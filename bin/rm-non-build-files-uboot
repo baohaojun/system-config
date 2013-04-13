@@ -7,5 +7,5 @@ echo 'echo -00122-g512f9aa; exit 0' > ./tools/setlocalversion
 (cd $(lookup_file .repo/..); . build/envsetup.sh; cd boot; BUILD_UBOOT_OBM=true; set -x; . ../.buildenv.sh; cd uboot; time make -j8 ${1:-kunlun_ff_config}; time make -j8 -k) 2>&1 | tee ~/1.txt 
 
 
-find . -type f -anewer mark -print -o -type l -print | perl -npe 's!^\./!!' > newer
+find . -type f -anewer mark -print | perl -npe 's!^\./!!' > newer
 file-arg1-arg2 mark newer | pn 1 | xargs git rm -f

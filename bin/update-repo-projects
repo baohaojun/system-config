@@ -40,7 +40,7 @@ for x in $(for y in ~/src/android "$@"; do readlink -f $y; done|uniq-even-non-aj
 
         android-daily-changes
 
-        mkdir -p out || mkdir -p $(readlink -m out)
+        mkdir -p out
         mv out/changes.log out/changes.log-backup-`today` || true
         repo-changes\? 2>&1|tee out/changes.log
         for x in `cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1`; do 

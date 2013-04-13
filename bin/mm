@@ -22,13 +22,6 @@ time (
     mkdir -p $build_mount_p
     test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1
     echo "make: Entering directory \`$(pwd)'"
-    function sudo() {
-        if test "$KERNEL_CONFIG"; then
-            command sudo env KERNEL_CONFIG=$KERNEL_CONFIG PATH=$PATH "$@"
-        else
-            command sudo env PATH=$PATH "$@"
-        fi
-    }
     time sudo unshare -m -- bash -c '
                 set -ex
                 mount $(pwd) '$build_mount_p' -o bind;
@@ -40,8 +33,8 @@ time (
                     ONE_SHOT_MAKEFILE='$ONE_SHOT_MAKEFILE' make all_modules '"$(for x in "$@"; do printf %q\  "$x"; done)"'
                 "
             ' 2>&1|tee ~/.logs/mm.log.x | perl -npe "s,$build_mount_p,$top_dir,g"|tee ~/.logs/mm.log|
-    grep --line-buffered -v '^Copy: .*/target/product/.*/system/media/audi'|
-    grep --line-buffered -v -e '/lang_pico/\|libinputcore-2.so\|libkpencore.so\|libqpicjni6.so\|/root/initlogo.rle\|/system/app/BaiduIme_v2.1.1.6.apk\|/system/app/android_10503_20111014.apk\|/system/app/cn.goapk.market_v2.1.4.apk\|/system/app/com.alensw.picfolder_v1.4.2.apk\|/system/etc/apns-conf.xml\|/system/etc/permissions/com.tmobile.software.themes.xml\|/system/etc/repository.txt'|
+    grep -v '^Copy: .*/target/product/.*/system/media/audi'|
+    grep -v -e '/lang_pico/\|libinputcore-2.so\|libkpencore.so\|libqpicjni6.so\|/root/initlogo.rle\|/system/app/BaiduIme_v2.1.1.6.apk\|/system/app/android_10503_20111014.apk\|/system/app/cn.goapk.market_v2.1.4.apk\|/system/app/com.alensw.picfolder_v1.4.2.apk\|/system/etc/apns-conf.xml\|/system/etc/permissions/com.tmobile.software.themes.xml\|/system/etc/repository.txt'|
     perl -ne 'print unless /unmappable character for encoding ascii/' | 
     perl -npe 's/(\.o\(.*?\.o\):)/$1\n/'
     

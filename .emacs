@@ -4,16 +4,6 @@
 (keyboard-translate ?\C-x ?\C-h)
 (keyboard-translate ?\C-h ?\C-x)
 
-(when (and (file-exists-p "/etc/emacs/site-start.d/00debian-vars.el")
-	   (not (fboundp 'debian-file->string)))
-  (load "/usr/share/emacs/site-lisp/debian-startup.el")
-  (setq debian-emacs-flavor 
-	(intern
-	 (concat "emacs" (replace-regexp-in-string "\\..*" "" emacs-version))))
-  (let ((flavor 'emacs))
-    (mapc (lambda (file)
-	    (load file))
-	  (directory-files "/etc/emacs/site-start.d/" t ".*.el"))))
 (when (file-exists-p (expand-file-name "~/.emacs-path.el"))
   (load-file (expand-file-name "~/.emacs-path.el")))
 
@@ -162,14 +152,6 @@
     (unless mark-active
       (push-mark))
     (ctags-beginning-of-defun arg)))
-
-(defun bhj-c-show-current-func ()
-  (interactive)
-  (save-excursion
-    (bhj-c-beginning-of-defun)
-    (message "%s" (current-line-string))))
-
-(global-set-key [(control c) ??] 'bhj-c-show-current-func)
 
 (defun current-regexp (re &optional func)
   (save-excursion
@@ -831,7 +813,6 @@
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
  '(x-select-enable-clipboard t)
- '(x-select-enable-primary t)
  '(yas/also-auto-indent-first-line t)
  '(yas/prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
  '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets" "~/.emacs_d/yasnippet-snippets")) nil (yasnippet))
@@ -940,7 +921,7 @@
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
-(require 'electric-complete)
+(require 'skeleton-complete)
 
 (require 'xcscope)
 
@@ -2488,6 +2469,8 @@ criteria can be provided via the optional match-string argument "
 
 (unless (or (eq system-type 'windows-nt)
 	    (eq system-type 'darwin))
+  (require 'xclip)
+  (turn-on-xclip)
   (load-file "~/.emacs_d/lisp/my-erc-config.el"))
 
 (defun goto-line-not-containing (word)
@@ -2713,9 +2696,3 @@ using ctags-exuberant"
 (condition-case nil
     (server-start)
   (error (message "emacs server start failed")))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

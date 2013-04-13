@@ -1,3 +1,0 @@
-#!/bin/bash
-
-ORIGINAL_MATCHER="$@" select-output-line git branch -a
