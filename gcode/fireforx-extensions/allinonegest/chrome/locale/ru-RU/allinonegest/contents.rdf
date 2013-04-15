@@ -1,0 +1,24 @@
+﻿<?xml version="1.0"?>
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+
+  <!-- list all the skins being supplied by this package -->
+  <RDF:Seq about="urn:mozilla:locale:root">
+    <RDF:li resource="urn:mozilla:locale:ru-RU"/>
+  </RDF:Seq>
+
+  <!-- locale information -->
+<RDF:Description about="urn:mozilla:locale:ru-RU"
+      chrome:displayName="Russian (ru-RU)"
+       chrome:author="Пирятинский Виталий a.k.a. Infant"
+       chrome:name="ru-RU"
+       chrome:localeVersion=""
+       chrome:previewURL="http://forum.mozilla.ru/">
+   <chrome:packages>
+      <RDF:Seq about="urn:mozilla:locale:ru-RU:packages">
+        <RDF:li resource="urn:mozilla:locale:ru-RU:allinonegest"/>
+      </RDF:Seq>
+    </chrome:packages>
+  </RDF:Description>
+<RDF:Description about="urn:mozilla:locale:ru-RU:allinonegest" chrome:localeVersion=""/>
+</RDF:RDF>

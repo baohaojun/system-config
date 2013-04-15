@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript"><![CDATA[
+  document.getElementById("useAutoScrolling").setAttribute("disabled", "true");
+]]></script>
+
+</overlay>

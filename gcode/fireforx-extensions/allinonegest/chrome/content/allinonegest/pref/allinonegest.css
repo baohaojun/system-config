@@ -1,0 +1,32 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+treechildren:-moz-tree-row(aioHovered) {
+  background: #F0F0F0 url("feedback.png") no-repeat bottom left;
+}
+treechildren:-moz-tree-row(aioHoverCol) {
+  background: #F0F0F0 url("feedback.png") no-repeat top left;
+}
+treecol.enableColHeader {
+  list-style-image: url("enabled.png");
+}
+treechildren:-moz-tree-image(enabledColId aioGestEnabled) {
+  list-style-image: url("enabled.png");
+}
+treechildren:-moz-tree-image(enabledColId aioGestDisabled) {
+  list-style-image: url("disabled.png");
+}
+.aio-indent {
+margin-left: 27px;
+}
+.aio-dblh {
+height: 2em;
+}
+.aio-smallButton {
+height: 1.5em;
+min-width: 2em;
+min-height: 1em;
+margin-right: 0px;
+}
+.aio-border {
+border-top: 2px solid;
+margin-left: 5px;
+}

@@ -1,0 +1,112 @@
+<!ENTITY allinonegest.label    "Opzioni di All-in-One Gestures">
+<!ENTITY drawgesture.title     "Area disegno gesture">
+
+<!ENTITY enable.label          "Attiva">
+<!ENTITY enable.mouse             "Mouse gesture">
+<!ENTITY enable.rocker            "Rocker gesture">
+<!ENTITY enable.wheelscroll       "Navigazione con rotellina di scorrimento">
+<!ENTITY enable.autoscroll        "Scorrimento con pulsante centrale">
+<!ENTITY enable.tabbarscroll      "Rotellina di scorrimento in barra schede">
+<!ENTITY enable.linkTooltip       "Descrizione collegamento">
+
+<!ENTITY tab.general              "Preferenze generali">
+<!ENTITY tab.customization        "Personalizzazione gesture">
+<!ENTITY tab.advanced1             "Preferenze avanzate #1">
+<!ENTITY tab.advanced2             "Preferenze avanzate #2">
+
+<!ENTITY customize.function       "Funzione">
+<!ENTITY customize.gesture        "Gesture">
+<!ENTITY customize.enable         "Attiva/Disattiva gesture">
+<!ENTITY customize.clear          "Cancella gesture">
+<!ENTITY customize.edit           "Modifica gesture">
+<!ENTITY customize.swap           "Scambia gesture">
+<!ENTITY customize.add            "Aggiungi gesture">
+<!ENTITY customize.edfunc         "Modifica funzione">
+<!ENTITY customize.undo           "Annulla">
+<!ENTITY customize.enter          "o Inserisci (formato compatto es. LRUD) la nuova gesture:">
+<!ENTITY customize.draw           "Disegna">
+<!ENTITY customize.swaptxt        "Clicca su una nuova riga per scambiare gesture (riga nuova gesture &lt;-&gt; riga gesture corrente)">
+<!ENTITY customize.edfunctxt      "Clicca sulla funzione da essere assegnata a questa gesture predefinita">
+<!ENTITY customize.apply          "OK">
+
+<!ENTITY mousegest.label       "Mouse gesture: Preferenze">
+<!ENTITY trails.enable             "Visualizza traccia gesture">
+<!ENTITY trails.color              "Colore traccia">
+<!ENTITY trails.size               "Dimensione traccia">
+
+<!ENTITY linktooltip.label     "Descrizione link: Preferenze">
+<!ENTITY linktooltip.shift         "Tenere premuto tasto maiuscole per mostrare descrizione">
+<!ENTITY linktooltip.delay         "Ritardo (ms) di visualizzazione descrizione:">
+<!ENTITY linktooltip.duration      "Durata (ms) visualizzazione descrizione:">
+
+<!ENTITY wheel.label           "Navigazione con rotellina di scorrimento: Seleziona">
+<!ENTITY wheel.gestures            "Esegui azione gesture">
+<!ENTITY wheel.historyNav          "Naviga attraverso la cronologia">
+<!ENTITY wheel.tabNav              "Naviga attraverso le schede">
+<!ENTITY wheel.historyOrTab        "Cronologia / Schede basate su rotazione iniziale">
+<!ENTITY wheel.historyIfCw         "All'indietro (verso l'utente): Cronologia">
+
+<!ENTITY autoscroll.label      "Scorrimento con pulsante centrale: Seleziona">
+<!ENTITY autoscroll.AiO            "Autoscorrimento All-in-One">
+<!ENTITY autoscroll.native         "Autoscorrimento nativo">
+<!ENTITY autoscroll.aiograb        "Autoscorrimento All-in-One + Afferra e Trascina">
+<!ENTITY autoscroll.grab           "Scorrimento Afferra e Trascina">
+
+<!ENTITY settings.label        "Impostazioni">
+<!ENTITY settings.export           "Esporta">
+<!ENTITY settings.import           "Importa">
+
+<!ENTITY about.label           "Informazioni">
+<!ENTITY about.version             "Versione">
+<!ENTITY about.provider1           "Fornita da Optimoz, Joe4711, Skidooer &amp; tutti gli altri;">
+<!ENTITY about.provider2           "Fusione ed ulteriore sviluppo da parte di M. Boullet">
+
+<!ENTITY mousebutton.label     "Pulsante utilizzato per Mouse Gesture e Navigazione con rotellina di scorrimento">
+<!ENTITY mousebutton.left          "Sinistro">
+<!ENTITY mousebutton.middle        "Centrale">
+<!ENTITY mousebutton.right         "Destro">
+<!ENTITY mousebutton.leftbutt      "Pulsante sinistro:">
+<!ENTITY mousebutton.altkey        "Non iniziare una gesture quando il tasto Alt è premuto">
+<!ENTITY mousebutton.leftdefault   "Effettua comunque l'azione predefinita del mouse">
+
+<!ENTITY aioMMBScrolling.label "Scorrimento con pulsante centrale">
+<!ENTITY aioMMB.evenOnLink         "Iniziare scorrimento quando si clicca su un collegamento col pulsante centrale">
+<!ENTITY aioMMB.marker             "Autoscorrimento: Non mostrare l'indicatore">
+<!ENTITY aioMMB.cursor             "Autoscorrimento: Mostra cursore del mouse dedicato">
+<!ENTITY aioMMB.panning            "Mantieni scorrimento quando il mouse viene rilasciato nella zona dell'indicatore">
+<!ENTITY aioMMB.paste              "Clic con pulsante centrale incolla nelle caselle di testo">
+<!ENTITY aioMMB.noHorizScroll      "Afferra e Trascina: Non scorrere orizzontalmente">
+<!ENTITY aioMMB.grabNdragmode      "Afferra e Trascina: modalità Acrobat Reader (in sostituzione a modalità Scorrimento)">
+<!ENTITY aioMMB.refreshrate        "Velocità autoscorrimento:">
+<!ENTITY aioMMB.normal             "Normale">
+<!ENTITY aioMMB.fast               "Veloce">
+<!ENTITY aioMMB.superfast          "Molto veloce">
+
+<!ENTITY aioAction.label       "Azioni Mouse Gesture">
+<!ENTITY aioAction.singlewindow    "'Apri collegamenti in finestre': Nuove finestre singole con schede">
+<!ENTITY aioAction.neverwarn       "'Chiudi le altre schede': Non mostrare avvertimento">
+<!ENTITY aioAction.goUpAction      "'Vai alla cartella superiore ...' / 'Carica pagina iniziale': Apri in una nuova scheda">
+<!ENTITY aioAction.nextprev        "'Raggiungi ... pagina': Parole da ricercare (separate da | )">
+<!ENTITY aioAction.nextlink        "'Raggiungi pagina successiva':">
+<!ENTITY aioAction.prevlink        "Raggiungi pagina precedente:">
+<!ENTITY aioAction.rockermode      "Gesture Rocker &amp; Rotellina di scorrimento: Permetti ripetizione per azioni che caricano pagine">
+
+<!ENTITY aioTabscroll.label    "Scorrimento delle schede">
+<!ENTITY aioTabscroll.tabrocker    "Navigazione rotellina di scorrimento: Spostamento diretto tra le schede (senza popup)">
+<!ENTITY aioTabscroll.revScroll    "Scorri le schede a sinistra quando la rotellina viene ruotata all'indietro">
+
+<!ENTITY aioTabClose.label     "Chiusura schede">
+<!ENTITY aioTabClose.focus         "Mantieni visualizzazione della scheda:">
+<!ENTITY aioTabClose.default       "predefinito Firefox">
+<!ENTITY aioTabClose.left          "a sinistra">
+<!ENTITY aioTabClose.lastSelect    "ultima visualizzata">
+<!ENTITY aioTabClose.opener        "apertura">
+<!ENTITY aioTabClose.right         "a destra">
+<!ENTITY aioTabClose.first         "prima">
+<!ENTITY aioTabClose.last          "ultima">
+<!ENTITY aioTabClose.lastOpen      "ultima aperta">
+
+<!ENTITY flipper.title             "Riconoscitore schema numerico in URL">
+<!ENTITY flipper.label             "Seleziona la parte numerica variabile dell'URL del documento.">
+
+

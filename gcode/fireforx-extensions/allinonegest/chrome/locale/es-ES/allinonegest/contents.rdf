@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+
+  <!-- list all the packages being supplied by this jar -->
+  <RDF:Seq about="urn:mozilla:locale:root">
+    <RDF:li resource="urn:mozilla:locale:es-ES"/>
+  </RDF:Seq>
+
+  <!-- locale information -->
+  <RDF:Description about="urn:mozilla:locale:es-ES"
+        chrome:displayName="Español (España)"
+        chrome:author="Proyecto NAVE"
+        chrome:name="es-ES"
+        chrome:previewURL="http://nave.escomposlinux.org/productos/extensiones/allinonegest/">
+    <chrome:packages>
+      <RDF:Seq about="urn:mozilla:locale:es-ES:packages">
+        <RDF:li resource="urn:mozilla:locale:es-ES:allinonegest"/>
+      </RDF:Seq>
+    </chrome:packages>
+  </RDF:Description>
+
+  <RDF:Description about="urn:mozilla:locale:es-ES:allinonegest"/>
+</RDF:RDF>

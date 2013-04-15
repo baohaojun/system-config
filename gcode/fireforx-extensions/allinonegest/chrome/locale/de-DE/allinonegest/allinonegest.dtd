@@ -1,0 +1,108 @@
+<!ENTITY allinonegest.label    "Einstellungen der All-in-One Gestures">
+<!ENTITY drawgesture.title     "Bitte die gewünschte Geste ausführen">
+
+<!ENTITY enable.label          "Aktivieren">
+<!ENTITY enable.mouse             "Mausgesten">
+<!ENTITY enable.rocker            "Rocker-Navigation">
+<!ENTITY enable.wheelscroll       "Mausrad-Navigation">
+<!ENTITY enable.autoscroll        "Bildlauf (Autoscroll) mit mittlerer Maustaste">
+<!ENTITY enable.tabbarscroll      "Mausrad in Tableiste (Tabscrolling)">
+<!ENTITY enable.linkTooltip       "Infokasten über Hyperlinks ('Link Tooltip')">
+
+<!ENTITY tab.general              "Allgemeine Einstellungen">
+<!ENTITY tab.customization        "Gesten anpassen">
+<!ENTITY tab.advanced1            "Erweitert 1">
+<!ENTITY tab.advanced2            "Erweitert 2">
+
+<!ENTITY customize.function       "Funktion">
+<!ENTITY customize.gesture        "Geste">
+<!ENTITY customize.enable         "Geste aktivieren/deaktivieren">
+<!ENTITY customize.clear          "Löschen">
+<!ENTITY customize.edit           "Bearbeiten">
+<!ENTITY customize.swap           "Gesten austauschen">
+<!ENTITY customize.add            "Geste hinzufügen">
+<!ENTITY customize.edfunc         "Funktion bearbeiten">
+<!ENTITY customize.undo           "Rückgängig">
+<!ENTITY customize.enter          "Neue Geste eingeben (z.B. LROU für Links-Rechts-Oben-Unten):">
+<!ENTITY customize.draw           "Mausgeste ziehen">
+<!ENTITY customize.swaptxt        "Auf eine neue Zeile klicken zum Austauschen (Geste neue Zeile &lt;-&gt; gewählte Geste)">
+<!ENTITY customize.edfunctxt      "Auf die gewünschte Funktion für diese Geste klicken">
+<!ENTITY customize.apply          "OK">
+
+<!ENTITY mousegest.label       "Mausgesten">
+<!ENTITY trails.enable             "Mausspur aktivieren">
+<!ENTITY trails.color              "Farbe der Spur">
+<!ENTITY trails.size               "Größe der Spur">
+
+<!ENTITY linktooltip.label     "Infokasten über Hyperlinks ('Link Tooltip')">
+<!ENTITY linktooltip.shift         "Zum Anzeigen Umschalttaste (Shift) gedrückt halten">
+<!ENTITY linktooltip.delay         "Verzögerung vor dem Anzeigen (msec):">
+<!ENTITY linktooltip.duration      "Dauer der Anzeige (msec):">
+
+<!ENTITY wheel.label           "Mausrad-Navigation (bei gedrückter rechter Taste)">
+<!ENTITY wheel.gestures            "Mausrad-Gesten erlauben">
+<!ENTITY wheel.historyNav          "Chronik durchblättern">
+<!ENTITY wheel.tabNav              "Tabs durchblättern">
+<!ENTITY wheel.historyOrTab        "Chronik / Tabs je nach Drehrichtung">
+<!ENTITY wheel.historyIfCw         "Nach unten drehen: Chronik">
+
+<!ENTITY autoscroll.label      "Bildlauf mit mittlerer Maustaste">
+<!ENTITY autoscroll.AiO            "All-in-One Bildlauf">
+<!ENTITY autoscroll.native         "Standard-Bildlauf">
+<!ENTITY autoscroll.aiograb        "A-i-O und festhalten+verschieben">
+<!ENTITY autoscroll.grab           "Festhalten+verschieben">
+
+<!ENTITY about.label           "Über">
+<!ENTITY about.version             "Version">
+<!ENTITY about.provider1           "Original von Optimoz, Joe4711, Skidooer; Zusammenstellung von Marc Boullet">
+<!ENTITY about.provider2           "Deutsche Übersetzung von Armin C. Schneider">
+
+<!ENTITY mousebutton.label     "Auslösetaste für Mausgesten und Mausrad-Navigation">
+<!ENTITY mousebutton.left          "Links">
+<!ENTITY mousebutton.middle        "Mitte">
+<!ENTITY mousebutton.right         "Rechts">
+<!ENTITY mousebutton.leftbutt      "Linke Maustaste:">
+<!ENTITY mousebutton.altkey        "Keine Geste starten, wenn die Alt-Taste gedrückt ist">
+<!ENTITY mousebutton.leftdefault   "Standardaktionen werden ebenfalls durchgeführt (z.B. Text markieren)">
+
+<!ENTITY aioMMBScrolling.label "Mittlere Taste / Bildlauf">
+<!ENTITY aioMMB.evenOnLink         "Bei Mittelklick über Link den Bildlauf starten">
+<!ENTITY aioMMB.marker             "Bildlauf: den Marker nicht anzeigen">
+<!ENTITY aioMMB.cursor             "Bildlauf: Doppelpfeil-Mauszeiger darstellen">
+<!ENTITY aioMMB.panning            "Bildlauf wird nicht verlassen, wenn Maus über dem Marker">
+<!ENTITY aioMMB.paste              "Unix: Mittelklick fügt Text ein">
+<!ENTITY aioMMB.noHorizScroll      "Festhalten und verschieben: nicht horizontal scrollen">
+<!ENTITY aioMMB.grabNdragmode      "Festhalten und verschieben: wie beim Adobe Acrobat Reader">
+<!ENTITY aioMMB.refreshrate        "Bildlauf-Abtastfrequenz:">
+<!ENTITY aioMMB.normal             "normal">
+<!ENTITY aioMMB.fast               "schnell">
+<!ENTITY aioMMB.superfast          "sehr schnell">
+
+<!ENTITY aioAction.label       "Verschiedenes">
+<!ENTITY aioAction.singlewindow    "'Links in Fenstern öffnen': nur EIN neues Fenster mit mehreren Tabs öffnen">
+<!ENTITY aioAction.neverwarn       "'Alle anderen Tabs schließen': Niemals warnen">
+<!ENTITY aioAction.goUpAction      "'Eine URL-Ebene höher' / 'Startseite laden':  In neuem Tab öffnen">
+<!ENTITY aioAction.nextprev        "'Link ähnlich ... folgen': Suchbegriffe wie 'weiter' (| als Trenner)">
+<!ENTITY aioAction.nextlink        "Link ähnlich 'weiter' folgen:">
+<!ENTITY aioAction.prevlink        "Link ähnlich 'zurück' folgen:">
+<!ENTITY aioAction.rockermode      "Rocker-/Mausrad-Navigation: mehrere Befehle hintereinander erlauben">
+
+<!ENTITY aioTabscroll.label    "Tabs durchblättern (Mausrad)">
+<!ENTITY aioTabscroll.tabrocker    "Tabs sofort durchblättern (ohne Kontextmenü)">
+<!ENTITY aioTabscroll.revScroll    "Tabs nach links durchblättern, wenn das Rad nach unten bewegt wird">
+
+<!ENTITY aioTabClose.label     "Tabs schließen">
+<!ENTITY aioTabClose.focus         "Neuer Fokus auf Tab...">
+<!ENTITY aioTabClose.default       "Standard">
+<!ENTITY aioTabClose.left          "ganz links">
+<!ENTITY aioTabClose.lastSelect    "zuvor fokussiert">
+<!ENTITY aioTabClose.opener        "zuerst geöffnet">
+<!ENTITY aioTabClose.right         "ganz rechts">
+<!ENTITY aioTabClose.first         "ersten">
+<!ENTITY aioTabClose.last          "letzten">
+<!ENTITY aioTabClose.lastOpen      "zuletzt geöffneten">
+
+<!ENTITY flipper.title             "Ziffer-URL-Flipper">
+<!ENTITY flipper.label             "Den zu ändernden Nummernteil der URL auswählen.">
+
+

@@ -1,0 +1,11 @@
+<?xml version="1.0"?> 
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<script type="application/x-javascript"><![CDATA[
+ var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                   .getService(Components.interfaces.nsIWindowMediator);
+ var browserWindow = wm.getMostRecentWindow("navigator:browser");
+ browserWindow.openDialog('chrome://allinonegest/content/pref/aioOptions.xul', '',
+                          'chrome,titlebar,toolbar,centerscreen,modal,resizable');
+ window.close();
+]]></script>
+</window>

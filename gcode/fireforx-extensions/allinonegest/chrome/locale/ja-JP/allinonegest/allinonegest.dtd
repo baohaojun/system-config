@@ -1,0 +1,108 @@
+<!ENTITY allinonegest.label "All-in-Oneジェスチャ設定">
+<!ENTITY drawgesture.title "ジェスチャ入力領域">
+
+<!ENTITY enable.label "利用する機能">
+<!ENTITY enable.mouse "マウスジェスチャ">
+<!ENTITY enable.rocker "ロッカージェスチャ">
+<!ENTITY enable.wheelscroll "マウスホイールジェスチャ">
+<!ENTITY enable.autoscroll "中クリックによるスクロール">
+<!ENTITY enable.tabbarscroll "タブバー上でマウスホイール">
+<!ENTITY enable.linkTooltip "リンク上での拡張ツールチップ">
+
+<!ENTITY tab.general "全般設定">
+<!ENTITY tab.customization "ジェスチャのカスタマイズ">
+<!ENTITY tab.advanced1 "詳細設定その1">
+<!ENTITY tab.advanced2 "詳細設定その2">
+
+<!ENTITY customize.function "機能">
+<!ENTITY customize.gesture "ジェスチャ">
+<!ENTITY customize.enable "ジェスチャの有効無効の切り替え">
+<!ENTITY customize.clear "消去">
+<!ENTITY customize.edit "編集">
+<!ENTITY customize.swap "入れ替え">
+<!ENTITY customize.add "ジェスチャを追加">
+<!ENTITY customize.edfunc "機能割り当て編集">
+<!ENTITY customize.undo "元に戻す">
+<!ENTITY customize.enter "ジェスチャを文字列 (上下左右をLRUDで記述) で入力してください。">
+<!ENTITY customize.draw "ジェスチャ入力">
+<!ENTITY customize.swaptxt "入れ替える相手の行をクリックしてください (現在行とその行を入れ替えます)。">
+<!ENTITY customize.edfunctxt "このジェスチャに割り当てたい機能を選択してください。">
+<!ENTITY customize.apply "OK">
+
+<!ENTITY mousegest.label "マウスジェスチャ">
+<!ENTITY trails.enable "ジェスチャの軌跡を描画する">
+<!ENTITY trails.color "軌跡の配色">
+<!ENTITY trails.size "軌跡の太さ">
+
+<!ENTITY linktooltip.label "リンク上での拡張ツールチップ">
+<!ENTITY linktooltip.shift "Shiftキーが押されているとき表示">
+<!ENTITY linktooltip.delay "表示するまでの遅延時間 (単位ミリ秒):">
+<!ENTITY linktooltip.duration "ツールチップを表示する時間 (単位ミリ秒):">
+
+<!ENTITY wheel.label "マウスホイールジェスチャ">
+<!ENTITY wheel.gestures "ジェスチャ機能を実行">
+<!ENTITY wheel.historyNav "履歴をたどる">
+<!ENTITY wheel.tabNav "タブを切り替える">
+<!ENTITY wheel.historyOrTab "両方 (上で履歴、下でタブ切り替えモードに)">
+<!ENTITY wheel.historyIfCw "上下を逆に">
+
+<!ENTITY autoscroll.label "オートスクロール">
+<!ENTITY autoscroll.AiO "All-in-Oneのものを使用">
+<!ENTITY autoscroll.native "ブラウザ内蔵のものを使用">
+<!ENTITY autoscroll.aiograb "AiOのオートスクロール + ページを掴んでスクロール">
+<!ENTITY autoscroll.grab "ページを掴んでスクロールする">
+
+<!ENTITY about.label "All-in-Oneジェスチャについて">
+<!ENTITY about.version "バージョン">
+<!ENTITY about.provider1 "Provided by Optimoz, Joe4711, Skidooer &amp; all;">
+<!ENTITY about.provider2 "Merged and further developed by M. Boullet">
+
+<!ENTITY mousebutton.label "マウスジェスチャ・マウスホイールジェスチャで用いるボタン">
+<!ENTITY mousebutton.left "左ボタン">
+<!ENTITY mousebutton.middle "中ボタン (ホイールクリック)">
+<!ENTITY mousebutton.right "右ボタン">
+<!ENTITY mousebutton.leftbutt "左ボタン">
+<!ENTITY mousebutton.altkey "Altキー非押下時はジェスチャを開始しない">
+<!ENTITY mousebutton.leftdefault "標準のマウスの動作も利用する"><!-- Default mouse action is performed as well -->
+
+<!ENTITY aioMMBScrolling.label "中ボタンでのオートスクロール">
+<!ENTITY aioMMB.evenOnLink "リンク上で中クリックでもオートスクロールを開始する">
+<!ENTITY aioMMB.marker "マーカを表示しない">
+<!ENTITY aioMMB.cursor "専用のマウスカーソルを表示する">
+<!ENTITY aioMMB.panning "マーカ内ではオートスクロールを終了しない">
+<!ENTITY aioMMB.paste "テキスト入力ボックス内での中クリックで貼り付ける">
+<!ENTITY aioMMB.noHorizScroll "掴んでスクロール: 横方向にはスクロールしない">
+<!ENTITY aioMMB.grabNdragmode "掴んでスクロール: Acrobat Reader風にする (スクロールバーを掴む感じではなく)">
+<!ENTITY aioMMB.refreshrate "オートスクロールの描画レート:">
+<!ENTITY aioMMB.normal "標準">
+<!ENTITY aioMMB.fast "高速">
+<!ENTITY aioMMB.superfast "最高速">
+
+<!ENTITY aioAction.label "マウスジェスチャの実行">
+<!ENTITY aioAction.singlewindow "'ページのリンクを新しいウィンドウで開く': 新しいウィンドウ一つにタブで開く">
+<!ENTITY aioAction.neverwarn "'他のタブを閉じる': 警告せず閉じるようにする">
+<!ENTITY aioAction.goUpAction "'上位階層へ移動' / 'ホームページを表示': 新しいタブで開く">
+<!ENTITY aioAction.nextprev "'前後へのリンクを辿る': 該当すると見なす文字列 (「|」で区切って複数指定可)">
+<!ENTITY aioAction.nextlink "次へのリンク:">
+<!ENTITY aioAction.prevlink "前へのリンク:">
+<!ENTITY aioAction.rockermode "ロッカー・マウスホイールジェスチャ: ページ読み込みが起こる機能の複数回実行を許可する">
+
+<!ENTITY aioTabscroll.label "タブスクロール">
+<!ENTITY aioTabscroll.tabrocker "マウスホイールジェスチャ: タブを直接切り替える (ポップアップ表示せずに)">
+<!ENTITY aioTabscroll.revScroll "タブバー上で、マウスホイール下で左のタブに切り替える (デフォルトは右に)">
+
+<!ENTITY aioTabClose.label "タブを閉じる">
+<!ENTITY aioTabClose.focus "フォーカスを移動するタブ:">
+<!ENTITY aioTabClose.default       "Firefoxのデフォルト">
+<!ENTITY aioTabClose.left          "左のタブ">
+<!ENTITY aioTabClose.lastSelect    "直前に選択していたタブ">
+<!ENTITY aioTabClose.opener        "そのタブを開いたタブ">
+<!ENTITY aioTabClose.right         "右のタブ">
+<!ENTITY aioTabClose.first         "先頭の">
+<!ENTITY aioTabClose.last          "最後の">
+<!ENTITY aioTabClose.lastOpen      "最後に開いていた">
+
+<!ENTITY flipper.title "数値切り替えの設定">
+<!ENTITY flipper.label "数値切り替えに使用する、URLの数字の部分を選択してください。">
+
+

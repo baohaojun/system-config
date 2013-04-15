@@ -940,7 +940,7 @@
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
-(require 'skeleton-complete)
+(require 'electric-complete)
 
 (require 'xcscope)
 

@@ -1,0 +1,50 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+#aioscrollerNS {
+   height: 28px;
+   width: 28px;
+   border: none;
+   padding: 0;
+   background-image: url("chrome://allinonegest/content/autoscroll_v.png");
+   background-color: transparent;
+   cursor: n-resize;
+   -moz-appearance: none;
+ }
+#aioscrollerEW {
+   height: 28px;
+   width: 28px;
+   border: none;
+   padding: 0;
+   background-image: url("chrome://allinonegest/content/autoscroll_h.png");
+   background-color: transparent;
+   cursor: e-resize;
+   -moz-appearance: none;
+ }
+ #aioscrollerNSEW {
+   height: 28px;
+   width: 28px;
+   border: none;
+   padding: 0;
+   background-image: url("chrome://allinonegest/content/autoscroll_all.png");
+   background-color: transparent;
+   cursor: move;
+   -moz-appearance: none;
+ }
+ .menuitem-iconic[aioBold] {
+   font-weight: bold;
+ }
+ .menuitem-iconic[aioItalic] {
+   font-style:italic;
+ }
+ #aioWheelPopup menuitem[_moz-menuactive] {
+   color: -moz-menuhovertext;
+   background-color: Highlight;
+ }
+ .aioTrail {
+   height: 1px;
+   width: 1px;
+   border: none;
+   padding: 0;
+   background-color: transparent;
+   opacity: 1;
+   -moz-appearance: none;
+ }

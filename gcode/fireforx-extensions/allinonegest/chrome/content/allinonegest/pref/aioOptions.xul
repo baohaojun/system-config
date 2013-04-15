@@ -1,0 +1,540 @@
+<?xml version="1.0"?> 
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="allinonegest.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+<!ENTITY % brandDTD SYSTEM "chrome://global/locale/brand.dtd" >
+%brandDTD;
+<!ENTITY % allinonegestDTD SYSTEM "chrome://allinonegest/locale/allinonegest.dtd" >
+%allinonegestDTD;
+]>
+
+<dialog id="allInOnePref"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      title="&allinonegest.label;"
+      buttons="accept, cancel"
+      onload="init();"
+      ondialogaccept="return savePrefs();"
+      persist="width height screenX screenY">
+
+<script type="application/x-javascript" src="customize.js"/>
+<script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>
+<script type="application/x-javascript">
+  <![CDATA[
+var trailSize;
+
+function getBrowserWindow() {
+  var winMgr=Components.classes["@mozilla.org/appshell/window-mediator;1"].getService()
+    .QueryInterface(Components.interfaces.nsIWindowMediator).getEnumerator("navigator:browser");
+  if (winMgr.hasMoreElements()) return winMgr.getNext();
+  return null;
+}
+
+function init() {
+  var checkboxes  = ["mouse", "trailId", "rocker", "wheelscroll", "autoscroll", "wheelDirection",
+                     "markerId", "cursorId", "panningId", "pasteId", "rockTabId", "reverseId",
+                     "noAltGestId", "leftdefaultId", "openlinksId", "tabBar", "evenOnLinkId",
+                     "linkTooltip", "tooltipShiftId", "grabHorizId", "grabModeId", "neverWarnId",
+                     "goUpId"];
+  var radiogroups = ["wheelScrollOptions", "mousebuttOptions", "autoscrollOptions",
+                     "scrollrateOptions", "closeTabOptions"];
+  var checkbox, radiogroup, i;
+  var pref = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  for (i = 0; i < checkboxes.length; ++i) {
+    checkbox = document.getElementById(checkboxes[i]);
+    checkbox.checked = pref.getBoolPref(checkbox.getAttribute("prefstring"));
+  }
+  for (i = 0; i < radiogroups.length; ++i) {
+    radiogroup = document.getElementById(radiogroups[i]);
+    radiogroup.selectedItem = radiogroup.childNodes[pref.getIntPref(radiogroup.getAttribute("prefstring"))];
+  }
+  document.getElementById("rockerModeId").checked = pref.getIntPref("allinonegest.rockertypepref") != 0;
+  document.getElementById("delaydropdownId").selectedIndex = pref.getIntPref("allinonegest.titleDelay");
+  document.getElementById("durationdropdownId").selectedIndex = pref.getIntPref("allinonegest.titleDuration");
+  document.getElementById("trailPickerId").color = pref.getCharPref("allinonegest.trailColor");
+  document.getElementById("nextsStringId").value = pref.getComplexValue("allinonegest.nextsString", Components.interfaces.nsISupportsString).data;
+  document.getElementById("prevsStringId").value = pref.getComplexValue("allinonegest.prevsString", Components.interfaces.nsISupportsString).data;
+  trailSize = pref.getIntPref("allinonegest.trailSize");
+  changeTrace(0);
+  doEnabling();
+  populateTree(pref.getCharPref("allinonegest.gestureString"), pref.getCharPref("allinonegest.functionString"),
+               pref.getCharPref("allinonegest.rockerString"));
+  setScrollGesturesVisibility(document.getElementById("wheelScrollOptions").value == 0);
+  const myGUID = "{8b86149f-01fb-4842-9dd8-4d7eb02fd055}";
+  try {
+    // Firefox 4 i.e. Mozilla 2 and later
+    Components.utils.import("resource://gre/modules/AddonManager.jsm");
+    AddonManager.getAddonByID(myGUID,
+                              function(addon) {
+                                 document.getElementById("versId").value += " " + addon.version;
+                              });
+  }
+  catch (err) {
+    // Firefox 3.6 i.e. Mozilla 1.9.2 and before
+    var em = Components.classes["@mozilla.org/extensions/manager;1"]
+             .getService(Components.interfaces.nsIExtensionManager);
+    var addon = em.getItemForID(myGUID);
+    document.getElementById("versId").value += " " + addon.version;
+  }
+}
+
+function doEnabling() {
+  var wheelEl = document.getElementById("wheelScrollOptions");
+  var autoscrollEl = document.getElementById("autoscrollOptions");
+  var c1 = document.getElementById("mouse").checked;
+  var c2 = document.getElementById("wheelscroll").checked;
+  var c1or2 = c1 || c2;
+  var c3 = document.getElementById("rocker").checked;
+  var c4 = c1 && document.getElementById("trailId").checked;
+  var c5 = c2 && wheelEl.value == 3;
+  var c6 = c4 && trailSize < 8;
+  var c7 = c4 && trailSize > 1;
+  var c8 = !c1or2 || document.getElementById("mousebuttOptions").value != 1;
+  var c9 = c8 && document.getElementById("autoscroll").checked;
+  var c9a = c9 && autoscrollEl.value == 0;
+  var c9b = c9 && autoscrollEl.value != 1;
+  var c9c = c9 && !(autoscrollEl.value & 1);
+  var c9d = c9 && autoscrollEl.value > 1;
+  var c10 = c9c && !document.getElementById("markerId").checked;
+  var c11 = c2 && wheelEl.value >= 2;
+  var c12 = c1 && document.getElementById("mousebuttOptions").value == 0 && !document.getElementById("noAltGestId").checked;
+  try {var c14 = !getBrowserWindow().document.getElementById("tabMenu");}
+  catch(err) {c14 = true;}
+  var c15 = (c11 && document.getElementById("rockTabId").checked) || (c14 && document.getElementById("tabBar").checked);
+  var c16 = document.getElementById("linkTooltip").checked;
+  var c17 = c16 && !document.getElementById("tooltipShiftId").checked;
+
+  var a1 = "disabled", a2 = "hidden";
+
+  var idTable = [["trailId", c1, a1], ["trailColorId", c4, a1], ["trailPickerId", c4, a2],
+                 ["trailSizeId", c4, a1], ["plusId", c6, a1], ["minusId", c7, a1],
+                 ["wheelScrollOptions", c2, a1], ["wheelScrollOptions0", c2, a1],
+                 ["wheelScrollOptions1", c2, a1], ["wheelScrollOptions2", c2, a1],
+                 ["wheelScrollOptions3", c2, a1],
+                 ["wheelDirection", c5, a1], ["rockerModeId", c3, a1],
+                 ["tooltipShiftId", c16, a1], ["tooltipDelayId", c17, a1], ["delaydropdownId", c17, a1],
+                 ["tooltipDisplayId", c16, a1], ["durationdropdownId", c16, a1], ["mousebuttOptions", c1or2, a1],
+                 ["mousebutt0", c1or2, a1],  ["mousebutt1", c1or2, a1], ["mousebutt2", c1or2, a1],
+                 ["autoscroll", c8, a1], ["markerId", c9c, a1], ["cursorId", c10, a1], ["rockTabId", c11, a1], 
+                 ["noAltGestId", c1, a1], ["leftdefaultId", c12, a1], ["autoscrollOptions", c9, a1],
+                 ["autoscrollOptions0", c9, a1], ["autoscrollOptions1", c9, a1], ["autoscrollOptions2", c9, a1],
+                 ["autoscrollOptions3", c9, a1], ["refreshrateId", c9c, a1], ["scrollrateOptions", c9c, a1],
+                 ["scrollrate0", c9c, a1], ["scrollrate1", c9c, a1], ["scrollrate2", c9c, a1],
+                 ["tabBar", c14, a1], ["panningId", c9a, a1], ["reverseId", c15, a1],
+                 ["evenOnLinkId", c9b, a1], ["openlinksId", c1, a1], ["grabHorizId", c9d, a1],
+                 ["grabModeId", c9d, a1], ["leftlabelId", c12, a1], ["neverWarnId", c1, a1],
+                 ["goUpId", c1, a1], ["nextprevId", c1, a1], ["nextlinkId", c1, a1],
+                 ["prevlinkId", c1, a1], ["nextsStringId", c1, a1], ["prevsStringId", c1, a1]];
+  var elem;
+
+  for (var i = 0; i < idTable.length; ++i) {
+     elem = document.getElementById(idTable[i][0]);
+     if (idTable[i][1]) elem.removeAttribute(idTable[i][2]);
+     else elem.setAttribute(idTable[i][2], "true");
+  }
+}
+
+function checkWheelRocker() {
+  setScrollGesturesVisibility(document.getElementById("wheelScrollOptions").value == 0);
+  doEnabling();
+}    
+
+function savePrefs() {
+  var checkboxes  = ["mouse", "trailId", "rocker", "wheelscroll", "autoscroll", "wheelDirection",
+                     "markerId", "cursorId", "panningId", "pasteId", "rockTabId", "reverseId",
+                     "noAltGestId", "leftdefaultId", "openlinksId", "tabBar", "evenOnLinkId",
+                     "linkTooltip", "tooltipShiftId", "grabHorizId", "grabModeId", "neverWarnId",
+                     "goUpId"];
+  var radiogroups = ["wheelScrollOptions", "mousebuttOptions", "autoscrollOptions",
+                     "scrollrateOptions", "closeTabOptions"];
+  var checkbox, radiogroup, i;
+  if (document.getElementById("tabpanId").selectedIndex == 1 &&
+      !document.getElementById("customEdit").hasAttribute("hidden")) {
+     setTimeout(newGestValue, 0);
+     return false;
+  }
+  var pref = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  for (i = 0; i < checkboxes.length; ++i) {
+    checkbox = document.getElementById(checkboxes[i]);
+    pref.setBoolPref(checkbox.getAttribute("prefstring"), checkbox.checked);
+  }
+  for (i = 0; i < radiogroups.length; ++i) {
+    radiogroup = document.getElementById(radiogroups[i]);
+    pref.setIntPref(radiogroup.getAttribute("prefstring"), radiogroup.value);
+  }
+  pref.setIntPref("allinonegest.rockertypepref", document.getElementById("rockerModeId").checked ? 1 : 0);
+  pref.setIntPref("allinonegest.titleDelay", document.getElementById("delaydropdownId").selectedIndex);
+  pref.setIntPref("allinonegest.titleDuration", document.getElementById("durationdropdownId").selectedIndex);
+  pref.setCharPref("allinonegest.trailColor", document.getElementById("trailPickerId").color);
+  pref.setIntPref("allinonegest.trailSize", trailSize);
+  pref.setCharPref("allinonegest.gestureString", returnCustomizedString(0));
+  pref.setCharPref("allinonegest.functionString", returnCustomizedString(1));
+  pref.setCharPref("allinonegest.rockerString", returnCustomizedString(2));
+  var str = Components.classes[ "@mozilla.org/supports-string;1" ].createInstance(Components.interfaces.nsISupportsString);
+  str.data = document.getElementById("nextsStringId").value;
+  pref.setComplexValue("allinonegest.nextsString", Components.interfaces.nsISupportsString, str);
+  str.data = document.getElementById("prevsStringId").value;
+  pref.setComplexValue("allinonegest.prevsString", Components.interfaces.nsISupportsString, str);
+  return true;
+}
+
+function changeTrace(inc) {
+  var color = document.getElementById("trailPickerId").color;
+  trailSize += inc;
+  document.getElementById("traitId").setAttribute("style",
+        "border-top-width:" + trailSize + "px;border-top-color:" + color);
+  if (inc) doEnabling();
+}
+  ]]>
+</script>
+
+<stringbundleset id="stringbundleset"> 
+  <stringbundle id="allinonegestbundle" src="chrome://allinonegest/locale/allinonegest.properties"/>
+  <stringbundle id="brandbundle" src="chrome://global/locale/brand.properties"/>
+</stringbundleset>
+
+<tabbox flex="1" style="overflow:auto;">
+ <tabs>
+   <tab label="&tab.general;" />
+   <tab label="&tab.customization;" />
+   <tab label="&tab.advanced1;" />
+   <tab label="&tab.advanced2;" />
+ </tabs>
+ <tabpanels flex="1" id="tabpanId">
+  <tabpanel orient="vertical">
+   <spacer flex="1"/>
+   <hbox flex="1">
+   <spacer flex="1"/>
+   <vbox flex="1">
+   <groupbox orient="horizontal">
+     <caption label="&enable.label;"/>
+     <vbox>
+       <checkbox id="mouse" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.mouse" label="&enable.mouse;" oncommand="doEnabling();"/>
+       <checkbox id="rocker" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.rocking" label="&enable.rocker;" oncommand="doEnabling();"/>
+       <checkbox id="tabBar" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.tabBar" label="&enable.tabbarscroll;" oncommand="doEnabling();"/>
+     </vbox>
+     <spring flex="1"/>
+     <vbox>
+       <checkbox id="wheelscroll" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.wheelscrolling" label="&enable.wheelscroll;" oncommand="doEnabling();"/>
+       <checkbox id="autoscroll" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.autoscrolling2" label="&enable.autoscroll;" oncommand="doEnabling();"/>
+       <checkbox id="linkTooltip" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.showLinkTooltip" label="&enable.linkTooltip;" oncommand="doEnabling();"/>
+     </vbox>
+   </groupbox>
+   <spring flex="1"/>
+   <hbox>
+     <groupbox orient="horizontal" flex="1">
+      <caption label="&mousegest.label;"/>
+      <vbox>
+       <checkbox id="trailId" type="checkbox" pref="true" preftype="bool" label="&trails.enable;"
+          prefstring="allinonegest.gestureTrails" oncommand="doEnabling();"/>
+       <hbox align="center" class="aio-dblh">
+        <label id="trailColorId" class="aio-indent" value="&trails.color;"/>
+        <spacer flex="1"/>
+        <colorpicker type="button" id="trailPickerId" onchange="changeTrace(0)"/>
+       </hbox>
+       <hbox align="center">
+        <label id="trailSizeId" class="aio-indent" value="&trails.size;"/>
+        <spacer flex="100"/>
+        <button id="minusId" class="aio-smallButton" image="minus.png" oncommand="changeTrace(-1)"/>
+        <image id="traitId" class="aio-border" src="transp.png"/>
+        <button id="plusId" class="aio-smallButton" image="plus.png" oncommand="changeTrace(1)"/> 
+       </hbox>
+      </vbox>
+     </groupbox>
+     <groupbox orient="horizontal" flex="1">
+      <caption label="&linktooltip.label;"/>
+      <vbox>
+       <checkbox id="tooltipShiftId" type="checkbox" pref="true" preftype="bool" label="&linktooltip.shift;"
+          prefstring="allinonegest.shiftForTitle"  oncommand="doEnabling();"/>
+       <hbox align="center">
+        <label id="tooltipDelayId" value="&linktooltip.delay;"/>
+        <spacer flex="1"/>
+        <menulist id="delaydropdownId">
+           <menupopup>
+              <menuitem label="250" />
+              <menuitem label="500" />
+              <menuitem label="750" />
+              <menuitem label="1000" />
+              <menuitem label="1250" />
+	      <menuitem label="1500" />
+              <menuitem label="2000" />
+	      <menuitem label="2500" />
+	      <menuitem label="3000" />
+              <menuitem label="4000" />
+           </menupopup>
+        </menulist>
+       </hbox>
+       <hbox align="center">
+        <label id="tooltipDisplayId" value="&linktooltip.duration;"/>
+        <spacer flex="1"/>
+        <menulist id="durationdropdownId">
+           <menupopup>
+              <menuitem label="2000" />
+              <menuitem label="3000" />
+              <menuitem label="4000" />
+              <menuitem label="5000" />
+              <menuitem label="6000" />
+	      <menuitem label="7000" />
+              <menuitem label="8000" />
+           </menupopup>
+        </menulist>
+       </hbox>
+      </vbox>
+     </groupbox>
+   </hbox>
+   <spring flex="1"/>
+   <hbox>
+     <groupbox orient="horizontal" flex="1">
+      <caption label="&wheel.label;"/>
+      <vbox>
+        <radiogroup id="wheelScrollOptions" prefstring="allinonegest.wheelpref2">
+          <radio id="wheelScrollOptions0" value="0" label="&wheel.gestures;"
+          oncommand="checkWheelRocker();" />
+          <radio id="wheelScrollOptions1" value="1" label="&wheel.historyNav;"
+          oncommand="checkWheelRocker();" selected="true" />
+          <radio id="wheelScrollOptions2" value="2" label="&wheel.tabNav;"
+          oncommand="checkWheelRocker();" />
+          <radio id="wheelScrollOptions3" value="3" label="&wheel.historyOrTab;"
+          oncommand="checkWheelRocker();" />
+        </radiogroup>
+        <checkbox id="wheelDirection" class="indent" type="checkbox" pref="true" preftype="bool"
+        prefstring="allinonegest.wheelHistoryIfCw" label="&wheel.historyIfCw;" />
+      </vbox>
+     </groupbox>
+     <groupbox orient="horizontal" flex="1">
+      <caption label="&autoscroll.label;"/>
+      <vbox>
+        <radiogroup id="autoscrollOptions" prefstring="allinonegest.autoscrollpref">
+          <radio id="autoscrollOptions0" value="0" label="&autoscroll.AiO;"
+          oncommand="doEnabling();" selected="true" />
+          <radio id="autoscrollOptions1" value="1" label="&autoscroll.native;"
+          oncommand="doEnabling();" />
+          <radio id="autoscrollOptions2" value="2" label="&autoscroll.aiograb;"
+          oncommand="doEnabling();" />
+          <radio id="autoscrollOptions3" value="3" label="&autoscroll.grab;"
+          oncommand="doEnabling();" />
+        </radiogroup>
+      </vbox>
+     </groupbox>
+   </hbox>
+   <spring flex="1"/>
+   <groupbox>
+     <caption label="&about.label;"/>
+     <hbox flex="1" align="center">
+        <label value="&about.provider1;"/>
+        <spring flex="1"/>
+        <label id="versId" value="&about.version;"/>
+     </hbox>
+     <spacer flex="1"/>
+     <hbox flex="1" align="center">
+        <vbox>
+          <label value="&about.provider2;"/>
+        </vbox>
+     </hbox>
+   </groupbox>
+   <spring flex="1"/>
+   </vbox>
+   <spacer flex="1"/>
+   </hbox>
+   <spacer flex="1"/>
+  </tabpanel>
+
+  <tabpanel orient="vertical">
+   <vbox flex="50">
+      <tree id="gesttree" hidecolumnpicker="true" flex="1"
+          onselect="selectionInTree();" ondraggesture="onBeginRowDrag(event);"
+          onmousedown="mouseDownInTree(event);" ondragover="onDragOverTree(event);"
+          ondragdrop="onDropOnTree(event);" ondragexit="onDragOutTree(event);">
+        <treecols>
+          <treecol persist="width" flex="8" id="functionId" label="&customize.function;"/>
+          <splitter class="tree-splitter"/>
+          <treecol id="enabledColId" persist="width" class="treecol-image enableColHeader"
+                   fixed="true" cycler="true" tooltiptext="&customize.enable;"/>
+          <splitter class="tree-splitter"/>
+          <treecol persist="width" flex="6" id="gestTextId" label="&customize.gesture;"/>
+        </treecols>
+        <treechildren flex="1"/>
+      </tree>
+   </vbox>
+   <spacer flex="1"/>
+   <vbox>
+     <hbox pack="center" flex="1">
+       <button label="&customize.clear;" id="clearId" oncommand="clearRows();" />
+       <button label="&customize.edit;" id="editId" oncommand="editCurrentRow(false);" />
+       <button label="&customize.swap;" id="swapId" oncommand="swapTwoRows();" />
+       <button label="&customize.add;" id="addId" hidden="true" />
+       <button label="&customize.edfunc;" id="edfuncId" oncommand="editFunction();" />
+       <button label="&customize.undo;" id="undoId" oncommand="performUndo();" />
+     </hbox>
+   </vbox>
+   <vbox>
+     <hbox align="end" flex="1" height="30">
+       <vbox id="customEditFunc" hidden="true">
+        <label value="&customize.edfunctxt;" />
+       </vbox>
+       <vbox id="customSwap" hidden="true">
+        <label value="&customize.swaptxt;" />
+       </vbox>
+       <vbox id="customEdit" flex="1">
+         <hbox align="center" flex="1">
+          <button label="&customize.draw;" oncommand="openPlayWindow();" />
+          <label value="&customize.enter;" control="customTextbox"/>
+          <textbox id="customTextbox" class="padded" value="" flex="1"/>
+          <spacer flex="1" />
+          <button label="&customize.apply;" oncommand="newGestValue();" />
+         </hbox>
+       </vbox>
+     </hbox>
+   </vbox>  
+  </tabpanel>
+
+  <tabpanel orient="vertical">
+   <spacer flex="1"/>
+   <hbox>
+   <spacer flex="1"/>
+   <vbox>
+   <groupbox orient="horizontal">
+     <caption label="&mousebutton.label;"/>
+     <vbox flex="1">
+      <hbox pack="center">
+      <vbox>
+       <radiogroup id="mousebuttOptions" prefstring="allinonegest.mousebuttonpref"
+                 orient="horizontal">
+        <radio minwidth="115" id="mousebutt0" value="0" label="&mousebutton.left;"
+        oncommand="doEnabling();" selected="true" />
+        <radio minwidth="115" id="mousebutt1" value="1" label="&mousebutton.middle;"
+        oncommand="doEnabling();" />
+        <radio id="mousebutt2" value="2" label="&mousebutton.right;" oncommand="doEnabling();" />
+       </radiogroup>
+      </vbox>
+      </hbox>
+      <separator orient="horizontal" />
+      <checkbox id="noAltGestId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.noAltGest" label="&mousebutton.altkey;" oncommand="doEnabling();" />
+      <label id="leftlabelId" value="&mousebutton.leftbutt;" />
+      <checkbox id="leftdefaultId" class="indent" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.leftDefault" label="&mousebutton.leftdefault;" />
+     </vbox>
+   </groupbox>
+   <groupbox orient="horizontal">
+     <caption label="&aioAction.label;"/>
+     <vbox>
+       <checkbox id="openlinksId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.singleWindow" label="&aioAction.singlewindow;" />
+       <checkbox id="neverWarnId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.neverWarnOnCloseOtherTabs" label="&aioAction.neverwarn;" />
+       <checkbox id="goUpId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.goUpInNewTab" label="&aioAction.goUpAction;" />
+       <checkbox id="rockerModeId" type="checkbox" label="&aioAction.rockermode;" />
+       <separator orient="horizontal" />
+       <label id="nextprevId" value="&aioAction.nextprev;" />
+       <grid class="indent" flex="1">
+         <columns>
+           <column/>
+           <column flex="1"/>
+         </columns>
+         <rows>
+            <row align="center">
+               <hbox pack="end">
+                  <label id="nextlinkId" value="&aioAction.nextlink;" />
+               </hbox>
+               <hbox align="center">
+                  <textbox id="nextsStringId" flex="1" />
+               </hbox>
+            </row>
+            <row align="center">
+               <hbox pack="end">
+                  <label id="prevlinkId" value="&aioAction.prevlink;" />
+               </hbox>
+               <hbox align="center">
+                  <textbox id="prevsStringId" flex="1" />
+               </hbox>
+            </row>
+         </rows>
+       </grid>
+     </vbox>
+   </groupbox>
+   <spring flex="1"/>
+   </vbox>
+   <spacer flex="1"/>
+   </hbox>
+   <spacer flex="10"/>
+  </tabpanel>
+
+  <tabpanel orient="vertical">
+   <spacer flex="1"/>
+   <hbox>
+   <spacer flex="1"/>
+   <vbox>
+   <groupbox orient="horizontal">
+     <caption label="&aioMMBScrolling.label;"/>
+     <vbox flex="1">
+       <checkbox id="evenOnLinkId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.evenOnLink" label="&aioMMB.evenOnLink;" />
+       <checkbox id="markerId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.autoscrollNoMarker" label="&aioMMB.marker;" oncommand="doEnabling();" />
+       <checkbox id="cursorId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.autoscrollCursor" label="&aioMMB.cursor;" />
+       <checkbox id="panningId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.panning" label="&aioMMB.panning;" />
+       <checkbox id="pasteId" type="checkbox" pref="true" preftype="bool"
+           prefstring="middlemouse.paste" label="&aioMMB.paste;" />
+       <checkbox id="grabHorizId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.noHorizScroll" label="&aioMMB.noHorizScroll;" />
+       <checkbox id="grabModeId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.dragAlaAcrobat" label="&aioMMB.grabNdragmode;" />
+      <separator orient="horizontal" />
+      <label id="refreshrateId" value="&aioMMB.refreshrate;" />
+      <hbox pack="center">
+      <vbox>
+        <radiogroup id="scrollrateOptions" prefstring="allinonegest.autoscrollRate" orient="horizontal">
+         <radio minwidth="115" id="scrollrate0" value="0" label="&aioMMB.normal;" />
+         <radio minwidth="115" id="scrollrate1" value="1" label="&aioMMB.fast;" />
+         <radio id="scrollrate2" value="2" label="&aioMMB.superfast;" />
+        </radiogroup>
+      </vbox>
+      </hbox>
+     </vbox>
+   </groupbox>
+   <groupbox orient="horizontal">
+     <caption label="&aioTabscroll.label;"/>
+     <vbox>
+       <checkbox id="rockTabId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.tabRocker" label="&aioTabscroll.tabrocker;"
+           oncommand="doEnabling();" />
+       <checkbox id="reverseId" type="checkbox" pref="true" preftype="bool"
+           prefstring="allinonegest.reverseScrolling" label="&aioTabscroll.revScroll;" />
+     </vbox>
+   </groupbox>
+   <groupbox orient="horizontal">
+     <caption label="&aioTabClose.label;"/>
+     <vbox>
+      <label value="&aioTabClose.focus;" />
+      <radiogroup class ="indent" id="closeTabOptions" prefstring="allinonegest.focusMode">
+       <radio id="closeTab0" value="0" label="&aioTabClose.default;" />
+       <radio id="closeTab1" value="1" label="&aioTabClose.left;" />
+       <radio id="closeTab2" value="2" label="&aioTabClose.lastSelect;" />
+       <radio id="closeTab3" value="3" label="&aioTabClose.opener;" />
+       <radio id="closeTab4" value="4" label="&aioTabClose.right;" />
+       <radio id="closeTab5" value="5" label="&aioTabClose.first;" />
+       <radio id="closeTab6" value="6" label="&aioTabClose.last;" />
+       <radio id="closeTab7" value="7" label="&aioTabClose.lastOpen;" />
+      </radiogroup>
+     </vbox>
+   </groupbox>
+   <spring flex="1"/>
+   </vbox>
+   <spacer flex="1"/>
+   </hbox>
+   <spacer flex="10"/>
+  </tabpanel>
+  </tabpanels>
+</tabbox>
+</dialog>

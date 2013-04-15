@@ -1,0 +1,108 @@
+<!ENTITY allinonegest.label       "All-in-One Gestures 설정">
+<!ENTITY drawgesture.title        "마우스 동작 그리기">
+
+<!ENTITY enable.label             "사용 가능">
+<!ENTITY enable.mouse             "마우스 동작">
+<!ENTITY enable.rocker            "록커 동작">
+<!ENTITY enable.wheelscroll       "휠 스크롤 탐색">
+<!ENTITY enable.autoscroll        "가운데 버튼 스크롤">
+<!ENTITY enable.tabbarscroll      "탭바에서의 휠 스크롤">
+<!ENTITY enable.linkTooltip       "링크 도움말">
+
+<!ENTITY tab.general              "일반">
+<!ENTITY tab.customization        "동작">
+<!ENTITY tab.advanced1            "고급 1">
+<!ENTITY tab.advanced2            "고급 2">
+
+<!ENTITY customize.function       "기능">
+<!ENTITY customize.gesture        "동작">
+<!ENTITY customize.enable         "동작 사용">
+<!ENTITY customize.clear          "동작 삭제">
+<!ENTITY customize.edit           "동작 편집">
+<!ENTITY customize.swap           "동작 교환">
+<!ENTITY customize.add            "동작 추가">
+<!ENTITY customize.edfunc         "기능 수정">
+<!ENTITY customize.undo           "되돌리기">
+<!ENTITY customize.enter          "또는 새로운 동작을 입력하십시오.(형식: L,U,R,D):">
+<!ENTITY customize.draw           "동작 그리기">
+<!ENTITY customize.swaptxt        "교환하려는 줄을 선택하십시오. (현재 줄과 선택된 줄을 서로 바꿉니다.)">
+<!ENTITY customize.edfunctxt      "이 동작으로 실행할 기능을 선택하십시오.">
+<!ENTITY customize.apply          "입력">
+
+<!ENTITY mousegest.label          "마우스 동작: 설정">
+<!ENTITY trails.enable            "자취 남기기">
+<!ENTITY trails.color             "색상:">
+<!ENTITY trails.size              "굵기:">
+
+<!ENTITY linktooltip.label        "링크 도움말: 설정">
+<!ENTITY linktooltip.shift        "Shift 키를 누를 때에만 표시합니다.">
+<!ENTITY linktooltip.delay        "지연 시간(밀리초)">
+<!ENTITY linktooltip.duration     "표시 시간(밀리초)">
+
+<!ENTITY wheel.label              "휠 스크롤 탐색: 선택">
+<!ENTITY wheel.gestures           "지정된 동작 실행하기">
+<!ENTITY wheel.historyNav         "탐색 기록 이동">
+<!ENTITY wheel.tabNav             "탭 이동">
+<!ENTITY wheel.historyOrTab       "회전 방향에 따라 결정">
+<!ENTITY wheel.historyIfCw        "역으로(사용자 쪽으로): 탐색 기록">
+
+<!ENTITY autoscroll.label         "가운데 버튼 스크롤: 선택">
+<!ENTITY autoscroll.AiO           "All-in-One 자동 스크롤">
+<!ENTITY autoscroll.native        "기본 자동 스크롤">
+<!ENTITY autoscroll.aiograb       "AiO 자동 스크롤 + 잡아끌기">
+<!ENTITY autoscroll.grab          "잡아끌기 스크롤">
+
+<!ENTITY about.label              "All-in-One Gestures에 대하여">
+<!ENTITY about.version            "버전">
+<!ENTITY about.provider1          "도움: Optimoz, Joe4711, Skidooer 그 외 모든 분">
+<!ENTITY about.provider2          "제작: M. Boullet">
+
+<!ENTITY mousebutton.label        "마우스 동작과 휠 스크롤 탐색에 사용할 버튼">
+<!ENTITY mousebutton.left         "왼쪽 버튼">
+<!ENTITY mousebutton.middle       "가운데 버튼">
+<!ENTITY mousebutton.right        "오른쪽 버튼">
+<!ENTITY mousebutton.leftbutt     "왼쪽 버튼:">
+<!ENTITY mousebutton.altkey       "Alt 키가 눌러져 있으면 마우스 동작을 인식하지 않습니다.">
+<!ENTITY mousebutton.leftdefault  "기본 기능도 함께 실행합니다.">
+
+<!ENTITY aioMMBScrolling.label    "가운데 버튼 스크롤">
+<!ENTITY aioMMB.evenOnLink        "가운데 버튼으로 링크를 클릭해도 스크롤을 시작합니다.">
+<!ENTITY aioMMB.marker            "자동 스크롤: 스크롤 표시를 감춥니다.">
+<!ENTITY aioMMB.cursor            "자동 스크롤: 마우스 커서를 바꿉니다.">
+<!ENTITY aioMMB.panning           "스크롤 표시 안에서 버튼을 떼면 스크롤을 취소합니다.">
+<!ENTITY aioMMB.paste             "가운데 버튼을 누르면 '붙여넣기'를 실행합니다.">
+<!ENTITY aioMMB.noHorizScroll     "잡아끌기: 수평으로 스크롤하지 않습니다.">
+<!ENTITY aioMMB.grabNdragmode     "잡아끌기: 아크로뱃 리더식으로 작동합니다.">
+<!ENTITY aioMMB.refreshrate       "자동 스크롤 속도:">
+<!ENTITY aioMMB.normal            "보통">
+<!ENTITY aioMMB.fast              "빠르게">
+<!ENTITY aioMMB.superfast         "매우 빠르게">
+
+<!ENTITY aioAction.label          "마우스 동작 지정">
+<!ENTITY aioAction.singlewindow   "'링크를 새 창으로 열기': 한 창에 여러 개의 탭으로 엽니다.">
+<!ENTITY aioAction.neverwarn      "'다른 탭 모두 닫기': 경고하지 않습니다.">
+<!ENTITY aioAction.goUpAction     "'상위로 이동...' / '홈 페이지 불러오기': 새 탭으로 엽니다.">
+<!ENTITY aioAction.nextprev       "'링크 ... 따라가기': 찾을 문자열 ('|' 로 구분하십시오.)">
+<!ENTITY aioAction.nextlink       "다음 링크 따라가기:">
+<!ENTITY aioAction.prevlink       "이전 링크 따라가기:">
+<!ENTITY aioAction.rockermode     "록커 탐색 및 휠 스크롤 탐색: 문서를 읽는 중에도 반복을 허용합니다.">
+
+<!ENTITY aioTabscroll.label       "탭 이동">
+<!ENTITY aioTabscroll.tabrocker   "휠 스크롤 탐색: 팝업 없이 바로 탭으로 이동합니다.">
+<!ENTITY aioTabscroll.revScroll   "휠을 뒤로 스크롤하면 왼쪽 탭으로 이동합니다.">
+
+<!ENTITY aioTabClose.label        "탭 닫기">
+<!ENTITY aioTabClose.focus        "탭 활성화:">
+<!ENTITY aioTabClose.default       "Firefox 기본 설정">
+<!ENTITY aioTabClose.left          "왼쪽 탭">
+<!ENTITY aioTabClose.lastSelect    "마지막 활성 탭">
+<!ENTITY aioTabClose.opener        "새 창">
+<!ENTITY aioTabClose.right         "오른쪽 탭">
+<!ENTITY aioTabClose.first         "처음">
+<!ENTITY aioTabClose.last          "마지막">
+<!ENTITY aioTabClose.lastOpen      "마지막으로 열렸던">
+
+<!ENTITY flipper.title            "숫자 변경 기능">
+<!ENTITY flipper.label            "숫자가 변경되는 부분을 선택하십시오.">
+
+

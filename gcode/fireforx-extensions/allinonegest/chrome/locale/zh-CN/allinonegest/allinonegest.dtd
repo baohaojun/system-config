@@ -1,0 +1,108 @@
+<!ENTITY allinonegest.label    "All-in-One Gestures选项">
+<!ENTITY drawgesture.title     "手势绘制区域">
+
+<!ENTITY enable.label          "启用">
+<!ENTITY enable.mouse             "鼠标手势">
+<!ENTITY enable.rocker            "摇杆手势">
+<!ENTITY enable.wheelscroll       "滚轮导航">
+<!ENTITY enable.autoscroll        "中键滚动">
+<!ENTITY enable.tabbarscroll      "滚轮切换标签页">
+<!ENTITY enable.linkTooltip       "链接提示">
+
+<!ENTITY tab.general              "常规选项">
+<!ENTITY tab.customization        "自定义手势">
+<!ENTITY tab.advanced1            "高级选项#1">
+<!ENTITY tab.advanced2            "高级选项#2">
+
+<!ENTITY customize.function       "功能">
+<!ENTITY customize.gesture        "手势">
+<!ENTITY customize.enable         "启用/停用手势">
+<!ENTITY customize.clear          "清除手势">
+<!ENTITY customize.edit           "编辑手势">
+<!ENTITY customize.swap           "交换手势">
+<!ENTITY customize.add            "添加手势">
+<!ENTITY customize.edfunc         "功能编辑">
+<!ENTITY customize.undo           "撤销">
+<!ENTITY customize.enter          "或输入(缩写格式，如LRUD)新手势:">
+<!ENTITY customize.draw           "绘制">
+<!ENTITY customize.swaptxt        "点击目标手势进行交换(新手势 &lt;-&gt; 当前手势)">
+<!ENTITY customize.edfunctxt      "点击指定给预设手势的功能">
+<!ENTITY customize.apply          "确定">
+
+<!ENTITY mousegest.label       "鼠标手势:首选项">
+<!ENTITY trails.enable             "启用手势轨迹">
+<!ENTITY trails.color              "轨迹颜色">
+<!ENTITY trails.size               "轨迹尺寸">
+
+<!ENTITY linktooltip.label     "链接提示:首选项">
+<!ENTITY linktooltip.shift         "按住Shift键显示">
+<!ENTITY linktooltip.delay         "延迟显示时间(毫秒):">
+<!ENTITY linktooltip.duration      "显示提示时间(毫秒):">
+
+<!ENTITY wheel.label           "滚轮导航:选择">
+<!ENTITY wheel.gestures            "执行手势动作">
+<!ENTITY wheel.historyNav          "控制历史浏览">
+<!ENTITY wheel.tabNav              "控制标签页浏览">
+<!ENTITY wheel.historyOrTab        "由滚动方向决定历史记录或标签">
+<!ENTITY wheel.historyIfCw         "向后滚动(向用户方向滚动):历史纪录">
+
+<!ENTITY autoscroll.label      "中键滚动:选择">
+<!ENTITY autoscroll.AiO            "All-in-One式自动滚动">
+<!ENTITY autoscroll.native         "系统默认式自动滚动">
+<!ENTITY autoscroll.aiograb        "AiO式自动滚动+拖拽">
+<!ENTITY autoscroll.grab           "拖拽式滚动">
+
+<!ENTITY about.label           "关于">
+<!ENTITY about.version             "版本">
+<!ENTITY about.provider1           "提供: Optimoz, Joe4711, Skidooer &amp; all;">
+<!ENTITY about.provider2           "合并及再开发: M. Boullet">
+
+<!ENTITY mousebutton.label     "鼠标手势及滚轮导航触发键">
+<!ENTITY mousebutton.left          "左键">
+<!ENTITY mousebutton.middle        "中键">
+<!ENTITY mousebutton.right         "右键">
+<!ENTITY mousebutton.leftbutt      "左键:">
+<!ENTITY mousebutton.altkey        "按下Alt时不使用手势">
+<!ENTITY mousebutton.leftdefault   "以默认鼠标动作为好">
+
+<!ENTITY aioMMBScrolling.label "中键滚动">
+<!ENTITY aioMMB.evenOnLink         "中键点击链接时开始滚动">
+<!ENTITY aioMMB.marker             "自动滚动:不显示标记">
+<!ENTITY aioMMB.cursor             "自动滚动:显示专用鼠标指针">
+<!ENTITY aioMMB.panning            "当在标记内放开鼠标中键时不停止滚动">
+<!ENTITY aioMMB.paste              "点击中键粘贴到文本框">
+<!ENTITY aioMMB.noHorizScroll      "拖拽:不水平滚动">
+<!ENTITY aioMMB.grabNdragmode      "拖拽:Acrobat Reader模式(替代滚动条模式)">
+<!ENTITY aioMMB.refreshrate        "自动滚动刷新率:">
+<!ENTITY aioMMB.normal             "正常">
+<!ENTITY aioMMB.fast               "快">
+<!ENTITY aioMMB.superfast          "非常快">
+
+<!ENTITY aioAction.label       "鼠标手势动作">
+<!ENTITY aioAction.singlewindow    "“在新窗口中打开链接”:带标签页的独立新窗口">
+<!ENTITY aioAction.neverwarn       "“关闭其它所有标签页”:不警告">
+<!ENTITY aioAction.goUpAction      "“返回上层...”/“载入主页”:在新标签页">
+<!ENTITY aioAction.nextprev        "“跟踪 ... 链接”:搜索字符串(用|分隔)">
+<!ENTITY aioAction.nextlink        "跟踪下一链接:">
+<!ENTITY aioAction.prevlink        "跟踪上一链接:">
+<!ENTITY aioAction.rockermode      "摇杆&amp;滚轮手势:允许重复载入页面">
+
+<!ENTITY aioTabscroll.label    "标签滚动">
+<!ENTITY aioTabscroll.tabrocker    "滚轮导航:直接切换标签页(无弹出窗口)">
+<!ENTITY aioTabscroll.revScroll    "滚轮向后滚动时向左滚动标签页">
+
+<!ENTITY aioTabClose.label     "关闭标签页">
+<!ENTITY aioTabClose.focus         "聚焦到...标签页:">
+<!ENTITY aioTabClose.default       "Firefox默认">
+<!ENTITY aioTabClose.left          "左侧的">
+<!ENTITY aioTabClose.lastSelect    "上一次聚焦的">
+<!ENTITY aioTabClose.opener        "打开该标签页的">
+<!ENTITY aioTabClose.right         "右侧的">
+<!ENTITY aioTabClose.first         "第一个">
+<!ENTITY aioTabClose.last          "最后一个">
+<!ENTITY aioTabClose.lastOpen      "上次打开的">
+
+<!ENTITY flipper.title         "数字翻页规则生成器">
+<!ENTITY flipper.label         "选择文档URL变化的数字部分.">
+
+

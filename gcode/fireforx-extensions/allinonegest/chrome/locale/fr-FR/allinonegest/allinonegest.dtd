@@ -1,0 +1,108 @@
+<!ENTITY allinonegest.label    "Options pour Gestes Tout-en-Un">
+<!ENTITY drawgesture.title     "Zone de dessin de gestes">
+
+<!ENTITY enable.label          "Activer">
+<!ENTITY enable.mouse             "Gestes de souris">
+<!ENTITY enable.rocker            "Gestes bascule">
+<!ENTITY enable.wheelscroll       "Navigation à la molette">
+<!ENTITY enable.autoscroll        "Défilement avec le bouton du milieu">
+<!ENTITY enable.tabbarscroll      "Molette dans la barre d'onglets">
+<!ENTITY enable.linkTooltip       "Info-bulle de lien">
+
+<!ENTITY tab.general              "Préférences générales">
+<!ENTITY tab.customization        "Personnalisation des gestes">
+<!ENTITY tab.advanced1            "Préférences avancées #1">
+<!ENTITY tab.advanced2            "Préférences avancées #2">
+
+<!ENTITY customize.function       "Fonction">
+<!ENTITY customize.gesture        "Geste">
+<!ENTITY customize.enable         "Activer/Désactiver le geste">
+<!ENTITY customize.clear          "Effacer le geste">
+<!ENTITY customize.edit           "Editer le geste">
+<!ENTITY customize.swap           "Echanger les gestes">
+<!ENTITY customize.add            "Ajouter un geste">
+<!ENTITY customize.edfunc         "Editer la fonction">
+<!ENTITY customize.undo           "Défaire">
+<!ENTITY customize.enter          "ou Entrer le nouveau geste (format court p.ex. GDHB):">
+<!ENTITY customize.draw           "Dessiner">
+<!ENTITY customize.swaptxt        "Cliquer sur une nouvelle ligne pour échanger (geste de la nouvelle ligne &lt;-&gt; geste de la ligne courante)">
+<!ENTITY customize.edfunctxt      "Cliquer sur la fonction à assigner à ce geste">
+<!ENTITY customize.apply          "Valider">
+
+<!ENTITY mousegest.label       "Gestes de souris: Préfs">
+<!ENTITY trails.enable             "Activer la trâce">
+<!ENTITY trails.color              "Couleur de la trâce">
+<!ENTITY trails.size               "Taille de la trâce">
+
+<!ENTITY linktooltip.label     "Info-bulle de lien: Préfs">
+<!ENTITY linktooltip.shift         "N'apparaît que si la touche MAJ est enfoncée">
+<!ENTITY linktooltip.delay         "Tempo (ms) avant apparition:">
+<!ENTITY linktooltip.duration      "Durée (ms) d'apparition:">
+
+<!ENTITY wheel.label           "Navigation à la molette: Choisir">
+<!ENTITY wheel.gestures            "Faire une action de geste">
+<!ENTITY wheel.historyNav          "Naviguer dans l'historique">
+<!ENTITY wheel.tabNav              "Naviguer dans les onglets">
+<!ENTITY wheel.historyOrTab        "Historique / Onglets suivant la rotation initiale">
+<!ENTITY wheel.historyIfCw         "Arrière (vers la main): Historique">
+
+<!ENTITY autoscroll.label      "Défilement avec le bouton du milieu: Choisir">
+<!ENTITY autoscroll.AiO            "Auto-défilement de Gestes Tout-en-Un">
+<!ENTITY autoscroll.native         "Auto-défilement natif">
+<!ENTITY autoscroll.aiograb        "Auto-défilement + Empoigner-glisser">
+<!ENTITY autoscroll.grab           "Empoigner-glisser">
+
+<!ENTITY about.label           "A propos">
+<!ENTITY about.version             "Version">
+<!ENTITY about.provider1           "Initialement: Optimoz, Joe4711, Skidooer &amp; les autres;">
+<!ENTITY about.provider2           "Fusionné et developpé par Marc Boullet">
+
+<!ENTITY mousebutton.label     "Bouton déclenchant les Gestes de Souris et la Navigation à la molette">
+<!ENTITY mousebutton.left          "Gauche">
+<!ENTITY mousebutton.middle        "Milieu">
+<!ENTITY mousebutton.right         "Droit">
+<!ENTITY mousebutton.leftbutt      "Bouton gauche:">
+<!ENTITY mousebutton.altkey        "Ne pas démarrer un geste quand la touche ALT est enfoncée">
+<!ENTITY mousebutton.leftdefault   "L'action par défaut du bouton gauche est aussi exécutée">
+
+<!ENTITY aioMMBScrolling.label "Défilement avec le bouton du milieu">
+<!ENTITY aioMMB.evenOnLink         "Démarrer le défilement même si le clic a lieu sur un lien">
+<!ENTITY aioMMB.marker             "Auto-défilement: Ne pas montrer le marqueur">
+<!ENTITY aioMMB.cursor             "Auto-défilement: Avoir un pointeur de souris dédié">
+<!ENTITY aioMMB.panning            "Auto-défilement avec bouton enfoncé: Continuer si le bouton est relâché dans le marqueur">
+<!ENTITY aioMMB.paste              "Coller quand on clique du bouton du milieu dans les zones de texte">
+<!ENTITY aioMMB.noHorizScroll      "Empoigner-glisser: Ne pas défiler horizontalement">
+<!ENTITY aioMMB.grabNdragmode      "Empoigner-glisser: mode Acrobat Reader (au lieu du mode Barre de défilement)">
+<!ENTITY aioMMB.refreshrate        "Vitesse de rafraîchissement de l'auto-défilement:">
+<!ENTITY aioMMB.normal             "Normal">
+<!ENTITY aioMMB.fast               "Rapide">
+<!ENTITY aioMMB.superfast          "Plus rapide">
+
+<!ENTITY aioAction.label       "Actions des Gestes de souris">
+<!ENTITY aioAction.singlewindow    "'Ouvrir les liens dans des fenêtres': une seule nouvelle fenêtre avec des onglets">
+<!ENTITY aioAction.neverwarn       "'Fermer tous les autres onglets': Ne jamais avertir">
+<!ENTITY aioAction.goUpAction      "'Aller au répertoire parent ...' / 'Charger la page d'accueil': Ouvrir dans un nouvel onglet">
+<!ENTITY aioAction.nextprev        "'Suivre le lien ...': Termes à chercher (séparés par |)">
+<!ENTITY aioAction.nextlink        "Suivre le lien Suivant:">
+<!ENTITY aioAction.prevlink        "Suivre le lien Précédent:">
+<!ENTITY aioAction.rockermode      "Gestes Bascule &amp; Molette: Permettre les répétitions pour les actions chargeant des pages">
+
+<!ENTITY aioTabscroll.label    "Défilement des onglets">
+<!ENTITY aioTabscroll.tabrocker    "Navigation à la molette: défiler directement les onglets (pas de popup)">
+<!ENTITY aioTabscroll.revScroll    "Défiler les onglets vers la gauche quand la molette tourne vers l'arrière">
+
+<!ENTITY aioTabClose.label     "Fermeture d'onglet">
+<!ENTITY aioTabClose.focus         "Sélectionner l'onglet:">
+<!ENTITY aioTabClose.default       "comme le ferait Firefox">
+<!ENTITY aioTabClose.left          "à gauche">
+<!ENTITY aioTabClose.lastSelect    "sélectionné en dernier">
+<!ENTITY aioTabClose.opener        "ouvreur">
+<!ENTITY aioTabClose.right         "à droite">
+<!ENTITY aioTabClose.first         "premier">
+<!ENTITY aioTabClose.last          "dernier">
+<!ENTITY aioTabClose.lastOpen      "ouvert en dernier">
+
+<!ENTITY flipper.title         "Constructeur de schéma pour l'incrémenteur d'URL">
+<!ENTITY flipper.label         "Sélectionner la partie numérique qui varie dans l'URL.">
+
+

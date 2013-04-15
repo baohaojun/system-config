@@ -1,0 +1,108 @@
+<!ENTITY allinonegest.label "Настройки All-in-One Gestures">
+<!ENTITY drawgesture.title "Область для рисования жеста">
+
+<!ENTITY enable.label "Включить">
+<!ENTITY enable.mouse "Мышиные жесты">
+<!ENTITY enable.rocker "'Rocker' жесты">
+<!ENTITY enable.wheelscroll "Навигацию колесом прокрутки">
+<!ENTITY enable.autoscroll "Прокручивание средней кнопкой">
+<!ENTITY enable.tabbarscroll "Колесо прокрутки в строке вкладок">
+<!ENTITY enable.linkTooltip "Всплывающие подсказки ссылок">
+
+<!ENTITY tab.general "Общие настройки">
+<!ENTITY tab.customization "Назначение жестов">
+<!ENTITY tab.advanced1 "Расширенные настройки №1">
+<!ENTITY tab.advanced2 "Расширенные настройки №2">
+
+<!ENTITY customize.function "Действие">
+<!ENTITY customize.gesture "Жест">
+<!ENTITY customize.enable "Включить/Выключить жест">
+<!ENTITY customize.clear "Стереть жест(ы)">
+<!ENTITY customize.edit "Изменить жест">
+<!ENTITY customize.swap "Обменять жесты местами">
+<!ENTITY customize.add "Добавить жест">
+<!ENTITY customize.edfunc "Изменить действие">
+<!ENTITY customize.undo "Отменить">
+<!ENTITY customize.enter "или Введите (например в коротком формате, ЛПВН) новый жест:">
+<!ENTITY customize.draw "Нарисуйте">
+<!ENTITY customize.swaptxt "Щёлкните на другую строку для обмена (новый жест строки &lt;-&gt; текущий жест строки)">
+<!ENTITY customize.edfunctxt "Щёлкните на действии, которое будет назначено на этот предопределённый жест">
+<!ENTITY customize.apply "OK">
+
+<!ENTITY mousegest.label "Мышиные жесты">
+<!ENTITY trails.enable "Включить отображение жеста">
+<!ENTITY trails.color "Цвет следа">
+<!ENTITY trails.size "Размер следа">
+
+<!ENTITY linktooltip.label "Всплывающая подсказка ссылки">
+<!ENTITY linktooltip.shift "Для отображения нажать клавишу Shift">
+<!ENTITY linktooltip.delay "Задержка (мс) перед отображением">
+<!ENTITY linktooltip.duration "Время (мс) отображения  всплывающей подсказки">
+
+<!ENTITY wheel.label "Навигация колесом прокрутки:">
+<!ENTITY wheel.gestures "Выполнить действие жеста">
+<!ENTITY wheel.historyNav "Навигация по Истории">
+<!ENTITY wheel.tabNav "Навигация по Вкладкам">
+<!ENTITY wheel.historyOrTab "История/Вкладки зависит от начального вращения">
+<!ENTITY wheel.historyIfCw "Наоборот (на себя): История">
+
+<!ENTITY autoscroll.label "Прокручивание средней кнопкой:">
+<!ENTITY autoscroll.AiO "AiO автопрокрутка">
+<!ENTITY autoscroll.native "Собственная автопрокрутка">
+<!ENTITY autoscroll.aiograb "AiO автопрокрутка + Grab'n'Drag">
+<!ENTITY autoscroll.grab "Grab'n'Drag  прокручивание">
+
+<!ENTITY about.label "О All-in-One Gestures">
+<!ENTITY about.version "Версия">
+<!ENTITY about.provider1 "Оригинальные расширения Optimoz, Joe4711, Skidooer &amp; all;">
+<!ENTITY about.provider2 "Объединение и дальнейшая разработка M.Boullet">
+
+<!ENTITY mousebutton.label "Начинать жесты мышью и навигацию колесом прокрутки при нажатии:">
+<!ENTITY mousebutton.left "левой кнопки">
+<!ENTITY mousebutton.middle "средней кнопки">
+<!ENTITY mousebutton.right "правой кнопки">
+<!ENTITY mousebutton.leftbutt "Левая кнопка:">
+<!ENTITY mousebutton.altkey "Не начинать жест если нажата клавиша Alt">
+<!ENTITY mousebutton.leftdefault "Действия мышью по умолчанию (например, выделение текста) также выполняются">
+
+<!ENTITY aioMMBScrolling.label "Прокручивание средней кнопкой">
+<!ENTITY aioMMB.evenOnLink "Начинать прокрутку при щелчке средней кнопкой по ссылке">
+<!ENTITY aioMMB.marker "Автопрокрутка: Не показывать маркер">
+<!ENTITY aioMMB.cursor "Автопрокрутка: Показывать специализированный курсор мыши">
+<!ENTITY aioMMB.panning "Панорамирование не заканчивается когда мышь внутри маркера">
+<!ENTITY aioMMB.paste "Щелчок средней кнопкой для вставки в текстовых полях">
+<!ENTITY aioMMB.noHorizScroll "Grab'n'Drag: Не прокручивать горизонтально">
+<!ENTITY aioMMB.grabNdragmode "Grab'n'Drag: Как в Acrobat Reader (вместо линейки прокрутки)">
+<!ENTITY aioMMB.refreshrate "Частота обновления автопрокрутки:">
+<!ENTITY aioMMB.normal "Нормальная">
+<!ENTITY aioMMB.fast "Средняя">
+<!ENTITY aioMMB.superfast "Высокая">
+
+<!ENTITY aioAction.label "Действия мышиных жестов">
+<!ENTITY aioAction.singlewindow "'Открыть ссылки в окнах': Новое окно с вкладками">
+<!ENTITY aioAction.neverwarn "'Закрыть все другие вкладки': Никогда не предупреждать">
+<!ENTITY aioAction.goUpAction "'Перейти в ... верхнего уровня'/'Загрузить начальную страницу': Открывать в новой вкладке">
+<!ENTITY aioAction.nextprev "'Следовать по ссылке...': Искомые слова (| разделитель)">
+<!ENTITY aioAction.nextlink "Следовать по ссылке next">
+<!ENTITY aioAction.prevlink "Следовать по ссылке prev">
+<!ENTITY aioAction.rockermode "Жесты колесом прокрутки &amp; 'Rocker': Разрешить повторение для действий, загружающих страницы">
+
+<!ENTITY aioTabscroll.label "Листание вкладок">
+<!ENTITY aioTabscroll.tabrocker "Навигация колесом прокрутки: Листать вкладки сразу (без всплывающего окна)">
+<!ENTITY aioTabscroll.revScroll "При вращении колеса прокрутки на себя листать вкладки влево.">
+
+<!ENTITY aioTabClose.label "При закрытии вкладки">
+<!ENTITY aioTabClose.focus "сделать активной:">
+<!ENTITY aioTabClose.default       "выбор по умолчанию">
+<!ENTITY aioTabClose.left          "вкладку слева">
+<!ENTITY aioTabClose.lastSelect    "последнюю активную вкладку">
+<!ENTITY aioTabClose.opener        "начальную вкладку">
+<!ENTITY aioTabClose.right         "вкладку справа">
+<!ENTITY aioTabClose.first         "первую вкладку">
+<!ENTITY aioTabClose.last          "последнюю вкладку">
+<!ENTITY aioTabClose.lastOpen      "последнюю открытую вкладку">
+
+<!ENTITY flipper.title "Конструктор схемы изменения URL">
+<!ENTITY flipper.label "Выделите изменяемую цифровую часть URL документа.">
+
+

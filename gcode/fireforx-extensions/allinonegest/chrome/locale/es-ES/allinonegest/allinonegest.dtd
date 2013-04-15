@@ -1,0 +1,93 @@
+<!ENTITY about.label "Acerca de">
+<!ENTITY about.provider1 "Creada por Optimoz, Joe4711, Skidooer &amp; otros;">
+<!ENTITY about.provider2 "Futuro desarrollo por M. Boullet">
+<!ENTITY about.version "Versión">
+<!ENTITY aioAction.goUpAction "'Ir a la carpeta superior'/'Cargar página de inicio': Abrir en una nueva pestaña">
+<!ENTITY aioAction.label "Acciones de los gestos del ratón">
+<!ENTITY aioAction.neverwarn "'Cerrar todas las pestañas menos esta': No avisar">
+<!ENTITY aioAction.nextlink "Ir al enlace siguiente:">
+<!ENTITY aioAction.nextprev "'Ir al ... enlace': Cadenas a buscar (separadas por |)">
+<!ENTITY aioAction.prevlink "Ir al enlace anterior:">
+<!ENTITY aioAction.rockermode "Gestos 'rocker' y con la rueda: Permitir repetición en acciones que cargan la página">
+<!ENTITY aioAction.singlewindow "'Abrir enlaces en ventanas': Una única ventana nueva con pestañas">
+<!ENTITY aioMMB.cursor "Autodesplazamiento: Mostrar cursor especial">
+<!ENTITY aioMMB.evenOnLink "Comenzar el desplazamiento al pulsar con el botón central en un enlace">
+<!ENTITY aioMMB.fast "Rápido">
+<!ENTITY aioMMB.grabNdragmode "'Coger y arrastrar': Modo Acrobat Reader">
+<!ENTITY aioMMB.marker "Autodesplazamiento: No mostrar las marcas">
+<!ENTITY aioMMB.noHorizScroll "'Coger y arrastrar': No desplazar horizontalmente">
+<!ENTITY aioMMB.normal "Normal">
+<!ENTITY aioMMB.panning "No salirse del cuadro cuando el ratón está dentro de la marca">
+<!ENTITY aioMMB.paste "El botón central equivale a pegar en los cuadros de texto">
+<!ENTITY aioMMB.refreshrate "Frecuencia del autodesplazamiento">
+<!ENTITY aioMMB.superfast "Más rápido">
+<!ENTITY aioMMBScrolling.label "Desplazamiento con el botón central">
+<!ENTITY aioTabClose.focus "Dar el foco a la pestaña:">
+<!ENTITY aioTabClose.label "Cerrar pestañas">
+<!ENTITY aioTabClose.default "por defecto en Firefox">
+<!ENTITY aioTabClose.left "de la izquierda">
+<!ENTITY aioTabClose.lastSelect "última seleccionada">
+<!ENTITY aioTabClose.opener "anterior">
+<!ENTITY aioTabClose.right "de la derecha">
+<!ENTITY aioTabClose.first "primera">
+<!ENTITY aioTabClose.last "última">
+<!ENTITY aioTabClose.lastOpen "última abierta">
+<!ENTITY aioTabscroll.label "Desplazamiento en pestañas">
+<!ENTITY aioTabscroll.revScroll "Desplazarse hacia la izquierda en las pestañas cuando la rueda se mueve en sentido contrario">
+<!ENTITY aioTabscroll.tabrocker "Navegación con la rueda: intercambiar pestañas directamente">
+<!ENTITY allinonegest.label "Opciones All-in-One Gestures">
+<!ENTITY autoscroll.AiO "Autodesplazamiento de All-in-One">
+<!ENTITY autoscroll.aiograb "Autodesplazamiento AiO + 'Coger y arrastrar'">
+<!ENTITY autoscroll.grab "Desplazamiento en modo 'Coger y arrastrar'">
+<!ENTITY autoscroll.label "Desplazamiento con botón central">
+<!ENTITY autoscroll.native "Desplazamiento automático nativo">
+<!ENTITY customize.add "Añadir gesto">
+<!ENTITY customize.apply "OK">
+<!ENTITY customize.clear "Borrar gesto">
+<!ENTITY customize.draw "Dibujar">
+<!ENTITY customize.edfunc "Editar función">
+<!ENTITY customize.edfunctxt "Pulsar en la función a asignar a este gesto predefinido">
+<!ENTITY customize.edit "Editar gesto">
+<!ENTITY customize.enable "Habilitar/Deshabilitar gesto">
+<!ENTITY customize.enter "o escriba (formato abrevido p.ej: IDRB) el nuevo gesto">
+<!ENTITY customize.function "Función">
+<!ENTITY customize.gesture "Gesto">
+<!ENTITY customize.swap "Intercambiar gestos">
+<!ENTITY customize.swaptxt "Pulse en una nueva fila para intercambiar (nuego gesto &lt;-&gt; gesto actual)">
+<!ENTITY customize.undo "Deshacer">
+<!ENTITY drawgesture.title "Área de dibujado del gesto">
+<!ENTITY enable.autoscroll "Desplazamiento con botón central">
+<!ENTITY enable.label "Habilitar">
+<!ENTITY enable.linkTooltip "Tooltip en enlaces">
+<!ENTITY enable.mouse "Gestos del ratón">
+<!ENTITY enable.rocker "Gestos 'rocker'">
+<!ENTITY enable.tabbarscroll "Desplazamiento con la rueda en barra de pestañas">
+<!ENTITY enable.wheelscroll "Desplazamiento con la rueda">
+<!ENTITY flipper.label "Seleccione la parte numérica de la dirección">
+<!ENTITY flipper.title "Esquema de construcción de números">
+<!ENTITY linktooltip.delay "Retraso (ms) antes de mostrar:">
+<!ENTITY linktooltip.duration "Tiempo (ms) que se muestra el tooltip:">
+<!ENTITY linktooltip.label "Tooltip en enlaces: Opciones">
+<!ENTITY linktooltip.shift "Mantener pulsada tecla Mayús para ver">
+<!ENTITY mousebutton.altkey "No comenzar un gesto del raton si la tecla Alt está pulsada">
+<!ENTITY mousebutton.label "Botón para iniciar los gestos del ratón y el desplazamiento con la rueda">
+<!ENTITY mousebutton.left "Izquierda">
+<!ENTITY mousebutton.leftbutt "Botón izquierdo:">
+<!ENTITY mousebutton.leftdefault "Realizar también la acción por defecto">
+<!ENTITY mousebutton.middle "Central">
+<!ENTITY mousebutton.right "Derecha">
+<!ENTITY mousegest.label "Gestos del ratón: Opciones">
+<!ENTITY tab.advanced1 "Opciones avanzadas #1">
+<!ENTITY tab.advanced2 "Opciones avanzadas #2">
+<!ENTITY tab.customization "Personalizar gestos">
+<!ENTITY tab.general "Opciones generales">
+<!ENTITY trails.color "Color del rastro">
+<!ENTITY trails.enable "Habilitar rastro de los gestos">
+<!ENTITY trails.size "Tamaño del rastro">
+<!ENTITY wheel.gestures "Realizar acción del gesto">
+<!ENTITY wheel.historyIfCw "Volver: Historial">
+<!ENTITY wheel.historyNav "Navegar en el historial">
+<!ENTITY wheel.historyOrTab "Historial/Pestañas basado en la rotación inicial">
+<!ENTITY wheel.label "Desplazamiento con la rueda">
+<!ENTITY wheel.tabNav "Navegar entre pestañas">
+

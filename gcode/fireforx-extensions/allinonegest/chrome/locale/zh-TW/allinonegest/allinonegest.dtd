@@ -1,0 +1,113 @@
+<!ENTITY allinonegest.label    "All-in-One Gestures 選項">
+<!ENTITY drawgesture.title     "手勢描繪區">
+
+<!ENTITY enable.label          "啟用">
+<!ENTITY enable.mouse             "滑鼠手勢">
+<!ENTITY enable.rocker            "搖擺手勢">
+<!ENTITY enable.wheelscroll       "滾輪導航">
+<!ENTITY enable.autoscroll        "中鍵捲動">
+<!ENTITY enable.tabbarscroll      "於分頁列捲動滾輪">
+<!ENTITY enable.linkTooltip       "連結工具提示">
+
+<!ENTITY tab.general              "一般偏好設定">
+<!ENTITY tab.customization        "自訂滑鼠手勢">
+<!ENTITY tab.advanced1            "進階偏好設定 #1">
+<!ENTITY tab.advanced2            "進階偏好設定 #2">
+
+<!ENTITY customize.function       "功能">
+<!ENTITY customize.gesture        "手勢">
+<!ENTITY customize.enable         "啟用或停用手勢">
+<!ENTITY customize.clear          "清除手勢">
+<!ENTITY customize.edit           "編輯手勢">
+<!ENTITY customize.swap           "互換手勢">
+<!ENTITY customize.add            "加入手勢">
+<!ENTITY customize.edfunc         "編輯功能">
+<!ENTITY customize.undo           "復原">
+<!ENTITY customize.enter          "或輸入（簡短格式，例如：LRUD）新的手勢：">
+<!ENTITY customize.draw           "描繪">
+<!ENTITY customize.swaptxt        "按一下另一列互換手勢（另一列的手勢 &lt;-&gt; 目前這一列的手勢）">
+<!ENTITY customize.edfunctxt      "按一下你想要指定給這個手勢的功能">
+<!ENTITY customize.apply          "確定">
+
+<!ENTITY mousegest.label       "滑鼠手勢：偏好設定">
+<!ENTITY trails.enable             "啟用手勢軌跡">
+<!ENTITY trails.color              "軌跡色彩">
+<!ENTITY trails.size               "軌跡大小">
+
+<!ENTITY linktooltip.label     "連結工具提示：偏好設定">
+<!ENTITY linktooltip.shift         "按下 Shift 鍵才顯示">
+<!ENTITY linktooltip.delay         "顯示之前延遲的秒數（1/1000 秒）：">
+<!ENTITY linktooltip.duration      "工具提示顯示的秒數（1/1000 秒）：">
+
+<!ENTITY wheel.label           "滾輪導覽功能：選擇">
+<!ENTITY wheel.gestures            "執行手勢動作">
+<!ENTITY wheel.historyNav          "以歷史紀錄導覽">
+<!ENTITY wheel.tabNav              "以分頁導覽">
+<!ENTITY wheel.historyOrTab        "以滾動方向決定歷史記錄或分頁導覽">
+<!ENTITY wheel.historyIfCw         "向後滾動（向使用者方向滾動）：歷史紀錄">
+
+<!ENTITY autoscroll.label      "中鍵捲動：選擇">
+<!ENTITY autoscroll.AiO            "All-in-One 的自動捲動">
+<!ENTITY autoscroll.native         "內建的自動捲動">
+<!ENTITY autoscroll.aiograb        "AiO 的自動捲動＋抓拉捲動">
+<!ENTITY autoscroll.grab           "抓拉捲動">
+
+<!ENTITY settings.label        "設定">
+<!ENTITY settings.export           "匯出">
+<!ENTITY settings.import           "匯入">
+
+<!ENTITY about.label           "關於">
+<!ENTITY about.version             "版本">
+<!ENTITY about.provider1           "由 Optimoz, Joe4711, Skidooer 等全體提供">
+<!ENTITY about.provider2           "由 M. Boullet 合併及進一步開發">
+
+<!ENTITY mousebutton.label     "觸發滑鼠手勢與滾輪導覽功能的按鈕">
+<!ENTITY mousebutton.left          "左鍵">
+<!ENTITY mousebutton.middle        "中鍵">
+<!ENTITY mousebutton.right         "右鍵">
+<!ENTITY mousebutton.leftbutt      "左鍵：">
+<!ENTITY mousebutton.altkey        "當 Alt 鍵按下時不要啟動手勢功能">
+<!ENTITY mousebutton.leftdefault   "也執行預設的滑鼠動作">
+
+<!ENTITY aioMMBScrolling.label "中鍵捲動">
+<!ENTITY aioMMB.evenOnLink         "當中鍵於連結上按下時開始捲動">
+<!ENTITY aioMMB.marker             "自動捲動：不要顯示標記">
+<!ENTITY aioMMB.cursor             "自動捲動：顯示專用的滑鼠游標">
+<!ENTITY aioMMB.panning            "當在標記內放開中鍵時繼續捲動">
+<!ENTITY aioMMB.paste              "按下中鍵貼上於文字方塊">
+<!ENTITY aioMMB.noHorizScroll      "抓拉捲動：不依水平方向捲動">
+<!ENTITY aioMMB.grabNdragmode      "抓拉捲動：Acrobat Reader 模式（會取代捲軸列模式）">
+<!ENTITY aioMMB.refreshrate        "自動捲動的重繪速率：">
+<!ENTITY aioMMB.normal             "標準">
+<!ENTITY aioMMB.fast               "快速">
+<!ENTITY aioMMB.superfast          "超快速">
+
+<!ENTITY aioAction.label       "滑鼠手勢動作">
+<!ENTITY aioAction.singlewindow    "『在新視窗中開啟連結』：開啟在單一新視窗內">
+<!ENTITY aioAction.neverwarn       "『關閉所有其他的分頁』：永不警告">
+<!ENTITY aioAction.goUpAction      "『回到上一層…』或『載入首頁』：開啟於新視窗內">
+<!ENTITY aioAction.bookmarkAction  "『開啟書籤』：開啟於目前分頁內">
+<!ENTITY aioAction.nextprev        "『尾隨…連結』：要搜尋的字串（以 '|' 來分隔）">
+<!ENTITY aioAction.nextlink        "尾隨下一個連結：">
+<!ENTITY aioAction.prevlink        "尾隨上一個連結：">
+<!ENTITY aioAction.rockermode      "搖擺與滾輪手勢：允許重複載入頁面">
+
+<!ENTITY aioTabscroll.label    "分頁捲動">
+<!ENTITY aioTabscroll.tabrocker    "滾輪導航：直接切換分頁（不顯示快顯功能表）">
+<!ENTITY aioTabscroll.revScroll    "當滾輪向下捲動時將分頁向左捲動">
+
+<!ENTITY aioTabClose.label     "關閉分頁">
+<!ENTITY aioTabClose.focus         "切換分頁焦點至：">
+<!ENTITY aioTabClose.default       "Firefox 預設">
+<!ENTITY aioTabClose.left          "左邊的分頁">
+<!ENTITY aioTabClose.lastSelect    "最後選取的分頁">
+<!ENTITY aioTabClose.opener        "開啟該分頁的分頁">
+<!ENTITY aioTabClose.right         "右邊的分頁">
+<!ENTITY aioTabClose.first         "第一個">
+<!ENTITY aioTabClose.last          "最後一個">
+<!ENTITY aioTabClose.lastOpen      "最近開啟的">
+
+<!ENTITY flipper.title         "數字翻頁器規則建立器">
+<!ENTITY flipper.label         "請選擇文件網址的數字部份。">
+
+

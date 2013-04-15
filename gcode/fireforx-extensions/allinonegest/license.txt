@@ -1,0 +1,83 @@
+The following license applies to all files
+
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this archive are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * This extension has modules with code derived from other archives:
+ *
+ *  allinonegest.js
+ *    Gesture part
+ *      The Original Code is Mouse Gesture for Mozilla.
+ *      The Initial Developer of the Original Code is Pavol Vaskovic.
+ *      Portions created by the Initial Developer are Copyright (C) 2001 the Initial Developer. All Rights Reserved.
+ *      Contributor(s):
+ *         Andy Edmonds <aedmonds@mindspring.com>
+ *         David Illsley <illsleydc@bigfoot.com>
+ *         HJ van Rantwijk <bugs4HJ@netscape.net>
+ *         Pavol Vaskovic <pali@pali.sk>
+ *         Scott R. Turner <srt@aero.org>
+ *         Tim Williamson <chsman@hotmail.com>
+ *         Martin.T.Kutschker <Martin.T.Kutschker@blackbox.net>
+ *    Tab and History scrolling part
+ *      The Original Code is tabscroller by Joe4711
+ *      Code has been entirely rewritten by Marc Boullet
+ *    Autoscroll part
+ *      The Original Code is Autoscroll
+ *      The Initial Developer of the Original Code is Skidooer.
+ *      Portions created by the Initial Developer are Copyright (C) 2003 the Initial Developer. All Rights Reserved.
+ *      Contributor(s):
+ *         Erik Arvidsson
+ *         Matthew Ratzloff
+ *
+ *  gestimp.js
+ *      The Original Code is Mouse Gesture for Mozilla.
+ *      The Initial Developer of the Original Code is Pavol Vaskovic.
+ *      Portions created by the Initial Developer are Copyright (C) 2001 the Initial Developer. All Rights Reserved.
+ *    Contributor(s):
+ *       Daniel Lindkvist
+ *       Ben Goodger
+ *       Ted Mielczarek
+ *       Christian Kruse
+ *       SHIMODA "Piro" Hiroshi
+ *       Stephen Clavering
+ *       squarefree.com
+ *       Ben Basson
+ *
+ *  trails.js
+ *    The Original Code is Mouse Gesture for Mozilla.
+ *    The Initial Developer of the Original Code is Jens Bannmann.
+ *    Portions created by the Jens Bannmann are Copyright (C) 2003 Jens Bannmann. All Rights Reserved.
+ *    aioDrawTrail has been rewritten using code from Walter Zorn (wz_jsgraphics.js)
+ *    Portions created by Walter Zorn are Copyright (C) 2002-2004 Walter Zorn. All Rights Reserved.
+ *
+ *  aioSchemaBuilder.xul
+ *    The Original Code is The Amazing TabDownloader 
+ *    The Initial Developer of the Original Code is Ben Goodger
+ *    Portions created by Ben Goodger are Copyright (C) 2002 Ben Goodger. All Rights Reserved.
+ *
+ *  For all other modules
+ *    The Original Code is the "All-in-One Gestures" extension for Phoenix.
+ *    The Initial Developer of the Original Code is Marc Boullet <boullet.marc@orange.fr>
+ *    Portions created by Marc Boullet are Copyright (C) 2003, Marc Boullet. All Rights Reserved.
+ * 
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.

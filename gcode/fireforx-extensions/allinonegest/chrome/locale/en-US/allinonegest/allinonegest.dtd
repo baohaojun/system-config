@@ -1,0 +1,108 @@
+<!ENTITY allinonegest.label    "Options for All-in-One Gestures">
+<!ENTITY drawgesture.title     "Gesture Drawing Area">
+
+<!ENTITY enable.label          "Enable">
+<!ENTITY enable.mouse             "Mouse gestures">
+<!ENTITY enable.rocker            "Rocker gestures">
+<!ENTITY enable.wheelscroll       "Scroll wheel navigation">
+<!ENTITY enable.autoscroll        "Middle button scrolling">
+<!ENTITY enable.tabbarscroll      "Scroll wheel in tab bar">
+<!ENTITY enable.linkTooltip       "Link tooltip">
+
+<!ENTITY tab.general              "General Preferences">
+<!ENTITY tab.customization        "Gestures Customization">
+<!ENTITY tab.advanced1            "Advanced Prefs #1">
+<!ENTITY tab.advanced2            "Advanced Prefs #2">
+
+<!ENTITY customize.function       "Function">
+<!ENTITY customize.gesture        "Gesture">
+<!ENTITY customize.enable         "Enable/Disable gesture">
+<!ENTITY customize.clear          "Clear gestures">
+<!ENTITY customize.edit           "Edit gesture">
+<!ENTITY customize.swap           "Swap gestures">
+<!ENTITY customize.add            "Add gesture">
+<!ENTITY customize.edfunc         "Edit function">
+<!ENTITY customize.undo           "Undo">
+<!ENTITY customize.enter          "or Enter (short format e.g. LRUD) the new gesture:">
+<!ENTITY customize.draw           "Draw">
+<!ENTITY customize.swaptxt        "Click on a new row to swap (new row gesture &lt;-&gt; current row gesture)">
+<!ENTITY customize.edfunctxt      "Click on the function to be assigned to this predefined gesture">
+<!ENTITY customize.apply          "OK">
+
+<!ENTITY mousegest.label       "Mouse Gestures: Prefs">
+<!ENTITY trails.enable             "Enable Gesture Trails">
+<!ENTITY trails.color              "Trail Color">
+<!ENTITY trails.size               "Trail Size">
+
+<!ENTITY linktooltip.label     "Link Tooltip: Prefs">
+<!ENTITY linktooltip.shift         "Depress Shift key to show">
+<!ENTITY linktooltip.delay         "Delay (ms) before showing:">
+<!ENTITY linktooltip.duration      "Time (ms) the tooltip is shown:">
+
+<!ENTITY wheel.label           "Scroll Wheel Navigation: Select">
+<!ENTITY wheel.gestures            "Perform Gesture Actions">
+<!ENTITY wheel.historyNav          "Navigate through History">
+<!ENTITY wheel.tabNav              "Navigate through Tabs">
+<!ENTITY wheel.historyOrTab        "History / Tabs based on initial rotation">
+<!ENTITY wheel.historyIfCw         "Backward (toward the user): History">
+
+<!ENTITY autoscroll.label      "Middle Button Scrolling: Select">
+<!ENTITY autoscroll.AiO            "All-in-One autoscroll">
+<!ENTITY autoscroll.native         "Native autoscroll">
+<!ENTITY autoscroll.aiograb        "AiO autoscroll + Grab and Drag">
+<!ENTITY autoscroll.grab           "Grab and Drag scrolling">
+
+<!ENTITY about.label           "About">
+<!ENTITY about.version             "Version">
+<!ENTITY about.provider1           "Provided by Optimoz, Joe4711, Skidooer &amp; all;">
+<!ENTITY about.provider2           "Merged and further developed by M. Boullet">
+
+<!ENTITY mousebutton.label     "Trigger button for Mouse Gestures and Scroll Wheel Navigation">
+<!ENTITY mousebutton.left          "Left">
+<!ENTITY mousebutton.middle        "Middle">
+<!ENTITY mousebutton.right         "Right">
+<!ENTITY mousebutton.leftbutt      "Left button:">
+<!ENTITY mousebutton.altkey        "Don't start a gesture when the Alt key is depressed">
+<!ENTITY mousebutton.leftdefault   "Default mouse action is performed as well">
+
+<!ENTITY aioMMBScrolling.label "Middle Button Scrolling">
+<!ENTITY aioMMB.evenOnLink         "Start scrolling when middle-clicking over a link">
+<!ENTITY aioMMB.marker             "Autoscroll: Don't show the marker">
+<!ENTITY aioMMB.cursor             "Autoscroll: Show dedicated mouse cursor">
+<!ENTITY aioMMB.panning            "Panning does not exit when the mouse is inside the marker">
+<!ENTITY aioMMB.paste              "Middle-click pastes in text boxes">
+<!ENTITY aioMMB.noHorizScroll      "Grab and Drag: Don't scroll horizontally">
+<!ENTITY aioMMB.grabNdragmode      "Grab and Drag: Acrobat Reader mode (instead of Scrollbar mode)">
+<!ENTITY aioMMB.refreshrate        "Autoscroll Refresh Rate:">
+<!ENTITY aioMMB.normal             "Normal">
+<!ENTITY aioMMB.fast               "Fast">
+<!ENTITY aioMMB.superfast          "Faster">
+
+<!ENTITY aioAction.label       "Mouse Gesture Actions">
+<!ENTITY aioAction.singlewindow    "'Open Links in Windows': Single new window with tabs">
+<!ENTITY aioAction.neverwarn       "'Close all other Tabs': Never warn">
+<!ENTITY aioAction.goUpAction      "'Go Up to parent ...' / 'Load Home Page': Open in new tab">
+<!ENTITY aioAction.nextprev        "'Follow ... Link': Strings to be searched for (| separated)">
+<!ENTITY aioAction.nextlink        "Follow Next Link:">
+<!ENTITY aioAction.prevlink        "Follow Previous Link:">
+<!ENTITY aioAction.rockermode      "Rocker &amp; Scrollwheel gestures: Allow repetition for actions that load pages">
+
+<!ENTITY aioTabscroll.label    "Tab scrolling">
+<!ENTITY aioTabscroll.tabrocker    "Scroll wheel navigation: Switch tabs directly (no popup)">
+<!ENTITY aioTabscroll.revScroll    "Scroll tabs to the left when the wheel is rotated backward">
+
+<!ENTITY aioTabClose.label     "Closing Tabs">
+<!ENTITY aioTabClose.focus         "Bring focus to the tab:">
+<!ENTITY aioTabClose.default       "Firefox default">
+<!ENTITY aioTabClose.left          "to the left">
+<!ENTITY aioTabClose.lastSelect    "last selected">
+<!ENTITY aioTabClose.opener        "opener">
+<!ENTITY aioTabClose.right         "to the right">
+<!ENTITY aioTabClose.first         "first">
+<!ENTITY aioTabClose.last          "last">
+<!ENTITY aioTabClose.lastOpen      "last opened">
+
+<!ENTITY flipper.title         "Digit Flipper Schema Builder">
+<!ENTITY flipper.label         "Select the numerical part of the document URL that varies.">
+
+

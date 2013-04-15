@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+  <rdf:Description rdf:about="urn:mozilla:install-manifest">
+    <em:id>{8b86149f-01fb-4842-9dd8-4d7eb02fd055}</em:id>
+    <em:version>0.25.1</em:version>
+    <em:type>2</em:type>
+    <em:unpack>true</em:unpack>
+    <em:targetApplication>
+      <rdf:Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>1.0</em:minVersion>
+        <em:maxVersion>18.*</em:maxVersion>
+      </rdf:Description>
+    </em:targetApplication>
+    <em:name>All-in-One Gestures</em:name>
+    <em:description>This extension allows you to execute common commands using mouse gestures, rocker navigation, scroll wheel navigation and page scrolling.</em:description>
+    <em:creator>Marc Boullet</em:creator>
+    <em:contributor>Optimoz, Joe4711, Skidooer &amp; all</em:contributor>
+    <em:homepageURL>http://pagesperso-orange.fr/marc.boullet/ext/extensions-en.html</em:homepageURL>
+    <em:optionsURL>chrome://allinonegest/content/pref/aioPrefs.xul</em:optionsURL>
+    <em:iconURL>chrome://allinonegest/content/aioIcon.png</em:iconURL>
+  </rdf:Description>
+</rdf:RDF>
