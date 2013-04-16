@@ -156,7 +156,7 @@ skeleton-complete that you might want to know.
 4. If the first character of a 2nd flavor skeleton is a word
    constituent character, it must match at beginning of a word.
 
-   For e.g., =er= will not match =hello world=, you mast change the
+   For e.g., =er= will not match =hello world=, you must change the
    skeleton to =hr= (the last character of the skeleton is not
    constrained).
    
