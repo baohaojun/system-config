@@ -60,8 +60,12 @@ if git branch --contains HEAD -a |grep -q from-mac; then
     exit
 fi
 
-git push origin HEAD:master || ( git push origin HEAD:$rb && die "you need to merge it!" )
-git push || true
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+git push origin HEAD:master || die "you need to merge it!"
 
 if test $(pwd) = ~/windows-config; then
     git-notify-push
