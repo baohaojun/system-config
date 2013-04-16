@@ -25,6 +25,7 @@
 	      (expand-file-name "~/src/bbdb/lisp")
 	      (expand-file-name (concat "~/.emacs_d/" (symbol-name system-type)))
 	      (expand-file-name "~/.emacs_d/lisp")
+	      (expand-file-name "~/.emacs_d/skeleton-complete")
 	      (expand-file-name "~/.emacs_d/org-confluence")
 	      (expand-file-name "~/.emacs_d/org-jira")
 	      (expand-file-name "~/.emacs_d/mo-git-blame")
