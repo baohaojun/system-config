@@ -2716,6 +2716,7 @@ using ctags-exuberant"
        (format "source-code-help %s %s" major-mode word)))))
 
 (global-set-key [(meta s) ?h ?h] 'source-code-help)
+(global-set-key [(control |)] 'toggle-input-method)
       
 (condition-case nil
     (server-start)

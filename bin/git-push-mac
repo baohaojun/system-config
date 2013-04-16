@@ -76,3 +76,5 @@ git push origin HEAD:refs/heads/$(
 if test $(pwd) = ~/windows-config; then
     CHECKING_SUBMODULE= git-notify-push
 fi
+
+exit 0;
