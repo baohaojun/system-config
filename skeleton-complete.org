@@ -1,6 +1,14 @@
-#+title: skeleton-completion
+#+title: skeleton-complete
 
-* What's not good enough
+Gimme a skeleton, and I'll complete you, man!
+
+Skeleton-complete is my effort to push hippie-expand to
+extremes. With it you can save a lot of typing even more than
+hippie-expand.
+
+You can get it on [[https://github.com/baohaojun/skeleton-complete][github]].
+
+* What's not good enough with =hippie-expand=
 
 Emacs completion (aka expand) is great, the hippie-expand is mostly
 useful.
@@ -10,66 +18,177 @@ But I have found it insufficient, for the following reasons.
 1. Hippie-expand requires you to start matching at the beginning.
 
    But not all interesting (and thus easy to remember and easy to
-   type) components are at the beginning. A lot of softwares including
+   type) components are at the beginning. A lot of software including
    Emacs itself have started to allow user type a component from
    anywhere in the final string and match it just fine. For e.g., the
-   anything.el (now renamed helm); firefox's url type and match; and
+   anything.el (now renamed helm); Firefox's URL type and match; and
    Emacs's built in =C-h f= (where you can type =-hello= and type
    =Tab=, and Emacs will expand it to =view-hello-file=: you do not
    need start with =view=. Not so with hippie-expand).
 
-2. Selecting from multiple matches is not instinctive
+2. Selecting from multiple matches is not instinctive.
 
+   Given the file below as an example, say the point is at where =**=
+   is located, when you type =M-/= repeatedly, you will get hello3, 2,
+   1, and then hello4, 5, 6, in that order (what will you get after
+   hello6 is dependent on what is contained in other buffers of your
+   current Emacs session, what modules you have loaded and symbols you
+   can access, etc. This is NICE and inspiring!).
+
+   #+BEGIN_EXAMPLE
+   hello1
+   hello2
+   hello3
+   he**
+   hello4
+   hello5
+   hello6
+   #+END_EXAMPLE
+
+   Now, the order is not satisfactory to me, I'd like 3, 4, 2, 5, 1, 6
+   better according roughly to the distance they are to the /point/.
+
+   And like anything.el, I'd like to see all the matching entries at
+   once, probably over multiple pages, but I can scroll up and down to
+   choose, instead of typing =M-/= repeatedly and blindly, not knowing
+   what the next entry will be, or how many times I need to press =M-/=.
+
+   Last but not least, as has been stated in 1), I need start with
+   =he**=, and if what I wanted is =hello6=, then 6 times I must press
+   along =M-/=.
+
+* How does skeleton-complete fix it
+
+Taking the above example, if you wanted to get =hello6=, you need only
+type the skeleton, the “interesting” bones that we want to flesh
+out: the =h= and =6= is enough in this example, see below (only =he=
+is changed to =h6= compared to above example):
+
+   #+BEGIN_EXAMPLE
+   hello1
+   hello2
+   hello3
+   h6**
+   hello4
+   hello5
+   hello6
+   #+END_EXAMPLE
+
+If you type =M-g <return>= at the point, you will get =hello6=
+instantly.
+
+** Regexp rewrite
+
+Here's how it works. =Skeleton-complete= will take the
+=(current-word)=, here =h6=, and break this “skeleton” down into
+bare pieces of bones, =h= and =6=. Then it strings these bones
+together, and we get =h.*6=, and behold, this is a regexp! What use do
+we have regexps? Right, searching. We can search and find 2 matches
+for =h.*6=: =h6= and =hello6=. Now the first one does not make much
+sense as it is the same as the skeleton we started with; so we can
+happily complete with =hello6=, and the user is not bothered to select
+from multiple matches at all!
+
+(In Emacs version 24.3, you will notice in =isearch-forward=, typing
+many white spaces has the same effect as one, and it will match any
+number of contiguous white spaces (except the newline). Déjà vu?)
+
+** Choosing from multiple matches
+
+But of course, often the user still need to choose from multiple
+matches. =Skeleton-complete= uses =ecomplete.el= for presenting the
+user the matches he/she can choose from:
+
+[[./skeleton-id.png]]
+
+From the screenshot, you can see that the matches are presented in a
+order according to their distance to the point. First =hyhyhy1= which
+comes immediately above the point, then the =h1= itself should come,
+which is below or on the same line as the point, but it has been
+deleted as it makes no sense as a completion. Then the =hahaha1= which
+is the next above, followed by =hihihi1= which is the next below, and
+so on.
+
+You can use =C-n= and =C-p= to scroll up and down the list, or off the
+ends to the next and previous pages of matches.
+
+** The second flavor of skeleton-complete
+
+The first flavor discussed above is for completing *identifiers*
+only. Say I have a long expression, and I will complete the whole
+expression, once again you type an “interesting” skeleton, and type
+=M-s <return>=, it will get fleshed out:
+
+[[./skeleton-exp.png]]
+
+Here's how it works. First the skeleton is broken down to bare bones,
+=$=, =h=, =1= and =}=. Then they are stringed to become
+=\\$.*?h.*?1.*?}= (note how the =$= is quoted because besides being a
+bone, it's also a “meta”bone; also note the usage of the non-greedy
+=.*?=, it is dark magic already, do not make it worse by being
+greedy!).
+
+Then all the expressions in the current buffer are matched, and there
+are listed in the same way as the first flavor (Thus the user should
+say, “oh, I have seen this before.” and feel easy. Déjà vu[fn:dvu]?).
+
+* Usage notes
+
+There are several tried and proved enhancements in
+skeleton-complete that you might want to know.
+
+1. Besides the current buffer, all *visible* buffers are searched for matches.
+
+2. If no matches are found in all the visible buffers, the buried
+   buffers are dug up for skeleton bones (but don't sweat, it will
+   stop as soon as the first dark buffer is finished where any match
+   is found).
+
+3. Because of 1) and the fact that =ecomplete.el= is used, you can use
+   skeleton-complete in the minibuffer. I only made key binding for
+   the second flavor, =M-g x=, you probably need use it too, because
+   =M-s <return>= is not usable in the minibuffer.
+
+   I mean, you won't get punished with =Command attempted to use
+   minibuffer while in minibuffer= for digging skeletons in the lowest
+   place of all, the minibuffer.
+
+4. If the first character of a 2nd flavor skeleton is a word
+   constituent character, it must match at beginning of a word.
+
+   For e.g., =er= will not match =hello world=, you mast change the
+   skeleton to =hr= (the last character of the skeleton is not
+   constrained).
    
+   A skeleton without a right skull is very difficult to complete!
 
+4. Arbitrary single line string can be completed with the 2nd
+   flavor. Not necessarily only expressions!
 
+5. By default, the 2nd flavor will find its skeleton by searching
+   backward for the first non-blank character. You can override this by
+   activating the region over your desired skeleton and include white
+   space into it.
 
-最早在 [[http://www.newsmth.net/bbstcon.php?board=Emacs&gid=88913][水木Emacs版的这个贴子]] 里讨论了这种补齐，一开始只是id补齐：
+6. Use interesting bones as much as possible. 
 
-#+BEGIN_QUOTE
-刚刚写了一段补齐的elisp程序，目的是想要比自带的dabbrev补齐少敲几下键盘。
+   In the above example, the =h= in =h6= is not interesting, because
+   everybody has this bone. You can discard it and use =6= alone,
+   because only =hello6= has this interesting bone in it, and it is
+   exactly what you wanted.   
 
-在用dabbrev补齐的时候，它会按照前缀是不是匹配来补齐，这样做有时候不能省
-按键次数。举个例子，如果你有好几个变量都是以相同的前缀开头，比如从
-=variable_0= 到 =variable_10= （当然，只是举个相同前缀的例子，实际情况
-应该不会以0到10来结束），那么补齐的时候会按照某种顺序一个一个的试。相同
-前缀越长，你在补齐之前需要打上去的字数也越多；相同前缀的名字越多，你需
-要敲补齐键选择的次数也越多。
+7. You can use complete and modify if you need input a similar but not
+   exactly same string to an existing one.
 
-也就是说关键字母并不一定都是在前缀里，你应该可以自己选择关键字母去补齐。
+* Bugs
 
-参考ecomplete里的代码，我写的这个补齐只要打两个关键字母v和0，它就会把所有包含v和0
-的单词给列出来让你选，这样补齐之前就可以只打两个字符，补齐之后也只要做两
-次选择了。
-#+END_QUOTE
+Because the rewrote regexp can be complex, sometimes (but very
+rarely!) it may seem hung for the 2nd flavor. You can type =C-g= to
+quit searching for matches, and examine what is wrong with your
+skeleton.
 
-很快 [[http://www.newsmth.net/bbscon.php?bid=573&id=88915][wuhaochi同学]] 建议应该做一个基于正则表达式的任意字符串（而不是仅限
-于identifier）的补齐，我很高兴的实现了。
+Beware of buffers with extremely long lines in it! Those are monsters,
+don't try to use 2nd flavor skeleton-complete with them, run away!
 
-其实类似的人机接口在firefox的地址栏里也可以见到，输入几个字，在任意位置
-匹配这些字的历史url就会被过滤出来让你挑选（也就是补齐）。
-
-见图（只要打3个字母，就允许我补齐相当长的字串，所以经常能省打很多字）：
-
-[[./re-completion.png]] 
-
-使用这种补齐方式的优点是（与eclipse等IDE中的java上下文智能补齐相比）：
-
-1. 适用于任何编程语言。
-
-2. 便宜。
-
-3. 效率。
-
-当然，缺点也很明显：
-
-1. 只能补齐当前buffer中已经出现过了的字或字串（这个已经做了改进，所有可
-   见的buffer都会参与匹配，如果没找到的话，还会继续进入
-   =(buffer-list)= 中不可见的部分去查找）。
-
-2. 由于1）中提到的改进，以及本身实现的头脑简单性，有可能会进入类死循环，
-   需要按 =C-g= 退出。
-
-3. 补齐函数名之后，不能很轻易的看见该函数的参数列表是乍定义的。
-
-具体实现见 [[http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/skeleton-complete.el][github代码]] 。
+[fn:dvu] I typed the 2nd and this =Déjà vu= with =dvu= and =M-s
+<return>=!
