@@ -128,7 +128,7 @@ bone, it's also a “meta”bone; also note the usage of the non-greedy
 =.*?=, it is dark magic already, do not make it worse by being
 greedy!).
 
-Then all the expressions in the current buffer are matched, and there
+Then all the expressions in the current buffer are matched, and they
 are listed in the same way as the first flavor (Thus the user should
 say, “oh, I have seen this before.” and feel easy. Déjà vu[fn:dvu]?).
 
@@ -191,4 +191,5 @@ Beware of buffers with extremely long lines in it! Those are monsters,
 don't try to use 2nd flavor skeleton-complete with them, run away!
 
 [fn:dvu] I typed the 2nd and this =Déjà vu= with =dvu= and =M-s
-<return>=!
+<return>=. And the 1st is typed as =D\'ej\`a vu= and =M-x
+iso-tex2iso=, if you don't know already:-)
