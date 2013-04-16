@@ -3,12 +3,17 @@
 
 (load-file "~/.sawfish/bhj-draw-wininfo.jl")
 (require 'bhj-draw-wininfo)
+
+(setq s-h-keymap (make-keymap))
+(bind-keys global-keymap "Super-h" s-h-keymap)
+
 (load-file "~/.sawfish/iswitch-window.jl")
 (bind-keys global-keymap "Super-s" 'iswitch-window)
 
 (defun bhj-window-class (window)
   (window-class window))
 
+(bind-keys s-h-keymap "s" (lambda () (system "~/bin/screenshot focused&")))
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/screenshot&")))
 (bind-keys global-keymap "Super-DEL" (lambda () (system "gnome-screensaver-command -l&")))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp" (lambda () (system "switch-touchpad enable&"))) ; for mac
@@ -48,8 +53,6 @@
     (if wcommand
 	(system (concat wcommand "&")))
     nil))
-(setq s-h-keymap (make-keymap))
-(bind-keys global-keymap "Super-h" s-h-keymap)
 
 (mapc
  (lambda (args)

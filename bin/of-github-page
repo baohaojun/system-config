@@ -1,6 +1,6 @@
 #!/bin/bash
 
-x=http://baohaojun.github.com/${1/%.org/.html}
+x=http://baohaojun.github.io/${1/%.org/.html}
 echo "$x"|putclip
 
 if test $(basename $0) != github-pagep; then

@@ -2581,6 +2581,13 @@ we are not interested in those lines that do."
   (bhj-choose (split-string (shell-command-to-string (read-from-minibuffer "command to run: ")) nil t)))
 (load "RubikitchAnythingConfiguration.el")
 
+(defun replace-double-quotes ()
+  (interactive)
+  (query-replace "``" "“" nil (point-min) (point-max))
+  (query-replace "''" "”" nil (point-min) (point-max)))
+
+
+
 (add-hook 'vc-git-log-view-mode-hook
 	  (lambda ()
 	    (when (string= log-view-message-re "^commit *\\([0-9a-z]+\\)")

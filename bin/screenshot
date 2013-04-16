@@ -1,8 +1,14 @@
 #!/bin/bash
 sleep 1
+
+select=-s
+
+if test "$1" = focused; then
+    select=-u
+fi
 now=`now|perl -npe 's/:/./g'`
 mkdir -p ~/shots
 now=shots/"$now"
-scrot -s ~/"$now".png
+scrot $select ~/"$now".png
 of ~/"$now".png
 up ~/"$now".png | putclip

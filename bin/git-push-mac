@@ -65,7 +65,13 @@ function die() {
     exit -1
 }
 
-git push origin HEAD:master || die "you need to merge it!"
+git push origin HEAD:refs/heads/$(
+    if test -e ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config/etc).sh; then
+        bash ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config/etc).sh my-master;
+    else
+        echo master
+    fi
+) || die "you need to merge it!"
 
 if test $(pwd) = ~/windows-config; then
     git-notify-push
