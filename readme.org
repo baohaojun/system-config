@@ -21,6 +21,10 @@ For the 2nd flavor, in the buffer I'm editting this readme, I can type
   (require 'skeleton-complete)
 #+END_SRC
 
+You can consider it as =abbrev-mode= or =yasnippet= on the go (with no
+need to prepare the long completion into an abbrev or yasnippet before
+using them for completion/expand: it's more free style!).
+
 * Usage
 
 1. =(require 'skeleton-complete)=
