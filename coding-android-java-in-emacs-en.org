@@ -251,7 +251,7 @@ scrits's bugs so urgent to fix.
 You can see in the video or the below screenshot:
 [[./regexp-completion.png]]
 
-You can find the elisp source in [[http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/electric-complete.el][electric-complete.el]].
+You can find the elisp source in [[http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/skeleton-complete.el][skeleton-complete.el]].
 
 ** What about JDEE or other Emacs Java plugins?
 

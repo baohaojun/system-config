@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>提干式id补齐和re补齐</title>
+<title>skeleton-completion</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="提干式id补齐和re补齐"/>
+<meta name="title" content="skeleton-completion"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-13 20:27:02 CST"/>
+<meta name="generated" content="2013-04-13 20:27:03 CST"/>
 <meta name="author" content="baohaojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -73,9 +73,55 @@
 </div>
 
 <div id="content">
-<h1 class="title">提干式id补齐和re补齐</h1>
+<h1 class="title">skeleton-completion</h1>
 
-<p>最早在 <a href="http://www.newsmth.net/bbstcon.php?board=Emacs&amp;gid=88913">水木Emacs版的这个贴子</a> 里讨论了这种补齐，一开始只是id补齐：
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 What's not good enough</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> What's not good enough</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+Emacs completion (aka expand) is great, the hippie-expand is mostly
+useful.
+</p>
+<p>
+But I have found it insufficient, for the following reasons.
+</p>
+<ol>
+<li>Hippie-expand requires you to start matching at the beginning.
+
+<p>
+   But not all interesting (and thus easy to remember and easy to
+   type) components are at the beginning. A lot of softwares including
+   Emacs itself have started to allow user type a component from
+   anywhere in the final string and match it just fine. For e.g., the
+   anything.el (now renamed helm); firefox's url type and match; and
+   Emacs's built in <code>C-h f</code> (where you can type <code>-hello</code> and type
+   <code>Tab</code>, and Emacs will expand it to <code>view-hello-file</code>: you do not
+   need start with <code>view</code>. Not so with hippie-expand).
+</p>
+</li>
+<li>Selecting from multiple matches is not instinctive
+</li>
+</ol>
+
+
+
+
+
+
+<p>
+最早在 <a href="http://www.newsmth.net/bbstcon.php?board=Emacs&amp;gid=88913">水木Emacs版的这个贴子</a> 里讨论了这种补齐，一开始只是id补齐：
 </p>
 <blockquote>
 
@@ -150,6 +196,8 @@
 <p>
 具体实现见 <a href="http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/skeleton-complete.el">github代码</a> 。
 </p></div>
+</div>
+</div>
 
 <div id="postamble">
     <hr/>

@@ -1,4 +1,28 @@
-#+title: 提干式id补齐和re补齐
+#+title: skeleton-completion
+
+* What's not good enough
+
+Emacs completion (aka expand) is great, the hippie-expand is mostly
+useful.
+
+But I have found it insufficient, for the following reasons.
+
+1. Hippie-expand requires you to start matching at the beginning.
+
+   But not all interesting (and thus easy to remember and easy to
+   type) components are at the beginning. A lot of softwares including
+   Emacs itself have started to allow user type a component from
+   anywhere in the final string and match it just fine. For e.g., the
+   anything.el (now renamed helm); firefox's url type and match; and
+   Emacs's built in =C-h f= (where you can type =-hello= and type
+   =Tab=, and Emacs will expand it to =view-hello-file=: you do not
+   need start with =view=. Not so with hippie-expand).
+
+2. Selecting from multiple matches is not instinctive
+
+   
+
+
 
 最早在 [[http://www.newsmth.net/bbstcon.php?board=Emacs&gid=88913][水木Emacs版的这个贴子]] 里讨论了这种补齐，一开始只是id补齐：
 
