@@ -24,4 +24,5 @@ For the 2nd flavor, in the buffer I'm editting this readme, I can type
 2.  Type a skeleton and press `M-g <return>` or `M-s <return>` based on
     the flavor you wanted.
 
-For more detailed discussion, see [this github page](http://baohaojun.github.io/skeleton-complete.html).
+For more detailed discussion about this dark magic, see [this github
+page](http://baohaojun.github.io/skeleton-complete.html).
