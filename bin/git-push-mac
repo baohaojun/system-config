@@ -60,7 +60,7 @@ if git branch --contains HEAD -a |grep -q from-mac; then
     exit
 fi
 
-git push origin HEAD:master || git push origin HEAD:$rb
+git push origin HEAD:master || ( git push origin HEAD:$rb && die "you need to merge it!" )
 git push || true
 
 if test $(pwd) = ~/windows-config; then
