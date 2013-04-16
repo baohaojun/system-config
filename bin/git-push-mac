@@ -74,5 +74,5 @@ git push origin HEAD:refs/heads/$(
 ) || die "you need to merge it!"
 
 if test $(pwd) = ~/windows-config; then
-    bash -x git-notify-push
+    CHECKING_SUBMODULE= git-notify-push
 fi
