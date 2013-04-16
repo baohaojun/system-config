@@ -120,7 +120,7 @@ body {
     /* font-lock-builtin-face */
     color: #e5786d;
 }
-pre.example, .org-block {
+pre.example, .org-block code{
     /* org-block */
     color: #b3b3b3;
 }
