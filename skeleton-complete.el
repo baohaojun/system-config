@@ -17,12 +17,12 @@
         (delete-region start end)
         (insert match)))))
 
-(defvar regexp-completion-history nil)
+(defvar skeleton-regexp-completion-history nil)
 
-(global-set-key [(meta s) (return)] 'easy-regexp-display-abbrev)
-(global-set-key [(meta g) ?x] 'easy-regexp-display-abbrev)
+(global-set-key [(meta s) (return)] 'skeleton-easy-regexp-display-abbrev)
+(global-set-key [(meta g) ?x] 'skeleton-easy-regexp-display-abbrev)
 
-(defun easy-regexp-display-abbrev ()
+(defun skeleton-easy-regexp-display-abbrev ()
   "Simplify writing the regexp. If we are looking back at, for
 e.g., \"sthe='\", the regexp for completion should be
 \"s.*?t.*?h.*?e.*?=.*?'\". That is, fill in a \".*?\" pattern
@@ -85,32 +85,32 @@ we will get the pattern \"naoehu[)+{\"
 	(setq is-first-char nil))
 
       (setq new-regexp (apply 'string (nreverse new-re-list))))
-    (regexp-display-abbrev new-regexp)))
+    (skeleton-regexp-display-abbrev new-regexp)))
 
-(defun regexp-display-abbrev (regexp)
+(defun skeleton-regexp-display-abbrev (regexp)
   "Display the possible abbrevs for the regexp."
   (interactive 
    (progn
      (list 
       (read-shell-command "Get matches with regexp: "
                                       (grep-tag-default)
-                                      'regexp-completion-history
+                                      'skeleton-regexp-completion-history
                                       nil))))
   (let ((match (when (not (zerop (length regexp)))
-                 (regexp-display-matches regexp))))
+                 (skeleton-regexp-display-matches regexp))))
     (when match
       (when (and transient-mark-mode mark-active
                  (/= (point) (mark)))
         (delete-region (point) (mark)))
       (insert match))))
   
-(defmacro max-mini-lines ()
+(defmacro skeleton-max-mini-lines ()
   `(if (floatp max-mini-window-height)
        (truncate (* (frame-height) max-mini-window-height))
      max-mini-window-height))
 
 (defun skeleton-highlight-match-line (matches line max-line-num)
-  (let* ((max-lines (max-mini-lines))
+  (let* ((max-lines (skeleton-max-mini-lines))
         (max-lines-1 (1- max-lines))
         (max-lines-2 (1- max-lines-1)))
     (cond
@@ -136,12 +136,12 @@ we will get the pattern \"naoehu[)+{\"
         (ecomplete-highlight-match-line matches line))))))
 
 (defun skeleton-display-matches (word)
-  (general-display-matches (delete word (nreverse (skeleton-get-matches-order word)))))
+  (skeleton-general-display-matches (delete word (nreverse (skeleton-get-matches-order word)))))
 
-(defun regexp-display-matches (regexp)
-  (general-display-matches (delete "" (nreverse (regexp-get-matches regexp)))))
+(defun skeleton-regexp-display-matches (regexp)
+  (skeleton-general-display-matches (delete "" (nreverse (skeleton-regexp-get-matches regexp)))))
 
-(defun general-display-matches (strlist)
+(defun skeleton-general-display-matches (strlist)
   (let* ((matches (concat 
                    (mapconcat 'identity (delete-dups strlist) "\n")
                    "\n"))
@@ -168,18 +168,14 @@ we will get the pattern \"naoehu[)+{\"
 	(when (eq command 'return)
 	  (nth line (split-string matches "\n")))))))
 
-
-(defvar ecomplete-other-buffer nil
-  "the other buffer to search for completion")
-
-(defun regexp-get-matches (re &optional no-recur)
-  (let ((list (regexp-get-matches-internal re no-recur)))
+(defun skeleton-regexp-get-matches (re &optional no-recur)
+  (let ((list (skeleton-regexp-get-matches-internal re no-recur)))
     (if (and (boundp 'old-regexp)
 	     (stringp old-regexp))
 	(delete old-regexp list)
       list)))
 
-(defun regexp-get-matches-internal (re &optional no-recur)
+(defun skeleton-regexp-get-matches-internal (re &optional no-recur)
   "Display the possible completions for the regexp."
   (let ((strlist-before nil)
         (strlist-after nil)
@@ -230,7 +226,7 @@ we will get the pattern \"naoehu[)+{\"
 	(save-excursion
 	  (mapcar (lambda (buf)
 		    (with-current-buffer buf ;;next let's recursive call
-		      (setq strlist (append (regexp-get-matches re t) strlist))))
+		      (setq strlist (append (skeleton-regexp-get-matches re t) strlist))))
 		  (delete buf-old
 			  (mapcar (lambda (w)
 				    (window-buffer w))
@@ -243,7 +239,7 @@ we will get the pattern \"naoehu[)+{\"
 	    (mapcar (lambda (buf)
 		      (with-current-buffer buf ;;next let's recursive call
 			(unless strlist
-			  (setq strlist (append (regexp-get-matches re t) strlist)))))
+			  (setq strlist (append (skeleton-regexp-get-matches re t) strlist)))))
 		    (delete buf-old
 			    (buffer-list)))
 	    strlist))
