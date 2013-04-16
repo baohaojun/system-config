@@ -15,7 +15,7 @@ if test "$1" = enable -o "$1" = on; then
     synclient RBCornerButton=0
     synclient LTCornerButton=0
     synclient LBCornerButton=0
-    synclient LockedDrags=0
+    synclient LockedDrags=1
 
     synclient TapButton1=1
     synclient TapButton2=3

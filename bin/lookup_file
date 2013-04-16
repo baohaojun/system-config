@@ -1,8 +1,9 @@
 #!/bin/bash
 
 exact=false
+select=false
 readlink=false
-TEMP=$(getopt -o er --long exact,readlink -n $(basename $0) -- "$@")
+TEMP=$(getopt -o ers --long exact,readlink,select -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -12,6 +13,10 @@ while true; do
             ;;
         -r|--readlink)
             readlink=true
+            shift
+            ;;
+        -s|--select)
+            select=true
             shift
             ;;
         --)
@@ -52,6 +57,26 @@ fi
 	fi
 
 	test -e "$file" && break
+
+        if test $wildcard = true -a $select = true; then
+
+            match=0
+            for x in $file; do
+                if test -e $x; then
+                    match=1
+                    break
+                fi
+            done
+
+            if test $match = 1; then
+                if test $readlink = true; then
+                    select-output-line bash -c "for x in $file; do readlink -f \$x; done"
+                else
+                    select-output-line bash -c "for x in $file; do echo \"$PWD\"/\$x; done"
+                fi
+                exit
+            fi
+        fi                
 
         if test $wildcard = true && test -e $file; then
             if test $readlink = true; then

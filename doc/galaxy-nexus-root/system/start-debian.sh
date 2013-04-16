@@ -5,7 +5,7 @@
 	
 	if test -e /sdcard/start-debian2.sh; then
 	    log -t bhj will now start debian
-	    logwrapper sh -x /sdcard/start-debian2.sh
+	    logwrapper su -c 'sh -x /sdcard/start-debian2.sh'
 	    exit
 	fi
 
