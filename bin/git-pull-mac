@@ -6,17 +6,16 @@ cd "$(dirname "$(lookup_file .git)")"
 
 git-clean-mac-branches-local
 git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git://,https://,')
-git fetch origin >/dev/null 2>&1 
-for x in $(git branch -a |grep -e 'remotes.*from-mac\|remotes/origin/master'); do
+git fetch origin -v
+for x in $(git branch -a |grep 'remotes.*from-mac'; echo remotes/origin/master); do
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
-    git fetch $remote $branch >/dev/null 2>&1 
-    if git branch --contains FETCH_HEAD |grep -q '^\*'; then
+    if git branch --contains $x |grep -q '^\*'; then
 	echo no need to merge $branch, it is already '*contained*' in HEAD
 	continue;
     else
 	current=$(git log -1|head -n 1|pn 2)
-	git merge FETCH_HEAD >/dev/null 2>&1 || {
+	git merge $x >/dev/null 2>&1 || {
 	    echo $remote/$branch merge failed
 	    exit -1
 	}
@@ -37,6 +36,8 @@ fi
 git submodule init
 git submodule update
 git submodule foreach 'bash -c "git-pull-mac&"' | grep .
+git submodule foreach 'git config user.email baohaojun@gmail.com'
+git config user.email baohaojun@gmail.com
 fix-submodule-dot-git
 ~/bin/after-co-ln-s.sh
 touch ~/windows-config/.for-code-reading
