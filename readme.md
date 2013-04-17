@@ -3,7 +3,8 @@ then you can type as little as possible (much less than
 `hippie-expand`), and `skeleton-complete` to the long expression.
 
 It has 2 flavors: identifier completion and single-line string
-completion.
+completion, corresponding to `hippie-expand`'s `try-expand-dabbrev`
+and `try-expand-line` respectively.
 
 To taste the 1st flavor, say in an emacs-lisp buffer, you have a long
 variable name, `this-is-a-very-long-var-name`, and a long function
@@ -18,8 +19,11 @@ For the 2nd flavor, in the buffer I'm editting this readme, I can type
     (require 'skeleton-complete)
 
 You can consider it as `abbrev-mode` or `yasnippet` on the go (with no
-need to prepare the long completion into an abbrev or yasnippet before
-using them for completion/expand: it's more free style!).
+need to prepare the long completion into a template beforehand: it's
+less formal and more free style!).
+
+`skeleton-complete` is not related to [`skeleton-mode`](http://www.emacswiki.org/emacs/SkeletonMode), except they
+both have `skeleton` in their names.
 
 # Usage
 
