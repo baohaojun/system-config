@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="skeleton-complete"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-16T18:53+0800"/>
+<meta name="generated" content="2013-04-17T12:48+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -102,9 +102,11 @@ for the JavaScript code in this tag.
 <p>Gimme a skeleton, and I'll complete you, man!
 </p>
 <p>
-Skeleton-complete is my effort to push hippie-expand to
+<code>Skeleton-complete</code> is my effort to push <code>hippie-expand</code> to
 extremes. With it you can save a lot of typing even more than
-hippie-expand.
+hippie-expand. To be more specific, it is hippie-expand's
+<code>try-expand-dabbrev</code> and <code>try-expand-line</code> functions that I want to do
+better with skeleton-complete.
 </p>
 <p>
 You can get it on <a href="https://github.com/baohaojun/skeleton-complete">github</a>.
@@ -114,7 +116,7 @@ You can get it on <a href="https://github.com/baohaojun/skeleton-complete">githu
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 What's not good enough with <code>hippie-expand</code></a></li>
+<li><a href="#sec-1">1 What's not good enough with hippie-expand</a></li>
 <li><a href="#sec-2">2 How does skeleton-complete fix it</a>
 <ul>
 <li><a href="#sec-2-1">2.1 Regexp rewrite</a></li>
@@ -129,7 +131,7 @@ You can get it on <a href="https://github.com/baohaojun/skeleton-complete">githu
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> What's not good enough with <code>hippie-expand</code></h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> What's not good enough with hippie-expand</h2>
 <div class="outline-text-2" id="text-1">
 
 
@@ -149,9 +151,9 @@ But I have found it insufficient, for the following reasons.
    Emacs itself have started to allow user type a component from
    anywhere in the final string and match it just fine. For e.g., the
    anything.el (now renamed helm); Firefox's URL type and match; and
-   Emacs's built in <code>C-h f</code> (where you can type <code>-hello</code> and type
-   <code>Tab</code>, and Emacs will expand it to <code>view-hello-file</code>: you do not
-   need start with <code>view</code>. Not so with hippie-expand).
+   Emacs's built in <code>C-h f</code> (where you can type <code>-hello</code> and <code>Tab</code>,
+   and Emacs will expand it to <code>view-hello-file</code>: you do not need
+   start with <code>view</code>. Not so with hippie-expand).
 </p>
 </li>
 <li>Selecting from multiple matches is not instinctive.
@@ -162,7 +164,8 @@ But I have found it insufficient, for the following reasons.
    1, and then hello4, 5, 6, in that order (what will you get after
    hello6 is dependent on what is contained in other buffers of your
    current Emacs session, what modules you have loaded and symbols you
-   can access, etc. This is NICE and inspiring!).
+   can access, etc. See <code>hippie-expand-try-functions-list</code>. This is
+   NICE and inspiring!).
 </p>
 
 
@@ -329,21 +332,32 @@ skeleton-complete that you might want to know.
 <ol>
 <li>Besides the current buffer, all <b>visible</b> buffers are searched for matches.
 
+<p>
+   Edit: think <code>try-expand-dabbrev-visible</code>.
+</p>
 </li>
 <li>If no matches are found in all the visible buffers, the buried
    buffers are dug up for skeleton bones (but don't sweat, it will
    stop as soon as the first dark buffer is finished where any match
    is found).
 
+<p>
+   Edit: think <code>try-expand-dabbrev-all-buffers</code>.
+</p>
 </li>
 <li>Because of 1) and the fact that <code>ecomplete.el</code> is used, you can use
    skeleton-complete in the minibuffer. I only made key binding for
    the second flavor, <code>M-g x</code>, you probably need use it too, because
-   <code>M-s &lt;return&gt;</code> is not usable in the minibuffer.
+   <code>M-s &lt;return&gt;</code> is often not usable in the minibuffer.
 
 <p>
    I mean, you won't get punished with <code>Command attempted to use    minibuffer while in minibuffer</code> for digging skeletons in the lowest
    place of all, the minibuffer.
+</p>
+<p>
+   Edit: This is also the reason why I have not yet replaced
+   ecomplete.el with anything.el to choose from multiple matches: the
+   latter can't be used in the minibuffer without the error above.
 </p>
 </li>
 <li>If the first character of a 2nd flavor skeleton is a word
@@ -365,7 +379,7 @@ skeleton-complete that you might want to know.
 <li>By default, the 2nd flavor will find its skeleton by searching
    backward for the first non-blank character. You can override this by
    activating the region over your desired skeleton and include white
-   space into it.
+   spaces into it.
 
 </li>
 <li>Use interesting bones as much as possible. 
