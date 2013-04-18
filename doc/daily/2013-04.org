@@ -1,1 +1,21 @@
-* Work on uboot logo (KUNLUN-1239)
+* Mon: Work on uboot logo (KUNLUN-1239)
+
+* Tue: Work on uboot source code
+
+  Consider merge the ff source file with dkb source file, and there
+  are a lot of conflicts which need be resolved.
+
+* Wed: sync APSE bsp source code
+
+* Wed: continue to work on uboot source code
+
+  Find out a way to add a common macro to all _ff products (CONFIG_BPE_FF).
+
+  The source code of both 1x88 and 98x board files are aligned with
+  APSE using the dkb board file.  
+
+* Thu: debug after the board file merge
+
+** TODO Fix the boot mode order
+** TODO Fix the uart log
+  

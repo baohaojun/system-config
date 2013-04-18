@@ -58,7 +58,11 @@ if test -n "$(git symbolic-ref HEAD)" -a -d .git/patches/$(basename $(git symbol
     gq push -a
     gq rebase $(repo-remote)/$(repo-branch)
 else
-    git rebase $(repo-remote)/$(repo-branch)
+    git rebase $(repo-remote)/$(repo-branch) ||
+    if ! repo-changes\? | grep -q .; then
+        git reset --hard
+        git rebase $(repo-remote)/$(repo-branch)
+    fi
 fi
 #{%/sh%}
 ' || true

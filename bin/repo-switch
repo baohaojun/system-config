@@ -6,7 +6,7 @@ repo_init_branch=
 repo_init_manifest=
 repo_url=
 
-TEMP=$(getopt -o u:b:m:r:ip -n $(basename $0) -- "$@")
+TEMP=$(getopt -o esu:b:m:r:ip --long repo-url: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 interactive=0
 while true; do
@@ -23,7 +23,7 @@ while true; do
             repo_init_manifest=$2
             shift 2
             ;;
-        -r)
+        -r|--repo-url)
             repo_url=$2
             shift 2
             ;;
@@ -33,6 +33,20 @@ while true; do
             ;;
         -p)
             cat $(lookup_file .repo/repo-switch)
+            exit 0
+            ;;
+        -e)
+            edit .repo/repo-switch
+            exit 0
+            ;;
+        -s)
+            output="$(select-output-line bash -c 'for x in .repo/repo-switch*; do
+                                                      cat $x 2>/dev/null
+                                                      echo
+                                                  done|uniq-even-non-ajacent')"
+            if test "$output"; then
+                echo "$output" > .repo/repo-switch
+            fi
             exit 0
             ;;
         --)
@@ -135,12 +149,22 @@ if test -z "$repo_init_manifest" || ! [[ "$repo_init_manifest" =~ \.xml$ ]]; the
     fi
 fi
 
+if test -z "$repo_url"; then
+    if test $interactive = 1; then
+        echo The repo url to use:
+        repo_url=$(select-output-line bash -c "(echo $old_repo_url; cat ~/.repo_urls 2>/dev/null)|uniq-even-non-ajacent")
+    fi
+fi
+
 (echo $repo_init_url; cat ~/.repoconfig/repo_init_urls 2>/dev/null) | uniq-even-non-ajacent > ~/.repoconfig/repo_init_urls.bak
 mv ~/.repoconfig/repo_init_urls.bak ~/.repoconfig/repo_init_urls
 
-if test -z "$repo_url"; then
-    repo_url=${old_repo_url:-https://gerrit.googlesource.com/git-repo}
-fi
+
+(
+    echo $repo_url;
+    cat ~/.repo_urls 2>/dev/null
+) |uniq-even-non-ajacent > ~/.repo_urls.$$
+mv ~/.repo_urls.$$ ~/.repo_urls
 
 cd "$repodir"
 test -d manifests
@@ -182,7 +206,21 @@ fi
         printf ' %q' "$x";
     done
     printf ')'
-) > repo-switch
+) > $(
+    if test -e repo-switch; then
+        seq=$(
+            if test -e .repo-switch.seq; then
+                cat .repo-switch.seq;
+            else
+                echo -1
+            fi
+        )
+        ((seq++, seq %= 10))
+        echo $seq > .repo-switch.seq
+        cp repo-switch repo-switch.$seq
+    fi
+    echo repo-switch
+)
 
 if ! diff -q manifest.xml manifest.xml.old; then
     touch .need_rebuild

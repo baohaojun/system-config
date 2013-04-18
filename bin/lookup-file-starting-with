@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) file start"
+fi
+
+start=$(readlink -m "$2")
+file=$1
+
+while true; do
+    if test -e "$start/$file"; then
+        echo "$start/$file"
+        exit 0
+    fi
+
+    start=$(dirname "$start")
+    if test "$start" = /; then
+        exit -1
+    fi
+done

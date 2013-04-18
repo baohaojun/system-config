@@ -133,24 +133,47 @@ It can be used to download Xcode using multithread download.
   CLOSED: [2013-03-14 Thu 19:15]
   - CLOSING NOTE [2013-03-14 Thu 19:15] \\
     Must change is system keyboard setting the Caps Lock behavior to No Action.
-* TODO How to lock Mac
+* DONE How to lock Mac
+  CLOSED: [2013-04-18 Thu 17:12]
+  - CLOSING NOTE [2013-04-18 Thu 17:12] \\
+    Control + Shift + Power.
+
 * TODO How to start programs at Mac login
 * DONE How to use flock on Mac
   CLOSED: [2013-03-18 Mon 17:15]
   - CLOSING NOTE [2013-03-18 Mon 17:15] \\
     gcc -D HAVE_MEMPCPY -D HAVE_USLEEP -D PACKAGE_STRING='"flock"' -I ../include/ flock.c ../lib/strutils.c
 
-* TODO Mac command line notify
-* TODO Mac work on keyremap and keyhack
-* TODO Announce beagrep for Mac
-* TODO dvp on Mac
-* TODO fix luit on Mac
-* TODO open(1) in Mac
+* DONE Mac command line notify
+  CLOSED: [2013-04-18 Thu 17:11]
+* DONE Mac work on keyremap and keyhack
+  CLOSED: [2013-04-18 Thu 17:11]
+* DONE Announce beagrep for Mac
+  CLOSED: [2013-04-18 Thu 17:07]
+  - CLOSING NOTE [2013-04-18 Thu 17:07] \\
+    You need use macports to install mono and gtk-sharp (I think, I'm
+    not sure anymore, and I'm under Linux again).
+* DONE dvp on Mac
+  CLOSED: [2013-04-18 Thu 17:06]
+  - CLOSING NOTE [2013-04-18 Thu 17:06] \\
+    http://github.com/baohaojun/windows-config/raw/master/doc/keyremap4macbook-dvp.xml
+    
+    Use this file as the private.xml for keyremap4macbook
+
+* DONE fix luit on Mac
+  CLOSED: [2013-04-18 Thu 17:05]
+https://github.com/baohaojun/luit
+* DONE open(1) in Mac
+  CLOSED: [2013-04-18 Thu 17:05]
 
 =open -a /Applications/Emacs.app/= will open Emacs or bring the
 already Emacs.app to foreground if it is already running.
 
 =open -a /Applications/Firefox.app/ .= will open the current dir in
 firefox.
-* TODO write a doc：翅膀变硬了
+* DONE write a doc：翅膀变硬了
+  CLOSED: [2013-04-18 Thu 16:55]
 * Bash下的if || &&是没有优先级的，怀疑的时候就用括号给括起来。
+* TODO Get skeleton-complete into a package manager
+** TODO make it into a minor mode
+** TODO add some doc string, use check doc

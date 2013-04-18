@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if test $# != 0; then
+    cat
+    exit
+fi
+
+beagrep_dbdir=$(lookup-file-starting-with .beagrep ~/.cache/for-code-reading/$PWD)
+export FILELIST=$(dirname "$beagrep_dbdir")/files.list
+
+
+if test ! "$beagrep_dbdir" -o ! "$FILELIST"; then
+   cat
+   exit
+fi
+
+cd "$(dirname "${beagrep_dbdir#*for-code-reading}")"
+if test -e "$FILELIST"; then
+    perl -ne '
+    BEGIN{
+        open($fl, "<", $ENV{FILELIST}) or die "No file list found";
+        @files = <$fl>;
+        map {chomp; $file_map{$_} = 1;} @files;
+        $pwd_strlen = length($ENV{PWD});
+    }
+    use English;
+    if (m/:\d/) {
+        $file = $PREMATCH;
+        if ($file =~ m!^/!) {
+            $file = substr($file, $pwd_strlen + 1);
+        }
+        if ($file_map{$file}) {
+            print;
+        }
+    }        
+'
+fi
+
+
