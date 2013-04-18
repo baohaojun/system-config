@@ -2656,7 +2656,7 @@ using ctags-exuberant"
     (when missing-file-name
       (if (nth 1 missing-file-name)
 	  (setq missing-file-name
-		(general-display-matches missing-file-name))
+		(skeleton-general-display-matches missing-file-name))
 	(setq missing-file-name (car missing-file-name)))
       (when (and (not (file-remote-p missing-file-name))
 		 (file-remote-p default-directory))

@@ -12,4 +12,4 @@
         time make -j8 $1
     fi	  
     time make -j8 -k
-) 2>&1 | tee ~/1.txt 
+) 2>&1 | tee ~/.logs/$(basename $0).txt 

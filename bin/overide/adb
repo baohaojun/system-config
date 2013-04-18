@@ -26,8 +26,16 @@ function adb() {
     fi
 
     if test "$1" = -r; then
-        $the_prog root || true
         $the_prog wait-for-device
+
+        if $the_prog root 2>&1 | grep 'restarting adbd as root'; then
+            while true; do
+                $the_prog wait-for-device
+                if adb shell id | grep uid=0 -q; then
+                    break
+                fi
+            done
+        fi
         shift
     fi
 
