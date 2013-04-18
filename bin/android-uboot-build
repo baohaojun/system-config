@@ -1,6 +1,8 @@
 #!/bin/bash
 
 (
+    echo '# -*- mode: compilation -*-'
+
     cd $(lookup_file .repo/..);
     . build/envsetup.sh;
     cd boot;

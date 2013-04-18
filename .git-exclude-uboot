@@ -2,3 +2,4 @@ arch/arm/include/asm/arch-pxa978/uboot_cmdline.h
 arch/arm/cpu/armv7/pxa978/asm-offsets.s
 tools/mbrgen
 arch/arm/cpu/armv7/pxa988/asm-offsets.s
+tools/extract_kernel

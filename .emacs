@@ -2718,6 +2718,7 @@ using ctags-exuberant"
 
 (global-set-key [(meta s) ?h ?h] 'source-code-help)
 (global-set-key [(control |)] 'toggle-input-method)
+(eval-after-load "ediff-init" (add-hook 'ediff-quit-hook (lambda () (shell-command "find-or-exec emacs"))))
       
 (condition-case nil
     (server-start)
