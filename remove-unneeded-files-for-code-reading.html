@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="在阅读源代码时删掉所有非必要文件的方法"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-03-05 13:27:50 CST"/>
+<meta name="generated" content="2013-04-18T19:11+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -43,6 +43,30 @@
         }
     </script>
 <script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -182,10 +206,10 @@ $ grep ' 684]' ~/1.txt|head -n 5
 </p>
 <p>
 <b>后记</b> 文件的atime有时候不知为何不会发生变化。我曾经看见一个文件，不管
-我怎么cat它，它的atime一直不变。而它所在的文件系统变没有使用noatime选项
+我怎么cat它，它的atime一直不变。而它所在的文件系统并没有使用noatime选项
 来mount。修正的办法就是把它touch一下，stat可以发现其a/m/c三个时间戳都是
-一样的，再cat一下，用stat就会发现其atime发生了变化。所以前面指出的第一
-步是必须的。有人能告诉我为什么会这样吗？
+一样的，再cat一下，再stat就会发现其atime发生了变化。所以前面指出的第一
+步是必须的。有人能告诉我这是为什么呢吗？
 </p>
 <p>
 <b>后记2</b> 把所有atime没发生变化（没变得比标记文件mark新）的文件列出来的命
