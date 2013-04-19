@@ -262,7 +262,7 @@ words closer to the (point) appear first"
                 (if (< (point) current-pos)
                     (setq strlist-before (cons substr strlist-before))
                   (setq strlist-after (cons substr strlist-after)))))
-          (end-of-buffer))))
+          (goto-char (point-max)))))
     (setq strlist-before  (delete-dups strlist-before)
           strlist-after (delete-dups (nreverse strlist-after)))
     (while (and strlist-before strlist-after)
