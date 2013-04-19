@@ -71,51 +71,22 @@ we will get the pattern \"naoehu[)+{\""
   (interactive)
   (let (old-regexp new-regexp search-start search-end)
     (if mark-active
-        (setq old-regexp (buffer-substring-no-properties (region-beginning) (region-end))
-              search-start (region-beginning)
-              search-end (region-end))
-      (let* ((back-limit (line-beginning-position)))
-        (push-mark (point))
-        (activate-mark)
-
-        (while (and (looking-back "\\s ") (< back-limit (point)))
-          (backward-char))
-
-        (while (and (not (looking-back "\\s ")) (< back-limit (point)))
-          (backward-char))
         (setq search-start (region-beginning)
-              search-end (region-end)
-              old-regexp (buffer-substring-no-properties search-start search-end))))
+              search-end (region-end))
+      (save-excursion
+        (let* ((back-limit (line-beginning-position))
+               (cp (point)))
+          (while (and (looking-back "\\s ") (< back-limit (point)))
+            (backward-char))
+          (while (and (not (looking-back "\\s ")) (< back-limit (point)))
+            (backward-char))
+          (setq search-start (point)
+                search-end cp))))
+    (setq old-regexp (buffer-substring-no-properties search-start search-end))
+    (setq new-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list old-regexp) ".*?"))
+    (skeleton-regexp-display-abbrev new-regexp search-start search-end)))
 
-    (let* ((re-list (string-to-list old-regexp))
-           (after-first-char nil)
-           (is-first-char t)
-           (meta-chars (string-to-list "^$*?[]+"))
-           new-re-list
-           char)
-
-      (while re-list
-        (setq char (car re-list)
-              re-list (cdr re-list))
-
-        (if after-first-char
-            (setq new-re-list (append (nreverse (string-to-list ".*?")) new-re-list))
-          (setq after-first-char t))
-
-        (if (eq char ?.)
-            (if is-first-char
-                (setq new-re-list (append (nreverse (string-to-list "\\.")) new-re-list))
-              (setq new-re-list (append (nreverse (string-to-list "\\W")) new-re-list)))
-          (when (member char meta-chars)
-            (setq new-re-list (cons ?\\ new-re-list)))
-          (setq new-re-list (cons char new-re-list)))
-
-        (setq is-first-char nil))
-
-      (setq new-regexp (apply 'string (nreverse new-re-list))))
-    (skeleton-regexp-display-abbrev new-regexp)))
-
-(defun skeleton-regexp-display-abbrev (regexp)
+(defun skeleton-regexp-display-abbrev (regexp &optional rb re)
   "Display the possible abbrevs for the regexp."
   (interactive
    (progn
@@ -127,9 +98,9 @@ we will get the pattern \"naoehu[)+{\""
   (let ((match (when (not (zerop (length regexp)))
                  (skeleton-regexp-display-matches regexp))))
     (when match
-      (when (and transient-mark-mode mark-active
-                 (/= (point) (mark)))
-        (delete-region (point) (mark)))
+      (if (region-active-p)
+          (delete-region (region-beginning) (region-end))
+        (when (and rb re) (delete-region rb re)))
       (insert match))))
 
 (defmacro skeleton-max-mini-lines ()
