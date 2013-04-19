@@ -211,7 +211,7 @@ we will get the pattern \"naoehu[)+{\""
         (current-pos (point))
         (re (replace-regexp-in-string "\\*\\*" "\\(\\w\\|_\\)*" re t t)))
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (while (re-search-forward re nil t)
         (let ((mb (match-beginning 0))
               (me (match-end 0)))
@@ -283,7 +283,7 @@ words closer to the (point) appear first"
         (strlist nil)
         (current-pos (point)))
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (while (not (eobp))
         (if (setq endpt (re-search-forward "\\(\\_<.*?\\_>\\)" nil t))
             (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
