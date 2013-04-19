@@ -18,4 +18,4 @@
 
 ** TODO Fix the boot mode order
 ** TODO Fix the uart log
-  
+* Fri: Fix boot fail error

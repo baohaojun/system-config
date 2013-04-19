@@ -4,4 +4,4 @@ EMACS=emacs
 if type emacs-snapshot-gtk; then
     EMACS=emacs-snapshot-gtk
 fi
-GTK_IM_MODULE= XMODIFIERS= XIM= $EMACS&
+GTK_IM_MODULE= XMODIFIERS= XIM= $EMACS -fs&

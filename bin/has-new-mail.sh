@@ -44,7 +44,6 @@ function got-mail() {
         hour=$(date +%_H)
         for x in */new */cur */.nnmaildir/marks/read; do
             if not_intesting_now "$x"; then
-                echo not interesting: "$x"
 	        continue
             fi
             if test $x -nt $result; then

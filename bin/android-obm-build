@@ -1,0 +1,14 @@
+#!/bin/bash
+
+(
+    echo '# -*- mode: compilation -*-'
+
+    cd $(lookup_file .repo/..);
+    . build/envsetup.sh;
+    cd boot;
+    BUILD_UBOOT_OBM=true;
+    set -x;
+    . ../.buildenv.sh;
+    cd obm
+    ./make_GUI_release.sh 
+) 2>&1 | tee ~/.logs/$(basename $0).txt 

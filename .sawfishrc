@@ -4,7 +4,26 @@
 (load-file "~/.sawfish/bhj-draw-wininfo.jl")
 (require 'bhj-draw-wininfo)
 
+(setq emacs-style-window-class-re "emacs|firefox|konsole")
 (setq s-h-keymap (make-keymap))
+(setq global-remap-alist
+      '(("C-a" . "Home")
+	("C-g" . "ESC")
+	("C-e" . "End")
+	("C-b" . "Left")
+	("C-f" . "Right")
+	("M-b" . "C-Left")
+	("M-f" . "C-Right")
+	("C-s" . "C-g")
+	("C-r" . "C-S-g")
+	("C-k" . ("S-End" "Del"))
+	("M-BS" . "C-BS")
+	("C-p" . "Up")
+	("C-n" . "Down")
+	("C-q" . "C-q")))
+
+
+
 (bind-keys global-keymap "Super-h" s-h-keymap)
 
 (load-file "~/.sawfish/iswitch-window.jl")
@@ -24,7 +43,7 @@
 								       ";\n\nand Window class is: " 
 								       (window-class (input-focus))))))
 
-(bind-keys window-keymap "Super-q" 
+(bind-keys global-keymap "Super-q" 
 	     (lambda ()
 	       (let ((window (input-focus)))
 		 (unless (equal (window-class window) "Xfce4-panel")
@@ -76,6 +95,51 @@
 
 (bind-keys global-keymap "C-S-XF86PowerOff" (lambda () (system "lock-screen&")))
 (bind-keys global-keymap "C-S-DEL" (lambda () (system "lock-screen&")))
+
+
+(defun do-global-remap()
+  (let ((c-q-map (make-keymap))
+	(esc-map (make-keymap)))
+    (mapc (lambda (key-map-1)
+	    (let ((from (car key-map-1))
+		  (to (cdr key-map-1)))
+	      (when (string-match "^M-" from 0 nil)
+		(bind-keys esc-map (substring from 2) (lambda () (synthesize-event to (input-focus)))))
+	      (bind-keys global-keymap from (lambda () 
+					      (if (stringp to)
+						  (synthesize-event to (input-focus))
+						(mapc (lambda (key1)
+							(synthesize-event key1 (input-focus)))
+						      to))))
+	      (bind-keys c-q-map from (lambda () (synthesize-event from (input-focus))))))
+	  global-remap-alist)
+    (bind-keys global-keymap "ESC" esc-map)
+    (bind-keys global-keymap "C-q" c-q-map)))
+
+
+(defun undo-global-remap()
+  (mapc (lambda (key-map-1)
+	  (let ((from (car key-map-1))
+		(to (cdr key-map-1)))
+	    (unbind-keys global-keymap from)))
+	global-remap-alist)
+  (unbind-keys global-keymap "C-q")
+  (unbind-keys global-keymap "ESC"))
+
+;; (let ((esc-map (make-keymap)))
+;;   (bind-keys global-keymap "ESC" esc-map)
+;;   (bind-keys esc-map "b" (lambda () (synthesize-event "C-Left" (input-focus)))))
+
+(progn
+  (setq focus-in-hook nil)
+  (add-hook 'focus-in-hook
+	  (lambda (w focus_mode)
+	    (if (string-match emacs-style-window-class-re (window-class w) 0 t)
+		(undo-global-remap)
+	      (do-global-remap)))))
+
+(bind-keys s-h-keymap "m" (lambda () (undo-global-remap)))
+;; to clear it: (setq visibility-notify-hook nil)
 
 (bind-keys s-h-keymap "Super-h" (lambda () (synthesize-event "Super-h" (input-focus))))
 (bind-keys global-keymap "Super-\\" (lambda () (synthesize-event "C-|" (input-focus))))

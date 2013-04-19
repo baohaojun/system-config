@@ -164,3 +164,4 @@ init_fnc_t *init_sequence[] = {
   CLOSED: [2013-03-19 Tue 15:23]
 * TODO refactor uboot source code
 * TODO Work on tickets of xiaolin
+* TODO Fix uboot compile warnings
