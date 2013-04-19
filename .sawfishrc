@@ -43,7 +43,7 @@
 								       ";\n\nand Window class is: " 
 								       (window-class (input-focus))))))
 
-(bind-keys global-keymap "Super-q" 
+(bind-keys window-keymap "Super-q" 
 	     (lambda ()
 	       (let ((window (input-focus)))
 		 (unless (equal (window-class window) "Xfce4-panel")
@@ -131,7 +131,6 @@
 ;;   (bind-keys esc-map "b" (lambda () (synthesize-event "C-Left" (input-focus)))))
 
 (progn
-  (setq focus-in-hook nil)
   (add-hook 'focus-in-hook
 	  (lambda (w focus_mode)
 	    (if (string-match emacs-style-window-class-re (window-class w) 0 t)
