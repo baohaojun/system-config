@@ -35,8 +35,6 @@
 
 (require 'ecomplete)
 
-(global-set-key [(meta g)(return)] 'skeleton-display-abbrev)
-
 (defun skeleton-display-abbrev ()
   "Display the next possible abbrev for the text before point."
   (interactive)
@@ -53,9 +51,6 @@
         (insert match)))))
 
 (defvar skeleton-regexp-completion-history nil)
-
-(global-set-key [(meta s) (return)] 'skeleton-easy-regexp-display-abbrev)
-(global-set-key [(meta g) ?x] 'skeleton-easy-regexp-display-abbrev)
 
 (defun skeleton-easy-regexp-display-abbrev ()
   "Simplify writing the regexp. If we are looking back at, for
@@ -330,6 +325,31 @@ words closer to the (point) appear first"
 			  (setq strlist (delete-dups (append (skeleton-get-matches-order skeleton t) strlist))))))
 		    (delete buf-old (buffer-list)))
 	    strlist))))))
+
+(defgroup skeleton-complete nil
+  "Dynamically expand expressions by provided skeleton (flex matching)."
+  :group 'abbrev)
+
+(defvar skeleton-complete-mode-map (make-sparse-keymap)
+  "skeleton-complete mode map.")
+(define-key skeleton-complete-mode-map (kbd "M-g <return>") 'skeleton-display-abbrev)
+(define-key skeleton-complete-mode-map (kbd "M-s <return>")'skeleton-easy-regexp-display-abbrev)
+(define-key skeleton-complete-mode-map (kbd "M-g x") 'skeleton-easy-regexp-display-abbrev)
+
+(define-minor-mode skeleton-complete-mode
+  "Toggle the `skeleton-complete-mode' minor mode."
+  :lighter " SkelC"
+  :keymap skeleton-complete-mode-map
+  :group 'skeleton-complete)
+
+(define-globalized-minor-mode skeleton-complete-global-mode
+  skeleton-complete-mode
+  turn-on-skeleton-complete-mode)
+
+(defun turn-on-skeleton-complete-mode ()
+  "Turn on `skeleton-complete-mode'"
+  (interactive)
+  (skeleton-complete-mode 1))
 
 (provide 'skeleton-complete)
 
