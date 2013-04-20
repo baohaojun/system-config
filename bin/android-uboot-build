@@ -10,7 +10,7 @@
     set -x;
     . ../.buildenv.sh;
     cd uboot;
-    if test $# = 1; then
+    if test $# = 1 && yes-or-no-p "Do configuration $1?"; then
         time make -j8 $1
     fi	  
     time make -j8 -k

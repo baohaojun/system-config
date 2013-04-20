@@ -33,13 +33,12 @@
 	      (expand-file-name "~/src/org-mode/lisp")
 	      (expand-file-name "~/src/org-mode/contrib/lisp"))
 	     load-path))
-(require 'package)
-(add-to-list 'package-archives
-	     '("marmalade" . "http://marmalade-repo.org/packages/"))
-(package-initialize)
 
-(require 'mmm-mode)
-(setq stack-trace-on-error t)
+(when (> emacs-major-version 23)
+  (require 'package)
+  (add-to-list 'package-archives
+	       '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (package-initialize))
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
   (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
@@ -70,23 +69,8 @@
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 (require 'weblogger)
 
-(require 'csharp-mode)
+(autoload 'csharp-mode "csharp-mode")
 (require 'w3m)
-(require 'tramp)
-(require 'session)
-(add-hook 'after-init-hook 'session-initialize)
-(add-hook 'sh-mode-hook (lambda () (setq indent-tabs-mode nil)))
-(require 'ibuffer)
-(require 'browse-kill-ring)
-(require 'ido)
-(require 'thumbs)
-(require 'keydef)
-(require 'grep-buffers)
-(require 'htmlize)
-
-(setq-default abbrev-mode t)                                                                   
-(read-abbrev-file "~/.abbrev_defs")
-(setq save-abbrevs t)   
 
 (grep-compute-defaults)
 
@@ -137,10 +121,6 @@
       ;; Now replace the pattern with the default tag.
       (replace-match tag-default t t grep-default 1))))
 
-            
-
-
-
 ;;;; You need this if you decide to use gnuclient
 
 (autoload 'sdim-use-package "sdim" "Shadow dance input method")
@@ -149,13 +129,8 @@
 
 (setq default-input-method "sdim")
 
-
-(let ((x "~/.emacs_d/UnicodeData.txt"))
-  (when (file-exists-p x)
-    (setq describe-char-unicodedata-file x)))
-
-
 (global-set-key [(meta ?/)] 'hippie-expand)
+(setq describe-char-unicodedata-file "~/.emacs_d/UnicodeData.txt")
 
 (defun bhj-c-beginning-of-defun (&optional arg)
   (interactive "^p")
@@ -290,43 +265,15 @@
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-
+(ido-mode 'buffers)
 (global-set-key [(control c)(k)] 'browse-kill-ring)
 (browse-kill-ring-default-keybindings)
-
-;;ido.el
-
-(ido-mode t)
 
 ;; enable visual feedback on selections
 (setq-default transient-mark-mode t)
 
 ;;popup the manual page, try:)
 (global-set-key[(f3)](lambda()(interactive)(woman (current-word))))
-                                        ;(global-set-key[(f4)](lambda()(interactive)(menu-bar-mode)))
-                                        ;(global-set-key[(f5)](lambda()(interactive)(ecb-minor-mode)))
-
-
-;; thumb
-
-
-(autoload 'dictionary-search "dictionary"
-  "Ask for a word and search it in all dictionaries" t)
-(autoload 'dictionary-match-words "dictionary"
-  "Ask for a word and search all matching words in the dictionaries" t)
-(autoload 'dictionary-lookup-definition "dictionary"
-  "Unconditionally lookup the word at point." t)
-(autoload 'dictionary "dictionary"
-  "Create a new dictionary buffer" t)
-(autoload 'dictionary-mouse-popup-matching-words "dictionary"
-  "Display entries matching the word at the cursor" t)
-(autoload 'dictionary-popup-matching-words "dictionary"
-  "Display entries matching the word at the point" t)
-(autoload 'dictionary-tooltip-mode "dictionary"
-  "Display tooltips for the current word" t)
-(autoload 'global-dictionary-tooltip-mode "dictionary"
-  "Enable/disable dictionary-tooltip-mode for all buffers" t)
-
 (put 'narrow-to-region 'disabled nil)
 
                                     
@@ -758,6 +705,7 @@
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
+ '(major-mode (quote text-mode))
  '(makefile-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(message-dont-reply-to-names (quote (".*haojun.*" "hjbao")))
  '(message-mail-alias-type nil)
@@ -812,6 +760,7 @@
  '(shell-file-name "/bin/bash")
  '(show-paren-mode t nil (paren))
  '(show-paren-style (quote parenthesis))
+ '(skeleton-complete-global-mode t)
  '(split-width-threshold 800)
  '(starttls-use-gnutls t)
  '(text-mode-hook (quote (text-mode-hook-identify)))
@@ -835,7 +784,7 @@
  '(x-select-enable-primary t)
  '(yas/also-auto-indent-first-line t)
  '(yas/prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
- '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets" "~/.emacs_d/yasnippet-snippets")) nil (yasnippet))
+ '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets")) nil (yasnippet))
  '(yas/trigger-key "M-TAB"))
 
 ; '(url-proxy-services (quote (("http" . "127.0.0.1:18080") ("no_proxy" . "^[^.]*$\\|sina.com"))))
@@ -945,8 +894,6 @@
 
 (require 'xcscope)
 
-(require 'moinmoin-mode)
-
 (defun bhj-jdk-help (jdk-word)
   "start jdk help"
   (interactive
@@ -1046,16 +993,10 @@
     (message "will use %s" (car theme)
     (funcall (car theme)))))
 
-(require 'color-theme)
-(condition-case nil
-    (progn
-      (color-theme-initialize)
-      (require 'color-theme-library))
-  (error nil))
-					;(color-theme-arjen)
+
 (condition-case nil
     (random-theme)
-  (error (color-theme-arjen)))
+  (error nil))
 
 ;(w32r-register-hot-key [A-tab])
 
@@ -2348,7 +2289,6 @@ criteria can be provided via the optional match-string argument "
 		  (format "+CLOSED>=\"[%s]\"" 
 			  (shell-command-to-string (concat "today '" match-string "'"))))))
 
-(load "color-theme-leuven")
 (setq org-src-fontify-natively t)
 (setq org-todo-keywords
       '((sequence "TODO" "|" "DONE" "CANCELED")))
@@ -2546,7 +2486,7 @@ we are not interested in those lines that do."
 				    package-name)
 				   html-name)))))
 			 
-(eval-after-load "cc-mode.el"
+(eval-after-load 'java-mode
   (define-key java-mode-map (kbd "M-s d") 'bhj-open-android-doc-on-java-buffer))
 
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)
@@ -2580,7 +2520,7 @@ we are not interested in those lines that do."
 (defun bhj-choose-from-output ()
   (interactive)
   (bhj-choose (split-string (shell-command-to-string (read-from-minibuffer "command to run: ")) nil t)))
-(load "RubikitchAnythingConfiguration.el")
+(load "RubikitchAnythingConfiguration")
 
 (defun replace-double-quotes ()
   (interactive)
