@@ -4,4 +4,11 @@ EMACS=emacs
 if type emacs-snapshot-gtk; then
     EMACS=emacs-snapshot-gtk
 fi
+
+# if test ! ~/.emacs.elc -nt ~/.emacs; then
+#     (
+#       cd ~
+#       emacs -q -l .emacs -batch -f batch-byte-compile .emacs
+#     )
+# fi
 GTK_IM_MODULE= XMODIFIERS= XIM= $EMACS -fs&

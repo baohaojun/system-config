@@ -5,49 +5,49 @@
 (keyboard-translate ?\C-h ?\C-x)
 
 (when (and (file-exists-p "/etc/emacs/site-start.d/00debian-vars.el")
-	   (not (fboundp 'debian-file->string)))
+           (not (fboundp 'debian-file->string)))
   (load "/usr/share/emacs/site-lisp/debian-startup.el")
-  (setq debian-emacs-flavor 
-	(intern
-	 (concat "emacs" (replace-regexp-in-string "\\..*" "" emacs-version))))
+  (setq debian-emacs-flavor
+        (intern
+         (concat "emacs" (replace-regexp-in-string "\\..*" "" emacs-version))))
   (let ((flavor 'emacs))
     (mapc (lambda (file)
-	    (load file))
-	  (directory-files "/etc/emacs/site-start.d/" t ".*.el"))))
+            (load file))
+          (directory-files "/etc/emacs/site-start.d/" t ".*.el"))))
 (when (file-exists-p (expand-file-name "~/.emacs-path.el"))
   (load-file (expand-file-name "~/.emacs-path.el")))
 
 (setq load-path
-      (nconc (list 
-	      "/usr/share/emacs/site-lisp/gnus"
-	      "/opt/local/share/emacs/site-lisp/gnus"
-	      (expand-file-name "~/src/gnus")
-	      (expand-file-name "~/src/bbdb/lisp")
-	      (expand-file-name (concat "~/.emacs_d/" (symbol-name system-type)))
-	      (expand-file-name "~/.emacs_d/lisp")
-	      (expand-file-name "~/.emacs_d/skeleton-complete")
-	      (expand-file-name "~/.emacs_d/org-confluence")
-	      (expand-file-name "~/.emacs_d/org-jira")
-	      (expand-file-name "~/.emacs_d/mo-git-blame")
-	      (expand-file-name "~/.emacs_d/lisp/ext")
-	      (expand-file-name "~/src/org-mode/lisp")
-	      (expand-file-name "~/src/org-mode/contrib/lisp"))
-	     load-path))
+      (nconc (list
+              "/usr/share/emacs/site-lisp/gnus"
+              "/opt/local/share/emacs/site-lisp/gnus"
+              (expand-file-name "~/src/gnus")
+              (expand-file-name "~/src/bbdb/lisp")
+              (expand-file-name (concat "~/.emacs_d/" (symbol-name system-type)))
+              (expand-file-name "~/.emacs_d/lisp")
+              (expand-file-name "~/.emacs_d/skeleton-complete")
+              (expand-file-name "~/.emacs_d/org-confluence")
+              (expand-file-name "~/.emacs_d/org-jira")
+              (expand-file-name "~/.emacs_d/mo-git-blame")
+              (expand-file-name "~/.emacs_d/lisp/ext")
+              (expand-file-name "~/src/org-mode/lisp")
+              (expand-file-name "~/src/org-mode/contrib/lisp"))
+             load-path))
 
 (when (> emacs-major-version 23)
   (require 'package)
   (add-to-list 'package-archives
-	       '("marmalade" . "http://marmalade-repo.org/packages/"))
+               '("marmalade" . "http://marmalade-repo.org/packages/"))
   (package-initialize))
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
   (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
-				"~/../external/emacs-site-lisp/"
-			      "~/external/emacs-site-lisp/")))
-    (let ((default-directory bhj-lisp-load-path)) 
+                                "~/../external/emacs-site-lisp/"
+                              "~/external/emacs-site-lisp/")))
+    (let ((default-directory bhj-lisp-load-path))
       (load-file (concat bhj-lisp-load-path "/subdirs.el")))
     (setq load-path
-	  (cons bhj-lisp-load-path load-path))
+          (cons bhj-lisp-load-path load-path))
     ;;press F2 to get MSDN help
     (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
     (setq locate-command "locateEmacs.sh")))
@@ -74,11 +74,32 @@
 
 (grep-compute-defaults)
 
+(defun cleanup-buffer-safe ()
+  "Perform a bunch of safe operations on the whitespace content of a buffer.
+Does not indent buffer, because it is used for a before-save-hook, and that
+might be bad."
+  (interactive)
+  (save-restriction
+    (widen)
+    (untabify (point-min) (point-max)))
+  (delete-trailing-whitespace)
+  (set-buffer-file-coding-system 'utf-8))
+
+(add-hook 'before-save-hook 'cleanup-buffer-safe)
+
+(defun confirm-risky-remote-edit () 
+  (let ((filename (buffer-file-name)))
+    (when (and (file-remote-p filename) (string-match "/windows-config/" filename))
+      (yes-or-no-p "Are you sure it's alright to save this remote file when you have a local copy?"))))
+
+(add-hook 'before-save-hook 'confirm-risky-remote-edit)
+
+
 (defun grep-shell-quote-argument (argument)
   "Quote ARGUMENT for passing as argument to an inferior shell."
   (cond
    ((and (boundp 'no-grep-quote)
-	 no-grep-quote)
+         no-grep-quote)
     (format "\"%s\"" argument))
    ((equal argument "")
     "\"\"")
@@ -87,37 +108,37 @@
     ;; This should be safe enough even for really weird shells.
     (let ((result "") (start 0) end)
       (while (string-match "[].*[^$\"\\]" argument start)
-	(setq end (match-beginning 0)
-	      result (concat result (substring argument start end)
-			     (let ((char (aref argument end)))
-			       (cond
-				((eq ?$ char)
-				 "\\\\\\")
-				((eq ?\\  char)
-				 "\\\\\\")
-				(t
-				 "\\"))) (substring argument end (1+ end)))
-	      start (1+ end)))
+        (setq end (match-beginning 0)
+              result (concat result (substring argument start end)
+                             (let ((char (aref argument end)))
+                               (cond
+                                ((eq ?$ char)
+                                 "\\\\\\")
+                                ((eq ?\\  char)
+                                 "\\\\\\")
+                                (t
+                                 "\\"))) (substring argument end (1+ end)))
+              start (1+ end)))
       (concat "\"" result (substring argument start) "\"")))))
 
 (defun grep-default-command ()
   "Compute the default grep command for C-u M-x grep to offer."
   (let ((tag-default (grep-shell-quote-argument (grep-tag-default)))
-	;; This a regexp to match single shell arguments.
-	;; Could someone please add comments explaining it?
-	(sh-arg-re "\\(\\(?:\"\\(?:\\\\\"\\|[^\"]\\)+\"\\|'[^']+'\\|\\(?:\\\\.\\|[^\"' \\|><\t\n]\\)\\)+\\)")
+        ;; This a regexp to match single shell arguments.
+        ;; Could someone please add comments explaining it?
+        (sh-arg-re "\\(\\(?:\"\\(?:\\\\\"\\|[^\"]\\)+\"\\|'[^']+'\\|\\(?:\\\\.\\|[^\"' \\|><\t\n]\\)\\)+\\)")
 
-	(grep-default (or (car grep-history) my-grep-command)))
+        (grep-default (or (car grep-history) my-grep-command)))
     ;; In the default command, find the arg that specifies the pattern.
     (when (or (string-match
-	       (concat "[^ ]+\\s +\\(?:-[^ ]+\\s +\\)*"
-		       sh-arg-re "\\(\\s +\\(\\S +\\)\\)?")
-	       grep-default)
-	      ;; If the string is not yet complete.
-	      (string-match "\\(\\)\\'" grep-default))
+               (concat "[^ ]+\\s +\\(?:-[^ ]+\\s +\\)*"
+                       sh-arg-re "\\(\\s +\\(\\S +\\)\\)?")
+               grep-default)
+              ;; If the string is not yet complete.
+              (string-match "\\(\\)\\'" grep-default))
       ;; Maybe we will replace the pattern with the default tag.
       ;; But first, maybe replace the file name pattern.
-      
+
       ;; Now replace the pattern with the default tag.
       (replace-match tag-default t t grep-default 1))))
 
@@ -151,58 +172,58 @@
   (save-excursion
     (let (start end)
       (while (not (looking-at re))
-	(backward-char))
+        (backward-char))
       (while (looking-at re)
-	(backward-char))
+        (backward-char))
       (forward-char)
       (setq start (point))
       (search-forward-regexp re)
       (setq end (point))
       (funcall (or func 'buffer-substring-no-properties) start end))))
-    
+
 (defun java-resolve (id)
-  (interactive 
+  (interactive
    (list (or (and transient-mark-mode mark-active
-		  (/= (point) (mark))
-		  (buffer-substring-no-properties (point) (mark)))
-	     (current-regexp "[.a-z0-9]+"))))
+                  (/= (point) (mark))
+                  (buffer-substring-no-properties (point) (mark)))
+             (current-regexp "[.a-z0-9]+"))))
   (shell-command (format "java-get-imports.pl %s -r %s"
-			 (shell-quote-argument (buffer-file-name))
-			 (shell-quote-argument id))))
+                         (shell-quote-argument (buffer-file-name))
+                         (shell-quote-argument id))))
 
 (defun java-complete-method (id)
   (interactive
    (list (or (and transient-mark-mode mark-active
-		  (/= (point) (mark))
-		  (buffer-substring-no-properties (point) (mark)))
-	     (current-regexp "[.a-z0-9_]+"))))
+                  (/= (point) (mark))
+                  (buffer-substring-no-properties (point) (mark)))
+             (current-regexp "[.a-z0-9_]+"))))
 
   (let (method (remove ""))
     (save-excursion
       (let* ((resolve (shell-command-to-string (format "java-get-imports.pl %s -r %s|tr -d '\\n'"
-						       (shell-quote-argument (buffer-file-name))
-						       (shell-quote-argument id))))
-	     (comp (split-string resolve "\\."))
-	     (comp-last (car (last comp)))
-	     (class (cond
-		     ((string= comp-last "")
-		      (setq remove ".")
-		      (mapconcat 'identity (butlast comp) "."))
-		     ((let ((case-fold-search nil))
-			      (string-match "^[a-z]" comp-last))
-		      (setq remove (concat "." comp-last))
-		      (mapconcat 'identity (butlast comp) "."))
-		     (t resolve)))
-	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class)))
-	     (methods (split-string hierarchy "\n")))
-	(setq method (completing-read "Which method to call? " methods nil t))))
+                                                       (shell-quote-argument (buffer-file-name))
+                                                       (shell-quote-argument id))))
+             (comp (split-string resolve "\\."))
+             (comp-last (car (last comp)))
+             (class (cond
+                     ((string= comp-last "")
+                      (setq remove ".")
+                      (mapconcat 'identity (butlast comp) "."))
+                     ((let ((case-fold-search nil))
+                              (string-match "^[a-z]" comp-last))
+                      (setq remove (concat "." comp-last))
+                      (mapconcat 'identity (butlast comp) "."))
+                     (t resolve)))
+             (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class)))
+             (methods (split-string hierarchy "\n")))
+        (setq method (completing-read "Which method to call? " methods nil t))))
     (goto-char (current-regexp "[.a-z0-9_]+" (lambda (start end) end)))
     (when (not (string-equal remove ""))
       (delete-region (- (point) (length remove)) (point)))
     (insert ".")
     (insert (replace-regexp-in-string ".*\\s \\(.*(.*)\\){" "\\1" method))))
-      
-    
+
+
 
 (global-set-key (kbd "M-g j r") 'java-resolve)
 (global-set-key (kbd "M-g j h") 'java-get-hierarchy)
@@ -224,12 +245,12 @@
                     (c-set-offset 'innamespace 0)
                     (c-set-offset 'substatement-open 0))))
         (list 'c-mode-hook 'c++-mode-hook))
-        
+
 
 (defun linux-c-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
-  (c-mode) 
+  (c-mode)
   (c-set-style "k&r")
   (setq tab-width 8)
   (setq indent-tabs-mode t)
@@ -241,21 +262,21 @@
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
-  (c++-mode) 
+  (c++-mode)
   (c-set-style "k&r")
   (setq tab-width 4)
   (setq indent-tabs-mode nil)
   (setq c-basic-offset 4))
 
 (setq auto-mode-alist (append '((".*/kernel.*\\.[ch]$" . linux-c-mode)
-				("logcat\\.log.*" . fundamental-mode)
-				(".*/Mlog/*" . fundamental-mode)
-				(".*\\.cpp$" . linux-c++-mode)
-				(".*\\.aidl$" . java-mode)
-				(".*\\.mm?$" . objc-mode)
-				("Kbuild*" . makefile-gmake-mode)
-				("makefile*" . makefile-gmake-mode))
-				  auto-mode-alist))
+                                ("logcat\\.log.*" . fundamental-mode)
+                                (".*/Mlog/*" . fundamental-mode)
+                                (".*\\.cpp$" . linux-c++-mode)
+                                (".*\\.aidl$" . java-mode)
+                                (".*\\.mm?$" . objc-mode)
+                                ("Kbuild*" . makefile-gmake-mode)
+                                ("makefile*" . makefile-gmake-mode))
+                                  auto-mode-alist))
 
 (setq frame-title-format "emacs@%b")
 (auto-image-file-mode)
@@ -276,7 +297,7 @@
 (global-set-key[(f3)](lambda()(interactive)(woman (current-word))))
 (put 'narrow-to-region 'disabled nil)
 
-                                    
+
 
 (require 'js)
 
@@ -285,8 +306,8 @@
 
 (setq org2blog/wp-blog-alist
       '(("wordpress"
-	 :url "http://baohaojun.wordpress.com/xmlrpc.php"
-	 :username "baohaojun")))
+         :url "http://baohaojun.wordpress.com/xmlrpc.php"
+         :username "baohaojun")))
 
 (define-key js-mode-map [(meta .)] 'grep-gtags)
 (define-key global-map [(meta control \,)] 'cscope-pop-mark)
@@ -307,9 +328,9 @@
 
 (global-set-key [(control meta shift g)]
                 (lambda()(interactive)
-                  (let 
-                      ((search-string (current-word))) 
-                    (progn     
+                  (let
+                      ((search-string (current-word)))
+                    (progn
                       (setq search-string
                             (read-string (format "search google with [%s]: " search-string) nil nil search-string))
                       (call-process "bash" nil nil nil "googleemacs.sh" search-string)
@@ -317,9 +338,9 @@
 
 (defun wiki-local-bhj ()
   (interactive)
-  (let 
-      ((search-string (current-word))) 
-    (progn     
+  (let
+      ((search-string (current-word)))
+    (progn
       (setq search-string
             (read-string (format "search local wiki with [%s]: " search-string) nil nil search-string))
       (call-process "bash" nil nil nil "local-wiki.sh" search-string)
@@ -338,7 +359,7 @@
   (interactive)
   (let ((prev-buffer (other-buffer (current-buffer) t)))
 
-    (insert 
+    (insert
      (if (buffer-file-name prev-buffer)
          (replace-regexp-in-string ".*/" "" (buffer-file-name prev-buffer))
        (buffer-name prev-buffer)))))
@@ -354,9 +375,9 @@
 (defun bhj-insert-pwdu ()
   (interactive)
   (insert "'")
-  (insert 
+  (insert
    (replace-regexp-in-string
-    "^/.?scp:.*?@.*?:" "" 
+    "^/.?scp:.*?@.*?:" ""
     (expand-file-name default-directory)))
   (insert "'"))
 
@@ -373,12 +394,12 @@
   (interactive)
   (beginning-of-line)
   (let ((min (progn
-	       (search-forward "\"" nil t)
-	       (point)))
-	(max (progn
-	       (search-forward "\"" nil t)
-	       (backward-char)
-	       (point))))
+               (search-forward "\"" nil t)
+               (point)))
+        (max (progn
+               (search-forward "\"" nil t)
+               (backward-char)
+               (point))))
     (undo-boundary)
     (when (< min max)
       (delete-region min max))))
@@ -406,9 +427,9 @@
 (defun grep-bhj-dir ()
   (interactive)
   (let ((default-directory
-	  (if (boundp 'bhj-grep-dir)
-	      bhj-grep-dir
-	    default-directory)))
+          (if (boundp 'bhj-grep-dir)
+              bhj-grep-dir
+            default-directory)))
     (call-interactively 'grep)))
 
 (keydef "M-g r" (progn
@@ -421,13 +442,13 @@
 (defvar grep-find-file-history nil)
 
 (defvar grep-rgrep-history nil)
-    
+
 (global-set-key [(meta n)] 'next-error)
 (global-set-key [(meta p)] 'previous-error)
 
 (setq my-grep-command "beagrep -e pat") ;; should not put it into custom, the custom will be read every time and so the `(let ((grep-command ..' scheme will fail
 
-(global-set-key [(meta s) ?r] 
+(global-set-key [(meta s) ?r]
                 (lambda ()
                   (interactive)
                   (let ((grep-history grep-rgrep-history)
@@ -443,26 +464,26 @@
 (defun grep-imenu ()
   (interactive)
   (let ((grep-gtags-history grep-imenu-history)
-	(grep-buffer-name "*grep-imenu*"))
+        (grep-buffer-name "*grep-imenu*"))
     (grep-gtags 'grep-imenu-history "grep-imenu -i -e pat")))
 
 (defun set-gtags-start-file ()
   (let ((file (my-buffer-file-name (current-buffer))))
     (if (file-remote-p file)
-	(let ((process-environment tramp-remote-process-environment))
-	  (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
-	  (setq tramp-remote-process-environment process-environment))
+        (let ((process-environment tramp-remote-process-environment))
+          (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
+          (setq tramp-remote-process-environment process-environment))
       (setenv "GTAGS_START_FILE" file))))
 
 (defun grep-gtags (&optional history-var def-grep-command)
   (interactive)
   (let ((grep-history grep-gtags-history)
-	(no-grep-quote t)
-	(compilation-buffer-name-function (lambda (_ign) (if (boundp 'grep-buffer-name)
-							     grep-buffer-name
-							   "*grep-gtags*")))
-	(my-grep-command (or def-grep-command "grep-gtags -e pat"))
-	(current-prefix-arg 4))
+        (no-grep-quote t)
+        (compilation-buffer-name-function (lambda (_ign) (if (boundp 'grep-buffer-name)
+                                                             grep-buffer-name
+                                                           "*grep-gtags*")))
+        (my-grep-command (or def-grep-command "grep-gtags -e pat"))
+        (current-prefix-arg 4))
     (nodup-ring-insert cscope-marker-ring (point-marker))
     (set-gtags-start-file)
     (call-interactively 'grep-bhj-dir)
@@ -472,16 +493,16 @@
   (interactive)
   (set-gtags-start-file)
   (let ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
-	(method-name (or (and transient-mark-mode mark-active
-			      (/= (point) (mark))
-			      (buffer-substring-no-properties (point) (mark)))
-			 (get-the-tag-around-me 'tag-name-from-tag-line 0)))
-	(compilation-buffer-name-function (lambda (_ign) "*java-get-hierarchy*")))
-    (compile (format "java-get-hierarchy.pl %s %s" 
-		     class-name 
-		     (if current-prefix-arg
-			 "-v"
-		       (concat "-m " method-name))))))
+        (method-name (or (and transient-mark-mode mark-active
+                              (/= (point) (mark))
+                              (buffer-substring-no-properties (point) (mark)))
+                         (get-the-tag-around-me 'tag-name-from-tag-line 0)))
+        (compilation-buffer-name-function (lambda (_ign) "*java-get-hierarchy*")))
+    (compile (format "java-get-hierarchy.pl %s %s"
+                     class-name
+                     (if current-prefix-arg
+                         "-v"
+                       (concat "-m " method-name))))))
 
 (defun java-get-override ()
   (interactive)
@@ -489,16 +510,16 @@
   (let (method)
     (save-excursion
       (let* ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
-	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class-name)))
-	     (methods (split-string hierarchy "\n")))
-	(setq method (completing-read "Which method to override? " methods nil t))))
+             (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class-name)))
+             (methods (split-string hierarchy "\n")))
+        (setq method (completing-read "Which method to override? " methods nil t))))
     (insert "@Override\n")
     (insert (replace-regexp-in-string  "\\(,\\|)\\)" "\\1 " method))))
 
 (defun grep-tag-default-path ()
   (or (and transient-mark-mode mark-active
-	   (/= (point) (mark))
-	   (buffer-substring-no-properties (point) (mark)))
+           (/= (point) (mark))
+           (buffer-substring-no-properties (point) (mark)))
       (save-excursion
         (let* ((re "[^-a-zA-Z0-9._/]")
                (p1 (progn (search-backward-regexp re)
@@ -524,9 +545,9 @@
 (defun grep-find-file ()
   (interactive)
   (let ((grep-history grep-find-file-history)
-	(my-grep-command "beagrep -f -e pat")
-	(compilation-buffer-name-function (lambda (_ign) "*grep-find-file*"))
-	(current-prefix-arg 4))
+        (my-grep-command "beagrep -f -e pat")
+        (compilation-buffer-name-function (lambda (_ign) "*grep-find-file*"))
+        (current-prefix-arg 4))
     (flet ((grep-tag-default () (grep-tag-default-path)))
       (nodup-ring-insert cscope-marker-ring (point-marker))
       (call-interactively 'grep-bhj-dir)
@@ -539,41 +560,41 @@
 (defun bhj-occur ()
   (interactive)
   (with-syntax-table (let ((new-table (make-syntax-table (syntax-table))))
-		       (modify-syntax-entry ?_ "w" new-table)
-		       new-table)
-    (let 
-	((regexp (or bhj-occur-regexp
-		     (if mark-active 
-			 (buffer-substring-no-properties (region-beginning)
-							 (region-end))
-		       (current-word)))))
-      (progn     
-	(nodup-ring-insert cscope-marker-ring (point-marker))
-	(when (or (equal regexp "")
-		  (not regexp))
-	  (setq regexp 
-		(buffer-substring-no-properties
-		 (save-excursion 
-		   (back-to-indentation)
-		   (point))
-		 (line-end-position))))
+                       (modify-syntax-entry ?_ "w" new-table)
+                       new-table)
+    (let
+        ((regexp (or bhj-occur-regexp
+                     (if mark-active
+                         (buffer-substring-no-properties (region-beginning)
+                                                         (region-end))
+                       (current-word)))))
+      (progn
+        (nodup-ring-insert cscope-marker-ring (point-marker))
+        (when (or (equal regexp "")
+                  (not regexp))
+          (setq regexp
+                (buffer-substring-no-properties
+                 (save-excursion
+                   (back-to-indentation)
+                   (point))
+                 (line-end-position))))
 
-	(unless bhj-occur-regexp
-	  (setq regexp (concat
-			(if (string-match "^\\w" regexp)
-			    "\\b"
-			  "")
-			(replace-regexp-in-string "\\([][^$*?\\\\.+]\\)" "\\\\\\1" regexp) 
-			(if (string-match "\\w$" regexp)
-			    "\\b"
-			  ""))))
+        (unless bhj-occur-regexp
+          (setq regexp (concat
+                        (if (string-match "^\\w" regexp)
+                            "\\b"
+                          "")
+                        (replace-regexp-in-string "\\([][^$*?\\\\.+]\\)" "\\\\\\1" regexp)
+                        (if (string-match "\\w$" regexp)
+                            "\\b"
+                          ""))))
 
-	(setq regexp 
-	      (read-shell-command "List lines matching regexp: " regexp))
-	(if (eq major-mode 'antlr-mode)
-	    (let ((occur-excluded-properties t))
-	      (occur regexp))
-	  (occur regexp))))))
+        (setq regexp
+              (read-shell-command "List lines matching regexp: " regexp))
+        (if (eq major-mode 'antlr-mode)
+            (let ((occur-excluded-properties t))
+              (occur regexp))
+          (occur regexp))))))
 
 (defun bhj-occur-make-errors ()
   (interactive)
@@ -581,7 +602,7 @@
     (call-interactively 'bhj-occur)))
 
 
-(setq hippie-expand-try-functions-list 
+(setq hippie-expand-try-functions-list
       '(try-expand-dabbrev
         try-expand-dabbrev-visible
         try-expand-dabbrev-all-buffers
@@ -607,22 +628,22 @@
 (defun bhj-isearch-from-bod (&optional col-indent)
   (interactive "p")
   (with-syntax-table (let ((new-table (make-syntax-table (syntax-table))))
-		       (modify-syntax-entry ?_ "w" new-table)
-		       new-table)
+                       (modify-syntax-entry ?_ "w" new-table)
+                       new-table)
     (let ((word (current-word)))
       (nodup-ring-insert cscope-marker-ring (point-marker))
       (bhj-c-beginning-of-defun)
 
       (unless (string-equal (car regexp-search-ring) (concat "\\b" word "\\b"))
-	(add-to-history
-	 'regexp-search-ring
-	 (concat "\\b" word "\\b")
-	 regexp-search-ring-max))
+        (add-to-history
+         'regexp-search-ring
+         (concat "\\b" word "\\b")
+         regexp-search-ring-max))
       (let ((not-match t))
-	(while not-match
-	  (search-forward-regexp (concat "\\b" word "\\b"))
-	  (when (string-equal word (current-word))
-	    (setq not-match nil)))))))
+        (while not-match
+          (search-forward-regexp (concat "\\b" word "\\b"))
+          (when (string-equal word (current-word))
+            (setq not-match nil)))))))
 
 (global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
 
@@ -649,8 +670,8 @@
 
 
 
-(add-hook 'w3m-mode-hook 
-          (lambda () 
+(add-hook 'w3m-mode-hook
+          (lambda ()
             (local-set-key [(left)] 'backward-char)
             (local-set-key [(right)] 'forward-char)
             (local-set-key [(\ )] 'bhj-w3m-scroll-up-or-next-url)
@@ -671,7 +692,6 @@
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bbdb-hashtable-size 10007)
- '(before-save-hook (quote ((lambda nil (let ((filename (buffer-file-name))) (when (and (file-remote-p filename) (string-match "/windows-config/" filename)) (yes-or-no-p "Are you sure it's alright to save this remote file when you have a local copy?")))))))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(delete-old-versions t)
@@ -826,16 +846,16 @@
           (start-pos 0))
 
       (when (save-excursion
-	      (save-restriction
-		(message-narrow-to-headers)
-		(message-fetch-field "Newsgroups")))
-	(setq all-marvell nil))
+              (save-restriction
+                (message-narrow-to-headers)
+                (message-fetch-field "Newsgroups")))
+        (setq all-marvell nil))
 
       (while (and all-marvell (string-match "@" receivers start-pos))
         (setq start-pos (match-end 0))
-        (unless (equal (string-match 
-                    "@marvell.com" 
-                    receivers 
+        (unless (equal (string-match
+                    "@marvell.com"
+                    receivers
                     (1- start-pos))
                    (1- start-pos))
           (setq all-marvell nil)))
@@ -846,47 +866,47 @@
           (message-beginning-of-line)
           (kill-line)
           (insert "\"Bao Haojun\" <hjbao@marvell.com>")))
-      
-      (save-excursion
-	(message-goto-from)
-	(message-beginning-of-line)
-	(when (save-excursion 
-		(search-forward-regexp "@ask.com" (line-end-position) t))
-	  (kill-line)
-	  (insert (completing-read "use account? " '("hjbao@marvell.com" "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
-	(message-goto-from)
-	(message-beginning-of-line)
-	(cond ((save-excursion (search-forward-regexp "@marvell.com" (line-end-position) t))
-	       (kill-line)
-	       (insert "\"Bao Haojun\" <hjbao@marvell.com>")
-	       (setq smtpmail-auth-credentials 
-		     '(("localhost"
-			2025
-			"hjbao@marvell.com"
-			nil))
-		     message-send-mail-function 'smtpmail-send-it
-		     smtpmail-stream-type nil
-		     user-mail-address "hjbao@marvell.com"
-		     smtpmail-default-smtp-server "localhost"
-		     smtpmail-smtp-server "localhost"
-		     smtpmail-smtp-service 2025))
 
-	      ((save-excursion (search-forward-regexp "@gmail.com" (line-end-position) t))
-	       (kill-line)
-	       (insert "\"Bao Haojun\" <baohaojun@gmail.com>")
-	       (setq smtpmail-auth-credentials 
-		     '(("smtp.gmail.com"
-			465
-			"baohaojun@gmail.com"
-			nil))
-		     message-send-mail-function 'smtpmail-send-it
-		     smtpmail-stream-type 'ssl
-		     user-mail-address "baohaojun@gmail.com"
-		     smtpmail-default-smtp-server "smtp.gmail.com"
-		     smtpmail-smtp-server "smtp.gmail.com"
-		     smtpmail-smtp-service 465))
-	      (t
-	       (error "don't know send as whom")))))))
+      (save-excursion
+        (message-goto-from)
+        (message-beginning-of-line)
+        (when (save-excursion
+                (search-forward-regexp "@ask.com" (line-end-position) t))
+          (kill-line)
+          (insert (completing-read "use account? " '("hjbao@marvell.com" "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
+        (message-goto-from)
+        (message-beginning-of-line)
+        (cond ((save-excursion (search-forward-regexp "@marvell.com" (line-end-position) t))
+               (kill-line)
+               (insert "\"Bao Haojun\" <hjbao@marvell.com>")
+               (setq smtpmail-auth-credentials
+                     '(("localhost"
+                        2025
+                        "hjbao@marvell.com"
+                        nil))
+                     message-send-mail-function 'smtpmail-send-it
+                     smtpmail-stream-type nil
+                     user-mail-address "hjbao@marvell.com"
+                     smtpmail-default-smtp-server "localhost"
+                     smtpmail-smtp-server "localhost"
+                     smtpmail-smtp-service 2025))
+
+              ((save-excursion (search-forward-regexp "@gmail.com" (line-end-position) t))
+               (kill-line)
+               (insert "\"Bao Haojun\" <baohaojun@gmail.com>")
+               (setq smtpmail-auth-credentials
+                     '(("smtp.gmail.com"
+                        465
+                        "baohaojun@gmail.com"
+                        nil))
+                     message-send-mail-function 'smtpmail-send-it
+                     smtpmail-stream-type 'ssl
+                     user-mail-address "baohaojun@gmail.com"
+                     smtpmail-default-smtp-server "smtp.gmail.com"
+                     smtpmail-smtp-server "smtp.gmail.com"
+                     smtpmail-smtp-service 465))
+              (t
+               (error "don't know send as whom")))))))
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
@@ -924,16 +944,16 @@
   (interactive)
   (save-some-buffers)
   (let ((val1
-	   (devenv-cmd "File.OpenFile" (buffer-file-name (current-buffer))))
-	(val2
-	   (devenv-cmd "Edit.GoTo" (int-to-string (+ (my-current-line) 1)))))
+           (devenv-cmd "File.OpenFile" (buffer-file-name (current-buffer))))
+        (val2
+           (devenv-cmd "Edit.GoTo" (int-to-string (+ (my-current-line) 1)))))
     (cond ((zerop (+ val1 val2))
-	      ;(iconify-frame)  ;; what I really want here is to raise the VS.NET window
-	         t)
-	    ((or (= val1 1) (= val2 1))
-	        (error "command failed"))  ;; hm, how do I get the output of the command?
-	      (t
-	          (error "couldn't run DevEnvCommand")))))
+              ;(iconify-frame)  ;; what I really want here is to raise the VS.NET window
+                 t)
+            ((or (= val1 1) (= val2 1))
+                (error "command failed"))  ;; hm, how do I get the output of the command?
+              (t
+                  (error "couldn't run DevEnvCommand")))))
 (global-set-key [f3] 'switch-to-devenv)
 
 ;; Command to toggle a VS.NET breakpoint at the current line.
@@ -966,7 +986,7 @@
 )
 
 (setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
-			      auto-mode-alist))
+                              auto-mode-alist))
 (require 'saveplace)
 
 (defun random-theme()
@@ -974,8 +994,8 @@
   (dolist (theme custom-enabled-themes)
     (disable-theme theme))
   (load-theme (let ((theme (nth (random (length (custom-available-themes))) (custom-available-themes))))
-		(message "loaded theme: %s" theme)
-		theme)))
+                (message "loaded theme: %s" theme)
+                theme)))
 
 (defun try-all-themes()
   (interactive)
@@ -1042,7 +1062,7 @@
 
 (setq weblogger-start-edit-entry-hook
       (list
-       (lambda () 
+       (lambda ()
          (interactive)
          (message-goto-body)
          (shell-command-on-region
@@ -1059,7 +1079,7 @@
          (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p)
          (set-buffer-modified-p nil))))
 
-;; becase we are putting our database under ~/.cache/for-code-reading/, 
+;; becase we are putting our database under ~/.cache/for-code-reading/,
 ;; we need to redefine this function:
 (defun cscope-search-directory-hierarchy (directory)
   "Look for a cscope database in the directory hierarchy.
@@ -1074,24 +1094,24 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
     (catch 'done
       (if (file-regular-p saved-directory)
-	  (throw 'done saved-directory))
+          (throw 'done saved-directory))
       (setq directory (concat (getenv "HOME") "/.cache/for-code-reading/" (cscope-canonicalize-directory directory))
-	    this-directory directory)
+            this-directory directory)
       (while this-directory
-	(when (or (file-exists-p (concat remote-prefix this-directory cscope-database-file))
+        (when (or (file-exists-p (concat remote-prefix this-directory cscope-database-file))
                   (file-exists-p (concat remote-prefix this-directory cscope-index-file)))
           (progn
             (setq database-dir (substring
-                                this-directory 
+                                this-directory
                                 (length
                                  (concat (getenv "HOME") "/.cache/for-code-reading/"))))
             (throw 'done (concat "" database-dir))))
-	(when (string-match "^\\(/\\|[A-Za-z]:[\\/]\\)$" this-directory)
+        (when (string-match "^\\(/\\|[A-Za-z]:[\\/]\\)$" this-directory)
             (throw 'done (concat "" (expand-file-name "~/.gtags-dir/"))))
-	(setq this-directory (file-name-as-directory
-			      (file-name-directory
-			       (directory-file-name this-directory))))
-	))
+        (setq this-directory (file-name-as-directory
+                              (file-name-directory
+                               (directory-file-name this-directory))))
+        ))
     ))
 
 (defun cscope-pop-mark ()
@@ -1143,11 +1163,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (if (ring-empty-p cscope-marker-ring-poped)
       (error "There are no marked buffers in the cscope-marker-ring-poped yet"))
   (let* ( (marker (ring-remove cscope-marker-ring-poped 0))
-	  (old-buffer (current-buffer))
-	  (marker-buffer (marker-buffer marker))
-	  marker-window
-	  (marker-point (marker-position marker))
-	  (cscope-buffer (get-buffer cscope-output-buffer-name)) )
+          (old-buffer (current-buffer))
+          (marker-buffer (marker-buffer marker))
+          marker-window
+          (marker-point (marker-position marker))
+          (cscope-buffer (get-buffer cscope-output-buffer-name)) )
     (nodup-ring-insert cscope-marker-ring (point-marker))
 
     ;; After the following both cscope-marker-ring-poped and cscope-marker will be
@@ -1158,13 +1178,13 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (setq cscope-marker marker)
 
     (if marker-buffer
-	(if (eq old-buffer cscope-buffer)
-	    (progn ;; In the *cscope* buffer.
-	      (set-buffer marker-buffer)
-	      (setq marker-window (display-buffer marker-buffer))
-	      (set-window-point marker-window marker-point)
-	      (select-window marker-window))
-	  (switch-to-buffer marker-buffer))
+        (if (eq old-buffer cscope-buffer)
+            (progn ;; In the *cscope* buffer.
+              (set-buffer marker-buffer)
+              (setq marker-window (display-buffer marker-buffer))
+              (set-window-point marker-window marker-point)
+              (select-window marker-window))
+          (switch-to-buffer marker-buffer))
       (error "The marked buffer has been deleted"))
     (goto-char marker-point)
     (set-buffer old-buffer)))
@@ -1173,9 +1193,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive)
   (save-excursion
     (end-of-line)
-    (shell-command-on-region 
-     1 (point) 
-     (concat "where-are-we " 
+    (shell-command-on-region
+     1 (point)
+     (concat "where-are-we "
              (shell-quote-argument (or (buffer-file-name) (buffer-name)))
              (format " %s" tab-width))))
   (pop-to-buffer "*Shell Command Output*")
@@ -1202,40 +1222,40 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (save-excursion
     (save-window-excursion
       (save-restriction
-	(widen)
-	(shell-command-on-region
-	 (point-min)
-	 (point-max)
-	 (let ((mode-name-minus-mode 
-		(replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
-	   (concat "ctags-stdin --language-force="
-		   (shell-quote-argument 
-		    (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
-			mode-name-minus-mode))
-		   " -xu "
-		   (cdr (assoc mode-name-minus-mode emacs-mode-ctags-tag-filter))))
-	 output-buf)))))
+        (widen)
+        (shell-command-on-region
+         (point-min)
+         (point-max)
+         (let ((mode-name-minus-mode
+                (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
+           (concat "ctags-stdin --language-force="
+                   (shell-quote-argument
+                    (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
+                        mode-name-minus-mode))
+                   " -xu "
+                   (cdr (assoc mode-name-minus-mode emacs-mode-ctags-tag-filter))))
+         output-buf)))))
 
 (defvar grep-func-call-history nil)
 (defun grep-func-call ()
   (interactive)
   (let ((grep-history grep-func-call-history)
-	(my-grep-command "grep-func-call -e pat")
-	(compilation-buffer-name-function (lambda (_ign) "*grep-func-call*"))
-	(current-prefix-arg 4))
+        (my-grep-command "grep-func-call -e pat")
+        (compilation-buffer-name-function (lambda (_ign) "*grep-func-call*"))
+        (current-prefix-arg 4))
     (nodup-ring-insert cscope-marker-ring (point-marker))
     (let ((file (my-buffer-file-name (current-buffer)))
-	  (mode-name-minus-mode
-	   (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
+          (mode-name-minus-mode
+           (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
       (if (file-remote-p file)
-	  (let ((process-environment tramp-remote-process-environment))
-	    (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
-	    (setenv "GTAGS_LANG_FORCE" (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
-					   mode-name-minus-mode))
-	    (setq tramp-remote-process-environment process-environment))
-	(setenv "GTAGS_START_FILE" file)
-	(setenv "GTAGS_LANG_FORCE" (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
-				       mode-name-minus-mode))))
+          (let ((process-environment tramp-remote-process-environment))
+            (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
+            (setenv "GTAGS_LANG_FORCE" (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
+                                           mode-name-minus-mode))
+            (setq tramp-remote-process-environment process-environment))
+        (setenv "GTAGS_START_FILE" file)
+        (setenv "GTAGS_LANG_FORCE" (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
+                                       mode-name-minus-mode))))
     (call-interactively 'grep-bhj-dir)
     (setq grep-func-call-history grep-history)))
 
@@ -1244,7 +1264,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (let ((subs (split-string (current-line-string))))
     (string-to-number
      (if (string-equal (car subs) "operator")
-	 (cadddr subs) ;operator +=      function    183 /home...
+         (cadddr subs) ;operator +=      function    183 /home...
        (caddr subs))))) ;region_iterator  struct      189 /home...
 
 (defmacro set-remote-env (name val)
@@ -1261,9 +1281,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (let ((code-line (code-line-number-from-tag-line line)))
     (with-current-buffer old-buffer
       (save-excursion
-	(goto-line code-line)
-	(back-to-indentation)
-	(current-column)))))
+        (goto-line code-line)
+        (back-to-indentation)
+        (current-column)))))
 
 (defun ctags-get-fully-qualified-name ()
   (interactive)
@@ -1271,36 +1291,36 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (let (deactivate-mark) ;;see the help of save-excursion
       (tag-this-file (get-buffer-create "*ctags-beginning-of-defun*"))
       (let ((old-buffer (current-buffer))
-	    (old-code-line (line-number-at-pos))
-	    (last-code-line (line-number-at-pos (buffer-end 1)))
-	    (last-def-line 1)
-	    (fully-qualified-name "")
-	    current-code-line-indent)
-	(with-current-buffer "*ctags-beginning-of-defun*"
-	  (goto-char (point-max))
-	  (insert ( concat "hello function "
-			   (number-to-string last-code-line)
-			   "hello world"))
-	  (while (< old-code-line (code-line-number-from-tag-line (line-number-at-pos)))
-	    (previous-line))
-	  (setq fully-qualified-name (code-def-from-tag-line (line-number-at-pos))
-		current-code-line-indent (code-indentation-from-tag-line (line-number-at-pos)))
-	  (while (and (> current-code-line-indent 0)
-		      (> (line-number-at-pos) 1))
-	    (previous-line)
-	    (if (< (code-indentation-from-tag-line (line-number-at-pos)) current-code-line-indent)
-		(setq fully-qualified-name (concat (code-def-from-tag-line (line-number-at-pos))
-						   "."
-						   fully-qualified-name)
-		      current-code-line-indent (code-indentation-from-tag-line (line-number-at-pos)))))
-	  (message "%s" fully-qualified-name)
-	  (with-temp-buffer
-	    (insert-string fully-qualified-name)
-	    (copy-region-as-kill (point-min) (point-max))))))))
-	  
+            (old-code-line (line-number-at-pos))
+            (last-code-line (line-number-at-pos (buffer-end 1)))
+            (last-def-line 1)
+            (fully-qualified-name "")
+            current-code-line-indent)
+        (with-current-buffer "*ctags-beginning-of-defun*"
+          (goto-char (point-max))
+          (insert ( concat "hello function "
+                           (number-to-string last-code-line)
+                           "hello world"))
+          (while (< old-code-line (code-line-number-from-tag-line (line-number-at-pos)))
+            (previous-line))
+          (setq fully-qualified-name (code-def-from-tag-line (line-number-at-pos))
+                current-code-line-indent (code-indentation-from-tag-line (line-number-at-pos)))
+          (while (and (> current-code-line-indent 0)
+                      (> (line-number-at-pos) 1))
+            (previous-line)
+            (if (< (code-indentation-from-tag-line (line-number-at-pos)) current-code-line-indent)
+                (setq fully-qualified-name (concat (code-def-from-tag-line (line-number-at-pos))
+                                                   "."
+                                                   fully-qualified-name)
+                      current-code-line-indent (code-indentation-from-tag-line (line-number-at-pos)))))
+          (message "%s" fully-qualified-name)
+          (with-temp-buffer
+            (insert-string fully-qualified-name)
+            (copy-region-as-kill (point-min) (point-max))))))))
+
 (defun ctags-beginning-of-defun (&optional arg)
   (interactive "^p")
-  (goto-line 
+  (goto-line
    (get-the-tag-around-me 'code-line-number-from-tag-line arg)))
 
 (defun tag-name-from-tag-line (line)
@@ -1315,17 +1335,17 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (defun class-name-from-tag-line (line)
   (goto-line line)
   (let ((limit (line-end-position))
-	classes)
-    (goto-char (point-min))    
+        classes)
+    (goto-char (point-min))
     (while (search-forward-regexp "class\\|interface" limit t)
       (let* ((line (current-line-string))
-	     (fields (split-string line))
-	     (name (car fields))
-	     (type (cadr fields)))
-	(cond
-	 ((or (string-equal type "class")
-	      (string-equal type "interface"))
-	  (setq classes (cons line classes))))))
+             (fields (split-string line))
+             (name (car fields))
+             (type (cadr fields)))
+        (cond
+         ((or (string-equal type "class")
+              (string-equal type "interface"))
+          (setq classes (cons line classes))))))
     (car (split-string (completing-read-one? "Which class/interface to hierarchy? " (delete-dups (nreverse classes)) nil t)))))
 
 (defun android-get-help ()
@@ -1355,8 +1375,8 @@ ARG means found the (ARG - 1)th tag to find."
                   (mid (/ (+ min max) 2))
                   (mid-code-line (code-line-number-from-tag-line mid))
                   (mid+1-codeline (code-line-number-from-tag-line (1+ mid))))
-             (while (and 
-                     (not (and 
+             (while (and
+                     (not (and
                            (< mid-code-line old-code-line)
                            (>= mid+1-codeline old-code-line)))
                      (< min max))
@@ -1366,14 +1386,14 @@ ARG means found the (ARG - 1)th tag to find."
                (setq mid (/ (+ min max) 2)
                      mid-code-line (code-line-number-from-tag-line mid)
                      mid+1-codeline (code-line-number-from-tag-line (1+ mid))))
-             (funcall get-attr-func (- mid -1 
-				       (if (and (numberp arg)
-						(= arg 0)
-						(not (= (code-line-number-from-tag-line (1+ mid)) old-code-line)))
-					   1
-					 (or arg 1))))))))))  
-                    
-                                     
+             (funcall get-attr-func (- mid -1
+                                       (if (and (numberp arg)
+                                                (= arg 0)
+                                                (not (= (code-line-number-from-tag-line (1+ mid)) old-code-line)))
+                                           1
+                                         (or arg 1))))))))))
+
+
 (global-set-key [(control x) (w)] 'where-are-we)
 
 (defvar code-reading-file "~/.code-reading")
@@ -1384,7 +1404,7 @@ ARG means found the (ARG - 1)th tag to find."
     (when (equal (buffer-name (current-buffer))
                "*Shell Command Output*")
       (setq from-waw t))
-    
+
     (if (= arg 1)
         (find-file code-reading-file)
       (call-interactively 'find-file)
@@ -1397,7 +1417,7 @@ ARG means found the (ARG - 1)th tag to find."
       (waw-mode)))
 
 (global-set-key [(control x) (c)] 'visit-code-reading)
-             
+
 
   ;; if it's on a `error' line, i.e. entry 0 in the following, it
   ;; means we are actually on 10th entry, we need go to entry 9
@@ -1415,7 +1435,7 @@ ARG means found the (ARG - 1)th tag to find."
     ;; 8                     if self.astack:
     ;; 9                         ...
     ;; 10 =>                      if a:
-  
+
 (defmacro current-line-string ()
  `(buffer-substring-no-properties
    (line-beginning-position)
@@ -1479,7 +1499,7 @@ ARG means found the (ARG - 1)th tag to find."
         (next-error-find-buffer nil nil
                                 (lambda()
                                   (eq major-mode 'waw-mode))))
-    
+
     (goto-char (cond (reset (point-min))
                      ((< argp 0) (line-beginning-position))
                      ((> argp 0) (line-end-position))
@@ -1493,14 +1513,14 @@ ARG means found the (ARG - 1)th tag to find."
 
     (forward-line) ;;this is because the following was written
                    ;;originally as prev-error :-)
-     
+
     (catch 'done
       (let ((start-line-number (line-number-at-pos))
             (start-line-str (current-line-string))
-            new-line-number target-file target-line 
+            new-line-number target-file target-line
             error-line-number error-line-str
             msg mk end-mk)
-        
+
         (save-excursion
           (end-of-line) ;; prepare for search-backward-regexp
           (search-backward-regexp ":[0-9]+:")
@@ -1513,13 +1533,13 @@ ARG means found the (ARG - 1)th tag to find."
         (when (equal start-line-number error-line-number)
           (search-forward "=>")
           (forward-line))
-        
+
         (when (equal start-line-number (1+ error-line-number))
           (search-backward-regexp "=>")
           (forward-line)
           (waw-next-error -1)
           (throw 'done nil))
-        
+
         (setq new-line-number (line-number-at-pos))
         (forward-line -1)
 
@@ -1597,7 +1617,7 @@ ARG means found the (ARG - 1)th tag to find."
         (next-error-find-buffer nil nil
                                 (lambda()
                                   (eq major-mode 'java-bt-mode))))
-    
+
     (message "point is at %d" (point))
     (goto-char (cond (reset (point-min))
                      ((< argp 0) (line-beginning-position))
@@ -1614,7 +1634,7 @@ ARG means found the (ARG - 1)th tag to find."
     (catch 'done
       (let ((start-line-number (line-number-at-pos))
             (start-line-str (current-line-string))
-            new-line-number target-file target-line 
+            new-line-number target-file target-line
             error-line-number error-line-str grep-output temp-buffer
             msg mk end-mk)
           (save-excursion
@@ -1641,7 +1661,7 @@ ARG means found the (ARG - 1)th tag to find."
               (setq mk (point-marker) end-mk (line-end-position)))))
 
         (compilation-goto-locus msg mk end-mk))
-      
+
       (throw 'done nil))))
 
 (setq java-bt-mode-map
@@ -1672,67 +1692,67 @@ ARG means found the (ARG - 1)th tag to find."
   (when from-bol
     (goto-char (line-beginning-position)))
   (let ((start-point (point))
-	(end-point (point)))
+        (end-point (point)))
     (let* ((col-start-indent (current-column))
-	   (compare-to-prev-lines (if (> n-prev 0)
-				      t
-				    nil))
-	   (n-prev (if (> n-prev 0)
-		       n-prev
-		     (- n-prev)))
-	   (col-end-indent (save-excursion
-			     (or (looking-at "\\S ")
-				 (when (search-forward-regexp "\\S " (line-end-position) t)
-				   (backward-char) 
-				   t)
-				 (goto-char (line-end-position)))
-			     (setq end-point (point))
-			     (current-column)))
-	   (col-indent-to (save-excursion
-			    (while (> n-prev 0)
-			      (forward-line (if compare-to-prev-lines -1 1))
-			      (goto-char (if compare-to-prev-lines (line-end-position) (line-beginning-position)))
-			      (apply (if compare-to-prev-lines 'search-backward-regexp 'search-forward-regexp) (list "\\S "))
-			      (setq n-prev (1- n-prev)))
-			    (move-to-column col-start-indent)
-			    (when (and (looking-at "\\S ")
-				       (not (and 
-					     (looking-back "\t")
-					     (> (current-column) col-start-indent))))
-			      (search-forward-regexp "\\s "))
-			    (search-forward-regexp "\\S " (line-end-position))
-			    (current-column))))
+           (compare-to-prev-lines (if (> n-prev 0)
+                                      t
+                                    nil))
+           (n-prev (if (> n-prev 0)
+                       n-prev
+                     (- n-prev)))
+           (col-end-indent (save-excursion
+                             (or (looking-at "\\S ")
+                                 (when (search-forward-regexp "\\S " (line-end-position) t)
+                                   (backward-char)
+                                   t)
+                                 (goto-char (line-end-position)))
+                             (setq end-point (point))
+                             (current-column)))
+           (col-indent-to (save-excursion
+                            (while (> n-prev 0)
+                              (forward-line (if compare-to-prev-lines -1 1))
+                              (goto-char (if compare-to-prev-lines (line-end-position) (line-beginning-position)))
+                              (apply (if compare-to-prev-lines 'search-backward-regexp 'search-forward-regexp) (list "\\S "))
+                              (setq n-prev (1- n-prev)))
+                            (move-to-column col-start-indent)
+                            (when (and (looking-at "\\S ")
+                                       (not (and
+                                             (looking-back "\t")
+                                             (> (current-column) col-start-indent))))
+                              (search-forward-regexp "\\s "))
+                            (search-forward-regexp "\\S " (line-end-position))
+                            (current-column))))
       (unless (equal start-point end-point)
-	(delete-region start-point end-point))
+        (delete-region start-point end-point))
       (insert (make-string (- col-indent-to col-start-indent 1) ? )))))
 
 (defun back-to-indent-same-space-as-prev-line (n-prev)
   (interactive "p")
   (if (looking-back "\\S ")
       (let* ((old-pos (point))
-	     (old-col (current-column))
-	     (pat-start (save-excursion
-			  (search-backward-regexp "\\(^\\|\\s \\)\\S ")
-			  (unless (looking-at "^")
-			    (forward-char))
-			  (point)))
-	     (pat (buffer-substring-no-properties old-pos pat-start))
-	     (col-back-to (save-excursion
-			    (goto-char pat-start)
-			    (search-backward pat)
-			    (current-column)))
-	     (pos-back-to (- old-pos (- old-col col-back-to))))
-	(untabify (line-beginning-position) old-pos)
-	(if (< pos-back-to old-pos)
-	    (delete-region pos-back-to old-pos)
-	  (delete-region pat-start old-pos)
-	  (insert (make-string (- pos-back-to pat-start) ?\ ))))
+             (old-col (current-column))
+             (pat-start (save-excursion
+                          (search-backward-regexp "\\(^\\|\\s \\)\\S ")
+                          (unless (looking-at "^")
+                            (forward-char))
+                          (point)))
+             (pat (buffer-substring-no-properties old-pos pat-start))
+             (col-back-to (save-excursion
+                            (goto-char pat-start)
+                            (search-backward pat)
+                            (current-column)))
+             (pos-back-to (- old-pos (- old-col col-back-to))))
+        (untabify (line-beginning-position) old-pos)
+        (if (< pos-back-to old-pos)
+            (delete-region pos-back-to old-pos)
+          (delete-region pat-start old-pos)
+          (insert (make-string (- pos-back-to pat-start) ?\ ))))
     (indent-same-space-as-prev-line n-prev t)))
 
 (global-set-key [(meta shift ? )] 'indent-same-space-as-prev-line)
 
 (define-key esc-map [(shift backspace)] 'back-to-indent-same-space-as-prev-line)
-              
+
 (defun save-all-buffers-no-check-modified ()
   (interactive)
   (flet ((verify-visited-file-modtime (&rest args) t)
@@ -1743,7 +1763,7 @@ ARG means found the (ARG - 1)th tag to find."
                 (with-current-buffer x
                   (unless buffer-read-only
                     (set-buffer-modified-p t)
-                    (basic-save-buffer))))) 
+                    (basic-save-buffer)))))
             (buffer-list))))
 
 (defun revert-all-buffers ()
@@ -1771,7 +1791,7 @@ ARG means found the (ARG - 1)th tag to find."
 
 (defun switch-buffer-same-filename (&optional reverse)
   (interactive)
-  (let* ((buf-list (if reverse 
+  (let* ((buf-list (if reverse
                        (nreverse (buffer-list))
                      (buffer-list)))
          (current-filepath (my-buffer-file-name (current-buffer)))
@@ -1818,9 +1838,9 @@ ARG means found the (ARG - 1)th tag to find."
 
 (defun gnus-gmail-search-subject ()
   (interactive)
-  (shell-command (concat 
+  (shell-command (concat
                   "search-gmail "
-                  (shell-quote-argument (case major-mode 
+                  (shell-quote-argument (case major-mode
                                           ('gnus-summary-mode
                                            (gnus-summary-article-subject))
                                           ('gnus-article-mode
@@ -1830,17 +1850,17 @@ ARG means found the (ARG - 1)th tag to find."
                                              (buffer-substring-no-properties (point) (line-end-position))))))
                   "&")))
 
-(add-hook 'gnus-summary-mode-hook 
-	  (lambda ()
-	    (define-key gnus-summary-mode-map "v" 'bhj-view-mail-external)))
-				    
+(add-hook 'gnus-summary-mode-hook
+          (lambda ()
+            (define-key gnus-summary-mode-map "v" 'bhj-view-mail-external)))
+
 (defun bhj-view-mail-external ()
   "open the current maildir file in kmail"
   (interactive)
   ;(defun nnmaildir-request-article (num-msgid &optional gname server to-buffer)
   (let ((article_id gnus-current-article))
     (with-temp-buffer
-      (nnmaildir-request-article 
+      (nnmaildir-request-article
        article_id
        gnus-newsgroup-name
        (replace-regexp-in-string ".*:" "" (gnus-group-server gnus-newsgroup-name))
@@ -1885,57 +1905,57 @@ ARG means found the (ARG - 1)th tag to find."
 (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
 (setq bbdb-auto-notes-alist
       (quote (("To"
-	       ("w3o" . "w3o")
-	       ("plug" . "plug")
-	       ("linux" . "linux")
-	       ("emacs-commit" . "emacs commit")
-	       ("emacs" . "emacs")
-	       ("pinoyjug" . "pinoyjug")
-	       ("digitalfilipino" . "digitalfilipino")
-	       ("sacha" . "personal mail"))
-	      ("From"
-	       ("admu" company "Ateneo de Manila University")
-	       ("Organization" (".*" company 0 nil))
-	       ))))
-(setq bbdb-auto-notes-ignore 
-      (quote 
+               ("w3o" . "w3o")
+               ("plug" . "plug")
+               ("linux" . "linux")
+               ("emacs-commit" . "emacs commit")
+               ("emacs" . "emacs")
+               ("pinoyjug" . "pinoyjug")
+               ("digitalfilipino" . "digitalfilipino")
+               ("sacha" . "personal mail"))
+              ("From"
+               ("admu" company "Ateneo de Manila University")
+               ("Organization" (".*" company 0 nil))
+               ))))
+(setq bbdb-auto-notes-ignore
+      (quote
        (("Organization" . "^Gatewayed from\\\\|^Source only"))))
 (setq bbdb-auto-notes-ignore-all nil)
 (setq bbdb-check-zip-codes-p nil)
-(setq bbdb-ignore-some-messages-alist 
+(setq bbdb-ignore-some-messages-alist
       '(
-	("From" . "susanpan@marvell.com")
-	("From" . "chenli@marvell.com")
-	("From" . "linkedin.com")
-	("From" . "bear.eee168.com")
-	("To" . "linux-kernel@vger.kernel.org\\|public.gmane.org")
-	("Cc" . "linux-kernel@vger.kernel.org\\|public.gmane.org")
-	))
+        ("From" . "susanpan@marvell.com")
+        ("From" . "chenli@marvell.com")
+        ("From" . "linkedin.com")
+        ("From" . "bear.eee168.com")
+        ("To" . "linux-kernel@vger.kernel.org\\|public.gmane.org")
+        ("Cc" . "linux-kernel@vger.kernel.org\\|public.gmane.org")
+        ))
 (setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
 
 (unless (eq system-type 'windows-nt)
   (setq bbdb-file "~/windows-config/.bbdb"))
 ;; (add-hook 'gnus-select-group-hook
-;; 	  (lambda ()
-;; 	    (make-local-variable 'bbdb/news-auto-create-p)
-;; 	    (make-local-variable 'bbdb/mail-auto-create-p)
-;; 	    (if (string-match "^\\*Summary nntp" (buffer-name))
-;; 		(setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
-;; 	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))
+;;        (lambda ()
+;;          (make-local-variable 'bbdb/news-auto-create-p)
+;;          (make-local-variable 'bbdb/mail-auto-create-p)
+;;          (if (string-match "^\\*Summary nntp" (buffer-name))
+;;              (setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
+;;            (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))
 
 ;; (defun my-gnus-article-prepare-bbdb ()
 ;;   (make-local-variable 'bbdb/news-auto-create-p)
 ;;   (make-local-variable 'bbdb/mail-auto-create-p)
-;; 					;(message "hello my-gnus-article-prepare-bbdb %s %s" (buffer-name gnus-article-current-summary) (buffer-name))
+;;                                      ;(message "hello my-gnus-article-prepare-bbdb %s %s" (buffer-name gnus-article-current-summary) (buffer-name))
 ;;   (if (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary))
 ;;       (setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
 ;;     (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook)))
 
 ;; (add-hook 'gnus-startup-hook
-;; 	  (lambda ()
-;; 	    (add-hook 'gnus-article-prepare-hook
-;; 		      'my-gnus-article-prepare-bbdb))
-;; 	  t)
+;;        (lambda ()
+;;          (add-hook 'gnus-article-prepare-hook
+;;                    'my-gnus-article-prepare-bbdb))
+;;        t)
 ;; make sure our article prepare hook is run before bbdb hook
 
 (setq bbdb/news-auto-create-p nil
@@ -1947,10 +1967,10 @@ ARG means found the (ARG - 1)th tag to find."
   (progn
     ;(message "hello bbdb/gnus-update-records-mode: %s %s %s" (buffer-name gnus-article-current-summary) (buffer-name) bbdb/news-auto-create-p)
     (if (and (boundp 'auto-create-p) (null auto-create-p))
-	(if (and (boundp 'gnus-article-current-summary)
-		 (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary)))
-	    'annotating
-	  'searching)
+        (if (and (boundp 'gnus-article-current-summary)
+                 (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary)))
+            'annotating
+          'searching)
       'annotating)))
 
 (setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
@@ -1969,65 +1989,65 @@ ARG means found the (ARG - 1)th tag to find."
 
 ;; (setq bbdb-create-hook '(bbdb-creation-date-hook bbdb-bhj-unify-eee168))
 ;; (letf* ((old-all-completions (symbol-function 'all-completions))
-;; 	  (old-try-completion (symbol-function 'try-completion)))
+;;        (old-try-completion (symbol-function 'try-completion)))
 
 (defun all-completions-skeleton
   (STRING COLLECTION &optional PREDICATE)
   (let* ((fragments (mapcar 'regexp-quote (split-string STRING))))
     (while fragments
-      
-      (setq COLLECTION (mapcan 
-			(lambda (x)
-			  (let ((tmp (if (symbolp x)
-					 (format "%s" (symbol-value x))
-				       (format "%s" x))))
 
-					; (if (string-match "haojun.bao@ray" tmp)
-					;   (message "'%s' : '%s'" x tmp))
+      (setq COLLECTION (mapcan
+                        (lambda (x)
+                          (let ((tmp (if (symbolp x)
+                                         (format "%s" (symbol-value x))
+                                       (format "%s" x))))
 
-			    (if (string-match (car fragments) tmp)
-				(progn ;(message "(string-match \"%s\" \"%s\") x is %s\n" (car fragments) x oldx)
-				  (if (cdr fragments)
-				      (list x)
-				    (and (when (functionp PREDICATE)
-					   (funcall PREDICATE x))
-					 (list x))))
-			      nil)))
-			COLLECTION)
-	    fragments (cdr fragments))
+                                        ; (if (string-match "haojun.bao@ray" tmp)
+                                        ;   (message "'%s' : '%s'" x tmp))
+
+                            (if (string-match (car fragments) tmp)
+                                (progn ;(message "(string-match \"%s\" \"%s\") x is %s\n" (car fragments) x oldx)
+                                  (if (cdr fragments)
+                                      (list x)
+                                    (and (when (functionp PREDICATE)
+                                           (funcall PREDICATE x))
+                                         (list x))))
+                              nil)))
+                        COLLECTION)
+            fragments (cdr fragments))
       ;; (message "COLLECTION all- is %s\n" COLLECTION)
       )
     COLLECTION))
 
 (defun try-completion-skeleton (STRING COLLECTION &optional PREDICATE)
   (let* ((fragments (mapcar 'regexp-quote (split-string STRING)))
-	 (final (car (reverse (split-string STRING))))
-	 res)
+         (final (car (reverse (split-string STRING))))
+         res)
     (while fragments
       (setq COLLECTION (mapcan
-			(lambda (x) 
-			  (let ((tmp
-				 (if (symbolp x)
-				     (format "%s" (symbol-value x))
-				   (format "%s" x))))
-			    (if (string-match (car fragments) tmp)
-				(list x)
-			      nil)))
-			COLLECTION)
-	    fragments (cdr fragments))
+                        (lambda (x)
+                          (let ((tmp
+                                 (if (symbolp x)
+                                     (format "%s" (symbol-value x))
+                                   (format "%s" x))))
+                            (if (string-match (car fragments) tmp)
+                                (list x)
+                              nil)))
+                        COLLECTION)
+            fragments (cdr fragments))
       )
     ;; (message "COLLECTION is %s\n" COLLECTION)
     (if (and COLLECTION (not (cdr COLLECTION)))
-	t
+        t
       nil)))
 
 (defun string-skeleton-match (target source)
   (let* ((fragments (mapcar 'regexp-quote (split-string target)))
-	 (res t))
+         (res t))
     (while fragments
       (unless (string-match (car fragments) source)
-	(setq res nil
-	      fragments nil))
+        (setq res nil
+              fragments nil))
       (setq fragments (cdr fragments)))
     res))
 
@@ -2048,40 +2068,40 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
   (interactive)
 
   (let* ((end (point))
-	 (beg (or start-pos
-		  (save-excursion
-		    (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
-		    (goto-char (match-end 0))
-		    (point))))
-	 (orig (buffer-substring beg end))
-	 (typed (downcase orig))
-	 (pattern (bbdb-string-trim typed))
-	 (ht (bbdb-hashtable))
-	 ;; make a list of possible completion strings
-	 ;; (all-the-completions), and a flag to indicate if there's a
-	 ;; single matching record or not (only-one-p)
-	 (only-one-p t)
-	 (all-the-completions nil)
-	 (pred
-	  (lambda (sym)
-	    (when (bbdb-completion-predicate sym)
-	      (if (and only-one-p
-		       all-the-completions
-		       (or
-			;; not sure about this. more than one record
-			;; attached to the symbol? does that happen?
-			(> (length (symbol-value sym)) 1)
-			;; this is the doozy, though. multiple syms
-			;; which all match the same record
-			(delete t (mapcar (lambda(x)
-					    (equal (symbol-value x)
-						   (symbol-value sym)))
-					  all-the-completions))))
-		  (setq only-one-p nil))
-	      (if (not (memq sym all-the-completions))
-		  (setq all-the-completions (cons sym all-the-completions))))))
-	 (completion (progn (all-completions-skeleton pattern ht pred) (try-completion-skeleton pattern ht)))
-	 (exact-match (eq completion t)))
+         (beg (or start-pos
+                  (save-excursion
+                    (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
+                    (goto-char (match-end 0))
+                    (point))))
+         (orig (buffer-substring beg end))
+         (typed (downcase orig))
+         (pattern (bbdb-string-trim typed))
+         (ht (bbdb-hashtable))
+         ;; make a list of possible completion strings
+         ;; (all-the-completions), and a flag to indicate if there's a
+         ;; single matching record or not (only-one-p)
+         (only-one-p t)
+         (all-the-completions nil)
+         (pred
+          (lambda (sym)
+            (when (bbdb-completion-predicate sym)
+              (if (and only-one-p
+                       all-the-completions
+                       (or
+                        ;; not sure about this. more than one record
+                        ;; attached to the symbol? does that happen?
+                        (> (length (symbol-value sym)) 1)
+                        ;; this is the doozy, though. multiple syms
+                        ;; which all match the same record
+                        (delete t (mapcar (lambda(x)
+                                            (equal (symbol-value x)
+                                                   (symbol-value sym)))
+                                          all-the-completions))))
+                  (setq only-one-p nil))
+              (if (not (memq sym all-the-completions))
+                  (setq all-the-completions (cons sym all-the-completions))))))
+         (completion (progn (all-completions-skeleton pattern ht pred) (try-completion-skeleton pattern ht)))
+         (exact-match (eq completion t)))
 
     (cond
      ;; No matches found OR you're trying completion on an
@@ -2092,93 +2112,93 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
      ;; care too much about the exact-match part.
      ((and only-one-p (or exact-match bbdb-complete-name-allow-cycling))
       (let* ((sym (car all-the-completions))
-	     (recs (symbol-value sym))
-	     the-net match-recs lst primary matched)
+             (recs (symbol-value sym))
+             the-net match-recs lst primary matched)
 
-	(while recs
-	  (when (bbdb-record-net (car recs))
+        (while recs
+          (when (bbdb-record-net (car recs))
 
-	    ;; Did we match on name?
-	    (let ((b-r-name (or (bbdb-record-name (car recs)) "")))
-	      (if t
-		  (setq match-recs (cons (car recs) match-recs)
-			matched t)))
+            ;; Did we match on name?
+            (let ((b-r-name (or (bbdb-record-name (car recs)) "")))
+              (if t
+                  (setq match-recs (cons (car recs) match-recs)
+                        matched t)))
 
-	    ;; Did we match on lastname?
-	    (let ((b-r-name (or (bbdb-record-lfname (car recs)) "")))
-	      (if (string= pattern
-			   (substring (downcase b-r-name) 0
-				      (min (length b-r-name)
-					   (length pattern))))
-		  (setq match-recs (cons (car recs) match-recs)
-			matched t)))
+            ;; Did we match on lastname?
+            (let ((b-r-name (or (bbdb-record-lfname (car recs)) "")))
+              (if (string= pattern
+                           (substring (downcase b-r-name) 0
+                                      (min (length b-r-name)
+                                           (length pattern))))
+                  (setq match-recs (cons (car recs) match-recs)
+                        matched t)))
 
-	    ;; Did we match on aka?
-	    (when (not matched)
-	      (setq lst (bbdb-record-aka (car recs)))
-	      (while lst
-		(if (string= pattern (substring (downcase (car lst)) 0
-						(min (length (downcase
-							      (car
-							       lst)))
-						     (length pattern))))
-		    (setq match-recs (append match-recs (list (car recs)))
-			  matched t
-			  lst '())
-		  (setq lst (cdr lst)))))
+            ;; Did we match on aka?
+            (when (not matched)
+              (setq lst (bbdb-record-aka (car recs)))
+              (while lst
+                (if (string= pattern (substring (downcase (car lst)) 0
+                                                (min (length (downcase
+                                                              (car
+                                                               lst)))
+                                                     (length pattern))))
+                    (setq match-recs (append match-recs (list (car recs)))
+                          matched t
+                          lst '())
+                  (setq lst (cdr lst)))))
 
-	    ;; Name didn't match name so check net matching
-	    (when (not matched)
-	      (setq lst (bbdb-record-net (car recs)))
-	      (setq primary t) ;; primary wins over secondary...
-	      (while lst
-		(if (string= pattern (substring (downcase (car lst))
-						0 (min (length
-							(downcase (car
-								   lst)))
-						       (length pattern))))
-		    (setq the-net (car lst)
-			  lst     nil
-			  match-recs
-			  (if primary (cons (car recs) match-recs)
-			    (append match-recs (list (car recs))))))
-		(setq lst     (cdr lst)
-		      primary nil))))
+            ;; Name didn't match name so check net matching
+            (when (not matched)
+              (setq lst (bbdb-record-net (car recs)))
+              (setq primary t) ;; primary wins over secondary...
+              (while lst
+                (if (string= pattern (substring (downcase (car lst))
+                                                0 (min (length
+                                                        (downcase (car
+                                                                   lst)))
+                                                       (length pattern))))
+                    (setq the-net (car lst)
+                          lst     nil
+                          match-recs
+                          (if primary (cons (car recs) match-recs)
+                            (append match-recs (list (car recs))))))
+                (setq lst     (cdr lst)
+                      primary nil))))
 
-	  ;; loop to next rec
-	  (setq recs    (cdr recs)
-		matched nil))
+          ;; loop to next rec
+          (setq recs    (cdr recs)
+                matched nil))
 
-	(unless match-recs
-	  (error "only exact matching record unhas net field"))
+        (unless match-recs
+          (error "only exact matching record unhas net field"))
 
-	;; now replace the text with the expansion
-	(delete-region beg end)
-	(insert (bbdb-dwim-net-address (car match-recs) the-net))
+        ;; now replace the text with the expansion
+        (delete-region beg end)
+        (insert (bbdb-dwim-net-address (car match-recs) the-net))
 
-	;; if we're past fill-column, wrap at the previous comma.
-	(if (and
-	     (bbdb-auto-fill-function)
-	     (>= (current-column) fill-column))
-	    (let ((p (point))
-		  bol)
-	      (save-excursion
-		(beginning-of-line)
-		(setq bol (point))
-		(goto-char p)
-		(if (search-backward "," bol t)
-		    (progn
-		      (forward-char 1)
-		      (insert "\n   "))))))
+        ;; if we're past fill-column, wrap at the previous comma.
+        (if (and
+             (bbdb-auto-fill-function)
+             (>= (current-column) fill-column))
+            (let ((p (point))
+                  bol)
+              (save-excursion
+                (beginning-of-line)
+                (setq bol (point))
+                (goto-char p)
+                (if (search-backward "," bol t)
+                    (progn
+                      (forward-char 1)
+                      (insert "\n   "))))))
 
-	;; Update the *BBDB* buffer if desired.
-	(if bbdb-completion-display-record
-	    (let ((bbdb-gag-messages t))
-	      (bbdb-display-records-1 match-recs t)))
-	(bbdb-complete-name-cleanup)
+        ;; Update the *BBDB* buffer if desired.
+        (if bbdb-completion-display-record
+            (let ((bbdb-gag-messages t))
+              (bbdb-display-records-1 match-recs t)))
+        (bbdb-complete-name-cleanup)
 
-	;; call the exact-completion hook
-	(run-hooks 'bbdb-complete-name-hooks)))
+        ;; call the exact-completion hook
+        (run-hooks 'bbdb-complete-name-hooks)))
 
      ;; Partial match
      ;; note, we can't use the trimmed version of the pattern here or
@@ -2188,80 +2208,80 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
       (insert completion)
       (setq end (point))
       (let ((last "")
-	    (bbdb-complete-name-allow-cycling nil))
-	(while (and (stringp completion)
-		    (not (string= completion last))
-		    (setq last completion
-			  pattern (downcase orig)
-			  completion (progn (all-completions-skeleton pattern ht pred) (try-completion-skeleton pattern ht))))
-	  (if (stringp completion)
-	      (progn (delete-region beg end)
-		     (insert completion))))
-	(bbdb-complete-name beg)))
+            (bbdb-complete-name-allow-cycling nil))
+        (while (and (stringp completion)
+                    (not (string= completion last))
+                    (setq last completion
+                          pattern (downcase orig)
+                          completion (progn (all-completions-skeleton pattern ht pred) (try-completion-skeleton pattern ht))))
+          (if (stringp completion)
+              (progn (delete-region beg end)
+                     (insert completion))))
+        (bbdb-complete-name beg)))
 
      ;; Exact match, but more than one record
      (t
       (or (eq (selected-window) (minibuffer-window))
-	  (message "Making completion list..."))
+          (message "Making completion list..."))
 
       (let (dwim-completions
-	    uniq nets net name lfname akas)
-	;; Now collect all the dwim-addresses for each completion, but only
-	;; once for each record!  Add it if the net is part of the completions
-	(bbdb-mapc
-	 (lambda (sym)
-	   (bbdb-mapc
-	    (lambda (rec)
-	      (when (not (member rec uniq))
-		(setq uniq (cons rec uniq)
-		      nets (bbdb-record-net rec)
-		      name (downcase (or (bbdb-record-name rec) ""))
-		      lfname (downcase (or (bbdb-record-lfname rec) ""))
-		      akas (mapcar 'downcase (bbdb-record-aka rec)))
-		(while nets
-		  (setq net (car nets))
-		  (when (string-skeleton-match pattern (format "%s %s %s" name (format "%s" akas) net))
-		    (setq dwim-completions
-			  (cons (bbdb-dwim-net-address rec net)
-				dwim-completions))
-		    (if exact-match (setq nets nil)))
-		  (setq nets (cdr nets)))))
-	    (symbol-value sym)))
-	 all-the-completions)
+            uniq nets net name lfname akas)
+        ;; Now collect all the dwim-addresses for each completion, but only
+        ;; once for each record!  Add it if the net is part of the completions
+        (bbdb-mapc
+         (lambda (sym)
+           (bbdb-mapc
+            (lambda (rec)
+              (when (not (member rec uniq))
+                (setq uniq (cons rec uniq)
+                      nets (bbdb-record-net rec)
+                      name (downcase (or (bbdb-record-name rec) ""))
+                      lfname (downcase (or (bbdb-record-lfname rec) ""))
+                      akas (mapcar 'downcase (bbdb-record-aka rec)))
+                (while nets
+                  (setq net (car nets))
+                  (when (string-skeleton-match pattern (format "%s %s %s" name (format "%s" akas) net))
+                    (setq dwim-completions
+                          (cons (bbdb-dwim-net-address rec net)
+                                dwim-completions))
+                    (if exact-match (setq nets nil)))
+                  (setq nets (cdr nets)))))
+            (symbol-value sym)))
+         all-the-completions)
 
-	;; if, after all that, we've only got one matching record...
-	(if (and dwim-completions (null (cdr dwim-completions)))
-	    (progn
-	      (delete-region beg end)
-	      (insert (car dwim-completions))
-	      (message ""))
-	  ;; otherwise, pop up a completions window
-	  (if (not (get-buffer-window "*Completions*"))
-	      (setq bbdb-complete-name-saved-window-config
-		    (current-window-configuration)))
-	  (let ((arg (list (current-buffer)
-			   (set-marker (make-marker) beg)
-			   (set-marker (make-marker) end))))
-	    (with-output-to-temp-buffer "*Completions*"
-	      (bbdb-display-completion-list
-	       dwim-completions
-	       'bbdb-complete-clicked-name
-	       arg)))
-	  (or (eq (selected-window) (minibuffer-window))
-	      (message "Making completion list...done"))))))))
+        ;; if, after all that, we've only got one matching record...
+        (if (and dwim-completions (null (cdr dwim-completions)))
+            (progn
+              (delete-region beg end)
+              (insert (car dwim-completions))
+              (message ""))
+          ;; otherwise, pop up a completions window
+          (if (not (get-buffer-window "*Completions*"))
+              (setq bbdb-complete-name-saved-window-config
+                    (current-window-configuration)))
+          (let ((arg (list (current-buffer)
+                           (set-marker (make-marker) beg)
+                           (set-marker (make-marker) end))))
+            (with-output-to-temp-buffer "*Completions*"
+              (bbdb-display-completion-list
+               dwim-completions
+               'bbdb-complete-clicked-name
+               arg)))
+          (or (eq (selected-window) (minibuffer-window))
+              (message "Making completion list...done"))))))))
 
 
 (setq org-publish-project-alist
       '(("notes"
-	 :base-directory "~/notes/"
-	 :publishing-directory "~/notes_html"
-	 :section-numbers t
-	 :table-of-contents t
-	 :style "<link rel=\"stylesheet\"
+         :base-directory "~/notes/"
+         :publishing-directory "~/notes_html"
+         :section-numbers t
+         :table-of-contents t
+         :style "<link rel=\"stylesheet\"
                      href=\"../other/mystyle.css\"
                      type=\"text/css\"/>")
 
-	("org"
+        ("org"
          :base-directory "~/doc/projects"
          :publishing-directory "~/public_html"
          :section-numbers nil
@@ -2275,19 +2295,19 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
        gnus-parameters))
 
 (defun bhj-org-tasks-closed-last-week (&optional match-string)
-  "Produces an org agenda tags view list of the tasks completed 
-in the specified month and year. Month parameter expects a number 
-from 1 to 12. Year parameter expects a four digit number. Defaults 
+  "Produces an org agenda tags view list of the tasks completed
+in the specified month and year. Month parameter expects a number
+from 1 to 12. Year parameter expects a four digit number. Defaults
 to the current month when arguments are not provided. Additional search
 criteria can be provided via the optional match-string argument "
   (interactive "sShow tasks before (default: last mon): ")
-  (if (or (not match-string) 
-	  (and (stringp match-string) (string-equal match-string "")))
-      (setq match-string "last mon"))    
-  (org-tags-view nil 
-		 (concat
-		  (format "+CLOSED>=\"[%s]\"" 
-			  (shell-command-to-string (concat "today '" match-string "'"))))))
+  (if (or (not match-string)
+          (and (stringp match-string) (string-equal match-string "")))
+      (setq match-string "last mon"))
+  (org-tags-view nil
+                 (concat
+                  (format "+CLOSED>=\"[%s]\""
+                          (shell-command-to-string (concat "today '" match-string "'"))))))
 
 (setq org-src-fontify-natively t)
 (setq org-todo-keywords
@@ -2299,9 +2319,9 @@ criteria can be provided via the optional match-string argument "
     (search-backward "start code-generator")
     (forward-char (length "start code-generator"))
     (if (looking-at "\\s *\\(\"\\|(\\)")
-	(setq code-transform 
-	     (read
-	      (buffer-substring-no-properties (point) (line-end-position)))))
+        (setq code-transform
+             (read
+              (buffer-substring-no-properties (point) (line-end-position)))))
     (next-line)
     (move-beginning-of-line nil)
     (setq start-of-code (point))
@@ -2327,7 +2347,7 @@ criteria can be provided via the optional match-string argument "
     (shell-command-on-region start-of-text end-of-text code-text nil t)
     (unless (eq major-mode 'fundamental-mode)
       (indent-region (min (point) (mark))
-		     (max (point) (mark))))))
+                     (max (point) (mark))))))
 
 (require 'org-jira)
 (condition-case nil
@@ -2336,7 +2356,7 @@ criteria can be provided via the optional match-string argument "
 (when (eq system-type 'windows-nt)
 
   (setq nntp-authinfo-file "~/../.authinfo"
-	auth-sources '((:source "~/../.authinfo" :host t :protocol t))))
+        auth-sources '((:source "~/../.authinfo" :host t :protocol t))))
 (global-set-key (kbd "M-s g") 'bhj-do-code-generation)
 (global-set-key (kbd "M-s c") (lambda () (interactive) (call-interactively 'compile)))
 (global-set-key (kbd "M-g i") 'imenu)
@@ -2383,27 +2403,27 @@ criteria can be provided via the optional match-string argument "
   (twittering-enable-unread-status-notifier)
   (setq-default twittering-icon-mode t)
   (setq twittering-use-ssl nil
-	twittering-oauth-use-ssl nil)
+        twittering-oauth-use-ssl nil)
   (setq twittering-icon-mode 1)
   (setq twittering-enabled-services '(sina))
   (setq twittering-accounts '((sina (username "baohj_zj@hotmail.com")
-				    (auth oauth))))
+                                    (auth oauth))))
 
   (setq twittering-initial-timeline-spec-string `(":home@sina")))
 
 (setq gnus-posting-styles
       '(
-	(".*"
-	 ("From" "Ask <ask@ask.com>")
-	 (signature "All the best\n\n Bao Haojun")
-	 )
-	(".*mrvl.*"
-	 ("From" "Bao Haojun <hjbao@marvell.com>")
-	 )
-	(".*gmail.*"
-	 ("From" "Bao Haojun <baohaojun@gmail.com>")
-	 )
-	))
+        (".*"
+         ("From" "Ask <ask@ask.com>")
+         (signature "All the best\n\n Bao Haojun")
+         )
+        (".*mrvl.*"
+         ("From" "Bao Haojun <hjbao@marvell.com>")
+         )
+        (".*gmail.*"
+         ("From" "Bao Haojun <baohaojun@gmail.com>")
+         )
+        ))
 
 (defun dos2unix ()
   "Convert this entire buffer from MS-DOS text file format to UNIX."
@@ -2413,7 +2433,7 @@ criteria can be provided via the optional match-string argument "
     (replace-regexp "\r$" "" nil)
     (goto-char (1- (point-max)))
     (if (looking-at "\C-z")
-	(delete-char 1))))
+        (delete-char 1))))
 
 (defun copy-string (str)
   "copy the string into kill-ring"
@@ -2428,7 +2448,7 @@ criteria can be provided via the optional match-string argument "
 (global-set-key [(meta shift ?d)] 'insert-today)
 
 (unless (or (eq system-type 'windows-nt)
-	    (eq system-type 'darwin))
+            (eq system-type 'darwin))
   (load-file "~/.emacs_d/lisp/my-erc-config.el"))
 
 (defun goto-line-not-containing (word)
@@ -2436,28 +2456,28 @@ criteria can be provided via the optional match-string argument "
 we are not interested in those lines that do."
   (interactive (list (read-string "What word you want to skip? ")))
   (let* ((temp-buffer (get-buffer-create "*goto-line-not-containing*")))
-    (goto-line 
+    (goto-line
      (save-excursion
        (save-window-excursion
-	 (shell-command-on-region (point-min) 
-				  (point-max)
-				  (format 
-				   "export CURRENTLINE=%s; grep -i -v -e %s -n | perl -ne 'chomp; s/:.*//; if ($_ > $ENV{CURRENTLINE}) { print $_ . \"\\n\";}'"
-				   (line-number-at-pos)
-				   (shell-quote-argument word))
-				  temp-buffer)
-	 
-	 (string-to-number
-	  (with-current-buffer temp-buffer
-	    (goto-char (point-min))
-	    (current-line-string))))))))
+         (shell-command-on-region (point-min)
+                                  (point-max)
+                                  (format
+                                   "export CURRENTLINE=%s; grep -i -v -e %s -n | perl -ne 'chomp; s/:.*//; if ($_ > $ENV{CURRENTLINE}) { print $_ . \"\\n\";}'"
+                                   (line-number-at-pos)
+                                   (shell-quote-argument word))
+                                  temp-buffer)
+
+         (string-to-number
+          (with-current-buffer temp-buffer
+            (goto-char (point-min))
+            (current-line-string))))))))
 (defun bhj-do-dictionry (word)
   "lookup the current word (or region) in dictionary"
   (interactive
-   (list (if mark-active 
-	     (buffer-substring-no-properties (region-beginning)
-					     (region-end))
-	   (current-word))))
+   (list (if mark-active
+             (buffer-substring-no-properties (region-beginning)
+                                             (region-end))
+           (current-word))))
   (w3m-goto-url (format "http://r66:34567/dict/%s" word)))
 
 (define-key esc-map [(meta d)] 'bhj-do-dictionry)
@@ -2467,25 +2487,25 @@ we are not interested in those lines that do."
   (save-excursion
     (goto-char (point-min))
     (search-forward-regexp "^\\s *package ")
-    (let ((package-name 
-	   (buffer-substring-no-properties
-	    (point)
-	    (1- (line-end-position))))
-	  (doc-prefix "file:///home/bhj/bin/Linux/ext/android-sdk-linux_86/docs/reference")
-	  (html-name (replace-regexp-in-string 
-		      ".java$" ".html" 
-		      (replace-regexp-in-string
-		       ".*/" ""
-		       (buffer-file-name))))
-	  (default-directory (expand-file-name "~")))
+    (let ((package-name
+           (buffer-substring-no-properties
+            (point)
+            (1- (line-end-position))))
+          (doc-prefix "file:///home/bhj/bin/Linux/ext/android-sdk-linux_86/docs/reference")
+          (html-name (replace-regexp-in-string
+                      ".java$" ".html"
+                      (replace-regexp-in-string
+                       ".*/" ""
+                       (buffer-file-name))))
+          (default-directory (expand-file-name "~")))
       (shell-command (format "of %s/%s/%s"
-				   doc-prefix
-				   (replace-regexp-in-string
-				    "\\."
-				    "/"
-				    package-name)
-				   html-name)))))
-			 
+                                   doc-prefix
+                                   (replace-regexp-in-string
+                                    "\\."
+                                    "/"
+                                    package-name)
+                                   html-name)))))
+
 (eval-after-load 'java-mode
   (define-key java-mode-map (kbd "M-s d") 'bhj-open-android-doc-on-java-buffer))
 
@@ -2500,10 +2520,10 @@ we are not interested in those lines that do."
   (require 'cl)
   (let ((saved-file-remote-p (symbol-function 'file-remote-p)))
     (flet ((file-remote-p (file &optional identification connected)
-			  (cond
-			   ((string-match "^/scp:" file) nil)
-			   ((string-match "/smb/" file) t)
-			   (t (funcall saved-file-remote-p file identification connected)))))
+                          (cond
+                           ((string-match "^/scp:" file) nil)
+                           ((string-match "/smb/" file) t)
+                           (t (funcall saved-file-remote-p file identification connected)))))
       ad-do-it)))
 
 (yas/global-mode)
@@ -2530,46 +2550,46 @@ we are not interested in those lines that do."
 
 
 (add-hook 'vc-git-log-view-mode-hook
-	  (lambda ()
-	    (when (string= log-view-message-re "^commit *\\([0-9a-z]+\\)")
-	      (setq log-view-message-re "^commit +\\([0-9a-z]+\\)"))))
+          (lambda ()
+            (when (string= log-view-message-re "^commit *\\([0-9a-z]+\\)")
+              (setq log-view-message-re "^commit +\\([0-9a-z]+\\)"))))
 
 (defun imenu-create-index-using-ctags ()
   "Create the index like the imenu-default-create-index-function,
 using ctags-exuberant"
 
   (let ((source-buffer (current-buffer))
-	(temp-buffer (get-buffer-create "* imenu-ctags *"))
-	result-alist)
+        (temp-buffer (get-buffer-create "* imenu-ctags *"))
+        result-alist)
     (save-excursion
       (save-restriction
-	(widen)
-	(save-window-excursion
-	  (shell-command-on-region 
-	   (point-min)
-	   (point-max)
-	   (concat "imenu-ctags " 
-		   (file-name-nondirectory (buffer-file-name source-buffer)))
-	   temp-buffer))
-	(with-current-buffer temp-buffer
-	  (goto-char (point-min))
-	  (while (search-forward-regexp "^\\([0-9]+\\) : \\(.*\\)" nil t)
-	    (setq result-alist
-		  (cons (cons (match-string 2) 
-			      (let ((marker (make-marker)))
-				(set-marker marker (string-to-number (match-string 1)) source-buffer)))
-			result-alist))))))
+        (widen)
+        (save-window-excursion
+          (shell-command-on-region
+           (point-min)
+           (point-max)
+           (concat "imenu-ctags "
+                   (file-name-nondirectory (buffer-file-name source-buffer)))
+           temp-buffer))
+        (with-current-buffer temp-buffer
+          (goto-char (point-min))
+          (while (search-forward-regexp "^\\([0-9]+\\) : \\(.*\\)" nil t)
+            (setq result-alist
+                  (cons (cons (match-string 2)
+                              (let ((marker (make-marker)))
+                                (set-marker marker (string-to-number (match-string 1)) source-buffer)))
+                        result-alist))))))
     (nreverse result-alist)))
 
 (setq-default imenu-create-index-function #'imenu-create-index-using-ctags)
-(add-hook 'python-mode-hook 
-	  (lambda ()
-	    (setq imenu-create-index-function #'imenu-create-index-using-ctags))
-	  t)
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq imenu-create-index-function #'imenu-create-index-using-ctags))
+          t)
 
 (add-hook 'grep-mode-hook
-	  (lambda ()
-	    (setq compilation-directory-matcher (default-value 'compilation-directory-matcher))))
+          (lambda ()
+            (setq compilation-directory-matcher (default-value 'compilation-directory-matcher))))
 (require 'org-md)
 
 (defun bhj-find-missing-file ()
@@ -2582,27 +2602,27 @@ using ctags-exuberant"
       (setq missing-file-name-save missing-file-name))
 
     (setq missing-file-name
-	  (mapcar (lambda (b) (buffer-file-name b))
-		  (delete-if-not 
-		   (lambda (b)
-		     (let ((name (file-name-nondirectory (or (buffer-file-name b) ""))))
-		       (string= name missing-file-name-save)))
-		   (buffer-list))))
+          (mapcar (lambda (b) (buffer-file-name b))
+                  (delete-if-not
+                   (lambda (b)
+                     (let ((name (file-name-nondirectory (or (buffer-file-name b) ""))))
+                       (string= name missing-file-name-save)))
+                   (buffer-list))))
     (unless missing-file-name
       (setq missing-file-name (shell-command-to-string
-			       (format "beagrep -e %s -f 2>&1|perl -ne 's/:\\d+:.*// and print'" missing-file-name-save)))
+                               (format "beagrep -e %s -f 2>&1|perl -ne 's/:\\d+:.*// and print'" missing-file-name-save)))
       (setq missing-file-name (delete-if-empty (split-string missing-file-name "\n"))))
-      
+
     (when missing-file-name
       (if (nth 1 missing-file-name)
-	  (setq missing-file-name
-		(skeleton-general-display-matches missing-file-name))
-	(setq missing-file-name (car missing-file-name)))
+          (setq missing-file-name
+                (skeleton-general-display-matches missing-file-name))
+        (setq missing-file-name (car missing-file-name)))
       (when (and (not (file-remote-p missing-file-name))
-		 (file-remote-p default-directory))
-	(setq missing-file-name (concat (file-remote-p default-directory)
-					missing-file-name)))
-      	(insert missing-file-name))))
+                 (file-remote-p default-directory))
+        (setq missing-file-name (concat (file-remote-p default-directory)
+                                        missing-file-name)))
+        (insert missing-file-name))))
 
 (global-set-key [(shift return)] 'bhj-find-missing-file)
 
@@ -2617,49 +2637,49 @@ using ctags-exuberant"
   (interactive)
   (save-excursion
     (let ((old-buffer (current-buffer))
-	  import-list)
+          import-list)
       (with-temp-buffer
-	(shell-command (format "java-get-imports.pl %s -v" (buffer-file-name old-buffer)) (current-buffer))
-	(goto-char (point-min))
-	(while (search-forward-regexp "^import" nil t)
-	  (save-excursion
-	    (if (looking-at "-multi")
+        (shell-command (format "java-get-imports.pl %s -v" (buffer-file-name old-buffer)) (current-buffer))
+        (goto-char (point-min))
+        (while (search-forward-regexp "^import" nil t)
+          (save-excursion
+            (if (looking-at "-multi")
 
-		(setq import-list (cons
-				   (format "import %s;\n" 
-					   (completing-read-one? "Import which? "
-								 (cdr
-								  (delete-if-empty
-								   (split-string (current-line-string) "\\s +")))
-								 nil
-								 t))
-				   import-list))
-	      (setq import-list (cons (format "%s;\n" (current-line-string)) import-list))))
-	  (forward-line) 
-	  (beginning-of-line)))
+                (setq import-list (cons
+                                   (format "import %s;\n"
+                                           (completing-read-one? "Import which? "
+                                                                 (cdr
+                                                                  (delete-if-empty
+                                                                   (split-string (current-line-string) "\\s +")))
+                                                                 nil
+                                                                 t))
+                                   import-list))
+              (setq import-list (cons (format "%s;\n" (current-line-string)) import-list))))
+          (forward-line)
+          (beginning-of-line)))
       (goto-char (point-max))
       (or (search-backward-regexp "^import\\s +" nil t)
-	  (search-backward-regexp "^package\\s +" nil t))
+          (search-backward-regexp "^package\\s +" nil t))
       (forward-line)
       (beginning-of-line)
       (while import-list
-	(insert (car import-list))
-	(setq import-list (cdr import-list))))))
+        (insert (car import-list))
+        (setq import-list (cdr import-list))))))
 
 (setq ring-bell-function (lambda ()))
 
 (defun source-code-help()
   (interactive)
   (let ((word (current-word)))
-    (async-shell-command 
+    (async-shell-command
      (if current-prefix-arg
-	 (format "search-google %s" (shell-quote-argument word))
+         (format "search-google %s" (shell-quote-argument word))
        (format "source-code-help %s %s" major-mode word)))))
 
 (global-set-key [(meta s) ?h ?h] 'source-code-help)
 (global-set-key [(control |)] 'toggle-input-method)
 (eval-after-load "ediff-init" (add-hook 'ediff-quit-hook (lambda () (shell-command "find-or-exec emacs"))))
-      
+
 (condition-case nil
     (server-start)
   (error (message "emacs server start failed")))
