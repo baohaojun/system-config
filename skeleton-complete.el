@@ -45,7 +45,8 @@
            (word (when start (buffer-substring-no-properties start end)))
            (match (when (and word
                              (not (zerop (length word))))
-                    (skeleton-display-matches word))))
+                    (let ((case-fold-search (not (string-match-p "[A-Z]" word))))
+                      (skeleton-display-matches word)))))
       (when match
         (delete-region start end)
         (insert match)))))
@@ -84,7 +85,8 @@ we will get the pattern \"naoehu[)+{\""
                 search-end cp))))
     (setq old-regexp (buffer-substring-no-properties search-start search-end))
     (setq new-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list old-regexp) ".*?"))
-    (skeleton-regexp-display-abbrev new-regexp search-start search-end)))
+    (let ((case-fold-search (not (string-match-p "[A-Z]" old-regexp))))
+      (skeleton-regexp-display-abbrev new-regexp search-start search-end))))
 
 (defun skeleton-regexp-display-abbrev (regexp &optional rb re)
   "Display the possible abbrevs for the regexp."
