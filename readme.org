@@ -33,8 +33,15 @@ both have =skeleton= in their names.
 
 1. =(require 'skeleton-complete)=
 
-2. Type a skeleton and press =M-g <return>= or =M-s <return>= based on
+2. =(skeleton-complete-global-mode 1)=
+
+3. Type a skeleton and press =M-g <return>= or =M-s <return>= based on
    the flavor you wanted.
 
-For more detailed discussion about this dark magic, see [[http://baohaojun.github.io/skeleton-complete.html][this github
-page]].
+For more detailed discussion about this dark magic, see [[http://baohaojun.github.io/skeleton-complete.html][this github page]].
+
+* Ack
+
+Thank [[http://www.newsmth.net/bbscon.php?bid=573&id=88915][wuhaochi]] from NewSmth BBS's Emacs board (best Chinese Emacs
+forum) for suggesting the (more useful) 2nd flavor when I posted about
+the 1st flavor there.
