@@ -35,27 +35,27 @@
 
 (require 'ecomplete)
 
-(defun skeleton-display-abbrev ()
-  "Display the next possible abbrev for the text before point."
+(defun skeleton--expand-symbols ()
+  "Expand the skeleton before point into a symbol. The skeleton
+itself is constructed by symbol constituting characters."
   (interactive)
   (when (looking-back "\\w\\|_" 1)
     (let* ((end (point))
            (start (save-excursion
-                    (search-backward-regexp "\\(\\_<.*?\\)")))
-           (word (when start (buffer-substring-no-properties start end)))
-           (match (when (and word
-                             (not (zerop (length word))))
+                    (search-backward-regexp "\\_<")))
+           (the-skeleton (when start (buffer-substring-no-properties start end)))
+           (the-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list the-skeleton) ".*?"))
+           (match (when (and the-skeleton
+                             (not (zerop (length the-skeleton))))
                     (let ((case-fold-search
                            (let ((case-fold-search nil))
-                             (not (string-match-p "[A-Z]" word)))))
-                      (skeleton-display-matches word)))))
+                             (not (string-match-p "[A-Z]" the-skeleton)))))
+                      (skeleton--expand-bounded-matching the-regexp)))))
       (when match
         (delete-region start end)
         (insert match)))))
 
-(defvar skeleton-regexp-completion-history nil)
-
-(defun skeleton-easy-regexp-display-abbrev ()
+(defun skeleton--expand-partial-lines ()
   "Simplify writing the regexp. If we are looking back at, for
 e.g., \"sthe='\", the regexp for completion should be
 \"s.*?t.*?h.*?e.*?=.*?'\". That is, fill in a \".*?\" pattern
@@ -64,15 +64,17 @@ between each 2 characters.
 If the region is active, the original pattern is built from what
 is in the region.
 
-If the region is not active, the original pattern should be
-found by looking backwards for the second word boundary \\b. So
-that if we are looking back at:
+If the region is not active, the original pattern should be found
+by checking white spaces (see the code). For e.g., if we are
+looking back at (with the last * denoting where the point is):
 
-   [{)}& aonehua naoehu[)+{*
+    [{)}& aonehua naoehu[)+{ *
 
-we will get the pattern \"naoehu[)+{\""
+we will get the skeleton:
+
+    \"naoehu[)+{ \""
   (interactive)
-  (let (old-regexp new-regexp search-start search-end)
+  (let (the-skeleton the-regexp search-start search-end)
     (if mark-active
         (setq search-start (region-beginning)
               search-end (region-end))
@@ -85,37 +87,32 @@ we will get the pattern \"naoehu[)+{\""
             (backward-char))
           (setq search-start (point)
                 search-end cp))))
-    (setq old-regexp (buffer-substring-no-properties search-start search-end))
-    (setq new-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list old-regexp) ".*?"))
+    (setq the-skeleton (buffer-substring-no-properties search-start search-end))
+    (setq the-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list the-skeleton) ".*?"))
     (let ((case-fold-search
            (let ((case-fold-search nil))
-             (not (string-match-p "[A-Z]" old-regexp)))))
-      (skeleton-regexp-display-abbrev new-regexp search-start search-end))))
+             (not (string-match-p "[A-Z]" the-skeleton)))))
+      (skeleton--expand-with-regexp the-regexp search-start search-end))))
 
-(defun skeleton-regexp-display-abbrev (regexp &optional rb re)
+(defun skeleton--expand-with-regexp (regexp &optional rb re)
   "Display the possible abbrevs for the regexp."
-  (interactive
-   (progn
-     (list
-      (read-shell-command "Get matches with regexp: "
-                          (grep-tag-default)
-                          'skeleton-regexp-completion-history
-                          nil))))
-  (let ((match (when (not (zerop (length regexp)))
-                 (skeleton-regexp-display-matches regexp))))
+  (interactive)
+  (let ((match (unless (string= "" regexp)
+                 (skeleton--expand-matching regexp))))
     (when match
       (if (region-active-p)
           (delete-region (region-beginning) (region-end))
         (when (and rb re) (delete-region rb re)))
       (insert match))))
 
-(defmacro skeleton-max-mini-lines ()
+(defmacro skeleton--max-minibuffer-lines ()
   `(if (floatp max-mini-window-height)
        (truncate (* (frame-height) max-mini-window-height))
      max-mini-window-height))
 
-(defun skeleton-highlight-match-line (matches line max-line-num)
-  (let* ((max-lines (skeleton-max-mini-lines))
+(defun skeleton--highlight-match-line (matches line max-line-num)
+  "This function is copy and modified from ecomplete-highlight-match-line"
+  (let* ((max-lines (skeleton--max-minibuffer-lines))
          (max-lines-1 (1- max-lines))
          (max-lines-2 (1- max-lines-1)))
     (cond
@@ -140,13 +137,13 @@ we will get the pattern \"naoehu[)+{\""
                  (format "\nmin: %d, max: %d, total: %d" min-disp max-disp max-line-num)))))
         (ecomplete-highlight-match-line matches line))))))
 
-(defun skeleton-display-matches (word)
-  (skeleton-general-display-matches (delete word (nreverse (skeleton-get-matches-order word)))))
+(defun skeleton--expand-bounded-matching (re)
+  (skeleton--display-matches (skeleton--delete-the-skeleton (nreverse (skeleton--get-bounded-matches re)))))
 
-(defun skeleton-regexp-display-matches (regexp)
-  (skeleton-general-display-matches (delete "" (nreverse (skeleton-regexp-get-matches regexp)))))
+(defun skeleton--expand-matching (regexp)
+  (skeleton--display-matches (delete "" (nreverse (skeleton--get-matches regexp)))))
 
-(defun skeleton-general-display-matches (strlist)
+(defun skeleton--display-matches (strlist)
   (let* ((matches (concat
                    (mapconcat 'identity (delete-dups strlist) "\n")
                    "\n"))
@@ -160,7 +157,7 @@ we will get the pattern \"naoehu[)+{\""
           nil)
       (if (= max-line-num 0)
           (nth line (split-string matches "\n"))
-        (setq highlight (skeleton-highlight-match-line matches line max-line-num))
+        (setq highlight (skeleton--highlight-match-line matches line max-line-num))
         (while (not (memq (setq command (read-event highlight)) '(? return)))
           (cond
            ((or (eq command ?\M-n)
@@ -169,24 +166,25 @@ we will get the pattern \"naoehu[)+{\""
            ((or (eq command ?\M-p)
                 (eq command ?\C-p))
             (setq line (% (+ max-line-num line) (1+ max-line-num)))))
-          (setq highlight (skeleton-highlight-match-line matches line max-line-num)))
+          (setq highlight (skeleton--highlight-match-line matches line max-line-num)))
         (when (eq command 'return)
           (nth line (split-string matches "\n")))))))
 
-(defun skeleton-regexp-get-matches (re &optional no-recur)
-  (let ((list (skeleton-regexp-get-matches-internal re no-recur)))
-    (if (and (boundp 'old-regexp)
-             (stringp old-regexp))
-        (delete old-regexp list)
-      list)))
+(defun skeleton--delete-the-skeleton (list)
+  (if (and (boundp 'the-skeleton)
+           (stringp the-skeleton))
+      (delete the-skeleton list)
+    list))
 
-(defun skeleton-regexp-get-matches-internal (re &optional no-recur)
+(defun skeleton--get-matches (re &optional no-recur)
+  (skeleton--delete-the-skeleton (skeleton--get-matches-internal re no-recur)))
+
+(defun skeleton--get-matches-internal (re &optional no-recur)
   "Display the possible completions for the regexp."
   (let ((strlist-before nil)
         (strlist-after nil)
         (strlist nil)
-        (current-pos (point))
-        (re (replace-regexp-in-string "\\*\\*" "\\(\\w\\|_\\)*" re t t)))
+        (current-pos (point)))
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward re nil t)
@@ -231,7 +229,7 @@ we will get the pattern \"naoehu[)+{\""
         (save-excursion
           (mapcar (lambda (buf)
                     (with-current-buffer buf ;;next let's recursive call
-                      (setq strlist (append (skeleton-regexp-get-matches re t) strlist))))
+                      (setq strlist (append (skeleton--get-matches re t) strlist))))
                   (delete buf-old
                           (mapcar (lambda (w)
                                     (window-buffer w))
@@ -244,18 +242,17 @@ we will get the pattern \"naoehu[)+{\""
             (mapcar (lambda (buf)
                       (with-current-buffer buf ;;next let's recursive call
                         (unless strlist
-                          (setq strlist (append (skeleton-regexp-get-matches re t) strlist)))))
+                          (setq strlist (append (skeleton--get-matches re t) strlist)))))
                     (delete buf-old
                             (buffer-list)))
             strlist))
         ))))
 
-(defun skeleton-get-matches-order (skeleton &optional no-recur)
+(defun skeleton--get-bounded-matches (re &optional no-recur)
   "Get all the words that contains every character of the
 SKELETON from the current buffer The words are ordered such that
 words closer to the (point) appear first"
-  (let ((skeleton-re (mapconcat 'string skeleton ".*"))
-        (strlist-before nil)
+  (let ((strlist-before nil)
         (strlist-after nil)
         (strlist nil)
         (current-pos (point)))
@@ -264,7 +261,7 @@ words closer to the (point) appear first"
       (while (not (eobp))
         (if (setq endpt (re-search-forward "\\(\\_<.*?\\_>\\)" nil t))
             (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
-              (when (string-match skeleton-re substr)
+              (when (string-match re substr)
                 (if (< (point) current-pos)
                     (setq strlist-before (cons substr strlist-before))
                   (setq strlist-after (cons substr strlist-after)))))
@@ -284,7 +281,7 @@ words closer to the (point) appear first"
         (save-excursion
           (mapcar (lambda (buf)
                     (with-current-buffer buf ;;next let's recursive call
-                      (setq strlist (append (skeleton-get-matches-order skeleton t) strlist))))
+                      (setq strlist (append (skeleton--get-bounded-matches re t) strlist))))
                   (delete buf-old
                           (mapcar (lambda (w)
                                     (window-buffer w))
@@ -297,7 +294,7 @@ words closer to the (point) appear first"
             (mapcar (lambda (buf)
                       (with-current-buffer buf ;;next let's recursive call
                         (unless (and strlist (cdr strlist))
-                          (setq strlist (delete-dups (append (skeleton-get-matches-order skeleton t) strlist))))))
+                          (setq strlist (delete-dups (append (skeleton--get-bounded-matches skeleton t) strlist))))))
                     (delete buf-old (buffer-list)))
             strlist))))))
 
@@ -307,9 +304,9 @@ words closer to the (point) appear first"
 
 (defvar skeleton-complete-mode-map (make-sparse-keymap)
   "skeleton-complete mode map.")
-(define-key skeleton-complete-mode-map (kbd "M-g <return>") 'skeleton-display-abbrev)
-(define-key skeleton-complete-mode-map (kbd "M-s <return>")'skeleton-easy-regexp-display-abbrev)
-(define-key skeleton-complete-mode-map (kbd "M-g x") 'skeleton-easy-regexp-display-abbrev)
+(define-key skeleton-complete-mode-map (kbd "M-g <return>") 'skeleton--expand-symbols)
+(define-key skeleton-complete-mode-map (kbd "M-s <return>")'skeleton--expand-partial-lines)
+(define-key skeleton-complete-mode-map (kbd "M-g x") 'skeleton--expand-partial-lines)
 
 (define-minor-mode skeleton-complete-mode
   "Toggle the `skeleton-complete-mode' minor mode."
