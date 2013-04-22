@@ -52,7 +52,7 @@ characters before the point."
            (the-skeleton (buffer-substring-no-properties start end))
            (the-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list the-skeleton) ".*?"))
            (case-fold-search (not (skeleton--contains-upcase-p the-skeleton)))
-           (match (skeleton--display-matches (nreverse (skeleton--get-symbol-matches the-regexp)))))
+           (match (skeleton--display-matches (skeleton--get-symbol-matches the-regexp))))
       (when match
         (delete-region start end)
         (insert match)))))
@@ -88,7 +88,7 @@ we will get the skeleton:
     (setq the-skeleton (buffer-substring-no-properties start end))
     (setq the-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list the-skeleton) ".*?"))
     (let ((case-fold-search (not (skeleton--contains-upcase-p the-skeleton)))
-          (match (skeleton--display-matches (nreverse (skeleton--get-line-matches the-regexp)))))
+          (match (skeleton--display-matches (skeleton--get-line-matches the-regexp))))
 
       (when match
         (delete-region start end)
@@ -157,13 +157,17 @@ This func is copied and modified from `ecomplete-display-matches'."
           (nth line (split-string matches "\n")))))))
 
 (defun skeleton--clean-up (list)
-  (delete "" (if (and (boundp 'the-skeleton)
-                      (stringp the-skeleton))
-                 (delete the-skeleton list)
-               list)))
+  (delete-dups
+   (delete ""
+           (if (and (boundp 'the-skeleton)
+                    (stringp the-skeleton))
+               (delete the-skeleton list)
+             list))))
 
 (defun skeleton--get-line-matches (re &optional no-recur)
-  (skeleton--clean-up (skeleton--get-matches-internal re #'skeleton--line-matching-loop-func no-recur)))
+  (nreverse
+   (skeleton--clean-up ; to be paranoid
+    (skeleton--get-matches-internal re #'skeleton--line-matching-loop-func no-recur))))
 
 (defun skeleton--line-matching-loop-func (re)
   "Search the buffer to collect all strings that matches `re'.
@@ -179,7 +183,7 @@ strlist-before and strlist-after variables in the env."
       ;;; bad match.
       (unless (or (and (looking-at "\\w")
                        (looking-back "\\w")
-                                        ; 你好*ma should provide a good match as "ma", not "你好ma"
+                                        ; 你好*ma should provide a match as "ma", not "你好ma"
                        (not (looking-at "\\b")))
                   (and (boundp 'search-start) ; the found string is over our searching pattern
                        (boundp 'search-end)
@@ -193,45 +197,70 @@ strlist-before and strlist-after variables in the env."
             (re-search-forward "\\b" nil t)
             (setq me (point))))
         (let ((substr (buffer-substring-no-properties mb me)))
-          (if (< (point) current-pos)
+          (if (< (point) old-point)
+              ;; substr closer to the old-point is at the head of strlist-before, in good order
               (setq strlist-before (cons substr strlist-before))
+            ;; substr further to the old-point is at the head of strlist-after, bad
             (setq strlist-after (cons substr strlist-after)))))
       (goto-char (1+ mb)))))
 
 (defun skeleton--get-matches-internal (re loop-func &optional no-recur)
   "Get all the possible completions for the RE, using LOOP-FUNC
-to collect completions from 1 buffer."
+to collect matching completions from 1 buffer.
+
+The list of matching completions are desirable to be
+sorted (interleaved) according to their distance to the
+point. First one entry coming *before* the point, then one entry
+coming *after* point, until either list runs out.
+
+The LOOP-FUNC is expected to update the strlist-before and
+strlist-after, and when it finishes, strlist-before should be in
+desirable order, but strlist-after should be in reversed order
+according to the above standard.
+
+But for ease of coding, this func returns a list of strings which
+are in the reversed order, so one must remember to call nreverse
+with the result before presenting it to the user."
+
   (let ((strlist-before nil)
         (strlist-after nil)
         (strlist nil)
-        (current-pos (point)))
+        (old-point (point)))
     (save-excursion
       (goto-char (point-min))
       (funcall loop-func re)
-      (setq strlist-before  (delete-dups strlist-before)
-            strlist-after (delete-dups (nreverse strlist-after)))
+      (setq strlist-before (skeleton--clean-up strlist-before) ; strlist-before is good
+            strlist-after (skeleton--clean-up (nreverse strlist-after))) ; strlist-after is made also good with this nreverse
       (while (and strlist-before strlist-after)
-        (setq strlist (cons (car strlist-before) strlist)
+        (setq strlist (cons (car strlist-before) strlist) ; consing like this makes strlist in bad order
               strlist (cons (car strlist-after) strlist)
               strlist-before (cdr strlist-before)
               strlist-after (cdr strlist-after)))
+
+      ;; need 2 nreverse to make the 2 good strlist-* aligned with the
+      ;; bad strlist; strlist must be the last of `append'
       (setq strlist (append (nreverse strlist-after) (nreverse strlist-before) strlist))
-      ;;get matches from other visible buffers
+
       (if no-recur
           strlist
 
         (or
+
+         ;;get matches from other visible buffers
          (let* ((buf-old (current-buffer)))
            (save-excursion
              (mapcar (lambda (buf)
-                       (with-current-buffer buf ;;next let's recursive call
+                       (with-current-buffer buf
+                         ;; recursive call, and keep strlist still in
+                         ;; the bad order by making it the last of `append'
                          (setq strlist (append (skeleton--get-matches-internal re loop-func t) strlist))))
                      (delete buf-old
                              (mapcar (lambda (w)
                                        (window-buffer w))
                                      (window-list))))
              strlist))
-         ;;get matches from all buffers if nothing found
+
+         ;;get matches from all buffers if nothing found so far
          (let* ((buf-old (current-buffer)))
            (save-excursion
              (mapcar (lambda (buf)
@@ -251,13 +280,15 @@ strlist-before and strlist-after variables in the env."
     (if (setq endpt (re-search-forward "\\(\\_<.*?\\_>\\)" nil t))
         (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
           (when (string-match re substr)
-            (if (< (point) current-pos)
+            (if (< (point) old-point)
                 (setq strlist-before (cons substr strlist-before))
               (setq strlist-after (cons substr strlist-after)))))
       (goto-char (point-max)))))
 
 (defun skeleton--get-symbol-matches (re &optional no-recur)
-  (skeleton--clean-up (skeleton--get-matches-internal re #'skeleton--symbol-matching-loop-func no-recur)))
+  (nreverse
+   (skeleton--clean-up ; to be paranoid
+    (skeleton--get-matches-internal re #'skeleton--symbol-matching-loop-func no-recur))))
 
 (defgroup skeleton-complete nil
   "Dynamically expand expressions by provided skeleton (flex matching)."
