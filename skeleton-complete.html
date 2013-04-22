@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="skeleton-complete"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-17T12:48+0800"/>
+<meta name="generated" content="2013-04-22T17:04+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -308,12 +308,12 @@ Here's how it works. First the skeleton is broken down to bare bones,
 <code>\\$.*?h.*?1.*?}</code> (note how the <code>$</code> is quoted because besides being a
 bone, it's also a “meta”bone; also note the usage of the non-greedy
 <code>.*?</code>, it is dark magic already, do not make it worse by being
-greedy!).
+greedy<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>!).
 </p>
 <p>
 Then all the expressions in the current buffer are matched, and they
 are listed in the same way as the first flavor (Thus the user should
-say, “oh, I have seen this before.” and feel easy. Déjà vu<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>?).
+say, “oh, I have seen this before.” and feel easy. Déjà vu<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>?).
 </p>
 </div>
 </div>
@@ -364,12 +364,12 @@ skeleton-complete that you might want to know.
    constituent character, it must match at beginning of a word.
 
 <p>
-   For e.g., <code>er</code> will not match <code>hello world</code>, you must change the
+   For e.g., <code>lr</code> will not match <code>hello world</code>, you must change the
    skeleton to <code>hr</code> (the last character of the skeleton is not
    constrained).
 </p>
-<p>   
-   A skeleton without a right skull is very difficult to complete!
+<p>
+   A skeleton without a right skull is very difficult to complete!<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>
 </p>
 </li>
 <li>Arbitrary single line string can be completed with the 2nd
@@ -382,13 +382,13 @@ skeleton-complete that you might want to know.
    spaces into it.
 
 </li>
-<li>Use interesting bones as much as possible. 
+<li>Use interesting bones as much as possible.
 
 <p>
    In the above example, the <code>h</code> in <code>h6</code> is not interesting, because
    everybody has this bone. You can discard it and use <code>6</code> alone,
    because only <code>hello6</code> has this interesting bone in it, and it is
-   exactly what you wanted.   
+   exactly what you wanted.
 </p>
 </li>
 <li>You can use complete and modify if you need input a similar but not
@@ -419,7 +419,24 @@ don't try to use 2nd flavor skeleton-complete with them, run away!
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> I typed the 2nd and this <code>Déjà vu</code> with <code>dvu</code> and <code>M-s &lt;return&gt;</code>. And the 1st is typed as <code>D\'ej\`a vu</code> and <code>M-x iso-tex2iso</code>, if you don't know already:-)
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> In the first flavor, either greedy or non-greedy
+will do. But in the 2nd flaver, I must use non-greedy to give user
+more control: given <code>$double_hash{$ref1}{$ref2}</code>, greedy <code>${}</code> and
+<code>${}}</code> will both match the whole thing, but the non-greedy version
+will empower user to choose <code>$double_hash{$ref1}</code> and
+<code>$double_hash{$ref1}{$ref2}</code> respectively.
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> I typed the 2nd and this <code>Déjà vu</code> with <code>dvu</code> and <code>M-s &lt;return&gt;</code>. And the 1st is typed as <code>D\'ej\`a vu</code> and <code>M-x iso-tex2iso</code>, if you don't know already:-)
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> The real reason is, without this constraint, <code>hello world</code> will generate 2 meaningless matches for the skeleton <code>lr</code> and
+user is likely to get disappointed: <code>llo wor</code> and <code>lo wor</code>. As for the
+tail, we can easily extend it to the word boundary: <code>llo world</code> and
+<code>lo world</code>, but for the missing head, let's simply forbid it, because
+it's also a performance hit by causing these unwanted matches.
 </p></div>
 </div>
 

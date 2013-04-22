@@ -129,7 +129,7 @@ Here's how it works. First the skeleton is broken down to bare bones,
 =\\$.*?h.*?1.*?}= (note how the =$= is quoted because besides being a
 bone, it's also a “meta”bone; also note the usage of the non-greedy
 =.*?=, it is dark magic already, do not make it worse by being
-greedy!).
+greedy[fn:why-non-greedy]!).
 
 Then all the expressions in the current buffer are matched, and they
 are listed in the same way as the first flavor (Thus the user should
@@ -167,11 +167,11 @@ skeleton-complete that you might want to know.
 4. If the first character of a 2nd flavor skeleton is a word
    constituent character, it must match at beginning of a word.
 
-   For e.g., =er= will not match =hello world=, you must change the
+   For e.g., =lr= will not match =hello world=, you must change the
    skeleton to =hr= (the last character of the skeleton is not
    constrained).
-   
-   A skeleton without a right skull is very difficult to complete!
+
+   A skeleton without a right skull is very difficult to complete![fn:why-boundary]
 
 4. Arbitrary single line string can be completed with the 2nd
    flavor. Not necessarily only expressions!
@@ -181,12 +181,12 @@ skeleton-complete that you might want to know.
    activating the region over your desired skeleton and include white
    spaces into it.
 
-6. Use interesting bones as much as possible. 
+6. Use interesting bones as much as possible.
 
    In the above example, the =h= in =h6= is not interesting, because
    everybody has this bone. You can discard it and use =6= alone,
    because only =hello6= has this interesting bone in it, and it is
-   exactly what you wanted.   
+   exactly what you wanted.
 
 7. You can use complete and modify if you need input a similar but not
    exactly same string to an existing one.
@@ -204,3 +204,17 @@ don't try to use 2nd flavor skeleton-complete with them, run away!
 [fn:dvu] I typed the 2nd and this =Déjà vu= with =dvu= and =M-s
 <return>=. And the 1st is typed as =D\'ej\`a vu= and =M-x
 iso-tex2iso=, if you don't know already:-)
+
+[fn:why-non-greedy] In the first flavor, either greedy or non-greedy
+will do. But in the 2nd flaver, I must use non-greedy to give user
+more control: given =$double_hash{$ref1}{$ref2}=, greedy =${}= and
+=${}}= will both match the whole thing, but the non-greedy version
+will empower user to choose =$double_hash{$ref1}= and
+=$double_hash{$ref1}{$ref2}= respectively.
+
+[fn:why-boundary] The real reason is, without this constraint, =hello
+world= will generate 2 meaningless matches for the skeleton =lr= and
+user is likely to get disappointed: =llo wor= and =lo wor=. As for the
+tail, we can easily extend it to the word boundary: =llo world= and
+=lo world=, but for the missing head, let's simply forbid it, because
+it's also a performance hit by causing these unwanted matches.
