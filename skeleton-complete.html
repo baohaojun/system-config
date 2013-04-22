@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="skeleton-complete"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-22T17:04+0800"/>
+<meta name="generated" content="2013-04-22T18:06+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -273,12 +273,14 @@ user the matches he/she can choose from:
 </p>
 <p>
 From the screenshot, you can see that the matches are presented in a
-order according to their distance to the point. First <code>hyhyhy1</code> which
-comes immediately above the point, then the <code>h1</code> itself should come,
-which is below or on the same line as the point, but it has been
-deleted as it makes no sense as a completion. Then the <code>hahaha1</code> which
-is the next above, followed by <code>hihihi1</code> which is the next below, and
-so on.
+order according to their distance to the point. According to rule of
+locality, the closer the match to the point, the earlier it should
+appear in the list of choices. In the figure above, displayed first is
+<code>hyhyhy1</code> which comes immediately above the point, then the <code>h1</code>
+itself should have come, which is below or on the same line as the
+point, but it has been deleted as it makes no sense as a completion
+for itself. So next comes <code>hahaha1</code> which is the next above the point,
+followed by <code>hihihi1</code> which is the next below, and so on.
 </p>
 <p>
 You can use <code>C-n</code> and <code>C-p</code> to scroll up and down the list, or off the

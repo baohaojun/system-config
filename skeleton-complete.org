@@ -105,12 +105,14 @@ user the matches he/she can choose from:
 [[./skeleton-id.png]]
 
 From the screenshot, you can see that the matches are presented in a
-order according to their distance to the point. First =hyhyhy1= which
-comes immediately above the point, then the =h1= itself should come,
-which is below or on the same line as the point, but it has been
-deleted as it makes no sense as a completion. Then the =hahaha1= which
-is the next above, followed by =hihihi1= which is the next below, and
-so on.
+order according to their distance to the point. According to rule of
+locality, the closer the match to the point, the earlier it should
+appear in the list of choices. In the figure above, displayed first is
+=hyhyhy1= which comes immediately above the point, then the =h1=
+itself should have come, which is below or on the same line as the
+point, but it has been deleted as it makes no sense as a completion
+for itself. So next comes =hahaha1= which is the next above the point,
+followed by =hihihi1= which is the next below, and so on.
 
 You can use =C-n= and =C-p= to scroll up and down the list, or off the
 ends to the next and previous pages of matches.
