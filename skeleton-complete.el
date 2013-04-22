@@ -179,17 +179,17 @@ strlist-before and strlist-after variables in the env."
           (me (match-end 0)))
       (goto-char mb)
 
-      ;;; mb can not be in the middle of a word, if so, it is considered a
-      ;;; bad match.
+      ;; mb can not be in the middle of a word, if so, it is
+      ;; considered a bad match.
       (unless (or (and (looking-at "\\w")
                        (looking-back "\\w")
-                                        ; 你好*ma should provide a match as "ma", not "你好ma"
+                       ;; However, 你好*ma should provide a match as "ma", not "你好ma"
                        (not (looking-at "\\b")))
                   (and (boundp 'search-start) ; the found string is over our searching pattern
                        (boundp 'search-end)
                        (= me search-end)))
-        ;;; me should also not be in the middle of a word, if so, we should
-        ;;; find the end of the word.
+        ;; me should also not be in the middle of a word, if so, we
+        ;; should find the end of the word.
         (save-excursion
           (goto-char me)
           (when (and (looking-at "\\w")
