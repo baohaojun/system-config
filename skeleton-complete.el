@@ -46,15 +46,15 @@ The skeleton itself is constructed by symbol constituting
 characters before the point."
   (interactive)
   (when (looking-back "\\w\\|_" 1)
-    (let* ((end (point))
-           (start (or (save-excursion
-                        (search-backward-regexp "\\_<" (line-beginning-position) t)) end))
-           (the-skeleton (buffer-substring-no-properties start end))
+    (let* ((skeleton-end (point))
+           (skeleton-start (or (save-excursion
+                        (search-backward-regexp "\\_<" (line-beginning-position) t)) skeleton-end))
+           (the-skeleton (buffer-substring-no-properties skeleton-start skeleton-end))
            (the-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list the-skeleton) ".*?"))
            (case-fold-search (not (skeleton--contains-upcase-p the-skeleton)))
            (match (skeleton--display-matches (skeleton--get-symbol-matches the-regexp))))
       (when match
-        (delete-region start end)
+        (delete-region skeleton-start skeleton-end)
         (insert match)))))
 
 (defun skeleton--expand-partial-lines ()
@@ -72,10 +72,10 @@ we will get the skeleton:
 
     \"naoehu[)+{ \""
   (interactive)
-  (let (the-skeleton the-regexp start end)
+  (let (the-skeleton the-regexp skeleton-start skeleton-end)
     (if mark-active
-        (setq start (region-beginning)
-              end (region-end))
+        (setq skeleton-start (region-beginning)
+              skeleton-end (region-end))
       (save-excursion
         (let* ((back-limit (line-beginning-position))
                (cp (point)))
@@ -83,15 +83,20 @@ we will get the skeleton:
             (backward-char))
           (while (and (not (looking-back "\\s ")) (< back-limit (point)))
             (backward-char))
-          (setq start (point)
-                end cp))))
-    (setq the-skeleton (buffer-substring-no-properties start end))
+          (setq skeleton-start (point)
+                skeleton-end cp))))
+    (setq the-skeleton (buffer-substring-no-properties skeleton-start skeleton-end))
     (setq the-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list the-skeleton) ".*?"))
+
+    ;; performance consideration
+    (when (string-match-p "^\\w" the-regexp)
+      (setq the-regexp (concat "\\b" the-regexp)))
+
     (let ((case-fold-search (not (skeleton--contains-upcase-p the-skeleton)))
           (match (skeleton--display-matches (skeleton--get-line-matches the-regexp))))
 
       (when match
-        (delete-region start end)
+        (delete-region skeleton-start skeleton-end)
         (insert match)))))
 
 (defmacro skeleton--max-minibuffer-lines ()
@@ -185,9 +190,9 @@ strlist-before and strlist-after variables in the env."
                        (looking-back "\\w")
                        ;; However, 你好*ma should provide a match as "ma", not "你好ma"
                        (not (looking-at "\\b")))
-                  (and (boundp 'search-start) ; the found string is over our searching pattern
-                       (boundp 'search-end)
-                       (= me search-end)))
+                  (and (boundp 'skeleton-start) ; the found string should not overlap with our skeleton
+                       (boundp 'skeleton-end)
+                       (= me skeleton-end)))
         ;; me should also not be in the middle of a word, if so, we
         ;; should find the end of the word.
         (save-excursion
