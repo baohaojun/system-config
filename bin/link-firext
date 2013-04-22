@@ -32,7 +32,18 @@ for x in ~/.mozilla/firefox/*/ ~/Library/"Application Support"/Firefox/Profiles/
 	    cp $ext_dir/* "$dir" -av
 	    ;;
 	*)
-	    ln -sf $ext_dir/* "$dir"
+	    for x in $ext_dir/*; do 
+		if test -d $x; then
+		    mkdir "$dir"/$(basename $x)
+		    ln -sf $x/* "$dir"/$(basename $x)/
+		else
+		    ln -sf $x "$dir"
+		fi
+	    done
+	    (
+		cd "$dir"/chrome
+		jar cfv $(basename $ext_dir).jar */
+	    ) || true
 	    ;;
     esac
 done

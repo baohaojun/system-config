@@ -79,15 +79,19 @@
 Does not indent buffer, because it is used for a before-save-hook, and that
 might be bad."
   (interactive)
-  (save-restriction
-    (widen)
-    (untabify (point-min) (point-max)))
-  (delete-trailing-whitespace)
-  (set-buffer-file-coding-system 'utf-8))
+  (set-buffer-file-coding-system 'utf-8)
+  (save-excursion
+    (save-restriction
+      (widen)
+      (goto-char (point-min))
+      (when (and (search-forward-regexp "\t\\|[ \t]$" nil t)
+                 (yes-or-no-p "cleanup the buffer "))
+        (untabify (point-min) (point-max))
+        (delete-trailing-whitespace)))))
 
 (add-hook 'before-save-hook 'cleanup-buffer-safe)
 
-(defun confirm-risky-remote-edit () 
+(defun confirm-risky-remote-edit ()
   (let ((filename (buffer-file-name)))
     (when (and (file-remote-p filename) (string-match "/windows-config/" filename))
       (yes-or-no-p "Are you sure it's alright to save this remote file when you have a local copy?"))))
@@ -2451,26 +2455,6 @@ criteria can be provided via the optional match-string argument "
             (eq system-type 'darwin))
   (load-file "~/.emacs_d/lisp/my-erc-config.el"))
 
-(defun goto-line-not-containing (word)
-  "look forward to find a line not containing WORD, maybe because
-we are not interested in those lines that do."
-  (interactive (list (read-string "What word you want to skip? ")))
-  (let* ((temp-buffer (get-buffer-create "*goto-line-not-containing*")))
-    (goto-line
-     (save-excursion
-       (save-window-excursion
-         (shell-command-on-region (point-min)
-                                  (point-max)
-                                  (format
-                                   "export CURRENTLINE=%s; grep -i -v -e %s -n | perl -ne 'chomp; s/:.*//; if ($_ > $ENV{CURRENTLINE}) { print $_ . \"\\n\";}'"
-                                   (line-number-at-pos)
-                                   (shell-quote-argument word))
-                                  temp-buffer)
-
-         (string-to-number
-          (with-current-buffer temp-buffer
-            (goto-char (point-min))
-            (current-line-string))))))))
 (defun bhj-do-dictionry (word)
   "lookup the current word (or region) in dictionary"
   (interactive
