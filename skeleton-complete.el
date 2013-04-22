@@ -37,9 +37,9 @@
 
 (defun skeleton--contains-upcase-p (str)
   (let ((case-fold-search nil))
-    (string-match-p "[[:upper:]]" the-skeleton)))
+    (string-match-p "[[:upper:]]" str)))
 
-(defun skeleton--expand-symbols ()
+(defun skeleton-expand-symbols ()
   "Find and expand the skeleton into a symbol.
 
 The skeleton itself is constructed by symbol constituting
@@ -57,7 +57,7 @@ characters before the point."
         (delete-region skeleton-start skeleton-end)
         (insert match)))))
 
-(defun skeleton--expand-partial-lines ()
+(defun skeleton-expand-partial-lines ()
   "Find and expand the skeleton into an arbitrary string.
 
 If the region is active, the skeleton is what is in the region.
@@ -87,14 +87,11 @@ we will get the skeleton:
                 skeleton-end cp))))
     (setq the-skeleton (buffer-substring-no-properties skeleton-start skeleton-end))
     (setq the-regexp (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list the-skeleton) ".*?"))
-
     ;; performance consideration
     (when (string-match-p "^\\w" the-regexp)
       (setq the-regexp (concat "\\b" the-regexp)))
-
-    (let ((case-fold-search (not (skeleton--contains-upcase-p the-skeleton)))
+    (let* ((case-fold-search (not (skeleton--contains-upcase-p the-skeleton)))
           (match (skeleton--display-matches (skeleton--get-line-matches the-regexp))))
-
       (when match
         (delete-region skeleton-start skeleton-end)
         (insert match)))))
@@ -183,7 +180,6 @@ strlist-before and strlist-after variables in the env."
     (let ((mb (match-beginning 0))
           (me (match-end 0)))
       (goto-char mb)
-
       ;; mb can not be in the middle of a word, if so, it is
       ;; considered a bad match.
       (unless (or (and (looking-at "\\w")
@@ -226,7 +222,6 @@ according to the above standard.
 But for ease of coding, this func returns a list of strings which
 are in the reversed order, so one must remember to call nreverse
 with the result before presenting it to the user."
-
   (let ((strlist-before nil)
         (strlist-after nil)
         (strlist nil)
@@ -241,20 +236,16 @@ with the result before presenting it to the user."
               strlist (cons (car strlist-after) strlist)
               strlist-before (cdr strlist-before)
               strlist-after (cdr strlist-after)))
-
       ;; need 2 nreverse to make the 2 good strlist-* aligned with the
       ;; bad strlist; strlist must be the last of `append'
       (setq strlist (append (nreverse strlist-after) (nreverse strlist-before) strlist))
-
       (if no-recur
           strlist
-
         (or
-
          ;;get matches from other visible buffers
          (let* ((buf-old (current-buffer)))
            (save-excursion
-             (mapcar (lambda (buf)
+             (mapc (lambda (buf)
                        (with-current-buffer buf
                          ;; recursive call, and keep strlist still in
                          ;; the bad order by making it the last of `append'
@@ -264,11 +255,10 @@ with the result before presenting it to the user."
                                        (window-buffer w))
                                      (window-list))))
              strlist))
-
          ;;get matches from all buffers if nothing found so far
          (let* ((buf-old (current-buffer)))
            (save-excursion
-             (mapcar (lambda (buf)
+             (mapc (lambda (buf)
                        (with-current-buffer buf ;;next let's recursive call
                          (unless strlist ; exit as soon as something is found
                            (setq strlist (append (skeleton--get-matches-internal re loop-func t) strlist)))))
@@ -301,9 +291,9 @@ strlist-before and strlist-after variables in the env."
 
 (defvar skeleton-complete-mode-map (make-sparse-keymap)
   "skeleton-complete mode map.")
-(define-key skeleton-complete-mode-map (kbd "M-g <return>") 'skeleton--expand-symbols)
-(define-key skeleton-complete-mode-map (kbd "M-s <return>") 'skeleton--expand-partial-lines)
-(define-key skeleton-complete-mode-map (kbd "M-g x") 'skeleton--expand-partial-lines)
+(define-key skeleton-complete-mode-map (kbd "M-g <return>") 'skeleton-expand-symbols)
+(define-key skeleton-complete-mode-map (kbd "M-s <return>") 'skeleton-expand-partial-lines)
+(define-key skeleton-complete-mode-map (kbd "M-g x") 'skeleton-expand-partial-lines)
 
 (define-minor-mode skeleton-complete-mode
   "Toggle the `skeleton-complete-mode' minor mode."
