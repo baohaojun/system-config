@@ -105,8 +105,8 @@ user the matches he/she can choose from:
 [[./skeleton-id.png]]
 
 From the screenshot, you can see that the matches are presented in a
-order according to their distance to the point. According to rule of
-locality, the closer the match to the point, the earlier it should
+order according to their distance to the point. According to principle
+of locality, the closer the match to the point, the earlier it should
 appear in the list of choices. In the figure above, displayed first is
 =hyhyhy1= which comes immediately above the point, then the =h1=
 itself should have come, which is below or on the same line as the
