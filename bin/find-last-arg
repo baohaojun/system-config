@@ -6,7 +6,7 @@ while test $# -gt 1; do
       shift
 done
 
-set -- "${args[@]}" "$(lookup_file "$1")"
+set -- "${args[@]}" "$(lookup-file "$1")"
 
 "$@"
 

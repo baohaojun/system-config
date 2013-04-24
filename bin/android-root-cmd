@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd $(lookup_file .repo/..)
+cd $(lookup-file .repo/..)
 "$@"

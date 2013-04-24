@@ -2,7 +2,7 @@
 
 set -e
 
-ANDROID_DIR=$(readlink -f $(lookup_file .repo/..))
+ANDROID_DIR=$(readlink -f $(lookup-file .repo/..))
 CHANGES_DIR=$ANDROID_DIR/.repo/daily-changes
 TODAYS_CHANGES_DIR=$CHANGES_DIR/$(today)
 
@@ -71,7 +71,7 @@ relative-link $CHANGES_DIR $ANDROID_DIR || true
 
 export ANDROID_DIR TODAYS_CHANGES_DIR
 
-for x in $(xmlstarlet sel -B -t -m //project -v @path -n -b  $(lookup_file .repo/manifest.xml 2>/dev/null || echo /dev/null)  2>/dev/null); do
+for x in $(xmlstarlet sel -B -t -m //project -v @path -n -b  $(lookup-file .repo/manifest.xml 2>/dev/null || echo /dev/null)  2>/dev/null); do
     test -d "$x" && continue
     repo sync $(echo $x|perl -npe 's,/+$,,')
     rm -f .repo/repo_info.pl

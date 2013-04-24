@@ -3,7 +3,7 @@
 use strict;
 use String::ShellQuote;
 
-chomp(my $globalrc = qx(lookup_file .globalrc));
+chomp(my $globalrc = qx(lookup-file .globalrc));
 if (not -e $globalrc) {
     $globalrc = glob("~/.globalrc");
 }

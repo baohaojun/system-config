@@ -25,7 +25,7 @@ export PATH=$(dirname "$(readlink -f "$0")"):$PATH
 # part  19::attr 0::    reserved  start 0x1f400000, size 0x00c00000
 
 set -e
-test -e system.img || cd $(lookup_file flashing)
+test -e system.img || cd $(lookup-file flashing)
 function die() {
     echo "$@"
     exit -1

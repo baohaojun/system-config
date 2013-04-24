@@ -4,7 +4,7 @@ set -e
 git ls-tree -r HEAD --name-only |tee mark| xargs touch
 touch mark
 
-(cd $(lookup_file vendor/marvell/generic/tcmd/kernel-helper); time mm -j8 -k obm) | tee ~/1.txt
+(cd $(lookup-file vendor/marvell/generic/tcmd/kernel-helper); time mm -j8 -k obm) | tee ~/1.txt
 
 find . -type f -anewer mark -print | perl -npe 's!^\./!!' > newer
 file-arg1-arg2 mark newer | grep -v .gitignore | pn 1 | xargs git rm -f

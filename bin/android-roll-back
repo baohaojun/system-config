@@ -13,7 +13,7 @@ fi
 
 export ROLLBACK_TIME=$1
 
-export ANDROID_DIR=$(lookup_file .repo/..)
+export ANDROID_DIR=$(lookup-file .repo/..)
 cd $ANDROID_DIR
 
 set -e

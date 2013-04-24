@@ -1,13 +1,13 @@
 #!/bin/bash
 . ~/.bashrc
 
-build_env=`lookup_file build/envsetup.sh`
+build_env=`lookup-file build/envsetup.sh`
 top_dir=`dirname $build_env`
 top_dir=`readlink -f $top_dir/..`
 target_device=$(cd $top_dir >/dev/null 2>&1; . build/envsetup.sh >/dev/null 2>&1; get_build_var TARGET_DEVICE)
 
-Android_mk=`lookup_file Android.mk`
-install_bhj=`lookup_file install.bhj`
+Android_mk=`lookup-file Android.mk`
+install_bhj=`lookup-file install.bhj`
 
 
 apk=`grep LOCAL_PACKAGE_NAME $Android_mk|awk '{print $3}'`
@@ -15,9 +15,9 @@ apk=`grep LOCAL_PACKAGE_NAME $Android_mk|awk '{print $3}'`
 function ainstall() {
 
     if test x$apk != x; then
-        File=`lookup_file out/target/product/$target_device/data/app/$apk.apk||true`
+        File=`lookup-file out/target/product/$target_device/data/app/$apk.apk||true`
         if test ! -f "$File"; then #this line " is necessary, or else test will be confused
-            File=`lookup_file out/target/product/$target_device/system/app/$apk.apk`
+            File=`lookup-file out/target/product/$target_device/system/app/$apk.apk`
         fi
         echo $File
         anduninst
@@ -36,7 +36,7 @@ function ainstall() {
         fi
     else
         exe=`grep 'LOCAL_MODULE\b' $Android_mk|perl -npe 's/.*=//g; s/\s*//g;'`
-        File=`lookup_file out/target/product/$target_device/symbols/system/bin/$exe`
+        File=`lookup-file out/target/product/$target_device/symbols/system/bin/$exe`
         if test ! -f "$File"; then
             echo 'Error: exe file is empty'
             return 1
@@ -48,9 +48,9 @@ function ainstall() {
 
 function apkwhich() {
     if test x$apk != x; then
-                File=`lookup_file out/target/product/$target_device/data/app/$apk.apk||true`
+                File=`lookup-file out/target/product/$target_device/data/app/$apk.apk||true`
         if test ! -f "$File"; then #this line " is necessary, or else test will be confused
-            File=`lookup_file out/target/product/$target_device/system/app/$apk.apk`
+            File=`lookup-file out/target/product/$target_device/system/app/$apk.apk`
         fi
         echo -n $File
     fi

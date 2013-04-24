@@ -3,7 +3,7 @@
 time (
     set -e
     set -o pipefail
-    build_env=$(lookup_file build/envsetup.sh)
+    build_env=$(lookup-file build/envsetup.sh)
     top_dir=$(dirname $build_env)
     top_dir=$(readlink -f $top_dir/..)
 
@@ -12,7 +12,7 @@ time (
     set_stuff_for_environment
     cd - 
 
-    cd "$(dirname $(lookup_file Android.mk))"
+    cd "$(dirname $(lookup-file Android.mk))"
     ONE_SHOT_MAKEFILE=$PWD/Android.mk
     export ONE_SHOT_MAKEFILE=${ONE_SHOT_MAKEFILE:1+${#top_dir}}
 

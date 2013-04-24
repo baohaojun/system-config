@@ -12,7 +12,7 @@ function die() {
     exit -1
 }
 
-cd $(lookup_file .repo/..)
+cd $(lookup-file .repo/..)
 start_hour=${start_hour-$(date +%_H|tr -d ' ')}
 test -d .repo || die ".repo not found, not android source directory?"
 

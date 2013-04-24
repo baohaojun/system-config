@@ -3,4 +3,4 @@
 export COMPARE_TO=$1
 shift
 
-lookup_file "$@"|xargs -d \\n bash -c 'for x in "$@"; do strdist "${COMPARE_TO:-$PWD}" "$x"; done|sort -n' true |awk -F \\r '{print $3}'
+lookup-file "$@"|xargs -d \\n bash -c 'for x in "$@"; do strdist "${COMPARE_TO:-$PWD}" "$x"; done|sort -n' true |awk -F \\r '{print $3}'

@@ -153,6 +153,111 @@ See `w3m-region' for the optional arguments.
 
 ;;;***
 
+;;;### (autoloads (org-jira-get-issues-from-filter-headonly org-jira-get-issues-from-filter
+;;;;;;  org-jira-browse-issue org-jira-progress-issue org-jira-refresh-issue
+;;;;;;  org-jira-create-subtask org-jira-create-issue org-jira-get-subtasks
+;;;;;;  org-jira-todo-to-jira org-jira-update-issue org-jira-copy-current-issue-key
+;;;;;;  org-jira-update-comment org-jira-get-issues org-jira-get-issues-headonly
+;;;;;;  org-jira-get-projects org-jira-mode) "../org-jira/org-jira"
+;;;;;;  "../../../.emacs_d/org-jira/org-jira.el" (20855 15281 643693
+;;;;;;  707000))
+;;; Generated autoloads from ../../../.emacs_d/org-jira/org-jira.el
+
+(autoload 'org-jira-mode "../org-jira/org-jira" "\
+Toggle org-jira mode.
+With no argument, the mode is toggled on/off.
+Non-nil argument turns mode on.
+Nil argument turns mode off.
+
+Commands:
+\\{org-jira-entry-mode-map}
+
+Entry to this mode calls the value of `org-jira-mode-hook'.
+
+\(fn &optional ARG)" t nil)
+
+(autoload 'org-jira-get-projects "../org-jira/org-jira" "\
+Get list of projects.
+
+\(fn)" t nil)
+
+(autoload 'org-jira-get-issues-headonly "../org-jira/org-jira" "\
+Get list of issues assigned to you and unresolved, head
+only. With a prefix argument, allow you to customize the jql. See `org-jira-get-issue-list'
+
+\(fn ISSUES)" t nil)
+
+(autoload 'org-jira-get-issues "../org-jira/org-jira" "\
+Get list of issues. Default is get unfinished issues assigned
+to you, but you can customize jql with a prefix argument. See
+`org-jira-get-issue-list'
+
+\(fn ISSUES)" t nil)
+
+(autoload 'org-jira-update-comment "../org-jira/org-jira" "\
+update a comment for the current issue
+
+\(fn)" t nil)
+
+(autoload 'org-jira-copy-current-issue-key "../org-jira/org-jira" "\
+Copy the current issue's key into clipboard
+
+\(fn)" t nil)
+
+(autoload 'org-jira-update-issue "../org-jira/org-jira" "\
+update an issue
+
+\(fn)" t nil)
+
+(autoload 'org-jira-todo-to-jira "../org-jira/org-jira" "\
+convert an ordinary todo item to a jira ticket
+
+\(fn)" t nil)
+
+(autoload 'org-jira-get-subtasks "../org-jira/org-jira" "\
+get subtasks for the current issue
+
+\(fn)" t nil)
+
+(autoload 'org-jira-create-issue "../org-jira/org-jira" "\
+create an issue
+
+\(fn PROJECT TYPE SUMMARY DESCRIPTION)" t nil)
+
+(autoload 'org-jira-create-subtask "../org-jira/org-jira" "\
+create an subtask issue
+
+\(fn PROJECT TYPE SUMMARY DESCRIPTION)" t nil)
+
+(autoload 'org-jira-refresh-issue "../org-jira/org-jira" "\
+Refresh issue from jira to org
+
+\(fn)" t nil)
+
+(autoload 'org-jira-progress-issue "../org-jira/org-jira" "\
+Progress issue workflow
+
+\(fn)" t nil)
+
+(autoload 'org-jira-browse-issue "../org-jira/org-jira" "\
+Open the current issue in external browser.
+
+\(fn)" t nil)
+
+(autoload 'org-jira-get-issues-from-filter "../org-jira/org-jira" "\
+Get issues from filter which are jql created and saved on the
+server side. Provide this command in case some users are not able
+to use client side jql (maybe because of Jira server version?).
+
+\(fn FILTER)" t nil)
+
+(autoload 'org-jira-get-issues-from-filter-headonly "../org-jira/org-jira" "\
+Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
+
+\(fn FILTER)" t nil)
+
+;;;***
+
 ;;;### (autoloads (weblogger-fetch-entries weblogger-start-entry
 ;;;;;;  weblogger-setup-weblog weblogger-select-configuration) "../weblogger/weblogger"
 ;;;;;;  "../weblogger/weblogger.el" (20622 27199 0 0))

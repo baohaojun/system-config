@@ -5,7 +5,7 @@ if test $# -lt 1; then
     die "Usage: $(basename $0) FROM [TO]"
 fi
 
-top=$(lookup_file .repo/..)
+top=$(lookup-file .repo/..)
 outd=$top/flashing/quilt/$(repo-tracking)/$(repo-path)/
 mkdir -p $outd
 

@@ -32,7 +32,7 @@ while true; do
             shift
             ;;
         -p)
-            cat $(lookup_file .repo/repo-switch)
+            cat $(lookup-file .repo/repo-switch)
             exit 0
             ;;
         -e)
@@ -60,7 +60,7 @@ while true; do
 done
 
 
-repodir=$(lookup_file -e .repo)
+repodir=$(lookup-file -e .repo)
 if test -z "$repodir"; then
     (set -x; repo init -p auto -u ${repo_init_url:-bibler:shgit/manifest}\
         -m ${repo_init_manifest:-default.xml}\
@@ -69,7 +69,7 @@ if test -z "$repodir"; then
         "$@")
 fi
 
-repodir=$(lookup_file -e .repo)
+repodir=$(lookup-file -e .repo)
 if test -e "$repodir"/repo-switch && grep '^export' -q "$repodir"/repo-switch; then
     . "$repodir"/repo-switch
 
@@ -121,7 +121,7 @@ fi
 if test -z "$repo_init_branch"; then
     if test $interactive = 1; then
         echo The repo init branch to use:
-        repo_init_branch=$(select-output-line bash -c "echo $old_repo_init_branch; (cd $(lookup_file .repo/manifests) && git branch -a | pn 1 | perl -npe 's!remotes/.*?/!!' | sort -u)")
+        repo_init_branch=$(select-output-line bash -c "echo $old_repo_init_branch; (cd $(lookup-file .repo/manifests) && git branch -a | pn 1 | perl -npe 's!remotes/.*?/!!' | sort -u)")
     else
         repo_init_branch=${old_repo_init_branch:-master}
     fi
@@ -140,7 +140,7 @@ if test -z "$repo_init_manifest" || ! [[ "$repo_init_manifest" =~ \.xml$ ]]; the
             manifest_pattern="m/./";
         fi
         repo_init_manifest=$(select-output-line bash -c "echo $old_repo_init_manifest;
-                                                         (cd $(lookup_file .repo/manifests) && 
+                                                         (cd $(lookup-file .repo/manifests) && 
                                                           find . -name '*.xml' | 
                                                           perl -npe 's!^\./!!' | 
                                                           perl -ne 'print if $manifest_pattern')")
@@ -184,7 +184,7 @@ for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
 (
     set -x;
     (
-        cd $(lookup_file .repo/repo)
+        cd $(lookup-file .repo/repo)
         git config remote.origin.url $repo_url
     )
     repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@"
@@ -226,7 +226,7 @@ if ! diff -q manifest.xml manifest.xml.old; then
     touch .need_rebuild
 fi
 
-cd $(lookup_file .repo/repo)
+cd $(lookup-file .repo/repo)
 (
 
     if grep -P -e '\Qnodes.append(self._ParseManifestXml(local_file, self.repodir))\E' manifest_xml.py; then

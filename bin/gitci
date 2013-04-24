@@ -116,7 +116,7 @@ EOF
     fi
 
     review_host=$(xmlstarlet sel -B -t -m //default -v @review -b \
-	$(lookup_file .repo/manifest.xml 2>/dev/null || echo /dev/null) 2>/dev/null |
+	$(lookup-file .repo/manifest.xml 2>/dev/null || echo /dev/null) 2>/dev/null |
 	perl -npe 's,^http.?://,,')
 
     if test -n "$review_host" && yes-or-no-p -y "Push for review?"; then
@@ -128,7 +128,7 @@ EOF
             done)" \
             "$(repo-review-url)" HEAD:refs/for/$(repo-refname)
         (
-            cd $(lookup_file .git/..)
+            cd $(lookup-file .git/..)
             if test -e .gerrit-hooks; then
                 bash .gerrit-hooks push-for-review
             fi

@@ -11,7 +11,7 @@ $dest = pop( @ARGV);
 
 for (@ARGV) {
     $_ = shell_quote($_);
-    chomp($file=qx/lookup_file $_/);
+    chomp($file=qx/lookup-file $_/);
     system("adb",  "push", "$file", "$dest");
     if ($secure) {
 	my $base_file = $file;

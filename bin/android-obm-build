@@ -3,7 +3,7 @@
 (
     echo '# -*- mode: compilation -*-'
 
-    cd $(lookup_file .repo/..);
+    cd $(lookup-file .repo/..);
     . build/envsetup.sh;
     cd boot;
     BUILD_UBOOT_OBM=true;

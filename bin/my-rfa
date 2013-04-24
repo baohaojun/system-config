@@ -14,7 +14,7 @@ function die() {
 
 export -f die
 
-if test ! -e $(lookup_file .repo)/manifest.xml; then
+if test ! -e $(lookup-file .repo)/manifest.xml; then
     die "Error: .repo/manifest.xml not found"
 fi
 
@@ -52,9 +52,9 @@ if test "${#dirs[@]}" = 0; then
 	$(
             if test -d .repo; then
                 (
-                    xmlstarlet sel -B -t -m //project -v @path -n $(lookup_file .repo/manifest.xml)
-                    if test -e "$(lookup_file .repo/local_manifests/local_manifist.xml 2>/dev/null)"; then
-                        xmlstarlet sel -B -t -m //project -v @path -n $(lookup_file .repo/local_manifests/local_manifist.xml)
+                    xmlstarlet sel -B -t -m //project -v @path -n $(lookup-file .repo/manifest.xml)
+                    if test -e "$(lookup-file .repo/local_manifests/local_manifist.xml 2>/dev/null)"; then
+                        xmlstarlet sel -B -t -m //project -v @path -n $(lookup-file .repo/local_manifests/local_manifist.xml)
                     fi
                 ) | sort -u
             else
@@ -79,7 +79,7 @@ else
 fi
 job=0
 
-cd $(lookup_file .repo/..)
+cd $(lookup-file .repo/..)
 test -d .repo
 
 export ANDROID_TOP=$(pwd)

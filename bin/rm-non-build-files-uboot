@@ -5,7 +5,7 @@ set -o pipefail
 git ls-tree -r HEAD --name-only |tee mark| xargs touch
 touch mark
 echo 'echo -00122-g512f9aa; exit 0' > ./tools/setlocalversion 
-(cd $(lookup_file .repo/..); . build/envsetup.sh; cd boot; BUILD_UBOOT_OBM=true; set -x; . ../.buildenv.sh; cd uboot; time make -j8 ${1:-kunlun_ff_config}; time make -j8 -k) 2>&1 | tee ~/1.txt 
+(cd $(lookup-file .repo/..); . build/envsetup.sh; cd boot; BUILD_UBOOT_OBM=true; set -x; . ../.buildenv.sh; cd uboot; time make -j8 ${1:-kunlun_ff_config}; time make -j8 -k) 2>&1 | tee ~/1.txt 
 
 
 find . -type f -anewer mark -print -o -type l -print | perl -npe 's!^\./!!' > newer

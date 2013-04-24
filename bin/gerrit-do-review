@@ -49,7 +49,7 @@ fi
 
 if test -z "$GERRIT_HOST"; then
     (
-        cd $(lookup_file .git/..);
+        cd $(lookup-file .git/..);
         if test -e .gerrit-hooks-branches; then
             echo running the hooks
             gerrit-hooks do-review $rev

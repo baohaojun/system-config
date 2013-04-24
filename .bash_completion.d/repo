@@ -32,7 +32,7 @@ _repo-switch() {
 
     case "$prev" in
         -b)
-            br_list=$( cd `lookup_file .repo/manifests` >/dev/null 2>&1; git branch -r |perl -npe 's,.*?/,,')
+            br_list=$( cd `lookup-file .repo/manifests` >/dev/null 2>&1; git branch -r |perl -npe 's,.*?/,,')
             ;;
         -u)
             br_list=$(
@@ -43,7 +43,7 @@ _repo-switch() {
                     echo git@www.rayzertrack.com:ggl/pxa935/platform/manifest
                     echo git@www.rayzertrack.com:nv/android/manifest
 		    echo file:///android/manifest.git
-		    (cd `lookup_file .repo/manifests` >/dev/null 2>&1; git-remote-url)
+		    (cd `lookup-file .repo/manifests` >/dev/null 2>&1; git-remote-url)
                     cat ~/.repo-manifest-urls 2>/dev/null
                 ) |sort -u | tee ~/.repo-manifest-urls.bak
 		mv ~/.repo-manifest-urls.bak ~/.repo-manifest-urls >/dev/null 2>&1

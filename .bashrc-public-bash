@@ -136,20 +136,20 @@ function tcd() {
 
     _select_cd $(
 	export LOOKUP_NON_EXIST_FILES=false 
-	lookup_file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
-	lookup_file `today-- "$@"`
+	lookup-file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
+	lookup-file `today-- "$@"`
     ) $(
 	export LOOKUP_NON_EXIST_FILES=false
 	pcd ~/today && {
-	    lookup_file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
-	    lookup_file `today-- "$@"`; 
+	    lookup-file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
+	    lookup-file `today-- "$@"`; 
 	}
     )
 }
 
 function mcd() {
     local IFS=$'\n'
-    _select_cd $(lookup_file "$@")
+    _select_cd $(lookup-file "$@")
 }
 
 alias hil=hir

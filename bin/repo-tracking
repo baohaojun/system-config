@@ -2,7 +2,7 @@
 
 # find out which repo-switch branch we are currently on.
 set -e
-cd $(lookup_file .repo/manifests)
+cd $(lookup-file .repo/manifests)
 test -e ../manifest.xml
 
 git config branch.default.merge

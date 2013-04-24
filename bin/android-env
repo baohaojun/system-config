@@ -1,6 +1,6 @@
 #!/bin/bash
 
-build_env=`lookup_file build/envsetup.sh`
+build_env=`lookup-file build/envsetup.sh`
 top_dir=`dirname $build_env`
 top_dir=`readlink -f $top_dir/..`
 

@@ -33,12 +33,12 @@ use strict;
 # Dance around to find the actual android toolchain path (it's very
 # deep, so links on $PATH are going to be common.
 
-my $arm_mk = `lookup_file build/core/combo/TARGET_linux-arm.mk`;
+my $arm_mk = `lookup-file build/core/combo/TARGET_linux-arm.mk`;
 chomp($arm_mk);
 
 open(my $file, "<", $arm_mk) or die "can not open build/core/combo/TARGET_linux-arm.mk";
 
-my $GCC = `lookup_file prebuilt/linux-x86/toolchain/arm-eabi-4.2.1/bin/arm-eabi-gcc`;
+my $GCC = `lookup-file prebuilt/linux-x86/toolchain/arm-eabi-4.2.1/bin/arm-eabi-gcc`;
 chomp($GCC);
 
 sub debug(@) {
@@ -48,7 +48,7 @@ sub debug(@) {
 while (<$file>) {
   if (m#.*prebuilt/\$\(HOST_PREBUILT_TAG\)/toolchain(.*)#) {
     $GCC = "prebuilt/linux-x86/toolchain$1gcc";
-    chomp($GCC = `lookup_file $GCC`);
+    chomp($GCC = `lookup-file $GCC`);
     last;
   }
 }

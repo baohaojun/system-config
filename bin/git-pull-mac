@@ -2,7 +2,7 @@
 
 set -e
 test $PWD = ~ && cd ~/windows-config/
-cd "$(dirname "$(lookup_file .git)")"
+cd "$(dirname "$(lookup-file .git)")"
 
 git-clean-mac-branches-local
 git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git://,https://,')

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if test $# = 0; then
+   set -- logs-$(today)
+fi
+
+set -e
+if test -d ~/today/"$1"; then
+    x=0;
+    while true; do
+        ((x++)) || true
+        if test ! -d ~/today/"$1".$x; then
+            set -- ~/today/"$1".$x;
+            break
+        fi
+    done
+fi
+
+echo cd ~/today/"$1"
+mkdir -p ~/today/"$1"
+cd ~/today/"$1"
+
+adb -r pull /data/Mlog Mlog

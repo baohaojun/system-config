@@ -11,7 +11,7 @@ if test $# = 3; then
 fi
 set -- `readlink -f "$1" ` $2
 
-lookup_file .repo/.. && cd $(lookup_file .repo/..)
+lookup-file .repo/.. && cd $(lookup-file .repo/..)
 OUT_ROOT=/tmp
 if ! test -e "$1/system/bin/$2" && test -e "$1"/buildspec.mk; then
     . build/envsetup.sh

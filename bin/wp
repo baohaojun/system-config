@@ -31,12 +31,12 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function ap()
     {
-        relative-path "$FILE" $(readlink -f $(lookup_file .repo/..))/
+        relative-path "$FILE" $(readlink -f $(lookup-file .repo/..))/
     }
     
     function gitp()
     {
-        relative-path "$FILE" $(readlink -f $(dirname "$(lookup_file .git)"))/
+        relative-path "$FILE" $(readlink -f $(dirname "$(lookup-file .git)"))/
     }
 
     function absp()
@@ -83,7 +83,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     }
 
     export FILE=${1:-`pwd`}
-    export FILE=$(lookup_file "$FILE")
+    export FILE=$(lookup-file "$FILE")
 
     out=$($(basename -- $0) "$@")
     echo "$out"
@@ -102,7 +102,7 @@ else # we are being sourced
                 return
             fi
             FILE=${1:-`pwd`}
-            FILE=`lookup_file "$FILE"`
+            FILE=`lookup-file "$FILE"`
             history -s '$x' "$(printf %q "$FILE")"
         }'
     done

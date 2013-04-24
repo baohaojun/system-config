@@ -6,5 +6,5 @@ set -x
 if test $# = 0; then
     setsid xdg-open "$(xclip -o -selection primary)"
 else 
-    setsid xdg-open "$(lookup_file "$@")" 
+    setsid xdg-open "$(lookup-file "$@")" 
 fi

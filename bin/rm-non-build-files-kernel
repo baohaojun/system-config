@@ -5,7 +5,7 @@ git ls-tree -r HEAD --name-only |tee mark| xargs touch
 touch mark
 echo 'echo -00122-g512f9aa; exit 0' > ./scripts/setlocalversion
 
-(cd $(lookup_file vendor/marvell/generic/tcmd/kernel-helper); time mm -j8 -k kernel) | tee ~/1.txt
+(cd $(lookup-file vendor/marvell/generic/tcmd/kernel-helper); time mm -j8 -k kernel) | tee ~/1.txt
 
 find . -type f -anewer mark -print | perl -npe 's!^\./!!' > newer
 file-arg1-arg2 mark newer | pn 1 | xargs git rm -f

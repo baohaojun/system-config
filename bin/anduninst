@@ -4,7 +4,7 @@
 #search for AndroidManifest.xml
 function apkgname() {
     
-    export MANIFEST=`lookup_file AndroidManifest.xml`
+    export MANIFEST=`lookup-file AndroidManifest.xml`
     export package=$(xmlstarlet el -v $MANIFEST|grep '@package='|perl -npe "s#.*\@package=.(.*?)'.*#\$1#;")
     echo package is $package
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if test -d "$1"; then
-    cd $(lookup_file $1)
+    cd $(lookup-file $1)
     repo-branch
     exit
 fi
@@ -11,7 +11,7 @@ if test "$REPO_BRANCH"; then
     exit
 fi
 
-if test -z "$(lookup_file -e .repo)"; then
+if test -z "$(lookup-file -e .repo)"; then
     branch=$(git symbolic-ref HEAD 2>/dev/null)
     if test -z "$branch"; then
         echo master

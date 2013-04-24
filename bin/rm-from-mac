@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
-cd $(lookup_file .git)
+cd $(lookup-file .git)
 find ./refs -name from-mac|xargs rm -rv

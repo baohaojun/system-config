@@ -6,7 +6,7 @@ function die() {
     exit -1
 }
 
-cd $(lookup_file -e .repo/..)
+cd $(lookup-file -e .repo/..)
 
 if test ! -d .repo; then
     cd ~/src/android || die "Error: .repo not found, not android project?"

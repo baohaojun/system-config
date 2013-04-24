@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-cd $(dirname $(lookup_file build.xml))
+cd $(dirname $(lookup-file build.xml))
 if test $# = 0; then
     ant-expect-keystore release
     ant installr 2>&1 | tee ~/.logs/ant-install.log

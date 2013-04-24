@@ -53,7 +53,7 @@ function die() {
     exit -1
 }
 
-cd $(lookup_file .repo/..) || die repo not found.
+cd $(lookup-file .repo/..) || die repo not found.
 
 export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
 

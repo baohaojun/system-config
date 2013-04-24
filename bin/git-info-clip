@@ -4,7 +4,7 @@
 
 set -e
 test $# = 0 && set -- .
-set -- "$(readlink -f "$(lookup_file $1)")"
+set -- "$(readlink -f "$(lookup-file $1)")"
 
 if test -d "$1"; then
     cd "$1"
@@ -13,7 +13,7 @@ else
 fi
 
 cd -P .
-git_dir=$(dirname $(lookup_file .git))
+git_dir=$(dirname $(lookup-file .git))
 git_proj_http=$(repo-remote-url|perl -npe 's,git\@github.com:,http://github.com/,; s,git://,http://,; s,\.git$,,')
 
 stem=/raw/master
@@ -21,6 +21,6 @@ if test -d "$1"; then
     stem=/tree/master
 fi
 
-lookup_file "$1" |perl -npe 's,'$git_dir','$git_proj_http$stem','|tr -d '\r\n'|tee /dev/tty|putclip
+lookup-file "$1" |perl -npe 's,'$git_dir','$git_proj_http$stem','|tr -d '\r\n'|tee /dev/tty|putclip
 
 

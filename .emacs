@@ -119,7 +119,6 @@
 (put 'LaTeX-hide-environment 'disabled nil)
 
 
-(ido-mode 'buffers)
 (browse-kill-ring-default-keybindings)
 
 ;; enable visual feedback on selections
@@ -388,10 +387,10 @@
 
 
 (setenv "EMACS" "t")
-(eval-after-load 'weblogger '(define-key weblogger-entry-mode-map "\C-c\C-k" 'ido-kill-buffer))
-
-
 (require 'saveplace)
+(setq-default abbrev-mode t)
+(read-abbrev-file "~/.abbrev_defs")
+(setq save-abbrevs t)
 
 (condition-case nil
     (random-theme)

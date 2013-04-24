@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd $(lookup_file .repo/..)
-build_env=`lookup_file build/envsetup.sh`
+cd $(lookup-file .repo/..)
+build_env=`lookup-file build/envsetup.sh`
 top_dir=$(pwd)
 
 set -e

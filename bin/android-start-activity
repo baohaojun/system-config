@@ -2,7 +2,7 @@
 
 set -e
 
-manifest=$(lookup_file AndroidManifest.xml)
+manifest=$(lookup-file AndroidManifest.xml)
 #xmlstarlet sel -B -t -m //project -v @path  -n /home/bhj/smb/bible/cm/release-20120710/tkpxa978T-ics.ariel.eng.blds.20120710.000002/manifest-tkpxa978T-ics.ariel.eng.blds.20120710.000002.xml 
 
 package=$(xmlstarlet sel -B -t -m //manifest -v @package $manifest)

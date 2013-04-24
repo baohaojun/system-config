@@ -29,7 +29,7 @@ while true; do
 done
 
 if test "$1" = out/repo-changes.log; then
-    cd $(lookup_file .repo/..)
+    cd $(lookup-file .repo/..)
 fi
 
 if test $# = 0 -a ! -d .repo; then
@@ -137,7 +137,7 @@ fi
 
 #{%/sh%}
 ' 2>&1 10>~/.logs/repo-changes.lock | (
-    cd $(lookup_file .repo/..);
+    cd $(lookup-file .repo/..);
     mkdir -p $(readlink -m out)
     log=./out/repo-changes.log"$(echo -n $*)"
     lognow="$log-$(now)"

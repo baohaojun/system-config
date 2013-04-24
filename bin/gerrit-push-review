@@ -8,7 +8,7 @@ function die() {
     exit -1
 }
 
-if test -z "$(lookup_file -e .repo)"; then
+if test -z "$(lookup-file -e .repo)"; then
     git fetch -v
 else
     repo sync -n .
@@ -81,7 +81,7 @@ set +x
 echo push ok.
 
 (
-    cd $(dirname $(lookup_file .git))
+    cd $(dirname $(lookup-file .git))
     set -e
     test -e .git
     if test -e .gerrit-hooks; then

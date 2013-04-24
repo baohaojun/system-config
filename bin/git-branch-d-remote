@@ -20,6 +20,6 @@ for b in "$@"; do
     (
         set -x
         git push $origin :refs/heads/$branch
-        perl -ne "print unless m,$origin/$branch," -i $(lookup_file $(git rev-parse --git-dir)/packed-refs)
+        perl -ne "print unless m,$origin/$branch," -i $(lookup-file $(git rev-parse --git-dir)/packed-refs)
     )
 done

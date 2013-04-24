@@ -1,7 +1,7 @@
 #!/bin/bash
 
 adir=$(
-    cd $(lookup_file .repo/..) >/dev/null 2>&1
+    cd $(lookup-file .repo/..) >/dev/null 2>&1
     pwd)/
 
 xmlstarlet sel -t -m //project -i "@path='$(relative-path $(pwd) $adir)'" -v @revision "$1"

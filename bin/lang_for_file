@@ -10,7 +10,7 @@ if (@ARGV != 1 and @ARGV != 2) {
 my $globalrc = $ARGV[1];
 
 unless (-e $globalrc) {
-    chomp($globalrc = qx(lookup_file .globalrc));
+    chomp($globalrc = qx(lookup-file .globalrc));
 }
 
 unless (-e $globalrc) {

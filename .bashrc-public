@@ -113,9 +113,9 @@ scd()
         dir1=$(pwd | perl -npe 's#'"$1"'#'"$2"'#g')
         test -d "$dir1" && { cd "$dir1"; return; }
         
-        dir=$(lookup_file -- "$1"|tee /dev/stderr|head -n 1)
+        dir=$(lookup-file -- "$1"|tee /dev/stderr|head -n 1)
         shift
-        dir=$(builtin cd "$dir"; lookup_file "$1"|tee /dev/stderr|head -n 1)
+        dir=$(builtin cd "$dir"; lookup-file "$1"|tee /dev/stderr|head -n 1)
         dir=$(formal-path "$dir")
         basedir=$(dirname "$dir")
         stem=$(basename "$dir")
