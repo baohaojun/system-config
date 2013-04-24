@@ -19,3 +19,10 @@
 ** TODO Fix the boot mode order
 ** TODO Fix the uart log
 * Fri: Fix boot fail error
+
+* Mon: Investigate internal sdcard can't mount issue, HLTD-44
+* Tue: Continue to investigate internal sdcard can't mount issue, caused by REM
+* Wed: Sync merge APSE code for BSP
+* Wed: Tester reproduced HLTD-44, investigate again.
+
+  It is caused by 

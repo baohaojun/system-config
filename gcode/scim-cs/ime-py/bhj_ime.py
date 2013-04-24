@@ -25,7 +25,7 @@ class ime_trans:
         with autolock(self.lock):
             import wubi86_trans
             self.rules = wubi86_trans.g_trans_map
-        
+
     def has_trans(self, prefix):
         with autolock(self.lock):
             if prefix in self.rules:
@@ -46,7 +46,7 @@ class ime_trans:
                     trans.sort()
                     self.rules[prefix] = ''.join(trans)
 
-    
+
     def get_trans(self, prefix):
         with autolock(self.lock):
             if prefix in self.rules:
@@ -72,7 +72,7 @@ class ime_history:
             set_ = OrderedSet((idx,))
             self.rules[comp] = set_ | self.rules[comp]
             _g_ime_quail.adjust_history(comp, list(self.rules[comp]))
-            del self.rules[comp] 
+            del self.rules[comp]
 
     def get_history(self, comp):
         with autolock(self.lock):
@@ -140,7 +140,7 @@ class ime_quail:
             cands |= OrderedSet(self.rules[comp])
             self.rules[comp] = tuple(cands)
             self.__save_comp(comp)
-            
+
     def __save_comp(self, comp):
         try:
             file_ = open(os.path.expanduser("~/.sdim/cands/" + comp), "wb")
@@ -156,7 +156,7 @@ class ime_reverse:
         self.lock = threading.RLock()
         import wubi86_reverse
         self.rules = wubi86_reverse.g_reverse_map
-        
+
     def has_reverse(self, han):
         with autolock(self.lock):
             return han in self.rules
@@ -193,11 +193,11 @@ class ime_keyboard:
         mods.sort()
         mods = OrderedSet(mods)
         self.mods = ''.join(mods)
-        
+
         assert self.mods in ime_keyboard.all_mods, "invalid modifiers"
-        
+
         self.key = keys[-1]
-        
+
         assert len(self.key), "empty keys"
 
         if len(self.key) == 1:
@@ -206,7 +206,7 @@ class ime_keyboard:
             #assert self.key in self.special_keys, "key is not special function, like in emacs"
             pass
 
-        if self.key == 'space': 
+        if self.key == 'space':
             self.key = ' '
 
 
@@ -221,7 +221,7 @@ class ime_keyboard:
             return self.key
         else:
             return self.mods + ' ' + self.key
-        
+
     def isgraph(self):
         if not self.mods and len(self.key) == 1:
             return True
@@ -270,7 +270,7 @@ class ime:
     @cand_index.setter
     def cand_index(self, value):
         self.__cand_index = value
-        
+
         if _g_ime_quail.has_quail(self.compstr):
             num_cands = len(_g_ime_quail.get_cands(self.compstr))
             if not self.cand_index < num_cands:
@@ -307,7 +307,7 @@ class ime:
         self.cand_index = _g_ime_history.get_history(self.compstr)
 
         self.hintstr = _g_ime_trans.get_trans(self.compstr)
-        
+
         if _g_ime_quail.has_quail(self.compstr) \
                 and not _g_ime_trans.has_trans(self.compstr) \
                 and len(self.__cands) == 1 \
@@ -349,7 +349,7 @@ class ime:
             line = line.decode('utf-8')
             while line and line[-1] in ('\r', '\n'):
                 line = line[:-1]
-            
+
             pos = line.find(' ')
             if pos == -1:
                 func = line
@@ -369,7 +369,7 @@ class ime:
 
     def want(self, arg):
         assert arg, "want must take non empty arg"
-        
+
         arg = arg[:-1] #get rid of the '?' at the end
         key = ime_keyboard(arg)
 
@@ -392,7 +392,7 @@ class ime:
             self.compstr += key.name
         elif _g_ime_trans.has_trans(comp):
             self.compstr += key.name
-        else: 
+        else:
             self.commitstr += key.name
 
     def keyed_when_comp(self, key):
@@ -413,6 +413,7 @@ class ime:
             self.__english_mode(key)
 
     def cand_possible_before_key(self, key): #impossible after key
+        global _g_ime_single_mode
         if key == 'return':
             self.__english_mode(key)
         elif key == 'space':
@@ -423,8 +424,11 @@ class ime:
             self.cand_index = (int(key.name) + 9) % 10 + self.cand_index // 10 * 10;
             self.__commit_cand()
         elif key.isalpha():
-            self.__commit_cand()
-            self.__keyed_when_no_comp(key)
+            if _g_ime_single_mode:
+                self.__english_mode(key)
+            else:
+                self.__commit_cand()
+                self.__keyed_when_no_comp(key)
         elif key == 'C n':
             self.cand_index += ime.page_size
         elif key == 'C p':
@@ -438,7 +442,7 @@ class ime:
             self.__keyed_when_no_comp(key)
         else:
             self.beepstr = 'y'
-            
+
     def dump_comp(self, comp):
             if _g_ime_quail.has_quail(comp):
                 debug("rules[" + comp + "]: " + repr(_g_ime_quail.get_cands(comp)))
@@ -503,7 +507,7 @@ class ime:
         self.reply_beep()
 
 
-        
+
 
     def __english_mode(self, key):
         if self.compstr == '; ' and key == 'space':
@@ -552,7 +556,7 @@ class ime:
             return
         if self.compstr:
             self.__reply('comp: ' + self.compstr)
-            
+
     def reply_cands(self, arg=''):
         cands = []
         for x in self.__cands:
@@ -585,6 +589,9 @@ class ime:
 def init():
     global _g_ime_reverse
     _g_ime_reverse = ime_reverse()
+
+    global _g_ime_single_mode
+    _g_ime_single_mode = os.path.exists(os.path.join(os.environ["HOME"], ".sdim-single"))
 
     global _g_ime_trans
     _g_ime_trans = ime_trans()

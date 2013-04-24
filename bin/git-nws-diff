@@ -1,0 +1,8 @@
+#!/bin/bash
+if test "$1" = diff -o "$1" = diff-index; then
+    cmd=$1
+    shift
+    git $cmd --ignore-space-at-eol "$@"
+else
+    git "$@"
+fi

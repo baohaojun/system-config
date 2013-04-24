@@ -45,6 +45,7 @@
       ;; Now replace the pattern with the default tag.
       (replace-match tag-default t t grep-default 1))))
 
+(autoload 'nodup-ring-insert "bhj-defines")
 ;;;###autoload
 (defun bhj-edit-grep-pattern ()
   (interactive)

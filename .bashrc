@@ -33,18 +33,18 @@ if test -e ~/.bash-path; then
     fi
 else
     if test -x /opt/local/libexec/gnubin/readlink; then
-	export PATH=/opt/local/libexec/gnubin:$PATH
+        export PATH=/opt/local/libexec/gnubin:$PATH
     fi
     if test -d ~/etc/path/$(uname)-$(uname -m); then
         rm -rf ~/external/etc/overide/
         export PATH=$(
             builtin cd ~/etc/path/$(uname)-$(uname -m);
             for x in $(for d in *; do echo $d; done|sort -n); do
-                readlink -m -- $x; 
+                readlink -m -- $x;
             done|tr '\n' ':'
         )
     fi
-    export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent |tr '\n' ':')
+    export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent|rm-last-nl|tr '\n' ':')
     printf 'export PATH=%q' "$PATH" > ~/.bash-path
 fi
 if test "$TERM" = dumb; then

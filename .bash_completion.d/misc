@@ -1,1 +1,2 @@
-complete -c -f edit e
+complete -f edit e
+complete -c edit pe
