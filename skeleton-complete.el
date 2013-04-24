@@ -143,8 +143,40 @@ See also `skeleton--symbol-skeleton-extracter'."
             the-regexp (replace-regexp-in-string "^" "^" the-regexp))
       the-regexp)))
 
-(defun skeleton--matcher (re buffer tag)
-  "Search the buffer to collect a list of all strings matching `re'.
+(defmacro skeleton--make-matcher (matcher-name doc extract-match move-along)
+  "Make a new matcher named as MATCHER-NAME with EXTRACT-MATCH and MOVE-ALONG.
+
+The function MATCHER-NAME thus created will take 3 arguments, RE,
+BUFFER, and TAG. When called, it will search the BUFFER for RE,
+return all the matching substrings in an order dependent on
+TAG. See `skeleton--matcher'.
+
+EXTRACT-MATCH and MOVE-ALONG are 2 lisp sexp, you can use the
+variables mb and me in these sexps. Result of EXTRACT-MATCH
+should be a string; MOVE-ALONG is only used for its side-effects."
+  (declare (doc-string 2))
+  `(defun ,matcher-name (re buffer tag)
+     (let ((strlist-before nil)
+           (strlist-after nil)
+           (old-point (point)))
+       (with-current-buffer buffer
+         (save-excursion
+           (goto-char (point-min))
+           (while (re-search-forward re nil t)
+             (let ((mb (match-beginning 0))
+                   (me (match-end 0)))
+               (let ((substr ,extract-match))
+                 (if (and (< (point) old-point) (eq tag 'current))
+                     ;; substr closer to the old-point is at the head of strlist-before, in good order
+                     (setq strlist-before (cons substr strlist-before))
+                   ;; substr further to the old-point is at the head of strlist-after, in bad order
+                   (setq strlist-after (cons substr strlist-after))))
+               ,move-along))
+           (skeleton--interleave strlist-before (nreverse strlist-after)))))))
+
+(skeleton--make-matcher
+ skeleton--matcher
+ "Search the buffer to collect a list of all strings matching `re'.
 
 If TAG is 'current, the returned list is sorted (interleaved)
 roughly according to their distance to where the point is. First
@@ -152,27 +184,18 @@ one entry coming *before* the point, then one entry coming
 *after* point, until either list runs out.
 
 Or else the returned list of strings is in the order they appear in the buffer."
-  (let ((strlist-before nil)
-        (strlist-after nil)
-        (old-point (point)))
-    (with-current-buffer buffer
-      (save-excursion
-        (goto-char (point-min))
-        (while (re-search-forward re nil t)
-          (let ((mb (match-beginning 0))
-                (me (match-end 0)))
-            (goto-char mb)
-            (unless (and (boundp 'skeleton--start) ; the found string should not overlap with our skeleton
-                         (boundp 'skeleton--end)
-                         (= me skeleton--end))
-              (let ((substr (buffer-substring-no-properties mb me)))
-                (if (and (< (point) old-point) (eq tag 'current))
-                    ;; substr closer to the old-point is at the head of strlist-before, in good order
-                    (setq strlist-before (cons substr strlist-before))
-                  ;; substr further to the old-point is at the head of strlist-after, in bad order
-                  (setq strlist-after (cons substr strlist-after)))))
-            (goto-char (1+ mb))))
-        (skeleton--interleave strlist-before (nreverse strlist-after))))))
+ (buffer-substring-no-properties mb me)
+ ;; no need to move along, the re-search-forward will move by itself
+ ;; in this basic case
+ nil)
+
+(skeleton--make-matcher
+ skeleton--line-extracting-matcher
+ "Search the buffer to collect a list of all lines matching `re'.
+
+See `skeleton--matcher'."
+ (buffer-substring-no-properties (line-beginning-position) (line-end-position))
+ (end-of-line))
 
 (defun skeleton--buffer-filter ()
   "Return an alist of buffers to be matched againt the skeleton for completions.
