@@ -45,6 +45,7 @@
       ;; Now replace the pattern with the default tag.
       (replace-match tag-default t t grep-default 1))))
 
+;;;###autoload
 (defun bhj-edit-grep-pattern ()
   (interactive)
   (beginning-of-line)
@@ -59,6 +60,7 @@
     (when (< min max)
       (delete-region min max))))
 
+;;;###autoload
 (defun grep-bhj-dir ()
   (interactive)
   (let ((default-directory
@@ -67,12 +69,14 @@
             default-directory)))
     (call-interactively 'grep)))
 
+;;;###autoload
 (defun grep-imenu ()
   (interactive)
   (let ((grep-gtags-history grep-imenu-history)
         (grep-buffer-name "*grep-imenu*"))
     (grep-gtags 'grep-imenu-history "grep-imenu -i -e pat")))
 
+;;;###autoload
 (defun grep-gtags (&optional history-var def-grep-command)
   (interactive)
   (let ((grep-history grep-gtags-history)
@@ -112,6 +116,7 @@
                             (point)))))
           (buffer-substring-no-properties p1 p2)))))
 
+;;;###autoload
 (defun grep-find-file ()
   (interactive)
   (let ((grep-history grep-find-file-history)
@@ -123,6 +128,7 @@
       (call-interactively 'grep-bhj-dir)
       (setq grep-find-file-history grep-history))))
 
+;;;###autoload
 (defun grep-func-call ()
   (interactive)
   (let ((grep-history grep-func-call-history)

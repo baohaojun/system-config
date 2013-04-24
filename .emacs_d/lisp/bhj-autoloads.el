@@ -258,6 +258,420 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 
 ;;;***
 
+;;;### (autoloads (source-code-help bhj-java-import bhj-find-missing-file
+;;;;;;  replace-double-quotes bhj-choose-from-output bhj-choose bhj-open-android-doc-on-java-buffer
+;;;;;;  bhj-do-dictionry insert-today dos2unix bhj-do-code-generation
+;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-name bhj-view-mail-external
+;;;;;;  gnus-gmail-search-subject localedit sudoedit switch-buffer-same-filename-rev
+;;;;;;  switch-buffer-same-filename revert-all-buffers save-all-buffers-no-check-modified
+;;;;;;  back-to-indent-same-space-as-prev-line indent-same-space-as-prev-line
+;;;;;;  java-bt-mode java-bt-next-error java-bt-ret-key waw-mode
+;;;;;;  waw-ret-key waw-next-error visit-code-reading get-the-tag-around-me
+;;;;;;  android-get-help ctags-beginning-of-defun ctags-get-fully-qualified-name
+;;;;;;  tag-this-file where-are-we cscope-pop-mark-back cscope-pop-mark
+;;;;;;  try-all-color-themes try-all-themes random-theme devenv-debug
+;;;;;;  devenv-toggle-breakpoint switch-to-devenv bhj-jdk-help bhj-set-reply
+;;;;;;  bhj-mimedown bhj-w3m-scroll-down-or-previous-url bhj-w3m-scroll-up-or-next-url
+;;;;;;  bhj-isearch-from-bod bhj-occur-make-errors bhj-occur java-get-override
+;;;;;;  java-get-hierarchy bhj-insert-pwdu bhj-insert-pwdw bhj-clt-insert-file-name
+;;;;;;  wiki-local-bhj weekrep linux-c++-mode linux-c-mode bhj-c-end-of-defun
+;;;;;;  java-complete-method java-resolve bhj-c-show-current-func
+;;;;;;  bhj-c-beginning-of-defun cleanup-buffer-safe) "bhj-defines"
+;;;;;;  "bhj-defines.el" (20855 20552 183421 287000))
+;;; Generated autoloads from bhj-defines.el
+
+(autoload 'cleanup-buffer-safe "bhj-defines" "\
+Perform a bunch of safe operations on the whitespace content of a buffer.
+Does not indent buffer, because it is used for a before-save-hook, and that
+might be bad.
+
+\(fn)" t nil)
+
+(autoload 'bhj-c-beginning-of-defun "bhj-defines" "\
+
+
+\(fn &optional ARG)" t nil)
+
+(autoload 'bhj-c-show-current-func "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'java-resolve "bhj-defines" "\
+
+
+\(fn ID)" t nil)
+
+(autoload 'java-complete-method "bhj-defines" "\
+
+
+\(fn ID)" t nil)
+
+(autoload 'bhj-c-end-of-defun "bhj-defines" "\
+
+
+\(fn &optional ARG)" t nil)
+
+(autoload 'linux-c-mode "bhj-defines" "\
+C mode with adjusted defaults for use with the Linux kernel.
+
+\(fn)" t nil)
+
+(autoload 'linux-c++-mode "bhj-defines" "\
+C mode with adjusted defaults for use with the Linux kernel.
+
+\(fn)" t nil)
+
+(autoload 'weekrep "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'wiki-local-bhj "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-clt-insert-file-name "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-insert-pwdw "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-insert-pwdu "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'java-get-hierarchy "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'java-get-override "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-occur "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-occur-make-errors "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-isearch-from-bod "bhj-defines" "\
+
+
+\(fn &optional COL-INDENT)" t nil)
+
+(autoload 'bhj-w3m-scroll-up-or-next-url "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-w3m-scroll-down-or-previous-url "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-mimedown "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-set-reply "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-jdk-help "bhj-defines" "\
+start jdk help
+
+\(fn JDK-WORD)" t nil)
+
+(autoload 'switch-to-devenv "bhj-defines" "\
+Jump to VS.NET, at the same file & line as in emacs
+
+\(fn)" t nil)
+
+(autoload 'devenv-toggle-breakpoint "bhj-defines" "\
+Toggle a breakpoint at the current line
+
+\(fn)" t nil)
+
+(autoload 'devenv-debug "bhj-defines" "\
+Run the debugger in VS.NET
+
+\(fn)" t nil)
+
+(autoload 'random-theme "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'try-all-themes "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'try-all-color-themes "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'cscope-pop-mark "bhj-defines" "\
+Pop back to where cscope was last invoked.
+
+\(fn)" t nil)
+
+(autoload 'cscope-pop-mark-back "bhj-defines" "\
+Pop back to where cscope was last invoked.
+
+\(fn)" t nil)
+
+(autoload 'where-are-we "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'tag-this-file "bhj-defines" "\
+
+
+\(fn &optional OUTPUT-BUF)" t nil)
+
+(autoload 'ctags-get-fully-qualified-name "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'ctags-beginning-of-defun "bhj-defines" "\
+
+
+\(fn &optional ARG)" t nil)
+
+(autoload 'android-get-help "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'get-the-tag-around-me "bhj-defines" "\
+
+
+\(fn GET-ATTR-FUNC &optional ARG)" t nil)
+
+(autoload 'visit-code-reading "bhj-defines" "\
+
+
+\(fn &optional ARG)" t nil)
+
+(autoload 'waw-next-error "bhj-defines" "\
+
+
+\(fn &optional ARGP RESET)" t nil)
+
+(autoload 'waw-ret-key "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'waw-mode "bhj-defines" "\
+Major mode for output from \\[where-are-we].
+
+\(fn)" t nil)
+
+(autoload 'java-bt-ret-key "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'java-bt-next-error "bhj-defines" "\
+
+
+\(fn &optional ARGP RESET)" t nil)
+
+(autoload 'java-bt-mode "bhj-defines" "\
+Major mode for output from java back trace.
+
+\(fn)" t nil)
+
+(autoload 'indent-same-space-as-prev-line "bhj-defines" "\
+
+
+\(fn N-PREV &optional FROM-BOL)" t nil)
+
+(autoload 'back-to-indent-same-space-as-prev-line "bhj-defines" "\
+
+
+\(fn N-PREV)" t nil)
+
+(autoload 'save-all-buffers-no-check-modified "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'revert-all-buffers "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'switch-buffer-same-filename "bhj-defines" "\
+
+
+\(fn &optional REVERSE)" t nil)
+
+(autoload 'switch-buffer-same-filename-rev "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'sudoedit "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'localedit "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'gnus-gmail-search-subject "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-view-mail-external "bhj-defines" "\
+open the current maildir file in kmail
+
+\(fn)" t nil)
+
+(autoload 'bbdb-complete-name "bhj-defines" "\
+Complete the user full-name or net-address before point (up to the
+preceeding newline, colon, or comma, or the value of START-POS).  If
+what has been typed is unique, insert an entry of the form \"User Name
+<net-addr>\" (although see documentation for
+bbdb-dwim-net-address-allow-redundancy).  If it is a valid completion
+but not unique, a list of completions is displayed.
+
+If the completion is done and `bbdb-complete-name-allow-cycling' is
+true then cycle through the nets for the matching record.
+
+When called with a prefix arg then display a list of all nets.
+
+Completion behaviour can be controlled with `bbdb-completion-type'.
+
+\(fn &optional START-POS)" t nil)
+
+(autoload 'bhj-org-tasks-closed-last-week "bhj-defines" "\
+Produces an org agenda tags view list of the tasks completed
+in the specified month and year. Month parameter expects a number
+from 1 to 12. Year parameter expects a four digit number. Defaults
+to the current month when arguments are not provided. Additional search
+criteria can be provided via the optional match-string argument
+
+\(fn &optional MATCH-STRING)" t nil)
+
+(autoload 'bhj-do-code-generation "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'dos2unix "bhj-defines" "\
+Convert this entire buffer from MS-DOS text file format to UNIX.
+
+\(fn)" t nil)
+
+(autoload 'insert-today "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-do-dictionry "bhj-defines" "\
+lookup the current word (or region) in dictionary
+
+\(fn WORD)" t nil)
+
+(autoload 'bhj-open-android-doc-on-java-buffer "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-choose "bhj-defines" "\
+
+
+\(fn ARGS)" t nil)
+
+(autoload 'bhj-choose-from-output "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'replace-double-quotes "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-find-missing-file "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-java-import "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'source-code-help "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads (grep-func-call grep-find-file grep-gtags grep-imenu
+;;;;;;  grep-bhj-dir bhj-edit-grep-pattern) "bhj-grep" "bhj-grep.el"
+;;;;;;  (20855 20629 663417 283000))
+;;; Generated autoloads from bhj-grep.el
+
+(autoload 'bhj-edit-grep-pattern "bhj-grep" "\
+
+
+\(fn)" t nil)
+
+(autoload 'grep-bhj-dir "bhj-grep" "\
+
+
+\(fn)" t nil)
+
+(autoload 'grep-imenu "bhj-grep" "\
+
+
+\(fn)" t nil)
+
+(autoload 'grep-gtags "bhj-grep" "\
+
+
+\(fn &optional HISTORY-VAR DEF-GREP-COMMAND)" t nil)
+
+(autoload 'grep-find-file "bhj-grep" "\
+
+
+\(fn)" t nil)
+
+(autoload 'grep-func-call "bhj-grep" "\
+
+
+\(fn)" t nil)
+
+;;;***
+
 ;;;### (autoloads (weblogger-fetch-entries weblogger-start-entry
 ;;;;;;  weblogger-setup-weblog weblogger-select-configuration) "../weblogger/weblogger"
 ;;;;;;  "../weblogger/weblogger.el" (20622 27199 0 0))

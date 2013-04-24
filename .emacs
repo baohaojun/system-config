@@ -593,9 +593,8 @@
             (setq compilation-directory-matcher (default-value 'compilation-directory-matcher))))
 
 (load "bhj-setq.el")
-(load "bhj-defines-autoload.el")
-(load "bhj-grep-autoload.el")
 (load "bhj-set-key.el")
+(load "bhj-autoloads.el")
 
 (eval-after-load "ediff-init" (add-hook 'ediff-quit-hook (lambda () (shell-command "find-or-exec emacs"))))
 

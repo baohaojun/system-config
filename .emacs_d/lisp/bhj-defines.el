@@ -1,3 +1,4 @@
+;;;###autoload
 (defun cleanup-buffer-safe ()
   "Perform a bunch of safe operations on the whitespace content of a buffer.
 Does not indent buffer, because it is used for a before-save-hook, and that
@@ -22,6 +23,7 @@ might be bad."
 
 
 
+;;;###autoload
 (defun bhj-c-beginning-of-defun (&optional arg)
   (interactive "^p")
   (progn
@@ -29,6 +31,7 @@ might be bad."
       (push-mark))
     (ctags-beginning-of-defun arg)))
 
+;;;###autoload
 (defun bhj-c-show-current-func ()
   (interactive)
   (save-excursion
@@ -48,6 +51,7 @@ might be bad."
       (setq end (point))
       (funcall (or func 'buffer-substring-no-properties) start end))))
 
+;;;###autoload
 (defun java-resolve (id)
   (interactive
    (list (or (and transient-mark-mode mark-active
@@ -58,6 +62,7 @@ might be bad."
                          (shell-quote-argument (buffer-file-name))
                          (shell-quote-argument id))))
 
+;;;###autoload
 (defun java-complete-method (id)
   (interactive
    (list (or (and transient-mark-mode mark-active
@@ -90,6 +95,7 @@ might be bad."
     (insert ".")
     (insert (replace-regexp-in-string ".*\\s \\(.*(.*)\\){" "\\1" method))))
 
+;;;###autoload
 (defun bhj-c-end-of-defun (&optional arg)
   (interactive "^p")
   (progn
@@ -97,6 +103,7 @@ might be bad."
       (push-mark))
     (ctags-beginning-of-defun (- arg))))
 
+;;;###autoload
 (defun linux-c-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
@@ -106,6 +113,7 @@ might be bad."
   (setq indent-tabs-mode t)
   (setq c-basic-offset 8))
 
+;;;###autoload
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
@@ -115,10 +123,12 @@ might be bad."
   (setq indent-tabs-mode nil)
   (setq c-basic-offset 4))
 
+;;;###autoload
 (defun weekrep ()
   (interactive)
   (call-process "wr" nil t nil "-6"))
 
+;;;###autoload
 (defun wiki-local-bhj ()
   (interactive)
   (let
@@ -129,6 +139,7 @@ might be bad."
       (call-process "bash" nil nil nil "local-wiki.sh" search-string)
       )))
 
+;;;###autoload
 (defun bhj-clt-insert-file-name ()
   (interactive)
   (let ((prev-buffer (other-buffer (current-buffer) t)))
@@ -138,6 +149,7 @@ might be bad."
          (replace-regexp-in-string ".*/" "" (buffer-file-name prev-buffer))
        (buffer-name prev-buffer)))))
 
+;;;###autoload
 (defun bhj-insert-pwdw ()
   (interactive)
   (insert "'")
@@ -145,6 +157,7 @@ might be bad."
   (backward-delete-char 1)
   (insert "'"))
 
+;;;###autoload
 (defun bhj-insert-pwdu ()
   (interactive)
   (insert "'")
@@ -171,6 +184,7 @@ might be bad."
       (setenv "GTAGS_START_FILE" file))))
 
 
+;;;###autoload
 (defun java-get-hierarchy ()
   (interactive)
   (set-gtags-start-file)
@@ -186,6 +200,7 @@ might be bad."
                          "-v"
                        (concat "-m " method-name))))))
 
+;;;###autoload
 (defun java-get-override ()
   (interactive)
   (set-gtags-start-file)
@@ -200,6 +215,7 @@ might be bad."
 
 
 
+;;;###autoload
 (defun bhj-occur ()
   (interactive)
   (with-syntax-table (let ((new-table (make-syntax-table (syntax-table))))
@@ -239,11 +255,13 @@ might be bad."
               (occur regexp))
           (occur regexp))))))
 
+;;;###autoload
 (defun bhj-occur-make-errors ()
   (interactive)
   (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|syntax error\\|invalid argument\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]elapsed \\|cannot find symbol\\|error [0-9]\\|because of errors\\|[0-9] error\\b\\|error:\\|undefined reference to"))
     (call-interactively 'bhj-occur)))
 
+;;;###autoload
 (defun bhj-isearch-from-bod (&optional col-indent)
   (interactive "p")
   (with-syntax-table (let ((new-table (make-syntax-table (syntax-table))))
@@ -264,6 +282,7 @@ might be bad."
           (when (string-equal word (current-word))
             (setq not-match nil)))))))
 
+;;;###autoload
 (defun bhj-w3m-scroll-up-or-next-url ()
   (interactive)
   (if (pos-visible-in-window-p (point-max))
@@ -276,6 +295,7 @@ might be bad."
           (call-interactively 'w3m-view-this-url)))
     (call-interactively 'w3m-scroll-up-or-next-url)))
 
+;;;###autoload
 (defun bhj-w3m-scroll-down-or-previous-url ()
   (interactive)
   (if (pos-visible-in-window-p (point-min))
@@ -285,6 +305,7 @@ might be bad."
          (call-interactively 'w3m-view-this-url))
     (call-interactively 'w3m-scroll-down-or-previous-url)))
 
+;;;###autoload
 (defun bhj-mimedown ()
   (interactive)
   (if (not mark-active)
@@ -300,6 +321,7 @@ might be bad."
         (exchange-point-and-mark)
         (insert "\n</body>\n</html>\n<#/multipart>\n")))))
 
+;;;###autoload
 (defun bhj-set-reply ()
   (interactive)
   (save-excursion
@@ -379,6 +401,7 @@ might be bad."
               (t
                (error "don't know send as whom")))))))
 
+;;;###autoload
 (defun bhj-jdk-help (jdk-word)
   "start jdk help"
   (interactive
@@ -402,6 +425,7 @@ might be bad."
   "Send a command-line to a running VS.NET process.  'devenv' comes from devenv.exe"
   (apply 'call-process "DevEnvCommand" nil nil nil args))
 
+;;;###autoload
 (defun switch-to-devenv ()
   "Jump to VS.NET, at the same file & line as in emacs"
   (interactive)
@@ -418,12 +442,14 @@ might be bad."
               (t
                   (error "couldn't run DevEnvCommand")))))
 
+;;;###autoload
 (defun devenv-toggle-breakpoint ()
   "Toggle a breakpoint at the current line"
   (interactive)
   (switch-to-devenv)
   (devenv-cmd "Debug.ToggleBreakpoint"))
 
+;;;###autoload
 (defun devenv-debug ()
   "Run the debugger in VS.NET"
   (interactive)
@@ -439,6 +465,7 @@ might be bad."
   (c-set-offset 'case-label 0)
 )
 
+;;;###autoload
 (defun random-theme()
   (interactive)
   (dolist (theme custom-enabled-themes)
@@ -447,6 +474,7 @@ might be bad."
                 (message "loaded theme: %s" theme)
                 theme)))
 
+;;;###autoload
 (defun try-all-themes()
   (interactive)
   (dolist (theme (custom-available-themes))
@@ -456,6 +484,7 @@ might be bad."
     (load-theme theme)
     (recursive-edit)))
 
+;;;###autoload
 (defun try-all-color-themes()
   (interactive)
   (dolist (theme color-themes)
@@ -505,6 +534,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
         ))
     ))
 
+;;;###autoload
 (defun cscope-pop-mark ()
   "Pop back to where cscope was last invoked."
   (interactive)
@@ -544,6 +574,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (goto-char marker-point)
     (set-buffer old-buffer)))
 
+;;;###autoload
 (defun cscope-pop-mark-back ()
   "Pop back to where cscope was last invoked."
   (interactive)
@@ -580,6 +611,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (goto-char marker-point)
     (set-buffer old-buffer)))
 
+;;;###autoload
 (defun where-are-we ()
   (interactive)
   (save-excursion
@@ -596,6 +628,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (forward-line)
   (waw-mode))
 
+;;;###autoload
 (defun tag-this-file (&optional output-buf)
   (interactive)
   (save-excursion
@@ -637,6 +670,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
         (back-to-indentation)
         (current-column)))))
 
+;;;###autoload
 (defun ctags-get-fully-qualified-name ()
   (interactive)
   (save-excursion
@@ -670,6 +704,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
             (insert-string fully-qualified-name)
             (copy-region-as-kill (point-min) (point-max))))))))
 
+;;;###autoload
 (defun ctags-beginning-of-defun (&optional arg)
   (interactive "^p")
   (goto-line
@@ -700,10 +735,12 @@ Starting from DIRECTORY, look upwards for a cscope database."
           (setq classes (cons line classes))))))
     (car (split-string (completing-read-one? "Which class/interface to hierarchy? " (delete-dups (nreverse classes)) nil t)))))
 
+;;;###autoload
 (defun android-get-help ()
   (interactive)
   (shell-command (format "%s %s" "android-get-help" (my-buffer-file-name-local))))
 
+;;;###autoload
 (defun get-the-tag-around-me (get-attr-func &optional arg)
   (interactive)
   "GET-ATTR-FUNC is a function to specify what attribute of the tag to return,
@@ -745,6 +782,7 @@ ARG means found the (ARG - 1)th tag to find."
                                            1
                                          (or arg 1))))))))))
 
+;;;###autoload
 (defun visit-code-reading (&optional arg)
   (interactive "p")
   (let ((from-waw nil))
@@ -813,6 +851,7 @@ ARG means found the (ARG - 1)th tag to find."
   (pop-to-buffer "*cscope*")
   (other-window 1))
 
+;;;###autoload
 (defun waw-next-error (&optional argp reset)
   (interactive "p")
   (with-current-buffer
@@ -885,6 +924,7 @@ ARG means found the (ARG - 1)th tag to find."
               (compilation-goto-locus msg mk end-mk))
             (throw 'done nil)))))))
 
+;;;###autoload
 (defun waw-ret-key ()
   (interactive)
   (let ((start-line-str (current-line-string)))
@@ -897,6 +937,7 @@ ARG means found the (ARG - 1)th tag to find."
             (next-error 0))
         (insert "\n")))))
 
+;;;###autoload
 (defun waw-mode ()
   "Major mode for output from \\[where-are-we]."
   (interactive)
@@ -907,12 +948,14 @@ ARG means found the (ARG - 1)th tag to find."
   (setq next-error-function 'waw-next-error)
   (run-mode-hooks 'waw-mode-hook))
 
+;;;###autoload
 (defun java-bt-ret-key ()
   (interactive)
   (let ((start-line-str (current-line-string)))
     (if (string-match "(.*:[0-9]+)" start-line-str)
         (next-error 0))))
 
+;;;###autoload
 (defun java-bt-next-error (&optional argp reset)
   (interactive "p")
   (with-current-buffer
@@ -968,6 +1011,7 @@ ARG means found the (ARG - 1)th tag to find."
 
       (throw 'done nil))))
 
+;;;###autoload
 (defun java-bt-mode ()
   "Major mode for output from java back trace."
   (interactive)
@@ -979,6 +1023,7 @@ ARG means found the (ARG - 1)th tag to find."
   (setq next-error-function 'java-bt-next-error)
   (run-mode-hooks 'java-bt-mode-hook))
 
+;;;###autoload
 (defun indent-same-space-as-prev-line (n-prev &optional from-bol)
   (interactive "p")
   (when from-bol
@@ -1018,6 +1063,7 @@ ARG means found the (ARG - 1)th tag to find."
         (delete-region start-point end-point))
       (insert (make-string (- col-indent-to col-start-indent 1) ? )))))
 
+;;;###autoload
 (defun back-to-indent-same-space-as-prev-line (n-prev)
   (interactive "p")
   (if (looking-back "\\S ")
@@ -1041,6 +1087,7 @@ ARG means found the (ARG - 1)th tag to find."
           (insert (make-string (- pos-back-to pat-start) ?\ ))))
     (indent-same-space-as-prev-line n-prev t)))
 
+;;;###autoload
 (defun save-all-buffers-no-check-modified ()
   (interactive)
   (flet ((verify-visited-file-modtime (&rest args) t)
@@ -1054,6 +1101,7 @@ ARG means found the (ARG - 1)th tag to find."
                     (basic-save-buffer)))))
             (buffer-list))))
 
+;;;###autoload
 (defun revert-all-buffers ()
   (interactive)
   (mapcar (lambda (x)
@@ -1076,6 +1124,7 @@ ARG means found the (ARG - 1)th tag to find."
     (or (file-remote-p name 'localname)
         name)))
 
+;;;###autoload
 (defun switch-buffer-same-filename (&optional reverse)
   (interactive)
   (let* ((buf-list (if reverse
@@ -1102,10 +1151,12 @@ ARG means found the (ARG - 1)th tag to find."
     (unless buf-switched
       (message "You have no other buffer named `%s'" current-filename))))
 
+;;;###autoload
 (defun switch-buffer-same-filename-rev ()
   (interactive)
   (switch-buffer-same-filename t))
 
+;;;###autoload
 (defun sudoedit ()
   (interactive)
   (find-alternate-file
@@ -1113,10 +1164,12 @@ ARG means found the (ARG - 1)th tag to find."
        (replace-regexp-in-string ":.*?@" ":root@" (buffer-file-name))
      (concat remote-sudo-prefix (buffer-file-name)))))
 
+;;;###autoload
 (defun localedit ()
   (interactive)
   (find-alternate-file (replace-regexp-in-string "^/scp:.*?:" "" (buffer-file-name))))
 
+;;;###autoload
 (defun gnus-gmail-search-subject ()
   (interactive)
   (shell-command (concat
@@ -1131,6 +1184,7 @@ ARG means found the (ARG - 1)th tag to find."
                                              (buffer-substring-no-properties (point) (line-end-position))))))
                   "&")))
 
+;;;###autoload
 (defun bhj-view-mail-external ()
   "open the current maildir file in kmail"
   (interactive)
@@ -1223,6 +1277,7 @@ ARG means found the (ARG - 1)th tag to find."
       (setq fragments (cdr fragments)))
     res))
 
+;;;###autoload
 (defun bbdb-complete-name (&optional start-pos)
   "Complete the user full-name or net-address before point (up to the
 preceeding newline, colon, or comma, or the value of START-POS).  If
@@ -1442,6 +1497,7 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
           (or (eq (selected-window) (minibuffer-window))
               (message "Making completion list...done"))))))))
 
+;;;###autoload
 (defun bhj-org-tasks-closed-last-week (&optional match-string)
   "Produces an org agenda tags view list of the tasks completed
 in the specified month and year. Month parameter expects a number
@@ -1457,6 +1513,7 @@ criteria can be provided via the optional match-string argument "
                   (format "+CLOSED>=\"[%s]\""
                           (shell-command-to-string (concat "today '" match-string "'"))))))
 
+;;;###autoload
 (defun bhj-do-code-generation ()
   (interactive)
   (let (start-of-code end-of-code code-text start-of-text end-of-text code-transform)
@@ -1498,6 +1555,7 @@ criteria can be provided via the optional match-string argument "
       (org-display-inline-images)
     (error nil)))
 
+;;;###autoload
 (defun dos2unix ()
   "Convert this entire buffer from MS-DOS text file format to UNIX."
   (interactive)
@@ -1514,10 +1572,12 @@ criteria can be provided via the optional match-string argument "
     (insert str)
     (kill-region (point-min) (point-max))))
 
+;;;###autoload
 (defun insert-today ()
   (interactive)
   (insert (shell-command-to-string "today")))
 
+;;;###autoload
 (defun bhj-do-dictionry (word)
   "lookup the current word (or region) in dictionary"
   (interactive
@@ -1527,6 +1587,7 @@ criteria can be provided via the optional match-string argument "
            (current-word))))
   (w3m-goto-url (format "http://r66:34567/dict/%s" word)))
 
+;;;###autoload
 (defun bhj-open-android-doc-on-java-buffer ()
   (interactive)
   (save-excursion
@@ -1551,15 +1612,18 @@ criteria can be provided via the optional match-string argument "
                                     package-name)
                                    html-name)))))
 
+;;;###autoload
 (defun bhj-choose (args)
   (interactive)
   (insert
    (completing-read "Please enter which one to use: " args)))
 
+;;;###autoload
 (defun bhj-choose-from-output ()
   (interactive)
   (bhj-choose (split-string (shell-command-to-string (read-from-minibuffer "command to run: ")) nil t)))
 
+;;;###autoload
 (defun replace-double-quotes ()
   (interactive)
   (query-replace "``" "“" nil (point-min) (point-max))
@@ -1592,6 +1656,7 @@ using ctags-exuberant"
                         result-alist))))))
     (nreverse result-alist)))
 
+;;;###autoload
 (defun bhj-find-missing-file ()
   (interactive)
   (let (missing-file-name missing-file-name-save)
@@ -1632,6 +1697,7 @@ using ctags-exuberant"
 (defun ca-with-comment (str)
   (format "%s%s%s" comment-start str comment-end))
 
+;;;###autoload
 (defun bhj-java-import ()
   (interactive)
   (save-excursion
@@ -1665,6 +1731,7 @@ using ctags-exuberant"
         (insert (car import-list))
         (setq import-list (cdr import-list))))))
 
+;;;###autoload
 (defun source-code-help()
   (interactive)
   (let ((word (current-word)))
