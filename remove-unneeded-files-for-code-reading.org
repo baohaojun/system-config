@@ -35,7 +35,7 @@
 调用，加上 =-f= 参数表示跟踪所有fork出来的子进程的系统调用: 
 
 #+BEGIN_EXAMPLE
-(cd $(lookup_file .repo/..);
+(cd $(lookup-file .repo/..);
  . build/envsetup.sh;
  cd boot; 
  BUILD_UBOOT_OBM=true; 

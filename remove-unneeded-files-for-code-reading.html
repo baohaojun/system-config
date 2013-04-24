@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="在阅读源代码时删掉所有非必要文件的方法"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-18T19:11+0800"/>
+<meta name="generated" content="2013-04-24T11:10+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -152,7 +152,7 @@ for the JavaScript code in this tag.
 
 
 
-<pre class="example">(cd $(lookup_file .repo/..);
+<pre class="example">(cd $(lookup-file .repo/..);
  . build/envsetup.sh;
  cd boot; 
  BUILD_UBOOT_OBM=true; 
