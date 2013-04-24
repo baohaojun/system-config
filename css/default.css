@@ -10,11 +10,15 @@
 .left   {margin-left:0px;  margin-right:auto; text-align:left;}
 .center {margin-left:auto; margin-right:auto; text-align:center;}
 p.verse { margin-left: 3% }
+.left,.right{display:inline;}
+.left{float:left;}
+.right{float:right;}
+
 
 pre, tt, code {
     font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier,
     monospace;
-    background:transparent; color:inherit; 
+    background:transparent; color:inherit;
 }
 
 body, input, textarea, #content, #content input, #content textarea {
@@ -53,9 +57,9 @@ textarea { overflow-x: auto; }
 .code-highlighted {background-color:#ffff00;}
 .org-info-js_info-navigation { border-style:none; }
 #org-info-js_console-label { font-size:10px; font-weight:bold;
-			     white-space:nowrap; }
+                             white-space:nowrap; }
 .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-			       font-weight:bold; }
+                               font-weight:bold; }
 
 
 
@@ -2461,4 +2465,3 @@ body {
     /* yas/field-highlight-face */
     background-color: #696969;
 }
-
