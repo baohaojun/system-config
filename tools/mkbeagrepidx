@@ -4,7 +4,7 @@
 export TMPDIR=~/.cache
 mkdir -p $TMPDIR
 
-cd -P . 
+cd -P .
 outDir=~/.cache/for-code-reading/"`pwd`"
 srcDir=`pwd`
 relativeSrcDir=.
@@ -34,7 +34,7 @@ then
         relativeSrcDir=${srcDir/#$higherSrcDir/.}
         cd $higherSrcDir
     fi
-else 
+else
     outDir=~/.cache/for-code-reading/"`pwd`"
 fi
 
@@ -61,11 +61,11 @@ function mkcscope_files() {
             '-o' '-iname' '*.elc' \
             '-o' '-path' '*/.ignore' \
             '-o' '-path' '*/.repo' \
-	    '-o' '-iname' '*.ncb' \
+            '-o' '-iname' '*.ncb' \
             '-o' '-iname' "cscope.files" \
             -o -iname "cscope.out" \
             -o -ipath "*/.beagrep" \
-            \) -prune -o -type f -print | 
+            \) -prune -o -type f -print |
             perl -ne 'print unless m,
                 (?:frameworks/base/api/[0-9]+.xml)|
                 (?:frameworks/base/docs/html/sdk/api_diff/.*\.xml)|
@@ -83,7 +83,7 @@ function _mk_help_dir() {
 function mkgtags() {
     _mk_help_dir
     if test -e .globalrc; then
-	export GTAGSCONF=$(readlink -f .globalrc)
+        export GTAGSCONF=$(readlink -f .globalrc)
     fi
     mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
 }
@@ -94,12 +94,12 @@ function mkgtags-filter() {
 
 function wlp() {
     case $(uname) in
-	CYGWIN*)
-	    cygpath -alm "$1"
-	    ;;
-	*)
-	    readlink -m "$1"
-	    ;;
+        CYGWIN*)
+            cygpath -alm "$1"
+            ;;
+        *)
+            readlink -m "$1"
+            ;;
     esac
 }
 
@@ -119,8 +119,8 @@ function mkbeagrepidx() {
         ADDITIONAL_OPTIONS=("$@")
     elif test "$BEAGREP_IGNORE_DIR_PATTERNS"; then
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "$BEAGREP_IGNORE_DIR_PATTERNS")
-    elif test -e "$(lookup_file .beagrep-ignore)"; then
-        ADDITIONAL_OPTIONS=(--deny-directory-pattern "*/.git,$(cat $(lookup_file .beagrep-ignore))")
+    elif test -e "$(lookup-file .beagrep-ignore 2>/dev/null)"; then
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "*/.git,$(cat $(lookup-file .beagrep-ignore))")
     else
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "$PWD/out,*/.repo,*/.git")
     fi
