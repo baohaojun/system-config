@@ -1,3 +1,0 @@
-#+title: This is test2
-
-Test2 is greater!

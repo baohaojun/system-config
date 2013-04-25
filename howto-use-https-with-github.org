@@ -1,1 +1,0 @@
-You need to write up a .netrc file to avoid inputting password every time.

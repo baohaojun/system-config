@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Switched to USA Pragrammer Dvorak Keyboard</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Switched to USA Pragrammer Dvorak Keyboard"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-09-29"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Switched to USA Pragrammer Dvorak Keyboard</h1>
+
+<p>After reading <a href="http://xahlee.org/index.html">xahlee</a>'s articles on keyboards, I recently made 2 big
+changes (and many other small changes because of the 2 big ones) to
+the way I type. I switched from QWERTY to UPD (USA Programmer Dvorak),
+and I switched my Control keys and Alt keys.
+</p>
+<p>
+And how does it feel? Well, at first it was like pain in the ass. But
+then it seems to get better and better.
+</p>
+<p>
+And to make it even better, I bought a Microsoft Ergonomics 4000
+keyboard for use at work!
+</p>
+<p>
+Here's some hacking around this switch.
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Switching Chinese and English at the same time</a></li>
+<li><a href="#sec-2">2 Some changes to Emacs</a></li>
+<li><a href="#sec-3">3 Using Progammers Dvorak under Windows.</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-3">
+<h3 id="sec-1"><span class="section-number-3">1</span> Switching Chinese and English at the same time</h3>
+<div class="outline-text-3" id="text-1">
+
+
+<p>
+As a Chinese, I also need to type Chinese using an Input Method, such
+as Wubi. Now, I want myself to use the same UDP keyboard layout when
+using IME, because it would be crazy if I switch back to QWERTY when
+typing Chinese and stick to UDP when typing English&hellip;
+</p>
+<p>
+But switching to UDP for my IME is even more painful. Because I am
+using Wubi, instead of PinYin, and the secret about Wubi is you use
+your muscle to memorize the encoding, so basically I just re-learned
+Wubi. 
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-3">
+<h3 id="sec-2"><span class="section-number-3">2</span> Some changes to Emacs</h3>
+<div class="outline-text-3" id="text-2">
+
+
+<p>
+Xahlee considered Progammers Dvorak no better than Simple Dvorak (he
+tried UDP and then gave up), but I chose it anyway and have no plan to
+change again. I kinda feel its not that a bigger differenc now that
+both are Dvorak&hellip;
+</p>
+<p>
+But Progammers Dvorak does give me some edge, considering the fact
+that I also switched Controls and Alts (which is also one of the
+advices by Xahlee).
+</p>
+<p>
+This made a lot trouble with C-x and M-x. In the mean time, C-x got
+separated with many of the combination keys that used to be typed with
+the same hand as itself: C-x C-s, C-x C-f, etc.
+</p>
+<p>
+Finally I found my solution (after searching Dvorak on EmacsWiki and
+some inspiration): 
+</p>
+<ol>
+<li>Switch C-h and C-x using keyboard-translate.
+
+</li>
+<li>Stop using M- prefix altogether, use C-[ (the same effect as ESC)
+   instead. Now Progammers Dvorak seem a much better choice than Simle
+   Dvorak, because C-[ is very easy to type.
+</li>
+</ol>
+
+
+<p>
+I tried to add more hacks, but finally stopped to reduce the
+confusion, and because the above 2 is about enough.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-3">
+<h3 id="sec-3"><span class="section-number-3">3</span> Using Progammers Dvorak under Windows.</h3>
+<div class="outline-text-3" id="text-3">
+
+
+<p>
+Not that I use Windows a lot nowadays, but I do use it once in a
+little while, and I don't want to be a fool when at it. So I need to
+find a way to use Progammers Dvorak under Windows. 
+</p>
+<p>
+Windows already provide a Simple Dvorak keyboad layout, and Programms
+Dvorak also available on the net. But they are both incompitable with
+IME. 
+</p>
+<p>
+I found on the net people has used autohotkey to provide Simple
+Dvorak, which does can be used at the same time with IME.
+</p>
+<p>
+So I just wrote my Programms Dvorak version of autohotkey script. You
+can get it <a href="http://github.com/baohaojun/windows-config/raw/master/doc/dvorak.ahk">here</a>. This ahk script was generated from 3 bash scripts,
+which you can find <a href="http://github.com/baohaojun/windows-config/raw/master/doc/dvorak.ahk.in">here</a>, <a href="http://github.com/baohaojun/windows-config/raw/master/bin/gen-dvorak-programmer.sh">here</a> and <a href="http://github.com/baohaojun/windows-config/raw/master/bin/gen-dvorak-programmer-shift3.sh">here</a>.
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="html2mht.pl-and-dir2html.pl-.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              html2mht.pl and dir2html.pl <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="note.html"> <!-- next-url -->
+              note <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</p></div>
+</div>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/keyboard.html" title="Hacking the keyboard, Dvorak Programmer's Keyboard mainly.">keyboard</a><br/>
+            <a href="../../../../meta/tags/system.html" title="System programming">system</a><br/>
+<a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

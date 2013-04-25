@@ -7,14 +7,14 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="在Emacs下用java编程（Android相关）"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-25 02:55:48 CST"/>
-<meta name="author" content="baohaojun"/>
+<meta name="generated" content="2013-04-25T17:27+0800"/>
+<meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
 <link rel="stylesheet" href="/css/default.css" type="text/css">
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
-    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript">
         var BYB = {};
     </script>
@@ -43,6 +43,30 @@
         }
     </script>
 <script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -69,21 +93,6 @@
 <body>
 
 <div id="preamble">
-        <header id="header" class="inner">
-<nav id="sub-nav" class="alignright">
-        <div class="social">
-                <a class="weibo" href="http://weibo.com/baohaojun" title="Weibo">Weibo</a>
-                <a class="github" href="https://github.com/baohaojun" title="GitHub">GitHub</a>
-                <a class="rss" href="/atom.xml" title="RSS">RSS</a>
-
-        </div>
-        <form class="search" action="http://google.com/search" method="get">
-                <input class="alignright" type="text" name="q" results="0">
-                <input type="hidden" name="q" value="site:baohaojun.github.io">
-        </form>
-</nav>
-
-</header>
 
 </div>
 
@@ -134,7 +143,7 @@ Emacs lisp做一些简单的java编程工具。
 在eclim底下的截图做不出来了，下面给大家看一下我用自己的脚本做出来的效果吧。
 </p>
 <p>
-<img src="./java-get-hierarchy.png"  alt="./java-get-hierarchy.png" />
+<img src="java-get-hierarchy.png"  alt="../../../../java-get-hierarchy.png" />
 </p>
 <p>
 与eclim的java-get-hierarchy相比，优点有二：
@@ -181,7 +190,7 @@ import过的class都给import进来。feature有：
 
 
 <p>
-做这个最初的目的是想做上下文补齐，后来发现太难了，补齐还是用我自己的 <a href="./stem-completion.html">提干式id补齐和re补齐</a> 吧。
+做这个最初的目的是想做上下文补齐，后来发现太难了，补齐还是用我自己的 <a href="#stem-completion.html">提干式id补齐和re补齐</a> 吧。
 </p>
 </div>
 </div>
@@ -194,11 +203,11 @@ import过的class都给import进来。feature有：
 
 
 <p>
-这套工具和我的个人配置环境整合在一起，需要先配一下，参考 <a href="./my-config-cn.html">这里</a> 。
+这套工具和我的个人配置环境整合在一起，需要先配一下，参考 <a href="10/22/my-config-cn.html">这里</a> 。
 </p>
 <p>
 配置完成后，到你的android目录下执行 <code>for-code-reading</code> （会花大约一小时，
-主要是 <a href="./beagrep.html">mkbeagrepidx</a> 会花很长时间），然后执行 <code>java-get-hierarchy.pl android.view.View</code> ，应该能看到这样的输出：
+主要是 <a href="2011/12/23/beagrep.html">mkbeagrepidx</a> 会花很长时间），然后执行 <code>java-get-hierarchy.pl android.view.View</code> ，应该能看到这样的输出：
 </p>
 
 
@@ -211,6 +220,22 @@ import过的class都给import进来。feature有：
    =&gt; interface android.view.accessibility.AccessibilityEventSource at frameworks/base/core/java/android/view/accessibility/AccessibilityEventSource.java line 29.
 </pre>
 
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="19/perfect-emacs-chinese-font.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              狠狠地折腾了一把Emacs中文字体 <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="stem-completion.html"> <!-- next-url -->
+              提干式id补齐和re补齐 <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
 </div>
 </div>
 </div>
@@ -222,7 +247,7 @@ import过的class都给import进来。feature有：
     <div style="margin-bottom:20px">
         <script type="text/javascript" charset="utf-8">
         (function(){
-          var _w = 86 , _h = 20;
+          var _w = 86 , _h = 16;
           var param = {
             url:location.href,
             type:'6',
@@ -257,9 +282,11 @@ import过的class都给import进来。feature有：
                 </div>
             </div>
             <div class="about-left about-more">
-                <h2>Projects</h2>
-                    <a href="beagrep.html" title="Fastest grep">beagrep</a><br/>
-                    <a href="skeleton-complete.html" title="Geekest Emacs Completion">skeleton-complete.el</a><br/>
+                <h2>Tags</h2>
+                                <a href="meta/tags/android.html" title="Android development">android</a><br/>
+            <a href="meta/tags/emacs.html" title="Emacs the editor">emacs</a><br/>
+            <a href="meta/tags/java.html" title="The Java programming language">java</a><br/>
+<a href="meta/Archive.html" title="All blogs">archive</a><br/>
             </div>
             <div class="about-left about-more">
                 <h2>About</h2>

@@ -1,0 +1,11 @@
+#+title: System administration
+ * 2012
+  - 2012-10
+   * 2012-10-29
+
+     [[../../blog/2012/10/29/why-symlink-my-config.org][我的配置环境：为什么用symlink而不是cp]]
+
+   * 2012-10-22
+
+     [[../../blog/2012/10/22/my-config-cn.org][My configuration system]]
+

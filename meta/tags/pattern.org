@@ -1,0 +1,7 @@
+#+title: Design pattern
+ * 2012
+  - 2012-10
+   * 2012-10-22
+
+     [[../../blog/2012/10/22/fun-design-pattern.org][在shell脚本里使用Abstract Factory的设计模式]]
+

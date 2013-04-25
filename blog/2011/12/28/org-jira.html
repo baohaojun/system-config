@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>org-jira</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="org-jira"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-04-25T17:27+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">org-jira</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Introduction</a></li>
+<li><a href="#sec-2">2 Features</a>
+<ul>
+<li><a href="#sec-2-1">2.1 Sync Jira tickets into Org-mode todo items in a batch mode</a></li>
+<li><a href="#sec-2-2">2.2 Update Org-mode new edits back to Jira</a></li>
+<li><a href="#sec-2-3">2.3 Progress Jira ticket workflow in Org-mode</a></li>
+<li><a href="#sec-2-4">2.4 Create new Jira issue in org mode</a></li>
+<li><a href="#sec-2-5">2.5 Convert existing org mode TODO item into Jira ticket</a></li>
+<li><a href="#sec-2-6">2.6 Edit existing Jira comments / add new comment</a></li>
+<li><a href="#sec-2-7">2.7 Open current issue in browser</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Usage</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+(For the latest verion of this page, visit <a href="http://baohaojun.github.com/org-jira.html">this github page</a>.
+</p>
+<p>
+<a href="http://orgmode.html">Org-mode</a> is the best GTD (get things done) tool I have used. If you
+didn't use it, please consider give it a shot.
+</p>
+<p>
+Jira is, well, a very popular Bug Tracking system. Two companies in a
+row where I worked chose Jira for bug tracking, task management, etc.
+</p>
+<p>
+As an emacs enthusiast, I very much want to be able to use Jira within
+Emacs. Thus I started digging the web for a solution.
+</p>
+<p>
+To use Jira without the browser, you can use a) xmp-rpc, b) soap, c)
+REST. I don't know what the last one is, but their supported degree by
+Jira is in ascending order. The former 2 protocols has both been
+supported by Emacs plugin: <a href="https://launchpad.net/xml-rpc-el">xml-rpc</a> and <a href="http://code.google.com/p/emacs-soap-client/">soap</a>.
+</p>
+<p>
+For xml-rpc, there is already a <a href="http://www.emacswiki.org/emacs/org-jira.el">jira.el</a>, but it is not satisfactory for me:
+</p>
+<ul>
+<li>xml-rpc is not as well supported as soap by Jira.
+</li>
+<li>jira.el is a stand-alone tool, while I want to integrate with
+  org-mode.
+</li>
+</ul>
+
+
+<p>
+Luckily, the emacs-soap-client guy(s) already provided a sample
+jira2.el, so I started hacking by combining jira.el and jira2.el, the
+result is jiralib.el <a href="http://github.com/baohaojun/org-jira/raw/master/jiralib.el">here</a> (people suggested jira2.el is not a good
+name, as it can be quite confusing what the 2 means, and I totally
+agree, thus the name jiralib).
+</p>
+<p>
+After browsing Jira with jira2.el is implemented, I checked <a href="https://github.com/punchagan/org2blog">org2blog</a>
+for ideas of how to hack on org-mode, and started from his org2blog.el
+and hacked into a new <a href="http://github.com/baohaojun/org-jira/raw/master/org-jira.el">org-jira.el</a>.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Features</h2>
+<div class="outline-text-2" id="text-2">
+
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Sync Jira tickets into Org-mode todo items in a batch mode</h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+<p>
+Jira ticket attributes such as priority, status, resolution, summary,
+description, etc. are supported. New ones can be added if desired by
+hacking the elisp.
+</p>
+<p>
+See the following example. Jira ticket summary has been used as the
+Org TODO headline; most Jira ticket attributes have been made into Org
+entry; Jira description attribute is made into a separate subtitle
+because unlike most attributes it is multi-line.
+</p>
+
+
+
+<pre class="example">* TODO test summary                                          :SANDBOX_22:
+  :PROPERTIES:
+  :assignee: hjbao
+  :reporter: hjbao
+  :type:     Bug
+  :priority: Major
+  :status:   Open
+  :ID:       SANDBOX-22
+  :END:
+
+** description: SANDBOX-22
+test description
+** Comment: Bao Haojun
+   :PROPERTIES:
+   :ID:       21322
+   :END:
+test comment
+</pre>
+
+
+<p>  
+Also note the ID Org entry, both the Jira issue and Jira comment has
+an attribute ideal for this entry. Org-mode has an API for finding
+heading from ID entry.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Update Org-mode new edits back to Jira</h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+<p>
+After you edit the attributes, such as change priority from "Major" to
+"Minor", you can post it back the Jira.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Progress Jira ticket workflow in Org-mode</h3>
+<div class="outline-text-3" id="text-2-3">
+
+<p>You can Resolve/Close/Reopen the jira ticket and so on, without leaving org-mode!
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Create new Jira issue in org mode</h3>
+<div class="outline-text-3" id="text-2-4">
+
+
+<p>
+You can create new Jira issue within org mode. You will be prompted
+for Jira ticket information such as create in which project, assign to
+whom, and one-line summary, etc.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Convert existing org mode TODO item into Jira ticket</h3>
+<div class="outline-text-3" id="text-2-5">
+
+
+<p>
+This one is similar to the create-new-issue case, except the existing
+TODO headline can be used for Jira ticket summary.
+</p>
+<p>
+The old TODO is deleted. But you will not lose a TODO entry, instead,
+you will trade a normal TODO for a Jira ticket tracked TODO.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-6" class="outline-3">
+<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Edit existing Jira comments / add new comment</h3>
+<div class="outline-text-3" id="text-2-6">
+
+
+<p>
+These are also supported.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-7" class="outline-3">
+<h3 id="sec-2-7"><span class="section-number-3">2.7</span> Open current issue in browser</h3>
+<div class="outline-text-3" id="text-2-7">
+
+
+<p>
+Last but not least, if you think org-jira can not perform some tasks
+you wanted, you can press a key combination (default "C-c i b") to
+open the current issue in an external browser such as firefox.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Usage</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+To use org-jira.el, get the .el files from <a href="https://github.com/baohaojun/org-jira">org-jira on github</a>. 
+</p>
+
+
+<pre class="example">git clone git://github.com/baohaojun/org-jira.git
+</pre>
+
+
+<p>   
+(In my repository, I have included the emacs-soap files, which you can
+get from its project, but in my version I fixed an utf-8 encoding bug
+in it so that I can post comments in Chinese).
+</p>
+
+<p>
+Then put the following in your .emacs, 
+</p>
+
+
+<pre class="src src-emacs-lisp">(setq jiralib-url <span class="org-string">"http://jira-host/jira"</span>)
+<span class="org-comment-delimiter">; </span><span class="org-comment">you need make sure the jiralib-url is correct. Login your jira</span>
+<span class="org-comment-delimiter">; </span><span class="org-comment">server in browser, the home page URL should be like:</span>
+<span class="org-comment-delimiter">; </span><span class="org-comment">https://issues.apache.org/jira/secure/Dashboard.jspa</span>
+<span class="org-comment-delimiter">; </span><span class="org-comment">remove the "/secure/Dashboard.jspa" part and you get the jiralib-url: </span>
+<span class="org-comment-delimiter">; </span><span class="org-comment">"https://issues.apache.org/jira"</span>
+
+(<span class="org-keyword">require</span> '<span class="org-constant">org-jira</span>) 
+<span class="org-comment-delimiter">; </span><span class="org-comment">jiralib is not explicitly required, since org-jira will load it</span>
+</pre>
+
+
+<p> 
+(If you have a ~/.authinfo file and corresponding entry for jira-host,
+the username and password will be computed from that; or else you will
+be prompted for password).
+</p>
+<p>  
+Then start syncing with <code>M-x org-jira-get-issues</code> .
+</p>
+
+
+
+
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="../23/index.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              My Page on Github <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../../../2012/01/31/beagrep-cn.html"> <!-- next-url -->
+              beagrep，两秒钟grep两个G的代码 <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/emacs.html" title="Emacs the editor">emacs</a><br/>
+<a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

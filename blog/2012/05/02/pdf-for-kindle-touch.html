@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>pdf-for-kindle-touch</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="pdf-for-kindle-touch"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-04-25T17:27+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">pdf-for-kindle-touch</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 How to get your pdf Kindle-touch-ready (using open source tools)</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Already got a pdf</a></li>
+<li><a href="#sec-1-2">1.2 When you can print to a pdf</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> How to get your pdf Kindle-touch-ready (using open source tools)</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+PDF reading on Kindle touch is suffer. Googling "pdf kindle touch" will show you
+how many other people also thinks so.
+</p>
+<p>
+With the help of some open source tools (mainly pdfjam), you can actually get a
+lot better experience reading pdf on your Kindle touch.
+</p>
+<p>
+Below I will talk about how to get you pdf file kindle-touch-ready on 2 situations: 
+</p>
+<ul>
+<li>you already got a pdf
+
+</li>
+<li>you are about to print (such as an html) into pdf
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Already got a pdf</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+<p>
+When you already got a pdf, there is not much you can do except to sacrifice
+something: you need cut every page into halves so that it looks large enough on
+kindle touch and do not strain your eyes so much.
+</p>
+<p>
+With the help of pdfjam, you can achieve this like the following.
+</p>
+<ul>
+<li>Get rid of the margin
+
+
+
+
+<pre class="example">pdfnup --no-landscape --nup 1x1 --papersize '{210mm,297mm}' --trim '18.5mm 18.5mm 18.5mm 25.5mm' 1.pdf
+</pre>
+
+
+<p>
+  How much you need to cut off? You may need to try and error for it. If you cut
+  too little, the pages would not be as big as it can be when displayed on the
+  Kindle touch, thus still strains your eyes out a little bit. But if you cut
+  off too much, then useful text might be cut off, which is surely not wanted, either.
+</p></li>
+</ul>
+
+
+
+<ul>
+<li>split it to top and bottom halfs (so that we can read in landscape on kindle touch)
+
+
+
+
+<pre class="example">pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 143mm 0 0' --suffix top 1-nup.pdf 
+pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 0 0 143mm' --suffix bot 1-nup.pdf 
+</pre>
+
+
+<p>
+  Note that I'm not cutting right through the center of the page, for an A4
+  (210mm x 297mm) page, that will be 148mm cut off and 149mm remaining. Instead,
+  for each half, I cut off 143mm and 154mm remained. This is because we do not
+  want part of a line of text show in the top half while the other part of the
+  same line of text show in the bottom half. With the extra space we reserved,
+  if a line of text is only partially shown in the top half, for e.g., it will
+  almost certainly show completely in the bottom half.
+</p>
+<p>
+  At the end of this, you get 2 pdf files, one consist all the pages for the top
+  half, and one all the pages of the bottom half. This is mostly not what we
+  want, we want the top half pages and bottom half pages interwined in the
+  correct order. To achieve this, we need 2 steps.
+</p></li>
+</ul>
+
+
+
+<ul>
+<li>split and interwine the top and bot pdf files page by page
+
+
+
+
+<pre class="example">for x in $(seq 1 530); do pdfjoin 1-nup-top.pdf $x 1-nup-bot.pdf $x; done
+</pre>
+
+
+<p>
+  At the end of this, we get as many pdf files as there are pages in the
+  original pdf file, each new file contains exactly 2 pages, the top half page
+  and the bottom half page.
+</p>
+<p>
+  So we need to join them.
+</p>
+</li>
+<li>join all the new pdfs
+
+
+
+
+<pre class="example">for x in $(seq 1 528); do echo 1-nup-bot-$x-joined.pdf; done|xargs pdfjoin
+</pre>
+
+
+</li>
+<li>rotate the pages
+
+
+
+
+<pre class="example">pdf90 /home/bhj/today/1-nup-bot-528-joined-joined.pdf
+</pre>
+
+
+<p>
+  After all these steps, you can view your pdf in landscape mode on your Kindle
+  touch. Finally.
+</p>
+<p>
+  This seems a lot of ordeal, so I have put together 2 scripts to automate them,
+  you can find it at <a href="https://github.com/baohaojun/windows-config/raw/master/bin/pdf-cut">pdf-cut</a> and <a href="https://github.com/baohaojun/windows-config/raw/master/bin/pdf-for-kindle">pdf-for-kindle</a>. The former is for trial and
+  error when you need to determine how much to cut off each page, and after you
+  get the perfect set of parameters, you can change <code>pdf-cut</code> to
+  <code>pdf-for-kindle</code> to get the converted Kindle-Touch-Ready version of pdf.
+</p></li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> When you can print to a pdf</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+<p>
+There is a very simple way to get a Kindle-Touch-Ready pdf in this situation,
+customize your cups-pdf page size!
+</p>
+<p>
+For e.g., I have my pdf pseudo printer page size to be set up as 8.5in x 6in.
+</p>
+<p>
+After you got the pdf printed, you can use the same tricks to cut out the
+margins and rotate it for landscape viewing on Kindle.
+</p>
+<p>
+Another pitfall in this solution though: Kindle-Touch will easily display
+out-of-memory for pdf thus created. I believe its because the ghostscript
+backend used in cups-pdf printer use a lot of Type-3 fonts which is memory
+hungry.
+</p>
+<p>
+My solution, is to root my Kindle-Touch and turn swapping on, so it can get 512M
+extra virtual memory!
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="../../03/27/why-lisp-cn.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              why-lisp-cn <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../../09/17/Android-Product-Makefiles.html"> <!-- next-url -->
+              Android-Product-Makefiles <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</p></div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/tool.html" title="Computer tools">tool</a><br/>
+<a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

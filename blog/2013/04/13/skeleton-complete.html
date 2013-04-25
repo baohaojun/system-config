@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>skeleton-complete</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="skeleton-complete"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-04-25T17:27+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">skeleton-complete</h1>
+
+<p>Gimme a skeleton, and I'll complete you, man!
+</p>
+<p>
+<code>Skeleton-complete</code> is my effort to push <code>hippie-expand</code> to
+extremes. With it you can save a lot of typing even more than
+hippie-expand. To be more specific, it is hippie-expand's
+<code>try-expand-dabbrev</code> and <code>try-expand-line</code> functions that I want to do
+better with skeleton-complete.
+</p>
+<p>
+You can get it on <a href="https://github.com/baohaojun/skeleton-complete">github</a>.
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 What's not good enough with hippie-expand</a></li>
+<li><a href="#sec-2">2 How does skeleton-complete fix it</a>
+<ul>
+<li><a href="#sec-2-1">2.1 Regexp rewrite</a></li>
+<li><a href="#sec-2-2">2.2 Choosing from multiple matches</a></li>
+<li><a href="#sec-2-3">2.3 The second flavor of skeleton-complete</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Usage notes</a></li>
+<li><a href="#sec-4">4 Bugs</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> What's not good enough with hippie-expand</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+Emacs completion (aka expand) is great, the hippie-expand is mostly
+useful.
+</p>
+<p>
+But I have found it insufficient, for the following reasons.
+</p>
+<ol>
+<li>Hippie-expand requires you to start matching at the beginning.
+
+<p>
+   But not all interesting (and thus easy to remember and easy to
+   type) components are at the beginning. A lot of software including
+   Emacs itself have started to allow user type a component from
+   anywhere in the final string and match it just fine. For e.g., the
+   anything.el (now renamed helm); Firefox's URL type and match; and
+   Emacs's built in <code>C-h f</code> (where you can type <code>-hello</code> and <code>Tab</code>,
+   and Emacs will expand it to <code>view-hello-file</code>: you do not need
+   start with <code>view</code>. Not so with hippie-expand).
+</p>
+</li>
+<li>Selecting from multiple matches is not instinctive.
+
+<p>
+   Given the file below as an example, say the point is at where <code>**</code>
+   is located, when you type <code>M-/</code> repeatedly, you will get hello3, 2,
+   1, and then hello4, 5, 6, in that order (what will you get after
+   hello6 is dependent on what is contained in other buffers of your
+   current Emacs session, what modules you have loaded and symbols you
+   can access, etc. See <code>hippie-expand-try-functions-list</code>. This is
+   NICE and inspiring!).
+</p>
+
+
+
+<pre class="example">hello1
+hello2
+hello3
+he**
+hello4
+hello5
+hello6
+</pre>
+
+
+<p>
+   Now, the order is not satisfactory to me, I'd like 3, 4, 2, 5, 1, 6
+   better according roughly to the distance they are to the <i>point</i>.
+</p>
+<p>
+   And like anything.el, I'd like to see all the matching entries at
+   once, probably over multiple pages, but I can scroll up and down to
+   choose, instead of typing <code>M-/</code> repeatedly and blindly, not knowing
+   what the next entry will be, or how many times I need to press <code>M-/</code>.
+</p>
+<p>
+   Last but not least, as has been stated in 1), I need start with
+   <code>he**</code>, and if what I wanted is <code>hello6</code>, then 6 times I must press
+   along <code>M-/</code>.
+</p></li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> How does skeleton-complete fix it</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+Taking the above example, if you wanted to get <code>hello6</code>, you need only
+type the skeleton, the “interesting” bones that we want to flesh
+out: the <code>h</code> and <code>6</code> is enough in this example, see below (only <code>he</code>
+is changed to <code>h6</code> compared to above example):
+</p>
+
+
+
+<pre class="example">hello1
+hello2
+hello3
+h6**
+hello4
+hello5
+hello6
+</pre>
+
+
+<p>
+If you type <code>M-g &lt;return&gt;</code> at the point, you will get <code>hello6</code>
+instantly.
+</p>
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Regexp rewrite</h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+<p>
+Here's how it works. <code>Skeleton-complete</code> will take the
+<code>(current-word)</code>, here <code>h6</code>, and break this “skeleton” down into
+bare pieces of bones, <code>h</code> and <code>6</code>. Then it strings these bones
+together, and we get <code>h.*6</code>, and behold, this is a regexp! What use do
+we have regexps? Right, searching. We can search and find 2 matches
+for <code>h.*6</code>: <code>h6</code> and <code>hello6</code>. Now the first one does not make much
+sense as it is the same as the skeleton we started with; so we can
+happily complete with <code>hello6</code>, and the user is not bothered to select
+from multiple matches at all!
+</p>
+<p>
+(In Emacs version 24.3, you will notice in <code>isearch-forward</code>, typing
+many white spaces has the same effect as one, and it will match any
+number of contiguous white spaces (except the newline). Déjà vu?)
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Choosing from multiple matches</h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+<p>
+But of course, often the user still need to choose from multiple
+matches. <code>Skeleton-complete</code> uses <code>ecomplete.el</code> for presenting the
+user the matches he/she can choose from:
+</p>
+<p>
+<img src="../../../../skeleton-id.png"  alt="../../../../skeleton-id.png" />
+</p>
+<p>
+From the screenshot, you can see that the matches are presented in a
+order according to their distance to the point. According to principle
+of locality, the closer the match to the point, the earlier it should
+appear in the list of choices. In the figure above, displayed first is
+<code>hyhyhy1</code> which comes immediately above the point, then the <code>h1</code>
+itself should have come, which is below or on the same line as the
+point, but it has been deleted as it makes no sense as a completion
+for itself. So next comes <code>hahaha1</code> which is the next above the point,
+followed by <code>hihihi1</code> which is the next below, and so on.
+</p>
+<p>
+You can use <code>C-n</code> and <code>C-p</code> to scroll up and down the list, or off the
+ends to the next and previous pages of matches.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> The second flavor of skeleton-complete</h3>
+<div class="outline-text-3" id="text-2-3">
+
+
+<p>
+The first flavor discussed above is for completing <b>identifiers</b>
+only. Say I have a long expression, and I will complete the whole
+expression, once again you type an “interesting” skeleton, and type
+<code>M-s &lt;return&gt;</code>, it will get fleshed out:
+</p>
+<p>
+<img src="../../../../skeleton-exp.png"  alt="../../../../skeleton-exp.png" />
+</p>
+<p>
+Here's how it works. First the skeleton is broken down to bare bones,
+<code>$</code>, <code>h</code>, <code>1</code> and <code>}</code>. Then they are stringed to become
+<code>\\$.*?h.*?1.*?}</code> (note how the <code>$</code> is quoted because besides being a
+bone, it's also a “meta”bone; also note the usage of the non-greedy
+<code>.*?</code>, it is dark magic already, do not make it worse by being
+greedy<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>!).
+</p>
+<p>
+Then all the expressions in the current buffer are matched, and they
+are listed in the same way as the first flavor (Thus the user should
+say, “oh, I have seen this before.” and feel easy. Déjà vu<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>?).
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Usage notes</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+There are several tried and proved enhancements in
+skeleton-complete that you might want to know.
+</p>
+<ol>
+<li>Besides the current buffer, all <b>visible</b> buffers are searched for matches.
+
+<p>
+   Edit: think <code>try-expand-dabbrev-visible</code>.
+</p>
+</li>
+<li>If no matches are found in all the visible buffers, the buried
+   buffers are dug up for skeleton bones (but don't sweat, it will
+   stop as soon as the first dark buffer is finished where any match
+   is found).
+
+<p>
+   Edit: think <code>try-expand-dabbrev-all-buffers</code>.
+</p>
+</li>
+<li>Because of 1) and the fact that <code>ecomplete.el</code> is used, you can use
+   skeleton-complete in the minibuffer. I only made key binding for
+   the second flavor, <code>M-g x</code>, you probably need use it too, because
+   <code>M-s &lt;return&gt;</code> is often not usable in the minibuffer.
+
+<p>
+   I mean, you won't get punished with <code>Command attempted to use    minibuffer while in minibuffer</code> for digging skeletons in the lowest
+   place of all, the minibuffer.
+</p>
+<p>
+   Edit: This is also the reason why I have not yet replaced
+   ecomplete.el with anything.el to choose from multiple matches: the
+   latter can't be used in the minibuffer without the error above.
+</p>
+</li>
+<li>If the first character of a 2nd flavor skeleton is a word
+   constituent character, it must match at beginning of a word.
+
+<p>
+   For e.g., <code>lr</code> will not match <code>hello world</code>, you must change the
+   skeleton to <code>hr</code> (the last character of the skeleton is not
+   constrained).
+</p>
+<p>
+   A skeleton without a right skull is very difficult to complete!<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>
+</p>
+</li>
+<li>Arbitrary single line string can be completed with the 2nd
+   flavor. Not necessarily only expressions!
+
+</li>
+<li>By default, the 2nd flavor will find its skeleton by searching
+   backward for the first non-blank character. You can override this by
+   activating the region over your desired skeleton and include white
+   spaces into it.
+
+</li>
+<li>Use interesting bones as much as possible.
+
+<p>
+   In the above example, the <code>h</code> in <code>h6</code> is not interesting, because
+   everybody has this bone. You can discard it and use <code>6</code> alone,
+   because only <code>hello6</code> has this interesting bone in it, and it is
+   exactly what you wanted.
+</p>
+</li>
+<li>You can use complete and modify if you need input a similar but not
+   exactly same string to an existing one.
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Bugs</h2>
+<div class="outline-text-2" id="text-4">
+
+
+<p>
+Because the rewrote regexp can be complex, sometimes (but very
+rarely!) it may seem hung for the 2nd flavor. You can type <code>C-g</code> to
+quit searching for matches, and examine what is wrong with your
+skeleton.
+</p>
+<p>
+Beware of buffers with extremely long lines in it! Those are monsters,
+don't try to use 2nd flavor skeleton-complete with them, run away!
+</p>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> In the first flavor, either greedy or non-greedy
+will do. But in the 2nd flaver, I must use non-greedy to give user
+more control: given <code>$double_hash{$ref1}{$ref2}</code>, greedy <code>${}</code> and
+<code>${}}</code> will both match the whole thing, but the non-greedy version
+will empower user to choose <code>$double_hash{$ref1}</code> and
+<code>$double_hash{$ref1}{$ref2}</code> respectively.
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> I typed the 2nd and this <code>Déjà vu</code> with <code>dvu</code> and <code>M-s &lt;return&gt;</code>. And the 1st is typed as <code>D\'ej\`a vu</code> and <code>M-x iso-tex2iso</code>, if you don't know already:-)
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> The real reason is, without this constraint, <code>hello world</code> will generate 2 meaningless matches for the skeleton <code>lr</code> and
+user is likely to get disappointed: <code>llo wor</code> and <code>lo wor</code>. As for the
+tail, we can easily extend it to the word boundary: <code>llo world</code> and
+<code>lo world</code>, but for the missing head, let's simply forbid it, because
+it's also a performance hit by causing these unwanted matches.
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="../12/hardened-bhj-style-macros.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              翅膀硬了 <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../../../../meta/Archive.html"> <!-- next-url -->
+              Archive <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</p></div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/emacs.html" title="Emacs the editor">emacs</a><br/>
+<a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

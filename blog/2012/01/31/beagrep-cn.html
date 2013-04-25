@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>beagrep，两秒钟grep两个G的代码</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="beagrep，两秒钟grep两个G的代码"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-04-25T17:27+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">beagrep，两秒钟grep两个G的代码</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 简介</a></li>
+<li><a href="#sec-2">2 安装</a>
+<ul>
+<li><a href="#sec-2-1">2.1 Linux下安装</a>
+<ul>
+<li><a href="#sec-2-1-1">2.1.1 用.deb包安装</a></li>
+<li><a href="#sec-2-1-2">2.1.2 编译安装</a></li>
+</ul>
+</li>
+<li><a href="#sec-2-2">2.2 Windows下安装</a>
+<ul>
+<li><a href="#sec-2-2-1">2.2.1 安装依赖软件</a></li>
+<li><a href="#sec-2-2-2">2.2.2 下载代码</a></li>
+<li><a href="#sec-2-2-3">2.2.3 编译安装</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 使用</a>
+<ul>
+<li><a href="#sec-3-1">3.1 快速smoke test</a></li>
+<li><a href="#sec-3-2">3.2 创建索引</a></li>
+<li><a href="#sec-3-3">3.3 man page for mkbeagrepidx</a></li>
+<li><a href="#sec-3-4">3.4 用beagrep搜索</a>
+<ul>
+<li><a href="#sec-3-4-1">3.4.1 man page for beagrep</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-4">4 原理</a>
+<ul>
+<li><a href="#sec-4-1">4.1 grep pattern ，通常是很简单的</a>
+<ul>
+<li><a href="#sec-4-1-1">4.1.1 题外话，用emacs自动创建pattern</a></li>
+</ul>
+</li>
+<li><a href="#sec-4-2">4.2 grep 关键字，通常是有趣的</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 简介</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+多年前还在上大学的时候，读到LDD（Linux Device Driver）第一版的前言，作
+者说这本书是他花了很多小时，仔细grep内核源代码才写出来的。所以后来我也
+试着坚持用grep这样的工具阅读源代码。很长一段时间内grep都是足够用了的，
+即使像Linux内核这样的几百兆的代码，grep起来也不会太慢。
+</p>
+<p>
+直到有一天grep了一下Android的代码，花了我半个小时，终于觉得太慢了，受不
+了了。
+</p>
+<p>
+后来发现Linux下开源的桌面索引、搜索软件<a href="http://en.wikipedia.org/wiki/Beagle_(software)">beagle</a>，灵机一动，先用beagle粗略
+地搜一遍可能匹配的文件，然后再单在这些文件内grep，不就可以大大节省时间
+吗？
+</p>
+<p>
+非常热血地向你推荐beagrep（beagle + grep），grep两个G的Android代码，只
+需要两秒钟！
+</p>
+<p>
+更加热血的是，beagrep在Windows下也能用！
+</p>
+<p>
+（本文的英文版在 <a href="http://baohaojun.github.com/beagrep.html">这里</a> ，可能会比中文版更新）。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 安装</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Linux下安装</h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+
+</div>
+
+<div id="outline-container-2-1-1" class="outline-4">
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> 用.deb包安装</h4>
+<div class="outline-text-4" id="text-2-1-1">
+
+
+<p>
+我在github上提供了4个.deb包，分别是给ubuntu 10.04, 11.10, 12.04和
+debian testing (wheezy)的，如果你的Linux发行版恰好是这几个中的一个，那
+你可以在 <a href="https://github.com/baohaojun/beagrep/downloads">这里</a> 直接选一个.deb包下载安装，以ubuntu 12.04 (precise)为例：
+</p>
+
+
+
+<pre class="example">dpkg -i beagrep_0.4.0-1_amd64-ubuntu-precise.deb # 会出错，因为一些依赖的.deb包没装上
+apt-get -f install # 装上依赖的.deb包，修正上面的错误
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-1-2" class="outline-4">
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> 编译安装</h4>
+<div class="outline-text-4" id="text-2-1-2">
+
+
+<p>
+如果你需要自己编译，以ubuntu precise为例：
+</p>
+
+
+
+<pre class="example">git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
+# you can also run "git branch -a" to see other versions of ubuntu supported
+
+# Install build dependencies. You can open debian/control and check
+# the build dependencies and install all of them. The following
+# command will try to install them automatically, but if it fails then
+# you need figure out which packages to install manually. Good luck!
+# Or you can contact me for help.
+apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
+
+# do the build
+(set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Windows下安装</h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+
+</div>
+
+<div id="outline-container-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> 安装依赖软件</h4>
+<div class="outline-text-4" id="text-2-2-1">
+
+<p>需要安装cygwin和mono的Windows版。Cygwin建议完全安装，Mono建议安装到默认
+目录下。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2-2" class="outline-4">
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> 下载代码</h4>
+<div class="outline-text-4" id="text-2-2-2">
+
+
+
+
+<pre class="example">git clone git://github.com/baohaojun/beagrep.git -b Windows
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-2-3" class="outline-4">
+<h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> 编译安装</h4>
+<div class="outline-text-4" id="text-2-2-3">
+
+
+
+
+
+<pre class="example">cd beagrep
+bash build-win.sh
+</pre>
+
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 使用</h2>
+<div class="outline-text-2" id="text-3">
+
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> 快速smoke test</h3>
+<div class="outline-text-3" id="text-3-1">
+
+
+
+
+<pre class="example">cd /tmp; mkdir $$; cd $$; echo main &gt; 1.txt; mkbeagrepidx; beagrep -e 'main' --grep '--color=auto'; true; cd ..; rm $$ -rf
+</pre>
+
+
+<p>
+如果beagrep安装配置没有问题的话，在上面的命令输出的最后，你可以看到类似于 <code>/tmp/11468/1.txt:1:main</code> 。
+</p></div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> 创建索引</h3>
+<div class="outline-text-3" id="text-3-2">
+
+
+<p>
+到想阅读的源代码目录下，以android为例
+</p>
+
+
+
+<pre class="example">cd ~/src/android
+mkbeagrepidx
+</pre>
+
+
+<p>
+这一步第一次花费的时间较长，在Linux下android代码索引大概需要半个小时
+（跟以前单独用一次grep的时间差不多）。我建议可以用crontab定时在半夜做这
+个工作。
+</p>
+<p>
+但是如果以前已经生成过index，则再做一次花的时间应该可以大为缩短（几分钟），因为那
+些没有更新过的文件（按照文件时间戳和index数据库里记录的时间戳对比）不需要重新生成
+index。
+</p>
+<p>
+另外，已经生成过index的情形下，如果你只想重新index某个子目录，则可在该子目录下调
+用 <code>mkbeagrepidx</code> ，程序会问你是否想更新上级已有的index库，如果选是，则取决于该子
+目录的大小，可能更新index的时间只需要几秒钟。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> man page for mkbeagrepidx</h3>
+<div class="outline-text-3" id="text-3-3">
+
+
+<p>
+mkbeagrepidx is a simple wrapper over beagrep-build-index. You can
+configure it for which directories to ignore using
+<code>--deny-directory-pattern</code> option. By default, 
+</p>
+<ul>
+<li>The $PWD/out is ignored, because it contains android build output
+</li>
+<li>The */.git is ignored, because of well known reason
+</li>
+<li>The */.repo is ignored, for the same reason.
+</li>
+</ul>
+
+
+<p>
+The syntax is comma separated shell glob patterns, and you can check
+how it is converted into regular expression by examing the beginning
+of mkbeagrepidx output.
+</p>
+<p>
+You can customize it using several ways, in the order of increasing
+priority:
+</p>
+<ul>
+<li>Not customize it, then 
+
+
+
+
+<pre class="example">"$PWD/out,*/.repo,*/.git"
+</pre>
+
+
+<p>  
+  will be used.
+</p>
+</li>
+<li>Overide it in <code>~/.mkbeagrepidx.rc</code>, setting the <code>BEAGREP_IGNORE_DIR_PATTERNS</code> environment variable:
+
+
+
+
+<pre class="example">export BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/.git"
+</pre>
+
+
+</li>
+<li>Overide it in the .mkbeagrepidx.rc in the current working directory, same as the above.
+
+</li>
+<li>Overide it on the command line:
+
+
+
+
+<pre class="example">mkbeagrepidx --deny-directory-pattern "$PWD/out,*/.repo,*/.git,*/.svn"
+</pre>
+
+</li>
+</ul>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> 用beagrep搜索</h3>
+<div class="outline-text-3" id="text-3-4">
+
+
+<p>
+在想阅读的代码目录下：
+</p>
+
+
+<pre class="example">cd ~/src/android
+beagrep -e "readlink"
+</pre>
+
+
+
+</div>
+
+<div id="outline-container-3-4-1" class="outline-4">
+<h4 id="sec-3-4-1"><span class="section-number-4">3.4.1</span> man page for beagrep</h4>
+<div class="outline-text-4" id="text-3-4-1">
+
+
+<p>
+Here's a list of all arguments that beagrep takes:
+</p>
+
+
+
+<pre class="example">beagrep -e REGEXP_MATCH [-p REGEXP_PATH] [-a ADDITIONAL_WORDS] [-v REGEXP_REVERSE_PATH] [-i] [-f] [-l] [--grep GREP_OPTIONS] [-a]
+</pre>
+
+
+<dl>
+<dt>-e <code>REGEXP_MATCH</code></dt><dd>This is the minimum required arguments. For e.g., <code>beagrep -e readlink</code>
+
+<p>
+     The <code>REGEXP_MATCH</code> serves 2 purposes:
+</p>
+<ul>
+<li>First, it is computed into whole words for querying beagle. For
+       e.g., <code>l] [--grep GREP_OPTIONS]</code> above should be matched with
+       the following REGEXP: <code>l\] \[--grep GREP_OPTIONS\]</code>, but it
+       should be converted into 4 words: <code>l grep GREP OPTIONS</code> for
+       beagle.
+
+</li>
+<li>Second, it is used as the regexp for grep to work on.
+
+</li>
+</ul>
+
+</dd>
+<dt>-a <code>ADDITIONAL_WORDS</code></dt><dd>means to add more words into the beagle
+     query. This is useful by increasing the work beagle need to do,
+     but reduce the possible workset grep need to work on.
+
+</dd>
+<dt>-p <code>REGEXP_PATH</code></dt><dd>means to limit the search result to those files whose pathname matches <code>REGEXP_PATH</code>.
+
+</dd>
+<dt>-v <code>REGEXP_REVERSE_PATH</code></dt><dd>means to exclude those matched files whose pathname matches <code>REGEXP_REVERSE_PATH</code>.
+
+</dd>
+<dt>-i</dt><dd>means to do case insignificant grep.
+
+</dd>
+<dt>-f</dt><dd>means to do the match in filenames only. For example, <code>beagrep         -e readlink -f</code> will only show results like readlink.h and
+        readlink.c.
+
+<p>
+        This is very useful for finding files. Note that when <code>-f</code> is
+        used, the beagle querying words will be computed differently:
+        only the basename will be used, and <code>filename:</code> is prepended
+        onto each words.
+</p>
+</dd>
+<dt>-l</dt><dd>means to list the beagle matched list of files directly, without running grep to match on them.
+
+</dd>
+<dt>&ndash;grep <code>GREP_OPTIONS</code></dt><dd>means to pass additional arguments to the
+     grep invocation. For e.g., the <code>-l</code> argument can be passed to
+     beagrep directly, or it can be passed using <code>--grep</code>, they mean different things:
+
+<p>
+     <code>beagrep -e "hello world" -l</code> will show a file containing "hello
+     wonderful world", but <code>beagrep -e "hello world" --grep -l</code> will
+     not show that file as a match.
+</p></dd>
+</dl>
+
+
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> 原理</h2>
+<div class="outline-text-2" id="text-4">
+
+
+<p>
+beagrep是一个非常实用主义的软件，它之所以有用，是基于以下几条观察：
+</p>
+
+</div>
+
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> grep pattern ，通常是很简单的</h3>
+<div class="outline-text-3" id="text-4-1">
+
+
+<p>
+或者说，可以分解为几个很简单的子pattern：整字（whole words）。
+</p>
+<p>
+比如在android代码库里grep这样一个看起来很复杂的pattern：
+</p>
+
+
+
+<pre class="example">"JsonToValue(\"\\\\\"hello world\\\\\"\","
+</pre>
+
+
+<p>
+实际上，它包含了几个简单的子pattern，也就是那三个完整的英文单词： <code>JsonToValue</code>
+<code>hello</code> <code>world</code> 。要匹配这个复杂的pattern，一个必要而非充分条件是需要能匹配所有的
+这三个子pattern。但这三个子pattern已经不需要正则表达式这么强大的工具去匹配了，我
+们把它交给beagle，一个桌面搜索引擎工具。它可以飞快查出在android代码里，哪些文件能
+匹配所有这三个子pattern（也即包含所有这三个英文单词）。
+</p>
+<p>
+事实上，只有一个文件满足这个要求：
+</p>
+
+
+
+<pre class="example">$beagrep-files 'JsonToValue hello world '
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+/home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc
+/dev/null
+</pre>
+
+
+<p>
+所以，可以想象在这个文件集上grep之前那个复杂的pattern能有多快得到结果。
+</p>
+
+
+
+<pre class="example">beagrep -e "JsonToValue(\"\\\\\"hello world\\\\\"\","
+pat is: 'JsonToValue("\\"hello world\\"",'.
+beagrep query argument `JsonToValue hello world '
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+/home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc:168:  root.reset(JSONReader().JsonToValue("\"hello world\"", false, false));
+Unmatched ( in regex; marked by &lt;-- HERE in m/JsonToValue( &lt;-- HERE ""hello world"",/ at /home/bhj/bin/beagrep line 98.
+</pre>
+
+
+<p>
+总之，完整的英文单词是beagle处理起来最得心应手的，而巧得很的是，我们几乎从来都只
+用完整的英文单词，而不是半个单词去grep代码。
+</p>
+
+</div>
+
+<div id="outline-container-4-1-1" class="outline-4">
+<h4 id="sec-4-1-1"><span class="section-number-4">4.1.1</span> 题外话，用emacs自动创建pattern</h4>
+<div class="outline-text-4" id="text-4-1-1">
+
+
+<p>
+从上面可以看出，在文本中出现的match的字符串是：
+</p>
+
+
+
+<pre class="example">JsonToValue("\"hello world\"",
+</pre>
+
+
+<p>
+因为正则表达式的元字符、shell的转义字符、引号的关系，我传给beagrep的pattern是复杂得多的：
+</p>
+
+
+
+<pre class="example">"JsonToValue(\"\\\\\"hello world\\\\\"\","
+</pre>
+
+
+<p>
+如果这些反斜杠要自已用手指头数着挨个数进去的话，就悲剧了。所以当然不是这样的。当
+你在Emacs里选定一段文本，按下C-u M-x grep之后，Emacs会自动帮你计算出需要如何添加
+反斜杠，以把这个“纯”字符串变成一个可以跟它匹配的正则表达式（其实也是字符串，只是
+加了一些奇怪字符，有特殊意义的字符串）。（但是其实现有点bug，我的 <a href="https://github.com/baohaojun/windows-config/raw/master/.emacs">.emacs</a> 里有对
+<code>grep-default-command</code> 和 <code>grep-shell-quote-argument</code> 的修正）。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> grep 关键字，通常是有趣的</h3>
+<div class="outline-text-3" id="text-4-2">
+
+
+<p>
+beagrep之所以能大大加快grep的速度，是因为它能大大缩小grep需要处理的文件集。
+</p>
+<p>
+注意，是大大地缩小，而不是小小的缩小一点点。这有一个要求，就是你给beagrep（也就是
+最终的beagle）的英文单词，必须是有趣的。至少要有一个以上是有趣的。有趣的越多，加
+速的越大，像上面那个例子，只有三个有趣的英文单词，就把文件集缩小到只剩一个。
+</p>
+<p>
+试想一下，如果你想grep <code>is</code> 这个最常见的英文单词在android里出现的位置，几乎所有的
+文件都包含了这个单词，不管是文档还是代码（代码的注释里极可能出现 <code>is</code> ）。所以即便
+用beagle，得到的文件集和整个android代码是相当的，没有加速的空间。因为 <code>is</code> 实在是
+太不有趣了，所以你通常不会单独去grep它。
+</p>
+<p>
+所以：
+</p>
+<ul>
+<li>不要单独grep include，因为它不有趣，几乎所有C/C++源文件、头文件都会包含这个单词。
+
+</li>
+<li>不要单独grep import，因为它也不有趣，几乎所有java文件都会包含它。
+</li>
+</ul>
+
+
+<p>
+等等等等。
+</p>
+
+
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="../../../2011/12/28/org-jira.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              org-jira <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../../02/02/how-to-do-long-twitter-cn.html"> <!-- next-url -->
+              自己动手做长微博（推特），内嵌图片的 <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/beagrep.html" title="Fastest grep">beagrep</a><br/>
+<a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

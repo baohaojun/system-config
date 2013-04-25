@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>android的binder机制</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="android的binder机制"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-04-25T17:27+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">android的binder机制</h1>
+
+<p><code>status_t IPCThreadState::talkWithDriver(bool doReceive)</code> 这个函数会把kernel driver打交道，通过ioctl。
+</p>
+<p>
+<code>status_t status = IPCThreadState::self()-&gt;transact(</code> 这个是在BpBinder
+里的 <code>status_t BpBinder::transact(</code> 调用的。
+</p>
+
+
+
+<pre class="src src-c"><span class="org-preprocessor">#define</span> <span class="org-function-name">IMPLEMENT_META_INTERFACE</span>(<span class="org-variable-name">INTERFACE</span>, <span class="org-variable-name">NAME</span>)                       \
+    <span class="org-keyword">const</span> <span class="org-type">android</span>::String16 I##INTERFACE::descriptor(NAME);             \
+    <span class="org-keyword">const</span> <span class="org-type">android</span>::String16&amp;                                            \
+            I##INTERFACE::getInterfaceDescriptor() <span class="org-keyword">const</span> {              \
+        <span class="org-keyword">return</span> I##INTERFACE::descriptor;                                \
+    }                                                                   \
+    android::sp&lt;I##INTERFACE&gt; I##INTERFACE::asInterface(                \
+            <span class="org-keyword">const</span> <span class="org-type">android</span>::sp&lt;android::IBinder&gt;&amp; obj)                   \
+    {                                                                   \
+        android::sp&lt;I##INTERFACE&gt; intr;                                 \
+        <span class="org-keyword">if</span> (obj != <span class="org-constant">NULL</span>) {                                              \
+            intr = static_cast&lt;I##INTERFACE*&gt;(                          \
+                obj-&gt;queryLocalInterface(                               \
+                        I##INTERFACE::descriptor).get());               \
+            <span class="org-keyword">if</span> (intr == <span class="org-constant">NULL</span>) {                                         \
+                intr = new Bp##INTERFACE(obj);                          \
+            }                                                           \
+        }                                                               \
+        <span class="org-keyword">return</span> intr;                                                    \
+    }                                                                   \
+    I##INTERFACE::I##INTERFACE() { }                                    \
+    I##INTERFACE::~I##INTERFACE() { }                                   \
+</pre>
+
+
+<p>
+所有的BpXXX都是在这个 <code>I##INTERFACE::asInterface</code> 里创建的。
+</p>
+<p>
+常见的用法是： 
+</p>
+
+
+
+<pre class="example">IBinder service = ServiceManager.getService("mount");
+mMountService = IMountService.Stub.asInterface(service);
+</pre>
+
+
+<p>
+与BpBinder类对应的是BBinder类，它们都是IBinder的子类，都需要定义
+transact函数，不同是前者（proxy）的transact只是一个ipc调用，后者则是真
+正干活的。
+</p>
+<p>
+前者什么时候会被调用？随便一搜出来的基本上都是
+<code>remote()-&gt;transact(...)</code> ，但后者的调用比较隐蔽一些，初步怀疑是在
+<code>void IPCThreadState::joinThreadPool(bool isMain)</code> 里，调了 <code>result = talkWithDriver();</code> ，然后是 <code>result = executeCommand(cmd);</code> ，此函数会
+调用 <code>const status_t error = b-&gt;transact(tr.code, buffer, &amp;reply, tr.flags);</code> 。
+</p>
+
+
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="../23/makefile-printval.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              Emacs and interactive makefiles <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../29/why-symlink-my-config.html"> <!-- next-url -->
+              我的配置环境：为什么用symlink而不是cp <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/android.html" title="Android development">android</a><br/>
+            <a href="../../../../meta/tags/ipc.html" title="Inter Process Communication">ipc</a><br/>
+<a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+#+title: Free software
+ * 2013
+  - 2013-03
+   * 2013-03-02
+
+     [[../../blog/2013/03/02/donate.org][Donate for my free software effort]]
+

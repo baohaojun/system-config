@@ -1,0 +1,6 @@
+#+TITLE: bash-complete-filenames
+# bhj-tags: bash
+
+When bash completing, there will be a problem if -o filenames option
+is given, and the elements are not true filenames, but only to use the
+filenames completion special handling.

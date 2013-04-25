@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>又一个字典软件，我的！</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="又一个字典软件，我的！"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-04-25T17:27+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">又一个字典软件，我的！</h1>
+
+<p>去年开始用业余时间断断续续的开发了一款Android下的字典软件，过程中有些有意思的地方，在这里记一下。
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 我想要American Heritage Dictionary</a></li>
+<li><a href="#sec-2">2 我弄到了American Heritage Dictionary的数据</a></li>
+<li><a href="#sec-3">3 开始写CrossDict程序</a></li>
+<li><a href="#sec-4">4 CrossDict的字典数据</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 我想要American Heritage Dictionary</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+先给大家推荐一下这本字典，叫 《American Heritage Dictionary》，我最早了
+解这个字典并对其产生兴趣是在 <a href="http://wordyenglish.com/musing/dict_review.html">XahLee的字典评价网页上</a> 。在线版可以上
+<a href="http://education.yahoo.com/reference/dictionary/">education.yahoo.com</a> 。
+</p>
+<p>
+这本字典最大的特色是它的作者们花了很大的功夫去追寻每个单词的根源。比如
+Japan（日本）这个单词的解释里有这样一段：
+</p>
+<blockquote>
+
+<p>WORD HISTORY:
+</p>
+<p>
+Stamp collectors know that Nihon and Nippon on Japanese stamps mean
+"Japan"; what they probably don't know is that Nihon, Nippon, and
+Japan are all ultimately the same word. In the early part of the
+Chinese Tang dynastyin a.d. 670, to be preciseJapanese scholars who
+had studied Chinese created a new name for their country using the
+Chinese phrase for "origin of the sun, sunrise," because Japan is
+located east of China. In the Chinese of the time (called Middle
+Chinese), the phrase was nzyet-pwun. To this the scholars added the
+Chinese suffix -kwuk, "country," yielding a compound nzyet-pwun-kwuk,
+"sun-origin-country, land of the rising sun." The consonant clusters
+in the word were not pronounceable in Old Japanese, so the form was
+simplified to Nip-pon-gu or *Ni-pon-gu, the latter developing by
+regular sound change to Ni-hon-gu. The forms Nippon and Nihon of today
+are the same as these, minus the "country" suffix. Interestingly, the
+Chinese themselves took to calling Japan by the name that the Japanese
+had invented, and it is from the Chinese version of the name that
+English Japan is ultimately derived. In Mandarin Chinese, one of the
+forms of Chinese to develop from Middle Chinese, the phrase evolved to
+Rìbnguó, an early form of which was recorded by Marco Polo as
+Chipangu, which he would have pronounced as (ch-pän-goo) or
+(sh-pän-goo). The early Mandarin word was borrowed into Malay as Japang,
+which was encountered by Portuguese traders in Moluccas in the 16th
+century. These traders may have been the ones to bring the word to
+Europe; it is first recorded in English in 1577, spelled Giapan.
+</p>
+
+</blockquote>
+
+
+<p>
+原来Japan是日本的音译！就像John被音译成约翰，Johnny却被译成强尼一样；
+Japan如果再音译回中文的，应该译成亚本，而不是甲本吧。当然这是没必要的，
+因为Japan本身是从中文音译过去的！
+</p>
+<p>
+另外了解到日本为什么叫日本了，原来是唐朝时期的遣唐使们认为自己的国家是
+在大唐的太阳升起的方向，origin（本源） of the sun （日），所以就叫日本。
+</p>
+<p>
+真的是太有意思了:-)
+</p>
+<p>
+另外，日本人自己日字的发音是尼，这跟我的老家浙江东阳方言有点像，我们管
+日头叫聂（第2声）豆。很多南方的方言都比较古老，比较适合用来读古诗，就是
+这个道理:-)
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 我弄到了American Heritage Dictionary的数据</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+先声明一下，下面的做法是触犯知识产权保护法的，所以只供大家研究学习之用，
+千万别拿它做坏事！
+</p>
+<p>
+另外，网上其实能找到未加密的AHD的字典数据，是Stardict这个开源Linux字典
+项目的格式，直接能用的。现在找起来有点费劲了，Stardict这个项目基本已经
+不维护了，并且其众多字典数据全是侵权的，纷纷被拿下了。并且AHD数据有点不
+全，Stardict本身用这个数据库的时候也有一些bug。
+</p>
+<p>
+所以我找来了AHD的安装光盘，这是一个Windows软件，并且其数据是加密的，怎
+么才能把它给挖出来呢？
+</p>
+<p>
+请系好安全带！
+</p>
+<p>
+在Linux下有个Windows模拟器叫Wine，估计大家都知道。用Wine可以把AHD给装上
+并且跑起来。
+</p>
+<p>
+<img src="../../../../Japan-ahd.png"  alt="../../../../Japan-ahd.png" />
+</p>
+<p>
+很快发现这个软件会在其安装目录下泄露数据：每个查过的单词的解释会被循环
+保存到10来个临时html文件中！这下思路就很清晰了，把所有单词都查一遍，每
+查一个就把相应的html文件给拷出来！
+</p>
+<p>
+可是有9万多个单词呢，你手工一个一个拷不成？
+</p>
+<p>
+当然不是。
+</p>
+<p>
+从第一个单词开始，不停的按Down键，就会不停地查下一个单词。所以如果在
+Windows上的话，用AutoHotKey可以很容易地做到这点。可是每按一个下键我们就
+需要找到并保存最新的那个临时文件呢。
+</p>
+<p>
+幸好我们是在Linux下，这一切都可以用脚本来做。可以提供AutoHotKey的功能的
+软件不是别的，就是我的窗口管理器：Sawfish。
+</p>
+<p>
+比如我媳妇儿刚给我买的Macbook Air，上面Insert键需要用Fn + Delete来按，
+我在Terminal下粘贴习惯用Shift-Insert，这下必须按3个键了：
+Shift-Fn-Delete。我在我的 <code>~/.sawfishrc</code> 里加这么一条就可以继续只按两个
+键（Win + 回车）来粘贴：
+</p>
+
+
+
+<pre class="src src-sawfish">(bind-keys global-keymap <span class="org-string">"Super-RET"</span> (<span class="org-keyword">lambda</span> () (synthesize-event <span class="org-string">"S-Insert"</span> (input-focus))))
+</pre>
+
+
+<p>
+总之，最后用来挖字典数据的脚本是这样的（注释版）：
+</p>
+
+
+
+<pre class="src src-perl"><span class="org-comment-delimiter">#</span><span class="org-comment">!/usr/bin/env perl</span>
+<span class="org-keyword">use</span> <span class="org-constant">strict</span>;
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">&#32473;&#33258;&#24049;&#19968;&#28857;&#26102;&#38388;&#25226;AHD&#31243;&#24207;&#21551;&#21160;&#36215;&#26469;&#65292;&#19968;&#20010;&#38271;&#26102;&#38388;&#65288;1000&#31186;&#65289;&#30340;sleep&#20445;&#35777;&#22815;&#29992;</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">&#24182;&#19988;&#21487;&#20197;kill&#25481;&#65292;&#20877;&#26469;&#19968;&#20010;&#30701;&#30340;sleep&#20197;&#20445;&#35777;&#29992;&#32456;&#31471;kill&#25481;&#38271;&#30340;&#20043;&#21518;&#26377;&#26102;&#38388;&#20999;&#22238;</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">AHD</span>
+
+system(<span class="org-string">"sleep 1000; sleep 5;"</span>);
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">&#36825;&#27573;&#26159;&#19968;&#20010;&#23383;&#31526;&#20018;&#65292;&#26159;&#32473;sawfish&#31243;&#24207;&#25191;&#34892;&#30340;lisp&#20195;&#30721;&#12290;&#20854;&#20027;&#35201;&#20316;&#29992;&#23601;&#26159;&#25214;&#21040;</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">AHD&#30340;&#31383;&#21475;&#24182;&#32473;&#23427;&#21457;&#21521;&#19979;&#26041;&#21521;&#38190;&#12290;</span>
+
+<span class="org-type">my</span> $<span class="org-variable-name">down_sawfish_cmd</span> = &lt;&lt;EOF;
+(mapcar
+ (lambda (w)
+   (<span class="org-keyword">if</span> (string-match <span class="org-string">"^the american heritage"</span> (window-name w) 0 t)
+       (synthesize-event <span class="org-string">"Down"</span> w)
+     <span class="org-string">"world"</span>))
+ (window-order))
+EOF
+
+<span class="org-keyword">sub</span> <span class="org-function-name">debug</span>(@) {
+  print STDERR <span class="org-string">"@_\n"</span>;
+}
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">&#19968;&#20010;&#27515;&#24490;&#29615;&#65292;&#26368;&#21518;&#35201;&#25163;&#21160;&#20572;&#27490;&#23427;</span>
+
+<span class="org-keyword">while</span> (1) {
+
+  <span class="org-type">my</span> %<span class="org-underline"><span class="org-variable-name">old_ts</span></span> = ();
+
+  <span class="org-comment"># &#35760;&#19979;html&#25991;&#20214;&#30340;&#26102;&#38388;&#25139;</span>
+  <span class="org-keyword">for</span> (glob(<span class="org-string">"~/.wine/drive_c/AHD4withThesaurus/outfile*.htm"</span>)) {
+    $<span class="org-variable-name">old_ts</span>{$<span class="org-variable-name">_</span>} = qx<span class="org-string">(stat -c %Y $_)</span>;
+  }
+
+  <span class="org-comment"># &#21457;&#19968;&#20010;Down&#38190;&#65292;&#26597;&#19979;&#19968;&#20010;&#21333;&#35789;&#65288;&#24212;&#35813;&#20250;&#26377;&#19968;&#20010;html&#25991;&#20214;&#34987;&#26356;&#26032;&#65289;</span>
+  system(<span class="org-string">"sawfish-client"</span>, <span class="org-string">"-e"</span>, $<span class="org-variable-name">down_sawfish_cmd</span>);
+
+
+  <span class="org-type">my</span> $<span class="org-variable-name">done_copying</span> = 0;
+  <span class="org-type">my</span> $<span class="org-variable-name">try</span> = 0;
+  <span class="org-keyword">while</span> (1) {
+    <span class="org-type">my</span> %<span class="org-underline"><span class="org-variable-name">new_ts</span></span> = ();
+
+    <span class="org-comment"># &#37325;&#35760;&#26102;&#38388;&#25139;</span>
+    <span class="org-keyword">for</span> (glob(<span class="org-string">"~/.wine/drive_c/AHD4withThesaurus/outfile*.htm"</span>)) {
+      $<span class="org-variable-name">new_ts</span>{$<span class="org-variable-name">_</span>} = qx<span class="org-string">(stat -c %Y $_)</span>;
+    }
+    <span class="org-keyword">for</span> (keys %<span class="org-underline"><span class="org-variable-name">new_ts</span></span>) {
+
+      <span class="org-comment"># &#26102;&#38388;&#25139;&#19981;&#31561;</span>
+
+      <span class="org-keyword">if</span> ($<span class="org-variable-name">new_ts</span>{$<span class="org-variable-name">_</span>} ne $<span class="org-variable-name">old_ts</span>{$<span class="org-variable-name">_</span>} and
+
+          <span class="org-comment"># &#24182;&#19988;&#25991;&#20214;&#24050;&#32463;&#20889;&#20840;</span>
+          system(<span class="org-string">"grep"</span>, <span class="org-string">"-q"</span>, <span class="org-string">"Published by Houghton Mifflin Company"</span>, $<span class="org-variable-name">_</span>) == 0) {
+
+
+        <span class="org-comment"># &#35760;&#24405;md5&#20197;&#23545;&#27604;&#25991;&#20214;&#26159;&#21542;&#24050;&#32463;&#25335;&#36807;&#65292;&#19968;&#30452;&#37325;&#22797;&#25335;&#30340;&#35805;&#23601;&#38656;&#35201;&#20154;&#24037;&#24178;&#39044;&#20102;</span>
+        chomp(<span class="org-type">my</span> $<span class="org-variable-name">md5sum</span> = qx<span class="org-string">(md5sum $_)</span>);
+        $<span class="org-variable-name">md5sum</span> = substr $<span class="org-variable-name">md5sum</span>, 0, 32;
+        <span class="org-type">my</span> $<span class="org-variable-name">subdir</span> = substr($<span class="org-variable-name">md5sum</span>, 0, 2);
+        <span class="org-type">my</span> $<span class="org-variable-name">filename</span> = substr($<span class="org-variable-name">md5sum</span>, 2);
+        system(<span class="org-string">"mkdir -p ~/external/ahd/$subdir"</span>);
+        -e glob(<span class="org-string">"~/external/ahd/$subdir/$filename.htm"</span>) and 
+          debug(<span class="org-string">"$_ has changed, and md5 file already there."</span>);
+
+        system(<span class="org-string">"cp $_ ~/external/ahd/$subdir/$filename.htm"</span>);
+        $<span class="org-variable-name">done_copying</span> = 1;
+      }
+    }
+    <span class="org-keyword">if</span> ($<span class="org-variable-name">done_copying</span> == 0 and $<span class="org-variable-name">try</span>++ &lt; 5) {
+      system(<span class="org-string">"sleep .5"</span>);
+    } <span class="org-keyword">else</span> {
+      <span class="org-keyword">last</span>;
+    }
+  }
+}
+</pre>
+
+
+<p>
+最后，把所有数据都挖出来大概需要10个小时，中间需要人工干预两三次。
+</p>
+<p>
+把数据挖出来之后对数据清理也花了很大的精力，其次就是它某些单词附带的图
+片也需要挖出来（这个在Stardict的AHD包中大部分都有了）。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 开始写CrossDict程序</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+这是我正儿八经写的第一个比较大的Java程序，如果不算那些Hello World之类的
+练手小程序的话。
+</p>
+<p>
+为什么以前没写过大的Java程序？因为我不会用Eclipse，并且不想学，因为我是
+Emacs的死忠用户。
+</p>
+<p>
+而Emacs下写Java程序，需要一个比较好的辅助工具。我一开始用的是Eclim，这
+是一个把Vim或Emacs跟Eclipse相结合的工具。后来很快发现它的后台Eclipse不
+能把整个Android代码都放进一个项目，因为会变得跟蜗牛一样快！
+</p>
+<p>
+于是我开始倒饬 <a href="http://baohaojun.github.com/coding-android-java-in-emacs-en.html">aJoe</a> （中文名阿舅，此软件献给我的三个舅舅）。可以上优酷
+看一下我用aJoe的<a href="https://www.youtube.com/watch?v=rqBPEEjoVX0">视频</a>。
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> CrossDict的字典数据</h2>
+<div class="outline-text-2" id="text-4">
+
+
+<p>
+不用担心，它不是违法的AHD的数据，因为我后来又挖来了开源的GCIDE的字典数
+据。那又是另一个故事了。
+</p>
+<p>
+现在CrossDict终于发布了，您可以到 <a href="https://play.google.com/store/apps/details?id=com.baohaojun.crossdict">Google Play</a> 上安装它。
+</p>
+<p>
+而这段有趣的旅程也终于结束了，感觉真好！
+</p>
+<p>
+最后，如果您觉得我干得漂亮，想鼓励我一下，请 <a href="http://baohaojun.github.com/donate.html">Donate</a> 。
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="donate.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              Donate for my free software effort <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../08/crossdict-readme-cn.html"> <!-- next-url -->
+              CrossDict: 交叉索引字典 <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</p></div>
+</div>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/dict.html" title="English dictionary">dict</a><br/>
+<a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

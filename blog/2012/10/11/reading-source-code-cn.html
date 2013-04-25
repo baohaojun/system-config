@@ -1,0 +1,839 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Emacs和它的朋友们——阅读源代码篇</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Emacs和它的朋友们——阅读源代码篇"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-04-25T17:27+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Emacs和它的朋友们——阅读源代码篇</h1>
+
+<p>正如那本《Code Reading》一书中指出的那样，源代码阅读一直没有被很好的重
+视：你上大学的时候有“代码阅读”这门课吗？相信没有。
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Source Insight</a></li>
+<li><a href="#sec-2">2 Emacs</a>
+<ul>
+<li><a href="#sec-2-1">2.1 强大的社区和库的支持——内功</a></li>
+<li><a href="#sec-2-2">2.2 友好的与其他强大的工具配套使用——外功</a>
+<ul>
+<li><a href="#sec-2-2-1">2.2.1 试用</a></li>
+<li><a href="#sec-2-2-2">2.2.2 文档</a></li>
+<li><a href="#sec-2-2-3">2.2.3 使用</a></li>
+<li><a href="#sec-2-2-4">2.2.4 逆袭の使用</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Grep</a></li>
+<li><a href="#sec-4">4 ctags-exuberant</a>
+<ul>
+<li><a href="#sec-4-1">4.1 打造个人的使用习惯</a></li>
+<li><a href="#sec-4-2">4.2 多点定义下的距离计算</a></li>
+</ul>
+</li>
+<li><a href="#sec-5">5 imenu</a>
+<ul>
+<li><a href="#sec-5-1">5.1 imenu与ctags-exuberant的结合</a></li>
+</ul>
+</li>
+<li><a href="#sec-6">6 beagrep</a>
+<ul>
+<li><a href="#sec-6-1">6.1 beagrep与ctags-exuberant的结合使用</a></li>
+</ul>
+</li>
+<li><a href="#sec-7">7 生成调用关系图</a></li>
+<li><a href="#sec-8">8 cscope 和 gtags</a></li>
+<li><a href="#sec-9">9 查找局部变量的定义</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Source Insight</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+谈到阅读源代码，不得不提一下很多人都用过并且现在也还用着的一个工具：
+Source Insight。很多年前我最早接触的源代码阅读工具就是这个。不可否认，
+它有很多优点：非常直观，非常容易上手，该有的功能基本上都有&hellip;
+</p>
+<p>
+但是，它也有一些缺点：
+</p>
+<ul>
+<li>是商业软件：要花钱买或者使用盗版
+
+</li>
+<li>是Windows软件：在Linux下用的话需要用 Wine 虚拟。
+
+</li>
+<li>可扩展性极差：如同Perl语言作者对Perl的评价，一个好的语言，应该让简单
+  的事情更简单，难的事情有可能；一个代码阅读工具也应如此，但是Source
+  Insight对难的事情（扩展性、定制性）基本上不可能。
+
+</li>
+<li>基本是一个只读软件：想使它可写、用它来编辑源代码简直要弱爆了，跟
+  Vim/Emacs等比起来。
+</li>
+</ul>
+
+
+<p>
+使用开源软件 Emacs 和它的朋友们，我们可以实现Source Insight所拥有的大部
+分（也是最有价值的那部分）功能。并且能极大的超越。
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Emacs</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+Emacs 是一个很强悍的编辑器，基本上只有 Vim 可与之匹敌。（鄙人是一个狂热
+的 Emacs 粉，但绝不是 Vim 黑，因为我学Emacs的过程，最大的受益来自于Vim
+作者所写的“<a href="http://www.moolenaar.net/habits.html">Seven habits of effective text editing</a>”）。
+</p>
+<p>
+没错，Emacs的学习曲线可能是陡一些，但是话说回来，学会它绝对是值得的，并
+且不然的话，就没意思了——爬个香山，能和珠峰比哪个更带劲儿么？
+</p>
+<p>
+作为一个Emacs的老用户，我想我应该说说为什么我向大家推荐Emacs。这是一件
+看上去很简单，实际上很困难的事情，因为太熟悉了，就像要解释人为什么要呼
+吸空气一样。但无论如何，我会认真试一下。
+</p>
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 强大的社区和库的支持——内功</h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+<p>
+   任何一个好的软件背后都会有一个强大的社区以及库。Java语言为什么那么火？
+   因为它自带的标准库提供了很强大的功能。Perl的背后有cpan（相信我，里面
+   真的简直什么都有）。TeX背后有ctan。Emacs的背后有EmacsWiki。
+</p>
+<p>
+   有了这样一个社区之后，无论你想要什么样的功能，很可能你到社区里找一找
+   就发现别人已经帮你实现了；或者如果没找到的话，你自己实现它，再把它发
+   布到社区里，从而帮助到其它的用户——整个社区就这样慢慢变得越来越强大。
+</p>
+<p>
+   这些社区（库）的实现，一般都是用Emacs自带的语言Elisp来实现的。所以我
+   们把它称为内功。说到Elisp，它是最古老而伟大的Lisp语言（听起来有点宗
+   教狂热？）的一个专门为Emacs的编辑器功能而量身定做的一个变种。学点
+   Lisp是很有好处的（据说:-）。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 友好的与其他强大的工具配套使用——外功</h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+<p>
+   简单地说，就是好学、好用。
+</p>
+
+</div>
+
+<div id="outline-container-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> 试用</h4>
+<div class="outline-text-4" id="text-2-2-1">
+
+
+<p>
+当你对某个外部程序不是很熟的时候，你可以很轻松地试着调用它一下，从而更
+快学会它。
+</p>
+<p>
+比如 <code>make</code> 程序，我想知道某段 makefile 脚本是不是可以这样写，如果不跟
+Emacs配套试用的话，你需要用很多步骤：
+</p>
+<ol>
+<li>创建一个临时的Makefile
+
+</li>
+<li>打开此Makefile，编辑，输入以下内容，并关闭。
+
+
+
+
+<pre class="example">out/target/product/%/kernel:
+     cp $@-out/uImage $@
+</pre>
+
+
+</li>
+<li>退出编辑器，回到命令行，运行 make，查看结果，如果出错，回第2步。
+
+</li>
+<li>删除此临时文件。
+
+</li>
+<li>验证通过，把上面的内容再输入到你真正要写的Makefile脚本里去（或者可以
+   用copy/paste）。
+</li>
+</ol>
+
+
+<p>
+而如果你在Emacs里的话，你可以直接在你想改的Makefile里开始写以上的脚本片
+段，然后选上此片段，按 <code>M-|</code> （也就是shell-command-on-region命令），然
+后输入 <code>make -f - out/target/product/xx/kernel</code> ，底下的临时输出窗口就
+会显示：
+</p>
+
+
+
+<pre class="example">cp out/target/product/xx/kernel-out/uImage out/target/product/xx/kernel
+cp: cannot stat `out/target/product/xx/kernel-out/uImage': No such file or directory
+make: *** [out/target/product/xx/kernel] Error 1
+</pre>
+
+
+<p>
+于是你就知道试用通过了，并且这小段代码已经在它应该在的位置上，没那么多
+乱七八糟非常不简约的步骤哦！
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2-2" class="outline-4">
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> 文档</h4>
+<div class="outline-text-4" id="text-2-2-2">
+
+
+<p>
+   如果试用不够的话，你可以在Emacs里直接打开该外部程序的文档来深入学习。
+   Linux下常见的man手册、info手册，perl的perldoc方档等都可以直接在
+   Emacs里打开看，并且比起在终端上用相应的man(1)等命令打开，在Emacs里你
+   可以调用更丰富的浏览、搜索功能（如果是在终端上打开，你的输出是
+   <code>$PAGER</code> 来控制的，可能是 <code>less</code> ，也可能是 <code>more</code> ，甚至可能是
+   <code>cat</code> ）。
+</p>
+<p>
+   比如，在我知道perldoc怎么用之前，我一直直接用man perlfunc来看perl的
+   函数帮助，比如我想看read函数，我一般是先 <code>man perlfunc</code> 然后再用
+   <code>occur</code> 功能去列出 <code>read</code> 在这个 man 手册里出现的行，向下翻几页之后
+   你能很轻松地发现 <code>read</code> 函数是在哪一行上讲解的（因为开始讲解的地方是
+   会突出来一点的，纯文本的显示一般会用不同的缩进来表示不同的章节），然
+   后跳到那一行上就行了，见图（在这个例子中，read的定义开始于3162行）：
+</p>
+<p>
+   <img src="../../../../orrur-read.png"  alt="../../../../orrur-read.png" />
+</p>
+<p>
+   当然，现在我知道Emacs有一个perldoc命令可以直接显示read函数了，可是在
+   此之前，这个小技巧真的让我很开心:-) 因为要不然的话，我只能在终端里用
+   <code>/read</code> 然后不停地按 <code>n</code> 去找下一个 read 出现的地方，而一行上可能会
+   有出现很多次 read。而这样不停地机械地按，还容易按过头啊。或者我可以
+   想一个更复杂的正则表达式比如 <code>/^ *read</code> （匹配一行开头任意个空格后跟
+   一个read单词），但这个真的很不习惯，我老是担心万一不是空格，而是制表
+   符怎么办，另外不同的工具有不同的正则表达式语法，我很不愿意去多记一个
+   less的正则表达式语法是怎样。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2-3" class="outline-4">
+<h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> 使用</h4>
+<div class="outline-text-4" id="text-2-2-3">
+
+
+<p>
+   当你想解决一个问题，发现Emacs本身不够用的时候，你可以很轻松地调用外
+   部程序来帮忙。Emacs主要通过直接运行、运行并获得输出、运行并喂以输入
+   并获得输出这三种方式来调用外部程序。基本上就是UNIX哲学最精华的部份都
+   用上了。如果现有的工具也无法满足的话，还可以用perl之类的脚本，现写一
+   个，只要符合UNIX的哲学，也是能被Emacs使用的。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2-4" class="outline-4">
+<h4 id="sec-2-2-4"><span class="section-number-4">2.2.4</span> 逆袭の使用</h4>
+<div class="outline-text-4" id="text-2-2-4">
+
+
+<p>
+偶尔地，我们也可能想在Emacs之外来调用Emacs的功能，这也是可以的。一段
+elisp程序和一段perl程序其实都是程序。
+</p>
+<p>
+这种用法我用的最多的是org-mode的发布功能，比如的我github page（您目前正
+在看的这篇文章就是发布于github上），我用org-mode写完一篇文章之后，可能
+忘了把它发布为html，所以我在git push的时候可以加个hook，自动检查一下，
+相应的.html文件是不是没有更新，如果没有的话，就逆向调用Emacs一下，自动
+完成.html的发布（要不然的话还手动打开Emacs，再打开这个.org文件，再手动
+发布，就太烦了）。
+</p>
+<p>
+所以以上就是我喜欢用Emacs的原因，内外兼修，无限可能。下面我们开始讲怎样
+调用一个个具体的外部程序来把Emacs打造成强大的代码阅读工具吧！
+</p>
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Grep</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+没错，grep，最简单，最古老，最强大的工具之一。
+</p>
+<p>
+grep与Emacs的结合相当紧密，Emacs专门有一个mode来处理grep的输出：
+compilation-mode（make出错，perl脚本里的die，还有很多其他程序的错误输出，
+都可以用这个mode来捕获出错的文件与行号，从而实现跳转）。
+</p>
+<p>
+从下面的例子可以看到，实际上Emacs使用的mode是grep-mode，但这个实际上是
+从compilation-mode继承下来的。这种输出有一个基本模式，那就是
+“ <code>文件名:行号: 内容</code> ”。所以Emacs很容易parse出应该跳转到哪个文件的哪一行上。
+</p>
+<p>
+跳转到下一个匹配行的Emacs函数是 <code>next-error</code> （由此可见其与
+compilation-mode的联系，把grep的匹配也称之为一个error，软件逻辑重用是好
+的，但这样的名字重用真的会造成困惑吧）。
+</p>
+<p>
+下面你会看到我把所有的代码阅读工具的界面都归一到grep-mode上来了，所以可见grep在我心目中的重要性:-)
+</p>
+<p>
+（这种做法是非常极端的，当我们发现一样好的东西的时候，应该像一条疯狗一
+样扑上去，死死咬住不放:-) grep很好用，所以让我们到处都用grep；文件很好
+用，所以让我们做一个everything is a file的操作系统；面像对象很好，所以
+让我们做一个一切皆对象的编程语言；…… 参见 <a href="http://blog.ezyang.com/2012/11/extremist-programming/">极端编程</a>。）
+</p>
+
+
+
+<pre class="example">-*- mode: grep; default-directory: "~/windows-config/gcode/fcitx/src/" -*- 
+Grep started at Fri Oct 19 16:25:46
+
+grep -nH -e include *.cpp
+ime-socket.cpp:1:#include &lt;map&gt;
+ime-socket.cpp:2:#include &lt;string&gt;
+...
+
+Grep finished (matches found) at Fri Oct 19 16:25:46
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> ctags-exuberant</h2>
+<div class="outline-text-2" id="text-4">
+
+
+<p>
+ctags-exuberant是emacs自带的etags的一个加强兼容版。用它可以查函数、类、
+结构等定义于何处。它支持40多种语言。它可以轻易地扩展支持更多简单的语言，
+比如Kernel的Kconfig脚本，可以通过一个这样的 <code>$HOME/.ctags</code> 文件来增加支
+持：
+</p>
+
+
+
+<pre class="example">--langdef=kconfig
+--langmap=kconfig:(Kconfig)
+--regex-kconfig=/^(menu)?config[ \t]*([a-zA-Z0-9_]+)/CONFIG_\2/d,definition/
+</pre>
+
+
+
+</div>
+
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> 打造个人的使用习惯</h3>
+<div class="outline-text-3" id="text-4-1">
+
+
+<p>
+这里要叉开去说一下我对Emacs和Vim自带的tag功能有点不满，它们都不支持把所
+有的定义点给列出来，只能让你自己一个一个地挨个看下去，看是不是你要找的。
+（至少我没有发现，这点不如source-insight来得直观，它是默认把所有的定义
+点都给列出来）。
+</p>
+<p>
+幸好我们用的是开源软件，无限可能。让我们自己来！
+</p>
+<p>
+ctags-exuberant支持一个 <code>-x</code> 选项，允许它：
+</p>
+<p>
+        Print a tabular, human-readable cross reference (xref) file to standard output instead of generating a tag file.
+</p>
+<p>
+你可以这样调用它：  <code>ctags-exuberant -x scim_fcitx_imengine.cpp</code> ，结果是这样的：
+</p>
+
+
+
+<pre class="example">...
+SCIM_CONFIG_IMENGINE_FCITX_LANGUAGES macro        53 scim_fcitx_imengine.cpp #define SCIM_CONFIG_IMENGINE_FCITX_LANGUAGES "/IMEngine/Fcitx/Languages"
+SCIM_FCITX_ICON_FILE macro        71 scim_fcitx_imengine.cpp #define SCIM_FCITX_ICON_FILE (SCIM_ICONDIR "/fcitx.png")
+SCIM_FULL_LETTER_ICON macro        62 scim_fcitx_imengine.cpp #define SCIM_FULL_LETTER_ICON (SCIM_ICONDIR "/full-letter.png")
+...
+</pre>
+
+
+<p>
+剧透：文件名，行号。
+</p>
+<p>
+哈，我们可以写一个perl小脚本，轻松地把它转换成grep的格式！见图：
+</p>
+<p>
+<img src="../../../../grep-def.png"  alt="../../../../grep-def.png" />
+</p>
+<p>
+这样做的额外的好处是，查找上一个/下一个定义点的Emacs按键，也跟
+grep/compilation统一起来了！（不去记两套不同但功能完全类似的按键，就像
+保护自己的脑力不被 <code>less</code> 的不常用、irrelevant、insignificant的正则表达
+式规则污染一样，非常必要。）
+</p>
+<p>
+一个缺点是，所有使用grep-mode的外部输出，都共用一个buffer，看完ctags看
+grep再回来看之前的ctags的话，就不得不重新查一遍（或许我应该去看看
+multi-grep，但幸好这些grep/ctags查得都很快）。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 多点定义下的距离计算</h3>
+<div class="outline-text-3" id="text-4-2">
+
+
+<p>
+在一个大的项目下，一个函数有很多个定义是很常见的事。source-insight或我
+们如上打造的Emacs默认查到这些定义之后，都是以一种随意的顺序列出这些定义。
+</p>
+<p>
+我们的目标是给这些定义点排一个序。Google为何能大行其道，据说跟它有一个
+很牛的申请了专利的排序算法 pagerank 有关。所谓排序，意思就是说，当出现
+多个结果时，我们把这些结果按照一定的规则排列出来，理想的目标是：把最重
+要的、最相关的、用户最想要的结果排在最前面。
+</p>
+<p>
+如果你只是在读一个小的代码项目，那很可能不需要怎么排序，因为基本上你要
+搜索什么东西，要么没有，要么出来只有一两条结果，所以就不需要排序了。
+</p>
+<p>
+但是，如果是Android这种大项目呢？你可能会查出来有n个地方定义了你想查的
+那个函数，你真正想要看的那个函数可能列在第一个，也可能出现在最后一个，
+总之，你需要很费神费眼地自己去找。让我们想个办法保护我们的眼睛吧！
+</p>
+<p>
+比如我们在Android里搜索 <code>parse_state</code> ，会出来6个地方有定义它：
+</p>
+
+
+
+<pre class="example">Finding global definition: parse_state
+
+Database directory: /home/bhj/src/android/
+-------------------------------------------------------------------------------
+gtags-cscope-bhj -f cscope.out -d -L -1 parse_state 
+
+*** /home/bhj/src/android/external/e2fsprogs/e2fsck/profile.c:
+parse_state[152]               struct parse_state {
+
+*** /home/bhj/src/android/system/core/init/parser.c:
+parse_state[70]                struct parse_state
+
+*** /home/bhj/src/android/external/freetype/include/freetype/internal/psaux.h:
+parse_state[575]               T1_ParseState parse_state;
+
+*** /home/bhj/src/android/external/iptables/extensions/libipt_conntrack.c:
+parse_state[60]                parse_state(const char *state, size_t strlen, struct ipt_conntrack_info *sinfo)
+
+*** /home/bhj/src/android/external/iptables/extensions/libipt_state.c:
+parse_state[32]                parse_state(const char *state, size_t strlen, struct ipt_state_info *sinfo)
+
+*** /home/bhj/src/android/external/iptables/extensions/libip6t_state.c:
+parse_state[32]                parse_state(const char *state, size_t strlen, struct ipt_state_info *sinfo)
+-------------------------------------------------------------------------------
+
+Search complete.  Search time = 0.59 seconds.
+
+</pre>
+
+
+<p>
+这种情况我们应该怎么对它进行排序呢？要注意的是，“最重要的、最相关的”这
+一标准是上下文相关的。如果用户当前在看system init相关的代码，很可能用户
+希望第二个 <code>parse_state</code> 出现在最前面，如果用户在看iptables相关的代码，那么
+很可能需要把4、5、6排在前面。
+</p>
+<p>
+怎么办呢？我想到了一个“土”办法。
+</p>
+<p>
+把用户开始搜索的时候正在阅读的文件，记为起始文件；把结果文件中的每一个，
+都跟起始文件计算一下“距离”。距离最短的，就认为是最相关的。
+</p>
+<p>
+怎么计算距离呢？哈哈，perl有一个module，叫 <code>String::Approx</code> ，可以直接
+从cpan上安装，如果是用debian/ubuntu的话，也可以直接 <code>apt-get install libstring-approx-perl</code> 。它已经帮我们实现了计算两个字符串之间的距离的功
+能，我们直接拿来用就行了（再一次让我们见识到了社区的力量）。
+</p>
+<p>
+假设我们的起始文件是 <code>/home/bhj/src/android/system/core/init/init.c</code> ，
+在读这个文件代码的时候，我们想查一下 <code>parse_state</code> ，查出来有一
+条 <code>/home/bhj/src/android/system/core/init/parser.c</code> 里面包含有这个定义，
+那它当然应该排在最前面了，因为它距离最短，大家甚至都是在一个目录下的。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> imenu</h2>
+<div class="outline-text-2" id="text-5">
+
+
+<p>
+imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 里类似于
+下图的功能（1. 列出当前文件中的所有定义方便查看，2. 鼠标点击实现跳转）：
+</p>
+<p>
+<img src="../../../../si-imenu.png"  alt="../../../../si-imenu.png" />
+</p>
+<p>
+我们的imenu的用法当然跟source insight有点不一样，虽然精神上是类似的。首
+先，我不能一直炫炫地显示着有一个“定义窗口”，我想看有哪些定义的话，需要
+自己手动打一下imenu命令（我曾经很偏执地也想要一个这样的窗口，并且这也是
+可以通过 ecb 之类的插件实现的，但是后来我突然不想要了，嘻嘻）。
+</p>
+<p>
+其次，如下图所示
+</p>
+<p>
+<img src="../../../../emacs-imenu.png"  alt="../../../../emacs-imenu.png" />
+</p>
+<p>
+我可以把它跟emacs的 <code>anything.el</code> 结合，对要显示何种定义做更精准的控制
+(图中只显示了 <code>macro</code> ）。Source insight做不到这一点，所以，Emacs加一分！
+<code>anything</code> 的好处在于你还可以接着打一个空格，再打一个正则表达式，继续过
+滤出你真正想要的定义。
+</p>
+<p>
+最后，我不需要用鼠标点，直接回车就跳到定义的点上了（看完不想跳的话就按
+<code>C-g</code> ）Source insight必须用鼠标点，所以 Emacs 再加一分！
+</p>
+
+</div>
+
+<div id="outline-container-5-1" class="outline-3">
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> imenu与ctags-exuberant的结合</h3>
+<div class="outline-text-3" id="text-5-1">
+
+
+<p>
+最后，上面的图里显示的 imenu 定义跟默认的 Emacs 自带的有点不一样哦！那
+是因为我发现 Emacs 自带的imenu找定义功能不够强大，所以我就把它定制了一
+下，转而寻求强大的ctags-exuberant的帮助（详见 <a href="../22/my-config-cn.html">我的配置系统</a> ）：
+</p>
+
+
+
+<pre class="example">(setq-default imenu-create-index-function #'imenu-create-index-using-ctags)
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> beagrep</h2>
+<div class="outline-text-2" id="text-6">
+
+
+<p>
+终于说到我的 favorite，beagrep了。详见 <a href="../../01/31/beagrep-cn.html">两秒钟grep两G代码！</a>。
+</p>
+
+
+</div>
+
+<div id="outline-container-6-1" class="outline-3">
+<h3 id="sec-6-1"><span class="section-number-3">6.1</span> beagrep与ctags-exuberant的结合使用</h3>
+<div class="outline-text-3" id="text-6-1">
+
+
+<p>
+通过它们的结合使用，我们可以实现最后一个功能：查找一个函数在何处被调用。见下图：
+</p>
+<p>
+<img src="../../../../func-called.png"  alt="../../../../func-called.png" />
+</p>
+<p>
+其工作原理是这样的，以上图为例，先beagrep出readlink出现在哪些文件里，再
+在这些文件上当场调用ctags-exuberant，获得类似这样的信息：某文件第100行
+有一个函数定义 <code>A_func</code> ，150行有下一个函数 <code>B_func</code> ，而readlink出现在了125行，
+那么，我们可以说， <code>A_func</code> 调用了readlink这个函数。
+</p>
+<p>
+又一次，我使用了 grep-mode 来一统其输出格式。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> 生成调用关系图</h2>
+<div class="outline-text-2" id="text-7">
+
+
+<p>
+source-insight有生成调用关系图的功能（有人用过吗？），我们用开源软件也
+可以做到的（只不过弄完这个功能之后我再也没有用过它），见下图：
+</p>
+<p>
+<img src="../../../../call-graph.png"  alt="../../../../call-graph.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> cscope 和 gtags</h2>
+<div class="outline-text-2" id="text-8">
+
+
+<p>
+我曾经也用过这两个工具，从上面的函数定义距离计算的例子中可以看到，写那
+一段的时候我还是在用cscope。后来转成用gtags，最后用的是ctags-exuberant。
+</p>
+<p>
+虽然现在已经不完全用这两个工具了，它俩的一些好的idea我还是吸收了，比如
+在cscope.el里有一个cscope-marker-ring，能够在查询定义之后回到开始查询的
+地方，经过我的改良之后，纵横进退，异常方便。而gtags既有接口模拟cscope的
+输出，又有plugin机制可以调ctags-exuberant来做定义点预索引，所以为我试用
+这几个不同工具时的平滑过渡提供了很大的方便。目前我还在通过它来调用
+ctags-exuberant，因为它有内建增量更新索引机制。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> 查找局部变量的定义</h2>
+<div class="outline-text-2" id="text-9">
+
+
+<p>
+这个也是可以实现的，先记下当前的变量，再搜到当前函数开头（可以用
+ctags-exuberant来记算），再搜到记下的变量的第一次出现的地方。
+</p>
+<p>
+写到这里，我们的“Emacs和它的朋友们——代码阅读篇”就告一段落了。下一篇，你
+猜对了，“Code Writing”，敬请期待！
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="../../09/17/Android-Product-Makefiles.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              Android-Product-Makefiles <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../22/fun-design-pattern.html"> <!-- next-url -->
+              在shell脚本里使用Abstract Factory的设计模式 <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</p></div>
+</div>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/emacs.html" title="Emacs the editor">emacs</a><br/>
+            <a href="../../../../meta/tags/code-reading.html" title="Reading source code">code-reading</a><br/>
+<a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

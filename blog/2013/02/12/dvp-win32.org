@@ -1,0 +1,39 @@
+#+POSTID: 49
+# bhj-tags: win32 system keyboard
+#+DATE: [2011-11-26 Sat 20:43]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil TeX:nil
+#+CATEGORY: Uncategorized, Hello
+#+TAGS:
+#+DESCRIPTION:
+#+TITLE: Using dvp under Win32
+
+In a previous blog I posted, I mentioned I was using dvp under Win32 with a custom AutoHotKey (AHK) script I wrote. Now I have abandoned that script. For 2 reasons: 
+
+- It does not work on some programs/input boxes, not sure why, but
+  google suggests maybe because they are run in SYSTEM account...
+
+- It fails to translate key presses occasionally. This is because the
+  low level KeyboardHook/SendInput Win32 mechanism it employs is a
+  half-baked buggy system itself.
+
+Now I have switched to the kbddvp.dll provided by dvp creator Roland
+Kaufmann, and also solved the Chinese IME problem, turns out I only
+need to point the "Layout File" of my IME to "kbddvp.dll" in the registry: 
+
+#+begin_example
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layouts\E0350804]
+"Ime File"="ywbhj35.dll"
+"Layout File"="kbddvp.dll"
+"Layout Text"="Chinese (Simplified) - YWB35"
+#+end_example
+
+There comes another problem through: cygwin-x does not work with my
+new solution. In fact, cygwin-x has nothing to do with Win32 keyboard
+layout/IME. Xwindows has its own keyboard layout mechanism. Sadly, dvp
+is not part of cygwin-x yet.
+
+But I can live with that, since the 2 most fundamental GUI programs I
+use, terminal emulator and emacs, both I can do without X. I use
+mintty and emacs-nt, both of which are not X programs.

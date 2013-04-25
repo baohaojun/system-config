@@ -1,3 +1,0 @@
-#+title: This is test3
-
-Test3 is the greatest!

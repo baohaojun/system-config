@@ -1,0 +1,21 @@
+#+title: Fastest grep
+ * 2013
+  - 2013-02
+   * 2013-02-12
+
+     [[../../blog/2013/02/12/beagrep-under-win32.org][beagrep under win32]]
+
+     [[../../blog/2013/02/12/beagle-grep-readme.org][Introducing beagrep, the beast like grep]]
+
+ * 2012
+  - 2012-01
+   * 2012-01-31
+
+     [[../../blog/2012/01/31/beagrep-cn.org][beagrep，两秒钟grep两个G的代码]]
+
+ * 2011
+  - 2011-12
+   * 2011-12-23
+
+     [[../../blog/2011/12/23/beagrep.org][beagrep, grep 2G source code in 2 seconds]]
+

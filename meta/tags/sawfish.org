@@ -1,0 +1,7 @@
+#+title: The sawfish window manager
+ * 2012
+  - 2012-02
+   * 2012-02-26
+
+     [[../../blog/2012/02/26/extracting-ahd-cn.org][extracting-ahd-cn]]
+

@@ -1,0 +1,7 @@
+#+title: Inter Process Communication
+ * 2012
+  - 2012-10
+   * 2012-10-26
+
+     [[../../blog/2012/10/26/android-binder.org][android的binder机制]]
+

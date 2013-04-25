@@ -1,0 +1,14 @@
+#+TITLE: extracting-ahd-cn
+# bhj-tags: dict sawfish
+
+安装了AHD（American Heritage Dictionary），心想，能不能把它的数据给提取出来，给自己做一个定制的字典软件吼？
+
+经过一番调查，发现是可以的。AHD的Eref.exe程序每显示一个单词的定义，都会在其安装目录下生成一个outfile[0-9a-f].htm的文件，而其界面可以简单的用键盘上下键依次遍历所有的单词。
+
+于是办法也就出来了，我是在Linux下用wine跑这个软件，所以也不用AutoHotkey脚本了，直接用sawfish的synthesize-event，更方便。
+
+另外，在抽取单词的过程中，必须保证AHD程序是当前激活的程序，也就是说你不能干别的了，
+最好是去睡一觉，第二天早上起来也还不一定能弄完呢！并且如果你的屏幕保护程序跑起来
+了，也会中止抽取行动的:-(
+
+可是，幸好我们是在Linux下，我可以启动一个vncserver，在vncserver里启动这个AHD和抽取脚本，这样，就不会有上面说的问题了！

@@ -1,3 +1,1 @@
-When bash completing, there will be a problen if -o filenames option
-is given, and the elements are not true filenames, but only to use the
-filenames completion special handling.
+blog/2013/02/12/bash-complete-filenames.org

@@ -1,0 +1,55 @@
+#+title: android的binder机制
+# bhj-tags: android ipc
+~status_t IPCThreadState::talkWithDriver(bool doReceive)~ 这个函数会把kernel driver打交道，通过ioctl。
+
+~status_t status = IPCThreadState::self()->transact(~ 这个是在BpBinder
+里的 ~status_t BpBinder::transact(~ 调用的。
+
+#+begin_src c
+#define IMPLEMENT_META_INTERFACE(INTERFACE, NAME)                       \
+    const android::String16 I##INTERFACE::descriptor(NAME);             \
+    const android::String16&                                            \
+            I##INTERFACE::getInterfaceDescriptor() const {              \
+        return I##INTERFACE::descriptor;                                \
+    }                                                                   \
+    android::sp<I##INTERFACE> I##INTERFACE::asInterface(                \
+            const android::sp<android::IBinder>& obj)                   \
+    {                                                                   \
+        android::sp<I##INTERFACE> intr;                                 \
+        if (obj != NULL) {                                              \
+            intr = static_cast<I##INTERFACE*>(                          \
+                obj->queryLocalInterface(                               \
+                        I##INTERFACE::descriptor).get());               \
+            if (intr == NULL) {                                         \
+                intr = new Bp##INTERFACE(obj);                          \
+            }                                                           \
+        }                                                               \
+        return intr;                                                    \
+    }                                                                   \
+    I##INTERFACE::I##INTERFACE() { }                                    \
+    I##INTERFACE::~I##INTERFACE() { }                                   \
+#+end_src
+
+所有的BpXXX都是在这个 ~I##INTERFACE::asInterface~ 里创建的。
+
+常见的用法是： 
+
+#+begin_example
+        IBinder service = ServiceManager.getService("mount");
+        mMountService = IMountService.Stub.asInterface(service);
+#+end_example
+
+与BpBinder类对应的是BBinder类，它们都是IBinder的子类，都需要定义
+transact函数，不同是前者（proxy）的transact只是一个ipc调用，后者则是真
+正干活的。
+
+前者什么时候会被调用？随便一搜出来的基本上都是
+~remote()->transact(...)~ ，但后者的调用比较隐蔽一些，初步怀疑是在
+~void IPCThreadState::joinThreadPool(bool isMain)~ 里，调了 ~result =
+talkWithDriver();~ ，然后是 ~result = executeCommand(cmd);~ ，此函数会
+调用 ~const status_t error = b->transact(tr.code, buffer, &reply,
+tr.flags);~ 。
+
+# Local Variables: #
+# bhj-grep-dir: "~/src/android/" #
+# End: #

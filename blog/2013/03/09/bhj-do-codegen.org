@@ -1,0 +1,124 @@
+#+title: 给任意语言插上宏定义的翅膀
+# bhj-tags: macro programming
+
+宏，[[en.wikipedia.org/wiki/Macro_(computer_science)][英文wikipedia]]，[[http://zh.wikipedia.org/wiki/%E5%AE%8F][中文wikipedia]]。
+
+关于宏有多邪恶，我想用一个简单的问题来描述：echo hello world，这是shell脚本，还是C语言程序？
+
+如果是二选一的话，我想大多数人会认为这是shell脚本，而不可能是C语言。很
+可惜，答错，这可以是C语言。你需要把宏加入到你的考虑之中。
+
+实际上，C/C++语言是两种语言的叠加，首先是它的预处理器（preprocessor）处
+理的宏定义语言，然后是编译器编译的C语言。
+
+想明白了这点之后，我对阅读源代码有了一个全新的看法：永远不要希望有一个
+源代码阅读工具能帮你找到任意一个C/C++函数、变量等的定义位置。宏定义的存
+在，会让一切这样的努力化为泡影。
+
+把echo hello world弄成一段合法的C语言程序的命令是这样的（我正在考虑为此
+申请专利）：
+
+#+BEGIN_EXAMPLE
+echo echo hello world > 1.c
+gcc -D echo='int main() {printf("hello world?\n");}' -D hello= -D world= 1.c
+./a.out
+#+END_EXAMPLE
+
+你会看见最后打出来的是 =hello world?= 。
+
+然而这决不是我们对宏因噎废食的理由。宏的存在是有它的道理的，对于那些没
+有内置宏的编程语言，我们不应该歧视它们，而是帮助它们解决这个问题。
+
+我想出来的这个代码生成机制，就能很大程度上给那些没有宏的语言，插上宏的
+翅膀。
+
+以我的 [[http://github.com/baohaojun/windows-config/raw/master/bin/bbs-robot][bbs-robot]] 脚本为例，首先，在tcl模式下，我有一个名为codegen的
+yasnippet，把它展开之后的结果是这样的：
+
+#+BEGIN_EXAMPLE
+    # start code-generator "^\\s *#"
+    
+    # end code-generator
+    # start generated code
+    
+    # end generated code
+#+END_EXAMPLE
+
+然后我会把我的伪宏加进去，变成这样：
+
+#+BEGIN_EXAMPLE
+    # start code-generator "^\\s *#"
+    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+    # end code-generator
+    # start generated code
+
+    # end generated code
+#+END_EXAMPLE
+
+接下来，我运行一下下面的这个emacs-lisp命令（我给它绑定到 *M-s g* 了，s
+g代表source generation），一长串的定义就会自动生成到指定的位置，最后变
+成：
+
+#+BEGIN_SRC tcl
+    # start code-generator "^\\s *#"
+    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+    # end code-generator
+    # start generated code
+    set CTRLA \001
+    set CTRLB \002
+    ...
+    set CTRLZ \032
+
+    # end generated code
+
+#+END_SRC
+
+最后解释一下这个emacs-lisp命令。最关键的是code-transform，它在上面的例
+子中是 "=^\\s *#=" ，这是一个正则表达式，其作用是把
+
+#+BEGIN_EXAMPLE
+    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+#+END_EXAMPLE
+
+这段注释变成可以执行的代码：把前面的#字符给去掉。
+
+最后还会把代码给缩进。
+
+请问这样做有什么好处？有什么坏处？你感受一下:-)
+
+#+BEGIN_SRC emacs-lisp
+(defun bhj-do-code-generation ()
+  (interactive)
+  (let (start-of-code end-of-code code-text start-of-text end-of-text code-transform)
+    (search-backward "start code-generator")
+    (forward-char (length "start code-generator"))
+    (if (looking-at "\\s *\\(\"\\|(\\)")
+	(setq code-transform 
+	     (read
+	      (buffer-substring-no-properties (point) (line-end-position)))))
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-code (point))
+    (search-forward "end code-generator")
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-code (point))
+    (setq code-text (buffer-substring-no-properties start-of-code end-of-code))
+    (cond
+     ((stringp code-transform)
+      (setq code-text (replace-regexp-in-string code-transform "" code-text)))
+     ((consp code-transform)
+      (setq code-text (replace-regexp-in-string (car code-transform) (cadr code-transform) code-text))))
+
+    (search-forward "start generated code")
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-text (point))
+    (search-forward "end generated code")
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-text (point))
+    (shell-command-on-region start-of-text end-of-text code-text nil t)
+    (indent-region (min (point) (mark))
+		   (max (point) (mark)))))
+#+END_SRC

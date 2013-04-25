@@ -1,0 +1,195 @@
+#+title: Archive
+ * 2013
+  - 2013-04
+   * 2013-04-25
+
+     [[../blog/2013/04/25/test3.org][This is test3]]
+
+     [[../blog/2013/04/25/test2.org][This is test2]]
+
+     [[../blog/2013/04/25/test1.org][this is test1]]
+
+   * 2013-04-24
+
+     [[../blog/2013/04/24/allow-comments.org][allow-comments]]
+
+   * 2013-04-13
+
+     [[../blog/2013/04/13/skeleton-complete.org][skeleton-complete]]
+
+   * 2013-04-12
+
+     [[../blog/2013/04/12/hardened-bhj-style-macros.org][翅膀硬了]]
+
+  - 2013-03
+   * 2013-03-31
+
+     [[../blog/2013/03/31/when-java-meet-c#.org][当Java遇到C#]]
+
+   * 2013-03-17
+
+     [[../blog/2013/03/17/cli+gui.org][当纯文本命令行碰到图形界面]]
+
+   * 2013-03-14
+
+     [[../blog/2013/03/14/dvp-keyboard-mac.org][在Mac系统下使用dvp (Dvorak Programmer)]]
+
+   * 2013-03-11
+
+     [[../blog/2013/03/11/crossdict-gcide.org][How to extract GCIDE dictionary data for CrossDict]]
+
+     [[../blog/2013/03/11/crossdict-gcide-help.org][Installing Dictionary Data Separately]]
+
+   * 2013-03-09
+
+     [[../blog/2013/03/09/bhj-do-codegen.org][给任意语言插上宏定义的翅膀]]
+
+   * 2013-03-08
+
+     [[../blog/2013/03/08/crossdict-readme-cn.org][CrossDict: 交叉索引字典]]
+
+   * 2013-03-02
+
+     [[../blog/2013/03/02/the-ulti-dict.org][又一个字典软件，我的！]]
+
+     [[../blog/2013/03/02/donate.org][Donate for my free software effort]]
+
+  - 2013-02
+   * 2013-02-25
+
+     [[../blog/2013/02/25/index-cn.org][我在Github上的个人博客]]
+
+   * 2013-02-12
+
+     [[../blog/2013/02/12/wasted.org][wasted]]
+
+     [[../blog/2013/02/12/note.org][note]]
+
+     [[../blog/2013/02/12/my-programmer-dvorak.org][Switched to USA Pragrammer Dvorak Keyboard]]
+
+     [[../blog/2013/02/12/make-proposal.org][make-proposal]]
+
+     [[../blog/2013/02/12/kernel.org][kernel]]
+
+     [[../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.org][html2mht.pl and dir2html.pl]]
+
+     [[../blog/2013/02/12/dvp-win32.org][Using dvp under Win32]]
+
+     [[../blog/2013/02/12/dvp-on-windows.org][dvp-on-windows]]
+
+     [[../blog/2013/02/12/combining-cli-and-gui.org][Using CLI and GUI Together Seemlessly]]
+
+     [[../blog/2013/02/12/blf-to-human.org][blf-to-human]]
+
+     [[../blog/2013/02/12/beagrep-under-win32.org][beagrep under win32]]
+
+     [[../blog/2013/02/12/beagle-grep-readme.org][Introducing beagrep, the beast like grep]]
+
+     [[../blog/2013/02/12/bash-complete-filenames.org][bash-complete-filenames]]
+
+   * 2013-02-02
+
+     [[../blog/2013/02/02/remove-unneeded-files-for-code-reading.org][在阅读源代码时删掉所有非必要文件的方法]]
+
+  - 2013-01
+   * 2013-01-09
+
+     [[../blog/2013/01/09/coding-android-java-in-emacs-en.org][Doing Android Java Programming in Emacs]]
+
+ * 2012
+  - 2012-12
+   * 2012-12-27
+
+     [[../blog/2012/12/27/stem-completion.org][提干式id补齐和re补齐]]
+
+     [[../blog/2012/12/27/coding-android-java-in-emacs.org][在Emacs下用java编程（Android相关）]]
+
+   * 2012-12-19
+
+     [[../blog/2012/12/19/perfect-emacs-chinese-font.org][狠狠地折腾了一把Emacs中文字体]]
+
+  - 2012-11
+   * 2012-11-14
+
+     [[../blog/2012/11/14/gdb-android.org][How to use gdb (in Emacs) for android]]
+
+   * 2012-11-09
+
+     [[../blog/2012/11/09/android-diary.org][android-diary]]
+
+  - 2012-10
+   * 2012-10-31
+
+     [[../blog/2012/10/31/ctags-android-xml.org][用ctags索引Android资源定义的.xml和.png文件]]
+
+   * 2012-10-30
+
+     [[../blog/2012/10/30/writing-source-code-cn.org][Emacs和它的朋友们--编写代码篇]]
+
+   * 2012-10-29
+
+     [[../blog/2012/10/29/why-symlink-my-config.org][我的配置环境：为什么用symlink而不是cp]]
+
+   * 2012-10-26
+
+     [[../blog/2012/10/26/android-binder.org][android的binder机制]]
+
+   * 2012-10-23
+
+     [[../blog/2012/10/23/makefile-printval.org][Emacs and interactive makefiles]]
+
+   * 2012-10-22
+
+     [[../blog/2012/10/22/my-config-cn.org][My configuration system]]
+
+     [[../blog/2012/10/22/fun-design-pattern.org][在shell脚本里使用Abstract Factory的设计模式]]
+
+   * 2012-10-11
+
+     [[../blog/2012/10/11/reading-source-code-cn.org][Emacs和它的朋友们——阅读源代码篇]]
+
+  - 2012-09
+   * 2012-09-17
+
+     [[../blog/2012/09/17/Android-Product-Makefiles.org][Android-Product-Makefiles]]
+
+  - 2012-05
+   * 2012-05-14
+
+     [[../blog/2012/05/14/howto-use-https-with-github.org][howto-use-https-with-github]]
+
+   * 2012-05-02
+
+     [[../blog/2012/05/02/pdf-for-kindle-touch.org][pdf-for-kindle-touch]]
+
+  - 2012-03
+   * 2012-03-27
+
+     [[../blog/2012/03/27/why-lisp-cn.org][why-lisp-cn]]
+
+  - 2012-02
+   * 2012-02-26
+
+     [[../blog/2012/02/26/extracting-ahd-cn.org][extracting-ahd-cn]]
+
+   * 2012-02-02
+
+     [[../blog/2012/02/02/how-to-do-long-twitter-cn.org][自己动手做长微博（推特），内嵌图片的]]
+
+  - 2012-01
+   * 2012-01-31
+
+     [[../blog/2012/01/31/beagrep-cn.org][beagrep，两秒钟grep两个G的代码]]
+
+ * 2011
+  - 2011-12
+   * 2011-12-28
+
+     [[../blog/2011/12/28/org-jira.org][org-jira]]
+
+   * 2011-12-23
+
+     [[../blog/2011/12/23/index.org][My Page on Github]]
+
+     [[../blog/2011/12/23/beagrep.org][beagrep, grep 2G source code in 2 seconds]]
+

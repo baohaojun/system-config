@@ -1,7 +1,1 @@
-#+title: 在Mac系统下使用dvp (Dvorak Programmer)
-
-* use keyremap4macbook，not the one provided by dvp author
-
-* firefox can use firemacs fully after the above change
-
-* should use reset defaults ocassioaly in system pref/keyboard/modifier settings
+blog/2013/03/14/dvp-keyboard-mac.org

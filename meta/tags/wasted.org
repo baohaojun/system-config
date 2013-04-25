@@ -1,0 +1,7 @@
+#+title: I have wasted time here
+ * 2013
+  - 2013-02
+   * 2013-02-12
+
+     [[../../blog/2013/02/12/wasted.org][wasted]]
+

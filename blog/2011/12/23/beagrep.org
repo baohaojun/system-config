@@ -1,0 +1,402 @@
+#+title: beagrep, grep 2G source code in 2 seconds
+# bhj-tags: beagrep
+* Introduction
+
+I still remember when I read the ``Linux Device Drivers'', 1st Edition, in the preface, the author says:
+
+#+begin_quote
+... The text you are approaching is the result of hours of patient grepping ...
+#+end_quote
+
+I have been using grep to read source code ever since. It's been
+adequate for a long time, until I started reading Android source code
+with it. I remember vividly how it took me 30 minutes to ~grep
+readlink~ in Android source code (with VCS directory and binary files
+excluded).
+
+Then I learned about the beagle software, and it occurred to me, what
+if I use beagle and grep together? I mean, to use beagle first to
+decide the (relatively a lot smaller) set of possible matching files
+(i.e., files that contained the word ~readlink~, taking the previous
+example), then invoke grep on this set only. Usually the job can be
+done in a couple of seconds.
+
+Beagrep supports both Linux and Windows (requires CYGWIN).
+
+(Note a Chinese version of this page is available [[http://baohaojun.github.com/beagrep-cn.html][here]], but it may be
+outdated).
+
+* Install
+** Linux install
+
+*** Using .deb under debian/ubuntu
+# <<using.deb>>
+
+I have provided several .deb package files on github, one for debian
+testing, 3 for ubuntu lucid(10.04), oneiric(11.10) and
+precise(12.04). They are all for amd64. If you happen to be using one
+of these, you can download them [[https://github.com/baohaojun/beagrep/downloads][here]]. Here's how to install it using
+ubuntu 12.04 as an example:
+
+#+begin_src sh
+dpkg -i beagrep-for-ubuntu-precise-2012-09-05-ae0a1a2.deb # will probably get dependency errors
+apt-get -f install # fix the dependency errors
+#+end_src
+
+*** Compile by yourself
+
+If you need compile by yourself, using Ubuntu precise as an example:
+
+#+begin_src sh
+git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
+# you can also run "git branch -a" to see other versions of debian/ubuntu supported
+
+# Install build dependencies. You can open debian/control and check
+# the build dependencies and install all of them. The following
+# command will try to install them automatically, but if it fails then
+# you need figure out which packages to install manually. Good luck!
+# Or you can contact some debian/ubuntu advanced user for help.
+apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
+
+# do the build
+(set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
+#+end_src
+
+*** Build .deb by yourself
+
+Before someone volunteer to make beagrep into debian/ubuntu
+distribution, you might also find a need to build .deb by yourself
+(for e.g., to help your colleagues use beagrep easily without needing
+to compile it themselves).
+
+Here's how I do it:
+
+1. Make sure you can compile beagrep manually by referring to the
+   previous section.
+
+2. Make a tar.gz of beagrep (note that the filename must be exact, it
+   is required by dpkg):
+
+   : tar czfv ~/tmp/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
+
+3. Untar it and build the .deb package:
+
+   #+BEGIN_EXAMPLE
+   cd ~/tmp
+   tar zxfv beagrep_0.4.0.orig.tar.gz
+   cd beagrep
+   dpkg-buildpackage
+   #+END_EXAMPLE
+
+   The .deb file is generated in the =~/tmp= directory.
+
+4. Refer to [[#using.deb]] for how to install.
+
+** Windows install
+
+Windows install can only be done compiling by yourself, and be
+pre-warned, it's not easy...
+
+*** Install dependencies
+
+You need install CYGWIN and Mono for Windows.
+
+*** Get beagrep Windows code
+
+#+begin_src sh
+git clone git://github.com/baohaojun/beagrep.git -b Windows
+#+end_src
+
+*** Compile and install
+
+#+begin_src sh
+cd beagrep
+bash build-win.sh
+#+end_src
+
+* Usage
+
+** Quick smoke test
+#+begin_src sh
+cd /tmp; mkdir $$; cd $$; echo main > 1.txt; mkbeagrepidx; beagrep -e 'main' --grep '--color=auto'; true; cd ..; rm $$ -rf
+#+end_src
+
+If beagrep has been installed correctly, at the end of the above
+command's output, you should see something like
+~/tmp/11468/1.txt:1:main~.
+
+** Create index
+
+In your source code directory, using android as example: 
+
+#+begin_src sh
+cd ~/src/android
+mkbeagrepidx
+#+end_src
+
+This step will cost you quite some time, under my Linux indexing
+Android cost me about half an hour (it's about the same time you run
+grep directly on android source). So I'd advise you create a cron job
+to do it at midnight.
+
+It takes about 8 minutes to index linux kernel (v3.6-rc6):
+
+#+begin_example
+Debug: IndexWorker Done
+Debug: Elapsed time 478.01s.
+#+end_example
+
+But the good news is if indexing has already been done before, there
+re-indexing will only work on those updated files based on file
+time-stamp. So it will cost you only a few minutes to re-index the
+whole Android source.
+
+Even better, after an initial indexing, you can do a sub-folder
+re-index, ~mkbeagrepidx~ will ask you if you want to update the index
+found for upper directory. This generally only takes seconds depending
+on the size of the sub-folder.
+
+** Man page for mkbeagrepidx
+
+mkbeagrepidx is a simple wrapper over beagrep-build-index. You can
+configure it for which directories to ignore using
+~--deny-directory-pattern~ option. By default,
+
+- The ~$PWD/out~ is ignored, because it contains android build output
+- The */.git is ignored, because of well known reason
+- The */.repo is ignored, for the same reason.
+
+The syntax is comma separated shell glob patterns, and you can check
+how it is converted into regular expression by examining the beginning
+of mkbeagrepidx output:
+
+#+begin_example
+Always: Will ignore directories matching regular expression: ^(?:/home/bhj/tmp/test/out)$|^(?:.*/\.repo)$|^(?:.*/\.git)$
+#+end_example
+
+You can customize it using several ways, in the order of increasing
+priority:
+
+- Not customize it, then the default
+
+  #+begin_example
+  "$PWD/out,*/.repo,*/.git"
+  #+end_example
+  
+  will be used.
+
+- Override it in =~/.mkbeagrepidx.rc=, setting the ~BEAGREP_IGNORE_DIR_PATTERNS~ environment variable:
+
+  #+begin_src sh
+  export BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/.git"
+  #+end_src
+
+- Override it in the .mkbeagrepidx.rc in the current working directory, same as the above.
+
+- Override it on the command line (you must repeat the default pattern
+  because it won't append):
+
+  #+begin_src sh
+  mkbeagrepidx --deny-directory-pattern "$PWD/out,*/.repo,*/.git,*/.svn"
+  #+end_src
+  
+
+** Searching using beagrep
+
+Under your source code directory:
+#+begin_src sh
+cd ~/src/android
+beagrep -e "readlink"
+#+end_src
+
+*** Man page for beagrep
+
+Here's a list of all arguments that beagrep takes:
+
+#+begin_example
+beagrep -e REGEXP_MATCH [-p REGEXP_PATH] [-a ADDITIONAL_WORDS] [-v REGEXP_REVERSE_PATH] [-i] [-f] [-l] [--grep GREP_OPTIONS] [-a]
+#+end_example
+
+- -e ~REGEXP_MATCH~ :: This is the minimum required arguments. For e.g., ~beagrep -e readlink~
+
+     The ~REGEXP_MATCH~ serves 2 purposes:
+
+     - First, it is computed into whole words for querying beagle. For
+       e.g., ~l] [--grep GREP_OPTIONS]~ above should be matched with
+       the following REGEXP: ~l\] \[--grep GREP_OPTIONS\]~, but it
+       should be converted into 4 words: ~l grep GREP OPTIONS~ for
+       beagle.
+
+     - Second, it is used as the regexp for grep to work on.
+
+- -a ~ADDITIONAL_WORDS~ :: means to add more words into the beagle
+     query. This is useful by increasing the work beagle need to do,
+     but reduce the possible work set grep need to work on.
+
+- -p ~REGEXP_PATH~ :: means to limit the search result to those files whose path-name matches ~REGEXP_PATH~.
+
+- -v ~REGEXP_REVERSE_PATH~ :: means to exclude those matched files whose path-name matches ~REGEXP_REVERSE_PATH~.
+
+- -i :: means to do case insignificant grep.
+
+- -f :: means to do the match in file-names only. For example, ~beagrep
+        -e readlink -f~ will only show results like readlink.h and
+        readlink.c.
+
+	This is very useful for finding files. Note that when ~-f~ is
+        used, the beagle querying words will be computed differently:
+        only the basename will be used, and ~filename:~ is prepended
+        onto each words.
+
+- -l :: means to list the beagle matched list of files directly, without running grep to match on them.
+
+- --grep ~GREP_OPTIONS~ :: means to pass additional arguments to the
+     grep invocation. For e.g., the ~-l~ argument can be passed to
+     beagrep directly, or it can be passed using ~--grep~, they mean different things:
+
+     ~beagrep -e "hello world" -l~ will show a file containing "hello
+     wonderful world", but ~beagrep -e "hello world" --grep -l~ will
+     not show that file as a match.
+
+
+* How does it work?
+
+beagrep is a very practical software, it works because of the following observations:
+
+** grep patterns are usually simple
+
+Or rather, they can be decomposed into several simple sub-patterns: whole words.
+
+For example, to grep such a seemingly complex pattern in Android source code:
+
+#+begin_example
+"JsonToValue(\"\\\\\"hello world\\\\\"\","
+#+end_example
+
+In fact, it contained some simpler sub-patterns, i.e., those 3
+wholesome English words: ~JsonToValue~ ~hello~ ~world~. For a file to
+match this complex pattern, one necessary but not sufficient condition
+is for this file to contain all these 3 words. And what is good for
+this job? A search engine! Using beagle, the parent project for
+beagrep, a desktop search engine, you can find which files (actually,
+which file in this case) contained these 3 words in a blink of the
+eyes.
+
+Only 1 file contained all 3 words:
+
+#+begin_example
+$beagrep-files 'JsonToValue hello world '
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+/home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc
+/dev/null
+#+end_example
+
+So, you can imagine how quick it is to run ~grep~ on the set of files containing all required words:
+
+#+begin_example
+beagrep -e "JsonToValue(\"\\\\\"hello world\\\\\"\","
+pat is: 'JsonToValue("\\"hello world\\"",'.
+beagrep query argument `JsonToValue hello world '
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+/home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc:168:  root.reset(JSONReader().JsonToValue("\"hello world\"", false, false));
+Unmatched ( in regex; marked by <-- HERE in m/JsonToValue( <-- HERE ""hello world"",/ at /home/bhj/bin/beagrep line 98.
+#+end_example
+
+To summarize, complete words are what search engines are good for, and
+fortunately, when grepping source code, we almost always grep using
+whole words, instead of sub-words. For e.g., this evil pattern
+~r.*e.*a.*d.*l.*i.*n.*k~ can match our ~readlink~, but do you really
+need that power of ~grep~?
+
+*** BTW, creating the regexp pattern automatically in Emacs
+
+From the example above, you can see the actual matched string is:
+
+#+begin_example
+JsonToValue("\"hello world\"",
+#+end_example
+
+but because of meta characters in regexp and shell, the regexp pattern for beagrep to work on is a lot more complex:
+
+#+begin_example
+"JsonToValue(\"\\\\\"hello world\\\\\"\","
+#+end_example
+
+It'd be tragedy if you need type all those ~\~ characters by
+yourself. So of course I didn't. In fact, when you work in Emacs,
+after you marked some text and press ~C-u M-x grep~, Emacs will
+correctly add the ~\~ -s for you, to convert this plain text into a
+matching regexp (which can be passed to grep by the shell).
+
+Note that last time I checked, the Emacs grep regexp generation code
+has some bugs, so I rolled my own fix for it, you can check my [[https://github.com/baohaojun/windows-config/raw/master/.emacs][.emacs]]
+for definition of ~grep-default-command~ and
+~grep-shell-quote-argument~.
+
+** grep keywords are usually interesting
+
+beagrep can greatly quicken the speed of grep, only because it can
+greatly reduce the working set of files for grep.
+
+Note that you need provide interesting words to search for so as to
+*greatly* reduce the working set. By interesting I mean non-common.
+
+For e.g., say you want to grep ~is~. This word is so common in English
+that almost all files would probably contain it (source code file will
+probably contain it in comments). Then you are basically running grep
+nakedly on the whole android source.
+
+Fortunately, this requirement is easy to meet. In the first place, you
+probably don't want to grep for common words; and even if you do need
+to, you probably won't grep for one common word *alone*, which is very
+uninteresting; thirdly, even if you do need to ~grep~ for a common
+word alone, you can provide more words for ~beagrep~ to work on by
+using its ~-a~ option (see the manpage above).
+
+So:
+
+- Don't grep for ~include~ alone, because almost all C/C++ source and
+  header files contain it.
+
+- Don't grep for ~import~ alone, because almost all java source files
+  contain it.
+
+And so on.
+
+* Other projects using beagrep
+
+Because beagrep is so fast, I have used it in a couple other projects/tools.
+
+** offline Wikipedia
+
+I added CJK character support into beagrep so that both English and
+Chinese offline Wikipedia can be browsed and subject-searched.
+
+Check it out at [[https://github.com/baohaojun/windows-config]], sorry I
+didn't make it a stand-alone project, it's under the
+~gcode/offline.wikipedia~ directory.
+
+** ~grep-func-call~ and ~grep-func-call-all~
+
+The latter used beagrep and ctags-exuberant to search for which
+functions called a specific function. It's under the ~bin/~ directory.
+
+** Generate call graph
+
+This is a tool to generate a call graph for the software project you
+want. I have found its effectiveness is to be questioned, but you can
+see a picture below:
+
+[[../../../../call-graph.png]]
+
+This picture is generated for the adb sub-project in android code. You
+can see which functions are calling ~adb_connect~, and which functions
+are called by it.
+
+It is generated using beagrep + ctags-exuberant + graphviz, using my
+wrap scripts like following in the android/system/core directory:
+
+#+begin_src sh
+generate-call-graph.pl > call_graph.org
+dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2 
+#+end_src

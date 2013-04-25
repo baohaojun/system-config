@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Introducing beagrep, the beast like grep</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Introducing beagrep, the beast like grep"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-09-29"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Introducing beagrep, the beast like grep</h1>
+
+
+<p>  
+  I just found out about the beagle project couple of months ago, I'm
+  totally excited by it. It's the missing brick that I longed for to
+  write a `grep on steroid' which I can use as a source code reading
+  tool.
+</p>
+<p>
+  Yeah, right, I was using grep to read souce code, often times
+  finding cscope insufficient (because some files are not source code,
+  and even cscope's fuzzy syntax parser can not parse them). On the
+  other hand, with large projects, such as Linux Kernel, or the even
+  larger Android system, grepping can be very slow on the whole
+  project. I once searched for <code>readlink</code> in android source tree, it
+  took me &gt;30 minutes!
+</p>
+<p>
+  With beagrep (beagle combined with grep), I can grep it for less than 2 seconds!
+</p>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Why is it possible</a></li>
+<li><a href="#sec-2">2 How is it done</a></li>
+<li><a href="#sec-3">3 Modifications to beagle</a></li>
+<li><a href="#sec-4">4 Usage</a></li>
+<li><a href="#sec-5">5 Where to find everything</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Why is it possible</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+When you grep for reading source code's sake, you often don't need
+complex regexp power: when you search <code>readlink</code>, you <code>grep readlink</code>,
+not <code>grep r.*e.*a.*d.*l.*i.*n.*k</code>, that just does not make any sense!
+</p>
+<p>
+IOW, you 99.9% times search only for <i>whole words</i> like <code>readlink</code>,
+which is a kind of simple regexp, and unlike complex regexps (such as
+<code>r.*e.*a.*d.*l.*i.*n.*k</code>), is something search engines can deal with
+perfectly.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> How is it done</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+It is really a very simple idea, when you want to grep a target
+repexp, do the following:
+</p>
+<ol>
+<li>Break the target regexp into <i>whole words</i>, for e.g., <code>grep -e some.*fun.*stuff</code> 
+     should be broken into "some fun stuff".
+
+</li>
+<li>Query beagle with the whole words, beagle answers with which
+     files in the repository contais these words. These files are the
+     possibe matching files.
+
+</li>
+<li>Grep the target regexp in those possible files (which often is
+     only a very small part of the whole repository, thus grep can
+     finish in a blink of the eyes).
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Modifications to beagle</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+  Here's the details of how I changed beagle to satisfy my need
+  (warning: boring stuff ahead):
+</p>
+<ol>
+<li>Change all beagle built in filters to FilterText. This is
+       because I don't want those keywords filtered by those
+       SourceCode filters. This way, I can beagle-query `extends
+       CFunny' to see which classes are inheriting from `CFunny' in
+       Java (The default Java filter will remoke <code>extends</code> since it is
+       too common and uninteresting in java source files).
+
+</li>
+<li>Remove some restricts. For e.g., only the first 100000 tokens
+       in a file would be indexed, which is undesirable for my
+       purpose. Also, I enlarged the memory threshold by 10 times,
+       since I found it causing problems with some large xml files.
+
+</li>
+<li>Remove more restricts. Basically, I unremoved anything the
+       NoiseFilter will remove. Also, another filter will remove
+       common English words, I unremoved those as well.
+
+</li>
+<li>Added support for indexing Chinese characters (This is because
+       I'm a Chinese).
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Usage</h2>
+<div class="outline-text-2" id="text-4">
+
+
+<p>
+  Here's how I use it:
+</p>
+<ol>
+<li>Build a static index at the top level dir of the souce code:
+
+
+
+
+<pre class="example">mkbeagleidx
+</pre>
+
+</li>
+</ol>
+
+
+
+<ol>
+<li>Use beagrep in any directory in the source tree:
+
+
+
+
+<pre class="example">~/bin/beagrep -e "ENGLISH_STOP_WORDS" 
+</pre>
+
+
+<p>
+       The output is like the following:
+</p>
+
+
+
+<pre class="example">beagle query argument `ENGLISH STOP WORDS'
+/src/beagle/beagled/LuceneCommon.cs:1206: ...ENGLISH_STOP_WORDS...
+...
+...
+</pre>
+
+
+<p>   
+       Note: <code>ENGLISH_STOP_WORDS</code> is broken into 3 words before beagle
+       is queried.
+</p></li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Where to find everything</h2>
+<div class="outline-text-2" id="text-5">
+
+
+<p>
+  I have put the source code at <a href="http://github.com/baohaojun/windows-config/tree/master/">github</a>.
+</p>
+<p>
+  If you checkout the source code, you can find the beagrep and
+  its helper scripts under <a href="http://github.com/baohaojun/windows-config/tree/master/bin/">windows-config/bin</a>.
+</p>
+<p>
+  The beagle source code I modified is under <a href="http://github.com/baohaojun/windows-config/tree/master/gcode/beagle/">windows-config/gcode/beagle</a>.
+</p>
+<p>
+  The c# program which breakes <code>ENGLISH_STOP_WORDS</code> to <code>ENGLISH STOP   WORDS</code> is under <a href="http://github.com/baohaojun/windows-config/tree/master/gcode/BeagleTokenizer/">windows-config/gcode/BeagleTokenizer</a>.
+</p>
+<p>
+  The simplest way to set things up is to run
+</p><pre class="example">
+~/windows-config/bin/after-co-ln-s.sh
+</pre>
+
+<p>  and then
+</p><pre class="example">
+~/windows-config/bin/Linux/after-check-out.sh
+</pre>
+
+
+<p>
+  For more details, please RTFS using beagrep!
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="bash-complete-filenames.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              bash-complete-filenames <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="beagrep-under-win32.html"> <!-- next-url -->
+              beagrep under win32 <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</p></div>
+</div>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/beagrep.html" title="Fastest grep">beagrep</a><br/>
+<a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

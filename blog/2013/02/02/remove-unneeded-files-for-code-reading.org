@@ -1,0 +1,105 @@
+#+title: 在阅读源代码时删掉所有非必要文件的方法
+# bhj-tags: code-reading
+
+在阅读kernel、uboot等项目的源代码的时候，会发现有很大的噪音来自于一些不
+相干的CPU的代码。比如我司的pxa1088，其uboot真正build时用到的文件只有不
+到400个，但整个uboot里共有多少文件呢？6000多个！
+
+怎么想个办法把所有不相干的文件都去掉呢？
+
+我有个主意：
+
+1. 把所有源代码文件都touch一下：
+
+   #+BEGIN_EXAMPLE
+   git ls-tree HEAD -r |pn 4|xargs touch
+   #+END_EXAMPLE
+
+2. 弄出一个标记文件， =touch mark=
+
+3. 做个full build
+
+4. 把所有比 =mark= 新的文件都选出来，这里的新不是改动，而是访问，也就是
+   在 =mark= 被创建之后被第3步的full build访问到过的文件。所以用
+   =find= 命令的话可以这样做： =find . -anewer mark= 
+
+5. 反选访问时间比 =mark= 旧的文件，这些是full build时没有用到的文件，可
+   以安全地把它们删除。
+
+6. 删完之后再做一遍full build，验证一下没有删掉不该删的文件导致build失
+   败。
+
+但是很可惜，这个主意没法在uboot里用。在第4步的时候，你会发现所有源代码
+文件都被访问过了。这是怎么回事儿呢？
+
+用strace可以告诉我们答案。一边在做full build的时候用strace查看所有系统
+调用，加上 =-f= 参数表示跟踪所有fork出来的子进程的系统调用: 
+
+#+BEGIN_EXAMPLE
+(cd $(lookup-file .repo/..);
+ . build/envsetup.sh;
+ cd boot; 
+ BUILD_UBOOT_OBM=true; 
+ set -x;
+ . ../.buildenv.sh;
+ cd uboot;
+ strace -f time make -j8 helan_ff_config;
+ strace -f time make -j8) 2>&1 | tee ~/1.txt
+#+END_EXAMPLE
+
+
+另一边用 =watch= 命令监测某个不相干的文件什么时候其 =atime= 发生了变化：
+
+#+BEGIN_EXAMPLE
+watch -n 1 stat drivers/mmc/arm_pl180_mmci.c
+#+END_EXAMPLE
+
+当发现其atime发生变化之后再去看 =~/1.txt= 里是哪个进程在搞鬼，然后从文
+件头开始查这个进程是怎样被exec的。
+
+#+BEGIN_EXAMPLE
+$ grep drivers/mmc/arm_pl180_mmci.c ~/1.txt
+[pid   684] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
+[pid   684] open("drivers/mmc/arm_pl180_mmci.c", O_RDONLY) = 6
+[pid   694] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
+
+$ grep ' 684]' ~/1.txt|head -n 5
+[pid   684] close(10)                   = 0
+[pid   684] execve("/usr/bin/git", ["git", "update-index", "--refresh", "--unmerged"], [/* 78 vars */]) = 0
+[pid   684] brk(0)                      = 0x25b6000
+[pid   684] access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+[pid   684] mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x2b5c68ec2000
+#+END_EXAMPLE
+
+最后发现是一个 =git update-index ...= 的命令调用。直接在uboot目录下
+=rgrep update-index= 发现是一个setlocalversion脚本，它会产生类似
+=-02978-ge39e5db= 这样的输出。
+
+把这个脚本修正之后，就可以达到我的目的了，你体会一下:-)
+
+*后记* 文件的atime有时候不知为何不会发生变化。我曾经看见一个文件，不管
+我怎么cat它，它的atime一直不变。而它所在的文件系统并没有使用noatime选项
+来mount。修正的办法就是把它touch一下，stat可以发现其a/m/c三个时间戳都是
+一样的，再cat一下，再stat就会发现其atime发生了变化。所以前面指出的第一
+步是必须的。有人能告诉我这是为什么呢吗？
+
+*后记2* 把所有atime没发生变化（没变得比标记文件mark新）的文件列出来的命
+令我现在想到最简洁的是这样的：
+
+#+BEGIN_EXAMPLE
+find . -type f \( -anewer mark -prune -o -print \)
+#+END_EXAMPLE
+
+当然，如果你想把这些文件删掉的话需要注意把.git底下的文件给过滤出去： =|grep -v \\.git= 。
+
+
+*后记3* kernel代码也可以用这个方法删除非build必须的文件。但它的
+setlocalversion脚本是在scripts下（uboot里有很多东西是直接从kernel里“偷”来
+的）。从原理上说应该其他软件也都能用这个方法删掉那些“noise for code
+reading”的文件，但效果根据项目不同而异吧，不可能有kernel/uboot那么夸张
+了。
+
+*后记4* 针对uboot和kernel我分别写了两个脚本，一步完成这里面的所有操作，
+但一如既往地，你想要用这两个脚本的话，需要自己改改。
+
+分别在 [[http://github.com/baohaojun/windows-config/raw/master/bin/rm-non-build-files-uboot][for uboot]] 和 [[http://github.com/baohaojun/windows-config/raw/master/bin/rm-non-build-files-kernel][for kernel]] 。

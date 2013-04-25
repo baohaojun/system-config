@@ -1,0 +1,81 @@
+#+title: 当Java遇到C#
+# bhj-tags: java programming language c#
+
+好吧，蔡学镛老师在微博上幽了一默，
+
+#+BEGIN_QUOTE
+《青春期遇上更年期》、《北京遇上西雅图》... 这些戏剧要描述的是一种冲突
+现象，那么我还可以提供一种电视剧的冲突素材，比方说《Java 遇上 .NET》之
+类的 ... [哈哈]
+#+END_QUOTE
+
+屌丝的我觉得这个拍电视剧估计没人看了，可给我作一个命题作文还是可以
+的:-)。因为beagrep的关系，我曾经把一个JFlex生成的Java文件改写成C#语言。
+
+Beagrep源自Beagle，后者源自Lucene，一个最初用Java实现的搜索引擎，
+Apache的项目，有好事者把它移植到了各种语言上。其中包括Mono平台，微
+软.NET系统的开源实现。当时在Novell的工程师利用这个C#的Lucene版本做了
+Beagle程序。只是可惜后来Mono平台被Novell放弃，Beagle也随之缺乏维护，从
+Debian、Ubuntu等Linux发行版中消失了。现在的默认Linux桌面搜索好像是一个
+叫Tracker的程序，我一直是把它禁用的，因为它一直在后台索引你的所有文件，
+我怕把硬盘灯闪坏了...
+
+搜索引擎都会用到一个分词程序，Lucene的分词程序是用jflex写的，由于我要用
+beagle+grep来阅读源代码，我必须重写这个分词程序以保证搜索的精确性。这个
+重写工作只可能从.jflex的源文件入手，生成一个新的.java的分词程序，再把它
+改写成C#的。最初把Lucene移植到C#上的开发者肯定也是这么干的，但我把每一
+步的过程都记下来了:-)
+
+* Java离C#有多远
+
+不远，最多18步。
+
+代码在 [[https://github.com/baohaojun/beagrep.git][github]] 上，到 =beagrepd/Lucene.Net/Analysis/Standard= 目录下，运行
+
+#+BEGIN_EXAMPLE
+git log --follow --pretty='format: %H' ./StandardTokenizerImpl.cs 
+#+END_EXAMPLE
+就能看到我对这个分词程序的所有改动。 =wc -l= 显示共有18个git commit，这
+其中还应该去掉几个。
+
+运行下面这条长命令可以列出每条commit的主题：
+
+#+BEGIN_EXAMPLE
+git log --follow --pretty='format: %H' ./StandardTokenizerImpl.cs |reverse|xargs bash -c 'for x in "$@"; do echo; git log -1 --pretty="format: %s" $x; done' true
+#+END_EXAMPLE
+
+1. init from http://archive.ubuntu.com/ubuntu/pool/universe/b/beagle/beagle_0.3.9.orig.tar.gz
+   
+   这是第一个commit，我记下来自己是从ubuntu的apt源里下载来的beagle开始改写成beagrep。
+
+2. Big hack on Tokenizer, do not remember how it is done.
+
+   这是我第一次改写这个分词程序，但是说自己不记得怎么做的了，完整的
+   commit记录里你会看到我在底下又说，不要担心，我会重做一遍，并且把每一
+   步都解释一下（因为这真的是太有意思了，非屌丝所不为也！）
+
+   #+BEGIN_QUOTE
+   But don't worry, I will do it again later, with each step explained.
+   #+END_QUOTE
+
+3. rename the generated .java tokenizer to .cs, indent it in emacs
+
+   这一步很简单，就是跑了一下jflex，把.java文件重命名为.cs文件，并在
+   Emacs底下缩进。
+
+4. add namespace, indentation changed because of it.
+5. final -> readonly
+6. java-string-to-cs
+7. int x[] -> int [] x
+8. yychar -> yychar_field
+9. static readonly String ZZ -> const String ZZ
+10. \.length() -> Length
+11. \.charAt(\(.*?\)) -> [\1]
+12. boolean -> bool
+13. throws java.io.IOException ->
+14. value -> value_rename
+15. java.io.Reader -> System.IO.TextReader
+16. readonly \(.*?\)( -> \1(
+17. misc changes to tokenizer to make it work
+18. make the externel program "beagle-break.exe" compile
+19. Rename refactory from beagle to beagrep

@@ -7,14 +7,14 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Emacs和它的朋友们——阅读源代码篇"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-25 02:55:52 CST"/>
-<meta name="author" content="baohaojun"/>
+<meta name="generated" content="2013-04-25T17:27+0800"/>
+<meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
 <link rel="stylesheet" href="/css/default.css" type="text/css">
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
-    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript">
         var BYB = {};
     </script>
@@ -43,6 +43,30 @@
         }
     </script>
 <script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -69,21 +93,6 @@
 <body>
 
 <div id="preamble">
-        <header id="header" class="inner">
-<nav id="sub-nav" class="alignright">
-        <div class="social">
-                <a class="weibo" href="http://weibo.com/baohaojun" title="Weibo">Weibo</a>
-                <a class="github" href="https://github.com/baohaojun" title="GitHub">GitHub</a>
-                <a class="rss" href="/atom.xml" title="RSS">RSS</a>
-
-        </div>
-        <form class="search" action="http://google.com/search" method="get">
-                <input class="alignright" type="text" name="q" results="0">
-                <input type="hidden" name="q" value="site:baohaojun.github.io">
-        </form>
-</nav>
-
-</header>
 
 </div>
 
@@ -318,7 +327,7 @@ make: *** [out/target/product/xx/kernel] Error 1
    后跳到那一行上就行了，见图（在这个例子中，read的定义开始于3162行）：
 </p>
 <p>
-   <img src="./orrur-read.png"  alt="./orrur-read.png" />
+   <img src="orrur-read.png"  alt="../../../../orrur-read.png" />
 </p>
 <p>
    当然，现在我知道Emacs有一个perldoc命令可以直接显示read函数了，可是在
@@ -492,7 +501,7 @@ SCIM_FULL_LETTER_ICON macro        62 scim_fcitx_imengine.cpp #define SCIM_FULL_
 哈，我们可以写一个perl小脚本，轻松地把它转换成grep的格式！见图：
 </p>
 <p>
-<img src="./grep-def.png"  alt="./grep-def.png" />
+<img src="grep-def.png"  alt="../../../../grep-def.png" />
 </p>
 <p>
 这样做的额外的好处是，查找上一个/下一个定义点的Emacs按键，也跟
@@ -608,7 +617,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 下图的功能（1. 列出当前文件中的所有定义方便查看，2. 鼠标点击实现跳转）：
 </p>
 <p>
-<img src="./si-imenu.png"  alt="./si-imenu.png" />
+<img src="si-imenu.png"  alt="../../../../si-imenu.png" />
 </p>
 <p>
 我们的imenu的用法当然跟source insight有点不一样，虽然精神上是类似的。首
@@ -620,7 +629,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 其次，如下图所示
 </p>
 <p>
-<img src="./emacs-imenu.png"  alt="./emacs-imenu.png" />
+<img src="emacs-imenu.png"  alt="../../../../emacs-imenu.png" />
 </p>
 <p>
 我可以把它跟emacs的 <code>anything.el</code> 结合，对要显示何种定义做更精准的控制
@@ -643,7 +652,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 <p>
 最后，上面的图里显示的 imenu 定义跟默认的 Emacs 自带的有点不一样哦！那
 是因为我发现 Emacs 自带的imenu找定义功能不够强大，所以我就把它定制了一
-下，转而寻求强大的ctags-exuberant的帮助（详见 <a href="./my-config-cn.html">我的配置系统</a> ）：
+下，转而寻求强大的ctags-exuberant的帮助（详见 <a href="22/my-config-cn.html">我的配置系统</a> ）：
 </p>
 
 
@@ -663,7 +672,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 
 
 <p>
-终于说到我的 favorite，beagrep了。详见 <a href="./beagrep-cn.html">两秒钟grep两G代码！</a>。
+终于说到我的 favorite，beagrep了。详见 <a href="01/31/beagrep-cn.html">两秒钟grep两G代码！</a>。
 </p>
 
 
@@ -678,7 +687,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 通过它们的结合使用，我们可以实现最后一个功能：查找一个函数在何处被调用。见下图：
 </p>
 <p>
-<img src="./func-called.png"  alt="./func-called.png" />
+<img src="func-called.png"  alt="../../../../func-called.png" />
 </p>
 <p>
 其工作原理是这样的，以上图为例，先beagrep出readlink出现在哪些文件里，再
@@ -704,7 +713,7 @@ source-insight有生成调用关系图的功能（有人用过吗？），我们
 可以做到的（只不过弄完这个功能之后我再也没有用过它），见下图：
 </p>
 <p>
-<img src="./call-graph.png"  alt="./call-graph.png" />
+<img src="call-graph.png"  alt="../../../../call-graph.png" />
 </p>
 </div>
 
@@ -743,6 +752,22 @@ ctags-exuberant来记算），再搜到记下的变量的第一次出现的地�
 <p>
 写到这里，我们的“Emacs和它的朋友们——代码阅读篇”就告一段落了。下一篇，你
 猜对了，“Code Writing”，敬请期待！
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="09/17/Android-Product-Makefiles.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              Android-Product-Makefiles <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="22/fun-design-pattern.html"> <!-- next-url -->
+              在shell脚本里使用Abstract Factory的设计模式 <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
 </p></div>
 </div>
 </div>
@@ -754,7 +779,7 @@ ctags-exuberant来记算），再搜到记下的变量的第一次出现的地�
     <div style="margin-bottom:20px">
         <script type="text/javascript" charset="utf-8">
         (function(){
-          var _w = 86 , _h = 20;
+          var _w = 86 , _h = 16;
           var param = {
             url:location.href,
             type:'6',
@@ -789,9 +814,10 @@ ctags-exuberant来记算），再搜到记下的变量的第一次出现的地�
                 </div>
             </div>
             <div class="about-left about-more">
-                <h2>Projects</h2>
-                    <a href="beagrep.html" title="Fastest grep">beagrep</a><br/>
-                    <a href="skeleton-complete.html" title="Geekest Emacs Completion">skeleton-complete.el</a><br/>
+                <h2>Tags</h2>
+                                <a href="meta/tags/emacs.html" title="Emacs the editor">emacs</a><br/>
+            <a href="meta/tags/code-reading.html" title="Reading source code">code-reading</a><br/>
+<a href="meta/Archive.html" title="All blogs">archive</a><br/>
             </div>
             <div class="about-left about-more">
                 <h2>About</h2>
