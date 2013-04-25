@@ -35,7 +35,7 @@ import过的class都给import进来。feature有：
 
 ** java-resolve
 
-做这个最初的目的是想做上下文补齐，后来发现太难了，补齐还是用我自己的 [[stem-completion.html][提干式id补齐和re补齐]] 吧。
+做这个最初的目的是想做上下文补齐，后来发现太难了，补齐还是用我自己的 [[./stem-completion.org][提干式id补齐和re补齐]] 吧。
 
 * 使用方法
 

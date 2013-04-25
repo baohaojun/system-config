@@ -15,7 +15,7 @@ myself. Just to show you what a geek I am:-)
 
 * Projects
 
-- [[beagrep.html][beagrep]]
+- [[./beagrep.org][beagrep]]
   
   Beagrep is a fork of [[http://en.wikipedia.org/wiki/Beagle_(software)][beagle]], which is a desktop search engine; I
   hacked beagrep to make it more suitable for precise searching, such as code reading.
