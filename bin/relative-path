@@ -3,8 +3,8 @@ function calc_relative() {
     local source=$(formal-path "$1")
     local target=$2
     if test "$source" = "$(readlink -m "$2")"; then
-	echo .
-	exit 0
+        echo .
+        exit 0
     fi
 
     perl -e '
@@ -45,5 +45,5 @@ print "$relative_s";
 }
 
 if test "$(basename "$BASH_SOURCE")" = "$(basename "$0")"; then
-   calc_relative "$@"
+   calc_relative "$(formal-path "$1")" "$(formal-path "$2")"
 fi

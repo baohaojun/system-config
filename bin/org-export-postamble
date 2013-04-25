@@ -1,9 +1,9 @@
 #!/bin/bash
 
-cat <<'EOF'
+cat <<EOF
 
 <div id="disqus_container">
-    <a href="#" class="right comment" onclick="return false;">Click to view/add comments</a>
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
     <div style="margin-bottom:20px">
         <script type="text/javascript" charset="utf-8">
         (function(){
@@ -42,9 +42,8 @@ cat <<'EOF'
                 </div>
             </div>
             <div class="about-left about-more">
-                <h2>Projects</h2>
-                    <a href="beagrep.html" title="Fastest grep">beagrep</a><br/>
-                    <a href="skeleton-complete.html" title="Geekest Emacs Completion">skeleton-complete.el</a><br/>
+                <h2>Tags</h2>
+                    $(org-export-generate-tags $1)
             </div>
             <div class="about-left about-more">
                 <h2>About</h2>

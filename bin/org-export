@@ -1,53 +1,173 @@
 #!/bin/bash
 set -e
 
-if test $# = 0; then
-    die "Error: Usage $(basename $0) FILE.org"
-fi
+orgs=("$@")
+tmp_el=/tmp/$(basename $0).$$
 
-export ORG_FILE_NAME=$(readlink -f $1);
-test -e $1
-tf=/tmp/org-export-$$ # temp file
-(
-    if grep -e '^#+title:' -i "$1" -q; then
-	true;
-    else
-	title=$(echo "$1" | perl -npe 's/_/\\_/g;')
-    cat <<EOF
-#+TITLE: ${title/%.org/}
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+export START_DIR=$PWD
+function org-export-generate-tags() {
+    the_ORG_FILE_NAME=$1
+    echo "arg1 is $the_ORG_FILE_NAME" > ~/.logs/relative-url.log
+    for tag in $(grep '# bhj-tags:' $the_ORG_FILE_NAME|perl -npe 's/.*?://'); do
+        desc=$START_DIR/meta/tags/$tag.desc
+        (
+            cd $START_DIR
+        cat <<EOF
+            <a href="$(relative-url meta/tags/$tag.html $the_ORG_FILE_NAME 2>>~/.logs/relative-url.log)" title="$(cat $START_DIR/meta/tags/$tag.desc)">$tag</a><br/>
 EOF
-    fi
-
-    if test $# = 1; then
-	cat "$1"
-    else
-	perl -ne ' # I am not sure what does this mean anymore.
-BEGIN {
-    $start = 0; 
-}
-if (m/^\*.*'"$2"'/) {
-    $start = 1;
+        )
+    done
+    (
+        cd $START_DIR
+        cat <<EOF
+<a href="$(relative-url meta/Archive.html $the_ORG_FILE_NAME 2>>~/.logs/relative-url.log)" title="All blogs">archive</a><br/>
+EOF
+    )
 }
 
-if (m/^\*/ and $_ !~ m/'"$2"'/) {
-    exit;
+export -f org-export-generate-tags
+function relative-url() {
+
+    relative-path "$@" | perl -e 'use URI::Encode qw(uri_encode); $_ = (<>); print uri_encode($_)'
 }
+export -f relative-url
 
-print if $start;
-' < "$1"
-    fi
-) > $tf.org
+link=true
+TEMP=$(getopt -o L --long no-link -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -L|--no-link)
+        link=false
+        shift
+        ;;
+        --)
+        shift
+        break
+        ;;
+        *)
+        die "internal error"
+        ;;
+    esac
+done
+(
+    echo "(progn"
+    next=0
+    export title
+    for x in "$@"; do
+        if ! grep -e '^#+title:' -i "$x" -q; then
+            (
+                title=$(basename "$x" | perl -npe 's/_/\\_/g;')
+                cat <<EOF
+#+TITLE: ${title/%.org/}
 
-(cd $(dirname $tf.org)
-	emacs-nt -q --batch \
-	    --eval "$(org-export.help $(basename $tf.org))"
+EOF
+                cat "$x"
+            ) > "$x".$$
+            mv "$x".$$ "$x"
+        fi
+    done
+
+    for x in "$@"; do
+        ((next++)) || true
+        ((curr=next-1)) || true
+        ((prev=curr-1)) || true
+
+
+
+        export ORG_FILE_NAME=$(readlink -f $x);
+        test -e $x
+        tf=/tmp/org-export-$(basename $x).$$ # temp file
+        (
+            if test $link = false; then
+                cat $x
+                exit 0
+            fi
+
+            export curr_title=$(grep -e '^#+title:' -i "${orgs[$curr]}"|perl -npe 's/.*?:\s+//')
+            export curr_url=${orgs[$curr]/%.org/.html}
+
+            if test $prev -lt 0; then
+                if test -e .the-last-published-org.rc; then
+                    org=$(cat .the-last-published-org.rc)
+                    export prev_title=$(grep -e '^#+title:' -i "${org}"|perl -npe 's/.*?:\s+//')
+                    export prev_url=${org/%.org/.html}
+
+                    export rel_curr_url=$(relative-url $curr_url $prev_url)
+
+
+
+                    perl -npe '
+                        s/^(\s*)(.*?) <!-- next-title -->/$1$ENV{curr_title} <!-- next-title -->/;
+                        s/^(\s*<a href=")(.*?)(".*)<!-- next-url -->/$1$ENV{rel_curr_url}$3<!-- next-url -->/;' -i $prev_url
+                else
+                    prev_title=Archive
+                    prev_url=meta/Archive.html
+                fi
+
+                echo "${orgs[$#-1]}" > .the-last-published-org.rc
+
+            else
+                prev_title=$(grep -e '^#+title:' -i "${orgs[$prev]}"|perl -npe 's/.*?:\s+//')
+                prev_url=${orgs[$prev]/%.org/.html}
+            fi
+
+            if test $next -ge $#; then
+                next_title=Archive
+                next_url=meta/Archive.html
+            else
+                next_title=$(grep -e '^#+title:' -i "${orgs[$next]}"|perl -npe 's/.*?:\s+//')
+                next_url=${orgs[$next]/%.org/.html}
+            fi
+
+            rel_prev_url=$(relative-url $prev_url $curr_url)
+            rel_next_url=$(relative-url $next_url $curr_url)
+            cat "$x"
+            cat <<EOF
+#+BEGIN_HTML
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="$rel_prev_url"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              $prev_title <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="$rel_next_url"> <!-- next-url -->
+              $next_title <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+#+END_HTML
+EOF
+        ) > $tf.org
+
+
+        org-export.help $(basename $tf.org)
+    done
+    echo ")"
+) > $tmp_el
+
+(
+    cd /tmp
+    emacs -q --batch -l $tmp_el
 )
 
-
-perl -npe 's,\bfile:////([^/]),file://///$1,g' -i $tf.html
-if test -e "$(dirname "$1")"/.no-org.html; then
-    set -- "${1%.org}"
-fi
-cp $tf.html "$1".html
-of "$1".html
-rm $tf.* 
+for x in "$@"; do
+    tf=/tmp/org-export-$(basename $x).$$
+    perl -npe 's,\bfile:////([^/]),file://///$1,g' -i $tf.html
+    x=${x%.org}
+    cp $tf.html "$x".html
+    if test $# = 1; then
+        of "$x".html
+    fi
+    rm $tf.*
+done

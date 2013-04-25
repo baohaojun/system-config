@@ -176,6 +176,8 @@
 (define-key minibuffer-local-map [(meta shift d )] 'bhj-insert-pwdu)
 
 (defvar last-grep-marker nil)
+(defvar bhj-force-cleanup-buffer nil)
+(make-variable-buffer-local 'bhj-force-cleanup-buffer)
 
 (defvar cscope-marker-ring (make-ring 32)
   "Ring of markers which are locations from which cscope was invoked.")
