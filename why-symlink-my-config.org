@@ -1,1 +1,0 @@
-blog/2012/10/29/why-symlink-my-config.org

@@ -1,1 +1,0 @@
-blog/2012/10/23/makefile-printval.org
