@@ -185,9 +185,7 @@ one entry coming *before* the point, then one entry coming
 
 Or else the returned list of strings is in the order they appear in the buffer."
  (buffer-substring-no-properties mb me)
- ;; no need to move along, the re-search-forward will move by itself
- ;; in this basic case
- nil)
+ (goto-char (1+ mb)))
 
 (skeleton--make-matcher
  skeleton--line-extracting-matcher
