@@ -1,18 +1,6 @@
 #+title: Archive
  * 2013
   - 2013-04
-   * 2013-04-25
-
-     [[../blog/2013/04/25/test3.org][This is test3]]
-
-     [[../blog/2013/04/25/test2.org][This is test2]]
-
-     [[../blog/2013/04/25/test1.org][this is test1]]
-
-   * 2013-04-24
-
-     [[../blog/2013/04/24/allow-comments.org][allow-comments]]
-
    * 2013-04-13
 
      [[../blog/2013/04/13/skeleton-complete.org][skeleton-complete]]
@@ -67,15 +55,9 @@
 
      [[../blog/2013/02/12/my-programmer-dvorak.org][Switched to USA Pragrammer Dvorak Keyboard]]
 
-     [[../blog/2013/02/12/make-proposal.org][make-proposal]]
-
-     [[../blog/2013/02/12/kernel.org][kernel]]
-
      [[../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.org][html2mht.pl and dir2html.pl]]
 
      [[../blog/2013/02/12/dvp-win32.org][Using dvp under Win32]]
-
-     [[../blog/2013/02/12/dvp-on-windows.org][dvp-on-windows]]
 
      [[../blog/2013/02/12/combining-cli-and-gui.org][Using CLI and GUI Together Seemlessly]]
 
@@ -154,10 +136,6 @@
      [[../blog/2012/09/17/Android-Product-Makefiles.org][Android-Product-Makefiles]]
 
   - 2012-05
-   * 2012-05-14
-
-     [[../blog/2012/05/14/howto-use-https-with-github.org][howto-use-https-with-github]]
-
    * 2012-05-02
 
      [[../blog/2012/05/02/pdf-for-kindle-touch.org][pdf-for-kindle-touch]]
