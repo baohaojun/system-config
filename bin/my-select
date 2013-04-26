@@ -26,14 +26,14 @@ my @original_argv = @ARGV;
 
 sub find_in_original_argv($) {
     my ($entry) = @_;
-    
+
     my $count = 1;
     for (@original_argv) {
-	if ($entry eq $_) {
-	    echo $count;
-	    exit 0;
-	}
-	$count++;
+        if ($entry eq $_) {
+            echo $count;
+            exit 0;
+        }
+        $count++;
     }
 }
 
@@ -41,69 +41,69 @@ sub my_select(\@) {
     my ($args_ref) = @_;
 
     if (@$args_ref == 1) {
-	find_in_original_argv($$args_ref[0]);
-	return;
+        find_in_original_argv($$args_ref[0]);
+        return;
     }
 
     unless ($ENV{ORIGINAL_MATCHER}) {
-	my $count = 1;
-	foreach (@$args_ref) {
-	    tty "$count) $_\n";
-	    $count++;
-	}
+        my $count = 1;
+        foreach (@$args_ref) {
+            tty "$count) $_\n";
+            $count++;
+        }
     }
-    
+
     my $ans;
     if ($ENV{ORIGINAL_MATCHER}) {
-	$ans = $ENV{ORIGINAL_MATCHER};
-	$ENV{ORIGINAL_MATCHER} = "";
+        $ans = $ENV{ORIGINAL_MATCHER};
+        $ENV{ORIGINAL_MATCHER} = "";
     } else {
-	$ans = read_ans '#? ';
+        $ans = read_ans '#? ';
     }
 
     if (not $ans or $ans =~ m/^\d+$/ and $ans > @$args_ref) {
-	find_in_original_argv($$args_ref[0]);
+        find_in_original_argv($$args_ref[0]);
     } elsif ($ans =~ m/^\d+$/) {
-	find_in_original_argv($$args_ref[$ans - 1]);
+        find_in_original_argv($$args_ref[$ans - 1]);
     } else {
-	my @matches;
-	my $reverse;
+        my @matches;
+        my $reverse;
 
-	if ($ans =~ m/^!/) {
-	    $reverse = 1;
-	    $ans = substr($ans, 1);
-	}
-	
-	for my $entry (@$args_ref) {
-	    my $matched = 1;
-	    for my $matcher (map {qr($_)} split(" ", $ans)) {
-		if ($entry =~ m/$matcher/i) {
-		    if ($reverse) {
-			$matched = 0;
-			last;
-		    }
-		} elsif (not $reverse) {
-		    $matched = 0;
-		    last;
-		}
-	    }
-	    if ($matched) {
-		push @matches, $entry;
-	    }
-	}
+        if ($ans =~ m/^!/) {
+            $reverse = 1;
+            $ans = substr($ans, 1);
+        }
 
-	if (@matches == 1) {
-	    find_in_original_argv($matches[0]);
-	} elsif (@matches) {
-	    my_select(\@matches);
-	} else {
-	    $ans = read_ans "Warning: no matches found, press <return> to continue";
-	    if ($ans eq "-") {
-		read_ans "Going back a level, press <return> to continue";
-	    } else {
-		my_select($args_ref);
-	    }
-	}
+        for my $entry (@$args_ref) {
+            my $matched = 1;
+            for my $matcher (map {qr($_)i} split(" ", $ans)) {
+                if ($entry =~ m/$matcher/) {
+                    if ($reverse) {
+                        $matched = 0;
+                        last;
+                    }
+                } elsif (not $reverse) {
+                    $matched = 0;
+                    last;
+                }
+            }
+            if ($matched) {
+                push @matches, $entry;
+            }
+        }
+
+        if (@matches == 1) {
+            find_in_original_argv($matches[0]);
+        } elsif (@matches) {
+            my_select(\@matches);
+        } else {
+            $ans = read_ans "Warning: no matches found, press <return> to continue";
+            if ($ans eq "-") {
+                read_ans "Going back a level, press <return> to continue";
+            } else {
+                my_select($args_ref);
+            }
+        }
     }
 }
 

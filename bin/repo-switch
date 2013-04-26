@@ -96,6 +96,9 @@ if test -e "$repodir"/repo-switch && grep '^export' -q "$repodir"/repo-switch; t
                 ;;
             -r)
                 old_repo_url=$2
+                if test "$old_repo_url" = --; then
+                    old_repo_url=
+                fi
                 shift 2
                 ;;
             --)
@@ -140,9 +143,9 @@ if test -z "$repo_init_manifest" || ! [[ "$repo_init_manifest" =~ \.xml$ ]]; the
             manifest_pattern="m/./";
         fi
         repo_init_manifest=$(select-output-line bash -c "echo $old_repo_init_manifest;
-                                                         (cd $(lookup-file .repo/manifests) && 
-                                                          find . -name '*.xml' | 
-                                                          perl -npe 's!^\./!!' | 
+                                                         (cd $(lookup-file .repo/manifests) &&
+                                                          find . -name '*.xml' |
+                                                          perl -npe 's!^\./!!' |
                                                           perl -ne 'print if $manifest_pattern')")
     else
         repo_init_manifest=${old_repo_init_manifest:-default.xml}
@@ -202,7 +205,7 @@ fi
 
 (
     printf 'export repo_init_args=('
-    for x in -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest -r $repo_url -- "$@"; do 
+    for x in -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest -r $repo_url -- "$@"; do
         printf ' %q' "$x";
     done
     printf ')'
