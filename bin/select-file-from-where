@@ -1,0 +1,2 @@
+#!/bin/bash
+select-output-line lookup-file-from-where "$@";

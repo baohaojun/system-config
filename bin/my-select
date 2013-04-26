@@ -17,7 +17,7 @@ sub read_ans($) {
         $prompt .= " ";
     }
     tty "$prompt";
-    my $ans = <>;
+    chomp(my $ans = <>);
     return $ans;
 }
 
@@ -62,10 +62,9 @@ sub my_select(\@) {
     }
 
     if (not $ans or $ans =~ m/^\d+$/ and $ans > @$args_ref) {
-	$ans = 1
+	find_in_original_argv($$args_ref[0]);
     } elsif ($ans =~ m/^\d+$/) {
 	find_in_original_argv($$args_ref[$ans - 1]);
-	exit 0;
     } else {
 	my @matches;
 	my $reverse;
