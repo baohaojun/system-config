@@ -5,6 +5,10 @@ set -ex
 test "$(pwd)" = $HOME && cd ~/windows-config
 cd "$(dirname "$(lookup-file .git)")"
 
+if git-is-ancestor master HEAD; then
+    git co -B master
+fi
+
 git config remote.origin.url | grep -q baohaojun || exit 0 # this is not my github, do not try to push it.
 
 
@@ -20,7 +24,7 @@ fi
 
 if git remote -v | grep baohaojun.github.com.git; then
     org_changes=$(git st -S|grep -e '\.org$' || true)
-    for x in $org_changes; do 
+    for x in $org_changes; do
         if test -e $x; then
             org-export $x
         fi
@@ -32,7 +36,7 @@ if git remote -v | grep baohaojun.github.com.git; then
     git add .
 fi
 
-git add . 
+git add .
 
 while test "$(git log --pretty=oneline -1 | cut -b 42-)" = mf; do
     git reset --soft HEAD^
@@ -40,22 +44,22 @@ done
 
 if git status -s | grep . ; then
     git commit -m "$(
-	(
-	    echo "###start of comment###"
-	    echo in $(pwd):
-	    git diff HEAD | perl -npe 's,^diff --git ,* ,'
-	    LOCAL=Local
-	    cat <<EOF
+        (
+            echo "###start of comment###"
+            echo in $(pwd):
+            git diff HEAD | perl -npe 's,^diff --git ,* ,'
+            LOCAL=Local
+            cat <<EOF
 # $LOCAL Variables: #
 # mode:org #
 # End: #
 EOF
-	) | get-stdin
+        ) | get-stdin
     )" ||true # " to fix the font-lock...
 fi
 
 rb=$(from-mac)
-if git branch --contains HEAD -a |grep -q from-mac; then 
+if git branch --contains HEAD -a |grep -q from-mac; then
     echo HEAD already containd in a remote branch, no need to push
     exit
 fi

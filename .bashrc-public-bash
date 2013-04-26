@@ -125,7 +125,7 @@ function _select_cd() {
     elif test ${#dirs[@]} = 1; then
         builtin cd ${dirs[0]}
     else 
-        NUM=`my_select "${dirs[@]}"`
+        NUM=`my-select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
     fi
