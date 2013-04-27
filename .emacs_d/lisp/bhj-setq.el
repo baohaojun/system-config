@@ -1,4 +1,4 @@
-(setq yas/root-directory '("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets"))
+(setq yas-snippet-dirs "~/.emacs_d/yasnippet/snippets")
 
 (setq org-mobile-directory "~/MobileOrg")
 

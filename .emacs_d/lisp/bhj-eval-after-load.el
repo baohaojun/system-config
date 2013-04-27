@@ -86,4 +86,9 @@
 (eval-after-load 'java-mode
   '(define-key java-mode-map (kbd "M-s d") 'bhj-open-android-doc-on-java-buffer))
 
-(eval-after-load "ediff-init" (add-hook 'ediff-quit-hook (lambda () (shell-command "find-or-exec emacs"))))
+(eval-after-load "ediff-init" '(add-hook 'ediff-quit-hook (lambda () (shell-command "find-or-exec emacs"))))
+
+(eval-after-load 'yasnippet '(progn 
+                               (message "hello yas/reload-all")))
+
+(add-hook 'emacs-startup-hook (lambda () (call-interactively 'yas-global-mode)))

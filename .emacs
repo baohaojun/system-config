@@ -504,8 +504,6 @@
                            (t (funcall saved-file-remote-p file identification connected)))))
       ad-do-it)))
 
-(yas/global-mode)
-
 (require 'helm-config)
 (helm-mode 1)
 
