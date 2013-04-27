@@ -158,6 +158,7 @@ should be a string; MOVE-ALONG is only used for its side-effects."
   `(defun ,matcher-name (re buffer tag)
      (let ((strlist-before nil)
            (strlist-after nil)
+           (strlist nil)
            (old-point (point)))
        (with-current-buffer buffer
          (save-excursion
@@ -172,7 +173,16 @@ should be a string; MOVE-ALONG is only used for its side-effects."
                    ;; substr further to the old-point is at the head of strlist-after, in bad order
                    (setq strlist-after (cons substr strlist-after))))
                ,move-along))
-           (skeleton--interleave strlist-before (nreverse strlist-after)))))))
+           (setq strlist (skeleton--interleave strlist-before (nreverse strlist-after)))
+           ;; This expansion is useless, it's the same as the skeleton
+           ;; (in fact, extracted from the same place, and thus at the
+           ;; car of strlist. We must remove it here, or else the
+           ;; buried buffers will never get matched).
+           (if (and (eq tag 'current)
+                    (stringp (car strlist))
+                    (string= (car strlist) skeleton--the-skeleton))
+               (cdr strlist)
+             strlist))))))
 
 (skeleton--make-matcher
  skeleton--matcher
