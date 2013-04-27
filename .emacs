@@ -164,6 +164,9 @@
 (defvar bhj-force-cleanup-buffer nil)
 (make-variable-buffer-local 'bhj-force-cleanup-buffer)
 
+(defvar cscope-output-buffer-name "*cscope*"
+  "The name of the cscope output buffer.")
+
 (defvar cscope-marker-ring (make-ring 32)
   "Ring of markers which are locations from which cscope was invoked.")
 
@@ -360,8 +363,6 @@
 (require 'skeleton-complete)
 (skeleton-complete-global-mode 1)
 
-
-(require 'xcscope)
 
 (keydef "C-M-j" 'bhj-jdk-help)
 (keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
