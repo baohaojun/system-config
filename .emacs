@@ -348,9 +348,9 @@
  '(woman-use-own-frame nil)
  '(x-select-enable-clipboard t)
  '(x-select-enable-primary t)
- '(yas/also-auto-indent-first-line t)
- '(yas/prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
- '(yas/trigger-key "M-TAB"))
+ '(yas-also-auto-indent-first-line t)
+ '(yas-prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
+ '(yas-trigger-key "M-TAB"))
 
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
