@@ -56,7 +56,7 @@ org-mode里的中英文混排、尤其是在表格中，如果不选等宽（指
 
 改完之后由于缩放对中文也有效，我只要把输入法的中文字体设小一点就可以了。见图：
 
-[[../../../../perfect-emacs-chinese-font.png]]
+[[../../../../images/post/perfect-emacs-chinese-font.png]]
 
 配置脚本见 [[http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/bhj-fonts.el][github]] 。
 
@@ -70,4 +70,4 @@ org-mode里的中英文混排、尤其是在表格中，如果不选等宽（指
 
 见图：
 
-[[../../../../perfect-emacs-chinese-font-win7.png]]
+[[../../../../images/post/perfect-emacs-chinese-font-win7.png]]

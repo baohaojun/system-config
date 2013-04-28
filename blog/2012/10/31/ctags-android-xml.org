@@ -47,12 +47,12 @@ BUT！人生最厉害就是这个BUT！png资源对应的id名字就是该png文
 gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-example，
 结果见图：
 
-[[../../../../grep-png.png]]
+[[../../../../images/post/grep-png.png]]
 
 尤其爽的是，在Emacs底下，“编辑”.png文件的话，会把它以图片方式打开，而不
 是一堆乱码。这样才够直观嘛！另外，很多layout下的.xml文件名也会被当作一
 个id出现在源码中，所以我们也一并处理了，gtags的patch如下（已经checkin到
-[[../22/my-config-cn.html][我的配置系统]] ）：
+[[../22/my-config-cn.org][我的配置系统]] ）：
 
 #+begin_src diff
 diff --git a/gcode/global/plugin-example/exuberant-ctags.c b/gcode/global/plugin-example/exuberant-ctags.c

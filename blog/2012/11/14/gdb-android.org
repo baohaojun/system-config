@@ -39,7 +39,7 @@ target remote localhost:3333
 这里我们用的是gud，而不是Emacs下支持多窗口的gdb，是因为我发现后者不太稳
 定，性能也比较弱些。gud的bt列出来的文件不支持跳转，我们可以用 ~compilation-minor-mode~ 加上这个支持：
 
-[[../../../../gud-cmm.png]]
+[[../../../../images/post/gud-cmm.png]]
 
 为了来回切换方便，我们把这个命令绑一个快捷键：
 
@@ -47,7 +47,7 @@ target remote localhost:3333
 (global-set-key (kbd "M-s x") 'compilation-minor-mode)
 #+end_src
 
-所有增强脚本见[[../../10/22/my-config-cn.html][我的配置环境]]。
+所有增强脚本见[[../../10/22/my-config-cn.org][我的配置环境]]。
 
 
 

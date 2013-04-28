@@ -34,7 +34,7 @@ windows-config的子目录下呢？别急，听我慢慢道来:-)
 
 其中第一条就是要把相应的该放在 ~$HOME~ 下的文件/目录通过symlink给放出来，
 让bash/emacs等程序能读到。用symlink而不是拷贝出来有一个额外的好处，你能
-猜到 [[../29/why-symlink-my-config.html][是什么]] 吗？第二条则是做一些.deb包的安装、编译工作。
+猜到 [[../29/why-symlink-my-config.org][是什么]] 吗？第二条则是做一些.deb包的安装、编译工作。
 
 其中.deb包的安装有点意思，可以跟大家说说：
 

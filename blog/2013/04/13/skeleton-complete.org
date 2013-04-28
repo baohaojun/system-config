@@ -103,7 +103,7 @@ But of course, often the user still need to choose from multiple
 matches. =Skeleton-complete= uses =ecomplete.el= for presenting the
 user the matches he/she can choose from:
 
-[[../../../../skeleton-id.png]]
+[[../../../../images/post/skeleton-id.png]]
 
 From the screenshot, you can see that the matches are presented in a
 order according to their distance to the point. According to principle
@@ -125,7 +125,7 @@ only. Say I have a long expression, and I will complete the whole
 expression, once again you type an “interesting” skeleton, and type
 =M-s <return>=, it will get fleshed out:
 
-[[../../../../skeleton-exp.png]]
+[[../../../../images/post/skeleton-exp.png]]
 
 Here's how it works. First the skeleton is broken down to bare bones,
 =$=, =h=, =1= and =}=. Then they are stringed to become

@@ -28,7 +28,7 @@
 
 见图（只要打3个字母，就允许我补齐相当长的字串，所以经常能省打很多字）：
 
-[[../../../../re-completion.png]] 
+[[../../../../images/post/re-completion.png]] 
 
 使用这种补齐方式的优点是（与eclipse等IDE中的java上下文智能补齐相比）：
 

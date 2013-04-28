@@ -15,7 +15,7 @@ Emacs lisp做一些简单的java编程工具。
 
 在eclim底下的截图做不出来了，下面给大家看一下我用自己的脚本做出来的效果吧。
 
-[[../../../../java-get-hierarchy.png]]
+[[../../../../images/post/java-get-hierarchy.png]]
 
 与eclim的java-get-hierarchy相比，优点有二：
 
@@ -39,10 +39,10 @@ import过的class都给import进来。feature有：
 
 * 使用方法
 
-这套工具和我的个人配置环境整合在一起，需要先配一下，参考 [[../../10/22/my-config-cn.html][这里]] 。
+这套工具和我的个人配置环境整合在一起，需要先配一下，参考 [[../../10/22/my-config-cn.org][这里]] 。
 
 配置完成后，到你的android目录下执行 =for-code-reading= （会花大约一小时，
-主要是 [[../../../2011/12/23/beagrep.html][mkbeagrepidx]] 会花很长时间），然后执行 =java-get-hierarchy.pl
+主要是 [[../../../2011/12/23/beagrep.org][mkbeagrepidx]] 会花很长时间），然后执行 =java-get-hierarchy.pl
 android.view.View= ，应该能看到这样的输出：
 
 #+BEGIN_EXAMPLE

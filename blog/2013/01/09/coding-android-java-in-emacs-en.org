@@ -36,7 +36,7 @@ the java source file.
    =completing-read= will be used to trivially prompt you to choose
    one, as you can see in the video or the screenshot below:
 
-   [[../../../../emacs-java-import.png]]
+   [[../../../../images/post/emacs-java-import.png]]
 
    Note that I am using anything.el (now renamed as [[http://www.emacswiki.org/Anything][helm]]) to make
    =completing-read= even more friendly.
@@ -69,11 +69,11 @@ You can see it in the video, or the below screenshot, note how the
 onCreate method has been show below each of the classes who defines
 it.
 
-[[../../../../emacs-java-hierarchy.png]]
+[[../../../../images/post/emacs-java-hierarchy.png]]
 
 Here is another one showing a similar class and the onKeyUp method.
 
-[[../../../../java-get-hierarchy.png]]
+[[../../../../images/post/java-get-hierarchy.png]]
 
 ** java-resolve
 
@@ -102,7 +102,7 @@ methods.
 
 See the video or the below screenshot:
 
-[[../../../../java-complete-method.png]]
+[[../../../../images/post/java-complete-method.png]]
 
 
 ** java-get-override
@@ -111,7 +111,7 @@ You may need to redefine a method of a parent class/interface, this
 elisp command can come to help. You can =completing-read= choose which
 method to override. See the video or the screenshot:
 
-[[../../../../java-get-override.png]]
+[[../../../../images/post/java-get-override.png]]
 
 
 
@@ -250,7 +250,7 @@ This tool is so convenient that I don't find some of my java-coding
 scrits's bugs so urgent to fix.
 
 You can see in the video or the below screenshot:
-[[../../../../regexp-completion.png]]
+[[../../../../images/post/regexp-completion.png]]
 
 You can find the elisp source in [[http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/skeleton-complete.el][skeleton-complete.el]].
 

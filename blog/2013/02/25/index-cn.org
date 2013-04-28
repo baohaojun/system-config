@@ -15,7 +15,7 @@
 
 * 我的自由软件项目
 
-- [[../../../2012/01/31/beagrep-cn.html][beagrep]]
+- [[../../../2012/01/31/beagrep-cn.org][beagrep]]
   
   Beagrep在两G代码中grep只需不到一秒钟。它源自[[http://en.wikipedia.org/wiki/Beagle_(software)][beagle]]，一个桌面搜索引擎，
   我对其进行了修改，以便能精确地进行搜索，从而可以用它来大大加快grep的
@@ -24,7 +24,7 @@
 
   Beagrep同时支持Linux版和Windows版。
 
-- [[../../../2011/12/28/org-jira.html][org-jira]]
+- [[../../../2011/12/28/org-jira.org][org-jira]]
 
   用Emacs的org-mode来管理Jira，一个很受欢迎的bug tracking/task
   management系统。
@@ -49,13 +49,13 @@
   * 处理文件内容中的重命名、文件名字的重命名、（递归）目录名字的重命名，
     symlink目标路径的重命名。
 
-- [[../../../2012/12/27/coding-android-java-in-emacs.html][aJoe]]
+- [[../../../2012/12/27/coding-android-java-in-emacs.org][aJoe]]
 
   在Emacs下进行Android Java编程。
 
 - 其他
   
   还有很多其他的小软件、小脚本。我把它们都放到一个github项目里进行管理。
-  详情见 [[../../../2012/10/22/my-config-cn.html][我的配置环境]] 。
+  详情见 [[../../../2012/10/22/my-config-cn.org][我的配置环境]] 。
 
 

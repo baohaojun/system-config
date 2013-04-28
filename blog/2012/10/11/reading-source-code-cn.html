@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Emacs和它的朋友们——阅读源代码篇"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-28T13:20+0800"/>
+<meta name="generated" content="2013-04-28T14:14+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -327,7 +327,7 @@ make: *** [out/target/product/xx/kernel] Error 1
    后跳到那一行上就行了，见图（在这个例子中，read的定义开始于3162行）：
 </p>
 <p>
-   <img src="../../../../orrur-read.png"  alt="../../../../orrur-read.png" />
+   <img src="../../../../images/post/orrur-read.png"  alt="../../../../images/post/orrur-read.png" />
 </p>
 <p>
    当然，现在我知道Emacs有一个perldoc命令可以直接显示read函数了，可是在
@@ -501,7 +501,7 @@ SCIM_FULL_LETTER_ICON macro        62 scim_fcitx_imengine.cpp #define SCIM_FULL_
 哈，我们可以写一个perl小脚本，轻松地把它转换成grep的格式！见图：
 </p>
 <p>
-<img src="../../../../grep-def.png"  alt="../../../../grep-def.png" />
+<img src="../../../../images/post/grep-def.png"  alt="../../../../images/post/grep-def.png" />
 </p>
 <p>
 这样做的额外的好处是，查找上一个/下一个定义点的Emacs按键，也跟
@@ -617,7 +617,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 下图的功能（1. 列出当前文件中的所有定义方便查看，2. 鼠标点击实现跳转）：
 </p>
 <p>
-<img src="../../../../si-imenu.png"  alt="../../../../si-imenu.png" />
+<img src="../../../../images/post/si-imenu.png"  alt="../../../../images/post/si-imenu.png" />
 </p>
 <p>
 我们的imenu的用法当然跟source insight有点不一样，虽然精神上是类似的。首
@@ -629,7 +629,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 其次，如下图所示
 </p>
 <p>
-<img src="../../../../emacs-imenu.png"  alt="../../../../emacs-imenu.png" />
+<img src="../../../../images/post/emacs-imenu.png"  alt="../../../../images/post/emacs-imenu.png" />
 </p>
 <p>
 我可以把它跟emacs的 <code>anything.el</code> 结合，对要显示何种定义做更精准的控制
@@ -687,7 +687,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 通过它们的结合使用，我们可以实现最后一个功能：查找一个函数在何处被调用。见下图：
 </p>
 <p>
-<img src="../../../../func-called.png"  alt="../../../../func-called.png" />
+<img src="../../../../images/post/func-called.png"  alt="../../../../images/post/func-called.png" />
 </p>
 <p>
 其工作原理是这样的，以上图为例，先beagrep出readlink出现在哪些文件里，再
@@ -713,7 +713,7 @@ source-insight有生成调用关系图的功能（有人用过吗？），我们
 可以做到的（只不过弄完这个功能之后我再也没有用过它），见下图：
 </p>
 <p>
-<img src="../../../../call-graph.png"  alt="../../../../call-graph.png" />
+<img src="../../../../images/post/call-graph.png"  alt="../../../../images/post/call-graph.png" />
 </p>
 </div>
 

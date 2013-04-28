@@ -387,7 +387,7 @@ This is a tool to generate a call graph for the software project you
 want. I have found its effectiveness is to be questioned, but you can
 see a picture below:
 
-[[../../../../call-graph.png]]
+[[../../../../images/post/call-graph.png]]
 
 This picture is generated for the adb sub-project in android code. You
 can see which functions are calling ~adb_connect~, and which functions

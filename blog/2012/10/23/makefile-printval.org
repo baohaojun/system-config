@@ -70,7 +70,7 @@ Emacs大大简化，从而让它基本达到“交互式”编程的标准：
 
 具体可见下图：
 
-[[../../../../interactive-make.png]]
+[[../../../../images/post/interactive-make.png]]
 
 这个脚本的内容如下：
 

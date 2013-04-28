@@ -1,7 +1,7 @@
 #+title: My Page on Github
 # bhj-tags: blog
 
-(For Chinese version of this page, click [[../../../2013/02/25/index-cn.html][这里]]).
+(For Chinese version of this page, click [[../../../2013/02/25/index-cn.org][这里]]).
 
 * About Me
 
@@ -22,7 +22,7 @@ myself. Just to show you what a geek I am:-)
 
   It has both Linux and Windows version.
 
-- [[../28/org-jira.html][org-jira]]
+- [[../28/org-jira.org][org-jira]]
 
   Brings org mode and Jira together.
 
