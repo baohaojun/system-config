@@ -1,10 +1,11 @@
 #+title: skeleton-complete
 # bhj-tags: emacs
 
-Gimme a skeleton, and I'll complete you, man!
+Gimme a skeleton, and I'll complete you, like Jerry Maguire does. Or
+at least lemme make it scratch your back, heeheehee.
 
-=Skeleton-complete= is my effort to push =hippie-expand= to
-extremes. With it you can save a lot of typing even more than
+Jokes aside, =skeleton-complete= is my effort to go beyond
+=hippie-expand=. With it you can save a lot of typing even more than
 hippie-expand. To be more specific, it is hippie-expand's
 =try-expand-dabbrev= and =try-expand-line= functions that I want to do
 better with skeleton-complete.
@@ -155,7 +156,7 @@ skeleton-complete that you might want to know.
    Edit: think =try-expand-dabbrev-all-buffers=.
 
 3. Because of 1) and the fact that =ecomplete.el= is used, you can use
-   skeleton-complete in the minibuffer. I only made key binding for
+   skeleton-complete in the minibuffer. I made another key binding for
    the second flavor, =M-g x=, you probably need use it too, because
    =M-s <return>= is often not usable in the minibuffer.
 
@@ -212,8 +213,8 @@ iso-tex2iso=, if you don't know already:-)
 will do. But in the 2nd flaver, I must use non-greedy to give user
 more control: given =$double_hash{$ref1}{$ref2}=, greedy =${}= and
 =${}}= will both match the whole thing, but the non-greedy version
-will empower user to choose =$double_hash{$ref1}= and
-=$double_hash{$ref1}{$ref2}= respectively.
+will empower user to choose =$double_hash{$ref1}= with =${}= and
+=$double_hash{$ref1}{$ref2}= with =${}}= respectively.
 
 [fn:why-boundary] The real reason is, without this constraint, =hello
 world= will generate 2 meaningless matches for the skeleton =lr= and

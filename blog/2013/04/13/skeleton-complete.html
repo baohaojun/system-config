@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="skeleton-complete"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-28T14:14+0800"/>
+<meta name="generated" content="2013-04-28T16:04+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -99,11 +99,12 @@ for the JavaScript code in this tag.
 <div id="content">
 <h1 class="title">skeleton-complete</h1>
 
-<p>Gimme a skeleton, and I'll complete you, man!
+<p>Gimme a skeleton, and I'll complete you, like Jerry Maguire does. Or
+at least lemme make it scratch your back, heeheehee.
 </p>
 <p>
-<code>Skeleton-complete</code> is my effort to push <code>hippie-expand</code> to
-extremes. With it you can save a lot of typing even more than
+Jokes aside, <code>skeleton-complete</code> is my effort to go beyond
+<code>hippie-expand</code>. With it you can save a lot of typing even more than
 hippie-expand. To be more specific, it is hippie-expand's
 <code>try-expand-dabbrev</code> and <code>try-expand-line</code> functions that I want to do
 better with skeleton-complete.
@@ -348,7 +349,7 @@ skeleton-complete that you might want to know.
 </p>
 </li>
 <li>Because of 1) and the fact that <code>ecomplete.el</code> is used, you can use
-   skeleton-complete in the minibuffer. I only made key binding for
+   skeleton-complete in the minibuffer. I made another key binding for
    the second flavor, <code>M-g x</code>, you probably need use it too, because
    <code>M-s &lt;return&gt;</code> is often not usable in the minibuffer.
 
@@ -425,8 +426,8 @@ don't try to use 2nd flavor skeleton-complete with them, run away!
 will do. But in the 2nd flaver, I must use non-greedy to give user
 more control: given <code>$double_hash{$ref1}{$ref2}</code>, greedy <code>${}</code> and
 <code>${}}</code> will both match the whole thing, but the non-greedy version
-will empower user to choose <code>$double_hash{$ref1}</code> and
-<code>$double_hash{$ref1}{$ref2}</code> respectively.
+will empower user to choose <code>$double_hash{$ref1}</code> with <code>${}</code> and
+<code>$double_hash{$ref1}{$ref2}</code> with <code>${}}</code> respectively.
 </p>
 
 

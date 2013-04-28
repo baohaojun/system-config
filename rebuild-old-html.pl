@@ -6,7 +6,7 @@ use strict;
 use String::ShellQuote;
 
 sub debug(@) {
-    # print STDERR "@_\n";
+    print STDERR "@_\n";
 }
 
 sub fix_link($)
@@ -15,21 +15,21 @@ sub fix_link($)
 
     our $html_dir;
     our $base_html_sq;
-    debug "link is $link";
     if (-e "$html_dir/$link") {
-        debug "-e $html_dir/$link";
         $link = shell_quote("$html_dir/$link");
         chomp($link = qx(relative-path $link $base_html_sq));
-        debug "link is $link";
         return uri_encode($link);
     } else {
-        debug "not -e $html_dir/$link";
     }
 
     return $link;
 }
 
-for our $org_file (split("\n", qx(find blog -name '*.org' -type f))) {
+unless (@ARGV) {
+    @ARGV = split("\n", qx(find blog -name '*.org' -type f));
+}
+
+for our $org_file (@ARGV) {
     debug "org_file is $org_file";
     next unless -e $org_file;
     my $base_org = $org_file;
