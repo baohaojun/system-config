@@ -35,6 +35,7 @@
 
 (require 'ecomplete)
 (require 'cl)
+(require 'thingatpt)
 
 (defvar skeleton--start
   nil
@@ -205,6 +206,16 @@ See `skeleton--matcher'."
  (buffer-substring-no-properties (line-beginning-position) (line-end-position))
  (end-of-line))
 
+(skeleton--make-matcher
+ skeleton--sexp-extracting-matcher
+ "Search the buffer to collect a list of all balanced expressions matching `re'.
+
+See `skeleton--matcher'."
+ (let ((e (save-excursion (goto-char mb) (forward-sexp) (point))))
+   (buffer-substring-no-properties mb e))
+ (let ((e (save-excursion (goto-char mb) (forward-sexp) (point))))
+   (goto-char e)))
+
 (defun skeleton--buffer-filter ()
   "Return an alist of buffers to be matched againt the skeleton for completions.
 
@@ -295,8 +306,30 @@ characters before the point."
   (skeleton--general-expand #'skeleton--symbol-skeleton-extracter))
 
 (defun skeleton-expand-partial-lines ()
+  "Expand the skeleton into a partial line match.
+
+This means expand to string from the beginning to the end of the
+matched region."
   (interactive)
   (skeleton--general-expand #'skeleton--line-skeleton-extracter))
+
+(defun skeleton-expand-lines ()
+  "Expand the skeleton into a full line match.
+
+This means expand to string from the beginning to the end of the
+line where the match occured."
+  (interactive)
+  (skeleton--general-expand #'skeleton--line-skeleton-extracter
+                            #'skeleton--line-extracting-matcher))
+
+(defun skeleton-expand-sexp ()
+  "Expand the skeleton into an S-expression.
+
+This means expand to string from the beginning to the end of the
+S-expression enclosing the matched region."
+  (interactive)
+  (skeleton--general-expand #'skeleton--line-skeleton-extracter
+                            #'skeleton--sexp-extracting-matcher))
 
 (defmacro skeleton--max-minibuffer-lines ()
   `(if (floatp max-mini-window-height)
@@ -377,6 +410,8 @@ This func is copied and modified from `ecomplete-display-matches'."
 (define-key skeleton-complete-mode-map (kbd "M-g <return>") 'skeleton-expand-symbols)
 (define-key skeleton-complete-mode-map (kbd "M-s <return>") 'skeleton-expand-partial-lines)
 (define-key skeleton-complete-mode-map (kbd "M-g x") 'skeleton-expand-partial-lines)
+(define-key skeleton-complete-mode-map (kbd "M-s l") 'skeleton-expand-lines)
+(define-key skeleton-complete-mode-map (kbd "M-s s") 'skeleton-expand-sexp)
 
 (define-minor-mode skeleton-complete-mode
   "Toggle the `skeleton-complete-mode' minor mode."
