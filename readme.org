@@ -1,8 +1,15 @@
 #+title: =skeleton-complete=: text matching based completion pushed to extremes
 
+Geeks like one-liners. A mental twist: one-lines are not
+one-timers. Often after you write a long one-liner and are proud of
+yourself, you will want to repeat it for many times.
+
+Do you need (re-)type the whole one-liner every time?
+
 With =skeleton-complete=, you need type any long expression only once,
-then you can type as little as possible (much less than
-=hippie-expand=), and =skeleton-complete= to the long expression.
+and later you can type as little as possible (much less than
+=hippie-expand=), and use =skeleton-complete= to reproduce the long
+expression.
 
 It has 2 flavors: identifier completion and single-line string
 completion, corresponding to =hippie-expand='s =try-expand-dabbrev=
@@ -10,13 +17,14 @@ and =try-expand-line= respectively.
 
 To taste the 1st flavor, say in an emacs-lisp buffer, you have a long
 variable name, =this-is-a-very-long-var-name=, and a long function
-name, =this-is-a-very-long-function-name=, you can complete the first
-name with typing =tvv= into the buffer where you wanted, and press
-=M-g <return>=; or =tvf= and =M-g <return>= to complete the second
-name.
+name, =this-is-a-very-long-function-name=, to reproduce the first
+name, you can simply type =tvv=, and press =M-g <return>=; or =tvf=
+and =M-g <return>= for the second (compare this to
+=try-expand-dabbrev=).
 
 For the 2nd flavor, in the buffer I'm editting this readme, I can type
-=(')= and press =M-s <return>= to get the following expression:
+=(')= and =M-s <return>= to reproduce the following expression
+(compare this to =try-expand-line=) :
 
 #+BEGIN_SRC emacs-lisp
   (require 'skeleton-complete)
@@ -26,8 +34,8 @@ You can consider it as =abbrev-mode= or =yasnippet= on the go (with no
 need to prepare the long completion into a template beforehand: it's
 less formal and more free style!).
 
-=skeleton-complete= is not related to [[http://www.emacswiki.org/emacs/SkeletonMode][=skeleton-mode=]], except they
-both have =skeleton= in their names.
+=skeleton-complete= is not related to [[http://www.emacswiki.org/emacs/SkeletonMode][skeleton-mode]], except they both
+have =skeleton= in their names.
 
 * Usage
 
@@ -45,3 +53,6 @@ For more detailed discussion about this dark magic, see [[http://baohaojun.githu
 Thank [[http://www.newsmth.net/bbscon.php?bid=573&id=88915][wuhaochi]] from NewSmth BBS's Emacs board (best Chinese Emacs
 forum) for suggesting the (more useful) 2nd flavor when I posted about
 the 1st flavor there.
+
+Thank Matus Goljer (author of [[https://github.com/Fuco1/smartparens][smartparens]]) for teaching me a lot on
+emacs lisp programming (see the [[https://github.com/baohaojun/skeleton-complete/issues][issues of skeleton-complete]]).
