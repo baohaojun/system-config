@@ -20,7 +20,7 @@
 
 更加热血的是，beagrep在Windows下也能用！
 
-（本文的英文版在 [[http://baohaojun.github.com/beagrep.html][这里]] ，可能会比中文版更新）。
+（本文的英文版在 [[../../../2011/12/23/beagrep.org][这里]] ，可能会比中文版更新）。
 
 * 安装
 ** Linux下安装

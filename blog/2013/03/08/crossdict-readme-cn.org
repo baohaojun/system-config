@@ -77,9 +77,9 @@ StarDict的字典数据生成CrossDict需要的格式。
   [[http://ctags.sourceforge.net/][exuberant ctags]] 自己搞了一套Emacs/Android的开发环境。
 
   这套开发环境还没有完成到可以让大家很方便的用的程度（有人会觉得遗憾
-  吗？:-)），但是你可以在 [[http://baohaojun.github.com/coding-android-java-in-emacs-en.html][这里]] 看一下简介（英文版，内有使用视频链接）。
+  吗？:-)），但是你可以在 [[../../01/09/coding-android-java-in-emacs-en.org][这里]] 看一下简介（英文版，内有使用视频链接）。
 
 * 请支持
 
-如果你喜欢CrossDict、想支持我的工作的话，请点 [[http://baohaojun.github.com/donate.html][这里]] 了解给我捐款的方法。
+如果你喜欢CrossDict、想支持我的工作的话，请点 [[../02/donate.org][这里]] 了解给我捐款的方法。
 非常感谢！

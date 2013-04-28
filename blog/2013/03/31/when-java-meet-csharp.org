@@ -1,5 +1,5 @@
 #+title: 当Java遇到C#
-# bhj-tags: java programming language c#
+# bhj-tags: java programming language csharp
 
 好吧，蔡学镛老师在微博上幽了一默，
 

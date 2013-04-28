@@ -23,7 +23,7 @@ done in a couple of seconds.
 
 Beagrep supports both Linux and Windows (requires CYGWIN).
 
-(Note a Chinese version of this page is available [[http://baohaojun.github.com/beagrep-cn.html][here]], but it may be
+(Note a Chinese version of this page is available [[../../../2012/01/31/beagrep-cn.org][here]], but it may be
 outdated).
 
 * Install
