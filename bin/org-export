@@ -1,12 +1,15 @@
 #!/bin/bash
 set -e
 
-orgs=("$@")
 tmp_el=/tmp/$(basename $0).$$
 
 function die() {
     echo Error: "$@"
     exit -1
+}
+
+function debug() {
+    echo "$@" 1>&2
 }
 
 export START_DIR=$PWD
@@ -18,14 +21,20 @@ function org-export-generate-tags() {
         (
             cd $START_DIR
         cat <<EOF
-            <a href="$(relative-url meta/tags/$tag.html $the_ORG_FILE_NAME 2>>~/.logs/relative-url.log)" title="$(cat $START_DIR/meta/tags/$tag.desc)">$tag</a><br/>
+            <a href="$(
+                relative-url meta/tags/$tag.html $the_ORG_FILE_NAME 2>>~/.logs/relative-url.log
+            )" title="$(
+                cat $START_DIR/meta/tags/$tag.desc
+            )">$tag</a><br/>
 EOF
         )
     done
     (
         cd $START_DIR
         cat <<EOF
-            <a href="$(relative-url meta/Archive.html $the_ORG_FILE_NAME 2>>~/.logs/relative-url.log)" title="All blogs">archive</a><br/>
+            <a href="$(
+                relative-url meta/Archive.html $the_ORG_FILE_NAME 2>>~/.logs/relative-url.log
+            )" title="All blogs">archive</a><br/>
 EOF
     )
 }
@@ -55,6 +64,26 @@ while true; do
         ;;
     esac
 done
+
+orgs=(
+    $(
+        find blog -name '*.org'|
+        sort -n|
+        xargs -d \\n bash -c 'for x in "$@"; do readlink -f "$x"; done' true
+    )
+)
+
+function find-curr() {
+    local curr=0
+    needle=$(readlink -f "$1")
+    for org in "${orgs[@]}"; do
+        if test "$org" = "$needle"; then
+            echo $curr
+        fi
+        ((curr++)) || true
+    done
+}
+
 (
     echo "(progn"
     next=0
@@ -74,8 +103,9 @@ EOF
     done
 
     for x in "$@"; do
-        ((next++)) || true
-        ((curr=next-1)) || true
+        curr=$(find-curr "$x")
+        debug curr is $curr for $x
+        ((next=curr+1)) || true
         ((prev=curr-1)) || true
 
 
@@ -93,25 +123,8 @@ EOF
             export curr_url=${orgs[$curr]/%.org/.html}
 
             if test $prev -lt 0; then
-                if test -e .the-last-published-org.rc; then
-                    org=$(cat .the-last-published-org.rc)
-                    export prev_title=$(grep -e '^#+title:' -i "${org}"|perl -npe 's/.*?:\s+//')
-                    export prev_url=${org/%.org/.html}
-
-                    export rel_curr_url=$(relative-url $curr_url $prev_url)
-
-
-
-                    perl -npe '
-                        s/^(\s*)(.*?) <!-- next-title -->/$1$ENV{curr_title} <!-- next-title -->/;
-                        s/^(\s*<a href=")(.*?)(".*)<!-- next-url -->/$1$ENV{rel_curr_url}$3<!-- next-url -->/;' -i $prev_url
-                else
-                    prev_title=Archive
-                    prev_url=meta/Archive.html
-                fi
-
-                echo "${orgs[$#-1]}" > .the-last-published-org.rc
-
+                prev_title=Archive
+                prev_url=meta/Archive.html
             else
                 prev_title=$(grep -e '^#+title:' -i "${orgs[$prev]}"|perl -npe 's/.*?:\s+//')
                 prev_url=${orgs[$prev]/%.org/.html}

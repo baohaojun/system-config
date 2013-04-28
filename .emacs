@@ -262,6 +262,8 @@
  '(gnus-ignored-newsgroups "")
  '(gnus-propagate-marks t)
  '(grep-use-null-device nil)
+ '(helm-idle-delay 0.1)
+ '(helm-input-idle-delay 0.1)
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
  '(imenu-max-item-length nil)

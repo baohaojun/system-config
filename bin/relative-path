@@ -2,7 +2,10 @@
 function calc_relative() {
     local source=$(formal-path "$1")
     local target=$2
-    if test "$source" = "$(readlink -m "$2")"; then
+    if test -f "$target"; then
+        target=${target%/*}/
+    fi
+    if test "$source" = "$(readlink -m "$target")"; then
         echo .
         exit 0
     fi

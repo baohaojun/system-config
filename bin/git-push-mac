@@ -27,13 +27,23 @@ if git remote -v | grep baohaojun.github.com.git; then
     for x in $org_changes; do
         if test -e $x; then
             org-export $x
+            if test -e "$(basename $org_changes|perl -npe 's/\.org$/.html/')" && [[ "$org_changes" =~ blog/ ]]; then
+                ./rebuild-old-html.pl "$x"
+            fi
         fi
     done
     if git st -S | grep . ; then
         yes-or-no-p -y "Continue?"
     fi
 
+    if git st -s |grep -e '^A\|^.A\|^D\|^.D'; then
+        ./meta/generate-archives.sh
+    fi
+
     git add .
+    if git diff HEAD -- $org_changes | grep -P -e '^(-|\+).*bhj-tag'; then
+        ./generate-tags.sh
+    fi
 fi
 
 git add .
