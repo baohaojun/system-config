@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# key: logdef
-# name: logdef
-# --
-echo -n > ~/.logs/\$(basename \$0).log
-function debug() {
-    echo "\$@" >> ~/.logs/\$(basename \$0).log
-}

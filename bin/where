@@ -22,7 +22,7 @@ def where_pushd():
     dir_history = OrderedSet(dir_history);
     
     for x in OrderedSet(dir_history):
-        if not (os.path.exists(x) and os.path.isdir(x)):
+        if not os.path.exists(x):
             dir_history.discard(x)
 
     dir_history.add('')

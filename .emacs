@@ -37,6 +37,11 @@
               (expand-file-name "~/src/org-mode/contrib/lisp"))
              load-path))
 
+(eval-after-load 'package
+  '(progn
+     (add-to-list 'package-archives
+                  '("marmalade" . "http://marmalade-repo.org/packages/"))
+     (package-initialize)))
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
   (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
@@ -65,7 +70,15 @@
 
 (autoload 'csharp-mode "csharp-mode")
 
+(eval-after-load "grep"
+  '(progn
+     (grep-compute-defaults)
+     (load "bhj-grep")))
 
+(eval-after-load "bhj-defines"
+  '(progn
+     (add-hook 'before-save-hook 'cleanup-buffer-safe)
+     (add-hook 'before-save-hook 'confirm-risky-remote-edit)))
 
 (autoload 'sdim-use-package "sdim" "Shadow dance input method")
 (register-input-method
@@ -96,6 +109,7 @@
 
 
 
+(eval-after-load 'c-mode '(c-set-style 'k&r))
 
 
 
@@ -117,6 +131,7 @@
 (require 'org2blog-autoloads)
 
 
+(eval-after-load 'js '(define-key js-mode-map [(meta .)] 'grep-gtags))
 (define-key global-map [(meta control \,)] 'cscope-pop-mark)
 (define-key global-map [(meta control .)] 'cscope-pop-mark-back)
 
@@ -161,11 +176,6 @@
 (define-key minibuffer-local-map [(meta shift d )] 'bhj-insert-pwdu)
 
 (defvar last-grep-marker nil)
-(defvar bhj-force-cleanup-buffer nil)
-(make-variable-buffer-local 'bhj-force-cleanup-buffer)
-
-(defvar cscope-output-buffer-name "*cscope*"
-  "The name of the cscope output buffer.")
 
 (defvar cscope-marker-ring (make-ring 32)
   "Ring of markers which are locations from which cscope was invoked.")
@@ -262,14 +272,12 @@
  '(gnus-ignored-newsgroups "")
  '(gnus-propagate-marks t)
  '(grep-use-null-device nil)
- '(helm-idle-delay 0.1)
- '(helm-input-idle-delay 0.1)
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
  '(imenu-max-item-length nil)
  '(imenu-space-replacement " ")
  '(install-elisp-repository-directory "~/.emacs_d/lisp/")
- '(ispell-program-name "aspell" t)
+ '(ispell-program-name "aspell")
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
  '(jiralib-url "http://bible/jira")
@@ -319,7 +327,6 @@
  '(org-export-html-style-include-default nil)
  '(org-export-htmlize-output-type (quote css))
  '(org-file-apps (quote ((auto-mode . emacs) ("\\.mm\\'" . default) ("\\.x?html?\\'" . default) ("\\.pdf\\'" . "of %s"))))
- '(org-latex-title-command "")
  '(org2blog/wp-confirm-post t)
  '(org2blog/wp-use-tags-as-categories t)
  '(require-final-newline t)
@@ -353,9 +360,9 @@
  '(woman-use-own-frame nil)
  '(x-select-enable-clipboard t)
  '(x-select-enable-primary t)
- '(yas-also-auto-indent-first-line t)
- '(yas-prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
- '(yas-trigger-key "M-TAB"))
+ '(yas/also-auto-indent-first-line t)
+ '(yas/prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
+ '(yas/trigger-key "M-TAB"))
 
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
@@ -365,6 +372,8 @@
 (require 'skeleton-complete)
 (skeleton-complete-global-mode 1)
 
+
+(require 'xcscope)
 
 (keydef "C-M-j" 'bhj-jdk-help)
 (keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
@@ -450,14 +459,62 @@
 
 (define-key esc-map [(shift backspace)] 'back-to-indent-same-space-as-prev-line)
 
+(eval-after-load 'cc-vars '(require 'guess-offset))
 
+(eval-after-load 'org-mode
+  '(progn
+     (require 'org-jira)
+     (condition-case nil
+         (load "jira-users")
+       (error nil))
+     (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+     (org-babel-do-load-languages
+      (quote org-babel-load-languages)
+      (quote ((emacs-lisp . t)
+              (dot . t)
+              (ditaa . t)
+              (R . t)
+              (python . t)
+              (ruby . t)
+              (gnuplot . t)
+              (clojure . t)
+              (sh . t)
+              (ledger . t)
+              (org . t)
+              (plantuml . t)
+              (latex . t))))
+     (require 'org-md)
+     (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+     (add-hook 'org-mode-hook (lambda () (org-jira-mode t)))))
 
+(eval-after-load "diff-mode"
+  '(define-key diff-mode-map (kbd "M-g") (lookup-key global-map (kbd "M-g"))))
 
 (when (eq system-type 'windows-nt)
   (setq file-name-coding-system 'gbk)
   (set-selection-coding-system 'gbk))
 
 (require 'bbdb-autoloads)
+(eval-after-load 'gnus
+  '(progn
+     (require 'bbdb-gnus)
+     (require 'bbdb)
+     (require 'bbdb-hooks)
+     (load "bbdb-com" t)
+     (add-hook 'gnus-summary-mode-hook
+               (lambda ()
+                 (define-key gnus-summary-mode-map "v" 'bhj-view-mail-external)))
+     (add-hook 'message-send-hook 'bhj-set-reply)
+     (setq gnus-parameters
+           (nconc
+            ;; Some charsets are just examples!
+            '(("\\bcn\\.bbs\\..*" ;; Chinese
+               (mm-coding-system-priorities
+                '(iso-8859-1 gbk utf-8))))
+            gnus-parameters))
+     (bbdb-initialize 'gnus 'message)
+     (bbdb-insinuate-message)
+     (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)))
 
 (unless (eq system-type 'windows-nt)
   (setq bbdb-file "~/windows-config/.bbdb"))
@@ -490,6 +547,8 @@
 
 (define-key esc-map [(meta d)] 'bhj-do-dictionry)
 
+(eval-after-load 'java-mode
+  '(define-key java-mode-map (kbd "M-s d") 'bhj-open-android-doc-on-java-buffer))
 
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)
 (autoload 'mo-git-blame-current "mo-git-blame" nil t)
@@ -506,6 +565,8 @@
                            ((string-match "/smb/" file) t)
                            (t (funcall saved-file-remote-p file identification connected)))))
       ad-do-it)))
+
+(yas/global-mode)
 
 (require 'helm-config)
 (helm-mode 1)
@@ -534,8 +595,8 @@
 (load "bhj-setq.el")
 (load "bhj-set-key.el")
 (load "bhj-autoloads.el")
-(load "bhj-eval-after-load.el")
 
+(eval-after-load "ediff-init" (add-hook 'ediff-quit-hook (lambda () (shell-command "find-or-exec emacs"))))
 
 (condition-case nil
     (server-start)

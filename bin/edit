@@ -2,20 +2,13 @@
 use String::ShellQuote;
 use strict;
 
+system("find-or-exec emacs emacs.bhj");
 open (my $log_, ">", glob("~/.logs/edit.log")) or die "Can not open log file";
 print $log_ "@ARGV\n";
-
 sub debug(@) {
     print $log_ "@_\n";
 }
 
-if ((scalar @ARGV) > 1 and $0 =~ m!(^|/)e$!) {
-    map {$_ = shell_quote($_)} @ARGV;
-    chomp(my $file = qx(select-file-from-where @ARGV));
-    @ARGV = ($file);
-}
-
-system("find-or-exec emacs emacs.bhj");
 
 if ($ARGV[0] =~ m/^\+\d+$/) {
   my $line = substr($ARGV[0], 1);
@@ -50,9 +43,9 @@ sub get_emacs_file_name($) {
     }
 
     if ($myport eq "22") {
-      return "/$protocol:$myname\@$myip:$file";
+      return "/$protocol:$myname\@$myip:$file"; 
     } else {
-      return "/$protocol:$myname\@$myip#$myport:$file";
+      return "/$protocol:$myname\@$myip#$myport:$file"; 
     }
   } else {
     return $file;
@@ -66,17 +59,17 @@ sub edit_1($)
 
     if (-e $file) {
 
-        my $file_q = $file = shell_quote($file);
-        chomp($file_q = qx(lookup-file -e -r -- $file));
-        if (not $file_q) {
-            chomp ($file_q = qx(lookup-file -r -- $file));
-        }
-        debug "file_q is $file_q";
-        return (@emacsclient, get_emacs_file_name($file_q));
+	my $file_q = $file = shell_quote($file);
+	chomp($file_q = qx(lookup-file -e -r -- $file));
+	if (not $file_q) {
+	    chomp ($file_q = qx(lookup-file -r -- $file));
+	}
+	debug "file_q is $file_q";
+	return (@emacsclient, get_emacs_file_name($file_q));
 
     } else {
 
-      # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
+      # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’  
       $file =~ m,^[a|b]/, and $file = substr($file, 2); # for git diff output
       $file =~ m,:$, and chop($file);
 
@@ -84,15 +77,15 @@ sub edit_1($)
       $file =~ s,:(\d+)$,, and $line = $1;
 
       if (`uname` =~ m/cygwin/i) {
-        $file = shell_quote($file);
-        $file = `cygpath -u $file`;
-        chomp($file);
+	$file = shell_quote($file);
+	$file = `cygpath -u $file`;
+	chomp($file);
       }
 
       my $file_q = $file = shell_quote($file);
       chomp($file_q = qx(lookup-file -e -r -- $file|head -n 1));
       if (not $file_q or not -e $file_q) {
-          chomp($file_q = qx(lookup-file -r -- $file|head -n 1));
+	  chomp($file_q = qx(lookup-file -r -- $file|head -n 1));
       }
       return (@emacsclient, "+$line", get_emacs_file_name($file_q));
 

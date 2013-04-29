@@ -1,7 +1,8 @@
 # -*- mode: snippet -*-
-# name: dbgdef
 # key: dbgdef
+# name: dbgdef
 # --
+echo -n > ~/.logs/\$(basename \$0).log
 function debug() {
-    echo "\$@" 1>&2
+    echo "\$@" >> ~/.logs/\$(basename \$0).log
 }

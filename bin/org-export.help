@@ -3,12 +3,12 @@ cat <<EOF
 (progn
   (global-font-lock-mode)
   (setq org-export-html-style-include-default nil
-        org-export-htmlize-output-type (quote css)
+	org-export-htmlize-output-type (quote css)
         org-export-html-coding-system (quote utf-8)
-        org-export-html-style-extra "<link rel=\"stylesheet\" href=\"/css/default.css\" type=\"text/css\">
+        org-export-html-style-extra "<link rel=\"stylesheet\" href=\"css/default.css\" type=\"text/css\">
  <link rel=\"shortcut icon\" href=\"/poison.png\" type=\"image/png\" />
 
-    <script type=\"text/javascript\" src=\"/js/jquery-1.7.1.min.js\"></script>
+    <script type=\"text/javascript\" src=\"js/jquery-1.7.1.min.js\"></script>
     <script type=\"text/javascript\">
         var BYB = {};
     </script>
@@ -36,7 +36,7 @@ cat <<EOF
             return false;
         }
     </script>"
-        org-export-html-postamble (lambda nil (shell-command-to-string (format "org-export-postamble %s" (shell-quote-argument bhj-org-export-file)))))
+	org-export-html-postamble (lambda nil (shell-command-to-string (format "org-export-postamble %s" (shell-quote-argument bhj-org-export-file)))))
   (find-file "$1")
   (setq bhj-org-export-file "$ORG_FILE_NAME")
   (load-theme 'wombat)

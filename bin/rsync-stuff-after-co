@@ -9,11 +9,11 @@ host=$1
 shift
 
 for x in $(
-    if test $# != 0;
-    then
-        echo "$@";
+    if test $# != 0; 
+    then 
+        echo "$@"; 
     else
-        echo .texmf-config .texmf-var .ssh .smbpass .edictrc .smb smbookmarks .netrc .authinfo .keystore /var/myca jira-users .confhttp .confkeys .confserv .confuser weekly
+        echo .ssh .smbpass .edictrc .smb smbookmarks .netrc .authinfo .keystore /var/myca jira-users .confhttp .confkeys .confserv .confuser weekly
     fi
 ); do
     rsync -av $host:$x ~/
