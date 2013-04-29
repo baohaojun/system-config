@@ -2,7 +2,7 @@
 set -e
 touch ~/.authinfo
 chmod og-r ~/.authinfo
-mkdir -p ~/.logs 
+mkdir -p ~/.logs
 touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
 mkdir -p ~/tmp
@@ -20,22 +20,26 @@ function die() {
 
 function symlink-map() {
     if test $# != 2; then
-	die "Error: symlink-map FROM TO"
+        die "Error: symlink-map FROM TO"
     fi
 
     cd "$1"
 
     for x in `git ls-tree --name-only HEAD`
     do
-	if test -e "$2"/$x -a "$(readlink -f "$2"/$x)" != "$(readlink -f "$1"/$x)"; 
-	then
+        if test $(basename $x) = .dir-locals.el; then
+            next
+        fi
+
+        if test -e "$2"/$x -a "$(readlink -f "$2"/$x)" != "$(readlink -f "$1"/$x)";
+        then
             echo "Warning: "$2"/$x already exist and it's not softlink to "$1"/$x"
             mv "$2"/$x "$2"/$x.bak
             ln -s "$1"/$x "$2"/
-	elif ! test -e "$2"/$x;
-	then
+        elif ! test -e "$2"/$x;
+        then
             ln -sf "$1"/$x "$2"/
-	fi
+        fi
     done
 
 }

@@ -4,3 +4,12 @@ baohaojun-en.pdf
 baohaojun-zh.aux
 baohaojun-zh.log
 baohaojun-zh.pdf
+*.html
+*.pdf
+*.aux
+*.dvi
+*.log
+*.out
+../../bin/latex-dvi-pdf
+resume-en.tex
+resume-zh.tex

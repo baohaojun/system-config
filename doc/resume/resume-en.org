@@ -1,0 +1,130 @@
+#+OPTIONS: toc:nil H:10
+
+#+LaTeX_HEADER: \usepackage{mycv}
+#+BEGIN_LaTeX
+\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
+\begin{CJK*}{UTF8}{simsun}
+\maketitle
+#+END_LaTeX
+
+
+#+MACRO: first  Haojun
+#+MACRO: last   Bao
+#+MACRO: full {{{first}}}{{{Last}}}
+#+MACRO: phone  18610314439
+
+#+TITLE: Haojun Bao
+
+
+
+* Work Experience
+*** November 2011 - /Present/
+    *Staff Engineer*, [[http://marvell.com][Marvell]], Beijing
+
+    - Work as architect in the Tools team for Marvell's mobile phone
+      total solution. In charge of designing and implementing mobile
+      phone factory production tools.
+
+    - Also work in the BSP team, focusing on tools related components,
+      such as Uboot, Kernel API, factory partitions.
+
+*** March 2010 - October 2011
+
+    *Staff Engineer*, RayzerLink/Letou
+    
+    - In charge of system software development for a Tablet product
+      which uses Nvidia's Tegra2 CPU. Tasks include Linux Kernel
+      bringup, device drivers (Touch, Lcd, Sensors), HAL.
+
+    - Mentor junior BSP software engineers for system programming.
+
+*** November 2008 - March 2010
+
+    *Senior Engineer*, [[http://www.borqs.com][Borqs]]
+    
+    - Worked in the Tools team at Borqs.
+
+    - Design and implement a lot of tools for development, factory,
+      customer, test.
+
+*** September 2005 - September 2008
+
+    *Software Engineer*, [[http://motorola.com][Motorola]],  MD/GSG
+
+    - Develop automated testing tool for Mobile Multimedia Software
+
+    - Develop Mobile Multimedia Software
+
+*** October 2004 - September 2005
+    *Software Engineer*, Vitria Software
+
+    - ERP software test
+
+* Free Software Projects
+
+*** Emacs
+  - [[http://github.com/baohaojun/skeleton-complete][skeleton-complete.el]] ::  A completion command for Emacs
+       (Emacs-lisp).
+
+  - [[https://github.com/baohaojun/org-jira][org-jira.el]] ::  An Emacs minor mode for using org-mode to track
+                    Jira issues (Emacs-lisp).
+
+*** Android
+
+  - [[https://github.com/baohaojun/BTAndroidWebViewSelection][CrossDict]] :: An English dictionary Android APK, released on Google
+                 Play (Java, Android).
+*** Input Method
+  - sdim :: An input method for all major Operating Systems, even
+            including Emacs (Python, C++, ObjC, Emacs-lisp).
+
+  - scim-fcitx ::  An input method under GNU/Linux, ported from scim
+                   and fcitx (C++, GNU/Linux).
+
+*** System Software
+
+  - [[https://github.com/baohaojun/beagrep][beagrep]] :: Combining grep with a search engine for source code
+               reading and debugging, can grep 2G source code under 1
+               second (C#, Perl).
+
+  - system-config :: A lot of other system admin scripts/programs, all
+                     can be found on [[https://github.com/baohaojun][github]].
+
+
+* Technical Skills
+
+*** Languages \& Libraries
+    - Proficient :: Python, Emacs Lisp, C, Bash, Perl, C++, Java
+
+    - Used :: ObjC, C#, PHP
+*** Authoring
+    - Text :: Org-mode, Emacs
+*** Version Control
+    Git
+*** System Admin
+    System admin for Debian based Gnu/Linux distributions, Bash
+    programming
+
+* Education
+
+*** 1997 - 2001
+    Bachelor, Control Theory \& Engineering, Zhejiang University
+*** 2001 - 2004
+    Master, Control Theory \& Engineering, Institute of Automation,
+    Chinese Academy of Science
+
+* Personal Infomation
+*** Date of Birth
+    10^{th} March, 1980
+*** Mobile Phone
+    {{{phone}}}
+*** E-mail
+    [[mailto:baohaojun@gmail.com][baohaojun@gmail.com]]
+*** Blog
+    [[http://baohaojun.github.io]]
+*** Code
+    [[https://github.com/baohaojun]]   
+
+
+#+BEGIN_LaTeX
+\end{CJK*}
+#+END_LaTeX

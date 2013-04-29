@@ -1,0 +1,99 @@
+\ProvidesPackage{mycv}
+
+ %A Few Useful Packages
+\usepackage{url}
+\usepackage{titlesec} %custom section
+\usepackage{enumitem} %custom lists
+\usepackage{calc}
+
+\usepackage{color}
+\usepackage{hyperref}
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\hypersetup{colorlinks,breaklinks, urlcolor=linkcolour,linkcolor=linkcolour}
+
+\definecolor{sectionothercolor}{rgb}{1.00,0.65,0.20}
+\definecolor{sectioncolor}{rgb}{0.35,0.45,0.55}
+
+\pagestyle{empty} % plain
+
+% Header spacing
+\voffset -0.5in
+\topmargin 10pt
+\headheight 0pt
+\headsep 0pt
+
+% Footer spacing
+\footskip 0pt 
+\textheight 9.5in
+
+% Sideways
+\textwidth 6.0in
+
+%% Title
+\renewcommand*{\maketitle}{%
+  {
+     \raggedleft{\Huge \@title}\\[.5in]
+  }
+}
+
+%% Section Headings, etc.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\titleformat{\section} %command
+            {\Large\scshape\raggedright} %format
+            {} %label
+            {0em} %sep
+            {} %before
+            [\titlerule]
+\titlespacing{\section}{0pt}{10pt}{5pt}
+
+\titleformat{\subsection} %command
+            [leftmargin] %shape
+            {\small\scshape\raggedleft} %format
+            {} %label
+            {0pt} %sep
+            {} %before
+            [] %after
+\titlespacing{\subsection}{90pt}{5pt}{15pt}
+
+\titleformat{\subsubsection} %command
+            [leftmargin] %shape
+            {\tiny\scshape\raggedleft} %format
+            {} %label
+            {0pt} %sep
+            {} %before
+            [] %after
+\titlespacing{\subsubsection}{60pt}{0pt}{15pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Paragraph indent
+\setlength{\parindent}{0cm}
+
+% Lists
+\let\origdescription\description
+\renewenvironment{description}{
+  \origdescription
+  \vspace{-1.55\baselineskip}
+  \setlength{\topsep}{0in}
+  \setlength{\parskip}{0in} 
+  \setlength{\partopsep}{0in}
+  
+  \setlength{\itemsep}{0.05in}   
+  \setlength{\parsep}{0in} 
+}
+{\endlist}
+
+% Description Label 
+\renewcommand\descriptionlabel[1]%
+{\hspace\labelsep\scshape{#1 --}}
+
+\renewenvironment{itemize}{
+  \begin{list}{-}{%
+      \setlength{\itemsep}{0.05in}
+      \setlength{\parsep}{0in} 
+      \setlength{\parskip}{0in}
+      \setlength{\topsep}{0in} 
+      \setlength{\partopsep}{0in}
+    \setlength{\leftmargin}{0.1in}}}{\end{list}}
+
+
+

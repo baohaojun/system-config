@@ -1,29 +1,28 @@
 #!/bin/bash
 function git()
 {
-
     (
-	if test "$(readlink -f .)" = "$(readlink -f ~)" -a "$1" != clone || 
+        if test "$(readlink -f .)" = "$(readlink -f ~)" -a "$1" != clone ||
             test "$(readlink -f .)" = "$(readlink -f ~/windows-config/)"
-	then
+        then
             cd ~/windows-config/;
             if test "$1" = st; then
                 for x in ~/src/github/*/; do
                     if test -d $x; then
                         (
                             cd $x
-                            
+
                             y=$(git st -s)
                             if test "$y"; then
-                                echo $x not clean 1>&2 
+                                echo $x not clean 1>&2
                                 git st -s
-                                echo ---------------- 1>&2 
+                                echo ---------------- 1>&2
                             fi
                             y=$(git diff --name-status origin/master)
                             if test "$y"; then
-                                echo $x not clean 1>&2 
+                                echo $x not clean 1>&2
                                 git diff --name-status origin/master
-                                echo ---------------- 1>&2 
+                                echo ---------------- 1>&2
                             fi
                         )
                     fi
@@ -40,19 +39,19 @@ function git()
                     fi
                 done
             fi
-	fi
+        fi
 
-	if test "$1" = st -a "$2" = -S; then
-	    command git status -s | perl -ne '
-chomp(); 
-$_ = substr($_, 3); 
-if (m/^"/) { 
+        if test "$1" = st -a "$2" = -S; then
+            command git status -s | perl -ne '
+chomp();
+$_ = substr($_, 3);
+if (m/^"/) {
     $_ = eval($_);
 }
 print $_ . "\n";
 '
-	  exit
-	fi
+          exit
+        fi
         if test "$1" = clean; then
             if command git st -s | grep '??'; then
                 echo Warning: git not clean, will not clean it
@@ -64,8 +63,18 @@ print $_ . "\n";
                 fi
             fi
         fi
-    
-	command git "$@"
+
+        if test "$1" = co -a $# = 2; then
+            command git "$@" || {
+                git fetch -v $(repo-remote) || true
+                git co $(git-choose-branch "$2")
+            }
+            exit
+        fi
+
+
+
+        command git "$@"
     )
 
 }

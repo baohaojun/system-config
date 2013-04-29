@@ -11,7 +11,6 @@ might be bad."
         (widen)
         (goto-char (point-min))
         (when (and (search-forward-regexp "\t\\|[ \t]$" nil t)
-                   (boundp 'bhj-force-cleanup-buffer)
                    bhj-force-cleanup-buffer)
           (untabify (point-min) (point-max))
           (delete-trailing-whitespace))))))

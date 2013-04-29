@@ -26,7 +26,7 @@ mkdir -p ~/.logs/start-debug.log/
     printf "cd %q;" "$(pwd)"
 
     for x in "$1" "\$@"; do
-        printf "%q " "\$x" 
+        printf "%q " "\$x"
     done
     echo
 ) >> ~/.logs/start-debug.log/$1
@@ -36,10 +36,11 @@ res=\$?
 /bin/cat ~/.logs/start-debug.log/$1.\$\$.err 1>&2
 
 (
-    echo out; /bin/cat ~/.logs/start-debug.log/$1.\$\$.out; 
+    echo out; /bin/cat ~/.logs/start-debug.log/$1.\$\$.out;
     echo err:; /bin/cat ~/.logs/start-debug.log/$1.\$\$.err
     echo tree:; show-ps-tree \$\$
 ) >>  ~/.logs/start-debug.log/$1
+cd ~/.logs/start-debug.log/
 /bin/rm $1.\$\$.out $1.\$\$.err
 exit \$res
 EOF

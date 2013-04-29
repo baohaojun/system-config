@@ -1,67 +1,110 @@
-#!/bin/bash
+#!/usr/bin/perl
 
-function my_select() 
-{
-    local y=1
-    if test $# = 1; then
-        echo 1
-        return
-    fi
+use strict;
 
-    if test -z "$ORIGINAL_MATCHER"; then
-        for x in "$@"; do 
-            echo $y\) "$x" >/dev/tty;
-            ((y++))
-        done
-    fi
-
-    if test "$ORIGINAL_MATCHER"; then
-        NUM=$ORIGINAL_MATCHER
-        export ORIGINAL_MATCHER=
-    else
-        read -p "#?" NUM
-    fi
-
-    if [[ x"$NUM" = x ]] || ( [[ "$NUM" =~ ^[1-9][0-9]*$ ]] &&  (( "$NUM" > $# )) ); then
-        NUM=1
-    elif [[ ! "$NUM" =~ ^[1-9][0-9]*$ ]]; then
-        matches=()
-        reverse=0
-        if [[ "$NUM" =~ ^! ]]; then
-            reverse=1
-            NUM=${NUM:1}
-        fi
-        for arg in "$@"; do
-            match=true
-            for entry in $NUM; do
-                if (test $reverse = 0 && ! echo "$arg" | grep -P -q -i -e "$entry") || (test $reverse = 1 && echo "$arg" |grep -P -i -q -e "$entry"); 
-                then
-                    match=false
-                    break
-                fi
-            done
-            if test $match = true; then
-                matches=("${matches[@]}" "$arg")
-            fi
-        done
-        ans=$(command my-select "${matches[@]}")
-        if [[ "$ans" =~ ^[1-9][0-9]*$ ]] && (( ans <= "${#matches[@]}" )); then
-            ans=${matches[ans-1]}
-            
-            num=1
-            for x in "$@"; do
-                if test "$x" = "$ans"; then
-                    echo $num
-                    exit 0;
-                fi
-                ((num++))
-            done
-        fi
-
-        
-                
-    fi
-    echo $NUM
+sub echo(@) {
+    print "@_\n";
 }
 
-my_select "$@"
+open (my $tty, ">", "/dev/tty") or die "can not open tty";
+sub tty(@) {
+    print $tty "@_";
+}
+
+sub read_ans($) {
+    my ($prompt) = @_;
+    unless ($prompt =~ '\s$') {
+        $prompt .= " ";
+    }
+    tty "$prompt";
+    chomp(my $ans = <>);
+    return $ans;
+}
+
+my @original_argv = @ARGV;
+@ARGV = ();
+
+sub find_in_original_argv($) {
+    my ($entry) = @_;
+
+    my $count = 1;
+    for (@original_argv) {
+        if ($entry eq $_) {
+            echo $count;
+            exit 0;
+        }
+        $count++;
+    }
+}
+
+sub my_select(\@) {
+    my ($args_ref) = @_;
+
+    if (@$args_ref == 1) {
+        find_in_original_argv($$args_ref[0]);
+        return;
+    }
+
+    unless ($ENV{ORIGINAL_MATCHER}) {
+        my $count = 1;
+        foreach (@$args_ref) {
+            tty "$count) $_\n";
+            $count++;
+        }
+    }
+
+    my $ans;
+    if ($ENV{ORIGINAL_MATCHER}) {
+        $ans = $ENV{ORIGINAL_MATCHER};
+        $ENV{ORIGINAL_MATCHER} = "";
+    } else {
+        $ans = read_ans '#? ';
+    }
+
+    if (not $ans or $ans =~ m/^\d+$/ and $ans > @$args_ref) {
+        find_in_original_argv($$args_ref[0]);
+    } elsif ($ans =~ m/^\d+$/) {
+        find_in_original_argv($$args_ref[$ans - 1]);
+    } else {
+        my @matches;
+        my $reverse;
+
+        if ($ans =~ m/^!/) {
+            $reverse = 1;
+            $ans = substr($ans, 1);
+        }
+
+        for my $entry (@$args_ref) {
+            my $matched = 1;
+            for my $matcher (map {qr($_)i} split(" ", $ans)) {
+                if ($entry =~ m/$matcher/) {
+                    if ($reverse) {
+                        $matched = 0;
+                        last;
+                    }
+                } elsif (not $reverse) {
+                    $matched = 0;
+                    last;
+                }
+            }
+            if ($matched) {
+                push @matches, $entry;
+            }
+        }
+
+        if (@matches == 1) {
+            find_in_original_argv($matches[0]);
+        } elsif (@matches) {
+            my_select(\@matches);
+        } else {
+            $ans = read_ans "Warning: no matches found, press <return> to continue";
+            if ($ans eq "-") {
+                read_ans "Going back a level, press <return> to continue";
+            } else {
+                my_select($args_ref);
+            }
+        }
+    }
+}
+
+my_select @original_argv;

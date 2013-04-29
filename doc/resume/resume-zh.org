@@ -1,0 +1,125 @@
+
+#+OPTIONS: toc:nil H:10
+
+#+LaTeX_HEADER: \usepackage{mycv}
+#+BEGIN_LaTeX
+\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
+\begin{CJK*}{UTF8}{simsun}
+\maketitle
+#+END_LaTeX
+
+
+#+MACRO: first  昊军
+#+MACRO: last   包
+#+MACRO: full {{{last}}}{{{first}}}
+#+MACRO: phone  18610314439
+
+#+TITLE: 包昊军
+
+
+
+* 工作经历
+*** 2011年11月 - 目前
+    *Staff Engineer*, [[http://marvell.com][Marvell]], 北京
+
+    - 在Tools团队担任架构师的职务, 负责手机工厂生产工具的设计研发
+
+    - 在BSP团队负责与工具相关的功能模块的设计实现, 包括Uboot, Kernel接
+      口, 工厂分区等
+
+*** 2010年3月 - 2011年10月
+
+    *Staff Engineer*, RayzerLink/Letou
+    
+    - 负责基于Nvidia Tegra2芯片的平板电脑底层软件开发, 主要包括Linux
+      Kernel bringup, 驱动（Touch、Lcd、Sensors）, Hal（硬件抽象层）的
+      开发等工作
+
+    - 指导bsp新同事底层系统开发工作
+
+*** 2008年11月 - 2010年3月
+
+    *Senior Engineer*, [[http://www.borqs.com][播思通讯]]
+    
+    - 在Tools组工作
+
+    - 设计并实现手机开发、测试、生产以及售后等各个环节需要用到的一系列
+      工具
+
+
+*** 2005年9月 - 2008年9月
+
+    *Software Engineer*, [[http://motorola.com][摩托罗拉]],  MD/GSG
+
+    - 手机多媒体软件自动调试工具开发
+
+    - 手机多媒体软件开发
+
+*** 2004年10月 - 2005年9月
+    *Software Engineer*, 麒麟软件
+
+    - 企业集成应用软件测试
+
+* 自由软件项目
+
+*** Emacs
+
+  - [[http://github.com/baohaojun/skeleton-complete][skeleton-complete.el]] ::  Emacs下的补齐工具（Emacs-lisp）
+
+  - [[https://github.com/baohaojun/org-jira][org-jira.el]] :: Emacs下用org-mode来进行Jira开发流程管理的工具
+                    （Emacs-lisp）
+
+*** Android
+  - [[https://github.com/baohaojun/BTAndroidWebViewSelection][CrossDict]] ::  Android下的英文字典软件, 在Google Play上发布
+                  （Java, Android) 
+
+*** Input Method
+  - sdim :: 跨所有主流平台（Win32/Linux/Mac OS基至Emacs）的输入法
+            （Python, C++, ObjC, Emacs-lisp）
+
+  - scim-fcitx :: GNU/Linux下的输入法, 基于scim和fcitx移植(C++, 
+                  GNU/Linux)
+
+*** System Software
+  - [[https://github.com/baohaojun/beagrep][beagrep]] ::  结合搜索引擎的源代码grep工具, 一秒钟grep两G代码（C#, 
+                Perl）
+
+  - system-config :: 其他一些较小的脚本/程序, 均放在 [[https://github.com/baohaojun][github]] 上用git管理
+
+
+* 技术技能
+
+*** 编程语言 \& 库
+    - 熟练 :: Python, Emacs Lisp, C, Bash, Perl, C++, Java
+
+    - 用过 :: ObjC, C#, PHP
+*** 写作
+    - 文本 :: Org-mode, Emacs
+*** 版本管理
+    Git
+*** 系统管理
+    基于Debian的Linux发行版系统管理、Bash脚本编程
+
+* 教育
+
+*** 1997 - 2001
+    本科, 控制理论与工程, 浙江大学
+*** 2001 - 2004
+    硕士, 控制理论与工程, 中科院自动化所
+
+* 个人信息
+*** 出生日期
+    1980年3月10日
+*** 手机
+    {{{phone}}}
+*** E-mail
+    [[mailto:baohaojun@gmail.com][baohaojun@gmail.com]]
+*** 博客
+    [[http://baohaojun.github.io]]
+*** 代码
+    [[https://github.com/baohaojun]]   
+
+
+#+BEGIN_LaTeX
+\end{CJK*}
+#+END_LaTeX

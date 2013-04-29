@@ -1,0 +1,37 @@
+#!/usr/bin/perl
+
+use strict;
+use File::Glob qw(:glob :nocase);
+use Fcntl qw(:flock SEEK_END);
+
+
+my $pattern;
+
+$pattern = "*$ARGV[0]*";
+shift @ARGV;
+
+sub lookup_up_file_1dir($) {
+    my ($dir) = @_;
+    if (1) {
+        chdir $dir or return;
+        my @files = glob($pattern);
+        for my $file (@files) {
+            my $match = 1;
+            for my $matcher (@ARGV) {
+                if ($file !~ m/$matcher/i) {
+                    $match = 0;
+                    last;
+                }
+            }
+            if ($match) {
+                flock STDOUT, LOCK_EX;
+                print "$dir/$file\n" unless $file =~ m/~/;
+                flock STDOUT, LOCK_UN;
+            }
+        }
+    }
+}
+
+open my $where, "<", glob("~/.where") or die "can not open ~/.where";
+my @dirs = (<$where>);
+map {chomp; lookup_up_file_1dir($_)} @dirs;
