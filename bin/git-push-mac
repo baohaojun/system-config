@@ -23,6 +23,16 @@ if test -z "$CHECKING_SUBMODULE"; then
 fi
 
 if git remote -v | grep baohaojun.github.com.git; then
+    (
+        cd $(dirname $(lookup-file .git))
+        for x in *.org; do
+            test -f "$x" || continue
+            mkdir -p blog/$(today|perl -npe 's!-!/!g')
+            git mv $x blog/$(today|perl -npe 's!-!/!g')/ ||
+            mv $x blog/$(today|perl -npe 's!-!/!g')/
+            git add blog/$(today|perl -npe 's!-!/!g')/$x
+        done
+    )
     org_changes=$(git st -S|grep -e '\.org$' || true)
     for x in $org_changes; do
         if test -e $x; then

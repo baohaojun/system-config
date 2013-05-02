@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd ~/gcode
+tar czfv ~/tmp/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
+cd ~/tmp
+tar zxfv beagrep_0.4.0.orig.tar.gz
+cd beagrep
+dpkg-buildpackage

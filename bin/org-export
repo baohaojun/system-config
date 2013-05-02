@@ -128,6 +128,9 @@ EOF
             else
                 prev_title=$(grep -e '^#+title:' -i "${orgs[$prev]}"|perl -npe 's/.*?:\s+//')
                 prev_url=${orgs[$prev]/%.org/.html}
+                if grep -e 'Archive <!-- next-title -->' $prev_url; then
+                    org-export ${orgs[$prev]}
+                fi
             fi
 
             if test $next -ge ${#orgs[@]}; then
