@@ -1,5 +1,12 @@
 #+title: beagrep, grep 2G source code in 2 seconds
 # bhj-tags: beagrep
+
+Beagrep can grep ~readlink~ in Android source code in 0.8 second when
+cache is hot, and about 11 seconds when cache is cold.
+
+Using [[https://github.com/ggreer/the_silver_searcher][ag]] or [[https://github.com/petdance/ack][ack]] or bare grep, the results are a couple of seconds when
+cache is hot, or a couple of minutes when the cache is cold[fn:fact].
+
 * Introduction
 
 I still remember when I read the ``Linux Device Drivers'', 1st Edition, in the preface, the author says:
@@ -400,3 +407,9 @@ wrap scripts like following in the android/system/core directory:
 generate-call-graph.pl > call_graph.org
 dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2 
 #+end_src
+
+[fn:fact] Here's how I run =grep= in Android source tree: ~time grep
+          -I -r --exclude-dir=.git --exclude-dir=.repo -e readlink~
+          =~/src/android=. The first time it took 5m20s, second time
+          1m21s, and third time 3.5s, and it can't be reduced much
+          further.
