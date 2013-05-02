@@ -7,10 +7,10 @@ if test $(whoami) = bhj; then
 fi
 sudo touch /etc/console-setup/* || true
 sudo touch /etc/default/* || true # setupcon may fail when the timestamp of
-				  # these files are messed up by debian
-				  # installation (time zone or ntp not available
-				  # because we are not connected to the
-				  # Internet).
+                                  # these files are messed up by debian
+                                  # installation (time zone or ntp not available
+                                  # because we are not connected to the
+                                  # Internet).
 sudo setupcon
 sudo usermod -a -G fuse $USER
 
@@ -32,4 +32,9 @@ config-gfw
 
 sudo usermod -a -G dialout $(whoami) || true
 sudo perl -npe 's/^#user_allow_other/user_allow_other/' -i /etc/fuse.conf
+emacs -q --batch --eval '(progn (package-initialize) (package-install '\''yasnippet))'
+mkdir -p ~/src/github
+if test ! -d helm; then
+    git clone https://github.com/emacs-helm/helm
+fi
 echo 'OK'
