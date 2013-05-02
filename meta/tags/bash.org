@@ -3,11 +3,11 @@
   - 2013-02
    * 2013-02-12
 
-     [[../../blog/2013/02/12/bash-complete-filenames.org][bash-complete-filenames]]
+     [[../../../blog/2013/02/12/bash-complete-filenames.org][bash-complete-filenames]]
 
  * 2012
   - 2012-10
    * 2012-10-22
 
-     [[../../blog/2012/10/22/fun-design-pattern.org][在shell脚本里使用Abstract Factory的设计模式]]
+     [[../../../blog/2012/10/22/fun-design-pattern.org][在shell脚本里使用Abstract Factory的设计模式]]
 

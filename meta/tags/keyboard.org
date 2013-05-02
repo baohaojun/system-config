@@ -3,12 +3,12 @@
   - 2013-03
    * 2013-03-14
 
-     [[../../blog/2013/03/14/dvp-keyboard-mac.org][在Mac系统下使用dvp (Dvorak Programmer)]]
+     [[../../../blog/2013/03/14/dvp-keyboard-mac.org][在Mac系统下使用dvp (Dvorak Programmer)]]
 
   - 2013-02
    * 2013-02-12
 
-     [[../../blog/2013/02/12/my-programmer-dvorak.org][Switched to USA Pragrammer Dvorak Keyboard]]
+     [[../../../blog/2013/02/12/my-programmer-dvorak.org][Switched to USA Pragrammer Dvorak Keyboard]]
 
-     [[../../blog/2013/02/12/dvp-win32.org][Using dvp under Win32]]
+     [[../../../blog/2013/02/12/dvp-win32.org][Using dvp under Win32]]
 

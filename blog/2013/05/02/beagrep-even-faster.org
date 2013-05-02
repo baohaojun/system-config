@@ -1,0 +1,15 @@
+#+title: beagrep is made even faster
+# bhj-tags: beagrep
+
+~beagrep -e readlink~ in my android source tree now takes only 0.230
+second on Dell Optiplex 960 (cache hot).
+
+The trick I used is to simply enable Mono's AOT option (see git log).
+
+But sadly, I can't improve it on my macbookair with debian
+installation to the same speed as on my Optiplex 960. This is very
+strange since the macbookair is a more powerful machine with better
+CPU and SSD (which does not matter when cache is hot though).
+
+The time on macbookair is consistently ~0.8 second slower than
+Optiplex 960, AOT or not AOT.

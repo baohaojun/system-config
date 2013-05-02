@@ -3,21 +3,21 @@
   - 2013-02
    * 2013-02-12
 
-     [[../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.org][html2mht.pl and dir2html.pl]]
+     [[../../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.org][html2mht.pl and dir2html.pl]]
 
  * 2012
   - 2012-10
    * 2012-10-29
 
-     [[../../blog/2012/10/29/why-symlink-my-config.org][我的配置环境：为什么用symlink而不是cp]]
+     [[../../../blog/2012/10/29/why-symlink-my-config.org][我的配置环境：为什么用symlink而不是cp]]
 
   - 2012-05
    * 2012-05-02
 
-     [[../../blog/2012/05/02/pdf-for-kindle-touch.org][pdf-for-kindle-touch]]
+     [[../../../blog/2012/05/02/pdf-for-kindle-touch.org][pdf-for-kindle-touch]]
 
   - 2012-02
    * 2012-02-02
 
-     [[../../blog/2012/02/02/how-to-do-long-twitter-cn.org][自己动手做长微博（推特），内嵌图片的]]
+     [[../../../blog/2012/02/02/how-to-do-long-twitter-cn.org][自己动手做长微博（推特），内嵌图片的]]
 

@@ -3,15 +3,15 @@
   - 2013-02
    * 2013-02-25
 
-     [[../../blog/2013/02/25/index-cn.org][我在Github上的个人博客]]
+     [[../../../blog/2013/02/25/index-cn.org][我在Github上的个人博客]]
 
    * 2013-02-12
 
-     [[../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.org][html2mht.pl and dir2html.pl]]
+     [[../../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.org][html2mht.pl and dir2html.pl]]
 
  * 2011
   - 2011-12
    * 2011-12-23
 
-     [[../../blog/2011/12/23/index.org][My Page on Github]]
+     [[../../../blog/2011/12/23/index.org][My Page on Github]]
 
