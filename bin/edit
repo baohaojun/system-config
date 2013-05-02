@@ -122,11 +122,14 @@ EOC
     print "'$_' ";
   }
   print "\n";
-  my $res = system(@cmd);
-  exit $res unless @ARGV;
+  while (system(@cmd) != 0) {
+      system("sleep 5");
+  }
 }
 
 while (@ARGV) {
     my $arg = shell_quote(shift @ARGV);
-    system("$0 $arg");
+    while (system("$0 $arg") != 0) {
+        system("sleep 1");
+    }
 }

@@ -80,8 +80,8 @@ function die() {
 }
 
 git push origin HEAD:refs/heads/$(
-    if test -e ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config/etc).sh; then
-        bash ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config/etc).sh my-master;
+    if test -e ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config).sh; then
+        bash ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config).sh my-master;
     else
         echo master
     fi

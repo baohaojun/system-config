@@ -130,7 +130,7 @@ EOF
                 prev_url=${orgs[$prev]/%.org/.html}
             fi
 
-            if test $next -ge $#; then
+            if test $next -ge ${#orgs[@]}; then
                 next_title=Archive
                 next_url=meta/Archive.html
             else
