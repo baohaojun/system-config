@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -- $(relative-path $1 $(lookup-file .git))
+
 x=http://baohaojun.github.io/${1/%.org/.html}
 echo "$x"|putclip
 
