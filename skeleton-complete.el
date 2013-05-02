@@ -37,6 +37,18 @@
 (require 'cl)
 (require 'thingatpt)
 
+(defgroup skeleton-complete nil
+  "Dynamically expand expressions by provided skeleton (flex matching)."
+  :group 'abbrev)
+
+(defcustom skeleton--max-chars 80
+  "Maximum chars in any single match to use ecomplete.
+
+If exceeded, will use other schemes (such as browse-kill-ring) to
+select from the matches."
+  :type 'integer
+  :group 'skeleton-complete)
+
 (defvar skeleton--start
   nil
   "The start of the skeleton that is to be replaced with the
@@ -211,10 +223,20 @@ See `skeleton--matcher'."
  "Search the buffer to collect a list of all balanced expressions matching `re'.
 
 See `skeleton--matcher'."
- (let ((e (save-excursion (goto-char mb) (forward-sexp) (point))))
+ (let ((e (save-excursion
+            (goto-char mb)
+            (condition-case nil (forward-sexp)
+              (error nil))
+            (point))))
    (buffer-substring-no-properties mb e))
- (let ((e (save-excursion (goto-char mb) (forward-sexp) (point))))
-   (goto-char e)))
+ (let ((e (save-excursion
+            (goto-char mb)
+            (condition-case nil (forward-sexp)
+              (error nil))
+            (point))))
+   (goto-char (if (= e mb)
+                  (1+ mb)
+                e))))
 
 (defun skeleton--buffer-filter ()
   "Return an alist of buffers to be matched againt the skeleton for completions.
@@ -277,6 +299,11 @@ See `skeleton--matcher' and `skeleton--buffer-filter'."
                        (setq matched-buried t))))))
              (funcall buffer-filter)))))
 
+(defun skeleton--string-multiline-p (str)
+  "Return t if STR is too long or span multilines"
+  (or (> (length str) skeleton--max-chars)
+      (string-match-p "\n" str)))
+
 (defun skeleton--general-expand (extracter &optional matcher buffer-filter)
   "General function to expand a skeleton using the functional arguments.
 
@@ -290,12 +317,21 @@ EXTRACTER, MATCHER and BUFFER-FILTER."
         buffer-filter (or buffer-filter #'skeleton--buffer-filter))
   (let* ((the-regexp (funcall extracter))
          (case-fold-search (not (skeleton--contains-upcase-p skeleton--the-skeleton)))
+         matches
          match)
     (when (and the-regexp
-               (setq match (skeleton--display-matches (skeleton--get-matches the-regexp matcher buffer-filter))))
-      (when (and skeleton--start skeleton--end)
-        (delete-region skeleton--start skeleton--end))
-      (insert match))))
+               (setq matches (skeleton--get-matches the-regexp matcher buffer-filter)))
+      (if (or (minibufferp)
+           (cl-notany #'skeleton--string-multiline-p matches))
+          (progn
+            (setq match (skeleton--display-matches matches))
+            (when (and skeleton--start skeleton--end)
+              (delete-region skeleton--start skeleton--end))
+            (insert match))
+        (when (and skeleton--start skeleton--end)
+          (delete-region skeleton--start skeleton--end))
+        (let ((kill-ring matches))
+          (browse-kill-ring))))))
 
 (defun skeleton-expand-symbols ()
   "Find and expand the skeleton into a symbol.
@@ -400,10 +436,6 @@ This func is copied and modified from `ecomplete-display-matches'."
                     (stringp skeleton--the-skeleton))
                (delete skeleton--the-skeleton list)
              list))))
-
-(defgroup skeleton-complete nil
-  "Dynamically expand expressions by provided skeleton (flex matching)."
-  :group 'abbrev)
 
 (defvar skeleton-complete-mode-map (make-sparse-keymap)
   "skeleton-complete mode map.")
