@@ -1,13 +1,11 @@
 #!/bin/bash
 function calc_relative() {
     local source=$(formal-path "$1")
-    local target=$(formal-path "$2")
-    if test -d "$target"; then
-        target=$target/
-    else
+    local target=$2
+    if test -f "$target"; then
         target=${target%/*}/
     fi
-    if test "$source" = "$target"; then
+    if test "$source" = "$(readlink -m "$target")"; then
         echo .
         exit 0
     fi
@@ -50,5 +48,5 @@ print "$relative_s";
 }
 
 if test "$(basename "$BASH_SOURCE")" = "$(basename "$0")"; then
-   calc_relative "$1" "$2"
+   calc_relative "$(formal-path "$1")" "$(formal-path "$2")"
 fi

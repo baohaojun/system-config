@@ -1198,7 +1198,6 @@ ARG means found the (ARG - 1)th tag to find."
   (let ((default-directory "/"))
     (shell-command (concat "kmail-view " (shell-quote-argument nnmaildir-article-file-name)))))
 
-;;;###autoload
 (defun my-bbdb/gnus-update-records-mode ()
   (progn
     ;(message "hello bbdb/gnus-update-records-mode: %s %s %s" (buffer-name gnus-article-current-summary) (buffer-name) bbdb/news-auto-create-p)

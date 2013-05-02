@@ -9,8 +9,8 @@ git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git:
 git fetch origin -v
 for x in $( 
     (git branch -a |grep 'remotes.*from-mac'; echo remotes/origin/master) |
-    if test -e ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config).sh; then
-        bash ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config).sh
+    if test -e ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config/etc).sh; then
+        bash ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config/etc).sh
     else
         cat
     fi
