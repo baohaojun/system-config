@@ -5,9 +5,9 @@ function fix-it() {
 	set -e
 	cd $(dirname "$1")
 	target=$(cat "$1" | pn 2)
-	target=$(relative-path "$target" $(pwd)/.git)
+	target=$(relative-path "$target" $(pwd)/)
 	echo gitdir: "$target" | tee "$1"
-	git config core.worktree $(relative-path $(readlink -f .) $(readlink -f $target)/config)
+	git config core.worktree $(relative-path $(readlink -f .) $(readlink -f $target)/)
     )
 }
 

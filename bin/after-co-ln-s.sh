@@ -28,7 +28,7 @@ function symlink-map() {
     for x in `git ls-tree --name-only HEAD`
     do
         if test $(basename $x) = .dir-locals.el; then
-            continue
+            next
         fi
 
         if test -e "$2"/$x -a "$(readlink -f "$2"/$x)" != "$(readlink -f "$1"/$x)";
