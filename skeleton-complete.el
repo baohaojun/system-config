@@ -5,6 +5,7 @@
 ;; Author: Bao Haojun <baohaojun@gmail.com>
 ;; Maintainer: Bao Haojun <baohaojun@gmail.com>
 ;; Created: 15th April 2013
+;; Package-Requires: ((browse-kill-ring "1.3"))
 ;; Keywords: abbrev
 ;; Version: 0.0.20130419
 ;; URL: https://github.com/baohaojun/skeleton-complete
@@ -36,6 +37,7 @@
 (require 'ecomplete)
 (require 'cl)
 (require 'thingatpt)
+(require 'browse-kill-ring)
 
 (defgroup skeleton-complete nil
   "Dynamically expand expressions by provided skeleton (flex matching)."
