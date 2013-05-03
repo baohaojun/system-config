@@ -1,0 +1,15 @@
+#+title: beagrep performance tuning on MacbookAir+Linux
+
+[[../../../2011/12/23/beagrep.org][beagrep]] has been slow on my MacbookAir with Linux installation. Where
+it takes 0.23 second to =beagrep -e readlink= on my Optiplex 960, it
+took about 1 second on my MBA.
+
+Finally it turns out to be the cpu clock is locked at 800MHz on
+MBA. See [[https://zignar.net/2012/12/20/linux-on-a-macbook-air/][Linux on a MacBook Air 2012]] for how to fix this.
+
+With this change, bare grep is still not as fast as it is on Optiplex
+960: where Optiplex 960 takes only 3.5s, MacbookAir is taking 40
+seconds.
+
+
+# bhj-tags: beagrep
