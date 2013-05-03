@@ -1155,6 +1155,9 @@ ARG means found the (ARG - 1)th tag to find."
   (interactive)
   (switch-buffer-same-filename t))
 
+(defvar remote-sudo-prefix "/scp:root@localhost:"
+  "The prefix for visiting a file's remote counterpart or with sudo permission")
+
 ;;;###autoload
 (defun sudoedit ()
   (interactive)

@@ -10,5 +10,8 @@ tmpf=/tmp/$(basename $0).$$
 
 cat $tmpf
 
+perl -npe '@x = split(/"/); $_ = $x[1] . "\n"' -i $tmpf
+sort -u $tmpf | xargs -d '\n' bash -c 'for x in "$@"; do test -f $x && md5sum $x || echo $x; done' true > $tmpf.bak
+mv $tmpf.bak $tmpf
 edit-wait $tmpf
 test $(whoami) = root || rm $tmpf

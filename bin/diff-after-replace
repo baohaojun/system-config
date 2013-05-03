@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 3; then
+    die "Error: Usage $(basename $0) file1 file2 re"
+fi
+perl -npe "s/$3//" $1 > /tmp/1.$(basename $0).$$
+perl -npe "s/$3//" $2 > /tmp/2.$(basename $0).$$
+
+for x in /tmp/1.$(basename $0).$$ /tmp/2.$(basename $0).$$; do
+    perl -npe 's/0x ?[a-f0-9]+//ig' -i $x
+done
+
+diff /tmp/1.$(basename $0).$$ /tmp/2.$(basename $0).$$
