@@ -43,10 +43,10 @@ Firemacs.Commands.View = {
         this._sfun.subPageDown(e);
     },
     PrevLink: function(e) {
-	this._sfun.subPrevLink(e);
+        this._sfun.subPrevLink(e);
     },
     NextLink: function(e) {
-	this._sfun.subNextLink(e);
+        this._sfun.subNextLink(e);
     },
     PreviousPage: function(e) {
         if (typeof(BrowserBack) == 'function') { BrowserBack(); }
@@ -275,8 +275,8 @@ Firemacs.CmdKey.View = {
     ReloadPage: 'R',
     ViScrollTop: '<',
     ViScrollBottom: '>',
-    ScrollTop: 'C-{',
-    ScrollBottom: 'C-}'
+    ScrollTop: 'M-<',
+    ScrollBottom: 'M->'
 };
 
 Firemacs.CmdKey.Edit = {
@@ -339,4 +339,3 @@ Firemacs.CmdKey.Menu = {
     PreviousCompletion: 'C-p',
     NextCompletion: 'C-n'
 };
-
