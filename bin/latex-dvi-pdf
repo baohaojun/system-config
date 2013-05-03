@@ -12,7 +12,9 @@ fi
 
 if yes-or-no-p -y "Export from .org? "; then
     emacs -l ~/.emacs --batch --eval '(progn (find-file "'${1/%.tex/.org}'") (org-latex-export-to-latex))'
+    set -- "${1/%.org/.tex}"
 fi
+
 for x in aux log out dvi; do
     rm ${1/%.tex/.$x} -f
 done

@@ -13,3 +13,5 @@ baohaojun-zh.pdf
 ../../bin/latex-dvi-pdf
 resume-en.tex
 resume-zh.tex
+resume-cn.tex
+*.toc

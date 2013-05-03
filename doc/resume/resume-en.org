@@ -71,8 +71,7 @@
 
 *** Android
 
-  - [[https://github.com/baohaojun/BTAndroidWebViewSelection][CrossDict]] :: An English dictionary Android APK, released on Google
-                 Play (Java, Android).
+  - [[https://github.com/baohaojun/BTAndroidWebViewSelection][CrossDict]] :: An English dictionary Android APK, released on [[https://play.google.com/store/apps/details?id=com.baohaojun.crossdict][Google Play]] (Java, Android).
 *** Input Method
   - sdim :: An input method for all major Operating Systems, even
             including Emacs (Python, C++, ObjC, Emacs-lisp).
