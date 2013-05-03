@@ -45,7 +45,7 @@ deprived of macro's power.
 
 They do all support comments, don't they?
 
-** on-site macro support in Tcl
+** On-site macro support in Tcl
 
 I was writing an expect script [[http://github.com/baohaojun/windows-config/raw/master/bin/bbs-robot][bbs-robot]] to connect to the newsmth.net
 BBS and remap its key-binding with Emacs's. For e.g., when I press
