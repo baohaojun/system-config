@@ -72,10 +72,6 @@
 
 (global-set-key (kbd "s-h") help-map)
 
-(global-set-key (kbd "C-{") 'beginning-of-buffer)
-
-(global-set-key (kbd "C-}") 'end-of-buffer)
-
 (global-set-key (kbd "M-.") 'grep-gtags)
 
 (global-set-key (kbd "M-g f") 'grep-func-call)
