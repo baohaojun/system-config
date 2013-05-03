@@ -97,7 +97,7 @@ if git status -s | grep . ; then
         (
             echo "###start of comment###"
             echo in $(pwd):
-            git diff HEAD | perl -npe 's,^diff --git ,* ,'
+            git diff -w HEAD | perl -npe 's,^diff --git ,* ,'
             LOCAL=Local
             cat <<EOF
 # $LOCAL Variables: #
