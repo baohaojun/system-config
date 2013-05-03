@@ -1,5 +1,10 @@
 #+title: General programming
  * 2013
+  - 2013-05
+   * 2013-05-03
+
+     [[../../../blog/2013/05/03/z02abuse-macros-comments.org][Abusing macros and comments]]
+
   - 2013-04
    * 2013-04-12
 

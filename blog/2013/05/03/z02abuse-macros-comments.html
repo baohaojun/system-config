@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Abusing macros and comments</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Abusing macros and comments"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-03T17:58+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="/css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Abusing macros and comments</h1>
+
+<p>People say macros are evil; they also say macros are powerful.
+</p>
+<p>
+To see how evil they are, consider this question: is <code>echo hello world</code> shell script or C program?
+</p>
+<p>
+Most people will think this question is crazy, of course it is some
+kind of shell script and never can be C program! Where's the
+semi-colon and the braces?
+</p>
+<p>
+Well, the truth is, you can compile it as valid C program when you
+bring macros into the field (I am patenting this technique,
+seriously:-):
+</p>
+
+
+
+<pre class="src src-sh"><span class="org-builtin">echo</span> echo hello world &gt; 1.c
+gcc -D <span class="org-variable-name">echo</span>=<span class="org-string">'int main() {printf("Say again?\n");}'</span> -D <span class="org-variable-name">hello</span>= -D <span class="org-variable-name">world</span>= 1.c
+./a.out
+</pre>
+
+
+<p>
+Macros allow easy code expansion, that's where the name cames
+from. But not every programming language has macro, what to do with
+those that doesn't?
+</p>
+<p>
+One useful way is to do code generation: write a program that would
+generate another program source file. But this has it's drawbacks: 
+</p>
+<ol>
+<li>It is too formal, instead of one program file, you got two program
+   files.
+
+</li>
+<li>It is not enough fine-grained, you can only generate a whole file
+   instead of part of a file.
+
+<p>
+   If you have done some php/html programming, you would love the
+   ability to put php code (which is a kind of html macro: it expands
+   to html) and html together, don't you?
+</p>
+
+
+
+<pre class="src src-html">&lt;<span class="org-function-name">title</span>&gt;&lt;<span class="org-keyword">?php</span> echo $articletitle ?&gt;&lt;/<span class="org-function-name">title</span>&gt;   
+</pre>
+
+</li>
+</ol>
+
+
+<p>
+Here's my idea to abuse macros for those poor languages who has been
+deprived of macro's power.
+</p>
+<p>
+They do all support comments, don't they?
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 on-site macro support in Tcl</a>
+<ul>
+<li><a href="#sec-1-1">1.1 <code>bhj-do-code-generation</code></a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2 On-site macro abuse in embedded python in objc</a>
+<ul>
+<li><a href="#sec-2-1">2.1 <code>expand EOF | here-doc-to-cstr | append-line-number //</code></a></li>
+<li><a href="#sec-2-2">2.2 Another level of code generation</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Pros and Cons</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-3">
+<h3 id="sec-1"><span class="section-number-3">1</span> on-site macro support in Tcl</h3>
+<div class="outline-text-3" id="text-1">
+
+
+<p>
+I was writing an expect script <a href="http://github.com/baohaojun/windows-config/raw/master/bin/bbs-robot">bbs-robot</a> to connect to the newsmth.net
+BBS and remap its key-binding with Emacs's. For e.g., when I press
+<code>C-n</code>, it should send <code>^[[1;1B</code> (terminal code for Down key) to the
+BBS. Naming <code>CTRLA</code> as <code>\001</code> all the way to <code>CTRLZ</code> as <code>\032</code> is
+tedious and error prone:
+</p>
+
+
+
+<pre class="src src-tcl"><span class="org-builtin">set</span> <span class="org-variable-name">CTRLA</span> \001
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLB</span> \002
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLC</span> \003
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLD</span> \004
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLE</span> \005
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLF</span> \006
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLG</span> \007
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLH</span> \010
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLI</span> \011
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLJ</span> \012
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLK</span> \013
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLL</span> \014
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLM</span> \015
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLN</span> \016
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLO</span> \017
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLP</span> \020
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLQ</span> \021
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLR</span> \022
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLS</span> \023
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLT</span> \024
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLU</span> \025
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLV</span> \026
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLW</span> \027
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLX</span> \030
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLY</span> \031
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLZ</span> \032
+</pre>
+
+
+<p>
+So what I did is this. First of all, I use Emacs and have a yasnippet
+named <code>codegen</code> for tcl-mode, which expands to the following Tcl
+comments:
+</p>
+
+
+
+<pre class="example"># start code-generator "^\\s *#"
+
+# end code-generator
+# start generated code
+
+# end generated code
+</pre>
+
+
+<p>
+Then I put in my fake macro between the first 2 lines of comments like
+this:
+</p>
+
+
+
+<pre class="example"># start code-generator "^\\s *#"
+# perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+# end code-generator
+# start generated code
+
+# end generated code
+</pre>
+
+
+<p>
+Next I run this emacs-lisp command <code>bhj-do-code-generation</code>, which I
+binded to <b>M-s g</b> (here <code>s</code> and <code>g</code> mean “source generation”), and
+the definition of <code>CTRLA</code> through <code>CTRLZ</code> will be generated
+automatically, turning into:
+</p>
+
+
+
+<pre class="src src-tcl"><span class="org-comment-delimiter"># </span><span class="org-comment">start code-generator "^\\s *#"</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">end code-generator</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">start generated code</span>
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLA</span> \001
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLB</span> \002
+...
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLZ</span> \032
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">end generated code</span>
+
+</pre>
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-4">
+<h4 id="sec-1-1"><span class="section-number-4">1.1</span> <code>bhj-do-code-generation</code></h4>
+<div class="outline-text-4" id="text-1-1">
+
+
+
+
+
+<pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">bhj-do-code-generation</span> ()
+  (interactive)
+  (<span class="org-keyword">let</span> (start-of-code end-of-code code-text start-of-text end-of-text code-transform)
+    (search-backward <span class="org-string">"start code-generator"</span>)
+    (forward-char (length <span class="org-string">"start code-generator"</span>))
+    (<span class="org-keyword">if</span> (looking-at <span class="org-string">"\\s *</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(</span></span><span class="org-string">\"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">(</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">"</span>)
+        (setq code-transform 
+             (read
+              (buffer-substring-no-properties (point) (line-end-position)))))
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-code (point))
+    (search-forward <span class="org-string">"end code-generator"</span>)
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-code (point))
+    (setq code-text (buffer-substring-no-properties start-of-code end-of-code))
+    (<span class="org-keyword">cond</span>
+     ((stringp code-transform)
+      (setq code-text (replace-regexp-in-string code-transform <span class="org-string">""</span> code-text)))
+     ((consp code-transform)
+      (setq code-text (replace-regexp-in-string (car code-transform) (cadr code-transform) code-text))))
+
+    (search-forward <span class="org-string">"start generated code"</span>)
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-text (point))
+    (search-forward <span class="org-string">"end generated code"</span>)
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-text (point))
+    (shell-command-on-region start-of-text end-of-text code-text nil t)
+    (indent-region (min (point) (mark))
+                   (max (point) (mark)))))
+</pre>
+
+
+<p>
+Here's a simple explanation for this emacs-lisp command. Most of the
+code is straight forward (I hope), except for the local var
+<code>code-transform</code>. In the Tcl example it is bound to "<code>^\\s *#</code>", which
+is a regexp whose purpose is to remove the comment beginning <code>#</code>
+character in the code generator:
+</p>
+
+
+
+<pre class="example"># perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+</pre>
+
+
+<p>
+Another nice thing is that it indents the generated code
+automatically:-)
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-3">
+<h3 id="sec-2"><span class="section-number-3">2</span> On-site macro abuse in embedded python in objc</h3>
+<div class="outline-text-3" id="text-2">
+
+
+<p>
+This is becoming really twisted. I've written a <a href="https://github.com/baohaojun/DDHotKey">hotkey</a> program for Mac
+OS (it's a fork of <a href="https://github.com/davedelong/DDHotKey">davedelong's DDHotKey</a> project, thanks).
+</p>
+<p>
+Given such a .rc file, I want to start Emacs when <code>command + + control + shift + m</code> is pressed, and likewise for Terminal and
+  Firefox:
+</p></li>
+</ul>
+
+
+
+
+
+<pre class="example">m command|control open -a /Applications/Emacs.app/
+t command open -a /Applications/Utilities/Terminal.app/
+n command open -a /Applications/Firefox.app/
+</pre>
+
+
+<p>
+The first field is the main key, the second is the <i>or</i> of modifiers
+minus the <code>shift</code> modifier (see below), and the rest is the command to
+execute when the hotkey is pressed.
+</p>
+<p>
+Now parsing the config file in objc is difficult for me as I'm new to
+this language and it's libraries. But it should be easy in embedded
+python (though I've not done any <b>embedded</b> python before, here's how
+the fun starts).
+</p>
+<p>
+I decided to use <code>PyRun_SimpleString</code>, and the python code is very
+simple when standing alone:
+</p>
+
+
+
+<pre class="src src-python"><span class="org-keyword">import</span> ini
+<span class="org-keyword">import</span> os
+<span class="org-variable-name">ini_path</span> = os.path.join(os.path.expanduser(<span class="org-string">"~"</span>), <span class="org-string">".mac-hotkey.rc"</span>)
+<span class="org-variable-name">ini_file</span> = <span class="org-builtin">open</span>(ini_path)
+<span class="org-variable-name">keycodes</span> = {
+    <span class="org-string">"kvk_ansi_a"</span> : 0x00,
+    <span class="org-string">"kvk_ansi_b"</span> : 0x01,
+    ...
+}
+
+<span class="org-variable-name">keymasks</span> = {
+    <span class="org-string">"shift"</span>   : 1 &lt;&lt; 17,
+    <span class="org-string">"control"</span> : 1 &lt;&lt; 18,
+    <span class="org-string">"alt"</span>     : 1 &lt;&lt; 19,
+    <span class="org-string">"command"</span> : 1 &lt;&lt; 20,
+}
+<span class="org-keyword">import</span> re
+<span class="org-keyword">for</span> line <span class="org-keyword">in</span> ini_file:
+    <span class="org-variable-name">m</span> = re.match(r<span class="org-string">"(\S+)\s+(\S+)\s+(.*)"</span>, line)
+    <span class="org-variable-name">mod</span> = keymasks[<span class="org-string">"shift"</span>]
+    <span class="org-keyword">for</span> mask <span class="org-keyword">in</span> m.group(2).split(<span class="org-string">"|"</span>):
+        <span class="org-variable-name">mod</span> |= keymasks[mask]
+    ini.Parse(keycodes[<span class="org-string">"kvk_ansi_"</span> + m.group(1)], mod, m.group(3))
+</pre>
+
+
+<p>
+Some simple explanation:
+</p>
+<p>
+<code>ini</code> is a (misnamed) python module written in objc, it provides only
+one (misnamed) function <code>Parse()</code>, they should have been better named
+<code>hotkey.Register</code>.
+</p>
+<p>
+Now when the above code is embedded into objc with <code>PyRun_SimpleString</code>:
+</p>
+
+
+
+<pre class="src src-objc">PyRun_SimpleString(
+                   <span class="org-string">"import ini\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">1</span>
+                   <span class="org-string">"import os\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">2</span>
+                   <span class="org-string">"ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">3</span>
+                   <span class="org-string">"ini_file = open(ini_path)\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">4</span>
+                   <span class="org-string">"keycodes = {\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">5</span>
+                   <span class="org-string">"    \"kvk_ansi_a\" : 0x00,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">6</span>
+                   <span class="org-string">"    \"kvk_ansi_s\" : 0x01,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">7</span>
+                   ...
+                   <span class="org-string">"    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">81</span>
+                   ...
+                   );
+</pre>
+
+
+<p>
+It is disaster! So many double quotes and back slashes, you can never
+get it right! No wonder I read on the web people saying do not use
+<code>PyRun_SimpleString</code> seriously, indeed it can only be a toy!
+</p>
+<p>
+But again this thing can be done with our on-site macro abusing:-) My
+actual code is like this:
+</p>
+
+
+
+<pre class="src src-objc">PyRun_SimpleString(
+                   <span class="org-comment-delimiter">/* </span><span class="org-comment">start code-generator </span>
+<span class="org-comment">                      expand &lt;&lt;EOF | here-doc-to-cstr | append-line-number //</span>
+<span class="org-comment">                      import ini</span>
+<span class="org-comment">                      import os</span>
+<span class="org-comment">                      ini_path = os.path.join(os.path.expanduser("~"), ".mac-hotkey.rc")</span>
+<span class="org-comment">                      ini_file = open(ini_path)</span>
+<span class="org-comment">                      keycodes = {</span>
+<span class="org-comment">$(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {</span>
+<span class="org-comment">            m/(\S+)\s*=\s*(\S+)/;</span>
+<span class="org-comment">            printf </span>
+<span class="org-comment">"                          \"%s\" : $2\n", lc $1;</span>
+<span class="org-comment">        }' \</span>
+<span class="org-comment">/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h)</span>
+<span class="org-comment">                      }</span>
+
+<span class="org-comment">                      keymasks = {</span>
+<span class="org-comment">                          "shift"   : 1 &lt;&lt; 17,</span>
+<span class="org-comment">                          "control" : 1 &lt;&lt; 18,</span>
+<span class="org-comment">                          "alt"     : 1 &lt;&lt; 19,</span>
+<span class="org-comment">                          "command" : 1 &lt;&lt; 20,</span>
+<span class="org-comment">                      }</span>
+<span class="org-comment">                      import re</span>
+<span class="org-comment">                      for line in ini_file:</span>
+<span class="org-comment">                          m = re.match(r"(\S+)\s+(\S+)\s+(.*)", line)</span>
+<span class="org-comment">                          mod = keymasks["shift"]</span>
+<span class="org-comment">                          for mask in m.group(2).split("|"):</span>
+<span class="org-comment">                              mod |= keymasks[mask]</span>
+<span class="org-comment">                          ini.Parse(keycodes["kvk_ansi_" + m.group(1)], mod, m.group(3))</span>
+<span class="org-comment">EOF</span>
+<span class="org-comment">                      end code-generator */</span>
+                   <span class="org-comment-delimiter">// </span><span class="org-comment">start generated code</span>
+                   <span class="org-string">"import ini\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">1</span>
+                   <span class="org-string">"import os\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">2</span>
+                   <span class="org-string">"ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">3</span>
+                   <span class="org-string">"ini_file = open(ini_path)\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">4</span>
+                   <span class="org-string">"keycodes = {\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">5</span>
+                   <span class="org-string">"    \"kvk_ansi_a\" : 0x00,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">6</span>
+                   <span class="org-string">"    \"kvk_ansi_s\" : 0x01,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">7</span>
+                   <span class="org-string">"    \"kvk_ansi_d\" : 0x02,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">8</span>
+                   ...
+                   <span class="org-string">"    \"kvk_ansi_keypad7\" : 0x59,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">68</span>
+                   <span class="org-string">"    \"kvk_ansi_keypad8\" : 0x5B,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">69</span>
+                   <span class="org-string">"    \"kvk_ansi_keypad9\" : 0x5C\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">70</span>
+                   <span class="org-string">"}\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">71</span>
+                   <span class="org-string">"\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">72</span>
+                   <span class="org-string">"keymasks = {\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">73</span>
+                   <span class="org-string">"    \"shift\"   : 1 &lt;&lt; 17,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">74</span>
+                   <span class="org-string">"    \"control\" : 1 &lt;&lt; 18,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">75</span>
+                   <span class="org-string">"    \"alt\"     : 1 &lt;&lt; 19,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">76</span>
+                   <span class="org-string">"    \"command\" : 1 &lt;&lt; 20,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">77</span>
+                   <span class="org-string">"}\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">78</span>
+                   <span class="org-string">"import re\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">79</span>
+                   <span class="org-string">"for line in ini_file:\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">80</span>
+                   <span class="org-string">"    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">81</span>
+                   <span class="org-string">"    mod = keymasks[\"shift\"]\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">82</span>
+                   <span class="org-string">"    for mask in m.group(2).split(\"|\"):\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">83</span>
+                   <span class="org-string">"        mod |= keymasks[mask]\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">84</span>
+                   <span class="org-string">"    ini.Parse(keycodes[\"kvk_ansi_\" + m.group(1)], mod, m.group(3))\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">85</span>
+
+                   <span class="org-comment-delimiter">// </span><span class="org-comment">end generated code</span>
+                   )
+
+</pre>
+
+
+<p>
+Some more explanation:
+</p>
+
+</div>
+
+<div id="outline-container-2-1" class="outline-4">
+<h4 id="sec-2-1"><span class="section-number-4">2.1</span> <code>expand &lt;&lt;EOF | here-doc-to-cstr | append-line-number //</code></h4>
+<div class="outline-text-4" id="text-2-1">
+
+
+<ol>
+<li><code>expand</code> will replace all tab into spaces, because we are doing
+   python where spaces are serious business.
+
+</li>
+<li><a href="http://github.com/baohaojun/windows-config/raw/master/bin/here-doc-to-cstr"><code>here-doc-to-cstr</code></a>
+
+<p>
+   A simple perl script which takes care of double quotes, back
+   slashes, carriage returns and indentations (according to the first
+   line's indent).
+</p>
+
+
+
+<pre class="src src-perl"><span class="org-comment-delimiter">#</span><span class="org-comment">!/usr/bin/env perl</span>
+
+<span class="org-keyword">use</span> <span class="org-constant">strict</span>;
+
+<span class="org-type">my</span> $<span class="org-variable-name">l1</span> = 1;
+
+<span class="org-type">my</span> $<span class="org-variable-name">cut_head</span> = 0;
+<span class="org-keyword">while</span> (&lt;&gt;) {
+    <span class="org-keyword">if</span> ($<span class="org-variable-name">l1</span> == 1) {
+        m<span class="org-string">/^(\s*)/</span>;
+        $<span class="org-variable-name">cut_head</span> = length $<span class="org-variable-name">1</span>;
+        $<span class="org-variable-name">l1</span> = 0;
+    }
+
+    <span class="org-keyword">if</span> (substr($<span class="org-variable-name">_</span>, 0, $<span class="org-variable-name">cut_head</span>) =~ <span class="org-string">/^\s+$/</span>) {
+        $<span class="org-variable-name">_</span> = substr($<span class="org-variable-name">_</span>, $<span class="org-variable-name">cut_head</span>);
+    } <span class="org-keyword">else</span> {
+        $<span class="org-variable-name">_</span> =~ s<span class="org-string">/^\s+//</span>;
+    }
+    chomp;
+    s<span class="org-string">/([\\"])/\\$1/</span>g;
+    printf <span class="org-string">'"%s\n"'</span> . <span class="org-string">"\n"</span>, $<span class="org-variable-name">_</span>;
+}
+</pre>
+
+
+</li>
+<li><a href="http://github.com/baohaojun/windows-config/raw/master/bin/append-line-number"><code>append-line-number //</code></a>
+
+<p>
+   When I debug the hotkey program in xcode, I think I was lucky to
+   notice that the python exceptions were printed in the xcode log
+   window. I must add line number info to the embedded python source code!
+</p>
+<p>   
+   The <code>//</code> argument to <code>append-line-number</code> means to write the line number info as comments of objc:-)
+</p>
+
+
+
+<pre class="src src-perl"><span class="org-comment-delimiter">#</span><span class="org-comment">!/usr/bin/env perl</span>
+
+<span class="org-keyword">while</span> (&lt;<span class="org-constant">STDIN</span>&gt;) {
+    chomp;
+    <span class="org-keyword">if</span> (@<span class="org-underline"><span class="org-variable-name">ARGV</span></span>) {
+        printf <span class="org-string">"%s %s %d\n"</span>, $<span class="org-variable-name">_</span>, join(<span class="org-string">" "</span>, @<span class="org-underline"><span class="org-variable-name">ARGV</span></span>), $.;
+    } <span class="org-keyword">else</span> {
+        printf <span class="org-string">"%s %d\n"</span>, $<span class="org-variable-name">_</span>, $.;
+    }
+}
+</pre>
+
+</li>
+</ol>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-4">
+<h4 id="sec-2-2"><span class="section-number-4">2.2</span> Another level of code generation</h4>
+<div class="outline-text-4" id="text-2-2">
+
+
+
+
+
+<pre class="src src-sh">$(<span class="org-sh-quoted-exec">perl</span> -ne <span class="org-string">'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {</span>
+<span class="org-string">                m/(\S+)\s*=\s*(\S+)/;</span>
+<span class="org-string">                printf </span>
+<span class="org-string">"                              \"%s\" : $2\n", lc $1;</span>
+<span class="org-string">            }'</span> <span class="org-sh-escaped-newline">\</span>
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h)
+</pre>
+
+
+<p>
+For each main key, we need generate a dict entry for <code>keycodes</code>. This
+can be extracted from the events.h header file.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-3">
+<h3 id="sec-3"><span class="section-number-3">3</span> Pros and Cons</h3>
+<div class="outline-text-3" id="text-3">
+
+
+<p>
+This remains to be discussed:-)
+</p>
+
+
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="z00fix-generate-tags.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              only re-generate the tags that have changed <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../../../../meta/Archive.html"> <!-- next-url -->
+              Archive <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+
+<div id="disqus_container">
+    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+    <div style="margin-bottom:20px">
+        <script type="text/javascript" charset="utf-8">
+        (function(){
+          var _w = 86 , _h = 16;
+          var param = {
+            url:location.href,
+            type:'6',
+            count:'', /**是否显示分享数，1显示(可选)*/
+            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+            pic:'', /**分享图片的路径(可选)*/
+            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+            rnd:new Date().valueOf()
+          }
+          var temp = [];
+          for( var p in param ){
+            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+          }
+          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+        })()
+        </script>
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+<div id="about">
+    <div class="about-content">
+        <div class="clearfix">
+            <div class="about-left">
+                <h2>Contact</h2>
+                <div class="weibo-con">
+                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+                </div>
+            </div>
+            <div class="about-left about-more">
+                <h2>Tags</h2>
+                                <a href="../../../../meta/tags/language.html" title="Programming languages">language</a><br/>
+            <a href="../../../../meta/tags/programming.html" title="General programming">programming</a><br/>
+            <a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
+            </div>
+            <div class="about-left about-more">
+                <h2>About</h2>
+                <p>
+                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+                </p>
+            </div>
+        </div>
+
+        <div class="copyright right">
+            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

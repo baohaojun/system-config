@@ -1,0 +1,410 @@
+#+title: Abusing macros and comments
+
+People say macros are evil; they also say macros are powerful.
+
+To see how evil they are, consider this question: is =echo hello
+world= shell script or C program?
+
+Most people will think this question is crazy, of course it is some
+kind of shell script and never can be C program! Where's the
+semi-colon and the braces?
+
+Well, the truth is, you can compile it as valid C program when you
+bring macros into the field (I am patenting this technique,
+seriously:-):
+
+#+BEGIN_SRC sh
+echo echo hello world > 1.c
+gcc -D echo='int main() {printf("Say again?\n");}' -D hello= -D world= 1.c
+./a.out
+#+END_SRC
+
+Macros allow easy code expansion, that's where the name cames
+from. But not every programming language has macro, what to do with
+those that doesn't?
+
+One useful way is to do code generation: write a program that would
+generate another program source file. But this has it's drawbacks: 
+
+1. It is too formal, instead of one program file, you got two program
+   files.
+
+2. It is not enough fine-grained, you can only generate a whole file
+   instead of part of a file.
+
+   If you have done some php/html programming, you would love the
+   ability to put php code (which is a kind of html macro: it expands
+   to html) and html together, don't you?
+
+   #+BEGIN_SRC html
+    <title><?php echo $articletitle ?></title>   
+   #+END_SRC
+
+Here's my idea to abuse macros for those poor languages who has been
+deprived of macro's power.
+
+They do all support comments, don't they?
+
+** on-site macro support in Tcl
+
+I was writing an expect script [[http://github.com/baohaojun/windows-config/raw/master/bin/bbs-robot][bbs-robot]] to connect to the newsmth.net
+BBS and remap its key-binding with Emacs's. For e.g., when I press
+=C-n=, it should send =^[[1;1B= (terminal code for Down key) to the
+BBS. Naming =CTRLA= as =\001= all the way to =CTRLZ= as =\032= is
+tedious and error prone:
+
+#+BEGIN_SRC tcl
+    set CTRLA \001
+    set CTRLB \002
+    set CTRLC \003
+    set CTRLD \004
+    set CTRLE \005
+    set CTRLF \006
+    set CTRLG \007
+    set CTRLH \010
+    set CTRLI \011
+    set CTRLJ \012
+    set CTRLK \013
+    set CTRLL \014
+    set CTRLM \015
+    set CTRLN \016
+    set CTRLO \017
+    set CTRLP \020
+    set CTRLQ \021
+    set CTRLR \022
+    set CTRLS \023
+    set CTRLT \024
+    set CTRLU \025
+    set CTRLV \026
+    set CTRLW \027
+    set CTRLX \030
+    set CTRLY \031
+    set CTRLZ \032
+#+END_SRC
+
+So what I did is this. First of all, I use Emacs and have a yasnippet
+named =codegen= for tcl-mode, which expands to the following Tcl
+comments:
+
+#+BEGIN_EXAMPLE
+    # start code-generator "^\\s *#"
+    
+    # end code-generator
+    # start generated code
+    
+    # end generated code
+#+END_EXAMPLE
+
+Then I put in my fake macro between the first 2 lines of comments like
+this:
+
+#+BEGIN_EXAMPLE
+    # start code-generator "^\\s *#"
+    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+    # end code-generator
+    # start generated code
+
+    # end generated code
+#+END_EXAMPLE
+
+Next I run this emacs-lisp command =bhj-do-code-generation=, which I
+binded to *M-s g* (here =s= and =g= mean “source generation”), and
+the definition of =CTRLA= through =CTRLZ= will be generated
+automatically, turning into:
+
+#+BEGIN_SRC tcl
+    # start code-generator "^\\s *#"
+    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+    # end code-generator
+    # start generated code
+    set CTRLA \001
+    set CTRLB \002
+    ...
+    set CTRLZ \032
+
+    # end generated code
+
+#+END_SRC
+
+*** =bhj-do-code-generation=
+
+#+BEGIN_SRC emacs-lisp
+(defun bhj-do-code-generation ()
+  (interactive)
+  (let (start-of-code end-of-code code-text start-of-text end-of-text code-transform)
+    (search-backward "start code-generator")
+    (forward-char (length "start code-generator"))
+    (if (looking-at "\\s *\\(\"\\|(\\)")
+	(setq code-transform 
+	     (read
+	      (buffer-substring-no-properties (point) (line-end-position)))))
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-code (point))
+    (search-forward "end code-generator")
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-code (point))
+    (setq code-text (buffer-substring-no-properties start-of-code end-of-code))
+    (cond
+     ((stringp code-transform)
+      (setq code-text (replace-regexp-in-string code-transform "" code-text)))
+     ((consp code-transform)
+      (setq code-text (replace-regexp-in-string (car code-transform) (cadr code-transform) code-text))))
+
+    (search-forward "start generated code")
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-text (point))
+    (search-forward "end generated code")
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-text (point))
+    (shell-command-on-region start-of-text end-of-text code-text nil t)
+    (indent-region (min (point) (mark))
+		   (max (point) (mark)))))
+#+END_SRC
+
+Here's a simple explanation for this emacs-lisp command. Most of the
+code is straight forward (I hope), except for the local var
+=code-transform=. In the Tcl example it is bound to "=^\\s *#=", which
+is a regexp whose purpose is to remove the comment beginning =#=
+character in the code generator:
+
+#+BEGIN_EXAMPLE
+    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+#+END_EXAMPLE
+
+Another nice thing is that it indents the generated code
+automatically:-)
+
+** On-site macro abuse in embedded python in objc
+
+This is becoming really twisted. I've written a [[https://github.com/baohaojun/DDHotKey][hotkey]] program for Mac
+OS (it's a fork of [[https://github.com/davedelong/DDHotKey][davedelong's DDHotKey]] project, thanks).
+
+Given such a .rc file, I want to start Emacs when =command +
++ control + shift + m= is pressed, and likewise for Terminal and
+  Firefox:
+
+#+BEGIN_EXAMPLE
+m command|control open -a /Applications/Emacs.app/
+t command open -a /Applications/Utilities/Terminal.app/
+n command open -a /Applications/Firefox.app/
+#+END_EXAMPLE
+
+The first field is the main key, the second is the /or/ of modifiers
+minus the =shift= modifier (see below), and the rest is the command to
+execute when the hotkey is pressed.
+
+Now parsing the config file in objc is difficult for me as I'm new to
+this language and it's libraries. But it should be easy in embedded
+python (though I've not done any *embedded* python before, here's how
+the fun starts).
+
+I decided to use =PyRun_SimpleString=, and the python code is very
+simple when standing alone:
+
+#+BEGIN_SRC python
+import ini
+import os
+ini_path = os.path.join(os.path.expanduser("~"), ".mac-hotkey.rc")
+ini_file = open(ini_path)
+keycodes = {
+    "kvk_ansi_a" : 0x00,
+    "kvk_ansi_b" : 0x01,
+    ...
+}
+
+keymasks = {
+    "shift"   : 1 << 17,
+    "control" : 1 << 18,
+    "alt"     : 1 << 19,
+    "command" : 1 << 20,
+}
+import re
+for line in ini_file:
+    m = re.match(r"(\S+)\s+(\S+)\s+(.*)", line)
+    mod = keymasks["shift"]
+    for mask in m.group(2).split("|"):
+        mod |= keymasks[mask]
+    ini.Parse(keycodes["kvk_ansi_" + m.group(1)], mod, m.group(3))
+#+END_SRC
+
+Some simple explanation:
+
+~ini~ is a (misnamed) python module written in objc, it provides only
+one (misnamed) function =Parse()=, they should have been better named
+=hotkey.Register=.
+
+Now when the above code is embedded into objc with =PyRun_SimpleString=:
+
+#+BEGIN_SRC objc
+    PyRun_SimpleString(
+                       "import ini\n" // 1
+                       "import os\n" // 2
+                       "ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n" // 3
+                       "ini_file = open(ini_path)\n" // 4
+                       "keycodes = {\n" // 5
+                       "    \"kvk_ansi_a\" : 0x00,\n" // 6
+                       "    \"kvk_ansi_s\" : 0x01,\n" // 7
+                       ...
+                       "    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n" // 81
+                       ...
+                       );
+#+END_SRC
+
+It is disaster! So many double quotes and back slashes, you can never
+get it right! No wonder I read on the web people saying do not use
+=PyRun_SimpleString= seriously, indeed it can only be a toy!
+
+But again this thing can be done with our on-site macro abusing:-) My
+actual code is like this:
+
+#+BEGIN_SRC objc
+
+PyRun_SimpleString(
+                   /* start code-generator 
+                      expand <<EOF | here-doc-to-cstr | append-line-number //
+                      import ini
+                      import os
+                      ini_path = os.path.join(os.path.expanduser("~"), ".mac-hotkey.rc")
+                      ini_file = open(ini_path)
+                      keycodes = {
+$(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {
+            m/(\S+)\s*=\s*(\S+)/;
+            printf 
+"                          \"%s\" : $2\n", lc $1;
+        }' \
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h)
+                      }
+
+                      keymasks = {
+                          "shift"   : 1 << 17,
+                          "control" : 1 << 18,
+                          "alt"     : 1 << 19,
+                          "command" : 1 << 20,
+                      }
+                      import re
+                      for line in ini_file:
+                          m = re.match(r"(\S+)\s+(\S+)\s+(.*)", line)
+                          mod = keymasks["shift"]
+                          for mask in m.group(2).split("|"):
+                              mod |= keymasks[mask]
+                          ini.Parse(keycodes["kvk_ansi_" + m.group(1)], mod, m.group(3))
+EOF
+                      end code-generator */
+                   // start generated code
+                   "import ini\n" // 1
+                   "import os\n" // 2
+                   "ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n" // 3
+                   "ini_file = open(ini_path)\n" // 4
+                   "keycodes = {\n" // 5
+                   "    \"kvk_ansi_a\" : 0x00,\n" // 6
+                   "    \"kvk_ansi_s\" : 0x01,\n" // 7
+                   "    \"kvk_ansi_d\" : 0x02,\n" // 8
+                   ...
+                   "    \"kvk_ansi_keypad7\" : 0x59,\n" // 68
+                   "    \"kvk_ansi_keypad8\" : 0x5B,\n" // 69
+                   "    \"kvk_ansi_keypad9\" : 0x5C\n" // 70
+                   "}\n" // 71
+                   "\n" // 72
+                   "keymasks = {\n" // 73
+                   "    \"shift\"   : 1 << 17,\n" // 74
+                   "    \"control\" : 1 << 18,\n" // 75
+                   "    \"alt\"     : 1 << 19,\n" // 76
+                   "    \"command\" : 1 << 20,\n" // 77
+                   "}\n" // 78
+                   "import re\n" // 79
+                   "for line in ini_file:\n" // 80
+                   "    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n" // 81
+                   "    mod = keymasks[\"shift\"]\n" // 82
+                   "    for mask in m.group(2).split(\"|\"):\n" // 83
+                   "        mod |= keymasks[mask]\n" // 84
+                   "    ini.Parse(keycodes[\"kvk_ansi_\" + m.group(1)], mod, m.group(3))\n" // 85
+
+                   // end generated code
+                   )
+
+#+END_SRC
+
+Some more explanation:
+
+*** =expand <<EOF | here-doc-to-cstr | append-line-number //=
+
+1. =expand= will replace all tab into spaces, because we are doing
+   python where spaces are serious business.
+
+2. [[http://github.com/baohaojun/windows-config/raw/master/bin/here-doc-to-cstr][=here-doc-to-cstr=]]
+
+   A simple perl script which takes care of double quotes, back
+   slashes, carriage returns and indentations (according to the first
+   line's indent).
+   
+   #+BEGIN_SRC perl
+   #!/usr/bin/env perl
+   
+   use strict;
+   
+   my $l1 = 1;
+   
+   my $cut_head = 0;
+   while (<>) {
+       if ($l1 == 1) {
+           m/^(\s*)/;
+           $cut_head = length $1;
+           $l1 = 0;
+       }
+   
+       if (substr($_, 0, $cut_head) =~ /^\s+$/) {
+           $_ = substr($_, $cut_head);
+       } else {
+           $_ =~ s/^\s+//;
+       }
+       chomp;
+       s/([\\"])/\\$1/g;
+       printf '"%s\n"' . "\n", $_;
+   }
+   #+END_SRC
+
+3. [[http://github.com/baohaojun/windows-config/raw/master/bin/append-line-number][=append-line-number //=]]
+
+   When I debug the hotkey program in xcode, I think I was lucky to
+   notice that the python exceptions were printed in the xcode log
+   window. I must add line number info to the embedded python source code!
+   
+   The =//= argument to =append-line-number= means to write the line number info as comments of objc:-)
+
+   #+BEGIN_SRC perl
+   #!/usr/bin/env perl
+   
+   while (<STDIN>) {
+       chomp;
+       if (@ARGV) {
+           printf "%s %s %d\n", $_, join(" ", @ARGV), $.;
+       } else {
+           printf "%s %d\n", $_, $.;
+       }
+   }
+   #+END_SRC
+   
+   
+*** Another level of code generation
+
+#+BEGIN_SRC sh
+$(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {
+                m/(\S+)\s*=\s*(\S+)/;
+                printf 
+"                              \"%s\" : $2\n", lc $1;
+            }' \
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h)
+#+END_SRC
+
+For each main key, we need generate a dict entry for =keycodes=. This
+can be extracted from the events.h header file.
+
+** Pros and Cons
+
+This remains to be discussed:-)
+
+# bhj-tags: language programming
