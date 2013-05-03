@@ -412,4 +412,11 @@ dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2
           -I -r --exclude-dir=.git --exclude-dir=.repo -e readlink~
           =~/src/android=. The first time it took 5m20s, second time
           1m21s, and third time 3.5s, and it can't be reduced much
-          further.
+          further. The result is retrieved on a ThinkPad T420 with 8G
+          memory. One thing notable here I think is that it could
+          require multiple runs to reach the minimum 3.5s. Another
+          thing is I tried it multiple times on my MacbookAir with
+          about the same debian installation, =grep= always takes
+          about 1m as the minimum. Was it because less memory (only 4G
+          for MacbookAir), or was it because SSD and thus different
+          caching strategy? It eludes me.
