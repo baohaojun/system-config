@@ -8,11 +8,11 @@ if test "$EMACS" != t; then
     fi
 fi
 
-for x in ~/.bash_completion.d/*; do 
+for x in ~/.bash_completion.d/*; do
     . "$x"
 done
 
-function cd_bhj () 
+function cd_bhj ()
 {
     local oldpwd=`pwd`
     local ok=1 # 1 means not ok
@@ -22,7 +22,7 @@ function cd_bhj ()
     return $ok
 }
 
-function cd_failed() 
+function cd_failed()
 {
     local IFS=$'\n'
     dirs=( $(where "$@") )
@@ -31,7 +31,7 @@ function cd_failed()
         return 1
     elif test ${#dirs[@]} = 1; then
         builtin cd ${dirs[0]}
-    else 
+    else
         NUM=`my-select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
@@ -39,7 +39,7 @@ function cd_failed()
     return 0
 }
 
-function fcd() 
+function fcd()
 {
     local IFS=$'\n'
     dirs=( $(find . -iname "*$1*") )
@@ -48,14 +48,14 @@ function fcd()
         return 1
     elif test ${#dirs[@]} = 1; then
         cd_bhj ${dirs[0]}
-    else 
+    else
         NUM=`my-select "${dirs[@]}"`
         ((NUM--))
         cd_bhj "${dirs[$NUM]}"
     fi
 }
 
-function wcd() 
+function wcd()
 {
     local IFS=$'\n'
     dirs=( "$@" )
@@ -64,32 +64,35 @@ function wcd()
         return 1
     elif test ${#dirs[@]} = 1; then
         cd_bhj ${dirs[0]}
-    else 
+    else
         NUM=`my-select "${dirs[@]}"`
         ((NUM--))
         cd_bhj "${dirs[$NUM]}"
     fi
 }
 
-function fedit() 
+function f()
 {
     local IFS=$'\n'
     local line=
     if [[ "$1" =~ :[0-9]+:?$ ]]; then
-	line=:$(echo "$1"|perl -npe 's/.*:(\d+):?$/$1/')
-	set -- "$(echo "$1"|perl -npe 's/:(\d+):?$//')"
+        line=:$(echo "$1"|perl -npe 's/.*:(\d+):?$/$1/')
+        file=$1
+        shift
+        set -- "$(echo "$file"|perl -npe 's/:(\d+):?$//')" "$@"
     fi
-    dirs=( $(find . -iname "*$1*" | grep -v '.class$') )
-    if test ${#dirs[@]} = 0; then
-        echo 'Error: no such file or directory'
-        return 1
-    elif test ${#dirs[@]} = 1; then
-        edit ${dirs[0]}$line
-    else 
-        NUM=`my-select "${dirs[@]}"`
-        ((NUM--))
-        edit "${dirs[$NUM]}"$line
-    fi
+
+    echo $(ORIGINAL_MATCHER="$@ "'!\.class$' select-output-line find . -type f)
+}
+
+function fp()
+{
+    f "$@" | tee /dev/stderr | putclip
+}
+
+function fe()
+{
+    f "$@" | xargs e
 }
 
 function rbcd()
@@ -112,9 +115,9 @@ function rex()
 
 function rcd() {
     if test $# = 0; then
-	cd .repo/manifests
+        cd .repo/manifests
     else
-	scd "$@"
+        scd "$@"
     fi
 }
 

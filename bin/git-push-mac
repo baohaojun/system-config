@@ -22,6 +22,26 @@ if test -z "$CHECKING_SUBMODULE"; then
     fi
 fi
 
+function get-tags()
+{
+    local tags=()
+    local tag=()
+    existing_tags=$(find meta/tags/ -type d -exec basename '{}' \;)
+    while true; do
+        tag=$(select-output-line bash -c "echo done; echo new; arg1-arg2 \"$existing_tags\" \"$(echo ${tags[@]})\" ")
+        if test $tag = done; then
+            if test "${#tags[@]}" = 0; then
+                read -p "Must specifi at least one tag, press any key to continue... "
+                continue
+            else
+                echo "${tags[@]}"
+                return
+            fi
+        fi
+        tags=("${tags[@]}" $tag)
+    done
+}
+
 if git remote -v | grep baohaojun.github.com.git; then
     (
         cd $(dirname $(lookup-file .git))
@@ -36,9 +56,19 @@ if git remote -v | grep baohaojun.github.com.git; then
     org_changes=$(git st -S|grep -e '\.org$' || true)
     for x in $org_changes; do
         if test -e $x; then
+            ./fix-links.pl $x
+            if ! grep 'bhj-tags:' $x; then
+                tags=$(get-tags)
+                echo "# bhj-tags: $tags" >> $x
+            fi
+
             org-export $x
             if test -e "$(basename $org_changes|perl -npe 's/\.org$/.html/')" && [[ "$org_changes" =~ blog/ ]]; then
-                ./rebuild-old-html.pl "$x"
+                if git st -s "$(basename $org_changes|perl -npe 's/\.org$/.html/')" | grep -P -q -e '^\?\?'; then
+                    rm "$(basename $org_changes|perl -npe 's/\.org$/.html/')"
+                else
+                    ./rebuild-old-html.pl "$x"
+                fi
             fi
         fi
     done

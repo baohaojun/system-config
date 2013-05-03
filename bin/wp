@@ -8,12 +8,12 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     {
         if [[ "$FILE" =~ ~/smb/ ]]; then
             FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
-	    host=$(echo "$FILE" | perl -npe 's,^..(.*?)\\.*,$1,')
-	    path=$(echo "$FILE" | perl -npe 's,^..(.*?)(\\.*),$2,')
-	    FILE=$(printf '\\\\%s%s' $(ip-or-name $host) $path)		
+            host=$(echo "$FILE" | perl -npe 's,^..(.*?)\\.*,$1,')
+            path=$(echo "$FILE" | perl -npe 's,^..(.*?)(\\.*),$2,')
+            FILE=$(printf '\\\\%s%s' $(ip-or-name $host) $path)
         elif [[ "$FILE" =~ ^// ]]; then
-	    FILE=`echo "$FILE"|perl -npe 's,/,\\\\,g'`
-	else
+            FILE=`echo "$FILE"|perl -npe 's,/,\\\\,g'`
+        else
             FILE=z:$FILE
         fi
         echo -n "$FILE"
@@ -33,7 +33,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     {
         relative-path "$FILE" $(readlink -f $(lookup-file .repo/..))/
     }
-    
+
     function gitp()
     {
         relative-path "$FILE" $(readlink -f $(dirname "$(lookup-file .git)"))/
@@ -66,14 +66,14 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function mp() #mail path
     {
-	case $(uname) in
-	    CYGWIN*)
-		wlp "$FILE"
-		;;
-	    *)
-		echo -n "$FILE"
-		;;
-	esac
+        case $(uname) in
+            CYGWIN*)
+                wlp "$FILE"
+                ;;
+            *)
+                echo -n "$FILE"
+                ;;
+        esac
     }
 
     function tmp() #tramp mail path
@@ -95,7 +95,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo "$out" | putclip
     fi
 else # we are being sourced
-    for x in swp sup gitp wp ap up mp tmp realp; do 
+    for x in swp sup gitp wp ap up mp tmp realp; do
         eval 'function '$x'() {
             command '$x' "$@" || { renew-xauth; command '$x' "$@"; }
             if test "$NO_PUTCLIP" = true; then
