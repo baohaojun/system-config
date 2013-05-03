@@ -1,0 +1,17 @@
+#+title: My org-mode blog for github page
+
+Here I've written a command line blogging tool for my github [[http://baohaojun.github.io][page]].
+
+I only need write the article in .org file, then git push it using a
+special command: [[http://github.com/baohaojun/windows-config/raw/master/bin/git-push-mac][=git-push-mac=]].
+
+This command will automatically generate the .html file and
+create/update the links automatically, such as the next/previous blog
+post.
+
+I didn't use o-blog because 1) I've seen firefox complain the less.js
+is run away; 2) I like generating one blog post from one .org file
+(instead of 1 blog post from 1 DONE heading in a .org file); 3) The
+timestamp etc. can be managed by git instead of hardcoding them in the
+.org file.
+# bhj-tags: blog

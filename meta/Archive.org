@@ -3,6 +3,8 @@
   - 2013-05
    * 2013-05-03
 
+     [[../blog/2013/05/03/my-org-github-blog.org][My org-mode blog for github page]]
+
      [[../blog/2013/05/03/beagrep-even-faster2.org][beagrep performance tuning on MacbookAir+Linux]]
 
    * 2013-05-02
