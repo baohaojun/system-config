@@ -3,9 +3,9 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>My org-mode blog for github page</title>
+<title>only re-generate the tags that have changed</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="My org-mode blog for github page"/>
+<meta name="title" content="only re-generate the tags that have changed"/>
 <meta name="generator" content="Org-mode"/>
 <meta name="generated" content="2013-05-03T15:47+0800"/>
 <meta name="author" content="Bao Haojun"/>
@@ -97,42 +97,52 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="content">
-<h1 class="title">My org-mode blog for github page</h1>
+<h1 class="title">only re-generate the tags that have changed</h1>
 
-<p>Here I've written a command line blogging tool for my github <a href="http://baohaojun.github.io">page</a>.
+
+<p>
+When I wrote a new blog post, it should have a tag (aka. category). My
+tags are managed using file system as the database: every tag is a
+filesystem directory, and every post of this tag is symlinked into
+this directory.
 </p>
 <p>
-I only need write the article in .org file, then git push it using a
-special command: <a href="http://github.com/baohaojun/windows-config/raw/master/bin/git-push-mac"><code>git-push-mac</code></a>.
+When I publish a post, I should only re-generate the tags that are
+affected, instead of all tags of my blog system:
 </p>
-<p>
-This command will automatically generate the .html file and
-create/update the links automatically, such as the next/previous blog
-post.
-</p>
-<p>
-I didn't use o-blog because 1) I've seen firefox complain the less.js
-is run away; 2) I like generating one blog post from one .org file
-(instead of 1 blog post from 1 DONE heading in a .org file); 3) The
-timestamp etc. can be managed by git instead of hardcoding them in the
-.org file.
+
+
+
+<pre class="example">diff --git a/generate-tags.sh b/generate-tags.sh
+index bb579c3..ef42695 100755
+--- a/generate-tags.sh
++++ b/generate-tags.sh
+@@ -66,4 +66,5 @@ for tagd in meta/tags/*/; do
+     ) &gt; $(dirname $tagd)/$tag.org
+ done
+ 
+-org-export -L meta/tags/*.org
++
++org-export -L $(git st -s meta/tags/*.org|pn 2)
+</pre>
+
       <nav>
         <ul class="pager">
           <li class="prev_post">
-            <a href="beagrep-even-faster2.html"> <!-- prev-url -->
+            <a href="my-org-github-blog.html"> <!-- prev-url -->
               <i class="icon-chevron-left">《</i>
-              beagrep performance tuning on MacbookAir+Linux <!-- prev-title -->
+              My org-mode blog for github page <!-- prev-title -->
             </a>
           </li>
           <li class="next_post" style="text-align: right;">
-            <a href="z00fix-generate-tags.html"> <!-- next-url -->
-              only re-generate the tags that have changed <!-- next-title -->
+            <a href="../../../../meta/Archive.html"> <!-- next-url -->
+              Archive <!-- next-title -->
               <i class="icon-chevron-right">》</i>
             </a>
           </li>
         </ul>
       </nav>
-</p></div>
+</div>
 
 <div id="postamble">
 

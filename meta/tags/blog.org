@@ -3,6 +3,8 @@
   - 2013-05
    * 2013-05-03
 
+     [[../../../blog/2013/05/03/z00fix-generate-tags.org][only re-generate the tags that have changed]]
+
      [[../../../blog/2013/05/03/my-org-github-blog.org][My org-mode blog for github page]]
 
   - 2013-02

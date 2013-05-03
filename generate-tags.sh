@@ -66,4 +66,5 @@ for tagd in meta/tags/*/; do
     ) > $(dirname $tagd)/$tag.org
 done
 
-org-export -L meta/tags/*.org
+
+org-export -L $(git st -s meta/tags/*.org|pn 2)

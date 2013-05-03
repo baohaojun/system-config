@@ -1,0 +1,25 @@
+#+title: only re-generate the tags that have changed
+
+# bhj-tags: blog
+
+When I wrote a new blog post, it should have a tag (aka. category). My
+tags are managed using file system as the database: every tag is a
+filesystem directory, and every post of this tag is symlinked into
+this directory.
+
+When I publish a post, I should only re-generate the tags that are
+affected, instead of all tags of my blog system:
+
+#+BEGIN_EXAMPLE
+diff --git a/generate-tags.sh b/generate-tags.sh
+index bb579c3..ef42695 100755
+--- a/generate-tags.sh
++++ b/generate-tags.sh
+@@ -66,4 +66,5 @@ for tagd in meta/tags/*/; do
+     ) > $(dirname $tagd)/$tag.org
+ done
+ 
+-org-export -L meta/tags/*.org
++
++org-export -L $(git st -s meta/tags/*.org|pn 2)
+#+END_EXAMPLE
