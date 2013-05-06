@@ -6,14 +6,14 @@ THIS=$(readlink -f "$THIS")
 echo "we are executing $THIS"
 BIN_WINDOWS=$(dirname "$THIS")
 
-# strlen("windows-config/bin/windows") is 26, and -26 means the last
+# strlen("system-config/bin/windows") is 26, and -26 means the last
 # 26 chars, but we can't simply write -26, because that's another
 # expansion syntax. We must write 0-26, and it's arithmetic, which is
 # allowed.
 
-if test "${BIN_WINDOWS:0-26}" != "windows-config/bin/windows"
+if test "${BIN_WINDOWS:0-26}" != "system-config/bin/windows"
 then
-    read -p 'startup.sh is not in ~/windows-config/bin/windows! Press any key to exit...'
+    read -p 'startup.sh is not in ~/system-config/bin/windows! Press any key to exit...'
     #pause and exit, it's all blowed up!
     exit
 fi
@@ -35,7 +35,7 @@ rm -f /q;
 ln -s "$HOME2" /q
 export HOME=/q
 
-~/windows-config/bin/after-co-ln-s.sh
+~/system-config/bin/after-co-ln-s.sh
 . ~/.bashrc-windows
 export HOME=/q 
 cd ~/bin/windows/Imap4Monitor/
@@ -83,5 +83,5 @@ ln -s "$(cygpath -D)" ~/Desktop
 ln -s ~/user/Application\ Data/Mozilla  ~/.mozilla
 at 15:00 /every:monday,tuesday,wednesday,thursday,friday  "$(wlp $(which 15-00.bat))"
 
-echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/windows-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
+echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/system-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
 echo "After check out success!"

@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ex
-test $PWD = ~ && cd ~/windows-config/
+test $PWD = ~ && cd ~/system-config/
 remote=origin
 
 my_mac=$(from-mac)

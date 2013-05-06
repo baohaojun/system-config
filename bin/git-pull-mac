@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-test $PWD = ~ && cd ~/windows-config/
+test $PWD = ~ && cd ~/system-config/
 cd "$(dirname "$(lookup-file .git)")"
 
 git-clean-mac-branches-local
@@ -9,8 +9,8 @@ git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git:
 git fetch origin -v
 for x in $( 
     (git branch -a |grep 'remotes.*from-mac'; echo remotes/origin/master) |
-    if test -e ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config).sh; then
-        bash ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config).sh
+    if test -e ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh; then
+        bash ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh
     else
         cat
     fi
@@ -39,4 +39,4 @@ git submodule foreach 'git config user.email baohaojun@gmail.com'
 git config user.email baohaojun@gmail.com
 fix-submodule-dot-git
 ~/bin/after-co-ln-s.sh
-touch ~/windows-config/.for-code-reading
+touch ~/system-config/.for-code-reading

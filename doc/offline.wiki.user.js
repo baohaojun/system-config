@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name          Fix Offline Wiki Links
-// @namespace     http://github.com/baohaojun/windows-config
+// @namespace     http://github.com/baohaojun/system-config
 // @description   Fix offline wikipedia page links
 // @include       http://offline-wiki:34567/*
 // ==/UserScript==

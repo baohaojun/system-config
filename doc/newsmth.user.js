@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name          login-newsmth
-// @namespace     http://github.com/baohaojun/windows-config
+// @namespace     http://github.com/baohaojun/system-config
 // @description   Script for auto login at newsmth
 // @include       http://www.newsmth.net/bbs*
 // ==/UserScript==

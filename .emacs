@@ -460,7 +460,7 @@
 (require 'bbdb-autoloads)
 
 (unless (eq system-type 'windows-nt)
-  (setq bbdb-file "~/windows-config/.bbdb"))
+  (setq bbdb-file "~/system-config/.bbdb"))
 
 (add-hook 'bbdb-canonicalize-net-hook
       'my-bbdb-canonicalize)

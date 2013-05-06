@@ -108,7 +108,7 @@ beagrep是一个从lucene演变来的搜索引擎程序。当我们想在android
 
 参考：
 
-http://github.com/baohaojun/windows-config/raw/master/gcode/beagrep/beagrep-grep-readme.org
+http://github.com/baohaojun/system-config/raw/master/gcode/beagrep/beagrep-grep-readme.org
 
 
 ** 那么，哪里能买得到呢？
@@ -116,8 +116,8 @@ http://github.com/baohaojun/windows-config/raw/master/gcode/beagrep/beagrep-grep
 在ubuntu/debian下，运行下列命令：
 
 cd ~
-git clone git://github.com/baohaojun/windows-config.git
-~/windows-config/bin/after-co-ln-s.sh
+git clone git://github.com/baohaojun/system-config.git
+~/system-config/bin/after-co-ln-s.sh
 . ~/.bash_profile
 ~/bin/Linux/after-check-out.sh
 

@@ -3,7 +3,7 @@
 
 import os, sys, pickle
 
-sys.path.append(os.path.expanduser("~/windows-config/gcode/scim-cs/ime-py"))
+sys.path.append(os.path.expanduser("~/system-config/gcode/scim-cs/ime-py"))
 
 from wubi86 import g_quail_map
 

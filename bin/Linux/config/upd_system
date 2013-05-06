@@ -1,7 +1,7 @@
 #!/bin/bash
-#把windows-config下载回来，并全部拷到~下
+#把system-config下载回来，并全部拷到~下
 #cd ~
-#svn co http://windows-config.googlecode.com/svn/trunk
+#svn co http://system-config.googlecode.com/svn/trunk
 #mv ~/trunk/* ~/trunk/.* ~ 
 
 #先把一些常用的软件装上，包括编译Android需要用到的软件。

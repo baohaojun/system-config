@@ -18,8 +18,8 @@ sudo apt-get install -y git-core ssh subversion vim
 
 
 cd ~
-git clone git://192.168.0.46/git/windows-config.git || (cd ~/windows-config && git pull)
-cd ~/windows-config
+git clone git://192.168.0.46/git/system-config.git || (cd ~/system-config && git pull)
+cd ~/system-config
 git checkout -- . 
 ./bin/after-co-ln-s.sh
 sudo apt-get install -y lftp

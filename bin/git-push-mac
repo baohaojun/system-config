@@ -2,7 +2,7 @@
 set -ex
 . ~/bin/.gitx
 
-test "$(pwd)" = $HOME && cd ~/windows-config
+test "$(pwd)" = $HOME && cd ~/system-config
 cd "$(dirname "$(lookup-file .git)")"
 
 if git-is-ancestor master HEAD; then
@@ -120,14 +120,14 @@ function die() {
 }
 
 git push origin HEAD:refs/heads/$(
-    if test -e ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config).sh; then
-        bash ~/windows-config/etc/branch-fileters/$(relative-path $PWD ~/windows-config).sh my-master;
+    if test -e ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh; then
+        bash ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh my-master;
     else
         echo master
     fi
 ) || die "you need to merge it!"
 
-if test $(pwd) = ~/windows-config; then
+if test $(pwd) = ~/system-config; then
     CHECKING_SUBMODULE= git-notify-push
 fi
 

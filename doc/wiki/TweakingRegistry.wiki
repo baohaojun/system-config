@@ -8,7 +8,7 @@ Usage is very simple:
 {{{
 $regrep.py "hello.*world"
 }}}
-will search that pattern in your registry. Read the code at [http://windows-config.googlecode.com/svn/trunk/bin/windows/regrep.py here]
+will search that pattern in your registry. Read the code at [http://system-config.googlecode.com/svn/trunk/bin/windows/regrep.py here]
 
 = Registry Subst =
 
@@ -19,7 +19,7 @@ I did it with:
 $regsub.py 'c:.*documents and settings' 'd:/profiles'
 }}}
 
-Read the code at [http://windows-config.googlecode.com/svn/trunk/bin/windows/regsub.py here]
+Read the code at [http://system-config.googlecode.com/svn/trunk/bin/windows/regsub.py here]
 
 = Registry Open =
 
@@ -28,4 +28,4 @@ $regopen.py 'HKEY_CURRENT_USER\Software\JavaSoft\Prefs\org\antlr\works'
 }}}
 will open that key in regedit.exe.
 
-The code is at [http://windows-config.googlecode.com/svn/trunk/bin/windows/regopen.py here].
+The code is at [http://system-config.googlecode.com/svn/trunk/bin/windows/regopen.py here].

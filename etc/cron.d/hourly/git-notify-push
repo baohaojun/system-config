@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~/windows-config/
+cd ~/system-config/
 
 if git-need-push; then
     echo git need push

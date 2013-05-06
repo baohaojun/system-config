@@ -17,7 +17,7 @@ might be bad."
 
 (defun confirm-risky-remote-edit ()
   (let ((filename (buffer-file-name)))
-    (when (and (file-remote-p filename) (string-match "/windows-config/" filename))
+    (when (and (file-remote-p filename) (string-match "/system-config/" filename))
       (yes-or-no-p "Are you sure it's alright to save this remote file when you have a local copy?"))))
 
 

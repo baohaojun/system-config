@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name          Fix android sdk manual too slow
-// @namespace     http://github.com/baohaojun/windows-config
+// @namespace     http://github.com/baohaojun/system-config
 // @description   Fix android sdk manual too slow
 // @include       http://developer.android.com/*
 // ==/UserScript==

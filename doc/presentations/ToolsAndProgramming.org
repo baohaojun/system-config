@@ -137,7 +137,7 @@ gcc -D echo='int main() {printf("hello world?\n");}' \
 *** When you can not make a 4 in C, make one in Bash (@Bao Haojun)
 
 #+begin_example
-cd ~/windows-config/
+cd ~/system-config/
 beagrep -e 'start code-generator'
 #+end_example
 
@@ -186,19 +186,19 @@ beagrep -e 'start code-generator'
 #+begin_example
 cd ~
 git clone --recursive \
-    git://github.com/baohaojun/windows-config.git
-~/windows-config/bin/after-co-ln-s.sh
-~/windows-config/bin/Linux/after-check-out.sh
+    git://github.com/baohaojun/system-config.git
+~/system-config/bin/after-co-ln-s.sh
+~/system-config/bin/Linux/after-check-out.sh
 #+end_example
 
 or, to save network bandwidth:
 
 #+begin_example
 # get the tarball into your ~ from
-# '\\bible\Public\user\baohaojun\windows-config.tgz'
+# '\\bible\Public\user\baohaojun\system-config.tgz'
 
 cd ~
-tar zxfv windows-config.tgz
-~/windows-config/bin/after-co-ln-s.sh
-~/windows-config/bin/Linux/after-check-out.sh
+tar zxfv system-config.tgz
+~/system-config/bin/after-co-ln-s.sh
+~/system-config/bin/Linux/after-check-out.sh
 #+end_example

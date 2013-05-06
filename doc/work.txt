@@ -1166,7 +1166,7 @@ mkdir /var/myca; cd /var/myca
 2) /usr/share/ssl/misc/CA.sh -sign
 
 Emacs for vs2010
-Location: D:\cyg\home\bhj\windows-config\bin\windows\redirect_vc6\emacsedit.exe
+Location: D:\cyg\home\bhj\system-config\bin\windows\redirect_vc6\emacsedit.exe
 Arguments: -n +$(CurLine):$(CurCol) $(ItemPath)
 *note there is a variable button that will help you with the shortcuts like $(CurLine)
 WorkingDirectory: $(ItemDirectory)

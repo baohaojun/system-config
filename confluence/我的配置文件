@@ -12,17 +12,17 @@ h2. 下载
 
 {code:sh}
 cd ~/
-git clone git://github.com/baohaojun/windows-config.git
+git clone git://github.com/baohaojun/system-config.git
 {code}
 
 我的配置文件一定要放在我的HOME目录底下，放在任何其他地方都是未经测试的。你可能认为这样的要求太苛刻、太过分，但是其实一点也不。因为所有的文件几乎都是需要放在一个固定位置下的，比如bash，大家写bash脚本的时候第一很几乎总是 {{#!/bin/bash}} 。这样做的原因，是因为可以省去很多不必要的麻烦。再比如.bashrc，也总是放在 {{\~}} 目录下，我的配置文件也包含了.bashrc，所以当然也要放在 {{\~}} 下。
 
-当然，确切的说，我的东西都是放在 {{\~/windows-config/}} 底下，但是，很快我就会让它们出现在 {{\~}} 下的。
+当然，确切的说，我的东西都是放在 {{\~/system-config/}} 底下，但是，很快我就会让它们出现在 {{\~}} 下的。
 
 h2. 配置
 
 {code:sh}
-~/windows-config/bin/after-co-ln.sh
+~/system-config/bin/after-co-ln.sh
 {code}
 
 这一步就是把我所有的配置文件都软链接到 {{\~}} 下来。如果已经存在目标文件的话，我会先把目标文件做一个.bak的备份，所以不必太担心会丢失数据。

@@ -6,7 +6,7 @@ mkdir -p ~/.logs
 touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
 mkdir -p ~/tmp
-cd ~/windows-config/
+cd ~/system-config/
 mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')/ext
 mkdir -p ~/tmp/notification-manager
 mkdir -p ~/external/etc/at
@@ -44,12 +44,12 @@ function symlink-map() {
 
 }
 
-symlink-map ~/windows-config/ ~/
+symlink-map ~/system-config/ ~/
 if test -d ~/.config; then
-    symlink-map ~/windows-config/.config.vc/ ~/.config
+    symlink-map ~/system-config/.config.vc/ ~/.config
 fi
 mkdir -p ~/.local/share/applications
-symlink-map ~/windows-config/etc/local-app/ ~/.local/share/applications
+symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
 
 if test -e ~/.gitconfig.$USER; then
     ln -sf ~/.gitconfig.$USER ~/.gitconfig
@@ -57,9 +57,9 @@ fi
 
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 if test -e ~/.macbook-air; then
-    ln -sf ~/windows-config/etc/.Xmodmap-macbook-air ~/.Xmodmap
+    ln -sf ~/system-config/etc/.Xmodmap-macbook-air ~/.Xmodmap
 else
-    ln -sf ~/windows-config/etc/.Xmodmap ~/.Xmodmap
+    ln -sf ~/system-config/etc/.Xmodmap ~/.Xmodmap
 fi
 sudo ln -sf ~/etc/rc.local /etc
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/

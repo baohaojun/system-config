@@ -2,7 +2,7 @@
 
 set -e
 . .gitx
-test $(pwd) = $HOME && cd ~/windows-config/
+test $(pwd) = $HOME && cd ~/system-config/
 cd "$(dirname "$(lookup-file .git)")"
 signal=~/.git-need-push
 

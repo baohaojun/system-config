@@ -87,7 +87,7 @@ Sawmill改名而来）。
   怎么处理都不为过，我采取的做法是问用户意见，应该怎么处理（类似于弹一
   个对话框）。
 
-更多细节，看下面代码和其中的注释。代码最新版本（无注释）在[[http://github.com/baohaojun/windows-config/raw/master/bin/Linux/refactory-rename][这里]]。
+更多细节，看下面代码和其中的注释。代码最新版本（无注释）在[[http://github.com/baohaojun/system-config/raw/master/bin/Linux/refactory-rename][这里]]。
 
 有一个值得一提的细节是，我的这个工具是依赖于git的，但是我不认为这是一种本末倒置的依赖关系，因为git实在是太普遍了。
 

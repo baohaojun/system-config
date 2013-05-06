@@ -3,9 +3,9 @@ function git()
 {
     (
         if test "$(readlink -f .)" = "$(readlink -f ~)" -a "$1" != clone ||
-            test "$(readlink -f .)" = "$(readlink -f ~/windows-config/)"
+            test "$(readlink -f .)" = "$(readlink -f ~/system-config/)"
         then
-            cd ~/windows-config/;
+            cd ~/system-config/;
             if test "$1" = st; then
                 for x in ~/src/github/*/; do
                     if test -d $x; then

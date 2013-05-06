@@ -35,7 +35,7 @@ if test $(basename $0) = build-beagrep-debs; then
                         set -x
                         command sudo cowbuilder --execute --basepath $builddir/$(basename $pkg) \
                             --buildplace $builddir/ \
-                            --bindmounts \"$(readlink -f $HOME/windows-config) $(readlink -f $HOME/tmp/beagrep-debs)\" $ADDITIONAL_BUILD_BEAGREP_DEBS_ARGS -- \
+                            --bindmounts \"$(readlink -f $HOME/system-config) $(readlink -f $HOME/tmp/beagrep-debs)\" $ADDITIONAL_BUILD_BEAGREP_DEBS_ARGS -- \
                             $(which do-beagrep-build) \
                             $branch \
                             $HOME \
@@ -64,7 +64,7 @@ export arch=$6
 export bldir=~/$$
 (
     mkdir -p $bldir
-    cd $myhome/windows-config/gcode/beagrep
+    cd $myhome/system-config/gcode/beagrep
     which git || apt-get install -y git-core || true
     which dpkg-depcheck || apt-get -y install devscripts || true
     which dh_autoreconf || apt-get -y install dh-autoreconf || {
@@ -136,7 +136,7 @@ export bldir=~/$$
 
     cp -a * $myhome/tmp/beagrep-debs/$branch-$arch
     cd $myhome/tmp/beagrep-debs/$branch-$arch
-    export PATH=$myhome/windows-config/bin:$PATH 
+    export PATH=$myhome/system-config/bin:$PATH 
     (
         diff-arg1-arg2 "$(cat beagrep/debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')" \
             "$(cat make.dep | perl -ne 'print if m/^Packages needed:/..m/^$/'|grep -v 'Packages needed'|sed -e 's/:.*//')" |

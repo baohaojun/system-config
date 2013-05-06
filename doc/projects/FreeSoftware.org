@@ -156,7 +156,7 @@ It can be used to download Xcode using multithread download.
 * DONE dvp on Mac
   CLOSED: [2013-04-18 Thu 17:06]
   - CLOSING NOTE [2013-04-18 Thu 17:06] \\
-    http://github.com/baohaojun/windows-config/raw/master/doc/keyremap4macbook-dvp.xml
+    http://github.com/baohaojun/system-config/raw/master/doc/keyremap4macbook-dvp.xml
     
     Use this file as the private.xml for keyremap4macbook
 

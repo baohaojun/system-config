@@ -43,10 +43,10 @@ h1. 改字体：
 winetricks wenquanyi
 {code}
 
-然后把这个[注册表|http://github.com/baohaojun/windows-config/raw/master/doc/wine-font.reg]文件导入到注册表里：
+然后把这个[注册表|http://github.com/baohaojun/system-config/raw/master/doc/wine-font.reg]文件导入到注册表里：
 
 {code:sh}
-wget http://github.com/baohaojun/windows-config/raw/master/doc/wine-font.reg
+wget http://github.com/baohaojun/system-config/raw/master/doc/wine-font.reg
 regedit /s wine-font.reg
 {code}
 

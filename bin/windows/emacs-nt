@@ -7,10 +7,10 @@ else
     emacs_dir=~/external/emacs-nt/bin
 fi
 if test "$(ps.pl emacs.exe|wc -l)" == 1; then
-    rm -f ~/windows-config/.emacs.d/server/server
+    rm -f ~/system-config/.emacs.d/server/server
 fi
 if test $# = 0; then
-    HOME=~/windows-config/ $emacs_dir/runemacs
+    HOME=~/system-config/ $emacs_dir/runemacs
 else 
-    HOME=~/windows-config/ $emacs_dir/emacs "$@"
+    HOME=~/system-config/ $emacs_dir/emacs "$@"
 fi

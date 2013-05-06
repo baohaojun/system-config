@@ -7,7 +7,7 @@ if test -e ~/external/emacs-nt; then
     elif test $# = 3 && test -e "$3"; then
 	set -- "$1" "$2" "$(ulp "$3")"
     fi
-    HOME=~/windows-config ~/external/emacs-nt/bin/emacsclient "$@"
+    HOME=~/system-config ~/external/emacs-nt/bin/emacsclient "$@"
 else
     /bin/emacsclient "$@"
 fi
