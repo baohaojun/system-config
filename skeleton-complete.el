@@ -240,6 +240,20 @@ See `skeleton--matcher'."
                   (1+ mb)
                 e))))
 
+(skeleton--make-matcher
+ skeleton--paragraph-extracting-matcher
+ "Search the buffer to collect a list of all paragraphs matching `re'.
+
+See `skeleton--matcher'."
+ (buffer-substring-no-properties
+  (save-excursion
+    (start-of-paragraph-text)
+    (point))
+  (save-excursion
+    (end-of-paragraph-text)
+    (point)))
+ (end-of-paragraph-text))
+
 (defun skeleton--buffer-filter ()
   "Return an alist of buffers to be matched againt the skeleton for completions.
 
@@ -369,6 +383,12 @@ S-expression enclosing the matched region."
   (skeleton--general-expand #'skeleton--line-skeleton-extracter
                             #'skeleton--sexp-extracting-matcher))
 
+(defun skeleton-expand-paragraph ()
+  "Expand the skeleton into a whole paragraph."
+    (interactive)
+    (skeleton--general-expand #'skeleton--line-skeleton-extracter
+                              #'skeleton--paragraph-extracting-matcher))
+
 (defmacro skeleton--max-minibuffer-lines ()
   `(if (floatp max-mini-window-height)
        (truncate (* (frame-height) max-mini-window-height))
@@ -446,6 +466,7 @@ This func is copied and modified from `ecomplete-display-matches'."
 (define-key skeleton-complete-mode-map (kbd "M-g x") 'skeleton-expand-partial-lines)
 (define-key skeleton-complete-mode-map (kbd "M-s l") 'skeleton-expand-lines)
 (define-key skeleton-complete-mode-map (kbd "M-s s") 'skeleton-expand-sexp)
+(define-key skeleton-complete-mode-map (kbd "M-s p") 'skeleton-expand-paragraph)
 
 (define-minor-mode skeleton-complete-mode
   "Toggle the `skeleton-complete-mode' minor mode."
