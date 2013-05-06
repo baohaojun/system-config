@@ -8,19 +8,22 @@
 (setq s-h-keymap (make-keymap))
 (setq global-remap-alist
       '(("C-a" . "Home")
-	("C-g" . "ESC")
-	("C-e" . "End")
-	("C-b" . "Left")
-	("C-f" . "Right")
-	("M-b" . "C-Left")
-	("M-f" . "C-Right")
-	("C-s" . "C-g")
-	("C-r" . "C-S-g")
-	("C-k" . ("S-End" "Del"))
-	("M-BS" . "C-BS")
-	("C-p" . "Up")
-	("C-n" . "Down")
-	("C-q" . "C-q")))
+        ("C-g" . "ESC")
+        ("C-e" . "End")
+        ("C-b" . "Left")
+        ("C-f" . "Right")
+        ("M-b" . "C-Left")
+        ("M-f" . "C-Right")
+        ("C-s" . "C-g")
+        ("C-r" . "C-S-g")
+        ("C-k" . ("S-End" "Del"))
+        ("M-BS" . "C-BS")
+        ("C-p" . "Up")
+        ("C-n" . "Down")
+        ("C-q" . "C-q")))
+
+(setq esc-g-remap-alist
+      '(("M-g g" . ("M-v" "g" "p"))))
 
 
 
@@ -38,16 +41,16 @@
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp" (lambda () (system "switch-touchpad enable&"))) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown" (lambda () (system "switch-touchpad enable&"))) ; for mac
 (bind-keys global-keymap "Super-Print" (lambda () (system "super-print.sh&")))
-(bind-keys window-keymap "Super-I" (lambda () (display-message (concat "wm_class is: " 
-								       (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
-								       ";\n\nand Window class is: " 
-								       (window-class (input-focus))))))
+(bind-keys window-keymap "Super-I" (lambda () (display-message (concat "wm_class is: "
+                                                                       (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
+                                                                       ";\n\nand Window class is: "
+                                                                       (window-class (input-focus))))))
 
-(bind-keys window-keymap "Super-q" 
-	     (lambda ()
-	       (let ((window (input-focus)))
-		 (unless (equal (window-class window) "Xfce4-panel")
-		   (delete-window-safely window)))))
+(bind-keys window-keymap "Super-q"
+             (lambda ()
+               (let ((window (input-focus)))
+                 (unless (equal (window-class window) "Xfce4-panel")
+                   (delete-window-safely window)))))
 
 (defun bhj-activate-window (window)
   (if (window-iconified-p window)
@@ -64,13 +67,13 @@
                                   (write (stderr-file) "hello world\n")
                                   (wclass-or-lambda window)))
 
-		      (bhj-activate-window window)
-		      (throw 'wFound 'wFound)))
+                      (bhj-activate-window window)
+                      (throw 'wFound 'wFound)))
                   (stacking-order)))
           'wFound)
       t
     (if wcommand
-	(system (concat wcommand "&")))
+        (system (concat wcommand "&")))
     nil))
 
 (mapc
@@ -99,30 +102,43 @@
 
 (defun do-global-remap()
   (let ((c-q-map (make-keymap))
-	(esc-map (make-keymap)))
+        (esc-map (make-keymap))
+        (esc-g-map (make-keymap)))
     (mapc (lambda (key-map-1)
-	    (let ((from (car key-map-1))
-		  (to (cdr key-map-1)))
-	      (when (string-match "^M-" from 0 nil)
-		(bind-keys esc-map (substring from 2) (lambda () (synthesize-event to (input-focus)))))
-	      (bind-keys global-keymap from (lambda () 
-					      (if (stringp to)
-						  (synthesize-event to (input-focus))
-						(mapc (lambda (key1)
-							(synthesize-event key1 (input-focus)))
-						      to))))
-	      (bind-keys c-q-map from (lambda () (synthesize-event from (input-focus))))))
-	  global-remap-alist)
+            (let ((from (car key-map-1))
+                  (to (cdr key-map-1)))
+              (when (string-match "^M-" from 0 nil)
+                (bind-keys esc-map (substring from 2) (lambda () (synthesize-event to (input-focus)))))
+              (bind-keys global-keymap from (lambda ()
+                                              (if (stringp to)
+                                                  (synthesize-event to (input-focus))
+                                                (mapc (lambda (key1)
+                                                        (synthesize-event key1 (input-focus)))
+                                                      to))))
+              (bind-keys c-q-map from (lambda () (synthesize-event from (input-focus))))))
+          global-remap-alist)
+    (mapc (lambda (key-map-1)
+            (let ((from (car key-map-1))
+                  (to (cdr key-map-1)))
+              (bind-keys esc-g-map (substring from 4) (lambda ()
+                                                        (if (stringp to)
+                                                            (synthesize-event to (input-focus))
+                                                          (mapc (lambda (key1)
+                                                                  (synthesize-event key1 (input-focus)))
+                                                                to))))
+              ))
+          esc-g-remap-alist)
     (bind-keys global-keymap "ESC" esc-map)
+    (bind-keys esc-map "g" esc-g-map)
     (bind-keys global-keymap "C-q" c-q-map)))
 
 
 (defun undo-global-remap()
   (mapc (lambda (key-map-1)
-	  (let ((from (car key-map-1))
-		(to (cdr key-map-1)))
-	    (unbind-keys global-keymap from)))
-	global-remap-alist)
+          (let ((from (car key-map-1))
+                (to (cdr key-map-1)))
+            (unbind-keys global-keymap from)))
+        global-remap-alist)
   (unbind-keys global-keymap "C-q")
   (unbind-keys global-keymap "ESC"))
 
@@ -132,10 +148,10 @@
 
 (progn
   (add-hook 'focus-in-hook
-	  (lambda (w focus_mode)
-	    (if (string-match emacs-style-window-class-re (window-class w) 0 t)
-		(undo-global-remap)
-	      (do-global-remap)))))
+          (lambda (w focus_mode)
+            (if (string-match emacs-style-window-class-re (window-class w) 0 t)
+                (undo-global-remap)
+              (do-global-remap)))))
 
 (bind-keys s-h-keymap "m" (lambda () (undo-global-remap)))
 ;; to clear it: (setq visibility-notify-hook nil)
@@ -149,7 +165,7 @@
 (bind-keys window-keymap "Button1-Click" 'raise-and-pass-through-click)
 
 
-(mapc 
+(mapc
  (lambda (arg)
    (let ((wclass nil) (wmark nil))
      (bind-keys global-keymap (concat "C-M-" (format nil "%d" arg))
@@ -167,27 +183,27 @@
 (setq super-key-window-remap
   '(("v" . ((t . "S-Insert")))
     ("c" . ((Emacs . "M-w")
-	    (Konsole . "C-S-c")))
+            (Konsole . "C-S-c")))
     ("w" . ((Firefox . ("C-h" "k"))))
     ("l" . ((Firefox . ("C-h" "C-l"))))
     ("r" . ((Firefox . ("C-h" "C-r"))))
     ("s" . ((Firefox . ("C-h" "C-s"))))
     ("d" . ((Firefox . ("C-h" "C-d"))))))
-  
+
 (mapc
  (lambda (key)
    (bind-keys global-keymap
-	      (concat "Super-" key)
-	      (lambda () 
-		(let* ((fw (input-focus))
-		       (class (window-class fw))
-		       (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))
-					    (assoc t (assoc key super-key-window-remap)))) (concat "C-" key))))
-		  (if (listp map-to)
-		      (mapc (lambda (map-1)
-			      (synthesize-event map-1 fw))
-			    map-to)
-		    (synthesize-event map-to fw))))))
+              (concat "Super-" key)
+              (lambda ()
+                (let* ((fw (input-focus))
+                       (class (window-class fw))
+                       (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))
+                                            (assoc t (assoc key super-key-window-remap)))) (concat "C-" key))))
+                  (if (listp map-to)
+                      (mapc (lambda (map-1)
+                              (synthesize-event map-1 fw))
+                            map-to)
+                    (synthesize-event map-to fw))))))
  '("t" "w" "n" "c" "v" "l" "r" "s" "d"))
 
 
@@ -236,25 +252,25 @@
 
 (define-cycle-command-pair
   'cycle-im-window 'cycle-im-windows-backwards
-  (lambda () (filter-windows 
+  (lambda () (filter-windows
               (lambda (x) (string-match im-class (bhj-window-class x)))
               (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-br-window 'cycle-br-window-backwards
-  (lambda () (filter-windows 
+  (lambda () (filter-windows
               (lambda (x) (string-match br-class (bhj-window-class x)))
               (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-dc-window 'cycle-dc-window-backwards
-  (lambda () (filter-windows 
+  (lambda () (filter-windows
               (lambda (x) (string-match dc-class (bhj-window-class x)))
               (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-mg-window 'cycle-mg-window-backwards
-  (lambda () (filter-windows 
+  (lambda () (filter-windows
               (lambda (x) (string-match mg-class (bhj-window-class x)))
               (stacking-order))))
 

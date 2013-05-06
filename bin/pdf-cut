@@ -13,7 +13,7 @@ function die() {
 
 function Usage() {
     echo "Usage: $(basename $0) [OPTIONS...] INPUT.pdf"
-    echo "	OPTIONS: -w top|bot|left|right, the position (where) of the remaining page after cut (deprecated)"
+    echo "      OPTIONS: -w top|bot|left|right, the position (where) of the remaining page after cut (deprecated)"
     echo "               -a, original size of INPUT.pdf is a4, refer to -p, -W and -H"
     echo "               -u, original size of INPUT.pdf is us letter, refer to -p, -W and -H"
     echo "               -p a4|ul, specify the original size of INPUT.pdf"
@@ -71,90 +71,90 @@ function sum() {
 
 while true; do
     case "$1" in
-	-w)
-	    where=$2
-	    shift 2
-	    ;;
-	-s)
-	    remaining_size=$2
-	    shift 2
-	    ;;
-	-p)
-	    o_size=$2
-	    shift 2
-	    ;;
-	-a)
-	    o_size=a4
-	    shift
-	    ;;
-	-u)
-	    o_size=ul
-	    shift
-	    ;;
-	-h)
-	    Usage
-	    exit 0
-	    ;;
-	-W)
-	    o_width=$2
-	    o_size=cust
-	    shift 2
-	    ;;
-	-H)
-	    o_size=cust
-	    o_height=$2
-	    shift 2
-	    ;;
-	-c)
-	    left=$2
-	    right=$2
-	    top=$2
-	    bot=$2
-	    shift 2
-	    ;;
-	
+        -w)
+            where=$2
+            shift 2
+            ;;
+        -s)
+            remaining_size=$2
+            shift 2
+            ;;
+        -p)
+            o_size=$2
+            shift 2
+            ;;
+        -a)
+            o_size=a4
+            shift
+            ;;
+        -u)
+            o_size=ul
+            shift
+            ;;
+        -h)
+            Usage
+            exit 0
+            ;;
+        -W)
+            o_width=$2
+            o_size=cust
+            shift 2
+            ;;
+        -H)
+            o_size=cust
+            o_height=$2
+            shift 2
+            ;;
+        -c)
+            left=$2
+            right=$2
+            top=$2
+            bot=$2
+            shift 2
+            ;;
+
 ## start code-generator "^\\s *#"
     # for x in top bot left right; do
-	# printf "%s\n"  "-${x:0:1})"
-	# printf "%s\n" "$x=\$(sum \$$x \$2)"
-	# printf "%s\n" "shift 2"
-	# printf "%s\n" ";;"
+        # printf "%s\n"  "-${x:0:1})"
+        # printf "%s\n" "$x=\$(sum \$$x \$2)"
+        # printf "%s\n" "shift 2"
+        # printf "%s\n" ";;"
     # done
 ## end code-generator
 ## start generated code
-	-t)
-	    top=$(sum $top $2)
-	    shift 2
-	    ;;
-	-b)
-	    bot=$(sum $bot $2)
-	    shift 2
-	    ;;
-	-l)
-	    left=$(sum $left $2)
-	    shift 2
-	    ;;
-	-r)
-	    right=$(sum $right $2)
-	    shift 2
-	    ;;
+        -t)
+            top=$(sum $top $2)
+            shift 2
+            ;;
+        -b)
+            bot=$(sum $bot $2)
+            shift 2
+            ;;
+        -l)
+            left=$(sum $left $2)
+            shift 2
+            ;;
+        -r)
+            right=$(sum $right $2)
+            shift 2
+            ;;
 
 ## end generated code
-	-m)
-	    min_page=$2
-	    shift 2
-	    ;;
-	-M)
-	    max_page=$2
-	    shift 2
-	    ;;
-	--)
-	    shift
-	    break
-	    ;;
-	*)
-	    die "internal error"
-	    ;;
+        -m)
+            min_page=$2
+            shift 2
+            ;;
+        -M)
+            max_page=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
     esac
 done
 
@@ -206,5 +206,7 @@ else
     n_height=$(subtract $n_height $top)
     n_height=$(subtract $n_height $bot)
 fi
+
+echo pdf-cut -W $o_width -H $o_height -t $top -b $bot -l $left -r $right "$pdf"
 
 pdfnup --no-landscape --papersize "{$n_width,$n_height}" --nup 1x1 --trim "$left $bot $right $top" --clip true "$pdf".pdf $min_page-$max_page
