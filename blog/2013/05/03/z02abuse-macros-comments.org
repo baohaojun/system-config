@@ -1,5 +1,37 @@
 #+title: Abusing macros and comments
 
+How would you write the following Tcl code?
+
+#+BEGIN_SRC tcl
+    set CTRLA \001
+    set CTRLB \002
+    set CTRLC \003
+    set CTRLD \004
+    set CTRLE \005
+    set CTRLF \006
+    set CTRLG \007
+    set CTRLH \010
+    set CTRLI \011
+    set CTRLJ \012
+    set CTRLK \013
+    set CTRLL \014
+    set CTRLM \015
+    set CTRLN \016
+    set CTRLO \017
+    set CTRLP \020
+    set CTRLQ \021
+    set CTRLR \022
+    set CTRLS \023
+    set CTRLT \024
+    set CTRLU \025
+    set CTRLV \026
+    set CTRLW \027
+    set CTRLX \030
+    set CTRLY \031
+    set CTRLZ \032
+#+END_SRC
+
+* Introduction
 People say macros are evil; they also say macros are powerful.
 
 To see how evil they are, consider this question: is =echo hello
@@ -21,7 +53,7 @@ gcc -D echo='int main() {printf("Say again?\n");}' -D hello= -D world= 1.c
 
 Macros allow easy code expansion, that's where the name cames
 from. But not every programming language has macro, what to do with
-those that doesn't?
+those that don't?
 
 One useful way is to do code generation: write a program that would
 generate another program source file. But this has it's drawbacks: 
@@ -43,9 +75,10 @@ generate another program source file. But this has it's drawbacks:
 Here's my idea to abuse macros for those poor languages who has been
 deprived of macro's power.
 
-They do all support comments, don't they?
+They do all support comments, don't they? Let's fake macros in their
+comments!
 
-** On-site macro support in Tcl
+* On-site macro support in Tcl
 
 I was writing an expect script [[http://github.com/baohaojun/windows-config/raw/master/bin/bbs-robot][bbs-robot]] to connect to the newsmth.net
 BBS and remap its key-binding with Emacs's. For e.g., when I press
@@ -126,7 +159,7 @@ automatically, turning into:
 
 #+END_SRC
 
-*** =bhj-do-code-generation=
+** =bhj-do-code-generation=
 
 #+BEGIN_SRC emacs-lisp
 (defun bhj-do-code-generation ()
@@ -178,14 +211,13 @@ character in the code generator:
 Another nice thing is that it indents the generated code
 automatically:-)
 
-** On-site macro abuse in embedded python in objc
+* On-site macro abuse in embedded python in objc
 
 This is becoming really twisted. I've written a [[https://github.com/baohaojun/DDHotKey][hotkey]] program for Mac
 OS (it's a fork of [[https://github.com/davedelong/DDHotKey][davedelong's DDHotKey]] project, thanks).
 
-Given such a .rc file, I want to start Emacs when =command +
-+ control + shift + m= is pressed, and likewise for Terminal and
-  Firefox:
+Given such a .rc file, I want to start Emacs when =command + control +
+shift + m= is pressed, and likewise for Terminal and Firefox:
 
 #+BEGIN_EXAMPLE
 m command|control open -a /Applications/Emacs.app/
@@ -194,11 +226,11 @@ n command open -a /Applications/Firefox.app/
 #+END_EXAMPLE
 
 The first field is the main key, the second is the /or/ of modifiers
-minus the =shift= modifier (see below), and the rest is the command to
-execute when the hotkey is pressed.
+minus the =shift= modifier (it is added in the code automatically),
+and the rest is the command to execute when the hotkey is pressed.
 
 Now parsing the config file in objc is difficult for me as I'm new to
-this language and it's libraries. But it should be easy in embedded
+this language and its libraries. But it should be easy in embedded
 python (though I've not done any *embedded* python before, here's how
 the fun starts).
 
@@ -237,7 +269,8 @@ Some simple explanation:
 one (misnamed) function =Parse()=, they should have been better named
 =hotkey.Register=.
 
-Now when the above code is embedded into objc with =PyRun_SimpleString=:
+Now when the above code is embedded into objc with
+=PyRun_SimpleString=, much to my dismay I found this:
 
 #+BEGIN_SRC objc
     PyRun_SimpleString(
@@ -255,7 +288,7 @@ Now when the above code is embedded into objc with =PyRun_SimpleString=:
 #+END_SRC
 
 It is disaster! So many double quotes and back slashes, you can never
-get it right! No wonder I read on the web people saying do not use
+get them right! No wonder I read on the web people saying do not use
 =PyRun_SimpleString= seriously, indeed it can only be a toy!
 
 But again this thing can be done with our on-site macro abusing:-) My
@@ -330,7 +363,7 @@ EOF
 
 Some more explanation:
 
-*** =expand <<EOF | here-doc-to-cstr | append-line-number //=
+** =expand <<EOF | here-doc-to-cstr | append-line-number //=
 
 1. =expand= will replace all tab into spaces, because we are doing
    python where spaces are serious business.
@@ -389,7 +422,7 @@ Some more explanation:
    #+END_SRC
    
    
-*** Another level of code generation
+** Another level of code generation
 
 #+BEGIN_SRC sh
 $(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {
@@ -403,7 +436,7 @@ $(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {
 For each main key, we need generate a dict entry for =keycodes=. This
 can be extracted from the events.h header file.
 
-** Pros and Cons
+* Pros and Cons
 
 This remains to be discussed:-)
 

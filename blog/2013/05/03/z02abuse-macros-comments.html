@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Abusing macros and comments"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-03T18:03+0800"/>
+<meta name="generated" content="2013-05-06T11:26+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -99,6 +99,66 @@ for the JavaScript code in this tag.
 <div id="content">
 <h1 class="title">Abusing macros and comments</h1>
 
+<p>How would you write the following Tcl code?
+</p>
+
+
+
+<pre class="src src-tcl"><span class="org-builtin">set</span> <span class="org-variable-name">CTRLA</span> \001
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLB</span> \002
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLC</span> \003
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLD</span> \004
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLE</span> \005
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLF</span> \006
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLG</span> \007
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLH</span> \010
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLI</span> \011
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLJ</span> \012
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLK</span> \013
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLL</span> \014
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLM</span> \015
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLN</span> \016
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLO</span> \017
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLP</span> \020
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLQ</span> \021
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLR</span> \022
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLS</span> \023
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLT</span> \024
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLU</span> \025
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLV</span> \026
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLW</span> \027
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLX</span> \030
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLY</span> \031
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLZ</span> \032
+</pre>
+
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Introduction</a></li>
+<li><a href="#sec-2">2 On-site macro support in Tcl</a>
+<ul>
+<li><a href="#sec-2-1">2.1 <code>bhj-do-code-generation</code></a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 On-site macro abuse in embedded python in objc</a>
+<ul>
+<li><a href="#sec-3-1">3.1 <code>expand EOF | here-doc-to-cstr | append-line-number //</code></a></li>
+<li><a href="#sec-3-2">3.2 Another level of code generation</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4 Pros and Cons</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+
 <p>People say macros are evil; they also say macros are powerful.
 </p>
 <p>
@@ -126,7 +186,7 @@ gcc -D <span class="org-variable-name">echo</span>=<span class="org-string">'int
 <p>
 Macros allow easy code expansion, that's where the name cames
 from. But not every programming language has macro, what to do with
-those that doesn't?
+those that don't?
 </p>
 <p>
 One useful way is to do code generation: write a program that would
@@ -160,32 +220,16 @@ Here's my idea to abuse macros for those poor languages who has been
 deprived of macro's power.
 </p>
 <p>
-They do all support comments, don't they?
+They do all support comments, don't they? Let's fake macros in their
+comments!
 </p>
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 On-site macro support in Tcl</a>
-<ul>
-<li><a href="#sec-1-1">1.1 <code>bhj-do-code-generation</code></a></li>
-</ul>
-</li>
-<li><a href="#sec-2">2 On-site macro abuse in embedded python in objc</a>
-<ul>
-<li><a href="#sec-2-1">2.1 <code>expand EOF | here-doc-to-cstr | append-line-number //</code></a></li>
-<li><a href="#sec-2-2">2.2 Another level of code generation</a></li>
-</ul>
-</li>
-<li><a href="#sec-3">3 Pros and Cons</a></li>
-</ul>
-</div>
 </div>
 
-<div id="outline-container-1" class="outline-3">
-<h3 id="sec-1"><span class="section-number-3">1</span> On-site macro support in Tcl</h3>
-<div class="outline-text-3" id="text-1">
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> On-site macro support in Tcl</h2>
+<div class="outline-text-2" id="text-2">
 
 
 <p>
@@ -286,9 +330,9 @@ automatically, turning into:
 
 </div>
 
-<div id="outline-container-1-1" class="outline-4">
-<h4 id="sec-1-1"><span class="section-number-4">1.1</span> <code>bhj-do-code-generation</code></h4>
-<div class="outline-text-4" id="text-1-1">
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> <code>bhj-do-code-generation</code></h3>
+<div class="outline-text-3" id="text-2-1">
 
 
 
@@ -354,9 +398,9 @@ automatically:-)
 
 </div>
 
-<div id="outline-container-2" class="outline-3">
-<h3 id="sec-2"><span class="section-number-3">2</span> On-site macro abuse in embedded python in objc</h3>
-<div class="outline-text-3" id="text-2">
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> On-site macro abuse in embedded python in objc</h2>
+<div class="outline-text-2" id="text-3">
 
 
 <p>
@@ -364,12 +408,8 @@ This is becoming really twisted. I've written a <a href="https://github.com/baoh
 OS (it's a fork of <a href="https://github.com/davedelong/DDHotKey">davedelong's DDHotKey</a> project, thanks).
 </p>
 <p>
-Given such a .rc file, I want to start Emacs when <code>command + + control + shift + m</code> is pressed, and likewise for Terminal and
-  Firefox:
-</p></li>
-</ul>
-
-
+Given such a .rc file, I want to start Emacs when <code>command + control + shift + m</code> is pressed, and likewise for Terminal and Firefox:
+</p>
 
 
 
@@ -381,12 +421,12 @@ n command open -a /Applications/Firefox.app/
 
 <p>
 The first field is the main key, the second is the <i>or</i> of modifiers
-minus the <code>shift</code> modifier (see below), and the rest is the command to
-execute when the hotkey is pressed.
+minus the <code>shift</code> modifier (it is added in the code automatically),
+and the rest is the command to execute when the hotkey is pressed.
 </p>
 <p>
 Now parsing the config file in objc is difficult for me as I'm new to
-this language and it's libraries. But it should be easy in embedded
+this language and its libraries. But it should be easy in embedded
 python (though I've not done any <b>embedded</b> python before, here's how
 the fun starts).
 </p>
@@ -432,7 +472,8 @@ one (misnamed) function <code>Parse()</code>, they should have been better named
 <code>hotkey.Register</code>.
 </p>
 <p>
-Now when the above code is embedded into objc with <code>PyRun_SimpleString</code>:
+Now when the above code is embedded into objc with
+<code>PyRun_SimpleString</code>, much to my dismay I found this:
 </p>
 
 
@@ -454,7 +495,7 @@ Now when the above code is embedded into objc with <code>PyRun_SimpleString</cod
 
 <p>
 It is disaster! So many double quotes and back slashes, you can never
-get it right! No wonder I read on the web people saying do not use
+get them right! No wonder I read on the web people saying do not use
 <code>PyRun_SimpleString</code> seriously, indeed it can only be a toy!
 </p>
 <p>
@@ -536,9 +577,9 @@ Some more explanation:
 
 </div>
 
-<div id="outline-container-2-1" class="outline-4">
-<h4 id="sec-2-1"><span class="section-number-4">2.1</span> <code>expand &lt;&lt;EOF | here-doc-to-cstr | append-line-number //</code></h4>
-<div class="outline-text-4" id="text-2-1">
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> <code>expand &lt;&lt;EOF | here-doc-to-cstr | append-line-number //</code></h3>
+<div class="outline-text-3" id="text-3-1">
 
 
 <ol>
@@ -617,9 +658,9 @@ Some more explanation:
 
 </div>
 
-<div id="outline-container-2-2" class="outline-4">
-<h4 id="sec-2-2"><span class="section-number-4">2.2</span> Another level of code generation</h4>
-<div class="outline-text-4" id="text-2-2">
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Another level of code generation</h3>
+<div class="outline-text-3" id="text-3-2">
 
 
 
@@ -643,9 +684,9 @@ can be extracted from the events.h header file.
 
 </div>
 
-<div id="outline-container-3" class="outline-3">
-<h3 id="sec-3"><span class="section-number-3">3</span> Pros and Cons</h3>
-<div class="outline-text-3" id="text-3">
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Pros and Cons</h2>
+<div class="outline-text-2" id="text-4">
 
 
 <p>
