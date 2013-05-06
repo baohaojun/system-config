@@ -153,6 +153,18 @@ See `w3m-region' for the optional arguments.
 
 ;;;***
 
+;;;### (autoloads (twit) "../../src/github/twittering-mode/twittering-mode"
+;;;;;;  "../../../src/github/twittering-mode/twittering-mode.el"
+;;;;;;  (20871 38424 871391 24000))
+;;; Generated autoloads from ../../../src/github/twittering-mode/twittering-mode.el
+
+(autoload 'twit "../../src/github/twittering-mode/twittering-mode" "\
+Start twittering-mode.
+
+\(fn)" t nil)
+
+;;;***
+
 ;;;### (autoloads (org-jira-get-issues-from-filter-headonly org-jira-get-issues-from-filter
 ;;;;;;  org-jira-browse-issue org-jira-progress-issue org-jira-refresh-issue
 ;;;;;;  org-jira-create-subtask org-jira-create-issue org-jira-get-subtasks
