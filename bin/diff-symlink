@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) symlink1 symlink2"
+fi
+
+readlink "$1" |tee /tmp/$(basename $0).1.$$
+readlink "$2" |tee /tmp/$(basename $0).2.$$
+
+ret=0;
+if ! diff /tmp/$(basename $0).1.$$ /tmp/$(basename $0).2.$$; then
+    ret=$?
+fi
+
+rm /tmp/$(basename $0).1.$$ /tmp/$(basename $0).2.$$ -f
+exit $ret
+
+
