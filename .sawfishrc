@@ -15,12 +15,14 @@
         ("M-b" . "C-Left")
         ("M-f" . "C-Right")
         ("C-s" . "C-g")
+        ("C-v" . "Next")
+        ("M-v" . "Prior")
         ("C-r" . "C-S-g")
         ("C-k" . ("S-End" "Del"))
         ("M-BS" . "C-BS")
         ("C-p" . "Up")
         ("C-n" . "Down")
-        ("C-q" . "C-q")))
+        ("C-h" . "C-h")))
 
 (setq esc-g-remap-alist
       '(("M-g g" . ("M-v" "g" "p"))))
@@ -101,7 +103,7 @@
 
 
 (defun do-global-remap()
-  (let ((c-q-map (make-keymap))
+  (let ((c-h-map (make-keymap))
         (esc-map (make-keymap))
         (esc-g-map (make-keymap)))
     (mapc (lambda (key-map-1)
@@ -115,7 +117,7 @@
                                                 (mapc (lambda (key1)
                                                         (synthesize-event key1 (input-focus)))
                                                       to))))
-              (bind-keys c-q-map from (lambda () (synthesize-event from (input-focus))))))
+              (bind-keys c-h-map from (lambda () (synthesize-event from (input-focus))))))
           global-remap-alist)
     (mapc (lambda (key-map-1)
             (let ((from (car key-map-1))
@@ -130,7 +132,7 @@
           esc-g-remap-alist)
     (bind-keys global-keymap "ESC" esc-map)
     (bind-keys esc-map "g" esc-g-map)
-    (bind-keys global-keymap "C-q" c-q-map)))
+    (bind-keys global-keymap "C-h" c-h-map)))
 
 
 (defun undo-global-remap()
@@ -139,7 +141,7 @@
                 (to (cdr key-map-1)))
             (unbind-keys global-keymap from)))
         global-remap-alist)
-  (unbind-keys global-keymap "C-q")
+  (unbind-keys global-keymap "C-h")
   (unbind-keys global-keymap "ESC"))
 
 ;; (let ((esc-map (make-keymap)))
