@@ -22,7 +22,7 @@ function check_arg()
 function Usage()
 {
     echo "Usage: $prog_name [recipient]... OPTIONS"
-    echo 
+    echo
     echo "Main Options:"
     echo "    -h:                 this little help"
     echo "    -c cc_recipient:    cc to somebody"
@@ -32,10 +32,10 @@ function Usage()
     exit
 }
 rec_type=to
-while true; do 
+while true; do
     case "$1" in
         [^-]*)
-	    eval $rec_type='("${'$rec_type'[@]}" "$1")'
+            eval $rec_type='("${'$rec_type'[@]}" "$1")'
             shift
             ;;
         -h)
@@ -50,12 +50,12 @@ while true; do
             ;;
         -c)
             check_arg "$2"
-	    rec_type=cc
+            rec_type=cc
             shift
             ;;
         -b)
             check_arg "$2"
-	    rec_type=bcc
+            rec_type=bcc
             shift
             ;;
         -a)
@@ -78,7 +78,7 @@ fi
 
 test -z "${body[0]}" && body=("=")
 
-the_mailx=/usrbin/mailx
+the_mailx=/usr/bin/mailx
 if test -e /opt/local/bin/mailx; then
     the_mailx=/opt/local/bin/mailx;
 fi
@@ -86,13 +86,14 @@ fi
 (
     printf "$the_mailx -S smtp=localhost:2025 -S smtp-auth-user=hjbao@marvell.com -S smtp-auth-password=%q " "$(get-authinfo localhost hjbao@marvell.com)"
     for y in attach cc bcc subject to; do
-	eval '
+        eval '
         if test ${#'$y'[@]} != 0; then
             for x in $(seq 1 "${#'$y'[@]}"); do
                 if test '$y' = to; then
                     printf -- " ";
                 else
-                    printf -- \ -'${y:0:1}'\ 
+                    printf -- \ -'${y:0:1}'\ \
+
                 fi
                 if [[ '$y' =~ cc|bcc|to ]]; then
                     printf -- "%q" "$( echo -n "${'$y'[$x-1]}" |perl -npe "s/.*<(.*)>.*/\$1/")"
