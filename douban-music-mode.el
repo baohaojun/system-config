@@ -1,7 +1,7 @@
 ;; -*- Emacs-Lisp -*-
 ;; -*- coding: utf-8; -*-
 ;;; douban-music-mode.el ---
-;; Time-stamp: <2013-05-06 00:39:11 Monday by lzy>
+;; Time-stamp: <2013-05-07 01:57:18 Tuesday by lzy>
 
 ;; Copyright (C) 2013 zhengyu li
 ;;
@@ -33,6 +33,11 @@
 ;; add the following lines into your configuration file
 ;;
 ;;   (autoload 'douban-music "douban-music-mode" nil t)
+
+;; 2012-05-06: zhengyu li <lizhengyu419@gmail.com>
+;;   add image clean after exit features
+;;   add pause seek forward/backward for mplayer
+;;   fixed some bugs     
 
 ;; 2012-05-05: zhengyu li <lizhengyu419@gmail.com>
 ;;   add mplayer support
@@ -68,39 +73,44 @@
   :type 'string
   :group 'douban-music)
 
-(defcustom douban-music-track-face '((t (:height 1.2 :foreground "Grey70")))
+(defcustom douban-music-exit-clean nil
+  "Clean image cache after exit"
+  :type 'boolean
+  :group 'douban-music)
+
+(defface douban-music-track-face
+  '((t (:height 1.2 :foreground "Grey70")))
   "Face for douban music track"
-  :type 'face
   :group 'douban-music)
 
-(defcustom douban-music-tag-face '((t (:height 1.1 :foreground "Steelblue1")))
+(defface douban-music-tag-face
+  '((t (:height 1.1 :foreground "Steelblue1")))
   "Face for douban music tag"
-  :type 'face
   :group 'douban-music)
 
-(defcustom douban-music-title-face '((t (:height 1.05 :foreground "Grey65")))
+(defface douban-music-title-face
+  '((t (:height 1.05 :foreground "Grey65")))
   "Face for douban music title"
-  :type 'face
   :group 'douban-music)
 
-(defcustom douban-music-album-face '((t (:height 1.05 :foreground "Red3")))
+(defface douban-music-album-face
+  '((t (:height 1.05 :foreground "Red3")))
   "Face for douban music album"
-  :type 'face
   :group 'douban-music)
 
-(defcustom douban-music-artist-face '((t (:height 1.05 :foreground "RoyalBlue")))
+(defface douban-music-artist-face
+  '((t (:height 1.05 :foreground "RoyalBlue")))
   "Face for douban music artist"
-  :type 'face
   :group 'douban-music)
 
-(defcustom douban-music-company-face '((t (:height 1.05 :foreground "Yellow")))
+(defface douban-music-company-face
+  '((t (:height 1.05 :foreground "Yellow")))
   "Face for douban music publish company"
-  :type 'face
   :group 'douban-music)
 
-(defcustom douban-music-publish-year-face '((t (:height 1.05 :foreground "Green")))
+(defface douban-music-publish-year-face
+  '((t (:height 1.05 :foreground "Green")))
   "Face for douban music publish year"
-  :type 'face
   :group 'douban-music)
 
 (defconst douban-music-buffer-name "Douban Music" "Douban music buffer name")
@@ -115,10 +125,12 @@
   "Delimiter for channels show")
 
 ;; Internal variables
-(defvar douban-music-song-list nil "song list for current channel.")
-(defvar douban-music-current-song nil "song currently playing.")
+(defvar douban-music-song-list nil "Song list for current channel.")
+(defvar douban-music-current-song nil "Song currently playing.")
 (defvar douban-music-channels nil "Total channels for douban music.")
 (defvar douban-music-current-channel nil "Current channel for douban music.")
+(defvar douban-music-current-status "stopped" "Douban music current status.")
+(defvar douban-music-current-process nil "Current play process of douban music.")
 (defvar douban-music-indent0 " " "0-level indentation.")
 (defvar douban-music-indent1 "  " "1-level indentation.")
 (defvar douban-music-indent2 "    " "2-level indentation.")
@@ -141,11 +153,37 @@
         (define-key map "q" 'douban-music-bury-buffer)
         (define-key map "x" 'douban-music-quit)
         (define-key map "z" 'douban-music-current-song-info)
+        (if (string-match douban-music-player "mplayer")
+            (progn
+              (define-key map " " 'douban-music-pause/resume)
+              (define-key map "<" 'douban-music-seek-backward)
+              (define-key map ">" 'douban-music-seek-forward)))
         map))
+
+(defun douban-music-pause/resume ()
+  (interactive)
+  (if (string-match douban-music-current-status "playing")
+      (progn
+        (setq douban-music-current-status "paused")
+        (process-send-string douban-music-current-process "pause\n"))
+    (if (string-match douban-music-current-status "paused")
+        (progn
+          (setq douban-music-current-status "playing")
+          (process-send-string douban-music-current-process "pause\n")))))
+
+(defun douban-music-seek-forward ()
+  (interactive)
+  (process-send-string douban-music-current-process "seek 2\n"))
+
+(defun douban-music-seek-backward ()
+  (interactive)
+  (process-send-string douban-music-current-process "seek -2\n"))
 
 (defun douban-music-stop ()
   (interactive)
-  (douban-music-kill-process))
+  (douban-music-kill-process)
+  (setq douban-music-current-status "stopped")
+  (setq douban-music-current-process nil))
 
 (defun douban-music-refresh ()
   (interactive)
@@ -155,7 +193,13 @@
 
 (defun douban-music-goto-current-playing ()
   (interactive)
-  (douban-music-interface-update))
+  (if (string-match douban-music-current-status "playing")
+      (douban-music-interface-update)
+    (if (string-match douban-music-current-status "stopped")
+        (douban-music-play)
+      (if (string-match douban-music-current-status "paused")
+          (douban-music-pause/resume)
+        (error "Unknown status")))))
 
 (defun douban-music-set-channel (channel-number)
   (interactive "nChannel number:")
@@ -204,7 +248,10 @@
   (interactive)
   (when (eq major-mode 'douban-music-mode)
     (douban-music-stop)
-    (kill-buffer (current-buffer))))
+    (kill-buffer (current-buffer))
+    (if douban-music-exit-clean
+        (dolist (f (directory-files douban-music-cache-directory t "\\.jpg"))
+          (delete-file f)))))
 
 (defun douban-music-play ()
   (let (song)
@@ -213,20 +260,25 @@
     (if (not song)
         (error "Get song from song list failed"))
     (douban-music-interface-update)
+    (setq douban-music-current-process
+          (start-process "douban-music-proc"
+                         nil
+                         douban-music-player
+                         (if (string-match douban-music-player "mplayer")
+                             "-slave"
+                           "")
+                         (aget song 'url)))
     (set-process-filter
-     (start-process "douban-music-proc"
-                    nil
-                    douban-music-player
-                    (aget song 'url))
-     'douban-music-proc-filter)))
+     douban-music-current-process
+     'douban-music-proc-filter)
+    (setq douban-music-current-status "playing")))
 
 (defun douban-music-proc-filter (proc string)
   (if (string-match
        (if (string-match "mplayer" douban-music-player)
            "Exiting"
-         (if (string-match "mpg123")
-             "finished")
-         (warn "un-supported player, now only support mplayer and mpg123"))
+         (if (string-match "mpg123" douban-music-player)
+             "finished"))
        string)
       (progn
         (douban-music-kill-process)
@@ -362,16 +414,16 @@
         (error "current song is nil"))
       (insert (concat (propertize (format "\n\n%sCurrent song: "
                                           douban-music-indent0)
-                                  'face douban-music-track-face)
+                                  'face 'douban-music-track-face)
                       (propertize (format "%s"
                                           (aget (elt douban-music-song-list douban-music-current-song) 'title))
-                                  'face douban-music-publish-year-face)))
+                                  'face 'douban-music-publish-year-face)))
       (insert (concat (propertize (format "\n%sCurrent channel: "
                                           douban-music-indent0)
-                                  'face douban-music-track-face)
+                                  'face 'douban-music-track-face)
                       (propertize (format "%s\n"
                                           (cdr (assoc douban-music-current-channel douban-music-channels)))
-                                  'face douban-music-publish-year-face)))
+                                  'face 'douban-music-publish-year-face)))
       (dotimes (i (length douban-music-song-list))
         (setq song (elt douban-music-song-list i))
         (setq title (aget song 'title))
@@ -380,29 +432,29 @@
         (setq company (aget song 'company))
         (setq public-time (aget song 'public_time))
         (setq song-info (concat (propertize (format "\n%sTrack%2d " douban-music-indent1 i)
-                                            'face douban-music-track-face)
-                                (propertize "Title: " 'face douban-music-tag-face)
-                                (propertize (format "%s\n" title) 'face douban-music-title-face)
+                                            'face 'douban-music-track-face)
+                                (propertize "Title: " 'face 'douban-music-tag-face)
+                                (propertize (format "%s\n" title) 'face 'douban-music-title-face)
                                 (propertize (format "%sAlbum: "
                                                     douban-music-indent4)
-                                            'face douban-music-tag-face)
+                                            'face 'douban-music-tag-face)
                                 (propertize (format "%s\n" album)
-                                            'face douban-music-album-face)
+                                            'face 'douban-music-album-face)
                                 (propertize (format "%sArtist: "
                                                     douban-music-indent4)
-                                            'face douban-music-tag-face)
+                                            'face 'douban-music-tag-face)
                                 (propertize (format "%s\n" artist)
-                                            'face douban-music-artist-face)
+                                            'face 'douban-music-artist-face)
                                 (propertize (format "%sCompany: "
                                                     douban-music-indent4)
-                                            'face douban-music-tag-face)
+                                            'face 'douban-music-tag-face)
                                 (propertize (format "%s\n" company)
-                                            'face douban-music-company-face)
+                                            'face 'douban-music-company-face)
                                 (propertize (format "%sPublish Year: "
                                                     douban-music-indent4)
-                                            'face douban-music-tag-face)
+                                            'face 'douban-music-tag-face)
                                 (propertize (format "%s" public-time)
-                                            'face douban-music-publish-year-face)))
+                                            'face 'douban-music-publish-year-face)))
         (insert song-info)))
     (set-buffer-modified-p nil)
     (setq buffer-read-only t)
@@ -463,6 +515,9 @@
         (mkdir douban-music-cache-directory t))
     (set-buffer (get-buffer-create douban-music-buffer-name))
     (douban-music-mode)
+    (if (and (not (string-match "mplayer" douban-music-player))
+             (not (string-match "mpg123" douban-music-player)))
+        (error "Unknown player"))
     (douban-music-get-channels)
     (setq douban-music-current-channel douban-music-default-channel)
     (douban-music-get-song-list)
