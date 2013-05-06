@@ -80,7 +80,7 @@ comments!
 
 * On-site macro support in Tcl
 
-I was writing an expect script [[http://github.com/baohaojun/windows-config/raw/master/bin/bbs-robot][bbs-robot]] to connect to the newsmth.net
+I was writing an expect script [[http://github.com/baohaojun/system-config/raw/master/bin/bbs-robot][bbs-robot]] to connect to the newsmth.net
 BBS and remap its key-binding with Emacs's. For e.g., when I press
 =C-n=, it should send =^[[1;1B= (terminal code for Down key) to the
 BBS. Naming =CTRLA= as =\001= all the way to =CTRLZ= as =\032= is
@@ -368,7 +368,7 @@ Some more explanation:
 1. =expand= will replace all tab into spaces, because we are doing
    python where spaces are serious business.
 
-2. [[http://github.com/baohaojun/windows-config/raw/master/bin/here-doc-to-cstr][=here-doc-to-cstr=]]
+2. [[http://github.com/baohaojun/system-config/raw/master/bin/here-doc-to-cstr][=here-doc-to-cstr=]]
 
    A simple perl script which takes care of double quotes, back
    slashes, carriage returns and indentations (according to the first
@@ -400,7 +400,7 @@ Some more explanation:
    }
    #+END_SRC
 
-3. [[http://github.com/baohaojun/windows-config/raw/master/bin/append-line-number][=append-line-number //=]]
+3. [[http://github.com/baohaojun/system-config/raw/master/bin/append-line-number][=append-line-number //=]]
 
    When I debug the hotkey program in xcode, I think I was lucky to
    notice that the python exceptions were printed in the xcode log

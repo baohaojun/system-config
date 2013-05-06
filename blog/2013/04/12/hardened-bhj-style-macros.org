@@ -90,7 +90,7 @@ for line in ini_file:
    tab页的App常用热键给重定义了；我重定义的是相对不常用的
    =command + shift + t= 。
 
-   （但是 [[http://github.com/baohaojun/windows-config/raw/master/doc/keyremap4macbook-dvp.xml][这个keyremap4mac的private.xml]] 文件会告诉你最终的完整的版本，
+   （但是 [[http://github.com/baohaojun/system-config/raw/master/doc/keyremap4macbook-dvp.xml][这个keyremap4mac的private.xml]] 文件会告诉你最终的完整的版本，
    我把 =[(command h）(command t)]= 给重新定义到 =command + shift + t=
    了，并且这个 =command h= 的定义类似于 Emacs 下的 =Ctrl q= 、 bash 下
    的 =Ctrl v= 、C字符串里的反斜杠（请问这是什么design pattern？），如

@@ -84,7 +84,7 @@ With the help of pdfjam, you can achieve this like the following.
   touch. Finally.
 
   This seems a lot of ordeal, so I have put together 2 scripts to automate them,
-  you can find it at [[https://github.com/baohaojun/windows-config/raw/master/bin/pdf-cut][pdf-cut]] and [[https://github.com/baohaojun/windows-config/raw/master/bin/pdf-for-kindle][pdf-for-kindle]]. The former is for trial and
+  you can find it at [[https://github.com/baohaojun/system-config/raw/master/bin/pdf-cut][pdf-cut]] and [[https://github.com/baohaojun/system-config/raw/master/bin/pdf-for-kindle][pdf-for-kindle]]. The former is for trial and
   error when you need to determine how much to cut off each page, and after you
   get the perfect set of parameters, you can change ~pdf-cut~ to
   ~pdf-for-kindle~ to get the converted Kindle-Touch-Ready version of pdf.

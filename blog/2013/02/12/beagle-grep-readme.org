@@ -101,19 +101,19 @@ repexp, do the following:
 
 * Where to find everything
 
-  I have put the source code at [[http://github.com/baohaojun/windows-config/tree/master/][github]].
+  I have put the source code at [[http://github.com/baohaojun/system-config/tree/master/][github]].
 
   If you checkout the source code, you can find the beagrep and
-  its helper scripts under [[http://github.com/baohaojun/windows-config/tree/master/bin/][windows-config/bin]].
+  its helper scripts under [[http://github.com/baohaojun/system-config/tree/master/bin/][system-config/bin]].
 
-  The beagle source code I modified is under [[http://github.com/baohaojun/windows-config/tree/master/gcode/beagle/][windows-config/gcode/beagle]].
+  The beagle source code I modified is under [[http://github.com/baohaojun/system-config/tree/master/gcode/beagle/][system-config/gcode/beagle]].
 
   The c# program which breakes =ENGLISH_STOP_WORDS= to =ENGLISH STOP
-  WORDS= is under [[http://github.com/baohaojun/windows-config/tree/master/gcode/BeagleTokenizer/][windows-config/gcode/BeagleTokenizer]].
+  WORDS= is under [[http://github.com/baohaojun/system-config/tree/master/gcode/BeagleTokenizer/][system-config/gcode/BeagleTokenizer]].
 
   The simplest way to set things up is to run
-  : ~/windows-config/bin/after-co-ln-s.sh
+  : ~/system-config/bin/after-co-ln-s.sh
   and then
-  : ~/windows-config/bin/Linux/after-check-out.sh
+  : ~/system-config/bin/Linux/after-check-out.sh
 
   For more details, please RTFS using beagrep!

@@ -336,7 +336,7 @@ correctly add the ~\~ -s for you, to convert this plain text into a
 matching regexp (which can be passed to grep by the shell).
 
 Note that last time I checked, the Emacs grep regexp generation code
-has some bugs, so I rolled my own fix for it, you can check my [[https://github.com/baohaojun/windows-config/raw/master/.emacs][.emacs]]
+has some bugs, so I rolled my own fix for it, you can check my [[https://github.com/baohaojun/system-config/raw/master/.emacs][.emacs]]
 for definition of ~grep-default-command~ and
 ~grep-shell-quote-argument~.
 
@@ -379,7 +379,7 @@ Because beagrep is so fast, I have used it in a couple other projects/tools.
 I added CJK character support into beagrep so that both English and
 Chinese offline Wikipedia can be browsed and subject-searched.
 
-Check it out at [[https://github.com/baohaojun/windows-config]], sorry I
+Check it out at [[https://github.com/baohaojun/system-config]], sorry I
 didn't make it a stand-alone project, it's under the
 ~gcode/offline.wikipedia~ directory.
 

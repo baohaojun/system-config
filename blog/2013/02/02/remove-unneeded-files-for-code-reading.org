@@ -102,4 +102,4 @@ reading”的文件，但效果根据项目不同而异吧，不可能有kernel/
 *后记4* 针对uboot和kernel我分别写了两个脚本，一步完成这里面的所有操作，
 但一如既往地，你想要用这两个脚本的话，需要自己改改。
 
-分别在 [[http://github.com/baohaojun/windows-config/raw/master/bin/rm-non-build-files-uboot][for uboot]] 和 [[http://github.com/baohaojun/windows-config/raw/master/bin/rm-non-build-files-kernel][for kernel]] 。
+分别在 [[http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-uboot][for uboot]] 和 [[http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-kernel][for kernel]] 。

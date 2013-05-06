@@ -50,7 +50,7 @@ myself. Just to show you what a geek I am:-)
   A lot other stuff I wrote. I always try to write something when I
   face a repetitive problem, even when it's very simple.
 
-  You can find them under [[https://github.com/baohaojun/windows-config/][windows-config.git]]. The name has *windows*
+  You can find them under [[https://github.com/baohaojun/system-config/][system-config.git]]. The name has *windows*
   in it, but it really is not about windows, at least not only
   windows. I know it's not a good name, maybe I will think of a good
   one someday.

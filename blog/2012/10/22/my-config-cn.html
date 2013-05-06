@@ -99,17 +99,17 @@ for the JavaScript code in this tag.
 <div id="content">
 <h1 class="title">My configuration system</h1>
 
-<p>我的配置系统是github上的一个项目，<a href="https://github.com/baohaojun/windows-config">Windows-config</a>。
+<p>我的配置系统是github上的一个项目，<a href="https://github.com/baohaojun/system-config">System-config</a>。
 </p>
 <p>
 里面最开始只是我的.bashrc、.emacs等文件，但很快我就把它的目标修正为：当
-我新安装一台机器后，我可以通过一个简单的 <code>git clone --recursive http://github.com/baohaojun/windows-config</code> 和额外的几条脚本，把
+我新安装一台机器后，我可以通过一个简单的 <code>git clone --recursive http://github.com/baohaojun/system-config</code> 和额外的几条脚本，把
 我的个人环境快速重建出来。
 </p>
 <p>
-整个项目必须checkout到你的 <code>$HOME/windows-config</code> 下。你可能会觉得奇
+整个项目必须checkout到你的 <code>$HOME/system-config</code> 下。你可能会觉得奇
 怪，.bashrc/.emacs等文件不是应该放在 <code>$HOME/</code> 下吗，为什么要放到一个叫
-windows-config的子目录下呢？别急，听我慢慢道来:-)
+system-config的子目录下呢？别急，听我慢慢道来:-)
 </p>
 <p>
 这其实是两个问题：
@@ -122,8 +122,8 @@ windows-config的子目录下呢？别急，听我慢慢道来:-)
   本管理文件全部删除，泪啊）？
 
 </li>
-<li>为什么叫windows-config？这只是个巧合而已，最开始的时候我正在公司的
-  windows机器上用cygwin，所以其配置文件就叫windows-config了。本来计划在
+<li>为什么叫system-config？这只是个巧合而已，最开始的时候我正在公司的
+  windows机器上用cygwin，所以其配置文件就叫system-config了。本来计划在
   linux底下搞个linux-config的，但后来发现完全没必要，它们可以用设计模式
   中factory的模式共用大部分代码，见<a href="./fun-design-pattern.html">在shell脚本里的抽象工厂模式</a>:-)
 </li>
@@ -132,13 +132,13 @@ windows-config的子目录下呢？别急，听我慢慢道来:-)
 
 <p>
 最后，“额外的几条脚本”是指何意？把代码checkout到
-<code>$HOME/windows-config/</code> 下之后，只要记得跑这两条命令就搞定了：
+<code>$HOME/system-config/</code> 下之后，只要记得跑这两条命令就搞定了：
 </p>
 
 
 
-<pre class="src src-sh">~/windows-config/bin/after-co-ln-s.sh
-~/windows-config/bin/Linux/after-check-out.sh
+<pre class="src src-sh">~/system-config/bin/after-co-ln-s.sh
+~/system-config/bin/Linux/after-check-out.sh
 </pre>
 
 

@@ -69,5 +69,5 @@ I found on the net people has used autohotkey to provide Simple
 Dvorak, which does can be used at the same time with IME.
 
 So I just wrote my Programms Dvorak version of autohotkey script. You
-can get it [[http://github.com/baohaojun/windows-config/raw/master/doc/dvorak.ahk][here]]. This ahk script was generated from 3 bash scripts,
-which you can find [[http://github.com/baohaojun/windows-config/raw/master/doc/dvorak.ahk.in][here]], [[http://github.com/baohaojun/windows-config/raw/master/bin/gen-dvorak-programmer.sh][here]] and [[http://github.com/baohaojun/windows-config/raw/master/bin/gen-dvorak-programmer-shift3.sh][here]].
+can get it [[http://github.com/baohaojun/system-config/raw/master/doc/dvorak.ahk][here]]. This ahk script was generated from 3 bash scripts,
+which you can find [[http://github.com/baohaojun/system-config/raw/master/doc/dvorak.ahk.in][here]], [[http://github.com/baohaojun/system-config/raw/master/bin/gen-dvorak-programmer.sh][here]] and [[http://github.com/baohaojun/system-config/raw/master/bin/gen-dvorak-programmer-shift3.sh][here]].

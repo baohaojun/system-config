@@ -260,7 +260,7 @@ JsonToValue("\"hello world\"",
 如果这些反斜杠要自已用手指头数着挨个数进去的话，就悲剧了。所以当然不是这样的。当
 你在Emacs里选定一段文本，按下C-u M-x grep之后，Emacs会自动帮你计算出需要如何添加
 反斜杠，以把这个“纯”字符串变成一个可以跟它匹配的正则表达式（其实也是字符串，只是
-加了一些奇怪字符，有特殊意义的字符串）。（但是其实现有点bug，我的 [[https://github.com/baohaojun/windows-config/raw/master/.emacs][.emacs]] 里有对
+加了一些奇怪字符，有特殊意义的字符串）。（但是其实现有点bug，我的 [[https://github.com/baohaojun/system-config/raw/master/.emacs][.emacs]] 里有对
 ~grep-default-command~ 和 ~grep-shell-quote-argument~ 的修正）。
 
 ** grep 关键字，通常是有趣的

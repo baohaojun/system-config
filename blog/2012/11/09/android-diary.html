@@ -621,7 +621,7 @@ repo forall . -c <span class="org-string">'echo $REPO_RREV'</span>
 
 
 <p>
-NV的gpio命名是以字母a-z分组，每组有8个gpio。所以你会看到类似于gpio<sub>ps5的名字，意思就是s组的5管脚（注意是从管脚0开始数，所以其实是第6个）。想计算这个名字在代码里应该对应gpio管脚的序号是多少，可以用我写的一个</sub><a href="http://github.com/baohaojun/windows-config/raw/master/bin/Linux/nvgpio">小脚本</a>，用法如下： <code>nvgpio s 5</code> 。
+NV的gpio命名是以字母a-z分组，每组有8个gpio。所以你会看到类似于gpio<sub>ps5的名字，意思就是s组的5管脚（注意是从管脚0开始数，所以其实是第6个）。想计算这个名字在代码里应该对应gpio管脚的序号是多少，可以用我写的一个</sub><a href="http://github.com/baohaojun/system-config/raw/master/bin/Linux/nvgpio">小脚本</a>，用法如下： <code>nvgpio s 5</code> 。
 </p>
 <p>
 或者直接参考kernel/arch/arm/mach-tegra/gpio-names.h。
@@ -764,10 +764,10 @@ cat /data/debugfs/gpio
 这就是pinmux。大多数管脚除了它们自己特定的2~3个功能之外，还都可以配成一个通用的功能。这就是gpio。
 </p>
 <p>
-所以在原理图上，你会看到一个管脚的序号、主功能名，而在pinmux文件中（我们的NV项目没有出pinmux表，我们可以基于另外一个项目的pinmux表，在vendor/nvidia/theatre-doc/pinmux/下），我们可以看到这个管脚的次功能名和gpio名。这个比查trm文档方便一些，但是还是比较麻烦，所以（谢谢佟波的建议）我提供一个脚本<a href="http://github.com/baohaojun/windows-config/raw/master/bin/Linux/nvpinmux">nvpinmux</a>，可以方便地查看一个管脚的管脚名、pinmux功能名、gpio名。
+所以在原理图上，你会看到一个管脚的序号、主功能名，而在pinmux文件中（我们的NV项目没有出pinmux表，我们可以基于另外一个项目的pinmux表，在vendor/nvidia/theatre-doc/pinmux/下），我们可以看到这个管脚的次功能名和gpio名。这个比查trm文档方便一些，但是还是比较麻烦，所以（谢谢佟波的建议）我提供一个脚本<a href="http://github.com/baohaojun/system-config/raw/master/bin/Linux/nvpinmux">nvpinmux</a>，可以方便地查看一个管脚的管脚名、pinmux功能名、gpio名。
 </p>
 <p>
-这个脚本需要你把<a href="http://github.com/baohaojun/windows-config/raw/master/doc/pinmux.csv">这个文件</a>放到你的~/doc目录下。
+这个脚本需要你把<a href="http://github.com/baohaojun/system-config/raw/master/doc/pinmux.csv">这个文件</a>放到你的~/doc目录下。
 </p>
 <p>
 使用方法：

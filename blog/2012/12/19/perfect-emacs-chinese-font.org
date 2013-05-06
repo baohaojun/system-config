@@ -58,7 +58,7 @@ org-mode里的中英文混排、尤其是在表格中，如果不选等宽（指
 
 [[../../../../images/post/perfect-emacs-chinese-font.png]]
 
-配置脚本见 [[http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/bhj-fonts.el][github]] 。
+配置脚本见 [[http://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-fonts.el][github]] 。
 
 另外，这个设置在Windows上也可以用，但是好像不是很可靠（我见到它有时候不
 起作用，不明白怎么回事），并且在我的Win7系统上必须把 =微软雅黑= 给加到

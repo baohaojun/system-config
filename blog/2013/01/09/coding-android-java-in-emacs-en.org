@@ -120,8 +120,8 @@ method to override. See the video or the screenshot:
 This system is part of my personal configuration system, I have not
 found time to exact them into a separate project yet.
 
-It is all in [[https://github.com/baohaojun/windows-config][this github project]](and its git submodules). You can
-start from the [[http://github.com/baohaojun/windows-config/raw/master/.emacs][.emacs]] and find the scripts under [[http://github.com/baohaojun/windows-config/tree/master/bin][bin]].
+It is all in [[https://github.com/baohaojun/system-config][this github project]](and its git submodules). You can
+start from the [[http://github.com/baohaojun/system-config/raw/master/.emacs][.emacs]] and find the scripts under [[http://github.com/baohaojun/system-config/tree/master/bin][bin]].
 
 If you are willing to try my whole configuration, you must use a
 recent Debian or Ubuntu distribution, and can do it in following
@@ -135,15 +135,15 @@ etc. will be moved to =.emacs.bak/.bashrc.bak= and maybe get lost.
 
 #+BEGIN_SRC sh
 cd ~
-git clone --recursive http://github.com/baohaojun/windows-config
-~/windows-config/bin/after-co-ln-s.sh
-~/windows-config/bin/Linux/after-check-out.sh
+git clone --recursive http://github.com/baohaojun/system-config
+~/system-config/bin/after-co-ln-s.sh
+~/system-config/bin/Linux/after-check-out.sh
 #+END_SRC
 
 ** Test the system
 
 #+BEGIN_SRC sh
-cd ~/windows-config/gcode/java-test
+cd ~/system-config/gcode/java-test
 for-code-reading
 java-get-hierarchy.pl Child -m Child
 #+END_SRC
@@ -252,7 +252,7 @@ scrits's bugs so urgent to fix.
 You can see in the video or the below screenshot:
 [[../../../../images/post/regexp-completion.png]]
 
-You can find the elisp source in [[http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/skeleton-complete.el][skeleton-complete.el]].
+You can find the elisp source in [[http://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/skeleton-complete.el][skeleton-complete.el]].
 
 ** What about JDEE or other Emacs Java plugins?
 
@@ -312,7 +312,7 @@ if (word == "hello world") {
 }
 #+END_SRC 
 
-You can use [[http://github.com/baohaojun/windows-config/raw/master/bin/flatten.pl][flatten.pl]] to filter it into the following highly regexp
+You can use [[http://github.com/baohaojun/system-config/raw/master/bin/flatten.pl][flatten.pl]] to filter it into the following highly regexp
 matchable piece of Java, and you can easily extract the whole
 prototype of the =getWordIdx= method, or the class declaration line
 for =test=:

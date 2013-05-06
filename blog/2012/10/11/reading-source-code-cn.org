@@ -171,7 +171,7 @@ compilation-mode的联系，把grep的匹配也称之为一个error，软件逻�
 让我们做一个一切皆对象的编程语言；…… 参见 [[http://blog.ezyang.com/2012/11/extremist-programming/][极端编程]]。）
 
 #+begin_example
--*- mode: grep; default-directory: "~/windows-config/gcode/fcitx/src/" -*- 
+-*- mode: grep; default-directory: "~/system-config/gcode/fcitx/src/" -*- 
 Grep started at Fri Oct 19 16:25:46
 
 grep -nH -e include *.cpp

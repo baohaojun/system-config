@@ -49,4 +49,4 @@
 
 3. 补齐函数名之后，不能很轻易的看见该函数的参数列表是乍定义的。
 
-具体实现见 [[http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/skeleton-complete.el][github代码]] 。
+具体实现见 [[http://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/skeleton-complete.el][github代码]] 。
