@@ -1,8 +1,12 @@
-#+title: Abusing macros and comments
+#+title: The code is not really code, the comment is
 
-How would you write the following Tcl code?
-
+Stop reading if you can make out how the following strangely commented
+Tcl code is written:-)
 #+BEGIN_SRC tcl
+    # start code-generator "^\\s *#"
+    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+    # end code-generator
+    # start generated code
     set CTRLA \001
     set CTRLB \002
     set CTRLC \003
@@ -11,24 +15,10 @@ How would you write the following Tcl code?
     set CTRLF \006
     set CTRLG \007
     set CTRLH \010
-    set CTRLI \011
-    set CTRLJ \012
-    set CTRLK \013
-    set CTRLL \014
-    set CTRLM \015
-    set CTRLN \016
-    set CTRLO \017
-    set CTRLP \020
-    set CTRLQ \021
-    set CTRLR \022
-    set CTRLS \023
-    set CTRLT \024
-    set CTRLU \025
-    set CTRLV \026
-    set CTRLW \027
-    set CTRLX \030
-    set CTRLY \031
+    ...
     set CTRLZ \032
+
+    # end generated code
 #+END_SRC
 
 * Introduction
@@ -62,7 +52,7 @@ generate another program source file. But this has it's drawbacks:
    files.
 
 2. It is not enough fine-grained, you can only generate a whole file
-   instead of part of a file.
+   instead of part (or parts) of a file.
 
    If you have done some php/html programming, you would love the
    ability to put php code (which is a kind of html macro: it expands
@@ -80,11 +70,11 @@ comments!
 
 * On-site macro support in Tcl
 
-I was writing an expect script [[http://github.com/baohaojun/system-config/raw/master/bin/bbs-robot][bbs-robot]] to connect to the newsmth.net
-BBS and remap its key-binding with Emacs's. For e.g., when I press
-=C-n=, it should send =^[[1;1B= (terminal code for Down key) to the
-BBS. Naming =CTRLA= as =\001= all the way to =CTRLZ= as =\032= is
-tedious and error prone:
+Back to the question asked at the beginning. I was writing an expect
+script [[http://github.com/baohaojun/system-config/raw/master/bin/bbs-robot][bbs-robot]] to connect to the newsmth.net BBS and remap its
+key-binding with Emacs's. For e.g., when I press =C-n=, it should send
+=^[[1;1B= (terminal code for Down key) to the BBS. Naming =CTRLA= as
+=\001= all the way to =CTRLZ= as =\032= is tedious and error prone:
 
 #+BEGIN_SRC tcl
     set CTRLA \001

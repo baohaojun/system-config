@@ -3,7 +3,7 @@
   - 2013-05
    * 2013-05-03
 
-     [[../blog/2013/05/03/z02abuse-macros-comments.org][Abusing macros and comments]]
+     [[../blog/2013/05/03/z02abuse-macros-comments.org][The code is not really code, the comment is]]
 
      [[../blog/2013/05/03/z00fix-generate-tags.org][only re-generate the tags that have changed]]
 

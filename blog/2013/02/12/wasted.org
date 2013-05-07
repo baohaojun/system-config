@@ -154,3 +154,7 @@ Grep finished (matches found) at Wed Dec 12 17:31:00
 * Everytime you change apk resource, you must do a clean build
 
   So that all .java files are recompiled, or else something weird will happen. This is a lesson learned in developping crossdict.
+
+* acroread: how to open url in a browser
+
+Preferences -> Trust Manager -> Internet Access from PDF ... Change Settings -> Allow all web sites

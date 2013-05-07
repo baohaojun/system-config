@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Abusing macros and comments</title>
+<title>The code is not really code, the comment is</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Abusing macros and comments"/>
+<meta name="title" content="The code is not really code, the comment is"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-06T11:26+0800"/>
+<meta name="generated" content="2013-05-07T14:31+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -97,14 +97,18 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="content">
-<h1 class="title">Abusing macros and comments</h1>
+<h1 class="title">The code is not really code, the comment is</h1>
 
-<p>How would you write the following Tcl code?
+<p>Stop reading if you can make out how the following strangely commented
+Tcl code is written:-)
 </p>
 
 
-
-<pre class="src src-tcl"><span class="org-builtin">set</span> <span class="org-variable-name">CTRLA</span> \001
+<pre class="src src-tcl"><span class="org-comment-delimiter"># </span><span class="org-comment">start code-generator "^\\s *#"</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">end code-generator</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">start generated code</span>
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLA</span> \001
 <span class="org-builtin">set</span> <span class="org-variable-name">CTRLB</span> \002
 <span class="org-builtin">set</span> <span class="org-variable-name">CTRLC</span> \003
 <span class="org-builtin">set</span> <span class="org-variable-name">CTRLD</span> \004
@@ -112,24 +116,10 @@ for the JavaScript code in this tag.
 <span class="org-builtin">set</span> <span class="org-variable-name">CTRLF</span> \006
 <span class="org-builtin">set</span> <span class="org-variable-name">CTRLG</span> \007
 <span class="org-builtin">set</span> <span class="org-variable-name">CTRLH</span> \010
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLI</span> \011
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLJ</span> \012
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLK</span> \013
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLL</span> \014
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLM</span> \015
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLN</span> \016
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLO</span> \017
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLP</span> \020
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLQ</span> \021
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLR</span> \022
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLS</span> \023
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLT</span> \024
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLU</span> \025
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLV</span> \026
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLW</span> \027
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLX</span> \030
-<span class="org-builtin">set</span> <span class="org-variable-name">CTRLY</span> \031
+...
 <span class="org-builtin">set</span> <span class="org-variable-name">CTRLZ</span> \032
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">end generated code</span>
 </pre>
 
 
@@ -198,7 +188,7 @@ generate another program source file. But this has it's drawbacks:
 
 </li>
 <li>It is not enough fine-grained, you can only generate a whole file
-   instead of part of a file.
+   instead of part (or parts) of a file.
 
 <p>
    If you have done some php/html programming, you would love the
@@ -233,11 +223,11 @@ comments!
 
 
 <p>
-I was writing an expect script <a href="http://github.com/baohaojun/system-config/raw/master/bin/bbs-robot">bbs-robot</a> to connect to the newsmth.net
-BBS and remap its key-binding with Emacs's. For e.g., when I press
-<code>C-n</code>, it should send <code>^[[1;1B</code> (terminal code for Down key) to the
-BBS. Naming <code>CTRLA</code> as <code>\001</code> all the way to <code>CTRLZ</code> as <code>\032</code> is
-tedious and error prone:
+Back to the question asked at the beginning. I was writing an expect
+script <a href="http://github.com/baohaojun/system-config/raw/master/bin/bbs-robot">bbs-robot</a> to connect to the newsmth.net BBS and remap its
+key-binding with Emacs's. For e.g., when I press <code>C-n</code>, it should send
+<code>^[[1;1B</code> (terminal code for Down key) to the BBS. Naming <code>CTRLA</code> as
+<code>\001</code> all the way to <code>CTRLZ</code> as <code>\032</code> is tedious and error prone:
 </p>
 
 
