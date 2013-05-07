@@ -1,7 +1,7 @@
 ;; -*- Emacs-Lisp -*-
 ;; -*- coding: utf-8; -*-
 ;;; douban-music-mode.el ---
-;; Time-stamp: <2013-05-07 01:57:18 Tuesday by lzy>
+;; Time-stamp: <2013-05-07 16:42:18 Tuesday by lzy>
 
 ;; Copyright (C) 2013 zhengyu li
 ;;
@@ -37,7 +37,7 @@
 ;; 2012-05-06: zhengyu li <lizhengyu419@gmail.com>
 ;;   add image clean after exit features
 ;;   add pause seek forward/backward for mplayer
-;;   fixed some bugs     
+;;   fixed some bugs
 
 ;; 2012-05-05: zhengyu li <lizhengyu419@gmail.com>
 ;;   add mplayer support
@@ -372,7 +372,9 @@
                                 'face '((t (:height 1.4 :foreground "ForestGreen"))))
                     (propertize " douban.fm\n\n"
                                 'face '((t (:height 0.8 :foreground "grey70" :))))))
-    (insert (propertize (format "Channels:\n%s%s"
+    (insert (propertize "Channels:"
+                        'face '((t (:foreground "Green3" :height 1.1)))))
+    (insert (propertize (format "\n%s%s"
                                 douban-music-indent0
                                 douban-music-channels-delimiter)
                         'face '((t (:foreground "Grey80")))))
@@ -415,8 +417,9 @@
       (insert (concat (propertize (format "\n\n%sCurrent song: "
                                           douban-music-indent0)
                                   'face 'douban-music-track-face)
-                      (propertize (format "%s"
-                                          (aget (elt douban-music-song-list douban-music-current-song) 'title))
+                      (propertize (format "%s (kbps %s)"
+                                          (aget (elt douban-music-song-list douban-music-current-song) 'title)
+                                          (aget (elt douban-music-song-list douban-music-current-song) 'kbps))
                                   'face 'douban-music-publish-year-face)))
       (insert (concat (propertize (format "\n%sCurrent channel: "
                                           douban-music-indent0)
@@ -476,7 +479,7 @@
   "Insert image file into text buffer."
   (when image-file
     (condition-case err
-        (let ((img (create-image image-file)))
+        (let ((img (create-image image-file nil nil :relief 2 :ascent 'center)))
           (insert-image img)
           img)
       (error
