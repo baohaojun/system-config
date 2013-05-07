@@ -1,7 +1,7 @@
 ;; -*- Emacs-Lisp -*-
 ;; -*- coding: utf-8; -*-
 ;;; douban-music-mode.el ---
-;; Time-stamp: <2013-05-07 16:42:18 Tuesday by lzy>
+;; Time-stamp: <2013-05-07 17:54:04 Tuesday by lzy>
 
 ;; Copyright (C) 2013 zhengyu li
 ;;
@@ -35,9 +35,8 @@
 ;;   (autoload 'douban-music "douban-music-mode" nil t)
 
 ;; 2012-05-06: zhengyu li <lizhengyu419@gmail.com>
-;;   add image clean after exit features
 ;;   add pause seek forward/backward for mplayer
-;;   fixed some bugs
+;;   don't save all song's pictures to local
 
 ;; 2012-05-05: zhengyu li <lizhengyu419@gmail.com>
 ;;   add mplayer support
@@ -71,11 +70,6 @@
 (defcustom douban-music-player "mplayer"
   "Player for douban music."
   :type 'string
-  :group 'douban-music)
-
-(defcustom douban-music-exit-clean nil
-  "Clean image cache after exit"
-  :type 'boolean
   :group 'douban-music)
 
 (defface douban-music-track-face
@@ -131,6 +125,7 @@
 (defvar douban-music-current-channel nil "Current channel for douban music.")
 (defvar douban-music-current-status "stopped" "Douban music current status.")
 (defvar douban-music-current-process nil "Current play process of douban music.")
+(defvar douban-music-image-file "image" "Image file used to save picture of current song")
 (defvar douban-music-indent0 " " "0-level indentation.")
 (defvar douban-music-indent1 "  " "1-level indentation.")
 (defvar douban-music-indent2 "    " "2-level indentation.")
@@ -248,10 +243,7 @@
   (interactive)
   (when (eq major-mode 'douban-music-mode)
     (douban-music-stop)
-    (kill-buffer (current-buffer))
-    (if douban-music-exit-clean
-        (dolist (f (directory-files douban-music-cache-directory t "\\.jpg"))
-          (delete-file f)))))
+    (kill-buffer (current-buffer))))
 
 (defun douban-music-play ()
   (let (song)
@@ -359,25 +351,24 @@
           (dotimes (i (length json))
             (let ((var (aref json i)))
               (setq douban-music-song-list
-                    (cons var douban-music-song-list))
-              (douban-music-download-image-file (aget var 'picture)))))))))
+                    (cons var douban-music-song-list)))))))))
 
 (defun douban-music-interface-update ()
   (with-current-buffer douban-music-buffer-name
     (setq buffer-read-only nil)
     (erase-buffer)
     (insert (concat (propertize "豆瓣"
-                                'face '((t (:height 1.3 :foreground "Grey70"))))
+                                'face '(:height 1.3 :foreground "Grey70"))
                     (propertize "FM"
-                                'face '((t (:height 1.4 :foreground "ForestGreen"))))
+                                'face '(:height 1.4 :foreground "ForestGreen"))
                     (propertize " douban.fm\n\n"
-                                'face '((t (:height 0.8 :foreground "grey70" :))))))
+                                'face '(:height 0.8 :foreground "grey70" :))))
     (insert (propertize "Channels:"
-                        'face '((t (:foreground "Green3" :height 1.1)))))
+                        'face '(:foreground "Green3" :height 1.1)))
     (insert (propertize (format "\n%s%s"
                                 douban-music-indent0
                                 douban-music-channels-delimiter)
-                        'face '((t (:foreground "Grey80")))))
+                        'face '(:foreground "Grey80")))
     (let (channels
           (counter 0)
           (channel-list douban-music-channels))
@@ -388,9 +379,9 @@
                   (insert channels))
               (setq channels (format "\n%s" douban-music-indent0))))
         (setq channels (concat channels (concat (propertize (format "%-3d" (caar channel-list))
-                                                            'face '((t (:foreground "Green"))))
+                                                            'face '(:foreground "Green"))
                                                 (propertize (format "%-10s " (cdar channel-list))
-                                                            'face '((t (:foreground "Grey80")))))))
+                                                            'face '(:foreground "Grey80")))))
         (setq counter (1+ counter))
         (setq channel-list (cdr channel-list)))
       (if (not (string-equal channels (format "\n%s" douban-music-indent0)))
@@ -398,9 +389,8 @@
       (insert (propertize (format "\n%s%s\n\n"
                                   douban-music-indent0
                                   douban-music-channels-delimiter)
-                          'face '((t (:foreground "Grey80"))))))
+                          'face '(:foreground "Grey80"))))
     (let (song
-          image
           title
           album
           artist
@@ -410,9 +400,10 @@
       (setq song (elt douban-music-song-list douban-music-current-song))
       (if song
           (progn
-            (setq image (make-image-file-name (aget song 'picture)))
             (insert douban-music-indent2)
-            (douban-music-insert-image image))
+            (douban-music-download-image-file (aget song 'picture))
+            (douban-music-insert-image (concat douban-music-cache-directory
+                                               douban-music-image-file)))
         (error "current song is nil"))
       (insert (concat (propertize (format "\n\n%sCurrent song: "
                                           douban-music-indent0)
@@ -479,7 +470,9 @@
   "Insert image file into text buffer."
   (when image-file
     (condition-case err
-        (let ((img (create-image image-file nil nil :relief 2 :ascent 'center)))
+        (let ((img (progn
+                     (clear-image-cache image-file)
+                     (create-image image-file nil nil :relief 2 :ascent 'center))))
           (insert-image img)
           img)
       (error
@@ -489,7 +482,8 @@
 
 (defun douban-music-download-image-file (url)
   "Download image file to douban music cache directory."
-  (let ((image-file (make-image-file-name url)))
+  (let ((image-file (concat douban-music-cache-directory
+                            douban-music-image-file)))
     (with-current-buffer (url-retrieve-synchronously url)
       (setq buffer-file-coding-system 'no-conversion)
       (goto-char (point-min))
@@ -499,12 +493,6 @@
           (write-region (point-min) (point-max) image-file nil 0)))
       (kill-buffer))
     image-file))
-
-(defun make-image-file-name (url)
-  "Create image file name based on url."
-  (let ((image-file-name (file-name-nondirectory
-                          (url-filename (url-generic-parse-url url)))))
-    (expand-file-name image-file-name douban-music-cache-directory)))
 
 ;;;###autoload
 (defun douban-music ()
