@@ -3,7 +3,9 @@
   - 2013-05
    * 2013-05-08
 
-     [[../blog/2013/05/08/bbs-robot.org][版主福音：在水木bbs上用Emacs的键绑定]]
+     [[../blog/2013/05/08/stripping-kernel-code-for-reading.org][Stripping kernel/uboot source to 10% for code reading]]
+
+     [[../blog/2013/05/08/bbs-robot.org][站友福音：在水木bbs上用Emacs的键绑定]]
 
    * 2013-05-03
 

@@ -7,8 +7,8 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="站友福音：在水木bbs上用Emacs的键绑定"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-08T18:48+0800"/>
-<meta name="author" content="Bao Haojun"/>
+<meta name="generated" content="2013-05-08 23:30:51 CST"/>
+<meta name="author" content="baohaojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
 <link rel="stylesheet" href="/css/default.css" type="text/css">
@@ -43,30 +43,6 @@
         }
     </script>
 <script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -167,7 +143,7 @@ for the JavaScript code in this tag.
    所以我们的这几个按键，就相当于让那个猪头把那个快捷键“吃了我的给我吐
    出来”了:-)
 </p>
-<p>   
+<p>
    以 <code>C-c t</code> 为例，这个快捷键真正发过去的按键是：
 </p>
 
@@ -186,6 +162,12 @@ for the JavaScript code in this tag.
      原作模式），并且继续保持在列表界面。而因为之前已经跳到同主题第一篇，
      所以即使这时候模式从普通变为原作也继续指向这篇文章。
 
+<p>
+     (Edit: 注意我刚发现此技巧只能在原作模式下已经看过一篇文章的情况下
+     才能正确工作，否则从普通模式跳到原作模式并不会指向同一篇文章：从原
+     作模式退出到普通模式总是会指向该主题第一篇，但从普通回到原作模式则
+     还是指向原来的文章）
+</p>
 </li>
 <li>接下来的 <code>q</code> 会切换到普通模式，并且保持在同主题第一篇
 
@@ -213,8 +195,8 @@ for the JavaScript code in this tag.
             </a>
           </li>
           <li class="next_post" style="text-align: right;">
-            <a href="../../../../meta/Archive.html"> <!-- next-url -->
-              Archive <!-- next-title -->
+            <a href="stripping-kernel-code-for-reading.html"> <!-- next-url -->
+              Stripping kernel/uboot source to 10% for code reading <!-- next-title -->
               <i class="icon-chevron-right">》</i>
             </a>
           </li>

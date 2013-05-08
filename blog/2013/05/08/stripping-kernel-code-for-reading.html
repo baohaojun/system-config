@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Reading source code</title>
+<title>Stripping kernel/uboot source to 10% for code reading</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Reading source code"/>
+<meta name="title" content="Stripping kernel/uboot source to 10% for code reading"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-08 23:31:29 CST"/>
+<meta name="generated" content="2013-05-08 23:31:12 CST"/>
 <meta name="author" content="baohaojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -73,67 +73,128 @@
 </div>
 
 <div id="content">
-<h1 class="title">Reading source code</h1>
+<h1 class="title">Stripping kernel/uboot source to 10% for code reading</h1>
 
-<ul>
-<li>2013
-<ul>
-<li>2013-05
-<ul>
-<li>2013-05-08
-
-<p>
-     <a href="../../../blog/2013/05/08/stripping-kernel-code-for-reading.html">Stripping kernel/uboot source to 10% for code reading</a>
+<p>When reading kernel or uboot source code, it's quite a headache that
+there are so many duplicate definitions for CPU specific
+functions. For e.g., when I was working on our company's pxa988 uboot
+code, there are only ~400 relevant files, but how many files total are
+there in the whole uboot project? More than 6000!
 </p>
-</li>
-</ul>
-
-</li>
-<li>2013-02
-<ul>
-<li>2013-02-12
-
 <p>
-     <a href="../../../blog/2013/02/12/note.html">note</a>
+Here I present a simple but reliable way to get rid of those not
+immediately needed files, it works both for kernel and uboot. It's
+based on building and file timestamps: after a full build, ideally all
+relevant files will be visited, thus their <code>atime</code> updated, but those
+irrelevant files shouldn't.
 </p>
-</li>
-<li>2013-02-02
-
 <p>
-     <a href="../../../blog/2013/02/02/remove-unneeded-files-for-code-reading.html">在阅读源代码时删掉所有非必要文件的方法</a>
+So here are the steps:
 </p>
-</li>
-</ul>
+<ol>
+<li>touch all source code files (this step is mandatory, or else the
+   <code>atime</code> won't update correctly, I don't know why, but guess it's an
+   optimization).
+
+
+
+
+<pre class="example">git ls-tree HEAD -r |pn 4|xargs touch
+</pre>
+
 
 </li>
-</ul>
+<li>touch a sentinel file: <code>touch mark</code>
 
 </li>
-<li>2012
-<ul>
-<li>2012-10
-<ul>
-<li>2012-10-31
+<li>full build
+
+</li>
+<li>find all files newerly accessed than <i>mark</i>, like this: <code>find    . -anewer mark</code>. These are used (visited) by the build.
+
+</li>
+<li>Similarly find all files not accessed after <i>mark</i>, these are not
+   used by the build, so not so important for your code reading
+   task. Remove them.
+
+</li>
+<li>After removing those non-build files, do a full build again (with
+   the same kernel/uboot config, of course) to verify it's still
+   building OK.
+</li>
+</ol>
+
 
 <p>
-     <a href="../../../blog/2012/10/31/ctags-android-xml.html">用ctags索引Android资源定义的.xml和.png文件</a>
+But sadly, this idea doesn't work. In step 4, you will find that all
+source files has been visited (with a newer atime than <i>mark</i>), WTH?
 </p>
-</li>
-<li>2012-10-11
+<p>
+<code>strace(1)</code> comes to the rescue! 
+</p>
+
+
+
+<pre class="example">(
+ cd uboot;
+ strace -f time make -j8 helan_ff_config;
+ strace -f time make -j8
+) 2&gt;&amp;1 | tee ~/strace.log
+</pre>
+
 
 <p>
-     <a href="../../../blog/2012/10/11/reading-source-code-cn.html">Emacs和它的朋友们——阅读源代码篇</a>
-</p></li>
-</ul>
-
-</li>
-</ul>
-
-</li>
-</ul>
+In the <code>~/strace.log</code>, we can find who is visiting a file for a
+totally different CPU/driver:
+</p>
 
 
-</div>
+
+<pre class="example">$ grep drivers/mmc/arm_pl180_mmci.c ~/strace.log
+[pid   684] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
+[pid   684] open("drivers/mmc/arm_pl180_mmci.c", O_RDONLY) = 6
+[pid   694] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
+
+$ grep ' 684]' ~/strace.log|head -n 5
+[pid   684] close(10)                   = 0
+[pid   684] execve("/usr/bin/git", ["git", "update-index", "--refresh", "--unmerged"], [/* 78 vars */]) = 0
+[pid   684] brk(0)                      = 0x25b6000
+[pid   684] access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+[pid   684] mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x2b5c68ec2000
+</pre>
+
+
+<p>
+And you can see that it is a <code>git update-index ...</code> command, and it is
+run in a script named <code>setlocalversion</code> (same script for both kernel
+and uboot). After hacking this script (do not run the git command),
+the idea works.
+</p>
+<p>
+See my scripts to do it in one command: <a href="http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-uboot">for uboot</a> and <a href="http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-kernel">for kernel</a>. But
+you need to adapt them if you want to use, of course.
+</p>
+<p>
+Using this idea, the uboot code can be reduced from ~6000 files to
+~400, and kernel from ~40k to ~4k (based on our small embedded
+system's kernel config, of course), that is, about 10 percent.
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="bbs-robot.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              站友福音：在水木bbs上用Emacs的键绑定 <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../../../../meta/Archive.html"> <!-- next-url -->
+              Archive <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</p></div>
 
 <div id="postamble">
 
@@ -178,7 +239,8 @@
             </div>
             <div class="about-left about-more">
                 <h2>Tags</h2>
-                                <a href="../Archive.html" title="All blogs">archive</a><br/>
+                                <a href="../../../../meta/tags/code-reading.html" title="Reading source code">code-reading</a><br/>
+            <a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
             </div>
             <div class="about-left about-more">
                 <h2>About</h2>
