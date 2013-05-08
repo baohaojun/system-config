@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>版主福音：在水木bbs上用Emacs的键绑定</title>
+<title>站友福音：在水木bbs上用Emacs的键绑定</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="版主福音：在水木bbs上用Emacs的键绑定"/>
+<meta name="title" content="站友福音：在水木bbs上用Emacs的键绑定"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-08T18:32+0800"/>
+<meta name="generated" content="2013-05-08T18:40+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -97,17 +97,18 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="content">
-<h1 class="title">版主福音：在水木bbs上用Emacs的键绑定</h1>
+<h1 class="title">站友福音：在水木bbs上用Emacs的键绑定</h1>
 
 <p>作为一个Emacs狂人，在用ssh上水木发贴子的时候发现 <code>C-y</code> 会把整行都删掉而不是
-粘贴简直让我快疯了。疯了疯了疯了！
+粘贴简直让我快疯了。疯了疯了疯了疯了！
 </p>
 <p>
-下面说一下我用Expect实现的一个上水木的 <a href="https://github.com/baohaojun/system-config/raw/master/bin/bbs-robot">bbs-robot</a> 脚本。
+下面说一下我用Expect实现的一个上水木的 <a href="https://github.com/baohaojun/system-config/raw/master/bin/bbs-robot">bbs-robot</a> 脚本（其实现中用到的代
+码生成的编程技巧见 <a href="../../03/09/bhj-do-codegen.html">给任意语言插上宏定义的翅膀</a> ）。
 </p>
 <p>
-用法（如果在utf-8的环境下用需要一个额外的 <a href="https://github.com/baohaojun/system-config/raw/master/bin/gbk-exec">gbk-exec</a> 脚本，如果在gbk环境
-下用的话需要自己改一下bbs-robot，把gbk-exec删掉）：
+用法（如果在utf-8的locale下用需要一个额外的 <a href="https://github.com/baohaojun/system-config/raw/master/bin/gbk-exec">gbk-exec</a> 脚本，如果在gbk环
+境下用的话需要自己改一下bbs-robot，把gbk-exec删掉）：
 </p>
 
 
