@@ -1,12 +1,17 @@
 #!/bin/bash
 
 jobs=5
-TEMP=$(getopt -o j: --long jobs: -n $(basename $0) -- "$@")
+replace_str=
+TEMP=$(getopt -o j:I: --long jobs: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -j|--jobs)
             jobs=$2
+            shift 2
+            ;;
+        -I)
+            replace_str=$2
             shift 2
             ;;
         --)
@@ -26,18 +31,34 @@ mkdir -p $lock_dir
 
 x=0
 
+need_sleep=true
 for y in "$@"; do
     while true; do
-        ((x %= jobs))
-        if test $(fuser $lock_dir/$x 2>&1 |wc -w) -gt 5; then
-            echo need sleep 1>&2
+        if test $need_sleep = true -a $x = $jobs; then
             sleep 1;
+        fi
+
+        if test $x = $jobs; then
+            need_sleep=true
+        fi
+
+        ((x %= jobs))
+
+
+        if test $(fuser $lock_dir/$x 2>/dev/null |wc -w) -lt 10; then
+            echo do not need sleep 1>&2
+            need_sleep=false
+        else
             ((x++));
             continue
         fi
         (
             flock 9
-            bash -c "$cmd" true "$y"
+            if test "$replace_str"; then
+                echo "$cmd" | perl -npe "s/$replace_str/$y/g"
+            else
+                echo "$cmd"
+            fi | bash
         ) 9> $lock_dir/$x&
         ((x++))
         break

@@ -63,9 +63,9 @@ if git remote -v | grep baohaojun.github.com.git; then
             fi
 
             org-export $x
-            if test -e "$(basename $org_changes|perl -npe 's/\.org$/.html/')" && [[ "$org_changes" =~ blog/ ]]; then
-                if git st -s "$(basename $org_changes|perl -npe 's/\.org$/.html/')" | grep -P -q -e '^\?\?'; then
-                    rm "$(basename $org_changes|perl -npe 's/\.org$/.html/')"
+            if test -e "$(basename $x|perl -npe 's/\.org$/.html/')" && [[ "$x" =~ blog/ ]]; then
+                if git st -s "$(basename $x|perl -npe 's/\.org$/.html/')" | grep -P -q -e '^\?\?'; then
+                    rm "$(basename $x|perl -npe 's/\.org$/.html/')"
                 else
                     ./rebuild-old-html.pl "$x"
                 fi

@@ -122,8 +122,14 @@ EOC
     print "'$_' ";
   }
   print "\n";
-  while (system(@cmd) != 0) {
-      system("sleep 5");
+  while (1) {
+      my $ret = system(@cmd);
+      if ($ret != 0) {
+          warn("ret is $ret for @cmd");
+          system("sleep 5");
+      } else {
+          last;
+      }
   }
 }
 

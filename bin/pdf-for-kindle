@@ -2,104 +2,22 @@
 
 set -e
 
-left=0mm
-bot=0mm
-right=0mm
-top=0mm
 paper=a4
 duplicate=5mm
 scale=1.2
 max=-1
 
-function die() {
-    echo "$@"
-    exit -1
-}
-
-function subtract() {
-    perl -e '$sub1 = $ARGV[0]; $sub2 = $ARGV[1];
-    $sub1 =~ m/(.*)(..)$/;
-    $sub1 = $1;
-    if ($2 eq "in") {
-        $sub1 *= 2.54;
-    }
-
-    $sub2 =~ m/(.*)(..)$/;
-    $sub2 = $1;
-
-    if ($2 eq "in") {
-        $sub2 *= 2.54;
-    }
-
-    print "" . ($sub1 - $sub2) . "mm"
-' "$@"
-}
-
-function sum() {
-    subtract "$1" "$(subtract 0mm "$2")"
-}
-
-TEMP=$(getopt -o t:l:r:b:W:H:d:p:s:m:c: -n $(basename $0) -- "$@")
+pagespec=
+TEMP=$(getopt -o d:m:p: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -c)
-            top=$2
-            bot=$2
-            left=$2
-            right=$2
+        -p)
+            pagespec=$2
             shift 2
             ;;
-
-## start code-generator "^\\s *#"
-    # for x in top bot left right; do
-        # printf "%s\n"  "-${x:0:1})"
-        # printf "%s\n" "$x=\$(sum \$$x \$2)"
-        # printf "%s\n" "shift 2"
-        # printf "%s\n" ";;"
-    # done
-## end code-generator
-## start generated code
-        -t)
-            top=$(sum $top $2)
-            shift 2
-            ;;
-        -b)
-            bot=$(sum $bot $2)
-            shift 2
-            ;;
-        -l)
-            left=$(sum $left $2)
-            shift 2
-            ;;
-        -r)
-            right=$(sum $right $2)
-            shift 2
-            ;;
-
-## end generated code
-
-        -W)
-            o_width=$2
-            o_size=cust
-            shift 2
-            ;;
-        -H)
-            o_size=cust
-            o_height=$2
-            shift 2
-            ;;
-
         -d)
             duplicate=$2
-            shift 2
-            ;;
-        -p)
-            paper=$2
-            shift 2
-            ;;
-        -s)
-            scale=$2
             shift 2
             ;;
         -m)
@@ -115,31 +33,50 @@ while true; do
             ;;
     esac
 done
-pdf=$1
 
-if test $paper = a4; then
-    o_width=210mm
-    o_height=297mm
-elif test $paper = ul; then
-    o_width=215.9mm
-    o_height=279.4mm
-else
-    die "Error: old paper size must be one of 'a4' or 'ul'"
+function die() {
+    echo "$@"
+    exit -1
+}
+
+function sum() {
+    subtract "$1" "$(subtract 0 "$2")"
+}
+
+pdf=$1
+old_pdf=$1
+
+if test ! -e odd.pdf; then
+    pdf-split.sh "$pdf"
+    pdf-intwine.sh odd.pdf even.pdf -o out.pdf
+    pdf=out.pdf
 fi
 
-n_width=$(subtract $o_width $left)
-n_width=$(subtract $n_width $right)
+o_width=$(pdf-get-width "$pdf")
+o_height=$(pdf-get-height "$pdf")
 
-n_height=$(subtract $o_height $top)
-n_height=$(subtract $n_height $bot)
+if test "$CUT_SPEC_ODD"; then
+    cut=$CUT_SPEC_ODD
+else
+    cut=$(pdf-get-cut.sh odd.pdf)
+fi
+pdf-cut $cut odd.pdf -p "$pagespec"
+export CUT_SPEC=$(echo "$cut" | perl -npe 's/(-l|-r)/if ($1 eq "-l") {"-r"} else {"-l"}/eg')
+
+if test "$CUT_SPEC_EVEN"; then
+    cut=$CUT_SPEC_EVEN
+else
+    cut=$(pdf-get-cut.sh even.pdf)
+fi
+
+pdf-cut $cut even.pdf -p "$pagespec"
+n_width=$(pdf-get-width odd-cut.pdf)
+n_height=$(pdf-get-height odd-cut.pdf)
 
 function scale() {
-    perl -e '$h = $ARGV[0];
-    $h =~ s/^(.*)mm$/$1/;
-    $h *= $ARGV[1];
-    print "$h" . "mm"
-' "$@"
+    perl -e "print ($1 * $2)";
 }
+
 
 half_n_height=$(scale $n_height 0.5)
 cut_n_height=$(subtract $n_height $half_n_height)
@@ -153,48 +90,27 @@ test -e $pdf || die "Error: $pdf does not exist";
 
 pdf=${pdf%.pdf}
 
-pages=$(pdfinfo "$pdf".pdf | grep "Pages:" | pn 2)
+for x in odd even; do
+    pdfnup --no-landscape --nup 1x1 --papersize "{${n_width}pt,${remaining_n_height}pt}" \
+        --trim "0pt ${cut_n_height}pt 0pt 0pt" --outfile $x-top.pdf $x-cut.pdf
+    pdfnup --no-landscape --nup 1x1 --papersize "{${n_width}pt,${remaining_n_height}pt}" \
+        --trim "0pt 0pt 0pt ${cut_n_height}pt" --outfile $x-bot.pdf $x-cut.pdf
+    run-in-parallel -I %N "pdfjoin $x-top.pdf %N $x-bot.pdf %N --outfile $x-join-%N.pdf" $(seq 1 $(pdf-get-pages $x-top.pdf))
+done
 
-pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$n_height}"           --trim "$left $bot $right $top" "$pdf".pdf
-cp "$pdf"-nup.pdf cut-"$pdf".pdf
-pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_n_height 0 0" --suffix top "$pdf"-nup.pdf
-pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 0 0 $cut_n_height" --suffix bot "$pdf"-nup.pdf
+pages=$(pdf-get-pages odd-cut.pdf)
+for page in $(seq 1 $pages); do
+    for x in odd even; do
+        echo $x-join-$page.pdf
+    done
+done | xargs pdfjoin --outfile final.pdf
 
+pdf90 final.pdf --outfile "${old_pdf/%.pdf/.Kindle.pdf}"
+rm odd-*.pdf even-*.pdf -f
 
-x=0;
+for x in left bot right top; do
+    rm $x.pdf -f
+done
 
-mkdir -p ~/.logs/locks/pdf-for-kindle/
-
-while true; do
-    ((x++)) || true;
-    if test $max -gt 0 -a $x -gt $max; then
-        break
-    fi
-
-    if test $x -gt $pages; then
-        break;
-    fi
-
-    ((lock = x % 10)) || true
-
-    (
-        flock 9
-        # split the pages
-        pdfjoin "$pdf"-nup-top.pdf $x "$pdf"-nup-bot.pdf $x&
-    ) 9>~/.logs/locks/pdf-for-kindle/$lock
-done | cat
-
-((y=x-1))
-for x in $(seq 1 $y); do echo "$pdf"-nup-bot-$x-joined.pdf; done|xargs pdfjoin
-
-if test $scale != 1; then
-    n_width=$(scale $n_width $scale)
-    remaining_n_height=$(scale $remaining_n_height $scale)
-    pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --scale $scale --noautoscale true "$pdf"-nup-bot-$y-joined-joined.pdf
-    mv "$pdf"-nup-bot-$y-joined-joined-nup.pdf "$pdf"-nup-bot-$y-joined-joined.pdf
-fi
-
-pdf90 "$pdf"-nup-bot-$y-joined-joined.pdf
-
-mv "$pdf"-nup-bot-$y-joined-joined-rotated90.pdf kindle-"$pdf".pdf
-rm -rf "$pdf"-nup*.pdf
+#mv "$pdf"-nup-bot-$y-joined-joined-rotated90.pdf kindle-"$pdf".pdf
+#rm -rf "$pdf"-nup*.pdf

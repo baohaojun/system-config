@@ -1,4 +1,4 @@
-#!/usr/bin/expect -f 
+#!/usr/bin/expect -f
 
 # this script will log into bbs automatically, maybe even post an
 # article to a specified board.
@@ -14,27 +14,41 @@ set password ""
 
 for {set i 0} {$i < [llength $argv]} {incr i} {
     if {[string eq [lindex $argv $i] "-u"]} {
-	incr i;
-	set user [lindex $argv $i];
+        incr i;
+        set user [lindex $argv $i];
     } elseif {[string eq [lindex $argv $i] "-p"]} {
-	incr i;
-	set password [lindex $argv $i];
+        incr i;
+        set password [lindex $argv $i];
     } elseif {[string eq [lindex $argv $i] "-h"]} {
-	incr i;
-	set host [lindex $argv $i];
+        incr i;
+        set host [lindex $argv $i];
     } elseif {[string eq [lindex $argv $i] "-m"]} {
-	incr i;
-	set mode [lindex $argv $i];
+        incr i;
+        set mode [lindex $argv $i];
     } elseif {[string eq [lindex $argv $i] "-b"]} {
-	incr i;
-	set board [lindex $argv $i];
+        incr i;
+        set board [lindex $argv $i];
     }
 }
 
-if [string eq "" $password] {
-    set fh [open "|get-authinfo $host $user"]
-    set password [read $fh]
+proc qx cmd {
+    set fh [open "|$cmd"]
+    set res [read $fh]
     close $fh
+    return $res
+}
+
+proc send_all args {
+    send [join $args ""]
+}
+
+proc strcat args {
+    return [join $args ""]
+}
+
+
+if [string eq "" $password] {
+    set password [qx "get-authinfo $host $user"]
 }
 
 if [string eq "" $mode] {
@@ -55,21 +69,21 @@ set timeout 5
 
 expect {
     -re "按.*RETURN.*继续|上次连线时间|按任意键继续|近期热点|如何处理以上" {
-	send "\r\n";
-	exp_continue;
+        send "\r\n";
+        exp_continue;
     }
     "主选单" {
-	if {! [string eq "" $board]} {
-	    send "s\r\n";
-	    expect {
-		"请输入讨论区" {
-		    send "$board\r\n"
-		}
-	    }
-	}		
+        if {! [string eq "" $board]} {
+            send "s\r\n";
+            expect {
+                "请输入讨论区" {
+                    send "$board\r\n"
+                }
+            }
+        }
     }
     timeout {
-	puts "timed out\n"; puts "timed out\n"; puts "timed out\n";    puts "timed out\n";    puts "timed out\n";
+        puts "timed out\n"; puts "timed out\n"; puts "timed out\n";    puts "timed out\n";    puts "timed out\n";
     }
 }
 
@@ -122,53 +136,73 @@ if [string eq "" $mode] {
     set ESCgt \033>
 
     interact {
-	-reset $CTRLZ {exec kill -STOP [pid]}
-	$CTRLP {send $UP}
-	$CTRLN {send $DOWN}
-	$CTRLK {send $CTRLY}
-	$CTRLV {send $NEXT}
-	$ESCv  {send $PREV}
-	$CTRLS {send /}
-	$CTRLR {send ?}
-	$CTRLF {send $RIGHT}
-	$CTRLB {send $LEFT}
-	$ESClt {send $HOME}
-	$ESCgt {send $END}
+        -reset $CTRLZ {exec kill -STOP [pid]}
+        $CTRLP {send $UP}
+        $CTRLN {send $DOWN}
+        $CTRLF {send $RIGHT}
+        $CTRLB {send $LEFT}
+        $CTRLV {send $NEXT}
+        $ESCv  {send $PREV}
 
-	# start code-generator "^\\s *#"
-	# perl -e 'for $x ("A".."Z") { print "\$CTRLQ\$CTRL$x {send \$CTRL$x}\n"}'
-	# end code-generator
-	# start generated code
-	$CTRLQ$CTRLA {send $CTRLA}
-	$CTRLQ$CTRLB {send $CTRLB}
-	$CTRLQ$CTRLC {send $CTRLC}
-	$CTRLQ$CTRLD {send $CTRLD}
-	$CTRLQ$CTRLE {send $CTRLE}
-	$CTRLQ$CTRLF {send $CTRLF}
-	$CTRLQ$CTRLG {send $CTRLG}
-	$CTRLQ$CTRLH {send $CTRLH}
-	$CTRLQ$CTRLI {send $CTRLI}
-	$CTRLQ$CTRLJ {send $CTRLJ}
-	$CTRLQ$CTRLK {send $CTRLK}
-	$CTRLQ$CTRLL {send $CTRLL}
-	$CTRLQ$CTRLM {send $CTRLM}
-	$CTRLQ$CTRLN {send $CTRLN}
-	$CTRLQ$CTRLO {send $CTRLO}
-	$CTRLQ$CTRLP {send $CTRLP}
-	$CTRLQ$CTRLQ {send $CTRLQ}
-	$CTRLQ$CTRLR {send $CTRLR}
-	$CTRLQ$CTRLS {send $CTRLS}
-	$CTRLQ$CTRLT {send $CTRLT}
-	$CTRLQ$CTRLU {send $CTRLU}
-	$CTRLQ$CTRLV {send $CTRLV}
-	$CTRLQ$CTRLW {send $CTRLW}
-	$CTRLQ$CTRLX {send $CTRLX}
-	$CTRLQ$CTRLY {send $CTRLY}
-	$CTRLQ$CTRLZ {send $CTRLZ}
+        $CTRLS {send /}
+        $CTRLR {send ?}
 
-	# end generated code
-	$CTRLQ$ESC   {send $ESC}
-    }	
+        $ESClt {send $HOME}
+        $ESCgt {send $END}
+
+        $CTRLO {send $CTRLM$UP$CTRLE}
+        $CTRLY {send [qx getclip]}
+        # $CTRLT {send_all {a b c d e}}
+
+        # thread mode when in original list
+        [strcat $CTRLC t] {
+            send_all & $CTRLG 4 $CTRLM q $RIGHT $RIGHT
+        }
+
+        # next thread when in normal list
+        [strcat $CTRLC n] {
+            send_all & $CTRLG 4 $CTRLM $DOWN q $RIGHT $RIGHT
+        }
+
+        # prev thread when in normal list
+        [strcat $CTRLC p] {
+            send_all & $CTRLG 4 $CTRLM $UP q $RIGHT $RIGHT
+        }
+
+        # start code-generator "^\\s *#"
+        # perl -e 'for $x ("A".."Z") { print "\$CTRLQ\$CTRL$x {send \$CTRL$x}\n"}'
+        # end code-generator
+        # start generated code
+        $CTRLQ$CTRLA {send $CTRLA}
+        $CTRLQ$CTRLB {send $CTRLB}
+        $CTRLQ$CTRLC {send $CTRLC}
+        $CTRLQ$CTRLD {send $CTRLD}
+        $CTRLQ$CTRLE {send $CTRLE}
+        $CTRLQ$CTRLF {send $CTRLF}
+        $CTRLQ$CTRLG {send $CTRLG}
+        $CTRLQ$CTRLH {send $CTRLH}
+        $CTRLQ$CTRLI {send $CTRLI}
+        $CTRLQ$CTRLJ {send $CTRLJ}
+        $CTRLQ$CTRLK {send $CTRLK}
+        $CTRLQ$CTRLL {send $CTRLL}
+        $CTRLQ$CTRLM {send $CTRLM}
+        $CTRLQ$CTRLN {send $CTRLN}
+        $CTRLQ$CTRLO {send $CTRLO}
+        $CTRLQ$CTRLP {send $CTRLP}
+        $CTRLQ$CTRLQ {send $CTRLQ}
+        $CTRLQ$CTRLR {send $CTRLR}
+        $CTRLQ$CTRLS {send $CTRLS}
+        $CTRLQ$CTRLT {send $CTRLT}
+        $CTRLQ$CTRLU {send $CTRLU}
+        $CTRLQ$CTRLV {send $CTRLV}
+        $CTRLQ$CTRLW {send $CTRLW}
+        $CTRLQ$CTRLX {send $CTRLX}
+        $CTRLQ$CTRLY {send $CTRLY}
+        $CTRLQ$CTRLZ {send $CTRLZ}
+
+        # end generated code
+        $CTRLQ$ESC   {send $ESC}
+    }
 }
 exit
 

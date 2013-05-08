@@ -7,11 +7,11 @@ function die() {
 }
 
 outfile=out.pdf
-TEMP=$(getopt -o o: --long outfile: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o o: --long out: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -o|--outfile)
+        -o|--out)
             outfile=$2
             shift 2
             ;;
@@ -29,13 +29,14 @@ if test $# != 2; then
     die "Error: Usage $(basename $0) pdf1 pdf2"
 fi
 
-pdfseparate -f 1 -l 10000 "$1" odd-%d.pdf || true
-pdfseparate -f 1 -l 10000 "$2" even-%d.pdf || true
+odd_pages=$(pdf-get-pages "$1")
+even_pages=$(pdf-get-pages "$2")
 
-for x in $(seq 1 10000); do
-    for y in odd even; do
-        if test -e $y-$x.pdf; then
-            echo $y-$x.pdf;
-        fi
+(
+    for n in $(seq 1 $odd_pages); do
+        echo "$1" $n "$2" $n
     done
-done | xargs pdfjoin --outfile $outfile
+    if test $odd_pages -gt $even_pages; then
+        echo "$1" $odd_pages
+    fi
+) | xargs pdfjoin --outfile $outfile

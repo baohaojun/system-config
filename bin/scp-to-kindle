@@ -1,4 +1,9 @@
 #!/bin/bash
 
+sudo ifconfig usb0 192.168.15.33
+if test $(ip-or-name kindle) = kindle; then
+    echo need update ip
+    sudo update-host-ip kindle 192.168.15.244
+fi
 remote=$(basename $0| perl -npe 's/scp-to-//')
 scp "$@" $remote:/mnt/us/documents/

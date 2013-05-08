@@ -9,8 +9,9 @@ if test $# != 2; then
     die Usage: $(basename $0) dir1 dir2
 fi
 
-dir1=$(formal-path "$1")
-dir2=$(formal-path "$2")
+# both of $1 and $2 must be abspath
+dir1=$1
+dir2=$2
 
 while true; do
     dir2_x=$dir2

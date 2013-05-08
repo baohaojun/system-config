@@ -13,16 +13,7 @@ function die() {
 
 function Usage() {
     echo "Usage: $(basename $0) [OPTIONS...] INPUT.pdf"
-    echo "      OPTIONS: -w top|bot|left|right, the position (where) of the remaining page after cut (deprecated)"
-    echo "               -a, original size of INPUT.pdf is a4, refer to -p, -W and -H"
-    echo "               -u, original size of INPUT.pdf is us letter, refer to -p, -W and -H"
-    echo "               -p a4|ul, specify the original size of INPUT.pdf"
-    echo "               -W NNN{in|mm}, the original width of INPUT.pdf, unit can be in or mm."
-    echo "               -H NNN{in|mm}, the original height of INPUT.pdf, unit can be in or mm."
-    echo "               -h, show this help"
-    echo "               -s size, the width (-w is left|right) or height (-w is top|bot) of the remaining page"
-    echo "                        default unit is mm (deprecated)"
-    echo "               -c circumcise, how much to circumsize (cut off on each side of left/right/bot/top"
+    echo "      OPTIONS: -h, show this help"
     echo "               -l left, how much *more* to cut off on the left, note that it accumulates!"
     echo "               -r right, see -l"
     echo "               -t top, see -l"
@@ -34,85 +25,25 @@ function Usage() {
 
 o_size=a4
 where=cust
-o_width=210mm
-o_height=297mm
 
-left=0mm
-right=0mm
-top=0mm
-bot=0mm
-min_page=50
-max_page=55
-TEMP=$(getopt -o w:s:p:auhW:H:l:b:r:t:c:m:M: -n $(basename $0) -- "$@")
+left=0
+right=0
+top=0
+bot=0
+pagespec=
+TEMP=$(getopt -o l:b:r:t:p:h: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 
-function subtract() {
-    perl -e '$sub1 = $ARGV[0]; $sub2 = $ARGV[1];
-    $sub1 =~ m/(.*)(..)$/;
-    $sub1 = $1;
-    if ($2 eq "in") {
-        $sub1 *= 25.4;
-    }
-
-    $sub2 =~ m/(.*)(..)$/;
-    $sub2 = $1;
-
-    if ($2 eq "in") {
-        $sub2 *= 25.4;
-    }
-
-    print "" . ($sub1 - $sub2) . "mm"
-' "$@"
-}
-
 function sum() {
-    subtract "$1" "$(subtract 0mm "$2")"
+    subtract "$1" "$(subtract 0 "$2")"
 }
 
 while true; do
     case "$1" in
-        -w)
-            where=$2
-            shift 2
-            ;;
-        -s)
-            remaining_size=$2
-            shift 2
-            ;;
-        -p)
-            o_size=$2
-            shift 2
-            ;;
-        -a)
-            o_size=a4
-            shift
-            ;;
-        -u)
-            o_size=ul
-            shift
-            ;;
         -h)
             Usage
             exit 0
             ;;
-        -W)
-            o_width=$2
-            o_size=cust
-            shift 2
-            ;;
-        -H)
-            o_size=cust
-            o_height=$2
-            shift 2
-            ;;
-        -c)
-            left=$2
-            right=$2
-            top=$2
-            bot=$2
-            shift 2
-            ;;
-
 ## start code-generator "^\\s *#"
     # for x in top bot left right; do
         # printf "%s\n"  "-${x:0:1})"
@@ -140,12 +71,8 @@ while true; do
             ;;
 
 ## end generated code
-        -m)
-            min_page=$2
-            shift 2
-            ;;
-        -M)
-            max_page=$2
+        -p)
+            pagespec=$2
             shift 2
             ;;
         --)
@@ -166,47 +93,20 @@ pdf=$1
 test -e $pdf || die "Error: $pdf does not exist";
 pdf=${pdf%.pdf}
 
-
-if test $o_size = a4; then
-    o_width=210mm
-    o_height=297mm
-elif test $o_size = ul; then
-    o_width=215.9mm
-    o_height=279.4mm
-elif test $o_size = cust; then
-    true;
-else
-    die "Error: old paper size must be one of 'a4' or 'ul' or 'cust'"
-fi
-
-if test $where = top; then
-    bot=$(subtract $o_height $remaining_size)
-elif test $where = bot; then
-    top=$(subtract $o_height $remaining_size)
-elif test $where = left; then
-    right=$(subtract $o_width $remaining_size)
-elif test $where = right; then
-    left=$(subtract $o_width $remaining_size)
-elif test $where = cust; then
-    true
-else
-    die "Error: -w must be one of top|bot|right|left";
-fi
+o_width=$(pdf-get-width "$pdf".pdf)
+o_height=$(pdf-get-height "$pdf".pdf)
 
 n_width=$o_width
 n_height=$o_height
 
-if test $where = top -o $where = bot; then
-    n_height=$remaining_size
-elif test $where = left -o $where = right; then
-    n_width=$remaining_size
-else
-    n_width=$(subtract $n_width $left)
-    n_width=$(subtract $n_width $right)
-    n_height=$(subtract $n_height $top)
-    n_height=$(subtract $n_height $bot)
-fi
+n_width=$(subtract $n_width $left)
+n_width=$(subtract $n_width $right)
+n_height=$(subtract $n_height $top)
+n_height=$(subtract $n_height $bot)
 
-echo pdf-cut -W $o_width -H $o_height -t $top -b $bot -l $left -r $right "$pdf"
 
-pdfnup --no-landscape --papersize "{$n_width,$n_height}" --nup 1x1 --trim "$left $bot $right $top" --clip true "$pdf".pdf $min_page-$max_page
+echo pdf-cut -t ${top} -b ${bot} -l ${left} -r ${right} "$pdf".pdf
+pdfnup --no-landscape --papersize "{${n_width}pt,${n_height}pt}" \
+    --nup 1x1 --trim "${left}pt ${bot}pt ${right}pt ${top}pt" --clip true "$pdf".pdf $pagespec --outfile "$pdf"-cut.pdf
+
+evince "$pdf"-cut.pdf&

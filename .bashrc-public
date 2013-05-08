@@ -27,12 +27,12 @@ alias bcd=cd_beagrep
 alias pcd='builtin cd -P'
 alias mail=mailx
 
-cd_beagrep() 
+cd_beagrep()
 {
     if test $# = 1; then
-	dir=$(readlink -f "$1")
-	cd ~/.cache/for-code-reading/chm/"$dir"
-	return
+        dir=$(readlink -f "$1")
+        cd ~/.cache/for-code-reading/chm/"$dir"
+        return
     fi
 
     if [[ "$PWD" =~ .cache/for-code-reading ]]; then
@@ -92,13 +92,13 @@ scd()
             scd "$1" ''
             return $?
         fi
-            
+
 
         for dir in $(lookup-closest-file "$PWD" -- "$1"|tee /dev/stderr); do
             dir=$(echo "$dir" | perl -npe 's,/./,/,g')
             basedir=$(common-path "$PWD" "$dir")
             stem="${dir:${#basedir}+1}"
-            
+
             dir1=$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')
             if test -e  "$dir1"; then
                 cd "$dir1" && break
@@ -112,14 +112,14 @@ scd()
         fi
         dir1=$(pwd | perl -npe 's#'"$1"'#'"$2"'#g')
         test -d "$dir1" && { cd "$dir1"; return; }
-        
+
         dir=$(lookup-file -- "$1"|tee /dev/stderr|head -n 1)
         shift
         dir=$(builtin cd "$dir"; lookup-file "$1"|tee /dev/stderr|head -n 1)
         dir=$(formal-path "$dir")
         basedir=$(dirname "$dir")
         stem=$(basename "$dir")
-        
+
         cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"
     fi
 }

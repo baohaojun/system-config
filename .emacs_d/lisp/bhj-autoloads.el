@@ -153,6 +153,18 @@ See `w3m-region' for the optional arguments.
 
 ;;;***
 
+;;;### (autoloads (douban-music) "../../src/github/DoubanMusic/douban-music-mode"
+;;;;;;  "../../../src/github/DoubanMusic/douban-music-mode.el" (20872
+;;;;;;  37462 699706 737000))
+;;; Generated autoloads from ../../../src/github/DoubanMusic/douban-music-mode.el
+
+(autoload 'douban-music "../../src/github/DoubanMusic/douban-music-mode" "\
+Play douban music in its own buffer.
+
+\(fn)" t nil)
+
+;;;***
+
 ;;;### (autoloads (twit) "../../src/github/twittering-mode/twittering-mode"
 ;;;;;;  "../../../src/github/twittering-mode/twittering-mode.el"
 ;;;;;;  (20871 38424 871391 24000))
@@ -285,12 +297,13 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 ;;;;;;  try-all-themes random-theme devenv-debug devenv-toggle-breakpoint
 ;;;;;;  switch-to-devenv bhj-jdk-help bhj-set-reply bhj-mimedown
 ;;;;;;  bhj-w3m-scroll-down-or-previous-url bhj-w3m-scroll-up-or-next-url
-;;;;;;  bhj-isearch-from-bod bhj-occur-make-errors bhj-occur java-get-override
-;;;;;;  java-get-hierarchy bhj-insert-pwdu bhj-insert-pwdw bhj-clt-insert-file-name
-;;;;;;  wiki-local-bhj weekrep linux-c++-mode linux-c-mode bhj-c-end-of-defun
-;;;;;;  java-complete-method java-resolve bhj-c-show-current-func
-;;;;;;  bhj-c-beginning-of-defun cleanup-buffer-safe) "bhj-defines"
-;;;;;;  "bhj-defines.el" (20865 56661 557357 545000))
+;;;;;;  bhj-isearch-from-bod bhj-occur-merge-conflicts bhj-occur-make-errors
+;;;;;;  bhj-occur java-get-override java-get-hierarchy bhj-insert-pwdu
+;;;;;;  bhj-insert-pwdw bhj-clt-insert-file-name wiki-local-bhj weekrep
+;;;;;;  linux-c++-mode linux-c-mode bhj-c-end-of-defun java-complete-method
+;;;;;;  java-resolve bhj-c-show-current-func bhj-c-beginning-of-defun
+;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (20873
+;;;;;;  44536 683934 854000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -376,6 +389,11 @@ C mode with adjusted defaults for use with the Linux kernel.
 \(fn)" t nil)
 
 (autoload 'bhj-occur-make-errors "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-occur-merge-conflicts "bhj-defines" "\
 
 
 \(fn)" t nil)

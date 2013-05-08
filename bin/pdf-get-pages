@@ -1,0 +1,3 @@
+#!/bin/bash
+
+pdfinfo "$1" | grep "Pages:" | pn 2 | grep .

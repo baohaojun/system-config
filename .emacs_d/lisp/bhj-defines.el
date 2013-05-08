@@ -261,6 +261,12 @@ might be bad."
     (call-interactively 'bhj-occur)))
 
 ;;;###autoload
+(defun bhj-occur-merge-conflicts ()
+  (interactive)
+  (let ((bhj-occur-regexp "<<<<<<\\|>>>>>>\\|======"))
+    (call-interactively 'bhj-occur)))
+
+;;;###autoload
 (defun bhj-isearch-from-bod (&optional col-indent)
   (interactive "p")
   (with-syntax-table (let ((new-table (make-syntax-table (syntax-table))))

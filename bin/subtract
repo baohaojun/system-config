@@ -1,0 +1,16 @@
+#!/usr/bin/env perl
+
+$sub1 = $ARGV[0]; $sub2 = $ARGV[1];
+$sub1 =~ m/(.*)(..)$/;
+if ($2 eq "in") {
+    $sub1 = $1 * 72;
+}
+
+$sub2 =~ m/(.*)(..)$/;
+
+if ($2 eq "in") {
+    $sub2 = $1 * 72;
+}
+
+print "" . ($sub1 - $sub2);
+

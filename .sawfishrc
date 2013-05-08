@@ -148,12 +148,19 @@
 ;;   (bind-keys global-keymap "ESC" esc-map)
 ;;   (bind-keys esc-map "b" (lambda () (synthesize-event "C-Left" (input-focus)))))
 
+(setq no-tap-drag-window-class-re "acroread")
 (progn
   (add-hook 'focus-in-hook
-          (lambda (w focus_mode)
+          (lambda (w focus-mode)
             (if (string-match emacs-style-window-class-re (window-class w) 0 t)
                 (undo-global-remap)
-              (do-global-remap)))))
+              (do-global-remap))
+            (if (string-match no-tap-drag-window-class-re (window-class w) 0 t)
+                (system "synclient TapAndDragGesture=0&")
+              (system "synclient TapAndDragGesture=1&")))))
+
+;; (setq focus-in-hook (cons (nth 2 focus-in-hook)
+;;                         (cons (nth 4 focus-in-hook))))
 
 (bind-keys s-h-keymap "m" (lambda () (undo-global-remap)))
 ;; to clear it: (setq visibility-notify-hook nil)
