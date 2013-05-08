@@ -17,6 +17,8 @@ bbs-robot -- -u USERNAME -p PASSWORD -b emacs
 
 1. 根据参数指定，自动登录并选择版面
 
+5. 加 =C-q= 前缀可以取得各个 =C-= 按键原本的功能 (quoted-insert）
+
 2. C-p/C-n键上下移动，C-f/C-b前进后退，等等等等
 
 3. C-o（open-line），C-y（yank）
@@ -25,7 +27,7 @@ bbs-robot -- -u USERNAME -p PASSWORD -b emacs
    粘贴功能一致），是用命令行上的clipboard工具xclip(1)程序实现的。
 
 4. 重头戏： =C-c t= / =C-c n= / =C-c p=
-
+   
    不论在普通模式下还是在原作模式下，分别用来作当前主题、下一主题和上一
    主题的同主题阅读。
 
@@ -36,24 +38,17 @@ bbs-robot -- -u USERNAME -p PASSWORD -b emacs
    
    #+BEGIN_EXAMPLE
                 水木社区快捷键回收第一号令
-   
                 同志们，朋友们！快捷键回收啦！
-   
                 您刚才按的键已经被技术站务私吞。
-   
                 请使用 Ctrl+G 2 进入同主题阅读
-   
-   
-   
                                                   ╭︿︿︿╮
                                                   {/-◎◎-\}
                                                    ( (oo) )
                                                       ︶
-             
    #+END_EXAMPLE
    
-   所以我们的这几个按键，就相当于让那个猪头把那个快捷键“吃了
-   我的给我吐出来”了:-)
+   所以我们的这几个按键，就相当于让那个猪头把那个快捷键“吃了我的给我吐
+   出来”了:-)
    
    以 =C-c t= 为例，这个快捷键真正发过去的按键是：
 
@@ -73,7 +68,7 @@ bbs-robot -- -u USERNAME -p PASSWORD -b emacs
    * 接下来的两个 =$RIGHT= 会进入同主题阅读
 
 
-5. 加 =C-q= 前缀可以取得各个 =C-= 按键原本的功能 (quoted-insert）。
+
 
 
 # bhj-tags: tool
