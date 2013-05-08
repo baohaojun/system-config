@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+emacs -q --batch --eval '(progn
+                           (package-initialize)
+                           (package-install '\''yasnippet)
+                           (package-install '\''oauth2))'
+mkdir -p ~/src/github
+cd ~/src/github
+
+if test ! -e twittering-mode/.git; then
+    git clone http://github.com/baohaojun/twittering-mode
+fi

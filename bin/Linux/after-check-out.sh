@@ -32,7 +32,7 @@ config-gfw
 
 sudo usermod -a -G dialout $(whoami) || true
 sudo perl -npe 's/^#user_allow_other/user_allow_other/' -i /etc/fuse.conf
-emacs -q --batch --eval '(progn (package-initialize) (package-install '\''yasnippet))'
+emacs-install-packages
 mkdir -p ~/src/github
 if test ! -d helm; then
     git clone https://github.com/emacs-helm/helm

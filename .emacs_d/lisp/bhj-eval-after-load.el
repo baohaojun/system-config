@@ -88,7 +88,31 @@
 
 (eval-after-load "ediff-init" '(add-hook 'ediff-quit-hook (lambda () (shell-command "find-or-exec emacs"))))
 
-(eval-after-load 'yasnippet '(progn 
-                               (message "hello yas/reload-all")))
+;; (eval-after-load 'yasnippet
+;;   '(progn
+;;      (message "hello yas/reload-all")))
 
 (add-hook 'emacs-startup-hook (lambda () (call-interactively 'yas-global-mode)))
+
+;; (defun eliminate-dup-invalid-buffers ()
+;;   (let* ((new-buffer (current-buffer))
+;;          (new-file-abs-name (buffer-file-name))
+;;          (new-file-rela-name (file-name-nondirectory (buffer-file-name)))
+;;          (new-buffer-name (buffer-name))
+;;          (buffer-list (buffer-list)))
+;;     (mapc
+;;      (lambda (abuf)
+;;        (unless (eq abuf new-buffer)
+;;          (let ((abuf-file-abs-name (buffer-file-name abuf)))
+;;            (when (or (and (not abuf-file-abs-name)
+;;                           (string= (replace-regexp-in-string "<[0-9]+>$" "" (buffer-name abuf))
+;;                                    (replace-regexp-in-string "<[0-9]+>$" "" new-buffer-name)))
+;;                      (and
+;;                       abuf-file-abs-name
+;;                       (string= (file-name-nondirectory abuf-file-abs-name) new-file-rela-name)
+;;                       (not (file-exists-p abuf-file-abs-name))))
+;;              (with-current-buffer abuf
+;;                (kill-buffer abuf))))))
+;;      buffer-list)))
+
+;; (add-hook 'find-file-hook 'eliminate-dup-invalid-buffers)
