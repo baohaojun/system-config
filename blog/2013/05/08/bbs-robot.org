@@ -1,0 +1,78 @@
+#+title: 版主福音：在水木bbs上用Emacs的键绑定
+
+作为一个Emacs狂人，在用ssh上水木发贴子的时候发现 ~C-y~ 会把整行都删掉而不是
+粘贴简直让我快疯了。疯了疯了疯了！
+
+下面说一下我用Expect实现的一个上水木的 [[https://github.com/baohaojun/system-config/raw/master/bin/bbs-robot][bbs-robot]] 脚本。
+
+用法（如果在utf-8的环境下用需要一个额外的 [[https://github.com/baohaojun/system-config/raw/master/bin/gbk-exec][gbk-exec]] 脚本，如果在gbk环境
+下用的话需要自己改一下bbs-robot，把gbk-exec删掉）：
+
+#+BEGIN_EXAMPLE
+bbs-robot -- -u USERNAME -p PASSWORD -b emacs
+#+END_EXAMPLE
+
+主要功能有：
+
+1. 根据参数指定，自动登录并选择版面
+
+2. C-p/C-n键上下移动，C-f/C-b前进后退，等等等等
+
+3. C-o（open-line），C-y（yank）
+
+   其中C-y是指把系统剪贴板中的内容粘贴上去（与gnome-terminal等的右键->
+   粘贴功能一致），是用命令行上的clipboard工具xclip(1)程序实现的。
+
+4. 重头戏： =C-c t= / =C-c n= / =C-c p=
+
+   不论在普通模式下还是在原作模式下，分别用来作当前主题、下一主题和上一
+   主题的同主题阅读。
+
+   实现这个功能的好处与 =C-g 2= 的同主题阅读模式相比是显而易见的
+   （ =C-g 2= 不能方便傻瓜的跳到下一主题、上一主题）。另外如果你在 原作
+   模式下按 =C-t= 的话，你会看到下面这样的一段话（从而让这个原作模式显
+   得相当的鸡肋）：
+   
+   #+BEGIN_EXAMPLE
+                水木社区快捷键回收第一号令
+   
+                同志们，朋友们！快捷键回收啦！
+   
+                您刚才按的键已经被技术站务私吞。
+   
+                请使用 Ctrl+G 2 进入同主题阅读
+   
+   
+   
+                                                  ╭︿︿︿╮
+                                                  {/-◎◎-\}
+                                                   ( (oo) )
+                                                      ︶
+             
+   #+END_EXAMPLE
+   
+   所以我们的这几个按键，就相当于让那个猪头把那个快捷键“吃了
+   我的给我吐出来”了:-)
+   
+   以 =C-c t= 为例，这个快捷键真正发过去的按键是：
+
+   #+BEGIN_EXAMPLE
+   & $CTRLG 4 $CTRLM q $RIGHT $RIGHT
+   #+END_EXAMPLE
+
+   * 第一个 =&= 字符不论当前在阅读还是在列表界面，都会回到列表界面并跳
+     到同主题第一篇（即使当前是“原作”模式也不影响 =&= 的功能）。
+
+   * 接下来的 =$CTRLG 4 $CTRLM= 会强制切换到“原作”模式（即使当前已经在
+     原作模式），并且继续保持在列表界面。而因为之前已经跳到同主题第一篇，
+     所以即使这时候模式从普通变为原作也继续指向这篇文章。
+
+   * 接下来的 =q= 会切换到普通模式，并且保持在同主题第一篇
+
+   * 接下来的两个 =$RIGHT= 会进入同主题阅读
+
+
+5. 加 =C-q= 前缀可以取得各个 =C-= 按键原本的功能 (quoted-insert）。
+
+
+# bhj-tags: tool
