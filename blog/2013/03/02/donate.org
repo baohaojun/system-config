@@ -1,5 +1,5 @@
 #+title: Donate for my free software effort
-# bhj-tags: dotate free-software
+# bhj-tags: donate free-software
 
 * If you want to donate through Paypal
 
