@@ -1,0 +1,25 @@
+#!/bin/bash
+
+function _blog()
+{
+    local cur prev
+    local IFS=$'\n'
+    
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    
+    case "$prev" in
+	-T)
+	    COMPREPLY=( $(skeleton_compgen_word.pl \
+		-d '\n' -- \
+		"$(cd ~/doc/baohaojun/meta/tags; ls *.desc|perl -npe 's/\.desc$//')" \
+		"$cur")
+	    )
+	    return 0
+	    ;;
+    esac
+}
+
+complete -o default -o filenames -F _blog blog
+

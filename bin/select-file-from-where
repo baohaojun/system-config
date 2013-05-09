@@ -1,2 +1,3 @@
 #!/bin/bash
-select-output-line lookup-file-from-where "$@";
+
+f "$@" || select-output-line lookup-file-from-where "$@";

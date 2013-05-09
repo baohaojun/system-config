@@ -1,0 +1,34 @@
+# -*- mode: snippet -*-
+# name: comp
+# key: comp
+# --
+#!/bin/bash
+
+function _${1:mailx}()
+{
+    local cur prev
+    local IFS=\$'\n'
+
+    COMPREPLY=()
+    cur="\${COMP_WORDS[COMP_CWORD]}"
+    prev="\${COMP_WORDS[COMP_CWORD-1]}"
+    
+    case "\$prev" in
+	${2:-a})
+	    COMPREPLY=( \$( compgen -A file -- \$cur ) )
+	    return 0
+	    ;;
+
+	${3:-c|-b|[^-]*})
+	    COMPREPLY=( \$(skeleton_compgen_word.pl \
+		-d '\n' -- \
+		"\$(${4:cd ~/jira-users; ls})" \
+		"\$cur")
+	    )
+	    return 0
+	    ;;
+	esac
+}
+
+complete -o default -o filenames -F _$1 $1
+	    

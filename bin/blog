@@ -1,0 +1,69 @@
+#!/bin/bash
+
+set -e
+cd ~/doc/baohaojun/
+dir=blog/$(today|tr - /)
+mkdir -p $dir
+
+TEMP=$(getopt -o t:T:f: --long title:tags:file: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -t|--title)
+            title=$2
+            shift 2
+            ;;
+	-T|--tags)
+	    tags=$2
+	    shift 2
+	    ;;
+	-f|--file)
+	    filename=$2
+	    shift 2
+	    ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+if test "$#" != 0; then
+    cd ~/doc/baohaojun/
+    if test "$1" = v; then
+	shift
+	of $(github-pagep $(f "$@"))
+	exit
+    fi
+	
+    e "$@"
+    exit
+fi
+
+test "$title" || title=$(ask what is your new blog title)
+test "$tags" || tags=$(ask what are your new blog\'s tags)
+title=$(echo "$title" | perl -npe 's/(^\s+|\s+$)//g')
+
+test "$filename" || filename=$(ask -e -- what is your .org file name "(default: $title.org)")
+
+if test -z "$filename"; then
+    filename=$(echo $title|perl -npe 's/\s/-/g').org
+fi
+
+# it would be crazy for me to write more than 20 blogs a day.
+for n in $(seq 0 20); do 
+    if test -e $dir/$n-*; then
+	continue
+    else
+	filename="$n-$filename"
+	break
+    fi
+done
+
+echo "#+title: $title" >> "$dir/$filename"
+echo "# bhj-tags: $tags" >> "$dir/$filename"
+git add "$dir/$filename"
+e "$dir/$filename"

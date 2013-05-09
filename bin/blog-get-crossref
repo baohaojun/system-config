@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd ~/doc/baohaojun/
+
+file=$(f "$@")
+
+echo "[[$file][$(set -x; perl -ne 'chomp; print $1 if m/^#\+title: (.*)/i' $file)]]" | putclip

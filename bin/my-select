@@ -54,9 +54,11 @@ sub my_select(\@) {
     }
 
     my $ans;
+    my $got_ans_from_env = 0;
     if ($ENV{ORIGINAL_MATCHER}) {
         $ans = $ENV{ORIGINAL_MATCHER};
         $ENV{ORIGINAL_MATCHER} = "";
+        $got_ans_from_env = 1;
     } else {
         $ans = read_ans '#? ';
     }
@@ -109,6 +111,9 @@ sub my_select(\@) {
         } elsif (@matches) {
             my_select(\@matches);
         } else {
+            if ($got_ans_from_env) {
+                exit -1;
+            }
             $ans = read_ans "Warning: no matches found, press <return> to continue";
             if ($ans eq "-") {
                 read_ans "Going back a level, press <return> to continue";

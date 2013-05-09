@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# f means Find File in the currect dir. ~f hello world~ will find all
+# files having both hello and world in its file name. If more than 1
+# is found, ask you to select (like emacs's helm-mode); if exactly 1
+# is found, print that file's path; else none is found and exit with
+# failure.
+
+function f()
+{
+    local IFS=$'\n'
+    local line=
+    if [[ "$1" =~ :[0-9]+:?$ ]]; then
+        line=:$(echo "$1"|perl -npe 's/.*:(\d+):?$/$1/')
+        file=$1
+        shift
+        set -- "$(echo "$file"|perl -npe 's/:(\d+):?$//')" "$@"
+    fi
+
+    set -e
+    out=$(ORIGINAL_MATCHER="$@ "'!\.class$' select-output-line find . -type f)
+    echo $out
+}
+
+f "$@"

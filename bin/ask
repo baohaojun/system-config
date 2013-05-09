@@ -1,0 +1,30 @@
+#!/bin/bash
+
+eok=false
+
+TEMP=$(getopt -o e --long empty-ok -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -e|--empty-ok)
+            eok=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+read -p "$(echo "$@"\?) " ans
+
+if test -z "$ans" -a $eok = false; then
+    echo it can not be empty\! 1>&2 
+    exec $0 "$@"
+fi
+
+echo -n "$ans"

@@ -71,20 +71,6 @@ function wcd()
     fi
 }
 
-function f()
-{
-    local IFS=$'\n'
-    local line=
-    if [[ "$1" =~ :[0-9]+:?$ ]]; then
-        line=:$(echo "$1"|perl -npe 's/.*:(\d+):?$/$1/')
-        file=$1
-        shift
-        set -- "$(echo "$file"|perl -npe 's/:(\d+):?$//')" "$@"
-    fi
-
-    echo $(ORIGINAL_MATCHER="$@ "'!\.class$' select-output-line find . -type f)
-}
-
 function fp()
 {
     f "$@" | tee /dev/stderr | putclip

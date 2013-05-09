@@ -1,6 +1,10 @@
 #!/bin/bash
+set -e
 IFS=$'\n'
 
 dood=($("$@"))
+if test ${#dood[@]} = 0; then
+    exit -1
+fi
 n=$(my-select "${dood[@]}")
 echo ${dood[n-1]}
