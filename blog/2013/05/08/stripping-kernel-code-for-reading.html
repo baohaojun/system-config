@@ -7,8 +7,8 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Stripping kernel/uboot source to 10% for code reading"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-08 23:41:52 CST"/>
-<meta name="author" content="baohaojun"/>
+<meta name="generated" content="2013-05-09T12:53+0800"/>
+<meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
 <link rel="stylesheet" href="/css/default.css" type="text/css">
@@ -43,6 +43,30 @@
         }
     </script>
 <script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -99,7 +123,7 @@ So here are the steps:
 
 
 
-<pre class="example">git ls-tree HEAD -r |pn 4|xargs touch
+<pre class="example">git ls-tree HEAD -r --name-only|xargs touch
 </pre>
 
 
@@ -172,7 +196,11 @@ the idea works.
 </p>
 <p>
 See my scripts to do it in one command: <a href="http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-uboot">for uboot</a> and <a href="http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-kernel">for kernel</a>. But
-you need to adapt them if you want to use, of course.
+you need to adapt them if you want to use, of course. For those
+commands not found anywhere else such as <a href="https://github.com/baohaojun/system-config/raw/master/bin/pn">pn</a> (Print Nth field) or
+<a href="https://github.com/baohaojun/system-config/raw/master/bin/file-arg1-arg2">file-arg1-arg2</a> (file version of <a href="https://github.com/baohaojun/system-config/raw/master/bin/arg1-arg2">arg1-arg2</a>, doing simple set
+subtraction: <code>echo $(arg1-arg2 'a b c d e' 'e b b')</code> =&gt; <code>a c d</code>), you
+can find them in the same github project as the above 2 scripts.
 </p>
 <p>
 Using this idea, the uboot code can be reduced from ~6000 files to

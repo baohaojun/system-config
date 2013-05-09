@@ -19,7 +19,7 @@ So here are the steps:
    optimization).
 
    #+BEGIN_EXAMPLE
-   git ls-tree HEAD -r |pn 4|xargs touch
+   git ls-tree HEAD -r --name-only|xargs touch
    #+END_EXAMPLE
 
 2. touch a sentinel file: =touch mark=
@@ -73,7 +73,11 @@ and uboot). After hacking this script (do not run the git command),
 the idea works.
 
 See my scripts to do it in one command: [[http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-uboot][for uboot]] and [[http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-kernel][for kernel]]. But
-you need to adapt them if you want to use, of course.
+you need to adapt them if you want to use, of course. For those
+commands not found anywhere else such as [[https://github.com/baohaojun/system-config/raw/master/bin/pn][pn]] (Print Nth field) or
+[[https://github.com/baohaojun/system-config/raw/master/bin/file-arg1-arg2][file-arg1-arg2]] (file version of [[https://github.com/baohaojun/system-config/raw/master/bin/arg1-arg2][arg1-arg2]], doing simple set
+subtraction: ~echo $(arg1-arg2 'a b c d e' 'e b b')~ => ~a c d~), you
+can find them in the same github project as the above 2 scripts.
 
 Using this idea, the uboot code can be reduced from ~6000 files to
 ~400, and kernel from ~40k to ~4k (based on our small embedded
