@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Emacs the editor</title>
+<title>全局放大Emacs字体</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Emacs the editor"/>
+<meta name="title" content="全局放大Emacs字体"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-09T16:04+0800"/>
+<meta name="generated" content="2013-05-09T16:03+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -97,125 +97,46 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="content">
-<h1 class="title">Emacs the editor</h1>
+<h1 class="title">全局放大Emacs字体</h1>
 
-<ul>
-<li>2013
-<ul>
-<li>2013-05
-<ul>
-<li>2013-05-09
-
-<p>
-     <a href="../../../blog/2013/05/09/0-emacs-font-global-scaling.html">全局放大Emacs字体</a>
-</p>
-</li>
-</ul>
-
-</li>
-<li>2013-04
-<ul>
-<li>2013-04-13
-
-<p>
-     <a href="../../../blog/2013/04/13/skeleton-complete.html">skeleton-complete</a>
-</p>
-</li>
-</ul>
-
-</li>
-<li>2013-01
-<ul>
-<li>2013-01-09
-
-<p>
-     <a href="../../../blog/2013/01/09/coding-android-java-in-emacs-en.html">Doing Android Java Programming in Emacs</a>
-</p>
-</li>
-</ul>
-
-</li>
-</ul>
-
-</li>
-<li>2012
-<ul>
-<li>2012-12
-<ul>
-<li>2012-12-27
-
-<p>
-     <a href="../../../blog/2012/12/27/stem-completion.html">提干式id补齐和re补齐</a>
+<p>继 <a href="../../../2012/12/19/perfect-emacs-chinese-font.html">狠狠地折腾了一把Emacs中文字体</a> 之后，我们的中文字体可以和英文字体一起
+缩放了。
 </p>
 <p>
-     <a href="../../../blog/2012/12/27/coding-android-java-in-emacs.html">在Emacs下用java编程（Android相关）</a>
+但是还有一个小缺陷没有解决，这个在做讲演的时候字体太小的话就体现出来了：
+Emacs只提供了一个针对单个buffer的text-scale-adjust命令。这样你每开一个
+新buffer都需要重新调整字体大小。
 </p>
-</li>
-<li>2012-12-19
+<p>
+所以小小折腾了一下，增加了一个全局缩放字体的函数：
+</p>
+
+
+
+<pre class="src src-emacs-lisp">(global-set-key [(control x) (meta -)] (<span class="org-keyword">lambda</span> () (interactive) (bhj-step-frame-font-size -1)))
+(global-set-key [(control x) (meta +)] (<span class="org-keyword">lambda</span> () (interactive) (bhj-step-frame-font-size 1)))
+</pre>
+
 
 <p>
-     <a href="../../../blog/2012/12/19/perfect-emacs-chinese-font.html">狠狠地折腾了一把Emacs中文字体</a>
-</p>
-</li>
-</ul>
-
-</li>
-<li>2012-11
-<ul>
-<li>2012-11-14
-
-<p>
-     <a href="../../../blog/2012/11/14/gdb-android.html">How to use gdb (in Emacs) for android</a>
-</p>
-</li>
-</ul>
-
-</li>
-<li>2012-10
-<ul>
-<li>2012-10-30
-
-<p>
-     <a href="../../../blog/2012/10/30/writing-source-code-cn.html">Emacs和它的朋友们&ndash;编写代码篇</a>
-</p>
-</li>
-<li>2012-10-23
-
-<p>
-     <a href="../../../blog/2012/10/23/makefile-printval.html">Emacs and interactive makefiles</a>
-</p>
-</li>
-<li>2012-10-11
-
-<p>
-     <a href="../../../blog/2012/10/11/reading-source-code-cn.html">Emacs和它的朋友们——阅读源代码篇</a>
-</p>
-</li>
-</ul>
-
-</li>
-</ul>
-
-</li>
-<li>2011
-<ul>
-<li>2011-12
-<ul>
-<li>2011-12-28
-
-<p>
-     <a href="../../../blog/2011/12/28/org-jira.html">org-jira</a>
-</p></li>
-</ul>
-
-</li>
-</ul>
-
-</li>
-</ul>
-
-
-</div>
+代码见 <a href="https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-fonts.el">bhj-fonts.el</a>
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="../08/stripping-kernel-code-for-reading.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              Stripping kernel/uboot source to 10% for code reading <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../../../../meta/Archive.html"> <!-- next-url -->
+              Archive <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+</p></div>
 
 <div id="postamble">
 
@@ -260,7 +181,8 @@ for the JavaScript code in this tag.
             </div>
             <div class="about-left about-more">
                 <h2>Tags</h2>
-                                <a href="../Archive.html" title="All blogs">archive</a><br/>
+                                <a href="../../../../meta/tags/emacs.html" title="Emacs the editor">emacs</a><br/>
+            <a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
             </div>
             <div class="about-left about-more">
                 <h2>About</h2>

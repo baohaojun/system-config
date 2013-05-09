@@ -1,0 +1,18 @@
+#+title: 全局放大Emacs字体
+# bhj-tags: emacs
+
+继 [[../../../2012/12/19/perfect-emacs-chinese-font.org][狠狠地折腾了一把Emacs中文字体]] 之后，我们的中文字体可以和英文字体一起
+缩放了。
+
+但是还有一个小缺陷没有解决，这个在做讲演的时候字体太小的话就体现出来了：
+Emacs只提供了一个针对单个buffer的text-scale-adjust命令。这样你每开一个
+新buffer都需要重新调整字体大小。
+
+所以小小折腾了一下，增加了一个全局缩放字体的函数：
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [(control x) (meta -)] (lambda () (interactive) (bhj-step-frame-font-size -1)))
+(global-set-key [(control x) (meta +)] (lambda () (interactive) (bhj-step-frame-font-size 1)))
+#+END_SRC
+
+代码见 [[https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-fonts.el][bhj-fonts.el]]
