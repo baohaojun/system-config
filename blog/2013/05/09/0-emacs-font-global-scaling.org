@@ -8,6 +8,11 @@
 Emacs只提供了一个针对单个buffer的text-scale-adjust命令。这样你每开一个
 新buffer都需要重新调整字体大小。
 
+上次北京lisper聚会我做 lightening talk 的时候发现了这个问题，我对着自己
+的本本兴致勃勃的讲啊讲，抬头一看投影，咋字体又小了呢？马上放大，过一会
+换了个buffer... 如此反复几次，大家都受不了了，哥也受不了了，丢不起这个
+人啊！我丢得起，Emacs丢不起啊！
+
 所以小小折腾了一下，增加了一个全局缩放字体的函数：
 
 #+BEGIN_SRC emacs-lisp
@@ -15,4 +20,4 @@ Emacs只提供了一个针对单个buffer的text-scale-adjust命令。这样你�
 (global-set-key [(control x) (meta +)] (lambda () (interactive) (bhj-step-frame-font-size 1)))
 #+END_SRC
 
-代码见 [[https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-fonts.el][bhj-fonts.el]]
+代码还是见 [[https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-fonts.el][bhj-fonts.el]]
