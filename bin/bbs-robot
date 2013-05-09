@@ -163,9 +163,17 @@ if [string eq "" $mode] {
         [strcat $CTRLC n] {
             send_all & $CTRLG 4 $CTRLM $DOWN q $RIGHT $RIGHT
         }
+        # F4
+        [strcat $ESC O S] {
+            send_all & $CTRLG 4 $CTRLM $DOWN q $RIGHT $RIGHT
+        }
 
         # prev thread when in normal list
         [strcat $CTRLC p] {
+            send_all & $CTRLG 4 $CTRLM $UP q $RIGHT $RIGHT
+        }
+        # F3
+        [strcat $ESC O R] {
             send_all & $CTRLG 4 $CTRLM $UP q $RIGHT $RIGHT
         }
 
