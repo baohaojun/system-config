@@ -14,8 +14,13 @@ git config remote.origin.url | grep -q baohaojun || exit 0 # this is not my gith
 
 if test -z "$CHECKING_SUBMODULE"; then
     export CHECKING_SUBMODULE=true
-    if git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' | tee /dev/stderr | grep "^hello.*failed$";
+    if output=$(
+            git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' |
+            tee /dev/stderr |
+            grep "^hello.*failed$"
+        )
     then
+        echo "$output"
         exit -1
     else
         true
@@ -119,13 +124,22 @@ function die() {
     exit -1
 }
 
-git push origin HEAD:refs/heads/$(
+branch=$(
     if test -e ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh; then
         bash ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh my-master;
     else
         echo master
     fi
-) || die "you need to merge it!"
+)
+
+if test "$(git symbolic-ref --short HEAD)" != $branch; then
+    if git-is-ancestor $branch HEAD; then
+        git co -B $branch
+    fi
+fi
+
+git pull --rebase
+git push origin HEAD:refs/heads/$branch || die "you need to merge it!"
 
 if test $(pwd) = ~/system-config; then
     CHECKING_SUBMODULE= git-notify-push
