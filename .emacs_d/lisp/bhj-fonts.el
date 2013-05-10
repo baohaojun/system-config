@@ -3,7 +3,7 @@
       nil t))
 
 (defun qiang-make-font-string (font-name font-size)
-  (if (and (stringp font-size) 
+  (if (and (stringp font-size)
            (equal ":" (string (elt font-size 0))))
       (format "%s%s" font-name font-size)
     (format "%s-%s" font-name font-size)))
@@ -20,17 +20,19 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
                   (find-if #'qiang-font-existsp english-fonts)
                   english-font-size))
         (zh-font (font-spec :family (find-if #'qiang-font-existsp chinese-fonts))))
- 
+
     ;; Set the default English font
-    ;; 
+    ;;
     ;; The following 2 method cannot make the font settig work in new frames.
     ;; (set-default-font "Consolas:pixelsize=18")
     ;; (add-to-list 'default-frame-alist '(font . "Consolas:pixelsize=18"))
     ;; We have to use set-face-attribute
     (set-face-attribute
      'default nil :font en-font)
- 
-    ;; Set Chinese font 
+    (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size (+ 0.0 english-font-size)))
+    (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size (+ 0.0 english-font-size)))
+
+    ;; Set Chinese font
     ;; Do not use 'unicode charset, it will cause the english font setting invalid
     (dolist (charset '(kana han symbol cjk-misc bopomofo))
       (set-fontset-font t
@@ -48,8 +50,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
        (find-file "~/external/etc/.emacs-frame-font")
        (goto-char (point-min))
        (let ((monaco-font-size (read (current-buffer))))
-	 (kill-buffer (current-buffer))
-	 monaco-font-size))
+         (kill-buffer (current-buffer))
+         monaco-font-size))
    12.5)
  bhj-chinese-fonts)
 
@@ -57,20 +59,23 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 (defvar bhj-english-font-size-steps-dec (reverse bhj-english-font-size-steps))
 (defun bhj-step-frame-font-size (step)
   (let ((steps bhj-english-font-size-steps)
-	next-size)
+        next-size)
     (if (< step 0)
-	(setq steps bhj-english-font-size-steps-dec))
+        (setq steps bhj-english-font-size-steps-dec))
     (setq next-size
-	  (cadr (member bhj-english-font-size steps)))
+          (cadr (member bhj-english-font-size steps)))
     (when next-size
-	(message "Your font size is set to %.1f" next-size)
-	(qiang-set-font bhj-english-fonts next-size bhj-chinese-fonts))))
+        (message "Your font size is set to %.1f" next-size)
+        (qiang-set-font bhj-english-fonts next-size bhj-chinese-fonts))))
 
 (global-set-key [(control x) (meta -)] (lambda () (interactive) (bhj-step-frame-font-size -1)))
 (global-set-key [(control x) (meta +)] (lambda () (interactive) (bhj-step-frame-font-size 1)))
-    
+
 (set-face-attribute 'default nil :font (font-spec))
 
+; {%org-mode%}
 ; here are 20 hanzi and 40 english chars, see if they are the same width
 ; 你你你你你你你你你你你你你你你你你你你你
 ; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+; /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/
+; {%/org-mode%}
