@@ -68,7 +68,7 @@ while True:
                 notifications[file_].close()
                 del notifications[file_]
 
-            if content:
+            if content and content != "\n":
                 print "content:", content
                 notifications[file_] = pynotify.Notification(file_, content)
                 if icon:
