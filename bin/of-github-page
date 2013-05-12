@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if test ${1:0:1} = /; then
+    cd "$(dirname "$1")"
+fi
+
 set -- $(relative-path $1 $(lookup-file .git))
 
 x=http://baohaojun.github.io/${1/%.org/.html}

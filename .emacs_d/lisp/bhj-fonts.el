@@ -79,3 +79,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 ; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ; /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/
 ; {%/org-mode%}
+
+; Local Variables:
+; eval: (mmm-mode 1)
+; End:

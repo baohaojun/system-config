@@ -64,6 +64,15 @@ print $_ . "\n";
             fi
         fi
 
+        if test $# = 3 -a "$1" = co -a "$2" = -B; then
+            if git-is-ancestor "$3" HEAD; then
+                command git "$@"
+                exit 0
+            else
+                exit 1
+            fi
+        fi
+
         if test "$1" = co -a $# = 2; then
             command git "$@" || {
                 git fetch -v $(repo-remote) || true
