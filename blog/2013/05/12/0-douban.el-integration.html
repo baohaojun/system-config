@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Support my free software effort</title>
+<title>douban.el与bhj-notify的集成</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Support my free software effort"/>
+<meta name="title" content="douban.el与bhj-notify的集成"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-12T23:24+0800"/>
+<meta name="generated" content="2013-05-12T23:23+0800"/>
 <meta name="author" content="baohaojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -97,27 +97,49 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="content">
-<h1 class="title">Support my free software effort</h1>
+<h1 class="title">douban.el与bhj-notify的集成</h1>
 
+<p>写了一个 <a href="http://github.com/baohaojun/system-config/raw/master/bin/douban">douban</a> 脚本，是个dispatcher：
+</p>
 <ul>
-<li>2013
-<ul>
-<li>2013-03
-<ul>
-<li>2013-03-02
+<li><code>douban prev</code> 会播放上一首歌
+</li>
+<li><code>douban next</code> 会播放下一首歌
+</li>
+<li><code>douban info</code> 会调用 <a href="http://github.com/baohaojun/system-config/raw/master/bin/bhj-notify">bhj-notify</a> 在系统通知中显示 专辑图片，频道，专辑名，歌手，歌曲名。
 
 <p>
-     <a href="../../../blog/2013/03/02/donate.html">Donate for my free software effort</a>
+   见图：
+</p>
+<p>
+   <img src="../../../../images/post/douban-info.png"  alt="../../../../images/post/douban-info.png" />
 </p></li>
 </ul>
 
-</li>
-</ul>
 
-</li>
-</ul>
+<p>
+并且与sawfish桌面管理器进行了集成，按 <code>s-h n</code> （Win键+H N）的话会调用
+<code>douban next</code> ， <code>s-h XF86AudioPlay</code> （Win键+H 播放/暂停键） 的话会调用
+<code>douban info</code> ，等等。见我的 
+</p>
+ 
 
-
+      <nav>
+        <ul class="pager">
+          <li class="prev_post">
+            <a href="../09/0-emacs-font-global-scaling.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              全局放大Emacs字体 <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../../../../meta/Archive.html"> <!-- next-url -->
+              Archive <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
 </div>
 
 <div id="postamble">
@@ -163,7 +185,8 @@ for the JavaScript code in this tag.
             </div>
             <div class="about-left about-more">
                 <h2>Tags</h2>
-                                <a href="../Archive.html" title="All blogs">archive</a><br/>
+                                <a href="../../../../meta/tags/emacs.html" title="Emacs the editor">emacs</a><br/>
+            <a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
             </div>
             <div class="about-left about-more">
                 <h2>About</h2>
