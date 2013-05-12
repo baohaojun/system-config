@@ -72,6 +72,14 @@
   :type 'string
   :group 'douban-music)
 
+(defcustom douban-song-info-complete-hook nil
+  "Hook run when song infomation is complete (the image is downloaded).
+
+You can use this as an opportunity to show the current song in
+system notification, just as rythombox does."
+  :group 'douban-music
+  :type 'hook)
+
 (defface douban-music-track-face
   '((t (:height 1.2 :foreground "Grey70")))
   "Face for douban music track"
@@ -504,7 +512,8 @@
         (let ((buffer-read-only nil))
           (goto-char point)
           (douban-music-insert-image (concat douban-music-cache-directory
-                                             douban-music-image-file)))))))
+                                             douban-music-image-file)))))
+    (run-hooks 'douban-song-info-complete-hook)))
 
 
 (defun douban-music-download-and-insert-image-async (url douban-buffer point)
