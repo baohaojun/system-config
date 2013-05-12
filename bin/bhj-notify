@@ -3,21 +3,28 @@
 if ! test -e "$XAUTHORITY"; then
     exit 0;
 fi
+
+icon=
+if test $1 = -i; then
+    icon=$2;
+    shift 2
+fi
+
 label=$1
 shift
 
 content=
 if test $# != 0; then
 content=$(
-    echo At $(date):; 
+    echo At $(date):;
     echo "$@"|perl -ne '
 BEGIN{
-    use HTML::Entities;
+    use HTML::Entities();
     use Encode;
-} 
+}
 chomp;
 $_ = decode_utf8($_);
-print encode_entities($_) . "\n"
+print HTML::Entities::encode_numeric($_) . "\n"
 ')
 fi
 
@@ -25,10 +32,10 @@ if ! ps.pl notification-manager >/dev/null 2>&1; then
     setsid notification-manager > ~/.logs/notification-manager.log 2>&1&
     sleep 1
 fi
-notification-manager "$label" "$content"
+notification-manager $icon "$label" "$content"
 if test $(basename $0) = bhj-short-notify; then
     (
-	sleep 5
+        sleep 5
         notification-manager "$label"
     )&
 fi

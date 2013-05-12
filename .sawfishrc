@@ -38,6 +38,9 @@
   (window-class window))
 
 (bind-keys s-h-keymap "s" (lambda () (system "~/bin/screenshot focused&")))
+(bind-keys s-h-keymap "n" (lambda () (system "~/bin/douban next&")))
+(bind-keys s-h-keymap "p" (lambda () (system "~/bin/douban prev&")))
+(bind-keys s-h-keymap "XF86AudioPlay" (lambda () (system "~/bin/douban info&")))
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/screenshot&")))
 (bind-keys global-keymap "Super-DEL" (lambda () (system "gnome-screensaver-command -l&")))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp" (lambda () (system "switch-touchpad enable&"))) ; for mac

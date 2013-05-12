@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+
+case "$1" in
+    info)
+	(
+	    set -x
+	    bhj-notify -i ~/.emacs.d/DouBanMusic/image DoubanMusic.el \
+		"$(emacsclient -e '
+                (let ((song-info (elt douban-music-song-list douban-music-current-song))
+                      (channel (aget douban-music-channels douban-music-current-channel)))
+                  (format "channel: %s
+
+album: %s
+title: %s
+artist: %s
+	    "
+                     channel
+                     (aget song-info '\''albumtitle)
+                     (aget song-info '\''title)
+                     (aget song-info '\''artist)))'|
+         perl -npe 's/^"|"$//g; s/\\n/\n/g'|
+         grep -v -P -e '^\s+$')"
+	 ) > ~/.logs/douban.log 2>&1
+	 ;;
+    next)
+	emacsclient -e '(douban-music-play-next-refresh)'
+	;;
+    prev)
+	emacsclient -e '(douban-music-play-previous)'
+	;;
+    *)
+	die "not a douban.el command"
+	;;
+esac

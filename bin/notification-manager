@@ -19,18 +19,27 @@ except:
     if len(sys.argv) < 2:
         print "Error: usage: notification-manager KEY CONTENT"
         exit(-1)
-    file_ = open(os.path.join(os.path.expanduser("~/tmp/notification-manager"), 
-                         sys.argv[1]), 
+
+    icon = ""
+    if len(sys.argv) == 4:
+        icon = sys.argv[1]
+        sys.argv=sys.argv[1:]
+
+    file_ = open(os.path.join(os.path.expanduser("~/tmp/notification-manager"),
+                         sys.argv[1]),
                  "w")
+
+    if icon:
+        file_.write("icon:\n%s\n" % icon)
     if len(sys.argv) == 3:
-        file_.write(sys.argv[2])
+        file_.write("content:\n%s\n" % sys.argv[2])
     file_.close()
     os.kill(pid, signal.SIGUSR1)
     exit(0)
 
 pidf.truncate()
 pidf.write(str(os.getpid()))
-pidf.flush()    
+pidf.flush()
 
 signal.signal(signal.SIGUSR1, handler)
 
@@ -46,14 +55,27 @@ while True:
         for file_ in tup[2]:
             print "hello", file_
             content = open(os.path.join(tup[0], file_)).read()
+            icon = 0
+            if content[0:6] == "icon:\n":
+                lines = content.split("\n")
+                icon = lines[1]
+                content = "\n".join(lines[3:])
+            else:
+                content = content[9:] # content:\n
+
             os.unlink(os.path.join(tup[0], file_))
             if file_ in notifications:
                 notifications[file_].close()
                 del notifications[file_]
-                if content:
-                    notifications[file_] = pynotify.Notification(file_, content)
-                    notifications[file_].show()
-            elif content:
+
+            if content:
+                print "content:", content
                 notifications[file_] = pynotify.Notification(file_, content)
+                if icon:
+                    print ("hello icon: %s\n" % icon)
+                    sys.stdout.flush()
+                    import gtk
+                    notifications[file_].set_icon_from_pixbuf(gtk.gdk.pixbuf_new_from_file(icon))
+
                 notifications[file_].show()
         break

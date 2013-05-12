@@ -83,6 +83,12 @@
      (bbdb-insinuate-message)
      (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)))
 
+(eval-after-load 'douban-music-mode
+  '(progn
+     (add-hook 'douban-song-info-complete-hook
+               (lambda ()
+                 (shell-command-to-string "douban info >/dev/null 2>&1 &")))))
+
 (eval-after-load 'java-mode
   '(define-key java-mode-map (kbd "M-s d") 'bhj-open-android-doc-on-java-buffer))
 
