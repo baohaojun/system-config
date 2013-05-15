@@ -29,6 +29,12 @@ done
 if test -z "$board"; then
     board=("${def_board[@]}")
 fi
+
+if test ${#b[@]} = 0; then
+    of "http://ar.newsmth.net/searchArticle.do?subject=&author=$author&boardname=&body=&start=&end="
+    exit
+fi
+
 for b in "${board[@]}"; do
     case $b in
         Kernel)
@@ -37,4 +43,3 @@ for b in "${board[@]}"; do
     esac
     of "http://www.newsmth.net/bbsbfind.php?q=1&board=$b&title=&title2=&title3=&userid=$author&dt=22222"
 done
-

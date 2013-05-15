@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "http://mp3.sogou.com/lyric.so?query=$(echo -n "$@" | urlify)"

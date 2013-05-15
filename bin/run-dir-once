@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) dir"
+fi
+
+if test ! -d "$1"; then
+    die "Error: Usage $(basename $0) dir"
+fi
+
+cd "$1"
+
+(
+    flock -n 9
+    for x in ./*; do
+        ($x || true&)
+    done
+) 9> .$(basename $0).lock

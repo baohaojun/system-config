@@ -6,13 +6,8 @@ function die() {
     exit -1
 }
 
-
-case "$1" in
-    info)
-	(
-	    set -x
-	    bhj-notify -i ~/.emacs.d/DouBanMusic/image DoubanMusic.el \
-		"$(emacsclient -e '
+function info() {
+    emacsclient -e '
                 (let ((song-info (elt douban-music-song-list douban-music-current-song))
                       (channel (aget douban-music-channels douban-music-current-channel)))
                   (format "channel: %s
@@ -20,22 +15,40 @@ case "$1" in
 album: %s
 title: %s
 artist: %s
-	    "
+                  "
                      channel
                      (aget song-info '\''albumtitle)
                      (aget song-info '\''title)
                      (aget song-info '\''artist)))'|
          perl -npe 's/^"|"$//g; s/\\n/\n/g'|
-         grep -v -P -e '^\s+$')"
-	 ) > ~/.logs/douban.log 2>&1
-	 ;;
+         grep -v -P -e '^\s+$'
+}
+
+case "$1" in
+    info)
+        (
+            set -x
+            bhj-notify -i ~/.emacs.d/DouBanMusic/image DoubanMusic.el \
+                "$(info)"
+         ) > ~/.logs/douban.log 2>&1
+         ;;
+    pinfo)
+        info
+        ;;
+    lyrics)
+
+        url=$(search-lyrics "$(info|perl -ne 'if (m/^artist|^title/) {s/.*?://; print}')")
+        douban info
+        emacsclient -e '(w3m-goto-url "'$url'")'
+        find-or-exec emacs
+        ;;
     next)
-	emacsclient -e '(douban-music-play-next-refresh)'
-	;;
+        emacsclient -e '(douban-music-play-next-refresh)'
+        ;;
     prev)
-	emacsclient -e '(douban-music-play-previous)'
-	;;
+        emacsclient -e '(douban-music-play-previous)'
+        ;;
     *)
-	die "not a douban.el command"
-	;;
+        die "not a douban.el command"
+        ;;
 esac
