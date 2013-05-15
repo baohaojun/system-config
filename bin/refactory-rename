@@ -1,8 +1,39 @@
 #!/bin/bash
 set -e
+
+prepend=
+postpend=
+
+TEMP=$(getopt -o p:P: --long pre:post: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--pre)
+            prepend=$(printf %q "$2")
+            shift 2
+            ;;
+        -P|--post)
+            postpend=$(printf %q "$2")
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) from to"
+fi
+
 # set -- "$(printf %q "$1")" "$(printf %q "$2")"
 arg1="$(printf %q "$1")"
 arg2="$(printf %q "$2")"
+
 
 function die() {
     echo "$@"
@@ -38,6 +69,10 @@ xargs -d \\n perl -npe '
 BEGIN{
     $from = "'"$arg1"'";
     $to = "'"$arg2"'";
+    $prepend = "'"$prepend"'";
+    $postpend = "'"$postpend"'";
+
+    warn "from is $from, to is $to\n";
 }
 
 $rep_save{$from} = $to;
@@ -45,7 +80,7 @@ $rep_save{lc $from} = lc $to unless (lc $from eq $from);
 $rep_save{uc $from} = uc $to unless (uc $from eq $from);
 $rep_save{ucfirst lc $from} = ucfirst lc $to unless (ucfirst $from eq $from);
 
-while (m#('"$arg1"')#ig) {
+while (m#($prepend$from$postpend)#ig) {
     if (defined $rep_save{$1}) {
         next;
     } else {
@@ -56,7 +91,7 @@ while (m#('"$arg1"')#ig) {
 
 for $key (keys %rep_save) {
     my ($from, $to) = ($key, $rep_save{$key});
-    s/$from/$to/g;
+    s/$prepend$from$postpend/$to/g;
 }
 
 END {
@@ -64,17 +99,19 @@ END {
     store \%rep_save, "'$perlhash'";
 }
 ' -i
-        
+
 function compute-new-string() {
 echo "$@"|perl -npe '
 BEGIN{
     use Storable;
     %rep_save = %{retrieve("'$perlhash'")};
+    $prepend = "'"$prepend"'";
+    $postpend = "'"$postpend"'";
 }
 
 for $key (keys %rep_save) {
     my ($from, $to) = ($key, $rep_save{$key});
-    s/$from/$to/g;
+    s/$prepend$from$postpend/$to/g;
 }
 '
 }
@@ -83,15 +120,15 @@ function rename-files() {
     dir=$1
     shift
     (
-	cd "$dir";
-	debug doing $(pwd)
-	for x in $(get-files-this-dir); do
-	    if test -d "$x"; then
-		test -L "$x" || rename-files "$x" "$@"
-	    fi
-	    if echo "$x"|grep -P -q -i -e "$1" || readlink "$x" | grep -P -q -i -e "$1"; then
-		debug doing "$x"
-		y="$(compute-new-string "$x")"
+        cd "$dir";
+        debug doing $(pwd)
+        for x in $(get-files-this-dir); do
+            if test -d "$x"; then
+                test -L "$x" || rename-files "$x" "$@"
+            fi
+            if echo "$x"|grep -P -q -i -e "$prepend$1" || readlink "$x" | grep -P -q -i -e "$prepend$1"; then
+                debug doing "$x"
+                y="$(compute-new-string "$x")"
 
                 if test -L "$x"; then
                     new_link=$(compute-new-string "$(readlink "$x")")
@@ -102,10 +139,10 @@ function rename-files() {
                 else
                     git mv "$x" "$y"
                 fi
-                    
-	    fi
-	done
+
+            fi
+        done
     )
 }
-	    
+
 rename-files . "$@"

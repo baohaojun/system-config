@@ -1,9 +1,6 @@
 
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
-(keyboard-translate ?\C-x ?\C-h)
-(keyboard-translate ?\C-h ?\C-x)
-
 (when (and (file-exists-p "/etc/emacs/site-start.d/00debian-vars.el")
            (not (fboundp 'debian-file->string)))
   (load "/usr/share/emacs/site-lisp/debian-startup.el")

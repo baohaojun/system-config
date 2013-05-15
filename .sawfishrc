@@ -22,7 +22,7 @@
         ("M-BS" . "C-BS")
         ("C-p" . "Up")
         ("C-n" . "Down")
-        ("C-h" . "C-h")))
+        ("C-x" . "C-x")))
 
 (setq esc-g-remap-alist
       '(("M-g g" . ("M-v" "g" "p"))))
@@ -110,7 +110,7 @@
 
 
 (defun do-global-remap()
-  (let ((c-h-map (make-keymap))
+  (let ((c-x-map (make-keymap))
         (esc-map (make-keymap))
         (esc-g-map (make-keymap)))
     (mapc (lambda (key-map-1)
@@ -124,7 +124,7 @@
                                                 (mapc (lambda (key1)
                                                         (synthesize-event key1 (input-focus)))
                                                       to))))
-              (bind-keys c-h-map from (lambda () (synthesize-event from (input-focus))))))
+              (bind-keys c-x-map from (lambda () (synthesize-event from (input-focus))))))
           global-remap-alist)
     (mapc (lambda (key-map-1)
             (let ((from (car key-map-1))
@@ -139,7 +139,7 @@
           esc-g-remap-alist)
     (bind-keys global-keymap "ESC" esc-map)
     (bind-keys esc-map "g" esc-g-map)
-    (bind-keys global-keymap "C-h" c-h-map)))
+    (bind-keys global-keymap "C-x" c-x-map)))
 
 
 (defun undo-global-remap()
@@ -148,7 +148,7 @@
                 (to (cdr key-map-1)))
             (unbind-keys global-keymap from)))
         global-remap-alist)
-  (unbind-keys global-keymap "C-h")
+  (unbind-keys global-keymap "C-x")
   (unbind-keys global-keymap "ESC"))
 
 ;; (let ((esc-map (make-keymap)))
@@ -200,11 +200,11 @@
   '(("v" . ((t . "S-Insert")))
     ("c" . ((Emacs . "M-w")
             (Konsole . "C-S-c")))
-    ("w" . ((Firefox . ("C-h" "k"))))
-    ("l" . ((Firefox . ("C-h" "C-l"))))
-    ("r" . ((Firefox . ("C-h" "C-r"))))
-    ("s" . ((Firefox . ("C-h" "C-s"))))
-    ("d" . ((Firefox . ("C-h" "C-d"))))))
+    ("w" . ((Firefox . ("C-x" "k"))))
+    ("l" . ((Firefox . ("C-x" "C-l"))))
+    ("r" . ((Firefox . ("C-x" "C-r"))))
+    ("s" . ((Firefox . ("C-x" "C-s"))))
+    ("d" . ((Firefox . ("C-x" "C-d"))))))
 
 (mapc
  (lambda (key)
