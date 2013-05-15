@@ -5,7 +5,7 @@ if ! test -e "$XAUTHORITY"; then
 fi
 
 icon=
-if test $1 = -i; then
+if test "$1" = -i; then
     icon=$2;
     shift 2
 fi
