@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl -w
 # (>>>FILE<<<) --- (>>>DESC<<<)
 # Author: (>>>USER_NAME<<<) <(>>>AUTHOR<<<)>
 # Created: (>>>CDATE<<<)
