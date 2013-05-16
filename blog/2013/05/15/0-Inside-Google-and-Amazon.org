@@ -877,11 +877,11 @@ situation.
 
 1. A message to the external-world folks
 
-1. [[https://plus.google.com/110981030061712822816/posts/bwJ7kAELRnf][致外部世界的人们的一封信]]
+   [[https://plus.google.com/110981030061712822816/posts/bwJ7kAELRnf][致外部世界的人们的一封信]]
 
 2. Amazon War Story
 
-2. [[https://plus.google.com/110981030061712822816/posts/AaygmbzVeRq][亚马逊战争故事]] {非常值得一读！}
+   [[https://plus.google.com/110981030061712822816/posts/AaygmbzVeRq][亚马逊战争故事]] {非常值得一读！}
 
 
 
@@ -893,4 +893,3 @@ small developers.
 P.S.: 我转发这个贴子绝不是为了让谁陷入麻烦。我的用意是让小开发者的世界
 能认识到业界领秀们内部在干啥。这对我们这些小开发者来说上了很好的一课。
 
-<= More Articles
