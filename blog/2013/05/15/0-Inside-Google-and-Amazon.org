@@ -139,10 +139,12 @@ ordinary control freaks look like stoned hippies.
 顺便说一句，微管理也不是亚马逊做得比我们好的第三件事。我是说，对，他们
 真的微管理得非常棒，但我不会把这当成一个强项或任何[值得称道的]东西。我
 只是在做一些肯景交待，帮助你理解接下来发生的事情。我们在聊的这个家伙很
-多次在公开场合非常严肃的指出人们[有幸]能够到亚马逊工作应该付给他钱。这
-家伙是一个一般性的...Steve Jobs，我猜。除了他没有任何fashion和设计上的
-感觉。Bezos是非常聪明的，这一点不要误读我。他只是让一般的控制狂看上去像
-吸了大麻的嘻皮士。
+多次在公开场合非常严肃的指出人们[有幸]能够到亚马逊工作应该付给他钱[而不
+是反过来让他发工资！]。当人们与他意见相左时他随时会掏出一张黄色便笺递给
+他们，上面还写着他的名字，以提醒他们“这公司是谁的谁说了算？”[小心，我猜
+集满两张黄色便笺可以换一张红的！]。这家伙是一个一般性的...Steve Jobs，
+我猜。除了他没有任何fashion和设计上的感觉。Bezos是非常聪明的，这一点不
+要误读我。他只是让一般的控制狂看上去像吸了大麻的嘻皮士。
 
 So one day Jeff Bezos issued a mandate. He's doing that all the time,
 of course, and people scramble like ants being pounded with a rubber
@@ -382,8 +384,8 @@ the page above the fold.
 告诉他他妈不会用这个见鬼的网站的时候可能触动了Bezos的某根弦。这里都不是
 很清楚他说的是谁的妈，这也并不重要，因为谁的妈来了也不会用这见鬼的网站。
 事实上我自己也发现这个网站让人害怕不安，而我在那里工作了不止半个
-decade[12年为一decade]。我刚刚学会怎样让眼睛散光再聚焦到页面中间的那几
-百个像素上。
+decade[10年为一decade]。我刚刚学会怎样让眼睛散光再聚焦到页面中间的那几
+百万个像素上。
 
 I'm not really sure how Bezos came to this realization -- the insight
 that he can't build one product and have it be right for everyone. But
@@ -427,7 +429,9 @@ named Security. And boy howdy are the two ever at odds.
 
 就像所有生命中又大又重要的东西一样，Accessibility有一个邪恶双生——由于它
 们的父母在它们幼时给了它们不平衡的爱，长成了一个同样强大的大复仇女神
-（是，accessibility还有其他复仇女神）名叫Security。哎玛呀这俩一天打到晚。
+（是，accessibility还有其他复仇女神）名叫Security。哎玛呀这俩一天打到晚
+[这两者是此消彼长的，太强调security会让accessibility受损害，反之亦然。
+比如微软的平台大行其道所以也更易被攻破]。
 
 But I'll argue that Accessibility is actually more important than
 Security because dialing Accessibility to zero means you have no
@@ -690,7 +694,7 @@ Producters.
 
 并且也不要误会我关于Google+[的看法]。它们远不是唯一的案犯。这是一个文化
 性的东西。我们内部正在上演的是一场战争，其中的落水狗少数派平台派在和资
-金充沛自信爆棚的产品派打着一场或多或少节节败退战争。
+金充沛自信爆棚的产品派打着一场或多或少节节败退的战争。
 
 Any teams that have successfully internalized the notion that they
 should be externally programmable platforms from the ground up are
