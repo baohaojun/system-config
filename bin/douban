@@ -28,6 +28,13 @@ case "$1" in
     info)
         (
             set -x
+
+            if test -e ~/.do-not-disturb -a "$EMACS"; then
+                exit
+            fi
+            if test -e ~/.do-not-disturb.bak; then
+                mv ~/.do-not-disturb.bak ~/.do-not-disturb
+            fi
             bhj-notify -i ~/.emacs.d/DouBanMusic/image DoubanMusic.el \
                 "$(info)"
          ) > ~/.logs/douban.log 2>&1
@@ -43,9 +50,15 @@ case "$1" in
         find-or-exec emacs
         ;;
     next)
+        if test -e ~/.do-not-disturb; then
+            mv ~/.do-not-disturb ~/.do-not-disturb.bak
+        fi
         emacsclient -e '(douban-music-play-next-refresh)'
         ;;
     prev)
+        if test -e ~/.do-not-disturb; then
+            mv ~/.do-not-disturb ~/.do-not-disturb.bak
+        fi
         emacsclient -e '(douban-music-play-previous)'
         ;;
     *)

@@ -192,6 +192,9 @@ Firemacs.Commands.Common = {
     CloseTab: function(e) {
         if (typeof(BrowserCloseTabOrWindow) == 'function') { BrowserCloseTabOrWindow(); }
     },
+    bhjUndoCloseTab: function(e) {
+        undoCloseTab();
+    },
     OpenFile: function(e) {
         if (typeof(BrowserOpenFileWindow) == 'function') { BrowserOpenFileWindow(); }
     },
@@ -320,6 +323,7 @@ Firemacs.CmdKey.Common = {
     JumpInput: 'C-xt',
     JumpSubmit: 'C-xs',
     CloseTab: 'C-xk',
+    bhjUndoCloseTab: 'C-xC-r',
     OpenFile: 'C-xC-f',
     Copy: 'M-w',
     NextButton: 'M-n',

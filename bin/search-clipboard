@@ -1,0 +1,9 @@
+#!/bin/bash
+
+exec > ~/.logs/$(basename $0).log 2>&1
+set -x
+words=$(getclip)
+
+for site in search-google search-en.wikipedia search-bing; do
+    $site "$words"
+done

@@ -88,7 +88,7 @@ if ($do_dir) {
     $db_dir = "$ENV{HOME}/.cache/for-code-reading$do_dir";
 }
 
-$start_file = $working_file || $ENV{GTAGS_START_FILE};
+$start_file = $working_file || $ENV{GTAGS_START_FILE} || ".";
 chomp($start_file = qx/readlink -f $start_file/);
 
 if ($only_start_file and not $path_matcher) {
@@ -112,21 +112,21 @@ if ($db_dir eq "/" or $db_dir eq glob("~")) {
     system("rm", "-f", glob("~/.gtags-dir"));
     system("ln", '-sf', $db_dir, glob("~/.gtags-dir"));
 }
-    
+
 $approx_dir = substr($approx_dir, length($db_dir));
 
 sub is_qualified_by($$)
 {
     my ($d1, $d2) = @_;
     if (length($d1) >= length($d2)) {
-	return 0;
+        return 0;
     }
 
     if (substr($d2, -length($d1)) eq $d1 and
-	substr($d2, -length($d1) - 1, 1) =~ m/\.|:/) {
-	return 1;
+        substr($d2, -length($d1) - 1, 1) =~ m/\.|:/) {
+        return 1;
     }
-    return 0;    
+    return 0;
 }
 
 my $filter_worked = 0;
@@ -134,10 +134,10 @@ my $filter_worked = 0;
 sub is_binary($)
 {
     if ($_[0] =~ m/\.jar$|\.dll$/i) {
-	return 1;
+        return 1;
     } else {
-	return 0;
-    }	
+        return 0;
+    }
 }
 
 sub parse_xref($$)
@@ -147,112 +147,112 @@ sub parse_xref($$)
     our %matches;
     our %matches_path_line;
     our %updated_paths;
-    
+
     my $path_inv;
     if (-e ".grep-gtags-path-inv") {
-	$path_inv = qx(cat .grep-gtags-path-inv);
-	$path_inv = qr($path_inv)x;
+        $path_inv = qx(cat .grep-gtags-path-inv);
+        $path_inv = qr($path_inv)x;
     } elsif (-e glob("~/etc/.grep-gtags-path-inv")) {
-	$path_inv = qx(cat ~/etc/.grep-gtags-path-inv);
-	$path_inv = qr($path_inv)x;
+        $path_inv = qx(cat ~/etc/.grep-gtags-path-inv);
+        $path_inv = qr($path_inv)x;
     }
 
 read_line:
     while (<$grep>) {
         chomp();
-	debug "got $_";
+        debug "got $_";
 
         if ($lookup_restrict_regexp && not m/$lookup_restrict_regexp/i) {
             next;
         }
 
-	m/(.*?)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
-	my ($def, $line, $path, $str) = ($1, $2, $3, $4);
-	my $type = "definition";
-	if ($str =~ m/^(\S+):\t/) {
-	    $type = $1;
-	    debug "type is $type";
-	}
-	if (not -e "$path") {
-	    debug "ignore $path: not exist\n";
-	    next;
-	}
-	if ($arch ne "." and $path =~ m,(?:/|^)arch/, and $path !~ m,(?:/|^)arch/[^/]*$arch,) {
-	    debug "ignore $path because arch not matches";
-	    next;
-	}
-	    
-	if (not $updating and $path_matcher and $path !~ m/$path_matcher/) {
-	    debug "ignore $path because of path matcher miss";
-	    $filter_worked++;
-	    next;
-	}
+        m/(.*?)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
+        my ($def, $line, $path, $str) = ($1, $2, $3, $4);
+        my $type = "definition";
+        if ($str =~ m/^(\S+):\t/) {
+            $type = $1;
+            debug "type is $type";
+        }
+        if (not -e "$path") {
+            debug "ignore $path: not exist\n";
+            next;
+        }
+        if ($arch ne "." and $path =~ m,(?:/|^)arch/, and $path !~ m,(?:/|^)arch/[^/]*$arch,) {
+            debug "ignore $path because arch not matches";
+            next;
+        }
 
-	if ($path_matcher_inv and $path =~ m/$path_matcher_inv/) {
-	    debug "ignore $path because of inverted path matcher matched";
-	    $filter_worked++;
-	    next;
-	}
+        if (not $updating and $path_matcher and $path !~ m/$path_matcher/) {
+            debug "ignore $path because of path matcher miss";
+            $filter_worked++;
+            next;
+        }
 
-	if ($type_re and $type !~ m/$type_re/) {
-	    debug "ignore $path:$line: $str because type mismatch: $type !~ $type_re";
-	    $filter_worked++;
-	    next;
-	}
+        if ($path_matcher_inv and $path =~ m/$path_matcher_inv/) {
+            debug "ignore $path because of inverted path matcher matched";
+            $filter_worked++;
+            next;
+        }
 
-	if (not $type_re and $type eq "prototype") {
-	    debug "ignore prototype for $str";
-	    next;
-	}
+        if ($type_re and $type !~ m/$type_re/) {
+            debug "ignore $path:$line: $str because type mismatch: $type !~ $type_re";
+            $filter_worked++;
+            next;
+        }
 
-	if ($lookup_needle_save and $def ne $lookup_needle_save) {
-	    debug "ignore $path because component not match";
-	    next;
-	}	    
+        if (not $type_re and $type eq "prototype") {
+            debug "ignore prototype for $str";
+            next;
+        }
 
-	if ( # we should extract this into a .conf!!
-	     $str =~ m/(?:^|:\t)#undef|^variable.*:\s+EXPORT_SYMBOL/ or 
-	     $path_inv and $path =~ $path_inv) {
-	    debug "ignore because $path matches reverse pattern ($path_inv)";
-	    next;
-	}
+        if ($lookup_needle_save and $def ne $lookup_needle_save) {
+            debug "ignore $path because component not match";
+            next;
+        }
 
-	$_ = "$path:$line:$def";
+        if ( # we should extract this into a .conf!!
+             $str =~ m/(?:^|:\t)#undef|^variable.*:\s+EXPORT_SYMBOL/ or
+             $path_inv and $path =~ $path_inv) {
+            debug "ignore because $path matches reverse pattern ($path_inv)";
+            next;
+        }
 
-	if (not is_binary($path)) {
-	    my $loc = "$path:$line";
-	    $matches_path_line{$loc} = {} unless exists $matches_path_line{$loc};
-	    
-	    foreach my $elem (keys %{$matches_path_line{$loc}}) {
-		debug "checking $elem against $def";
-		if (is_qualified_by($def, $elem)) {
-		    debug "$def is qualified by $elem";
-		    next read_line;
-		} elsif (is_qualified_by($elem, $def)) {
-		    debug "$elem is qualified by $def, should delete $elem";
-		    delete $matches_path_line{$loc}{$elem};
-		    delete $matches{"$path:$line:$elem"};
-		}
-	    }
-	    $matches_path_line{$loc}{$def} = 1;	
-	}
-	$matches{$_} = {
-	    "path" => $path,
-	    "def"  => $def,
-	    "line" => $line,
-	    "str" => $str,
-	    "type", => $type,
-	};
-	debug "got matches: $path:$line: $str";
-	my $x = $path;
-	$x =~ s,.*/,,;
-	$matches{$_}{"dist"} = (
-	    $silent ?
-	    $silent++ : 
-	    abs(adistr($matches{$_}{"path"}, $approx_dir)) + abs(adistr($x, $lookup_needle)) / 2);
+        $_ = "$path:$line:$def";
 
-	$updated_paths{$path} = 1;
-	
+        if (not is_binary($path)) {
+            my $loc = "$path:$line";
+            $matches_path_line{$loc} = {} unless exists $matches_path_line{$loc};
+
+            foreach my $elem (keys %{$matches_path_line{$loc}}) {
+                debug "checking $elem against $def";
+                if (is_qualified_by($def, $elem)) {
+                    debug "$def is qualified by $elem";
+                    next read_line;
+                } elsif (is_qualified_by($elem, $def)) {
+                    debug "$elem is qualified by $def, should delete $elem";
+                    delete $matches_path_line{$loc}{$elem};
+                    delete $matches{"$path:$line:$elem"};
+                }
+            }
+            $matches_path_line{$loc}{$def} = 1;
+        }
+        $matches{$_} = {
+            "path" => $path,
+            "def"  => $def,
+            "line" => $line,
+            "str" => $str,
+            "type", => $type,
+        };
+        debug "got matches: $path:$line: $str";
+        my $x = $path;
+        $x =~ s,.*/,,;
+        $matches{$_}{"dist"} = (
+            $silent ?
+            $silent++ :
+            abs(adistr($matches{$_}{"path"}, $approx_dir)) + abs(adistr($x, $lookup_needle)) / 2);
+
+        $updated_paths{$path} = 1;
+
     }
 }
 
@@ -260,8 +260,8 @@ sub do_cscope($$$) {
     $filter_worked = 0;
     debug "do_cscope @_";
     if ($fall_back) {
-	$fall_back = 0;
-	return 0;
+        $fall_back = 0;
+        return 0;
     }
     my ($db_dir, $lookup_needle, $lookup_restrict_regexp) = @_;
     my $lookup_needle_quote = shell_quote($lookup_needle);
@@ -276,9 +276,9 @@ sub do_cscope($$$) {
 
     my $grep;
     if ($imenu_mode) {
-	open($grep, "-|", "cat /dev/null");
+        open($grep, "-|", "cat /dev/null");
     } else {
-	open($grep, "-|", "global -x $lookup_needle_quote $ignore_case");
+        open($grep, "-|", "global -x $lookup_needle_quote $ignore_case");
     }
     our %matches;
     our %updated_paths;
@@ -287,102 +287,102 @@ sub do_cscope($$$) {
     close($grep);
 
     if (not %matches and $filter_worked) {
-	return 1 if $silent;
-	print "Filter worked in $code_dir, and you got 0 matches! Will restart without filtering\n";
-	$filter_worked = 0;
-	$path_matcher = "";
-	$path_matcher_inv = "";
-	$type_re = "";
-	do_cscope(@_);
-	return 1;
+        return 1 if $silent;
+        print "Filter worked in $code_dir, and you got 0 matches! Will restart without filtering\n";
+        $filter_worked = 0;
+        $path_matcher = "";
+        $path_matcher_inv = "";
+        $type_re = "";
+        do_cscope(@_);
+        return 1;
     }
 
     our $approx_dir;
 
-    my @updated_paths = keys %updated_paths; 
+    my @updated_paths = keys %updated_paths;
 
 
     if (substr($start_file, 0, length($code_dir)) eq $code_dir) {
-	$start_file = substr($start_file, 1 + length($code_dir));
+        $start_file = substr($start_file, 1 + length($code_dir));
     } else {
-	debug "$start_file not changed";
+        debug "$start_file not changed";
     }
 
     if (not $imenu_mode) {
 
 
         my $child_pid = open2(my $child_out, my $child_in, "gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
-        or die "Can not query update on gtags"; 
+        or die "Can not query update on gtags";
 
-	if (fork() == 0) {
-	    for (@updated_paths) {
-		print $child_in "$_\n";
-	    }
-	    close($child_in);
-	    exit 0;
-	}
+        if (fork() == 0) {
+            for (@updated_paths) {
+                print $child_in "$_\n";
+            }
+            close($child_in);
+            exit 0;
+        }
 
         close $child_in;
-	@updated_paths = map {chomp; s,^\./,,; $_} <$child_out>;
+        @updated_paths = map {chomp; s,^\./,,; $_} <$child_out>;
         close $child_out;
         waitpid($child_pid, 0);
     }
 
     if (-e $start_file and not $updated_paths{$start_file}) {
-	push @updated_paths, $start_file unless $start_file =~ m/\.jar$|\.dll$/i;
-	debug "pushed start file into updated_paths";
+        push @updated_paths, $start_file unless $start_file =~ m/\.jar$|\.dll$/i;
+        debug "pushed start file into updated_paths";
     } else {
-	debug "no need to push start file into updated_paths"
+        debug "no need to push start file into updated_paths"
     }
     if (@updated_paths) {
-	debug "These files need update: @updated_paths\n";
-	foreach my $path(@updated_paths) {
-	    foreach my $match (keys %matches) {
-		if ($matches{$match}{path} eq $path) {
-		    delete $matches{$match};
-		}
-	    }
-	}
+        debug "These files need update: @updated_paths\n";
+        foreach my $path(@updated_paths) {
+            foreach my $match (keys %matches) {
+                if ($matches{$match}{path} eq $path) {
+                    delete $matches{$match};
+                }
+            }
+        }
 
-	my @ignore_case = $ignore_case ? ("-i") : ();
-	open($grep, "-|", "global-ctags", @ignore_case, $lookup_needle, @updated_paths) or
-	    die "can not open pipe for global-ctags";
-	parse_xref($grep, 1);
+        my @ignore_case = $ignore_case ? ("-i") : ();
+        open($grep, "-|", "global-ctags", @ignore_case, $lookup_needle, @updated_paths) or
+            die "can not open pipe for global-ctags";
+        parse_xref($grep, 1);
     }
 
     if (%matches and not $silent) {
-	printf STDERR "Found total %d%s definitions: Entering directory \`%s'\n", scalar keys %matches, $filter_worked ? "/$filter_worked" : "", $code_dir;
+        printf STDERR "Found total %d%s definitions: Entering directory \`%s'\n", scalar keys %matches, $filter_worked ? "/$filter_worked" : "", $code_dir;
     }
 
     for (sort {
-	($matches{$a}{"dist"} <=> $matches{$b}{"dist"})
-	    or
-	    ($matches{$a}{"line"} <=> $matches{$b}{"line"})
-	 } keys %matches) {
-	
-	debug "dist between $_ and $approx_dir is $matches{$_}{dist}";
-	my ($file, $def, $line, $str) = @{$matches{$_}}{"path", "def", "line", "str"};
+        ($matches{$a}{"dist"} <=> $matches{$b}{"dist"})
+            or
+            ($matches{$a}{"line"} <=> $matches{$b}{"line"})
+         } keys %matches) {
 
-	if ($ENV{UNPACK_MACRO} and $str =~ m/^\s*#define\s+$lookup_needle\s+(\S+)$/) {
-	    unless ($1 eq $lookup_needle or $ENV{UNPACK_MACRO} >= 5) {
-		my $UNPACK_MACRO = $ENV{UNPACK_MACRO} + 1;
-		print "need to lookup the $1 'cause you are probably not interested in '$str'\n" unless $silent;
-		system("UNPACK_MACRO=$UNPACK_MACRO $0 -e $1");
-	    }
-	}
-	if ($str =~ m/:\t\s*typedef (?:struct|enum)\s+(.*)\s+$lookup_needle/) { # need look up the $1 instead
-	    unless ($1 eq $lookup_needle or $ENV{UNPACK_MACRO} >= 5) {
-		my $UNPACK_MACRO = $ENV{UNPACK_MACRO} + 1;
-		print "need to lookup the $1 'cause you are probably not interested in '$str'\n" unless $silent;
-		system("UNPACK_MACRO=$UNPACK_MACRO $0 -e $1");
-	    }
-	}
-	$str =~ s,:\t,: <$def> : ,;
-	print "$file:$line: $str\n";
-	$got_results = 1;
-	if (keys %matches < 5 and not $imenu_mode and not $silent and not is_binary($file)) { # this will be nice!
-	    system("ctags-show-definition $code_dir/$file $line $lookup_needle");
-	}        
+        debug "dist between $_ and $approx_dir is $matches{$_}{dist}";
+        my ($file, $def, $line, $str) = @{$matches{$_}}{"path", "def", "line", "str"};
+
+        if ($ENV{UNPACK_MACRO} and $str =~ m/^\s*#define\s+$lookup_needle\s+(\S+)$/) {
+            unless ($1 eq $lookup_needle or $ENV{UNPACK_MACRO} >= 5) {
+                my $UNPACK_MACRO = $ENV{UNPACK_MACRO} + 1;
+                print "need to lookup the $1 'cause you are probably not interested in '$str'\n" unless $silent;
+                system("UNPACK_MACRO=$UNPACK_MACRO $0 -e $1");
+            }
+        }
+        if ($str =~ m/:\t\s*typedef (?:struct|enum)\s+(.*)\s+$lookup_needle/) { # need look up the $1 instead
+            unless ($1 eq $lookup_needle or $ENV{UNPACK_MACRO} >= 5) {
+                my $UNPACK_MACRO = $ENV{UNPACK_MACRO} + 1;
+                print "need to lookup the $1 'cause you are probably not interested in '$str'\n" unless $silent;
+                system("UNPACK_MACRO=$UNPACK_MACRO $0 -e $1");
+            }
+        }
+        $str =~ s,:\t,: <$def> : ,;
+        print "$file:$line: $str\n";
+        $got_results = 1;
+        if (keys %matches < 5 and not $imenu_mode and not $silent and not is_binary($file)) { # this will be nice!
+            system("ctags-show-definition $code_dir/$file $line $lookup_needle");
+        }
     }
 
     return $got_results;
@@ -413,5 +413,3 @@ for (@gtags_fallback_dir) {
   debug "Not found in current dir; search in $dir";
   do_cscope($dir, $lookup_needle, $lookup_restrict_regexp) and last;
 }
-
-
