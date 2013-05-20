@@ -71,12 +71,19 @@ if git remote -v | grep baohaojun.github.com.git; then
             if test -e "$(basename $x|perl -npe 's/\.org$/.html/')" && [[ "$x" =~ blog/ ]]; then
                 if git st -s "$(basename $x|perl -npe 's/\.org$/.html/')" | grep -P -q -e '^\?\?'; then
                     rm "$(basename $x|perl -npe 's/\.org$/.html/')"
-                else
+                elif test "$(basename "$x")" != index.org; then
                     ./rebuild-old-html.pl "$x"
                 fi
             fi
         fi
     done
+    generate-atom.xml.sh
+    last_org=$(find blog -name '*.org'|sort -n|tail -n 1)
+    if git st -s "$last_org" | grep .; then
+        ./rebuild-old-html.pl "$last_org"
+        mv "$(basename "$last_org" | perl -npe 's/\.org$/.html/')" index.org
+    fi
+
     if git st -S | grep . ; then
         yes-or-no-p -y "Continue?"
     fi

@@ -1,8 +1,10 @@
 #!/bin/bash
 cat <<EOF
+; {%emacs-lisp%}
 (progn
   (global-font-lock-mode)
   ; (toggle-debug-on-error)
+  (setq bhj-org-export-file "$ORG_FILE_NAME")
   (setq load-path
       (nconc (list
               "/usr/share/emacs/site-lisp/gnus"
@@ -22,13 +24,10 @@ cat <<EOF
               (expand-file-name "~/src/github/helm")
               (expand-file-name "~/src/org-mode/contrib/lisp"))
              load-path))
-  (require 'ox-html)
-  (defadvice org-html--build-pre/postamble (around my-pre/postamble first activate)
-           ad-do-it
-           (if (eq (ad-get-arg 0) 'preamble)
-               (setq ad-return-value (concat ad-return-value "\n<div id='bhj_article'>\n"))
-             (setq ad-return-value (concat "</div\n" ad-return-value))))
   (setq org-html-style-include-default nil
+        org-export-with-toc nil
+        org-export-with-timestamps nil
+        org-export-time-stamp-file nil
         org-html-htmlize-output-type (quote css)
         org-html-head-extra "<link rel=\"stylesheet\" href=\"/css/default.css\" type=\"text/css\" />
  <link rel=\"shortcut icon\" href=\"/poison.png\" type=\"image/png\" />
@@ -63,8 +62,20 @@ cat <<EOF
     </script>"
         org-html-preamble (lambda (arg) (shell-command-to-string (format "org-export-preamble %s" (shell-quote-argument bhj-org-export-file))))
         org-html-postamble (lambda (arg) (shell-command-to-string (format "org-export-postamble %s" (shell-quote-argument bhj-org-export-file)))))
+
+  (require 'ox-html)
+  (defadvice org-html--build-pre/postamble (around my-pre/postamble first activate)
+           ad-do-it
+           (if (eq (ad-get-arg 0) 'preamble)
+               (setq ad-return-value (concat ad-return-value (shell-command-to-string (format "org-export-preamble.tail %s" (shell-quote-argument bhj-org-export-file)))))
+             (setq ad-return-value (concat (shell-command-to-string (format "org-export-postamble.head %s" (shell-quote-argument bhj-org-export-file))) ad-return-value))))
+
   (find-file "$1")
-  (setq bhj-org-export-file "$ORG_FILE_NAME")
   (load-theme 'wombat)
   (org-html-export-to-html))
+; {%/emacs-lisp%}
 EOF
+
+# Local Variables:
+# eval: (mmm-mode 1)
+# End:

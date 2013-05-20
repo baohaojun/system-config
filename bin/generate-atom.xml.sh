@@ -1,5 +1,6 @@
 #!/bin/bash
 
+exec >atom.xml
 function github-pagep()
 {
     echo http://baohaojun.github.io/${1/%.org/.html}
@@ -21,7 +22,11 @@ cat <<EOF
   <generator uri="http://octopress.org/">Octopress</generator>
 EOF
 
-for x in *.org; do grep -P -e "\Q#+title:\E" -q $x && git log -1 --pretty=format:"%ai $x%n" $x; done|sort -n |reverse | while read date time tz name; do
+for x in $(find blog -name '*.org'|sort -n|reverse); do grep -P -e "\Q#+title:\E" -q $x &&
+    (
+        git log --pretty=format:"%ai $x%n" $x 2>/dev/null | tail -n 1 | grep . ||
+        echo $(date +%Y-%M-%d\ %H:%m:%S\ +0800) $x
+    ); done|perl -ne 'print if 1..10' |tee /dev/stderr | while read date time tz name; do
         cat <<EOF
   <entry>
     <title type="html"><![CDATA[$(grep -P -e "\Q#+title:\E" $name | perl -npe "s/.*:\s+//")]]></title>

@@ -1,0 +1,131 @@
+#!/bin/bash
+export ORG_FILE_NAME=$1
+cat <<EOF
+<!-- {%html-mode%} -->
+
+<div id="disqus_container">
+  <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+  <div style="margin-bottom:20px">
+    <script type="text/javascript" charset="utf-8">
+      (function(){
+      var _w = 86 , _h = 16;
+      var param = {
+      url:location.href,
+      type:'6',
+      count:'', /**是否显示分享数，1显示(可选)*/
+      appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+      title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+      pic:'', /**分享图片的路径(可选)*/
+      ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+      language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+      rnd:new Date().valueOf()
+      }
+      var temp = [];
+      for( var p in param ){
+      temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+      }
+      document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+      })()
+    </script>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+</div> <!-- bhj_leftpane -->
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
+
+
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+    <h2>Tags</h2>
+    <ul>
+        $(org-export-generate-tags $1)
+    </ul>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        $(
+            function find-last-10() {
+                find $START_DIR/blog -name "*.org" |sort -n| perl -ne '
+                    BEGIN{$n = 0}
+                    chomp;
+                    $file_number{$n++} = $_;
+                    if ($_ eq "'"$ORG_FILE_NAME"'") {
+                        $n -= 11;
+                        for $time (1..10) {
+                            print $file_number{$n++} . "\n"
+                        }
+                    }
+                '
+            }
+
+            function title-of() {
+                file=$1
+                perl -ne '
+                    chomp;
+                    if (m/#\+title: (.*)/i) {
+                        $_ = $1;
+                        use Encode;
+                        $_ = decode_utf8($_);
+                        if (length($_) > 50) {
+                            $_ = substr($_, 0, 50) . "...";
+                        }
+                        $_ = encode_utf8($_);
+                        print $_;
+                    }
+                ' "$file"
+            }
+
+            for x in $(find-last-10|reverse); do
+                echo "<li><a href='$(relative-url $x $ORG_FILE_NAME | perl -npe 's/\.org$/.html/')'> $(title-of $x) </a></li>"
+            done
+        )
+    </ul>
+
+    <h2 class="sidebar-title">Archive</h2>
+      <ul id="archives">
+        <li><a href="/meta/Archive.html"> The complete archive </a></li>
+      </ul>
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
+EOF
+                # Local Variables: #
+                # eval: (mmm-mode 1) #
+                # End: #

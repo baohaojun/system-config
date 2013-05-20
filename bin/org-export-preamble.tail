@@ -1,0 +1,6 @@
+#!/bin/bash
+export ORG_FILE_NAME=$1
+cat <<EOF
+<div id='bhj_article'>
+  <div id='bhj_leftpane'>
+EOF

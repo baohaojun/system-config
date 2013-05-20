@@ -233,7 +233,7 @@
   (if gnome?
       ;; The sleep is necessary for unknown reason, but it won't work
       ;; without it.
-      (system (concat "sleep .5; xdotool key --clearmodifiers " (rewrite-event-for-xtool event)))
+      (system (concat "sleep .5 && xdotool key --clearmodifiers " (rewrite-event-for-xtool event)))
     (synthesize-event event window)))
 
 (mapc
@@ -249,10 +249,10 @@
                                    (concat "C-" key))))
                   (if (listp map-to)
                       (mapc (lambda (map-1)
-                              (synthesize-or-xdotool map-1 fw gnome?))
+                              (synthesize-event map-1 fw))
                             map-to)
 
-                    (synthesize-or-xdotool map-to fw gnome?))))))
+                    (synthesize-event map-to fw))))))
  '("t" "w" "n" "c" "v" "l" "r" "s" "d"))
 
 (bind-keys global-keymap "Super-Insert" (lambda () (system "send-key $(getclip)&")))

@@ -12,7 +12,7 @@ function debug() {
     echo "$@" 1>&2
 }
 
-export START_DIR=$PWD
+export START_DIR=$(readlink -f .)
 function org-export-generate-tags() {
     the_ORG_FILE_NAME=$1
     echo "arg1 is $the_ORG_FILE_NAME" > ~/.logs/relative-url.log
@@ -21,22 +21,14 @@ function org-export-generate-tags() {
         (
             cd $START_DIR
         cat <<EOF
-            <a href="$(
+        <li><a href="$(
                 relative-url meta/tags/$tag.html $the_ORG_FILE_NAME 2>>~/.logs/relative-url.log
             )" title="$(
                 cat $START_DIR/meta/tags/$tag.desc
-            )">$tag</a><br/>
+            )">$tag</a></li>
 EOF
         )
     done
-    (
-        cd $START_DIR
-        cat <<EOF
-            <a href="$(
-                relative-url meta/Archive.html $the_ORG_FILE_NAME 2>>~/.logs/relative-url.log
-            )" title="All blogs">archive</a><br/>
-EOF
-    )
 }
 
 export -f org-export-generate-tags
@@ -147,7 +139,7 @@ EOF
             cat <<EOF
 #+BEGIN_HTML
       <nav>
-        <ul class="pager">
+        <ul id="prev_next_posts">
           <li class="prev_post">
             <a href="$rel_prev_url"> <!-- prev-url -->
               <i class="icon-chevron-left">《</i>
@@ -182,7 +174,7 @@ for x in "$@"; do
     perl -npe 's,\bfile:////([^/]),file://///$1,g' -i $tf.html
     x=${x%.org}
     cp $tf.html "$x".html
-    if test $# = 1; then
+    if test $# = 1 -a "$RUN_IN_PARALLEL" != true; then
         of "$x".html
     fi
     rm $tf.*

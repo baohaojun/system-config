@@ -2,6 +2,7 @@
 
 jobs=5
 replace_str=
+export RUN_IN_PARALLEL=true
 TEMP=$(getopt -o j:I: --long jobs: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
@@ -25,6 +26,10 @@ while true; do
 done
 
 cmd=$1
+if test -z "$replace_str" && yes-or-no-p -y "Use %N as replace_str"; then
+    replace_str=%N
+    cmd="$cmd %N"
+fi
 shift
 lock_dir=~/.logs/$(basename $0).lock/
 mkdir -p $lock_dir
@@ -55,7 +60,7 @@ for y in "$@"; do
         (
             flock 9
             if test "$replace_str"; then
-                echo "$cmd" | perl -npe "s/$replace_str/$y/g"
+                echo "$cmd" | perl -npe "s!$replace_str!$y!g"
             else
                 echo "$cmd"
             fi | bash
