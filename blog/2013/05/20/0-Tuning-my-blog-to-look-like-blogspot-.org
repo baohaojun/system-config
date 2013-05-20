@@ -1,4 +1,4 @@
-#+title: Tuing my blog to look like blogspot
+#+title: Tuning my blog to look like blogspot
 # bhj-tags: blog
 Done a lot of work with my org-export scripts.
 

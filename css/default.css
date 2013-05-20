@@ -21,7 +21,7 @@ pre, tt, code {
 }
 
 body, input, textarea, #content, #content input, #content textarea {
- font-size: 11pt; line-height: 15pt; }
+ font-size: 11pt; line-height: 1.6em; }
 
 pre {
     border: 2pt solid #7E0D0C;
@@ -143,7 +143,7 @@ pre.example, .org-block, code{
 h1.title, .org-document-title {
     /* org-document-title */
     color: #afeeee;
-    font-size: 200%;
+    font-size: 160%;
     font-weight: bold;
 }
 h2, .org-level-1 {
@@ -1367,12 +1367,12 @@ body {
 }
 .org-info-title-1 {
     /* info-title-1 */
-    font-size: 172%;
+    font-size: 150%;
     font-weight: bold;
 }
 .org-info-title-2 {
     /* info-title-2 */
-    font-size: 144%;
+    font-size: 140%;
     font-weight: bold;
 }
 .org-info-title-3 {
@@ -1674,7 +1674,7 @@ body {
 .org-moinmoin-h1 {
     /* moinmoin-h1 */
     color: #8b5a2b;
-    font-size: 168%;
+    font-size: 150%;
     font-weight: bold;
 }
 .org-moinmoin-h2 {
@@ -1945,7 +1945,7 @@ body {
 .org-org-document-title {
     /* org-document-title */
     color: #afeeee;
-    font-size: 144%;
+    font-size: 140%;
     font-weight: bold;
 }
 .org-org-done {
@@ -2505,7 +2505,7 @@ a img {
   padding:20px 20px .25em;
   border:1px solid #eee;
   border-width:1px 1px 0;
-  font-size:200%;
+  font-size:160%;
   line-height:1.2em;
   font-weight:normal;
   /*text-transform:uppercase;*/

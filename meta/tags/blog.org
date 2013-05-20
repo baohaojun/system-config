@@ -3,7 +3,7 @@
   - 2013-05
    * 2013-05-20
 
-     [[../../../blog/2013/05/20/0-Tuing-my-blog-to-look-like-blogspot-.org][Tuing my blog to look like blogspot]]
+     [[../../../blog/2013/05/20/0-Tuning-my-blog-to-look-like-blogspot-.org][Tuning my blog to look like blogspot]]
 
    * 2013-05-03
 
