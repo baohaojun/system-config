@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Emacs and interactive makefiles</title>
+<!-- 2013-05-20 Mon 17:46 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Emacs and interactive makefiles"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-28T14:14+0800"/>
 <meta name="author" content="Bao Haojun"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
-<link rel="stylesheet" href="/css/default.css" type="text/css">
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -47,7 +43,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
+Copyright (C) 2012  Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -88,18 +84,25 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
 
-<div id="preamble">
+  <h1 id="blog-title">
+
+    包昊军的博客
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
 
 </div>
-
+</div>
+<div id='bhj_article'>
 <div id="content">
 <h1 class="title">Emacs and interactive makefiles</h1>
-
-<p>很多脚本语言都支持one-liner。有的还提供一个shell/ide，你在上面打一个表
+<p>
+很多脚本语言都支持one-liner。有的还提供一个shell/ide，你在上面打一个表
 达式，可以马上看到它的结果（比如matlab、python、scheme、tcl等，连C都有
 一个tcc可以把编译、执行简化为一步）。这样可以方便用户使用的同时，还可以
 方便用户的学习。一个interactive的编程环境是非常重要的。就像MS Word 吹嘘
@@ -109,193 +112,240 @@ for the JavaScript code in this tag.
 敲完代码到他/她看到结果（不论好坏），中间需要步骤越多、时间（编译、运行
 等）越长，他就越“苦逼”。这大概跟一个很有趣的研究有点共通之处：把一个人
 的听觉用仪器分离出去，再让他说话，但他发出的声音要在半分钟后才让他听见。
-据说参加实验的人很快就失去语言能力甚至出现精神失常&hellip; 又，巴甫洛夫的条
+据说参加实验的人很快就失去语言能力甚至出现精神失常&#x2026; 又，巴甫洛夫的条
 件反射也是同样的道理：每次你养的狗乖乖按你的指示做了，但你都在半个小时
 或者一堆莫名其妙的仪式后才奖给它一块肉吃；每次它不乖了，你都在半个小时
 之后才把它拎起来揍一顿。这样的狗想必不会觉得自己幸福吧！
 </p>
+
 <p>
 makefile就是这样一种让我觉得苦逼头疼没有交互式环境的脚本语言。每次我们
 想执行一个小表达式都涉及一堆重复的 boilerplate 步骤。比如下面一段稍微复
 杂的片段：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-makefile"><span class="org-variable-name">copy_db_dir</span> := $(<span class="org-variable-name">foreach</span> dbdir,$(<span class="org-variable-name">wildcard</span> $(<span class="org-variable-name">LOCAL_PATH</span>)/db/*),$(<span class="org-variable-name">if</span> $(<span class="org-variable-name">filter</span> $(<span class="org-variable-name">notdir</span> $(<span class="org-variable-name">dbdir</span>))%,$(<span class="org-variable-name">TARGET_DEVICE</span>)),$(<span class="org-variable-name">dbdir</span>)))
 </pre>
-
+</div>
 
 <p>
 在对makefile不是很熟的情况下，我们希望看到它的每个子表达式具体会被eval
 成什么值。这个可以用 <code>$(warning)</code> 来实现，但如果用一般的方法的话，具体
 的步骤大概是这样的：
 </p>
-<ol>
-<li>拷下某个感兴趣的子表达式，比如 <code>$(if $(filter $(notdir $(dbdir))%,$(TARGET_DEVICE)),$(dbdir))</code>
 
+<ol class="org-ol">
+<li>拷下某个感兴趣的子表达式，比如 <code>$(if $(filter $(notdir $(dbdir))%,$(TARGET_DEVICE)),$(dbdir))</code>
 </li>
+
 <li>写一个临时的makefile， <code>$HOME/makefile.tmp</code> ，内容如下：
 
-
-
+<div class="org-src-container">
 
 <pre class="src src-makefile">$(warning your expression evals to: $(<span class="org-variable-name">if</span> $(<span class="org-variable-name">filter</span> $(<span class="org-variable-name">notdir</span> $(<span class="org-variable-name">dbdir</span>))%,$(<span class="org-variable-name">TARGET_DEVICE</span>)),$(<span class="org-variable-name">dbdir</span>)))
 </pre>
-
-
+</div>
 </li>
+
 <li>但是上面的makefile还不会工作，因为用到的变量目前全部是空的，所以需要
-   给它们一个稍微有点意义的赋值，所以文件内容变成这样：
+给它们一个稍微有点意义的赋值，所以文件内容变成这样：
 
-
-
+<div class="org-src-container">
 
 <pre class="src src-makefile"><span class="org-variable-name">dbdir</span> := db/yellow
 <span class="org-variable-name">TARGET_DEVICE</span> := yellow_stone
 $(<span class="org-variable-name">warning</span> your expression evals to: $(<span class="org-variable-name">if</span> $(<span class="org-variable-name">filter</span> $(<span class="org-variable-name">notdir</span> $(<span class="org-variable-name">dbdir</span>))%,$(<span class="org-variable-name">TARGET_DEVICE</span>)),$(<span class="org-variable-name">dbdir</span>)))
 </pre>
-
-
+</div>
 </li>
+
 <li>这时候我们跑一下 <code>make -f ~/makefile.tmp</code> 输出如下：
 
-
-
-
-<pre class="example">/tmp/GmucSK3W:3: your expression evals to: db/yellow
+<pre class="example">
+/tmp/GmucSK3W:3: your expression evals to: db/yellow
 make: *** No targets.  Stop.
 </pre>
-
-
 </li>
+
 <li>上面的输出基本上验证了我们的子表达式是OK的，现在可以把临时文件删掉了。
 </li>
 </ol>
 
-
 <p>
 毫无疑问，这么多步骤是比较烦的，不利于我们的quick learn。尤其是考虑到那
-么多子表达式需要学习，中间又需要在emacs和shell之间切换来切换去&hellip;
+么多子表达式需要学习，中间又需要在emacs和shell之间切换来切换去&#x2026;
 </p>
+
 <p>
 好消息是，通过一个脚本 <code>makefile-printval</code> 的帮助，以上步骤我们可以用
 Emacs大大简化，从而让它基本达到“交互式”编程的标准：
 </p>
-<ol>
-<li>mark the sub-expression you want to evaluate
 
+<ol class="org-ol">
+<li>mark the sub-expression you want to evaluate
 </li>
+
 <li>shell-command-on-region（ <code>M-|</code> ） ：
 
-
-
+<div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-variable-name">dbdir</span>=db/yellow <span class="org-variable-name">TARGET_DEVICE</span>=yellow_stone makefile-printval
 </pre>
-
+</div>
 </li>
 </ol>
-
 
 <p>
 具体可见下图：
 </p>
-<p>
-<img src="../../../../images/post/interactive-make.png"  alt="../../../../images/post/interactive-make.png" />
-</p>
+
+
+<div class="figure">
+<p><img src="../../../../images/post/interactive-make.png"  alt="interactive-make.png"/></p>
+</div>
+
 <p>
 这个脚本的内容如下：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">/bin/bash</span>
 
 <span class="org-builtin">echo</span> <span class="org-string">"\$(</span><span class="org-sh-quoted-exec">warning</span><span class="org-string"> value is :$(</span><span class="org-sh-quoted-exec">cat</span><span class="org-string">):)"</span>|make -f -
 </pre>
-
-      <nav>
-        <ul class="pager">
-          <li class="prev_post">
-            <a href="../22/my-config-cn.html"> <!-- prev-url -->
-              <i class="icon-chevron-left">《</i>
-              My configuration system <!-- prev-title -->
-            </a>
-          </li>
-          <li class="next_post" style="text-align: right;">
-            <a href="../26/android-binder.html"> <!-- next-url -->
-              android的binder机制 <!-- next-title -->
-              <i class="icon-chevron-right">》</i>
-            </a>
-          </li>
-        </ul>
-      </nav>
 </div>
+<nav>
+  <ul class="pager">
+    <li class="prev_post">
+      <a href="../22/my-config-cn.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        My configuration system <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../26/android-binder.html"> <!-- next-url -->
+        android的binder机制 <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
+</div>
+<!-- {%html-mode%} -->
 
-<div id="postamble">
 
-<div id="disqus_container">
-    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-    <div style="margin-bottom:20px">
-        <script type="text/javascript" charset="utf-8">
-        (function(){
-          var _w = 86 , _h = 16;
-          var param = {
-            url:location.href,
-            type:'6',
-            count:'', /**是否显示分享数，1显示(可选)*/
-            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-            pic:'', /**分享图片的路径(可选)*/
-            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-            rnd:new Date().valueOf()
-          }
-          var temp = [];
-          for( var p in param ){
-            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-          }
-          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-        })()
-        </script>
-    </div>
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
+
+
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='../22/my-config-cn.html'> My configuration system </a></li>
+<li><a href='../22/fun-design-pattern.html'> 在shell脚本里使用Abstract Factory的设计模式 </a></li>
+<li><a href='../11/reading-source-code-cn.html'> Emacs和它的朋友们——阅读源代码篇 </a></li>
+<li><a href='../../09/17/Android-Product-Makefiles.html'> Android-Product-Makefiles </a></li>
+<li><a href='../../05/02/pdf-for-kindle-touch.html'> pdf-for-kindle-touch </a></li>
+<li><a href='../../03/27/why-lisp-cn.html'> why-lisp-cn </a></li>
+<li><a href='../../02/26/extracting-ahd-cn.html'> extracting-ahd-cn </a></li>
+<li><a href='../../02/02/how-to-do-long-twitter-cn.html'> 自己动手做长微博（推特），内嵌图片的 </a></li>
+<li><a href='../../01/31/beagrep-cn.html'> beagrep，两秒钟grep两个G的代码 </a></li>
+<li><a href='../../../2011/12/28/org-jira.html'> org-jira </a></li>
+    </ul>
+
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
+<div id="postamble" class="status">
+<!-- {%html-mode%} -->
     <div id="disqus_thread"></div>
-</div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'baohaojun'; // required: replace example with your forum shortname
 
-<script src="/js/post.js" type="text/javascript"></script>
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
-<div id="about">
-    <div class="about-content">
+    <script src="/js/post.js" type="text/javascript"></script>
+
+    <div id="about">
+      <div class="about-content">
         <div class="clearfix">
-            <div class="about-left">
-                <h2>Contact</h2>
-                <div class="weibo-con">
-                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
-                </div>
+          <div class="about-left">
+            <h2>Contact</h2>
+            <div class="weibo-con">
+              <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
             </div>
-            <div class="about-left about-more">
-                <h2>Tags</h2>
-                                <a href="../../../../meta/tags/emacs.html" title="Emacs the editor">emacs</a><br/>
+          </div>
+          <div class="about-left about-more">
+            <h2>Tags</h2>
+                        <a href="../../../../meta/tags/emacs.html" title="Emacs the editor">emacs</a><br/>
             <a href="../../../../meta/tags/make.html" title="GNU Make">make</a><br/>
             <a href="../../../../meta/tags/programming.html" title="General programming">programming</a><br/>
             <a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
-            </div>
-            <div class="about-left about-more">
-                <h2>About</h2>
-                <p>
-                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
-                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
-                </p>
-            </div>
+          </div>
+          <div class="about-left about-more">
+            <h2>About</h2>
+            <p>
+              Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+              Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+            </p>
+          </div>
         </div>
 
         <div class="copyright right">
-            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
-        </div>
-    </div>
-</div>
+          <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div> <!-- copyright -->
+      </div>   <!-- about-content -->
+    </div> <!-- id="about" -->
 
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>

@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>给任意语言插上宏定义的翅膀</title>
+<!-- 2013-05-20 Mon 17:46 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="给任意语言插上宏定义的翅膀"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-28T14:14+0800"/>
 <meta name="author" content="Bao Haojun"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
-<link rel="stylesheet" href="/css/default.css" type="text/css">
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -47,7 +43,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
+Copyright (C) 2012  Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -88,67 +84,79 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
 
-<div id="preamble">
+  <h1 id="blog-title">
+
+    包昊军的博客
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
 
 </div>
-
+</div>
+<div id='bhj_article'>
 <div id="content">
 <h1 class="title">给任意语言插上宏定义的翅膀</h1>
-
-<p>宏，<a href="#en.wikipedia.org-wiki-Macro_-computer_science">英文wikipedia</a>，<a href="http://zh.wikipedia.org/wiki/宏">中文wikipedia</a>。
+<p>
+宏，<i>英文wikipedia</i>，<a href="http://zh.wikipedia.org/wiki/宏">中文wikipedia</a>。
 </p>
+
 <p>
 关于宏有多邪恶，我想用一个简单的问题来描述：echo hello world，这是shell脚本，还是C语言程序？
 </p>
+
 <p>
 如果是二选一的话，我想大多数人会认为这是shell脚本，而不可能是C语言。很
 可惜，答错，这可以是C语言。你需要把宏加入到你的考虑之中。
 </p>
+
 <p>
 实际上，C/C++语言是两种语言的叠加，首先是它的预处理器（preprocessor）处
 理的宏定义语言，然后是编译器编译的C语言。
 </p>
+
 <p>
 想明白了这点之后，我对阅读源代码有了一个全新的看法：永远不要希望有一个
 源代码阅读工具能帮你找到任意一个C/C++函数、变量等的定义位置。宏定义的存
 在，会让一切这样的努力化为泡影。
 </p>
+
 <p>
 把echo hello world弄成一段合法的C语言程序的命令是这样的（我正在考虑为此
 申请专利）：
 </p>
 
-
-
-<pre class="example">echo echo hello world &gt; 1.c
+<pre class="example">
+echo echo hello world &gt; 1.c
 gcc -D echo='int main() {printf("hello world?\n");}' -D hello= -D world= 1.c
 ./a.out
 </pre>
 
-
 <p>
 你会看见最后打出来的是 <code>hello world?</code> 。
 </p>
+
 <p>
 然而这决不是我们对宏因噎废食的理由。宏的存在是有它的道理的，对于那些没
 有内置宏的编程语言，我们不应该歧视它们，而是帮助它们解决这个问题。
 </p>
+
 <p>
 我想出来的这个代码生成机制，就能很大程度上给那些没有宏的语言，插上宏的
 翅膀。
 </p>
+
 <p>
 以我的 <a href="http://github.com/baohaojun/system-config/raw/master/bin/bbs-robot">bbs-robot</a> 脚本为例，首先，在tcl模式下，我有一个名为codegen的
 yasnippet，把它展开之后的结果是这样的：
 </p>
 
-
-
-<pre class="example"># start code-generator "^\\s *#"
+<pre class="example">
+# start code-generator "^\\s *#"
 
 # end code-generator
 # start generated code
@@ -156,14 +164,12 @@ yasnippet，把它展开之后的结果是这样的：
 # end generated code
 </pre>
 
-
 <p>
 然后我会把我的伪宏加进去，变成这样：
 </p>
 
-
-
-<pre class="example"># start code-generator "^\\s *#"
+<pre class="example">
+# start code-generator "^\\s *#"
 # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
 # end code-generator
 # start generated code
@@ -171,14 +177,13 @@ yasnippet，把它展开之后的结果是这样的：
 # end generated code
 </pre>
 
-
 <p>
 接下来，我运行一下下面的这个emacs-lisp命令（我给它绑定到 <b>M-s g</b> 了，s
 g代表source generation），一长串的定义就会自动生成到指定的位置，最后变
 成：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-tcl"><span class="org-comment-delimiter"># </span><span class="org-comment">start code-generator "^\\s *#"</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'</span>
@@ -190,39 +195,38 @@ g代表source generation），一长串的定义就会自动生成到指定的�
 <span class="org-builtin">set</span> <span class="org-variable-name">CTRLZ</span> \032
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">end generated code</span>
-
 </pre>
-
+</div>
 
 <p>
 最后解释一下这个emacs-lisp命令。最关键的是code-transform，它在上面的例
 子中是 "<code>^\\s *#</code>" ，这是一个正则表达式，其作用是把
 </p>
 
-
-
-<pre class="example"># perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+<pre class="example">
+# perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
 </pre>
-
 
 <p>
 这段注释变成可以执行的代码：把前面的#字符给去掉。
 </p>
+
 <p>
 最后还会把代码给缩进。
 </p>
+
 <p>
 请问这样做有什么好处？有什么坏处？你感受一下:-)
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">bhj-do-code-generation</span> ()
   (interactive)
   (<span class="org-keyword">let</span> (start-of-code end-of-code code-text start-of-text end-of-text code-transform)
     (search-backward <span class="org-string">"start code-generator"</span>)
     (forward-char (length <span class="org-string">"start code-generator"</span>))
-    (<span class="org-keyword">if</span> (looking-at <span class="org-string">"\\s *</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(</span></span><span class="org-string">\"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">(</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">"</span>)
+    (<span class="org-keyword">if</span> (looking-at <span class="org-string">"\\s *</span><span class="org-regexp-grouping-backslash"><span class="org-string">\\</span></span><span class="org-regexp-grouping-construct"><span class="org-string">(</span></span><span class="org-string">\"</span><span class="org-regexp-grouping-backslash"><span class="org-string">\\</span></span><span class="org-regexp-grouping-construct"><span class="org-string">|</span></span><span class="org-string">(</span><span class="org-regexp-grouping-backslash"><span class="org-string">\\</span></span><span class="org-regexp-grouping-construct"><span class="org-string">)</span></span><span class="org-string">"</span>)
         (setq code-transform 
              (read
               (buffer-substring-no-properties (point) (line-end-position)))))
@@ -252,87 +256,135 @@ g代表source generation），一长串的定义就会自动生成到指定的�
     (indent-region (min (point) (mark))
                    (max (point) (mark)))))
 </pre>
-
-      <nav>
-        <ul class="pager">
-          <li class="prev_post">
-            <a href="blog/2013/03/08/crossdict-readme-cn.html"> <!-- prev-url -->
-              <i class="icon-chevron-left">《</i>
-              CrossDict: 交叉索引字典 <!-- prev-title -->
-            </a>
-          </li>
-          <li class="next_post" style="text-align: right;">
-            <a href="blog/2013/03/11/crossdict-gcide-help.html"> <!-- next-url -->
-              Installing Dictionary Data Separately <!-- next-title -->
-              <i class="icon-chevron-right">》</i>
-            </a>
-          </li>
-        </ul>
-      </nav>
 </div>
+<nav>
+  <ul class="pager">
+    <li class="prev_post">
+      <a href="blog/2013/03/08/crossdict-readme-cn.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        CrossDict: 交叉索引字典 <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="blog/2013/03/11/crossdict-gcide-help.html"> <!-- next-url -->
+        Installing Dictionary Data Separately <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
+</div>
+<!-- {%html-mode%} -->
 
-<div id="postamble">
 
-<div id="disqus_container">
-    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-    <div style="margin-bottom:20px">
-        <script type="text/javascript" charset="utf-8">
-        (function(){
-          var _w = 86 , _h = 16;
-          var param = {
-            url:location.href,
-            type:'6',
-            count:'', /**是否显示分享数，1显示(可选)*/
-            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-            pic:'', /**分享图片的路径(可选)*/
-            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-            rnd:new Date().valueOf()
-          }
-          var temp = [];
-          for( var p in param ){
-            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-          }
-          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-        })()
-        </script>
-    </div>
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
+
+
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='blog/2013/03/08/crossdict-readme-cn.html'> CrossDict: 交叉索引字典 </a></li>
+<li><a href='blog/2013/03/02/the-ulti-dict.html'> 又一个字典软件，我的！ </a></li>
+<li><a href='blog/2013/03/02/donate.html'> Donate for my free software effort </a></li>
+<li><a href='blog/2013/02/25/index-cn.html'> 我在Github上的个人博客 </a></li>
+<li><a href='blog/2013/02/12/wasted.html'> wasted </a></li>
+<li><a href='blog/2013/02/12/note.html'> note </a></li>
+<li><a href='blog/2013/02/12/my-programmer-dvorak.html'> Switched to USA Pragrammer Dvorak Keyboard </a></li>
+<li><a href='blog/2013/02/12/html2mht.pl-and-dir2html.pl-.html'> html2mht.pl and dir2html.pl </a></li>
+<li><a href='blog/2013/02/12/dvp-win32.html'> Using dvp under Win32 </a></li>
+<li><a href='blog/2013/02/12/combining-cli-and-gui.html'> Using CLI and GUI Together Seemlessly </a></li>
+    </ul>
+
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
+<div id="postamble" class="status">
+<!-- {%html-mode%} -->
     <div id="disqus_thread"></div>
-</div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'baohaojun'; // required: replace example with your forum shortname
 
-<script src="/js/post.js" type="text/javascript"></script>
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'blog/2013/03/09' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
-<div id="about">
-    <div class="about-content">
+    <script src="/js/post.js" type="text/javascript"></script>
+
+    <div id="about">
+      <div class="about-content">
         <div class="clearfix">
-            <div class="about-left">
-                <h2>Contact</h2>
-                <div class="weibo-con">
-                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
-                </div>
+          <div class="about-left">
+            <h2>Contact</h2>
+            <div class="weibo-con">
+              <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
             </div>
-            <div class="about-left about-more">
-                <h2>Tags</h2>
-                                <a href="meta/tags/macro.html" title="macro in programming languages">macro</a><br/>
+          </div>
+          <div class="about-left about-more">
+            <h2>Tags</h2>
+                        <a href="meta/tags/macro.html" title="macro in programming languages">macro</a><br/>
             <a href="meta/tags/programming.html" title="General programming">programming</a><br/>
             <a href="meta/Archive.html" title="All blogs">archive</a><br/>
-            </div>
-            <div class="about-left about-more">
-                <h2>About</h2>
-                <p>
-                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
-                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
-                </p>
-            </div>
+          </div>
+          <div class="about-left about-more">
+            <h2>About</h2>
+            <p>
+              Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+              Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+            </p>
+          </div>
         </div>
 
         <div class="copyright right">
-            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
-        </div>
-    </div>
-</div>
+          <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div> <!-- copyright -->
+      </div>   <!-- about-content -->
+    </div> <!-- id="about" -->
 
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>

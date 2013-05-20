@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>在shell脚本里使用Abstract Factory的设计模式</title>
+<!-- 2013-05-20 Mon 17:46 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="在shell脚本里使用Abstract Factory的设计模式"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-28T14:14+0800"/>
 <meta name="author" content="Bao Haojun"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
-<link rel="stylesheet" href="/css/default.css" type="text/css">
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -47,7 +43,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
+Copyright (C) 2012  Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -88,28 +84,38 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
 
-<div id="preamble">
+  <h1 id="blog-title">
+
+    包昊军的博客
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
 
 </div>
-
+</div>
+<div id='bhj_article'>
 <div id="content">
 <h1 class="title">在shell脚本里使用Abstract Factory的设计模式</h1>
-
-<p>Abstract Factory的定义见 <a href="http://en.wikipedia.org/wiki/Abstract_factory_pattern">wikipedia</a> 。
+<p>
+Abstract Factory的定义见 <a href="http://en.wikipedia.org/wiki/Abstract_factory_pattern">wikipedia</a> 。
 </p>
+
 <p>
 在不同的平台下，我需要分别定义一组函数/命令， 比如 <code>of</code> ，其作用是在命
 令行下用图形程序打开参数指定的文件或URL（ <code>of</code> 是 “open file”之意）；又
 比如 <code>oc</code> ，“open container”，其作用是用文件管理器打开参数指定的文件所
 在文件夹并选定该文件。
 </p>
+
 <p>
 这个需求非常符合 Abstract Factory 设计模式的使用场景，请听我慢慢道来。
 </p>
+
 <p>
 比如，重复上面的叙述，虚拟的 <code>of</code> 的定义为：在命令行下用图形程序打开参
 数指定的文件或URL。具体的 <code>of</code> 的定义则是（以linux为例）：在linux命令行
@@ -117,6 +123,7 @@ for the JavaScript code in this tag.
 Windows平台下应该用notepad.exe打开该文本文件（取决于注册表中的文件关
 联），而在Linux平台下应该用相应的例如gedit程序来打开此文件。）
 </p>
+
 <p>
 （ <code>of</code> 命令最早是受到了 cygwin 下 cygstart 命令的启发。而 cygstart 其
 实是受 windows 下 cmd.exe 自带的 start 命令启发；并且 Linux 底下也有类
@@ -124,12 +131,14 @@ Windows平台下应该用notepad.exe打开该文本文件（取决于注册表�
 同的命令实在是一件让人痛苦的事情，就像面象对象编程用虚函数解决掉了
 giant “switch” 语句的问题，我们也可以用抽象工厂模式来抹除这种痛苦。）
 </p>
+
 <p>
 我需要一个工厂虚类，通过它我可以创建虚拟的 <code>of/oc</code> 命令。在linux下，有
 一个具体的工厂，通过它我可以创建具体的linux版本的 <code>of/oc</code> 命令；在
 windows下，也有一个具体的工厂，通过它我可以创建具体的windows版本的
 <code>of/oc</code> 命令。
 </p>
+
 <p>
 如果一定要把类、对象的比喻进行到底的话，这里所说的工厂虚类我们可以把它
 等同于文件的概念。则相应的linux工厂实类的定义就是“一个实现了linux版 <code>of</code>
@@ -138,42 +147,46 @@ windows下，也有一个具体的工厂，通过它我可以创建具体的wind
 统中的文件（而不再是口头说说的、概念上的文件）： <code>$HOME/.bashrc-linux</code>
 （注意我们只能创建一个这样的对象，如果你自己把这个对象拷贝一份到
 <code>$HOME/.bashrc-linux.bak</code> 的话也是可以的——但系统不认，请问这叫什么
-design pattern？）。接下来linux版 <code>of</code> 实类的定义类似于 <code>function of() { ... }</code> ，要为它创建一个对象的话，我们需要把这段定义交给bash命令行执行
+design pattern？）。接下来linux版 <code>of</code> 实类的定义类似于 <code>function of()
+{ &#x2026; }</code> ，要为它创建一个对象的话，我们需要把这段定义交给bash命令行执行
 一下，见下图：
 </p>
-<p>
-<img src="images/post/create-of.png"  alt="../../../../images/post/create-of.png" />
-</p>
+
+
+<div class="figure">
+<p><img src="images/post/create-of.png"  alt="create-of.png"/></p>
+</div>
+
 <p>
 在 <code>.bashrc-linux</code> 这个工厂里，我们这样定义linux版的 <code>of</code> ：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">of</span>() {
     gnome-open <span class="org-string">"$@"</span> &gt; /dev/null 2&gt;&amp;1
 }
 </pre>
-
+</div>
 
 <p>
 而在 <code>.bashrc-windows</code> 这个工厂里，我们这样定义windows版的 <code>of</code> ：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">of</span>() {
      cygstart <span class="org-string">"$@"</span> &gt; /dev/null 2&gt;&amp;1
 }
 </pre>
-
+</div>
 
 <p>
 抽象工厂模式里一般在程序刚开始的时候决定使用哪个具体的工厂，所以在我的
 .bashrc 里：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">if </span><span class="org-builtin">test</span> <span class="org-sh-quoted-exec">`uname`</span> = Linux; <span class="org-keyword">then</span>
     <span class="org-variable-name">factory</span>=~/.bashrc-linux
@@ -181,103 +194,153 @@ design pattern？）。接下来linux版 <code>of</code> 实类的定义类似�
     <span class="org-variable-name">factory</span>=~/.bashrc-windows
 <span class="org-keyword">fi</span>
 </pre>
-
+</div>
 
 <p>
-最后，我们让工厂开工，一次性制造出我们想要的 <code>of/oc</code> 以及其他 <b>概念上平 台无关，实现上平台相关，故曰之抽象</b> 的 <b>一系列，故曰之工厂</b> 的命令：
+最后，我们让工厂开工，一次性制造出我们想要的 <code>of/oc</code> 以及其他 <b>概念上平
+台无关，实现上平台相关，故曰之抽象</b> 的 <b>一系列，故曰之工厂</b> 的命令：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">Start</span>() {
     <span class="org-builtin">source</span> <span class="org-string">"$2"</span>
 }
 Start the <span class="org-string">"$factory"</span> and claim deep understanding about Abstract Factory design pattern<span class="org-string">\!</span> No kidding<span class="org-string">\!</span>
 </pre>
-
+</div>
 
 <p>
 这就是我对抽象工厂模式的理解，您觉得呢？
-      <nav>
-        <ul class="pager">
-          <li class="prev_post">
-            <a href="blog/2012/10/11/reading-source-code-cn.html"> <!-- prev-url -->
-              <i class="icon-chevron-left">《</i>
-              Emacs和它的朋友们——阅读源代码篇 <!-- prev-title -->
-            </a>
-          </li>
-          <li class="next_post" style="text-align: right;">
-            <a href="blog/2012/10/22/my-config-cn.html"> <!-- next-url -->
-              My configuration system <!-- next-title -->
-              <i class="icon-chevron-right">》</i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-</p></div>
-
-<div id="postamble">
-
-<div id="disqus_container">
-    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-    <div style="margin-bottom:20px">
-        <script type="text/javascript" charset="utf-8">
-        (function(){
-          var _w = 86 , _h = 16;
-          var param = {
-            url:location.href,
-            type:'6',
-            count:'', /**是否显示分享数，1显示(可选)*/
-            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-            pic:'', /**分享图片的路径(可选)*/
-            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-            rnd:new Date().valueOf()
-          }
-          var temp = [];
-          for( var p in param ){
-            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-          }
-          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-        })()
-        </script>
-    </div>
-    <div id="disqus_thread"></div>
+</p>
+<nav>
+  <ul class="pager">
+    <li class="prev_post">
+      <a href="blog/2012/10/11/reading-source-code-cn.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        Emacs和它的朋友们——阅读源代码篇 <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="blog/2012/10/22/my-config-cn.html"> <!-- next-url -->
+        My configuration system <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
+<!-- {%html-mode%} -->
 
-<script src="/js/post.js" type="text/javascript"></script>
 
-<div id="about">
-    <div class="about-content">
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
+
+
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='blog/2012/10/11/reading-source-code-cn.html'> Emacs和它的朋友们——阅读源代码篇 </a></li>
+<li><a href='blog/2012/09/17/Android-Product-Makefiles.html'> Android-Product-Makefiles </a></li>
+<li><a href='blog/2012/05/02/pdf-for-kindle-touch.html'> pdf-for-kindle-touch </a></li>
+<li><a href='blog/2012/03/27/why-lisp-cn.html'> why-lisp-cn </a></li>
+<li><a href='blog/2012/02/26/extracting-ahd-cn.html'> extracting-ahd-cn </a></li>
+<li><a href='blog/2012/02/02/how-to-do-long-twitter-cn.html'> 自己动手做长微博（推特），内嵌图片的 </a></li>
+<li><a href='blog/2012/01/31/beagrep-cn.html'> beagrep，两秒钟grep两个G的代码 </a></li>
+<li><a href='blog/2011/12/28/org-jira.html'> org-jira </a></li>
+<li><a href='blog/2011/12/23/index.html'> My Page on Github </a></li>
+<li><a href='blog/2011/12/23/beagrep.html'> beagrep, grep 2G source code in 2 seconds </a></li>
+    </ul>
+
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
+<div id="postamble" class="status">
+<!-- {%html-mode%} -->
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'baohaojun'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'blog/2012/10/22' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    <script src="/js/post.js" type="text/javascript"></script>
+
+    <div id="about">
+      <div class="about-content">
         <div class="clearfix">
-            <div class="about-left">
-                <h2>Contact</h2>
-                <div class="weibo-con">
-                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
-                </div>
+          <div class="about-left">
+            <h2>Contact</h2>
+            <div class="weibo-con">
+              <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
             </div>
-            <div class="about-left about-more">
-                <h2>Tags</h2>
-                                <a href="meta/tags/pattern.html" title="Design pattern">pattern</a><br/>
+          </div>
+          <div class="about-left about-more">
+            <h2>Tags</h2>
+                        <a href="meta/tags/pattern.html" title="Design pattern">pattern</a><br/>
             <a href="meta/tags/bash.html" title="Boarne Again Shell">bash</a><br/>
             <a href="meta/Archive.html" title="All blogs">archive</a><br/>
-            </div>
-            <div class="about-left about-more">
-                <h2>About</h2>
-                <p>
-                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
-                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
-                </p>
-            </div>
+          </div>
+          <div class="about-left about-more">
+            <h2>About</h2>
+            <p>
+              Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+              Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+            </p>
+          </div>
         </div>
 
         <div class="copyright right">
-            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
-        </div>
-    </div>
-</div>
+          <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div> <!-- copyright -->
+      </div>   <!-- about-content -->
+    </div> <!-- id="about" -->
 
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>

@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>用ctags索引Android资源定义的.xml和.png文件</title>
+<!-- 2013-05-20 Mon 17:47 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="用ctags索引Android资源定义的.xml和.png文件"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-28T14:14+0800"/>
 <meta name="author" content="Bao Haojun"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
-<link rel="stylesheet" href="/css/default.css" type="text/css">
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -47,7 +43,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
+Copyright (C) 2012  Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -88,53 +84,59 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
 
-<div id="preamble">
+  <h1 id="blog-title">
+
+    包昊军的博客
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
 
 </div>
-
+</div>
+<div id='bhj_article'>
 <div id="content">
 <h1 class="title">用ctags索引Android资源定义的.xml和.png文件</h1>
-
-<p>看着Android的那一堆资源定义文件，真是头疼啊，只能一点一点的grep，有点不
+<p>
+看着Android的那一堆资源定义文件，真是头疼啊，只能一点一点的grep，有点不
 便呢。
 </p>
+
 <p>
 今日突发奇想，能不能把它当成一种编程语言，用编程语言索引之王——
 ctags-exuberant来处理它呢？试试看！
 </p>
+
 <p>
 先打开man手册看一眼？不用了，我以前搞过linux kernel kconfig脚本的ctags
 处理，这回打开 <code>$HOME/.ctags</code> 复习一下先：
 </p>
 
-
-
-<pre class="example">--langdef=kconfig
+<pre class="example">
+--langdef=kconfig
 --langmap=kconfig:(Kconfig)
 --regex-kconfig=/^(menu)?config[ \t]*([a-zA-Z0-9_]+)/CONFIG_\2/d,definition/
 </pre>
-
 
 <p>
 照葫芦画瓢，所以我们的layout、strings等xml可以这样写它们的语言定义之正则表达式：
 </p>
 
-
-
-<pre class="example">--langdef=androidxml
+<pre class="example">
+--langdef=androidxml
 --langmap=androidxml:.xml
 --regex-androidxml=/android:id="@\+id\/([^"]*)"/\1/d,id/
 --regex-androidxml=/name[ \t]*=[ \t]*"([^"]*)"/\1/d,resource/
 </pre>
 
-
 <p>
-试了一下，嗯，索引之王ctags-exuberant，果然是，行！科科科&hellip;
+试了一下，嗯，索引之王ctags-exuberant，果然是，行！科科科&#x2026;
 </p>
+
 <p>
 接下来，要对.png文件进行索引！什麻？你问有没有听错？.png文件不是图片吗，
 怎么可能把它当成编程语言文件进行索引呢？是这样的，.png图片文件是一种资
@@ -142,7 +144,7 @@ ctags-exuberant来处理它呢？试试看！
 你索引这些R.java的话，就真的是“索”然无味啊，找到一堆id，根本不明白它们哪个是哪个：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span class="org-keyword">public</span> <span class="org-keyword">static</span> <span class="org-keyword">final</span> <span class="org-type">int</span> <span class="org-variable-name">app_name</span>=0x7f050000;
 <span class="org-keyword">public</span> <span class="org-keyword">static</span> <span class="org-keyword">final</span> <span class="org-type">int</span> <span class="org-variable-name">eglconfig_prompt</span>=0x7f050001;
@@ -150,20 +152,24 @@ ctags-exuberant来处理它呢？试试看！
 <span class="org-keyword">public</span> <span class="org-keyword">static</span> <span class="org-keyword">final</span> <span class="org-type">int</span> <span class="org-variable-name">logging_prompt</span>=0x7f050003;
 <span class="org-keyword">public</span> <span class="org-keyword">static</span> <span class="org-keyword">final</span> <span class="org-type">int</span> <span class="org-variable-name">logging_text</span>=0x7f050004;
 </pre>
-
+</div>
 
 <p>
 BUT！人生最厉害就是这个BUT！png资源对应的id名字就是该png文件名去掉.png
 扩展名而已啊！（请问这是什么编程模式？真的是，行！）
 </p>
+
 <p>
 但这个功能没法简单的hack ctags-exuberant来搞定了，但是因为我是通过
 gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-example，
 结果见图：
 </p>
-<p>
-<img src="images/post/grep-png.png"  alt="../../../../images/post/grep-png.png" />
-</p>
+
+
+<div class="figure">
+<p><img src="images/post/grep-png.png"  alt="grep-png.png"/></p>
+</div>
+
 <p>
 尤其爽的是，在Emacs底下，“编辑”.png文件的话，会把它以图片方式打开，而不
 是一堆乱码。这样才够直观嘛！另外，很多layout下的.xml文件名也会被当作一
@@ -171,12 +177,12 @@ gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-exa
 <a href="blog/2012/10/22/my-config-cn.html">我的配置系统</a> ）：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-diff"><span class="org-diff-context">diff --git a/gcode/global/plugin-example/exuberant-ctags.c b/gcode/global/plugin-example/exuberant-ctags.c</span>
 <span class="org-diff-context">index b7ea5dd..09048d0 100644</span>
-<span class="org-diff-header">--- </span><span class="org-diff-header"><span class="org-diff-file-header">a/gcode/global/plugin-example/exuberant-ctags.c</span></span>
-<span class="org-diff-header">+++ </span><span class="org-diff-header"><span class="org-diff-file-header">b/gcode/global/plugin-example/exuberant-ctags.c</span></span>
+<span class="org-diff-header">--- </span><span class="org-diff-file-header"><span class="org-diff-header">a/gcode/global/plugin-example/exuberant-ctags.c</span></span>
+<span class="org-diff-header">+++ </span><span class="org-diff-file-header"><span class="org-diff-header">b/gcode/global/plugin-example/exuberant-ctags.c</span></span>
 <span class="org-diff-hunk-header">@@ -249,16 +249,42 @@</span><span class="org-diff-function"> put_line(char *ctags_x, const struct parser_param *param)</span>
 <span class="org-diff-context">        param-&gt;put(PARSER_DEF, tagname, lineno, param-&gt;file, p, param-&gt;arg);</span>
 <span class="org-diff-context"> }</span>
@@ -221,98 +227,146 @@ gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-exa
 <span class="org-diff-context">        fputs(param-&gt;file, op);</span>
 <span class="org-diff-context">        putc('\n', op);</span>
 </pre>
-
+</div>
 
 <p>
 事实上，我还想把Android的颜色资源id真的用它所代表的颜色画出来呢。下次吧！
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml"><span class="org-nxml-tag-delimiter">&lt;</span><span class="org-nxml-element-local-name">color</span> <span class="org-nxml-attribute-local-name">name</span>=<span class="org-nxml-attribute-value-delimiter">"</span><span class="org-nxml-attribute-value">link_text_dark</span><span class="org-nxml-attribute-value-delimiter">"</span><span class="org-nxml-tag-delimiter">&gt;</span><span class="org-nxml-text">#5c5cff</span><span class="org-nxml-tag-delimiter">&lt;</span><span class="org-nxml-tag-slash">/</span><span class="org-nxml-element-local-name">color</span><span class="org-nxml-tag-delimiter">&gt;</span>
 </pre>
-
-
-      <nav>
-        <ul class="pager">
-          <li class="prev_post">
-            <a href="blog/2012/10/30/writing-source-code-cn.html"> <!-- prev-url -->
-              <i class="icon-chevron-left">《</i>
-              Emacs和它的朋友们--编写代码篇 <!-- prev-title -->
-            </a>
-          </li>
-          <li class="next_post" style="text-align: right;">
-            <a href="blog/2012/11/09/android-diary.html"> <!-- next-url -->
-              android-diary <!-- next-title -->
-              <i class="icon-chevron-right">》</i>
-            </a>
-          </li>
-        </ul>
-      </nav>
 </div>
 
-<div id="postamble">
+<nav>
+  <ul class="pager">
+    <li class="prev_post">
+      <a href="blog/2012/10/30/writing-source-code-cn.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        Emacs和它的朋友们--编写代码篇 <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="blog/2012/11/09/android-diary.html"> <!-- next-url -->
+        android-diary <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
+</div>
+<!-- {%html-mode%} -->
 
-<div id="disqus_container">
-    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-    <div style="margin-bottom:20px">
-        <script type="text/javascript" charset="utf-8">
-        (function(){
-          var _w = 86 , _h = 16;
-          var param = {
-            url:location.href,
-            type:'6',
-            count:'', /**是否显示分享数，1显示(可选)*/
-            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-            pic:'', /**分享图片的路径(可选)*/
-            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-            rnd:new Date().valueOf()
-          }
-          var temp = [];
-          for( var p in param ){
-            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-          }
-          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-        })()
-        </script>
-    </div>
+
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
+
+
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='blog/2012/10/30/writing-source-code-cn.html'> Emacs和它的朋友们--编写代码篇 </a></li>
+<li><a href='blog/2012/10/29/why-symlink-my-config.html'> 我的配置环境：为什么用symlink而不是cp </a></li>
+<li><a href='blog/2012/10/26/android-binder.html'> android的binder机制 </a></li>
+<li><a href='blog/2012/10/23/makefile-printval.html'> Emacs and interactive makefiles </a></li>
+<li><a href='blog/2012/10/22/my-config-cn.html'> My configuration system </a></li>
+<li><a href='blog/2012/10/22/fun-design-pattern.html'> 在shell脚本里使用Abstract Factory的设计模式 </a></li>
+<li><a href='blog/2012/10/11/reading-source-code-cn.html'> Emacs和它的朋友们——阅读源代码篇 </a></li>
+<li><a href='blog/2012/09/17/Android-Product-Makefiles.html'> Android-Product-Makefiles </a></li>
+<li><a href='blog/2012/05/02/pdf-for-kindle-touch.html'> pdf-for-kindle-touch </a></li>
+<li><a href='blog/2012/03/27/why-lisp-cn.html'> why-lisp-cn </a></li>
+    </ul>
+
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
+<div id="postamble" class="status">
+<!-- {%html-mode%} -->
     <div id="disqus_thread"></div>
-</div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'baohaojun'; // required: replace example with your forum shortname
 
-<script src="/js/post.js" type="text/javascript"></script>
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'blog/2012/10/31' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
-<div id="about">
-    <div class="about-content">
+    <script src="/js/post.js" type="text/javascript"></script>
+
+    <div id="about">
+      <div class="about-content">
         <div class="clearfix">
-            <div class="about-left">
-                <h2>Contact</h2>
-                <div class="weibo-con">
-                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
-                </div>
+          <div class="about-left">
+            <h2>Contact</h2>
+            <div class="weibo-con">
+              <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
             </div>
-            <div class="about-left about-more">
-                <h2>Tags</h2>
-                                <a href="meta/tags/code-reading.html" title="Reading source code">code-reading</a><br/>
+          </div>
+          <div class="about-left about-more">
+            <h2>Tags</h2>
+                        <a href="meta/tags/code-reading.html" title="Reading source code">code-reading</a><br/>
             <a href="meta/tags/ctags.html" title="ctags-exuberant, source code indexing tool">ctags</a><br/>
             <a href="meta/Archive.html" title="All blogs">archive</a><br/>
-            </div>
-            <div class="about-left about-more">
-                <h2>About</h2>
-                <p>
-                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
-                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
-                </p>
-            </div>
+          </div>
+          <div class="about-left about-more">
+            <h2>About</h2>
+            <p>
+              Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+              Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+            </p>
+          </div>
         </div>
 
         <div class="copyright right">
-            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
-        </div>
-    </div>
-</div>
+          <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div> <!-- copyright -->
+      </div>   <!-- about-content -->
+    </div> <!-- id="about" -->
 
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>

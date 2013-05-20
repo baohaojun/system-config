@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Stripping kernel/uboot source to 10% for code reading</title>
+<!-- 2013-05-20 Mon 17:46 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Stripping kernel/uboot source to 10% for code reading"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-09T16:03+0800"/>
 <meta name="author" content="Bao Haojun"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
-<link rel="stylesheet" href="/css/default.css" type="text/css">
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -47,7 +43,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
+Copyright (C) 2012  Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -88,23 +84,31 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
 
-<div id="preamble">
+  <h1 id="blog-title">
+
+    包昊军的博客
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
 
 </div>
-
+</div>
+<div id='bhj_article'>
 <div id="content">
 <h1 class="title">Stripping kernel/uboot source to 10% for code reading</h1>
-
-<p>When reading kernel or uboot source code, it's quite a headache that
+<p>
+When reading kernel or uboot source code, it's quite a headache that
 there are so many duplicate definitions for CPU specific
 functions. For e.g., when I was working on our company's pxa988 uboot
 code, there are only ~400 relevant files, but how many files total are
 there in the whole uboot project? More than 6000!
 </p>
+
 <p>
 Here I present a simple but reliable way to get rid of those not
 immediately needed files, it works both for kernel and uboot. It's
@@ -112,69 +116,66 @@ based on building and file timestamps: after a full build, ideally all
 relevant files will be visited, thus their <code>atime</code> updated, but those
 irrelevant files shouldn't.
 </p>
+
 <p>
 So here are the steps:
 </p>
-<ol>
+
+<ol class="org-ol">
 <li>touch all source code files (this step is mandatory, or else the
-   <code>atime</code> won't update correctly, I don't know why, but guess it's an
-   optimization).
+<code>atime</code> won't update correctly, I don't know why, but guess it's an
+optimization).
 
-
-
-
-<pre class="example">git ls-tree HEAD -r --name-only|xargs touch
+<pre class="example">
+git ls-tree HEAD -r --name-only|xargs touch
 </pre>
-
-
 </li>
+
 <li>touch a sentinel file: <code>touch mark</code>
-
 </li>
+
 <li>full build
-
 </li>
-<li>find all files newerly accessed than <i>mark</i>, like this: <code>find    . -anewer mark</code>. These are used (visited) by the build.
 
+<li>find all files newerly accessed than <i>mark</i>, like this: <code>find
+   . -anewer mark</code>. These are used (visited) by the build.
 </li>
+
 <li>Similarly find all files not accessed after <i>mark</i>, these are not
-   used by the build, so not so important for your code reading
-   task. Remove them.
-
+used by the build, so not so important for your code reading
+task. Remove them.
 </li>
+
 <li>After removing those non-build files, do a full build again (with
-   the same kernel/uboot config, of course) to verify it's still
-   building OK.
+the same kernel/uboot config, of course) to verify it's still
+building OK.
 </li>
 </ol>
-
 
 <p>
 But sadly, this idea doesn't work. In step 4, you will find that all
 source files has been visited (with a newer atime than <i>mark</i>), WTH?
 </p>
+
 <p>
 <code>strace(1)</code> comes to the rescue! 
 </p>
 
-
-
-<pre class="example">(
+<pre class="example">
+(
  cd uboot;
  strace -f time make -j8 helan_ff_config;
  strace -f time make -j8
 ) 2&gt;&amp;1 | tee ~/strace.log
 </pre>
 
-
 <p>
 In the <code>~/strace.log</code>, we can find who is visiting a file for a
 totally different CPU/driver:
 </p>
 
-
-
-<pre class="example">$ grep drivers/mmc/arm_pl180_mmci.c ~/strace.log
+<pre class="example">
+$ grep drivers/mmc/arm_pl180_mmci.c ~/strace.log
 [pid   684] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
 [pid   684] open("drivers/mmc/arm_pl180_mmci.c", O_RDONLY) = 6
 [pid   694] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
@@ -187,13 +188,13 @@ $ grep ' 684]' ~/strace.log|head -n 5
 [pid   684] mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x2b5c68ec2000
 </pre>
 
-
 <p>
-And you can see that it is a <code>git update-index ...</code> command, and it is
+And you can see that it is a <code>git update-index &#x2026;</code> command, and it is
 run in a script named <code>setlocalversion</code> (same script for both kernel
 and uboot). After hacking this script (do not run the git command),
 the idea works.
 </p>
+
 <p>
 See my scripts to do it in one command: <a href="http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-uboot">for uboot</a> and <a href="http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-kernel">for kernel</a>. But
 you need to adapt them if you want to use, of course. For those
@@ -202,93 +203,144 @@ commands not found anywhere else such as <a href="https://github.com/baohaojun/s
 subtraction: <code>echo $(arg1-arg2 'a b c d e' 'e b b')</code> =&gt; <code>a c d</code>), you
 can find them in the same github project as the above 2 scripts.
 </p>
+
 <p>
 Using this idea, the uboot code can be reduced from ~6000 files to
 ~400, and kernel from ~40k to ~4k (based on our small embedded
 system's kernel config, of course), that is, about 10 percent.
 </p>
+
 <p>
 Still, you may want to know and use <a href="../../../2011/12/23/beagrep.html">beagrep</a> which is great for reading
 huge code base (it can grep 2G Android source code in 0.23 second).
-      <nav>
-        <ul class="pager">
-          <li class="prev_post">
-            <a href="bbs-robot.html"> <!-- prev-url -->
-              <i class="icon-chevron-left">《</i>
-              站友福音：在水木bbs上用Emacs的键绑定 <!-- prev-title -->
-            </a>
-          </li>
-          <li class="next_post" style="text-align: right;">
-            <a href="../09/0-emacs-font-global-scaling.html"> <!-- next-url -->
-              全局放大Emacs字体 <!-- next-title -->
-              <i class="icon-chevron-right">》</i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-</p></div>
-
-<div id="postamble">
-
-<div id="disqus_container">
-    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-    <div style="margin-bottom:20px">
-        <script type="text/javascript" charset="utf-8">
-        (function(){
-          var _w = 86 , _h = 16;
-          var param = {
-            url:location.href,
-            type:'6',
-            count:'', /**是否显示分享数，1显示(可选)*/
-            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-            pic:'', /**分享图片的路径(可选)*/
-            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-            rnd:new Date().valueOf()
-          }
-          var temp = [];
-          for( var p in param ){
-            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-          }
-          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-        })()
-        </script>
-    </div>
-    <div id="disqus_thread"></div>
+</p>
+<nav>
+  <ul class="pager">
+    <li class="prev_post">
+      <a href="bbs-robot.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        站友福音：在水木bbs上用Emacs的键绑定 <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../09/0-emacs-font-global-scaling.html"> <!-- next-url -->
+        全局放大Emacs字体 <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
+<!-- {%html-mode%} -->
 
-<script src="/js/post.js" type="text/javascript"></script>
 
-<div id="about">
-    <div class="about-content">
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
+
+
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='bbs-robot.html'> 站友福音：在水木bbs上用Emacs的键绑定 </a></li>
+<li><a href='../03/z02abuse-macros-comments.html'> The code is not really code, the comment is </a></li>
+<li><a href='../03/z00fix-generate-tags.html'> only re-generate the tags that have changed </a></li>
+<li><a href='../03/my-org-github-blog.html'> My org-mode blog for github page </a></li>
+<li><a href='../03/beagrep-even-faster2.html'> beagrep performance tuning on MacbookAir+Linux </a></li>
+<li><a href='../02/beagrep-even-faster.html'> beagrep is made even faster </a></li>
+<li><a href='../../04/13/skeleton-complete.html'> skeleton-complete </a></li>
+<li><a href='../../04/12/hardened-bhj-style-macros.html'> 翅膀硬了 </a></li>
+<li><a href='../../03/31/when-java-meet-csharp.html'> 当Java遇到C# </a></li>
+<li><a href='../../03/17/cli+gui.html'> 当纯文本命令行碰到图形界面 </a></li>
+    </ul>
+
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
+<div id="postamble" class="status">
+<!-- {%html-mode%} -->
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'baohaojun'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    <script src="/js/post.js" type="text/javascript"></script>
+
+    <div id="about">
+      <div class="about-content">
         <div class="clearfix">
-            <div class="about-left">
-                <h2>Contact</h2>
-                <div class="weibo-con">
-                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
-                </div>
+          <div class="about-left">
+            <h2>Contact</h2>
+            <div class="weibo-con">
+              <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
             </div>
-            <div class="about-left about-more">
-                <h2>Tags</h2>
-                                <a href="../../../../meta/tags/code-reading.html" title="Reading source code">code-reading</a><br/>
+          </div>
+          <div class="about-left about-more">
+            <h2>Tags</h2>
+                        <a href="../../../../meta/tags/code-reading.html" title="Reading source code">code-reading</a><br/>
             <a href="../../../../meta/Archive.html" title="All blogs">archive</a><br/>
-            </div>
-            <div class="about-left about-more">
-                <h2>About</h2>
-                <p>
-                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
-                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
-                </p>
-            </div>
+          </div>
+          <div class="about-left about-more">
+            <h2>About</h2>
+            <p>
+              Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+              Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+            </p>
+          </div>
         </div>
 
         <div class="copyright right">
-            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
-        </div>
-    </div>
-</div>
+          <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div> <!-- copyright -->
+      </div>   <!-- about-content -->
+    </div> <!-- id="about" -->
 
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>

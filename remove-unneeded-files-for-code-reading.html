@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>在阅读源代码时删掉所有非必要文件的方法</title>
+<!-- 2013-05-20 Mon 17:46 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="在阅读源代码时删掉所有非必要文件的方法"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-28T14:14+0800"/>
 <meta name="author" content="Bao Haojun"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
-<link rel="stylesheet" href="/css/default.css" type="text/css">
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -47,7 +43,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
+Copyright (C) 2012  Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -88,71 +84,77 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
 
-<div id="preamble">
+  <h1 id="blog-title">
+
+    包昊军的博客
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
 
 </div>
-
+</div>
+<div id='bhj_article'>
 <div id="content">
 <h1 class="title">在阅读源代码时删掉所有非必要文件的方法</h1>
-
-<p>在阅读kernel、uboot等项目的源代码的时候，会发现有很大的噪音来自于一些不
+<p>
+在阅读kernel、uboot等项目的源代码的时候，会发现有很大的噪音来自于一些不
 相干的CPU的代码。比如我司的pxa1088，其uboot真正build时用到的文件只有不
 到400个，但整个uboot里共有多少文件呢？6000多个！
 </p>
+
 <p>
 怎么想个办法把所有不相干的文件都去掉呢？
 </p>
+
 <p>
 我有个主意：
 </p>
-<ol>
+
+<ol class="org-ol">
 <li>把所有源代码文件都touch一下：
 
-
-
-
-<pre class="example">git ls-tree HEAD -r |pn 4|xargs touch
+<pre class="example">
+git ls-tree HEAD -r |pn 4|xargs touch
 </pre>
-
-
 </li>
+
 <li>弄出一个标记文件， <code>touch mark</code>
-
 </li>
+
 <li>做个full build
-
 </li>
+
 <li>把所有比 <code>mark</code> 新的文件都选出来，这里的新不是改动，而是访问，也就是
-   在 <code>mark</code> 被创建之后被第3步的full build访问到过的文件。所以用
-   <code>find</code> 命令的话可以这样做： <code>find . -anewer mark</code> 
-
+在 <code>mark</code> 被创建之后被第3步的full build访问到过的文件。所以用
+<code>find</code> 命令的话可以这样做： <code>find . -anewer mark</code> 
 </li>
+
 <li>反选访问时间比 <code>mark</code> 旧的文件，这些是full build时没有用到的文件，可
-   以安全地把它们删除。
-
+以安全地把它们删除。
 </li>
+
 <li>删完之后再做一遍full build，验证一下没有删掉不该删的文件导致build失
-   败。
+败。
 </li>
 </ol>
-
 
 <p>
 但是很可惜，这个主意没法在uboot里用。在第4步的时候，你会发现所有源代码
 文件都被访问过了。这是怎么回事儿呢？
 </p>
+
 <p>
 用strace可以告诉我们答案。一边在做full build的时候用strace查看所有系统
 调用，加上 <code>-f</code> 参数表示跟踪所有fork出来的子进程的系统调用: 
 </p>
 
-
-
-<pre class="example">(cd $(lookup-file .repo/..);
+<pre class="example">
+(cd $(lookup-file .repo/..);
  . build/envsetup.sh;
  cd boot; 
  BUILD_UBOOT_OBM=true; 
@@ -164,25 +166,21 @@ for the JavaScript code in this tag.
 </pre>
 
 
-
 <p>
 另一边用 <code>watch</code> 命令监测某个不相干的文件什么时候其 <code>atime</code> 发生了变化：
 </p>
 
-
-
-<pre class="example">watch -n 1 stat drivers/mmc/arm_pl180_mmci.c
+<pre class="example">
+watch -n 1 stat drivers/mmc/arm_pl180_mmci.c
 </pre>
-
 
 <p>
 当发现其atime发生变化之后再去看 <code>~/1.txt</code> 里是哪个进程在搞鬼，然后从文
 件头开始查这个进程是怎样被exec的。
 </p>
 
-
-
-<pre class="example">$ grep drivers/mmc/arm_pl180_mmci.c ~/1.txt
+<pre class="example">
+$ grep drivers/mmc/arm_pl180_mmci.c ~/1.txt
 [pid   684] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
 [pid   684] open("drivers/mmc/arm_pl180_mmci.c", O_RDONLY) = 6
 [pid   694] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
@@ -195,15 +193,16 @@ $ grep ' 684]' ~/1.txt|head -n 5
 [pid   684] mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x2b5c68ec2000
 </pre>
 
-
 <p>
-最后发现是一个 <code>git update-index ...</code> 的命令调用。直接在uboot目录下
+最后发现是一个 <code>git update-index &#x2026;</code> 的命令调用。直接在uboot目录下
 <code>rgrep update-index</code> 发现是一个setlocalversion脚本，它会产生类似
 <code>-02978-ge39e5db</code> 这样的输出。
 </p>
+
 <p>
 把这个脚本修正之后，就可以达到我的目的了，你体会一下:-)
 </p>
+
 <p>
 <b>后记</b> 文件的atime有时候不知为何不会发生变化。我曾经看见一个文件，不管
 我怎么cat它，它的atime一直不变。而它所在的文件系统并没有使用noatime选项
@@ -211,20 +210,20 @@ $ grep ' 684]' ~/1.txt|head -n 5
 一样的，再cat一下，再stat就会发现其atime发生了变化。所以前面指出的第一
 步是必须的。有人能告诉我这是为什么呢吗？
 </p>
+
 <p>
 <b>后记2</b> 把所有atime没发生变化（没变得比标记文件mark新）的文件列出来的命
 令我现在想到最简洁的是这样的：
 </p>
 
-
-
-<pre class="example">find . -type f \( -anewer mark -prune -o -print \)
+<pre class="example">
+find . -type f \( -anewer mark -prune -o -print \)
 </pre>
-
 
 <p>
 当然，如果你想把这些文件删掉的话需要注意把.git底下的文件给过滤出去： <code>|grep -v \\.git</code> 。
 </p>
+
 
 <p>
 <b>后记3</b> kernel代码也可以用这个方法删除非build必须的文件。但它的
@@ -233,91 +232,142 @@ setlocalversion脚本是在scripts下（uboot里有很多东西是直接从kerne
 reading”的文件，但效果根据项目不同而异吧，不可能有kernel/uboot那么夸张
 了。
 </p>
+
 <p>
 <b>后记4</b> 针对uboot和kernel我分别写了两个脚本，一步完成这里面的所有操作，
 但一如既往地，你想要用这两个脚本的话，需要自己改改。
 </p>
+
 <p>
 分别在 <a href="http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-uboot">for uboot</a> 和 <a href="http://github.com/baohaojun/system-config/raw/master/bin/rm-non-build-files-kernel">for kernel</a> 。
-      <nav>
-        <ul class="pager">
-          <li class="prev_post">
-            <a href="blog/2013/01/09/coding-android-java-in-emacs-en.html"> <!-- prev-url -->
-              <i class="icon-chevron-left">《</i>
-              Doing Android Java Programming in Emacs <!-- prev-title -->
-            </a>
-          </li>
-          <li class="next_post" style="text-align: right;">
-            <a href="blog/2013/02/12/bash-complete-filenames.html"> <!-- next-url -->
-              bash-complete-filenames <!-- next-title -->
-              <i class="icon-chevron-right">》</i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-</p></div>
-
-<div id="postamble">
-
-<div id="disqus_container">
-    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-    <div style="margin-bottom:20px">
-        <script type="text/javascript" charset="utf-8">
-        (function(){
-          var _w = 86 , _h = 16;
-          var param = {
-            url:location.href,
-            type:'6',
-            count:'', /**是否显示分享数，1显示(可选)*/
-            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-            pic:'', /**分享图片的路径(可选)*/
-            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-            rnd:new Date().valueOf()
-          }
-          var temp = [];
-          for( var p in param ){
-            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-          }
-          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-        })()
-        </script>
-    </div>
-    <div id="disqus_thread"></div>
+</p>
+<nav>
+  <ul class="pager">
+    <li class="prev_post">
+      <a href="blog/2013/01/09/coding-android-java-in-emacs-en.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        Doing Android Java Programming in Emacs <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="blog/2013/02/12/bash-complete-filenames.html"> <!-- next-url -->
+        bash-complete-filenames <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
+<!-- {%html-mode%} -->
 
-<script src="/js/post.js" type="text/javascript"></script>
 
-<div id="about">
-    <div class="about-content">
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
+
+
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='blog/2013/01/09/coding-android-java-in-emacs-en.html'> Doing Android Java Programming in Emacs </a></li>
+<li><a href='blog/2012/12/27/stem-completion.html'> 提干式id补齐和re补齐 </a></li>
+<li><a href='blog/2012/12/27/coding-android-java-in-emacs.html'> 在Emacs下用java编程（Android相关） </a></li>
+<li><a href='blog/2012/12/19/perfect-emacs-chinese-font.html'> 狠狠地折腾了一把Emacs中文字体 </a></li>
+<li><a href='blog/2012/11/14/gdb-android.html'> How to use gdb (in Emacs) for android </a></li>
+<li><a href='blog/2012/11/09/android-diary.html'> android-diary </a></li>
+<li><a href='blog/2012/10/31/ctags-android-xml.html'> 用ctags索引Android资源定义的.xml和.png文件 </a></li>
+<li><a href='blog/2012/10/30/writing-source-code-cn.html'> Emacs和它的朋友们--编写代码篇 </a></li>
+<li><a href='blog/2012/10/29/why-symlink-my-config.html'> 我的配置环境：为什么用symlink而不是cp </a></li>
+<li><a href='blog/2012/10/26/android-binder.html'> android的binder机制 </a></li>
+    </ul>
+
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
+<div id="postamble" class="status">
+<!-- {%html-mode%} -->
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'baohaojun'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'blog/2013/02/02' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    <script src="/js/post.js" type="text/javascript"></script>
+
+    <div id="about">
+      <div class="about-content">
         <div class="clearfix">
-            <div class="about-left">
-                <h2>Contact</h2>
-                <div class="weibo-con">
-                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
-                </div>
+          <div class="about-left">
+            <h2>Contact</h2>
+            <div class="weibo-con">
+              <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
             </div>
-            <div class="about-left about-more">
-                <h2>Tags</h2>
-                                <a href="meta/tags/code-reading.html" title="Reading source code">code-reading</a><br/>
+          </div>
+          <div class="about-left about-more">
+            <h2>Tags</h2>
+                        <a href="meta/tags/code-reading.html" title="Reading source code">code-reading</a><br/>
             <a href="meta/Archive.html" title="All blogs">archive</a><br/>
-            </div>
-            <div class="about-left about-more">
-                <h2>About</h2>
-                <p>
-                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
-                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
-                </p>
-            </div>
+          </div>
+          <div class="about-left about-more">
+            <h2>About</h2>
+            <p>
+              Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+              Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+            </p>
+          </div>
         </div>
 
         <div class="copyright right">
-            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
-        </div>
-    </div>
-</div>
+          <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div> <!-- copyright -->
+      </div>   <!-- about-content -->
+    </div> <!-- id="about" -->
 
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>

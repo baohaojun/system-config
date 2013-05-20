@@ -9,7 +9,7 @@ MBA. See [[https://zignar.net/2012/12/20/linux-on-a-macbook-air/][Linux on a Mac
 
 With this change, bare grep is still not as fast as it is on Optiplex
 960: where Optiplex 960 takes only 3.5s, MacbookAir is taking 40
-seconds.
-
+seconds. And same with beagrep: where Optiplex 960 takes 0.23s to
+beagrep Android, MacbookAir is taking 0.38s.
 
 # bhj-tags: beagrep

@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>翅膀硬了</title>
+<!-- 2013-05-20 Mon 17:45 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="翅膀硬了"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-28T14:14+0800"/>
 <meta name="author" content="Bao Haojun"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
-<link rel="stylesheet" href="/css/default.css" type="text/css">
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -47,7 +43,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
+Copyright (C) 2012  Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -88,90 +84,81 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
 
-<div id="preamble">
+  <h1 id="blog-title">
+
+    包昊军的博客
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
 
 </div>
-
+</div>
+<div id='bhj_article'>
 <div id="content">
 <h1 class="title">翅膀硬了</h1>
-
-<p>这是 <a href="blog/2013/03/09/bhj-do-codegen.html">给任意语言插上宏定义的翅膀</a> 的续篇，这里你会看到此技巧的更“硬朗”的
+<p>
+这是 <a href="blog/2013/03/09/bhj-do-codegen.html">给任意语言插上宏定义的翅膀</a> 的续篇，这里你会看到此技巧的更“硬朗”的
 使用，所以这个题目（本来我想把前两个字也去掉，想想还是适可而止吧:-）。
 </p>
+
 <p>
 话说我最近开始用Mac OS了，一开始各种不适应。我有三个最基本的诉求，DVP的
 键盘布局、SDIM的中文输入法、Sawfish的系统快捷键，一个也不能少，可是却一
 个也没有！
 </p>
+
 <p>
 没有枪，没有炮，我们自己造！
 </p>
+
 <p>
 结果我现在应该已经是中国输入法第一人了吧，我的SDIM输入法，可以运行在四
 个平台上：Windows、Emacs、Linux、Mac OS。当然了，用户也只有我自己一个，
 哈哈哈！
 </p>
+
 <p>
 在搞定上述3个基本诉求的过程中，我无一例外的用上了军哥包·宏之奥义，下面
 就结合系统快捷键的开发，跟大家说说我对此奥义的新体悟吧！
 </p>
 
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 在Objc里使用嵌入式Python</a></li>
-<li><a href="#sec-2">2 问题来了</a>
-<ul>
-<li><a href="#sec-2-1">2.1 小蝌蚪的野望</a></li>
-<li><a href="#sec-2-2">2.2 小蝌蚪？侠客行？挪威的森林！</a></li>
-</ul>
-</li>
-<li><a href="#sec-3">3 呛，宏之奥义，出鞘！</a>
-<ul>
-<li><a href="#sec-3-1">3.1 <code>expand EOF | here-doc-to-cstr | append-line-number //</code></a></li>
-<li><a href="#sec-3-2">3.2 perl层的盗梦空间</a></li>
-</ul>
-</li>
-<li><a href="#sec-4">4 结论</a></li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> 在Objc里使用嵌入式Python</h2>
 <div class="outline-text-2" id="text-1">
-
-
 <p>
 要开发Mac OS下的系统快捷键程序，当然要学一点Objc了。这个其实不难学，教
 材耐心点看，很容易上手的；难的是要学多少才够用呢，我希望刚刚够用就好，
 而不是花太多时间，学会了一时半会儿用不上的，最后又忘了，那就浪费了。其
 次就是要尽量抛开Xcode，而是使用Emacs开发Objc的程序。
 </p>
+
 <p>
 所以稍微学了一点之后，就开始在网上搜系统快捷键的例子框架程序，很快在
 <a href="https://github.com/davedelong/DDHotKey">github</a> 上找到一个，接下来就是开始自己的定制。
 </p>
+
 <p>
 要灵活定制一个C/C++/Objc等偏底层语言写的编译运行的程序，最正统的做法莫
 过于用tcl/python/guile(scheme)/ruby等高级的、可嵌入的脚本语言了。我决定
 用python，因为这个语言我以前用过（虽然嵌入式python没用过，但随便找个例
 子依葫芦画瓢就可以了，重点还是框架之上的逻辑）。
 </p>
+
 <p>
 我决定用最简单的 <code>PyRun_SimpleString</code> ，配合宏之奥义，给我什么神器IDE都
 不换！
 </p>
+
 <p>
 真正要用到的定制逻辑是下面这段简单的代码：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-python"><span class="org-keyword">import</span> ini
 <span class="org-keyword">import</span> os
@@ -197,82 +184,73 @@ for the JavaScript code in this tag.
         <span class="org-variable-name">mod</span> |= keymasks[mask]
     ini.Parse(keycodes[<span class="org-string">"kvk_ansi_"</span> + m.group(1)], mod, m.group(3))
 </pre>
-
+</div>
 
 <p>
 在此对上面这段稍做解释（整个文件在 <a href="https://github.com/baohaojun/DDHotKey/raw/master/DDHotKeyAppDelegate.m">github</a> 上）。
 </p>
-<ol>
-<li><code>ini</code> 是用Objc写的一个python module，它只提供一个 <code>Parse()</code> 函数，但
-   其实真正的 <code>Parse</code> 工作是python脚本做的， <code>ini</code> 模块的 <code>Parse()</code> 只
-   是记录下结果（这个名字没有起好:-)）。
 
+<ol class="org-ol">
+<li><code>ini</code> 是用Objc写的一个python module，它只提供一个 <code>Parse()</code> 函数，但
+其实真正的 <code>Parse</code> 工作是python脚本做的， <code>ini</code> 模块的 <code>Parse()</code> 只
+是记录下结果（这个名字没有起好:-)）。
 </li>
+
 <li>设置脚本 <code>~/.mac-hotkey.rc</code> 的格式为：
 
-
-
-
-<pre class="example">t command open -a /Applications/Utilities/Terminal.app/
+<pre class="example">
+t command open -a /Applications/Utilities/Terminal.app/
 n command open -a /Applications/Firefox.app/
 m command open -a /Applications/Emacs.app/
 </pre>
 
+<p>
+第一个域是主键名，第二个域是modifier键名，之后的是要运行的程序。见代
+码中的 <code>(\S+)\s+(\S+)\s+(.*)</code> 这个正则表达式。
+</p>
 
-<p>   
-   第一个域是主键名，第二个域是modifier键名，之后的是要运行的程序。见代
-   码中的 <code>(\S+)\s+(\S+)\s+(.*)</code> 这个正则表达式。
-</p>
 <p>
-   所以第一行的意思是，当我按下 <code>command + t</code> 键时，给我切换到
-   Terminal 程序。 <code>open</code> 是 Mac OS 自己提供的命令，它有一个很好的特性
-   是如果当前没有相应的Terminal/Emacs程序在运行，则把该程序启动起来；如
-   果该程序已经在运行，则把它调到前台来。
+所以第一行的意思是，当我按下 <code>command + t</code> 键时，给我切换到
+Terminal 程序。 <code>open</code> 是 Mac OS 自己提供的命令，它有一个很好的特性
+是如果当前没有相应的Terminal/Emacs程序在运行，则把该程序启动起来；如
+果该程序已经在运行，则把它调到前台来。
 </p>
+
 <p>
-   当然了，我在python代码里已经硬编码了一个shift的modifier，所以你大可
-   不必皱眉，我不至于傻到把 <code>command + t</code> 这个 Mac OS 自带的新开一个
-   tab页的App常用热键给重定义了；我重定义的是相对不常用的
-   <code>command + shift + t</code> 。
+当然了，我在python代码里已经硬编码了一个shift的modifier，所以你大可
+不必皱眉，我不至于傻到把 <code>command + t</code> 这个 Mac OS 自带的新开一个
+tab页的App常用热键给重定义了；我重定义的是相对不常用的
+<code>command + shift + t</code> 。
 </p>
+
 <p>
-   （但是 <a href="http://github.com/baohaojun/system-config/raw/master/doc/keyremap4macbook-dvp.xml">这个keyremap4mac的private.xml</a> 文件会告诉你最终的完整的版本，
-   我把 <code>[(command h）(command t)]</code> 给重新定义到 <code>command + shift + t</code>
-   了，并且这个 <code>command h</code> 的定义类似于 Emacs 下的 <code>Ctrl q</code> 、 bash 下
-   的 <code>Ctrl v</code> 、C字符串里的反斜杠（请问这是什么design pattern？），如
-   果我想向应用发一个 <code>command h</code> 键，我需按两次 <code>command h</code> 。在这
-   个.xml文件里你还可以看到我是怎么实现DVP的键盘布局的，以及宏奥义的又
-   一使用场景。DVP的作者提供的Mac OS下的解决方案好像跟Firemacs有点兼容
-   性问题，这个需要确认；但我弃用它最关键的理由是，它无法像其在Windows
-   上的解决方案一样，轻松帮我解决中文输入法的DVP键盘布局问题）。
-</p></li>
+（但是 <a href="http://github.com/baohaojun/system-config/raw/master/doc/keyremap4macbook-dvp.xml">这个keyremap4mac的private.xml</a> 文件会告诉你最终的完整的版本，
+我把 <code>[(command h）(command t)]</code> 给重新定义到 <code>command + shift + t</code>
+了，并且这个 <code>command h</code> 的定义类似于 Emacs 下的 <code>Ctrl q</code> 、 bash 下
+的 <code>Ctrl v</code> 、C字符串里的反斜杠（请问这是什么design pattern？），如
+果我想向应用发一个 <code>command h</code> 键，我需按两次 <code>command h</code> 。在这
+个.xml文件里你还可以看到我是怎么实现DVP的键盘布局的，以及宏奥义的又
+一使用场景。DVP的作者提供的Mac OS下的解决方案好像跟Firemacs有点兼容
+性问题，这个需要确认；但我弃用它最关键的理由是，它无法像其在Windows
+上的解决方案一样，轻松帮我解决中文输入法的DVP键盘布局问题）。
+</p>
+</li>
 </ol>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-2" class="outline-2">
+<div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> 问题来了</h2>
 <div class="outline-text-2" id="text-2">
-
-
-
-</div>
-
-<div id="outline-container-2-1" class="outline-3">
+</div><div id="outline-container-sec-2-1" class="outline-3">
 <h3 id="sec-2-1"><span class="section-number-3">2.1</span> 小蝌蚪的野望</h3>
 <div class="outline-text-3" id="text-2-1">
-
-
 <p>
 上面那段代码看起来很简单嘛，你想必也是这样认为的吧！可是一旦要把它用
 <code>PyRun_SimpleString</code> 嵌入进去的话，我就傻眼了，要用到好多小蝌蚪一样的双
 引号和反斜杠！你看到的代码将是这样的：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-objc">PyRun_SimpleString(
                    <span class="org-string">"import ini\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">1</span>
@@ -287,7 +265,7 @@ m command open -a /Applications/Emacs.app/
                    ...
                    );
 </pre>
-
+</div>
 
 <p>
 怪不得后来在网上看到人说不推荐用 <code>PyRun_SimpleString</code> 呢！不解决这个双
@@ -296,14 +274,10 @@ m command open -a /Applications/Emacs.app/
 偿失啊！
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-2-2" class="outline-3">
+<div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2"><span class="section-number-3">2.2</span> 小蝌蚪？侠客行？挪威的森林！</h3>
 <div class="outline-text-3" id="text-2-2">
-
-
 <p>
 看到上面代码里的行号了吧？当你的宏展开代码报告出错、你迷失在了挪威的森
 林里的时候，你能用这些行号找到方向。你总不至于期望自己聪明到代码一把过
@@ -311,19 +285,15 @@ m command open -a /Applications/Emacs.app/
 </p>
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-3" class="outline-2">
+<div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> 呛，宏之奥义，出鞘！</h2>
 <div class="outline-text-2" id="text-3">
-
-
 <p>
 所以实际上我的代码是这样写的：
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-objc">PyRun_SimpleString(
                    <span class="org-comment-delimiter">/* </span><span class="org-comment">start code-generator </span>
@@ -387,34 +357,30 @@ m command open -a /Applications/Emacs.app/
 
                    <span class="org-comment-delimiter">// </span><span class="org-comment">end generated code</span>
                    )
-
 </pre>
-
+</div>
 
 <p>
 这里稍微解释一下几个关键点。
 </p>
-
 </div>
 
-<div id="outline-container-3-1" class="outline-3">
+<div id="outline-container-sec-3-1" class="outline-3">
 <h3 id="sec-3-1"><span class="section-number-3">3.1</span> <code>expand &lt;&lt;EOF | here-doc-to-cstr | append-line-number //</code></h3>
 <div class="outline-text-3" id="text-3-1">
-
-
-<ol>
+<ol class="org-ol">
 <li><code>expand</code> 把所有tab制表符替换成空格，我们要生成的是python代码，对缩进
-   要求最严格的了，最好别在这个事情上开玩笑。
-
+要求最严格的了，最好别在这个事情上开玩笑。
 </li>
+
 <li><code>here-doc-to-cstr</code>
 
-<p>   
-   一个很简单的perl程序，负责制造小蝌蚪、回车、缩进（根据第一行文本的缩
-   进量进行之后的缩进处理）。
+<p>
+一个很简单的perl程序，负责制造小蝌蚪、回车、缩进（根据第一行文本的缩
+进量进行之后的缩进处理）。
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-perl"><span class="org-comment-delimiter">#</span><span class="org-comment">!/usr/bin/env perl</span>
 
@@ -440,50 +406,44 @@ m command open -a /Applications/Emacs.app/
     printf <span class="org-string">'"%s\n"'</span> . <span class="org-string">"\n"</span>, $<span class="org-variable-name">_</span>;
 }
 </pre>
-
-
+</div>
 </li>
+
 <li><code>append-line-number //</code>
 
-<p>   
-   我在xcode下debug这些代码的时候，会在log里看到python报错，所以我马上
-   意识到应该给生成的代码加上行号， <code>//</code> 参数表示这些行号应该写成Objc的
-   注释里。
-</p>
 <p>
-   这也是一个很简单的perl程序：
+我在xcode下debug这些代码的时候，会在log里看到python报错，所以我马上
+意识到应该给生成的代码加上行号， <code>//</code> 参数表示这些行号应该写成Objc的
+注释里。
 </p>
 
+<p>
+这也是一个很简单的perl程序：
+</p>
 
+<div class="org-src-container">
 
 <pre class="src src-perl"><span class="org-comment-delimiter">#</span><span class="org-comment">!/usr/bin/env perl</span>
 
 <span class="org-keyword">while</span> (&lt;<span class="org-constant">STDIN</span>&gt;) {
     chomp;
-    <span class="org-keyword">if</span> (@<span class="org-underline"><span class="org-variable-name">ARGV</span></span>) {
-        printf <span class="org-string">"%s %s %d\n"</span>, $<span class="org-variable-name">_</span>, join(<span class="org-string">" "</span>, @<span class="org-underline"><span class="org-variable-name">ARGV</span></span>), $.;
+    <span class="org-keyword">if</span> (@<span class="org-variable-name"><span class="org-underline">ARGV</span></span>) {
+        printf <span class="org-string">"%s %s %d\n"</span>, $<span class="org-variable-name">_</span>, join(<span class="org-string">" "</span>, @<span class="org-variable-name"><span class="org-underline">ARGV</span></span>), $.;
     } <span class="org-keyword">else</span> {
         printf <span class="org-string">"%s %d\n"</span>, $<span class="org-variable-name">_</span>, $.;
     }
 }
 </pre>
-
+</div>
 </li>
 </ol>
-
-
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-3-2" class="outline-3">
+<div id="outline-container-sec-3-2" class="outline-3">
 <h3 id="sec-3-2"><span class="section-number-3">3.2</span> perl层的盗梦空间</h3>
 <div class="outline-text-3" id="text-3-2">
-
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-sh">$(<span class="org-sh-quoted-exec">perl</span> -ne <span class="org-string">'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {</span>
 <span class="org-string">                m/(\S+)\s*=\s*(\S+)/;</span>
@@ -492,116 +452,163 @@ m command open -a /Applications/Emacs.app/
 <span class="org-string">            }'</span> <span class="org-sh-escaped-newline">\</span>
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h)
 </pre>
-
+</div>
 
 <p>
 最后，要对每个主按键都生成一个keycodes dict项，这个工作我们嵌入到perl层
 去实现，也就是上面的这段代码。这种感觉是不是有点像盗梦空间？还是说像那
-首叫“洋葱”的歌？一层一层一层&hellip;
+首叫“洋葱”的歌？一层一层一层&#x2026;
 </p>
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-4" class="outline-2">
+<div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4"><span class="section-number-2">4</span> 结论</h2>
 <div class="outline-text-2" id="text-4">
-
-
 <p>
 在一个自己相对还不是很熟的领域（Objc编程）里，把自己熟悉的技能用到极致，
 从而快速、轻松的解决问题。
 </p>
+
 <p>
 还是说你愿意把自己以前熟悉的全部抛弃，再把Objc学到足够熟，然后纯用它来
 解决问题？
 </p>
+
 <p>
 我已经做出了选择，你感受一下:-)
-      <nav>
-        <ul class="pager">
-          <li class="prev_post">
-            <a href="blog/2013/03/31/when-java-meet-csharp.html"> <!-- prev-url -->
-              <i class="icon-chevron-left">《</i>
-              当Java遇到C# <!-- prev-title -->
-            </a>
-          </li>
-          <li class="next_post" style="text-align: right;">
-            <a href="blog/2013/04/13/skeleton-complete.html"> <!-- next-url -->
-              skeleton-complete <!-- next-title -->
-              <i class="icon-chevron-right">》</i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-</p></div>
+</p>
+<nav>
+  <ul class="pager">
+    <li class="prev_post">
+      <a href="blog/2013/03/31/when-java-meet-csharp.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        当Java遇到C# <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="blog/2013/04/13/skeleton-complete.html"> <!-- next-url -->
+        skeleton-complete <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
 </div>
+</div>
+<!-- {%html-mode%} -->
 
-<div id="postamble">
 
-<div id="disqus_container">
-    <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-    <div style="margin-bottom:20px">
-        <script type="text/javascript" charset="utf-8">
-        (function(){
-          var _w = 86 , _h = 16;
-          var param = {
-            url:location.href,
-            type:'6',
-            count:'', /**是否显示分享数，1显示(可选)*/
-            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-            pic:'', /**分享图片的路径(可选)*/
-            ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-            rnd:new Date().valueOf()
-          }
-          var temp = [];
-          for( var p in param ){
-            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-          }
-          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-        })()
-        </script>
-    </div>
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
+
+
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='blog/2013/03/31/when-java-meet-csharp.html'> 当Java遇到C# </a></li>
+<li><a href='blog/2013/03/17/cli+gui.html'> 当纯文本命令行碰到图形界面 </a></li>
+<li><a href='blog/2013/03/14/dvp-keyboard-mac.html'> 在Mac系统下使用dvp (Dvorak Programmer) </a></li>
+<li><a href='blog/2013/03/11/crossdict-gcide.html'> How to extract GCIDE dictionary data for CrossDict </a></li>
+<li><a href='blog/2013/03/11/crossdict-gcide-help.html'> Installing Dictionary Data Separately </a></li>
+<li><a href='blog/2013/03/09/bhj-do-codegen.html'> 给任意语言插上宏定义的翅膀 </a></li>
+<li><a href='blog/2013/03/08/crossdict-readme-cn.html'> CrossDict: 交叉索引字典 </a></li>
+<li><a href='blog/2013/03/02/the-ulti-dict.html'> 又一个字典软件，我的！ </a></li>
+<li><a href='blog/2013/03/02/donate.html'> Donate for my free software effort </a></li>
+<li><a href='blog/2013/02/25/index-cn.html'> 我在Github上的个人博客 </a></li>
+    </ul>
+
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
+<div id="postamble" class="status">
+<!-- {%html-mode%} -->
     <div id="disqus_thread"></div>
-</div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'baohaojun'; // required: replace example with your forum shortname
 
-<script src="/js/post.js" type="text/javascript"></script>
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'blog/2013/04/12' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
-<div id="about">
-    <div class="about-content">
+    <script src="/js/post.js" type="text/javascript"></script>
+
+    <div id="about">
+      <div class="about-content">
         <div class="clearfix">
-            <div class="about-left">
-                <h2>Contact</h2>
-                <div class="weibo-con">
-                    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
-                </div>
+          <div class="about-left">
+            <h2>Contact</h2>
+            <div class="weibo-con">
+              <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
             </div>
-            <div class="about-left about-more">
-                <h2>Tags</h2>
-                                <a href="meta/tags/macro.html" title="macro in programming languages">macro</a><br/>
+          </div>
+          <div class="about-left about-more">
+            <h2>Tags</h2>
+                        <a href="meta/tags/macro.html" title="macro in programming languages">macro</a><br/>
             <a href="meta/tags/programming.html" title="General programming">programming</a><br/>
             <a href="meta/tags/mac.html" title="Mac OS">mac</a><br/>
             <a href="meta/Archive.html" title="All blogs">archive</a><br/>
-            </div>
-            <div class="about-left about-more">
-                <h2>About</h2>
-                <p>
-                    Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
-                    Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
-                </p>
-            </div>
+          </div>
+          <div class="about-left about-more">
+            <h2>About</h2>
+            <p>
+              Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+              Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+            </p>
+          </div>
         </div>
 
         <div class="copyright right">
-            <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
-        </div>
-    </div>
-</div>
+          <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+        </div> <!-- copyright -->
+      </div>   <!-- about-content -->
+    </div> <!-- id="about" -->
 
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>

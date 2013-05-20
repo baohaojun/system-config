@@ -55,4 +55,4 @@ myself. Just to show you what a geek I am:-)
   windows. I know it's not a good name, maybe I will think of a good
   one someday.
 
-# [[{{prev_post}}[Prev]] [[{{next_post}}[Next]]
+
