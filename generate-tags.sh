@@ -67,4 +67,13 @@ for tagd in meta/tags/*/; do
 done
 
 
-org-export -L $(git st -s meta/tags/*.org|pn 2)
+org-export -L $(
+    (
+        git st -s meta/tags/*.org|pn 2
+        for x in meta/tags/*.org; do
+            if test ! -e ${x/%.org/.html}; then
+                echo $x
+            fi
+        done
+    ) | sort -u
+)

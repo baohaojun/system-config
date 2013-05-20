@@ -2772,4 +2772,21 @@ p.post-footer {
 @import url(http://www.blogger.com/static/v1/v-css/navbar/3334278262-classic.css);
 div.b-mobile {display:none;}
 
+#prev_next_posts {
+    list-style:none;
+}
 
+#prev_next_posts .prev_post {
+    float:left;
+    width:50%;
+}
+
+#prev_next_posts .next_post {
+    float: right;
+    width:50%
+}
+
+#disqus_container * {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
