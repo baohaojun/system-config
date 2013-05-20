@@ -1,4 +1,11 @@
 $(document).ready(function(){
+    window.disqus_shortname = 'baohaojun';
+    $('#disqus_container .disqus').on('click',function(){
+        $(this).html('loading...');
+        var that = this;
+        $.getScript('http://' + disqus_shortname + '.disqus.com/embed.js',function(){$(that).remove()});
+    });
+
     $('.entry a').each(function(index,element){
         var href = $(this).attr('href');
         if(href){

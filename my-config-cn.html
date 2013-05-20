@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>My configuration system</title>
-<!-- 2013-05-20 Mon 17:47 -->
+<!-- 2013-05-20 Mon 20:15 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
 <meta name="author" content="Bao Haojun"/>
@@ -258,54 +258,66 @@ stdout/stderr结果记下来，parse一下，再把出错的包从它的参数�
 <!-- {%/html-mode%} -->
 <div id="postamble" class="status">
 <!-- {%html-mode%} -->
-    <div id="disqus_thread"></div>
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'baohaojun'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = 'blog/2012/10/22' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
+<div id="disqus_container">
+  <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
+  <div style="margin-bottom:20px">
+    <script type="text/javascript" charset="utf-8">
+      (function(){
+      var _w = 86 , _h = 16;
+      var param = {
+      url:location.href,
+      type:'6',
+      count:'', /**是否显示分享数，1显示(可选)*/
+      appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+      title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+      pic:'', /**分享图片的路径(可选)*/
+      ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+      language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+      rnd:new Date().valueOf()
+      }
+      var temp = [];
+      for( var p in param ){
+      temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+      }
+      document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+      })()
     </script>
-    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
 
-    <script src="/js/post.js" type="text/javascript"></script>
+<script src="/js/post.js" type="text/javascript"></script>
 
-    <div id="about">
-      <div class="about-content">
-        <div class="clearfix">
-          <div class="about-left">
-            <h2>Contact</h2>
-            <div class="weibo-con">
-              <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
-            </div>
-          </div>
-          <div class="about-left about-more">
-            <h2>Tags</h2>
-                        <a href="meta/tags/system.html" title="System programming">system</a><br/>
+<div id="about">
+  <div class="about-content">
+    <div class="clearfix">
+      <div class="about-left">
+        <h2>Contact</h2>
+        <div class="weibo-con">
+          <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+        </div>
+      </div>
+      <div class="about-left about-more">
+        <h2>Tags</h2>
+                    <a href="meta/tags/system.html" title="System programming">system</a><br/>
             <a href="meta/tags/admin.html" title="System administration">admin</a><br/>
             <a href="meta/tags/programming.html" title="General programming">programming</a><br/>
             <a href="meta/Archive.html" title="All blogs">archive</a><br/>
-          </div>
-          <div class="about-left about-more">
-            <h2>About</h2>
-            <p>
-              Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
-              Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
-            </p>
-          </div>
-        </div>
+      </div>
+      <div class="about-left about-more">
+        <h2>About</h2>
+        <p>
+          Working<a href="http://marvell.com" class="external" target="_blank">@Marvell</a><br/>
+          Code<a href="https://github.com/baohaojun" class="external" target="_blank">@GitHub</a><br/>
+        </p>
+      </div>
+    </div>
 
-        <div class="copyright right">
-          <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
-        </div> <!-- copyright -->
-      </div>   <!-- about-content -->
-    </div> <!-- id="about" -->
-
+    <div class="copyright right">
+      <p>Design by <a href="http://baohaojun.github.io/" title="BaoHaojun" target="_blank">Bao Haojun</a> © 2013</p>
+    </div>
+  </div>
+</div>
 <!-- {%/html-mode%} -->
 </div>
 </body>
