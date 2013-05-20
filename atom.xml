@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Tuing my blog to look like blogspot]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/20/0-Tuing-my-blog-to-look-like-blogspot-.html"/>
+    <updated>2013-33-20T22:05:35+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/20/0-Tuing-my-blog-to-look-like-blogspot-.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[在Google和亚马逊（译）]]></title>
     <link href="http://baohaojun.github.io/blog/2013/05/15/0-Inside-Google-and-Amazon.html"/>
     <updated>2013-05-16T00:17:19+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/05/03/beagrep-even-faster2.html"/>
     <updated>2013-05-03T15:27:59+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/03/beagrep-even-faster2.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[beagrep is made even faster]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/02/beagrep-even-faster.html"/>
-    <updated>2013-05-02T23:03:18+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/02/beagrep-even-faster.html</id>
   </entry>
 </feed>

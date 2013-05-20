@@ -1,0 +1,7 @@
+#+title: Tuing my blog to look like blogspot
+# bhj-tags: blog
+Done a lot of work with my org-export scripts.
+
+Many stuff is stolen from [[http://steve-yegge.blogspot.com/][Steve Yegge's blog]]. 
+
+Hope you like it:-)
