@@ -2464,54 +2464,6 @@ body {
     background-color: #696969;
 }
 
-#about{background:#262626;width:100%;margin:0 auto;border-top:6px solid #026b8c;overflow:hidden;margin-top:30px;font-size:14px;line-height:1.6em;}
-#about .about-content {width:720px;margin:50px auto;}
-#about h2{color:#bbb;font-size:24px;font-weight:bold;border-bottom:1px solid #444;line-height:45px;}
-#about .about-left{float:left;width:200px;color:#999;}
-#about .about-more {margin-left:60px;}
-#about .weibo-con{margin-top:-10px;margin-left:-14px;}
-#about .copyright {margin-top:15px;font-size:12px;color:#666;overflow:hidden;}
-#about a:link,
-#about a:visited,
-#about a:hover,
-#about a:active {color:#5e8dba;outline:none;text-decoration:none;}
-#about a:hover {text-decoration:underline;}
-
-#sub-nav {position:absolute;top:30px;right:0}
-
-#sub-nav .search{float:none;margin-top:15px}}
-#sub-nav .search:before{content:"\f002";color:#ccc;font:18px FontAwesome;line-height:30px;position:absolute;top:0;right:125px}
-#sub-nav .search input[type="text"]{background:#f2f2f2;color:#999;border:1px solid #ddd;font:13px "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,sans-serif;padding:6px 15px 6px 35px;width:100px;-webkit-transition:0.3s;-moz-transition:0.3s;-o-transition:0.3s;transition:0.3s;-webkit-border-radius:15px;-moz-border-radius:15px;-ms-border-radius:15px;-o-border-radius:15px;border-radius:15px}
-#sub-nav .search input[type="text"]:focus,
-#sub-nav .search input[type="text"]:active{background:#fff;border-top:1px solid #ccc;color:#666;outline:none}
-#sub-nav .social{float:none;margin-right:0}
-#sub-nav .social a:last-of-type{margin-right:0}
-#sub-nav .social a{-webkit-border-radius:50%;-moz-border-radius:50%;-ms-border-radius:50%;-o-border-radius:50%;border-radius:50%;display:-moz-inline-stack;display:inline-block;vertical-align:middle;*vertical-align:auto;zoom:1;*display:inline;text-indent:-9999px;margin-right:15px;opacity:0.5;width:28px;height:28px;-webkit-transition:0.3s;-moz-transition:0.3s;-o-transition:0.3s;transition:0.3s}
-#sub-nav .social a:hover{opacity:1}
-#sub-nav .social a.facebook{background:url('/images/social/facebook.png?1355392288') center no-repeat #3b5998;border:1px solid #3B5998}
-#sub-nav .social a.facebook:hover{border:1px solid #2d4373}
-#sub-nav .social a.google{background:url('/images/social/google.png?1355392288') center no-repeat #c83d20;border:1px solid #C83D20}
-#sub-nav .social a.google:hover{border:1px solid #9c3019}
-
-
-#sub-nav .social a.weibo{background:url('/images/social/weibo.png?1355392288') center no-repeat #55cff8;border:1px solid #55CFF8}
-#sub-nav .social a.weibo:hover{border:1px solid #24c1f6}
-#sub-nav .social a.github{background:url('/images/social/github.png?1355392288') center no-repeat #afb6ca;border:1px solid #afb6ca}
-#sub-nav .social a.github:hover{border:1px solid #909ab6}
-#sub-nav .social a.coderwall{background:url('/images/social/coderwall.png?1355392288') center no-repeat #3a729f;border:1px solid #3a729f}
-#sub-nav .social a.coderwall:hover{border:1px solid #2c577a}
-#sub-nav .social a.pinboard{background:url('/images/social/pinboard.png?1355392288') center no-repeat #0066c8;border:1px solid #3a729f}
-#sub-nav .social a.pinboard:hover{border:1px solid #0052cc}
-#sub-nav .social a.linkedin{background:url('/images/social/linkedin.png?1355392288') center no-repeat #005a87;border:1px solid #005A87}
-#sub-nav .social a.linkedin:hover{border:1px solid #003854}
-#sub-nav .social a.pinterest{background:url('/images/social/pinterest.png?1355392288') center no-repeat #be4037;border:1px solid #be4037}
-#sub-nav .social a.pinterest:hover{border:1px solid #96332c}
-#sub-nav .social a.delicious{background:url('/images/social/delicious.png?1355392288') center no-repeat #3271cb;border:1px solid #3271cb}
-#sub-nav .social a.delicious:hover{border:1px solid #285aa2}
-#sub-nav .social a.rss{background:url('/images/social/rss.png?1355392288') center no-repeat #ef7522;border:1px solid #EF7522}
-#sub-nav .social a.rss:hover{border:1px solid #cf5d0f}
-
-
 body {
   margin:0;
   padding:40px 20px;
@@ -2585,7 +2537,7 @@ a img {
     padding:0;
     text-align:left;
     }
-  #content {
+  #bhj_leftpane, #content {
     width:510px;
     float:left;
     }
@@ -2598,7 +2550,7 @@ a img {
   #bhj_article {
     width:90%;
     }
-  #content {
+  #bhj_leftpane, #content {
     width:100%;
     float:none;
     }
