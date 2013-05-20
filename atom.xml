@@ -12,189 +12,63 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
-    <title type="html"><![CDATA[在阅读源代码时删掉所有非必要文件的方法]]></title>
-    <link href="http://baohaojun.github.io/remove-unneeded-files-for-code-reading.html"/>
-    <updated>2013-04-24T11:11:01+08:00</updated>
-    <id>http://baohaojun.github.io/remove-unneeded-files-for-code-reading.html</id>
+    <title type="html"><![CDATA[在Google和亚马逊（译）]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/15/0-Inside-Google-and-Amazon.html"/>
+    <updated>2013-05-16T00:17:19+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/15/0-Inside-Google-and-Amazon.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[skeleton-complete]]></title>
-    <link href="http://baohaojun.github.io/skeleton-complete.html"/>
-    <updated>2013-04-22T18:09:15+08:00</updated>
-    <id>http://baohaojun.github.io/skeleton-complete.html</id>
+    <title type="html"><![CDATA[douban.el与bhj-notify的集成]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/12/0-douban.el-integration.html"/>
+    <updated>2013-05-12T23:24:48+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/12/0-douban.el-integration.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[提干式id补齐和re补齐]]></title>
-    <link href="http://baohaojun.github.io/stem-completion.html"/>
-    <updated>2013-04-13T20:27:21+08:00</updated>
-    <id>http://baohaojun.github.io/stem-completion.html</id>
+    <title type="html"><![CDATA[全局放大Emacs字体]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/09/0-emacs-font-global-scaling.html"/>
+    <updated>2013-05-09T16:05:11+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/09/0-emacs-font-global-scaling.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[Doing Android Java Programming in Emacs]]></title>
-    <link href="http://baohaojun.github.io/coding-android-java-in-emacs-en.html"/>
-    <updated>2013-04-13T20:27:21+08:00</updated>
-    <id>http://baohaojun.github.io/coding-android-java-in-emacs-en.html</id>
+    <title type="html"><![CDATA[Stripping kernel/uboot source to 10% for code reading]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/08/stripping-kernel-code-for-reading.html"/>
+    <updated>2013-05-08T23:32:00+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/08/stripping-kernel-code-for-reading.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[翅膀硬了]]></title>
-    <link href="http://baohaojun.github.io/hardened-bhj-style-macros.html"/>
-    <updated>2013-04-12T13:57:13+08:00</updated>
-    <id>http://baohaojun.github.io/hardened-bhj-style-macros.html</id>
+    <title type="html"><![CDATA[站友福音：在水木bbs上用Emacs的键绑定]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/08/bbs-robot.html"/>
+    <updated>2013-05-08T18:34:18+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/08/bbs-robot.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[当Java遇到C#]]></title>
-    <link href="http://baohaojun.github.io/when-java-meet-c#.html"/>
-    <updated>2013-03-31T14:31:49+08:00</updated>
-    <id>http://baohaojun.github.io/when-java-meet-c#.html</id>
+    <title type="html"><![CDATA[The code is not really code, the comment is]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/03/z02abuse-macros-comments.html"/>
+    <updated>2013-05-03T17:59:48+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/03/z02abuse-macros-comments.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[当纯文本命令行碰到图形界面]]></title>
-    <link href="http://baohaojun.github.io/cli+gui.html"/>
-    <updated>2013-03-17T23:56:19+08:00</updated>
-    <id>http://baohaojun.github.io/cli+gui.html</id>
+    <title type="html"><![CDATA[only re-generate the tags that have changed]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/03/z00fix-generate-tags.html"/>
+    <updated>2013-05-03T15:49:52+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/03/z00fix-generate-tags.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[在Mac系统下使用dvp (Dvorak Programmer)]]></title>
-    <link href="http://baohaojun.github.io/dvp-keyboard-mac.html"/>
-    <updated>2013-03-14T23:38:41+08:00</updated>
-    <id>http://baohaojun.github.io/dvp-keyboard-mac.html</id>
+    <title type="html"><![CDATA[My org-mode blog for github page]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/03/my-org-github-blog.html"/>
+    <updated>2013-05-03T15:42:21+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/03/my-org-github-blog.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[交叉索引字典]]></title>
-    <link href="http://baohaojun.github.io/crossdict-readme-cn.html"/>
-    <updated>2013-03-11T18:31:44+08:00</updated>
-    <id>http://baohaojun.github.io/crossdict-readme-cn.html</id>
+    <title type="html"><![CDATA[beagrep performance tuning on MacbookAir+Linux]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/03/beagrep-even-faster2.html"/>
+    <updated>2013-05-03T15:27:59+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/03/beagrep-even-faster2.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[Installing Dictionary Data Separately]]></title>
-    <link href="http://baohaojun.github.io/crossdict-gcide-help.html"/>
-    <updated>2013-03-11T18:31:44+08:00</updated>
-    <id>http://baohaojun.github.io/crossdict-gcide-help.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[How to extract GCIDE dictionary data for CrossDict]]></title>
-    <link href="http://baohaojun.github.io/crossdict-gcide.html"/>
-    <updated>2013-03-11T10:44:08+08:00</updated>
-    <id>http://baohaojun.github.io/crossdict-gcide.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[给任意语言插上宏定义的翅膀]]></title>
-    <link href="http://baohaojun.github.io/bhj-do-codegen.html"/>
-    <updated>2013-03-09T23:17:04+08:00</updated>
-    <id>http://baohaojun.github.io/bhj-do-codegen.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[又一个字典软件，我的！]]></title>
-    <link href="http://baohaojun.github.io/the-ulti-dict.html"/>
-    <updated>2013-03-02T16:03:43+08:00</updated>
-    <id>http://baohaojun.github.io/the-ulti-dict.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Donate for my free software effort]]></title>
-    <link href="http://baohaojun.github.io/donate.html"/>
-    <updated>2013-03-02T09:45:54+08:00</updated>
-    <id>http://baohaojun.github.io/donate.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[My Page on Github]]></title>
-    <link href="http://baohaojun.github.io/index.html"/>
-    <updated>2013-02-25T00:38:26+08:00</updated>
-    <id>http://baohaojun.github.io/index.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[我在Github上的个人博客]]></title>
-    <link href="http://baohaojun.github.io/index-cn.html"/>
-    <updated>2013-02-25T00:30:15+08:00</updated>
-    <id>http://baohaojun.github.io/index-cn.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[beagrep, grep 2G source code in 2 seconds]]></title>
-    <link href="http://baohaojun.github.io/beagrep.html"/>
-    <updated>2013-02-22T17:56:26+08:00</updated>
-    <id>http://baohaojun.github.io/beagrep.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[beagrep，两秒钟grep两个G的代码]]></title>
-    <link href="http://baohaojun.github.io/beagrep-cn.html"/>
-    <updated>2013-02-22T17:56:26+08:00</updated>
-    <id>http://baohaojun.github.io/beagrep-cn.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[My configuration system]]></title>
-    <link href="http://baohaojun.github.io/my-config-cn.html"/>
-    <updated>2013-02-16T21:49:11+08:00</updated>
-    <id>http://baohaojun.github.io/my-config-cn.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Using CLI and GUI Together Seemlessly]]></title>
-    <link href="http://baohaojun.github.io/combining-cli-and-gui.html"/>
-    <updated>2013-02-12T23:23:44+08:00</updated>
-    <id>http://baohaojun.github.io/combining-cli-and-gui.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[自己动手做长微博（推特），内嵌图片的]]></title>
-    <link href="http://baohaojun.github.io/how-to-do-long-twitter-cn.html"/>
-    <updated>2013-01-08T08:23:53+08:00</updated>
-    <id>http://baohaojun.github.io/how-to-do-long-twitter-cn.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[在Emacs下用java编程（Android相关）]]></title>
-    <link href="http://baohaojun.github.io/coding-android-java-in-emacs.html"/>
-    <updated>2012-12-28T16:33:42+08:00</updated>
-    <id>http://baohaojun.github.io/coding-android-java-in-emacs.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[狠狠地折腾了一把Emacs中文字体]]></title>
-    <link href="http://baohaojun.github.io/perfect-emacs-chinese-font.html"/>
-    <updated>2012-12-21T10:50:59+08:00</updated>
-    <id>http://baohaojun.github.io/perfect-emacs-chinese-font.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Emacs和它的朋友们——阅读源代码篇]]></title>
-    <link href="http://baohaojun.github.io/reading-source-code-cn.html"/>
-    <updated>2012-12-19T16:43:02+08:00</updated>
-    <id>http://baohaojun.github.io/reading-source-code-cn.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Emacs和它的朋友们--编写代码篇]]></title>
-    <link href="http://baohaojun.github.io/writing-source-code-cn.html"/>
-    <updated>2012-11-21T12:26:25+08:00</updated>
-    <id>http://baohaojun.github.io/writing-source-code-cn.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[How to use gdb (in Emacs) for android]]></title>
-    <link href="http://baohaojun.github.io/gdb-android.html"/>
-    <updated>2012-11-14T21:14:45+08:00</updated>
-    <id>http://baohaojun.github.io/gdb-android.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[在shell脚本里使用Abstract Factory的设计模式]]></title>
-    <link href="http://baohaojun.github.io/fun-design-pattern.html"/>
-    <updated>2012-11-09T10:12:08+08:00</updated>
-    <id>http://baohaojun.github.io/fun-design-pattern.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[用ctags索引Android资源定义的.xml和.png文件]]></title>
-    <link href="http://baohaojun.github.io/ctags-android-xml.html"/>
-    <updated>2012-10-31T16:56:46+08:00</updated>
-    <id>http://baohaojun.github.io/ctags-android-xml.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[android的binder机制]]></title>
-    <link href="http://baohaojun.github.io/android-binder.html"/>
-    <updated>2012-10-29T19:27:53+08:00</updated>
-    <id>http://baohaojun.github.io/android-binder.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[我的配置环境：为什么用symlink而不是cp]]></title>
-    <link href="http://baohaojun.github.io/why-symlink-my-config.html"/>
-    <updated>2012-10-29T13:16:34+08:00</updated>
-    <id>http://baohaojun.github.io/why-symlink-my-config.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Emacs and interactive makefiles]]></title>
-    <link href="http://baohaojun.github.io/makefile-printval.html"/>
-    <updated>2012-10-29T13:16:34+08:00</updated>
-    <id>http://baohaojun.github.io/makefile-printval.html</id>
+    <title type="html"><![CDATA[beagrep is made even faster]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/02/beagrep-even-faster.html"/>
+    <updated>2013-05-02T23:03:18+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/02/beagrep-even-faster.html</id>
   </entry>
 </feed>
