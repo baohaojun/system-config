@@ -1,7 +1,6 @@
 #!/bin/bash
 
 cat <<EOF
-
 <div id="disqus_container">
     <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
     <div style="margin-bottom:20px">

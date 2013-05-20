@@ -4,7 +4,7 @@
 (load-file "~/.sawfish/bhj-draw-wininfo.jl")
 (require 'bhj-draw-wininfo)
 
-(setq emacs-style-window-class-re "emacs|firefox|konsole")
+(setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal")
 (setq s-h-keymap (make-keymap))
 (setq global-remap-alist
       '(("C-a" . "Home")
@@ -199,14 +199,42 @@
  '(0 1 2 3 4 5 6 7 8 9))
 
 (setq super-key-window-remap
-  '(("v" . ((t . "S-Insert")))
-    ("c" . ((Emacs . "M-w")
-            (Konsole . "C-S-c")))
-    ("w" . ((Firefox . ("C-x" "k"))))
-    ("l" . ((Firefox . ("C-x" "C-l"))))
-    ("r" . ((Firefox . ("C-x" "C-r"))))
-    ("s" . ((Firefox . ("C-x" "C-s"))))
-    ("d" . ((Firefox . ("C-x" "C-d"))))))
+      '(("v" . ((t . "S-Insert")))
+        ("c" . ((Emacs . "M-w")
+                (Konsole . "C-S-c")
+                (Gnome-terminal . "C-S-c")))
+        ("w" . ((Firefox . ("C-x" "k"))))
+        ("l" . ((Firefox . ("C-x" "C-l"))))
+        ("r" . ((Firefox . ("C-x" "C-r"))))
+        ("s" . ((Firefox . ("C-x" "C-s"))))
+        ("d" . ((Firefox . ("C-x" "C-d"))))))
+
+(setq gnome-windows-re "gnome-terminal|nautilus")
+
+(defun rewrite-event-for-xtool (event)
+  (let* ((keys-break-down (string-split "-" event))
+         (modifiers (reverse (cdr (reverse keys-break-down))))
+         (main-key (last keys-break-down))
+         (result ""))
+    (while modifiers
+      (case (intern (car modifiers))
+        ((C Control)
+         (setq result (concat result "ctrl+")))
+        ((S Shift)
+         (setq result (concat result "shift+")))
+        ((M Meta)
+         (setq result (concat result "alt+")))
+        ((Super)
+         (setq result (concat result "super+"))))
+      (setq modifiers (cdr modifiers)))
+    (setq result (concat result main-key))))
+
+(defun synthesize-or-xdotool (event window gnome?)
+  (if gnome?
+      ;; The sleep is necessary for unknown reason, but it won't work
+      ;; without it.
+      (system (concat "sleep .5; xdotool key --clearmodifiers " (rewrite-event-for-xtool event)))
+    (synthesize-event event window)))
 
 (mapc
  (lambda (key)
@@ -215,17 +243,17 @@
               (lambda ()
                 (let* ((fw (input-focus))
                        (class (window-class fw))
+                       (gnome? (string-match gnome-windows-re class 0 t))
                        (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))
-                                            (assoc t (assoc key super-key-window-remap)))) (concat "C-" key))))
+                                            (assoc t (assoc key super-key-window-remap))))
+                                   (concat "C-" key))))
                   (if (listp map-to)
                       (mapc (lambda (map-1)
-                              (synthesize-event map-1 fw))
+                              (synthesize-or-xdotool map-1 fw gnome?))
                             map-to)
-                    (synthesize-event map-to fw))))))
+
+                    (synthesize-or-xdotool map-to fw gnome?))))))
  '("t" "w" "n" "c" "v" "l" "r" "s" "d"))
-
-
-
 
 (bind-keys global-keymap "Super-Insert" (lambda () (system "send-key $(getclip)&")))
 (bind-keys global-keymap "Super-S-RET" (lambda () (system "send-key $(getclip)&")))

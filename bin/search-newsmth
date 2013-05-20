@@ -26,11 +26,7 @@ while true; do
     esac
 done
 
-if test -z "$board"; then
-    board=("${def_board[@]}")
-fi
-
-if test ${#b[@]} = 0; then
+if test ${#board[@]} = 0; then
     of "http://ar.newsmth.net/searchArticle.do?subject=&author=$author&boardname=&body=&start=&end="
     exit
 fi

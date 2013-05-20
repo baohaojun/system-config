@@ -323,7 +323,7 @@ Firemacs.CmdKey.Common = {
     JumpInput: 'C-xt',
     JumpSubmit: 'C-xs',
     CloseTab: 'C-xk',
-    bhjUndoCloseTab: 'C-xC-r',
+    bhjUndoCloseTab: 'C-xr',
     OpenFile: 'C-xC-f',
     Copy: 'M-w',
     NextButton: 'M-n',
