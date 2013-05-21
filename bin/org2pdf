@@ -10,7 +10,13 @@ if test $# != 1; then
     die "Error: Usage $(basename $0) TEX_FILE"
 fi
 
-if yes-or-no-p -y "Export from .org? "; then
+org_file=false
+if test "${1##*.}" = org; then
+    org_file=true
+    set -- "${1/%.org/.tex}"
+fi
+
+if test $org_file = true || yes-or-no-p -y "Export from .org"; then
     emacs -l ~/.emacs --batch --eval '(progn (find-file "'${1/%.tex/.org}'") (org-latex-export-to-latex))'
     set -- "${1/%.org/.tex}"
 fi

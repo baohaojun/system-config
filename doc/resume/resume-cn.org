@@ -22,10 +22,10 @@
 *** 2011年11月 - 目前
     *Staff Engineer*, [[http://marvell.com][Marvell]], 北京
 
-    - 在Tools团队担任架构师的职务, 负责手机工厂生产工具的设计研发
+    - 在Tools团队担任架构师的职务, 负责手机工厂生产工具的设计与实现
 
-    - 在BSP团队负责与工具相关的功能模块的设计实现, 包括Uboot, Kernel接
-      口, 工厂分区等
+    - 在BSP团队负责与工具相关的功能模块的设计与实现, 包括Uboot, Kernel
+      接口, 工厂分区等
 
 *** 2010年3月 - 2011年10月
 
@@ -74,14 +74,14 @@
                   （Java, Android) 
 
 *** Input Method
-  - sdim :: 跨所有主流平台（Win32/Linux/Mac OS基至Emacs）的输入法
+  - sdim :: 跨所有主流平台（Win32/Linux/Mac OS甚至Emacs）的输入法
             （Python, C++, ObjC, Emacs-lisp）
 
   - scim-fcitx :: GNU/Linux下的输入法, 基于scim和fcitx移植(C++, 
                   GNU/Linux)
 
 *** System Software
-  - [[https://github.com/baohaojun/beagrep][beagrep]] ::  结合搜索引擎的源代码grep工具, 一秒钟grep两G代码（C#, 
+  - [[https://github.com/baohaojun/beagrep][beagrep]] ::  结合搜索引擎的源代码grep工具, 0.23秒grep两G代码（C#,
                 Perl）
 
   - system-config :: 其他一些较小的脚本/程序, 均放在 [[https://github.com/baohaojun][github]] 上用git管理

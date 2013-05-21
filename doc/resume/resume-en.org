@@ -82,7 +82,7 @@
 *** System Software
 
   - [[https://github.com/baohaojun/beagrep][beagrep]] :: Combining grep with a search engine for source code
-               reading and debugging, can grep 2G source code under 1
+               reading and debugging, can grep 2G source code in 0.23
                second (C#, Perl).
 
   - system-config :: A lot of other system admin scripts/programs, all
