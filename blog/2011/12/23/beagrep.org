@@ -17,18 +17,19 @@ I still remember when I read the ``Linux Device Drivers'', 1st Edition, in the p
 
 I have been using grep to read source code ever since. It's been
 adequate for a long time, until I started reading Android source code
-with it. I remember vividly how it took me 30 minutes to ~grep
-readlink~ in Android source code (with VCS directory and binary files
-excluded).
+with it. I remember vividly how it took me 30 minutes[fn:correction]
+to ~grep readlink~ in Android source code (with VCS directory and
+binary files excluded).
 
-Then I learned about the beagle software, and it occurred to me, what
-if I use beagle and grep together? I mean, to use beagle first to
-decide the (relatively a lot smaller) set of possible matching files
-(i.e., files that contained the word ~readlink~, taking the previous
-example), then invoke grep on this set only. Usually the job can be
-done in a couple of seconds.
+Then I learned about the beagle software which is a desktop search
+engine, and it occurred to me, what if I use beagle and grep together?
+I mean, to use beagle first to decide the (relatively a lot smaller)
+set of possible matching files (i.e., files that contained the word
+~readlink~, taking the previous example), then invoke grep on this set
+only. Usually the job can be done in the blink of an eye.
 
-Beagrep supports both Linux and Windows (requires CYGWIN).
+Beagrep is available on GNU/Linux, Mac OS (requires MacPorts) and
+Windows (requires CYGWIN).
 
 (Note a Chinese version of this page is available [[../../../2012/01/31/beagrep-cn.org][here]], but it may be
 outdated).
@@ -286,8 +287,8 @@ match this complex pattern, one necessary but not sufficient condition
 is for this file to contain all these 3 words. And what is good for
 this job? A search engine! Using beagle, the parent project for
 beagrep, a desktop search engine, you can find which files (actually,
-which file in this case) contained these 3 words in a blink of the
-eyes.
+which file in this case) contained these 3 words in the blink of an
+eye.
 
 Only 1 file contained all 3 words:
 
@@ -300,14 +301,15 @@ Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbre
 
 So, you can imagine how quick it is to run ~grep~ on the set of files containing all required words:
 
-#+begin_example
+
+#+BEGIN_EXAMPLE
 beagrep -e "JsonToValue(\"\\\\\"hello world\\\\\"\","
 pat is: 'JsonToValue("\\"hello world\\"",'.
 beagrep query argument `JsonToValue hello world '
 Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
 /home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc:168:  root.reset(JSONReader().JsonToValue("\"hello world\"", false, false));
 Unmatched ( in regex; marked by <-- HERE in m/JsonToValue( <-- HERE ""hello world"",/ at /home/bhj/bin/beagrep line 98.
-#+end_example
+#+END_EXAMPLE
 
 To summarize, complete words are what search engines are good for, and
 fortunately, when grepping source code, we almost always grep using
@@ -429,3 +431,27 @@ on MacbookAir+Linux]].
           caching strategy? It eludes me. (*EDIT*: it's because cpu
           freq is locked at 800MHz, same as the above footnote, see
           [[../../../2013/05/03/beagrep-even-faster2.org][beagrep performance tuning on MacbookAir+Linux]].)
+
+[fn:correction] As stated in the previous footnote, something must
+have went wrong with this result, 30 minutes is just impossibly long
+compared to the 5m20s cache cold and 3.5s cache hot stated above. Was
+it because of a slower machine, or even being run within a virtual
+machine (on a slower real machine)?  I can neither remember nor
+reproduce now. But I think one problem was the way I used =grep=, it's
+something along the line of: ~find-filter-out-non-src-files | xargs
+grep readlink~. This will cause a lot of ~grep~ processes to be
+created because on most systems there is a max number of characters
+(typically 128k on 32 bit systems) limit with the command line
+arguments. When this limit is exceeded, you will see something like
+=bash: XXX: Argument list too long=. For this reason, xargs will call
+its command multiple times. For e.g., when I run this command: =seq 1
+1000000 | xargs bash -c 'echo -n $#\ ' true=, you'd expect =1000000=
+is printed, because xargs will pass this many arguments to the bash
+command, but no, instead you will see (try it, see how slow it is!)
+=23692 21841 21841 21841...= printed one by one because xargs must
+invoke this bash command multiple times and each time pass just as
+many arguments as possible. This is not the most efficient way for
+calling grep (with all the arguments creating and passing around and
+grep processes creating and exiting) and must have contributed to my
+30 minutes measurement.
+

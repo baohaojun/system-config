@@ -68,11 +68,23 @@ for my $filename (@ARGV) {
     $working_file = $filename;
     ($working_file_dir = $filename) =~ s!(.*/).*!$1!;
     $working_file_sq = shell_quote($filename);
+    my $changed = 0;
     while (<$fh>) {
+        my $old = $_;
         s/\[\[(.*?)\]/"[[" . fix_link($1) . "]"/eg;
         print $fh_new $_;
+        if ($_ ne $old) {
+            $changed = 1;
+        }
     }
     close $fh;
     close $fh_new;
-    rename "$filename.$$", $filename;
+
+
+    if ($changed) {
+        rename "$filename.$$", $filename;
+    } else {
+        debug "remove $filename.$$";
+        unlink "$filename.$$";
+    }
 }

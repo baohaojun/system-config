@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>beagrep, grep 2G source code in 0.23 second</title>
-<!-- 2013-05-21 Tue 10:46 -->
+<!-- 2013-05-21 Tue 11:57 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
 <meta name="author" content="Bao Haojun"/>
@@ -128,22 +128,23 @@ I still remember when I read the ``Linux Device Drivers'', 1st Edition, in the p
 <p>
 I have been using grep to read source code ever since. It's been
 adequate for a long time, until I started reading Android source code
-with it. I remember vividly how it took me 30 minutes to <code>grep
-readlink</code> in Android source code (with VCS directory and binary files
-excluded).
+with it. I remember vividly how it took me 30 minutes<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>
+to <code>grep readlink</code> in Android source code (with VCS directory and
+binary files excluded).
 </p>
 
 <p>
-Then I learned about the beagle software, and it occurred to me, what
-if I use beagle and grep together? I mean, to use beagle first to
-decide the (relatively a lot smaller) set of possible matching files
-(i.e., files that contained the word <code>readlink</code>, taking the previous
-example), then invoke grep on this set only. Usually the job can be
-done in a couple of seconds.
+Then I learned about the beagle software which is a desktop search
+engine, and it occurred to me, what if I use beagle and grep together?
+I mean, to use beagle first to decide the (relatively a lot smaller)
+set of possible matching files (i.e., files that contained the word
+<code>readlink</code>, taking the previous example), then invoke grep on this set
+only. Usually the job can be done in the blink of an eye.
 </p>
 
 <p>
-Beagrep supports both Linux and Windows (requires CYGWIN).
+Beagrep is available on GNU/Linux, Mac OS (requires MacPorts) and
+Windows (requires CYGWIN).
 </p>
 
 <p>
@@ -543,8 +544,8 @@ match this complex pattern, one necessary but not sufficient condition
 is for this file to contain all these 3 words. And what is good for
 this job? A search engine! Using beagle, the parent project for
 beagrep, a desktop search engine, you can find which files (actually,
-which file in this case) contained these 3 words in a blink of the
-eyes.
+which file in this case) contained these 3 words in the blink of an
+eye.
 </p>
 
 <p>
@@ -561,6 +562,7 @@ Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbre
 <p>
 So, you can imagine how quick it is to run <code>grep</code> on the set of files containing all required words:
 </p>
+
 
 <pre class="example">
 beagrep -e "JsonToValue(\"\\\\\"hello world\\\\\"\","
@@ -759,7 +761,33 @@ for MacbookAir), or was it because SSD and thus different
 caching strategy? It eludes me. (<b>EDIT</b>: it's because cpu
 freq is locked at 800MHz, same as the above footnote, see
 <a href="blog/2013/05/03/beagrep-even-faster2.html">beagrep performance tuning on MacbookAir+Linux</a>.)
+</p></div>
+
+<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
+As stated in the previous footnote, something must
+have went wrong with this result, 30 minutes is just impossibly long
+compared to the 5m20s cache cold and 3.5s cache hot stated above. Was
+it because of a slower machine, or even being run within a virtual
+machine (on a slower real machine)?  I can neither remember nor
+reproduce now. But I think one problem was the way I used <code>grep</code>, it's
+something along the line of: <code>find-filter-out-non-src-files | xargs
+grep readlink</code>. This will cause a lot of <code>grep</code> processes to be
+created because on most systems there is a max number of characters
+(typically 128k on 32 bit systems) limit with the command line
+arguments. When this limit is exceeded, you will see something like
+<code>bash: XXX: Argument list too long</code>. For this reason, xargs will call
+its command multiple times. For e.g., when I run this command: <code>seq 1
+1000000 | xargs bash -c 'echo -n $#\ ' true</code>, you'd expect <code>1000000</code>
+is printed, because xargs will pass this many arguments to the bash
+command, but no, instead you will see (try it, see how slow it is!)
+<code>23692 21841 21841 21841&#x2026;</code> printed one by one because xargs must
+invoke this bash command multiple times and each time pass just as
+many arguments as possible. This is not the most efficient way for
+calling grep (with all the arguments creating and passing around and
+grep processes creating and exiting) and must have contributed to my
+30 minutes measurement.
 </p>
+
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
