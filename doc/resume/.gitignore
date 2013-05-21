@@ -10,7 +10,6 @@ baohaojun-zh.pdf
 *.dvi
 *.log
 *.out
-../../bin/latex-dvi-pdf
 resume-en.tex
 resume-zh.tex
 resume-cn.tex
