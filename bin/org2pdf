@@ -10,6 +10,10 @@ if test $# != 1; then
     die "Error: Usage $(basename $0) TEX_FILE"
 fi
 
+if test ! -e "$1"; then
+    die "$1 doesn't exist"
+fi
+
 org_file=false
 if test "${1##*.}" = org; then
     org_file=true
