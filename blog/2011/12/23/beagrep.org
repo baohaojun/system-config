@@ -1,7 +1,7 @@
-#+title: beagrep, grep 2G source code in 2 seconds
+#+title: beagrep, grep 2G source code in 0.23 second
 # bhj-tags: beagrep
 
-Beagrep can grep ~readlink~ in Android source code in 0.8 second when
+Beagrep can grep ~readlink~ in Android source code in +0.8+ 0.23[fn:improve] second when
 cache is hot, and about 11 seconds when cache is cold.
 
 Using [[https://github.com/ggreer/the_silver_searcher][ag]] or [[https://github.com/petdance/ack][ack]] or bare grep, the results are a couple of seconds when
@@ -408,6 +408,13 @@ generate-call-graph.pl > call_graph.org
 dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2 
 #+end_src
 
+[fn:improve] Here's how I improved it from 0.8s to 0.23s: use Mono's
+AOT option to do the JIT optimization Ahead Of Time. I found out about
+this option when I was investigating why beagrep on my
+MacbookAir+Linux is consistently a few tenths of second slower than
+other machines, which is another story, see [[../../../2013/05/03/beagrep-even-faster2.org][beagrep performance tuning
+on MacbookAir+Linux]].
+
 [fn:fact] Here's how I run =grep= in Android source tree: ~time grep
           -I -r --exclude-dir=.git --exclude-dir=.repo -e readlink~
           =~/src/android=. The first time it took 5m20s, second time
@@ -419,5 +426,6 @@ dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2
           about the same debian installation, =grep= always takes
           about 1m as the minimum. Was it because less memory (only 4G
           for MacbookAir), or was it because SSD and thus different
-          caching strategy? It eludes me. (Edit: it is because of cpu
-          freq is locked at 800MHz, see [[../../../2013/05/03/beagrep-even-faster2.org][beagrep performance tuning on MacbookAir+Linux]].
+          caching strategy? It eludes me. (*EDIT*: it's because cpu
+          freq is locked at 800MHz, same as the above footnote, see
+          [[../../../2013/05/03/beagrep-even-faster2.org][beagrep performance tuning on MacbookAir+Linux]].)

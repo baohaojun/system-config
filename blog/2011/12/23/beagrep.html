@@ -2,8 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>beagrep, grep 2G source code in 2 seconds</title>
-<!-- 2013-05-20 Mon 22:13 -->
+<title>beagrep, grep 2G source code in 0.23 second</title>
+<!-- 2013-05-21 Tue 10:46 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
 <meta name="author" content="Bao Haojun"/>
@@ -101,15 +101,15 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">beagrep, grep 2G source code in 2 seconds</h1>
+<h1 class="title">beagrep, grep 2G source code in 0.23 second</h1>
 <p>
-Beagrep can grep <code>readlink</code> in Android source code in 0.8 second when
+Beagrep can grep <code>readlink</code> in Android source code in <del>0.8</del> 0.23<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup> second when
 cache is hot, and about 11 seconds when cache is cold.
 </p>
 
 <p>
 Using <a href="https://github.com/ggreer/the_silver_searcher">ag</a> or <a href="https://github.com/petdance/ack">ack</a> or bare grep, the results are a couple of seconds when
-cache is hot, or a couple of minutes when the cache is cold<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>.
+cache is hot, or a couple of minutes when the cache is cold<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>.
 </p>
 
 <div id="outline-container-sec-1" class="outline-2">
@@ -736,6 +736,15 @@ dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2
 <div id="text-footnotes">
 
 <div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+Here's how I improved it from 0.8s to 0.23s: use Mono's
+AOT option to do the JIT optimization Ahead Of Time. I found out about
+this option when I was investigating why beagrep on my
+MacbookAir+Linux is consistently a few tenths of second slower than
+other machines, which is another story, see <a href="../../../2013/05/03/beagrep-even-faster2.html">beagrep performance tuning
+on MacbookAir+Linux</a>.
+</p></div>
+
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
 Here's how I run <code>grep</code> in Android source tree: <code>time grep
           -I -r &#x2013;exclude-dir=.git &#x2013;exclude-dir=.repo -e readlink</code>
 <code>~/src/android</code>. The first time it took 5m20s, second time
@@ -747,8 +756,9 @@ thing is I tried it multiple times on my MacbookAir with
 about the same debian installation, <code>grep</code> always takes
 about 1m as the minimum. Was it because less memory (only 4G
 for MacbookAir), or was it because SSD and thus different
-caching strategy? It eludes me. (Edit: it is because of cpu
-freq is locked at 800MHz, see <a href="../../../2013/05/03/beagrep-even-faster2.html">beagrep performance tuning on MacbookAir+Linux</a>.
+caching strategy? It eludes me. (<b>EDIT</b>: it's because cpu
+freq is locked at 800MHz, same as the above footnote, see
+<a href="../../../2013/05/03/beagrep-even-faster2.html">beagrep performance tuning on MacbookAir+Linux</a>.)
 </p>
 <nav>
   <ul id="prev_next_posts">
