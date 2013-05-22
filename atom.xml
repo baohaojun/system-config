@@ -12,6 +12,18 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[通天塔导游]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/22/TourDeBabel.html"/>
+    <updated>2013-05-22T13:05:03+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/22/TourDeBabel.html</id>
+  </entry>
+  <entry>
+    <title type="html"><![CDATA[Mysterious rsync/ssh/scp hang]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html"/>
+    <updated>2013-05-22T13:05:03+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Tuning my blog to look like blogspot]]></title>
     <link href="http://baohaojun.github.io/blog/2013/05/20/0-Tuning-my-blog-to-look-like-blogspot-.html"/>
     <updated>2013-05-20T22:45:19+08:00</updated>
@@ -58,17 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/05/03/z00fix-generate-tags.html"/>
     <updated>2013-05-03T15:49:52+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/03/z00fix-generate-tags.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[My org-mode blog for github page]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/03/my-org-github-blog.html"/>
-    <updated>2013-05-03T15:42:21+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/03/my-org-github-blog.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[beagrep performance tuning on MacbookAir+Linux]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/03/beagrep-even-faster2.html"/>
-    <updated>2013-05-03T15:27:59+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/03/beagrep-even-faster2.html</id>
   </entry>
 </feed>

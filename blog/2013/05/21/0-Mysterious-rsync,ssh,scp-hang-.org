@@ -1,0 +1,35 @@
+#+title: Mysterious rsync/ssh/scp hang
+# bhj-tags: tool
+
+When I was writing a wrapper script for ease of syncing files with my
+cell-phone, I encountered this mysterious rsync hang when connecting
+to the phone.
+
+The idea is to convert the phone to rndis mode after it is connect to
+PC with USB, then use rsync over the usb0 network device on the PC.
+
+The command to convert phone's mode is like following:
+
+#+BEGIN_SRC sh
+    adb shell su -c "
+        setsid setsid sh -c '
+            setprop persist.sys.usb.config rndis,adb;
+            while ! netcfg|grep 'rndis0.*UP'; do
+                netcfg rndis0 up; 
+            done;
+            ifconfig rndis0 192.168.42.129
+        '"
+#+END_SRC
+
+After that, I will use rsync to the phone, 192.168.42.129, but
+unfortunately, it hangs.
+
+After a few debugging, I found out that it's because I have not made
+sure the rndis path is up after I issue that long adb command! So
+basically this means when I start rsync, the usb0 device is not there.
+
+Fixing it is easy, just make sure you don't change the phone's rndis
+state unnecessary, and if you must change it, then wait a few seconds
+before you use the usb0 network.
+
+Code is at [[https://github.com/baohaojun/system-config/raw/master/bin/scp-to-phone][scp-to-phone]].

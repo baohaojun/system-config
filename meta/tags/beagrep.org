@@ -26,5 +26,5 @@
   - 2011-12
    * 2011-12-23
 
-     [[../../../blog/2011/12/23/beagrep.org][beagrep, grep 2G source code in 2 seconds]]
+     [[../../../blog/2011/12/23/beagrep.org][beagrep, grep 2G source code in 0.23 second]]
 

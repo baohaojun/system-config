@@ -1,206 +1,74 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<title>通天塔导游</title>
-<!-- 2013-05-22 Wed 13:05 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="author" content="Bao Haojun"/>
-<link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="shortcut icon" href="/poison.png" type="image/png" />
+#+title: 通天塔导游
 
-    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript">
-        var BYB = {};
-    </script>
-    <script type="text/javascript">
-        BYB.includeScript = function(file,callback){
-            var _doc = document.getElementsByTagName('head')[0];
-            var js = document.createElement('script');
-            js.setAttribute('type', 'text/javascript');
-            js.setAttribute('src', file);
-            _doc.appendChild(js);
+[[http://steve.yegge.googlepages.com/tour-de-babel][Tour De Babel]]
 
-            if (!/*@cc_on!@*/0) { //if not IE
-                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
-                js.onload = function () {
-                    callback();
-                }
-            } else {
-                //IE6、IE7 support js.onreadystatechange
-                js.onreadystatechange = function () {
-                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
-                        callback();
-                    }
-                }
-            }
-            return false;
-        }
-    </script>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012  Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
-</head>
-<body>
-<div id="preamble" class="status">
-<div id="header">
-
-  <h1 id="blog-title">
-
-    包昊军的博客
-
-  </h1>
-  <p id="description">What you don't know, won't hurt you.</p>
-
-</div>
-</div>
-<div id='bhj_article'>
-  <div id='bhj_leftpane'>
-<div id="content">
-<h1 class="title">通天塔导游</h1>
-<p>
-<a href="http://steve.yegge.googlepages.com/tour-de-babel">Tour De Babel</a>
-</p>
-
-<p>
 [圣经记载：在远古的时候，人类都使用一种语言，全世界的人决定一起造一座通
 天的塔，就是巴别塔，后来被上帝知道了，上帝就让人们使用不同的语言，这个
 塔就没能造起来。巴别塔不建自毁，与其说上帝的分化将人类的语言复杂化，不
 如说是人类自身心灵和谐不再的分崩离析。之所以后来有了翻译，不仅是为了加
 强人类之间的交流，更寄达了一种愿望，希望能以此消除人际的隔阂，获求来自
 心灵的和谐及慰藉。真正的译者，把握血脉，抚平创痕，通传天籁，开启心门。]
-</p>
 
-<p>
 This is my whirlwind languages tour — the one I was going to write for
 the Amazon Developers Journal this month, but couldn't find a way to
-do it that was&#x2026; presentable.
-</p>
+do it that was... presentable.
 
-<p>
 这是我写的旋风式的编程语言简介——我本来为亚马逊开发者杂志本月的期刊写的，
-但是发现我写的东西没法&#x2026;见人。
-</p>
+但是发现我写的东西没法...见人。
 
 
-<p>
 For one thing, I lapse occasionally into coarseness and profanity
 here, so it wasn't appropriate for an official-ish Amazon
 publication. Instead, I'm stuffing it into my blog, which nobody
 reads. Except for you. Yep, just you. Hiya.
-</p>
 
-<p>
 首先，我偶尔一不小心口出脏话，或者对上帝不恭的话，所以对很官方很正式的
 亚马逊内参是不合适的；所以我就把它塞到我的博客里了，我的博客反正没人看
 的。除了你以外。是的，只有你会看，你好啊。
-</p>
 
 
-<p>
 For another, it's really a work in progress, just a few snippets here
 and there, not polished at all. Another great reason to make it a blog
 entry. Doesn't have to be good, or complete. It's just what I've got
 today. Enjoy!
-</p>
 
-<p>
 其次，这是一项进行中的工程，现在只是东打一耙西搞一下，还没有精修细改过
 的。又一个把它写到博客里的很大的理由。不需要很好，或很完整。就是我今天
 想说的一些话。请随便！
-</p>
 
 
-<p>
 My whirlwind tour will cover C, C++, Lisp, Java, Perl, (all languages
 we use at Amazon), Ruby (which I just plain like), and Python, which
 is in there because — well, no sense getting ahead of ourselves, now.
-</p>
 
 
-<p>
 我的旋风式简介会讲C，C++，Lisp，Java，Perl (我们在亚马逊用到的所有语言)，
 Ruby (我就是喜欢)，和Python，把Python加进来是因为——好吧，你看了就知道了，
 现在说了就没意思了。
-</p>
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> C</h2>
-<div class="outline-text-2" id="text-1">
-<p>
+* C
+
 You just have to know C. Why? Because for all practical purposes,
 every computer in the world you'll ever use is a von Neumann machine,
 and C is a lightweight, expressive syntax for the von Neumann
 machine's capabilities.
-</p>
 
-<p>
 你必须懂C。为啥? 因为出于所有现实的理由，这个世界上你可能会用到的每一台
 计算机都是一台冯·诺曼机器，而C是一种轻量级的、很有表达力的语法，能很好
 的展现冯·诺曼机器的能力。
-</p>
 
 
-<p>
 The von Neumann architecture is the standard computer architecture you
 use every day: a CPU, RAM, a disk, a bus. Multi-CPU doesn't really
 change it that much. The von Neumann machine is a convenient,
 cost-effective, 1950s realization of a Turing Machine, which is a
 famous abstract model for performing computations.
-</p>
 
-<p>
 冯·诺曼架构就是你每天都用的计算机的架构的标准：一个CPU，内存，硬盘，一
 条总线。多核计算机并没有带来本质上的变化。冯·诺曼机是一个很方便，很便宜，
 上世纪五十年代的实现图灵机的技术，图灵机是执行计算的最知名的抽象模型。
-</p>
 
 
-<p>
 There are other kinds of machines too. For instance, there are Lisp
 Machines, which are convenient 1950s realizations of Lisp, a
 programming language notation based on the lambda calculus, which is
@@ -208,41 +76,29 @@ another model for performing computations. Unlike Turing machines, the
 lambda calculus can be read and written by humans. But the two models
 are equivalent in power. They both model precisely what computers are
 capable of.
-</p>
 
-<p>
 世上还有其他的计算的机器。比如，Lisp机器，是上世纪50年代对Lisp计算模型
 的实现。Lisp模型是基于lambda代数的一种计算语言表示法，后者是与图灵机同
 构的一种模型。不像图灵机，lambda代数能被人类读和写。但是这二者是同等能
 力的。它们同样精确的表示了计算机能干什么。
-</p>
 
 
-<p>
 Lisp Machines aren't very common though, except at garage sales. von
 Neumann machines won the popularity race. There are various other
 kinds of computers, such as convenient realizations of neural networks
 or cellular automata, but they're nowhere as popular either, at least
 not yet.
-</p>
 
-<p>
 Lisp机现在不是很流行了，除了在跳蚤市场里。从谁更受欢迎来说，冯·诺曼机器
 赢了。还有一些其他的计算机，比如神经网络计算机，译者也不知道怎么翻的计
 算机(cellular automata)，但是这些都不够大众化，至少现在是这样的。
-</p>
 
 
-<p>
 So you have to know C.
-</p>
 
-<p>
 所以你必须懂C。
-</p>
 
 
-<p>
 You also have to know C because it's the language that Unix is written
 in, and happens also to be the language that Windows and virtually all
 other operating systems are written in, because they're OSes for von
@@ -251,48 +107,36 @@ different from C is going to be too far removed from the actual
 capabilities of the hardware to perform well enough, at least for an
 OS — at least in the last century, which is when they were all
 written.
-</p>
 
-<p>
 还有一个你必须懂C的原因是，Unix是用C写的。巧的是，Windows也是。基本上所
 有的其他操作系统都是用C写的。因为这些操作系统都是冯·诺曼机的操作系统，
 你还能用别的吗? 任何跟C很不一样的东西都会跟硬件的实际能力相差太远而导致
 无法满足性能上的需要，至少对一个操作系统来说是这样——至少在上个世纪是这
 样，碰巧这些系统都是上个世纪的。
-</p>
 
 
-<p>
 You should also know Lisp. You don't have to use it for real work,
 although it comes in quite handy for lots of GNU applications. In
 particular, you should learn Scheme, which is a small, pure dialect of
 Lisp. The GNU version is called Guile.
-</p>
 
-<p>
 你还应该知道Lisp。你不必用它来干实际工作，虽然它在很多GNU的软件里都会很
 用得着。尤其是，你应该学会Scheme，Lisp的一种小巧化的，纯洁的方言。GNU的
 版本叫Guile。
-</p>
 
 
-<p>
 They teach Scheme at MIT and Berkeley to new students for a semester
 or two, and the students have absolutely no clue as to why they're
 learning this weird language. It's a lousy first language, to be
 honest, and probably a lousy second one too. You should learn it,
 eventually, and not as your first or second language.
-</p>
 
-<p>
 他们在麻省理工和加州伯克利教新学生一到两个学期的Scheme，这些学生都对他
 们为什么要学这么奇怪的语言抓破脑袋。实话实说，作为第一门学习的语言，这
 是一个很烂的选择，即使作为第二门也是很烂。你应该学会它，最终，但不是作
 为第一门或第二门语言。
-</p>
 
 
-<p>
 It's hard, though. It's a big jump. It's not sufficient to learn how
 to write C-like programs in Lisp. That's pointless. C and Lisp stand
 at opposite ends of the spectrum; they're each great at what the other
@@ -305,9 +149,7 @@ and tools and stuff. That, you don't need to know. But you should be
 able to write programs in Scheme. If you can make your way through all
 the exercises in The Little Schemer and The Seasoned Schemer, you'll
 know enough, I think.
-</p>
 
-<p>
 这是很难的哦。这是很大的一步。学会怎么用Lisp写出像C语言的程序是不够的，
 那没有意义。C和Lisp一个就像红外线，一个就像紫外线，它们分布在光谱的最两
 端。它俩一个牛逼的地方刚好是另一个傻逼了的地方。如果说，C是最靠近计算机
@@ -317,36 +159,24 @@ Scheme就可以了，因为它是最简单最干净的。其他的Lisp已经发�
 复杂的编程环境，就像C++和Java，要有很多库啊，工具啊等等之类。那些，你不
 需要知道。但是你应该能用Scheme写程序。如果你能够做出The Little Schemer
 和The Seasoned Schemer这两本书里的所有习题，你懂得就够多了，我认为。
-</p>
 
-<p>
 But you choose a language for day-to-day programming based on its
 libraries, documentation, tools support, OS integration, resources,
 and a host of other things that have very little to do with how
 computers work, and a whole lot to do with how people work.
-</p>
 
-<p>
 但是对于你天天要做的编程工作，你应该基于以下条款选择你的语言：库，文档，
 工具支持，操作系统集成，资源，和一堆其他的东西。这些东西跟计算机如何工
 作关系很小，但是跟人类如何工作关系甚大。
-</p>
 
 
-<p>
 People still write stuff in straight C. Lots of stuff. You should know
 it!
-</p>
 
-<p>
 人们还在用很直白的C语言写东西。很多东西。你应该懂C！
-</p>
-</div>
-</div>
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> C++</h2>
-<div class="outline-text-2" id="text-2">
-<p>
+
+* C++
+
 C++ is the dumbest language on earth, in the very real sense of being
 the least sentient. It doesn't know about itself. It is not
 introspective. Neither is C, but C isn't "Object-Oriented", and object
@@ -354,20 +184,16 @@ orientation is in no small measure about making your programs know
 about themselves. Objects are actors. So OO languages need to have
 runtime reflection and typing. C++ doesn't, not really, not that you'd
 ever use.
-</p>
 
 
 
-<p>
 C++是地球上最蠢的语言，从蠢这个字的真正意义上说：它所知极少。它不知道自
 己是什么东西。它没有内视[面向对象里的一个概念]。C也没有，但是C不是“面向
 对象”的，而面向对象很大程度上是关于要让你的程序知道它自己。对象就像演员。
 所以面向对象语言应该有运行时的自省机制，知道自己是个什么类的对象。C++不
 是这样的，真的，你不会那样用它。
-</p>
 
 
-<p>
 As for C: it's so easy to write a C compiler that you can build tools
 on top of C that act like introspection. C++, on the other hand, is
 essentially un-parseable, so if you want to write smart tools that
@@ -375,145 +201,101 @@ can, for example, tell you the signatures of your virtual functions,
 or refactor your code for you, you're stuck using someone else's
 toolset, since you sure as heck aren't gonna parse it. And all the
 toolsets for parsing C++ out there just plain suck.
-</p>
 
-<p>
 关于C：写一个C的编译器是那么的简单，以至于你可以用C写一个关于C的工具，
 用起来就像是有内省机制。而C++呢，基本上是不可解析的，所以如果你想写一个
 很牛逼的工具用来——比如，告诉你你的虚函数的原型，或者帮你重构你的代码，
 你将不得不依赖别人的工具集，因为你自己在除非脑子进屎的情况下是根本不会
 去写一个C++的解析器的。而市面上所有的C++的解析器都很傻逼。
-</p>
 
 
-<p>
 C++ is dumb, and you can't write smart systems in a dumb
 language. Languages shape the world. Dumb languages make for dumb
 worlds.
-</p>
 
-<p>
 C++很蠢，你不能用蠢语言创造一个好系统。语言决定世界，蠢语言决定蠢世界。
-</p>
 
 
-<p>
 All of computing is based on abstractions. You build higher-level
 things on lower-level ones. You don't try to build a city out of
 molecules. Trying to use too low-level an abstraction gets you into
 trouble.
-</p>
 
-<p>
 所有的计算都基于抽象。你用低级的东西创造出高级的东西。但是你不能用分子
 创造出一个城市。尝试使用太低级别的抽象只会给你带来麻烦。
-</p>
 
 
-<p>
 We are in trouble.
-</p>
 
-<p>
 我们就惹上麻烦了 [是指亚马逊的员工，还是所有C++的程序员? 我也不知道]。
-</p>
 
 
-<p>
 The biggest thing you can reasonably write in C is an operating
 system, and they're not very big, not really. They look big because of
 all their apps, but kernels are small.
-</p>
 
-<p>
 理智的情况下，你用C写的最大的东东就是一个操作系统。而操作系统其实不是很
 大的，真的。它们看起来很大，但那是因为它们有很多应用软件，操作系统本身
 的内核是蛮小的。
-</p>
 
 
-<p>
-The biggest thing you can write in C++ is&#x2026; also an operating
+The biggest thing you can write in C++ is... also an operating
 system. Well, maybe a little bigger. Let's say three times bigger. Or
 even ten times. But operating system kernels are at most, what, maybe
 a million lines of code? So I'd argue the biggest system you can
 reasonably write in C++ is maybe 10 million lines, and then it starts
 to break down and become this emergent thing that you have no hope of
 controlling, like the plant in Little Shop of Horrors. Feeeeeed
-meeeeeee&#x2026;
-</p>
+meeeeeee...
 
-<p>
-你用C++能写的最大的东东是&#x2026;也是操作系统。好吧，或许稍微再大点儿。让我
+你用C++能写的最大的东东是...也是操作系统。好吧，或许稍微再大点儿。让我
 们说，再大三倍吧。或者10倍吧。但是操作系统内核最多也就，那啥，一百万行
 代码? 所以我说你能用C++写的最大的系统大概也就是一千万行代码吧，再大的话
-就开始不行了，这玩意儿你没法控制了，就像恐怖片里的&#x2026;让我吃了你&#x2026;
-</p>
+就开始不行了，这玩意儿你没法控制了，就像恐怖片里的...让我吃了你...
 
 
-<p>
 If you can get it to compile by then, that is.
-</p>
 
-<p>
 我说的一千万行是指如果你那时候还能让你的系统编译通过的话。
-</p>
 
 
-<p>
 We have 50 million lines of C++ code. No, it's more than that now. I
 don't know what it is anymore. It was 50 million last Christmas, nine
 months ago, and was expanding at 8 million lines a quarter. The
 expansion rate was increasing as well. Ouch.
-</p>
 
-<p>
 我们(在亚马逊，译者注)有五千万行C++代码。不，现在还要更多了。我已经不知
 道有多少行了。上个圣诞节是五千万行，那是九个月前，而它以每季度八百万行
 的规模增长。增长率本身也增长，妈呀。
-</p>
 
 
-<p>
 Stuff takes forever to do around here. An Amazon engineer once
 described our code base as "a huge mountain of poop, the biggest
 mountain you've ever seen, and your job is to crawl into the very
 center of it, every time you need to fix something."
-</p>
 
-<p>
 我们想这个系统里干点啥好像要一万年。一个亚马逊工程师有一次这样描述我们
 的代码库：“一座很大的屎山，你见过的最大的山，每次你想修正一个bug，你的
 工作就是爬到屎山的正中心去。”
-</p>
 
 
-<p>
 That was four years ago, folks. That engineer has moved on to greener
 pastures. Too bad; he was really good.
-</p>
 
-<p>
 伙计们，那哥们可是在四年前说的这话。他现在已经到更环保绿色的牧场上去了。
 真是太可惜了，他可是个实实在在的高手啊。
-</p>
 
 
-<p>
 It's all C++'s fault. Don't argue. It is. We're using the dumbest
 language in the world. That's kind of meta-dumb, don't you think?
-</p>
 
-<p>
 这都是C++的错。别跟我争论。就是的。我们用的是世上最蠢的语言。这简直有点
 老板级的蠢，你说呢?  [meta在计算机术语里通常表示更高一个层次，比如，
 meta-language，比普通的language高一个层次，意思是关于语言的语言。哲学里
 应该会经常用到这个词。我不懂哲学，但是我觉得老板们总是比我们高一级，所
 以meta-dump我就翻译成老板级的蠢喽:-)]
-</p>
 
 
-<p>
 With that said, it is obviously possible to write nice C++ code, by
 which I mean, code that's mostly C, with some C++ features mixed in
 tastefully and minimally. But it almost never happens. C++ is a vast
@@ -521,51 +303,39 @@ playground, and makes you feel smart when you know all of it, so
 you're always tempted to use all of it. But that's really, really hard
 to do well, because it's such a crap language to begin with. In the
 end, you just make a mess, even if you're good.
-</p>
 
-<p>
 [说了这些不好听的]话说回来，用C++写出漂亮的代码显然是可以的，我的意思是
 说，这样的代码应该大部分还是C，偶尔很有品味的，很有节制的用一点C++。但
 是这种代码几乎从来不会被写出来。C++是个很好玩的游乐场，而如果你把它玩儿
 得门儿清的话你会觉得自己特牛，所以你总是被诱惑把你知道的所有的东西都用
 上。但是那是很难做好的，因为从一开始这个语言就太狗屎了，最终，你会弄得
 一塌糊涂，即使你很能干。
-</p>
 
 
-<p>
 I know, this is Heresy, with a capital-'H'. Whatever. I loved C++ in
 college, because it's all I knew. When I heard that my languages prof,
 Craig Chambers, absolutely detested C++, I thought: "Why? I like it
 just fine." And when I heard that the inventor of STL was on record as
 saying he hated OOP, I thought he was cracked. How could anyone hate
 OOP, especially the inventor of STL?
-</p>
 
-<p>
 我知道，我说的都是异端邪说，该被钉到十字架上的。随便吧。我在大学里的时
 候老喜欢C++了，因为我那时候就只知道这一门语言。当我听到我的语言教授，
 Craig Chambers，绝对的厌憎C++，我想：“这是为什么呢? 我觉得它挺好的啊”。
 而当我听到STL(标准模板库)的发明者被采访时说他恨OOP(面向对象编程)时，我
 更是认为他肯定是磕药了。怎么会有人恨OOP呢，而这个人竟然还是STL的发明者?
-</p>
 
 
-<p>
 Familiarity breeds contempt in most cases, but not with computer
 languages. You have to become an expert with a better language before
 you can start to have contempt for the one you're most familiar with.
-</p>
 
-<p>
 亲不敬，熟生厌[语出圣经]。说的是在大多数情况下，跟一件事物熟悉了之后你
 就失去对它的膜拜尊敬了；在计算机语言里情况不是这样的。光对一门语言熟悉
 不会导致你看轻这门语言。你必须成为另一门更优秀的语言的专家[才能让你明白
 原来那门语言有多么多的问题]。
-</p>
 
 
-<p>
 So if you don't like what I'm saying about about C++, go become an
 expert at a better language (I recommend Lisp), and then you'll be
 armed to disagree with me. You won't, though. I'll have tricked
@@ -573,157 +343,111 @@ you. You won't like C++ anymore, and you might be irked that I tricked
 you into disliking your ex-favorite language. So maybe you'd better
 just forget about all this. C++ is great. Really. It's just
 ducky. Forget what I said about it. It's fine.  Lisp
-</p>
 
-<p>
 所以如果你不喜欢我针对C++大放厥词，请你去学另一门语言并成为一个专家(我
 推荐Lisp)，只有那时你才有足够的武器与我争论。然而，那时你将不会跟我争了。
 你上了我的当了。你也会跟我一样变得不喜欢C++了，你或许会觉得我这个人很恶
 心，把你骗得不喜欢自己曾经的最爱了。所以或许你应该把我说的一切都忘了。
 C++挺好的其实，真的。它就是很棒棒(译者注，作者在这里用了ducky，这是一个
 女性喜欢用的夸某物好的词，近来也为玻璃们喜爱)。忘了我说的话。C++不错的。
-</p>
-</div>
-</div>
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Lisp</h2>
-<div class="outline-text-2" id="text-3">
-<p>
+
+* Lisp 
+
 (I'm betting this next section will astonish you, even if you've been
 here a while.)
-</p>
 
-<p>
 (我打赌这一节会让你觉得惊讶，即使你在这儿有一阵了[作者有可能是说即使你
 在亚马逊工作已经有一阵了，因为这个博客原来是他想发在亚马逊内参上的，并
 且下面说的很多是亚马逊公司的内幕]。)
-</p>
 
 
-<p>
 When Amazon got its start, we had brilliant engineers. I didn't know
 all of them, but I knew some of them.
-</p>
 
-<p>
 亚马逊创业之初，我们有很多明星级的工程师。我不认识他们所有人，但是我认
 识几个。
-</p>
 
 
-<p>
 Examples? Shel Kaphan. Brilliant. Greg Linden. Brilliant. Eric
 Benson. Independently famous in his own right, before he ever even
 came to Amazon. Also brilliant.
-</p>
 
-<p>
 比如? Shel Kaphan。大拿。Greg Linden。大拿。Eric Benson。即使在他加入亚
 马逊之前就已经有自己响亮的名气了。也是大拿。
-</p>
 
 
-<p>
 They wrote the Obidos webserver. Obidos made Amazon successful. It was
 only later that poop-making engineers and web devs, frontend folks
 mostly — schedule-driven people who could make their managers happy by
 delivering crap fast — it was only later that these people made Obidos
 bad. Clogged the river, so to speak. But Obidos was a key cornerstone
 of Amazon's initial success.
-</p>
 
-<p>
 他们写了Obidos服务器。是Obidos让亚马逊成功的。只是后来那些生产大便很拿
 手的工程师，网页开发者，搞前端的人——这些进度驱动的人因为生产大便很快所
 以总是能让经理们满意[因为他们总能赶上进度]——只是在后来这些人把Obidos搞
 糟了。[他们的大便]把整条[亚马逊]河都堵了，打个比方说的话。但是Obidos是
 亚马逊最初的成功的一块关键的基石。
-</p>
 
 
-<p>
 The original brilliant guys and gals here only allowed two languages
 in Amazon's hallowed source repository: C and Lisp.
-</p>
 
-<p>
 这些最早的牛人们在亚马逊神圣的代码库里只允许两种语言：C 和 Lisp。
-</p>
 
 
-<p>
 Go figure.
-</p>
 
-<p>
 你自己去想吧。
-</p>
 
 
-<p>
 They all used Emacs, of course. Hell, Eric Benson was one of the
-authors of XEmacs<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>. All of the greatest engineers in the
+authors of XEmacs[fn:note1]. All of the greatest engineers in the
 world use Emacs. The world-changer types. Not the great gal in the
 cube next to you. Not Fred, the amazing guy down the hall. I'm talking
 about the greatest software developers of our profession, the ones who
 changed the face of the industry. The James Goslings, the Donald
-Knuths, the Paul Grahams<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>, the Jamie Zawinskis, the Eric
+Knuths, the Paul Grahams[fn:note2], the Jamie Zawinskis, the Eric
 Bensons. Real engineers use Emacs. You have to be way smart to use it
 well, and it makes you incredibly powerful if you can master it. Go
 look over Paul Nordstrom's shoulder while he works sometime, if you
 don't believe me. It's a real eye-opener for someone who's used Visual
 Blub .NET-like IDEs their whole career.
-</p>
 
-<p>
 当然，他们所有人都使用Emacs。靠，Eric Benson是XEmacs的作者之
-一<sup><a id="fnr.1.100" name="fnr.1.100" class="footref" href="#fn.1">1</a></sup>。这个世界上所有伟大的工程师都在用Emacs。那种世界因你而不同
+一[fn:note1]。这个世界上所有伟大的工程师都在用Emacs。那种世界因你而不同
 级别的[工程师]。不是坐在你旁边的格子里的那哥们那种伟大。也不是Fred，走
 廊尽头那哥们。我说的是我们这个行业里最伟大的软件开发者，那些能改变这个
 工业的面貌的人。像James Gosling们(Java语言设计者)，Donald Knuth们(这个
-人没有听说过的话赶紧改行吧，别搞计算机了)，Paul Graham们<sup><a id="fnr.2.100" name="fnr.2.100" class="footref" href="#fn.2">2</a></sup>，
+人没有听说过的话赶紧改行吧，别搞计算机了)，Paul Graham们[fn:note2]，
 Jamie Zawinski们，Eric Benson们。真正的工程师用Emacs。你必须很有点聪明
 才能把Emacs用好，而如果你能成为一个Emacs大师的话它会给你难以置信的牛力。
 有机会的话你应该站到Paul Nordstrom的肩后看看他是怎么工作的，如果你不相
 信我的话。对那些一辈子都在用烂Visual.Net之类的集成开发环境的人来说，一
 定会大开眼界的。
-</p>
 
 
-<p>
 Emacs is the 100-year editor.
-</p>
 
-<p>
 Emacs是那种你可以用100年的编辑器。
-</p>
 
 
-<p>
 Shel, Eric, Greg, and others like them that I wasn't fortunate enough
 to work with directly: they didn't allow C++ here, and they didn't
 allow Perl. (Or Java, for that matter). They knew better.
-</p>
 
-<p>
 Shel，Eric，Greg，和其他像他们那样的人，我没有足够幸运能跟他们直接一起
 工作：他们禁止在这里使用C++，他们禁止使用Perl。(或者Java，为完整起见)。
 他们是明白人。
-</p>
 
 
-<p>
 Now C++, Java and Perl are all we write in. The elders have moved on
 to greener pastures too.
-</p>
 
-<p>
 现在我们都在用C++，Java和Perl了，所有的代码都用这些语言。我们的前辈们已
 经到更环保的[没那么多大便的]牧场上去了。
-</p>
 
 
-<p>
 Shel wrote Mailman in C, and Customer Service wrapped it in
 Lisp. Emacs-Lisp. You don't know what Mailman is. Not unless you're a
 longtime Amazon employee, probably non-technical, and you've had to
@@ -734,9 +458,7 @@ mean directly; i.e., you had to talk to them. Our lovely, illiterate,
 eloquent, well-meaning, hopeful, confused, helpful, angry, happy
 customers, the real ones, the ones buying stuff from us, our
 customers. Then you know Mailman.
-</p>
 
-<p>
 Shel用C写了Mailman，客服部的人把它用Lisp封装了一下。Emacs-Lisp。你不需
 要知道Mailman是什么东西。除非你是个Amazon的老员工，或许不是搞技术的，而
 且你曾经不得不让客户嗨皮[只有在这种情况下你才需要知道Mailman]。不是间接
@@ -745,22 +467,16 @@ Shel用C写了Mailman，客服部的人把它用Lisp封装了一下。Emacs-Lisp
 们可爱的，不识字的，呱呱其谈的，心地善良的，充满希望的，困惑的，能帮点
 小忙的，愤怒的，嗨皮的客户们，真正的客户们，那些从咱们这里买东西的人，
 我们的客户们。(如果你必须跟他们打交道的话，)那你就会知道Mailman这个东西。
-</p>
 
 
-<p>
 Mailman was the Customer Service customer-email processing application
-for &#x2026; four, five years? A long time, anyway. It was written in
+for ... four, five years? A long time, anyway. It was written in
 Emacs. Everyone loved it.
-</p>
 
-<p>
-Mailman是客服部的客户电子邮件处理软件，它服务了有&#x2026;四，五年? 反正是很
+Mailman是客服部的客户电子邮件处理软件，它服务了有...四，五年? 反正是很
 长时间。它是用Emacs写的，所有人都爱死它了。
-</p>
 
 
-<p>
 People still love it. To this very day, I still have to listen to long
 stories from our non-technical folks about how much they miss
 Mailman. I'm not shitting you. Last Christmas I was at an Amazon
@@ -771,9 +487,7 @@ Amazon. Four young women found out I was in Customer Service, cornered
 me, and talked for fifteen minutes about how much they missed Mailman
 and Emacs, and how Arizona (the JSP replacement we'd spent years
 developing) still just wasn't doing it for them.
-</p>
 
-<p>
 人们现在还很爱它。直到今天，我依旧不得不听我们一些非技术员工跟我长篇大
 论的叨叨他们是多么的怀念Mailman。我可绝不是满嘴喷粪。上个圣诞节我参加了
 一个Amazon的派对，一个我不知道自己怎么会被邀请的派对，里面有很多西装笔
@@ -783,19 +497,13 @@ developing) still just wasn't doing it for them.
 我包围了，跟我说了十五分钟她们是多么的怀念Mailman和Emacs，而现在的亚马
 逊(我们用JSP开发了好多年用来换掉Mailman的那一套软件)是怎么的不能满足她
 们，让她们能够跟以前一样爽[邪恶]。
-</p>
 
 
-<p>
 It was truly surreal. I think they may have spiked the eggnog.
-</p>
 
-<p>
 这一切都太梦幻了，我觉得她们可能是喝多了。
-</p>
 
 
-<p>
 Shel's a genius. Emacs is a genius. Even non-technical people love
 Emacs. I'm typing in Emacs right now. I'd never voluntarily type
 anywhere else. It's more than just a productivity boost from having
@@ -803,28 +511,20 @@ great typing shortcuts and text-editing features found nowhere else on
 the planet. I type 130 to 140 WPM, error-free, in Emacs, when I'm
 doing free-form text. I've timed it, with a typing-test Emacs
 application I wrote. But it's more than that.
-</p>
 
-<p>
 Shel是个天才。Emacs是天才。连非技术人员都爱Emacs。我现在就是在Emacs里打
 这些文字。我绝不情愿在任何其他地方打字。这不只是关于让你的效率得到飞跃，
 通过那些地球上其他地方找不到的快捷键和文本编辑功能。我每分钟打一百三到
 一百四十个英文单词，在Emacs里，当我在写没有格式要求的文本的时候。我测过
 这个时间速度。自己写了一个测打字速度的Emacs应用。但我想跟你说的不只是这
 个。
-</p>
 
 
-<p>
 Emacs has the Quality Without a Name.
-</p>
 
-<p>
 Emacs有的是一种你叫不出名字来的品质。
-</p>
 
 
-<p>
 We retired Mailman. That's because we have the Quality With a Name —
 namely, Suckiness. We suck. We couldn't find anyone who was good
 enough at Emacs-Lisp to make it work. Nowadays it would be easy;
@@ -835,9 +535,7 @@ while, they even had Bob Glickstein on contract, the guy who wrote the
 O'Reilly "giraffe" book Writing Gnu Emacs Extensions, sitting there
 writing Gnu Emacs Extensions for Mailman in this little office in the
 Securities building.
-</p>
 
-<p>
 我们让Mailman退役了。那是因为我们有一种叫得出名字的品质——就是，烂。我们
 很烂。我们(当时)找不到Emacs-Lisp足够牛的人把Mailman继续搞下去。今天这应
 该不难了；亚马逊现在到处都是Emacs Lisp的黑客。但是在那时候，客服部的人没
@@ -845,118 +543,82 @@ Securities building.
 当时没有足够多的Emacs-Lisp的人。有一段时间，他们甚至找来Bob Glickstein
 当合同工，那个给O'Reilly写了那本Gnu Emacs扩展的书的家伙，坐在保安们呆的
 屋子里给Emacs写Mailman的扩展。
-</p>
 
 
-<p>
 CS Apps was Amazon's first 2-pizza team, you know. They're completely
 autonomous — then and now. Nobody talks to them, nobody helps them,
 they build everything themselves. They don't have web devs, they don't
 have support engineers, they don't have squat, except for rock-solid
 engineers and a mentoring culture. And that's all they've ever needed.
-</p>
 
-<p>
 客服应用部是Amazon的第一个两块比萨饼的团队[我也不知道什么意思，看下文]。
 这个团队是完全自立的。不管是那时还是现在。没人跟他们说话，没人帮他们。
 没有枪，没有炮，他们自己造。他们没有网页工程师，没有支持工程师。屁也没
 有。有的只是一堆骨灰级的工程师和一个能带新人的文化。这就是他们需要的一
 切了。
-</p>
 
 
-<p>
 But they had to retire Mailman. Alas. Alackaday. And I still get to
 hear about how much people miss it. At parties, even.
-</p>
 
-<p>
 但他们最终不得不让Mailman光荣退休。妈哎。而我呢今天还听到人们说他们是多
 么的怀念它。甚至在派对上。
-</p>
 
 
-<p>
 I think there may still be more Lisp hackers, per capita, in CS Apps
 than in any other group at Amazon. Not that they get to use it much,
 but as Eric Raymond said, even if you don't program in it much,
 learning Lisp will be a profound experience that will make you a
 better engineer for the rest of your life.
-</p>
 
-<p>
 我想今天按人头比例来说，客服部仍然拥有比亚马逊任何其他团队更多的Lisp黑
 客。可能他们用到Lisp的机会不多了，但是Eric Raymond[UNIX编程艺术、教堂与
 集市的作者]说过，即使你很少用Lisp写程序，学习Lisp会是意义深远的一个经历，
 能让你剩下的这辈子都成为一个更好的工程师。
-</p>
 
 
-<p>
 Religion isn't the opiate of the masses anymore, Karl. IDEs are.  
-</p>
 
-<p>
 卡尔，宗教现在已经不是大众的精神鸦片了。集成开发环境才是。[卡尔，姓马克
 思，这么说大家应该都知道了吧]。
-</p>
-</div>
-</div>
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> Java</h2>
-<div class="outline-text-2" id="text-4">
-<p>
+
+* Java
+
 Java is simultaneously the best and the worst thing that has happened
 to computing in the past 10 years.
-</p>
 
-<p>
 Java是过去的10年中计算行业里发生过的最好的同时也是最坏的事。
-</p>
 
 
-<p>
 On the one hand, Java frees you up from many mundane and error-prone
 details of C++ coding. No more bounds errors, no more core
 dumps. Exceptions thrown point you to the exact line of code that
 erred, and are right 99% of the time. Objects print themselves
 intelligently on demand. Etc., etc.
-</p>
 
-<p>
 一方面，Java把你从C++编程的很多枯燥易错的细节中解救出来了。没有数组越界
 了，没有core dump了。抛出来的异常能让你精确定位到出错的那一行代码，而且
 99%的时候都是真正出错了的那一行代码。对象们在需要的时候能智能地把它们自
 己打印出来。等等等等。
-</p>
 
 
-<p>
 On the other hand, in addition to being a language, a virtual machine,
 a huge set of class libraries, a security model, and a portable
 bytecode format, Java is a religion. So you can't trust anyone who
 loves it too much. It's a tricky business to hire good Java
 programmers.
-</p>
 
-<p>
 另一方面，除了是一种语言，一个虚拟机，一个巨无霸的类库，一个安全模型，
 一个可移植的字节码格式，Java还是一个宗教。邪教。所以你不能太相信对它太
 虔诚的人。想要招一个好的Java工程师是一项很有技术挑战的活。
-</p>
 
 
-<p>
 But Java really has been a big step forward for software engineering
 in general.
-</p>
 
-<p>
 但是总的来说，Java是软件工程史上的一大进步。
-</p>
 
 
-<p>
 Going from C++ to Java isn't just changing syntax. It's a shocking
 paradigm shift that takes a while to sink in. It's like suddenly
 getting your own Executive Assistant. You know how VPs always seem to
@@ -969,9 +631,7 @@ mundane tasks. Switching to Java turns you into two programmers — one
 taking care of all this stuff that you no longer have to think much
 about, and another one focused on the problem domain. It's a
 staggering difference, and one you can get used to in a real hurry.
-</p>
 
-<p>
 从C++到Java不只是语法上的改变。这是一种需要一段时间去好好体会的一种震撼
 性的世界观的转变。这有点像突然你被配了一个执行助理。你知道老总们为什么
 总是好像有时间去开会，总是知道公司现在运行的情况，总是写出很酷酷的文档
@@ -981,146 +641,104 @@ staggering difference, and one you can get used to in a real hurry.
 俗的事情上。切换到Java编程语言就把你变成了两个程序员——一个处理那些你不
 需要关心的东西，另一个可以集中精力在问题本身上。这是一个很震人的改变，
 一个你应该很快就能习惯并能喜欢上的改变。
-</p>
 
 
-<p>
 As Jamie Zawinski said in his famous "java sucks" article: "First the
 good stuff: Java doesn't have free(). I have to admit right off that,
 after that, all else is gravy. That one point makes me able to forgive
 just about anything else, no matter how egregious. Given this one
 point, everything else in this document fades nearly into
 insignificance."
-</p>
 
-<p>
 就像Jamie Zawinski[Netscape牛人，开发XEmacs和Mozilla浏览器和很多很多其
 他软件，好像学历是高中毕业?]在他著名的“Java真烂”那篇文章里说的：“先说那
 些好东西：Java没有free()函数。我必须一开始就承认，其他的东西都没什么了
 不起。(没有free)是能让我原谅其他所有东西的特性，不管其他东西有多烂。讲
 完这一点后，我的文章里其他一切几乎都完全没有重要性了。”
-</p>
 
 
-<p>
 Jamie's article was written in 1997, which in Java years is a long
 time ago, and Java has improved a lot since he wrote it; some of the
 things he complains about are even fixed now.
-</p>
 
-<p>
 Jamie的文章写在1997年，按Java年来算的话是很早以前了，跟他写这篇文章时比
 Java已经有很大的改善；一些他抱怨的东西甚至已经被fix了。
-</p>
 
 
-<p>
 Most of them aren't. Java does still kind of suck, as a language. But
 as Jamie points out, it's "the best language going today, which is to
 say, it's the marginally acceptable one among the set of complete
 bagbiting loser languages that we have to work with out here in the
 real world."
-</p>
 
-<p>
 但是大多数还是没有被fix。Java作为一门语言还是有点烂。但就如Jamie指出的，
 Java“是今天为止最好的语言。我的意思是说，它是今天市面上那些烂得底儿掉的
 一堆语言比起来有那么一点能被我接受。”
-</p>
 
 
-<p>
 Really, you should read it.
-</p>
 
-<p>
 真的，你应该读读他那篇文章。
-</p>
 
 
-<p>
 Java is truly wonderful along almost every dimension except for the
 language itself, which is mostly what JWZ was griping about. But
 that's a lot to gripe about. Libraries can only get you so far if your
 language sucks. Trust me: you may know many, many things better than I
 do, but I know that libraries can't really save a sucky language. Five
 years of assembly-language hell at Geoworks taught me that.
-</p>
 
-<p>
 Java几乎每一方面都很好，除了它的语言本身，而这是JWZ抱怨的主要对象。但那
 是一个很大的抱怨。再好的库也救不了一个烂语言。相信我：你可能比我知道多
 得多的东西，但是我知道好兵救不了烂将。在Geoworks搞了五年汇编语言教会了
 我这个道理。
-</p>
 
 
-<p>
 Compared to C++, Java as a language is about even. Well, scratch that,
 it's a lot better, because it has strings, oh man, how can you use a
 language with lousy string support.
-</p>
 
-<p>
 跟C++比，Java作为一个语言还过得去。好吧，别扯了，Java要好很多。因为它有
 (内建)的字符串。哥们，你说一个没有内建的字符串的语言是人用的吗。
-</p>
 
 
-<p>
 But Java's missing some nice features from C++, such as
 pass-by-reference(-to-stack-object), typedefs, macros, and operator
 overloading. Stuff that comes in handy now and again.
-</p>
 
-<p>
 但是Java跟C++比少了一些好东西，比如(函数调用时)传引用，栈上的对象，
 typedef，宏，以及运算符重载。一些时不时地会很称手的东西。
-</p>
 
 
-<p>
 Oh, and multiple inheritance, which now I've come to appreciate in my
 old age. If you think my Opinionated Elf was a good counterpoint to
 polymorphism dogma, I've got several brilliant examples of why you
 need multiple inheritance, or at least Ruby-style mixins or automatic
 delegation. Ask me about the Glowing Sword or Cloak of Thieving
 sometime. Interfaces suck.
-</p>
 
-<p>
 哦，还有多重继承，我现在老了，反而挺欣赏了的多重继承。如果你认为我这个
 观点僵硬不灵活的家伙是多态教义很好的反例的话，我倒是可以给你举几个为什
 么你需要多态继承的好例子，或者至少像Ruby那样的mixin或者自动的派遣。下次
 问问我白龙马的事情。今天我要告诉你为什么Java的interface是个烂货。
-</p>
 
 
-<p>
 Gosling even said, a few years ago, that if he had to do it all over
 again, he wouldn't have used interfaces.
-</p>
 
-<p>
 几年前Gosling自己都说，如果一切都能重来的话，他不会用上interface。
-</p>
 
 
-<p>
 But that's just exactly what the problem with Java is. When James said
 that, people were shocked. I could feel the shock waves, could feel
 the marketing and legal folks at Sun maneuvering to hush him up, brush
 it off, say it wasn't so.
-</p>
 
-<p>
 但那正是Java的问题所在：当James说出那句话的时候，人们被雷到了。我甚至能
 感觉到那股雷劲儿，能感觉到Sun公司市场部和法务部的鸟人是多么想把James灭
 口，然后告诉大家他没那么说过。
-</p>
 
 
-<p>
 The problem with Java is that people are blinded by the marketing
 hype. That's the problem with C++, with Perl, with any language that's
 popular, and it's a serious one, because languages can't become
@@ -1128,27 +746,19 @@ popular without hype. So if the language designer suggests innocently
 that the language might not have been designed perfectly, it's time to
 shoot the language designer full of horse tranquilizers and shut down
 the conference.
-</p>
 
-<p>
 Java的问题就是人们都被那帮人搞的广告效应蒙住了眼。C++，Perl，任何流行语
 言都有这个问题。这是很严重的，因为如果没有一些说大话吹牛逼的广告，一个
 语言是不会流行起来的。所以如果一个语言的设计者说他的语言没有被设计得很
 完美的话，就是赶紧用麻醉枪射击这胡说八道的家伙并宣布散会的时候了。
-</p>
 
 
-<p>
 Languages need hype to survive; I just wish people didn't have to be
 blinded by it.
-</p>
 
-<p>
 语言们需要放点儿卫星才能活，我只希望人们不要被卫星耀瞎了眼。
-</p>
 
 
-<p>
 I drank the OOP Kool-Aid, I regurgitated the hype myself. When I
 started at Amazon, I could recite for you all the incantations,
 psalms, and voodoo chants that I'd learned, all in lieu of
@@ -1157,184 +767,123 @@ is Evil 'cuz Everyone Says So, and Operator Overloading Is Evil, and
 so on. I even vaguely sort of knew why, but not really. Since then
 I've come to realize that it's not MI that sucks, it's developers who
 suck. I sucked, and I still do, although hopefully less every year.
-</p>
 
-<p>
 我学了面向对象编程，我自己也对此大吹大擂。当我加入亚马逊时，我不能告诉
 你我有什么智慧或者经验，但我可以给你背诵出所有关于OOP的魔咒。多重继承是
 邪恶的，因为大家都这么说；运算符重载是邪恶的，诸如此类。我甚至有点模糊地
 知道为什么是邪恶的，但实际上不知道。后来我明白了，这些都不邪恶，不是烂
 玩意儿，烂的是开发者，是我。我现在还是烂，但是希望每年都不烂一点起来。
-</p>
 
 
-<p>
 I had an interview candidate last week tell me that MI is Evil
 because, for instance, you could make a Human class that
 multiply-inherits from Head, Arm, Leg, and Torso. He was both right
 and wrong. That MI situation was evil, sure, but it was all
 him. Stupid from a distance, evil if he'd made it in through the front
 door.
-</p>
 
-<p>
 上礼拜我碰到一个来面试的，他告诉我多继是邪恶的，因为，比如，你可以从头，
 胳膊，腿，躯干多重继承出一个人来。他既是对的，又是错的。那样的多继情形
 当然邪恶，但那都是因为他自己太邪恶了。那样继承出来的“东西”远远就能看见
 有多蠢，如果他还把这玩意儿弄进门来那就更邪恶了。
-</p>
 
 
-<p>
 Bad developers, who constitute the majority of all developers
 worldwide, can write bad code in any language you throw at them.
-</p>
 
-<p>
 不良开发者，占了这世上开发者的大多数，随便你扔给他们什么语言，他们都能
 用它写出不良的代码。
-</p>
 
 
-<p>
 That said, though, MI is no picnic; mixins seem to be a better
 solution, but nobody has solved the problem perfectly yet. But I'll
 still take Java over C++, even without MI, because I know that no
 matter how good my intentions are, I will at some point be surrounded
 by people who don't know how to code, and they will do far less damage
 with Java than with C++.
-</p>
 
-<p>
 说了这些，还是得说回来，多继不是请客吃饭； mixin看起来是更好的解决方案，
 但是还没人完美的解决这个问题。但我还是认为Java比C++好，即使它没有多继。
 因为我知道不管我的出发点是多么好，某一天我还是会被一堆不懂怎么写好代码
 的人包围，让他们用Java至少比用C++会造成小得多的灾难。
-</p>
 
 
-<p>
 Besides, there's way more to Java than the core language. And even the
 language is evolving, albeit glacially, so there's hope. It's what we
 should be using at Amazon.
-</p>
 
-<p>
 此外，Java除了语言本身外还有很多其他的重要有用的东西。且Java语言本身也
 在进化，虽然像冰川一样慢，所以我们还是能看到希望。Java正是我们应该在亚
 马逊推荐使用的语言。
-</p>
 
 
-<p>
 You just have to be careful, because as with any other language, you
 can easily find people who know a lot about the language environment,
 and very little about taste, computing, or anything else that's
 important.
-</p>
 
-<p>
 你就是得小心点儿，因为各其他任何语言一样，你能很容易找出一堆人，他们很
 懂一门语言及其编程环境，但对品味，计算或者其他任何重要的东西却一无所知。
-</p>
 
-<p>
 When in doubt, hire Java programmers who are polyglots, who detest
 large spongy frameworks like J2EE and EJB, and who use Emacs. All good
 rules of thumb.
-</p>
 
-<p>
 当你有怀疑时，还是雇那种会好几门语言的Java程序员，那种厌憎J2EE/EJB之类
 松松跨跨的所谓框架的，那种使用Emacs的。这都是一些实战经验。
-</p>
-</div>
-</div>
-<div id="outline-container-sec-5" class="outline-2">
-<h2 id="sec-5"><span class="section-number-2">5</span> Perl</h2>
-<div class="outline-text-2" id="text-5">
-<p>
+
+* Perl
+
 Perl. Where to start?
-</p>
 
-<p>
 Perl，怎么说呢?
-</p>
 
-<p>
 Perl is an old friend. Perl and I go way back. I started writing Perl
 stuff in maybe 1995, and it's served me well for nearly a decade.
-</p>
 
-<p>
 Perl是个老朋友。老老朋友。我开始写Perl代码的时候，可能是1995年? 而它为
 我很好的服务了差不多10年的时间。
-</p>
 
 
-<p>
 It's like that old bicycle you've put 100k or 200k miles on, and
 you'll always have a warm fuzzy spot for it, even though you've since
 moved on to a more modern bike that weighs 5 lbs and doesn't make your
 ass hurt so much.
-</p>
 
-<p>
 它就像你骑了十万二十万英里的老自行车，你心里永远有一块地方装着它，虽然
 现在你已经换了一辆更加现代化的只有五磅重的，并且不像老的那辆顶得你屁眼
 疼的更现代的自行车了。
-</p>
 
 
-<p>
 Perl is popular for three reasons:
-</p>
 
-<p>
 Perl受欢迎原因有三个：
-</p>
 
 
-<ul class="org-ul">
-<li>You can get stuff done really fast in Perl, which is what really
-matters, in the end.
+    * You can get stuff done really fast in Perl, which is what really
+      matters, in the end.
 
-<p>
-用Perl你很快就能搞定你的问题。而这是最终的衡量标准。 
-</p>
-</li>
-</ul>
+      用Perl你很快就能搞定你的问题。而这是最终的衡量标准。 
 
 
-<ul class="org-ul">
-<li>Perl has the best marketing in the world. You could write a book
-about how brilliant their marketing is. Sun has marketed Java
-with money, and Perl is almost keeping up, popularity-wise,
-purely on the on sheer marketing brilliance of Larry Wall and
-his buddies. Folks at Harvard Business School should study
-Perl's marketing. It's astonishing.
+    * Perl has the best marketing in the world. You could write a book
+      about how brilliant their marketing is. Sun has marketed Java
+      with money, and Perl is almost keeping up, popularity-wise,
+      purely on the on sheer marketing brilliance of Larry Wall and
+      his buddies. Folks at Harvard Business School should study
+      Perl's marketing. It's astonishing.
 
-<p>
-Perl有世上最好的市场推广。你可以写一本介绍他们市场推广有多绝的书。
-Sun公司砸大笔钱给Java推市场，Perl在受欢迎程度来说能跟Java齐头并进，
-但Perl纯粹是依靠Larry Wall和他那帮哥们的三寸不烂之舌做市场。哈佛
-商学院的人应该去研究Perl的市场是怎么做出来的。真的让人瞠目结舌。
-</p>
-</li>
-</ul>
+      Perl有世上最好的市场推广。你可以写一本介绍他们市场推广有多绝的书。
+      Sun公司砸大笔钱给Java推市场，Perl在受欢迎程度来说能跟Java齐头并进，
+      但Perl纯粹是依靠Larry Wall和他那帮哥们的三寸不烂之舌做市场。哈佛
+      商学院的人应该去研究Perl的市场是怎么做出来的。真的让人瞠目结舌。
 
 
-<ul class="org-ul">
-<li>Until roughly, oh, now, it had no real competitors.
+    * Until roughly, oh, now, it had no real competitors.
 
-<p>
-直到差不多，呃，现在，Perl没有真正的竞争者。
-</p>
-</li>
-</ul>
+      直到差不多，呃，现在，Perl没有真正的竞争者。
 
 
-<p>
 There are "better" languages than Perl — hell, there are lots of them,
 if you define "better" as "not being insane". Lisp, Smalltalk, Python,
 gosh, I could probably name 20 or 30 languages that are "better" than
@@ -1342,111 +891,83 @@ Perl, inasmuch as they don't look like that Sperm Whale that exploded
 in the streets of Taiwan over the summer. Whale guts everywhere,
 covering cars, motorcycles, pedestrians. That's Perl. It's charming,
 really.
-</p>
 
-<p>
 有比Perl“好”的语言。操，有很多比Perl好的语言，如果你定义“好”为“不是给疯
 子用的”的话。Lisp，Smalltalk，Python，妈呀，我可能可以列出二三十种比
 Perl“好”的语言。从这些语言不像这个夏天在台湾街头爆了肚皮的抹香鲸这个角
 度来说。鲸鱼肠子到处都是，汽车上，机车上，行人身上。这就是Perl。让人着
 迷，真的。
-</p>
 
 
-<p>
 But Perl has many, many things going for it that, until recently, no
 other language had, and they compensated for its exo-intestinal
 qualities. You can make all sorts of useful things out of exploded
 whale, including perfume. It's quite useful. And so is Perl.
-</p>
 
-<p>
 但是Perl有很多很多好的特性，直到最近，都是其他语言没有的。它们弥补了
 Perl肠子在外的不足。你可以从爆了肚皮的鲸鱼可以做很多有用的东西出来，比
 如香水。这很有用。Perl也是这样。
-</p>
 
 
-<p>
 While all those other languages (Lisp and Smalltalk being particularly
 noteworthy offenders) tried to pretend that operating systems don't
 exist, and that lists (for Lisp) or objects (for Smalltalk) are the
 be-all, end-all of getting shit done, Perl did exactly the
 opposite. Larry said: Unix and string processing are the be-all,
 end-all of getting shit done.
-</p>
 
-<p>
 当其他的那些语言(尤其是Lisp和Smalltalk)都想假装操作系统并不存在，列表
 (Lisp的)和对象(Smalltalk的)就是把屎搞出来的唯一存在，Perl却走了截然相反
 的路子。Larry说：Unix和字符串是搞出屎来的唯一存在。
-</p>
 
 
-<p>
 And for many tasks, he was absolutely right. So Perl is better at Unix
 integration and string processing than any language on the planet,
 save one, and that one only arrived on the scene recently, from the
 land of Godzilla. I'll get to that one later.
-</p>
 
-<p>
 对很多任务来说，他绝对是正确的。所以Perl绝对是Unix系统管理和字符串处理
 的史上最强语言，除了一个，刚出来的一个，从哥斯拉之地[日本]出来的一个。
 我一会儿会讲到那一个。
-</p>
 
 
-<p>
 Sadly, Larry focused sooooo hard on Unix integration and string
 processing that he totally forgot about lists and objects until it was
 far too late to implement them properly. In fact, a few key mistakes
-he made early on in Perl's&#x2026; well, I hesitate to use the word
+he made early on in Perl's... well, I hesitate to use the word
 "design" for whale guts, but let's call it Perl's "lifecycle" — those
 mistakes made it so hard to do lists and objects correctly that Perl
 has evolved into a genuine Rube Goldberg machine, at least if you want
 to use lists or objects.
-</p>
 
-<p>
 可惜，Larry太太太太在意Unix系统管理和字符串处理以致他压根忘了列表和对象，
-等他明白过来想改正的时候已经晚了。实际上，在Perl早期的设计&#x2026;好吧，对鲸
+等他明白过来想改正的时候已经晚了。实际上，在Perl早期的设计...好吧，对鲸
 鱼肠子我实在不想用“设计”这个词，就说生命周期中吧，他犯的几个关键错误让
 把列表和对象加进来变得如此尴尬，以致Perl已经进化成一个真正的Rube
 Goldberg机器，至少当你想在Perl里用列表和对象的时候。[维基：Rube
 Goldberg是一漫画家，常画一些很复杂的机器，但只完成简单的工作，比如一个
 小球滚过很多关卡，最后把门打开]
-</p>
 
 
-<p>
 Lists and objects are pretty farging important too, Larry!
-</p>
 
-<p>
 列表和对象也他妈的是很重要的，Larry！[farging应该是作者不想说fucking那
 么直白]
-</p>
 
 
-<p>
 Perl can't do lists because Larry made the tragically stupid decision
 early on to flatten them automatically. So (1, 2, (3, 4)) magically
 becomes (1, 2, 3, 4). Not that you ever want it to work this way. But
 Larry happened to be working on some problem for which it was
 convenient on that particular day, and Perl's data structures have
 been pure exploded whale ever since.
-</p>
 
-<p>
 Perl没法表达列表因为Larry一早犯了一个悲剧性的愚蠢的错误，把列表全抹平。
 于是(1，2，(3，4))魔术般地变成(1，2，3，4)。不是说你会想让它这样工作，
 而是Larry刚好那天在搞一个这样会更方便的问题。于是Perl的数据结构从此就变
 得像爆炸了的鲸鱼了。
-</p>
 
 
-<p>
 Now you can't read a book or tutorial or PowerPoint on Perl without
 spending at least a third of your time learning about "references",
 which are Larry's pathetic, broken, Goldbergian fix for his
@@ -1454,35 +975,27 @@ list-flattening insanity. But Perl's marketing is so incredibly good
 that it makes you feel as if references are the best thing that ever
 happened to you. You can take a reference to anything! It's fun!
 Smells good, too!
-</p>
 
-<p>
 今天你看Perl的书，小教程或PPT的时候，不花三分之一的时间在“引用”上是不可
 能的。这就是Larry可怜的，坏了的，Goldberg[漫画家]式的对他那抹平列表的疯
 狂错误的补救方案。但是Perl的市场宣传做得那么难以置信地好以致它让你觉得
 这是你身上发生过的最好的东西。你可以对任何东西取它的引用。这很有趣！闻
 起来也很香[像肠子]！
-</p>
 
 
-<p>
 Perl can't do objects because Larry never reeeeally believed in
 them. Maybe that's OK; I'm still not quite sure if I believe in them
 either. But then why did he try adding them? Perl's OO is a
 halfhearted add-on that never caught on with the Perl community. It's
 just not as inspired as the string-processing or Unix integration
 stuff.
-</p>
 
-<p>
 Perl不能支持面向对象编程因为Larry压根不相信这玩意儿。这可能没什么大不
 了；我也不是很确定我是不是信这个OOP。但是那么为啥他又要试着把对象加进
 Perl呢?  Perl的面向对象是个半成品，且在Perl社区里没多少人重视。它就是不
 像字符串处理或Unix集成那样充满灵感。
-</p>
 
 
-<p>
 And of course, Perl has plenty of other crackpot design features. Take
 its "contexts", for instance, which are a horrid outgrowth of Larry's
 comical decision to have N variable namespaces, dereferenced by
@@ -1492,46 +1005,32 @@ randomly in one of six different ways, depending on the current
 "context". There are no rules or heuristics governing how a particular
 operation will behave in a given context. You just have to commit it
 all to memory.
-</p>
 
-<p>
 当然了，Perl还有其他很多怪怪的特性。比如它的“上下文”，这是Larry要有N个
 变量名字空间的喜剧式决定的一个恐怖片式的产物。这些空间由sigil来区分(就
 是Perl里变量名前面的‘$'，‘@'，‘%'字符)，看着像是从shell脚本里拷贝来的。
 在Perl里，所有的运算符，所有的函数，所有的操作其行为都是六取一的随机的，
 取决于当前的“上下文”。没有一些规则或助记法能帮你搞定这些特定操作在特定
 上下文里的特定行为。你得把它们全记在脑子里。
-</p>
 
 
-<p>
 Need an example? Here's one: accessing a hash in a scalar context
 gives you a string containing a fraction whose numerator is the number
 of allocated keys, and the denominator is the number of buckets. Whale
 guts, I'm telling you.
-</p>
 
-<p>
 想要个例子? 这儿有一个：在一个值量(scalar，对应于vector，向量)上下文里
 对一个哈希取值你得到一个字符串，里面是个分数，分子是目前已分配的键，分
 母是总共有多少个桶。鲸鱼肠子，我告诉你。
-</p>
 
 
-<p>
 Like I said, though — until recently, nothing could get the job done
 like Perl could.
-</p>
 
-<p>
 但就像我说的——直到最近，没啥能像Perl那样把屎搞定。
-</p>
-</div>
-</div>
-<div id="outline-container-sec-6" class="outline-2">
-<h2 id="sec-6"><span class="section-number-2">6</span> Ruby</h2>
-<div class="outline-text-2" id="text-6">
-<p>
+
+* Ruby
+
 Every 15 years or so, languages are replaced with better ones. C was
 replaced by C++, at least for large-scale application development by
 people who needed performance but desperately wanted data types
@@ -1541,20 +1040,16 @@ after it finishes replacing C++, which evidently hasn't fully happened
 yet, mostly because Microsoft was able to stall it before it became
 ubiquitous on the desktop. But for server-side applications, C++ is
 basically on its way out.
-</p>
 
 
 
-<p>
 每过15年左右，一门语言就会被更好的代替。C被C++代替，至少对大应用开发而
 又需要性能和数据类型的人们来说。C++被Java代替，而Java无疑在7年后又会被
 更好的东西代替——好吧，我说的是完全代替C++的7年后，这到目前为止还没有发
 生，主要是因为微软能在Java霸占桌面系统之前狙击它。但是在服务器上的应用
 而言，C++的阵地已经慢慢让给Java了。
-</p>
 
 
-<p>
 Perl will be gone soon, too. That's because a new language called Ruby
 has finally been translated into English. Yep, it was invented in
 Japan, of all places — everyone else was as surprised as you are,
@@ -1566,9 +1061,7 @@ thousand characters in it. But Emacs got multibyte support a few years
 ago, so I can imagine they're pretty dang fast with it now. (And yes,
 they use Emacs — in fact Japanese folks did the majority of the Mule
 [multibyte] support for Emacs, and it's rock-solid.)
-</p>
 
-<p>
 Perl有一天也会消逝。那是因为一门新的语言Ruby刚刚终于被翻译成英语了。没
 错，它是在日本发明的，这么多地儿，没想到日本人搞出来了，还以为他们只是
 硬件和制造上占有名气，而不是他们的软件业，所以大家都跟你一样惊奇。为什
@@ -1577,52 +1070,38 @@ Perl有一天也会消逝。那是因为一门新的语言Ruby刚刚终于被翻
 支持多字节字符了，所以我猜他们现在打字速度他妈的快多了。[所以能搞出
 Ruby来了，译者猜作者是这个意思] (是的，他们也用Emacs——事实上日本人负责
 了Emacs多字节支持的大部工作，而且搞得坚不可摧。)
-</p>
 
 
-<p>
 Anyway, Ruby stole everything good from Perl; in fact, Matz, Ruby's
 author (Yukihiro Matsumoto, if I recall correctly, but he goes by
 "Matz"), feels he may have stolen a little too much from Perl, and got
 some whale guts on his shoes. But only a little.
-</p>
 
-<p>
 不管怎么样，Ruby从Perl那里偷师了所有的好东西；实际上，Matz，Ruby的作者
 (Yukihiro Matsumoto，如果我没记错的话，但是他外号“Matz”)，觉得他从Perl
 那里偷的有点太多了，他的鞋上也粘了些鲸鱼肠子。但是只粘了一点点。
-</p>
 
 
-<p>
 For the most part, Ruby took Perl's string processing and Unix
 integration as-is, meaning the syntax is identical, and so right
 there, before anything else happens, you already have the Best of
 Perl. And that's a great start, especially if you don't take the Rest
 of Perl.
-</p>
 
-<p>
 最重要的是，Ruby拿来了Perl的串处理和Unix集成，一点没改，就是说语法都是
 一样的，于是乎啥也不说了，你就拥有了Perl最好的那部分。这是个不错的开局，
 特别是如果你不把Perl剩下的东西也拿进来的话。
-</p>
 
 
-<p>
 But then Matz took the best of list processing from Lisp, and the best
 of OO from Smalltalk and other languages, and the best of iterators
 from CLU, and pretty much the best of everything from everyone.
-</p>
 
-<p>
 但是之后Matz还从Lisp那里拿来的最好的列表处理，Smalltalk和其他语言那里拿
 来了最好的面向对象，CLU那里拿来了最好的迭代器，以及基本上是每个人每个事
 的最好的东西。
-</p>
 
 
-<p>
 And he somehow made it all work together so well that you don't even
 notice that it has all that stuff. I learned Ruby faster than any
 other language, out of maybe 30 or 40 total; it took me about 3 days
@@ -1630,18 +1109,14 @@ before I was more comfortable using Ruby than I was in Perl, after
 eight years of Perl hacking. It's so consistent that you start being
 able to guess how things will work, and you're right most of the
 time. It's beautiful. And fun. And practical.
-</p>
 
-<p>
 而他让这些东西全部都跑起来，跑得那么顺，你都不会注意到这些东西在那儿。
 我比其他任何语言都快就学会了Ruby，我总共会三十到四十门语言；而我花了大概
 三天时间就能用Ruby比Perl还流畅地工作了，当了八年的Perl黑客后。这些东西
 是这么的和谐你都能自己猜它们是怎么工作的，而且大多数时候你都能猜对。漂
 亮。有趣。靠谱。
-</p>
 
 
-<p>
 If languages are bicycles, then Awk is a pink kiddie bike with a white
 basket and streamers coming off the handlebars, Perl is a beach
 cruiser (remember how cool they were? Gosh.) and Ruby is a $7,500
@@ -1650,93 +1125,67 @@ as the leap from C++ to Java, but without any of the downsides,
 because Ruby's essentially a proper superset of Perl's functionality,
 whereas Java took some things away that people missed, and didn't
 offer real replacements for them.
-</p>
 
-<p>
 如果把语言比成自行车，那么AWK就是一辆粉系的儿童自行车，前面有个白色小框，
 还插块小旗，Perl就是沙滩车(还记得那有多酷吧? 唉。)，而Ruby则是一辆七千
 五美金的钛合金山地自行车。从Perl飞跃到Ruby意义不下于从C++到Java的飞跃。
 却没有任何缺陷，因为Ruby几乎是Perl功能的一个超集，而Java却拿掉了一些人
 们想要的东西，且没有真正的提供一个替代品。
-</p>
 
 
-<p>
 I'll write more about Ruby sometime. I need to be inspired first. Read
 Why the Lucky Stiff's (poignant) guide to Ruby. That is an inspired
 piece of work. Really. Read it. It's amazing. I don't understand the
 kind of mind that could produce it, but it's funny, and poignant, and
 all about Ruby. Sort of. You'll see.
-</p>
 
-<p>
 下次我会写更多关于Ruby的东西。我先需要灵感。去读读Lucky Stiff的(写得很
 到位的) guide to Ruby吧。那本书是一本有灵感的书。真的，读一下。超赞。我
 无法理解什么样的头脑才能写出这样的书，但它很有趣，很犀利，且全是关于
 Ruby的。好像。你会看到的。
-</p>
-</div>
-</div>
-<div id="outline-container-sec-7" class="outline-2">
-<h2 id="sec-7"><span class="section-number-2">7</span> Python</h2>
-<div class="outline-text-2" id="text-7">
-<p>
+
+* Python
+
 Well gosh, what about Python, a nice language that has patiently been
 waiting in the wings for all these years? The Python community has
 long been the refuge for folks who finally took the red pill and woke
 up from the Perl Matrix.
-</p>
 
-<p>
 啊，Python怎么说呢，一个不错的语言，这么多年来一直旁边在等待它的机会?
 Python社区很长时间以来是那些勇敢地吞下红药片从Perl骇客帝国中醒来的人的
 避难营。
-</p>
 
 
-<p>
 Well, they're just like the Smalltalk folks, who waited forever to
 replace C++, and then Java came along and screwed them royally, and
 permanently. Oops. Ruby's doing exactly that to Python, right now,
 today. Practically overnight.
-</p>
 
-<p>
 啊，有点像Smalltalk的人们，他们永远在等着替代C++，没想到半路杀出个Java
 一下把他们操翻了，漂亮地，永久地。哎哟。Ruby正在对Python做着同样的事，
 现在，今天。可能会在一夜之间吧。
-</p>
 
 
-<p>
 Python would have taken over the world, but it has two fatal flaws:
 the whitespace thing, and the permafrost thing.
-</p>
 
-<p>
 Python本来可以统治世界，可惜它有两个致命缺陷：空格问题，和冷淡问题。
-</p>
 
 
-<p>
 The whitespace thing is simply that Python uses indentation to
 determine block nesting. It forces you to indent everything a certain
 way, and they do this so that everyone's code will look the same. A
 surprising number of programmers hate this, because it feels to them
 like their freedom is being taken away; it feels as if Python is
 trampling their constitutional right to use shotgun formatting and
-obfuscated one-liners<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>.
-</p>
+obfuscated one-liners[fn:note3].
 
-<p>
 空格很简单，就是说Python是用缩进来表达代码块之间的嵌套。它强制你必须按
 一定格式把所有的东西缩进，他们这样做是为了让所有人写的代码看上去一样。
 不料蛮多程序员讨厌这点，因为他们觉得自己的自由被拿走了；感觉就像Python侵
-犯了宪法赋予他们的可以随便缩进格式和全写在一行上的权利<sup><a id="fnr.3.100" name="fnr.3.100" class="footref" href="#fn.3">3</a></sup>。
-</p>
+犯了宪法赋予他们的可以随便缩进格式和全写在一行上的权利[fn:note3]。
 
 
-<p>
 Python's author, Guido Van Rossum, also made some boneheaded technical
 blunders early on — none quite as extravagant as Larry's blunders, but
 a few were real doozies nonetheless. For instance, Python originally
@@ -1747,11 +1196,9 @@ scope, so even though it had a "real" OO system, classes couldn't even
 access their own damned instance variables. You have to pass a "self"
 parameter to EVERY instance method and then get to your instance data
 by accessing it through self. So everything in Python is self,
-selfself, selfselfself, selfSELFselfSELF_<sub>SELF</sub>__, and it drives you
+selfself, selfselfself, selfSELFselfSELF__SELF__, and it drives you
 frigging nuts, even if you don't mind the whitespace thing.
-</p>
 
-<p>
 Python的作者，Guido Van Rossum，也在早期犯过一些很傻的技术错误——没有像
 Larry的失误那么严重，但是还是有几个。比如，最早Python没有字面变量范围，
 但它同时也没有动态变量范围，而动态变量范围可能会有它一些问题，但它还是
@@ -1759,247 +1206,82 @@ Larry的失误那么严重，但是还是有几个。比如，最早Python没有
 是一个真正的OO系统，类甚至不能访问它们自己的动态成员变量。你必须给成员
 函数传“self”参数，一大堆self参数很快就会把你搞疯掉，即使你不在意空格问
 题。
-</p>
 
 
-<p>
 Etc.
-</p>
 
-<p>
 等等之类。
-</p>
 
 
-<p>
 But in my opinion, it's really the frost thing that killed Python, and
 has prevented it from ever achieving its wish to be the premier
 scripting language, or the premier anything language, for that
 matter. Heck, people still use Tcl as an embedded interpreter, even
 though Python is far superior to Tcl in every conceivable way —
 except, that is, for the frost thing.
-</p>
 
-<p>
 但在我看来，Python不行其实是因为冷淡。这阻止了它成为首选脚本语言，或者
 首选的一切语言。靠，人们现在还在用Tcl作嵌入解释执行器，虽然Python比Tcl
 好得不要太多——除了，我说，这个冷淡问题。
-</p>
 
 
-<p>
 What's the frost thing, you ask? Well, I used to have a lot of
 exceptionally mean stuff written here, but since Python's actually
 quite pleasant to work with (if you can overlook its warts), I no
 longer think it's such a great idea to bash on Pythonistas. The "frost
 thing" is just that they used to have a tendency to be a bit, well,
 frosty. Why?
-</p>
 
-<p>
 什么是冷淡问题，你问？好吧，我本来写了很多很伤人的话在这儿，但因为
 Python用起来挺顺手的（如果你能忽视它的那些“刺儿”的话），我现在认为恶意
 攻击Python人是伤人品的事儿。所谓“冷淡”问题就是说他们曾经一度有一点怎么
 说呢，冷淡的倾向。为什么呢？
-</p>
 
-<p>
 Because they were so tired of hearing about the whitespace thing！
-</p>
 
-<p>
 因为他们真是烦死了每次都被人拿空格说事儿！[所以我猜作者这里说的冷淡
 （frost）意思是python社区有点不爱搭理人，或者有点玻璃心，因为受不了老有
 人拿空格去撩拨他们的神经]
-</p>
 
 
-<p>
 I think that's why Python never reached Perl's level of popularity,
 but maybe I'm just imagining things。
-</p>
 
-<p>
 我认为这就是为什么Python一直没有达到Perl的那种受欢迎程度，但也有可能这
 都只是我的臆测。
-</p>
-</div>
-</div>
-<div id="outline-container-sec-8" class="outline-2">
-<h2 id="sec-8"><span class="section-number-2">8</span> Coda （终章）</h2>
-<div class="outline-text-2" id="text-8">
-<p>
+
+* Coda （终章）
+
 That was the ADJ article I really wanted to write。Or at least
 something like it。For some reason, though, my true feelings only seem
 to come out during insomniac attacks between 3am and 6am。Time for bed！
 2 hours 'til my next meeting。
-</p>
 
-<p>
 这才是我真正想给亚马逊开发者杂志写的文章。或者至少是类似这样的。出于某
 些原因，我的真感情好像只有在我凌晨三点到六点失眠来袭的时候才会流露。觉
 觉了！我下个会议再过两小时就开始了。
-</p>
 
-<p>
-<i>(Published September 2004. Minor updates on 3/28/2006)</i>
-</p>
+/(Published September 2004. Minor updates on 3/28/2006)/
 
-<p>
-<i>(发布于2004年9月，小小的更新在3/28/2006)</i>
-</p>
-</div>
-</div>
-<div id="footnotes">
-<h2 class="footnotes">Footnotes: </h2>
-<div id="text-footnotes">
+/(发布于2004年9月，小小的更新在3/28/2006)/
 
-<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
-Eric tells me it was actually almost all Jamie Zawinski,
+
+
+[fn:note1] Eric tells me it was actually almost all Jamie Zawinski,
 when they worked at Lucid together.  Eric告诉我当时几乎全是Jamie
 Zawinski，当他们在Lucid工作的时候。
-</p></div>
-
-<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
-It's been pointed out many times since I wrote this that
-Paul Graham actually uses vi. Go figure! 我写了这个之后很多人告诉我
-Paul Graham是用VI的。想不到！
-</p></div>
-
-<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
-For the record, I personally don't mind the whitespace
-thing at all. I think it's silly to dislike Python for that
-reason. What I'm saying is that a surprising percentage of <b>other</b>
-programmers hate it. 为了有据可查，我个人根本不介意空格问题。我认为
-因为这个原因而讨厌Python是很傻的。我只是说有一堆比例让人惊奇的 <b>其
-他</b> 工程师讨厌空格问题。
-</p>
-
-<nav>
-  <ul id="prev_next_posts">
-    <li class="prev_post">
-      <a href="blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html"> <!-- prev-url -->
-        <i class="icon-chevron-left">《</i>
-        Mysterious rsync/ssh/scp hang <!-- prev-title -->
-      </a>
-    </li>
-    <li class="next_post" style="text-align: right;">
-      <a href="meta/Archive.html"> <!-- next-url -->
-        Archive <!-- next-title -->
-        <i class="icon-chevron-right">》</i>
-      </a>
-    </li>
-  </ul>
-</nav></div>
 
 
-</div>
-</div></div>
-<!-- {%html-mode%} -->
-
-<div id="disqus_container">
-  <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-  <div style="margin-bottom:20px">
-    <script type="text/javascript" charset="utf-8">
-      (function(){
-      var _w = 86 , _h = 16;
-      var param = {
-      url:location.href,
-      type:'6',
-      count:'', /**是否显示分享数，1显示(可选)*/
-      appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-      title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-      pic:'', /**分享图片的路径(可选)*/
-      ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-      language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-      rnd:new Date().valueOf()
-      }
-      var temp = [];
-      for( var p in param ){
-      temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-      }
-      document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-      })()
-    </script>
-  </div>
-  <div id="disqus_thread"></div>
-</div>
-
-</div> <!-- bhj_leftpane -->
-<div id="sidebar"><div id="sidebar2">
+[fn:note2] It's been pointed out many times since I wrote this that
+   Paul Graham actually uses vi. Go figure! 我写了这个之后很多人告诉我
+   Paul Graham是用VI的。想不到！
 
 
-  <!-- Begin #profile-container -->
+[fn:note3] For the record, I personally don't mind the whitespace
+   thing at all. I think it's silly to dislike Python for that
+   reason. What I'm saying is that a surprising percentage of *other*
+   programmers hate it. 为了有据可查，我个人根本不介意空格问题。我认为
+   因为这个原因而讨厌Python是很傻的。我只是说有一堆比例让人惊奇的 *其
+   他* 工程师讨厌空格问题。
 
-   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
-<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
-<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
-<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
-
-<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
-
-  <!-- End #profile -->
-
-
-
-  <h2 class="sidebar-title">Feeds</h2>
-    <ul>
-        <li><a href="/atom.xml">Atom</a></li>
-    </ul>
-
-  <h2 class="sidebar-title">Projects</h2>
-    <dl>
-        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
-        <dd> Grep 2G source code in 0.23 second </dd>
-
-        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
-        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
-
-        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
-        <dd> Use JIRA with org-mode </dd>
-    </dl>
-
-    <h2>Tags</h2>
-    <ul>
-                <li><a href="meta/tags/translate.html" title="Articles that I translated from English into Chinese">translate</a></li>
-    </ul>
-
-  <h2 class="sidebar-title">Previous Posts</h2>
-    <ul id="recently">
-        <li><a href='blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html'> Mysterious rsync/ssh/scp hang </a></li>
-<li><a href='blog/2013/05/20/0-Tuning-my-blog-to-look-like-blogspot-.html'> Tuning my blog to look like blogspot </a></li>
-<li><a href='blog/2013/05/15/0-Inside-Google-and-Amazon.html'> 在Google和亚马逊（译） </a></li>
-<li><a href='blog/2013/05/12/0-douban.el-integration.html'> douban.el与bhj-notify的集成 </a></li>
-<li><a href='blog/2013/05/09/0-emacs-font-global-scaling.html'> 全局放大Emacs字体 </a></li>
-<li><a href='blog/2013/05/08/stripping-kernel-code-for-reading.html'> Stripping kernel/uboot source to 10% for code read... </a></li>
-<li><a href='blog/2013/05/08/bbs-robot.html'> 站友福音：在水木bbs上用Emacs的键绑定 </a></li>
-<li><a href='blog/2013/05/03/z02abuse-macros-comments.html'> The code is not really code, the comment is </a></li>
-<li><a href='blog/2013/05/03/z00fix-generate-tags.html'> only re-generate the tags that have changed </a></li>
-<li><a href='blog/2013/05/03/my-org-github-blog.html'> My org-mode blog for github page </a></li>
-    </ul>
-
-    <h2 class="sidebar-title">Archive</h2>
-      <ul id="archives">
-        <li><a href="/meta/Archive.html"> The complete archive </a></li>
-      </ul>
-
-  <!--
-  <p>This is a paragraph of text that could go in the sidebar.</p>
-  -->
-
-
-
-</div></div>
-<!-- End #sidebar -->
-</div> <!-- End #bhj_article -->
-<!-- {%/html-mode%} -->
-<div id="postamble" class="status">
-<!-- {%html-mode%} -->
-
-<script src="/js/post.js" type="text/javascript"></script>
-
-
-<!-- {%/html-mode%} -->
-</div>
-</body>
-</html>
+# bhj-tags: translate

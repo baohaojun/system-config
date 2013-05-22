@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Fastest grep</title>
+<title>Mysterious rsync/ssh/scp hang</title>
 <!-- 2013-05-22 Wed 13:05 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
@@ -101,75 +101,71 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Fastest grep</h1>
-<ul class="org-ul">
-<li>2013
-<ul class="org-ul">
-<li>2013-05
-<ul class="org-ul">
-<li>2013-05-03
-
+<h1 class="title">Mysterious rsync/ssh/scp hang</h1>
 <p>
-<a href="../../../blog/2013/05/03/beagrep-even-faster2.html">beagrep performance tuning on MacbookAir+Linux</a>
-</p>
-</li>
-
-<li>2013-05-02
-
-<p>
-<a href="../../../blog/2013/05/02/beagrep-even-faster.html">beagrep is made even faster</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2013-02
-<ul class="org-ul">
-<li>2013-02-12
-
-<p>
-<a href="../../../blog/2013/02/12/beagrep-under-win32.html">beagrep under win32</a>
+When I was writing a wrapper script for ease of syncing files with my
+cell-phone, I encountered this mysterious rsync hang when connecting
+to the phone.
 </p>
 
 <p>
-<a href="../../../blog/2013/02/12/beagle-grep-readme.html">Introducing beagrep, the beast like grep</a>
+The idea is to convert the phone to rndis mode after it is connect to
+PC with USB, then use rsync over the usb0 network device on the PC.
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2012
-<ul class="org-ul">
-<li>2012-01
-<ul class="org-ul">
-<li>2012-01-31
 
 <p>
-<a href="../../../blog/2012/01/31/beagrep-cn.html">beagrep，两秒钟grep两个G的代码</a>
+The command to convert phone's mode is like following:
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 
-<li>2011
-<ul class="org-ul">
-<li>2011-12
-<ul class="org-ul">
-<li>2011-12-23
+<div class="org-src-container">
+
+<pre class="src src-sh">adb shell su -c <span class="org-string">"</span>
+<span class="org-string">    setsid setsid sh -c '</span>
+<span class="org-string">        setprop persist.sys.usb.config rndis,adb;</span>
+<span class="org-string">        while ! netcfg|grep 'rndis0.*UP'; do</span>
+<span class="org-string">            netcfg rndis0 up; </span>
+<span class="org-string">        done;</span>
+<span class="org-string">        ifconfig rndis0 192.168.42.129</span>
+<span class="org-string">    '"</span>
+</pre>
+</div>
 
 <p>
-<a href="../../../blog/2011/12/23/beagrep.html">beagrep, grep 2G source code in 0.23 second</a>
+After that, I will use rsync to the phone, 192.168.42.129, but
+unfortunately, it hangs.
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+
+<p>
+After a few debugging, I found out that it's because I have not made
+sure the rndis path is up after I issue that long adb command! So
+basically this means when I start rsync, the usb0 device is not there.
+</p>
+
+<p>
+Fixing it is easy, just make sure you don't change the phone's rndis
+state unnecessary, and if you must change it, then wait a few seconds
+before you use the usb0 network.
+</p>
+
+<p>
+Code is at <a href="https://github.com/baohaojun/system-config/raw/master/bin/scp-to-phone">scp-to-phone</a>.
+</p>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../20/0-Tuning-my-blog-to-look-like-blogspot-.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        Tuning my blog to look like blogspot <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../22/TourDeBabel.html"> <!-- next-url -->
+        通天塔导游 <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
 <!-- {%html-mode%} -->
 
@@ -237,12 +233,21 @@ for the JavaScript code in this tag.
 
     <h2>Tags</h2>
     <ul>
-        
+                <li><a href="../../../../meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        
+        <li><a href='../20/0-Tuning-my-blog-to-look-like-blogspot-.html'> Tuning my blog to look like blogspot </a></li>
+<li><a href='../15/0-Inside-Google-and-Amazon.html'> 在Google和亚马逊（译） </a></li>
+<li><a href='../12/0-douban.el-integration.html'> douban.el与bhj-notify的集成 </a></li>
+<li><a href='../09/0-emacs-font-global-scaling.html'> 全局放大Emacs字体 </a></li>
+<li><a href='../08/stripping-kernel-code-for-reading.html'> Stripping kernel/uboot source to 10% for code read... </a></li>
+<li><a href='../08/bbs-robot.html'> 站友福音：在水木bbs上用Emacs的键绑定 </a></li>
+<li><a href='../03/z02abuse-macros-comments.html'> The code is not really code, the comment is </a></li>
+<li><a href='../03/z00fix-generate-tags.html'> only re-generate the tags that have changed </a></li>
+<li><a href='../03/my-org-github-blog.html'> My org-mode blog for github page </a></li>
+<li><a href='../03/beagrep-even-faster2.html'> beagrep performance tuning on MacbookAir+Linux </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

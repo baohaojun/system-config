@@ -1,6 +1,10 @@
 #+title: Computer tools
  * 2013
   - 2013-05
+   * 2013-05-21
+
+     [[../../../blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.org][Mysterious rsync/ssh/scp hang]]
+
    * 2013-05-08
 
      [[../../../blog/2013/05/08/bbs-robot.org][站友福音：在水木bbs上用Emacs的键绑定]]
