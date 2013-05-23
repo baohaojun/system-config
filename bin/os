@@ -2,7 +2,11 @@
 
 exec > ~/.logs/$(basename $0).log 2>&1
 set -x
-words=$(getclip)
+if test $# != 0; then
+    words=$(echo "$@")
+else
+    words=$(getclip)
+fi
 
 for site in search-google search-en.wikipedia search-bing; do
     $site "$words"

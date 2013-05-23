@@ -77,7 +77,9 @@ if git remote -v | grep baohaojun.github.com.git; then
             fi
         fi
     done
-    generate-atom.xml.sh
+    if test "$org_changes"; then
+        generate-atom.xml.sh
+    fi
     last_org=$(find blog -name '*.org'|sort -n|tail -n 1)
     if git st -s "$last_org" | grep .; then
         ./rebuild-old-html.pl "$last_org"

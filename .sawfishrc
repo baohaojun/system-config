@@ -2,6 +2,7 @@
 (require 'sawfish.wm.state.maximize)
 
 (load-file "~/.sawfish/bhj-draw-wininfo.jl")
+(require 'Run-application)
 (require 'bhj-draw-wininfo)
 
 (setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal")
@@ -38,7 +39,7 @@
   (window-class window))
 
 (bind-keys s-h-keymap "s" (lambda () (system "~/bin/screenshot focused&")))
-(bind-keys s-h-keymap "S" (lambda () (system "~/bin/search-clipboard&")))
+(bind-keys s-h-keymap "S" (lambda () (system "~/bin/os&")))
 (bind-keys s-h-keymap "n" (lambda () (system "~/bin/douban next&")))
 (bind-keys global-keymap "XF86AudioNext" (lambda () (system "~/bin/douban next&")))
 (bind-keys s-h-keymap "p" (lambda () (system "~/bin/douban prev&")))
@@ -269,6 +270,8 @@
              (if (not (showing-desktop-p))
                  (show-desktop)
                (hide-desktop))))
+
+(bind-keys s-h-keymap "r" 'run-application)
 
 (system "run-dir-once ~/.sawfish/start&")
 

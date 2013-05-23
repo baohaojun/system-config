@@ -1,6 +1,8 @@
 #!/bin/bash
 . ~/.bashrc
 
+export PATH=$(echo $PATH|tr ':' '\n'| perl -ne 'next if m/overide/; chomp; $path .= ":$_"; END{print substr($path, 1)}')
+
 if test "$RUNNING_IN_CRON" = true; then
     export DO_REPO_UPDATE=true
     (
@@ -13,13 +15,13 @@ if test "$RUNNING_IN_CRON" = true; then
     set -- `locate -b -r '^\.repo$'|grep src | grep -v ics-autobuild`
     echo will update: "$@"
 else
-    set -- . 
+    set -- .
     echo will only update current dir: $PWD
 fi
 
 
 
-for x in $(for y in ~/src/android "$@"; do readlink -f $y; done|uniq-even-non-ajacent); do 
+for x in $(for y in ~/src/android "$@"; do readlink -f $y; done|uniq-even-non-ajacent); do
     cd $x || continue
     cd `lookup-file .repo/..` || continue
 
@@ -37,23 +39,22 @@ for x in $(for y in ~/src/android "$@"; do readlink -f $y; done|uniq-even-non-aj
         fi
         test -e Makefile || exit
         repo-sync -n -j4
+        mkdir -p out || mkdir -p $(readlink -m out)
 
         android-daily-changes
-
-        mkdir -p out || mkdir -p $(readlink -m out)
         mv out/changes.log out/changes.log-backup-`today` || true
         repo-changes\? 2>&1|tee out/changes.log
-        for x in `cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1`; do 
-	    if test ! -d $x; then
-		touch ~/etc/generate-repo-info.mk;
-		repo sync "$x" || true
-		continue
-	    fi
-	    
+        for x in `cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1`; do
+            if test ! -d $x; then
+                touch ~/etc/generate-repo-info.mk;
+                repo sync "$x" || true
+                continue
+            fi
+
             repo forall $x -c '
 #{%sh%}
 set -x
-if test -n "$(git symbolic-ref HEAD)" -a -d .git/patches/$(basename $(git symbolic-ref HEAD))/ && 
+if test -n "$(git symbolic-ref HEAD)" -a -d .git/patches/$(basename $(git symbolic-ref HEAD))/ &&
     ! git-is-ancestor $(repo-remote)/$(repo-branch) HEAD; then
     gq push -a
     gq rebase $(repo-remote)/$(repo-branch)
@@ -69,13 +70,13 @@ fi
         done 2>&1|tee out/merge.log
         repo-changes\? || true
 
-        { 
-	    repo-changes\? $(cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1) | grep . > out/changes.log.new && 
-	    {
+        {
+            repo-changes\? $(cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1) | grep . > out/changes.log.new &&
+            {
                 echo some repos still has changes:;
                 cat out/changes.log.new
             }
-        } || 
+        } ||
         echo repo is up to date.
 
         flock -u 9
