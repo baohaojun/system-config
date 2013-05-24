@@ -29,7 +29,7 @@ while (<>) {
 
   my $record_line = 1;
 
-  if (m#^Number of Images = (\d+)#) {
+  if (m#^Number.of.Images = (\d+)#) {
     $n_images = $1;
   } elsif (m#^\s*(\d+)\s+Image\s+(.*?)\s+=\s+(.*)\s*$# and $image_list_started) {
     my ($img_idx, $img_key, $img_val) = ($1, $2, $3);
@@ -89,12 +89,12 @@ for my $idx (keys %images) {
 
   die "wrong number of image key/vals for $idx" unless keys %{$images{$idx}} == @keys;
 
-  
+
   my @number_keys = (
-		     "Erase Size",
-		     "Load Address",
-		     "Flash Entry Address",
-		    );
+                     "Erase Size",
+                     "Load Address",
+                     "Flash Entry Address",
+                    );
   for (@number_keys) {
     $images{$idx}{$_} = "0" unless $images{$idx}{$_}; # in case it is empty.
     die "not valid number for $_: image $idx" unless $images{$idx}{$_} =~ m#^(0x)?[a-f0-9]+$#i;
@@ -117,24 +117,24 @@ print $header;
 my @header = split(":", $header);
 
 for my $idx (sort
-	     {
-	       ($images{$b}{"Partition Number"} <=> $images{$a}{"Partition Number"}) * 10 +
-		 ($images{$a}{"Flash Entry Address"} <=> $images{$b}{"Flash Entry Address"})
-	       } keys %images) {
+             {
+               ($images{$b}{"Partition Number"} <=> $images{$a}{"Partition Number"}) * 10 +
+                 ($images{$a}{"Flash Entry Address"} <=> $images{$b}{"Flash Entry Address"})
+               } keys %images) {
     my @print_keys = (
-	"ID Name",
-	"Type",
-	"Flash Entry Address.pretty",
-	"Load Address.pretty",
-	"Erase Size.pretty",
-	"Enable",
-	"Tim Included",
-	"Hash Algorithm ID",
-	"Image Size To Hash in bytes",
-	"Size To CRC in bytes",
-	"Partition Number",
-	"Path",
-	);
+        "ID Name",
+        "Type",
+        "Flash Entry Address.pretty",
+        "Load Address.pretty",
+        "Erase Size.pretty",
+        "Enable",
+        "Tim Included",
+        "Hash Algorithm ID",
+        "Image Size To Hash in bytes",
+        "Size To CRC in bytes",
+        "Partition Number",
+        "Path",
+        );
 
   for my $key_n (0 .. (@print_keys - 1)) {
     my $key = $print_keys[$key_n];

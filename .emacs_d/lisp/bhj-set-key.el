@@ -7,6 +7,7 @@
 (global-set-key (kbd "M-g j h") 'java-get-hierarchy)
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "C-x b") 'helm-buffers-list)
 
 (global-set-key [(control c)(k)] 'browse-kill-ring)
 

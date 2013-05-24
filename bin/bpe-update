@@ -80,7 +80,7 @@ for x in $args; do
 	    gq push -a
 	    if test -z "$do_rebase"; then
 		echo Will now start a new shell
-		start-recursive-shell quilt rebase
+		start_recursive_shell quilt rebase
 		exit
 	    fi
             if test -z "$GQ_REBASE_TO"; then

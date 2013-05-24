@@ -25,7 +25,7 @@ for x in $todo_revs; do
     else
         echo $x need to be rebased
         git log -1 -p $x | cat
-        git cherry-pick $x || start-recursive-shell "rebase $x"
+        git cherry-pick $x || start_recursive_shell "rebase $x"
     fi
 done
 

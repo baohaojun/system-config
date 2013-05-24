@@ -5,7 +5,7 @@
 (require 'Run-application)
 (require 'bhj-draw-wininfo)
 
-(setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal")
+(setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal|rdesktop")
 (setq s-h-keymap (make-keymap))
 (setq global-remap-alist
       '(("C-a" . "Home")
@@ -256,8 +256,8 @@
                     (synthesize-event map-to fw))))))
  '("t" "w" "n" "c" "v" "l" "r" "s" "d"))
 
-(bind-keys global-keymap "Super-Insert" (lambda () (system "send-key $(getclip)&")))
-(bind-keys global-keymap "Super-S-RET" (lambda () (system "send-key $(getclip)&")))
+(bind-keys global-keymap "Super-Insert" (lambda () (system "send-key&")))
+(bind-keys global-keymap "Super-S-RET" (lambda () (system "send-key&")))
 (bind-keys global-keymap "Super-RET" (lambda () (synthesize-event "S-Insert" (input-focus))))
 (bind-keys global-keymap "Super-BS" (lambda () (synthesize-event "Prior" (input-focus))))
 (bind-keys global-keymap "Super-SPC" (lambda () (synthesize-event "Next" (input-focus))))

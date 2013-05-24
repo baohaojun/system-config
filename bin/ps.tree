@@ -1,0 +1,69 @@
+#!/usr/bin/env perl
+
+use strict;
+
+my @ps = split /\n/, qx(ps.pl . 2>/dev/null);
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+
+my %ppid_map;
+my %command_map;
+
+for my $p (@ps) {
+    $p =~ m/(\d+)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
+    my ($pid, $ppid, $time, $command) = ($1, $2, $3, $4);
+
+    $ppid_map{$pid} = $ppid;
+    $command_map{$pid} = $command;
+}
+
+my $start_p = $ARGV[0];
+
+my @start_p = ($start_p);
+unless ($start_p =~ m/^\d+$/) {
+    @start_p = ();
+    open(my $pipe, "-|", "ps.pl", $start_p) or
+        die "Cannot open pipe for ps.pl $start_p";
+
+    while (<$pipe>) {
+        my @fields = split;
+        push @start_p, $fields[0];
+    }
+    close $pipe;
+}
+
+for $start_p (@start_p) {
+    # find till the root (usually the init process)
+
+    my @parents = ();
+
+    while ($start_p) {
+        push @parents, $start_p;
+        $start_p = $ppid_map{$start_p};
+    }
+
+    my $indent = "";
+    while (@parents) {
+        $start_p = pop @parents;
+        printf "$indent %d %d %s\n", $start_p, $ppid_map{$start_p}, $command_map{$start_p};
+        $indent .= "  ";
+    }
+
+    sub print_childrens($$) {
+        my ($proc, $indent_save) = @_;
+        for (keys %ppid_map) {
+            my $indent = $indent_save;
+            if ($ppid_map{$_} == $proc) {
+                my $start_p = $_;
+                printf "$indent %d %d %s\n", $start_p, $ppid_map{$start_p}, $command_map{$start_p};
+                $indent .= "  ";
+                print_childrens($start_p, $indent);
+            }
+        }
+    }
+
+    print_childrens($start_p, $indent);
+}

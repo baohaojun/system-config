@@ -32,7 +32,7 @@ git co -B quilt.$$ $base
     gq next | grep . && die "Error: patch remaining"
     
 ) || true
-start-recursive-shell patching...
+start_recursive_shell patching...
 git co $1
 git branch -D quilt.$$
 

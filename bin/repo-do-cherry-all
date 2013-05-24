@@ -29,24 +29,34 @@ while true; do
             ;;
     esac
 done
-for x in $(rgrep -l -e "$1" out/diff); do
+
+if test -d .repo; then
+    diffs=$(rgrep -l -e "$1" out/diff | sort)
+else
+    diffs=out/diff/$(ap . | perl -npe 's!/!%!g').log
+    cd $(lookup-file .repo/..)
+fi
+
+for x in $diffs; do
     x=$(readlink -f $x)
     dir=$(echo $x|perl -npe 's!.*/!!; s/.log$//; s!%!/!g')
     (
         cd $dir
+        echo doing $dir
         if test $shell = true; then
-            start-recursive-shell 'shell for cherry'
+            start_recursive_shell 'shell for cherry'
             exit
         fi
         target_branch=$(grep -o 'not found in .*' $x|pn 4|head -n 1)
         if test -z "$target_branch"; then
             echo target branch is not found in $x'!'
-            start-recursive-shell "No target branch"
+            start_recursive_shell "No target branch"
         else
-            git co $target_branch -b $(basename $target_branch)
-            for y in $(grep -e "$1" $x | pn 3); do
-                git cherry-pick $y || start-recursive-shell "cherry failed: $y"
+            git co $target_branch -b $(basename $target_branch) || true
+            for y in $(grep -e "$1" $x |grep -v 'Merge commit.*into'| pn 3); do
+                export WORKING_REV=$y
+                git cherry-pick $y || start_recursive_shell "cherry failed: $y" || true
             done
-        fi            
+        fi
     )
 done

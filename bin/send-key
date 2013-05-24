@@ -2,9 +2,16 @@
 
 set -x
 sleep 1;
+
+if test "$#" = 0; then
+    set -- "$(getclip)"
+fi
 x=$1
 while test "$x"; do
     y=${x:0:1}
     x=${x:1}
+    if test "$y" = \\; then
+        y=backslash
+    fi
     sawfish-client -e '(synthesize-event "'"$y"'" (car (window-order)))'
 done

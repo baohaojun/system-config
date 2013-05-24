@@ -11,5 +11,5 @@ if test $# != 1; then
 fi
 for x in $(git rev-list $1 ^HEAD|reverse); do
     git log -1 $x
-    git cherry-pick $x || start-recursive-shell cherry-pick-all
+    git cherry-pick $x || start_recursive_shell cherry-pick-all
 done

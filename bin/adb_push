@@ -6,7 +6,7 @@ GetOptions(
     "s!" => \$secure,
     );
 
-system("adb shell sync; echo adb shell mount -o remount,rw /system; adb shell mount -o remount,rw /system");
+system("adb -r shell sync; echo adb shell mount -o remount,rw /system; adb shell mount -o remount,rw /system");
 $dest = pop( @ARGV);
 
 for (@ARGV) {
@@ -14,16 +14,16 @@ for (@ARGV) {
     chomp($file=qx/lookup-file $_/);
     system("adb",  "push", "$file", "$dest");
     if ($secure) {
-	my $base_file = $file;
-	$base_file =~ s!.*/!!;
-	my $base_dest = $dest;
-	$base_dest =~ s!.*/!!;
-	
-	if ($base_file eq $base_dest) {
-	    system("adb", "shell", "chmod", "644", $dest);
-	} else {
-	    system("adb", "shell", "chmod", "644", "$dest/$base_file");
-	}
+        my $base_file = $file;
+        $base_file =~ s!.*/!!;
+        my $base_dest = $dest;
+        $base_dest =~ s!.*/!!;
+
+        if ($base_file eq $base_dest) {
+            system("adb", "shell", "chmod", "644", $dest);
+        } else {
+            system("adb", "shell", "chmod", "644", "$dest/$base_file");
+        }
     }
 }
 

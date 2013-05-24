@@ -285,9 +285,9 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 ;;;### (autoloads (source-code-help bhj-java-import bhj-find-missing-file
 ;;;;;;  replace-double-quotes bhj-choose-from-output bhj-choose bhj-open-android-doc-on-java-buffer
 ;;;;;;  bhj-do-dictionry insert-today dos2unix bhj-do-code-generation
-;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-name my-bbdb/gnus-update-records-mode
-;;;;;;  bhj-view-mail-external gnus-gmail-search-subject localedit
-;;;;;;  sudoedit switch-buffer-same-filename-rev switch-buffer-same-filename
+;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-name my-bbdb-canonicalize
+;;;;;;  my-bbdb/gnus-update-records-mode bhj-view-mail-external gnus-gmail-search-subject
+;;;;;;  localedit sudoedit switch-buffer-same-filename-rev switch-buffer-same-filename
 ;;;;;;  revert-all-buffers save-all-buffers-no-check-modified back-to-indent-same-space-as-prev-line
 ;;;;;;  indent-same-space-as-prev-line java-bt-mode java-bt-next-error
 ;;;;;;  java-bt-ret-key waw-mode waw-ret-key waw-next-error visit-code-reading
@@ -302,8 +302,8 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 ;;;;;;  bhj-insert-pwdw bhj-clt-insert-file-name wiki-local-bhj weekrep
 ;;;;;;  linux-c++-mode linux-c-mode bhj-c-end-of-defun java-complete-method
 ;;;;;;  java-resolve bhj-c-show-current-func bhj-c-beginning-of-defun
-;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (20873
-;;;;;;  44536 683934 854000))
+;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (20895
+;;;;;;  12148 497515 553000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -587,6 +587,11 @@ open the current maildir file in kmail
 
 
 \(fn)" nil nil)
+
+(autoload 'my-bbdb-canonicalize "bhj-defines" "\
+
+
+\(fn ADDR)" nil nil)
 
 (autoload 'bbdb-complete-name "bhj-defines" "\
 Complete the user full-name or net-address before point (up to the

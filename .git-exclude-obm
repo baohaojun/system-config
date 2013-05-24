@@ -8,3 +8,4 @@ Loader/Build/*.txt
 Loader/Platforms/*/release/
 Loader/Platforms/*/DKB/*.map
 Loader/Platforms/*/DKB/*.bin
+TimBuilder

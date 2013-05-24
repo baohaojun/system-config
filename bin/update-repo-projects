@@ -81,7 +81,7 @@ fi
 
         flock -u 9
         rm .repo/out-*/ -rf
-        if test $(stat -c %s .do-update) != 0; then
+        if test $(wc -w .do-update|pn 1) != 0; then
             for x in $(cat .do-update); do
                 android-full-build $x || true
             done

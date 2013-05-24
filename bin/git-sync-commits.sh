@@ -24,9 +24,9 @@ y=; for x in $(cat ~/1.txt); do
 	git rm $(rgrep bbmzc -l -I) -f||true; 
 	git commit --date "$(git-get-date $x)" -m "$(git-get-log $x | grep . || echo no commit message provided)" --allow-empty; 
 	if test -z "$y"; then
-	    start-recursive-shell check it now
+	    start_recursive_shell check it now
 	fi
-    ) || ( export REV_1=$y; export REV=$x;  start-recursive-shell $x); 
+    ) || ( export REV_1=$y; export REV=$x;  start_recursive_shell $x); 
     if test $? = 5; then
 	break;
     fi;

@@ -14,7 +14,7 @@ fi
 cd - >/dev/null
 
 if test $# = 0; then
-    start-recursive-shell android-env
+    start_recursive_shell android-env
 else
     "$@"
 fi

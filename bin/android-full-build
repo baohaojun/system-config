@@ -35,17 +35,17 @@ function die() {
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-	-j)
-	    jobs=$2
-	    shift 2
-	    ;;
-	--)
-	    shift
-	    break
-	    ;;
-	*)
-	    die "internal error"
-	    ;;
+        -j)
+            jobs=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
     esac
 done
 
@@ -57,7 +57,7 @@ if test $# = 0 -a ! -e buildspec.mk; then
 fi
 
 if test $# = 0; then
-    
+
     set -- $(
         cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_PRODUCT\s*.?=\s*(.*?)\s*$/')-$(
         cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_BUILD_VARIANT\s*.?=\s*(.*?)\s*$/')
@@ -66,7 +66,9 @@ fi
 if lunch "$1"; then
     shift
 else
-    lunch $(get_build_var TARGET_PRODUCT)-$(get_build_var TARGET_BUILD_VARIANT)
+    config=$(get_build_var TARGET_PRODUCT)-$(get_build_var TARGET_BUILD_VARIANT)
+    echo using old config $config
+    lunch $config
 fi
 . ~/bin/.android-set-outdir
 android-set-product
@@ -85,7 +87,7 @@ fi
     cd "$ANDROID_PRODUCT_OUT"
     test -d .repo && die "can not do it; .repo means we are at android top."
     rm ../system.img ../obj/PACKAGING/systemimage_intermediates/system.img -vf
-    rm kernel telephony uboot-obm -rf    
+    # rm kernel telephony uboot-obm -rf # see what will happen?
 ) || true
 
 test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
@@ -96,16 +98,16 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
         if pwd | grep -P -e '\d+-\d+'; then
             echo looks like a rolling back build dir, do not do code reading in it
         else
-	    touch .for-code-reading
+            touch .for-code-reading
         fi
-	echo 'about to lock at '$(date)
-	flock 9
-	echo 'lock success! at '$(date)
-	rm */out/ -rf || true
+        echo 'about to lock at '$(date)
+        flock 9
+        echo 'lock success! at '$(date)
+        rm */out/ -rf || true
         if test "$DO_REPO_UPDATE" = true; then
             rm out/*/ -rf || true
-        fi        
-	result=''
+        fi
+        result=''
         export build_mount_p=$(readlink -f ../)/.afb
         mkdir -p $build_mount_p
         test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1
@@ -138,20 +140,20 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                 fi
             '
         " && result=$result'all ok; ' && echo build is successful &&
-	(
-	    cd flashing
-	    ./make-links.sh
-	    dest=$(android-env get_abs_build_var OUT_DIR)/flashing/
-	    mkdir -p $dest
-	    DO_SYMLINK=true ./copy-release.sh $dest
-	) || true
+        (
+            cd flashing
+            ./make-links.sh
+            dest=$(android-env get_abs_build_var OUT_DIR)/flashing/
+            mkdir -p $dest
+            DO_SYMLINK=true ./copy-release.sh $dest
+        ) || true
         if test -e .afb-do-repo-changes; then
-	    echo -n 'after build, ccache stat is '
-	    ./prebuilt/linux-x86/ccache/ccache -s
+            echo -n 'after build, ccache stat is '
+            ./prebuilt/linux-x86/ccache/ccache -s
         fi
-	echo 
-	echo "full build result is $result"
-	echo
+        echo
+        echo "full build result is $result"
+        echo
     )
 ) 9>.android-full-build.lock  2>&1 | tee build.log out/build.log
 

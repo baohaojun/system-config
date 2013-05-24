@@ -1218,6 +1218,7 @@ ARG means found the (ARG - 1)th tag to find."
           'searching)
       'annotating)))
 
+;;;###autoload
 (defun my-bbdb-canonicalize (addr)
   (if (stringp addr)
       (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr)

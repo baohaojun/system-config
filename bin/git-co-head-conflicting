@@ -1,0 +1,3 @@
+#!/bin/bash
+
+git st -s | grep ^UU | pn 2|xargs git co HEAD

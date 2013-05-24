@@ -11,7 +11,8 @@
     . ../.buildenv.sh;
     cd uboot;
     if test $# = 1 && yes-or-no-p "Do configuration $1?"; then
+        git clean -xfd
         time make -j8 $1
-    fi	  
+    fi
     time make -j8 -k
-) 2>&1 | tee ~/.logs/$(basename $0).txt 
+) 2>&1 | tee ~/.logs/$(basename $0).txt

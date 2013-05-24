@@ -55,11 +55,11 @@ time (
 
     if [[ $(basename $0) =~ do-fastboot-full ]]; then
         if test ! -e $1; then
-	    die "blf file '$1' not exist! Usage: $(basename $0) XXX.blf PARTS"
+            die "blf file '$1' not exist! Usage: $(basename $0) XXX.blf PARTS"
         fi
     else
         if test $# -lt 2; then
-	    die "Usage: $(basename $0) blf partitions..."
+            die "Usage: $(basename $0) blf partitions..."
         fi
     fi
 
@@ -74,13 +74,13 @@ time (
     function should-do-it() {
         local default=0
         if ! [[ $(basename $0) =~ do-fastboot-full ]]; then
-	    default=1
+            default=1
         fi
 
         for x in "${partitions[@]}"; do
-	    if test "$1" = "$x"; then
-	        return $((! default))
-	    fi
+            if test "$1" = "$x"; then
+                return $((! default))
+            fi
         done
         return $((default))
     }
@@ -150,12 +150,15 @@ time (
     do-partition ramdisk "$(get-image-path RAMD)"
     do-partition kernel "$(get-image-path ZIMG)"
     if should-do-it radio; then
-        do-partition radio "$(concat-file 0 ARBI \
-                                          $(blf-calc-dist.sh ARBI GRBI) GRBI \
-                                          $(blf-calc-dist.sh ARBI ARB2) ARB2 \
-                                          $(blf-calc-dist.sh ARBI GRB2) GRB2)" ||
-        do-partition radio "$(concat-file 0 ARBI \
-                                          $(blf-calc-dist.sh ARBI GRBI)  GRBI)"
+        if grep -q -e ARB2 -- "$BLF"; then
+            do-partition radio "$(concat-file 0 ARBI \
+                                              $(blf-calc-dist.sh ARBI GRBI) GRBI \
+                                              $(blf-calc-dist.sh ARBI ARB2) ARB2 \
+                                              $(blf-calc-dist.sh ARBI GRB2) GRB2)"
+        else
+            do-partition radio "$(concat-file 0 ARBI \
+                                              $(blf-calc-dist.sh ARBI GRBI)  GRBI)"
+        fi
     fi
 
     if should-do-it recovery; then
@@ -199,12 +202,12 @@ time (
                 set -e
                 cp ./software_downloader/Utilities/TimBuilder/TimBuilder ~/tmp/
                 chmod +x ~/tmp/TimBuilder
-                ~/tmp/TimBuilder -r "$(absp $BLF)" 
+                ~/tmp/TimBuilder -r "$(absp $BLF)"
                 echo 'ok!'
             ) || wine ./software_downloader/Utilities/TimBuilder/TimBuilder.exe -r "$(command wp $BLF)"
         fi
     fi
-    
+
     if test -e "$ntim_bin" -a "$(stat -c %s "$ntim_bin")" != 0 && should-do-it DTIM; then
         if test -e DTim.CP; then
             do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery 1M DTim.CP)
