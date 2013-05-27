@@ -14,42 +14,42 @@ function die() {
 
 export -f die
 
-if test ! -e $(lookup-file .repo)/manifest.xml; then
+if test ! -e "$(lookup-file -e .repo/manifest.xml)"; then
     die "Error: .repo/manifest.xml not found"
 fi
 
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-	-x)
-	    debug=1
-	    shift
-	    ;;
-	-j)
-	    jobs=$2
-	    shift 2
-	    ;;
-	-d)
-	    dirs=("${dirs[@]}" "$2")
-	    shift 2
-	    ;;
+        -x)
+            debug=1
+            shift
+            ;;
+        -j)
+            jobs=$2
+            shift 2
+            ;;
+        -d)
+            dirs=("${dirs[@]}" "$2")
+            shift 2
+            ;;
         -p)
             path_pattern=$2
             shift 2
             ;;
-	--)
-	    shift
-	    break
-	    ;;
-	*)
-	    die "internal error"
-	    ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
     esac
 done
 
 if test "${#dirs[@]}" = 0; then
     dirs=(
-	$(
+        $(
             if test -d .repo; then
                 (
                     xmlstarlet sel -B -t -m //project -v @path -n $(lookup-file .repo/manifest.xml)
@@ -64,17 +64,17 @@ if test "${#dirs[@]}" = 0; then
     )
 else
     dirs=(
-	$(
-	    for x in "${dirs[@]}"; do
-		if test -d "$x"; then
-		    repo forall "$x" -c 'echo $REPO_PATH'
-		elif test -f "$x"; then
-		    cat "$x" | pn 1 | sort -u
-		else
-		    die "Error: not a dir: $x"
-		fi
-	    done
-	)
+        $(
+            for x in "${dirs[@]}"; do
+                if test -d "$x"; then
+                    repo forall "$x" -c 'echo $REPO_PATH'
+                elif test -f "$x"; then
+                    cat "$x" | pn 1 | sort -u
+                else
+                    die "Error: not a dir: $x"
+                fi
+            done
+        )
     )
 fi
 job=0
@@ -84,7 +84,7 @@ test -d .repo
 
 export ANDROID_TOP=$(pwd)
 
-(cd .repo; make -f ~/etc/generate-repo-info.mk) >/dev/null 2>&1 
+(cd .repo; make -f ~/etc/generate-repo-info.mk) >/dev/null 2>&1
 export REPO_INFO=$(pwd)/.repo/repo_info.pl
 
 function die() {
@@ -94,21 +94,21 @@ function die() {
 
 export -f die
 mkdir -p ~/.logs/my-rfa-locks
-for x in "${dirs[@]}"; do 
-    if test "$path_pattern" && ! [[ "$x" =~ "$path_pattern" ]]; 
+for x in "${dirs[@]}"; do
+    if test "$path_pattern" && ! [[ "$x" =~ "$path_pattern" ]];
         then continue
     fi
     job=$((job + 1))
     job=$((job % jobs))
     (
-	(
-	    cd $x || exit
-	    flock -x 9
-	    x=
-	    if test "$debug" = 1; then
-		x=-x
-	    fi
-	    bash $x -c "$@"
-	) 9>~/.logs/my-rfa-locks/$job.lock &
+        (
+            cd $x || exit
+            flock -x 9
+            x=
+            if test "$debug" = 1; then
+                x=-x
+            fi
+            bash $x -c "$@"
+        ) 9>~/.logs/my-rfa-locks/$job.lock &
     )
 done | tee ~/.logs/my-rfa.log

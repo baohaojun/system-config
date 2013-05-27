@@ -61,7 +61,7 @@ if test $# -gt 1 -a "$1" = sync; then
            -j|-m|-u|-p|-t|--jobs|--manifest-name|--manifest-server-username|--manifest-server-password|--smart-tag)
                options=("${options[@]}" "$1" "$2")
                shift 2
-               ;;               
+               ;;
            --)
                shift
                break
@@ -88,7 +88,7 @@ if test $# -gt 1 -a "$1" = sync; then
        exit 0
    fi
 
-   echo "Warning: some dirs may get deleted by your 'repo ${saved_args[@]}' command." 1>&2
+   echo "Warning: some dirs may get deleted by your '$the_prog ${saved_args[@]}' command." 1>&2
    if ! tty >/dev/null 2>&1 || yes-or-no-p "Continue?"; then
        set -- "${saved_args[@]}"
    else
@@ -97,5 +97,3 @@ if test $# -gt 1 -a "$1" = sync; then
 fi
 
 $the_prog "$@"
-
-

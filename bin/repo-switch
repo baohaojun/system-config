@@ -211,16 +211,12 @@ fi
     printf ')'
 ) > $(
     if test -e repo-switch; then
-        seq=$(
-            if test -e .repo-switch.seq; then
-                cat .repo-switch.seq;
-            else
-                echo -1
-            fi
-        )
-        ((seq++, seq %= 10))
-        echo $seq > .repo-switch.seq
-        cp repo-switch repo-switch.$seq
+        for seq in $(seq 9 -1 1); do
+            last=$((seq - 1))
+            mv repo-switch.$last repo-switch.$seq >/dev/null 2>&1 || true
+        done
+
+        mv repo-switch repo-switch.0 >/dev/null 2>&1 || true
     fi
     echo repo-switch
 )
