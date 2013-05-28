@@ -2,17 +2,21 @@
 
 $l = 0;
 
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
 while (<>) {
     chomp;
     last if $l == 9;
     $row[$l] = $_;
     $l++;
     die "invalid input: not 9 chars" if length($_) != 9;
-    
+
     die "invalid input: non-digit, non-blank" if m/[^0-9 ]/;
-    
+
     die "invalid input: repeated digit" if m/([0-9]).*\1/;
-    
+
 }
 
 die "not enough rows" if $l != 9;
@@ -68,7 +72,7 @@ sub fill_one_cell ($) {
                 $found = 1;
                 $br = $r;
                 $bc = $c;
-                print "found space at [$r][$c]\n";
+                debug "found space at [$r][$c]\n";
             }
         }
     }
@@ -84,24 +88,24 @@ sub fill_one_cell ($) {
                 $go = 0;
                 last;
             } else {
-                
+
             }
         }
 
         if (area_contains($m, $br, $bc, $try)) {
-            print "area at $br $bc contains $try\n";
+            debug "area at $br $bc contains $try\n";
             $go = 0;
         }
 
         if ($go == 0 and $try == 9) {
             return 0;
         }
-        
+
         if ($go == 0) {
             next;
         }
         $dup[$br][$bc] = $try;
-        print "try $try at [$br][$bc]\n";
+        print "try $try at [$br][$bc]\n" if ($br + $bc < 2);
         if ((my $res = fill_one_cell(\@dup)) != 0) {
             for $r (0..8) {
                 for $c (0..8) {
@@ -113,8 +117,8 @@ sub fill_one_cell ($) {
         }
     }
                    }
-                
-            
-           
+
+
+
 
 fill_one_cell(\@m);
