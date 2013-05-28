@@ -61,6 +61,9 @@ case "$1" in
         fi
         emacsclient -e '(douban-music-play-previous)'
         ;;
+    pause)
+        emacsclient -e '(douban-music-pause/resume)'
+        ;;
     *)
         die "not a douban.el command"
         ;;

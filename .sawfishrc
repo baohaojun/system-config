@@ -46,7 +46,7 @@
 (bind-keys s-h-keymap "p" (lambda () (system "~/bin/douban prev&")))
 (bind-keys global-keymap "XF86AudioPrev" (lambda () (system "~/bin/douban prev&")))
 (bind-keys global-keymap "XF86Launch8" (lambda () (system "~/bin/douban prev&")))
-(bind-keys s-h-keymap "XF86AudioPlay" (lambda () (system "~/bin/douban info&")))
+(bind-keys global-keymap "Super-XF86AudioPlay" (lambda () (system "~/bin/douban pause&")))
 (bind-keys global-keymap "XF86AudioPlay" (lambda () (system "~/bin/douban info&")))
 (bind-keys global-keymap "C-XF86AudioPlay" (lambda () (system "~/bin/douban lyrics&")))
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/screenshot&")))
