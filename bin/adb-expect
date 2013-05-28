@@ -1,0 +1,26 @@
+#!/usr/bin/expect -f
+
+
+spawn adb shell;
+
+proc shell-quote {str} {
+    # puts [regsub -all ' "hello ' world" '\\''];
+    set str [regsub -all ' $str '\\''];
+    return "'$str'";
+}
+
+expect -timeout 150 -re "(\\$|#) $" {
+    send "exec ";
+    foreach arg $argv {
+        send -- [shell-quote $arg];
+        send " ";
+    }
+    send "\n";
+    interact;
+}
+
+
+
+# Local Variables: #
+# mode: tcl #
+# End: #

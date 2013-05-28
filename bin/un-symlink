@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test ! -f "$1"; then
+    die "$1 not file"
+fi
+if test ! -L "$1"; then
+    die "$1 not symlink"
+fi
+
+cp "$1" "$1".$$
+rm -f "$1"
+mv "$1".$$ "$1"
