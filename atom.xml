@@ -12,15 +12,21 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[用bash脚本并发执行程序]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/29/0-parallel-bash.html"/>
+    <updated>2013-33-29T11:05:13+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/29/0-parallel-bash.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[通天塔导游]]></title>
     <link href="http://baohaojun.github.io/blog/2013/05/22/TourDeBabel.html"/>
-    <updated>2013-05-22T13:05:03+08:00</updated>
+    <updated>2013-05-22T13:06:26+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/22/TourDeBabel.html</id>
   </entry>
   <entry>
     <title type="html"><![CDATA[Mysterious rsync/ssh/scp hang]]></title>
     <link href="http://baohaojun.github.io/blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html"/>
-    <updated>2013-05-22T13:05:03+08:00</updated>
+    <updated>2013-05-22T13:06:26+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/05/03/z02abuse-macros-comments.html"/>
     <updated>2013-05-03T17:59:48+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/03/z02abuse-macros-comments.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[only re-generate the tags that have changed]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/03/z00fix-generate-tags.html"/>
-    <updated>2013-05-03T15:49:52+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/03/z00fix-generate-tags.html</id>
   </entry>
 </feed>
