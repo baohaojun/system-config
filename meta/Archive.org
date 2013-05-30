@@ -1,6 +1,10 @@
 #+title: Archive
  * 2013
   - 2013-05
+   * 2013-05-30
+
+     [[../blog/2013/05/30/0-intelligent-cd.org][智能cd]]
+
    * 2013-05-29
 
      [[../blog/2013/05/29/0-parallel-bash.org][用bash脚本并发执行程序]]

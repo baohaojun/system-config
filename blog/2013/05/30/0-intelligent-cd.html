@@ -2,8 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>用bash脚本并发执行程序</title>
-<!-- 2013-05-30 Thu 23:49 -->
+<title>智能cd</title>
+<!-- 2013-05-31 Fri 00:00 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
 <meta name="author" content="baohaojun"/>
@@ -101,147 +101,139 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">用bash脚本并发执行程序</h1>
+<h1 class="title">智能cd</h1>
 <p>
-在多核时代，越来越多的情况下如果能并发执行程序将会大大提升效率。比如在
-写我的博客的时候，它是发布在 <a href="http://baohaojun.github.io/">github page</a> 上的静态页面，所以每次我更新页
-面布局之后，我需要重新生成每个页面。我的博客是用org-mode写的，所以发布
-的时候要用Emacs脚本来发布，一开始我的做法是这样的（伪bash和elisp代码）：
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh"><span class="org-keyword">for</span> x<span class="org-keyword"> in</span> *.org; <span class="org-keyword">do</span>
-    emacs --batch -e <span class="org-string">'</span>
-<span class="org-string">        (progn</span>
-<span class="org-string">          (init-org-publishing-vars)</span>
-<span class="org-string">          (org-publish-as-html '</span>$<span class="org-variable-name">x</span><span class="org-string">'))'</span>
-<span class="org-keyword">done</span>
-</pre>
-</div>
-
-<p>
-但发现这样做太慢了，我有100篇博客的话，我要启动100次Emacs，所以我的（第
-一次）优化是这样的，把这100个博客的发布写到一个elisp脚本里，然后跑一次
-Emacs就可以了：
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh">cat &lt;&lt;EOF &gt; tmp-export.el
-<span class="org-sh-heredoc">(progn</span>
-<span class="org-sh-heredoc">  (init-org-publishing-vars)</span>
-<span class="org-sh-heredoc">$(</span><span class="org-sh-quoted-exec">for</span><span class="org-sh-heredoc"> x in *.org do</span>
-<span class="org-sh-heredoc">    echo "(org-publish-as-html $x)"</span>
-<span class="org-sh-heredoc">done)</span>
-<span class="org-sh-heredoc">)</span>
-<span class="org-sh-heredoc">EOF</span>
-
-emacs --batch -l tmp-export.el
-</pre>
-</div>
-
-<p>
-但是发现这样还是太慢，最终，我还是回到了一个.org文件调用一次Emacs，但这
-回，我用上了并发执行。
+这是一个智能的时代，手机已经智能了，cd怎么智能？
 </p>
 
 <p>
-所谓并发执行，其实很简单，只要在第一段伪代码的Emacs调用后面加上一个
-<code>&amp;</code> ，把进程放到后台就可以了。但有个陷阱是这样的话系统有可能进入
-thrashing（抽风）状态，因为同时创造出的后台进程太多了（100篇博客可能不
-会有太大问题，但并发执行1万个其他的任务的话呢？）。
+好吧，这里说的cd不是用来听的cd，而是UNIX改变当前工作目录的shell自带命令，
+change directory的缩写，cd。
 </p>
 
 <p>
-我的解决方案是加上flock，比如我通过-j10指定最多只能有10个并发任务（类似
-于 <code>make</code> 程序的选项，j for jobs），则我会创建10个临时锁文件，所有任务
-在开始的时候必须先锁住其中一个锁文件，退出的时候会释放，这样下一个在等
-待这个文件锁的任务才能开始执行。
+哦，那个cd啊，你恍然，这东西还能智能？
 </p>
 
 <p>
-以重新发布我的所有博客文章为例，脚本的用法是：
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh">run-in-parallel <span class="org-string">'org-export'</span> $(<span class="org-sh-quoted-exec">find</span> blog -name <span class="org-string">'*.org'</span>)
-</pre>
-</div>
-
-<p>
-另一个更完整的例子是：
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh"><span class="org-keyword">time</span> run-in-parallel -I %N -j 10 <span class="org-string">'echo %N; sleep 1'</span> $(<span class="org-sh-quoted-exec">seq</span> 1 20)
-</pre>
-</div>
-
-<p>
-处理完选项参数（-I和-j）之后，剩下的1+X个参数中，第一个代表要执行的任务
-命令，其余的X个则是代表总个要执行的X个任务，每一个需要传进去的参数。所
-以上面这个例子的意思是，-I（偷师于xargs的-I选项） %N表示任务命令中出现
-的%N要用后面的参数代替；然后对1到20的每个整数（用变量x表示），执行
-<code>echo $x</code> ，然后sleep 1秒。最终执行完需要多少时间呢？如果不并发的话相信
-大家都知道结果至少要20秒，但用了上面的并发脚本，最终的结果是2.5秒。
+UNIX的设计遵循了一条非常有道理的原则，那就是底层提供机制（mechanism），
+而非决策（policy）。决策要由上层决定如何使用底层的机制去实现。最早看到
+这条原则是在LDD（Linux Device Driver）那本书里。
 </p>
 
 <p>
-还有一个应用的场景是为我的Kindle设备裁剪pdf文件。Kindle Touch上看一般的
-pdf文件待别痛苦，放大、缩小、横竖屏转动支持都很差，所以我用pdfjam工具箱
-里的工具写了个脚本，让重新生成的pdf更适于在Kindle上阅读：
+cd的机制就是 chdir 这条系统调用了，但作为shell里的一条命令，它自己应该
+是可以定制的一种policy了。可惜在Bash里，我们看不到能怎么定制它。唯一提
+供的一个定制是通过一个叫CDPATH的环境变量。设置了这个变量之后执行 <code>cd
+XDIR</code> 命令，如果当前目录下没有 XDIR ，则Bash会依次到CDPATH里指定的每个
+路径下寻找名为XDIR的子目录，如果找到就chdir到那个子目录下，如果所有
+CDPATH路径下都找不到则最终报错。
+</p>
+
+<p>
+<b>强烈建议你不要使用这个变量!!!</b>
+</p>
+
+<p>
+因为我曾经吃过苦头，设置了这个变量之后发现Android的编译莫名其妙的失败了。
+查了半天才发现原来是CDPATH引起的。你Google一下Android CDPATH应该发现别
+人也碰到了这个问题，可惜你自己查出问题原因之前Google也帮不了你。
+Android的Makefile里指定了Shell用Bash而不是默认的sh，然后Makefile里的
+$(shell cd XDIR &amp;&amp; ls &#x2026;)类似这样的命令就都无法正常工作了。因为这里的
+cd也会尊重你设的那个CDPATH变量！
+</p>
+
+<p>
+正确的定制cd的办法是写一个 <code>function cd() {&#x2026;}</code> 。在函数体里计算出你最
+后真正要chdir过去的那个目标目录后，调用 <code>builtin cd XDIR</code> 过去。注意这
+里必须用 <code>builtin</code> （另一个Bash自带命令）指定这回我们要用Bash自带的那个
+cd而不是我们这里定义出来的cd函数，要不然你就递归了（恭喜你:-）。
+</p>
+
+<p>
+然后因为你没有用过 <code>export -f cd</code> ，Make子进程和它唤起的$(shell cd
+&#x2026;)并不会看到这个cd函数，所以就不会存在CDPATH的那个问题。
+</p>
+
+<p>
+基本上我自己定制过后的cd是这样工作的：
 </p>
 
 <ol class="org-ol">
-<li>把原pdf文件四周的白边切掉
+<li>如果只带一个参数 X（谁说cd只 <i>准</i> 带一个参数？马上我就告诉你带多
+个参数是什么意思），则：
+
+<p>
+a) 如果当前目录下有X并且是一个目录，则chdir到X。这保证了与builtin
+   cd的兼容性。
+</p>
+
+<p>
+b) 如果当前目录下有X并且是一个文件，则chdir到$(dirname X)。
+</p>
+
+<p>
+c) 如果依次往上级目录寻找一直到根目录 <code>/</code> 为止，能找到X（也就是在X前
+   加n个 <code>../</code> 后发现其存在），则依照a)或b)处理。
+</p>
+
+<p>
+d) 以上都失败，按2.处理
+</p>
 </li>
-<li>把每页切成两页（留一点余量，保证某一行在上半页被切断的话，在下半页还
-能看到完整的这一行，也就是说要切两次）。
+
+<li>带多个参数或者带一个参数但在1.中尚未cd成功的情况。假设我们有X Y Z几
+个参数，则到cd历史目录列表中（下面会解释）中匹配这些参数，匹配成功的
+历史目录 <code>$HISTDIR</code> 要求必须:
+
+<p>
+a) X Y Z每一个都是其子串
+</p>
+
+<p>
+b) X Y Z中至少有一个是其$(basename $HISTDIR)的子串。
+</p>
+
+<ul class="org-ul">
+<li>然后如果只有一条匹配的历史目录，则直接chdir过去。
 </li>
-<li>再拼回去
+
+<li>如果有多条匹配成功的历史目录，则调用一个my-select程序，让用户选哪
+个才是他想要的。由于历史目录的记录方法，用户最近去过的目录会在前面
+出现，如果是第一项的话，可以直接按回车。也可以继续输入一些单词U V
+W进行细化选择，但这个就是my-select的特性了，下次再聊它（有没有让你
+想起Emacs下的Anything/Helm Mode?）。
 </li>
-<li>转动90度。
+
+<li>如果一个也没有匹配，则报错。
+</li>
+</ul>
 </li>
 </ol>
 
 <p>
-这里的第一步和第二步用上run-in-parallel的话真的是——天下武功，无坚不破，
-唯快不破:-)
+最后，如果有chdir发生的话，把新的当前工作目录push到历史目录列表的头部。
 </p>
 
 <p>
-最后处理过前后的pdf文件在Kindle上的效果见图。
-</p>
-
-<p>
-之前：
-<img src="../../../../images/post/before-for-kindle.jpg"  alt="before-for-kindle.jpg"/>
-</p>
-
-<p>
-之后：
-<img src="../../../../images/post/after-for-kindle.jpg"  alt="after-for-kindle.jpg"/> 
+见图（中间我输入ext作了一次细化）：
 </p>
 
 
-<p>
-各个脚本的位置：<a href="https://github.com/baohaojun/system-config/raw/master/bin/run-in-parallel">run-in-parallel</a>， <a href="https://github.com/baohaojun/system-config/raw/master/bin/pdf-for-kindle">pdf-for-kindle</a>， 剩下一些辅助的脚本也
-都在 <a href="https://github.com/baohaojun/system-config">system-config</a> 上可以找到。
-</p>
+<div class="figure">
+<p><img src="../../../../images/post/cd_bhj.png"  alt="cd_bhj.png"/></p>
+</div>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="../22/TourDeBabel.html"> <!-- prev-url -->
+      <a href="../29/0-parallel-bash.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        通天塔导游 <!-- prev-title -->
+        用bash脚本并发执行程序 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
-      <a href="../30/0-intelligent-cd.html"> <!-- next-url -->
-        智能cd <!-- next-title -->
+      <a href="../../../../meta/Archive.html"> <!-- next-url -->
+        Archive <!-- next-title -->
         <i class="icon-chevron-right">》</i>
       </a>
     </li>
@@ -319,7 +311,8 @@ pdf文件待别痛苦，放大、缩小、横竖屏转动支持都很差，所�
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='../22/TourDeBabel.html'> 通天塔导游 </a></li>
+        <li><a href='../29/0-parallel-bash.html'> 用bash脚本并发执行程序 </a></li>
+<li><a href='../22/TourDeBabel.html'> 通天塔导游 </a></li>
 <li><a href='../21/0-Mysterious-rsync,ssh,scp-hang-.html'> Mysterious rsync/ssh/scp hang </a></li>
 <li><a href='../20/0-Tuning-my-blog-to-look-like-blogspot-.html'> Tuning my blog to look like blogspot </a></li>
 <li><a href='../15/0-Inside-Google-and-Amazon.html'> 在Google和亚马逊（译） </a></li>
@@ -328,7 +321,6 @@ pdf文件待别痛苦，放大、缩小、横竖屏转动支持都很差，所�
 <li><a href='../08/stripping-kernel-code-for-reading.html'> Stripping kernel/uboot source to 10% for code read... </a></li>
 <li><a href='../08/bbs-robot.html'> 站友福音：在水木bbs上用Emacs的键绑定 </a></li>
 <li><a href='../03/z02abuse-macros-comments.html'> The code is not really code, the comment is </a></li>
-<li><a href='../03/z00fix-generate-tags.html'> only re-generate the tags that have changed </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

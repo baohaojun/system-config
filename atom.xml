@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[智能cd]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/30/0-intelligent-cd.html"/>
+    <updated>2013-00-31T00:05:12+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/30/0-intelligent-cd.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[用bash脚本并发执行程序]]></title>
     <link href="http://baohaojun.github.io/blog/2013/05/29/0-parallel-bash.html"/>
-    <updated>2013-33-29T11:05:13+08:00</updated>
+    <updated>2013-05-29T11:34:37+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/29/0-parallel-bash.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/05/08/bbs-robot.html"/>
     <updated>2013-05-08T18:34:18+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/08/bbs-robot.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[The code is not really code, the comment is]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/03/z02abuse-macros-comments.html"/>
-    <updated>2013-05-03T17:59:48+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/03/z02abuse-macros-comments.html</id>
   </entry>
 </feed>
