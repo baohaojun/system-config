@@ -1,0 +1,159 @@
+#+title: 智能补齐
+# bhj-tags: bash
+
+昨天说完[[../30/0-intelligent-cd.org][智能cd]]，今天来说说Bash下的智能补齐。跟Emacs下的Anything.el /
+Helm.el一样，我们的补齐应该可以随意打几个词干，然后就把整条命令补出来。
+
+与Bash自带的Ctrl-R / Ctrl-S历史命令搜索相比，它们开始匹配之后，要求必须
+是连续地一直匹配下去，中间不能断，这对用户来说有点不够友好。而我的补齐
+方式之下，用户可以提纲契领的输入几个信息量高的词干，从而保证一旦补齐之
+后，会是唯一补齐，不需要进行多项选择；即使被迫需要多选，也可以做得比
+Bash自带的更方便！
+
+做法是这样，我写了一个空Bash函数，名为re，Re-Exec（再次执行）的意思，它
+自己什么也不干，（除了把参数全丢掉——它的定义是 =re () { true; }= ），但
+我为它写了Bash补齐命令才是窍门:-)
+
+#+NAME: ~/.bash_completion.d/re
+#+BEGIN_SRC sh
+#!/bin/bash
+
+function _re()
+{
+    local cur prev
+    local IFS=$'\n'
+
+    COMPREPLY=()
+    set -- "${COMP_WORDS[@]}"
+    shift
+    
+
+    COMPREPLY=( $(skeleton_compgen_word.pl \
+        -d '\n' -p \; -f ~/.bash_history.bak \
+        -- "$@")
+    )
+    return 0
+}
+
+complete -o default -F _re re rex
+#+END_SRC
+
+这段补齐配置的意思是说，让skeleton_compgen_word.pl这个脚本拿着re命令所
+带的参数以换行符为分割符(-d '\n'），去 =~/.bash_history.bak= 里找匹配，
+找到以后先打个分号（-p \;），再把这个匹配行打出来。
+
+以我想重新编译一下Android里我司自加的uboot为例，我只记得编译的命令是mm，
+所以我就输入 =re mm uboot .0= 然后就按Tab键（也就是一般shell下的补齐
+键），这样上面的_re函数就会被执行。
+
+skeleton_compgen_word.pl这个脚本有个特点，它看到最后一个参数如果是 =.0
+.1 .2= 这种格式的话，它就会把第0个、第1个或第2个匹配项抽出来打印出去然
+后马上退出（而不是默认的把所有匹配项都打出去）。由于我的历史命令文件是
+动态调整的，最近用过的历史命令会出现在最前面，所以这里补出来的第0个应该
+就是我想要的（否则我可以打.1去选择下一个，等等）。
+
+下面就是魔术了：我的第一条匹配的历史命令（应该说是一个组合命令）是
+=(cd $(lookup-file vendor/marvell/generic/tcmd/kernel-helper); time mm
+-j8 -k uboot)= ，由于Tab键按下时最后一个参数是.0，所以.0会被补齐成这条
+（跟它完全看不出有什么匹配关系的）历史命令，也就是说你会看到输入从 =re
+mm uboot .0= 变成了这样：
+
+: re mm uboot (cd $(lookup-file vendor/marvell/generic/tcmd/kernel-helper); time mm -j8 -k uboot) 
+
+但是，人生最有意思的就是这个但是！眼睛亮的你肯定发现了问题，这个历史命
+令被re给吃掉了！它成了re的参数，并且由于括号的存在，事实上是个语法错误！
+怎么样才能让re“吃了我的给我吐出来”呢？前面说了，（-p \;）会在匹配的历史
+命令之前先打个分号出来，所以你看到的是：
+
+: re mm uboot ;(cd $(lookup-file vendor/marvell/generic/tcmd/kernel-helper); time mm -j8 -k uboot) 
+
+分号和换行符是Bash里的语句分隔符，加了这个分号之后 =re mm uboot ;= 成为
+一条独立的语句什么也不干的随风去了，剩下我们真正想要的好干活啊。
+
+如果不加.0的话我们按Tab键是什么效果呢？这时候一般会有多个匹配项，Bash会
+把它们都列出来。如果是Bash自带的补齐机制，它会要求你继续输入能继续匹配
+的子串。以apt-get install latex的补齐为例，Bash会提示有这么些选项：
+
+#+BEGIN_EXAMPLE
+latex209-base                      latex-cjk-chinese                  latex-cjk-korean                   latexila-data
+latex209-bin                       latex-cjk-chinese-arphic-bkai00mp  latex-cjk-thai                     latex-make
+latex209-src                       latex-cjk-chinese-arphic-bsmi00lp  latex-cjk-xcjk                     latexmk
+latex2html                         latex-cjk-chinese-arphic-gbsn00lp  latexdiff                          latex-mk
+latex2rtf                          latex-cjk-chinese-arphic-gkai00mp  latexdraw                          latexml
+latex2rtf-doc                      latex-cjk-common                   latex-fonts-sipa-arundina          latex-sanskrit
+latex-beamer                       latex-cjk-japanese                 latex-fonts-thai-tlwg              latex-xcolor
+latex-cjk-all                      latex-cjk-japanese-wadalab         latexila                           
+#+END_EXAMPLE
+
+所以你要继续输入-cjk（假设你想要装的是
+latex-cjk-chinese-arphic-gkai00mp ），然后再按一下Tab键，Bash会提示你还
+有这么些选项（它倒是会自动帮你添个减号把-cjk补成-cjk-）：
+
+#+BEGIN_EXAMPLE
+$apt-get install latex-cjk- # 这里连按两次Tab键
+latex-cjk-all                      latex-cjk-chinese-arphic-bsmi00lp  latex-cjk-common                   latex-cjk-korean
+latex-cjk-chinese                  latex-cjk-chinese-arphic-gbsn00lp  latex-cjk-japanese                 latex-cjk-thai
+latex-cjk-chinese-arphic-bkai00mp  latex-cjk-chinese-arphic-gkai00mp  latex-cjk-japanese-wadalab         latex-cjk-xcjk
+#+END_EXAMPLE
+
+然后你输入ch，bash会自动帮你补成chinese，但接下来又提示你：
+
+#+BEGIN_EXAMPLE
+$apt-get install latex-cjk-chinese
+latex-cjk-chinese                  latex-cjk-chinese-arphic-bsmi00lp  latex-cjk-chinese-arphic-gkai00mp  
+latex-cjk-chinese-arphic-bkai00mp  latex-cjk-chinese-arphic-gbsn00lp  
+#+END_EXAMPLE
+
+然后你输入-a，bash会自动帮你补成-arphic-，但接下来又提示你：
+
+#+BEGIN_EXAMPLE
+$apt-get install latex-cjk-chinese-arphic-
+latex-cjk-chinese-arphic-bkai00mp  latex-cjk-chinese-arphic-bsmi00lp  latex-cjk-chinese-arphic-gbsn00lp  latex-cjk-chinese-arphic-gkai00mp
+#+END_EXAMPLE
+
+好了，我想你肯定明白我的意思了。
+
+按照我的补齐方法，apt-get install latex之后按两下Tab键，应该出现这样的提示：
+
+#+BEGIN_EXAMPLE
+$apt-get install latex
+00: latex209-base                               11: latex-cjk-chinese-arphic-gbsn00lp
+01: latex209-bin                                12: latex-cjk-chinese-arphic-gkai00mp
+02: latex209-src                                13: latex-cjk-common
+03: latex2html                                  14: latex-cjk-japanese
+04: latex2rtf                                   15: latex-cjk-japanese-wadalab
+05: latex2rtf-doc                               16: latex-cjk-korean
+06: latex-beamer                                17: latex-cjk-thai
+07: latex-cjk-all                               18: latex-cjk-xcjk
+08: latex-cjk-chinese                           19: latexdiff
+09: latex-cjk-chinese-arphic-bkai00mp           31 total zzz... please use hil (history list)!
+10: latex-cjk-chinese-arphic-bsmi00lp           
+
+#+END_EXAMPLE
+
+然后我加个.12再按个Tab就得到我想要的啦吼吼吼！
+
+（刚刚为这个Demo写了一个临时的补齐配置：
+
+#+BEGIN_SRC sh
+function _apt_get()
+{
+    local cur prev
+    local IFS=$'\n'
+
+    COMPREPLY=()
+    shift
+    
+
+    COMPREPLY=( $(skeleton_compgen_word.pl \
+	 "latex209-base latex209-bin latex209-src latex2html latex2rtf latex2rtf-doc latex-beamer latex-cjk-all latex-cjk-chinese latex-cjk-chinese-arphic-bkai00mp latex-cjk-chinese-arphic-bsmi00lp latex-cjk-chinese-arphic-gbsn00lp latex-cjk-chinese-arphic-gkai00mp latex-cjk-common latex-cjk-japanese latex-cjk-japanese-wadalab latex-cjk-korean latex-cjk-thai latex-cjk-xcjk latexdiff latexdraw latex-fonts-sipa-arundina latex-fonts-thai-tlwg latexila latexila-data latex-make latexmk latex-mk latexml latex-sanskrit latex-xcolor" \
+        -- "${COMP_WORDS[$COMP_CWORD]}")
+    )
+    return 0
+}
+
+complete -o default -F _apt_get apt-get
+#+END_SRC
+）
+
+所有的脚本都可以在 [[http://github.com/baohaojun/system-config][system-config]] 中找到，见[[../../../2012/10/22/my-config-cn.org][我的系统配置]]。

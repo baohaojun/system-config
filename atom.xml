@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[智能补齐]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/05/31/0-intelligent-completion.html"/>
+    <updated>2013-39-31T23:05:13+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/05/31/0-intelligent-completion.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[智能cd]]></title>
     <link href="http://baohaojun.github.io/blog/2013/05/30/0-intelligent-cd.html"/>
     <updated>2013-05-31T00:00:34+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/05/08/stripping-kernel-code-for-reading.html"/>
     <updated>2013-05-08T23:32:00+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/08/stripping-kernel-code-for-reading.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[站友福音：在水木bbs上用Emacs的键绑定]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/08/bbs-robot.html"/>
-    <updated>2013-05-08T18:34:18+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/08/bbs-robot.html</id>
   </entry>
 </feed>
