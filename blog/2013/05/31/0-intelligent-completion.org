@@ -1,7 +1,7 @@
 #+title: 智能补齐
 # bhj-tags: bash
 
-昨天说完[[../30/0-intelligent-cd.org][智能cd]]，今天来说说Bash下的智能补齐。跟Emacs下的Anything.el /
+昨天说完[[../30/0-intelligent-cd.org][智能cd]]，今天来说说Bash下的智能补齐。跟Emacs[fn:skeleton]下的Anything.el /
 Helm.el一样，我们的补齐应该可以随意打几个词干，然后就把整条命令补出来。
 
 与Bash自带的Ctrl-R / Ctrl-S历史命令搜索相比，它们开始匹配之后，要求必须
@@ -157,3 +157,6 @@ complete -o default -F _apt_get apt-get
 ）
 
 所有的脚本都可以在 [[http://github.com/baohaojun/system-config][system-config]] 中找到，见[[../../../2012/10/22/my-config-cn.org][我的系统配置]]。
+
+[fn:skeleton] Emacs下我写的类似的补齐方式见[[../../../2012/12/27/stem-completion.org][skeleton-complete（中文）]]和
+[[../../04/13/skeleton-complete.org][skeleton-complete（英文）]]。
