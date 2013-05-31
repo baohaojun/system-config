@@ -6,7 +6,7 @@ GetOptions(
     "s!" => \$secure,
     );
 
-system("adb -r shell sync; echo adb shell mount -o remount,rw /system; adb shell mount -o remount,rw /system");
+system("echo adb shell mount -o remount,rw /system; exec >/dev/null 2>&1; adb -r shell sync; adb shell mount -o remount,rw /system");
 $dest = pop( @ARGV);
 
 for (@ARGV) {
@@ -27,4 +27,4 @@ for (@ARGV) {
     }
 }
 
-system("adb shell sync; echo adb shell mount -o remount,ro /system; adb shell mount -o remount,ro /system");
+system("echo adb shell mount -o remount,ro /system; exec >/dev/null 2>&1; adb shell sync; adb shell mount -o remount,ro /system");

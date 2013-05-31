@@ -55,7 +55,13 @@ dir2ramdisk $tdir > $boot.2
 
 dd if=/dev/zero of=$boot.2 bs=1 count=1 seek=$(decimal $(stat -L -c %s $boot)-1)
 
-echo please run the following command manually
-echo "adb_push $boot.2 /data/; adb shell dd if=/data/$(basename $boot.2) of=/dev/block/platform/sdhci-pxav3.2/by-name/ramdisk"
-        
+if yes-or-no-p -n "Push to the device and update the ramdisk partition?"; then
+    (
+        set +e
+        adb_push $boot.2 /data/
+        adb shell dd if=/dev/zero of=/dev/block/platform/sdhci-pxav3.2/by-name/ramdiskadb
+        adb shell dd if=/data/$(basename $boot.2) of=/dev/block/platform/sdhci-pxav3.2/by-name/ramdisk
+    )
+fi
+
 rm -rf $(dirname $tdir) -rf

@@ -3,8 +3,9 @@ set -e
 
 prepend=
 postpend=
+export ASK_REPLACER=true
 
-TEMP=$(getopt -o p:P: --long pre:post: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o p:P:A --long pre:post:no-ask -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -15,6 +16,10 @@ while true; do
         -P|--post)
             postpend=$(printf %q "$2")
             shift 2
+            ;;
+        -A|--no-ask)
+            ASK_REPLACER=false
+            shift
             ;;
         --)
             shift
@@ -84,8 +89,12 @@ while (m#($prepend$from$postpend)#ig) {
     if (defined $rep_save{$1}) {
         next;
     } else {
-        system("echo please input your replacement for \"$1\" > /tmp/get-stdin.$$");
-        chomp($rep_save{$1} = qx(get-stdin /tmp/get-stdin.$$));
+        if ($ENV{ASK_REPLACER} eq "true") {
+            system("echo please input your replacement for \"$1\" > /tmp/get-stdin.$$");
+            chomp($rep_save{$1} = qx(get-stdin /tmp/get-stdin.$$));
+        } else {
+            $rep_save{$1} = $to;
+        }
     }
 }
 

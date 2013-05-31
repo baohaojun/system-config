@@ -33,7 +33,7 @@ odd_pages=$(pdf-get-pages "$1")
 even_pages=$(pdf-get-pages "$2")
 
 (
-    for n in $(seq 1 $odd_pages); do
+    for n in $(seq 1 $even_pages); do
         echo "$1" $n "$2" $n
     done
     if test $odd_pages -gt $even_pages; then

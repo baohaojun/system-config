@@ -6,6 +6,7 @@ s,^ssh://shgit.marvell.com/git/,shgit.marvell.com:/git/,;
 s,(shgit.marvell.com):/git/,$1/r/:,;
 %rewrites = (
     "android/vendor/marvell/ose/ttc_telephony" => "ose/linux/ttc_telephony",
+    "android/vendor/marvell/ose/wtptp_pxa910" => "ose/linux/wtptp_pxa910",
     "^bibler:" => "bible/gerrit:",
 );
 foreach $key (keys %rewrites) {

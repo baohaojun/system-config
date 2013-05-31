@@ -30,7 +30,7 @@ if test "$size" != "$page_sizes"; then
     size=\{$(echo $size|perl -npe 's!.*?(\d+\.\d+) x (\d+\.\d+).*!sprintf "%fin,%fin", $1/72,$2/72!e')\}
 
         run-in-parallel -j 10 -I %N '
-            pdfnup --no-landscape --no-tidy --nup 1x1 --papersize "$size" seq-%N.pdf --outfile seq-ss-%N.pdf
+            pdfnup --no-landscape --nup 1x1 --papersize "$size" seq-%N.pdf --outfile seq-ss-%N.pdf
         ' $(seq 1 $pages)
 else
     for x in $(seq 1 $pages); do

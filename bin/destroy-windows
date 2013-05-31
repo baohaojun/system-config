@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) window_class"
+fi
+
+class=$1
+sawfish-client -e '
+    (mapcar
+      (lambda (w)
+        (when (string-equal (window-class w) "'$class'")
+          (message (format nil "?window: %s; name: %s; class: %s" w (window-name w) (window-class w)))
+          (destroy-window w)))
+      (managed-windows))' 
+

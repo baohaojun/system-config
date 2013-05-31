@@ -13,6 +13,8 @@
 	fflush(stderr);				\
  } while(0)
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
 #define envdebug(fmt, ...) do {						\
 	if (getenv("DEBUG") && strcmp(getenv("DEBUG"), "true") == 0) {	\
 	    fprintf(stderr,						\

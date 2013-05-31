@@ -86,7 +86,7 @@ remaining_n_height=$(subtract $n_height $cut_n_height)
 
 test $# != 1 && die "Error: Usage $(basename $0) PDF"
 
-test -e $pdf || die "Error: $pdf does not exist";
+test -e "$pdf" || die "Error: $pdf does not exist";
 
 pdf=${pdf%.pdf}
 
@@ -101,7 +101,9 @@ done
 pages=$(pdf-get-pages odd-cut.pdf)
 for page in $(seq 1 $pages); do
     for x in odd even; do
-        echo $x-join-$page.pdf
+        if test -e $x-join-$page.pdf; then
+            echo $x-join-$page.pdf
+        fi
     done
 done | xargs pdfjoin --outfile final.pdf
 
