@@ -59,6 +59,7 @@ if git remote -v | grep baohaojun.github.com.git; then
         done
     )
     org_changes=$(git st -S|grep -e '\.org$' || true)
+    git add $org_changes
     for x in $org_changes; do
         if test -e $x; then
             ./fix-links.pl $x

@@ -38,6 +38,12 @@ if test "$#" != 0; then
 	of $(github-pagep $(f "$@"))
 	exit
     fi
+    
+    if test "$1" = p; then
+        shift
+        putclip $(f "$@")
+        exit
+    fi
 	
     e "$@"
     exit
