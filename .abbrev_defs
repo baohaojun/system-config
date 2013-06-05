@@ -157,6 +157,8 @@
 
 (define-abbrev-table 'edebug-eval-mode-abbrev-table '())
 
+(define-abbrev-table 'emacs-lisp-byte-code-mode-abbrev-table '())
+
 (define-abbrev-table 'emacs-lisp-mode-abbrev-table '())
 
 (define-abbrev-table 'emacs-wiki-mode-abbrev-table '())
@@ -197,6 +199,8 @@
 
 (define-abbrev-table 'gud-mode-abbrev-table '())
 
+(define-abbrev-table 'helm-grep-mode-abbrev-table '())
+
 (define-abbrev-table 'help-mode-abbrev-table '())
 
 (define-abbrev-table 'html-mode-abbrev-table '())
@@ -204,6 +208,10 @@
 (define-abbrev-table 'ibuffer-occur-mode-abbrev-table '())
 
 (define-abbrev-table 'idl-mode-abbrev-table '())
+
+(define-abbrev-table 'image-dired-display-image-mode-abbrev-table '())
+
+(define-abbrev-table 'image-dired-thumbnail-mode-abbrev-table '())
 
 (define-abbrev-table 'inferior-python-mode-abbrev-table '())
 
@@ -235,6 +243,13 @@
 (define-abbrev-table 'log-edit-mode-abbrev-table '())
 
 (define-abbrev-table 'log-view-mode-abbrev-table '())
+
+(define-abbrev-table 'lua-mode-abbrev-table
+  '(
+    ("else" "else" lua-indent-line 0)
+    ("elseif" "elseif" lua-indent-line 0)
+    ("end" "end" lua-indent-line 0)
+   ))
 
 (define-abbrev-table 'makefile-automake-mode-abbrev-table '())
 
@@ -273,9 +288,13 @@
 
 (define-abbrev-table 'occur-mode-abbrev-table '())
 
+(define-abbrev-table 'org-export-stack-mode-abbrev-table '())
+
 (define-abbrev-table 'org-mode-abbrev-table '())
 
 (define-abbrev-table 'outline-mode-abbrev-table '())
+
+(define-abbrev-table 'package-menu-mode-abbrev-table '())
 
 (define-abbrev-table 'pascal-mode-abbrev-table '())
 
@@ -387,6 +406,8 @@ fi
 
 (define-abbrev-table 'tabulated-list-mode-abbrev-table '())
 
+(define-abbrev-table 'term-mode-abbrev-table '())
+
 (define-abbrev-table 'tex-mode-abbrev-table '())
 
 (define-abbrev-table 'tex-shell-abbrev-table '())
@@ -411,6 +432,8 @@ Cc: \"Anle Zhou\" <anlezhou@marvell.com>,  \"Cheng Liao\" <chengl@marvell.com>, 
 (define-abbrev-table 'vc-bzr-log-view-mode-abbrev-table '())
 
 (define-abbrev-table 'vc-dir-mode-abbrev-table '())
+
+(define-abbrev-table 'vc-git-log-edit-mode-abbrev-table '())
 
 (define-abbrev-table 'vc-git-log-view-mode-abbrev-table '())
 

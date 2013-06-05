@@ -1,0 +1,38 @@
+#!/bin/bash
+
+find . -type f | sort -n | perl -ne '
+    chomp;
+    if (m!(.*/)(.*?)_((?:\d|\.|\+|-|debian|ubuntu)+)(.*)!) {
+        $dir = $1;
+        $name = $2;
+        $version = $3;
+        $suffix = $4;
+
+        my $old_path;
+        if ($file_ver_map{$dir . $name . $suffix}{"version"}) {
+            $old_path = $file_ver_map{$dir . $name . $suffix}{"path"};
+            $old_version = $file_ver_map{$dir . $name . $suffix}{"version"};
+        } else {
+            $file_ver_map{$dir . $name . $suffix}{"version"} = $version;
+            $file_ver_map{$dir . $name . $suffix}{"path"} = $_;
+        }
+
+        next unless $old_path;
+
+        $old_version_save = $old_version;
+        $version_save = $version;
+
+        while (substr($old_version, 0, 1) eq substr($version, 0, 1)) {
+            $old_version = substr($old_version, 1);
+            $version = substr($version, 1);
+        }
+        if ($old_version < $version) {
+            print "rm -v $old_path\n";
+            $file_ver_map{$dir . $name . $suffix}{"version"} = $version_save;
+            $file_ver_map{$dir . $name . $suffix}{"path"} = $_;
+        } else {
+            print "rm -v $_\n";
+            $file_ver_map{$dir . $name . $suffix}{"version"} = $old_version_save;
+            $file_ver_map{$dir . $name . $suffix}{"path"} = $old_path;
+        }
+    }'
