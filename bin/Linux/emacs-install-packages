@@ -1,9 +1,19 @@
 #!/bin/bash
 set -e
-emacs -q --batch --eval '(progn
+emacs --batch --eval "(progn
+                           (require 'package)
+                           (add-to-list 'package-archives
+                               '(\"marmalade\" . \"http://marmalade-repo.org/packages/\"))
+                           (add-to-list 'package-archives
+                               '(\"melpa\" . \"http://melpa.milkbox.net/packages/\"))
                            (package-initialize)
-                           (package-install '\''yasnippet)
-                           (package-install '\''oauth2))'
+                           (package-refresh-contents)
+                           (package-install 'yasnippet)
+                           (package-install 'mmm-mode)
+                           (package-install 'session)
+                           (package-install 'keydef)
+                           (package-install 'browse-kill-ring)
+                           (package-install 'oauth2))"
 mkdir -p ~/src/github
 cd ~/src/github
 

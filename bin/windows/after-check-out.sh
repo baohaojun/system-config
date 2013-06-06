@@ -6,12 +6,12 @@ THIS=$(readlink -f "$THIS")
 echo "we are executing $THIS"
 BIN_WINDOWS=$(dirname "$THIS")
 
-# strlen("system-config/bin/windows") is 26, and -26 means the last
-# 26 chars, but we can't simply write -26, because that's another
-# expansion syntax. We must write 0-26, and it's arithmetic, which is
+# strlen("system-config/bin/windows") is 25, and -25 means the last
+# 25 chars, but we can't simply write -25, because that's another
+# expansion syntax. We must write 0-25, and it's arithmetic, which is
 # allowed.
 
-if test "${BIN_WINDOWS:0-26}" != "system-config/bin/windows"
+if test "${BIN_WINDOWS:0-25}" != "system-config/bin/windows"
 then
     read -p 'startup.sh is not in ~/system-config/bin/windows! Press any key to exit...'
     #pause and exit, it's all blowed up!
@@ -31,13 +31,13 @@ if test -e /q -a ! -L /q; then
     die "Error, the /q exist and is not a symlink";
 fi
 
-rm -f /q; 
+rm -f /q;
 ln -s "$HOME2" /q
 export HOME=/q
 
 ~/system-config/bin/after-co-ln-s.sh
 . ~/.bashrc-windows
-export HOME=/q 
+export HOME=/q
 cd ~/bin/windows/Imap4Monitor/
 function report_error()
 {

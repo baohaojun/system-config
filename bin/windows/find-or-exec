@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# = 0; then
+    die "Error: Usage $(basename $0) window_class [program_to_exec]"
+fi
+
+
+if ! findexec -c $1 && test "$2"; then
+    shift
+    "$@"&
+fi

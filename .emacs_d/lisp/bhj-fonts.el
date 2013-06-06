@@ -39,9 +39,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
                         charset
                         zh-font))))
 
-(setq face-font-rescale-alist '(("Microsoft Yahei" . 1.2) ("WenQuanYi Zen Hei" . 1.2)))
+(setq face-font-rescale-alist '(("Microsoft Yahei" . 1.2) ("微软雅黑" . 1.2) ("WenQuanYi Zen Hei" . 1.2)))
 (defvar bhj-english-fonts '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))
-(defvar bhj-chinese-fonts '("Microsoft Yahei" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
+(defvar bhj-chinese-fonts '("Microsoft Yahei" "微软雅黑" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
 
 (qiang-set-font
  bhj-english-fonts

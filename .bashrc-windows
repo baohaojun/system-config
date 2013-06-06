@@ -8,15 +8,15 @@ function SetPath()
 {
     local paths
     paths=(
-	~/bin/windows/ext
-	~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
+        ~/bin/windows/ext
+        ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
         ~/bin/windows/lnks
         /cygdrive/c/PROGRA~1/Java/JDK16~1.0_1/bin #"/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
-        ~/bin
         ~/bin/windows
+        ~/bin
         ~/bin/Linux
         /usr/local/bin
-	/usr/local/sbin
+        /usr/local/sbin
         /usr/X11R6/bin
         /usr/bin
         /sbin
@@ -27,7 +27,7 @@ function SetPath()
         /cygdrive/c/WINDOWS/system32
         "/cygdrive/c/Program Files/Intel/IPP/5.1/ia32/bin"
         /c/Python25
-	"/c/PROGRA~1/MONO-2~1.6/bin"
+        "/c/PROGRA~1/MONO-2~1.6/bin"
     )
 
     unset PATH
@@ -37,15 +37,15 @@ function SetPath()
         export PATH=$PATH:$x
     done
     for x in $(find ~/bin/windows/paths/ -type f -o -type l) \
-	$(find ~/external/bin/windows/paths/ -type f -o -type l 2>/dev/null)
+        $(find ~/external/bin/windows/paths/ -type f -o -type l 2>/dev/null)
     do
-	export PATH=$PATH:$x
+        export PATH=$PATH:$x
     done
     PATH=${PATH:1} #remove the beginning `:'
 
     #set up CLASSPATH
     unset CLASSPATH
-    for x in ~/bin/classpath/*.jar; do 
+    for x in ~/bin/classpath/*.jar; do
         if test -f "$x"; then
             CLASSPATH="$CLASSPATH":"$x"
         fi
@@ -53,7 +53,7 @@ function SetPath()
     CLASSPATH="$CLASSPATH":.
     CLASSPATH="${CLASSPATH:1}"
     export CLASSPATH="`cygpath -w -p \"$CLASSPATH\"`"
-    
+
 }
 
 #Open Containing folder..
@@ -62,7 +62,7 @@ function oc()
     cygstart `which explorer.exe` /n,/select,\""`cygpath -alw \"$1\"`"\"
 }
 
-function cmd() 
+function cmd()
 {
     if [[ -z "$1" ]]; then
         of cmd.exe
@@ -70,7 +70,7 @@ function cmd()
         (cd "$1"; of cmd.exe)
     elif [[ -d "`dirname \"$1\"`" ]]; then
         (cd "`dirname \"$1\"`"; of cmd.exe)
-    else 
+    else
         echo cmd: no such file or directory "$1"
     fi
 }
@@ -102,7 +102,7 @@ function svn-check()
 }
 
 
-function dict() 
+function dict()
 {
     dict.exe -v 2>/dev/null "$@"|iconv -f UTF-8 -t GBK
 }
@@ -160,9 +160,9 @@ function complete_skeleton_words() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     cmd="${COMP_WORDS[0]}"
     COMPREPLY=( $(skeleton_compgen_word.pl \
-		-d '\n' -- \
-		"$(cat ~/doc/.bash_completion_words.$(basename "$cmd"))" \
-		"$cur")
+                -d '\n' -- \
+                "$(cat ~/doc/.bash_completion_words.$(basename "$cmd"))" \
+                "$cur")
     )
 }
 

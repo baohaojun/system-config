@@ -1,6 +1,7 @@
 #!/bin/bash
 
 if test "$(basename -- "$1")" = emacs.exe -o "$(basename -- "$1")" = runemacs.exe; then
+    # so that I can choose to run another emacs-nt installation
     emacs_dir="$(dirname "$(readlink -f "$1")")"
     shift
 else
@@ -10,7 +11,7 @@ if test "$(ps.pl emacs.exe|wc -l)" == 1; then
     rm -f ~/system-config/.emacs.d/server/server
 fi
 if test $# = 0; then
-    HOME=~/system-config/ $emacs_dir/runemacs
-else 
-    HOME=~/system-config/ $emacs_dir/emacs "$@"
+    $emacs_dir/runemacs
+else
+    $emacs_dir/emacs "$@"
 fi

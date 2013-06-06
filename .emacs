@@ -34,18 +34,18 @@
               (expand-file-name "~/src/org-mode/contrib/lisp"))
              load-path))
 
+(require 'package)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/"))
+(package-initialize)
+(require 'mmm-auto)
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
-  (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
-                                "~/../external/emacs-site-lisp/"
-                              "~/external/emacs-site-lisp/")))
-    (let ((default-directory bhj-lisp-load-path))
-      (load-file (concat bhj-lisp-load-path "/subdirs.el")))
-    (setq load-path
-          (cons bhj-lisp-load-path load-path))
-    ;;press F2 to get MSDN help
-    (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
-    (setq locate-command "locateEmacs.sh")))
+  ;;press F2 to get MSDN help
+  (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
+  (setq locate-command "locateEmacs.sh"))
 
 (when (eq system-type 'windows-nt)
   (setq org-jira-working-dir "~/.org-jira")
@@ -102,6 +102,7 @@
 (put 'LaTeX-hide-environment 'disabled nil)
 
 
+(require 'browse-kill-ring-autoloads)
 (browse-kill-ring-default-keybindings)
 
 ;; enable visual feedback on selections

@@ -11,12 +11,6 @@
                          entry)
                        org-latex-default-packages-alist))))
 
-(eval-after-load 'package
-  '(progn
-     (add-to-list 'package-archives
-                  '("marmalade" . "http://marmalade-repo.org/packages/"))
-     (package-initialize)))
-
 (eval-after-load "grep"
   '(progn
      (grep-compute-defaults)
