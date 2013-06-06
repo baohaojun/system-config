@@ -10,10 +10,14 @@ set user "flonk"
 set mode "-1"
 set board ""
 set password ""
+set loc "gbk-exec"
 
 
 for {set i 0} {$i < [llength $argv]} {incr i} {
-    if {[string eq [lindex $argv $i] "-u"]} {
+    if {[string eq [lindex $argv $i] "-l"]} {
+        incr i;
+        set loc [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-u"]} {
         incr i;
         set user [lindex $argv $i];
     } elseif {[string eq [lindex $argv $i] "-p"]} {
@@ -52,9 +56,9 @@ if [string eq "" $password] {
 }
 
 if [string eq "" $mode] {
-    spawn gbk-exec ssh $user@$host
+    spawn $loc ssh $user@$host
 } else {
-    spawn gbk-exec ssh $mode $user@$host
+    spawn $loc ssh $mode $user@$host
 }
 
 expect -timeout 150 password {

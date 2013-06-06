@@ -1,9 +1,13 @@
 #!/bin/bash
+loc=zh_CN.GBK
+if test $(basename $0) = big5-exec; then
+    loc=zh_TW.BIG5
+fi
 
-export LANG=zh_CN.GBK 
-export LC_ALL=zh_CN.GBK 
+export LANG=$loc
+export LC_ALL=$loc
 if type luit >/dev/null 2>&1 ; then
-    luit -encoding GBK "$@"
+    luit -encoding ${loc##*.} "$@"
 else
     "$@"
 fi
