@@ -1,4 +1,4 @@
-#+title: beagrep，两秒钟grep两个G的代码
+#+title: beagrep，0.23秒grep两个G的代码
 # bhj-tags: beagrep
 
 * 简介
@@ -15,10 +15,10 @@
 地搜一遍可能匹配的文件，然后再单在这些文件内grep，不就可以大大节省时间
 吗？
 
-非常热血地向你推荐beagrep（beagle + grep），grep两个G的Android代码，只
-需要两秒钟！
+非常热血地向你推荐beagrep（beagle + grep），在两个G的Android代码中grep
+readlink函数，只需要0.23秒！
 
-更加热血的是，beagrep在Windows下也能用！
+更加热血的是，beagrep在Windows下也能用（更新：在MacOS下也可以）！
 
 （本文的英文版在 [[../../../2011/12/23/beagrep.org][这里]] ，可能会比中文版更新）。
 
@@ -55,6 +55,9 @@ apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Sta
 (set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
 #+end_example
 
+*** 自己编译deb包
+
+这一节见英文版
 ** Windows下安装
 
 *** 安装依赖软件
