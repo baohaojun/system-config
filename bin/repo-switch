@@ -156,6 +156,8 @@ if test -z "$repo_url"; then
     if test $interactive = 1; then
         echo The repo url to use:
         repo_url=$(select-output-line bash -c "(echo $old_repo_url; cat ~/.repo_urls 2>/dev/null)|uniq-even-non-ajacent")
+    else
+        repo_url=${old_repo_url}
     fi
 fi
 
