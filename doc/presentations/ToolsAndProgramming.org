@@ -1,16 +1,30 @@
-#+LaTeX_CLASS: beamer
-#+MACRO: BEAMERMODE presentation
-#+MACRO: BEAMERTHEME AnnArbor
-#+MACRO: BEAMERCOLORTHEME beaver
-#+MACRO: BEAMERSUBJECT RMRF
-#+MACRO: BEAMERINSTITUTE Marvell BPE.
-#+TITLE: Tools And Programming
-#+AUTHOR: Bao Haojun
+#+Latex: \AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
+#+Latex: \begin{CJK*}{UTF8}{simsun}
+#+Latex: \CJKtilde
 
+
+#+TITLE:     Tools and Programming
+#+AUTHOR:    Bao Haojun
+#+EMAIL:     baohaojun@gmail.com
+#+DATE:      2013-06-08
+#+LATEX_CLASS_OPTIONS: [presentation,CJKbookmarks]
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:2 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME:
 
 * Tools from UPE (Unix Programming Environment)
 
 
+** 你好吗
+
+我觉得这真是太有意思了
 ** 2, 3, 4, 5
 
 *** The same script behave differently according to script name ($0)
@@ -24,15 +38,15 @@ Why? Because:
 
 *** It's very similar to busybox
 
-** It's a very nice *pattern*
+** It's a very nice pattern
 
 *** The bridge design pattern?
 
 - Bridge cygwin shell script and Windows .exe together.
 
-* Make tools smart
+* Make tools smart （让工具更智能）
 
-** Smart requires memory (a.k.a., history)
+** Smart requires memory (a.k.a., history/历史)
 
 *** bash history
 
@@ -202,3 +216,10 @@ tar zxfv system-config.tgz
 ~/system-config/bin/after-co-ln-s.sh
 ~/system-config/bin/Linux/after-check-out.sh
 #+end_example
+
+#+Latex: \end{CJK*}
+
+# Local Variables: #
+# eval: (org-beamer-mode) #
+# eval: (mmm-mode 1) #
+# End: #

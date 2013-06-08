@@ -1,2 +1,8 @@
 ToolsAndProgramming.pdf
 ToolsAndProgramming.tex
+*.vrb
+*.log
+*.nav
+*.snm
+*.toc
+*.dvi

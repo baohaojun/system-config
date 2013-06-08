@@ -2,7 +2,7 @@
 
 set -e
 target=${1:-.}
-for system in debian-testing $(for dist in lucid natty oneiric precise; do echo ubuntu-$dist; done); do
+for system in debian-testing $(for dist in lucid natty oneiric precise ${target%-*}; do echo ubuntu-$dist; done); do
     for arch in i386 amd64; do
         if ! echo $system-$arch|grep -q "$target"; then
             continue
@@ -19,10 +19,10 @@ for system in debian-testing $(for dist in lucid natty oneiric precise; do echo 
             gpgpath=~/external/ubuntu-keyring/usr/share/keyrings/ubuntu-archive-keyring.gpg
             extra_args="--keyring $gpgpath --debootstrapopts --keyring=$gpgpath"
         fi
-        
+
         sysname=${system%-*} #debian/ubuntu
         dist=${system#*-} #lucid/testing
-        
+
         sudo unshare -m -- bash -c "
             mkdir -p $basepath/base.cow2
             mount -t tmpfs none $basepath/base.cow2 -o size=2000000k
@@ -31,7 +31,7 @@ for system in debian-testing $(for dist in lucid natty oneiric precise; do echo 
                 sudo perl -npe 'if (m/'$dist'/) {\$back = \$_; \$back =~ s/'$dist'/'$dist'-backports/; print \$back}' -i $basepath/base.cow2/base/etc/apt/sources.list
                 sudo cowbuilder --update --basepath $basepath/base.cow2/base --buildplace $basepath/base.cow2
             fi
-            echo -n copying back the base files...\ 
+            echo -n copying back the base files...\ ;
             mv $basepath/base.cow2/base $basepath/base.cow
             echo done
         "

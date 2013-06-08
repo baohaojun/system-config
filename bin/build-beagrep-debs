@@ -1,6 +1,7 @@
 #!/bin/bash
 
 if test $(basename $0) = build-beagrep-debs; then
+    yes-or-no-p "Please use 'sudo ps-killall strace' if it seems stuck" || true
     cd ~/gcode/beagrep
     for branch in $(git branch -a |grep -v remotes|sed 's/^\*/ /'|grep for); do
         for arch in i386 amd64; do
@@ -85,11 +86,11 @@ export bldir=~/$$
         if test -e $myhome/tmp/beagrep-debs/$branch.pm; then
             cp $myhome/tmp/beagrep-debs/$branch.pm /usr/share/devscripts/Devscripts/Packages.pm;
         else
-            
+
             echo 'in /usr/share/devscripts/Devscripts/Packages.pm, search for not found, and add:
-	    elsif ($line =~ /^dpkg-query: no path found matching pattern \Q$curfile\E\.$/) {
-		last;
-	    }
+            elsif ($line =~ /^dpkg-query: no path found matching pattern \Q$curfile\E\.$/) {
+                last;
+            }
 '
             echo "after you update the .pm, you can:
             cp /usr/share/devscripts/Devscripts/Packages.pm $myhome/tmp/beagrep-debs/$branch.pm
@@ -136,7 +137,7 @@ export bldir=~/$$
 
     cp -a * $myhome/tmp/beagrep-debs/$branch-$arch
     cd $myhome/tmp/beagrep-debs/$branch-$arch
-    export PATH=$myhome/system-config/bin:$PATH 
+    export PATH=$myhome/system-config/bin:$PATH
     (
         diff-arg1-arg2 "$(cat beagrep/debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')" \
             "$(cat make.dep | perl -ne 'print if m/^Packages needed:/..m/^$/'|grep -v 'Packages needed'|sed -e 's/:.*//')" |

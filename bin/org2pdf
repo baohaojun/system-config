@@ -21,7 +21,12 @@ if test "${1##*.}" = org; then
 fi
 
 if test $org_file = true || yes-or-no-p -y "Export from .org"; then
-    emacs -l ~/.emacs --batch --eval '(progn (find-file "'${1/%.tex/.org}'") (org-latex-export-to-latex))'
+    exp_func=org-latex-export-to-latex
+    if grep -q 'org-beamer-mode' "${1/%.tex/.org}"; then
+        exp_func=org-beamer-export-to-latex
+    fi
+
+    emacs -l ~/.emacs --batch --eval '(progn (find-file "'${1/%.tex/.org}'") ('$exp_func'))'
     set -- "${1/%.org/.tex}"
 fi
 
@@ -29,7 +34,7 @@ for x in aux log out dvi; do
     rm ${1/%.tex/.$x} -f
 done
 
-perl -npe 's/\Q[CJKbookmarks]\E/[dvipdfm,CJKbookmarks]/' -i $1
+perl -npe 's/\QCJKbookmarks]\E/dvipdfm,CJKbookmarks]/;' -i $1
 
 latex $1
 latex $1

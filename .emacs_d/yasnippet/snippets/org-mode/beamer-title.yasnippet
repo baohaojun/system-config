@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name: beamer-title
+# key: BeamerTitle
+# --
+#+TITLE:     $1
+#+AUTHOR:    ${2:Bao Haojun}
+#+EMAIL:     ${3:baohaojun@gmail.com}
+#+DATE:      ${4:$$(shell-command-to-string "today | tr -d '\n'")}
+#+LATEX_CLASS_OPTIONS: [${5:presentation,CJKbookmarks}]
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME:
+$0

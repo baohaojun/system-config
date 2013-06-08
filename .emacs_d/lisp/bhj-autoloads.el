@@ -302,8 +302,8 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 ;;;;;;  bhj-insert-pwdw bhj-clt-insert-file-name wiki-local-bhj weekrep
 ;;;;;;  linux-c++-mode linux-c-mode bhj-c-end-of-defun java-complete-method
 ;;;;;;  java-resolve bhj-c-show-current-func bhj-c-beginning-of-defun
-;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (20895
-;;;;;;  12148 497515 553000))
+;;;;;;  confirm-risky-remote-edit fix-latex-cjk cleanup-buffer-safe)
+;;;;;;  "bhj-defines" "bhj-defines.el" (20914 58480 707262 453000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -312,6 +312,16 @@ Does not indent buffer, because it is used for a before-save-hook, and that
 might be bad.
 
 \(fn)" t nil)
+
+(autoload 'fix-latex-cjk "bhj-defines" "\
+move the cjk env outmost with the document env
+
+\(fn)" t nil)
+
+(autoload 'confirm-risky-remote-edit "bhj-defines" "\
+
+
+\(fn)" nil nil)
 
 (autoload 'bhj-c-beginning-of-defun "bhj-defines" "\
 

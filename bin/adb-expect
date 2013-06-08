@@ -9,6 +9,39 @@ proc shell-quote {str} {
     return "'$str'";
 }
 
+# start code-generator "^\\s *#"
+# perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+# end code-generator
+# start generated code
+set CTRLA \001
+set CTRLB \002
+set CTRLC \003
+set CTRLD \004
+set CTRLE \005
+set CTRLF \006
+set CTRLG \007
+set CTRLH \010
+set CTRLI \011
+set CTRLJ \012
+set CTRLK \013
+set CTRLL \014
+set CTRLM \015
+set CTRLN \016
+set CTRLO \017
+set CTRLP \020
+set CTRLQ \021
+set CTRLR \022
+set CTRLS \023
+set CTRLT \024
+set CTRLU \025
+set CTRLV \026
+set CTRLW \027
+set CTRLX \030
+set CTRLY \031
+set CTRLZ \032
+
+# end generated code
+
 expect -timeout 150 -re "(\\$|#) $" {
     send "exec ";
     foreach arg $argv {
@@ -16,7 +49,9 @@ expect -timeout 150 -re "(\\$|#) $" {
         send " ";
     }
     send "\n";
-    interact;
+    interact {
+        -reset $CTRLZ {exec kill -STOP [pid]}
+    }
 }
 
 

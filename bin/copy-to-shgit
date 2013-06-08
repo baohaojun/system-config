@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+for x in "$@"; do
+    share_path=$(sup $x|cut -b 5-)
+    file=$(basename $share_path)
+    share_path=$(dirname $share_path)
+    share=$(echo "$share_path" | perl -npe 's!^(//.*?/.*?)/.*!$1!')
+    dir=${share_path:${#share} + 1}
+
+    cat ~/.smbpass | ssh shgit bash -c 'cat /dev/stdin | smbclient '$share' -A /dev/stdin -D '$dir' -c "get '$file'"'
+done

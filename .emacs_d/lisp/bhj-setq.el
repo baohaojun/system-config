@@ -1,4 +1,3 @@
-(setq yas-snippet-dirs "~/.emacs_d/yasnippet/snippets")
 (setq twittering-initial-timeline-spec-string `(":home@sina"))
 (setq org-mobile-directory "~/MobileOrg")
 

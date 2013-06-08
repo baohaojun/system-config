@@ -54,7 +54,7 @@
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp" (lambda () (system "switch-touchpad enable&"))) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown" (lambda () (system "switch-touchpad enable&"))) ; for mac
 (bind-keys global-keymap "Super-Print" (lambda () (system "super-print.sh&")))
-(bind-keys window-keymap "Super-I" (lambda () (display-message (concat "wm_class is: "
+(bind-keys s-h-keymap "Super-i" (lambda () (display-message (concat "wm_class is: "
                                                                        (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
                                                                        ";\n\nand Window class is: "
                                                                        (window-class (input-focus))))))
@@ -98,11 +98,11 @@
                 (lambda ()
                   (find-window-or-exec (eval wclass) wcommand)))))
  '(
-   ("Super-m" "emacs" "emacs.bhj")
-   ("Super-n" "firefox" "firefox")
-   ("Super-r" "grun" "grun")
-   ("Super-t" "konsole" "konsole -e ~/bin/myscr")
-   ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict -e ~/bin/Linux/my-dict")
+   ("Super-m"          "emacs" "emacs.bhj")
+   ("Super-n"          "firefox" "firefox")
+   ("Super-r"          "grun" "grun")
+   ("Super-t"          "konsole" "konsole -e ~/bin/myscr")
+   ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
    ("Super-x" "xcalc" "xcalc")

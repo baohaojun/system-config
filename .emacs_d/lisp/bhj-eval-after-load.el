@@ -1,15 +1,3 @@
-(eval-after-load 'ox-latex
-  '(setq org-latex-default-packages-alist
-         (cons '("" "CJK" nil)
-               (mapcar (lambda (entry)
-                         (when (and (listp entry)
-                                    (stringp (car entry))
-                                    (stringp (cadr entry))
-                                    (string= "" (car entry))
-                                    (string= "hyperref" (cadr entry)))
-                           (setq entry (cons "CJKbookmarks" (cdr entry))))
-                         entry)
-                       org-latex-default-packages-alist))))
 
 (eval-after-load "grep"
   '(progn

@@ -124,6 +124,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                 fi
                 . ./build/envsetup.sh
                 (cd boot/uboot; git add .; git clean -xfd) || true
+                (cd boot/obm;   git add .; git clean -xfd) || true
 
                 if test $# != 0; then
                     make -j$jobs -l $jobs -k $*

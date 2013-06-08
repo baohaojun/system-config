@@ -69,6 +69,10 @@ if git remote -v | grep baohaojun.github.com.git; then
             fi
 
             org-export $x
+
+            if grep -e '<sub>' "${x/%.org/.html}"; then
+                yes-or-no-p "Do you think the above <sub>s are expected?"
+            fi
             if test -e "$(basename $x|perl -npe 's/\.org$/.html/')" && [[ "$x" =~ blog/ ]]; then
                 if git st -s "$(basename $x|perl -npe 's/\.org$/.html/')" | grep -P -q -e '^\?\?'; then
                     rm "$(basename $x|perl -npe 's/\.org$/.html/')"

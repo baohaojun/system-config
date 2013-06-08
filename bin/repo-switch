@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+repo_dir=$(lookup-file -e .repo)
+cd $(dirname $repo_dir)
 repo_init_url=
 repo_init_branch=
 repo_init_manifest=
