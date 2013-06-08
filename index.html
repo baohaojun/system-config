@@ -3,10 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>智能补齐</title>
-<!-- 2013-05-31 Fri 23:43 -->
+<!-- 2013-06-08 Sat 22:09 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="author" content="baohaojun"/>
+<meta name="author" content="Bao Haojun"/>
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
@@ -188,7 +188,7 @@ Bash自带的更方便！
 </div>
 
 <p>
-这段补齐配置的意思是说，让skeleton<sub>compgen</sub><sub>word</sub>.pl这个脚本拿着re命令所
+这段补齐配置的意思是说，让 <code>skeleton_compgen_word.pl</code> 这个脚本拿着re命令所
 带的参数以换行符为分割符(-d '\n'），去 <code>~/.bash_history.bak</code> 里找匹配，
 找到以后先打个分号（-p \;），再把这个匹配行打出来。
 </p>
@@ -196,11 +196,11 @@ Bash自带的更方便！
 <p>
 以我想重新编译一下Android里我司自加的uboot为例，我只记得编译的命令是mm，
 所以我就输入 <code>re mm uboot .0</code> 然后就按Tab键（也就是一般shell下的补齐
-键），这样上面的<sub>re函数就会被执行。</sub>
+键），这样上面的 <code>_re</code> 函数就会被执行。
 </p>
 
 <p>
-skeleton<sub>compgen</sub><sub>word</sub>.pl这个脚本有个特点，它看到最后一个参数如果是 <code>.0
+<code>skeleton_compgen_word.pl</code> 这个脚本有个特点，它看到最后一个参数如果是 <code>.0
 .1 .2</code> 这种格式的话，它就会把第0个、第1个或第2个匹配项抽出来打印出去然
 后马上退出（而不是默认的把所有匹配项都打出去）。由于我的历史命令文件是
 动态调整的，最近用过的历史命令会出现在最前面，所以这里补出来的第0个应该

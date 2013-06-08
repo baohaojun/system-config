@@ -38,15 +38,15 @@ function _re()
 complete -o default -F _re re rex
 #+END_SRC
 
-这段补齐配置的意思是说，让skeleton_compgen_word.pl这个脚本拿着re命令所
+这段补齐配置的意思是说，让 =skeleton_compgen_word.pl= 这个脚本拿着re命令所
 带的参数以换行符为分割符(-d '\n'），去 =~/.bash_history.bak= 里找匹配，
 找到以后先打个分号（-p \;），再把这个匹配行打出来。
 
 以我想重新编译一下Android里我司自加的uboot为例，我只记得编译的命令是mm，
 所以我就输入 =re mm uboot .0= 然后就按Tab键（也就是一般shell下的补齐
-键），这样上面的_re函数就会被执行。
+键），这样上面的 =_re= 函数就会被执行。
 
-skeleton_compgen_word.pl这个脚本有个特点，它看到最后一个参数如果是 =.0
+=skeleton_compgen_word.pl= 这个脚本有个特点，它看到最后一个参数如果是 =.0
 .1 .2= 这种格式的话，它就会把第0个、第1个或第2个匹配项抽出来打印出去然
 后马上退出（而不是默认的把所有匹配项都打出去）。由于我的历史命令文件是
 动态调整的，最近用过的历史命令会出现在最前面，所以这里补出来的第0个应该
