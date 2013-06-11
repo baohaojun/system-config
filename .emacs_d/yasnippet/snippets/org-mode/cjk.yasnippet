@@ -2,7 +2,8 @@
 # key: cjk
 # name: cjk
 # --
-#+Latex: \begin{CJK*}{UTF8}{${1:$$(yas/choose-value '("simsun" "simhei"))}}
+#+Latex: \AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
+#+Latex: \begin{CJK*}{UTF8}{${1:simsun}}
 #+Latex: \CJKtilde
 $0
 #+Latex: \end{CJK*}

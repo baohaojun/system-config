@@ -32,7 +32,7 @@ might be bad."
                  (kill-line 1)
                  (search-backward "\\begin{document}")
                  (goto-char (line-end-position))
-                 (insert "\n")
+                 (forward-char)
                  (yank)))
              (reverse move-around-lines)))
       (let ((move-around-lines '("\\end{CJK")))
@@ -42,11 +42,14 @@ might be bad."
                  (kill-line 1)
                  (search-forward "\\end{document}")
                  (goto-char (line-beginning-position))
-                 (insert "\n")
                  (yank)
-                 (search-backward "\\documentclass")
-                 (goto-char (line-end-position))
-                 (insert "\n\\usepackage{CJK}\n")))
+                 (let ((use-cjk "\\usepackage{CJKutf8}"))
+                   (unless (save-excursion
+                             (goto-char (point-min))
+                             (search-forward use-cjk nil t))
+                     (search-backward "\\documentclass")
+                     (goto-char (line-end-position))
+                     (insert (concat "\n" use-cjk))))))
              (reverse move-around-lines))))))
 
 ;;;###autoload

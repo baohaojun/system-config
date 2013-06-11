@@ -1,18 +1,42 @@
 #!/usr/bin/env perl
 use String::ShellQuote;
 use Getopt::Long;
+use English;
 my $secure;
 GetOptions(
     "s!" => \$secure,
     );
 
-system("echo adb shell mount -o remount,rw /system; exec >/dev/null 2>&1; adb -r shell sync; adb shell mount -o remount,rw /system");
+$mount_cmd = "echo adb remount\\; adb shell mount -o remount,rw /system; exec >/dev/null 2>&1; adb -r shell sync; adb remount; adb shell mount -o remount,rw /system";
 $dest = pop( @ARGV);
+
+if ($dest =~ m/:/) {
+    $dest = $POSTMATCH;
+    $host = $PREMATCH;
+    system("ssh", $host, "bash", "-c", $mount_cmd);
+} else {
+    system($mount_cmd);
+}
 
 for (@ARGV) {
     $_ = shell_quote($_);
     chomp($file=qx/lookup-file $_/);
-    system("adb",  "push", "$file", "$dest");
+    if ($host) {
+        $file = shell_quote($file);
+        chomp($dir = qx/dirname $file/);
+        chomp($dir = qx/readlink -f $dir/);
+        $file =~ s!.*/!!;
+        $file = "$dir/$file";
+        $file = shell_quote($file);
+        $dir = $file;
+        $dir =~ s!(.*)/.*!$1!;
+        system("ssh", $host, "mkdir", "-p", $dir);
+
+        system("rsync", "-rvL", $file, "$host:$dir");
+        system("ssh", $host, "adb", "push", "$file", "$dest");
+    } else {
+        system("adb",  "push", "$file", "$dest");
+    }
     if ($secure) {
         my $base_file = $file;
         $base_file =~ s!.*/!!;
@@ -27,4 +51,9 @@ for (@ARGV) {
     }
 }
 
-system("echo adb shell mount -o remount,ro /system; exec >/dev/null 2>&1; adb shell sync; adb shell mount -o remount,ro /system");
+$mount_cmd = "echo adb shell mount -o remount,ro /system; exec >/dev/null 2>&1; adb shell sync; adb shell mount -o remount,ro /system";
+if ($host) {
+    system("ssh", $host, "bash", "-c", $mount_cmd);
+} else {
+    system($mount_cmd);
+}

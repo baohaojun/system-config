@@ -2,4 +2,6 @@
 # key: usage
 # name: usage
 # --
-die "Error: Usage \$(basename \$0) $0"
+if test \$# != ${1:1}; then
+    die "Error: Usage \$(basename \$0) $0"
+fi
