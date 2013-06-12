@@ -48,6 +48,7 @@
 (bind-keys global-keymap "XF86Launch8" (lambda () (system "~/bin/douban prev&")))
 (bind-keys global-keymap "Super-XF86AudioPlay" (lambda () (system "~/bin/douban pause&")))
 (bind-keys global-keymap "XF86AudioPlay" (lambda () (system "~/bin/douban info&")))
+(bind-keys global-keymap "XF86Launch7" (lambda () (system "~/bin/douban info&")))
 (bind-keys global-keymap "C-XF86AudioPlay" (lambda () (system "~/bin/douban lyrics&")))
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/screenshot&")))
 (bind-keys global-keymap "Super-DEL" (lambda () (system "gnome-screensaver-command -l&")))
@@ -108,6 +109,8 @@
    ("Super-x" "xcalc" "xcalc")
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")))
+
+(bind-keys global-keymap "Super-Button1-Click" (lambda () (system "my-dict&")))
 
 (bind-keys global-keymap "C-S-XF86PowerOff" (lambda () (system "lock-screen&")))
 (bind-keys global-keymap "C-S-DEL" (lambda () (system "lock-screen&")))
