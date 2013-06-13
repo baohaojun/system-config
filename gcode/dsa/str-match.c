@@ -20,10 +20,9 @@ int * init_fail_over(const char* str)
         if (str[i] == str[0]) {
             int j;
 
-            for (j = 0; str[i + j]; j++) {
-                if (str[j] != str[i + j]) {
+            for (j = 1; str[i + j]; j++) {
+                if (str[j] != str[i + j] && fail_over[i + j] < j) {
                     fail_over[i + j] = j;
-                    i = i + j;
                     break;
                 }
             }
@@ -62,5 +61,5 @@ int string_find(const char* t, const char*p, const int* fail_over)
 
 int main(int argc, char* argv[])
 {
-    printf("%d\n", string_find(argv[1], argv[2], init_fail_over(argv[2])));
+    printf("%d\n", string_find(argv[2], argv[1], init_fail_over(argv[1])));
 }
