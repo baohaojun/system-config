@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: dbg
+# key: dbg
+# --
+(format t (format nil "%s:%d: %s" "`(buffer-name)`" `(line-number-at-pos)` $1))$0

@@ -1,0 +1,38 @@
+#!/bin/bash -i
+
+# instead of scp in the name, we are going to use rsync
+
+if ! adb shell netcfg|grep -q 'rndis0.*129/'; then
+    adb shell su -c "
+        setsid setsid sh -c '
+            setprop persist.sys.usb.config rndis,adb;
+            while ! netcfg|grep 'rndis0.*UP'; do
+                netcfg rndis0 up;
+            done;
+            ifconfig rndis0 192.168.42.129
+        '"
+    sleep 5
+fi
+
+WHERE=Movies
+TEMP=$(getopt -o w: --long where: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -w|--where)
+            WHERE=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+unset TEMP
+
+set -x
+ssh phone

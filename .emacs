@@ -388,6 +388,7 @@
 
 (defconst emacs-mode-ctags-lang-map
   '(("emacs-lisp" . "lisp")
+    ("sawfish" . "lisp")
     ("c" . "c++")
     ("objc" . "ObjectiveC")
     ("makefile-gmake" . "make")

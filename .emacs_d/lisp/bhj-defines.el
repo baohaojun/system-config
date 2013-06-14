@@ -458,12 +458,6 @@ might be bad."
   (call-process "/bin/bash" nil nil nil "jdkhelp.sh" jdk-word)
   (w3m-goto-url "file:///d/knowledge/jdk-6u18-docs/1.html"))
 
-(defun my-current-line ()
-  "Return the current buffer line at point.  The first line is 0."
-  (save-excursion
-    (beginning-of-line)
-    (count-lines (point-min) (point))))
-
 (defun devenv-cmd (&rest args)
   "Send a command-line to a running VS.NET process.  'devenv' comes from devenv.exe"
   (apply 'call-process "DevEnvCommand" nil nil nil args))
@@ -476,7 +470,7 @@ might be bad."
   (let ((val1
            (devenv-cmd "File.OpenFile" (buffer-file-name (current-buffer))))
         (val2
-           (devenv-cmd "Edit.GoTo" (int-to-string (+ (my-current-line) 1)))))
+           (devenv-cmd "Edit.GoTo" (int-to-string (line-number-at-pos)))))
     (cond ((zerop (+ val1 val2))
               ;(iconify-frame)  ;; what I really want here is to raise the VS.NET window
                  t)

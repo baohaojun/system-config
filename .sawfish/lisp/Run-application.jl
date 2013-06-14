@@ -8,7 +8,7 @@
 ;; published by the Free Software Foundation; either version 2, or
 ;; (at your option) any later version.
 
-;; run-application is distributed in the hope that it will be useful, 
+;; run-application is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
@@ -25,7 +25,7 @@
 ;;  - Custom path support
 ;;  - Application exclusion support
 
-(require 'sawfish.wm.util.prompt)
+(require 'bhj.prompt)
 (require 'rep.io.files)
 
 (defgroup run-application "Run application"
@@ -34,8 +34,8 @@
 (defcustom run-application:x-position nil
   "X:  Position: \\w"
   :type (choice (nil "Center")
-		(left "Left")
-		(right "Right"))
+                (left "Left")
+                (right "Right"))
   :group (misc run-application))
 
 (defcustom run-application:x-offset 0
@@ -47,8 +47,8 @@
 (defcustom run-application:y-position nil
   "Y:  Position: \\w"
   :type (choice (nil "Center")
-		(top "Top")
-		(bottom "Bottom"))
+                (top "Top")
+                (bottom "Bottom"))
   :group (misc run-application))
 
 (defcustom run-application:y-offset 0
@@ -83,31 +83,31 @@
 (define (prompt-application-executable file dir)
    (let ((f (expand-file-name file dir)))
     (and (not (file-directory-p f))
-	 (string-match "x" (file-modes-as-string f)))))
+         (string-match "x" (file-modes-as-string f)))))
 
 (define (prompt-application-duplicate file dirs)
   (delete-if-not (lambda (dir)
-		   (file-exists-p (expand-file-name file dir)))
-		 dirs))
+                   (file-exists-p (expand-file-name file dir)))
+                 dirs))
 
 (define (prompt-mismatch-application str dir file dirs)
   (or (not (string-head-eq file str))
       (prompt-application-duplicate file dirs)
       (not (prompt-application-executable file dir))
       (and run-application:use-application-exclude
-	   (string-match run-application:application-exclude file))))
+           (string-match run-application:application-exclude file))))
 
 (define (prompt-application-path)
   (let ((path (if run-application:use-custom-path
-		  run-application:custom-path
-		  (getenv "PATH")))
+                  run-application:custom-path
+                  (getenv "PATH")))
         (path-list '())
         (dir "")
         (start 0)
         (end 0))
    (while (< start (length path))
      (setq end (if (string-match ":" path start)
-		   (match-start) (length path)))
+                   (match-start) (length path)))
      (setq dir (substring path start end))
      (when (file-exists-p dir)
        (setq path-list (append path-list (list dir))))
@@ -115,37 +115,46 @@
    path-list))
 
 (define (prompt-complete-application str)
-  (let ((path (prompt-application-path)))
-    (apply #'nconc 
-	   (mapcar (lambda (dir)
-		     (let ((dirs (cdr (member dir path))))
-		       (delete-if 
-			 (lambda (file) 
-			   (prompt-mismatch-application str dir file dirs))
-			 (directory-files dir))))
-		   path))))
+  (let* ((output-stream (make-string-output-stream))
+         (process (make-process output-stream))
+         (lines nil))
+    (apply #'call-process
+     process
+     "/dev/null"
+     (concat (getenv "HOME") "/bin/skeleton_compgen_word.pl")
+     "-d"
+     "\\n"
+     "-f"
+     "~/.bash_history.bak"
+     "--"
+     (string-split "\\s+" str))
+    (setq lines (string-split "\n" (get-output-stream-string output-stream)))
+    (if (and (= 2 (length lines))
+               (string-equal (cadr lines) ""))
+        (list (car lines))
+      lines)))
 
 (define (prompt-for-application #!optional title start default)
   "Prompt for an application in $PATH"
   (unless (stringp title)
     (setq title "Enter application:"))
   (let* ((prompt-completion-fun prompt-complete-application)
-	 (str (prompt title start)))
+         (str (prompt title start)))
     (when (and (string= str "") default)
       (setq str default))
     str))
 
 (define (run-application)
   "Prompt for an application and run it"
-  (setq prompt-window-position 
-	(cons (case run-application:x-position
-		('left run-application:x-offset)
-		('right (- -1 run-application:x-offset))
-		(nil nil))
-	      (case run-application:y-position
-		('top run-application:y-offset)
-		('bottom (- -1 run-application:y-offset))
-		(nil nil))))
+  (setq prompt-window-position
+        (cons (case run-application:x-position
+                ('left run-application:x-offset)
+                ('right (- -1 run-application:x-offset))
+                (nil nil))
+              (case run-application:y-position
+                ('top run-application:y-offset)
+                ('bottom (- -1 run-application:y-offset))
+                (nil nil))))
   (system (format nil "%s &" (prompt-for-application "Run application: "))))
 
 (define-command 'run-application run-application)
