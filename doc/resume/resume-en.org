@@ -4,7 +4,6 @@
 #+BEGIN_LaTeX
 \AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
 \begin{CJK*}{UTF8}{simsun}
-\maketitle
 #+END_LaTeX
 
 
@@ -21,12 +20,36 @@
 *** November 2011 - /Present/
     *Staff Engineer*, [[http://marvell.com][Marvell]], Beijing
 
-    - Work as architect in the Tools team for Marvell's mobile phone
+    - Worked as architect in the Tools team for Marvell's mobile phone
       total solution. In charge of designing and implementing mobile
       phone factory production tools.
 
-    - Also work in the BSP team, focusing on tools related components,
-      such as Uboot, Kernel API, factory partitions.
+      * Implemented all test cases using Bash scripts, to make
+        development more dynamic and efficient.
+
+      * For those unavoidable hardware tests, implemented them with
+        C/C++ programming: LCD (framebuffer), Touch (input device),
+        Camera (V4L2), Audio (ALSA, Marvell API), CP (AT command),
+        Sensors/Wifi/BlueTooth (Android HAL programming).
+
+      * Went to ShenZhen factory to track the tool's usage on
+        production line and collect first hand feedback, improved it
+        accordingly.
+
+    - Also worked in the BSP team, focusing on tools related
+      components, such as Uboot, Kernel API, factory partitions.
+
+      * Brought up usbtty from scratch in Uboot, to solve serial
+        console too inconvinient to use issue on Form Factor.
+
+      * Implemented whole disk flashing with fastboot, so that
+        collegues can flash under Linux easily and efficiently,
+        instead of using Windows and Marvell proprietary Windows-only
+        software for the task.
+
+    - Drawing from my experience with open source community, gave
+      advice for cooperation process with other teams and sites of
+      Marvell.
 
 *** March 2010 - October 2011
 
@@ -36,7 +59,7 @@
       which uses Nvidia's Tegra2 CPU. Tasks include Linux Kernel
       bringup, device drivers (Touch, Lcd, Sensors), HAL.
 
-    - Mentor junior BSP software engineers for system programming.
+    - Mentored junior BSP software engineers for system programming.
 
 *** November 2008 - March 2010
 
@@ -44,16 +67,16 @@
     
     - Worked in the Tools team at Borqs.
 
-    - Design and implement a lot of tools for development, factory,
-      customer, test.
+    - Designed and implemented a lot of tools for development,
+      factory, customer, test.
 
 *** September 2005 - September 2008
 
     *Software Engineer*, [[http://motorola.com][Motorola]],  MD/GSG
 
-    - Develop automated testing tool for Mobile Multimedia Software
+    - Developed automated testing tool for Mobile Multimedia Software
 
-    - Develop Mobile Multimedia Software
+    - Developed Mobile Multimedia Software
 
 *** October 2004 - September 2005
     *Software Engineer*, Vitria Software

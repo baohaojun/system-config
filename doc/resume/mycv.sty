@@ -23,7 +23,7 @@
 \headsep 0pt
 
 % Footer spacing
-\footskip 0pt 
+\footskip 0pt
 \textheight 9.5in
 
 % Sideways
@@ -74,26 +74,31 @@
   \origdescription
   \vspace{-1.55\baselineskip}
   \setlength{\topsep}{0in}
-  \setlength{\parskip}{0in} 
+  \setlength{\parskip}{0in}
   \setlength{\partopsep}{0in}
-  
-  \setlength{\itemsep}{0.05in}   
-  \setlength{\parsep}{0in} 
+
+  \setlength{\itemsep}{0.05in}
+  \setlength{\parsep}{0in}
 }
 {\endlist}
 
-% Description Label 
+% Description Label
 \renewcommand\descriptionlabel[1]%
 {\hspace\labelsep\scshape{#1 --}}
 
-\renewenvironment{itemize}{
-  \begin{list}{-}{%
+
+\def\@list{%
       \setlength{\itemsep}{0.05in}
-      \setlength{\parsep}{0in} 
+      \setlength{\parsep}{0in}
       \setlength{\parskip}{0in}
-      \setlength{\topsep}{0in} 
+      \setlength{\topsep}{0in}
       \setlength{\partopsep}{0in}
-    \setlength{\leftmargin}{0.1in}}}{\end{list}}
+    \setlength{\leftmargin}{0.1in}}
 
-
-
+\def\@listi{%
+      \setlength{\itemsep}{0.05in}
+      \setlength{\parsep}{0in}
+      \setlength{\parskip}{0in}
+      \setlength{\topsep}{0in}
+      \setlength{\partopsep}{0in}
+    \setlength{\leftmargin}{0.1in}}

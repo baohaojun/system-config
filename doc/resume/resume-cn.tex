@@ -1,7 +1,6 @@
-% Created 2013-06-11 Tue 22:40
+% Created 2013-06-15 Sat 01:13
 \documentclass[11pt,dvipdfm,CJKbookmarks]{article}
-\usepackage{CJK}
-
+\usepackage{CJKutf8}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{fixltx2e}
@@ -28,9 +27,7 @@
   pdfcreator={Emacs 24.3.1 (Org mode 8.0.3)}}
 \begin{document}
 \AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
-
 \begin{CJK*}{UTF8}{simsun}
-
 
 \maketitle
 
@@ -43,10 +40,33 @@
 \textbf{Staff Engineer}, \href{http://marvell.com}{Marvell}, 北京
 
 \begin{itemize}
-\item 在Tools团队担任架构师的职务, 负责手机工厂生产工具的设计与实现
+\item 在Tools团队担任架构师的职务, 负责Marvell手机整体解决方案中工厂生
+产工具的设计与实现
+\begin{itemize}
+\item 手机端测试case全部用Bash脚本实现，使开发流程更为高效
 
-\item 在BSP团队负责与工具相关的功能模块的设计与实现, 包括Uboot, Kernel
-接口, 工厂分区等
+\item 用C/C++实现有必要的硬件测试case：LCD（framebuffer）、
+Touch（input device）、Camera（V4L2）、Audio（ALSA、Marvell API）、
+CP（AT command）、Sensors/Wifi/BlueTooth（Android HAL
+programming）
+
+\item 试产时到深圳工厂跟踪此工具在产线的实际使用情况，根据产线反馈对
+其进行改进
+\end{itemize}
+
+\item 在BSP团队负责与工具相关的功能模块的设计与实现, 包括Uboot, Kernel接口,
+工厂分区等
+
+\begin{itemize}
+\item 在Uboot里参考原有的usbtty代码（for old cpu and usb framework），
+从头重新bring up了usbtty以解决FormFactor上串口调试不便的问题
+\item 实现在Linux下用fastboot对Marvell方案的整机烧写，解决了工程师只
+能在Windows机器上用Marvell私有工具做整机烧写的问题，提升同事的
+开发效率
+\end{itemize}
+
+\item 结合对开源社区的认识，对与Marvell其他团队之间的合作提出流程上的改
+良建议
 \end{itemize}
 \subsubsection{2010年3月 - 2011年10月}
 \label{sec-1-0-2}
@@ -183,6 +203,5 @@ Git
 
 
 % Emacs 24.3.1 (Org mode 8.0.3)
-
 \end{CJK*}
 \end{document}

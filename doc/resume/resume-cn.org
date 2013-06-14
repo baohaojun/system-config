@@ -22,10 +22,29 @@
 *** 2011年11月 - 目前
     *Staff Engineer*, [[http://marvell.com][Marvell]], 北京
 
-    - 在Tools团队担任架构师的职务, 负责手机工厂生产工具的设计与实现
+    - 在Tools团队担任架构师的职务, 负责Marvell手机整体解决方案中工厂生
+      产工具的设计与实现
+      * 手机端测试case全部用Bash脚本实现，使开发流程更为高效
 
-    - 在BSP团队负责与工具相关的功能模块的设计与实现, 包括Uboot, Kernel
-      接口, 工厂分区等
+      * 用C/C++实现有必要的硬件测试case：LCD（framebuffer）、
+        Touch（input device）、Camera（V4L2）、Audio（ALSA、Marvell API）、
+        CP（AT command）、Sensors/Wifi/BlueTooth（Android HAL
+        programming）
+
+      * 试产时到深圳工厂跟踪此工具在产线的实际使用情况，根据产线反馈对
+        其进行改进
+
+    - 在BSP团队负责与工具相关的功能模块的设计与实现, 包括Uboot, Kernel接口,
+      工厂分区等
+      
+      * 在Uboot里参考原有的usbtty代码（for old cpu and usb framework），
+        从头重新bring up了usbtty以解决FormFactor上串口调试不便的问题
+      * 实现在Linux下用fastboot对Marvell方案的整机烧写，解决了工程师只
+        能在Windows机器上用Marvell私有工具做整机烧写的问题，提升同事的
+        开发效率
+
+    - 结合对开源社区的认识，对与Marvell其他团队之间的合作提出流程上的改
+      良建议
 
 *** 2010年3月 - 2011年10月
 
