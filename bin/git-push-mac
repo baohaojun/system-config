@@ -112,7 +112,7 @@ while test "$(git log --pretty=oneline -1 | cut -b 42-)" = mf; do
 done
 
 if git status -s | grep . ; then
-    git commit -m "$(
+    git commit -s -m "$(
         (
             echo "###start of comment###"
             echo in $(pwd):
