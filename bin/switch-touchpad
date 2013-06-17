@@ -1,14 +1,18 @@
 #!/bin/bash
-. ~/.new-xauth 
+. ~/.new-xauth
 if test "$1" = disable -o "$1" = off; then
     synclient TouchpadOff=2
     # sawfish-client -e '(bind-keys window-keymap "Button1-Click" (lambda () (system "rebind-button1&")))'
     exit
 fi
 
+finger_high=80
+if test -e ~/.config/bhj/touchpad-finger-high; then
+    finger_high=$(cat ~/.config/bhj/touchpad-finger-high)
+fi
 
 if test "$1" = enable -o "$1" = on; then
-    synclient FingerHigh=80
+    synclient FingerHigh=$finger_high
     synclient TouchpadOff=0
     synclient PalmDetect=1
     synclient RTCornerButton=0
@@ -28,4 +32,3 @@ if test "$1" = enable -o "$1" = on; then
     # rebind-button1
     exit
 fi
-

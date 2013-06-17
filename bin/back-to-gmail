@@ -5,20 +5,20 @@ for x in "$@"; do
 
     back=~/.logs/back-to-gmail/"$x"
     if test -e "$back" && diff "$x" "$back" -rq; then
-	continue
+        continue
     else
         echo will back up "$back"
-	mkdir -p "$(dirname "$back")"
-	rm -rf "$back"
-	cp "$x" "$(dirname "$back")" -av
+        mkdir -p "$(dirname "$back")"
+        rm -rf "$back"
+        cp "$x" "$(dirname "$back")" -av
     fi
 
     attachment=$x
     if test -d "$x"; then
-	attachment=~/.logs/back-to-gmail-"$(echo "$x"|perl -npe 's,/,-,g')".tgz
-	tar czfv "$attachment" "$x"
+        attachment=~/.logs/back-to-gmail-"$(echo "$x"|perl -npe 's,/,-,g')".tgz
+        tar czfv "$attachment" "$x"
     fi
 
     echo sending mail "back-to-gmail $x from $(from-mac)"
-    mailx -s "back-to-gmail $x from $(from-mac)" -a "$attachment" baohaojun@gmail.com </dev/null
+    mailx -s "back-to-gmail $x from $(from-mac|perl -npe 's!.*from-mac/!!')" -a "$attachment" baohaojun@gmail.com </dev/null
 done

@@ -43,8 +43,12 @@ case "$1" in
         info
         ;;
     lyrics)
-
-        url=$(search-lyrics "$(info|perl -ne 'if (m/^artist|^title/) {s/.*?://; print}')")
+        shift
+        if test $# != 0; then
+            url=$(search-lyrics "$@")
+        else
+            url=$(search-lyrics "$(info|perl -ne 'if (m/^artist|^title/) {s/.*?://; print}')")
+        fi
         douban info
         emacsclient -e '(w3m-goto-url "'$url'")'
         find-or-exec emacs
