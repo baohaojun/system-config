@@ -1,0 +1,52 @@
+#+title: 苹果对头文件开刀了？我也来！
+# bhj-tags: programming emacs
+
+不知道网上是不是已经有了现成的解决方案，就是比如我在写C/C++程序的时候，
+不想自己动手写 ~#include <stdio.h>~ 等头文件的包含。这个实在是太笨了，
+每次我都需要自己用man手册看一下，比如malloc()函数到底是哪个头文件声明它
+的，然后将其include进来。
+
+其实这个东西很好自动化嘛。拿g++（比gcc更严格一些，基本又向下兼容gcc）编
+译一遍，把未声明而出错的所有函数都grep出来，然后挨个man 2（系统调用）或
+者man 3（标准库），把 ~#include~ 给抽出来插进去，不就解决了吗？
+
+当然，苹果对头文件开的刀是解决另一个问题（头文件的重复编译引起的编译性
+能差），我这是标题党了一把:-)
+
+给定这样一个 stack-order.c 文件：
+
+#+BEGIN_SRC c
+int main(int argc, char* argv[])
+{
+    printf("hello world\n");
+    malloc();
+}
+#+END_SRC
+
+拿这个 [[https://github.com/baohaojun/system-config/raw/master/bin/c-get-includes][c-get-includes]] 跑下： ~c-get-includes stack-order.c~ ，结果如下：
+
+#+BEGIN_SRC c
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#+END_SRC
+
+其中stdarg.h是躺枪了，printf的man手册里也有vprintf，而后者的头文件正是
+stdarg.h，但这并不影响大局嘛！除了编译性能:-)
+
+再加上一小段 [[https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-defines.el][emacs-lisp代码]] 和一个快捷键设置，只要按一个键上面的c文件就
+能拥有正确的头文件了！
+
+#+BEGIN_SRC c
+/**** start of bhj auto includes ****/
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+/**** end of bhj auto includes ****/
+
+int main(int argc, char* argv[])
+{
+    printf("hello world\n");
+    malloc();
+}
+#+END_SRC
