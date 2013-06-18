@@ -220,6 +220,53 @@ might be bad."
           (setq tramp-remote-process-environment process-environment))
       (setenv "GTAGS_START_FILE" file))))
 
+;;;###autoload
+(defun c-get-includes ()
+  (interactive)
+  ;; when use call this function, 1) assume we will have some headers
+  ;; to include, 2) assume we need insert them at a special position
+  ;; marked with /**** start of bhj auto includes ****/ and /**** end
+  ;; of bhj auto includes ****/.
+
+  (let (start-include-mark-line
+        end-include-mark-line
+        mark-line-found
+        (start-mark "/**** start of bhj auto includes ****/")
+        (end-mark "/**** end of bhj auto includes ****/")
+        (includes (split-string
+                   (shell-command-to-string
+                    (concat "c-get-includes "
+                            (shell-quote-argument (buffer-file-name))))
+                   "\n" t)))
+    (save-excursion
+      (goto-char (point-min))
+      (if (search-forward start-mark nil t)
+          (setq start-include-mark-line (line-number-at-pos)
+                end-include-mark-line (save-excursion
+                                        (search-forward end-mark)
+                                        (line-number-at-pos)))
+        (goto-char (point-min))
+        (insert start-mark "\n" end-mark "\n\n")
+        (setq start-include-mark-line 1
+              end-include-mark-line 2))
+      (goto-line (1+ start-include-mark-line))
+      (goto-char (point-at-bol))
+      (mapc (lambda (head)
+              (insert head "\n"))
+            includes)
+      (setq end-include-mark-line (save-excursion
+                                    (search-forward end-mark)
+                                    (line-number-at-pos)))
+      (shell-command-on-region
+       (save-excursion
+         (goto-line (1+ start-include-mark-line))
+         (point-at-bol))
+       (save-excursion
+         (goto-line end-include-mark-line)
+         (point-at-bol))
+       "sort -u"
+       nil
+       t))))
 
 ;;;###autoload
 (defun java-get-hierarchy ()

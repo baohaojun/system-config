@@ -298,12 +298,13 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 ;;;;;;  switch-to-devenv bhj-jdk-help bhj-set-reply bhj-mimedown
 ;;;;;;  bhj-w3m-scroll-down-or-previous-url bhj-w3m-scroll-up-or-next-url
 ;;;;;;  bhj-isearch-from-bod bhj-occur-merge-conflicts bhj-occur-make-errors
-;;;;;;  bhj-occur java-get-override java-get-hierarchy bhj-insert-pwdu
-;;;;;;  bhj-insert-pwdw bhj-clt-insert-file-name wiki-local-bhj weekrep
-;;;;;;  linux-c++-mode linux-c-mode bhj-c-end-of-defun java-complete-method
-;;;;;;  java-resolve bhj-c-show-current-func bhj-c-beginning-of-defun
-;;;;;;  confirm-risky-remote-edit fix-latex-cjk cleanup-buffer-safe)
-;;;;;;  "bhj-defines" "bhj-defines.el" (20914 58480 707262 453000))
+;;;;;;  bhj-occur java-get-override java-get-hierarchy c-get-includes
+;;;;;;  bhj-insert-pwdu bhj-insert-pwdw bhj-clt-insert-file-name
+;;;;;;  wiki-local-bhj weekrep linux-c++-mode linux-c-mode bhj-c-end-of-defun
+;;;;;;  java-complete-method java-resolve bhj-c-show-current-func
+;;;;;;  bhj-c-beginning-of-defun confirm-risky-remote-edit fix-latex-cjk
+;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (20928
+;;;;;;  17370 154722 50000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -379,6 +380,11 @@ C mode with adjusted defaults for use with the Linux kernel.
 \(fn)" t nil)
 
 (autoload 'bhj-insert-pwdu "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'c-get-includes "bhj-defines" "\
 
 
 \(fn)" t nil)

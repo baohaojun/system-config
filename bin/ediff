@@ -1,0 +1,40 @@
+#!/bin/bash
+
+regexp=.
+sub=
+TEMP=$(getopt -o e:s: --long regexp:sub: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -e|--regexp)
+            regexp=$2
+            shift 2
+            ;;
+        -s|--sub)
+            sub=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) file1 file2"
+fi
+
+for x in "$@"; do
+    if test "$sub"; then
+        perl -npe "$sub" "$x"
+    else
+        cat "$x"
+    fi | grep -P -e "$regexp" > "$x".bak
+done
+
+set -- "$1".bak "$2".bak
+emacsclient -e "(ediff-files \""$(readlink -f "$1")"\" \""$(readlink -f "$2")"\")"

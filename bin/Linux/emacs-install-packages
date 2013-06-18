@@ -1,19 +1,31 @@
 #!/bin/bash
 set -e
-emacs --batch --eval "(progn
-                           (require 'package)
-                           (add-to-list 'package-archives
-                               '(\"marmalade\" . \"http://marmalade-repo.org/packages/\"))
-                           (add-to-list 'package-archives
-                               '(\"melpa\" . \"http://melpa.milkbox.net/packages/\"))
-                           (package-initialize)
-                           (package-refresh-contents)
-                           (package-install 'yasnippet)
-                           (package-install 'mmm-mode)
-                           (package-install 'session)
-                           (package-install 'keydef)
-                           (package-install 'browse-kill-ring)
-                           (package-install 'oauth2))"
+
+emacs_code=$(cat <<EOF
+(progn
+    (require 'package)
+    (add-to-list 'package-archives
+                 '("marmalade" . "http://marmalade-repo.org/packages/"))
+    (add-to-list 'package-archives
+                 '("melpa" . "http://melpa.milkbox.net/packages/"))
+    (package-initialize)
+    (package-refresh-contents)
+
+    $(
+        for x in $(
+                       if test $# != 0; then
+                           echo "$@";
+                       else
+                           echo ~/bin/Linux/config/emacs-pkgs/*;
+                       fi
+                   ); do
+            echo "(package-install '$(basename $x))"
+        done
+    )
+)
+EOF
+)
+emacs --batch --eval "$emacs_code"
 mkdir -p ~/src/github
 cd ~/src/github
 

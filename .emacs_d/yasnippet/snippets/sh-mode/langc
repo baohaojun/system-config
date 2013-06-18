@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: langc
+# key: langc
+# --
+export LANG=C
+export LC_ALL=C
+$0

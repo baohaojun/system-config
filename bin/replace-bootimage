@@ -1,6 +1,6 @@
 #!/bin/bash
 
-boot=$(echo $(lookup-file -e out/flashing/)/*/ramdisk.img)
+boot=$(echo $(select-args $(lookup-file -e out/flashing/)/*/ramdisk.img))
 
 TEMP=$(getopt -o b: --long boot: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"

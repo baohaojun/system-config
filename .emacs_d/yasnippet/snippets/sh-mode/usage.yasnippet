@@ -3,5 +3,6 @@
 # name: usage
 # --
 if test \$# != ${1:1}; then
-    die "Error: Usage \$(basename \$0) $0"
+    die "Error: Usage \$(basename \$0) $2"
 fi
+$0

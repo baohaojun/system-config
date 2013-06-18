@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+export LANG=C
+export LC_ALL=C
+
+function get-includes-for-file()
+{
+    g++ -c "$1" -o /dev/null 2>&1 | perl -ne '
+    if (m/error: .(.*?). was not declared in this scope/) {
+        print "$1\n";
+    }
+' | sort -u | xargs c-get-includes man
+}
+
+if test $# = 1 -a "$1" != man; then
+    get-includes-for-file "$1" | sort -u
+    exit
+fi
+
+shift # the 'man'
+
+for func in "$@"; do
+    (
+	man 2 "$func" || 
+	man 3 "$func"
+    ) 2>/dev/null | 
+    perl -ne '
+        if (m/^SYN/..m/^DES/) {
+            print "$&\n" if m/#include.*>/;
+        }'
+done

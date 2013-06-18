@@ -279,6 +279,7 @@
 (bind-keys s-h-keymap "r" 'run-application)
 
 (system "run-dir-once ~/.sawfish/start&")
+(system "run-dir-once ~/external/sawfish/start&")
 
 (require 'sawfish.wm.commands.x-cycle)
 

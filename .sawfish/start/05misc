@@ -6,24 +6,24 @@ if test -e ~/.fonts/symbol.ttf; then
 fi
 
 rm ~/.fonts/monaco-windows.ttf -f
-sudo modprobe -r pcspkr 
+sudo modprobe -r pcspkr
 python3 ~/gcode/scim-cs/ime-py/ime-server.py&
 if test -f ~/.offlineimaprc; then
     (
-	flock -n 5 || { echo "lock failed for Imap4Monitor.py, exit"; exit; }
-	while true; 
-	do 
-	    python ~/bin/windows/Imap4Monitor/Imap4Monitor.py;
-	    sleep 2; 
-	done
+        flock -n 5 || { echo "lock failed for Imap4Monitor.py, exit"; exit; }
+        while true;
+        do
+            python ~/bin/windows/Imap4Monitor/Imap4Monitor.py;
+            sleep 2;
+        done
     ) 5< ~/bin/windows/Imap4Monitor/Imap4Monitor.py &
 fi
 
 # while true; do
 #     (
-# 	cd ~/gcode/gmail-notify-1.6.1.1;
-# 	GA_LABEL=/BigOne  ./notifier.py;
-# 	sleep 5;
+#       cd ~/gcode/gmail-notify-1.6.1.1;
+#       GA_LABEL=/BigOne  ./notifier.py;
+#       sleep 5;
 #     )
 # done >~/.gmail-notifier.log 2>&1 &
 # qq
@@ -31,11 +31,11 @@ fi
 
 (
     flock -n 5 || { echo "lock failed for manage.py, exit"; exit; }
-    while true; do 
-	cd ~/gcode/offline.wikipedia/mywiki
+    while true; do
+        cd ~/gcode/offline.wikipedia/mywiki
         test -e ../en.py || exit
-	python manage.py runserver 0.0.0.0:34567 --noreload >>~/.logs/offline-wiki.log 2>&1
-	sleep 2; 
+        python manage.py runserver 0.0.0.0:34567 --noreload >>~/.logs/offline-wiki.log 2>&1
+        sleep 2;
     done
 ) 5< ~/gcode/offline.wikipedia/mywiki/manage.py &
 
@@ -43,19 +43,12 @@ download-today
 
 command renew-xauth
 
-for x in ~/external/sawfish/start/*; do
-    (
-	echo executing "$x"
-	test -e "$x" && "$x"&
-    )
-done
-
 # for x in /etc/xdg/autostart/*; do
 #     (
-# 	$(cat "$x"|perl -ne '
+#       $(cat "$x"|perl -ne '
 # if (m/^\s*Exec\s*=\s*(.*)/) {
 #     print $1;
 # }'
-# 	)&
+#       )&
 #     )
 # done

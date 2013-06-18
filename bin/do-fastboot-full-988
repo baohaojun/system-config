@@ -37,7 +37,7 @@ time (
         sleep .5
         dir=/tmp/$(basename $0).$$/
         mkdir $dir
-        ln -s $(pwd)/* $dir/
+        ln -s "$(pwd)"/* $dir/
         cd $dir/
         rm -f ntim_emei.bin DTim.*
     fi
