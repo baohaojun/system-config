@@ -1,0 +1,92 @@
+* beagrep
+
+Grep 2G source tree in 0.23 seconds. A speed up of more than 10 fold.
+
+It uses a search engine before using grep. The search engine is
+beagle, thus the name beagrep.
+
+For more details, visit [[http://baohaojun.github.com/beagrep.html][my github page]] (man page included).
+
+* How does it compare to ag
+
+[[https://github.com/ggreer/the_silver_searcher][Ag (AKA the silver searcher)]] claims to be very fast, beating [[http://beyondgrep.com/][ack]] and
+GNU grep.
+
+I compared ag and beagrep on my laptop:
+
+| Model         | CPU                                      | Memory |
+|---------------+------------------------------------------+--------|
+| Thinkpad T420 | Intel(R) Core(TM) i5-2520M CPU @ 2.50GHz | 8G     |
+
+
+** ag speed
+#+BEGIN_EXAMPLE
+    cd ~/src/android   
+
+# One nice thing about ag is that it filters 
+# VCS and binary files automatically.
+    time ag readlink . 
+#+END_EXAMPLE
+
+The first time it took 3 minutes, the second time it took 8 seconds,
+very impressive! I think if I had learned about it earlier I probably
+wouldn't have started working on beagrep in the first place, because I
+would have thought it is quick enough already.
+
+** beagrep speed
+#+BEGIN_EXAMPLE
+    time beagrep -e readlink
+#+END_EXAMPLE
+
+The first time it took 30 seconds, the second time it took 0.42
+second.
+
+Another test is done on Linux kernel source code, where ag takes
+1m35s/1.8s for cache hot/cold, while beagrep takes 15s/0.25s
+respectively.
+
+(The claim that it took 0.23 second to grep 2G Android source code is
+achieved on my Dell Optiplex 960).
+
+* Pros and cons of beagrep
+
+** Pros
+
+- Very fast
+
+- Output format compatibility with grep, so it can be used by, for
+  e.g., Emacs grep-mode directly.
+
+- Match not only file content, file names too, like locate(1).
+
+** Cons
+
+-  You need build the search engine database beforehand (the first
+   time you do this will take a long while, but subsequent updating is
+   reasonably fast)
+
+-  Works on whole words only: can not use =beagrep -e rely= to find
+   =readlink=.
+
+* Other grep like tools
+
+Ack's author Andy Lester has written [[http://betterthangrep.com/more-tools/][a nice intro]] about all kinds of
+tools for searching source code.
+
+Of particular interest to beagrep is Google's Code Search tool.
+
+* To-do
+
+-  Push beagrep into Debian distribution.
+
+* Acknowledgment
+
+Thank the Beagle project for making the original engine. And of
+course, the Apache Lucene project.
+
+Thank LDD's author for saying ``(LDD) is the result of hours of
+grepping'' and getting me hooked to grep forever.
+
+Last but not least, I submitted this README on [[http://redd.it/14tybj][reddit]], and has refined
+it several times according to the comments there. To those who
+commented: thanks, I have learned from you!
