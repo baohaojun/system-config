@@ -3,7 +3,7 @@
 set -xe
 export PATH=/jffs/bin:$PATH
 
-my_ip_dns=$(nslookup bhj.is-a-geek.org | grep bhj.is-a-geek.org -A 1|tail -n 1|awk '{print $3}')
+my_ip_dns=$(nslookup bhj.dyndns.org | grep bhj.dyndns.org -A 1|tail -n 1|awk '{print $3}')
 my_ip_det=$( (cat <<EOF
 GET /checkip HTTP/1.1
 User-Agent: Wget/1.13.4 (linux-gnu)
@@ -22,7 +22,7 @@ fi
 if test "$my_ip_dns" != "$my_ip_det"; then
     (
         cat <<EOF
-GET /nic/update?hostname=bhj.is-a-geek.org&wildcard=NOCHG&mx=NOCHG&backmx=NOCHG HTTP/1.1
+GET /nic/update?hostname=bhj.dyndns.org&wildcard=NOCHG&mx=NOCHG&backmx=NOCHG HTTP/1.1
 User-Agent: Wget/1.13.4 (linux-gnu)
 Accept: */*
 Host: members.dyndns.org

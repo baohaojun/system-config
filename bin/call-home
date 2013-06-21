@@ -14,10 +14,10 @@ fi
         if test ! -e ~/.ssh-home-ok; then
             home=192.168.33.8
         else
-            home=bhj.is-a-geek.org
+            home=bhj.dyndns.org
         fi
 	ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 root@$home -p 443 ||
-        if route -n |grep -e "$(host bhj.is-a-geek.org | pn 4)"; then
+        if route -n |grep -e "$(host bhj.dyndns.org | pn 4)"; then
             true
         else
             sudo su - -c 'nmcli con down id vpn-home'
