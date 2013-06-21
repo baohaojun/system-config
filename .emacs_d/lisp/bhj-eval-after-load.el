@@ -76,9 +76,11 @@
 
 (eval-after-load "ediff-init" '(add-hook 'ediff-quit-hook (lambda () (shell-command "find-or-exec emacs"))))
 
-;; (eval-after-load 'yasnippet
-;;   '(progn
-;;      (message "hello yas/reload-all")))
+(eval-after-load 'yasnippet
+  '(progn
+    (define-key yas-minor-mode-map [(tab)]     nil)
+    (define-key yas-minor-mode-map (kbd "TAB") nil)
+    (define-key yas-minor-mode-map (kbd "C-M-i") 'yas-expand)))
 
 (add-hook 'emacs-startup-hook (lambda () (call-interactively 'yas-global-mode)))
 

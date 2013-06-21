@@ -1,7 +1,9 @@
 #!/bin/bash
 eth0=${1:-eth0}
 vboxnet0=${2:-vboxnet0}
-sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
-sudo /sbin/iptables -t nat -A POSTROUTING -o $eth0 -j MASQUERADE
-sudo /sbin/iptables -A FORWARD -i $eth0 -o $vboxnet0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo /sbin/iptables -A FORWARD -i $vboxnet0 -o $eth0 -j ACCEPT
+if ! sudo iptables-save | grep -e "-A FORWARD -i $eth0 -o $vboxnet0"; then
+    sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+    sudo /sbin/iptables -t nat -A POSTROUTING -o $eth0 -j MASQUERADE
+    sudo /sbin/iptables -A FORWARD -i $eth0 -o $vboxnet0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+    sudo /sbin/iptables -A FORWARD -i $vboxnet0 -o $eth0 -j ACCEPT
+fi

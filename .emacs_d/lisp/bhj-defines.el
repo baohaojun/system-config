@@ -411,6 +411,7 @@ might be bad."
         (exchange-point-and-mark)
         (insert "\n</body>\n</html>\n<#/multipart>\n")))))
 
+(defvar bhj-gmail-host "smtp.gmail.com")
 ;;;###autoload
 (defun bhj-set-reply ()
   (interactive)
@@ -478,15 +479,15 @@ might be bad."
                (kill-line)
                (insert "\"Bao Haojun\" <baohaojun@gmail.com>")
                (setq smtpmail-auth-credentials
-                     '(("smtp.gmail.com"
+                     '((bhj-gmail-host
                         465
                         "baohaojun@gmail.com"
                         nil))
                      message-send-mail-function 'smtpmail-send-it
                      smtpmail-stream-type 'ssl
                      user-mail-address "baohaojun@gmail.com"
-                     smtpmail-default-smtp-server "smtp.gmail.com"
-                     smtpmail-smtp-server "smtp.gmail.com"
+                     smtpmail-default-smtp-server bhj-gmail-host
+                     smtpmail-smtp-server bhj-gmail-host
                      smtpmail-smtp-service 465))
               (t
                (error "don't know send as whom")))))))

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+perl -ne 'if (m!<title>! .. m!</title>!) {
+     chomp;
+     s!<\s*/?\s*title\s*>!!g;
+     print "$_\n";
+}' "$@"

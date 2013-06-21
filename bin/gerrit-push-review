@@ -11,31 +11,41 @@ function die() {
 if test -z "$(lookup-file -e .repo)"; then
     git fetch -v
 else
-    repo sync -n .
-fi
-if ! git-is-ancestor $(repo-remote-branch) HEAD; then
-    die "Not fast-forward push is not allowed"
+    2nd repo sync -n . || git fetch origin
 fi
 
 rev=HEAD
 
-TEMP=$(getopt -o r: --long revision: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o b:r: --long revision: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -b)
+            export REPO_BRANCH=$2
+            shift 2
+            ;;
         -r|--revision)
-        rev=$2
-        shift 2
-        ;;
+            rev=$2
+            shift 2
+            ;;
         --)
-        shift
-        break
-        ;;
+            shift
+            break
+            ;;
         *)
-        die "internal error"
-        ;;
+            die "internal error"
+            ;;
     esac
 done
+
+if ! git-is-ancestor $(repo-remote-branch) HEAD; then
+    if yes-or-no-p "Not fast-forward push is not allowed, rebase? "; then
+        git rebase $(repo-remote-branch) ||
+        die "Rebase failed"
+    else
+        die "Not fast-forward push is not allowed"
+    fi
+fi
 
 reviewers=()
 if test $# = 0; then
@@ -46,7 +56,7 @@ if test $# = 0; then
     fi
 fi
 
-while test $# -gt 0; do 
+while test $# -gt 0; do
     reviewers=("${reviewers[@]}" "$(echo "${1%@*}"|perl -npe 's/.*<//')")
     shift
 done
@@ -57,23 +67,23 @@ export REMOTE=$( (repo-review-url) )
 
 (
     if tty >/dev/null 2>&1; then
-	git push  --receive-pack="$(
+        git push  --receive-pack="$(
             echo -n 'git receive-pack ';
             for x in "${reviewers[@]}"; do
                 echo -n "--reviewer=$x "
             done)" $REMOTE "$rev":refs/for/`repo-branch` 2>&1 |
-	grep -v 'x11 forwarding' -i |
-	perl -npe '
+        grep -v 'x11 forwarding' -i |
+        perl -npe '
     if (m,http://bear/gerrit/(\d+),) {
-        system("putclip", "git", "pull", $ENV{REMOTE}, 
+        system("putclip", "git", "pull", $ENV{REMOTE},
                "refs/changes/" . substr($1, -2) . "/$1/1");
     }'
-	echo
-	echo '* git commit message:'
-	echo
-	git log -1 "$rev"
+        echo
+        echo '* git commit message:'
+        echo
+        git log -1 "$rev"
     else
-	cat
+        cat
     fi
 ) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty ~/.logs/gerrit-review.log.$$
 

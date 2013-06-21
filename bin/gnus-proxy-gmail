@@ -1,0 +1,4 @@
+#!/bin/bash
+
+emacsclient -e '(setq bhj-gmail-host "localhost")'
+sudo tsocks ssh -C2qN -R 127.0.0.1:465:smtp.gmail.com:465 localhost

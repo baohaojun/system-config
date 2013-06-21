@@ -41,6 +41,15 @@
 	exit(-1);				\
  } while(0)
 
+#define warn(fmt, ...) do {			\
+	debug(fmt, ##__VA_ARGS__);		\
+    } while(0)
+
+#define output(fmt, ...) do {			\
+	printf(fmt, ##__VA_ARGS__);		\
+	fflush(stdout);				\
+    } while(0)
+
 #define ASSERT_EQUAL(a,b) do {					\
 	if ((a) != (b)) {					\
 	    debug("error: %s is not equal to %s\n ", #a,  #b);  \

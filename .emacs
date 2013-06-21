@@ -234,8 +234,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(Info-additional-directory-list (list "~/tools/emacswin/info/" "/usr/local/share/info" "/usr/share/info"))
- '(Info-default-directory-list (quote ("~/src/org-mode/doc" "/usr/share/info/emacs-24" "/usr/local/share/info/" "/usr/share/info/" "/usr/share/info/")))
  '(ansi-color-names-vector ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
@@ -269,7 +267,7 @@
  '(imenu-max-item-length nil)
  '(imenu-space-replacement " ")
  '(install-elisp-repository-directory "~/.emacs_d/lisp/")
- '(ispell-program-name "aspell" t)
+ '(ispell-program-name "aspell")
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
  '(jiralib-url "http://bible/jira")

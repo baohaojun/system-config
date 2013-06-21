@@ -80,7 +80,7 @@ fi
         echo repo is up to date.
 
         flock -u 9
-        rm .repo/out-*/ -rf
+        rm .repo/out-*/ -rf || true
         if test $(wc -w .do-update|pn 1) != 0; then
             for x in $(cat .do-update); do
                 android-full-build $x || true
