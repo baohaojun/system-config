@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+use strict;
+for my $arg (@ARGV) {
+    my $num = $arg;
+    my @b64_digits;
+
+    do {
+        my $rem = $num % 64;
+        $num = int($num / 64);
+
+        if ($rem < 26) {
+            push @b64_digits, chr($rem + ord('A'));
+        } elsif ($rem < 52) {
+            push @b64_digits, chr($rem - 26 + ord('a'));
+        } elsif ($rem < 62) {
+            push @b64_digits, chr($rem - 52 + ord('0'));
+        } elsif ($rem == 62) {
+            push @b64_digits, '+';
+        } else {
+            push @b64_digits, '/';
+        }
+    } while ($num);
+    print join('', reverse @b64_digits) . "\n";
+}

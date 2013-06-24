@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+use strict;
+for my $arg (@ARGV) {
+    my $number = 0;
+    for (split '', $arg) {
+        $number *= 64;
+        if ($_ =~ m/[A-Z]/) {
+            $number += ord($_) - ord('A');
+        } elsif ($_ =~ m/[a-z]/) {
+            $number += ord($_) - ord('a') + 26;
+        } elsif ($_ =~ m/[0-9]/) {
+            $number += ord($_) - ord('0') + 26 + 26;
+        } elsif ($_ eq '+') {
+            $number += 62;
+        } elsif ($_ eq '/') {
+            $number += 63;
+        }
+    }
+    print "$number\n";
+
+}
