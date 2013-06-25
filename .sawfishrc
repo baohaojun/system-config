@@ -18,6 +18,8 @@
         ("C-s" . "C-g")
         ("C-v" . "Next")
         ("M-v" . "Prior")
+        ("M-<" . "C-Home")
+        ("M->" . "C-End")
         ("C-r" . "C-S-g")
         ("C-k" . ("S-End" "Del"))
         ("M-BS" . "C-BS")

@@ -1,0 +1,6 @@
+#/bin/bash
+
+if test $# = 0; then
+    set -- "$(xclip -o)"
+fi
+of file:///usr/share/doc/python-qt4-doc/html/$(echo "$1"|perl -ne 'print lc($_)').html
