@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: dbg
+# key: dbg
+# --
+print "%s:%d: $1" % (inspect.stack()[0][1], inspect.stack()[0][2], $2)
+$0
