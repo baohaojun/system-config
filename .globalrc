@@ -55,6 +55,7 @@ plugin-example|Example of function layer plugin parser:\
 	:langmap=pascal\:.p.pas:\
 	:langmap=c#\:.cs:\
 	:langmap=lisp\:.l.el.lisp.jl(.emacs):\
+	:langmap=lua\:.lua:\
 	:langmap=javaprop\:(ExternalMessages.properties):\
 	:langmap=kconfig\:(Kconfig*):\
 	:langmap=androidxml\:.xml:\
@@ -81,6 +82,7 @@ plugin-example|Example of function layer plugin parser:\
 	:gtags_parser=pascal\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=c#\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=lisp\:/usr/local/lib/gtags/exuberant-ctags.la:\
+	:gtags_parser=lua\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=kconfig\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=androidxml\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=androidpng\:/usr/local/lib/gtags/exuberant-ctags.la:\

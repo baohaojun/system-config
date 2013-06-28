@@ -35,11 +35,68 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
     }
 }
 
+# start code-generator "^\\s *#"
+# perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+# end code-generator
+# start generated code
+set CTRLA \001
+set CTRLB \002
+set CTRLC \003
+set CTRLD \004
+set CTRLE \005
+set CTRLF \006
+set CTRLG \007
+set CTRLH \010
+set CTRLI \011
+set CTRLJ \012
+set CTRLK \013
+set CTRLL \014
+set CTRLM \015
+set CTRLN \016
+set CTRLO \017
+set CTRLP \020
+set CTRLQ \021
+set CTRLR \022
+set CTRLS \023
+set CTRLT \024
+set CTRLU \025
+set CTRLV \026
+set CTRLW \027
+set CTRLX \030
+set CTRLY \031
+set CTRLZ \032
+
+# end generated code
+set ESC   \033
+set UP    \033\[A
+set DOWN  \033\[B
+set LEFT  \033\[D
+set RIGHT \033\[C
+set NEXT  \033\[6~
+set PREV  \033\[5~
+set HOME  \033\[1~
+set END   \033\[4~
+set ESCv  \033v
+set ESClt \033<
+set ESCgt \033>
+
 proc qx cmd {
     set fh [open "|$cmd"]
     set res [read $fh]
     close $fh
     return $res
+}
+
+proc same_thread args {
+    send [join $args ""]
+    expect -re "上下篇|上一封" {
+        if {[string eq $expect_out(0,string) "上下篇"]} {
+            # do nothing
+        } else {
+            set RIGHT \033\[C
+            send $RIGHT
+        }
+    }
 }
 
 proc send_all args {
@@ -94,51 +151,6 @@ expect {
 if [string eq "" $mode] {
     puts [wait]
 } else {
-    # start code-generator "^\\s *#"
-    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
-    # end code-generator
-    # start generated code
-    set CTRLA \001
-    set CTRLB \002
-    set CTRLC \003
-    set CTRLD \004
-    set CTRLE \005
-    set CTRLF \006
-    set CTRLG \007
-    set CTRLH \010
-    set CTRLI \011
-    set CTRLJ \012
-    set CTRLK \013
-    set CTRLL \014
-    set CTRLM \015
-    set CTRLN \016
-    set CTRLO \017
-    set CTRLP \020
-    set CTRLQ \021
-    set CTRLR \022
-    set CTRLS \023
-    set CTRLT \024
-    set CTRLU \025
-    set CTRLV \026
-    set CTRLW \027
-    set CTRLX \030
-    set CTRLY \031
-    set CTRLZ \032
-
-    # end generated code
-    set ESC   \033
-    set UP    \033\[A
-    set DOWN  \033\[B
-    set LEFT  \033\[D
-    set RIGHT \033\[C
-    set NEXT  \033\[6~
-    set PREV  \033\[5~
-    set HOME  \033\[1~
-    set END   \033\[4~
-    set ESCv  \033v
-    set ESClt \033<
-    set ESCgt \033>
-
     interact {
         -reset $CTRLZ {exec kill -STOP [pid]}
         $CTRLP {send $UP}
@@ -160,25 +172,25 @@ if [string eq "" $mode] {
 
         # thread mode when in original list
         [strcat $CTRLC t] {
-            send_all & $CTRLG 4 $CTRLM q $RIGHT $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM q $RIGHT
         }
 
         # next thread when in normal list
         [strcat $CTRLC n] {
-            send_all & $CTRLG 4 $CTRLM $DOWN q $RIGHT $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q $RIGHT
         }
         # F4
         [strcat $ESC O S] {
-            send_all & $CTRLG 4 $CTRLM $DOWN q $RIGHT $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q $RIGHT
         }
 
         # prev thread when in normal list
         [strcat $CTRLC p] {
-            send_all & $CTRLG 4 $CTRLM $UP q $RIGHT $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q $RIGHT
         }
         # F3
         [strcat $ESC O R] {
-            send_all & $CTRLG 4 $CTRLM $UP q $RIGHT $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q $RIGHT
         }
 
         # start code-generator "^\\s *#"

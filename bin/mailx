@@ -84,7 +84,7 @@ if test -e /opt/local/bin/mailx; then
 fi
 
 (
-    printf "$the_mailx -S smtp=localhost:2025 -S smtp-auth-user=hjbao@marvell.com -S smtp-auth-password=%q " "$(get-authinfo localhost hjbao@marvell.com)"
+    printf "$the_mailx -S from=hjbao@marvell.com -S smtp=localhost:2025 -S smtp-auth-user=hjbao@marvell.com -S smtp-auth-password=%q " "$(get-authinfo localhost hjbao@marvell.com)"
     for y in attach cc bcc subject to; do
         eval '
         if test ${#'$y'[@]} != 0; then
@@ -106,4 +106,4 @@ fi
     printf " << '31a1b9affa4ee4c6520ac20bb7c16f69'\n"
     echo "$body"
     echo "31a1b9affa4ee4c6520ac20bb7c16f69"
-) | bash
+) | bash $(if test "$DEBUG" = true; then echo -x; fi)

@@ -2,10 +2,13 @@
 
 for x in ~/Maildir/*/cur ~/Maildir/*/new; do
     [[ $x =~ gmail ]] && continue
+    if test $# = 1 && echo $x | ! grep -i -e "$1"; then
+        continue
+    fi
     (
-	cd "$x"
-	find . -size -500000c -type f|xargs -d \\n bash -c 'mv -v "$@" ~/Maildir/gmail.MarvellInbox/cur -v ' true 
-	find . -size +500000c -type f|xargs -d \\n bash -c 'mv -v "$@" ~/Maildir/gmail.BigMirror/cur -v ' true 
+        cd "$x"
+        find . -size -500000c -type f|xargs -d \\n bash -c 'mv -n -v "$@" ~/Maildir/gmail.MarvellInbox/cur' true
+        find . -size +500000c -type f|xargs -d \\n bash -c 'mv -n -v "$@" ~/Maildir/gmail.BigMirror/cur' true
     )
 done
 

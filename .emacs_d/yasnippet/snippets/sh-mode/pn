@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: pn
+# key: pn
+# --
+awk '{print \$$1}'$0

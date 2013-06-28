@@ -269,6 +269,20 @@ might be bad."
        t))))
 
 ;;;###autoload
+(defun bhj-indent-region-as-prev-line()
+  (interactive)
+  (when mark-active
+    (let* ((begin (region-beginning))
+          (end (region-end))
+          (last-line-indent
+           (save-excursion
+             (goto-char begin)
+             (previous-line)
+             (back-to-indentation)
+             (current-column))))
+      (replace-regexp "^" (make-string last-line-indent ? ) nil begin end))))
+
+;;;###autoload
 (defun java-get-hierarchy ()
   (interactive)
   (set-gtags-start-file)

@@ -1,7 +1,11 @@
 #!/usr/bin/env perl
 use URI::Escape;
 
-push @ARGV, "-bash_history.bak";
+if (@ARGV = 1 && $ARGV[0] eq 'backup-mail') {
+    @ARGV = split(' ', 'label:marvellinbox OR label:bigmirror')
+} else {
+    push @ARGV, "-bash_history.bak";
+}
 
 $, = " ";
 $escape = uri_escape("@ARGV");
