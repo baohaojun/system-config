@@ -96,6 +96,8 @@ public:
     bool hintExists ( const QString &key );
     void insertHint ( const QString &key,const QVariant &val );
 
+    const QObject *data() const;
+
 
 private:
     class NotificationData;

@@ -75,12 +75,12 @@ uint  FreedesktopBackend::notify ( Notification noti )
     if(replyMsg.type() == QDBusMessage::ReplyMessage){
         id= replyMsg.arguments().at(0).toUInt();
         qDebug()<<"DBUS_ID"<<id;
-        activeNotifications[id] = noti;
+        m_activeNotifications[id] = noti;
     }
     return id;
 }
 void FreedesktopBackend::actionInvoked(const uint &id, const QString &actionID){
-    Notification noti = activeNotifications[id];
+    Notification noti = m_activeNotifications[id];
     if(noti.id() == 0)
         return;
     qDebug() <<"Action"<<id<<"|"<<actionID ;
@@ -90,7 +90,7 @@ void FreedesktopBackend::actionInvoked(const uint &id, const QString &actionID){
 
 void FreedesktopBackend::closeNotification ( Notification notification )
 {
-    activeNotifications.remove(notification.id());
+    m_activeNotifications.remove(notification.id());
     QDBusMessage message = QDBusMessage::createMethodCall(dbusServiceName, dbusPath, dbusInterfaceName,"CloseNotification");
     QVariantList args;
     args<<notification.id();
@@ -105,7 +105,7 @@ void FreedesktopBackend::closed ( const uint &id,const uint &reason )
     qDebug() <<"Closed"<<id<<"|"<<reason;
     if(id == 0)
         return;
-    Notification noti =  activeNotifications.take(id);
+    Notification noti =  m_activeNotifications.take(id);
     snore()->closeNotification ( noti ,QFlag(reason));
 }
 

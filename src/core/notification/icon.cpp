@@ -39,13 +39,22 @@ public:
 
     SnoreIconData(const QString &url){
         qDebug()<<"Creating SnoreIcon"<<url;
-        if(url.startsWith(":/")){
+        if(url.startsWith(":/"))
+        {
             m_img = QImage(url);
             m_isLocalFile = false;
-        }else if(QFile(url).exists()){
-            m_isLocalFile = true;
-            m_localFileName = url;
         }
+        else if(QFile(url).exists())
+        {
+            m_isLocalFile = true;
+            m_localUrl = url;
+        }
+        else
+        {
+            m_url = url;
+            m_isLocalFile = false;
+        }
+
     }
 
     ~SnoreIconData()
@@ -54,7 +63,8 @@ public:
 
     QImage m_img;
     QByteArray m_data;
-    QString m_localFileName;
+    QString m_localUrl;
+    QString m_url;
     QString m_hash;
     bool m_isLocalFile;
 
@@ -89,23 +99,23 @@ SnoreIcon::~SnoreIcon()
 
 const QImage &SnoreIcon::image() const{
     if(d->m_img.isNull() && d->m_isLocalFile){
-        d->m_img = QImage(d->m_localFileName);
+        d->m_img = QImage(d->m_localUrl);
     }
     return d->m_img;
 }
 
 const QString &SnoreIcon::localUrl()const{
-    if(d->m_localFileName.isEmpty()){
+    if(d->m_localUrl.isEmpty()){
         if(hasedImages.contains(hash())){
-            d->m_localFileName =  hasedImages[hash()];
+            d->m_localUrl =  hasedImages[hash()];
         }else{
-            d->m_localFileName = SnoreCore::snoreTMP();
-            d->m_localFileName  = d->m_localFileName .append("/").append(hash()).append(".png");
-            hasedImages[hash()] = d->m_localFileName;
-            d->m_img.save(d->m_localFileName ,"PNG");
+            d->m_localUrl = SnoreCore::snoreTMP();
+            d->m_localUrl  = d->m_localUrl.append(hash()).append(".png");
+            hasedImages[hash()] = d->m_localUrl;
+            d->m_img.save(d->m_localUrl ,"PNG");
         }
     }
-    return d->m_localFileName;
+    return d->m_localUrl;
 }
 
 const QByteArray &SnoreIcon::imageData() const{
@@ -132,7 +142,12 @@ bool SnoreIcon::isLocalFile() const
 }
 
 bool SnoreIcon::isEmpty() const{
-    return d->m_hash.isEmpty() && d->m_img.isNull() && d->m_localFileName.isEmpty();
+    return d->m_hash.isEmpty() && d->m_img.isNull() && d->m_localUrl.isEmpty();
+}
+
+const QString &SnoreIcon::url() const
+{
+    d->m_url.isEmpty()?localUrl():d->m_url;
 }
 
 }

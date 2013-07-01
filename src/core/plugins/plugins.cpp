@@ -82,8 +82,8 @@ void SnorePlugin::startTimeout(uint id,int timeout){
 void SnorePlugin::notificationTimedOut(){
     uint id = m_timeout_order.takeFirst();
     m_timeouts.take(id)->deleteLater();
-    if(activeNotifications.contains(id)){
-        Notification n = activeNotifications.take(id);
+    if(m_activeNotifications.contains(id)){
+        Notification n = m_activeNotifications.take(id);
         snore()->closeNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
     }
 }

@@ -58,8 +58,8 @@ public:
             int action = msg->wParam & 0xffff;
             int data = (msg->wParam & 0xffffffff) >> 16;
             uint notificationID = msg->lParam;
-            qDebug()<<"_snarl->activeNotifications"<<m_snarl->activeNotifications.keys();
-            Notification notification(m_snarl->activeNotifications[notificationID]);
+            qDebug()<<"_snarl->activeNotifications"<<m_snarl->m_activeNotifications.keys();
+            Notification notification(m_snarl->m_activeNotifications[notificationID]);
             qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action<<"data:"<<data;
             NotificationEnums::CloseReasons::closeReasons reason = NotificationEnums::CloseReasons::NONE;
             switch(action){
@@ -84,7 +84,7 @@ public:
                 break;
             case SnarlEnums::SnarlUserBack:
                 qDebug()<<"Snalr user has returned";
-                m_snarl->activeNotifications.clear();
+                m_snarl->m_activeNotifications.clear();
                 m_snarl->m_away = false;
                 break;
             default:
@@ -191,7 +191,7 @@ uint SnarlBackend::notify(Notification notification){
         }
         //add ack stuff
         if(!m_away)
-            activeNotifications[id] = notification;
+            m_activeNotifications[id] = notification;
     }else{
         //update message
         snarlInterface->Update(notification.id(),
@@ -209,7 +209,7 @@ uint SnarlBackend::notify(Notification notification){
 
 void SnarlBackend::closeNotification(Notification notification){
     m_defautSnarlinetrface->Hide(notification.id());
-    activeNotifications.remove(notification.id());
+    m_activeNotifications.remove(notification.id());
 }
 
 #include "snarl.moc"

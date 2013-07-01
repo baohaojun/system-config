@@ -237,6 +237,11 @@ void Notification::insertHint ( const QString &key, const QVariant &val )
     d->m_hints.insert ( key,val );
 }
 
+const QObject *Notification::data() const
+{
+    return d.data();
+}
+
 QDataStream & operator<< ( QDataStream &stream, const Notification &noti )
 {
     stream<<noti.toString();

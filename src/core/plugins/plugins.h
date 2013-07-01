@@ -39,7 +39,7 @@ public:
     const QString &name() const;
 
 protected:
-    QHash<uint,Notification> activeNotifications;
+    QHash<uint,Notification> m_activeNotifications;
     void startTimeout(uint id,int timeout);
 private slots:
     void notificationTimedOut();
