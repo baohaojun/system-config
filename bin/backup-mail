@@ -7,8 +7,8 @@ for x in ~/Maildir/*/cur ~/Maildir/*/new; do
     fi
     (
         cd "$x"
-        find . -size -500000c -type f|xargs -d \\n bash -c 'mv -n -v "$@" ~/Maildir/gmail.MarvellInbox/cur' true
-        find . -size +500000c -type f|xargs -d \\n bash -c 'mv -n -v "$@" ~/Maildir/gmail.BigMirror/cur' true
+        find . -name '*:*,*S*' -size -500000c -type f|xargs -d \\n bash -c 'mv -n -v "$@" ~/Maildir/gmail.MarvellInbox/cur' true
+        find . -name '*:*,*S*' -size +500000c -type f -print|xargs -d \\n bash -c 'mv -n -v "$@" ~/Maildir/gmail.BigMirror/cur' true
     )
 done
 

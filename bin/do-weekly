@@ -36,8 +36,8 @@ week_page=$(date +%Y.%m.%d -d "$monday")-$(date +%Y.%m.%d -d "$friday")
 congfu --space Weekly -- -a getSource --title $week_page |perl -ne 'print unless(1..1)' > $week_page
 congfu --space Weekly -- -a storePage --title $week_page --file $week_page --parent $year_page
 
-tool_page=$(congfu --space Weekly -- -a getPageList --title $week_page --children | grep tool -i) || true
-test -z "$tool_page" && tool_page=Tool_$(date +%Y%m%d -d "$friday")
+tool_page=$(congfu --space Weekly -- -a getPageList --title $week_page --children | grep bsp -i) || true
+test -z "$tool_page" && tool_page=BSP_$(date +%Y%m%d -d "$friday")
 congfu --space Weekly -- -a getSource --title $tool_page |perl -ne 'print unless(1..1)' > $tool_page
 congfu --space Weekly -- -a storePage --title $tool_page --file $tool_page --parent $week_page
 
