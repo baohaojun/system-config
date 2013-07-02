@@ -39,6 +39,8 @@ have =skeleton= in their names.
 
 * Usage
 
+0. Install [[https://github.com/browse-kill-ring/browse-kill-ring][browse-kill-ring]].
+
 1. =(require 'skeleton-complete)=
 
 2. =(skeleton-complete-global-mode 1)=
@@ -56,3 +58,6 @@ the 1st flavor there.
 
 Thank Matus Goljer (author of [[https://github.com/Fuco1/smartparens][smartparens]]) for teaching me a lot on
 emacs lisp programming (see the [[https://github.com/baohaojun/skeleton-complete/issues][issues of skeleton-complete]]).
+
+Thank the [[https://github.com/browse-kill-ring/browse-kill-ring][browse-kill-ring]] project for providing me a much better way
+for selecting from multiple completions.
