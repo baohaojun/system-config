@@ -31,6 +31,7 @@ public:
     SnoreIcon(const QImage &img);
     SnoreIcon(const class QString &url);
     SnoreIcon(const SnoreIcon &other);
+    SnoreIcon &operator=(const SnoreIcon& other);
     ~SnoreIcon();
 
     const QImage &image() const;
@@ -46,7 +47,7 @@ private:
     static QHash<QString,QString> hasedImages;
 private:
     class SnoreIconData;
-    QSharedPointer<SnoreIconData> d;
+    SnoreIconData* d;
 
 
 

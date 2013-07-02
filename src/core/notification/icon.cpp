@@ -61,6 +61,7 @@ public:
     {}
 
 
+    QAtomicInt m_ref;
     QImage m_img;
     QByteArray m_data;
     QString m_localUrl;
@@ -73,27 +74,53 @@ public:
 
 QHash<QString,QString> SnoreIcon::hasedImages;
 
-SnoreIcon::SnoreIcon()
+SnoreIcon::SnoreIcon() :
+    d(NULL)
 {
-    d = QSharedPointer<SnoreIconData>(new SnoreIconData());
 }
 
 SnoreIcon::SnoreIcon(const QImage &img)
 {
-    d = QSharedPointer<SnoreIconData>(new SnoreIconData(img));
+    d = new SnoreIconData(img);
+    d->m_ref.ref();
 }
 
-SnoreIcon::SnoreIcon(const QString &url){
-    d = QSharedPointer<SnoreIconData>(new SnoreIconData(url));
+SnoreIcon::SnoreIcon(const QString &url)
+{
+    d = new SnoreIconData(url);
+    d->m_ref.ref();
 }
 
-SnoreIcon::SnoreIcon(const SnoreIcon &other):
-    d(other.d)
-{    }
+SnoreIcon::SnoreIcon(const SnoreIcon &other)
+{
+    if(other.d)
+    {
+        other.d->m_ref.ref();
+        d = other.d;
+    }
+    else
+    {
+        d = NULL;
+    }
+}
+
+SnoreIcon &SnoreIcon::operator=(const SnoreIcon &other)
+{
+    if(d && !d->m_ref.deref())
+    {
+        d->deleteLater();
+    }
+    other.d->m_ref.ref();
+    d = other.d;
+    return *this;
+}
 
 SnoreIcon::~SnoreIcon()
 {
-    d.clear();
+    if(d && !d->m_ref.deref())
+    {
+        d->deleteLater();
+    }
 }
 
 
@@ -147,7 +174,7 @@ bool SnoreIcon::isEmpty() const{
 
 const QString &SnoreIcon::url() const
 {
-    d->m_url.isEmpty()?localUrl():d->m_url;
+    return d->m_url.isEmpty()?localUrl():d->m_url;
 }
 
 }

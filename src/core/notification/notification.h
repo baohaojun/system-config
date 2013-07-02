@@ -20,7 +20,6 @@
 #include "icon.h"
 
 #include <QVariant>
-#include <QSharedPointer>
 namespace Snore{
 
 namespace NotificationEnums{
@@ -62,7 +61,7 @@ public:
     };
 
 public:
-    Notification ( uint id=0 );
+    Notification ();
     Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10,uint id=0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
     Notification ( const Notification &other );
     ~Notification();
@@ -101,7 +100,9 @@ public:
 
 private:
     class NotificationData;
-    QSharedPointer<NotificationData> d;
+    NotificationData* d;
+    static int notificationCount;
+    static int notificationMetaID;
 };
 
 }

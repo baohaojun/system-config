@@ -26,25 +26,14 @@
 #include <QTextDocument>
 namespace Snore{
 
-static int metaid = qRegisterMetaType<Notification>();
+int Notification::notificationMetaID = qRegisterMetaType<Notification>();
 
-static int count = 0;
+int Notification::notificationCount = 0;
 
 class Notification::NotificationData : public QObject
 {
     Q_OBJECT
 public:
-    NotificationData ( uint id=0 ):
-        m_id ( id ),
-        m_timeout ( 10 ),
-        m_source ( NULL ),
-        m_priority(NotificationEnums::Prioritys::NORMAL),
-        m_closeReason(NotificationEnums::CloseReasons::NONE)
-
-    {
-        qDebug()<<"ActiveNotifications"<<++count;
-    }
-
     NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
         m_id ( id ),
         m_timeout ( timeout ),
@@ -57,15 +46,15 @@ public:
         m_priority(priority),
         m_closeReason(NotificationEnums::CloseReasons::NONE)
     {
-        qDebug()<<"ActiveNotifications"<<++count;
+        qDebug()<<"Creating Notification: ActiveNotifications"<<++notificationCount;
     }
 
 
     ~NotificationData(){
-        //delete _actionInvoked;
-        qDebug()<<"ActiveNotifications"<<--count;
+        qDebug() << "Deleting Notification: ActiveNotifications"<<--notificationCount;
     }
 
+    QAtomicInt m_ref;
     uint m_id;
     int m_timeout;
     Notification::Action *m_actionInvoked;
@@ -79,6 +68,8 @@ public:
     NotificationEnums::CloseReasons::closeReasons m_closeReason;
     QMap<int,Notification::Action*> m_actions;
     QVariantHash m_hints;
+
+
 };
 
 
@@ -91,28 +82,45 @@ QString Notification::toPlainText ( const QString &string )
     return QString(string);
 }
 
-Notification::Notification ( uint id ) 
+Notification::Notification () :
+    d(NULL)
 {
-    d = QSharedPointer<NotificationData>(new NotificationData(id));
 }
 
 Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority ) 
 {
-    d = QSharedPointer<NotificationData>(new  NotificationData(application,alert,title,text,icon,timeout,id,priority));
+    d = new  NotificationData(application,alert,title,text,icon,timeout,id,priority);
+    d->m_ref.ref();
 }
 
-Notification::Notification ( const Notification &other ):
-    d(other.d)
+Notification::Notification ( const Notification &other )
 {
+    if(other.d)
+    {
+        other.d->m_ref.ref();
+        d = other.d;
+    }
+    else
+    {
+        d = NULL;
+    }
 }
 
 Notification::~Notification()
 {
-    d.clear();
+    if(d && !d->m_ref.deref())
+    {
+        d->deleteLater();
+    }
 }
 
 Notification &Notification::operator=(const Notification& other)
 {
+    if(d && !d->m_ref.deref())
+    {
+        d->deleteLater();
+    }
+    other.d->m_ref.ref();
     d = other.d;
     return *this;
 }
@@ -239,7 +247,7 @@ void Notification::insertHint ( const QString &key, const QVariant &val )
 
 const QObject *Notification::data() const
 {
-    return d.data();
+    return d;
 }
 
 QDataStream & operator<< ( QDataStream &stream, const Notification &noti )

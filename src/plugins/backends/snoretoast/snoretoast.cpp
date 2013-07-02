@@ -47,7 +47,6 @@ void SnoreToast::unregisterApplication(Application *application)
 uint SnoreToast::notify(Notification notification)
 {
     QProcess *p = new QProcess(this);
-    p->setProcessChannelMode(QProcess::MergedChannels);
 
     connect(p,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(slotToastNotificationClosed(int,QProcess::ExitStatus)));
     connect(qApp,SIGNAL(aboutToQuit()),p,SLOT(kill()));
@@ -88,8 +87,11 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
     {
     case 0:
         reason = NotificationEnums::CloseReasons::CLOSED;
-        n.setActionInvoked(n.actions().begin().key());
-        snore()->notificationActionInvoked(n);
+        if(!n.actions().isEmpty())
+        {
+            n.setActionInvoked(n.actions().begin().key());
+            snore()->notificationActionInvoked(n);
+        }
         break;
     case 1:
         //hidden;
