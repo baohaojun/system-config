@@ -35,7 +35,6 @@ private:
     SnarlBackend::SnarlWidget* m_eventLoop;
     QHash<QString,Snarl::V42::SnarlInterface*> m_applications;
     Snarl::V42::SnarlInterface* m_defautSnarlinetrface;
-    bool m_away;
 
 public slots:
     void registerApplication(Snore::Application *application);

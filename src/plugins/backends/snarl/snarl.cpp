@@ -46,6 +46,7 @@ public:
     }
 
     bool winEvent( MSG * msg, long * result ){
+        Q_UNUSED(result);
         if(msg->message == SNARL_GLOBAL_MESSAGE){
             int action = msg->wParam;
             if(action == SnarlEnums::SnarlLaunched){
@@ -58,8 +59,7 @@ public:
             int action = msg->wParam & 0xffff;
             int data = (msg->wParam & 0xffffffff) >> 16;
             uint notificationID = msg->lParam;
-            qDebug()<<"_snarl->activeNotifications"<<m_snarl->m_activeNotifications.keys();
-            Notification notification(m_snarl->m_activeNotifications[notificationID]);
+            Notification notification =  m_snarl->snore()->getActiveNotificationByID(notificationID);
             qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action<<"data:"<<data;
             NotificationEnums::CloseReasons::closeReasons reason = NotificationEnums::CloseReasons::NONE;
             switch(action){
@@ -80,12 +80,9 @@ public:
                 //away stuff
             case SnarlEnums::SnarlUserAway:
                 qDebug()<<"Snalr user has gone away";
-                m_snarl->m_away = true;
                 break;
             case SnarlEnums::SnarlUserBack:
                 qDebug()<<"Snalr user has returned";
-                m_snarl->m_activeNotifications.clear();
-                m_snarl->m_away = false;
                 break;
             default:
                 qDebug()<<"Unknown snarl action found!!";
@@ -106,8 +103,7 @@ private:
 
 SnarlBackend::SnarlBackend():
     SnoreBackend("Snarl"),
-    m_defautSnarlinetrface(NULL),
-    m_away(false)
+    m_defautSnarlinetrface(NULL)
 {
 
 }
@@ -189,9 +185,6 @@ uint SnarlBackend::notify(Notification notification){
         foreach(const Notification::Action *a, notification.actions()){
             snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
         }
-        //add ack stuff
-        if(!m_away)
-            m_activeNotifications[id] = notification;
     }else{
         //update message
         snarlInterface->Update(notification.id(),
@@ -209,7 +202,6 @@ uint SnarlBackend::notify(Notification notification){
 
 void SnarlBackend::closeNotification(Notification notification){
     m_defautSnarlinetrface->Hide(notification.id());
-    m_activeNotifications.remove(notification.id());
 }
 
 #include "snarl.moc"

@@ -79,7 +79,6 @@ uint Growl::notify(Notification notification){
                       Notification::toPlainText(notification.title()).toUtf8().constData(),
                       Notification::toPlainText(notification.text()).toUtf8().constData(),
                       notification.icon().localUrl().isEmpty()?NULL:notification.icon().localUrl().toUtf8().constData(),NULL,"1");
-        m_activeNotifications.insert(m_id,notification);
 
     }catch(const std::exception& e){
         qDebug()<<"Growl:"<<e.what();
@@ -93,7 +92,7 @@ void Growl::closeNotification(Notification notification){
 
 void Growl::gntpCallback(const int &id,const std::string &reason,const std::string &data){
     qDebug()<<"Growl Callback"<<id<<QString(reason.c_str())<<QString(data.c_str());
-    Notification n = s_instance->m_activeNotifications.take(id);
+    Notification n = s_instance->snore()->getActiveNotificationByID(id);
     NotificationEnums::CloseReasons::closeReasons r = NotificationEnums::CloseReasons::NONE;
     if(reason == "TIMEDOUT")
         r = NotificationEnums::CloseReasons::TIMED_OUT;

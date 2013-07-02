@@ -64,28 +64,28 @@ void TrayIconNotifer::displayNotification(){
 
     qDebug()<<"taking"<<notification.title();
     m_displayed = notification.id();
-    m_activeNotifications.insert(notification.id(),notification);
     m_trayIcon->showMessage ( Notification::toPlainText(notification.title()),Notification::toPlainText(notification.text()),QSystemTrayIcon::NoIcon,notification.timeout() *1000 );
     m_lastNotify.restart();
 }
 
 void TrayIconNotifer::closeNotification(){
-    if(m_activeNotifications.contains(m_displayed)){
-        Notification noti = m_activeNotifications.take(m_displayed);
-        snore()->closeNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
+    Notification n = snore()->getActiveNotificationByID(m_displayed);
+    if(n.isValid()){
+        snore()->closeNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
     }
     displayNotification();
 }
 
 void TrayIconNotifer::actionInvoked(){
     qDebug()<<"Traicon invoked"<<m_displayed;
-    if(m_activeNotifications.contains(m_displayed)){
-        Notification noti = m_activeNotifications.take(m_displayed);
-        if(noti.actions().isEmpty()){
-            noti.setActionInvoked(noti.actions().keys().first());
-            snore()->notificationActionInvoked(noti);
+
+    Notification n = snore()->getActiveNotificationByID(m_displayed);
+    if(n.isValid()){
+        if(n.actions().isEmpty()){
+            n.setActionInvoked(n.actions().keys().first());
+            snore()->notificationActionInvoked(n);
         }
-        snore()->closeNotification(noti,NotificationEnums::CloseReasons::CLOSED);
+        snore()->closeNotification(n,NotificationEnums::CloseReasons::CLOSED);
 
     }
 

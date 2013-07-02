@@ -245,6 +245,11 @@ void Notification::insertHint ( const QString &key, const QVariant &val )
     d->m_hints.insert ( key,val );
 }
 
+bool Notification::isValid() const
+{
+    return d != NULL;
+}
+
 const QObject *Notification::data() const
 {
     return d;

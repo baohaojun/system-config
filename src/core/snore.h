@@ -28,6 +28,7 @@ class QSystemTrayIcon;
 class QDir;
 class QSettings;
 
+
 namespace Snore{
 class SNORE_EXPORT SnoreCore:public QObject
 {
@@ -61,6 +62,8 @@ public:
     const QString &primaryNotificationBackend();
     QSystemTrayIcon *trayIcon();
 
+    Notification getActiveNotificationByID(uint id);
+
 
 
 private:
@@ -71,6 +74,7 @@ private:
     static QDir *s_pluginDir;
 
     ApplicationsList m_applications;
+    QHash<uint,Notification> m_activeNotifications;
 
 
     QStringList m_notificationBackends;

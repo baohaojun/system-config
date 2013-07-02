@@ -57,8 +57,6 @@ void FreedesktopFrontend::actionInvoked(Notification notification) {
 void FreedesktopFrontend::notificationClosed(Notification notification) {
 
     qDebug()<<"Closing Dbus notification"<<notification.id()<<"reason:"<<(int)notification.closeReason();
-    m_activeNotifications.remove(notification.id());
-    qDebug()<<"Active Dbus Notifications"<<m_activeNotifications.keys();
     emit NotificationClosed(notification.id(),notification.closeReason());
 }
 
@@ -99,7 +97,6 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     }
 
     snore()->broadcastNotification(noti);
-    m_activeNotifications[noti.id()] = noti;
     startTimeout(noti.id(),noti.timeout());
     return noti.id();
 }
@@ -107,8 +104,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
 
 
 void FreedesktopFrontend::CloseNotification(uint id){
-    Notification noti = m_activeNotifications.take(id);
-    qDebug()<<"Active Dbus Notifications"<<m_activeNotifications.keys();
+    Notification noti = snore()->getActiveNotificationByID(id);
     snore()->closeNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
 }
 

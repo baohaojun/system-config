@@ -224,6 +224,7 @@ uint SnoreCore::broadcastNotification ( Notification notification )
             qApp->quit();
         }
         notification.setId(m_notificationBackend->notify( notification ));
+        m_activeNotifications[notification.id()] = notification;
         return  notification.id();
     }
     return -1;
@@ -232,6 +233,7 @@ uint SnoreCore::broadcastNotification ( Notification notification )
 void SnoreCore::closeNotification ( Notification notification,const NotificationEnums::CloseReasons::closeReasons &reason )
 {
     notification.setCloseReason(reason);
+    m_activeNotifications.remove(notification.id());
     emit closeNotify ( notification );
 }
 
@@ -312,6 +314,11 @@ const QString &SnoreCore::primaryNotificationBackend(){
 
 QSystemTrayIcon *SnoreCore::trayIcon(){
     return m_trayIcon;
+}
+
+Notification SnoreCore::getActiveNotificationByID(uint id)
+{
+    return m_activeNotifications[id];
 }
 
 }
