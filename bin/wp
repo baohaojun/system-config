@@ -10,7 +10,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
             FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
             host=$(echo "$FILE" | perl -npe 's,^..(.*?)\\.*,$1,')
             path=$(echo "$FILE" | perl -npe 's,^..(.*?)(\\.*),$2,')
-            FILE=$(printf '\\\\%s%s' $(ip-or-name $host) $path)
+            FILE=$(printf '\\\\%s%s' $(ip-or-name $host) "$path")
         elif [[ "$FILE" =~ ^// ]]; then
             FILE=`echo "$FILE"|perl -npe 's,/,\\\\,g'`
         else

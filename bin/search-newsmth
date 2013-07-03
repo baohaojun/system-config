@@ -1,9 +1,10 @@
 #!/bin/bash
 
-TEMP=$(getopt -o a:b: --long author:board: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o a:Ab: --long author:board: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 
 author=flonk
+att='&aonly=true'
 def_board=(MyPhoto Pictures)
 board=()
 while true; do
@@ -11,6 +12,10 @@ while true; do
         -a|--author)
             author=$2
             shift 2
+            ;;
+        -A)
+            att=
+            shift
             ;;
         -b|--board)
             board=("${board[@]}" $2)
@@ -27,7 +32,7 @@ while true; do
 done
 
 if test ${#board[@]} = 0; then
-    of "http://ar.newsmth.net/searchArticle.do?subject=&author=$author&boardname=&body=&start=&end="
+    of "http://ar.newsmth.net/searchArticle.do?subject=&author=$author&boardname=&body=&start=&end=$att"
     exit
 fi
 

@@ -53,6 +53,12 @@ case "$1" in
         emacsclient -e '(w3m-goto-url "'$url'")'
         find-or-exec emacs
         ;;
+    back)
+        emacsclient -e '(douban-music-seek-backward)'
+        ;;
+    forth)
+        emacsclient -e '(douban-music-seek-forward)'
+        ;;
     next)
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak

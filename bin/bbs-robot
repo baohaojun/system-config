@@ -89,14 +89,6 @@ proc qx cmd {
 
 proc same_thread args {
     send [join $args ""]
-    expect -re "上下篇|上一封" {
-        if {[string eq $expect_out(0,string) "上下篇"]} {
-            # do nothing
-        } else {
-            set RIGHT \033\[C
-            send $RIGHT
-        }
-    }
 }
 
 proc send_all args {
@@ -172,25 +164,25 @@ if [string eq "" $mode] {
 
         # thread mode when in original list
         [strcat $CTRLC t] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM q $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM q p
         }
 
         # next thread when in normal list
         [strcat $CTRLC n] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q p
         }
         # F4
         [strcat $ESC O S] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q p
         }
 
         # prev thread when in normal list
         [strcat $CTRLC p] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q p
         }
         # F3
         [strcat $ESC O R] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q $RIGHT
+            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q p
         }
 
         # start code-generator "^\\s *#"
