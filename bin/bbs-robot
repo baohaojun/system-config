@@ -194,38 +194,39 @@ if [string eq "" $mode] {
         }
 
         # start code-generator "^\\s *#"
-        # perl -e 'for $x ("A".."Z") { print "\$CTRLQ\$CTRL$x {send \$CTRL$x}\n"}'
+        # perl -e 'for $x ("A".."Z") { print "\$CTRLX\$CTRL$x {send \$CTRL$x}\n"}'
         # end code-generator
         # start generated code
-        $CTRLQ$CTRLA {send $CTRLA}
-        $CTRLQ$CTRLB {send $CTRLB}
-        $CTRLQ$CTRLC {send $CTRLC}
-        $CTRLQ$CTRLD {send $CTRLD}
-        $CTRLQ$CTRLE {send $CTRLE}
-        $CTRLQ$CTRLF {send $CTRLF}
-        $CTRLQ$CTRLG {send $CTRLG}
-        $CTRLQ$CTRLH {send $CTRLH}
-        $CTRLQ$CTRLI {send $CTRLI}
-        $CTRLQ$CTRLJ {send $CTRLJ}
-        $CTRLQ$CTRLK {send $CTRLK}
-        $CTRLQ$CTRLL {send $CTRLL}
-        $CTRLQ$CTRLM {send $CTRLM}
-        $CTRLQ$CTRLN {send $CTRLN}
-        $CTRLQ$CTRLO {send $CTRLO}
-        $CTRLQ$CTRLP {send $CTRLP}
-        $CTRLQ$CTRLQ {send $CTRLQ}
-        $CTRLQ$CTRLR {send $CTRLR}
-        $CTRLQ$CTRLS {send $CTRLS}
-        $CTRLQ$CTRLT {send $CTRLT}
-        $CTRLQ$CTRLU {send $CTRLU}
-        $CTRLQ$CTRLV {send $CTRLV}
-        $CTRLQ$CTRLW {send $CTRLW}
-        $CTRLQ$CTRLX {send $CTRLX}
-        $CTRLQ$CTRLY {send $CTRLY}
-        $CTRLQ$CTRLZ {send $CTRLZ}
+        $CTRLX$CTRLA {send $CTRLA}
+        $CTRLX$CTRLB {send $CTRLB}
+        $CTRLX$CTRLC {send $CTRLC}
+        $CTRLX$CTRLD {send $CTRLD}
+        $CTRLX$CTRLE {send $CTRLE}
+        $CTRLX$CTRLF {send $CTRLF}
+        $CTRLX$CTRLG {send $CTRLG}
+        $CTRLX$CTRLH {send $CTRLH}
+        $CTRLX$CTRLI {send $CTRLI}
+        $CTRLX$CTRLJ {send $CTRLJ}
+        $CTRLX$CTRLK {send $CTRLK}
+        $CTRLX$CTRLL {send $CTRLL}
+        $CTRLX$CTRLM {send $CTRLM}
+        $CTRLX$CTRLN {send $CTRLN}
+        $CTRLX$CTRLO {send $CTRLO}
+        $CTRLX$CTRLP {send $CTRLP}
+        $CTRLX$CTRLQ {send $CTRLQ}
+        $CTRLX$CTRLR {send $CTRLR}
+        $CTRLX$CTRLS {send $CTRLS}
+        $CTRLX$CTRLT {send $CTRLT}
+        $CTRLX$CTRLU {send $CTRLU}
+        $CTRLX$CTRLV {send $CTRLV}
+        $CTRLX$CTRLW {send $CTRLW}
+        $CTRLX$CTRLX {send $CTRLX}
+        $CTRLX$CTRLY {send $CTRLY}
+        $CTRLX$CTRLZ {send $CTRLZ}
 
         # end generated code
-        $CTRLQ$ESC   {send $ESC}
+        $CTRLX$ESC   {send $ESC}
+        timeout 180 {send \000}
     }
 }
 exit
