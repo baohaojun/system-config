@@ -37,7 +37,7 @@ bool SnoreToast::init(SnoreCore *snore)
 
     QStringList arguements;
     arguements << "-install"
-               << qApp->applicationName()
+               << QString("SnoreNotify\\%1").arg(qApp->applicationName())
                << qApp->applicationFilePath()
                << m_appID;
     qDebug() << "SnoreToast" << arguements;
