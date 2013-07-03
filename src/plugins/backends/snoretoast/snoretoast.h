@@ -23,6 +23,9 @@ public slots:
 private slots:
     void slotToastNotificationClosed(int code, QProcess::ExitStatus);
 
+private:
+    QString m_appID;
+
 
 };
 

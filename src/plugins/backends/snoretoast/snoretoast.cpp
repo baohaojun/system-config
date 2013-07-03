@@ -31,6 +31,21 @@ bool SnoreToast::init(SnoreCore *snore)
     {
         return false;
     }
+    m_appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName());
+
+    QProcess *p = new QProcess(this);
+
+    QStringList arguements;
+    arguements << "-install"
+               << qApp->applicationName()
+               << qApp->applicationFilePath()
+               << m_appID;
+    qDebug() << "SnoreToast" << arguements;
+    p->start("SnoreToast", arguements);
+    p->waitForFinished();
+    if(p->exitCode() != 0)
+        return false;
+
     return SnoreBackend::init(snore);
 }
 
@@ -60,7 +75,9 @@ uint SnoreToast::notify(Notification notification)
                << "-p"
                   //               << notification.icon().isLocalFile()?QDir::toNativeSeparators(notification.icon().localUrl()):notification.icon().url()
                << QDir::toNativeSeparators(notification.icon().localUrl())
-               << "-w";
+               << "-w"
+               << "-appID"
+               << m_appID;
     qDebug() << "SnoreToast" << arguements;
     p->start("SnoreToast", arguements);
 

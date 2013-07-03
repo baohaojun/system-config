@@ -34,6 +34,8 @@ using namespace Snore;
 SnoreNotify::SnoreNotify():
     m_settings("TheOneRing","SnoreNotify")
 {
+    qApp->setApplicationName("SnoreNotify");
+    qApp->setOrganizationName("TheOneRing");
     m_trayIcon = new TrayIcon();
     m_snore = new SnoreCore(m_trayIcon->trayIcon());
     m_snore->loadPlugins(PluginContainer::ALL);

@@ -61,8 +61,8 @@ void FreedesktopFrontend::notificationClosed(Notification notification) {
 }
 
 uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
-                                              const QString &app_icon, const QString &summary, const QString &body,
-                                              const QStringList &actions, const QVariantMap &hints, int timeout)
+                                 const QString &app_icon, const QString &summary, const QString &body,
+                                 const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     qDebug()<<app_name<<summary<<body<<app_icon<<timeout;
     SnoreIcon icon;
@@ -74,7 +74,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         icon = SnoreIcon(image.toQImage());
     }
 
-    if(!snore()->aplications().contains(app_name)){        
+    if(!snore()->aplications().contains(app_name)){
 #ifdef HAVE_KDE
         SnoreIcon appIcon = SnoreIcon(KIconLoader::global()->iconPath(app_icon, KIconLoader::Desktop));
 #else
@@ -105,7 +105,10 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
 
 void FreedesktopFrontend::CloseNotification(uint id){
     Notification noti = snore()->getActiveNotificationByID(id);
-    snore()->closeNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
+    if(noti.isValid())
+    {
+        snore()->closeNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
+    }
 }
 
 QStringList FreedesktopFrontend::GetCapabilities()

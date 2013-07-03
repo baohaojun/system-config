@@ -47,10 +47,12 @@ public:
         m_closeReason(NotificationEnums::CloseReasons::NONE)
     {
         qDebug()<<"Creating Notification: ActiveNotifications"<<++notificationCount;
+        m_ref.ref();
     }
 
 
     ~NotificationData(){
+        qDebug() << "Cloasing Notification:" << m_id << m_ref;
         qDebug() << "Deleting Notification: ActiveNotifications"<<--notificationCount;
     }
 
@@ -90,7 +92,6 @@ Notification::Notification () :
 Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority ) 
 {
     d = new  NotificationData(application,alert,title,text,icon,timeout,id,priority);
-    d->m_ref.ref();
 }
 
 Notification::Notification ( const Notification &other )
