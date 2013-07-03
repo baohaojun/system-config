@@ -176,11 +176,11 @@ system notification, just as rythombox does."
 
 (defun douban-music-seek-forward ()
   (interactive)
-  (process-send-string douban-music-current-process "seek 2\n"))
+  (process-send-string douban-music-current-process "seek 5\n"))
 
 (defun douban-music-seek-backward ()
   (interactive)
-  (process-send-string douban-music-current-process "seek -2\n"))
+  (process-send-string douban-music-current-process "seek -5\n"))
 
 (defun douban-music-stop ()
   (interactive)
