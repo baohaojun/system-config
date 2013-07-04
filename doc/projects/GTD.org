@@ -1,4 +1,0 @@
-* TODO track how much time I spent on each task
-  :PROPERTIES:
-  :ID:       d9243eab-fb58-4b9b-801b-cbd702f9a5db
-  :END:

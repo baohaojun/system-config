@@ -1,8 +1,0 @@
-* DONE Baby
-  CLOSED: [2013-02-05 Tue 16:35]
-  - CLOSING NOTE [2013-02-05 Tue 16:35] \\
-    The done items about my baby
-** DONE 搞定宝宝的生育津贴盖章 						 :pe:
-  CLOSED: [2011-12-12 Mon 13:05]
-  - CLOSING NOTE [2011-12-12 Mon 13:05]
-  - CLOSING NOTE [2011-12-09 Fri 15:37]

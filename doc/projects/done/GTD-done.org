@@ -1,7 +1,0 @@
-* DONE 搞定org-mode的习惯
-  CLOSED: [2013-02-05 Tue 16:33]
-  - CLOSING NOTE [2013-02-05 Tue 16:33] \\
-    Read the info, it's easy!
-  :PROPERTIES:
-  :ID:       10a4727d-9ee8-4cb8-bcf7-7c12dd482193
-  :END:
