@@ -1,0 +1,11 @@
+#!/bin/bash
+
+(cat <<EOF
+GET /checkip HTTP/1.1
+User-Agent: Wget/1.13.4 (linux-gnu)
+Accept: */*
+Host: ddns.oray.com
+Connection: Keep-Alive
+
+EOF
+sleep 5) | busybox nc ddns.oray.com 80 | grep 'Current IP' | sed -e 's/.*Current IP Address: \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'
