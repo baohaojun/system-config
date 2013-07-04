@@ -1,16 +1,15 @@
 #+LAST_MOBILE_CHANGE: 2013-03-07 11:00:08
-* TODO CrossDict
-
-** TODO Post some screenshots onto EnglishWorld board
 * TODO Learn ios programming
   :PROPERTIES:
   :ID:       1353b0c1-35eb-41eb-8444-99727018d53c
   :END:
-** TODO Start using the Mac system with my macbook air
+** DONE Start using the Mac system with my macbook air
+   CLOSED: [2013-07-04 Thu 09:48]
    :PROPERTIES:
    :ID:       c0213b81-512d-4984-81c5-eb43d2787447
    :END:
-** TODO Hack the keyboard into my preferred configuration
+** DONE Hack the keyboard into my preferred configuration
+   CLOSED: [2013-07-04 Thu 09:48]
    :PROPERTIES:
    :ID:       d5b3410f-bfe7-43e8-8935-970a08c8d7b4
    :END:
@@ -109,7 +108,8 @@ It can be used to download Xcode using multithread download.
   :PROPERTIES:
   :ID:       a78fc1d6-1b7e-4cde-aedf-8e05395a6824
   :END:
-* TODO Refine my github page as a true blog, which supports commenting.
+* DONE Refine my github page as a true blog, which supports commenting.
+  CLOSED: [2013-07-04 Thu 09:48]
   :PROPERTIES:
   :ID:       866dbc94-3521-43f3-85e5-323ce9d8c969
   :END:
@@ -174,6 +174,9 @@ firefox.
 * DONE write a doc：翅膀变硬了
   CLOSED: [2013-04-18 Thu 16:55]
 * Bash下的if || &&是没有优先级的，怀疑的时候就用括号给括起来。
-* TODO Get skeleton-complete into a package manager
-** TODO make it into a minor mode
-** TODO add some doc string, use check doc
+* DONE Get skeleton-complete into a package manager
+  CLOSED: [2013-07-04 Thu 09:49]
+** DONE make it into a minor mode
+   CLOSED: [2013-07-04 Thu 09:49]
+** DONE add some doc string, use check doc
+   CLOSED: [2013-07-04 Thu 09:49]

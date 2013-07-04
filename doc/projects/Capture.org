@@ -1,5 +1,7 @@
 * Tasks
-** TODO Finish the document
+** DONE Finish the document
+   CLOSED: [2013-07-04 Thu 09:44]
+   - CLOSING NOTE [2013-07-04 Thu 09:44]
    [2013-03-14 Thu]
    [[file:~/doc/baohaojun/dvp-keyboard-mac.org::%E5%9C%A8Mac%E7%B3%BB%E7%BB%9F%E4%B8%8B%E4%BD%BF%E7%94%A8dvp%20(Dvorak%20Programmer)][在Mac系统下使用dvp (Dvorak Programmer)]]
 

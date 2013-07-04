@@ -16,7 +16,8 @@
 
   Code is at vendor/marvell/generic/apps/MarvellSettings.
 
-* TODO understand uboot source code
+* DONE understand uboot source code
+  CLOSED: [2013-07-04 Thu 09:44]
   :PROPERTIES:
   :ID:       ee44af7a-8a29-4a30-becd-5c0a3a3e1f5e
   :END:
@@ -60,7 +61,8 @@ init_fnc_t *init_sequence[] = {
 
 这个 =board_init_f= 函数之后会跳转回来start.S里的 =relocate_code= 汇编
 函数，而最后会调用 =board_init_r= 函数。
-** TODO use memory test in uboot
+** DONE use memory test in uboot
+   CLOSED: [2013-07-04 Thu 09:44]
    :PROPERTIES:
    :ID:       7d26b473-25de-4df5-8aab-bc193d3b28dc
    :END:
@@ -163,5 +165,6 @@ init_fnc_t *init_sequence[] = {
 * DONE Local database for 1*88
   CLOSED: [2013-03-19 Tue 15:23]
 * TODO refactor uboot source code
-* TODO Work on tickets of xiaolin
+* DONE Work on tickets of xiaolin
+  CLOSED: [2013-07-04 Thu 09:46]
 * TODO Fix uboot compile warnings
