@@ -281,6 +281,7 @@
  '(mmm-submode-decoration-level 2)
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
+ '(org-directory "~/doc/projects")
  '(org-export-html-coding-system (quote utf-8))
  '(org-export-html-postamble (lambda nil (buffer-file-name)))
  '(org-export-html-style-extra "<link rel=\"stylesheet\" href=\"css/default.css\" type=\"text/css\">
@@ -317,6 +318,8 @@
  '(org-export-html-style-include-default nil)
  '(org-export-htmlize-output-type (quote css))
  '(org-file-apps (quote ((auto-mode . emacs) ("\\.mm\\'" . default) ("\\.x?html?\\'" . default) ("\\.pdf\\'" . "of %s"))))
+ '(org-mobile-directory "~/today/MobileOrg")
+ '(org-mobile-inbox-for-pull "~/today/MobileOrg/from-mobile.org")
  '(org2blog/wp-confirm-post t)
  '(org2blog/wp-use-tags-as-categories t)
  '(require-final-newline t)

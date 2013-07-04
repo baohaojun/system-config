@@ -40,7 +40,7 @@ done
 unset TEMP
 set -x
 if test $(basename $0) = ssh-to-phone; then
-    ssh phone
+    ssh phone "$@"
     exit 0
 fi
 ssh media_rw@phone mkdir -p /data/media/0/$WHERE

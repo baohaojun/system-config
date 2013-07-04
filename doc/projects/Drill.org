@@ -1,3 +1,4 @@
+#+LAST_MOBILE_CHANGE: 2013-07-04 10:06:16
 * TODO Enhance my English skills
   :PROPERTIES:
   :ID:       413d3065-707a-4233-861b-2dfe6aba2da1
@@ -13,7 +14,22 @@
 
 
 
-
+* [[brow.][从The Lord of the Rings中引用]]
+* [[strained][从The Lord of the Rings中引用]]
+* [[sullen][从The Lord of the Rings中引用]]
+* [[fell under the shadow of Angmar.][从The Lord of the Rings中引用]]
+* [[cloven,][从The Lord of the Rings中引用]]
+* [[weary.][从The Lord of the Rings中引用]]
+* [[choked with fallen stones and trees;][从The Lord of the Rings中引用]]
+* [[peered][从The Lord of the Rings中引用]]
+* [[They rested for some time in the glade,][从The Lord of the Rings中引用]]
+* [[shimmering in the wind of his speed.][从The Lord of the Rings中引用]]
+* [[voices so fair to hear.][从The Lord of the Rings中引用]]
+* [[beckoned][从The Lord of the Rings中引用]]
+* [[amiss,][从The Lord of the Rings中引用]]
+* [[my lot to take the Road,][从The Lord of the Rings中引用]]
+* [[a measure of new hope and strength][从The Lord of the Rings中引用]]
+* [[laden instead with][从The Lord of the Rings中引用]]
 * [[alder-trees][从The Lord of the Rings中引用]]
 * [[barrow-wightish][从The Lord of the Rings中引用]]
 * [[bear right][从The Lord of the Rings中引用]]
@@ -85,11 +101,29 @@
 * [[wraith.’][从The Lord of the Rings中引用]]
 * [[yammering][从The Lord of the Rings中引用]]
 
+
 * TODO 控制自己每周只更新一次系统
   SCHEDULED: <2013-04-05 Fri ++1w>
   :PROPERTIES:
   :STYLE:    habit
   :LAST_REPEAT: [2013-03-28 Thu 09:35]
+  :ID:       0c01ef51-37f1-403b-b50e-9d807f123997
   :END:
 
 
+
+* 深蹲kg
+<2013-03-21>
+45lbx2
+[2013-03-29 Fri 09:48]
+* 卧推kg
+[2013-03-29 Fri 09:48]
+** 65
+* 引体向上lb
+[2013-03-29 Fri 09:49]
+** -50 -30
+* 双臂曲伸lb
+[2013-03-29 Fri 09:49]
+** -50 -23
+
+* 体重kg

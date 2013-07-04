@@ -1,4 +1,4 @@
-#+LAST_MOBILE_CHANGE: 2013-03-07 11:00:08
+#+LAST_MOBILE_CHANGE: 2013-07-04 11:01:38
 * TODO Learn ios programming
   :PROPERTIES:
   :ID:       1353b0c1-35eb-41eb-8444-99727018d53c
@@ -65,12 +65,21 @@ It can be used to download Xcode using multithread download.
   :ID:       b7d65e8f-b552-4282-9cc4-54ef6c3d4a22
   :END:
 ** TODO crossdict version 1.2
+   :PROPERTIES:
+   :ID:       d826d245-9aad-4a17-a3ab-be49cf680909
+   :END:
 *** DONE remove the copy files code
     CLOSED: [2013-03-11 Mon 15:23]
 *** DONE when files not found, direct user to the play.google.com page or my github page.
     CLOSED: [2013-03-11 Mon 15:23]
 *** TODO Write the github page for explaining that.
+    :PROPERTIES:
+    :ID:       a059912d-bcb1-465a-ab5a-56004df8ab41
+    :END:
 *** TODO Remove the accept capability of the dict data apk.
+    :PROPERTIES:
+    :ID:       17657500-5dc7-4ac1-bcdb-11ec6e866b9a
+    :END:
 *** DONE write the new words into a file on sdcard
     CLOSED: [2013-03-11 Mon 15:22]
 *** DONE Remove the exit comfirm button
@@ -119,6 +128,11 @@ It can be used to download Xcode using multithread download.
   :PROPERTIES:
   :ID:       f06bfcb8-9b3a-4e7b-9361-1374d4144167
   :END:
+
+** TODO 前面有空格的话要删掉。
+   :PROPERTIES:
+   :ID:       036dd7dd-4320-4eb0-946d-713d44971dd7
+   :END:
 * DONE 阅读fbreader的代码
   CLOSED: [2013-03-11 Mon 10:18]
   :PROPERTIES:
@@ -139,6 +153,9 @@ It can be used to download Xcode using multithread download.
     Control + Shift + Power.
 
 * TODO How to start programs at Mac login
+  :PROPERTIES:
+  :ID:       9bc3198f-1d4c-4292-a4b1-71c210df6a1e
+  :END:
 * DONE How to use flock on Mac
   CLOSED: [2013-03-18 Mon 17:15]
   - CLOSING NOTE [2013-03-18 Mon 17:15] \\
@@ -180,3 +197,37 @@ firefox.
    CLOSED: [2013-07-04 Thu 09:49]
 ** DONE add some doc string, use check doc
    CLOSED: [2013-07-04 Thu 09:49]
+* DONE Sync with MobileOrg on the phone easily
+  CLOSED: [2013-07-04 Thu 11:19]
+  :PROPERTIES:
+  :ID:       c76da5b4-f6fd-4089-b1c6-8937406020a3
+  :END:
+
+* DONE 脚本sync mobileorg and pc
+  CLOSED: [2013-07-04 Thu 11:19]
+  :PROPERTIES:
+  :ID:       812131a8-d25b-4ae5-b5b4-512204f6c87b
+  :END:
+* DONE 把emacs字体调大。
+  CLOSED: [2013-07-04 Thu 11:18]
+  :PROPERTIES:
+  :ID:       cbadd1a7-e554-477f-837e-0d9e45293114
+  :END:
+* TODO 单词查不到时的处理
+  :PROPERTIES:
+  :ID:       ba048658-6240-4cde-bdeb-1334b0f559d0
+  :END:
+
+* DONE [#A] 搞定sync mobileorg
+  CLOSED: [2013-07-04 Thu 11:18]
+  - CLOSING NOTE [2013-07-04 Thu 11:18] \\
+    Use the script sync-mobile-org
+  :PROPERTIES:
+  :ID:       35599e9e-b402-4a77-8130-c050ecbff4cf
+  :END:
+
+** DONE [#A] 检查sync机制是否工作
+   CLOSED: [2013-07-04 Thu 11:18]
+   :PROPERTIES:
+   :ID:       0c0cf1c3-52c7-4bbb-bb65-85ef6e9264ca
+   :END:

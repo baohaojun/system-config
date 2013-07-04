@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    find-or-exec konsole
+    exit -1
+}
+
+find-or-exec emacs emacs.bhj
+while ! emacsclient -e '(save-some-buffers)'; do
+    sleep 1
+    echo "Emacs need save some buffers"
+done
+
+cd ~/doc/projects
+
+if git-dirty; then
+    die "git is dirty under ~/doc/projects"
+fi
+
+cd ~/today/MobileOrg/
+if git-dirty; then
+    die "git is dirty under $PWD"
+fi
+
+ssh-to-phone echo hello
+rsync -av phone-sdcard:/data/media/0/MobileOrg/* .
+emacsclient -e '(org-mobile-pull)'
+emacsclient -e '(save-some-buffers)'
+
+function check_git_dir() {
+    if test $# != 2; then
+	die "Error: Usage $(basename $0) dir prompt"
+    fi
+
+    cd  "$1"
+
+    find-or-exec konsole
+    if git-dirty; then
+	git diff .
+    fi
+
+    if git-dirty && yes-or-no-p -y "$1: $2"; then
+	git add .
+    else
+	start_recursive_shell "Do the check"
+	if ! yes-or-no-p "Continue?"; then
+	    exit 0
+	fi
+    fi    
+}
+
+check_git_dir ~/doc/projects "Add all changes after org-mobile-pull?"
+check_git_dir ~/today/MobileOrg "Add all changes before org-mobile-push?"
+emacsclient -e '(org-mobile-push)'
+check_git_dir ~/doc/projects "Add all changes after org-mobile-push?"
+cd ~/today/MobileOrg
+if ! grep -P -e '\S' mobileorg.org from-mobile.org; then
+    echo -n > mobile.org
+    echo -n > from-mobile.org
+fi
+check_git_dir ~/today/MobileOrg "Add all changes after org-mobile-push?"
+
+true;rsync -av * phone-sdcard:/data/media/0/MobileOrg/
+yes-or-no-p "Please sync the MobileOrg APP on you phone manually"

@@ -1,3 +1,4 @@
+#+LAST_MOBILE_CHANGE: 2013-07-04 10:06:16
 * DONE Work on uboot/obm to support multi products with 1 image
   CLOSED: [2013-03-18 Mon 10:39]
 ** DONE merge changes from smt branch
@@ -71,6 +72,9 @@ init_fnc_t *init_sequence[] = {
   :ID:       c56213e4-5094-47da-86f0-713232bb4ff5
   :END:
 ** TODO emmc spec/standard
+   :PROPERTIES:
+   :ID:       1ea357c0-bd66-4039-ace4-ec082c9fa4cf
+   :END:
 * TODO understand how lcd works (both in uboot and in kernel)
   :PROPERTIES:
   :ID:       26eac8a9-b7a7-445c-b0e0-53a88c9c0871
@@ -165,6 +169,18 @@ init_fnc_t *init_sequence[] = {
 * DONE Local database for 1*88
   CLOSED: [2013-03-19 Tue 15:23]
 * TODO refactor uboot source code
+  :PROPERTIES:
+  :ID:       9da1cd62-5c8a-4139-9435-1f04f008df23
+  :END:
 * DONE Work on tickets of xiaolin
   CLOSED: [2013-07-04 Thu 09:46]
 * TODO Fix uboot compile warnings
+  :PROPERTIES:
+  :ID:       9dfb01c9-587d-425f-a25f-a1a54043615c
+  :END:
+
+* TODO 脚本stardict 2 crossdict
+  :PROPERTIES:
+  :ID:       90f14c1d-5c48-4047-b6f3-64b0fbebe7c5
+  :END:
+* bt scan slow

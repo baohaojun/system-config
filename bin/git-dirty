@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+if ! git status -s . >/dev/null 2>&1; then # git failed
+    exit 0                                 # it is dirty!
+fi
+
+#when the 2nd char is not space, it is dirty
+git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' -q 
