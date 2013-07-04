@@ -26,5 +26,8 @@ if test -d ~gerrit2; then
 fi
 
 nmcli con up id DHCP
+if ! systemctl status ssh.service|grep -e 'active .running'; then
+    systemctl restart ssh.service
+fi
 
 exit 0

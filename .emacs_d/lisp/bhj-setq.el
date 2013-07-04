@@ -6,6 +6,7 @@
 (setq describe-char-unicodedata-file "~/.emacs_d/UnicodeData.txt")
 
 (setq-default c-basic-offset 4)
+(setq bbdb-file "~/src/github/private-config/.bbdb")
 
 (setq auto-mode-alist (append '((".*/kernel.*\\.[ch]$" . linux-c-mode)
                                 ("logcat\\.log.*" . fundamental-mode)

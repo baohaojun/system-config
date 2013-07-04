@@ -5,3 +5,7 @@ Module.symvers
 *.cmd
 *.ko
 modules.order
+pxa1088/src/driver/out/mpdc_cm.ko
+pxa1088/src/driver/out/mpdc_css.ko
+pxa1088/src/driver/out/mpdc_hs.ko
+pxa1088/src/driver/out/mpdc_tp.ko
