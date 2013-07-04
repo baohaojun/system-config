@@ -3,6 +3,19 @@
 
 * use keyremap4macbook，not the one provided by dvp author
 
+主要是为中文输入法考虑。在Windows下，dvp作者提供的是一个keyboard
+layout（键盘布局），中文输入法只要改一下注册表就可以使用这种键盘布局。
+
+另外可能在Mac下dvp作者提供的方案有点问题，我使用的时候有点感觉...
+
+使用keyremap4macbook的方法见这个 [[https://github.com/baohaojun/system-config/raw/master/doc/keyremap4macbook-dvp.xml][private.xml]] 。
+
 * firefox can use firemacs fully after the above change
 
+上面说的Mac下dvp作者提供的方案有点问题，主要就是在firefox下，我用
+firemacs插件，C-b等用到Ctrl键的组合键在编辑框里的时候不能工作。
+
 * should use reset defaults ocassioaly in system pref/keyboard/modifier settings
+
+这个主要是因为我还改了CapsLock/Escape、Ctrl/Alt/Win键互相的映射，有时候
+会不工作，需要到上面说的系统配置里重置一下。
