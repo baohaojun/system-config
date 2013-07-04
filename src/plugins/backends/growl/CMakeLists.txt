@@ -13,7 +13,8 @@ if( WITH_GROWL_BACKEND )
 
                 if(MINGW)
                     #fiexes a multiple defenition error with static boost
-                    SET_TARGET_PROPERTIES(growl PROPERTIES LINK_FLAGS -Wl,--allow-multiple-definition)
+                    SET_TARGET_PROPERTIES(growl PROPERTIES LINK_FLAGS -Wl,--allow-multiple-definition COMPILE_FLAGS
+                    "-Wno-undef -Wno-unused-parameter -Wno-unknown-pragmas -Wno-unused-local-typedefs -Wno-missing-field-initializers -Wno-strict-aliasing -Wno-reorder -Wno-unused-variable -Wno-unused-function" )
                 endif(MINGW)
 
                 if(WIN32)

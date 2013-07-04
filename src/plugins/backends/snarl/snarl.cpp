@@ -51,7 +51,7 @@ public:
             int action = msg->wParam;
             if(action == SnarlEnums::SnarlLaunched){
                 foreach(Application *a,m_snarl->snore()->aplications()){
-                    m_snarl->registerApplication(a);
+                    m_snarl->slotRegisterApplication(a);
                 }
             }
 
@@ -88,7 +88,7 @@ public:
                 qDebug()<<"Unknown snarl action found!!";
                 return false;
             }
-            m_snarl->snore()->closeNotification(notification,reason);
+            m_snarl->closeNotification(notification,reason);
             return true;
         }
         return false;
@@ -112,7 +112,7 @@ SnarlBackend::~SnarlBackend()
 {
     if(snore() != NULL){
         foreach(Application *a,snore()->aplications()){
-            this->unregisterApplication(a);
+            this->slotUnregisterApplication(a);
         }
     }
     if(m_defautSnarlinetrface)
@@ -130,7 +130,7 @@ bool SnarlBackend::init(SnoreCore *snore){
     return SnoreBackend::init(snore);
 }
 
-void SnarlBackend::registerApplication(Application *application){
+void SnarlBackend::slotRegisterApplication(Application *application){
     SnarlInterface *snarlInterface = NULL;
     if(m_applications.contains(application->name())){
         snarlInterface = m_applications.value(application->name());
@@ -154,7 +154,7 @@ void SnarlBackend::registerApplication(Application *application){
     }
 }
 
-void SnarlBackend::unregisterApplication(Application *application){
+void SnarlBackend::slotUnregisterApplication(Application *application){
     SnarlInterface *snarlInterface = m_applications.take(application->name());
     if(snarlInterface == NULL)
         return;
@@ -164,7 +164,7 @@ void SnarlBackend::unregisterApplication(Application *application){
     delete snarlInterface;
 }
 
-uint SnarlBackend::notify(Notification notification){
+uint SnarlBackend::slotNotify(Notification notification){
     SnarlInterface *snarlInterface = m_applications.value(notification.application());
     if(snarlInterface == NULL){
         qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
@@ -200,8 +200,9 @@ uint SnarlBackend::notify(Notification notification){
     return id;
 }
 
-void SnarlBackend::closeNotification(Notification notification){
+bool SnarlBackend::slotCloseNotification(Notification notification){
     m_defautSnarlinetrface->Hide(notification.id());
+    return true;
 }
 
 #include "snarl.moc"

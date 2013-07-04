@@ -12,9 +12,9 @@ Q_EXPORT_PLUGIN2(trayicon,TrayIconNotifer)
 
 TrayIconNotifer::TrayIconNotifer () :
     SnoreBackend ( "SystemTray" ),
+    m_trayIcon(NULL),
     m_id ( 0 ),
-    m_displayed(-1),
-    m_trayIcon(NULL)
+    m_displayed(-1)
 {
 
 }
@@ -27,16 +27,16 @@ bool TrayIconNotifer::init(SnoreCore *snore){
     return SnoreBackend::init(snore);
 }
 
-void TrayIconNotifer::registerApplication ( Application *application )
+void TrayIconNotifer::slotRegisterApplication ( Application *application )
 {
     Q_UNUSED ( application )
 }
-void TrayIconNotifer::unregisterApplication ( Application *application )
+void TrayIconNotifer::slotUnregisterApplication ( Application *application )
 {
     Q_UNUSED ( application )
 }
 
-uint TrayIconNotifer::notify ( Notification notification )
+uint TrayIconNotifer::slotNotify ( Notification notification )
 {
     m_notificationQue.append(notification);
     if(m_lastNotify.elapsed()> Notification::DefaultTimeout * 1000){
@@ -45,21 +45,17 @@ uint TrayIconNotifer::notify ( Notification notification )
     return m_id++;
 }
 
-void TrayIconNotifer::closeNotification ( Notification notification )
+bool TrayIconNotifer::slotCloseNotification( Notification notification )
 {
     Q_UNUSED ( notification )
-}
-
-bool TrayIconNotifer::isPrimaryNotificationBackend()
-{
-    return true;
+    return false;
 }
 
 void TrayIconNotifer::displayNotification(){
     qDebug()<<"Display"<<m_notificationQue.size();
     Notification notification =  m_notificationQue.takeFirst();
     if(!m_notificationQue.isEmpty()){
-        QTimer::singleShot(notification.timeout()*1000,this,SLOT(closeNotification()));
+        QTimer::singleShot(notification.timeout()*1000,this,SLOT(slotCloseNotification()));
     }
 
     qDebug()<<"taking"<<notification.title();
@@ -68,10 +64,10 @@ void TrayIconNotifer::displayNotification(){
     m_lastNotify.restart();
 }
 
-void TrayIconNotifer::closeNotification(){
+void TrayIconNotifer::slotCloseNotification(){
     Notification n = snore()->getActiveNotificationByID(m_displayed);
     if(n.isValid()){
-        snore()->closeNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
+        closeNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
     }
     displayNotification();
 }
@@ -85,7 +81,7 @@ void TrayIconNotifer::actionInvoked(){
             n.setActionInvoked(n.actions().keys().first());
             snore()->notificationActionInvoked(n);
         }
-        snore()->closeNotification(n,NotificationEnums::CloseReasons::CLOSED);
+        closeNotification(n,NotificationEnums::CloseReasons::CLOSED);
 
     }
 

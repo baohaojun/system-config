@@ -17,6 +17,7 @@
 #include "snorebackend.h"
 #include "../snore.h"
 #include "../application.h"
+#include "../notification/notification.h"
 
 #include <QTimer>
 #include <QPluginLoader>
@@ -41,15 +42,32 @@ bool SnoreBackend::init( SnoreCore *snore )
 {
     if(!SnorePlugin::init(snore))
         return false;
-    connect( snore,SIGNAL( closeNotify( Snore::Notification ) ),this,SLOT( closeNotification( Snore::Notification) ) );
-    connect( snore,SIGNAL( applicationInitialized( Snore::Application* ) ),this,SLOT( registerApplication( Snore::Application* ) ) );
-    connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( unregisterApplication( Snore::Application* ) ) );
+    connect( snore,SIGNAL( applicationInitialized( Snore::Application* ) ),this,SLOT( slotRegisterApplication( Snore::Application* ) ) );
+    connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( slotUnregisterApplication( Snore::Application* ) ) );
 
     foreach(Application *a,snore->aplications()){
-        this->registerApplication(a);
+        this->slotRegisterApplication(a);
     }
 
     return true;
+}
+
+
+bool SnoreBackend::requestCloseNotification ( Notification notification,NotificationEnums::CloseReasons::closeReasons reason )
+{
+    if(slotCloseNotification(notification))
+    {
+        notification.setCloseReason(reason);
+        return true;
+    }
+    return false;
+}
+
+void SnoreBackend::closeNotification(Notification n, NotificationEnums::CloseReasons::closeReasons reason)
+{
+    m_activeNotifications.remove(n.id());
+    n.setCloseReason(reason);
+    emit closeNotification(n);
 }
 
 SnoreSecondaryBackend::SnoreSecondaryBackend(const QString &name)
@@ -65,9 +83,20 @@ SnoreSecondaryBackend::~SnoreSecondaryBackend()
 
 bool SnoreSecondaryBackend::init(SnoreCore *snore)
 {
-    connect( snore,SIGNAL( notify(SnoreCore::Notification) ),this,SLOT( notify( SnoreCore::Notification ) ) );
+    connect( snore,SIGNAL( slotNotify(SnoreCore::Notification) ),this,SLOT( slotNotify( SnoreCore::Notification ) ) );
     return SnoreBackend::init(snore);
 }
+
+Snore::Notification SnoreBackend::getActiveNotificationByID(uint id)
+{
+    return m_activeNotifications[id];
+}
+
+void SnoreBackend::addActiveNotification(Notification n)
+{
+    m_activeNotifications[n.id()] = n;
+}
+
 
 }
 #include "snorebackend.moc"

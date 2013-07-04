@@ -107,7 +107,7 @@ void FreedesktopFrontend::CloseNotification(uint id){
     Notification noti = snore()->getActiveNotificationByID(id);
     if(noti.isValid())
     {
-        snore()->closeNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
+        snore()->requestCloseNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
     }
 }
 

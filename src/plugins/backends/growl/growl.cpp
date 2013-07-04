@@ -38,12 +38,12 @@ Growl::Growl():
 Growl::~Growl(){
     if(snore() != NULL){
         foreach(Application *a,snore()->aplications()){
-            this->unregisterApplication(a);
+            this->slotUnregisterApplication(a);
         }
     }
 }
 
-void Growl::registerApplication(Application *application){
+void Growl::slotRegisterApplication(Application *application){
     gntp *growl = new gntp(application->name().toUtf8().constData(),application->icon().localUrl().toUtf8().constData());
 
 
@@ -62,14 +62,14 @@ void Growl::registerApplication(Application *application){
     m_applications.insert(application->name(),growl);
 }
 
-void Growl::unregisterApplication(Application *application){
+void Growl::slotUnregisterApplication(Application *application){
     gntp *growl = m_applications.take(application->name());
     if(growl == NULL)
         return;
     delete growl;
 }
 
-uint Growl::notify(Notification notification){
+uint Growl::slotNotify(Notification notification){
     gntp *growl = m_applications.value(notification.application());
     if(growl == NULL)
         return -1;
@@ -86,8 +86,9 @@ uint Growl::notify(Notification notification){
     return m_id++;
 }
 
-void Growl::closeNotification(Notification notification){
+bool Growl::slotCloseNotification(Notification notification){
     Q_UNUSED(notification);
+    return false;
 }
 
 void Growl::gntpCallback(const int &id,const std::string &reason,const std::string &data){
@@ -103,7 +104,7 @@ void Growl::gntpCallback(const int &id,const std::string &reason,const std::stri
         n.setActionInvoked(QString(data.c_str()).toInt());
         s_instance->snore()->notificationActionInvoked(n);
     }
-    s_instance->snore()->closeNotification(n,r);
+    s_instance->closeNotification(n,r);
 }
 
 

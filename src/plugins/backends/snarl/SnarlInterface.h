@@ -1,7 +1,7 @@
 #ifndef SNARL_INTERFACE_V42_H
 #define SNARL_INTERFACE_V42_H
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) && !defined(MINGW_HAS_SECURE_API)
 	#define MINGW_HAS_SECURE_API
 #endif
 

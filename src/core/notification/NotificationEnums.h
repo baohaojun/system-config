@@ -1,5 +1,5 @@
 /****************************************************************************************
- * Copyright (c) 2010-2012 Patrick von Reth <patrick.vonreth@gmail.com>                 *
+ * Copyright (c) 2013 Patrick von Reth <vonreth@kde.org>                                *
  *                                                                                      *
  * This program is free software; you can redistribute it and/or modify it under        *
  * the terms of the GNU General Public License as published by the Free Software        *
@@ -14,51 +14,35 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#ifndef SNORE_PLUGINS_H
-#define SNORE_PLUGINS_H
-#include "../snore_exports.h"
 
-#include <QPointer>
-#include <QHash>
-#include <QTimer>
+#ifndef NOTIFICATIONENUMS_H
+#define NOTIFICATIONENUMS_H
+
+#include <QFlags>
 
 namespace Snore{
-class Application;
-class SnoreCore;
+namespace NotificationEnums{
 
-
-class SNORE_EXPORT SnorePlugin:public QObject
-{
-    Q_OBJECT
-public:
-    SnorePlugin ( const QString &name);
-    virtual ~SnorePlugin();
-    virtual bool init( SnoreCore* snore );
-    bool isInitialized();
-    SnoreCore* snore();
-    const QString &name() const;
-
-protected:
-    void startTimeout(uint id,int timeout);
-private slots:
-    void notificationTimedOut();
-
-private:
-    SnorePlugin() {}
-    QString m_name;
-    bool m_initialized;
-    QPointer<SnoreCore> m_snore;
-    QHash<uint,QTimer*> m_timeouts;
-    QList<uint> m_timeout_order;
-
-
+namespace Prioritys{
+enum priority{
+    LOW = -1,
+    NORMAL = 0,
+    HIGH = +1
 };
-
+Q_DECLARE_FLAGS(prioritys, priority)
+Q_DECLARE_OPERATORS_FOR_FLAGS(prioritys)
 }
-Q_DECLARE_INTERFACE ( Snore::SnorePlugin,
-                      "org.Snore.SnorePlugin/1.0" )
-
-
-
-
-#endif//SNORE_PLUGINS_H
+namespace CloseReasons{
+enum closeReason
+{
+    NONE,
+    TIMED_OUT,
+    DISMISSED,
+    CLOSED
+};
+Q_DECLARE_FLAGS(closeReasons, closeReason)
+Q_DECLARE_OPERATORS_FOR_FLAGS(closeReasons)
+}
+}
+}
+#endif // NOTIFICATIONENUMS_H

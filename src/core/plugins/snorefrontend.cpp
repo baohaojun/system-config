@@ -39,7 +39,7 @@ bool SnoreFrontend::init( SnoreCore *snore )
 {
     if(!SnorePlugin::init(snore))
         return false;
-    connect( snore,SIGNAL ( closeNotify( Snore::Notification ) ),this,SLOT ( notificationClosed( Snore::Notification) ) );
+    connect( snore,SIGNAL ( notificationClosed( Snore::Notification ) ),this,SLOT ( notificationClosed( Snore::Notification) ) );
     return true;
 }
 }

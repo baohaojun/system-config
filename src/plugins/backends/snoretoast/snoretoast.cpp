@@ -49,17 +49,17 @@ bool SnoreToast::init(SnoreCore *snore)
     return SnoreBackend::init(snore);
 }
 
-void SnoreToast::registerApplication(Application *application)
+void SnoreToast::slotRegisterApplication(Application *application)
 {
     Q_UNUSED(application)
 }
 
-void SnoreToast::unregisterApplication(Application *application)
+void SnoreToast::slotUnregisterApplication(Application *application)
 {
     Q_UNUSED(application)
 }
 
-uint SnoreToast::notify(Notification notification)
+uint SnoreToast::slotNotify(Notification notification)
 {
     QProcess *p = new QProcess(this);
 
@@ -87,9 +87,10 @@ uint SnoreToast::notify(Notification notification)
 
 }
 
-void SnoreToast::closeNotification(Notification notification)
+bool SnoreToast::slotCloseNotification(Notification notification)
 {
     Q_UNUSED(notification)
+    return false;
 }
 
 void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
@@ -123,7 +124,7 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
         break;
     }
 
-    snore()->closeNotification(n,reason);
+    closeNotification(n,reason);
 
 }
 

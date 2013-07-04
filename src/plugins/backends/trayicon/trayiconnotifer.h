@@ -18,13 +18,12 @@ class TrayIconNotifer:public Snore::SnoreBackend
 public:
     TrayIconNotifer ();
     virtual bool init(Snore::SnoreCore *snore);
-    bool isPrimaryNotificationBackend();
 
 public slots:
-    void registerApplication ( Snore::Application *application );
-    void unregisterApplication ( Snore::Application *application );
-    uint notify ( Snore::Notification notification );
-    void closeNotification ( Snore::Notification notification );
+    void slotRegisterApplication ( Snore::Application *application );
+    void slotUnregisterApplication ( Snore::Application *application );
+    uint slotNotify ( Snore::Notification notification );
+    bool slotCloseNotification ( Snore::Notification notification );
 
 private:
     QSystemTrayIcon *m_trayIcon;
@@ -36,7 +35,7 @@ private:
 private slots:
     void displayNotification();
     void actionInvoked();
-    void closeNotification();
+    void slotCloseNotification();
 };
 
 #endif // TRAYICONNOTIFER_H

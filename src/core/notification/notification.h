@@ -19,32 +19,10 @@
 #include "../snore_exports.h"
 #include "icon.h"
 
+#include "NotificationEnums.h"
+
 #include <QVariant>
 namespace Snore{
-
-namespace NotificationEnums{
-
-namespace Prioritys{
-enum priority{
-    LOW = -1,
-    NORMAL = 0,
-    HIGH = +1
-};
-Q_DECLARE_FLAGS(prioritys, priority)
-Q_DECLARE_OPERATORS_FOR_FLAGS(prioritys)
-}
-namespace CloseReasons{
-enum closeReason
-{
-    NONE,
-    TIMED_OUT,
-    DISMISSED,
-    CLOSED
-};
-Q_DECLARE_FLAGS(closeReasons, closeReason)
-Q_DECLARE_OPERATORS_FOR_FLAGS(closeReasons)
-}
-}
 
 class SNORE_EXPORT Notification
 {
@@ -70,12 +48,10 @@ public:
     QString toString() const;
 
     const uint &id() const;
-    void setId(const uint &id);
     //timeout in seconds
     //0 means sticky
     const int &timeout() const;
-    void setActionInvoked ( Action *action );
-    void setActionInvoked ( const int &actionID);
+
     const Action* actionInvoked() const;
     void setSource(class SnoreFrontend *source)const;
     class SnoreFrontend *source() const;
@@ -99,12 +75,18 @@ public:
 
     const QObject *data() const;
 
+//protected://TODO::make only accesable from a backend
+    void setActionInvoked ( Action *action );
+    void setActionInvoked ( const int &actionID);
+    void setId(const uint &id);
+
 
 private:
     class NotificationData;
     NotificationData* d;
     static int notificationCount;
     static int notificationMetaID;
+
 };
 
 }

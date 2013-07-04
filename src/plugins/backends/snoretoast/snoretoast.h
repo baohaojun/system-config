@@ -15,10 +15,10 @@ public:
 
     // SnoreBackend interface
 public slots:
-    void registerApplication(Snore::Application *application);
-    void unregisterApplication(Snore::Application *application);
-    uint notify(Snore::Notification notification);
-    void closeNotification(Snore::Notification notification);
+    void slotRegisterApplication(Snore::Application *application);
+    void slotUnregisterApplication(Snore::Application *application);
+    uint slotNotify(Snore::Notification notification);
+    bool slotCloseNotification(Snore::Notification notification);
 
 private slots:
     void slotToastNotificationClosed(int code, QProcess::ExitStatus);

@@ -46,7 +46,6 @@ public:
 
 
     uint broadcastNotification ( Notification notification );
-    void closeNotification ( Notification notification, const NotificationEnums::CloseReasons::closeReasons &reason );
     void notificationActionInvoked ( Notification notification );
 
     void addApplication ( Application *application );
@@ -64,6 +63,9 @@ public:
 
     Notification getActiveNotificationByID(uint id);
 
+    void requestCloseNotification(Notification,NotificationEnums::CloseReasons::closeReasons);
+
+
 
 
 private:
@@ -74,7 +76,6 @@ private:
     static QDir *s_pluginDir;
 
     ApplicationsList m_applications;
-    QHash<uint,Notification> m_activeNotifications;
 
 
     QStringList m_notificationBackends;
@@ -92,7 +93,10 @@ signals:
     void applicationRemoved( Snore::Application* );
     void notify( Snore::Notification noti );
     void actionInvoked( Snore::Notification );
-    void closeNotify( Snore::Notification );
+    void notificationClosed(Snore::Notification );
+
+private slots:
+    void slotNotificationClosed(Snore::Notification);
 
 };
 

@@ -17,8 +17,8 @@
 #ifndef SNORE_BACKEND_H
 #define SNORE_BACKEND_H
 #include "../snore_exports.h"
-#include "../notification/notification.h"
 #include "plugins.h"
+#include "../notification/notification.h"
 
 #include <QPointer>
 #include <QFlag>
@@ -27,7 +27,7 @@
 namespace Snore{
 class SnoreCore;
 
-class SNORE_EXPORT SnoreBackend:public SnorePlugin
+class SNORE_EXPORT SnoreBackend : public SnorePlugin
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
@@ -36,13 +36,27 @@ public:
     virtual ~SnoreBackend();
     virtual bool init(SnoreCore *snore);
 
+    bool requestCloseNotification( Snore::Notification notification,NotificationEnums::CloseReasons::closeReasons reason );
+
+    Snore::Notification getActiveNotificationByID(uint id);
+    void addActiveNotification(Notification n);
+
+signals:
+    void closeNotification( Snore::Notification );
 
 
 public slots:
-    virtual void registerApplication ( Snore::Application *application ) = 0;
-    virtual void unregisterApplication ( Snore::Application *application ) = 0;
-    virtual uint notify ( Snore::Notification notification ) = 0;
-    virtual void closeNotification ( Snore::Notification notification ) =0;
+    virtual void slotRegisterApplication ( Snore::Application *application ) = 0;
+    virtual void slotUnregisterApplication ( Snore::Application *application ) = 0;
+    virtual uint slotNotify ( Snore::Notification notification ) = 0;
+    virtual bool slotCloseNotification ( Snore::Notification notification ) =0;
+
+protected:
+    void closeNotification(Snore::Notification,Snore::NotificationEnums::CloseReasons::closeReasons);
+
+
+private:
+    QHash<uint,Notification> m_activeNotifications;
 
 
 

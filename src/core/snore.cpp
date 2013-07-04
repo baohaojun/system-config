@@ -46,6 +46,11 @@ QSettings *SnoreCore::cacheFile(){
 #endif
 }
 
+void SnoreCore::slotNotificationClosed(Notification n)
+{
+    emit notificationClosed(n);
+}
+
 QString const SnoreCore::version(){
     static QString ver(QString().append(Version::major()).append(".").append(Version::minor()).append(Version::suffix()));
     return ver;
@@ -223,19 +228,13 @@ uint SnoreCore::broadcastNotification ( Notification notification )
             qDebug()<<"Notification backend "<<m_notificationBackend<<" isnt initialized will snore will exit now";
             qApp->quit();
         }
-        notification.setId(m_notificationBackend->notify( notification ));
-        m_activeNotifications[notification.id()] = notification;
+        m_notificationBackend->slotNotify( notification );
+        m_notificationBackend->addActiveNotification(notification);
         return  notification.id();
     }
     return -1;
 }
 
-void SnoreCore::closeNotification ( Notification notification,const NotificationEnums::CloseReasons::closeReasons &reason )
-{
-    notification.setCloseReason(reason);
-    m_activeNotifications.remove(notification.id());
-    emit closeNotify ( notification );
-}
 
 void SnoreCore::notificationActionInvoked ( Notification notification )
 {
@@ -299,7 +298,9 @@ void SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
             qDebug()<<"Failed to initialize"<<b->name();
             return;
         }
+        connect(b,SIGNAL(closeNotification(Snore::Notification)),this,SLOT(slotNotificationClosed(Snore::Notification)));
     }
+
 
     m_notificationBackend = b;
 }
@@ -318,7 +319,19 @@ QSystemTrayIcon *SnoreCore::trayIcon(){
 
 Notification SnoreCore::getActiveNotificationByID(uint id)
 {
-    return m_activeNotifications[id];
+    if(!m_notificationBackend->isInitialized()){
+        qDebug()<<"Notification backend "<<m_notificationBackend<<" isn't initialized will snore will exit now";
+        qApp->quit();
+    }
+    return m_notificationBackend->getActiveNotificationByID(id);
+}
+
+void SnoreCore::requestCloseNotification(Notification n, NotificationEnums::CloseReasons::closeReasons r)
+{
+    if(m_notificationBackend->requestCloseNotification(n,r))
+    {
+        emit notificationClosed(n);
+    }
 }
 
 }
