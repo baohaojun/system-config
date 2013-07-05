@@ -1,0 +1,7 @@
+#+title: reading books
+ * 2013
+  - 2013-06
+   * 2013-06-13
+
+     [[../../../blog/2013/06/13/0-one-book-one-saying.org][一本书，一句话]]
+

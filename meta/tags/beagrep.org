@@ -20,7 +20,7 @@
   - 2012-01
    * 2012-01-31
 
-     [[../../../blog/2012/01/31/beagrep-cn.org][beagrep，两秒钟grep两个G的代码]]
+     [[../../../blog/2012/01/31/beagrep-cn.org][beagrep，0.23秒grep两个G的代码]]
 
  * 2011
   - 2011-12

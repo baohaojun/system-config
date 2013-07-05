@@ -1,0 +1,78 @@
+#+title: Firefox: -new-tab or no -new-tab
+# bhj-tags: system-config
+
+When using firefox to repeatedly open similar URLs from the command
+line or from Emacs (for e.g., searching Wikipedia or Wiktionary), you
+have 3 choices:
+
+1. Open in a new window (yak, who would want many windows)
+
+2. Open in a new tab
+
+3. Open in the current tab
+
+Option 1 doesn't count at least for me, so I'm facing the
+latter 2. Belindly choosing either of them is equally
+undesirable. With 2, I could end up with lot of tabs most of which not
+wanted anymore; With 3, well I could accidentally "overload" an
+important on-line form that I'm halfway filling.
+
+So I've been thinking a smarter way to open these kind of URLs: before
+openning, should be able to check what the current tab is already
+visiting, if the url seems the same as my intention (for e.g., search
+Wikipedia), then go ahead with the current tab; if not, then open a
+new tab.
+
+With a script named get-firefox-tab-url, I could write my
+search-wikipedia script like this:
+
+#+BEGIN_SRC sh
+entry=$1
+url="http://en.wikipedia.org/w/index.php?search=$entry"
+tab_mode=-new-tab
+if [[ $(get-firefox-tab-url) =~ ://en.wikipedia.org/ ]]; then
+   tab_mode=
+fi
+
+firefox $tab_mode "$url"
+#+END_SRC
+
+So, to the script get-firefox-tab-url. Firefor doesn't provide this
+kind of IPC out of the box, so I must use the IPC mechanisms provided
+by the system: clipboard. Like this:
+
+1. Clear the clipboard
+2. Find the firefox window and send it 2 keys: C-l to focus into the url bar, and C-c to put the url into clipboard
+3. Print the clipboard
+
+For step 2, I use sawfish so it's not a problem. If you are not a
+sawfish user, then maybe you can check xdotool.
+
+The whole script:
+
+#+BEGIN_SRC sh
+#!/bin/bash
+putclip ""
+
+script=$(cat <<EOF
+(catch 'TAG
+ (mapc
+   (lambda (w)
+     (when (string-match "- Mozilla Firefox\$" (window-name w))
+       (synthesize-event "C-l" w)
+       (synthesize-event "C-c" w)
+       (throw 'TAG)))
+   (managed-windows)))
+EOF
+)
+sawfish-client -e "$script" >~/.logs/$(basename $0).log 2>&1 
+
+getclip
+#+END_SRC
+
+Here putclip and getclip are both my wrappers around xclip.
+
+Oh, almost forgot: by default, =firefox URL= and =firefox -new-tab
+URL= behave the same: both will open URL in a new tab. To make the
+former open URL in the current tab, goto about:config and toggle
+=browser.link.open_newwindow.override.external= to 1.

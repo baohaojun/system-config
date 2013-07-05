@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Firefox: -new-tab or no -new-tab</title>
+<title>My system-config github project</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 
@@ -101,130 +101,23 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Firefox: -new-tab or no -new-tab</h1>
-<p>
-When using firefox to repeatedly open similar URLs from the command
-line or from Emacs (for e.g., searching Wikipedia or Wiktionary), you
-have 3 choices:
-</p>
+<h1 class="title">My system-config github project</h1>
+<ul class="org-ul">
+<li>2013
+<ul class="org-ul">
+<li>2013-07
+<ul class="org-ul">
+<li>2013-07-05
 
-<ol class="org-ol">
-<li>Open in a new window (yak, who would want many windows)
+<p>
+<a href="../../../blog/2013/07/05/0-firefox-smart-new-tab.html">Firefox: -new-tab or no -new-tab</a>
+</p>
 </li>
-
-<li>Open in a new tab
+</ul>
 </li>
-
-<li>Open in the current tab
+</ul>
 </li>
-</ol>
-
-<p>
-Option 1 doesn't count at least for me, so I'm facing the
-latter 2. Belindly choosing either of them is equally
-undesirable. With 2, I could end up with lot of tabs most of which not
-wanted anymore; With 3, well I could accidentally "overload" an
-important on-line form that I'm halfway filling.
-</p>
-
-<p>
-So I've been thinking a smarter way to open these kind of URLs: before
-openning, should be able to check what the current tab is already
-visiting, if the url seems the same as my intention (for e.g., search
-Wikipedia), then go ahead with the current tab; if not, then open a
-new tab.
-</p>
-
-<p>
-With a script named get-firefox-tab-url, I could write my
-search-wikipedia script like this:
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh"><span class="org-variable-name">entry</span>=$<span class="org-variable-name">1</span>
-<span class="org-variable-name">url</span>=<span class="org-string">"http://en.wikipedia.org/w/index.php?search=$entry"</span>
-<span class="org-variable-name">tab_mode</span>=-new-tab
-<span class="org-keyword">if</span> [[ $(<span class="org-sh-quoted-exec">get-firefox-tab-url</span>) =~ ://en.wikipedia.org/ ]]; <span class="org-keyword">then</span>
-   <span class="org-variable-name">tab_mode</span>=
-<span class="org-keyword">fi</span>
-
-firefox $<span class="org-variable-name">tab_mode</span> <span class="org-string">"$url"</span>
-</pre>
-</div>
-
-<p>
-So, to the script get-firefox-tab-url. Firefor doesn't provide this
-kind of IPC out of the box, so I must use the IPC mechanisms provided
-by the system: clipboard. Like this:
-</p>
-
-<ol class="org-ol">
-<li>Clear the clipboard
-</li>
-<li>Find the firefox window and send it 2 keys: C-l to focus into the url bar, and C-c to put the url into clipboard
-</li>
-<li>Print the clipboard
-</li>
-</ol>
-
-<p>
-For step 2, I use sawfish so it's not a problem. If you are not a
-sawfish user, then maybe you can check xdotool.
-</p>
-
-<p>
-The whole script:
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">!/bin/</span><span class="org-keyword">bash</span>
-putclip <span class="org-string">""</span>
-
-<span class="org-variable-name">script</span>=$(<span class="org-sh-quoted-exec">cat</span> &lt;&lt;EOF
-<span class="org-sh-heredoc">(catch 'TAG</span>
-<span class="org-sh-heredoc"> (mapc</span>
-<span class="org-sh-heredoc">   (lambda (w)</span>
-<span class="org-sh-heredoc">     (when (string-match "- Mozilla Firefox\$" (window-name w))</span>
-<span class="org-sh-heredoc">       (synthesize-event "C-l" w)</span>
-<span class="org-sh-heredoc">       (synthesize-event "C-c" w)</span>
-<span class="org-sh-heredoc">       (throw 'TAG)))</span>
-<span class="org-sh-heredoc">   (managed-windows)))</span>
-<span class="org-sh-heredoc">EOF</span>
-)
-sawfish-client -e <span class="org-string">"$script"</span> &gt;~/.logs/$(<span class="org-sh-quoted-exec">basename</span> $<span class="org-variable-name">0</span>).log 2&gt;&amp;1 
-
-getclip
-</pre>
-</div>
-
-<p>
-Here putclip and getclip are both my wrappers around xclip.
-</p>
-
-<p>
-Oh, almost forgot: by default, <code>firefox URL</code> and <code>firefox -new-tab
-URL</code> behave the same: both will open URL in a new tab. To make the
-former open URL in the current tab, goto about:config and toggle
-<code>browser.link.open_newwindow.override.external</code> to 1.
-</p>
-<nav>
-  <ul id="prev_next_posts">
-    <li class="prev_post">
-      <a href="../../06/18/0-auto-includes.html"> <!-- prev-url -->
-        <i class="icon-chevron-left">《</i>
-        苹果对头文件开刀了？我也来！ <!-- prev-title -->
-      </a>
-    </li>
-    <li class="next_post" style="text-align: right;">
-      <a href="meta/Archive.html"> <!-- next-url -->
-        Archive <!-- next-title -->
-        <i class="icon-chevron-right">》</i>
-      </a>
-    </li>
-  </ul>
-</nav>
+</ul>
 </div>
 <!-- {%html-mode%} -->
 
@@ -292,21 +185,12 @@ former open URL in the current tab, goto about:config and toggle
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="../../../../meta/tags/system-config.html" title="My system-config github project">system-config</a></li>
+        
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='../../06/18/0-auto-includes.html'> 苹果对头文件开刀了？我也来！ </a></li>
-<li><a href='../../06/13/0-one-book-one-saying.html'> 一本书，一句话 </a></li>
-<li><a href='blog/2013/05/31/0-intelligent-completion.html'> 智能补齐 </a></li>
-<li><a href='blog/2013/05/30/0-intelligent-cd.html'> 智能cd </a></li>
-<li><a href='blog/2013/05/29/0-parallel-bash.html'> 用bash脚本并发执行程序 </a></li>
-<li><a href='blog/2013/05/22/TourDeBabel.html'> 通天塔导游 </a></li>
-<li><a href='blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html'> Mysterious rsync/ssh/scp hang </a></li>
-<li><a href='blog/2013/05/20/0-Tuning-my-blog-to-look-like-blogspot-.html'> Tuning my blog to look like blogspot </a></li>
-<li><a href='blog/2013/05/15/0-Inside-Google-and-Amazon.html'> 在Google和亚马逊（译） </a></li>
-<li><a href='blog/2013/05/12/0-douban.el-integration.html'> douban.el与bhj-notify的集成 </a></li>
+        
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

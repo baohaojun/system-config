@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) tag-name"
+fi
+
+cd ~/doc/baohaojun/
+if test -e meta/tags/$1.org; then
+    echo $1 already exists
+    exit 0
+fi
+
+tag=$1
+mkdir meta/tags/$tag -p;
+descfile=meta/tags/$tag.desc
+if test ! -e $descfile; then
+    read -p "input desc for tag $tag: " desc;
+    echo $desc > $descfile;
+fi
