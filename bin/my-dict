@@ -4,4 +4,8 @@ if test $# = 0; then
     set -- "$(xclip -o)"
 fi
 
-goldendict "$@"
+new_tab=-new-tab
+if get-firefox-tab-url | grep 'localhost.*/dict' -q; then
+    new_tab=
+fi
+firefox $new_tab http://localhost:34567/dict/"$(echo "$@" | urlify)"

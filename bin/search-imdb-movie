@@ -65,4 +65,4 @@ fi
 
 url="$(printf "http://www.imdb.com/search/title?sort=num_votes&title_type=feature&user_rating=%.1f,%.1f&year=%s,%s&num_votes=%s,%s" $rate $RATE $year $year $vote $VOTE)"
 echo "$url"
-firefox "$url"
+firefox -new-tab "$url"

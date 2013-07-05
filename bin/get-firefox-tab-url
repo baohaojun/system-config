@@ -1,0 +1,18 @@
+#!/bin/bash
+
+putclip ""
+
+script=$(cat <<EOF
+(catch 'TAG
+ (mapc
+   (lambda (w)
+     (when (string-match "- Mozilla Firefox\$" (window-name w))
+       (synthesize-event "C-l" w)
+       (synthesize-event "C-c" w)
+       (throw 'TAG)))
+   (managed-windows)))
+EOF
+)
+sawfish-client -e "$script" >~/.logs/$(basename $0).log 2>&1 
+
+getclip

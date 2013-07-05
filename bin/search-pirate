@@ -8,5 +8,5 @@ url=$(
     echo /0/7/0
 )
 echo "$url"|tee /dev/tty|putclip
-of "$url"&
+firefox -new-tab "$url"&
 

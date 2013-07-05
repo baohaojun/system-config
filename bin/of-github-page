@@ -7,8 +7,12 @@ fi
 set -- $(relative-path $1 $(lookup-file .git))
 
 x=http://baohaojun.github.io/${1/%.org/.html}
-echo "$x"|putclip
+
+echo "$x"
+if is-tty-io; then
+    echo "$x"|putclip
+fi
 
 if test $(basename $0) != github-pagep; then
-    of "$x"
+    firefox -new-tab "$x"
 fi

@@ -13,14 +13,14 @@ while true; do
             title=$2
             shift 2
             ;;
-	-T|--tags)
-	    tags=$2
-	    shift 2
-	    ;;
-	-f|--file)
-	    filename=$2
-	    shift 2
-	    ;;
+        -T|--tags)
+            tags=$2
+            shift 2
+            ;;
+        -f|--file)
+            filename=$2
+            shift 2
+            ;;
         --)
             shift
             break
@@ -34,17 +34,17 @@ done
 if test "$#" != 0; then
     cd ~/doc/baohaojun/
     if test "$1" = v; then
-	shift
-	of $(github-pagep $(f "$@"))
-	exit
+        shift
+        firefox -new-tab $(github-pagep $(f "$@"))
+        exit
     fi
-    
+
     if test "$1" = p; then
         shift
         putclip $(f "$@")
         exit
     fi
-	
+
     e "$@"
     exit
 fi
@@ -60,12 +60,12 @@ if test -z "$filename"; then
 fi
 
 # it would be crazy for me to write more than 20 blogs a day.
-for n in $(seq 0 20); do 
+for n in $(seq 0 20); do
     if test -e $dir/$n-*; then
-	continue
+        continue
     else
-	filename="$n-$filename"
-	break
+        filename="$n-$filename"
+        break
     fi
 done
 
