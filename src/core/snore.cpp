@@ -228,7 +228,7 @@ uint SnoreCore::broadcastNotification ( Notification notification )
             qDebug()<<"Notification backend "<<m_notificationBackend<<" isnt initialized will snore will exit now";
             qApp->quit();
         }
-        m_notificationBackend->slotNotify( notification );
+        notification.setId( m_notificationBackend->slotNotify( notification ));
         m_notificationBackend->addActiveNotification(notification);
         return  notification.id();
     }
