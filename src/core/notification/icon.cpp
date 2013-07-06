@@ -179,4 +179,5 @@ const QString &SnoreIcon::url() const
 
 }
 
+
 #include "icon.moc"

@@ -19,7 +19,7 @@
 #include "../snore_exports.h"
 #include "icon.h"
 
-#include "NotificationEnums.h"
+#include "notificationenums.h"
 
 #include <QVariant>
 namespace Snore{
@@ -40,7 +40,7 @@ public:
 
 public:
     Notification ();
-    Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10,uint id=0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10,uint id = 0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
     Notification ( const Notification &other );
     ~Notification();
     Notification &operator=(const Notification& other);
@@ -78,10 +78,10 @@ public:
 //protected://TODO::make only accesable from a backend
     void setActionInvoked ( Action *action );
     void setActionInvoked ( const int &actionID);
-    void setId(const uint &id);
 
 
 private:
+    static uint m_idCount;
     class NotificationData;
     NotificationData* d;
     static int notificationCount;

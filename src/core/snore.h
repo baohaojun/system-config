@@ -45,7 +45,7 @@ public:
     void loadPlugins ( PluginContainer::PluginTypes types );
 
 
-    uint broadcastNotification ( Notification notification );
+    void broadcastNotification( Notification notification );
     void notificationActionInvoked ( Notification notification );
 
     void addApplication ( Application *application );

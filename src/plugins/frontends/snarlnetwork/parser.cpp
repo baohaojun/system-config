@@ -194,5 +194,3 @@ QByteArray Parser::download(const QUrl &address){
     loop.exec();
     return reply->readAll();
 }
-
-#include "parser.moc"

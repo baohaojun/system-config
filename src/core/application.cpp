@@ -100,7 +100,3 @@ bool Alert::isActive() const
 }
 
 }
-#include "application.moc"
-
-
-

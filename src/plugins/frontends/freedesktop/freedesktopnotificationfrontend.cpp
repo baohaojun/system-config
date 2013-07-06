@@ -129,5 +129,3 @@ QString FreedesktopFrontend::GetServerInformation(QString& vendor, QString& vers
     specVersion = "0";
     return "Snore";
 }
-
-#include "freedesktopnotificationfrontend.moc"

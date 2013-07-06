@@ -6,6 +6,7 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
 set ( Notification_HDR 
         notification.h
         icon.h
+        notificationenums.h
         )
 
 install(FILES ${Notification_HDR} DESTINATION include/snore/core/notification)

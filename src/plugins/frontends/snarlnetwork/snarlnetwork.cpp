@@ -116,5 +116,3 @@ void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg){
     }
 }
 
-
-#include "snarlnetwork.moc"

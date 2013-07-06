@@ -89,4 +89,3 @@ void SnorePlugin::notificationTimedOut(){
 }
 
 }
-#include "plugins.moc"

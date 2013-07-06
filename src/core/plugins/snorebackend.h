@@ -19,13 +19,13 @@
 #include "../snore_exports.h"
 #include "plugins.h"
 #include "../notification/notification.h"
+#include "../snore.h"
 
 #include <QPointer>
 #include <QFlag>
 #include <QtCore>
 
 namespace Snore{
-class SnoreCore;
 
 class SNORE_EXPORT SnoreBackend : public SnorePlugin
 {
@@ -39,7 +39,6 @@ public:
     bool requestCloseNotification( Snore::Notification notification,NotificationEnums::CloseReasons::closeReasons reason );
 
     Snore::Notification getActiveNotificationByID(uint id);
-    void addActiveNotification(Notification n);
 
 signals:
     void closeNotification( Snore::Notification );
@@ -48,7 +47,7 @@ signals:
 public slots:
     virtual void slotRegisterApplication ( Snore::Application *application ) = 0;
     virtual void slotUnregisterApplication ( Snore::Application *application ) = 0;
-    virtual uint slotNotify ( Snore::Notification notification ) = 0;
+    virtual void slotNotify ( Snore::Notification notification ) = 0;
     virtual bool slotCloseNotification ( Snore::Notification notification ) =0;
 
 protected:
@@ -58,6 +57,8 @@ protected:
 private:
     QHash<uint,Notification> m_activeNotifications;
 
+    void addActiveNotification(Notification n);
+    friend void SnoreCore::broadcastNotification(Notification notification);
 
 
 };

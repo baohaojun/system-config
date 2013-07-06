@@ -70,6 +70,3 @@ void TrayIcon::setPrimaryBackend(){
 
 }
 
-
-
-#include "trayicon.moc"

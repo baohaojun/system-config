@@ -13,7 +13,6 @@ Q_EXPORT_PLUGIN2(trayicon,TrayIconNotifer)
 TrayIconNotifer::TrayIconNotifer () :
     SnoreBackend ( "SystemTray" ),
     m_trayIcon(NULL),
-    m_id ( 0 ),
     m_displayed(-1)
 {
 
@@ -36,13 +35,12 @@ void TrayIconNotifer::slotUnregisterApplication ( Application *application )
     Q_UNUSED ( application )
 }
 
-uint TrayIconNotifer::slotNotify ( Notification notification )
+void TrayIconNotifer::slotNotify( Notification notification )
 {
     m_notificationQue.append(notification);
     if(m_lastNotify.elapsed()> Notification::DefaultTimeout * 1000){
         displayNotification();
     }
-    return m_id++;
 }
 
 bool TrayIconNotifer::slotCloseNotification( Notification notification )
@@ -87,5 +85,3 @@ void TrayIconNotifer::actionInvoked(){
 
 }
 
-
-#include "trayiconnotifer.moc"

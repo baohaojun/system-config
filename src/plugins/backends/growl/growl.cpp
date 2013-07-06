@@ -69,13 +69,13 @@ void Growl::slotUnregisterApplication(Application *application){
     delete growl;
 }
 
-uint Growl::slotNotify(Notification notification){
+void Growl::slotNotify(Notification notification){
     gntp *growl = m_applications.value(notification.application());
     if(growl == NULL)
-        return -1;
+        return;
     //qDebug()<<"Notify Growl:"<<notification.application()<<Notification.toPlainText(notification.title());
     try{
-        growl->notify(notification.alert().toUtf8().constData(),m_id,
+        growl->notify(notification.alert().toUtf8().constData(),notification.id(),
                       Notification::toPlainText(notification.title()).toUtf8().constData(),
                       Notification::toPlainText(notification.text()).toUtf8().constData(),
                       notification.icon().localUrl().isEmpty()?NULL:notification.icon().localUrl().toUtf8().constData(),NULL,"1");
@@ -83,7 +83,6 @@ uint Growl::slotNotify(Notification notification){
     }catch(const std::exception& e){
         qDebug()<<"Growl:"<<e.what();
     }
-    return m_id++;
 }
 
 bool Growl::slotCloseNotification(Notification notification){
@@ -106,7 +105,3 @@ void Growl::gntpCallback(const int &id,const std::string &reason,const std::stri
     }
     s_instance->closeNotification(n,r);
 }
-
-
-
-#include "growl.moc"

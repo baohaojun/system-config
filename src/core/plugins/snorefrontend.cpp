@@ -43,4 +43,3 @@ bool SnoreFrontend::init( SnoreCore *snore )
     return true;
 }
 }
-#include "snorefrontend.moc"

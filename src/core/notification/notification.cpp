@@ -24,18 +24,21 @@
 #include <Qt>
 #include <QTextDocumentFragment>
 #include <QTextDocument>
+
 namespace Snore{
 
 int Notification::notificationMetaID = qRegisterMetaType<Notification>();
 
 int Notification::notificationCount = 0;
 
+uint Notification::m_idCount = 1;
+
 class Notification::NotificationData : public QObject
 {
     Q_OBJECT
 public:
     NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
-        m_id ( id ),
+        m_id ( id == 0 ?m_idCount++:id),
         m_timeout ( timeout ),
         m_source ( NULL),
         m_application ( application ),
@@ -46,7 +49,7 @@ public:
         m_priority(priority),
         m_closeReason(NotificationEnums::CloseReasons::NONE)
     {
-        qDebug()<<"Creating Notification: ActiveNotifications"<<++notificationCount;
+        qDebug()<<"Creating Notification: ActiveNotifications"<<++notificationCount<< "id" << m_id;
         m_ref.ref();
     }
 
@@ -89,7 +92,7 @@ Notification::Notification () :
 {
 }
 
-Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority ) 
+Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id,NotificationEnums::Prioritys::prioritys priority )
 {
     d = new  NotificationData(application,alert,title,text,icon,timeout,id,priority);
 }
@@ -134,12 +137,6 @@ QString Notification::toString() const
 const uint &Notification::id() const
 {
     return d->m_id;
-}
-
-void Notification::setId(const uint &id) 
-{
-    qDebug()<<"setting notification id:"<<id;
-    d->m_id = id;
 }
 
 const SnoreIcon &Notification::icon() const
@@ -269,5 +266,4 @@ QDataStream & operator<< ( QDataStream &stream, const Notification::Action &a)
 }
 }
 
-
-#include <notification.moc>
+#include "notification.moc"

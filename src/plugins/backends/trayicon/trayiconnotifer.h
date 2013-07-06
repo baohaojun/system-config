@@ -22,14 +22,13 @@ public:
 public slots:
     void slotRegisterApplication ( Snore::Application *application );
     void slotUnregisterApplication ( Snore::Application *application );
-    uint slotNotify ( Snore::Notification notification );
+    void slotNotify ( Snore::Notification notification );
     bool slotCloseNotification ( Snore::Notification notification );
 
 private:
     QSystemTrayIcon *m_trayIcon;
     QList<Snore::Notification > m_notificationQue;
     QTime m_lastNotify;
-    uint m_id;
     uint m_displayed;
 
 private slots:

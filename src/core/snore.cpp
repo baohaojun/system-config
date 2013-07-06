@@ -218,7 +218,7 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
     }
 }
 
-uint SnoreCore::broadcastNotification ( Notification notification )
+void SnoreCore::broadcastNotification ( Notification notification )
 {
     qDebug()<<"Broadcasting"<<notification.title()<<notification.timeout();
     emit notify ( notification );
@@ -228,11 +228,9 @@ uint SnoreCore::broadcastNotification ( Notification notification )
             qDebug()<<"Notification backend "<<m_notificationBackend<<" isnt initialized will snore will exit now";
             qApp->quit();
         }
-        notification.setId( m_notificationBackend->slotNotify( notification ));
+        m_notificationBackend->slotNotify( notification );
         m_notificationBackend->addActiveNotification(notification);
-        return  notification.id();
     }
-    return -1;
 }
 
 
@@ -335,5 +333,3 @@ void SnoreCore::requestCloseNotification(Notification n, NotificationEnums::Clos
 }
 
 }
-
-#include "snore.moc"

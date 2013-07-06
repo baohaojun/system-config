@@ -17,7 +17,7 @@ public:
 public slots:
     void slotRegisterApplication(Snore::Application *application);
     void slotUnregisterApplication(Snore::Application *application);
-    uint slotNotify(Snore::Notification notification);
+    void slotNotify(Snore::Notification notification);
     bool slotCloseNotification(Snore::Notification notification);
 
 private slots:

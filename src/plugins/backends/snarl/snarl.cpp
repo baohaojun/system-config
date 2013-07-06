@@ -164,45 +164,43 @@ void SnarlBackend::slotUnregisterApplication(Application *application){
     delete snarlInterface;
 }
 
-uint SnarlBackend::slotNotify(Notification notification){
+void SnarlBackend::slotNotify(Notification notification){
     SnarlInterface *snarlInterface = m_applications.value(notification.application());
     if(snarlInterface == NULL){
         qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
         qDebug()<<m_applications.keys();
         snarlInterface = m_defautSnarlinetrface;
     }
-    uint id = notification.id();
 
-    if(id == 0){
-        id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
-                                    Notification::toPlainText(notification.title()).toUtf8().constData(),
-                                    Notification::toPlainText(notification.text()).toUtf8().constData(),
-                                    notification.timeout(),
-                                    notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
-                                    !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
-                                    notification.priority());
+    if(!m_idMap.contains(notification.id())){
+        ULONG32 id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
+                                            Notification::toPlainText(notification.title()).toUtf8().constData(),
+                                            Notification::toPlainText(notification.text()).toUtf8().constData(),
+                                            notification.timeout(),
+                                            notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
+                                            !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
+                                            notification.priority());
 
         foreach(const Notification::Action *a, notification.actions()){
             snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
         }
+        m_idMap[notification.id()] = id;
+
     }else{
         //update message
-        snarlInterface->Update(notification.id(),
-                               notification.alert().toUtf8().constData(),
-                               Notification::toPlainText(notification.title()).toUtf8().constData(),
-                               Notification::toPlainText(notification.text()).toUtf8().constData(),
-                               notification.timeout(),
-                               notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
-                               !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
-                               notification.priority());
+        snarlInterface->Update(m_idMap[notification.id()],
+                notification.alert().toUtf8().constData(),
+                Notification::toPlainText(notification.title()).toUtf8().constData(),
+                Notification::toPlainText(notification.text()).toUtf8().constData(),
+                notification.timeout(),
+                notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
+                !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
+                notification.priority());
     }
-    startTimeout(id,notification.timeout());
-    return id;
+    startTimeout(notification.id(),notification.timeout());
 }
 
 bool SnarlBackend::slotCloseNotification(Notification notification){
-    m_defautSnarlinetrface->Hide(notification.id());
+    m_defautSnarlinetrface->Hide(m_idMap.remove(notification.id()));
     return true;
 }
-
-#include "snarl.moc"

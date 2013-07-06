@@ -99,4 +99,3 @@ void SnoreBackend::addActiveNotification(Notification n)
 
 
 }
-#include "snorebackend.moc"

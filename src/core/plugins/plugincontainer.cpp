@@ -90,4 +90,3 @@ const QStringList &PluginContainer::types(){
 }
 
 }
-#include "plugincontainer.moc"

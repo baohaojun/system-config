@@ -59,7 +59,7 @@ void SnoreToast::slotUnregisterApplication(Application *application)
     Q_UNUSED(application)
 }
 
-uint SnoreToast::slotNotify(Notification notification)
+void SnoreToast::slotNotify(Notification notification)
 {
     QProcess *p = new QProcess(this);
 
@@ -81,10 +81,8 @@ uint SnoreToast::slotNotify(Notification notification)
     qDebug() << "SnoreToast" << arguements;
     p->start("SnoreToast", arguements);
 
-    uint id = p->pid()->dwProcessId;
-    p->setProperty("SNORE_NOTIFICATION_ID",id);
-    return id;
-
+    p->setProperty("SNORE_NOTIFICATION_ID",notification.id());
+    qDebug() << notification.id();
 }
 
 bool SnoreToast::slotCloseNotification(Notification notification)
@@ -96,7 +94,8 @@ bool SnoreToast::slotCloseNotification(Notification notification)
 void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
 {
     QProcess *p = qobject_cast<QProcess*>(sender());
-    Notification n = snore()->getActiveNotificationByID(p->property("SNORE_NOTIFICATION_ID").toUInt());
+    qDebug() << p->property("SNORE_NOTIFICATION_ID").toUInt();
+    Notification n = getActiveNotificationByID(p->property("SNORE_NOTIFICATION_ID").toUInt());
 
     NotificationEnums::CloseReasons::closeReason reason = NotificationEnums::CloseReasons::CLOSED;
 
@@ -127,5 +126,3 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
     closeNotification(n,reason);
 
 }
-
-#include "snoretoast.moc"

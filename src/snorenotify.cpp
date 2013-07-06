@@ -67,5 +67,3 @@ void SnoreNotify::exit(){
     m_trayIcon->hide();
 }
 
-
-#include "snorenotify.moc"
