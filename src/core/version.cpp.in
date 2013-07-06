@@ -6,6 +6,11 @@
 
 namespace Snore{
 
+const QString Version::version()
+{
+    return QString("%1.%2%3").arg(major(),minor(),suffix());
+}
+
 const QString Version::major(){
 	return QString(SNORE_VERSION_MAJOR);
 }

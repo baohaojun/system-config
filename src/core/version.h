@@ -11,6 +11,8 @@ namespace Snore{
 
 class SNORE_EXPORT Version{
 public:
+static const QString version();
+
 static const QString major();
 
 static const QString minor();

@@ -11,7 +11,9 @@ option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 #######################################################################
 
-
+set(SNORE_VERSION_MAJOR 0)
+set(SNORE_VERSION_MINOR 4)
+set(SNORE_VERSION_SUFFIX pre)
 
 
 
