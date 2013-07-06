@@ -49,7 +49,7 @@ public:
         m_priority(priority),
         m_closeReason(NotificationEnums::CloseReasons::NONE)
     {
-        qDebug()<<"Creating Notification: ActiveNotifications"<<++notificationCount<< "id" << m_id;
+        qDebug()<< "Creating Notification: ActiveNotifications" << ++notificationCount << "id" << m_id;
         m_ref.ref();
     }
 
@@ -71,7 +71,7 @@ public:
     SnoreIcon m_icon;
     NotificationEnums::Prioritys::prioritys m_priority;
     NotificationEnums::CloseReasons::closeReasons m_closeReason;
-    QMap<int,Notification::Action*> m_actions;
+    QHash<int,Notification::Action*> m_actions;
     QVariantHash m_hints;
 
 
@@ -127,11 +127,6 @@ Notification &Notification::operator=(const Notification& other)
     other.d->m_ref.ref();
     d = other.d;
     return *this;
-}
-
-QString Notification::toString() const
-{
-    return QString ( "Title: "+d->m_title+"\nText: "+d->m_text );
 }
 
 const uint &Notification::id() const
@@ -215,7 +210,7 @@ void Notification::addAction(Notification::Action *a)
 }
 
 
-const QMap<int,Notification::Action*> &Notification::actions() const
+const QHash<int, Notification::Action *> &Notification::actions() const
 {
     return d->m_actions;
 }
@@ -255,7 +250,7 @@ const QObject *Notification::data() const
 
 QDataStream & operator<< ( QDataStream &stream, const Notification &noti )
 {
-    stream<<noti.toString();
+    stream << "Title: " << noti.title() << " Text: " << noti.text() << " ID: " << noti.id() ;
     return stream;
 }
 

@@ -45,8 +45,6 @@ public:
     ~Notification();
     Notification &operator=(const Notification& other);
 
-    QString toString() const;
-
     const uint &id() const;
     //timeout in seconds
     //0 means sticky
@@ -63,7 +61,7 @@ public:
     void setSticky();
     bool sticky() const;
     const NotificationEnums::Prioritys::prioritys &priority() const;
-    const QMap<int,Action*> &actions() const;
+    const QHash<int,Action*> &actions() const;
     void addAction(Action *a);
     const NotificationEnums::CloseReasons::closeReasons &closeReason();
     void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
