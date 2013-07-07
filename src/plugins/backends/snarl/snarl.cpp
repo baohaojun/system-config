@@ -61,9 +61,18 @@ public:
         }else if(msg->message == SNORENOTIFIER_MESSAGE_ID){
             int action = msg->wParam & 0xffff;
             int data = (msg->wParam & 0xffffffff) >> 16;
-            uint notificationID = msg->lParam;
+            uint notificationID = 0;
+            for(QHash<uint,LONG32>::iterator it = m_snarl->m_idMap.begin();it != m_snarl->m_idMap.end();++it)
+            {
+                if(it.value() == msg->lParam)
+                {
+                    notificationID = it.key();
+                    break;
+                }
+            }
+
             Notification notification =  m_snarl->snore()->getActiveNotificationByID(notificationID);
-            qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action<<"data:"<<data;
+            qDebug()<<"recived a Snarl callback id:"<<notificationID<< "|" << msg->lParam <<"action:"<<action<<"data:"<<data;
             NotificationEnums::CloseReasons::closeReasons reason = NotificationEnums::CloseReasons::NONE;
             switch(action){
             case SnarlEnums::CallbackInvoked:
@@ -217,7 +226,8 @@ void SnarlBackend::slotNotify(Notification notification){
     startTimeout(notification.id(),notification.timeout());
 }
 
-bool SnarlBackend::slotCloseNotification(Notification notification){
-    m_defautSnarlinetrface->Hide(m_idMap.remove(notification.id()));
+bool SnarlBackend::slotCloseNotification(Notification notification)
+{
+    m_defautSnarlinetrface->Hide(m_idMap.take(notification.id()));
     return true;
 }

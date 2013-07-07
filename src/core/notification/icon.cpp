@@ -24,9 +24,8 @@
 #include <QDebug>
 namespace Snore{
 
-class SnoreIcon::SnoreIconData : public QObject
+class SnoreIcon::SnoreIconData
 {
-    Q_OBJECT
 public:
     SnoreIconData():
         m_isLocalFile(false)
@@ -108,7 +107,7 @@ SnoreIcon &SnoreIcon::operator=(const SnoreIcon &other)
 {
     if(d && !d->m_ref.deref())
     {
-        d->deleteLater();
+        delete d;
     }
     other.d->m_ref.ref();
     d = other.d;
@@ -119,7 +118,7 @@ SnoreIcon::~SnoreIcon()
 {
     if(d && !d->m_ref.deref())
     {
-        d->deleteLater();
+        delete d;
     }
 }
 
@@ -178,6 +177,3 @@ const QString &SnoreIcon::url() const
 }
 
 }
-
-
-#include "icon.moc"

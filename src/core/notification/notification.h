@@ -25,6 +25,8 @@
 #include "notificationenums.h"
 
 #include <QVariant>
+#include <QDebug>
+
 namespace Snore{
 
 class SNORE_EXPORT Notification
@@ -74,8 +76,6 @@ public:
 
     bool isValid() const;
 
-    const QObject *data() const;
-
 //protected://TODO::make only accesable from a backend
     void setActionInvoked ( Action *action );
     void setActionInvoked ( const int &actionID);
@@ -94,6 +94,13 @@ private:
 
 Q_DECLARE_METATYPE(Snore::Notification)
 
-QDataStream & operator<< ( QDataStream & stream, const Snore::Notification & noti );
-QDataStream & operator<< ( QDataStream & stream, const Snore::Notification::Action & action);
+QDataStream &operator<< ( QDataStream & stream, const Snore::Notification & noti );
+
+inline QDebug operator<< ( QDebug debug, const Snore::Notification &noti )
+{
+    debug << "Snore::Notification(" << noti.title() << ", " << noti.text() << "," << noti.id() << ")" ;
+    return debug.maybeSpace();
+}
+
+QDataStream &operator<< ( QDataStream & stream, const Snore::Notification::Action & action);
 #endif // NOTIFICATION_H

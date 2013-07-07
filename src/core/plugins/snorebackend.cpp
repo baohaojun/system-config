@@ -68,8 +68,12 @@ bool SnoreBackend::requestCloseNotification ( Notification notification,Notifica
 
 void SnoreBackend::closeNotification(Notification n, NotificationEnums::CloseReasons::closeReasons reason)
 {
-    m_activeNotifications.remove(n.id());
+    if(m_activeNotifications.contains(n.id()))
+    {
+        m_activeNotifications.remove(n.id());
+    }
     n.setCloseReason(reason);
+    slotCloseNotification(n);
     emit closeNotification(n);
 }
 

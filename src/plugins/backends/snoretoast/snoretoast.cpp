@@ -65,7 +65,6 @@ void SnoreToast::slotNotify(Notification notification)
 
     connect(p,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(slotToastNotificationClosed(int,QProcess::ExitStatus)));
     connect(qApp,SIGNAL(aboutToQuit()),p,SLOT(kill()));
-    connect(notification.data(),SIGNAL(destroyed()),p,SLOT(kill()));
 
     QStringList arguements;
     arguements << "-t"

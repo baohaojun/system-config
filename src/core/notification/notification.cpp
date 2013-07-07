@@ -36,9 +36,8 @@ int Notification::notificationCount = 0;
 
 uint Notification::m_idCount = 1;
 
-class Notification::NotificationData : public QObject
+class Notification::NotificationData
 {
-    Q_OBJECT
 public:
     NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
         m_id ( id == 0 ?m_idCount++:id),
@@ -117,7 +116,7 @@ Notification::~Notification()
 {
     if(d && !d->m_ref.deref())
     {
-        d->deleteLater();
+        delete d;
     }
 }
 
@@ -125,7 +124,7 @@ Notification &Notification::operator=(const Notification& other)
 {
     if(d && !d->m_ref.deref())
     {
-        d->deleteLater();
+        delete d;
     }
     other.d->m_ref.ref();
     d = other.d;
@@ -246,22 +245,17 @@ bool Notification::isValid() const
     return d != NULL;
 }
 
-const QObject *Notification::data() const
-{
-    return d;
-}
-
-QDataStream & operator<< ( QDataStream &stream, const Notification &noti )
+QDataStream &operator<< ( QDataStream &stream, const Notification &noti )
 {
     stream << "Title: " << noti.title() << " Text: " << noti.text() << " ID: " << noti.id() ;
     return stream;
 }
 
-QDataStream & operator<< ( QDataStream &stream, const Notification::Action &a)
+
+QDataStream &operator<< ( QDataStream &stream, const Notification::Action &a)
 {
     stream<<a.id<<a.id;
     return stream;
 }
 }
 
-#include "notification.moc"
