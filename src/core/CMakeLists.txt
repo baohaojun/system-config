@@ -5,7 +5,7 @@ include(GetGitRevisionDescription)
 
 get_git_head_revision(GIT_REFSPEC SNORE_REVISION)
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" @ONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 
 add_subdirectory(notification)
 add_subdirectory(plugins)
