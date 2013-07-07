@@ -10,7 +10,7 @@ if(WIN32)
     add_library(snarl MODULE ${SNARL_SRC} )
     target_link_libraries(snarl snorecore ${QT_QTCORE_LIBRARY} )
     if(MINGW)
-        set_target_properties(snarl PROPERTIES COMPILE_FLAGS "-Wno-conversion-null")
+        set_target_properties(snarl PROPERTIES COMPILE_FLAGS "-Wno-conversion-null -Wno-unused")
     endif(MINGW)
 
     install(TARGETS snarl ${SNORE_BACKEND_INSTALL_PATH})

@@ -175,6 +175,20 @@ void SnarlBackend::slotNotify(Notification notification){
         snarlInterface = m_defautSnarlinetrface;
     }
 
+    Snarl::V42::SnarlEnums::MessagePriority priority = Snarl::V42::SnarlEnums::PriorityUndefined;
+    switch(notification.priority())
+    {
+    case NotificationEnums::Prioritys::LOW:
+        priority = Snarl::V42::SnarlEnums::PriorityLow;
+        break;
+    case NotificationEnums::Prioritys::NORMAL:
+        priority = Snarl::V42::SnarlEnums::PriorityNormal;
+        break;
+    case NotificationEnums::Prioritys::HIGH:
+        priority = Snarl::V42::SnarlEnums::PriorityHigh;
+        break;
+    }
+
     if(!m_idMap.contains(notification.id())){
         ULONG32 id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
                                             Notification::toPlainText(notification.title()).toUtf8().constData(),
@@ -182,7 +196,7 @@ void SnarlBackend::slotNotify(Notification notification){
                                             notification.timeout(),
                                             notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
                                             !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
-                                            notification.priority());
+                                            priority);
 
         foreach(const Notification::Action *a, notification.actions()){
             snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
@@ -198,7 +212,7 @@ void SnarlBackend::slotNotify(Notification notification){
                 notification.timeout(),
                 notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
                 !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
-                notification.priority());
+                priority);
     }
     startTimeout(notification.id(),notification.timeout());
 }
