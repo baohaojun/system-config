@@ -1846,4 +1846,32 @@ using ctags-exuberant"
          (format "search-google %s" (shell-quote-argument word))
        (format "source-code-help %s %s" major-mode word)))))
 
+;;;###autoload
+(defun bhj-upcase-symbol-or-region()
+  (interactive)
+  (if (region-active-p)
+      (call-interactively 'upcase-region)
+    (save-excursion
+      (backward-sexp)
+      (upcase-region (point)
+                     (progn
+                       (forward-sexp)
+                       (point))))))
+
+(define-key global-map [remap upcase-region] 'bhj-upcase-symbol-or-region)
+
+;;;###autoload
+(defun bhj-downcase-symbol-or-region()
+  (interactive)
+  (if (region-active-p)
+      (call-interactively 'downcase-region)
+    (save-excursion
+      (backward-sexp)
+      (downcase-region (point)
+                     (progn
+                       (forward-sexp)
+                       (point))))))
+
+(define-key global-map [remap downcase-region] 'bhj-downcase-symbol-or-region)
+
 (provide 'bhj-defines)
