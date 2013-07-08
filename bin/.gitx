@@ -17,6 +17,7 @@ function git()
                                 echo $x not clean 1>&2
                                 git st -s
                                 echo ---------------- 1>&2
+                                exit 0
                             fi
                             y=$(git diff --name-status origin/master)
                             if test "$y"; then

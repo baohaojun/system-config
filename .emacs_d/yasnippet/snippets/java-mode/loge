@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: loge
+# key: loge
+# --
+Log.e("bhj", String.format("%s:%d: %s$1", "`(buffer-name)`", `(line-number-at-pos)`, "$2"$3));$0

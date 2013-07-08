@@ -6,10 +6,10 @@ test "$(pwd)" = $HOME && cd ~/system-config
 cd "$(dirname "$(lookup-file .git)")"
 
 if git-is-ancestor master HEAD; then
-    git co -B master
+    command git co -B master
 fi
 
-git config remote.origin.url | grep -q baohaojun || exit 0 # this is not my github, do not try to push it.
+command git config remote.origin.url | grep -q -P -e 'baohaojun|bhj' || exit 0 # this is not my github, do not try to push it.
 
 
 if test -z "$CHECKING_SUBMODULE"; then
