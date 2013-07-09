@@ -110,7 +110,7 @@
    ("Super-m"          "emacs" "emacs.bhj")
    ("Super-n"          "firefox" "firefox")
    ("Super-r"          "grun" "grun")
-   ("Super-t"          "konsole" "konsole -e ~/bin/myscr")
+   ("Super-t"          "konsole" "konsole.bhj")
    ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
