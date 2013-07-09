@@ -64,7 +64,7 @@ cdr()
     if [[ "$PWD" =~ ^$HOME/smb/ ]]; then
         local pat=$HOME/smb/
         local rep=smb://
-        history -s cd "${PWD/$pat/$rep}"
+        history -s cd "$(printf %q "${PWD/$pat/$rep}")"
     else
         history -s cd "$(printf %q "`pwd`")"
     fi
