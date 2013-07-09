@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Simple scripts to record/play keyboard macro (sawfish)]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/07/09/0-sawfish-keyboard-macro.html"/>
+    <updated>2013-15-09T18:07:22+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/07/09/0-sawfish-keyboard-macro.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[-new-tab or no -new-tab]]></title>
     <link href="http://baohaojun.github.io/blog/2013/07/05/0-firefox-smart-new-tab.html"/>
     <updated>2013-07-05T14:33:32+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/05/20/0-Tuning-my-blog-to-look-like-blogspot-.html"/>
     <updated>2013-05-20T22:45:19+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/20/0-Tuning-my-blog-to-look-like-blogspot-.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[在Google和亚马逊（译）]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/15/0-Inside-Google-and-Amazon.html"/>
-    <updated>2013-05-16T00:17:19+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/15/0-Inside-Google-and-Amazon.html</id>
   </entry>
 </feed>

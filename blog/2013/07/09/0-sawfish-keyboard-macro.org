@@ -1,0 +1,145 @@
+#+title: Simple scripts to record/play keyboard macro (sawfish)
+# bhj-tags: system-config
+
+Today I was assigned a task, to give various access permissions for
+dozens of gerrit projects to a certain group. It's lots of repetitive
+mouse clicking and keyboard hitting.
+
+[[../../../../images/post/keyboard-macro-1.png]] 
+
+Then it occured to me, I cound use AutoHotKey under Windows to
+automate this. But I don't want to switch to Windows, so I asked
+myself, can I do it under Linux + Sawfish?
+
+Turns out I can, and it's better than AutoHotKey: I can both record
+and replay (just like under Emacs); and I can write the whole thing
+myself, crystal clear in my mind!
+
+Without further ado, here's the [[https://github.com/baohaojun/system-config/raw/master/bin/record-key-macro][recording script]]:
+
+#+BEGIN_SRC sh
+#!/bin/bash
+
+exec > "${1:-$HOME/.key-macro}"
+function synth-key() {
+    echo "$1"
+    sawfish-client -e '(synthesize-event '"$1"' (input-focus))' >/dev/null 2>&1
+}
+
+while true; do
+    key=$(sawfish-client -e '(event-name (read-event))')
+    if test "$key" = '"Super-h"'; then
+	key=$(sawfish-client -e '(event-name (read-event))')
+	if test "$key" = '")"'; then
+	    break
+	else
+	    synth-key '"Super-h"'
+	    synth-key "$key"
+	fi
+    else
+	synth-key "$key"
+    fi
+done
+#+END_SRC
+
+And here's the [[https://github.com/baohaojun/system-config/raw/master/bin/play-key-macro][playing script]]: 
+
+#+BEGIN_SRC sh
+#!/bin/bash
+
+function synth-key() {
+    echo "$1"
+    sawfish-client -e '(synthesize-event '"$1"' (input-focus))' >/dev/null 2>&1
+    if test "$key" = '"RET"'; then
+	sleep 1
+    fi
+}
+
+cat "${1:-$HOME/.key-macro}" | while read key; do
+    synth-key "$key"
+done      
+#+END_SRC
+
+Here's the macro I recorded for doing the above task:
+
+#+BEGIN_EXAMPLE
+"C-s"
+"C"
+"a"
+"t"
+"e"
+"g"
+"o"
+"r"
+"y"
+":"
+"C-g"
+"TAB"
+"v"
+"TAB"
+"C-y"
+"TAB"
+"TAB"
+"Down"
+"Down"
+"TAB"
+"Up"
+"Up"
+"Up"
+"TAB"
+"RET"
+
+"C-s"
+"C"
+"a"
+"t"
+"e"
+"g"
+"o"
+"r"
+"y"
+":"
+"C-g"
+"TAB"
+"c"
+"TAB"
+"C-y"
+"TAB"
+"TAB"
+"Down"
+"Down"
+"Down"
+"Down"
+"Down"
+"TAB"
+"Up"
+"Up"
+"Up"
+"Up"
+"Up"
+"TAB"
+"RET"
+
+"C-s"
+"C"
+"a"
+"t"
+"e"
+"g"
+"o"
+"r"
+"y"
+":"
+"C-g"
+"TAB"
+"s"
+"TAB"
+"C-y"
+"TAB"
+"TAB"
+"TAB"
+"RET"
+#+END_EXAMPLE
+
+Note that I'm using Firemacs, so C-s means search, C-g means cancel,
+and C-y means yank (paste).
