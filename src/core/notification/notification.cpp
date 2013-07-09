@@ -39,51 +39,6 @@ QAtomicInt Notification::notificationCount = 0;
 
 uint Notification::m_idCount;
 
-class Notification::NotificationData : public QSharedData
-{
-
-public:
-    NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
-        m_id ( id == 0 ?m_idCount++:id),
-        m_timeout ( timeout ),
-        m_source ( NULL),
-        m_application ( application ),
-        m_alert ( alert ),
-        m_title ( title ),
-        m_text ( text ),
-        m_icon ( icon ),
-        m_priority(priority),
-        m_closeReason(NotificationEnums::CloseReasons::NONE)
-    {
-        notificationCount.ref();
-        qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
-    }
-
-
-    ~NotificationData(){
-        notificationCount.deref();
-        qDebug() << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id;
-    }
-
-    uint m_id;
-    int m_timeout;
-    Notification::Action *m_actionInvoked;
-    SnoreFrontend *m_source;
-    QString m_application;
-    QString m_alert;
-    QString m_title;
-    QString m_text;
-    SnoreIcon m_icon;
-    NotificationEnums::Prioritys::prioritys m_priority;
-    NotificationEnums::CloseReasons::closeReasons m_closeReason;
-    QHash<int,Notification::Action*> m_actions;
-    QVariantHash m_hints;
-
-
-
-
-};
-
 
 int Notification::DefaultTimeout = 10;
 
@@ -99,9 +54,9 @@ Notification::Notification () :
 {
 }
 
-Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id,NotificationEnums::Prioritys::prioritys priority )
+Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id,NotificationEnums::Prioritys::prioritys priority ):
+    d(new  NotificationData(application,alert,title,text,icon,timeout,id,priority))
 {
-    d = new  NotificationData(application,alert,title,text,icon,timeout,id,priority);
 }
 
 Notification::Notification ( const Notification &other ) :
@@ -113,18 +68,12 @@ Notification::~Notification()
 {
 }
 
-Notification &Notification::operator=(const Notification& other)
-{
-    d = other.d;
-    return *this;
-}
-
 const uint &Notification::id() const
 {
     return d->m_id;
 }
 
-const SnoreIcon &Notification::icon()
+const SnoreIcon &Notification::icon() const
 {
     return d->m_icon;
 }
@@ -245,5 +194,28 @@ QDataStream &operator<< ( QDataStream &stream, const Notification::Action &a)
     stream<<a.id<<a.id;
     return stream;
 }
+
+Snore::Notification::Notification::NotificationData::NotificationData(const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority):
+    m_id ( id == 0 ?m_idCount++:id),
+    m_timeout ( timeout ),
+    m_source ( NULL),
+    m_application ( application ),
+    m_alert ( alert ),
+    m_title ( title ),
+    m_text ( text ),
+    m_icon ( icon ),
+    m_priority(priority),
+    m_closeReason(NotificationEnums::CloseReasons::NONE)
+{
+    notificationCount.ref();
+    qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+}
+
+Snore::Notification::Notification::NotificationData::~NotificationData()
+{
+    notificationCount.deref();
+    qDebug() << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+}
+
 }
 

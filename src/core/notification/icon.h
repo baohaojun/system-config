@@ -21,6 +21,8 @@
 
 #include <QImage>
 #include <QSharedPointer>
+#include <QDebug>
+
 namespace Snore{
 
 
@@ -31,29 +33,57 @@ public:
     SnoreIcon(const QImage &img);
     SnoreIcon(const class QString &url);
     SnoreIcon(const SnoreIcon &other);
-    SnoreIcon &operator=(const SnoreIcon& other);
     ~SnoreIcon();
 
     const QImage &image() const;
-    const QString &localUrl() const;
-    const QString &url() const;
+    QString localUrl() const;
+    QString url() const;
     const QByteArray &imageData() const ;
-    const QString &hash() const;
+    QString hash() const;
     bool isLocalFile() const;
     bool isEmpty() const;
+    bool isValid() const;
 
 
 private:
     static QHash<QString,QString> hasedImages;
-private:
-    class SnoreIconData;
+    static QString computeHash(const QByteArray &data);
+
+
+    class SnoreIconData : public QSharedData
+    {
+    public:
+        SnoreIconData(const QImage &img);
+        SnoreIconData(const QString &url);
+
+        ~SnoreIconData();
+
+        void setImageData();
+
+        QImage m_img;
+        QByteArray m_data;
+        QString m_localUrl;
+        QString m_url;
+        QString m_hash;
+        bool m_isLocalFile;
+
+    };
     QExplicitlySharedDataPointer<SnoreIconData> d;
-
-
-
-
-
 };
+}
+
+
+inline QDebug operator<< ( QDebug debug, const Snore::SnoreIcon &icon )
+{
+    if(icon.isValid())
+    {
+        debug << "Snore::SnoreIcon(" << icon.url() << ")" ;
+    }
+    else
+    {
+        debug << "Snore::SnoreIcon(0x00)" ;
+    }
+    return debug.maybeSpace();
 }
 
 

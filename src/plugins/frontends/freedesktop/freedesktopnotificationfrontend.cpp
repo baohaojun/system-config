@@ -76,6 +76,10 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         hints["image_data"].value<QDBusArgument>()>>image;
         icon = SnoreIcon(image.toQImage());
     }
+    else
+    {
+        icon = SnoreIcon(":/root/images/freedesktop-dbus.png");
+    }
 
     if(!snore()->aplications().contains(app_name)){
 #ifdef HAVE_KDE

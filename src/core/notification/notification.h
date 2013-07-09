@@ -48,7 +48,6 @@ public:
     Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10,uint id = 0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
     Notification ( const Notification &other );
     ~Notification();
-    Notification &operator=(const Notification& other);
 
     const uint &id() const;
     //timeout in seconds
@@ -61,7 +60,7 @@ public:
     const QString &application() const;
     const QString &title() const;
     const QString &text() const;
-    const SnoreIcon &icon();
+    const SnoreIcon &icon() const;
     const QString &alert() const;
     void setSticky();
     bool sticky() const;
@@ -76,14 +75,41 @@ public:
 
     bool isValid() const;
 
-//protected://TODO::make only accesable from a backend
+    //protected://TODO::make only accesable from a backend
     void setActionInvoked ( Action *action );
     void setActionInvoked ( const int &actionID);
 
 
 private:
     static uint m_idCount;
-    class NotificationData;
+
+
+    class NotificationData : public QSharedData
+    {
+
+    public:
+        NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,
+                           int timeout,uint id,NotificationEnums::Prioritys::prioritys priority );
+
+
+        ~NotificationData();
+
+        uint m_id;
+        int m_timeout;
+        Notification::Action *m_actionInvoked;
+        SnoreFrontend *m_source;
+        QString m_application;
+        QString m_alert;
+        QString m_title;
+        QString m_text;
+        SnoreIcon m_icon;
+        NotificationEnums::Prioritys::prioritys m_priority;
+        NotificationEnums::CloseReasons::closeReasons m_closeReason;
+        QHash<int,Notification::Action*> m_actions;
+        QVariantHash m_hints;
+
+    };
+
     QExplicitlySharedDataPointer<NotificationData> d;
     static QAtomicInt notificationCount;
     static int notificationMetaID;
@@ -98,7 +124,14 @@ QDataStream &operator<< ( QDataStream & stream, const Snore::Notification & noti
 
 inline QDebug operator<< ( QDebug debug, const Snore::Notification &noti )
 {
-    debug << "Snore::Notification(" << noti.title() << ", " << noti.text() << "," << noti.id() << ")" ;
+    if(noti.isValid())
+    {
+        debug << "Snore::Notification(" << noti.title() << ", " << noti.text() << "," << noti.id() << ")" ;
+    }
+    else
+    {
+        debug << "Snore::Notification(0x00)" ;
+    }
     return debug.maybeSpace();
 }
 
