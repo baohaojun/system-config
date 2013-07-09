@@ -10,6 +10,7 @@ my $pattern;
 $pattern = "*$ARGV[0]*";
 shift @ARGV;
 
+our $first_file = 1;
 sub lookup_up_file_1dir($) {
     my ($dir) = @_;
     if (1) {
@@ -25,7 +26,16 @@ sub lookup_up_file_1dir($) {
             }
             if ($match) {
                 flock STDOUT, LOCK_EX;
-                print "$dir/$file\n" unless $file =~ m/~/;
+                unless ($file =~ m/~/) {
+                    print "$dir/$file\n";
+                    our $first_file;
+                    if ($first_file == 1) {
+                        $first_file = 0;
+                        if (system("yes-or-no-p -y '$dir/$file: your file?'") == 0) {
+                            exit 0;
+                        }
+                    }
+                }
                 flock STDOUT, LOCK_UN;
             }
         }

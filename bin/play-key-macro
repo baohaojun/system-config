@@ -1,0 +1,13 @@
+#!/bin/bash
+
+function synth-key() {
+    echo "$1"
+    sawfish-client -e '(synthesize-event '"$1"' (input-focus))' >/dev/null 2>&1
+    if test "$key" = '"RET"'; then
+	sleep 1
+    fi
+}
+
+cat "${1:-$HOME/.key-macro}" | while read key; do
+    synth-key "$key"
+done      

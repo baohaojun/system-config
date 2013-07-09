@@ -1,9 +1,28 @@
 #!/bin/bash
+
 if test "$GERRIT_HOST"; then
     host=$GERRIT_HOST
-else
+elif test "${1:0:1}" != -; then
     host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
 fi
+
+TEMP=$(getopt -o h: --long host: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -h|--host)
+            host=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
 
 if test -z "$host"; then
     host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')

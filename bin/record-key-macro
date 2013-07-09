@@ -1,0 +1,22 @@
+#!/bin/bash
+
+exec > "${1:-$HOME/.key-macro}"
+function synth-key() {
+    echo "$1"
+    sawfish-client -e '(synthesize-event '"$1"' (input-focus))' >/dev/null 2>&1
+}
+
+while true; do
+    key=$(sawfish-client -e '(event-name (read-event))')
+    if test "$key" = '"Super-h"'; then
+	key=$(sawfish-client -e '(event-name (read-event))')
+	if test "$key" = '")"'; then
+	    break
+	else
+	    synth-key '"Super-h"'
+	    synth-key "$key"
+	fi
+    else
+	synth-key "$key"
+    fi
+done
