@@ -108,6 +108,9 @@ fi
 git add .
 
 while test "$(git log --pretty=oneline -1 | cut -b 42-)" = mf; do
+    if git config remote.origin.url | grep bhj.dyndns.org; then
+        break
+    fi
     git reset --soft HEAD^
 done
 
