@@ -329,10 +329,7 @@ Notification SnoreCore::getActiveNotificationByID(uint id)
 
 void SnoreCore::requestCloseNotification(Notification n, NotificationEnums::CloseReasons::closeReasons r)
 {
-    if(m_notificationBackend->requestCloseNotification(n,r))
-    {
-        emit notificationClosed(n);
-    }
+    m_notificationBackend->requestCloseNotification(n,r);
 }
 
 }

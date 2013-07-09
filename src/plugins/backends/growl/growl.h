@@ -31,6 +31,7 @@ public:
     Growl();
     ~Growl();
     static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
+    bool canCloseNotification();
 
 private:
 	//a static instance for the static callback methode
@@ -42,7 +43,6 @@ public slots:
     void slotRegisterApplication(Snore::Application *application);
     void slotUnregisterApplication(Snore::Application *application);
     void slotNotify(Snore::Notification notification);
-    bool slotCloseNotification(Snore::Notification notification);
 };
 
 

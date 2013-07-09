@@ -24,13 +24,9 @@
 #include <QDebug>
 namespace Snore{
 
-class SnoreIcon::SnoreIconData
+class SnoreIcon::SnoreIconData : public QSharedData
 {
 public:
-    SnoreIconData():
-        m_isLocalFile(false)
-    {	}
-
     SnoreIconData(const QImage &img):
         m_img(img),
         m_isLocalFile(false)
@@ -59,8 +55,6 @@ public:
     ~SnoreIconData()
     {}
 
-
-    QAtomicInt m_ref;
     QImage m_img;
     QByteArray m_data;
     QString m_localUrl;
@@ -78,48 +72,32 @@ SnoreIcon::SnoreIcon() :
 {
 }
 
-SnoreIcon::SnoreIcon(const QImage &img)
+SnoreIcon::SnoreIcon(const QImage &img):
+    d(new SnoreIconData(img))
 {
-    d = new SnoreIconData(img);
-    d->m_ref.ref();
+
 }
 
-SnoreIcon::SnoreIcon(const QString &url)
+SnoreIcon::SnoreIcon(const QString &url):
+    d(new SnoreIconData(url))
 {
-    d = new SnoreIconData(url);
-    d->m_ref.ref();
+
 }
 
 SnoreIcon::SnoreIcon(const SnoreIcon &other)
 {
-    if(other.d)
-    {
-        other.d->m_ref.ref();
-        d = other.d;
-    }
-    else
-    {
-        d = NULL;
-    }
+    d = other.d;
 }
 
 SnoreIcon &SnoreIcon::operator=(const SnoreIcon &other)
 {
-    if(d && !d->m_ref.deref())
-    {
-        delete d;
-    }
-    other.d->m_ref.ref();
     d = other.d;
     return *this;
 }
 
 SnoreIcon::~SnoreIcon()
 {
-    if(d && !d->m_ref.deref())
-    {
-        delete d;
-    }
+
 }
 
 
@@ -131,10 +109,14 @@ const QImage &SnoreIcon::image() const{
 }
 
 const QString &SnoreIcon::localUrl()const{
-    if(d->m_localUrl.isEmpty()){
-        if(hasedImages.contains(hash())){
+    if(d->m_localUrl.isEmpty())
+    {
+        if(hasedImages.contains(hash()))
+        {
             d->m_localUrl =  hasedImages[hash()];
-        }else{
+        }
+        else
+        {
             d->m_localUrl = SnoreCore::snoreTMP();
             d->m_localUrl  = d->m_localUrl.append(hash()).append(".png");
             hasedImages[hash()] = d->m_localUrl;
@@ -145,16 +127,16 @@ const QString &SnoreIcon::localUrl()const{
 }
 
 const QByteArray &SnoreIcon::imageData() const{
-    if(d->m_data.isEmpty()){
+    if(d->m_data.isEmpty() && !image().isNull()){
         QBuffer buffer( &d->m_data );
         buffer.open( QBuffer::WriteOnly );
-        d->m_img.save( &buffer, "PNG" );
+        image().save( &buffer, "PNG" );
     }
     return d->m_data;
 }
 
 const QString &SnoreIcon::hash() const{
-    if(d->m_hash.isEmpty()){
+    if(d->m_hash.isEmpty() && !imageData().isNull()){
         QCryptographicHash h(QCryptographicHash::Md5);
         h.addData(imageData());
         d->m_hash = h.result().toHex();

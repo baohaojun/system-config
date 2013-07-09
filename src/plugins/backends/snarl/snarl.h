@@ -32,6 +32,7 @@ public:
     SnarlBackend();
     ~SnarlBackend();
     virtual bool init(Snore::SnoreCore *snore);
+    bool canCloseNotification();
 
 private:
     class SnarlWidget;
@@ -43,7 +44,7 @@ public slots:
     void slotRegisterApplication(Snore::Application *application);
     void slotUnregisterApplication(Snore::Application *application);
     void slotNotify(Snore::Notification notification);
-    bool slotCloseNotification(Snore::Notification notification);
+    void slotCloseNotification(Snore::Notification notification);
 
 private:
     QHash<uint,LONG32> m_idMap;

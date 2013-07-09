@@ -88,11 +88,6 @@ void Growl::slotNotify(Notification notification){
     }
 }
 
-bool Growl::slotCloseNotification(Notification notification){
-    Q_UNUSED(notification);
-    return false;
-}
-
 void Growl::gntpCallback(const int &id,const std::string &reason,const std::string &data){
     qDebug()<<"Growl Callback"<<id<<QString(reason.c_str())<<QString(data.c_str());
     Notification n = s_instance->snore()->getActiveNotificationByID(id);
@@ -107,4 +102,9 @@ void Growl::gntpCallback(const int &id,const std::string &reason,const std::stri
         s_instance->snore()->notificationActionInvoked(n);
     }
     s_instance->closeNotification(n,r);
+}
+
+bool Growl::canCloseNotification()
+{
+    return false;
 }

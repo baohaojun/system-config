@@ -49,6 +49,11 @@ bool SnoreToast::init(SnoreCore *snore)
     return SnoreBackend::init(snore);
 }
 
+bool SnoreToast::canCloseNotification()
+{
+    return false;
+}
+
 void SnoreToast::slotRegisterApplication(Application *application)
 {
     Q_UNUSED(application)
@@ -82,12 +87,6 @@ void SnoreToast::slotNotify(Notification notification)
 
     p->setProperty("SNORE_NOTIFICATION_ID",notification.id());
     qDebug() << notification.id();
-}
-
-bool SnoreToast::slotCloseNotification(Notification notification)
-{
-    Q_UNUSED(notification)
-    return false;
 }
 
 void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)

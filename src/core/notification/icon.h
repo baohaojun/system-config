@@ -37,7 +37,7 @@ public:
     const QImage &image() const;
     const QString &localUrl() const;
     const QString &url() const;
-    const QByteArray &imageData() const;
+    const QByteArray &imageData() const ;
     const QString &hash() const;
     bool isLocalFile() const;
     bool isEmpty() const;
@@ -47,7 +47,7 @@ private:
     static QHash<QString,QString> hasedImages;
 private:
     class SnoreIconData;
-    SnoreIconData* d;
+    QExplicitlySharedDataPointer<SnoreIconData> d;
 
 
 

@@ -56,12 +56,12 @@ public:
     const int &timeout() const;
 
     const Action* actionInvoked() const;
-    void setSource(class SnoreFrontend *source)const;
+    void setSource(class SnoreFrontend *source);
     class SnoreFrontend *source() const;
     const QString &application() const;
     const QString &title() const;
     const QString &text() const;
-    const SnoreIcon &icon() const;
+    const SnoreIcon &icon();
     const QString &alert() const;
     void setSticky();
     bool sticky() const;
@@ -84,8 +84,8 @@ public:
 private:
     static uint m_idCount;
     class NotificationData;
-    NotificationData* d;
-    static int notificationCount;
+    QExplicitlySharedDataPointer<NotificationData> d;
+    static QAtomicInt notificationCount;
     static int notificationMetaID;
 
 };

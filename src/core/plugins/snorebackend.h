@@ -39,9 +39,11 @@ public:
     virtual ~SnoreBackend();
     virtual bool init(SnoreCore *snore);
 
-    bool requestCloseNotification( Snore::Notification notification,NotificationEnums::CloseReasons::closeReasons reason );
+    void requestCloseNotification( Snore::Notification notification,NotificationEnums::CloseReasons::closeReasons reason );
 
     Snore::Notification getActiveNotificationByID(uint id);
+
+    virtual bool canCloseNotification() = 0;
 
 signals:
     void closeNotification( Snore::Notification );
@@ -51,7 +53,7 @@ public slots:
     virtual void slotRegisterApplication ( Snore::Application *application ) = 0;
     virtual void slotUnregisterApplication ( Snore::Application *application ) = 0;
     virtual void slotNotify ( Snore::Notification notification ) = 0;
-    virtual bool slotCloseNotification ( Snore::Notification notification ) =0;
+    virtual void slotCloseNotification ( Snore::Notification notification );
 
 protected:
     void closeNotification(Snore::Notification,Snore::NotificationEnums::CloseReasons::closeReasons);

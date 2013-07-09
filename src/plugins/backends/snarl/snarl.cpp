@@ -142,6 +142,11 @@ bool SnarlBackend::init(SnoreCore *snore){
     return SnoreBackend::init(snore);
 }
 
+bool SnarlBackend::canCloseNotification()
+{
+    return true;
+}
+
 void SnarlBackend::slotRegisterApplication(Application *application){
     SnarlInterface *snarlInterface = NULL;
     if(m_applications.contains(application->name())){
@@ -226,8 +231,7 @@ void SnarlBackend::slotNotify(Notification notification){
     startTimeout(notification.id(),notification.timeout());
 }
 
-bool SnarlBackend::slotCloseNotification(Notification notification)
+void SnarlBackend::slotCloseNotification(Notification notification)
 {
     m_defautSnarlinetrface->Hide(m_idMap.take(notification.id()));
-    return true;
 }

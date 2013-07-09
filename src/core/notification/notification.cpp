@@ -28,16 +28,20 @@
 #include <QTextDocumentFragment>
 #include <QTextDocument>
 
+#include <QSharedData>
+
 namespace Snore{
 
 int Notification::notificationMetaID = qRegisterMetaType<Notification>();
 
-int Notification::notificationCount = 0;
+QAtomicInt Notification::notificationCount = 0;
 
-uint Notification::m_idCount = 1;
 
-class Notification::NotificationData
+uint Notification::m_idCount;
+
+class Notification::NotificationData : public QSharedData
 {
+
 public:
     NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
         m_id ( id == 0 ?m_idCount++:id),
@@ -51,17 +55,16 @@ public:
         m_priority(priority),
         m_closeReason(NotificationEnums::CloseReasons::NONE)
     {
-        qDebug()<< "Creating Notification: ActiveNotifications" << ++notificationCount << "id" << m_id;
-        m_ref.ref();
+        notificationCount.ref();
+        qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
     }
 
 
     ~NotificationData(){
-        qDebug() << "Cloasing Notification:" << m_id << m_ref;
-        qDebug() << "Deleting Notification: ActiveNotifications"<<--notificationCount;
+        notificationCount.deref();
+        qDebug() << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id;
     }
 
-    QAtomicInt m_ref;
     uint m_id;
     int m_timeout;
     Notification::Action *m_actionInvoked;
@@ -75,6 +78,8 @@ public:
     NotificationEnums::CloseReasons::closeReasons m_closeReason;
     QHash<int,Notification::Action*> m_actions;
     QVariantHash m_hints;
+
+
 
 
 };
@@ -99,34 +104,17 @@ Notification::Notification ( const QString &application, const QString &alert, c
     d = new  NotificationData(application,alert,title,text,icon,timeout,id,priority);
 }
 
-Notification::Notification ( const Notification &other )
+Notification::Notification ( const Notification &other ) :
+    d(other.d)
 {
-    if(other.d)
-    {
-        other.d->m_ref.ref();
-        d = other.d;
-    }
-    else
-    {
-        d = NULL;
-    }
 }
 
 Notification::~Notification()
 {
-    if(d && !d->m_ref.deref())
-    {
-        delete d;
-    }
 }
 
 Notification &Notification::operator=(const Notification& other)
 {
-    if(d && !d->m_ref.deref())
-    {
-        delete d;
-    }
-    other.d->m_ref.ref();
     d = other.d;
     return *this;
 }
@@ -136,7 +124,7 @@ const uint &Notification::id() const
     return d->m_id;
 }
 
-const SnoreIcon &Notification::icon() const
+const SnoreIcon &Notification::icon()
 {
     return d->m_icon;
 }
@@ -161,7 +149,7 @@ void Notification::setActionInvoked ( const int &id)
     d->m_actionInvoked = d->m_actions[id];
 }
 
-void Notification::setSource(SnoreFrontend *source) const{
+void Notification::setSource(SnoreFrontend *source){
     d->m_source = source;
 }
 
@@ -242,7 +230,7 @@ void Notification::insertHint ( const QString &key, const QVariant &val )
 
 bool Notification::isValid() const
 {
-    return d != NULL;
+    return d;
 }
 
 QDataStream &operator<< ( QDataStream &stream, const Notification &noti )

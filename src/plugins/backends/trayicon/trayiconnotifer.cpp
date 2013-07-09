@@ -26,6 +26,11 @@ bool TrayIconNotifer::init(SnoreCore *snore){
     return SnoreBackend::init(snore);
 }
 
+bool TrayIconNotifer::canCloseNotification()
+{
+    return false;
+}
+
 void TrayIconNotifer::slotRegisterApplication ( Application *application )
 {
     Q_UNUSED ( application )
@@ -43,17 +48,11 @@ void TrayIconNotifer::slotNotify( Notification notification )
     }
 }
 
-bool TrayIconNotifer::slotCloseNotification( Notification notification )
-{
-    Q_UNUSED ( notification )
-    return false;
-}
-
 void TrayIconNotifer::displayNotification(){
     qDebug()<<"Display"<<m_notificationQue.size();
     Notification notification =  m_notificationQue.takeFirst();
     if(!m_notificationQue.isEmpty()){
-        QTimer::singleShot(notification.timeout()*1000,this,SLOT(slotCloseNotification()));
+        QTimer::singleShot(notification.timeout()*1000,this,SLOT(slotCloseNotificationByTimeout()));
     }
 
     qDebug()<<"taking"<<notification.title();
@@ -62,7 +61,7 @@ void TrayIconNotifer::displayNotification(){
     m_lastNotify.restart();
 }
 
-void TrayIconNotifer::slotCloseNotification(){
+void TrayIconNotifer::slotCloseNotificationByTimeout(){
     Notification n = snore()->getActiveNotificationByID(m_displayed);
     if(n.isValid()){
         closeNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
