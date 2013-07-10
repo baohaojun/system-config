@@ -4,7 +4,7 @@ TEMP=$(getopt -o a:Ab: --long author:board: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 
 author=flonk
-att='&aonly=true'
+att='&sbyt=true&aonly=true'
 def_board=(MyPhoto Pictures)
 board=()
 while true; do

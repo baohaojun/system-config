@@ -9,10 +9,16 @@ script=$(cat <<EOF
      (when (string-match "(- |^)Mozilla Firefox\$" (window-name w))
        (synthesize-event "C-l" w)
        (synthesize-event "C-c" w)
+       (synthesize-event "TAB" w)
+       (synthesize-event "TAB" w)
+       (synthesize-event "TAB" w)
        (throw 'TAG)))
    (managed-windows)))
 EOF
 )
 sawfish-client -e "$script" >~/.logs/$(basename $0).log 2>&1
 
-getclip
+(
+    getclip |grep . ||
+    xclip -o
+) | tee -a ~/.logs/$(basename $0).log
