@@ -1858,8 +1858,6 @@ using ctags-exuberant"
                        (forward-sexp)
                        (point))))))
 
-(define-key global-map [remap upcase-region] 'bhj-upcase-symbol-or-region)
-
 ;;;###autoload
 (defun bhj-downcase-symbol-or-region()
   (interactive)
@@ -1871,7 +1869,5 @@ using ctags-exuberant"
                      (progn
                        (forward-sexp)
                        (point))))))
-
-(define-key global-map [remap downcase-region] 'bhj-downcase-symbol-or-region)
 
 (provide 'bhj-defines)

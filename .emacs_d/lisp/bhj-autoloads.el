@@ -282,8 +282,9 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 
 ;;;***
 
-;;;### (autoloads (source-code-help bhj-java-import bhj-find-missing-file
-;;;;;;  replace-double-quotes bhj-choose-from-output bhj-choose bhj-open-android-doc-on-java-buffer
+;;;### (autoloads (bhj-downcase-symbol-or-region bhj-upcase-symbol-or-region
+;;;;;;  source-code-help bhj-java-import bhj-find-missing-file replace-double-quotes
+;;;;;;  bhj-choose-from-output bhj-choose bhj-open-android-doc-on-java-buffer
 ;;;;;;  bhj-do-dictionry insert-today dos2unix bhj-do-code-generation
 ;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-name my-bbdb-canonicalize
 ;;;;;;  my-bbdb/gnus-update-records-mode bhj-view-mail-external gnus-gmail-search-subject
@@ -298,13 +299,13 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 ;;;;;;  switch-to-devenv bhj-jdk-help bhj-set-reply bhj-mimedown
 ;;;;;;  bhj-w3m-scroll-down-or-previous-url bhj-w3m-scroll-up-or-next-url
 ;;;;;;  bhj-isearch-from-bod bhj-occur-merge-conflicts bhj-occur-make-errors
-;;;;;;  bhj-occur java-get-override java-get-hierarchy c-get-includes
-;;;;;;  bhj-insert-pwdu bhj-insert-pwdw bhj-clt-insert-file-name
+;;;;;;  bhj-occur java-get-override java-get-hierarchy bhj-indent-region-as-prev-line
+;;;;;;  c-get-includes bhj-insert-pwdu bhj-insert-pwdw bhj-clt-insert-file-name
 ;;;;;;  wiki-local-bhj weekrep linux-c++-mode linux-c-mode bhj-c-end-of-defun
 ;;;;;;  java-complete-method java-resolve bhj-c-show-current-func
 ;;;;;;  bhj-c-beginning-of-defun confirm-risky-remote-edit fix-latex-cjk
-;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (20928
-;;;;;;  17370 154722 50000))
+;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (20957
+;;;;;;  30073 927795 244000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -385,6 +386,11 @@ C mode with adjusted defaults for use with the Linux kernel.
 \(fn)" t nil)
 
 (autoload 'c-get-includes "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-indent-region-as-prev-line "bhj-defines" "\
 
 
 \(fn)" t nil)
@@ -686,6 +692,16 @@ lookup the current word (or region) in dictionary
 \(fn)" t nil)
 
 (autoload 'source-code-help "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-upcase-symbol-or-region "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-downcase-symbol-or-region "bhj-defines" "\
 
 
 \(fn)" t nil)
