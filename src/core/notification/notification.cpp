@@ -37,7 +37,7 @@ int Notification::notificationMetaID = qRegisterMetaType<Notification>();
 uint Notification::notificationCount = 0;
 
 
-uint Notification::m_idCount;
+uint Notification::m_idCount = 1;
 
 
 int Notification::DefaultTimeout = 10;
