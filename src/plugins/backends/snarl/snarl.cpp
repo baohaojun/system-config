@@ -203,7 +203,7 @@ void SnarlBackend::slotNotify(Notification notification){
         break;
     }
 
-    if(!m_idMap.contains(notification.id())){
+    if(notification.updateID() == 0){
         ULONG32 id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
                                             Notification::toPlainText(notification.title()).toUtf8().constData(),
                                             Notification::toPlainText(notification.text()).toUtf8().constData(),
@@ -216,10 +216,11 @@ void SnarlBackend::slotNotify(Notification notification){
             snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
         }
         m_idMap[notification.id()] = id;
+        startTimeout(notification.id(),notification.timeout());
 
     }else{
         //update message
-        snarlInterface->Update(m_idMap[notification.id()],
+        snarlInterface->Update(m_idMap[notification.updateID()],
                 notification.alert().toUtf8().constData(),
                 Notification::toPlainText(notification.title()).toUtf8().constData(),
                 Notification::toPlainText(notification.text()).toUtf8().constData(),
@@ -227,8 +228,9 @@ void SnarlBackend::slotNotify(Notification notification){
                 notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
                 !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
                 priority);
+        startTimeout(notification.updateID(),notification.timeout());
     }
-    startTimeout(notification.id(),notification.timeout());
+
 }
 
 void SnarlBackend::slotCloseNotification(Notification notification)

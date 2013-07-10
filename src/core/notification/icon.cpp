@@ -35,26 +35,22 @@ SnoreIcon::SnoreIcon() :
 SnoreIcon::SnoreIcon(const QImage &img):
     d(new SnoreIconData(img))
 {
-
 }
 
 SnoreIcon::SnoreIcon(const QString &url):
     d(new SnoreIconData(url))
 {
-
 }
 
 SnoreIcon::SnoreIcon(const SnoreIcon &other):
     d(other.d)
 {
-    qDebug() << *this;
 }
 
 SnoreIcon::~SnoreIcon()
 {
 
 }
-
 
 const QImage &SnoreIcon::image() const{
     if(d->m_img.isNull()){
@@ -72,7 +68,7 @@ QString SnoreIcon::localUrl()const{
         }
         else
         {
-            d->m_localUrl = QString("%1%2.png").arg(SnoreCore::snoreTMP(), hash(), ".png");
+            d->m_localUrl = QString("%1%2.png").arg(SnoreCore::snoreTMP(), hash());
             image().save(d->m_localUrl ,"PNG");
             hasedImages[hash()] = d->m_localUrl;
         }

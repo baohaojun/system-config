@@ -59,7 +59,7 @@ void FreedesktopFrontend::actionInvoked(Notification notification) {
 
 void FreedesktopFrontend::notificationClosed(Notification notification) {
 
-    qDebug()<<"Closing Dbus notification"<<notification.id()<<"reason:"<<(int)notification.closeReason();
+    qDebug()<<"Closing Dbus notification"<<notification<<"reason:"<<(int)notification.closeReason();
     emit NotificationClosed(notification.id(),notification.closeReason());
 }
 
@@ -67,7 +67,6 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
                                  const QString &app_icon, const QString &summary, const QString &body,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
-    qDebug()<<app_name<<summary<<body<<app_icon<<timeout;
     SnoreIcon icon;
     NotificationEnums::Prioritys::prioritys priotity = NotificationEnums::Prioritys::NORMAL;
 
@@ -97,7 +96,11 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         priotity =  NotificationEnums::Prioritys::prioritys(hints["urgency"].toInt()-1);
     }
 
-    Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id,priotity);
+    Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,priotity);
+    if(replaces_id != 0)
+    {
+        noti.setUpdateID(replaces_id);
+    }
     noti.setSource(this);
     for(int i = 0;i < actions.length(); i+=2){
         noti.addAction(new Notification::Action(actions.at(i).toInt(),actions.at(i+1)));

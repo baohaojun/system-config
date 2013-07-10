@@ -34,7 +34,7 @@ namespace Snore{
 
 int Notification::notificationMetaID = qRegisterMetaType<Notification>();
 
-QAtomicInt Notification::notificationCount = 0;
+uint Notification::notificationCount = 0;
 
 
 uint Notification::m_idCount;
@@ -54,8 +54,8 @@ Notification::Notification () :
 {
 }
 
-Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id,NotificationEnums::Prioritys::prioritys priority ):
-    d(new  NotificationData(application,alert,title,text,icon,timeout,id,priority))
+Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout,NotificationEnums::Prioritys::prioritys priority ):
+    d(new  NotificationData(application,alert,title,text,icon,timeout,priority))
 {
 }
 
@@ -81,6 +81,16 @@ const SnoreIcon &Notification::icon() const
 const int &Notification::timeout() const
 {
     return d->m_timeout;
+}
+
+void Notification::setUpdateID(uint id)
+{
+    d->m_updateID = id;
+}
+
+const uint &Notification::updateID() const
+{
+    return d->m_updateID;
 }
 
 const Notification::Action *Notification::actionInvoked() const
@@ -195,8 +205,9 @@ QDataStream &operator<< ( QDataStream &stream, const Notification::Action &a)
     return stream;
 }
 
-Snore::Notification::Notification::NotificationData::NotificationData(const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority):
-    m_id ( id == 0 ?m_idCount++:id),
+Snore::Notification::Notification::NotificationData::NotificationData(const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout,  NotificationEnums::Prioritys::prioritys priority):
+    m_id ( m_idCount++ ),
+    m_updateID(0),
     m_timeout ( timeout ),
     m_source ( NULL),
     m_application ( application ),
@@ -207,13 +218,13 @@ Snore::Notification::Notification::NotificationData::NotificationData(const QStr
     m_priority(priority),
     m_closeReason(NotificationEnums::CloseReasons::NONE)
 {
-    notificationCount.ref();
+    notificationCount++;
     qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
 }
 
 Snore::Notification::Notification::NotificationData::~NotificationData()
 {
-    notificationCount.deref();
+    notificationCount--;
     qDebug() << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id;
 }
 

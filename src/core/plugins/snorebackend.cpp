@@ -66,7 +66,11 @@ void SnoreBackend::requestCloseNotification ( Notification notification,Notifica
 
 void SnoreBackend::closeNotification(Notification n, NotificationEnums::CloseReasons::closeReasons reason)
 {
-    qDebug() << __func__ << n;
+    if(!n.isValid())
+    {
+        qWarning() << "Closing a notification a second time, this should not heappen";
+        return;
+    }
     if(m_activeNotifications.contains(n.id()))
     {
         m_activeNotifications.remove(n.id());

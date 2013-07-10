@@ -86,13 +86,11 @@ void SnoreToast::slotNotify(Notification notification)
     p->start("SnoreToast", arguements);
 
     p->setProperty("SNORE_NOTIFICATION_ID",notification.id());
-    qDebug() << notification.id();
 }
 
 void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
 {
     QProcess *p = qobject_cast<QProcess*>(sender());
-    qDebug() << p->property("SNORE_NOTIFICATION_ID").toUInt();
     Notification n = getActiveNotificationByID(p->property("SNORE_NOTIFICATION_ID").toUInt());
 
     NotificationEnums::CloseReasons::closeReason reason = NotificationEnums::CloseReasons::CLOSED;
@@ -118,6 +116,7 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
         break;
     case -1:
         //failed
+         qWarning() << "SnoreToast failed to display " << n;
         break;
     }
 
