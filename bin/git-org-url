@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -- "$(readlink -f "$1")"
+cd "$(dirname "$1")"
+set -- "$(basename "$1")"
+
+clip="[[$(git-info-clip "$@")]["$@"]]"
+echo "$clip"
+putclip "$clip"

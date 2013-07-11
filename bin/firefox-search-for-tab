@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) url_pattern"
+fi
+
+for x in $(seq 1 50); do
+    url=$(get-firefox-tab-url)
+    if echo "$url" | grep -q -P -e "$1"; then
+	exit 0;
+    fi
+
+    if test $x = 1; then
+	first_url=$url
+    elif test "$url" = "$first_url"; then
+	exit -1
+    fi
+
+    sawfish-send-window-event '(- |^)Mozilla Firefox\$' C-f
+done
+

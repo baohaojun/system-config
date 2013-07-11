@@ -21,6 +21,11 @@ if test -d "$1"; then
     stem=/tree/master
 fi
 
-lookup-file "$1" |perl -npe 's,'$git_dir','$git_proj_http$stem','|tr -d '\r\n'|tee /dev/tty|putclip
+url=$(lookup-file "$1" |perl -npe 's,'$git_dir','$git_proj_http$stem','|tr -d '\r\n')
+echo "$url"
+
+if is-tty-io; then
+    putclip "$url"
+fi
 
 

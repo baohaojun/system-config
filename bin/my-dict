@@ -5,7 +5,8 @@ if test $# = 0; then
 fi
 
 new_tab=-new-tab
-if get-firefox-tab-url | grep 'localhost.*/dict' -q; then
+
+if firefox-search-for-tab 'localhost.*/dict'; then
     new_tab=
 fi
 firefox $new_tab http://localhost:34567/dict/"$(echo "$@" | urlify)"

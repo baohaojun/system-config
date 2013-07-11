@@ -41,7 +41,8 @@ if test "$#" != 0; then
 
     if test "$1" = p; then
         shift
-        putclip $(f "$@")
+        blog=$(f "$@")
+        putclip "[[$blog][$(grep -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//')]]"
         exit
     fi
 

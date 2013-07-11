@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+script=$(cat <<EOF
+(catch 'TAG
+ (mapc
+   (lambda (w)
+     (when (string-match "$1" (window-name w))
+       $(
+           shift;
+           for x in "$@"; do
+               echo "(synthesize-event \"$x\" w)"
+           done
+       )
+       (throw 'TAG)))
+   (managed-windows)))
+EOF
+)
+sawfish-client -e "$script" >~/.logs/$(basename $0).log 2>&1
