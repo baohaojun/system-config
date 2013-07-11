@@ -1,0 +1,20 @@
+#+title: Bash/sawfish scripts to force firefox open in a certain tab
+# bhj-tags: system-config
+
+In [[../05/0-firefox-smart-new-tab.org][Firefox: -new-tab or no -new-tab]] I put forward a method to make
+firefox try very hard to open a utility webpage in a new tab /only/ if
+the *current tab* is not visiting the same utility.
+
+Now I took one step forward (after practicing more with the idea in
+[[../09/0-sawfish-keyboard-macro.org][Simple scripts to record/play keyboard macro (sawfish)]]), if *any tab*
+is visiting the same utility (with a regexp matching), firefox will
+try to open the url in that tab.
+
+The idea is very simple, just switch all the tabs around with C-f (I'm
+using Firemacs and this key is defined to be NextTab), then check the
+url it's visiting, if it matches the utility's url pattern, then we
+use that tab. Only if we can't find such a tab do we use a new one.
+
+The scripts are located at [[https://github.com/baohaojun/system-config/raw/master/bin/my-dict][my-dict]] (the utility),
+[[https://github.com/baohaojun/system-config/raw/master/bin/firefox-search-for-tab][firefox-search-for-tab]] and [[https://github.com/baohaojun/system-config/raw/master/bin/get-firefox-tab-url][get-firefox-tab-url]]. Oh, and another script
+is [[https://github.com/baohaojun/system-config/raw/master/bin/sawfish-send-window-event][sawfish-send-window-event]].

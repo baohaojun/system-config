@@ -1,6 +1,10 @@
 #+title: Archive
  * 2013
   - 2013-07
+   * 2013-07-11
+
+     [[../blog/2013/07/11/0-firefox-search-for-tab.org][Bash/sawfish scripts to force firefox open in a certain tab]]
+
    * 2013-07-09
 
      [[../blog/2013/07/09/0-sawfish-keyboard-macro.org][Simple scripts to record/play keyboard macro (sawfish)]]

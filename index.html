@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Simple scripts to record/play keyboard macro (sawfish)</title>
+<title>Bash/sawfish scripts to force firefox open in a certain tab</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 
@@ -101,177 +101,38 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Simple scripts to record/play keyboard macro (sawfish)</h1>
+<h1 class="title">Bash/sawfish scripts to force firefox open in a certain tab</h1>
 <p>
-Today I was assigned a task, to give various access permissions for
-dozens of gerrit projects to a certain group. It's lots of repetitive
-mouse clicking and keyboard hitting.
-</p>
-
-
-<div class="figure">
-<p><img  src="images/post/keyboard-macro-1.png" alt="keyboard-macro-1.png" /></p>
-</div> 
-
-<p>
-Then it occured to me, I cound use AutoHotKey under Windows to
-automate this. But I don't want to switch to Windows, so I asked
-myself, can I do it under Linux + Sawfish?
+In <a href="blog/2013/07/05/0-firefox-smart-new-tab.html">Firefox: -new-tab or no -new-tab</a> I put forward a method to make
+firefox try very hard to open a utility webpage in a new tab <i>only</i> if
+the <b>current tab</b> is not visiting the same utility.
 </p>
 
 <p>
-Turns out I can, and it's better than AutoHotKey: I can both record
-and replay (just like under Emacs); and I can write the whole thing
-myself, crystal clear in my mind! (I think this is quicker for me to
-learn the Linux autokey tool, plus I believe it gives me more control).
+Now I took one step forward (after practicing more with the idea in
+<a href="blog/2013/07/09/0-sawfish-keyboard-macro.html">Simple scripts to record/play keyboard macro (sawfish)</a>), if <b>any tab</b>
+is visiting the same utility (with a regexp matching), firefox will
+try to open the url in that tab.
 </p>
 
 <p>
-Without further ado, here's the <a href="https://github.com/baohaojun/system-config/raw/master/bin/record-key-macro">recording script</a>:
+The idea is very simple, just switch all the tabs around with C-f (I'm
+using Firemacs and this key is defined to be NextTab), then check the
+url it's visiting, if it matches the utility's url pattern, then we
+use that tab. Only if we can't find such a tab do we use a new one.
 </p>
 
-<div class="org-src-container">
-
-<pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">!/bin/</span><span class="org-keyword">bash</span>
-
-<span class="org-keyword">exec</span> &gt; <span class="org-string">"${1:-$HOME/.key-macro}"</span>
-<span class="org-keyword">function</span> <span class="org-function-name">synth-key</span>() {
-    <span class="org-builtin">echo</span> <span class="org-string">"$1"</span>
-    sawfish-client -e <span class="org-string">'(synthesize-event '"$1"' (input-focus))'</span> &gt;/dev/null 2&gt;&amp;1
-}
-
-<span class="org-keyword">while</span> true; <span class="org-keyword">do</span>
-    <span class="org-variable-name">key</span>=$(<span class="org-sh-quoted-exec">sawfish-client</span> -e <span class="org-string">'(event-name (read-event))'</span>)
-    <span class="org-keyword">if </span><span class="org-builtin">test</span> <span class="org-string">"$key"</span> = <span class="org-string">'"Super-h"'</span>; <span class="org-keyword">then</span>
-        <span class="org-variable-name">key</span>=$(<span class="org-sh-quoted-exec">sawfish-client</span> -e <span class="org-string">'(event-name (read-event))'</span>)
-        <span class="org-keyword">if </span><span class="org-builtin">test</span> <span class="org-string">"$key"</span> = <span class="org-string">'")"'</span>; <span class="org-keyword">then</span>
-            <span class="org-keyword">break</span>
-        <span class="org-keyword">else</span>
-            synth-key <span class="org-string">'"Super-h"'</span>
-            synth-key <span class="org-string">"$key"</span>
-        <span class="org-keyword">fi</span>
-    <span class="org-keyword">else</span>
-        synth-key <span class="org-string">"$key"</span>
-    <span class="org-keyword">fi</span>
-<span class="org-keyword">done</span>
-</pre>
-</div>
-
 <p>
-And here's the <a href="https://github.com/baohaojun/system-config/raw/master/bin/play-key-macro">playing script</a>: 
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">!/bin/</span><span class="org-keyword">bash</span>
-
-<span class="org-keyword">function</span> <span class="org-function-name">synth-key</span>() {
-    <span class="org-builtin">echo</span> <span class="org-string">"$1"</span>
-    sawfish-client -e <span class="org-string">'(synthesize-event '"$1"' (input-focus))'</span> &gt;/dev/null 2&gt;&amp;1
-    <span class="org-keyword">if </span><span class="org-builtin">test</span> <span class="org-string">"$key"</span> = <span class="org-string">'"RET"'</span>; <span class="org-keyword">then</span>
-        sleep 1
-    <span class="org-keyword">fi</span>
-}
-
-cat <span class="org-string">"${1:-$HOME/.key-macro}"</span> | <span class="org-keyword">while </span><span class="org-builtin">read</span> key; <span class="org-keyword">do</span>
-    synth-key <span class="org-string">"$key"</span>
-<span class="org-keyword">done</span>
-</pre>
-</div>
-
-<p>
-Here's the macro I recorded for doing the above task:
-</p>
-
-<pre class="example">
-"C-s"
-"C"
-"a"
-"t"
-"e"
-"g"
-"o"
-"r"
-"y"
-":"
-"C-g"
-"TAB"
-"v"
-"TAB"
-"C-y"
-"TAB"
-"TAB"
-"Down"
-"Down"
-"TAB"
-"Up"
-"Up"
-"Up"
-"TAB"
-"RET"
-
-"C-s"
-"C"
-"a"
-"t"
-"e"
-"g"
-"o"
-"r"
-"y"
-":"
-"C-g"
-"TAB"
-"c"
-"TAB"
-"C-y"
-"TAB"
-"TAB"
-"Down"
-"Down"
-"Down"
-"Down"
-"Down"
-"TAB"
-"Up"
-"Up"
-"Up"
-"Up"
-"Up"
-"TAB"
-"RET"
-
-"C-s"
-"C"
-"a"
-"t"
-"e"
-"g"
-"o"
-"r"
-"y"
-":"
-"C-g"
-"TAB"
-"s"
-"TAB"
-"C-y"
-"TAB"
-"TAB"
-"TAB"
-"RET"
-</pre>
-
-<p>
-Note that I'm using Firemacs, so C-s means search, C-g means cancel,
-and C-y means yank (paste).
+The scripts are located at <a href="https://github.com/baohaojun/system-config/raw/master/bin/my-dict">my-dict</a> (the utility),
+<a href="https://github.com/baohaojun/system-config/raw/master/bin/firefox-search-for-tab">firefox-search-for-tab</a> and <a href="https://github.com/baohaojun/system-config/raw/master/bin/get-firefox-tab-url">get-firefox-tab-url</a>. Oh, and another script
+is <a href="https://github.com/baohaojun/system-config/raw/master/bin/sawfish-send-window-event">sawfish-send-window-event</a>.
 </p>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2013/07/05/0-firefox-smart-new-tab.html"> <!-- prev-url -->
+      <a href="blog/2013/07/09/0-sawfish-keyboard-macro.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        Firefox: -new-tab or no -new-tab <!-- prev-title -->
+        Simple scripts to record/play keyboard macro (sawfish) <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -354,7 +215,8 @@ and C-y means yank (paste).
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2013/07/05/0-firefox-smart-new-tab.html'> Firefox: -new-tab or no -new-tab </a></li>
+        <li><a href='blog/2013/07/09/0-sawfish-keyboard-macro.html'> Simple scripts to record/play keyboard macro (sawf... </a></li>
+<li><a href='blog/2013/07/05/0-firefox-smart-new-tab.html'> Firefox: -new-tab or no -new-tab </a></li>
 <li><a href='blog/2013/06/18/0-auto-includes.html'> 苹果对头文件开刀了？我也来！ </a></li>
 <li><a href='../../06/13/0-one-book-one-saying.html'> 一本书，一句话 </a></li>
 <li><a href='blog/2013/05/31/0-intelligent-completion.html'> 智能补齐 </a></li>
@@ -363,7 +225,6 @@ and C-y means yank (paste).
 <li><a href='blog/2013/05/22/TourDeBabel.html'> 通天塔导游 </a></li>
 <li><a href='blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html'> Mysterious rsync/ssh/scp hang </a></li>
 <li><a href='blog/2013/05/20/0-Tuning-my-blog-to-look-like-blogspot-.html'> Tuning my blog to look like blogspot </a></li>
-<li><a href='blog/2013/05/15/0-Inside-Google-and-Amazon.html'> 在Google和亚马逊（译） </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

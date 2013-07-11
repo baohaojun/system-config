@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>My system-config github project</title>
+<title>Bash/sawfish scripts to force firefox open in a certain tab</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 
@@ -101,37 +101,48 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">My system-config github project</h1>
-<ul class="org-ul">
-<li>2013
-<ul class="org-ul">
-<li>2013-07
-<ul class="org-ul">
-<li>2013-07-11
+<h1 class="title">Bash/sawfish scripts to force firefox open in a certain tab</h1>
+<p>
+In <a href="../05/0-firefox-smart-new-tab.html">Firefox: -new-tab or no -new-tab</a> I put forward a method to make
+firefox try very hard to open a utility webpage in a new tab <i>only</i> if
+the <b>current tab</b> is not visiting the same utility.
+</p>
 
 <p>
-<a href="../../../blog/2013/07/11/0-firefox-search-for-tab.html">Bash/sawfish scripts to force firefox open in a certain tab</a>
+Now I took one step forward (after practicing more with the idea in
+<a href="../09/0-sawfish-keyboard-macro.html">Simple scripts to record/play keyboard macro (sawfish)</a>), if <b>any tab</b>
+is visiting the same utility (with a regexp matching), firefox will
+try to open the url in that tab.
 </p>
-</li>
-
-<li>2013-07-09
 
 <p>
-<a href="../../../blog/2013/07/09/0-sawfish-keyboard-macro.html">Simple scripts to record/play keyboard macro (sawfish)</a>
+The idea is very simple, just switch all the tabs around with C-f (I'm
+using Firemacs and this key is defined to be NextTab), then check the
+url it's visiting, if it matches the utility's url pattern, then we
+use that tab. Only if we can't find such a tab do we use a new one.
 </p>
-</li>
-
-<li>2013-07-05
 
 <p>
-<a href="../../../blog/2013/07/05/0-firefox-smart-new-tab.html">Firefox: -new-tab or no -new-tab</a>
+The scripts are located at <a href="https://github.com/baohaojun/system-config/raw/master/bin/my-dict">my-dict</a> (the utility),
+<a href="https://github.com/baohaojun/system-config/raw/master/bin/firefox-search-for-tab">firefox-search-for-tab</a> and <a href="https://github.com/baohaojun/system-config/raw/master/bin/get-firefox-tab-url">get-firefox-tab-url</a>. Oh, and another script
+is <a href="https://github.com/baohaojun/system-config/raw/master/bin/sawfish-send-window-event">sawfish-send-window-event</a>.
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../09/0-sawfish-keyboard-macro.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        Simple scripts to record/play keyboard macro (sawfish) <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../../../../meta/Archive.html"> <!-- next-url -->
+        Archive <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
 <!-- {%html-mode%} -->
 
@@ -199,12 +210,21 @@ for the JavaScript code in this tag.
 
     <h2>Tags</h2>
     <ul>
-        
+                <li><a href="../../../../meta/tags/system-config.html" title="My system-config github project">system-config</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        
+        <li><a href='../09/0-sawfish-keyboard-macro.html'> Simple scripts to record/play keyboard macro (sawf... </a></li>
+<li><a href='../05/0-firefox-smart-new-tab.html'> Firefox: -new-tab or no -new-tab </a></li>
+<li><a href='../../06/18/0-auto-includes.html'> 苹果对头文件开刀了？我也来！ </a></li>
+<li><a href='../../06/13/0-one-book-one-saying.html'> 一本书，一句话 </a></li>
+<li><a href='../../05/31/0-intelligent-completion.html'> 智能补齐 </a></li>
+<li><a href='../../05/30/0-intelligent-cd.html'> 智能cd </a></li>
+<li><a href='../../05/29/0-parallel-bash.html'> 用bash脚本并发执行程序 </a></li>
+<li><a href='../../05/22/TourDeBabel.html'> 通天塔导游 </a></li>
+<li><a href='../../05/21/0-Mysterious-rsync,ssh,scp-hang-.html'> Mysterious rsync/ssh/scp hang </a></li>
+<li><a href='../../05/20/0-Tuning-my-blog-to-look-like-blogspot-.html'> Tuning my blog to look like blogspot </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>
