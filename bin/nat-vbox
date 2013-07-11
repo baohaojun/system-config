@@ -1,4 +1,6 @@
 #!/bin/bash
+
+set -e
 eth0=${1:-eth0}
 vboxnet0=${2:-vboxnet0}
 if ! sudo iptables-save | grep -e "-A FORWARD -i $eth0 -o $vboxnet0"; then
