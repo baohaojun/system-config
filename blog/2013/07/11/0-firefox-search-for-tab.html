@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Bash/sawfish scripts to force firefox open in a certain tab</title>
+<title>Firefox: Better Tab Reuse for IDE Help Integration</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 
@@ -101,7 +101,34 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Bash/sawfish scripts to force firefox open in a certain tab</h1>
+<h1 class="title">Firefox: Better Tab Reuse for IDE Help Integration</h1>
+<p>
+Suppose you have written a plug-in for your IDE, in which you press F1
+and it will open the help utility page for the current function/method
+in your favorite browser, Firefox. What tab do you want that page to
+be openned with? A new tab? The current tab? 
+</p>
+
+<p>
+These are the options firefox provides you out of the box (actually
+you need tweek about:config to get the open-in-current-tab
+feature. See <a href="../05/0-firefox-smart-new-tab.html">Firefox: -new-tab or no -new-tab</a>). But neither is
+satisfactory if applied blindly. With a new tab each time, you end up
+with too many; with the current tab, you may ``overload'' a tab
+visiting reddit/slashdot in which you are composing a very funny
+story/reply. You don't want that happen, right?
+</p>
+
+<p>
+I longed for a way to look if there's an old tab already visiting a
+help page for the IDE, if yes, open the new help page in that tab, if
+not, then open in a new tab. For e.g., I want to check python's
+<a href="http://www.python.org/doc//current/library/subprocess.html">subprocess.Popen</a>, I could check if there's any tab visiting a URL that
+matches the regexp <code>www.python.org/doc/.*</code>, if yes, I should reuse
+that tab instead of the current tab (which is visiting reddit, of
+course) or a blind-brand-new tab.
+</p>
+
 <p>
 In <a href="../05/0-firefox-smart-new-tab.html">Firefox: -new-tab or no -new-tab</a> I put forward a method to make
 firefox try very hard to open a utility webpage in a new tab <i>only</i> if
@@ -109,23 +136,24 @@ the <b>current tab</b> is not visiting the same utility.
 </p>
 
 <p>
-Now I took one step forward (after practicing more with the idea in
+Now I took one step further (after practicing more with the idea in
 <a href="../09/0-sawfish-keyboard-macro.html">Simple scripts to record/play keyboard macro (sawfish)</a>), if <b>any tab</b>
 is visiting the same utility (with a regexp matching), firefox will
-try to open the url in that tab.
+try to open the URL in that tab.
 </p>
 
 <p>
-The idea is very simple, just switch all the tabs around with C-f (I'm
-using Firemacs and this key is defined to be NextTab), then check the
-url it's visiting, if it matches the utility's url pattern, then we
-use that tab. Only if we can't find such a tab do we use a new one.
+The scripts are straightforward, just switch all the tabs around with
+C-f (I'm using Firemacs and this key binds to NextTab), then check the
+URL it's visiting, if it matches the utility's URL regexp, then we use
+that tab. Only if we can't find such a tab do we use a new one.
 </p>
 
 <p>
-The scripts are located at <a href="https://github.com/baohaojun/system-config/raw/master/bin/my-dict">my-dict</a> (the utility),
-<a href="https://github.com/baohaojun/system-config/raw/master/bin/firefox-search-for-tab">firefox-search-for-tab</a> and <a href="https://github.com/baohaojun/system-config/raw/master/bin/get-firefox-tab-url">get-firefox-tab-url</a>. Oh, and another script
-is <a href="https://github.com/baohaojun/system-config/raw/master/bin/sawfish-send-window-event">sawfish-send-window-event</a>.
+The scripts are located at <a href="https://github.com/baohaojun/system-config/raw/master/bin/my-dict">my-dict</a> (the utility, not for IDE, but for
+my English dictionary), <a href="https://github.com/baohaojun/system-config/raw/master/bin/firefox-search-for-tab">firefox-search-for-tab</a> and
+<a href="https://github.com/baohaojun/system-config/raw/master/bin/get-firefox-tab-url">get-firefox-tab-url</a>. Oh, and another script is
+<a href="https://github.com/baohaojun/system-config/raw/master/bin/sawfish-send-window-event">sawfish-send-window-event</a>.
 </p>
 <nav>
   <ul id="prev_next_posts">
