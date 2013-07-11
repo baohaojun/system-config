@@ -10,17 +10,17 @@
 
 * 装eclim的时候eclipse home要选自己下载的eclipse的目录
 
-并且不要点user local目录，例如~/.eclipse/org.eclipse.platform_3.7.0_155965261/，
+并且不要点user local目录，例如 =~/.eclipse/org.eclipse.platform_3.7.0_155965261/= ，
 这个是系统自带的eclipse版本才用的，点上这个之后反而装不上eclim了。
 * vs2008必须装sp1才能避免此错误：
 
 .\stdafx.cpp : fatal error C1902: Program database manager mismatch; please check your installation
 
 泪奔，装sp1是解决不了这个问题的。这个错误只会在用ssh登录上去运行
-vccompile的时候才会发生。并且是那种用了id_rsa不需要输入密码的情况下。
+vccompile的时候才会发生。并且是那种用了 =id_rsa= 不需要输入密码的情况下。
 
 这种情况下登录上去后看系统的环境变量USERNAME是system，而如果把client端
-的id_rsa移走，要求输入密码之后登录上去的话，看环境变量USERNAME就是我的
+的 =id_rsa= 移走，要求输入密码之后登录上去的话，看环境变量USERNAME就是我的
 用户名bhj。所以这是一个cygwin的bug，最后的uid取决于登录时是否输入了密码。
 
 所以真正的解决方法是让sshd服务用bhj帐号去启动，这样不管我怎么登录上去的，最后的权
@@ -158,3 +158,7 @@ Grep finished (matches found) at Wed Dec 12 17:31:00
 * acroread: how to open url in a browser
 
 Preferences -> Trust Manager -> Internet Access from PDF ... Change Settings -> Allow all web sites
+* org-beamer: 
+
+  必需有一个大section，然后再能有一张一张的slides。如果光有slides，没有
+  上级的section，所有的slides会挤到一起去。
