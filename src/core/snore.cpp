@@ -223,7 +223,7 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
 
 void SnoreCore::broadcastNotification ( Notification notification )
 {
-    qDebug()<<"Broadcasting"<<notification.title()<<notification.timeout();
+    qDebug()<<"Broadcasting"<<notification<<"timeout:"<<notification.timeout();
     emit notify ( notification );
     if ( m_notificationBackend != NULL )
     {

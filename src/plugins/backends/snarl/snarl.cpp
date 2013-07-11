@@ -61,22 +61,23 @@ public:
         }else if(msg->message == SNORENOTIFIER_MESSAGE_ID){
             int action = msg->wParam & 0xffff;
             int data = (msg->wParam & 0xffffffff) >> 16;
-            uint notificationID = 0;
-            for(QHash<uint,LONG32>::iterator it = m_snarl->m_idMap.begin();it != m_snarl->m_idMap.end();++it)
+
+            Notification notification;
+            if(msg->lParam != 0)
             {
-                if(it.value() == msg->lParam)
+                uint notificationID = 0;
+                for(QHash<uint,LONG32>::iterator it = m_snarl->m_idMap.begin();it != m_snarl->m_idMap.end();++it)
                 {
-                    notificationID = it.key();
-                    break;
+                    if(it.value() == msg->lParam)
+                    {
+                        notificationID = it.key();
+                        break;
+                    }
                 }
+                notification =  m_snarl->snore()->getActiveNotificationByID(notificationID);
+                qDebug()<<"recived a Snarl callback id:"<<notificationID<< "|" << msg->lParam <<"action:"<<action<<"data:"<<data;
             }
-            if(notificationID == 0)
-            {
-                qDebug() << "Snarl notification already closed" << msg->lParam;
-                return true;
-            }
-            Notification notification =  m_snarl->snore()->getActiveNotificationByID(notificationID);
-            qDebug()<<"recived a Snarl callback id:"<<notificationID<< "|" << msg->lParam <<"action:"<<action<<"data:"<<data;
+
             NotificationEnums::CloseReasons::closeReasons reason = NotificationEnums::CloseReasons::NONE;
             switch(action){
             case SnarlEnums::CallbackInvoked:
@@ -84,8 +85,11 @@ public:
                 break;
             case SnarlEnums::NotifyAction:
                 reason = NotificationEnums::CloseReasons::CLOSED;
-                notification.setActionInvoked(data);
-                m_snarl->snore()->notificationActionInvoked(notification);
+                if(notification.isValid())
+                {
+                    notification.setActionInvoked(data);
+                    m_snarl->snore()->notificationActionInvoked(notification);
+                }
                 break;
             case SnarlEnums::CallbackClosed:
                 reason = NotificationEnums::CloseReasons::DISMISSED;
@@ -96,15 +100,23 @@ public:
                 //away stuff
             case SnarlEnums::SnarlUserAway:
                 qDebug()<<"Snalr user has gone away";
-                break;
+                return true;
             case SnarlEnums::SnarlUserBack:
                 qDebug()<<"Snalr user has returned";
-                break;
+                return true;
             default:
                 qDebug()<<"Unknown snarl action found!!";
                 return false;
             }
-            m_snarl->closeNotification(notification,reason);
+            if(notification.isValid())
+            {
+                m_snarl->closeNotification(notification,reason);
+            }
+            else
+            {
+                qDebug() << "Snarl notification already closed" << msg->lParam << action;
+                qDebug() << m_snarl->m_idMap;
+            }
             return true;
         }
         return false;
