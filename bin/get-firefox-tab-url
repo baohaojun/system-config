@@ -1,10 +1,30 @@
 #!/bin/bash
 
-putclip ""
+putclip "shit"
 
+for x in $(seq 1 5); do
+    sawfish-send-window-event '(- |^)Mozilla Firefox\$' C-l C-c TAB TAB TAB
+    out=$(
+        getclip |grep . ||
+        xclip -o
+    )
 
-sawfish-send-window-event '(- |^)Mozilla Firefox\$' C-l C-c TAB TAB TAB
-(
-    getclip |grep . ||
-    xclip -o
-) | tee -a ~/.logs/$(basename $0).log
+    if test "$out" = shit; then
+        echo out not ready >> ~/.logs/$(basename $0).log
+        for y in $(seq 1 5); do
+            sleep .03
+            out=$(
+                getclip |grep . ||
+                xclip -o
+            )
+            if test "$out" != shit -a "$out"; then
+                echo out became $out at $x/$y >> ~/.logs/$(basename $0).log
+                echo $out
+                exit 0
+            fi
+        done
+    elif test "$out"; then
+        echo $out
+        exit 0
+    fi
+done
