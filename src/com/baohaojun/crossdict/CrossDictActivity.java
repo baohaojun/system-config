@@ -1,5 +1,7 @@
 package com.baohaojun.crossdict;
 
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -145,6 +147,37 @@ public class CrossDictActivity extends Activity {
         setContentView(R.layout.main);
         mListView = (SlowListView) findViewById(R.id.nearby_dict_entries);
         mEdit = (EditText) findViewById(R.id.enter_dict_entry);
+        // mEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        //         public void onFocusChange(View v, boolean hasFocus) {
+        //             EditText mEdit = (EditText)v;
+        //             if (!hasFocus) {
+        //                 mEdit.selectAll();
+        //             }
+        //         }
+        //     });
+
+        mEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e("bhj", String.format("%s:%d: onClick", "CrossDictActivity.java", 162));
+                    mEdit.selectAll();
+                }
+            });
+
+
+        mEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(mEdit.getWindowToken(), 0);
+                        String word = getEditText();
+                        lookUpWord(word);
+                        return true;
+                    }
+                    return false;
+                }
+            });
         mWebView = (BTWebView) findViewById(R.id.webView);
 
         mWebView.setActivity(this);
@@ -229,7 +262,11 @@ public class CrossDictActivity extends Activity {
     }
 
     void continueLoading() {
-        mDict = new StarDict(new File(mWorkingDir, "ahd").toString());
+        if (new File(mWorkingDir, "derive.dz").exists()) {
+            mDict = new StarDict(new File(mWorkingDir, "ahd").toString(), new File(mWorkingDir, "derive").toString());
+        } else {
+            mDict = new StarDict(new File(mWorkingDir, "ahd").toString());
+        }
         mUsageDict = new StarDict(new File(mWorkingDir, "usage").toString());
         mFreqDict = new FreqDict(new File(mWorkingDir, "frequency").toString());
 

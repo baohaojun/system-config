@@ -47,254 +47,298 @@ import android.util.Log;
 public class StarDict implements StarDictInterface {
 
     static int packI(byte[] buffer, int offset) {
-	return 
-	    ((0XFF & buffer[offset]) << 24) +
-	    ((0XFF & buffer[offset+1]) << 16) +
-	    ((0XFF & buffer[offset+2]) << 8) +
-	    ((0XFF & buffer[offset+3]) << 0);
-    }	    
-	
+        return
+            ((0XFF & buffer[offset]) << 24) +
+            ((0XFF & buffer[offset+1]) << 16) +
+            ((0XFF & buffer[offset+2]) << 8) +
+            ((0XFF & buffer[offset+3]) << 0);
+    }
+
     RandomAccessFile index;
     RandomAccessFile dict;
     RandomAccessFile ii; // index of index
     int mTotalEntries;
     int mDebug = 0;
     LoadingCache<String, Integer> mWordIdxCache = CacheBuilder.newBuilder().maximumSize(10000).build(new CacheLoader<String, Integer>() {
-	    public Integer load(String word) {
-		return getWordIdxInternal(word);
-	    }
-	});
+            public Integer load(String word) {
+                return getWordIdxInternal(word);
+            }
+        });
 
     LoadingCache<Integer, String> mIdxWordCache = CacheBuilder.newBuilder().maximumSize(10000).build(new CacheLoader<Integer, String>() {
-	    public String load(Integer idx) {
-		try {
-		    return getWordInternal(idx);
-		} catch (IOException e) {
-		    return "";
-		}
-	    }
-	});
+            public String load(Integer idx) {
+                try {
+                    return getWordInternal(idx);
+                } catch (IOException e) {
+                    return "";
+                }
+            }
+        });
 
     void die(String s) {
-	System.out.println(s);
-	System.exit(-1);
+        System.out.println(s);
+        System.exit(-1);
     }
 
     private void debug(String format, Object... args) {
-	if (mDebug != 0) {
-	    new Formatter(System.err).format(format, args);
-	}
+        if (mDebug != 0) {
+            new Formatter(System.err).format(format, args);
+        }
     }
 
     @Override
     public int getTotalNumOfEntries() {
-	return mTotalEntries;
+        return mTotalEntries;
     }
 
     private boolean mHtmlize = false;
-    public StarDict(String dictname) {
-	try {
-	    if (new File(dictname + ".htmlize").exists()) {
-		mHtmlize = true;
-	    }
-	    this.ii = new RandomAccessFile(dictname+".ii", "r");
-	    this.index = new RandomAccessFile(dictname+".idx", "r");
-	    this.dict = new RandomAccessFile(dictname+".dz", "r");
+    private StarDict mDerivedDict = null;
 
-	    mTotalEntries = (int) (new File(dictname+".ii").length()/4);
-	}
-	catch(FileNotFoundException e) {
-	    e.printStackTrace();
-	}
-	catch(Exception e) {
-	    e.printStackTrace();
-	}
+    public StarDict(String dictname) {
+        this(dictname, "");
     }
-  
+
+    public StarDict(String dictname, String derivedDictname) {
+        if (!derivedDictname.isEmpty()) {
+            mDerivedDict = new StarDict(derivedDictname);
+        }
+
+
+        try {
+            if (new File(dictname + ".htmlize").exists()) {
+                mHtmlize = true;
+            }
+            this.ii = new RandomAccessFile(dictname+".ii", "r");
+            this.index = new RandomAccessFile(dictname+".idx", "r");
+            this.dict = new RandomAccessFile(dictname+".dz", "r");
+
+            mTotalEntries = (int) (new File(dictname+".ii").length()/4);
+        }
+        catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public int getWordIdx(String word) {
-	try {
-	    return mWordIdxCache.get(word);
-	} catch (ExecutionException e) {
-	    e.printStackTrace();
-	    return 0;
-	}
+        try {
+            int wordIdx = mWordIdxCache.get(word);
+            String wordX = getWord(wordIdx);
+
+            if (mDerivedDict != null && !normalNcaseEqual(word, wordX)) {
+                int derivedIdx = mDerivedDict.getWordIdx(word);
+                String derivedWordX = mDerivedDict.getWord(derivedIdx);
+
+                if (normalNcaseEqual(word, derivedWordX)) {
+                    ArrayList<String> words = mDerivedDict.getExplanation(word);
+                    if (words.size() == 1) {
+                        wordIdx = mWordIdxCache.get(words.get(0));
+                    }
+                }
+            }
+
+            return wordIdx;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
     private int getWordIdxInternal(String word) {
 
-	try {
-	    return binarySearchHelper(getNormalWord(word), word, 0, mTotalEntries);
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    return 0;
-	}
+        try {
+            return binarySearchHelper(getNormalWord(word), word, 0, mTotalEntries);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     private int tryToFindExactMatch(String normalWord, String word, int mid) {
-	do {
-	    mid--;
-	} while (mid >= 0 && normalWord.compareToIgnoreCase(getNormalWord(getWord(mid))) == 0);
+        do {
+            mid--;
+        } while (mid >= 0 && normalWord.compareToIgnoreCase(getNormalWord(getWord(mid))) == 0);
 
-	do {
-	    mid++;
-	    if (word.compareTo(getWord(mid)) == 0) {
-		return mid;
-	    }
-	} while (normalWord.compareToIgnoreCase(getNormalWord(getWord(mid))) == 0);
-	
-	return mid - 1;
+        do {
+            mid++;
+            if (word.compareTo(getWord(mid)) == 0) {
+                return mid;
+            }
+        } while (normalWord.compareToIgnoreCase(getNormalWord(getWord(mid))) == 0);
+
+        return mid - 1;
     }
 
     private int binarySearchHelper(String normalWord, String word, int min, int maxP1) throws IOException{
-	if (min + 1 >= maxP1) {
-	    return min;
-	}
+        if (min + 1 >= maxP1) {
+            return min;
+        }
 
-	int mid = (min + maxP1) / 2;
-	String midWord = getWord(mid);
-	String midWordNormal = getNormalWord(midWord);
-	debug("?: word is %s, midWord is %s, mid is %d, min is %d, max is %d\n", word, midWord, mid, min, maxP1);
-	int compRes = normalWord.compareToIgnoreCase(midWordNormal);
-	if (compRes == 0) {
-	    if (word.compareTo(midWord) == 0) {
-		debug("ok: word is %s, midWord is %s, midWordNormal is %s, mid is %s\n", word, midWord, midWordNormal, mid);
-		return mid;
-	    } else {
-		return tryToFindExactMatch(normalWord, word, mid);
-	    }
-	} else if ( compRes <= 0) {
-	    return binarySearchHelper(normalWord, word, min, mid);
-	} else {
-	    return binarySearchHelper(normalWord, word, mid + 1, maxP1);
-	}
-	
+        int mid = (min + maxP1) / 2;
+        String midWord = getWord(mid);
+        String midWordNormal = getNormalWord(midWord);
+        debug("?: word is %s, midWord is %s, mid is %d, min is %d, max is %d\n", word, midWord, mid, min, maxP1);
+        int compRes = normalWord.compareToIgnoreCase(midWordNormal);
+        if (compRes == 0) {
+            if (word.compareTo(midWord) == 0) {
+                debug("ok: word is %s, midWord is %s, midWordNormal is %s, mid is %s\n", word, midWord, midWordNormal, mid);
+                return mid;
+            } else {
+                return tryToFindExactMatch(normalWord, word, mid);
+            }
+        } else if ( compRes <= 0) {
+            return binarySearchHelper(normalWord, word, min, mid);
+        } else {
+            return binarySearchHelper(normalWord, word, mid + 1, maxP1);
+        }
+
     }
 
-    private String getNormalWord(String word) {
-	StringBuilder b = new StringBuilder();
+    private static String getNormalWord(String word) {
+        StringBuilder b = new StringBuilder();
 
-	for (char c : Normalizer.normalize(word, Normalizer.Form.NFKD).toCharArray()) {
-	    if (c < 128) {
-		b.append(c);
-	    }
-	}
-	return b.toString();
+        for (char c : Normalizer.normalize(word, Normalizer.Form.NFKD).toCharArray()) {
+            if (c < 128) {
+                b.append(c);
+            }
+        }
+        return b.toString();
     }
 
     @Override
     public String getWord(int idx) {
-	try {
-	    return mIdxWordCache.get(idx);
-	} catch (ExecutionException e) {
-	    return "";
-	}
+        try {
+            return mIdxWordCache.get(idx);
+        } catch (ExecutionException e) {
+            return "";
+        }
     }
 
     private String getWordInternal(int idx) throws IOException {
-	if (idx < 0 || idx >= mTotalEntries) {
-	    return "";
-	}
+        if (idx < 0 || idx >= mTotalEntries) {
+            return "";
+        }
 
-	int wordStart = 0;
-	if (idx != 0) {
-	    wordStart = getEntryEndPos(idx - 1) + 1;
-	}
+        int wordStart = 0;
+        if (idx != 0) {
+            wordStart = getEntryEndPos(idx - 1) + 1;
+        }
 
-	int wordEndPlus1 = getByte0Pos(idx);
-	if (wordEndPlus1 <= wordStart) {
-	    return "";
-	}
+        int wordEndPlus1 = getByte0Pos(idx);
+        if (wordEndPlus1 <= wordStart) {
+            return "";
+        }
 
-	byte[] buffer = new byte[wordEndPlus1 - wordStart];
-	index.seek(wordStart);
-	index.read(buffer);
-	
-	return new String(buffer, "UTF8");
+        byte[] buffer = new byte[wordEndPlus1 - wordStart];
+        index.seek(wordStart);
+        index.read(buffer);
+
+        return new String(buffer, "UTF8");
     }
-    
+
     private int getByte0Pos(int idx) throws IOException {
-	ii.seek(idx * 4);
-	int ret = ii.readInt();
-	return ret - 1;
+        ii.seek(idx * 4);
+        int ret = ii.readInt();
+        return ret - 1;
     }
-	
+
     private int getEntryEndPos(int idx) throws IOException {
-	int pos0 = getByte0Pos(idx);
-	index.seek(pos0 + 1);
-	int nDefs = index.readUnsignedByte();
-	int ret = pos0 + 1 + nDefs * 8;
-	return ret;
+        int pos0 = getByte0Pos(idx);
+        index.seek(pos0 + 1);
+        int nDefs = index.readUnsignedByte();
+        int ret = pos0 + 1 + nDefs * 8;
+        return ret;
     }
 
     private ArrayList<Pair<Integer, Integer>> getStartEnds(int idx) {
-	ArrayList<Pair<Integer, Integer>> start_ends = new ArrayList<Pair<Integer, Integer>>();
-	
-	try {
-	    int pos0 = getByte0Pos(idx);
-	    index.seek(pos0 + 1);
-	
-	    int nDefs = index.readUnsignedByte();
+        ArrayList<Pair<Integer, Integer>> start_ends = new ArrayList<Pair<Integer, Integer>>();
 
-	    for (int i = 0; i < nDefs; i++) {
-		int start = index.readInt();
-		int end = index.readInt();
+        try {
+            int pos0 = getByte0Pos(idx);
+            index.seek(pos0 + 1);
 
-		start_ends.add(new Pair(start, end));
-	    }
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    return null;
-	}
-	return start_ends;
+            int nDefs = index.readUnsignedByte();
+
+            for (int i = 0; i < nDefs; i++) {
+                int start = index.readInt();
+                int end = index.readInt();
+
+                start_ends.add(new Pair(start, end));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return start_ends;
+    }
+
+    static boolean normalNcaseEqual(String a, String b) {
+        return getNormalWord(a).toLowerCase().equals(
+               getNormalWord(b).toLowerCase());
     }
 
     public ArrayList<String> getExplanation(String word) {
-	
-	// search the ii for the word, should be a binary search
-	
-	ArrayList<Pair<Integer, Integer>> start_ends = null;
 
-	try {
-	    start_ends = getStartEnds(mWordIdxCache.get(word));
-	} catch (ExecutionException e) {
-	    return null;
-	}
+        // search the ii for the word, should be a binary search
 
-	if (start_ends != null) {
-	    ArrayList<String> ret = new ArrayList<String>();
-	    for (Pair<Integer, Integer> p : start_ends) {
-		int start = (int) p.first;
-		int end = (int) p.second;
+        ArrayList<Pair<Integer, Integer>> start_ends = null;
 
-		byte[] buffer = new byte[end - start];
+        int wordIdx = getWordIdx(word);
+        String wordX = getWord(wordIdx);
 
-		try {
-		    dict.seek(start);
-		    dict.readFully(buffer, 0, buffer.length);
-		    String add = new String(buffer, "UTF8");
-		    
-		    if (mHtmlize) {
-			add = String.format("<pre>%s</pre><hr>", add);
-		    }
-		    ret.add(add);		    
-		} catch (Exception e) {
-		    System.out.printf("start for %s is %d, stop is %d\n", word, start, end);
-		    e.printStackTrace();
-		}
-	    }
-	    return ret;
-	}
-	return null;
+        if (mDerivedDict != null && !normalNcaseEqual(word, wordX)) {
+            int derivedIdx = mDerivedDict.getWordIdx(word);
+            String derivedWordX = mDerivedDict.getWord(derivedIdx);
+
+            if (normalNcaseEqual(word, derivedWordX)) {
+                ArrayList<String> words = mDerivedDict.getExplanation(word);
+                if (words.size() > 1) {
+                    return words;
+                } else if (words.size() == 1) {
+                    wordIdx = getWordIdx(words.get(0));
+                }
+            }
+        }
+        start_ends = getStartEnds(wordIdx);
+
+
+        if (start_ends != null) {
+            ArrayList<String> ret = new ArrayList<String>();
+            for (Pair<Integer, Integer> p : start_ends) {
+                int start = (int) p.first;
+                int end = (int) p.second;
+
+                byte[] buffer = new byte[end - start];
+
+                try {
+                    dict.seek(start);
+                    dict.readFully(buffer, 0, buffer.length);
+                    String add = new String(buffer, "UTF8");
+
+                    if (mHtmlize) {
+                        add = String.format("<pre>%s</pre><hr>", add);
+                    }
+                    ret.add(add);
+                } catch (Exception e) {
+                    System.out.printf("start for %s is %d, stop is %d\n", word, start, end);
+                    e.printStackTrace();
+                }
+            }
+            return ret;
+        }
+        return null;
     }
 
     public static void main(String[] args) {
-	StarDict dict = new StarDict("words");
-	dict.mDebug = 1;
-	for (String a : args) {
-	    for (String s : dict.getExplanation(a)) {
-		System.out.println(s);
-	    }
-	}
+        StarDict dict = new StarDict("words");
+        dict.mDebug = 1;
+        for (String a : args) {
+            for (String s : dict.getExplanation(a)) {
+                System.out.println(s);
+            }
+        }
     }
 }
 
