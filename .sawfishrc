@@ -182,6 +182,13 @@
                 (system "synclient TapAndDragGesture=0&")
               (system "synclient TapAndDragGesture=1&")))))
 
+(progn
+  (add-hook 'focus-in-hook
+            (lambda (w focus-mode)
+              (if (window-get w 'scroll-lock)
+                  (scroll-lock-on)
+                (scroll-lock-off)))))
+
 ;; (setq focus-in-hook (cons (nth 2 focus-in-hook)
 ;;                         (cons (nth 4 focus-in-hook))))
 
@@ -341,22 +348,23 @@
                                (not (string-match "x-nautilus-desktop" (window-name x)))))
               (stacking-order))))
 
-(setq scroll-lock nil)
-(defun scroll-lock-off ()
-  (setq scroll-lock nil)
+(defun scroll-lock-off (&optional w)
+  (when w
+    (window-put w 'scroll-lock nil))
   (unbind-keys global-keymap "SPC")
   (unbind-keys global-keymap "BS")
   (system "switch-caps-led off&"))
 
-(defun scroll-lock-on ()
-  (setq scroll-lock t)
+(defun scroll-lock-on (&optional w)
+  (when w
+    (window-put w 'scroll-lock t))
   (bind-keys global-keymap "SPC" (lambda () (synthesize-event "Next" (input-focus))))
   (bind-keys global-keymap "BS" (lambda () (synthesize-event "Prior" (input-focus))))
   (system "switch-caps-led on&"))
 
-
 (bind-keys global-keymap "Scroll_Lock"
            (lambda ()
-             (if scroll-lock
-                 (scroll-lock-off)
-               (scroll-lock-on))))
+             (let ((w (input-focus)))
+               (if (window-get w 'scroll-lock)
+                   (scroll-lock-off w)
+                 (scroll-lock-on w)))))
