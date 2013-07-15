@@ -21,6 +21,16 @@ function die() {
 }
 
 if test $uname = CYGWIN; then
+    if test $(uname) = CYGWIN_NT-5.1; then
+        function do_ln_1() {
+            junction "$1" "$2"
+        }
+    else
+        function do_ln_1() {
+            cmd.exe /c mklink  "$1" "$2"
+        }
+    fi
+        
     function ln() {
         soft=false
         force=false
@@ -84,7 +94,7 @@ if test $uname = CYGWIN; then
             elif test -e $dest; then
                 die "$dest already exist"
             fi
-            cmd.exe /c mklink "$(cygpath -wa "$dest")" "$(cygpath -wa "${args[$n]}")"
+            do_ln_1 "$(cygpath -wa "$dest")" "$(cygpath -wa "${args[$n]}")"
         done
     }
 fi
