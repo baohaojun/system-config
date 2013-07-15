@@ -340,3 +340,23 @@
               (lambda (x) (and (string-match fm-class (bhj-window-class x))
                                (not (string-match "x-nautilus-desktop" (window-name x)))))
               (stacking-order))))
+
+(setq scroll-lock nil)
+(defun scroll-lock-off ()
+  (setq scroll-lock nil)
+  (unbind-keys global-keymap "SPC")
+  (unbind-keys global-keymap "BS")
+  (system "switch-caps-led off&"))
+
+(defun scroll-lock-on ()
+  (setq scroll-lock t)
+  (bind-keys global-keymap "SPC" (lambda () (synthesize-event "Next" (input-focus))))
+  (bind-keys global-keymap "BS" (lambda () (synthesize-event "Prior" (input-focus))))
+  (system "switch-caps-led on&"))
+
+
+(bind-keys global-keymap "Scroll_Lock"
+           (lambda ()
+             (if scroll-lock
+                 (scroll-lock-off)
+               (scroll-lock-on))))
