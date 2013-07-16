@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[找回失去的Scroll Lock——系统View Mode]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/07/16/0-find-scroll-lock.html"/>
+    <updated>2013-00-16T11:07:09+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/07/16/0-find-scroll-lock.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Better Tab Reuse for IDE Help Integration]]></title>
     <link href="http://baohaojun.github.io/blog/2013/07/11/0-firefox-search-for-tab.html"/>
     <updated>2013-07-11T10:49:03+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/05/22/TourDeBabel.html"/>
     <updated>2013-05-22T13:06:26+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/22/TourDeBabel.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Mysterious rsync/ssh/scp hang]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html"/>
-    <updated>2013-05-22T13:06:26+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html</id>
   </entry>
 </feed>

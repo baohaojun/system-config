@@ -1,0 +1,121 @@
+#+title: 找回失去的Scroll Lock——系统View Mode
+# bhj-tags: system-config
+
+我一直没弄明白大多数键盘都有的scroll lock有什么用。好像目前没有哪个操作
+系统能用上这个键。当然还有跟这个键对应的那个scroll lock led灯。昨天专门
+上wikipedia查了一下，原来早期的IBM PC机上设计了这个键，类似于大写键
+Caps Lock，是个乒乓开关键：打开的时候能改变上下左右方向键的行为，从单行
+移动输入光标变成上下左右滚屏（类似于PageUp/PageDown以及并不存在的
+PageLeft/PageRight）。
+
+这么鸡肋的功能，难怪现在被抛弃了。
+
+为了发挥它的余热，我用它实现了一个新的功能：改变空格键和退格键的行为，
+当scroll lock打开的时候，空格变成PageDown，退格变成PageUp。这个功能其实
+在Firefox等浏览器以及Less、Info等程序里都有实现，包括Emacs的View Mode。
+正因为经过这些程序的熏陶养成习惯之后，在其他程序里发现没法用空格翻下页、
+退格翻下页而必须用回PageUp、PageDown就会觉得太“惊喜”了。
+
+刚好最近正琢磨Sawfish的synthesize-event上瘾，干脆打铁趁热，乘胜追击，把
+这个系统全局的View Mode给实现了。
+
+Emacs里有很多种Mode，Vi(m)里也有两种：命令mode，插入mode。前者按一下
+Esc进入，后者按一下i进入；两种模式下几乎所有的键的行为都是不一样的。我
+们要做的就是在sawfish里实现ViewMode和EditMode，唯一的差别就是在
+ViemMode下空格会向下翻页，退格会向上翻页，而EditMode（也就是平常的模式）
+下，空格和退格执行的是它们的旧有的功能。采用的开关当然就是那个老而无用
+的Scroll Lock键啦。
+
+代码是这样的：
+
+#+BEGIN_SRC sawfish
+(setq scroll-lock nil)
+
+(defun scroll-lock-off ()
+  (setq scroll-lock nil)
+  (unbind-keys global-keymap "SPC")
+  (unbind-keys global-keymap "BS")
+  (system "switch-caps-led off&"))
+
+(defun scroll-lock-on ()
+  (setq scroll-lock t)
+  (bind-keys global-keymap "SPC" (lambda () (synthesize-event "Next" (input-focus))))
+  (bind-keys global-keymap "BS" (lambda () (synthesize-event "Prior" (input-focus))))
+  (system "switch-caps-led on&"))
+
+
+(bind-keys global-keymap "Scroll_Lock"
+           (lambda ()
+             (if scroll-lock
+                 (scroll-lock-off)
+               (scroll-lock-on))))
+
+#+END_SRC
+
+其中 "SPC"、"BS"分别是空格（SPACE）和退格（BackSpace）键在Sawfish里的键
+名，"Next"、"Prior"则是PageDown和PageUp的键名。
+
+以上是我的第一次迭代，里面有个问题，就是scroll-lock是个全局变量。我在
+acroread里看电子文档时设了ViewMode，看着看着想回Emacs写一小段代码验证一
+下看到的内容，却发现SPC和BS滚来滚去给我捣乱，于是我按下ScrollLock回到
+EditMode；验证完了回到acroread继续阅读，按一下BS想看一下上一页的内容却又有个“惊喜”...
+
+解决的方法是第二次迭代：用窗口的lisp property表示其scroll-lock的状态，
+然后在窗口切换的时候加个hook去切换ViewMode/EditMode。代码如下：
+
+#+BEGIN_SRC sawfish
+(defun scroll-lock-off (&optional w)
+  (when w
+    (window-put w 'scroll-lock nil))
+  (unbind-keys global-keymap "SPC")
+  (unbind-keys global-keymap "BS")
+  (system "switch-caps-led off&"))
+
+(defun scroll-lock-on (&optional w)
+  (when w
+    (window-put w 'scroll-lock t))
+  (bind-keys global-keymap "SPC" (lambda () (synthesize-event "Next" (input-focus))))
+  (bind-keys global-keymap "BS" (lambda () (synthesize-event "Prior" (input-focus))))
+  (system "switch-caps-led on&"))
+
+(bind-keys global-keymap "Scroll_Lock"
+           (lambda ()
+             (let ((w (input-focus)))
+               (if (window-get w 'scroll-lock)
+                   (scroll-lock-off w)
+                 (scroll-lock-on w)))))
+
+(progn
+  (add-hook 'focus-in-hook
+            (lambda (w focus-mode)
+              (if (window-get w 'scroll-lock)
+                  (scroll-lock-on)
+                (scroll-lock-off)))))
+#+END_SRC
+
+这样就真的爽死了：在acroread里用着ViewMode，回到Emacs自动切为EditMode，
+再回到acroread还是ViewMode！
+
+最后您眼睛够亮的话会发现我会去点、灭系统大写键的led指示灯
+（switch-caps-led）。这是为什么呢？
+
+1. 有个灯指示一下更人性一点
+2. 很多笔记本上没有ScrollLock灯，只有CapsLock灯
+3. 我压根儿不用CapsLock键，它的灯不用也是浪费
+
+switch-caps-led的代码如下：
+
+#+BEGIN_SRC sh
+#!/bin/bash
+
+toggle=-
+if test "$1" = on; then
+    toggle=+
+fi
+echo setleds -D ${toggle}caps \< ~/.xtty | sudo bash
+#+END_SRC
+
+=~/.xtty= 根据需要应该指向你的Xorg程序正在使用的那个/dev/ttyN，在我的系统上一般是/dev/tty7。
+
+最后需要担心的是当有一天我回到Windows或者Mac下的话该怎么办。最后鄙视一
+下所有Gnome程序，为什么不让人用synthesize-event！
