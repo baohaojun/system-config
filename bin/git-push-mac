@@ -154,7 +154,7 @@ if git diff --quiet origin/$branch; then
     exit
 fi
 
-if git-is-ancestor origin/$branch HEAD; then
+if git-is-ancestor HEAD origin/$branch; then
     git co -B $branch origin/$branch
     exit
 fi
