@@ -395,7 +395,7 @@ my @gtags_fallback_dir = glob("$db_dir/.gtags-fallback-dir*");
 @gtags_fallback_dir = map {chomp($_ = qx(readlink -f $_)); $_} (@gtags_fallback_dir ? @gtags_fallback_dir : glob("~/.gtags-fallback-dir*"));
 
 unless (@gtags_fallback_dir) {
-    print "you have no fallback dir to search for, will exit now" unless $silent;
+    print "you have no fallback dir to search for, will exit now\n" unless $silent;
     exit;
 } else {
     debug "fallback: @gtags_fallback_dir";
