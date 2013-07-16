@@ -130,12 +130,6 @@ EOF
     )" ||true # " to fix the font-lock...
 fi
 
-rb=$(from-mac)
-if git branch --contains HEAD -a |grep -q from-mac; then
-    echo HEAD already containd in a remote branch, no need to push
-    exit
-fi
-
 function die() {
     echo Error: "$@"
     exit -1
@@ -153,6 +147,16 @@ if test "$(git symbolic-ref --short HEAD)" != $branch; then
     if git-is-ancestor $branch HEAD; then
         git co -B $branch
     fi
+fi
+
+if git diff --quiet origin/$branch; then
+    echo HEAD already containd in a remote $branch, no need to push
+    exit
+fi
+
+if git-is-ancestor origin/$branch HEAD; then
+    git co -B $branch origin/$branch
+    exit
 fi
 
 git pull --rebase

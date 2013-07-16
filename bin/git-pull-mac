@@ -1,13 +1,15 @@
 #!/bin/bash
 
 set -e
+. ~/bin/.gitx
+
 test $PWD = ~ && cd ~/system-config/
 cd "$(dirname "$(lookup-file .git)")"
 
 git-clean-mac-branches-local
 git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git://,https://,')
 git fetch origin -v
-for x in $( 
+for x in $(
     (git branch -a |grep 'remotes.*from-mac'; echo remotes/origin/master) |
     if test -e ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh; then
         bash ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh
@@ -18,22 +20,27 @@ for x in $(
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
     if git branch --contains $x |grep -q '^\*'; then
-	echo no need to merge $branch, it is already '*contained*' in HEAD
-	continue;
-    else
-	git merge $x >/dev/null 2>&1 || {
-	    echo $remote/$branch merge failed
-	    exit -1
-	}
+        echo no need to merge $branch, it is already '*contained*' in HEAD
+        continue;
+    elif test "$FETCH_ONLY" != true; then
+        git merge $x >/dev/null 2>&1 || {
+            echo $remote/$branch merge failed
+            exit -1
+        }
     fi
 done
 
-if test -e ~/.crontab.$USER; then
+if test -e ~/.crontab.$USER -a "$FETCH_ONLY" != true; then
     crontab ~/.crontab.$USER
 fi
 
 git submodule init
 git submodule update
+
+if test "$FETCH_ONLY" = true; then
+    git submodule foreach 'bash -c "git-pull-mac"'
+    exit 0
+fi
 git submodule foreach 'bash -c "git-pull-mac&"' | grep .
 git submodule foreach 'git config user.email baohaojun@gmail.com'
 git config user.email baohaojun@gmail.com

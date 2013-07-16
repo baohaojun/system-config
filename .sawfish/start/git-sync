@@ -1,0 +1,2 @@
+#!/bin/bash
+FETCH_ONLY=true git-pull-mac 
