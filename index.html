@@ -145,24 +145,24 @@ ViemMode下空格会向下翻页，退格会向上翻页，而EditMode（也就�
 
 <pre class="src src-sawfish">(setq scroll-lock nil)
 
-(defun scroll-lock-off ()
+(<span class="org-keyword">defun</span> <span class="org-function-name">scroll-lock-off</span> ()
   (setq scroll-lock nil)
-  (unbind-keys global-keymap "SPC")
-  (unbind-keys global-keymap "BS")
-  (system "switch-caps-led off&amp;"))
+  (unbind-keys global-keymap <span class="org-string">"SPC"</span>)
+  (unbind-keys global-keymap <span class="org-string">"BS"</span>)
+  (system <span class="org-string">"switch-caps-led off&amp;"</span>))
 
-(defun scroll-lock-on ()
+(<span class="org-keyword">defun</span> <span class="org-function-name">scroll-lock-on</span> ()
   (setq scroll-lock t)
-  (bind-keys global-keymap "SPC" (lambda () (synthesize-event "Next" (input-focus))))
-  (bind-keys global-keymap "BS" (lambda () (synthesize-event "Prior" (input-focus))))
-  (system "switch-caps-led on&amp;"))
+  (bind-keys global-keymap <span class="org-string">"SPC"</span> (<span class="org-keyword">lambda</span> () (synthesize-event <span class="org-string">"Next"</span> (input-focus))))
+  (bind-keys global-keymap <span class="org-string">"BS"</span> (<span class="org-keyword">lambda</span> () (synthesize-event <span class="org-string">"Prior"</span> (input-focus))))
+  (system <span class="org-string">"switch-caps-led on&amp;"</span>))
 
 
-(bind-keys global-keymap "Scroll_Lock"
-	   (lambda ()
-	     (if scroll-lock
-		 (scroll-lock-off)
-	       (scroll-lock-on))))
+(bind-keys global-keymap <span class="org-string">"Scroll_Lock"</span>
+           (<span class="org-keyword">lambda</span> ()
+             (<span class="org-keyword">if</span> scroll-lock
+                 (scroll-lock-off)
+               (scroll-lock-on))))
 </pre>
 </div>
 
@@ -185,33 +185,33 @@ EditMode；验证完了回到acroread继续阅读，按一下BS想看一下上�
 
 <div class="org-src-container">
 
-<pre class="src src-sawfish">(defun scroll-lock-off (&amp;optional w)
-  (when w
+<pre class="src src-sawfish">(<span class="org-keyword">defun</span> <span class="org-function-name">scroll-lock-off</span> (<span class="org-type">&amp;optional</span> w)
+  (<span class="org-keyword">when</span> w
     (window-put w 'scroll-lock nil))
-  (unbind-keys global-keymap "SPC")
-  (unbind-keys global-keymap "BS")
-  (system "switch-caps-led off&amp;"))
+  (unbind-keys global-keymap <span class="org-string">"SPC"</span>)
+  (unbind-keys global-keymap <span class="org-string">"BS"</span>)
+  (system <span class="org-string">"switch-caps-led off&amp;"</span>))
 
-(defun scroll-lock-on (&amp;optional w)
-  (when w
+(<span class="org-keyword">defun</span> <span class="org-function-name">scroll-lock-on</span> (<span class="org-type">&amp;optional</span> w)
+  (<span class="org-keyword">when</span> w
     (window-put w 'scroll-lock t))
-  (bind-keys global-keymap "SPC" (lambda () (synthesize-event "Next" (input-focus))))
-  (bind-keys global-keymap "BS" (lambda () (synthesize-event "Prior" (input-focus))))
-  (system "switch-caps-led on&amp;"))
+  (bind-keys global-keymap <span class="org-string">"SPC"</span> (<span class="org-keyword">lambda</span> () (synthesize-event <span class="org-string">"Next"</span> (input-focus))))
+  (bind-keys global-keymap <span class="org-string">"BS"</span> (<span class="org-keyword">lambda</span> () (synthesize-event <span class="org-string">"Prior"</span> (input-focus))))
+  (system <span class="org-string">"switch-caps-led on&amp;"</span>))
 
-(bind-keys global-keymap "Scroll_Lock"
-	   (lambda ()
-	     (let ((w (input-focus)))
-	       (if (window-get w 'scroll-lock)
-		   (scroll-lock-off w)
-		 (scroll-lock-on w)))))
+(bind-keys global-keymap <span class="org-string">"Scroll_Lock"</span>
+           (<span class="org-keyword">lambda</span> ()
+             (<span class="org-keyword">let</span> ((w (input-focus)))
+               (<span class="org-keyword">if</span> (window-get w 'scroll-lock)
+                   (scroll-lock-off w)
+                 (scroll-lock-on w)))))
 
-(progn
+(<span class="org-keyword">progn</span>
   (add-hook 'focus-in-hook
-	    (lambda (w focus-mode)
-	      (if (window-get w 'scroll-lock)
-		  (scroll-lock-on)
-		(scroll-lock-off)))))
+            (<span class="org-keyword">lambda</span> (w focus-mode)
+              (<span class="org-keyword">if</span> (window-get w 'scroll-lock)
+                  (scroll-lock-on)
+                (scroll-lock-off)))))
 </pre>
 </div>
 
@@ -258,6 +258,7 @@ switch-caps-led的代码如下：
 最后需要担心的是当有一天我回到Windows或者Mac下的话该怎么办。最后鄙视一
 下所有Gnome程序，为什么不让人用synthesize-event！
 </p>
+
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">

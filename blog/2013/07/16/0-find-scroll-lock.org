@@ -119,3 +119,4 @@ echo setleds -D ${toggle}caps \< ~/.xtty | sudo bash
 
 最后需要担心的是当有一天我回到Windows或者Mac下的话该怎么办。最后鄙视一
 下所有Gnome程序，为什么不让人用synthesize-event！
+
