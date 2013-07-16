@@ -67,6 +67,7 @@ void SnoreToast::slotUnregisterApplication(Application *application)
 void SnoreToast::slotNotify(Notification notification)
 {
     QProcess *p = new QProcess(this);
+    p->setReadChannelMode(QProcess::MergedChannels);
 
     connect(p,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(slotToastNotificationClosed(int,QProcess::ExitStatus)));
     connect(qApp,SIGNAL(aboutToQuit()),p,SLOT(kill()));
@@ -80,8 +81,13 @@ void SnoreToast::slotNotify(Notification notification)
                   //               << notification.icon().isLocalFile()?QDir::toNativeSeparators(notification.icon().localUrl()):notification.icon().url()
                << QDir::toNativeSeparators(notification.icon().localUrl())
                << "-w"
-               << "-appID"
-               << m_appID;
+//               << "-appID"
+//               << m_appID
+                  ;
+    if(notification.hint("silent",true).toBool())
+    {
+        arguements << "-silent";
+    }
     qDebug() << "SnoreToast" << arguements;
     p->start("SnoreToast", arguements);
 
@@ -116,7 +122,7 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
         break;
     case -1:
         //failed
-         qWarning() << "SnoreToast failed to display " << n;
+         qWarning() << "SnoreToast failed to display " << n << p->readAll();
         break;
     }
 

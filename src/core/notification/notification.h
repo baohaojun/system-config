@@ -72,9 +72,11 @@ public:
     void addAction(Action *a);
     const NotificationEnums::CloseReasons::closeReasons &closeReason();
     void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
-    const QVariant hint ( const QString &key ) const;
+    const QVariant hint(const QString &key , const QVariant &defaultValue ) const;
     bool hintExists ( const QString &key );
     void insertHint ( const QString &key,const QVariant &val );
+
+    void setSilent(bool silent);
 
     bool isValid() const;
 
