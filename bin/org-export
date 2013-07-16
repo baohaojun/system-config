@@ -78,6 +78,8 @@ function find-curr() {
 
 (
     echo "(progn"
+    echo "(setq bhj-no-random-theme t)"
+    echo '(load "~/.emacs")'
     next=0
     export title
     for x in "$@"; do

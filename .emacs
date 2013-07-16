@@ -383,9 +383,18 @@
 (read-abbrev-file "~/.abbrev_defs")
 (setq save-abbrevs t)
 
-(condition-case nil
-    (random-theme)
-  (error nil))
+(defun random-theme()
+  (interactive)
+  (dolist (theme custom-enabled-themes)
+    (disable-theme theme))
+  (load-theme (let ((theme (nth (random (length (custom-available-themes))) (custom-available-themes))))
+                (message "loaded theme: %s" theme)
+                theme)))
+
+(unless (boundp 'bhj-no-random-theme)
+  (condition-case nil
+      (random-theme)
+    (error nil)))
 
 (defconst emacs-mode-ctags-lang-map
   '(("emacs-lisp" . "lisp")

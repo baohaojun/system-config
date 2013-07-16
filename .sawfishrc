@@ -182,13 +182,6 @@
                 (system "synclient TapAndDragGesture=0&")
               (system "synclient TapAndDragGesture=1&")))))
 
-(progn
-  (add-hook 'focus-in-hook
-            (lambda (w focus-mode)
-              (if (window-get w 'scroll-lock)
-                  (scroll-lock-on)
-                (scroll-lock-off)))))
-
 ;; (setq focus-in-hook (cons (nth 2 focus-in-hook)
 ;;                         (cons (nth 4 focus-in-hook))))
 
@@ -368,3 +361,10 @@
                (if (window-get w 'scroll-lock)
                    (scroll-lock-off w)
                  (scroll-lock-on w)))))
+
+(progn
+  (add-hook 'focus-in-hook
+            (lambda (w focus-mode)
+              (if (window-get w 'scroll-lock)
+                  (scroll-lock-on)
+                (scroll-lock-off)))))
