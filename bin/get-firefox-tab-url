@@ -17,14 +17,14 @@ for x in $(seq 1 5); do
                 getclip |grep . ||
                 xclip -o
             )
-            if test "$out" != shit -a "$out"; then
-                echo out became $out at $x/$y >> ~/.logs/$(basename $0).log
-                echo $out
+            if test "$out" != shit; then
+                echo out became "'$out'" at $x/$y >> ~/.logs/$(basename $0).log
+                echo -n $out
                 exit 0
             fi
         done
-    elif test "$out"; then
-        echo $out
+    else
+        echo -n $out
         exit 0
     fi
 done
