@@ -1,0 +1,62 @@
+#!/usr/bin/perl
+
+use strict;
+
+sub debug(@) {
+    print "@_\n";
+}
+
+if (not grep {$_ eq "--filter"} @ARGV) {
+    exec("2nd", "ctags-exuberant", @ARGV);
+    exit;
+}
+
+my ($terminator) = grep {$_ =~ m/--filter-terminator=/} @ARGV;
+
+$terminator =~ s/^--filter-terminator=//;
+
+use IPC::Open2;
+
+$|++;
+my $ctags_pid = open2(my $read, my $write, "2nd", "ctags-exuberant", @ARGV);
+while (<STDIN>) {
+    print $write "$_";
+    $write->flush();
+    my $is_java;
+    if ($_ =~ m/\.java|\.aidl/) {
+        $is_java = 1;
+    }
+
+    my @fields;
+    my @old_fields;
+    my $last_line;
+    my $package;
+    while (<$read>) {
+        if ($is_java) {
+            @fields = split(" ");
+            if ($fields[1] eq 'package') {
+                $package = $fields[0];
+                print;
+            } else {
+                my $tag = $fields[0];
+                $tag =~ s/.*\.//;
+                if ($tag ne $old_fields[0] and $old_fields[0] !~ m/\./) {
+                    print "$package.$last_line" if $last_line and $old_fields[1] ne 'package';
+                }
+                if ($_ eq $terminator) {
+                    print;
+                    last;
+                }
+                print "$package.$_" if $fields[0] =~ m/\./;
+            }
+            $last_line = $_;
+            @old_fields = @fields;
+        } else {
+            print;
+            if ($_ eq $terminator) {
+                last;
+            }
+        }
+    }
+}
+close($write);

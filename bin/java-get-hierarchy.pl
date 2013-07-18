@@ -37,7 +37,7 @@ if ($q_class !~ m/\./) {
     chomp($q_class = qx(java-get-qclass $q_class));
     debug "q_class for $ARGV[0] is $q_class";
     if ($q_class =~ m/\n/) {
-	warn "$$ARGV[0] has multi q_class:\n$q_class\n";
+        warn "$$ARGV[0] has multi q_class:\n$q_class\n";
     }
 }
 
@@ -77,13 +77,13 @@ my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
 my $qualified_re = qr($id_re(?:\.$id_re)*\b);
 
 my @keywords = ("abstract", "assert", "boolean", "break", "byte",
-	      "case", "catch", "char", "class", "const", "continue", "default",
-	      "double", "else", "enum", "extends", "false", "final", "finally",
-	      "float", "for", "goto", "implements", "import", "instanceof", "int",
-	      "interface", "long", "native", "new", "null", "package", "private",
-	      "protected", "public", "return", "short", "static", "strictfp",
-	      "super", "switch", "synchronized", "this", "throw", "throws",
-	      "transient", "true", "try", "void", "volatile", "while"
+              "case", "catch", "char", "class", "const", "continue", "default",
+              "double", "else", "enum", "extends", "false", "final", "finally",
+              "float", "for", "goto", "implements", "import", "instanceof", "int",
+              "interface", "long", "native", "new", "null", "package", "private",
+              "protected", "public", "return", "short", "static", "strictfp",
+              "super", "switch", "synchronized", "this", "throw", "throws",
+              "transient", "true", "try", "void", "volatile", "while"
     );
 
 my $keywords = join('|', @keywords);
@@ -99,10 +99,10 @@ if ($def_line =~ m/(class|interface).+?\b$class\b(?:<.*?>)?(.*)\{/) {
     $supers = "$supers $2";
 
     if ($1 eq "class") {
-	my $super = $2;
-	if ($super !~ m/\bextends\b/ and $class ne "Object" and $class ne "java.lang.Object") {
-	    $supers = "$supers java.lang.Object";
-	}
+        my $super = $2;
+        if ($super !~ m/\bextends\b/ and $class ne "Object" and $class ne "java.lang.Object") {
+            $supers = "$supers java.lang.Object";
+        }
     }
     debug "supers: $supers";
 }
@@ -114,7 +114,7 @@ debug "package is $package from $flatten_cache";
 
 my %defined_class;
 my %simple_qualified_map;
-sub map_it($) 
+sub map_it($)
 {
     my $q = $_[0];
     my $class = $q;
@@ -127,9 +127,9 @@ sub import_it($)
 {
     my $q = $_[0];
     if ($q =~ m/\*$/) {
-	$q =~ s/\.\*$//;
+        $q =~ s/\.\*$//;
     } else {
-	map_it($q);
+        map_it($q);
     }
 }
 map {$_ and not $keywords{$_} and import_it($_)} split(/\s|;/, $imports);
@@ -145,7 +145,7 @@ $super_classes{$q_class} = {};
 $done_classes{$q_class} = 1;
 
 # avoid infinite loop in below
-$supers =~ s/<.*?>//g; # public class Preference implements Comparable<Preference>, OnDependencyChangeListener { 
+$supers =~ s/<.*?>,*/,/g; # public class Preference implements Comparable<Preference>, OnDependencyChangeListener {
 
 while ($supers =~ m/($qualified_re)/g) {
     next if $keywords{$1};
@@ -154,23 +154,23 @@ while ($supers =~ m/($qualified_re)/g) {
     $prefix =~ s/\..*//;
     my $q_super;
     if ($simple_qualified_map{$prefix}) {
-	$q_super = $simple_qualified_map{$prefix} . substr($class, length($prefix));
+        $q_super = $simple_qualified_map{$prefix} . substr($class, length($prefix));
     } elsif (-e "$working_file_dir/$prefix.java" or -e "$working_file_dir/$prefix.aidl") {
-	$q_super = "$package.$prefix".substr($class, length($prefix));
+        $q_super = "$package.$prefix".substr($class, length($prefix));
     } elsif (-e "libcore/luni/src/main/java/java/lang/$prefix.java") {
-	$q_super = "java.lang.$prefix" . substr($class, length($prefix));
+        $q_super = "java.lang.$prefix" . substr($class, length($prefix));
     } else {
-	if ($class =~ m/^[a-z].*\./) {
-	    $q_super = $class;
-	} else {
-	    warn "super $class not resolved" if length($class) > 1;
-	}
+        if ($class =~ m/^[a-z].*\./) {
+            $q_super = $class;
+        } else {
+            warn "super $class not resolved" if length($class) > 1;
+        }
     }
 
     if ($q_super) {
-	debug "q_super is $q_super";
-	$super_classes{$q_class}{$q_super} = 1;
-	$done_classes{$q_super} = 0 unless $done_classes{$q_super};
+        debug "q_super is $q_super";
+        $super_classes{$q_class}{$q_super} = 1;
+        $done_classes{$q_super} = 0 unless $done_classes{$q_super};
     }
 }
 
@@ -182,44 +182,44 @@ unless ($recursive) {
 while (1) {
     my $done = 1;
     for my $q_super (sort keys %done_classes) {
-	unless ($done_classes{$q_super}) {
-	    $done = 0;
-	    $done_classes{$q_super} = 1;
-	    my $supers = qx($0 $q_super);
-	    debug "supers is $supers";
-	    for (split(' ', $supers)) {
-		$super_classes{$q_super}{$_} = 1;
-		$done_classes{$_} = 0 unless $done_classes{$_};
-	    }
-	}
+        unless ($done_classes{$q_super}) {
+            $done = 0;
+            $done_classes{$q_super} = 1;
+            my $supers = qx($0 $q_super);
+            debug "supers is $supers";
+            for (split(' ', $supers)) {
+                $super_classes{$q_super}{$_} = 1;
+                $done_classes{$_} = 0 unless $done_classes{$_};
+            }
+        }
     }
-    last if $done;	
+    last if $done;
 }
-	    
+
 sub print_hierarchy($$)
 {
     my ($q_class, $indent) = @_;
     debug "print_hierarchy $q_class $indent";
     my $method_indent;
     if ($method or $verbose) {
-	$method_indent = " " x ($indent * 3 + 3);
+        $method_indent = " " x ($indent * 3 + 3);
     }
- 
+
     my $java_find_def = qx(java-find-def.pl -e $q_class -v);
     print " " x ($indent * 3 - 3) . "=> " . $java_find_def;
 
     if ($method) {
-	my $q_class2 = (split(" ", $java_find_def))[1];
-	if ($q_class2) {
-	    $q_class = $q_class2;
-	}
-	system("java-query-qmethod $q_class.$method|perl -npe 's/^/$method_indent/'");
+        my $q_class2 = (split(" ", $java_find_def))[1];
+        if ($q_class2) {
+            $q_class = $q_class2;
+        }
+        system("java-query-qmethod $q_class.$method|perl -npe 's/^/$method_indent/'");
     }
     system("java-get-members $q_class -p | perl -npe 's/^/$method_indent/'") if $verbose;
     if ($super_classes{$q_class}) {
-	for (sort keys $super_classes{$q_class}) {
-	    print_hierarchy($_, $indent + 1);
-	}
+        for (sort keys $super_classes{$q_class}) {
+            print_hierarchy($_, $indent + 1);
+        }
     }
 }
 

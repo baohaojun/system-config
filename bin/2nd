@@ -1,8 +1,20 @@
 #!/bin/bash
-prog=$1
-prog=$(type -a $1 | grep 'is /'|perl -ne 'print if (2..2)'|pn 3)
+prog1=
+prog2=
+for p in $(type -a $1 | grep 'is /'|pn 3); do
+    prog=$(readlink -f "$p")
+    if test "$prog1"; then
+        if test "$prog" != "$prog1"; then
+            prog2=$prog
+            break;
+        fi
+    else
+        prog1=$prog
+    fi
+done
+
 shift
 
-if test "$prog"; then
-   exec $prog "$@"
+if test "$prog2"; then
+   exec "$prog2" "$@"
 fi

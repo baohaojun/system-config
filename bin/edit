@@ -125,6 +125,9 @@ EOC
   while (1) {
       my $ret = system(@cmd);
       if ($ret != 0) {
+          if ($ret == 2) {
+              die "@cmd got interrupt";
+          }
           warn("ret is $ret for @cmd");
           system("sleep 5");
       } else {
