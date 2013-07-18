@@ -60,7 +60,8 @@ public:
     const QStringList &notificationFrontends() const;
     const QStringList &secondaryNotificationBackends() const;
 
-    void setPrimaryNotificationBackend ( const QString &backend );
+    bool setPrimaryNotificationBackend( const QString &backend );
+    bool setPrimaryNotificationBackend();
     const QString &primaryNotificationBackend();
     QSystemTrayIcon *trayIcon();
 

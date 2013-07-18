@@ -286,24 +286,60 @@ const QStringList &SnoreCore::secondaryNotificationBackends() const
     return m_secondaryNotificationBackends;
 }
 
-void SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
+bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
 {
     if(!pluginCache().contains(backend)){
         qDebug()<<"Unknown Backend:"<<backend;
-        return;
+        return false;
     }
     qDebug()<<"Setting Notification Backend to:"<<backend;
     SnoreBackend* b = qobject_cast<SnoreBackend*>(pluginCache()[backend]->load());
     if(!b->isInitialized()){
         if(!b->init(this)){
             qDebug()<<"Failed to initialize"<<b->name();
-            return;
+            return false;
         }
         connect(b,SIGNAL(closeNotification(Snore::Notification)),this,SLOT(slotNotificationClosed(Snore::Notification)));
     }
-
-
     m_notificationBackend = b;
+    return true;
+}
+
+bool SnoreCore::setPrimaryNotificationBackend()
+{
+    QStringList backends = notificationBackends();
+#ifdef Q_OS_WIN
+    if(QSysInfo::windowsVersion() == QSysInfo::WV_WINDOWS8 && backends.contains("SnoreToast"))
+    {
+        if(setPrimaryNotificationBackend("SnoreToast"))
+            return true;
+    }
+    if( backends.contains("Growl"))
+    {
+        if(setPrimaryNotificationBackend("Growl"))
+            return true;
+    }
+    if( backends.contains("Snarl"))
+    {
+        if(setPrimaryNotificationBackend("Snarl"))
+            return true;
+    }
+#elif defined(Q_OS_LINUX)
+    if( backends.contains("FreedesktopNotification_Backend"))
+    {
+        return setPrimaryNotificationBackend("FreedesktopNotification_Backend");
+    }
+#elif defined(Q_OS_MAC)
+    if( backends.contains("Growl"))
+    {
+        return setPrimaryNotificationBackend("Growl");
+    }
+#endif
+    if( trayIcon() && backends.contains("SystemTray"))
+    {
+        return setPrimaryNotificationBackend("SystemTray");
+    }
+    return false;
 }
 
 const QString &SnoreCore::primaryNotificationBackend(){

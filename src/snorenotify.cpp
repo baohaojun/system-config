@@ -54,9 +54,15 @@ SnoreNotify::~SnoreNotify(){
 }
 
 void SnoreNotify::load(){
-    m_snore->setPrimaryNotificationBackend(m_settings.value("notificationBackend","SystemTray").toString());
+    if(m_settings.contains("notificationBackend"))
+    {
+        m_snore->setPrimaryNotificationBackend(m_settings.value("notificationBackend","SystemTray").toString());
+    }
+    else
+    {
+        m_snore->setPrimaryNotificationBackend();
+    }
 }
-
 void SnoreNotify::save(){
     m_settings.setValue("notificationBackend",m_snore->primaryNotificationBackend());
 }
