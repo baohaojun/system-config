@@ -4,6 +4,7 @@ use strict;
 chomp(my $code_dir = qx(find-code-reading-dir));
 chdir $code_dir or die "can not chdir $code_dir";
 
+$ENV{GTAGS_START_FILE} = "";
 my $recursive = 1;
 if ($ENV{DO_RECURSIVE_JAVA_HIERARCHY}) {
     $recursive = 0;
@@ -31,6 +32,7 @@ GetOptions(
 if (@ARGV != 1) {
     die "Usage: $0 Q_CLASS";
 }
+debug "$0 @ARGV";
 
 my $q_class = $ARGV[0];
 if ($q_class !~ m/\./) {
@@ -145,20 +147,21 @@ $super_classes{$q_class} = {};
 $done_classes{$q_class} = 1;
 
 # avoid infinite loop in below
-$supers =~ s/<.*?>,*/,/g; # public class Preference implements Comparable<Preference>, OnDependencyChangeListener {
+$supers =~ s/<.*?>(\w)/ $1/g; # public class Preference implements Comparable<Preference>, OnDependencyChangeListener {
+$supers =~ s/<.*?>//g; # public class Preference implements Comparable<Preference>, OnDependencyChangeListener {
 
 while ($supers =~ m/($qualified_re)/g) {
     next if $keywords{$1};
     my $class = $1;
-    my $prefix = $class;
-    $prefix =~ s/\..*//;
+    my $out_class = $class;
+    $out_class =~ s/\..*//;
     my $q_super;
-    if ($simple_qualified_map{$prefix}) {
-        $q_super = $simple_qualified_map{$prefix} . substr($class, length($prefix));
-    } elsif (-e "$working_file_dir/$prefix.java" or -e "$working_file_dir/$prefix.aidl") {
-        $q_super = "$package.$prefix".substr($class, length($prefix));
-    } elsif (-e "libcore/luni/src/main/java/java/lang/$prefix.java") {
-        $q_super = "java.lang.$prefix" . substr($class, length($prefix));
+    if ($simple_qualified_map{$out_class}) {
+        $q_super = $simple_qualified_map{$out_class} . substr($class, length($out_class));
+    } elsif (-e "$working_file_dir/$out_class.java" or -e "$working_file_dir/$out_class.aidl") {
+        $q_super = "$package.$out_class" . substr($class, length($out_class));
+    } elsif (-e "libcore/luni/src/main/java/java/lang/$out_class.java") {
+        $q_super = "java.lang.$out_class" . substr($class, length($out_class));
     } else {
         if ($class =~ m/^[a-z].*\./) {
             $q_super = $class;

@@ -30,17 +30,20 @@ while (<STDIN>) {
     my @fields;
     my @old_fields;
     my $last_line;
+    my $last_line_num;
     my $package;
     while (<$read>) {
         if ($is_java) {
             @fields = split(" ");
+            my $line_num = $fields[2];
+
             if ($fields[1] eq 'package') {
                 $package = $fields[0];
                 print;
             } else {
                 my $tag = $fields[0];
                 $tag =~ s/.*\.//;
-                if ($tag ne $old_fields[0] and $old_fields[0] !~ m/\./) {
+                if (($tag ne $old_fields[0] or $line_num != $last_line_num) and $old_fields[0] !~ m/\./) {
                     print "$package.$last_line" if $last_line and $old_fields[1] ne 'package';
                 }
                 if ($_ eq $terminator) {
@@ -51,6 +54,7 @@ while (<STDIN>) {
             }
             $last_line = $_;
             @old_fields = @fields;
+            $last_line_num = $line_num;
         } else {
             print;
             if ($_ eq $terminator) {
