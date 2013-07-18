@@ -50,7 +50,7 @@ private:
     static QString computeHash(const QByteArray &data);
 
 
-    class SnoreIconData : public QSharedData
+    class SNORE_EXPORT SnoreIconData : public QSharedData
     {
     public:
         SnoreIconData(const QImage &img);

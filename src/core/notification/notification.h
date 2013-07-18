@@ -89,7 +89,7 @@ private:
     static uint m_idCount;
 
 
-    class NotificationData : public QSharedData
+    class SNORE_EXPORT NotificationData : public QSharedData
     {
 
     public:

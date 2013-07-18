@@ -60,7 +60,7 @@ QString const SnoreCore::version(){
 }
 
 QString const SnoreCore::snoreTMP(){
-    static const QString tmp = QDir::temp().path() +"/SnoreNotify/";
+    static const QString tmp = QString("%1/SnoreNotify/").arg(QDir::temp().path());
     return tmp;
 }
 
