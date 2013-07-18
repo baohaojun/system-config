@@ -16,7 +16,7 @@ if test "$outDir" = "`readlink -f ~`"; then
     outDir=""
 fi
 
-if test "$outDir" != "" -a "$outDir" != ~/.cache/for-code-reading/"`pwd`";
+if test -r "$outDir" -a "$outDir" != ~/.cache/for-code-reading/"`pwd`";
 then
     higherSrcDir=${outDir#~/.cache/for-code-reading/}
 
