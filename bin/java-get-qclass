@@ -40,12 +40,6 @@ for (@ARGV) {
             debug "already a qclass: $tag";
             exit;
         }
-        my $package = $files_package{$file};
-        if ($ENV{GTAGS_START_FILE} and not $package) {
-            chomp ($package = qx(java-get-package $file));
-            debug "package is $package from $file";
-            $files_package{$file} = $package;
-        }
-        print "$package$tag\n" if "$package$tag" =~ m/$qclass/;
+        print "$tag\n" if "$tag" =~ m/$qclass/;
     }
 }

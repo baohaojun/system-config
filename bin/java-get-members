@@ -6,6 +6,10 @@ function die() {
     exit -1
 }
 
+for x in $0 "$@"; do
+    printf %q\ "$x"
+done >> ~/.logs/$(basename $0).log
+
 type='.*?'
 proto=false
 TEMP=$(getopt -o pt: --long prototype,type: -n $(basename $0) -- "$@")
@@ -32,12 +36,14 @@ done
 
 
 for class in "$@"; do
-    export GTAGS_START_FILE= 
+    export GTAGS_START_FILE=
     qclasses=$(java-get-qclass $class)
+    echo qclasses is $qclasses >> ~/.logs/$(basename $0).log
 
     for qclass in $qclasses; do
         file=$(java-find-def.pl -e $qclass)
         tag_cache=$(java-tags-cache $file)
+        echo tag_cache is $tag_cache >> ~/.logs/$(basename $0).log
         if test $proto = true; then
             perl -ne "print \"\$1\n\" if m/$type: <$qclass.[^.>]*> : (.*)/" $tag_cache /dev/null
         else

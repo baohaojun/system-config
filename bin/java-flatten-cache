@@ -18,13 +18,12 @@ file=$1
 cache=$HOME/tmp/code-reading-flatten$PWD/$file
 def=$HOME/tmp/code-reading-defs$PWD/$file
 if test ! -e $cache -o $cache -ot $file -o ! -e $def -o $def -ot $file; then
-    mkdir -p $(dirname $cache) $(dirname $def)    
+    mkdir -p $(dirname $cache) $(dirname $def)
     flatten.pl $file > $cache.bak
     mv $cache.bak $cache
     (
         cd $HOME/tmp/code-reading-flatten$PWD
-        package=$(java-get-package $file|perl -npe 's/\.$//');
-        grep-imenu -e '.*' -f $file -s | perl -npe 's/: <(.*?)>/: <'$package.'$1>/ unless m/package: <'$package'>/'
+        grep-imenu -e '.*' -f $file -s
     ) > $def.bak
     mv $def.bak $def
 fi

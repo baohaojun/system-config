@@ -326,7 +326,6 @@ sub do_cscope($$$) {
 
         close $child_in;
         @updated_paths = map {chomp; s,^\./,,; $_} <$child_out>;
-        grep {print STDERR "'$_' "} @updated_paths;
 
         close $child_out;
         waitpid($child_pid, 0);
