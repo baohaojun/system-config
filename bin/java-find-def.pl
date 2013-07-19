@@ -24,10 +24,10 @@ die "Usage: $0 -e LOOKUP_QCLASS -d CODE_DIR" unless $lookup_qclass;
 my $non_qclass = $lookup_qclass;
 $non_qclass =~ s/.*\.//;
 
+debug "grep-gtags -e $non_qclass -d $code_dir -t 'class|interface|method|field' -s -p '\\.java|\\.aidl|\\.jar|\\.cs|\\.dll'";
 open(my $pipe, "-|", "grep-gtags -e $non_qclass -d $code_dir -t 'class|interface|method|field' -s -p '\\.java|\\.aidl|\\.jar|\\.cs|\\.dll'")
     or die "can not open global-ctags";
 
-debug "grep-gtags -e $non_qclass -d $code_dir -t 'class|interface|method|field' -s -p '\\.java|\\.aidl|\\.jar|\\.cs|\\.dll'";
 
 my %files_package;
 my $print_done;

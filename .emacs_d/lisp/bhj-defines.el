@@ -1804,7 +1804,7 @@ using ctags-exuberant"
   (format "%s%s%s" comment-start str comment-end))
 
 ;;;###autoload
-(defun bhj-java-import ()
+(defun java-get-imports ()
   (interactive)
   (save-excursion
     (let ((old-buffer (current-buffer))

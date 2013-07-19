@@ -4,7 +4,6 @@ use strict;
 chomp(my $code_dir = qx(find-code-reading-dir));
 chdir $code_dir or die "can not chdir $code_dir";
 
-$ENV{GTAGS_START_FILE} = "";
 my $recursive = 1;
 if ($ENV{DO_RECURSIVE_JAVA_HIERARCHY}) {
     $recursive = 0;

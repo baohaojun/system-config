@@ -20,6 +20,7 @@ sub debug(@) {
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
+debug "$0 @ARGV";
 #gtags-cscope-grep regexp
 
 
@@ -90,6 +91,7 @@ if ($do_dir) {
 
 $start_file = $working_file || $ENV{GTAGS_START_FILE} || ".";
 chomp($start_file = qx/readlink -f $start_file/);
+my $start_file_abs = $start_file;
 
 if ($only_start_file and not $path_matcher) {
     $path_matcher = $start_file;
@@ -269,7 +271,8 @@ sub do_cscope($$$) {
     my $got_results = 0;
     my $code_dir = substr($db_dir, length("$ENV{HOME}/.cache/for-code-reading"));
     $code_dir =~ s,/+,/,g;
-    chdir ($code_dir) or die "Can not change to $code_dir" unless $working_file;
+
+    chdir ($code_dir) or die "Can not change to $code_dir";
 
     $ENV{GTAGSDBPATH} = $db_dir;
     $ENV{GTAGSROOT} = $code_dir;
@@ -301,7 +304,6 @@ sub do_cscope($$$) {
 
     my @updated_paths = keys %updated_paths;
 
-
     if (substr($start_file, 0, length($code_dir)) eq $code_dir) {
         $start_file = substr($start_file, 1 + length($code_dir));
     } else {
@@ -324,15 +326,17 @@ sub do_cscope($$$) {
 
         close $child_in;
         @updated_paths = map {chomp; s,^\./,,; $_} <$child_out>;
+        grep {print STDERR "'$_' "} @updated_paths;
+
         close $child_out;
         waitpid($child_pid, 0);
     }
 
-    if (-e $start_file and not $updated_paths{$start_file}) {
+    if ($start_file and -e $start_file_abs and not $updated_paths{$start_file}) {
         push @updated_paths, $start_file unless $start_file =~ m/\.jar$|\.dll$/i;
-        debug "pushed start file into updated_paths";
+        debug "pushed start file '$start_file' into updated_paths";
     } else {
-        debug "no need to push start file into updated_paths"
+        debug "no need to push $start_file into updated_paths"
     }
     if (@updated_paths) {
         debug "These files need update: @updated_paths\n";

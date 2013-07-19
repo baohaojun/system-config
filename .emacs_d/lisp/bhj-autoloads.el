@@ -283,7 +283,7 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 ;;;***
 
 ;;;### (autoloads (bhj-downcase-symbol-or-region bhj-upcase-symbol-or-region
-;;;;;;  source-code-help bhj-java-import bhj-find-missing-file replace-double-quotes
+;;;;;;  source-code-help java-get-imports bhj-find-missing-file replace-double-quotes
 ;;;;;;  bhj-choose-from-output bhj-choose bhj-open-android-doc-on-java-buffer
 ;;;;;;  bhj-do-dictionry insert-today dos2unix bhj-do-code-generation
 ;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-name my-bbdb-canonicalize
@@ -686,7 +686,7 @@ lookup the current word (or region) in dictionary
 
 \(fn)" t nil)
 
-(autoload 'bhj-java-import "bhj-defines" "\
+(autoload 'java-get-imports "bhj-defines" "\
 
 
 \(fn)" t nil)

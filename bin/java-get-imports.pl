@@ -11,7 +11,6 @@ sub debug(@) {
 use String::ShellQuote;
 use Getopt::Long;
 chomp(my $code_dir = qx(find-code-reading-dir));
-my %files_package;
 my $verbose;
 my $resolve;
 GetOptions(
@@ -26,15 +25,15 @@ my $connect_re = qr((?: |(?:\[\])+));
 my %super_classes;
 
 my @keywords = ("abstract", "assert", "boolean", "break", "byte",
-	      "case", "catch", "char", "class", "const", "continue",
-	      "default", "double", "else", "enum", "extends", "false",
-	      "final", "finally", "float", "for", "goto", "if",
-	      "implements", "import", "instanceof", "int",
-	      "interface", "long", "native", "new", "null", "package",
-	      "private", "protected", "public", "return", "short",
-	      "static", "strictfp", "super", "switch", "synchronized",
-	      "this", "throw", "throws", "transient", "true", "try",
-	      "void", "volatile", "while" );
+              "case", "catch", "char", "class", "const", "continue",
+              "default", "double", "else", "enum", "extends", "false",
+              "final", "finally", "float", "for", "goto", "if",
+              "implements", "import", "instanceof", "int",
+              "interface", "long", "native", "new", "null", "package",
+              "private", "protected", "public", "return", "short",
+              "static", "strictfp", "super", "switch", "synchronized",
+              "this", "throw", "throws", "transient", "true", "try",
+              "void", "volatile", "while" );
 
 my $keywords = join('|', @keywords);
 my $keywords_re = qr($keywords);
@@ -49,7 +48,7 @@ my @modifiers = ('public', 'protected', 'private', 'static',
 my $modifiers = join('|', @modifiers);
 my $modifier_re = qr($modifiers);
 
-sub match_args($) 
+sub match_args($)
 {
     return 0;
 }
@@ -119,59 +118,68 @@ if (not $code_dir) {
     debug "code dir set to $code_dir";
     chdir $code_dir or die "can not chdir $code_dir";
 }
-    
+
 while (<>) {
     debug "got $_";
     if (m/^package ($qualified_re);/) { #package
-	$package = $1;
+        $package = $1;
     } elsif (m/^import (?:static )?($qualified_re);/) { #import
-	import_it($1);
+        import_it($1);
     } elsif (m/^import (?:static )?($qualified_re)(?:\.\*);/) { #import
-	$wild_import_qualifieds{$1} = 1;
+        $wild_import_qualifieds{$1} = 1;
     } elsif (m/(?:class|interface) ($id_re)(.*)\{/) { #class|interface
-	define_it($1);
-	my $class = $1;
-	my $ext = $2;
-	$super_classes{$class} = {} unless exists $super_classes{$class};
-	while ($ext =~ m/($qualified_re)/g) {
-	    next if $keywords{$1};
-	    $refs{$1} = 1;
-	    $super_classes{$class}{$1} = 1;	    
-	}
+        define_it($1);
+        my $class = $1;
+        my $ext = $2;
+        $super_classes{$class} = {} unless exists $super_classes{$class};
+        while ($ext =~ m/($qualified_re)/g) {
+            next if $keywords{$1};
+            $refs{$1} = 1;
+            $super_classes{$class}{$1} = 1;
+        }
     } elsif (m/new ($qualified_re)\((.*)\)\{/) { #anonymous class definition
-	$refs{$1} = 1;
-	match_args($2);
-    } elsif (m/($qualified_re)$connect_re($id_re)\((.*)\)\{/) { #method definition
-	debug "got method: $1 $2";
-	type_it($2, $1);
+        $refs{$1} = 1;
+        match_args($2);
+    } elsif (m/($qualified_re)$connect_re($id_re)\((.*)\)((?:throws $id_re(?:,$id_re)*)?)\{/) { #method definition
+        debug "got method: $1 $2";
+        if ($4) {
+            debug "throws: $4";
+            my $_ = $4;
+            s/^throws //;
 
-	my $params = $3;
-	$params =~ s/$modifier_re //g;
-	while ($params =~ m/($qualified_re)(?:$connect_re|<$id_re>)($id_re)/g) {
-	    type_it($2, $1);
-	}
+            while (m/($qualified_re)/g) {
+                $refs{$1} = 1;
+            }
+        }
+        type_it($2, $1);
+
+        my $params = $3;
+        $params =~ s/$modifier_re //g;
+        while ($params =~ m/($qualified_re)(?:$connect_re|<$id_re>)($id_re)/g) {
+            type_it($2, $1);
+        }
     } elsif (m/($qualified_re)$connect_re($id_re)\)/) { #arguments
-	s/$modifier_re //g;
-	my $line = $_;
-	while ($line =~ m/($qualified_re)$connect_re($id_re)(?=,|\))/g) {
-	    debug "got $1 $2";
-	    type_it($2, $1);
-	}
+        s/$modifier_re //g;
+        my $line = $_;
+        while ($line =~ m/($qualified_re)$connect_re($id_re)(?=,|\))/g) {
+            debug "got $1 $2";
+            type_it($2, $1);
+        }
     } elsif (m/($qualified_re)(?:$connect_re|<$id_re(?:,$id_re)*>)($id_re)(,|=.*|;)/) { #var definition
-	type_it($2, $1);
-	my $assign = $3;
-	while ($assign =~ m/($qualified_re)/g) {
-	    $refs{$1} = 1;
-	}
+        type_it($2, $1);
+        my $assign = $3;
+        while ($assign =~ m/($qualified_re)/g) {
+            $refs{$1} = 1;
+        }
     } else {
-	debug "not matched: $_";
-	while (m/($qualified_re)=/g) {
-	    define_it($1);
-	}
+        debug "not matched: $_";
+        while (m/($qualified_re)=/g) {
+            define_it($1);
+        }
 
-	while (m/($qualified_re)/g) {
-	    $refs{$1} = 1;
-	}
+        while (m/($qualified_re)/g) {
+            $refs{$1} = 1;
+        }
     }
 }
 
@@ -185,11 +193,11 @@ sub get_default_packages($)
     my $package = $_[0];
     return unless $package;
     open(my $pipe, "-|", "grep-gtags -e $package -d $code_dir -t package -s -c")
-	or die "can not open grep-gtags";
+        or die "can not open grep-gtags";
 
     while (<$pipe>) {
-	m#/([^/]+)\.(?:java|aidl):.*# or next;
-	import_it("$package.$1");
+        m#/([^/]+)\.(?:java|aidl):.*# or next;
+        import_it("$package.$1");
     }
     close($pipe);
 }
@@ -201,78 +209,73 @@ sub get_wildcards($)
     $import =~ s/.*\.//;
     my %def_files;
     open(my $pipe, "-|", "grep-gtags -e $import -d $code_dir -s")
-	or die "can not open grep-gtags";
-    
+        or die "can not open grep-gtags";
+
     while (<$pipe>) {
-	m#(.*?):# or next;
-	$def_files{$1} = 1;
+        m#(.*?):# or next;
+        $def_files{$1} = 1;
     }
     close $pipe;
 
     $import = shell_quote($import);
     for my $file (keys %def_files) {
-	open(my $pipe, "-|", "global-ctags $import..* $code_dir/$file")
-	    or die "can not open global-ctags";
-	while (<$pipe>) {
-	    my ($def) = split;
-	    $def =~ s/.*\.//;
-	    define_it($def);
-	}
-	close $pipe;
-    }	
+        open(my $pipe, "-|", "global-ctags $import..* $code_dir/$file")
+            or die "can not open global-ctags";
+        while (<$pipe>) {
+            my ($def) = split;
+            $def =~ s/.*\.//;
+            define_it($def);
+        }
+        close $pipe;
+    }
 }
 
 sub find_import_for($)
 {
     my $def = $_[0];
     if (length($def) == 1) {
-	print STDERR "$def: generics type parameter?\n";
-	return 0;	    
+        print STDERR "$def: generics type parameter?\n";
+        return 0;
     }
     return 0 unless $def;
     if ($def =~ m/\./) {
-	our %import_quoted_map;
-	$def =~ s/\..*//;
-	return 0 if exists $import_quoted_map{$def};
-	$import_quoted_map{$def} = 1;
+        our %import_quoted_map;
+        $def =~ s/\..*//;
+        return 0 if exists $import_quoted_map{$def};
+        $import_quoted_map{$def} = 1;
     }
     debug "grep-gtags -e $def -d $code_dir -t 'class|interface' -s -p '\\.java|\\.aidl'";
     open(my $pipe, "-|", "grep-gtags -e $def -d $code_dir -t 'class|interface' -s -p '\\.java|\\.aidl'")
-	or die "can not open grep-gtags";
-    
+        or die "can not open grep-gtags";
+
     my @imports;
     while (<$pipe>) {
-	m/^(.*?):.*?<(.*?)>/ or next;
-	
-	my ($file, $tag) = ($1, $2);
-	my $package = $files_package{$file};
-	unless ($package) {
-	    chomp($package = qx(java-get-package $code_dir/$file));
-	    $files_package{$file} = $package;
-	}
-	push @imports, "$package.$tag";
+        m/^(.*?):.*?<(.*?)>/ or next;
+
+        my ($file, $tag) = ($1, $2);
+        push @imports, "$tag";
     }
 
     unless ($resolve) {
-	our %printed_imports;
-	my $deleted = 0;
-	
-	for (0..@imports) {
-	    if ($printed_imports{$imports[$_]}) {
-		delete $imports[$_];
-		$deleted = 1;
-	    } else {
-		$printed_imports{$imports[$_]} = 1;
-	    }
-	}
-	
-	if (@imports == 1) {
-	    print "import @imports\n";
-	} elsif (@imports) {
-	    print "import-multi @imports\n";
-	} else {
-	    print "can not import $def\n" unless $deleted;
-	}
+        our %printed_imports;
+        my $deleted = 0;
+
+        for (0..@imports) {
+            if ($printed_imports{$imports[$_]}) {
+                delete $imports[$_];
+                $deleted = 1;
+            } else {
+                $printed_imports{$imports[$_]} = 1;
+            }
+        }
+
+        if (@imports == 1) {
+            print "import @imports\n";
+        } elsif (@imports) {
+            print "import-multi @imports\n";
+        } else {
+            print "can not import $def\n" unless $deleted;
+        }
     }
 }
 
@@ -287,19 +290,19 @@ for my $ref (keys %refs) {
     my $ref_save = $ref;
     $ref =~ s/\..*//;
     unless (is_keyword_or_defined($ref)) {
-	debug "need import: $ref";
-	if ($import_simples{$ref}) {
-	    $import_simples{$ref} ++;
-	} elsif ($ref =~ m/^[A-Z]/) {
-	    debug "find_import_for $ref_save\n";
-	    find_import_for($ref_save);
-	}
+        debug "need import: $ref";
+        if ($import_simples{$ref}) {
+            $import_simples{$ref} ++;
+        } elsif ($ref =~ m/^[A-Z]/) {
+            debug "find_import_for $ref_save\n";
+            find_import_for($ref_save);
+        }
     }
 }
 
 if ($verbose) {
     for my $import (keys %import_simples) {
-	debug "import $simple_qualified_map{$import} not used" if $import_simples{$import} == 1;
+        debug "import $simple_qualified_map{$import} not used" if $import_simples{$import} == 1;
     }
 }
 
@@ -313,21 +316,21 @@ sub prefix($)
 if ($resolve) {
     my $postfix = "";
     if ($resolve =~ m/\./) {
-	$postfix = $resolve;
-	$postfix =~ s/.*?(?=\.)//;
-	debug "postfix is $postfix";
-	$resolve =~ s/\..*//;
+        $postfix = $resolve;
+        $postfix =~ s/.*?(?=\.)//;
+        debug "postfix is $postfix";
+        $resolve =~ s/\..*//;
     }
     if ($simple_qualified_map{$resolve}) {
-	print $simple_qualified_map{$resolve} . "$postfix";
+        print $simple_qualified_map{$resolve} . "$postfix";
     } elsif ($var_type_map{$resolve}) {
-	for my $type (keys $var_type_map{$resolve}) {
-	    my $prefix = prefix($type);
-	    if ($simple_qualified_map{$prefix}) {
-		print $simple_qualified_map{$prefix} . substr($type, length($prefix)) . "$postfix\n";
-	    } else {
-		print "$type$postfix\n";
-	    }
-	}
+        for my $type (keys $var_type_map{$resolve}) {
+            my $prefix = prefix($type);
+            if ($simple_qualified_map{$prefix}) {
+                print $simple_qualified_map{$prefix} . substr($type, length($prefix)) . "$postfix\n";
+            } else {
+                print "$type$postfix\n";
+            }
+        }
     }
 }

@@ -2,8 +2,8 @@
 # key: logdef
 # name: logdef
 # --
-open(my \$debug, ">", glob("~/.logs/$1.log"))
-    or die "Can not open debug log file ~/.logs/$1.log";
+open(my \$debug, ">", glob("~/.logs/`(buffer-name)`.log"))
+    or die "Can not open debug log file ~/.logs/`(buffer-name)`.log";
 sub debug(@) {
     print \$debug "@_\n";
 }

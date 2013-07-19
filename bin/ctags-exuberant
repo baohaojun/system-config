@@ -2,12 +2,52 @@
 
 use strict;
 
+open(my $debug, ">>", glob("~/.logs/ctags-exuberant.log"))
+    or die "Can not open debug log file ~/.logs/ctags-exuberant.log";
 sub debug(@) {
-    print "@_\n";
+    print $debug "@_\n";
 }
 
+debug "$0 @ARGV";
 if (not grep {$_ eq "--filter"} @ARGV) {
-    exec("2nd", "ctags-exuberant", @ARGV);
+    use IPC::Open2;
+    $|++;
+
+    my $ctags_pid = open2(my $read, my $write, "2nd", "ctags-exuberant", @ARGV);
+    my @fields;
+    my $last_line;
+    my $last_line_num;
+    my $package;
+    my $package_file;
+    my $is_java;
+    my $terminator;
+    my ($old_tag, $old_type, $old_line_num, $old_file);
+    while (<$read>) {
+        @fields = split(" ");
+        my ($tag, $type, $line_num, $file) = @fields;
+        if ($file =~ m/\.java|\.aidl/) {
+
+            if ($type eq 'package') {
+                $package = "$tag.";
+                $package_file = $file;
+                print;
+            } else {
+                if ($file ne $package_file) {
+                    $package = "";
+                }
+                $tag =~ s/.*\.//;
+                if (($tag ne $old_tag or $line_num != $last_line_num) and $old_tag !~ m/\./) {
+                    print "$package$last_line" if $last_line and $old_type ne 'package';
+                }
+                print "$package$_" if $tag =~ m/\./;
+            }
+            $last_line = $_;
+            ($old_tag, $old_type, $old_line_num, $old_file) = ($tag, $type, $line_num, $file);
+            $last_line_num = $line_num;
+        } else {
+            print;
+        }
+    }
     exit;
 }
 
