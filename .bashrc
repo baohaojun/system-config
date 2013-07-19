@@ -45,7 +45,18 @@ else
         )
     fi
     export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent|rm-last-nl|tr '\n' ':')
-    printf 'export PATH=%q' "$PATH" > ~/.bash-path
+    printf 'export PATH=%q\n' "$PATH" > ~/.bash-path
+
+    cat <<'EOF' >> ~/.bash-path
+if test "$USER" = bhj; then
+    export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
+    export PERL_MB_OPT="--install_base $HOME/perl5";
+    export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
+    export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:$HOME/perl5/lib/perl5:$PERL5LIB";
+    export PATH="$HOME/perl5/bin:$PATH";
+fi
+EOF
+    . ~/.bash-path
 fi
 if test "$TERM" = dumb; then
     . ~/.bashrc-in-emacs
@@ -55,14 +66,6 @@ fi
 DEBEMAIL="baohaojun@gmail.com"
 DEBFULLNAME="Bao Haojun"
 export DEBEMAIL DEBFULLNAME
-
-if test "$USER" = bhj; then
-    export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
-    export PERL_MB_OPT="--install_base $HOME/perl5";
-    export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
-    export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:$HOME/perl5/lib/perl5:$PERL5LIB";
-    export PATH="$HOME/perl5/bin:$PATH";
-fi
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8

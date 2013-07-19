@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. ~/.bash-path
 EMACS=emacs
 if type emacs-snapshot-gtk; then
     EMACS=emacs-snapshot-gtk

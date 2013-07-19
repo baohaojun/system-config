@@ -192,7 +192,7 @@ sub get_default_packages($)
 {
     my $package = $_[0];
     return unless $package;
-    open(my $pipe, "-|", "grep-gtags -e $package -d $code_dir -t package -s -c")
+    open(my $pipe, "-|", "grep-gtags -e $package -t package -s -c")
         or die "can not open grep-gtags";
 
     while (<$pipe>) {
@@ -208,7 +208,7 @@ sub get_wildcards($)
     get_default_packages($import);
     $import =~ s/.*\.//;
     my %def_files;
-    open(my $pipe, "-|", "grep-gtags -e $import -d $code_dir -s")
+    open(my $pipe, "-|", "grep-gtags -e $import -s")
         or die "can not open grep-gtags";
 
     while (<$pipe>) {
@@ -244,8 +244,8 @@ sub find_import_for($)
         return 0 if exists $import_quoted_map{$def};
         $import_quoted_map{$def} = 1;
     }
-    debug "grep-gtags -e $def -d $code_dir -t 'class|interface' -s -p '\\.java|\\.aidl'";
-    open(my $pipe, "-|", "grep-gtags -e $def -d $code_dir -t 'class|interface' -s -p '\\.java|\\.aidl'")
+    debug "grep-gtags -e $def -t 'class|interface' -s -p '\\.java|\\.aidl'";
+    open(my $pipe, "-|", "grep-gtags -e $def -t 'class|interface' -s -p '\\.java|\\.aidl'")
         or die "can not open grep-gtags";
 
     my @imports;

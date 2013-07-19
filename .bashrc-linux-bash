@@ -58,7 +58,9 @@ fi
 export -f sudo
 
 function global() {
-    export GTAGSROOT=$(pcd .; bcd; bcd; pwd)
-    export GTAGSDBPATH=$(pcd .; bcd; pwd)
-    command global "$@"
+    (
+        export GTAGSROOT=$(pcd .; bcd; bcd; pwd)
+        export GTAGSDBPATH=$(pcd .; bcd; pwd)
+        command global "$@"
+    )
 }

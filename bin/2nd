@@ -3,7 +3,10 @@ prog1=
 prog2=
 for p in $(type -a $1 | grep 'is /'|pn 3); do
     prog=$(readlink -f "$p")
-    if test "$prog1"; then
+
+    if [[ $prog =~ /debug/ ]]; then
+        continue;
+    elif test "$prog1"; then
         if test "$prog" != "$prog1"; then
             prog2=$prog
             break;
@@ -14,6 +17,8 @@ for p in $(type -a $1 | grep 'is /'|pn 3); do
 done
 
 shift
+
+echo prog1 is $prog1 prog2 is $prog2 >> ~/.logs/$(basename $0).log
 
 if test "$prog2"; then
    exec "$prog2" "$@"

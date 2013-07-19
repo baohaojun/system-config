@@ -23,7 +23,7 @@ mkdir -p ~/bin/$(uname)/ext/debug
 mkdir -p ~/.logs/start-debug.log/
 
 (
-    printf "cd %q;" "$(pwd)"
+    printf "cd %q;" "\$(pwd)"
 
     for x in "$1" "\$@"; do
         printf "%q " "\$x"
@@ -38,7 +38,7 @@ res=\$?
 (
     echo out; /bin/cat ~/.logs/start-debug.log/$1.\$\$.out;
     echo err:; /bin/cat ~/.logs/start-debug.log/$1.\$\$.err
-    echo tree:; show-ps-tree \$\$
+    echo tree:; ps.tree \$\$
 ) >>  ~/.logs/start-debug.log/$1
 cd ~/.logs/start-debug.log/
 /bin/rm $1.\$\$.out $1.\$\$.err
