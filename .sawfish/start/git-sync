@@ -1,2 +1,3 @@
 #!/bin/bash
-FETCH_ONLY=true git-pull-mac 
+cd ~/system-config/
+FETCH_ONLY=true git-pull-mac
