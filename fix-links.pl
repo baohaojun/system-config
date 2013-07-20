@@ -72,6 +72,7 @@ for my $filename (@ARGV) {
     while (<$fh>) {
         my $old = $_;
         s/\[\[(.*?)\]/"[[" . fix_link($1) . "]"/eg;
+        s/\[\[([^]:]*\.(png|jpg))\]\]/[[$1][file:$1]]/gi; # make images clickable
         print $fh_new $_;
         if ($_ ne $old) {
             $changed = 1;

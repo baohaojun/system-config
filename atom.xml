@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Grepping Cross Reference]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/07/20/0-grep-cross-ref.html"/>
+    <updated>2013-15-21T01:07:55+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/07/20/0-grep-cross-ref.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[找回失去的Scroll Lock——系统View Mode]]></title>
     <link href="http://baohaojun.github.io/blog/2013/07/16/0-find-scroll-lock.html"/>
     <updated>2013-07-16T11:02:05+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/05/29/0-parallel-bash.html"/>
     <updated>2013-05-29T11:34:37+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/05/29/0-parallel-bash.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[通天塔导游]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/22/TourDeBabel.html"/>
-    <updated>2013-05-22T13:06:26+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/22/TourDeBabel.html</id>
   </entry>
 </feed>

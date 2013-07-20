@@ -1,0 +1,93 @@
+#+title: Grepping Cross Reference
+# bhj-tags: code-reading
+
+This tool is like lxr, except it works for most programming languages
+(as many as supported by ctags-exuberant) and allows you use it in
+Emacs/Vim instead of a browser.
+
+See some screenshots for c++, python, and shell script (click to view
+in the original size):
+
+[[../../../../images/post/c-grep-func.png][file:../../../../images/post/c-grep-func.png]]
+
+[[../../../../images/post/py-grep-func.png][file:../../../../images/post/py-grep-func.png]]
+
+[[../../../../images/post/sh-grep-func.png][file:../../../../images/post/sh-grep-func.png]]
+
+Here I'll explain some of its features and how it works.
+
+* It's very fast
+
+Because [[../../../2011/12/23/beagrep.org][beagrep]] is being used, which can grep 2G source code in 0.23 second.
+
+For e.g., when checking cross references for =MockZip=, first we use
+beagrep to find out the (tiny) set of files and line numbers on which
+this word occurs. Then we work on these files only.
+
+* It support most programming languages
+
+Because ctags-exuberant is used.
+
+Given the small set of files containing =MockZip=, we use
+ctags-exuberant to tag each of these files, then compare line
+numbers. If =MockZip= occurs on line 88, then the last tag before line
+88 is referencing =MockZip=.
+
+* It removes false positives
+
+Currently it can take 2 arguments =--nc= (no comment) and =--ns== (no
+string) to ignore where =MockZip= occurs inside a comment or string
+literal.
+
+* It reuses grep output format
+
+For easy integration with Emacs's grep-mode. Or vim's handling of grep output.
+
+* It's not perfect
+
+But good enough (at least for me:-)
+
+* How to use it
+
+1. Install [[../../../2011/12/23/beagrep.org][beagrep]] and ctags-exuberant.
+2. Download and get the package from [[https://github.com/baohaojun/gxr][gxr]].
+3. Create beagrep index in your source tree.
+4. =mkdir ~/.logs=
+5. =grep-func-call -e MockZip -a --nc --ns=
+6. File a bug on the github project:-)
+
+Here are the arguments:
+
+ * -e /pattern/ :: PATTERN is a perl style regexp. When you want to
+                   find only those cross references where a var named
+                   =my_var= is assigned a value, use a pattern like
+                   ~my_var\s*=[^=]~.
+                   
+                   =\b= is added when appropriate, so that a pattern
+                   of =my_var= will not find =my_var2= because I do
+                   myself a favor by changing the pattern to
+                   =\bmy_var\b=. If I also want =my_var2= I can use
+                   =my_var2?=.
+
+ * -a :: =-a= is a toggle switch, one =-a= will search in all source
+         files, two (even number of) =-a= will search only in the file
+         =$GTAGS_START_FILE= (the file my Emacs's current buffer is
+         visiting, I added a hook in grep, the current buffer's file
+         will be exported to the environment variable).
+
+         #+BEGIN_SRC emacs-lisp
+         (defun set-gtags-start-file ()
+           (let ((file (my-buffer-file-name (current-buffer))))
+             (if (file-remote-p file)
+                 (let ((process-environment tramp-remote-process-environment))
+                   (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
+                   (setq tramp-remote-process-environment process-environment))
+               (setenv "GTAGS_START_FILE" file))))         
+         #+END_SRC
+
+         Always use =-a= if you are not sure of my hack.
+
+         
+ 
+ * --nc --ns :: These has been explained above.
+

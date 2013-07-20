@@ -1,6 +1,10 @@
 #+title: Archive
  * 2013
   - 2013-07
+   * 2013-07-20
+
+     [[../blog/2013/07/20/0-grep-cross-ref.org][Grepping Cross Reference]]
+
    * 2013-07-16
 
      [[../blog/2013/07/16/0-find-scroll-lock.org][找回失去的Scroll Lock——系统View Mode]]
