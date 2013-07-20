@@ -29,20 +29,23 @@ bool SnoreToast::init(SnoreCore *snore)
 {
     if(QSysInfo::windowsVersion() != QSysInfo::WV_WINDOWS8)
     {
+        qDebug() << "SnoreToast does not work on windows" << QSysInfo::windowsVersion();
         return false;
     }
     m_appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName());
 
     QProcess *p = new QProcess(this);
+    p->setReadChannelMode(QProcess::MergedChannels);
 
     QStringList arguements;
     arguements << "-install"
                << QString("SnoreNotify\\%1").arg(qApp->applicationName())
-               << qApp->applicationFilePath()
+               << QDir::toNativeSeparators(qApp->applicationFilePath())
                << m_appID;
     qDebug() << "SnoreToast" << arguements;
     p->start("SnoreToast", arguements);
-    p->waitForFinished();
+    p->waitForFinished(-1);
+    qDebug() << p->readAll();
     if(p->exitCode() != 0)
         return false;
 
@@ -81,9 +84,9 @@ void SnoreToast::slotNotify(Notification notification)
                   //               << notification.icon().isLocalFile()?QDir::toNativeSeparators(notification.icon().localUrl()):notification.icon().url()
                << QDir::toNativeSeparators(notification.icon().localUrl())
                << "-w"
-//               << "-appID"
-//               << m_appID
-                  ;
+               << "-appID"
+               << m_appID;
+    ;
     if(notification.hint("silent",true).toBool())
     {
         arguements << "-silent";
@@ -122,7 +125,7 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
         break;
     case -1:
         //failed
-         qWarning() << "SnoreToast failed to display " << n << p->readAll();
+        qWarning() << "SnoreToast failed to display " << n << p->readAll();
         break;
     }
 
