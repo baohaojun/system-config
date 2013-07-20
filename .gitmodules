@@ -40,3 +40,6 @@
 [submodule ".emacs_d/skeleton-complete"]
 	path = .emacs_d/skeleton-complete
 	url = https://github.com/baohaojun/skeleton-complete
+[submodule "gcode/gxr"]
+	path = gcode/gxr
+	url = https://github.com/baohaojun/gxr
