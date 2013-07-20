@@ -32,7 +32,7 @@ bool SnoreToast::init(SnoreCore *snore)
         qDebug() << "SnoreToast does not work on windows" << QSysInfo::windowsVersion();
         return false;
     }
-    m_appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName());
+    m_appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName()).replace(" ","");
 
     QProcess *p = new QProcess(this);
     p->setReadChannelMode(QProcess::MergedChannels);
