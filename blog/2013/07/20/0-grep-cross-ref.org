@@ -1,4 +1,4 @@
-#+title: Grepping Cross Reference
+#+title: Grepping Cross References
 # bhj-tags: code-reading
 
 This tool is like lxr, except it works for most programming languages
@@ -51,10 +51,17 @@ But good enough (at least for me:-)
 
 1. Install [[../../../2011/12/23/beagrep.org][beagrep]] and ctags-exuberant.
 2. Download and get the package from [[https://github.com/baohaojun/gxr][gxr]].
-3. Create beagrep index in your source tree.
+3. In your gxr checkout:
+
+   #+BEGIN_SRC sh
+   cp .globalrc ~
+   cp $(find . -maxdepth 1 -type f -executable) ~/bin # or some other dir in your PATH
+   #+END_SRC
+
 4. =mkdir ~/.logs=
-5. =grep-func-call -e MockZip -a --nc --ns=
-6. File a bug on the github project:-)
+5. Create beagrep index in your source tree.
+6. =grep-func-call -e MockZip -a --nc --ns=
+7. File a bug on the github project:-)
 
 Here are the arguments:
 

@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Grepping Cross Reference</title>
+<title>Grepping Cross References</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 
@@ -101,7 +101,7 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Grepping Cross Reference</h1>
+<h1 class="title">Grepping Cross References</h1>
 <p>
 This tool is like lxr, except it works for most programming languages
 (as many as supported by ctags-exuberant) and allows you use it in
@@ -192,13 +192,23 @@ But good enough (at least for me:-)
 </li>
 <li>Download and get the package from <a href="https://github.com/baohaojun/gxr">gxr</a>.
 </li>
-<li>Create beagrep index in your source tree.
+<li>In your gxr checkout:
+
+<div class="org-src-container">
+
+<pre class="src src-sh">cp .globalrc ~
+cp $(<span class="org-sh-quoted-exec">find</span> . -maxdepth 1 -type f -executable) ~/bin <span class="org-comment-delimiter"># </span><span class="org-comment">or some other dir in your PATH</span>
+</pre>
+</div>
 </li>
+
 <li><code>mkdir ~/.logs</code>
+</li>
+<li>Create beagrep index in your source tree.
 </li>
 <li><code>grep-func-call -e MockZip -a --nc --ns</code>
 </li>
-<li>File a bug on the github project.
+<li>File a bug on the github project:-)
 </li>
 </ol>
 
