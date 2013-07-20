@@ -1,0 +1,101 @@
+#!/bin/bash
+
+IFS=$'\t\n'
+
+function get_lang_for_file_from_globalrc() {
+    lang_for_file "$@"
+}
+
+regexp=hello
+silent=
+ignore_case=
+members=
+no_comment=
+reverse_matcher=()
+path_matcher=()
+path_matcher_inv=()
+
+echo -n > ~/.logs/$(basename $0).log
+function debug() {
+    echo "$@" >> ~/.logs/$(basename $0).log
+}
+
+TEMP=$(getopt -o e:p:r:v:sima --long nc -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -e)
+            regexp=$2
+            shift 2
+            ;;
+        -p)
+            path_matcher=(-p "$2")
+            shift 2
+            ;;
+        -r)
+            reverse_matcher=(-v "$2")
+            shift 2
+            ;;
+        -v)
+            path_matcher_inv=(-v "$2")
+            shift 2
+            ;;
+        --nc)
+            no_comment=--nc
+            shift
+            ;;
+        -s)
+            silent=-s
+            shift 1
+            ;;
+        -i)
+            ignore_case=-i
+            shift 1
+            ;;
+        -m)
+            members=-m
+            shift
+            ;;
+        -a)
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+echo # workaround for emacs tramp grep will destroy the first output
+     # line with a '$' prompt
+
+re_beagrep=$regexp
+
+if echo "$regexp" | grep -q -e "^\b"; then
+    re_beagrep=\\b$re_beagrep
+fi
+
+if echo "$regexp" | grep -q -e "\b$"; then
+    re_beagrep=$re_beagrep\\b
+fi
+
+debug "re_beagrep is $re_beagrep"
+for file in $(beagrep -e "$re_beagrep" $ignore_case "${path_matcher[@]}" "${path_matcher_inv[@]}" --grep "-l -P"); do
+    debug "got file $file";
+    if test ! -e "$file"; then
+        continue
+    fi
+    export GTAGS_LANG_FORCE=c
+    gtags_rc=$(lookup-file .globalrc)
+    if test -e "$gtags_rc"; then
+        GTAGS_LANG_FORCE=$(get_lang_for_file_from_globalrc "$file" $gtags_rc)
+        if test "$GTAGS_LANG_FORCE" = unknown; then
+            continue
+        fi
+    fi
+    export GTAGS_START_FILE=$file
+    grep-func-call -e "$regexp" $silent $ignore_case $members $no_comment "${reverse_matcher[@]}"| grep -v '^$'
+done

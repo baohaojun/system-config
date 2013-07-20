@@ -1,0 +1,206 @@
+#!/usr/bin/perl
+
+print "\n";
+use strict;
+use String::ShellQuote;
+use Getopt::Long;
+
+open(my $debug, ">", glob("~/.logs/grep-func-call.log"))
+  or die "Error: can not open log";
+
+sub debug(@) {
+    print $debug "@_\n";
+}
+
+my $silent = 0;
+my $ignore_case = 0;
+my $target = "hello";
+my $members = 0;
+my $grep_all = 0;
+my $no_comment = 0;
+my @argv_for_grep_all = @ARGV;
+my $path_matcher = "";
+my $path_matcher_inv = "";
+my @beagrep_path_arg;
+my $reverse_matcher;
+
+GetOptions(
+    "s!" => \$silent,
+    "i!" => \$ignore_case,
+    "a!" => sub { $grep_all = !$grep_all},
+    "m!" => \$members,
+    "e=s" => \$target,
+    "p=s" => \$path_matcher,
+    "r=s" => \$reverse_matcher,
+    "v=s" => \$path_matcher_inv,
+    "nc!" => \$no_comment,
+    );
+
+if ($path_matcher) {
+    @beagrep_path_arg = ("-p", $path_matcher);
+}
+
+if ($path_matcher_inv) {
+    @beagrep_path_arg = (@beagrep_path_arg, "-v", $path_matcher_inv);
+}
+
+if ($reverse_matcher) {
+    $reverse_matcher = qr($reverse_matcher);
+    debug "got reverse matcher: $reverse_matcher";
+}
+
+if ($target =~ m/^\b/) {
+    $target = "\\b$target";
+}
+
+if ($target =~ m/\b$/) {
+    $target = "$target\\b";
+}
+
+if ($ignore_case) {
+    $target = qr/$target/i;
+}
+
+debug "$0:" . __LINE__ . ": no_comment is $no_comment";
+if ($grep_all) {
+    system("grep-func-call-all", @argv_for_grep_all);
+    exit 0;
+}
+
+my $is_gz = 0;
+my $start_file = shell_quote($ENV{GTAGS_START_FILE});
+
+my $command = "ctags-exuberant --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu $start_file";
+
+if ($ENV{GTAGS_START_FILE} =~ m/\.gz$/) {
+    debug "file is a gzip file";
+    $is_gz = 1;
+    $command = "zcat $start_file | ctags-stdin --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu";
+}
+
+
+debug "will run $command";
+
+open(my $ctags_pipe, "-|",  $command)
+    or die "Error: open gtags output";
+
+open(my $env, ">", glob("~/.logs/grep-func-call.env"))
+    or die "Error: open env save file failed";
+
+print $env "export GTAGS_LANG_FORCE=$ENV{GTAGS_LANG_FORCE}\n";
+print $env "export GTAGS_START_FILE=$start_file\n";
+
+my %def_line_map;
+my %type_line_map;
+my @def_lines;
+
+sub is_makefile()
+{
+    debug "lang is $ENV{GTAGS_LANG_FORCE}";
+    return $ENV{GTAGS_LANG_FORCE} eq "make";
+}
+
+$def_line_map{1} = "******";
+$def_line_map{10000000} = "******";
+while(<$ctags_pipe>) {
+  print $debug "$_";
+  m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
+  my ($def, $type, $line, $str) = ($1, $2, $3, $4);
+  $type_line_map{$line} = $type;
+  if (not is_makefile() and $type eq "macro" and $_ !~ m/\\$/) {
+      # a macro not ended with ~\~ is a simple macro, skip it
+      # because it can not cantain usage of others,
+
+      # unless this macro is actually defined using $target:
+      if ($def !~ m/\b$target\b/ and $_ =~ m/\b$target\b/) { 
+	  print $ENV{GTAGS_START_FILE} . ":$line: <> macro $def is defined using $target\n";
+      }
+
+      next;
+  }
+  $def_line_map{$line} = $def;
+}
+
+@def_lines = sort { $a <=> $b } keys %def_line_map;
+
+my $file;
+if (not $is_gz) {
+    open($file, "<", $ENV{GTAGS_START_FILE}) or die "Error: open source file";
+} else {
+    open($file, "-|", "zcat $start_file") or die "Error: open source file";
+}
+
+print $debug "def_lines are @def_lines\n";
+my $last_match_def_line = 1;
+my %file_line_map;
+my %printed_func_map;
+while(<$file>) {
+    $file_line_map{$.} = $_;
+    next unless m/$target/;
+    next if ($reverse_matcher and m/$reverse_matcher/);
+    my $is_calling_myself = 1;
+    if (m/->$target/ or m/\.$target/ or m/:$target/) {
+	$is_calling_myself = 0;
+    }
+
+    debug ":$.: $_";
+    my $last_checked_def_line = -1;
+    my $line_str = $_;
+    my $line_no = $.;
+
+    my $next_def_line_idx = 0;
+    my $current_def_line;
+    for my $idx (1.. (@def_lines - 1)) {
+	if ($def_lines[$idx] > $.) {
+	    $current_def_line = $def_lines[$idx - 1];
+	    last;
+	}
+    }
+    
+    if ($def_line_map{$current_def_line} eq "******") {
+	debug "the previous defun is *****";
+	next;
+    }
+
+    if ($type_line_map{$current_def_line} eq "prototype") {
+	debug "the previous defun is a prototype";
+	next;
+    }
+
+    if (($is_calling_myself or $current_def_line == $line_no) and $def_line_map{$current_def_line} =~ m/\b$target\b/) { # this is the definition of target
+	debug "the previous definition matches myself: " . 
+	    "current_def_line is $current_def_line, " .
+	    "line_no is $line_no, " .
+	    "def_line is $def_line_map{$current_def_line}; " . 
+	    "current line is $line_str";
+	next;
+    }
+
+    if ($no_comment and m,(?:^\s*/?\*)|(?:^\s*//),) {
+	debug "$0:" . __LINE__ . ": no comment should be allowed";
+	next;
+    }
+	    
+    if ($members == 0 && $current_def_line == $line_no && $file_line_map{$line_no} =~ m/\b$target\b/ && $def_line_map{$current_def_line} =~ m/\b$target\b/) {
+	#next;
+	;
+    } else {
+	debug "members: $members, current_def_line: $current_def_line, line: $line_no, file_line_map{\$line_no}: $file_line_map{$line_no}, target: $target";
+    }
+    unless ($printed_func_map{$current_def_line}) {
+	my $calling_tag = "<=";
+	if ($current_def_line == $.) {
+	    $calling_tag = "<>";
+	}
+	print $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag " 
+	    . 
+	    (
+	     $silent ? ($def_line_map{$current_def_line} . "\n") : $file_line_map{$current_def_line}
+	    );
+	$printed_func_map{$current_def_line} = 1;
+    }
+
+    print $ENV{GTAGS_START_FILE} . ":$.: => " . $line_str unless ($silent or $current_def_line == $.);
+}
+
+
