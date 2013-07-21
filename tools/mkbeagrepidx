@@ -86,6 +86,7 @@ function mkgtags() {
         export GTAGSCONF=$(readlink -f .globalrc)
     fi
     mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
+    GTAGSROOT=$PWD GTAGSDBPATH=$outDir global -c > "$outDir"/GTAGS.dump
 }
 
 function mkgtags-filter() {
