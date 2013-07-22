@@ -13,7 +13,7 @@ class NotificationData : public QSharedData
 {
 
 public:
-    NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,
+    NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const Icon &icon,
                        int timeout,NotificationEnums::Prioritys::prioritys priority ):
         m_id ( m_idCount++ ),
         m_updateID(0),
@@ -47,7 +47,7 @@ public:
     QString m_alert;
     QString m_title;
     QString m_text;
-    SnoreIcon m_icon;
+    Icon m_icon;
     NotificationEnums::Prioritys::prioritys m_priority;
     NotificationEnums::CloseReasons::closeReasons m_closeReason;
     QHash<int,Notification::Action*> m_actions;

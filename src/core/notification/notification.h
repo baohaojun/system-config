@@ -51,7 +51,7 @@ public:
 
 public:
     Notification ();
-    Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const Icon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
     Notification ( const Notification &other );
     Notification &operator=(const Notification &other);
     ~Notification();
@@ -70,7 +70,7 @@ public:
     const QString &application() const;
     const QString &title() const;
     const QString &text() const;
-    const SnoreIcon &icon() const;
+    const Icon &icon() const;
     const QString &alert() const;
     void setSticky();
     bool sticky() const;

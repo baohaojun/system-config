@@ -25,15 +25,15 @@ namespace Snore{
 
 class IconData;
 
-class SNORE_EXPORT SnoreIcon
+class SNORE_EXPORT Icon
 {
 public:
-    SnoreIcon();
-    SnoreIcon(const QImage &img);
-    SnoreIcon(const class QString &url);
-    SnoreIcon(const SnoreIcon &other);
-    SnoreIcon &operator=(const SnoreIcon &other);
-    ~SnoreIcon();
+    Icon();
+    Icon(const QImage &img);
+    Icon(const class QString &url);
+    Icon(const Icon &other);
+    Icon &operator=(const Icon &other);
+    ~Icon();
 
     const QImage &image() const;
     QString localUrl() const;
@@ -53,15 +53,15 @@ private:
 }
 
 
-inline QDebug operator<< ( QDebug debug, const Snore::SnoreIcon &icon )
+inline QDebug operator<< ( QDebug debug, const Snore::Icon &icon )
 {
     if(icon.isValid())
     {
-        debug << "Snore::SnoreIcon(" << icon.url() << ")" ;
+        debug << "Snore::Icon(" << icon.url() << ")" ;
     }
     else
     {
-        debug << "Snore::SnoreIcon(0x00)" ;
+        debug << "Snore::Icon(0x00)" ;
     }
     return debug.maybeSpace();
 }

@@ -22,47 +22,47 @@
 using namespace Snore;
 
 
-QHash<QString,QString> SnoreIcon::hasedImages;
+QHash<QString,QString> Icon::hasedImages;
 
-SnoreIcon::SnoreIcon() :
+Icon::Icon() :
     d(NULL)
 {
 }
 
-SnoreIcon::SnoreIcon(const QImage &img):
+Icon::Icon(const QImage &img):
     d(new IconData(img))
 {
 }
 
-SnoreIcon::SnoreIcon(const QString &url):
+Icon::Icon(const QString &url):
     d(new IconData(url))
 {
 }
 
-SnoreIcon::SnoreIcon(const SnoreIcon &other):
+Icon::Icon(const Icon &other):
     d(other.d)
 {
 }
 
-SnoreIcon &SnoreIcon::operator=(const SnoreIcon &other)
+Icon &Icon::operator=(const Icon &other)
 {
     d = other.d;
     return *this;
 }
 
-SnoreIcon::~SnoreIcon()
+Icon::~Icon()
 {
 
 }
 
-const QImage &SnoreIcon::image() const{
+const QImage &Icon::image() const{
     if(d->m_img.isNull()){
         d->m_img = QImage(d->m_url);
     }
     return d->m_img;
 }
 
-QString SnoreIcon::localUrl()const{
+QString Icon::localUrl()const{
     if(d->m_localUrl.isEmpty())
     {
         if(hasedImages.contains(hash()))
@@ -79,14 +79,14 @@ QString SnoreIcon::localUrl()const{
     return d->m_localUrl;
 }
 
-const QByteArray &SnoreIcon::imageData() const{
+const QByteArray &Icon::imageData() const{
     if(d->m_data.isEmpty() && !image().isNull()){
         d->setImageData();
     }
     return d->m_data;
 }
 
-QString SnoreIcon::hash() const{
+QString Icon::hash() const{
     if(d->m_isLocalFile)
     {
         return "";
@@ -97,21 +97,21 @@ QString SnoreIcon::hash() const{
     return d->m_hash;
 }
 
-bool SnoreIcon::isLocalFile() const
+bool Icon::isLocalFile() const
 {
     return d->m_isLocalFile;
 }
 
-bool SnoreIcon::isEmpty() const{
+bool Icon::isEmpty() const{
     return d->m_hash.isEmpty() && d->m_img.isNull() && d->m_localUrl.isEmpty();
 }
 
-bool SnoreIcon::isValid() const
+bool Icon::isValid() const
 {
     return d;
 }
 
-QString SnoreIcon::url() const
+QString Icon::url() const
 {
     return d->m_url;
 }

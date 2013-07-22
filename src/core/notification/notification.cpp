@@ -40,7 +40,7 @@ Notification::Notification () :
 {
 }
 
-Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout,NotificationEnums::Prioritys::prioritys priority ):
+Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const Icon &icon, int timeout,NotificationEnums::Prioritys::prioritys priority ):
     d(new  NotificationData(application,alert,title,text,icon,timeout,priority))
 {
 }
@@ -65,7 +65,7 @@ const uint &Notification::id() const
     return d->m_id;
 }
 
-const SnoreIcon &Notification::icon() const
+const Icon &Notification::icon() const
 {
     return d->m_icon;
 }

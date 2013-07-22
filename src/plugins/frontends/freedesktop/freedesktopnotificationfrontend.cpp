@@ -67,24 +67,24 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
                                  const QString &app_icon, const QString &summary, const QString &body,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
-    SnoreIcon icon;
+    Icon icon;
     NotificationEnums::Prioritys::prioritys priotity = NotificationEnums::Prioritys::NORMAL;
 
     if(hints.contains("image_data")){
         FreedesktopImageHint image;
         hints["image_data"].value<QDBusArgument>()>>image;
-        icon = SnoreIcon(image.toQImage());
+        icon = Icon(image.toQImage());
     }
     else
     {
-        icon = SnoreIcon(":/root/images/freedesktop-dbus.png");
+        icon = Icon(":/root/images/freedesktop-dbus.png");
     }
 
     if(!snore()->aplications().contains(app_name)){
 #ifdef HAVE_KDE
-        SnoreIcon appIcon = SnoreIcon(KIconLoader::global()->iconPath(app_icon, KIconLoader::Desktop));
+        Icon appIcon(KIconLoader::global()->iconPath(app_icon, KIconLoader::Desktop));
 #else
-        SnoreIcon appIcon = SnoreIcon(":/root/images/freedesktop-dbus.png");
+        Icon appIcon(":/root/images/freedesktop-dbus.png");
 #endif
         Application *a = new Application(app_name,appIcon);
         a->addAlert(new Alert("DBus Alert","DBus Alert",appIcon));

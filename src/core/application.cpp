@@ -21,7 +21,7 @@
 namespace Snore{
 
 
-Application::Application (const QString &name, const SnoreIcon &icon) :
+Application::Application (const QString &name, const Icon &icon) :
         m_name ( name ),
         m_icon(icon),
         m_initialized ( false )
@@ -50,7 +50,7 @@ const QString &Application::name() const
     return m_name;
 }
 
-const SnoreIcon &Application::icon()const
+const Icon &Application::icon()const
 {
     return m_icon;
 }
@@ -70,7 +70,7 @@ void Application::setInitialized ( bool b )
     m_initialized = b;
 }
 
-Alert::Alert (const QString &name, const QString &title, const SnoreIcon &icon, bool active) :
+Alert::Alert (const QString &name, const QString &title, const Icon &icon, bool active) :
         m_name ( name ),
         m_title ( title ),
         m_icon(icon),
@@ -92,7 +92,7 @@ const QString &Alert::title() const
     return m_title;
 }
 
-const SnoreIcon &Alert::icon() const
+const Icon &Alert::icon() const
 {
     return m_icon;
 }
