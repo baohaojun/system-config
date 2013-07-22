@@ -4,7 +4,7 @@ function push-url() {
     ring=$1
     shift
     if test "$1" = -new-tab; then
-	shift
+        shift
     fi
 
     (echo "$@"; cat "$ring" 2>/dev/null)|
@@ -15,67 +15,58 @@ function push-url() {
 function pop-url() {
     ring=$1
     shift
-    
+
     perl -ne 'BEGIN{$url = "'"$1"'"} print if m!\Q$url\E!..0' "$ring" | perl -ne 'print if 2..0' > "$ring".$$
     mv "$ring".$$ "$ring"
-}    
+}
 
 export -f push-url pop-url
-    
+
 if test "$1" = -new-tab; then
     push-url ~/.logs/firefox-tab-ring "$(get-firefox-tab-url)"
 fi
 
-if test "$1" = pop; then
+function do_it() {
     (
-	flock 9
-        cat ~/.logs/firefox-tab-ring | xargs -d \\n \
+        export ring1=$1
+        export ring2=$2
+        flock 9
+        push-url $ring2 "$(get-firefox-tab-url)"
+        cat $ring1 | xargs -d \\n \
             bash -c '
                 for x in "$@"; do
                     if test "$(get-firefox-tab-url)" = "$x"; then
-                        push-url ~/.logs/firefox-tab-ring.pop "$x"
+                        push-url $ring2 "$x"
                         echo "will skip $x"
                         continue;
                     fi
                     if $(firefox-search-for-tab "\Q$x\E"); then
                        echo "will open $x"
-                       push-url ~/.logs/firefox-tab-ring.pop "$x"
-                       pop-url ~/.logs/firefox-tab-ring "$x"
-                       break
+                       push-url $ring2 "$x"
+                       pop-url $ring1 "$x"
+                       exit
                    fi
                done
+               echo will now empty $ring1
+               echo -n > $ring1
            ' true
     ) 9<~/.bashrc
+}
+
+if test "$1" = pop; then
+    do_it ~/.logs/firefox-tab-ring ~/.logs/firefox-tab-ring.pop
     exit
 fi
 
 if test "$1" = push; then
     if test $# -gt 1; then
-	shift
-	push-url ~/.logs/firefox-tab-ring "$@"
+        shift
+        push-url ~/.logs/firefox-tab-ring "$@"
     else
-	(
-	    flock 9
-            cat ~/.logs/firefox-tab-ring.pop | xargs -d \\n \
-                bash -c '
-                    for x in "$@"; do
-                        if test "$(get-firefox-tab-url)" = "$x"; then
-                            push-url ~/.logs/firefox-tab-ring "$x"
-                            echo "will skip $x"
-                            continue;
-                        fi
-                        if $(firefox-search-for-tab "\Q$x\E"); then
-                           echo "will open $x"
-                           push-url ~/.logs/firefox-tab-ring "$x"
-                           pop-url ~/.logs/firefox-tab-ring.pop "$x"
-                           break
-                       fi
-                   done
-               ' true
-	) 9<~/.bashrc
+        do_it ~/.logs/firefox-tab-ring.pop ~/.logs/firefox-tab-ring
     fi
     exit
-    
+
 fi
 
 if test $# = 1; then
