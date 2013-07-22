@@ -1,3 +1,5 @@
 #!/bin/bash
 
-edit ~/doc/baohaojun/wasted.org
+cd ~/doc/baohaojun/;
+
+e $(f wasted.org)
