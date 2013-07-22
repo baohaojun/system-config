@@ -19,12 +19,12 @@ for x in $(seq 1 5); do
             )
             if test "$out" != shit; then
                 echo out became "'$out'" at $x/$y >> ~/.logs/$(basename $0).log
-                echo -n $out
+                echo -n ${out%/}
                 exit 0
             fi
         done
     else
-        echo -n $out
+        echo -n ${out%/}
         exit 0
     fi
 done

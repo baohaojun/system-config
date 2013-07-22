@@ -10,6 +10,6 @@ url=$(
     echo /en
 )
 echo "$url"|tee /dev/tty|putclip
-firefox -new-tab "$url"&
+firefox "$url"&
 
 

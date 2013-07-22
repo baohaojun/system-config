@@ -14,11 +14,10 @@ url=$2
 
 new_tab=-new-tab
 
-if sawfish-client -e '(window-name (input-focus))'| grep -q -i 'mozilla firefox' &&
-    get-firefox-tab-url | grep -q -i 'file:///'; then
-    new_tab=
-elif firefox-search-for-tab "$pattern"; then
-    new_tab=
+firefox push "$(get-firefox-tab-url)"
+
+if firefox-search-for-tab "$pattern"; then
+    new_tab=-current-tab
 fi
 
 firefox $new_tab "$url"

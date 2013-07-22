@@ -32,7 +32,7 @@ while true; do
 done
 
 if test ${#board[@]} = 0; then
-    firefox -new-tab "http://ar.newsmth.net/searchArticle.do?subject=&author=$author&boardname=&body=&start=&end=$att"
+    firefox "http://ar.newsmth.net/searchArticle.do?subject=&author=$author&boardname=&body=&start=&end=$att"
     exit
 fi
 
@@ -42,5 +42,5 @@ for b in "${board[@]}"; do
             b=KernelTech
             ;;
     esac
-    firefox -new-tab "http://www.newsmth.net/bbsbfind.php?q=1&board=$b&title=&title2=&title3=&userid=$author&dt=22222"
+    firefox "http://www.newsmth.net/bbsbfind.php?q=1&board=$b&title=&title2=&title3=&userid=$author&dt=22222"
 done

@@ -1,10 +1,15 @@
 #!/bin/bash
-echo $@ > ~/1.txt
 exec > ~/.logs/of.log 2>&1
 set -x
 
 if test $# = 0; then
-    setsid xdg-open "$(xclip -o -selection primary)"
-else 
-    setsid xdg-open "$(lookup-file "$@")" 
+    set -- "$(xclip -o -selection primary)"
+else
+    set -- "$(lookup-file "$@")"
 fi
+
+if test $# = 1 && echo "${1}" | grep -q -i -P -e "^https?://"; then
+    firefox -new-tab "$1"
+    exit
+fi
+setsid xdg-open "$@"

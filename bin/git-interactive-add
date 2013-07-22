@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if test "$PWD" = ~; then
+    cd ~/system-config/
+fi
+
+for x in $(git st -s |grep '^.\S' -P | pn 2); do 
+    git diff "$x";
+    while true; do
+	out=$(select-args yes no diff);
+	if test $out = diff; then
+	    git diff "$x";
+	    continue;
+	fi
+
+	if test $out = yes; then
+	    git add "$x"
+	fi
+	break
+    done
+done
+	    
+	

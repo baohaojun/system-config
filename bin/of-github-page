@@ -14,5 +14,5 @@ if is-tty-io; then
 fi
 
 if test $(basename $0) != github-pagep; then
-    firefox -new-tab "$x"
+    firefox "$x"
 fi

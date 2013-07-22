@@ -6,11 +6,23 @@ fi
 
 new_tab=-new-tab
 
-if sawfish-client -e '(window-name (input-focus))'| grep -q -i 'mozilla firefox' &&
-    get-firefox-tab-url | grep -q -i 'file:///'; then
-    new_tab=
+in_firefox=false
+if sawfish-client -e '(window-name (input-focus))'| grep -q -i 'mozilla firefox'; then
+    in_firefox=true
+fi
+
+current_url=$(get-firefox-tab-url)
+
+if echo "$current_url" | grep -P -e '^shit$|file:///|localhost:34567'; then
+    echo nothing to do
+else
+    firefox push "$current_url"
+fi
+
+if test $in_firefox = true -a "${current_url:0-8}" = 'file:///'; then
+    new_tab=-current-tab
 elif firefox-search-for-tab 'localhost.*/dict'; then
-    new_tab=
+    new_tab=-current-tab
 fi
 
 firefox $new_tab http://localhost:34567/dict/"$(echo "$@" | urlify)"

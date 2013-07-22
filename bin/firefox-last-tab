@@ -1,0 +1,3 @@
+#!/bin/bash
+
+firefox-search-for-tab "\Q$(cat ~/.logs/last-tab-url)\E"

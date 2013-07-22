@@ -25,12 +25,13 @@ sub print_it($)
     print "$tag$rem\n";
 }
 
+my $td = "/tmp/gtagsAntlrJavaParser.$$";
+
 while (<>) {
     chdir $pwd or die "can not chdir to $pwd";
     chomp(my $jar = $_);
     my $file_name = $jar;
     chomp($jar = qx(readlink -f $jar));
-    my $td = "/tmp/gtagsAntlrJavaParser.$$";
     system("rm -rf $td; mkdir -p $td");
     chdir $td or die "can not chdir $td";
     system("jar xf $jar");
@@ -69,4 +70,6 @@ while (<>) {
     print "###terminator###" . "\n";
     $| = 0;
 }
+
+system("rm -rf $td");
 # java -cp ~/bin/Linux/ext/`uname -m`/gtagsAntlrJavaParser.jar:$CLASSPATH gtagsAntlrJavaParser

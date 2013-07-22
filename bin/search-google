@@ -13,8 +13,8 @@ url='http://'$host.$domain''"`echo \"$@\"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#s
 set -x
 
 if test "$EMACS" = t; then
-    firefox -new-tab "$url"
+    firefox "$url"
 else
-    firefox -new-tab "$url"&
+    firefox "$url"&
     echo "$url"|tee /dev/tty|putclip
 fi
