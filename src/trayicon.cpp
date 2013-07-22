@@ -24,6 +24,8 @@
 #include <QMenu>
 #include <QAction>
 
+#include "core/version.h"
+
 using namespace Snore;
 
 TrayIcon::TrayIcon()        
@@ -36,7 +38,7 @@ void TrayIcon::initConextMenu(SnoreCore *snore){
     _trayIcon->setVisible(true);
 
     _trayMenu = new QMenu("SnoreNotify");
-    _trayMenu->addAction(QString("SnoreNotify ").append(_snore->version()));
+    _trayMenu->addAction(QString("SnoreNotify ").append(Version::version()));
     _trayMenu->addSeparator();
     foreach(const QString &back,_snore->notificationBackends()){
         QAction *b=  new QAction(back,this);

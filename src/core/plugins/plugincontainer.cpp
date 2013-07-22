@@ -23,34 +23,36 @@
 #include "snorebackend.h"
 #include "snorefrontend.h"
 
-
-#include <QTimer>
 #include <QPluginLoader>
 #include <QDir>
 #include <QDebug>
 
-namespace Snore{
+using namespace Snore;
 
-PluginContainer::PluginContainer(QString fileName, QString pluginName, PluginContainer::PluginType type)
-    :m_pluginFile(fileName),
-      m_pluginName(pluginName),
-      m_pluginType(type)
+PluginContainer::PluginContainer(QString fileName, QString pluginName, PluginContainer::PluginType type):
+    m_pluginFile(fileName),
+    m_pluginName(pluginName),
+    m_pluginType(type)
 {
 }
 
-PluginContainer::~PluginContainer(){
+PluginContainer::~PluginContainer()
+{
     if(m_instance)
+    {
         m_instance->deleteLater();
+    }
 }
 
-SnorePlugin *PluginContainer::load(){
+SnorePlugin *PluginContainer::load()
+{
     if(m_instance != NULL)
         return m_instance;
     QPluginLoader loader ( SnoreCore::pluginDir().absoluteFilePath(file()));
-    qDebug()<<"Trying to load"<<file();
+    qDebug() << "Trying to load" << file();
     if ( !loader.load())
     {
-        qDebug() <<"Failed loading plugin: "<<loader.errorString();
+        qDebug() << "Failed loading plugin: " << loader.errorString();
         return NULL;
     }
 
@@ -73,23 +75,32 @@ PluginContainer::PluginType PluginContainer::type()
     return m_pluginType;
 }
 
-PluginContainer::PluginType PluginContainer::typeFromString(const QString &t){
+PluginContainer::PluginType PluginContainer::typeFromString(const QString &t)
+{
+    PluginContainer::PluginType type = PLUGIN;
     if(t == QLatin1String("backend"))
-        return BACKEND;
-    if(t == QLatin1String("secondary_backend"))
-        return SECONDARY_BACKEND;
-    if(t == QLatin1String("frontend"))
-        return FRONTEND;
-    return PLUGIN;
-}
-
-const QStringList &PluginContainer::types(){
-    static QStringList *list = NULL;
-    if(list == NULL){
-        list = new QStringList();
-        *list<<"backend"<<"secondary_backend"<<"frontend"<<"plugin";
+    {
+        type = BACKEND;
     }
-    return *list;
+    else if(t == QLatin1String("secondary_backend"))
+    {
+        type = SECONDARY_BACKEND;
+    }
+    else if(t == QLatin1String("frontend"))
+    {
+        type = FRONTEND;
+    }
+    return type;
 }
 
+const QStringList &PluginContainer::types()
+{
+    static QStringList list;
+    if(list.isEmpty()){
+        list << "backend"
+             << "secondary_backend"
+             << "frontend"
+             << "plugin";
+    }
+    return list;
 }

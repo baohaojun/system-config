@@ -35,28 +35,22 @@
 #include <QApplication>
 #include <QSettings>
 
-namespace Snore{
+using namespace Snore;
 
 QHash<QString,PluginContainer*> SnoreCore::s_pluginCache = QHash<QString,PluginContainer*>() ;
 
-QDir *SnoreCore::s_pluginDir = NULL;
-
-QSettings *SnoreCore::cacheFile(){
+QSettings &SnoreCore::cacheFile(){
 #ifdef Q_OS_LINUX
-    return  new QSettings("TheOneRing","libsnore");
+    static QSettings cache("TheOneRing","libsnore");
 #else
-    return new QSettings(SnoreCore::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
+    static QSettings cache(SnoreCore::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
 #endif
+    return cache;
 }
 
 void SnoreCore::slotNotificationClosed(Notification n)
 {
     emit notificationClosed(n);
-}
-
-QString const SnoreCore::version(){
-    static QString ver(QString().append(Version::major()).append(".").append(Version::minor()).append(Version::suffix()));
-    return ver;
 }
 
 QString const SnoreCore::snoreTMP(){
@@ -79,30 +73,30 @@ SnoreCore::SnoreCore ( QSystemTrayIcon *trayIcon ) :
 QHash<QString, PluginContainer *> SnoreCore::pluginCache(){
     if(!s_pluginCache.isEmpty())
         return s_pluginCache;
-    QSettings *cache = cacheFile();
-    QString version = cache->value("version").toString();
-    QString path = cache->value("pluginPath").toString();
-    int size = cache->beginReadArray("plugins");
+    QSettings &cache = cacheFile();
+    QString version = cache.value("version").toString();
+    QString path = cache.value("pluginPath").toString();
+    int size = cache.beginReadArray("plugins");
     if(size == 0 || version != Version::revision() || path != pluginDir().path()){
         qDebug() << version << "!=" << Version::revision();
         qDebug() << path << "!=" << pluginDir().path();
         updatePluginCache();
     }else{
         for(int i=0;i<size;++i) {
-            cache->setArrayIndex(i);
-            PluginContainer::PluginType type = (PluginContainer::PluginType)cache->value("type").toInt();
-            PluginContainer *info = new PluginContainer(cache->value("fileName").toString(),cache->value("name").toString(),type);
+            cache.setArrayIndex(i);
+            PluginContainer::PluginType type = (PluginContainer::PluginType)cache.value("type").toInt();
+            PluginContainer *info = new PluginContainer(cache.value("fileName").toString(),cache.value("name").toString(),type);
             s_pluginCache.insert(info->name(),info);
         }
-        cache->endArray();
+        cache.endArray();
     }
 
     return s_pluginCache;
 }
 
 void SnoreCore::updatePluginCache(){
-    QSettings *cache = cacheFile();
-    qDebug() << "Updating plugin cache" << cache->fileName();
+    QSettings &cache = cacheFile();
+    qDebug() << "Updating plugin cache" << cache.fileName();
 
     s_pluginCache.clear();
 
@@ -132,57 +126,47 @@ void SnoreCore::updatePluginCache(){
     }
 
     qDebug()<<s_pluginCache.keys();
-    cache->setValue("version",Version::revision());
-    cache->setValue("pluginPath",pluginDir().path());
+    cache.setValue("version",Version::revision());
+    cache.setValue("pluginPath",pluginDir().path());
     QList<PluginContainer*> plugins = s_pluginCache.values();
-    cache->beginWriteArray("plugins");
+    cache.beginWriteArray("plugins");
     for(int i=0;i< plugins.size();++i) {
-        cache->setArrayIndex(i);
-        cache->setValue("fileName",plugins[i]->file());
-        cache->setValue("name", plugins[i]->name());
-        cache->setValue("type",(int)plugins[i]->type());
+        cache.setArrayIndex(i);
+        cache.setValue("fileName",plugins[i]->file());
+        cache.setValue("name", plugins[i]->name());
+        cache.setValue("type",(int)plugins[i]->type());
     }
-    cache->endArray();
+    cache.endArray();
 }
 
 const QDir &SnoreCore::pluginDir(){
-    if(s_pluginDir == NULL)
-        setPluginDir();
-    qDebug()<<"SnorePluginDir:"<<s_pluginDir->path();
-    return *s_pluginDir;
+    static QDir path(QString("%1/snoreplugins").arg(qApp->applicationDirPath()));
+    if(!path.exists())
+    {
+        path = QDir(LIBSNORE_PLUGIN_PATH);
+    }
+    qDebug() << "PluginDir" << path.absolutePath();
+    return path;
 }
 
-void SnoreCore::setPluginDir(const QString &path){
-    if(!path.isEmpty()){//path is not empty
-        QDir *tmp = new QDir(path);
-        if(tmp->exists()){//path exists
-            s_pluginDir = tmp;
-        }else{
-            delete tmp;
-        }
-    }
-    //if pluginpath is not initialized try snoreplugins/ in application dir
-    if(s_pluginDir == NULL){
-        s_pluginDir  = new QDir(qApp->applicationDirPath()+"/snoreplugins");
-        qDebug()<<"PluginDir"<<s_pluginDir->absolutePath();
-        if(!s_pluginDir->exists())//still not existing? use the path defined on compile time
-            s_pluginDir = new QDir(LIBSNORE_PLUGIN_PATH);
-    }
-}
 
 void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
 {
-    qDebug()<<"PluginInfo"<<SnoreCore::pluginCache().keys();
+    qDebug() << "PluginInfo" << SnoreCore::pluginCache().keys();
     foreach ( PluginContainer *info, SnoreCore::pluginCache().values())
     {
-        if(types == PluginContainer::ALL or  types.testFlag(info->type())){
-            switch(info->type()){
-            case PluginContainer::BACKEND:{
+        if(types == PluginContainer::ALL or  types.testFlag(info->type()))
+        {
+            switch(info->type())
+            {
+            case PluginContainer::BACKEND:
+            {
                 qDebug() <<info->name()<<"is a Notification_Backend";
                 m_notificationBackends.append( info->name());
                 break;
             }
-            case PluginContainer::SECONDARY_BACKEND:{
+            case PluginContainer::SECONDARY_BACKEND:
+            {
                 SnoreSecondaryBackend *nb = qobject_cast<SnoreSecondaryBackend *> ( info->load() );
                 if(!nb->init( this )){
                     nb->deleteLater();
@@ -191,7 +175,8 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
                 m_secondaryNotificationBackends.append(info->name());
                 break;
             }
-            case PluginContainer::FRONTEND:{
+            case PluginContainer::FRONTEND:
+            {
                 SnoreFrontend * nf = qobject_cast<SnoreFrontend*> (info->load());
                 qDebug() <<info->name()<<"is a Notification_Frontend";
                 if(!nf->init( this )){
@@ -201,7 +186,8 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
                 m_Frontends.append(info->name());
                 break;
             }
-            case PluginContainer::PLUGIN:{
+            case PluginContainer::PLUGIN:
+            {
                 qDebug() <<info->name()<<"is a SnorePlugin";
                 if(!info->load()->init(this)){
                     info->load()->deleteLater();
@@ -210,9 +196,10 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
                 m_plugins.append(info->name());
                 break;
             }
-            default:{
+            default:
+            {
                 std::cerr<<"Plugin Cache corrupted"<<std::endl;
-                std::cerr<<info->file().toLatin1().constData()<<QString::number((int)info->type()).toLatin1().constData()<<std::endl;
+                std::cerr<<info->file().toLocal8Bit().constData()<<QString::number((int)info->type()).toLatin1().constData()<<std::endl;
             }
             }
         }else{
@@ -240,7 +227,7 @@ void SnoreCore::broadcastNotification ( Notification notification )
 void SnoreCore::notificationActionInvoked ( Notification notification )
 {
     emit actionInvoked(notification);
-    SnoreFrontend *nf= notification.source();
+    SnoreFrontend *nf = notification.source();
     if ( nf != NULL )
     {
         nf->actionInvoked ( notification );
@@ -371,6 +358,4 @@ void SnoreCore::requestCloseNotification(Notification n, NotificationEnums::Clos
 bool SnoreCore::primaryBackendSupportsRichtext()
 {
     return m_notificationBackend->supportsRichtext();
-}
-
 }

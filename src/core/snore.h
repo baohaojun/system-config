@@ -33,15 +33,13 @@ class QSettings;
 
 
 namespace Snore{
-class SNORE_EXPORT SnoreCore:public QObject
+class SNORE_EXPORT SnoreCore : public QObject
 {
     Q_OBJECT
 public:
-    static const QString version();
     static const QString snoreTMP();
     static void updatePluginCache();
     static const QDir &pluginDir();
-    static void setPluginDir(const QString &path = "");
 
 public:
     SnoreCore (QSystemTrayIcon *trayIcon = NULL );
@@ -76,10 +74,9 @@ public:
 
 private:
     static QHash<QString,PluginContainer*> pluginCache();
-    static QSettings *cacheFile();
+    static QSettings &cacheFile();
 
     static QHash<QString,PluginContainer*> s_pluginCache;
-    static QDir *s_pluginDir;
 
     ApplicationsList m_applications;
 

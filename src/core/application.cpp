@@ -18,8 +18,9 @@
 */
 
 #include "application.h"
-namespace Snore{
 
+
+using namespace Snore;
 
 Application::Application (const QString &name, const Icon &icon) :
         m_name ( name ),
@@ -34,14 +35,11 @@ Application::Application() :
 
 Application::~Application()
 {
-    foreach ( Alert *a,m_alerts )
-    {
-        a->deleteLater();
-    }
 }
 
 void Application::addAlert ( Alert *alert )
 {
+    alert->setParent(this);
     m_alerts.insert ( alert->name(),alert );
 }
 
@@ -102,4 +100,3 @@ bool Alert::isActive() const
     return m_active;
 }
 
-}

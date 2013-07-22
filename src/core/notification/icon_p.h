@@ -70,6 +70,9 @@ public:
     QString m_hash;
     bool m_isLocalFile;
 
+private:
+    Q_DISABLE_COPY(IconData)
+
 };
 
 }

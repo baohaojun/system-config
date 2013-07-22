@@ -22,6 +22,7 @@
 
 #include "plugins/backends/freedesktop/fredesktopnotification.h"
 #include "core/snore.h"
+#include "core/version.h"
 
 #include <QtCore>
 #include <QtDBus>
@@ -126,16 +127,15 @@ QStringList FreedesktopFrontend::GetCapabilities()
     return QStringList()
             << "body"
                //            << "body-hyperlinks"
-               //            << "body-markup"
+            << "body-markup"
             << "icon-static"
-            << "actions"
-               ;
+            << "actions";
 }
 
 QString FreedesktopFrontend::GetServerInformation(QString& vendor, QString& version, QString& specVersion)
 {
     vendor = "Snore";
-    version = snore()->version();
+    version = Version::version();
     specVersion = "0";
     return "Snore";
 }
