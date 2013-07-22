@@ -8,23 +8,26 @@ sub debug(@) {
     print $debug "@_\n";
 }
 
-debug "$0 @ARGV";
+debug "$0", map {"'$_'"} @ARGV;
+
+my $last_line;
+my $package;
+my $package_file;
+my $is_java;
+my $terminator;
+my ($old_tag, $old_type, $old_line_num, $old_file);
+my ($tag, $type, $line_num, $file);
+
 if (not grep {$_ eq "--filter"} @ARGV) {
     use IPC::Open2;
     $|++;
 
     my $ctags_pid = open2(my $read, my $write, "2nd", "ctags-exuberant", @ARGV);
-    my @fields;
-    my $last_line;
-    my $last_line_num;
-    my $package;
-    my $package_file;
-    my $is_java;
-    my $terminator;
-    my ($old_tag, $old_type, $old_line_num, $old_file);
     while (<$read>) {
-        @fields = split(" ");
-        my ($tag, $type, $line_num, $file) = @fields;
+        ($tag, $type, $line_num, $file) = split(" ");
+        if ($file ne $old_file) {
+            $package = "";
+        }
         if ($file =~ m/\.java|\.aidl/) {
 
             if ($type eq 'package') {
@@ -36,17 +39,19 @@ if (not grep {$_ eq "--filter"} @ARGV) {
                     $package = "";
                 }
                 $tag =~ s/.*\.//;
-                if (($tag ne $old_tag or $line_num != $last_line_num) and $old_tag !~ m/\./) {
+                if (($tag ne $old_tag or $line_num != $old_line_num) and $old_tag !~ m/\./) {
                     print "$package$last_line" if $last_line and $old_type ne 'package';
                 }
                 print "$package$_" if $tag =~ m/\./;
             }
             $last_line = $_;
             ($old_tag, $old_type, $old_line_num, $old_file) = ($tag, $type, $line_num, $file);
-            $last_line_num = $line_num;
         } else {
             print;
         }
+    }
+    if ($old_file =~ m/\.java|\.aidl/ and $old_tag !~ m/\./) {
+        print "$package$last_line" if $last_line and $old_type ne 'package';
     }
     exit;
 }
@@ -67,34 +72,41 @@ while (<STDIN>) {
         $is_java = 1;
     }
 
-    my @fields;
-    my @old_fields;
-    my $last_line;
-    my $last_line_num;
-    my $package;
     while (<$read>) {
         if ($is_java) {
-            @fields = split(" ");
-            my $line_num = $fields[2];
-
-            if ($fields[1] eq 'package') {
-                $package = $fields[0];
+            ($tag, $type, $line_num, $file) = split(" ");
+            if ($type eq 'package') {
+                $package = $tag;
                 print;
             } else {
-                my $tag = $fields[0];
-                $tag =~ s/.*\.//;
-                if (($tag ne $old_fields[0] or $line_num != $last_line_num) and $old_fields[0] !~ m/\./) {
-                    print "$package.$last_line" if $last_line and $old_fields[1] ne 'package';
+                my $tag_no_dot = $tag;
+                $tag_no_dot =~ s/.*\.//;
+                if (($tag_no_dot ne $old_tag or $line_num != $old_line_num) and $old_tag !~ m/\./) {
+                    if ($last_line and $old_type ne 'package') {
+                        my $last_out = "$package.$last_line";
+                        print $last_out;
+                        my $last_tag_out = "$package.$old_tag";
+                        $last_tag_out =~ s/\./-/g;
+                        $last_out =~ s/^\S+/$last_tag_out/;
+                        print $last_out;
+                    }
                 }
                 if ($_ eq $terminator) {
                     print;
                     last;
                 }
-                print "$package.$_" if $fields[0] =~ m/\./;
+
+                if ($tag =~ m/\./) {
+                    my $last_out = "$package.$_";
+                    print $last_out;
+                    my $last_tag_out = "$package.$tag";
+                    $last_tag_out =~ s/\./-/g;
+                    $last_out =~ s/^\S+/$last_tag_out/;
+                    print $last_out;
+                }
             }
+            ($old_tag, $old_type, $old_line_num, $old_file) = ($tag, $type, $line_num, $file);
             $last_line = $_;
-            @old_fields = @fields;
-            $last_line_num = $line_num;
         } else {
             print;
             if ($_ eq $terminator) {

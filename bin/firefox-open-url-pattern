@@ -1,0 +1,25 @@
+#!/bin/bash
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) pattern url"
+fi
+
+pattern=$1
+url=$2
+
+new_tab=-new-tab
+
+if sawfish-client -e '(window-name (input-focus))'| grep -q -i 'mozilla firefox' &&
+    get-firefox-tab-url | grep -q -i 'file:///'; then
+    new_tab=
+elif firefox-search-for-tab "$pattern"; then
+    new_tab=
+fi
+
+firefox $new_tab "$url"
+

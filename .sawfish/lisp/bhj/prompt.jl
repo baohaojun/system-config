@@ -449,6 +449,8 @@ displayed. See the `display-message' function for more details.")
            "RET" prompt-accept
            "Up" prompt-previous
            "Down" prompt-next
+           "C-p" prompt-previous
+           "C-n" prompt-next
            "M-n" prompt-next
            "M-p" prompt-previous
            "A-n" prompt-next

@@ -1330,6 +1330,8 @@ search(const char *pattern, const char *root, const char *cwd, const char *dbpat
         if ((last_comp_sep = strrchr(pattern, '.')) || (last_comp_sep = strrchr(pattern, ':'))) {
                 if (last_comp_sep[1] && !isregexchar(last_comp_sep[1])) {
                         pattern = last_comp_sep + 1;
+                } else {
+                        last_comp_sep = NULL;
                 }
         }
 

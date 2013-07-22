@@ -8,6 +8,8 @@ sub debug(@) {
     print $debug "@_\n";
 }
 
+debug "$0 @ARGV";
+
 use Getopt::Long;
 my $type = "class|interface";
 GetOptions(
@@ -26,6 +28,7 @@ for (@ARGV) {
 
     if ($ENV{GTAGS_START_FILE}) {
         my $file = $ENV{GTAGS_START_FILE};
+        debug "grep-imenu -e $class -t '$type' -s -p '\.java|\.aidl|\.jar|\.cs|\.dll' -f $file";
         $output = qx(grep-imenu -e $class -t '$type' -s -p "\.java|\.aidl|\.jar|\.cs|\.dll" -f $file);
         debug "output is $output from $file";
     } else {

@@ -39,7 +39,7 @@ cd_beagrep()
         builtin cd "${PWD#*for-code-reading}"
         return
     fi
-    dest=~/.cache/for-code-reading/`pwd`
+    dest=~/.cache/for-code-reading/$(readlink -f "$PWD")
     while test ! -d "$dest"/.beagrep -a ! -e "$dest"/GPATH -a "$dest" != / -a "$dest" != ""; do
         dest=${dest%/*};
     done

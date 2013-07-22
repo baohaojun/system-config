@@ -36,7 +36,6 @@ debug "$0 @ARGV";
 my $q_class = $ARGV[0];
 if ($q_class !~ m/\./) {
     chomp($q_class = qx(java-get-qclass $q_class));
-    $ENV{GTAGS_START_FILE} = "";
     debug "q_class for $ARGV[0] is $q_class";
     if ($q_class =~ m/\n/) {
         warn "$$ARGV[0] has multi q_class:\n$q_class\n";
@@ -46,6 +45,7 @@ if ($q_class !~ m/\./) {
 debug "q_class is $q_class";
 chomp(my $working_file= qx(java-find-def.pl -e $q_class));
 debug "working_file is $working_file for $q_class";
+$ENV{GTAGS_START_FILE} = "";
 if (not $working_file) {
     die "No working file for $q_class";
 }
