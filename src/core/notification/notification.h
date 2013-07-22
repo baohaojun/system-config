@@ -26,14 +26,19 @@
 
 #include <QVariant>
 #include <QDebug>
+#include <QTextDocumentFragment>
+#include <QTextDocument>
+
+
 
 namespace Snore{
+
+class NotificationData;
 
 class SNORE_EXPORT Notification
 {
 public:
     static int DefaultTimeout;
-    static QString toPlainText ( const QString &string );
 
     class Action
     {
@@ -43,10 +48,12 @@ public:
         QString name;
     };
 
+
 public:
     Notification ();
     Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
     Notification ( const Notification &other );
+    Notification &operator=(const Notification &other);
     ~Notification();
 
     const uint &id() const;
@@ -86,39 +93,8 @@ public:
 
 
 private:
-    static uint m_idCount;
-
-
-    class SNORE_EXPORT NotificationData : public QSharedData
-    {
-
-    public:
-        NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,
-                           int timeout,NotificationEnums::Prioritys::prioritys priority );
-
-
-        ~NotificationData();
-
-        uint m_id;
-        uint m_updateID;
-        int m_timeout;
-        Notification::Action *m_actionInvoked;
-        SnoreFrontend *m_source;
-        QString m_application;
-        QString m_alert;
-        QString m_title;
-        QString m_text;
-        SnoreIcon m_icon;
-        NotificationEnums::Prioritys::prioritys m_priority;
-        NotificationEnums::CloseReasons::closeReasons m_closeReason;
-        QHash<int,Notification::Action*> m_actions;
-        QVariantHash m_hints;
-
-    };
-
     QExplicitlySharedDataPointer<NotificationData> d;
-    static uint notificationCount;
-    static int notificationMetaID;
+
 
 };
 

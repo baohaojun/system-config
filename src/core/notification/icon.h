@@ -18,13 +18,12 @@
 #define NOTIFICATION_ICON_H
 #include "../snore_exports.h"
 
-
-#include <QImage>
-#include <QSharedPointer>
+#include <QSharedData>
 #include <QDebug>
 
 namespace Snore{
 
+class IconData;
 
 class SNORE_EXPORT SnoreIcon
 {
@@ -33,6 +32,7 @@ public:
     SnoreIcon(const QImage &img);
     SnoreIcon(const class QString &url);
     SnoreIcon(const SnoreIcon &other);
+    SnoreIcon &operator=(const SnoreIcon &other);
     ~SnoreIcon();
 
     const QImage &image() const;
@@ -47,28 +47,8 @@ public:
 
 private:
     static QHash<QString,QString> hasedImages;
-    static QString computeHash(const QByteArray &data);
 
-
-    class SNORE_EXPORT SnoreIconData : public QSharedData
-    {
-    public:
-        SnoreIconData(const QImage &img);
-        SnoreIconData(const QString &url);
-
-        ~SnoreIconData();
-
-        void setImageData();
-
-        QImage m_img;
-        QByteArray m_data;
-        QString m_localUrl;
-        QString m_url;
-        QString m_hash;
-        bool m_isLocalFile;
-
-    };
-    QExplicitlySharedDataPointer<SnoreIconData> d;
+    QExplicitlySharedDataPointer<IconData> d;
 };
 }
 

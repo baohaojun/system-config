@@ -31,7 +31,6 @@ public:
     Growl();
     ~Growl();
     static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
-    bool canCloseNotification();
 
 private:
 	//a static instance for the static callback methode

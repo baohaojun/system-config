@@ -130,7 +130,7 @@ private:
 
 
 SnarlBackend::SnarlBackend():
-    SnoreBackend("Snarl"),
+    SnoreBackend("Snarl",true,false),
     m_defautSnarlinetrface(NULL)
 {
 
@@ -156,11 +156,6 @@ bool SnarlBackend::init(SnoreCore *snore){
     m_defautSnarlinetrface = new SnarlInterface();
 
     return SnoreBackend::init(snore);
-}
-
-bool SnarlBackend::canCloseNotification()
-{
-    return true;
 }
 
 void SnarlBackend::slotRegisterApplication(Application *application){
@@ -221,8 +216,8 @@ void SnarlBackend::slotNotify(Notification notification){
 
     if(notification.updateID() == 0){
         ULONG32 id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
-                                            Notification::toPlainText(notification.title()).toUtf8().constData(),
-                                            Notification::toPlainText(notification.text()).toUtf8().constData(),
+                                            Snore::toPlainText(notification.title()).toUtf8().constData(),
+                                            Snore::toPlainText(notification.text()).toUtf8().constData(),
                                             notification.timeout(),
                                             notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
                                             !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
@@ -239,8 +234,8 @@ void SnarlBackend::slotNotify(Notification notification){
         //update message
         snarlInterface->Update(m_idMap[notification.updateID()],
                 notification.alert().toUtf8().constData(),
-                Notification::toPlainText(notification.title()).toUtf8().constData(),
-                Notification::toPlainText(notification.text()).toUtf8().constData(),
+                Snore::toPlainText(notification.title()).toUtf8().constData(),
+                Snore::toPlainText(notification.text()).toUtf8().constData(),
                 notification.timeout(),
                 notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
                 !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,

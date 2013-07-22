@@ -32,7 +32,6 @@ public:
     SnarlBackend();
     ~SnarlBackend();
     virtual bool init(Snore::SnoreCore *snore);
-    bool canCloseNotification();
 
 private:
     class SnarlWidget;

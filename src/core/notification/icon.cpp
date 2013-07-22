@@ -17,12 +17,9 @@
 #include "icon.h"
 #include "../snore.h"
 
-#include <QCryptographicHash>
-#include <QBuffer>
-#include <QHash>
-#include <QFile>
-#include <QDebug>
-namespace Snore{
+#include "notification/icon_p.h"
+
+using namespace Snore;
 
 
 QHash<QString,QString> SnoreIcon::hasedImages;
@@ -33,18 +30,24 @@ SnoreIcon::SnoreIcon() :
 }
 
 SnoreIcon::SnoreIcon(const QImage &img):
-    d(new SnoreIconData(img))
+    d(new IconData(img))
 {
 }
 
 SnoreIcon::SnoreIcon(const QString &url):
-    d(new SnoreIconData(url))
+    d(new IconData(url))
 {
 }
 
 SnoreIcon::SnoreIcon(const SnoreIcon &other):
     d(other.d)
 {
+}
+
+SnoreIcon &SnoreIcon::operator=(const SnoreIcon &other)
+{
+    d = other.d;
+    return *this;
 }
 
 SnoreIcon::~SnoreIcon()
@@ -89,7 +92,7 @@ QString SnoreIcon::hash() const{
         return "";
     }
     if(d->m_hash.isEmpty() && !imageData().isNull()){
-        d->m_hash = computeHash(imageData());
+        d->m_hash = IconData::computeHash(imageData());
     }
     return d->m_hash;
 }
@@ -108,55 +111,7 @@ bool SnoreIcon::isValid() const
     return d;
 }
 
-QString SnoreIcon::computeHash(const QByteArray &data)
-{
-    QCryptographicHash h(QCryptographicHash::Md5);
-    h.addData(data);
-    return h.result().toHex();
-}
-
 QString SnoreIcon::url() const
 {
     return d->m_url;
-}
-
-SnoreIcon::SnoreIcon::SnoreIconData::SnoreIconData(const QString &url):
-    m_url(url),
-    m_isLocalFile(false)
-{
-    if(m_url.startsWith(":/"))
-    {
-        m_hash = computeHash(m_url.toLatin1());
-    }
-    else if(QFile(url).exists())
-    {
-        m_isLocalFile = true;
-        m_localUrl = url;
-    }
-}
-
-SnoreIcon::SnoreIcon::SnoreIconData::SnoreIconData(const QImage &img):
-    m_img(img),
-    m_isLocalFile(false)
-{
-    setImageData();
-}
-
-SnoreIcon::SnoreIcon::SnoreIconData::~SnoreIconData()
-{
-
-}
-
-void SnoreIcon::SnoreIconData::setImageData()
-{
-    QBuffer buffer( &m_data );
-    buffer.open( QBuffer::WriteOnly );
-    m_img.save( &buffer, "PNG" );
-
-    if(m_hash.isEmpty())
-    {
-        m_hash = computeHash(m_data);
-    }
-}
-
 }

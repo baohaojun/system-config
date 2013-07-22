@@ -20,34 +20,20 @@
 #include "notification.h"
 #include "snore.h"
 #include "notification/icon.h"
+#include "notification/notification_p.h"
 #include "plugins/plugincontainer.h"
-
-#include <QDebug>
-#include <QTcpSocket>
 #include <Qt>
-#include <QTextDocumentFragment>
-#include <QTextDocument>
 
-#include <QSharedData>
-
-namespace Snore{
-
-int Notification::notificationMetaID = qRegisterMetaType<Notification>();
-
-uint Notification::notificationCount = 0;
-
-
-uint Notification::m_idCount = 1;
+using namespace Snore;
 
 
 int Notification::DefaultTimeout = 10;
 
-QString Notification::toPlainText ( const QString &string )
-{
-    if( Qt::mightBeRichText(string))
-        return QTextDocumentFragment::fromHtml(string).toPlainText();
-    return QString(string);
-}
+uint NotificationData::notificationCount = 0;
+
+uint NotificationData::m_idCount = 1;
+
+int NotificationData::notificationMetaID = qRegisterMetaType<Notification>();
 
 Notification::Notification () :
     d(NULL)
@@ -62,6 +48,12 @@ Notification::Notification ( const QString &application, const QString &alert, c
 Notification::Notification ( const Notification &other ) :
     d(other.d)
 {
+}
+
+Notification &Notification::operator=(const Notification &other)
+{
+    d = other.d;
+    return *this;
 }
 
 Notification::~Notification()
@@ -212,30 +204,5 @@ QDataStream &operator<< ( QDataStream &stream, const Notification::Action &a)
 {
     stream<<a.id<<a.id;
     return stream;
-}
-
-Snore::Notification::Notification::NotificationData::NotificationData(const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout,  NotificationEnums::Prioritys::prioritys priority):
-    m_id ( m_idCount++ ),
-    m_updateID(0),
-    m_timeout ( timeout ),
-    m_source ( NULL),
-    m_application ( application ),
-    m_alert ( alert ),
-    m_title ( title ),
-    m_text ( text ),
-    m_icon ( icon ),
-    m_priority(priority),
-    m_closeReason(NotificationEnums::CloseReasons::NONE)
-{
-    notificationCount++;
-    qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
-}
-
-Snore::Notification::Notification::NotificationData::~NotificationData()
-{
-    notificationCount--;
-    qDebug() << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id;
-}
-
 }
 

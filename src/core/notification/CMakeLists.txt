@@ -1,4 +1,4 @@
-set ( SnoreNotify_SRCS ${SnoreNotify_SRCS} 
+set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         notification/notification.cpp
         notification/icon.cpp
         PARENT_SCOPE)

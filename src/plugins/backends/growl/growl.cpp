@@ -32,7 +32,7 @@ Q_EXPORT_PLUGIN2(growl,Growl)
 Growl *Growl::s_instance = NULL;
 
 Growl::Growl():
-    SnoreBackend("Growl"),
+    SnoreBackend("Growl",false,false),
     m_id(0)
 {
     s_instance = this;
@@ -79,8 +79,8 @@ void Growl::slotNotify(Notification notification){
     //qDebug()<<"Notify Growl:"<<notification.application()<<Notification.toPlainText(notification.title());
     try{
         growl->notify(notification.alert().toUtf8().constData(),notification.id(),
-                      Notification::toPlainText(notification.title()).toUtf8().constData(),
-                      Notification::toPlainText(notification.text()).toUtf8().constData(),
+                      Snore::toPlainText(notification.title()).toUtf8().constData(),
+                      Snore::toPlainText(notification.text()).toUtf8().constData(),
                       notification.icon().localUrl().isEmpty()?NULL:notification.icon().localUrl().toUtf8().constData(),NULL,"1");
 
     }catch(const std::exception& e){
@@ -104,7 +104,3 @@ void Growl::gntpCallback(const int &id,const std::string &reason,const std::stri
     s_instance->closeNotification(n,r);
 }
 
-bool Growl::canCloseNotification()
-{
-    return false;
-}

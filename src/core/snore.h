@@ -69,6 +69,8 @@ public:
 
     void requestCloseNotification(Notification,NotificationEnums::CloseReasons::closeReasons);
 
+    bool primaryBackendSupportsRichtext();
+
 
 
 
@@ -103,6 +105,19 @@ private slots:
     void slotNotificationClosed(Snore::Notification);
 
 };
+
+
+static inline QString toPlainText ( const QString &string)
+{
+        if(Qt::mightBeRichText(string))
+        {
+            return QTextDocumentFragment::fromHtml(string).toPlainText();
+        }
+        else
+        {
+            return string;
+        }
+}
 
 }
 

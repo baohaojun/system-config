@@ -35,7 +35,7 @@ class SNORE_EXPORT SnoreBackend : public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
 public:
-    SnoreBackend(const  QString &name );
+    SnoreBackend(const  QString &name, bool canCloseNotification, bool supportsRichtext );
     virtual ~SnoreBackend();
     virtual bool init(SnoreCore *snore);
 
@@ -43,7 +43,8 @@ public:
 
     Snore::Notification getActiveNotificationByID(uint id);
 
-    virtual bool canCloseNotification() = 0;
+    bool canCloseNotification();
+    bool supportsRichtext();
 
 signals:
     void closeNotification( Snore::Notification );
@@ -56,6 +57,8 @@ public slots:
     virtual void slotCloseNotification ( Snore::Notification notification );
 
 protected:
+    bool m_canCloseNotification;
+    bool m_supportsRichtext;
     void closeNotification(Snore::Notification,Snore::NotificationEnums::CloseReasons::closeReasons);
 
 
@@ -80,7 +83,7 @@ class SNORE_EXPORT SnoreSecondaryBackend:public SnoreBackend
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin Snore::SnoreBackend)
 public:
-    SnoreSecondaryBackend(const  QString &name);
+    SnoreSecondaryBackend(const  QString &name, bool supportsRhichtext);
     virtual ~SnoreSecondaryBackend();
     virtual bool init(SnoreCore *snore);
 

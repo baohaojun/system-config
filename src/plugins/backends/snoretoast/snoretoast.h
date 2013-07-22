@@ -11,7 +11,6 @@ public:
     SnoreToast();
     ~SnoreToast();
     bool init(Snore::SnoreCore *snore);
-    bool canCloseNotification();
 
 
     // SnoreBackend interface

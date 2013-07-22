@@ -16,7 +16,7 @@ Q_EXPORT_PLUGIN2(snoretoast,SnoreToast)
 
 
 SnoreToast::SnoreToast():
-    SnoreBackend("SnoreToast")
+    SnoreBackend("SnoreToast",false,false)
 {
 }
 
@@ -52,11 +52,6 @@ bool SnoreToast::init(SnoreCore *snore)
     return SnoreBackend::init(snore);
 }
 
-bool SnoreToast::canCloseNotification()
-{
-    return false;
-}
-
 void SnoreToast::slotRegisterApplication(Application *application)
 {
     Q_UNUSED(application)
@@ -77,9 +72,9 @@ void SnoreToast::slotNotify(Notification notification)
 
     QStringList arguements;
     arguements << "-t"
-               << Notification::toPlainText(notification.title())
+               << Snore::toPlainText(notification.title())
                << "-m"
-               << Notification::toPlainText(notification.text())
+               << Snore::toPlainText(notification.text())
                << "-p"
                   //               << notification.icon().isLocalFile()?QDir::toNativeSeparators(notification.icon().localUrl()):notification.icon().url()
                << QDir::toNativeSeparators(notification.icon().localUrl())

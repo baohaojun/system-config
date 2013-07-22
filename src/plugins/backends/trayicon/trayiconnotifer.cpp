@@ -11,7 +11,7 @@ using namespace Snore;
 Q_EXPORT_PLUGIN2(trayicon,TrayIconNotifer)
 
 TrayIconNotifer::TrayIconNotifer () :
-    SnoreBackend ( "SystemTray" ),
+    SnoreBackend ( "SystemTray",false,false ),
     m_trayIcon(NULL),
     m_displayed(-1)
 {
@@ -26,10 +26,6 @@ bool TrayIconNotifer::init(SnoreCore *snore){
     return SnoreBackend::init(snore);
 }
 
-bool TrayIconNotifer::canCloseNotification()
-{
-    return false;
-}
 
 void TrayIconNotifer::slotRegisterApplication ( Application *application )
 {
@@ -57,7 +53,7 @@ void TrayIconNotifer::displayNotification(){
 
     qDebug()<<"taking"<<notification.title();
     m_displayed = notification.id();
-    m_trayIcon->showMessage ( Notification::toPlainText(notification.title()),Notification::toPlainText(notification.text()),QSystemTrayIcon::NoIcon,notification.timeout() *1000 );
+    m_trayIcon->showMessage ( Snore::toPlainText(notification.title()),Snore::toPlainText(notification.text()),QSystemTrayIcon::NoIcon,notification.timeout() *1000 );
     m_lastNotify.restart();
 }
 

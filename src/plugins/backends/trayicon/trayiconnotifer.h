@@ -18,7 +18,6 @@ class TrayIconNotifer:public Snore::SnoreBackend
 public:
     TrayIconNotifer ();
     virtual bool init(Snore::SnoreCore *snore);
-    bool canCloseNotification();
 
 public slots:
     void slotRegisterApplication ( Snore::Application *application );

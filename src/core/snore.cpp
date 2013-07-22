@@ -368,4 +368,9 @@ void SnoreCore::requestCloseNotification(Notification n, NotificationEnums::Clos
     m_notificationBackend->requestCloseNotification(n,r);
 }
 
+bool SnoreCore::primaryBackendSupportsRichtext()
+{
+    return m_notificationBackend->supportsRichtext();
+}
+
 }
