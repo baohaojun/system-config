@@ -22,12 +22,13 @@
 #include <QObject>
 #include <QVariantHash>
 
+#include "snore_exports.h"
 
 namespace Snore
 {
 
 
-class Hint : public QObject
+class SNORE_EXPORT Hint : public QObject
 {
     Q_OBJECT
 public:
