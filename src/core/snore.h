@@ -24,12 +24,15 @@
 #include "application.h"
 #include "plugins/plugincontainer.h"
 #include "notification/notification.h"
+#include "hint.h"
 
 #include <QStringList>
+#include <QSettings>
+#include <QTextDocument>
+#include <QTextDocumentFragment>
 
 class QSystemTrayIcon;
 class QDir;
-class QSettings;
 
 
 namespace Snore{
@@ -69,7 +72,17 @@ public:
 
     bool primaryBackendSupportsRichtext();
 
+    Hint &hints();
 
+signals:
+    void applicationInitialized( Snore::Application* );
+    void applicationRemoved( Snore::Application* );
+    void notify( Snore::Notification noti );
+    void actionInvoked( Snore::Notification );
+    void notificationClosed(Snore::Notification );
+
+private slots:
+    void slotNotificationClosed(Snore::Notification);
 
 
 private:
@@ -77,6 +90,8 @@ private:
     static QSettings &cacheFile();
 
     static QHash<QString,PluginContainer*> s_pluginCache;
+
+    Hint m_hints;
 
     ApplicationsList m_applications;
 
@@ -89,18 +104,6 @@ private:
     QPointer<SnoreBackend> m_notificationBackend;
 
     QSystemTrayIcon *m_trayIcon;
-
-
-signals:
-    void applicationInitialized( Snore::Application* );
-    void applicationRemoved( Snore::Application* );
-    void notify( Snore::Notification noti );
-    void actionInvoked( Snore::Notification );
-    void notificationClosed(Snore::Notification );
-
-private slots:
-    void slotNotificationClosed(Snore::Notification);
-
 };
 
 

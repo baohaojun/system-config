@@ -359,3 +359,8 @@ bool SnoreCore::primaryBackendSupportsRichtext()
 {
     return m_notificationBackend->supportsRichtext();
 }
+
+Hint &SnoreCore::hints()
+{
+    return m_hints;
+}

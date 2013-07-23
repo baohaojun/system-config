@@ -13,12 +13,14 @@ add_subdirectory(plugins)
 set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         snore.cpp
         application.cpp
+        hint.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
         )
 
 set ( SnoreNotify_HDR ${SnoreNotify_HDR}
         snore.h
         application.h
+        hint.h
         snore_exports.h
         version.h
         )

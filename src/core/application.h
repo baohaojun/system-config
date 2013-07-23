@@ -30,7 +30,7 @@ class Alert;
 typedef QHash<QString,Application*> ApplicationsList ;
 typedef QHash<QString,Alert*> AlertList;
 
-class SNORE_EXPORT Application:public QObject
+class SNORE_EXPORT Application : public QObject
 {
     Q_OBJECT
 public:

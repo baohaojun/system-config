@@ -164,28 +164,14 @@ void Notification::setCloseReason(const NotificationEnums::CloseReasons::closeRe
     d->m_closeReason = r;
 }
 
-const QVariant Notification::hint(const QString &key , const QVariant &defaultValue ) const
+Hint &Notification::hints()
 {
-    if(d->m_hints.contains(key))
-    {
-        return d->m_hints.value ( key );
-    }
-    return defaultValue;
-}
-
-bool Notification::hintExists ( const QString &key )
-{
-    return d->m_hints.contains ( key );
-}
-
-void Notification::insertHint ( const QString &key, const QVariant &val )
-{
-    d->m_hints.insert ( key,val );
+    return d->m_hints;
 }
 
 void Notification::setSilent(bool silent)
 {
-    d->m_hints["silent"] = silent;
+    d->m_hints.setValue("silent", silent);
 }
 
 bool Notification::isValid() const

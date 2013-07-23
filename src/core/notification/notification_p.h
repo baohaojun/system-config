@@ -4,6 +4,7 @@
 
 #include "notification/icon.h"
 #include "notification/NotificationEnums.h"
+#include "../hint.h"
 
 #include <QSharedData>
 
@@ -51,7 +52,7 @@ public:
     NotificationEnums::Prioritys::prioritys m_priority;
     NotificationEnums::CloseReasons::closeReasons m_closeReason;
     QHash<int,Notification::Action*> m_actions;
-    QVariantHash m_hints;
+    Hint m_hints;
 
     static uint notificationCount;
     static uint m_idCount;

@@ -32,22 +32,29 @@ bool SnoreToast::init(SnoreCore *snore)
         qDebug() << "SnoreToast does not work on windows" << QSysInfo::windowsVersion();
         return false;
     }
-    m_appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName()).replace(" ","");
+    if(snore->hints().contains("WINDOWS_APP_ID"))
+    {
+        m_appID = snore->hints().value("WINDOWS_APP_ID");
+    }
+    else
+    {
+        m_appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName()).replace(" ","");
 
-    QProcess *p = new QProcess(this);
-    p->setReadChannelMode(QProcess::MergedChannels);
+        QProcess *p = new QProcess(this);
+        p->setReadChannelMode(QProcess::MergedChannels);
 
-    QStringList arguements;
-    arguements << "-install"
-               << QString("SnoreNotify\\%1").arg(qApp->applicationName())
-               << QDir::toNativeSeparators(qApp->applicationFilePath())
-               << m_appID;
-    qDebug() << "SnoreToast" << arguements;
-    p->start("SnoreToast", arguements);
-    p->waitForFinished(-1);
-    qDebug() << p->readAll();
-    if(p->exitCode() != 0)
-        return false;
+        QStringList arguements;
+        arguements << "-install"
+                   << QString("SnoreNotify\\%1").arg(qApp->applicationName())
+                   << QDir::toNativeSeparators(qApp->applicationFilePath())
+                   << m_appID;
+        qDebug() << "SnoreToast" << arguements;
+        p->start("SnoreToast", arguements);
+        p->waitForFinished(-1);
+        qDebug() << p->readAll();
+        if(p->exitCode() != 0)
+            return false;
+    }
 
     return SnoreBackend::init(snore);
 }
@@ -82,7 +89,7 @@ void SnoreToast::slotNotify(Notification notification)
                << "-appID"
                << m_appID;
     ;
-    if(notification.hint("silent",true).toBool())
+    if(notification.hints().value("silent",true).toBool())
     {
         arguements << "-silent";
     }

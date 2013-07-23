@@ -23,11 +23,10 @@
 #include "icon.h"
 
 #include "notificationenums.h"
+#include "../hint.h"
 
 #include <QVariant>
 #include <QDebug>
-#include <QTextDocumentFragment>
-#include <QTextDocument>
 
 
 
@@ -79,9 +78,7 @@ public:
     void addAction(Action *a);
     const NotificationEnums::CloseReasons::closeReasons &closeReason();
     void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
-    const QVariant hint(const QString &key , const QVariant &defaultValue ) const;
-    bool hintExists ( const QString &key );
-    void insertHint ( const QString &key,const QVariant &val );
+    Hint &hints();
 
     void setSilent(bool silent);
 

@@ -118,7 +118,7 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
     sNotification.notification = Notification(app,alert,title,text,icon,timeout);
     sNotification.notification.setSource(snarl);
 
-    sNotification.notification.insertHint("SnarlIcon",sntpIcon);
+    sNotification.notification.hints().setValue("SnarlIcon", sntpIcon);
 
 
     switch(action){
@@ -159,17 +159,21 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
         sNotification.vailid=false;
         break;
     }
-    sNotification.notification.insertHint("SnarlAction",sNotification.action);
+    sNotification.notification.hints().setValue("SnarlAction", sNotification.action);
     return sNotification;
 }
 
 QString Parser::downloadIcon(const QString &address){
     if(address=="")
+    {
         return "";
+    }
     if(address.startsWith("file://"))
+    {
         return QString(address.mid(7));
+    }
     QByteArray arr=address.toUtf8();
-    QUrl url=QUrl::fromEncoded(arr);
+    QUrl url = QUrl::fromEncoded(arr);
 
     QCryptographicHash hash(QCryptographicHash::Md5);
     hash.addData(arr);
