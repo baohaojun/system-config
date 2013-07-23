@@ -572,7 +572,7 @@ do not display unread notifier on mode line.")
              (stream     "stream.twitter.com")
              (userstream "userstream.twitter.com")
 
-             (api-prefix    "1/")
+             (api-prefix    "1.1/")
              (search-method "search")
 
              (oauth-request-token-url-without-scheme
@@ -6579,11 +6579,11 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
 
           (friends         . "statuses/friends_timeline")
           (home            . "statuses/home_timeline")
-          (mentions        . "statuses/mentions")
+          (mentions        . "statuses/mentions_timeline")
           (public          . "statuses/public_timeline")
           (replies         . ,(if (eq service 'sina)
                                   "comments/timeline"
-                                "statuses/replies"))
+                                "statuses/mentions_timeline"))
           (retweeted_by_me . "statuses/retweeted_by_me")
           (retweeted_to_me . "statuses/retweeted_to_me")
           (retweets_of_me  . "statuses/retweets_of_me")
