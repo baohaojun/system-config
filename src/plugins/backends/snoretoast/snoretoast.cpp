@@ -38,7 +38,7 @@ bool SnoreToast::init(SnoreCore *snore)
     }
     else
     {
-        m_appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName()).replace(" ","");
+        m_appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName()).remove(" ");
 
         QProcess *p = new QProcess(this);
         p->setReadChannelMode(QProcess::MergedChannels);
