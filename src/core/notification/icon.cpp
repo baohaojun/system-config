@@ -22,7 +22,7 @@
 using namespace Snore;
 
 
-QHash<QString,QString> Icon::hasedImages;
+QHash<QString,QString> Icon::m_localImageCache;
 
 Icon::Icon() :
     d(NULL)
@@ -65,15 +65,15 @@ const QImage &Icon::image() const{
 QString Icon::localUrl()const{
     if(d->m_localUrl.isEmpty())
     {
-        if(hasedImages.contains(hash()))
+        if(m_localImageCache.contains(hash()))
         {
-            d->m_localUrl =  hasedImages[hash()];
+            d->m_localUrl =  m_localImageCache[hash()];
         }
         else
         {
             d->m_localUrl = QString("%1%2.png").arg(SnoreCore::snoreTMP(), hash());
             image().save(d->m_localUrl ,"PNG");
-            hasedImages[hash()] = d->m_localUrl;
+            m_localImageCache[hash()] = d->m_localUrl;
         }
     }
     return d->m_localUrl;

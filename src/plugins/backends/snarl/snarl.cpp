@@ -82,6 +82,7 @@ public:
             switch(action){
             case SnarlEnums::CallbackInvoked:
                 reason = NotificationEnums::CloseReasons::CLOSED;
+                m_snarl->snore()->notificationActionInvoked(notification);
                 break;
             case SnarlEnums::NotifyAction:
                 reason = NotificationEnums::CloseReasons::CLOSED;

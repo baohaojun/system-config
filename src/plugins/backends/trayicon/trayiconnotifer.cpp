@@ -70,12 +70,8 @@ void TrayIconNotifer::actionInvoked(){
 
     Notification n = snore()->getActiveNotificationByID(m_displayed);
     if(n.isValid()){
-        if(n.actions().isEmpty()){
-            n.setActionInvoked(n.actions().keys().first());
-            snore()->notificationActionInvoked(n);
-        }
+        snore()->notificationActionInvoked(n);
         closeNotification(n,NotificationEnums::CloseReasons::CLOSED);
-
     }
 
 }

@@ -1,5 +1,5 @@
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef SNORE_VERSION_H
+#define SNORE_VERSION_H
 #undef major
 #undef minor
 

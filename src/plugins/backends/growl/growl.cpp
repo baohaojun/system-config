@@ -98,7 +98,6 @@ void Growl::gntpCallback(const int &id,const std::string &reason,const std::stri
         r = NotificationEnums::CloseReasons::DISMISSED;
     else if(reason == "CLICK"){
         r = NotificationEnums::CloseReasons::CLOSED;
-        n.setActionInvoked(QString(data.c_str()).toInt());
         s_instance->snore()->notificationActionInvoked(n);
     }
     s_instance->closeNotification(n,r);

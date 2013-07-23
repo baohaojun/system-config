@@ -26,7 +26,8 @@ public:
         m_text ( text ),
         m_icon ( icon ),
         m_priority(priority),
-        m_closeReason(NotificationEnums::CloseReasons::NONE)
+        m_closeReason(NotificationEnums::CloseReasons::NONE),
+        m_actionInvoked( NULL )
     {
         notificationCount++;
         qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
@@ -42,7 +43,6 @@ public:
     uint m_id;
     uint m_updateID;
     int m_timeout;
-    Notification::Action *m_actionInvoked;
     SnoreFrontend *m_source;
     QString m_application;
     QString m_alert;
@@ -51,6 +51,7 @@ public:
     Icon m_icon;
     NotificationEnums::Prioritys::prioritys m_priority;
     NotificationEnums::CloseReasons::closeReasons m_closeReason;
+    Notification::Action *m_actionInvoked;
     QHash<int,Notification::Action*> m_actions;
     Hint m_hints;
 

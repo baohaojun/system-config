@@ -46,7 +46,7 @@ public:
 
 
 private:
-    static QHash<QString,QString> hasedImages;
+    static QHash<QString,QString> m_localImageCache;
 
     QExplicitlySharedDataPointer<IconData> d;
 };
