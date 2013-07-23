@@ -34,7 +34,7 @@ bool SnoreToast::init(SnoreCore *snore)
     }
     if(snore->hints().contains("WINDOWS_APP_ID"))
     {
-        m_appID = snore->hints().value("WINDOWS_APP_ID");
+        m_appID = snore->hints().value("WINDOWS_APP_ID").toString();
     }
     else
     {
