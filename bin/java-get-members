@@ -41,7 +41,13 @@ for class in "$@"; do
     echo qclasses is $qclasses >> ~/.logs/$(basename $0).log
 
     for qclass in $qclasses; do
+
         file=$(java-find-def.pl -e $qclass)
+        if [[ $file =~ \.jar$ ]]; then
+            java-query-qmethod $qclass.[^-]*
+            continue
+        fi
+
         tag_cache=$(java-tags-cache $file)
         echo tag_cache is $tag_cache >> ~/.logs/$(basename $0).log
         if test $proto = true; then

@@ -2,8 +2,17 @@
 # key: logdef
 # name: logdef
 # --
-open(my \$debug, ">", glob("~/.logs/`(buffer-name)`.log"))
-    or die "Can not open debug log file ~/.logs/`(buffer-name)`.log";
-sub debug(@) {
-    print \$debug "@_\n";
+my \$logfile = \$0;
+\$logfile =~ s!.*/!!;   
+if (\$ENV{DEBUG} eq 'true') {
+    sub debug(@) {
+        print STDERR "\$logfile: @_\n";
+    }
+} else {
+    open(my \$debug, ">", glob("~/.logs/\$logfile.log"))
+        or die "Can not open debug log file ~/.logs/\$logfile.log";
+    sub debug(@) {
+        print \$debug "@_\n";
+    }
 }
+$0

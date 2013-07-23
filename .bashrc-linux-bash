@@ -58,9 +58,17 @@ fi
 export -f sudo
 
 function global() {
+    globalenv global "$@"
+}
+
+function globalenv() {
     (
         export GTAGSROOT=$(pcd .; bcd; bcd; pwd)
         export GTAGSDBPATH=$(pcd .; bcd; pwd)
-        command global "$@"
+        export GTAGSLIBPATH=$(pcd .; bcd;
+            for x in .java-fallback.*; do echo "$PWD/$x"; done |
+            grep . | rm-last-nl | tr '\n' :
+        )
+        command "$@"
     )
 }

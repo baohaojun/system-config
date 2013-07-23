@@ -14,7 +14,7 @@ fi
 
 cmd=$(which $1)
 if test "$cmd" = "$(readlink -f ~/bin/$(uname)/ext/debug/$1)"; then
-    die "already set up debugging for $1"z..
+    die "already set up debugging for $1"
 fi
 
 mkdir -p ~/bin/$(uname)/ext/debug

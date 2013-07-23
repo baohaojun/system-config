@@ -16,10 +16,10 @@ this_db_dir=$(cd -P .; cd_beagrep; pwd)
 that_db_dir=$(cd -P "$1"; cd_beagrep; pwd)
 for x in $(seq 0 100); do
     if test ! -e $this_db_dir/.java-fallback.$x; then
-	break
+        break
     fi
     if test "$(readlink -f $this_db_dir/.java-fallback.$x)" = $that_db_dir; then
-	die "$1 already a fallback at $x"
+        die "$1 already a fallback at $x"
     fi
 done
 

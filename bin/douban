@@ -50,7 +50,8 @@ case "$1" in
             url=$(search-lyrics "$(info|perl -ne 'if (m/^artist|^title/) {s/.*?://; print}')")
         fi
         douban info
-        firefox-open-url-pattern http://mp3.sogou.com/lyric "$url"
+        host=$(echo $url|perl -npe 's!((?:.*://)?.*?)/.*!$1!')
+        firefox-open-url-pattern $host "$url"
         ;;
     back)
         emacsclient -e '(douban-music-seek-backward)'

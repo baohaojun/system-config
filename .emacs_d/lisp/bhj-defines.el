@@ -287,10 +287,13 @@ might be bad."
   (interactive)
   (set-gtags-start-file)
   (let ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
-        (method-name (or (and transient-mark-mode mark-active
-                              (/= (point) (mark))
-                              (buffer-substring-no-properties (point) (mark)))
-                         (get-the-tag-around-me 'tag-name-from-tag-line 0)))
+        (method-name
+         (replace-regexp-in-string
+          ".*\\." ""
+          (or (and transient-mark-mode mark-active
+                   (/= (point) (mark))
+                   (buffer-substring-no-properties (point) (mark)))
+              (get-the-tag-around-me 'tag-name-from-tag-line 0))))
         (compilation-buffer-name-function (lambda (_ign) "*java-get-hierarchy*")))
     (compile (format "java-get-hierarchy.pl %s %s"
                      class-name
@@ -739,7 +742,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
          (point-max)
          (let ((mode-name-minus-mode
                 (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
-           (concat "ctags-stdin --language-force="
+           (concat "ctags-stdin --extra=+q --language-force="
                    (shell-quote-argument
                     (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
                         mode-name-minus-mode))
@@ -1835,7 +1838,19 @@ using ctags-exuberant"
       (beginning-of-line)
       (while import-list
         (insert (car import-list))
-        (setq import-list (cdr import-list))))))
+        (setq import-list (cdr import-list)))
+      (let ((end-imports (point))
+            (start-imports
+             (save-excursion
+               (previous-line)
+               (beginning-of-line)
+               (while (looking-at "^import\\s +")
+                 (previous-line)
+                 (beginning-of-line))
+               (next-line)
+               (beginning-of-line)
+               (point))))
+        (shell-command-on-region start-imports end-imports "sort -u" nil t)))))
 
 ;;;###autoload
 (defun source-code-help()

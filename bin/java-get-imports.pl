@@ -1,23 +1,8 @@
 #!/usr/bin/perl
 
 use strict;
-
-open(my $debug, ">", glob("~/.logs/java-get-imports.log"))
-    or die "Can not open debug log file ~/.logs/java-get-imports.log";
-sub debug(@) {
-    print $debug "@_\n";
-}
-
 use String::ShellQuote;
 use Getopt::Long;
-chomp(my $code_dir = qx(find-code-reading-dir));
-my $verbose;
-my $resolve;
-GetOptions(
-    "d=s" => \$code_dir,
-    "v!"  => \$verbose,
-    "r=s" => \$resolve,
-    );
 
 my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
 my $qualified_re = qr($id_re(?:\.$id_re)*\b);
@@ -36,7 +21,7 @@ my @keywords = ("abstract", "assert", "boolean", "break", "byte",
               "void", "volatile", "while" );
 
 my $keywords = join('|', @keywords);
-my $keywords_re = qr($keywords);
+my $keywords_re = qr(\b(?:$keywords)\b);
 my %keywords;
 
 map {$keywords{$_} = 1} @keywords;
@@ -47,6 +32,35 @@ my @modifiers = ('public', 'protected', 'private', 'static',
 
 my $modifiers = join('|', @modifiers);
 my $modifier_re = qr($modifiers);
+
+my $logfile = $0;
+$logfile =~ s!.*/!!;
+if ($ENV{DEBUG} eq 'true') {
+    sub debug(@) {
+        print STDERR "$logfile: @_\n";
+    }
+} else {
+    open(my $debug, ">", glob("~/.logs/$logfile.log"))
+        or die "Can not open debug log file ~/.logs/$logfile.log";
+    sub debug(@) {
+        print $debug "@_\n";
+    }
+}
+
+my $code_dir = $ENV{PWD};
+unless ($ENV{GTAGSROOT}) {
+    chomp($code_dir = qx(find-code-reading-dir));
+    chdir $code_dir or die "can not chdir $code_dir";
+    $ENV{GTAGSROOT} = $code_dir;
+    $ENV{GTAGSDBPATH} = "$ENV{HOME}/.cache/for-code-reading$code_dir";
+    $ENV{GTAGSLIBPATH} = join(":", glob("$ENV{GTAGSDBPATH}/.java-fallback.*"));
+}
+my $verbose;
+my $resolve;
+GetOptions(
+    "v!"  => \$verbose,
+    "r=s" => \$resolve,
+    );
 
 sub match_args($)
 {
@@ -111,13 +125,6 @@ if (@ARGV != 1) {
 $working_file = $ARGV[0];
 chomp($working_file = qx(java-flatten-cache $working_file));
 @ARGV = ($working_file);
-
-if (not $code_dir) {
-    die "code dir not found!";
-} else {
-    debug "code dir set to $code_dir";
-    chdir $code_dir or die "can not chdir $code_dir";
-}
 
 while (<>) {
     debug "got $_";
@@ -192,12 +199,14 @@ sub get_default_packages($)
 {
     my $package = $_[0];
     return unless $package;
-    open(my $pipe, "-|", "grep-gtags -e $package -t package -s -c")
+    $package =~ s/\./-/g;
+    $package = shell_quote("^$package-[^-]*\$");
+    open(my $pipe, "-|", "global -x $package | pn 1 | perl -npe 's/-/./g'")
         or die "can not open grep-gtags";
 
     while (<$pipe>) {
-        m#/([^/]+)\.(?:java|aidl):.*# or next;
-        import_it("$package.$1");
+        chomp;
+        import_it("$_");
     }
     close($pipe);
 }
@@ -244,8 +253,8 @@ sub find_import_for($)
         return 0 if exists $import_quoted_map{$def};
         $import_quoted_map{$def} = 1;
     }
-    debug "grep-gtags -e $def -t 'class|interface' -s -p '\\.java|\\.aidl'";
-    open(my $pipe, "-|", "grep-gtags -e $def -t 'class|interface' -s -p '\\.java|\\.aidl'")
+    debug "grep-gtags -e $def -t 'class|interface' -s -p '\\.java|\\.aidl|\\.jar'";
+    open(my $pipe, "-|", "grep-gtags -e $def -t 'class|interface' -s -p '\\.java|\\.aidl|\\.jar'")
         or die "can not open grep-gtags";
 
     my @imports;

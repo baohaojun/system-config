@@ -4,20 +4,24 @@ if test "$PWD" = ~; then
     cd ~/system-config/
 fi
 
-for x in $(git st -s |grep '^.\S' -P | pn 2); do 
-    git diff "$x";
+for x in $(git st -s |grep '^.\S' -P | pn 2); do
+    git diff -w "$x";
     while true; do
-	out=$(select-args yes no diff);
-	if test $out = diff; then
-	    git diff "$x";
-	    continue;
-	fi
+        out=$(select-args yes no diff edit);
+        if test $out = diff; then
+            git diff -w "$x";
+            continue;
+        fi
 
-	if test $out = yes; then
-	    git add "$x"
-	fi
-	break
+        if test $out = edit; then
+            ew "$x"
+            git diff -w "$x";
+            continue
+        fi
+
+        if test $out = yes; then
+            git add "$x"
+        fi
+        break
     done
 done
-	    
-	

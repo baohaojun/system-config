@@ -57,7 +57,7 @@ void grep(const char *, char *const *, const char *);
 void pathlist(const char *, const char *);
 void parsefile(char *const *, const char *, const char *, const char *, int);
 int search(const char *, const char *, const char *, const char *, int);
-void tagsearch(const char *, const char *, const char *, const char *, int);
+int tagsearch(const char *, const char *, const char *, const char *, int);
 void encode(char *, int, const char *);
 
 const char *localprefix;                /* local prefix         */
@@ -649,7 +649,7 @@ main(int argc, char **argv)
          * tag search.
          */
         else {
-                tagsearch(av, cwd, root, dbpath, db);
+                return ! tagsearch(av, cwd, root, dbpath, db);
         }
         return 0;
 }
@@ -1533,7 +1533,7 @@ search(const char *pattern, const char *root, const char *cwd, const char *dbpat
  *      i)      dbpath          database directory
  *      i)      db              GTAGS,GRTAGS,GSYMS
  */
-void
+int
 tagsearch(const char *pattern, const char *cwd, const char *root, const char *dbpath, int db)
 {
         int count, total = 0;
@@ -1583,6 +1583,7 @@ tagsearch(const char *pattern, const char *cwd, const char *root, const char *db
                         fprintf(stderr, " (using '%s')", makepath(dbpath, dbname(db), NULL));
                 fputs(".\n", stderr);
         }
+        return total;
 }
 /*
  * encode: string copy with converting blank chars into %ff format.

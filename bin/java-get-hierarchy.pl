@@ -1,8 +1,60 @@
 #!/usr/bin/perl
 use strict;
+use Getopt::Long;
 
-chomp(my $code_dir = qx(find-code-reading-dir));
-chdir $code_dir or die "can not chdir $code_dir";
+my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
+my $qualified_re = qr($id_re(?:\.$id_re)*\b);
+my $connect_re = qr((?: |(?:\[\])+));
+my %super_classes;
+
+my @keywords = ("abstract", "assert", "boolean", "break", "byte",
+              "case", "catch", "char", "class", "const", "continue",
+              "default", "double", "else", "enum", "extends", "false",
+              "final", "finally", "float", "for", "goto", "if",
+              "implements", "import", "instanceof", "int",
+              "interface", "long", "native", "new", "null", "package",
+              "private", "protected", "public", "return", "short",
+              "static", "strictfp", "super", "switch", "synchronized",
+              "this", "throw", "throws", "transient", "true", "try",
+              "void", "volatile", "while" );
+
+my $keywords = join('|', @keywords);
+my $keywords_re = qr(\b(?:$keywords)\b);
+my %keywords;
+
+map {$keywords{$_} = 1} @keywords;
+
+my @modifiers = ('public', 'protected', 'private', 'static',
+'abstract', 'final', 'native', 'synchronized', 'transient',
+'volatile', 'strictfp');
+
+my $modifiers = join('|', @modifiers);
+my $modifier_re = qr($modifiers);
+
+my $logfile = $0;
+$logfile =~ s!.*/!!;
+if ($ENV{DEBUG} eq 'true') {
+    sub debug(@) {
+        print STDERR "$logfile: @_\n";
+    }
+} else {
+    open(my $debug, ">", glob("~/.logs/$logfile.log"))
+        or die "Can not open debug log file ~/.logs/$logfile.log";
+    sub debug(@) {
+        print $debug "@_\n";
+    }
+}
+
+my $code_dir = $ENV{PWD};
+unless ($ENV{GTAGSROOT}) {
+    chomp($code_dir = qx(find-code-reading-dir));
+    chdir $code_dir or die "can not chdir $code_dir";
+    $ENV{GTAGSROOT} = $code_dir;
+    $ENV{GTAGSDBPATH} = "$ENV{HOME}/.cache/for-code-reading$code_dir";
+    $ENV{GTAGSLIBPATH} = join(":", glob("$ENV{GTAGSDBPATH}/.java-fallback.*"));
+}
+
+$ENV{GTAGS_START_FILE} = "";
 
 my $recursive = 1;
 if ($ENV{DO_RECURSIVE_JAVA_HIERARCHY}) {
@@ -11,16 +63,9 @@ if ($ENV{DO_RECURSIVE_JAVA_HIERARCHY}) {
     unlink glob("~/.logs/java-get-hierarchy.log")
 }
 
-open(my $debug, ">>", glob("~/.logs/java-get-hierarchy.log"))
-    or die "Can not open debug log file ~/.logs/java-get-hierarchy.log";
-sub debug(@) {
-    print $debug "@_\n";
-}
-
 debug "@ARGV";
 
 $ENV{DO_RECURSIVE_JAVA_HIERARCHY} = 1;
-use Getopt::Long;
 my $method;
 my $verbose;
 GetOptions(
@@ -45,7 +90,6 @@ if ($q_class !~ m/\./) {
 debug "q_class is $q_class";
 chomp(my $working_file= qx(java-find-def.pl -e $q_class));
 debug "working_file is $working_file for $q_class";
-$ENV{GTAGS_START_FILE} = "";
 if (not $working_file) {
     die "No working file for $q_class";
 }
@@ -74,27 +118,6 @@ if ($flatten_cache) {
     flatten.pl);
 }
 debug "def_line is $def_line";
-
-my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
-my $qualified_re = qr($id_re(?:\.$id_re)*\b);
-
-my @keywords = ("abstract", "assert", "boolean", "break", "byte",
-              "case", "catch", "char", "class", "const", "continue", "default",
-              "double", "else", "enum", "extends", "false", "final", "finally",
-              "float", "for", "goto", "implements", "import", "instanceof", "int",
-              "interface", "long", "native", "new", "null", "package", "private",
-              "protected", "public", "return", "short", "static", "strictfp",
-              "super", "switch", "synchronized", "this", "throw", "throws",
-              "transient", "true", "try", "void", "volatile", "while"
-    );
-
-my $keywords = join('|', @keywords);
-my $keywords_re = qr(\b(?:$keywords)\b);
-my %keywords;
-
-for my $key (@keywords) {
-    $keywords{$key} = 1;
-}
 
 my $supers = ' ';
 if ($def_line =~ m/(class|interface).+?\b$class\b(?:<.*?>)?(.*)\{/) {
@@ -160,7 +183,7 @@ while ($supers =~ m/($qualified_re)/g) {
         $q_super = $simple_qualified_map{$out_class} . substr($class, length($out_class));
     } elsif (-e "$working_file_dir/$out_class.java" or -e "$working_file_dir/$out_class.aidl") {
         $q_super = "$package.$out_class" . substr($class, length($out_class));
-    } elsif (-e "libcore/luni/src/main/java/java/lang/$out_class.java") {
+    } elsif (system("global -x java.lang.$out_class >/dev/null 2>&1") == 0) { # must use -x! 'cause it's my hacked tagsearch
         $q_super = "java.lang.$out_class" . substr($class, length($out_class));
     } else {
         if ($class =~ m/^[a-z].*\./) {
@@ -216,7 +239,7 @@ sub print_hierarchy($$)
         if ($q_class2) {
             $q_class = $q_class2;
         }
-        system("java-query-qmethod $q_class.$method|perl -npe 's/^/$method_indent/'");
+        system("java-query-qmethod $q_class.$method|perl -npe 's/^/$method_indent/'|sort -u");
     }
     system("java-get-members $q_class -p | perl -npe 's/^/$method_indent/'") if $verbose;
     if ($super_classes{$q_class}) {

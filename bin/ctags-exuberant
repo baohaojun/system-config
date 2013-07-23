@@ -23,12 +23,13 @@ if (not grep {$_ eq "--filter"} @ARGV) {
     $|++;
 
     my $ctags_pid = open2(my $read, my $write, "2nd", "ctags-exuberant", @ARGV);
+    my $is_java = grep {$_ eq "--language-force=java"} @ARGV;
     while (<$read>) {
         ($tag, $type, $line_num, $file) = split(" ");
         if ($file ne $old_file) {
             $package = "";
         }
-        if ($file =~ m/\.java|\.aidl/) {
+        if ($is_java or $file =~ m/\.java|\.aidl/) {
 
             if ($type eq 'package') {
                 $package = "$tag.";
