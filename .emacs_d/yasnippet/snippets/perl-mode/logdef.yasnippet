@@ -2,17 +2,16 @@
 # key: logdef
 # name: logdef
 # --
+my \$debug;
 my \$logfile = \$0;
 \$logfile =~ s!.*/!!;   
 if (\$ENV{DEBUG} eq 'true') {
-    sub debug(@) {
-        print STDERR "\$logfile: @_\n";
-    }
+   \$debug = *STDERR;
 } else {
-    open(my \$debug, ">", glob("~/.logs/\$logfile.log"))
+    open(\$debug, ">", glob("~/.logs/\$logfile.log"))
         or die "Can not open debug log file ~/.logs/\$logfile.log";
-    sub debug(@) {
-        print \$debug "@_\n";
-    }
+}
+sub debug(@) {
+    print \$debug "@_\n";
 }
 $0

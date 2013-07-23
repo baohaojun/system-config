@@ -31,19 +31,19 @@ my @modifiers = ('public', 'protected', 'private', 'static',
 my $modifiers = join('|', @modifiers);
 my $modifier_re = qr($modifiers);
 
+my $debug;
 my $logfile = $0;
 $logfile =~ s!.*/!!;
 if ($ENV{DEBUG} eq 'true') {
-    sub debug(@) {
-        print STDERR "$logfile: @_\n";
-    }
+    $debug = *STDERR;
 } else {
-    open(my $debug, ">", glob("~/.logs/$logfile.log"))
+    open($debug, ">", glob("~/.logs/$logfile.log"))
         or die "Can not open debug log file ~/.logs/$logfile.log";
-    sub debug(@) {
-        print $debug "@_\n";
-    }
 }
+sub debug(@) {
+    print $debug "@_\n";
+}
+
 
 my $code_dir = $ENV{PWD};
 unless ($ENV{GTAGSROOT}) {
@@ -56,11 +56,9 @@ unless ($ENV{GTAGSROOT}) {
 
 $ENV{GTAGS_START_FILE} = "";
 
-my $recursive = 1;
+my $should_recurse = 1;
 if ($ENV{DO_RECURSIVE_JAVA_HIERARCHY}) {
-    $recursive = 0;
-} else {
-    unlink glob("~/.logs/java-get-hierarchy.log")
+    $should_recurse = 0;
 }
 
 debug "@ARGV";
@@ -80,11 +78,7 @@ debug "$0 @ARGV";
 
 my $q_class = $ARGV[0];
 if ($q_class !~ m/\./) {
-    chomp($q_class = qx(java-get-qclass $q_class));
-    debug "q_class for $ARGV[0] is $q_class";
-    if ($q_class =~ m/\n/) {
-        warn "$$ARGV[0] has multi q_class:\n$q_class\n";
-    }
+    die "Will only work on qualified classes such as java.lang.String, not $q_class";
 }
 
 debug "q_class is $q_class";
@@ -200,7 +194,7 @@ while ($supers =~ m/($qualified_re)/g) {
     }
 }
 
-unless ($recursive) {
+unless ($should_recurse) {
     print join(" ", keys $super_classes{$q_class});
     exit 0;
 }
@@ -212,7 +206,7 @@ while (1) {
             $done = 0;
             $done_classes{$q_super} = 1;
             my $supers = qx($0 $q_super);
-            debug "supers is $supers";
+            debug "supers is $supers for $q_super";
             for (split(' ', $supers)) {
                 $super_classes{$q_super}{$_} = 1;
                 $done_classes{$_} = 0 unless $done_classes{$_};

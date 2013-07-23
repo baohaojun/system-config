@@ -1,0 +1,4 @@
+#!/bin/bash
+
+find-or-exec emacs emacs.bhj
+emacsclient -e '(perldoc "'${1:-$(xclip -o)}'")'

@@ -9,7 +9,7 @@ archive_mimes=(
 if test "$(xdg-mime query default $(xdg-mime query filetype "$1"))" = file-roller.desktop; then
     dir=./"$(basename "$1")".unzip.$$
     mkdir -p "$dir"
-    file-roller -e "$dir" "$1"
+    file-roller "$1" -e "$dir"
     up "$dir"
     exit
 fi
