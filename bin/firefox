@@ -1,5 +1,12 @@
 #!/bin/bash
 
+exec 2>>~/.logs/firefox.log
+
+function debug() {
+    echo "$@" 1>&2
+}
+export -f debug
+
 function push-url() {
     ring=$1
     shift
@@ -33,22 +40,36 @@ function do_it() {
         flock 9
         push-url $ring2 "$(get-firefox-tab-url)"
         cat $ring1 | xargs -d \\n \
-            bash -c '
+            bash -x -c '
                 for x in "$@"; do
                     if test "$(get-firefox-tab-url)" = "$x"; then
                         push-url $ring2 "$x"
-                        echo "will skip $x"
+                        debug "will skip $x"
                         continue;
                     fi
-                    if $(firefox-search-for-tab "\Q$x\E"); then
-                       echo "will open $x"
-                       push-url $ring2 "$x"
-                       pop-url $ring1 "$x"
-                       exit
-                   fi
+
+                    list_f=/tmp/firefox-tab-list-failed.$$
+                    list=/tmp/firefox-tab-list.$$
+
+                    if (
+                        if test -e $list_f; then
+                            grep -P -e "\Q$x\E" $list_f && firefox-search-for-tab "\Q$x\E"
+                        else
+                            DEBUG=true firefox-search-for-tab "\Q$x\E" > $list
+                        fi
+                       ); then
+                        echo "will open $x"
+                        push-url $ring2 "$x"
+                        pop-url $ring1 "$x"
+                        rm -f /tmp/firefox-tab-list-failed.$$ /tmp/firefox-tab-list.$$
+                        exit
+                    else
+                        mv /tmp/firefox-tab-list.$$ /tmp/firefox-tab-list-failed.$$ || true
+                    fi
                done
-               echo will now empty $ring1
+               debug will now empty $ring1
                echo -n > $ring1
+               rm -f /tmp/firefox-tab-list-failed.$$ /tmp/firefox-tab-list.$$
            ' true
     ) 9<~/.bashrc
 }
