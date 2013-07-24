@@ -4,7 +4,7 @@ package BhjJava;
 use Exporter;
 
 our @ISA=("Exporter");
-our @EXPORT = qw($id_re $qualified_re $connect_re %super_classes @keywords $keywords $keywords_re %keywords @modifiers $modifiers $modifier_re $debug $code_dir9);
+our @EXPORT = qw($id_re $qualified_re $connect_re %super_classes @keywords $keywords $keywords_re %keywords @modifiers $modifiers $modifier_re $debug $code_dir);
 our $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
 our $qualified_re = qr($id_re(?:\.$id_re)*\b);
 our $connect_re = qr((?: |(?:\[\])+));

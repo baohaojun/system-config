@@ -111,8 +111,7 @@ if ($db_dir eq "/" or $db_dir eq glob("~")) {
     chomp($db_dir = `readlink ~/.gtags-dir`);
     print "db_dir is read from ~/.gtags-dir at $db_dir\n" unless $ENV{UNPACK_MACRO} or $silent;
 } else {
-    system("rm", "-f", glob("~/.gtags-dir"));
-    system("ln", '-sf', $db_dir, glob("~/.gtags-dir"));
+    system("ln", '-sf', $db_dir, glob("~/.gtags-dir"), "-T");
 }
 
 $approx_dir = substr($approx_dir, length($db_dir));

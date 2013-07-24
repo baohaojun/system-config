@@ -96,7 +96,7 @@ might be bad."
                   (buffer-substring-no-properties (point) (mark)))
              (current-regexp "[.a-z0-9]+"))))
   (shell-command (format "java-get-imports.pl %s -r %s"
-                         (shell-quote-argument (buffer-file-name))
+                         (shell-quote-argument (my-buffer-file-name-local))
                          (shell-quote-argument id))))
 
 ;;;###autoload
@@ -110,7 +110,7 @@ might be bad."
   (let (method (remove ""))
     (save-excursion
       (let* ((resolve (shell-command-to-string (format "java-get-imports.pl %s -r %s|tr -d '\\n'"
-                                                       (shell-quote-argument (buffer-file-name))
+                                                       (shell-quote-argument (my-buffer-file-name-local))
                                                        (shell-quote-argument id))))
              (comp (split-string resolve "\\."))
              (comp-last (car (last comp)))
@@ -130,7 +130,7 @@ might be bad."
     (when (not (string-equal remove ""))
       (delete-region (- (point) (length remove)) (point)))
     (insert ".")
-    (insert (replace-regexp-in-string ".*\\s \\(.*(.*)\\){" "\\1" method))))
+    (insert (replace-regexp-in-string ".*\\s \\(\\S *(.*)\\).*" "\\1" method))))
 
 ;;;###autoload
 (defun bhj-c-end-of-defun (&optional arg)
@@ -213,7 +213,7 @@ might be bad."
 
 
 (defun set-gtags-start-file ()
-  (let ((file (my-buffer-file-name (current-buffer))))
+  (let ((file (my-buffer-file-name)))
     (if (file-remote-p file)
         (let ((process-environment tramp-remote-process-environment))
           (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
@@ -610,10 +610,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
          (remote-prefix (or (file-remote-p directory) ""))
          (directory (or (file-remote-p directory 'localname) directory))
          this-directory database-dir)
-
-
-
-
     (catch 'done
       (if (file-regular-p saved-directory)
           (throw 'done saved-directory))
@@ -632,9 +628,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
             (throw 'done (concat "" (expand-file-name "~/.gtags-dir/"))))
         (setq this-directory (file-name-as-directory
                               (file-name-directory
-                               (directory-file-name this-directory))))
-        ))
-    ))
+                               (directory-file-name this-directory))))))))
 
 ;;;###autoload
 (defun cscope-pop-mark ()
@@ -1216,7 +1210,8 @@ ARG means found the (ARG - 1)th tag to find."
                   (kill-buffer)))))
           (buffer-list)))
 
-(defun my-buffer-file-name (buf)
+(defun my-buffer-file-name (&optional buf)
+  (setq buf (or buf (current-buffer)))
   (with-current-buffer buf
     (if (eq major-mode 'dired-mode)
         (replace-regexp-in-string "/*$" "" default-directory)
@@ -1224,7 +1219,7 @@ ARG means found the (ARG - 1)th tag to find."
           ""))))
 
 (defun my-buffer-file-name-local (&optional buf)
-  (let ((name (my-buffer-file-name (or buf (current-buffer)))))
+  (let ((name (my-buffer-file-name buf)))
     (or (file-remote-p name 'localname)
         name)))
 
@@ -1234,7 +1229,7 @@ ARG means found the (ARG - 1)th tag to find."
   (let* ((buf-list (if reverse
                        (nreverse (buffer-list))
                      (buffer-list)))
-         (current-filepath (my-buffer-file-name (current-buffer)))
+         (current-filepath (my-buffer-file-name))
          (current-filename (file-name-nondirectory current-filepath))
          checking-filename
          checking-filepath
@@ -1248,7 +1243,7 @@ ARG means found the (ARG - 1)th tag to find."
               (unless reverse
                 (bury-buffer (current-buffer)))
               (switch-to-buffer (car buf-list))
-              (message "switched to `%s'" (my-buffer-file-name (current-buffer)))
+              (message "switched to `%s'" (my-buffer-file-name))
               (setq buf-list nil
                     buf-switched t))))
       (setq buf-list (cdr buf-list)))
