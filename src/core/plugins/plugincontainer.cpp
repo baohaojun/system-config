@@ -22,11 +22,24 @@
 #include "plugins.h"
 #include "snorebackend.h"
 #include "snorefrontend.h"
+#include "../version.h"
 
 #include <QDir>
 #include <QDebug>
 
 using namespace Snore;
+
+QHash<QString,PluginContainer*> PluginContainer::s_pluginCache = QHash<QString,PluginContainer*>() ;
+
+QSettings &PluginContainer::cacheFile(){
+#ifdef Q_OS_LINUX
+    static QSettings cache("TheOneRing","libsnore");
+#else
+    static QSettings cache(SnoreCore::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
+#endif
+    return cache;
+}
+
 
 PluginContainer::PluginContainer(QString fileName, QString pluginName, PluginContainer::PluginType type):
     m_pluginFile(fileName),
@@ -102,4 +115,74 @@ const QStringList &PluginContainer::types()
              << "plugin";
     }
     return list;
+}
+
+
+void PluginContainer::updatePluginCache(){
+    QSettings &cache = cacheFile();
+    qDebug() << "Updating plugin cache" << cache.fileName();
+
+    s_pluginCache.clear();
+    cache.clear();
+
+    foreach(const QString &type,PluginContainer::types()){
+        QDir plPath(SnoreCore::pluginDir().absoluteFilePath(type));
+        qDebug() << "Searching for plugins in" << plPath.path();
+        foreach (QString fileName, plPath.entryList(QDir::Files)) {
+            QString filepath(plPath.absoluteFilePath(fileName));
+            qDebug() << "adding" << filepath;
+            QPluginLoader loader(filepath);
+            QObject *plugin = loader.instance();
+            if (plugin == NULL) {
+                qDebug() << "Failed loading plugin: " << filepath << loader.errorString();
+                continue;
+            }
+            SnorePlugin *sp = dynamic_cast<SnorePlugin*>(plugin);
+            if(sp == NULL){
+                qDebug() << "Error:" << fileName << " is not a Snore plugin" ;
+                plugin->deleteLater();
+                continue;
+            }
+            PluginContainer *info = new PluginContainer( SnoreCore::pluginDir().relativeFilePath(filepath),sp->name(),PluginContainer::typeFromString(type));
+            s_pluginCache.insert(info->name(),info);
+            delete sp;
+            qDebug() << "added" << info->name() << "to cache";
+        }
+    }
+
+    qDebug()<<s_pluginCache.keys();
+    cache.setValue("version",Version::revision());
+    cache.setValue("pluginPath",SnoreCore::pluginDir().path());
+    QList<PluginContainer*> plugins = s_pluginCache.values();
+    cache.beginWriteArray("plugins");
+    for(int i=0;i< plugins.size();++i) {
+        cache.setArrayIndex(i);
+        cache.setValue("fileName",plugins[i]->file());
+        cache.setValue("name", plugins[i]->name());
+        cache.setValue("type",(int)plugins[i]->type());
+    }
+    cache.endArray();
+}
+
+QHash<QString, PluginContainer *> PluginContainer::pluginCache(){
+    if(!s_pluginCache.isEmpty())
+        return s_pluginCache;
+    QSettings &cache = cacheFile();
+    QString version = cache.value("version").toString();
+    QString path = cache.value("pluginPath").toString();
+    int size = cache.beginReadArray("plugins");
+    if(size == 0 || version != Version::revision() || path != SnoreCore::pluginDir().path()){
+        cache.endArray();
+        updatePluginCache();
+    }else{
+        for(int i=0;i<size;++i) {
+            cache.setArrayIndex(i);
+            PluginContainer::PluginType type = (PluginContainer::PluginType)cache.value("type").toInt();
+            PluginContainer *info = new PluginContainer(cache.value("fileName").toString(),cache.value("name").toString(),type);
+            s_pluginCache.insert(info->name(),info);
+        }
+        cache.endArray();
+    }
+
+    return s_pluginCache;
 }

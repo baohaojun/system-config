@@ -27,7 +27,6 @@
 #include "hint.h"
 
 #include <QStringList>
-#include <QSettings>
 #include <QTextDocument>
 #include <QTextDocumentFragment>
 
@@ -41,7 +40,6 @@ class SNORE_EXPORT SnoreCore : public QObject
     Q_OBJECT
 public:
     static const QString snoreTMP();
-    static void updatePluginCache();
     static const QDir &pluginDir();
 
 public:
@@ -86,11 +84,6 @@ private slots:
 
 
 private:
-    static QHash<QString,PluginContainer*> pluginCache();
-    static QSettings &cacheFile();
-
-    static QHash<QString,PluginContainer*> s_pluginCache;
-
     Hint m_hints;
 
     ApplicationsList m_applications;

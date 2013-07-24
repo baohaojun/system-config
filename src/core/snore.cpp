@@ -36,17 +36,6 @@
 
 using namespace Snore;
 
-QHash<QString,PluginContainer*> SnoreCore::s_pluginCache = QHash<QString,PluginContainer*>() ;
-
-QSettings &SnoreCore::cacheFile(){
-#ifdef Q_OS_LINUX
-    static QSettings cache("TheOneRing","libsnore");
-#else
-    static QSettings cache(SnoreCore::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
-#endif
-    return cache;
-}
-
 void SnoreCore::slotNotificationClosed(Notification n)
 {
     emit notificationClosed(n);
@@ -69,77 +58,6 @@ SnoreCore::SnoreCore ( QSystemTrayIcon *trayIcon ) :
 
 }
 
-QHash<QString, PluginContainer *> SnoreCore::pluginCache(){
-    if(!s_pluginCache.isEmpty())
-        return s_pluginCache;
-    QSettings &cache = cacheFile();
-    QString version = cache.value("version").toString();
-    QString path = cache.value("pluginPath").toString();
-    int size = cache.beginReadArray("plugins");    
-    if(size == 0 || version != Version::revision() || path != pluginDir().path()){
-        qDebug() << version << "!=" << Version::revision();
-        qDebug() << path << "!=" << pluginDir().path();
-        cache.endArray();
-        updatePluginCache();
-    }else{
-        for(int i=0;i<size;++i) {
-            cache.setArrayIndex(i);
-            PluginContainer::PluginType type = (PluginContainer::PluginType)cache.value("type").toInt();
-            PluginContainer *info = new PluginContainer(cache.value("fileName").toString(),cache.value("name").toString(),type);
-            s_pluginCache.insert(info->name(),info);
-        }
-        cache.endArray();
-    }
-
-    return s_pluginCache;
-}
-
-void SnoreCore::updatePluginCache(){
-    QSettings &cache = cacheFile();
-    qDebug() << "Updating plugin cache" << cache.fileName();
-
-    s_pluginCache.clear();
-    cache.clear();
-
-    foreach(const QString &type,PluginContainer::types()){
-        QDir plPath(SnoreCore::pluginDir().absoluteFilePath(type));
-        qDebug() << "Searching for plugins in" << plPath.path();
-        foreach (QString fileName, plPath.entryList(QDir::Files)) {
-            QString filepath(plPath.absoluteFilePath(fileName));
-            qDebug() << "adding" << filepath;
-            QPluginLoader loader(filepath);
-            QObject *plugin = loader.instance();
-            if (plugin == NULL) {
-                qDebug() << "Failed loading plugin: " << filepath << loader.errorString();
-                continue;
-            }
-            SnorePlugin *sp = dynamic_cast<SnorePlugin*>(plugin);
-            if(sp == NULL){
-                qDebug() << "Error:" << fileName << " is not a Snore plugin" ;
-                plugin->deleteLater();
-                continue;
-            }
-            PluginContainer *info = new PluginContainer( SnoreCore::pluginDir().relativeFilePath(filepath),sp->name(),PluginContainer::typeFromString(type));
-            s_pluginCache.insert(info->name(),info);
-            delete sp;
-            qDebug() << "added" << info->name() << "to cache";
-        }
-    }
-
-    qDebug()<<s_pluginCache.keys();
-    cache.setValue("version",Version::revision());
-    cache.setValue("pluginPath",pluginDir().path());
-    QList<PluginContainer*> plugins = s_pluginCache.values();
-    cache.beginWriteArray("plugins");
-    for(int i=0;i< plugins.size();++i) {
-        cache.setArrayIndex(i);
-        cache.setValue("fileName",plugins[i]->file());
-        cache.setValue("name", plugins[i]->name());
-        cache.setValue("type",(int)plugins[i]->type());
-    }
-    cache.endArray();
-}
-
 const QDir &SnoreCore::pluginDir(){
     static QDir path(QString("%1/snoreplugins").arg(qApp->applicationDirPath()));
     if(!path.exists())
@@ -153,8 +71,8 @@ const QDir &SnoreCore::pluginDir(){
 
 void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
 {
-    qDebug() << "PluginInfo" << SnoreCore::pluginCache().keys();
-    foreach ( PluginContainer *info, SnoreCore::pluginCache().values())
+    qDebug() << "PluginInfo" << PluginContainer::pluginCache().keys();
+    foreach ( PluginContainer *info, PluginContainer::pluginCache().values())
     {
         if(types == PluginContainer::ALL or  types.testFlag(info->type()))
         {
@@ -276,12 +194,12 @@ const QStringList &SnoreCore::secondaryNotificationBackends() const
 
 bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
 {
-    if(!pluginCache().contains(backend)){
+    if(!PluginContainer::pluginCache().contains(backend)){
         qDebug()<<"Unknown Backend:"<<backend;
         return false;
     }
     qDebug()<<"Setting Notification Backend to:"<<backend;
-    SnoreBackend* b = qobject_cast<SnoreBackend*>(pluginCache()[backend]->load());
+    SnoreBackend* b = qobject_cast<SnoreBackend*>(PluginContainer::pluginCache()[backend]->load());
     if(!b->isInitialized()){
         if(!b->init(this)){
             qDebug()<<"Failed to initialize"<<b->name();

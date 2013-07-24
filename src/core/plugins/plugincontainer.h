@@ -22,6 +22,7 @@
 #include "../snore_exports.h"
 
 #include <QPointer>
+#include <QSettings>
 #include <QFlag>
 
 namespace Snore{
@@ -41,6 +42,9 @@ public:
         PLUGIN = 0x8
     };
     Q_DECLARE_FLAGS(PluginTypes, PluginType)
+
+    static QHash<QString,PluginContainer*> pluginCache();
+
     PluginContainer(QString fileName,QString pluginName,PluginType type);
     ~PluginContainer();
     SnorePlugin *load();
@@ -53,6 +57,11 @@ public:
     static const QStringList &types();
 
 private:
+    static void updatePluginCache();
+    static QSettings &cacheFile();
+
+    static QHash<QString,PluginContainer*> s_pluginCache;
+
     QPointer<SnorePlugin> m_instance;
     QString m_pluginFile;
     QString m_pluginName;
