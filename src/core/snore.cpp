@@ -74,7 +74,7 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
     qDebug() << "PluginInfo" << PluginContainer::pluginCache().keys();
     foreach ( PluginContainer *info, PluginContainer::pluginCache().values())
     {
-        if(types == PluginContainer::ALL or  types.testFlag(info->type()))
+        if(types == PluginContainer::ALL || types.testFlag(info->type()))
         {
             switch(info->type())
             {
