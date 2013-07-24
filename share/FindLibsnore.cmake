@@ -21,13 +21,28 @@
 #  LIBSNORE_LIBRARIES - The libraries needed to use LIBSNORE
 #  LIBSNORE_PLUGIN_PATH - Path of the plugins
 
+find_path(LIBSNORE_INCLUDE_DIR
+  NAMES snore/core/snore.h
+  PATHS ${KDE4_INCLUDE_DIR}
+)
 
-find_library(LIBSNORE_LIBRARIES NAMES libsnore snore)
+find_library(LIBSNORE_LIBRARY
+  NAMES
+  libsnore
+  snore
+  PATHS ${KDE4_LIB_DIR}
+)
+
 find_path(LIBSNORE_PLUGIN_PATH snoreplugins)
-if(LIBSNORE_LIBRARIES AND LIBSNORE_PLUGIN_PATH)
-    set(LIBSNORE_FOUND TRUE)
+
+if(LIBSNORE_LIBRARY AND LIBSNORE_PLUGIN_PATH)
     set(LIBSNORE_PLUGIN_PATH ${LIBSNORE_PLUGIN_PATH}/snoreplugins)
-    message(STATUS "Found libsnore ${LIBSNORE_LIBRARIES}")
-else(LIBSNORE_LIBRARIES AND LIBSNORE_PLUGIN_PATH)
-    message(STATUS "Could not find libsnore, please install libsnore")
-endif(LIBSNORE_LIBRARIES AND LIBSNORE_PLUGIN_PATH)
+endif()
+
+set(LIBSNORE_LIBRARIES ${LIBSNORE_LIBRARY})
+set(LIBSNORE_INCLUDE_DIRS ${LIBSNORE_INCLUDE_DIR})
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(LIBSNORE DEFAULT_MSG LIBSNORE_LIBRARIES LIBSNORE_INCLUDE_DIRS)
+
+mark_as_advanced(LIBSNORE_LIBRARIES LIBSNORE_INCLUDE_DIRS)
