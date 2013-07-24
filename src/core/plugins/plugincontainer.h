@@ -48,6 +48,7 @@ public:
     PluginContainer(QString fileName,QString pluginName,PluginType type);
     ~PluginContainer();
     SnorePlugin *load();
+    void unload();
     const QString &file();
     const QString &name();
     PluginContainer::PluginType type();

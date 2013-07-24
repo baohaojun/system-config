@@ -72,6 +72,11 @@ SnorePlugin *PluginContainer::load()
     return m_instance;
 }
 
+void PluginContainer::unload()
+{
+    m_instance->deleteLater();
+}
+
 const QString & PluginContainer::file()
 {
     return m_pluginFile;
