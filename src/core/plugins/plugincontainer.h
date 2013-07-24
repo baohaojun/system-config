@@ -62,4 +62,5 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::PluginContainer::PluginTypes)
 
+
 #endif//PLUGINCONTAINER_H

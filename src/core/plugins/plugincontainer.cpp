@@ -23,7 +23,6 @@
 #include "snorebackend.h"
 #include "snorefrontend.h"
 
-#include <QPluginLoader>
 #include <QDir>
 #include <QDebug>
 

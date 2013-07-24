@@ -26,7 +26,6 @@
 
 #include <QPointer>
 #include <QFlag>
-#include <QtCore>
 
 namespace Snore{
 

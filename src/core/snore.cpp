@@ -28,7 +28,6 @@
 
 #include <iostream>
 
-#include <QPluginLoader>
 #include <QDebug>
 #include <QDir>
 #include <QSystemTrayIcon>
@@ -76,10 +75,11 @@ QHash<QString, PluginContainer *> SnoreCore::pluginCache(){
     QSettings &cache = cacheFile();
     QString version = cache.value("version").toString();
     QString path = cache.value("pluginPath").toString();
-    int size = cache.beginReadArray("plugins");
+    int size = cache.beginReadArray("plugins");    
     if(size == 0 || version != Version::revision() || path != pluginDir().path()){
         qDebug() << version << "!=" << Version::revision();
         qDebug() << path << "!=" << pluginDir().path();
+        cache.endArray();
         updatePluginCache();
     }else{
         for(int i=0;i<size;++i) {
@@ -99,6 +99,7 @@ void SnoreCore::updatePluginCache(){
     qDebug() << "Updating plugin cache" << cache.fileName();
 
     s_pluginCache.clear();
+    cache.clear();
 
     foreach(const QString &type,PluginContainer::types()){
         QDir plPath(SnoreCore::pluginDir().absoluteFilePath(type));

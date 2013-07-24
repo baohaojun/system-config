@@ -173,7 +173,7 @@ void SnarlBackend::slotRegisterApplication(Application *application){
     snarlInterface->Register(appName.toUtf8().constData(),
                              application->name().toUtf8().constData(),
                              application->icon().localUrl().toUtf8().constData(),
-                             0,m_eventLoop->winId(),SNORENOTIFIER_MESSAGE_ID);
+                             0,(HWND)m_eventLoop->winId(),SNORENOTIFIER_MESSAGE_ID);
 
     foreach(Alert *alert,application->alerts()){
         qDebug()<<"registering snarl alert"<<application->name();

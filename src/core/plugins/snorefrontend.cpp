@@ -21,7 +21,6 @@
 #include "../snore.h"
 
 #include <QTimer>
-#include <QPluginLoader>
 #include <QDir>
 #include <QDebug>
 

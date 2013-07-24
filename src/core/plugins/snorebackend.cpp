@@ -23,7 +23,6 @@
 #include "../notification/notification.h"
 
 #include <QTimer>
-#include <QPluginLoader>
 #include <QDir>
 #include <QDebug>
 

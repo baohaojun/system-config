@@ -5,7 +5,7 @@
 
 #include <QDebug>
 #include <QDir>
-#include <QProcess>
+#include <QApplication>
 #include <QSysInfo>
 
 #include <windows.h>

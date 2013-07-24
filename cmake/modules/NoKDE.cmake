@@ -1,13 +1,6 @@
-find_package( Qt4 REQUIRED )
+find_package(Qt5Transitional)
+include_directories( ${QT_INCLUDES} )
 
-include_directories( ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-                    ${QT_QTNETWORK_INCLUDE_DIR})
-
-if (WITH_FREEDESKTOP_FRONTEND)
-    include_directories(${QT_QTDBUS_INCLUDE_DIR})
-endif (WITH_FREEDESKTOP_FRONTEND)
-
-include( ${QT_USE_FILE} )
 
 if (CMAKE_COMPILER_IS_GNUCXX)
    set (KDE4_ENABLE_EXCEPTIONS -fexceptions)

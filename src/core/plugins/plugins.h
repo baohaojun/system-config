@@ -24,6 +24,8 @@
 #include <QPointer>
 #include <QHash>
 #include <QTimer>
+#include <QtPlugin>
+#include <QPluginLoader>
 
 namespace Snore{
 class Application;
@@ -61,6 +63,19 @@ private:
 Q_DECLARE_INTERFACE ( Snore::SnorePlugin,
                       "org.Snore.SnorePlugin/1.0" )
 
+//compatability defines to reduce the number of ifdefs to make fiat compile with qt4 and qt5
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#   if defined(Q_EXPORT_PLUGIN)
+#       undef Q_EXPORT_PLUGIN
+#   endif
+#   if defined(Q_EXPORT_PLUGIN2)
+#       undef Q_EXPORT_PLUGIN2
+#   endif
+#   define Q_EXPORT_PLUGIN(a)
+#   define Q_EXPORT_PLUGIN2(a, b)
+#else
+#   define Q_PLUGIN_METADATA(a)
+#endif
 
 
 

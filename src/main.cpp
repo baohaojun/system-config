@@ -1,7 +1,7 @@
 
 #include "snorenotify.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #ifdef HAVE_KDE
 #include "core/version.h"

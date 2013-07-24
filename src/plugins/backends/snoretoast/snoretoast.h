@@ -2,11 +2,13 @@
 #define TOASTER_H
 
 #include "core/plugins/snorebackend.h"
+#include <QProcess>
 
 class SnoreToast : public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreBackend)
+    Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0")
 public:
     SnoreToast();
     ~SnoreToast();
