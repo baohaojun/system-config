@@ -13,114 +13,95 @@ using namespace Snore;
 
 Q_EXPORT_PLUGIN2 ( freedesktopnotificationbackend,FreedesktopBackend )
 
-static const char dbusServiceName[] = "org.freedesktop.Notifications";
-static const char dbusInterfaceName[] = "org.freedesktop.Notifications";
-static const char dbusPath[] = "/org/freedesktop/Notifications";
-
 
 FreedesktopBackend::FreedesktopBackend () :
-    SnoreBackend ( "FreedesktopNotification_Backend")
+    SnoreBackend ( "FreedesktopNotification_Backend",true,true)
 {
 
 
 }
 
 bool FreedesktopBackend::init(SnoreCore *snore){
-      QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","ActionInvoked",this,SLOT ( actionInvoked( uint,QString ) ) );
-    //    if ( getVendor() =="GNOME" )
-    QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","NotificationClosed",this,SLOT ( closed ( uint,uint ) ) );
+
+    m_interface = new org::freedesktop::Notifications( "org.freedesktop.Notifications", "/org/freedesktop/Notifications",
+                                                       QDBusConnection::sessionBus(), this );
+
+    QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
+    reply.waitForFinished();
+    QStringList caps  = reply.reply().arguments().first().toStringList();
+    m_supportsRichtext = caps.contains( "body-markup" );
+    connect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
+    connect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
+
     return SnoreBackend::init(snore);
 }
 
-void FreedesktopBackend::registerApplication ( Application *application )
+void FreedesktopBackend::slotRegisterApplication ( Application *application )
 {
     Q_UNUSED ( application );
 }
 
-void FreedesktopBackend::unregisterApplication ( Application *application )
+void FreedesktopBackend::slotUnregisterApplication ( Application *application )
 {
     Q_UNUSED ( application );
 }
 
-uint  FreedesktopBackend::notify ( Notification noti )
+void  FreedesktopBackend::slotNotify ( Notification noti )
 {    
-    QDBusMessage message = QDBusMessage::createMethodCall(dbusServiceName, dbusPath, dbusInterfaceName,  "Notify");
-    QVariantList args;
-
-    args<<noti.application() ; // app_name
-    args<<noti.id() ; // replaces_id
-    args<<"" ; // app_icon
-    args<<noti.title() ; // summary
-    args<<noti.text() ; // body
-
     QStringList actions;
-    foreach(int k,noti.actions().keys()){
-        actions<<QString::number(k)<<noti.actions()[k]->name;
-    }
-    args<<actions;
-
-    if(!noti.icon().isEmpty()){
-        QVariantMap image_data;
-        QVariant img = QVariant::fromValue(FreedesktopImageHint(noti.icon().image().scaledToWidth(50,Qt::FastTransformation)));
-        image_data.insert(QString("image_data"),img);
-        args<<image_data;
+    foreach(int k,noti.actions().keys())
+    {
+        actions << QString::number(k) << noti.actions()[k]->name;
     }
 
-    args<<noti.timeout()*1000;
+    QVariantMap hints;
+    hints["image_data"] = QVariant::fromValue(FreedesktopImageHint(noti.icon().image().scaledToWidth(50,Qt::FastTransformation)));
 
-    message.setArguments(args);
-
-    QDBusMessage replyMsg = QDBusConnection::sessionBus().call(message);
-    uint id = 0;
-    if(replyMsg.type() == QDBusMessage::ReplyMessage){
-        id= replyMsg.arguments().at(0).toUInt();
-        qDebug()<<"DBUS_ID"<<id;
-        m_activeNotifications[id] = noti;
+    uint updateId = 0;
+    if(noti.updateID() != 0)
+    {
+        updateId = m_idMap[noti.updateID()];
+        noti.hints().setValue("DBUS_ID", updateId);
     }
-    return id;
+
+    QDBusPendingReply<uint>  id = m_interface->Notify(noti.application(), updateId, "", noti.title(),
+                                                      noti.text(), actions, hints, noti.timeout()*1000);
+
+
+
+    if(noti.updateID() == 0)
+    {
+        id.waitForFinished();
+        noti.hints().setValue("DBUS_ID", id.value());
+        m_idMap[id.value()] = noti.id();
+    }
 }
-void FreedesktopBackend::actionInvoked(const uint &id, const QString &actionID){
-    Notification noti = m_activeNotifications[id];
-    if(noti.id() == 0)
+void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID){
+    Notification noti = getActiveNotificationByID(m_idMap[id]);
+    if(!noti.isValid())
         return;
     qDebug() <<"Action"<<id<<"|"<<actionID ;
-    noti.setActionInvoked ( actionID == "default"?1:actionID.toInt() );
+    noti.setActionInvoked ( actionID.toInt() );
     snore()->notificationActionInvoked ( noti );
 }
 
-void FreedesktopBackend::closeNotification ( Notification notification )
+void FreedesktopBackend::slotCloseNotification ( Notification notification )
 {
-    m_activeNotifications.remove(notification.id());
-    QDBusMessage message = QDBusMessage::createMethodCall(dbusServiceName, dbusPath, dbusInterfaceName,"CloseNotification");
-    QVariantList args;
-    args<<notification.id();
-    message.setArguments(args);
-    QDBusConnection::sessionBus().send(message);
+    uint id = notification.hints().value("DBUS_ID").toUInt();
+    m_idMap.remove(id);
+    m_interface->CloseNotification(id);
 }
 
 
 
-void FreedesktopBackend::closed ( const uint &id,const uint &reason )
+void FreedesktopBackend::slotNotificationClosed ( const uint &id,const uint &reason )
 {
     qDebug() <<"Closed"<<id<<"|"<<reason;
     if(id == 0)
         return;
-    Notification noti =  m_activeNotifications.take(id);
-    snore()->closeNotification ( noti ,QFlag(reason));
+    Notification noti =  getActiveNotificationByID(m_idMap.take(id));
+    closeNotification(noti ,NotificationEnums::CloseReasons::closeReasons(reason));
 }
-
-//QString fNotification::getVendor()
-//{
-//    if ( vendor == "" )
-//    {
-//        QDBusMessage recive =  notificationInterface.call ( QDBus::AutoDetect,"GetServerInformation" );
-//        vendor=recive.arguments() [1].toString();
-//        qDebug() <<recive.arguments();
-//    }
-//    return vendor;
-//}
-
-
 
 
 
