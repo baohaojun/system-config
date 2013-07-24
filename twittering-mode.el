@@ -6579,7 +6579,9 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
 
           (friends         . "statuses/friends_timeline")
           (home            . "statuses/home_timeline")
-          (mentions        . "statuses/mentions_timeline")
+          (mentions        . ,(if (eq service 'sina)
+                                  "statuses/mentions"
+                                "statuses/mentions_timeline"))
           (public          . "statuses/public_timeline")
           (replies         . ,(if (eq service 'sina)
                                   "comments/timeline"
