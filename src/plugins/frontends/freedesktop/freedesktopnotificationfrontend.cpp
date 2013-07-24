@@ -55,7 +55,10 @@ bool FreedesktopFrontend::init(SnoreCore *snore){
 }
 
 void FreedesktopFrontend::actionInvoked(Notification notification) {
-    emit ActionInvoked(notification.id(),QString::number(notification.actionInvoked()->id));
+    if(notification.actionInvoked())
+    {
+        emit ActionInvoked(notification.id(),QString::number(notification.actionInvoked()->id));
+    }
 }
 
 void FreedesktopFrontend::notificationClosed(Notification notification) {
