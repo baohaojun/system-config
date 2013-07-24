@@ -9,6 +9,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #######################################################################
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
+option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
 #######################################################################
 
 set(SNORE_VERSION_MAJOR 0)

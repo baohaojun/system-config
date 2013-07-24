@@ -1,4 +1,4 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}  ${CMAKE_CURRENT_BINARY_DIR})
 
 include(GetGitRevisionDescription)
 
@@ -6,6 +6,8 @@ include(GetGitRevisionDescription)
 get_git_head_revision(GIT_REFSPEC SNORE_REVISION)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
+
+QT4_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 
 add_subdirectory(notification)
 add_subdirectory(plugins)
@@ -15,6 +17,7 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         application.cpp
         hint.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
+        ${SNORENOTIFY_RCS}
         )
 
 set ( SnoreNotify_HDR ${SnoreNotify_HDR}
