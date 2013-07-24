@@ -46,6 +46,7 @@ SnoreNotify::SnoreNotify():
     m_trayIcon->initConextMenu(m_snore);
 
     connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(exit()));
+    qDebug() << "Snorenotfiy initialized with" << m_snore->primaryNotificationBackend();
 }
 
 SnoreNotify::~SnoreNotify(){
@@ -56,7 +57,7 @@ SnoreNotify::~SnoreNotify(){
 void SnoreNotify::load(){
     if(m_settings.contains("notificationBackend"))
     {
-        m_snore->setPrimaryNotificationBackend(m_settings.value("notificationBackend","SystemTray").toString());
+        m_snore->setPrimaryNotificationBackend(m_settings.value("notificationBackend").toString());
     }
     else
     {
