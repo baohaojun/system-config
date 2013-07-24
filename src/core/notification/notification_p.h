@@ -3,7 +3,7 @@
 
 
 #include "notification/icon.h"
-#include "notification/NotificationEnums.h"
+#include "notification/notificationenums.h"
 #include "../hint.h"
 
 #include <QSharedData>
