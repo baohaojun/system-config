@@ -279,8 +279,15 @@ might be bad."
              (goto-char begin)
              (previous-line)
              (back-to-indentation)
+             (current-column)))
+          (this-line-indent
+           (save-excursion
+             (goto-char begin)
+             (back-to-indentation)
              (current-column))))
-      (replace-regexp "^" (make-string last-line-indent ? ) nil begin end))))
+      (if (> last-line-indent this-line-indent)
+          (replace-regexp "^" (make-string last-line-indent ? ) nil begin end)
+        (replace-regexp (concat "^" (make-string (- this-line-indent last-line-indent) ? )) "" nil begin end)))))
 
 ;;;###autoload
 (defun java-get-hierarchy ()

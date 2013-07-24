@@ -8,13 +8,13 @@ function die() {
 }
 
 me=$(readlink -f $0)
-if test "$me" != ~/system-config/bin/ajokex; then
+if test "$me" != ~/system-config/bin/ajoke; then
     die "ajoke not found at ~/system-config/bin/ajoke, please run:
     cd ~; git clone --recursive http://github.com/baohaojun/system-config"
 fi
 
 
-if test -x /opt/local/libexec/gnubin/readlink; then 
+if test -x /opt/local/libexec/gnubin/readlink; then
     # on MacOS, the system readlink doesn't do -m/-f options
     export PATH=/opt/local/libexec/gnubin:$PATH
 fi
@@ -39,43 +39,43 @@ function test-env() {
     # the cpan librarys?
 
     if ! perl -e 'use String::Approx'; then
-	cpan String::Approx
+        cpan String::Approx
     fi
 
     if ! perl -e 'use String::ShellQuote'; then
-	cpan String::ShellQuote
+        cpan String::ShellQuote
     fi
 
     if ! perl -e 'use Text::Glob'; then
-	cpan Text::Glob
+        cpan Text::Glob
     fi
 
     if test ! -x /usr/local/bin/global; then
-	if yes-or-no-p "You have not built ajoke's version of GNU gtags, 
+        if yes-or-no-p "You have not built ajoke's version of GNU gtags,
 build it with compile_gtags (will need sudo for installing)?"; then
-	    compile_gtags
-	else
-	    die "ajoke's gtags not built"
-	fi
+            compile_gtags
+        else
+            die "ajoke's gtags not built"
+        fi
     fi
 
     if test -b /usr/bin/ctags-exuberant; then
-	if yes-or-no-p "You need to install ctags-exuberant, apt-get?"; then
-	    sudo apt-get install ctags-exuberant
-	else
-	    die "Can't use ctags-exuberant"
-	fi
+        if yes-or-no-p "You need to install ctags-exuberant, apt-get?"; then
+            sudo apt-get install ctags-exuberant
+        else
+            die "Can't use ctags-exuberant"
+        fi
     fi
 
     if test ! -e ~/.globalrc || ! diff -q ~/.globalrc ~/system-config/.globalrc; then
-	if yes-or-no-p "You need use ajoke's version of .globalrc, replace?"; then
-	    if test -e ~/.globalrc; then
-		mv ~/.globalrc ~/.globalrc.bak
-	    fi
-	    relative-link ~/system-config/.globalrc ~/
-	else
-	    die "ajoke's version of .globalrc not used"
-	fi
-    fi	    
-	    
+        if yes-or-no-p "You need use ajoke's version of .globalrc, replace?"; then
+            if test -e ~/.globalrc; then
+                mv ~/.globalrc ~/.globalrc.bak
+            fi
+            relative-link ~/system-config/.globalrc ~/
+        else
+            die "ajoke's version of .globalrc not used"
+        fi
+    fi
+
 }

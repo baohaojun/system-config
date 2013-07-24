@@ -3,8 +3,7 @@
 set -e
 
 if test -L /var/cache/pbuilder -a ! -e /var/cache/pbuilder; then
-    sudo rm /var/cache/pbuilder -f
-    sudo ln -s ~/external/cowbuilder /var/cache/pbuilder
+    sudo mkdir -p $(readlink -m /var/cache/pbuilder)
 fi
 
 target=${1:-.}
