@@ -4,56 +4,9 @@ use strict;
 use String::ShellQuote;
 use Getopt::Long;
 
-my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
-my $qualified_re = qr($id_re(?:\.$id_re)*\b);
-my $connect_re = qr((?: |(?:\[\])+));
-my %super_classes;
-
-my @keywords = ("abstract", "assert", "boolean", "break", "byte",
-              "case", "catch", "char", "class", "const", "continue",
-              "default", "double", "else", "enum", "extends", "false",
-              "final", "finally", "float", "for", "goto", "if",
-              "implements", "import", "instanceof", "int",
-              "interface", "long", "native", "new", "null", "package",
-              "private", "protected", "public", "return", "short",
-              "static", "strictfp", "super", "switch", "synchronized",
-              "this", "throw", "throws", "transient", "true", "try",
-              "void", "volatile", "while" );
-
-my $keywords = join('|', @keywords);
-my $keywords_re = qr(\b(?:$keywords)\b);
-my %keywords;
-
-map {$keywords{$_} = 1} @keywords;
-
-my @modifiers = ('public', 'protected', 'private', 'static',
-'abstract', 'final', 'native', 'synchronized', 'transient',
-'volatile', 'strictfp');
-
-my $modifiers = join('|', @modifiers);
-my $modifier_re = qr($modifiers);
-
-my $logfile = $0;
-$logfile =~ s!.*/!!;
-if ($ENV{DEBUG} eq 'true') {
-    sub debug(@) {
-        print STDERR "$logfile: @_\n";
-    }
-} else {
-    open(my $debug, ">", glob("~/.logs/$logfile.log"))
-        or die "Can not open debug log file ~/.logs/$logfile.log";
-    sub debug(@) {
-        print $debug "@_\n";
-    }
-}
-
-my $code_dir = $ENV{PWD};
-unless ($ENV{GTAGSROOT}) {
-    chomp($code_dir = qx(find-code-reading-dir));
-    chdir $code_dir or die "can not chdir $code_dir";
-    $ENV{GTAGSROOT} = $code_dir;
-    $ENV{GTAGSDBPATH} = "$ENV{HOME}/.cache/for-code-reading$code_dir";
-    $ENV{GTAGSLIBPATH} = join(":", glob("$ENV{GTAGSDBPATH}/.java-fallback.*"));
+use BhjJava;
+sub debug(@) {
+    print $debug "@_\n";
 }
 my $verbose;
 my $resolve;

@@ -21,5 +21,9 @@ for x in $(seq 1 50); do
         exit -1
     fi
 
-    sawfish-send-window-event '(- |^)Mozilla Firefox\$' C-f
+    next_tab_key=C-f
+    if test "$FF_POP" = true; then
+        next_tab_key=C-b
+    fi
+    sawfish-send-window-event '(- |^)Mozilla Firefox\$' $next_tab_key
 done

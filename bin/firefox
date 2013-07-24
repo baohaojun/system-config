@@ -75,7 +75,7 @@ function do_it() {
 }
 
 if test "$1" = pop; then
-    do_it ~/.logs/firefox-tab-ring ~/.logs/firefox-tab-ring.pop
+    FF_POP=true do_it ~/.logs/firefox-tab-ring ~/.logs/firefox-tab-ring.pop
     exit
 fi
 

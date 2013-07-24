@@ -74,7 +74,7 @@
       (insert data)))
   (setq sdim-server-answer (concat sdim-server-answer data))
   (if (string-match "^end:\n" sdim-server-answer)
-      (progn 
+      (progn
         (setq answer (substring sdim-server-answer 0 (match-beginning 0))
               sdim-server-answer (substring sdim-server-answer 0 (match-end 0)))
         (sdim-got-ime-answer answer))))
@@ -86,9 +86,9 @@
 
 (defvar sdim-minor-mode-map
   (let* ((tmp-map (make-sparse-keymap))
-	(min-key 32)
-	(max-key 126)
-	(key min-key))
+        (min-key 32)
+        (max-key 126)
+        (key min-key))
     (while (<= key max-key)
       (define-key tmp-map (make-vector 1 key) 'sdim-minor-mode-got-key)
       (setq key (1+ key)))
@@ -144,14 +144,14 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
       (setq sdim-translating nil))))
 
 
-    
+
 
 (defun sdim-network-sentinel (proc event)
   '(do nothing))
 
 (defun sdim-connect-to-server ()
   (unless sdim-ime-connection
-    (setq sdim-ime-connection 
+    (setq sdim-ime-connection
           (make-network-process :name "ime-server"
                                 :host "localhost"
                                 :service 12345
@@ -229,9 +229,9 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
                 prefix-arg nil))
 
       (while (> repeat 0)
-	(if (eq major-mode 'term-mode)
-	    (term-send-raw-string sdim-commit-str)
-	  (insert sdim-commit-str))
+        (if (eq major-mode 'term-mode)
+            (term-send-raw-string sdim-commit-str)
+          (insert sdim-commit-str))
         (setq repeat (1- repeat)))
       (if auto-fill-function
           (apply normal-auto-fill-function ())))
@@ -247,19 +247,19 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
           (mapc (lambda (str)
                   (when (eq i cand-index)
                     (put-text-property 0 (length str) 'face '(:background "green2") str))
-		  (put-text-property 0 (length str) 'face '(:height .8) str)
+                  (put-text-property 0 (length str) 'face '(:height .8) str)
                   (setq i (1+ i)
                         prefix (string (+ ?0 (% i 10)) ?.)
-                        sdim-cands-str (concat sdim-cands-str 
+                        sdim-cands-str (concat sdim-cands-str
                                                (if (eq i 0)
                                                    ""
                                                  " ")
                                                prefix
                                                str))) cands-list))))
-     
-        
-        
-              
+
+
+
+
   (let ((buffer-undo-list t))
     (insert sdim-comp-str)
     (move-overlay sdim-overlay (overlay-start sdim-overlay) (point)))
@@ -290,17 +290,17 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
           (unwind-indicator nil))
       (setq sdim-modified-p (buffer-modified-p))
       (unwind-protect
-	  (progn
-	    (sdim-start-translation key)
-	    nil) ; must make sure the sdim-input-method got translated
-		 ; events, in this case, we don't have any generated
-		 ; events, the buffer is already modified by us using
-		 ; insert directly.
+          (progn
+            (sdim-start-translation key)
+            nil) ; must make sure the sdim-input-method got translated
+                 ; events, in this case, we don't have any generated
+                 ; events, the buffer is already modified by us using
+                 ; insert directly.
         (unless unwind-indicator
           (message "sdim translation failed")
-	  (unless (process-live-p sdim-ime-connection)
-	    (setq sdim-ime-connection nil)
-	    (kill-buffer "*ime-server*")))
+          (unless (process-live-p sdim-ime-connection)
+            (setq sdim-ime-connection nil)
+            (kill-buffer "*ime-server*")))
         (sdim-delete-overlays)
         (set-buffer-modified-p sdim-modified-p)
         ;; Run this hook only when the current input method doesn't
@@ -342,7 +342,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
        ((numberp base)
         (string base))
        (t
-        "unknown")))))      
+        "unknown")))))
 
 (defun sdim-start-translation (key)
   "Start translation of the typed character KEY."
@@ -353,29 +353,29 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
       (let* ((echo-keystrokes 0)
              (help-char nil)
              (overriding-terminal-local-map sdim-mode-map)
-	     (input-method-function nil)
+             (input-method-function nil)
              last-command-event last-command this-command)
 
         (setq sdim-translating t)
         (while sdim-translating
 
           (let* ((prompt  (if input-method-use-echo-area
-			      (format "%s %s"
-				      (or input-method-previous-message "")
-				      sdim-cands-str)))
-                 (keyseq (if key 
+                              (format "%s %s"
+                                      (or input-method-previous-message "")
+                                      sdim-cands-str)))
+                 (keyseq (if key
                              (prog1 (vector key) (setq key nil))
-			   (read-key-sequence-vector prompt)))
-                 (keyed-str (format "keyed %s %s\n" 
+                           (read-key-sequence-vector prompt)))
+                 (keyed-str (format "keyed %s %s\n"
                                     (sdim-key-modifier (aref keyseq 0))
                                     (sdim-key-base (aref keyseq 0)))))
             (setq sdim-answer-ready nil sdim-server-answer "")
             (process-send-string sdim-ime-connection keyed-str)
             (while (not sdim-answer-ready)
-	      (accept-process-output sdim-ime-connection nil nil 1))
+              (accept-process-output sdim-ime-connection nil nil 1))
             (setq unwind-indicator t))))))
 
 
 ;; (add-hook 'isearch-mode-hook (lambda () (when sdim-minor-mode (sdim-minor-mode 0))))
 ;; (add-hook 'isearch-mode-end-hook (lambda () (when (eq input-method-function 'sdim-input-method)
-;; 					     (sdim-minor-mode 1))))
+;;                                           (sdim-minor-mode 1))))

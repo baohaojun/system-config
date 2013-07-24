@@ -13,7 +13,7 @@ fi
 
 current_url=$(get-firefox-tab-url)
 
-if echo "$current_url" | grep -P -e '^shit$|file:///|localhost:34567'; then
+if echo "$current_url" | grep -P -e '^shit$|localhost:34567'; then
     echo nothing to do
 else
     firefox push "$current_url"

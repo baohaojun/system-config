@@ -2,56 +2,9 @@
 use strict;
 use Getopt::Long;
 
-my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
-my $qualified_re = qr($id_re(?:\.$id_re)*\b);
-my $connect_re = qr((?: |(?:\[\])+));
-my %super_classes;
-
-my @keywords = ("abstract", "assert", "boolean", "break", "byte",
-              "case", "catch", "char", "class", "const", "continue",
-              "default", "double", "else", "enum", "extends", "false",
-              "final", "finally", "float", "for", "goto", "if",
-              "implements", "import", "instanceof", "int",
-              "interface", "long", "native", "new", "null", "package",
-              "private", "protected", "public", "return", "short",
-              "static", "strictfp", "super", "switch", "synchronized",
-              "this", "throw", "throws", "transient", "true", "try",
-              "void", "volatile", "while" );
-
-my $keywords = join('|', @keywords);
-my $keywords_re = qr(\b(?:$keywords)\b);
-my %keywords;
-
-map {$keywords{$_} = 1} @keywords;
-
-my @modifiers = ('public', 'protected', 'private', 'static',
-'abstract', 'final', 'native', 'synchronized', 'transient',
-'volatile', 'strictfp');
-
-my $modifiers = join('|', @modifiers);
-my $modifier_re = qr($modifiers);
-
-my $debug;
-my $logfile = $0;
-$logfile =~ s!.*/!!;
-if ($ENV{DEBUG} eq 'true') {
-    $debug = *STDERR;
-} else {
-    open($debug, ">", glob("~/.logs/$logfile.log"))
-        or die "Can not open debug log file ~/.logs/$logfile.log";
-}
+use BhjJava;
 sub debug(@) {
     print $debug "@_\n";
-}
-
-
-my $code_dir = $ENV{PWD};
-unless ($ENV{GTAGSROOT}) {
-    chomp($code_dir = qx(find-code-reading-dir));
-    chdir $code_dir or die "can not chdir $code_dir";
-    $ENV{GTAGSROOT} = $code_dir;
-    $ENV{GTAGSDBPATH} = "$ENV{HOME}/.cache/for-code-reading$code_dir";
-    $ENV{GTAGSLIBPATH} = join(":", glob("$ENV{GTAGSDBPATH}/.java-fallback.*"));
 }
 
 $ENV{GTAGS_START_FILE} = "";
@@ -164,14 +117,14 @@ $super_classes{$q_class} = {};
 $done_classes{$q_class} = 1;
 
 # avoid infinite loop in below
-$supers =~ s/<.*?>(\w)/ $1/g; # public class Preference implements Comparable<Preference>, OnDependencyChangeListener {
-$supers =~ s/<.*?>//g; # public class Preference implements Comparable<Preference>, OnDependencyChangeListener {
+$supers =~ s/<.*?>(\w)/ $1/g; # Xx entends Yy<X>implements Zz{
+$supers =~ s/<.*?>//g; # Xx implements Yy<X>,Zz{
 
 while ($supers =~ m/($qualified_re)/g) {
     next if $keywords{$1};
     my $class = $1;
     my $out_class = $class;
-    $out_class =~ s/\..*//;
+    $out_class =~ s/\..*//; # implements Xx.Yy
     my $q_super;
     if ($simple_qualified_map{$out_class}) {
         $q_super = $simple_qualified_map{$out_class} . substr($class, length($out_class));
@@ -180,7 +133,7 @@ while ($supers =~ m/($qualified_re)/g) {
     } elsif (system("global -x java.lang.$out_class >/dev/null 2>&1") == 0) { # must use -x! 'cause it's my hacked tagsearch
         $q_super = "java.lang.$out_class" . substr($class, length($out_class));
     } else {
-        if ($class =~ m/^[a-z].*\./) {
+        if ($class =~ m/^[a-z].*\./) { # is a packaged class already
             $q_super = $class;
         } else {
             warn "super $class not resolved" if length($class) > 1;
@@ -199,22 +152,31 @@ unless ($should_recurse) {
     exit 0;
 }
 
+use DelayedQx;
+
 while (1) {
     my $done = 1;
     for my $q_super (sort keys %done_classes) {
-        unless ($done_classes{$q_super}) {
+        if (not $done_classes{$q_super}) {
             $done = 0;
-            $done_classes{$q_super} = 1;
-            my $supers = qx($0 $q_super);
+            $done_classes{$q_super} = DelayedQx->new($0, $q_super);
+        } elsif (ref $done_classes{$q_super}) {
+            $done = 0;
+            my $supers = $done_classes{$q_super}->value();
             debug "supers is $supers for $q_super";
             for (split(' ', $supers)) {
                 $super_classes{$q_super}{$_} = 1;
-                $done_classes{$_} = 0 unless $done_classes{$_};
+                $done_classes{$_} = DelayedQx->new($0, $_) unless $done_classes{$_};
             }
+            $done_classes{$q_super} = 1;
         }
     }
     last if $done;
 }
+
+my %qclass_defs;
+my %method_prototypes;
+my %qclass_members;
 
 sub print_hierarchy($$)
 {
@@ -225,17 +187,22 @@ sub print_hierarchy($$)
         $method_indent = " " x ($indent * 3 + 3);
     }
 
-    my $java_find_def = qx(java-find-def.pl -e $q_class -v);
+    my $java_find_def = $qclass_defs{$q_class}->value();
     print " " x ($indent * 3 - 3) . "=> " . $java_find_def;
 
     if ($method) {
-        my $q_class2 = (split(" ", $java_find_def))[1];
-        if ($q_class2) {
-            $q_class = $q_class2;
+        for my $method_proto (split("\n", $method_prototypes{$q_class.$method}->value())) {
+            $method_proto =~ s/^/$method_indent/;
+            print "$method_proto\n";
         }
-        system("java-query-qmethod $q_class.$method|perl -npe 's/^/$method_indent/'|sort -u");
     }
-    system("java-get-members $q_class -p | perl -npe 's/^/$method_indent/'") if $verbose;
+
+    if ($verbose) {
+        for my $member (split("\n", $qclass_members{$q_class}->value())) {
+            $member =~ s/^/$method_indent/;
+            print "$member\n";
+        }
+    }
     if ($super_classes{$q_class}) {
         for (sort keys $super_classes{$q_class}) {
             print_hierarchy($_, $indent + 1);
@@ -247,4 +214,15 @@ if ($ENV{EMACS} eq 't') {
     chomp(my $pwd = qx(pwd));
     print "make: Entering directory \`$pwd'\n\n";
 }
+
+for (keys %done_classes) {
+    $qclass_defs{$_} = DelayedQx->new("java-find-def.pl -e $_ -v");
+    if ($method) {
+        $method_prototypes{$_.$method} = DelayedQx->new("java-query-qmethod $_.$method|sort -u");
+    }
+    if ($verbose) {
+        $qclass_members{$_} = DelayedQx->new("java-get-members $_ -p");
+    }
+}
+
 print_hierarchy($q_class, 1);
