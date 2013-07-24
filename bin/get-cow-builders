@@ -1,10 +1,19 @@
 #!/bin/bash
 
 set -e
+
+if test -L /var/cache/pbuilder -a ! -e /var/cache/pbuilder; then
+    sudo rm /var/cache/pbuilder -f
+    sudo ln -s ~/external/cowbuilder /var/cache/pbuilder
+fi
+
 target=${1:-.}
 for system in debian-testing $(for dist in lucid natty oneiric precise ${target%-*}; do echo ubuntu-$dist; done); do
     for arch in i386 amd64; do
         if ! echo $system-$arch|grep -q "$target"; then
+            continue
+        fi
+        if echo $system-$arch|grep -q -e '\*'; then
             continue
         fi
         echo will generate $system-$arch
