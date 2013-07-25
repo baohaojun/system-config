@@ -15,7 +15,7 @@ cow=$(select-output-line find ~/external/cowbuilder -maxdepth 1 -type d -name '*
 echo $cow
 
 pkg=$cow/bare/base.cow
-builddir=~/.cache/build
+builddir=/tmp/build-cow.$$
 mkdir -p $builddir
 id=$(id)
 time sudo unshare -m -- bash -c "

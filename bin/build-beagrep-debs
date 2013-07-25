@@ -27,7 +27,7 @@ if test $(basename $0) = build-beagrep-debs; then
                     rm -rf ~/.cache/beagrep-debs/$branch-$arch
                     mkdir -p ~/.cache/beagrep-debs/$branch-$arch
                     mkdir ~/.cache/build -p
-                    builddir=~/.cache/build
+                    builddir=/tmp/build-cow.$$
                     time sudo unshare -m -- bash -c "
                         mount -o size=2000000k -t tmpfs none $builddir
                         echo copying base files...
