@@ -119,11 +119,6 @@ void FreedesktopBackend::slotNotificationClosed ( const uint &id,const uint &rea
         return;
     Notification noti =  getActiveNotificationByID(m_dbusIdMap.take(id));
     m_snoreIdMap.remove(noti.id());
-
-    if(closeReason == NotificationEnums::CloseReasons::CLOSED)
-    {
-        snore()->notificationActionInvoked(noti);
-    }
     closeNotification(noti, closeReason);
 }
 
