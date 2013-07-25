@@ -2,6 +2,7 @@
 function git()
 {
     (
+        builtin cd -P .
         if test "$(readlink -f .)" = "$(readlink -f ~)" -a "$1" != clone ||
             test "$(readlink -f .)" = "$(readlink -f ~/system-config/)"
         then
