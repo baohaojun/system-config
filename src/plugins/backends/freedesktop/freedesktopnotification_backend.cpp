@@ -66,24 +66,28 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
         m_snoreIdMap[noti.id()] = updateId;
     }
 
-    QDBusPendingReply<uint>  id = m_interface->Notify(noti.application(), updateId, "", noti.title(),
-                                                      noti.text(), actions, hints, noti.sticky()?-1:noti.timeout()*1000);
-
-
+    QString title = QString("%1 - %2").arg(noti.application(), noti.title());
+    QString body(noti.text());
+    if(!supportsRichtext())
+    {
+        title = Snore::toPlainText(title);
+        body = Snore::toPlainText(body);
+    }
+    QDBusPendingReply<uint>  id = m_interface->Notify(noti.application(), updateId, "", title,
+                                                      body, actions, hints, noti.sticky()?-1:noti.timeout()*1000);
 
     if(noti.updateID() == 0)
     {
         id.waitForFinished();
         m_snoreIdMap[noti.id()] = id.value();
         m_dbusIdMap[id.value()] = noti.id();
-        qDebug() << "dbus showed " << id.value() << m_dbusIdMap.keys();
+        qDebug() << Q_FUNC_INFO << "Opend" << id.value();
     }
 }
 void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID){
     Notification noti = getActiveNotificationByID(m_dbusIdMap[id]);
     if(!noti.isValid())
         return;
-    qDebug() <<"Action"<<id<<"|"<<actionID ;
     noti.setActionInvoked ( actionID.toInt() );
     snore()->notificationActionInvoked ( noti );
 }
@@ -91,7 +95,6 @@ void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &action
 void FreedesktopBackend::slotCloseNotification ( Notification notification )
 {
     uint id = m_snoreIdMap.take(notification.id());
-    qDebug() << "dbus closing " << id;
     m_dbusIdMap.remove(id);
     m_interface->CloseNotification(id);
 }
@@ -101,7 +104,7 @@ void FreedesktopBackend::slotCloseNotification ( Notification notification )
 void FreedesktopBackend::slotNotificationClosed ( const uint &id,const uint &reason )
 {
     NotificationEnums::CloseReasons::closeReasons closeReason = NotificationEnums::CloseReasons::closeReasons(reason);
-    qDebug() << "Closed" << id << "|" << closeReason << reason;
+    qDebug() << Q_FUNC_INFO << "Closed" << id << "|" << closeReason << reason;
     if(id == 0)
         return;
     Notification noti =  getActiveNotificationByID(m_dbusIdMap.take(id));
