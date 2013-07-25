@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -e
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) source target"
+fi
+
+source=$(readlink -f "$1")
+target=$(readlink -f "$2")
+
+if ! test -e "$source"; then
+    die "$source doesn't exist";
+fi
+
+dupdir=~/system-config/etc/duplicate-files/$(basename "$source")
+
+if test "$(basename "$source")" != "$(basename "$target")"; then
+    ln -sfT "$dupdir" ~/system-config/etc/duplicate-files/"$(basename "$target")"
+fi
+
+
+for file in "$source" "$target"; do
+    n=0; 
+    while true; do
+	if test -e "$dupdir"/$n && test "$(readlink -f "$dupdir"/$n)" = "$file"; then
+	    break
+	fi
+	if test ! -e "$dupdir"/$n; then
+	    relative-link "$file" "$dupdir"/$n
+	    break
+	fi
+	((n++))
+    done
+done

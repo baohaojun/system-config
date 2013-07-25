@@ -1,8 +1,15 @@
 #!/bin/bash
 set -e
 IFS=$'\n'
-
-dood=($("$@"))
+dood=(
+    $(
+        if test $# = 1; then
+            bash -c "$1"
+        else
+            "$@"
+        fi
+    )
+)
 if test ${#dood[@]} = 0; then
     exit -1
 fi

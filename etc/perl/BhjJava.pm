@@ -1,1 +1,1 @@
-../../bin/BhjJava.pm
+../../gcode/ajoke/etc/perl/BhjJava.pm
