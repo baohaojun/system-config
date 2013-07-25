@@ -44,6 +44,5 @@ fi
 git submodule foreach 'bash -c "git-pull-mac&"' | grep .
 git submodule foreach 'git config user.email baohaojun@gmail.com'
 git config user.email baohaojun@gmail.com
-fix-submodule-dot-git
 ~/bin/after-co-ln-s.sh
 touch ~/system-config/.for-code-reading
