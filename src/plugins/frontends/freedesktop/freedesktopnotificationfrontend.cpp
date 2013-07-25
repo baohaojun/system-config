@@ -129,6 +129,7 @@ QStringList FreedesktopFrontend::GetCapabilities()
 {
     return QStringList()
             << "body"
+            << "urgency"
                //            << "body-hyperlinks"
             << "body-markup"
             << "icon-static"
