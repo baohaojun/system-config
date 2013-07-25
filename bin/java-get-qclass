@@ -1,0 +1,48 @@
+#!/usr/bin/perl
+
+use strict;
+die "Error: Usage $0 class" unless @ARGV;
+open(my $debug, ">", glob("~/.logs/java-get-qclass.log"))
+    or die "Can not open debug log file ~/.logs/java-get-qclass.log";
+sub debug(@) {
+    print $debug "@_\n";
+}
+
+debug "$0 @ARGV";
+
+use Getopt::Long;
+my $type = "class|interface";
+GetOptions(
+    "t=s" => \$type,
+    );
+
+
+my %files_package;
+for (@ARGV) {
+    my $qclass = my $class = $_;
+    if ($class =~ m/\./) {
+        $class =~ s/.*\.//;
+    }
+
+    my $output;
+
+    if ($ENV{GTAGS_START_FILE}) {
+        my $file = $ENV{GTAGS_START_FILE};
+        debug "grep-imenu -e $class -t '$type' -s -p '\.java|\.aidl|\.jar|\.cs|\.dll' -f $file";
+        $output = qx(grep-imenu -e $class -t '$type' -s -p "\.java|\.aidl|\.jar|\.cs|\.dll" -f $file);
+        debug "output is $output from $file";
+    } else {
+        $output = qx(grep-gtags -e $class -t '$type' -s -p "\.java|\.aidl|\.jar|\.cs|\.dll");
+        debug "output is $output from gtags";
+    }
+
+    while ($output =~ m/^(.*?):.*?: <(.*?)>/mg) {
+        my ($file, $tag) = ($1, $2);
+        if ($tag eq $qclass and $qclass =~ /\./) {
+            print $tag;
+            debug "already a qclass: $tag";
+            exit;
+        }
+        print "$tag\n" if "$tag" =~ m/$qclass/;
+    }
+}

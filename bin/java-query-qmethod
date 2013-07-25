@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Getopt::Long;
+my $package_show;
+GetOptions(
+    "p!" => \$package_show,
+    );
+
+sub do_it($)
+{
+    my $q_class = my $q_method = $_[0];
+    $q_class =~ s/(.*)\..*/$1/;
+
+    chomp(my $file = qx(java-find-def.pl -e $q_class));
+    if ($file =~ m/\.jar$/i) {
+        $q_method =~ s/\./-/g;
+        return system("global -x '^$q_method\$' | perl -npe 's/.*?:\\s+//'");
+    }
+    chomp(my $tags_cache = qx(java-tags-cache $file));
+
+    if ($package_show) {
+        system("grep -e '<$q_method>' $tags_cache|perl -npe 's/.*?</</'");
+    } else {
+        system("grep -e '<$q_method>' $tags_cache|perl -npe 's/.*?> : //'");
+    }
+}
+
+for (@ARGV) {
+    if (m/\./) { #take it as qualified name
+        do_it($_);
+    } else {
+        die "Must take qualified names";
+    }
+}
