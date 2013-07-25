@@ -1,0 +1,3 @@
+[submodule "external/global"]
+        path = external/global
+        url = https://github.com/baohaojun/ajoke-global
