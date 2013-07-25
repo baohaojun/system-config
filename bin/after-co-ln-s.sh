@@ -10,7 +10,7 @@ cd ~/system-config/
 
 uname=$(uname|perl -npe 's/_.*//')
 mkdir -p ~/external/bin/$uname/ext
-mkdir -p ~/tmp/notification-manager
+mkdir -p ~/.cache/notification-manager
 mkdir -p ~/external/etc/at
 echo ~/external/etc/at >> ~/.where
 export PATH=/opt/local/libexec/gnubin:$PATH

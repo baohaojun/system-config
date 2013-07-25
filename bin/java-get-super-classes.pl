@@ -13,7 +13,7 @@ if (@ARGV != 2) {
 my ($qclass, $file) = @ARGV;
 die "$file not exist" unless -e $file;
 
-my $cache = "$ENV{HOME}/tmp/code-reading-cache$ENV{PWD}/$file";
+my $cache = "$ENV{HOME}/.cache/code-reading-cache$ENV{PWD}/$file";
 unless (-e $cache) {
     my $dir = $cache;
     $dir =~ s,(.*)/.*,$1,;

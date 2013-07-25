@@ -13,13 +13,13 @@ fi
 
 file=$(readlink -f "$1")
 
-if test ! -d ~/tmp/$(basename $1).unpack; then
-    mkdir -p ~/tmp/$(basename $1).unpack
-    cd ~/tmp/$(basename $1).unpack
+if test ! -d ~/.cache/$(basename $1).unpack; then
+    mkdir -p ~/.cache/$(basename $1).unpack
+    cd ~/.cache/$(basename $1).unpack
     unzip "$file"
 fi
 
-cd ~/tmp/$(basename $1).unpack
+cd ~/.cache/$(basename $1).unpack
 if test ! -e .AndroidManifest.xml-is-good; then
     axml2xml.pl AndroidManifest.xml > .AndroidManifest.xml.bak
     rm ./* -rf

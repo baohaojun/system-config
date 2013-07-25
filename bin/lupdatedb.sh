@@ -9,7 +9,7 @@ else
     lupdatedb.sh /cygdrive/d
     lupdatedb.sh /cygdrive/e
 fi
-mkdir -p ~/tmp/locate
+mkdir -p ~/.cache/locate
 
 #get rid of `/' at the end
 while [[ "${LOCATE_DIRS: -1}" == / ]]; do 

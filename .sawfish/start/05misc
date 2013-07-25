@@ -2,7 +2,7 @@
 echo sawfish starting sub programs
 
 if test -e ~/.fonts/symbol.ttf; then
-    mv ~/.fonts/symbol.ttf ~/tmp/symbol.ttf.$$
+    mv ~/.fonts/symbol.ttf ~/.cache/symbol.ttf.$$
 fi
 
 rm ~/.fonts/monaco-windows.ttf -f

@@ -24,10 +24,10 @@ if test $(basename $0) = build-beagrep-debs; then
                     pkg=~/external/cowbuilder/${branch#for-}-$arch/bare/base.cow
                 fi
                 if test -e $pkg; then
-                    rm -rf ~/tmp/beagrep-debs/$branch-$arch
-                    mkdir -p ~/tmp/beagrep-debs/$branch-$arch
-                    mkdir ~/tmp/build -p
-                    builddir=~/tmp/build
+                    rm -rf ~/.cache/beagrep-debs/$branch-$arch
+                    mkdir -p ~/.cache/beagrep-debs/$branch-$arch
+                    mkdir ~/.cache/build -p
+                    builddir=~/.cache/build
                     time sudo unshare -m -- bash -c "
                         mount -o size=2000000k -t tmpfs none $builddir
                         echo copying base files...
@@ -36,7 +36,7 @@ if test $(basename $0) = build-beagrep-debs; then
                         set -x
                         command sudo cowbuilder --execute --basepath $builddir/$(basename $pkg) \
                             --buildplace $builddir/ \
-                            --bindmounts \"$(readlink -f $HOME/system-config) $(readlink -f $HOME/tmp/beagrep-debs)\" $ADDITIONAL_BUILD_BEAGREP_DEBS_ARGS -- \
+                            --bindmounts \"$(readlink -f $HOME/system-config) $(readlink -f $HOME/.cache/beagrep-debs)\" $ADDITIONAL_BUILD_BEAGREP_DEBS_ARGS -- \
                             $(which do-beagrep-build) \
                             $branch \
                             $HOME \
@@ -81,10 +81,10 @@ export bldir=~/$$
     (
         cd /usr/share/devscripts/Devscripts/
         if grep 'no path found matching pattern' Packages.pm; then
-            cp /usr/share/devscripts/Devscripts/Packages.pm $myhome/tmp/beagrep-debs/$branch.pm;
+            cp /usr/share/devscripts/Devscripts/Packages.pm $myhome/.cache/beagrep-debs/$branch.pm;
         fi
-        if test -e $myhome/tmp/beagrep-debs/$branch.pm; then
-            cp $myhome/tmp/beagrep-debs/$branch.pm /usr/share/devscripts/Devscripts/Packages.pm;
+        if test -e $myhome/.cache/beagrep-debs/$branch.pm; then
+            cp $myhome/.cache/beagrep-debs/$branch.pm /usr/share/devscripts/Devscripts/Packages.pm;
         else
 
             echo 'in /usr/share/devscripts/Devscripts/Packages.pm, search for not found, and add:
@@ -93,7 +93,7 @@ export bldir=~/$$
             }
 '
             echo "after you update the .pm, you can:
-            cp /usr/share/devscripts/Devscripts/Packages.pm $myhome/tmp/beagrep-debs/$branch.pm
+            cp /usr/share/devscripts/Devscripts/Packages.pm $myhome/.cache/beagrep-debs/$branch.pm
 "
             bash
         fi
@@ -109,7 +109,7 @@ export bldir=~/$$
 
     # for clear error messages
     autoreconf -i
-    dpkg-depcheck -l -a -m bash -c './configure; make -j8; true' 2>&1 | tee $myhome/tmp/beagrep-debs/$branch-$arch/make.dep
+    dpkg-depcheck -l -a -m bash -c './configure; make -j8; true' 2>&1 | tee $myhome/.cache/beagrep-debs/$branch-$arch/make.dep
     make install
     apt-get install -y $(cat debian/control | perl -ne 'print if m/^Depends/..m/^Descr/'|grep -v -e Depends:\\\|Description|perl -npe 's/,/ /g')
     dpkg-depcheck -l -a -m bash -c '(
@@ -119,7 +119,7 @@ export bldir=~/$$
         echo main > 1.txt
         mkbeagrepidx
         beagrep -e "main" | grep "1.txt:1:main" || exit -1
-    )' 2>&1 | tee $myhome/tmp/beagrep-debs/$branch-$arch/beagrep.dep
+    )' 2>&1 | tee $myhome/.cache/beagrep-debs/$branch-$arch/beagrep.dep
 
     # do it again
     cd ..
@@ -135,8 +135,8 @@ export bldir=~/$$
     apt-get -f install -y
     apt-get remove -y beagrep
 
-    cp -a * $myhome/tmp/beagrep-debs/$branch-$arch
-    cd $myhome/tmp/beagrep-debs/$branch-$arch
+    cp -a * $myhome/.cache/beagrep-debs/$branch-$arch
+    cd $myhome/.cache/beagrep-debs/$branch-$arch
     export PATH=$myhome/system-config/bin:$PATH
     (
         diff-arg1-arg2 "$(cat beagrep/debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')" \
@@ -147,7 +147,7 @@ export bldir=~/$$
             "$(cat beagrep.dep | perl -ne 'print if m/^Packages needed:/..m/^$/'|grep -v 'Packages needed'|sed -e 's/:.*//')" |
         tee beagrep.diff
     ) || true
-    chown -R $myuid $myhome/tmp/beagrep-debs/$branch-$arch
+    chown -R $myuid $myhome/.cache/beagrep-debs/$branch-$arch
     cd ~
     rm $bldir -rf
 ) || (

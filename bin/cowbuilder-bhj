@@ -15,7 +15,7 @@ cow=$(select-output-line find ~/external/cowbuilder -maxdepth 1 -type d -name '*
 echo $cow
 
 pkg=$cow/bare/base.cow
-builddir=~/tmp/build
+builddir=~/.cache/build
 mkdir -p $builddir
 id=$(id)
 time sudo unshare -m -- bash -c "
@@ -26,5 +26,5 @@ time sudo unshare -m -- bash -c "
     set -x
     command sudo cowbuilder --execute --basepath $builddir/$(basename $pkg) \
         --buildplace $builddir/ \
-        --bindmounts \"$(readlink -f $HOME/system-config) $(readlink -f $HOME/src) $(readlink -f $HOME/.cache) $(readlink -f $HOME/tmp/beagrep-debs)\" -- ${HOME}/bin/cowbuilder-bhj-shell \"$id\"
+        --bindmounts \"$(readlink -f $HOME/system-config) $(readlink -f $HOME/src) $(readlink -f $HOME/.cache) $(readlink -f $HOME/.cache/beagrep-debs)\" -- ${HOME}/bin/cowbuilder-bhj-shell \"$id\"
 "

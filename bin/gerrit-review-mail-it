@@ -36,7 +36,7 @@ if test "$1" = build-failed; then
     
     title=$(echo Automatic hourly build failed $(now) - "$@")
     
-    tmpd=~/tmp/$(basename $0).$$.dir
+    tmpd=~/.cache/$(basename $0).$$.dir
     mkdir -p $tmpd
     cd $tmpd
     tar zxfv $tmpf
