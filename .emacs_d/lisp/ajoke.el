@@ -1,14 +1,13 @@
-;;; skeleton-complete.el --- Dynamically expand expressions by provided skeleton (flex matching)
+;;; ajoke.el --- Ambitious Java On Emacs, K is silent.
 
 ;; Copyright (C) 2013 Bao Haojun
 
 ;; Author: Bao Haojun <baohaojun@gmail.com>
 ;; Maintainer: Bao Haojun <baohaojun@gmail.com>
-;; Created: 15th April 2013
-;; Package-Requires: ((browse-kill-ring "1.3"))
-;; Keywords: abbrev
-;; Version: 0.0.20130419
-;; URL: https://github.com/baohaojun/skeleton-complete
+;; Created: 2013-07-25
+;; Keywords: java
+;; Version: 0.0.20130725
+;; URL: https://github.com/baohaojun/ajoke
 
 ;; This file is not part of GNU Emacs.
 
@@ -30,26 +29,28 @@
 ;;; Commentary:
 
 ;; For more information see the readme at:
-;; https://github.com/baohaojun/skeleton-complete
+;; https://github.com/baohaojun/ajoke
 
 ;;; Code:
 
-(defmacro current-line-string ()
+(defmacro ajoke--current-line ()
  `(buffer-substring-no-properties
    (line-beginning-position)
    (line-end-position)))
 
-(defconst ajoke--emacs-ctags-alist
+(defcustom ajoke--emacs-ctags-alist
   '(("emacs-lisp" . "lisp")
     ("sawfish" . "lisp")
     ("c" . "c++")
     ("objc" . "ObjectiveC")
     ("makefile-gmake" . "make")
-    ("csharp" . "C#")))
+    ("csharp" . "C#"))
+  "Map from Emacs major modes to ctags languages")
 
-(defconst ajoke--emacs-filter-alist
+(defcustom ajoke--emacs-filter-alist
   '(("c" . "| perl -ne '@f = split; print unless $f[1] =~ m/^member|macro$/'")
-    ("php" . "| perl -ne '@f = split; print unless $f[1] =~ m/^variable$/'")))
+    ("php" . "| perl -ne '@f = split; print unless $f[1] =~ m/^variable$/'"))
+  "Map from Emacs major modes to ctags output filter")
 
 (defun set-gtags-start-file ()
   (let ((file (my-buffer-file-name)))
@@ -225,7 +226,7 @@
 
 (defun code-line-number-from-tag-line (line)
   (goto-line line)
-  (let ((subs (split-string (current-line-string))))
+  (let ((subs (split-string (ajoke--current-line))))
     (string-to-number
      (if (string-equal (car subs) "operator")
          (cadddr subs) ;operator +=      function    183 /home...
@@ -233,7 +234,7 @@
 
 (defun code-def-from-tag-line (line)
   (goto-line line)
-  (let ((subs (split-string (current-line-string))))
+  (let ((subs (split-string (ajoke--current-line))))
     (car subs)))
 
 (defun code-indentation-from-tag-line (line)
@@ -286,7 +287,7 @@
 
 (defun tag-name-from-tag-line (line)
   (goto-line line)
-  (car (split-string (current-line-string))))
+  (car (split-string (ajoke--current-line))))
 
 (defun completing-read-one? (prompt collection &rest args)
   (if (= (length (delete-dups collection)) 1)
@@ -299,7 +300,7 @@
         classes)
     (goto-char (point-min))
     (while (search-forward-regexp "class\\|interface" limit t)
-      (let* ((line (current-line-string))
+      (let* ((line (ajoke--current-line))
              (fields (split-string line))
              (name (car fields))
              (type (cadr fields)))
@@ -426,11 +427,11 @@ using ctags-exuberant"
                                            (completing-read-one? "Import which? "
                                                                  (cdr
                                                                   (delete-if-empty
-                                                                   (split-string (current-line-string) "\\s +")))
+                                                                   (split-string (ajoke--current-line) "\\s +")))
                                                                  nil
                                                                  t))
                                    import-list))
-              (setq import-list (cons (format "%s;\n" (current-line-string)) import-list))))
+              (setq import-list (cons (format "%s;\n" (ajoke--current-line)) import-list))))
           (forward-line)
           (beginning-of-line)))
       (goto-char (point-max))
