@@ -1,0 +1,242 @@
+#
+# Copyright (c) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2006
+#	2008, 2009 Tama Communications Corporation
+#
+# This file is part of GNU GLOBAL.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# This file is converted to the following files:
+#	o command source file(for usage and help).
+#	o man format reference manual.
+#	o texinfo format reference manual.
+#
+@HEADER	GLOBAL,1,March 2010,GNU Project
+@NAME	global - print locations of the specified object.
+@SYNOPSIS
+	@name{global} [-aGilnqrstTvx][-e] @arg{pattern}
+	@name{global} -c[iIqsv] @arg{prefix}
+	@name{global} -f[anqrstvx][-L file-list] @arg{files}
+	@name{global} -g[aGilnoOqtvVx][-L file-list][-e] @arg{pattern} [@arg{files}]
+	@name{global} -I[ailnqtvx][-e] @arg{pattern}
+	@name{global} -P[aGilnoOqtvVx][-e] @arg{pattern}
+	@name{global} -p[qrv]
+	@name{global} -u[qv]
+@DESCRIPTION
+	@name{Global} finds locations of the specified object
+	in C, C++, Yacc, Java, PHP and Assembly source files,
+	and print the path name, line number and line image of the locations.
+	@name{Global} can locate not only object definitions but also object
+	references and other symbols.
+
+	@name{Global} can treat a source tree, that is, a directory that
+	has sub-directories and source files as a project.
+	In advance of using this command, you must execute @xref{gtags,1}
+	at the root directory of a project to make tag files.
+	Then you can execute this command anywhere in the project.
+	You need not specify where the tag file is.
+	Instead, @name{global} locates it by itself.
+
+	You can specify a regular expression for the @arg{pattern}.
+	@name{Global} understands two different versions of regular expression
+	syntax: @arg{basic} and @arg{extended}. The default is @arg{extended}.
+@COMMANDS
+	The following commands are available:
+	@begin_itemize
+	@item{<no command> @arg{pattern}}
+		Print objects which match to the @arg{pattern}.
+		By default, print object definitions.
+	@item{@option{-c}, @option{--completion} [@arg{prefix}]}
+		Print object names which start with the specified @arg{prefix}.
+		If @arg{prefix} is not specified, print all object names.
+	@item{@option{-f}, @option{--file} @arg{files}}
+		Print all objects in the @arg{files}.
+		This option implies the @option{-x} option.
+	@item{@option{-g}, @option{--grep} @arg{pattern} [@arg{files}]}
+		Print all lines which match to the @arg{pattern}.
+		If @arg{files} is specified, this command searchs in the files.
+	@item{@option{--help}}
+		Show help.
+	@item{@option{-I}, @option{--idutils} @arg{pattern}}
+		Print all lines which match to the @arg{pattern}.
+		This function use @xref{idutils,1} as a search engine.
+		To use this command, you need to install @xref{idutils,1}
+		in your system and execute @xref{gtags,1} with the @option{-I} option.
+	@item{@option{-P}, @option{--path} [@arg{pattern}]}
+		Print path names which match to the @arg{pattern}.
+		If no pattern specified, print all path names in the project.
+	@item{@option{-p}, @option{--print-dbpath}}
+		Print the location of @file{GTAGS}.
+	@item{@option{-u}, @option{--update}}
+		Update tag files incrementally.
+		This command internally invokes @xref{gtags,1}.
+		You can execute this command anywhere in the project
+		differing from @xref{gtags,1}.
+	@item{@option{--version}}
+		Show version number.
+	@end_itemize
+@OPTIONS
+	The following options are available:
+	@begin_itemize
+	@item{@option{-a}, @option{--absolute}}
+		Print absolute path name. By default, print relative path name.
+	@item{@option{--from-here} @arg{context}}
+		Decide tag type by the @arg{context}. The @arg{context} must be 'lineno:path'.
+		If this option is specified then the @option{-s} and @option{-r}
+		are ignored.
+		Regular expression is not allowed for the @arg{pattern}.
+		This option assumes use in conversational environments such as
+		editors and IDEs.
+	@item{@option{-e}, @option{--regexp} @arg{pattern}}
+		Use @arg{pattern} as the pattern; useful to protect patterns
+		beginning with @file{-}.
+	@item{@option{--encode-path} @arg{chars}}
+		Convert path characters in @arg{chars} into a '%' symbol, followed by the
+		two-digit hexadecimal representation of the character.
+		A blank will be converted to '%20'.
+	@item{@option{-G}, @option{--basic-regexp}}
+		Interpret @arg{pattern} as a basic regular expression.
+		The default is extended regular expression.
+	@item{@option{-i}, @option{--ignore-case}}
+		Ignore case distinctions in the pattern.
+	@item{@option{-l}, @option{--local}}
+		Print only objects which exist under the current directory.
+	@item{@option{-L}, @option{--file-list} @arg{file-list}}
+		Obtain files from @arg{file-list} in addition to the arguments.
+	@item{@option{-n}, @option{--nofilter}}
+		Suppress sort filter and path conversion filter.
+	@item{@option{-O}, @option{--only-other}}
+		Treat only text files other than source code like @file{README}.
+		This option is valid only with the @option{-g} or @option{-P} command.
+		This option override the @option{-o} option.
+	@item{@option{-o}, @option{--other}}
+		Treat not only source files but also text files other than source code
+		like @file{README}.
+		This option is valid only with the @option{-g} or @option{-P} command.
+	@item{@option{--print0}}
+		Print each record followed by a null character instead of a newline.
+	@item{@option{-q}, @option{--quiet}}
+		Quiet mode.
+	@item{@option{-r}, @option{--reference}, @option{--rootdir}}
+		Print locations of object references.
+		With the @option{-p} option, print the root directory of the project.
+	@item{@option{--result} @arg{format}}
+		Print out using the specified @arg{format}.
+		@arg{format} may be @arg{path}, @arg{ctags}, @arg{ctags-x}, @arg{grep} or @arg{cscope}.
+		The default is @arg{path}.
+		The @option{--result=ctags} and @option{--result=ctags-x} are
+		equivalent to the @option{-t} and @option{-x} respectively.
+		The @option{--result} option is given to priority more than the -t and -x option.
+	@item{@option{-s}, @option{--symbol}}
+		Print locations of the specified symbol other than definitions.
+	@item{@option{-T}, @option{--through}}
+		Go through all the tag files listed in @var{GTAGSLIBPATH}.
+		By default, stop searching when tag is found.
+		This option is ignored when either @option{-s}, @option{-r}
+		or @option{-l} option is specified.
+	@item{@option{-t}, @option{--tags}}
+		Use standard ctags format.
+	@item{@option{-v}, @option{--verbose}}
+		Verbose mode.
+	@item{@option{-V}, @option{--invert-match}}
+		Invert the sense of matching, to select non-matching lines.
+		This option is valid in the @option{-g} and @option{-P} command.
+	@item{@option{-x}, @option{--cxref}}
+		Use standard ctags cxref (with the @arg{-x}) format.
+	@end_itemize
+@EXAMPLES
+	$ ls -F
+	Makefile      src/    lib/
+	$ gtags
+	$ global main
+	src/main.c
+	$ global -x main
+	main              10 src/main.c  main (argc, argv) {
+	$ global -f src/main.c
+	main              10 src/main.c  main (argc, argv) {
+	func1		  55 src/main.c  func1() {		  
+	func2		  72 src/main.c  func2() {		  
+	func3		 120 src/main.c  func3() {		  
+	$ global -x '^[sg]et'
+	set_num           20 lib/util.c  set_num(values) {
+	get_num           30 lib/util.c  get_num() {
+	$ global -rx '^[sg]et'
+	get_num          205 src/op.c            while (get_num() > 0) {
+	set_num          113 src/op.c            set_num(32);
+	set_num          225 src/opop.c               if (set_num(0) > 0) {
+	$ global strlen
+	$ (cd /usr/src/sys; gtags)
+	$ export GTAGSLIBPATH=/usr/src/sys
+	$ global strlen
+	../../../usr/src/sys/libkern/strlen.c
+	$ (cd /usr/src/lib; gtags)
+	$ GTAGSLIBPATH=/usr/src/lib:/usr/src/sys
+	$ global strlen
+	../../../usr/src/lib/libc/string/strlen.c
+@FILES
+	@begin_itemize
+	@item{@file{GTAGS}}
+		Tag file for object definitions.
+	@item{@file{GRTAGS}}
+		Tag file for object references.
+	@item{@file{GPATH}}
+		Tag file for path of source files.
+	@item{@file{GTAGSROOT}}
+		If environment variable @var{GTAGSROOT} is not set
+		and file @file{GTAGSROOT} exists in the same directory with @file{GTAGS}
+		then @name{global} set the @var{GTAGSROOT} to the content of the file.
+	@item{@file{$HOME/.globalrc}, @file{/etc/gtags.conf}, @file{[sysconfdir]/gtags.conf}}
+		Configuration file.
+	@end_itemize
+@ENVIRONMENT
+	The following environment variables affect the execution of @name{global}:
+	@begin_itemize
+	@item{@var{GTAGSROOT}}
+		The root directory of the project.
+	@item{@var{GTAGSDBPATH}}
+		The directory on which tag files exist.
+		This value is ignored when @var{GTAGSROOT} is not defined.
+	@item{@var{GTAGSLIBPATH}}
+		If this variable is set, it is used as the path to search
+		for library functions. If the specified object is not
+		found in the project, @name{global} also search in these paths.
+		Since only @file{GTAGS} is targeted in the retrieval, this variable is
+		ignored when the @option{-r} or @option{-s} is specified.
+	@item{@var{GTAGSCONF}}
+		Configuration file. The default is @file{$HOME/.globalrc}.
+	@item{@var{GTAGSLABEL}}
+		Configuration label. The default is @arg{default}.
+	@item{@var{MAKEOBJDIRPREFIX}}
+		If this variable is set, @file{$MAKEOBJDIRPREFIX} is used as the prefix
+		of BSD-style objdir. The default is @file{/usr/obj}.
+	@end_itemize
+@CONFIGURATION
+	The following configuration variables affect the execution of @name{global}:
+	@begin_itemize
+	@item{@code{icase_path}(boolean)}
+		Ignore case distinctions in the @arg{pattern}.
+	@end_itemize
+@DIAGNOSTICS
+	@name{Global} exits with a non 0 value if an error occurred, 0 otherwise.
+@SEE ALSO
+	@xref{gtags,1},
+	@xref{htags,1},
+	@xref{less,1}.
+
+        GNU GLOBAL source code tag system@br
+        (http://www.gnu.org/software/global/).
+@AUTHOR
+	Shigio YAMAGUCHI, Hideki IWAMOTO and others.
+@HISTORY
+	The @name{global} command appeared in FreeBSD 2.2.2.

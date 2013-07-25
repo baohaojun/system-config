@@ -1,0 +1,131 @@
+%{
+#include "strmake.h"
+#define START_VARIABLE	1001
+#define START_WORD	2001
+#define START_SHARP	3001
+#define START_YACC	4001
+#define IS_RESERVED_WORD(a)	((a) >= START_WORD)
+#define IS_RESERVED_VARIABLE(a)	((a) >= START_VARIABLE && (a) < START_WORD)
+#define IS_RESERVED_SHARP(a)	((a) >= START_SHARP && (a) < START_YACC)
+#define IS_RESERVED_YACC(a)	((a) >= START_YACC)
+
+#define JAVA_ABSTRACT	2001
+#define JAVA_BOOLEAN	2002
+#define JAVA_BREAK	2003
+#define JAVA_BYTE	2004
+#define JAVA_CASE	2005
+#define JAVA_CATCH	2006
+#define JAVA_CHAR	2007
+#define JAVA_CLASS	2008
+#define JAVA_CONST	2009
+#define JAVA_CONTINUE	2010
+#define JAVA_DEFAULT	2011
+#define JAVA_DO	2012
+#define JAVA_DOUBLE	2013
+#define JAVA_ELSE	2014
+#define JAVA_ENUM	2015
+#define JAVA_EXTENDS	2016
+#define JAVA_FALSE	2017
+#define JAVA_FINAL	2018
+#define JAVA_FINALLY	2019
+#define JAVA_FLOAT	2020
+#define JAVA_FOR	2021
+#define JAVA_GOTO	2022
+#define JAVA_IF	2023
+#define JAVA_IMPLEMENTS	2024
+#define JAVA_IMPORT	2025
+#define JAVA_INSTANCEOF	2026
+#define JAVA_INT	2027
+#define JAVA_INTERFACE	2028
+#define JAVA_LONG	2029
+#define JAVA_NATIVE	2030
+#define JAVA_NEW	2031
+#define JAVA_NULL	2032
+#define JAVA_PACKAGE	2033
+#define JAVA_PRIVATE	2034
+#define JAVA_PROTECTED	2035
+#define JAVA_PUBLIC	2036
+#define JAVA_RETURN	2037
+#define JAVA_SHORT	2038
+#define JAVA_STATIC	2039
+#define JAVA_STRICTFP	2040
+#define JAVA_SUPER	2041
+#define JAVA_SWITCH	2042
+#define JAVA_SYNCHRONIZED	2043
+#define JAVA_THIS	2044
+#define JAVA_THROW	2045
+#define JAVA_THROWS	2046
+#define JAVA_UNION	2047
+#define JAVA_TRANSIENT	2048
+#define JAVA_TRUE	2049
+#define JAVA_TRY	2050
+#define JAVA_VOID	2051
+#define JAVA_VOLATILE	2052
+#define JAVA_WHILE	2053
+#define JAVA_WIDEFP	2054
+%}
+struct keyword { char *name; int token; }
+%%
+abstract, JAVA_ABSTRACT
+boolean, JAVA_BOOLEAN
+break, JAVA_BREAK
+byte, JAVA_BYTE
+case, JAVA_CASE
+catch, JAVA_CATCH
+char, JAVA_CHAR
+class, JAVA_CLASS
+const, JAVA_CONST
+continue, JAVA_CONTINUE
+default, JAVA_DEFAULT
+do, JAVA_DO
+double, JAVA_DOUBLE
+else, JAVA_ELSE
+enum, JAVA_ENUM
+extends, JAVA_EXTENDS
+false, JAVA_FALSE
+final, JAVA_FINAL
+finally, JAVA_FINALLY
+float, JAVA_FLOAT
+for, JAVA_FOR
+goto, JAVA_GOTO
+if, JAVA_IF
+implements, JAVA_IMPLEMENTS
+import, JAVA_IMPORT
+instanceof, JAVA_INSTANCEOF
+int, JAVA_INT
+interface, JAVA_INTERFACE
+long, JAVA_LONG
+native, JAVA_NATIVE
+new, JAVA_NEW
+null, JAVA_NULL
+package, JAVA_PACKAGE
+private, JAVA_PRIVATE
+protected, JAVA_PROTECTED
+public, JAVA_PUBLIC
+return, JAVA_RETURN
+short, JAVA_SHORT
+static, JAVA_STATIC
+strictfp, JAVA_STRICTFP
+super, JAVA_SUPER
+switch, JAVA_SWITCH
+synchronized, JAVA_SYNCHRONIZED
+this, JAVA_THIS
+throw, JAVA_THROW
+throws, JAVA_THROWS
+union, JAVA_UNION
+transient, JAVA_TRANSIENT
+true, JAVA_TRUE
+try, JAVA_TRY
+void, JAVA_VOID
+volatile, JAVA_VOLATILE
+while, JAVA_WHILE
+widefp, JAVA_WIDEFP
+%%
+int
+java_reserved_word(const char *str, int len)
+{
+	struct keyword *keyword;
+
+	keyword = java_lookup(str, len);
+	return (keyword && IS_RESERVED_WORD(keyword->token)) ? keyword->token : 0;
+}
