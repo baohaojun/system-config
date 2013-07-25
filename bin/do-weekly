@@ -45,7 +45,7 @@ bhj_page=bhj_$(date +%Y.%m.%d -d "$friday")
 set -x
 do_overwrite=false
 if test -e $bhj_page; then
-    yes-or-no "overwrite existing $bhj_page?" && do_overwrite=true
+    yes-or-no-p "overwrite existing $bhj_page?" && do_overwrite=true
 fi
 
 { test $do_overwrite = true || ! test -e $bhj_page; }  && (

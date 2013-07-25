@@ -22,7 +22,7 @@ my $lookup_needle = shift @ARGV;
 
 my $ctags_lang_map = qx(lang-map-for-ctags ~/.globalrc);
 
-open(my $xref, "-|", "ctags-exuberant", "--langmap=$ctags_lang_map", "-xu", "--c-kinds=+p", "--extra=+q", @ARGV) or
+open(my $xref, "-|", "ctags-ajoke", "--langmap=$ctags_lang_map", "-xu", "--c-kinds=+p", "--extra=+q", @ARGV) or
     die "Can not open xref";
 
 my $lookup_needle_re;

@@ -14,22 +14,27 @@ if ! test -e "$source"; then
 fi
 
 dupdir=~/system-config/etc/duplicate-files/$(basename "$source")
+mkdir -p "$dupdir"
 
 if test "$(basename "$source")" != "$(basename "$target")"; then
-    ln -sfT "$dupdir" ~/system-config/etc/duplicate-files/"$(basename "$target")"
+    if test $(readlink -f "$dupdir") != $(readlink -f ~/system-config/etc/duplicate-files/"$(basename "$target")"); then
+        relative-link "$dupdir" ~/system-config/etc/duplicate-files/"$(basename "$target")"
+    else
+        echo $dupdir already linked for $(basename $target)
+    fi
 fi
 
 
 for file in "$source" "$target"; do
-    n=0; 
+    n=0;
     while true; do
-	if test -e "$dupdir"/$n && test "$(readlink -f "$dupdir"/$n)" = "$file"; then
-	    break
-	fi
-	if test ! -e "$dupdir"/$n; then
-	    relative-link "$file" "$dupdir"/$n
-	    break
-	fi
-	((n++))
+        if test -e "$dupdir"/$n && test "$(readlink -f "$dupdir"/$n)" = "$file"; then
+            break
+        fi
+        if test ! -e "$dupdir"/$n; then
+            relative-link "$file" "$dupdir"/$n
+            break
+        fi
+        ((n++)) || true
     done
 done

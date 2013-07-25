@@ -5,6 +5,10 @@ set -ex
 test "$(pwd)" = $HOME && cd ~/system-config
 cd "$(dirname "$(lookup-file .git)")"
 
+if test -e .git-push-mac-hooks; then
+    bash .git-push-mac-hooks
+fi
+
 if git-is-ancestor master HEAD; then
     command git co -B master
 fi

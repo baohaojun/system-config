@@ -10,16 +10,15 @@ fi
 for contact in ${@:-*}; do
     salution=${contact##*-}
     if test "$salution" = "$contact"; then
-	salution=$(echo "$contact"|perl -npe 'use Encode; $_ = decode_utf8($_); s/.*(..)/$1/; $_=encode_utf8($_)')
+        salution=$(echo "$contact"|perl -npe 'use Encode; $_ = decode_utf8($_); s/.*(..)/$1/; $_=encode_utf8($_)')
     fi
-    echo "Send sms to $contact" 
+    echo "Send sms to $contact"
     rm -rf ."$contact".failed
-    if echo "$text" | grep -q -e "^$salution" && ! yes-or-no "you already have $salution in your text, repeat it?" ; then
-	salution=""
+    if echo "$text" | grep -q -e "^$salution" && ! yes-or-no-p "you already have $salution in your text, repeat it?" ; then
+        salution=""
     else
-	salution=$salution，
+        salution=$salution，
     fi
-	
+
     printf "%s%s%s\n" "$salution" "$text" "$me" | gnokii --sendsms "$(cat -- "$contact")" || touch ."$contact".failed
 done
-    

@@ -9,7 +9,7 @@ if (@ARGV != 3) {
 my ($file, $target_line, $target_def) = @ARGV;
 
 chomp(my $lang = qx(lang_for_file $file));
-open(my $ctags_pipe, "-|", "ctags-exuberant --c-kinds=+p --language-force=$lang -xu $file")
+open(my $ctags_pipe, "-|", "ctags-ajoke --c-kinds=+p --language-force=$lang -xu $file")
     or die "Error: can not open ctags pipe";
 
 open(my $debug, ">", glob("~/.logs/ctags-show-definition.log")) or
@@ -29,17 +29,17 @@ while (<$ctags_pipe>) {
     my ($def, $type, $line) = split;
     debug "got def: $def, type: $type, line: $line";
     if ($line eq $target_line and $type eq 'macro' and $_ =~ m/#\s*define/) {
-	debug "exit because line eq to target_line $target_line";
-	exit 0;
+        debug "exit because line eq to target_line $target_line";
+        exit 0;
     }
     $line_def_map{$line} = [$def, $type] unless $type eq 'member' or $type eq 'macro' and $_ !~ /\\$/;
     if ($type ne "member") {
-	$last_non_member_line = $line;
+        $last_non_member_line = $line;
     }
 
     if ($def eq $target_def) {
-	debug "got matching $def on $line";
-	$matching_def_map{$last_non_member_line} = [$def, $type];
+        debug "got matching $def on $line";
+        $matching_def_map{$last_non_member_line} = [$def, $type];
     }
 }
 
@@ -52,8 +52,8 @@ my ($start_line, $end_line) = (1, 1000000);
 for my $line (sort {$a <=> $b} keys %line_def_map) {
     debug "checking $line";
     if ($line > $target_line) {
-	$end_line = $line;
-	last;
+        $end_line = $line;
+        last;
     }
     $start_line = $line;
 }

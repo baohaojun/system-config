@@ -25,3 +25,6 @@ for x in $(git st -s |grep '^.\S' -P | pn 2); do
         break
     done
 done
+
+. .gitx
+git submodule foreach $0

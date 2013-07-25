@@ -4,10 +4,17 @@ if test $(basename $0) != cowbuilder-bhj; then
    user=$(echo "$@"|perl -npe 's/.*?\((.*?)\).*/$1/')
    uid=$(echo "$@"|perl -npe 's/.*?=(\d+).*/$1/')
    echo $user $uid
-   apt-get install sudo bash-completion
+   apt-get build-dep global
+
+   apt-get install sudo bash-completion autoconf automake \
+       autoreconf bison exuberant-ctags flex \
+       gperf libltdl-dev libtool lynx netbase \
+       openjdk-6-jdk strace tasksel git
+
    echo "$user ALL=NOPASSWD: ALL" > /etc/sudoers.d/$user
    chmod 440 /etc/sudoers.d/$user
    useradd $user -u $uid -s /bin/bash
+   chown $user\: /home/$user
    bash
 fi
 
@@ -26,5 +33,9 @@ time sudo unshare -m -- bash -c "
     set -x
     command sudo cowbuilder --execute --basepath $builddir/$(basename $pkg) \
         --buildplace $builddir/ \
-        --bindmounts \"$(readlink -f $HOME/system-config) $(readlink -f $HOME/src) $(readlink -f $HOME/.cache) $(readlink -f $HOME/.cache/beagrep-debs)\" -- ${HOME}/bin/cowbuilder-bhj-shell \"$id\"
+        --bindmounts \"$(readlink -f $HOME/system-config)
+                       $(readlink -f $HOME/src)
+                       $(readlink -f $HOME/.cache)
+                       $(readlink -f $HOME/.cache/beagrep-debs)
+                     \" -- ${HOME}/bin/cowbuilder-bhj-shell \"$id\"
 "

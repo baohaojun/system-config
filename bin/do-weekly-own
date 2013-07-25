@@ -5,7 +5,7 @@ if test .weeklyrc; then
     . .weeklyrc
 fi
 if echo "${1:-Fri}" |grep fri -iqv; then
-    yes-or-no "Warning: you are not doing weekly for a Friday, continue?" || exit;
+    yes-or-no-p "Warning: you are not doing weekly for a Friday, continue?" || exit;
 fi
 
 year_page=$(date +%Y -d "${1:-today}")
@@ -36,7 +36,7 @@ N/A
 {color:#008000}{*}Green Flag{*}{color}
 {code:none}
 EOF
-    emacs-nt -Q --batch --eval "$(bash do-weekly.help $bhj_page.1)" >/dev/null 2>&1 
+    emacs-nt -Q --batch --eval "$(bash do-weekly.help $bhj_page.1)" >/dev/null 2>&1
     cat $bhj_page.1
     rm $bhj_page.1
     cat <<EOF

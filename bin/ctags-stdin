@@ -2,5 +2,5 @@
 tmpf=/tmp/$(basename $0).$$
 cat > $tmpf
 
-ctags-exuberant "$@" $tmpf
+ctags-ajoke "$@" $tmpf
 rm $tmpf

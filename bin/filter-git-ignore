@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+
+use strict;
+
+my %gitdir_ignored_files;
+my %file_gitdir;
+while (<>) {
+    next unless m/(.*?):\d+:/;
+
+    my $file = $1;
+
+    unless (exists $file_gitdir{$file}) {
+	# need find the gitdir
+	my $dir = $file;
+	while (1) {
+	    my $dir_save = $dir;
+	    $dir =~ s!(.*)/.*!$1!;
+	    last if $dir_save eq $dir;
+	    if (-e "$dir/.git") {
+		$file_gitdir{$file} = $dir;
+		open(my $pipe, "-|", "cd $dir; git clean -xfd -n | pn 3 | perl -npe 's!^!$dir/!'");
+		$gitdir_ignored_files{$dir} = {} unless exists $gitdir_ignored_files{$dir};
+		for (<$pipe>) {
+		    chomp;
+		    if (m!/$!) {
+			for (split("\n", qx(find $_ -type f))) {
+			    next unless $_;
+			    $gitdir_ignored_files{$dir}{$_} = 1;
+			}
+		    } else {
+			$gitdir_ignored_files{$dir}{$_} = 1;
+		    }
+		}		
+		last;
+	    }
+	}
+    }
+    if ($gitdir_ignored_files{$file_gitdir{$file}}{$file}) {
+	next;
+    }
+    print;
+}
+
+
