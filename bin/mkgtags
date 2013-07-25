@@ -1,0 +1,163 @@
+#!/bin/bash
+
+# gtags will call sort, which will use a lot of space for large projects.
+export TMPDIR=~/.cache
+mkdir -p $TMPDIR
+
+cd -P .
+outDir=~/.cache/for-code-reading/"`pwd`"
+srcDir=`pwd`
+relativeSrcDir=.
+while test "$outDir" != "" -a ! -d "$outDir"/.beagrep; do
+    outDir=${outDir%/*}
+done
+
+if test "$outDir" = "`readlink -f ~`"; then
+    outDir=""
+fi
+
+if test -r "$outDir" -a "$outDir" != ~/.cache/for-code-reading/"`pwd`";
+then
+    higherSrcDir=${outDir#~/.cache/for-code-reading/}
+
+    if tty >/dev/null && test "$IN_EMACS" != true
+    then
+        read -p "Do you want update code reading for $higherSrcDir? (Y/n): " ans
+    else
+        ans=Y
+    fi
+
+    if test "$ans" = n -o "$ans" = N; then
+        outDir=~/.cache/for-code-reading/"`pwd`"
+    else
+        DoUpDir=true
+        relativeSrcDir=${srcDir/#$higherSrcDir/.}
+        cd $higherSrcDir
+    fi
+else
+    outDir=~/.cache/for-code-reading/"`pwd`"
+fi
+
+function mkcscope_files() {
+    if tty >/dev/null 2>&1 || test "$RUNNING_IN_CRON" = true || test "$IN_EMACS" = true; then
+        find $relativeSrcDir \( '-path' '*/CVS' \
+            '-o' '-path' '*/.svn' \
+            '-o' '-path' '*/autom4te.cache' \
+            '-o' '-path' '*/{arch}' \
+            '-o' '-path' '*/.hg' \
+            '-o' '-path' '*/_darcs' \
+            '-o' '-path' '*/out-*' \
+            '-o' '-path' '*/.git' \
+            '-o' '-path' '*/.bzr' \
+            '-o' '-path' '*~*' \
+            '-o' '-path' '*#' \
+            '-o' '-path' '*/TAGS' \
+            '-o' '-path' '*/tags' \
+            '-o' '-path' '*/semantic.cache' \
+            '-o' '-iname' '*.o' \
+            '-o' '-iname' '*.class' \
+            '-o' '-iname' '*.obj' \
+            '-o' '-iname' '*.pyc' \
+            '-o' '-iname' '*.elc' \
+            '-o' '-path' '*/.ignore' \
+            '-o' '-path' '*/.repo' \
+            '-o' '-iname' '*.ncb' \
+            '-o' '-iname' "cscope.files" \
+            -o -iname "cscope.out" \
+            -o -ipath "*/.beagrep" \
+            \) -prune -o -type f -print |
+            perl -ne 'print unless m,
+                (?:frameworks/base/api/[0-9]+.xml)|
+                (?:frameworks/base/docs/html/sdk/api_diff/.*\.xml)|
+                (?:development/sdk/api-versions.xml),x' |
+            tee "$outDir"/cscope.files
+    else
+        cat
+    fi | if test -e ~/etc/gtags-filter.rc; then
+        bash ~/etc/gtags-filter.rc
+    else
+        cat
+    fi
+}
+
+function _mk_help_dir() {
+    mkdir -p "$outDir"
+}
+
+function mkgtags() {
+    _mk_help_dir
+    if test -e .globalrc; then
+        export GTAGSCONF=$(readlink -f .globalrc)
+    fi
+    if test -e "$outDir"/GTAGS && test "$(stat -c %s "$outDir"/GTAGS)" = 0; then
+        (
+            cd "$outDir"
+            rm GPATH GRTAGS GTAGS GTAGS.dump -f
+        )
+    fi
+    mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
+
+    (
+        flock 9
+        GTAGSROOT=$PWD GTAGSDBPATH=$outDir global -x '.*' | awk '{print $1" "$4}' | sort -u > "$outDir"/GTAGS.dump
+    ) 9<"$outDir"/GTAGS &
+
+}
+
+function mkgtags-filter() {
+    gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
+}
+
+function wlp() {
+    case $(uname) in
+        CYGWIN*)
+            cygpath -alm "$1"
+            ;;
+        *)
+            readlink -m "$1"
+            ;;
+    esac
+}
+
+function mkbeagrepidx() {
+    mkdir -p "$outDir"/.beagrep
+    if test -e ~/.mkbeagrepidx.rc; then
+        . ~/.mkbeagrepidx.rc
+    fi
+
+    if test -e ./.mkbeagrepidx.rc; then
+        . ./.mkbeagrepidx.rc
+    fi
+
+    local -a ADDITIONAL_OPTIONS=
+
+    if test $# != 0; then
+        ADDITIONAL_OPTIONS=("$@")
+    elif test "$BEAGREP_IGNORE_DIR_PATTERNS"; then
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$BEAGREP_IGNORE_DIR_PATTERNS")
+    elif test -e "$(lookup-file .beagrep-ignore 2>/dev/null)"; then
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "*/.git,$(cat $(lookup-file .beagrep-ignore))")
+    else
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$PWD/out,*/.repo,*/.git")
+    fi
+
+    beagrep-build-index --recursive \
+        "${ADDITIONAL_OPTIONS[@]}" \
+        --enable-deletion \
+        --target "$(wlp "$outDir"/.beagrep/)" \
+        "$relativeSrcDir" 2>&1 \
+        |tee -a "$outDir"/.beagrep-build-log
+
+    cat "$outDir"/.beagrep-build-log |grep "No filter for" \
+        |sort -u > "$outDir"/.beagrep-build-log2
+
+    mv "$outDir"/.beagrep-build-log2 "$outDir"/.beagrep-build-log
+
+}
+
+function for-code-reading() {
+    mkbeagrepidx&
+    mkgtags "$@" #must not put background, the tty(1) depends on this
+}
+
+`basename $0` "$@"
