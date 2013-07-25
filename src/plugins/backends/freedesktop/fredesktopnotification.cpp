@@ -33,13 +33,13 @@ FreedesktopImageHint::FreedesktopImageHint(){
 FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
 {
     QImage image(img.convertToFormat(QImage::Format_ARGB32));
-    this->imageData.append((char*)image.rgbSwapped().bits(),image.numBytes());
-    width=image.width();
-    height=image.height();
-    rowstride=image.bytesPerLine();
-    hasAlpha=image.hasAlphaChannel();
-    channels =image.isGrayscale()?1:hasAlpha?4:3;
-    bitsPerSample=image.depth()/channels;
+    imageData = QByteArray((char*)image.rgbSwapped().bits(),image.numBytes());
+    width = image.width();
+    height = image.height();
+    rowstride = image.bytesPerLine();
+    hasAlpha = image.hasAlphaChannel();
+    channels = image.isGrayscale()?1:hasAlpha?4:3;
+    bitsPerSample = image.depth()/channels;
 
 }
 
@@ -50,14 +50,26 @@ QImage FreedesktopImageHint::toQImage() const {
 
 QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopImageHint &i) {
     a.beginStructure();
-    a << i.width<<i.height<<i.rowstride<<i.hasAlpha<<i.bitsPerSample<<i.channels<<i.imageData;
+    a << i.width <<
+         i.height <<
+         i.rowstride <<
+         i.hasAlpha <<
+         i.bitsPerSample <<
+         i.channels <<
+         i.imageData;
     a.endStructure();
     return a;
 }
 
 const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopImageHint &i) {
-    a.beginStructure();    
-    a >> i.width>> i.height>> i.rowstride>> i.hasAlpha>> i.bitsPerSample>> i.channels>> i.imageData;
+    a.beginStructure();
+    a >> i.width >>
+         i.height >>
+         i.rowstride >>
+         i.hasAlpha >>
+         i.bitsPerSample >>
+         i.channels >>
+         i.imageData;
     a.endStructure();
     return a;
 }

@@ -3,8 +3,6 @@
 #include "core/plugins/snorebackend.h"
 #include "notificationinterface.h"
 
-class fNotification;
-
 class  FreedesktopBackend:public Snore::SnoreBackend
 {
     Q_OBJECT
@@ -17,21 +15,19 @@ public:
 public slots:
     void slotNotify( Snore::Notification notification );
     void slotCloseNotification ( Snore::Notification notification );
+    void slotRegisterApplication ( Snore::Application *application );
+    void slotUnregisterApplication ( Snore::Application *application );
 
     void slotActionInvoked(const uint &id,const QString &actionID);
     void slotNotificationClosed ( const uint &id,const uint &reason );
-    void slotRegisterApplication ( Snore::Application *application );
-    void slotUnregisterApplication ( Snore::Application *application );
 
 
 private:
     org::freedesktop::Notifications* m_interface;
-    QHash<uint,uint> m_idMap;
+    QHash<uint,uint> m_dbusIdMap;
+    QHash<uint,uint> m_snoreIdMap;
+
 
 };
-QDBusArgument &operator<<(QDBusArgument &a,const Snore::Notification &i);
-const QDBusArgument & operator >>(const QDBusArgument &a,  Snore::Notification &i) ;
-
-
 
 #endif // FREEDESKTOPNOTIFICATION_H

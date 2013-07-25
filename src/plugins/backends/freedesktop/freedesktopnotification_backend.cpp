@@ -17,8 +17,6 @@ Q_EXPORT_PLUGIN2 ( freedesktopnotificationbackend,FreedesktopBackend )
 FreedesktopBackend::FreedesktopBackend () :
     SnoreBackend ( "FreedesktopNotification_Backend",true,true)
 {
-
-
 }
 
 bool FreedesktopBackend::init(SnoreCore *snore){
@@ -28,7 +26,7 @@ bool FreedesktopBackend::init(SnoreCore *snore){
 
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
     reply.waitForFinished();
-    QStringList caps  = reply.reply().arguments().first().toStringList();
+    QStringList caps  = reply.value();
     m_supportsRichtext = caps.contains( "body-markup" );
     connect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
     connect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
@@ -54,30 +52,35 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
         actions << QString::number(k) << noti.actions()[k]->name;
     }
 
+    FreedesktopImageHint image(noti.icon().image());
+
+    noti.icon().localUrl();
     QVariantMap hints;
-    hints["image_data"] = QVariant::fromValue(FreedesktopImageHint(noti.icon().image().scaledToWidth(50,Qt::FastTransformation)));
+    hints["image_data"] = QVariant::fromValue(image);
 
     uint updateId = 0;
     if(noti.updateID() != 0)
     {
-        updateId = m_idMap[noti.updateID()];
-        noti.hints().setValue("DBUS_ID", updateId);
+        updateId = m_snoreIdMap[noti.updateID()];
+        m_dbusIdMap[updateId] = noti.id();
+        m_snoreIdMap[noti.id()] = updateId;
     }
 
     QDBusPendingReply<uint>  id = m_interface->Notify(noti.application(), updateId, "", noti.title(),
-                                                      noti.text(), actions, hints, noti.timeout()*1000);
+                                                      noti.text(), actions, hints, noti.sticky()?-1:noti.timeout()*1000);
 
 
 
     if(noti.updateID() == 0)
     {
         id.waitForFinished();
-        noti.hints().setValue("DBUS_ID", id.value());
-        m_idMap[id.value()] = noti.id();
+        m_snoreIdMap[noti.id()] = id.value();
+        m_dbusIdMap[id.value()] = noti.id();
+        qDebug() << "dbus showed " << id.value() << m_dbusIdMap.keys();
     }
 }
 void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID){
-    Notification noti = getActiveNotificationByID(m_idMap[id]);
+    Notification noti = getActiveNotificationByID(m_dbusIdMap[id]);
     if(!noti.isValid())
         return;
     qDebug() <<"Action"<<id<<"|"<<actionID ;
@@ -87,8 +90,9 @@ void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &action
 
 void FreedesktopBackend::slotCloseNotification ( Notification notification )
 {
-    uint id = notification.hints().value("DBUS_ID").toUInt();
-    m_idMap.remove(id);
+    uint id = m_snoreIdMap.take(notification.id());
+    qDebug() << "dbus closing " << id;
+    m_dbusIdMap.remove(id);
     m_interface->CloseNotification(id);
 }
 
@@ -96,11 +100,18 @@ void FreedesktopBackend::slotCloseNotification ( Notification notification )
 
 void FreedesktopBackend::slotNotificationClosed ( const uint &id,const uint &reason )
 {
-    qDebug() <<"Closed"<<id<<"|"<<reason;
+    NotificationEnums::CloseReasons::closeReasons closeReason = NotificationEnums::CloseReasons::closeReasons(reason);
+    qDebug() << "Closed" << id << "|" << closeReason << reason;
     if(id == 0)
         return;
-    Notification noti =  getActiveNotificationByID(m_idMap.take(id));
-    closeNotification(noti ,NotificationEnums::CloseReasons::closeReasons(reason));
+    Notification noti =  getActiveNotificationByID(m_dbusIdMap.take(id));
+    m_snoreIdMap.remove(noti.id());
+
+    if(closeReason == NotificationEnums::CloseReasons::CLOSED)
+    {
+        snore()->notificationActionInvoked(noti);
+    }
+    closeNotification(noti, closeReason);
 }
 
 

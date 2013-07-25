@@ -38,7 +38,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(prioritys)
 namespace CloseReasons{
 enum closeReason
 {
-    NONE,
+    NONE = 0,
     TIMED_OUT,
     DISMISSED,
     CLOSED
