@@ -1,0 +1,3 @@
+#!/bin/bash
+
+readlink -m "$1"

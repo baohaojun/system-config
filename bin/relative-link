@@ -1,0 +1,94 @@
+#!/bin/bash
+
+. relative-path
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+no_clobber=false
+ln_force=false
+TEMP=$(getopt -o fn --long no-clobber -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -n|--no-clobber)
+            no_clobber=true
+            shift
+            ;;
+        -f)
+            ln_force=true
+            shift
+            ;;
+            --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+target_file=''
+
+test $# = 0 && die "ln: missing file operand"
+
+if test $# = 1; then
+    set -- "$@" ./"$(basename "$1")"
+fi
+
+args=("$@")
+n_targets=$#
+((n_targets--))
+
+target_dir=${args[$#-1]}
+
+if (($# > 2)) && test ! -d "$target_dir"; then
+    die "ln: target_dir \`$target_dir' is not a directory"
+fi
+
+if [[ "$target_dir" =~ /$ ]] && test ! -d "$target_dir"; then
+    die "target \`$target_dir' is not a directory"
+fi
+
+if test $# = 2; then
+    if test -d "$target_dir"; then
+        { target_file=$(basename "$1"); }
+    else
+        { target_file=$(basename "$target_dir"); target_dir=$(dirname "$target_dir"); }
+    fi
+fi
+
+test -e "$target_dir" || die "ln: target_dir \`$target_dir does not exist"
+
+old_target_dir=$target_dir;
+target_dir=$(formal-path "$target_dir")
+
+echo -n > ~/.failed-rln
+
+target_file_save=$target_file
+for x in $(seq 1 $n_targets); do
+    source=${args[$x-1]}
+    if test -z "$target_file_save"; then
+        target_file=$(basename "$source")
+    fi
+    if test -e "$target_dir"/"$target_file"; then
+        if test $ln_force = true; then
+            echo "FORCE ->" "$target_dir"/"$target_file"
+        else
+            echo "$target_dir"/"$target_file" already exist\!
+            continue
+        fi
+    fi
+    rm -f "$target_dir"/"$target_file"
+
+    normal_target=$(formal-path "$target_dir"/"$target_file")
+    relative_source=$(calc_relative "$source" "$normal_target")
+    # if test -z "target_file"; then
+    #   echo 1>&2 "$old_target_dir"/"$(basename "$relative_source")" =\> "$relative_source"
+    # else
+    #   echo 1>&2 "$old_target_dir"/"$target_file" =\> "$relative_source"
+    # fi
+    ln -s -- "$relative_source" "$target_dir"/"$target_file" || printf "ln -sf -- %q %q\n" "$relative_source" "$target_dir"/"$target_file" >> ~/.failed-rln
+done

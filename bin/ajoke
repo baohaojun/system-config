@@ -10,6 +10,7 @@ function die() {
 me=$(readlink -f $0)
 ajoke_bindir=$(dirname $me)
 ajoke_dir=$(dirname $ajoke_bindir)
+export AJOKE_DIR=$ajoke_dir # this env is used by other scripts
 
 if test ! -e $ajoke_dir/etc/perl/BhjJava.pm; then
     die "$ajoke_dir/etc/perl/BhjJava.pm not found,
