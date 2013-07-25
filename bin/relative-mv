@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+if test ! -d $2; then
+    die "usage: $(basename $0) source_file target_dir"
+fi
+
+mv "$1" "$2"
+relative-link "$2"/"$(basename "$1")" "$1"

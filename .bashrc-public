@@ -27,37 +27,11 @@ alias bcd=cd_beagrep
 alias pcd='builtin cd -P'
 alias mail=mailx
 
-cd_beagrep()
-{
-    if test $# = 1; then
-        dir=$(readlink -f "$1")
-        cd ~/.cache/for-code-reading/chm/"$dir"
-        return
+for x in ~/etc/bash.d/*; do
+    if test -f $x; then
+        . $x
     fi
-
-    if [[ "$PWD" =~ .cache/for-code-reading ]]; then
-        builtin cd "${PWD#*for-code-reading}"
-        return
-    fi
-    dest=~/.cache/for-code-reading/$(readlink -f "$PWD")
-    while test ! -d "$dest"/.beagrep -a ! -e "$dest"/GPATH -a "$dest" != / -a "$dest" != ""; do
-        dest=${dest%/*};
-    done
-    if test "$dest" = / -o "$dest" = ""; then
-        echo 'You have not run for-code-reading yet, please run it first!'
-        return 1;
-    else
-        cd_ok "$dest"
-        return 0
-    fi
-}
-
-cd_ok()
-{
-    builtin cd "$@"
-    return 0
-}
-
+done
 
 cdr()
 {

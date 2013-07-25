@@ -9,7 +9,9 @@ if test $(basename $0) != cowbuilder-bhj; then
    apt-get install sudo bash-completion autoconf automake \
        autoreconf bison exuberant-ctags flex \
        gperf libltdl-dev libtool lynx netbase \
-       openjdk-6-jdk strace tasksel git
+       openjdk-6-jdk strace tasksel git python python3 \
+       libstring-approx-perl libstring-shellquote-perl \
+       libtext-glob-perl liburi-encode-perl
 
    echo "$user ALL=NOPASSWD: ALL" > /etc/sudoers.d/$user
    chmod 440 /etc/sudoers.d/$user

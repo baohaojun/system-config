@@ -396,17 +396,6 @@
       (random-theme)
     (error nil)))
 
-(defconst emacs-mode-ctags-lang-map
-  '(("emacs-lisp" . "lisp")
-    ("sawfish" . "lisp")
-    ("c" . "c++")
-    ("objc" . "ObjectiveC")
-    ("makefile-gmake" . "make")
-    ("csharp" . "C#")))
-
-(defconst emacs-mode-ctags-tag-filter
-  '(("c" . "| perl -ne '@f = split; print unless $f[1] =~ m/^member|macro$/'")
-    ("php" . "| perl -ne '@f = split; print unless $f[1] =~ m/^variable$/'")))
 
 
 
@@ -436,11 +425,6 @@
     ;; 8                     if self.astack:
     ;; 9                         ...
     ;; 10 =>                      if a:
-
-(defmacro current-line-string ()
- `(buffer-substring-no-properties
-   (line-beginning-position)
-   (line-end-position)))
 
 (defvar waw-mode-map nil
   "Keymap for where-are-we-mode.")
@@ -495,7 +479,7 @@
 ;;   (load-file "~/.emacs_d/lisp/my-erc-config.el"))
 
 
-(define-key esc-map [(meta d)] 'bhj-do-dictionry)
+(define-key esc-map [(meta d)] 'bhj-do-dictionary)
 
 
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)

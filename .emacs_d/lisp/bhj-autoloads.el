@@ -285,7 +285,7 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 ;;;### (autoloads (bhj-downcase-symbol-or-region bhj-upcase-symbol-or-region
 ;;;;;;  source-code-help java-get-imports bhj-find-missing-file replace-double-quotes
 ;;;;;;  bhj-choose-from-output bhj-choose bhj-open-android-doc-on-java-buffer
-;;;;;;  bhj-do-dictionry insert-today dos2unix bhj-do-code-generation
+;;;;;;  bhj-do-dictionary insert-today dos2unix bhj-do-code-generation
 ;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-name my-bbdb-canonicalize
 ;;;;;;  my-bbdb/gnus-update-records-mode bhj-view-mail-external gnus-gmail-search-subject
 ;;;;;;  localedit sudoedit switch-buffer-same-filename-rev switch-buffer-same-filename
@@ -656,7 +656,7 @@ Convert this entire buffer from MS-DOS text file format to UNIX.
 
 \(fn)" t nil)
 
-(autoload 'bhj-do-dictionry "bhj-defines" "\
+(autoload 'bhj-do-dictionary "bhj-defines" "\
 lookup the current word (or region) in dictionary
 
 \(fn WORD)" t nil)
