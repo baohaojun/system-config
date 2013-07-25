@@ -85,7 +85,7 @@ Here's how I do it:
 2. Make a tar.gz of beagrep (note that the filename must be exact, it
    is required by dpkg):
 
-   : tar czfv ~/tmp/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
+   : tar czfv ~/.cache/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
 
 3. Untar it and build the .deb package:
 
@@ -131,7 +131,7 @@ cd /tmp; mkdir $$; cd $$; echo main > 1.txt; mkbeagrepidx; beagrep -e 'main' --g
 
 If beagrep has been installed correctly, at the end of the above
 command's output, you should see something like
-~/tmp/11468/1.txt:1:main~.
+~/.cache/11468/1.txt:1:main~.
 
 ** Create index
 
@@ -396,7 +396,7 @@ This is a tool to generate a call graph for the software project you
 want. I have found its effectiveness is to be questioned, but you can
 see a picture below:
 
-[[../../../../images/post/call-graph.png]]
+[[../../../../images/post/call-graph.png][file:../../../../images/post/call-graph.png]]
 
 This picture is generated for the adb sub-project in android code. You
 can see which functions are calling ~adb_connect~, and which functions

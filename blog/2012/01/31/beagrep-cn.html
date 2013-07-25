@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>beagrep，0.23秒grep两个G的代码</title>
-<!-- 2013-06-07 Fri 09:19 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="author" content="Bao Haojun"/>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
@@ -234,7 +234,7 @@ cd /tmp; mkdir $$; cd $$; echo main &gt; 1.txt; mkbeagrepidx; beagrep -e 'main' 
 </pre>
 
 <p>
-如果beagrep安装配置没有问题的话，在上面的命令输出的最后，你可以看到类似于 <code>/tmp/11468/1.txt:1:main</code> 。
+如果beagrep安装配置没有问题的话，在上面的命令输出的最后，你可以看到类似于 <code>/.cache/11468/1.txt:1:main</code> 。
 </p>
 </div>
 </div>
@@ -276,7 +276,7 @@ index。
 <p>
 mkbeagrepidx is a simple wrapper over beagrep-build-index. You can
 configure it for which directories to ignore using
-<code>&#x2013;deny-directory-pattern</code> option. By default, 
+<code>--deny-directory-pattern</code> option. By default, 
 </p>
 
 <ul class="org-ul">
@@ -363,8 +363,8 @@ The <code>REGEXP_MATCH</code> serves 2 purposes:
 
 <ul class="org-ul">
 <li>First, it is computed into whole words for querying beagle. For
-e.g., <code>l] [&#x2013;grep GREP_OPTIONS]</code> above should be matched with
-the following REGEXP: <code>l\] \[&#x2013;grep GREP_OPTIONS\]</code>, but it
+e.g., <code>l] [--grep GREP_OPTIONS]</code> above should be matched with
+the following REGEXP: <code>l\] \[--grep GREP_OPTIONS\]</code>, but it
 should be converted into 4 words: <code>l grep GREP OPTIONS</code> for
 beagle.
 </li>
@@ -405,11 +405,11 @@ onto each words.
 
 <dt> &#x2013;grep <code>GREP_OPTIONS</code> </dt><dd>means to pass additional arguments to the
 grep invocation. For e.g., the <code>-l</code> argument can be passed to
-beagrep directly, or it can be passed using <code>&#x2013;grep</code>, they mean different things:
+beagrep directly, or it can be passed using <code>--grep</code>, they mean different things:
 
 <p>
 <code>beagrep -e "hello world" -l</code> will show a file containing "hello
-wonderful world", but <code>beagrep -e "hello world" &#x2013;grep -l</code> will
+wonderful world", but <code>beagrep -e "hello world" --grep -l</code> will
 not show that file as a match.
 </p>
 </dd>

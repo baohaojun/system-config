@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>How to use gdb (in Emacs) for android</title>
-<!-- 2013-05-20 Mon 22:13 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="author" content="Bao Haojun"/>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
@@ -141,7 +141,7 @@ android 代码的根目录下，并在
 </div>
 
 <p>
-gdb初始化执行的脚本 <code>/tmp/gdbclient.cmds</code> 的内容是这样的：
+gdb初始化执行的脚本 <code>/.cache/gdbclient.cmds</code> 的内容是这样的：
 </p>
 
 <pre class="example">
@@ -160,10 +160,9 @@ target remote localhost:3333
 定，性能也比较弱些。gud的bt列出来的文件不支持跳转，我们可以用 <code>compilation-minor-mode</code> 加上这个支持：
 </p>
 
-
-<div class="figure">
-<p><img src="images/post/gud-cmm.png"  alt="gud-cmm.png"/></p>
-</div>
+<p>
+<a href="images/post/gud-cmm.png"><img  src="images/post/gud-cmm.png" alt="gud-cmm.png" /></a>
+</p>
 
 <p>
 为了来回切换方便，我们把这个命令绑一个快捷键：

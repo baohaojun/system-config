@@ -83,7 +83,7 @@ bash build-win.sh
 cd /tmp; mkdir $$; cd $$; echo main > 1.txt; mkbeagrepidx; beagrep -e 'main' --grep '--color=auto'; true; cd ..; rm $$ -rf
 #+end_example
 
-如果beagrep安装配置没有问题的话，在上面的命令输出的最后，你可以看到类似于 ~/tmp/11468/1.txt:1:main~ 。
+如果beagrep安装配置没有问题的话，在上面的命令输出的最后，你可以看到类似于 ~/.cache/11468/1.txt:1:main~ 。
 ** 创建索引
 
 到想阅读的源代码目录下，以android为例
