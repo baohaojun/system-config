@@ -91,7 +91,6 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
         id.waitForFinished();
         m_snoreIdMap[noti.id()] = id.value();
         m_dbusIdMap[id.value()] = noti.id();
-        qDebug() << Q_FUNC_INFO << "Opend" << id.value();
     }
 }
 void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID){
@@ -104,6 +103,8 @@ void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &action
 
 void FreedesktopBackend::slotCloseNotification ( Notification notification )
 {
+    if(!m_snoreIdMap.contains(notification.id()))
+        return;
     uint id = m_snoreIdMap.take(notification.id());
     m_dbusIdMap.remove(id);
     m_interface->CloseNotification(id);
