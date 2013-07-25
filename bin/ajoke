@@ -1,0 +1,81 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+me=$(readlink -f $0)
+if test "$me" != ~/system-config/bin/ajoke; then
+    die "ajoke not found at ~/system-config/bin/ajoke, please run:
+    cd ~; git clone --recursive http://github.com/baohaojun/system-config"
+fi
+
+
+if test -x /opt/local/libexec/gnubin/readlink; then
+    # on MacOS, the system readlink doesn't do -m/-f options
+    export PATH=/opt/local/libexec/gnubin:$PATH
+fi
+if test -d ~/system-config/etc/path/$(uname)-$(uname -m); then
+    rm -rf ~/external/etc/overide/
+    export PATH=$(
+        builtin cd ~/system-config/etc/path/$(uname)-$(uname -m);
+        for x in $(for d in *; do echo $d; done|sort -n); do
+            readlink -m -- $x;
+        done|tr '\n' ':'
+    ):$PATH
+fi
+
+export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
+export PERL_MB_OPT="--install_base $HOME/perl5";
+export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
+export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:$HOME/perl5/lib/perl5:$HOME/system-config/etc/perl:$PERL5LIB";
+export PATH="$HOME/perl5/bin:$PATH";
+
+
+function test-env() {
+    # the cpan librarys?
+
+    if ! perl -e 'use String::Approx'; then
+        cpan String::Approx
+    fi
+
+    if ! perl -e 'use String::ShellQuote'; then
+        cpan String::ShellQuote
+    fi
+
+    if ! perl -e 'use Text::Glob'; then
+        cpan Text::Glob
+    fi
+
+    if test ! -x /usr/local/bin/global; then
+        if yes-or-no-p "You have not built ajoke's version of GNU gtags,
+build it with compile_gtags (will need sudo for installing)?"; then
+            compile_gtags
+        else
+            die "ajoke's gtags not built"
+        fi
+    fi
+
+    if test -b /usr/bin/ctags-exuberant; then
+        if yes-or-no-p "You need to install ctags-exuberant, apt-get?"; then
+            sudo apt-get install ctags-exuberant
+        else
+            die "Can't use ctags-exuberant"
+        fi
+    fi
+
+    if test ! -e ~/.globalrc || ! diff -q ~/.globalrc ~/system-config/.globalrc; then
+        if yes-or-no-p "You need use ajoke's version of .globalrc, replace?"; then
+            if test -e ~/.globalrc; then
+                mv ~/.globalrc ~/.globalrc.bak
+            fi
+            relative-link ~/system-config/.globalrc ~/
+        else
+            die "ajoke's version of .globalrc not used"
+        fi
+    fi
+
+}
