@@ -70,7 +70,7 @@ if ($grep_all) {
 my $is_gz = 0;
 my $start_file = shell_quote($ENV{GTAGS_START_FILE});
 
-my $command = "ctags-exuberant --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu $start_file";
+my $command = "ctags-ajoke --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu $start_file";
 
 if ($ENV{GTAGS_START_FILE} =~ m/\.gz$/) {
     debug "file is a gzip file";
@@ -112,8 +112,8 @@ while(<$ctags_pipe>) {
       # because it can not cantain usage of others,
 
       # unless this macro is actually defined using $target:
-      if ($def !~ m/\b$target\b/ and $_ =~ m/\b$target\b/) { 
-	  print $ENV{GTAGS_START_FILE} . ":$line: <> macro $def is defined using $target\n";
+      if ($def !~ m/\b$target\b/ and $_ =~ m/\b$target\b/) {
+          print $ENV{GTAGS_START_FILE} . ":$line: <> macro $def is defined using $target\n";
       }
 
       next;
@@ -140,7 +140,7 @@ while(<$file>) {
     next if ($reverse_matcher and m/$reverse_matcher/);
     my $is_calling_myself = 1;
     if (m/->$target/ or m/\.$target/ or m/:$target/) {
-	$is_calling_myself = 0;
+        $is_calling_myself = 0;
     }
 
     debug ":$.: $_";
@@ -151,56 +151,54 @@ while(<$file>) {
     my $next_def_line_idx = 0;
     my $current_def_line;
     for my $idx (1.. (@def_lines - 1)) {
-	if ($def_lines[$idx] > $.) {
-	    $current_def_line = $def_lines[$idx - 1];
-	    last;
-	}
+        if ($def_lines[$idx] > $.) {
+            $current_def_line = $def_lines[$idx - 1];
+            last;
+        }
     }
-    
+
     if ($def_line_map{$current_def_line} eq "******") {
-	debug "the previous defun is *****";
-	next;
+        debug "the previous defun is *****";
+        next;
     }
 
     if ($type_line_map{$current_def_line} eq "prototype") {
-	debug "the previous defun is a prototype";
-	next;
+        debug "the previous defun is a prototype";
+        next;
     }
 
     if (($is_calling_myself or $current_def_line == $line_no) and $def_line_map{$current_def_line} =~ m/\b$target\b/) { # this is the definition of target
-	debug "the previous definition matches myself: " . 
-	    "current_def_line is $current_def_line, " .
-	    "line_no is $line_no, " .
-	    "def_line is $def_line_map{$current_def_line}; " . 
-	    "current line is $line_str";
-	next;
+        debug "the previous definition matches myself: " .
+            "current_def_line is $current_def_line, " .
+            "line_no is $line_no, " .
+            "def_line is $def_line_map{$current_def_line}; " .
+            "current line is $line_str";
+        next;
     }
 
     if ($no_comment and m,(?:^\s*/?\*)|(?:^\s*//),) {
-	debug "$0:" . __LINE__ . ": no comment should be allowed";
-	next;
+        debug "$0:" . __LINE__ . ": no comment should be allowed";
+        next;
     }
-	    
+
     if ($members == 0 && $current_def_line == $line_no && $file_line_map{$line_no} =~ m/\b$target\b/ && $def_line_map{$current_def_line} =~ m/\b$target\b/) {
-	#next;
-	;
+        #next;
+        ;
     } else {
-	debug "members: $members, current_def_line: $current_def_line, line: $line_no, file_line_map{\$line_no}: $file_line_map{$line_no}, target: $target";
+        debug "members: $members, current_def_line: $current_def_line, line: $line_no, file_line_map{\$line_no}: $file_line_map{$line_no}, target: $target";
     }
     unless ($printed_func_map{$current_def_line}) {
-	my $calling_tag = "<=";
-	if ($current_def_line == $.) {
-	    $calling_tag = "<>";
-	}
-	print $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag " 
-	    . 
-	    (
-	     $silent ? ($def_line_map{$current_def_line} . "\n") : $file_line_map{$current_def_line}
-	    );
-	$printed_func_map{$current_def_line} = 1;
+        my $calling_tag = "<=";
+        if ($current_def_line == $.) {
+            $calling_tag = "<>";
+        }
+        print $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag "
+            .
+            (
+             $silent ? ($def_line_map{$current_def_line} . "\n") : $file_line_map{$current_def_line}
+            );
+        $printed_func_map{$current_def_line} = 1;
     }
 
     print $ENV{GTAGS_START_FILE} . ":$.: => " . $line_str unless ($silent or $current_def_line == $.);
 }
-
-
