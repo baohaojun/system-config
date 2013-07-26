@@ -139,7 +139,7 @@ NTH-TAG-LINE, ask user to pick."
         (cond
          ((or (string-equal type "class")
               (string-equal type "interface"))
-          (setq classes (cons line classes))))))
+          (setq classes (cons tagstr classes))))))
     (car (split-string (ajoke--pick-one "Which class/interface? " (delete-dups (nreverse classes)) nil t)))))
 
 (defun ajoke--pick-one (prompt collection &rest args)
@@ -386,14 +386,13 @@ methods."
 (defun ajoke-search-local-id ()
   "Search an identifier such as a local variable from the
 beginning of current defun."
-  (interactive "p")
+  (interactive)
   (with-syntax-table (let ((new-table (make-syntax-table (syntax-table))))
                        (modify-syntax-entry ?_ "w" new-table)
                        new-table)
     (let ((word (current-word)))
       (nodup-ring-insert ajoke--marker-ring (point-marker))
-      (bhj-c-beginning-of-defun)
-
+      (ajoke--beginning-of-defun-function)
       (unless (string-equal (car regexp-search-ring) (concat "\\b" word "\\b"))
         (add-to-history
          'regexp-search-ring

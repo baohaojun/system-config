@@ -68,18 +68,6 @@
 (register-input-method
  "sdim" "euc-cn" 'sdim-use-package "影舞笔")
 
-
-
-
-
-
-
-
-
-
-
-
-
 (mapcar (lambda (x) (add-hook x (lambda ()
                     (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
                     (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun))))
