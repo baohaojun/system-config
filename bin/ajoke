@@ -127,7 +127,7 @@ build it now (will need sudo for installing)?"; then
                 cd $dir
                 cat <<EOF > Test.java
 //{%java%}
-        package ajoke;
+package ajoke;
 class Test extends Writer {
     Test() {
 
