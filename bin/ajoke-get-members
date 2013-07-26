@@ -37,7 +37,7 @@ done
 
 for class in "$@"; do
     export GTAGS_START_FILE=
-    qclasses=$(java-get-qclass $class)
+    qclasses=$(ajoke-get-qclass $class)
     echo qclasses is $qclasses >> ~/.logs/$(basename $0).log
 
     for qclass in $qclasses; do

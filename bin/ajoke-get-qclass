@@ -2,8 +2,8 @@
 
 use strict;
 die "Error: Usage $0 class" unless @ARGV;
-open(my $debug, ">", glob("~/.logs/java-get-qclass.log"))
-    or die "Can not open debug log file ~/.logs/java-get-qclass.log";
+open(my $debug, ">", glob("~/.logs/ajoke-get-qclass.log"))
+    or die "Can not open debug log file ~/.logs/ajoke-get-qclass.log";
 sub debug(@) {
     print $debug "@_\n";
 }

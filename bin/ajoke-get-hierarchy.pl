@@ -221,7 +221,7 @@ for (keys %done_classes) {
         $method_prototypes{$_.$method} = DelayedQx->new("java-query-qmethod $_.$method|sort -u");
     }
     if ($verbose) {
-        $qclass_members{$_} = DelayedQx->new("java-get-members $_ -p");
+        $qclass_members{$_} = DelayedQx->new("ajoke-get-members $_ -p");
     }
 }
 
