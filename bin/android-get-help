@@ -1,5 +1,5 @@
 #!/bin/bash
 
-url=file://$HOME/bin/Linux/ext/android-sdk-linux/docs/reference/$(java-get-package $1 | perl -npe 's#\.#/#g')$(basename $1|perl -npe 's/\.java$/.html/')
+url=file://$HOME/bin/Linux/ext/android-sdk-linux/docs/reference/$(ajoke-get-package $1 | perl -npe 's#\.#/#g')$(basename $1|perl -npe 's/\.java$/.html/')
 emacsclient -e '(w3m-goto-url "'$url'")' >/dev/null 2>&1 &
 

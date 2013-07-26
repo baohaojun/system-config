@@ -1,3 +1,5 @@
+(require 'ajoke)
+
 ;;;###autoload
 (defun cleanup-buffer-safe ()
   "Perform a bunch of safe operations on the whitespace content of a buffer.
@@ -66,7 +68,7 @@ might be bad."
   (progn
     (unless mark-active
       (push-mark))
-    (ctags-beginning-of-defun arg)))
+    (ajoke--beginning-of-defun arg)))
 
 ;;;###autoload
 (defun bhj-c-end-of-defun (&optional arg)
@@ -74,14 +76,7 @@ might be bad."
   (progn
     (unless mark-active
       (push-mark))
-    (ctags-beginning-of-defun (- arg))))
-
-;;;###autoload
-(defun bhj-c-show-current-func ()
-  (interactive)
-  (save-excursion
-    (bhj-c-beginning-of-defun)
-    (message "%s" (current-line-string))))
+    (ajoke--beginning-of-defun (- arg))))
 
 ;;;###autoload
 (defun linux-c-mode ()
@@ -192,7 +187,7 @@ might be bad."
                                                          (region-end))
                        (current-word)))))
       (progn
-        (nodup-ring-insert cscope-marker-ring (point-marker))
+        (nodup-ring-insert ajoke--marker-ring (point-marker))
         (when (or (equal regexp "")
                   (not regexp))
           (setq regexp
@@ -451,7 +446,7 @@ might be bad."
 ;;;###autoload
 (defun android-get-help ()
   (interactive)
-  (shell-command (format "%s %s" "android-get-help" (my-buffer-file-name-local))))
+  (shell-command (format "%s %s" "android-get-help" (ajoke--buffer-file-name-local))))
 
 ;;;###autoload
 (defun visit-code-reading (&optional arg)
@@ -489,7 +484,7 @@ might be bad."
 (defun waw-search-prev ()
   (beginning-of-line)
   (search-backward-regexp "^    ")
-  (let ((this-line-str (current-line-string)))
+  (let ((this-line-str (ajoke--current-line)))
     (cond ((string-match ":[0-9]+:" this-line-str)
            (search-backward "    =>"))
           ((string-match "^\\s *\\.\\.\\.$" this-line-str)
@@ -499,7 +494,7 @@ might be bad."
 (defun waw-search-next ()
   (end-of-line)
   (search-forward-regexp "^    ")
-  (let ((this-line-str (current-line-string)))
+  (let ((this-line-str (ajoke--current-line)))
     (cond ((string-match ":[0-9]+:" this-line-str)
            (forward-line))
           ((string-match "^\\s *\\.\\.\\.$" this-line-str)
@@ -532,7 +527,7 @@ might be bad."
 
     (catch 'done
       (let ((start-line-number (line-number-at-pos))
-            (start-line-str (current-line-string))
+            (start-line-str (ajoke--current-line))
             new-line-number target-file target-line
             error-line-number error-line-str
             msg mk end-mk)
@@ -540,7 +535,7 @@ might be bad."
         (save-excursion
           (end-of-line) ;; prepare for search-backward-regexp
           (search-backward-regexp ":[0-9]+:")
-          (setq error-line-str (current-line-string)
+          (setq error-line-str (ajoke--current-line)
                 error-line-number (line-number-at-pos))
           (string-match "^\\s *\\(.*?\\):\\([0-9]+\\):" error-line-str)
           (setq target-file (match-string 1 error-line-str)
@@ -560,7 +555,7 @@ might be bad."
         (forward-line -1)
 
         (while (> new-line-number error-line-number)
-          (if (string-match "^\\s *\\.\\.\\.$" (current-line-string))
+          (if (string-match "^\\s *\\.\\.\\.$" (ajoke--current-line))
               (progn
                 (setq new-line-number (1- new-line-number))
                 (forward-line -1))
@@ -582,7 +577,7 @@ might be bad."
 ;;;###autoload
 (defun waw-ret-key ()
   (interactive)
-  (let ((start-line-str (current-line-string)))
+  (let ((start-line-str (ajoke--current-line)))
     (if (string-match "^    .*:[0-9]+:" start-line-str)
         (progn
           (search-forward-regexp "^    =>")
@@ -614,7 +609,7 @@ might be bad."
 ;;;###autoload
 (defun java-bt-ret-key ()
   (interactive)
-  (let ((start-line-str (current-line-string)))
+  (let ((start-line-str (ajoke--current-line)))
     (if (string-match "(.*:[0-9]+)" start-line-str)
         (next-error 0))))
 
@@ -643,7 +638,7 @@ might be bad."
 
     (catch 'done
       (let ((start-line-number (line-number-at-pos))
-            (start-line-str (current-line-string))
+            (start-line-str (ajoke--current-line))
             new-line-number target-file target-line
             error-line-number error-line-str grep-output temp-buffer
             msg mk end-mk)
@@ -656,7 +651,7 @@ might be bad."
             (setq grep-output (cdr (assoc-string start-line-str java-bt-tag-alist)))
             (unless grep-output
               (setq grep-output (progn
-                                  (shell-command (concat "java-trace-grep " (shell-quote-argument (current-line-string))))
+                                  (shell-command (concat "java-trace-grep " (shell-quote-argument (ajoke--current-line))))
                                   (with-current-buffer "*Shell Command Output*"
                                     (buffer-substring-no-properties (point-min) (point-max)))))
               (setq java-bt-tag-alist (cons (cons start-line-str grep-output) java-bt-tag-alist))))
@@ -783,13 +778,13 @@ might be bad."
   (let* ((buf-list (if reverse
                        (nreverse (buffer-list))
                      (buffer-list)))
-         (current-filepath (my-buffer-file-name))
+         (current-filepath (ajoke--buffer-file-name))
          (current-filename (file-name-nondirectory current-filepath))
          checking-filename
          checking-filepath
          buf-switched)
     (while buf-list
-      (setq checking-filepath (my-buffer-file-name (car buf-list))
+      (setq checking-filepath (ajoke--buffer-file-name (car buf-list))
             checking-filename (file-name-nondirectory checking-filepath))
       (unless (eq (current-buffer) (car buf-list))
         (when (string-equal checking-filename current-filename)
@@ -797,7 +792,7 @@ might be bad."
               (unless reverse
                 (bury-buffer (current-buffer)))
               (switch-to-buffer (car buf-list))
-              (message "switched to `%s'" (my-buffer-file-name))
+              (message "switched to `%s'" (ajoke--buffer-file-name))
               (setq buf-list nil
                     buf-switched t))))
       (setq buf-list (cdr buf-list)))
@@ -1290,7 +1285,7 @@ criteria can be provided via the optional match-string argument "
     (unless missing-file-name
       (setq missing-file-name (shell-command-to-string
                                (format "beagrep -e %s -f 2>&1|perl -ne 's/:\\d+:.*// and print'" missing-file-name-save)))
-      (setq missing-file-name (delete-if-empty (split-string missing-file-name "\n"))))
+      (setq missing-file-name (ajoke--delete-empty-strings (split-string missing-file-name "\n"))))
 
     (when missing-file-name
       (if (nth 1 missing-file-name)
@@ -1382,5 +1377,95 @@ criteria can be provided via the optional match-string argument "
     "^/.?scp:.*?@.*?:" ""
     (expand-file-name default-directory)))
   (insert "'"))
+
+;;;###autoload
+(defun bhj-jdk-help (jdk-word)
+  "start jdk help"
+  (interactive
+   (progn
+     (let ((default (current-word)))
+       (list (read-string "Search JDK help on: "
+                          default
+                          'jdk-help-history)))))
+
+  ;; Setting process-setup-function makes exit-message-function work
+  (call-process "/bin/bash" nil nil nil "jdkhelp.sh" jdk-word)
+  (w3m-goto-url "file:///d/knowledge/jdk-6u18-docs/1.html"))
+
+;;;###autoload
+(defun ajoke-pop-mark ()
+  "Pop back to where ajoke was last invoked."
+  (interactive)
+  ;; This function is based on pop-tag-mark, which can be found in
+  ;; lisp/progmodes/etags.el.
+  (if (ring-empty-p ajoke--marker-ring)
+      (error "There are no marked buffers in the ajoke--marker-ring yet"))
+  (let* ( (marker (ring-remove ajoke--marker-ring 0))
+          (old-buffer (current-buffer))
+          (marker-buffer (marker-buffer marker))
+          marker-window
+          (marker-point (marker-position marker))
+          (ajoke-buffer (get-buffer ajoke-output-buffer-name)) )
+    (when (and (not (ring-empty-p ajoke--marker-ring))
+               (equal marker (ring-ref ajoke--marker-ring 0)))
+      (ring-remove ajoke--marker-ring 0))
+    (nodup-ring-insert ajoke--marker-ring-poped (point-marker))
+    ;; After the following both ajoke--marker-ring and ajoke-marker will be
+    ;; in the state they were immediately after the last search.  This way if
+    ;; the user now makes a selection in the previously generated *ajoke*
+    ;; buffer things will behave the same way as if that selection had been
+    ;; made immediately after the last search.
+    (setq ajoke-marker marker)
+    (if marker-buffer
+        (if (eq old-buffer ajoke-buffer)
+            (progn ;; In the *ajoke* buffer.
+              (set-buffer marker-buffer)
+              (setq marker-window (display-buffer marker-buffer))
+              (set-window-point marker-window marker-point)
+              (select-window marker-window))
+          (switch-to-buffer marker-buffer))
+      (error "The marked buffer has been deleted"))
+    (goto-char marker-point)
+    (set-buffer old-buffer)))
+
+;;;###autoload
+(defun ajoke-pop-mark-back ()
+  "Pop back to where ajoke was last invoked."
+  (interactive)
+  ;; This function is based on pop-tag-mark, which can be found in
+  ;; lisp/progmodes/etags.el.
+  (if (ring-empty-p ajoke--marker-ring-poped)
+      (error "There are no marked buffers in the ajoke--marker-ring-poped yet"))
+  (let* ( (marker (ring-remove ajoke--marker-ring-poped 0))
+          (old-buffer (current-buffer))
+          (marker-buffer (marker-buffer marker))
+          marker-window
+          (marker-point (marker-position marker))
+          (ajoke-buffer (get-buffer ajoke-output-buffer-name)) )
+    (nodup-ring-insert ajoke--marker-ring (point-marker))
+    ;; After the following both ajoke--marker-ring-poped and ajoke-marker will be
+    ;; in the state they were immediately after the last search.  This way if
+    ;; the user now makes a selection in the previously generated *ajoke*
+    ;; buffer things will behave the same way as if that selection had been
+    ;; made immediately after the last search.
+    (setq ajoke-marker marker)
+    (if marker-buffer
+        (if (eq old-buffer ajoke-buffer)
+            (progn ;; In the *ajoke* buffer.
+              (set-buffer marker-buffer)
+              (setq marker-window (display-buffer marker-buffer))
+              (set-window-point marker-window marker-point)
+              (select-window marker-window))
+          (switch-to-buffer marker-buffer))
+      (error "The marked buffer has been deleted"))
+    (goto-char marker-point)
+    (set-buffer old-buffer)))
+
+;;;###autoload
+(defun bhj-c-show-current-func ()
+  (interactive)
+  (save-excursion
+    (ajoke--beginning-of-defun-function)
+    (message "%s" (ajoke--current-line))))
 
 (provide 'bhj-defines)

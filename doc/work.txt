@@ -231,7 +231,7 @@ for x in `git branch -r`; do git diff $x 2>&1|grep diff -q || echo $x; done
 
 (find-file
  (let ((file 
-        (replace-regexp-in-string "android-byd" "rayzerlink-ventana" (my-buffer-file-name (current-buffer)))))
+        (replace-regexp-in-string "android-byd" "rayzerlink-ventana" (ajoke--buffer-file-name (current-buffer)))))
    (if (file-exists-p (replace-regexp-in-string "harmony" "ventana" file))
        (replace-regexp-in-string "harmony" "ventana" file)
      (if (file-exists-p (replace-regexp-in-string "harmony" "template" file))
@@ -245,7 +245,7 @@ for x in `git branch -r`; do git diff $x 2>&1|grep diff -q || echo $x; done
 
 (find-file
  (let ((file 
-        (replace-regexp-in-string "rayzerlink-ventana" "android-byd" (my-buffer-file-name (current-buffer)))))
+        (replace-regexp-in-string "rayzerlink-ventana" "android-byd" (ajoke--buffer-file-name (current-buffer)))))
    (if (file-exists-p (replace-regexp-in-string "harmony" "ventana" file))
        (replace-regexp-in-string "harmony" "ventana" file)
      (if (file-exists-p (replace-regexp-in-string "harmony" "template" file))
@@ -957,7 +957,7 @@ make error: no rule to make
 
 (find-file
  (let ((file 
-        (replace-regexp-in-string "/src/.*?/" "/src/theatre/" (my-buffer-file-name (current-buffer)))))
+        (replace-regexp-in-string "/src/.*?/" "/src/theatre/" (ajoke--buffer-file-name (current-buffer)))))
         file))
         
 

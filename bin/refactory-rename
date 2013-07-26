@@ -59,8 +59,26 @@ function get-files-this-dir() {
     find . -maxdepth 1 -name '.git' -prune -o -print | perl -npe 's#^\./##' | grep -v -P -e '^\.$';
 }
 
-git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' && die "git not clean:
-$(git status . )"
+function test-git-clean() {
+    (
+        set -e
+        cd "$1"
+
+        for x in $(git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' | pn 2); do
+            if test -d $x; then
+                test-git-clean "$x"
+            else
+                die "git not clean in $PWD:
+$(git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' )"
+            fi
+        done
+    )
+}
+
+if ! test-git-clean .; then
+    git-interactive-add
+    test-git-clean .
+fi
 
 test $# = 0 && die "must provide at least 2 args"
 tmpf=/tmp/$(basename $0).$$
@@ -100,7 +118,7 @@ while (m#($prepend$from$postpend)#ig) {
 
 for $key (keys %rep_save) {
     my ($from, $to) = ($key, $rep_save{$key});
-    s/$prepend$from$postpend/$to/g;
+    s/$prepend\Q$from\E$postpend/$to/g;
 }
 
 END {
@@ -155,3 +173,4 @@ function rename-files() {
 }
 
 rename-files . "$@"
+git-interactive-add

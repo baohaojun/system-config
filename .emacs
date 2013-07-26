@@ -114,10 +114,8 @@
 
 (require 'org2blog-autoloads)
 
-
-(define-key global-map [(meta control \,)] 'cscope-pop-mark)
-(define-key global-map [(meta control .)] 'cscope-pop-mark-back)
-
+(global-set-key [(meta control \,)] 'ajoke-pop-mark)
+(global-set-key [(meta control .)] 'ajoke-pop-mark-back)
 (prefer-coding-system 'gbk)
 (prefer-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8-unix)
@@ -162,20 +160,14 @@
 (defvar bhj-force-cleanup-buffer nil)
 (make-variable-buffer-local 'bhj-force-cleanup-buffer)
 
-(defvar cscope-output-buffer-name "*cscope*"
-  "The name of the cscope output buffer.")
-
-(defvar cscope-marker-ring (make-ring 32)
-  "Ring of markers which are locations from which cscope was invoked.")
-
-(defvar cscope-marker-ring-poped (make-ring 32)
-  "Ring of markers which are locations poped from cscope-marker-ring.")
+(defvar ajoke-output-buffer-name "*ajoke*"
+  "The name of the ajoke output buffer.")
 
 (keydef "M-g r" (progn
                   (let ((current-prefix-arg 4)
                         ;; (default-directory (eval bhj-grep-default-directory))
                         (grep-use-null-device nil))
-                    (nodup-ring-insert cscope-marker-ring (point-marker))
+                    (nodup-ring-insert ajoke--marker-ring (point-marker))
                     (call-interactively 'grep-bhj-dir))))
 
 (defvar grep-find-file-history nil)
@@ -250,7 +242,7 @@
  '(eclim-interactive-completion-function (quote anything-completing-read))
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(edebug-eval-macro-args t)
- '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
+ '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote ajoke-symbol-chars)) (setq ajoke-symbol-chars "-A-Za-z0-9_")))))
  '(fill-column 70)
  '(gdb-find-source-frame t)
  '(gdb-many-windows t)
@@ -272,10 +264,10 @@
  '(jira-url "http://bible/jira/rpc/xmlrpc")
  '(jiralib-url "http://bible/jira")
  '(keyboard-coding-system (quote cp936))
- '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
+ '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote ajoke-symbol-chars)) (setq ajoke-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
  '(major-mode (quote text-mode))
- '(makefile-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
+ '(makefile-mode-hook (quote ((lambda nil (make-local-variable (quote ajoke-symbol-chars)) (setq ajoke-symbol-chars "-A-Za-z0-9_")))))
  '(message-dont-reply-to-names (quote (".*haojun.*" "hjbao")))
  '(message-mail-alias-type nil)
  '(mmm-submode-decoration-level 2)
@@ -515,7 +507,7 @@
 
 (add-hook 'python-mode-hook
           (lambda ()
-            (setq imenu-create-index-function #'imenu-create-index-using-ctags))
+            (setq imenu-create-index-function #'ajoke-create-index-function))
           t)
 
 (add-hook 'grep-mode-hook

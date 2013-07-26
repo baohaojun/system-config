@@ -2,3 +2,43 @@
 
 perl -npe 's!/usr/local!\@prefix\@!g' .globalrc > gcode/ajoke/external/global/gtags.conf.in
 
+if test "$PWD" = ~/system-config; then
+    for x in ~/etc/duplicate-files/*; do
+        if test -L $x; then
+            continue
+        fi
+        (
+            cd $x
+
+            need_copy=false
+            for file in *; do
+                if ! diff -q $file 0; then
+                    need_copy=true;
+                    break
+                fi
+            done
+
+            if test $need_copy = false; then
+                echo no need to update
+                break
+            fi
+            echo Which file to use as base?
+            updated_file=$(select-output-line 'for x in *; do readlink -f "$x"; done')
+            for file in $(for x in *; do readlink -f "$x"; done); do
+                if test "$updated_file" = "$file"; then
+                    continue
+                fi
+
+                if diff -q $updated_file $file; then
+                    echo $updated_file and $file are the same
+                    continue
+                fi
+                if (cd $(dirname $file); git st -s $(basename $file) | grep -P -e "^.\S"); then
+                    die "$file not clean in git"
+                fi
+                cp -v "$updated_file" "$file"
+                sleep 1
+            done
+        )
+    done
+fi

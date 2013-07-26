@@ -282,9 +282,52 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 
 ;;;***
 
-;;;### (autoloads (bhj-downcase-symbol-or-region bhj-upcase-symbol-or-region
-;;;;;;  source-code-help java-get-imports bhj-find-missing-file replace-double-quotes
-;;;;;;  bhj-choose-from-output bhj-choose bhj-open-android-doc-on-java-buffer
+;;;### (autoloads (ajoke-search-local-id ajoke-complete-method ajoke-resolve
+;;;;;;  ajoke-get-imports ajoke-get-override ajoke-get-hierarchy)
+;;;;;;  "ajoke" "ajoke.el" (20978 9411 730903 403000))
+;;; Generated autoloads from ajoke.el
+
+(autoload 'ajoke-get-hierarchy "ajoke" "\
+Print the class/interface inheritance hierarchy for the
+current class. Output is in compilation-mode for ease of cross
+referencing.
+
+\(fn)" t nil)
+
+(autoload 'ajoke-get-override "ajoke" "\
+Overide a method defined in super classes/interfaces.
+
+\(fn)" t nil)
+
+(autoload 'ajoke-get-imports "ajoke" "\
+Write the java import statements automatically.
+
+\(fn)" t nil)
+
+(autoload 'ajoke-resolve "ajoke" "\
+Resolve the type (class/interface) of ID.
+
+\(fn ID)" t nil)
+
+(autoload 'ajoke-complete-method "ajoke" "\
+Complete a method given an ID. First will resolve the
+type (class/interface) of ID, then complete using the type's
+methods.
+
+\(fn ID)" t nil)
+
+(autoload 'ajoke-search-local-id "ajoke" "\
+Search an identifier such as a local variable from the
+beginning of current defun.
+
+\(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads (bhj-c-show-current-func ajoke-pop-mark-back ajoke-pop-mark
+;;;;;;  bhj-jdk-help bhj-insert-pwdu bhj-insert-pwdw bhj-clt-insert-file-name
+;;;;;;  wiki-local-bhj weekrep bhj-downcase-symbol-or-region bhj-upcase-symbol-or-region
+;;;;;;  source-code-help bhj-find-missing-file bhj-open-android-doc-on-java-buffer
 ;;;;;;  bhj-do-dictionary insert-today dos2unix bhj-do-code-generation
 ;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-name my-bbdb-canonicalize
 ;;;;;;  my-bbdb/gnus-update-records-mode bhj-view-mail-external gnus-gmail-search-subject
@@ -292,20 +335,14 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 ;;;;;;  revert-all-buffers save-all-buffers-no-check-modified back-to-indent-same-space-as-prev-line
 ;;;;;;  indent-same-space-as-prev-line java-bt-mode java-bt-next-error
 ;;;;;;  java-bt-ret-key waw-mode waw-ret-key waw-next-error visit-code-reading
-;;;;;;  get-the-tag-around-me android-get-help ctags-beginning-of-defun
-;;;;;;  ctags-get-fully-qualified-name tag-this-file where-are-we
-;;;;;;  cscope-pop-mark-back cscope-pop-mark try-all-color-themes
-;;;;;;  try-all-themes random-theme devenv-debug devenv-toggle-breakpoint
-;;;;;;  switch-to-devenv bhj-jdk-help bhj-set-reply bhj-mimedown
-;;;;;;  bhj-w3m-scroll-down-or-previous-url bhj-w3m-scroll-up-or-next-url
-;;;;;;  bhj-isearch-from-bod bhj-occur-merge-conflicts bhj-occur-make-errors
-;;;;;;  bhj-occur java-get-override java-get-hierarchy bhj-indent-region-as-prev-line
-;;;;;;  c-get-includes bhj-insert-pwdu bhj-insert-pwdw bhj-clt-insert-file-name
-;;;;;;  wiki-local-bhj weekrep linux-c++-mode linux-c-mode bhj-c-end-of-defun
-;;;;;;  java-complete-method java-resolve bhj-c-show-current-func
-;;;;;;  bhj-c-beginning-of-defun confirm-risky-remote-edit fix-latex-cjk
-;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (20957
-;;;;;;  30073 927795 244000))
+;;;;;;  android-get-help where-are-we try-all-color-themes try-all-themes
+;;;;;;  random-theme devenv-debug devenv-toggle-breakpoint switch-to-devenv
+;;;;;;  bhj-set-reply bhj-mimedown bhj-w3m-scroll-down-or-previous-url
+;;;;;;  bhj-w3m-scroll-up-or-next-url bhj-occur-merge-conflicts bhj-occur-make-errors
+;;;;;;  bhj-occur bhj-indent-region-as-prev-line c-get-includes linux-c++-mode
+;;;;;;  linux-c-mode bhj-c-end-of-defun bhj-c-beginning-of-defun
+;;;;;;  confirm-risky-remote-edit fix-latex-cjk cleanup-buffer-safe)
+;;;;;;  "bhj-defines" "bhj-defines.el" (20978 9436 466903 991000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -330,21 +367,6 @@ move the cjk env outmost with the document env
 
 \(fn &optional ARG)" t nil)
 
-(autoload 'bhj-c-show-current-func "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'java-resolve "bhj-defines" "\
-
-
-\(fn ID)" t nil)
-
-(autoload 'java-complete-method "bhj-defines" "\
-
-
-\(fn ID)" t nil)
-
 (autoload 'bhj-c-end-of-defun "bhj-defines" "\
 
 
@@ -360,47 +382,12 @@ C mode with adjusted defaults for use with the Linux kernel.
 
 \(fn)" t nil)
 
-(autoload 'weekrep "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'wiki-local-bhj "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'bhj-clt-insert-file-name "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'bhj-insert-pwdw "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'bhj-insert-pwdu "bhj-defines" "\
-
-
-\(fn)" t nil)
-
 (autoload 'c-get-includes "bhj-defines" "\
 
 
 \(fn)" t nil)
 
 (autoload 'bhj-indent-region-as-prev-line "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'java-get-hierarchy "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'java-get-override "bhj-defines" "\
 
 
 \(fn)" t nil)
@@ -419,11 +406,6 @@ C mode with adjusted defaults for use with the Linux kernel.
 
 
 \(fn)" t nil)
-
-(autoload 'bhj-isearch-from-bod "bhj-defines" "\
-
-
-\(fn &optional COL-INDENT)" t nil)
 
 (autoload 'bhj-w3m-scroll-up-or-next-url "bhj-defines" "\
 
@@ -444,11 +426,6 @@ C mode with adjusted defaults for use with the Linux kernel.
 
 
 \(fn)" t nil)
-
-(autoload 'bhj-jdk-help "bhj-defines" "\
-start jdk help
-
-\(fn JDK-WORD)" t nil)
 
 (autoload 'switch-to-devenv "bhj-defines" "\
 Jump to VS.NET, at the same file & line as in emacs
@@ -480,45 +457,15 @@ Run the debugger in VS.NET
 
 \(fn)" t nil)
 
-(autoload 'cscope-pop-mark "bhj-defines" "\
-Pop back to where cscope was last invoked.
-
-\(fn)" t nil)
-
-(autoload 'cscope-pop-mark-back "bhj-defines" "\
-Pop back to where cscope was last invoked.
-
-\(fn)" t nil)
-
 (autoload 'where-are-we "bhj-defines" "\
 
 
 \(fn)" t nil)
 
-(autoload 'tag-this-file "bhj-defines" "\
-
-
-\(fn &optional OUTPUT-BUF)" t nil)
-
-(autoload 'ctags-get-fully-qualified-name "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'ctags-beginning-of-defun "bhj-defines" "\
-
-
-\(fn &optional ARG)" t nil)
-
 (autoload 'android-get-help "bhj-defines" "\
 
 
 \(fn)" t nil)
-
-(autoload 'get-the-tag-around-me "bhj-defines" "\
-
-
-\(fn GET-ATTR-FUNC &optional ARG)" t nil)
 
 (autoload 'visit-code-reading "bhj-defines" "\
 
@@ -666,27 +613,7 @@ lookup the current word (or region) in dictionary
 
 \(fn)" t nil)
 
-(autoload 'bhj-choose "bhj-defines" "\
-
-
-\(fn ARGS)" t nil)
-
-(autoload 'bhj-choose-from-output "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'replace-double-quotes "bhj-defines" "\
-
-
-\(fn)" t nil)
-
 (autoload 'bhj-find-missing-file "bhj-defines" "\
-
-
-\(fn)" t nil)
-
-(autoload 'java-get-imports "bhj-defines" "\
 
 
 \(fn)" t nil)
@@ -702,6 +629,51 @@ lookup the current word (or region) in dictionary
 \(fn)" t nil)
 
 (autoload 'bhj-downcase-symbol-or-region "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'weekrep "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'wiki-local-bhj "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-clt-insert-file-name "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-insert-pwdw "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-insert-pwdu "bhj-defines" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-jdk-help "bhj-defines" "\
+start jdk help
+
+\(fn JDK-WORD)" t nil)
+
+(autoload 'ajoke-pop-mark "bhj-defines" "\
+Pop back to where ajoke was last invoked.
+
+\(fn)" t nil)
+
+(autoload 'ajoke-pop-mark-back "bhj-defines" "\
+Pop back to where ajoke was last invoked.
+
+\(fn)" t nil)
+
+(autoload 'bhj-c-show-current-func "bhj-defines" "\
 
 
 \(fn)" t nil)

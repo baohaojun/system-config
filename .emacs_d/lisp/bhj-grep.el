@@ -1,3 +1,5 @@
+(require 'ajoke)
+
 (defun grep-shell-quote-argument (argument)
   "Quote ARGUMENT for passing as argument to an inferior shell."
   (cond
@@ -87,8 +89,8 @@
                                                            "*grep-gtags*")))
         (my-grep-command (or def-grep-command "grep-gtags -e pat"))
         (current-prefix-arg 4))
-    (nodup-ring-insert cscope-marker-ring (point-marker))
-    (set-gtags-start-file)
+    (nodup-ring-insert ajoke--marker-ring (point-marker))
+    (ajoke--setup-env)
     (call-interactively 'grep-bhj-dir)
     (set (or history-var 'grep-gtags-history) grep-history)))
 
@@ -125,7 +127,7 @@
         (compilation-buffer-name-function (lambda (_ign) "*grep-find-file*"))
         (current-prefix-arg 4))
     (flet ((grep-tag-default () (grep-tag-default-path)))
-      (nodup-ring-insert cscope-marker-ring (point-marker))
+      (nodup-ring-insert ajoke--marker-ring (point-marker))
       (call-interactively 'grep-bhj-dir)
       (setq grep-find-file-history grep-history))))
 
@@ -136,8 +138,8 @@
         (my-grep-command "grep-func-call -e pat")
         (compilation-buffer-name-function (lambda (_ign) "*grep-func-call*"))
         (current-prefix-arg 4))
-    (nodup-ring-insert cscope-marker-ring (point-marker))
-    (let ((file (my-buffer-file-name (current-buffer)))
+    (nodup-ring-insert ajoke--marker-ring (point-marker))
+    (let ((file (ajoke--buffer-file-name (current-buffer)))
           (mode-name-minus-mode
            (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
       (if (file-remote-p file)

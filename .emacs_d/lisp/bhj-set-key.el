@@ -1,18 +1,9 @@
 (global-set-key [(meta ?/)] 'hippie-expand)
-
 (global-set-key [(control c) ??] 'bhj-c-show-current-func)
-
-(global-set-key (kbd "M-g j r") 'java-resolve)
-
-(global-set-key (kbd "M-g j h") 'java-get-hierarchy)
-
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-x b") 'helm-buffers-list)
-
 (global-set-key [(control c)(k)] 'browse-kill-ring)
-
-(global-set-key[(f3)](lambda()(interactive)(woman (current-word))))
-
+(global-set-key [(f3)] (lambda()(interactive)(woman (current-word))))
 (global-set-key [(control meta shift g)]
                 (lambda()(interactive)
                   (let
@@ -20,8 +11,7 @@
                     (progn
                       (setq search-string
                             (read-string (format "search google with [%s]: " search-string) nil nil search-string))
-                      (call-process "bash" nil nil nil "googleemacs.sh" search-string)
-                      ))))
+                      (call-process "bash" nil nil nil "googleemacs.sh" search-string)))))
 
 (global-set-key [(meta n)] 'next-error)
 
@@ -33,7 +23,7 @@
                   (let ((grep-history grep-rgrep-history)
                         (my-grep-command "rgrep -Hn -e pat")
                         (current-prefix-arg 4))
-                    (nodup-ring-insert cscope-marker-ring (point-marker))
+                    (nodup-ring-insert ajoke--marker-ring (point-marker))
                     (call-interactively 'grep-bhj-dir)
                     (setq grep-rgrep-history grep-history))))
 
@@ -42,8 +32,6 @@
 (global-set-key [(control meta o)] 'bhj-occur)
 
 (global-set-key (kbd "M-g o") 'bhj-occur)
-
-(global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
 
 (global-set-key [f3] 'switch-to-devenv)
 

@@ -204,8 +204,5 @@
         ))
 
 (setq eclim-auto-save t)
-
-(setq-default imenu-create-index-function #'imenu-create-index-using-ctags)
-
 (setq ring-bell-function (lambda ()))
 
