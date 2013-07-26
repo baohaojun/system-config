@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 1999, 2000, 2001, 2007
- *	Tama Communications Corporation
+ *      Tama Communications Corporation
  *
  * This file is part of GNU GLOBAL.
  *
@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -42,7 +42,7 @@ Please see the donation page <http://www.gnu.org/software/global/donation.html>.
 char *
 get_version(void)
 {
-	return VERSION;
+        return VERSION;
 }
 /*
  * version: print version information.
@@ -50,17 +50,18 @@ get_version(void)
 void
 version(const char *name, const int verbose)
 {
-	if (name == NULL)
-		name = progname;
-	/*
-	 * if the -q option is not specified then always verbose
-	 * according to the GNU coding standard
-	 */
-	if (qflag)
-		fprintf(stdout, "%s\n", VERSION);
-	else {
-		fprintf(stdout, "%s - %s\n", name, PACKAGE_STRING);
-		fprintf(stdout, "%s", copy);
-	}
-	exit(0);
+        if (name == NULL)
+                name = progname;
+        /*
+         * if the -q option is not specified then always verbose
+         * according to the GNU coding standard
+         */
+        if (qflag)
+                fprintf(stdout, "%s\n", VERSION);
+        else {
+                fprintf(stdout, "%s - %s\n", name, PACKAGE_STRING);
+                fprintf(stdout, "%s", copy);
+                fprintf(stdout, "\nPatched for ajoke.\n");
+        }
+        exit(0);
 }

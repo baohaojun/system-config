@@ -1,6 +1,6 @@
 #
 # Copyright (c) 1998, 1999, 2000, 2001, 2002, 2003, 2010
-#	Tama Communications Corporation
+#       Tama Communications Corporation
 #
 # This file is part of GNU GLOBAL.
 #
@@ -28,55 +28,88 @@
 # variable 'langmap' instead.
 #
 default:\
-	:tc=gtags:tc=htags:
+        :tc=gtags:tc=htags:
 #---------------------------------------------------------------------
 # Configuration for gtags(1)
 # See gtags(1).
 #---------------------------------------------------------------------
 common:\
-	:skip=@DEFAULTSKIP@:
+        :skip=GPATH,GTAGS,GRTAGS,GSYMS,HTML/,HTML.pub/,html/,tags,TAGS,ID,y.tab.c,y.tab.h,cscope.out,cscope.po.out,cscope.in.out,SCCS/,RCS/,CVS/,CVSROOT/,{arch}/,autom4te.cache/:
 gtags:\
-	:tc=common:\
-	:langmap=@DEFAULTLANGMAP_QUOTED@:
+        :tc=common:\
+        :langmap=c\:.c.h,yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H,php\:.php.php3.phtml:
 #
 # plugin parser
 #
 plugin-example|Example of function layer plugin parser:\
-	:tc=common:extractmethod:\
-	:langmap=@DEFAULTLANGMAP_QUOTED@:\
-	:langmap=fortran\:.f.for.f77.f90.f95,pascal\:.p.pas,c#\:.cs,lisp\:.l.el.lisp,scheme\:.scm:\
-	:langmap=awk\:.awk,ruby\:.rb,perl\:.pl,python\:.py,vim\:.vim,javascript\:.js,sh\:.sh:\
-	:gtags_parser=c\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=yacc\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=asm\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=java\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=cpp\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=php\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=fortran\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=pascal\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=c#\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=lisp\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :tc=common:extractmethod:\
+        :langmap=c\:.c:\
+        :langmap=yacc\:.y:\
+        :langmap=asm\:.s.S:\
+        :langmap=java\:.java.aidl:\
+        :langmap=jar\:.jar:\
+        :langmap=antlr\:.g:\
+        :langmap=c++\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h:\
+        :langmap=php\:.php.php3.phtml:\
+        :langmap=fortran\:.f.for.f77.f90.f95:\
+        :langmap=pascal\:.p.pas:\
+        :langmap=c#\:.cs:\
+        :langmap=lisp\:.l.el.lisp.jl(.emacs):\
+        :langmap=lua\:.lua:\
+        :langmap=javaprop\:(ExternalMessages.properties):\
+        :langmap=kconfig\:(Kconfig*):\
+        :langmap=androidxml\:.xml:\
+        :langmap=androidpng\:.png:\
+        :langmap=scheme\:.scm:\
+        :langmap=awk\:.awk:\
+        :langmap=ruby\:.rb:\
+        :langmap=perl\:.pl.pm:\
+        :langmap=python\:.py:\
+        :langmap=make\:(*.am)([mM]akefile*)(Kbuild*).mk.make:\
+        :langmap=vim\:.vim:\
+        :langmap=javascript\:.js:\
+        :langmap=ObjectiveC\:.m.mm:\
+        :langmap=sh\:(.bashrc*).sh:\
+        :gtags_parser=c\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=yacc\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=asm\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=java\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=jar\:@prefix@/lib/gtags/gtags-antlr-java.la:\
+        :gtags_parser=antlr\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=c++\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=php\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=fortran\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=pascal\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=c#\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=lisp\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=lua\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=kconfig\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=androidxml\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=androidpng\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=javaprop\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=scheme\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=awk\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=ruby\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=perl\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=python\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=vim\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=javascript\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=scheme\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=awk\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=ruby\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=perl\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=python\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=vim\:@prefix@/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=sh\:@prefix@/lib/gtags/exuberant-ctags.la:
+        :gtags_parser=make\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=ObjectiveC\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=sh\:@prefix@/lib/gtags/exuberant-ctags.la:
 #---------------------------------------------------------------------
 # Configuration for htags(1)
 # Let's paint hypertext with your favorite colors!
 # See htags(1).
 #---------------------------------------------------------------------
 htags:\
-	:body_begin=<body text='#191970' bgcolor='#f5f5dc' vlink='gray'>:body_end=</body>:\
-	:table_begin=<table>:table_end=</table>:\
-	:title_begin=<h1><font color='#cc0000'>:title_end=</font></h1>:\
-	:comment_begin=<i><font color='green'>:comment_end=</font></i>:\
-	:sharp_begin=<font color='darkred'>:sharp_end=</font>:\
-	:brace_begin=<font color='red'>:brace_end=</font>:\
-	:warned_line_begin=<span style='background-color\:yellow'>:warned_line_end=</span>:\
-	:reserved_begin=<b>:reserved_end=</b>:script_alias=/cgi-bin/:\
-	:ncol#4:tabs#8:normal_suffix=html:gzipped_suffix=ghtml:\
-	:definition_header=no:
+        :body_begin=<body text='#191970' bgcolor='#f5f5dc' vlink='gray'>:body_end=</body>:\
+        :table_begin=<table>:table_end=</table>:\
+        :title_begin=<h1><font color='#cc0000'>:title_end=</font></h1>:\
+        :comment_begin=<i><font color='green'>:comment_end=</font></i>:\
+        :sharp_begin=<font color='darkred'>:sharp_end=</font>:\
+        :brace_begin=<font color='red'>:brace_end=</font>:\
+        :warned_line_begin=<span style='background-color\:yellow'>:warned_line_end=</span>:\
+        :reserved_begin=<b>:reserved_end=</b>:script_alias=/cgi-bin/:\
+        :ncol#4:tabs#8:normal_suffix=html:gzipped_suffix=ghtml:\
+        :definition_header=no:

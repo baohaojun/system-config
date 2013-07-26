@@ -199,7 +199,7 @@ AC_MSG_CHECKING(for exuberant ctags program)
 AC_ARG_WITH(exuberant-ctags,
 [  --with-exuberant-ctags=PROGRAM  specify Exuberant Ctags program ],
 [ EXUBERANT_CTAGS="$withval" ],
-[ EXUBERANT_CTAGS=/usr/bin/ctags-exuberant ])
+[ EXUBERANT_CTAGS=/bin/true ])
 AC_DEFINE_UNQUOTED(EXUBERANT_CTAGS, "$EXUBERANT_CTAGS", [Exuberant Ctags program.])
 AC_MSG_RESULT("$EXUBERANT_CTAGS")
 AC_SUBST(EXUBERANT_CTAGS)
