@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Emacs和它的朋友们——阅读源代码篇</title>
-<!-- 2013-05-20 Mon 22:13 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="author" content="Bao Haojun"/>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
@@ -272,10 +272,9 @@ Emacs里打开看，并且比起在终端上用相应的man(1)等命令打开，
 后跳到那一行上就行了，见图（在这个例子中，read的定义开始于3162行）：
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/orrur-read.png"  alt="orrur-read.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/orrur-read.png"><img  src="../../../../images/post/orrur-read.png" alt="orrur-read.png" /></a>
+</p>
 
 <p>
 当然，现在我知道Emacs有一个perldoc命令可以直接显示read函数了，可是在
@@ -434,10 +433,9 @@ SCIM_FULL_LETTER_ICON macro        62 scim_fcitx_imengine.cpp #define SCIM_FULL_
 哈，我们可以写一个perl小脚本，轻松地把它转换成grep的格式！见图：
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/grep-def.png"  alt="grep-def.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/grep-def.png"><img  src="../../../../images/post/grep-def.png" alt="grep-def.png" /></a>
+</p>
 
 <p>
 这样做的额外的好处是，查找上一个/下一个定义点的Emacs按键，也跟
@@ -552,10 +550,9 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 下图的功能（1. 列出当前文件中的所有定义方便查看，2. 鼠标点击实现跳转）：
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/si-imenu.png"  alt="si-imenu.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/si-imenu.png"><img  src="../../../../images/post/si-imenu.png" alt="si-imenu.png" /></a>
+</p>
 
 <p>
 我们的imenu的用法当然跟source insight有点不一样，虽然精神上是类似的。首
@@ -568,10 +565,9 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 其次，如下图所示
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/emacs-imenu.png"  alt="emacs-imenu.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/emacs-imenu.png"><img  src="../../../../images/post/emacs-imenu.png" alt="emacs-imenu.png" /></a>
+</p>
 
 <p>
 我可以把它跟emacs的 <code>anything.el</code> 结合，对要显示何种定义做更精准的控制
@@ -596,7 +592,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 </p>
 
 <pre class="example">
-(setq-default imenu-create-index-function #'imenu-create-index-using-ctags)
+(setq-default imenu-create-index-function #'ajoke-create-index-function)
 </pre>
 </div>
 </div>
@@ -617,10 +613,9 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 通过它们的结合使用，我们可以实现最后一个功能：查找一个函数在何处被调用。见下图：
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/func-called.png"  alt="func-called.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/func-called.png"><img  src="../../../../images/post/func-called.png" alt="func-called.png" /></a>
+</p>
 
 <p>
 其工作原理是这样的，以上图为例，先beagrep出readlink出现在哪些文件里，再
@@ -643,10 +638,9 @@ source-insight有生成调用关系图的功能（有人用过吗？），我们
 可以做到的（只不过弄完这个功能之后我再也没有用过它），见下图：
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/call-graph.png"  alt="call-graph.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/call-graph.png"><img  src="../../../../images/post/call-graph.png" alt="call-graph.png" /></a>
+</p>
 </div>
 </div>
 <div id="outline-container-sec-8" class="outline-2">
@@ -659,7 +653,7 @@ source-insight有生成调用关系图的功能（有人用过吗？），我们
 
 <p>
 虽然现在已经不完全用这两个工具了，它俩的一些好的idea我还是吸收了，比如
-在cscope.el里有一个cscope-marker-ring，能够在查询定义之后回到开始查询的
+在cscope.el里有一个ajoke&#x2013;marker-ring，能够在查询定义之后回到开始查询的
 地方，经过我的改良之后，纵横进退，异常方便。而gtags既有接口模拟cscope的
 输出，又有plugin机制可以调ctags-exuberant来做定义点预索引，所以为我试用
 这几个不同工具时的平滑过渡提供了很大的方便。目前我还在通过它来调用
@@ -775,10 +769,10 @@ ctags-exuberant来记算），再搜到记下的变量的第一次出现的地�
 <li><a href='../../03/27/why-lisp-cn.html'> why-lisp-cn </a></li>
 <li><a href='../../02/26/extracting-ahd-cn.html'> extracting-ahd-cn </a></li>
 <li><a href='../../02/02/how-to-do-long-twitter-cn.html'> 自己动手做长微博（推特），内嵌图片的 </a></li>
-<li><a href='../../01/31/beagrep-cn.html'> beagrep，两秒钟grep两个G的代码 </a></li>
+<li><a href='../../01/31/beagrep-cn.html'> beagrep，0.23秒grep两个G的代码 </a></li>
 <li><a href='../../../2011/12/28/org-jira.html'> org-jira </a></li>
 <li><a href='../../../2011/12/23/index.html'> My Page on Github </a></li>
-<li><a href='../../../2011/12/23/beagrep.html'> beagrep, grep 2G source code in 2 seconds </a></li>
+<li><a href='../../../2011/12/23/beagrep.html'> beagrep, grep 2G source code in 0.23 second </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

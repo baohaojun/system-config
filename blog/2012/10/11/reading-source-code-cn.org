@@ -113,7 +113,7 @@ make: *** [out/target/product/xx/kernel] Error 1
    会突出来一点的，纯文本的显示一般会用不同的缩进来表示不同的章节），然
    后跳到那一行上就行了，见图（在这个例子中，read的定义开始于3162行）：
 
-   [[../../../../images/post/orrur-read.png]]
+   [[../../../../images/post/orrur-read.png][file:../../../../images/post/orrur-read.png]]
 
    当然，现在我知道Emacs有一个perldoc命令可以直接显示read函数了，可是在
    此之前，这个小技巧真的让我很开心:-) 因为要不然的话，我只能在终端里用
@@ -222,7 +222,7 @@ SCIM_FULL_LETTER_ICON macro        62 scim_fcitx_imengine.cpp #define SCIM_FULL_
 
 哈，我们可以写一个perl小脚本，轻松地把它转换成grep的格式！见图：
 
-[[../../../../images/post/grep-def.png]]
+[[../../../../images/post/grep-def.png][file:../../../../images/post/grep-def.png]]
 
 这样做的额外的好处是，查找上一个/下一个定义点的Emacs按键，也跟
 grep/compilation统一起来了！（不去记两套不同但功能完全类似的按键，就像
@@ -307,7 +307,7 @@ libstring-approx-perl~ 。它已经帮我们实现了计算两个字符串之间
 imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 里类似于
 下图的功能（1. 列出当前文件中的所有定义方便查看，2. 鼠标点击实现跳转）：
 
-[[../../../../images/post/si-imenu.png]]
+[[../../../../images/post/si-imenu.png][file:../../../../images/post/si-imenu.png]]
 
 我们的imenu的用法当然跟source insight有点不一样，虽然精神上是类似的。首
 先，我不能一直炫炫地显示着有一个“定义窗口”，我想看有哪些定义的话，需要
@@ -316,7 +316,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 
 其次，如下图所示
 
-[[../../../../images/post/emacs-imenu.png]]
+[[../../../../images/post/emacs-imenu.png][file:../../../../images/post/emacs-imenu.png]]
 
 我可以把它跟emacs的 ~anything.el~ 结合，对要显示何种定义做更精准的控制
 (图中只显示了 ~macro~ ）。Source insight做不到这一点，所以，Emacs加一分！
@@ -333,7 +333,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 下，转而寻求强大的ctags-exuberant的帮助（详见 [[../22/my-config-cn.org][我的配置系统]] ）：
 
 #+begin_example
-(setq-default imenu-create-index-function #'imenu-create-index-using-ctags)
+(setq-default imenu-create-index-function #'ajoke-create-index-function)
 #+end_example
 
 * beagrep
@@ -345,7 +345,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 
 通过它们的结合使用，我们可以实现最后一个功能：查找一个函数在何处被调用。见下图：
 
-[[../../../../images/post/func-called.png]]
+[[../../../../images/post/func-called.png][file:../../../../images/post/func-called.png]]
 
 其工作原理是这样的，以上图为例，先beagrep出readlink出现在哪些文件里，再
 在这些文件上当场调用ctags-exuberant，获得类似这样的信息：某文件第100行
@@ -359,7 +359,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 source-insight有生成调用关系图的功能（有人用过吗？），我们用开源软件也
 可以做到的（只不过弄完这个功能之后我再也没有用过它），见下图：
 
-[[../../../../images/post/call-graph.png]]
+[[../../../../images/post/call-graph.png][file:../../../../images/post/call-graph.png]]
 
 * cscope 和 gtags
 
@@ -367,7 +367,7 @@ source-insight有生成调用关系图的功能（有人用过吗？），我们
 一段的时候我还是在用cscope。后来转成用gtags，最后用的是ctags-exuberant。
 
 虽然现在已经不完全用这两个工具了，它俩的一些好的idea我还是吸收了，比如
-在cscope.el里有一个cscope-marker-ring，能够在查询定义之后回到开始查询的
+在cscope.el里有一个ajoke--marker-ring，能够在查询定义之后回到开始查询的
 地方，经过我的改良之后，纵横进退，异常方便。而gtags既有接口模拟cscope的
 输出，又有plugin机制可以调ctags-exuberant来做定义点预索引，所以为我试用
 这几个不同工具时的平滑过渡提供了很大的方便。目前我还在通过它来调用

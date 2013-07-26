@@ -240,7 +240,7 @@ will be exported to the environment variable).
 <div class="org-src-container">
 
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">set-gtags-start-file</span> ()
-  (<span class="org-keyword">let</span> ((file (my-buffer-file-name (current-buffer))))
+  (<span class="org-keyword">let</span> ((file (ajoke--buffer-file-name (current-buffer))))
     (<span class="org-keyword">if</span> (file-remote-p file)
         (<span class="org-keyword">let</span> ((process-environment tramp-remote-process-environment))
           (setenv <span class="org-string">"GTAGS_START_FILE"</span> (file-remote-p file 'localname))

@@ -22,7 +22,7 @@ that I know it. I can read comments/upload, but not watch. Thanks!)
   Using the features of Eclim as a reference, I have implemented the
   following which I find most useful (and most fun).
 
-** java-get-import
+** ajoke-get-import
 
 Given a java file, I will parse it and find all the classes/interfaces
 missing, and add the corresponding =import= statement at the start of
@@ -36,12 +36,12 @@ the java source file.
    =completing-read= will be used to trivially prompt you to choose
    one, as you can see in the video or the screenshot below:
 
-   [[../../../../images/post/emacs-java-import.png]]
+   [[../../../../images/post/emacs-java-import.png][file:../../../../images/post/emacs-java-import.png]]
 
    Note that I am using anything.el (now renamed as [[http://www.emacswiki.org/Anything][helm]]) to make
    =completing-read= even more friendly.
 
-** java-get-hierarchy
+** ajoke-get-hierarchy
 
 I can use this command to draw the inheritance tree of a class I am
 interested in.
@@ -69,13 +69,13 @@ You can see it in the video, or the below screenshot, note how the
 onCreate method has been show below each of the classes who defines
 it.
 
-[[../../../../images/post/emacs-java-hierarchy.png]]
+[[../../../../images/post/emacs-java-hierarchy.png][file:../../../../images/post/emacs-java-hierarchy.png]]
 
 Here is another one showing a similar class and the onKeyUp method.
 
-[[../../../../images/post/java-get-hierarchy.png]]
+[[../../../../images/post/ajoke-get-hierarchy.png][file:../../../../images/post/ajoke-get-hierarchy.png]]
 
-** java-resolve
+** ajoke-resolve
 
 This method seem to be not very useful, but it is depended upon by the
 next very useful command.
@@ -87,31 +87,31 @@ simply =ArrayList=, depending on whether you have imported
 
 #+BEGIN_EXAMPLE
 ArrayList<String> xx;
-xx.  <= put point here and M-x java-resolve
+xx.  <= put point here and M-x ajoke-resolve
 #+END_EXAMPLE
 
-** java-complete-method
+** ajoke-complete-method
 
 As said above, if you put =point= after =xx.= and invoke
-=java-complete-method=, it will let you =completing-read= choose from
+=ajoke-complete-method=, it will let you =completing-read= choose from
 all the methods of ArrayList (and its superclass and interfaces's).
 
-It works by reusing java-resolve on =xx= and find its type
-=ArrayList=, then java-get-hierarchy on =ArrayList= to list all its
+It works by reusing ajoke-resolve on =xx= and find its type
+=ArrayList=, then ajoke-get-hierarchy on =ArrayList= to list all its
 methods.
 
 See the video or the below screenshot:
 
-[[../../../../images/post/java-complete-method.png]]
+[[../../../../images/post/ajoke-complete-method.png][file:../../../../images/post/ajoke-complete-method.png]]
 
 
-** java-get-override
+** ajoke-get-override
 
 You may need to redefine a method of a parent class/interface, this
 elisp command can come to help. You can =completing-read= choose which
 method to override. See the video or the screenshot:
 
-[[../../../../images/post/java-get-override.png]]
+[[../../../../images/post/ajoke-get-override.png][file:../../../../images/post/ajoke-get-override.png]]
 
 
 
@@ -145,7 +145,7 @@ git clone --recursive http://github.com/baohaojun/system-config
 #+BEGIN_SRC sh
 cd ~/system-config/gcode/java-test
 for-code-reading
-java-get-hierarchy.pl Child -m Child
+ajoke-get-hierarchy.pl Child -m Child
 #+END_SRC
 
 You should see output like the following:
@@ -187,7 +187,7 @@ get too slow:-)
 
 ** Problems of individual commands
 
-+ java-get-import
++ ajoke-get-import
 
   It should not offer to import the android resouce class android.R,
   because an APK project will generate its own R.java in the same
@@ -195,16 +195,16 @@ get too slow:-)
 
   And it does not handle generic types very well.
 
-+ java-resolve
++ ajoke-resolve
 
   It parse =String[] strArr= as java.lang.String, not as Array.
 
-+ java-get-hierarchy
++ ajoke-get-hierarchy
 
   When asked to list all methods/fields, it will literally list
   everything, even private ones.
 
-+ java-get-override
++ ajoke-get-override
 
   1. Should support batch overriding for e.g., all the methods of an
      interface.
@@ -250,7 +250,7 @@ This tool is so convenient that I don't find some of my java-coding
 scrits's bugs so urgent to fix.
 
 You can see in the video or the below screenshot:
-[[../../../../images/post/regexp-completion.png]]
+[[../../../../images/post/regexp-completion.png][file:../../../../images/post/regexp-completion.png]]
 
 You can find the elisp source in [[http://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/skeleton-complete.el][skeleton-complete.el]].
 

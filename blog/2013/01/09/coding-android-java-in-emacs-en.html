@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Doing Android Java Programming in Emacs</title>
-<!-- 2013-05-20 Mon 22:13 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="author" content="Bao Haojun"/>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
@@ -134,7 +134,7 @@ following which I find most useful (and most fun).
 </div>
 
 <div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> java-get-import</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> ajoke-get-import</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 Given a java file, I will parse it and find all the classes/interfaces
@@ -152,10 +152,9 @@ class in the whole project with the same name, the elisp command
 <code>completing-read</code> will be used to trivially prompt you to choose
 one, as you can see in the video or the screenshot below:
 
-
-<div class="figure">
-<p><img src="../../../../images/post/emacs-java-import.png"  alt="emacs-java-import.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/emacs-java-import.png"><img  src="../../../../images/post/emacs-java-import.png" alt="emacs-java-import.png" /></a>
+</p>
 
 <p>
 Note that I am using anything.el (now renamed as <a href="http://www.emacswiki.org/Anything">helm</a>) to make
@@ -166,7 +165,7 @@ Note that I am using anything.el (now renamed as <a href="http://www.emacswiki.o
 </div>
 </div>
 <div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> java-get-hierarchy</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> ajoke-get-hierarchy</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 I can use this command to draw the inheritance tree of a class I am
@@ -208,23 +207,21 @@ onCreate method has been show below each of the classes who defines
 it.
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/emacs-java-hierarchy.png"  alt="emacs-java-hierarchy.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/emacs-java-hierarchy.png"><img  src="../../../../images/post/emacs-java-hierarchy.png" alt="emacs-java-hierarchy.png" /></a>
+</p>
 
 <p>
 Here is another one showing a similar class and the onKeyUp method.
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/java-get-hierarchy.png"  alt="java-get-hierarchy.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/ajoke-get-hierarchy.png"><img  src="../../../../images/post/ajoke-get-hierarchy.png" alt="ajoke-get-hierarchy.png" /></a>
+</p>
 </div>
 </div>
 <div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> java-resolve</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> ajoke-resolve</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 This method seem to be not very useful, but it is depended upon by the
@@ -240,22 +237,22 @@ simply <code>ArrayList</code>, depending on whether you have imported
 
 <pre class="example">
 ArrayList&lt;String&gt; xx;
-xx.  &lt;= put point here and M-x java-resolve
+xx.  &lt;= put point here and M-x ajoke-resolve
 </pre>
 </div>
 </div>
 <div id="outline-container-sec-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> java-complete-method</h3>
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> ajoke-complete-method</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 As said above, if you put <code>point</code> after <code>xx.</code> and invoke
-<code>java-complete-method</code>, it will let you <code>completing-read</code> choose from
+<code>ajoke-complete-method</code>, it will let you <code>completing-read</code> choose from
 all the methods of ArrayList (and its superclass and interfaces's).
 </p>
 
 <p>
-It works by reusing java-resolve on <code>xx</code> and find its type
-<code>ArrayList</code>, then java-get-hierarchy on <code>ArrayList</code> to list all its
+It works by reusing ajoke-resolve on <code>xx</code> and find its type
+<code>ArrayList</code>, then ajoke-get-hierarchy on <code>ArrayList</code> to list all its
 methods.
 </p>
 
@@ -263,15 +260,14 @@ methods.
 See the video or the below screenshot:
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/java-complete-method.png"  alt="java-complete-method.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/ajoke-complete-method.png"><img  src="../../../../images/post/ajoke-complete-method.png" alt="ajoke-complete-method.png" /></a>
+</p>
 </div>
 </div>
 
 <div id="outline-container-sec-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> java-get-override</h3>
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> ajoke-get-override</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
 You may need to redefine a method of a parent class/interface, this
@@ -279,10 +275,9 @@ elisp command can come to help. You can <code>completing-read</code> choose whic
 method to override. See the video or the screenshot:
 </p>
 
-
-<div class="figure">
-<p><img src="../../../../images/post/java-get-override.png"  alt="java-get-override.png"/></p>
-</div>
+<p>
+<a href="../../../../images/post/ajoke-get-override.png"><img  src="../../../../images/post/ajoke-get-override.png" alt="ajoke-get-override.png" /></a>
+</p>
 </div>
 </div>
 </div>
@@ -334,7 +329,7 @@ git clone --recursive http://github.com/baohaojun/system-config
 
 <pre class="src src-sh"><span class="org-builtin">cd</span> ~/system-config/gcode/java-test
 for-code-reading
-java-get-hierarchy.pl Child -m Child
+ajoke-get-hierarchy.pl Child -m Child
 </pre>
 </div>
 
@@ -405,7 +400,7 @@ performance.
 <h3 id="sec-3-2"><span class="section-number-3">3.2</span> Problems of individual commands</h3>
 <div class="outline-text-3" id="text-3-2">
 <ul class="org-ul">
-<li>java-get-import
+<li>ajoke-get-import
 
 <p>
 It should not offer to import the android resouce class android.R,
@@ -418,14 +413,14 @@ And it does not handle generic types very well.
 </p>
 </li>
 
-<li>java-resolve
+<li>ajoke-resolve
 
 <p>
 It parse <code>String[] strArr</code> as java.lang.String, not as Array.
 </p>
 </li>
 
-<li>java-get-hierarchy
+<li>ajoke-get-hierarchy
 
 <p>
 When asked to list all methods/fields, it will literally list
@@ -433,7 +428,7 @@ everything, even private ones.
 </p>
 </li>
 
-<li>java-get-override
+<li>ajoke-get-override
 
 <ol class="org-ol">
 <li>Should support batch overriding for e.g., all the methods of an
@@ -507,7 +502,7 @@ scrits's bugs so urgent to fix.
 
 <p>
 You can see in the video or the below screenshot:
-<img src="../../../../images/post/regexp-completion.png"  alt="regexp-completion.png"/>
+<a href="../../../../images/post/regexp-completion.png"><img  src="../../../../images/post/regexp-completion.png" alt="regexp-completion.png" /></a>
 </p>
 
 <p>

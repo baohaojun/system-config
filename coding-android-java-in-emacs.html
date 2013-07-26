@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>在Emacs下用java编程（Android相关）</title>
-<!-- 2013-05-20 Mon 22:13 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="author" content="Bao Haojun"/>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
@@ -116,7 +116,7 @@ Emacs lisp做一些简单的java编程工具。
 <h2 id="sec-1"><span class="section-number-2">1</span> 目前已经实现的功能</h2>
 <div class="outline-text-2" id="text-1">
 </div><div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> java-get-hierarchy</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> ajoke-get-hierarchy</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 把某个指定的类的继承关系图给画出来。
@@ -126,13 +126,12 @@ Emacs lisp做一些简单的java编程工具。
 在eclim底下的截图做不出来了，下面给大家看一下我用自己的脚本做出来的效果吧。
 </p>
 
-
-<div class="figure">
-<p><img src="images/post/java-get-hierarchy.png"  alt="java-get-hierarchy.png"/></p>
-</div>
+<p>
+<a href="images/post/ajoke-get-hierarchy.png"><img  src="images/post/ajoke-get-hierarchy.png" alt="ajoke-get-hierarchy.png" /></a>
+</p>
 
 <p>
-与eclim的java-get-hierarchy相比，优点有二：
+与eclim的ajoke-get-hierarchy相比，优点有二：
 </p>
 
 <ol class="org-ol">
@@ -145,7 +144,7 @@ Emacs lisp做一些简单的java编程工具。
 </div>
 </div>
 <div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> java-get-import</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> ajoke-get-import</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 这一点功能基本上与Eclim的是一样的，parse一个.java文件，把里面没有
@@ -163,7 +162,7 @@ emacs-lisp中调用completing-read要求用户选一个。
 </div>
 </div>
 <div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> java-resolve</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> ajoke-resolve</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 做这个最初的目的是想做上下文补齐，后来发现太难了，补齐还是用我自己的 <a href="blog/2012/12/27/stem-completion.html">提干式id补齐和re补齐</a> 吧。
@@ -180,7 +179,7 @@ emacs-lisp中调用completing-read要求用户选一个。
 
 <p>
 配置完成后，到你的android目录下执行 <code>for-code-reading</code> （会花大约一小时，
-主要是 <a href="blog/2011/12/23/beagrep.html">mkbeagrepidx</a> 会花很长时间），然后执行 <code>java-get-hierarchy.pl
+主要是 <a href="blog/2011/12/23/beagrep.html">mkbeagrepidx</a> 会花很长时间），然后执行 <code>ajoke-get-hierarchy.pl
 android.view.View</code> ，应该能看到这样的输出：
 </p>
 
