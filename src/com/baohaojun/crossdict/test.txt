@@ -36,14 +36,14 @@ beautifully
 
 // * The meat (Remember, worse is better!):
 
-// ** java-get-import (watch how it allow us to choose which class to import)
+// ** ajoke-get-import (watch how it allow us to choose which class to import)
     ArrayList<String> xx;
 
-// ** java-resolve (watch out the echo area, the type of xx will be
+// ** ajoke-resolve (watch out the echo area, the type of xx will be
 // ** shown (only works after ArrayList is imported).
     xx;
 
-// ** java-get-hierarchy.pl (is a bit slow, see how the context
+// ** ajoke-get-hierarchy.pl (is a bit slow, see how the context
 // ** function's top defining class/interface is also resloved)
 
     @Override
@@ -52,9 +52,9 @@ beautifully
 	return "";
     }
     
-// ** java-get-overide (is a bit slow, really should improve it using caching)
+// ** ajoke-get-overide (is a bit slow, really should improve it using caching)
  
-// ** java-complete-method (also slow, may need some editing before
+// ** ajoke-complete-method (also slow, may need some editing before
 // ** using the method)
 
 
