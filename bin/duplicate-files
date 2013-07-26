@@ -6,11 +6,19 @@ if test $# != 2; then
     die "Error: Usage $(basename $0) source target"
 fi
 
-source=$(readlink -f "$1")
-target=$(readlink -f "$2")
+source=$(readlink -m "$1")
+target=$(readlink -m "$2")
 
-if ! test -e "$source"; then
+if ! test -f "$source"; then
     die "$source doesn't exist";
+fi
+
+if test -d "$target"; then
+    target=$target/$(basename "$source")
+fi
+
+if ! test -e "$target"; then
+    cp "$source" "$target"
 fi
 
 dupdir=~/system-config/etc/duplicate-files/$(basename "$source")

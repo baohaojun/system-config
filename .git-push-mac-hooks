@@ -2,6 +2,10 @@
 
 perl -npe 's!/usr/local!\@prefix\@!g' .globalrc > gcode/ajoke/external/global/gtags.conf.in
 
+if test $PWD = $HOME; then
+    cd ~/system-config
+fi
+
 if test "$PWD" = ~/system-config; then
     for x in ~/etc/duplicate-files/*; do
         if test -L $x; then

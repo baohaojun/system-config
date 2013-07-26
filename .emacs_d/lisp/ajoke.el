@@ -250,42 +250,6 @@ is set, call FUNC with the start and end of the matched region."
     (nreverse result-alist)))
 
 ;;;###autoload
-(defun ajoke-get-hierarchy ()
-  "Print the class/interface inheritance hierarchy for the
-current class. Output is in compilation-mode for ease of cross
-referencing."
-  (interactive)
-  (ajoke--setup-env)
-  (let ((class-name (ajoke--thing-at-tag 'ajoke--extract-class 0))
-        (method-name
-         (replace-regexp-in-string
-          ".*\\." ""
-          (or (and transient-mark-mode mark-active
-                   (/= (point) (mark))
-                   (buffer-substring-no-properties (point) (mark)))
-              (ajoke--thing-at-tag 'ajoke--extract-tag 0))))
-        (compilation-buffer-name-function (lambda (_ign) "*ajoke-get-hierarchy*")))
-    (compile (format "ajoke-get-hierarchy.pl %s %s"
-                     class-name
-                     (if current-prefix-arg
-                         "-v"
-                       (concat "-m " method-name))))))
-
-;;;###autoload
-(defun ajoke-get-override ()
-  "Overide a method defined in super classes/interfaces."
-  (interactive)
-  (ajoke--setup-env)
-  (let (method)
-    (save-excursion
-      (let* ((class-name (ajoke--thing-at-tag 'ajoke--extract-class 0))
-             (hierarchy (shell-command-to-string (format "ajoke-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class-name)))
-             (methods (split-string hierarchy "\n")))
-        (setq method (completing-read "Which method to override? " methods nil t))))
-    (insert "@Override\n")
-    (insert (replace-regexp-in-string  "\\(,\\|)\\)" "\\1 " method))))
-
-;;;###autoload
 (defun ajoke-get-imports ()
   "Write the java import statements automatically."
   (interactive)
@@ -334,6 +298,42 @@ referencing."
                (beginning-of-line)
                (point))))
         (shell-command-on-region start-imports end-imports "sort -u" nil t)))))
+
+;;;###autoload
+(defun ajoke-get-hierarchy ()
+  "Print the class/interface inheritance hierarchy for the
+current class. Output is in compilation-mode for ease of cross
+referencing."
+  (interactive)
+  (ajoke--setup-env)
+  (let ((class-name (ajoke--thing-at-tag 'ajoke--extract-class 0))
+        (method-name
+         (replace-regexp-in-string
+          ".*\\." ""
+          (or (and transient-mark-mode mark-active
+                   (/= (point) (mark))
+                   (buffer-substring-no-properties (point) (mark)))
+              (ajoke--thing-at-tag 'ajoke--extract-tag 0))))
+        (compilation-buffer-name-function (lambda (_ign) "*ajoke-get-hierarchy*")))
+    (compile (format "ajoke-get-hierarchy.pl %s %s"
+                     class-name
+                     (if current-prefix-arg
+                         "-v"
+                       (concat "-m " method-name))))))
+
+;;;###autoload
+(defun ajoke-get-override ()
+  "Overide a method defined in super classes/interfaces."
+  (interactive)
+  (ajoke--setup-env)
+  (let (method)
+    (save-excursion
+      (let* ((class-name (ajoke--thing-at-tag 'ajoke--extract-class 0))
+             (hierarchy (shell-command-to-string (format "ajoke-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class-name)))
+             (methods (split-string hierarchy "\n")))
+        (setq method (completing-read "Which method to override? " methods nil t))))
+    (insert "@Override\n")
+    (insert (replace-regexp-in-string  "\\(,\\|)\\)" "\\1 " method))))
 
 ;;;###autoload
 (defun ajoke-resolve (id)
@@ -406,8 +406,11 @@ beginning of current defun."
 
 (setq-default imenu-create-index-function #'ajoke--create-index-function)
 (setq-default beginning-of-defun-function #'ajoke--beginning-of-defun-function)
+(global-set-key [(meta g)(j)(i)] 'ajoke-get-imports)
 (global-set-key [(meta g)(j)(h)] 'ajoke-get-hierarchy)
+(global-set-key [(meta g)(j)(o)] 'ajoke-get-override)
 (global-set-key [(meta g)(j)(r)] 'ajoke-resolve)
+(global-set-key [(meta g)(j)(m)] 'ajoke-complete-method)
 (global-set-key [(shift meta s)] 'ajoke-search-local-id)
 
 (provide 'ajoke)
