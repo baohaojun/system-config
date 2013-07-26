@@ -38,9 +38,9 @@ function global() {
 
 function globalenv() {
     (
-        export GTAGSROOT=$(cd -P .; bcd; bcd; pwd)
-        export GTAGSDBPATH=$(cd -P .; bcd; pwd)
-        export GTAGSLIBPATH=$(cd -P .; bcd;
+        export GTAGSROOT=$(builtin cd -P .; cd_beagrep; cd_beagrep; pwd)
+        export GTAGSDBPATH=$(builtin cd -P .; cd_beagrep; pwd)
+        export GTAGSLIBPATH=$(builtin cd -P .; cd_beagrep;
             for x in .java-fallback.*; do echo "$PWD/$x"; done |
             grep . | rm-last-nl | tr '\n' :
         )

@@ -409,5 +409,7 @@ beginning of current defun."
 (global-set-key [(meta g)(j)(h)] 'ajoke-get-hierarchy)
 (global-set-key [(meta g)(j)(r)] 'ajoke-resolve)
 (global-set-key [(shift meta s)] 'ajoke-search-local-id)
+(global-set-key [(meta g)(j)(i)] 'ajoke-get-imports)
+(global-set-key [(meta g)(j)(m)] 'ajoke-complete-method)
 
 (provide 'ajoke)

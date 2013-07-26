@@ -27,6 +27,10 @@ export PERL_MM_OPT="INSTALL_BASE=$perl5d";
 export PERL5LIB="$perl5d/lib/perl5/x86_64-linux-gnu-thread-multi:$perl5d/lib/perl5:$ajoke_dir/etc/perl:$PERL5LIB";
 export PATH="$perl5d/bin:$PATH";
 
+function prompt () {
+    echo
+    builtin read -p "$@"
+}
 
 function test-env() {
     # the cpan librarys?
@@ -43,7 +47,7 @@ function test-env() {
         cpan Text::Glob
     fi
 
-    if ! global --version | grep -i 'Patched for ajoke'; then
+    if ! global --version | grep -q -i 'Patched for ajoke'; then
         if yes-or-no-p "You have not built ajoke's version of GNU gtags,
 build it now (will need sudo for installing)?"; then
             (
@@ -59,7 +63,7 @@ build it now (will need sudo for installing)?"; then
         fi
     fi
 
-    if ! ctags-exuberant --version; then
+    if ! ctags-exuberant --version >/dev/null 2>&1 ; then
         if yes-or-no-p "You need to install ctags-exuberant, run apt-get now?"; then
             sudo apt-get install exuberant-ctags
         else
@@ -79,13 +83,85 @@ build it now (will need sudo for installing)?"; then
     perl -npe "s,\@prefix\@,$global_prefix,g" $gtags_conf_in > ~/.globalrc
     ln -sf $ajoke_dir/etc/.ctags ~/
 
-    javac_path=$(which javac)
+    javac_path=$(readlink -f $(which javac))
     if test -z "$javac_path"; then
         die "javac not found, please install: sudo apt-get install openjdk-6-jdk"
     fi
     java_dir=$(dirname $(dirname $javac_path))
+    if test ! -e $java_dir/jre/lib/rt.jar; then
+        die "jre rt.jar not found"
+    fi
+
     if test -e ~/.cache/for-code-reading/$java_dir/GTAGS; then
         echo "Good, you have done mkgtags for java"
+        for rc in $ajoke_dir/etc/bash.d/*; do
+            if test -f $rc; then
+                . $rc
+            fi
+        done
+        prompt "Here you can see where java.lang.String is defined (press ENTER to continue):"
+
+        (
+            cd $java_dir/
+            global -x java.lang.String
+            prompt "Here you can see all the members of java.lang.String (press ENTER to continue):"
+            global -x '^java-lang-String-[^-]*$'
+        )
+
+        prompt "Press ENTER to continue:"
+
+        echo "Please remember 2 things when you use ajoke with your own java project:"
+        echo
+        echo "1. mkgtags"
+        echo "2. java-add-fallback $java_dir"
+        echo
+        echo "Or you can try java-add-fallback Your-Android-Dir after you mkgtags your android source tree."
+
+
+        echo
+        if yes-or-no-p -y "Do you want have a test drive in Emacs?"; then
+            (
+                set -e
+                dir=~/.cache/test-ajoke
+                mkdir -p $dir
+                cd $dir
+                cat <<EOF > Test.java
+//{%java%}
+        package ajoke;
+class Test extends Writer {
+    Test() {
+
+        }
+
+    Test.
+    // At the end of the previous line, press "M-g j r" and you should
+    // see "ajoke.Test." displayed in minibuf.  Press "M-g j i", you
+    // should see "import java.io.Writer" added at the beginning.
+    // After that, press "M-g j h", and you should see the inheritance
+    // hierarchy for ajoke.Test (java.io.Writer and it's own super
+    // types won't appear until you finished "M-g j i").  Press "M-g j
+    // m" at the end of "Test." (the last source code line), and you
+    // will be prompted with all the methods of class Test (including
+    // those inherited).  You can see the list by pressing Tab,
+    // because in this test drive, you have no Helm or Anything.el to
+    // help you do the picking.  Press "M-g j o", and you will be
+    // prompted with a list of methods that you can "overide". Again,
+    // press Tab to see the list.
+}
+
+//{%/java%}
+EOF
+
+                echo 'Now, when emacs starts, try ajoke out by pressing "M-g j i" or
+"M-g j m" or "M-g j h" in it. Please read the comments in the source buffer.'
+
+                mkgtags
+                java-add-fallback $java_dir/ >/dev/null 2>&1 || true
+
+                prompt 'Press ENTER to continue: '
+                emacs -q -nw -l $AJOKE_DIR/etc/elisp/ajoke.el Test.java
+            )
+        fi
     else
         (
             cd $java_dir

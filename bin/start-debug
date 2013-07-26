@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+test $# = 1 || die "Error: Usage $(basename $0) CMD"
+
+if test "$1" != "$(basename $1)"; then
+    die "cmd must be a basename, no dir part allowed"
+fi
+
+cmd=$(which $1)
+if test "$cmd" = "$(readlink -f ~/bin/$(uname)/ext/debug/$1)"; then
+    die "already set up debugging for $1"
+fi
+
+mkdir -p ~/bin/$(uname)/ext/debug
+/bin/cat <<EOF > ~/bin/$(uname)/ext/debug/$1
+#!/bin/bash
+mkdir -p ~/.logs/start-debug.log/
+
+(
+    printf "cd %q;" "\$(pwd)"
+
+    for x in "$1" "\$@"; do
+        printf "%q " "\$x"
+    done
+    echo
+) >> ~/.logs/start-debug.log/$1
+$cmd "\$@" > ~/.logs/start-debug.log/$1.\$\$.out 2> ~/.logs/start-debug.log/$1.\$\$.err
+res=\$?
+/bin/cat ~/.logs/start-debug.log/$1.\$\$.out
+/bin/cat ~/.logs/start-debug.log/$1.\$\$.err 1>&2
+
+(
+    echo out; /bin/cat ~/.logs/start-debug.log/$1.\$\$.out;
+    echo err:; /bin/cat ~/.logs/start-debug.log/$1.\$\$.err
+    echo tree:; ps.tree \$\$
+) >>  ~/.logs/start-debug.log/$1
+cd ~/.logs/start-debug.log/
+/bin/rm $1.\$\$.out $1.\$\$.err
+exit \$res
+EOF
+chmod +x ~/bin/$(uname)/ext/debug/$1
