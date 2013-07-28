@@ -32,11 +32,11 @@ cd_ok()
 
 alias bcd=cd_beagrep
 
-function global() {
+global() {
     globalenv global "$@"
 }
 
-function globalenv() {
+globalenv() {
     (
         export GTAGSROOT=$(builtin cd -P .; cd_beagrep; cd_beagrep; pwd)
         export GTAGSDBPATH=$(builtin cd -P .; cd_beagrep; pwd)
@@ -47,4 +47,3 @@ function globalenv() {
         command "$@"
     )
 }
-
