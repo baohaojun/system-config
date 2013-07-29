@@ -68,7 +68,7 @@ might be bad."
   (progn
     (unless mark-active
       (push-mark))
-    (ajoke--beginning-of-defun arg)))
+    (ajoke--beginning-of-defun-function arg)))
 
 ;;;###autoload
 (defun bhj-c-end-of-defun (&optional arg)
@@ -76,7 +76,7 @@ might be bad."
   (progn
     (unless mark-active
       (push-mark))
-    (ajoke--beginning-of-defun (- arg))))
+    (ajoke--beginning-of-defun-function (- arg))))
 
 ;;;###autoload
 (defun linux-c-mode ()

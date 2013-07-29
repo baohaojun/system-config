@@ -10,5 +10,6 @@ xsetroot -solid grey
 vncconfig -iconic &
 export BHJ_IN_VNC=1
 fspanel&
-konsole&
+grep -v lock -i ~/.Xmodmap | grep -v '^pointer' > ~/external/.Xmodmap.vnc
+xmodmap ~/external/.Xmodmap.vnc
 x-window-manager &
