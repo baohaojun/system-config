@@ -36,7 +36,7 @@ function prompt () {
     builtin read -p "$@"
 }
 
-function test-env() {
+function test-drive() {
     # the cpan librarys?
 
     if ! perl -e 'use String::Approx'; then
@@ -170,7 +170,16 @@ EOF
                 java-add-fallback $java_dir/ >/dev/null 2>&1 || true
 
                 prompt 'Press ENTER to continue: '
+            if test -e ~/system-config/gcode/crossdict/src/com/baohaojun/crossdict/CrossDictActivity.java; then
+                (
+                    ew ~/system-config/gcode/crossdict/src/com/baohaojun/crossdict/CrossDictActivity.java
+                    find-or-exec konsole
+                    prompt "Press any key to start ajoke demo with jdk (.jar files) fallback:"
+                    ew Test.java
+                )
+            else
                 emacs -q -nw -l $AJOKE_DIR/etc/elisp/ajoke.el Test.java
+            fi
             )
         fi
     else
