@@ -6,7 +6,6 @@ set -e
 test $PWD = ~ && cd ~/system-config/
 cd "$(dirname "$(lookup-file .git)")"
 
-git-clean-mac-branches-local
 git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git://,https://,')
 git fetch origin -v
 for x in $(
