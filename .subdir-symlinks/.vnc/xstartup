@@ -12,4 +12,5 @@ export BHJ_IN_VNC=1
 fspanel&
 grep -v lock -i ~/.Xmodmap | grep -v '^pointer' > ~/external/.Xmodmap.vnc
 xmodmap ~/external/.Xmodmap.vnc
+command renew-xauth ~/.renew-xauth.${DISPLAY##*:}
 x-window-manager &

@@ -1,2 +1,5 @@
 #!/bin/bash
-echo "export XAUTHORITY=$XAUTHORITY; export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS" >~/.new-xauth
+echo "export XAUTHORITY=$XAUTHORITY
+export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS
+export DISPLAY=$DISPLAY
+" >${1:-~/.renew-xauth}

@@ -24,7 +24,12 @@ done
 
 function renew-xauth() { # so that in the saved gnu screen session, I can reset the xauth
     if test -z "$SSH_CLIENT"; then
-        . ~/.new-xauth
+        vnc=$(sawfish-client -e '(window-name (input-focus))' | grep -o -P -e 'vnc://localhost:\d+')
+        if test "$vnc"; then
+            . ~/.renew-xauth.${vnc##*:}
+        else
+            . ~/.renew-xauth
+        fi
     else
         if test `ps -o comm=  -o pid= -A|grep gnome-terminal|wc -l` != 1; then
             echo 'you have more that 1 gnome-terminal running, can not renew xauth!'

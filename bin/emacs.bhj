@@ -11,4 +11,4 @@ fi
 #       emacs -q -l .emacs -batch -f batch-byte-compile .emacs
 #     )
 # fi
-GTK_IM_MODULE= XMODIFIERS= XIM= $EMACS -mm&
+GTK_IM_MODULE= XMODIFIERS= XIM= $EMACS -mm "$@"&

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+cd /proc/$1/ >/dev/null 2>&1 || cd /proc/$(ps.pl "$1"|pn 1)/
+cat environ | tr '\000' '\n' | grep -P -e "^\Q$2\E="
