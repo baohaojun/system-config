@@ -51,7 +51,7 @@ if (not grep {$_ eq "--filter"} @ARGV) {
             print;
         }
     }
-    if ($old_file =~ m/\.java|\.aidl/ and $old_tag !~ m/\./) {
+    if (($is_java or $old_file =~ m/\.java|\.aidl/) and $old_tag !~ m/\./) {
         print "$package$last_line" if $last_line and $old_type ne 'package';
     }
     exit;
