@@ -241,11 +241,35 @@ displayed. See the `display-message' function for more details.")
   "Move to previous non-word character."
   (setq prompt-position (1- prompt-position))
   (while (and (> prompt-position 0)
+              (string-looking-at "\\s"
+                                 prompt-result prompt-position t))
+    (setq prompt-position (1- prompt-position)))
+  (while (and (> prompt-position 0)
               (string-looking-at prompt-word-regexp
                                  prompt-result prompt-position t))
     (setq prompt-position (1- prompt-position)))
   (setq prompt-position (max prompt-position 0))
   (prompt-update-display))
+
+(defun prompt-backward-kill-word ()
+  (prompt-backward-word)
+  (prompt-kill-word))
+
+(defun prompt-kill-word ()
+  "Kill the next word."
+  (let ((old-prompt-position prompt-position))
+    (setq prompt-position (1+ prompt-position))
+    (while (and (< prompt-position (length prompt-result))
+                (string-looking-at prompt-word-regexp
+                                   prompt-result prompt-position t))
+      (setq prompt-position (1+ prompt-position)))
+    (setq prompt-position (min prompt-position
+                               (length prompt-result)))
+    (setq prompt-result (concat (substring prompt-result 0 old-prompt-position)
+                                (substring prompt-result prompt-position (length prompt-result)))
+          prompt-position old-prompt-position)
+    (prompt-update-display))
+  (throw 'prompt-exit nil))
 
 (defun prompt-forward-character ()
   "Move forward one character."
@@ -376,6 +400,14 @@ displayed. See the `display-message' function for more details.")
              (recursive-edit)))
        (display-message nil)))))
 
+(defun prompt-esc ()
+  "Esc map, for a true keymap can't be used."
+  (let* ((override-keymap prompt-esc-keymap)
+         (unbound-key-hook (list (lambda () (throw 'prompt-exit nil)))))
+    (catch 'prompt-exit
+      (recursive-edit))))
+
+
 (defun prompt-for-symbol (#!optional title predicate validator)
   (let ((prompt-completion-fun
          (lambda (x)
@@ -423,12 +455,36 @@ displayed. See the `display-message' function for more details.")
 
 ;;; init keymap
 
+;; start code-generator "^\\s *;*\\s *"
+;; for x in prompt-backward-word prompt-forward-word; do
+;;     cat <<EOF
+;; (defun $x-esc()
+;; ($x)
+;; (throw 'prompt-exit nil))
+;;
+;; EOF
+;; done
+;; end code-generator
+;; start generated code
+(defun prompt-backward-word-esc()
+  (prompt-backward-word)
+  (throw 'prompt-exit nil))
+
+(defun prompt-forward-word-esc()
+  (prompt-forward-word)
+  (throw 'prompt-exit nil))
+
+
+;; end generated code
+
 (bind-keys prompt-esc-keymap
-           "b" prompt-backward-word
-           "f" prompt-forward-word)
+           "b" prompt-backward-word-esc
+           "f" prompt-forward-word-esc
+           "d" prompt-kill-word
+           "BS" prompt-backward-kill-word)
 
 (bind-keys prompt-keymap
-           "ESC" prompt-exit
+           "ESC" prompt-esc
            "C-g" prompt-exit
            "C-u" prompt-clear
            "BS" prompt-backspace

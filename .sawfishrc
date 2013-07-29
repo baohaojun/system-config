@@ -5,7 +5,7 @@
 (require 'Run-application)
 (require 'bhj-draw-wininfo)
 
-(setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal|rdesktop|urxvt")
+(setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal|rdesktop|urxvt|krdc|vncviewer")
 (setq s-h-keymap (make-keymap))
 (setq global-remap-alist
       '(("C-a" . "Home")
