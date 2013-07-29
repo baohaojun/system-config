@@ -7,6 +7,10 @@ function die() {
     exit -1
 }
 
+if ! which apt-get; then
+    die "Error: this ajoke test drive script can run on debian alike systems currently"
+fi
+
 me=$(readlink -f $0)
 ajoke_bindir=$(dirname $me)
 ajoke_dir=$(dirname $ajoke_bindir)
@@ -128,10 +132,17 @@ build it now (will need sudo for installing)?"; then
                 cat <<EOF > Test.java
 //{%java%}
 package ajoke;
-class Test extends Writer {
+class Test extends Writer implements PrintStream {
+                        //^^^^^^^^^^^^^^^^^^^^^^ this is bullshit, but hey, it's only an example
     Test() {
 
-        }
+    }
+
+    void Append() {
+    }
+
+    String s;
+    s.
 
     Test.
     // At the end of the previous line, press "M-g j r" and you should
