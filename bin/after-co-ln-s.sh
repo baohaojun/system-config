@@ -30,7 +30,7 @@ if test $uname = CYGWIN; then
             cmd.exe /c mklink  "$1" "$2"
         }
     fi
-        
+
     function ln() {
         soft=false
         force=false
@@ -100,9 +100,27 @@ if test $uname = CYGWIN; then
 fi
 
 
+function symlink-map-files() {
+    if test $# != 2; then
+        die "Error: symlink-map-files FROM TO"
+    fi
 
+    cd "$1"
+    for x in $(git ls-tree --name-only HEAD -r); do
+        if test $(basename $x) = .dir-locals.el; then
+            continue
+        fi
 
-
+        if test -e "$2"/$x -a "$(readlink -f "$2"/$x)" != "$(readlink -f "$1"/$x)"; then
+            echo "Warning: "$2"/$x already exist and it's not softlink to "$1"/$x"
+            mv "$2"/$x "$2"/$x.bak
+            ln -sT "$1"/$x "$2"/$x
+        elif test ! -e "$2"/$x; then
+            mkdir -p "$(dirname "$2"/$x)"
+            ln -sf "$1"/$x "$2"/$x
+        fi
+    done
+}
 
 function symlink-map() {
     if test $# != 2; then
@@ -131,9 +149,7 @@ function symlink-map() {
 }
 
 symlink-map ~/system-config/ ~/
-if test -d ~/.config; then
-    symlink-map ~/system-config/.config.vc/ ~/.config
-fi
+symlink-files ~/system-config/.subdir-symlinks/ ~/
 mkdir -p ~/.local/share/applications
 symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
 
