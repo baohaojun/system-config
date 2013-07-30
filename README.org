@@ -59,18 +59,19 @@ type =./ajoke/bin/ajoke-test-drive= to have a taste of it.
 If you are not using Debian alike systems, then please follow these
 steps, supposing ajoke is checked out in =$ajoke_dir=:
 
-0. Put ajoke scripts into you PATH:
+*** Put ajoke scripts into you PATH:
    
    #+BEGIN_SRC sh
    export export PATH=$ajoke_dir/bin:$PATH
    #+END_SRC
 
-1. Install 3 cpan modules: String::Approx, String::ShellQuote,
-   Text::Glob (as debian packages, they are named
-   libstring-approx-perl, libstring-shellquote-perl and
-   libtext-glob-perl)
+*** Install 3 cpan modules
 
-2. Compile and install the patched version of Gnu Global:
+    String::Approx, String::ShellQuote, Text::Glob (as debian
+   packages, they are named libstring-approx-perl,
+   libstring-shellquote-perl and libtext-glob-perl)
+
+*** Compile and install the patched version of Gnu Global
 
    #+BEGIN_SRC sh
    cd ./external/global
@@ -80,7 +81,7 @@ steps, supposing ajoke is checked out in =$ajoke_dir=:
    sudo make install
    #+END_SRC
 
-3. Install ctags-exuberant.
+*** Install ctags-exuberant
 
    You can install it from your Linux distro, but you must make sure
    the final binary executable's name is =ctags-exuberant=, not
@@ -96,15 +97,16 @@ steps, supposing ajoke is checked out in =$ajoke_dir=:
    sudo mv /usr/local/bin/ctags /usr/local/bin/ctags-exuberant
    #+END_SRC
 
-4. Copy the .globalrc and .ctags into your =$HOME=:
+*** Copy the .globalrc and .ctags into your HOME
 
    #+BEGIN_SRC sh
    perl -npe "s,\@prefix\@,$global_prefix,g" $ajoke_dir/external/global/gtags.conf.in > ~/.globalrc
    ln -sf $ajoke_dir/etc/.ctags ~/
    #+END_SRC
 
-5. Create Gnu Global tags for JDK (taking my openjdk installation as
-   e.g.):
+*** Create Gnu Global tags for JDK
+
+    Taking my openjdk installation as e.g.:
 
    #+BEGIN_SRC sh
    cd /usr/lib/jvm/java-6-openjdk-amd64
@@ -119,8 +121,9 @@ steps, supposing ajoke is checked out in =$ajoke_dir=:
    mkgtags
    #+END_SRC
 
-6. In your Java project, create Gnu Global tags again, and add the JDK
-   or Android as fallback:
+*** Create gtags for your Java project
+
+    And add the JDK or Android as fallback:
 
    #+BEGIN_SRC sh
    cd ~/your-java-project 
@@ -130,12 +133,13 @@ steps, supposing ajoke is checked out in =$ajoke_dir=:
    # as it'd be a waste of time to find 2 copies of java.lang.String     
    #+END_SRC
    
-7. Require $ajoke_dir/etc/elisp/ajoke.el in your .emacs, and start
-   laughing:-)
+*** Require $ajoke_dir/etc/elisp/ajoke.el in your .emacs
 
-You can refer to the test driver script if there are any problems. In
-the mean time, I will try to make =ajoke-test-drive= to support more
-systems.
+    And start laughing:-)
+
+(You can refer to the test driver script if there are any problems. In
+the mean time, I will try to make =ajoke-test-drive= support more
+systems.)
 
 * Ajoke with its friends
 
