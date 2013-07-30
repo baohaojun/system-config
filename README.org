@@ -1,0 +1,154 @@
+* What is ajoke
+
+ * Abducting Java Onto Emacs, K is silent.
+
+ * A Joke Of Kidding Eclipse.
+
+Ajoke is a tool for doing Java programming on Emacs. It is inspired by
+Emacs-Eclim, but does not depend on Eclipse. Instead, it uses GNU
+Global and ctags-exuberant extensively, with a bunch of Perl scripts.
+
+For a demo, you can watch the video I made at [[http://www.youtube.com/watch?v=K4bYiQik6lE][Youtube]] (also on [[http://v.youku.com/v_show/id_XNTg5MzcxNTQ0.html][youku]]
+for my countrymen behind Great Free Wall, but the quality is bad
+because youku sucks).
+
+* Why ajoke
+
+Well, I tried Emacs-Eclim, it was nice. But it has dependency on
+Eclipse, which is awful: it is very slow with large projects. I tried
+to put the whole android source tree into Eclipse, it was still doing
+background indexing the next day. Strace showed that it is scanning
+all those binary files under =.git= and =.repo/projects=. I finally
+killed it.
+
+But I really liked a couple of things Emacs-Eclim did, for e.g., draw
+the class/interface inheritance hierarchy; automatically import
+missing classes. So I took the ideas and extended it with source code
+reading in mind: with Emacs-Eclim, when a hierarchy contains
+android.view.View, you can't easily jump over to that class to take a
+peek, because that class is from a .jar file in the Android SDK; but
+with ajoke, android.view.View can be also from GNU Global GTAGS
+database, which is in turn built from the Android source code (of
+course, because GNU Global is a source code tagging tool great for
+code reading), so you can easily jump over to that class and have a
+sense of The Big Picture:-)
+
+Plus, by hacking this tool, I hope it will also support other
+programming languages better, such as C#, which is very like Java in
+my opinion. This is unlike [[http://jdee.sourceforge.net/][JDEE]], which will remain Java only I
+think. For e.g., I have hacked GNU Global a bit, so that it will be
+very quick to query android.view.View as a whole. But that will be
+another blog post (which I will add the link here after I write it).
+
+* How to tell ajoke
+
+** Check out the source code
+
+#+BEGIN_SRC sh
+git clone --recursive https://github.com/baohaojun/ajoke 
+#+END_SRC
+
+Note the --recursive option, it's important because I have a submodule
+in ajoke (my hacked version of GNU Global).
+
+** Set up the env
+If you are using Debian or Ubuntu, I have provided a test drive script
+named =ajoke-test-drive=, so after you check out ajoke, you can simply
+type =./ajoke/bin/ajoke-test-drive= to have a taste of it.
+
+If you are not using Debian alike systems, then please follow these
+steps, supposing ajoke is checked out in =$ajoke_dir=:
+
+0. Put ajoke scripts into you PATH:
+   
+   #+BEGIN_SRC sh
+   export export PATH=$ajoke_dir/bin:$PATH
+   #+END_SRC
+
+1. Install 3 cpan modules: String::Approx, String::ShellQuote,
+   Text::Glob (as debian packages, they are named
+   libstring-approx-perl, libstring-shellquote-perl and
+   libtext-glob-perl)
+
+2. Compile and install the patched version of Gnu Global:
+
+   #+BEGIN_SRC sh
+   cd ./external/global
+   sh ./reconf.sh
+   ./configure
+   make -j8
+   sudo make install
+   #+END_SRC
+
+3. Install ctags-exuberant.
+
+   You can install it from your Linux distro, but you must make sure
+   the final binary executable's name is =ctags-exuberant=, not
+   =ctags=.
+
+   If you want to compile it by yourself, then:
+
+   #+BEGIN_SRC sh
+   cd ./external/ctags-exuberant
+   ./configure
+   make -j8
+   sudo make install
+   sudo mv /usr/local/bin/ctags /usr/local/bin/ctags-exuberant
+   #+END_SRC
+
+4. Copy the .globalrc and .ctags into your =$HOME=:
+
+   #+BEGIN_SRC sh
+   perl -npe "s,\@prefix\@,$global_prefix,g" $ajoke_dir/external/global/gtags.conf.in > ~/.globalrc
+   ln -sf $ajoke_dir/etc/.ctags ~/
+   #+END_SRC
+
+5. Create Gnu Global tags for JDK (taking my openjdk installation as
+   e.g.):
+
+   #+BEGIN_SRC sh
+   cd /usr/lib/jvm/java-6-openjdk-amd64
+   mkgtags
+   #+END_SRC
+
+   Alternatively, you can use Android source tree as the fallback tags
+   (my android is at =~/src/android=):
+
+   #+BEGIN_SRC sh
+   cd ~/src/android
+   mkgtags
+   #+END_SRC
+
+6. In your Java project, create Gnu Global tags again, and add the JDK
+   or Android as fallback:
+
+   #+BEGIN_SRC sh
+   cd ~/your-java-project 
+   mkgtags
+   java-add-fallback /usr/lib/jvm/java-6-openjdk-amd64 
+   # or java-add-fallback ~/src/android, but not both
+   # as it'd be a waste of time to find 2 copies of java.lang.String     
+   #+END_SRC
+   
+7. Require $ajoke_dir/etc/elisp/ajoke.el in your .emacs, and start
+   laughing:-)
+
+You can refer to the test driver script if there are any problems. In
+the mean time, I will try to make =ajoke-test-drive= to support more
+systems.
+
+* Ajoke with its friends
+
+Another tool very useful for code reading is [[./blog/2011/12/23/beagrep.org][beagrep, grep 2G source
+code in 0.23 second]]. For e.g., compared to JDEE, ajoke can't do
+caller/callee look up, but its friends beagrep and ctags-exuberant [[http://baohaojun.github.io/blog/2013/07/20/0-grep-cross-ref.html][can
+do it]].
+
+Most of other ajoke's friends are still unborn in my personal
+[[https://github.com/baohaojun/system-config][system-config]] project.
+
+* Acknowledgments
+
+Thank Emacs-Eclim and JDEE for the inspiration. Thank GNU Global for
+using B+ tree to query tags (it's so fast!), and ctags-exuberant for
+supporting so many programming languages.

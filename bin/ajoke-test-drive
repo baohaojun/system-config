@@ -192,4 +192,6 @@ EOF
 
 if test $# != 0; then
     "$@"
+else
+    test-drive
 fi
