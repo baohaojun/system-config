@@ -1,0 +1,6 @@
+*.o
+Makefile
+config.h
+config.log
+config.status
+ctags
