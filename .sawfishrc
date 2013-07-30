@@ -112,7 +112,6 @@
    ("C-,"              "hello world no such thing" "firefox pop")
    ("C-."              "hello world no such thing" "firefox push")
    ("Super-n"          "firefox" "firefox")
-   ("Super-r"          "grun" "grun")
    ("Super-t"          "konsole" "konsole.bhj")
    ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
@@ -289,6 +288,7 @@
                (hide-desktop))))
 
 (bind-keys s-h-keymap "r" 'run-application)
+(bind-keys s-h-keymap "Super-r" 'run-application)
 
 (system "run-dir-once ~/.sawfish/start&")
 (system "run-dir-once ~/external/sawfish/start&")

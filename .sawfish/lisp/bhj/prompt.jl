@@ -403,8 +403,8 @@ displayed. See the `display-message' function for more details.")
 (defun prompt-esc ()
   "Esc map, for a true keymap can't be used."
   (let* ((override-keymap prompt-esc-keymap)
-         (unbound-key-hook (list (lambda () (throw 'prompt-exit nil)))))
-    (catch 'prompt-exit
+         (unbound-key-hook (list (lambda () (throw 'prompt-esc-exit nil)))))
+    (catch 'prompt-esc-exit
       (recursive-edit))))
 
 
@@ -456,11 +456,11 @@ displayed. See the `display-message' function for more details.")
 ;;; init keymap
 
 ;; start code-generator "^\\s *;*\\s *"
-;; for x in prompt-backward-word prompt-forward-word; do
+;; for x in prompt-backward-word prompt-forward-word prompt-exit; do
 ;;     cat <<EOF
 ;; (defun $x-esc()
 ;; ($x)
-;; (throw 'prompt-exit nil))
+;; (throw 'prompt-esc-exit nil))
 ;;
 ;; EOF
 ;; done
@@ -468,17 +468,22 @@ displayed. See the `display-message' function for more details.")
 ;; start generated code
 (defun prompt-backward-word-esc()
   (prompt-backward-word)
-  (throw 'prompt-exit nil))
+  (throw 'prompt-esc-exit nil))
 
 (defun prompt-forward-word-esc()
   (prompt-forward-word)
-  (throw 'prompt-exit nil))
+  (throw 'prompt-esc-exit nil))
+
+(defun prompt-exit-esc()
+  (prompt-exit)
+  (throw 'prompt-esc-exit nil))
 
 
 ;; end generated code
 
 (bind-keys prompt-esc-keymap
            "b" prompt-backward-word-esc
+           "ESC" prompt-exit-esc
            "f" prompt-forward-word-esc
            "d" prompt-kill-word
            "BS" prompt-backward-kill-word)
