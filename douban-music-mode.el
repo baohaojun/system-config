@@ -174,13 +174,15 @@ system notification, just as rythombox does."
           (setq douban-music-current-status "playing")
           (process-send-string douban-music-current-process "pause\n")))))
 
-(defun douban-music-seek-forward ()
+(defun douban-music-seek-forward (&optional seconds)
   (interactive)
-  (process-send-string douban-music-current-process "seek 5\n"))
+  (setq seconds (or seconds 5))
+  (process-send-string douban-music-current-process (format "seek %d\n" seconds)))
 
-(defun douban-music-seek-backward ()
+(defun douban-music-seek-backward (&optional seconds)
   (interactive)
-  (process-send-string douban-music-current-process "seek -5\n"))
+  (setq seconds (or seconds 5))
+  (process-send-string douban-music-current-process (format "seek -%d\n" seconds)))
 
 (defun douban-music-stop ()
   (interactive)
