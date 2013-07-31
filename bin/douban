@@ -54,10 +54,10 @@ case "$1" in
         firefox-open-url-pattern $host "$url"
         ;;
     back)
-        emacsclient -e '(douban-music-seek-backward)'
+        emacsclient -e '(douban-music-seek-backward '$2')'
         ;;
     forth)
-        emacsclient -e '(douban-music-seek-forward)'
+        emacsclient -e '(douban-music-seek-forward '$2')'
         ;;
     next)
         if test -e ~/.do-not-disturb; then
