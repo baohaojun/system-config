@@ -139,6 +139,7 @@ system notification, just as rythombox does."
 (defvar douban-music-indent2 "    " "2-level indentation.")
 (defvar douban-music-indent3 "     " "3-level indentation.")
 (defvar douban-music-indent4 "          " "4-level indentation.")
+(defvar douban-music-should-replay nil "Should replay the song.")
 
 ;; key map definition
 (defvar douban-music-mode-map nil
@@ -209,6 +210,24 @@ system notification, just as rythombox does."
           (douban-music-pause/resume)
         (error "Unknown status")))))
 
+(defun douban-music-next-channel ()
+  "Switch to the next channel."
+  (let ((cn douban-music-current-channel)
+	(channels douban-music-channels))
+    (while (and channels (>= cn (caar channels)))
+      (setq channels (cdr channels)))
+    (setq cn (or (caar channels) (caar douban-music-channels)))
+    (douban-music-set-channel cn)))
+
+(defun douban-music-prev-channel ()
+  "Switch to the prev channel."
+    (let ((cn douban-music-current-channel)
+	  (channels (reverse douban-music-channels)))
+      (while (and channels (<= cn (caar channels)))
+	(setq channels (cdr channels)))
+      (setq cn (or (caar channels) (caar (last douban-music-channels))))
+      (douban-music-set-channel cn)))
+
 (defun douban-music-set-channel (channel-number)
   (interactive "nChannel number:")
   (if (assoc channel-number douban-music-channels)
@@ -229,7 +248,9 @@ system notification, just as rythombox does."
   (interactive)
   (let ((previous-song douban-music-current-song))
     (douban-music-kill-process)
-    (douban-music-get-next-song)
+    (if douban-music-should-replay
+	(setq douban-music-should-replay nil)
+      (douban-music-get-next-song))
     (if (> previous-song douban-music-current-song)
         (douban-music-refresh)
       (douban-music-play))))
