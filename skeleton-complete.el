@@ -120,15 +120,18 @@ Return a regexp rewritten from the skeleton.
 
 In addition, extracters can also set the variables
 `skeleton--the-skeleton', `skeleton--start' and `skeleton--end'."
-  (when (looking-back "\\w\\|_" 1)
-    (setq skeleton--end (point)
-          skeleton--start (or (save-excursion
-                                (search-backward-regexp "\\_<" (line-beginning-position) t))
-                              skeleton--end)
-          skeleton--the-skeleton (buffer-substring-no-properties skeleton--start skeleton--end)
-          skeleton--contains-upcase (skeleton--contains-upcase-p skeleton--the-skeleton))
-    (unless (string= "" skeleton--the-skeleton)
-      (let ((symbol-chars "\\(?:\\sw\\|\\s_\\)*?"))
+  (if mark-active
+      (setq skeleton--start (region-beginning)
+            skeleton--end (region-end))
+    (when (looking-back "\\w\\|_" 1)
+      (setq skeleton--end (point)
+            skeleton--start (or (save-excursion
+                                  (search-backward-regexp "\\_<" (line-beginning-position) t))
+                                skeleton--end))))
+  (setq skeleton--the-skeleton (buffer-substring-no-properties skeleton--start skeleton--end)
+        skeleton--contains-upcase (skeleton--contains-upcase-p skeleton--the-skeleton))
+  (unless (string= "" skeleton--the-skeleton)
+    (let ((symbol-chars "\\(?:\\sw\\|\\s_\\)*?"))
       (concat
        "\\_<"
        symbol-chars
@@ -137,7 +140,7 @@ In addition, extracters can also set the variables
         (string-to-list skeleton--the-skeleton)
         symbol-chars)
        symbol-chars
-       "\\_>")))))
+       "\\_>"))))
 
 (defun skeleton--line-skeleton-extracter ()
   "Extract a skeleton for line-completing.
