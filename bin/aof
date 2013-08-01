@@ -6,10 +6,20 @@ archive_mimes=(
     application/zip
 )
 
-if test "$(xdg-mime query default $(xdg-mime query filetype "$1"))" = file-roller.desktop; then
+type=$(xdg-mime query filetype "$1")
+is_archive_type() {
+    for x in ${archive_mimes[@]}; do
+        if test "$1" = "$x"; then
+            return 0;
+        fi
+    done
+    return 1
+}
+
+if is_archive_type "$type" || test "$(xdg-mime query default "$type")" = file-roller.desktop; then
     dir=./"$(basename "$1")".unzip.$$
     mkdir -p "$dir"
-    file-roller "$1" -e "$dir"
+    file-roller "$1" -e "$dir"&
     up "$dir"
     exit
 fi
