@@ -70,6 +70,10 @@ See `skeleton--start'.")
   nil
   "The skeleton that is extracted with a skeleton extracter.")
 
+(defvar skeleton--contains-upcase
+  nil
+  "Whether the skeleton contains upcase char.")
+
 (defun skeleton--contains-upcase-p (str)
   (let ((case-fold-search nil))
     (string-match-p "[[:upper:]]" str)))
@@ -77,7 +81,8 @@ See `skeleton--start'.")
 (defun skeleton--clear-vars ()
   (setq skeleton--start nil
         skeleton--end nil
-        skeleton--the-skeleton nil))
+        skeleton--the-skeleton nil
+        skeleton--contains-upcase nil))
 
 (defun skeleton--interleave (l1 l2)
   (let (result)
@@ -91,6 +96,23 @@ See `skeleton--start'.")
 (defun skeleton--difference (l1 l2)
   (delete-if (lambda (e) (member e l2)) l1))
 
+(defun skeleton--regexp-quote (char)
+  "Regexp-quote char smartly.
+If skeleton--the-skeleton contains upcase chars, then
+case-fold-search will be turned on, in that case, we want the
+upcase char to match exactly, but the downcase char to match
+either an upcase or a downcase.
+
+For e.g., given HelloWorld and helloWorld, we want Hw to match
+the former, but not the later. If the w in Hw was to made to
+match w only, then none will match, which sometimes is a
+surprise."
+  (if (and skeleton--contains-upcase
+           (>= char ?a)
+           (<= char ?z))
+      (format "[%c%c]" char (upcase char))
+    (regexp-quote (string char))))
+
 (defun skeleton--symbol-skeleton-extracter ()
   "Extract a skeleton for symbol-completing.
 
@@ -103,13 +125,17 @@ In addition, extracters can also set the variables
           skeleton--start (or (save-excursion
                                 (search-backward-regexp "\\_<" (line-beginning-position) t))
                               skeleton--end)
-          skeleton--the-skeleton (buffer-substring-no-properties skeleton--start skeleton--end))
+          skeleton--the-skeleton (buffer-substring-no-properties skeleton--start skeleton--end)
+          skeleton--contains-upcase (skeleton--contains-upcase-p skeleton--the-skeleton))
     (unless (string= "" skeleton--the-skeleton)
       (let ((symbol-chars "\\(?:\\sw\\|\\s_\\)*?"))
       (concat
        "\\_<"
        symbol-chars
-       (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list skeleton--the-skeleton) symbol-chars)
+       (mapconcat
+        #'skeleton--regexp-quote
+        (string-to-list skeleton--the-skeleton)
+        symbol-chars)
        symbol-chars
        "\\_>")))))
 
@@ -141,10 +167,14 @@ See also `skeleton--symbol-skeleton-extracter'."
             (backward-char))
           (setq skeleton--start (point)
                 skeleton--end cp))))
-  (setq skeleton--the-skeleton (buffer-substring-no-properties skeleton--start skeleton--end))
+  (setq skeleton--the-skeleton (buffer-substring-no-properties skeleton--start skeleton--end)
+        skeleton--contains-upcase (skeleton--contains-upcase-p skeleton--the-skeleton))
   (when skeleton--the-skeleton
     (let ((the-regexp
-           (mapconcat (lambda (x) (regexp-quote (string x))) (string-to-list skeleton--the-skeleton) ".*?")))
+           (mapconcat
+            #'skeleton--regexp-quote
+            (string-to-list skeleton--the-skeleton)
+            ".*?")))
       ;; performance consideration: if syntax of skeleton's first char
       ;; is word, then it must match word boundary
       (when (string-match-p "^\\w" skeleton--the-skeleton)
@@ -152,7 +182,7 @@ See also `skeleton--symbol-skeleton-extracter'."
       ;; if skeleton's last char is word syntax, should extend the
       ;; completion to word boundaries
       (when (string-match-p "\\w$" skeleton--the-skeleton)
-        (setq the-regexp (concat the-regexp "\\w*\\b")))
+        (setq the-regexp (concat the-regexp "\\w*?\\b")))
       ;; extend the regexp rewrite: use Ctrl-e to mean $ and Ctrl-a to mean ^
       (setq the-regexp (replace-regexp-in-string "$" "$" the-regexp)
             the-regexp (replace-regexp-in-string "^" "^" the-regexp))
@@ -332,7 +362,7 @@ EXTRACTER, MATCHER and BUFFER-FILTER."
   (setq matcher (or matcher #'skeleton--matcher)
         buffer-filter (or buffer-filter #'skeleton--buffer-filter))
   (let* ((the-regexp (funcall extracter))
-         (case-fold-search (not (skeleton--contains-upcase-p skeleton--the-skeleton)))
+         (case-fold-search (not skeleton--contains-upcase))
          matches
          match)
     (when (and the-regexp
