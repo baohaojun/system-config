@@ -213,6 +213,11 @@ displayed. See the `display-message' function for more details.")
       (prompt-changed)
       (prompt-update-display))))
 
+(defun prompt-delete-char ()
+  "Delete the following character."
+  (prompt-forward-character)
+  (prompt-backspace))
+
 (defun prompt-kill-line ()
   "Delete rest of line."
   (setq prompt-result (substring prompt-result 0 prompt-position))
@@ -269,7 +274,7 @@ displayed. See the `display-message' function for more details.")
                                 (substring prompt-result prompt-position (length prompt-result)))
           prompt-position old-prompt-position)
     (prompt-update-display))
-  (throw 'prompt-exit nil))
+  (throw 'prompt-esc-exit nil))
 
 (defun prompt-forward-character ()
   "Move forward one character."
@@ -493,6 +498,7 @@ displayed. See the `display-message' function for more details.")
            "C-g" prompt-exit
            "C-u" prompt-clear
            "BS" prompt-backspace
+           "C-d" prompt-delete-char
            "C-k" prompt-kill-line
            "Left" prompt-backward-character
            "C-b" prompt-backward-character

@@ -1238,7 +1238,10 @@ criteria can be provided via the optional match-string argument "
              (buffer-substring-no-properties (region-beginning)
                                              (region-end))
            (current-word))))
-  (w3m-goto-url (format "http://r66:34567/dict/%s" word)))
+  (shell-command (format "setsid bash -c %s\\& >/dev/null 2>&1"
+                         (shell-quote-argument
+                          (format "md %s"
+                                  (shell-quote-argument word))))))
 
 ;;;###autoload
 (defun bhj-open-android-doc-on-java-buffer ()

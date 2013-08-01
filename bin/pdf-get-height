@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pdfinfo "$1" 2>/dev/null | grep 'page size:' -i | perl -npe 's!.*?(\d+\.\d+) x (\d+\.\d+).*!sprintf "%f", $2!e'
+pdfinfo "$1" 2>/dev/null | grep 'page size:' -i | pn 5

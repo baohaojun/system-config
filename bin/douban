@@ -59,6 +59,14 @@ case "$1" in
     forth)
         emacsclient -e '(douban-music-seek-forward '$2')'
         ;;
+    replay)
+        if test -e ~/.do-not-disturb; then
+            mv ~/.do-not-disturb ~/.do-not-disturb.bak
+        fi
+        emacsclient -e '(progn
+                          (setq douban-music-should-replay t)
+                          (douban-music-play-next-refresh))'
+        ;;
     next)
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
@@ -70,6 +78,18 @@ case "$1" in
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
         emacsclient -e '(douban-music-play-previous)'
+        ;;
+    nchan)
+        if test -e ~/.do-not-disturb; then
+            mv ~/.do-not-disturb ~/.do-not-disturb.bak
+        fi
+        emacsclient -e '(douban-music-next-channel)'
+        ;;
+    pchan)
+        if test -e ~/.do-not-disturb; then
+            mv ~/.do-not-disturb ~/.do-not-disturb.bak
+        fi
+        emacsclient -e '(douban-music-prev-channel)'
         ;;
     pause)
         emacsclient -e '(douban-music-pause/resume)'

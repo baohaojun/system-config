@@ -125,7 +125,7 @@ for side in left bot right top; do
         pdfnup --no-landscape --no-tidy --papersize $(echo "$papersize" | perl -npe 's/(,|\})/pt$1/g') \
             --nup $nup "$arg_pdf" $(echo $(seq 1 $step $pages) | perl -npe 's/ /,/g') \
             --outfile $side.pdf --clip true --trim "${cut_left}pt ${cut_bot}pt ${cut_right}pt ${cut_top}pt" >/dev/null 2>&1
-        evince $side.pdf 1>&2&
+        evince $side.pdf >/dev/null 2>&1 &
         debug "min is $min, mid is $mid, max is $max"
         ans=$(my-select good bad done)
         if good-enough $max $min; then

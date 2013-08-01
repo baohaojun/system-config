@@ -11,6 +11,12 @@ if sawfish-client -e '(window-name (input-focus))'| grep -q -i 'mozilla firefox'
     in_firefox=true
 fi
 
+if test "$EMACS"; then
+    function firefox() {
+        setsid firefox "$@"
+    }
+fi
+
 current_url=$(get-firefox-tab-url)
 
 if echo "$current_url" | grep -P -e '^shit$|localhost:34567'; then
