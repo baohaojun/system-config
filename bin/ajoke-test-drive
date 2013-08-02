@@ -52,9 +52,21 @@ function test-drive() {
     fi
 
     if ! global --version | grep -q -i 'Patched for ajoke'; then
-        if yes-or-no-p "You have not built ajoke's version of GNU gtags,
+        if yes-or-no-p -y "You have not built ajoke's version of GNU gtags,
 build it now (will need sudo for installing)?"; then
             (
+                sudo apt-get build-dep global
+
+                sudo apt-get install sudo bash-completion autoconf automake \
+                    bison exuberant-ctags flex \
+                    gperf libltdl-dev libtool netbase \
+                    openjdk-6-jdk strace tasksel git python python3 \
+                    libstring-approx-perl libstring-shellquote-perl \
+                    libtext-glob-perl liburi-encode-perl || {
+                    echo "Installation of dependencies for building GNU Global failed";
+                    yes-or-no-p "Ignore the error and continue to build? " or die "Will now exit";
+                }
+
                 cd $ajoke_dir
                 cd ./external/global
                 sh ./reconf.sh
@@ -68,7 +80,7 @@ build it now (will need sudo for installing)?"; then
     fi
 
     if ! ctags-exuberant --version >/dev/null 2>&1 ; then
-        if yes-or-no-p "You need to install ctags-exuberant, run apt-get now?"; then
+        if yes-or-no-p -y "You need to install ctags-exuberant, run apt-get now?"; then
             sudo apt-get install exuberant-ctags
         else
             die "Can't use ctags-exuberant"

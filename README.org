@@ -81,6 +81,27 @@ steps, supposing ajoke is checked out in =$ajoke_dir=:
    sudo make install
    #+END_SRC
 
+**** If the compilation fails because of missing dependencies
+
+If you are on Debian family, you can try to install the dependencies
+with the following commands. I tried them myself on a clean minimal
+Debian system built using pbuilder, and GNU Global compiles just fine
+after the dependencies resolved.
+
+#+BEGIN_SRC sh
+apt-get build-dep global
+
+apt-get install sudo bash-completion autoconf automake \
+    bison exuberant-ctags flex \
+    gperf libltdl-dev libtool netbase \
+    openjdk-6-jdk strace tasksel git python python3 \
+    libstring-approx-perl libstring-shellquote-perl \
+    libtext-glob-perl liburi-encode-perl
+
+
+  
+#+END_SRC
+
 *** Install ctags-exuberant
 
    You can install it from your Linux distro, but you must make sure
