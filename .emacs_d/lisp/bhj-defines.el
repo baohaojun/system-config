@@ -60,24 +60,6 @@ might be bad."
     (when (and (file-remote-p filename) (string-match "/system-config/" filename))
       (yes-or-no-p "Are you sure it's alright to save this remote file when you have a local copy?"))))
 
-
-
-;;;###autoload
-(defun bhj-c-beginning-of-defun (&optional arg)
-  (interactive "^p")
-  (progn
-    (unless mark-active
-      (push-mark))
-    (ajoke--beginning-of-defun-function arg)))
-
-;;;###autoload
-(defun bhj-c-end-of-defun (&optional arg)
-  (interactive "^p")
-  (progn
-    (unless mark-active
-      (push-mark))
-    (ajoke--beginning-of-defun-function (- arg))))
-
 ;;;###autoload
 (defun linux-c-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
