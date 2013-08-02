@@ -58,6 +58,12 @@
 (defvar ajoke--marker-ring-poped (make-ring 32)
   "Ring of markers which are locations poped from ajoke--marker-ring.")
 
+(defvar ajoke--last-tagged-buffer nil
+  "The last buffer tagged, use for optimization.")
+
+(defvar ajoke--last-tagged-tick 0
+  "The modification tick of the last tagged buffer, for optimization.")
+
 (defun ajoke--buffer-file-name (&optional buf)
   (setq buf (or buf (current-buffer)))
   (with-current-buffer buf
@@ -90,23 +96,39 @@ now, and thus need rebuild tags for this file."
       (setenv "GTAGS_START_FILE" file))))
 
 (defun ajoke--tag-current-buffer (output-buf)
+  "Tag the current buffer using ctags."
   (interactive)
-  (save-excursion
-    (save-window-excursion
-      (save-restriction
-        (widen)
-        (shell-command-on-region
-         (point-min)
-         (point-max)
-         (let ((mode-name-minus-mode
-                (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
-           (concat "ctags-stdin --extra=+q --language-force="
-                   (shell-quote-argument
-                    (or (cdr (assoc mode-name-minus-mode ajoke--emacs-ctags-alist))
-                        mode-name-minus-mode))
-                   " -xu "
-                   (cdr (assoc mode-name-minus-mode ajoke--emacs-filter-alist))))
-         output-buf)))))
+  (let ((current-buffer (current-buffer))
+        (current-buffer-tick (buffer-modified-tick))
+        last-code-line)
+    (unless (and
+         (eq current-buffer ajoke--last-tagged-buffer)
+         (= current-buffer-tick ajoke--last-tagged-tick))
+      ;; tag is out-dated, retag
+      (save-excursion
+        (save-window-excursion
+          (save-restriction
+            (widen)
+            (setq last-code-line (line-number-at-pos (buffer-end 1)))
+            (shell-command-on-region
+             (point-min)
+             (point-max)
+             (let ((mode-name-minus-mode
+                    (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
+               (concat "ctags-stdin --extra=+q --language-force="
+                       (shell-quote-argument
+                        (or (cdr (assoc mode-name-minus-mode ajoke--emacs-ctags-alist))
+                            mode-name-minus-mode))
+                       " -xu "
+                       (cdr (assoc mode-name-minus-mode ajoke--emacs-filter-alist))))
+             output-buf))))
+      (with-current-buffer output-buf
+        (goto-char (point-max))
+        (insert (concat "hello function "
+                        (number-to-string last-code-line)
+                        " hello world")))
+      (setq ajoke--last-tagged-buffer current-buffer
+            ajoke--last-tagged-tick current-buffer-tick))))
 
 (defun ajoke--extract-line-number (nth-tag-line)
   "Extract line number for `ajoke--thing-at-tag'."
@@ -144,7 +166,6 @@ NTH-TAG-LINE, ask user to pick."
 
 (defun ajoke--pick-one (prompt collection &rest args)
   "Pick an item from COLLECTION, which is a list.
-
 ARGS is passed to the supporting function completing-read (or
 HELM's or Anything's version of completing-read: you are strongly
 advised to use one of these elisp tools)."
@@ -152,7 +173,7 @@ advised to use one of these elisp tools)."
       (car collection)
     (apply 'completing-read prompt collection args)))
 
-(defun ajoke--thing-at-tag (thing-func &optional nth-tag-cur)
+(defun ajoke--thing-at-tag (thing-func nth-tag-cur)
   "Like `thing-at-point', this function finds something for the current tag.
 
 THING-FUNC is a function to specify which thing of the tag to
@@ -160,25 +181,20 @@ extract, for e.g., the line number the tag is on, or the name of
 the tag. When it is called, the current buffer must be the *ajoke--tags* buffer.
 
 NTH-TAG-CUR means the NTH-TAG-CUR'th tag around the current code
-line. For e.g., if NTH-TAG-CUR is 0, it means the tag the current
-line of code defined (or if there is no tag defined on the
-current line of code, the lats tag defined before the current
-line. In most cases NTH-TAG-CUR should be 0, because we are most
-interested in the current tag. It can also be positive or
-negative, meaning to look forward or backward the current line."
+line. If it is positive, it means the NTH-TAG-CUR-th tag whose
+code line is smaller than the current code line. If it is
+negative, it means larger. If it is 0, it means equal or
+smaller. In most cases NTH-TAG-CUR should be 0, because we are
+most interested in the current tag."
   (interactive)
   (save-excursion
      (let (deactivate-mark) ;;see the help of save-excursion
        (ajoke--tag-current-buffer (get-buffer-create "*ajoke--tags*"))
        (let ((old-buffer (current-buffer))
              (old-code-line (line-number-at-pos))
-             (last-code-line (line-number-at-pos (buffer-end 1)))
              (last-def-line 1))
          (with-current-buffer "*ajoke--tags*"
-           (goto-char (point-max))
-           (insert (concat "hello function "
-                           (number-to-string last-code-line)
-                           " hello world"))
+           ;; we will use binary search
            (let* ((min 1)
                   (max (line-number-at-pos (buffer-end 1)))
                   (mid (/ (+ min max) 2))
@@ -195,12 +211,18 @@ negative, meaning to look forward or backward the current line."
                (setq mid (/ (+ min max) 2)
                      mid-code-line (ajoke--extract-line-number mid)
                      mid+1-codeline (ajoke--extract-line-number (1+ mid))))
-             (funcall thing-func (- mid -1
-                                       (if (and (numberp nth-tag-cur)
-                                                (= nth-tag-cur 0)
-                                                (not (= (ajoke--extract-line-number (1+ mid)) old-code-line)))
-                                           1
-                                         (or nth-tag-cur 1))))))))))
+             (funcall thing-func
+                      (cond
+                       ((= 0 nth-tag-cur)
+                        (if (= mid+1-codeline old-code-line)
+                            (1+ mid)
+                          mid))
+                       ((< nth-tag-cur 0)
+                        (if (= mid+1-codeline old-code-line)
+                            (+ mid 1 (- nth-tag-cur))
+                          (+ mid (- nth-tag-cur))))
+                       (t ; (> nth-tag-cur 0)
+                        (+ mid -1 nth-tag-cur))))))))))
 
 (defun ajoke--current-regexp (re &optional func)
   "Look for regular expression RE around the current point.
@@ -221,8 +243,14 @@ is set, call FUNC with the start and end of the matched region."
 
 (defun ajoke--beginning-of-defun-function (&optional arg)
   "Ajoke's version of `beginning-of-defun-function'."
-  (goto-line
-   (ajoke--thing-at-tag 'ajoke--extract-line-number arg)))
+  (if (or (null arg) (= arg 0)) (setq arg 1))
+  (let ((target-line
+         (ajoke--thing-at-tag
+          'ajoke--extract-line-number
+          (if (and (not (bolp)) (> arg 0))
+              (1- arg)
+            arg))))
+  (goto-line target-line)))
 
 (defun ajoke--create-index-function ()
   "Ajoke's version of `imenu-default-create-index-function'."

@@ -397,8 +397,7 @@ if (do_cscope($db_dir, $lookup_needle, $lookup_restrict_regexp)) {
     exit unless @java_fallback_dir;
 }
 
-exit 1 if $do_dir;
-
+exit 1 if $do_dir or -e "$db_dir/.no-fallback";
 
 $start_file = "";
 $ENV{GTAGS_START_FILE} = "";
