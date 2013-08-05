@@ -166,4 +166,7 @@ fi
 sudo ln -sf ~/etc/rc.local /etc || true # no sudo on win32
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
 if test -L ~/.git; then rm -f ~/.git; fi
+if ! grep -q -P -e 'iface\s+usb0\s+inet\s+manual' /etc/network/interfaces; then
+    sudo bash -c 'echo iface usb0 inet manual >> /etc/network/interfaces'
+fi
 echo OK
