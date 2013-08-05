@@ -55,6 +55,10 @@ GetOptions(
     "t=s" => sub {$type_re = qr($_[1])i},
     );
 
+if ($lookup_needle =~ m/^\w.*\.\*/) {
+    $lookup_needle = "^$lookup_needle";
+}
+
 if ($wild_card) {
     $lookup_needle = ".*";
 }
@@ -86,6 +90,7 @@ debug "started grep in $start_dir\n";
 
 my $db_dir = "$ENV{HOME}/.cache/for-code-reading$start_dir";
 if ($do_dir) {
+    chomp($do_dir = qx(readlink -f '$do_dir'));
     $db_dir = "$ENV{HOME}/.cache/for-code-reading$do_dir";
 }
 
