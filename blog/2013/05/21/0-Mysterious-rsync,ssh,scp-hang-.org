@@ -17,11 +17,11 @@ The command to convert phone's mode is like following:
             while ! netcfg|grep 'rndis0.*UP'; do
                 netcfg rndis0 up; 
             done;
-            ifconfig rndis0 192.168.42.129
+            ifconfig rndis0 192.168.15.244
         '"
 #+END_SRC
 
-After that, I will use rsync to the phone, 192.168.42.129, but
+After that, I will use rsync to the phone, 192.168.15.244, but
 unfortunately, it hangs.
 
 After a few debugging, I found out that it's because I have not made
