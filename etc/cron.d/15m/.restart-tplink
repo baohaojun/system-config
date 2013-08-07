@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -x
+. ~/.renew-xauth
+
+y=0
+for x in $(seq 1 10); do
+    if ! ping -c 1 192.168.33.1; then
+        ((y++));
+    fi
+done
+
+if test $y -gt 5; then
+   reboot-tplink.sh >/dev/null 2>&1
+fi
