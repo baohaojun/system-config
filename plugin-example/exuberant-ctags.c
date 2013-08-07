@@ -111,7 +111,7 @@ start_ctags(const struct parser_param *param)
                 close(opipe[0]);
                 close(ipipe[1]);
                 execvp("ctags-ajoke", argv);
-                param->die("execvp failed.");
+                param->die("execvp failed: %s", strerror(errno));
         }
         /* parent process */
         if (pid < 0)
