@@ -120,7 +120,9 @@ apt-get install sudo bash-completion autoconf automake \
 
 *** Copy the .globalrc and .ctags into your HOME
 
+    Suppose your global installed into =/usr/local/bin/global=, then =global_prefix=/usr/local=
    #+BEGIN_SRC sh
+   global_prefix=/usr/local
    perl -npe "s,\@prefix\@,$global_prefix,g" $ajoke_dir/external/global/gtags.conf.in > ~/.globalrc
    ln -sf $ajoke_dir/etc/.ctags ~/
    #+END_SRC
