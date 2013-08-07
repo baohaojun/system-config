@@ -217,16 +217,7 @@
 
 (define-abbrev-table 'internal-ange-ftp-mode-abbrev-table '())
 
-(define-abbrev-table 'java-mode-abbrev-table
-  '(
-    ("le" "Log.e(\"bhj\", \"" nil 4)
-    ("lv" "Slog.v(TAG, String.format(\"" nil 1)
-    ("pk" "Log.i(\"Bhj\", \"hello world\");" nil 1)
-    ("sle" "Slog.e(\"bhj\", \" hello world\", new Exception());" nil 5)
-    ("slne" "Slog.e(\"bhj\", \" hello world \"" nil 2)
-    ("string" "String" nil 19)
-    ("sv" "System.out.print(String.format(\"" nil 0)
-   ))
+(define-abbrev-table 'java-mode-abbrev-table '())
 
 (define-abbrev-table 'js-mode-abbrev-table '())
 

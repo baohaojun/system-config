@@ -69,6 +69,7 @@
  "sdim" "euc-cn" 'sdim-use-package "影舞笔")
 
 (mapcar (lambda (x) (add-hook x (lambda ()
+                    (setq beginning-of-defun-function #'ajoke--beginning-of-defun-function)
                     (local-set-key [?\C-\M-a] 'beginning-of-defun)
                     (local-set-key [?\C-\M-e] 'end-of-defun))))
         (list 'c-mode-hook 'c++-mode-hook 'csharp-mode-hook 'java-mode-hook))

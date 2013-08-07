@@ -24,14 +24,83 @@ artist: %s
          grep -v -P -e '^\s+$'
 }
 
+function douban-misc() {
+    emacsclient -e '
+        (let* ((song-info (elt douban-music-song-list douban-music-current-song))
+               (channel (aget douban-music-channels douban-music-current-channel))
+               (album (aget song-info '\''albumtitle))
+               (title (aget song-info '\''title))
+               (artist (aget song-info '\''artist))
+               (url (aget song-info '\''url)))
+          (shell-command
+            (format "#set -x;
+  export artist=%s;
+  export album=%s;
+  export title=%s;
+  dir=~/Music/like/$artist/$album;
+  song=$dir/$title.mp3
+  mkdir -p \"$dir\";
+  export douban_action='$douban_action'
+  douban misc %s \"$song\""
+                (shell-quote-argument (replace-regexp-in-string "/" "%" artist))
+                (shell-quote-argument (replace-regexp-in-string "/" "%" album))
+                (shell-quote-argument (replace-regexp-in-string "/" "%" title))
+                (shell-quote-argument url))))'
+}
+
+export douban_action=${douban_action:-unknown}
 case "$1" in
+    like)
+        douban_action=download
+        douban-misc;
+        ;;
+    misc)
+        shift
+        url=$1
+        song=$2
+        (
+            set -x
+            if test $douban_action = download; then
+                wget "$url" -O "$song".$$ &&
+                mv "$song".$$ "$song"
+            elif test $douban_action = download-or-next; then
+                if test -e "$song"; then
+                    (
+                        sawfish-client -e '(display-message "do not play '"$song"'")'
+                        sleep 5
+                        sawfish-client -e '(display-message)'
+                    )&
+                    douban next
+                else
+                    (
+                        sawfish-client -e '(display-message "douban automatic save '"$song"'")'
+                        sleep 5
+                        sawfish-client -e '(display-message)'
+                    )&
+                    douban like
+                fi
+            elif test $douban_action = bagua; then
+                true;
+            fi
+        ) >>~/.logs/douban-save.log 2>&1 &
+        ;;
+    ba) # bagua
+        douban_action=bagua
+        douban-misc
+        ;;
     info)
         (
             set -x
 
+            if test -e ~/.douban/download-or-next -a "$EMACS"; then
+                douban_action=download-or-next
+                douban-misc
+            fi
+
             if test -e ~/.do-not-disturb -a "$EMACS"; then
                 exit
             fi
+
             if test -e ~/.do-not-disturb.bak; then
                 mv ~/.do-not-disturb.bak ~/.do-not-disturb
             fi
@@ -39,9 +108,6 @@ case "$1" in
                 "$(info)"
          ) > ~/.logs/douban.log 2>&1
          ;;
-    pinfo)
-        info
-        ;;
     lyrics)
         shift
         if test $# != 0; then
