@@ -57,11 +57,13 @@ named =ajoke-test-drive=, so after you check out ajoke, you can simply
 type =./ajoke/bin/ajoke-test-drive= to have a taste of it.
 
 If you are not using Debian alike systems, then please follow these
-steps, supposing ajoke is checked out in =$ajoke_dir=:
+steps, supposing ajoke is checked out in =$ajoke_dir= (in my case, it
+is =~/gcode/ajoke=, yours may vary):
 
 *** Put ajoke scripts into you PATH:
    
    #+BEGIN_SRC sh
+   export ajoke_dir=~/gcode/ajoke #PLEASE MODIFY THIS TO SUIT YOUR CASE
    export export PATH=$ajoke_dir/bin:$PATH
    #+END_SRC
 
