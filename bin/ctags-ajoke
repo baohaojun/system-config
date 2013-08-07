@@ -25,7 +25,7 @@ if (not grep {$_ eq "--filter"} @ARGV) {
     my $ctags_pid = open2(my $read, my $write, "ctags-exuberant", @ARGV);
     my $is_java = grep {$_ eq "--language-force=java"} @ARGV;
     while (<$read>) {
-        ($tag, $type, $line_num, $file) = split(" ");
+        ($tag, $type, $line_num, $file) = m/^\s*(\S+)\s+(.*?)\s+(\d+)\s+(\S+)/;
         if ($file ne $old_file) {
             $package = "";
         }
@@ -75,7 +75,7 @@ while (<STDIN>) {
 
     while (<$read>) {
         if ($is_java) {
-            ($tag, $type, $line_num, $file) = split(" ");
+            ($tag, $type, $line_num, $file) = m/^\s*(\S+)\s+(.*?)\s+(\d+)\s+(\S+)/;
             if ($type eq 'package') {
                 $package = $tag;
                 print;
