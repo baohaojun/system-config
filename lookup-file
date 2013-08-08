@@ -111,18 +111,18 @@ fi
             echo "$file"
         fi
     fi
-) || (
+) || {
     if test "$exact" = true; then
         if test $readlink = true; then
             readlink -f "$(which "$1")"
         else
             which "$1"
-        fi 2>/dev/null || true
-        exit 0
+        fi 2>/dev/null
+        exit
     else
         false
     fi
-) || (
+} || (
     dir=`dirname -- "$file"`
     base=`basename -- "$file"`
 
