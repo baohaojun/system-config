@@ -81,9 +81,22 @@
 
 (eval-after-load 'douban-music-mode
   '(progn
-     (add-hook 'douban-song-info-complete-hook
+     (add-hook 'douban-song-before-info-hook
                (lambda ()
-                 (shell-command-to-string "douban info >/dev/null 2>&1 &")))))
+                 (shell-command-to-string "douban start-play-hook >/dev/null 2>&1 &")
+                 (let* ((song-info (elt douban-music-song-list douban-music-current-song))
+                        (channel (aget douban-music-channels douban-music-current-channel))
+                        (album (aget song-info 'albumtitle))
+                        (title (aget song-info 'title))
+                        (artist (aget song-info 'artist))
+                        (url (aget song-info 'url))
+                        (mp3 (expand-file-name (format "~/Music/like/%s/%s/%s.mp3"
+                                                       (replace-regexp-in-string "/" "%" artist)
+                                                       (replace-regexp-in-string "/" "%" album)
+                                                       (replace-regexp-in-string "/" "%" title)))))
+                    (if (file-exists-p mp3)
+                        (setq douban-music-local-url mp3)
+                      (setq douban-music-local-url nil)))))))
 
 (eval-after-load 'java-mode
   '(define-key java-mode-map (kbd "M-s d") 'bhj-open-android-doc-on-java-buffer))
