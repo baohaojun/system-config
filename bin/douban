@@ -45,6 +45,12 @@ case "$1" in
         (
             set -x
             case $douban_action in
+                lyrics)
+                    douban_action=info douban misc
+                    url=$(search-lyrics "$artist" "$title")
+                    host=$(echo $url|perl -npe 's!((?:.*://)?.*?)/.*!$1!')
+                    firefox-open-url-pattern $host "$url"
+                    ;;
                 bagua)
                     search-google "$artist"
                     search-google "$artist" "$title"
@@ -100,12 +106,11 @@ case "$1" in
         shift
         if test $# != 0; then
             url=$(search-lyrics "$@")
+            host=$(echo $url|perl -npe 's!((?:.*://)?.*?)/.*!$1!')
+            firefox-open-url-pattern $host "$url"
         else
-            url=$(search-lyrics "$(info|perl -ne 'if (m/^artist|^title/) {s/.*?://; print}')")
+            douban_action=lyrics douban-misc
         fi
-        douban info
-        host=$(echo $url|perl -npe 's!((?:.*://)?.*?)/.*!$1!')
-        firefox-open-url-pattern $host "$url"
         ;;
     back)
         emacsclient -e '(douban-music-seek-backward '$2')'
