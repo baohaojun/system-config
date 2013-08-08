@@ -93,10 +93,14 @@
                         (mp3 (expand-file-name (format "~/Music/like/%s/%s/%s.mp3"
                                                        (replace-regexp-in-string "/" "%" artist)
                                                        (replace-regexp-in-string "/" "%" album)
-                                                       (replace-regexp-in-string "/" "%" title)))))
+                                                       (replace-regexp-in-string "/" "%" title))))
+                        (icon (replace-regexp-in-string "mp3$" "png" mp3)))
                     (if (file-exists-p mp3)
                         (setq douban-music-local-url mp3)
-                      (setq douban-music-local-url nil)))))))
+                      (setq douban-music-local-url nil))
+                    (if (file-exists-p icon)
+                        (setq douban-music-local-icon icon)
+                      (setq douban-music-local-icon nil)))))))
 
 (eval-after-load 'java-mode
   '(define-key java-mode-map (kbd "M-s d") 'bhj-open-android-doc-on-java-buffer))

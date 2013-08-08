@@ -64,16 +64,21 @@ case "$1" in
                          )"
                     ;;
                 start-play-hook)
+                    downloading=false
                     if test ! -e "$song" -o ! -e "$icon" ; then
-                        mkdir -p "$(dirname "$song")"
-                        wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"
-                        wget "$picture_url" -O "$icon".$$ && mv "$icon".$$ "$icon"
+                        downloading=true
+                        (
+                            mkdir -p "$(dirname "$song")"
+                            wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"
+                            wget "$picture_url" -O "$icon".$$ && mv "$icon".$$ "$icon"
+                            if test ! -e ~/.do-not-disturb; then
+                                douban_action=info douban misc
+                            fi
+                        )&
                     fi
 
-                    if test -e "$song" -a -e ~/.douban/download-or-next; then
+                    if test -e "$song" -a -e ~/.douban/download-or-next -a $downloading != true; then
                         douban next
-                    elif test ! -e ~/.do-not-disturb; then
-                        douban_action=info douban misc
                     fi
                     ;;
             esac
