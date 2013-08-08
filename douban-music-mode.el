@@ -131,6 +131,7 @@ system notification, just as rythombox does."
 
 ;; Internal variables
 (defvar douban-music-local-url nil "The local saved mp3 to play instead of http://...")
+(defvar douban-music-local-icon nil "The local saved icon to display.")
 (defvar douban-music-song-list nil "Song list for current channel.")
 (defvar douban-music-current-song nil "Song currently playing.")
 (defvar douban-music-channels nil "Total channels for douban music.")
@@ -528,8 +529,10 @@ system notification, just as rythombox does."
 (defun download-image-callback (status &rest arg)
   (let ((douban-buffer (car arg))
         (point (cadr arg))
-        (image-file (concat douban-music-cache-directory
-                            douban-music-image-file)))
+        (image-file (or 
+		     douban-music-local-icon
+		     (concat douban-music-cache-directory
+			     douban-music-image-file))))
     (setq buffer-file-coding-system 'no-conversion)
     (goto-char (point-min))
     (let ((end (search-forward "\n\n" nil t)))
@@ -541,13 +544,14 @@ system notification, just as rythombox does."
       (save-excursion
         (let ((buffer-read-only nil))
           (goto-char point)
-          (douban-music-insert-image (concat douban-music-cache-directory
-                                             douban-music-image-file)))))
+          (douban-music-insert-image image-file))))
     (run-hooks 'douban-song-info-complete-hook)))
 
 
 (defun douban-music-download-and-insert-image-async (url douban-buffer point)
-  (url-retrieve url #'download-image-callback (list douban-buffer point)))
+  (if douban-music-local-icon
+      (download-image-callback nil (list douban-buffer point))
+    (url-retrieve url #'download-image-callback (list douban-buffer point)))
 
 ;;;###autoload
 (defun douban-music ()
