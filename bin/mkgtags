@@ -3,6 +3,7 @@
 # gtags will call sort, which will use a lot of space for large projects.
 export TMPDIR=~/.cache
 mkdir -p $TMPDIR
+mkdir -p ~/.logs
 
 cd -P .
 outDir=~/.cache/for-code-reading/"`pwd`"
