@@ -1,5 +1,5 @@
 #!/bin/bash
-. ~/.new-xauth
+. ~/.renew-xauth
 if test "$1" = disable -o "$1" = off; then
     synclient TouchpadOff=2
     # sawfish-client -e '(bind-keys window-keymap "Button1-Click" (lambda () (system "rebind-button1&")))'

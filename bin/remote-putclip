@@ -5,7 +5,7 @@ unset REMOTEIP
 EMACS=t
 scp "$1" /tmp/remote-putclip.$$
 DISPLAY=:0
-. ~/.new-xauth
+. ~/.renew-xauth
 cat /tmp/remote-putclip.$$ | putclip
 rm /tmp/remote-putclip.$$
 

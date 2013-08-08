@@ -1,5 +1,5 @@
 #!/bin/bash
-. ~/.new-xauth >/dev/null 2>&1
+. ~/.renew-xauth >/dev/null 2>&1
 if ! test -e "$XAUTHORITY"; then
     exit 0;
 fi
@@ -32,7 +32,11 @@ if ! ps.pl notification-manager >/dev/null 2>&1; then
     setsid notification-manager > ~/.logs/notification-manager.log 2>&1&
     sleep 1
 fi
-notification-manager $icon "$label" "$content"
+if test "$icon"; then
+    notification-manager "$icon" "$label" "$content"
+else
+    notification-manager "$label" "$content"
+fi
 if test $(basename $0) = bhj-short-notify; then
     (
         sleep 5
