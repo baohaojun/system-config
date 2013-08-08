@@ -7,7 +7,7 @@ if test $(basename $0) != cowbuilder-bhj; then
    apt-get build-dep global
 
    apt-get install sudo bash-completion autoconf automake \
-       autoreconf bison exuberant-ctags flex \
+       bison exuberant-ctags flex \
        gperf libltdl-dev libtool netbase \
        openjdk-6-jdk strace tasksel git python python3 \
        libstring-approx-perl libstring-shellquote-perl \
@@ -23,17 +23,14 @@ fi
 cow=$(select-output-line find ~/external/cowbuilder -maxdepth 1 -type d -name '*-*')
 echo $cow
 
-pkg=$cow/bare/base.cow
+basepath=$cow/bare
 builddir=/tmp/build-cow.$$
 mkdir -p $builddir
 id=$(id)
 time sudo unshare -m -- bash -c "
     mount -o size=2000000k -t tmpfs none $builddir
-    echo copying base files...
-    time cp $pkg $builddir -a
-    echo done
     set -x
-    command sudo cowbuilder --execute --basepath $builddir/$(basename $pkg) \
+    command sudo pbuilder --execute --basetgz $basepath/base.tgz \
         --buildplace $builddir/ \
         --bindmounts \"$(readlink -f $HOME/system-config)
                        $(readlink -f $HOME/src)
