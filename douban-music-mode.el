@@ -72,6 +72,9 @@
   :type 'string
   :group 'douban-music)
 
+(defcustom douban-song-before-info-hook nil
+  "Hook to run before fetch the song's info.")
+
 (defcustom douban-song-info-complete-hook nil
   "Hook run when song infomation is complete (the image is downloaded).
 
@@ -127,6 +130,7 @@ system notification, just as rythombox does."
   "Delimiter for channels show")
 
 ;; Internal variables
+(defvar douban-music-local-url nil "The local saved mp3 to play instead of http://...")
 (defvar douban-music-song-list nil "Song list for current channel.")
 (defvar douban-music-current-song nil "Song currently playing.")
 (defvar douban-music-channels nil "Total channels for douban music.")
@@ -282,11 +286,12 @@ system notification, just as rythombox does."
 (defun douban-music-play ()
   (unless (and douban-music-current-process
                (process-live-p douban-music-current-process))
+    (run-hooks 'douban-song-before-info-hook)
     (let (song)
       (setq song (elt douban-music-song-list
                       douban-music-current-song))
-      (if (not song)
-          (error "Get song from song list failed"))
+      (unless song
+	(error "Get song from song list failed"))
       (douban-music-interface-update)
       (setq douban-music-current-process
             (start-process "douban-music-proc"
@@ -295,7 +300,9 @@ system notification, just as rythombox does."
                            (if (string-match douban-music-player "mplayer")
                                "-slave"
                              "")
-                           (aget song 'url)))
+                           (or 
+			    douban-music-local-url
+			    (aget song 'url))))
       (set-process-sentinel
        douban-music-current-process
        'douban-music-proc-sentinel)
