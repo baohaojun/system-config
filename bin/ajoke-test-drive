@@ -198,6 +198,9 @@ EOF
         (
             cd $java_dir
             mkgtags
+            if yes-or-no-p -y "Restart ajoke-test-drive after building jdk tags?"; then
+                ajoke-test-drive
+            fi
         )
     fi
 }
