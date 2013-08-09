@@ -157,7 +157,7 @@ system notification, just as rythombox does."
         (define-key map "g" 'douban-music-refresh)
         (define-key map "j" 'douban-music-goto-current-playing)
         (define-key map "c" 'douban-music-set-channel)
-        (define-key map "n" 'douban-music-play-next)
+        (define-key map "n" 'douban-music-play-next-refresh)
         (define-key map "p" 'douban-music-play-previous)
         (define-key map "q" 'douban-music-bury-buffer)
         (define-key map "x" 'douban-music-quit)
@@ -447,7 +447,11 @@ system notification, just as rythombox does."
       (if song
           (progn
             (insert douban-music-indent2)
-            (douban-music-download-and-insert-image-async (aget song 'picture) (current-buffer) (point)))
+	    (if douban-music-local-icon
+		(progn
+		  (douban-music-insert-image douban-music-local-icon)
+		  (insert douban-music-local-icon))
+	      (douban-music-download-and-insert-image-async (aget song 'picture) (current-buffer) (point))))
         (error "current song is nil"))
       (insert (concat (propertize (format "\n\n%sCurrent song: "
                                           douban-music-indent0)
@@ -514,43 +518,39 @@ system notification, just as rythombox does."
 
 (defun douban-music-insert-image (image-file)
   "Insert image file into text buffer."
-  (when image-file
-    (condition-case err
-        (let ((img (progn
-                     (clear-image-cache image-file)
-                     (create-image image-file nil nil :relief 2 :ascent 'center))))
-          (insert-image img)
-          img)
-      (error
-       (when (file-exists-p image-file)
-         (delete-file image-file))
-       nil))))
+  (let ((buffer-read-only nil))
+    (when image-file
+      (condition-case err
+	  (let ((img (progn
+		       (clear-image-cache image-file)
+		       (create-image image-file nil nil :relief 2 :ascent 'center))))
+	    (insert-image img)
+	    img)
+	(error
+	 (when (file-exists-p image-file)
+	   (delete-file image-file))
+	 nil)))))
 
 (defun download-image-callback (status &rest arg)
   (let ((douban-buffer (car arg))
         (point (cadr arg))
-        (image-file (or 
-		     douban-music-local-icon
-		     (concat douban-music-cache-directory
-			     douban-music-image-file))))
+        (image-file (concat douban-music-cache-directory
+			    douban-music-image-file)))
     (setq buffer-file-coding-system 'no-conversion)
     (goto-char (point-min))
     (let ((end (search-forward "\n\n" nil t)))
       (when end
-        (delete-region (point-min) end)
-        (write-region (point-min) (point-max) image-file nil 0)))
+	(delete-region (point-min) end)
+	(write-region (point-min) (point-max) image-file nil 0)))
     (kill-buffer)
     (with-current-buffer douban-buffer
       (save-excursion
-        (let ((buffer-read-only nil))
           (goto-char point)
-          (douban-music-insert-image image-file))))
+          (douban-music-insert-image image-file)))
     (run-hooks 'douban-song-info-complete-hook)))
 
 
 (defun douban-music-download-and-insert-image-async (url douban-buffer point)
-  (if douban-music-local-icon
-      (download-image-callback nil (list douban-buffer point))
     (url-retrieve url #'download-image-callback (list douban-buffer point)))
 
 ;;;###autoload
