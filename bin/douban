@@ -84,7 +84,7 @@ case "$1" in
                     fi
 
                     if test -e "$song" -a -e ~/.douban/download-or-next -a $downloading != true; then
-                        douban next
+                        sleep 1
                     fi
                     ;;
             esac
