@@ -6,9 +6,20 @@ sub echo(@) {
     print "@_\n";
 }
 
-open (my $tty, ">", "/dev/tty") or die "can not open tty";
+my $tty;
+if ($ENV{EMACS}) {
+    $tty = "";
+} else {
+    open ($tty, ">", "/dev/tty") or $tty = "";
+}
+
+my $accrue_prompt = "";
 sub tty(@) {
-    print $tty "@_";
+    if ($tty) {
+        print $tty "@_";
+    } else {
+        $accrue_prompt .= "@_";
+    }
 }
 
 sub read_ans($) {
@@ -17,7 +28,20 @@ sub read_ans($) {
         $prompt .= " ";
     }
     tty "$prompt";
-    chomp(my $ans = <>);
+    my $ans;
+    if ($tty) {
+        chomp($ans = <>);
+    } else {
+        my $sawfish_prompt = $accrue_prompt;
+        use String::Escape qw(qqbackslash unqqbackslash);
+        $sawfish_prompt = qqbackslash($sawfish_prompt);
+        open(my $sawpipe, "-|", "sawfish-client", "-e", "(let* ((prompt-completion-fun (lambda ()))) (prompt $sawfish_prompt nil))")
+            or die "Can not open sawfish pipe";
+        $ans = unqqbackslash join("", <$sawpipe>);
+        close $sawpipe;
+    }
+
+    $accrue_prompt = "";
     return $ans;
 }
 
