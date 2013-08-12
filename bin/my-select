@@ -84,7 +84,7 @@ sub my_select(\@) {
         $ENV{ORIGINAL_MATCHER} = "";
         $got_ans_from_env = 1;
     } else {
-        $ans = read_ans '#? ';
+        $ans = read_ans $ENV{SELECT_PROMPT} or '#? ';
     }
 
     if (not $ans or $ans =~ m/^\d+$/ and $ans > @$args_ref) {

@@ -118,7 +118,29 @@ case "$1" in
     forth)
         emacsclient -e '(douban-music-seek-forward '$2')'
         ;;
+    should-play)
+        shift
+        function yes() {
+            echo -n yes
+            exit
+        }
+        if test -e ~/.douban/.should-play; then
+            rm ~/.douban/.should-play
+            yes
+        fi
+        if test ! -e "$1"; then
+            yes
+        fi
+        age=$(perl -e 'print 100 * -A "$ARGV[0]"' "$1")
+        if test $(random $age) -gt 50; then
+            touch "$1"
+            yes
+        else
+            echo -n no
+        fi
+        ;;
     replay)
+        touch ~/.douban/.should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
@@ -133,6 +155,7 @@ case "$1" in
         emacsclient -e '(douban-music-play-next-refresh)'
         ;;
     prev)
+        touch ~/.douban/.should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi

@@ -96,7 +96,7 @@
                                                        (replace-regexp-in-string "/" "%" title))))
                         (icon (replace-regexp-in-string "mp3$" "png" mp3)))
                     (if (file-exists-p mp3)
-                        (if (file-exists-p (expand-file-name "~/.douban/download-or-next"))
+                        (if (string= (shell-command-to-string (concat "douban should-play " (shell-quote-argument mp3))) "no")
                             (setq douban-music-local-url "/dev/null")
                           (setq douban-music-local-url mp3))
                       (setq douban-music-local-url nil))

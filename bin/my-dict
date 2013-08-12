@@ -29,6 +29,11 @@ if test $in_firefox = true -a "${current_url:0-8}" = 'file:///' || echo $current
     new_tab=-current-tab
 elif firefox-search-for-tab 'localhost.*/dict'; then
     new_tab=-current-tab
+else
+    sawfish-send-window-event '(- |^)Mozilla Firefox\$' "M-1"
+    if test $(SELECT_PROMPT="Open in the current tab (tab 1)?" select-args yes no) = yes; then
+        new_tab=-current-tab
+    fi
 fi
 
 firefox $new_tab http://localhost:34567/dict/"$(echo "$@" | urlify)"
