@@ -295,15 +295,17 @@ system notification, just as rythombox does."
 	(error "Get song from song list failed"))
       (douban-music-interface-update)
       (setq douban-music-current-process
-            (start-process "douban-music-proc"
-                           nil
-                           douban-music-player
-                           (if (string-match douban-music-player "mplayer")
-                               "-slave"
-                             "")
-                           (or 
-			    douban-music-local-url
-			    (aget song 'url))))
+	    (if (and douban-music-local-url (string= douban-music-local-url "/dev/null"))
+		(start-process "douban-music-proc" nil "sleep" "1")
+	      (start-process "douban-music-proc"
+			     nil
+			     douban-music-player
+			     (if (string-match douban-music-player "mplayer")
+				 "-slave"
+			       "")
+			     (or 
+			      douban-music-local-url
+			      (aget song 'url)))))
       (set-process-sentinel
        douban-music-current-process
        'douban-music-proc-sentinel)
