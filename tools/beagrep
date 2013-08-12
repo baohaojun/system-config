@@ -7,6 +7,7 @@ use String::ShellQuote;
 my $pat = '';
 my $pathpat = '.';
 my $additional_tokens = '';
+my $use_tokens = '';
 my $pathdeny = '^$';
 chomp(my $pwd = qx/readlink -f "`pwd`"/);
 my $pwd_opt;
@@ -34,9 +35,10 @@ sub debug(@) {
 my $grep_add_opts = "";
 GetOptions(
     "a=s" => \$additional_tokens,
+    "t=s" => \$use_tokens,
     "e=s" => \$pat,
     "p=s" => \$pathpat,
-    "perl=s" => \$grep_use_perl_regexp,
+    "perl!" => \$grep_use_perl_regexp,
     "grep=s" => \$grep_add_opts,
     "v=s" => \$pathdeny,
     "d=s" => \$pwd_opt,
@@ -45,7 +47,7 @@ GetOptions(
     "l!" => \$list_beagrep,
     "s!" => \$short_format,
     "rewrite=s" => \$replace_with,
-    );
+    ) or die;
 
 if ($replace_with) {
     my $char_1 = substr($replace_with, 0, 1);
@@ -100,11 +102,11 @@ if ($pat_implicit_path =~ m/\(|\)/) {
 $pat = shell_quote($pat);
 debug "pat is: $pat.\n";
 
-debug "beagrep query argument `[01;31m"
-  . substr(qx/beagrep-get-tokens $pat/, 0, -1)
-  . "[0m'\n";
+# debug "beagrep query argument `[01;31m"
+#   . substr(qx/beagrep-get-tokens $pat/, 0, -1)
+#   . "[0m'\n";
 
-my $beagrep_files = qx/beagrep-files $pat $additional_tokens/;
+my $beagrep_files = $use_tokens ? qx/beagrep-files $use_tokens/ : qx/beagrep-files $pat $additional_tokens/;
 my @beagrep_files = split(/\n/, $beagrep_files);
 
 if ($short_format) {
@@ -138,7 +140,7 @@ if (!$find_file_only) {
         $ENV{'LC_ALL'} = 'C'; # fix grep too slow when ignore_case
     }
 
-    open(my $grep, "|xargs -d '\\n' grep -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp -e $pat");
+    open(my $grep, "|xargs -d '\\n' -- grep -e $pat -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp");
 
     for (@beagrep_files) {
         next unless m/$pathpat/i;
