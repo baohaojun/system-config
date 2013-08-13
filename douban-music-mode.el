@@ -145,6 +145,7 @@ system notification, just as rythombox does."
 (defvar douban-music-indent3 "     " "3-level indentation.")
 (defvar douban-music-indent4 "          " "4-level indentation.")
 (defvar douban-music-should-replay nil "Should replay the song.")
+(defvar douban-music-not-playing 0 "How many times we chose not to play the songs.")
 
 ;; key map definition
 (defvar douban-music-mode-map nil
