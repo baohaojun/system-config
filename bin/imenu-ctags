@@ -11,16 +11,28 @@ my %line_point_map;
 my $line = 0;
 chomp(my $mode = qx(lang_for_file $filename));
 
-open(my $ctags_pipe, "-|", "ctags-ajoke --c-kinds=+p --language-force=$mode -xu --extra=+q /dev/stdin > ~/.imenu-ctags.$$")
-    or die "Can not open ctags program";
+my $debug;
+my $logfile = $0;
+$logfile =~ s!.*/!!;
+if ($ENV{DEBUG} eq 'true') {
+    $debug = *STDERR;
+} else {
+    open($debug, ">", glob("~/.logs/$logfile.log"))
+        or die "Can not open debug log file ~/.logs/$logfile.log";
+}
+sub debug(@) {
+    print $debug "@_\n";
+}
 
-while (<>) {
+chomp(my $stdin = qx(readlink -f /dev/stdin));
+system("ctags-ajoke --c-kinds=+p --language-force=$mode -xu --extra=+q $stdin > ~/.imenu-ctags.$$");
+
+while (<>) { # that's true, the stdin can be read again, because it is
+             # a normal file from emacs
     $line_point_map{++$line} = $point;
     my $u_ = decode_utf8($_);
     $point += length($u_);
-    print $ctags_pipe $_;
 }
-close $ctags_pipe;
 
 my $total_lines = $line;
 
@@ -43,4 +55,4 @@ while (<$ctags_out>) {
 foreach my $line (sort {$a <=> $b} keys %imenu_line_map) {
     print $imenu_line_map{$line}
 }
-unlink glob("~/.imenu-ctags.$$");
+# unlink glob("~/.imenu-ctags.$$");

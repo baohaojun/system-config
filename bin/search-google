@@ -5,6 +5,11 @@ domain=com/search?q=
 if [[ $host =~ wikipedia ]]; then
     domain=org/w/index.php?search=
 fi
+
+if [[ $host =~ google ]]; then
+    domain=com.hk/search?q=
+fi
+
 if test $# = 0; then
     set -- "$(xclip -o)"
 fi
