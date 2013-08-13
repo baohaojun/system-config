@@ -7,4 +7,4 @@ read $randf, my $randata, 8;
 my ($randval) = unpack("Q", $randata);
 
 $randval = int($randval / 0xffffffffffffffff * $ARGV[0]) if $ARGV[0];
-printf "$randval\n";
+printf "$randval";

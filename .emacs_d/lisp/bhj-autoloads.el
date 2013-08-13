@@ -340,8 +340,9 @@ beginning of current defun.
 ;;;;;;  bhj-set-reply bhj-mimedown bhj-w3m-scroll-down-or-previous-url
 ;;;;;;  bhj-w3m-scroll-up-or-next-url bhj-occur-merge-conflicts bhj-occur-make-errors
 ;;;;;;  bhj-occur bhj-indent-region-as-prev-line c-get-includes linux-c++-mode
-;;;;;;  linux-c-mode confirm-risky-remote-edit fix-latex-cjk cleanup-buffer-safe)
-;;;;;;  "bhj-defines" "bhj-defines.el" (20987 30144 721414 180000))
+;;;;;;  linux-c-mode bhj-douban-start confirm-risky-remote-edit fix-latex-cjk
+;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (21001
+;;;;;;  61465 93225 142000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -357,6 +358,11 @@ move the cjk env outmost with the document env
 \(fn)" t nil)
 
 (autoload 'confirm-risky-remote-edit "bhj-defines" "\
+
+
+\(fn)" nil nil)
+
+(autoload 'bhj-douban-start "bhj-defines" "\
 
 
 \(fn)" nil nil)

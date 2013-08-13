@@ -52,12 +52,11 @@ case "$1" in
                     firefox-open-url-pattern $host "$url"
                     ;;
                 bagua)
-                    search-google "$artist"
-                    search-google "$artist" "$title" site:baike.baidu.com
+                    search-baidu "$artist"
+                    search-baidu "$artist" "$title" site:baike.baidu.com
                     douban info
                     ;;
                 info)
-
                     if test -e ~/.do-not-disturb.bak; then
                         mv ~/.do-not-disturb.bak ~/.do-not-disturb
                     fi
@@ -71,21 +70,14 @@ case "$1" in
                          )"
                     ;;
                 start-play-hook)
-                    downloading=false
                     if test ! -e "$song" -o ! -e "$icon" ; then
-                        downloading=true
-                        (
-                            mkdir -p "$(dirname "$song")"
-                            wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"
-                            wget "$picture_url" -O "$icon".$$ && mv "$icon".$$ "$icon"
-                            if test ! -e ~/.do-not-disturb; then
-                                douban_action=info douban misc
-                            fi
-                        )&
+                        mkdir -p "$(dirname "$song")"
+                        wget "$picture_url" -O "$icon".$$ && mv "$icon".$$ "$icon"
+                        wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"&
                     fi
 
-                    if test -e "$song" -a -e ~/.douban/download-or-next -a $downloading != true; then
-                        sleep 1
+                    if test ! -e ~/.do-not-disturb; then
+                        douban_action=info douban misc
                     fi
                     ;;
             esac

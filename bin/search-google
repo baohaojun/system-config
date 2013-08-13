@@ -10,6 +10,10 @@ if [[ $host =~ google ]]; then
     domain=com.hk/search?q=
 fi
 
+if [[ $host =~ baidu ]]; then
+    domain=com/s?wd=
+fi
+
 if test $# = 0; then
     set -- "$(xclip -o)"
 fi
