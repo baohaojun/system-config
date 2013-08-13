@@ -53,7 +53,8 @@ case "$1" in
                     ;;
                 bagua)
                     search-google "$artist"
-                    search-google "$artist" "$title"
+                    search-google "$artist" "$title" site:baike.baidu.com
+                    douban info
                     ;;
                 info)
 
@@ -133,7 +134,9 @@ case "$1" in
         fi
         age=$(perl -e 'print 100 * -A "$ARGV[0]"' "$1")
         if test $(random $age) -gt 50; then
-            touch "$1"
+            if test "$EMACS"; then
+                touch "$1"
+            fi
             yes
         else
             echo -n no

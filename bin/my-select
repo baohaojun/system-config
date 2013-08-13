@@ -32,7 +32,11 @@ sub read_ans($) {
     if ($tty) {
         chomp($ans = <>);
     } else {
-        my $sawfish_prompt = $accrue_prompt;
+        my @accrue_prompt = split("\n", $accrue_prompt);
+        if (@accrue_prompt > 20) {
+            @accrue_prompt = (@accrue_prompt[0..20], "...");
+        }
+        my $sawfish_prompt = join("\n", @accrue_prompt);
         use String::Escape qw(qqbackslash unqqbackslash);
         $sawfish_prompt = qqbackslash($sawfish_prompt);
         open(my $sawpipe, "-|", "sawfish-client", "-e", "(let* ((prompt-completion-fun (lambda ()))) (prompt $sawfish_prompt nil))")
@@ -84,7 +88,7 @@ sub my_select(\@) {
         $ENV{ORIGINAL_MATCHER} = "";
         $got_ans_from_env = 1;
     } else {
-        $ans = read_ans $ENV{SELECT_PROMPT} or '#? ';
+        $ans = read_ans ($ENV{SELECT_PROMPT} or '#? ');
     }
 
     if (not $ans or $ans =~ m/^\d+$/ and $ans > @$args_ref) {
