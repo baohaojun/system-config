@@ -3,18 +3,18 @@
 
 while true; do
     volume=$(
-	(       
+        (
             amixer|grep %
-	    echo volume keys: a to add, s to sub
-	) | perl -npe 'chomp; s/$/\\n/'
+            echo volume keys: a to add, s to sub
+        ) | perl -npe 'chomp; s/$/\\n/'
     )
 
     key=$(sawfish-client -e '(event-name (read-event "'"$volume"'"))')
     if test "$key" = '"+"'; then
-	amixer -q sset Master 2%+
+        amixer -q sset Master 1%+
     elif test "$key" = '"-"'; then
-	amixer -q sset Master 2%-
+        amixer -q sset Master 1%-
     else
-	break
+        break
     fi
 done
