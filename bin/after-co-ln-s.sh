@@ -169,4 +169,8 @@ if test -L ~/.git; then rm -f ~/.git; fi
 if ! grep -q -P -e 'iface\s+usb0\s+inet\s+manual' /etc/network/interfaces; then
     sudo bash -c 'echo iface usb0 inet manual >> /etc/network/interfaces'
 fi
+
+if grep managed=true /etc/NetworkManager/NetworkManager.conf; then
+    sudo perl -npe 's/managed=true/managed=false/' -i /etc/NetworkManager/NetworkManager.conf;
+fi
 echo OK
