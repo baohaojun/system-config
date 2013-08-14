@@ -18,8 +18,10 @@ sub timetag_human_to_sec($)
 {
     my ($tag) = @_;
 
-    if ($tag =~ m/(\d\d):(\d\d):(\d\d),(\d\d\d)/) {
-	return $1 * 3600 + $2 * 60 + $3 + $4 / 1000;
+    if ($tag =~ m/(\d+):(\d+):(\d+),(\d+)/) {
+        return $1 * 3600 + $2 * 60 + $3 + "0.$4";
+    } else {
+        die "$tag not match";
     }
     return $tag;
 }
@@ -34,7 +36,7 @@ sub timetag_sec_to_human($)
     my ($subsec, $min, $hour);
 
     if ($sec < 0) {
-	$sec = 0;
+        $sec = 0;
     }
     $sec *= 1000;
     $sec = int($sec);
@@ -65,12 +67,13 @@ debug "a is $a, b is $b";
 @ARGV = ();
 while (<>) {
     chomp;
+    tr/\r//;
     if (m/^(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/) {
-	my ($tag1, $tag2) = map {timetag_human_to_sec $_} ($1, $2);
-	$tag1 = $a * $tag1 + $b;
-	$tag2 = $a * $tag2 + $b;
-	printf "%s --> %s\n", map {timetag_sec_to_human $_} ($tag1, $tag2);
+        my ($tag1, $tag2) = map {timetag_human_to_sec $_} ($1, $2);
+        $tag1 = $a * $tag1 + $b;
+        $tag2 = $a * $tag2 + $b;
+        printf "%s --> %s\n", map {timetag_sec_to_human $_} ($tag1, $tag2);
     } else {
-	print "$_\n";
+        print "$_\n";
     }
 }

@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+
+use strict;
+my $regex_stem = qr/0*(\d+):0*(\d+):0*(\d+)\.(\d+)/;
+my $seq = 1;
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+while (<>) {
+    # debug "$0:" . __LINE__ . ": got $_";
+    if (m/Dialogue: Marked=0,$regex_stem,$regex_stem,Default,,0000,0000,0000,,(.*)/) {
+	print $seq++, "\n";
+	printf "%02d:%02d:%02d,%03d --> %02d:%02d:%02d,%03d\n", 
+	    int($1), $2, $3, int("0.$4" * 1000), 
+	    int($5), $6, $7, int("0.$8" * 1000);
+	
+	print "$9\n\n";
+    }
+}
+
+	
+	
