@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+amixer -q sset Master unmute
 while true; do
     volume=$(
         (
