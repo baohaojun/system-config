@@ -188,17 +188,35 @@ while(<$file>) {
         debug "members: $members, current_def_line: $current_def_line, line: $line_no, file_line_map{\$line_no}: $file_line_map{$line_no}, target: $target";
     }
     unless ($printed_func_map{$current_def_line}) {
-        my $calling_tag = "<=";
+        my $calling_tag = "<="; # caller
         if ($current_def_line == $.) {
             $calling_tag = "<>";
         }
-        print $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag "
+
+        if ($current_def_line == $. and $type_line_map{$current_def_line} eq "member") {
+            my $current_def_line = $current_def_line;
+            while (not $type_line_map{$current_def_line} or $type_line_map{$current_def_line} eq "member") {
+                $current_def_line--;
+            }
+            $calling_tag = "<=";
+            my $output = $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag "
+                .
+                (
+                 $silent ? ($def_line_map{$current_def_line} . "\n") : $file_line_map{$current_def_line}
+                );
+            print $output;
+            $calling_tag = ">=";
+        }
+
+        my $output = $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag "
             .
             (
              $silent ? ($def_line_map{$current_def_line} . "\n") : $file_line_map{$current_def_line}
             );
+
+        print $output;
         $printed_func_map{$current_def_line} = 1;
     }
-
+    # => callee
     print $ENV{GTAGS_START_FILE} . ":$.: => " . $line_str unless ($silent or $current_def_line == $.);
 }
