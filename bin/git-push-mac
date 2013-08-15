@@ -22,19 +22,16 @@ fi
 command git config remote.origin.url | grep -q -P -e 'baohaojun|bhj' || exit 0 # this is not my github, do not try to push it.
 
 
-if test -z "$CHECKING_SUBMODULE"; then
-    export CHECKING_SUBMODULE=true
-    if output=$(
-            git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' |
-            tee /dev/stderr |
-            grep "^hello.*failed$"
-        )
-    then
-        echo "$output"
-        exit -1
-    else
-        true
-    fi
+if output=$(
+        git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' |
+        tee /dev/stderr |
+        grep "^hello.*failed$"
+    )
+then
+    echo "$output"
+    exit -1
+else
+    true
 fi
 
 function get-tags()

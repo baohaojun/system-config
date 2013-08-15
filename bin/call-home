@@ -16,16 +16,17 @@ fi
         else
             home=bhj.dyndns.org
         fi
-	ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 root@$home -p 443 ||
+        ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 $home -p 443 ||
         if route -n |grep -e "$(host bhj.dyndns.org | pn 4)"; then
             true
         else
             sudo su - -c 'nmcli con down id vpn-home'
         fi
-	x=30
-	y=$(random 30)
-	((x = x + y))
-	sleep $x
+        sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
+        x=30
+        y=$(random 30)
+        ((x = x + y))
+        sleep $x
     done
 ) 9>~/.logs/$(basename $0).lock  2>&1 &
 
@@ -44,10 +45,10 @@ fi
         if test $? = 137 || echo "$res" | grep -q SIGKILL; then
             continue
         fi
-	x=30
-	y=$(random 30)
-	((x = x + y))
-	sleep $x
+        x=30
+        y=$(random 30)
+        ((x = x + y))
+        sleep $x
     done
 ) 9>~/.logs/$(basename $0).lock-fix-net  2>&1 &
 

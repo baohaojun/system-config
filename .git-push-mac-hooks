@@ -27,7 +27,13 @@ if test "$PWD" = ~/system-config; then
                 break
             fi
             echo Which file to use as base?
-            updated_file=$(select-output-line 'for x in *; do readlink -f "$x"; done')
+            updated_file=$(select-output-line 'for x in *; do
+                            (
+                                f=$(readlink -f "$x")
+                                cd "$(dirname "$f")"
+                                git st -s "$f" | grep -q . && echo "$f"
+                            )
+                        done')
             for file in $(for x in *; do readlink -f "$x"; done); do
                 if test "$updated_file" = "$file"; then
                     continue

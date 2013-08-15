@@ -1,0 +1,65 @@
+#!/usr/bin/perl
+
+use strict;
+my $dir = shift or die "No ARGV!";
+
+my $seen_plugin;
+open(my $home_globalrc, "<", glob("~/.globalrc")) or die;
+
+my %lang_pat_map;
+my %pat_lang_map;
+while (<$home_globalrc>) {
+    if (/plugin-example\|/) {
+	$seen_plugin = 1
+    }
+    if ($seen_plugin and m/:langmap=(.*?)\\?:(.*):\\?$/) {
+	my $lang = $1;
+	my $patterns = $2;
+
+	while ($patterns =~ m/\G(\(.*?\)|\.[^.(]+)/g) {
+	    my $pat = $1;
+	    $lang_pat_map{$lang} = {} unless exists $lang_pat_map{$lang};
+	    $lang_pat_map{$lang}{$pat} = 1;
+	    $pat_lang_map{$pat} = $lang;
+	}
+    } 
+}
+
+open(my $outdir_langmap, "<", "$dir/.langmap")  or die;
+
+while(<$outdir_langmap>) {
+    if (m/^\s*(.*?)\\?:(.*)$/) {
+	my ($lang, $patterns) = ($1, $2);
+	
+	while ($patterns =~ m/\G(\(.*?\)|\.[^.(]+)/g) {
+	    my $pat = $1;
+	    my $old_lang = $pat_lang_map{$pat};
+	    if ($old_lang) {
+		delete $lang_pat_map{$old_lang}{$pat};
+	    }
+	    $pat_lang_map{$pat} = $lang;
+	    $lang_pat_map{$lang}{$pat} = 1;
+	}
+    }
+}
+
+open(my $outdir_globalrc, ">", "$dir/.globalrc") or die;
+seek $home_globalrc, 0, 0;
+
+$seen_plugin = 0;
+while(<$home_globalrc>) {
+    if (/plugin-example\|/) {
+	$seen_plugin = 1
+    }
+    if ($seen_plugin and m/:langmap=/) {
+	for my $lang (sort keys %lang_pat_map) {
+	    # :langmap=c\:.c:\
+	    printf $outdir_globalrc ":langmap=%s\\:%s:\\\n", $lang, join("", sort keys %{$lang_pat_map{$lang}});
+	}
+	while(<$home_globalrc>) {
+	    last unless m/:langmap=/;
+	    # will print this line below
+	}
+    }
+    print $outdir_globalrc $_;
+}

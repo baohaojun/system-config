@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-use Getopt::Long;
+use Getopt::Long qw(:config no_ignore_case);
 use strict;
 use String::ShellQuote;
 use String::Approx 'adistr';
@@ -31,6 +31,7 @@ my $path_matcher;
 my $path_matcher_inv;
 my $ignore_case = "";
 my $type_re;
+my $reverse_type_re;
 my $fall_back = 0;
 my $do_dir;
 my $silent;
@@ -53,6 +54,7 @@ GetOptions(
     "i!"  => \$ignore_case,
     "b!"  => \$fall_back,
     "t=s" => sub {$type_re = qr($_[1])i},
+    "T=s" => sub {$type_re = qr($_[1])i; $reverse_type_re = 1},
     );
 
 if ($lookup_needle =~ m/^\w.*\.\*/) {
@@ -200,8 +202,8 @@ read_line:
             next;
         }
 
-        if ($type_re and $type !~ m/$type_re/) {
-            debug "ignore $path:$line: $str because type mismatch: $type !~ $type_re";
+        if ($type_re and ($reverse_type_re xor $type !~ m/$type_re/)) {
+            debug "ignore $path:$line: $str because type mismatch: $type !~ $type_re, reverse_type_re is $reverse_type_re";
             $filter_worked++;
             next;
         }
