@@ -18,8 +18,9 @@ if (not $comment) { print }
 '
 }
 if test "`get-rid-of-comment $tmp | wc -w`" == 0; then
-    echo Error: input can not be empty 1>&2
-    exec get-stdin $tmp
+    if EMACS=t yes-or-no-p -y "Error: input can not be empty, try again?"; then
+        exec get-stdin $tmp
+    fi
 fi
 get-rid-of-comment $tmp
 
