@@ -205,7 +205,7 @@ while(<$file>) {
                  $silent ? ($def_line_map{$current_def_line} . "\n") : $file_line_map{$current_def_line}
                 );
             print $output;
-            $calling_tag = ">=";
+            $calling_tag = "=>";
         }
 
         my $output = $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag "
