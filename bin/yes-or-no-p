@@ -2,9 +2,9 @@
 
 function exit() {
     if test $1 = 0; then
-	echo yes 1>&2
+        echo yes 1>&2
     else
-	echo no 1>&2
+        echo no 1>&2
     fi
     builtin exit $@
 }
@@ -22,12 +22,13 @@ if test "${user_prompt:0-1}" != '?'; then
     user_prompt=${user_prompt}\?
 fi
 
-if ! tty >/dev/null 2>&1; then
-    test $default = yes && exit 0
-    exit -1
+if ! tty >/dev/null 2>&1 || test "$EMACS"; then
+    REPLY=$(
+        SELECT_PROMPT="$user_prompt $prompt:" select-args $(if test $default = yes; then echo yes no; else echo no yes; fi)
+    )
+else
+    read -p "$user_prompt $prompt: " >/dev/tty 2>&1
 fi
-
-read -p "$user_prompt $prompt: " >/dev/tty 2>&1
 
 if test -z "$REPLY" -a $default = yes; then
     exit 0
