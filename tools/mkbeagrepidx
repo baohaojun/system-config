@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# gtags will call sort, which will use a lot of space for large projects.
+# gtags will call sort, which will use a lot of space for large
+# projects.  And if TMPDIR is on /tmp, which is tmpfs using RAM, then
+# sort may fail
 export TMPDIR=~/.cache
 mkdir -p $TMPDIR
 mkdir -p ~/.logs
@@ -21,8 +23,9 @@ if test -r "$outDir" -a "$outDir" != ~/.cache/for-code-reading/"`pwd`";
 then
     higherSrcDir=${outDir#~/.cache/for-code-reading/}
 
-    if tty >/dev/null && test "$IN_EMACS" != true
-    then
+    if type yes-or-no-p >/dev/null 2>&1 && yes-or-no-p -y "Do you want update code reading for $higherSrcDir?"; then
+        ans=Y
+    elif tty >/dev/null && test "$IN_EMACS" != true; then
         read -p "Do you want update code reading for $higherSrcDir? (Y/n): " ans
     else
         ans=Y
@@ -31,7 +34,6 @@ then
     if test "$ans" = n -o "$ans" = N; then
         outDir=~/.cache/for-code-reading/"`pwd`"
     else
-        DoUpDir=true
         relativeSrcDir=${srcDir/#$higherSrcDir/.}
         cd $higherSrcDir
     fi
@@ -40,7 +42,14 @@ else
 fi
 
 function mkcscope_files() {
-    if tty >/dev/null 2>&1 || test "$RUNNING_IN_CRON" = true || test "$IN_EMACS" = true; then
+    # When in Emacs, we want to be able to use "echo $FILE | mkgtags
+    # -u" to check if $FILE is updated or not, and in that case, we
+    # don't use `find' to find all the files, instead we just `cat'
+    # (the stdin).
+    if tty >/dev/null 2>&1 || test "$RUNNING_IN_CRON" = true || {
+            test -f /dev/stdin &&
+            test $(stat -c %s "$(readlink -f /dev/stdin)") = 0
+        }; then
         find $relativeSrcDir \( '-path' '*/CVS' \
             '-o' '-path' '*/.svn' \
             '-o' '-path' '*/autom4te.cache' \
@@ -73,7 +82,7 @@ function mkcscope_files() {
                 (?:development/sdk/api-versions.xml),x' |
             tee "$outDir"/cscope.files
     else
-        cat
+        cat # see comment above
     fi | if test -e ~/etc/gtags-filter.rc; then
         bash ~/etc/gtags-filter.rc
     else
@@ -81,14 +90,14 @@ function mkcscope_files() {
     fi
 }
 
-function _mk_help_dir() {
-    mkdir -p "$outDir"
-}
-
 function mkgtags() {
-    _mk_help_dir
+    mkdir -p "$outDir"
     if test -e .globalrc; then
         export GTAGSCONF=$(readlink -f .globalrc)
+    fi
+    if test "$outDir"/.langmap; then
+        fix-lang-map "$outDir"
+        export GTAGSCONF=$(readlink -f "$outDir"/.globalrc)
     fi
     if test -e "$outDir"/GTAGS && test "$(stat -c %s "$outDir"/GTAGS)" = 0; then
         (
