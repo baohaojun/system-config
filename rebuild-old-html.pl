@@ -15,7 +15,9 @@ sub fix_link($)
 
     our $html_dir;
     our $base_html_sq;
-    if (-e "$html_dir/$link") {
+
+    (my $org_file = "$html_dir/$link") =~ s/\.html$/.org/;
+    if (-e "$html_dir/$link" or -e $org_file) {
         $link = shell_quote("$html_dir/$link");
         chomp($link = qx(relative-path $link $base_html_sq));
         return uri_encode($link);
