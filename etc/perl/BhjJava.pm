@@ -47,7 +47,8 @@ if ($ENV{DEBUG} eq 'true') {
 our $code_dir = $ENV{PWD};
 unless ($ENV{GTAGSROOT}) {
     chomp($code_dir = qx(find-code-reading-dir));
-    chdir $code_dir or die "can not chdir $code_dir";
+
+    $code_dir and chdir $code_dir or die "can not chdir $code_dir, you have not run mkgtags yet?";
     $ENV{GTAGSROOT} = $code_dir;
     $ENV{GTAGSDBPATH} = "$ENV{HOME}/.cache/for-code-reading$code_dir";
     $ENV{GTAGSLIBPATH} = join(":", glob("$ENV{GTAGSDBPATH}/.java-fallback.*"));
