@@ -18,7 +18,7 @@ if test $# = 1; then
     if test "$(today-weekday "$1")" != Friday; then
         die "The last day you specified is not a Friday"
     fi
-    friday=$1
+    friday=$(today $1)
 
     for y in $(seq 7 -1 -365); do
         if test $(today $y) = $(today "$1"); then
