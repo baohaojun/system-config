@@ -1,10 +1,36 @@
 #!/bin/bash
 set -e
 
+prompt=
+TEMP=$(getopt -o p: --long prompt: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--prompt)
+            prompt=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 test $# = 0 -o $# = 1
 tmp=/tmp/`basename $0`.$$
 touch $tmp
-if tty >/dev/null 2>&1 || test $# = 1; then
+
+if test "$prompt"; then
+    cat <<EOF > $tmp
+
+###start of comment###
+"$prompt"
+EOF
+elif tty >/dev/null 2>&1 || test $# = 1; then
     test $# = 1 -a "$1" != $tmp && cat $1 > $tmp
 else
     cat > $tmp

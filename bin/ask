@@ -20,10 +20,10 @@ while true; do
     esac
 done
 
-read -p "$(echo "$@"\?) " ans
+ans=$(get-stdin -p "$(echo "$@"\?) ")
 
 if test -z "$ans" -a $eok = false; then
-    echo it can not be empty\! 1>&2 
+    echo it can not be empty\! 1>&2
     exec $0 "$@"
 fi
 

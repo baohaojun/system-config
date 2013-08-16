@@ -57,7 +57,20 @@ if test "$#" != 0; then
 fi
 
 test "$title" || title=$(ask what is your new blog title)
-test "$tags" || tags=$(ask what are your new blog\'s tags)
+test "$tags" || {
+    tags=$(ask -- what are your new blog\'s tags? One of: "$(echo; cd ~/doc/baohaojun/meta/tags; for x in *.desc; do echo -n ${x%.desc}:\ ; cat $x; done)")
+    if echo $tags|grep : -q; then
+        echo "$tags" | while read tag desc; do
+            tag=${tag%:}
+            (
+                cd ~/doc/baohaojun/meta/tags;
+                if test ! -e $tag.desc; then
+                    echo "$desc" > $tag.desc
+                fi
+            )
+        done
+    fi
+}
 title=$(echo "$title" | perl -npe 's/(^\s+|\s+$)//g')
 
 test "$filename" || filename=$(ask -e -- what is your .org file name "(default: $title.org)")

@@ -21,6 +21,8 @@ fi
 
 command git config remote.origin.url | grep -q -P -e 'baohaojun|bhj' || exit 0 # this is not my github, do not try to push it.
 
+git-interactive-add
+
 
 if output=$(
         git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' |
