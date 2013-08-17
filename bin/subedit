@@ -5,10 +5,10 @@
 # With only 1 argument, it's like mplayer's -subdelay, the subtitle
 # will be delayed (advanced if negative). It can be a float.
 
-# With 4 arguments, the first 2 are the starting and ending time tags
-# in the old subtitle, the last 2 are the starting and ending time
-# tags desired in the new subtitle. The new one is linearly generated
-# using these infomation.
+# With 4 arguments, the first 2 are the starting time tags of the old
+# and the new subtitle, the last 2 are the ending time tags of the old
+# and the new subtitle. The new subtitle is linearly generated using
+# these infomation.
 
 # y = a * x + b
 
@@ -53,21 +53,21 @@ if (@ARGV == 1) {
     $a = 1;
     $b = timetag_human_to_sec($ARGV[0]);
     debug "hello world", timetag_sec_to_human($b);
-
-} elsif (@ARGV == 4) {
-    my ($x1, $x2, $y1, $y2) = map {timetag_human_to_sec $_} @ARGV;
+    shift @ARGV;
+} elsif (@ARGV >= 4) {
+    my ($x1, $y1, $x2, $y2) = map {timetag_human_to_sec $_} @ARGV[0..3];
     $a = ($y2 - $y1) / ($x2 - $x1);
     $b = $y1 - $a * $x1;
+    @ARGV = @ARGV[4..$#ARGV];
 } else {
     die "Usage: $0 DIFF or $0 old_start old_end new_start new_end"
 }
 
 debug "a is $a, b is $b";
 
-@ARGV = ();
 while (<>) {
     chomp;
-    tr/\r//;
+    s/\r//g;
     if (m/^(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/) {
         my ($tag1, $tag2) = map {timetag_human_to_sec $_} ($1, $2);
         $tag1 = $a * $tag1 + $b;
