@@ -1,6 +1,11 @@
 vbell off
 bindkey -m \033[4~ stuff G
 bindkey -m \033[1~ stuff g
+bindkey -m \033b stuff b
+bindkey -m \033f stuff el
+
+markkeys h=^B:l=^F:$=^E:@=\033=h=l=$
+
 ignorecase on
 defscrollback 100000
 

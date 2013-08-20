@@ -4,6 +4,9 @@ if test $(basename $0) != cowbuilder-bhj; then
    user=$(echo "$@"|perl -npe 's/.*?\((.*?)\).*/$1/')
    uid=$(echo "$@"|perl -npe 's/.*?=(\d+).*/$1/')
    echo $user $uid
+   apt-get install sudo bash-completion software-properties-common
+   locale-gen en_US.UTF-8
+   export LC_ALL=en_US.UTF-8
    apt-get build-dep global
 
    apt-get install sudo bash-completion autoconf automake \
