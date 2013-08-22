@@ -23,8 +23,12 @@ if test -r "$outDir" -a "$outDir" != ~/.cache/for-code-reading/"`pwd`";
 then
     higherSrcDir=${outDir#~/.cache/for-code-reading/}
 
-    if type yes-or-no-p >/dev/null 2>&1 && yes-or-no-p -y "Do you want update code reading for $higherSrcDir?"; then
-        ans=Y
+    if type yes-or-no-p >/dev/null 2>&1; then
+        if yes-or-no-p -y "Do you want update code reading for $higherSrcDir?"; then
+            ans=Y
+        else
+            ans=N
+        fi
     elif tty >/dev/null && test "$IN_EMACS" != true; then
         read -p "Do you want update code reading for $higherSrcDir? (Y/n): " ans
     else
@@ -95,7 +99,7 @@ function mkgtags() {
     if test -e .globalrc; then
         export GTAGSCONF=$(readlink -f .globalrc)
     fi
-    if test "$outDir"/.langmap; then
+    if test -e "$outDir"/.langmap; then
         fix-lang-map "$outDir"
         export GTAGSCONF=$(readlink -f "$outDir"/.globalrc)
     fi
