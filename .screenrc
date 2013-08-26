@@ -3,8 +3,14 @@ bindkey -m \033[4~ stuff G
 bindkey -m \033[1~ stuff g
 bindkey -m \033b stuff b
 bindkey -m \033f stuff el
+bindkey -m \033v stuff \002
+bindkey -m "^v" stuff \006
+bindkey -m "^B" stuff h
+bindkey -m "^F" stuff l
+bindkey -m "^E" stuff $
 
-markkeys h=^B:l=^F:$=^E:@=\033=h=l=$
+markkeys @=\033
+maxwin 10
 
 ignorecase on
 defscrollback 100000

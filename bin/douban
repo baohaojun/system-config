@@ -52,7 +52,6 @@ case "$1" in
                     firefox-open-url-pattern $host "$url"
                     ;;
                 bagua)
-                    search-baidu "$artist"
                     search-baidu "$artist" "$title" site:baike.baidu.com
                     douban info
                     ;;
