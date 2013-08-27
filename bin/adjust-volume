@@ -10,11 +10,13 @@ while true; do
     )
 
     key=$(sawfish-client -e '(event-name (read-event "'"$volume"'"))')
-    if test "$key" = '"+"'; then
+    if test "$key" = '"+"' -o "$key" = '"KP_Add"'; then
         amixer -q sset Master 1%+
-    elif test "$key" = '"-"'; then
+    elif test "$key" = '"-"' -o "$key" = '"KP_Subtract"'; then
         amixer -q sset Master 1%-
     else
+        vol=$(amixer | grep 'Playback.*%' | perl -ne 's/.*\[(\d+%)\].*/$1/; print; last');
+        echo $vol > ~/.logs/audion-volume.%
         break
     fi
 done

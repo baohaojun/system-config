@@ -130,6 +130,9 @@
 (bind-keys global-keymap "C-S-XF86PowerOff" (lambda () (system "lock-screen&")))
 (bind-keys global-keymap "C-S-DEL" (lambda () (system "lock-screen&")))
 
+(bind-keys global-keymap "KP_Add" (lambda () (system "adjust-volume&")))
+(bind-keys global-keymap "KP_Subtract" (lambda () (system "adjust-volume&")))
+
 
 (defun do-global-remap()
   (let ((c-x-map (make-keymap))
