@@ -9,4 +9,4 @@ if test $# = 1; then
         set -- "$x"
     fi
 fi
-kmail --view "$@" >/dev/null 2>&1 &
+kmail --view file://"$(readlink -f "$@")" >/dev/null 2>&1 &

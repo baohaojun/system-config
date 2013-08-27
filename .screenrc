@@ -10,7 +10,6 @@ bindkey -m "^F" stuff l
 bindkey -m "^E" stuff $
 
 markkeys @=\033
-maxwin 10
 
 ignorecase on
 defscrollback 100000

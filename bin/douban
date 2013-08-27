@@ -83,6 +83,12 @@ case "$1" in
         ) >>~/.logs/douban-misc.log 2>&1 &
         ;;
     ba) # bagua
+        shift;
+        if test $# != 0; then
+            search-baidu "$@" site:baike.baidu.com
+            exit
+        fi
+
         douban_action=bagua
         douban-misc
         ;;
