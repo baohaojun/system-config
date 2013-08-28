@@ -33,7 +33,7 @@ $header =~ s/xxx-replace-this-xxx/encode_entities $dir_url/eg;
 $header =~ s/uuu-replace-this-uuu/encode_entities $up_url/eg;
 print $header;
 
-for my $de (@dir_list) {
+for my $de (sort @dir_list) {
 
 # <tr class="hidden-object">
 #  <td sortable-data="2.Xmodmap"><a class="file" href="file:///D:/cyg/home/bhj/.Xmodmap"><img src="1_files/a_026" alt="文件:">.Xmodmap</a></td>
@@ -54,12 +54,11 @@ for my $de (@dir_list) {
   my $url = shell_quote($de);
   chomp ($url = $file_url_prefix . qx(wlp $url));
 
-  print "<tr $hidden>\n" . 
+  print "<tr $hidden>\n" .
     "<td sortable-data=\"$name_sort\"><a class=\"file\" href=\"$url\">$name_print</a></td>\n" .
       "<td sortable-data=\"$size_sort\">$size_pretty</td>\n" .
-	"<td sortable-data=\"$date_sort\">$date_day</td>\n" . 
-	  "<td>$date_hms</td>\n</tr>";
+        "<td sortable-data=\"$date_sort\">$date_day</td>\n" .
+          "<td>$date_hms</td>\n</tr>";
 }
 
 print "</tbody></table>\n</body></html>\n"
-

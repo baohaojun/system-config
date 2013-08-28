@@ -31,7 +31,7 @@ elif firefox-search-for-tab 'localhost.*/dict'; then
     new_tab=-current-tab
 else
     sawfish-send-window-event '(- |^)Mozilla Firefox\$' "M-1"
-    if test $(SELECT_PROMPT="Open in the current tab (tab 1)?" select-args yes no) = yes; then
+    if test $(EMACS=t SELECT_PROMPT="Open in the current tab (tab 1)?" select-args yes no) = yes; then
         new_tab=-current-tab
     fi
 fi

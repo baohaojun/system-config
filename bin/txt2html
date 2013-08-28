@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+print "<html><body><pre>\n";
+while (<>) {
+    s/([^\w\s])/sprintf "&#%d;", ord($1)/ge;
+    print;
+}
+
+print "</pre></body></html>\n";
