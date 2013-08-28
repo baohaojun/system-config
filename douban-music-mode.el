@@ -146,6 +146,7 @@ system notification, just as rythombox does."
 (defvar douban-music-indent4 "          " "4-level indentation.")
 (defvar douban-music-should-replay nil "Should replay the song.")
 (defvar douban-music-not-playing 0 "How many times we chose not to play the songs.")
+(defvar douban-music-alive nil "Douban is alive.")
 
 ;; key map definition
 (defvar douban-music-mode-map nil
@@ -509,12 +510,14 @@ system notification, just as rythombox does."
 
 (defun douban-music-send-url (url &optional args callback)
   "Fetch data from douban music server."
-  (let ((url-request-method "GET")
-        (url-request-data (mapconcat (lambda (arg)
-                                       (concat (url-hexify-string (car arg))
-                                               "="
-                                               (url-hexify-string (cdr arg))))
-                                     args "&")))
+  (let* ((url-request-method "GET")
+	 (url-request-data (if args
+			       (mapconcat (lambda (arg)
+					    (concat (url-hexify-string (car arg))
+						    "="
+						    (url-hexify-string (cdr arg))))
+					  args "&")
+			     url-request-data)))
     (if callback
         (url-retrieve url callback)
       (url-retrieve-synchronously url))))
@@ -561,7 +564,7 @@ system notification, just as rythombox does."
   "Play douban music in its own buffer."
   (interactive)
   (cond
-   ((buffer-live-p (get-buffer douban-music-buffer-name))
+   ((and douban-music-alive (buffer-live-p (get-buffer douban-music-buffer-name)))
     (switch-to-buffer douban-music-buffer-name))
    (t
     (if (not (file-exists-p douban-music-cache-directory))
@@ -576,6 +579,7 @@ system notification, just as rythombox does."
     (douban-music-get-song-list)
     (douban-music-kill-process)
     (douban-music-play)
+    (setq douban-music-alive t)
     (set-buffer-modified-p nil)
     (select-window (display-buffer (current-buffer)))
     (delete-other-windows))))
