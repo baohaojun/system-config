@@ -1,9 +1,19 @@
 #!/usr/bin/perl
+use Getopt::Long;
+my $title;
+GetOptions(
+    "t=s" => \$title,
+    );
 
-print "<html><body><pre>\n";
+print "<html><body><pre><code>\n";
+print "<h1 class='chapter'>$title</h1>\n";
 while (<>) {
     s/([^\w\s])/sprintf "&#%d;", ord($1)/ge;
     print;
 }
 
-print "</pre></body></html>\n";
+print "</code></pre>\n";
+
+print "<p><a href='index.html'>Home</a></p>\n";
+
+print "</body></html>\n";

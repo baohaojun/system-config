@@ -2,19 +2,18 @@
 
 sub fix_it($) {
     my ($path) = @_;
-    if (-d $path and -f "$path/index.html") {
-	chomp($res = qx(relative-path $path/index.html .));
-	return $res;
+    if (-d $path) {
+        chomp($res = qx(relative-path $path/index.html .));
+        return $res;
     } elsif (-e $path) {
-	chomp($res = qx(relative-path $path .));
-	return $res;
+        chomp($res = qx(relative-path $path .));
+        return $res;
     } else {
-	return $path;
-    }    
+        return $path;
+    }
 }
 
 while (<>) {
     s!href="file://(.*?)"!sprintf 'href="%s"', fix_it($1)!ge;
     print;
 }
-	    

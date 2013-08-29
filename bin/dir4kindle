@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+for x in $(find . -name '*.gz'); do
+    gunzip $x; x=${x%.gz};
+    if test ${x##*.} != txt; then
+        mv -v $x $x.txt;
+    fi;
+done
+
+run-in-parallel -I %N '(
+    cd %N;
+    for x in *.txt; do
+        txt2html -t $(gitp $x) $x > $x.html
+        rm $x
+    done
+
+    dir2html > ~/index.html.$$;
+    index=index.html;
+    if test -e $index; then
+        index=index-kindle.html
+    fi
+    mv -v ~/index.html.$$ $index
+    fix-relative-url-for-dir2html $index > $index.bak
+    mv $index.bak $index
+)' $(find . -type d)
+

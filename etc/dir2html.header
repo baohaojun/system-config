@@ -272,7 +272,7 @@ function updateHidden() {
 <title>xxx-replace-this-xxx</title>
 </head>
 <body dir="ltr">
-<h1>xxx-replace-this-xxx</h1>
+<h1 class='chapter'>xxx-replace-this-xxx</h1>
 <p id="UI_goUp"><a class="up" href="uuu-replace-this-uuu">回到上一层文件夹</a></p>
 <p id="UI_showHidden" style="display: block;"><label><input checked="checked" onchange="updateHidden()" type="checkbox">显示隐藏对象</label></p>
 <table class="" order="">
