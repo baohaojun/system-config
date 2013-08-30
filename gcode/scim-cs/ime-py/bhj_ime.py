@@ -245,8 +245,10 @@ class ime_keyboard:
 class ime:
     comp_empty_wanted_keys = ('C g', 'C q', 'C +')
     page_size = 10 #max cands per page
+    use_cand_as_comp = True
     def __init__(self, in_, out_):
         self.special_keys = special_keys.special_keys
+        self.check_env();
         self.__on = False
         self.__in = in_
         self.__out = out_
@@ -254,6 +256,24 @@ class ime:
         self.cand_index = 0
         self.commitstr = ''
         self.beepstr = ''
+
+    def check_env(self, arg = None):
+        if os.path.exists(os.path.expanduser("~/.sdim.rc")):
+            file = open(os.path.expanduser("~/.sdim.rc"))
+            while True:
+                line = file.readline()
+                if line == '':
+                    break
+                if re.match(r'^\s*use_cand_as_comp\s*=\s*true\s*$', line, re.IGNORECASE):
+                    ime.use_cand_as_comp = True
+                elif re.match(r'^\s*use_cand_as_comp\s*=\s*false\s*$', line, re.IGNORECASE):
+                    ime.use_cand_as_comp = False
+            file.close()
+
+        if os.path.exists(os.path.expanduser("~/.sdim/use_cand_as_comp=false")):
+            ime.use_cand_as_comp = False
+        elif os.path.exists(os.path.expanduser("~/.sdim/use_cand_as_comp=true")):
+            ime.use_cand_as_comp = True
 
     @property
     def beepstr(self):
@@ -545,7 +565,7 @@ class ime:
             self.__reply('hint: ' + self.hintstr)
 
     def reply_comp(self, arg=''):
-        if self.__cands:
+        if self.__cands and ime.use_cand_as_comp:
             comp = ''
             try:
                 bytes(self.__cands[self.cand_index % ime.page_size], 'utf-8')

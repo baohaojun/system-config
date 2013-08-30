@@ -1,4 +1,4 @@
-#!/bin/env pycyg31
+#!/usr/bin/env python3
 from socket import *
 import threading
 import os, sys, bhj_ime
