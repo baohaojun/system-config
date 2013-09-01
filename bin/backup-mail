@@ -2,7 +2,7 @@
 
 for x in ~/Maildir/*/cur ~/Maildir/*/new; do
     [[ $x =~ gmail ]] && continue
-    if test $# = 1 && echo $x | ! grep -i -e "$1"; then
+    if test $# = 1 && ! echo $x | grep -i -e "$1"; then
         continue
     fi
     (

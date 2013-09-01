@@ -2,16 +2,16 @@
 
 num=$1
 file=$2
-size=$(stat -c %s "$file")
+size=$(stat -c %s "$(readlink -f "$file")")
 ((each_size=size/num/512))
 
 for x in $(seq 1 $num); do
     ((skip=(x-1) * each_size))
-    
+
     if test $x = $num; then
-	dd if="$file" of="$file.$x" bs=512 skip=$skip
+        dd if="$file" of="$file.$x.bin" bs=512 skip=$skip
     else
-	dd if="$file" of="$file.$x" bs=512 count=$each_size skip=$skip
+        dd if="$file" of="$file.$x.bin" bs=512 count=$each_size skip=$skip
     fi
 
 done
