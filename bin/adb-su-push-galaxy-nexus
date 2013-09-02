@@ -19,7 +19,7 @@ while true; do
     esac
 done
 
-adb shell su -c 'mount -o remount /system'
+adb shell su -c 'mount -w -o remount /system; true; mount | grep system'
 
 for x in $(find ./ -type d); do adb shell su -c "mkdir -p ${x#.}"; done
 
@@ -27,13 +27,15 @@ for x in $(find ./system -type f); do
     adb push $x /sdcard/sys_$(basename $x);
     adb shell su -c "cat /sdcard/sys_$(basename $x) > ${x#.}";
     if test -x $x; then
-	adb shell su -c "chmod 555 ${x#.}"
+        adb shell su -c "chmod 555 ${x#.}"
     fi
 done
 
 if test "$do_links" = true; then
     for x in $(find ./system -type l); do
-        adb shell su -c "ln -s $(readlink $x) ${x#.}"
-    done
+        echo ln -s $(readlink $x) ${x#.}
+    done > /tmp/1.sh
+    adb push /tmp/1.sh /sdcard/ln.sh
+    adb shell su -c 'sh -x /sdcard/ln.sh'
 fi
 for x in $(find ./sdcard -type f); do adb push $x ${x#.}; done

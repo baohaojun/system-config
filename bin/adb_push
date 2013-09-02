@@ -7,7 +7,7 @@ GetOptions(
     "s!" => \$secure,
     );
 
-$mount_cmd = "echo adb remount\\; adb shell mount -o remount,rw /system; exec >/dev/null 2>&1; adb -r shell sync; adb remount; adb shell mount -o remount,rw /system";
+$mount_cmd = "echo adb remount\\; adb shell mount -o remount,rw /system; exec >/dev/null 2>&1; adb -r shell sync; adb remount; adb shell mount -o remount,rw /system; adb -w shell true";
 $dest = pop( @ARGV);
 
 if ($dest =~ m/:/) {

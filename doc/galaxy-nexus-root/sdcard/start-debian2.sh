@@ -2,10 +2,10 @@ set -x
 set -e
 
 # Make tmp
-if [ ! -d /tmp ]; then 
+if [ ! -d /tmp ]; then
     mount -o rw,remount / && mkdir /tmp && mount -o ro,remount /
 fi
-if [ ! -f /tmp/.mounted ] ; then 
+if [ ! -f /tmp/.mounted ] ; then
     mount -t tmpfs none /tmp && touch /tmp/.mounted
 fi
 
@@ -34,17 +34,24 @@ if [ -d /data/debian/dev/.udev ] ; then
 fi
 
 # start debian ssh
-export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH 
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 # must ensure linux standard paths come before android paths, or else the wrong
 # version will be used and cause segfault, because the /system/ etc. also are
 # mounted (and symlinked) under the debian chroot jail.
 echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+
+if test ! -e /data/debian/second-stage-done; then
+    echo second-stage not done yet.
+    exit 0
+    chroot /data/debian /debootstrap/debootstrap --second-stage
+    echo deb http://r66:9999/debian testing main contrib non-free > /etc/apt/sources.list
+    echo 192.168.15.33 r66 >> /etc/hosts
+    touch /data/debian/second-stage-done
+fi
 chroot /data/debian /usr/sbin/service openbsd-inetd start
 
 # mount sd in debian
-if [ -d /mnt/sdcard/Android ] && [ -d /data/debian/mnt/sdcard/ ] && [ ! -d /data/debian/mnt/sdcard/Android ] ; 
+if [ -d /mnt/sdcard/Android ] && [ -d /data/debian/mnt/sdcard/ ] && [ ! -d /data/debian/mnt/sdcard/Android ] ;
 then
    mount -o bind /mnt/sdcard /data/debian/mnt/sdcard
 fi
-
-

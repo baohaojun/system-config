@@ -8,6 +8,7 @@ fi
 (
     flock -n 9 || { echo 'lock failed for home at '$(date); exit 0; }
     while true; do
+        sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
         if test -e ~/.at-home; then
             exit 0
         fi
@@ -22,7 +23,6 @@ fi
         else
             sudo su - -c 'nmcli con down id vpn-home'
         fi
-        sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
         x=30
         y=$(random 30)
         ((x = x + y))
