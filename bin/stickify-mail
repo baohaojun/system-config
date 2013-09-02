@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for x in *,S; do
+    mv "$x" "${x/%,S/,FS}"; 
+    break;
+done;
