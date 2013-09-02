@@ -62,7 +62,7 @@ class KeyEvent:
         if not is_press:
             self.mask |= modifier.RELEASE_MASK
             return
-        
+
         try:
             self.name = chr(self.code)
             if self.name == ' ':
@@ -71,7 +71,7 @@ class KeyEvent:
                 self.mask &= ~modifier.SHIFT_MASK
         except:
             self.name = keysyms.keycode_to_name(self.code).lower()
-        
+
         if self.name in ("control_l",
                          "control_r",
                          "alt_l",
@@ -100,15 +100,17 @@ class tabengine (ibus.EngineBase):
     '''The IM Engine for Tables'''
 
     _page_size = 10
+    def do_connect(self):
+        self.sock = socket(AF_INET, SOCK_STREAM)
+        self.sock.connect(("localhost", 12345))
+        self.sock = self.sock.makefile("rwb", 0)
 
     def __init__ (self, bus, obj_path):
         print 'obj_path is', obj_path
         super(tabengine,self).__init__ (bus,obj_path)
         self._bus = bus
 
-        self.sock = socket(AF_INET, SOCK_STREAM)
-        self.sock.connect(("localhost", 12345))
-        self.sock = self.sock.makefile("rwb", 0)
+        self.do_connect()
 
         self.clear_data()
         self._lookup_table = ibus.LookupTable (tabengine._page_size)
@@ -116,7 +118,7 @@ class tabengine (ibus.EngineBase):
         self._name = 'sdim'
         print 'name is', self._name
         self._config_section = "engine/%s" % self._name
-        
+
         # config module
         self._config = self._bus.get_config ()
         self._on = True
@@ -133,7 +135,7 @@ class tabengine (ibus.EngineBase):
 
     def reset (self):
         self._update_ui ()
-    
+
     def do_destroy(self):
         self.reset ()
         self.focus_out ()
@@ -153,7 +155,7 @@ class tabengine (ibus.EngineBase):
 
 
             super(tabengine, self).update_preedit_text(ibus.Text(_str.decode('utf-8'), attrs), len(_str), True)
-    
+
     def _update_aux (self):
         '''Update Aux String in UI'''
         _aux = self._aux_str
@@ -172,7 +174,7 @@ class tabengine (ibus.EngineBase):
 
         _cands = self._cands_str.split()
         _cands = [_str_percent_decode(str) for str in _cands]
-        
+
         self._lookup_table.clean()
 
         for cand in _cands:
@@ -181,7 +183,7 @@ class tabengine (ibus.EngineBase):
         index = int(self._cand_idx) % 10
         self._lookup_table.set_cursor_pos_in_current_page(index)
         self._lookup_table.show_cursor(True)
-        self.update_lookup_table ( self._lookup_table, True, True )    
+        self.update_lookup_table ( self._lookup_table, True, True )
 
     def _update_ui (self):
         '''Update User Interface'''
@@ -221,20 +223,29 @@ class tabengine (ibus.EngineBase):
         return True
 
     def _really_process_key (self, key):
-        self.sock.write("keyed " + key + "\n")
+        try:
+            self.sock.write("keyed " + key + "\n")
+        except:
+            self.do_connect()
+            return
         self.clear_data()
         while True:
-            line = self.sock.readline()
+            try:
+                line = self.sock.readline()
+            except:
+                self.do_connect()
+                self._aux_str = "Error with sock connection"
+                break
             if not line:
                 break
             line = line[:-1]
-            
+
             if line.find('commit: ') == 0:
                 self._commit_str = line[len('commit: '):]
-            
+
             elif line.find('hint: ') == 0:
                 self._aux_str = line[len('hint: '):]
-            
+
             elif line.find('comp: ') == 0:
                 self._preedit_str = line[len('comp: '):]
 
@@ -246,17 +257,17 @@ class tabengine (ibus.EngineBase):
 
             elif line.find('active: ') == 0:
                 self._active = line[len('active: '):]
-            
+
             elif line == "end:":
                 break
-            
+
             else:
                 self._aux_str = line
-                
+
     def focus_in (self):
         if self._on:
             self._update_ui ()
-    
+
     def focus_out (self):
         pass
 
@@ -274,7 +285,7 @@ class tabengine (ibus.EngineBase):
         config = bus.get_config()
         if section != self._config_section:
             return
-    
+
     @classmethod
     def CONFIG_RELOADED(cls, bus):
         config = bus.get_config()
