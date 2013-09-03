@@ -28,45 +28,10 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
-LOCAL_PACKAGE_NAME := MrvlTerm
+LOCAL_PACKAGE_NAME := BootDebian
 LOCAL_CERTIFICATE := platform
-LOCAL_JNI_SHARED_LIBRARIES := libmrvl-auto-test
 
 include $(BUILD_PACKAGE)
 
 include $(CLEAR_VARS)
 
-ifneq ($(wildcard $(LOCAL_PATH)/products/$(TARGET_PRODUCT)/*),)
-
-PRODUCT_COPY_FILES += \
- $(foreach script,$(wildcard $(LOCAL_PATH)/products/$(TARGET_PRODUCT)/*),$(script):system/lib/mrvl-auto-test/$(notdir $(script)))
-
-else ifneq ($(wildcard $(LOCAL_PATH)/products/$(TARGET_DEVICE)/*),)
-
-$(info you are using device test cases from $(TARGET_DEVICE), not product cases from $(TARGET_PRODUCT))
-PRODUCT_COPY_FILES += \
- $(foreach script,$(wildcard $(LOCAL_PATH)/products/$(TARGET_DEVICE)/*),$(script):system/lib/mrvl-auto-test/$(notdir $(script)))
-
-else
-
-$(warning you have not set up your factory test cases!)
-PRODUCT_COPY_FILES += \
- $(foreach script,$(wildcard $(LOCAL_PATH)/scripts/*),$(script):system/lib/mrvl-auto-test/$(notdir $(script)))
-
-endif
-
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/mrvl-auto-test.sh:system/etc/mrvl-auto-test.sh
-
-PRODUCT_COPY_FILES += \
- $(foreach config,$(wildcard $(LOCAL_PATH)/configs/*),$(config):system/lib/mrvl-auto-test-configs/$(notdir $(config)))
-
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/adbcompgen.sh:system/bin/adbcompgen.sh
-
-ifeq ($(TARGET_BUILD_VARIANT),user)
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/default_factory_mode:data/default_factory_mode
-endif
-
-# ============================================================
-
-# Also build all of the sub-targets under this one: the shared library.
-include $(call all-makefiles-under,$(LOCAL_PATH))
