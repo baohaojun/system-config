@@ -32,24 +32,24 @@ emacsclient -e '(save-some-buffers)'
 
 function check_git_dir() {
     if test $# != 2; then
-	die "Error: Usage $(basename $0) dir prompt"
+        die "Error: Usage $(basename $0) dir prompt"
     fi
 
     cd  "$1"
 
     find-or-exec konsole
     if git-dirty; then
-	git diff .
+        git diff .
     fi
 
     if git-dirty && yes-or-no-p -y "$1: $2"; then
-	git add .
+        git add .
     else
-	start_recursive_shell "Do the check"
-	if ! yes-or-no-p "Continue?"; then
-	    exit 0
-	fi
-    fi    
+        start_recursive_shell "Do the check"
+        if ! yes-or-no-p "Continue?"; then
+            exit 0
+        fi
+    fi
 }
 
 check_git_dir ~/doc/projects "Add all changes after org-mobile-pull?"
