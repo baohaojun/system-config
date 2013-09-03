@@ -48,10 +48,14 @@ if test ! -e /data/debian/second-stage-done; then
     echo 192.168.15.33 r66 >> /etc/hosts
     touch /data/debian/second-stage-done
 fi
-chroot /data/debian /usr/sbin/service ssh start
+
+mkdir -p /data/debian/mnt/sdcard
 
 # mount sd in debian
 if [ -d /mnt/sdcard/Android ] && [ -d /data/debian/mnt/sdcard/ ] && [ ! -d /data/debian/mnt/sdcard/Android ] ;
 then
    mount -o bind /mnt/sdcard /data/debian/mnt/sdcard
 fi
+
+export HOME=/root
+chroot /data/debian /bin/bash
