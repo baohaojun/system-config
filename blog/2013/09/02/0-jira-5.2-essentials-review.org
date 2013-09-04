@@ -1,4 +1,4 @@
-#+title: My True-To-The-Earth Book Review: JIRA 5.2 Essentials
+#+title: Book Review: JIRA 5.2 Essentials
 # bhj-tags: reading
 
 Because I wrote an Emacs plugin for using Jira with org-mode.el, named
