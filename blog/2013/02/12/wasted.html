@@ -360,6 +360,31 @@ Preferences -&gt; Trust Manager -&gt; Internet Access from PDF &#x2026; Change S
 必需有一个大section，然后再能有一张一张的slides。如果光有slides，没有
 上级的section，所有的slides会挤到一起去。
 </p>
+</div>
+</div>
+
+<div id="outline-container-sec-12" class="outline-2">
+<h2 id="sec-12"><span class="section-number-2">12</span> use openbsd-inetd to start ssh on 443:</h2>
+<div class="outline-text-2" id="text-12">
+<pre class="example">
+cat &gt; /etc/inetd.conf &lt;&lt;EOF
+443   stream  tcp nowait root /usr/sbin/sshd sshd -i
+EOF
+
+# then update /etc/apache2/ports.conf: remove the following lines.
+
+&lt;IfModule ssl_module&gt;
+	Listen 443
+&lt;/IfModule&gt;
+
+&lt;IfModule mod_gnutls.c&gt;
+	Listen 443
+&lt;/IfModule&gt;
+
+# then restart the services:
+
+sudo systemctl restart openbsd-inetd.service
+</pre>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">

@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Grepping Cross References</title>
+<title>My True-To-The-Earth Book Review: JIRA 5.2 Essentials</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 
@@ -101,173 +101,68 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Grepping Cross References</h1>
+<h1 class="title">My True-To-The-Earth Book Review: JIRA 5.2 Essentials</h1>
 <p>
-This tool is like lxr, except it works for most programming languages
-(as many as supported by ctags-exuberant) and allows you use it in
-Emacs/Vim instead of a browser.
+Because I wrote an Emacs plugin for using Jira with org-mode.el, named
+org-jira.el, some guy at this book's publishing house came up with my
+name and asked me to write a book review for it. And here it is.
 </p>
 
 <p>
-See some screenshots for c++, python, and shell script (click to view
-in the original size):
+Jira is very popular. My ex-employer, my current employer, and one of
+my possible next employer (Intel) are all using Jira. One reason of
+this wild popularity is because Jira is very easy to use. Every body
+can start to use it with minimum effort. When I work at Motorola, they
+use ClearQuest, and the reference manual is so thick that you can use
+it as a weapon to strike people unconscious. But Jira, it's so simple
+and intuitive that you can go a long way without seeing any need even
+for its on-line help, which is already high quality. So why a book on
+Jira?
 </p>
 
 <p>
-<a href="images/post/c-grep-func.png"><img  src="images/post/c-grep-func.png" alt="c-grep-func.png" /></a>
+Well, this book provides you the Big Picture of Jira. If you only
+learn Jira by using it and probably also with the help of the online
+documents, you are easily trapped in a small corner of Jira, albeit
+the most obvious and easy to access part. True, it might be the most
+useful part of Jira, and you will expand it with increased exposure
+with and poking around in Jira. This book just make it easier for you
+with the expanding process. With the big picture in your eyes, you
+gain the freedom to do more wild stuff to get your things done. Just
+don't overdo it, keep your process light:-)
 </p>
 
 <p>
-<a href="images/post/py-grep-func.png"><img  src="images/post/py-grep-func.png" alt="py-grep-func.png" /></a>
+It also teaches you how to administrate Jira. This may seem not so
+useful to a common Jira user. But if you happen to be a Jira Admin or
+a PM, then these info are valuable. Even to the User, it can be more
+helpful than it seems. Because everybody should be a PM nowadays (or so I've
+heard).
 </p>
 
 <p>
-<a href="images/post/sh-grep-func.png"><img  src="images/post/sh-grep-func.png" alt="sh-grep-func.png" /></a>
+The final chapter is on how to use Jira (with an additional Jira
+plug-in, GreenHopper) for Agile Development. Agile people might love
+to check it out.
 </p>
 
 <p>
-Here I'll explain some of its features and how it works.
-</p>
-
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> It's very fast</h2>
-<div class="outline-text-2" id="text-1">
-<p>
-Because <a href="blog/2011/12/23/beagrep.html">beagrep</a> is being used, which can grep 2G source code in 0.23 second.
+After you gain the Big Picture, this book is also great as a reference
+manual, the topics are well organized and easy to look up.
 </p>
 
 <p>
-For e.g., when checking cross references for <code>MockZip</code>, first we use
-beagrep to find out the (tiny) set of files and line numbers on which
-this word occurs. Then we work on these files only.
+Last but not least, some ad for my org-jira. If you are a hacker using
+Emacs and org-mode and Jira all at the same time, then you definitely
+will like <a href="blog/2011/12/28/org-jira.html">org-jira</a>.
 </p>
-</div>
-</div>
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> It support most programming languages</h2>
-<div class="outline-text-2" id="text-2">
-<p>
-Because ctags-exuberant is used.
-</p>
-
-<p>
-Given the small set of files containing <code>MockZip</code>, we use
-ctags-exuberant to tag each of these files, then compare line
-numbers. If <code>MockZip</code> occurs on line 88, then the last tag before line
-88 is referencing <code>MockZip</code>.
-</p>
-</div>
-</div>
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> It removes false positives</h2>
-<div class="outline-text-2" id="text-3">
-<p>
-Currently it can take 2 arguments <code>--nc</code> (no comment) and <code>--ns=</code> (no
-string) to ignore where <code>MockZip</code> occurs inside a comment or string
-literal.
-</p>
-</div>
-</div>
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> It reuses grep output format</h2>
-<div class="outline-text-2" id="text-4">
-<p>
-For easy integration with Emacs's grep-mode. Or vim's handling of grep output.
-</p>
-</div>
-</div>
-<div id="outline-container-sec-5" class="outline-2">
-<h2 id="sec-5"><span class="section-number-2">5</span> It's not perfect</h2>
-<div class="outline-text-2" id="text-5">
-<p>
-But good enough (at least for me:-)
-</p>
-</div>
-</div>
-<div id="outline-container-sec-6" class="outline-2">
-<h2 id="sec-6"><span class="section-number-2">6</span> How to use it</h2>
-<div class="outline-text-2" id="text-6">
-<ol class="org-ol">
-<li>Install <a href="blog/2011/12/23/beagrep.html">beagrep</a> and ctags-exuberant.
-</li>
-<li>Download and get the package from <a href="https://github.com/baohaojun/gxr">gxr</a>.
-</li>
-<li>In your gxr checkout:
-
-<div class="org-src-container">
-
-<pre class="src src-sh">cp .globalrc ~
-cp $(<span class="org-sh-quoted-exec">find</span> . -maxdepth 1 -type f -executable) ~/bin <span class="org-comment-delimiter"># </span><span class="org-comment">or some other dir in your PATH</span>
-</pre>
-</div>
-</li>
-
-<li><code>mkdir ~/.logs</code>
-</li>
-<li>Create beagrep index in your source tree.
-</li>
-<li><code>grep-func-call -e MockZip -a --nc --ns</code>
-</li>
-<li>File a bug on the github project:-)
-</li>
-</ol>
-
-<p>
-Here are the arguments:
-</p>
-
-<dl class="org-dl">
-<dt> -e <i>pattern</i> </dt><dd>PATTERN is a perl style regexp. When you want to
-find only those cross references where a var named
-<code>my_var</code> is assigned a value, use a pattern like
-<code>my_var\s*=[^=]</code>.
-
-<p>
-<code>\b</code> is added when appropriate, so that a pattern
-of <code>my_var</code> will not find <code>my_var2</code> because I do
-myself a favor by changing the pattern to
-<code>\bmy_var\b</code>. If I also want <code>my_var2</code> I can use
-<code>my_var2?</code>.
-</p>
-</dd>
-
-<dt> -a </dt><dd><code>-a</code> is a toggle switch, one <code>-a</code> will search in all source
-files, two (even number of) <code>-a</code> will search only in the file
-<code>$GTAGS_START_FILE</code> (the file my Emacs's current buffer is
-visiting, I added a hook in grep, the current buffer's file
-will be exported to the environment variable).
-
-<div class="org-src-container">
-
-<pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">set-gtags-start-file</span> ()
-  (<span class="org-keyword">let</span> ((file (ajoke--buffer-file-name (current-buffer))))
-    (<span class="org-keyword">if</span> (file-remote-p file)
-        (<span class="org-keyword">let</span> ((process-environment tramp-remote-process-environment))
-          (setenv <span class="org-string">"GTAGS_START_FILE"</span> (file-remote-p file 'localname))
-          (setq tramp-remote-process-environment process-environment))
-      (setenv <span class="org-string">"GTAGS_START_FILE"</span> file))))
-</pre>
-</div>
-
-<p>
-Always use <code>-a</code> if you are not sure of my hack.
-</p>
-</dd>
-</dl>
-
-
-
-<dl class="org-dl">
-<dt> &#x2013;nc &#x2013;ns </dt><dd>These has been explained above.
-</dd>
-</dl>
 
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2013/07/16/0-find-scroll-lock.html"> <!-- prev-url -->
+      <a href="../../08/16/0-%C3%A7%C2%BA%C2%A2%C3%A9%C2%BB%C2%91%C3%A6%C2%A0%C2%91.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        找回失去的Scroll Lock——系统View Mode <!-- prev-title -->
+        红黑树 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -278,8 +173,6 @@ Always use <code>-a</code> if you are not sure of my hack.
     </li>
   </ul>
 </nav>
-</div>
-</div>
 </div>
 <!-- {%html-mode%} -->
 
@@ -347,12 +240,14 @@ Always use <code>-a</code> if you are not sure of my hack.
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="meta/tags/code-reading.html" title="Reading source code">code-reading</a></li>
+                <li><a href="meta/tags/reading.html" title="reading books">reading</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2013/07/16/0-find-scroll-lock.html'> 找回失去的Scroll Lock——系统View Mode </a></li>
+        <li><a href='../../08/16/0-%C3%A7%C2%BA%C2%A2%C3%A9%C2%BB%C2%91%C3%A6%C2%A0%C2%91.html'> 红黑树 </a></li>
+<li><a href='blog/2013/07/20/0-grep-cross-ref.html'> Grepping Cross References </a></li>
+<li><a href='blog/2013/07/16/0-find-scroll-lock.html'> 找回失去的Scroll Lock——系统View Mode </a></li>
 <li><a href='blog/2013/07/11/0-firefox-search-for-tab.html'> Firefox: Better Tab Reuse for IDE Help Integration </a></li>
 <li><a href='blog/2013/07/09/0-sawfish-keyboard-macro.html'> Simple scripts to record/play keyboard macro (sawf... </a></li>
 <li><a href='blog/2013/07/05/0-firefox-smart-new-tab.html'> Firefox: -new-tab or no -new-tab </a></li>
@@ -360,8 +255,6 @@ Always use <code>-a</code> if you are not sure of my hack.
 <li><a href='blog/2013/06/13/0-one-book-one-saying.html'> 一本书，一句话 </a></li>
 <li><a href='blog/2013/05/31/0-intelligent-completion.html'> 智能补齐 </a></li>
 <li><a href='blog/2013/05/30/0-intelligent-cd.html'> 智能cd </a></li>
-<li><a href='blog/2013/05/29/0-parallel-bash.html'> 用bash脚本并发执行程序 </a></li>
-<li><a href='blog/2013/05/22/TourDeBabel.html'> 通天塔导游 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

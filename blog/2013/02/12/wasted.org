@@ -162,3 +162,24 @@ Preferences -> Trust Manager -> Internet Access from PDF ... Change Settings -> 
 
   必需有一个大section，然后再能有一张一张的slides。如果光有slides，没有
   上级的section，所有的slides会挤到一起去。
+* use openbsd-inetd to start ssh on 443:
+
+#+BEGIN_EXAMPLE
+cat > /etc/inetd.conf <<EOF
+443   stream  tcp nowait root /usr/sbin/sshd sshd -i
+EOF
+
+# then update /etc/apache2/ports.conf: remove the following lines.
+
+<IfModule ssl_module>
+	Listen 443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+	Listen 443
+</IfModule>
+
+# then restart the services:
+
+sudo systemctl restart openbsd-inetd.service 
+#+END_EXAMPLE

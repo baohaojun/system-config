@@ -1,0 +1,44 @@
+#+title: My True-To-The-Earth Book Review: JIRA 5.2 Essentials
+# bhj-tags: reading
+
+Because I wrote an Emacs plugin for using Jira with org-mode.el, named
+org-jira.el, some guy at this book's publishing house came up with my
+name and asked me to write a book review for it. And here it is.
+
+Jira is very popular. My ex-employer, my current employer, and one of
+my possible next employer (Intel) are all using Jira. One reason of
+this wild popularity is because Jira is very easy to use. Every body
+can start to use it with minimum effort. When I work at Motorola, they
+use ClearQuest, and the reference manual is so thick that you can use
+it as a weapon to strike people unconscious. But Jira, it's so simple
+and intuitive that you can go a long way without seeing any need even
+for its on-line help, which is already high quality. So why a book on
+Jira?
+
+Well, this book provides you the Big Picture of Jira. If you only
+learn Jira by using it and probably also with the help of the online
+documents, you are easily trapped in a small corner of Jira, albeit
+the most obvious and easy to access part. True, it might be the most
+useful part of Jira, and you will expand it with increased exposure
+with and poking around in Jira. This book just make it easier for you
+with the expanding process. With the big picture in your eyes, you
+gain the freedom to do more wild stuff to get your things done. Just
+don't overdo it, keep your process light:-)
+
+It also teaches you how to administrate Jira. This may seem not so
+useful to a common Jira user. But if you happen to be a Jira Admin or
+a PM, then these info are valuable. Even to the User, it can be more
+helpful than it seems. Because everybody should be a PM nowadays (or so I've
+heard).
+
+The final chapter is on how to use Jira (with an additional Jira
+plug-in, GreenHopper) for Agile Development. Agile people might love
+to check it out.
+
+After you gain the Big Picture, this book is also great as a reference
+manual, the topics are well organized and easy to look up.
+
+Last but not least, some ad for my org-jira. If you are a hacker using
+Emacs and org-mode and Jira all at the same time, then you definitely
+will like [[../../../2011/12/28/org-jira.org][org-jira]].
+
