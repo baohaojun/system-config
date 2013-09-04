@@ -42,7 +42,7 @@ if test "$#" != 0; then
     if test "$1" = p; then
         shift
         blog=$(f "$@")
-        putclip "[[$blog][$(grep -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//')]]"
+        putclip "[[$blog][$(grep -i -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//i')]]"
         exit
     fi
 
@@ -50,6 +50,10 @@ if test "$#" != 0; then
         shift
         putclip $(github-pagep $(f "$@"))
         exit
+    fi
+
+    if test "$1" = e; then
+        shift
     fi
 
     e "$@"

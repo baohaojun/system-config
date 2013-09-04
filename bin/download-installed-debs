@@ -3,6 +3,7 @@
 set -e
 
 workdir=~/external/installed-pkgs/pkgs
+rm -rf $workdir
 mkdir -p $workdir
 
 cd $workdir
@@ -12,10 +13,6 @@ export PACKAGES_DIR=$workdir
 
 cd ..
 
-if ! tty >/dev/null 2>&1; then
-    install-pkgs -s --reinstall >pkgs.txt 2>&1 
-fi
-
 sites=localhost:9999/debian\ localhost:9999/ubuntu
 releases=testing\ unstable\ precise\ lucid\ oneiric
 dists=main\ contrib\ non-free\ universe\ multiverse\ restricted
@@ -23,7 +20,7 @@ archs=armel\ i386\ amd64
 
 for site in $sites; do
     for release in $releases; do
-	rm $release.pkgs -f
+        rm $release.pkgs -f
 
         if echo $site | grep ubuntu && test $release = testing -o $release = unstable; then
             echo continue for $site $release
@@ -34,7 +31,7 @@ for site in $sites; do
             continue
         fi
 
-	for dist in $dists; do
+        for dist in $dists; do
 
             if echo $site | grep ubuntu && test $dist = contrib -o $dist = non-free; then
                 echo continue for $site, dist: $dist
@@ -46,35 +43,35 @@ for site in $sites; do
                 continue
             fi
             echo http://$site/dists/$release/$dist/source/Sources.gz
-	    for arch in $archs; do
+            for arch in $archs; do
                 if echo $site | grep ubuntu && test $arch = armel; then
                     echo continue for $site, arch: $arch
                     continue
                 fi
-		echo http://$site/dists/$release/$dist/binary-$arch/Packages.gz
-	    done
-	done
+                echo http://$site/dists/$release/$dist/binary-$arch/Packages.gz
+            done
+        done
     done
 done | mf-download.pl -n 2
-	
-pkgnames=$(cat pkgs.txt|grep -e '^Inst .*Debian:'|pn 2)
+
+pkgnames=$(cd $workdir; echo *)
 
 
 for site in $sites; do
     export SITE=$site;
     for release in $releases; do
-	for dist in $dists; do
+        for dist in $dists; do
             zcat $site/dists/$release/$dist/source/Sources.gz | get-deb-src-path-size $pkgnames >> $release.pkgs
-	    for arch in $archs; do
-		zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $pkgnames >> $release.pkgs
-	    done
-	done
+            for arch in $archs; do
+                zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $pkgnames >> $release.pkgs
+            done
+        done
     done
 done
 
 (
     for release in $releases; do
-	cat $release.pkgs; 
+        cat $release.pkgs;
     done
 ) | grep '^Y: ' | pn 2 | sort -u | mf-download.pl -n 2
 

@@ -20,6 +20,9 @@ function f()
     set -e
     out=$(ORIGINAL_MATCHER="$@ "'!\.class$' select-output-line find . -type f)
     echo $out
+    if is-tty-io; then
+        putclip $out
+    fi
 }
 
 f "$@"
