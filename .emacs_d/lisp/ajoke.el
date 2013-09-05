@@ -164,6 +164,7 @@ NTH-TAG-LINE, ask user to pick."
           (setq classes (cons tagstr classes))))))
     (car (split-string (ajoke--pick-one "Which class/interface? " (delete-dups (nreverse classes)) nil t)))))
 
+;;;###autoload
 (defun ajoke--pick-one (prompt collection &rest args)
   "Pick an item from COLLECTION, which is a list.
 ARGS is passed to the supporting function completing-read (or

@@ -153,6 +153,57 @@ See `w3m-region' for the optional arguments.
 
 ;;;***
 
+;;;### (autoloads (ajoke-search-local-id ajoke-complete-method ajoke-resolve
+;;;;;;  ajoke-get-override ajoke-get-hierarchy ajoke-get-imports
+;;;;;;  ajoke--pick-one) "../../gcode/ajoke/etc/elisp/ajoke" "../../gcode/ajoke/etc/elisp/ajoke.el"
+;;;;;;  (21032 15180 282361 356000))
+;;; Generated autoloads from ../../gcode/ajoke/etc/elisp/ajoke.el
+
+(autoload 'ajoke--pick-one "../../gcode/ajoke/etc/elisp/ajoke" "\
+Pick an item from COLLECTION, which is a list.
+ARGS is passed to the supporting function completing-read (or
+HELM's or Anything's version of completing-read: you are strongly
+advised to use one of these elisp tools).
+
+\(fn PROMPT COLLECTION &rest ARGS)" nil nil)
+
+(autoload 'ajoke-get-imports "../../gcode/ajoke/etc/elisp/ajoke" "\
+Write the java import statements automatically.
+
+\(fn)" t nil)
+
+(autoload 'ajoke-get-hierarchy "../../gcode/ajoke/etc/elisp/ajoke" "\
+Print the class/interface inheritance hierarchy for the
+current class. Output is in compilation-mode for ease of cross
+referencing.
+
+\(fn)" t nil)
+
+(autoload 'ajoke-get-override "../../gcode/ajoke/etc/elisp/ajoke" "\
+Overide a method defined in super classes/interfaces.
+
+\(fn)" t nil)
+
+(autoload 'ajoke-resolve "../../gcode/ajoke/etc/elisp/ajoke" "\
+Resolve the type (class/interface) of ID.
+
+\(fn ID)" t nil)
+
+(autoload 'ajoke-complete-method "../../gcode/ajoke/etc/elisp/ajoke" "\
+Complete a method given an ID. First will resolve the
+type (class/interface) of ID, then complete using the type's
+methods.
+
+\(fn ID)" t nil)
+
+(autoload 'ajoke-search-local-id "../../gcode/ajoke/etc/elisp/ajoke" "\
+Search an identifier such as a local variable from the
+beginning of current defun.
+
+\(fn)" t nil)
+
+;;;***
+
 ;;;### (autoloads (douban-music) "../../src/github/DoubanMusic/douban-music-mode"
 ;;;;;;  "../../../src/github/DoubanMusic/douban-music-mode.el" (20872
 ;;;;;;  37462 699706 737000))
@@ -341,8 +392,8 @@ beginning of current defun.
 ;;;;;;  bhj-w3m-scroll-up-or-next-url bhj-occur-merge-conflicts bhj-occur-make-errors
 ;;;;;;  bhj-occur bhj-indent-region-as-prev-line c-get-includes linux-c++-mode
 ;;;;;;  linux-c-mode bhj-douban-start confirm-risky-remote-edit fix-latex-cjk
-;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (21001
-;;;;;;  61465 93225 142000))
+;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (21032
+;;;;;;  18820 586447 874000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\

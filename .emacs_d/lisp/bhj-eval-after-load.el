@@ -46,9 +46,9 @@
 
 (eval-after-load 'gnus
   '(progn
+     (require 'message)
      (require 'bbdb-gnus)
      (require 'bbdb)
-     (require 'bbdb-hooks)
      (load "bbdb-com" t)
      (add-hook 'gnus-summary-mode-hook
                (lambda ()
