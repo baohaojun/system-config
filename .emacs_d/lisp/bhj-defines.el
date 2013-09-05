@@ -891,6 +891,7 @@ might be bad."
   (bbdb-search records regexp regexp regexp
                (cons '* regexp) regexp regexp))
 
+;;;###autoload
 (defun bhj-flatten-list (list)
   "Return a new, flat list that contains all elements of LIST.
 

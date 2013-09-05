@@ -380,20 +380,21 @@ beginning of current defun.
 ;;;;;;  wiki-local-bhj weekrep bhj-downcase-symbol-or-region bhj-upcase-symbol-or-region
 ;;;;;;  source-code-help bhj-find-missing-file bhj-open-android-doc-on-java-buffer
 ;;;;;;  bhj-do-dictionary insert-today dos2unix bhj-do-code-generation
-;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-name my-bbdb-canonicalize
-;;;;;;  my-bbdb/gnus-update-records-mode bhj-view-mail-external gnus-gmail-search-subject
-;;;;;;  localedit sudoedit switch-buffer-same-filename-rev switch-buffer-same-filename
-;;;;;;  revert-all-buffers save-all-buffers-no-check-modified back-to-indent-same-space-as-prev-line
-;;;;;;  indent-same-space-as-prev-line java-bt-mode java-bt-next-error
-;;;;;;  java-bt-ret-key waw-mode waw-ret-key waw-next-error visit-code-reading
-;;;;;;  android-get-help where-are-we try-all-color-themes try-all-themes
-;;;;;;  random-theme devenv-debug devenv-toggle-breakpoint switch-to-devenv
-;;;;;;  bhj-set-reply bhj-mimedown bhj-w3m-scroll-down-or-previous-url
-;;;;;;  bhj-w3m-scroll-up-or-next-url bhj-occur-merge-conflicts bhj-occur-make-errors
-;;;;;;  bhj-occur bhj-indent-region-as-prev-line c-get-includes linux-c++-mode
+;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-name bhj-flatten-list
+;;;;;;  my-bbdb-canonicalize my-bbdb/gnus-update-records-mode bhj-view-mail-external
+;;;;;;  gnus-gmail-search-subject localedit sudoedit switch-buffer-same-filename-rev
+;;;;;;  switch-buffer-same-filename revert-all-buffers save-all-buffers-no-check-modified
+;;;;;;  back-to-indent-same-space-as-prev-line indent-same-space-as-prev-line
+;;;;;;  java-bt-mode java-bt-next-error java-bt-ret-key waw-mode
+;;;;;;  waw-ret-key waw-next-error visit-code-reading android-get-help
+;;;;;;  where-are-we try-all-color-themes try-all-themes random-theme
+;;;;;;  devenv-debug devenv-toggle-breakpoint switch-to-devenv bhj-set-reply
+;;;;;;  bhj-mimedown bhj-w3m-scroll-down-or-previous-url bhj-w3m-scroll-up-or-next-url
+;;;;;;  bhj-occur-merge-conflicts bhj-occur-make-errors bhj-occur
+;;;;;;  bhj-indent-region-as-prev-line c-get-includes linux-c++-mode
 ;;;;;;  linux-c-mode bhj-douban-start confirm-risky-remote-edit fix-latex-cjk
 ;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (21032
-;;;;;;  18820 586447 874000))
+;;;;;;  20964 538498 828000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -607,6 +608,14 @@ open the current maildir file in kmail
 
 
 \(fn ADDR)" nil nil)
+
+(autoload 'bhj-flatten-list "bhj-defines" "\
+Return a new, flat list that contains all elements of LIST.
+
+\(bhj-flatten-list '(1 (2 3 (4 5 (6))) 7))
+=> (1 2 3 4 5 6 7)
+
+\(fn LIST)" nil nil)
 
 (autoload 'bbdb-complete-name "bhj-defines" "\
 Complete the user full-name or net-address before point (up to the

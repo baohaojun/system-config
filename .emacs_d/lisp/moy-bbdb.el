@@ -203,8 +203,8 @@ This can be used to keep track  of the mails you sent to some persons,
 like in
 
  bbdb/send-auto-notes-alist '((\"Subject\"
-			       (\".*Test.*\" . \"I sent him a test\")
-			       (\".*\" last-sent 0 t))))
+                               (\".*Test.*\" . \"I sent him a test\")
+                               (\".*\" last-sent 0 t))))
 
 "
   :group 'bbdb-noticing-records
@@ -257,22 +257,22 @@ documentation  for   the  variables  `bbdb/send-auto-notes-alist'  and
       (widen)
       (goto-char marker)
       (while (and ignore-all (not ignore))
-	(goto-char marker)
-	(setq field (car (car ignore-all))
-	      regexp (cdr (car ignore-all))
-	      fieldval (bbdb-extract-field-value field))
-	(if (and fieldval
-		 (string-match regexp fieldval))
-	    (setq ignore t)
-	  (setq ignore-all (cdr ignore-all))))
+        (goto-char marker)
+        (setq field (car (car ignore-all))
+              regexp (cdr (car ignore-all))
+              fieldval (bbdb-extract-field-value field))
+        (if (and fieldval
+                 (string-match regexp fieldval))
+            (setq ignore t)
+          (setq ignore-all (cdr ignore-all))))
 
       (unless ignore          ; ignore-all matched
-	(while rest ; while their still are clauses in the auto-notes alist
+        (while rest ; while their still are clauses in the auto-notes alist
           (goto-char marker)
           (setq field (car (car rest))  ; name of header, e.g., "Subject"
                 pairs (cdr (car rest))  ; (REGEXP . STRING) or
-				       ; (REGEXP FIELD-NAME STRING) or
-				; (REGEXP FIELD-NAME STRING REPLACE-P)
+                                       ; (REGEXP FIELD-NAME STRING) or
+                                ; (REGEXP FIELD-NAME STRING REPLACE-P)
                 fieldval (bbdb-extract-field-value field)) ; e.g., Subject line
           (when fieldval
             (while pairs
@@ -282,9 +282,9 @@ documentation  for   the  variables  `bbdb/send-auto-notes-alist'  and
                   (setq notes-field-name (car string)
                         replace-p (nth 2 string) ; perhaps nil
                         string (nth 1 string))
-		;; else it's simple (REGEXP . STRING)
-		(setq notes-field-name 'notes
-		      replace-p nil))
+                ;; else it's simple (REGEXP . STRING)
+                (setq notes-field-name 'notes
+                      replace-p nil))
               (setq notes (bbdb-record-getprop record notes-field-name))
               (let ((did-match
                      (and (string-match regexp fieldval)
@@ -293,7 +293,7 @@ documentation  for   the  variables  `bbdb/send-auto-notes-alist'  and
                                                 bbdb/send-auto-notes-ignore))))
                             (if re
                                 (not (string-match re fieldval))
-			      t)))))
+                              t)))))
                 ;; An integer as STRING is an index into match-data:
                 ;; A function as STRING calls the function on fieldval:
                 (if did-match
@@ -357,29 +357,22 @@ function bbdb/send-hook."
   (if (null list)
       list
     (if (null (car list))
-	(bbdb/send-remove-nil-from-list (cdr list))
+        (bbdb/send-remove-nil-from-list (cdr list))
       (cons (car list) (bbdb/send-remove-nil-from-list (cdr list))))))
 
 (defun bbdb/send-hook-fetch-fields (fields)
   (when fields
     (let ((field-content (mail-fetch-field (car fields))))
       (append (if field-content
-		  (mapcar
-		   (lambda (elem)
-		     (concat "\"" (car elem) "\" <" (cadr elem) ">"))
-		   (bbdb-extract-address-components field-content))
-		'())
-	      (bbdb/send-hook-fetch-fields (cdr fields))))))
+                  (mapcar
+                   (lambda (elem)
+                     (list (car elem) (cadr elem)))
+                   (bbdb-extract-address-components field-content t))
+                '())
+              (bbdb/send-hook-fetch-fields (cdr fields))))))
 
 (defun bbdb/send-hook-annotate-message (rcp)
-  (if (not (string-match
-	    (or bbdb-user-mail-names
-		"$[^\n]^") ;; Regexp matching nothing
-	    rcp))
-      (bbdb-annotate-message-sender
-       rcp t
-       (bbdb-invoke-hook-for-value bbdb/send-auto-create-p)
-       (bbdb-invoke-hook-for-value bbdb/send-prompt-for-create-p))))
+  (bbdb-annotate-message rcp 'query))
 
 ;;;###autoload
 (defun bbdb/send-hook ()
@@ -391,29 +384,30 @@ function bbdb/send-hook."
       (widen)
       ;; Narrow to the headers region to use 'mail-fetch-field'
       (narrow-to-region (point-min)
-			(progn (goto-char (point-min))
-			       (if (string= mail-header-separator "")
-				   (progn
-				     (search-forward-regexp "\n\n")
-				     (backward-char))
-				 (search-forward mail-header-separator))
-			       (beginning-of-line nil)
-			       (point)
-			       ))
+                        (progn (goto-char (point-min))
+                               (if (string= mail-header-separator "")
+                                   (progn
+                                     (search-forward-regexp "\n\n")
+                                     (backward-char))
+                                 (search-forward mail-header-separator))
+                               (beginning-of-line nil)
+                               (point)
+                               ))
       ;; Fetch the recipient's mail address.
       (let ((recipients (bbdb/send-hook-fetch-fields
-			 bbdb-field-to-fetch-when-sending)))
-	(widen)
-	;; And add it to the database.
-	(if recipients
-	    (let ((added-records
-		   (bbdb/send-remove-nil-from-list
-		    (mapcar 'bbdb/send-hook-annotate-message
-			    recipients))))
-	      ;; If some record were added, show them.
-	      (if added-records
-		  (bbdb-display-records added-records)
-		(message "No record were added."))))))))
+                         bbdb-field-to-fetch-when-sending)))
+        (widen)
+        ;; And add it to the database.
+        (if recipients
+            (let ((added-records
+                   (bhj-flatten-list
+                    (bbdb/send-remove-nil-from-list
+                     (mapcar 'bbdb/send-hook-annotate-message
+                             recipients)))))
+              ;; If some record were added, show them.
+              (if added-records
+                  (bbdb-display-records added-records)
+                (message "No record were added."))))))))
 
 (provide 'moy-bbdb)
 ;;; moy-bbdb.el ends here
