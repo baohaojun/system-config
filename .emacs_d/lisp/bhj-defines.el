@@ -910,7 +910,7 @@ might be bad."
      (number-sequence 0 (1- (length mails))))))
 
 ;;;###autoload
-(defun bbdb-complete-name (&optional start-pos)
+(defun bbdb-complete-mail (&optional start-pos)
   "Complete the user full-name or net-address before point (up to the
 preceeding newline, colon, or comma, or the value of START-POS).  If
 what has been typed is unique, insert an entry of the form \"User Name
