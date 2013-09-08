@@ -2,7 +2,18 @@
 
 mkdir -p ~/doc/daily
 cd ~/doc/daily
-month=$(today "$@"|perl -npe 's/(.*)-.*/$1/')
 
-test -e $month.org || touch $month.org
-edit $month.org
+day=${1:-$(today)}
+find-or-exec emacs
+emacsclient -e '
+  (progn
+    (find-file "~/doc/daily.org")
+    (goto-char (point-min))
+    (if (search-forward-regexp "^\\* '${day}'" nil t)
+        (progn
+          (forward-line)
+          (move-beginning-of-line))
+      (goto-char (point-max))
+
+      (insert "\n* '${day}'\n")))
+'
