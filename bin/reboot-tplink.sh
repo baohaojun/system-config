@@ -35,5 +35,10 @@ sleep 2
 putclip "系统工具"
 send-multi-args C-s C-y C-g RET
 putclip 重启路由器
-send-multi-args C-s C-y C-g RET C-s C-s C-g TAB RET RET
+send-multi-args C-s C-y C-g RET
+
+sleep 5
+
+putclip 将使
+send-multi-args C-s C-y C-g TAB RET RET
 gnome-screensaver&
