@@ -1,0 +1,46 @@
+#!/usr/bin/perl
+
+use MIME::Parser;
+
+### Create parser, and set some parsing options:
+my $parser = new MIME::Parser;
+$parser->output_to_core(1);
+
+### Parse input:
+$entity = $parser->parse(\*STDIN) or die "parse failed\n";
+
+### Take a look at the top-level entity (and any parts it has):
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+debug "entity has " . $entity->parts . " parts";
+
+if ($entity->parts == 0) {
+    $ent = $entity;
+    
+    if ($ent->mime_type =~ m!^text/!) {
+	if ($io = $ent->open("r")) {
+	    while (defined($_ = $io->getline)) { print $_ }
+	    $io->close;
+	}
+    } else {
+	print STDERR "mime type is " . $ent->mime_type . "\n";
+    }
+}
+
+for my $part (1..$entity->parts) {
+    $ent = $entity->parts($part-1);
+
+    if ($ent->mime_type =~ m!^text/!) {
+	if ($io = $ent->open("r")) {
+	    while (defined($_ = $io->getline)) { print $_ }
+	    $io->close;
+	}
+    } else {
+	print STDERR "mime type is " . $ent->mime_type . "\n";
+    }
+}
+
+# $entity->print(\*STDOUT);

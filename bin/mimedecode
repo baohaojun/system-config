@@ -1,0 +1,76 @@
+#!/usr/bin/perl -w
+use Getopt::Std;
+
+
+{package MyME::Parser;
+ use base 'MIME::Parser';
+
+sub new_body_for
+ {
+  my ($parser,$head) = @_;
+  my $outname = $head->recommended_filename;
+  if (defined $outname)
+   {
+    return MIME::Body::File->new($parser->output_path($head));
+   }
+  else
+   {
+       return MIME::Body::Scalar->new;
+   }
+ }
+
+}
+
+my %opt = ( 'd' => '.' );
+
+getopts('d:',\%opt);
+
+my $parser = new MyME::Parser;
+$parser->output_dir($opt{'d'});
+
+if (@ARGV)
+ {
+  foreach my $file (@ARGV)
+   {
+    my $entity = $parser->parse_in($file);
+   }
+ }
+else
+ {
+  my $entity = $parser->read(\*STDIN);
+ }
+
+__END__
+
+=head1 NAME
+
+mimedecode - extract MIME attachments in uudecode-like manner
+
+=head1 SYNOPSIS
+
+  mimedecode [-d directory] < file
+
+  mimedecode [-d directory] file...
+
+=head1 DESCRIPTION
+
+C<mimedecode> processes mail files using B<MIME::Parser> module.
+It handles "multipart" messages and saves "attached" files
+(i.e. parts with suggested file names) to their suggested names
+in the directory specified after C<-d>, or the current directory if
+C<-d> is not given.
+
+=head1 BUGS
+
+It needs the module installed.
+
+Should probably consider more of headers in deciding if it really
+is a useful attachment.
+
+=head1 AUTHOR
+
+Slapped together by Nick Ing-Simmons <nick@ni-s.u-net.com>
+
+=cut
+
+
