@@ -134,7 +134,8 @@
 
 (bind-keys global-keymap "KP_Add" (lambda () (system "adjust-volume&")))
 (bind-keys global-keymap "KP_Subtract" (lambda () (system "adjust-volume&")))
-
+(bind-keys global-keymap "XF86AudioRaiseVolume" (lambda () (system "adjust-volume&")))
+(bind-keys global-keymap "XF86AudioLowerVolume" (lambda () (system "adjust-volume&")))
 
 (defun do-global-remap()
   (let ((c-x-map (make-keymap))
