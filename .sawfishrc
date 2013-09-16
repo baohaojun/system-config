@@ -370,12 +370,14 @@
   (bind-keys global-keymap "BS" (lambda () (synthesize-event "Prior" (input-focus))))
   (system "switch-caps-led on&"))
 
-(bind-keys global-keymap "Scroll_Lock"
-           (lambda ()
-             (let ((w (input-focus)))
-               (if (window-get w 'scroll-lock)
-                   (scroll-lock-off w)
-                 (scroll-lock-on w)))))
+(defun scroll-lock-toggle ()
+  (let ((w (input-focus)))
+    (if (window-get w 'scroll-lock)
+        (scroll-lock-off w)
+      (scroll-lock-on w))))
+
+(bind-keys global-keymap "XF86LaunchA" #'scroll-lock-toggle)
+(bind-keys global-keymap "Scroll_Lock" #'scroll-lock-toggle)
 
 (progn
   (add-hook 'focus-in-hook
