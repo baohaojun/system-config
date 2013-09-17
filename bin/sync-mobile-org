@@ -14,19 +14,24 @@ while ! emacsclient -e '(save-some-buffers)'; do
     echo "Emacs need save some buffers"
 done
 
+find-or-exec konsole
 cd ~/doc/projects
 
 if git-dirty; then
-    die "git is dirty under ~/doc/projects"
+    git-interactive-add
 fi
 
 cd ~/today/MobileOrg/
 if git-dirty; then
-    die "git is dirty under $PWD"
+    git-interactive-add
 fi
+
+yes-or-no-p -y "Please sync the MobileOrg APP on you phone manually"
 
 ssh-to-phone echo hello
 rsync -av phone-sdcard:/data/media/0/MobileOrg/* .
+
+find-or-exec emacs emacs.bhj
 emacsclient -e '(org-mobile-pull)'
 emacsclient -e '(save-some-buffers)'
 
@@ -38,22 +43,14 @@ function check_git_dir() {
     cd  "$1"
 
     find-or-exec konsole
-    if git-dirty; then
-        git diff .
-    fi
-
-    if git-dirty && yes-or-no-p -y "$1: $2"; then
-        git add .
-    else
-        start_recursive_shell "Do the check"
-        if ! yes-or-no-p "Continue?"; then
-            exit 0
-        fi
+    git-interactive-add
+    if ! yes-or-no-p -y "Continue for $2 @$PWD"; then
+        exit 0
     fi
 }
 
-check_git_dir ~/doc/projects "Add all changes after org-mobile-pull?"
-check_git_dir ~/today/MobileOrg "Add all changes before org-mobile-push?"
+check_git_dir ~/doc/projects "Add all changes from mobile to Emacs"
+check_git_dir ~/today/MobileOrg "Add all changes from Emacs to mobile"
 emacsclient -e '(org-mobile-push)'
 check_git_dir ~/doc/projects "Add all changes after org-mobile-push?"
 cd ~/today/MobileOrg
@@ -64,4 +61,4 @@ fi
 check_git_dir ~/today/MobileOrg "Add all changes after org-mobile-push?"
 
 true;rsync -av * phone-sdcard:/data/media/0/MobileOrg/
-yes-or-no-p "Please sync the MobileOrg APP on you phone manually"
+yes-or-no-p -y "Please sync the MobileOrg APP on you phone manually"
