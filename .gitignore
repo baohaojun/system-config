@@ -132,3 +132,4 @@ tools/beagrep-static-query
 *.exe
 *.exe.mdb
 tools/beagrep-break-words
+compile
