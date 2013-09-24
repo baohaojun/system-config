@@ -7,12 +7,12 @@ disps=()
 
 while test $# != 0; do
     if test ${#matches[@]} = 2 -o "$1" = --; then
-	matches_done=true
+        matches_done=true
     fi
     if test $matches_done = false; then
-	matches=("${matches[@]}" "$1")
+        matches=("${matches[@]}" "$1")
     else
-	test "$1" != -- && disps=("${disps[@]}" "$1")
+        test "$1" != -- && disps=("${disps[@]}" "$1")
     fi
     shift
 done
@@ -21,19 +21,19 @@ set -- "${matches[@]}"
 
 if test $# = 1; then
     if [[ "$1" =~ = ]]; then
-	query=$1
+        query=$1
     else
-	query=$(printf '(|(cn=%s*)(sn=%s*)(mail=%s*))' "$1" "$1" "$1")
+        query=$(printf '(|(cn=%s*)(sn=%s*)(mail=%s*))' "$1" "$1" "$1")
     fi
 elif test $# = 2; then
     query='(|'
     f='sn mail givenName'
     for x in $f; do
-	for y in $f; do
-	    test $x = $y && continue;
-	    query=$(printf '%s(&(%s=%s*)(%s=%s*))' "$query" $x $1 $y $2)
-	    done
-	done
+        for y in $f; do
+            test $x = $y && continue;
+            query=$(printf '%s(&(%s=%s*)(%s=%s*))' "$query" $x $1 $y $2)
+            done
+        done
     query=$query')'
 fi
 
@@ -63,7 +63,7 @@ END {
 chomp;
 if (m/^dn: /) { # restart
     print_it;
-    $str = ""; 
+    $str = "";
     $mail_str = "";
 } elsif (m/^displayName: (.*)$/) {
     $mail_str = "\"$1\" $mail_str";
@@ -81,4 +81,4 @@ if (m/^dn: /) { # restart
 ' "${disps[@]}"
 }
 
-ldapsearch -x -ZZ  -LLL -b "DC=marvell,DC=com"  -h sh4-dc01.marvell.com -D "marvell\hjbao" -w $(get-authinfo sh4-dc01) "$query" | get-display
+ldapsearch -x -ZZ  -LLL -b "DC=alibaba-inc,DC=com"  -h ldap.alibaba-inc.com -D "marvell\hjbao" -w $(get-authinfo sh4-dc01) "$query" | get-display

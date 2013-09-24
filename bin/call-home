@@ -12,12 +12,8 @@ fi
         if test -e ~/.at-home; then
             exit 0
         fi
-        if test ! -e ~/.ssh-home-ok; then
-            home=192.168.33.8
-        else
-            home=bhj.dyndns.org
-        fi
-        ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 $home -p 443 ||
+        home=bhj.dyndns.org
+        ssh -C2qN -D 18080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 $home -p 443 ||
         if route -n |grep -e "$(host bhj.dyndns.org | pn 4)"; then
             true
         else
@@ -29,28 +25,6 @@ fi
         sleep $x
     done
 ) 9>~/.logs/$(basename $0).lock  2>&1 &
-
-(
-    if test "$DEBUG" = true; then
-        set -x;
-    fi
-    flock -n 9 || { echo 'lock failed for fixnet at '$(date); exit 0; }
-    host=fixnet
-    user=bhjbhj
-    if test -e ~/.ssh-vpn; then
-        . ~/.ssh-vpn
-    fi
-    while true; do
-        res=$(ssh-vpn -- -h $host -u $user 2>&1)
-        if test $? = 137 || echo "$res" | grep -q SIGKILL; then
-            continue
-        fi
-        x=30
-        y=$(random 30)
-        ((x = x + y))
-        sleep $x
-    done
-) 9>~/.logs/$(basename $0).lock-fix-net  2>&1 &
 
 (
     flock -n 9 || { echo 'lock failed for vpn at '$(date); exit 0; }

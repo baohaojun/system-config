@@ -4,7 +4,7 @@ use URI::Escape;
 if (@ARGV == 1 and $ARGV[0] eq 'backup-mail') {
     @ARGV = split(' ', 'label:marvellinbox OR label:bigmirror')
 } else {
-    push @ARGV, "-bash_history.bak";
+    push @ARGV, "-bash_history.bak" unless join(' ', @ARGV) =~ m/bash_history.bak/;
 }
 
 $, = " ";
