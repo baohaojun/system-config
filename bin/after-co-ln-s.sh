@@ -160,6 +160,8 @@ fi
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 if test -e ~/.macbook-air; then
     ln -sf ~/system-config/etc/.Xmodmap-macbook-air ~/.Xmodmap
+elif test -e ~/.mach=t430; then
+    ln -sf ~/system-config/etc/.Xmodmap-t430 ~/.Xmodmap
 else
     ln -sf ~/system-config/etc/.Xmodmap ~/.Xmodmap
 fi

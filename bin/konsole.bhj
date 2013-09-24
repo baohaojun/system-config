@@ -1,2 +1,2 @@
 #!/bin/bash
-konsole -e ~/bin/myscr&
+konsole --profile myscr -e ~/bin/myscr&
