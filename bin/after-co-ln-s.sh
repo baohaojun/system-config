@@ -176,3 +176,30 @@ if grep managed=true /etc/NetworkManager/NetworkManager.conf; then
     sudo perl -npe 's/managed=true/managed=false/' -i /etc/NetworkManager/NetworkManager.conf;
 fi
 echo OK
+
+if test $(whoami) = bhj -a -d ~/.config/bhj; then
+    true
+else
+    mkdir -p ~/.config/bhj;
+fi
+
+if test ! -e ~/.config/bhj/mail; then
+    read -e -p "What is your email address? " mail
+    echo -n $mail > ~/.config/bhj/mail
+    perl -npe '$mail = '"'$mail'"'; s/(^\s*email\s*=\s*).*/$1$mail/' -i ~/system-config/.gitconfig.bhj
+fi
+
+if test ! -e ~/.config/bhj/smtp; then
+    read -e -p "What is your email smtp? " smtp
+    echo -n $smtp > ~/.config/bhj/smtp
+fi
+
+if test ! -e ~/.config/bhj/smtp-port; then
+    read -e -p "What is your email smtp port? " port
+    echo -n $port > ~/.config/bhj/smtp-port
+fi
+
+if test ! -e ~/.config/bhj/conn-type; then
+    read -e -p "What is your email conn-type? " conn_type
+    echo -n $conn_type > ~/.config/bhj/conn-type
+fi

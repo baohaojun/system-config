@@ -22,7 +22,7 @@ function check_arg()
 function Usage()
 {
     echo "Usage: $prog_name [recipient]... OPTIONS"
-    echo 
+    echo
     echo "Main Options:"
     echo "    -h:                 this little help"
     echo "    -c cc_recipient:    cc to somebody"
@@ -32,10 +32,10 @@ function Usage()
     exit
 }
 rec_type=to
-while true; do 
+while true; do
     case "$1" in
         [^-]*)
-	    eval $rec_type='("${'$rec_type'[@]}" "$1")'
+            eval $rec_type='("${'$rec_type'[@]}" "$1")'
             shift
             ;;
         -h)
@@ -50,12 +50,12 @@ while true; do
             ;;
         -c)
             check_arg "$2"
-	    rec_type=cc
+            rec_type=cc
             shift
             ;;
         -b)
             check_arg "$2"
-	    rec_type=bcc
+            rec_type=bcc
             shift
             ;;
         -a)
@@ -80,11 +80,11 @@ test -z "${body[0]}" && body=("=")
 
 (type blat.exe || of http://sourceforge.net/projects/blat/files/) >/dev/null 2>&1
 (
-    printf "blat.exe - -charset gbk -f hjbao@marvell.com -u hjbao@marvell.com -server localhost -port 2025 -pw %q " "$(get-authinfo localhost hjbao@marvell.com)";
+    printf "blat.exe - -charset gbk -f $(cat ~/.config/bhj/mail) -u $(cat ~/.config/bhj/mail) -server localhost -port 2025 -pw %q " "$(get-authinfo $(cat ~/.config/bhj/smtp) $(cat ~/.config/bhj/mail))";
     for y in attach to cc bcc subject body; do
-	eval '
+        eval '
         if test ${#'$y'[@]} != 0; then
-            printf -- \ -'$y'\ 
+            printf -- \ -'$y'\
             for x in $(seq 1 "${#'$y'[@]}"); do
                 printf -- "%q" "${'$y'[$x-1]}"
                 if test $x != ${#'$y'[@]}; then

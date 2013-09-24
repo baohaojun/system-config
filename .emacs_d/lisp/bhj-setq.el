@@ -190,13 +190,13 @@
 (setq org-confirm-babel-evaluate nil)
 
 (setq gnus-posting-styles
-      '(
+      `(
         (".*"
          ("From" "Ask <ask@ask.com>")
          (signature "All the best\n\n Bao Haojun")
          )
         (".*mrvl.*"
-         ("From" "Bao Haojun <hjbao@marvell.com>")
+         ("From" ,(concat "Bao Haojun <" (shell-command-to-string "cat ~/.config/bhj/mail") ">"))
          )
         (".*gmail.*"
          ("From" "Bao Haojun <baohaojun@gmail.com>")

@@ -276,6 +276,22 @@ might be bad."
         (insert "\n</body>\n</html>\n<#/multipart>\n")))))
 
 (defvar bhj-gmail-host "smtp.gmail.com")
+
+;;;###autoload
+(defun bhj-set-smtp-cred-to-company-mail ()
+  (setq smtpmail-auth-credentials ; fixme
+        `((,(shell-command-to-string "cat ~/.config/bhj/smtp")
+           ,(string-to-int (shell-command-to-string "cat ~/.config/bhj/smtp-port"))
+           ,(shell-command-to-string "cat ~/.config/bhj/mail")
+           nil))
+
+        message-send-mail-function 'smtpmail-send-it
+        user-mail-address (shell-command-to-string "cat ~/.config/bhj/mail")
+        smtpmail-stream-type (intern (shell-command-to-string "cat ~/.config/bhj/conn-type"))
+        smtpmail-default-smtp-server (shell-command-to-string "cat ~/.config/bhj/smtp")
+        smtpmail-smtp-server (shell-command-to-string "cat ~/.config/bhj/smtp")
+        smtpmail-smtp-service (string-to-int (shell-command-to-string "cat ~/.config/bhj/smtp-port"))))
+
 ;;;###autoload
 (defun bhj-set-reply ()
   (interactive)
@@ -302,7 +318,7 @@ might be bad."
       (while (and all-marvell (string-match "@" receivers start-pos))
         (setq start-pos (match-end 0))
         (unless (equal (string-match
-                    "@marvell.com"
+                    "@alibaba-inc.com"
                     receivers
                     (1- start-pos))
                    (1- start-pos))
@@ -313,7 +329,7 @@ might be bad."
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "\"Bao Haojun\" <hjbao@marvell.com>")))
+          (insert "\"Bao Haojun\" <" (shell-command-to-string "cat ~/.config/bhj/mail") ">")))
 
       (save-excursion
         (message-goto-from)
@@ -321,23 +337,13 @@ might be bad."
         (when (save-excursion
                 (search-forward-regexp "@ask.com" (line-end-position) t))
           (kill-line)
-          (insert (completing-read "use account? " '("hjbao@marvell.com" "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
+          (insert (completing-read "use account? " `(,(shell-command-to-string "cat ~/.config/bhj/mail") "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
         (message-goto-from)
         (message-beginning-of-line)
-        (cond ((save-excursion (search-forward-regexp "@marvell.com" (line-end-position) t))
+        (cond ((save-excursion (search-forward-regexp "@alibaba-inc.com" (line-end-position) t))
                (kill-line)
-               (insert "\"Bao Haojun\" <hjbao@marvell.com>")
-               (setq smtpmail-auth-credentials
-                     '(("localhost"
-                        2025
-                        "hjbao@marvell.com"
-                        nil))
-                     message-send-mail-function 'smtpmail-send-it
-                     smtpmail-stream-type nil
-                     user-mail-address "hjbao@marvell.com"
-                     smtpmail-default-smtp-server "localhost"
-                     smtpmail-smtp-server "localhost"
-                     smtpmail-smtp-service 2025))
+               (insert "\"Bao Haojun\" <" (shell-command-to-string "cat ~/.config/bhj/mail") ">")
+               (bhj-set-smtp-cred-to-company-mail))
 
               ((save-excursion (search-forward-regexp "@gmail.com" (line-end-position) t))
                (kill-line)

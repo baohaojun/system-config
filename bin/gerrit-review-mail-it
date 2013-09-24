@@ -32,10 +32,10 @@ fi
 
 if test "$1" = build-failed; then
     shift
-    set -ex    
-    
+    set -ex
+
     title=$(echo Automatic hourly build failed $(now) - "$@")
-    
+
     tmpd=~/.cache/$(basename $0).$$.dir
     mkdir -p $tmpd
     cd $tmpd
@@ -47,22 +47,22 @@ if test "$1" = build-failed; then
     #################################################################
     # in case some one passed a symlink to a passwd file, trying to
     # trick us to mail that file to him!
-    find . -type l | xargs rm >/dev/null 2>&1 || true 
-    
+    find . -type l | xargs rm >/dev/null 2>&1 || true
+
     recipients=$(
         find ./daily-changes -type f | xargs cat |
         grep '^Commit:' |
         perl -npe 's/.*<//; s/>.*//;' |
         grep '@marvell.com' |
         sort -u;
-        echo hjbao@marvell.com
+        cat ~/.config/bhj/mail
         if test -e ~/.mail-build-errors; then
             cat ~/.mail-build-errors
         fi
     )
 
     if test ! -e .compile_failed; then
-        cat .build-status $(echo .hourly-build.log.*) > build.log # need more infomation since this is for myself 
+        cat .build-status $(echo .hourly-build.log.*) > build.log # need more infomation since this is for myself
     fi
 
     in_mail_recipients=$recipients
@@ -73,17 +73,17 @@ if test "$1" = build-failed; then
     else
         recipients=
     fi
-    
+
     set -e
     cp $tmpf commit-messages.tgz
-    cat <<EOF |tee /dev/stderr | mailx -s "$title" hjbao@marvell.com $recipients -a commit-messages.tgz -a build.log
+    cat <<EOF |tee /dev/stderr | mailx -s "$title" $(cat ~/.config/bhj/mail) $recipients -a commit-messages.tgz -a build.log
 Hi, all
 $in_mail_recipients
 You are receiving this email because the automatic hourly build has
 failed, and you are among the people who commited changes in the last
 hour. See
 
-    https://ewiki.marvell.com/pages/viewpage.action?pageId=38453690 
+    https://ewiki.marvell.com/pages/viewpage.action?pageId=38453690
 
 for more infomation about the hourly build.
 
@@ -93,7 +93,7 @@ $(
     if test -e .repo/repo-switch; then
         echo
         echo The repo is inited with the following command:
-        echo 
+        echo
         echo "    $(cat .repo/repo-switch|perl -npe 's/repo-switch/repo init/; s/hjbao\@//;')"
     fi
 )
@@ -106,6 +106,6 @@ $(grep -Hn -i -e "$(grep -o -e '".*invalid argument.*no rule to.*"' ~/.emacs|per
 Thanks.
 
 EOF
-    
+
 fi
 echo mail sent.

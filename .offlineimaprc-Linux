@@ -1,30 +1,31 @@
 [general]
-accounts = Marvell, Gmail
+accounts = Alibaba, Gmail
 maxsyncaccounts = 2
 pythonfile = ~/bin/get-credentials.py
 ui = Noninteractive.Basic
 
 
-[Account Marvell]
-localrepository = Local-Mrvl
-remoterepository = Remote-Mrvl
+[Account Alibaba]
+localrepository = Local-Ali
+remoterepository = Remote-Ali
 presynchook = ~/bin/sync_nnmaildir -g
 postsynchook = ~/bin/sync_nnmaildir -m
 
-[Repository Remote-Mrvl]
+[Repository Remote-Ali]
 type = IMAP
-remotehost = localhost
-remoteport = 1143
-remoteuser = hjbao@marvell.com
-remotepasseval = getcred("localhost", "hjbao@marvell.com", 1143)
-nametrans = lambda foldername: "mrvl." + foldername.replace(" ", "_")
+remotehost = imap.alibaba-inc.com
+remoteport = 993
+ssl = yes
+remoteuser = haojun.bhj@alibaba-inc.com
+remotepasseval = getcred("imap.alibaba-inc.com", "haojun.bhj@alibaba-inc.com", 993)
+nametrans = lambda foldername: "ali." + foldername.replace(" ", "_")
 maxconnections = 6
 folderfilter = lambda foldername: any([x.lower() in foldername.lower() and 'gmail' not in x for x in ('inbox', 'sent', 'draft')])
 
-[Repository Local-Mrvl]
+[Repository Local-Ali]
 type = Maildir
 localfolders = ~/Maildir
-folderfilter = lambda foldername: 'mrvl.' in foldername
+folderfilter = lambda foldername: 'ali.' in foldername
 
 [Account Gmail]
 localrepository = Local-Gmail

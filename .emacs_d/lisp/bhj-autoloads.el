@@ -389,12 +389,12 @@ beginning of current defun.
 ;;;;;;  waw-ret-key waw-next-error visit-code-reading android-get-help
 ;;;;;;  where-are-we try-all-color-themes try-all-themes random-theme
 ;;;;;;  devenv-debug devenv-toggle-breakpoint switch-to-devenv bhj-set-reply
-;;;;;;  bhj-mimedown bhj-w3m-scroll-down-or-previous-url bhj-w3m-scroll-up-or-next-url
-;;;;;;  bhj-occur-merge-conflicts bhj-occur-make-errors bhj-occur
-;;;;;;  bhj-indent-region-as-prev-line c-get-includes linux-c++-mode
+;;;;;;  bhj-set-smtp-cred-to-company-mail bhj-mimedown bhj-w3m-scroll-down-or-previous-url
+;;;;;;  bhj-w3m-scroll-up-or-next-url bhj-occur-merge-conflicts bhj-occur-make-errors
+;;;;;;  bhj-occur bhj-indent-region-as-prev-line c-get-includes linux-c++-mode
 ;;;;;;  linux-c-mode bhj-douban-start confirm-risky-remote-edit fix-latex-cjk
-;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (21033
-;;;;;;  54842 218821 201000))
+;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (21057
+;;;;;;  31592 639184 905000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -468,6 +468,11 @@ C mode with adjusted defaults for use with the Linux kernel.
 
 
 \(fn)" t nil)
+
+(autoload 'bhj-set-smtp-cred-to-company-mail "bhj-defines" "\
+
+
+\(fn)" nil nil)
 
 (autoload 'bhj-set-reply "bhj-defines" "\
 

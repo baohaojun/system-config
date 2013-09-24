@@ -19,13 +19,6 @@
              (gnus-article-highlight-citation)
              ))
 
-
-(setq message-send-mail-function 'smtpmail-send-it
-      user-mail-address "hjbao@marvell.com" ; fixme
-      smtpmail-default-smtp-server "localhost"
-      smtpmail-smtp-server "localhost"
-      smtpmail-smtp-service 2025) ; fixme, set this port for davmail
-
 (setq gnus-default-charset 'chinese-iso-8bit
       gnus-group-name-charset-group-alist '((".*" . chinese-iso-8bit))
       gnus-summary-show-article-charset-alist
@@ -51,31 +44,26 @@
           "sent-messages")
          ((message-mail-p)
           ;; Mail
-          "sent-mails")))) 
+          "sent-mails"))))
 
 (setq gnus-select-method
       '(nnmaildir "Gmail"
-		  (directory "~/Maildir")
-		  (directory-files nnheader-directory-files-safe) 
-		  (get-new-mail nil)))
+                  (directory "~/Maildir")
+                  (directory-files nnheader-directory-files-safe)
+                  (get-new-mail nil)))
 
 (defadvice nnmaildir--prepare (around no-ephmeral (server group) activate)
   (let ((server
-	 (if (and (stringp server)
-	     (string= server "Gmail-ephemeral"))
-	     "Gmail"
-	   server)))
+         (if (and (stringp server)
+             (string= server "Gmail-ephemeral"))
+             "Gmail"
+           server)))
     ad-do-it))
 
-(setq smtpmail-auth-credentials ; fixme
-      '(("localhost"
-	 2025
-	 "hjbao@marvell.com"
-	 nil)))
-
-(autoload 'bbdb/send-hook "moy-bbdb" 
+(bhj-set-smtp-cred-to-company-mail)
+(autoload 'bbdb/send-hook "moy-bbdb"
   "Function to be added to `message-send-hook' to notice records when sending messages" t)
- 
+
 (add-hook 'message-send-hook 'bbdb/send-hook) ; If you use Gnus
 
 (add-hook 'mail-send-hook 'bbdb/send-hook)
