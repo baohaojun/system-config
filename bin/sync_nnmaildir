@@ -1,5 +1,4 @@
 #!/usr/bin/perl -w
-exit 0;
 
 # Maildir flags are:
 #         D (draft)
@@ -63,54 +62,47 @@ for (glob "$dir/*") {
     }
 
     if ($from_maildir) {
-      # Sync ticked flags
-      if ($flags =~ /F/) {
-        mkdir "$path/.nnmaildir/marks/tick";
-        my $dst = "$path/.nnmaildir/marks/tick/$message";
 
-        if (! -e "$dst") {
-            symlink "$file","$dst"
-                and print "Added mail in $mb to gnus ticks\n"
-                or warn "symlink $file $dst failed\n";
-        }
-      } else {
-        # my $dst = "$path/.nnmaildir/marks/tick/$message";
-        # unlink "$dst"
-        #   and print "Removed mail in $mb from nnmaildir ticks\n";
-      }
+        my %flag_settings = (tick => qr/F/,
+                             read => qr/S/,
+                             reply => qr/R/);
 
-      # Sync read flags
-      if ($flags =~ /S/) {
-          #debug "read: $message";
-          mkdir "$path/.nnmaildir/marks/read";
-        my $dst = "$path/.nnmaildir/marks/read/$message";
-        if (! -e $dst) {
-            unlink $dst;
-            symlink "$file","$dst"
-                and print "Added mail in $mb to gnus seen\n"
-                or warn "Failed: symlink \"$file\", \"$dst\"\n";
+        for my $folder (sort keys %flag_settings) {
+            my $re = $flag_settings{$folder};
+            my $dst = "$path/.nnmaildir/marks/$folder/$message";
+            if ($flags =~ $re) {
+                mkdir "$path/.nnmaildir/marks/$folder";
+                if (! -e $dst) {
+                    unlink $dst if -l $dst;
+                    symlink "$file","$dst"
+                        and print "Sync: added mail in $mb to gnus $folder\n"
+                        or warn "symlink $file $dst failed\n";
+                }
+            } else {
+                unlink "$dst"
+                    and print "Sync: removed mail in $mb from nnmaildir $folder\n";
+            }
+
         }
-      } else {
-        my $dst = "$path/.nnmaildir/marks/read/$message";
-        unlink "$dst"
-          and print "Removed mail in $mb from nnmaildir seen\n";
-      }
     } elsif ($from_gnus) {
       my $new_flags = '';
 
-      if (-e "$path/.nnmaildir/marks/tick/$message") {
-          # $new_flags = $new_flags . 'F'; davmail can not handle sticky emails
-      }
-      if (-e "$path/.nnmaildir/marks/reply/$message") {
-          # $new_flags = $new_flags . 'R'; davmail can not handle replied flag (in fact, any flag except 'S')
-      }
-      if (-e "$path/.nnmaildir/marks/read/$message" or $flags =~ m/S/) { #add Seen flag if either Seen by gnus or the upstream
-        $new_flags = $new_flags . 'S';
+      my %flag_settings = (tick => q/F/,
+                           read => q/S/,
+                           reply => q/R/);
+
+      for my $folder (sort keys %flag_settings) {
+            my $re = $flag_settings{$folder};
+            my $dst = "$path/.nnmaildir/marks/$folder/$message";
+
+            if (-e $dst or -l $dst or $flags =~ m/$re/) {
+                $new_flags = $new_flags . $re;
+            }
       }
 
-      if ($new_flags ne $flags) {
-        rename "$file", ("$path/cur/$message$sep_char" . "2,$new_flags")
-          and print "Marked mail in $mb as $new_flags\n";
+      if (join('', sort split('', $new_flags)) ne join('', sort split('', $flags))) {
+          rename "$file", ("$path/cur/$message$sep_char" . "2,$new_flags")
+              and print "Sync: changed mail in $mb: $flags -> $new_flags\n";
       }
     }
   }

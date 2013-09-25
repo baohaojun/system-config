@@ -1,6 +1,8 @@
 #!/bin/bash
 
-for x in *,S; do
-    mv "$x" "${x/%,S/,FS}"; 
+for x in *:2,S; do
+    mkdir -p ../.nnmaildir/marks/tick
+    mv "$x" "${x/%,S/,FS}";
+    ln -s "$(readlink -f "$x" | perl -npe 's/,S$/,FS/')" ../.nnmaildir/marks/tick/"${x/%:2,S/}" -f
     break;
 done;
