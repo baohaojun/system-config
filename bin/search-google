@@ -1,7 +1,17 @@
 #!/bin/bash
 
+#http://work.alibaba-inc.com/work/search?keywords=%E5%85%83%E4%BB%B2&type=person&offset=0&tabIndex=1
+
+prog=$(basename $0)
 host=$(basename $0 | perl -npe 's/.*-//')
 domain=com/search?q=
+
+if test $# = 0; then
+    set -- "$(xclip -o)"
+fi
+
+fill=$(echo "$@"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g')
+
 if [[ $host =~ wikipedia ]]; then
     domain=org/w/index.php?search=
 fi
@@ -14,10 +24,11 @@ if [[ $host =~ baidu ]]; then
     domain=com/s?wd=
 fi
 
-if test $# = 0; then
-    set -- "$(xclip -o)"
+url="http://$host.$domain$fill"
+
+if test $prog = search-aliman; then
+    url="http://work.alibaba-inc.com/work/search?keywords=$fill&type=person&offset=0&tabIndex=1"
 fi
-url='http://'$host.$domain''"`echo \"$@\"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf(\"%%%02x\", ord($1))#seg; s# #+#g'`"
 
 set -x
 

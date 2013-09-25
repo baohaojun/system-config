@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+exit 0;
 
 # Maildir flags are:
 #         D (draft)
@@ -48,17 +49,17 @@ for (glob "$dir/*") {
     my $file = $_;
 
     if (not m!(.*?)/cur/(.*?)(?:$sep_char)\b2,(.*)$!) {
-	warn "$_ not match maildir file\n";	
-	next;
+        warn "$_ not match maildir file\n";
+        next;
     }
 
     my $path = $1;
     my $message = $2;
     my $flags = $3;
-    
+
     if ($message =~ m/:/) {
-	system("bhj-notify sync_nnmaildir interesting double separator");
-	die "interesting: $_\n";
+        system("bhj-notify sync_nnmaildir interesting double separator");
+        die "interesting: $_\n";
     }
 
     if ($from_maildir) {
@@ -67,11 +68,11 @@ for (glob "$dir/*") {
         mkdir "$path/.nnmaildir/marks/tick";
         my $dst = "$path/.nnmaildir/marks/tick/$message";
 
-	if (! -e "$dst") {
-	    symlink "$file","$dst"
-		and print "Added mail in $mb to gnus ticks\n"
-		or warn "symlink $file $dst failed\n";
-	}
+        if (! -e "$dst") {
+            symlink "$file","$dst"
+                and print "Added mail in $mb to gnus ticks\n"
+                or warn "symlink $file $dst failed\n";
+        }
       } else {
         # my $dst = "$path/.nnmaildir/marks/tick/$message";
         # unlink "$dst"
@@ -80,15 +81,15 @@ for (glob "$dir/*") {
 
       # Sync read flags
       if ($flags =~ /S/) {
-	  #debug "read: $message";
-	  mkdir "$path/.nnmaildir/marks/read";
+          #debug "read: $message";
+          mkdir "$path/.nnmaildir/marks/read";
         my $dst = "$path/.nnmaildir/marks/read/$message";
-	if (! -e $dst) {
-	    unlink $dst;
-	    symlink "$file","$dst"
-		and print "Added mail in $mb to gnus seen\n" 
-		or warn "Failed: symlink \"$file\", \"$dst\"\n";
-	}
+        if (! -e $dst) {
+            unlink $dst;
+            symlink "$file","$dst"
+                and print "Added mail in $mb to gnus seen\n"
+                or warn "Failed: symlink \"$file\", \"$dst\"\n";
+        }
       } else {
         my $dst = "$path/.nnmaildir/marks/read/$message";
         unlink "$dst"
@@ -98,12 +99,12 @@ for (glob "$dir/*") {
       my $new_flags = '';
 
       if (-e "$path/.nnmaildir/marks/tick/$message") {
-	  # $new_flags = $new_flags . 'F'; davmail can not handle sticky emails
+          # $new_flags = $new_flags . 'F'; davmail can not handle sticky emails
       }
       if (-e "$path/.nnmaildir/marks/reply/$message") {
-	  # $new_flags = $new_flags . 'R'; davmail can not handle replied flag (in fact, any flag except 'S')
+          # $new_flags = $new_flags . 'R'; davmail can not handle replied flag (in fact, any flag except 'S')
       }
-      if (-e "$path/.nnmaildir/marks/read/$message" or $flags =~ m/S/) { #add Seen flag if either Seen by gnus or the upstream 
+      if (-e "$path/.nnmaildir/marks/read/$message" or $flags =~ m/S/) { #add Seen flag if either Seen by gnus or the upstream
         $new_flags = $new_flags . 'S';
       }
 

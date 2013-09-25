@@ -195,7 +195,7 @@
          ("From" "Ask <ask@ask.com>")
          (signature "All the best\n\n Bao Haojun")
          )
-        (".*mrvl.*"
+        (".*ali\\..*"
          ("From" ,(concat "Bao Haojun <" (shell-command-to-string "cat ~/.config/bhj/mail") ">"))
          )
         (".*gmail.*"

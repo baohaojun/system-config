@@ -81,4 +81,8 @@ if (m/^dn: /) { # restart
 ' "${disps[@]}"
 }
 
-ldapsearch -x -ZZ  -LLL -b "DC=alibaba-inc,DC=com"  -h ldap.alibaba-inc.com -D "marvell\hjbao" -w $(get-authinfo sh4-dc01) "$query" | get-display
+ldapsearch -LLL -b "DC=alibaba-inc.com,DC=com" \
+    -P 3 \
+    -H ldaps://ldap.alibaba-inc.com:636/ \
+    -D "haojun.bhj@alibaba-inc.com" \
+    -w "$(get-authinfo smtp.alibaba-inc.com)" "$query"
