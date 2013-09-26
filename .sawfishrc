@@ -127,7 +127,7 @@
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")))
 
-(bind-keys global-keymap "Super-Button1-Click" (lambda () (system "my-dict&")))
+(bind-keys global-keymap "Super-Button1-Click" (lambda () (system "my-dict-maybe&")))
 
 (bind-keys global-keymap "C-S-XF86PowerOff" (lambda () (system "lock-screen&")))
 (bind-keys global-keymap "C-S-DEL" (lambda () (system "lock-screen&")))

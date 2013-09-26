@@ -48,7 +48,6 @@
   (setq locate-command "locateEmacs.sh"))
 
 (when (eq system-type 'windows-nt)
-  (setq org-jira-working-dir "~/.org-jira")
   (require 'cygwin-mount)
   (cygwin-mount-activate)
   (require 'w32-symlinks))

@@ -114,7 +114,7 @@
         (define-key map [(meta n)] 'next-error-no-select)
         map))
 
-(setq org-agenda-files `("~/doc/projects" "~/.org-jira"))
+(setq org-agenda-files `("~/doc/projects"))
 
 (setq org-log-done 'note)
 

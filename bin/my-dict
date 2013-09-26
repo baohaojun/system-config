@@ -4,6 +4,10 @@ if test $# = 0; then
     set -- "$(xclip -o)"
 fi
 
+if test $(basename $0) = my-dict-maybe -a -e ~/.config/$USER/using-touchpad; then
+    exit 0;
+fi
+
 new_tab=-new-tab
 
 in_firefox=false
