@@ -83,7 +83,33 @@ for x in dl.google.com/android/repository/*.xml; do
         $(cat $x|grep -P -e 'sdk=".*?"' -o|perl -npe 's/"//g') \
         -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum" \
         -n $x
-done | sort -u | perl -npe 's!(.*):(.*)!test `shasum </dev/null \$(basename $1)|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; if [[ $1 =~ :// ]]; then wget -N $1; else wget -N http://dl.google.com/android/repository/\$(basename $1); fi)!g'|grep -i -e "$vpattern" -v|bash -x
+done |perl -ne '
+    BEGIN {
+        sub debug {
+            print STDERR "@_\n";
+        }
+    }
+    chomp;
+    ($file, $cs) = split /:/;
+    $non_version = qx(extract-nonversion $file);
+    $version = qx(extract-version $file);
+
+    $cur_ver = $hash{$non_version}{version} || 0;
+
+    if (qx(compare-version $cur_ver $version) eq "<") {
+        $hash{$non_version} = {
+            version => $version,
+            file => $file,
+            cs => $cs,
+        }
+    }
+
+    END {
+        for (keys %hash) {
+            print "$hash{$_}{file}:$hash{$_}{cs}\n";
+        }
+    }
+' | grep -v '^:$' | sort -u | perl -npe 's!(.*):(.*)!test `shasum </dev/null \$(basename $1)|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; if [[ $1 =~ :// ]]; then wget -N $1; else wget -N http://dl.google.com/android/repository/\$(basename $1); fi)!g'|grep -i -e "$vpattern" -v|bash -x
 
 mkdir -p ../temp
 cd ../temp

@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+
+use strict;
+
+my ($v1, $v2) = @ARGV;
+
+my @v1 = split(/\./, $v1);
+my @v2 = split(/\./, $v2);
+
+while (@v1) {
+    $v1 = int shift @v1;
+    $v2 = int shift @v2;
+
+    if ($v1 < $v2) {
+        print "<";
+        exit;
+    } elsif ($v1 > $v2) {
+        print ">";
+        exit;
+    }
+}
+
+if (@v2) {
+    print "<";
+} else {
+    print "=";
+}
