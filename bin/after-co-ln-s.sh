@@ -175,11 +175,18 @@ fi
 if grep managed=true /etc/NetworkManager/NetworkManager.conf; then
     sudo perl -npe 's/managed=true/managed=false/' -i /etc/NetworkManager/NetworkManager.conf;
 fi
+
+if test -e ~/src/github/ahd/ -a ! -e ~/src/ahd; then
+    ln -s ~/src/github/ahd/ ~/src/ahd
+fi
+
 echo OK
 
-if test $(whoami) = bhj -a -d ~/.config/bhj; then
-    true
-else
+if test $(whoami) != bhj; then
+    exit
+fi
+
+if test ! -d ~/.config/bhj; then
     mkdir -p ~/.config/bhj;
 fi
 
@@ -202,4 +209,10 @@ fi
 if test ! -e ~/.config/bhj/conn-type; then
     read -e -p "What is your email conn-type? " conn_type
     echo -n $conn_type > ~/.config/bhj/conn-type
+fi
+
+if test ! -e ~/.config/bhj/firefox-config; then
+    if yes-or-no-p "browser.link.open_newwindow.override.external = 1?"; then
+        touch ~/.config/bhj/firefox-config
+    fi
 fi
