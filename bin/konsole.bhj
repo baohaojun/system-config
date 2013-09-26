@@ -1,2 +1,2 @@
 #!/bin/bash
-konsole --profile myscr -e ~/bin/myscr&
+konsole --profile myscr --hide-menubar --hide-tabbar&
