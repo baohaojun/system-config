@@ -9,14 +9,13 @@ mkdir ~/external/bin/Linux/ext/android-sdk-linux/google -p
 test -e ~/external/bin/Linux/ext/android-sdk-linux/google/do.not.download && exit 0
 cd ~/external/bin/Linux/ext/android-sdk-linux/google
 
-x=$(if test -e sdk.ver; then cat sdk.ver; else echo 21; fi)
-while true; do
-    wget -N http://dl.google.com/android/android-sdk_r$x-linux.tgz || break
-    if tty >/dev/null 2>&1; then
-        wget -N http://dl.google.com/android/installer_r$x-windows.exe || break
-        wget -N http://dl.google.com/android/android-sdk_r$x-macosx.zip || break
+rm -rf sdk.html
+wget -O sdk.html http://developer.android.com/sdk/index.html
+
+for x in $(grep -P -o -e 'http://dl.google.com/android/.*?"' sdk.html | perl -npe 's/"//'); do
+    if ! echo $x|grep adt-; then
+        wget -N $x
     fi
-    ((x++))
 done&
 
 (

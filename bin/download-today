@@ -5,12 +5,13 @@ cd ~/Downloads
 dir=$(today)
 dir=${dir%-*}
 mkdir -p $dir
-rm -f ~/today ~/last-month
+rm -f ~/today ~/last-month ~/Downloads/today
 relative-link $(pwd)/$dir ~/today
+relative-link ~/today ~/Downloads/today
 
 dir=$(today 'last month')
 dir=${dir%-*}
 relative-link $(pwd)/$dir ~/last-month
 relative-link ~/Downloads/forever/* ~/today/
 rm ~/today/\* -f
-relative-link ~/Downloads/forever/ ~/today/
+relative-link ~/Downloads/forever/ ~/today/ >/dev/null 2>&1
