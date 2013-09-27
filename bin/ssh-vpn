@@ -2,7 +2,7 @@
 
 
 set host "fixnet"
-set dport "18080"
+set dport "7070"
 set user "bhjbhj"
 set mode ""
 

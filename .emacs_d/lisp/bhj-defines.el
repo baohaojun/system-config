@@ -1279,4 +1279,9 @@ criteria can be provided via the optional match-string argument "
     (ajoke--beginning-of-defun-function)
     (message "%s" (ajoke--current-line))))
 
+(defadvice fill-paragraph (before fill-paragraph-insert-nl-if-eob activate)
+  (when (eobp)
+    (save-excursion
+    (insert "\n"))))
+
 (provide 'bhj-defines)

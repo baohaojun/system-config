@@ -13,7 +13,7 @@ fi
             exit 0
         fi
         home=bhj.dyndns.org
-        ssh -C2qN -D 18080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 $home -p 443 ||
+        ssh -C2qN -D 7070 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 $home -p 443 ||
         if route -n |grep -e "$(host bhj.dyndns.org | pn 4)"; then
             true
         else

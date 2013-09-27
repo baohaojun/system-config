@@ -23,7 +23,7 @@ sub do_ssh($$$) {
 
   $SIG{WINCH} = \&winch;        # best strategy
 
-  $spawn=Expect->spawn("ssh -C2qN -D 18080 $username\@$host");
+  $spawn=Expect->spawn("ssh -C2qN -D 7070 $username\@$host");
   # log everything if you want
   # $spawn->log_file("/tmp/autossh.log.$$");
 
