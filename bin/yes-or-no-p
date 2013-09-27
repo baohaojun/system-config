@@ -18,8 +18,8 @@ if ! tty >/dev/null 2>&1 || test "$EMACS"; then
         SELECT_PROMPT="$user_prompt $prompt:" select-args $(if test $default = yes; then echo yes no; else echo no yes; fi)
     )
 else
-    (echo shit >/dev/tty) >/dev/null 2>&1 &&
-    read -p "$user_prompt $prompt: " >/dev/tty 2>/dev/null
+    (echo -n >/dev/tty) >/dev/null 2>&1 &&
+    read -p "$user_prompt $prompt: " >/dev/tty 2>&1
 fi
 
 if test -z "$REPLY" -a $default = yes; then
