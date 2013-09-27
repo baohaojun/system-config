@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-BEGIN 
+BEGIN
 {
     open($file, "<", "/etc/hosts");
     while (<$file>) {
@@ -22,6 +22,7 @@ open($file, ">", "/etc/hosts") or die "Error: can not open /etc/hosts, are you r
 
 my %ip_map;
 
+$hosts{localhost} = "127.0.0.1";
 for my $host (keys %hosts) {
     my $ip = $hosts{$host};
     $ip_map{$ip} = [] unless exists $ip_map{$ip};
@@ -30,7 +31,7 @@ for my $host (keys %hosts) {
 
 $, = " ";
 
-sub count_dot($) 
+sub count_dot($)
 {
     my $str = $_[0];
     $str =~ s/[^.]//g;
@@ -39,12 +40,12 @@ sub count_dot($)
 
 for my $ip ("127.0.0.1", "::1") {
     if (exists $ip_map{$ip}) {
-	@{$ip_map{$ip}} = sort {count_dot $b <=> count_dot $a} @{$ip_map{$ip}};
-	print $file "$ip @{$ip_map{$ip}}\n";
-	delete $ip_map{$ip};
+        @{$ip_map{$ip}} = sort {count_dot $b <=> count_dot $a} @{$ip_map{$ip}};
+        print $file "$ip @{$ip_map{$ip}}\n";
+        delete $ip_map{$ip};
     }
 }
 
-for my $ip (sort keys %ip_map) {
+for my $ip ((sort grep {! /:/} keys %ip_map), (sort grep {/:/} keys %ip_map)) {
     print $file "$ip @{$ip_map{$ip}}\n";
 }

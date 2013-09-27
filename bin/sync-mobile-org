@@ -21,12 +21,24 @@ if git-dirty; then
     git-interactive-add
 fi
 
+if test ! -d ~/today/MobileOrg; then
+    rm -rf ~/today/forever/MobileOrg;
+    mkdir -p ~/today/forever/MobileOrg;
+    download-today
+    cd ~/today/MobileOrg;
+    ssh-to-phone echo hello
+    rsync -av phone-sdcard:/data/media/0/MobileOrg/* .
+    git init
+    git add .
+    git commit -m 'Init version'
+fi
+
 cd ~/today/MobileOrg/
 if git-dirty; then
     git-interactive-add
 fi
 
-yes-or-no-p -y "Please sync the MobileOrg APP on you phone manually"
+yes-or-no-p -y "Sync MobileOrg APP on you phone manually done"
 
 ssh-to-phone echo hello
 rsync -av phone-sdcard:/data/media/0/MobileOrg/* .
@@ -61,4 +73,4 @@ fi
 check_git_dir ~/today/MobileOrg "Add all changes after org-mobile-push?"
 
 true;rsync -av * phone-sdcard:/data/media/0/MobileOrg/
-yes-or-no-p -y "Please sync the MobileOrg APP on you phone manually"
+yes-or-no-p -y "Sync MobileOrg APP on you phone manually done"

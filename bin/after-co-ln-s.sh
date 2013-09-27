@@ -222,3 +222,4 @@ if test ! -e ~/.config/bhj/kmail-config; then
         touch ~/.config/bhj/kmail-config
     fi
 fi
+sudo update-host-ip phone 192.168.15.244
