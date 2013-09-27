@@ -63,6 +63,17 @@ for system_arch in $system_archs; do
         components='main universe multiverse'
         gpgpath=~/external/ubuntu-keyring/usr/share/keyrings/ubuntu-archive-keyring.gpg
         extra_args="--keyring $gpgpath --debootstrapopts --keyring=$gpgpath"
+        if test ! -e $gpgpath; then
+            (
+                cd /tmp
+                deb=$(wget http://cn.archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/ -O - |
+                    grep -P -e 'href=".*?"' -o |
+                    tail -n 1 |
+                    perl -npe 's!.*"(.*)".*!http://cn.archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/$1!')
+                wget -N $deb
+                dpkg -x $(basename $deb) ~/external/ubuntu-keyring
+            )
+        fi
     fi
 
     sysname=${system%-*} #debian/ubuntu
