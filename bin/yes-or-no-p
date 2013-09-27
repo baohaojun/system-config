@@ -1,14 +1,5 @@
 #!/bin/bash
 
-function exit() {
-    if test $1 = 0; then
-        echo yes 1>&2
-    else
-        echo no 1>&2
-    fi
-    builtin exit $@
-}
-
 default=no
 prompt=(yes/No)
 if test "$1" = -y; then
@@ -27,7 +18,8 @@ if ! tty >/dev/null 2>&1 || test "$EMACS"; then
         SELECT_PROMPT="$user_prompt $prompt:" select-args $(if test $default = yes; then echo yes no; else echo no yes; fi)
     )
 else
-    read -p "$user_prompt $prompt: " >/dev/tty 2>&1
+    (echo shit >/dev/tty) >/dev/null 2>&1 &&
+    read -p "$user_prompt $prompt: " >/dev/tty 2>/dev/null
 fi
 
 if test -z "$REPLY" -a $default = yes; then
