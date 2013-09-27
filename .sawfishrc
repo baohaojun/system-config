@@ -325,6 +325,8 @@
                       (window-order)))))
   #:spec "%W")
 
+(bind-keys s-h-keymap "Super-c" 'cycle-class-bhj)
+
 (define-cycle-command-pair
   'cycle-im-window 'cycle-im-windows-backwards
   (lambda () (filter-windows

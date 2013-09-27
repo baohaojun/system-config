@@ -64,6 +64,12 @@
 (defvar ajoke--last-tagged-tick 0
   "The modification tick of the last tagged buffer, for optimization.")
 
+(defvar ajoke--tagged-lines nil
+  "A vector of the tagged lines for the current buffer.
+
+Each element of it is the line number on the source code buffer,
+where a tag is defined.")
+
 (defun ajoke--buffer-file-name (&optional buf)
   (setq buf (or buf (current-buffer)))
   (with-current-buffer buf
@@ -99,70 +105,86 @@ now, and thus need rebuild tags for this file."
   "Tag the current buffer using ctags."
   (interactive)
   (let ((current-buffer (current-buffer))
-        (current-buffer-tick (buffer-modified-tick))
+        (current-buffer-tick (buffer-chars-modified-tick))
         last-code-line)
     (unless (and
-         (eq current-buffer ajoke--last-tagged-buffer)
-         (= current-buffer-tick ajoke--last-tagged-tick))
+             (eq current-buffer ajoke--last-tagged-buffer)
+             (= current-buffer-tick ajoke--last-tagged-tick))
       ;; tag is out-dated, retag
-      (save-excursion
-        (save-window-excursion
-          (save-restriction
-            (widen)
-            (setq last-code-line (line-number-at-pos (buffer-end 1)))
-            (shell-command-on-region
-             (point-min)
-             (point-max)
-             (let ((mode-name-minus-mode
-                    (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
-               (concat "ctags-stdin --extra=+q --language-force="
-                       (shell-quote-argument
-                        (or (cdr (assoc mode-name-minus-mode ajoke--emacs-ctags-alist))
-                            mode-name-minus-mode))
-                       " -xu "
-                       (cdr (assoc mode-name-minus-mode ajoke--emacs-filter-alist))))
-             output-buf))))
-      (with-current-buffer output-buf
-        (goto-char (point-max))
-        (insert (concat "hello function "
-                        (number-to-string last-code-line)
-                        " hello world")))
+      (message "Ajoke: re-tag the buffer")
+      (let (deactivate-mark) ;;see the help of save-excursion
+        (save-excursion
+          (save-window-excursion
+            (save-restriction
+              (widen)
+              (setq last-code-line (line-number-at-pos (buffer-end 1)))
+              (shell-command-on-region
+               (point-min)
+               (point-max)
+               (let ((mode-name-minus-mode
+                      (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
+                 (concat "ctags-stdin --extra=+q --language-force="
+                         (shell-quote-argument
+                          (or (cdr (assoc mode-name-minus-mode ajoke--emacs-ctags-alist))
+                              mode-name-minus-mode))
+                         " -xu "
+                         (cdr (assoc mode-name-minus-mode ajoke--emacs-filter-alist))))
+               output-buf))))
+        (with-current-buffer output-buf
+          (goto-char (point-max))
+          (insert (concat "hello function "
+                          (number-to-string last-code-line)
+                          " hello world"))
+          (let* ((number-of-tags (line-number-at-pos))
+                 (it 1)
+                 (vec (make-vector number-of-tags 0)))
+            (setq ajoke--tagged-lines nil)
+            (while (<= it number-of-tags)
+              (aset vec (1- it) (list (ajoke--extract-line-number it)
+                                      (ajoke--extract-tag it)))
+              (setq it (1+ it)))
+            (setq ajoke--tagged-lines vec))))
       (setq ajoke--last-tagged-buffer current-buffer
             ajoke--last-tagged-tick current-buffer-tick))))
 
 (defun ajoke--extract-line-number (nth-tag-line)
   "Extract line number for `ajoke--thing-at-tag'."
-  (goto-line nth-tag-line)
-  (let ((subs (split-string (ajoke--current-line))))
-    (string-to-number
-     (if (string-equal (car subs) "operator")
-         (cadddr subs) ;operator +=      function    183 /home...
-       (caddr subs))))) ;region_iterator  struct      189 /home...
+  (if ajoke--tagged-lines
+      (nth 0 (aref ajoke--tagged-lines (1- nth-tag-line)))
+    (goto-line nth-tag-line)
+    (let ((subs (split-string (ajoke--current-line))))
+      (string-to-number
+       (if (string-equal (car subs) "operator")
+           (cadddr subs) ;operator +=      function    183 /home...
+         (caddr subs)))))) ;region_iterator  struct      189 /home...
 
 (defun ajoke--extract-tag (nth-tag-line)
   "Extract tag for `ajoke--thing-at-tag'."
-  (goto-line nth-tag-line)
-  (car (split-string (ajoke--current-line))))
+  (if ajoke--tagged-lines
+      (nth 1 (aref ajoke--tagged-lines (1- nth-tag-line)))
+    (goto-line nth-tag-line)
+    (car (split-string (ajoke--current-line)))))
 
 (defun ajoke--extract-class (nth-tag-line)
   "Extract classes for `ajoke--thing-at-tag'.
 
 If there are more than one classes/interfaces before
 NTH-TAG-LINE, ask user to pick."
-  (goto-line nth-tag-line)
-  (let ((limit (line-end-position))
-        classes)
-    (goto-char (point-min))
-    (while (search-forward-regexp "class\\|interface" limit t)
-      (let* ((tagstr (ajoke--current-line))
-             (fields (split-string tagstr))
-             (name (car fields))
-             (type (cadr fields)))
-        (cond
-         ((or (string-equal type "class")
-              (string-equal type "interface"))
-          (setq classes (cons tagstr classes))))))
-    (car (split-string (ajoke--pick-one "Which class/interface? " (delete-dups (nreverse classes)) nil t)))))
+  (with-current-buffer "*ajoke--tags*"
+    (goto-line nth-tag-line)
+    (let ((limit (line-end-position))
+          classes)
+      (goto-char (point-min))
+      (while (search-forward-regexp "class\\|interface" limit t)
+        (let* ((tagstr (ajoke--current-line))
+               (fields (split-string tagstr))
+               (name (car fields))
+               (type (cadr fields)))
+          (cond
+           ((or (string-equal type "class")
+                (string-equal type "interface"))
+            (setq classes (cons tagstr classes))))))
+      (car (split-string (ajoke--pick-one "Which class/interface? " (delete-dups (nreverse classes)) nil t))))))
 
 ;;;###autoload
 (defun ajoke--pick-one (prompt collection &rest args)
@@ -179,7 +201,7 @@ advised to use one of these elisp tools)."
 
 THING-FUNC is a function to specify which thing of the tag to
 extract, for e.g., the line number the tag is on, or the name of
-the tag. When it is called, the current buffer must be the *ajoke--tags* buffer.
+the tag.
 
 NTH-TAG-CUR means the NTH-TAG-CUR'th tag around the current code
 line. If it is positive, it means the NTH-TAG-CUR-th tag whose
@@ -188,42 +210,37 @@ negative, it means larger. If it is 0, it means equal or
 smaller. In most cases NTH-TAG-CUR should be 0, because we are
 most interested in the current tag."
   (interactive)
-  (save-excursion
-     (let (deactivate-mark) ;;see the help of save-excursion
-       (ajoke--tag-current-buffer (get-buffer-create "*ajoke--tags*"))
-       (let ((old-buffer (current-buffer))
-             (old-code-line (line-number-at-pos))
-             (last-def-line 1))
-         (with-current-buffer "*ajoke--tags*"
-           ;; we will use binary search
-           (let* ((min 1)
-                  (max (line-number-at-pos (buffer-end 1)))
-                  (mid (/ (+ min max) 2))
-                  (mid-code-line (ajoke--extract-line-number mid))
-                  (mid+1-codeline (ajoke--extract-line-number (1+ mid))))
-             (while (and
-                     (not (and
-                           (< mid-code-line old-code-line)
-                           (>= mid+1-codeline old-code-line)))
-                     (< min max))
-               (if (>= mid-code-line old-code-line)
-                   (setq max (1- mid))
-                 (setq min (1+ mid)))
-               (setq mid (/ (+ min max) 2)
-                     mid-code-line (ajoke--extract-line-number mid)
-                     mid+1-codeline (ajoke--extract-line-number (1+ mid))))
-             (funcall thing-func
-                      (cond
-                       ((= 0 nth-tag-cur)
-                        (if (= mid+1-codeline old-code-line)
-                            (1+ mid)
-                          mid))
-                       ((< nth-tag-cur 0)
-                        (if (= mid+1-codeline old-code-line)
-                            (+ mid 1 (- nth-tag-cur))
-                          (+ mid (- nth-tag-cur))))
-                       (t ; (> nth-tag-cur 0)
-                        (+ mid -1 nth-tag-cur))))))))))
+  (ajoke--tag-current-buffer (get-buffer-create "*ajoke--tags*"))
+  (let ((old-code-line (line-number-at-pos))
+        (last-def-line 1))
+    (let* ((min 1)
+           (max (length ajoke--tagged-lines))
+           (mid (/ (+ min max) 2))
+           (mid-code-line (ajoke--extract-line-number mid))
+           (mid+1-codeline (ajoke--extract-line-number (1+ mid))))
+      (while (and
+              (not (and
+                    (< mid-code-line old-code-line)
+                    (>= mid+1-codeline old-code-line)))
+              (< min max))
+        (if (>= mid-code-line old-code-line)
+            (setq max (1- mid))
+          (setq min (1+ mid)))
+        (setq mid (/ (+ min max) 2)
+              mid-code-line (ajoke--extract-line-number mid)
+              mid+1-codeline (ajoke--extract-line-number (1+ mid))))
+      (funcall thing-func
+               (cond
+                ((= 0 nth-tag-cur)
+                 (if (= mid+1-codeline old-code-line)
+                     (1+ mid)
+                   mid))
+                ((< nth-tag-cur 0)
+                 (if (= mid+1-codeline old-code-line)
+                     (+ mid 1 (- nth-tag-cur))
+                   (+ mid (- nth-tag-cur))))
+                (t ; (> nth-tag-cur 0)
+                 (+ mid -1 nth-tag-cur)))))))
 
 (defun ajoke--current-regexp (re &optional func)
   "Look for regular expression RE around the current point.
