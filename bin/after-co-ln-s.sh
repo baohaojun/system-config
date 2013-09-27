@@ -216,3 +216,9 @@ if test ! -e ~/.config/bhj/firefox-config; then
         touch ~/.config/bhj/firefox-config
     fi
 fi
+
+if test ! -e ~/.config/bhj/kmail-config; then
+    if yes-or-no-p "Prefer html in kmail? (Set in Configure Kmail -> Security)"; then
+        touch ~/.config/bhj/kmail-config
+    fi
+fi
