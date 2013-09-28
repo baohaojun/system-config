@@ -23,7 +23,7 @@ for x in $(git st -s |grep '^.\S' -P | pn 2); do
     fi
     git-diff -w "$x";
     while true; do
-        out=$(select-args yes no diff edit "@$x");
+        out=$(select-args yes no diff edit "@$PWD/$x");
         if test $out = diff; then
             git-diff -w "$x";
             continue;

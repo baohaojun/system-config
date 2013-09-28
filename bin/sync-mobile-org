@@ -26,7 +26,7 @@ if test ! -d ~/today/MobileOrg; then
     mkdir -p ~/today/forever/MobileOrg;
     download-today
     cd ~/today/MobileOrg;
-    ssh-to-phone echo hello
+    adb shell su -c sh /sdcard/start-debian2.sh && ssh-to-phone echo hello
     rsync -av phone-sdcard:/data/media/0/MobileOrg/* .
     git init
     git add .
