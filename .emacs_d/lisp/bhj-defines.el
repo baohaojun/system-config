@@ -1280,7 +1280,8 @@ criteria can be provided via the optional match-string argument "
     (message "%s" (ajoke--current-line))))
 
 (defadvice fill-paragraph (before fill-paragraph-insert-nl-if-eob activate)
-  (when (eobp)
+  (when (or (eobp)
+            (looking-at "\n###start of comment###"))
     (save-excursion
     (insert "\n"))))
 
