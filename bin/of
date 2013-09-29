@@ -18,4 +18,9 @@ if test $# = 1 && echo "${1}" | grep -q -i -P -e "^https?://"; then
     $setsid firefox -new-tab "$1"
     exit
 fi
-$setsid xdg-open "$@"
+
+if test "${1##*.}" = chm; then
+    $setsid ffchm "$@"
+else
+    $setsid xdg-open "$@"
+fi

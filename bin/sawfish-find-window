@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+script=$(cat <<EOF
+(catch 'TAG
+ (mapc
+   (lambda (w)
+     (when (or (string-match "$1" (window-name w))
+               (string-match "$1" (window-class w)))
+       (throw 'TAG "yes")))
+   (managed-windows)))
+EOF
+)
+sawfish-client -e "$script"

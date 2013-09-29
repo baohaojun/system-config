@@ -10,6 +10,7 @@
 (setq global-remap-alist
       '(("C-a" . "Home")
         ("C-g" . "ESC")
+        ("C-d" . "DEL")
         ("C-e" . "End")
         ("C-b" . "Left")
         ("C-f" . "Right")
@@ -202,7 +203,6 @@
 ;; to clear it: (setq visibility-notify-hook nil)
 
 (bind-keys s-h-keymap "Super-h" (lambda () (synthesize-event "Super-h" (input-focus))))
-(bind-keys global-keymap "Super-\\" (lambda () (synthesize-event "C-|" (input-focus))))
 (bind-keys s-h-keymap "Super-s" 'iswitch-window)
 (bind-keys s-h-keymap "Super-f" (lambda () (maximize-window-fullscreen-toggle (input-focus))))
 (unbind-keys global-keymap "Super-f")
@@ -301,9 +301,6 @@
 (bind-keys s-h-keymap "r" 'run-application)
 (bind-keys s-h-keymap "Super-r" 'run-application)
 
-(system "run-dir-once ~/.sawfish/start&")
-(system "run-dir-once ~/external/sawfish/start&")
-
 (require 'sawfish.wm.commands.x-cycle)
 
 (setq im-class "QQ.exe|kopete|Pidgin" ;; im = instant messanger
@@ -381,9 +378,15 @@
 (bind-keys global-keymap "XF86LaunchA" #'scroll-lock-toggle)
 (bind-keys global-keymap "Scroll_Lock" #'scroll-lock-toggle)
 
-(progn
-  (add-hook 'focus-in-hook
-            (lambda (w focus-mode)
-              (if (window-get w 'scroll-lock)
-                  (scroll-lock-on)
-                (scroll-lock-off)))))
+(add-hook 'focus-in-hook
+          (lambda (w focus-mode)
+            (if (window-get w 'scroll-lock)
+                (scroll-lock-on)
+              (scroll-lock-off))
+            (if (string= (window-class w) "Emacs")
+                (bind-keys global-keymap "Super-\\" (lambda () (synthesize-event "C-q" (input-focus))))
+              (bind-keys global-keymap "Super-\\" (lambda () (system "sleep .1 && xdotool key super+F12&"))))))
+
+(system "run-dir-once ~/.sawfish/start&")
+(system "run-dir-once ~/external/sawfish/start&")
+

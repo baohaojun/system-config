@@ -11,24 +11,22 @@ if test -e ~/.config/bhj/touchpad-finger-high; then
     finger_high=$(cat ~/.config/bhj/touchpad-finger-high)
 fi
 
-if test "$1" = enable -o "$1" = on; then
-    synclient FingerHigh=$finger_high
-    synclient TouchpadOff=0
-    synclient PalmDetect=1
-    synclient RTCornerButton=0
-    synclient RBCornerButton=0
-    synclient LTCornerButton=0
-    synclient LBCornerButton=0
-    synclient LockedDrags=1
+synclient FingerHigh=$finger_high
+synclient TouchpadOff=0
+synclient PalmDetect=1
+synclient RTCornerButton=0
+synclient RBCornerButton=0
+synclient LTCornerButton=0
+synclient LBCornerButton=0
+synclient LockedDrags=1
 
-    synclient TapButton1=1
-    synclient TapButton2=3
-    synclient TapButton3=2
-    synclient TapAndDragGesture=1
+synclient TapButton1=1
+synclient TapButton2=3
+synclient TapButton3=2
+synclient TapAndDragGesture=1
 
-    synclient VertTwoFingerScroll=1
-    synclient HorizTwoFingerScroll=1
+synclient VertTwoFingerScroll=1
+synclient HorizTwoFingerScroll=1
 
-    # rebind-button1
-    exit
-fi
+# rebind-button1
+exit

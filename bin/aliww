@@ -1,0 +1,20 @@
+#!/bin/bash
+
+find-or-exec AliWangWang AliWangWang&
+
+for x in $(seq 1 5); do
+    if test "$(sawfish-find-window 阿里旺旺)" != '"yes"'; then
+	sleep 1
+    else
+	break
+    fi
+done
+
+putclip $(get-config 花名)
+sawfish-send-window-event 阿里旺旺 C-v TAB
+sleep .5
+putclip $(get-authinfo alibaba)
+sawfish-send-window-event 阿里旺旺 C-v RET 
+sleep .5
+sawfish-send-window-event 关于.*阿里旺旺 RET
+

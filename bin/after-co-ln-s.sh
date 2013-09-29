@@ -190,36 +190,5 @@ if test ! -d ~/.config/bhj; then
     mkdir -p ~/.config/bhj;
 fi
 
-if test ! -e ~/.config/bhj/mail; then
-    read -e -p "What is your email address? " mail
-    echo -n $mail > ~/.config/bhj/mail
-    perl -npe '$mail = '"'$mail'"'; s/(^\s*email\s*=\s*).*/$1$mail/' -i ~/system-config/.gitconfig.bhj
-fi
-
-if test ! -e ~/.config/bhj/smtp; then
-    read -e -p "What is your email smtp? " smtp
-    echo -n $smtp > ~/.config/bhj/smtp
-fi
-
-if test ! -e ~/.config/bhj/smtp-port; then
-    read -e -p "What is your email smtp port? " port
-    echo -n $port > ~/.config/bhj/smtp-port
-fi
-
-if test ! -e ~/.config/bhj/conn-type; then
-    read -e -p "What is your email conn-type? " conn_type
-    echo -n $conn_type > ~/.config/bhj/conn-type
-fi
-
-if test ! -e ~/.config/bhj/firefox-config; then
-    if yes-or-no-p "browser.link.open_newwindow.override.external = 1?"; then
-        touch ~/.config/bhj/firefox-config
-    fi
-fi
-
-if test ! -e ~/.config/bhj/kmail-config; then
-    if yes-or-no-p "Prefer html in kmail? (Set in Configure Kmail -> Security)"; then
-        touch ~/.config/bhj/kmail-config
-    fi
-fi
+after-co-settings.sh
 sudo update-host-ip phone 192.168.15.244
