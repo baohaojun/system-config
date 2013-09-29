@@ -384,7 +384,7 @@
                 (scroll-lock-on)
               (scroll-lock-off))
             (if (string= (window-class w) "Emacs")
-                (bind-keys global-keymap "Super-\\" (lambda () (synthesize-event "C-q" (input-focus))))
+                (unbind-keys global-keymap "Super-\\")
               (bind-keys global-keymap "Super-\\" (lambda () (system "sleep .1 && xdotool key super+F12&"))))))
 
 (system "run-dir-once ~/.sawfish/start&")

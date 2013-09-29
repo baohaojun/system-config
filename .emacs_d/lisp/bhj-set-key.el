@@ -89,6 +89,7 @@
 (global-set-key [(meta s) ?h ?h] 'source-code-help)
 
 (global-set-key [(control |)] 'toggle-input-method)
+(global-set-key [(super ?\\)] 'toggle-input-method)
 (define-key global-map [remap upcase-region] 'bhj-upcase-symbol-or-region)
 (define-key global-map [remap downcase-region] 'bhj-downcase-symbol-or-region)
 
