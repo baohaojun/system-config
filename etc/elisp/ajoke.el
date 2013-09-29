@@ -150,7 +150,7 @@ now, and thus need rebuild tags for this file."
 (defun ajoke--extract-line-number (nth-tag-line)
   "Extract line number for `ajoke--thing-at-tag'."
   (if ajoke--tagged-lines
-      (nth 0 (aref ajoke--tagged-lines (1- nth-tag-line)))
+      (nth 0 (aref ajoke--tagged-lines (max 0 (1- nth-tag-line))))
     (goto-line nth-tag-line)
     (let ((subs (split-string (ajoke--current-line))))
       (string-to-number
@@ -451,7 +451,18 @@ beginning of current defun."
             (setq not-match nil)))))))
 
 (setq-default imenu-create-index-function #'ajoke--create-index-function)
-(setq-default beginning-of-defun-function #'ajoke--beginning-of-defun-function)
+; (setq-default beginning-of-defun-function #'ajoke--beginning-of-defun-function)
+(defadvice beginning-of-defun (around ajoke--beginning-of-defun first activate)
+  (if (eq this-command 'beginning-of-defun)
+    (let ((beginning-of-defun-function #'ajoke--beginning-of-defun-function))
+      ad-do-it)
+    ad-do-it))
+(defadvice end-of-defun (around ajoke--end-of-defun first activate)
+  (if (eq this-command 'end-of-defun)
+      (let ((beginning-of-defun-function #'ajoke--beginning-of-defun-function))
+        ad-do-it)
+    ad-do-it))
+
 (global-set-key [(meta g)(j)(i)] 'ajoke-get-imports)
 (global-set-key [(meta g)(j)(h)] 'ajoke-get-hierarchy)
 (global-set-key [(meta g)(j)(o)] 'ajoke-get-override)
