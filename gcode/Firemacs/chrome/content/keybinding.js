@@ -42,6 +42,12 @@ Firemacs.Commands.View = {
     ViScrollPageDown: function(e) {
         this._sfun.subPageDown(e);
     },
+    ViScrollPageUp2: function(e) {
+        this._sfun.subPageUp(e);
+    },
+    ViScrollPageDown2: function(e) {
+        this._sfun.subPageDown(e);
+    },
     PrevLink: function(e) {
         this._sfun.subPrevLink(e);
     },
@@ -268,7 +274,9 @@ Firemacs.CmdKey.View = {
     ViScrollLeft: 'H',
     ViScrollRight: 'L',
     ViScrollPageUp: 'DEL',
+    ViScrollPageUp2: 'M-v',
     ViScrollPageDown: 'SPC',
+    ViScrollPageDown2: 'C-v',
     PrevLink: 'C-xDEL',
     NextLink: 'C-xSPC',
     PrevLink: 'p',

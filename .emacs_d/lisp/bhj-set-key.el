@@ -40,6 +40,7 @@
 (global-set-key [(control f5)] 'devenv-debug)
 
 (global-set-key [(control x) (w)] 'where-are-we)
+(global-set-key [(control x) (r)] 'random-theme)
 
 (global-set-key [(control x) (c)] 'visit-code-reading)
 
