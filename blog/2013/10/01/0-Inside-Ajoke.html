@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Book Review: JIRA 5.2 Essentials</title>
+<title>Inside Ajoke</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -101,78 +101,201 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Book Review: JIRA 5.2 Essentials</h1>
+<h1 class="title">Inside Ajoke</h1>
 <p>
-Because I wrote an Emacs plugin for using Jira with org-mode.el, named
-org-jira.el, some guy at this book's publishing house came up with my
-name and asked me to write a book review for it. And here it is.
+Here's the Ajoke internals blog that I commited to write long time
+ago.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Flatten, the world of pragramming languages is flat</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+I tried to use Antlr for parsing Java source files. Boy it is slow!
+I'm slow to learn Antlr, and the parser I wrote using Antlr is slow to
+run. Maybe I'm not made for that stuff. 
 </p>
 
 <p>
-Jira is very popular. My ex-employer, my current employer, and one of
-my possible next employer (Intel) are all using Jira. One reason of
-this wild popularity is because Jira is very easy to use. Every body
-can start to use it with minimum effort. When I work at Motorola, they
-use ClearQuest, and the reference manual is so thick that you can use
-it as a weapon to strike people unconscious. But Jira, it's so simple
-and intuitive that you can go a long way without seeing any need even
-for its on-line help, which is already high quality. So why a book on
-Jira?
+Than I wrote flatten, a simple perl script that will do the following
+things (not necessarily in the order):
+</p>
+
+<ol class="org-ol">
+<li>Remove all unnecessary spaces. Only a single space between two
+identifiers are left alone. Because removing it will make the two
+identifiers turn into one.
+</li>
+
+<li>Remove all strings, or put it better, make all string literals
+empty. Thus <code>printf("hello world\n");</code> will become <code>printf("");</code>
+</li>
+
+<li>Remove all comments.
+</li>
+
+<li>Put a line feed (<code>\n</code>) only after these three characters: <code>{};</code>.
+</li>
+</ol>
+
+<p>
+And that's about all. If not, you can always refer to the <a href="https://github.com/baohaojun/ajoke/raw/master/bin/flatten.pl">flatten.pl code</a>.
 </p>
 
 <p>
-Well, this book provides you the Big Picture of Jira. If you only
-learn Jira by using it and probably also with the help of the online
-documents, you are easily trapped in a small corner of Jira, albeit
-the most obvious and easy to access part. True, it might be the most
-useful part of Jira, and you will expand it with increased exposure
-with and poking around in Jira. This book just make it easier for you
-with the expanding process. With the big picture in your eyes, you
-gain the freedom to do more wild stuff to get your things done. Just
-don't overdo it, keep your process light:-)
+Using flatten.pl, the following nonsense code will be transformed into better shape:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java">naoehu
+anteohu
+anteohu
+<span class="org-type">aontehua</span> <span class="org-function-name">eouinta</span> (<span class="org-type">anoethu</span> <span class="org-variable-name">noehu</span>, <span class="org-type">noatehu</span> <span class="org-variable-name">aon</span>)<span class="org-comment-delimiter">/*</span><span class="org-comment">aoenu haonhaoeu */</span> { <span class="org-string">"anthue an"</span>; }asneo <span class="org-type">huanoehu</span> <span class="org-variable-name">anoeh</span>{<span class="org-type">aneou</span> <span class="org-variable-name">haneohuanoheu</span>; }
+</pre>
+</div>
+
+<p>
+like this:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java">naoehu anteohu anteohu <span class="org-type">aontehua</span> <span class="org-function-name">eouinta</span>(<span class="org-type">anoethu</span> <span class="org-variable-name">noehu</span>,<span class="org-type">noatehu</span> <span class="org-variable-name">aon</span>){
+    <span class="org-string">""</span>;
+}
+asneo <span class="org-type">huanoehu</span> <span class="org-variable-name">anoeh</span>{
+    <span class="org-type">aneou</span> <span class="org-variable-name">haneohuanoheu</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Parsing flat java</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Java is so easy to parse when it is flatten. Well, not quite if you
+take generic programming into question. It's a lot more difficult with
+it. So screw generic programming.
 </p>
 
 <p>
-It also teaches you how to administrate Jira. This may seem not so
-useful to a common Jira user. But if you happen to be a Jira Admin or
-a PM, then these info are valuable. Even to the User, it can be more
-helpful than it seems. Because everybody should be a PM nowadays (or so I've
-heard).
+Flat Java is very easy to parse, you can do it with Regular
+Expression. First of all, for any class/interface/method, you can look
+for the <code>{</code> character on the same line. If there is a class/interface
+keyword, then it's a class definition; if there is a <code>(</code> character,
+then it is a method. The whole line can be used as the prototype for
+the class/interface/method.
 </p>
 
 <p>
-The final chapter is on how to use Jira (with an additional Jira
-plug-in, GreenHopper) for Agile Development. Agile people might love
-to check it out.
+See the code at both <a href="https://github.com/baohaojun/ajoke/raw/master/bin/ajoke-get-hierarchy.pl">ajoke-get-hierarchy.pl</a> and <a href="https://github.com/baohaojun/ajoke/raw/master/bin/ajoke-get-imports.pl">ajoke-get-imports.pl</a>. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Patching ctags-exuberant and GNU global</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+For some reason, if you tagged Java source code with global +
+ctags-exuberant, and you query for String, java.lang.String will show
+up as a match. But if you query for java.lang.String, then there is no
+match.
 </p>
 
 <p>
-After you gain the Big Picture, this book is also great as a reference
-manual, the topics are well organized and easy to look up.
+This is because <code>.</code> is a regexp meta character, and global supports
+regexp querying, if it saw any irregular character like ".", then the
+query became a regexp matching instead of simple string compare.
 </p>
 
 <p>
-Last but not least, some ad for my org-jira. If you are a hacker using
-Emacs and org-mode and Jira all at the same time, then you definitely
-will like <a href="../../../2011/12/28/org-jira.html">org-jira</a>.
+Besides, even if it's not <code>.</code>, but the c++ ":", the java::lang::String
+will not show up because only String is recorded as an entry,
+java::lang is recorded as its prefix which will be added to the front
+if the entry matches.
 </p>
 
+<p>
+So I patched global a bit, that when it sees java.lang.String queried,
+it will do the right thing.
+</p>
+
+<p>
+See <a href="https://github.com/baohaojun/system-config/commit/2d99e01c0d7773f76214224409b1654e13fa6fd2">this commit at my system-config project</a>. Later I have moved the
+ctags-exuberant and global projects into their separate github repo
+<a href="https://github.com/baohaojun/ctags-exuberant.git">here</a> and <a href="https://github.com/baohaojun/ajoke-global">here</a>, respectively. Some changes to them have been left in
+the system-config project though. What a mess:-)
+</p>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Tagging .jar files</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+In the beginning my ajoke system is only for Android programming where
+the whole source code is available, even the java.lang.String class's
+source code.
+</p>
+
+<p>
+But to make ajoke more useful, it must be able to handle .jar files,
+which is the norm for java programming.
+</p>
+
+<p>
+Turns out it's easy. Given a .jar file, you can unzip it to get all
+the .class files in it. Then you can use javap to peek what
+classes/interfaces/methods are there in it.
+</p>
+
+<p>
+And that's all I need to put together a perl script
+<a href="https://github.com/baohaojun/system-config/raw/master/bin/gtagsAntlrJavaParser">gtagsAntlrJavaParser</a> to parse the .jar files. Don't ask me why the
+name says using Antlr to parse Java. Long story and you are welcome to
+guess. I will someday change it to gtagsJarParser.
+</p>
+
+<p>
+And the global source code for invoking this parser is completely
+copied from global's plugin to call ctags-exuberant. Only minor
+changes are done to it, check the code <a href="https://github.com/baohaojun/ajoke-global/raw/master/plugin-example/gtags-antlr-java.c">gtags-antlr-java.c</a>.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Idea: Using Ajoke to do C# programming (with Mono)</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+I hope Ajoke can someday be extended to allow it being used for C#
+programming. Like the .jar files, the .dll files for Mono platform can
+be decompiled to get the classes/interfaces/methods.
+</p>
+
+<p>
+But not until I have the need again to do Mono programming. My
+<a href="https://github.com/baohaojun/beagrep.git">beagrep.git</a> project is the only place I used C#, and I'm not doing it
+recently.
+</p>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="../../08/16/0-rbtree.html"> <!-- prev-url -->
+      <a href="../../09/02/0-jira-5.2-essentials-review.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        红黑树 <!-- prev-title -->
+        Book Review: JIRA 5.2 Essentials <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
-      <a href="../../10/01/0-Inside-Ajoke.html"> <!-- next-url -->
-        Inside Ajoke <!-- next-title -->
+      <a href="../../../../meta/Archive.html"> <!-- next-url -->
+        Archive <!-- next-title -->
         <i class="icon-chevron-right">》</i>
       </a>
     </li>
   </ul>
 </nav>
+</div>
+</div>
 </div>
 <!-- {%html-mode%} -->
 
@@ -240,12 +363,13 @@ will like <a href="../../../2011/12/28/org-jira.html">org-jira</a>.
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="../../../../meta/tags/reading.html" title="reading books">reading</a></li>
+                <li><a href="../../../../meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='../../08/16/0-rbtree.html'> 红黑树 </a></li>
+        <li><a href='../../09/02/0-jira-5.2-essentials-review.html'> Book Review: JIRA 5.2 Essentials </a></li>
+<li><a href='../../08/16/0-rbtree.html'> 红黑树 </a></li>
 <li><a href='../../07/20/0-grep-cross-ref.html'> Grepping Cross References </a></li>
 <li><a href='../../07/16/0-find-scroll-lock.html'> 找回失去的Scroll Lock——系统View Mode </a></li>
 <li><a href='../../07/11/0-firefox-search-for-tab.html'> Firefox: Better Tab Reuse for IDE Help Integration </a></li>
@@ -254,7 +378,6 @@ will like <a href="../../../2011/12/28/org-jira.html">org-jira</a>.
 <li><a href='../../06/18/0-auto-includes.html'> 苹果对头文件开刀了？我也来！ </a></li>
 <li><a href='../../06/13/0-one-book-one-saying.html'> 一本书，一句话 </a></li>
 <li><a href='../../05/31/0-intelligent-completion.html'> 智能补齐 </a></li>
-<li><a href='../../05/30/0-intelligent-cd.html'> 智能cd </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

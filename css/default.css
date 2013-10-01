@@ -2564,7 +2564,7 @@ a img {
 ----------------------------------------------- */
 h2 {
   margin:1.5em 0 .75em;
-  font: "Trebuchet MS",Trebuchet,Arial,Verdana,Sans-serif;
+  font-family: "Trebuchet MS",Trebuchet,Arial,Verdana,Sans-serif;
   /*text-transform:uppercase;*/
   letter-spacing:.2em;
   }
@@ -2769,7 +2769,6 @@ p.post-footer {
   /* font-lock-variable-name-face */
 }
 
-@import url(http://www.blogger.com/static/v1/v-css/navbar/3334278262-classic.css);
 div.b-mobile {display:none;}
 
 #prev_next_posts {

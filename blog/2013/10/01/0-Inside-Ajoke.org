@@ -1,0 +1,118 @@
+#+title: Inside Ajoke
+# bhj-tags: tool
+
+Here's the Ajoke internals blog that I commited to write long time
+ago.
+
+* Flatten, the world of pragramming languages is flat
+
+I tried to use Antlr for parsing Java source files. Boy it is slow!
+I'm slow to learn Antlr, and the parser I wrote using Antlr is slow to
+run. Maybe I'm not made for that stuff. 
+
+Than I wrote flatten, a simple perl script that will do the following
+things (not necessarily in the order):
+
+1. Remove all unnecessary spaces. Only a single space between two
+   identifiers are left alone. Because removing it will make the two
+   identifiers turn into one.
+
+2. Remove all strings, or put it better, make all string literals
+   empty. Thus =printf("hello world\n");= will become =printf("");=
+
+3. Remove all comments.
+
+4. Put a line feed (=\n=) only after these three characters: ={};=.
+
+And that's about all. If not, you can always refer to the [[https://github.com/baohaojun/ajoke/raw/master/bin/flatten.pl][flatten.pl code]].
+
+Using flatten.pl, the following nonsense code will be transformed into better shape:
+
+#+BEGIN_SRC java
+naoehu
+anteohu
+anteohu
+aontehua eouinta (anoethu noehu, noatehu aon)/*aoenu haonhaoeu */ { "anthue an"; }asneo huanoehu anoeh{aneou haneohuanoheu; }
+#+END_SRC
+
+like this:
+
+#+BEGIN_SRC java
+naoehu anteohu anteohu aontehua eouinta(anoethu noehu,noatehu aon){
+    "";
+}
+asneo huanoehu anoeh{
+    aneou haneohuanoheu;
+}
+#+END_SRC
+
+* Parsing flat java
+
+Java is so easy to parse when it is flatten. Well, not quite if you
+take generic programming into question. It's a lot more difficult with
+it. So screw generic programming.
+
+Flat Java is very easy to parse, you can do it with Regular
+Expression. First of all, for any class/interface/method, you can look
+for the ={= character on the same line. If there is a class/interface
+keyword, then it's a class definition; if there is a =(= character,
+then it is a method. The whole line can be used as the prototype for
+the class/interface/method.
+
+See the code at both [[https://github.com/baohaojun/ajoke/raw/master/bin/ajoke-get-hierarchy.pl][ajoke-get-hierarchy.pl]] and [[https://github.com/baohaojun/ajoke/raw/master/bin/ajoke-get-imports.pl][ajoke-get-imports.pl]]. 
+
+* Patching ctags-exuberant and GNU global
+
+For some reason, if you tagged Java source code with global +
+ctags-exuberant, and you query for String, java.lang.String will show
+up as a match. But if you query for java.lang.String, then there is no
+match.
+
+This is because =.= is a regexp meta character, and global supports
+regexp querying, if it saw any irregular character like ".", then the
+query became a regexp matching instead of simple string compare.
+
+Besides, even if it's not =.=, but the c++ ":", the java::lang::String
+will not show up because only String is recorded as an entry,
+java::lang is recorded as its prefix which will be added to the front
+if the entry matches.
+
+So I patched global a bit, that when it sees java.lang.String queried,
+it will do the right thing.
+
+See [[https://github.com/baohaojun/system-config/commit/2d99e01c0d7773f76214224409b1654e13fa6fd2][this commit at my system-config project]]. Later I have moved the
+ctags-exuberant and global projects into their separate github repo
+[[https://github.com/baohaojun/ctags-exuberant.git][here]] and [[https://github.com/baohaojun/ajoke-global][here]], respectively. Some changes to them have been left in
+the system-config project though. What a mess:-)
+
+* Tagging .jar files
+
+In the beginning my ajoke system is only for Android programming where
+the whole source code is available, even the java.lang.String class's
+source code.
+
+But to make ajoke more useful, it must be able to handle .jar files,
+which is the norm for java programming.
+
+Turns out it's easy. Given a .jar file, you can unzip it to get all
+the .class files in it. Then you can use javap to peek what
+classes/interfaces/methods are there in it.
+
+And that's all I need to put together a perl script
+[[https://github.com/baohaojun/system-config/raw/master/bin/gtagsAntlrJavaParser][gtagsAntlrJavaParser]] to parse the .jar files. Don't ask me why the
+name says using Antlr to parse Java. Long story and you are welcome to
+guess. I will someday change it to gtagsJarParser.
+
+And the global source code for invoking this parser is completely
+copied from global's plugin to call ctags-exuberant. Only minor
+changes are done to it, check the code [[https://github.com/baohaojun/ajoke-global/raw/master/plugin-example/gtags-antlr-java.c][gtags-antlr-java.c]].
+
+* Idea: Using Ajoke to do C# programming (with Mono)
+
+I hope Ajoke can someday be extended to allow it being used for C#
+programming. Like the .jar files, the .dll files for Mono platform can
+be decompiled to get the classes/interfaces/methods.
+
+But not until I have the need again to do Mono programming. My
+[[https://github.com/baohaojun/beagrep.git][beagrep.git]] project is the only place I used C#, and I'm not doing it
+recently.

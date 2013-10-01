@@ -1,14 +1,19 @@
 #+title: Archive
  * 2013
+  - 2013-10
+   * 2013-10-01
+
+     [[../blog/2013/10/01/0-Inside-Ajoke.org][Inside Ajoke]]
+
   - 2013-09
    * 2013-09-02
 
-     [[../blog/2013/09/02/0-jira-5.2-essentials-review.org][My True-To-The-Earth Book Review: JIRA 5.2 Essentials]]
+     [[../blog/2013/09/02/0-jira-5.2-essentials-review.org][Book Review: JIRA 5.2 Essentials]]
 
   - 2013-08
    * 2013-08-16
 
-     [[../blog/2013/08/16/0-红黑树.org][红黑树]]
+     [[../blog/2013/08/16/0-rbtree.org][红黑树]]
 
   - 2013-07
    * 2013-07-20

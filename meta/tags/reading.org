@@ -3,7 +3,7 @@
   - 2013-09
    * 2013-09-02
 
-     [[../../../blog/2013/09/02/0-jira-5.2-essentials-review.org][My True-To-The-Earth Book Review: JIRA 5.2 Essentials]]
+     [[../../../blog/2013/09/02/0-jira-5.2-essentials-review.org][Book Review: JIRA 5.2 Essentials]]
 
   - 2013-06
    * 2013-06-13

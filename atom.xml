@@ -12,16 +12,22 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Inside Ajoke]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/10/01/0-Inside-Ajoke.html"/>
+    <updated>2013-10-01T23:10:48+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/10/01/0-Inside-Ajoke.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[JIRA 5.2 Essentials]]></title>
     <link href="http://baohaojun.github.io/blog/2013/09/02/0-jira-5.2-essentials-review.html"/>
-    <updated>2013-03-04T11:09:28+08:00</updated>
+    <updated>2013-09-04T11:05:42+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/09/02/0-jira-5.2-essentials-review.html</id>
   </entry>
   <entry>
     <title type="html"><![CDATA[红黑树]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/08/16/0-红黑树.html"/>
-    <updated>2013-08-16T17:58:09+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/08/16/0-红黑树.html</id>
+    <link href="http://baohaojun.github.io/blog/2013/08/16/0-rbtree.html"/>
+    <updated>2013-09-04T11:13:04+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/08/16/0-rbtree.html</id>
   </entry>
   <entry>
     <title type="html"><![CDATA[Grepping Cross References]]></title>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/06/13/0-one-book-one-saying.html"/>
     <updated>2013-06-13T21:42:09+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/06/13/0-one-book-one-saying.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[智能补齐]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/05/31/0-intelligent-completion.html"/>
-    <updated>2013-05-31T23:39:53+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/05/31/0-intelligent-completion.html</id>
   </entry>
 </feed>
