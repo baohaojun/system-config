@@ -38,7 +38,8 @@ programming languages better, such as C#, which is very like Java in
 my opinion. This is unlike [[http://jdee.sourceforge.net/][JDEE]], which will remain Java only I
 think. For e.g., I have hacked GNU Global a bit, so that it will be
 very quick to query android.view.View as a whole. But that will be
-another blog post (which I will add the link here after I write it).
+another blog post (which I will add the link [[http://baohaojun.github.io/blog/2013/10/01/0-Inside-Ajoke.html][Inside Ajoke]] here after I
+write it).
 
 * How to tell ajoke
 
