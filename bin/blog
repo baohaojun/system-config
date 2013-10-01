@@ -32,31 +32,51 @@ while true; do
 done
 
 if test "$#" != 0; then
-    cd ~/doc/baohaojun/
-    if test "$1" = v; then
-        shift
-        firefox $(github-pagep $(f "$@"))
-        exit
-    fi
-
-    if test "$1" = p; then
-        shift
-        blog=$(f "$@")
-        putclip "[[$blog][$(grep -i -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//i')]]"
-        exit
-    fi
-
-    if test "$1" = u; then
-        shift
-        putclip $(github-pagep $(f "$@"))
-        exit
-    fi
-
-    if test "$1" = e; then
-        shift
-    fi
-
-    e "$@"
+    case "$1" in
+        project)
+            cd -
+            shift
+            remote=$(git remote -v |pn 2|head -n 1)
+            putclip "[[$remote][$(basename $remote)]]"
+            ;;
+        c)
+            cd -
+            shift
+            remote=$(git remote -v |pn 2|head -n 1)
+            putclip "[[$remote/commit/"$@"][this commit at my $(basename $remote) project]]"
+            ;;
+        g)
+            cd -
+            shift
+            putclip "[[$(git-info-clip "$@")][$@]]"
+            ;;
+        v)
+            shift
+            firefox $(github-pagep $(f "$@"))
+            ;;
+        p|P)
+            a1=$1
+            shift
+            blog=$(f "$@")
+            link=$blog
+            if test $a1 = P; then
+                link=http://baohaojun.github.io/${blog#./}
+                link=${link%.org}.html
+            fi
+            putclip "[[$link][$(grep -i -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//i')]]"
+            ;;
+        u)
+            shift
+            putclip $(github-pagep $(f "$@"))
+            ;;
+        e)
+            shift
+            e "$@"
+            ;;
+        *)
+            e "$@"
+            ;;
+    esac
     exit
 fi
 

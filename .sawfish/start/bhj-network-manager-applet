@@ -1,0 +1,5 @@
+#!/bin/bash
+sleep 5
+if ! ps.pl nm-applet; then
+    exec nm-applet
+fi

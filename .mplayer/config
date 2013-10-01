@@ -3,6 +3,6 @@ subfont-text-scale=4
 #vf=expand=0:-80:0:0
 subfont-encoding=unicode
 subcp=gbk
-font=simsun
+font="Microsoft YaHei"
 
 
