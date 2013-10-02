@@ -1,0 +1,17 @@
+#!/bin/bash
+
+case $1 in
+    hibernate)
+        ;;
+    suspend)
+        ;;
+    thaw)
+        ;;
+    resume)
+	su bhj -c ~bhj/bin/switch-touchpad
+	echo done > ~bhj/.logs/$(basename $0).log
+        ;;
+    *)  echo "ERROR: called incorrectly."
+        ;;
+esac
+
