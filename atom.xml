@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[自己写了一个输入法, Windows下的五笔]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/10/05/0-My-Own-Win32-Input-Method.html"/>
+    <updated>2013-32-05T07:10:11+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/10/05/0-My-Own-Win32-Input-Method.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[我的Win32输入法编程心得]]></title>
     <link href="http://baohaojun.github.io/blog/2013/10/04/0-Win32-IME-Programming.html"/>
-    <updated>2013-23-04T23:10:15+08:00</updated>
+    <updated>2013-10-04T23:27:06+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/10/04/0-Win32-IME-Programming.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/07/05/0-firefox-smart-new-tab.html"/>
     <updated>2013-07-05T14:33:32+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/07/05/0-firefox-smart-new-tab.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[苹果对头文件开刀了？我也来！]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/06/18/0-auto-includes.html"/>
-    <updated>2013-06-18T19:59:12+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/06/18/0-auto-includes.html</id>
   </entry>
 </feed>

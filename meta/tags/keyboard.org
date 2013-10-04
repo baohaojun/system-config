@@ -1,6 +1,10 @@
 #+title: Hacking the keyboard, Dvorak Programmer's Keyboard mainly.
  * 2013
   - 2013-10
+   * 2013-10-05
+
+     [[../../../blog/2013/10/05/0-My-Own-Win32-Input-Method.org][自己写了一个输入法, Windows下的五笔]]
+
    * 2013-10-04
 
      [[../../../blog/2013/10/04/0-Win32-IME-Programming.org][我的Win32输入法编程心得]]
