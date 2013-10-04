@@ -1,0 +1,325 @@
+#+title: 我的Win32输入法编程心得
+# bhj-tags: keyboard
+
+这是我很多年前写的一篇文章，当时用wiki的格式放在google code的文档区，现
+在把它改成.org的格式再发布成.html，贴到我的博客里。里面最有价值的应该是
+我自己当时为了开发Windows输入法调试方便而整理总结出来的一些土方法。这玩
+意儿由于是与系统集成的很紧密的，不小心一点的话会搞得系统整个用不了，然
+后必须重启，从而导致开发效率非常低下。咱们毕竟不是专业搞Windows输入法开
+发的正规军，所以真的不知道人家在这方面是不是有什么秘笈啦...
+
+此外不知道我以前的脑子是不是进水了，所有的逗号和句号用的居然是英文的逗
+号句号，如果在阅读上对您造成困扰，很抱歉，但我是懒得改了:-)
+
+* 一些术语
+
+  * IME :: Input Method Editor/Engine,  输入法编辑器, 引擎
+  * IMM :: Input Method Manager, 输入法管理器
+
+  * Comp :: Composition String, 一般是用户输入的字串, 比如拼音输入`香'
+            字要打`xiang', 这个`xiang'就是用户输入的Comp. 你可以告诉
+            IMM当前的Comp是什么, 这样如果应用能自己显示Comp/Cands的话它
+            就自己显示; 你也可以不告诉IMM, 这样你自己负责显示就行了.
+  * Cands :: Candidates, 候选词组
+  * Commit :: 提交上屏
+
+其他一些软键盘啊, GuideLine啊之类的对我的输入法没什么用, 我就全部无视了.
+
+* 简介 
+
+Win32下的输入法编程概括地来说就是要写一个DLL. 这个DLL要实现并在.def文件
+中指定输出M$指定的一些API. Win32在装载你的输入法DLL时会检查是不是每个
+API都能查询到, 如果不是的话, 这个输入法就不会被成功的装载.
+
+建议下载2600.1106版本的win32 DDK, 里面有区位输入法的源程序, 我的影舞笔
+就是参考这个程序写的. 可以看看里面的wingb.def文件, 总共输出了将近20个
+API. 其实大部分都没什么用, 直接套就行了, 重要的也就5~6个.
+
+#+BEGIN_EXAMPLE
+$cat wingb.def
+LIBRARY         WINGB
+
+EXPORTS
+                ImeConversionList
+                ImeConfigure
+                ImeDestroy
+                ImeEscape
+                ImeInquire
+                ImeProcessKey
+                ImeSelect
+                ImeSetActiveContext
+                ImeSetCompositionString
+                ImeToAsciiEx
+                NotifyIME
+
+                ImeRegisterWord
+                ImeUnregisterWord
+                ImeGetRegisterWordStyle
+                ImeEnumRegisterWord
+
+                UIWndProc
+                StatusWndProc
+                CompWndProc
+                CandWndProc
+
+#+END_EXAMPLE
+
+
+事实上win32 DLL还有一个隐含的输出函数, 就是DLL的入口函数, 一般都是名为
+DllMain的一个函数, 但是在区位输入法里这个函数的名字是ImeDllInit. 你可以
+在你的makefile (或类似于vc6的.dsp/vc789的.vcproj等文件)里指定入口函数的
+名字.
+
+初始化的大概的顺序是: 
+
+  - DllMain里注册窗口类
+  - ImeInquire里告诉imm你的ime消息窗口的类名
+  - imm根据这个类名创建你的ime消息窗口
+  - 你的消息窗口的回调函数被调用, 消息是 =wm_create=
+
+至此, 用户就可以开始使用你的输入法了, 这之后有意义的顺序是大概这样的: 
+
+  - 用户按下一个键
+  - ImeProcessKey返回true, 表示输入法想处理这个键
+  - ImeToAsciiEx被调用
+  - 此函数创建一些ime消息, 如开始/结束输入法编辑, 设置comp串, cand串,
+    显示comp窗口, 显示状态栏窗口, 提交等
+  - 相应的窗口被创建, 显示, 
+  - 如果当前的应用程序是懂输入法的, 它自己也会显示comp串, 前提是你的
+    ImeToAsciiEx需要告诉它comp串是什么, 如果你只想自己来显示comp串的话,
+    那么这种程序是不会显示的
+
+我为了自己编程方便, 就没有通知应用程序自己去显示comp和cands. 同时也是因
+为我觉得实在是没有必要.
+
+
+** DllMain
+
+这个函数肯定是最重要的, 一个DLL没有这个入口函数的话就不是DLL了. 在DDK的
+区位输入法代码里有一个sources的文件, 里面有一行:
+
+#+BEGIN_EXAMPLE
+DLLENTRY=ImeDllInit
+#+END_EXAMPLE
+
+你如果用别的build系统, 比如Visual Studio或者mingw, 你就应该自己配置你的入口函数是哪个.
+
+这个函数在dll load的时候需要初始化你的输入法里要用到的全局变量, 以及注
+册win32的几个窗口类. 在区位输入法里注册了四个窗口类, UI, Status, Comp,
+Cand. 其中UI窗口是一个纯消息窗口, 也是win32 IME必须要求的一个窗口. 这个
+窗口的类名会在ImeInquire里传给win32 IME以便让win32 IME知道它应该去跟谁
+通讯. 我的影舞笔输入法把Comp和Cand的窗口合并为一个了.
+
+如果这个函数返回false的话那这个DLL就会load失败, 当前尝试load你的输入法
+的这个程序就没法用你的输入法了. 所以在这个函数里你可以干一些很``酷''的
+事情, 比如, 在测试阶段, 你可以指定只有notepad才能成功load你的输入法, 通
+过GetModuleFileName你可以得到当前调用的程序的路径, 如果不是notepad, 那
+就不让它用你的输入法. 然后呢, 你在win32的控制面板->区域设置里指定你当前
+正在测试开发的输入法为默认的输入法, 这样你一打开notepad, 就可以开始测试
+你的输入法了, 而不需要按一下输入法切换键才能开始测. 虽然只是省下按一个
+键, 但是也是值得的, 因为相信你会按很多次的. 而这时候其他的程序不会受影
+响, 你可以随便杀死notepad.exe, 做下一轮的开发, 测试迭代.
+
+(win32下一个DLL被load了的话, 是不允许替换这个dll文件的. 所以当你发现一
+个bug, 做了修正, 你没法把build出来的这个新的dll拷到系统路径里, 必须先把
+所有的load了这个dll的程序杀死. 如果你的输入法不是默认的, 那你每次都要按
+一下切换键才能开始测试; 如果它是默认的但是你不把除了notepad的其他程序排
+除的话, 你每次都要杀死很多程序, 比如explorer.exe等. 尤其是如果你只能手
+工一个一个的删的话, 很快你会疯掉的. 你甚至都不知道哪个程序load了你的输
+入法. 只能一个一个的猜? 如果你知道sysinternal的process explorer的话, 那
+你还可以用一下它的查找功能).
+
+还有一个特别有用的功能是, 即使你的输入法还有bug, 但是如果这个bug只是针
+对某个程序的话(或者说某个程序有bug, 但只针对你的输入法:-), 你可以把这个
+程序排除在外. 比如, Cygwin下的X窗口程序都是由xwin.exe来画窗口的, 这些窗
+口都不能处理win32的输入法, 但是win32的输入法切换键又能把输入法的状态栏
+给切出来, 很明显没什么意义, 我就把xwin.exe在我的输入法里排除了. 又比如,
+所有的DOS窗口的输入法处理都是由一个叫conime.exe的程序处理的, 这个程序好
+像会对我的输入法提很非分的要求, 我干脆就把它也拒之门外:-) 以后我就打定
+主意在终端窗口里再也不用输入法了, 呵呵! (造成这个的原因是前面提到的
+conime是个``懂''输入法的应用, 它太``懂''了, 它要求你必须设置comp串
+/cands告诉它知道, 你还不能自己显示! 我怀疑这个应用的imm是不是压根就不会
+帮你创建那个ime消息窗口. 一句话, 它太霸道了).
+
+做这样的选择, 我的生活会更简单.
+
+** ImeInquire
+
+这个函数是除了DllMain后第一个会被win32 IMM调用的函数. IMM通过调用这个函
+数知道你的输入法有什么特性. 比如, 除了按键消息外, 你是不是还想处理键放
+开的消息. 以下是我的影舞笔的此函数代码(注释版)
+
+#+BEGIN_SRC c++
+  BOOL WINAPI
+  ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
+  {
+          if (!lpImeInfo) { //简单出错处理
+                  return FALSE;
+          }
+  
+          lpImeInfo->dwPrivateDataSize = 0; //IMM会根据这个值自动为你的输
+                                            //入法分配一块内存, 你可以用
+                                            //它来保存一些你的context数据.
+                                            //我嫌这玩意儿太"聪明"了, 不
+                                            //用之.
+  
+          lpImeInfo->fdwProperty = IME_PROP_KBD_CHAR_FIRST | IME_PROP_UNICODE | IME_PROP_IGNORE_UPKEYS | IME_PROP_SPECIAL_UI;
+  
+          // IME_PROP_KBD_CHAR_FIRST 是说IMM调用你的ImeProcessKey和
+          // ImeToAsciiEx函数之前是不是把按键消息的char值算出来, 在第一个
+          // 整型参数的前两个字节里传给你, 其实你也可以自己算的如果你不设
+          // 这个标志的话那第一个参数就只有低位的两个字节有意义 (好像是所
+          // 按的键的虚拟键值).
+  
+          // IME_PROP_UNICODE, 意义应该很明显了, 一般肯定得设上
+  
+          // IME_PROP_IGNORE_UPKEYS, 就是上文说的要不要处理键放开的消息.
+          // 不设这个标志就是要处理, 设了就是不处理(IMM针对键放开的消息就
+          // 不会来调你的ImeProcessKey和ImeToAsciiEx了).
+  
+          // IME_PROP_SPECIAL_UI, 不记得什么意思了, 可以上google查一下.
+  
+          lpImeInfo->fdwConversionCaps =
+                  IME_CMODE_NATIVE | IME_CMODE_NOCONVERSION;
+          lpImeInfo->fdwSentenceCaps = 0;
+          lpImeInfo->fdwUICaps = UI_CAP_ROT90;
+          lpImeInfo->fdwSCSCaps = SCS_CAP_COMPSTR | SCS_CAP_MAKEREAD;
+          lpImeInfo->fdwSelectCaps = (DWORD) 0;
+  
+          // 这之上的这段代码是什么意思我也不明白, 但是这样写对我的影舞笔
+          // 就够用了, 所以我也懒得去弄明白.
+          
+          lstrcpy(lpszWndCls, get_ui_class_name().c_str());
+  
+          // 这里你要把你的UI窗口的类名拷到IMM传给你的输出参数里.
+          
+          return (TRUE);
+  
+          // 一定要返回true, 没试过这里返回false会怎样. 
+  }
+#+END_SRC
+
+
+LPIMEINFO的定义可以在ddk的immdev.h里查到. 
+
+** ImeProcessKey 
+win32 IMM在收到一个键盘消息之后, 会先问一下这个函数, 你的IME是不是想处
+理这个键, 如果你在这个函数里返回true, 意思就是你想处理, 那么imm就会接着
+调下一个函数ImeToAsciiEx, 否则它就会自己处理这个键盘消息.
+
+** ImeToAsciiEx 
+这个函数的返回值有点意思. 返回值应该是你这个函数的这次调用一共给win32产
+生的多少个消息. 比如用户输入了一个完整的五笔编码, 希望提交他/她选中的候
+选词了, 你就把要提交的数据(一个unicode字符串)写到输入法上下文的提交字串
+的内存句柄中, 再把 ( =WM_IME_COMPOSITION=, 0,
+=GCS_COMP|GCS_RESULT|GCS_RESULTREAD= ) 这样一个消息添加到输入法上下文的
+消息内存中, 把要返回多少个消息加一.
+
+以下是输入法上下文结构的定义:
+
+#+BEGIN_SRC c++
+typedef struct tagINPUTCONTEXT {
+    HWND                hWnd;
+    BOOL                fOpen;
+    POINT               ptStatusWndPos;
+    POINT               ptSoftKbdPos;
+    DWORD               fdwConversion;
+    DWORD               fdwSentence;
+    union   {
+        LOGFONTA        A;
+        LOGFONTW        W;
+    } lfFont;
+    COMPOSITIONFORM     cfCompForm;
+    CANDIDATEFORM       cfCandForm[4];
+    HIMCC               hCompStr;
+    HIMCC               hCandInfo;
+    HIMCC               hGuideLine;
+    HIMCC               hPrivate;
+    DWORD               dwNumMsgBuf;
+    HIMCC               hMsgBuf;
+    DWORD               fdwInit;
+    DWORD               dwReserve[3];
+} INPUTCONTEXT
+#+END_SRC
+
+
+** UIWndProc
+
+这个函数里要处理IME消息. 其实UI窗口根本没有UI, 没有图形! 这个窗口是一个
+纯消息窗口, 你不会收到 =wm_paint= 的消息. 所以我直接把区位输入法里处理
+=wm_paint= 的回调函数删了. 我觉得把这个窗口命名为ImePureMsgWnd更合适一些.
+
+话说回来, 这个IME第一重要的窗口是谁创建的呢? 答案是IMM. 你在区位输入法
+的代码里不会看到这个窗口被CreateWindowEx. 在DllMain里你会注册这个窗口的
+类, 在ImeInquire里你会把这个窗口的类名传给IMM. 之后你就会收到这个窗口的
+创建消息了. 说明肯定是IMM负责创建了这个窗口.
+
+这个函数根据收到的消息要负责创建Comp, Status等窗口, 移动这些窗口的位置,
+等等.
+
+**  CompWndProc 和 StatusWndProc 
+
+这两个窗口函数最重要的当然是负责画窗口了.
+
+
+**  其他不怎么重要的API 
+
+  * ImeConfigure 这个函数就是按理你应该弹一个对话框给用户配置你的输入法
+    的地方了, 像我们这种高级电脑用户, 对这种功能直接无视.
+  * ImeConversionList 这个函数是让另一个输入法来反查一个汉字在你的这个
+    输入法里是怎么打出来的. 比如区位输入法可以指定用微软拼音来反查一个
+    汉字的拼音. 在区位输入法的unicode模式下按``9999'';输入``香'', 输入
+    完后还会继续显示编辑窗, 内容是``xiang''. 这么无厘头的功能, 无视!
+  * ImeDestroy 没什么好说的, 
+  * ImeEscape 也没什么好说的, 没什么鸟用. 以下是我的代码:
+  * ImeSelect Google出来的文档是说在这个函数里初始化或析构你的私有数据,
+    好吧, 我前面已经说了, 我没什么私有数据, 所以这个函数也可以简化了.
+  * ImeSetActiveContext 
+  * ImeRegisterWord
+  * ImeUnregisterWord
+  * ImeGetRegisterWordStyle
+  * ImeEnumRegisterWord
+  * ImeSetCompositionString
+  * NotifyIME
+
+可以上 [[http://www.osronline.com/ddkx/w98ddk/intl_1sdw.htm][这儿]] 去看文档. 这些函数都没有什么用.
+
+*  一些注意事项 
+
+win32输入法编程的陷阱还是挺多的, 搞不好会很迷惑.
+
+  - 一定要用版本管理工具(废话), 但是用了版本管理工具还不一定够, 在前期
+    开发的时候, 要时不时地重启一下机器, 有时候测着没问题, 重启一次就不
+    行了. 如果改动量大的话就会不知道是哪个版本引进的问题.
+  - ime消息窗口的类名不能随便换. win32的IMM好像装载过一次以后就会把你这
+    个输入法的各个窗口的类名给记下来, 你要是换了的话下次就装载不上了,
+    必须重启一次机器. 靠, 发现这个问题当时花了我很多时间.
+  - 某种情况下winlogon.exe不能被排除在外. 如果你的输入法开发的差不多了,
+    你把它设成默认的输入法, 准备以后一直用它了, 嗯, 用的好好的, 一重启,
+    嘿, 用不了了. 这是因为winlogon是你的第一个用户, 而这个进程好像比较
+    特别, 如果它load这个默认输入法失败的话, windows就会认为这个输入法有
+    问题. 所以你想把winlogon排除在外的话记得重启前要把另一个输入法换成
+    默认的再重启.
+  - 出现以上两个问题时你也可以不重启, 只要把你的.dll换一个名字, 在注册
+    表里换一个注册键.
+
+往注册表里添的时候内容大概是这样的: (E0330804的0804比较重要, 这代表这是
+中文输入法, 更关键的是你的资源文件.rc里面也有0804, 如果这个不匹配的话这
+个ime也是load不了的. 前面的e033可以随便换).
+
+#+BEGIN_EXAMPLE
+
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layouts\E0330804]
+"Ime File"="ywb.dll"
+"Layout File"="kbdus.dll"
+"Layout Text"="Chinese (Simplified) - YWB"
+#+END_EXAMPLE
+
+
+*  影舞笔的运行方法 
+
+编译用VS2008, 同时还要求安装了python3.1, 安装路径必须是C:/python31, 同
+时你必须把代码co到Q:\gcode\scim-cs下, 如果没有Q:盘可以用subst.exe挂一个.
+当然也可以自己改一下源代码.
