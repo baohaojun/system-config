@@ -15,11 +15,12 @@ step=1
 
 seq_done=true
 for x in $(seq 1 1 $pages); do
-    if test ! -e $seq-$x.pdf; then
+    if test ! -e seq-$x.pdf; then
         seq_done=false
+        break
     fi
 done
-if test $seq_done = true && yes-or-no-p "Redo split?"; then
+if test $seq_done = false || (test $seq_done = true && yes-or-no-p "Redo split?"); then
     run-in-parallel -j 10 -I %N 'pdfjoin '"$(printf %q "$1")"' %N --outfile seq-%N.pdf' $(seq 1 $step $pages)
 fi
 
