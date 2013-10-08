@@ -323,7 +323,7 @@
   #:spec "%W")
 
 (bind-keys s-h-keymap "Super-c" 'cycle-class-bhj)
-(bind-keys s-h-keymap "Super-c" (lambda () (system "do-capture&")))
+(bind-keys s-h-keymap "c" (lambda () (system "do-capture&")))
 
 (define-cycle-command-pair
   'cycle-im-window 'cycle-im-windows-backwards

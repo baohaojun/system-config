@@ -115,8 +115,6 @@
 
 (setq org-agenda-files `("~/doc/projects"))
 
-(setq org-log-done 'note)
-
 (setq bbdb-north-american-phone-numbers nil)
 
 (setq bbdb-auto-notes-alist
