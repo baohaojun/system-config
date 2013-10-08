@@ -260,6 +260,7 @@
  '(mmm-submode-decoration-level 2)
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
+ '(org-clock-x11idle-program-name "xprintidle")
  '(org-directory "~/doc/projects")
  '(org-export-html-coding-system (quote utf-8))
  '(org-export-html-postamble (lambda nil (buffer-file-name)))

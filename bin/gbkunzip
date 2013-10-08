@@ -3,8 +3,8 @@ set -e
 
 [[ "$1" =~ .zip$ ]]
 FILE=`readlink -f "$1"`
-DIR=${FILE%%.zip}
-DIR=$(basename "$DIR")
+DIR=${FILE}
+DIR=$(basename "$DIR").$$
 mkdir -p "$DIR"
 
 TD=/tmp/$$.gbkunzip

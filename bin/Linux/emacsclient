@@ -1,4 +1,10 @@
 #!/bin/bash
+
+if test "$1" = -d; then
+    shift
+    find-or-exec emacs&
+fi
+
 if test $# = 1; then
     set -- "$(ulp "$1")"
 elif test $# = 2 && test -e "$2"; then
@@ -9,8 +15,9 @@ fi
 
 if test -z "$LOCAL_EDIT" -a $# = 2 -a -e "$2"; then
     if test "$(fstype "$2")" = fuse.sshfs; then
-	set -x
-	set -- "$1" "$(get-scp-from-sshfs "$2")"
+        set -x
+        set -- "$1" "$(get-scp-from-sshfs "$2")"
     fi
 fi
+
 /usr/bin/emacsclient "$@"

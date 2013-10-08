@@ -180,7 +180,7 @@
 (setq org-src-fontify-natively t)
 
 (setq org-todo-keywords
-      '((sequence "TODO" "|" "DONE" "CANCELED")))
+      '((sequence "TODO(!)" "|" "DONE(@)" "CANCELED(@)")))
 
 (setq org-plantuml-jar-path "~/bin/plantuml.jar")
 
