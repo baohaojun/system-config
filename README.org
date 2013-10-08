@@ -65,8 +65,8 @@ achieved on my Dell Optiplex 960).
    time you do this will take a long while, but subsequent updating is
    reasonably fast)
 
--  Works on whole words only: can not use =beagrep -e rely= to find
-   =readlink=.
+-  Works on whole words only: can not use partial word (=beagrep -e
+   readli=) to find =readlink=.
 
 * Other grep like tools
 
