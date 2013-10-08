@@ -1,7 +1,9 @@
 #!/bin/bash
 
-file=$(select-output-line bash -c 'cd ~/doc/projects; ls *.org')
+file=$(select-output-line bash -c 'cd ~/doc/projects; ls *.org; echo agenda')
 
 if test -e ~/doc/projects/$file; then
    e ~/doc/projects/$file;
-fi	
+else
+    emacsclient -d -e '(org-todo-list)'
+fi
