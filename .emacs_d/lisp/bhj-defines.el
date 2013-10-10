@@ -863,6 +863,12 @@ might be bad."
     nnmaildir-article-file-name))
 
 ;;;###autoload
+(defun bhj-help-it ()
+  "open help for the current word"
+  (interactive)
+  (shell-command-to-string (format "bhj-help-it %s %s >~/.logs/bhj-help-it.log 2>&1&" major-mode (shell-quote-argument (current-word)))))
+
+;;;###autoload
 (defun bhj-view-mail-external ()
   "open the current maildir file in kmail"
   (interactive)

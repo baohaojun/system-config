@@ -29,7 +29,7 @@ for x in $(git st -s |grep '^.\S' -P | pn 2); do
         continue
     fi
     if test ! -e "$x" && git st -s |grep -P -e "\Q$x\E" | grep "^RM"; then
-        x=$(git st -s |grep -P -e "\Q$x\E" | grep "^RM" | pn 4)
+        x=$(git st -s |grep -P -e "\Q$x\E" | grep "^RM" | perl -npe 's/.*-> //')
     fi
     git-diff "$x";
     while true; do

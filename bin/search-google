@@ -30,6 +30,10 @@ if test $prog = search-aliman; then
     url="http://work.alibaba-inc.com/work/search?keywords=$fill&type=person&offset=0&tabIndex=1"
 fi
 
+if test $prog = search-aliwork; then
+    url="http://work.alibaba-inc.com/work/search?keywords=$fill&offset=0&tabIndex=1"
+fi
+
 set -x
 
 if test "$EMACS" = t; then

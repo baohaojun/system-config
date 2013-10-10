@@ -1,6 +1,29 @@
 #!/bin/bash
+
+function git_svn() {
+    case "$1" in
+        fetch)
+            command git svn fetch
+            ;;
+        pull)
+            command git svn rebase
+            ;;
+        push)
+            command git svn dcommit
+            ;;
+        *)
+            command git "$@"
+            ;;
+    esac
+}
+
 function git()
 {
+    if command git config svn-remote.svn.url | grep -q .; then
+        git_svn "$@"
+        return $?
+    fi
+
     (
         builtin cd -P .
         if test "$(readlink -f .)" = "$(readlink -f ~)" -a "$1" != clone ||

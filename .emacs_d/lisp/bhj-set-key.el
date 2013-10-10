@@ -41,6 +41,7 @@
 
 (global-set-key [(control x) (w)] 'where-are-we)
 (global-set-key [(control x) (r)] 'random-theme)
+(global-set-key [(control h) (h)] 'bhj-help-it)
 
 (global-set-key [(control x) (c)] 'visit-code-reading)
 
