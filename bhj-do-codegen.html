@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>给任意语言插上宏定义的翅膀</title>
-<!-- 2013-05-20 Mon 22:13 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="author" content="Bao Haojun"/>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
@@ -103,7 +103,7 @@ for the JavaScript code in this tag.
 <div id="content">
 <h1 class="title">给任意语言插上宏定义的翅膀</h1>
 <p>
-宏，<i>英文wikipedia</i>，<a href="http://zh.wikipedia.org/wiki/宏">中文wikipedia</a>。
+宏，<a href="http://en.wikipedia.org/wiki/Macro_(computer_science)">英文wikipedia</a>，<a href="http://zh.wikipedia.org/wiki/%E5%AE%8F">中文wikipedia</a>。
 </p>
 
 <p>
@@ -227,7 +227,7 @@ g代表source generation），一长串的定义就会自动生成到指定的�
   (<span class="org-keyword">let</span> (start-of-code end-of-code code-text start-of-text end-of-text code-transform)
     (search-backward <span class="org-string">"start code-generator"</span>)
     (forward-char (length <span class="org-string">"start code-generator"</span>))
-    (<span class="org-keyword">if</span> (looking-at <span class="org-string">"\\s *</span><span class="org-regexp-grouping-backslash"><span class="org-string">\\</span></span><span class="org-regexp-grouping-construct"><span class="org-string">(</span></span><span class="org-string">\"</span><span class="org-regexp-grouping-backslash"><span class="org-string">\\</span></span><span class="org-regexp-grouping-construct"><span class="org-string">|</span></span><span class="org-string">(</span><span class="org-regexp-grouping-backslash"><span class="org-string">\\</span></span><span class="org-regexp-grouping-construct"><span class="org-string">)</span></span><span class="org-string">"</span>)
+    (<span class="org-keyword">if</span> (looking-at <span class="org-string">"\\s *</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(</span></span><span class="org-string">\"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">(</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">"</span>)
         (setq code-transform 
              (read
               (buffer-substring-no-properties (point) (line-end-position)))))

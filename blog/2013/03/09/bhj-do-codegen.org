@@ -1,7 +1,7 @@
 #+title: 给任意语言插上宏定义的翅膀
 # bhj-tags: macro programming
 
-宏，[[en.wikipedia.org/wiki/Macro_(computer_science)][英文wikipedia]]，[[http://zh.wikipedia.org/wiki/%E5%AE%8F][中文wikipedia]]。
+宏，[[http://en.wikipedia.org/wiki/Macro_(computer_science)][英文wikipedia]]，[[http://zh.wikipedia.org/wiki/%E5%AE%8F][中文wikipedia]]。
 
 关于宏有多邪恶，我想用一个简单的问题来描述：echo hello world，这是shell脚本，还是C语言程序？
 
