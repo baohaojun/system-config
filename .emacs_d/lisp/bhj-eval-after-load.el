@@ -52,7 +52,11 @@
      (load "bbdb-com" t)
      (add-hook 'gnus-summary-mode-hook
                (lambda ()
-                 (define-key gnus-summary-mode-map "v" 'bhj-view-mail-external)))
+                 (let ((keymap (make-keymap)))
+                   (define-key keymap "m" 'bhj-view-mail-external)
+                   (define-key keymap "a" 'bhj-nnmaildir-search-aliman)
+                   (define-key gnus-article-mode-map "v" keymap)
+                   (define-key gnus-summary-mode-map "v" keymap))))
      (add-hook 'message-send-hook 'bhj-set-reply)
      (setq gnus-parameters
            (nconc

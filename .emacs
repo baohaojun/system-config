@@ -334,8 +334,9 @@
  '(x-select-enable-clipboard t)
  '(x-select-enable-primary t)
  '(yas-also-auto-indent-first-line t)
+ '(yas-global-mode t nil (yasnippet))
  '(yas-prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
- '(yas-snippet-dirs (quote ("~/.emacs_d/yasnippet/snippets" "~/.emacs_d/yasnippet-snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets")) nil (yasnippet))
+ '(yas-snippet-dirs (quote ("~/.emacs_d/yasnippet/snippets" "~/.emacs_d/yasnippet-snippets")) nil (yasnippet))
  '(yas-trigger-key "M-TAB"))
 
 (set-keyboard-coding-system 'utf-8)

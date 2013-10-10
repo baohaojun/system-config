@@ -66,7 +66,7 @@
 (bind-keys global-keymap "XF86AudioPlay" (lambda () (system "~/bin/douban info&")))
 (bind-keys global-keymap "XF86Launch7" (lambda () (system "~/bin/douban info&")))
 (bind-keys global-keymap "C-XF86AudioPlay" (lambda () (system "~/bin/douban lyrics&")))
-(bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/screenshot&")))
+(bind-keys s-h-keymap "C-s" (lambda () (system "~/bin/screenshot&")))
 (bind-keys global-keymap "Super-DEL" (lambda () (system "gnome-screensaver-command -l&")))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp" (lambda () (system "switch-touchpad enable&"))) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown" (lambda () (system "switch-touchpad enable&"))) ; for mac
@@ -376,8 +376,10 @@
         (scroll-lock-off w)
       (scroll-lock-on w))))
 
-(bind-keys global-keymap "XF86LaunchA" #'scroll-lock-toggle)
+(bind-keys global-keymap "XF86LaunchA" #'scroll-lock-toggle) ; The F3 key on MBA
 (bind-keys global-keymap "Scroll_Lock" #'scroll-lock-toggle)
+(bind-keys global-keymap "Super-Home" #'scroll-lock-toggle)
+(bind-keys s-h-keymap "g" (lambda () (system "emacsclient -d -e '(gnus)'&")))
 
 (add-hook 'focus-in-hook
           (lambda (w focus-mode)

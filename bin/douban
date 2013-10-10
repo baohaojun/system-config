@@ -122,8 +122,8 @@ case "$1" in
             echo -n yes
             exit
         }
-        if test -e ~/.douban/.should-play; then
-            rm ~/.douban/.should-play
+        if test -e ~/.logs/douban-should-play; then
+            rm ~/.logs/douban-should-play
             yes
         fi
         if test ! -e "$1"; then
@@ -140,7 +140,7 @@ case "$1" in
         fi
         ;;
     replay)
-        touch ~/.douban/.should-play
+        touch ~/.logs/douban-should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
@@ -155,7 +155,7 @@ case "$1" in
         emacsclient -e '(douban-music-play-next-refresh)'
         ;;
     prev)
-        touch ~/.douban/.should-play
+        touch ~/.logs/douban-should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi

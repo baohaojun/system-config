@@ -7,14 +7,13 @@ while (<>) {
     chomp;
     tr/\r//;
     if (1 .. /^$/) {
-	s/=\?(.*?)\?B\?(.*?)\?=/qx(maildir-base64-decode-iconv $1 $2)/eg;
-	if (m/^\s/) {
-	    $line = $line . $_;
-	} else {
-	    print "$line\n";
-	    $line = $_;
-	}
+        s/=\?(.*?)\?B\?(.*?)\?=/qx(maildir-base64-decode-iconv $1 $2)/eg;
+        s/=\?(.*?)\?Q\?(.*?)\?=/qx(maildir-quote-decode-iconv $1 $2)/eg;
+        if (m/^\s/) {
+            $line = $line . $_;
+        } else {
+            print "$line\n";
+            $line = $_;
+        }
     }
 }
-
-

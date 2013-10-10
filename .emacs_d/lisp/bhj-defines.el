@@ -851,20 +851,28 @@ might be bad."
                                              (buffer-substring-no-properties (point) (line-end-position))))))
                   "&")))
 
+(defun bhj-get-nnmaildir-article-filename ()
+  (let ((nnmaildir-article-file-name nnmaildir-article-file-name))
+    (let ((article_id (if (eq major-mode 'gnus-summary-mode)
+                          (gnus-summary-article-number)
+                        gnus-current-article)))
+      (with-temp-buffer
+        (nnmaildir-request-article
+         article_id
+         gnus-newsgroup-name)))
+    nnmaildir-article-file-name))
+
 ;;;###autoload
 (defun bhj-view-mail-external ()
   "open the current maildir file in kmail"
   (interactive)
-  ;(defun nnmaildir-request-article (num-msgid &optional gname server to-buffer)
-  (let ((article_id gnus-current-article))
-    (with-temp-buffer
-      (nnmaildir-request-article
-       article_id
-       gnus-newsgroup-name
-       (replace-regexp-in-string ".*:" "" (gnus-group-server gnus-newsgroup-name))
-       (current-buffer))))
   (let ((default-directory "/"))
-    (shell-command (concat "kmail-view " (shell-quote-argument nnmaildir-article-file-name)))))
+    (shell-command (concat "kmail-view " (shell-quote-argument (bhj-get-nnmaildir-article-filename))))))
+
+(defun bhj-nnmaildir-search-aliman ()
+  "Get the header of the current mail"
+  (interactive)
+  (shell-command (format "maildir-search-aliman %s" (shell-quote-argument (bhj-get-nnmaildir-article-filename)))))
 
 ;;;###autoload
 (defun my-bbdb/gnus-update-records-mode ()

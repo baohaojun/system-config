@@ -1,0 +1,3 @@
+#!/bin/bash
+
+out=$(acroread >/dev/null 2>&1);
