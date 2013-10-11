@@ -6,8 +6,8 @@ function die() {
     exit -1
 }
 
-cd ~/weekly || exit
-if test .weeklyrc; then
+cd ~/.cache/weekly || exit
+if test -e .weeklyrc; then
     . .weeklyrc
 fi
 
@@ -30,61 +30,30 @@ if test $# = 1; then
     monday="$y days"
 fi
 
-year_page=$(date +%Y -d "$friday")
-week_page=$(date +%Y.%m.%d -d "$monday")-$(date +%Y.%m.%d -d "$friday")
-
-congfu --space Weekly -- -a getSource --title $week_page |perl -ne 'print unless(1..1)' > $week_page
-congfu --space Weekly -- -a storePage --title $week_page --file $week_page --parent $year_page
-
-tool_page=$(congfu --space Weekly -- -a getPageList --title $week_page --children | grep bsp -i) || true
-test -z "$tool_page" && tool_page=BSP_$(date +%Y%m%d -d "$friday")
-congfu --space Weekly -- -a getSource --title $tool_page |perl -ne 'print unless(1..1)' > $tool_page
-congfu --space Weekly -- -a storePage --title $tool_page --file $tool_page --parent $week_page
-
-bhj_page=bhj_$(date +%Y.%m.%d -d "$friday")
+bhj_page=$PWD/bhj_$(date +%Y.%m.%d -d "$friday")
 set -x
 do_overwrite=false
 if test -e $bhj_page; then
     yes-or-no-p "overwrite existing $bhj_page?" && do_overwrite=true
 fi
 
+function separate() {
+    perl -a -F: -npe 'if ($F[0] ne $saved_f0) {print "\n"; $saved_f0 = $F[0]}'
+}
+
 { test $do_overwrite = true || ! test -e $bhj_page; }  && (
-    cat <<EOF
-{color:#ff0000}{*}Red Flag{*}{color}
-
-N/A
-
-{color:#ffcc00}{*}Yellow Flag{*}{color}
-
-N/A
-
-{color:#008000}{*}Green Flag{*}{color}
-{code:none}
-EOF
-    emacs-nt -Q --batch --eval "$(bash do-weekly.help $bhj_page.1)" >/dev/null 2>&1
-    cat $bhj_page.1
+    echo 本周：
+    emacsclient -e "$(bash do-weekly.help '+CLOSED>=\"['$(today "last mon")']\"' $bhj_page.1)" >/dev/null 2>&1
+    cat $bhj_page.1 | separate
     rm $bhj_page.1
-    cat <<EOF
-{code}
 
-*Plan for next week*
+    echo
+    echo
+    echo 下周（未完成）：
 
-{code:none}
-EOF
-    emacs-nt -Q --batch --eval "$(bash do-weekly.todo $bhj_page.1)" >/dev/null 2>&1
-    cat $bhj_page.1
+    emacsclient -e "$(bash do-weekly.help '+TODO=\"TODO\"' $bhj_page.1)" >/dev/null 2>&1
+    cat $bhj_page.1 | separate
     rm $bhj_page.1
-    cat <<EOF
-{code}
-EOF
 ) > $bhj_page
 
-if tty >/dev/null 2>&1 ; then
-    edit-wait $bhj_page
-fi
-
-log=~/.logs/do-weekly.log
-congfu --space Weekly -- -a storePage --title $bhj_page --file $bhj_page --parent $tool_page --encoding UTF-8 2>&1|tee $log
-
-id=$(cat $log|grep 'Page has id:'|perl -npe 's/.*Page has id: //')
-of http://$CONFLUENCE_SERV/pages/viewpage.action?pageId=$id
+gnus-mailx -s "技术质量部--测试技术--钧钩周报 （$(today "last mon") - $(today Fri)）" -t "taobao-ad-qa-tool <taobao-ad-qa-tool@list.alibaba-inc.com>" -m "$(cat $bhj_page)"

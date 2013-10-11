@@ -2,12 +2,18 @@
 
 declare -a subject
 declare -a body
-declare -a attach
+declare -a attachments
 declare -a to
 declare -a cc
 declare -a bcc
 
 IFS=$'\n'
+
+function die() {
+    echo Error: "$@"
+    echo
+    Usage 1
+}
 
 prog_name="`basename \"$0\"`"
 
@@ -15,7 +21,7 @@ function check_arg()
 {
     if [[ -z "$1" ]]
     then
-        Usage;
+        Usage 1;
     fi
 }
 
@@ -25,11 +31,13 @@ function Usage()
     echo
     echo "Main Options:"
     echo "    -h:                 this little help"
+    echo "    -t recipient:       mail to somebody"
     echo "    -c cc_recipient:    cc to somebody"
     echo "    -b bcc_recipient:   bcc to somebody"
     echo "    -s subject:         subject"
-    echo "    -a file:            attach"
-    exit
+    echo "    -a file:            attachments"
+    echo "    -m message:         the mail text"
+    exit "$@"
 }
 rec_type=to
 while true; do
@@ -48,6 +56,11 @@ while true; do
             shift
             shift
             ;;
+        -t)
+            check_arg "$2"
+            rec_type=to
+            shift
+            ;;
         -c)
             check_arg "$2"
             rec_type=cc
@@ -58,11 +71,18 @@ while true; do
             rec_type=bcc
             shift
             ;;
+        -m)
+            check_arg "$2"
+            body=$2
+            shift 2
+            ;;
         -a)
             check_arg "$2"
-            attach=("${attach[@]}" "$(wlp "$2")")
-            shift
-            shift
+            attachments=("${attachments[@]}" "$(wlp "$2")")
+            shift 2
+            ;;
+        -*)
+            die unknown option $1
             ;;
         *)
             break
@@ -70,7 +90,9 @@ while true; do
     esac
 done
 
-if tty >/dev/null 2>&1; then
+if test "$body" -o $(basename $0) = gnus-mailx; then
+    true
+elif tty >/dev/null 2>&1; then
     body=("$(get-stdin)")
 else
     body=("$(cat)")
@@ -83,27 +105,83 @@ if test -e /opt/local/bin/mailx; then
     the_mailx=/opt/local/bin/mailx;
 fi
 
-(
-    printf "$the_mailx -S from=$(cat ~/.config/bhj/mail) -S smtp=localhost:2025 -S smtp-auth-user=$(cat ~/.config/bhj/mail) -S smtp-auth-password=%q " "$(get-authinfo $(cat ~/.config/bhj/smtp) $(cat ~/.config/bhj/mail))"
-    for y in attach cc bcc subject to; do
-        eval '
-        if test ${#'$y'[@]} != 0; then
-            for x in $(seq 1 "${#'$y'[@]}"); do
-                if test '$y' = to; then
-                    printf -- " ";
-                else
-                    printf -- \ -'${y:0:1}'\ \
+if test $(basename $0) = gnus-mailx; then
+cat <<EOF > /tmp/mail.txt.$$
+From: $(cat ~/.config/bhj/花名) <$(cat ~/.config/bhj/mail)>
+$(
+## start code-generator "^\\s *#"
+# for x in cc bcc subject to; do
+#     echo if test \$"$x"\; then
+#     echo '    echo' $(ucfirst $x): '${'$x'[@]}'
+#     echo fi
+# done
+## end code-generator
+## start generated code
+if test $cc; then
+    echo Cc: ${cc[@]}
+fi
+if test $bcc; then
+    echo Bcc: ${bcc[@]}
+fi
+if test $subject; then
+    echo Subject: ${subject[@]}
+fi
+if test $to; then
+    echo To: ${to[@]}
+fi
 
-                fi
-                if [[ '$y' =~ cc|bcc|to ]]; then
-                    printf -- "%q" "$( echo -n "${'$y'[$x-1]}" |perl -npe "s/.*<(.*)>.*/\$1/")"
-                else
-                    printf -- "%q" "${'$y'[$x-1]}"
-                fi
-            done
-        fi'
-    done
-    printf " << '31a1b9affa4ee4c6520ac20bb7c16f69'\n"
-    echo "$body"
-    echo "31a1b9affa4ee4c6520ac20bb7c16f69"
-) | bash $(if test "$DEBUG" = true; then echo -x; fi)
+## end generated code
+)
+Gcc: nnfolder+archive:sent-mails
+--text follows this line--
+$(echo "$body")
+
+--
+All the best
+
+ Bao Haojun
+
+$(
+    if test "$attachments"; then
+        for x in "${attachments[@]}"; do
+            echo '<#part type="'$(xdg-mime query filetype "$x")'" filename="'"$x"'" disposition=attachment>'
+            echo '<#/part>'
+        done
+    fi
+)
+EOF
+
+emacsclient -d -e "
+(progn
+  (require 'gnus)
+  (gnus-summary-mail-other-window)
+  (delete-region (point-min) (point-max))
+  (insert-file \"/tmp/mail.txt.$$\")
+  (message-goto-body))"
+
+else
+    (
+        printf "$the_mailx -S from=$(cat ~/.config/bhj/mail) -S smtp=localhost:2025 -S smtp-auth-user=$(cat ~/.config/bhj/mail) -S smtp-auth-password=%q " "$(get-authinfo $(cat ~/.config/bhj/smtp) $(cat ~/.config/bhj/mail))"
+        for y in attachments cc bcc subject to; do
+            eval '
+            if test ${#'$y'[@]} != 0; then
+                for x in $(seq 1 "${#'$y'[@]}"); do
+                    if test '$y' = to; then
+                        printf -- " ";
+                    else
+                        printf -- \ -'${y:0:1}'\ \
+
+                    fi
+                    if [[ '$y' =~ cc|bcc|to ]]; then
+                        printf -- "%q" "$( echo -n "${'$y'[$x-1]}" |perl -npe "s/.*<(.*)>.*/\$1/")"
+                    else
+                        printf -- "%q" "${'$y'[$x-1]}"
+                    fi
+                done
+            fi'
+        done
+        printf " << '31a1b9affa4ee4c6520ac20bb7c16f69'\n"
+        echo "$body"
+        echo "31a1b9affa4ee4c6520ac20bb7c16f69"
+    ) | bash $(if test "$DEBUG" = true; then echo -x; fi)
+fi

@@ -29,23 +29,22 @@ function _mailx()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    
-    case "$prev" in
-	-a)
-	    COMPREPLY=( $( compgen -A file -- $cur ) )
-	    return 0
-	    ;;
 
-	-c|-b|[^-]*)
-	    COMPREPLY=( $(skeleton_compgen_word.pl \
-		-d '\n' -- \
-		"$(cd ~/jira-users; ls)" \
-		"$cur")
-	    )
-	    return 0
-	    ;;
-	esac
+    case "$prev" in
+        -a)
+            COMPREPLY=( $( compgen -A file -- $cur ) )
+            return 0
+            ;;
+
+        -c|-b|[^-]*)
+            COMPREPLY=( $(skeleton_compgen_word.pl \
+                -d '\n' -- \
+                "$(cd ~/jira-users; ls)" \
+                "$cur")
+            )
+            return 0
+            ;;
+        esac
 }
 
-complete -o default -o filenames -F _mailx mailx
-	    
+complete -o default -o filenames -F _mailx mailx gnus-mailx

@@ -7,7 +7,10 @@ fi
 
 rm ~/.fonts/monaco-windows.ttf -f
 sudo modprobe -r pcspkr
-python3 ~/gcode/scim-cs/ime-py/ime-server.py&
+while true; do
+    python3 ~/gcode/scim-cs/ime-py/ime-server.py
+    sleep 2
+done&
 if test -f ~/.offlineimaprc; then
     (
         flock -n 5 || { echo "lock failed for Imap4Monitor.py, exit"; exit; }

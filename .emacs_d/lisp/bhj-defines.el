@@ -342,7 +342,9 @@ might be bad."
         (message-beginning-of-line)
         (cond ((save-excursion (search-forward-regexp "@alibaba-inc.com" (line-end-position) t))
                (kill-line)
-               (insert "\"Bao Haojun\" <" (shell-command-to-string "cat ~/.config/bhj/mail") ">")
+               (insert (format "%s <%s>"
+                               (shell-command-to-string "cat ~/.config/bhj/花名")
+                               (shell-command-to-string "cat ~/.config/bhj/mail")))
                (bhj-set-smtp-cred-to-company-mail))
 
               ((save-excursion (search-forward-regexp "@gmail.com" (line-end-position) t))

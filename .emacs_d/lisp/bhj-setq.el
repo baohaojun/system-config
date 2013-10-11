@@ -115,6 +115,8 @@
 
 (setq org-agenda-files `("~/doc/projects"))
 
+(setq org-log-done 'note)
+
 (setq bbdb-north-american-phone-numbers nil)
 
 (setq bbdb-auto-notes-alist
@@ -178,7 +180,7 @@
 (setq org-src-fontify-natively t)
 
 (setq org-todo-keywords
-      '((sequence "TODO(!)" "|" "DONE(@)" "CANCELED(@)")))
+      '((sequence "TODO(!)" "|" "DONE(@)" "CANCELED(@)" "LATER(!)")))
 
 (setq org-plantuml-jar-path "~/bin/plantuml.jar")
 
@@ -190,16 +192,13 @@
       `(
         (".*"
          ("From" "Ask <ask@ask.com>")
-         (signature "All the best\n\n Bao Haojun")
-         )
+         (signature "All the best\n\n Bao Haojun"))
         (".*ali\\..*"
-         ("From" ,(concat "Bao Haojun <" (shell-command-to-string "cat ~/.config/bhj/mail") ">"))
-         )
+         ("From" ,(format "%s <%s>"
+                          (shell-command-to-string "cat ~/.config/bhj/花名")
+                          (shell-command-to-string "cat ~/.config/bhj/mail"))))
         (".*gmail.*"
-         ("From" "Bao Haojun <baohaojun@gmail.com>")
-         )
-        ))
+         ("From" "Bao Haojun <baohaojun@gmail.com>"))))
 
 (setq eclim-auto-save t)
 (setq ring-bell-function (lambda ()))
-

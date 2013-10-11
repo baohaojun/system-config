@@ -41,36 +41,36 @@
 (defun bhj-window-class (window)
   (window-class window))
 
-(bind-keys s-h-keymap "s" (lambda () (system "~/bin/screenshot focused&")))
-(bind-keys s-h-keymap "S" (lambda () (system "~/bin/os&")))
-(bind-keys s-h-keymap "n" (lambda () (system "~/bin/douban next&")))
-(bind-keys global-keymap "Super-Down" (lambda () (system "~/bin/douban info&")))
-(bind-keys global-keymap "Super-Up" (lambda () (system "~/bin/douban lyrics&")))
-(bind-keys global-keymap "Super-Right" (lambda () (system "~/bin/douban next&")))
-(bind-keys global-keymap "Super-Left" (lambda () (system "~/bin/douban prev&")))
-(bind-keys global-keymap "KP_Down" (lambda () (system "~/bin/douban info&")))
-(bind-keys global-keymap "KP_Up" (lambda () (system "~/bin/douban lyrics&")))
-(bind-keys global-keymap "KP_Right" (lambda () (system "~/bin/douban next&")))
-(bind-keys global-keymap "KP_Left" (lambda () (system "~/bin/douban prev&")))
-(bind-keys global-keymap "KP_Begin" (lambda () (system "~/bin/douban ba&")))
-(bind-keys global-keymap "KP_Home" (lambda () (system "~/bin/douban replay&")))
-(bind-keys global-keymap "KP_End" (lambda () (system "~/bin/douban pause&")))
-(bind-keys global-keymap "Super-S-Right" (lambda () (system "~/bin/douban back&")))
-(bind-keys global-keymap "Super-S-Left" (lambda () (system "~/bin/douban forth&")))
-(bind-keys global-keymap "XF86AudioNext" (lambda () (system "~/bin/douban next&")))
-(bind-keys global-keymap "XF86Launch9" (lambda () (system "~/bin/douban next&")))
-(bind-keys s-h-keymap "p" (lambda () (system "~/bin/douban prev&")))
-(bind-keys global-keymap "XF86AudioPrev" (lambda () (system "~/bin/douban prev&")))
-(bind-keys global-keymap "XF86Launch8" (lambda () (system "~/bin/douban prev&")))
-(bind-keys global-keymap "Super-XF86AudioPlay" (lambda () (system "~/bin/douban pause&")))
-(bind-keys global-keymap "XF86AudioPlay" (lambda () (system "~/bin/douban info&")))
-(bind-keys global-keymap "XF86Launch7" (lambda () (system "~/bin/douban info&")))
-(bind-keys global-keymap "C-XF86AudioPlay" (lambda () (system "~/bin/douban lyrics&")))
-(bind-keys s-h-keymap "C-s" (lambda () (system "~/bin/screenshot&")))
-(bind-keys global-keymap "Super-DEL" (lambda () (system "gnome-screensaver-command -l&")))
-(bind-keys global-keymap "Super-XF86KbdBrightnessUp" (lambda () (system "switch-touchpad enable&"))) ; for mac
-(bind-keys global-keymap "Super-XF86KbdBrightnessDown" (lambda () (system "switch-touchpad enable&"))) ; for mac
-(bind-keys global-keymap "Super-Print" (lambda () (system "super-print.sh&")))
+(bind-keys s-h-keymap "s"  '(system "~/bin/screenshot focused&"))
+(bind-keys s-h-keymap "S"  '(system "~/bin/os&"))
+(bind-keys s-h-keymap "n"  '(system "~/bin/douban next&"))
+(bind-keys global-keymap "Super-Down"  '(system "~/bin/douban info&"))
+(bind-keys global-keymap "Super-Up" '(system "~/bin/douban ba&"))
+(bind-keys global-keymap "Super-Right"  '(system "~/bin/douban next&"))
+(bind-keys global-keymap "Super-Left"  '(system "~/bin/douban prev&"))
+(bind-keys global-keymap "KP_Down"  '(system "~/bin/douban info&"))
+(bind-keys global-keymap "KP_Up"  '(system "~/bin/douban lyrics&"))
+(bind-keys global-keymap "KP_Right"  '(system "~/bin/douban next&"))
+(bind-keys global-keymap "KP_Left"  '(system "~/bin/douban prev&"))
+(bind-keys global-keymap "KP_Begin"  '(system "~/bin/douban ba&"))
+(bind-keys global-keymap "KP_Home"  '(system "~/bin/douban replay&"))
+(bind-keys global-keymap "KP_End"  '(system "~/bin/douban pause&"))
+(bind-keys global-keymap "Super-S-Right"  '(system "~/bin/douban back&"))
+(bind-keys global-keymap "Super-S-Left"  '(system "~/bin/douban forth&"))
+(bind-keys global-keymap "XF86AudioNext"  '(system "~/bin/douban next&"))
+(bind-keys global-keymap "XF86Launch9"  '(system "~/bin/douban next&"))
+(bind-keys s-h-keymap "p"  '(system "~/bin/douban prev&"))
+(bind-keys global-keymap "XF86AudioPrev"  '(system "~/bin/douban prev&"))
+(bind-keys global-keymap "XF86Launch8"  '(system "~/bin/douban prev&"))
+(bind-keys global-keymap "Super-XF86AudioPlay"  '(system "~/bin/douban pause&"))
+(bind-keys global-keymap "XF86AudioPlay"  '(system "~/bin/douban info&"))
+(bind-keys global-keymap "XF86Launch7"  '(system "~/bin/douban info&"))
+(bind-keys global-keymap "C-XF86AudioPlay"  '(system "~/bin/douban lyrics&"))
+(bind-keys s-h-keymap "C-s"  '(system "~/bin/screenshot&"))
+(bind-keys global-keymap "Super-DEL"  '(system "gnome-screensaver-command -l&"))
+(bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
+(bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
+(bind-keys global-keymap "Super-Print"  '(system "super-print.sh&"))
 (bind-keys s-h-keymap "Super-i" (lambda () (display-message (concat "wm_class is: "
                                                                        (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
                                                                        ";\n\nand Window class is: "
@@ -128,15 +128,15 @@
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")))
 
-(bind-keys global-keymap "Super-Button1-Click" (lambda () (system "my-dict-maybe&")))
+(bind-keys global-keymap "Super-Button1-Click"  '(system "my-dict-maybe&"))
 
-(bind-keys global-keymap "C-S-XF86PowerOff" (lambda () (system "lock-screen&")))
-(bind-keys global-keymap "C-S-DEL" (lambda () (system "lock-screen&")))
+(bind-keys global-keymap "C-S-XF86PowerOff"  '(system "lock-screen&"))
+(bind-keys global-keymap "C-S-DEL"  '(system "lock-screen&"))
 
-(bind-keys global-keymap "KP_Add" (lambda () (system "adjust-volume&")))
-(bind-keys global-keymap "KP_Subtract" (lambda () (system "adjust-volume&")))
-(bind-keys global-keymap "XF86AudioRaiseVolume" (lambda () (system "adjust-volume&")))
-(bind-keys global-keymap "XF86AudioLowerVolume" (lambda () (system "adjust-volume&")))
+(bind-keys global-keymap "KP_Add"  '(system "adjust-volume&"))
+(bind-keys global-keymap "KP_Subtract"  '(system "adjust-volume&"))
+(bind-keys global-keymap "XF86AudioRaiseVolume"  '(system "adjust-volume&"))
+(bind-keys global-keymap "XF86AudioLowerVolume"  '(system "adjust-volume&"))
 
 (defun do-global-remap()
   (let ((c-x-map (make-keymap))
@@ -283,13 +283,13 @@
                     (synthesize-event map-to fw))))))
  '("t" "w" "n" "c" "v" "l" "r" "s" "d"))
 
-(bind-keys global-keymap "Super-Insert" (lambda () (system "send-key&")))
-(bind-keys global-keymap "Super-S-RET" (lambda () (system "send-key&")))
+(bind-keys global-keymap "Super-Insert"  '(system "send-key&"))
+(bind-keys global-keymap "Super-S-RET"  '(system "send-key&"))
 (bind-keys global-keymap "Super-RET" (lambda () (synthesize-event "S-Insert" (input-focus))))
 (bind-keys global-keymap "Super-BS" (lambda () (synthesize-event "Prior" (input-focus))))
 (bind-keys global-keymap "Super-SPC" (lambda () (synthesize-event "Next" (input-focus))))
-(bind-keys global-keymap "Super-Control-n" (lambda () (system "daily-notes&")))
-(bind-keys global-keymap "Super-Control-o" (lambda () (system "emacsclient -n ~/doc/notes.org&")))
+(bind-keys global-keymap "Super-Control-n"  '(system "daily-notes&"))
+(bind-keys global-keymap "Super-Control-o"  '(system "emacsclient -n ~/doc/notes.org&"))
 
 
 (bind-keys s-h-keymap "Super-d"
@@ -323,7 +323,7 @@
   #:spec "%W")
 
 (bind-keys s-h-keymap "Super-c" 'cycle-class-bhj)
-(bind-keys s-h-keymap "c" (lambda () (system "do-capture&")))
+(bind-keys s-h-keymap "c"  '(system "do-capture&"))
 
 (define-cycle-command-pair
   'cycle-im-window 'cycle-im-windows-backwards
@@ -379,7 +379,7 @@
 (bind-keys global-keymap "XF86LaunchA" #'scroll-lock-toggle) ; The F3 key on MBA
 (bind-keys global-keymap "Scroll_Lock" #'scroll-lock-toggle)
 (bind-keys global-keymap "Super-Home" #'scroll-lock-toggle)
-(bind-keys s-h-keymap "g" (lambda () (system "emacsclient -d -e '(gnus)'&")))
+(bind-keys s-h-keymap "g"  '(system "emacsclient -d -e '(gnus)'&"))
 
 (add-hook 'focus-in-hook
           (lambda (w focus-mode)
@@ -388,7 +388,7 @@
               (scroll-lock-off))
             (if (string= (window-class w) "Emacs")
                 (unbind-keys global-keymap "Super-\\")
-              (bind-keys global-keymap "Super-\\" (lambda () (system "sleep .1 && xdotool key super+F12&"))))))
+              (bind-keys global-keymap "Super-\\"  '(system "sleep .1 && xdotool key super+F12&")))))
 
 (system "run-dir-once ~/.sawfish/start&")
 (system "run-dir-once ~/external/sawfish/start&")

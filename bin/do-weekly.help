@@ -1,31 +1,8 @@
 #!/bin/bash
+
+#usage: do-weekly.help rule_of_matching file_to_save
 cat <<EOF
 (progn
-  (setq load-path
-	(nconc (list (expand-file-name "~/.emacs_d/lisp")
-		     (expand-file-name "~/.emacs_d/lisp/ext"))
-	       load-path))
-  (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
-    (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
-				  "~/../external/emacs-site-lisp/"
-				"~/external/emacs-site-lisp/")))
-      (let ((default-directory bhj-lisp-load-path)) 
-	(load-file (concat bhj-lisp-load-path "/subdirs.el")))
-      (setq load-path
-	    (cons bhj-lisp-load-path load-path))
-      ;;press F2 to get MSDN help
-      (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
-      (setq locate-command "locateEmacs.sh")))
-
-  (when (eq system-type 'windows-nt)
-    (require 'cygwin-mount)
-    (cygwin-mount-activate)
-    (require 'w32-symlinks))
-
-  (setq org-agenda-files '( "~/doc/daily"))
-  (org-tags-view nil 
-		 (concat
-		  (format "-pe+CLOSED>=\"[%s]\"" 
-			  (shell-command-to-string "today 'last mon'"))))
-  (write-file "$1"))
+  (org-tags-view nil "$1")
+  (write-region (save-excursion (beginning-of-buffer) (line-beginning-position 3)) (point-max) "$2"))
 EOF

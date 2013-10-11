@@ -252,6 +252,7 @@ class ime:
         self.__on = False
         self.__in = in_
         self.__out = out_
+        self.last_key = self.key = ''
         self.compstr = ''
         self.cand_index = 0
         self.commitstr = ''
@@ -315,6 +316,7 @@ class ime:
     def commitstr(self, value):
         assert isinstance(value, str), "commitstr must be set to be a string"
         self.__commitstr = value
+        self.last_key = self.key
 
     @property
     def compstr(self):
@@ -408,7 +410,9 @@ class ime:
 
     def __keyed_when_no_comp(self, key):
         comp = key.name
-        if _g_ime_quail.has_quail(comp) or key.isalpha() or key == ';':
+        if not self.commitstr and key == '.' and '0' <= self.last_key and self.last_key <= '9':
+            self.commitstr += key.name
+        elif _g_ime_quail.has_quail(comp) or key.isalpha() or key == ';':
             self.compstr += key.name
         elif _g_ime_trans.has_trans(comp):
             self.compstr += key.name
@@ -504,7 +508,8 @@ class ime:
                 _g_ime_quail.add_cand(comps, cand)
 
     def keyed(self, arg):
-        debug('keyed args:', arg)
+        # debug('keyed args:', arg)
+        self.key = arg
         key = ime_keyboard(arg)
 
         if key == 'C \\':

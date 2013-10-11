@@ -98,8 +98,6 @@
     (define-key yas-minor-mode-map (kbd "TAB") nil)
     (define-key yas-minor-mode-map (kbd "C-M-i") 'yas-expand)))
 
-(add-hook 'emacs-startup-hook (lambda () (call-interactively 'yas-global-mode)))
-
 ;; (defun eliminate-dup-invalid-buffers ()
 ;;   (let* ((new-buffer (current-buffer))
 ;;          (new-file-abs-name (buffer-file-name))
