@@ -14,7 +14,7 @@ thing yet, but am very close to that. I will probably do it when I
 need to do it on another PC...
 
 #+begin_example
-git clone git://github.com/baohaojun/beagrep.git -b windows
+git clone git://github.com/baohaojun/beagrep.git -b for-windows
 #+end_example
 
 

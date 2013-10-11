@@ -112,7 +112,7 @@ You need install CYGWIN and Mono for Windows.
 *** Get beagrep Windows code
 
 #+begin_src sh
-git clone git://github.com/baohaojun/beagrep.git -b Windows
+git clone git://github.com/baohaojun/beagrep.git -b for-windows
 #+end_src
 
 *** Compile and install

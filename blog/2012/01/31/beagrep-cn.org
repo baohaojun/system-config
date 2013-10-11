@@ -66,7 +66,7 @@ apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Sta
 
 *** 下载代码
 #+begin_example
-git clone git://github.com/baohaojun/beagrep.git -b Windows
+git clone git://github.com/baohaojun/beagrep.git -b for-windows
 #+end_example
 
 *** 编译安装
