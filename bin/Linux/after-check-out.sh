@@ -1,5 +1,6 @@
 #!/bin/bash
 
+. ~/.bashrc
 touch ~/.where ~/.where.lock
 
 if test $(whoami) = bhj; then

@@ -155,15 +155,26 @@ symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
 
 if test -e ~/.gitconfig.$USER; then
     ln -sf ~/.gitconfig.$USER ~/.gitconfig
+else
+    cp ~/.gitconfig.bhj ~/.gitconfig
+    name=$(finger $USER | grep Name: | perl -npe 's/.*Name: //')
+    if test "$name"; then
+        git config --global user.name "$name"
+    else
+        git config --global user.name "$USER"
+    fi
 fi
 
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
-if test -e ~/.macbook-air; then
-    ln -sf ~/system-config/etc/.Xmodmap-macbook-air ~/.Xmodmap
-elif test -e ~/.mach=t430; then
-    ln -sf ~/system-config/etc/.Xmodmap-t430 ~/.Xmodmap
-else
-    ln -sf ~/system-config/etc/.Xmodmap ~/.Xmodmap
+
+if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; then
+    if test -e ~/.macbook-air; then
+        ln -sf ~/system-config/etc/.Xmodmap-macbook-air ~/.Xmodmap
+    elif test -e ~/.mach=t430; then
+        ln -sf ~/system-config/etc/.Xmodmap-t430 ~/.Xmodmap
+    else
+        ln -sf ~/system-config/etc/.Xmodmap ~/.Xmodmap
+    fi
 fi
 sudo ln -sf ~/etc/rc.local /etc || true # no sudo on win32
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
@@ -182,12 +193,8 @@ fi
 
 echo OK
 
-if test $(whoami) != bhj; then
-    exit
-fi
-
-if test ! -d ~/.config/bhj; then
-    mkdir -p ~/.config/bhj;
+if test ! -d ~/.config/about_me; then
+    mkdir -p ~/.config/about_me;
 fi
 
 after-co-settings.sh

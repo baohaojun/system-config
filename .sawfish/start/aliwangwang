@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 while true; do
     AliWangWang
     sleep 5
-done
+done&

@@ -107,7 +107,7 @@ fi
 
 if test $(basename $0) = gnus-mailx; then
 cat <<EOF > /tmp/mail.txt.$$
-From: $(cat ~/.config/bhj/花名) <$(cat ~/.config/bhj/mail)>
+From: $(cat ~/.config/about_me/花名) <$(cat ~/.config/about_me/mail)>
 $(
 ## start code-generator "^\\s *#"
 # for x in cc bcc subject to; do
@@ -161,7 +161,7 @@ emacsclient -d -e "
 
 else
     (
-        printf "$the_mailx -S from=$(cat ~/.config/bhj/mail) -S smtp=localhost:2025 -S smtp-auth-user=$(cat ~/.config/bhj/mail) -S smtp-auth-password=%q " "$(get-authinfo $(cat ~/.config/bhj/smtp) $(cat ~/.config/bhj/mail))"
+        printf "$the_mailx -S from=$(cat ~/.config/about_me/mail) -S smtp=localhost:2025 -S smtp-auth-user=$(cat ~/.config/about_me/mail) -S smtp-auth-password=%q " "$(get-authinfo $(cat ~/.config/about_me/smtp) $(cat ~/.config/about_me/mail))"
         for y in attachments cc bcc subject to; do
             eval '
             if test ${#'$y'[@]} != 0; then

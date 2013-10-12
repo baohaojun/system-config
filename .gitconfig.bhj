@@ -10,14 +10,8 @@
 	st = status
 	co = checkout
         dt = difftool -t meld
-[review "www.rayzertrack.com:8080"]
-	username = bhj
 [difftool "bhj"]
 	cmd = args-debug
-[url "bibler:android/"]
-        insteadOf = "git://android.git.kernel.org/"
-[url "bibler:android"]
-        insteadOf = "ssh://gerrit2@bible/~gerrit2/android"
 [guilt]
 	diffstat = true
 [format]

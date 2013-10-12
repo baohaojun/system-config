@@ -7,8 +7,8 @@ if test "$1" = disable -o "$1" = off; then
 fi
 
 finger_high=80
-if test -e ~/.config/bhj/touchpad-finger-high; then
-    finger_high=$(cat ~/.config/bhj/touchpad-finger-high)
+if test -e ~/.config/about_me/touchpad-finger-high; then
+    finger_high=$(cat ~/.config/about_me/touchpad-finger-high)
 fi
 
 synclient FingerHigh=$finger_high

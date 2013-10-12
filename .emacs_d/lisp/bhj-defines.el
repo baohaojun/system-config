@@ -280,17 +280,17 @@ might be bad."
 ;;;###autoload
 (defun bhj-set-smtp-cred-to-company-mail ()
   (setq smtpmail-auth-credentials ; fixme
-        `((,(shell-command-to-string "cat ~/.config/bhj/smtp")
-           ,(string-to-int (shell-command-to-string "cat ~/.config/bhj/smtp-port"))
-           ,(shell-command-to-string "cat ~/.config/bhj/mail")
+        `((,(shell-command-to-string "cat ~/.config/about_me/smtp")
+           ,(string-to-int (shell-command-to-string "cat ~/.config/about_me/smtp-port"))
+           ,(shell-command-to-string "cat ~/.config/about_me/mail")
            nil))
 
         message-send-mail-function 'smtpmail-send-it
-        user-mail-address (shell-command-to-string "cat ~/.config/bhj/mail")
-        smtpmail-stream-type (intern (shell-command-to-string "cat ~/.config/bhj/conn-type"))
-        smtpmail-default-smtp-server (shell-command-to-string "cat ~/.config/bhj/smtp")
-        smtpmail-smtp-server (shell-command-to-string "cat ~/.config/bhj/smtp")
-        smtpmail-smtp-service (string-to-int (shell-command-to-string "cat ~/.config/bhj/smtp-port"))))
+        user-mail-address (shell-command-to-string "cat ~/.config/about_me/mail")
+        smtpmail-stream-type (intern (shell-command-to-string "cat ~/.config/about_me/conn-type"))
+        smtpmail-default-smtp-server (shell-command-to-string "cat ~/.config/about_me/smtp")
+        smtpmail-smtp-server (shell-command-to-string "cat ~/.config/about_me/smtp")
+        smtpmail-smtp-service (string-to-int (shell-command-to-string "cat ~/.config/about_me/smtp-port"))))
 
 ;;;###autoload
 (defun bhj-set-reply ()
@@ -329,7 +329,7 @@ might be bad."
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "\"Bao Haojun\" <" (shell-command-to-string "cat ~/.config/bhj/mail") ">")))
+          (insert "\"Bao Haojun\" <" (shell-command-to-string "cat ~/.config/about_me/mail") ">")))
 
       (save-excursion
         (message-goto-from)
@@ -337,14 +337,14 @@ might be bad."
         (when (save-excursion
                 (search-forward-regexp "@ask.com" (line-end-position) t))
           (kill-line)
-          (insert (completing-read "use account? " `(,(shell-command-to-string "cat ~/.config/bhj/mail") "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
+          (insert (completing-read "use account? " `(,(shell-command-to-string "cat ~/.config/about_me/mail") "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
         (message-goto-from)
         (message-beginning-of-line)
         (cond ((save-excursion (search-forward-regexp "@alibaba-inc.com" (line-end-position) t))
                (kill-line)
                (insert (format "%s <%s>"
-                               (shell-command-to-string "cat ~/.config/bhj/花名")
-                               (shell-command-to-string "cat ~/.config/bhj/mail")))
+                               (shell-command-to-string "cat ~/.config/about_me/花名")
+                               (shell-command-to-string "cat ~/.config/about_me/mail")))
                (bhj-set-smtp-cred-to-company-mail))
 
               ((save-excursion (search-forward-regexp "@gmail.com" (line-end-position) t))

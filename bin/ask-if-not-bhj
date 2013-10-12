@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if test $USER = bhj; then
+   true;
+   exit
+fi   
+
+if yes-or-no-p "$@"; then
+    true
+fi
+
+false

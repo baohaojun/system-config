@@ -4,7 +4,7 @@ export LANG=C
 export LC_ALL=C
 
 packages_dir=${PACKAGES_DIR:-~/bin/Linux/config/pkgs/}
-packages=$(find "$packages_dir" -type f|perl -npe 's,.*/,,')
+packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,')
 err_packages=""
 
 while ! aptitude show $packages >/dev/null 2>&1; do
@@ -28,6 +28,6 @@ if (m/^Package: (.*)$/) {
 
 echo "missing_packages are $missing_packages"
 
-for x in $missing_packages; do 
+for x in $missing_packages; do
     sudo apt-get install "$@" -y $x || true
 done

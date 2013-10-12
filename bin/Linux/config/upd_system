@@ -2,7 +2,7 @@
 #把system-config下载回来，并全部拷到~下
 #cd ~
 #svn co http://system-config.googlecode.com/svn/trunk
-#mv ~/trunk/* ~/trunk/.* ~ 
+#mv ~/trunk/* ~/trunk/.* ~
 
 #先把一些常用的软件装上，包括编译Android需要用到的软件。
 
@@ -27,8 +27,10 @@ mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
 
-if test "$USER" = bhj; then
-    set +e
-    sudo apt-get install texlive-full 
+if ask-if-not-bhj "Install texlive?"; then
+    sudo apt-get install texlive-full || true
+fi
+
+if ask-if-not-bhj "Use Bao Haojun's crontab config?"; then
     crontab ~/.crontab.bhj
 fi
