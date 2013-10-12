@@ -514,7 +514,7 @@ class ime:
 
         if key == 'C \\':
             self.__toggle()
-        elif key == 'C g' or key == 'escape':
+        elif key == 'C g' or key == 'escape' or key == 'C /':
             self.compstr = ''
         elif not self.compstr:
             self.__keyed_when_no_comp(key)
