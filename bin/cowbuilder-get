@@ -85,11 +85,11 @@ for system_arch in $system_archs; do
         fi
         mkdir -p $basepath/base.cow2
         mount -t tmpfs none $basepath/base.cow2 -o size=2000000k
-        othermirror='deb-src http://r66:9999/$sysname $dist $components'
+        othermirror='deb-src http://cn.archive.ubuntu.com/$sysname $dist $components'
         if test $dist = lucid; then
-            othermirror=\"\$othermirror|deb http://r66:9999/$sysname $dist-backports $components\"
+            othermirror=\"\$othermirror|deb http://cn.archive.ubuntu.com/$sysname $dist-backports $components\"
         fi
-        command sudo pbuilder --create --basetgz $basepath/base.tgz --mirror http://r66:9999/$sysname --othermirror \"\$othermirror\" --distribution $dist --components \"$components\" $extra_args --architecture $arch $(if test $DEBUG = true; then echo --debug; fi) --buildplace $basepath/base.cow2 ||
+        command sudo pbuilder --create --basetgz $basepath/base.tgz --mirror http://cn.archive.ubuntu.com/$sysname --othermirror \"\$othermirror\" --distribution $dist --components \"$components\" $extra_args --architecture $arch $(if test $DEBUG = true; then echo --debug; fi) --buildplace $basepath/base.cow2 ||
         cp $basepath/base.cow2 $basepath/base.error -av
         echo done
     "
