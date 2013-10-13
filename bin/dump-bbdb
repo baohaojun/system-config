@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+
+@ARGV = glob("~/.bbdb");
+
+while (<>) {
+    $re_nq = qr([^"]*);
+    $re_mail = qr([^"]*?\@[^"]*?);
+    if (m/^\[(?:"($re_nq)"|nil).*?"($re_nq)"/) {
+        ($first_name, $last_name) = ($1, $2);
+        while (m/"($re_mail)"/g) {
+            if ($first_name) {
+                $first_name .= " ";
+            }
+            print "$first_name$last_name <$1>\n";
+        }
+    }
+}

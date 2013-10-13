@@ -111,23 +111,23 @@ From: $(cat ~/.config/about_me/花名) <$(cat ~/.config/about_me/mail)>
 $(
 ## start code-generator "^\\s *#"
 # for x in cc bcc subject to; do
-#     echo if test \$"$x"\; then
-#     echo '    echo' $(ucfirst $x): '${'$x'[@]}'
+#     echo if test \"\$"$x"\" -o $x = to -o $x = subject\; then
+#     echo '    echo' \"$(ucfirst $x): \"'${'$x'[@]}'
 #     echo fi
 # done
 ## end code-generator
 ## start generated code
-if test $cc; then
-    echo Cc: ${cc[@]}
+if test "$cc" -o cc = to -o cc = subject; then
+    echo "Cc: "${cc[@]}
 fi
-if test $bcc; then
-    echo Bcc: ${bcc[@]}
+if test "$bcc" -o bcc = to -o bcc = subject; then
+    echo "Bcc: "${bcc[@]}
 fi
-if test $subject; then
-    echo Subject: ${subject[@]}
+if test "$subject" -o subject = to -o subject = subject; then
+    echo "Subject: "${subject[@]}
 fi
-if test $to; then
-    echo To: ${to[@]}
+if test "$to" -o to = to -o to = subject; then
+    echo "To: "${to[@]}
 fi
 
 ## end generated code

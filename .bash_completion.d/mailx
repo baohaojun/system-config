@@ -39,7 +39,7 @@ function _mailx()
         -c|-b|[^-]*)
             COMPREPLY=( $(skeleton_compgen_word.pl \
                 -d '\n' -- \
-                "$(cd ~/jira-users; ls)" \
+                "$((cd ~/jira-users; ls; dump-bbdb)|uniq-even-non-ajacent)" \
                 "$cur")
             )
             return 0
