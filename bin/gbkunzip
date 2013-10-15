@@ -14,7 +14,10 @@ mkdir $TD
     cd $TD
 
     LANG=C LC_ALL=C 7z x "$FILE" >/dev/null 2>&1
-    convmv -f gbk -t utf8 -r --nosmart --notest * >/dev/null 2>&1
+    convmv -f gbk -t utf8 -r --nosmart -- *
+    if yes-or-no-p "Do the convmv?"; then
+        convmv -f gbk -t utf8 -r --nosmart --notest -- * >/dev/null 2>&1
+    fi
 )
 cp $TD/* "$DIR" -va
 rm $TD -rf
