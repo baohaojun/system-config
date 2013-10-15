@@ -32,13 +32,13 @@ class Application;
 class SnoreCore;
 
 
-class SNORE_EXPORT SnorePlugin:public QObject
+class SNORE_EXPORT SnorePlugin : public QObject
 {
     Q_OBJECT
 public:
     SnorePlugin ( const QString &name);
     virtual ~SnorePlugin();
-    virtual bool init( SnoreCore* snore );
+    virtual bool init( SnoreCore *snore );
     bool isInitialized();
     SnoreCore* snore();
     const QString &name() const;
