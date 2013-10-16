@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) .msg_file"
+fi
+
+msgconvert.pl --mbox=shit.mbox "$1"
+dos2unix shit.mbox
+if iconv -f utf-8 -t utf-8 shit.mbox >/dev/null 2>&1; then
+    perl -npe 's/charset=\S*$/charset=utf-8/' -i shit.mbox
+elif iconv -f gbk -t utf-8 shit.mbox >/dev/null; then
+    perl -npe 's/charset=\S*$/charset=gbk/' -i shit.mbox
+fi
+msg_id=$(perl -ne 'print "$1\n" if m/^Message-Id: <(.*)>/' shit.mbox | head -n 1)
+mv shit.mbox "/home/bhj/Maildir/bhj.MSG/cur/1381896010_0.14114.bhj-t430,U=210,FMD5=9a2686ed80da019ef31dc45bb69d6961:2,FS"
+emacsclient -d -e '(org-open-link-from-string "gnus:bhj.MSG#'"$msg_id"'")'
+

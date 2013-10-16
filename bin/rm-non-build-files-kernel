@@ -5,7 +5,7 @@ git ls-tree -r HEAD --name-only |tee mark| xargs touch
 touch mark
 echo 'echo -00122-g512f9aa; exit 0' > ./scripts/setlocalversion
 
-if test $# != 0; then
+if test $# != 0; then # should be make i386_defconfig
     rm ~/.cache/kernel-build -rf
     mkdir -p ~/.cache/kernel-build
     export CROSS_COMPILE='ccache '
@@ -17,3 +17,11 @@ fi | tee ~/1.txt
 
 find . -type f -anewer mark -print | perl -npe 's!^\./!!' > newer
 file-arg1-arg2 mark newer | pn 1 | xargs git rm -f
+
+if test $# != 0; then # should be make i386_defconfig
+    headers=$(find ~/.cache/kernel-build/ -name '*.h')
+    echo "$headers"|perl -npe 'chomp; s!.*?kernel-build/!!; s![^/]*$!!; $_ .= "\n"'|sort -u | xargs mkdir -p
+    for x in $headers; do
+        cp $x $(echo $x | perl -npe 'chomp; s!.*?kernel-build/!!; s![^/]*$!!; $_ .= "\n"')
+    done
+fi

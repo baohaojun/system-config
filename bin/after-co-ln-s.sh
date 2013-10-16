@@ -201,6 +201,8 @@ if test ! -d ~/.config/about_me; then
     mkdir -p ~/.config/about_me;
 fi
 
+perl -npe 's!external/firefox/firefox!bin/firefox!' -i ~/.local/share/applications/userapp-Firefox-*.desktop
+
 after-co-settings.sh
 sudo cp ~/doc/usr/lib/pm-utils/sleep.d/99-switch-touchpad /usr/lib/pm-utils/sleep.d/
 sudo update-host-ip phone 192.168.15.244

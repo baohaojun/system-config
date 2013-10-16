@@ -734,10 +734,11 @@ might be bad."
                                              (> (current-column) col-start-indent))))
                               (search-forward-regexp "\\s "))
                             (search-forward-regexp "\\S " (line-end-position))
+                            (backward-char)
                             (current-column))))
       (unless (equal start-point end-point)
         (delete-region start-point end-point))
-      (insert (make-string (- col-indent-to col-start-indent 1) ? )))))
+      (insert (make-string (- col-indent-to col-start-indent) ? )))))
 
 ;;;###autoload
 (defun back-to-indent-same-space-as-prev-line (n-prev)

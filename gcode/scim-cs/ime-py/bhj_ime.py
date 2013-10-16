@@ -378,12 +378,15 @@ class ime:
                 arg = ''
             else :
                 func = line[:pos]
-                arg = line[pos+1 : ]
+                arg = line[pos+1 : ].strip()
 
             if not line:
                 return
             try:
-                eval('self.%s' % func)(arg)
+                if func == "keyed":
+                    self.keyed(arg)
+                else:
+                    eval('self.%s' % func)(arg)
             except:
                 self.__error()
             finally:

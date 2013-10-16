@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-set
 function die() {
     echo "$@"
     exit -1
@@ -22,7 +20,10 @@ case $1 in
         if test -e function.$2.html; then
             firefox-open-url-pattern file:///usr/share/doc/php-doc/html/ function.$2.html;
         else
-            file=$(select-output-line "ls *$2* && echo look-at-the-web" )
+            file=$(select-output-line "ls *$2* && echo look-at-the-web" ) || true
+            if ! test "$file"; then
+                file=$(select-output-line "ls *$(echo $2|perl -npe 's/_/-/g; $_ = lc')* && echo look-at-the-web" )
+            fi
             if test -e "$file"; then
                 firefox-open-url-pattern file:///usr/share/doc/php-doc/html/ $file
             elif php-functions | grep -q -e "$2"; then

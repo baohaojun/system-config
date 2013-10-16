@@ -1,4 +1,4 @@
 #!/bin/bash
 for x in "$@"; do
-    echo -n "$x" | perl -npe '$_ = ucfirst'
+    echo -n "$x" | perl -npe '$_ = '$(basename $0)
 done

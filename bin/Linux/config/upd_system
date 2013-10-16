@@ -9,7 +9,25 @@
 #all the other packages
 
 sudo perl -npe 's/^deb\s+\b/deb [arch=amd64,i386] /' -i /etc/apt/sources.list
+if ! grep -q -P -e 'debian/? testing main' /etc/apt/sources.list; then
+    old_name=$(perl -ne 'print "$1\n" if m!debian/? (\w+) main!' /etc/apt/sources.list | sort -u; echo testing)
+    old_name=$(select-output-line echo "$old_name")
+    sudo perl -npe 's!debian/?\s+'$old_name'\s+main!debian/ testing main!' -i /etc/apt/sources.list
+fi
+
+if ! grep -q -P -e 'debian/? unstable main' /etc/apt/sources.list; then
+    sudo perl -ne 'print;
+              if (m!debian/? testing main!) {
+                  s!debian/? testing main!debian/ unstable main!;
+                  print;
+              }
+             ' -i /etc/apt/sources.list
+    sudo perl -npe 's!(debian/? \w+ main)\s*$!$1 contrib non-free\n!' -i /etc/apt/sources.list
+fi
+
 sudo bash -c '(echo amd64; echo i386) > /var/lib/dpkg/arch'
+sudo cp ~/etc/apt/apt.conf.d/99testing /etc/apt/apt.conf.d/
+
 sudo apt-get update
 sudo apt-get dist-upgrade -y
 

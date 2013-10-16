@@ -16,11 +16,14 @@ is_archive_type() {
     return 1
 }
 
-if is_archive_type "$type" || test "$(xdg-mime query default "$type")" = file-roller.desktop; then
+if test "${1##*.}" = zip; then
+    gbkunzip "$1"
+elif is_archive_type "$type" || test "$(xdg-mime query default "$type")" = file-roller.desktop; then
     dir=./"$(basename "$1")".unzip.$$
     mkdir -p "$dir"
     file-roller "$1" -e "$dir"&
     up "$dir"
     exit
+else
+    of "$1";
 fi
-of "$1";

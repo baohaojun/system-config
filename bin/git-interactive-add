@@ -41,6 +41,7 @@ for x in $(git st -s |grep '^.\S' -P | pn 2); do
 
         if test $out = edit; then
             ew "$x"
+            find-or-exec konsole
             git-diff "$x";
             continue
         fi
