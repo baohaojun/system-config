@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Interactive Git Add]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/10/16/0-Interactive-Git-Add.html"/>
+    <updated>2013-49-16T10:10:50+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/10/16/0-Interactive-Git-Add.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[自己写了一个输入法, Windows下的五笔]]></title>
     <link href="http://baohaojun.github.io/blog/2013/10/05/0-My-Own-Win32-Input-Method.html"/>
     <updated>2013-10-05T07:33:54+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/07/09/0-sawfish-keyboard-macro.html"/>
     <updated>2013-07-09T18:18:45+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/07/09/0-sawfish-keyboard-macro.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[-new-tab or no -new-tab]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/07/05/0-firefox-smart-new-tab.html"/>
-    <updated>2013-07-05T14:33:32+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/07/05/0-firefox-smart-new-tab.html</id>
   </entry>
 </feed>

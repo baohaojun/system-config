@@ -1,6 +1,10 @@
 #+title: Computer tools
  * 2013
   - 2013-10
+   * 2013-10-16
+
+     [[../../../blog/2013/10/16/0-Interactive-Git-Add.org][Interactive Git Add]]
+
    * 2013-10-01
 
      [[../../../blog/2013/10/01/0-Inside-Ajoke.org][Inside Ajoke]]

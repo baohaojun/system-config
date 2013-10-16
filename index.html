@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>自己写了一个输入法, Windows下的五笔</title>
+<title>Interactive Git Add</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
-
+<meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
@@ -101,158 +101,90 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">自己写了一个输入法, Windows下的五笔</h1>
+<h1 class="title">Interactive Git Add</h1>
 <p>
-这是我很多年前写的一篇文章，发表在 <a href="http://www.linuxsir.org/bbs/thread362074.html">linuxsir</a> 上，现在把他重新整理一下，
-贴到自己的博客上。
+我经常一个人在战斗，没有人帮我做code review。咦，这英文和中文混在一起竟然也能压䪨吼。
 </p>
 
 <p>
-在我的前一篇老博客里，我以为自己的脑子进水了，所有的标点都采用了英文标
-点，看完这一篇才明白，自己当时的输入法不支持中文标点。所以抱歉，但我还
-是懒得改:-)
+我用过的唯一一个code review的工具，gerrit，貌似有点太正式，不够轻量级，
+虽然我已经写了很多脚本让其尽量自动化。然而还是要让我离开我的主战
+场——Shell和Emacs——两个不会逼我用到鼠标的工具，到一个我不得不用到鼠标的
+工具，firefox浏览器，还是有点不爽。
 </p>
 
 <p>
-后来又折腾折腾，最后搞出来Linux/Win32/Emacs下都可以用了，名字也取成
-SDIM（Shadow Dance Input Method，影舞笔），然后到水木清华bbs的Emacs版了
-广告了一下，在 <a href="http://www.newsmth.net/bbstcon.php?board=Emacs&gid=88131">这里</a>。
+其实我觉得更适合我的一个做code review的机会，是我在每次git add的时候。
+可能是因为我要写的代码都比较小的缘故吧，我自己一个人很少——几乎从来没有
+过——需要拉一个topic branch的时候。如果是有topic branch，可能会觉得当
+merge回主线的时候是个做code review的好时机，因为主线的质量应该要求更严
+格一点嘛。
 </p>
 
 <p>
-<code>==============</code>
+但我不这样觉得。对topic branch和master branch提不同的两种质量要求是很邪
+恶的。会给你制造你不想要的“惊喜”。它要求你实刻记得哦我现在是在topic
+branch，哦我现在又换到master branch了，事情就不一样了&#x2026;
 </p>
 
 <p>
-嗯, Windows的, 还是五笔? 有病吧? 脑残吧? Windows下那么多输入法了, 五笔
-的也有很多, 什么极点, 万能, 甚至还有启程之星, 最后这个还是部分开源的五
-笔输入法呢. 我为什么还要自己写一个呢?
+类似的情况就像我们常被强迫记得哦我现在是在用Windows，所有这件事儿得这么
+办，哦我现在切到Linux了，这事儿没法弄了&#x2026; 去你大爷的，这就是我写了
+SDIM输入法的原因，保证我不会被系统逼得一起换脑子和我的打字指法机械记忆。
 </p>
 
 <p>
-哎, 说来话长啊. 因为我觉得, 输入法就是个很个性化的软件, 每个人都应该有
-一个他自己的输入法. 如果Suzhe写的scim不够好, 如果Yuking写的fcitx不够好,
-我就把他们俩的捏一块儿, 叫做scim-fcitx:-)
+说着说着有点跑题了，好吧，因为不喜欢在topic branch里降低review要求（事
+实上很少用topic branch），我希望我的每一个git commit的质量都能够高一点，
+所以我觉得每次git add的时候自动强迫自己做一下review应该是个好主意。这样
+我最后git commit的时候心里基本能有个谱，基本的review已经做过了，质量有
+保障了:-)
 </p>
 
 <p>
-后来我不怎么用Linux了, 在公司一直用Windows XP + Cygwin. scim-fcitx肯定
-是没法再用了, 就琢磨着, 自己写一个吧. 拿Windows DDK下的区位输入法的例子
-源代码看啊看, 改啊改, 失败, 看不懂, 改不了&#x2026; 不搞了, 忍一忍算了, 我用
-极点吧.
+脚本 <a href="https://github.com/baohaojun/system-config/raw/master/bin/git-interactive-add">git-interactive-add</a> 很简单，就是对每个改动过的文件都显示一个git diff，然后问一个选择题，
+</p>
+
+<ol class="org-ol">
+<li>yes？选中会真的git add这个文件，然后往下走（看下一个文件）
+</li>
+<li>no？选中会跳过这个文件（下次git add再说），然后往下走
+</li>
+<li>diff？选中会再做一遍diff，让你一次看个够
+</li>
+<li>edit？选中会直接在Emacs里打开这个文件，等你编辑完成后，自动把
+konsole窗口弹回前台，然后重头再来（sawfish窗口管理器就是好呀就是好！）
+</li>
+<li>显示一下当前文件的绝对路径。这不是一个选项，但我觉得有时候很有用。
+</li>
+</ol>
+
+<p>
+最后，我写了这个工具可能其实只不过是在拖延自己学会社区里很需要的一项能
+力：熟练修改git history。试想，Linux Kernel邮件组里经常收到一长串
+review， <code>[5/15]</code> 什么的，意思是这是15个git commit（patch）里的第5个。
+然后如果让别人review出问题来的话，显然作者就需要把之后的10个patch都pop
+出去，修改这第5个patch，然后重新commit，然后把之个的10个patch再push回来。
+小心一点肯定不会造成patch丢失的情况吼，所以也不用害怕啦。有一些commit的
+质量不高也没关系嘛，我们可以改的嘛！
 </p>
 
 <p>
-这一忍, 就是两三年的时间. 极点这个键跟fcitx不一样, 那个键也不一样, 算了
-啦, 忍了啦, 我也没有极点的源代码, 我就改变自己的习惯吧, 从了极点的快捷
-键设置吧. 谁让我看不懂区位输入法的代码呢.
+但我还是喜欢git-interactive-add给我带来的流程上的快乐。这种感觉就是中间
+自己停下来休息一下，看一眼再继续前进，如果要回去改commit的话，就感觉被
+逼着做屌丝的逆袭，有点不爽呢吼。所以如果你也喜欢这种飞流直下三千尺，一
+泄如注不被打断的感觉，不仿也来试试吧！
 </p>
 
 <p>
-最后让我忍无可忍的是, Cygwin下的X的窗口不能用Windows本地的输入法! 按一
-下Windows的输入法切换键, 输入法的窗口是切出来的, 但是按什么键都还是打英
-文. 其它的也就罢了, Emacs也没有! 这让我很受不了, 因为我大部分时间都要用
-Emacs的, 而Emacs自带的输入法又不是很好用(这是当然的啦, 因为Emacs的键绑
-定都是"怪怪"的啦, 比如, 候选词向下翻页人家默认的键是C-n, 也就是
-Control + n哎. 又比如, 我用过的所有输入法里, 取消你当前的输入都是按
-Escape, Emacs里是按C-g哎).
+哈哈哈哈，邪恶。
 </p>
-
-<p>
-怎么办? 忍! 极点我都忍了, 这个也忍了吧! 我找来fcitx里的wubi86码表, 倒腾
-到Emacs的quail里, 有一些gb18030的字quail还不认, 我只好一个一个的删掉,
-为了删它们我还专门学习了emacs里的宏, 要不然每删一个"怪"字我都得敲键盘若
-干下, 还不能敲错&#x2026;
-</p>
-
-<p>
-后来在网上看了海峰五笔的码表, 哇, 好全啊, 囧这个字算什么, 那个表连 ㍥  都
-能打出来! 给emacs整上, 极点怎么整不会. 嗯, 忍忍吧&#x2026;
-</p>
-
-<p>
-几年过去了. 我已经爱上了Emacs下打中文的快捷键, 我再也受不了极点了. 我要
-再试一次! 我又找来Windows的DDK, 打开区位输入法的代码, 看啊看, 改啊改,
-嗯, 看来我这几年阅读源代码的功力还是有长的, 这回大概看懂了, 再加上网上
-尤其是启程之星作者(破除封建迷信, 崇尚科学算命)的一篇文章, 我终于把代码
-给写出来了.
-</p>
-
-<p>
-区位输入法是用C写的, 我用了C++. C++的功力又长了不少, 嘿嘿, 窃喜. 很多以
-前没用过, 不知道有什么用的东西都懂一点了&#x2026;
-</p>
-
-<p>
-慢, 这还不算完. 写输入法有多痛苦写过的人才知道. 就一台机器, 出bug了你好
-多程序都嘎嘣嘎嘣的崩溃, 用C/C++语言每次改一点代码都还得重新编译, 编出来
-的程序(就一个dll)还不能直接安装, 在Windows下你得把所有用过了你的输入法
-的进程统统干掉. 我写了一个C#的程序, 能把系统中所有进程load了哪些dll全部
-打印, 然后我grep, 然后我用python (Windows自带的) + pywin32写一个脚本,
-把那些load了我输入法的进程全部咔嚓&#x2026; 这个程序还满有用的, 在我更新
-cygwin的时候需要把所有load了cygwin1.dll的程序全部咔嚓, 或者哪天我想把所
-有notepad的进程全部咔嚓&#x2026;
-</p>
-
-<p>
-扯远了, 最后要说的是, 因为c/c++调试困难, 我的程序有两个版本, 一个是纯
-c++写的, 另一个是后来用c++写了一个客户端, 用python3.1写了一个服务端, 模
-仿了一下scim的代码组织. 这样组织带来一个显而易见的好处是调试更方便了,
-客户与服务之间的协议采用纯文本, 我可以用telnet/nc来调试我的输入法服务
-端:
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh">$(<span class="org-sh-quoted-exec">echo</span> <span class="org-string">'keyed C \'</span>; <span class="org-comment-delimiter">#</span><span class="org-comment">&#36825;&#20010;&#26159;&#25105;&#30340;&#36755;&#20837;&#27861;&#28608;&#27963;&#38190;, &#27169;&#20223;emacs&#30340;quail  </span>
-&gt; echo keyed a; <span class="org-comment-delimiter">#</span><span class="org-comment">&#27169;&#20223;&#36755;&#20837;a  </span>
-&gt; echo keyed space <span class="org-comment-delimiter">#</span><span class="org-comment">&#27169;&#20223;&#36755;&#20837;&#31354;&#26684;  </span>
-&gt; )|nc localhost 12345  
-active: Y <span class="org-comment-delimiter">#</span><span class="org-comment">&#28608;&#27963;&#20102;  </span>
-end: <span class="org-comment-delimiter">#</span><span class="org-comment">&#24212;&#31572;&#32467;&#26463;  </span>
-comp: a <span class="org-comment-delimiter">#</span><span class="org-comment">&#32534;&#36753;&#20018;&#20026;"a"  </span>
-hint: [abcdefghijklmnopqrstuvwxy] <span class="org-comment-delimiter">#</span><span class="org-comment">&#21518;&#32493;&#36319;&#36825;&#20123;&#23383;&#31526;&#36824;&#21487;&#33021;&#26377;&#20505;&#36873;&#35789;, &#20063;&#26159;&#27169;&#20223;quail  </span>
-cands: &#24037; <span class="org-comment-delimiter">#</span><span class="org-comment">&#20505;&#36873;&#35789;&#20026;"&#24037;"  </span>
-active: Y <span class="org-comment-delimiter">#</span><span class="org-comment">&#29366;&#24577;&#36824;&#26159;&#28608;&#27963;  </span>
-end:  
-active: Y   
-commit: &#24037; <span class="org-comment-delimiter">#</span><span class="org-comment">&#26368;&#21518;&#19968;&#20010;"&#31354;&#26684;"&#34920;&#31034;&#35201;&#25552;&#20132;&#36825;&#20010;&#20505;&#36873;&#35789;"&#24037;"  </span>
-end:
-</pre>
-</div>
-
-<p>
-最后还有一点, 我的输入法极其简陋, 这个是故意的, 不喜欢很多花哨的东西.
-只有一点花哨的地方: 它的状态显示条只有一个图标, 是半透明的, 输入法为中
-文输入时透明度下降, 图标看得更清楚, 为英文输入状态时图标变得更透明, 呵
-呵. 这个图标用的是当前在使用这个输入法窗口的Windows图标. 见我附上的图.
-</p>
-
-<p>
-<a href="images/post/my-windows-ime.png"><img  src="images/post/my-windows-ime.png" alt="my-windows-ime.png" /></a>
-</p>
-
-<p>
-纯c++的代码在<a href="http://windows-config.googlecode.com/svn/trunk/gcode/scim">这里</a>, c++ + python的代码在<a href="http://windows-config.googlecode.com/svn/trunk/gcode/scim-cs">这里</a>, 你看出来了, 我的输入法名字
-也叫scim哎, 估计suzhe不能答应, 我以后得改&#x2026;
-</p>
-
-<p>
-事实上, 我给自己的输入法起了个名字, 叫做"影舞笔"! 哈哈哈&#x2026; 意思是用自
-己写的输入法, 那简直, 跟佛山无影腿似的, 又跟跳舞似的&#x2026;
-</p>
-
-<p>
-最后, 以上全是用自己的输入法写的&#x2026; 它不支持中文标点, 你肯定也看出来了
-吧:-) 以后我也不一定让它支持, 我忍!
-</p>
-
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2013/10/04/0-Win32-IME-Programming.html"> <!-- prev-url -->
+      <a href="blog/2013/10/05/0-My-Own-Win32-Input-Method.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        我的Win32输入法编程心得 <!-- prev-title -->
+        自己写了一个输入法, Windows下的五笔 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -330,12 +262,13 @@ end:
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="meta/tags/keyboard.html" title="Hacking the keyboard, Dvorak Programmer's Keyboard mainly.">keyboard</a></li>
+                <li><a href="meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2013/10/04/0-Win32-IME-Programming.html'> 我的Win32输入法编程心得 </a></li>
+        <li><a href='blog/2013/10/05/0-My-Own-Win32-Input-Method.html'> 自己写了一个输入法, Windows下的五笔 </a></li>
+<li><a href='blog/2013/10/04/0-Win32-IME-Programming.html'> 我的Win32输入法编程心得 </a></li>
 <li><a href='blog/2013/10/01/0-Inside-Ajoke.html'> Inside Ajoke </a></li>
 <li><a href='blog/2013/09/02/0-jira-5.2-essentials-review.html'> Book Review: JIRA 5.2 Essentials </a></li>
 <li><a href='blog/2013/08/16/0-rbtree.html'> 红黑树 </a></li>
@@ -344,7 +277,6 @@ end:
 <li><a href='blog/2013/07/11/0-firefox-search-for-tab.html'> Firefox: Better Tab Reuse for IDE Help Integration </a></li>
 <li><a href='blog/2013/07/09/0-sawfish-keyboard-macro.html'> Simple scripts to record/play keyboard macro (sawf... </a></li>
 <li><a href='blog/2013/07/05/0-firefox-smart-new-tab.html'> Firefox: -new-tab or no -new-tab </a></li>
-<li><a href='blog/2013/06/18/0-auto-includes.html'> 苹果对头文件开刀了？我也来！ </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

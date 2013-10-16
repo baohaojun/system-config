@@ -1,0 +1,53 @@
+#+title: Interactive Git Add
+# bhj-tags: tool
+
+我经常一个人在战斗，没有人帮我做code review。咦，这英文和中文混在一起竟然也能压䪨吼。
+
+我用过的唯一一个code review的工具，gerrit，貌似有点太正式，不够轻量级，
+虽然我已经写了很多脚本让其尽量自动化。然而还是要让我离开我的主战
+场——Shell和Emacs——两个不会逼我用到鼠标的工具，到一个我不得不用到鼠标的
+工具，firefox浏览器，还是有点不爽。
+
+其实我觉得更适合我的一个做code review的机会，是我在每次git add的时候。
+可能是因为我要写的代码都比较小的缘故吧，我自己一个人很少——几乎从来没有
+过——需要拉一个topic branch的时候。如果是有topic branch，可能会觉得当
+merge回主线的时候是个做code review的好时机，因为主线的质量应该要求更严
+格一点嘛。
+
+但我不这样觉得。对topic branch和master branch提不同的两种质量要求是很邪
+恶的。会给你制造你不想要的“惊喜”。它要求你实刻记得哦我现在是在topic
+branch，哦我现在又换到master branch了，事情就不一样了...
+
+类似的情况就像我们常被强迫记得哦我现在是在用Windows，所有这件事儿得这么
+办，哦我现在切到Linux了，这事儿没法弄了... 去你大爷的，这就是我写了
+SDIM输入法的原因，保证我不会被系统逼得一起换脑子和我的打字指法机械记忆。
+
+说着说着有点跑题了，好吧，因为不喜欢在topic branch里降低review要求（事
+实上很少用topic branch），我希望我的每一个git commit的质量都能够高一点，
+所以我觉得每次git add的时候自动强迫自己做一下review应该是个好主意。这样
+我最后git commit的时候心里基本能有个谱，基本的review已经做过了，质量有
+保障了:-)
+
+脚本 [[https://github.com/baohaojun/system-config/raw/master/bin/git-interactive-add][git-interactive-add]] 很简单，就是对每个改动过的文件都显示一个git diff，然后问一个选择题，
+
+1. yes？选中会真的git add这个文件，然后往下走（看下一个文件）
+2. no？选中会跳过这个文件（下次git add再说），然后往下走
+3. diff？选中会再做一遍diff，让你一次看个够
+4. edit？选中会直接在Emacs里打开这个文件，等你编辑完成后，自动把
+   konsole窗口弹回前台，然后重头再来（sawfish窗口管理器就是好呀就是好！）
+5. 显示一下当前文件的绝对路径。这不是一个选项，但我觉得有时候很有用。
+
+最后，我写了这个工具可能其实只不过是在拖延自己学会社区里很需要的一项能
+力：熟练修改git history。试想，Linux Kernel邮件组里经常收到一长串
+review， =[5/15]= 什么的，意思是这是15个git commit（patch）里的第5个。
+然后如果让别人review出问题来的话，显然作者就需要把之后的10个patch都pop
+出去，修改这第5个patch，然后重新commit，然后把之个的10个patch再push回来。
+小心一点肯定不会造成patch丢失的情况吼，所以也不用害怕啦。有一些commit的
+质量不高也没关系嘛，我们可以改的嘛！
+
+但我还是喜欢git-interactive-add给我带来的流程上的快乐。这种感觉就是中间
+自己停下来休息一下，看一眼再继续前进，如果要回去改commit的话，就感觉被
+逼着做屌丝的逆袭，有点不爽呢吼。所以如果你也喜欢这种飞流直下三千尺，一
+泄如注不被打断的感觉，不仿也来试试吧！
+
+哈哈哈哈，邪恶。
