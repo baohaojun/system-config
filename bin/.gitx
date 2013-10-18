@@ -69,9 +69,8 @@ function git()
         if test "$1" = st -a "$2" = -S; then
             command git status -s | perl -ne '
 chomp();
-$_ = substr($_, 3);
-if (m/^"/) {
-    $_ = eval($_);
+if (m/^..."/) {
+    s/(".*?")/eval($1)/ge;
 }
 print $_ . "\n";
 '
