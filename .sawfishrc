@@ -67,7 +67,6 @@
 (bind-keys global-keymap "XF86Launch7"  '(system "~/bin/douban info&"))
 (bind-keys global-keymap "C-XF86AudioPlay"  '(system "~/bin/douban lyrics&"))
 (bind-keys s-h-keymap "C-s"  '(system "~/bin/screenshot&"))
-(bind-keys global-keymap "Super-DEL"  '(system "gnome-screensaver-command -l&"))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys global-keymap "Super-Print"  '(system "super-print.sh&"))

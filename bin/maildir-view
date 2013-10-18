@@ -1,0 +1,19 @@
+#!/bin/bash
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+set -e
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) *U=41* (the maildir/cur file name)"
+fi
+
+msg_id=$(perl -ne 'print "$1\n" if m/^Message-Id: <(.*)>/i' "$1" | head -n 1)
+msg_dir=$(basename $(dirname $PWD))
+emacsclient -d -e '(org-open-link-from-string "gnus:'$msg_dir'#'"$msg_id"'")'
+
+
+

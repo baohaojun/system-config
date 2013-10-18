@@ -450,7 +450,7 @@ class ime:
         elif key.isdigit():
             self.cand_index = (int(key.name) + 9) % 10 + self.cand_index // 10 * 10;
             self.__commit_cand()
-        elif key.isalpha():
+        elif key.isalpha() or key.isprint():
             if _g_ime_single_mode:
                 self.__english_mode(key)
             else:
@@ -464,9 +464,6 @@ class ime:
             self.cand_index += 1
         elif key == 'C b':
             self.cand_index -= 1
-        elif key.isprint():
-            self.__commit_cand()
-            self.__keyed_when_no_comp(key)
         else:
             self.beepstr = 'y'
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-file=$(select-output-line bash -c 'cd ~/doc/projects; ls *.org; echo agenda')
+file=$(select-output-line bash -c 'cd ~/doc/projects; ls -t *.org; echo agenda')
 
 if test -e ~/doc/projects/$file; then
    e ~/doc/projects/$file;

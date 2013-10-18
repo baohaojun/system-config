@@ -881,7 +881,9 @@ might be bad."
 (defun bhj-nnmaildir-search-aliman ()
   "Get the header of the current mail"
   (interactive)
-  (shell-command (format "maildir-search-aliman %s" (shell-quote-argument (bhj-get-nnmaildir-article-filename)))))
+  (if (region-active-p)
+      (shell-command-to-string (format "search-aliman %s >/dev/null 2>&1&" (buffer-substring-no-properties (point) (mark))))
+    (shell-command (format "maildir-search-aliman %s" (shell-quote-argument (bhj-get-nnmaildir-article-filename))))))
 
 ;;;###autoload
 (defun my-bbdb/gnus-update-records-mode ()

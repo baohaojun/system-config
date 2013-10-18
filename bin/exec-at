@@ -1,0 +1,5 @@
+#!/bin/bash
+
+time=$1
+shift
+echo "$@" | at "$time"

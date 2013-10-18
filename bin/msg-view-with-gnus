@@ -18,7 +18,34 @@ if iconv -f utf-8 -t utf-8 shit.mbox >/dev/null 2>&1; then
 elif iconv -f gbk -t utf-8 shit.mbox >/dev/null; then
     perl -npe 's/charset=\S*$/charset=gbk/' -i shit.mbox
 fi
-msg_id=$(perl -ne 'print "$1\n" if m/^Message-Id: <(.*)>/' shit.mbox | head -n 1)
-mv shit.mbox "/home/bhj/Maildir/bhj.MSG/cur/1381896010_0.14114.bhj-t430,U=210,FMD5=9a2686ed80da019ef31dc45bb69d6961:2,FS"
-emacsclient -d -e '(org-open-link-from-string "gnus:bhj.MSG#'"$msg_id"'")'
 
+msg_id=$(perl -ne 'print "$1\n" if m/^Message-Id:\s*<(.*)>/i' shit.mbox | head -n 1)
+if (
+        cd ~/Maildir/bhj.MSG/cur;
+        perl -ne 'BEGIN {
+                      $msg_id = q('"$msg_id"');
+                      $msg_id = qr(\Q$msg_id\E);
+                  }
+                  if (1 .. m/^$/) {
+                      if (m/^Message-Id:\s*<$msg_id>/i) {
+                          print "yes $ARGV";
+                      }
+                  } else {
+                      close ARGV;
+                  }' *
+    ) | grep ^yes; then
+    true
+else
+    u=1
+
+    while true; do
+        file="/home/bhj/Maildir/bhj.MSG/cur/1381896010_0.14114.bhj-t430,U=$u,FMD5=9a2686ed80da019ef31dc45bb69d6961:2,FS"
+        if test ! -e "$file"; then
+            mv shit.mbox "$file"
+            break
+        else
+            ((u++)) || true
+        fi
+    done
+fi
+emacsclient -d -e '(org-open-link-from-string "gnus:bhj.MSG#'"$msg_id"'")'
