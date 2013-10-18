@@ -6,15 +6,15 @@ regedit /s ime-noctrlshift-noaltshift.reg
 
 net start sshd&
 net start cron&
-/c/Python31/python "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
+$(echo /c/Python3*/python | pn 1) "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
 while true; do
     sleep 2;
     test -e ~/.no-loop && continue;
-    if ps.pl ssh|grep bhj@216 -q; 
+    if ps.pl ssh|grep bhj@216 -q;
     then
         true;
     else
-        ssh -C2qN -D 8080 bhj@216.194.70.6; 
+        ssh -C2qN -D 8080 bhj@216.194.70.6;
     fi
 done&
 
@@ -23,11 +23,11 @@ rm ~/.no-loop
 function loop-start() {
     local dir=$1
     shift
-    while true; do 
-	sleep 2;
-	test -e ~/.no-loop && continue;
-	cd "$dir"
-	"$@"
+    while true; do
+        sleep 2;
+        test -e ~/.no-loop && continue;
+        cd "$dir"
+        "$@"
     done&
 }
 
@@ -42,4 +42,3 @@ loop-start ~/bin/windows/notification-daemon/ /c/Python25/python.exe notificatio
 run pageant $(wlp ~/.ssh/putty_rsa.ppk)&
 close-window '\\osk.exe'
 ~/bin/windows/redirect.sh&
-

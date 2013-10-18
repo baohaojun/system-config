@@ -22,6 +22,7 @@ function die() {
 
 if test $uname = CYGWIN; then
     if test $(uname) = CYGWIN_NT-5.1; then
+        export PATH=~/system-config/bin/windows:$PATH
         function do_ln_1() {
             junction "$1" "$2"
         }
