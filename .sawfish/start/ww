@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd /tmp
+
 while true; do
     AliWangWang
     sleep 5
