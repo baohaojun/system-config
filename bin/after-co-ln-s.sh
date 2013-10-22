@@ -206,4 +206,5 @@ perl -npe 's!external/firefox/firefox!bin/firefox!' -i ~/.local/share/applicatio
 
 after-co-settings.sh
 sudo cp ~/doc/usr/lib/pm-utils/sleep.d/99-switch-touchpad /usr/lib/pm-utils/sleep.d/
+sudo cp ~/doc/usr/lib/pm-utils/sleep.d/99-switch-touchpad /lib/systemd/system-sleep/zz-switch-touchpad
 sudo update-host-ip phone 192.168.15.244

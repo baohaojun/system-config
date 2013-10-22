@@ -7,11 +7,15 @@ case $1 in
         ;;
     thaw)
         ;;
-    resume)
-	su bhj -c ~bhj/bin/switch-touchpad
-	echo done > ~bhj/.logs/$(basename $0).log
+    resume|post)
+        (
+            su bhj -c "sleep 1 && bash -x ~bhj/bin/switch-touchpad &"
+            echo done "$@"
+            echo
+        ) > ~bhj/.logs/$(basename $0).log 2>&1
+        ;;
+    pre)
         ;;
     *)  echo "ERROR: called incorrectly."
         ;;
 esac
-
