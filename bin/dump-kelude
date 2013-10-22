@@ -1,0 +1,13 @@
+#!/bin/bash
+for x in $(seq 0 365); do
+    date=$(today -$x)
+    of "http://kelude.taobao.net/issues?utf8=%E2%9C%93&group_by=&my_watcher=&my_fix=&my_comment=&has_rb=&version_id=35390&values[id][]=&flt-input[tracker_id][]=&flt-input[status_id][]=&values[status_id][]=28&flt-input[priority_id][]=&values[subject][]=&values[created_at][]=$date&values[created_at][]=$date&flt-input[assigned_to_id][]=&flt-input[author_id][]=&tr_edit_status_id=&tr_edit_priority_id=&tr_edit_subject=&multi_assigned_to_id=&multi_assigned_to_id_input=&per_page=15&page="
+    sleep 5
+    putclip 导出所有; sawfish-send-window-event Mozilla C-s C-v C-g RET
+    sleep 1
+    sawfish-send-window-event Mozilla SPC TAB TAB TAB TAB TAB RET
+    sleep 1
+    if ((x % 30 == 19)); then
+	read -p "continue? "
+    fi
+done

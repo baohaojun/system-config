@@ -885,6 +885,11 @@ might be bad."
       (shell-command-to-string (format "search-aliman %s >/dev/null 2>&1&" (buffer-substring-no-properties (point) (mark))))
     (shell-command (format "maildir-search-aliman %s" (shell-quote-argument (bhj-get-nnmaildir-article-filename))))))
 
+(defun bhj-nnmaildir-find-file()
+  "Open the maildir file"
+  (interactive)
+  (find-file (bhj-get-nnmaildir-article-filename)))
+
 ;;;###autoload
 (defun my-bbdb/gnus-update-records-mode ()
   (progn

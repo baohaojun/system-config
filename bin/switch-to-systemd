@@ -7,3 +7,12 @@ if test -x /lib/systemd/systemd; then
     sudo perl -npe 's!GRUB_CMDLINE_LINUX_DEFAULT="quiet"!GRUB_CMDLINE_LINUX_DEFAULT="quiet init=/lib/systemd/systemd"!' -i /etc/default/grub
     sudo update-grub
 fi
+
+if ! grep -q '^HandlePowerKey=ignore' /etc/systemd/logind.conf; then
+    cat <<EOF | sudo tee -a /etc/systemd/logind.conf
+HandlePowerKey=ignore
+HandleSuspendKey=ignore
+HandleHibernateKey=ignore
+HandleLidSwitch=ignore
+EOF
+fi
