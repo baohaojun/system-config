@@ -35,7 +35,4 @@ sudo usermod -a -G dialout $(whoami) || true
 sudo perl -npe 's/^#user_allow_other/user_allow_other/' -i /etc/fuse.conf
 emacs-install-packages
 mkdir -p ~/src/github
-if test ! -d helm; then
-    git clone https://github.com/emacs-helm/helm
-fi
 echo 'OK'

@@ -3,6 +3,15 @@ set -e
 function compile_beagrep() {
     cd ~/gcode/beagrep
     git clean -xfd
+
+    if test -e /usr/lib/pkgconfig/gmime-sharp-2.6.pc/gmime-sharp-2.6.pc; then
+        (
+            cd /usr/lib/pkgconfig/
+            sudo mv gmime-sharp-2.6.pc/gmime-sharp-2.6.pc gmime-sharp-2.6.pc.2
+            sudo rmdir gmime-sharp-2.6.pc
+            sudo mv gmime-sharp-2.6.pc.2 gmime-sharp-2.6.pc
+        )
+    fi
     autoreconf -i
     ./configure
     make

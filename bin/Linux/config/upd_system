@@ -10,6 +10,9 @@
 
 sudo perl -npe 's/^deb\s+\b/deb [arch=amd64,i386] /' -i /etc/apt/sources.list
 if ! grep -q -P -e 'debian/? testing main' /etc/apt/sources.list; then
+    if ! perl -e 'use String::Escape' >/dev/null 2>&1; then
+        sudo apt-get install libstring-escape-perl # select-output-line below will use this module
+    fi
     old_name=$(perl -ne 'print "$1\n" if m!debian/? (\w+) main!' /etc/apt/sources.list | sort -u; echo testing)
     old_name=$(select-output-line echo "$old_name")
     sudo perl -npe 's!debian/?\s+'$old_name'\s+main!debian/ testing main!' -i /etc/apt/sources.list
@@ -32,7 +35,9 @@ sudo apt-get update
 sudo apt-get dist-upgrade -y
 
 ~/bin/Linux/config/install-pkgs
-sudo update-command-not-found
+if ! ls /var/cache/command-not-found/*.db; then
+    sudo update-command-not-found
+fi
 sudo apt-get build-dep -y sawfish librep rep-gtk ibus-table
 
 #我们用的桌面系统是gnome，但是窗口管理器要换一个，gnome自带的是metacity，我们要用sawfish
@@ -46,7 +51,7 @@ cp ~/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
 
 if ask-if-not-bhj "Install texlive?"; then
-    sudo apt-get install texlive-full || true
+    sudo apt-get install -y texlive-full || true
 fi
 
 if ask-if-not-bhj "Use Bao Haojun's crontab config?"; then

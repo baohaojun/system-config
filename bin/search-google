@@ -34,6 +34,10 @@ if test $prog = search-aliwork; then
     url="http://work.alibaba-inc.com/work/search?keywords=$fill&offset=0&tabIndex=1"
 fi
 
+if test $prog = search-ishare; then
+    url="http://ishare.iask.sina.com.cn/search.php?key=$fill&format="
+fi
+
 set -x
 
 if test "$EMACS" = t; then

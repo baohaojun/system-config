@@ -1,0 +1,5 @@
+#! /bin/bash
+
+. ~/.renew-xauth
+bhj-notify Life "Go for dinner"
+of http://bjdc.taobao.ali.com/

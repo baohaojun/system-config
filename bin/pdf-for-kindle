@@ -55,21 +55,26 @@ fi
 o_width=$(pdf-get-width "$pdf")
 o_height=$(pdf-get-height "$pdf")
 
-if test "$CUT_SPEC_ODD"; then
-    cut=$CUT_SPEC_ODD
-else
-    cut=$(pdf-get-cut.sh odd.pdf)
-fi
-pdf-cut $cut odd.pdf -p "$pagespec"
-export CUT_SPEC=$(echo "$cut" | perl -npe 's/(-l|-r)/if ($1 eq "-l") {"-r"} else {"-l"}/eg')
-
-if test "$CUT_SPEC_EVEN"; then
-    cut=$CUT_SPEC_EVEN
-else
-    cut=$(pdf-get-cut.sh even.pdf)
+if test ! -e odd-cut.pdf || yes-or-no-p "Redo odd.pdf cut?"; then
+    if test "$CUT_SPEC_ODD"; then
+        cut=$CUT_SPEC_ODD
+    else
+        cut=$(pdf-get-cut.sh odd.pdf)
+    fi
+    pdf-cut $cut odd.pdf -p "$pagespec"
+    export CUT_SPEC=$(echo "$cut" | perl -npe 's/(-l|-r)/if ($1 eq "-l") {"-r"} else {"-l"}/eg')
 fi
 
-pdf-cut $cut even.pdf -p "$pagespec"
+if test ! -e even-cut.pdf || yes-or-no-p "Redo even.pdf cut?"; then
+    read -p "Press any key to continue... "
+    if test "$CUT_SPEC_EVEN"; then
+        cut=$CUT_SPEC_EVEN
+    else
+        cut=$(pdf-get-cut.sh even.pdf)
+    fi
+    pdf-cut $cut even.pdf -p "$pagespec"
+fi
+
 n_width=$(pdf-get-width odd-cut.pdf)
 n_height=$(pdf-get-height odd-cut.pdf)
 
@@ -108,11 +113,13 @@ for page in $(seq 1 $pages); do
 done | xargs pdfjoin --outfile final.pdf
 
 pdf90 final.pdf --outfile "${old_pdf/%.pdf/.Kindle.pdf}"
-rm odd-*.pdf even-*.pdf -f
+rm odd-*.pdf even-*.pdf -f odd.pdf even.pdf
 
 for x in left bot right top; do
     rm $x.pdf -f
 done
+
+destroy-windows evince || true
 
 #mv "$pdf"-nup-bot-$y-joined-joined-rotated90.pdf kindle-"$pdf".pdf
 #rm -rf "$pdf"-nup*.pdf
