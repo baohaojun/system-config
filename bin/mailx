@@ -161,7 +161,13 @@ emacsclient -d -e "
 
 else
     (
-        printf "$the_mailx -S from=$(cat ~/.config/about_me/mail) -S smtp=localhost:2025 -S smtp-auth-user=$(cat ~/.config/about_me/mail) -S smtp-auth-password=%q " "$(get-authinfo $(cat ~/.config/about_me/smtp) $(cat ~/.config/about_me/mail))"
+        scheme=$(
+            if test $(get-about-me conn-type) = ssl; then
+                echo smtps://
+            fi
+        )
+
+        printf "$the_mailx -S from=$(get-about-me mail) -S smtp=$scheme$(get-about-me smtp):$(get-about-me smtp-port) -S smtp-auth-user=$(get-about-me mail) -S smtp-auth-password=%q " "$(get-authinfo $(get-about-me smtp) $(get-about-me mail))"
         for y in attachments cc bcc subject to; do
             eval '
             if test ${#'$y'[@]} != 0; then

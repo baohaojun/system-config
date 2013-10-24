@@ -9,9 +9,6 @@ fi
     flock -n 9 || { echo 'lock failed for home at '$(date); exit 0; }
     while true; do
         sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
-        if test -e ~/.at-home; then
-            exit 0
-        fi
         home=bhj.dyndns.org
         ssh -C2qN -D 7070 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 $home -p 443
         if test $? = 137; then

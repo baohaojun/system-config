@@ -8,11 +8,13 @@ while (<$auth>) {
     my @fields = split;
     my ($machine, $user, $pass, $port) = @fields[1, 3, 5, 7];
     if ($ARGV[0] eq $machine) {
-	if ($ARGV[1] and $ARGV[1] eq $user or not $ARGV[1]) {
-	    print $pass;
-	    $got_pass = 1;
-	    last;
-	}
+        if ($ARGV[1] and $ARGV[1] eq $user or not $ARGV[1]) {
+            if ($ARGV[2] and $ARGV[2] eq $port or not $ARGV[2]) {
+                print $pass;
+                $got_pass = 1;
+                last;
+            }
+        }
     }
 }
 

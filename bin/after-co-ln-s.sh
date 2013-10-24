@@ -193,7 +193,7 @@ if test -e ~/src/github/ahd/ -a ! -e ~/src/ahd; then
 fi
 
 if test -e ~/src/github/private-config/.bbdb; then
-    ln -s ~/src/github/private-config/.bbdb ~/
+    ln -s ~/src/github/private-config/.bbdb ~/ -f
 fi
 
 echo OK

@@ -3,22 +3,35 @@
 test $# = 0 && set -- $(for x in $(find ~/etc/back-to-gmail/ -type l); do readlink -m $x; done)
 for x in "$@"; do
 
-    back=~/.logs/back-to-gmail/"$x"
-    if test -e "$back" && diff "$x" "$back" -rq; then
-        continue
+    if test -d "$x"; then
+        back=~/.logs/back-to-gmail/$(dirname "$x")/$(basename "$x").tgz.gpg
+        if test -e "$back" && ! find "$x" -type f -newer "$back" | grep .; then
+            continue
+        fi
     else
-        echo will back up "$back"
-        mkdir -p "$(dirname "$back")"
-        rm -rf "$back"
-        cp "$x" "$(dirname "$back")" -av
+        back=~/.logs/back-to-gmail/"$x".gpg
+        if test -e "$back" -a "$back" -nt "$x"; then
+            continue
+        fi
     fi
 
-    attachment=$x
+    echo will back up "$back"
+    mkdir -p "$(dirname "$back")"
+    rm -rf "$back"
+
+    new_x=$(dirname "$back")/"$(basename "$x")"
     if test -d "$x"; then
         attachment=~/.logs/back-to-gmail-"$(echo "$x"|perl -npe 's,/,-,g')".tgz
         tar czfv "$attachment" "$x"
+        x=$attachment
+    fi
+
+    set -x
+    gpg-expect -- -- --no-use-agent -o "$back" -c "$x" </dev/null
+    if test -d "$new_x"; then
+        rm "$x"
     fi
 
     echo sending mail "back-to-gmail $x from $(from-mac)"
-    mailx -s "back-to-gmail $x from $(from-mac|perl -npe 's!.*from-mac/!!')" -a "$attachment" baohaojun@gmail.com </dev/null
+    mailx -s "back-to-gmail $x from $(from-mac|perl -npe 's!.*from-mac/!!')" -a "$back" baohaojun@gmail.com </dev/null
 done

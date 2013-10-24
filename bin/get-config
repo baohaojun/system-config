@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if test $(basename $0) = get-config; then
-    cat ~/.config/$USER/$1 
+    cat ~/.config/about_me/$1
 else
-    echo "$2" > ~/.config/$USER/$1
+    echo "$2" > ~/.config/about_me/$1
 fi

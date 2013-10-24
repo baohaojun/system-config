@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat ~/.config/about_me/"$1"
