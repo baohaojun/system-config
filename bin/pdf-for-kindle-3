@@ -43,76 +43,76 @@ TEMP=$(getopt -o t:l:r:b:W:H:d:p:s:m:c: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-	-c)
-	    top=$2
-	    bot=$2
-	    left=$2
-	    right=$2
-	    shift 2
-	    ;;
+        -c)
+            top=$2
+            bot=$2
+            left=$2
+            right=$2
+            shift 2
+            ;;
 
 ## start code-generator "^\\s *#"
     # for x in top bot left right; do
-	# printf "%s\n"  "-${x:0:1})"
-	# printf "%s\n" "$x=\$(sum \$$x \$2)"
-	# printf "%s\n" "shift 2"
-	# printf "%s\n" ";;"
+        # printf "%s\n"  "-${x:0:1})"
+        # printf "%s\n" "$x=\$(sum \$$x \$2)"
+        # printf "%s\n" "shift 2"
+        # printf "%s\n" ";;"
     # done
 ## end code-generator
 ## start generated code
-	-t)
-	    top=$(sum $top $2)
-	    shift 2
-	    ;;
-	-b)
-	    bot=$(sum $bot $2)
-	    shift 2
-	    ;;
-	-l)
-	    left=$(sum $left $2)
-	    shift 2
-	    ;;
-	-r)
-	    right=$(sum $right $2)
-	    shift 2
-	    ;;
+        -t)
+            top=$(sum $top $2)
+            shift 2
+            ;;
+        -b)
+            bot=$(sum $bot $2)
+            shift 2
+            ;;
+        -l)
+            left=$(sum $left $2)
+            shift 2
+            ;;
+        -r)
+            right=$(sum $right $2)
+            shift 2
+            ;;
 
 ## end generated code
 
-	-W)
-	    o_width=$2
-	    o_size=cust
-	    shift 2
-	    ;;
-	-H)
-	    o_size=cust
-	    o_height=$2
-	    shift 2
-	    ;;
+        -W)
+            o_width=$2
+            o_size=cust
+            shift 2
+            ;;
+        -H)
+            o_size=cust
+            o_height=$2
+            shift 2
+            ;;
 
-	-d)
-	    duplicate=$2
-	    shift 2
-	    ;;
-	-p)
-	    paper=$2
-	    shift 2
-	    ;;
-	-s)
-	    scale=$2
-	    shift 2
-	    ;;
-	-m)
-	    max=$2
-	    shift 2
-	    ;;
-	--)
-	    shift
-	    break
-	    ;;
-	*)
-	    die "internal error"
-	    ;;
+        -d)
+            duplicate=$2
+            shift 2
+            ;;
+        -p)
+            paper=$2
+            shift 2
+            ;;
+        -s)
+            scale=$2
+            shift 2
+            ;;
+        -m)
+            max=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
     esac
 done
 pdf=$1
@@ -144,7 +144,7 @@ function scale() {
 function debug() {
     echo "$@" 1>&2
 }
- 
+
 third_n_height=$(scale $n_height 0.333333)
 debug "third_n_height is $third_n_height"
 third_n_height_2=$(scale $third_n_height 2)
@@ -165,11 +165,11 @@ test -e $pdf || die "Error: $pdf does not exist";
 
 pdf=${pdf%.pdf}
 
-pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$n_height}"           --trim "$left $bot $right $top" "$pdf".pdf
+pdfnup --no-landscape --rotateoversize false  --nup 1x1 --papersize "{$n_width,$n_height}"           --trim "$left $bot $right $top" "$pdf".pdf
 cp "$pdf"-nup.pdf cut-"$pdf".pdf
-pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_1_bot 0 0" --suffix top "$pdf"-nup.pdf 
-pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_2_bot 0 $cut_2_top" --suffix mid "$pdf"-nup.pdf
-pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 0 0 $cut_3_top" --suffix bot "$pdf"-nup.pdf
+pdfnup --no-landscape --rotateoversize false  --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_1_bot 0 0" --suffix top "$pdf"-nup.pdf
+pdfnup --no-landscape --rotateoversize false  --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_2_bot 0 $cut_2_top" --suffix mid "$pdf"-nup.pdf
+pdfnup --no-landscape --rotateoversize false  --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 0 0 $cut_3_top" --suffix bot "$pdf"-nup.pdf
 
 
 x=0;
@@ -177,21 +177,21 @@ x=0;
 while true; do
     ((x++)) || true;
     if test $max -gt 0 -a $x -gt $max; then
-	break
+        break
     fi
 
-    if ! pdfjoin "$pdf"-nup-top.pdf $x "$pdf"-nup-mid.pdf $x "$pdf"-nup-bot.pdf $x; then
-	break
+    if ! pdfjoin --no-landscape --rotateoversize false  "$pdf"-nup-top.pdf $x "$pdf"-nup-mid.pdf $x "$pdf"-nup-bot.pdf $x; then
+        break
     fi
 done
 
 ((y=x-1))
-for x in $(seq 1 $y); do echo "$pdf"-nup-bot-$x-joined.pdf; done|xargs pdfjoin
+for x in $(seq 1 $y); do echo "$pdf"-nup-bot-$x-joined.pdf; done|xargs pdfjoin --no-landscape --rotateoversize false 
 
 if test $scale != 1; then
     n_width=$(scale $n_width $scale)
     remaining_n_height=$(scale $remaining_n_height $scale)
-    pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --scale $scale --noautoscale true "$pdf"-nup-bot-$y-joined-joined.pdf
+    pdfnup --no-landscape --rotateoversize false  --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --scale $scale --noautoscale true "$pdf"-nup-bot-$y-joined-joined.pdf
     mv "$pdf"-nup-bot-$y-joined-joined-nup.pdf "$pdf"-nup-bot-$y-joined-joined.pdf
 fi
 

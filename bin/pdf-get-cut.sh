@@ -122,12 +122,12 @@ for side in left bot right top; do
             cut_top=$(perl -e "print ($height-$mid)")
             papersize="{$width,$(perl -e 'print '$mid'*'$nclip'')}"
         fi
-        pdfnup --no-landscape --no-tidy --papersize $(echo "$papersize" | perl -npe 's/(,|\})/pt$1/g') \
+        pdfnup --no-landscape --rotateoversize false  --no-tidy --papersize $(echo "$papersize" | perl -npe 's/(,|\})/pt$1/g') \
             --nup $nup "$arg_pdf" $(echo $(seq 1 $step $pages) | perl -npe 's/ /,/g') \
             --outfile $side.pdf --clip true --trim "${cut_left}pt ${cut_bot}pt ${cut_right}pt ${cut_top}pt" >/dev/null 2>&1
         evince $side.pdf >/dev/null 2>&1 &
         debug "min is $min, mid is $mid, max is $max"
-        ans=$(my-select good bad done)
+        ans=$(my-select good bad min max done)
         if good-enough $max $min; then
             echo "" -${side:0:1} $min
             break
@@ -136,6 +136,10 @@ for side in left bot right top; do
             min=$mid
         elif test $ans = 2; then
             max=$mid
+        elif test $ans = 3; then
+            read -p "New min value: (currently $min) " min
+        elif test $ans = 4; then
+            read -p "New max value: (currently $max) " max
         else
             echo "" -${side:0:1} $mid
             break

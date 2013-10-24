@@ -46,6 +46,14 @@ function sum() {
 pdf=$1
 old_pdf=$1
 
+if test -e odd.pdf && yes-or-no-p "Clean up?"; then
+    rm -f odd-*.pdf even-*.pdf odd.pdf even.pdf seq-*.pdf
+    for x in left bot right top; do
+        rm $x.pdf -f
+    done
+fi
+
+
 if test ! -e odd.pdf; then
     pdf-split.sh "$pdf"
     pdf-intwine.sh odd.pdf even.pdf -o out.pdf
@@ -96,11 +104,11 @@ test -e "$pdf" || die "Error: $pdf does not exist";
 pdf=${pdf%.pdf}
 
 for x in odd even; do
-    pdfnup --no-landscape --nup 1x1 --papersize "{${n_width}pt,${remaining_n_height}pt}" \
+    pdfnup --no-landscape --rotateoversize false  --nup 1x1 --papersize "{${n_width}pt,${remaining_n_height}pt}" \
         --trim "0pt ${cut_n_height}pt 0pt 0pt" --outfile $x-top.pdf $x-cut.pdf
-    pdfnup --no-landscape --nup 1x1 --papersize "{${n_width}pt,${remaining_n_height}pt}" \
+    pdfnup --no-landscape --rotateoversize false  --nup 1x1 --papersize "{${n_width}pt,${remaining_n_height}pt}" \
         --trim "0pt 0pt 0pt ${cut_n_height}pt" --outfile $x-bot.pdf $x-cut.pdf
-    run-in-parallel -I %N "pdfjoin $x-top.pdf %N $x-bot.pdf %N --outfile $x-join-%N.pdf" $(seq 1 $(pdf-get-pages $x-top.pdf))
+    run-in-parallel -I %N "pdfjoin --no-landscape --rotateoversize false  $x-top.pdf %N $x-bot.pdf %N --outfile $x-join-%N.pdf" $(seq 1 $(pdf-get-pages $x-top.pdf))
 done
 
 pages=$(pdf-get-pages odd-cut.pdf)
@@ -110,10 +118,10 @@ for page in $(seq 1 $pages); do
             echo $x-join-$page.pdf
         fi
     done
-done | xargs pdfjoin --outfile final.pdf
+done | xargs pdfjoin --no-landscape --rotateoversize false  --outfile final.pdf
 
 pdf90 final.pdf --outfile "${old_pdf/%.pdf/.Kindle.pdf}"
-rm odd-*.pdf even-*.pdf -f odd.pdf even.pdf
+rm odd-*.pdf even-*.pdf -f odd.pdf even.pdf seq-*.pdf
 
 for x in left bot right top; do
     rm $x.pdf -f

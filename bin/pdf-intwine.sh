@@ -39,4 +39,4 @@ even_pages=$(pdf-get-pages "$2")
     if test $odd_pages -gt $even_pages; then
         echo "$1" $odd_pages
     fi
-) | xargs pdfjoin --outfile $outfile
+) | xargs pdfjoin --no-landscape --rotateoversize false  --outfile $outfile

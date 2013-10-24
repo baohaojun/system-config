@@ -106,7 +106,7 @@ n_height=$(subtract $n_height $bot)
 
 
 echo pdf-cut -t ${top} -b ${bot} -l ${left} -r ${right} "$pdf".pdf
-pdfnup --no-landscape --papersize "{${n_width}pt,${n_height}pt}" \
+pdfnup --no-landscape --rotateoversize false  --papersize "{${n_width}pt,${n_height}pt}" \
     --nup 1x1 --trim "${left}pt ${bot}pt ${right}pt ${top}pt" --clip true "$pdf".pdf $pagespec --outfile "$pdf"-cut.pdf
 
 evince "$pdf"-cut.pdf&

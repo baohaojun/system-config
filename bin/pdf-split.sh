@@ -21,7 +21,7 @@ for x in $(seq 1 1 $pages); do
     fi
 done
 if test $seq_done = false || (test $seq_done = true && yes-or-no-p "Redo split?"); then
-    run-in-parallel -j 10 -I %N 'pdfjoin '"$(printf %q "$1")"' %N --outfile seq-%N.pdf' $(seq 1 $step $pages)
+    run-in-parallel -j 10 -I %N 'pdfjoin --no-landscape --rotateoversize false  '"$(printf %q "$1")"' %N --outfile seq-%N.pdf' $(seq 1 $step $pages)
 fi
 
 page_sizes=$(for x in $(seq 1 $step $pages); do
@@ -42,7 +42,7 @@ if test "$size" != "$page_sizes"; then
     export nup_size=$(echo $size|perl -npe 's!.*?(\d+\.\d+) x (\d+\.\d+).*!sprintf "%fin,%fin", $1/72,$2/72!e')
     run-in-parallel -j 10 -I %N '
         if test $(pdf-get-width seq-%N.pdf) != $selected_width -o $(pdf-get-height seq-%N.pdf) != $selected_height; then
-            pdfnup --no-landscape --nup 1x1 --papersize "{$nup_size}" seq-%N.pdf --outfile seq-ss-%N.pdf
+            pdfnup --no-landscape --rotateoversize false  --nup 1x1 --papersize "{$nup_size}" seq-%N.pdf --outfile seq-ss-%N.pdf
         else
             cp seq-%N.pdf seq-ss-%N.pdf
         fi
@@ -53,7 +53,6 @@ else
     done
 fi
 
-pdfjoin --outfile odd.pdf $(for x in $(seq 1 2 $pages); do echo seq-ss-$x.pdf; done)
-pdfjoin --outfile even.pdf $(for x in $(seq 2 2 $pages); do echo seq-ss-$x.pdf; done)
+pdfjoin --no-landscape --rotateoversize false  --papersize "{${selected_width}pt,${selected_height}pt}" --outfile odd.pdf $(for x in $(seq 1 2 $pages); do echo seq-ss-$x.pdf; done)
+pdfjoin --no-landscape --rotateoversize false  --papersize "{${selected_width}pt,${selected_height}pt}" --outfile even.pdf $(for x in $(seq 2 2 $pages); do echo seq-ss-$x.pdf; done)
 
-rm seq-*.pdf
