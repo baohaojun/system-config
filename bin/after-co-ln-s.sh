@@ -169,9 +169,10 @@ fi
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
 if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; then
-    if test -e ~/.macbook-air; then
+    mach=$(get-config mach)
+    if test "$mach" = macbookair; then
         ln -sf ~/system-config/etc/.Xmodmap-macbook-air ~/.Xmodmap
-    elif test -e ~/.mach=t430; then
+    elif test "$mach" = thinkpad-t430; then
         ln -sf ~/system-config/etc/.Xmodmap-t430 ~/.Xmodmap
     else
         ln -sf ~/system-config/etc/.Xmodmap ~/.Xmodmap

@@ -387,7 +387,7 @@
               (scroll-lock-off))
             (if (string= (window-class w) "Emacs")
                 (unbind-keys global-keymap "Super-\\")
-              (bind-keys global-keymap "Super-\\"  '(system "sleep .1 && xdotool key super+F12&")))))
+              (bind-keys global-keymap "Super-\\"  '(system "sleep .5 && xdotool key super+F12&")))))
 
 (system "run-dir-once ~/.sawfish/start&")
 (system "run-dir-once ~/external/sawfish/start&")

@@ -1,3 +1,21 @@
 #!/bin/bash
 
-select-output-line bash -c 'for x in "$@"; do echo "$x"; done' true "$@"
+prompt="Please enter your selection: "
+TEMP=$(getopt -o p: --long prompt: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--prompt)
+            prompt=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+select-output-line -p "$prompt" -- bash -c 'for x in "$@"; do echo "$x"; done' true "$@"
