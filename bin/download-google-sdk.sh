@@ -112,4 +112,4 @@ done |perl -ne '
 
 mkdir -p ../temp
 cd ../temp
-ln ../google/* . -f
+ln ../google/* . -f || true
