@@ -185,13 +185,16 @@ fi
 sudo ln -sf ~/etc/rc.local /etc || true # no sudo on win32
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
 if test -L ~/.git; then rm -f ~/.git; fi
-if ! grep -q -P -e 'iface\s+usb0\s+inet\s+manual' /etc/network/interfaces; then
-    sudo bash -c 'echo iface usb0 inet manual >> /etc/network/interfaces'
+if test $(uname) = Linux; then
+    if ! grep -q -P -e 'iface\s+usb0\s+inet\s+manual' /etc/network/interfaces; then
+        sudo bash -c 'echo iface usb0 inet manual >> /etc/network/interfaces'
+    fi
+
+    if grep managed=true /etc/NetworkManager/NetworkManager.conf; then
+        sudo perl -npe 's/managed=true/managed=false/' -i /etc/NetworkManager/NetworkManager.conf;
+    fi
 fi
 
-if grep managed=true /etc/NetworkManager/NetworkManager.conf; then
-    sudo perl -npe 's/managed=true/managed=false/' -i /etc/NetworkManager/NetworkManager.conf;
-fi
 
 if test -e ~/src/github/ahd/ -a ! -e ~/src/ahd; then
     ln -s ~/src/github/ahd/ ~/src/ahd
@@ -207,7 +210,11 @@ if test ! -d ~/.config/about_me; then
     mkdir -p ~/.config/about_me;
 fi
 
-perl -npe 's!external/firefox/firefox!bin/firefox!' -i ~/.local/share/applications/userapp-Firefox-*.desktop
+if uname | grep cygwin -i; then
+    exit 0
+fi
+
+perl -npe 's!external/firefox/firefox!bin/firefox!' -i ~/.local/share/applications/userapp-Firefox-*.desktop || true
 
 after-co-settings.sh
 sudo cp ~/doc/usr/lib/pm-utils/sleep.d/99-switch-touchpad /usr/lib/pm-utils/sleep.d/

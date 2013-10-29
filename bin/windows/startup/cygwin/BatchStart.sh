@@ -44,6 +44,17 @@ function loop-start() {
     done&
 }
 
+if test ! -e ~/.config/about_me/links-done; then
+    touch ~/.config/about_me/links-done
+    fix-links.sh&
+fi
+
+(
+    cd ~/doc
+    regedit /s no-control-period.reg
+    regedit /s no-shift-space-toggle.reg
+)&
+
 bash emacs-nt&
 bcdedit.exe /set "{current}" nx AlwaysOff&
 wmic OS Get DataExecutionPrevention_SupportPolicy&

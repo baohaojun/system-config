@@ -7,16 +7,16 @@ fi
 
 function sudoedit()
 {
-    if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
+    if [[ $USER == root ]] && [[ -f "$1" ]]; then
         echo using root to do edit, won\'t check read permission
     else
         if ! [[ -w "$1" ]]; then
             echo Warning: "$1" is not writable
         fi
-    fi    
+    fi
 
     local file=$( readlink -f "$1" )
-    WHOAMI=root $EDITOR "$file"
+    USER=root $EDITOR "$file"
 }
 
 export EDITOR=~/bin/edit

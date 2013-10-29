@@ -30,6 +30,9 @@ my $remote_ip = $ENV{"REMOTEIP"};
 my $protocol = "";
 if ($remote_ip) {
   $protocol = qx(get-remote-edit-protocol $remote_ip);
+  if ($ENV{REMOTEUSER}) {
+      $remote_ip = "$ENV{REMOTEUSER}\@$remote_ip";
+  }
 }
 
 
@@ -42,7 +45,7 @@ if ($0 =~ m,/?edit-wait$, or $0 =~ m,/?ew$,) {
 sub get_emacs_file_name($) {
   my ($file) = @_;
   if ($ENV{"REMOTEIP"}) {
-    my ($myname, $myip, $myport, $remote_ip) = @ENV{"WHOAMI", "LOCALIP", "LOCALPORT", "REMOTEIP"};
+    my ($myname, $myip, $myport) = @ENV{"USER", "LOCALIP", "LOCALPORT"};
     if ($protocol eq "pscp") {
       # plink on win7 has a bug, can't handle ip connection, only hostname
       # works

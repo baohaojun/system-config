@@ -14,7 +14,7 @@ if lookup-file -e .repo/manifest.xml; then
 fi
 
 test "$(pwd)" = $HOME && cd ~/system-config
-cd "$(dirname "$(lookup-file .git)")"
+cd "$(dirname "$(lookup-file -e .git)")"
 
 if test -e .git-push-mac-hooks; then
     bash .git-push-mac-hooks
@@ -72,7 +72,7 @@ if git remote -v | grep baohaojun.github.com.git; then
             git add blog/$(today|perl -npe 's!-!/!g')/$x
         done
     )
-    org_changes=$(git st -S|grep -e '\.org$' || true)
+    org_changes=$(git st -S|cut -b 4-|grep -e '\.org$' || true)
     git add $org_changes
     for x in $org_changes; do
         if test -e $x; then

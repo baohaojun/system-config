@@ -1,11 +1,12 @@
 
 #include "hotkey_hook.h"
-#include "bhjdebug.h" 
+#include "bhjdebug.h"
 #include <assert.h>
 #include <string.h>
+#include <unistd.h>
 
 //global vars
-char *g_app_name = "hotkey_hook";
+const char *g_app_name = "hotkey_hook";
 HWND g_main_wnd = NULL;
 HHOOK g_kbd_hook = NULL;
 HINSTANCE g_instance = NULL;
@@ -48,9 +49,9 @@ void DebugHotkeyActionVecArr()
         }
     }
 }
-DWORD WINAPI KbdHookThreadFunc(LPVOID) 
+DWORD WINAPI KbdHookThreadFunc(LPVOID)
 {
-    g_kbd_hook = SetWindowsHookEx(WH_KEYBOARD_LL, 
+    g_kbd_hook = SetWindowsHookEx(WH_KEYBOARD_LL,
                                   (HOOKPROC)KbdHookProc, g_instance, 0);
     MSG msg;
     while (GetMessage (&msg, NULL, 0, 0))
@@ -70,8 +71,8 @@ int Initialize(HINSTANCE hInst, LPSTR lpCmdLine)
     LoadHotkeys();
     CreateThread(NULL, 0, KbdHookThreadFunc, NULL, 0, NULL);
     //DebugHotkeyActionVecArr();
-    
-    
+
+
     return 0;
     //With a proper windows message handler routine
     //Set the low level keyboard hook
@@ -81,7 +82,7 @@ int CleanUp()
 {
     //do it in reverse order as Initialize
     UnhookWindowsHookEx(g_kbd_hook);
-    UnLoadHotKeys();   
+    UnLoadHotKeys();
     exit_runtime_libs();
     return 0;
 }
@@ -114,7 +115,7 @@ LRESULT CALLBACK WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
-        
+
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -126,7 +127,7 @@ LRESULT CALLBACK WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 int MapKeys(WPARAM wParam, PKBDLLHOOKSTRUCT hook_struct)
 {
     // if key is synthesized (by ourself?), then don't do it, and let the hook handle it (return 0 here)
-   
+
     if (hook_struct->flags & LLKHF_INJECTED) {
         return 0;
     }
@@ -147,7 +148,7 @@ int MapKeys(WPARAM wParam, PKBDLLHOOKSTRUCT hook_struct)
         xsimple_debug(GetAsyncKeyState(VK_LMENU));
         xsimple_debug(GetAsyncKeyState(VK_RMENU));
     }
-    
+
     if (vkCode == VK_RMENU) {
         if (wParam==WM_SYSKEYDOWN || wParam==WM_KEYDOWN) {
             INPUT input = {0};
@@ -162,7 +163,7 @@ int MapKeys(WPARAM wParam, PKBDLLHOOKSTRUCT hook_struct)
             input.ki.wVk = VK_RMENU;
             input.ki.dwFlags = KEYEVENTF_KEYUP;
             SendInput(1, &input, sizeof(INPUT));
-            
+
             memset(&input, 0, sizeof(INPUT));
             input.type = INPUT_KEYBOARD;
             input.ki.wVk = VK_RMENU;
@@ -174,7 +175,7 @@ int MapKeys(WPARAM wParam, PKBDLLHOOKSTRUCT hook_struct)
             input.ki.wVk = VK_RMENU;
             input.ki.dwFlags = KEYEVENTF_KEYUP;
             SendInput(1, &input, sizeof(INPUT));
-            
+
         }
     }
 
@@ -184,14 +185,14 @@ int MapKeys(WPARAM wParam, PKBDLLHOOKSTRUCT hook_struct)
             input.type = INPUT_KEYBOARD;
             input.ki.wVk = exchange_table[i].to;
             input.ki.dwFlags = KEYEVENTF_KEYUP * (wParam==WM_SYSKEYUP || wParam==WM_KEYUP);
-            
+
             SendInput(1, &input, sizeof(INPUT));
             return 1;
-        } 
+        }
     }
 
 
-    
+
 
     // key is not maped, then kbdhookproc should handle it like normal. (return 0 here)
     return 0;
@@ -203,8 +204,6 @@ LRESULT CALLBACK KbdHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     // By returning a non-zero value from the hook procedure, the
     // message does not get passed to the target window
 
-    if (nCode != HC_ACTION)
-        goto out;
 
     //Mask keys are control, alt, shift, win
     //if win key pressed/released, don't call next hook, for other mask keys, call next hook
@@ -213,9 +212,13 @@ LRESULT CALLBACK KbdHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 
     PKBDLLHOOKSTRUCT hook_struct = (PKBDLLHOOKSTRUCT)lParam;
     DWORD vkCode = hook_struct->vkCode;
+
+
+    if (nCode != HC_ACTION)
+        goto out;
     if (vkCodeInvalid(vkCode))
         goto out;
-    
+
     if (wParam==WM_KEYDOWN || wParam==WM_SYSKEYDOWN) {
         SetMaskKeyActiveOn(vkCode);
     } else {
@@ -253,7 +256,7 @@ out:
 HWND CreateMainWindow(HINSTANCE hInst)
 {
     WNDCLASS wndclass;
-     
+
     wndclass.style         = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
     wndclass.lpfnWndProc   = WndProc;
     wndclass.cbClsExtra    = 0;
@@ -264,14 +267,14 @@ HWND CreateMainWindow(HINSTANCE hInst)
     wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH);
     wndclass.lpszMenuName  = NULL;
     wndclass.lpszClassName = g_app_name;
-    
+
     if (!RegisterClass (&wndclass))
     {
         MessageBox (NULL, TEXT ("This program requires Windows NT!"),
                     g_app_name, MB_ICONERROR);
         exit(-1);
     }
-     
+
     return CreateWindowEx (WS_EX_TOOLWINDOW|WS_EX_TOPMOST, g_app_name, g_app_name,
                                  0,
                                  CW_USEDEFAULT, CW_USEDEFAULT,
@@ -282,13 +285,13 @@ HWND CreateMainWindow(HINSTANCE hInst)
 
 void LoadHotkeys()
 {
-    char rcpath[MAX_PATH]; 
+    char rcpath[MAX_PATH];
     GetModuleFileName(g_instance, rcpath, sizeof(rcpath));
     int nLen = strlen(rcpath);
     while (nLen && rcpath[nLen-1] != '\\') nLen--;
     rcpath[nLen]='\0';
     chdir(rcpath);
-    strcpy(rcpath+nLen, "hotkey.rc");  
+    strcpy(rcpath+nLen, "hotkey.rc");
     if (!FileExists(rcpath)) {
         BHJDEBUG(".rc file not found!");
         exit(-1);
@@ -325,10 +328,10 @@ void LoadHotkeys()
 
         if (keytograb[1])
         {
-            static const struct vkTable 
-            { 
-                char* key; 
-                int vKey; 
+            static const struct vkTable
+            {
+                const char* key;
+                int vKey;
             } vkTable[] =
                   {
                       {"F1", VK_F1},
@@ -404,7 +407,7 @@ void LoadHotkeys()
         assert(0<ch && ch<0xff);
 
         mask = GetMaskCode(modifier);
-        
+
         hotkey_action_t ha_tmp;
         ha_tmp.vk_code = ch;
         ha_tmp.mask = mask;
@@ -445,7 +448,7 @@ void SetMaskKeyActiveOn(DWORD vkCode)
     assert(0<vkCode && vkCode<0xff);
 
 
-    g_mask_key_state |= vk_code_mask[vkCode];        
+    g_mask_key_state |= vk_code_mask[vkCode];
 }
 
 void SetMaskKeyActiveOff(DWORD vkCode)
@@ -512,20 +515,20 @@ bool read_next_line(FILE *fp, LPSTR szBuffer, DWORD dwLength)
 
 const char* stristr(const char *aa, const char *bb)
 {
-	do {
-		const char *a, *b; char c, d;
-		for (a = aa, b = bb;;++a, ++b)
-		{
-			if (0 == (c = *b)) return aa;
-			if (0 != (d = *a^c))
-				if (d != 32 || (c |= 32) < 'a' || c > 'z')
-					break;
-		}
-	} while (*aa++);
-	return NULL;
+    do {
+        const char *a, *b; char c, d;
+        for (a = aa, b = bb;;++a, ++b)
+        {
+            if (0 == (c = *b)) return aa;
+            if (0 != (d = *a^c))
+                if (d != 32 || (c |= 32) < 'a' || c > 'z')
+                    break;
+        }
+    } while (*aa++);
+    return NULL;
 }
 
-int getvalue(char *from, char *token, char *to, bool from_right)
+int getvalue(char *from, const char *token, char *to, bool from_right)
 {
     typedef char *(*strchr_func_t)(const char*, int);
     strchr_func_t func_p = from_right?(strchr_func_t)strrchr:(strchr_func_t)strchr;
