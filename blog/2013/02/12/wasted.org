@@ -183,3 +183,12 @@ EOF
 
 sudo systemctl restart openbsd-inetd.service 
 #+END_EXAMPLE
+* hell of ime hotkeys
+
+If you want to disable the shift+space and control+period hotkeys for
+windows ime, you can use my [[https://github.com/baohaojun/system-config/raw/master/doc/no-control-period.reg][no-control-period.reg]] and
+[[https://github.com/baohaojun/system-config/raw/master/doc/no-shift-space-toggle.reg][no-shift-space-toggle.reg]], then you need to open the control panel and
+the language hotkey setting page, then click to disable the hotkeys,
+after that, if you click Apply, you will see that the hotkeys are
+enabled again -- this is a Windows bug -- but the hotkeys are now
+changed to Shift+F11 and Control+F11 respectively.
