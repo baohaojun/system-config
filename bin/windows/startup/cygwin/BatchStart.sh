@@ -58,6 +58,10 @@ fi
 bash emacs-nt&
 bcdedit.exe /set "{current}" nx AlwaysOff&
 wmic OS Get DataExecutionPrevention_SupportPolicy&
-loop-start ~/bin/windows/ command cmd /c hotkey_hook
+if test $(uname -m) = x86_64; then
+    loop-start ~/bin/windows/ command cmd /c hotkey-hook-64
+else
+    loop-start ~/bin/windows/ command cmd /c hotkey-hook-32
+fi
 close-window '\\osk.exe'
 ~/bin/windows/redirect.sh&
