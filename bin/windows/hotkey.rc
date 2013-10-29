@@ -7,7 +7,7 @@ KeyToGrab(F1),          WithModifier(LWin),      WithAction(MaximizeWindow)
 KeyToGrab(F2),          WithModifier(LWin),      WithAction(MaximizeVertical)
 
 KeyToGrab(Y),           WithModifier(LWin),      WithAction(RestoreWindow)
-KeyToGrab(F4),           WithModifier(LWin),      WithAction(CloseWindow)
+KeyToGrab(Q),           WithModifier(LWin),      WithAction(CloseWindow)
 KeyToGrab(Z),           WithModifier(LWin),      WithAction(MinimizeWindow)
 KeyToGrab(F12),           WithModifier(LWin),      WithAction(Quit)
 
@@ -25,7 +25,7 @@ KeyToGrab(T),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(E),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p excel.exe -F 1 excel)
 KeyToGrab(W),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p winword.exe -F 1 word)
 KeyToGrab(W),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p explorer.exe -c wclass -F 1 run bash open-my-documents.sh)
-KeyToGrab(Q),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py dexplore.exe|pidgin.exe|qq.exe)
+KeyToGrab(F11),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py dexplore.exe|pidgin.exe|qq.exe)
 KeyToGrab(B),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p bash.exe bash --rcfile ~/.bashrc-min -i)
 KeyToGrab(N),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p firefox -F 1 http://www.google.com/calendar/render)
 #KeyToGrab(A),		WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c acrobat -F 1 acroread)

@@ -2,7 +2,7 @@
 
 (setq default-input-method "sdim")
 
-(setq describe-char-unicodedata-file "~/.emacs_d/UnicodeData.txt")
+(setq describe-char-unicodedata-file "~/system-config/.emacs_d/UnicodeData.txt")
 
 (setq-default c-basic-offset 4)
 (setq bbdb-file "~/src/github/private-config/.bbdb")
