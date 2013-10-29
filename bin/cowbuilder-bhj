@@ -23,7 +23,7 @@ if test $(basename $0) != cowbuilder-bhj; then
    bash
 fi
 
-cow=$(select-output-line find ~/external/cowbuilder -maxdepth 1 -type d -name '*-*')
+cow=$(select-output-line -- find ~/external/cowbuilder -maxdepth 1 -type d -name '*-*')
 echo $cow
 
 basepath=$cow/bare

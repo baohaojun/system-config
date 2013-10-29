@@ -37,6 +37,12 @@ if [string eq "" $password] {
     set password [qx "get-authinfo $host $user $dport"]
 }
 
+if ([string equal $password ""]) {
+    send_error "Error: password is empty\n";
+    exit -1;
+}
+
+
 set argv [linsert $argv $i spawn gpg];
 eval [lrange $argv $i end];
 

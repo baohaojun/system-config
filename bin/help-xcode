@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd ~/Library/Developer/Shared/Documentation/DocSets
-open -a /Applications/Firefox.app/ $(select-output-line find . -iname "*$1*")
+open -a /Applications/Firefox.app/ $(select-output-line -- find . -iname "*$1*")

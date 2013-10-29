@@ -35,7 +35,7 @@ done | grep 'page size' -i | perl -ne '
         }
     }' | sort -n)
 
-size=$(select-output-line echo "$page_sizes")
+size=$(select-output-line -- echo "$page_sizes")
 if test "$size" != "$page_sizes"; then
     export selected_width=$(echo $size | pn 3)
     export selected_height=$(echo $size | pn 5)

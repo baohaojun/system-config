@@ -11,10 +11,10 @@
 sudo perl -npe 's/^deb\s+\b/deb [arch=amd64,i386] /' -i /etc/apt/sources.list
 if ! grep -q -P -e 'debian/? testing main' /etc/apt/sources.list; then
     if ! perl -e 'use String::Escape' >/dev/null 2>&1; then
-        sudo apt-get install libstring-escape-perl # select-output-line below will use this module
+        sudo apt-get install libstring-escape-perl # select-output-line -- below will use this module
     fi
     old_name=$(perl -ne 'print "$1\n" if m!debian/? (\w+) main!' /etc/apt/sources.list | sort -u; echo testing)
-    old_name=$(select-output-line echo "$old_name")
+    old_name=$(select-output-line -- echo "$old_name")
     sudo perl -npe 's!debian/?\s+'$old_name'\s+main!debian/ testing main!' -i /etc/apt/sources.list
 fi
 

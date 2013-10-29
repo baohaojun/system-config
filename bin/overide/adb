@@ -40,7 +40,7 @@ function adb() {
     fi
 
     if test "$1" = -s; then
-        echo "$(select-output-line adb devices|pn 1)" > ~/.adbd
+        echo "$(select-output-line -- adb devices|pn 1)" > ~/.adbd
     elif test "$1" != devices -a $(setsid $the_prog start-server >/dev/null 2>&1 ; $the_prog devices | grep .| wc -l) -gt 2; then
         export ANDROID_SERIAL=$(cat ~/.adbd)
     fi
@@ -90,7 +90,7 @@ function gdbserver() {
         die "Error: Usage $(basename $0) -p process -P port, or, $(basename $0) -P port CMD ARGS"
     fi
     if test "$process"; then
-        pid=$(select-output-line bash -c 'adb shell ps |grep -P -e "\Q'$process'\E"'|pn 2)
+        pid=$(select-output-line -- bash -c 'adb shell ps |grep -P -e "\Q'$process'\E"'|pn 2)
         exec $the_prog shell gdbserver --attach :$port $pid
         return 0;
     fi

@@ -1,14 +1,20 @@
-#!/bin/bash 
-cd 
-source ~/.bash_profile
+#!/bin/bash
+cd
+
+if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then
+    export SHELL=/bin/bash
+fi
+
 if test -x /opt/local/bin/bash; then
     export SHELL=/opt/local/bin/bash;
 fi
+
+source ~/.bash_profile
 #. /etc/bash_completion
 session_name=${1:-first}
 
 screen -wipe
-if  screen -list|grep $session_name 
-	then exec screen -h 100000 -x -r $session_name -t $session_name 
-	else exec screen -h 100000 -S $session_name -t $session_name 
+if  screen -list|grep $session_name
+        then exec screen -h 100000 -x -r $session_name -t $session_name
+        else exec screen -h 100000 -S $session_name -t $session_name
 fi

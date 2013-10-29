@@ -10,7 +10,7 @@ if test -d hello_project; then
     die "can not create the hello_project as template"
 fi
 
-android create project -n ${1:-Superuser} -t $(select-output-line bash -c  "android list targets|grep '^id:'"|pn 2) -k com.bhj.boot -p hello_project -a Hello
+android create project -n ${1:-Superuser} -t $(select-output-line -- bash -c  "android list targets|grep '^id:'"|pn 2) -k com.bhj.boot -p hello_project -a Hello
 cp -i hello_project/*.properties . 
 
 cp -i hello_project/build.xml .

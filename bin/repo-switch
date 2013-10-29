@@ -42,7 +42,7 @@ while true; do
             exit 0
             ;;
         -s)
-            output="$(select-output-line bash -c 'for x in .repo/repo-switch*; do
+            output="$(select-output-line -- bash -c 'for x in .repo/repo-switch*; do
                                                       cat $x 2>/dev/null
                                                       echo
                                                   done|uniq-even-non-ajacent')"
@@ -117,7 +117,7 @@ fi
 if test -z "$repo_init_url"; then
     if test $interactive = 1; then
         echo The repo init url to use:
-        repo_init_url=$(select-output-line bash -c "echo $old_repo_init_url; cat ~/.repoconfig/repo_init_urls 2>/dev/null")
+        repo_init_url=$(select-output-line -- bash -c "echo $old_repo_init_url; cat ~/.repoconfig/repo_init_urls 2>/dev/null")
     else
         repo_init_url=${old_repo_init_url:-bibler:shgit/manifest}
     fi
@@ -126,7 +126,7 @@ fi
 if test -z "$repo_init_branch"; then
     if test $interactive = 1; then
         echo The repo init branch to use:
-        repo_init_branch=$(select-output-line bash -c "echo $old_repo_init_branch; (cd $(lookup-file .repo/manifests) && git branch -a | pn 1 | perl -npe 's!remotes/.*?/!!' | sort -u)")
+        repo_init_branch=$(select-output-line -- bash -c "echo $old_repo_init_branch; (cd $(lookup-file .repo/manifests) && git branch -a | pn 1 | perl -npe 's!remotes/.*?/!!' | sort -u)")
     else
         repo_init_branch=${old_repo_init_branch:-master}
     fi
@@ -144,7 +144,7 @@ if test -z "$repo_init_manifest" || ! [[ "$repo_init_manifest" =~ \.xml$ ]]; the
         else
             manifest_pattern="m/./";
         fi
-        repo_init_manifest=$(select-output-line bash -c "echo $old_repo_init_manifest;
+        repo_init_manifest=$(select-output-line -- bash -c "echo $old_repo_init_manifest;
                                                          (cd $(lookup-file .repo/manifests) &&
                                                           find . -name '*.xml' |
                                                           perl -npe 's!^\./!!' |
@@ -157,7 +157,7 @@ fi
 if test -z "$repo_url"; then
     if test $interactive = 1; then
         echo The repo url to use:
-        repo_url=$(select-output-line bash -c "(echo $old_repo_url; cat ~/.repo_urls 2>/dev/null)|uniq-even-non-ajacent")
+        repo_url=$(select-output-line -- bash -c "(echo $old_repo_url; cat ~/.repo_urls 2>/dev/null)|uniq-even-non-ajacent")
     else
         repo_url=${old_repo_url}
     fi

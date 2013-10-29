@@ -1,0 +1,13 @@
+#!/bin/bash
+
+sudo /etc/init.d/ziproxy stop
+sudo ps-killall ziproxy
+tsocks ziproxy -d 
+
+export http_proxy=localhost:8080
+sleep 1  
+if test "$#" != 0; then
+   "$@"
+else
+    start-recursive-shell proxy=set
+fi

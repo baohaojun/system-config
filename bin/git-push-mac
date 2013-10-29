@@ -47,7 +47,7 @@ function get-tags()
     local tag=()
     existing_tags=$(find meta/tags/ -type d -exec basename '{}' \;)
     while true; do
-        tag=$(select-output-line bash -c "echo done; echo new; arg1-arg2 \"$existing_tags\" \"$(echo ${tags[@]})\" ")
+        tag=$(select-output-line -- bash -c "echo done; echo new; arg1-arg2 \"$existing_tags\" \"$(echo ${tags[@]})\" ")
         if test $tag = done; then
             if test "${#tags[@]}" = 0; then
                 read -p "Must specifi at least one tag, press any key to continue... "

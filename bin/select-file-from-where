@@ -4,4 +4,4 @@ if test -e "$(lookup-file -e .git)"; then
     f "$@" && exit
 fi
 
-select-output-line lookup-file-from-where "$@";
+select-output-line -- lookup-file-from-where "$@";

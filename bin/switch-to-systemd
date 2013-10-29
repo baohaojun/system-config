@@ -8,6 +8,7 @@ if test -x /lib/systemd/systemd; then
     sudo update-grub
 fi
 
+exit 0
 if ! grep -q '^HandlePowerKey=ignore' /etc/systemd/logind.conf; then
     cat <<EOF | sudo tee -a /etc/systemd/logind.conf
 HandlePowerKey=ignore
