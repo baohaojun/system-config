@@ -18,7 +18,7 @@
  * Boston, MA  02111-1307  USA
  *
  *****************************/
-#define _WIN32_WINNT 0x0500 
+#define _WIN32_WINNT 0x0500
 #define WINVER 0x0500
 #define _UNICODE
 
@@ -29,7 +29,7 @@
 #include <string>
 #include <psapi.h>
 #define ENABLE_BHJDEBUG
-#include "bhjdebug.h" 
+#include "bhjdebug.h"
 using namespace std;
 
 #include "findexec.h"
@@ -52,7 +52,7 @@ BOOL BBExecute_string(const wstring& command_string, HANDLE* hProcess);
 
 bool IsChildWnd(HWND hw)
 {
-    if (GetParent(hw)) return true; 
+    if (GetParent(hw)) return true;
     return false;
 }
 
@@ -67,7 +67,7 @@ void debug_window(HWND hwnd)
     _wcslwr_s(buff, wcslen(buff)+1);
     wprintf(L"class %s\n", buff);
     fflush(stdout);
-    
+
 }
 
 void debug_window(vector<HWND>& v_win)
@@ -103,7 +103,7 @@ void found_action(vector<HWND>& v_win)
         }
     } else {
         i=v_win.size()-1;
-    } 
+    }
 
     if (print_windows) {
         print_found(v_win);
@@ -111,14 +111,14 @@ void found_action(vector<HWND>& v_win)
     }
 
     HWND hTarW=v_win[i];
-	hTarW = GetLastActivePopup(hTarW);
+    hTarW = GetLastActivePopup(hTarW);
     //debug_window(hTarW);
     if (IsChildWnd(hTarW))
         return;
-    
+
     if (IsIconic(hTarW))
         PostMessage(hTarW, WM_SYSCOMMAND, SC_RESTORE, 0);
-    
+
     SetForegroundWindow(hTarW);
 
     if (minimize_others) {
@@ -135,14 +135,14 @@ void found_action(vector<HWND>& v_win)
             }
         }
     }
-        
+
     SetForegroundWindow(hTarW);
 
 }
 
 int run_command(wstring program_str)
 {
-    
+
 
     if (program_str.size()==0) {
         return -1;
@@ -154,7 +154,7 @@ int run_command(wstring program_str)
     {
         return -1;
     }
-    
+
     if (match_save) {
         FILE *fp = _wfopen(match_save, L"w");
         DWORD pid = GetProcessId(hProcess);
@@ -173,15 +173,15 @@ bool my_get_window_module_file_name(HWND hwnd, wchar_t buff[], unsigned int size
     HANDLE proc_handle = OpenProcess(PROCESS_QUERY_INFORMATION |
                                      PROCESS_VM_READ,
                                      FALSE, proc_id);
-    if(!GetModuleFileNameExW(proc_handle,
-                             NULL,
+    if(!GetProcessImageFileNameW(proc_handle,
                              buff,
                              size)) {
         CloseHandle(proc_handle);
+        printf("hello world for pid %d %s %s %d\n", (int)proc_id, __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
     CloseHandle(proc_handle);
-    
+
     _wcslwr_s(buff, wcslen(buff)+1);
     return true;
 }
@@ -193,16 +193,16 @@ bool window_match(HWND wnd)
         wchar_t buff[1024];
         GetClassNameW(wnd, buff, 1024);
         _wcslwr_s(buff, wcslen(buff)+1);
-        if (!wcsstr(buff, match_class)) 
+        if (!wcsstr(buff, match_class))
             return false;
     }
 
     if (match_program) {
         wchar_t buff[1024];
-        
+
         if (!my_get_window_module_file_name(wnd, buff, 1024))
             return false;
-        
+
         if (!wcsstr(buff, match_program))
             return false;
     }
@@ -223,10 +223,10 @@ bool window_match(HWND wnd)
         DWORD pidsave;
         fread(&pidsave, sizeof(pidsave), 1, fp);
         fclose(fp);
-    
+
         DWORD pidthis;
         GetWindowThreadProcessId(wnd, &pidthis);
-        if (pidsave != pidthis) {            
+        if (pidsave != pidthis) {
             return false;
         }
     }
@@ -243,8 +243,8 @@ bool IsWindowSwitchable(HWND wnd)
     DWORD ex_style = GetWindowLong(wnd, GWL_EXSTYLE);
     if (ex_style&WS_EX_TOOLWINDOW)
         return false;
-	if (ex_style & WS_EX_APPWINDOW)
-		return true;
+    if (ex_style & WS_EX_APPWINDOW)
+        return true;
     if (style&WS_SYSMENU) {
         HWND wnd_owner = GetWindow(wnd, GW_OWNER);
         HWND wnd_shell = GetShellWindow();
@@ -259,7 +259,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hTarW, LPARAM lParam)
     vector<HWND>* pv_win=(vector<HWND>*)lParam;
 
     if (IsWindowVisible(hTarW) && !IsChildWnd(hTarW) && IsWindowSwitchable(hTarW) && window_match(hTarW)) {
-	pv_win->push_back(hTarW);
+    pv_win->push_back(hTarW);
     }
     return TRUE;
 }
@@ -273,12 +273,12 @@ int find_exec()
     EnumDesktopWindows(hdesk, EnumWindowsProc, (LPARAM)&v_win);
 
     if(v_win.size()) {
-	found_action(v_win);
+    found_action(v_win);
         run_command(found_exec_program);
         return 0;
     }
     else {
-	return run_command(nofound_exec_program);
+    return run_command(nofound_exec_program);
     }
 }
 
@@ -305,9 +305,9 @@ void Usage()
     wprintf(L"NOTE: you can specify multiple matching criteriors\n");
     wprintf(L"      but at least one criterior is required\n");
     exit(0);
-            
+
 }
-          
+
 void check_argc(int i, int argc)
 {
     if (i >= argc)
@@ -316,7 +316,7 @@ void check_argc(int i, int argc)
 void build_exec_string(wstring& string, wchar_t *arg)
 {
     string+=L"\"";
-    
+
     for (int i=0; arg[i]; i++) {
         if (arg[i]==L'\"') {
             string += L"\"\"";
@@ -343,7 +343,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
     for (int i=1; i<argc; i++) {
         if (!wcscmp(argv[i], L"-h")) {
             Usage();
-        } else if(!wcscmp(argv[i], L"-c")) {            
+        } else if(!wcscmp(argv[i], L"-c")) {
             check_argc(++i, argc);
             match_class = _wcsdup(argv[i]);
         } else if(!wcscmp(argv[i], L"-p")) {
@@ -357,7 +357,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
             match_save = _wcsdup(argv[i]);
         } else if(!wcscmp(argv[i], L"-F")) {
             check_argc(++i, argc);
-            act_first = _wtoi(argv[i]);            
+            act_first = _wtoi(argv[i]);
         } else if(!wcscmp(argv[i], L"-mo")) {
             minimize_others = true;
         } else if (!wcscmp(argv[i], L"-C")) {
@@ -403,10 +403,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
     if (match_class)
         _wcslwr_s(match_class, wcslen(match_class)+1);
 
-    if (match_program) 
+    if (match_program)
         _wcslwr_s(match_program, wcslen(match_program)+1);
 
-    if (match_title) 
+    if (match_title)
         _wcslwr_s(match_title, wcslen(match_title)+1);
 
     if (!match_title && !match_program && !match_class)
