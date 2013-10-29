@@ -95,7 +95,11 @@ if test $uname = CYGWIN; then
             elif test -e $dest; then
                 die "$dest already exist"
             fi
-            do_ln_1 "$(cygpath -wa "$dest")" "$(cygpath -wa "${args[$n]}")"
+            if test -d "${args[$n]}"; then
+                command ln -s "${args[$n]}" "$dest"
+            else
+                do_ln_1 "$(cygpath -wa "$dest")" "$(cygpath -wa "${args[$n]}")"
+            fi
         done
     }
 fi

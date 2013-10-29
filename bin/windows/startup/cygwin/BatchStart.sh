@@ -6,7 +6,20 @@ regedit /s ime-noctrlshift-noaltshift.reg
 
 net start sshd&
 net start cron&
-$(echo /c/Python3*/python | pn 1) "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
+$(echo /c/Python3?/python | pn 1) "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
+
+(
+    if test ! -e /c/Python3; then
+        ln -sf "$(find /c/ -maxdepth 1 -type d -name 'Python3?*' | pn 1)" /c/Python3
+    fi
+
+    if test ! -e /c/Python2; then
+        ln -sf "$(find /c/ -maxdepth 1 -type d -name 'Python2?*' | pn 1)" /c/Python2
+    fi
+)
+
+
+
 while true; do
     sleep 2;
     test -e ~/.no-loop && continue;
@@ -35,10 +48,5 @@ bash emacs-nt&
 bcdedit.exe /set "{current}" nx AlwaysOff&
 wmic OS Get DataExecutionPrevention_SupportPolicy&
 loop-start ~/bin/windows/ command cmd /c hotkey_hook
-if test -e ~/.offlineimaprc; then
-    loop-start ~/bin/windows/Imap4Monitor /c/Python25/python.exe Imap4Monitor.py
-fi
-loop-start ~/bin/windows/notification-daemon/ /c/Python25/python.exe notification-daemon.py
-run pageant $(wlp ~/.ssh/putty_rsa.ppk)&
 close-window '\\osk.exe'
 ~/bin/windows/redirect.sh&

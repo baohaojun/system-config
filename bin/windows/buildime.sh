@@ -2,7 +2,7 @@
 set -e 
 cd /q/gcode/scim-cs/scim
 seq=$1
-wpy25 "`cygpath -aml /q/bin/windows/terminateModule.py`" ywbhj"$seq" || true
+wpy2 "`cygpath -aml /q/bin/windows/terminateModule.py`" ywbhj"$seq" || true
 setime.pl $seq > 1.reg
 regedit /s 1.reg
 rm -f 1.reg

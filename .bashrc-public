@@ -24,7 +24,6 @@ fi
 alias rm='rm -i'
 alias mkgtags='mkgtags -i -v'
 alias bcd=cd_beagrep
-alias pcd='builtin cd -P'
 alias mail=mailx
 
 for x in ~/etc/bash.d/*; do
@@ -32,6 +31,19 @@ for x in ~/etc/bash.d/*; do
         . $x
     fi
 done
+
+function pcd() {
+    if test "$#" = 0; then
+        builtin cd -P
+        return
+    fi
+
+    if test "$#" = 1 -a "${1:0:1}" != /; then
+        builtin cd -P "$(readlink -f "$PWD/$1")"
+    else
+        builtin cd -P "$@"
+    fi
+}
 
 cdr()
 {

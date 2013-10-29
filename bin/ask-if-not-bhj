@@ -3,10 +3,11 @@
 if test $USER = bhj; then
    true;
    exit
-fi   
+fi
 
 if yes-or-no-p "$@"; then
     true
+    exit
 fi
 
 false

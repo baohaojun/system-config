@@ -6,43 +6,6 @@ function lw () {
 
 function SetPath()
 {
-    local paths
-    paths=(
-        ~/bin/windows/ext
-        ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
-        ~/bin/windows/lnks
-        /cygdrive/c/PROGRA~1/Java/JDK16~1.0_1/bin #"/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
-        ~/bin/windows
-        ~/bin
-        ~/bin/Linux
-        /usr/local/bin
-        /usr/local/sbin
-        /usr/X11R6/bin
-        /usr/bin
-        /sbin
-        /usr/sbin
-        /usr/x11r6/bin
-        /cygdrive/c/WINDOWS
-        /cygdrive/c/WINDOWS/System32/Wbem
-        /cygdrive/c/WINDOWS/system32
-        "/cygdrive/c/Program Files/Intel/IPP/5.1/ia32/bin"
-        /c/Python25
-        "/c/PROGRA~1/MONO-2~1.6/bin"
-    )
-
-    unset PATH
-    for x in "${paths[@]}"; do
-        #cygwin-1.7 will behave weirdly if /h is mounted but the
-        #texlive disk is not inserted
-        export PATH=$PATH:$x
-    done
-    for x in $(find ~/bin/windows/paths/ -type f -o -type l) \
-        $(find ~/external/bin/windows/paths/ -type f -o -type l 2>/dev/null)
-    do
-        export PATH=$PATH:$x
-    done
-    PATH=${PATH:1} #remove the beginning `:'
-
     #set up CLASSPATH
     unset CLASSPATH
     for x in ~/bin/classpath/*.jar; do
@@ -147,7 +110,6 @@ alias up="unipath.sh"
 
 if test -e ~/.bash-path; then
     . ~/.bash-path
-else
     SetPath
     unset SetPath
 fi

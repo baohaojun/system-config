@@ -14,7 +14,7 @@ fi
 shift
 pyfile=`cygpath -alw "$pyfile"`
 
-wpy25 "$pyfile" "$@"
+wpy2 "$pyfile" "$@"
 ret=$?
 if [[ $debug == true ]]
 then

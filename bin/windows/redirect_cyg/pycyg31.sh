@@ -14,7 +14,7 @@ pyfile="$1"
 shift
 pyfile=`cygpath -alw "$pyfile"`
 
-wpy31 "$pyfile" "$@"
+wpy3 "$pyfile" "$@"
 if [[ $debug == true ]]
 then
     echo -n Press any key to exit ...

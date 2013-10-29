@@ -508,7 +508,7 @@ class ime:
                 _g_ime_quail.add_cand(comps, cand)
 
     def keyed(self, arg):
-        # debug('keyed args:', arg)
+        debug('keyed args:', arg)
         self.key = arg
         key = ime_keyboard(arg)
 
