@@ -333,6 +333,24 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 
 ;;;***
 
+;;;### (autoloads (ahk-mode) "ahk-mode" "ahk-mode.el" (21104 33899
+;;;;;;  312653 180000))
+;;; Generated autoloads from ahk-mode.el
+
+(add-to-list 'auto-mode-alist '("\\.ahk$" . ahk-mode))
+
+(autoload 'ahk-mode "ahk-mode" "\
+Major mode for editing AutoHotKey Scripts.
+
+The hook functions in `ahk-mode-hook' are run after mode initialization.
+
+Key bindings:
+\\{ahk-mode-map}
+
+\(fn)" t nil)
+
+;;;***
+
 ;;;### (autoloads (ajoke-search-local-id ajoke-complete-method ajoke-resolve
 ;;;;;;  ajoke-get-imports ajoke-get-override ajoke-get-hierarchy)
 ;;;;;;  "ajoke" "ajoke.el" (20978 9411 730903 403000))
