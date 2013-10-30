@@ -18,6 +18,6 @@ while (<$auth>) {
     }
 }
 
-if (not $got_pass and system("is-tty-io") == 0) {
-  system("bash -c 'read -p \"Password: \" -s pass; echo \$pass'");
+if (not $got_pass) {
+  system("bash >/dev/tty </dev/tty 2>&1 -c 'read -s -p \"Password: \" pass; echo \$pass'");
 }
