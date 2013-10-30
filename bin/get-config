@@ -6,6 +6,8 @@ if test $(basename $0) = get-config; then
     else
         echo unknown
     fi
+elif test $(basename $0) = rm-config; then
+    rm ~/.config/about_me/$1
 else
     echo "$2" > ~/.config/about_me/$1
 fi
