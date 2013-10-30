@@ -538,6 +538,15 @@ class ime:
         if self.compstr == '; ' and key == 'space':
             self.commitstr += '；'
             self.compstr = ''
+        elif self.compstr[0:3] == "z0x" and \
+             re.match("^z0x[0-9a-f]+$", self.compstr, re.IGNORECASE) and \
+             key == 'space':
+            try:
+                hex = self.compstr[1:]
+                self.commitstr = chr(int(hex, 16))
+                self.compstr = ''
+            except:
+                pass
         elif key.isprint():
             self.compstr += key.name
         elif key == 'backspace':

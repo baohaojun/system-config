@@ -237,6 +237,7 @@
  '(gdb-same-frame t)
  '(gdb-show-main t)
  '(gnus-article-date-headers (quote (local lapsed)))
+ '(gnus-group-name-charset-group-alist (quote (("ali\\..*" . utf-8) (".*" . chinese-iso-8bit))))
  '(gnus-ignored-newsgroups "")
  '(gnus-propagate-marks t)
  '(grep-use-null-device nil)

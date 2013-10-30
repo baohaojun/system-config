@@ -1,7 +1,7 @@
 [general]
 accounts = Alibaba, Gmail
 maxsyncaccounts = 2
-pythonfile = ~/bin/get-credentials.py
+pythonfile = ~/bin/offlineimap_helper.py
 ui = Noninteractive.Basic
 
 
@@ -18,9 +18,9 @@ remoteport = 993
 ssl = yes
 remoteuser = haojun.bhj@alibaba-inc.com
 remotepasseval = getcred("imap.alibaba-inc.com", "haojun.bhj@alibaba-inc.com", 993)
-nametrans = lambda foldername: "ali." + foldername.replace(" ", "_")
+nametrans = lambda foldername: "ali." + ali_mailbox_conv(foldername.replace(" ", "_"))
 maxconnections = 6
-folderfilter = lambda foldername: any([x.lower() in foldername.lower() and 'gmail' not in x for x in ('inbox', 'sent', 'draft')])
+folderfilter = lambda foldername: ali_folder_match(foldername, ('inbox', 'sent', 'draft'))
 
 [Repository Local-Ali]
 type = Maildir

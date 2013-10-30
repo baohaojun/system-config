@@ -20,7 +20,6 @@
              ))
 
 (setq gnus-default-charset 'chinese-iso-8bit
-      gnus-group-name-charset-group-alist '((".*" . chinese-iso-8bit))
       gnus-summary-show-article-charset-alist
       '((1 . chinese-iso-8bit)
         (2 . gbk)
