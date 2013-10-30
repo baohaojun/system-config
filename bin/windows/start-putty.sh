@@ -1,3 +1,3 @@
 #!/bin/bash
 
-of mintty bash -c "myscr first"
+of mintty -w max bash -c "myscr first"
