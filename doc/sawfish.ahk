@@ -16,17 +16,18 @@
 ;      /* start code-generator "^;"
 ;      perl -e '
 ;           %key_win_progs = (
-;                                n => ["Mozilla Firefox", firefox],
-;                                m => ["emacs\@", emacs],
-;			         t => [q(ahk_class mintty), "bash -c ~/bin/windows/start-putty.sh"],
+;                                n => ["Mozilla Firefox", "firefox"],
+;                                m => ["emacs\@", "bash -c emacs"],
+;                                t => [q(ahk_class mintty), "bash -c ~/bin/windows/start-putty.sh"],
 ;                                r => ["RunBhjRun", "runbhjrun"],
 ;                            );
 ;           foreach (keys %key_win_progs) {
-;	       ($key, $win, $prog) = ($_, @{$key_win_progs{$_}});
+;              ($key, $win, $prog) = ($_, @{$key_win_progs{$_}});
 ;               print <<EOF;
 ;#$key\::
 ;If A_PriorHotkey = #h
 ;{
+;SetTitleMatchMode,2
 ;IfWinExist, $win
 ;    WinActivate
 ;else
@@ -37,52 +38,56 @@
 ;EOF
 ;           }
 ;'
-;	 end code-generator */
+;        end code-generator */
       ;; start generated code
 #n::
-If A_PriorHotkey = #h
-{
-IfWinExist, Mozilla Firefox
-    WinActivate
-else
-    Run firefox
-}
-return
+  If A_PriorHotkey = #h
+  {
+    SetTitleMatchMode,2
+    IfWinExist, Mozilla Firefox
+      WinActivate
+    else
+      Run firefox
+  }
+  return
 
 #r::
-If A_PriorHotkey = #h
-{
-IfWinExist, RunBhjRun
-    WinActivate
-else
-    Run runbhjrun
-}
-return
+  If A_PriorHotkey = #h
+  {
+    SetTitleMatchMode,2
+    IfWinExist, RunBhjRun
+      WinActivate
+    else
+      Run runbhjrun
+  }
+  return
 
 #m::
-If A_PriorHotkey = #h
-{
-IfWinExist, emacs@
-    WinActivate
-else
-    Run emacs
-}
-return
+  If A_PriorHotkey = #h
+  {
+    SetTitleMatchMode,2
+    IfWinExist, emacs@
+      WinActivate
+    else
+      Run bash -c emacs
+  }
+  return
 
 #t::
-If A_PriorHotkey = #h
-{
-IfWinExist, ahk_class mintty
-    WinActivate
-else
-    Run bash -c ~/bin/windows/start-putty.sh
-}
-return
+  If A_PriorHotkey = #h
+  {
+    SetTitleMatchMode,2
+    IfWinExist, ahk_class mintty
+      WinActivate
+    else
+      Run bash -c ~/bin/windows/start-putty.sh
+  }
+  return
 
 
       ;; end generated code
 #h::
-return
+  Return
 
 #d::
 If A_PriorHotkey = #h
@@ -95,7 +100,7 @@ If A_PriorHotkey = #h
 return
 
 #F1::
-WinGet,	MinMax, MinMax, A
+WinGet, MinMax, MinMax, A
 if MinMax = 1
     WinRestore, A
 else
@@ -133,3 +138,10 @@ return
 
 ; /* end generated code */
 
+WheelUp::
+  Send {WheelDown}
+  Return
+
+WheelDown::
+  Send {WheelUp}
+  Return
