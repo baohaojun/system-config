@@ -1031,7 +1031,8 @@ criteria can be provided via the optional match-string argument "
     (move-end-of-line nil)
     (setq end-of-text (point))
     (shell-command-on-region start-of-text end-of-text code-text nil t)
-    (unless (eq major-mode 'fundamental-mode)
+    (unless (or (eq major-mode 'fundamental-mode)
+                (eq major-mode 'text-mode))
       (indent-region (min (point) (mark))
                      (max (point) (mark))))))
 

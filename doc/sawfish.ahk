@@ -13,23 +13,75 @@
 ; and it launches a new Notepad window (or activates an existing one).  To
 ; try out these hotkeys, run AutoHotkey again, which will load this file.
 
-#h::
-return
-
+;      /* start code-generator "^;"
+;      perl -e '
+;           %key_win_progs = (
+;                                n => ["Mozilla Firefox", firefox],
+;                                m => ["emacs\@", emacs],
+;			         t => [q(ahk_class mintty), "bash -c ~/bin/windows/start-putty.sh"],
+;                                r => ["RunBhjRun", "runbhjrun"],
+;                            );
+;           foreach (keys %key_win_progs) {
+;	       ($key, $win, $prog) = ($_, @{$key_win_progs{$_}});
+;               print <<EOF;
+;#$key\::
+;If A_PriorHotkey = #h
+;{
+;IfWinExist, $win
+;    WinActivate
+;else
+;    Run $prog
+;}
+;return
+;
+;EOF
+;           }
+;'
+;	 end code-generator */
+      ;; start generated code
 #n::
 If A_PriorHotkey = #h
+{
 IfWinExist, Mozilla Firefox
     WinActivate
 else
-   Run firefox
+    Run firefox
+}
+return
+
+#r::
+If A_PriorHotkey = #h
+{
+IfWinExist, RunBhjRun
+    WinActivate
+else
+    Run runbhjrun
+}
 return
 
 #m::
 If A_PriorHotkey = #h
+{
 IfWinExist, emacs@
     WinActivate
 else
-   Run emacs
+    Run emacs
+}
+return
+
+#t::
+If A_PriorHotkey = #h
+{
+IfWinExist, ahk_class mintty
+    WinActivate
+else
+    Run bash -c ~/bin/windows/start-putty.sh
+}
+return
+
+
+      ;; end generated code
+#h::
 return
 
 #d::
@@ -37,53 +89,47 @@ If A_PriorHotkey = #h
     Run ToggleDesktop
 return
 
-#t::
+#s::
 If A_PriorHotkey = #h
-    {
-	If WinExist("ahk_class mintty")
-            WinActivate
-	else
-            Run bash -c ~/bin/windows/start-putty.sh
-    }
+   Run ifind.exe
+return
+
+#F1::
+WinGet,	MinMax, MinMax, A
+if MinMax = 1
+    WinRestore, A
+else
+    WinMaximize, A
 return
 
 #q::
 SendInput !{F4}
 return
 
-/* start code-generator
-   for x in "w" "c" "v" "l" "r" "s"; do
-       echo "#$x::"
-       echo "    SendInput ^{$x}"
-       echo "return"
-       echo
-   done
-   end code-generator */
-/* start generated code */
+;/* start code-generator "^;"
+;   for x in "w" "c" "v" "l" "r" "s"; do
+;       echo "#$x::"
+;       echo "    SendInput ^{$x}"
+;       echo "return"
+;       echo
+;   done
+;   end code-generator */
+; /* start generated code */
 #w::
-SendInput ^{w}
+    SendInput ^{w}
 return
 
 #c::
-SendInput ^{c}
+    SendInput ^{c}
 return
 
 #v::
-SendInput ^{v}
+    SendInput ^{v}
 return
 
 #l::
-SendInput ^{l}
+    SendInput ^{l}
 return
 
-#r::
-SendInput ^{r}
-return
-
-#s::
-SendInput ^{s}
-return
-
-
-/* end generated code */
+; /* end generated code */
 
