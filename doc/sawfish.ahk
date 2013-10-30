@@ -145,3 +145,6 @@ WheelUp::
 WheelDown::
   Send {WheelUp}
   Return
+
+<#Tab::AltTab
+>#Tab::AltTab
