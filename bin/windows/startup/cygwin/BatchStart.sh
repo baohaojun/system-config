@@ -33,13 +33,13 @@ done&
 
 rm ~/.no-loop
 
-function loop-start() {
+function loop-start-in-dir() {
     local dir=$1
     shift
+    cd "$dir"
     while true; do
         sleep 2;
         test -e ~/.no-loop && continue;
-        cd "$dir"
         "$@"
     done&
 }
@@ -58,9 +58,6 @@ fi
 bash emacs-nt&
 bcdedit.exe /set "{current}" nx AlwaysOff&
 wmic OS Get DataExecutionPrevention_SupportPolicy&
-(
-    cd ~/doc
-    loop-start ahk sawfish.ahk
-)
+loop-start-in-dir ~/doc ahk sawfish.ahk
 close-window '\\osk.exe'
 ~/bin/windows/redirect.sh&
