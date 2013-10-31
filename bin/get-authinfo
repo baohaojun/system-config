@@ -19,5 +19,5 @@ while (<$auth>) {
 }
 
 if (not $got_pass) {
-  system("bash >/dev/tty </dev/tty 2>&1 -c 'read -s -p \"Password: \" pass; echo \$pass'");
+  system("bash </dev/tty 2>/dev/tty -c 'read -s -p \"Password: \" pass; echo \$pass'");
 }

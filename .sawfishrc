@@ -4,6 +4,13 @@
 (load-file "~/.sawfish/bhj-draw-wininfo.jl")
 (require 'Run-application)
 (require 'bhj-draw-wininfo)
+(require 'sawfish.wm.commands.move-cursor)
+(bind-keys global-keymap "F23" '(move-cursor-up))
+(bind-keys global-keymap "F24" '(move-cursor-down))
+(bind-keys global-keymap "C-F23" '(move-cursor-left))
+(bind-keys global-keymap "C-F24" '(move-cursor-right))
+(bind-keys global-keymap "XF86Back" '(system "xdotool click 1&"))
+
 
 (setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal|rdesktop|urxvt|krdc|vncviewer")
 (setq s-h-keymap (make-keymap))
@@ -32,6 +39,12 @@
       '(("M-g g" . ("M-v" "g" "p"))))
 
 
+
+(defun multi-bind-keys (map what &rest keys)
+  "for each key in KEYS, bind it in MAP to do WHAT"
+  (mapc (lambda (key)
+          (bind-keys map key what))
+        keys))
 
 (bind-keys global-keymap "Super-h" s-h-keymap)
 
@@ -128,6 +141,7 @@
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")))
 
 (bind-keys global-keymap "Super-Button1-Click"  '(system "my-dict-maybe&"))
+(bind-keys global-keymap "XF86Search" '(system "my-dict&"))
 
 (bind-keys global-keymap "C-S-XF86PowerOff"  '(system "lock-screen&"))
 (bind-keys global-keymap "C-S-DEL"  '(system "lock-screen&"))

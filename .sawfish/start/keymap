@@ -1,0 +1,6 @@
+#!/bin/bash
+
+input=$(readlink -f /dev/input/by-id/*4000-if01* | perl -npe 's!^/dev/!!')
+if test "$input"; then
+   sudo /lib/udev/keymap "$input" /lib/udev/keymaps/microsoft-ergonomic-keyboard
+fi

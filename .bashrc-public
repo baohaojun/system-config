@@ -32,7 +32,8 @@ for x in ~/etc/bash.d/*; do
     fi
 done
 
-function pcd() {
+pcd()
+{
     if test "$#" = 0; then
         builtin cd -P
         return

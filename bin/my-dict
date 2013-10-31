@@ -1,7 +1,12 @@
 #!/bin/bash
 
 if test $# = 0; then
-    set -- "$(xclip -o)"
+    input=$(ask-for-input-with-sawfish -p "md> ")
+    if test "$input" = '""'; then
+        set -- "$(xclip -o)"
+    else
+        set -- $(echo $input|perl -npe 's/"//g')
+    fi
 fi
 
 if test $(basename $0) = my-dict-maybe -a -e ~/.config/$USER/using-touchpad; then
