@@ -5,15 +5,23 @@
 (require 'Run-application)
 (require 'bhj-draw-wininfo)
 (require 'sawfish.wm.commands.move-cursor)
-(bind-keys global-keymap "F23" '(move-cursor-up))
-(bind-keys global-keymap "F24" '(move-cursor-down))
+(bind-keys global-keymap "F23" '(system "xdotool click 4&"))
+(bind-keys global-keymap "F24" '(system "xdotool click 5&"))
 (bind-keys global-keymap "C-F23" '(move-cursor-left))
 (bind-keys global-keymap "C-F24" '(move-cursor-right))
+(bind-keys global-keymap "Super-F23" '(move-cursor-up))
+(bind-keys global-keymap "Super-F24" '(move-cursor-down))
+
 (bind-keys global-keymap "XF86Back" '(system "xdotool click 1&"))
 
 
 (setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal|rdesktop|urxvt|krdc|vncviewer")
-(setq s-h-keymap (make-keymap))
+(setq s-h-keymap (make-keymap)
+      c-x-esc-keymap (make-keymap)
+      c-x-map (make-keymap)
+      esc-map (make-keymap)
+      esc-g-map (make-keymap))
+
 (setq global-remap-alist
       '(("C-a" . "Home")
         ("C-g" . "ESC")
@@ -21,7 +29,7 @@
         ("C-e" . "End")
         ("C-b" . "Left")
         ("C-f" . "Right")
-        ("M-b" . "C-Left")
+        ("M-b" . "C-Left") ; this is for Escape only, not Alt
         ("M-f" . "C-Right")
         ("C-s" . "C-g")
         ("C-v" . "Next")
@@ -35,8 +43,11 @@
         ("C-n" . "Down")
         ("C-x" . "C-x")))
 
+(bind-keys c-x-map "ESC" '(let ((key (concat "M-" (event-name (read-event "M-")))))
+                             (synthesize-event key (input-focus))))
+
 (setq esc-g-remap-alist
-      '(("M-g g" . ("M-v" "g" "p"))))
+      '(("M-g g" . ("M-v" "g" "p")))) ; go to page in acroread
 
 
 
@@ -152,37 +163,34 @@
 (bind-keys global-keymap "XF86AudioLowerVolume"  '(system "adjust-volume&"))
 
 (defun do-global-remap()
-  (let ((c-x-map (make-keymap))
-        (esc-map (make-keymap))
-        (esc-g-map (make-keymap)))
-    (mapc (lambda (key-map-1)
-            (let ((from (car key-map-1))
-                  (to (cdr key-map-1)))
-              (when (string-match "^M-" from 0 nil)
-                (bind-keys esc-map (substring from 2) (lambda () (synthesize-event to (input-focus)))))
+  (mapc (lambda (key-map-1)
+          (let ((from (car key-map-1))
+                (to (cdr key-map-1)))
+            (if (string-match "^M-" from 0 nil)
+                (bind-keys esc-map (substring from 2) (lambda () (synthesize-event to (input-focus))))
               (bind-keys global-keymap from (lambda ()
                                               (if (stringp to)
                                                   (synthesize-event to (input-focus))
                                                 (mapc (lambda (key1)
                                                         (synthesize-event key1 (input-focus)))
-                                                      to))))
-              (bind-keys c-x-map from (lambda () (synthesize-event from (input-focus))))))
-          global-remap-alist)
-    (mapc (lambda (key-map-1)
-            (let ((from (car key-map-1))
-                  (to (cdr key-map-1)))
-              (bind-keys esc-g-map (substring from 4) (lambda ()
-                                                        (if (stringp to)
-                                                            (synthesize-event to (input-focus))
-                                                          (mapc (lambda (key1)
-                                                                  (synthesize-event key1 (input-focus)))
-                                                                to))))
-              ))
-          esc-g-remap-alist)
-    (bind-keys global-keymap "ESC" esc-map)
-    (bind-keys esc-map "ESC" (lambda () (synthesize-event "ESC" (input-focus))))
-    (bind-keys esc-map "g" esc-g-map)
-    (bind-keys global-keymap "C-x" c-x-map)))
+                                                      to)))))
+            (bind-keys c-x-map from (lambda () (synthesize-event from (input-focus))))))
+        global-remap-alist)
+  (mapc (lambda (key-map-1)
+          (let ((from (car key-map-1))
+                (to (cdr key-map-1)))
+            (bind-keys esc-g-map (substring from 4) (lambda ()
+                                                      (if (stringp to)
+                                                          (synthesize-event to (input-focus))
+                                                        (mapc (lambda (key1)
+                                                                (synthesize-event key1 (input-focus)))
+                                                              to))))
+            ))
+        esc-g-remap-alist)
+  (bind-keys global-keymap "ESC" esc-map)
+  (bind-keys esc-map "ESC" (lambda () (synthesize-event "ESC" (input-focus))))
+  (bind-keys esc-map "g" esc-g-map)
+  (bind-keys global-keymap "C-x" c-x-map))
 
 
 (defun undo-global-remap()
@@ -405,4 +413,3 @@
 
 (system "run-dir-once ~/.sawfish/start&")
 (system "run-dir-once ~/external/sawfish/start&")
-
