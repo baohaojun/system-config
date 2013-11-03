@@ -1,5 +1,8 @@
 #!/bin/bash
 
+if test $# = 0 -a $(basename $0) = my-dict-maybe; then
+        set -- "$(xclip -o)"
+fi
 if test $# = 0; then
     input=$(ask-for-input-with-sawfish -p "md> ")
     if test "$input" = '""'; then
