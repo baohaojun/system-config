@@ -1,20 +1,23 @@
 #!/bin/bash
 
+set -x
+set -e
 wlan0_ip=${1:-192.168.0.1}
 name_servers=$(grep -P -e '^\s*nameserver' /etc/resolv.conf | pn 2 | tr '\n' ' ')
 net_prefix=${wlan0_ip%.*}
 
-cat <<EOF > /etc/udhcpd.conf
-start		$net_prefix.20	#default: 192.168.0.20
-end		$net_prefix.254	#default: 192.168.0.254
-interface	wlan0		#default: eth0
-opt	dns	$name_servers
-option	subnet	255.255.255.0
-opt	router	$wlan0_ip
-option	domain	local
-option	lease	864000		# 10 days of seconds
+cat <<EOF | sudo tee /etc/udhcpd.conf
+start           $net_prefix.20  #default: 192.168.0.20
+end             $net_prefix.254 #default: 192.168.0.254
+interface       wlan0           #default: eth0
+opt     dns     $name_servers
+option  subnet  255.255.255.0
+opt     router  $wlan0_ip
+option  domain  local
+option  lease   864000          # 10 days of seconds
 EOF
 
-ifconfig wlan0 $wlan0_ip
-/etc/init.d/udhcpd restart
-hostapd /etc/hostapd/hostapd.conf
+sudo ifconfig wlan0 $wlan0_ip
+sudo /etc/init.d/udhcpd restart
+nat-vbox eth0 wlan0
+sudo hostapd /etc/hostapd/hostapd.conf
