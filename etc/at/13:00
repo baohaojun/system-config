@@ -1,5 +1,8 @@
 #! /bin/bash
 
+if dayofweek | grep -e "Sat|Sun"; then
+    exit 0
+fi
 . ~/.renew-xauth
 bhj-notify Life "Go for dinner"
 of http://bjdc.taobao.ali.com/
