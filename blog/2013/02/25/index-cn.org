@@ -58,7 +58,7 @@
   * 处理文件内容中的重命名、文件名字的重命名、（递归）目录名字的重命名，
     symlink目标路径的重命名。
 
-- [[../../../2012/12/27/coding-android-java-in-emacs.org][aJoe]]
+- [[../../../2012/12/27/coding-android-java-in-emacs.org][Ajoke]]
 
   在Emacs下进行Android Java编程。
 
