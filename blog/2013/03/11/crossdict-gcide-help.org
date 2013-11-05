@@ -6,7 +6,7 @@
 The CrossDict since version 2.0 will be released separately with the
 dictionary data.
 
-You can install the GCIDE dictionary data from [[https://play.google.com/store/apps/details?id%3Dcom.baohaojun.crossdictgcide][Google Play]] directly,
+You can install the GCIDE dictionary data from [[https://play.google.com/store/apps/details?id=com.baohaojun.crossdictgcide][Google Play]] directly,
 or you can download it from [[http://vdisk.weibo.com/s/thlHF][Sina Vdisk]] and install it manually if you
 can't access Google Play.
 
@@ -25,7 +25,7 @@ It has 2 advantages arranged this way:
 
 CrossDict从2.0版开始将与其字典数据分开发布。
 
-你可以从[[https://play.google.com/store/apps/details?id%3Dcom.baohaojun.crossdictgcide][Google Play]]直接安装GCIDE字典数据，或者如果你不能使用Google
+你可以从[[https://play.google.com/store/apps/details?id=com.baohaojun.crossdictgcide][Google Play]]直接安装GCIDE字典数据，或者如果你不能使用Google
 Play的话也可以从 [[http://vdisk.weibo.com/s/thlHF][新浪微盘]] 上下载安装。
 
 第一次运行这个字典数据APK的时候，它需要花一段时间（几十秒钟的样子）把数
