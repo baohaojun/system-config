@@ -24,7 +24,7 @@ function git-diff() {
     fi
 }
 
-for x in $(git st -s |grep '^.\S' -P | pn 2); do
+for x in "$@" $(if test $# == 0; then git st -s |grep '^.\S' -P | pn 2; fi); do
     if test -d "$x"; then
         continue
     fi

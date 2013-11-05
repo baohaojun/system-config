@@ -77,6 +77,10 @@ if git remote -v | grep baohaojun.github.com.git; then
     for x in $org_changes; do
         if test -e $x; then
             ./fix-links.pl $x
+            if grep -i %3D -- $x && yes-or-no-p -y "Fix all %3D as ="; then
+                perl -npe 's/(\[\[[^]]*%3D[^]]*\])/join("=", split("%3D", $1))/eg' -i $x
+                git-interactive-add $x
+            fi
             if ! grep 'bhj-tags:' $x; then
                 tags=$(get-tags)
                 echo "# bhj-tags: $tags" >> $x
@@ -106,6 +110,7 @@ if git remote -v | grep baohaojun.github.com.git; then
     fi
 
     if git st -S | grep . ; then
+        git-interactive-add
         yes-or-no-p -y "Continue?"
     fi
 
