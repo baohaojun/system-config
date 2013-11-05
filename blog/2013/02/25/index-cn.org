@@ -10,7 +10,7 @@
 在Emacs/Linux/Windows下使用的中文输入法都是我自己开发的SDIM输入法。这样
 你应该了解我有多特立独行了吧？
 
-我在水木的账号是flonk，平时常逛 [[http://www.newsmth.net/bbsbfind.php?q%3D1&board%3DEmacs&title%3D&title2%3D&title3%3D&userid%3Dflonk&dt%3D2222][Emacs]] 版。另一个用新闻组发表贴子的话用
+我在水木的账号是flonk，平时常逛 [[http://www.newsmth.net/bbsbfind.php?q=1&board=Emacs&title=&title2=&title3=&userid=flonk&dt=2222][Emacs]] 版。另一个用新闻组发表贴子的话用
 的账号是 [[http://www.newsmth.net/bbsbfind.php?q=1&board=Emacs&title=&title2=&title3=&userid=baohaojun.&dt=2222][baohaojun.]] 。
 
 * 我的自由软件项目

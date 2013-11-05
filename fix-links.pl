@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# do 2 things with links:
+# 1. fix links to find the target file and use relative path
+# 2. make images clickable
 use strict;
 use String::ShellQuote;
 
