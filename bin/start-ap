@@ -19,5 +19,5 @@ EOF
 
 sudo ifconfig wlan0 $wlan0_ip
 sudo /etc/init.d/udhcpd restart
-nat-vbox eth0 wlan0
+sudo nat-vbox eth0 wlan0
 sudo hostapd /etc/hostapd/hostapd.conf
