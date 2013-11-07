@@ -12,12 +12,44 @@ function die() {
     exit -1
 }
 
+at_head=false
+TEMP=$(getopt -o a -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -a)
+            at_head=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 if test $# != 1; then
     die "Error: Usage $(basename $0) fallback_code_dir"
 fi
 
 this_db_dir=$(cd -P .; cd_beagrep; pwd)
 that_db_dir=$(cd -P "$1"; cd_beagrep; pwd)
+
+if test $at_head = true; then
+    for x in $(seq 100 -1 0); do
+        ((y = x + 1)) || true
+        if test -e $this_db_dir/.java-fallback.$x; then
+            if test $(readlink -f $this_db_dir/.java-fallback.$x) = $(readlink -f $that_db_dir); then
+                rm $this_db_dir/.java-fallback.$x
+            else
+                mv $this_db_dir/.java-fallback.$x $this_db_dir/.java-fallback.$y
+            fi
+        fi
+    done
+fi
 for x in $(seq 0 100); do
     if test ! -e $this_db_dir/.java-fallback.$x; then
         break
