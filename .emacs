@@ -29,7 +29,6 @@
               (expand-file-name "~/system-config/.emacs_d/lisp/ext")
               (expand-file-name "~/system-config/.emacs_d/weblogger")
               (expand-file-name "~/system-config/.emacs_d/org2blog")
-              (expand-file-name "~/src/github/org-mode/lisp")
               (expand-file-name "~/src/github/helm")
               (expand-file-name "~/src/github/org-mode/contrib/lisp"))
              load-path))

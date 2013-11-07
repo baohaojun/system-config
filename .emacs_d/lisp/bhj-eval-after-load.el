@@ -99,6 +99,9 @@
     (define-key yas-minor-mode-map (kbd "TAB") nil)
     (define-key yas-minor-mode-map (kbd "C-M-i") 'yas-expand)))
 
+(eval-after-load 'bbdb-com
+  '(autoload 'bbdb-complete-mail "bhj-defines"))
+
 ;; (defun eliminate-dup-invalid-buffers ()
 ;;   (let* ((new-buffer (current-buffer))
 ;;          (new-file-abs-name (buffer-file-name))
