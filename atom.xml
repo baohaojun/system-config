@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[发现式编程]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/11/07/0-programming-discovery.html"/>
+    <updated>2013-18-09T23:11:41+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/11/07/0-programming-discovery.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Interactive Git Add]]></title>
     <link href="http://baohaojun.github.io/blog/2013/10/16/0-Interactive-Git-Add.html"/>
     <updated>2013-10-16T10:53:22+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/07/11/0-firefox-search-for-tab.html"/>
     <updated>2013-07-11T10:49:03+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/07/11/0-firefox-search-for-tab.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Simple scripts to record/play keyboard macro (sawfish)]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/07/09/0-sawfish-keyboard-macro.html"/>
-    <updated>2013-07-09T18:18:45+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/07/09/0-sawfish-keyboard-macro.html</id>
   </entry>
 </feed>

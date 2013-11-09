@@ -1,5 +1,10 @@
 #+title: General programming
  * 2013
+  - 2013-11
+   * 2013-11-07
+
+     [[../../../blog/2013/11/07/0-programming-discovery.org][发现式编程]]
+
   - 2013-06
    * 2013-06-18
 

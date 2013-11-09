@@ -18,6 +18,31 @@ sub fix_link($)
     my ($link) = @_;
     my $file;
     my $anchor;
+    if ($link =~ m!^~/!) {
+        $link =~ s!^~/!$ENV{HOME}/!;
+        chomp(my $abs_path = qx(readlink -f $link));
+        if ($abs_path !~ m!^$ENV{HOME}/doc/baohaojun/!) {
+            my $base;
+            while (1) {
+                chomp(my $opt = qx(select-args open keep));
+                if ($opt eq "open") {
+                    system("of $link&");
+                    system(qq!sawfish-client -e '(event-name (read-event "Press any key to continue..."))' !);
+                    system("find-or-exec konsole");
+                } elsif ($opt eq "keep") {
+                    $base = $link;
+                    $base =~ s!.*/!!;
+                    last;
+                } else {
+                    $base = $opt;
+                    last;
+                }
+            }
+
+            system("mv $link $ENV{HOME}/doc/baohaojun/images/$base");
+            $link = "$ENV{HOME}/doc/baohaojun/images/$base";
+        }
+    }
 
     if ($link =~ m!http://baohaojun.github.(?:com|io)/(.*)!) {
         $file = $1;
