@@ -21,6 +21,7 @@
                 (lambda ()
                   (interactive)
                   (let ((grep-history grep-rgrep-history)
+                        (grep-buffer-name "*grep-rgrep*")
                         (my-grep-command "rgrep -Hn -e pat")
                         (current-prefix-arg 4))
                     (nodup-ring-insert ajoke--marker-ring (point-marker))

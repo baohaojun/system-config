@@ -69,7 +69,10 @@
   (let ((default-directory
           (if (boundp 'bhj-grep-dir)
               bhj-grep-dir
-            default-directory)))
+            default-directory))
+        (compilation-buffer-name-function (lambda (_ign) (if (boundp 'grep-buffer-name)
+                                                             grep-buffer-name
+                                                           "*grep*"))))
     (call-interactively 'grep)))
 
 ;;;###autoload
@@ -84,10 +87,8 @@
   (interactive)
   (let ((grep-history grep-gtags-history)
         (no-grep-quote t)
-        (compilation-buffer-name-function (lambda (_ign) (if (boundp 'grep-buffer-name)
-                                                             grep-buffer-name
-                                                           "*grep-gtags*")))
         (my-grep-command (or def-grep-command "grep-gtags -e pat"))
+        (grep-buffer-name (if (boundp 'grep-buffer-name) grep-buffer-name "*grep-gtags*"))
         (current-prefix-arg 4))
     (nodup-ring-insert ajoke--marker-ring (point-marker))
     (ajoke--setup-env)
@@ -124,7 +125,7 @@
   (interactive)
   (let ((grep-history grep-find-file-history)
         (my-grep-command "beagrep -f -e pat")
-        (compilation-buffer-name-function (lambda (_ign) "*grep-find-file*"))
+        (grep-buffer-name "*grep-find-file*")
         (current-prefix-arg 4))
     (flet ((grep-tag-default () (grep-tag-default-path)))
       (nodup-ring-insert ajoke--marker-ring (point-marker))

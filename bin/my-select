@@ -142,9 +142,11 @@ sub my_select(\@) {
             if ($got_ans_from_env) {
                 exit -1;
             }
-            $ans = read_ans "Warning: no matches found, press <return> to continue";
-            if ($ans eq "-") {
-                read_ans "Going back a level, press <return> to continue";
+            my $saved_ans = $ans;
+            $ans = read_ans "Warning: no matches found,\npress <return> to continue or type !<return> to return $saved_ans";
+            if ($ans eq '!') {
+                print $saved_ans;
+                exit;
             } else {
                 my_select($args_ref);
             }

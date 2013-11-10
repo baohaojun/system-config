@@ -53,7 +53,7 @@ plugin-example|Example of function layer plugin parser:\
 :langmap=c#\:.cs:\
 :langmap=c++\:.C.H.c++.cc.cpp.cxx.h.hpp.hxx:\
 :langmap=fortran\:.f.f77.f90.f95.for:\
-:langmap=jar\:.jar:\
+:langmap=jar\:.jar.dll.exe:\
 :langmap=java\:.aidl.java:\
 :langmap=javaprop\:(ExternalMessages.properties):\
 :langmap=javascript\:.js:\

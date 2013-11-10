@@ -1,0 +1,6 @@
+#!/bin/bash
+
+getclip > ~/.cache/$(basename $0)-clip.txt
+xclip -o -selection primary > ~/.cache/$(basename $0)-prim.txt
+
+meld ~/.cache/$(basename $0)-prim.txt ~/.cache/$(basename $0)-clip.txt

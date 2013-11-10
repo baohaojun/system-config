@@ -34,4 +34,9 @@ if test ${#dood[@]} = 0; then
     exit -1
 fi
 n=$(my-select "${dood[@]}")
-echo ${dood[n-1]}
+
+if echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#dood[@]}; then
+    echo ${dood[n-1]}
+else
+    echo "$n"
+fi

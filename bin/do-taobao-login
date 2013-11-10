@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if test $# = 0; then
+    getclip | perl -ne '
+    if (m/username\s+=\s+"(.*?)"/i) {
+        print "$1 ";
+    } elsif (m/password\s+=\s+"(.*?)"/i) {
+        print "$1\n";
+    }
+    if (1..1) {
+        @fields = split(/\|/);
+        $seq = 0;
+        for (@fields) {
+            if (lc $_ eq "username") {
+                $user_seq = $seq;
+            } elsif (lc $_ eq "password") {
+                $pass_seq = $seq;
+            }
+            $seq++;
+        }
+    } elsif (2..2 and defined $user_seq) {
+        @fields = split(/\|/);
+        print "$fields[$user_seq] $fields[$pass_seq]\n";
+    }
+'
+elif test $# = 1; then
+    read -p Password:
+    echo "$1" $REPLY
+else 
+    echo "$@"
+fi | while read user pass; do
+    of 'https://login.taobao.com/?spm=0.0.0.0.pXpVhU&enup=false'
+
+    putclip 登录名
+    sleep 2
+    sawfish-send-window-event 'Mozilla Firefox\$' C-s C-y C-g 
+    for x in Tab S-Tab S-Tab S-Tab S-Tab S-Tab S-Tab; do
+	sawfish-send-window-event 'Mozilla Firefox\$' $x
+	sleep .1
+    done
+
+    putclip $user
+    echo sending $user
+    sawfish-send-window-event 'Mozilla Firefox\$' C-y Tab
+
+    sleep 1
+    putclip $pass
+    echo sending $pass
+    sawfish-send-window-event 'Mozilla Firefox\$' C-y RET
+done

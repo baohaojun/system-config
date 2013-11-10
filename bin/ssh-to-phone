@@ -20,7 +20,7 @@ if test $(basename $0) = net-for-phone; then
     adb shell su -c "setprop net.dns1 $(cat /etc/resolv.conf | grep ^nameserver | pn 2 | head -n 1)"
     adb shell su -c '/system/xbin/route del default'
     adb shell su -c '/system/xbin/route add default gw 192.168.15.33'
-    nat-vbox eth0 usb0
+    nat-vbox $(select-output-line "ifconfig | grep -P -e '^\S'| pn 1|grep -v -P -e '^(lo|usb0)$'") usb0
     exit 0
 fi
 WHERE=Movies
