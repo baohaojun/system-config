@@ -1,5 +1,6 @@
 #!/bin/bash -i
 # instead of scp in the name, we are going to use rsync
+adb shell su -c sh /sdcard/start-debian2.sh
 if ! adb -w shell netcfg|grep -q 'rndis0.*129/'; then
     adb shell su -c "
         setsid setsid sh -c '
