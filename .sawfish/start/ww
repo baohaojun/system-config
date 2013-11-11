@@ -3,6 +3,9 @@
 cd /tmp
 
 while true; do
+    if test -e ~/.config/no-ww; then
+        exit
+    fi
     AliWangWang
     sleep 5
 done&

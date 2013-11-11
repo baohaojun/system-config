@@ -1,9 +1,11 @@
 #!/usr/bin/perl
 
 use HTML::Entities;
+use Encode;
 
 while (<>) {
     decode_entities($_);
-    s/\[(0x[a-f0-9]{2})\]/pack("C", hex($1))/eg;
+    s/\[(0x[a-f0-9]{2})\]/pack("C", hex($1))/egi;
+    s/\\u([a-f0-9]{4})/pack("U", hex("0x$1"))/egi;
     print;
 }
