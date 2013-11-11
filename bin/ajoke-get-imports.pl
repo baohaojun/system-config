@@ -104,10 +104,10 @@ while (<>) {
         debug "got method: $1 $2";
         if ($4) {
             debug "throws: $4";
-            my $_ = $4;
-            s/^throws //;
+            my $throws = $4;
+            $throws =~ s/^throws //;
 
-            while (m/($qualified_re)/g) {
+            while ($throws =~ m/($qualified_re)/g) {
                 $refs{$1} = 1;
             }
         }
