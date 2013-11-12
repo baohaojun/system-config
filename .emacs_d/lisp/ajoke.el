@@ -406,9 +406,16 @@ methods."
              (ajoke--current-regexp "[.a-z0-9_]+"))))
   (let (method (remove ""))
     (save-excursion
-      (let* ((resolve (shell-command-to-string (format "ajoke-get-imports.pl %s -r %s|tr -d '\\n'"
-                                                       (shell-quote-argument (ajoke--buffer-file-name-local))
-                                                       (shell-quote-argument id))))
+      (let* ((resolve-line
+              (ajoke--pick-one
+               "Import which? "
+               (split-string
+                (shell-command-to-string (format "ajoke-get-imports.pl %s -r %s"
+                                                 (shell-quote-argument (ajoke--buffer-file-name-local))
+                                                 (shell-quote-argument id))) "\n")
+               nil
+               t))
+             (resolve (car (split-string resolve-line "\\s +")))
              (comp (split-string resolve "\\."))
              (comp-last (car (last comp)))
              (class (cond
