@@ -2585,18 +2585,18 @@ The method to perform the request is determined from
                        (if (twittering-is-uploading-file-p post-body)
                            "-F"
                          "-d")))
-                  ;; (or (mapcan (lambda (pair)
-                  ;;               (let ((n (car pair))
-                  ;;                     (v (cdr pair)))
-                  ;;                 (when (string= opt "-d")
-                  ;;                   (setq n (twittering-percent-encode n)
-                  ;;                         v (twittering-percent-encode v)))
-                  ;;                 (list opt (format "%s=%s" n v))))
-                  ;;             post-body)
+                  (or (mapcan (lambda (pair)
+                                (let ((n (car pair))
+                                      (v (cdr pair)))
+                                  (when (string= opt "-d")
+                                    (setq n (twittering-percent-encode n)
+                                          v (twittering-percent-encode v)))
+                                  (list opt (format "%s=%s" n v))))
+                              post-body)
 
-                  ;; Even if no data to post.. or it will fail for favorite,
-                  ;; retweet, etc.  This is to ensure curl will use POST?
-                  `(,opt ,(or post-body ""))))
+		      ;; Even if no data to post.. or it will fail for favorite,
+		      ;; retweet, etc.  This is to ensure curl will use POST?
+		      `(,opt ,(or post-body "")))))
             ,uri))
          (coding-system-for-read 'binary)
          (coding-system-for-write 'binary)
