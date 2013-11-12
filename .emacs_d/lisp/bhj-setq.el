@@ -14,6 +14,7 @@
                                 (".*\\.aidl$" . java-mode)
                                 (".*\\.mm?$" . objc-mode)
                                 ("Kbuild*" . makefile-gmake-mode)
+                                (".*/java/.*\\.wiki$" . org-mode)
                                 ("makefile*" . makefile-gmake-mode))
                                   auto-mode-alist))
 

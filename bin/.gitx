@@ -11,6 +11,19 @@ function git_svn() {
         push)
             command git svn dcommit
             ;;
+        remote)
+            ;;
+        diff)
+            args=()
+            for x in "$@"; do
+                if test "$x" = origin/master; then
+                    x=git-svn
+                fi
+                args=("${args[@]}" "$x")
+            done
+            set -- "${args[@]}"
+            command git "$@"
+            ;;
         *)
             command git "$@"
             ;;

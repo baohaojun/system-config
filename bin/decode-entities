@@ -3,6 +3,7 @@
 use HTML::Entities;
 use Encode;
 
+use bytes;
 while (<>) {
     decode_entities($_);
     s/\[(0x[a-f0-9]{2})\]/pack("C", hex($1))/egi;

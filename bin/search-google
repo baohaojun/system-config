@@ -30,6 +30,10 @@ if test $prog = search-aliman; then
     url="http://work.alibaba-inc.com/work/search?keywords=$fill&type=person&offset=0&tabIndex=1"
 fi
 
+if test $prog = search-taobao-item; then
+    url="http://detail.tmall.com/item.htm?spm=a3104.100017441.w900-4533435431.2.7UCp95&id=$fill"
+fi
+
 if test $prog = search-aliwork; then
     url="http://work.alibaba-inc.com/work/search?keywords=$fill&offset=0&tabIndex=1"
 fi

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+target_pwd=$PWD
+from_dir=$1
+pattern=$2
+cd "$from_dir"
+
+for x in $(find . -iname "*$pattern*"); do d=$target_pwd/$(dirname $x); mkdir -p "$d"; cp $x $d -av; done
