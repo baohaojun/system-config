@@ -294,5 +294,8 @@ if ($resolve) {
                 print "$type$postfix\n";
             }
         }
+    } else {
+        $resolve = shell_quote($resolve);
+        system("ajoke-get-type.pl $resolve");
     }
 }

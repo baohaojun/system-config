@@ -291,8 +291,8 @@ sub do_cscope($$$) {
     } else {
         open($grep, "-|", "global -x $lookup_needle_quote $ignore_case");
     }
-    our %matches;
-    our %updated_paths;
+    our %matches = ();
+    our %updated_paths = ();
 
     parse_xref($grep, 0);
     close($grep);
