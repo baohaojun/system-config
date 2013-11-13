@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ps-killall ibus-sdim
+ask-for-input-with-sawfish -p "Continue after restart ibus (right click the ibus icon)> "

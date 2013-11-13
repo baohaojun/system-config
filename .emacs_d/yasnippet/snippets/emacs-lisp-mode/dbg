@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: dbg
+# --
+(message "$1 is %s" $1)
