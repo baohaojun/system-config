@@ -215,11 +215,16 @@ should be a string; MOVE-ALONG is only used for its side-effects."
              (let ((mb (match-beginning 0))
                    (me (match-end 0)))
                (let ((substr ,extract-match))
-                 (if (and (< (point) old-point) (eq tag 'current))
-                     ;; substr closer to the old-point is at the head of strlist-before, in good order
-                     (setq strlist-before (cons substr strlist-before))
-                   ;; substr further to the old-point is at the head of strlist-after, in bad order
-                   (setq strlist-after (cons substr strlist-after))))
+                 (cond
+                  ((and (eq tag 'current)
+                       (< mb skeleton--start)
+                       (> me skeleton--start)))
+                  (t
+                   (if (and (< (point) old-point) (eq tag 'current))
+                       ;; substr closer to the old-point is at the head of strlist-before, in good order
+                       (setq strlist-before (cons substr strlist-before))
+                     ;; substr further to the old-point is at the head of strlist-after, in bad order
+                     (setq strlist-after (cons substr strlist-after))))))
                ,move-along))
            (setq strlist (skeleton--interleave strlist-before (nreverse strlist-after)))
            ;; This expansion is useless, it's the same as the skeleton
