@@ -25,7 +25,7 @@ function git_svn() {
             command git "$@"
             ;;
         *)
-            command git "$@"
+            NO_SVN_CHECK=true git "$@"
             ;;
     esac
 }
@@ -36,7 +36,7 @@ function git()
         echo only stat the current folder 1>&2
         set -- st .
     fi
-    if command git config svn-remote.svn.url | grep -q .; then
+    if test "$NO_SVN_CHECK" != true && command git config svn-remote.svn.url | grep -q .; then
         git_svn "$@"
         return $?
     fi

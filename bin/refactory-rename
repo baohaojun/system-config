@@ -36,8 +36,8 @@ if test $# != 2; then
 fi
 
 # set -- "$(printf %q "$1")" "$(printf %q "$2")"
-arg1="$(printf %q "$1")"
-arg2="$(printf %q "$2")"
+export ARG1=$1
+export ARG2=$2
 
 
 function die() {
@@ -90,8 +90,8 @@ xargs -d \\n grep -P -l -i -I -e "$1" |
 xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x is a match" 1>&2 && echo "$x"; done; echo '$tmpf.tmp true |
 xargs -d \\n perl -npe '
 BEGIN{
-    $from = "'"$arg1"'";
-    $to = "'"$arg2"'";
+    $from = $ENV{ARG1};
+    $to = $ENV{ARG2};
     $prepend = "'"$prepend"'";
     $postpend = "'"$postpend"'";
 

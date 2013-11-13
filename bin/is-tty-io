@@ -1,3 +1,7 @@
 #!/bin/bash
 
-test "$(readlink -f /proc/$$/fd/0)" = "$(readlink -f /proc/$$/fd/1)"
+if test $(basename $0) = is-tty-io; then
+    test "$(readlink -f /proc/$$/fd/0)" = "$(readlink -f /proc/$$/fd/1)"
+elif test $(basename $0) = is-null-output; then
+    test "$(readlink -f /proc/$$/fd/1)" = /dev/null
+fi

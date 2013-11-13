@@ -29,10 +29,15 @@ elif test $# = 1; then
 else
     echo "$@"
 fi | while read user pass; do
-    of 'https://login.taobao.com/?spm=0.0.0.0.pXpVhU&enup=false'
+    if test $(basename $0) = do-taobao-login-daily; then
+        of 'https://login.daily.taobao.net/?spm=0.0.0.0.pXpVhU&enup=false'
+    else
+        of 'https://login.taobao.com/?spm=0.0.0.0.pXpVhU&enup=false'
+    fi
 
     putclip 登录名
-    sleep 2
+    ask-for-input-with-sawfish -p Continue
+    sleep .5
     sawfish-send-window-event 'Mozilla Firefox\$' C-s C-y C-g
     for x in Tab S-Tab S-Tab S-Tab S-Tab S-Tab S-Tab; do
         sawfish-send-window-event 'Mozilla Firefox\$' $x

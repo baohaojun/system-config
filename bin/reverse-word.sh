@@ -1,7 +1,7 @@
 #!/bin/bash
 out=$(
 perl -e '
-$done = 0; 
+$done = 0;
 while (not $done) {
     $done = 1;
     map {
@@ -13,9 +13,12 @@ while (not $done) {
     } @ARGV;
 }' "$@" )
 
+if is-null-output; then
+    echo "$out" | putclip
+    exit 0
+fi
 
 echo "$out"
 if is-tty-io; then
     echo "$out" | putclip >/dev/null 2>&1
 fi
-     
