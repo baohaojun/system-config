@@ -9,3 +9,11 @@ while true; do
     AliWangWang
     sleep 5
 done&
+
+while true; do
+    if test -e ~/.config/no-ww; then
+        exit
+    fi
+    HOME=~/tmp AliWangWang
+    sleep 5
+done&

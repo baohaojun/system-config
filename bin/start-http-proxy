@@ -1,11 +1,12 @@
 #!/bin/bash
 
+set -e
 sudo /etc/init.d/ziproxy stop
 sudo ps-killall ziproxy
-tsocks ziproxy -d 
+tsocks ziproxy -d
 
 export http_proxy=localhost:8080
-sleep 1  
+sleep 1
 if test "$#" != 0; then
    "$@"
 else

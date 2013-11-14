@@ -70,3 +70,4 @@ export DEBEMAIL DEBFULLNAME
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export INFOPATH=${HOME}/src/github/org-mode/doc:${INFOPATH}
+export ANDROID_HOME=/home/bhj/external/bin/Linux/ext/android-sdk-linux
