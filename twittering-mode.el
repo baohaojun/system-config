@@ -7858,6 +7858,7 @@ managed by `twittering-mode'."
     (define-key km (kbd "a") 'twittering-toggle-activate-buffer)
     (define-key km (kbd "g") 'twittering-current-timeline)
     (define-key km (kbd "u") 'twittering-update-status-interactive)
+    (define-key km (kbd "l") 'recenter-top-bottom)
     (define-key km (kbd "C-c r") 'twittering-reply-to-user)
     (define-key km (kbd "U") 'twittering-push-uri-onto-kill-ring)
     (define-key km (kbd "d") 'twittering-direct-message)
