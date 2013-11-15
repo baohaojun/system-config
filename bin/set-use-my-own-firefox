@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for x in ~/.local/share/applications/userapp-Firefox-*.desktop; do
+    if test -e $x; then
+        perl -npe 's!external/firefox/firefox!bin/firefox!' $x > /tmp/firefox.desktop.$$
+        mv /tmp/firefox.desktop.$$ $x
+    fi
+done
