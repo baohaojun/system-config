@@ -36,6 +36,9 @@ function git()
         echo only stat the current folder 1>&2
         set -- st .
     fi
+    if test $# = 1 -a "$1" = diff; then
+        set -- diff -w
+    fi
     if test "$NO_SVN_CHECK" != true && command git config svn-remote.svn.url | grep -q .; then
         git_svn "$@"
         return $?
