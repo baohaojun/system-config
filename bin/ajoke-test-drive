@@ -183,6 +183,7 @@ EOF
 
                 prompt 'Press ENTER to continue: '
             if test -e ~/system-config/gcode/crossdict/src/com/baohaojun/crossdict/CrossDictActivity.java; then
+                # if this file exists, it's my own environment, so I can use some more weird commands
                 (
                     ew ~/system-config/gcode/crossdict/src/com/baohaojun/crossdict/CrossDictActivity.java
                     find-or-exec konsole
