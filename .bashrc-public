@@ -20,8 +20,13 @@ else
         export PS1='\$'
     fi
 
-    if ps.pl transmission-cli >/dev/null 2>&1 && yes-or-no-p "Kill transmission-cli?"; then
-        ps-killall transmission-cli
+    if test -e ~/.bash-path; then
+        (
+            . ~/.bash-path
+            if ps.pl transmission-cli >/dev/null 2>&1 && yes-or-no-p "Kill transmission-cli?"; then
+                ps-killall transmission-cli
+            fi
+        )
     fi
 fi
 

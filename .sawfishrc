@@ -401,6 +401,7 @@
 (bind-keys global-keymap "Scroll_Lock" #'scroll-lock-toggle)
 (bind-keys global-keymap "Super-Home" #'scroll-lock-toggle)
 (bind-keys s-h-keymap "g"  '(system "emacsclient -d -e '(gnus)'&"))
+(bind-keys s-h-keymap "w"  '(system "emacsclient -d -e '(twit)'&"))
 
 (add-hook 'focus-in-hook
           (lambda (w focus-mode)
