@@ -19,6 +19,10 @@ else
     if test "$TERM" = dumb; then
         export PS1='\$'
     fi
+
+    if ps.pl transmission-cli >/dev/null 2>&1 && yes-or-no-p "Kill transmission-cli?"; then
+        ps-killall transmission-cli
+    fi
 fi
 
 alias rm='rm -i'

@@ -3,7 +3,7 @@
 test $# = 0 && set -- "$(getclip)"
 
 url=$(
-    echo -n "http://thepiratebay.se/search/";
+    echo -n "http://thepiratebay.sx/search/";
     echo -n "$@" | perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g'
     echo /0/7/0
 )
