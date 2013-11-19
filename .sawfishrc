@@ -412,5 +412,4 @@
                 (unbind-keys global-keymap "Super-\\")
               (bind-keys global-keymap "Super-\\"  '(system "delayed-xdotool key super+F12&")))))
 
-(system "run-dir-once ~/.sawfish/start&")
-(system "run-dir-once ~/external/sawfish/start&")
+(system "sawfish-auto-start&")

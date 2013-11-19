@@ -1,5 +1,22 @@
 #!/bin/bash
 
+env=$(/usr/bin/gnome-keyring-daemon --start --components=ssh)
+for component in pkcs11 secrets gpg; do
+    /usr/bin/gnome-keyring-daemon --start --components=$component
+done
+
+eval $env
+export SSH_AUTH_SOCK GPG_AGENT_INFO
+
+env=$(cat <<EOF
+(progn
+  (setenv "SSH_AUTH_SOCK" "$SSH_AUTH_SOCK")
+  (setenv "GPG_AGENT_INFO" "$GPG_AGENT_INFO"))
+EOF
+)
+
+sawfish-client -e "$env"
+
 run-dir-once ~/.sawfish/start&
 run-dir-once ~/external/sawfish/start&
 
