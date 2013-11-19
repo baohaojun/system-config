@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sleep 10
+emacs.bhj&
+konsole.bhj&
