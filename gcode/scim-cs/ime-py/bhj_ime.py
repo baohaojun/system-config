@@ -423,7 +423,7 @@ class ime:
             self.commitstr += key.name
 
     def keyed_when_comp(self, key):
-        if self.compstr[-1] in '~?_*^!(){}$:<>"' and key == 'S space':
+        if self.compstr[-1] in '\'`~?_*^!(){}$:<>"' and key == 'S space':
             key = ime_keyboard('space')
         comp = self.compstr + key.name;
         if _g_ime_quail.has_quail(comp): #we have cand
