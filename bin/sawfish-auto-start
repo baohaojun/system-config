@@ -1,0 +1,6 @@
+#!/bin/bash
+
+run-dir-once ~/.sawfish/start&
+run-dir-once ~/external/sawfish/start&
+
+

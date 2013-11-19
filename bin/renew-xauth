@@ -1,5 +1,9 @@
 #!/bin/bash
+umask 0077
+file=${1:-~/.renew-xauth}
+rm -f $file.$$
 echo "export XAUTHORITY=$XAUTHORITY
 export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS
 export DISPLAY=$DISPLAY
-" >${1:-~/.renew-xauth}
+" > $file.$$
+mv $file.$$ $file

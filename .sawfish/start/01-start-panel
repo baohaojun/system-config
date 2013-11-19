@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while true; do 
-    gnome-panel
+while true; do
+    xfce4-session
     sleep 2
 done
