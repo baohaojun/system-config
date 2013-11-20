@@ -213,9 +213,9 @@ bool SnoreCore::setPrimaryNotificationBackend()
 {
     QStringList backends = notificationBackends();
 #ifdef Q_OS_WIN
-    if(QSysInfo::windowsVersion() == QSysInfo::WV_WINDOWS8 && backends.contains("SnoreToast"))
+    if(QSysInfo::windowsVersion() == QSysInfo::WV_WINDOWS8 && backends.contains("Windows 8"))
     {
-        if(setPrimaryNotificationBackend("SnoreToast"))
+        if(setPrimaryNotificationBackend("Windows 8"))
             return true;
     }
     if( backends.contains("Growl"))
@@ -246,10 +246,11 @@ bool SnoreCore::setPrimaryNotificationBackend()
     return false;
 }
 
-const QString &SnoreCore::primaryNotificationBackend(){
-    if(m_notificationBackend == NULL){
-        static QString none;
-        return none;
+const QString SnoreCore::primaryNotificationBackend()
+{
+    if(m_notificationBackend == NULL)
+    {
+        return QString();
     }
     return m_notificationBackend->name();
 }
