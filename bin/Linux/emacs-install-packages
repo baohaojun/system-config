@@ -32,3 +32,22 @@ cd ~/src/github
 if test ! -e twittering-mode/.git; then
     git clone http://github.com/baohaojun/twittering-mode
 fi
+
+if test ! -e weibo.emacs/.git; then
+    git clone http://github.com/baohaojun/weibo.emacs
+fi
+
+cd ~/src/github
+cat <<EOF > ~/.config/emacs.gen.el
+(setq load-path
+      (nconc (list
+$(
+for x in */; do
+    if test "$(echo $x/*.el)" != "$x/*.el"; then
+        printf '"%s"\n' $(readlink -f $x)
+    fi
+done
+)
+)
+             load-path))
+EOF

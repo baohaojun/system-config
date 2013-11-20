@@ -228,6 +228,17 @@ Start twittering-mode.
 
 ;;;***
 
+;;;### (autoloads (weibo) "../../src/github/weibo.emacs/weibo" "../../../src/github/weibo.emacs/weibo.el"
+;;;;;;  (21132 30635 388610 383000))
+;;; Generated autoloads from ../../../src/github/weibo.emacs/weibo.el
+
+(autoload 'weibo "../../src/github/weibo.emacs/weibo" "\
+
+
+\(fn)" t nil)
+
+;;;***
+
 ;;;### (autoloads (org-jira-get-issues-from-filter-headonly org-jira-get-issues-from-filter
 ;;;;;;  org-jira-browse-issue org-jira-progress-issue org-jira-refresh-issue
 ;;;;;;  org-jira-create-subtask org-jira-create-issue org-jira-get-subtasks

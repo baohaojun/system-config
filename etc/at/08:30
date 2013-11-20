@@ -1,0 +1,7 @@
+#! /bin/bash
+
+if dayofweek | grep -e "Sat|Sun"; then
+    exit 0
+fi
+. ~/.renew-xauth
+of 'http://kelude.taobao.net/regressions?id=10&testlab_id=31064&values[result_id][]=117&product_id=89&ticket=4345868c-1dbc-414a-9f63-ffba32dcf5fe&build_id=1277847'

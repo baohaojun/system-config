@@ -103,5 +103,5 @@ if test -x ~/external/firefox/firefox; then
         debug "Won't start firefox $@ because it is running in another display"
         exit -1
     fi
-    ~/external/firefox/firefox "$@" 2>&1
+    exec ~/external/firefox/firefox "$@" 2>&1
 fi

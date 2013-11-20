@@ -1,0 +1,6 @@
+#!/bin/bash
+
+emacsclient -d -e '(weibo)'
+exit 
+find-or-exec emacs
+sawfish-send-window-event emacs@ r
