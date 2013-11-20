@@ -16,7 +16,7 @@ Q_EXPORT_PLUGIN2(snoretoast,SnoreToast)
 
 
 SnoreToast::SnoreToast():
-    SnoreBackend("SnoreToast",false,false)
+    SnoreBackend("Windows 8",false,false)
 {
 }
 
