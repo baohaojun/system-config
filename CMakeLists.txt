@@ -14,7 +14,7 @@ option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications"
 
 set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 4)
-set(SNORE_VERSION_SUFFIX pre)
+set(SNORE_VERSION_SUFFIX "")
 
 
 
