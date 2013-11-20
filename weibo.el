@@ -178,4 +178,9 @@
 (weibo-timeline-register-provider (weibo-comments-to-me-timeline-provider))
 (weibo-timeline-register-provider (weibo-public-timeline-provider))
 
+;;;###autoload
+(defun weibo()
+  (interactive)
+  (weibo-timeline))
+
 (provide 'weibo)
