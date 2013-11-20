@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if test -d bionic; then
+if test -d bionic -a "$relativeSrcDir" = .; then
    grep -v -P -e 'match-overrun.c|\.jar'
 else
     cat

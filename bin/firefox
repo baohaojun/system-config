@@ -1,6 +1,9 @@
 #!/bin/bash
 
 exec 2>>~/.logs/firefox.log
+if test "$DISPLAY" = :0.0; then
+    . ~/.renew-xauth
+fi
 
 function debug() {
     echo "$@" 1>&2
