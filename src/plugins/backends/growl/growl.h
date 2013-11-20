@@ -31,7 +31,9 @@ class Growl:public Snore::SnoreBackend
 
 public:
     Growl();
-    ~Growl();
+    ~Growl();    
+    virtual bool init(Snore::SnoreCore *snore);
+    
     static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
 
 private:
@@ -39,6 +41,7 @@ private:
     static Growl *s_instance;
     uint m_id;
     QHash<QString,class gntp*> m_applications;
+    gntp *m_defaultGNTP;
 
 public slots:
     void slotRegisterApplication(Snore::Application *application);

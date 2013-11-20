@@ -33,7 +33,8 @@ Growl *Growl::s_instance = NULL;
 
 Growl::Growl():
     SnoreBackend("Growl",false,false),
-    m_id(0)
+    m_id(0),
+    m_defaultGNTP(NULL)
 {
     s_instance = this;
 }
@@ -44,11 +45,29 @@ Growl::~Growl(){
             this->slotUnregisterApplication(a);
         }
     }
+    delete m_defaultGNTP;
 }
 
-void Growl::slotRegisterApplication(Application *application){
-    gntp *growl = new gntp(application->name().toUtf8().constData(),application->icon().localUrl().toUtf8().constData());
+bool Growl::init(SnoreCore *snore)
+{
+    m_defaultGNTP = new gntp(QString("SnoreNotify").toUtf8().constData());
+    
+    std::vector<std::string> alerts;
+    alerts.push_back("Default");
+    try{
+        m_defaultGNTP->regist(alerts);
+    }catch(const std::exception& e){
+        qDebug()<<"Growl:"<<e.what();
+        delete m_defaultGNTP;
+        m_defaultGNTP = NULL;
+        return false;
+    }
+    return SnoreBackend::init(snore);
+}
 
+void Growl::slotRegisterApplication(Application *application)
+{
+    gntp *growl = new gntp(application->name().toUtf8().constData(),application->icon().localUrl().toUtf8().constData());
 
     gntp::gntp_callback callback(&Growl::gntpCallback);
     growl->set_gntp_callback(callback);
@@ -74,11 +93,15 @@ void Growl::slotUnregisterApplication(Application *application){
 
 void Growl::slotNotify(Notification notification){
     gntp *growl = m_applications.value(notification.application());
+    QString alert = notification.alert();
     if(growl == NULL)
-        return;
+    {
+        growl = m_defaultGNTP;
+        alert = "Default";
+    }
     //qDebug()<<"Notify Growl:"<<notification.application()<<Notification.toPlainText(notification.title());
     try{
-        growl->notify(notification.alert().toUtf8().constData(),notification.id(),
+        growl->notify(alert.toUtf8().constData(),notification.id(),
                       Snore::toPlainText(notification.title()).toUtf8().constData(),
                       Snore::toPlainText(notification.text()).toUtf8().constData(),
                       notification.icon().localUrl().isEmpty()?NULL:notification.icon().localUrl().toUtf8().constData(),NULL,"1");
@@ -88,7 +111,8 @@ void Growl::slotNotify(Notification notification){
     }
 }
 
-void Growl::gntpCallback(const int &id,const std::string &reason,const std::string &data){
+void Growl::gntpCallback(const int &id,const std::string &reason,const std::string &data)
+{
     qDebug()<<"Growl Callback"<<id<<QString(reason.c_str())<<QString(data.c_str());
     Notification n = s_instance->snore()->getActiveNotificationByID(id);
     NotificationEnums::CloseReasons::closeReasons r = NotificationEnums::CloseReasons::NONE;

@@ -149,8 +149,13 @@ SnarlBackend::~SnarlBackend()
 
 
 bool SnarlBackend::init(SnoreCore *snore){
-    m_eventLoop = new SnarlBackend::SnarlWidget(this);
     SnarlInterface *snarlInterface = new SnarlInterface();
+    if(!snarlInterface->IsSnarlRunning())
+    {
+        delete snarlInterface;
+        return false;
+    }
+    m_eventLoop = new SnarlBackend::SnarlWidget(this);
     m_applications.insert("SnoreNotify",snarlInterface);
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
     m_defautSnarlinetrface = new SnarlInterface();
