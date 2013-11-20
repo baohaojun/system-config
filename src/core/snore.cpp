@@ -203,6 +203,7 @@ bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
             qDebug()<<"Failed to initialize"<<b->name();
             return false;
         }
+        disconnect(m_notificationBackend,SIGNAL(closeNotification(Snore::Notification)));
         connect(b,SIGNAL(closeNotification(Snore::Notification)),this,SLOT(slotNotificationClosed(Snore::Notification)));
     }
     m_notificationBackend = b;
