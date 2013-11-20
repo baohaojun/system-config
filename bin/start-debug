@@ -29,6 +29,10 @@ mkdir -p ~/.logs/start-debug.log/
         printf "%q " "\$x"
     done
     echo
+    echo
+    set
+    echo
+    echo
 ) >> ~/.logs/start-debug.log/$1
 $cmd "\$@" > ~/.logs/start-debug.log/$1.\$\$.out 2> ~/.logs/start-debug.log/$1.\$\$.err
 res=\$?

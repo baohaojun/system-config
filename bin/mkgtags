@@ -10,7 +10,7 @@ mkdir -p ~/.logs
 cd -P .
 outDir=~/.cache/for-code-reading/"`pwd`"
 srcDir=`pwd`
-relativeSrcDir=.
+export relativeSrcDir=.
 while test "$outDir" != "" -a ! -d "$outDir"/.beagrep; do
     outDir=${outDir%/*}
 done
@@ -38,7 +38,7 @@ then
     if test "$ans" = n -o "$ans" = N; then
         outDir=~/.cache/for-code-reading/"`pwd`"
     else
-        relativeSrcDir=${srcDir/#$higherSrcDir/.}
+        export relativeSrcDir=${srcDir/#$higherSrcDir/.}
         cd $higherSrcDir
     fi
 else
