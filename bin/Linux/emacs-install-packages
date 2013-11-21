@@ -19,7 +19,7 @@ emacs_code=$(cat <<EOF
                            echo ~/bin/Linux/config/emacs-pkgs/*;
                        fi
                    ); do
-            echo "(package-install '$(basename $x))"
+            echo "(ignore-errors (package-install '$(basename $x)))"
         done
     )
 )
