@@ -57,9 +57,25 @@ GetOptions(
     "T=s" => sub {$type_re = qr($_[1])i; $reverse_type_re = 1},
     );
 
+if ($lookup_needle =~ m/^\w+\.\.\*/) {
+# so that when I search for String.* it will allow me to select java.lang.String..*
+    (my $id = $lookup_needle) =~ s/\..*//;
+    chomp (my $qid=qx(select-output-line "grep-gtags -e $id -T resource" | pn 3));
+    $qid =~ s/<|>//g;
+    $lookup_needle = "$qid..*";
+    debug "lookup_needle changed to $lookup_needle";
+}
+
+if ($lookup_needle =~ m/^</) {
+    $lookup_needle =~ s/<|>//g;
+}
+
 if ($lookup_needle =~ m/^\w.*\.\*/) {
     $lookup_needle = "^$lookup_needle";
 }
+
+
+
 
 if ($wild_card) {
     $lookup_needle = ".*";

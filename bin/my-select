@@ -6,6 +6,10 @@ sub echo(@) {
     print "@_\n";
 }
 
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
 my $tty;
 if ($ENV{EMACS}) {
     $tty = "";
@@ -37,12 +41,9 @@ sub read_ans($) {
             @accrue_prompt = (@accrue_prompt[0..20], "...");
         }
         my $sawfish_prompt = join("\n", @accrue_prompt);
-        use String::Escape qw(qqbackslash unqqbackslash);
-        $sawfish_prompt = qqbackslash($sawfish_prompt);
-        open(my $sawpipe, "-|", "sawfish-client", "-e", "(let* ((prompt-completion-fun (lambda ()))) (prompt $sawfish_prompt nil))")
-            or die "Can not open sawfish pipe";
-        $ans = unqqbackslash join("", <$sawpipe>);
-        close $sawpipe;
+        use String::ShellQuote;
+        $sawfish_prompt = shell_quote($sawfish_prompt);
+        chomp($ans = qx(ask-for-input-with-sawfish -p $sawfish_prompt));
     }
 
     $accrue_prompt = "";
@@ -143,7 +144,7 @@ sub my_select(\@) {
                 exit -1;
             }
             my $saved_ans = $ans;
-            $ans = read_ans "Warning: no matches found,\npress <return> to continue or type !<return> to return $saved_ans";
+            $ans = read_ans "Warning: no matches found for $ans,\npress <return> to continue or type !<return> to return $saved_ans";
             if ($ans eq '!') {
                 print $saved_ans;
                 exit;

@@ -4,4 +4,4 @@ if test -d bionic -a "$relativeSrcDir" = .; then
    grep -v -P -e 'match-overrun.c|\.jar'
 else
     cat
-fi
+fi | grep -v dalvik/dx/tests/

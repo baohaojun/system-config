@@ -19,7 +19,23 @@ while true; do
     esac
 done
 
-prompt=$(printf %q "$prompt")
+tmpf=/tmp/$(basename $0).$$
+
+echo "$prompt" > $tmpf
+
+read_file=$(cat <<EOF
+(progn
+  (let* ((file (open-file "$tmpf" 'read))
+         (str "")
+         (line ""))
+    (while (setq line (read-line file))
+      (setq str (concat str line)))
+    (close-file file)
+    str))
+EOF
+)
 
 sawfish-client -e "(let* ((prompt-completion-fun (lambda ())))
-                     (prompt \"$prompt\" nil))"
+                     (prompt $read_file nil))" | perl -npe 's/^"|"$//g' | tr -d '\r\n'
+
+rm $tmpf
