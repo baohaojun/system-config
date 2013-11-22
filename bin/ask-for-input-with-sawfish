@@ -1,13 +1,18 @@
 #!/bin/bash
 
 prompt="> "
-TEMP=$(getopt -o p: --long prompt: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o p:s --long prompt: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
+secret=0
 while true; do
     case "$1" in
         -p|--prompt)
             prompt=$2
             shift 2
+            ;;
+        -s)
+            secret=1
+            shift
             ;;
         --)
             shift
@@ -35,7 +40,14 @@ read_file=$(cat <<EOF
 EOF
 )
 
-sawfish-client -e "(let* ((prompt-completion-fun (lambda ())))
-                     (prompt $read_file nil))" | perl -npe 's/^"|"$//g' | tr -d '\r\n'
+sawfish_script=$(cat <<EOF
+(let* ((prompt-completion-fun (lambda ()))
+       (prompt-window-position
+        (cons 200 200))
+      $(if test $secret = 1; then echo '(prompt-display-fun (lambda (s) (make-string (length s) ?*)))'; fi))
+   (prompt $read_file nil))
+EOF
+)
+sawfish-client -e "$sawfish_script" | perl -npe 's/^"|"$//g' | tr -d '\r\n'
 
 rm $tmpf

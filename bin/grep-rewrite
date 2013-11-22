@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+
+use strict;
+my $last_dir;
+while (<>) {
+    if (m!^(.*)/(.*):(\d+):!) {
+        my ($dir, $file, $line) = ($1, $2, $3);
+        if ($dir ne $last_dir) {
+            print "Entering directory `$dir'\n";
+            $last_dir = $dir;
+        }
+        $_ = substr($_, length("$dir") + 1);
+        print "$_";
+    } else {
+        print;
+    }
+}

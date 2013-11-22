@@ -1,5 +1,7 @@
 #!/bin/bash
 
-sleep 10
+while test "$(sawfish-client -e '(window-exists-p "xfce4-panel")')" != t; do
+    sleep 1
+done
 emacs.bhj&
 konsole.bhj&

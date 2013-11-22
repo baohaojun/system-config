@@ -1,15 +1,22 @@
 #!/bin/bash
 
-env=$(/usr/bin/gnome-keyring-daemon --start --components=ssh)
-for component in pkcs11 secrets gpg; do
-    /usr/bin/gnome-keyring-daemon --start --components=$component
+ps-killall gnome-keyring-daemon
+
+for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; do
+    unset $x
 done
 
+env=$(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
 eval $env
-export SSH_AUTH_SOCK GPG_AGENT_INFO
+
+for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; do
+    export $x
+done
 
 env=$(cat <<EOF
 (progn
+  (setenv "GNOME_KEYRING_CONTROL" "$GNOME_KEYRING_CONTROL")
+  (setenv "GNOME_KEYRING_PID" "$GNOME_KEYRING_PID")
   (setenv "SSH_AUTH_SOCK" "$SSH_AUTH_SOCK")
   (setenv "GPG_AGENT_INFO" "$GPG_AGENT_INFO"))
 EOF
@@ -17,7 +24,9 @@ EOF
 
 sawfish-client -e "$env"
 
+python -c "
+import gnomekeyring
+gnomekeyring.unlock_sync(None, '$(ask-for-input-with-sawfish -s -p 'Please unlock your keyring')')"
+
 run-dir-once ~/.sawfish/start&
 run-dir-once ~/external/sawfish/start&
-
-

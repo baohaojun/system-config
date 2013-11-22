@@ -1,11 +1,17 @@
 #!/bin/bash
 set -e
-test $# == 0 -o -z "$1" && set -- origin
+test $# == 0 -o -z "$1" && set -- $(git remote | pn 1 | head -n 1)
 
-git config remote.$1.url | (
-    if test "$BPE_ON_APSE"; then
-	perl -npe 's,.*?:,bibler:,; s,:/git/android/,:shgit/,'
-    else
-	cat
-    fi
+url=$(git config remote.$1.url | (
+        if test "$BPE_ON_APSE"; then
+            perl -npe 's,.*?:,bibler:,; s,:/git/android/,:shgit/,'
+        else
+            cat
+        fi
+    )
 )
+
+echo "$url"
+if is-tty-io; then
+    putclip "$url"
+fi

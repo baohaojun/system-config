@@ -1,0 +1,6 @@
+#!/bin/bash
+
+xrandr_out=$(xrandr)
+if echo "$xrandr_out" | grep LVDS -q && echo "$xrandr_out" | grep VGA; then
+    switch-to-vga
+fi

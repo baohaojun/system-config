@@ -2,8 +2,15 @@
 umask 0077
 file=${1:-~/.renew-xauth}
 rm -f $file.$$
-echo "export XAUTHORITY=$XAUTHORITY
+
+cat <<EOF  > $file.$$
+export XAUTHORITY=$XAUTHORITY
 export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS
 export DISPLAY=$DISPLAY
-" > $file.$$
+export GNOME_KEYRING_CONTROL=$GNOME_KEYRING_CONTROL
+export GNOME_KEYRING_PID=$GNOME_KEYRING_PID
+export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
+export GPG_AGENT_INFO=$GPG_AGENT_INFO
+EOF
+
 mv $file.$$ $file

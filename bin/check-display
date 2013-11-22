@@ -1,0 +1,10 @@
+#!/bin/bash
+
+xrandr=$(xrandr)
+if test $(echo "$xrandr"|pn 2 | grep '^connected$'|wc -l) = 1; then
+    disp=$(echo "$xrandr" | grep -P -e '\bconnected\b' | pn 1)
+    xrandr --output $disp --auto
+    for disp in $(echo "$xrandr" | grep -P -e '\bdisconnected\b' | pn 1); do
+	xrandr --output $disp --off
+    done
+fi

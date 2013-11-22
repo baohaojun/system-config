@@ -110,6 +110,15 @@
       (uniconify-window window))
   (activate-window window))
 
+(defun window-exists-p (wclass)
+  (if (eq 'wFound
+          (catch 'wFound
+            (mapc (lambda (window)
+                    (when (string-match wclass (bhj-window-class window) 0 t)
+                      (throw 'wFound 'wFound)))
+                  (stacking-order))))
+      t
+    nil))
 
 (defun find-window-or-exec (wclass-or-lambda #!optional wcommand)
   (if (eq (catch 'wFound

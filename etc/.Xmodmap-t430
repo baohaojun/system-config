@@ -1,5 +1,6 @@
 
 clear mod4
+keycode 135 = Super_L
 keycode 107 = Super_L
 add mod4 = Super_R Super_L
 
