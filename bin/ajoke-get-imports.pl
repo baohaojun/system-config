@@ -81,13 +81,17 @@ chomp($working_file = qx(java-flatten-cache $working_file));
 
 while (<>) {
     debug "got $_";
+
+    while (s/\@($qualified_re)//g) {
+        $refs{$1} = 1;
+    }
     if (m/^package ($qualified_re);/) { #package
         $package = $1;
     } elsif (m/^import (?:static )?($qualified_re);/) { #import
         import_it($1);
     } elsif (m/^import (?:static )?($qualified_re)(?:\.\*);/) { #import
         $wild_import_qualifieds{$1} = 1;
-    } elsif (m/(?:class|interface) ($id_re)(.*)\{/) { #class|interface
+    } elsif (m/(?:class|interface|enum) ($id_re)(.*)\{/) { #class|interface|enum
         define_it($1);
         my $class = $1;
         my $ext = $2;
@@ -206,8 +210,8 @@ sub find_import_for($)
         return 0 if exists $import_quoted_map{$def};
         $import_quoted_map{$def} = 1;
     }
-    debug "grep-gtags -e $def -t 'class|interface' -s -p '\\.java|\\.aidl|\\.jar'";
-    open(my $pipe, "-|", "grep-gtags -e $def -t 'class|interface' -s -p '\\.java|\\.aidl|\\.jar'")
+    debug "grep-gtags -e $def -t 'class|interface|enum' -s -p '\\.java|\\.aidl|\\.jar'";
+    open(my $pipe, "-|", "grep-gtags -e $def -t 'class|interface|enum' -s -p '\\.java|\\.aidl|\\.jar'")
         or die "can not open grep-gtags";
 
     my @imports;
