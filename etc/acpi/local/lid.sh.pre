@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cmd=$(cat <<'EOF'
+exec >~/.logs/lid.sh.log 2>&1
+set -x
+. ~/.renew-xauth
+. ~/.bash-path
+grep -q closed /proc/acpi/button/lid/*/state
+if [ $? = 0 ]; then
+    xscreensaver-command -lock&
+fi
+EOF
+)
+su - bhj -c "$cmd"

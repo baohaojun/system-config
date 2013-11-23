@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 touch ~/.authinfo
-chmod og-r ~/.authinfo
+chmod og-rwx ~/.authinfo ~/.netrc
 mkdir -p ~/.logs
 touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
@@ -224,8 +224,12 @@ if test ! -d ~/.config/about_me && yes-or-no-p "You want to configure your about
     after-co-settings.sh
 fi
 
+sudo mkdir -p /etc/acpi/local/
+sudo ln -sf ~/etc/acpi/local/lid.sh.pre /etc/acpi/local/
+
 sudo ln -sf ~/etc/udev/rules.d/90-bhj-personal.rules /etc/udev/rules.d/
 sudo ln -sf ~/etc/lib/udev/keymaps/microsoft-ergonomic-keyboard /lib/udev/keymaps/microsoft-ergonomic-keyboard
 sudo ln -sf ~/doc/usr/lib/pm-utils/sleep.d/99-switch-touchpad /usr/lib/pm-utils/sleep.d/
 sudo ln -sf ~/doc/usr/lib/pm-utils/sleep.d/99-switch-touchpad /lib/systemd/system-sleep/zz-switch-touchpad
+
 sudo update-host-ip phone 192.168.15.244
