@@ -28,7 +28,7 @@
 
 (require 'init-frame-hooks)
 (require 'init-xterm)
-(require 'init-themes)
+; (require 'init-themes)
 (require 'init-osx-keys)
 (require 'init-gui-frames)
 (require 'init-maxframe)
@@ -40,7 +40,7 @@
 (require 'init-flycheck)
 
 (require 'init-recentf)
-(require 'init-ido)
+; (require 'init-ido)
 (require 'init-hippie-expand)
 (require 'init-auto-complete)
 (require 'init-windows)
@@ -103,7 +103,7 @@
 ;;----------------------------------------------------------------------------
 ;; Variables configured via the interactive 'customize' interface
 ;;----------------------------------------------------------------------------
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-file (expand-file-name "custom.el" "~/etc/"))
 (when (file-exists-p custom-file)
   (load custom-file))
 
