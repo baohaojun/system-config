@@ -102,6 +102,16 @@
 (eval-after-load 'bbdb-com
   '(autoload 'bbdb-complete-mail "bhj-defines"))
 
+(eval-after-load 'paredit
+  '(progn
+     (define-key paredit-mode-map (kbd "M-s") nil)
+     (define-key paredit-mode-map (kbd "M-s x") 'paredit-splice-sexp)))
+
+(eval-after-load 'paredit-everywhere
+  '(progn
+     (define-key paredit-everywhere-mode-map (kbd "M-s") nil)
+     (define-key paredit-everywhere-mode-map (kbd "M-s x") 'paredit-splice-sexp)))
+
 ;; (defun eliminate-dup-invalid-buffers ()
 ;;   (let* ((new-buffer (current-buffer))
 ;;          (new-file-abs-name (buffer-file-name))

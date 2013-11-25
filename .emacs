@@ -165,21 +165,7 @@
 
 (defvar grep-gtags-history nil)
 (defvar grep-imenu-history nil)
-
-
-
-
-
-
-
-
-
 (defvar bhj-occur-regexp nil)
-
-
-
-
-
 
 (put 'scroll-left 'disabled nil)
 
@@ -187,12 +173,6 @@
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\"" 0 "%d")) arg)))
 (fset 'bhj-preview-markdown
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 49 67108896 3 2 134217848 98 104 106 45 109 105 109 101 tab return 3 return 80 24 111 67108911 24 111] 0 "%d")) arg)))
-
-
-
-
-
-
 
 (add-hook 'w3m-mode-hook
           (lambda ()
@@ -206,142 +186,8 @@
             (local-set-key [(p)] 'previous-line)
             ))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ahk-syntax-directory "~/system-config/doc/ahk/Syntax/")
- '(ansi-color-names-vector ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
- '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
- '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
- '(before-save-hook (quote (confirm-risky-remote-edit cleanup-buffer-safe fix-latex-cjk)))
- '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
- '(case-fold-search t)
- '(delete-old-versions t)
- '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
- '(dictem-server "localhost")
- '(dictionary-server "localhost")
- '(ecb-options-version "2.40")
- '(eclim-executable "eclim")
- '(eclim-interactive-completion-function (quote anything-completing-read))
- '(ecomplete-database-file-coding-system (quote utf-8))
- '(edebug-eval-macro-args t)
- '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote ajoke-symbol-chars)) (setq ajoke-symbol-chars "-A-Za-z0-9_")))))
- '(fill-column 70)
- '(gdb-find-source-frame t)
- '(gdb-many-windows t)
- '(gdb-same-frame t)
- '(gdb-show-main t)
- '(gnus-article-date-headers (quote (local lapsed)))
- '(gnus-group-name-charset-group-alist (quote (("ali\\..*" . utf-8) (".*" . chinese-iso-8bit))))
- '(gnus-ignored-newsgroups "")
- '(gnus-propagate-marks t)
- '(grep-use-null-device nil)
- '(helm-idle-delay 0.1)
- '(helm-input-idle-delay 0.1)
- '(ido-enable-regexp t)
- '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
- '(imenu-max-item-length nil)
- '(imenu-space-replacement " ")
- '(install-elisp-repository-directory "~/system-config/.emacs_d/lisp/")
- '(ispell-program-name "aspell")
- '(jira-host "bible")
- '(jira-url "http://bible/jira/rpc/xmlrpc")
- '(jiralib-url "http://bible/jira")
- '(keyboard-coding-system (quote cp936))
- '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote ajoke-symbol-chars)) (setq ajoke-symbol-chars "-A-Za-z0-9_")))))
- '(longlines-auto-wrap nil)
- '(major-mode (quote text-mode))
- '(makefile-mode-hook (quote ((lambda nil (make-local-variable (quote ajoke-symbol-chars)) (setq ajoke-symbol-chars "-A-Za-z0-9_")))))
- '(message-dont-reply-to-names (quote (".*haojun.*" "hjbao")))
- '(message-mail-alias-type nil)
- '(mmm-submode-decoration-level 2)
- '(nnmail-expiry-wait (quote never))
- '(normal-erase-is-backspace nil)
- '(org-clock-x11idle-program-name "xprintidle")
- '(org-directory "~/doc/projects")
- '(org-export-html-coding-system (quote utf-8))
- '(org-export-html-postamble (lambda nil (buffer-file-name)))
- '(org-export-html-style-extra "<link rel=\"stylesheet\" href=\"css/default.css\" type=\"text/css\">
- <link rel=\"shortcut icon\" href=\"/poison.png\" type=\"image/png\" />
-
-    <script type=\"text/javascript\" src=\"js/jquery-1.7.1.min.js\"></script>
-    <script type=\"text/javascript\">
-        var BYB = {};
-    </script>
-    <script type=\"text/javascript\">
-        BYB.includeScript = function(file,callback){
-            var _doc = document.getElementsByTagName('head')[0];
-            var js = document.createElement('script');
-            js.setAttribute('type', 'text/javascript');
-            js.setAttribute('src', file);
-            _doc.appendChild(js);
-
-            if (!/*@cc_on!@*/0) { //if not IE
-                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
-                js.onload = function () {
-                    callback();
-                }
-            } else {
-                //IE6、IE7 support js.onreadystatechange
-                js.onreadystatechange = function () {
-                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
-                        callback();
-                    }
-                }
-            }
-            return false;
-        }
-    </script>")
- '(org-export-html-style-include-default nil)
- '(org-export-htmlize-output-type (quote css))
- '(org-file-apps (quote ((auto-mode . emacs) ("\\.mm\\'" . default) ("\\.x?html?\\'" . default) ("\\.pdf\\'" . "of %s"))))
- '(org-mobile-directory "~/today/MobileOrg" t)
- '(org-mobile-inbox-for-pull "~/today/MobileOrg/from-mobile.org")
- '(org2blog/wp-confirm-post t)
- '(org2blog/wp-use-tags-as-categories t)
- '(require-final-newline t)
- '(safe-local-variable-values (quote ((nxml-child-indent . 4) (sgml-basic-offset . 4) (bhj-force-cleanup-buffer . t) (bhj-grep-dir . "~/src/android/") (bhj-grep-dir . ~/src/android/) (sh-indent-comment . t) (c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
- '(save-place t nil (saveplace))
- '(scalable-fonts-allowed t)
- '(senator-minor-mode-hook (quote (ignore)))
- '(session-initialize (quote (de-saveplace session places keys menus)) nil (session))
- '(session-use-package t nil (session))
- '(shell-file-name "/bin/bash")
- '(show-paren-mode t nil (paren))
- '(show-paren-style (quote parenthesis))
- '(split-width-threshold 800)
- '(starttls-use-gnutls t)
- '(text-mode-hook (quote (text-mode-hook-identify)))
- '(tooltip-mode nil)
- '(tooltip-use-echo-area t)
- '(tramp-syntax (quote ftp))
- '(tramp-verbose 0)
- '(transient-mark-mode t)
- '(twittering-convert-fix-size nil)
- '(user-full-name "Bao Haojun")
- '(vc-follow-symlinks t)
- '(vc-handled-backends (quote (RCS CVS SVN SCCS Bzr Git Hg)))
- '(vc-ignore-dir-regexp "\\`\\(?:[\\/][\\/][^\\/]+[\\/]\\|/\\(?:net\\|afs\\|\\.\\.\\.\\)/\\)\\'\\|/smb/")
- '(w32-symlinks-handle-shortcuts t)
- '(w32-use-w32-font-dialog nil)
- '(w3m-default-display-inline-images t)
- '(weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("csdn" "http://blog.csdn.net/flowermonk/services/MetaBlogApi.aspx" "flowermonk" "" "814038"))))
- '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
- '(woman-use-own-frame nil)
- '(x-select-enable-clipboard t)
- '(x-select-enable-primary t)
- '(yas-also-auto-indent-first-line t)
- '(yas-global-mode t nil (yasnippet))
- '(yas-prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
- '(yas-snippet-dirs (quote ("~/system-config/.emacs_d/yasnippet/snippets" "~/system-config/.emacs_d/yasnippet-snippets")) nil (yasnippet))
- '(yas-trigger-key "M-TAB"))
-
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
-
-
 
 (require 'skeleton-complete)
 (skeleton-complete-global-mode 1)
@@ -507,7 +353,12 @@
 (load "bhj-set-key.el")
 (load "bhj-autoloads.el")
 (load "bhj-eval-after-load.el")
+(when (file-exists-p "~/src/github/emacs.d/init.el")
+  (load "init.el"))
 
+(setq custom-file (expand-file-name "custom.el" "~/etc/"))
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 (condition-case nil
     (server-start)

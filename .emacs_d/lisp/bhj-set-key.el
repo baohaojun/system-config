@@ -41,7 +41,8 @@
 (global-set-key [(control f5)] 'devenv-debug)
 
 (global-set-key [(control x) (w)] 'where-are-we)
-(global-set-key [(control x) (r)] 'random-theme)
+(global-set-key (kbd "C-x r") (make-sparse-keymap))
+(global-set-key (kbd "C-x r r") 'random-theme)
 (global-set-key [(control h) (h)] 'bhj-help-it)
 
 (global-set-key [(control x) (c)] 'visit-code-reading)
@@ -55,7 +56,7 @@
 (global-set-key "\C-cl" 'org-store-link)
 
 (global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-ccc" 'org-capture)
 
 (global-set-key "\C-cb" 'org-iswitchb)
 

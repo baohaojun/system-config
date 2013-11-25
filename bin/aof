@@ -18,6 +18,16 @@ is_archive_type() {
 
 if test "${1##*.}" = zip; then
     gbkunzip "$1"
+elif test "${1##*.}" = rar; then
+    file=$(readlink -f $1)
+    outd=$PWD/$(basename "$1").unzip.$$
+    mkdir "$outd"
+    cd "$outd"
+    if ! unrar x "$file"; then
+        rm -rf "$outd"
+        echo unrar "$file" failed\!
+        exit -1
+    fi
 elif is_archive_type "$type" || test "$(xdg-mime query default "$type")" = file-roller.desktop; then
     dir=./"$(basename "$1")".unzip.$$
     mkdir -p "$dir"
@@ -25,5 +35,6 @@ elif is_archive_type "$type" || test "$(xdg-mime query default "$type")" = file-
     up "$dir"
     exit
 else
+    yes-or-no-p "Not an archive type? Will open it using system program."
     of "$1";
 fi
