@@ -384,7 +384,8 @@ EXTRACTER, MATCHER and BUFFER-FILTER."
             (insert match))
         (when (and skeleton--start skeleton--end)
           (delete-region skeleton--start skeleton--end))
-        (let ((kill-ring matches))
+        (let ((kill-ring matches)
+              (kill-ring-yank-pointer matches))
           (browse-kill-ring))))))
 
 (defun skeleton-expand-symbols ()
@@ -500,7 +501,7 @@ This func is copied and modified from `ecomplete-display-matches'."
              list))))
 
 (defvar skeleton-complete-mode-map (make-sparse-keymap)
-  "skeleton-complete mode map.")
+  "Skeleton-complete mode map.")
 (define-key skeleton-complete-mode-map (kbd "M-g <return>") 'skeleton-expand-symbols)
 (define-key skeleton-complete-mode-map (kbd "M-s <return>") 'skeleton-expand-partial-lines)
 (define-key skeleton-complete-mode-map (kbd "M-g x") 'skeleton-expand-partial-lines)
@@ -519,7 +520,7 @@ This func is copied and modified from `ecomplete-display-matches'."
   turn-on-skeleton-complete-mode)
 
 (defun turn-on-skeleton-complete-mode ()
-  "Turn on `skeleton-complete-mode'"
+  "Turn on `skeleton-complete-mode'."
   (interactive)
   (skeleton-complete-mode 1))
 
