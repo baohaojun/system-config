@@ -61,7 +61,7 @@ public:
 
     bool setPrimaryNotificationBackend( const QString &backend );
     bool setPrimaryNotificationBackend();
-    const QString primaryNotificationBackend();
+    const QString primaryNotificationBackend() const;
     QSystemTrayIcon *trayIcon();
 
     Notification getActiveNotificationByID(uint id);
