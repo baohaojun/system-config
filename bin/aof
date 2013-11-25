@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if test $# = 0; then
+    set -- "$(get-newest-file ~/today/)"
+fi
+
 archive_mimes=(
     application/x-compressed-tar
     application/x-rar
