@@ -40,6 +40,7 @@ my $start_file;
 my $working_file;
 my $wild_card;
 my $only_start_file;
+my $member_lookup;
 GetOptions(
     "e=s" => \$lookup_needle,
     "f=s" => \$working_file,
@@ -48,6 +49,7 @@ GetOptions(
     "c!"  => \$do_component,
     "w!"  => \$wild_card,
     "s!"  => \$silent,
+    "m!"  => \$member_lookup,
     "o!"  => \$only_start_file,
     "p=s" => sub {$path_matcher = qr($_[1])i},
     "v=s" => sub {$path_matcher_inv = qr($_[1])i},
@@ -57,12 +59,13 @@ GetOptions(
     "T=s" => sub {$type_re = qr($_[1])i; $reverse_type_re = 1},
     );
 
-if ($lookup_needle =~ m/^\w+\.\.\*/) {
+if ($lookup_needle =~ m/^\w+\.\.\*/ or $member_lookup) {
 # so that when I search for String.* it will allow me to select java.lang.String..*
-    (my $id = $lookup_needle) =~ s/\..*//;
+    (my $id = $lookup_needle) =~ s/(\..*)//;
+    my $replaced = $1;
     chomp (my $qid=qx(select-output-line "grep-gtags -e $id -T resource" | pn 3));
     $qid =~ s/<|>//g;
-    $lookup_needle = "$qid..*";
+    $lookup_needle = "$qid$replaced";
     debug "lookup_needle changed to $lookup_needle";
 }
 
