@@ -1,0 +1,12 @@
+#!/bin/bash
+
+script=$(cat <<EOF
+(mapc (lambda (w)
+        (when (window-maximized-p w)
+          (maximize-window-toggle w)
+          (maximize-window-toggle w)))
+  (managed-windows))
+EOF
+)
+
+sawfish-client -e "$script"

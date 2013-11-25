@@ -5,3 +5,5 @@ lvds=$(echo "$xrandr_out" | grep '^LVDS' | pn 1)
 vga=$(echo "$xrandr_out" | grep '^VGA' | pn 1)
 xrandr --output $lvds --off
 xrandr --output $vga --auto
+
+sawfish-re-maximize

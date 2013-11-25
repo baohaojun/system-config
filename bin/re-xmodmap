@@ -1,0 +1,5 @@
+#!/bin/bash
+su - bhj -c "
+   . ~/.renew-xauth
+   xmodmap ~/.Xmodmap
+"
