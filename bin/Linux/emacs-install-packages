@@ -37,6 +37,11 @@ if test ! -e weibo.emacs/.git; then
     git clone http://github.com/baohaojun/weibo.emacs
 fi
 
+if test ! -e emacs.d/.git; then
+    git clone http://github.com/baohaojun/emacs.d
+    relative-link emacs.d/site-lisp ~/.emacs.d/
+fi
+
 cd ~/src/github
 cat <<EOF > ~/.config/emacs.gen.el
 (setq load-path
@@ -51,3 +56,5 @@ done
 )
              load-path))
 EOF
+
+echo OK.
