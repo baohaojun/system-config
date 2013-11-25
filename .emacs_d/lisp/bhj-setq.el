@@ -1,12 +1,7 @@
 (setq twittering-initial-timeline-spec-string `(":home@sina"))
-
-(setq default-input-method "sdim")
-
 (setq describe-char-unicodedata-file "~/system-config/.emacs_d/UnicodeData.txt")
-
 (setq-default c-basic-offset 4)
 (setq bbdb-file "~/src/github/private-config/.bbdb")
-
 (setq auto-mode-alist (append '((".*/kernel.*\\.[ch]$" . linux-c-mode)
                                 ("logcat\\.log.*" . fundamental-mode)
                                 (".*/Mlog/*" . fundamental-mode)
@@ -17,17 +12,12 @@
                                 (".*/java/.*\\.wiki$" . org-mode)
                                 ("makefile*" . makefile-gmake-mode))
                                   auto-mode-alist))
-
 (setq frame-title-format "emacs@%b")
-
 (setq-default transient-mark-mode t)
-
 (setq org2blog/wp-blog-alist
       '(("wordpress"
          :url "http://baohaojun.wordpress.com/xmlrpc.php"
          :username "baohaojun")))
-
-
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev
         try-expand-dabbrev-visible
@@ -40,14 +30,10 @@
         try-expand-line
         try-complete-lisp-symbol-partially
         try-complete-lisp-symbol))
-
 (setq tramp-backup-directory-alist backup-directory-alist)
 (setq tramp-remote-path '(tramp-own-remote-path tramp-default-remote-path "/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin" "/opt/sbin" "/opt/local/bin"))
-
-
 (setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
                               auto-mode-alist))
-
 (setq weblogger-entry-mode-hook
       (list
        (lambda ()

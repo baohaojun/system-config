@@ -59,3 +59,4 @@ ask-for-settings mach "Machine type" -s macbookair -s thinkpad-t430 -s generic
 
 ask-for-confirmation firefox-config "browser.link.open_newwindow.override.external = 1"
 ask-for-confirmation kmail-config "prefer html in kmail? (Set in Configure Kmail -> Security)"
+ask-for-confirmation xfce4-ctrl-esc "Have you removed the control escape in xfce4-keyboard-settings"
