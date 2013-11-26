@@ -1,5 +1,0 @@
-#!/bin/bash
-mkdir -p ~/.logs/at-tasks
-for x in $(find ~/system-config/etc/at ~/external/etc/at -maxdepth 1 -type f -o -type l 2>/dev/null); do
-    echo bash -c "'bash $x > ~/.logs/at-tasks/$(echo $x|perl -npe 's,/,.,g') 2>&1'"|at $(basename $x)
-done

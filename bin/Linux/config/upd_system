@@ -61,3 +61,7 @@ fi
 if ask-if-not-bhj "Use Bao Haojun's crontab config?"; then
     crontab ~/.crontab.bhj
 fi
+
+if test -d /proc/acpi/button/lid; then
+    sudo apt-get install xfce4-battery-plugin
+fi

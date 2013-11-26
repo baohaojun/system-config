@@ -1,0 +1,13 @@
+#!/bin/bash
+
+h=$(date +%H)
+m=$(date +%M)
+m=$((m - m % 15))
+
+echo $h:$m
+for x in ~/system-config/etc/at/$h:$m ~/external/etc/at/$h:$m; do
+    if test -e "$x"; then
+        bash $x > ~/.logs/at-tasks/$(echo $x|perl -npe 's,/,.,g') 2>&1
+    fi 
+done
+

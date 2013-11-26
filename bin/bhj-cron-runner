@@ -23,9 +23,11 @@ for dir in ~/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; do
         continue
     fi
     cd $dir
-    cmds=($(find . -maxdepth 1 -type f -o -type l|grep -v '/\.'|grep -v -e '\.stackdump$'))
 
-    for x in ${cmds[@]}; do
+    for x in *; do
+        if test "$x" != "${x%.stackdump}" -o -d "$x"; then
+            continue
+        fi
         chmod +x $x || true
         test -e $x || continue
         ld=$logdir/$x/$(date +%A)/

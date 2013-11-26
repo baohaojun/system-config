@@ -107,6 +107,23 @@ function rcd() {
     fi
 }
 
+function rsync() {
+    args=()
+    for x in "$@"; do
+        if test "${x:0:1}" != -; then
+            if test "${x:${#x}-1}" = /; then
+                if yes-or-no-p -y "Remove the trailing / for $x?"; then
+                    args=("${args[@]}" "${x%/}")
+                fi
+            fi
+        else
+            args=("${args[@]}" "${x}")
+        fi
+    done
+    set -- "${args[@]}"
+    command rsync "$@"
+}
+
 . ~/bin/.gitx
 
 if test -e ~/.bashrc-interactive-$USER; then

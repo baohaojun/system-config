@@ -24,7 +24,12 @@ function git-diff() {
     fi
 }
 
-for x in "$@" $(if test $# == 0; then git st -s |grep '^.\S' -P | pn 2; fi); do
+IFS=$'\n'
+for x in "$@" $(if test $# == 0; then git st -s |grep '^.\S' -P | cut -b 4-; fi); do
+    if test "${x:0:1}" = \" && yes-or-no-p -y "Eval $x?"; then
+        eval "x=$x"
+        echo "x changed to '$x'"
+    fi
     if test -d "$x"; then
         continue
     fi
