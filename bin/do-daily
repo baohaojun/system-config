@@ -3,7 +3,7 @@
 mkdir -p ~/doc/daily
 cd ~/doc/daily
 
-day=${1:-$(today)}
+day=${1:-$(date +%Y-%m-%d:%a)}
 find-or-exec emacs
 emacsclient -e '
   (progn
