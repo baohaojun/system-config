@@ -13,7 +13,11 @@ if ! grep -q -P -e 'debian/? testing main' /etc/apt/sources.list; then
     if ! perl -e 'use String::Escape' >/dev/null 2>&1; then
         sudo apt-get install libstring-escape-perl # select-output-line -- below will use this module
     fi
-    old_name=$(perl -ne 'print "$1\n" if m!debian/? (\w+) main!' /etc/apt/sources.list | sort -u; echo testing)
+
+    if ! perl -e 'use String::ShellQuote' >/dev/null 2>&1; then
+        sudo apt-get install libstring-shellquote-perl
+    fi
+    old_name=$(perl -ne 'print "$1\n" if m!debian/? (\w+) main!' /etc/apt/sources.list | sort -u; echo "no-such-thing")
     old_name=$(select-output-line -- echo "$old_name")
     sudo perl -npe 's!debian/?\s+'$old_name'\s+main!debian/ testing main!' -i /etc/apt/sources.list
 fi

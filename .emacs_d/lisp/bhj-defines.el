@@ -17,7 +17,8 @@ might be bad."
         (goto-char (point-min))
         (when (and (search-forward-regexp "\t\\|[ \t]$" nil t)
                    bhj-force-cleanup-buffer)
-          (untabify (point-min) (point-max))
+          (unless (string-match "makefile" (symbol-name major-mode))
+            (untabify (point-min) (point-max)))
           (delete-trailing-whitespace))))))
 
 ;;;###autoload

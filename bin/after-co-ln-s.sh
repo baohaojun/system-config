@@ -1,7 +1,12 @@
 #!/bin/bash
 set -e
-touch ~/.authinfo
+touch ~/.authinfo ~/.netrc
 chmod og-rwx ~/.authinfo ~/.netrc
+
+if ! which git; then
+    sudo apt-get install -y git
+fi
+
 mkdir -p ~/.logs
 touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
