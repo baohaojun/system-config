@@ -140,6 +140,7 @@ DAEMON_DLL_ASSEMBLIES = 					\
 	$(BEAGREPD_LIBS)                 			\
 	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)			\
 	$(SHARPZIPLIB_LIBS)					\
+        -r:System.Data                                          \
 	-r:Mono.Data.Sqlite					\
 	-r:Mono.Posix
 
@@ -623,4 +624,4 @@ CLEANFILES = \
 	$(BUILD_INDEX_WRAPPER)			\
 	$(REMOVABLE_INDEX_TARGET)			\
 	$(REMOVABLE_INDEX_TARGET).mdb		\
-	$(REMOVABLE_INDEX_WRAPPER)			
+	$(REMOVABLE_INDEX_WRAPPER)
