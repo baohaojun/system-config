@@ -1,0 +1,17 @@
+#!/bin/bash
+x=$(select-output-line '
+    (
+        if test -e ~/.logs/last-search; then
+            cat ~/.logs/last-search;
+        fi;
+        for x in ~/bin/search-*; do
+            echo $x;
+        done|sort -u
+    ) | uniq-even-non-ajacent '
+)
+
+if test -x "$x"; then
+   echo $x > ~/.logs/last-search
+fi
+
+"$x" "$@"

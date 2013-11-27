@@ -105,7 +105,9 @@
 (eval-after-load 'paredit
   '(progn
      (define-key paredit-mode-map (kbd "M-s") nil)
-     (define-key paredit-mode-map (kbd "M-s x") 'paredit-splice-sexp)))
+     (define-key paredit-mode-map (kbd "M-S") nil)
+     (define-key paredit-mode-map (kbd "M-s x") 'paredit-splice-sexp)
+     (define-key paredit-mode-map (kbd "M-s X") 'paredit-split-sexp)))
 
 (eval-after-load 'message
   '(progn
@@ -115,7 +117,13 @@
 (eval-after-load 'paredit-everywhere
   '(progn
      (define-key paredit-everywhere-mode-map (kbd "M-s") nil)
-     (define-key paredit-everywhere-mode-map (kbd "M-s x") 'paredit-splice-sexp)))
+     (define-key paredit-everywhere-mode-map (kbd "M-S") nil)
+     (define-key paredit-everywhere-mode-map (kbd "M-s x") 'paredit-splice-sexp)
+     (define-key paredit-everywhere-mode-map (kbd "M-s X") 'paredit-split-sexp)))
+
+(eval-after-load 'edebug
+  '(progn
+     (define-key emacs-lisp-mode-map "\C-x\C-a" (make-sparse-keymap))))
 
 ;; (defun eliminate-dup-invalid-buffers ()
 ;;   (let* ((new-buffer (current-buffer))
