@@ -139,7 +139,15 @@ done
 
 if git status -s | grep . ; then
     git commit -s -m "$(
+        if test -e .default-commit-msg; then
+            cat .default-commit-msg
+            exit
+        fi
         (
+            if test -e .commit-msg-bhj; then
+                cat .commit-msg-bhj | sort -u
+                rm .commit-msg-bhj
+            fi
             echo "###start of comment###"
             echo in $(pwd):
             git diff -w HEAD | perl -npe 's,^diff --git ,* ,'

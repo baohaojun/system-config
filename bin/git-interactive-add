@@ -43,20 +43,27 @@ for x in "$@" $(if test $# == 0; then git st -s |grep '^.\S' -P | cut -b 4-; fi)
     git-diff "$x";
     while true; do
         out=$(select-args yes no diff edit "@ $PWD/$x");
-        if test $out = diff; then
+        if test "$out" = diff; then
             git-diff "$x";
             continue;
         fi
 
-        if test $out = edit; then
+        if test "$out" = edit; then
             ew "$x"
             find-or-exec konsole
             git-diff "$x";
             continue
         fi
 
-        if test $out = yes; then
+        if test "$out" = no; then
+            continue
+        fi
+
+        if test "$out" = yes; then
             git add "$x"
+        elif test "${out:0:1}" != @; then
+            git add "$x"
+            echo $(gitp "$x"): $out >> $(lookup-file-dir -e .git)/.commit-msg-bhj
         fi
         break
     done

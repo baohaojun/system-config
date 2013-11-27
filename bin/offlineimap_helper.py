@@ -47,6 +47,8 @@ def ali_mailbox_conv(name):
     box = re.sub("&([^-]+)-", re_helper, name)
     if box == "已发送":
         box = "Sent"
+    elif box == '已删除邮件':
+        box = "Deleted"
     return box
 
 def ali_folder_match(folder, pats):

@@ -58,9 +58,11 @@ sub handle_jar($)
 
         if (m/(class|interface)\s+($qualified_re)/) {
             $class_name = $2;
+            my $type = $1;
             $class_name =~ s/\$(\d)/.Anon$1/g;
             $class_name =~ s/\$/./g;
-            print_it "$class_name $1 $line_number $file_name $_\n";
+            s/\$/./g;
+            print_it "$class_name $type $line_number $file_name $_\n";
         } elsif (m/($qualified_re)\s*\(/) {
             my $method_name = "$class_name.$1";
             if ($1 eq $class_name) {

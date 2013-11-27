@@ -107,6 +107,11 @@
      (define-key paredit-mode-map (kbd "M-s") nil)
      (define-key paredit-mode-map (kbd "M-s x") 'paredit-splice-sexp)))
 
+(eval-after-load 'message
+  '(progn
+     (add-hook 'message-mode-hook 'turn-on-orgtbl)
+     (add-hook 'message-mode-hook 'turn-on-orgstruct++)))
+
 (eval-after-load 'paredit-everywhere
   '(progn
      (define-key paredit-everywhere-mode-map (kbd "M-s") nil)

@@ -9,3 +9,4 @@
 .tmp_versions
 Module.symvers
 modules.order
+.commit-msg-bhj

@@ -93,6 +93,7 @@
  '(org-file-apps (quote ((auto-mode . emacs) ("\\.mm\\'" . default) ("\\.x?html?\\'" . default) ("\\.pdf\\'" . "of %s"))))
  '(org-mobile-directory "~/today/MobileOrg" t)
  '(org-mobile-inbox-for-pull "~/today/MobileOrg/from-mobile.org")
+ '(org-use-sub-superscripts (quote {}))
  '(org2blog/wp-confirm-post t)
  '(org2blog/wp-use-tags-as-categories t)
  '(require-final-newline t)
