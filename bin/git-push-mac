@@ -145,7 +145,7 @@ if git status -s | grep . ; then
         fi
         (
             if test -e .commit-msg-bhj; then
-                cat .commit-msg-bhj | sort -u
+                cat .commit-msg-bhj | sort-commit-msgs
                 rm .commit-msg-bhj
             fi
             echo "###start of comment###"

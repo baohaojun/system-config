@@ -42,7 +42,7 @@ for x in "$@" $(if test $# == 0; then git st -s |grep '^.\S' -P | cut -b 4-; fi)
     fi
     git-diff "$x";
     while true; do
-        out=$(select-args yes no diff edit "@ $PWD/$x");
+        out=$(select-args yes no discard diff edit "@ $PWD/$x");
         if test "$out" = diff; then
             git-diff "$x";
             continue;
@@ -56,6 +56,11 @@ for x in "$@" $(if test $# == 0; then git st -s |grep '^.\S' -P | cut -b 4-; fi)
         fi
 
         if test "$out" = no; then
+            continue
+        fi
+
+        if test "$out" = discard; then
+            git co "$x"
             continue
         fi
 

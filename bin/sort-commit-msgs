@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+
+use strict;
+my %msgs;
+while (<>) {
+      m/(.*?: )(.*)/ or next;
+      my ($tag, $msg) = ($1, $2);
+      push @{$msgs{$tag}}, $msg;
+}
+
+for my $tag (sort keys %msgs) {
+    for my $msg (@{$msgs{$tag}}) {
+        print "$tag$msg\n";
+    }
+}
