@@ -109,7 +109,7 @@ sub my_select(\@) {
                 $matchers{$_}{"qr"} = qr($re)i;
                 $matchers{$_}{"reverse"} = 1;
             } else {
-                $matchers{$_}{"qr"} = qr($_)i;
+                $matchers{$_}{"qr"} = qr(\Q$_\E)i;
                 $matchers{$_}{"reverse"} = 0;
             }
         }

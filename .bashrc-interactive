@@ -108,17 +108,17 @@ function rcd() {
 }
 
 function rsync() {
+    local x
+    local -a args
     args=()
     for x in "$@"; do
         if test "${x:0:1}" != -; then
-            if test "${x:${#x}-1}" = /; then
-                if yes-or-no-p -y "Remove the trailing / for $x?"; then
-                    args=("${args[@]}" "${x%/}")
-                fi
+            if test "${x:${#x}-1}" = / && yes-or-no-p -y "Remove the trailing / for $x?"; then
+                args=("${args[@]}" "${x%/}")
+                continue
             fi
-        else
-            args=("${args[@]}" "${x}")
         fi
+        args=("${args[@]}" "${x}")
     done
     set -- "${args[@]}"
     command rsync "$@"

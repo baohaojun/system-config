@@ -15,6 +15,12 @@
 
 (eval-after-load 'cc-vars '(require 'guess-offset))
 
+(eval-after-load 'rainbow-mode
+  '(setq rainbow-hexadecimal-colors-font-lock-keywords
+         (append rainbow-hexadecimal-colors-font-lock-keywords
+                 '(("#[0-9a-fA-F]\\{2\\}\\([0-9a-fA-F]\\{6\\}\\)<"
+                   (1 (rainbow-colorize-hexadecimal-without-sharp)))))))
+
 (eval-after-load 'org-mode
   '(progn
      (require 'org-jira)
