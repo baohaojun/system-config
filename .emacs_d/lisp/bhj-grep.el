@@ -29,10 +29,10 @@
 (defun bhj-grep-tag-default ()
   (let ((tag (grep-tag-default)))
   (cond
-   ((string-match "/res/.*\.xml" (buffer-file-name))
+   ((string-match "/res/.*\.xml" (or (buffer-file-name) ""))
     (replace-regexp-in-string "</\\w+>\\|^.*?/" "" tag))
    (t
-    tag))))
+    (replace-regexp-in-string "^<\\|>$" "" tag)))))
 
 (defun grep-default-command ()
   "Compute the default grep command for C-u M-x grep to offer."

@@ -409,6 +409,7 @@
 (bind-keys global-keymap "XF86LaunchA" #'scroll-lock-toggle) ; The F3 key on MBA
 (bind-keys global-keymap "Scroll_Lock" #'scroll-lock-toggle)
 (bind-keys global-keymap "Super-Home" #'scroll-lock-toggle)
+(bind-keys global-keymap "C-ESC" '(synthesize-event "ESC" (input-focus)))
 (bind-keys s-h-keymap "g"  '(system "emacsclient -d -e '(gnus)'&"))
 (bind-keys s-h-keymap "w"  '(system "emacs-weibo&"))
 
