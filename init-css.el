@@ -2,7 +2,7 @@
 (when (eval-when-compile (>= emacs-major-version 24))
   ;; rainbow-mode needs color.el, bundled with Emacs >= 24.
   (require-package 'rainbow-mode)
-  (dolist (hook '(css-mode-hook html-mode-hook sass-mode-hook))
+  (dolist (hook '(css-mode-hook nxml-mode-hook html-mode-hook sass-mode-hook))
     (add-hook hook 'rainbow-mode)))
 
 
