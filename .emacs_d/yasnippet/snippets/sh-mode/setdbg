@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: setdbg
+# key: setdbg
+# --
+if test "\$DEBUG" = true; then
+    set -x
+fi
