@@ -124,7 +124,7 @@
 (add-to-list 'auto-mode-alist '("\\.emacs-project\\'" . emacs-lisp-mode))
 (add-to-list 'auto-mode-alist '("archive-contents\\'" . emacs-lisp-mode))
 
-(define-key emacs-lisp-mode-map (kbd "C-x C-a") 'pp-macroexpand-last-sexp)
+(define-key emacs-lisp-mode-map (kbd "C-x A") 'pp-macroexpand-last-sexp)
 (define-key emacs-lisp-mode-map (kbd "C-x C-e") 'pp-eval-last-sexp)
 
 (require-package 'cl-lib-highlight)
