@@ -77,8 +77,9 @@ if ($lookup_needle =~ m/^\w.*\.\*/) {
     $lookup_needle = "^$lookup_needle";
 }
 
-
-
+if ($lookup_needle =~ m!^(color|drawable|\+id)/!) { # when looking up android xml resource
+    $lookup_needle =~ s!^.*?/!!;
+}
 
 if ($wild_card) {
     $lookup_needle = ".*";
