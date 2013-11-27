@@ -144,12 +144,16 @@ sub my_select(\@) {
                 exit -1;
             }
             my $saved_ans = $ans;
-            $ans = read_ans "Warning: no matches found for $ans,\npress <return> to continue or type !<return> to return $saved_ans";
-            if ($ans eq '!') {
-                print $saved_ans;
-                exit;
-            } else {
-                my_select($args_ref);
+
+            while (1) {
+                $ans = read_ans "Warning: no matches found for $ans,\npress -<return> to continue or type !<return> to return $saved_ans";
+                if ($ans eq '!') {
+                    print $saved_ans;
+                    exit;
+                } elsif ($ans eq '-') {
+                    my_select($args_ref);
+                    last;
+                }
             }
         }
     }
