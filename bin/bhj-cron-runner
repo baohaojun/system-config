@@ -24,7 +24,7 @@ for dir in ~/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; do
     fi
     cd $dir
 
-    for x in *; do
+    for x in ./*; do
         if test "$x" != "${x%.stackdump}" -o -d "$x"; then
             continue
         fi
