@@ -12,7 +12,7 @@
 --regex-androidxml=/name[ \t]*=[ \t]*"([^"]*)"/\1/d,resource/
 
 --langdef=androidpng
---langmap=androidpng:.png
+--langmap=androidpng:.png.jpg
 --regex-androidpng=/android:id="@\+id\/([^"]*)"/\1/d,id/
 --regex-androidpng=/name[ \t]*=[ \t]*"([^"]*)"/\1/d,resource/
 
