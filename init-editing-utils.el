@@ -14,12 +14,12 @@
  buffers-menu-max-size 30
  case-fold-search t
  column-number-mode t
- compilation-scroll-output t
+ compilation-scroll-output nil
  delete-selection-mode t
  ediff-split-window-function 'split-window-horizontally
  ediff-window-setup-function 'ediff-setup-windows-plain
  grep-highlight-matches t
- grep-scroll-output t
+ grep-scroll-output nil
  indent-tabs-mode nil
  line-spacing 0.2
  make-backup-files nil
@@ -118,9 +118,6 @@
 ;;----------------------------------------------------------------------------
 ;; Handy key bindings
 ;;----------------------------------------------------------------------------
-;; To be able to M-x without meta
-(global-set-key (kbd "C-x C-m") 'execute-extended-command)
-
 ;; Vimmy alternatives to M-^ and C-u M-^
 (global-set-key (kbd "C-c j") 'join-line)
 (global-set-key (kbd "C-c J") (lambda () (interactive) (join-line 1)))
