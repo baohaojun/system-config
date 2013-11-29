@@ -3,7 +3,7 @@ test $(uname) = Linux || exit
 (
     dumpkeys | head -1
 
-    if test "$(get-config mach)" = macbookair; then
+    if test "$(get-about-me mach)" = macbookair; then
         echo keycode 125 = Control
         echo keycode 126 = Control
     else

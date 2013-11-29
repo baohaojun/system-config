@@ -10,4 +10,8 @@ elif test "$1" = start; then
     android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
 else
     ant-expect-keystore "$@"
+    if test "$1" = debug; then
+        ant installd 2>&1 | tee ~/.logs/ant-install.log
+        android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
+    fi
 fi

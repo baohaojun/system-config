@@ -267,9 +267,12 @@ read_line:
         my $x = $path;
         $x =~ s,.*/,,;
         $matches{$_}{"dist"} = (
-            $silent ?
-            $silent++ :
-            abs(adistr($matches{$_}{"path"}, $approx_dir)) + abs(adistr($x, $lookup_needle)) / 2);
+            $silent
+            ? $silent++
+            : abs(adistr($matches{$_}{"path"}, $approx_dir))
+              + abs(adistr($x, $lookup_needle)) / 2
+              + ($x =~ m/\.xml$|\.jar$/ ? 1 : 0)
+            );
 
         $updated_paths{$path} = 1;
 

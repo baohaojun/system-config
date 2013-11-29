@@ -1,3 +1,13 @@
 #!/bin/bash
 
-cat ~/.config/about_me/"$1"
+if test $(basename $0) = get-about-me; then
+    if test -e ~/.config/about_me/$1; then
+        cat ~/.config/about_me/$1
+    else
+        echo unknown
+    fi
+elif test $(basename $0) = rm-about-me; then
+    rm ~/.config/about_me/$1
+else
+    echo "$2" > ~/.config/about_me/$1
+fi

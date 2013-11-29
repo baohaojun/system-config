@@ -10,7 +10,7 @@ for x in $(seq 1 5); do
     fi
 done
 
-putclip $(get-config 花名)
+putclip $(get-about-me 花名)
 sawfish-send-window-event 阿里旺旺 C-v TAB
 sleep .5
 putclip $(get-authinfo alibaba)

@@ -29,8 +29,10 @@
 (defun bhj-grep-tag-default ()
   (let ((tag (grep-tag-default)))
   (cond
+   ((region-active-p)
+    tag)
    ((string-match "/res/.*\.xml" (or (buffer-file-name) ""))
-    (replace-regexp-in-string "</\\w+>\\|^.*?/" "" tag))
+    (replace-regexp-in-string "</\\w+>\\|^<\\|^.*?/" "" tag))
    (t
     (replace-regexp-in-string "^<\\|>$" "" tag)))))
 
@@ -162,5 +164,22 @@
                                        mode-name-minus-mode))))
     (call-interactively 'grep-bhj-dir)
     (setq grep-func-call-history grep-history)))
+
+(defun bhj-goto-error-when-grep-finished (status code msg)
+  (if (eq status 'exit)
+      ;; This relies on the fact that `compilation-start'
+      ;; sets buffer-modified to nil before running the command,
+      ;; so the buffer is still unmodified if there is no output.
+      (cond ((and (zerop code) (buffer-modified-p))
+             (call-interactively #'next-error)
+             '("finished (matches found)\n" . "matched"))
+            ((not (buffer-modified-p))
+             '("finished with no matches found\n" . "no match"))
+            (t
+             (cons msg code)))
+    (cons msg code)))
+
+(add-hook 'grep-setup-hook (lambda () (setq compilation-exit-message-function #'bhj-goto-error-when-grep-finished)))
+
 
 (provide 'bhj-grep)

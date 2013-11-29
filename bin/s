@@ -4,13 +4,14 @@ x=$(select-output-line '
         if test -e ~/.logs/last-search; then
             cat ~/.logs/last-search;
         fi;
-        for x in ~/bin/search-*; do
+        cd ~/bin;
+        for x in search-*; do
             echo $x;
         done|sort -u
     ) | uniq-even-non-ajacent '
 )
 
-if test -x "$x"; then
+if test -x ~/bin/"$x"; then
    echo $x > ~/.logs/last-search
 fi
 

@@ -31,6 +31,9 @@ sudo perl -npe 's/^#user_allow_other/user_allow_other/' -i /etc/fuse.conf
 mkdir -p ~/src/github
 emacs-install-packages
 
+sudo ln -s ~/doc/bash.info.gz /usr/local/share/info/ -f
+sudo ginstall-info bash.info.gz /usr/local/share/info/dir
+
 #编译一些软件
 do_compile
 

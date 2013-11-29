@@ -1,10 +1,14 @@
 #!/bin/bash
 set -e
 
-packages_dir=${PACKAGES_DIR:-~/bin/Linux/config/pkgs/}
-packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,')
-if test -d "$packages_dir/$USER"; then
-    packages="$packages $(find "$packages_dir/$USER" -maxdepth 1 -type f|perl -npe 's,.*/,,')"
+if test $# != 0; then
+    packages=(echo "$@")
+else
+    packages_dir=${PACKAGES_DIR:-~/bin/Linux/config/pkgs/}
+    packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,')
+    if test -d "$packages_dir/$USER"; then
+        packages="$packages $(find "$packages_dir/$USER" -maxdepth 1 -type f|perl -npe 's,.*/,,')"
+    fi
 fi
 
 export LC_ALL=C

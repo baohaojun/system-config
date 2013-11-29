@@ -182,7 +182,7 @@ if ask-if-not-bhj "Do you want to use bhj's git-exclude file?"; then
 fi
 
 if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; then
-    mach=$(get-config mach)
+    mach=$(get-about-me mach)
     if test "$mach" = macbookair; then
         ln -sf ~/system-config/etc/.Xmodmap-macbook-air ~/.Xmodmap
     elif test "$mach" = thinkpad-t430; then

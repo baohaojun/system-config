@@ -1,0 +1,5 @@
+#!/bin/bash
+for x in "$@"; do
+    of "$x"
+    ask-for-input-with-sawfish "Press any key to continue"
+done
