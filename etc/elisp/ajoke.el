@@ -375,7 +375,13 @@ referencing."
   (ajoke--setup-env)
   (let (method)
     (save-excursion
-      (let* ((class-name (ajoke--thing-at-tag 'ajoke--extract-class 0))
+      (let* ((class-name
+              (if current-prefix-arg
+                  (ajoke-resolve (read-string "Whose methods to overide? " (save-excursion
+                                                              (backward-up-sexp 1) ;; new OnItemClickListener() { *
+                                                              (backward-sexp 1)
+                                                              (current-word)))
+                (ajoke--thing-at-tag 'ajoke--extract-class 0))))
              (hierarchy (shell-command-to-string (format "ajoke-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class-name)))
              (methods (split-string hierarchy "\n")))
         (setq method (completing-read "Which method to override? " methods nil t))))
@@ -390,9 +396,12 @@ referencing."
                   (/= (point) (mark))
                   (buffer-substring-no-properties (point) (mark)))
              (ajoke--current-regexp "[.a-z0-9]+"))))
-  (shell-command (format "ajoke-get-imports.pl %s -r %s"
+  (let ((res
+         (shell-command-to-string (format "ajoke-get-imports.pl %s -r %s"
                          (shell-quote-argument (ajoke--buffer-file-name-local))
-                         (shell-quote-argument id))))
+                         (shell-quote-argument id)))))
+    (message "%s" res)
+    res))
 
 ;;;###autoload
 (defun ajoke-complete-method (id)

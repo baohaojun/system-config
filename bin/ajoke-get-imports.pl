@@ -207,6 +207,10 @@ sub find_import_for($)
     if ($def =~ m/\./) {
         our %import_quoted_map;
         $def =~ s/\..*//;
+        if ($def eq "R") {
+            debug "do not import for R";
+            return 0;
+        }
         return 0 if exists $import_quoted_map{$def};
         $import_quoted_map{$def} = 1;
     }
