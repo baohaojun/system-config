@@ -282,7 +282,8 @@ parser(const struct parser_param *param)
 
         handle_special_files(param, filename_len, ".xml", "xml:\t***");
         if (handle_special_files(param, filename_len, ".9.png", "9png:\t***") ||
-            handle_special_files(param, filename_len, ".png", "png:\t***")) {
+            handle_special_files(param, filename_len, ".png", "png:\t***") ||
+            handle_special_files(param, filename_len, ".jpg", "jpg:\t***")) {
                 return;
         }
 

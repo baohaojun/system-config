@@ -44,7 +44,7 @@ gtags:\
 plugin-example|Example of function layer plugin parser:\
         :tc=common:extractmethod:\
 :langmap=ObjectiveC\:.m.mm:\
-:langmap=androidpng\:.png:\
+:langmap=androidpng\:.png.jpg:\
 :langmap=androidxml\:.xml:\
 :langmap=antlr\:.g:\
 :langmap=asm\:.S.s:\
