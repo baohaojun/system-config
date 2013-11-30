@@ -1,0 +1,6 @@
+#!/bin/bash
+if test $(basename $0) != no-bin-gen; then
+    x=$(basename $0)
+    x=${x#no-bin-gen-}
+fi
+$x "$@" | grep -P -e '/bin/|/gen/' -v

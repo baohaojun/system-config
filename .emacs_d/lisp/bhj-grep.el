@@ -179,7 +179,7 @@
              (cons msg code)))
     (cons msg code)))
 
-(add-hook 'grep-setup-hook (lambda () (setq compilation-exit-message-function #'bhj-goto-error-when-grep-finished)))
+;; (add-hook 'grep-setup-hook (lambda () (setq compilation-exit-message-function #'bhj-goto-error-when-grep-finished)))
 
 
 (provide 'bhj-grep)

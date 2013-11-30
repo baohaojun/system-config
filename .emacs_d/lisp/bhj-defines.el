@@ -873,6 +873,7 @@ might be bad."
 (defun bhj-help-it ()
   "open help for the current word"
   (interactive)
+  (ajoke--setup-env)
   (shell-command-to-string (format "bhj-help-it %s %s >~/.logs/bhj-help-it.log 2>&1&" major-mode (shell-quote-argument (current-word)))))
 
 ;;;###autoload

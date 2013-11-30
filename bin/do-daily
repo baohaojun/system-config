@@ -2,8 +2,7 @@
 
 mkdir -p ~/doc/daily
 cd ~/doc/daily
-
-day=${1:-$(date +%Y-%m-%d:%a)}
+day=$(today +%Y-%m-%d:%a "$@")
 find-or-exec emacs
 emacsclient -e '
   (progn
@@ -14,6 +13,8 @@ emacsclient -e '
           (forward-line)
           (move-beginning-of-line))
       (goto-char (point-max))
-
-      (insert "\n* '${day}'\n")))
+      (search-backward-regexp "\\S ")
+      (delete-region (1+ (point)) (point-max))
+      (goto-char (point-max))
+      (insert "\n\n* '${day}'\n")))
 '

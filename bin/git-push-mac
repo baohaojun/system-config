@@ -143,7 +143,7 @@ done
 
 if git status -s | grep . ; then
     git commit -s -m "$(
-        if test -e .default-commit-msg; then
+        if test -e .default-commit-msg -a ! -e .commit-msg-bhj; then
             cat .default-commit-msg
             exit
         fi

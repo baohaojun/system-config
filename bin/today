@@ -1,9 +1,14 @@
 #!/bin/bash
 
+fmt=+%Y-%m-%d
+if test "${1:0:1}" = +; then
+    fmt=$1
+    shift
+fi
 set -- "${1:-0}"
 
 if echo "$1"|grep -q -P '^[-+]?\d+$'; then
-    date +%Y-%m-%d -d "$1 days"
+    date "$fmt" -d "$1 days"
 else
-    date +%Y-%m-%d -d "$1"
+    date "$fmt" -d "$1"
 fi | tr -d '\n'
