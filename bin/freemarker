@@ -1,0 +1,15 @@
+#!/bin/bash
+
+export PATH=/usr/bin:$PATH
+
+file=~/external/FreeMarker/FreeMarker.class;
+if test ! -e $file; then
+    mkdir -p $(dirname $file)
+    (
+        cd $(dirname $file)
+        cp ~/bin/FreeMarker/* . -av
+        javac -cp /usr/share/java/freemarker.jar FreeMarker.java
+    )
+fi
+
+java -cp /usr/share/java/xml-apis.jar:/usr/share/java/freemarker.jar:$(dirname $file) FreeMarker "$@" 2>/dev/null

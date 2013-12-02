@@ -16,7 +16,7 @@ might be bad."
         (widen)
         (goto-char (point-min))
         (when (and (search-forward-regexp "\t\\|[ \t]$" nil t)
-                   bhj-force-cleanup-buffer)
+                   (or bhj-force-cleanup-buffer (eq this-command 'cleanup-buffer-safe)))
           (unless (string-match "makefile" (symbol-name major-mode))
             (untabify (point-min) (point-max)))
           (delete-trailing-whitespace))))))

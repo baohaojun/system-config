@@ -1,0 +1,126 @@
+#!/usr/bin/ruby
+
+require 'xmlsimple'
+
+xml = `select-output-line find ~/external/bin/Linux/ext/android-sdk-linux/tools/templates/ -name 'template.xml'`
+config = XmlSimple.xml_in(xml, { 'KeyAttr' => 'name' })
+
+require 'shellwords'
+def ask_for_input (prompt)
+  `ask-for-input-with-sawfish -p #{Shellwords.escape(prompt)}`
+end
+
+$parameter = {}
+config.each do |element, val|
+  print "#{element} => #{val}\n"
+  if element == 'parameter'
+    val.each do |paramName, paramAttrs|
+      print "#{paramName}'s id is #{paramAttrs['id']}\n"
+      input = ask_for_input("Please input for parametor #{paramName} (default is #{paramAttrs['default']})")
+      if input == "" and paramAttrs['default']
+        $parameter[paramAttrs['id']] = paramAttrs['default']
+      else
+        $parameter[paramAttrs['id']] = input
+      end
+    end
+  end
+end
+
+def camelCaseToUnderscore(str)
+  str.gsub(/[A-Z]+/) do
+    "_%s" % $~[0].downcase()
+  end
+end
+
+def underscoreToCamelCase(str)
+  t.gsub(/_([a-z])/) do
+    $~[1].upcase()
+  end
+end
+
+def stripActivity(str)
+  str.gsub(/(Activity|Fragment|Service|Provider)$/, '')
+end
+
+$temp_methods = {
+  slashedPackageName: proc {|t|
+    print "t is #{t}\n"
+    t.gsub(/\./, '/')
+  },
+
+  camelCaseToUnderscore: proc {|t|
+    camelCaseToUnderscore(t)
+  },
+
+  underscoreToCamelCase: proc {|t|
+    underscoreToCamelCase(t)
+  },
+
+  activityToLayout: proc {|t|
+    "layout_" + camelCaseToUnderscore(stripActivity(t))
+  },
+
+  layoutToActivity: proc {|t|
+    underscoreToCamelCase(t.sub(/^layout_/, '')) + 'Activity'
+  },
+
+  classToResource: proc {|t|
+    camelCaseToUnderscore(stripActivity(t))
+  },
+
+  escapeXmlAttribute: proc {|t| t },
+  escapeXmlText: proc {|t| t },
+  escapeXmlString: proc {|t| t },
+  extractLetters: proc {|t| t },
+}
+
+def templateCall(template)
+  print "template is #{template}\n"
+  if /(\w+)\((.*)\)/ =~ template
+    func = $~[1]
+    arg = templateCall $~[2]
+    if defined? $temp_methods[func.to_sym]
+      $temp_methods[func.to_sym].call(arg)
+    else
+      die "no such method: #{func}"
+    end
+  elsif defined? $parameter[template]
+    $parameter[template]
+  else
+    die "no such value: #{template}\n"
+  end
+end
+
+if config['globals']
+  dir = File.dirname(xml)
+  config['globals'].each do |global_element|
+    global_file = File.join(dir, global_element['file'])
+
+    print "global_file is #{global_file}\n"
+    config2 = XmlSimple.xml_in(global_file, { 'KeyAttr' => 'name' })
+
+    print "config2 is #{config2}\n"
+    config2['global'].each do |paramAttrs|
+      $parameter[paramAttrs['id']] = paramAttrs['value']
+
+      if paramAttrs['value'].index('${')
+        $parameter[paramAttrs['id']].gsub!(/\$\{.*?\}/) do |template|
+          templateCall template
+        end
+      end
+    end
+  end
+end
+
+if config['execute']
+  dir = File.dirname(xml)
+  config['execute'].each do |exec_elem|
+    exec_file = File.join(dir, exec_elem['file'])
+    param_str = ""
+    $parameter.each do |key, val|
+      param_str += " %s %s" % [Shellwords.escape(key), Shellwords.escape(val)]
+    end
+    print "freemarker #{dir} #{exec_elem['file']} #{param_str}\n"
+    system("freemarker #{dir} #{exec_elem['file']} #{param_str}")
+  end
+end

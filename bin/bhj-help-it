@@ -47,6 +47,18 @@ case $1 in
             shift
             anchor=$(perl -ne 'if (m/a\s+name="(.*\b'$1'\b.*?)"/i) {print $1; exit}' "$html")
             firefox-open-url-pattern /android-sdk-linux/ file://"$html#$anchor"
+        elif test -z "$html"; then
+            word=$2
+            java=$(select-output-line "grep-gtags -e "$word" -d ~/src/android | grep -P -e '\.java:' | perl -npe 's/java:.*/java/'|sort -u")
+            java=$(basename "$java")
+            start=$java
+            start=${start%.java}
+            html=$(select-output-line find ~/external/bin/Linux/ext/android-sdk-linux/docs -name "$start.html")
+            if test -e "$html"; then
+                shift
+                anchor=$(perl -ne 'if (m/a\s+name="(.*\b'$1'\b.*?)"/i) {print $1; exit}' "$html")
+                firefox-open-url-pattern /android-sdk-linux/ file://"$html#$anchor"
+            fi
         fi
         ;;
 esac

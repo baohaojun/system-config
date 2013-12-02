@@ -19,4 +19,4 @@ key.store=/home/bhj/.keystore/bhj.keystore
 key.alias=bhj.key.alias
 EOF
 rm hello_project/ -rf
-mm-ant release
+mm-ant
