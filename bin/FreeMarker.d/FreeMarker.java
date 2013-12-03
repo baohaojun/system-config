@@ -31,6 +31,19 @@ public class FreeMarker {
 
         for (int i = 2; i < args.length; i += 2) {
             root.put(args[i], args[i+1]);
+            if (args[i+1].equalsIgnoreCase("false!")) {
+                root.put(args[i], false);
+            } else if (args[i+1].equalsIgnoreCase("true!")) {
+                root.put(args[i], true);
+            } else if (args[i+1].matches("\\d+!")) {
+                root.put(args[i], Integer.parseInt(args[i+1].substring(0, args[i+1].length() - 1)));
+            } else if (args[i].matches("is.*")) {
+                if (args[i+1].matches("true|false")) {
+                    root.put(args[i], args[i+1].matches("true") ? true : false);
+                }
+            } else if (args[i+1].matches("\\d+")) {
+                root.put(args[i], Integer.parseInt(args[i+1].substring(0, args[i+1].length())));
+            }
         }
 
         root.put("slashedPackageName", new FmSlashedPackageNameMethod());

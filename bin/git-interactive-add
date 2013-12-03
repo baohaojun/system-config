@@ -56,7 +56,7 @@ for x in "$@" $(if test $# == 0; then git st -s |grep '^.\S' -P | cut -b 4-; fi)
         fi
 
         if test "$out" = no; then
-            continue
+            break
         fi
 
         if test "$out" = discard; then

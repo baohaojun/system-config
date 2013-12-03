@@ -3,12 +3,13 @@
 export PATH=/usr/bin:$PATH
 
 file=~/external/FreeMarker/FreeMarker.class;
-if test ! -e $file; then
+if test ! -e $file -o $file -ot ~/bin/FreeMarker.d/FreeMarker.java; then
     mkdir -p $(dirname $file)
     (
         cd $(dirname $file)
-        cp ~/bin/FreeMarker/* . -av
-        javac -cp /usr/share/java/freemarker.jar FreeMarker.java
+        echo Entering directory \`~/bin/FreeMarker.d\'
+        cp ~/bin/FreeMarker.d/* . -av
+        javac -cp /usr/share/java/freemarker.jar $(find . -name '*.java')
     )
 fi
 

@@ -3,25 +3,42 @@
 require 'xmlsimple'
 
 xml = `select-output-line find ~/external/bin/Linux/ext/android-sdk-linux/tools/templates/ -name 'template.xml'`
-config = XmlSimple.xml_in(xml, { 'KeyAttr' => 'name' })
+config = XmlSimple.xml_in(xml)
 
 require 'shellwords'
 def ask_for_input (prompt)
   `ask-for-input-with-sawfish -p #{Shellwords.escape(prompt)}`
 end
 
-$parameter = {}
+$parameter = {
+  'isNewProject' => 'false!',
+  'isGradle' => 'false!',
+
+  "compileSdkVersion" => '19',
+  "buildApi" => '19!',
+  "buildToolsVersion" => "19.0.0",
+
+  "minSdkVersion" => '7!',
+  "targetSdkVersion" => '19!',
+  "isLauncher" => 'false!',
+}
+
 config.each do |element, val|
   print "#{element} => #{val}\n"
   if element == 'parameter'
-    val.each do |paramName, paramAttrs|
-      print "#{paramName}'s id is #{paramAttrs['id']}\n"
-      input = ask_for_input("Please input for parametor #{paramName} (default is #{paramAttrs['default']})")
+    val.each do |paramAttrs|
+      print "#{paramAttrs['name']}'s id is #{paramAttrs['id']}\n"
+      input = ask_for_input("Please input for parametor #{paramAttrs['name']} (default is #{paramAttrs['default']})")
       if input == "" and paramAttrs['default']
         $parameter[paramAttrs['id']] = paramAttrs['default']
       else
         $parameter[paramAttrs['id']] = input
       end
+
+      if paramAttrs['type'] == 'boolean'
+        $parameter[paramAttrs['id']] += '!' unless $parameter[paramAttrs['id']] =~ /!$/
+      end
+
     end
   end
 end
@@ -97,7 +114,7 @@ if config['globals']
     global_file = File.join(dir, global_element['file'])
 
     print "global_file is #{global_file}\n"
-    config2 = XmlSimple.xml_in(global_file, { 'KeyAttr' => 'name' })
+    config2 = XmlSimple.xml_in(global_file)
 
     print "config2 is #{config2}\n"
     config2['global'].each do |paramAttrs|
@@ -113,14 +130,93 @@ if config['globals']
 end
 
 if config['execute']
-  dir = File.dirname(xml)
+  $template_xml_dir = dir = File.dirname(xml)
   config['execute'].each do |exec_elem|
     exec_file = File.join(dir, exec_elem['file'])
-    param_str = ""
+    $param_str = ""
     $parameter.each do |key, val|
-      param_str += " %s %s" % [Shellwords.escape(key), Shellwords.escape(val)]
+      $param_str += " %s %s" % [Shellwords.escape(key), Shellwords.escape(val)]
     end
-    print "freemarker #{dir} #{exec_elem['file']} #{param_str}\n"
-    system("freemarker #{dir} #{exec_elem['file']} #{param_str}")
+    $recipe_str = "freemarker #{dir} #{exec_elem['file']} #{$param_str}"
+  end
+end
+
+if $recipe_str
+  $recipe_str = `#{$recipe_str}`
+  puts "$recipe_str is #{$recipe_str}"
+  $recipe_config = XmlSimple.xml_in($recipe_str)
+
+  ['merge', 'instantiate', 'copy'].each do |action|
+    $recipe_config[action] = $recipe_config[action] || [];
+    puts "$recipe_config[action] is '#{$recipe_config[action]}'"
+  end
+
+  $recipe_config['copy'].each do |inst_spec|
+    from = inst_spec['from']
+    to = inst_spec['to']
+    src = File.join($template_xml_dir, "root", from)
+    if not File::exist?(to)
+      require 'fileutils'
+      FileUtils.mkdir_p(File.dirname to)
+      system("cp -av #{src} #{to}")
+    end
+  end
+
+  $recipe_config['instantiate'].each do |inst_spec|
+    from = inst_spec['from']
+    to = inst_spec['to']
+    dir = File.join($template_xml_dir, "root")
+    from_str = "freemarker #{dir} #{from} #{$param_str}"
+    from_str = `#{from_str}`
+    if not File::exist?(to)
+      require 'fileutils'
+      FileUtils.mkdir_p(File.dirname to)
+      file = File.new(to, 'w')
+      file.write(from_str)
+      file.close
+    end
+  end
+
+  puts "$recipe_config['merge'] is #{$recipe_config['merge']}"
+  $recipe_config['merge'].each do |merge_spec|
+    from = merge_spec['from']
+    to = merge_spec['to']
+    dir = File.join($template_xml_dir, "root")
+    from_str = "freemarker #{dir} #{from} #{$param_str}"
+    print "#{from_str}\n"
+    from_str = `#{from_str}`;
+    if not File::exist?(to)
+      require 'fileutils'
+      FileUtils.mkdir_p(File.dirname to)
+      file = File.new(to, 'w')
+      file.write(from_str)
+      file.close
+    else
+      from_config = XmlSimple.xml_in(from_str, { 'keeproot' => true })
+      to_config = XmlSimple.xml_in(to, { 'keeproot' => true })
+
+      def mergeHash!(h1, h2)
+        if h1.is_a? Hash
+          h1.each do |k, v|
+            if h2[k]
+              h1[k] = mergeHash!(v, h2[k])
+            end
+          end
+        elsif h1.is_a? Array
+          h1 += h2
+        else
+          h1 = h2 or h1
+        end
+      end
+
+      to_config.each do |k, v|
+        mergeHash!(v[0], from_config[k][0])
+      end
+      puts "to_config is #{to_config}"
+      file = File.new(to, 'w')
+      out_str = XmlSimple.xml_out(to_config, { 'keeproot' => true })
+      file.write(out_str)
+      file.close
+    end
   end
 end

@@ -19,3 +19,8 @@ while ! sudo apt-get install "$@" -y $packages; do
 done
 
 ~/bin/Linux/config/install-missing-pkgs "$@"
+if test "$#" = 0; then
+    for x in ~/bin/Linux/config/pkgs/*:*; do
+        sudo apt-get install "$x" || true
+    done
+fi

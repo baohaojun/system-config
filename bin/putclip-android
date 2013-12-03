@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo -n "$@" > ~/.logs/$(basename $0).txt
+adb push ~/.logs/$(basename $0).txt /sdcard/putclip.txt
+adb shell 'am' 'start' '-n' 'com.bhj.setclip/.SetClipActivity'

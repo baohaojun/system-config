@@ -1,6 +1,11 @@
 #!/bin/bash
 
 set -e
+build_xml=$(lookup-file build.xml) || true
+if test ! -e "$build_xml" -a -e AndroidManifest.xml; then
+    ant-build
+    exit
+fi
 cd $(dirname $(lookup-file build.xml))
 if test "$1" = release; then
     ant-expect-keystore release
