@@ -32,7 +32,11 @@ mkdir -p ~/src/github
 emacs-install-packages
 
 sudo ln -s ~/doc/bash.info.gz /usr/local/share/info/ -f
-sudo ginstall-info bash.info.gz /usr/local/share/info/dir
+
+(
+    cd /usr/local/share/info/
+    sudo ginstall-info bash.info.gz /usr/local/share/info/dir
+)
 sudo postconf -e "home_mailbox = Maildir/bhj.localhost/"
 sudo postconf -e "mailbox_command = "
 sudo  /etc/init.d/postfix restart
