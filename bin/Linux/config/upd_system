@@ -35,7 +35,9 @@ fi
 sudo bash -c '(echo amd64; echo i386) > /var/lib/dpkg/arch'
 sudo cp ~/etc/apt/apt.conf.d/99testing /etc/apt/apt.conf.d/
 
-sudo apt-get update
+if test "$NO_APT_UPDATE" != true; then
+    sudo apt-get update
+fi
 sudo apt-get dist-upgrade -y
 
 ~/bin/Linux/config/install-pkgs
@@ -63,5 +65,5 @@ if ask-if-not-bhj "Use Bao Haojun's crontab config?"; then
 fi
 
 if test -d /proc/acpi/button/lid; then
-    sudo apt-get install xfce4-battery-plugin
+    sudo apt-get install xfce4-battery-plugin -y
 fi
