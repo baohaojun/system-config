@@ -2,7 +2,7 @@
 
 require 'xmlsimple'
 
-xml = `select-output-line find ~/external/bin/Linux/ext/android-sdk-linux/tools/templates/ -name 'template.xml'`
+xml = `select-output-line find ~/external/bin/Linux/ext/android-sdk-linux/tools/templates/ ~/gcode/android-templates -name 'template.xml'`
 config = XmlSimple.xml_in(xml)
 
 require 'shellwords'
@@ -19,6 +19,8 @@ $parameter = {
   "buildToolsVersion" => "19.0.0",
 
   "minSdkVersion" => '7!',
+  "minApiLevel" => '7',
+  "minApi" => '7',
   "targetSdkVersion" => '19!',
   "isLauncher" => 'false!',
 }
@@ -28,7 +30,42 @@ config.each do |element, val|
   if element == 'parameter'
     val.each do |paramAttrs|
       print "#{paramAttrs['name']}'s id is #{paramAttrs['id']}\n"
-      input = ask_for_input("Please input for parametor #{paramAttrs['name']} (default is #{paramAttrs['default']})")
+
+      # <parameter
+      #   id="navType"
+      #   name="Navigation Type"
+      #   type="enum"
+      #   default="none"
+      #   help="The type of navigation to use for the activity" >
+      #     <option id="none" default="true">None</option>
+      #     <!--<option id="tabs" minApi="11">Fixed Tabs</option>-->
+      #     <option id="tabs_pager" minApi="11">Fixed Tabs + Swipe</option>
+      #     <option id="pager_strip" minApi="11">Scrollable Tabs + Swipe</option>
+      #     <option id="dropdown" minApi="11">Dropdown</option>
+      # </parameter>
+
+      if paramAttrs['type'] == 'enum'
+        options = ""
+        paramAttrs['option'].each do |option|
+          options += " " + Shellwords.escape("#{option['id']} : #{option['content']}")
+        end
+        prompt = Shellwords.escape "Which option for #{paramAttrs['name']}"
+        input = `select-args -p #{prompt} #{options}`
+        input.gsub!(/ : .*/, "")
+      elsif paramAttrs['id'] == "packageName"
+        packages = `rgrep '^package.*;' src | pn 2 | sort -u | grep . | perl -npe 's/;//'`
+        packages.gsub!(/\n/, " ")
+        packages += " #{paramAttrs['default']}"
+        prompt = Shellwords.escape "What is your #{paramAttrs['name']}? "
+        input = `select-args -p #{prompt} #{packages}`
+        input.gsub!(/ : .*/, "")
+      else
+        prompt = Shellwords.escape "Parameter #{paramAttrs['name']}? "
+        options = Shellwords.escape "#{paramAttrs['default']} : default"
+        options += " " + Shellwords.escape("Enter your own input with ! at the end")
+        input = `select-args -p #{prompt} #{options}`
+        input.gsub!(/ : default$/, "")
+      end
       if input == "" and paramAttrs['default']
         $parameter[paramAttrs['id']] = paramAttrs['default']
       else
@@ -38,6 +75,8 @@ config.each do |element, val|
       if paramAttrs['type'] == 'boolean'
         $parameter[paramAttrs['id']] += '!' unless $parameter[paramAttrs['id']] =~ /!$/
       end
+
+      puts "input for #{paramAttrs['name']} is #{$parameter[paramAttrs['id']]}"
 
     end
   end
@@ -158,8 +197,13 @@ if $recipe_str
     if not File::exist?(to)
       require 'fileutils'
       FileUtils.mkdir_p(File.dirname to)
-      system("cp -av #{src} #{to}")
     end
+
+    if File::directory?(to)
+      to = File.dirname to
+    end
+    system("cp -avi #{src} #{to}")
+
   end
 
   $recipe_config['instantiate'].each do |inst_spec|
@@ -212,6 +256,15 @@ if $recipe_str
       to_config.each do |k, v|
         mergeHash!(v[0], from_config[k][0])
       end
+
+      from_config.each do |k, v|
+        v[0].each do |ck, cv|
+          if not to_config[k][0][ck]
+            to_config[k][0][ck] = cv
+          end
+        end
+      end
+
       puts "to_config is #{to_config}"
       file = File.new(to, 'w')
       out_str = XmlSimple.xml_out(to_config, { 'keeproot' => true })

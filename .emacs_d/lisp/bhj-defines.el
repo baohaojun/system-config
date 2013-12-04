@@ -22,6 +22,15 @@ might be bad."
           (delete-trailing-whitespace))))))
 
 ;;;###autoload
+(defun bhj-2-window-visit-next-file()
+  "Make there 2 windows, and the other window visit the next buffer in buffer-list"
+  (interactive)
+  (delete-other-windows)
+  (split-window-below)
+  (helm-buffers-list)
+  (other-window 0))
+
+;;;###autoload
 (defun fix-latex-cjk ()
   "move the cjk env outmost with the document env"
   (interactive)

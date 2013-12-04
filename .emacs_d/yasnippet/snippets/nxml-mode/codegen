@@ -2,9 +2,10 @@
 # name: codegen
 # key: codegen
 # --
-      <!-- # start code-generator
-           $0
-	   # end code-generator -->
-      <!-- # start generated code -->
+        <!-- start code-generator ${1:"^\\\\s *"}
+        $0
+        end code-generator -->
 
-      <!-- # end generated code -->
+        <!-- start generated code -->
+
+        <!-- end generated code -->

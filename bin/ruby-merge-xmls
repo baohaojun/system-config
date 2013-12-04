@@ -14,16 +14,45 @@ puts x2
 puts XmlSimple.xml_out(x1, { 'keeproot' => true })
 puts XmlSimple.xml_out(x2, { 'keeproot' => true })
 
-x1.each do |k, v|
+from_config = x1
+to_config = x2
+# x1.each do |k, v|
+#   v[0].each do |ck, cv|
+#     puts "looking at #{k} and #{v}: #{ck} and #{cv}"
+#     if not x2[k][0][ck]
+#       puts "not defined: #{k}[#{ck}]"
+#       x2[k][0][ck] = cv
+#     elsif x2[k][0][ck].is_a? Array
+#       x2[k][0][ck] += x1[k][0][ck]
+#     end
+#   end
+# end
+
+def mergeHash!(h1, h2)
+  if h1.is_a? Hash
+    h1.each do |k, v|
+      if h2[k]
+        h1[k] = mergeHash!(v, h2[k])
+      end
+    end
+  elsif h1.is_a? Array
+    h1 += h2
+  else
+    h1 = h2 or h1
+  end
+end
+
+to_config.each do |k, v|
+  mergeHash!(v[0], from_config[k][0])
+end
+
+from_config.each do |k, v|
   v[0].each do |ck, cv|
-    puts "looking at #{k} and #{v}: #{ck} and #{cv}"
-    if not x2[k][0][ck]
-      puts "not defined: #{k}[#{ck}]"
-      x2[k][0][ck] = cv
-    elsif x2[k][0][ck].is_a? Array
-      x2[k][0][ck] += x1[k][0][ck]
+    if not to_config[k][0][ck]
+      to_config[k][0][ck] = cv
     end
   end
 end
 
-print XmlSimple.xml_out(x2, { 'keeproot' => true })
+puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+print XmlSimple.xml_out(to_config, { 'keeproot' => true })
