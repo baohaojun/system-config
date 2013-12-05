@@ -378,10 +378,10 @@ referencing."
       (let* ((class-name
               (if current-prefix-arg
                   (ajoke-resolve (read-string "Whose methods to overide? " (save-excursion
-                                                              (backward-up-sexp 1) ;; new OnItemClickListener() { *
-                                                              (backward-sexp 1)
-                                                              (current-word)))
-                (ajoke--thing-at-tag 'ajoke--extract-class 0))))
+                                                                             (backward-up-sexp 1) ;; new OnItemClickListener() { *
+                                                                             (backward-sexp 1)
+                                                                             (current-word))))
+                (ajoke--thing-at-tag 'ajoke--extract-class 0)))
              (hierarchy (shell-command-to-string (format "ajoke-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class-name)))
              (methods (split-string hierarchy "\n")))
         (setq method (completing-read "Which method to override? " methods nil t))))
@@ -483,6 +483,16 @@ beginning of current defun."
         ad-do-it)
     ad-do-it))
 
+(defun ajoke-insert-package ()
+  "GUESS and insert the package name at the beginning of the file."
+  (interactive)
+  (let* ((dir (file-name-directory (buffer-file-name)))
+         (package (replace-regexp-in-string ".*?/src/\\|/$" "" dir))
+         (package (replace-regexp-in-string "/" "." package)))
+    (goto-char (point-min))
+    (insert "package " package ";\n")))
+
+(global-set-key [(meta g)(j)(p)] 'ajoke-insert-package)
 (global-set-key [(meta g)(j)(i)] 'ajoke-get-imports)
 (global-set-key [(meta g)(j)(h)] 'ajoke-get-hierarchy)
 (global-set-key [(meta g)(j)(o)] 'ajoke-get-override)
