@@ -6,7 +6,8 @@ function die() {
     exit -1
 }
 
-cd ~/.cache/weekly || exit
+mkdir -p ~/.cache/weekly
+cd ~/.cache/weekly
 if test -e .weeklyrc; then
     . .weeklyrc
 fi

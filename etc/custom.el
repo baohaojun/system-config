@@ -129,7 +129,7 @@
  '(x-select-enable-primary t)
  '(yas-also-auto-indent-first-line t)
  '(yas-global-mode t nil (yasnippet))
- '(yas-prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
+ '(yas-prompt-functions (quote (yas-completing-prompt)))
  '(yas-snippet-dirs (quote ("~/system-config/.emacs_d/yasnippet/snippets" "~/system-config/.emacs_d/yasnippet-snippets")) nil (yasnippet))
  '(yas-trigger-key "M-TAB"))
 (custom-set-faces

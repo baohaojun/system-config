@@ -7,6 +7,11 @@ if test ! -e "$build_xml" -a -e AndroidManifest.xml; then
     exit
 fi
 cd $(dirname $(lookup-file build.xml))
+if test "$1" = clean; then
+    ant clean
+    shift
+fi
+
 if test "$1" = release; then
     ant-expect-keystore release
     ant installr 2>&1 | tee ~/.logs/ant-install.log

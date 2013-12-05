@@ -2,6 +2,10 @@
 
 set -ex
 
+if test $# = 0; then
+    android-start-activity select
+fi
+
 function die() {
     echo Error: "$@"
     exit -1
@@ -12,6 +16,8 @@ if test $# != 1; then
 fi
 
 file=$(readlink -f "$1")
+
+rm ~/.cache/$(basename $1).unpack -rf
 
 if test ! -d ~/.cache/$(basename $1).unpack; then
     mkdir -p ~/.cache/$(basename $1).unpack

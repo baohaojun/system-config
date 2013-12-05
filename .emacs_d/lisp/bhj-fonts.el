@@ -32,12 +32,12 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size (+ 0.0 english-font-size)))
     (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size (+ 0.0 english-font-size)))
 
+    (set-fontset-font t 'symbol (font-spec :family "Courier New"))
+
     ;; Set Chinese font
     ;; Do not use 'unicode charset, it will cause the english font setting invalid
-    (dolist (charset '(kana han symbol cjk-misc bopomofo))
-      (set-fontset-font t
-                        charset
-                        zh-font))))
+    (dolist (charset '(kana han cjk-misc bopomofo))
+      (set-fontset-font t charset zh-font))))
 
 (setq face-font-rescale-alist '(("Microsoft Yahei" . 1.2) ("微软雅黑" . 1.2) ("WenQuanYi Zen Hei" . 1.2)))
 (defvar bhj-english-fonts '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))

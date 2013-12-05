@@ -2,8 +2,13 @@
 
 set -e
 
+if test $# = 1 -a "$1" = select; then
+    select-output-line cat ~/.logs/$(basename $0).rec | bash
+    exit
+fi
+
 manifest=$(lookup-file AndroidManifest.xml)
-#xmlstarlet sel -B -t -m //project -v @path  -n /home/bhj/smb/bible/cm/release-20120710/tkpxa978T-ics.ariel.eng.blds.20120710.000002/manifest-tkpxa978T-ics.ariel.eng.blds.20120710.000002.xml 
+#xmlstarlet sel -B -t -m //project -v @path  -n /home/bhj/smb/bible/cm/release-20120710/tkpxa978T-ics.ariel.eng.blds.20120710.000002/manifest-tkpxa978T-ics.ariel.eng.blds.20120710.000002.xml
 
 package=$(xmlstarlet sel -B -t -m //manifest -v @package $manifest)
 
@@ -15,6 +20,15 @@ echo $activities
 
 start=$activities
 
+function doit() {
+    (
+        echo "$@"
+        cat ~/.logs/$(basename $0).rec 2>/dev/null || true
+    ) | uniq-even-non-ajacent > ~/.logs/$(basename $0).rec.$$
+    mv ~/.logs/$(basename $0).rec.$$ ~/.logs/$(basename $0).rec
+    "$@"
+}
+
 if test ${#activities[@]} -gt 1; then
     select=$(my-select "${activities[@]}")
     start=${activities[$select -  1]}
@@ -24,9 +38,10 @@ if [[ $start =~ ^$package ]]; then
     adb shell am start -n ${start/#$package/$package/}
 else
     echo adb shell am start -n $package/$start
-    adb shell am start -n $package/$start
     if ! [[ $start =~ \. ]]; then
-        adb shell am start -n $package/.$start
+        doit adb shell am start -n $package/.$start
+    else
+        doit adb shell am start -n $package/$start
     fi
 fi
 #adb shell am start -n com.baohaojun.crossdict/.CrossDictionaryActivity

@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: layout
+# key: layout
+# --
+<!--
+`(shell-command-to-string
+        "perl -ne 'if (s/public static final int .*?Layout_Layout_//) {print \"android:\$_\"}' ~/src/android/cts/tools/dex-tools/dex/classes.out.dex | sort -u")`
+-->
+
+<${1:$$(yas-choose-value "RelativeLayout" "LinearLayout")} xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+$0
+</$1>

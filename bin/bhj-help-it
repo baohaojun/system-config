@@ -1,6 +1,8 @@
 #!/bin/bash
 
-exec > ~/.logs/$(basename $0).log 2>&1
+if test "$EMACS" = t; then
+    exec > ~/.logs/$(basename $0).log 2>&1
+fi
 set -x
 function die() {
     echo "$@"
@@ -38,7 +40,7 @@ case $1 in
     java-mode)
         start=$GTAGS_START_FILE
         if test -z "$start"; then
-            exit 0
+            start=$1
         fi
         start=$(basename "$start")
         start=${start%.java}

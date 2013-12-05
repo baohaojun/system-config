@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: view
+# key: view
+# --
+<${1:$$(yas-choose-value (or (and (boundp 'bhj-yas-android-views) bhj-yas-android-views) (setq bhj-yas-android-views (split-string (shell-command-to-string "grep-gtags 2>/dev/null -e android.widget..* -d ~/src/android/ -t 'class|int'|perl -npe 's/.*<|>.*//g'|perl -npe 's/.*-//'|sort -u")))))} xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/$2"
+$0/>

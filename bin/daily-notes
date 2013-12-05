@@ -1,7 +1,0 @@
-#!/bin/bash
-
-set -e
-mkdir -p ~/notes/
-cd ~/notes
-test -e `today`.org || touch `today`.org
-edit `today`.org
