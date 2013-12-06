@@ -49,9 +49,15 @@
 
 
 ;;; Robe
+
+(defvar global-robe-mode t)
+(defun global-robe-mode-bhj()
+  (if global-robe-mode
+      (robe-mode 1)
+    (robe-mode -1)))
 (require-package 'robe)
 (after-load 'ruby-mode
-  (add-hook 'ruby-mode-hook 'robe-mode))
+  (add-hook 'ruby-mode-hook 'global-robe-mode-bhj))
 (after-load 'robe
   (add-hook 'robe-mode-hook
             (lambda ()
