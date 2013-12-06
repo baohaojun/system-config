@@ -4,5 +4,16 @@ if dayofweek | grep -e "Sat|Sun"; then
     exit 0
 fi
 . ~/.renew-xauth
+
+if curl --request POST -c ~/.logs/cookie.txt.$(basename $0) -d name='haojun.bhj' \
+    --data-urlencode pass=$(get-authinfo imap.alibaba-inc.com) \
+    -d remember_me=1 \
+    -d _op=%E7%99%BB%E5%BD%95 \
+    -d form_build_id=form-26661ea69269567c8ad3bdc49389aa03 \
+    -d form_id=user_login_block \
+    -d op=%E7%99%BB%E5%BD%95 'http://bjdc.taobao.ali.com/dish_today?destination=dish_today' -L --verbose |
+    grep '您已经订餐'; then
+    exit
+fi
 bhj-notify Life "Go for dinner"
 of http://bjdc.taobao.ali.com/

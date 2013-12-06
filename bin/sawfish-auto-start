@@ -28,5 +28,5 @@ python -c "
 import gnomekeyring
 gnomekeyring.unlock_sync(None, '$(ask-for-input-with-sawfish -s -p 'Please unlock your keyring')')"
 
-run-dir-once ~/.sawfish/start&
 run-dir-once ~/external/sawfish/start&
+run-dir-once ~/.sawfish/start&

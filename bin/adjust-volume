@@ -1,6 +1,18 @@
 #!/bin/bash
 
+function amixer() {
+    if test "$PULSE_SERVER"; then
+        ssh "$PULSE_SERVER" amixer "$@"
+    else
+        command amixer "$@"
+    fi
+}
+
 amixer -q sset Master unmute
+if test "$#" = 1; then
+    amixer -q sset Master "${1%%%}"%
+    exit
+fi
 while true; do
     volume=$(
         (

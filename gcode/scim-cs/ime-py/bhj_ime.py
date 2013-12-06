@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 import os, sys, re, traceback
@@ -553,7 +553,7 @@ class ime:
             self.compstr = self.compstr[:-1]
         elif key == 'return':
             comp = self.compstr
-            if self.compstr and self.compstr[0] == ';':
+            if self.compstr and self.compstr[0] == ';' and len(self.compstr) > 1:
                 comp = self.compstr[1:]
             self.commitstr += comp
             self.compstr = ''
