@@ -51,14 +51,44 @@
 ;;; Robe
 
 (defvar global-robe-mode t)
-(defun global-robe-mode-bhj()
-  (if global-robe-mode
-      (robe-mode 1)
-    (robe-mode -1)))
+
+(defun up-paren-or-up-indent (arg)
+  "Move up the paren or move up indent level"
+  (interactive "p")
+  (condition-case nil
+      (backward-up-sexp arg)
+    (error
+     (back-to-indentation)
+     (let ((current-indentation (current-column))
+           (new-indentation (progn
+                              (forward-line -1)
+                              (back-to-indentation)
+                              (while (looking-at "$")
+                                (forward-line -1)
+                                (back-to-indentation)
+                                (when (= (line-number-at-pos) 1)
+                                  (signal 'error "Beginning of buffer")))
+                              (current-column))))
+       (while (and (<= current-indentation new-indentation)
+                   (> (line-number-at-pos) 1))
+         (setq new-indentation (progn
+                                 (forward-line -1)
+                                 (back-to-indentation)
+                                 (while (looking-at "$")
+                                   (forward-line -1)
+                                   (back-to-indentation)
+                                   (when (= (line-number-at-pos) 1)
+                                     (signal 'error "Beginning of buffer")))
+                                 (current-column))))))))
+
 (require-package 'robe)
 (after-load 'ruby-mode
-  (add-hook 'ruby-mode-hook 'global-robe-mode-bhj))
+  (add-hook 'ruby-mode-hook 'robe-mode)
+  (define-key ruby-mode-map (kbd "M-C-u") 'up-paren-or-up-indent))
+
 (after-load 'robe
+  (define-key robe-mode-map (kbd "M-.") nil)
+  (define-key robe-mode-map (kbd "M-,") nil)
   (add-hook 'robe-mode-hook
             (lambda ()
               (add-to-list 'ac-sources 'ac-source-robe)
