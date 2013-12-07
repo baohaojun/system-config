@@ -1,0 +1,24 @@
+#!/bin/bash
+
+find "${1:-$(select-args */)}" -iname '*.jpg' -type f|xargs -d \\n bash -c 'for x in "$@";
+ do read a b c date time <<< $(exiv2 "$x" |grep timestamp);
+ date=${date//:/-};
+ time=${time//:/：};
+ test "$date" -a "$time" || {
+     echo not good for $x: date is $date, time is $time, data is $(exiv2 "$x" |grep timestamp);
+     continue;
+ };
+
+ mkdir -p ${date%-??};
+ date=./${date%-??}/$date;
+ if test -e $date-$time.jpg;
+ then diff $date-$time.jpg "$x" >/dev/null 2>&1 && echo "$date-$time.jpg and $x is the same" && rm "$x" || { n=1;
+ while test -e $date-$time-$n.jpg;
+ do ((n++));
+ done;
+ mv -v "$(readlink -f "$x")" $date-$time-$n.jpg;
+ };
+ continue;
+ else mv -v "$(readlink -f "$x")" $date-$time.jpg;
+ fi;
+ done' true
