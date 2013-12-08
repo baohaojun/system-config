@@ -46,6 +46,8 @@
     SetTitleMatchMode,2
     IfWinExist, Mozilla Firefox
       WinActivate
+    else IfWinExist, Nightly
+      WinActivate
     else
       Run firefox
   }
@@ -112,7 +114,7 @@ SendInput !{F4}
 return
 
 ;/* start code-generator "^;"
-;   for x in "w" "c" "v" "l" "r" "s"; do
+;   for x in "w" "c" "v" "l" "r" "s" "\\"; do
 ;       echo "#$x::"
 ;       echo "    SendInput ^{$x}"
 ;       echo "return"
@@ -121,20 +123,33 @@ return
 ;   end code-generator */
 ; /* start generated code */
 #w::
-    SendInput ^{w}
-return
+  SendInput ^{w}
+  return
 
 #c::
-    SendInput ^{c}
-return
+  SendInput ^{c}
+  return
 
 #v::
-    SendInput ^{v}
-return
+  SendInput ^{v}
+  return
 
 #l::
-    SendInput ^{l}
-return
+  SendInput ^{l}
+  return
+
+#r::
+  SendInput ^{r}
+  return
+
+#s::
+  SendInput ^{s}
+  return
+
+#\::
+  SendInput ^{\}
+  return
+
 
 ; /* end generated code */
 
