@@ -149,6 +149,7 @@ case "$1" in
                           (douban-music-play-next-refresh))'
         ;;
     next)
+        touch ~/.logs/douban-should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
