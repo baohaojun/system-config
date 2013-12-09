@@ -21,6 +21,7 @@ fi
 
 function adb() {
     if test "$1" = -w; then
+        echo wait-for-device 1>/dev/tty
         $the_prog wait-for-device
         shift
     fi

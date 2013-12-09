@@ -1,4 +1,4 @@
 #!/bin/bash
 
 x=$(echo "$@")
-adb shell input text "$x" >/dev/null 2>&1 
+adb -w shell input text "$x" >/dev/null 2>&1

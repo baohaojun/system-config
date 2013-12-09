@@ -6,6 +6,7 @@ fi
 
 archive_mimes=(
     application/x-compressed-tar
+    application/x-bzip-compressed-tar
     application/x-rar
     application/zip
 )
