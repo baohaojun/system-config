@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+function test-git-clean() {
+    (
+        set -e
+        cd "$1"
+
+        for x in $(git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' | pn 2); do
+            if test -d $x; then
+                test-git-clean "$x"
+            else
+                die "git not clean in $PWD:
+$(git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' )"
+            fi
+        done
+    )
+}
+
+test-git-clean "${1:-.}"

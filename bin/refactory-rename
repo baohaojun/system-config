@@ -59,25 +59,9 @@ function get-files-this-dir() {
     find . -maxdepth 1 -name '.git' -prune -o -print | perl -npe 's#^\./##' | grep -v -P -e '^\.$';
 }
 
-function test-git-clean() {
-    (
-        set -e
-        cd "$1"
-
-        for x in $(git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' | pn 2); do
-            if test -d $x; then
-                test-git-clean "$x"
-            else
-                die "git not clean in $PWD:
-$(git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' )"
-            fi
-        done
-    )
-}
-
-if ! test-git-clean .; then
+if ! git-is-clean .; then
     git-interactive-add
-    test-git-clean .
+    git-is-clean .
 fi
 
 test $# = 0 && die "must provide at least 2 args"

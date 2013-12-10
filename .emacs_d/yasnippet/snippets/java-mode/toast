@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: toast
+# key: toast
+# --
+Toast.makeText(${1:this}, ${2:"hello world"}, Toast.LENGTH_SHORT).show();

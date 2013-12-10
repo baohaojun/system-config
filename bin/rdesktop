@@ -26,8 +26,12 @@ function rdesktop() {
     done
     host=$1
     shift
-    user=${1:-$USER}
-    shift
+    if test "$1"; then
+        user=$1
+        shift
+    else
+        user=$(select-output-line "grep -P -e "$host" ~/.authinfo | pn 4 | sort -u")
+    fi
 
     set -- -k $kbd -r clipboard:PRIMARYCLIPBOARD "$@"
     pass=$(get-authinfo $host $user rdesktop)

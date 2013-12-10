@@ -2,6 +2,10 @@
 
 require 'xmlsimple'
 
+if not system("git-is-clean")
+  exit 1
+end
+
 xml = `select-output-line find ~/external/bin/Linux/ext/android-sdk-linux/tools/templates/ ~/gcode/android-templates -name 'template.xml'`
 config = XmlSimple.xml_in(xml)
 
@@ -100,8 +104,17 @@ end
 
 $temp_methods = {
   slashedPackageName: proc {|t|
-    print "t is #{t}\n"
-    t.gsub(/\./, '/')
+    if not t
+      packages = `rgrep '^package.*;' src | pn 2 | sort -u | grep . | perl -npe 's/;//'`
+      packages.gsub!(/\n/, " ")
+      packages += " com.baohaojun.unknown"
+      prompt = Shellwords.escape "What is your package name? "
+      input = `select-args -p #{prompt} #{packages}`
+      input.gsub!(/ : .*/, "")
+      t = input
+      t.gsub(/\./, '/')
+      $parameter['packageName'] ||= t
+    end
   },
 
   camelCaseToUnderscore: proc {|t|
@@ -225,6 +238,12 @@ if $recipe_str
   $recipe_config['merge'].each do |merge_spec|
     from = merge_spec['from']
     to = merge_spec['to']
+    if not to
+      to = File.basename from
+      to.gsub!(/\.ftl$/, '')
+    end
+
+    puts "from is #{from}, to is #{to}"
     dir = File.join($template_xml_dir, "root")
     from_str = "freemarker #{dir} #{from} #{$param_str}"
     print "#{from_str}\n"

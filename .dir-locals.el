@@ -3,5 +3,8 @@
 
 ((nil
   (bhj-force-cleanup-buffer . t)
-  (indent-tabs-mode)))
+  (indent-tabs-mode))
+ (java-mode
+  (c-basic-offset . 4)))
+
 

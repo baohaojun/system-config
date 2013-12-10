@@ -1,13 +1,16 @@
 #!/bin/bash
 
-trueone_rc=~/external/etc/overide/.$(basename $0).trueone
-if test -e $trueone_rc; then
-    . $trueone_rc
-else
-    mkdir -p $(dirname $trueone_rc)
-    the_prog=$(type -a adb|grep 'adb is /'|grep -v /debug/|perl -ne 'print if 2..2'|pn 3)
-    echo the_prog=$the_prog > $trueone_rc
-fi
+me=$(readlink -f $0)
+for x in $(type -a adb|grep 'adb is /'|grep -v /debug/|pn 3); do
+    x=$(readlink -f "$x")
+    if test "$x" = "$me"; then
+        continue
+    else
+        the_prog=$x
+        break
+    fi
+done
+
 export the_prog
 
 function die() {
