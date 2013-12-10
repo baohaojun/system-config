@@ -26,7 +26,7 @@ done
 
 tmpf=/tmp/$(basename $0).$$
 
-echo "$prompt" > $tmpf
+echo -n "$prompt " > $tmpf
 
 read_file=$(cat <<EOF
 (progn
