@@ -15,7 +15,7 @@ fi
 
 if ! tty >/dev/null 2>&1 || test "$EMACS"; then
     REPLY=$(
-        SELECT_PROMPT="$user_prompt $prompt:" select-args $(if test $default = yes; then echo yes no; else echo no yes; fi)
+        ask-for-input-with-sawfish -p "$user_prompt $prompt:"
     )
 else
     (echo -n >/dev/tty) >/dev/null 2>&1 &&
