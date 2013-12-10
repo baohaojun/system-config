@@ -40,7 +40,7 @@ function renew-xauth() { # so that in the saved gnu screen session, I can reset 
     fi
 }
 
-if test -e ~/.logs/sudo-ssh; then
+if test -e ~/.config/sudo-ssh; then
 
     function sudo {
         command=$(

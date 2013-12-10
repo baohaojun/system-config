@@ -28,14 +28,13 @@ if ps.pl ssh.-w.root.443 && yes-or-no-p -y "kill the previous tunnel?"; then
     sudo ps-killall ssh.-w.root.443
 fi
 sudo ssh -o StrictHostKeyChecking=no -v -C2qN -w 0:0 root@bhj.dyndns.org -p 443&
-eth=$(select-output-line "ifconfig | grep -P -e '^\S'| pn 1|grep -v -P -e '^(lo|usb0)$'")
 
 while true; do
     ssh bhj.dyndns.org bash -x -e -c 'true;
         set -e
         sudo ip link set tun0 up
         sudo ip addr add 10.0.0.200/32 peer 10.0.0.100 dev tun0
-        nat-vbox $eth tun0
+        nat-vbox eth0 tun0
     ' && break || true
     sleep 1
 done
@@ -49,3 +48,4 @@ sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw "$default_gw"
 sudo route add default gw 10.0.0.200
 net-for-phone
 nat-vbox tun0 usb0
+nat-vbox wlan0 usb0

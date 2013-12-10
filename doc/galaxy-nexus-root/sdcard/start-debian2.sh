@@ -48,6 +48,7 @@ if test ! -e /data/debian/second-stage-done; then
     echo 192.168.15.33 r66 >> /etc/hosts
     touch /data/debian/second-stage-done
 fi
+touch /data/debian/home/bhj/.config/sudo-ssh
 chroot /data/debian /usr/sbin/service ssh start
 
 # mount sd in debian
