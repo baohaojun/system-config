@@ -10,9 +10,9 @@ import android.widget.Toast;
 public class ClipMonService extends Service {
     ClipboardManager mClipboard;
     ClipboardManager.OnPrimaryClipChangedListener mClipListner;
+    boolean mClipWatched = false;
     @Override
     public int onStartCommand(Intent intent,  int flags,  int startId)  {
-
         if (mClipboard == null) {
             mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         }
@@ -33,7 +33,10 @@ public class ClipMonService extends Service {
                     }
                 };
         }
-        mClipboard.addPrimaryClipChangedListener(mClipListner);
+        if (!mClipWatched) {
+            mClipboard.addPrimaryClipChangedListener(mClipListner);
+            mClipWatched = true;
+        }
         return START_STICKY;
     }
     @Override

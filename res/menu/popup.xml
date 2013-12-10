@@ -21,9 +21,13 @@
     <item android:id="@+id/matching_menu"
           android:title="Matching" />
     <item android:id="@+id/freq_menu"
-	  android:title="Frequency" />
+          android:title="Frequency" />
     <item android:id="@+id/history_menu"
-	  android:title="History" />
+          android:title="History" />
+    <item android:id="@+id/start_service"
+          android:title="Watch Clipboard" />
+    <item android:id="@+id/stop_service"
+          android:title="Stop Watching" />
     <item android:id="@+id/donate_menu"
-	  android:title="Donate" />
+          android:title="Donate" />
 </menu>

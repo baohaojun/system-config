@@ -527,6 +527,10 @@ public class CrossDictActivity extends Activity {
                     mActiveDict = mDict;
                     mListView.setActiveDict(new StringArrayDict(stringReduce(mWordHistory)));
                     mWebView.lookUpWord(mWordHistory[0]);
+                } else if (item.getItemId() == R.id.start_service) {
+                    startService(new Intent(CrossDictActivity.this, ClipMonService.class));
+                } else if (item.getItemId() == R.id.stop_service) {
+                    stopService(new Intent(CrossDictActivity.this, ClipMonService.class));
                 } else if (item.getItemId() == R.id.donate_menu) {
                     String url = "http://baohaojun.github.com/donate";
                     Intent i = new Intent(Intent.ACTION_VIEW);
