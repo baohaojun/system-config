@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+
 function compile_beagrep() {
     cd ~/gcode/beagrep
     git clean -xfd
@@ -52,12 +53,32 @@ function compile_gtags() {
     git clean -xfd
 }
 
+function compile_ctags() {
+    cd ~/gcode/ctags-exuberant
+    autoreconf -i
+    ./configure
+    make
+    sudo make install
+    git clean -xfd
+}
+
 
 function do_compile() {
     compile_beagrep "$@"
     compile_uncomment_java "$@"
     compile_gtags "$@"
     compile_ibus_sdim "$@"
+    compile_ctags "$@"
 }
 
+if test "$DEBUG" = true; then
+    export CFLAGS='-g -O0 -DDEBUG'
+    function git() {
+        if test $# = 2 -a "$1" = clean; then
+            true
+        else
+            command git "$@"
+        fi
+    }
+fi
 `basename $0` "$@"
