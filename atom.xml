@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[ssh执行远程命令和bash -c string的用法]]></title>
+    <link href="http://baohaojun.github.io/blog/2013/12/11/0-ssh-remote-command-and-bash--c-string.html"/>
+    <updated>2013-03-11T14:12:37+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2013/12/11/0-ssh-remote-command-and-bash--c-string.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[发现式编程]]></title>
     <link href="http://baohaojun.github.io/blog/2013/11/07/0-programming-discovery.html"/>
     <updated>2013-11-09T23:25:05+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/07/16/0-find-scroll-lock.html"/>
     <updated>2013-07-16T11:02:05+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/07/16/0-find-scroll-lock.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Better Tab Reuse for IDE Help Integration]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/07/11/0-firefox-search-for-tab.html"/>
-    <updated>2013-07-11T10:49:03+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/07/11/0-firefox-search-for-tab.html</id>
   </entry>
 </feed>

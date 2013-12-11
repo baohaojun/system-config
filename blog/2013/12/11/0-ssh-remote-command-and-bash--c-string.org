@@ -1,0 +1,83 @@
+#+title: ssh执行远程命令和bash -c string的用法
+# bhj-tags: bash
+
+发现自己看文档没看仔细，长期在用 =ssh localhost bash -c "echo hello
+world" true= 试图让这个命令打出一个 =hello world= 出来，发现什么也没打
+出来之后（其实是有一个换行打出来），我想出来一个招，在echo之前加一个
+=true;= ，发现就好使了。其实最后那个 =true= 就已经是一种hack了，知其然
+却不知其所以然，今天终于把所以然也整明白了。
+
+用得最多的 =bash -c= ，是类似 =find . -name '*.java' | xargs bash -c
+'for x in "$@"; do XXX "$x"; done' true= 这样的用法。我一直没弄明白为什
+么最后要加一个 =true= ，只知道不加的话会少处理一个java文件（find输出的
+第一个文件）。根据find输出行带不带空格，可以给xargs加一个 =-d \\n= 的开
+关，以行为单位进行处理。
+
+而 =ssh...bash -c= 的问题，就更没有弄明白了，一直用
+#+BEGIN_EXAMPLE
+ssh localhost bash -c 'true; echo hello world'
+#+END_EXAMPLE
+的方法来执行，不加 =true;= 的话会发现 =hello world= 不会被打印出来。
+
+今天碰到一个奇怪的问题，终于让我打开手册页看了一下...
+
+问题是这样的：
+
+#+BEGIN_SRC sh
+ssh localhost bash -c '
+true; echo hello world'
+#+END_SRC
+
+发现输出如下：
+
+#+BEGIN_EXAMPLE
+hello world
+bash: -c: option requires an argument
+#+END_EXAMPLE
+
+=hello world= 被打了出来，同时 =bash -c= 报错，它没有找到参数！
+
+究其原因，ssh和xargs简直可以说南北两极：xargs把标准输入流（stream）里读
+来的东西放到参数列表里，ssh却反过来把参数列表里的东西放到一个流里。所以
+上面的命令中，ssh看到的是三个参数 bash，-c，和"\ntrue; echo hello
+world"，它所做的事却是把这三个参数用空格拼成一个长串，然后把这个长串写
+给一个文件、管道流，捅给bash/sh等shell去执行！最后shell看到喂过来的脚本是这样的：
+
+#+BEGIN_SRC sh
+bash -c
+true; echo hello world
+#+END_SRC
+
+至于我的那个xargs的例子，则是因为 =bash -c= 之后的第一个参数会被当成一
+个脚本，然后后面还有其他参数的话，会被当成从0开始的位参（$0, $1,
+$2...），而$0在shell编程里一般是脚本的名字，"$@"这样的表达式是不包括$0
+的。
+
+这样以下这些现象就好理解了：
+
+#+BEGIN_EXAMPLE
+echo 'hello    world'
+    => hello    world （注意空格数，还是4个）
+
+echo hello    world
+    => hello world
+    （空格数是1个，echo命令给加上的，
+      把它的参数依次打印出来，每两个参数中间加一个空格，
+      这里它有两个参数，hello和world，上面的例子中它只有一个参数，
+      'hello    world'去掉两边的单引号）
+
+ssh localhost echo 'hello    world'
+    => hello world
+    （空格数变成了1个，因为ssh登录成功后喂给shell的是
+      echo hello    world）
+#+END_EXAMPLE
+
+跟ssh类似的还有一个命令，是watch。
+
+如果ssh后执行的是一条简单的命令，比如echo hello world，则即使你写成
+
+#+BEGIN_SRC sh
+ssh localhost echo 'hello    ' '' '' "" 'world'
+#+END_SRC
+
+最后的输出也是'hello world'去掉引号。
