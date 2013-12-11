@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+
+my $blanked = 0;
+open (IN, "xscreensaver-command -watch |");
+while (<IN>) {
+    if (m/^(BLANK|LOCK)/) {
+        if (!$blanked) {
+            system "xset dpms 60 120 180; sound-off";
+            $blanked = 1;
+        }
+    } elsif (m/^UNBLANK/) {
+        system "xset dpms 600 1200 1800; sound-on";
+        $blanked = 0;
+    }
+}

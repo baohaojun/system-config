@@ -2,4 +2,3 @@
 
 xset b off
 xscreensaver-command -lock&
-sleep 5 && xset dpms force off

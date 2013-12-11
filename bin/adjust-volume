@@ -8,6 +8,14 @@ function amixer() {
     fi
 }
 
+if test "$(basename $0)" = sound-off; then
+    amixer -q sset Master mute
+    exit
+elif test "$(basename $0)" = sound-on; then
+    amixer -q sset Master unmute
+    exit
+fi
+
 amixer -q sset Master unmute
 if test "$#" = 1; then
     amixer -q sset Master "${1%%%}"%
