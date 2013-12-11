@@ -1,5 +1,8 @@
 #!/bin/bash
 
+if test "$#" = 0; then
+    set -- "$(ask-for-input-with-emacs)"
+fi
 echo -n "$@" > ~/.logs/$(basename $0).txt
 adb push ~/.logs/$(basename $0).txt /sdcard/putclip.txt
 adb shell 'am' 'start' '-n' 'com.bhj.setclip/.SetClipActivity'

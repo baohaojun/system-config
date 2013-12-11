@@ -7,7 +7,8 @@ function sudo() {
     command sudo env SSH_AGENT_PID=$SSH_AGENT_PID SSH_AUTH_SOCK=$SSH_AUTH_SOCK PATH=$PATH "$@"
 }
 
-ssh -v bhj.dyndns.org bash -x -c '
+ssh bhj.dyndns.org '
+    set -x
     if ! grep -P -e "^\s*PermitTunnel\s+yes" /etc/ssh/sshd_config; then
         sudo bash -c "echo PermitTunnel yes >> /etc/ssh/sshd_config"
         echo "you may want to restart sshd" && sleep 1
