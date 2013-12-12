@@ -4,3 +4,6 @@ config.h
 config.log
 config.status
 ctags
+configure
+autom4te.cache/
+config.h.in

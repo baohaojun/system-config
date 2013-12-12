@@ -47,48 +47,48 @@
 */
 
 enum eCharacters {
-	/* white space characters */
-	SPACE         = ' ',
-	NEWLINE       = '\n',
-	CRETURN       = '\r',
-	FORMFEED      = '\f',
-	TAB           = '\t',
-	VTAB          = '\v',
+        /* white space characters */
+        SPACE         = ' ',
+        NEWLINE       = '\n',
+        CRETURN       = '\r',
+        FORMFEED      = '\f',
+        TAB           = '\t',
+        VTAB          = '\v',
 
-	/* some hard to read characters */
-	DOUBLE_QUOTE  = '"',
-	SINGLE_QUOTE  = '\'',
-	BACKSLASH     = '\\',
+        /* some hard to read characters */
+        DOUBLE_QUOTE  = '"',
+        SINGLE_QUOTE  = '\'',
+        BACKSLASH     = '\\',
 
-	STRING_SYMBOL = ('S' + 0x80),
-	CHAR_SYMBOL   = ('C' + 0x80)
+        STRING_SYMBOL = ('S' + 0x80),
+        CHAR_SYMBOL   = ('C' + 0x80)
 };
 
 /*  Maintains the state of the current source file.
  */
 typedef struct sInputFile {
-	vString    *name;          /* name of input file */
-	vString    *path;          /* path of input file (if any) */
-	vString    *line;          /* last line read from file */
-	const unsigned char* currentLine;  /* current line being worked on */
-	FILE       *fp;            /* stream used for reading the file */
-	unsigned long lineNumber;  /* line number in the input file */
-	fpos_t      filePosition;  /* file position of current line */
-	int         ungetch;       /* a single character that was ungotten */
-	boolean     eof;           /* have we reached the end of file? */
-	boolean     newLine;       /* will the next character begin a new line? */
+        vString    *name;          /* name of input file */
+        vString    *path;          /* path of input file (if any) */
+        vString    *line;          /* last line read from file */
+        const unsigned char* currentLine;  /* current line being worked on */
+        FILE       *fp;            /* stream used for reading the file */
+        unsigned long lineNumber;  /* line number in the input file */
+        fpos_t      filePosition;  /* file position of current line */
+        int         ungetch;       /* a single character that was ungotten */
+        boolean     eof;           /* have we reached the end of file? */
+        boolean     newLine;       /* will the next character begin a new line? */
 
-	/*  Contains data pertaining to the original source file in which the tag
-	 *  was defined. This may be different from the input file when #line
-	 *  directives are processed (i.e. the input file is preprocessor output).
-	 */
-	struct sSource {
-		vString *name;           /* name to report for source file */
-		char    *tagPath;        /* path of source file relative to tag file */
-		unsigned long lineNumber;/* line number in the source file */
-		boolean  isHeader;       /* is source file a header file? */
-		langType language;       /* language of source file */
-	} source;
+        /*  Contains data pertaining to the original source file in which the tag
+         *  was defined. This may be different from the input file when #line
+         *  directives are processed (i.e. the input file is preprocessor output).
+         */
+        struct sSource {
+                vString *name;           /* name to report for source file */
+                char    *tagPath;        /* path of source file relative to tag file */
+                unsigned long lineNumber;/* line number in the source file */
+                boolean  isHeader;       /* is source file a header file? */
+                langType language;       /* language of source file */
+        } source;
 } inputFile;
 
 /*
@@ -109,6 +109,7 @@ extern void fileUngetc (int c);
 extern const unsigned char *fileReadLine (void);
 extern char *readLine (vString *const vLine, FILE *const fp);
 extern char *readSourceLine (vString *const vLine, fpos_t location, long *const pSeekValue);
+extern char *readStatement (vString *const vLine, fpos_t location, const char *endChars);
 
 #endif  /* _READ_H */
 

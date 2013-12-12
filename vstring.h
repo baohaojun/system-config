@@ -28,9 +28,9 @@
 #endif
 #ifdef VSTRING_PUTC_MACRO
 #define vStringPut(s,c) \
-	(void)(((s)->length + 1 == (s)->size ? vStringAutoResize (s) : 0), \
-	((s)->buffer [(s)->length] = (c)), \
-	((c) == '\0' ? 0 : ((s)->buffer [++(s)->length] = '\0')))
+        (void)(((s)->length + 1 == (s)->size ? vStringAutoResize (s) : 0), \
+        ((s)->buffer [(s)->length] = (c)), \
+        ((c) == '\0' ? 0 : ((s)->buffer [++(s)->length] = '\0')))
 #endif
 
 #define vStringValue(vs)      ((vs)->buffer)
@@ -52,9 +52,9 @@
 */
 
 typedef struct sVString {
-	size_t  length;  /* size of buffer used */
-	size_t  size;    /* allocated size of buffer */
-	char   *buffer;  /* location of buffer */
+        size_t  length;  /* size of buffer used */
+        size_t  size;    /* allocated size of buffer */
+        char   *buffer;  /* location of buffer */
 } vString;
 
 /*
@@ -67,6 +67,7 @@ extern void vStringDelete (vString *const string);
 #ifndef VSTRING_PUTC_MACRO
 extern void vStringPut (vString *const string, const int c);
 #endif
+extern void vStringCompressWhiteSpace (vString *const string);
 extern void vStringStripNewline (vString *const string);
 extern void vStringStripLeading (vString *const string);
 extern void vStringChop (vString *const string);

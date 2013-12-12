@@ -1095,6 +1095,19 @@ static void findScopeHierarchy (vString *const string,
         }
 }
 
+static void makeTagEntryFullProto (const tagEntryInfo *const tag)
+{
+        if (strcmp(tag->kindName, "class") == 0 ||
+            strcmp(tag->kindName, "struct") == 0 ||
+            strcmp(tag->kindName, "interface") == 0 ||
+            strcmp(tag->kindName, "function") == 0 ||
+            strcmp(tag->kindName, "method") == 0)
+        {
+                ((tagEntryInfo *)tag)->endProtoChars = "{};";
+        }
+        makeTagEntry(tag);
+}
+
 static void makeExtraTagEntry (const tagType type, tagEntryInfo *const e,
                                                            vString *const scope)
 {
@@ -1124,7 +1137,7 @@ static void makeExtraTagEntry (const tagType type, tagEntryInfo *const e,
                         addContextSeparator (scopedName);
                         vStringCatS (scopedName, e->name);
                         e->name = vStringValue (scopedName);
-                        makeTagEntry (e);
+                        makeTagEntryFullProto (e);
                 }
                 vStringDelete (scopedName);
         }
@@ -1159,7 +1172,7 @@ static void makeTag (const tokenInfo *const token,
                 findScopeHierarchy (scope, st);
                 addOtherFields (&e, type, st, scope, typeRef);
 
-                makeTagEntry (&e);
+                makeTagEntryFullProto (&e);
                 makeExtraTagEntry (type, &e, scope);
                 vStringDelete (scope);
                 vStringDelete (typeRef);
