@@ -3,11 +3,11 @@
 jobs=5
 replace_str=
 export RUN_IN_PARALLEL=true
-TEMP=$(getopt -o j:I: --long jobs: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o P:I: --long parallel: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -j|--jobs)
+        -P|--parallel)
             jobs=$2
             shift 2
             ;;
@@ -31,41 +31,8 @@ if test -z "$replace_str" && yes-or-no-p -y "Use %N as replace_str"; then
     cmd="$cmd %N"
 fi
 shift
-lock_dir=~/.logs/$(basename $0).lock/
-mkdir -p $lock_dir
 
-x=0
-
-need_sleep=true
 for y in "$@"; do
-    while true; do
-        if test $need_sleep = true -a $x = $jobs; then
-            sleep 1;
-        fi
-
-        if test $x = $jobs; then
-            need_sleep=true
-        fi
-
-        ((x %= jobs))
-
-
-        if test $(fuser $lock_dir/$x 2>/dev/null |wc -w) -lt 10; then
-            echo do not need sleep 1>&2
-            need_sleep=false
-        else
-            ((x++));
-            continue
-        fi
-        (
-            flock 9
-            if test "$replace_str"; then
-                echo "$cmd" | perl -npe "s!$replace_str!$y!g"
-            else
-                echo "$cmd"
-            fi | bash
-        ) 9> $lock_dir/$x&
-        ((x++))
-        break
-    done
-done | cat
+    echo -n "$y";
+    echo -n x | tr x \\0
+done | xargs -0 -P $jobs -I "$replace_str" bash -c "$cmd"

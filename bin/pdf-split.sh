@@ -45,7 +45,7 @@ for x in $(seq $my_min 1 $pages); do
     fi
 done
 if test $seq_done = false || (test $seq_done = true && yes-or-no-p "Redo split?"); then
-    run-in-parallel -j 10 -I %N '
+    run-in-parallel -P 10 -I %N '
                                     pdfjoin --no-landscape --rotateoversize false  '"$(printf %q "$1")"' %N --outfile seq-%N.pdf
                                     pdf2ps seq-%N.pdf
                                     ps2pdf seq-%N.ps
@@ -68,7 +68,7 @@ export selected_width=$(echo $size | pn 3)
 export selected_height=$(echo $size | pn 5)
 export nup_size=$(echo $size|perl -npe 's!.*?(\d+\.\d+) x (\d+\.\d+).*!sprintf "%fin,%fin", $1/72,$2/72!e')
 if test "$size" != "$page_sizes"; then
-    run-in-parallel -j 10 -I %N '
+    run-in-parallel -P 10 -I %N '
         if test $(pdf-get-width seq-%N.pdf) != $selected_width -o $(pdf-get-height seq-%N.pdf) != $selected_height; then
             pdfnup --no-landscape --rotateoversize false  --nup 1x1 --papersize "{$nup_size}" seq-%N.pdf --outfile seq-ss-%N.pdf
         else
