@@ -55,6 +55,7 @@ plugin-example|Example of function layer plugin parser:\
 :langmap=fortran\:.f.f77.f90.f95.for:\
 :langmap=jar\:.jar.dll.exe:\
 :langmap=java\:.aidl.java:\
+:langmap=Clojure\:.clj:\
 :langmap=javaprop\:(ExternalMessages.properties):\
 :langmap=javascript\:.js:\
 :langmap=kconfig\:(Kconfig*):\
@@ -74,6 +75,7 @@ plugin-example|Example of function layer plugin parser:\
         :gtags_parser=yacc\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=asm\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=java\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=Clojure\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=jar\:@prefix@/lib/gtags/gtags-antlr-java.la:\
         :gtags_parser=antlr\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=c++\:@prefix@/lib/gtags/exuberant-ctags.la:\
