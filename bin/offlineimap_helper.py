@@ -42,14 +42,23 @@ def convert_amp_notation(code):
     return str.encode('utf-8')
 
 def ali_mailbox_conv(name):
+    print "name is %s" % name
     def re_helper(m):
         return convert_amp_notation(m.groups()[0])
     box = re.sub("&([^-]+)-", re_helper, name)
+    print "box is %s" % box
     if box == "已发送":
         box = "Sent"
     elif box == '已删除邮件':
         box = "Deleted"
     return box
+
+def ali_mailbox_conv_to_remote(name):
+    if name == 'Sent':
+        return "&XfJT0ZAB-"
+    elif box == "Deleted":
+        return '&XfJSIJZkkK5O9g-'
+    return name
 
 def ali_folder_match(folder, pats):
     folder = ali_mailbox_conv(folder).lower()
