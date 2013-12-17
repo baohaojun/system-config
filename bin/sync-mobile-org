@@ -64,7 +64,13 @@ function check_git_dir() {
 check_git_dir ~/doc/projects "Add all changes from mobile to Emacs"
 check_git_dir ~/today/MobileOrg "Add all changes from Emacs to mobile"
 emacsclient -e '(org-mobile-push)'
-check_git_dir ~/doc/projects "Add all changes after org-mobile-push?"
+
+if (cd ~/doc/projects && git diff HEAD . | grep -v -e '^\+\s+:(properties|id|end):' -i -P | grep '^(-|\+) ' -P ); then
+    check_git_dir ~/doc/projects "Add all changes after org-mobile-push?"
+else
+    (cd ~/doc/projects && git add .)
+fi
+
 cd ~/today/MobileOrg
 if ! grep -P -e '\S' mobileorg.org from-mobile.org; then
     echo -n > mobile.org

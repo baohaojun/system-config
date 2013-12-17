@@ -1,15 +1,19 @@
 #!/bin/bash
 
 me=$(readlink -f $0)
-for x in $(type -a adb|grep 'adb is /'|grep -v /debug/|pn 3); do
-    x=$(readlink -f "$x")
-    if test "$x" = "$me"; then
-        continue
-    else
-        the_prog=$x
-        break
-    fi
-done
+if which the-true-adb >/dev/null 2>&1; then
+    the_prog=$(which the-true-adb)
+else
+    for x in $(type -a adb|grep 'adb is /'|grep -v /debug/|pn 3); do
+        x=$(readlink -f "$x")
+        if test "$x" = "$me"; then
+            continue
+        else
+            the_prog=$x
+            break
+        fi
+    done
+fi
 
 export the_prog
 
