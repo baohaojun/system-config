@@ -2,7 +2,7 @@
 export EDITOR=edit-wait
 
 if test -z "$SSH_CLIENT"; then
-    HOSTNAME=`hostname`
+    HOSTNAME=$(hostname | perl -npe 's/\..*//')
     export PS1='\n[01;34m{ [01;31m'`whoami`'[01;34m@[01;33m'$HOSTNAME'[01;34m [01;32m'\$PWD'[01;34m '\$PROMPT_RET\$RECURSIVE_SHELL'}[0m\n\$'
 else
     export LOCALIP=`echo $SSH_CONNECTION|awk '{print $3}'|sed -e 's/.*://'`

@@ -44,9 +44,13 @@ function adb() {
     fi
 
     if test "$1" = -s; then
-        echo "$(select-output-line -- adb devices|pn 1)" > ~/.adbd
+        echo "$(select-output-line -- 'adb devices 2>&1 | perl -ne "print unless 1..1"'|pn 1)" > ~/.config/adb-device
+        shift
+        if test "$#" = 0; then
+            exit
+        fi
     elif test "$1" != devices -a $(setsid $the_prog start-server >/dev/null 2>&1 ; $the_prog devices | grep .| wc -l) -gt 2; then
-        export ANDROID_SERIAL=$(cat ~/.adbd)
+        export ANDROID_SERIAL=$(cat ~/.config/adb-device)
     fi
 
     if test "$1" = gdbserver; then

@@ -7,19 +7,21 @@ Does not indent buffer, because it is used for a before-save-hook, and that
 might be bad."
   (interactive)
   (set-buffer-file-coding-system 'utf-8)
+  ;; for making .wiki table treated as org table for editing, and
+  ;; convert back to .wiki format (with spaces removed). invented when
+  ;; supporting mtop test.
   (when (and (string-match ".*/java/.*\\.wiki$" (buffer-file-name))
              (eq major-mode 'org-mode))
     (replace-regexp " " "" nil (point-min) (point-max)))
-  (unless (string-match "message-mode\\|org-mode\\|text-mode" (symbol-name major-mode))
-    (save-excursion
-      (save-restriction
-        (widen)
-        (goto-char (point-min))
-        (when (and (search-forward-regexp "\t\\|[ \t]$" nil t)
-                   (or bhj-force-cleanup-buffer (eq this-command 'cleanup-buffer-safe)))
-          (unless (string-match "makefile" (symbol-name major-mode))
-            (untabify (point-min) (point-max)))
-          (delete-trailing-whitespace))))))
+  (save-excursion
+    (save-restriction
+      (widen)
+      (goto-char (point-min))
+      (when (and (search-forward-regexp "\t\\|[ \t]$" nil t)
+                 (or bhj-force-cleanup-buffer (eq this-command 'cleanup-buffer-safe)))
+        (unless (string-match "makefile\\|message-mode\\|org-mode\\|text-mode" (symbol-name major-mode))
+          (untabify (point-min) (point-max)))
+        (delete-trailing-whitespace)))))
 
 ;;;###autoload
 (defun bhj-2-window-visit-next-file()

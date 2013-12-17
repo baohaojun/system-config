@@ -56,6 +56,7 @@
   (mapc (lambda (key)
           (bind-keys map key what))
         keys))
+(setq move-lock-when-maximized nil)
 
 (bind-keys global-keymap "Super-h" s-h-keymap)
 
