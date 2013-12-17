@@ -72,6 +72,9 @@ if ($grep_use_perl_regexp) {
 
 die 'no regexp specified' unless $pat;
 if ($pwd_opt) {
+    if (not -d $pwd_opt) {
+        $pwd_opt = qx(select-beagrep-dir $pwd_opt);
+    }
     $pwd = $pwd_opt;
 }
 chdir $pwd or die "$pwd: $!";
