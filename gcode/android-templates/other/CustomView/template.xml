@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<template
+    format="1"
+    revision="1"
+    name="Custom View"
+    description="Creates a new custom view that extends android.view.View and exposes custom attributes.">
+
+    <category value="UI Components" />
+
+    <parameter
+        id="packageName"
+        name="Package name"
+        type="string"
+        constraints="package"
+        default="com.mycompany.myapp" />
+
+    <parameter
+        id="viewClass"
+        name="View Class"
+        type="string"
+        constraints="class|unique|nonempty"
+        default="MyView"
+        help="By convention, should end in 'View'" />
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

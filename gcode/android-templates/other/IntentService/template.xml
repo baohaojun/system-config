@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<template
+    format="3"
+    revision="1"
+    name="New IntentService"
+    description="Creates a new intent service class."
+    minApi="3"
+    minBuildApi="3">
+
+    <category value="Other" />
+
+    <parameter
+        id="className"
+        name="Class Name"
+        type="string"
+        constraints="class|unique|nonempty"
+        default="MyIntentService" />
+
+    <parameter
+        id="includeHelper"
+        name="Include helper start methods?"
+        type="boolean"
+        default="true"
+        help="Generate static helper methods to start the service e.g. MyIntentService.startAction()" />
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

@@ -6,7 +6,7 @@ if not system("git-is-clean")
   exit 1
 end
 
-xml = `select-output-line find ~/external/bin/Linux/ext/android-sdk-linux/tools/templates/ ~/gcode/android-templates -name 'template.xml'`
+xml = `select-output-line find ~/gcode/android-templates -name 'template.xml'`
 config = XmlSimple.xml_in(xml)
 
 require 'shellwords'
@@ -61,7 +61,7 @@ config.each do |element, val|
         packages.gsub!(/\n/, " ")
         packages += " #{paramAttrs['default']}"
         prompt = Shellwords.escape "What is your #{paramAttrs['name']}? "
-        input = `select-args -p #{prompt} #{packages}`
+        input = `select-args -p #{prompt} #{packages} unknown`
         input.gsub!(/ : .*/, "")
       else
         prompt = Shellwords.escape "Parameter #{paramAttrs['name']}? "

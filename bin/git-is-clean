@@ -10,6 +10,7 @@ function test-git-clean() {
     (
         set -e
         cd "$1"
+        git status -s . >/dev/null 2>&1
 
         for x in $(git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' | pn 2); do
             if test -d $x; then

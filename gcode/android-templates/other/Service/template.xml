@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<template
+    format="1"
+    revision="1"
+    name="Service"
+    description="Creates a new service component and adds it to your Android manifest.">
+
+    <parameter
+        id="className"
+        name="Class Name"
+        type="string"
+        constraints="class|unique|nonempty"
+        default="MyService" />
+
+    <parameter
+        id="isExported"
+        name="Exported"
+        type="boolean"
+        default="true"
+        help="Whether or not components of other applications can invoke the service or interact with it" />
+
+    <parameter
+        id="isEnabled"
+        name="Enabled"
+        type="boolean"
+        default="true"
+        help="Whether or not the service can be instantiated by the system" />
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

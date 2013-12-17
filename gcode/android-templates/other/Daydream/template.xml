@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<template
+    format="3"
+    revision="1"
+    name="New Daydream"
+    description="Creates a new Daydream service component, for use on devices running Android 4.2 and later."
+    minBuildApi="17">
+
+    <category value="Other" />
+
+    <parameter
+        id="className"
+        name="Class Name"
+        type="string"
+        constraints="class|unique|nonempty"
+        default="MyDaydreamService" />
+
+    <parameter
+        id="isInteractive"
+        name="Interactive?"
+        type="boolean"
+        default="false"
+        help="Whether or not the Daydream is interactive. Touching anywhere on a non-interactive Daydreams dismisses it." />
+
+    <parameter
+        id="isFullscreen"
+        name="Fullscreen?"
+        type="boolean"
+        default="true"
+        help="Whether or not the Daydream should be in fullscreen mode (in which case system UI will be hidden)." />
+
+    <parameter
+        id="isScreenBright"
+        name="Bright Screen?"
+        type="boolean"
+        default="true"
+        help="Whether or not the screen should be bright when this Daydream is running. The screen will be dim otherwise." />
+
+    <parameter
+        id="configurable"
+        name="Configuration Activity"
+        type="boolean"
+        default="false"
+        help="Whether or not to generate an associated settings Activity." />
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

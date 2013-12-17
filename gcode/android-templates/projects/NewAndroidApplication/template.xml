@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<template
+    format="1"
+    revision="2"
+    name="Android Application"
+    description="Creates a new Android application.">
+    <dependency name="android-support-v4" revision="8" />
+
+    <thumbs>
+        <thumb>template_new_project.png</thumb>
+    </thumbs>
+
+    <category value="Applications" />
+
+    <parameter
+        id="packageName"
+        name="Package name"
+        type="string"
+        constraints="package|nonempty"
+        default="com.mycompany.myapp" />
+
+    <parameter
+        id="appTitle"
+        name="Application title"
+        type="string"
+        constraints="nonempty"
+        default="My Application" />
+
+    <parameter
+        id="baseTheme"
+        name="Base Theme"
+        type="enum"
+        default="holo_light_darkactionbar"
+        help="The base user interface theme for the application">
+        <option id="none">None</option>
+        <option id="holo_dark" minBuildApi="11">Holo Dark</option>
+        <option id="holo_light" minBuildApi="11">Holo Light</option>
+        <option id="holo_light_darkactionbar" minBuildApi="14" default="true">Holo Light with Dark Action Bar</option>
+    </parameter>
+
+    <parameter
+        id="minApi"
+        name="Minimum API level"
+        type="string"
+        constraints="apilevel"
+        default="7" />
+
+    <!--
+      Usually the same as minApi, but when minApi is a code name this will be the corresponding
+      API level
+    -->
+    <parameter
+        id="minApiLevel"
+        name="Minimum API level"
+        type="string"
+        constraints="apilevel"
+        default="7" />
+
+    <parameter
+        id="targetApi"
+        name="Target API level"
+        type="string"
+        constraints="apilevel"
+        default="16" />
+
+    <parameter
+        id="buildApi"
+        name="Build API level"
+        type="string"
+        constraints="apilevel"
+        default="16" />
+
+    <parameter
+        id="copyIcons"
+        name="Include launcher icons"
+        type="boolean"
+        default="true" />
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

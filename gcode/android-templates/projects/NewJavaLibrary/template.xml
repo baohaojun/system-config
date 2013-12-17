@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<template
+    format="1"
+    revision="2"
+    name="Java Library"
+    description="Creates a new Java library.">
+
+    <thumbs>
+        <thumb>template_new_project.png</thumb>
+    </thumbs>
+
+    <category value="Applications" />
+
+    <parameter
+        id="projectName"
+        name="Library name"
+        type="string"
+        constraints="nonempty"
+        default="MyLibrary"/>
+
+    <parameter
+        id="packageName"
+        name="Java package name"
+        type="string"
+        constraints="nonempty"
+        default="com.example"/>
+
+    <parameter
+        id="className"
+        name="Java class name"
+        type="string"
+        constraints="nonempty"
+        default="MyClass"/>
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

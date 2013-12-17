@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<template
+    format="1"
+    revision="1"
+    name="Content Provider"
+    description="Creates a new content provider component and adds it to your Android manifest.">
+
+    <parameter
+        id="className"
+        name="Class Name"
+        type="string"
+        constraints="class|unique|nonempty"
+        default="MyContentProvider" />
+
+    <parameter
+        id="authorities"
+        name="URI Authorities"
+        type="string"
+        constraints="nonempty"
+        default=""
+        help="A list of one or more URI authorities that identify data under the purview of the content provider. " />
+
+    <parameter
+        id="isExported"
+        name="Exported"
+        type="boolean"
+        default="true"
+        help="Whether or not the content provider can be used by components of other applications " />
+
+    <parameter
+        id="isEnabled"
+        name="Enabled"
+        type="boolean"
+        default="true"
+        help="Whether or not the content provider can be instantiated by the system " />
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

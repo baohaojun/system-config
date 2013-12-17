@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<template
+    format="3"
+    revision="3"
+    name="Fullscreen Activity"
+    description="Creates a new activity that toggles the visibility of the system UI (status and navigation bars) and action bar upon user interaction."
+    minApi="4"
+    minBuildApi="16">
+    <dependency name="android-support-v4" revision="8" />
+
+    <category value="Activities" />
+
+    <parameter
+        id="activityClass"
+        name="Activity Name"
+        type="string"
+        constraints="class|unique|nonempty"
+        default="FullscreenActivity"
+        help="The name of the activity class to create" />
+
+    <parameter
+        id="layoutName"
+        name="Layout Name"
+        type="string"
+        constraints="layout|unique|nonempty"
+        suggest="${activityToLayout(activityClass)}"
+        default="activity_fullscreen"
+        help="The name of the layout to create for the activity" />
+
+    <parameter
+        id="activityTitle"
+        name="Title"
+        type="string"
+        constraints="nonempty"
+        default="FullscreenActivity"
+        suggest="${activityClass}"
+        help="The name of the activity." />
+
+    <parameter
+        id="isLauncher"
+        name="Launcher Activity"
+        type="boolean"
+        default="false"
+        help="If true, this activity will have a CATEGORY_LAUNCHER intent filter, making it visible in the launcher" />
+
+    <parameter
+        id="parentActivityClass"
+        name="Hierarchical Parent"
+        type="string"
+        constraints="activity|exists|empty"
+        default=""
+        help="The hierarchical parent activity, used to provide a default implementation for the 'Up' button" />
+
+    <parameter
+        id="packageName"
+        name="Package name"
+        type="string"
+        constraints="package"
+        default="com.mycompany.myapp" />
+
+    <thumbs>
+        <thumb>template_fullscreen_activity.png</thumb>
+    </thumbs>
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

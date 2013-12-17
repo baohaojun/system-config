@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<template
+    format="3"
+    revision="1"
+    name="New List Fragment"
+    description="Creates a new empty fragment containing a list that can optionally change to a grid when on large screens. Compatible back to API level 4."
+    minApi="7"
+    minBuildApi="8">
+
+    <dependency name="android-support-v4" revision="8" />
+
+    <category value="UI Components" />
+
+    <parameter
+        id="packageName"
+        name="Package name"
+        type="string"
+        constraints="package"
+        default="com.mycompany.myapp" />
+
+    <parameter
+        id="objectKind"
+        name="Object Kind"
+        type="string"
+        constraints="nonempty"
+        default="Item"
+        help="Other examples are 'Person', 'Book', etc." />
+
+    <parameter
+        id="includeFactory"
+        name="Include fragment factory methods?"
+        type="boolean"
+        default="true"
+        help="Generate static fragment factory methods for easy instantiation" />
+
+    <parameter
+        id="switchGrid"
+        name="Switch to grid view on large screens?"
+        type="boolean"
+        default="true" />
+
+    <!-- 128x128 thumbnails relative to template.xml -->
+    <thumbs>
+        <!-- default thumbnail is required -->
+        <thumb>templates_list_fragment.png</thumb>
+    </thumbs>
+
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

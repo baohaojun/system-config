@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<template
+    format="3"
+    revision="1"
+    name="New Blank Fragment"
+    description="Creates a blank fragment that is compatible back to API level 4."
+    minApi="7"
+    minBuildApi="8">
+
+    <dependency name="android-support-v4" revision="8" />
+
+    <category value="Other" />
+
+    <parameter
+        id="className"
+        name="Fragment Name"
+        type="string"
+        constraints="class|nonempty|unique"
+        default="BlankFragment"
+        help="The name of the fragment class to create" />
+
+    <parameter
+        id="includeLayout"
+        name="Create layout XML?"
+        type="boolean"
+        default="true"
+        help="Generate a layout XML for the fragment" />
+
+    <parameter
+        id="includeFactory"
+        name="Include fragment factory methods?"
+        type="boolean"
+        default="true"
+        help="Generate static fragment factory methods for easy instantiation" />
+
+    <parameter
+        id="includeCallbacks"
+        name="Include interface callbacks?"
+        type="boolean"
+        default="true"
+        help="Generate event callbacks for communication with an Activity or other fragments" />
+
+    <thumbs>
+        <thumb>template_blank_fragment.png</thumb>
+    </thumbs>
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

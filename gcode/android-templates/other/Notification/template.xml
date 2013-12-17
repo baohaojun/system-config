@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<template
+    format="3"
+    revision="1"
+    name="New Notification"
+    description="Creates a new helper class that can show or cancel a status bar notification."
+    minApi="4">
+
+    <dependency name="android-support-v4" revision="10" />
+
+    <category value="Other" />
+
+    <parameter
+        id="className"
+        name="Class Name"
+        type="string"
+        constraints="class|unique|nonempty"
+        default="NewMessageNotification"
+        help="The name of the notification helper class to create, e.g. 'NewMessageNotification'." />
+
+    <parameter
+        id="expandedStyle"
+        name="Style when Expanded"
+        type="enum"
+        default="text"
+        help="The expanded notification style to use for devices running Android 4.1 or later." >
+        <option id="none">None</option>
+        <option id="text" default="true">More text</option>
+        <option id="picture">Picture</option>
+        <option id="list">List</option>
+    </parameter>
+
+    <parameter
+        id="moreActions"
+        name="Show Additional Actions"
+        type="boolean"
+        default="true"
+        help="If true, this notification will contain additional actions when expanded on devices running Android 4.1 or later." />
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+    <thumbs>
+        <thumb>template_notification_text_actions.png</thumb>
+        <thumb expandedStyle="none">template_notification_none.png</thumb>
+        <thumb expandedStyle="none" moreActions="true">template_notification_none_actions.png</thumb>
+        <thumb expandedStyle="text">template_notification_text.png</thumb>
+        <thumb expandedStyle="text" moreActions="true">template_notification_text_actions.png</thumb>
+        <thumb expandedStyle="list">template_notification_list.png</thumb>
+        <thumb expandedStyle="list" moreActions="true">template_notification_list_actions.png</thumb>
+        <thumb expandedStyle="picture">template_notification_picture.png</thumb>
+        <thumb expandedStyle="picture" moreActions="true">template_notification_picture_actions.png</thumb>
+    </thumbs>
+
+    <icons
+        type="notification"
+        name="ic_stat_${camelCaseToUnderscore(className?replace('notification','','i'))}" />
+</template>
