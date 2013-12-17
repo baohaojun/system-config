@@ -134,6 +134,11 @@ print $debug "def_lines are @def_lines\n";
 my $last_match_def_line = 1;
 my %file_line_map;
 my %printed_func_map;
+(my $dir = $ENV{GTAGS_START_FILE}) =~ s!(.*)/.*!$1!;
+(my $start_file_base = $ENV{GTAGS_START_FILE}) =~ s!.*/!!;
+
+printf "Entering directory `%s'\n", $dir;
+
 while(<$file>) {
     $file_line_map{$.} = $_;
     next unless m/$target/;
@@ -199,7 +204,7 @@ while(<$file>) {
                 $current_def_line--;
             }
             $calling_tag = "<=";
-            my $output = $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag "
+            my $output = $start_file_base . ":$current_def_line: $calling_tag "
                 .
                 (
                  $silent ? ($def_line_map{$current_def_line} . "\n") : $file_line_map{$current_def_line}
@@ -208,7 +213,7 @@ while(<$file>) {
             $calling_tag = "=>";
         }
 
-        my $output = $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag "
+        my $output = $start_file_base . ":$current_def_line: $calling_tag "
             .
             (
              $silent ? ($def_line_map{$current_def_line} . "\n") : $file_line_map{$current_def_line}
@@ -218,5 +223,5 @@ while(<$file>) {
         $printed_func_map{$current_def_line} = 1;
     }
     # => callee
-    print $ENV{GTAGS_START_FILE} . ":$.: => " . $line_str unless ($silent or $current_def_line == $.);
+    print $start_file_base . ":$.: => " . $line_str unless ($silent or $current_def_line == $.);
 }
