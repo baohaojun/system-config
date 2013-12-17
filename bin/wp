@@ -76,6 +76,16 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         esac
     }
 
+    function urlp() #file:///
+    {
+        echo -n "file://$(readlink -f "$FILE")"
+    }
+
+    function orgp() #[[file:///][basename]]
+    {
+        echo -n "[[file://$(readlink -f "$FILE")][$(basename "$FILE")]]"
+    }
+
     function tmp() #tramp mail path
     {
 
@@ -95,7 +105,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo "$out" | putclip
     fi
 else # we are being sourced
-    for x in swp sup gitp wp ap up mp tmp realp; do
+    for x in swp sup gitp wp ap up mp tmp realp urlp orgp; do
         eval 'function '$x'() {
             command '$x' "$@" || { renew-xauth; command '$x' "$@"; }
             if test "$NO_PUTCLIP" = true; then
