@@ -26,7 +26,7 @@ sawfish-client -e "$env"
 
 python -c "
 import gnomekeyring
-gnomekeyring.unlock_sync(None, '$(get-authinfo localhost)')"
+gnomekeyring.unlock_sync(None, '$(get-authinfo localhost $USER 22)')"
 
 run-dir-once ~/external/sawfish/start&
 run-dir-once ~/.sawfish/start&
