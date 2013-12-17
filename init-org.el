@@ -87,9 +87,15 @@
 ;;                   (re-search-backward "^[0-9]+:[0-9]+-[0-9]+:[0-9]+ " nil t))
 ;;                 (insert (match-string 0))))))
 
+(defun org-summary-todo (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
 
 (after-load 'org
   (define-key org-mode-map (kbd "C-M-<up>") 'org-up-element)
+  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
   (when *is-a-mac*
     (define-key org-mode-map (kbd "M-h") nil))
   (define-key org-mode-map (kbd "C-M-<up>") 'org-up-element)
