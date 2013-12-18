@@ -31,6 +31,10 @@ sudo perl -npe 's/^#user_allow_other/user_allow_other/' -i /etc/fuse.conf
 mkdir -p ~/src/github
 emacs-install-packages
 
+if test ! -d /usr/local/share/info; then
+    sudo mkdir -p /usr/local/share/info
+fi
+
 sudo ln -s ~/doc/bash.info.gz /usr/local/share/info/ -f
 
 (
