@@ -43,7 +43,7 @@ unless ( $exclude || $pattern || $file ) {
     pod2usage();
 }
 
-my $dir = ".";
+my $dir = shift || ".";
 
 # Backup TAGS
 if ( -e "TAGS" ) {
@@ -71,17 +71,15 @@ if ( $pattern || $exclude ) {
         }, $dir);
     } else {
         opendir(DIR, $dir) or die "Can't open directory .: $!";
-        foreach ( readdir DIR ) {
-            next unless -f $_;
-            if ( /$pattern/ ) {
-                next if defined $exclude && /$exclude/;
-                etags("-a", $_, @ARGV)
-                    or die "Can't create tags file: $!";
+        while ( my $file = readdir DIR ) {
+            if ( $file =~ /$pattern/ && (!defined $exclude || $file !~ /$exclude/) ) {
+                $file = File::Spec->catfile($dir, $file);
+                next unless -f $file;
+                etags("-a", $file, @ARGV) or die "Can't create tags file: $!";
             }
         }
     }
-}
-else {
+} else {
     etags("-a", $file, @ARGV)
         or die "Can't create tags file: $!";
 }
