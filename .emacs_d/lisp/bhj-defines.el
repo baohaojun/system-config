@@ -880,12 +880,15 @@ might be bad."
          gnus-newsgroup-name)))
     nnmaildir-article-file-name))
 
+(defun bhj-current-word ()
+  (bhj-grep-tag-default))
+
 ;;;###autoload
 (defun bhj-help-it ()
   "open help for the current word"
   (interactive)
   (ajoke--setup-env)
-  (shell-command-to-string (format "bhj-help-it %s %s >~/.logs/bhj-help-it.log 2>&1&" major-mode (shell-quote-argument (current-word)))))
+  (shell-command-to-string (format "bhj-help-it %s %s >~/.logs/bhj-help-it.log 2>&1&" major-mode (shell-quote-argument (bhj-current-word)))))
 
 ;;;###autoload
 (defun bhj-view-mail-external ()
@@ -1211,6 +1214,11 @@ criteria can be provided via the optional match-string argument "
      (if (buffer-file-name prev-buffer)
          (replace-regexp-in-string ".*/" "" (buffer-file-name prev-buffer))
        (buffer-name prev-buffer)))))
+
+;;;###autoload
+(defun bhj-file-basename ()
+  (let ((fn (or (buffer-file-name) (buffer-name))))
+    (setq fn (file-name-nondirectory fn))))
 
 ;;;###autoload
 (defun bhj-insert-pwdw ()

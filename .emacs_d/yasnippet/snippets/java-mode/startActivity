@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: startActivity
+# key: startActivity
+# --
+Intent intent = new Intent();
+intent.setClass(${1:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`.class}, ${2:ForwardTarget.class});
+startActivity(intent);
+${3:finish()}
+$0

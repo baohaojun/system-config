@@ -24,3 +24,5 @@ else
     ant installd 2>&1 | tee ~/.logs/ant-install.log
     android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
 fi
+find-or-exec emulator
+adb logcat

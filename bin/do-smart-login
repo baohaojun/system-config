@@ -1,6 +1,7 @@
 #!/bin/bash
 appcode=$(cat ~/.config/smart-appcode)
-code=$(wget "https://login.alibaba-inc.com/authorize/login.do?appcode=$appcode&name=haojun.bhj&password=$(get-authinfo localhost $USER 22)&authtype=user" -O - 2>/dev/null )
+pass=${1:-$(get-authinfo localhost $USER 22)}
+code=$(wget "https://login.alibaba-inc.com/authorize/login.do?appcode=$appcode&name=haojun.bhj&password=$pass&authtype=user" -O - 2>/dev/null )
 
 
 echo "$code"

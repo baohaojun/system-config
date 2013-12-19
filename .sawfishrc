@@ -413,6 +413,7 @@
 (bind-keys global-keymap "C-ESC" '(synthesize-event "ESC" (input-focus)))
 (bind-keys s-h-keymap "g"  '(system "emacsclient -d -e '(gnus)'&"))
 (bind-keys s-h-keymap "w"  '(system "emacs-weibo&"))
+(bind-keys s-h-keymap "m" 'move-window-interactively)
 
 (add-hook 'focus-in-hook
           (lambda (w focus-mode)

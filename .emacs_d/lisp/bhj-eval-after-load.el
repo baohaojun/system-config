@@ -9,6 +9,10 @@
      (add-hook 'before-save-hook 'cleanup-buffer-safe)
      (add-hook 'before-save-hook 'confirm-risky-remote-edit)))
 
+(eval-after-load 'helm-buffers
+  '(defun helm-buffers-sort-transformer (candidates _source)
+     candidates))
+
 (eval-after-load 'c-mode '(c-set-style 'k&r))
 
 (eval-after-load 'js '(define-key js-mode-map [(meta .)] 'grep-gtags))

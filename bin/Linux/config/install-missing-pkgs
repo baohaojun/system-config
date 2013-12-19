@@ -31,3 +31,10 @@ echo "missing_packages are $missing_packages" >> ~/.logs/$(basename $0).log
 for x in $missing_packages; do
     sudo apt-get install "$@" -y $x || true
 done
+
+(
+    cd ~/bin/Linux/config/pkgs;
+    for x in *:*; do
+        test -e "$x" && sudo apt-get install -y "$x" || true
+    done
+)

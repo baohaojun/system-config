@@ -26,6 +26,7 @@
               start (1+ end)))
       (concat "\"" result (substring argument start) "\"")))))
 
+;;;###autoload
 (defun bhj-grep-tag-default ()
   (let ((tag (grep-tag-default)))
   (cond

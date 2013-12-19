@@ -63,4 +63,14 @@ case $1 in
             fi
         fi
         ;;
+    *)
+        if [[ "$2" =~ ^android: ]]; then
+            anchor=${2/android:/R.attr.html#}
+            if grep -P -e "\Q$anchor\E" ~/external/bin/Linux/ext/android-sdk-linux/docs/reference/android/R.attr.html; then
+                firefox-open-url-pattern /android-sdk-linux/ file://$HOME/external/bin/Linux/ext/android-sdk-linux/docs/reference/android/$anchor
+            else
+                ask-for-input-with-sawfish -P "$2 not found in R.attr.html? "
+            fi
+        fi
+        ;;
 esac
