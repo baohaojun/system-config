@@ -59,7 +59,7 @@ GetOptions(
     "T=s" => sub {$type_re = qr($_[1])i; $reverse_type_re = 1},
     );
 
-if ($lookup_needle =~ m/^\w+\.\.\*/ or $member_lookup) {
+if ($lookup_needle =~ m/^\w+\.\.\*/ or $member_lookup and $lookup_needle =~ m/\./) {
 # so that when I search for String.* it will allow me to select java.lang.String..*
     (my $id = $lookup_needle) =~ s/(\..*)//;
     my $replaced = $1;
