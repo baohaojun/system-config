@@ -105,16 +105,10 @@ end
 $temp_methods = {
   slashedPackageName: proc {|t|
     if not t
-      packages = `rgrep '^package.*;' src | pn 2 | sort -u | grep . | perl -npe 's/;//'`
-      packages.gsub!(/\n/, " ")
-      packages += " com.baohaojun.unknown"
-      prompt = Shellwords.escape "What is your package name? "
-      input = `select-args -p #{prompt} #{packages}`
-      input.gsub!(/ : .*/, "")
-      t = input
-      t.gsub(/\./, '/')
-      $parameter['packageName'] ||= t
+      puts "packageName is empty, will exit!"
+      exit 1
     end
+    t.gsub(/\./, '/')
   },
 
   camelCaseToUnderscore: proc {|t|

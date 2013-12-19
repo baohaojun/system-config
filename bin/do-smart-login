@@ -1,6 +1,10 @@
 #!/bin/bash
 appcode=$(cat ~/.config/smart-appcode)
-code=$(wget "https://login-test.alibaba-inc.com/authorize/login.do?appcode=$appcode&name=haojun.bhj&password=$(get-authinfo localhost $USER 22)&authtype=user" -O - 2>/dev/null | perl -npe 's/.*:"//; s/".*//')
-echo $code
+code=$(wget "https://login.alibaba-inc.com/authorize/login.do?appcode=$appcode&name=haojun.bhj&password=$(get-authinfo localhost $USER 22)&authtype=user" -O - 2>/dev/null )
 
-wget -O - 2>/dev/null "https://login-test.alibaba-inc.com/authorize/getAccessToken.do?appcode=$appcode&authcode=$code&clienttype=1"
+
+echo "$code"
+
+code=$(echo "$code" | perl -npe 's/.*:"//; s/".*//')
+
+wget -O - 2>/dev/null "https://login.alibaba-inc.com/authorize/getAccessToken.do?appcode=$appcode&authcode=$code&clienttype=1"

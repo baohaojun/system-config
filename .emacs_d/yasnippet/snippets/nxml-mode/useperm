@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: useperm
+# key: useperm
+# --
+    <uses-permission android:name=${1:$$(yas-choose-value
+         (or
+           (and (boundp 'bhj-yas-android-perms) bhj-yas-android-perms)
+           (setq bhj-yas-android-perms (split-string (shell-command-to-string "grep -o -P -e '\\"android.permission..*?\\"' ~/src/android/prebuilts/sdk/api/19.txt | sort -u")))))}/>

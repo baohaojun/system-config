@@ -1,0 +1,34 @@
+# -*- mode: snippet -*-
+# name: atask
+# key: atask
+# --
+    private class $1 extends AsyncTask<${2:String, String, String}> {
+        @Override
+            protected void onPreExecute() {
+            //mTitleBar.startAnimation(mSlideIn);
+        }
+
+        @Override
+            protected String doInBackground(String... args) {
+                // publishProgress("");
+                return "";
+        }
+
+        @Override
+        protected void onProgressUpdate(String... args) {
+            // String searchWord = args[0];
+            // setEntryTitle(searchWord);
+        }
+
+        /**
+         * When finished, push the newly-found entry content into our
+         * {@link WebView} and hide the {@link ProgressBar}.
+         */
+        @Override
+        protected void onPostExecute(String parsedText) {
+            //mTitleBar.startAnimation(mSlideOut);
+            //mProgress.setVisibility(View.INVISIBLE);
+
+            //setEntryContent(parsedText);
+        }
+    }

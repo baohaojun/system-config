@@ -8,6 +8,9 @@
 
 #all the other packages
 
+if ! echo x | grep -P -q -e '.'; then
+    sudo apt-get install -y libpcre3
+fi
 sudo perl -npe 's/^deb\s+\b/deb [arch=amd64,i386] /' -i /etc/apt/sources.list
 if ! grep -q -P -e 'debian/? testing main' /etc/apt/sources.list; then
     if ! perl -e 'use String::Escape' >/dev/null 2>&1; then

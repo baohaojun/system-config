@@ -38,6 +38,10 @@ sub count_dot($)
     return length $str;
 }
 
+@{$ip_map{"127.0.0.1"}} = (@{$ip_map{"127.0.0.1"}}, @{$ip_map{"127.0.1.1"}});
+delete $ip_map{"127.0.1.1"};
+
+
 for my $ip ("127.0.0.1", "::1") {
     if (exists $ip_map{$ip}) {
         @{$ip_map{$ip}} = sort {count_dot $b <=> count_dot $a} @{$ip_map{$ip}};

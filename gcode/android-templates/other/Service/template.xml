@@ -5,6 +5,13 @@
     name="Service"
     description="Creates a new service component and adds it to your Android manifest.">
 
+  <parameter
+      id="packageName"
+      name="Package name"
+      type="string"
+      constraints="package"
+      default="com.mycompany.myapp" />
+
     <parameter
         id="className"
         name="Class Name"
