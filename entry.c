@@ -652,6 +652,10 @@ extern boolean statementEnded(const char *line, const char *chars)
 
 static int writeXrefEntry (const tagEntryInfo *const tag)
 {
+    if (strlen(tag->name) > 500) {
+        return 0;
+    }
+
         const char * line =
                         readSourceLine (TagFile.vLine, tag->filePosition, NULL);
 
