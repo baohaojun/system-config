@@ -1,4 +1,5 @@
 (require 'ajoke)
+(require 'gnus-sum)
 
 ;;;###autoload
 (defun cleanup-buffer-safe ()

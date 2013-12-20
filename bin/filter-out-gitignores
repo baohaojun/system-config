@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+use strict;
+
+my %is_git_dir; #
+
+sub check_is_git_dir($)
+{
+    my $dir = shift;
+    if (exists $is_git_dir{$dir}) {
+        return $is_git_dir{$dir}
+    }
+
+    my $last_slash = rindex($dir, "/");
+    if ($last_slash != -1) {
+        my $pdir = substr($dir, 0, $last_slash);
+        my $is_pdir_git = check_is_git_dir($pdir);
+        if ($is_pdir_git) {
+            return $is_git_dir{$dir} = 1;
+        }
+    }
+    if (-e "$dir/.git") {
+        return $is_git_dir{$dir} = 1;
+    }
+    return $is_git_dir{$dir} = 0;
+}
+
+my %git_ignore_file;
+my %git_ignore_patterns;
+
+sub get_next_ignore_pattern($)
+{
+    my $dir = shift;
+    while (1) {
+        if (-f "$dir/.gitignore") {
+            return
+
+
+
+}
+
+while (<>) { # each read line is a file, not a dir, output from "find . -type f"
+    chomp(my $file = $_);
+    my $dir = substr($file, 0, rindex($file, "/"));
+    my $base = substr($file, length($dir) + 1);
+
+    # see if we have already checked the directory
+    unless ($git_projects{$dir} or $non_git_dirs{$dir}) {
+
+
+    if (-e "$dir/.git") {
+
+}

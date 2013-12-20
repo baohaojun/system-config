@@ -32,7 +32,7 @@
   (cond
    ((region-active-p)
     tag)
-   ((string-match "/res/.*\.xml" (or (buffer-file-name) ""))
+   ((string-match "/res/.*\.xml\\|AndroidManifest.xml" (or (buffer-file-name) ""))
     (replace-regexp-in-string "</\\w+>\\|^<\\|^.*?/" "" tag))
    (t
     (replace-regexp-in-string "^<\\|>$" "" tag)))))

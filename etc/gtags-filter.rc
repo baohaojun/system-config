@@ -4,4 +4,5 @@ if test -d bionic -a "$relativeSrcDir" = .; then
    grep -v -P -e 'match-overrun.c|\.jar'
 else
     cat
-fi | grep -v dalvik/dx/tests/
+fi | grep -v dalvik/dx/tests/ |
+perl -ne 'print unless (m!/(bin|gen)/! and -e "$`/AndroidManifest.xml")'

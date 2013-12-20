@@ -2,8 +2,13 @@
 (global-set-key (kbd "C-c o") (lambda()(interactive)(shell-command-to-string (format "of %s" (shell-quote-argument (buffer-file-name))))))
 (global-set-key (kbd "C-c y n") 'yas-new-snippet)
 (global-set-key (kbd "C-c y v") 'yas-visit-snippet-file)
-(global-set-key (kbd "C-c i f") (lambda () (interactive) (insert (bhj-file-basename))))
-(global-set-key (kbd "C-c i F") (lambda () (interactive) (insert (file-name-sans-extension (bhj-file-basename)))))
+
+(defun bhj-insert-file-basename () (interactive) (insert (bhj-file-basename)))
+(defun bhj-insert-file-basename-sans-extension () (interactive) (insert (file-name-sans-extension (bhj-file-basename))))
+(defun bhj-insert-line-number () (interactive) (insert (format "%d" (line-number-at-pos))))
+(global-set-key (kbd "C-c i f") 'bhj-insert-file-basename)
+(global-set-key (kbd "C-c i F") 'bhj-insert-file-basename-sans-extension)
+(global-set-key (kbd "C-c i l") 'bhj-insert-line-number)
 (global-set-key [(control c) ??] 'bhj-c-show-current-func)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-x b") 'helm-buffers-list)
@@ -109,4 +114,3 @@
 (global-set-key [(super ?\\)] 'toggle-input-method)
 (define-key global-map [remap upcase-region] 'bhj-upcase-symbol-or-region)
 (define-key global-map [remap downcase-region] 'bhj-downcase-symbol-or-region)
-
