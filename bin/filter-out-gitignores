@@ -3,6 +3,8 @@ use strict;
 
 my %is_git_dir; #
 
+sub check_is_git_dir($);
+
 sub check_is_git_dir($)
 {
     my $dir = shift;
@@ -26,27 +28,92 @@ sub check_is_git_dir($)
 
 my %git_ignore_file;
 my %git_ignore_patterns;
+sub get_next_ignore_pattern($);
 
+sub get_ignore_patterns_from_file($)
+{
+    my $gitignore = shift;
+    open(my $file, "<", $gitignore) or die "Can't open $gitignore";
+    my @lines = <$file>;
+    close($file);
+    @lines = grep {not m/^#/ and m/\S/} @lines;
+    map {chomp} (my @positive = grep {not m/^!/} @lines);
+    map {chomp; s/^!//} (my @negative = grep {m/^!/} @lines);
+    my $dir = substr($gitignore, 0, rindex($gitignore, "/"));
+
+
+    return {
+        positive => \@positive,
+        negative => \@negative,
+        dir => $dir,
+    };
+}
+
+my %next_ignore_pattern;
 sub get_next_ignore_pattern($)
 {
     my $dir = shift;
-    while (1) {
-        if (-f "$dir/.gitignore") {
-            return
 
+    if (exists $next_ignore_pattern{$dir}) {
+        return $next_ignore_pattern{$dir};
+    }
 
-
+    if (-f "$dir/.gitignore") {
+        return $next_ignore_pattern{$dir} = get_ignore_patterns_from_file("$dir/.gitignore");
+    }
+    if (-e "$dir/.git") {
+        return $next_ignore_pattern{$dir} = undef; # no .gitignore, and have reached top of git repo
+    }
+    my $last_slash = rindex($dir, "/");
+    if ($last_slash != -1) {
+        my $pdir = substr($dir, 0, $last_slash);
+        return $next_ignore_pattern{$dir} = get_next_ignore_pattern($pdir);
+    }
 }
+use Text::Glob qw( match_glob );
 
+checking_file:
 while (<>) { # each read line is a file, not a dir, output from "find . -type f"
     chomp(my $file = $_);
     my $dir = substr($file, 0, rindex($file, "/"));
     my $base = substr($file, length($dir) + 1);
 
     # see if we have already checked the directory
-    unless ($git_projects{$dir} or $non_git_dirs{$dir}) {
+    if (not check_is_git_dir($dir)) {
+        print "$file is not ignored\n";
+        next checking_file;
+    } else {
+        while (1) {
+            my $patterns = get_next_ignore_pattern($dir);
+            if (not $patterns) {
+                print "$file is not ignored\n";
+                next checking_file;
+            } else {
+                my $gitignore_dir = $patterns->{dir};
+                my $file_check = substr($file, length($gitignore_dir) + 1);
 
+                for my $positive (@{$patterns->{positive}}) {
+                    if (match_glob($positive, $file_check)) {
+                        print "$file is ignored\n";
+                        next checking_file;
+                    }
+                }
+                for my $negative (@{$patterns->{negative}}) {
+                    if (match_glob($negative, $file_check)) {
+                        print "$file is not ignored\n";
+                        next checking_file;
+                    }
+                }
 
-    if (-e "$dir/.git") {
-
+                if (-e "$gitignore_dir/.git") { # top of git repo
+                    print "$file is not ignored\n";
+                    next checking_file;
+                }
+                my $last_slash = rindex($gitignore_dir, "/");
+                if ($last_slash != -1) {
+                    $dir = substr($gitignore_dir, 0, $last_slash);
+                }
+            }
+        }
+    }
 }
