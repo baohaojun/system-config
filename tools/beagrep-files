@@ -51,7 +51,8 @@ for x in "$beagrep_dir" $(cat "$beagrep_dir"/../.beagrep-brothers 2>/dev/null)
 do
     beagrep-static-query \
         --add-static-backend "$(wlp "$x")" \
-        --backend none --max-hits 100000 "$tokens" | \
-        beagrep-unurl.pl|grep -v '#'|sort -u
+        --backend none --max-hits 100000 "$tokens" |
+    beagrep-unurl-and-filter.pl|grep -v '#' |
+    sort -u
 done
 echo /dev/null
