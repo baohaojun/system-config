@@ -1,5 +1,4 @@
 SUBSYSTEM=="usb", ATTR{idVendor}=="096e", MODE="0666", OWNER="bhj"
-SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", OWNER="bhj"
 SUBSYSTEM=="usb", ATTR{idVendor}=="0955", MODE="0666", OWNER="bhj"
 SUBSYSTEM=="usb", ATTR{idVendor}=="0bb4", MODE="0666", OWNER="bhj"
 SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", MODE="0666", OWNER="bhj"

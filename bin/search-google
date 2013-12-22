@@ -26,6 +26,14 @@ if test $prog = search-google; then
     url="https://www.google.com.hk/search?q=$fill"
 fi
 
+if test $prog = search-gmap; then
+    if test -e "$1"; then
+        gps=$(exiftool "$1" | grep "GPS Coord" | head -n 1 | perl -npe 's/.*?://; s/ deg /°/g; s/\s+//g; $_ = substr($_, 0, rindex($_, ",")); s/[ESWN]//g');
+        fill=$(echo "$gps" | perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g')
+        url="http://ditu.google.cn/maps?newwindow=1&safe=strict&q=$fill&um=1&ie=UTF-8&hl=zh-CN&sa=N&tab=wl"
+    fi
+fi
+
 if test $prog = search-aliman; then
     url="http://work.alibaba-inc.com/work/search?keywords=$fill&type=person&offset=0&tabIndex=1"
 fi

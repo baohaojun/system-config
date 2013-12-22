@@ -1,7 +1,10 @@
 #!/bin/bash
 
-find "${1:-$(select-args */)}" -iname '*.jpg' -type f|xargs -d \\n bash -c 'for x in "$@";
- do read a b c date time <<< $(exiv2 "$x" |grep timestamp);
+export OUTPUT_DIR=$(select-args -p "output directory: " . */)
+find "${1:-$(select-args -p 'which folder to search? ' */)}" \( -iname '*.jpg' -o -iname '*.mov' -o -iname '*.mp4' \) -type f|xargs -d \\n bash -c 'for x in "$@"; do
+ set -x
+ read a b c date time <<< $(exiftool "$x" |grep -P -i -e "^create date\s+:");
+ ext=$(echo ${x##*.} | perl -npe "\$_ = lc \$_")
  date=${date//:/-};
  time=${time//:/：};
  test "$date" -a "$time" || {
@@ -9,16 +12,16 @@ find "${1:-$(select-args */)}" -iname '*.jpg' -type f|xargs -d \\n bash -c 'for 
      continue;
  };
 
- mkdir -p ${date%-??};
- date=./${date%-??}/$date;
- if test -e $date-$time.jpg;
- then diff $date-$time.jpg "$x" >/dev/null 2>&1 && echo "$date-$time.jpg and $x is the same" && rm "$x" || { n=1;
- while test -e $date-$time-$n.jpg;
+ mkdir -p $OUTPUT_DIR/$ext/${date%-??};
+ date=$OUTPUT_DIR/$ext/${date%-??}/$date;
+ if test -e $date-$time.$ext;
+ then diff $date-$time.$ext "$x" >/dev/null 2>&1 && echo "$date-$time.$ext and $x is the same" && rm "$x" || { n=1;
+ while test -e $date-$time-$n.$ext;
  do ((n++));
  done;
- mv -v "$(readlink -f "$x")" $date-$time-$n.jpg;
+ mv -v "$(readlink -f "$x")" $date-$time-$n.$ext;
  };
  continue;
- else mv -v "$(readlink -f "$x")" $date-$time.jpg;
+ else mv -v "$(readlink -f "$x")" $date-$time.$ext;
  fi;
  done' true
