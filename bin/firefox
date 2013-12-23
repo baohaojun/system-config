@@ -10,6 +10,12 @@ function debug() {
 }
 export -f debug
 
+the_firefox=~/external/firefox/firefox
+
+if test "$#" = 1 -a -e "$1" -a "${1##*.}" = pdf; then
+    exec $the_firefox -new-tab "$(urlp "$1")"
+fi
+
 function push-url() {
     ring=$1
     shift
@@ -101,10 +107,10 @@ if test "$1" = -current-tab; then
     shift
 fi
 
-if test -x ~/external/firefox/firefox; then
+if test -x $the_firefox; then
     if test "$(get-pid-env external/firefox/firefox DISPLAY)" != "DISPLAY=$DISPLAY"; then
         debug "Won't start firefox $@ because it is running in another display"
         exit -1
     fi
-    exec ~/external/firefox/firefox "$@" 2>&1
+    exec $the_firefox "$@" 2>&1
 fi

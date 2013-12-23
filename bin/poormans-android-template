@@ -225,6 +225,8 @@ if $recipe_str
       file = File.new(to, 'w')
       file.write(from_str)
       file.close
+    elsif system("yes-or-no-p -y '#{to} already exists, merge it?'")
+      $recipe_config['merge'] += [inst_spec]
     end
   end
 

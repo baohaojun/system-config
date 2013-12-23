@@ -4,7 +4,8 @@ if test $# = 0 -a $(basename $0) = my-dict-maybe; then
         set -- "$(xclip -o)"
 elif test $# = 0; then
     input=$(ask-for-input-with-sawfish -p "md> ")
-    if test "$input" = '""'; then
+    echo input is "$input" >> ~/.logs/my-dict.log
+    if test "$input" = ''; then
         set -- "$(xclip -o)"
     else
         set -- $(echo $input|perl -npe 's/"//g')
