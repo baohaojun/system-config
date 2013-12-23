@@ -13,11 +13,11 @@ fi
 
 me=$(readlink -f $0)
 ajoke_bindir=$(dirname $me)
-ajoke_dir=$(dirname $ajoke_bindir)
-export AJOKE_DIR=$ajoke_dir # this env is used by other scripts
+AJOKE_DIR=$(dirname $ajoke_bindir)
+export AJOKE_DIR # this env is used by other scripts (java-add-fallback), so export it
 
-if test ! -e $ajoke_dir/etc/perl/BhjJava.pm; then
-    die "$ajoke_dir/etc/perl/BhjJava.pm not found,
+if test ! -e $AJOKE_DIR/etc/perl/BhjJava.pm; then
+    die "$AJOKE_DIR/etc/perl/BhjJava.pm not found,
 incorrect git clone? Please run:
     git clone --recursive http://github.com/baohaojun/ajoke"
 fi
@@ -28,7 +28,7 @@ export PATH=$ajoke_bindir:$PATH
 export PERL_LOCAL_LIB_ROOT="$perl5d";
 export PERL_MB_OPT="--install_base $perl5d";
 export PERL_MM_OPT="INSTALL_BASE=$perl5d";
-export PERL5LIB="$perl5d/lib/perl5/x86_64-linux-gnu-thread-multi:$perl5d/lib/perl5:$ajoke_dir/etc/perl:$PERL5LIB";
+export PERL5LIB="$perl5d/lib/perl5/x86_64-linux-gnu-thread-multi:$perl5d/lib/perl5:$AJOKE_DIR/etc/perl:$PERL5LIB";
 export PATH="$perl5d/bin:$PATH";
 
 function prompt () {
@@ -67,7 +67,7 @@ build it now (will need sudo for installing)?"; then
                     yes-or-no-p "Ignore the error and continue to build? " or die "Will now exit";
                 }
 
-                cd $ajoke_dir
+                cd $AJOKE_DIR
                 cd ./external/global
                 sh ./reconf.sh
                 ./configure
@@ -94,10 +94,10 @@ build it now (will need sudo for installing)?"; then
     fi
 
     global_prefix=$(dirname $(dirname $global_path))
-    gtags_conf_in=$ajoke_dir/external/global/gtags.conf.in
+    gtags_conf_in=$AJOKE_DIR/external/global/gtags.conf.in
 
     perl -npe "s,\@prefix\@,$global_prefix,g" $gtags_conf_in > ~/.globalrc
-    ln -sf $ajoke_dir/etc/.ctags ~/
+    ln -sf $AJOKE_DIR/etc/.ctags ~/
 
     javac_path=$(readlink -f $(which javac))
     if test -z "$javac_path"; then
@@ -110,7 +110,7 @@ build it now (will need sudo for installing)?"; then
 
     if test -e ~/.cache/for-code-reading/$java_dir/GTAGS; then
         echo "Good, you have done mkgtags for java"
-        for rc in $ajoke_dir/etc/bash.d/*; do
+        for rc in $AJOKE_DIR/etc/bash.d/*; do
             if test -f $rc; then
                 . $rc
             fi

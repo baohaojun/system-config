@@ -58,15 +58,15 @@ named =ajoke-test-drive=, so after you check out ajoke, you can simply
 type =./ajoke/bin/ajoke-test-drive= to have a taste of it.
 
 If you are not using Debian alike systems, then please follow these
-steps, supposing ajoke is checked out in =$ajoke_dir= (in my case, it
+steps, supposing ajoke is checked out in =$AJOKE_DIR= (in my case, it
 is =~/gcode/ajoke=, yours may vary):
 
 *** Put ajoke scripts into you PATH and Perl PATH:
    
    #+BEGIN_SRC sh
-   export ajoke_dir=~/gcode/ajoke #PLEASE MODIFY THIS TO SUIT YOUR CASE
-   export export PATH=$ajoke_dir/bin:$PATH
-   export PERL5LIB="$ajoke_dir/etc/perl:$PERL5LIB";
+   export AJOKE_DIR=~/gcode/ajoke #PLEASE MODIFY THIS TO SUIT YOUR CASE
+   export export PATH=$AJOKE_DIR/bin:$PATH
+   export PERL5LIB="$AJOKE_DIR/etc/perl:$PERL5LIB";
    #+END_SRC
 
 *** Install 3 cpan modules
@@ -127,8 +127,8 @@ apt-get install sudo bash-completion autoconf automake \
     Suppose your global installed into =/usr/local/bin/global=, then ~global_prefix=/usr/local~
    #+BEGIN_SRC sh
    global_prefix=/usr/local
-   perl -npe "s,\@prefix\@,$global_prefix,g" $ajoke_dir/external/global/gtags.conf.in > ~/.globalrc
-   ln -sf $ajoke_dir/etc/.ctags ~/
+   perl -npe "s,\@prefix\@,$global_prefix,g" $AJOKE_DIR/external/global/gtags.conf.in > ~/.globalrc
+   ln -sf $AJOKE_DIR/etc/.ctags ~/
    #+END_SRC
 
 *** Create Gnu Global tags for JDK
@@ -160,7 +160,7 @@ apt-get install sudo bash-completion autoconf automake \
    # as it'd be a waste of time to find 2 copies of java.lang.String     
    #+END_SRC
    
-*** Require $ajoke_dir/etc/elisp/ajoke.el in your .emacs
+*** Require $AJOKE_DIR/etc/elisp/ajoke.el in your .emacs
 
     And start laughing:-)
 
