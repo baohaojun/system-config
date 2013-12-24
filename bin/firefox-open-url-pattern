@@ -5,6 +5,25 @@ function die() {
     exit -1
 }
 
+exact=
+TEMP=$(getopt -o e --long exact -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -e|--exact)
+            exact=-e
+            shift 1
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $1"
+            ;;
+    esac
+done
+
 if test $# != 2; then
     die "Error: Usage $(basename $0) pattern url"
 fi
@@ -16,9 +35,14 @@ new_tab=-new-tab
 
 firefox push "$(get-firefox-tab-url)"
 
-if firefox-search-for-tab "$pattern"; then
+if firefox-search-for-tab $exact "$pattern"; then
     new_tab=-current-tab
 fi
 
-firefox $new_tab "$url"
+if test "$exact"; then
+    find-or-exec firefox
+    exit 0;
+fi
+
+exec firefox $new_tab "$url"
 

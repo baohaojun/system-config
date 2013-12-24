@@ -13,7 +13,7 @@ export -f debug
 the_firefox=~/external/firefox/firefox
 
 if test "$#" = 1 -a -e "$1" -a "${1##*.}" = pdf; then
-    exec $the_firefox -new-tab "$(urlp "$1")"
+    exec firefox-open-url-pattern -e "$(urlp "$1")" "$(urlp "$1")"
 fi
 
 function push-url() {

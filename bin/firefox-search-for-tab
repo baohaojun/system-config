@@ -2,16 +2,49 @@
 
 set -e
 
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+exact=0
+TEMP=$(getopt -o e --long exact -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -e|--exact)
+            exact=1
+            shift 1
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $1"
+            ;;
+    esac
+done
+
 if test $# != 1; then
     die "Error: Usage $(basename $0) url_pattern"
+fi
+
+if test "$DEBUG" = true; then
+    echo "searching for $1"
 fi
 
 for x in $(seq 1 50); do
     url=$(get-firefox-tab-url)
     if test "$DEBUG" = true; then
-        echo $url
+        echo "url is $(echo "$url" | unurl.pl)"
     fi
-    if echo "$url" | grep -q -P -e "$1"; then
+
+    if test $exact = 1; then
+        if test "$(echo "$url" | unurl.pl)" = "$1"; then
+            exit 0
+        fi
+    elif echo "$url" | grep -q -P -e "$1"; then
         exit 0;
     fi
 
