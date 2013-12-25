@@ -35,7 +35,17 @@ rm -f /q;
 ln -s "$HOME2" /q
 export HOME=/q
 
+cd /cygdrive/c/
+wget -N  http://cygwin.com/setup-x86_64.exe
+chmod +x setup-x86_64.exe
+
+for x in nc util-linux git vim rsync inetutils apache2; do
+    /cygdrive/c/setup-x86_64.exe -q -n -d -A -P $x
+done
+
 ~/system-config/bin/after-co-ln-s.sh
+
+cygserver-config
 . ~/.bashrc-windows
 export HOME=/q
 cd ~/bin/windows/Imap4Monitor/

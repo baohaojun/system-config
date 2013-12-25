@@ -6,7 +6,11 @@ if test ! -e "$build_xml" -a -e AndroidManifest.xml; then
     ant-build
     exit
 elif grep 'android.library=true' $(dirname $(lookup-file build.xml))/project.properties; then
-    if (cd $(dirname $(lookup-file build.xml))/.. && lookup-file -e build.xml); then
+    if (
+            cd $(dirname $(lookup-file build.xml))/.. &&
+            lookup-file -e build.xml &&
+            yes-or-no-p -y "Go to up dir for build?"
+        ); then
         cd $(dirname $(lookup-file build.xml))/..
         exec mm-ant "$@"
     fi

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: usesp
+# key: usesp
+# --
+  <uses-permission android:name=${2:$$(replace-regexp-in-string ".*\\\\(\\".*\\"\\\\).*" "\\\\1" (yas-choose-value (split-string (shell-command-to-string "android-extract-from-sdk-txt -e \\"android.Manifest.permission.*\\"") "\\n")))} />
