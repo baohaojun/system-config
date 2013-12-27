@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if test "$1" = prev; then
+    putclip 前一篇
+else
+    putclip 后一篇
+fi
+sawfish-send-window-event "Mozilla Firefox" C-s C-y C-g Tab RET

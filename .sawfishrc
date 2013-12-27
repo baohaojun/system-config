@@ -425,3 +425,5 @@
               (bind-keys global-keymap "Super-\\"  '(system "delayed-xdotool key super+F12&")))))
 
 (system "sawfish-auto-start&")
+(bind-keys global-keymap "KP_Insert" '(system "firefox-goto-next-prev-page prev&"))
+(bind-keys global-keymap "KP_Delete" '(system "firefox-goto-next-prev-page next&"))

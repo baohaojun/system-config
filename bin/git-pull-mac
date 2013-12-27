@@ -8,17 +8,10 @@ cd "$(dirname "$(lookup-file .git)")"
 
 git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git://github.com,https://github.com,')
 git fetch origin -v
-for x in $(
-    (git branch -a |grep 'remotes.*from-mac'; echo remotes/origin/master) |
-    if test -e ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh; then
-        bash ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh
-    else
-        cat
-    fi
-); do
+for x in echo remotes/origin/master; do
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
-    if git branch --contains $x |grep -q '^\*'; then
+    if git-is-ancestor $x HEAD; then
         echo no need to merge $branch, it is already '*contained*' in HEAD
         continue;
     elif test "$FETCH_ONLY" != true; then
