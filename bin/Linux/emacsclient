@@ -20,4 +20,8 @@ if test -z "$LOCAL_EDIT" -a $# = 2 -a -e "$2"; then
     fi
 fi
 
-/usr/bin/emacsclient "$@"
+if test -x /Applications/Emacs.app/Contents/MacOS/bin/emacsclient; then
+    exec /Applications/Emacs.app/Contents/MacOS/bin/emacsclient "$@"
+else
+    exec /usr/bin/emacsclient "$@"
+fi

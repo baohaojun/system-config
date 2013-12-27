@@ -6,7 +6,7 @@
 
 [core]
 	pager = 
-	excludesfile = /home/bhj/.git-exclude
+	excludesfile = ~/.git-exclude
 [alias]
 	st = status
 	co = checkout

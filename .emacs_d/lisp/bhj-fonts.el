@@ -11,7 +11,14 @@
 (defvar bhj-english-font-size nil)
 (defun qiang-set-font (english-fonts
                        english-font-size
-                       chinese-fonts)
+                       chinese-fonts
+                       &optional chinese-fonts-scale
+                       )
+  (setq chinese-fonts-scale (or chinese-fonts-scale 1.2))
+  (setq face-font-rescale-alist `(("Microsoft Yahei" . ,chinese-fonts-scale)
+                                  ("Microsoft_Yahei" . ,chinese-fonts-scale)
+                                  ("微软雅黑" . ,chinese-fonts-scale)
+                                  ("WenQuanYi Zen Hei" . ,chinese-fonts-scale)))
   "english-font-size could be set to \":pixelsize=18\" or a integer.
 If set/leave chinese-font-size to nil, it will follow english-font-size"
   (require 'cl)                         ; for find if
@@ -39,9 +46,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     (dolist (charset '(kana han cjk-misc bopomofo))
       (set-fontset-font t charset zh-font))))
 
-(setq face-font-rescale-alist '(("Microsoft Yahei" . 1.2) ("微软雅黑" . 1.2) ("WenQuanYi Zen Hei" . 1.2)))
+
 (defvar bhj-english-fonts '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))
-(defvar bhj-chinese-fonts '("Microsoft Yahei" "微软雅黑" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
+(defvar bhj-chinese-fonts '("Microsoft Yahei" "Microsoft_Yahei" "微软雅黑" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
 
 (qiang-set-font
  bhj-english-fonts
@@ -55,7 +62,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
    12.5)
  bhj-chinese-fonts)
 
-(defvar bhj-english-font-size-steps '(10.5 11.5 12.5 14 18 22))
+(defvar chinese-font-size-scale-alist '((10.5 . 1.3) (11.5 . 1.3) (16 . 1.3) (18 . 1.25)))
+(defvar bhj-english-font-size-steps '(10.5 11.5 12.5 14 16 18 22))
 (defvar bhj-english-font-size-steps-dec (reverse bhj-english-font-size-steps))
 (defun bhj-step-frame-font-size (step)
   (let ((steps bhj-english-font-size-steps)
@@ -66,7 +74,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
           (cadr (member bhj-english-font-size steps)))
     (when next-size
         (message "Your font size is set to %.1f" next-size)
-        (qiang-set-font bhj-english-fonts next-size bhj-chinese-fonts))))
+        (qiang-set-font bhj-english-fonts next-size bhj-chinese-fonts (cdr (assoc next-size chinese-font-size-scale-alist))))))
 
 (global-set-key [(control x) (meta -)] (lambda () (interactive) (bhj-step-frame-font-size -1)))
 (global-set-key [(control x) (meta +)] (lambda () (interactive) (bhj-step-frame-font-size 1)))
