@@ -57,4 +57,4 @@ function separate() {
     rm $bhj_page.1
 ) > $bhj_page
 
-gnus-mailx -s "技术质量部--测试技术--钧钩周报 （$(today "last mon") - $(today Fri)）" -t "taobao-ad-qa-tool <taobao-ad-qa-tool@list.alibaba-inc.com>" -m "$(cat $bhj_page)"
+gnus-mailx -s "钧钩周报 （$(today "last mon") - $(today Fri)）" -t "taobao-ad-qa-tool <taobao-ad-qa-tool@list.alibaba-inc.com>" -m "$(cat $bhj_page)"
