@@ -41,7 +41,9 @@ fi
 
 if test "$exact"; then
     find-or-exec firefox
-    exit 0;
+    if test "$new_tab" = "-current-tab"; then
+        exit 0;
+    fi
 fi
 
 exec firefox $new_tab "$url"

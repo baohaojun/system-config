@@ -36,7 +36,9 @@ else
     cat > $tmp
 fi
 
+echo -n Edit it... 1>&2
 edit-wait $tmp >/dev/null 2>&1
+echo " done" 1>&2
 function get-rid-of-comment() {
     cat "$@" | perl -ne '
 if (m/###start of comment###/) { $comment = 1; }

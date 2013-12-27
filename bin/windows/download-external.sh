@@ -241,6 +241,8 @@ EOF
 function manual-download()
 {
     page_list=(
+        http://www.microsoft.com/en-hk/download/details.aspx?id=14632
+        http://www.microsoft.com/en-us/download/details.aspx?id=8328
         http://www.riverbankcomputing.co.uk/software/pyqt/download
         http://python.net/crew/mhammond/win32/Downloads.html
         http://www.python.org/download/
@@ -417,10 +419,9 @@ then
     else
         set -x
         (get-python)
+        (manual-download)
         (download-all)
         (setup-deb-src)
-        (emacs-site-lisps)
-        (manual-download)
         (get-ms-addons)
         (setup-vc6-env)
         (get-stlport-and-boost)

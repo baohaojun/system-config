@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if test "$(get-my-ip eth0)" = 192.168.33.66; then
+   detect-my-ip > ~/.logs/my-ip
+   back-to-gmail ~/.logs/my-ip
+fi

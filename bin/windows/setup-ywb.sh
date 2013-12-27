@@ -9,6 +9,7 @@ else
     cp ~/bin/windows/ywbhj-32.dll /c/Windows/System32/ywbhj$1.dll
 fi
 
-setime.pl $1 > ~/1.reg
+base_kbd=$(select-args kbddvp.dll kbdus.dll)
+setime.pl $1 $base_kbd > ~/1.reg
 cd
 regedit /s 1.reg

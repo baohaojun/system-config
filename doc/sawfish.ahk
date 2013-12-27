@@ -33,6 +33,10 @@
 ;else
 ;    Run $prog
 ;}
+;else
+;{
+;  SendInput ^{$key}
+;}
 ;return
 ;
 ;EOF
@@ -40,27 +44,33 @@
 ;'
 ;        end code-generator */
       ;; start generated code
+#t::
+  If A_PriorHotkey = #h
+  {
+    SetTitleMatchMode,2
+    IfWinExist, ahk_class mintty
+      WinActivate
+    else
+      Run bash -c ~/bin/windows/start-putty.sh
+  }
+  else
+  {
+    SendInput ^{t}
+  }
+  return
+
 #n::
   If A_PriorHotkey = #h
   {
     SetTitleMatchMode,2
     IfWinExist, Mozilla Firefox
       WinActivate
-    else IfWinExist, Nightly
-      WinActivate
     else
       Run firefox
   }
-  return
-
-#r::
-  If A_PriorHotkey = #h
+  else
   {
-    SetTitleMatchMode,2
-    IfWinExist, RunBhjRun
-      WinActivate
-    else
-      Run runbhjrun
+    SendInput ^{n}
   }
   return
 
@@ -73,16 +83,24 @@
     else
       Run bash -c emacs
   }
+  else
+  {
+    SendInput ^{m}
+  }
   return
 
-#t::
+#r::
   If A_PriorHotkey = #h
   {
     SetTitleMatchMode,2
-    IfWinExist, ahk_class mintty
+    IfWinExist, RunBhjRun
       WinActivate
     else
-      Run bash -c ~/bin/windows/start-putty.sh
+      Run runbhjrun
+  }
+  else
+  {
+    SendInput ^{r}
   }
   return
 
@@ -98,7 +116,11 @@ return
 
 #s::
 If A_PriorHotkey = #h
-   Run ifind.exe
+  Run ifind.exe
+else
+{
+  SendInput ^{s}
+}
 return
 
 #F1::
@@ -114,7 +136,7 @@ SendInput !{F4}
 return
 
 ;/* start code-generator "^;"
-;   for x in "w" "c" "v" "l" "r" "s" "\\"; do
+;   for x in "w" "c" "v" "l" "\\"; do
 ;       echo "#$x::"
 ;       echo "    SendInput ^{$x}"
 ;       echo "return"
@@ -136,14 +158,6 @@ return
 
 #l::
   SendInput ^{l}
-  return
-
-#r::
-  SendInput ^{r}
-  return
-
-#s::
-  SendInput ^{s}
   return
 
 #\::

@@ -38,7 +38,7 @@ function rdesktop() {
     if test -z "$pass"; then
         read -p "Password: " -s pass
     fi
-    setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1 | head -n 1) $host -u $user -p $pass "$@"&
+    setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1 | tail -n 1) $host -u $user -p $pass "$@"&
 }
 
 rdesktop "$@"

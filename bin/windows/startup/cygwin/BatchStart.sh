@@ -18,19 +18,6 @@ $(echo /c/Python3?/python | pn 1) "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-ser
     fi
 )
 
-
-
-while true; do
-    sleep 2;
-    test -e ~/.no-loop && continue;
-    if ps.pl ssh|grep bhj@216 -q;
-    then
-        true;
-    else
-        ssh -C2qN -D 8080 bhj@216.194.70.6;
-    fi
-done&
-
 rm ~/.no-loop
 
 function loop-start-in-dir() {

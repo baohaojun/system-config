@@ -39,9 +39,16 @@ cd /cygdrive/c/
 wget -N  http://cygwin.com/setup-x86_64.exe
 chmod +x setup-x86_64.exe
 
-for x in nc util-linux git vim rsync inetutils apache2; do
-    /cygdrive/c/setup-x86_64.exe -q -n -d -A -P $x
-done
+pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make screen cygutils-extra)
+/cygdrive/c/setup-x86_64.exe -q -n -d -A -P "${pkgs[@]}" || true
+
+if yes-or-no-p "Install the packages one by one?"; then
+    for x in "${pkgs[@]}"; do
+        /cygdrive/c/setup-x86_64.exe -q -n -d -A -P $x
+    done
+fi
+
+cpan String::ShellQuote
 
 ~/system-config/bin/after-co-ln-s.sh
 

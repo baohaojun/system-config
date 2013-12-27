@@ -1,0 +1,3 @@
+#!/bin/bash
+
+wget -O - 'https://account.dyn.com/dns/dyndns/free-vs-vip.html?continue=0&confirmed=baohaojun'
