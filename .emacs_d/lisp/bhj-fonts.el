@@ -15,6 +15,11 @@
                        &optional chinese-fonts-scale
                        )
   (setq chinese-fonts-scale (or chinese-fonts-scale 1.2))
+  (save-excursion
+    (with-current-buffer (find-file-noselect "~/.config/emacs-font-size")
+      (delete-region (point-min) (point-max))
+      (insert (format "%s" english-font-size))
+      (save-buffer)))
   (setq face-font-rescale-alist `(("Microsoft Yahei" . ,chinese-fonts-scale)
                                   ("Microsoft_Yahei" . ,chinese-fonts-scale)
                                   ("微软雅黑" . ,chinese-fonts-scale)
@@ -44,7 +49,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     ;; Set Chinese font
     ;; Do not use 'unicode charset, it will cause the english font setting invalid
     (dolist (charset '(kana han cjk-misc bopomofo))
-      (set-fontset-font t charset zh-font))))
+      (set-fontset-font t charset zh-font)))
+    (maximize-frame))
 
 
 (defvar bhj-english-fonts '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))
@@ -52,9 +58,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (qiang-set-font
  bhj-english-fonts
- (if (file-exists-p "~/external/etc/.emacs-frame-font")
+ (if (file-exists-p "~/.config/emacs-font-size")
      (save-excursion
-       (find-file "~/external/etc/.emacs-frame-font")
+       (find-file "~/.config/emacs-font-size")
        (goto-char (point-min))
        (let ((monaco-font-size (read (current-buffer))))
          (kill-buffer (current-buffer))
@@ -77,8 +83,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     (setq next-size
           (cadr (member bhj-english-font-size steps)))
     (when next-size
-        (message "Your font size is set to %.1f" next-size)
-        (qiang-set-font bhj-english-fonts next-size bhj-chinese-fonts (cdr (assoc next-size chinese-font-size-scale-alist))))))
+        (qiang-set-font bhj-english-fonts next-size bhj-chinese-fonts (cdr (assoc next-size chinese-font-size-scale-alist)))
+        (message "Your font size is set to %.1f" next-size))))
 
 (global-set-key [(control x) (meta -)] (lambda () (interactive) (bhj-step-frame-font-size -1)))
 (global-set-key [(control x) (meta +)] (lambda () (interactive) (bhj-step-frame-font-size 1)))

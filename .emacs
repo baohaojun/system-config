@@ -59,7 +59,7 @@
   (tool-bar-mode -1)
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
-  (load "bhj-fonts"))
+  (load "bhj-fonts.el"))
 
 (autoload 'csharp-mode "csharp-mode")
 
