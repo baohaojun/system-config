@@ -8,7 +8,7 @@ cd "$(dirname "$(lookup-file .git)")"
 
 git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git://github.com,https://github.com,')
 git fetch origin -v
-for x in echo remotes/origin/master; do
+for x in remotes/origin/master; do
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
     if git-is-ancestor $x HEAD; then
