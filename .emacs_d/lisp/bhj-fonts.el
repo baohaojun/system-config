@@ -62,14 +62,18 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
    12.5)
  bhj-chinese-fonts)
 
-(defvar chinese-font-size-scale-alist '((10.5 . 1.3) (11.5 . 1.3) (16 . 1.3) (18 . 1.25)))
-(defvar bhj-english-font-size-steps '(10.5 11.5 12.5 14 16 18 22))
-(defvar bhj-english-font-size-steps-dec (reverse bhj-english-font-size-steps))
+(defvar chinese-font-size-scale-alist nil)
+
+(if *is-a-mac*
+  (setq chinese-font-size-scale-alist '((10.5 . 1.3) (11.5 . 1.3) (16 . 1.3) (18 . 1.25)))
+  (setq chinese-font-size-scale-alist '((16 . 1.25))))
+
+(defvar bhj-english-font-size-steps '(10.5 11.5 12.5 14 16 18 20 22))
 (defun bhj-step-frame-font-size (step)
   (let ((steps bhj-english-font-size-steps)
         next-size)
-    (if (< step 0)
-        (setq steps bhj-english-font-size-steps-dec))
+    (when (< step 0)
+        (setq steps (reverse bhj-english-font-size-steps)))
     (setq next-size
           (cadr (member bhj-english-font-size steps)))
     (when next-size

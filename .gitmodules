@@ -22,12 +22,6 @@
 [submodule "gcode/crossdict"]
 	path = gcode/crossdict
 	url = https://github.com/baohaojun/BTAndroidWebViewSelection
-[submodule "gcode/android/Superuser"]
-	path = gcode/android/Superuser
-	url = https://github.com/baohaojun/Superuser.git
-[submodule "gcode/android/su-binary"]
-	path = gcode/android/su-binary
-	url = https://github.com/baohaojun/su-binary.git
 [submodule ".emacs_d/yasnippet-snippets"]
 	path = .emacs_d/yasnippet-snippets
 	url = https://github.com/baohaojun/yasnippet-snippets.git
