@@ -4,6 +4,7 @@ set -ex
 
 if test $# = 0; then
     android-start-activity select
+    exit 0
 fi
 
 function die() {
