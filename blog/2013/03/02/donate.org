@@ -37,5 +37,5 @@ choice to accept money encouragement from people through Paypal.
 CrossDict，或者只是喜欢我的某几篇博客，如果可以，请给我 [[mailto:baohaojun@gmail.com][发一封邮件]] 或者
 在新浪微博上 @baohaojun 告诉我。
 
-我的支付宝邮箱账户是baohaojun@gmail.com，您可以通过向这个账户转账对我捐
-款。
+我的支付宝收款主页是 https://me.alipay.com/baohaojun 您也可以在捐款时给
+我留言。
