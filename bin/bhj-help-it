@@ -1,13 +1,20 @@
 #!/bin/bash
 
 if test "$EMACS" = t; then
-    exec > ~/.logs/$(basename $0).log 2>&1
+    unset EMACS
+    find-or-exec firefox >/dev/null 2>&1 </dev/null &
+    (cat | $0 "$@" > ~/.logs/$(basename $0).log 2>&1) &
+    exit 0
 fi
 set -x
 function die() {
     echo "$@"
     exit -1
 }
+
+if test $# = 0; then
+    set -- "$(cat)"
+fi
 
 if test $# = 1 -a $(basename $0) != bhj-help-it; then
     set -- $(basename $0|perl -npe 's/bhj-help-//; s/$/-mode/') "$@"
@@ -62,6 +69,10 @@ case $1 in
                 firefox-open-url-pattern /android-sdk-linux/ file://"$html#$anchor"
             fi
         fi
+        ;;
+    qt|qt-mode)
+        file=$(select-output-line beagrep -e 'a name="'$2'"' -d /usr/share/qt4/doc --grep -l)
+        firefox-open-url-pattern usr/share/qt4/doc file://$file#$2
         ;;
     *)
         if [[ "$2" =~ ^android: ]]; then
