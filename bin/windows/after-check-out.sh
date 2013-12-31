@@ -39,7 +39,7 @@ cd /cygdrive/c/
 wget -N  http://cygwin.com/setup-x86_64.exe
 chmod +x setup-x86_64.exe
 
-pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make screen cygutils-extra)
+pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make screen cygutils-extra procps)
 /cygdrive/c/setup-x86_64.exe -q -n -d -A -P "${pkgs[@]}" || true
 
 if yes-or-no-p "Install the packages one by one?"; then

@@ -417,7 +417,17 @@ methods."
     (save-excursion
       (let* ((resolve
               (if current-prefix-arg
-                  (read-string "What class's method do you want to import? ")
+                  (let* ((resolve
+                          (replace-regexp-in-string "\\.*$" "" (read-string "What class's method do you want to import? ")))
+                         (has-a-dot-resolve
+                          (if (string-match "\\." resolve)
+                              resolve
+                            (ajoke--pick-one
+                             "Import which? "
+                             (split-string
+                              (shell-command-to-string (format "GTAGS_START_FILE= ajoke-get-qclass %s"
+                                                               (shell-quote-argument resolve))) "\n")))))
+                    (format "%s." has-a-dot-resolve))
                 (let ((resolve-line
                        (ajoke--pick-one
                         "Import which? "
