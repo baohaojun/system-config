@@ -414,6 +414,7 @@
 (bind-keys s-h-keymap "g"  '(system "emacsclient -d -e '(gnus)'&"))
 (bind-keys s-h-keymap "w"  '(system "emacs-weibo&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
+(bind-keys s-h-keymap "e" '(system "sawfish-click.sh&"))
 
 (add-hook 'focus-in-hook
           (lambda (w focus-mode)

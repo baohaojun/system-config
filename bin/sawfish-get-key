@@ -1,0 +1,2 @@
+#!/bin/bash
+sawfish-client -e '(event-name (read-event "'"$volume"'"))' | perl -npe 's/^"|"$//g'
