@@ -4,8 +4,10 @@ set -x
 
 if test $# = 0; then
     set -- "$(xclip -o -selection primary)"
-else
+elif test $# = 1; then
     set -- "$(lookup-file "$@")"
+else
+    set -- "$(f "$@")"
 fi
 
 if test "$EMACS"; then

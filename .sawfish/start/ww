@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export PATH=~/src/lww/out:$PATH
 while test $(ifconfig|grep 'inet addr'|wc -l) -lt 2; do # wait for a network connection
     sleep 5
 done

@@ -231,25 +231,36 @@ Firemacs.SubFunc = {
         }
         var re_exclude = /<.*>|>.*</;
         var links = doc.links;
-        for (i = 0; i < links.length; ++i) {
-            if (links[i].textContent &&
-                links[i].textContent.search(re) != -1 &&
-                links[i].textContent.search(re_exclude) == -1 &&
-                links[i].href
-               ) {
-                loadURI(links[i].href);
-                return;
-            }
-            imgElems = links[i].getElementsByTagName("img"); // Is it an image tag?
-            if (imgElems.length > 0 &&
-                imgElems[0].src &&
-                imgElems[0].src.search(re) != -1 &&
-                imgElems[0].src.search(re_exclude) == -1 &&
-                links[i].href) {
-                loadURI(links[i].href);
-                return;
-            }
+        var anchors = doc.getElementsByTagName("a");
+      for (i = 0; i < anchors.length; ++i) {
+        the_class = anchors[i].className;
+        if (the_class &&
+            the_class.search(re) != -1 &&
+            anchors[i].href) {
+          loadURI(anchors[i].href);
+          return;
         }
+      }
+      for (i = 0; i < links.length; ++i) {
+        if (links[i].textContent &&
+            links[i].textContent.search(re) != -1 &&
+            links[i].textContent.search(re_exclude) == -1 &&
+            links[i].href
+           ) {
+             loadURI(links[i].href);
+             return;
+           }
+        imgElems = links[i].getElementsByTagName("img"); // Is it an image tag?
+        if (imgElems.length > 0 &&
+            imgElems[0].src &&
+            imgElems[0].src.search(re) != -1 &&
+            imgElems[0].src.search(re_exclude) == -1 &&
+            links[i].href) {
+          loadURI(links[i].href);
+          return;
+        }
+      }
+      alert("Next/Prev link not found, using default for php manual");
         if (dir > 0) {
             loadURI(links[1].href); //for the php manual, the 2nd link is the next link
         } else {
