@@ -179,7 +179,7 @@ fi
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
 if ask-if-not-bhj "Do you want to use bhj's git-exclude file?"; then
-    git config --global core.excludesfile ~/.git-exclude
+    git config --global core.excludesfile '~/.git-exclude'
 fi
 
 if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; then
