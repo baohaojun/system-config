@@ -1,17 +1,43 @@
 #!/bin/bash
 
 function git_svn() {
+    if test $# = 1; then
+        should_return=1
+        case "$1" in
+            fetch)
+                command git svn fetch
+                ;;
+            pull)
+                command git svn rebase
+                ;;
+            push)
+                command git svn dcommit
+                ;;
+            *)
+                should_return=0
+                ;;
+        esac
+        if test $should_return = 1; then
+            return
+        fi
+    fi
+
     case "$1" in
-        fetch)
-            command git svn fetch
+        st)
+            NO_SVN_CHECK=true git "$@"
+            return;
             ;;
         pull)
-            command git svn rebase
+            if test $# = 2 -a "$2" = --rebase; then
+                command git svn rebase
+                return
+            fi
             ;;
         push)
-            command git svn dcommit
-            ;;
-        remote)
+            if test "$2" = origin; then
+                command git svn dcommit
+                return
+            fi
             ;;
         diff)
             args=()
@@ -23,11 +49,10 @@ function git_svn() {
             done
             set -- "${args[@]}"
             command git "$@"
-            ;;
-        *)
-            NO_SVN_CHECK=true git "$@"
+            return
             ;;
     esac
+    NO_SVN_CHECK=true git "$@"
 }
 
 function git()

@@ -2,4 +2,4 @@
 # name: loge
 # key: loge
 # --
-Log.e("bhj", String.format("%s:%d: $1", "`(buffer-name)`", `(line-number-at-pos)`$2));$0
+Log.e("bhj", String.format("%s:%d: $1", "`(buffer-name)`", `(line-number-at-pos)`$2)${3:, e});$0
