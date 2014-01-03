@@ -1,4 +1,10 @@
 #+title: reading books
+ * 2014
+  - 2014-01
+   * 2014-01-03
+
+     [[../../../blog/2014/01/03/0-7-habits-of-highly-effective-editting.org][高效文本编辑的七个习惯]]
+
  * 2013
   - 2013-09
    * 2013-09-02
