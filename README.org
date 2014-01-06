@@ -46,11 +46,12 @@ write it).
 ** Check out the source code
 
 #+BEGIN_SRC sh
-git clone --recursive https://github.com/baohaojun/ajoke 
+git clone --recursive https://github.com/baohaojun/ajoke
 #+END_SRC
 
-Note the --recursive option, it's important because I have a submodule
-in ajoke (my hacked version of GNU Global).
+Note the --recursive option, it's important because I have 2
+submodules in ajoke, my patched versions of GNU Global and
+ctags-exuberant.
 
 ** Set up the env
 If you are using Debian or Ubuntu, I have provided a test drive script
@@ -62,7 +63,7 @@ steps, supposing ajoke is checked out in =$AJOKE_DIR= (in my case, it
 is =~/gcode/ajoke=, yours may vary):
 
 *** Put ajoke scripts into you PATH and Perl PATH:
-   
+
    #+BEGIN_SRC sh
    export AJOKE_DIR=~/gcode/ajoke #PLEASE MODIFY THIS TO SUIT YOUR CASE
    export export PATH=$AJOKE_DIR/bin:$PATH
@@ -76,6 +77,10 @@ is =~/gcode/ajoke=, yours may vary):
    libstring-shellquote-perl and libtext-glob-perl)
 
 *** Compile and install the patched version of Gnu Global
+
+This code is available at [[https://github.com/baohaojun/ajoke-global][external/global]], it will be checked out
+together with ajoke if you used the --recursive option when cloning
+ajoke.
 
    #+BEGIN_SRC sh
    cd ./external/global
@@ -101,18 +106,12 @@ apt-get install sudo bash-completion autoconf automake \
     openjdk-6-jdk strace tasksel git python python3 \
     libstring-approx-perl libstring-shellquote-perl \
     libtext-glob-perl liburi-encode-perl
-
-
-  
 #+END_SRC
 
-*** Install ctags-exuberant
+*** Compile and install ctags-exuberant
 
-   You can install it from your Linux distro, but you must make sure
-   the final binary executable's name is =ctags-exuberant=, not
-   =ctags=.
-
-   If you want to compile it by yourself, then:
+Ctags-exuberant is also provided as a git submodule, under
+[[https://github.com/baohaojun/ctags-exuberant][external/ctags-exuberant]].
 
    #+BEGIN_SRC sh
    cd ./external/ctags-exuberant
@@ -153,13 +152,13 @@ apt-get install sudo bash-completion autoconf automake \
     And add the JDK or Android as fallback:
 
    #+BEGIN_SRC sh
-   cd ~/your-java-project 
+   cd ~/your-java-project
    mkgtags
-   java-add-fallback /usr/lib/jvm/java-6-openjdk-amd64 
+   java-add-fallback /usr/lib/jvm/java-6-openjdk-amd64
    # or java-add-fallback ~/src/android, but not both
-   # as it'd be a waste of time to find 2 copies of java.lang.String     
+   # as it'd be a waste of time to find 2 copies of java.lang.String
    #+END_SRC
-   
+
 *** Require $AJOKE_DIR/etc/elisp/ajoke.el in your .emacs
 
     And start laughing:-)
