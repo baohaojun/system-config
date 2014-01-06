@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+x=$(cat /sys/class/backlight/acpi_video0/brightness)
+if test "$1" = up; then
+   ((x+=10)) || true
+elif test "$1" = down; then
+    ((x-=10)) || true
+else
+    x=$1
+fi
+sudo bash -c "echo $x > /sys/class/backlight/acpi_video0/brightness" ||
+mplayer /usr/lib/python2.6/dist-packages/pygame/examples/data/boom.wav

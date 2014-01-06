@@ -15,6 +15,17 @@ case $1 in
         ) > ~bhj/.logs/$(basename $0).log 2>&1
         ;;
     pre)
+        (
+            cmd=$(cat <<'EOF'
+set -x
+. ~/.renew-xauth
+. ~/.bash-path
+xscreensaver-command -lock&
+EOF
+            )
+
+            su - bhj -c "$cmd"
+        ) > ~bhj/.logs/$(basename $0).log2 2>&1
         ;;
     *)  echo "ERROR: called incorrectly."
         ;;

@@ -55,7 +55,7 @@ function get-tags()
     local tag=()
     existing_tags=$(find meta/tags/ -type d -exec basename '{}' \;)
     while true; do
-        tag=$(select-output-line -- bash -c "echo done; echo new; arg1-arg2 \"$existing_tags\" \"$(echo ${tags[@]})\" ")
+        tag=$(select-output-line -p "select tags for $x" -- bash -c "echo done; echo new; arg1-arg2 \"$existing_tags\" \"$(echo ${tags[@]})\" ")
         if test $tag = done; then
             if test "${#tags[@]}" = 0; then
                 read -p "Must specifi at least one tag, press any key to continue... "
@@ -89,8 +89,8 @@ if git remote -v | grep baohaojun.github.com.git; then
                 perl -npe 's/(\[\[[^]]*%3D[^]]*\])/join("=", split("%3D", $1))/eg' -i $x
                 git-interactive-add $x
             fi
-            if ! grep 'bhj-tags:' $x; then
-                tags=$(get-tags)
+            if ! grep 'bhj-tags:' $x && [[ "$x" =~ /blog/ ]]; then
+                tags=$(get-tags $x)
                 echo "# bhj-tags: $tags" >> $x
             fi
 

@@ -2,6 +2,7 @@
 
 set -x
 set -e
+sudo apt-get install udhcpd hostapd
 wlan0_ip=${1:-192.168.0.1}
 name_servers=$(grep -P -e '^\s*nameserver' /etc/resolv.conf | pn 2 | tr '\n' ' ')
 net_prefix=${wlan0_ip%.*}
@@ -18,6 +19,17 @@ option  lease   864000          # 10 days of seconds
 EOF
 
 sudo ifconfig wlan0 $wlan0_ip
+
+if ! grep 'DHCPD_ENABLED="yes"' /etc/default/udhcpd; then
+    sudo perl -npe 's/DHCPD_ENABLED="no"/DHCPD_ENABLED="yes"/g' -i /etc/default/udhcpd;
+fi
 sudo /etc/init.d/udhcpd restart
 sudo nat-vbox eth0 wlan0
+if test ! -e /etc/hostapd/hostapd.conf; then
+    zcat /usr/share/doc/hostapd/examples/hostapd.conf.gz | sudo tee /etc/hostapd/hostapd.conf
+fi
+
+ssid=$(select-args baohaojun unknown)
+passwd=$(select-args helloworld iamsofunny)
+sudo perl -npe "s/^ssid=.*/ssid=$ssid/; s/#?wpa_passphrase=.*/wpa_passphrase=$passwd/" -i /etc/hostapd/hostapd.conf
 sudo hostapd /etc/hostapd/hostapd.conf
