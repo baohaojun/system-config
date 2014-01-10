@@ -92,8 +92,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
 #endif
         Application *a = new Application(app_name,appIcon);
         a->addAlert(new Alert("DBus Alert","DBus Alert",appIcon));
-        snore()->addApplication(a);
-        snore()->applicationIsInitialized(a);
+        snore()->registerApplication(a);
     }
 
     if (hints.contains("urgency")) {

@@ -44,6 +44,7 @@ private:
 
 public slots:
     void setPrimaryBackend();
+    void slotTestNotification();
 };
 
 #endif // TRAYICON_H

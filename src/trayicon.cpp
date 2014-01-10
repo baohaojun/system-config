@@ -40,6 +40,8 @@ void TrayIcon::initConextMenu(SnoreCore *snore){
     _trayMenu = new QMenu("SnoreNotify");
     _trayMenu->addAction(QString("SnoreNotify ").append(Version::version()));
     _trayMenu->addSeparator();
+    connect(_trayMenu->addAction(QString("Test")), SIGNAL(triggered()), this, SLOT(slotTestNotification()));
+    _trayMenu->addSeparator();
     foreach(const QString &back,_snore->notificationBackends()){
         QAction *b=  new QAction(back,this);
         connect(b,SIGNAL(triggered()),this,SLOT(setPrimaryBackend()));
@@ -73,5 +75,11 @@ void TrayIcon::setPrimaryBackend(){
     }
     a->setChecked(true);
 
+}
+
+void TrayIcon::slotTestNotification()
+{
+    Notification n("SnoreNotify","Default","Hello World","This is Snore",Icon(":/root/snore.png"));
+    _snore->broadcastNotification(n);
 }
 
