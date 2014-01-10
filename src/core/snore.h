@@ -48,11 +48,15 @@ public:
 
 
     void broadcastNotification( Notification notification );
-    void notificationActionInvoked ( Notification notification );
+    void notificationActionInvoked( Notification notification );//TODO: move to private header
 
-    void addApplication ( Application *application );
-    void applicationIsInitialized ( Application* application );
-    void removeApplication ( const QString& appName );
+    void registerApplication( Application *application );
+    void deregisterApplication( Application *application );
+
+    void Q_DECL_DEPRECATED addApplication ( Application *application );
+    void Q_DECL_DEPRECATED applicationIsInitialized ( Application* application );
+    void Q_DECL_DEPRECATED removeApplication ( const QString& appName );
+
     const ApplicationsList &aplications() const;
 
     const QStringList &notificationBackends() const;

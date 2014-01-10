@@ -36,8 +36,8 @@
 using namespace Snore;
 
 Parser::Parser(SnarlNetworkFrontend *snarl):
-        QObject(snarl),
-        snarl(snarl)
+    QObject(snarl),
+    snarl(snarl)
 {
     getSnpType.insert("type",TYPE);
     getSnpType.insert("app",APP);
@@ -58,12 +58,12 @@ Parser::Parser(SnarlNetworkFrontend *snarl):
 SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
     SnarlNotification sNotification;
     sNotification.httpClient=false;
-    sNotification.vailid=true;   
+    sNotification.vailid=true;
     sNotification.clientSocket=client;
     sNotification.isNotification = false;
 
 
-    snpTypes action(ERROR);  
+    snpTypes action(ERROR);
     if(msg.startsWith("GET ")){
         msg=msg.mid(msg.indexOf("/")+1);
         msg=msg.mid(0,msg.indexOf(" "));
@@ -123,36 +123,38 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
 
     switch(action){
     case NOTIFICATION:{
-            qDebug()<<sNotification.notification.application();
-            Application * appl=snarl->snore()->aplications().value(sNotification.notification.application());
-            if(!appl->isInitialized()){
-                snarl->snore()->applicationIsInitialized(appl);
-            }
-
-            if(!appl->alerts().value(sNotification.notification.alert())->isActive())
-                break;
-            sNotification.isNotification = true;
-            return sNotification;
-            break;
+        qDebug() << sNotification.notification.application();
+        Application * appl = snarl->snore()->aplications().value(sNotification.notification.application());
+        if(!snarl->snore()->aplications().contains(appl->name())){
+            snarl->snore()->registerApplication(appl);
         }
+
+        if(!appl->alerts().value(sNotification.notification.alert())->isActive())
+            break;
+        sNotification.isNotification = true;
+        return sNotification;
+        break;
+    }
     case ADD_CLASS:
         if(sNotification.notification.alert().isEmpty()){
             qDebug()<<"Error registering alert with empty name";
             break;
         }
         if(title.isEmpty())
+        {
             title = alert;
-        snarl->snore()->aplications().value(sNotification.notification.application())->addAlert(new Alert(alert,title));
+        }
+        snarl->m_applications.value(sNotification.notification.application())->addAlert(new Alert(alert,title));
         break;
     case REGISTER:
-        if(!snarl->snore()->aplications().contains(sNotification.notification.application())&&!sNotification.notification.application().isEmpty()){
-            snarl->snore()->addApplication(new Application(sNotification.notification.application()));
-        }   
+        if(!sNotification.notification.application().isEmpty() && !snarl->m_applications.contains(sNotification.notification.application())){
+            snarl->m_applications.insert(sNotification.notification.application(), new Application(sNotification.notification.application()));
+        }
         else
             qDebug()<<sNotification.notification.application()<<"already registred";
         break;
     case UNREGISTER:
-        snarl->snore()->removeApplication(sNotification.notification.application());
+        snarl->snore()->deregisterApplication( snarl->snore()->aplications().value(sNotification.notification.application()) );
         break;
     case ERROR:
     default:

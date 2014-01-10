@@ -151,22 +151,35 @@ void SnoreCore::notificationActionInvoked ( Notification notification )
     }
 }
 
+void SnoreCore::registerApplication(Application *application)
+{
+    if(!m_applications.contains(application->name()))
+    {
+        m_applications.insert ( application->name(),application );
+        emit applicationInitialized ( application );
+    }
+}
+
 void SnoreCore::addApplication ( Application *application )
 {
-    m_applications.insert ( application->name(),application );
+    registerApplication(application);
 }
 
 void SnoreCore::applicationIsInitialized ( Application *application )
 {
-    application->setInitialized ( true );
-    emit applicationInitialized ( application );
+    registerApplication(application);
 }
 
 void SnoreCore::removeApplication ( const QString& appName )
 {
-    qDebug()<<"Remove Application"<<appName;
-    emit applicationRemoved ( m_applications.value ( appName ) );
-    m_applications.take ( appName )->deleteLater();
+    deregisterApplication( m_applications.value ( appName ) );
+}
+
+void SnoreCore::deregisterApplication(Application *application)
+{
+    emit applicationRemoved (application );
+    m_applications.take ( application->name() );
+    application->deleteLater();
 }
 
 const ApplicationsList &SnoreCore::aplications() const

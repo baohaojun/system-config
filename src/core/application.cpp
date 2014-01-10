@@ -23,14 +23,13 @@
 using namespace Snore;
 
 Application::Application (const QString &name, const Icon &icon) :
-        m_name ( name ),
-        m_icon(icon),
-        m_initialized ( false )
+    m_name ( name ),
+    m_icon(icon)
 {
 }
 
 Application::Application() :
-        m_name ( "Error: Uninitialized Application" )
+    m_name ( "Error: Uninitialized Application" )
 {}
 
 Application::~Application()
@@ -58,25 +57,15 @@ const AlertList &Application::alerts() const
     return m_alerts;
 }
 
-bool Application::isInitialized()
-{
-    return m_initialized;
-}
-
-void Application::setInitialized ( bool b )
-{
-    m_initialized = b;
-}
-
 Alert::Alert (const QString &name, const QString &title, const Icon &icon, bool active) :
-        m_name ( name ),
-        m_title ( title ),
-        m_icon(icon),
-        m_active ( active )
+    m_name ( name ),
+    m_title ( title ),
+    m_icon(icon),
+    m_active ( active )
 {}
 
 Alert::Alert() :
-        m_active ( false )
+    m_active ( false )
 {}
 
 

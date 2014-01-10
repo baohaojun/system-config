@@ -41,15 +41,12 @@ public:
     const QString &name() const;
     const Icon &icon() const;
     const AlertList &alerts() const;
-    bool isInitialized();
-    void setInitialized ( bool b );
 
 
 private:
     QString m_name;
     Icon m_icon;
     AlertList m_alerts;
-    bool m_initialized;
 
 };
 
