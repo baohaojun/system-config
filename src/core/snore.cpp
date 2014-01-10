@@ -209,15 +209,18 @@ bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
         qDebug()<<"Unknown Backend:"<<backend;
         return false;
     }
-    qDebug()<<"Setting Notification Backend to:"<<backend;
+    qDebug() << "Setting Notification Backend to:" << backend;
     SnoreBackend* b = qobject_cast<SnoreBackend*>(PluginContainer::pluginCache()[backend]->load());
     if(!b->isInitialized()){
         if(!b->init(this)){
-            qDebug()<<"Failed to initialize"<<b->name();
+            qDebug() << "Failed to initialize" << b->name();
             return false;
         }
-        disconnect(m_notificationBackend,SIGNAL(closeNotification(Snore::Notification)));
-        connect(b,SIGNAL(closeNotification(Snore::Notification)),this,SLOT(slotNotificationClosed(Snore::Notification)));
+        if(m_notificationBackend)
+        {
+            disconnect(m_notificationBackend, SIGNAL(closeNotification));
+        }
+        connect(b, SIGNAL(closeNotification), this, SLOT(slotNotificationClosed));
     }
     m_notificationBackend = b;
     return true;
