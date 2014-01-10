@@ -1,6 +1,6 @@
 /*
     SnoreNotify is a Notification Framework based on Qt
-    Copyright (C) 2013  Patrick von Reth <vonreth@kde.org>
+    Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
 
     SnoreNotify is free software: you can redistribute it and/or modify
