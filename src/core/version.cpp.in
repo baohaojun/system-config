@@ -22,4 +22,8 @@ const QString Version::revision(){
     return QLatin1String("${SNORE_REVISION}");
 }
 
+const QString Version::buildTime(){
+    return QLatin1String(__TIMESTAMP__);
+}
+
 }

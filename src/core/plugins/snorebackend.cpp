@@ -19,12 +19,14 @@
 
 #include "snorebackend.h"
 #include "../snore.h"
+#include "../snore_p.h"
 #include "../application.h"
 #include "../notification/notification.h"
 
 #include <QTimer>
 #include <QDir>
 #include <QDebug>
+
 
 namespace Snore{
 
@@ -45,9 +47,11 @@ SnoreBackend::~SnoreBackend()
 bool SnoreBackend::init( SnoreCore *snore )
 {
     if(!SnorePlugin::init(snore))
+    {
         return false;
-    connect( snore,SIGNAL( applicationInitialized( Snore::Application* ) ),this,SLOT( slotRegisterApplication( Snore::Application* ) ) );
-    connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( slotUnregisterApplication( Snore::Application* ) ) );
+    }
+    connect( snore->d(), SIGNAL(applicationRegistered(Snore::Application*)), this, SLOT(slotRegisterApplication(Snore::Application*)));
+    connect( snore->d(), SIGNAL(applicationDeregistered(Snore::Application*)), this, SLOT(slotUnregisterApplication(Snore::Application*)));
 
     foreach(Application *a,snore->aplications()){
         this->slotRegisterApplication(a);
@@ -78,7 +82,7 @@ void SnoreBackend::closeNotification(Notification n, NotificationEnums::CloseRea
     }
     n.setCloseReason(reason);
     slotCloseNotification(n);
-    emit closeNotification(n);
+    emit notificationClosed(n);
 }
 
 void SnoreBackend::slotCloseNotification(Notification notification)
@@ -99,7 +103,7 @@ SnoreSecondaryBackend::~SnoreSecondaryBackend()
 
 bool SnoreSecondaryBackend::init(SnoreCore *snore)
 {
-    connect( snore,SIGNAL( slotNotify(SnoreCore::Notification) ),this,SLOT( slotNotify( SnoreCore::Notification ) ) );
+    connect( snore->d() ,SIGNAL( slotNotify(SnoreCore::Notification) ),this,SLOT( slotNotify( SnoreCore::Notification ) ) );
     return SnoreBackend::init(snore);
 }
 

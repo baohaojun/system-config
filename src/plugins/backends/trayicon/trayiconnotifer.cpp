@@ -1,5 +1,6 @@
 #include "trayiconnotifer.h"
 #include "core/snore.h"
+#include "core/snore_p.h"
 
 #include <QtCore>
 #include <QSystemTrayIcon>
@@ -70,7 +71,7 @@ void TrayIconNotifer::actionInvoked(){
 
     Notification n = snore()->getActiveNotificationByID(m_displayed);
     if(n.isValid()){
-        snore()->notificationActionInvoked(n);
+        snore()->d()->notificationActionInvoked(n);
         closeNotification(n,NotificationEnums::CloseReasons::CLOSED);
     }
 

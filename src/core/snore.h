@@ -31,31 +31,25 @@
 #include <QTextDocumentFragment>
 
 class QSystemTrayIcon;
-class QDir;
 
 
 namespace Snore{
+class SnoreCorePrivate;
+
 class SNORE_EXPORT SnoreCore : public QObject
 {
+    Q_DECLARE_PRIVATE(SnoreCore)
     Q_OBJECT
 public:
-    static const QString snoreTMP();
-    static const QDir &pluginDir();
-
-public:
     SnoreCore (QSystemTrayIcon *trayIcon = NULL );
+    ~SnoreCore();
     void loadPlugins ( PluginContainer::PluginTypes types );
 
 
     void broadcastNotification( Notification notification );
-    void notificationActionInvoked( Notification notification );//TODO: move to private header
 
     void registerApplication( Application *application );
     void deregisterApplication( Application *application );
-
-    void Q_DECL_DEPRECATED addApplication ( Application *application );
-    void Q_DECL_DEPRECATED applicationIsInitialized ( Application* application );
-    void Q_DECL_DEPRECATED removeApplication ( const QString& appName );
 
     const ApplicationsList &aplications() const;
 
@@ -76,31 +70,17 @@ public:
 
     Hint &hints();
 
+    const SnoreCorePrivate *d();
+
+
 signals:
-    void applicationInitialized( Snore::Application* );
-    void applicationRemoved( Snore::Application* );
-    void notify( Snore::Notification noti );
     void actionInvoked( Snore::Notification );
     void notificationClosed(Snore::Notification );
 
-private slots:
-    void slotNotificationClosed(Snore::Notification);
-
-
 private:
-    Hint m_hints;
-
-    ApplicationsList m_applications;
+    SnoreCorePrivate *d_ptr;
 
 
-    QStringList m_notificationBackends;
-    QStringList m_Frontends;
-    QStringList m_secondaryNotificationBackends;
-    QStringList m_plugins;
-
-    QPointer<SnoreBackend> m_notificationBackend;
-
-    QSystemTrayIcon *m_trayIcon;
 };
 
 

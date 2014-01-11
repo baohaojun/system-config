@@ -46,7 +46,7 @@ public:
     bool supportsRichtext();
 
 signals:
-    void closeNotification( Snore::Notification );
+    void notificationClosed( Snore::Notification );
 
 
 public slots:

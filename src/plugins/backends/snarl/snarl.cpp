@@ -20,6 +20,7 @@
 #include "snarl.h"
 
 #include "core/snore.h"
+#include "core/snore_p.h"
 #include "core/plugins/plugins.h"
 #include "core/plugins/snorebackend.h"
 
@@ -88,7 +89,7 @@ public:
                 if(notification.isValid())
                 {
                     notification.setActionInvoked(data);
-                    m_snarl->snore()->notificationActionInvoked(notification);
+                    m_snarl->snore()->d()->notificationActionInvoked(notification);
                 }
                 break;
             case SnarlEnums::CallbackClosed:

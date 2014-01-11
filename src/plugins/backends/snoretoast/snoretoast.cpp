@@ -1,5 +1,6 @@
 #include "snoretoast.h"
 #include "core/snore.h"
+#include "core/snore_p.h"
 #include "core/plugins/plugins.h"
 #include "core/plugins/snorebackend.h"
 
@@ -110,7 +111,7 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
     {
     case 0:
         reason = NotificationEnums::CloseReasons::CLOSED;
-        snore()->notificationActionInvoked(n);
+        snore()->d()->notificationActionInvoked(n);
         break;
     case 1:
         //hidden;

@@ -21,6 +21,8 @@ static const QString suffix();
 
 static const QString revision();
 
+static const QString buildTime();
+
 };
 
 }

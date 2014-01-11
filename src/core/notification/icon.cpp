@@ -16,6 +16,7 @@
 
 #include "icon.h"
 #include "../snore.h"
+#include "../snore_p.h"
 
 #include "notification/icon_p.h"
 
@@ -71,7 +72,7 @@ QString Icon::localUrl()const{
         }
         else
         {
-            d->m_localUrl = QString("%1%2.png").arg(SnoreCore::snoreTMP(), hash());
+            d->m_localUrl = QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), hash());
             image().save(d->m_localUrl ,"PNG");
             m_localImageCache[hash()] = d->m_localUrl;
         }

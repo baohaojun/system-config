@@ -21,6 +21,7 @@
 #include "gntp.h"
 
 #include "core/snore.h"
+#include "core/snore_p.h"
 
 
 #include <QtCore>
@@ -147,7 +148,7 @@ void Growl::gntpCallback(const int &id,const std::string &reason,const std::stri
     else if(reason == "CLICK")
     {
         r = NotificationEnums::CloseReasons::CLOSED;
-        s_instance->snore()->notificationActionInvoked(n);
+        s_instance->snore()->d()->notificationActionInvoked(n);
     }
     s_instance->closeNotification(n,r);
 }
