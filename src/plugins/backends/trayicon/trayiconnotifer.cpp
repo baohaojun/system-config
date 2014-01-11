@@ -22,19 +22,11 @@ TrayIconNotifer::TrayIconNotifer () :
 bool TrayIconNotifer::init(SnoreCore *snore){    
     m_trayIcon = snore->trayIcon();
     if(m_trayIcon == NULL)
+    {
         return false;
+    }
     connect(m_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
     return SnoreBackend::init(snore);
-}
-
-
-void TrayIconNotifer::slotRegisterApplication ( Application *application )
-{
-    Q_UNUSED ( application )
-}
-void TrayIconNotifer::slotUnregisterApplication ( Application *application )
-{
-    Q_UNUSED ( application )
 }
 
 void TrayIconNotifer::slotNotify( Notification notification )

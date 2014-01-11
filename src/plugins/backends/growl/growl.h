@@ -45,7 +45,7 @@ private:
 
 public slots:
     void slotRegisterApplication(Snore::Application *application);
-    void slotUnregisterApplication(Snore::Application *application);
+    void slotDeregisterApplication(Snore::Application *application);
     void slotNotify(Snore::Notification notification);
 };
 

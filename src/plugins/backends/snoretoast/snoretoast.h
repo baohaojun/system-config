@@ -14,11 +14,7 @@ public:
     ~SnoreToast();
     bool init(Snore::SnoreCore *snore);
 
-
-    // SnoreBackend interface
 public slots:
-    void slotRegisterApplication(Snore::Application *application);
-    void slotUnregisterApplication(Snore::Application *application);
     void slotNotify(Snore::Notification notification);
 
 private slots:

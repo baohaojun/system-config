@@ -21,9 +21,7 @@ public:
     virtual bool init(Snore::SnoreCore *snore);
 
 public slots:
-    void slotRegisterApplication ( Snore::Application *application );
-    void slotUnregisterApplication ( Snore::Application *application );
-    void slotNotify ( Snore::Notification notification );
+    void slotNotify(Snore::Notification notification);
 
 private:
     QSystemTrayIcon *m_trayIcon;

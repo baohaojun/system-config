@@ -139,11 +139,6 @@ SnarlBackend::SnarlBackend():
 
 SnarlBackend::~SnarlBackend()
 {
-    if(snore() != NULL){
-        foreach(Application *a,snore()->aplications()){
-            this->slotUnregisterApplication(a);
-        }
-    }
     if(m_defautSnarlinetrface)
         delete m_defautSnarlinetrface;
 }
@@ -188,7 +183,7 @@ void SnarlBackend::slotRegisterApplication(Application *application){
     }
 }
 
-void SnarlBackend::slotUnregisterApplication(Application *application){
+void SnarlBackend::slotDeregisterApplication(Application *application){
     SnarlInterface *snarlInterface = m_applications.take(application->name());
     if(snarlInterface == NULL)
         return;

@@ -50,8 +50,8 @@ signals:
 
 
 public slots:
-    virtual void slotRegisterApplication ( Snore::Application *application ) = 0;
-    virtual void slotUnregisterApplication ( Snore::Application *application ) = 0;
+    virtual void slotRegisterApplication(Snore::Application *application );
+    virtual void slotDeregisterApplication(Snore::Application *application );
     virtual void slotNotify ( Snore::Notification notification ) = 0;
     virtual void slotCloseNotification ( Snore::Notification notification );
 

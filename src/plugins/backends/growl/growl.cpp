@@ -42,13 +42,6 @@ Growl::Growl():
 
 Growl::~Growl()
 {
-    if(snore() != NULL)
-    {
-        foreach(Application *a,snore()->aplications())
-        {
-            this->slotUnregisterApplication(a);
-        }
-    }
     delete m_defaultGNTP;
 }
 
@@ -98,7 +91,7 @@ void Growl::slotRegisterApplication(Application *application)
     m_applications.insert(application->name(),growl);
 }
 
-void Growl::slotUnregisterApplication(Application *application)
+void Growl::slotDeregisterApplication(Application *application)
 {
     gntp *growl = m_applications.take(application->name());
     if(growl == NULL)

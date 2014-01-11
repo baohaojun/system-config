@@ -28,7 +28,7 @@
 #include <QDebug>
 
 
-namespace Snore{
+using namespace Snore;
 
 SnoreBackend::SnoreBackend (const QString &name , bool canCloseNotification, bool supportsRichtext) :
     SnorePlugin ( name ),
@@ -41,6 +41,11 @@ SnoreBackend::SnoreBackend (const QString &name , bool canCloseNotification, boo
 SnoreBackend::~SnoreBackend()
 {
     qDebug()<<"Deleting"<<name();
+    if(snore() != NULL){
+        foreach(Application *a,snore()->aplications()){
+            slotDeregisterApplication(a);
+        }
+    }
 }
 
 
@@ -51,7 +56,7 @@ bool SnoreBackend::init( SnoreCore *snore )
         return false;
     }
     connect( snore->d(), SIGNAL(applicationRegistered(Snore::Application*)), this, SLOT(slotRegisterApplication(Snore::Application*)));
-    connect( snore->d(), SIGNAL(applicationDeregistered(Snore::Application*)), this, SLOT(slotUnregisterApplication(Snore::Application*)));
+    connect( snore->d(), SIGNAL(applicationDeregistered(Snore::Application*)), this, SLOT(slotDeregisterApplication(Snore::Application*)));
 
     foreach(Application *a,snore->aplications()){
         this->slotRegisterApplication(a);
@@ -122,10 +127,17 @@ bool SnoreBackend::supportsRichtext()
     return m_supportsRichtext;
 }
 
+void SnoreBackend::slotRegisterApplication(Application *application)
+{
+    Q_UNUSED(application);
+}
+
+void SnoreBackend::slotDeregisterApplication(Application *application)
+{
+    Q_UNUSED(application);
+}
+
 void SnoreBackend::addActiveNotification(Notification n)
 {
     m_activeNotifications[n.id()] = n;
-}
-
-
 }

@@ -60,16 +60,6 @@ bool SnoreToast::init(SnoreCore *snore)
     return SnoreBackend::init(snore);
 }
 
-void SnoreToast::slotRegisterApplication(Application *application)
-{
-    Q_UNUSED(application)
-}
-
-void SnoreToast::slotUnregisterApplication(Application *application)
-{
-    Q_UNUSED(application)
-}
-
 void SnoreToast::slotNotify(Notification notification)
 {
     QProcess *p = new QProcess(this);
