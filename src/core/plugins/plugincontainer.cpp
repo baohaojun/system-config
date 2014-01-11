@@ -45,37 +45,29 @@ QSettings &PluginContainer::cacheFile(){
 PluginContainer::PluginContainer(QString fileName, QString pluginName, PluginContainer::PluginType type):
     m_pluginFile(fileName),
     m_pluginName(pluginName),
-    m_pluginType(type)
+    m_pluginType(type),
+    m_loader(SnoreCorePrivate::pluginDir().absoluteFilePath(file()))
 {
 }
 
 PluginContainer::~PluginContainer()
 {
-    if(m_instance)
-    {
-        m_instance->deleteLater();
-    }
+    m_loader.unload();
 }
 
 SnorePlugin *PluginContainer::load()
 {
-    if(m_instance != NULL)
-        return m_instance;
-    QPluginLoader loader ( SnoreCorePrivate::pluginDir().absoluteFilePath(file()));
-    qDebug() << "Trying to load" << file();
-    if ( !loader.load())
+    if ( !m_loader.load())
     {
-        qDebug() << "Failed loading plugin: " << loader.errorString();
+        qDebug() << "Failed loading plugin: " << m_loader.errorString();
         return NULL;
     }
-
-    m_instance = qobject_cast<SnorePlugin*> ( loader.instance());
-    return m_instance;
+    return qobject_cast<SnorePlugin*> ( m_loader.instance());
 }
 
 void PluginContainer::unload()
 {
-    m_instance->deleteLater();
+    m_loader.unload();
 }
 
 const QString & PluginContainer::file()
@@ -151,13 +143,13 @@ void PluginContainer::updatePluginCache(){
             }
             PluginContainer *info = new PluginContainer( SnoreCorePrivate::pluginDir().relativeFilePath(filepath),sp->name(),PluginContainer::typeFromString(type));
             s_pluginCache.insert(info->name(),info);
-            sp->deleteLater();
             qDebug() << "added" << info->name() << "to cache";
         }
     }
 
     qDebug()<<s_pluginCache.keys();
     cache.setValue("version",Version::revision());
+    cache.setValue("buildtime",Version::buildTime());
     cache.setValue("pluginPath",SnoreCorePrivate::pluginDir().path());
     QList<PluginContainer*> plugins = s_pluginCache.values();
     cache.beginWriteArray("plugins");
@@ -176,8 +168,12 @@ QHash<QString, PluginContainer *> PluginContainer::pluginCache(){
     QSettings &cache = cacheFile();
     QString version = cache.value("version").toString();
     QString path = cache.value("pluginPath").toString();
+    QString buildTime = cache.value("buildtime").toString();
     int size = cache.beginReadArray("plugins");
-    if(size == 0 || version != Version::revision() || path != SnoreCorePrivate::pluginDir().path()){
+    if(size == 0 ||
+            version != Version::revision() ||
+            buildTime != Version::buildTime() ||
+            path != SnoreCorePrivate::pluginDir().path()){
         cache.endArray();
         updatePluginCache();
     }else{

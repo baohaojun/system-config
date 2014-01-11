@@ -40,7 +40,6 @@ const QDir &SnoreCorePrivate::pluginDir(){
     {
         path = QDir(LIBSNORE_PLUGIN_PATH);
     }
-    qDebug() << "PluginDir" << path.absolutePath();
     return path;
 }
 

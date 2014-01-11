@@ -15,7 +15,7 @@ int main ( int argc, char *argv[] )
 
 #ifdef HAVE_KDE
     KAboutData about("SnoreNotify",0,ki18n("SnoreNotify"),Snore::Version::version().toLatin1(),
-                     ki18n("A notification deamon."),KAboutData::License_LGPL_V3, ki18n("Copyright (c) 2010-2013-2014 Patrick von Reth <vonreth@kde.org>"));
+                     ki18n("A notification deamon."),KAboutData::License_LGPL_V3, ki18n("Copyright (c) 2010-2014 Patrick von Reth <vonreth@kde.org>"));
     KCmdLineArgs::init(argc, argv, &about);
     KUniqueApplication app;
 #else

@@ -24,6 +24,8 @@
 #include <QPointer>
 #include <QSettings>
 #include <QFlag>
+#include <QPluginLoader>
+
 
 namespace Snore{
 class SnoreCore;
@@ -63,10 +65,10 @@ private:
 
     static QHash<QString,PluginContainer*> s_pluginCache;
 
-    QPointer<SnorePlugin> m_instance;
     QString m_pluginFile;
     QString m_pluginName;
     PluginContainer::PluginType m_pluginType;
+    QPluginLoader m_loader;
 };
 }
 
