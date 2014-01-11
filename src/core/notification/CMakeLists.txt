@@ -1,10 +1,12 @@
 set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         notification/notification.cpp
+        notification/notification_p.cpp
         notification/icon.cpp
         PARENT_SCOPE)
 
 set ( Notification_HDR 
         notification.h
+        notification_p.h
         icon.h
         notificationenums.h
         )

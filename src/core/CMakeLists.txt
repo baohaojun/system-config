@@ -23,6 +23,7 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
 
 set ( SnoreNotify_HDR ${SnoreNotify_HDR}
         snore.h
+        snore_p.h
         application.h
         hint.h
         snore_exports.h

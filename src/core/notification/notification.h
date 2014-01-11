@@ -84,9 +84,7 @@ public:
 
     bool isValid() const;
 
-    //protected://TODO::make only accesable from a backend
-    void setActionInvoked ( Action *action );
-    void setActionInvoked ( const int &actionID);
+    NotificationData *data();
 
 
 private:

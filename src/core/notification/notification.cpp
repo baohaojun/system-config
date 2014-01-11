@@ -29,10 +29,6 @@ using namespace Snore;
 
 int Notification::DefaultTimeout = 10;
 
-uint NotificationData::notificationCount = 0;
-
-uint NotificationData::m_idCount = 1;
-
 int NotificationData::notificationMetaID = qRegisterMetaType<Notification>();
 
 Notification::Notification () :
@@ -88,16 +84,6 @@ const uint &Notification::updateID() const
 const Notification::Action *Notification::actionInvoked() const
 {
     return d->m_actionInvoked;
-}
-
-void Notification::setActionInvoked ( Action *action )
-{
-    d->m_actionInvoked = action;
-}
-
-void Notification::setActionInvoked ( const int &id)
-{
-    d->m_actionInvoked = d->m_actions[id];
 }
 
 void Notification::setSource(SnoreFrontend *source){
@@ -177,6 +163,11 @@ void Notification::setSilent(bool silent)
 bool Notification::isValid() const
 {
     return d;
+}
+
+NotificationData *Notification::data()
+{
+    return d.data();
 }
 
 QDataStream &operator<< ( QDataStream &stream, const Notification &noti )

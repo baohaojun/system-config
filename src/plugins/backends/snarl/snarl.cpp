@@ -23,6 +23,7 @@
 #include "core/snore_p.h"
 #include "core/plugins/plugins.h"
 #include "core/plugins/snorebackend.h"
+#include "core/notification/notification_p.h"
 
 #include <QtCore>
 #include <QtDebug>
@@ -88,7 +89,7 @@ public:
                 reason = NotificationEnums::CloseReasons::CLOSED;
                 if(notification.isValid())
                 {
-                    notification.setActionInvoked(data);
+                    notification.data()->setActionInvoked(data);
                     m_snarl->snore()->d()->notificationActionInvoked(notification);
                 }
                 break;
