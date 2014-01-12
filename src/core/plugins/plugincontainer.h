@@ -53,68 +53,21 @@ public:
     static SnorePlugin::PluginType typeFromString(const QString &t);
     static const QStringList &types();
 
-protected:
-
-    static inline QVariant value(const QString &key, const QVariant &defaultValue = QVariant())
-    {
-        return cache().value(pluginPathHash(key), defaultValue);
-    }
-
-    static inline void setValue(const QString &key, const QVariant &value)
-    {
-        cache().setValue(pluginPathHash(key), value);
-    }
-
-    static inline void clear()
-    {
-        cache().remove(pluginPathHash());
-    }
-
-    static inline void setArrayIndex(int i)
-    {
-        cache().setArrayIndex(i);
-    }
-
-    static inline void beginWriteArray(const QString &prefix, int size = -1)
-    {
-        cache().beginWriteArray(pluginPathHash(prefix), size);
-    }
-
-    static inline int beginReadArray(const QString &prefix)
-    {
-        return cache().beginReadArray(pluginPathHash(prefix));
-    }
-
-    static inline void endArray()
-    {
-        cache().endArray();
-    }
-
 private:
     void static updatePluginCache();
     static QHash<QString,PluginContainer*> s_pluginCache;
-    static inline QString pluginPathHash(const QString &key = QString())
-    {
-        static QString s;
-        if(s.isEmpty())
-        {
-            QCryptographicHash h(QCryptographicHash::Md5);
-            h.addData(SnoreCorePrivate::pluginDir().absolutePath().toLatin1());
-            s = h.result().toHex();
-        }
-        if(key.isEmpty())
-        {
-            return QString("%1/").arg(s);
-        }
-        else
-        {
-            return QString("%1/%2").arg(s, key);
-        }
-    }
+
     static inline QSettings &cache()
     {
-        static QSettings cache("SnoreNotify","libsnore");
-        return cache;
+        static QSettings *_cache = NULL;
+        if(_cache == NULL)
+        {
+            _cache = new QSettings("SnoreNotify","libsnore");
+            QCryptographicHash h(QCryptographicHash::Md5);
+            h.addData(SnoreCorePrivate::pluginDir().absolutePath().toLatin1());
+            _cache->beginGroup( h.result().toHex());
+        }
+        return *_cache;
     }
 
     QString m_pluginFile;

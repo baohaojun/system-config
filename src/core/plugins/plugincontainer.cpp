@@ -112,7 +112,7 @@ void PluginContainer::updatePluginCache(){
     qDebug() << "Updating plugin cache";
 
     s_pluginCache.clear();
-    clear();
+    cache().remove("");
 
     foreach(const QString &type,PluginContainer::types()){
         QDir plPath(SnoreCorePrivate::pluginDir().absoluteFilePath(type));
@@ -140,43 +140,45 @@ void PluginContainer::updatePluginCache(){
     }
 
     qDebug()<<s_pluginCache.keys();
-    setValue("version",Version::revision());
-    setValue("buildtime",Version::buildTime());
-    setValue("pluginPath",SnoreCorePrivate::pluginDir().absolutePath());
+    cache().setValue("version",Version::revision());
+    cache().setValue("buildtime",Version::buildTime());
+    cache().setValue("pluginPath",SnoreCorePrivate::pluginDir().absolutePath());
     QList<PluginContainer*> plugins = s_pluginCache.values();
-    beginWriteArray("plugins");
+    cache().beginWriteArray("plugins");
     for(int i=0;i< plugins.size();++i) {
-        setArrayIndex(i);
-        setValue("fileName",plugins[i]->file());
-        setValue("name", plugins[i]->name());
-        setValue("type",(int)plugins[i]->type());
+        cache().setArrayIndex(i);
+        cache().setValue("fileName",plugins[i]->file());
+        cache().setValue("name", plugins[i]->name());
+        cache().setValue("type",(int)plugins[i]->type());
     }
-    endArray();
+    cache().endArray();
 }
 
 QHash<QString, PluginContainer *> PluginContainer::pluginCache(){
     if(!s_pluginCache.isEmpty())
+    {
         return s_pluginCache;
-    QString version = value("version").toString();
-    QString buildTime = value("buildtime").toString();
-    int size = beginReadArray("plugins");
+    }
+    QString version = cache().value("version").toString();
+    QString buildTime = cache().value("buildtime").toString();
+    int size = cache().beginReadArray("plugins");
     if(size == 0 ||
             version != Version::revision() ||
             buildTime != Version::buildTime())
     {
-        endArray();
+        cache().endArray();
         updatePluginCache();
     }
     else
     {
         for(int i=0;i<size;++i)
         {
-            setArrayIndex(i);
-            SnorePlugin::PluginType type = (SnorePlugin::PluginType)value("type").toInt();
-            PluginContainer *info = new PluginContainer(value("fileName").toString(),value("name").toString(),type);
+            cache().setArrayIndex(i);
+            SnorePlugin::PluginType type = (SnorePlugin::PluginType)cache().value("type").toInt();
+            PluginContainer *info = new PluginContainer(cache().value("fileName").toString(),cache().value("name").toString(),type);
             s_pluginCache.insert(info->name(),info);
         }
-        endArray();
+        cache().endArray();
     }
 
     return s_pluginCache;
