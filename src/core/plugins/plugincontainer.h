@@ -62,7 +62,7 @@ private:
         static QSettings *_cache = NULL;
         if(_cache == NULL)
         {
-            _cache = new QSettings("SnoreNotify","libsnore");
+            _cache = new QSettings("SnoreNotify","libsnore-plugin-cache");
             QCryptographicHash h(QCryptographicHash::Md5);
             h.addData(SnoreCorePrivate::pluginDir().absolutePath().toLatin1());
             _cache->beginGroup( h.result().toHex());
