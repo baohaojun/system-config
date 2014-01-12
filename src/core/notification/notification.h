@@ -56,13 +56,13 @@ public:
 
 
 public:
-    Notification ();
-    Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const Icon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
-    Notification ( const Notification &other );
+    Notification();
+    Notification(const QString &application,const QString &alert,const QString &title,const QString &text,const Icon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    Notification(const Notification &other );
     Notification &operator=(const Notification &other);
     ~Notification();
 
-    const uint &id() const;
+    uint id() const;
     //timeout in seconds
     //0 means sticky
     const int &timeout() const;
@@ -73,11 +73,11 @@ public:
     const Action &actionInvoked() const;
     void setSource(class SnoreFrontend *source);
     class SnoreFrontend *source() const;
-    const QString &application() const;
-    const QString &title() const;
-    const QString &text() const;
+    QString application() const;
+    QString title() const;
+    QString text() const;
     const Icon &icon() const;
-    const QString &alert() const;
+    QString alert() const;
     void setSticky();
     bool sticky() const;
     const NotificationEnums::Prioritys::prioritys &priority() const;

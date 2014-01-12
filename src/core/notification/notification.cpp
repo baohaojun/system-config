@@ -91,7 +91,7 @@ Notification::~Notification()
 {
 }
 
-const uint &Notification::id() const
+uint Notification::id() const
 {
     return d->m_id;
 }
@@ -130,22 +130,22 @@ SnoreFrontend *Notification::source() const
     return d->m_source;
 }
 
-const QString &Notification::application() const
+QString Notification::application() const
 {
     return d->m_application;
 }
 
-const QString &Notification::title() const
+QString Notification::title() const
 {
     return d->m_title;
 }
 
-const QString &Notification::text() const
+QString Notification::text() const
 {
     return d->m_text;
 }
 
-const QString &Notification::alert() const
+QString Notification::alert() const
 {
     return d->m_alert;
 }
