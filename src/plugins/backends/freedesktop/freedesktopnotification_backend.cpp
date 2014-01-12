@@ -41,7 +41,7 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
     QStringList actions;
     foreach(int k,noti.actions().keys())
     {
-        actions << QString::number(k) << noti.actions()[k]->name();
+        actions << QString::number(k) << noti.actions()[k].name();
     }
     QVariantMap hints;
     if(noti.icon().isValid())
