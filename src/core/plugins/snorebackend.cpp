@@ -42,7 +42,7 @@ SnoreBackend::~SnoreBackend()
 {
     qDebug()<<"Deleting"<<name();
     if(snore() != NULL){
-        foreach(Application *a,snore()->aplications()){
+        foreach(const Application &a,snore()->aplications()){
             slotDeregisterApplication(a);
         }
     }
@@ -55,10 +55,11 @@ bool SnoreBackend::init( SnoreCore *snore )
     {
         return false;
     }
-    connect( snore->d(), SIGNAL(applicationRegistered(Snore::Application*)), this, SLOT(slotRegisterApplication(Snore::Application*)));
-    connect( snore->d(), SIGNAL(applicationDeregistered(Snore::Application*)), this, SLOT(slotDeregisterApplication(Snore::Application*)));
+    connect( snore->d(), SIGNAL(applicationRegistered(const Snore::Application&)), this, SLOT(slotRegisterApplication(const Snore::Application&)));
+    connect( snore->d(), SIGNAL(applicationDeregistered(const Snore::Application&)), this, SLOT(slotDeregisterApplication(const Snore::Application&)));
 
-    foreach(Application *a,snore->aplications()){
+    foreach(const Application &a,snore->aplications())
+    {
         this->slotRegisterApplication(a);
     }
 
@@ -127,12 +128,12 @@ bool SnoreBackend::supportsRichtext()
     return m_supportsRichtext;
 }
 
-void SnoreBackend::slotRegisterApplication(Application *application)
+void SnoreBackend::slotRegisterApplication(const Application &application)
 {
     Q_UNUSED(application);
 }
 
-void SnoreBackend::slotDeregisterApplication(Application *application)
+void SnoreBackend::slotDeregisterApplication(const Application &application)
 {
     Q_UNUSED(application);
 }

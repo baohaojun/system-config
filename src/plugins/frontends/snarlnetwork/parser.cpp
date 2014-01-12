@@ -122,21 +122,26 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
 
 
     switch(action){
-    case NOTIFICATION:{
+    case NOTIFICATION:
+    {
         qDebug() << sNotification.notification.application();
-        Application * appl = snarl->snore()->aplications().value(sNotification.notification.application());
-        if(!snarl->snore()->aplications().contains(appl->name())){
+        const Application &appl = snarl->snore()->aplications().value(sNotification.notification.application());
+        if(!snarl->snore()->aplications().contains(appl.name()))
+        {
             snarl->snore()->registerApplication(appl);
         }
 
-        if(!appl->alerts().value(sNotification.notification.alert())->isActive())
+        if(!appl.alerts().value(sNotification.notification.alert()).isActive())
+        {
             break;
+        }
         sNotification.isNotification = true;
         return sNotification;
         break;
     }
     case ADD_CLASS:
-        if(sNotification.notification.alert().isEmpty()){
+        if(sNotification.notification.alert().isEmpty())
+        {
             qDebug()<<"Error registering alert with empty name";
             break;
         }
@@ -144,7 +149,7 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
         {
             title = alert;
         }
-        snarl->m_applications.value(sNotification.notification.application())->addAlert(new Alert(alert,title));
+        snarl->m_applications.value(sNotification.notification.application())->addAlert(Alert(alert,title));
         break;
     case REGISTER:
         if(!sNotification.notification.application().isEmpty() && !snarl->m_applications.contains(sNotification.notification.application())){

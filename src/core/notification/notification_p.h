@@ -38,8 +38,8 @@ public:
                        int timeout,NotificationEnums::Prioritys::prioritys priority );
 
     ~NotificationData();
-    void setActionInvoked ( Notification::Action *action );
-    void setActionInvoked ( const int &actionID);
+    void setActionInvoked( const Notification::Action &action );
+    void setActionInvoked( const int &actionID);
 
 private:
     Q_DISABLE_COPY(NotificationData)
@@ -55,8 +55,8 @@ private:
     Icon m_icon;
     NotificationEnums::Prioritys::prioritys m_priority;
     NotificationEnums::CloseReasons::closeReasons m_closeReason;
-    Notification::Action *m_actionInvoked;
-    QHash<int,Notification::Action*> m_actions;
+    Notification::Action m_actionInvoked;
+    QHash<int,Notification::Action> m_actions;
     Hint m_hints;
 
     static uint notificationCount;

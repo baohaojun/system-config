@@ -44,8 +44,8 @@ private:
     gntp *m_defaultGNTP;
 
 public slots:
-    void slotRegisterApplication(Snore::Application *application);
-    void slotDeregisterApplication(Snore::Application *application);
+    void slotRegisterApplication(const Snore::Application &application);
+    void slotDeregisterApplication(const Snore::Application &application);
     void slotNotify(Snore::Notification notification);
 };
 

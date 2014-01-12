@@ -23,26 +23,32 @@
 using namespace Snore;
 
 Application::Application (const QString &name, const Icon &icon) :
-    m_name ( name ),
+    m_name(name),
     m_icon(icon)
 {
 }
 
-Application::Application() :
-    m_name ( "Error: Uninitialized Application" )
+Application::Application(const Application &other):
+    m_name(other.m_name),
+    m_icon(other.m_icon),
+    m_alerts(other.m_alerts)
+{
+
+}
+
+Application::Application()
 {}
 
 Application::~Application()
 {
 }
 
-void Application::addAlert ( Alert *alert )
+void Application::addAlert(const Alert &alert)
 {
-    alert->setParent(this);
-    m_alerts.insert ( alert->name(),alert );
+    m_alerts.insert(alert.name(), alert);
 }
 
-const QString &Application::name() const
+QString Application::name() const
 {
     return m_name;
 }
@@ -52,29 +58,43 @@ const Icon &Application::icon()const
     return m_icon;
 }
 
-const AlertList &Application::alerts() const
+const QHash<QString, Alert> &Application::alerts() const
 {
     return m_alerts;
 }
 
-Alert::Alert (const QString &name, const QString &title, const Icon &icon, bool active) :
-    m_name ( name ),
-    m_title ( title ),
+bool Application::isValid() const
+{
+    return m_name.isNull();
+}
+
+Alert::Alert (const QString &name, const QString &title, const Icon &icon, bool active):
+    m_name(name),
+    m_title(title),
     m_icon(icon),
-    m_active ( active )
+    m_active(active)
 {}
+
+Alert::Alert(const Alert &other):
+    m_name(other.m_name),
+    m_title(other.m_title),
+    m_icon(other.m_icon),
+    m_active(other.m_active)
+{
+
+}
 
 Alert::Alert() :
     m_active ( false )
 {}
 
 
-const QString &Alert::name() const
+QString Alert::name() const
 {
     return m_name;
 }
 
-const QString &Alert::title() const
+QString Alert::title() const
 {
     return m_title;
 }
@@ -89,3 +109,7 @@ bool Alert::isActive() const
     return m_active;
 }
 
+bool Alert::isValid() const
+{
+    return m_name.isNull();
+}

@@ -41,10 +41,13 @@ public:
     class SNORE_EXPORT Action
     {
     public:
+        Action();
         Action(int id,QString name);
+        Action(const Action &other);
 
         int id() const;
         QString name() const;
+        bool isValid() const;
 
     private:
         int m_id;
@@ -67,7 +70,7 @@ public:
     void setUpdateID(uint id);
     const uint &updateID() const;
 
-    const Action* actionInvoked() const;
+    const Action &actionInvoked() const;
     void setSource(class SnoreFrontend *source);
     class SnoreFrontend *source() const;
     const QString &application() const;
@@ -78,8 +81,8 @@ public:
     void setSticky();
     bool sticky() const;
     const NotificationEnums::Prioritys::prioritys &priority() const;
-    const QHash<int,Action*> &actions() const;
-    void addAction(Action *a);
+    const QHash<int, Action> &actions() const;
+    void addAction(const Action &a);
     const NotificationEnums::CloseReasons::closeReasons &closeReason();
     void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
     Hint &hints();

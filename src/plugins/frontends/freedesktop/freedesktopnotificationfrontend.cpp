@@ -55,9 +55,9 @@ bool FreedesktopFrontend::init(SnoreCore *snore){
 }
 
 void FreedesktopFrontend::actionInvoked(Notification notification) {
-    if(notification.actionInvoked())
+    if(notification.actionInvoked().isValid())
     {
-        emit ActionInvoked(notification.id(),QString::number(notification.actionInvoked()->id()));
+        emit ActionInvoked(notification.id(),QString::number(notification.actionInvoked().id()));
     }
 }
 
@@ -90,8 +90,8 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
 #else
         Icon appIcon(":/root/images/freedesktop-dbus.png");
 #endif
-        Application *a = new Application(app_name,appIcon);
-        a->addAlert(new Alert("DBus Alert","DBus Alert",appIcon));
+        Application a(app_name,appIcon);
+        a.addAlert(Alert("DBus Alert","DBus Alert",appIcon));
         snore()->registerApplication(a);
     }
 
@@ -105,8 +105,9 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         noti.setUpdateID(replaces_id);
     }
     noti.setSource(this);
-    for(int i = 0;i < actions.length(); i+=2){
-        noti.addAction(new Notification::Action(actions.at(i).toInt(),actions.at(i+1)));
+    for(int i = 0;i < actions.length(); i+=2)
+    {
+        noti.addAction(Notification::Action(actions.at(i).toInt(),actions.at(i+1)));
     }
 
     snore()->broadcastNotification(noti);

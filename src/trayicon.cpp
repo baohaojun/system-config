@@ -28,49 +28,54 @@
 
 using namespace Snore;
 
-TrayIcon::TrayIcon()        
+TrayIcon::TrayIcon():
+    m_trayIcon(new QSystemTrayIcon(QIcon(":/root/snore.png")))
 {	
-    _trayIcon = new QSystemTrayIcon(QIcon(":/root/snore.png"));
 }
 
-void TrayIcon::initConextMenu(SnoreCore *snore){
-    _snore = snore;
-    _trayIcon->setVisible(true);
+void TrayIcon::initConextMenu(SnoreCore *snore)
+{
+    m_snore = snore;
+    m_trayIcon->setVisible(true);
 
-    _trayMenu = new QMenu("SnoreNotify");
-    _trayMenu->addAction(QString("SnoreNotify ").append(Version::version()));
-    _trayMenu->addSeparator();
-    connect(_trayMenu->addAction(QString("Test")), SIGNAL(triggered()), this, SLOT(slotTestNotification()));
-    _trayMenu->addSeparator();
-    foreach(const QString &back,_snore->notificationBackends()){
-        QAction *b=  new QAction(back,this);
-        connect(b,SIGNAL(triggered()),this,SLOT(setPrimaryBackend()));
+    m_trayMenu = new QMenu("SnoreNotify");
+    m_trayMenu->addAction(QString("SnoreNotify ").append(Version::version()));
+    m_trayMenu->addSeparator();
+    m_trayMenu->addAction("Test Notification", this, SLOT(slotTestNotification()));
+    m_trayMenu->addSeparator();
+    foreach(const QString &back,m_snore->notificationBackends())
+    {
+        QAction *b = m_trayMenu->addAction(back, this, SLOT(setPrimaryBackend()));
         b->setCheckable(true);
-        if(back == _snore->primaryNotificationBackend())
+        if(back == m_snore->primaryNotificationBackend())
+        {
             b->setChecked(true);
-        _backendActions.append(b);
-        _trayMenu->addAction(b);
+        }
+        m_backendActions.append(b);
     }
-    _trayMenu->addSeparator();
-    _trayMenu->addAction("Exit",qApp,SLOT(quit()));
+    m_trayMenu->addSeparator();
+    m_trayMenu->addAction("Exit",qApp,SLOT(quit()));
 
 
-    _trayIcon->setContextMenu(_trayMenu);
+    m_trayIcon->setContextMenu(m_trayMenu);
 }
 
-void TrayIcon::hide(){
-    _trayIcon->setVisible(false);
+void TrayIcon::hide()
+{
+    m_trayIcon->setVisible(false);
 }
 
-QSystemTrayIcon* TrayIcon::trayIcon(){
-    return _trayIcon;
+QSystemTrayIcon* TrayIcon::trayIcon()
+{
+    return m_trayIcon;
 }
 
 void TrayIcon::setPrimaryBackend(){
-    QAction *a= dynamic_cast<QAction*>(sender());
-    _snore->setPrimaryNotificationBackend(a->text());
+    QAction *a = qobject_cast<QAction*>(sender());
+    m_snore->setPrimaryNotificationBackend(a->text());
 
-    foreach(QAction *action,_backendActions){
+    foreach(QAction *action,m_backendActions)
+    {
         action->setChecked(false);
     }
     a->setChecked(true);
@@ -79,7 +84,12 @@ void TrayIcon::setPrimaryBackend(){
 
 void TrayIcon::slotTestNotification()
 {
+    Application appl("SnoreNotify");
+    appl.addAlert(Alert("Default"));
+    m_snore->registerApplication(appl);
     Notification n("SnoreNotify","Default","Hello World","This is Snore",Icon(":/root/snore.png"));
-    _snore->broadcastNotification(n);
+    n.addAction(Notification::Action(1,"Test Action"));
+    m_snore->broadcastNotification(n);
+    m_snore->deregisterApplication(appl);
 }
 

@@ -36,10 +36,10 @@ public:
     class QSystemTrayIcon* trayIcon();
 
 private:
-    class QSystemTrayIcon *_trayIcon;
-    class QMenu *_trayMenu;
-    class QList<class QAction*> _backendActions;
-    class Snore::SnoreCore *_snore;
+    class QSystemTrayIcon *m_trayIcon;
+    class QMenu *m_trayMenu;
+    class QList<class QAction*> m_backendActions;
+    class Snore::SnoreCore *m_snore;
 
 
 public slots:

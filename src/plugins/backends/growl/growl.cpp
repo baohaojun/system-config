@@ -66,19 +66,19 @@ bool Growl::init(SnoreCore *snore)
     return SnoreBackend::init(snore);
 }
 
-void Growl::slotRegisterApplication(Application *application)
+void Growl::slotRegisterApplication(const Application &application)
 {
-    gntp *growl = new gntp(application->name().toUtf8().constData(),application->icon().localUrl().toUtf8().constData());
+    gntp *growl = new gntp(application.name().toUtf8().constData(),application.icon().localUrl().toUtf8().constData());
 
     gntp::gntp_callback callback(&Growl::gntpCallback);
     growl->set_gntp_callback(callback);
 
 //    qDebug() << Q_FUNC_INFO << application->name().toUtf8().constData();
     std::vector<std::string> alerts;
-    foreach(Alert *a,application->alerts())
+    foreach(const Alert &a,application.alerts())
     {
 //        qDebug() << Q_FUNC_INFO << a->name().toUtf8().constData();
-        alerts.push_back(a->name().toUtf8().constData());
+        alerts.push_back(a.name().toUtf8().constData());
     }
 
     try
@@ -88,12 +88,12 @@ void Growl::slotRegisterApplication(Application *application)
     {
         qWarning() << Q_FUNC_INFO << e.what();
     }
-    m_applications.insert(application->name(),growl);
+    m_applications.insert(application.name(),growl);
 }
 
-void Growl::slotDeregisterApplication(Application *application)
+void Growl::slotDeregisterApplication(const Application &application)
 {
-    gntp *growl = m_applications.take(application->name());
+    gntp *growl = m_applications.take(application.name());
     if(growl == NULL)
     {
         return;

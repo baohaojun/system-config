@@ -41,8 +41,8 @@ private:
     Snarl::V42::SnarlInterface* m_defautSnarlinetrface;
 
 public slots:
-    void slotRegisterApplication(Snore::Application *application);
-    void slotDeregisterApplication(Snore::Application *application);
+    void slotRegisterApplication(const Snore::Application &application);
+    void slotDeregisterApplication(const Snore::Application &application);
     void slotNotify(Snore::Notification notification);
     void slotCloseNotification(Snore::Notification notification);
 

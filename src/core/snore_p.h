@@ -45,8 +45,8 @@ public:
     void notificationActionInvoked(Notification notification) const;
 
 signals:
-    void applicationRegistered(Snore::Application*);
-    void applicationDeregistered(Snore::Application*);
+    void applicationRegistered(const Snore::Application&);
+    void applicationDeregistered(const Snore::Application&);
     void notify(Snore::Notification noti);
 
 private slots:
@@ -56,7 +56,7 @@ private:
     SnoreCore *q_ptr;
     Hint m_hints;
 
-    ApplicationsList m_applications;
+    QHash<QString,Application> m_applications;
 
 
     QStringList m_notificationBackends;

@@ -24,49 +24,48 @@
 
 #include <QHash>
 namespace Snore{
-class Application;
-class Alert;
 
-typedef QHash<QString,Application*> ApplicationsList ;
-typedef QHash<QString,Alert*> AlertList;
-
-class SNORE_EXPORT Application : public QObject
+class SNORE_EXPORT Alert
 {
-    Q_OBJECT
 public:
-    Application ( const QString &name, const Icon &icon = Icon(":/root/snore.png"));
-    Application();
-    ~Application();
-    void addAlert ( Alert *alert );
-    const QString &name() const;
-    const Icon &icon() const;
-    const AlertList &alerts() const;
-
-
-private:
-    QString m_name;
-    Icon m_icon;
-    AlertList m_alerts;
-
-};
-
-class SNORE_EXPORT Alert:public QObject
-{
-    Q_OBJECT
-public:
-    Alert ( const QString &name,const QString &title="",const Icon &icon = Icon(":/root/snore.png"),bool active=true );
     Alert();
+    Alert ( const QString &name,const QString &title="",const Icon &icon = Icon(":/root/snore.png"),bool active=true );
+    Alert(const Alert &other);
 
-    const QString &name() const;
-    const QString &title() const;
+    QString name() const;
+    QString title() const;
     const Icon &icon() const;
     bool isActive() const;
+    bool isValid() const;
 private:
     QString m_name;
     QString m_title;
     Icon m_icon;
     bool m_active;
 };
+
+class SNORE_EXPORT Application
+{
+public:
+    Application();
+    Application ( const QString &name, const Icon &icon = Icon(":/root/snore.png"));
+    Application(const Application &other);
+    ~Application();
+
+    void addAlert(const  Alert &alert);
+    QString name() const;
+    const Icon &icon() const;
+    const QHash<QString,Alert> &alerts() const;
+    bool isValid() const;
+
+
+private:
+    QString m_name;
+    Icon m_icon;
+    QHash<QString,Alert> m_alerts;
+
+};
+
 
 
 }

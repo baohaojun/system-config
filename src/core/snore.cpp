@@ -124,25 +124,24 @@ void SnoreCore::broadcastNotification ( Notification notification )
     }
 }
 
-void SnoreCore::registerApplication(Application *application)
+void SnoreCore::registerApplication(const Application &application)
 {
     Q_D(SnoreCore);
-    if(!d->m_applications.contains(application->name()))
+    if(!d->m_applications.contains(application.name()))
     {
-        d->m_applications.insert ( application->name(),application );
+        d->m_applications.insert ( application.name(),application );
         emit d->applicationRegistered ( application );
     }
 }
 
-void SnoreCore::deregisterApplication(Application *application)
+void SnoreCore::deregisterApplication(const Application &application)
 {
     Q_D(SnoreCore);
     emit d->applicationDeregistered (application );
-    d->m_applications.take ( application->name() );
-    application->deleteLater();
+    d->m_applications.take ( application.name() );
 }
 
-const ApplicationsList &SnoreCore::aplications() const
+const QHash<QString, Application> &SnoreCore::aplications() const
 {
     Q_D(const SnoreCore);
     return d->m_applications;

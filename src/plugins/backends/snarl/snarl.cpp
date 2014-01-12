@@ -55,7 +55,8 @@ public:
         if(msg->message == SNARL_GLOBAL_MESSAGE){
             int action = msg->wParam;
             if(action == SnarlEnums::SnarlLaunched){
-                foreach(Application *a,m_snarl->snore()->aplications()){
+                foreach(const Application &a,m_snarl->snore()->aplications())
+                {
                     m_snarl->slotRegisterApplication(a);
                 }
             }
@@ -160,36 +161,38 @@ bool SnarlBackend::init(SnoreCore *snore){
     return SnoreBackend::init(snore);
 }
 
-void SnarlBackend::slotRegisterApplication(Application *application){
+void SnarlBackend::slotRegisterApplication(const Application &application){
     SnarlInterface *snarlInterface = NULL;
-    if(m_applications.contains(application->name())){
-        snarlInterface = m_applications.value(application->name());
-    }else{
-        snarlInterface = new SnarlInterface();
-        m_applications.insert(application->name(),snarlInterface);
+    if(m_applications.contains(application.name()))
+    {
+        snarlInterface = m_applications.value(application.name());
     }
-    qDebug()<<"Register with Snarl"<<application->name();
-    QString appName = application->name();
-    appName = appName.replace(" ","_");//app sig must not contain spaces
+    else
+    {
+        snarlInterface = new SnarlInterface();
+        m_applications.insert(application.name(),snarlInterface);
+    }
+    QString appName = application.name().replace(" ","_");//app sig must not contain spaces
     snarlInterface->Register(appName.toUtf8().constData(),
-                             application->name().toUtf8().constData(),
-                             application->icon().localUrl().toUtf8().constData(),
+                             application.name().toUtf8().constData(),
+                             application.icon().localUrl().toUtf8().constData(),
                              0,(HWND)m_eventLoop->winId(),SNORENOTIFIER_MESSAGE_ID);
 
-    foreach(Alert *alert,application->alerts()){
-        qDebug()<<"registering snarl alert"<<application->name();
-        snarlInterface->AddClass(alert->name().toUtf8().constData(),
-                                 alert->name().toUtf8().constData(),
-                                 0,0,alert->icon().localUrl().toUtf8().constData());
+    foreach(const Alert &alert,application.alerts())
+    {
+        snarlInterface->AddClass(alert.name().toUtf8().constData(),
+                                 alert.name().toUtf8().constData(),
+                                 0,0,alert.icon().localUrl().toUtf8().constData());
     }
 }
 
-void SnarlBackend::slotDeregisterApplication(Application *application){
-    SnarlInterface *snarlInterface = m_applications.take(application->name());
+void SnarlBackend::slotDeregisterApplication(const Application &application){
+    SnarlInterface *snarlInterface = m_applications.take(application.name());
     if(snarlInterface == NULL)
+    {
         return;
-    QString appName = application->name();
-    appName = appName.replace(" ","_");//app sig must not contain spaces
+    }
+    QString appName = application.name().replace(" ","_");//app sig must not contain spaces
     snarlInterface->Unregister(appName.toUtf8().constData());
     delete snarlInterface;
 }
@@ -225,14 +228,17 @@ void SnarlBackend::slotNotify(Notification notification){
                                             !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
                                             priority);
 
-        foreach(const Notification::Action *a, notification.actions()){
-            snarlInterface->AddAction(id,a->name().toUtf8().constData(),QString("@").append(QString::number(a->id())).toUtf8().constData());
+        foreach(const Notification::Action &a, notification.actions())
+        {
+            snarlInterface->AddAction(id,a.name().toUtf8().constData(),QString("@").append(QString::number(a.id())).toUtf8().constData());
         }
         m_idMap[notification.id()] = id;
         qDebug() << "snarl" << id << notification.id();
         startTimeout(notification.id(),notification.timeout());
 
-    }else{
+    }
+    else
+    {
         //update message
         snarlInterface->Update(m_idMap[notification.updateID()],
                 notification.alert().toUtf8().constData(),

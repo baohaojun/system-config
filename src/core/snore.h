@@ -48,10 +48,10 @@ public:
 
     void broadcastNotification( Notification notification );
 
-    void registerApplication( Application *application );
-    void deregisterApplication( Application *application );
+    void registerApplication(const Application &application );
+    void deregisterApplication(const Application &application );
 
-    const ApplicationsList &aplications() const;
+    const QHash<QString, Application> &aplications() const;
 
     const QStringList &notificationBackends() const;
     const QStringList &notificationFrontends() const;

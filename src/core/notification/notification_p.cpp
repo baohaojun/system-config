@@ -43,8 +43,7 @@ NotificationData::NotificationData ( const QString &application,const QString &a
     m_text ( text ),
     m_icon ( icon ),
     m_priority(priority),
-    m_closeReason(NotificationEnums::CloseReasons::NONE),
-    m_actionInvoked( NULL )
+    m_closeReason(NotificationEnums::CloseReasons::NONE)
 {
     notificationCount++;
     qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
@@ -57,7 +56,7 @@ NotificationData::~NotificationData()
 }
 
 
-void NotificationData::setActionInvoked ( Notification::Action *action )
+void NotificationData::setActionInvoked (const Snore::Notification::Action &action )
 {
     m_actionInvoked = action;
 }
