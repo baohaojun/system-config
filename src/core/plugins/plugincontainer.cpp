@@ -33,7 +33,7 @@ using namespace Snore;
 QHash<QString,PluginContainer*> PluginContainer::s_pluginCache = QHash<QString,PluginContainer*>() ;
 
 QSettings &PluginContainer::cacheFile(){
-#ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX || defined(Q_OS_OSX)
     static QSettings cache("TheOneRing","libsnore");
 #else
     static QSettings cache(SnoreCorePrivate::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
