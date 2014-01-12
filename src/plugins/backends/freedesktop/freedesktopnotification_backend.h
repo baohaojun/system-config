@@ -15,8 +15,6 @@ public:
 public slots:
     void slotNotify( Snore::Notification notification );
     void slotCloseNotification ( Snore::Notification notification );
-    void slotRegisterApplication ( Snore::Application *application );
-    void slotUnregisterApplication ( Snore::Application *application );
 
     void slotActionInvoked(const uint &id,const QString &actionID);
     void slotNotificationClosed ( const uint &id,const uint &reason );

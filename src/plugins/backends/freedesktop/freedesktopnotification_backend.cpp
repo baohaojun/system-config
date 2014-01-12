@@ -3,6 +3,8 @@
 #include <QtGlobal>
 #include <QDebug>
 #include "core/notification/notification.h"
+#include "core/notification/notification_p.h"
+#include "core/snore_p.h"
 #include <QtCore>
 #include <QImage>
 #include "fredesktopnotification.h"
@@ -34,16 +36,6 @@ bool FreedesktopBackend::init(SnoreCore *snore){
     return SnoreBackend::init(snore);
 }
 
-void FreedesktopBackend::slotRegisterApplication ( Application *application )
-{
-    Q_UNUSED ( application );
-}
-
-void FreedesktopBackend::slotUnregisterApplication ( Application *application )
-{
-    Q_UNUSED ( application );
-}
-
 void  FreedesktopBackend::slotNotify ( Notification noti )
 {    
     QStringList actions;
@@ -51,10 +43,6 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
     {
         actions << QString::number(k) << noti.actions()[k]->name;
     }
-
-
-
-
     QVariantMap hints;
     if(noti.icon().isValid())
     {
@@ -66,7 +54,7 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
     {
         hints["urgency"] = (char)noti.priority()+1;
     }
-
+    qDebug() << "hints" << hints;
 
     uint updateId = 0;
     if(noti.updateID() != 0)
@@ -96,15 +84,19 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
 void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID){
     Notification noti = getActiveNotificationByID(m_dbusIdMap[id]);
     if(!noti.isValid())
+    {
         return;
-    noti.setActionInvoked ( actionID.toInt() );
-    snore()->notificationActionInvoked ( noti );
+    }
+    noti.data()->setActionInvoked ( actionID.toInt() );
+    snore()->d()->notificationActionInvoked ( noti );
 }
 
 void FreedesktopBackend::slotCloseNotification ( Notification notification )
 {
     if(!m_snoreIdMap.contains(notification.id()))
+    {
         return;
+    }
     uint id = m_snoreIdMap.take(notification.id());
     m_dbusIdMap.remove(id);
     m_interface->CloseNotification(id);
