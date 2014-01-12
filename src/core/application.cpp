@@ -68,6 +68,11 @@ bool Application::isValid() const
     return m_name.isNull();
 }
 
+Hint &Application::hints()
+{
+    return m_hint;
+}
+
 Alert::Alert (const QString &name, const QString &title, const Icon &icon, bool active):
     m_name(name),
     m_title(title),

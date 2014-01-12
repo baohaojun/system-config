@@ -20,6 +20,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 #include "snore_exports.h"
+#include "hint.h"
 #include "notification/icon.h"
 
 #include <QHash>
@@ -57,12 +58,14 @@ public:
     const Icon &icon() const;
     const QHash<QString,Alert> &alerts() const;
     bool isValid() const;
+    Hint &hints();
 
 
 private:
     QString m_name;
     Icon m_icon;
     QHash<QString,Alert> m_alerts;
+    Hint m_hint;
 
 };
 
