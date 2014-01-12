@@ -57,7 +57,7 @@ bool FreedesktopFrontend::init(SnoreCore *snore){
 void FreedesktopFrontend::actionInvoked(Notification notification) {
     if(notification.actionInvoked())
     {
-        emit ActionInvoked(notification.id(),QString::number(notification.actionInvoked()->id));
+        emit ActionInvoked(notification.id(),QString::number(notification.actionInvoked()->id()));
     }
 }
 
@@ -99,7 +99,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         priotity =  NotificationEnums::Prioritys::prioritys(hints["urgency"].toInt()-1);
     }
 
-    Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,priotity);
+    Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::defaultTimeout():timeout/1000,priotity);
     if(replaces_id != 0)
     {
         noti.setUpdateID(replaces_id);

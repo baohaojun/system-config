@@ -32,7 +32,7 @@ namespace Snore{
 
 class SNORE_EXPORT NotificationData : public QSharedData
 {
-
+friend class Notification;
 public:
     NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const Icon &icon,
                        int timeout,NotificationEnums::Prioritys::prioritys priority );
@@ -41,6 +41,8 @@ public:
     void setActionInvoked ( Notification::Action *action );
     void setActionInvoked ( const int &actionID);
 
+private:
+    Q_DISABLE_COPY(NotificationData)
 
     uint m_id;
     uint m_updateID;
@@ -60,9 +62,6 @@ public:
     static uint notificationCount;
     static uint m_idCount;
     static int notificationMetaID;
-
-private:
-    Q_DISABLE_COPY(NotificationData)
 
 };
 

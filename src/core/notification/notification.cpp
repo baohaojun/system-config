@@ -27,9 +27,25 @@
 using namespace Snore;
 
 
-int Notification::DefaultTimeout = 10;
+int Notification::m_defaultTimeout = 10;
 
 int NotificationData::notificationMetaID = qRegisterMetaType<Notification>();
+
+Notification::Action::Action(int id, QString name):
+    m_id(id),
+    m_name(name)
+{
+
+}
+QString Notification::Action::name() const
+{
+    return m_name;
+}
+
+int Notification::Action::id() const
+{
+    return m_id;
+}
 
 Notification::Notification () :
     d(NULL)
@@ -132,8 +148,7 @@ const NotificationEnums::Prioritys::prioritys &Notification::priority() const
 
 void Notification::addAction(Notification::Action *a) 
 {
-    qDebug()<<"Added notification"<<a->id<<a->name;
-    d->m_actions.insert(a->id,a);
+    d->m_actions.insert(a->id(),a);
 }
 
 
@@ -169,6 +184,16 @@ NotificationData *Notification::data()
 {
     return d.data();
 }
+int Notification::defaultTimeout()
+{
+    return m_defaultTimeout;
+}
+
+void Notification::setDefaultTimeout(int defaultTimeout)
+{
+    m_defaultTimeout = defaultTimeout;
+}
+
 
 QDataStream &operator<< ( QDataStream &stream, const Notification &noti )
 {
@@ -179,7 +204,7 @@ QDataStream &operator<< ( QDataStream &stream, const Notification &noti )
 
 QDataStream &operator<< ( QDataStream &stream, const Notification::Action &a)
 {
-    stream<<a.id<<a.id;
+    stream << a.id() << a.name();
     return stream;
 }
 

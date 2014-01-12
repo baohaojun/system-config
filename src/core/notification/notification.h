@@ -36,15 +36,19 @@ class NotificationData;
 
 class SNORE_EXPORT Notification
 {
+    friend class NotificationData;
 public:
-    static int DefaultTimeout;
-
-    class Action
+    class SNORE_EXPORT Action
     {
     public:
-        Action(int id,QString name):id(id),name(name){}
-        int id;
-        QString name;
+        Action(int id,QString name);
+
+        int id() const;
+        QString name() const;
+
+    private:
+        int m_id;
+        QString m_name;
     };
 
 
@@ -87,8 +91,13 @@ public:
     NotificationData *data();
 
 
+    static int defaultTimeout();
+    static void setDefaultTimeout(int defaultTimeout);
+
 private:
     QExplicitlySharedDataPointer<NotificationData> d;
+
+    static int m_defaultTimeout;
 
 
 };

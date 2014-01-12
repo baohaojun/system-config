@@ -56,9 +56,9 @@ bool SnarlNetworkFrontend::init(SnoreCore *snore){
 void SnarlNetworkFrontend::actionInvoked(Notification notification){
     //TODO:fix callback
     SnarlNotification sn=notifications.value(notification.id());
-    if(notification.actionInvoked()->id == 1 )
+    if(notification.actionInvoked()->id() == 1 )
         callback(sn,"SNP/1.1/304/Notification acknowledged/");
-    else if(notification.actionInvoked()->id == 2)
+    else if(notification.actionInvoked()->id() == 2)
         callback(sn,"SNP/1.1/302/Notification cancelled/");
 }
 void SnarlNetworkFrontend::notificationClosed(Notification notification){

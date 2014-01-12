@@ -226,7 +226,7 @@ void SnarlBackend::slotNotify(Notification notification){
                                             priority);
 
         foreach(const Notification::Action *a, notification.actions()){
-            snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
+            snarlInterface->AddAction(id,a->name().toUtf8().constData(),QString("@").append(QString::number(a->id())).toUtf8().constData());
         }
         m_idMap[notification.id()] = id;
         qDebug() << "snarl" << id << notification.id();

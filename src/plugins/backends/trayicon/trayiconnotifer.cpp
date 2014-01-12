@@ -32,7 +32,7 @@ bool TrayIconNotifer::init(SnoreCore *snore){
 void TrayIconNotifer::slotNotify( Notification notification )
 {
     m_notificationQue.append(notification);
-    if(m_lastNotify.elapsed()> Notification::DefaultTimeout * 1000){
+    if(m_lastNotify.elapsed()> Notification::defaultTimeout() * 1000){
         displayNotification();
     }
 }
