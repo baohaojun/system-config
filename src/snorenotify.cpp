@@ -41,7 +41,7 @@ SnoreNotify::SnoreNotify():
     qApp->setOrganizationName("TheOneRing");
     m_trayIcon = new TrayIcon();
     m_snore = new SnoreCore(m_trayIcon->trayIcon());
-    m_snore->loadPlugins(PluginContainer::ALL);
+    m_snore->loadPlugins(SnorePlugin::ALL);
     load();
     m_trayIcon->initConextMenu(m_snore);
 

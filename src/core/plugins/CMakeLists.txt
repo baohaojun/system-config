@@ -6,7 +6,6 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         PARENT_SCOPE)
 
 set ( Plugins_HDR
-        plugincontainer.h
         plugins.h
         snorefrontend.h
         snorebackend.h

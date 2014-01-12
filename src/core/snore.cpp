@@ -51,23 +51,23 @@ SnoreCore::~SnoreCore()
     d->deleteLater();
 }
 
-void SnoreCore::loadPlugins( PluginContainer::PluginTypes types )
+void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
 {
     Q_D(SnoreCore);
     qDebug() << "PluginInfo" << PluginContainer::pluginCache().keys();
     foreach ( PluginContainer *info, PluginContainer::pluginCache().values())
     {
-        if(types == PluginContainer::ALL || types.testFlag(info->type()))
+        if(types == SnorePlugin::ALL || types.testFlag(info->type()))
         {
             switch(info->type())
             {
-            case PluginContainer::BACKEND:
+            case SnorePlugin::BACKEND:
             {
                 qDebug() << info->name() << "is a Notification_Backend";
                 d->m_notificationBackends.append( info->name());
                 break;
             }
-            case PluginContainer::SECONDARY_BACKEND:
+            case SnorePlugin::SECONDARY_BACKEND:
             {
                 if(!info->load()->init( this )){
                     info->unload();
@@ -76,7 +76,7 @@ void SnoreCore::loadPlugins( PluginContainer::PluginTypes types )
                 d->m_secondaryNotificationBackends.append(info->name());
                 break;
             }
-            case PluginContainer::FRONTEND:
+            case SnorePlugin::FRONTEND:
             {
                 qDebug() << info->name() << "is a Notification_Frontend";
                 if(!info->load()->init( this )){
@@ -86,7 +86,7 @@ void SnoreCore::loadPlugins( PluginContainer::PluginTypes types )
                 d->m_Frontends.append(info->name());
                 break;
             }
-            case PluginContainer::PLUGIN:
+            case SnorePlugin::PLUGIN:
             {
                 qDebug() <<info->name()<<"is a SnorePlugin";
                 if(!info->load()->init(this)){

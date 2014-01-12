@@ -22,8 +22,10 @@
 #define SNORECOREPRIVATE_H
 
 #include "snore.h"
+#include "plugins/snorebackend.h"
 
 #include <QDir>
+#include <QPointer>
 
 namespace Snore
 {

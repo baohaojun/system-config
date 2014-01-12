@@ -20,11 +20,14 @@
 #ifndef PLUGINCONTAINER_H
 #define PLUGINCONTAINER_H
 #include "../snore_exports.h"
+#include "../snore_p.h"
 
 #include <QPointer>
 #include <QSettings>
 #include <QFlag>
 #include <QPluginLoader>
+#include <QCryptographicHash>
+
 
 
 namespace Snore{
@@ -36,43 +39,90 @@ class SnoreSecondaryBackend;
 
 class SNORE_EXPORT PluginContainer{
 public:
-    enum PluginType{
-        ALL = 0x0,//for loading plugins
-        BACKEND = 0x1,
-        SECONDARY_BACKEND = 0x2,
-        FRONTEND = 0x4,
-        PLUGIN = 0x8
-    };
-    Q_DECLARE_FLAGS(PluginTypes, PluginType)
-
     static QHash<QString,PluginContainer*> pluginCache();
 
-    PluginContainer(QString fileName,QString pluginName,PluginType type);
+    PluginContainer(QString fileName,QString pluginName,SnorePlugin::PluginType type);
     ~PluginContainer();
     SnorePlugin *load();
     void unload();
     const QString &file();
     const QString &name();
-    PluginContainer::PluginType type();
+    SnorePlugin::PluginType type();
 
 
-    static PluginContainer::PluginType typeFromString(const QString &t);
+    static SnorePlugin::PluginType typeFromString(const QString &t);
     static const QStringList &types();
 
-private:
-    static void updatePluginCache();
-    static QSettings &cacheFile();
+protected:
 
+    static inline QVariant value(const QString &key, const QVariant &defaultValue = QVariant())
+    {
+        return cache().value(pluginPathHash(key), defaultValue);
+    }
+
+    static inline void setValue(const QString &key, const QVariant &value)
+    {
+        cache().setValue(pluginPathHash(key), value);
+    }
+
+    static inline void clear()
+    {
+        cache().remove(pluginPathHash());
+    }
+
+    static inline void setArrayIndex(int i)
+    {
+        cache().setArrayIndex(i);
+    }
+
+    static inline void beginWriteArray(const QString &prefix, int size = -1)
+    {
+        cache().beginWriteArray(pluginPathHash(prefix), size);
+    }
+
+    static inline int beginReadArray(const QString &prefix)
+    {
+        return cache().beginReadArray(pluginPathHash(prefix));
+    }
+
+    static inline void endArray()
+    {
+        cache().endArray();
+    }
+
+private:
+    void static updatePluginCache();
     static QHash<QString,PluginContainer*> s_pluginCache;
+    static inline QString pluginPathHash(const QString &key = QString())
+    {
+        static QString s;
+        if(s.isEmpty())
+        {
+            QCryptographicHash h(QCryptographicHash::Md5);
+            h.addData(SnoreCorePrivate::pluginDir().absolutePath().toLatin1());
+            s = h.result().toHex();
+        }
+        if(key.isEmpty())
+        {
+            return QString("%1/").arg(s);
+        }
+        else
+        {
+            return QString("%1/%2").arg(s, key);
+        }
+    }
+    static inline QSettings &cache()
+    {
+        static QSettings cache("SnoreNotify","libsnore");
+        return cache;
+    }
 
     QString m_pluginFile;
     QString m_pluginName;
-    PluginContainer::PluginType m_pluginType;
+    SnorePlugin::PluginType m_pluginType;
     QPluginLoader m_loader;
 };
 }
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::PluginContainer::PluginTypes)
 
 
 #endif//PLUGINCONTAINER_H

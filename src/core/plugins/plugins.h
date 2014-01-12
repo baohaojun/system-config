@@ -25,7 +25,6 @@
 #include <QHash>
 #include <QTimer>
 #include <QtPlugin>
-#include <QPluginLoader>
 
 namespace Snore{
 class Application;
@@ -36,6 +35,15 @@ class SNORE_EXPORT SnorePlugin : public QObject
 {
     Q_OBJECT
 public:
+    enum PluginType{
+        ALL = 0x0,//for loading plugins
+        BACKEND = 0x1,
+        SECONDARY_BACKEND = 0x2,
+        FRONTEND = 0x4,
+        PLUGIN = 0x8
+    };
+    Q_DECLARE_FLAGS(PluginTypes, PluginType)
+
     SnorePlugin ( const QString &name);
     virtual ~SnorePlugin();
     virtual bool init( SnoreCore *snore );
@@ -58,6 +66,8 @@ private:
 
 
 };
+Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::SnorePlugin::PluginTypes)
+
 
 }
 Q_DECLARE_INTERFACE ( Snore::SnorePlugin,

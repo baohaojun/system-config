@@ -22,8 +22,8 @@
 
 #include "snore_exports.h"
 #include "application.h"
-#include "plugins/plugincontainer.h"
 #include "notification/notification.h"
+#include "plugins/plugins.h"
 #include "hint.h"
 
 #include <QStringList>
@@ -43,7 +43,7 @@ class SNORE_EXPORT SnoreCore : public QObject
 public:
     SnoreCore (QSystemTrayIcon *trayIcon = NULL );
     ~SnoreCore();
-    void loadPlugins ( PluginContainer::PluginTypes types );
+    void loadPlugins ( SnorePlugin::PluginTypes types );
 
 
     void broadcastNotification( Notification notification );
@@ -84,16 +84,17 @@ private:
 };
 
 
+
 static inline QString toPlainText ( const QString &string)
 {
-        if(Qt::mightBeRichText(string))
-        {
-            return QTextDocumentFragment::fromHtml(string).toPlainText();
-        }
-        else
-        {
-            return string;
-        }
+    if(Qt::mightBeRichText(string))
+    {
+        return QTextDocumentFragment::fromHtml(string).toPlainText();
+    }
+    else
+    {
+        return string;
+    }
 }
 
 }
