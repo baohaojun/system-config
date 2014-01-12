@@ -20,8 +20,12 @@
 
 using namespace Snore;
 
-Hint::Hint(QObject *parent) :
-    QObject(parent)
+Hint::Hint()
+{
+}
+
+Hint::Hint(const Hint &other):
+    m_data(other.m_data)
 {
 }
 

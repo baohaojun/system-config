@@ -58,9 +58,9 @@ public:
     const Icon &icon() const;
     const QHash<QString,Alert> &alerts() const;
     bool isValid() const;
+
     Hint &hints();
-
-
+    const Hint &hints() const;
 private:
     QString m_name;
     Icon m_icon;

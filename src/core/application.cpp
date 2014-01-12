@@ -31,7 +31,8 @@ Application::Application (const QString &name, const Icon &icon) :
 Application::Application(const Application &other):
     m_name(other.m_name),
     m_icon(other.m_icon),
-    m_alerts(other.m_alerts)
+    m_alerts(other.m_alerts),
+    m_hint(other.m_hint)
 {
 
 }
@@ -69,6 +70,11 @@ bool Application::isValid() const
 }
 
 Hint &Application::hints()
+{
+    return m_hint;
+}
+
+const Hint &Application::hints() const
 {
     return m_hint;
 }

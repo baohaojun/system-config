@@ -28,11 +28,11 @@ namespace Snore
 {
 
 
-class SNORE_EXPORT Hint : public QObject
+class SNORE_EXPORT Hint
 {
-    Q_OBJECT
 public:
-    explicit Hint(QObject *parent = 0);
+    Hint();
+    Hint(const Hint &other);
 
     void setValue(const QString &key, const QVariant &value);
     QVariant value(const QString & key, const QVariant & defaultValue = QVariant() ) const;
