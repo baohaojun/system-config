@@ -23,10 +23,11 @@
 #include <QtGlobal>
 
 
-static int imageHintID = qDBusRegisterMetaType<FreedesktopImageHint>();
+int FreedesktopImageHint::imageHintID = qDBusRegisterMetaType<FreedesktopImageHint>();
 
 
-FreedesktopImageHint::FreedesktopImageHint(){
+FreedesktopImageHint::FreedesktopImageHint()
+{
 
 }
 
@@ -38,7 +39,7 @@ FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
     height = image.height();
     rowstride = image.bytesPerLine();
     hasAlpha = image.hasAlphaChannel();
-    channels = image.isGrayscale()?1:hasAlpha?4:3;
+    channels = hasAlpha?4:3;
     bitsPerSample = image.depth()/channels;
 
 }

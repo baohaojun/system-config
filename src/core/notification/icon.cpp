@@ -57,7 +57,8 @@ Icon::~Icon()
 }
 
 const QImage &Icon::image() const{
-    if(d->m_img.isNull()){
+    if(d->m_img.isNull())
+    {
         d->m_img = QImage(d->m_url);
     }
     return d->m_img;

@@ -31,8 +31,6 @@ class FreedesktopImageHint
 public:    
     FreedesktopImageHint();
     FreedesktopImageHint(const QImage &img);
-    QString hash()const;
-
     QImage toQImage()const;
 
     int width;
@@ -43,6 +41,8 @@ public:
     int channels;
     QByteArray imageData;
     QString _hash;
+private:
+    static int imageHintID;
 
 
 };

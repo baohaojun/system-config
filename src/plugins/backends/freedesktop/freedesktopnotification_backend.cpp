@@ -41,7 +41,7 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
     QStringList actions;
     foreach(int k,noti.actions().keys())
     {
-        actions << QString::number(k) << noti.actions()[k]->name;
+        actions << QString::number(k) << noti.actions()[k]->name();
     }
     QVariantMap hints;
     if(noti.icon().isValid())
@@ -54,7 +54,6 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
     {
         hints["urgency"] = (char)noti.priority()+1;
     }
-    qDebug() << "hints" << hints;
 
     uint updateId = 0;
     if(noti.updateID() != 0)
@@ -109,10 +108,15 @@ void FreedesktopBackend::slotNotificationClosed ( const uint &id,const uint &rea
     NotificationEnums::CloseReasons::closeReasons closeReason = NotificationEnums::CloseReasons::closeReasons(reason);
     qDebug() << Q_FUNC_INFO << "Closed" << id << "|" << closeReason << reason;
     if(id == 0)
+    {
         return;
+    }
     Notification noti =  getActiveNotificationByID(m_dbusIdMap.take(id));
-    m_snoreIdMap.remove(noti.id());
-    closeNotification(noti, closeReason);
+    if(noti.isValid())
+    {
+        m_snoreIdMap.remove(noti.id());
+        closeNotification(noti, closeReason);
+    }
 }
 
 
