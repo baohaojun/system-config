@@ -130,7 +130,7 @@ void PluginContainer::updatePluginCache(){
             SnorePlugin *sp = qobject_cast<SnorePlugin*>(plugin);
             if(sp == NULL){
                 qDebug() << "Error:" << fileName << " is not a Snore plugin" ;
-                plugin->deleteLater();
+                loader.unload();
                 continue;
             }
             PluginContainer *info = new PluginContainer( SnoreCorePrivate::pluginDir().relativeFilePath(filepath),sp->name(),PluginContainer::typeFromString(type));
@@ -138,8 +138,6 @@ void PluginContainer::updatePluginCache(){
             qDebug() << "added" << info->name() << "to cache";
         }
     }
-
-    qDebug()<<s_pluginCache.keys();
     cache().setValue("version",Version::revision());
     cache().setValue("buildtime",Version::buildTime());
     cache().setValue("pluginPath",SnoreCorePrivate::pluginDir().absolutePath());
