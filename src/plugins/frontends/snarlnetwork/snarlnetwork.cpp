@@ -56,7 +56,7 @@ bool SnarlNetworkFrontend::init(SnoreCore *snore){
 void SnarlNetworkFrontend::actionInvoked(Notification notification)
 {
     //TODO:fix callback
-    if(notifications.contains(notification.id()))
+    if(notification.source() == this)
     {
         SnarlNotification sn=notifications.value(notification.id());
         if(notification.actionInvoked().id() == 1 )
@@ -71,7 +71,7 @@ void SnarlNetworkFrontend::actionInvoked(Notification notification)
 }
 void SnarlNetworkFrontend::notificationClosed(Notification notification)
 {
-    if(notifications.contains(notification.id()))
+    if(notification.source() == this)
     {
         SnarlNotification sn=notifications.value(notification.id());
         if(notification.closeReason() == NotificationEnums::CloseReasons::TIMED_OUT)
