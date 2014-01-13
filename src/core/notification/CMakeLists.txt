@@ -2,6 +2,7 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         notification/notification.cpp
         notification/notification_p.cpp
         notification/icon.cpp
+        notification/icon_p.cpp
         PARENT_SCOPE)
 
 set ( Notification_HDR 

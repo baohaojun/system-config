@@ -76,7 +76,6 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
     QString appName;
     QString title;
     QString text;
-    QString sntpIcon;
     QString icon;
     QString alertName;
     int timeout=10;
@@ -102,8 +101,7 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
             text = value;
             break;
         case ICON:
-            sntpIcon = value;
-            icon = downloadIcon(value);
+            icon = value;
             break;
         case CLASS:
             alertName = value;
@@ -145,8 +143,6 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
 
     sNotification.notification = Notification(app,alert,title,text,icon,timeout);
     sNotification.notification.setSource(snarl);
-
-    sNotification.notification.hints().setValue("SnarlIcon", sntpIcon);
 
 
     switch(action){
@@ -197,41 +193,3 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
     return sNotification;
 }
 
-QString Parser::downloadIcon(const QString &address){
-    if(address=="")
-    {
-        return "";
-    }
-    if(address.startsWith("file://"))
-    {
-        return QString(address.mid(7));
-    }
-    QByteArray arr=address.toUtf8();
-    QUrl url = QUrl::fromEncoded(arr);
-
-    QCryptographicHash hash(QCryptographicHash::Md5);
-    hash.addData(arr);
-    QString filename=QDir::temp().path()+"/SnoreNotify/"+hash.result().toHex()+address.mid(address.lastIndexOf(".")-1);
-    QFile file(filename);
-    if(file.exists())
-        return filename;
-
-    QByteArray reply=download(url);
-
-    file.open(QIODevice::WriteOnly);
-    file.write(reply);
-
-    return filename;
-
-}
-
-QByteArray Parser::download(const QUrl &address){
-    QNetworkAccessManager manager;
-    QEventLoop loop;
-    QNetworkRequest request(address);
-    request.setRawHeader("User-Agent", "SnoreNotify");
-    QNetworkReply *reply=manager.get(request);
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-    return reply->readAll();
-}

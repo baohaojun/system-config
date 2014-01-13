@@ -62,7 +62,14 @@ Icon::~Icon()
 const QImage &Icon::image() const{
     if(d->m_img.isNull())
     {
+        if(isLocalFile())
+        {
         d->m_img = QImage(d->m_url);
+        }
+        else
+        {
+            d->m_img = QImage::fromData(d->m_data,"PNG");
+        }
     }
     return d->m_img;
 }
@@ -70,15 +77,18 @@ const QImage &Icon::image() const{
 QString Icon::localUrl()const{
     if(d->m_localUrl.isEmpty())
     {
-        if(m_localImageCache.contains(hash()))
+        if(m_localImageCache.contains(d->m_hash))
         {
-            d->m_localUrl =  m_localImageCache[hash()];
-        }
-        else
+            d->m_localUrl =  m_localImageCache[d->m_hash];
+        }else
         {
-            d->m_localUrl = QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), hash());
+            if(isRemoteFile())
+            {
+                d->download();
+            }
+            d->m_localUrl = QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), d->m_hash);
             image().save(d->m_localUrl ,"PNG");
-            m_localImageCache[hash()] = d->m_localUrl;
+            m_localImageCache[d->m_hash] = d->m_localUrl;
         }
     }
     return d->m_localUrl;
@@ -89,17 +99,6 @@ const QByteArray &Icon::imageData() const{
         d->setImageData();
     }
     return d->m_data;
-}
-
-QString Icon::hash() const{
-    if(d->m_isLocalFile)
-    {
-        return "";
-    }
-    if(d->m_hash.isEmpty() && !imageData().isNull()){
-        d->m_hash = IconData::computeHash(imageData());
-    }
-    return d->m_hash;
 }
 
 bool Icon::isLocalFile() const
@@ -119,4 +118,10 @@ bool Icon::isValid() const
 QString Icon::url() const
 {
     return d->m_url;
+}
+
+
+bool Snore::Icon::isRemoteFile() const
+{
+    return !d->m_isResource && !isLocalFile();
 }

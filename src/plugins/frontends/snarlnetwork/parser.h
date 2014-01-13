@@ -30,16 +30,13 @@
 class Parser:public QObject{
     Q_OBJECT
 public:
-    static class QByteArray download(const QUrl &address);
-
-public:
     Parser(class SnarlNetworkFrontend* snarl);
 
      struct SnarlNotification parse(QString &msg,class QTcpSocket* client);
 
 private:
     class SnarlNetworkFrontend *snarl;
-    QString downloadIcon(const QString &address);
+
     enum snpTypes{
         TYPE,
         APP,

@@ -42,8 +42,8 @@ public:
     QString localUrl() const;
     QString url() const;
     const QByteArray &imageData() const ;
-    QString hash() const;
     bool isLocalFile() const;
+    bool isRemoteFile() const;
     bool isEmpty() const;
     bool isValid() const;
 

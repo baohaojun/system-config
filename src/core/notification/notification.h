@@ -57,7 +57,7 @@ public:
 
 public:
     Notification();
-    Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
     Notification(const Notification &other );
     Notification &operator=(const Notification &other);
     ~Notification();
@@ -98,7 +98,8 @@ public:
     static void setDefaultTimeout(int defaultTimeout);
 
 private:
-    Notification(const QString &,const QString &,const QString &,const QString &,const Icon &,int, NotificationEnums::Prioritys::prioritys );
+    explicit Notification(const QString &, const QString &, const QString &, const QString &, const Icon &, int , NotificationEnums::Prioritys::prioritys);
+
     QExplicitlySharedDataPointer<NotificationData> d;
 
     static int m_defaultTimeout;

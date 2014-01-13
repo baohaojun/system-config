@@ -214,6 +214,11 @@ void Notification::setDefaultTimeout(int defaultTimeout)
     m_defaultTimeout = defaultTimeout;
 }
 
+Notification::Notification(const QString &, const QString &, const QString &, const QString &, const Icon &, int , NotificationEnums::Prioritys::prioritys )
+{
+
+}
+
 QDataStream &operator<< ( QDataStream &stream, const Notification &noti )
 {
     stream << "Title: " << noti.title() << " Text: " << noti.text() << " ID: " << noti.id() ;
