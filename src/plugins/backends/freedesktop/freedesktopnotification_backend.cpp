@@ -55,9 +55,9 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
         hints["urgency"] = (char)noti.priority()+1;
     }
 
-    if(snore()->aplications().value(noti.application()).hints().contains("desktop-entry"))
+    if(noti.application().hints().contains("desktop-entry"))
     {
-        hints["desktop-entry"] = snore()->aplications()[noti.application()].hints().value("desktop-entry");
+        hints["desktop-entry"] = noti.application().hints().value("desktop-entry");
     }
 
     uint updateId = 0;
@@ -68,14 +68,14 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
         m_snoreIdMap[noti.id()] = updateId;
     }
 
-    QString title = QString("%1 - %2").arg(noti.application(), noti.title());
+    QString title = QString("%1 - %2").arg(noti.application().name(), noti.title());
     QString body(noti.text());
     if(!supportsRichtext())
     {
         title = Snore::toPlainText(title);
         body = Snore::toPlainText(body);
     }
-    QDBusPendingReply<uint>  id = m_interface->Notify(noti.application(), updateId, "", title,
+    QDBusPendingReply<uint>  id = m_interface->Notify(noti.application().name(), updateId, "", title,
                                                       body, actions, hints, noti.sticky()?-1:noti.timeout()*1000);
 
     if(noti.updateID() == 0)

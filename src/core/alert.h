@@ -50,7 +50,7 @@ private:
 };
 }
 
-QDebug operator<< ( QDebug debug, const Snore::Alert &alert );
+QDebug SNORE_EXPORT operator<< ( QDebug debug, const Snore::Alert &alert );
 
 
 #endif // ALERT_H
