@@ -31,17 +31,17 @@ uint NotificationData::notificationCount = 0;
 
 uint NotificationData::m_idCount = 1;
 
-NotificationData::NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const Icon &icon,
-                                     int timeout,NotificationEnums::Prioritys::prioritys priority ):
+NotificationData::NotificationData (const Snore::Application &application, const Snore::Alert &alert, const QString &title, const QString &text, const Icon &icon,
+                                     int timeout, NotificationEnums::Prioritys::prioritys priority ):
     m_id ( m_idCount++ ),
     m_updateID(0),
-    m_timeout ( timeout ),
-    m_source ( NULL),
+    m_timeout( timeout ),
+    m_source( NULL),
     m_application ( application ),
-    m_alert ( alert ),
-    m_title ( title ),
-    m_text ( text ),
-    m_icon ( icon ),
+    m_alert( alert ),
+    m_title( title ),
+    m_text( text ),
+    m_icon( icon ),
     m_priority(priority),
     m_closeReason(NotificationEnums::CloseReasons::NONE)
 {

@@ -22,28 +22,12 @@
 #include "snore_exports.h"
 #include "hint.h"
 #include "notification/icon.h"
+#include "alert.h"
 
 #include <QHash>
 namespace Snore{
 
-class SNORE_EXPORT Alert
-{
-public:
-    Alert();
-    Alert ( const QString &name,const QString &title="",const Icon &icon = Icon(":/root/snore.png"),bool active=true );
-    Alert(const Alert &other);
-
-    QString name() const;
-    QString title() const;
-    const Icon &icon() const;
-    bool isActive() const;
-    bool isValid() const;
-private:
-    QString m_name;
-    QString m_title;
-    Icon m_icon;
-    bool m_active;
-};
+class ApplicationData;
 
 class SNORE_EXPORT Application
 {
@@ -51,6 +35,7 @@ public:
     Application();
     Application ( const QString &name, const Icon &icon = Icon(":/root/snore.png"));
     Application(const Application &other);
+    Application &operator=(const Application &other);
     ~Application();
 
     void addAlert(const  Alert &alert);
@@ -62,14 +47,24 @@ public:
     Hint &hints();
     const Hint &hints() const;
 private:
-    QString m_name;
-    Icon m_icon;
-    QHash<QString,Alert> m_alerts;
-    Hint m_hint;
+     QExplicitlySharedDataPointer<ApplicationData> d;
+
 
 };
 
 
+inline QDebug operator<< ( QDebug debug, const Snore::Application &app )
+{
+    if(app.isValid())
+    {
+        debug << "Snore::Application(" << app.name() << ", " << app.alerts() << ")";//," << app.hints() << ")" ;
+    }
+    else
+    {
+        debug << "Snore::Application(0x00)" ;
+    }
+    return debug.maybeSpace();
+}
 
 }
 

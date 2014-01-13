@@ -39,6 +39,7 @@ FreedesktopFrontend::FreedesktopFrontend():
     SnoreFrontend("Freedesktop")
 {
 
+
 }
 
 FreedesktopFrontend::~FreedesktopFrontend(){
@@ -72,6 +73,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     Icon icon;
+    Application app;
     NotificationEnums::Prioritys::prioritys priotity = NotificationEnums::Prioritys::NORMAL;
 
     if(hints.contains("image_data")){
@@ -84,22 +86,28 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         icon = Icon(":/root/images/freedesktop-dbus.png");
     }
 
-    if(!snore()->aplications().contains(app_name)){
+    if(!snore()->aplications().contains(app_name))
+    {
 #ifdef HAVE_KDE
         Icon appIcon(KIconLoader::global()->iconPath(app_icon, KIconLoader::Desktop));
 #else
         Icon appIcon(":/root/images/freedesktop-dbus.png");
 #endif
-        Application a(app_name,appIcon);
-        a.addAlert(Alert("DBus Alert","DBus Alert",appIcon));
-        snore()->registerApplication(a);
+        Alert alert("DBus Alert","DBus Alert",appIcon);
+        app = Application(app_name,appIcon);
+        app.addAlert(alert);
+        snore()->registerApplication(app);
+    }
+    else
+    {
+        app = snore()->aplications()[app_name];
     }
 
     if (hints.contains("urgency")) {
         priotity =  NotificationEnums::Prioritys::prioritys(hints["urgency"].toInt()-1);
     }
 
-    Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::defaultTimeout():timeout/1000,priotity);
+    Notification noti(app, *app.alerts().begin(), summary, body, icon, timeout==-1?Notification::defaultTimeout():timeout/1000, priotity);
     if(replaces_id != 0)
     {
         noti.setUpdateID(replaces_id);

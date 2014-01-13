@@ -61,7 +61,7 @@ private:
     class QTcpServer *tcpServer;
     Parser *parser;
     QHash<uint,SnarlNotification> notifications;
-    QHash<QString,Snore::Application*> m_applications;
+    QHash<QString,Snore::Application> m_applications;
 
     void callback(const SnarlNotification &sn,QString msg);
 

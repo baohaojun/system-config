@@ -34,7 +34,7 @@ class SNORE_EXPORT NotificationData : public QSharedData
 {
 friend class Notification;
 public:
-    NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const Icon &icon,
+    NotificationData ( const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,
                        int timeout,NotificationEnums::Prioritys::prioritys priority );
 
     ~NotificationData();
@@ -47,9 +47,9 @@ private:
     uint m_id;
     uint m_updateID;
     int m_timeout;
-    SnoreFrontend *m_source;
-    QString m_application;
-    QString m_alert;
+    SnoreFrontend *m_source;    
+    Application m_application;
+    Alert m_alert;
     QString m_title;
     QString m_text;
     Icon m_icon;
@@ -58,6 +58,8 @@ private:
     Notification::Action m_actionInvoked;
     QHash<int,Notification::Action> m_actions;
     Hint m_hints;
+
+
 
     static uint notificationCount;
     static uint m_idCount;

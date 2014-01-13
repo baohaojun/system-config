@@ -21,9 +21,9 @@
 #define NOTIFICATION_H
 #include "../snore_exports.h"
 #include "icon.h"
-
 #include "notificationenums.h"
 #include "../hint.h"
+#include "../application.h"
 
 #include <QVariant>
 #include <QDebug>
@@ -57,7 +57,7 @@ public:
 
 public:
     Notification();
-    Notification(const QString &application,const QString &alert,const QString &title,const QString &text,const Icon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
     Notification(const Notification &other );
     Notification &operator=(const Notification &other);
     ~Notification();
@@ -73,11 +73,11 @@ public:
     const Action &actionInvoked() const;
     void setSource(class SnoreFrontend *source);
     class SnoreFrontend *source() const;
-    QString application() const;
+    Application application() const;
     QString title() const;
     QString text() const;
     const Icon &icon() const;
-    QString alert() const;
+    Alert alert() const;
     void setSticky();
     bool sticky() const;
     const NotificationEnums::Prioritys::prioritys &priority() const;

@@ -50,3 +50,9 @@ bool Hint::contains(const QString &key) const
 {
     return m_data.contains(key);
 }
+
+//QDebug operator<<( QDebug debug, const Snore::Hint &hint )
+//{
+//    debug << "Snore::Hint(" << hint.m_data << ")" ;
+//    return debug.maybeSpace();
+//}

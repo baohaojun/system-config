@@ -198,7 +198,7 @@ void SnarlBackend::slotDeregisterApplication(const Application &application){
 }
 
 void SnarlBackend::slotNotify(Notification notification){
-    SnarlInterface *snarlInterface = m_applications.value(notification.application());
+    SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
     if(snarlInterface == NULL){
         qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
         qDebug()<<m_applications.keys();
@@ -220,7 +220,7 @@ void SnarlBackend::slotNotify(Notification notification){
     }
 
     if(notification.updateID() == 0){
-        ULONG32 id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
+        ULONG32 id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
                                             Snore::toPlainText(notification.title()).toUtf8().constData(),
                                             Snore::toPlainText(notification.text()).toUtf8().constData(),
                                             notification.timeout(),
@@ -241,7 +241,7 @@ void SnarlBackend::slotNotify(Notification notification){
     {
         //update message
         snarlInterface->Update(m_idMap[notification.updateID()],
-                notification.alert().toUtf8().constData(),
+                notification.alert().name().toUtf8().constData(),
                 Snore::toPlainText(notification.title()).toUtf8().constData(),
                 Snore::toPlainText(notification.text()).toUtf8().constData(),
                 notification.timeout(),

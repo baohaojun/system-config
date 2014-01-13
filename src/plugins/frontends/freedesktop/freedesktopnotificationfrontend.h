@@ -20,6 +20,7 @@
 #ifndef FREEDESKTOPNOTIFICATION_FRONTEND_H
 #define FREEDESKTOPNOTIFICATION_FRONTEND_H
 #include "core/plugins/snorefrontend.h"
+#include "core/application.h"
 #include <QtDBus>
 
 class FreedesktopFrontend:public Snore::SnoreFrontend{
@@ -42,6 +43,10 @@ public:
 signals:
     void NotificationClosed( uint id, uint reason );
     void ActionInvoked( uint id, const QString& actionKey );
+
+private:
+    Snore::Alert m_alert;
+    Snore::Icon m_icon;
 
 
 };

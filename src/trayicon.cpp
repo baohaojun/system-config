@@ -85,9 +85,10 @@ void TrayIcon::setPrimaryBackend(){
 void TrayIcon::slotTestNotification()
 {
     Application appl("SnoreNotify");
-    appl.addAlert(Alert("Default"));
+    Alert alert("Default");
+    appl.addAlert(alert);
     m_snore->registerApplication(appl);
-    Notification n("SnoreNotify","Default","Hello World","This is Snore",Icon(":/root/snore.png"));
+    Notification n(appl, alert, "Hello World", "This is Snore", Icon(":/root/snore.png"));
     n.addAction(Notification::Action(1,"Test Action"));
     m_snore->broadcastNotification(n);
     m_snore->deregisterApplication(appl);

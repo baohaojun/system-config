@@ -71,9 +71,10 @@ Notification::Notification () :
 {
 }
 
-Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const Icon &icon, int timeout,NotificationEnums::Prioritys::prioritys priority ):
+Notification::Notification(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon, int timeout, NotificationEnums::Prioritys::prioritys priority):
     d(new  NotificationData(application,alert,title,text,icon,timeout,priority))
 {
+
 }
 
 Notification::Notification ( const Notification &other ) :
@@ -130,7 +131,7 @@ SnoreFrontend *Notification::source() const
     return d->m_source;
 }
 
-QString Notification::application() const
+Application Notification::application() const
 {
     return d->m_application;
 }
@@ -145,7 +146,7 @@ QString Notification::text() const
     return d->m_text;
 }
 
-QString Notification::alert() const
+Alert Notification::alert() const
 {
     return d->m_alert;
 }

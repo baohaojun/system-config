@@ -16,6 +16,9 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         snore.cpp
         snore_p.cpp
         application.cpp
+        application_p.cpp
+        alert.cpp
+        alert_p.cpp
         hint.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
         ${SNORENOTIFY_RCS}
@@ -25,6 +28,7 @@ set ( SnoreNotify_HDR ${SnoreNotify_HDR}
         snore.h
         snore_p.h
         application.h
+        alert.h
         hint.h
         snore_exports.h
         version.h

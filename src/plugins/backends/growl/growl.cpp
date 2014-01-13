@@ -103,8 +103,8 @@ void Growl::slotDeregisterApplication(const Application &application)
 
 void Growl::slotNotify(Notification notification)
 {
-    gntp *growl = m_applications.value(notification.application());
-    QString alert = notification.alert();
+    gntp *growl = m_applications.value(notification.application().name());
+    QString alert = notification.alert().name();
     if(growl == NULL)
     {
         growl = m_defaultGNTP;

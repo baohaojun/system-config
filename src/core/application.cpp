@@ -18,27 +18,32 @@
 */
 
 #include "application.h"
+#include "application_p.h"
 
 
 using namespace Snore;
 
+Application::Application():
+    d(NULL)
+{}
+
 Application::Application (const QString &name, const Icon &icon) :
-    m_name(name),
-    m_icon(icon)
+    d(new ApplicationData(name,icon))
+
 {
 }
 
 Application::Application(const Application &other):
-    m_name(other.m_name),
-    m_icon(other.m_icon),
-    m_alerts(other.m_alerts),
-    m_hint(other.m_hint)
+    d(other.d)
 {
 
 }
 
-Application::Application()
-{}
+Application &Application::operator=(const Application &other)
+{
+    d = other.d;
+    return *this;
+}
 
 Application::~Application()
 {
@@ -46,81 +51,35 @@ Application::~Application()
 
 void Application::addAlert(const Alert &alert)
 {
-    m_alerts.insert(alert.name(), alert);
+    d->m_alerts.insert(alert.name(), alert);
 }
 
 QString Application::name() const
 {
-    return m_name;
+    return d->m_name;
 }
 
 const Icon &Application::icon()const
 {
-    return m_icon;
+    return d->m_icon;
 }
 
 const QHash<QString, Alert> &Application::alerts() const
 {
-    return m_alerts;
+    return d->m_alerts;
 }
 
 bool Application::isValid() const
 {
-    return m_name.isNull();
+    return d;
 }
 
 Hint &Application::hints()
 {
-    return m_hint;
+    return d->m_hint;
 }
 
 const Hint &Application::hints() const
 {
-    return m_hint;
-}
-
-Alert::Alert (const QString &name, const QString &title, const Icon &icon, bool active):
-    m_name(name),
-    m_title(title),
-    m_icon(icon),
-    m_active(active)
-{}
-
-Alert::Alert(const Alert &other):
-    m_name(other.m_name),
-    m_title(other.m_title),
-    m_icon(other.m_icon),
-    m_active(other.m_active)
-{
-
-}
-
-Alert::Alert() :
-    m_active ( false )
-{}
-
-
-QString Alert::name() const
-{
-    return m_name;
-}
-
-QString Alert::title() const
-{
-    return m_title;
-}
-
-const Icon &Alert::icon() const
-{
-    return m_icon;
-}
-
-bool Alert::isActive() const
-{
-    return m_active;
-}
-
-bool Alert::isValid() const
-{
-    return m_name.isNull();
+    return d->m_hint;
 }

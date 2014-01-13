@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QVariantHash>
+#include <QDebug>
 
 #include "snore_exports.h"
 
@@ -42,6 +43,10 @@ private:
     QVariantHash m_data;
     
 };
+
 }
+
+
+
 
 #endif // HINT_H
