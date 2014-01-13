@@ -72,11 +72,13 @@ void SnoreToast::slotNotify(Notification notification)
     arguements << "-t"
                << Snore::toPlainText(notification.title())
                << "-m"
-               << Snore::toPlainText(notification.text())
-               << "-p"
-                  //               << notification.icon().isLocalFile()?QDir::toNativeSeparators(notification.icon().localUrl()):notification.icon().url()
-               << QDir::toNativeSeparators(notification.icon().localUrl())
-               << "-w"
+               << Snore::toPlainText(notification.text());
+    if(notification.icon().isValid())
+    {
+        arguements << "-p"
+                   << QDir::toNativeSeparators(notification.icon().localUrl());
+    }
+    arguements << "-w"
                << "-appID"
                << m_appID;
     ;

@@ -25,9 +25,6 @@
 
 using namespace Snore;
 
-
-QHash<QString,QString> Icon::m_localImageCache;
-
 Icon::Icon() :
     d(NULL)
 {
@@ -64,41 +61,27 @@ const QImage &Icon::image() const{
     {
         if(isLocalFile())
         {
-        d->m_img = QImage(d->m_url);
+            d->m_img = QImage(d->m_url);
         }
         else
         {
-            d->m_img = QImage::fromData(d->m_data,"PNG");
+            d->m_img = QImage::fromData(imageData(),"PNG");
         }
     }
     return d->m_img;
 }
 
 QString Icon::localUrl()const{
-    if(d->m_localUrl.isEmpty())
+    if(!QFile(d->m_localUrl).exists())
     {
-        if(m_localImageCache.contains(d->m_hash))
-        {
-            d->m_localUrl =  m_localImageCache[d->m_hash];
-        }else
-        {
-            if(isRemoteFile())
-            {
-                d->download();
-            }
-            d->m_localUrl = QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), d->m_hash);
-            image().save(d->m_localUrl ,"PNG");
-            m_localImageCache[d->m_hash] = d->m_localUrl;
-        }
+        image().save(d->m_localUrl ,"PNG");
     }
+    qDebug() << d->m_localUrl << QFile(d->m_localUrl).exists();
     return d->m_localUrl;
 }
 
 const QByteArray &Icon::imageData() const{
-    if(d->m_data.isEmpty() && !image().isNull()){
-        d->setImageData();
-    }
-    return d->m_data;
+    return d->imageData();
 }
 
 bool Icon::isLocalFile() const
@@ -106,13 +89,9 @@ bool Icon::isLocalFile() const
     return d->m_isLocalFile;
 }
 
-bool Icon::isEmpty() const{
-    return d->m_hash.isEmpty() && d->m_img.isNull() && d->m_localUrl.isEmpty();
-}
-
 bool Icon::isValid() const
 {
-    return d;
+    return d && !(d->m_img.isNull() && d->m_url.isEmpty());
 }
 
 QString Icon::url() const
@@ -123,5 +102,11 @@ QString Icon::url() const
 
 bool Snore::Icon::isRemoteFile() const
 {
-    return !d->m_isResource && !isLocalFile();
+    return d->m_isRemoteFile;
+}
+
+QDebug operator<< ( QDebug debug, const Snore::Icon &icon )
+{
+    debug << "Snore::Icon(" << icon.url() << ")" ;
+    return debug.maybeSpace();
 }

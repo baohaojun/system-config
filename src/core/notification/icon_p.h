@@ -45,7 +45,7 @@ public:
     static QString computeHash(const QByteArray &data);
 
 
-    void setImageData();
+    const QByteArray &imageData();
     void download();
 
     QImage m_img;
@@ -55,6 +55,7 @@ public:
     QString m_hash;
     bool m_isLocalFile;
     bool m_isResource;
+    bool m_isRemoteFile;
 private:
     Q_DISABLE_COPY(IconData)
 

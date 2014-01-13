@@ -142,10 +142,12 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
     }
 
     sNotification.notification = Notification(app,alert,title,text,icon,timeout);
+    qDebug() << sNotification.notification.title() << sNotification.notification.icon() << sNotification.notification.icon().isValid();
     sNotification.notification.setSource(snarl);
 
 
-    switch(action){
+    switch(action)
+    {
     case NOTIFICATION:
     {
         qDebug() << sNotification.notification.application();

@@ -18,6 +18,7 @@
 */
 
 #include "icon_p.h"
+#include "../snore_p.h"
 
 #include <QEventLoop>
 #include <QNetworkAccessManager>
@@ -27,23 +28,29 @@ using namespace Snore;
 
 IconData::IconData(const QString &url):
     m_url(url),
+    m_hash(computeHash(m_url.toLatin1())),
     m_isLocalFile(false),
-    m_isResource(m_url.startsWith(":/")),
-    m_hash(computeHash(m_url.toLatin1()))
+    m_isResource(m_url.startsWith(":/"))
 {
-    if(QFile(url).exists())
+    if(!m_isResource && QFile(url).exists())
     {
         m_isLocalFile = true;
         m_localUrl = url;
     }
+    else
+    {
+        m_localUrl = QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash);
+    }
+    m_isRemoteFile = !m_isLocalFile && ! m_isResource;
 }
 
 IconData::IconData(const QImage &img):
     m_img(img),
     m_isLocalFile(false),
-    m_isResource(false)
+    m_isResource(false),
+    m_isRemoteFile(false)
 {
-    setImageData();
+    imageData();
 }
 
 IconData::~IconData()
@@ -52,16 +59,29 @@ IconData::~IconData()
 }
 
 
-void Snore::IconData::setImageData()
+const QByteArray &Snore::IconData::imageData()
 {
-    QBuffer buffer( &m_data );
-    buffer.open( QBuffer::WriteOnly );
-    m_img.save( &buffer, "PNG" );
-
-    if(m_hash.isEmpty())
+    if(m_data.isEmpty())
     {
-        m_hash = computeHash(m_data);
+        if(!m_isLocalFile)
+        {
+            if(!m_img.isNull())
+            {
+                QBuffer buffer( &m_data );
+                buffer.open( QBuffer::WriteOnly );
+                m_img.save( &buffer, "PNG" );
+                if(m_hash.isEmpty())
+                {
+                    m_hash = computeHash(m_data);
+                }
+            }
+            else if(m_isRemoteFile)
+            {
+                download();
+            }
+        }
     }
+    return m_data;
 }
 
 QString IconData::computeHash(const QByteArray &data)

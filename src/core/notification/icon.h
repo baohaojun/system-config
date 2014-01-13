@@ -44,30 +44,16 @@ public:
     const QByteArray &imageData() const ;
     bool isLocalFile() const;
     bool isRemoteFile() const;
-    bool isEmpty() const;
     bool isValid() const;
 
 
 private:
-    static QHash<QString,QString> m_localImageCache;
-
     QExplicitlySharedDataPointer<IconData> d;
 };
 }
 
 
-inline QDebug operator<< ( QDebug debug, const Snore::Icon &icon )
-{
-    if(icon.isValid())
-    {
-        debug << "Snore::Icon(" << icon.url() << ")" ;
-    }
-    else
-    {
-        debug << "Snore::Icon(0x00)" ;
-    }
-    return debug.maybeSpace();
-}
+SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Icon &);
 
 
 #endif // NOTIFICATION_ICON_H

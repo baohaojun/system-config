@@ -33,7 +33,7 @@ class SNORE_EXPORT Application
 {
 public:
     Application();
-    Application ( const QString &name, const Icon &icon = Icon(":/root/snore.png"));
+    explicit Application ( const QString &name, const Icon &icon = Icon(":/root/snore.png"));
     Application(const Application &other);
     Application &operator=(const Application &other);
     ~Application();
