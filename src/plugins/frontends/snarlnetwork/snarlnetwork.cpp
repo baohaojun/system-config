@@ -65,12 +65,20 @@ void SnarlNetworkFrontend::actionInvoked(Notification notification){
         callback(sn,"SNP/1.1/302/Notification cancelled/");
     }
 }
-void SnarlNetworkFrontend::notificationClosed(Notification notification){
-    SnarlNotification sn=notifications.value(notification.id());
-    if(notification.closeReason() == NotificationEnums::CloseReasons::TIMED_OUT)
-        callback(sn,"SNP/1.1/303/Notification timed out/");
-    else
-        callback(sn,"SNP/1.1/307/Notification closed/");
+void SnarlNetworkFrontend::notificationClosed(Notification notification)
+{
+    if(notifications.contains(notification.id()))
+    {
+        SnarlNotification sn=notifications.value(notification.id());
+        if(notification.closeReason() == NotificationEnums::CloseReasons::TIMED_OUT)
+        {
+            callback(sn,"SNP/1.1/303/Notification timed out/");
+        }
+        else
+        {
+            callback(sn,"SNP/1.1/307/Notification closed/");
+        }
+    }
 }
 
 void SnarlNetworkFrontend::handleConnection(){
@@ -108,7 +116,8 @@ void SnarlNetworkFrontend::handleMessages(){
     }
 }
 
-void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg){
+void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg)
+{
     notifications.remove(sn.notification.id());
     if(sn.clientSocket!=NULL&&!msg.isEmpty()){
         msg+=QString::number(sn.notification.id());
