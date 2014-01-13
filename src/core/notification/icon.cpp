@@ -59,7 +59,7 @@ Icon::~Icon()
 const QImage &Icon::image() const{
     if(d->m_img.isNull())
     {
-        if(isLocalFile())
+        if(!isRemoteFile()  )
         {
             d->m_img = QImage(d->m_url);
         }
