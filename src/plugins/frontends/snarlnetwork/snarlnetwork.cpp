@@ -56,32 +56,26 @@ bool SnarlNetworkFrontend::init(SnoreCore *snore){
 void SnarlNetworkFrontend::actionInvoked(Notification notification)
 {
     //TODO:fix callback
-    if(notification.source() == this)
+    SnarlNotification sn=notifications.value(notification.id());
+    if(notification.actionInvoked().id() == 1 )
     {
-        SnarlNotification sn=notifications.value(notification.id());
-        if(notification.actionInvoked().id() == 1 )
-        {
-            callback(sn,"SNP/1.1/304/Notification acknowledged/");
-        }
-        else if(notification.actionInvoked().id() == 2)
-        {
-            callback(sn,"SNP/1.1/302/Notification cancelled/");
-        }
+        callback(sn,"SNP/1.1/304/Notification acknowledged/");
+    }
+    else if(notification.actionInvoked().id() == 2)
+    {
+        callback(sn,"SNP/1.1/302/Notification cancelled/");
     }
 }
 void SnarlNetworkFrontend::notificationClosed(Notification notification)
 {
-    if(notification.source() == this)
+    SnarlNotification sn=notifications.value(notification.id());
+    if(notification.closeReason() == NotificationEnums::CloseReasons::TIMED_OUT)
     {
-        SnarlNotification sn=notifications.value(notification.id());
-        if(notification.closeReason() == NotificationEnums::CloseReasons::TIMED_OUT)
-        {
-            callback(sn,"SNP/1.1/303/Notification timed out/");
-        }
-        else
-        {
-            callback(sn,"SNP/1.1/307/Notification closed/");
-        }
+        callback(sn,"SNP/1.1/303/Notification timed out/");
+    }
+    else
+    {
+        callback(sn,"SNP/1.1/307/Notification closed/");
     }
 }
 

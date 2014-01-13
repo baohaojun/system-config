@@ -98,6 +98,7 @@ public:
     static void setDefaultTimeout(int defaultTimeout);
 
 private:
+    Notification(const QString &,const QString &,const QString &,const QString &,const Icon &,int, NotificationEnums::Prioritys::prioritys );
     QExplicitlySharedDataPointer<NotificationData> d;
 
     static int m_defaultTimeout;

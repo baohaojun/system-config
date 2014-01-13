@@ -41,7 +41,6 @@ public:
     virtual ~SnoreFrontend();
     virtual bool init(SnoreCore *snore);
 
-public slots:
     virtual void actionInvoked( Snore::Notification notification )=0;
     virtual void notificationClosed( Snore::Notification notification )=0;
 };

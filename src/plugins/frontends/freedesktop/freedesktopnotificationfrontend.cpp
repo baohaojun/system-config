@@ -62,9 +62,8 @@ void FreedesktopFrontend::actionInvoked(Notification notification) {
     }
 }
 
-void FreedesktopFrontend::notificationClosed(Notification notification) {
-
-    qDebug()<<"Closing Dbus notification"<<notification<<"reason:"<<(int)notification.closeReason();
+void FreedesktopFrontend::notificationClosed(Notification notification)
+{
     emit NotificationClosed(notification.id(),notification.closeReason());
 }
 

@@ -63,10 +63,9 @@ void SnoreCorePrivate::notificationActionInvoked(Notification notification) cons
 {
     Q_Q(const SnoreCore);
     emit const_cast<SnoreCore*>(q)->actionInvoked(notification);
-    SnoreFrontend *nf = notification.source();
-    if ( nf != NULL )
+    if ( notification.source() )
     {
-        nf->actionInvoked ( notification );
+        notification.source()->actionInvoked ( notification );
     }
 }
 
@@ -74,5 +73,9 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
 {
     Q_Q(SnoreCore);
     emit q->notificationClosed(n);
+    if(n.source())
+    {
+        n.source()->notificationClosed(n);
+    }
 }
 
