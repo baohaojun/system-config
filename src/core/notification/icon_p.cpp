@@ -73,6 +73,7 @@ const QByteArray &Snore::IconData::imageData()
                 if(m_hash.isEmpty())
                 {
                     m_hash = computeHash(m_data);
+                    m_localUrl = QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash);
                 }
             }
             else if(m_isRemoteFile)
