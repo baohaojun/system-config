@@ -23,6 +23,7 @@
 #include "plugins/plugins.h"
 #include "plugins/snorebackend.h"
 #include "plugins/snorefrontend.h"
+#include "notification/notification_p.h"
 
 #include <QApplication>
 
@@ -63,9 +64,9 @@ void SnoreCorePrivate::notificationActionInvoked(Notification notification) cons
 {
     Q_Q(const SnoreCore);
     emit const_cast<SnoreCore*>(q)->actionInvoked(notification);
-    if ( notification.source() )
+    if ( notification.data()->source() )
     {
-        notification.source()->actionInvoked ( notification );
+        notification.data()->source()->actionInvoked ( notification );
     }
 }
 
@@ -73,9 +74,9 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
 {
     Q_Q(SnoreCore);
     emit q->notificationClosed(n);
-    if(n.source())
+    if(n.data()->source())
     {
-        n.source()->notificationClosed(n);
+        n.data()->source()->notificationClosed(n);
     }
 }
 

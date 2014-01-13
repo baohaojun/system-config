@@ -22,6 +22,8 @@
 
 #include "core/snore.h"
 #include "core/notification/notification.h"
+#include "core/notification/notification_p.h"
+
 
 
 
@@ -142,8 +144,7 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
     }
 
     sNotification.notification = Notification(app,alert,title,text,icon,timeout);
-    qDebug() << sNotification.notification.title() << sNotification.notification.icon() << sNotification.notification.icon().isValid();
-    sNotification.notification.setSource(snarl);
+    sNotification.notification.data()->setSource(snarl);
 
 
     switch(action)

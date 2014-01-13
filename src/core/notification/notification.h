@@ -71,8 +71,6 @@ public:
     const uint &updateID() const;
 
     const Action &actionInvoked() const;
-    void setSource(class SnoreFrontend *source);
-    class SnoreFrontend *source() const;
     Application application() const;
     QString title() const;
     QString text() const;
@@ -84,7 +82,6 @@ public:
     const QHash<int, Action> &actions() const;
     void addAction(const Action &a);
     const NotificationEnums::CloseReasons::closeReasons &closeReason();
-    void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
     Hint &hints();
 
     void setSilent(bool silent);

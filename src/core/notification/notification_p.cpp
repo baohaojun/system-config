@@ -65,3 +65,19 @@ void NotificationData::setActionInvoked ( const int &id)
 {
     m_actionInvoked = m_actions[id];
 }
+
+void NotificationData::setSource(SnoreFrontend *source)
+{
+    m_source = source;
+}
+
+SnoreFrontend *NotificationData::source() const
+{
+    return m_source;
+}
+
+void NotificationData::setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r)
+{
+    m_closeReason = r;
+}
+

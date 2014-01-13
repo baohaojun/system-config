@@ -122,15 +122,6 @@ const Notification::Action &Notification::actionInvoked() const
     return d->m_actionInvoked;
 }
 
-void Notification::setSource(SnoreFrontend *source){
-    d->m_source = source;
-}
-
-SnoreFrontend *Notification::source() const
-{
-    return d->m_source;
-}
-
 Application Notification::application() const
 {
     return d->m_application;
@@ -179,10 +170,6 @@ const QHash<int, Notification::Action> &Notification::actions() const
 
 const NotificationEnums::CloseReasons::closeReasons &Notification::closeReason(){
     return d->m_closeReason;
-}
-
-void Notification::setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r){
-    d->m_closeReason = r;
 }
 
 Hint &Notification::hints()

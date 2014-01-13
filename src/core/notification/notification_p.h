@@ -38,8 +38,15 @@ public:
                        int timeout,NotificationEnums::Prioritys::prioritys priority );
 
     ~NotificationData();
+
+    void setSource(class SnoreFrontend *source);
+    class SnoreFrontend *source() const;
+
     void setActionInvoked( const Notification::Action &action );
     void setActionInvoked( const int &actionID);
+
+
+    void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
 
 private:
     Q_DISABLE_COPY(NotificationData)

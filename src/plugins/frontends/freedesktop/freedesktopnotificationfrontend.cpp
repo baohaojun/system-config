@@ -23,6 +23,7 @@
 #include "plugins/backends/freedesktop/fredesktopnotification.h"
 #include "core/snore.h"
 #include "core/version.h"
+#include "core/notification/notification_p.h"
 
 #include <QtCore>
 #include <QtDBus>
@@ -111,7 +112,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     {
         noti.setUpdateID(replaces_id);
     }
-    noti.setSource(this);
+    noti.data()->setSource(this);
     for(int i = 0;i < actions.length(); i+=2)
     {
         noti.addAction(Notification::Action(actions.at(i).toInt(),actions.at(i+1)));

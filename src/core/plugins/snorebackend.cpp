@@ -22,6 +22,7 @@
 #include "../snore_p.h"
 #include "../application.h"
 #include "../notification/notification.h"
+#include "../notification/notification_p.h"
 
 #include <QTimer>
 #include <QDir>
@@ -86,7 +87,7 @@ void SnoreBackend::closeNotification(Notification n, NotificationEnums::CloseRea
     {
         m_activeNotifications.remove(n.id());
     }
-    n.setCloseReason(reason);
+    n.data()->setCloseReason(reason);
     slotCloseNotification(n);
     emit notificationClosed(n);
 }
