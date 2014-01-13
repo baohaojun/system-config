@@ -240,6 +240,7 @@
 (unbind-keys global-keymap "Super-f")
 
 (bind-keys window-keymap "Button1-Click" 'raise-and-pass-through-click)
+(bind-keys window-keymap "Button2-Click" '(system "my-dict-maybe&"))
 
 
 (mapc
