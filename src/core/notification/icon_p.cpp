@@ -23,12 +23,13 @@
 #include <QEventLoop>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QHash>
 
 using namespace Snore;
 
 IconData::IconData(const QString &url):
     m_url(url),
-    m_hash(computeHash(m_url.toLatin1())),
+    m_hash(SnoreCorePrivate::computeHash(m_url.toLatin1())),
     m_isLocalFile(false),
     m_isResource(m_url.startsWith(":/"))
 {
@@ -46,11 +47,12 @@ IconData::IconData(const QString &url):
 
 IconData::IconData(const QImage &img):
     m_img(img),
+    m_hash(SnoreCorePrivate::computeHash((char*)img.constBits())),
+    m_localUrl(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash)),
     m_isLocalFile(false),
     m_isResource(false),
     m_isRemoteFile(false)
 {
-    imageData();
 }
 
 IconData::~IconData()
@@ -70,11 +72,6 @@ const QByteArray &Snore::IconData::imageData()
                 QBuffer buffer( &m_data );
                 buffer.open( QBuffer::WriteOnly );
                 m_img.save( &buffer, "PNG" );
-                if(m_hash.isEmpty())
-                {
-                    m_hash = computeHash(m_data);
-                    m_localUrl = QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash);
-                }
             }
             else if(m_isRemoteFile)
             {
@@ -85,21 +82,35 @@ const QByteArray &Snore::IconData::imageData()
     return m_data;
 }
 
-QString IconData::computeHash(const QByteArray &data)
+QImage IconData::image()
 {
-    QCryptographicHash h(QCryptographicHash::Md5);
-    h.addData(data);
-    return h.result().toHex();
+    if(m_img.isNull())
+    {
+        if(!m_isRemoteFile )
+        {
+            m_img = QImage(m_url);
+        }
+        else
+        {
+            download();
+            m_img = QImage::fromData(m_data,"PNG");
+        }
+    }
+    return m_img;
 }
+
 
 void IconData::download()
 {
-    QNetworkAccessManager manager;
-    QEventLoop loop;
-    QNetworkRequest request(m_url);
-    request.setRawHeader("User-Agent", "SnoreNotify");
-    QNetworkReply *reply = manager.get(request);
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-    m_data = reply->readAll();
+    if(m_data.isEmpty())
+    {
+        QNetworkAccessManager manager;
+        QEventLoop loop;
+        QNetworkRequest request(m_url);
+        request.setRawHeader("User-Agent", "SnoreNotify");
+        QNetworkReply *reply = manager.get(request);
+        QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+        loop.exec();
+        m_data = reply->readAll();
+    }
 }

@@ -26,7 +26,6 @@
 #include <QSettings>
 #include <QFlag>
 #include <QPluginLoader>
-#include <QCryptographicHash>
 
 
 
@@ -63,9 +62,7 @@ private:
         if(_cache == NULL)
         {
             _cache = new QSettings("SnoreNotify","libsnore");
-            QCryptographicHash h(QCryptographicHash::Md5);
-            h.addData(SnoreCorePrivate::pluginDir().absolutePath().toLatin1());
-            _cache->beginGroup( h.result().toHex());
+            _cache->beginGroup( SnoreCorePrivate::computeHash(SnoreCorePrivate::pluginDir().absolutePath().toLatin1()));
         }
         return *_cache;
     }

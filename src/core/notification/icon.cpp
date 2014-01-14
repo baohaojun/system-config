@@ -57,18 +57,7 @@ Icon::~Icon()
 }
 
 const QImage &Icon::image() const{
-    if(d->m_img.isNull())
-    {
-        if(!isRemoteFile()  )
-        {
-            d->m_img = QImage(d->m_url);
-        }
-        else
-        {
-            d->m_img = QImage::fromData(imageData(),"PNG");
-        }
-    }
-    return d->m_img;
+    return d->image();
 }
 
 QString Icon::localUrl()const{

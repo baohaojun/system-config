@@ -25,10 +25,7 @@
 #include "core/notification/notification_p.h"
 
 
-
-
 #include <QDir>
-#include <QCryptographicHash>
 #include <QNetworkAccessManager>
 #include <QEventLoop>
 #include <QNetworkReply>

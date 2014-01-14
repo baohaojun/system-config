@@ -26,6 +26,7 @@
 
 #include <QDir>
 #include <QPointer>
+#include <QCryptographicHash>
 
 namespace Snore
 {
@@ -37,6 +38,10 @@ class SNORE_EXPORT SnoreCorePrivate : public QObject
 public:
     static const QString snoreTMP();
     static const QDir &pluginDir();
+    static inline QString computeHash(const QByteArray &data)
+    {
+        return QCryptographicHash::hash(data,QCryptographicHash::Md5).toHex();
+    }
 public:
     SnoreCorePrivate(QSystemTrayIcon *trayIcon);
     ~SnoreCorePrivate();

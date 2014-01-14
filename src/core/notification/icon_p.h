@@ -26,11 +26,8 @@
 #include <QImage>
 #include <QSharedData>
 #include <QBuffer>
-#include <QHash>
 #include <QFile>
 #include <QDebug>
-#include <QCryptographicHash>
-#include <QUrl>
 
 namespace Snore{
 
@@ -42,17 +39,15 @@ public:
     ~IconData();
 
 
-    static QString computeHash(const QByteArray &data);
-
-
     const QByteArray &imageData();
+    QImage image();
     void download();
 
     QImage m_img;
     QByteArray m_data;
-    QString m_localUrl;
     QString m_url;
     QString m_hash;
+    QString m_localUrl;
     bool m_isLocalFile;
     bool m_isResource;
     bool m_isRemoteFile;
