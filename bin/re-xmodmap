@@ -7,6 +7,8 @@ su - bhj -c "
            flock -n 2 || exit
            sleep 1
            xmodmap ~/.Xmodmap
+           xmodmap -e 'keycode 197 = F23'
+           xmodmap -e 'keycode 202 = F24'
        )&
        date
    ) >> ~/.logs/re-xmodmap.log 2>&1
