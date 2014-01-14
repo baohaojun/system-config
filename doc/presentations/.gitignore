@@ -1,8 +1,10 @@
-ToolsAndProgramming.pdf
-ToolsAndProgramming.tex
 *.vrb
 *.log
 *.nav
 *.snm
 *.toc
 *.dvi
+*.pdf
+*.pyg
+*.xbb
+*.tex

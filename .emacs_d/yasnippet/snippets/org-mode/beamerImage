@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: beamerImage
+# key: beamerImage
+# --
+#+caption: ${1:the title of the image}
+#+label: ${2:the label of the image}
+#+ATTR_LATEX: :width .9\linewidth
+[[${3:~/system-config/doc/presentations/git-workflow-svn.png}]]

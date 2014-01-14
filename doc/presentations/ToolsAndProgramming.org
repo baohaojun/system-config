@@ -8,15 +8,15 @@
 #+EMAIL:     baohaojun@gmail.com
 #+DATE:      2013-06-08
 #+LATEX_CLASS_OPTIONS: [presentation,CJKbookmarks]
-#+DESCRIPTION: 
-#+KEYWORDS: 
+#+DESCRIPTION:
+#+KEYWORDS:
 #+LANGUAGE:  en
 #+OPTIONS:   H:2 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
 #+EXPORT_SELECT_TAGS: export
 #+EXPORT_EXCLUDE_TAGS: noexport
-#+LINK_UP:   
+#+LINK_UP:
 #+LINK_HOME:
 
 * Tools from UPE (Unix Programming Environment)
@@ -29,10 +29,10 @@
 
 *** The same script behave differently according to script name ($0)
 
-Why? Because: 
+Why? Because:
 
-- it improves code reuse, 
-- reduce code duplication. 
+- it improves code reuse,
+- reduce code duplication.
 
   Duplication means maintenance cost.
 
@@ -54,7 +54,7 @@ Please learn to use:
 
 - Ctrl-r
 - Ctrl-s
-- Alt-. 
+- Alt-.
 - Alt-n
 - Ctrl-j
 - ... (bind -p)
@@ -160,7 +160,7 @@ beagrep -e 'start code-generator'
 - You can type long names easily
 - You can change it easily when it's long
   - Why C++ author replace ~(int) i~ as ~dynamic_cast<int> i~?
-    
+
     It's so long, and so ugly!
 
 ** beagrep
@@ -216,6 +216,36 @@ tar zxfv system-config.tgz
 ~/system-config/bin/after-co-ln-s.sh
 ~/system-config/bin/Linux/after-check-out.sh
 #+end_example
+
+** Very Strange
+
+Put these lines into your .emacs or in a file your .emacs pulls in - i.e. via /(require 'mysettings)/ if the other file is named /mysettings.el/ and ends in /(provide 'mysettings)/.
+#+begin_src emacs-lisp
+(org-babel-do-load-languages ; babel, for executing
+ 'org-babel-load-languages   ; code in org-mode.
+ '((sh . t)
+   (emacs-lisp . t)))
+
+(require 'org-latex) ; latex export
+(add-to-list         ; with highlighting
+  'org-export-latex-packages-alist '("" "minted"))
+(add-to-list
+  'org-export-latex-packages-alist '("" "color"))
+(setq org-export-latex-listings 'minted)
+#+end_src
+
+** xx
+**** Result                                                   :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :BEAMER_col: 0.4
+    :END:
+
+#+caption: GNU Emacs icon
+#+label: fig:emacs-icon
+[[~/system-config/doc/presentations/emacs.png]]
+
+This is image (\ref{fig:emacs-icon})
 
 #+Latex: \end{CJK*}
 

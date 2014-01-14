@@ -2,20 +2,20 @@
 # name: atask
 # key: atask
 # --
-    private class $1 extends AsyncTask<${2:String, String, String}> {
+    private class $1 extends AsyncTask<${2:String}, ${3:String}, ${4:String}> {
         @Override
             protected void onPreExecute() {
             //mTitleBar.startAnimation(mSlideIn);
         }
 
         @Override
-            protected String doInBackground(String... args) {
+            protected String doInBackground($2... args) {
                 // publishProgress("");
                 return "";
         }
 
         @Override
-        protected void onProgressUpdate(String... args) {
+        protected void onProgressUpdate($3... args) {
             // String searchWord = args[0];
             // setEntryTitle(searchWord);
         }
@@ -25,10 +25,10 @@
          * {@link WebView} and hide the {@link ProgressBar}.
          */
         @Override
-        protected void onPostExecute(String parsedText) {
+        protected void onPostExecute($4 ${5:parsedText}) {
             //mTitleBar.startAnimation(mSlideOut);
             //mProgress.setVisibility(View.INVISIBLE);
 
-            //setEntryContent(parsedText);
+            //setEntryContent($5);
         }
     }

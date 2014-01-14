@@ -25,8 +25,15 @@ if test $org_file = true || yes-or-no-p -y "Export from .org"; then
     if grep -q 'org-beamer-mode' "${1/%.tex/.org}"; then
         exp_func=org-beamer-export-to-latex
     fi
-
-    emacs -l ~/.emacs --batch --eval '(progn (find-file "'${1/%.tex/.org}'") ('$exp_func'))'
+    eval_arg=$(cat <<EOF
+(progn
+  (require 'ox-latex)
+  (setq org-latex-listings 'minted)
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (find-file "${1/%.tex/.org}") ($exp_func))
+EOF
+)
+    emacs -l ~/.emacs --batch --eval "$eval_arg"
     set -- "${1/%.org/.tex}"
 fi
 
@@ -34,12 +41,12 @@ for x in aux log out dvi; do
     rm ${1/%.tex/.$x} -f
 done
 
-perl -npe 's/\QCJKbookmarks]\E/dvipdfm,CJKbookmarks]/;
-s/\Q\documentclass[11pt]{article}\E/\\documentclass[11pt,dvipdfm,CJKbookmarks]{article}/' -i $1
+perl -npe 's/\QCJKbookmarks]\E/dvipdfmx,CJKbookmarks]/;
+s/\Q\documentclass[11pt]{article}\E/\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}/' -i $1
 
-latex $1
-latex $1
-dvipdfm ${1/%.tex/.dvi}
+latex -shell-escape $1
+latex -shell-escape $1
+dvipdfmx ${1/%.tex/.dvi}
 
 ps-killall acroread
-of ${1/%.tex/.pdf}
+evince ${1/%.tex/.pdf}&
