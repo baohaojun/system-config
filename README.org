@@ -115,6 +115,7 @@ Ctags-exuberant is also provided as a git submodule, under
 
    #+BEGIN_SRC sh
    cd ./external/ctags-exuberant
+   autoreconf -i
    ./configure
    make -j8
    sudo make install
