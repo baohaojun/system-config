@@ -44,10 +44,20 @@ public:
     QString localUrl();
     void download();
 
+    inline QByteArray dataFromImage(const QImage &image)
+    {
+        QByteArray data;
+        QBuffer buffer( &data );
+        buffer.open( QBuffer::WriteOnly );
+        image.save( &buffer, "PNG" );
+        return data;
+    }
+
     QImage m_img;
     QByteArray m_data;
-    QString m_url;
+    QString m_url;    
     QString m_hash;
+    QString m_localUrl;
     bool m_isLocalFile;
     bool m_isResource;
     bool m_isRemoteFile;

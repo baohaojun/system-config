@@ -30,19 +30,22 @@ using namespace Snore;
 IconData::IconData(const QString &url):
     m_url(url),
     m_hash(SnoreCorePrivate::computeHash(m_url.toLatin1())),
+    m_localUrl(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash)),
     m_isLocalFile(false),
     m_isResource(m_url.startsWith(":/"))
 {
     if(!m_isResource && QFile(url).exists())
     {
         m_isLocalFile = true;
+        m_localUrl = url;
     }
     m_isRemoteFile = !m_isLocalFile && ! m_isResource;
 }
 
 IconData::IconData(const QImage &img):
     m_img(img),
-    m_hash(SnoreCorePrivate::computeHash((char*)img.constBits())),
+    m_hash(SnoreCorePrivate::computeHash(dataFromImage(img))),
+    m_localUrl(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash)),
     m_isLocalFile(false),
     m_isResource(false),
     m_isRemoteFile(false)
@@ -59,18 +62,9 @@ const QByteArray &Snore::IconData::imageData()
 {
     if(m_data.isEmpty())
     {
-        if(!m_isLocalFile)
+        if(m_isRemoteFile)
         {
-            if(!m_img.isNull())
-            {
-                QBuffer buffer( &m_data );
-                buffer.open( QBuffer::WriteOnly );
-                m_img.save( &buffer, "PNG" );
-            }
-            else if(m_isRemoteFile)
-            {
-                download();
-            }
+            download();
         }
     }
     return m_data;
@@ -95,33 +89,34 @@ const QImage &IconData::image()
 
 QString IconData::localUrl()
 {
-    if(m_isLocalFile)
+    if(!m_isLocalFile && !QFile(m_localUrl).exists())
     {
-        return m_url;
+        image().save(m_localUrl ,"PNG");
     }
-    else
-    {
-        QString out(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash));
-        if(!QFile(out).exists())
-        {
-            image().save(out ,"PNG");
-        }
-        return out;
-    }
+    return m_localUrl;
 }
 
 
 void IconData::download()
 {
-    if(m_data.isEmpty())
+    if(m_isRemoteFile && m_data.isEmpty())
     {
-        QNetworkAccessManager manager;
-        QEventLoop loop;
-        QNetworkRequest request(m_url);
-        request.setRawHeader("User-Agent", "SnoreNotify");
-        QNetworkReply *reply = manager.get(request);
-        QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-        loop.exec();
-        m_data = reply->readAll();
+        if(!QFile(m_localUrl).exists())
+        {
+            qDebug() << "Downloading:" << m_url;
+            QNetworkAccessManager manager;
+            QEventLoop loop;
+            QNetworkRequest request(m_url);
+            request.setRawHeader("User-Agent", "SnoreNotify");
+            QNetworkReply *reply = manager.get(request);
+            QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+            loop.exec();
+            m_data = reply->readAll();
+        }
+        else
+        {
+            m_img = QImage(m_localUrl);
+            m_data = dataFromImage(m_img);
+        }
     }
 }
