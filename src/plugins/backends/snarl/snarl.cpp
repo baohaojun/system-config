@@ -154,7 +154,7 @@ bool SnarlBackend::init(SnoreCore *snore){
         return false;
     }
     m_eventLoop = new SnarlBackend::SnarlWidget(this);
-    m_applications.insert("SnoreNotify",snarlInterface);
+    m_applications.insert(snore->d()->defaultApplication().name(),snarlInterface);
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
     m_defautSnarlinetrface = new SnarlInterface();
 
@@ -199,7 +199,8 @@ void SnarlBackend::slotDeregisterApplication(const Application &application){
 
 void SnarlBackend::slotNotify(Notification notification){
     SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
-    if(snarlInterface == NULL){
+    if(snarlInterface == NULL)
+    {
         qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
         qDebug()<<m_applications.keys();
         snarlInterface = m_defautSnarlinetrface;

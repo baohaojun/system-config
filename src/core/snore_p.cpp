@@ -46,18 +46,26 @@ const QDir &SnoreCorePrivate::pluginDir(){
 
 
 SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
-    m_trayIcon(trayIcon)
+    m_trayIcon(trayIcon),
+    m_defaultApp("SnoreNotify",Icon(":/root/snore.png"))
 {
     QDir home ( snoreTMP() );
     if ( !home.exists() ){
         home.cdUp();
         home.mkdir("SnoreNotify");
     }
+
+    m_defaultApp.addAlert(Alert("Default"));
 }
 
 SnoreCorePrivate::~SnoreCorePrivate()
 {
 
+}
+
+const Application SnoreCorePrivate::defaultApplication() const
+{
+    return m_defaultApp;
 }
 
 void SnoreCorePrivate::notificationActionInvoked(Notification notification) const

@@ -19,6 +19,7 @@
 
 #include "trayicon.h"
 #include "core/snore.h"
+#include "core/snore_p.h"
 
 #include <QSystemTrayIcon>
 #include <QMenu>
@@ -84,13 +85,11 @@ void TrayIcon::setPrimaryBackend(){
 
 void TrayIcon::slotTestNotification()
 {
-    Application appl("SnoreNotify");
-    Alert alert("Default");
-    appl.addAlert(alert);
-    m_snore->registerApplication(appl);
-    Notification n(appl, alert, "Hello World", "This is Snore", Icon(":/root/snore.png"));
+    const Application &app = m_snore->d()->defaultApplication();
+    m_snore->registerApplication(app);
+    Notification n(app, *app.alerts().begin(), "Hello World", "This is Snore", Icon(":/root/snore.png"));
     n.addAction(Notification::Action(1,"Test Action"));
     m_snore->broadcastNotification(n);
-    m_snore->deregisterApplication(appl);
+    m_snore->deregisterApplication(app);
 }
 

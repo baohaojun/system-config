@@ -40,6 +40,7 @@ public:
 public:
     SnoreCorePrivate(QSystemTrayIcon *trayIcon);
     ~SnoreCorePrivate();
+    const Application defaultApplication() const;
 
 
     void notificationActionInvoked(Notification notification) const;
@@ -67,6 +68,8 @@ private:
     QPointer<SnoreBackend> m_notificationBackend;
 
     QSystemTrayIcon *m_trayIcon;
+
+    Application m_defaultApp;
 };
 }
 

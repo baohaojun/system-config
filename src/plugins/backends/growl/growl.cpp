@@ -47,11 +47,11 @@ Growl::~Growl()
 
 bool Growl::init(SnoreCore *snore)
 {
-    Icon icon(":/root/snore.png");
-    m_defaultGNTP = new gntp("SnoreNotify", icon.localUrl().toUtf8().constData());
+    const Application &app = snore->d()->defaultApplication();
+    m_defaultGNTP = new gntp(app.name().toUtf8().constData(), app.icon().localUrl().toUtf8().constData());
     
     std::vector<std::string> alerts;
-    alerts.push_back("Default");
+    alerts.push_back(app.alerts().begin()->name().toUtf8().constData());
     try
     {
         m_defaultGNTP->regist(alerts);
