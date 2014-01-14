@@ -45,7 +45,7 @@ public:
     bool isValid() const;
 
     Hint &hints();
-    const Hint &consHints() const;
+    const Hint &constHints() const;
 private:
      QExplicitlySharedDataPointer<ApplicationData> d;
 

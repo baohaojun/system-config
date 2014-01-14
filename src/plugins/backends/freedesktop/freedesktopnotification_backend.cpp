@@ -55,9 +55,9 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
         hints["urgency"] = (char)noti.priority()+1;
     }
 
-    if(noti.application().hints().contains("desktop-entry"))
+    if(noti.application().constHints().contains("desktop-entry"))
     {
-        hints["desktop-entry"] = noti.application().hints().value("desktop-entry");
+        hints["desktop-entry"] = noti.application().constHints().value("desktop-entry");
     }
 
     uint updateId = 0;
