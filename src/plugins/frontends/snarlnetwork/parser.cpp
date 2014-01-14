@@ -115,13 +115,13 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
 
     Application app;
     Alert alert;
-    if(snarl->m_applications.contains(value))
+    if(snarl->m_applications.contains(appName))
     {
-        app = snarl->m_applications[value];
+        app = snarl->m_applications[appName];
     }
     else
     {
-        app = Application(value, icon);
+        app = Application(appName, icon);
     }
 
     if(app.alerts().contains(alertName))
@@ -169,7 +169,7 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
             qDebug()<<"Error registering alert with empty name";
             break;
         }
-        sNotification.notification.application().addAlert(sNotification.notification.alert());
+        snarl->m_applications[appName].addAlert(sNotification.notification.alert());
         break;
     case REGISTER:
         if(sNotification.notification.application().isValid() && !snarl->m_applications.contains(sNotification.notification.application().name()))

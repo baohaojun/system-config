@@ -88,7 +88,7 @@ const Action &Notification::actionInvoked() const
     return d->m_actionInvoked;
 }
 
-Application Notification::application() const
+const Application &Notification::application() const
 {
     return d->m_application;
 }
@@ -103,7 +103,7 @@ QString Notification::text() const
     return d->m_text;
 }
 
-Alert Notification::alert() const
+const Alert &Notification::alert() const
 {
     return d->m_alert;
 }

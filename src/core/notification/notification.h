@@ -54,11 +54,11 @@ public:
     const uint &updateID() const;
 
     const Action &actionInvoked() const;
-    Application application() const;
+    const Application &application() const;
     QString title() const;
     QString text() const;
     const Icon &icon() const;
-    Alert alert() const;
+    const Alert &alert() const;
     void setSticky();
     bool sticky() const;
     const NotificationEnums::Prioritys::prioritys &priority() const;
