@@ -5,6 +5,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules ${C
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+include(GNUInstallDirs)
+
 
 #######################################################################
 option(WITH_WITH_KDE "Try to build with KDE support if availibe" ON)
@@ -38,8 +40,10 @@ if(Boost_USE_STATIC_RUNTIME)
     add_definitions(-DBOOST_THREAD_USE_LIB )
 endif(Boost_USE_STATIC_RUNTIME)
 
-set(SNORE_PLUGIN_INSTALL_PATH LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/libsnore)
-add_definitions(-DLIBSNORE_PLUGIN_PATH="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/libsnore" -DCMAKE_INSTALL_LIBDIR="${CMAKE_INSTALL_LIBDIR}")
+set(LIBSNORE_PLUGIN_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/libsnore)
+set(SNORE_PLUGIN_INSTALL_PATH LIBRARY DESTINATION ${LIBSNORE_PLUGIN_PATH})
+add_definitions(-DLIBSNORE_PLUGIN_PATH="${LIBSNORE_PLUGIN_PATH}" -DCMAKE_INSTALL_LIBDIR="${CMAKE_INSTALL_LIBDIR}")
+message(STATUS "Installing plugins to ${LIBSNORE_PLUGIN_PATH}")
 
 add_subdirectory(data)
 add_subdirectory(share)

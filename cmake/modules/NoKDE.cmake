@@ -1,8 +1,6 @@
 find_package(Qt5Transitional)
 include_directories( ${QT_INCLUDES} )
 
-include(GNUInstallDirs)
-
 if (CMAKE_COMPILER_IS_GNUCXX)
    set (KDE4_ENABLE_EXCEPTIONS -fexceptions)
    # Select flags.
