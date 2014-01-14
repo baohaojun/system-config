@@ -112,6 +112,8 @@ void IconData::download()
             QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
             loop.exec();
             m_data = reply->readAll();
+            m_img = QImage::fromData(m_data, "PNG");
+            m_img.save(m_localUrl,"PNG");
         }
         else
         {
