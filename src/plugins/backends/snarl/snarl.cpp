@@ -220,7 +220,8 @@ void SnarlBackend::slotNotify(Notification notification){
         break;
     }
 
-    if(notification.updateID() == 0){
+    if(notification.updateID() == 0)
+    {
         ULONG32 id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
                                             Snore::toPlainText(notification.title()).toUtf8().constData(),
                                             Snore::toPlainText(notification.text()).toUtf8().constData(),
@@ -229,7 +230,7 @@ void SnarlBackend::slotNotify(Notification notification){
                                             !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
                                             priority);
 
-        foreach(const Notification::Action &a, notification.actions())
+        foreach(const Action &a, notification.actions())
         {
             snarlInterface->AddAction(id,a.name().toUtf8().constData(),QString("@").append(QString::number(a.id())).toUtf8().constData());
         }

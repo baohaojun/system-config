@@ -31,40 +31,6 @@ int Notification::m_defaultTimeout = 10;
 
 int NotificationData::notificationMetaID = qRegisterMetaType<Notification>();
 
-Notification::Action::Action():
-    m_id(-1)
-{
-
-}
-
-Notification::Action::Action(int id, QString name):
-    m_id(id),
-    m_name(name)
-{
-
-}
-
-Notification::Action::Action(const Notification::Action &other):
-    m_id(other.id()),
-    m_name(other.name())
-{
-
-}
-
-QString Notification::Action::name() const
-{
-    return m_name;
-}
-
-bool Notification::Action::isValid() const
-{
-    return m_name.isNull();
-}
-
-int Notification::Action::id() const
-{
-    return m_id;
-}
 
 Notification::Notification () :
     d(NULL)
@@ -117,7 +83,7 @@ const uint &Notification::updateID() const
     return d->m_updateID;
 }
 
-const Notification::Action &Notification::actionInvoked() const
+const Action &Notification::actionInvoked() const
 {
     return d->m_actionInvoked;
 }
@@ -157,13 +123,13 @@ const NotificationEnums::Prioritys::prioritys &Notification::priority() const
     return d->m_priority;
 }
 
-void Notification::addAction(const Notification::Action &a)
+void Notification::addAction(const Action &a)
 {
     d->m_actions.insert(a.id(),a);
 }
 
 
-const QHash<int, Notification::Action> &Notification::actions() const
+const QHash<int, Action> &Notification::actions() const
 {
     return d->m_actions;
 }
@@ -208,9 +174,4 @@ QDataStream &operator<< ( QDataStream &stream, const Notification &noti )
 }
 
 
-QDataStream &operator<< ( QDataStream &stream, const Notification::Action &a)
-{
-    stream << a.id() << a.name();
-    return stream;
-}
 

@@ -88,7 +88,7 @@ void TrayIcon::slotTestNotification()
     const Application &app = m_snore->d()->defaultApplication();
     m_snore->registerApplication(app);
     Notification n(app, *app.alerts().begin(), "Hello World", "This is Snore", Icon(":/root/snore.png"));
-    n.addAction(Notification::Action(1,"Test Action"));
+    n.addAction(Action(1,"Test Action"));
     m_snore->broadcastNotification(n);
     m_snore->deregisterApplication(app);
 }

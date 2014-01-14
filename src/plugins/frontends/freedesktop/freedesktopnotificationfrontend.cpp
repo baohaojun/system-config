@@ -115,7 +115,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     noti.data()->setSource(this);
     for(int i = 0;i < actions.length(); i+=2)
     {
-        noti.addAction(Notification::Action(actions.at(i).toInt(),actions.at(i+1)));
+        noti.addAction(Action(actions.at(i).toInt(),actions.at(i+1)));
     }
 
     snore()->broadcastNotification(noti);

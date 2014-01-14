@@ -56,7 +56,7 @@ NotificationData::~NotificationData()
 }
 
 
-void NotificationData::setActionInvoked (const Snore::Notification::Action &action )
+void NotificationData::setActionInvoked (const Snore::Action &action )
 {
     m_actionInvoked = action;
 }

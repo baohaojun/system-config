@@ -42,7 +42,7 @@ public:
     void setSource(class SnoreFrontend *source);
     class SnoreFrontend *source() const;
 
-    void setActionInvoked( const Notification::Action &action );
+    void setActionInvoked( const Action &action );
     void setActionInvoked( const int &actionID);
 
 
@@ -62,8 +62,8 @@ private:
     Icon m_icon;
     NotificationEnums::Prioritys::prioritys m_priority;
     NotificationEnums::CloseReasons::closeReasons m_closeReason;
-    Notification::Action m_actionInvoked;
-    QHash<int,Notification::Action> m_actions;
+    Action m_actionInvoked;
+    QHash<int,Action> m_actions;
     Hint m_hints;
 
 

@@ -22,6 +22,7 @@
 #include "../snore_exports.h"
 #include "icon.h"
 #include "notificationenums.h"
+#include "notificationaction.h"
 #include "../hint.h"
 #include "../application.h"
 
@@ -37,24 +38,6 @@ class NotificationData;
 class SNORE_EXPORT Notification
 {
     friend class NotificationData;
-public:
-    class SNORE_EXPORT Action
-    {
-    public:
-        Action();
-        Action(int id,QString name);
-        Action(const Action &other);
-
-        int id() const;
-        QString name() const;
-        bool isValid() const;
-
-    private:
-        int m_id;
-        QString m_name;
-    };
-
-
 public:
     Notification();
     explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
@@ -121,5 +104,5 @@ inline QDebug operator<< ( QDebug debug, const Snore::Notification &noti )
     return debug.maybeSpace();
 }
 
-QDataStream &operator<< ( QDataStream & stream, const Snore::Notification::Action & action);
+
 #endif // NOTIFICATION_H
