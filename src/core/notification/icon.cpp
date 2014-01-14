@@ -65,7 +65,6 @@ QString Icon::localUrl()const{
     {
         image().save(d->m_localUrl ,"PNG");
     }
-    qDebug() << d->m_localUrl << QFile(d->m_localUrl).exists();
     return d->m_localUrl;
 }
 
