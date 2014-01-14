@@ -36,7 +36,7 @@ QString const SnoreCorePrivate::snoreTMP(){
 }
 
 const QDir &SnoreCorePrivate::pluginDir(){
-    static QDir path(QString("%1/snoreplugins").arg(qApp->applicationDirPath()));
+    static QDir path(QString("%1/../%2/libsnore").arg(qApp->applicationDirPath(), CMAKE_INSTALL_LIBDIR));
     if(!path.exists())
     {
         path = QDir(LIBSNORE_PLUGIN_PATH);

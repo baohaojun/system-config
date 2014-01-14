@@ -1,6 +1,7 @@
 find_package(Qt5Transitional)
 include_directories( ${QT_INCLUDES} )
 
+include(GNUInstallDirs)
 
 if (CMAKE_COMPILER_IS_GNUCXX)
    set (KDE4_ENABLE_EXCEPTIONS -fexceptions)
@@ -21,9 +22,15 @@ if (CMAKE_COMPILER_IS_GNUCXX)
      set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common -fPIC")
      add_definitions (-D_BSD_SOURCE)
    endif (CMAKE_SYSTEM_NAME MATCHES Linux)
-   
-	if(WIN32)
-		add_definitions(-DQT_NO_DEBUG -DQT_FORCE_ASSERTS)
-	endif(WIN32)
 
 endif(CMAKE_COMPILER_IS_GNUCXX) 
+
+if(MINGW)
+    set(CMAKE_RC_COMPILER_INIT windres)
+    enable_language(RC)
+    set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
+endif()
+
+if(WIN32)
+    add_definitions(-DQT_NO_DEBUG -DQT_FORCE_ASSERTS)
+endif()

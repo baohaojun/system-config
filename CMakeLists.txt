@@ -7,6 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
 #######################################################################
+option(WITH_WITH_KDE "Try to build with KDE support if availibe" ON)
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
@@ -16,21 +17,17 @@ set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 5)
 set(SNORE_VERSION_SUFFIX "pre")
 
+if(WITH_WITH_KDE)
+    find_package(KDE4)
+endif()
 
 
-find_package(KDE4)
-
-if(MINGW)
-SET (CMAKE_RC_COMPILER_INIT windres)
-ENABLE_LANGUAGE (RC)
-SET (CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
-endif(MINGW)
 
 if(KDE4_FOUND)
-	add_definitions(-DHAVE_KDE ${KDE4_DEFINITIONS} -D_UNICODE)
-	include_directories(${KDE4_INCLUDES})
+    add_definitions(-DHAVE_KDE ${KDE4_DEFINITIONS} -D_UNICODE)
+    include_directories(${KDE4_INCLUDES})
 else(KDE4_FOUND)
-	include(NoKDE)
+    include(NoKDE)
 endif(KDE4_FOUND)
 
 
@@ -41,8 +38,8 @@ if(Boost_USE_STATIC_RUNTIME)
     add_definitions(-DBOOST_THREAD_USE_LIB )
 endif(Boost_USE_STATIC_RUNTIME)
 
-set(PLUGIN_INSTALL_PATH  LIBRARY DESTINATION bin/snoreplugins)
-add_definitions(-DLIBSNORE_PLUGIN_PATH="${CMAKE_INSTALL_PREFIX}/bin/snoreplugins")
+set(SNORE_PLUGIN_INSTALL_PATH LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/libsnore)
+add_definitions(-DLIBSNORE_PLUGIN_PATH="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/libsnore" -DCMAKE_INSTALL_LIBDIR="${CMAKE_INSTALL_LIBDIR}")
 
 add_subdirectory(data)
 add_subdirectory(share)
