@@ -30,22 +30,19 @@ using namespace Snore;
 IconData::IconData(const QString &url):
     m_url(url),
     m_hash(SnoreCorePrivate::computeHash(m_url.toLatin1())),
-    m_localUrl(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash)),
     m_isLocalFile(false),
     m_isResource(m_url.startsWith(":/"))
 {
     if(!m_isResource && QFile(url).exists())
     {
         m_isLocalFile = true;
-        m_localUrl = url;
     }
     m_isRemoteFile = !m_isLocalFile && ! m_isResource;
 }
 
 IconData::IconData(const QImage &img):
     m_img(img),
-    m_hash(QString::number(img.cacheKey(), 16)),
-    m_localUrl(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash)),
+    m_hash(SnoreCorePrivate::computeHash((char*)img.constBits())),
     m_isLocalFile(false),
     m_isResource(false),
     m_isRemoteFile(false)
@@ -94,6 +91,23 @@ const QImage &IconData::image()
         }
     }
     return m_img;
+}
+
+QString IconData::localUrl()
+{
+    if(m_isLocalFile)
+    {
+        return m_url;
+    }
+    else
+    {
+        QString out(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash));
+        if(!QFile(out).exists())
+        {
+            image().save(out ,"PNG");
+        }
+        return out;
+    }
 }
 
 

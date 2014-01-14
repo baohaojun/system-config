@@ -60,12 +60,9 @@ const QImage &Icon::image() const{
     return d->image();
 }
 
-QString Icon::localUrl()const{
-    if(!QFile(d->m_localUrl).exists())
-    {
-        image().save(d->m_localUrl ,"PNG");
-    }
-    return d->m_localUrl;
+QString Icon::localUrl()const
+{
+    return d->localUrl();
 }
 
 const QByteArray &Icon::imageData() const{

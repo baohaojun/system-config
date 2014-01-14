@@ -41,13 +41,13 @@ public:
 
     const QByteArray &imageData();
     const QImage &image();
+    QString localUrl();
     void download();
 
     QImage m_img;
     QByteArray m_data;
     QString m_url;
     QString m_hash;
-    QString m_localUrl;
     bool m_isLocalFile;
     bool m_isResource;
     bool m_isRemoteFile;
