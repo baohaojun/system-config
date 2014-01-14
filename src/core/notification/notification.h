@@ -40,7 +40,7 @@ class SNORE_EXPORT Notification
     friend class NotificationData;
 public:
     Notification();
-    explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout=10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
     Notification(const Notification &other );
     Notification &operator=(const Notification &other);
     ~Notification();
