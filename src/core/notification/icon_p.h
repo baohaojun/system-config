@@ -40,7 +40,7 @@ public:
 
 
     const QByteArray &imageData();
-    QImage image();
+    const QImage &image();
     void download();
 
     QImage m_img;

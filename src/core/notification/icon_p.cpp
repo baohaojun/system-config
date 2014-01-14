@@ -79,7 +79,7 @@ const QByteArray &Snore::IconData::imageData()
     return m_data;
 }
 
-QImage IconData::image()
+const QImage &IconData::image()
 {
     if(m_img.isNull())
     {

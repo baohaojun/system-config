@@ -79,7 +79,7 @@ Hint &Application::hints()
     return d->m_hint;
 }
 
-const Hint &Application::hints() const
+const Hint &Application::consHints() const
 {
-    return d->m_hint;
+     return d->m_hint;
 }
