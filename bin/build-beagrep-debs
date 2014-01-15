@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if test $(basename $0) = build-beagrep-debs; then
-    yes-or-no-p "Please use 'sudo ps-killall strace' if it seems stuck" || true
+    yes-or-no-p -y "Please use 'sudo ps-killall strace' if it seems stuck" || true
     cd ~/gcode/beagrep
     for branch in $(git branch -a |grep -v remotes|sed 's/^\*/ /'|grep for); do
         for arch in i386 amd64; do
@@ -18,23 +18,21 @@ if test $(basename $0) = build-beagrep-debs; then
                         exit
                     fi
                 fi
-                pkg=~/external/cowbuilder/${branch#for-}-$arch/beagrep-build/base.cow
+                pkg=~/external/cowbuilder/${branch#for-}-$arch/beagrep-build/base.tgz
                 if test ! -e $pkg; then
                     ADDITIONAL_BUILD_BEAGREP_DEBS_ARGS=
-                    pkg=~/external/cowbuilder/${branch#for-}-$arch/bare/base.cow
+                    pkg=~/external/cowbuilder/${branch#for-}-$arch/bare/base.tgz
                 fi
                 if test -e $pkg; then
                     rm -rf ~/.cache/beagrep-debs/$branch-$arch
                     mkdir -p ~/.cache/beagrep-debs/$branch-$arch
                     mkdir ~/.cache/build -p
                     builddir=/tmp/build-cow.$$
+                    mkdir -p $builddir
                     time sudo unshare -m -- bash -c "
                         mount -o size=2000000k -t tmpfs none $builddir
-                        echo copying base files...
-                        time cp $pkg $builddir -a
-                        echo done
                         set -x
-                        command sudo cowbuilder --execute --basepath $builddir/$(basename $pkg) \
+                        command sudo pbuilder --execute --basetgz $pkg \
                             --buildplace $builddir/ \
                             --bindmounts \"$(readlink -f $HOME/system-config) $(readlink -f $HOME/.cache/beagrep-debs)\" $ADDITIONAL_BUILD_BEAGREP_DEBS_ARGS -- \
                             $(which do-beagrep-build) \
@@ -45,7 +43,10 @@ if test $(basename $0) = build-beagrep-debs; then
                             $(git log --pretty=format:%h -1 $branch) \
                             $arch
                         echo copying back base files...
-                        cp $builddir/$(basename $pkg) $(dirname $pkg) -a
+                        (
+                            cd $builddir/$(basename $pkg)
+                            tar czf $pkg.2 . >/dev/null 2>&1 &
+                        )
                         echo done
                     "
                 fi
@@ -127,6 +128,14 @@ export bldir=~/$$
     mkdir beagrep
     cd beagrep
     tar zxf ../beagrep_0.4.0.orig.tar.gz
+    if test -e /usr/lib/pkgconfig/gmime-sharp-2.6.pc/gmime-sharp-2.6.pc; then
+        (
+            cd /usr/lib/pkgconfig/
+            mv gmime-sharp-2.6.pc/gmime-sharp-2.6.pc gmime-sharp-2.6.pc.2
+            rmdir gmime-sharp-2.6.pc
+            mv gmime-sharp-2.6.pc.2 gmime-sharp-2.6.pc
+        )
+    fi
     dpkg-buildpackage || true
     cd ..
     test -e *.deb || exit -1

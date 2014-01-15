@@ -28,5 +28,4 @@ else
     xrandr --output $vga --mode $res
 fi
 
-
 sawfish-re-maximize
