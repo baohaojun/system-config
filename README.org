@@ -70,6 +70,9 @@ is =~/gcode/ajoke=, yours may vary):
    export PERL5LIB="$AJOKE_DIR/etc/perl:$PERL5LIB";
    #+END_SRC
 
+It may be a good idea that you put these into your .bashrc, and
+restart your Emacs with these environment variables set.
+
 *** Install 3 cpan modules
 
     String::Approx, String::ShellQuote, Text::Glob (as debian
@@ -160,13 +163,14 @@ Ctags-exuberant is also provided as a git submodule, under
    # as it'd be a waste of time to find 2 copies of java.lang.String
    #+END_SRC
 
-*** Require $AJOKE_DIR/etc/elisp/ajoke.el in your .emacs
+*** Require $AJOKE_DIR/etc/elisp/ajoke.el in your =~/.emacs=
 
-    And start laughing:-)
+    Start Emacs with the environment variables set correctly, and
+    start laughing with Ajoke:-)
 
-(You can refer to the test driver script if there are any problems. In
+You can refer to the test driver script if there are any problems. In
 the mean time, I will try to make =ajoke-test-drive= support more
-systems.)
+systems.
 
 * Ajoke with its friends
 
