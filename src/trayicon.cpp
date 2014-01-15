@@ -87,9 +87,10 @@ void TrayIcon::slotTestNotification()
 {
     const Application &app = m_snore->d()->defaultApplication();
     m_snore->registerApplication(app);
-    Notification n(app, *app.alerts().begin(), "Hello World", "This is Snore", Icon(":/root/snore.png"));
+    Notification n(app, *app.alerts().begin(), "Hello World", "This is Snore", Icon(":/root/snore.png"));    
     n.addAction(Action(1,"Test Action"));
     m_snore->broadcastNotification(n);
+    m_snore->broadcastNotification(Notification(app, *app.alerts().begin(), "Hello World", "This is Snore, color test", Icon("http://jweatherwatch.googlecode.com/svn/trunk/iconset/04.png")));
     m_snore->deregisterApplication(app);
 }
 
