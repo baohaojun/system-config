@@ -3,7 +3,30 @@
 xrandr_out=$(xrandr)
 lvds=$(echo "$xrandr_out" | grep '^LVDS' | pn 1)
 vga=$(echo "$xrandr_out" | grep '^VGA' | pn 1)
-xrandr --output $lvds --auto --right-of $vga
-xrandr --output $vga --auto
+
+if test $(basename $0) = switch-to-vga; then
+    xrandr --output $lvds --auto --right-of $vga
+    xrandr --output $vga --auto
+else
+
+    res=$(xrandr |
+        pn 1 |
+        grep -P '^\d'|
+        sort -n  -r |
+        perl -e '
+            @x = <>;
+            $last = 0;
+            for $res (@x) {
+                if ($res eq $last) {
+                    print $last;
+                    last;
+                }
+                $last = $res
+            }'
+    )
+    xrandr --output $lvds --mode $res --same-as $vga
+    xrandr --output $vga --mode $res
+fi
+
 
 sawfish-re-maximize
