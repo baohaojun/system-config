@@ -110,10 +110,14 @@ void IconData::download()
             request.setRawHeader("User-Agent", "SnoreNotify");
             QNetworkReply *reply = manager.get(request);
             QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+            QTimer::singleShot(1000,&loop, SLOT(quit()));//timeout
             loop.exec();
-            m_data = reply->readAll();
-            m_img = QImage::fromData(m_data, "PNG");
-            m_img.save(m_localUrl,"PNG");
+            if(reply->isFinished())
+            {
+                    m_data = reply->readAll();
+                    m_img = QImage::fromData(m_data, "PNG");
+                    m_img.save(m_localUrl,"PNG");
+            }
         }
         else
         {
