@@ -19,6 +19,14 @@
 #+LINK_UP:
 #+LINK_HOME:
 
+* 学习使用git的最佳途径
+
+** 把.bashrc和.emacs/.vimrc等文件放到github上管理
+
+*** 我的system-config项目和衍生项目
+
+两条命令配好一个Debian/Ubuntu系统
+
 * Git使用的各种工作流
 
 
@@ -111,6 +119,11 @@ commits from untrusted contributors.
     #+label: fig:forking-workflow
     #+ATTR_LATEX: :width .9\linewidth
     [[~/system-config/doc/presentations/git-workflow-forking.png]]
+
+** 最适合我们的流
+
+每个团队都有自己的特色，生硬地套某种流可能适得其反，所以需要很好的思考，
+不断地调整，找到最适合的流程。
 
 * 一些常见用法和问题（写自己的wrapper）
 
