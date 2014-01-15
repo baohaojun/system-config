@@ -60,6 +60,7 @@ IconData::~IconData()
 
 const QByteArray &Snore::IconData::imageData()
 {
+    QMutexLocker lock(&m_mutex);
     if(m_data.isEmpty())
     {
         if(m_isRemoteFile)
@@ -72,6 +73,7 @@ const QByteArray &Snore::IconData::imageData()
 
 const QImage &IconData::image()
 {
+    QMutexLocker lock(&m_mutex);
     if(m_img.isNull())
     {
         if(!m_isRemoteFile )
@@ -89,6 +91,7 @@ const QImage &IconData::image()
 
 QString IconData::localUrl()
 {
+    QMutexLocker lock(&m_mutex);
     if(!m_isLocalFile && !QFile(m_localUrl).exists())
     {
         image().save(m_localUrl ,"PNG");
@@ -114,9 +117,9 @@ void IconData::download()
             loop.exec();
             if(reply->isFinished())
             {
-                    m_data = reply->readAll();
-                    m_img = QImage::fromData(m_data, "PNG");
-                    m_img.save(m_localUrl,"PNG");
+                m_data = reply->readAll();
+                m_img = QImage::fromData(m_data, "PNG");
+                m_img.save(m_localUrl,"PNG");
             }
         }
         else

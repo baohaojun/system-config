@@ -29,6 +29,8 @@
 #include <QFile>
 #include <QDebug>
 
+#include <QMutex>
+
 namespace Snore{
 
 class IconData : public QSharedData
@@ -61,6 +63,7 @@ public:
     bool m_isLocalFile;
     bool m_isResource;
     bool m_isRemoteFile;
+    QMutex m_mutex;
 private:
     Q_DISABLE_COPY(IconData)
 
