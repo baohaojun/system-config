@@ -2,10 +2,10 @@
 
 case "$1" in
      emacs)
-        of /Applications/Emacs.app
+        open -a /Applications/Emacs.app
         ;;
     konsole)
-        of /Applications/Utilities/Terminal.app
+        open -a /Applications/Utilities/Terminal.app
         ;;
 esac &
 true

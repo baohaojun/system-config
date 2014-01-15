@@ -1,2 +1,2 @@
 #!/bin/bash
-/home/bhj/gcode/scim-cs/ime-py/ime-server.py
+~/gcode/scim-cs/ime-py/ime-server.py

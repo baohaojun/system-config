@@ -1,0 +1,3 @@
+#!/bin/bash
+
+open -a ~/src/github/DDHotKey/build/Release/DDHotKey.app
