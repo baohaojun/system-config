@@ -101,14 +101,22 @@ class tabengine (ibus.EngineBase):
 
     _page_size = 10
     def do_connect(self):
+        if self.sock:
+            self.do_disconnect()
         self.sock = socket(AF_INET, SOCK_STREAM)
         self.sock.connect(("localhost", 12345))
         self.sock = self.sock.makefile("rwb", 0)
+
+    def do_disconnect(self):
+        if self.sock:
+            self.sock.close()
+            self.sock = None
 
     def __init__ (self, bus, obj_path):
         print 'obj_path is', obj_path
         super(tabengine,self).__init__ (bus,obj_path)
         self._bus = bus
+        self.sock = None
 
         self.do_connect()
 
@@ -139,6 +147,7 @@ class tabengine (ibus.EngineBase):
     def do_destroy(self):
         self.reset ()
         self.focus_out ()
+        self.do_disconnect()
         super(tabengine,self).do_destroy()
 
     def _update_preedit (self):
@@ -269,14 +278,18 @@ class tabengine (ibus.EngineBase):
             self._update_ui ()
 
     def focus_out (self):
+        super(tabengine,self).focus_out()
         pass
 
     def enable (self):
         self._on = True
+        if not self.sock:
+            self.do_connect()
         self.focus_in()
 
     def disable (self):
         self.reset()
+        self.do_disconnect()
         self._on = False
 
     # for further implementation :)
