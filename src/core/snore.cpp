@@ -115,11 +115,6 @@ void SnoreCore::broadcastNotification ( Notification notification )
     emit d->notify ( notification );
     if ( d->m_notificationBackend != NULL )
     {
-        if(!d->m_notificationBackend->isInitialized()){
-            qDebug()<<"Notification backend "<<d->m_notificationBackend<<" isnt initialized will snore will exit now";
-            qApp->quit();
-        }
-        d->m_notificationBackend->slotNotify( notification );
         d->m_notificationBackend->addActiveNotification(notification);
     }
 }
@@ -186,8 +181,10 @@ bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
         if(d->m_notificationBackend)
         {
             disconnect(d->m_notificationBackend, SIGNAL(notificationClosed(Snore::Notification)));
+            disconnect(d, SIGNAL(notify(Snore::Notification)), d->m_notificationBackend, SLOT(slotNotify(Snore::Notification)));
         }
         connect(b, SIGNAL(notificationClosed(Snore::Notification)), d, SLOT(slotNotificationClosed(Snore::Notification)));
+        connect(d, SIGNAL(notify(Snore::Notification)), b, SLOT(slotNotify(Snore::Notification)));
     }
     d->m_notificationBackend = b;
     return true;

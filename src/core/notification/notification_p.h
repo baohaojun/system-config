@@ -28,6 +28,7 @@
 
 #include <QSharedData>
 
+
 namespace Snore{
 
 class SNORE_EXPORT NotificationData : public QSharedData
