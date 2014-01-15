@@ -37,6 +37,7 @@ public:
     SnoreBackend(const  QString &name, bool canCloseNotification, bool supportsRichtext );
     virtual ~SnoreBackend();
     virtual bool init(SnoreCore *snore);
+    virtual void deinit();
 
     void requestCloseNotification( Snore::Notification notification,NotificationEnums::CloseReasons::closeReasons reason );
 

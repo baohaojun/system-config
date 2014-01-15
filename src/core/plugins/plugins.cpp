@@ -91,4 +91,9 @@ void SnorePlugin::notificationTimedOut(){
     }
 }
 
+void SnorePlugin::deinit()
+{
+    m_initialized = false;
+}
+
 }

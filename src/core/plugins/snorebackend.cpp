@@ -42,11 +42,6 @@ SnoreBackend::SnoreBackend (const QString &name , bool canCloseNotification, boo
 SnoreBackend::~SnoreBackend()
 {
     qDebug()<<"Deleting"<<name();
-    if(snore() != NULL){
-        foreach(const Application &a,snore()->aplications()){
-            slotDeregisterApplication(a);
-        }
-    }
 }
 
 
@@ -58,6 +53,9 @@ bool SnoreBackend::init( SnoreCore *snore )
     }
     connect( snore->d(), SIGNAL(applicationRegistered(const Snore::Application&)), this, SLOT(slotRegisterApplication(const Snore::Application&)));
     connect( snore->d(), SIGNAL(applicationDeregistered(const Snore::Application&)), this, SLOT(slotDeregisterApplication(const Snore::Application&)));
+
+    connect( this, SIGNAL(notificationClosed(Snore::Notification)), snore->d(), SLOT(slotNotificationClosed(Snore::Notification)));
+    connect( snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
 
     foreach(const Application &a,snore->aplications())
     {
@@ -110,7 +108,6 @@ SnoreSecondaryBackend::~SnoreSecondaryBackend()
 
 bool SnoreSecondaryBackend::init(SnoreCore *snore)
 {
-    connect( snore->d() ,SIGNAL( slotNotify(SnoreCore::Notification) ),this,SLOT( slotNotify( SnoreCore::Notification ) ) );
     return SnoreBackend::init(snore);
 }
 
@@ -142,4 +139,23 @@ void SnoreBackend::slotDeregisterApplication(const Application &application)
 void SnoreBackend::addActiveNotification(Notification n)
 {
     m_activeNotifications[n.id()] = n;
+}
+
+
+void SnoreBackend::deinit()
+{
+    if(m_initialized)
+    {
+        foreach(const Application &a,snore()->aplications())
+        {
+            slotDeregisterApplication(a);
+        }
+        disconnect( snore()->d(), SIGNAL(applicationRegistered(const Snore::Application&)), this, SLOT(slotRegisterApplication(const Snore::Application&)));
+        disconnect( snore()->d(), SIGNAL(applicationDeregistered(const Snore::Application&)), this, SLOT(slotDeregisterApplication(const Snore::Application&)));
+
+        disconnect( this, SIGNAL(notificationClosed(Snore::Notification)), snore()->d(), SLOT(slotNotificationClosed(Snore::Notification)));
+        disconnect( snore()->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
+
+        SnorePlugin::deinit();
+    }
 }
