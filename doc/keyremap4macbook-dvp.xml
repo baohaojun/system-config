@@ -1,14 +1,12 @@
 <?xml version="1.0"?>
 <root>
-  <item>
-    <name>[ex] Use Command+H as prefix key</name>
-    <item>
-      <name>Command+H detail</name>
+  <item><name>[ex] Use Command+H as prefix key</name>
+    <item><name>Command+H detail</name>
       <identifier vk_config="true">notsave.emacsmode_ex_commandH_core</identifier>
       <autogen>__ShowStatusMessage__ Quote Mode</autogen>
 
       <!-- # start code-generator
-	   function gen() {
+           function gen() {
                from=$1
                to=$2
                cat <<EOF
@@ -18,13 +16,29 @@ EOF
 
            gen SEMICOLON S
            gen J H
-	   gen O S
-	   gen K T
-	   gen D E
-	   gen L N
-	   gen U G
-	   gen M M
-	   # end code-generator -->
+           gen O S
+           gen K T
+           gen D E
+           gen L N
+           gen U G
+           gen M M
+           function gen2() {
+               from=$1
+               to=$2
+               cat <<EOF
+<autogen>__KeyToKey__ KeyCode::$from, VK_COMMAND | ModifierFlag::NONE, KeyCode::$to, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+EOF
+           }
+           function gen3() {
+               from=$1
+               to=$2
+               cat <<EOF
+<autogen>__KeyToKey__ KeyCode::$from, ModifierFlag::NONE, KeyCode::$to, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+EOF
+           }
+           gen2 I BACKQUOTE
+           gen3 U G # for s-h g; which is for gnus
+           # end code-generator -->
       <!-- # start generated code -->
       <autogen>__KeyToKey__ KeyCode::SEMICOLON, VK_COMMAND | ModifierFlag::NONE, KeyCode::S, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
       <autogen>__KeyToKey__ KeyCode::J, VK_COMMAND | ModifierFlag::NONE, KeyCode::H, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
@@ -34,33 +48,31 @@ EOF
       <autogen>__KeyToKey__ KeyCode::L, VK_COMMAND | ModifierFlag::NONE, KeyCode::N, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
       <autogen>__KeyToKey__ KeyCode::U, VK_COMMAND | ModifierFlag::NONE, KeyCode::G, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
       <autogen>__KeyToKey__ KeyCode::M, VK_COMMAND | ModifierFlag::NONE, KeyCode::M, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+      <autogen>__KeyToKey__ KeyCode::I, VK_COMMAND | ModifierFlag::NONE, KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+      <autogen>__KeyToKey__ KeyCode::U, ModifierFlag::NONE, KeyCode::G, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
 
       <!-- # end generated code -->
     </item>
-    <item>
-      <name>Enable Command+H</name>
+    <item><name>Enable Command+H!</name>
       <identifier>option.emacsmode_ex_commandH</identifier>
       <autogen>__KeyToKey__ KeyCode::J, VK_COMMAND | ModifierFlag::NONE, KeyCode::VK_CONFIG_FORCE_ON_notsave_emacsmode_ex_commandH_core</autogen>
     </item>
   </item>
 
-  <item>
-    <name>[Terminal] Control+/ to C-_ and Control+' to C-M-_</name>
+  <item><name>[Terminal] Control+/ to C-_ and Control+' to C-M-_</name>
     <identifier>bhj.emacsmode_controlSlashTerminal</identifier>
     <only>TERMINAL</only>
     <autogen>__KeyToKey__ KeyCode::BRACKET_LEFT, VK_CONTROL, KeyCode::MINUS, ModifierFlag::CONTROL_L | ModifierFlag::SHIFT_L</autogen>
   </item>
 
-  <item>
-    <name>sawfish</name>
+  <item><name>sawfish</name>
     <identifier>bhj.sawfish</identifier>
     <autogen>__KeyToKey__ KeyCode::DELETE, VK_COMMAND|ModifierFlag::NONE, KeyCode::PAGEUP </autogen>
     <autogen>__KeyToKey__ KeyCode::DELETE, VK_CONTROL|ModifierFlag::NONE, KeyCode::DELETE, ModifierFlag::OPTION_L </autogen>
-    <autogen>__KeyToKey__ KeyCode::SPACE, VK_COMMAND|ModifierFlag::NONE, KeyCode::PAGEDOWN </autogen> 
+    <autogen>__KeyToKey__ KeyCode::SPACE, VK_COMMAND|ModifierFlag::NONE, KeyCode::PAGEDOWN </autogen>
   </item>
 
-<item>
-    <name>dvp</name>
+<item><name>dvp</name>
     <identifier>remap.dvp</identifier>
 
     <autogen>__KeyToKey__ KeyCode::BACKQUOTE, VK_SHIFT, KeyCode::BACKQUOTE, ModifierFlag::SHIFT_L </autogen>

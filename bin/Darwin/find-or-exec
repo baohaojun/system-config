@@ -1,0 +1,11 @@
+#!/bin/bash
+
+case "$1" in
+     emacs)
+        of /Applications/Emacs.app
+        ;;
+    konsole)
+        of /Applications/Utilities/Terminal.app
+        ;;
+esac &
+true

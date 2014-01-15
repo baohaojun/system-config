@@ -6,6 +6,18 @@ if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then
     export SHELL=/bin/bash
 fi
 
+(
+    set -e
+    set -x
+    . ~/.bash-path
+    flock -n 9
+    ssh-agent > ~/.config/ssh-agent
+    . ~/.config/ssh-agent
+    do-ssh-add
+) 9<~/bin/myscr >~/.logs/ssh-agent.log 2>&1
+
+. ~/.config/ssh-agent
+
 if test -x /opt/local/bin/bash; then
     export SHELL=/opt/local/bin/bash;
 fi

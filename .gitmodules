@@ -25,9 +25,6 @@
 [submodule ".emacs_d/yasnippet-snippets"]
 	path = .emacs_d/yasnippet-snippets
 	url = https://github.com/baohaojun/yasnippet-snippets.git
-[submodule "gcode/grun"]
-	path = gcode/grun
-	url = https://github.com/baohaojun/grun
 [submodule ".emacs_d/skeleton-complete"]
 	path = .emacs_d/skeleton-complete
 	url = https://github.com/baohaojun/skeleton-complete

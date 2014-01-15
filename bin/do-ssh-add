@@ -1,0 +1,68 @@
+#!/usr/bin/expect -f
+
+# this script will log into bbs automatically, maybe even post an
+# article to a specified board.
+
+
+set host "localhost"
+set port "22"
+set user "bhj"
+set password ""
+
+for {set i 0} {$i < [llength $argv]} {incr i} {
+    if {[string eq [lindex $argv $i] "-l"]} {
+        incr i;
+        set loc [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-u"]} {
+        incr i;
+        set user [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-p"]} {
+        incr i;
+        set password [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-h"]} {
+        incr i;
+        set host [lindex $argv $i];
+    }
+}
+
+proc qx cmd {
+    set fh [open "|$cmd"]
+    set res [read $fh]
+    close $fh
+    return $res
+}
+
+proc same_thread args {
+    send [join $args ""]
+}
+
+proc send_all args {
+    send [join $args ""]
+}
+
+proc strcat args {
+    return [join $args ""]
+}
+
+
+if [string eq "" $password] {
+    set password [qx "get-authinfo $host $user $port"]
+}
+
+spawn ssh-add
+
+expect -timeout 150 passphrase {
+    puts "send password\n";
+    send "$password\n"
+} timeout {
+    puts "timed out\n";
+    exp_continue;
+}
+
+interact;
+puts "exit";
+exit
+
+# Local Variables: #
+# mode: tcl #
+# End: #

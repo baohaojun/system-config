@@ -49,8 +49,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     ;; Set Chinese font
     ;; Do not use 'unicode charset, it will cause the english font setting invalid
     (dolist (charset '(kana han cjk-misc bopomofo))
-      (set-fontset-font t charset zh-font)))
-    (maximize-frame))
+      (set-fontset-font t charset zh-font))))
 
 
 (defvar bhj-english-fonts '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))

@@ -356,14 +356,9 @@
 (when (file-exists-p "~/src/github/emacs.d/init.el")
   (load "init.el"))
 
-(setq custom-file (expand-file-name "custom.el" "~/etc/"))
-(when (file-exists-p custom-file)
-  (load custom-file))
-
 (condition-case nil
     (server-start)
   (error (message "emacs server start failed")))
-
 ;;----------------------------------------------------------------------------
 ;; Variables configured via the interactive 'customize' interface
 ;;----------------------------------------------------------------------------
