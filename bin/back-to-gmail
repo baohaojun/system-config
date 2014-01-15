@@ -36,6 +36,7 @@ for x in "$@"; do
     fi
 
     set -x
+    rm "$back" -f
     gpg-expect -- -- --no-use-agent -o "$back" -c "$x" </dev/null
     if test -d "$new_x"; then
         rm "$x"

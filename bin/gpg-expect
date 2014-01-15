@@ -61,6 +61,11 @@ expect -timeout 150 passphrase {
     exp_continue;
 }
 
+expect -timeout 150 "exists. Overwrite? (y/N)" {
+    send "y\n"
+}
+
+interact;
 wait;
 
 # Local Variables: #
