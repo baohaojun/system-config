@@ -35,12 +35,14 @@ SnorePlugin::SnorePlugin ( const QString &name ) :
 
 SnorePlugin::~SnorePlugin()
 {
-    qDebug()<<m_name<<this<<"deleted";
+    qDebug() << m_name << this << "deleted";
+    deinitialize();
 }
 
-bool SnorePlugin::init( SnoreCore *snore )
+bool SnorePlugin::initialize( SnoreCore *snore )
 {
-    if(m_initialized){
+    if(m_initialized)
+    {
         qFatal("Something went wrong, plugin %s is already initialized",this->name().toLatin1().constData());
         return false;
     }
@@ -50,7 +52,8 @@ bool SnorePlugin::init( SnoreCore *snore )
     return true;
 }
 
-bool SnorePlugin::isInitialized(){
+bool SnorePlugin::isInitialized()
+{
     return m_initialized;
 }
 
@@ -65,8 +68,10 @@ const QString &SnorePlugin::name() const
 }
 
 void SnorePlugin::startTimeout(uint id,int timeout){
-    if(timeout==-1)//sticky
+    if(timeout == -1)//sticky
+    {
         return;
+    }
     if(m_timeouts.contains(id)){
         QTimer *t = m_timeouts.take(id);
         t->stop();
@@ -91,9 +96,14 @@ void SnorePlugin::notificationTimedOut(){
     }
 }
 
-void SnorePlugin::deinit()
+bool SnorePlugin::deinitialize()
 {
-    m_initialized = false;
+    if(m_initialized)
+    {
+        m_initialized = false;
+        return true;
+    }
+    return false;
 }
 
 }

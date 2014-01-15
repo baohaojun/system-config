@@ -45,7 +45,7 @@ Growl::~Growl()
     delete m_defaultGNTP;
 }
 
-bool Growl::init(SnoreCore *snore)
+bool Growl::initialize(SnoreCore *snore)
 {
     const Application &app = snore->d()->defaultApplication();
     m_defaultGNTP = new gntp(app.name().toUtf8().constData(), app.icon().localUrl().toUtf8().constData());
@@ -63,7 +63,21 @@ bool Growl::init(SnoreCore *snore)
         m_defaultGNTP = NULL;
         return false;
     }
-    return SnoreBackend::init(snore);
+    return SnoreBackend::initialize(snore);
+}
+
+bool Growl::deinitialize()
+{
+    if(SnoreBackend::deinitialize())
+    {
+        if(m_defaultGNTP)
+        {
+            delete m_defaultGNTP;
+            m_defaultGNTP = NULL;
+        }
+        return true;
+    }
+    return false;
 }
 
 void Growl::slotRegisterApplication(const Application &application)
@@ -73,11 +87,11 @@ void Growl::slotRegisterApplication(const Application &application)
     gntp::gntp_callback callback(&Growl::gntpCallback);
     growl->set_gntp_callback(callback);
 
-//    qDebug() << Q_FUNC_INFO << application->name().toUtf8().constData();
+    //    qDebug() << Q_FUNC_INFO << application->name().toUtf8().constData();
     std::vector<std::string> alerts;
     foreach(const Alert &a,application.alerts())
     {
-//        qDebug() << Q_FUNC_INFO << a->name().toUtf8().constData();
+        //        qDebug() << Q_FUNC_INFO << a->name().toUtf8().constData();
         alerts.push_back(a.name().toUtf8().constData());
     }
 
@@ -110,7 +124,7 @@ void Growl::slotNotify(Notification notification)
         growl = m_defaultGNTP;
         alert = "Default";
     }
-//    qDebug() << "Notify Growl:" <<notification.application() << alert << Snore::toPlainText(notification.title());
+    //    qDebug() << "Notify Growl:" <<notification.application() << alert << Snore::toPlainText(notification.title());
     try
     {
         growl->notify(alert.toUtf8().constData(),notification.id(),
@@ -127,7 +141,7 @@ void Growl::slotNotify(Notification notification)
 
 void Growl::gntpCallback(const int &id,const std::string &reason,const std::string &data)
 {
-//    qDebug() << Q_FUNC_INFO << id << QString(reason.c_str()) << QString(data.c_str());
+    //    qDebug() << Q_FUNC_INFO << id << QString(reason.c_str()) << QString(data.c_str());
     Notification n = s_instance->snore()->getActiveNotificationByID(id);
     NotificationEnums::CloseReasons::closeReasons r = NotificationEnums::CloseReasons::NONE;
     if(reason == "TIMEDOUT")

@@ -26,7 +26,7 @@ SnoreToast::~SnoreToast()
 
 }
 
-bool SnoreToast::init(SnoreCore *snore)
+bool SnoreToast::initialize(SnoreCore *snore)
 {
     if(QSysInfo::windowsVersion() != QSysInfo::WV_WINDOWS8)
     {
@@ -54,11 +54,14 @@ bool SnoreToast::init(SnoreCore *snore)
         p->waitForFinished(-1);
         qDebug() << p->readAll();
         if(p->exitCode() != 0)
+        {
             return false;
+        }
     }
 
-    return SnoreBackend::init(snore);
+    return SnoreBackend::initialize(snore);
 }
+
 
 void SnoreToast::slotNotify(Notification notification)
 {

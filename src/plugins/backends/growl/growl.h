@@ -32,7 +32,8 @@ class Growl:public Snore::SnoreBackend
 public:
     Growl();
     ~Growl();    
-    virtual bool init(Snore::SnoreCore *snore);
+    virtual bool initialize(Snore::SnoreCore *snore);
+    virtual bool deinitialize();
     
     static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
 

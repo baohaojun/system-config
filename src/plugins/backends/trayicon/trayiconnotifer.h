@@ -18,7 +18,8 @@ class TrayIconNotifer:public Snore::SnoreBackend
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0")
 public:
     TrayIconNotifer ();
-    virtual bool init(Snore::SnoreCore *snore);
+    virtual bool initialize(Snore::SnoreCore *snore);
+    virtual bool deinitialize();
 
 public slots:
     void slotNotify(Snore::Notification notification);

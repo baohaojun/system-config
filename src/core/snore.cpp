@@ -69,7 +69,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             }
             case SnorePlugin::SECONDARY_BACKEND:
             {
-                if(!info->load()->init( this )){
+                if(!info->load()->initialize( this )){
                     info->unload();
                     break;
                 }
@@ -79,7 +79,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             case SnorePlugin::FRONTEND:
             {
                 qDebug() << info->name() << "is a Notification_Frontend";
-                if(!info->load()->init( this )){
+                if(!info->load()->initialize( this )){
                     info->unload();
                     break;
                 }
@@ -89,7 +89,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             case SnorePlugin::PLUGIN:
             {
                 qDebug() <<info->name()<<"is a SnorePlugin";
-                if(!info->load()->init(this)){
+                if(!info->load()->initialize(this)){
                     info->unload();
                     break;
                 }
@@ -173,7 +173,7 @@ bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
     SnoreBackend* b = qobject_cast<SnoreBackend*>(PluginContainer::pluginCache()[backend]->load());
     if(!b->isInitialized())
     {
-        if(!b->init(this))
+        if(!b->initialize(this))
         {
             qDebug() << "Failed to initialize" << b->name();
             return false;
@@ -181,7 +181,7 @@ bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
     }
     if(d->m_notificationBackend)
     {
-        d->m_notificationBackend->deinit();
+        d->m_notificationBackend->deinitialize();
     }
 
     d->m_notificationBackend = b;

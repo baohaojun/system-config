@@ -12,7 +12,7 @@ class SnoreToast : public Snore::SnoreBackend
 public:
     SnoreToast();
     ~SnoreToast();
-    bool init(Snore::SnoreCore *snore);
+    virtual bool initialize(Snore::SnoreCore *snore);
 
 public slots:
     void slotNotify(Snore::Notification notification);

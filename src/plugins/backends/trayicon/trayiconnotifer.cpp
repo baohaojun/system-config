@@ -19,28 +19,45 @@ TrayIconNotifer::TrayIconNotifer () :
 
 }
 
-bool TrayIconNotifer::init(SnoreCore *snore){    
+bool TrayIconNotifer::initialize(SnoreCore *snore){
     m_trayIcon = snore->trayIcon();
     if(m_trayIcon == NULL)
     {
         return false;
     }
     connect(m_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
-    return SnoreBackend::init(snore);
+    return SnoreBackend::initialize(snore);
+}
+
+bool TrayIconNotifer::deinitialize()
+{
+    if(SnoreBackend::deinitialize())
+    {
+        if(m_trayIcon)
+        {
+            disconnect(m_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
+            m_trayIcon = NULL;
+        }
+        return true;
+    }
+    return false;
 }
 
 void TrayIconNotifer::slotNotify( Notification notification )
 {
     m_notificationQue.append(notification);
-    if(m_lastNotify.elapsed()> Notification::defaultTimeout() * 1000){
+    if(m_lastNotify.elapsed()> Notification::defaultTimeout() * 1000)
+    {
         displayNotification();
     }
 }
 
-void TrayIconNotifer::displayNotification(){
+void TrayIconNotifer::displayNotification()
+{
     qDebug()<<"Display"<<m_notificationQue.size();
     Notification notification =  m_notificationQue.takeFirst();
-    if(!m_notificationQue.isEmpty()){
+    if(!m_notificationQue.isEmpty())
+    {
         QTimer::singleShot(notification.timeout()*1000,this,SLOT(slotCloseNotificationByTimeout()));
     }
 
@@ -50,19 +67,23 @@ void TrayIconNotifer::displayNotification(){
     m_lastNotify.restart();
 }
 
-void TrayIconNotifer::slotCloseNotificationByTimeout(){
-    Notification n = snore()->getActiveNotificationByID(m_displayed);
-    if(n.isValid()){
+void TrayIconNotifer::slotCloseNotificationByTimeout()
+{
+    Notification n = getActiveNotificationByID(m_displayed);
+    if(n.isValid())
+    {
         closeNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
     }
     displayNotification();
 }
 
-void TrayIconNotifer::actionInvoked(){
+void TrayIconNotifer::actionInvoked()
+{
     qDebug()<<"Traicon invoked"<<m_displayed;
 
-    Notification n = snore()->getActiveNotificationByID(m_displayed);
-    if(n.isValid()){
+    Notification n = getActiveNotificationByID(m_displayed);
+    if(n.isValid())
+    {
         snore()->d()->notificationActionInvoked(n);
         closeNotification(n,NotificationEnums::CloseReasons::CLOSED);
     }

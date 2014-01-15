@@ -37,8 +37,4 @@ SnoreFrontend::~SnoreFrontend()
     qDebug()<<"Deleting"<<name();
 }
 
-bool SnoreFrontend::init( SnoreCore *snore )
-{
-    return SnorePlugin::init(snore);
-}
 }

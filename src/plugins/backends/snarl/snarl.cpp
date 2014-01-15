@@ -141,12 +141,12 @@ SnarlBackend::SnarlBackend():
 
 SnarlBackend::~SnarlBackend()
 {
-    if(m_defautSnarlinetrface)
-        delete m_defautSnarlinetrface;
+
 }
 
 
-bool SnarlBackend::init(SnoreCore *snore){
+bool SnarlBackend::initialize(SnoreCore *snore)
+{
     SnarlInterface *snarlInterface = new SnarlInterface();
     if(!snarlInterface->IsSnarlRunning())
     {
@@ -156,9 +156,28 @@ bool SnarlBackend::init(SnoreCore *snore){
     m_eventLoop = new SnarlBackend::SnarlWidget(this);
     m_applications.insert(snore->d()->defaultApplication().name(),snarlInterface);
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
-    m_defautSnarlinetrface = new SnarlInterface();
+    m_defautSnarlinetrface = snarlInterface;
 
-    return SnoreBackend::init(snore);
+    return SnoreBackend::initialize(snore);
+}
+
+bool SnarlBackend::deinitialize()
+{
+    if(SnoreBackend::deinitialize())
+    {
+        if(m_defautSnarlinetrface)
+        {
+            delete m_defautSnarlinetrface;
+            m_defautSnarlinetrface = NULL;
+
+            delete m_eventLoop;
+            m_eventLoop = NULL;
+
+            m_applications.clear();
+        }
+        return true;
+    }
+    return false;
 }
 
 void SnarlBackend::slotRegisterApplication(const Application &application){

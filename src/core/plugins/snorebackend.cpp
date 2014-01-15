@@ -45,9 +45,9 @@ SnoreBackend::~SnoreBackend()
 }
 
 
-bool SnoreBackend::init( SnoreCore *snore )
+bool SnoreBackend::initialize( SnoreCore *snore )
 {
-    if(!SnorePlugin::init(snore))
+    if(!SnorePlugin::initialize(snore))
     {
         return false;
     }
@@ -95,8 +95,9 @@ void SnoreBackend::slotCloseNotification(Notification notification)
     Q_UNUSED(notification)
 }
 
-SnoreSecondaryBackend::SnoreSecondaryBackend(const QString &name, bool supportsRhichtext)
-    :SnoreBackend(name,false,supportsRhichtext)
+SnoreSecondaryBackend::SnoreSecondaryBackend(const QString &name, bool supportsRhichtext):
+    SnorePlugin(name),
+    m_supportsRichtext(supportsRhichtext)
 {
 
 }
@@ -106,9 +107,9 @@ SnoreSecondaryBackend::~SnoreSecondaryBackend()
     qDebug()<<"Deleting"<<name();
 }
 
-bool SnoreSecondaryBackend::init(SnoreCore *snore)
+bool SnoreSecondaryBackend::supportsRichtext()
 {
-    return SnoreBackend::init(snore);
+    return m_supportsRichtext;
 }
 
 Snore::Notification SnoreBackend::getActiveNotificationByID(uint id)
@@ -142,9 +143,9 @@ void SnoreBackend::addActiveNotification(Notification n)
 }
 
 
-void SnoreBackend::deinit()
+bool SnoreBackend::deinitialize()
 {
-    if(m_initialized)
+    if(SnorePlugin::deinitialize())
     {
         foreach(const Application &a,snore()->aplications())
         {
@@ -155,7 +156,7 @@ void SnoreBackend::deinit()
 
         disconnect( this, SIGNAL(notificationClosed(Snore::Notification)), snore()->d(), SLOT(slotNotificationClosed(Snore::Notification)));
         disconnect( snore()->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
-
-        SnorePlugin::deinit();
+        return true;
     }
+    return false;
 }

@@ -48,15 +48,34 @@ FreedesktopFrontend::~FreedesktopFrontend(){
     dbus.unregisterService( "org.freedesktop.Notifications" );
 }
 
-bool FreedesktopFrontend::init(SnoreCore *snore){
-    new  NotificationsAdaptor(this);
+bool FreedesktopFrontend::initialize(SnoreCore *snore)
+{
+    m_adaptor = new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerService( "org.freedesktop.Notifications" );
-    dbus.registerObject( "/org/freedesktop/Notifications", this );
-    return SnoreFrontend::init(snore);
+    if(dbus.registerService( "org.freedesktop.Notifications" ) &&
+            dbus.registerObject( "/org/freedesktop/Notifications", this ))
+    {
+        return SnoreFrontend::initialize(snore);
+    }
+    return false;
 }
 
-void FreedesktopFrontend::actionInvoked(Notification notification) {
+bool FreedesktopFrontend::deinitialize()
+{
+    if(SnoreFrontend::deinitialize())
+    {
+        QDBusConnection dbus = QDBusConnection::sessionBus();
+        dbus.unregisterService("org.freedesktop.Notifications" );
+        dbus.unregisterObject("/org/freedesktop/Notifications" );
+        m_adaptor->deleteLater();
+        m_adaptor = NULL;
+        return true;
+    }
+    return false;
+}
+
+void FreedesktopFrontend::actionInvoked(Notification notification)
+{
     if(notification.actionInvoked().isValid())
     {
         emit ActionInvoked(notification.id(),QString::number(notification.actionInvoked().id()));

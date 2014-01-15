@@ -46,8 +46,8 @@ public:
 
     SnorePlugin ( const QString &name);
     virtual ~SnorePlugin();
-    virtual bool init( SnoreCore *snore );
-    virtual void deinit();
+    virtual bool initialize( SnoreCore *snore );
+    virtual bool deinitialize();
     bool isInitialized();
     SnoreCore* snore();
     const QString &name() const;

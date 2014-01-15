@@ -23,14 +23,18 @@
 #include "core/application.h"
 #include <QtDBus>
 
-class FreedesktopFrontend:public Snore::SnoreFrontend{
+class NotificationsAdaptor;
+
+class FreedesktopFrontend : public Snore::SnoreFrontend
+{
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreFrontend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0")
 public:
     FreedesktopFrontend();
     ~FreedesktopFrontend();
-    virtual bool init(Snore::SnoreCore *snore);
+    virtual bool initialize(Snore::SnoreCore *snore);
+    virtual bool deinitialize();
 
     void actionInvoked(Snore::Notification notification);
     void notificationClosed(Snore::Notification notification);
@@ -47,6 +51,7 @@ signals:
 private:
     Snore::Alert m_alert;
     Snore::Icon m_icon;
+    NotificationsAdaptor *m_adaptor;
 
 
 };
