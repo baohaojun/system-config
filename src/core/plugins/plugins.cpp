@@ -46,7 +46,7 @@ bool SnorePlugin::initialize( SnoreCore *snore )
         qFatal("Something went wrong, plugin %s is already initialized",this->name().toLatin1().constData());
         return false;
     }
-    qDebug()<<"Initialize"<<m_name<<this<<snore;
+    qDebug() << "Initialize" << m_name << this << snore;
     this->m_snore = snore;
     m_initialized = true;
     return true;
@@ -87,11 +87,13 @@ void SnorePlugin::startTimeout(uint id,int timeout){
     timer->start();
 }
 
-void SnorePlugin::notificationTimedOut(){
+void SnorePlugin::notificationTimedOut()
+{
     uint id = m_timeout_order.takeFirst();
     m_timeouts.take(id)->deleteLater();
     Notification n = snore()->getActiveNotificationByID(id);
-    if(n.isValid()){
+    if(n.isValid())
+    {
         snore()->requestCloseNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
     }
 }
@@ -100,6 +102,7 @@ bool SnorePlugin::deinitialize()
 {
     if(m_initialized)
     {
+        qDebug() << "Deinitialize" << m_name << this;
         m_initialized = false;
         return true;
     }

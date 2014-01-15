@@ -133,8 +133,7 @@ private:
 
 
 SnarlBackend::SnarlBackend():
-    SnoreBackend("Snarl",true,false),
-    m_defautSnarlinetrface(NULL)
+    SnoreBackend("Snarl",true,false)
 {
 
 }
@@ -155,8 +154,7 @@ bool SnarlBackend::initialize(SnoreCore *snore)
     }
     m_eventLoop = new SnarlBackend::SnarlWidget(this);
     m_applications.insert(snore->d()->defaultApplication().name(),snarlInterface);
-    qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
-    m_defautSnarlinetrface = snarlInterface;
+    qDebug() << "Initiating Snarl Backend, Snarl version: " << snarlInterface->GetVersion();
 
     return SnoreBackend::initialize(snore);
 }
@@ -165,16 +163,12 @@ bool SnarlBackend::deinitialize()
 {
     if(SnoreBackend::deinitialize())
     {
-        if(m_defautSnarlinetrface)
+        if(m_eventLoop)
         {
-            delete m_defautSnarlinetrface;
-            m_defautSnarlinetrface = NULL;
-
-            delete m_eventLoop;
+            m_eventLoop->deleteLater();
             m_eventLoop = NULL;
-
-            m_applications.clear();
         }
+        m_applications.clear();
         return true;
     }
     return false;
@@ -222,7 +216,7 @@ void SnarlBackend::slotNotify(Notification notification){
     {
         qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
         qDebug()<<m_applications.keys();
-        snarlInterface = m_defautSnarlinetrface;
+        snarlInterface = m_applications[snore()->d()->defaultApplication().name()];
     }
 
     Snarl::V42::SnarlEnums::MessagePriority priority = Snarl::V42::SnarlEnums::PriorityUndefined;
@@ -278,5 +272,12 @@ void SnarlBackend::slotNotify(Notification notification){
 
 void SnarlBackend::slotCloseNotification(Notification notification)
 {
-    m_defautSnarlinetrface->Hide(m_idMap.take(notification.id()));
+    SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
+    if(snarlInterface == NULL)
+    {
+        qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
+        qDebug()<<m_applications.keys();
+        snarlInterface = m_applications[snore()->d()->defaultApplication().name()];
+    }
+    snarlInterface->Hide(m_idMap.take(notification.id()));
 }

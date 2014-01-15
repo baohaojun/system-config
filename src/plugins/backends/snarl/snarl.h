@@ -39,7 +39,6 @@ private:
     class SnarlWidget;
     SnarlBackend::SnarlWidget* m_eventLoop;
     QHash<QString,Snarl::V42::SnarlInterface*> m_applications;
-    Snarl::V42::SnarlInterface* m_defautSnarlinetrface;
 
 public slots:
     void slotRegisterApplication(const Snore::Application &application);
