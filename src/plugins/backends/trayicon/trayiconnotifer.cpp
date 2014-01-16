@@ -14,7 +14,13 @@ Q_EXPORT_PLUGIN2(trayicon,TrayIconNotifer)
 TrayIconNotifer::TrayIconNotifer () :
     SnoreBackend ( "SystemTray",false,false ),
     m_trayIcon(NULL),
-    m_displayed(-1)
+    m_displayed(-1),
+    m_currentlyDisplaying(false)
+{
+
+}
+
+TrayIconNotifer::~TrayIconNotifer()
 {
 
 }
@@ -46,25 +52,26 @@ bool TrayIconNotifer::deinitialize()
 void TrayIconNotifer::slotNotify( Notification notification )
 {
     m_notificationQue.append(notification);
-    if(m_lastNotify.elapsed()> Notification::defaultTimeout() * 1000)
+    qDebug() << notification << m_currentlyDisplaying;
+    if(!m_currentlyDisplaying)
     {
+        m_currentlyDisplaying = true;
         displayNotification();
     }
 }
 
 void TrayIconNotifer::displayNotification()
 {
-    qDebug()<<"Display"<<m_notificationQue.size();
-    Notification notification =  m_notificationQue.takeFirst();
-    if(!m_notificationQue.isEmpty())
+    if(m_notificationQue.isEmpty())
     {
-        QTimer::singleShot(notification.timeout()*1000,this,SLOT(slotCloseNotificationByTimeout()));
+        m_currentlyDisplaying = false;
+        return;
     }
-
-    qDebug()<<"taking"<<notification.title();
+    m_currentlyDisplaying = true;
+    Notification notification =  m_notificationQue.takeFirst();
     m_displayed = notification.id();
     m_trayIcon->showMessage ( Snore::toPlainText(notification.title()),Snore::toPlainText(notification.text()),QSystemTrayIcon::NoIcon,notification.timeout() *1000 );
-    m_lastNotify.restart();
+    QTimer::singleShot(notification.timeout()*1000,this,SLOT(slotCloseNotificationByTimeout()));
 }
 
 void TrayIconNotifer::slotCloseNotificationByTimeout()

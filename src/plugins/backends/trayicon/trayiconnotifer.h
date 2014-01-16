@@ -3,7 +3,6 @@
 
 #include "core/plugins/snorebackend.h"
 
-#include <QTime>
 
 namespace Snore{
     class SnoreCore;
@@ -18,6 +17,7 @@ class TrayIconNotifer:public Snore::SnoreBackend
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0")
 public:
     TrayIconNotifer ();
+    virtual ~TrayIconNotifer();
     virtual bool initialize(Snore::SnoreCore *snore);
     virtual bool deinitialize();
 
@@ -27,8 +27,8 @@ public slots:
 private:
     QSystemTrayIcon *m_trayIcon;
     QList<Snore::Notification > m_notificationQue;
-    QTime m_lastNotify;
     uint m_displayed;
+    bool m_currentlyDisplaying;
 
 private slots:
     void displayNotification();
