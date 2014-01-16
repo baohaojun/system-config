@@ -51,6 +51,7 @@ bool SnoreBackend::initialize( SnoreCore *snore )
     {
         return false;
     }
+
     connect( snore->d(), SIGNAL(applicationRegistered(const Snore::Application&)), this, SLOT(slotRegisterApplication(const Snore::Application&)));
     connect( snore->d(), SIGNAL(applicationDeregistered(const Snore::Application&)), this, SLOT(slotDeregisterApplication(const Snore::Application&)));
 
@@ -147,6 +148,12 @@ bool SnoreBackend::deinitialize()
 {
     if(SnorePlugin::deinitialize())
     {
+        foreach(Notification n,m_activeNotifications)
+        {
+            requestCloseNotification(n, NotificationEnums::CloseReasons::DISMISSED);
+        }
+
+
         foreach(const Application &a,snore()->aplications())
         {
             slotDeregisterApplication(a);

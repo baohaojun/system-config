@@ -243,7 +243,6 @@ void SnarlBackend::slotNotify(Notification notification){
             snarlInterface->AddAction(id,a.name().toUtf8().constData(),QString("@").append(QString::number(a.id())).toUtf8().constData());
         }
         m_idMap[notification.id()] = id;
-        qDebug() << "snarl" << id << notification.id();
         startTimeout(notification.id(),notification.timeout());
 
     }
@@ -259,7 +258,6 @@ void SnarlBackend::slotNotify(Notification notification){
                 !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
                 priority);
         m_idMap[notification.id()] = m_idMap[notification.updateID()];
-        qDebug() << "snarl update" << m_idMap[notification.updateID()] << notification.id();
         startTimeout(notification.updateID(),notification.timeout());
     }
 

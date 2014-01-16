@@ -91,6 +91,6 @@ void TrayIcon::slotTestNotification()
     n.addAction(Action(1,"Test Action"));
     m_snore->broadcastNotification(n);
     m_snore->broadcastNotification(Notification(app, *app.alerts().begin(), "Hello World", "This is Snore, color test", Icon("http://jweatherwatch.googlecode.com/svn/trunk/iconset/04.png")));
-    m_snore->deregisterApplication(app);
+//    m_snore->deregisterApplication(app);
 }
 

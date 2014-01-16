@@ -52,7 +52,7 @@ NotificationData::NotificationData (const Snore::Application &application, const
 NotificationData::~NotificationData()
 {
     notificationCount--;
-    qDebug() << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    qDebug() << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
 }
 
 
