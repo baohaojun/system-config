@@ -33,5 +33,8 @@ else
     ant installd 2>&1 | tee ~/.logs/ant-install.log
     android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
 fi
-# find-or-exec emulator
+
+if test $(adb devices | grep -v '^\s*$' -P | wc -l) -lt 3; then
+    find-or-exec emulator
+fi
 logcat

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if test $# = 0 -a $(basename $0) = my-dict-maybe; then
+if test $# = 0 -a $(basename $0 | perl -npe 's/my-dict//;' | cut -b 1) = -; then
         set -- "$(xclip -o)"
 elif test $# = 0; then
     input=$(ask-for-input-with-sawfish -p "md> ")

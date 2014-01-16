@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if test ! -e ~/.config/pointer-dev-ids; then
+   xinput list |
+   grep pointer |
+   grep -v XTEST |
+   grep -e 'slave\s+pointer' -P|
+   grep -v 'Keyboard 4000'|
+   grep -o -e 'id=\d+' -P |
+   cut -b 4- |
+   sort -u > ~/.config/pointer-dev-ids
+fi
+
+for x in $(cat ~/.config/pointer-dev-ids); do
+    xinput query-state $x
+done | grep -P "\[$1\].*down"

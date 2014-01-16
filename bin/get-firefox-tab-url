@@ -28,3 +28,5 @@ for x in $(seq 1 5); do
         exit 0
     fi
 done
+
+sawfish-send-window-event '(- |^)Mozilla Firefox\$' C-l C-e SPC # so that the url bar is not empty

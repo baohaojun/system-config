@@ -1,2 +1,22 @@
 #!/bin/bash
-sawfish-client -e '(event-name (read-event "'"$volume"'"))' | perl -npe 's/^"|"$//g'
+
+prompt=
+TEMP=$(getopt -o p: --long prompt: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--prompt)
+            prompt=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+sawfish-client -e '(event-name (read-event "'"$prompt"'"))' | perl -npe 's/^"|"$//g'

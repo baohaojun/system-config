@@ -2,12 +2,13 @@
 # key: Getopt
 # name: Getopt
 # --
-TEMP=\$(getopt -o ${1:j:} --long ${2:jobs:} -n \$(basename \$0) -- "\$@")
+TEMP=\$(getopt -o ${1:j}: --long ${2:jobs}: -n \$(basename \$0) -- "\$@")
+$2=
 eval set -- "\$TEMP"
 while true; do
     case "\$1" in
-        ${3:-j|--jobs})
-            ${4:jobs}=\$2
+        -$1|--$2)
+            $2=\$2
             shift 2
             ;;
         --)

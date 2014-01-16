@@ -12,8 +12,8 @@ fi
 cd "$from_dir"
 
 if test $(basename $0) = copy-files-maintain-path; then
-    for x in $(find . -iname "*$pattern*"); do
-            d=$target_pwd/$(dirname $x); mkdir -p "$d"; cp $x $d -av;
+    for x in $(find . -iname "$pattern"); do
+            d=$target_pwd/$(dirname $x); mkdir -p "$d"; cp $x $d -avi;
     done
 else
     for x in $(find . -iname $(basename $pattern)); do
