@@ -1,6 +1,10 @@
 #+title: Archive
  * 2014
   - 2014-01
+   * 2014-01-16
+
+     [[../blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.org][用GreaseMonkey禁止Google搜索重定向绑架]]
+
    * 2014-01-03
 
      [[../blog/2014/01/03/0-7-habits-of-highly-effective-editting.org][高效文本编辑的七个习惯]]

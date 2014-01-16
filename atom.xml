@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[用GreaseMonkey禁止Google搜索重定向绑架]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html"/>
+    <updated>2014-36-16T17:01:34+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[高效文本编辑的七个习惯]]></title>
     <link href="http://baohaojun.github.io/blog/2014/01/03/0-7-habits-of-highly-effective-editting.html"/>
-    <updated>2014-59-03T10:01:23+08:00</updated>
+    <updated>2014-01-03T11:00:55+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/01/03/0-7-habits-of-highly-effective-editting.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/08/16/0-rbtree.html"/>
     <updated>2013-09-04T11:13:04+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/08/16/0-rbtree.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Grepping Cross References]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/07/20/0-grep-cross-ref.html"/>
-    <updated>2013-07-21T01:20:30+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/07/20/0-grep-cross-ref.html</id>
   </entry>
 </feed>

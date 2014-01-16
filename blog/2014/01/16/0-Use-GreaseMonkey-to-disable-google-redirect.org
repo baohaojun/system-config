@@ -1,0 +1,29 @@
+#+title: 用GreaseMonkey禁止Google搜索重定向绑架
+# bhj-tags: tool
+
+Google搜索出来的结果点击总是会到它自己的服务器去转一圈再回到最终的目标
+页面，这可以理解，它也有流量、统计之类的KPI需求嘛。
+
+可是一结合国内的互联网被去了势的现状，问题就来了，经常联接被重置！无语。
+
+网上有firefox的一个 [[https://addons.mozilla.org/en-US/firefox/addon/google-no-tracking-url/][插件]] ，可以去掉这个重定向，但我试用之后效果很糟糕，
+完全不能用！
+
+于是用GreaseMonkey自己写了一个 [[https://github.com/baohaojun/system-config/raw/master/doc/GreaseMonkey/no-google-redirect.user.js][脚本]] ，很简单，只有几行代码：
+
+#+BEGIN_SRC javascript
+// ==UserScript==
+// @name          link-unredirect
+// @namespace     http://github.com/baohaojun/system-config
+// @description   Script for unredirecting google search results
+// @include       *.google.*
+// ==/UserScript==
+
+var redirect_re = new RegExp(".*//.*google.co.*&url=([^&]*)(&.*|$)");
+
+for (var x in document.links) {
+  if (document.links[x].onmousedown) {
+    document.links[x].onmousedown="";
+  }
+}
+#+END_SRC
