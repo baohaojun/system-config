@@ -43,6 +43,7 @@ bool TrayIconNotifer::deinitialize()
         {
             disconnect(m_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
             m_trayIcon = NULL;
+            m_currentlyDisplaying = false;
         }
         return true;
     }
@@ -52,16 +53,15 @@ bool TrayIconNotifer::deinitialize()
 void TrayIconNotifer::slotNotify( Notification notification )
 {
     m_notificationQue.append(notification);
-    qDebug() << notification << m_currentlyDisplaying;
-    if(!m_currentlyDisplaying)
-    {
-        m_currentlyDisplaying = true;
-        displayNotification();
-    }
+    displayNotification();
 }
 
 void TrayIconNotifer::displayNotification()
 {
+    if(m_currentlyDisplaying)
+    {
+        return;
+    }
     if(m_notificationQue.isEmpty())
     {
         m_currentlyDisplaying = false;
@@ -80,19 +80,20 @@ void TrayIconNotifer::slotCloseNotificationByTimeout()
     if(n.isValid())
     {
         closeNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
+        m_currentlyDisplaying = false;
+        displayNotification();
     }
-    displayNotification();
 }
 
 void TrayIconNotifer::actionInvoked()
 {
-    qDebug()<<"Traicon invoked"<<m_displayed;
-
     Notification n = getActiveNotificationByID(m_displayed);
     if(n.isValid())
     {
         snore()->d()->notificationActionInvoked(n);
         closeNotification(n,NotificationEnums::CloseReasons::CLOSED);
+        m_currentlyDisplaying = false;
+        displayNotification();
     }
 
 }
