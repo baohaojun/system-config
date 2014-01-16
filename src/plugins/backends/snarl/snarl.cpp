@@ -153,9 +153,8 @@ bool SnarlBackend::initialize(SnoreCore *snore)
         return false;
     }
     m_eventLoop = new SnarlBackend::SnarlWidget(this);
-    m_applications.insert(snore->d()->defaultApplication().name(),snarlInterface);
     qDebug() << "Initiating Snarl Backend, Snarl version: " << snarlInterface->GetVersion();
-
+    delete snarlInterface;
     return SnoreBackend::initialize(snore);
 }
 
@@ -168,23 +167,18 @@ bool SnarlBackend::deinitialize()
             m_eventLoop->deleteLater();
             m_eventLoop = NULL;
         }
-        m_applications.clear();
         return true;
     }
     return false;
 }
 
 void SnarlBackend::slotRegisterApplication(const Application &application){
-    SnarlInterface *snarlInterface = NULL;
-    if(m_applications.contains(application.name()))
-    {
-        snarlInterface = m_applications.value(application.name());
-    }
-    else
-    {
-        snarlInterface = new SnarlInterface();
-        m_applications.insert(application.name(),snarlInterface);
-    }
+
+    Q_ASSERT_X(!m_applications.contains(application.name()), Q_FUNC_INFO, "Application already registered");
+
+    SnarlInterface *snarlInterface = new SnarlInterface();
+    m_applications.insert(application.name(),snarlInterface);
+
     QString appName = application.name().replace(" ","_");//app sig must not contain spaces
     snarlInterface->Register(appName.toUtf8().constData(),
                              application.name().toUtf8().constData(),
@@ -200,24 +194,25 @@ void SnarlBackend::slotRegisterApplication(const Application &application){
 }
 
 void SnarlBackend::slotDeregisterApplication(const Application &application){
-    SnarlInterface *snarlInterface = m_applications.take(application.name());
-    if(snarlInterface == NULL)
+    if(!m_applications.contains(application.name()))
     {
+        qDebug() << Q_FUNC_INFO << "Unknown apllication: " << application.name();
         return;
     }
+    SnarlInterface *snarlInterface = m_applications.take(application.name());
     QString appName = application.name().replace(" ","_");//app sig must not contain spaces
     snarlInterface->Unregister(appName.toUtf8().constData());
     delete snarlInterface;
 }
 
 void SnarlBackend::slotNotify(Notification notification){
-    SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
-    if(snarlInterface == NULL)
+    if(!m_applications.contains(notification.application().name()))
     {
-        qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
-        qDebug()<<m_applications.keys();
-        snarlInterface = m_applications[snore()->d()->defaultApplication().name()];
+        qDebug() << Q_FUNC_INFO << "Unknown apllication: " << notification.application().name();
+        return;
     }
+
+    SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
 
     Snarl::V42::SnarlEnums::MessagePriority priority = Snarl::V42::SnarlEnums::PriorityUndefined;
     switch(notification.priority())
@@ -272,12 +267,10 @@ void SnarlBackend::slotNotify(Notification notification){
 
 void SnarlBackend::slotCloseNotification(Notification notification)
 {
-    SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
-    if(snarlInterface == NULL)
+    if(!m_applications.contains(notification.application().name()))
     {
-        qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
-        qDebug()<<m_applications.keys();
-        snarlInterface = m_applications[snore()->d()->defaultApplication().name()];
+        qDebug() << Q_FUNC_INFO << "Unknown apllication: " << notification.application().name();
+        return;
     }
-    snarlInterface->Hide(m_idMap.take(notification.id()));
+    m_applications.value(notification.application().name())->Hide(m_idMap.take(notification.id()));
 }
