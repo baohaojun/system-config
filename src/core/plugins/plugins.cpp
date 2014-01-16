@@ -94,6 +94,7 @@ void SnorePlugin::notificationTimedOut()
     Notification n = snore()->getActiveNotificationByID(id);
     if(n.isValid())
     {
+        qDebug() << Q_FUNC_INFO ;
         snore()->requestCloseNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
     }
 }

@@ -23,6 +23,7 @@ public:
 
 public slots:
     void slotNotify(Snore::Notification notification);
+    void slotCloseNotification(Snore::Notification notification);
 
 private:
     QSystemTrayIcon *m_trayIcon;
@@ -33,7 +34,6 @@ private:
 private slots:
     void displayNotification();
     void actionInvoked();
-    void slotCloseNotificationByTimeout();
 };
 
 #endif // TRAYICONNOTIFER_H

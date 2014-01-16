@@ -57,13 +57,14 @@ public slots:
     virtual void slotCloseNotification ( Snore::Notification notification );
 
 protected:
-    bool m_canCloseNotification;
-    bool m_supportsRichtext;
     void closeNotification(Snore::Notification,Snore::NotificationEnums::CloseReasons::closeReasons);
 
 
 private:
     QHash<uint,Notification> m_activeNotifications;
+
+    bool m_canCloseNotification;
+    bool m_supportsRichtext;
 
     void addActiveNotification(Notification n);
     friend void SnoreCore::broadcastNotification(Notification notification);
