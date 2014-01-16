@@ -19,4 +19,6 @@ key.store=/home/bhj/.keystore/bhj.keystore
 key.alias=bhj.key.alias
 EOF
 rm hello_project/ -rf
+mkdir -p libs
+relative-link  ~/external/bin/Linux/ext/android-sdk-linux/extras/android/support/v4/android-support-v4.jar libs
 mm-ant
