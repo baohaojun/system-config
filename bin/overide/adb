@@ -17,6 +17,7 @@ fi
 
 export the_prog
 
+$the_prog start-server >/dev/null 2>&1
 function die() {
     echo Error: "$@"
     exit -1
@@ -28,16 +29,18 @@ fi
 
 function adb() {
     if test "$1" = -w; then
-        echo wait-for-device 1>/dev/tty
+        echo -n 'wait-for-device ' 1>/dev/tty
         $the_prog wait-for-device
         shift
     fi
 
     if test "$1" = -r; then
+        echo -n 'wait-for-device ' 1>/dev/tty
         $the_prog wait-for-device
 
         if $the_prog root 2>&1 | grep 'restarting adbd as root'; then
             while true; do
+                echo -n '.' 1>/dev/tty
                 $the_prog wait-for-device
                 if adb shell id | grep uid=0 -q; then
                     break

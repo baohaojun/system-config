@@ -8,4 +8,7 @@ echo "$code"
 
 code=$(echo "$code" | perl -npe 's/.*:"//; s/".*//')
 
-wget -O - 2>/dev/null "https://login.alibaba-inc.com/authorize/getAccessToken.do?appcode=$appcode&authcode=$code&clienttype=1"
+token=$(wget -O - 2>/dev/null "https://login.alibaba-inc.com/authorize/getAccessToken.do?appcode=$appcode&authcode=$code&clienttype=1" | perl -npe 's/.*AccessToken":"(.*?)".*/$1/')
+echo $token
+
+wget -O - 2>/dev/null http://10.32.232.149/smart/api/auth/login?token=$token

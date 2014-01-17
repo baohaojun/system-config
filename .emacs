@@ -142,7 +142,11 @@
 
 
 (defvar last-grep-marker nil)
-(defvar bhj-force-cleanup-buffer nil)
+
+(defcustom bhj-force-cleanup-buffer nil
+  "force to clean up the buffer before save"
+  :type 'boolean)
+
 (make-variable-buffer-local 'bhj-force-cleanup-buffer)
 
 (defvar ajoke-output-buffer-name "*ajoke*"

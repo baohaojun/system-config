@@ -13,7 +13,10 @@ might be bad."
   ;; supporting mtop test.
   (when (and (string-match ".*/java/.*\\.wiki$" (buffer-file-name))
              (eq major-mode 'org-mode))
-    (replace-regexp " " "" nil (point-min) (point-max)))
+    (save-excursion
+      (goto-char (point-min))
+      (while (search-forward " " (point-max) t)
+        (replace-match ""))))
   (save-excursion
     (save-restriction
       (widen)
@@ -1334,5 +1337,31 @@ criteria can be provided via the optional match-string argument "
             (looking-at "\n###start of comment###"))
     (save-excursion
     (insert "\n"))))
+
+(defun bhj-update-loge ()
+  "Update logs in java files"
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((filename (bhj-file-basename)))
+      (while (search-forward-regexp "Log\\.e.*String.format(\"%s:%d: \", \"\\(.*?\\)\", \\([0-9]+\\)" nil t)
+        (let ((old-filename (buffer-substring-no-properties (match-beginning 1) (match-end 1)))
+              (old-line (buffer-substring-no-properties (match-beginning 2) (match-end 2)))
+              (old-start (match-beginning 0))
+              (old-end (match-end 0))
+              (old-filename-start (match-beginning 1))
+              (old-filename-end (match-end 1))
+              (old-line-start (match-beginning 2))
+              (old-line-end (match-end 2)))
+          (goto-char old-filename-start)
+          (while (search-forward old-filename old-filename-end t)
+            (replace-match filename))
+          (goto-char old-start)
+          (search-forward-regexp "Log\\.e.*String.format(\"%s:%d: \", \"\\(.*?\\)\", \\([0-9]+\\)" nil t)
+          (let ((old-line-start (match-beginning 2))
+                (old-line-end (match-end 2)))
+            (goto-char old-line-start)
+            (while (search-forward old-line old-line-end t)
+              (replace-match (number-to-string (line-number-at-pos old-line-start))))))))))
 
 (provide 'bhj-defines)
