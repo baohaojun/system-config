@@ -1,5 +1,6 @@
 #!/bin/bash
-su - bhj -c "
+# use evtest to see key code for keymap
+sudo su - bhj -c "
    . ~/.renew-xauth
 
    (
@@ -9,6 +10,7 @@ su - bhj -c "
            xmodmap ~/.Xmodmap
            xmodmap -e 'keycode 197 = F23'
            xmodmap -e 'keycode 202 = F24'
+           ~/bin/do-keymap
        )&
        date
    ) >> ~/.logs/re-xmodmap.log 2>&1

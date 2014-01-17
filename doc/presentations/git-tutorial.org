@@ -137,7 +137,9 @@ commits from untrusted contributors.
 ** git在协作环境下容易引发的问题
 
 *** 不提交至上游，导致常常要做rebase
-*** 不能很好的review。做得最好的review是Linux内核
+*** 不能很好的review。
+做得最好的review是Linux内核（用邮件review的意义？邮件是通用的，文件是通
+用的，计算机是通用的...；新手可以查看邮件列表）
 *** 分支切来切去搞得一些commit找不到了？用git reflog
 *** 有一个bug搞得很头大？用git bisect二分查找
 *** 有一行代码想看看是哪个二弟写的？用git blame
