@@ -23,7 +23,15 @@ fi
 
 if test "$1" = release; then
     ant-expect-keystore release
+    if test "$2" = build-only; then
+        exit
+    fi
     ant installr 2>&1 | tee ~/.logs/ant-install.log
+    if grep '\Q[exec] Failure\E' -P ~/.logs/ant-install.log; then
+        adb uninstall $(ant-get-package)
+        ant installr 2>&1 | tee ~/.logs/ant-install.log
+    fi
+
     android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
 elif test "$1" = start; then
     android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
@@ -31,6 +39,10 @@ else
     ant-expect-keystore debug
     adb -w shell echo
     ant installd 2>&1 | tee ~/.logs/ant-install.log
+    if grep '\Q[exec] Failure\E' -P ~/.logs/ant-install.log; then
+        adb uninstall $(ant-get-package)
+        ant installd 2>&1 | tee ~/.logs/ant-install.log
+    fi
     android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
 fi
 

@@ -505,6 +505,30 @@ beginning of current defun."
     (insert "package " package ";\n")
     (insert "public class " class " {\n}\n")))
 
+(defun ajoke-insert-exception-catchers ()
+  "Find out what exceptions are being thrown out of the preceding try block"
+  (interactive)
+  (save-excursion
+    (let* ((try-start) (progn (backward-list) (point))
+           (try-end (progn (forward-list) (point)))
+           (exceptions (shell-command-to-string
+                        (format "echo %s | ajoke-get-exceptions"
+                                (shell-quote-argument (buffer-substring-no-properties try-start try-end)))))
+           (exceptions (split-string exceptions))
+           (exceptions (cons "done" exceptions))
+           (done nil))
+      (while (not done)
+        (let ((ans (ajoke--pick-one "Which exception to catch?" exceptions nil t)))
+          (if (string= ans "done")
+              (setq done t)
+            (just-one-space)
+            (insert "catch (" ans " e) {\n")
+            (indent-for-tab-command)
+            (insert "Log.e(\"bhj\", String.format(\"%s:%d: \", \"" (bhj-file-basename) ", " (string-to-number (line-number-at-pos)) "), e);\n")
+            (indent-for-tab-command)
+            (insert "}")))))))
+
+
 (global-set-key [(meta g)(j)(p)] 'ajoke-insert-package)
 (global-set-key [(meta g)(j)(i)] 'ajoke-get-imports)
 (global-set-key [(meta g)(j)(h)] 'ajoke-get-hierarchy)

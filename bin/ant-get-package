@@ -1,0 +1,2 @@
+#!/bin/bash
+xmlstarlet sel -N android="http://schemas.android.com/apk/res/android" -B -t -m //manifest -v @package -n AndroidManifest.xml
