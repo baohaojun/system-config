@@ -1,0 +1,42 @@
+#!/usr/bin/perl
+
+# Given a snippet of java code, is able to list the exceptions that
+# are possible to be thrown. Does this by grep-gtags querying the
+# functions in the text.
+
+use strict;
+use Getopt::Long;
+use Set::Scalar;
+my $idset = Set::Scalar->new;
+use BhjJava;
+sub debug(@) {
+    print $debug "@_\n";
+}
+
+open(my $flat_pipe, "-|", "flatten.pl") or die "Cannot open flatten.pl pipe";
+open(my $grep_pipe, "|-", "bash | perl -mSet::Scalar -ne '" . '
+        BEGIN {
+            $s = Set::Scalar->new;
+        } END {
+            $s->delete("throws");
+            $s->insert("Exception");
+            while (defined(my $e = $s->each)) {
+                print "$e\n";
+            }
+        }
+        if (m/\\bthrows.*/) {
+            my $match = $&;
+            while ($match =~ m/\w+/g) {
+                $s->insert($&);
+            }
+        }' . "'") or die "Can not open grep pipe";
+
+while (<$flat_pipe>) {
+    while (m/($id_re)\(/g) {
+        $idset->insert($1);
+    }
+}
+
+while (defined(my $id = $idset->each)) {
+    print $grep_pipe "grep-gtags -e $id -p '\\.java|\\.jar|\\.aidl'\n";
+}
