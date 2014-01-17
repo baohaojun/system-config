@@ -336,6 +336,11 @@ system notification, just as rythombox does."
       (set-process-sentinel elt nil)
       (delete-process elt))))
 
+(defun douban--make-sure-int (int-or-str)
+     (if (stringp int-or-str)
+         (string-to-number int-or-str)
+       int-or-str))
+
 (defun douban-music-get-channels ()
   "Get channels from douban music server"
   (let ((json-buffer (douban-music-send-url
@@ -360,7 +365,7 @@ system notification, just as rythombox does."
             (let ((var (aref json i)))
               (setq douban-music-channels
                     (cons
-                     (cons (cdr (assoc 'channel_id var))
+                     (cons (douban--make-sure-int (cdr (assoc 'channel_id var)))
                            (cdr (assoc 'name var)))
                      douban-music-channels))))
           (setq douban-music-channels
