@@ -91,6 +91,11 @@ void SnoreBackend::closeNotification(Notification n, NotificationEnums::CloseRea
     emit notificationClosed(n);
 }
 
+void SnoreBackend::setSupportsRichtext(bool b)
+{
+    m_supportsRichtext = b;
+}
+
 void SnoreBackend::slotCloseNotification(Notification notification)
 {
     Q_UNUSED(notification)

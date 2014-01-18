@@ -58,6 +58,7 @@ public slots:
 
 protected:
     void closeNotification(Snore::Notification,Snore::NotificationEnums::CloseReasons::closeReasons);
+    void setSupportsRichtext(bool b);
 
 
 private:

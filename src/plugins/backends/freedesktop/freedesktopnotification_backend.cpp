@@ -21,7 +21,7 @@ FreedesktopBackend::FreedesktopBackend () :
 {
 }
 
-bool FreedesktopBackend::init(SnoreCore *snore){
+bool FreedesktopBackend::initialize(SnoreCore *snore){
 
     m_interface = new org::freedesktop::Notifications( "org.freedesktop.Notifications", "/org/freedesktop/Notifications",
                                                        QDBusConnection::sessionBus(), this );
@@ -29,11 +29,24 @@ bool FreedesktopBackend::init(SnoreCore *snore){
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
     reply.waitForFinished();
     QStringList caps  = reply.value();
-    m_supportsRichtext = caps.contains( "body-markup" );
+    setSupportsRichtext(caps.contains( "body-markup" ));
     connect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
     connect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
 
-    return SnoreBackend::init(snore);
+    return SnoreBackend::initialize(snore);
+}
+
+bool FreedesktopBackend::deinitialize()
+{
+    if(SnoreBackend::deinitialize())
+    {
+        disconnect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
+        disconnect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
+        m_interface->deleteLater();
+        m_interface = NULL;
+        return true;
+    }
+    return false;
 }
 
 void  FreedesktopBackend::slotNotify ( Notification noti )
