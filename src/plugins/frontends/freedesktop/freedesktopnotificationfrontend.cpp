@@ -138,7 +138,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     }
 
     snore()->broadcastNotification(noti);
-    startTimeout(noti.id(),noti.timeout());
+    startTimeout(noti);
     return noti.id();
 }
 

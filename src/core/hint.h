@@ -49,6 +49,18 @@ private:
     
 };
 
+template<typename Type>
+inline Type myQVariantCast(const QVariant &dat)
+{
+    return qobject_cast<Type>(qvariant_cast<QObject*>(dat));
+}
+
+template<typename Type>
+inline QVariant myQVariantFromValue(const Type &dat)
+{
+    return qVariantFromValue(qobject_cast<QObject*>(dat));
+}
+
 }
 
 

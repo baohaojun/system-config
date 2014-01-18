@@ -74,7 +74,7 @@ void SnorePlugin::startTimeout(Notification &notification)
         return;
     }
     uint id = notification.id();
-    QTimer *timer = qvariant_cast<QTimer*>(notification.hints().privateValue(this, "timeout"));
+    QTimer *timer = myQVariantCast<QTimer*>(notification.hints().privateValue(this, "timeout"));
     if(notification.updateID() != (uint)-1)
     {
         id = notification.updateID();
@@ -88,6 +88,7 @@ void SnorePlugin::startTimeout(Notification &notification)
         timer = new QTimer(this);
         timer->setSingleShot(true);
         timer->setProperty("notificationID", id);
+        notification.hints().setPrivateValue(this, "timeout", myQVariantFromValue(timer));
     }
 
     timer->setInterval(notification.timeout() * 1000);

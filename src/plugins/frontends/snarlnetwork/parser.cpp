@@ -138,7 +138,7 @@ void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
         }
         sNotification = Notification(app,alert,title,text,icon,timeout);
         sNotification.data()->setSource(snarl);
-        sNotification.hints().setPrivateValue(snarl, "clientSocket", qVariantFromValue(client));
+        sNotification.hints().setPrivateValue(snarl, "clientSocket", myQVariantFromValue(client));
         break;
     }
     case ADD_CLASS:
