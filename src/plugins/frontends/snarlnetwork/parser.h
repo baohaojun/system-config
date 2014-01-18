@@ -33,7 +33,7 @@ class Parser : public QObject
 public:
     Parser(class SnarlNetworkFrontend* snarl);
 
-     bool parse(Snore::Notification &sNotification, const QString &msg, class QTcpSocket* client);
+     void parse(Snore::Notification &sNotification, const QString &msg, class QTcpSocket* client);
 
 private:
     class SnarlNetworkFrontend *snarl;

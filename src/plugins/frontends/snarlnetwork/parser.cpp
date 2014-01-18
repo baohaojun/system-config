@@ -54,33 +54,18 @@ Parser::Parser(SnarlNetworkFrontend *snarl):
 }
 
 
-bool Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* client)
+void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* client)
 {
     qDebug() << Q_FUNC_INFO << msg;
-    QStringList splitted;
-    bool isHttp = false;
-
+    QStringList splitted(msg.split("#?"));
     snpTypes action(ERROR);
-    if(msg.startsWith("GET "))
-    {
-        QString tmp = msg.mid(msg.indexOf("/")+1);
-        tmp = tmp.mid(0,tmp.indexOf(" "));
-        tmp = QString(QByteArray::fromBase64(tmp.toLatin1().data()));
-        qDebug()<<"Notification from a browser"<<msg;
-        isHttp = true;
-        splitted = tmp.split("#?");
-    }
-    else
-    {
-        splitted = msg.split("#?");
-    }
 
     QString appName;
     QString alertName;
     QString title;
     QString text;
     QString icon;
-    int timeout=10;
+    int timeout = Notification::defaultTimeout();
 
     QString key;
     QString value;
@@ -127,7 +112,6 @@ bool Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
     }
 
 
-
     if(!alertName.isEmpty() && app.isValid())
     {
         if(app.alerts().contains(alertName))
@@ -155,7 +139,6 @@ bool Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
         sNotification = Notification(app,alert,title,text,icon,timeout);
         sNotification.data()->setSource(snarl);
         sNotification.hints().setValue("snarl_clientSocket", qVariantFromValue(client));
-        sNotification.hints().setValue("snarl_isHttpCLient", isHttp);
         break;
     }
     case ADD_CLASS:
@@ -192,6 +175,5 @@ bool Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
     default:
         break;
     }
-    return isHttp;
 }
 

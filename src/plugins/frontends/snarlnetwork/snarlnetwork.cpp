@@ -114,7 +114,7 @@ void SnarlNetworkFrontend::handleMessages()
             continue;
         }
         Notification noti;
-        bool isHttp = parser->parse(noti, s, client);
+        parser->parse(noti, s, client);
         if(noti.isValid())
         {
             snore()->broadcastNotification(noti);
@@ -123,13 +123,6 @@ void SnarlNetworkFrontend::handleMessages()
         else
         {
             write(client, QString("%1\r\n").arg(out));
-        }
-
-
-        if(isHttp)
-        {
-            client->disconnectFromHost();
-            client->waitForDisconnected();
         }
     }
 }
@@ -140,13 +133,6 @@ void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
     {
         QTcpSocket *client = qvariant_cast<QTcpSocket*>(sn.hints().value("snarl_clientSocket"));
         write(client, QString("%1%2\r\n").arg(msg, QString::number(sn.id())));
-        client->flush();
-
-        if(sn.hints().value("snarl_isHttpClient",false).toBool())
-        {
-            client->waitForBytesWritten(-1);
-            client->disconnectFromHost();
-        }
     }
 }
 
