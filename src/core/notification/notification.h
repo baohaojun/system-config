@@ -51,7 +51,7 @@ public:
     const int &timeout() const;
 
     void setUpdateID(uint id);
-    const uint &updateID() const;
+    uint updateID() const;
 
     const Action &actionInvoked() const;
     const Application &application() const;

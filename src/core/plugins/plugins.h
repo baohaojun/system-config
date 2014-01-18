@@ -20,11 +20,13 @@
 #ifndef SNORE_PLUGINS_H
 #define SNORE_PLUGINS_H
 #include "../snore_exports.h"
+#include "../notification/notification.h"
 
 #include <QPointer>
 #include <QHash>
 #include <QTimer>
 #include <QtPlugin>
+
 
 namespace Snore{
 class Application;
@@ -53,7 +55,7 @@ public:
     const QString &name() const;
 
 protected:
-    void startTimeout(uint id,int timeout);
+    void startTimeout(Notification &notification);
 private slots:
     void notificationTimedOut();
 
@@ -62,8 +64,6 @@ private:
     QString m_name;
     bool m_initialized;
     QPointer<SnoreCore> m_snore;
-    QHash<uint,QTimer*> m_timeouts;
-    QList<uint> m_timeout_order;
 
 
 };

@@ -67,36 +67,46 @@ const QString &SnorePlugin::name() const
     return m_name;
 }
 
-void SnorePlugin::startTimeout(uint id,int timeout){
-    if(timeout == -1)//sticky
+void SnorePlugin::startTimeout(Notification &notification)
+{
+    if(notification.sticky())
     {
         return;
     }
-    if(m_timeouts.contains(id)){
-        QTimer *t = m_timeouts.take(id);
-        t->stop();
-        t->deleteLater();
-        m_timeout_order.removeOne(id);
+    uint id = notification.id();
+    QTimer *timer = qvariant_cast<QTimer*>(notification.hints().privateValue(this, "timeout"));
+    if(notification.updateID() != (uint)-1)
+    {
+        id = notification.updateID();
     }
-    QTimer *timer= new QTimer(this);
-    timer->setInterval(timeout*1000);
-    timer->setSingleShot(true);
-    m_timeouts.insert(id,timer);
-    m_timeout_order.append(id);
+    if(timer)
+    {
+        timer->stop();
+    }
+    else
+    {
+        timer = new QTimer(this);
+        timer->setSingleShot(true);
+        timer->setProperty("notificationID", id);
+    }
+
+    timer->setInterval(notification.timeout() * 1000);
     connect(timer,SIGNAL(timeout()),this,SLOT(notificationTimedOut()));
     timer->start();
 }
 
 void SnorePlugin::notificationTimedOut()
 {
-    uint id = m_timeout_order.takeFirst();
-    m_timeouts.take(id)->deleteLater();
-    Notification n = snore()->getActiveNotificationByID(id);
+
+    QTimer *timer = qobject_cast<QTimer*>(sender());
+    Notification n = snore()->getActiveNotificationByID(timer->property("notificationID").toUInt());
     if(n.isValid())
     {
-        qDebug() << Q_FUNC_INFO ;
+        qDebug() << Q_FUNC_INFO << n;
+        timer->deleteLater();
         snore()->requestCloseNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
     }
+    timer->deleteLater();
 }
 
 bool SnorePlugin::deinitialize()

@@ -78,7 +78,7 @@ void Notification::setUpdateID(uint id)
     d->m_updateID = id;
 }
 
-const uint &Notification::updateID() const
+uint Notification::updateID() const
 {
     return d->m_updateID;
 }

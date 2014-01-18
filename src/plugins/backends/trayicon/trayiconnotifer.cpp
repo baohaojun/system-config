@@ -78,7 +78,7 @@ void TrayIconNotifer::displayNotification()
     Notification notification =  m_notificationQue.takeFirst();
     m_displayed = notification.id();
     m_trayIcon->showMessage ( Snore::toPlainText(notification.title()),Snore::toPlainText(notification.text()),QSystemTrayIcon::NoIcon,notification.timeout() *1000 );
-   startTimeout(notification.id(),notification.timeout());
+    startTimeout(notification);
 }
 
 void TrayIconNotifer::actionInvoked()

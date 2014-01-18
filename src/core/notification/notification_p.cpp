@@ -34,7 +34,7 @@ uint NotificationData::m_idCount = 1;
 NotificationData::NotificationData (const Snore::Application &application, const Snore::Alert &alert, const QString &title, const QString &text, const Icon &icon,
                                      int timeout, NotificationEnums::Prioritys::prioritys priority ):
     m_id ( m_idCount++ ),
-    m_updateID(0),
+    m_updateID((uint)-1),
     m_timeout( timeout ),
     m_source( NULL),
     m_application ( application ),
