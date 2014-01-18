@@ -83,7 +83,6 @@ const QImage &IconData::image()
         else
         {
             download();
-            m_img = QImage::fromData(m_data,"PNG");
         }
     }
     return m_img;
@@ -91,10 +90,13 @@ const QImage &IconData::image()
 
 QString IconData::localUrl()
 {
-    QMutexLocker lock(&m_mutex);
     if(!m_isLocalFile && !QFile(m_localUrl).exists())
     {
-        image().save(m_localUrl ,"PNG");
+        QImage img = image();
+        if(!QFile(m_localUrl).exists())
+        {
+            img.save(m_localUrl ,"PNG");
+        }
     }
     return m_localUrl;
 }
