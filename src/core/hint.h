@@ -38,9 +38,14 @@ public:
     void setValue(const QString &key, const QVariant &value);
     QVariant value(const QString & key, const QVariant & defaultValue = QVariant() ) const;
     bool contains ( const QString & key ) const;
+
+    void setPrivateValue(const void *owner, const QString &key, const QVariant &value);
+    QVariant privateValue(const void *owner, const QString & key, const QVariant & defaultValue = QVariant() ) const;
+    bool containsPrivateValue(const void *owner, const QString & key ) const;
     
 private:
     QVariantHash m_data;
+    QVariantHash m_privateData;
     
 };
 

@@ -56,3 +56,29 @@ bool Hint::contains(const QString &key) const
 //    debug << "Snore::Hint(" << hint.m_data << ")" ;
 //    return debug.maybeSpace();
 //}
+
+
+void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value)
+{
+    m_privateData[QString("%1-%2").arg(QString::number((quintptr)owner),key)] = value;
+}
+
+
+QVariant Hint::privateValue(const void *owner, const QString &k, const QVariant &defaultValue) const
+{
+    QString key(QString("%1-%2").arg(QString::number((quintptr)owner),k));
+    if(m_privateData.contains(key))
+    {
+        return m_privateData[key];
+    }
+    else
+    {
+        return defaultValue;
+    }
+}
+
+
+bool Hint::containsPrivateValue(const void *owner, const QString &key) const
+{
+    return m_privateData.contains(QString("%1-%2").arg(QString::number((quintptr)owner),key));
+}

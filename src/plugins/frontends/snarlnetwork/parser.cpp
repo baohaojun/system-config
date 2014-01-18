@@ -64,7 +64,7 @@ void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
     QString alertName;
     QString title;
     QString text;
-    QString icon;
+    Icon icon(":/root/snore.png");
     int timeout = Notification::defaultTimeout();
 
     QString key;
@@ -138,7 +138,7 @@ void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
         }
         sNotification = Notification(app,alert,title,text,icon,timeout);
         sNotification.data()->setSource(snarl);
-        sNotification.hints().setValue("snarl_clientSocket", qVariantFromValue(client));
+        sNotification.hints().setPrivateValue(snarl, "clientSocket", qVariantFromValue(client));
         break;
     }
     case ADD_CLASS:
