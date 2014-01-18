@@ -56,12 +56,9 @@ public slots:
     virtual void slotNotify ( Snore::Notification notification ) = 0;
     virtual void slotCloseNotification ( Snore::Notification notification );
 
-private slots:
-    void slotNotificationTimedOut();
-
 protected:
     void closeNotification(Snore::Notification,Snore::NotificationEnums::CloseReasons::closeReasons);
-    void startTimeout(Notification &notification);
+
 
 private:
     QHash<uint,Notification> m_activeNotifications;

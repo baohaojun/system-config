@@ -54,6 +54,11 @@ public:
     SnoreCore* snore();
     const QString &name() const;
 
+protected:
+    void startTimeout(Notification &notification);
+private slots:
+    void notificationTimedOut();
+
 private:
     SnorePlugin() {}
     QString m_name;
