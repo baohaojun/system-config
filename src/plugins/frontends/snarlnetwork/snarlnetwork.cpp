@@ -70,79 +70,82 @@ bool SnarlNetworkFrontend::deinitialize()
 }
 
 
-void SnarlNetworkFrontend::actionInvoked(Notification notification)
+void SnarlNetworkFrontend::actionInvoked(Snore::Notification notification)
 {
     //TODO:fix callback
-    SnarlNotification sn=notifications.value(notification.id());
     if(notification.actionInvoked().id() == 1 )
     {
-        callback(sn,"SNP/1.1/304/Notification acknowledged/");
+        callback(notification,"SNP/1.1/304/Notification acknowledged/");
     }
     else if(notification.actionInvoked().id() == 2)
     {
-        callback(sn,"SNP/1.1/302/Notification cancelled/");
+        callback(notification,"SNP/1.1/302/Notification cancelled/");
     }
 }
-void SnarlNetworkFrontend::notificationClosed(Notification notification)
+void SnarlNetworkFrontend::notificationClosed(Snore::Notification notification)
 {
-    SnarlNotification sn=notifications.value(notification.id());
     if(notification.closeReason() == NotificationEnums::CloseReasons::TIMED_OUT)
     {
-        callback(sn,"SNP/1.1/303/Notification timed out/");
+        callback(notification, "SNP/1.1/303/Notification timed out/");
     }
     else
     {
-        callback(sn,"SNP/1.1/307/Notification closed/");
+        callback(notification, "SNP/1.1/307/Notification closed/");
     }
 }
 
-void SnarlNetworkFrontend::handleConnection(){
+void SnarlNetworkFrontend::handleConnection()
+{
     QTcpSocket *client = tcpServer->nextPendingConnection();
     connect(client,SIGNAL(readyRead()),this,SLOT(handleMessages()));
     connect(client,SIGNAL(disconnected()), client, SLOT(deleteLater()));
 }
 
-void SnarlNetworkFrontend::handleMessages(){
-    QString out("SNP/1.1/0/OK");
-    QTcpSocket *client=qobject_cast<QTcpSocket*>(sender());
-    QStringList incommings(QString::fromUtf8(client->readAll()).split("\r\n"));
-    foreach(const QString &msg,incommings){
-        QString s=msg.trimmed();
-        if(s == "")
-            continue;
-        SnarlNotification noti=parser->parse(s,client);
-        if(!noti.vailid)
-            continue;
-        if(noti.isNotification){
-            snore()->broadcastNotification(noti.notification);
-            if(noti.notification.id()!=0){
-                out+="/"+QString::number(noti.notification.id());
-                notifications.insert(noti.notification.id(),noti);
-            }
-        }
-        out+="\r\n";
+void SnarlNetworkFrontend::handleMessages()
+{
+    const QString out("SNP/1.1/0/OK");
+    QTcpSocket *client = qobject_cast<QTcpSocket*>(sender());
 
-        client->write(out.toUtf8());
-        if(noti.httpClient){
+    QStringList messages(QString::fromAscii(client->readAll()).trimmed().split("\r\n"));
+    foreach(const QString &s, messages)
+    {
+        if(s.isEmpty())
+        {
+            continue;
+        }
+        Notification noti;
+        bool isHttp = parser->parse(noti, s, client);
+        if(noti.isValid())
+        {
+            snore()->broadcastNotification(noti);
+            write(client, QString("%1/%2\r\n").arg(out,QString::number(noti.id())));
+        }
+        else
+        {
+            write(client, QString("%1\r\n").arg(out));
+        }
+
+
+        if(isHttp)
+        {
             client->disconnectFromHost();
             client->waitForDisconnected();
         }
-        qDebug()<<out;
     }
 }
 
-void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg)
+void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
 {
-    notifications.remove(sn.notification.id());
-    if(sn.clientSocket!=NULL&&!msg.isEmpty()){
-        msg+=QString::number(sn.notification.id());
-        qDebug()<<msg;
-        sn.clientSocket->write(msg.toAscii()+"\r\n");
-        sn.clientSocket->flush();
+    if(sn.hints().contains("snarl_clientSocket") &&!msg.isEmpty())
+    {
+        QTcpSocket *client = qvariant_cast<QTcpSocket*>(sn.hints().value("snarl_clientSocket"));
+        write(client, QString("%1%2\r\n").arg(msg, QString::number(sn.id())));
+        client->flush();
 
-        if(sn.httpClient){
-            sn.clientSocket->waitForBytesWritten(-1);
-            sn.clientSocket->disconnectFromHost();
+        if(sn.hints().value("snarl_isHttpClient",false).toBool())
+        {
+            client->waitForBytesWritten(-1);
+            client->disconnectFromHost();
         }
     }
 }

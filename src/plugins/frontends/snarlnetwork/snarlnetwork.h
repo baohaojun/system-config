@@ -23,22 +23,12 @@
 #include "parser.h"
 
 #include <QPointer>
+#include <QTcpSocket>
+#include <QTcpServer>
 
-namespace Snore{
-    class Notification;
-    class SnoreCore;
-}
 
-struct SnarlNotification{
-    Snore::Notification notification;
-    QString action;
-    bool httpClient;
-    bool vailid;
-    bool isNotification;
-    QPointer<class QTcpSocket> clientSocket;
-};
-
-class SnarlNetworkFrontend:public Snore::SnoreFrontend{
+class SnarlNetworkFrontend : public Snore::SnoreFrontend
+{
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreFrontend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0")
@@ -60,12 +50,17 @@ private slots:
     void handleMessages();
 
 private:
-    class QTcpServer *tcpServer;
+    QTcpServer *tcpServer;
     Parser *parser;
-    QHash<uint,SnarlNotification> notifications;
-    QHash<QString,Snore::Application> m_applications;
+    QHash<QTcpSocket*,Snore::Application> m_applications;
 
-    void callback(const SnarlNotification &sn,QString msg);
+    void callback(Snore::Notification &sn,QString msg);
+
+    inline void write(QTcpSocket *dest,const QString &msg)
+    {
+        qDebug() << Q_FUNC_INFO << msg;
+        dest->write(msg.toAscii());
+    }
 
 };
 

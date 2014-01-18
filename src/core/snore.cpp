@@ -124,6 +124,7 @@ void SnoreCore::registerApplication(const Application &application)
     Q_D(SnoreCore);
     if(!d->m_applications.contains(application.name()))
     {
+        qDebug() << Q_FUNC_INFO << "Registering Application:" << application;
         d->m_applications.insert ( application.name(),application );
         emit d->applicationRegistered ( application );
     }

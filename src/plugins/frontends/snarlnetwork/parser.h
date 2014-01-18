@@ -27,12 +27,13 @@
 
 
 
-class Parser:public QObject{
+class Parser : public QObject
+{
     Q_OBJECT
 public:
     Parser(class SnarlNetworkFrontend* snarl);
 
-     struct SnarlNotification parse(QString &msg,class QTcpSocket* client);
+     bool parse(Snore::Notification &sNotification, const QString &msg, class QTcpSocket* client);
 
 private:
     class SnarlNetworkFrontend *snarl;

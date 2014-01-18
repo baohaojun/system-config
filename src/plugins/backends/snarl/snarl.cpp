@@ -193,7 +193,8 @@ void SnarlBackend::slotRegisterApplication(const Application &application){
     }
 }
 
-void SnarlBackend::slotDeregisterApplication(const Application &application){
+void SnarlBackend::slotDeregisterApplication(const Application &application)
+{
     if(!m_applications.contains(application.name()))
     {
         qDebug() << Q_FUNC_INFO << "Unknown apllication: " << application.name();

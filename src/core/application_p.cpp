@@ -25,6 +25,7 @@ ApplicationData::ApplicationData(const QString &name, const Icon &icon):
     m_name(name),
     m_icon(icon)
 {
+    Q_ASSERT_X(!name.isEmpty(),Q_FUNC_INFO, "invalid name detected");
 }
 
 ApplicationData::~ApplicationData()

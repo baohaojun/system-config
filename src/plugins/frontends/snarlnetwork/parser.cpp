@@ -54,44 +54,48 @@ Parser::Parser(SnarlNetworkFrontend *snarl):
 }
 
 
-SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
-    SnarlNotification sNotification;
-    sNotification.httpClient=false;
-    sNotification.vailid=true;
-    sNotification.clientSocket=client;
-    sNotification.isNotification = false;
-
+bool Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* client)
+{
+    qDebug() << Q_FUNC_INFO << msg;
+    QStringList splitted;
+    bool isHttp = false;
 
     snpTypes action(ERROR);
-    if(msg.startsWith("GET ")){
-        msg=msg.mid(msg.indexOf("/")+1);
-        msg=msg.mid(0,msg.indexOf(" "));
-        QByteArray dat(QByteArray::fromBase64(msg.toLatin1().data()));
-        msg=QString(dat);
+    if(msg.startsWith("GET "))
+    {
+        QString tmp = msg.mid(msg.indexOf("/")+1);
+        tmp = tmp.mid(0,tmp.indexOf(" "));
+        tmp = QString(QByteArray::fromBase64(tmp.toLatin1().data()));
         qDebug()<<"Notification from a browser"<<msg;
-        sNotification.httpClient=true;
+        isHttp = true;
+        splitted = tmp.split("#?");
+    }
+    else
+    {
+        splitted = msg.split("#?");
     }
 
     QString appName;
+    QString alertName;
     QString title;
     QString text;
     QString icon;
-    QString alertName;
     int timeout=10;
 
     QString key;
     QString value;
-    QStringList splitted=msg.split("#?");
-    foreach(QString s,splitted){
+
+    foreach(QString s,splitted)
+    {
         key = s.mid(0,s.indexOf("=")).toLower();
         value = s.mid(s.indexOf("=")+1);
-        switch(getSnpType.value(key)){
+        switch(getSnpType.value(key))
+        {
         case APP:
             appName = value;
             break;
         case ACTION:
             action = getSnpType.value(value);
-            sNotification.action = value;
             break;
         case  TITLE:
             title = value;
@@ -104,6 +108,7 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
             break;
         case CLASS:
             alertName = value;
+            break;
         case TIMEOUT:
             timeout = value.toInt();
             break;
@@ -115,81 +120,78 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
 
     Application app;
     Alert alert;
-    if(snarl->m_applications.contains(appName))
+
+    if(snarl->m_applications.contains(client))
     {
-        app = snarl->m_applications[appName];
-    }
-    else
-    {
-        app = Application(appName, icon);
+        app = snarl->m_applications[client];
     }
 
-    if(app.alerts().contains(alertName))
+
+
+    if(!alertName.isEmpty() && app.isValid())
     {
-        alert = app.alerts()[alertName];
-    }
-    else
-    {
-        if(title.isEmpty())
+        if(app.alerts().contains(alertName))
         {
-            alert = Alert(alertName, alertName);
-        }
-        else
-        {
-            alert = Alert(alertName, title);
+            alert = app.alerts()[alertName];
         }
     }
 
-    sNotification.notification = Notification(app,alert,title,text,icon,timeout);
-    sNotification.notification.data()->setSource(snarl);
+
 
 
     switch(action)
     {
     case NOTIFICATION:
     {
-        qDebug() << sNotification.notification.application();
-        const Application &appl = sNotification.notification.application();
-        if(!snarl->snore()->aplications().contains(appl.name()))
+        if(!snarl->snore()->aplications().contains(app.name()))
         {
-            snarl->snore()->registerApplication(appl);
+            snarl->snore()->registerApplication(app);
         }
 
-        if(!sNotification.notification.alert().isActive())
+        if(!alert.isActive())
         {
             break;
         }
-        sNotification.isNotification = true;
-        return sNotification;
+        sNotification = Notification(app,alert,title,text,icon,timeout);
+        sNotification.data()->setSource(snarl);
+        sNotification.hints().setValue("snarl_clientSocket", qVariantFromValue(client));
+        sNotification.hints().setValue("snarl_isHttpCLient", isHttp);
         break;
     }
     case ADD_CLASS:
-        if(!sNotification.notification.alert().isValid())
+        if(alertName.isEmpty())
         {
             qDebug()<<"Error registering alert with empty name";
             break;
         }
-        snarl->m_applications[appName].addAlert(sNotification.notification.alert());
-        break;
-    case REGISTER:
-        if(sNotification.notification.application().isValid() && !snarl->m_applications.contains(sNotification.notification.application().name()))
+        if(title.isEmpty())
         {
-            snarl->m_applications.insert(sNotification.notification.application().name(), sNotification.notification.application());
+            alert = Alert(alertName, alertName, icon);
         }
         else
         {
-            qDebug()<<sNotification.notification.application()<<"already registred";
+            alert = Alert(alertName, title, icon);
+        }
+        app.addAlert(alert);
+        break;
+    case REGISTER:
+        if(!snarl->m_applications.contains(client))
+        {
+            snarl->m_applications[client] = Application(appName, icon);
+        }
+        else
+        {
+            qDebug() << appName << "already registred";
         }
         break;
     case UNREGISTER:
-        snarl->snore()->deregisterApplication( sNotification.notification.application());
+        snarl->snore()->deregisterApplication( app );
+        snarl->m_applications.take(client);
         break;
     case ERROR:
     default:
-        sNotification.vailid=false;
         break;
     }
-    sNotification.notification.hints().setValue("SnarlAction", sNotification.action);
-    return sNotification;
+    return isHttp;
 }
 
