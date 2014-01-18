@@ -49,6 +49,21 @@ private:
     
 };
 
+
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+template<typename Type>
+inline Type myQVariantCast(const QVariant &dat)
+{
+    return qvariant_cast<Type>(dat);
+}
+
+template<typename Type>
+inline QVariant myQVariantFromValue(const Type &dat)
+{
+    return qVariantFromValue(dat);
+}
+#else
 template<typename Type>
 inline Type myQVariantCast(const QVariant &dat)
 {
@@ -60,6 +75,7 @@ inline QVariant myQVariantFromValue(const Type &dat)
 {
     return qVariantFromValue(qobject_cast<QObject*>(dat));
 }
+#endif
 
 }
 
