@@ -77,7 +77,7 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
     uint updateId = 0;
     if(noti.isUpdate())
     {
-        updateId = noti.notificationToReplace().id();
+        updateId = noti.old().hints().privateValue(this, "id").toUInt();
         m_dbusIdMap.take(updateId);
     }
 
@@ -89,7 +89,7 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
         body = Snore::toPlainText(body);
     }
     QDBusPendingReply<uint>  id = m_interface->Notify(noti.application().name(), updateId, "", title,
-                                                      body, actions, hints, noti.sticky()?-1:noti.timeout()*1000);
+                                                      body, actions, hints, noti.isSticky()?-1:noti.timeout()*1000);
 
 
     id.waitForFinished();
