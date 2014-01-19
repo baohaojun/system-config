@@ -229,7 +229,7 @@ void SnarlBackend::slotNotify(Notification notification){
         break;
     }
 
-    if(notification.isUpdate())
+    if(!notification.isUpdate())
     {
         ULONG32 id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
                                             Snore::toPlainText(notification.title()).toUtf8().constData(),
