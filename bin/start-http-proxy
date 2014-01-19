@@ -1,12 +1,19 @@
 #!/bin/bash
 
 set -e
-sudo /etc/init.d/ziproxy stop || true
-sudo ps-killall ziproxy
-tsocks ziproxy -d
+port=8888
+if type ziproxy >/dev/null 2>&1; then
+    port=8080
+    sudo /etc/init.d/ziproxy stop || true
+    sudo ps-killall ziproxy
+    tsocks ziproxy -d
+else
+    sudo ps-killall tinyproxy
+    tsocks tinyproxy
+fi
 
-export http_proxy=localhost:8080
-export https_proxy=localhost:8080
+export http_proxy=localhost:$port
+export https_proxy=localhost:$port
 sleep 1
 if test "$#" != 0; then
    "$@"

@@ -846,7 +846,7 @@ might be bad."
   "The prefix for visiting a file's remote counterpart or with sudo permission")
 
 ;;;###autoload
-(defun sudoedit ()
+(defun bhj-sudoedit ()
   (interactive)
   (find-alternate-file
    (if (file-remote-p (buffer-file-name))

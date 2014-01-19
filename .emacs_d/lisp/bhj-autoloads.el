@@ -405,13 +405,14 @@ beginning of current defun.
 ;;;***
 
 ;;;### (autoloads (bhj-c-show-current-func ajoke-pop-mark-back ajoke-pop-mark
-;;;;;;  bhj-jdk-help bhj-insert-pwdu bhj-insert-pwdw bhj-clt-insert-file-name
-;;;;;;  wiki-local-bhj weekrep bhj-downcase-symbol-or-region bhj-upcase-symbol-or-region
-;;;;;;  source-code-help bhj-find-missing-file bhj-open-android-doc-on-java-buffer
-;;;;;;  bhj-do-dictionary insert-today dos2unix bhj-do-code-generation
-;;;;;;  bhj-org-tasks-closed-last-week bbdb-complete-mail bhj-flatten-list
-;;;;;;  my-bbdb-canonicalize my-bbdb/gnus-update-records-mode bhj-view-mail-external
-;;;;;;  gnus-gmail-search-subject localedit sudoedit switch-buffer-same-filename-rev
+;;;;;;  bhj-jdk-help bhj-insert-pwdu bhj-insert-pwdw bhj-file-basename
+;;;;;;  bhj-clt-insert-file-name wiki-local-bhj weekrep bhj-downcase-symbol-or-region
+;;;;;;  bhj-upcase-symbol-or-region source-code-help bhj-find-missing-file
+;;;;;;  bhj-open-android-doc-on-java-buffer bhj-do-dictionary insert-today
+;;;;;;  dos2unix bhj-do-code-generation bhj-org-tasks-closed-last-week
+;;;;;;  bbdb-complete-mail bhj-flatten-list my-bbdb-canonicalize
+;;;;;;  my-bbdb/gnus-update-records-mode bhj-view-mail-external bhj-help-it
+;;;;;;  gnus-gmail-search-subject localedit bhj-sudoedit switch-buffer-same-filename-rev
 ;;;;;;  switch-buffer-same-filename revert-all-buffers save-all-buffers-no-check-modified
 ;;;;;;  back-to-indent-same-space-as-prev-line indent-same-space-as-prev-line
 ;;;;;;  java-bt-mode java-bt-next-error java-bt-ret-key waw-mode
@@ -422,14 +423,19 @@ beginning of current defun.
 ;;;;;;  bhj-w3m-scroll-up-or-next-url bhj-occur-merge-conflicts bhj-occur-make-errors
 ;;;;;;  bhj-occur bhj-indent-region-as-prev-line c-get-includes linux-c++-mode
 ;;;;;;  linux-c-mode bhj-douban-start confirm-risky-remote-edit fix-latex-cjk
-;;;;;;  cleanup-buffer-safe) "bhj-defines" "bhj-defines.el" (21057
-;;;;;;  31592 639184 905000))
+;;;;;;  bhj-2-window-visit-next-file cleanup-buffer-safe) "bhj-defines"
+;;;;;;  "bhj-defines.el" (21211 11280 0 0))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
 Perform a bunch of safe operations on the whitespace content of a buffer.
 Does not indent buffer, because it is used for a before-save-hook, and that
 might be bad.
+
+\(fn)" t nil)
+
+(autoload 'bhj-2-window-visit-next-file "bhj-defines" "\
+Make there 2 windows, and the other window visit the next buffer in buffer-list
 
 \(fn)" t nil)
 
@@ -613,7 +619,7 @@ Major mode for output from java back trace.
 
 \(fn)" t nil)
 
-(autoload 'sudoedit "bhj-defines" "\
+(autoload 'bhj-sudoedit "bhj-defines" "\
 
 
 \(fn)" t nil)
@@ -625,6 +631,11 @@ Major mode for output from java back trace.
 
 (autoload 'gnus-gmail-search-subject "bhj-defines" "\
 
+
+\(fn)" t nil)
+
+(autoload 'bhj-help-it "bhj-defines" "\
+open help for the current word
 
 \(fn)" t nil)
 
@@ -736,6 +747,11 @@ lookup the current word (or region) in dictionary
 
 
 \(fn)" t nil)
+
+(autoload 'bhj-file-basename "bhj-defines" "\
+
+
+\(fn)" nil nil)
 
 (autoload 'bhj-insert-pwdw "bhj-defines" "\
 
