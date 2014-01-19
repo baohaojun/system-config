@@ -60,16 +60,16 @@ bool Hint::contains(const QString &key) const
 
 void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value)
 {
-    m_privateData[QString("%1-%2").arg(QString::number((quintptr)owner),key)] = value;
+    m_privateData.insert(QPair<const void*,QString>(owner,key), value);
 }
 
 
 QVariant Hint::privateValue(const void *owner, const QString &k, const QVariant &defaultValue) const
 {
-    QString key(QString("%1-%2").arg(QString::number((quintptr)owner),k));
+    QPair<const void*,QString> key(owner,k);
     if(m_privateData.contains(key))
     {
-        return m_privateData[key];
+        return m_privateData.value(key);
     }
     else
     {
@@ -80,5 +80,5 @@ QVariant Hint::privateValue(const void *owner, const QString &k, const QVariant 
 
 bool Hint::containsPrivateValue(const void *owner, const QString &key) const
 {
-    return m_privateData.contains(QString("%1-%2").arg(QString::number((quintptr)owner),key));
+    return m_privateData.contains(QPair<const void*,QString>(owner,key));
 }

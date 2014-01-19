@@ -45,7 +45,7 @@ public:
     
 private:
     QVariantHash m_data;
-    QVariantHash m_privateData;
+    QHash<QPair<const void*,QString>, QVariant> m_privateData;
     
 };
 
