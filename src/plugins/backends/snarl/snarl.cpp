@@ -104,6 +104,7 @@ public:
             if(notification.isValid())
             {
                 m_snarl->closeNotification(notification,reason);
+                m_snarl->m_idMap.take(msg->lParam);
             }
             else
             {
@@ -220,6 +221,7 @@ void SnarlBackend::slotNotify(Notification notification){
     }
 
      ULONG32 id = 0;
+     qDebug() << Q_FUNC_INFO << notification.icon();
     if(!notification.isUpdate())
     {
        id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
@@ -240,7 +242,7 @@ void SnarlBackend::slotNotify(Notification notification){
     else
     {
         //update message
-        id = notification.notificationToReplace().hints().privateValue(this, "id").toUInt();
+        id = notification.old().hints().privateValue(this, "id").toUInt();
         snarlInterface->Update(id,
                                notification.alert().name().toUtf8().constData(),
                                Snore::toPlainText(notification.title()).toUtf8().constData(),

@@ -44,7 +44,7 @@ Notification::Notification(const Application &application, const Alert &alert, c
 }
 
 Notification::Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, NotificationEnums::Prioritys::prioritys priority):
-        d(new  NotificationData(old,title,text,icon,timeout,priority))
+    d(new  NotificationData(old,title,text,icon,timeout,priority))
 {
 }
 
@@ -78,7 +78,7 @@ const int &Notification::timeout() const
     return d->m_timeout;
 }
 
-Notification Notification::notificationToReplace() const
+Notification Notification::old() const
 {
     return d->m_toReplace;
 }
@@ -113,17 +113,20 @@ const Alert &Notification::alert() const
     return d->m_alert;
 }
 
-bool Notification::sticky() const
+bool Notification::isSticky() const
 {
     return d->m_timeout == 0;
 }
 
-void Notification::setSticky()
+void Notification::setIsSticky(bool b)
 {
-    d->m_timeout = 0;
+    if(b)
+    {
+        d->m_timeout = 0;
+    }
 }
 
-const NotificationEnums::Prioritys::prioritys &Notification::priority() const
+NotificationEnums::Prioritys::prioritys Notification::priority() const
 {
     return d->m_priority;
 }

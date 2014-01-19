@@ -92,6 +92,6 @@ bool Snore::Icon::isRemoteFile() const
 
 QDebug operator<< ( QDebug debug, const Snore::Icon &icon )
 {
-    debug << "Snore::Icon(" << icon.url() << ")" ;
+    debug << "Snore::Icon(" << (icon.url().isEmpty()?icon.localUrl():icon.url()) << ")" ;
     return debug.maybeSpace();
 }

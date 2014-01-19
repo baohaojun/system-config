@@ -52,18 +52,15 @@ public:
     //0 means sticky
     const int &timeout() const;
 
-    Notification notificationToReplace() const;
-    bool isUpdate() const;
-
     const Action &actionInvoked() const;
     const Application &application() const;
     QString title() const;
     QString text() const;
     const Icon &icon() const;
     const Alert &alert() const;
-    void setSticky();
-    bool sticky() const;
-    const NotificationEnums::Prioritys::prioritys &priority() const;
+    void setIsSticky(bool b);
+    bool isSticky() const;
+    NotificationEnums::Prioritys::prioritys priority() const;
     const QHash<int, Action> &actions() const;
     void addAction(const Action &a);
     const NotificationEnums::CloseReasons::closeReasons &closeReason();
@@ -72,6 +69,10 @@ public:
     void setSilent(bool silent);
 
     bool isValid() const;
+
+
+    Notification old() const;
+    bool isUpdate() const;
 
     NotificationData *data();
 

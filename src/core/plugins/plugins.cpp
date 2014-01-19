@@ -70,7 +70,7 @@ const QString &SnorePlugin::name() const
 
 void SnorePlugin::startTimeout(Notification &notification)
 {
-    if(notification.sticky())
+    if(notification.isSticky())
     {
         return;
     }
@@ -78,7 +78,7 @@ void SnorePlugin::startTimeout(Notification &notification)
     timer->stop();
     if(notification.isUpdate())
     {
-        notification.notificationToReplace().data()->timeoutTimer()->stop();
+        notification.old().data()->timeoutTimer()->stop();
     }
     timer->setInterval(notification.timeout() * 1000);
     connect(timer,SIGNAL(timeout()),this,SLOT(notificationTimedOut()));

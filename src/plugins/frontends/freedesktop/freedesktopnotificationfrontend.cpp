@@ -95,9 +95,10 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     Application app;
     NotificationEnums::Prioritys::prioritys priotity = NotificationEnums::Prioritys::NORMAL;
 
-    if(hints.contains("image_data")){
+    if(hints.contains("image_data"))
+    {
         FreedesktopImageHint image;
-        hints["image_data"].value<QDBusArgument>()>>image;
+        hints["image_data"].value<QDBusArgument>() >> image;
         icon = Icon(image.toQImage());
     }
     else

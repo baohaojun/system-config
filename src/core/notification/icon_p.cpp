@@ -44,7 +44,8 @@ IconData::IconData(const QString &url):
 
 IconData::IconData(const QImage &img):
     m_img(img),
-    m_hash(SnoreCorePrivate::computeHash(dataFromImage(img))),
+    m_data(dataFromImage(img)),
+    m_hash(SnoreCorePrivate::computeHash(m_data)),
     m_localUrl(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash)),
     m_isLocalFile(false),
     m_isResource(false),
