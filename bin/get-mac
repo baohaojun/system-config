@@ -1,6 +1,6 @@
 #!/bin/bash
 
-case $(uname) in 
+case $(uname) in
     Darwin)
         ifconfig | grep -B 1 -P -e '^\s+ether\s+'|perl -ne '
             if (m/^p2p\d+:/) {
@@ -8,14 +8,17 @@ case $(uname) in
             } elsif (m/^\w+:/) {
                 $p2p = 0;
             } elsif (m/^\s+ether\s+([a-f0-9:]+)/i) {
-                print $1 unless $p2p
+                unless ($p2p) {
+                    print $1;
+                    exit
+                }
             } '
         ;;
     Linux)
         ifconfig|grep HWaddr|grep -v usb
         ;;
     CYGWIN*)
-        ifconfig /all | tr -d '\r' | perl -ne 'if (m/eth\d+:\s*$/) 
+        ifconfig /all | tr -d '\r' | perl -ne 'if (m/eth\d+:\s*$/)
             {
                 while (<>) {
                     if (m/Physical Address.*:\s*(.*)/) {

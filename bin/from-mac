@@ -4,4 +4,4 @@ head=refs/heads/from-mac/
 mac=$(get-mac)
 host=$(if test -e ~/.hostname; then cat ~/.hostname; else hostname; fi)
 uname=$(uname|perl -npe 's/_.*//')
-echo $head$mac-$host-$uname
+echo $head$host-$uname-$mac
