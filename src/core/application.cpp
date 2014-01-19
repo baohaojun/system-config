@@ -81,5 +81,24 @@ Hint &Application::hints()
 
 const Hint &Application::constHints() const
 {
-     return d->m_hint;
+    return d->m_hint;
+}
+
+
+QDebug operator<< ( QDebug debug, const Snore::Application &app )
+{
+    if(app.isValid())
+    {
+        debug << "Snore::Application(" << app.name() << ", ";
+        foreach(const Alert &a, app.alerts())
+        {
+            debug << a << ", ";
+        }
+        debug << app.constHints() << ")" ;
+    }
+    else
+    {
+        debug << "Snore::Application(0x00)" ;
+    }
+    return debug.maybeSpace();
 }

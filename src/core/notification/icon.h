@@ -23,10 +23,16 @@
 
 #include <QSharedData>
 #include <QDebug>
+namespace Snore{
+    class Icon;
+}
+
+SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Icon &);
 
 namespace Snore{
 
 class IconData;
+
 
 class SNORE_EXPORT Icon
 {
@@ -49,11 +55,10 @@ public:
 
 private:
     QExplicitlySharedDataPointer<IconData> d;
+    friend SNORE_EXPORT QDebug (::operator<<) ( QDebug, const Snore::Icon &);
 };
 }
 
-
-SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Icon &);
 
 
 #endif // NOTIFICATION_ICON_H

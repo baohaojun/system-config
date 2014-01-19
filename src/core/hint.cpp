@@ -51,11 +51,11 @@ bool Hint::contains(const QString &key) const
     return m_data.contains(key);
 }
 
-//QDebug operator<<( QDebug debug, const Snore::Hint &hint )
-//{
-//    debug << "Snore::Hint(" << hint.m_data << ")" ;
-//    return debug.maybeSpace();
-//}
+QDebug operator<<( QDebug debug, const Snore::Hint &hint )
+{
+    debug << "Snore::Hint(" << hint.m_data << ", " << hint.m_privateData  << ")" ;
+    return debug.maybeSpace();
+}
 
 
 void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value)

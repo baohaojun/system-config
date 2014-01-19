@@ -27,6 +27,13 @@
 
 namespace Snore
 {
+    class Hint;
+}
+
+SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Hint &);
+
+namespace Snore
+{
 
 
 class SNORE_EXPORT Hint
@@ -46,6 +53,8 @@ public:
 private:
     QVariantHash m_data;
     QHash<QPair<const void*,QString>, QVariant> m_privateData;
+
+    friend SNORE_EXPORT QDebug (::operator<<) ( QDebug, const Snore::Hint &);
     
 };
 

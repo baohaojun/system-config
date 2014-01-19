@@ -52,20 +52,10 @@ private:
 
 };
 
-
-inline QDebug operator<< ( QDebug debug, const Snore::Application &app )
-{
-    if(app.isValid())
-    {
-        debug << "Snore::Application(" << app.name() << ", " << app.alerts() << ")";//," << app.hints() << ")" ;
-    }
-    else
-    {
-        debug << "Snore::Application(0x00)" ;
-    }
-    return debug.maybeSpace();
 }
 
-}
+SNORE_EXPORT QDebug operator<< ( QDebug debug, const Snore::Application &app );
+
+
 
 #endif // APPLICATION_H

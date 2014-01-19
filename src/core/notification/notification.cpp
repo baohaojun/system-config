@@ -151,6 +151,11 @@ Hint &Notification::hints()
     return d->m_hints;
 }
 
+const Hint &Notification::constHints() const
+{
+    return d->m_hints;
+}
+
 void Notification::setSilent(bool silent)
 {
     d->m_hints.setValue("silent", silent);

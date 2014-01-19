@@ -64,7 +64,8 @@ public:
     const QHash<int, Action> &actions() const;
     void addAction(const Action &a);
     const NotificationEnums::CloseReasons::closeReasons &closeReason();
-    Hint &hints();
+    Hint &hints();    
+    const Hint &constHints() const;
 
     void setSilent(bool silent);
 
@@ -98,7 +99,7 @@ inline QDebug operator<< ( QDebug debug, const Snore::Notification &noti )
 {
     if(noti.isValid())
     {
-        debug << "Snore::Notification(" << noti.title() << ", " << noti.text() << "," << noti.id() << ")" ;
+        debug << "Snore::Notification(" << noti.title() << ", " << noti.text() << "," << noti.id() << ", " << noti.constHints() << ")" ;
     }
     else
     {
