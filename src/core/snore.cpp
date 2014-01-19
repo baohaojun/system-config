@@ -167,8 +167,8 @@ bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
     Q_D(SnoreCore);
     if(!PluginContainer::pluginCache().contains(backend))
     {
-        qDebug()<<"Unknown Backend:"<<backend;
-        return setPrimaryNotificationBackend();
+        qDebug() << "Unknown Backend:" << backend;
+        return false;
     }
     qDebug() << "Setting Notification Backend to:" << backend;
     SnoreBackend* b = qobject_cast<SnoreBackend*>(PluginContainer::pluginCache()[backend]->load());
@@ -211,7 +211,7 @@ bool SnoreCore::setPrimaryNotificationBackend()
 #elif defined(Q_OS_LINUX)
     if( backends.contains("FreedesktopNotification_Backend"))
     {
-        return setPrimaryNotificationBackend("FreedesktopNotification_Backend");
+        return setPrimaryNotificationBackend("FreedesktopNotification");
     }
 #elif defined(Q_OS_MAC)
     if( backends.contains("Growl"))
@@ -244,9 +244,9 @@ QSystemTrayIcon *SnoreCore::trayIcon(){
 Notification SnoreCore::getActiveNotificationByID(uint id)
 {
     Q_D(SnoreCore);
-    if(!d->m_notificationBackend->isInitialized()){
-        qDebug() << "Notification backend " << d->m_notificationBackend << " isn't initialized will snore will exit now";
-        qApp->quit();
+    if(!d->m_notificationBackend->isInitialized())
+    {
+        qFatal("Notification backend %s isn't initialized will snore will exit now",d->m_notificationBackend->name().toLatin1().constData());
     }
     return d->m_notificationBackend->getActiveNotificationByID(id);
 }
