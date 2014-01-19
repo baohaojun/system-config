@@ -75,7 +75,7 @@ void SnoreToast::slotNotify(Notification notification)
     arguements << "-t"
                << Snore::toPlainText(notification.title())
                << "-m"
-               << Snore::toPlainText(notification.text());
+               << Snore::toPlainText(notification.text()).replace("\n","\\n");
     if(notification.icon().isValid())
     {
         arguements << "-p"

@@ -129,7 +129,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     Notification noti(app, *app.alerts().begin(), summary, body, icon, timeout==-1?Notification::defaultTimeout():timeout/1000, priotity);
     if(replaces_id != 0)
     {
-        noti.setUpdateID(replaces_id);
+        noti.setNotificationToReplace(snore()->getActiveNotificationByID(replaces_id));
     }
     noti.data()->setSource(this);
     for(int i = 0;i < actions.length(); i+=2)
