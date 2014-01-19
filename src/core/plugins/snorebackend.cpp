@@ -88,6 +88,7 @@ void SnoreBackend::closeNotification(Notification n, NotificationEnums::CloseRea
     }
     n.data()->setCloseReason(reason);
     slotCloseNotification(n);
+    qDebug() << Q_FUNC_INFO << n;
     emit notificationClosed(n);
 }
 

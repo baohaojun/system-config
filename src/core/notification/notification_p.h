@@ -66,6 +66,7 @@ private:
     Action m_actionInvoked;
     QHash<int,Action> m_actions;
     Hint m_hints;
+    Notification m_toReplace;
 
 
 

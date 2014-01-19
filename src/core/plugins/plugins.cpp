@@ -75,9 +75,14 @@ void SnorePlugin::startTimeout(Notification &notification)
     }
     uint id = notification.id();
     QTimer *timer = myQVariantCast<QTimer*>(notification.hints().privateValue(this, "timeout"));
-    if(notification.updateID() != (uint)-1)
+    if(notification.isUpdate())
     {
-        id = notification.updateID();
+        id = notification.notificationToReplace().id();
+        QTimer *old = myQVariantCast<QTimer*>(notification.notificationToReplace().hints().privateValue(this, "timeout"));
+        if(old)
+        {
+            old->deleteLater();
+        }
     }
     if(timer)
     {

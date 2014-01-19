@@ -9,7 +9,7 @@ include(GNUInstallDirs)
 
 
 #######################################################################
-option(WITH_WITH_KDE "Try to build with KDE support if availibe" ON)
+option(WITH_KDE "Try to build with KDE support if availibe" ON)
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
@@ -19,7 +19,7 @@ set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 5)
 set(SNORE_VERSION_SUFFIX "pre")
 
-if(WITH_WITH_KDE)
+if(WITH_KDE)
     find_package(KDE4)
 endif()
 

@@ -41,7 +41,7 @@ QString Action::name() const
 
 bool Action::isValid() const
 {
-    return m_name.isNull();
+    return !m_name.isNull();
 }
 
 int Action::id() const

@@ -50,8 +50,9 @@ public:
     //0 means sticky
     const int &timeout() const;
 
-    void setUpdateID(uint id);
-    uint updateID() const;
+    void setNotificationToReplace(const Notification &n);
+    Notification notificationToReplace() const;
+    bool isUpdate() const;
 
     const Action &actionInvoked() const;
     const Application &application() const;

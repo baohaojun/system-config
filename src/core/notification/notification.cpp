@@ -73,14 +73,19 @@ const int &Notification::timeout() const
     return d->m_timeout;
 }
 
-void Notification::setUpdateID(uint id)
+void Notification::setNotificationToReplace(const Notification &n)
 {
-    d->m_updateID = id;
+    d->m_toReplace = n;
 }
 
-uint Notification::updateID() const
+Notification Notification::notificationToReplace() const
 {
-    return d->m_updateID;
+    return d->m_toReplace;
+}
+
+bool Notification::isUpdate() const
+{
+    return d->m_toReplace.isValid();
 }
 
 const Action &Notification::actionInvoked() const
