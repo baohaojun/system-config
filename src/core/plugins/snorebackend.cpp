@@ -121,7 +121,7 @@ bool SnoreSecondaryBackend::supportsRichtext()
 
 Snore::Notification SnoreBackend::getActiveNotificationByID(uint id)
 {
-    return m_activeNotifications[id];
+    return m_activeNotifications.value(id);
 }
 
 bool SnoreBackend::canCloseNotification()
@@ -146,7 +146,7 @@ void SnoreBackend::slotDeregisterApplication(const Application &application)
 
 void SnoreBackend::addActiveNotification(Notification n)
 {
-    m_activeNotifications[n.id()] = n;
+    m_activeNotifications.insert(n.id(), n);
 }
 
 

@@ -40,6 +40,9 @@ public:
     NotificationData ( const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,
                        int timeout,NotificationEnums::Prioritys::prioritys priority );
 
+    NotificationData(const Notification &old,const QString &title,const QString &text,const Icon &icon,int timeout, NotificationEnums::Prioritys::prioritys priority);
+
+
     ~NotificationData();
 
     void setSource(class SnoreFrontend *source);

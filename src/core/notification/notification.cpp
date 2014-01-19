@@ -43,6 +43,11 @@ Notification::Notification(const Application &application, const Alert &alert, c
 
 }
 
+Notification::Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, NotificationEnums::Prioritys::prioritys priority):
+        d(new  NotificationData(old,title,text,icon,timeout,priority))
+{
+}
+
 Notification::Notification ( const Notification &other ) :
     d(other.d)
 {
@@ -71,11 +76,6 @@ const Icon &Notification::icon() const
 const int &Notification::timeout() const
 {
     return d->m_timeout;
-}
-
-void Notification::setNotificationToReplace(const Notification &n)
-{
-    d->m_toReplace = n;
 }
 
 Notification Notification::notificationToReplace() const

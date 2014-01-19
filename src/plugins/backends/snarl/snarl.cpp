@@ -68,17 +68,7 @@ public:
             Notification notification;
             if(msg->lParam != 0)
             {
-                uint notificationID = 0;
-                for(QHash<uint,LONG32>::iterator it = m_snarl->m_idMap.begin();it != m_snarl->m_idMap.end();++it)
-                {
-                    if(it.value() == msg->lParam)
-                    {
-                        notificationID = it.key();
-                        break;
-                    }
-                }
-                notification =  m_snarl->snore()->getActiveNotificationByID(notificationID);
-                qDebug()<<"recived a Snarl callback id:"<<notificationID<< "|" << msg->lParam <<"action:"<<action<<"data:"<<data;
+                notification =  m_snarl->snore()->getActiveNotificationByID(m_snarl->m_idMap[ msg->lParam]);
             }
 
             NotificationEnums::CloseReasons::closeReasons reason = NotificationEnums::CloseReasons::NONE;
@@ -229,9 +219,10 @@ void SnarlBackend::slotNotify(Notification notification){
         break;
     }
 
+     ULONG32 id = 0;
     if(!notification.isUpdate())
     {
-        ULONG32 id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
+       id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
                                             Snore::toPlainText(notification.title()).toUtf8().constData(),
                                             Snore::toPlainText(notification.text()).toUtf8().constData(),
                                             notification.timeout(),
@@ -243,24 +234,25 @@ void SnarlBackend::slotNotify(Notification notification){
         {
             snarlInterface->AddAction(id,a.name().toUtf8().constData(),QString("@").append(QString::number(a.id())).toUtf8().constData());
         }
-        m_idMap[notification.id()] = id;
-        startTimeout(notification);
-
+        m_idMap[id] = notification.id();
+        notification.hints().setPrivateValue(this, "id", id);
     }
     else
     {
         //update message
-        snarlInterface->Update(m_idMap[notification.notificationToReplace().id()],
-                notification.alert().name().toUtf8().constData(),
-                Snore::toPlainText(notification.title()).toUtf8().constData(),
-                Snore::toPlainText(notification.text()).toUtf8().constData(),
-                notification.timeout(),
-                notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
-                !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
-                priority);
-        m_idMap[notification.id()] = m_idMap[notification.notificationToReplace().id()];
-        startTimeout(notification);
+        id = notification.notificationToReplace().hints().privateValue(this, "id").toUInt();
+        snarlInterface->Update(id,
+                               notification.alert().name().toUtf8().constData(),
+                               Snore::toPlainText(notification.title()).toUtf8().constData(),
+                               Snore::toPlainText(notification.text()).toUtf8().constData(),
+                               notification.timeout(),
+                               notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
+                               !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
+                               priority);
     }
+
+    notification.hints().setPrivateValue(this, "id", id);
+    startTimeout(notification);//if dnd or away snarl does not timeout atomatically
 
 }
 
@@ -271,5 +263,5 @@ void SnarlBackend::slotCloseNotification(Notification notification)
         qDebug() << Q_FUNC_INFO << "Unknown apllication: " << notification.application().name();
         return;
     }
-    m_applications.value(notification.application().name())->Hide(m_idMap.take(notification.id()));
+    m_applications.value(notification.application().name())->Hide(notification.hints().privateValue(this, "id").toUInt());
 }

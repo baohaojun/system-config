@@ -41,6 +41,8 @@ class SNORE_EXPORT Notification
 public:
     Notification();
     explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    explicit Notification(const Notification &old,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+
     Notification(const Notification &other );
     Notification &operator=(const Notification &other);
     ~Notification();
@@ -50,7 +52,6 @@ public:
     //0 means sticky
     const int &timeout() const;
 
-    void setNotificationToReplace(const Notification &n);
     Notification notificationToReplace() const;
     bool isUpdate() const;
 

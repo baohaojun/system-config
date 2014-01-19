@@ -126,10 +126,14 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         priotity =  NotificationEnums::Prioritys::prioritys(hints["urgency"].toInt()-1);
     }
 
-    Notification noti(app, *app.alerts().begin(), summary, body, icon, timeout==-1?Notification::defaultTimeout():timeout/1000, priotity);
-    if(replaces_id != 0)
+    Notification noti;
+    if(replaces_id != 0 && snore()->getActiveNotificationByID(replaces_id).isValid())
     {
-        noti.setNotificationToReplace(snore()->getActiveNotificationByID(replaces_id));
+        noti = Notification(snore()->getActiveNotificationByID(replaces_id),summary, body, icon, timeout==-1?Notification::defaultTimeout():timeout/1000, priotity);
+    }
+    else
+    {
+        noti = Notification(app, *app.alerts().begin(), summary, body, icon, timeout==-1?Notification::defaultTimeout():timeout/1000, priotity);
     }
     noti.data()->setSource(this);
     for(int i = 0;i < actions.length(); i+=2)

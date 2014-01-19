@@ -30,8 +30,11 @@
 using namespace Snore;
 
 TrayIcon::TrayIcon():
-    m_trayIcon(new QSystemTrayIcon(QIcon(":/root/snore.png")))
+    m_trayIcon(new QSystemTrayIcon(QIcon(":/root/snore.png"))),
+    m_app("SnoreNotify Test", Icon(":/root/snore.png")),
+    m_alert("Default")
 {	
+    m_app.addAlert(m_alert);
 }
 
 void TrayIcon::initConextMenu(SnoreCore *snore)
@@ -85,12 +88,25 @@ void TrayIcon::setPrimaryBackend(){
 
 void TrayIcon::slotTestNotification()
 {
-    const Application &app = m_snore->d()->defaultApplication();
-    m_snore->registerApplication(app);
-    Notification n(app, *app.alerts().begin(), "Hello World", "This is Snore", Icon(":/root/snore.png"));    
-    n.addAction(Action(1,"Test Action"));
-    m_snore->broadcastNotification(n);
-    m_snore->broadcastNotification(Notification(app, *app.alerts().begin(), "Hello World", "This is Snore, color test", Icon("http://jweatherwatch.googlecode.com/svn/trunk/iconset/04.png")));
-//    m_snore->deregisterApplication(app);
+
+    if(!m_snore->aplications().contains(m_app.name()))
+    {
+        m_snore->registerApplication(m_app);
+    }
+    m_noti = Notification(m_app, m_alert, "Hello World", "This is Snore", Icon(":/root/snore.png"));
+    m_noti.addAction(Action(1,"Test Action"));
+    m_snore->broadcastNotification(m_noti);
+
+    QTimer::singleShot(m_noti.timeout()/2*1000,this,SLOT(sloutUpdateTestNotification()));
+
+
+    //    m_snore->deregisterApplication(app);
+}
+
+void TrayIcon::sloutUpdateTestNotification()
+{
+    Notification update(m_noti, "Hello World", "This is Snore, color test", Icon("http://jweatherwatch.googlecode.com/svn/trunk/iconset/04.png"));
+    m_snore->broadcastNotification(update);
+    m_noti = Notification();
 }
 

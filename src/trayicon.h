@@ -21,10 +21,8 @@
 #define TRAYICON_H
 
 #include <QtCore>
+#include "core/snore.h"
 
-namespace Snore{
-    class SnoreCore;
-}
 
 class TrayIcon:public QObject
 {
@@ -39,12 +37,16 @@ private:
     class QSystemTrayIcon *m_trayIcon;
     class QMenu *m_trayMenu;
     class QList<class QAction*> m_backendActions;
-    class Snore::SnoreCore *m_snore;
+    Snore::SnoreCore *m_snore;
+    Snore::Application m_app;
+    Snore::Alert m_alert;
+    Snore::Notification m_noti;
 
 
 public slots:
     void setPrimaryBackend();
     void slotTestNotification();
+    void sloutUpdateTestNotification();
 };
 
 #endif // TRAYICON_H

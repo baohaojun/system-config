@@ -48,6 +48,23 @@ NotificationData::NotificationData (const Snore::Application &application, const
     qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
 }
 
+Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, NotificationEnums::Prioritys::prioritys priority):
+    m_id ( old.id() ),
+    m_timeout( timeout ),
+    m_source( NULL),
+    m_application ( old.application()),
+    m_alert( old.alert() ),
+    m_title( title ),
+    m_text( text ),
+    m_icon( icon ),
+    m_priority(priority),
+    m_closeReason(NotificationEnums::CloseReasons::NONE),
+    m_toReplace(old)
+{
+    notificationCount++;
+    qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+}
+
 NotificationData::~NotificationData()
 {
     if(!m_timeoutTimer.isNull())
