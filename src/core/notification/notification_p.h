@@ -27,6 +27,8 @@
 #include "../hint.h"
 
 #include <QSharedData>
+#include <QTimer>
+#include <QPointer>
 
 
 namespace Snore{
@@ -49,6 +51,8 @@ public:
 
     void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
 
+    QTimer *timeoutTimer();
+
 private:
     Q_DISABLE_COPY(NotificationData)
 
@@ -67,6 +71,7 @@ private:
     QHash<int,Action> m_actions;
     Hint m_hints;
     Notification m_toReplace;
+    QPointer<QTimer> m_timeoutTimer;
 
 
 

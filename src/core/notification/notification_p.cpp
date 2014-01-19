@@ -50,6 +50,10 @@ NotificationData::NotificationData (const Snore::Application &application, const
 
 NotificationData::~NotificationData()
 {
+    if(!m_timeoutTimer.isNull())
+    {
+        m_timeoutTimer->deleteLater();
+    }
     notificationCount--;
     qDebug() << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
 }
@@ -78,5 +82,16 @@ SnoreFrontend *NotificationData::source() const
 void NotificationData::setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r)
 {
     m_closeReason = r;
+}
+
+QTimer *NotificationData::timeoutTimer()
+{
+    if(m_timeoutTimer.isNull())
+    {
+        m_timeoutTimer = new QTimer();
+        m_timeoutTimer->setSingleShot(true);
+        m_timeoutTimer->setProperty("notificationID", m_id);
+    }
+    return m_timeoutTimer;
 }
 

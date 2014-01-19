@@ -20,6 +20,7 @@
 #include "../snore.h"
 #include "snorebackend.h"
 #include "snorefrontend.h"
+#include "../notification/notification_p.h"
 
 #include <QTimer>
 #include <QPluginLoader>
@@ -73,29 +74,12 @@ void SnorePlugin::startTimeout(Notification &notification)
     {
         return;
     }
-    uint id = notification.id();
-    QTimer *timer = myQVariantCast<QTimer*>(notification.hints().privateValue(this, "timeout"));
+    QTimer *timer = notification.data()->timeoutTimer();
+    timer->stop();
     if(notification.isUpdate())
     {
-        id = notification.notificationToReplace().id();
-        QTimer *old = myQVariantCast<QTimer*>(notification.notificationToReplace().hints().privateValue(this, "timeout"));
-        if(old)
-        {
-            old->deleteLater();
-        }
+        notification.notificationToReplace().data()->timeoutTimer()->stop();
     }
-    if(timer)
-    {
-        timer->stop();
-    }
-    else
-    {
-        timer = new QTimer(this);
-        timer->setSingleShot(true);
-        timer->setProperty("notificationID", id);
-        notification.hints().setPrivateValue(this, "timeout", myQVariantFromValue(timer));
-    }
-
     timer->setInterval(notification.timeout() * 1000);
     connect(timer,SIGNAL(timeout()),this,SLOT(notificationTimedOut()));
     timer->start();
@@ -109,10 +93,8 @@ void SnorePlugin::notificationTimedOut()
     if(n.isValid())
     {
         qDebug() << Q_FUNC_INFO << n;
-        timer->deleteLater();
         snore()->requestCloseNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
     }
-    timer->deleteLater();
 }
 
 bool SnorePlugin::deinitialize()
