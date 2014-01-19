@@ -17,17 +17,17 @@ map {my $x = get_ext($_); $exts{$x} = $_} @output;
 open (my $file, ">>", ".gitignore") or die "Can't open .gitignore";
 
 for (keys %exts) {
-    if (system("yes-or-no-p -y 'put *.$_ into .gitignore?'") == 0) {
-	print $file "*.$_\n";
-	$exts{$_} = 1;
+    if (system("test ! -d $_ && yes-or-no-p -y 'put *.$_ into .gitignore?'") == 0) {
+        print $file "*.$_\n";
+        $exts{$_} = 1;
     } elsif (-e "$_") {
-	print $file "$_\n";
-	$exts{$_} = 1;
+        print $file "$_\n";
+        $exts{$_} = 1;
     }
 }
 
 for (@output) {
     if ($exts{$_} != 1 and $exts{get_ext $_} != 1) {
-	print $file "$_\n";
+        print $file "$_\n";
     }
 }

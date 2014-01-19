@@ -14,7 +14,11 @@ function compile_beagrep() {
         )
     fi
     autoreconf -i
-    ./configure
+    if test -e /opt/local/bin/bash; then
+        ./configure --prefix=/opt/local
+    else
+        ./configure
+    fi
     make
     sudo make install
 }

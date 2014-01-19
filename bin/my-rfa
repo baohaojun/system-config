@@ -51,12 +51,10 @@ if test "${#dirs[@]}" = 0; then
     dirs=(
         $(
             if test -d .repo; then
-                (
-                    xmlstarlet sel -B -t -m //project -v @path -n $(lookup-file .repo/manifest.xml)
-                    if test -e "$(lookup-file .repo/local_manifests/local_manifist.xml 2>/dev/null)"; then
-                        xmlstarlet sel -B -t -m //project -v @path -n $(lookup-file .repo/local_manifests/local_manifist.xml)
-                    fi
-                ) | sort -u
+                if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths; then
+                    repo forall -c 'echo $REPO_PATH' 2>&1 | perl -npe 's/^skipping //; s!/$!!' > .repo/repo-paths
+                fi
+                cat .repo/repo-paths | sort -u
             else
                 pwd
             fi
@@ -95,20 +93,6 @@ function die() {
 export -f die
 mkdir -p ~/.logs/my-rfa-locks
 for x in "${dirs[@]}"; do
-    if test "$path_pattern" && ! [[ "$x" =~ "$path_pattern" ]];
-        then continue
-    fi
-    job=$((job + 1))
-    job=$((job % jobs))
-    (
-        (
-            cd $x || exit
-            flock -x 9
-            x=
-            if test "$debug" = 1; then
-                x=-x
-            fi
-            bash $x -c "$@"
-        ) 9>~/.logs/my-rfa-locks/$job.lock &
-    )
-done | tee ~/.logs/my-rfa.log
+    echo "$x"
+done | xargs -P $jobs -I %N bash -c "cd %N; $@" true | tee ~/.logs/my-rfa.log
+exit
