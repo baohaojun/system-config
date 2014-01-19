@@ -265,5 +265,7 @@ void SnarlBackend::slotCloseNotification(Notification notification)
         qDebug() << Q_FUNC_INFO << "Unknown apllication: " << notification.application().name();
         return;
     }
-    m_applications.value(notification.application().name())->Hide(notification.hints().privateValue(this, "id").toUInt());
+    ULONG32 id = notification.hints().privateValue(this, "id").toUInt();
+    m_idMap.take(id);
+    m_applications.value(notification.application().name())->Hide(id);
 }

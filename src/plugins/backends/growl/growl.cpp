@@ -137,6 +137,7 @@ void Growl::slotNotify(Notification notification)
     {
         qWarning() << Q_FUNC_INFO << e.what();
     }
+    startTimeout(notification);
 }
 
 void Growl::gntpCallback(const int &id,const std::string &reason,const std::string &data)

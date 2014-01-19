@@ -143,13 +143,13 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     }
 
     snore()->broadcastNotification(noti);
-    startTimeout(noti);
     return noti.id();
 }
 
 
 
-void FreedesktopFrontend::CloseNotification(uint id){
+void FreedesktopFrontend::CloseNotification(uint id)
+{
     Notification noti = snore()->getActiveNotificationByID(id);
     if(noti.isValid())
     {

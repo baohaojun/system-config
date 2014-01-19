@@ -68,35 +68,6 @@ const QString &SnorePlugin::name() const
     return m_name;
 }
 
-void SnorePlugin::startTimeout(Notification &notification)
-{
-    if(notification.isSticky())
-    {
-        return;
-    }
-    QTimer *timer = notification.data()->timeoutTimer();
-    timer->stop();
-    if(notification.isUpdate())
-    {
-        notification.old().data()->timeoutTimer()->stop();
-    }
-    timer->setInterval(notification.timeout() * 1000);
-    connect(timer,SIGNAL(timeout()),this,SLOT(notificationTimedOut()));
-    timer->start();
-}
-
-void SnorePlugin::notificationTimedOut()
-{
-
-    QTimer *timer = qobject_cast<QTimer*>(sender());
-    Notification n = snore()->getActiveNotificationByID(timer->property("notificationID").toUInt());
-    if(n.isValid())
-    {
-        qDebug() << Q_FUNC_INFO << n;
-        snore()->requestCloseNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
-    }
-}
-
 bool SnorePlugin::deinitialize()
 {
     if(m_initialized)
