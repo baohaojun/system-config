@@ -35,7 +35,8 @@ SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Hint &);
 namespace Snore
 {
 /**
- * Hint contains extra information accesible by key
+ * Hint contains extra information accesible by key.
+ * The keys are case insensitive.
  */
 
 class SNORE_EXPORT Hint

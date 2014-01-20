@@ -27,6 +27,7 @@
 
 namespace Snore
 {
+
 class AlertData : public QSharedData
 {
     friend class Alert;
