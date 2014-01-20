@@ -7,6 +7,9 @@ vga=$(echo "$xrandr_out" | grep '^VGA' | pn 1)
 if test $(basename $0) = switch-to-vga; then
     xrandr --output $lvds --auto --right-of $vga
     xrandr --output $vga --auto
+elif test $(basename $0) = switch-to-laptop; then
+    xrandr --output $lvds --auto
+    xrandr --output $vga --off
 else
 
     res=$(xrandr |
