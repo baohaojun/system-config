@@ -33,7 +33,7 @@ Log::~Log()
 {
     if(debugLvl() >= m_lvl)
     {
-        std::wcout << m_msg.toUtf8().constData() << std::endl;
+        std::cout << m_msg.toUtf8().constData() << std::endl;
     }
 }
 
