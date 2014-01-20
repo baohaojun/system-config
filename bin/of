@@ -5,7 +5,17 @@ set -x
 if test $# = 0; then
     set -- "$(xclip -o -selection primary)"
 elif test $# = 1; then
-    set -- "$(lookup-file "$@")"
+    if test -e "$1"; then
+        true
+    elif test -e "$(lookup-file "$@")"; then
+        if yes-or-no-p -n "Open $(lookup-file "$@")"; then
+            set -- "$(lookup-file "$@")";
+        else
+            set -- "$(f "$@")"
+        fi
+    else
+        set -- "$(f "$@")"
+    fi
 else
     set -- "$(f "$@")"
 fi
