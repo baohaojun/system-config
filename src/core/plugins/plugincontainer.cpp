@@ -51,7 +51,7 @@ SnorePlugin *PluginContainer::load()
 {
     if ( !m_loader.load())
     {
-        qDebug() << "Failed loading plugin: " << m_loader.errorString();
+        snoreDebug( SNORE_DEBUG ) << "Failed loading plugin: " << m_loader.errorString();
         return NULL;
     }
     return qobject_cast<SnorePlugin*> ( m_loader.instance());
@@ -109,33 +109,33 @@ const QStringList &PluginContainer::types()
 
 
 void PluginContainer::updatePluginCache(){
-    qDebug() << "Updating plugin cache";
+    snoreDebug( SNORE_DEBUG ) << "Updating plugin cache";
 
     s_pluginCache.clear();
     cache().remove("");
 
     foreach(const QString &type,PluginContainer::types()){
         QDir plPath(SnoreCorePrivate::pluginDir().absoluteFilePath(type));
-        qDebug() << "Searching for plugins in" << plPath.path();
+        snoreDebug( SNORE_DEBUG ) << "Searching for plugins in" << plPath.path();
         foreach (QString fileName, plPath.entryList(QDir::Files))
         {
             QString filepath(plPath.absoluteFilePath(fileName));
-            qDebug() << "adding" << filepath;
+            snoreDebug( SNORE_DEBUG ) << "adding" << filepath;
             QPluginLoader loader(filepath);
             QObject *plugin = loader.instance();
             if (plugin == NULL) {
-                qDebug() << "Failed loading plugin: " << filepath << loader.errorString();
+                snoreDebug( SNORE_DEBUG ) << "Failed loading plugin: " << filepath << loader.errorString();
                 continue;
             }
             SnorePlugin *sp = qobject_cast<SnorePlugin*>(plugin);
             if(sp == NULL){
-                qDebug() << "Error:" << fileName << " is not a Snore plugin" ;
+                snoreDebug( SNORE_DEBUG ) << "Error:" << fileName << " is not a Snore plugin" ;
                 loader.unload();
                 continue;
             }
             PluginContainer *info = new PluginContainer( SnoreCorePrivate::pluginDir().relativeFilePath(filepath),sp->name(),PluginContainer::typeFromString(type));
             s_pluginCache.insert(info->name(),info);
-            qDebug() << "added" << info->name() << "to cache";
+            snoreDebug( SNORE_DEBUG ) << "added" << info->name() << "to cache";
         }
     }
     cache().setValue("version",Version::revision());

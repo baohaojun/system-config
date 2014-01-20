@@ -54,7 +54,7 @@ SnoreCore::~SnoreCore()
 void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
 {
     Q_D(SnoreCore);
-    qDebug() << "PluginInfo" << PluginContainer::pluginCache().keys();
+    snoreDebug( SNORE_DEBUG ) << "PluginInfo" << PluginContainer::pluginCache().keys();
     foreach ( PluginContainer *info, PluginContainer::pluginCache().values())
     {
         if(types == SnorePlugin::ALL || types.testFlag(info->type()))
@@ -63,7 +63,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             {
             case SnorePlugin::BACKEND:
             {
-                qDebug() << info->name() << "is a Notification_Backend";
+                snoreDebug( SNORE_DEBUG ) << info->name() << "is a Notification_Backend";
                 d->m_notificationBackends.append( info->name());
                 break;
             }
@@ -78,7 +78,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             }
             case SnorePlugin::FRONTEND:
             {
-                qDebug() << info->name() << "is a Notification_Frontend";
+                snoreDebug( SNORE_DEBUG ) << info->name() << "is a Notification_Frontend";
                 if(!info->load()->initialize( this )){
                     info->unload();
                     break;
@@ -88,7 +88,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             }
             case SnorePlugin::PLUGIN:
             {
-                qDebug() <<info->name()<<"is a SnorePlugin";
+                snoreDebug( SNORE_DEBUG ) <<info->name()<<"is a SnorePlugin";
                 if(!info->load()->initialize(this)){
                     info->unload();
                     break;
@@ -103,7 +103,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             }
             }
         }else{
-            qDebug()<<"dont load "<<info->file()<<info->type();
+            snoreDebug( SNORE_DEBUG )<<"dont load "<<info->file()<<info->type();
         }
     }
 }
@@ -111,7 +111,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
 void SnoreCore::broadcastNotification ( Notification notification )
 {
     Q_D(SnoreCore);
-    qDebug()<<"Broadcasting"<<notification<<"timeout:"<<notification.timeout();
+    snoreDebug( SNORE_DEBUG )<<"Broadcasting"<<notification<<"timeout:"<<notification.timeout();
     emit d->notify ( notification );
     if ( d->m_notificationBackend != NULL )
     {
@@ -124,7 +124,7 @@ void SnoreCore::registerApplication(const Application &application)
     Q_D(SnoreCore);
     if(!d->m_applications.contains(application.name()))
     {
-        qDebug() << Q_FUNC_INFO << "Registering Application:" << application;
+        snoreDebug( SNORE_DEBUG ) << "Registering Application:" << application;
         d->m_applications.insert ( application.name(),application );
         emit d->applicationRegistered ( application );
     }
@@ -167,16 +167,16 @@ bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
     Q_D(SnoreCore);
     if(!PluginContainer::pluginCache().contains(backend))
     {
-        qDebug() << "Unknown Backend:" << backend;
+        snoreDebug( SNORE_DEBUG ) << "Unknown Backend:" << backend;
         return false;
     }
-    qDebug() << "Setting Notification Backend to:" << backend;
+    snoreDebug( SNORE_DEBUG ) << "Setting Notification Backend to:" << backend;
     SnoreBackend* b = qobject_cast<SnoreBackend*>(PluginContainer::pluginCache()[backend]->load());
     if(!b->isInitialized())
     {
         if(!b->initialize(this))
         {
-            qDebug() << "Failed to initialize" << b->name();
+            snoreDebug( SNORE_DEBUG ) << "Failed to initialize" << b->name();
             return false;
         }
     }

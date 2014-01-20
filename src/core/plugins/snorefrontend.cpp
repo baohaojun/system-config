@@ -34,7 +34,7 @@ SnoreFrontend::SnoreFrontend ( const QString &name ) :
 
 SnoreFrontend::~SnoreFrontend()
 {
-    qDebug()<<"Deleting"<<name();
+    snoreDebug( SNORE_DEBUG )<<"Deleting"<<name();
 }
 
 }

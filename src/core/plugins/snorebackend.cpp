@@ -41,7 +41,7 @@ SnoreBackend::SnoreBackend (const QString &name , bool canCloseNotification, boo
 
 SnoreBackend::~SnoreBackend()
 {
-    qDebug()<<"Deleting"<<name();
+    snoreDebug( SNORE_DEBUG )<<"Deleting"<<name();
 }
 
 
@@ -88,7 +88,7 @@ void SnoreBackend::closeNotification(Notification n, NotificationEnums::CloseRea
     }
     n.data()->setCloseReason(reason);
     slotCloseNotification(n);
-    qDebug() << Q_FUNC_INFO << n;
+    snoreDebug( SNORE_DEBUG ) << n;
     emit notificationClosed(n);
 }
 
@@ -111,7 +111,7 @@ SnoreSecondaryBackend::SnoreSecondaryBackend(const QString &name, bool supportsR
 
 SnoreSecondaryBackend::~SnoreSecondaryBackend()
 {
-    qDebug()<<"Deleting"<<name();
+    snoreDebug( SNORE_DEBUG )<<"Deleting"<<name();
 }
 
 bool SnoreSecondaryBackend::supportsRichtext()
@@ -199,7 +199,7 @@ void SnoreBackend::notificationTimedOut()
     Notification n = snore()->getActiveNotificationByID(timer->property("notificationID").toUInt());
     if(n.isValid())
     {
-        qDebug() << Q_FUNC_INFO << n;
+        snoreDebug( SNORE_DEBUG ) << n;
         snore()->requestCloseNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
     }
 }

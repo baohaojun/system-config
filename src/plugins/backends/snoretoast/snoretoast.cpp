@@ -30,7 +30,7 @@ bool SnoreToast::initialize(SnoreCore *snore)
 {
     if(QSysInfo::windowsVersion() != QSysInfo::WV_WINDOWS8)
     {
-        qDebug() << "SnoreToast does not work on windows" << QSysInfo::windowsVersion();
+        snoreDebug( SNORE_DEBUG ) << "SnoreToast does not work on windows" << QSysInfo::windowsVersion();
         return false;
     }
     if(snore->hints().contains("WINDOWS_APP_ID"))
@@ -49,10 +49,10 @@ bool SnoreToast::initialize(SnoreCore *snore)
                    << QString("SnoreNotify\\%1").arg(qApp->applicationName())
                    << QDir::toNativeSeparators(qApp->applicationFilePath())
                    << m_appID;
-        qDebug() << "SnoreToast" << arguements;
+        snoreDebug( SNORE_DEBUG ) << "SnoreToast" << arguements;
         p->start("SnoreToast", arguements);
         p->waitForFinished(-1);
-        qDebug() << p->readAll();
+        snoreDebug( SNORE_DEBUG ) << p->readAll();
         if(p->exitCode() != 0)
         {
             return false;
@@ -89,7 +89,7 @@ void SnoreToast::slotNotify(Notification notification)
     {
         arguements << "-silent";
     }
-    qDebug() << "SnoreToast" << arguements;
+    snoreDebug( SNORE_DEBUG ) << "SnoreToast" << arguements;
     p->start("SnoreToast", arguements);
 
     p->setProperty("SNORE_NOTIFICATION_ID",notification.id());

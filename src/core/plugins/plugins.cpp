@@ -36,7 +36,7 @@ SnorePlugin::SnorePlugin ( const QString &name ) :
 
 SnorePlugin::~SnorePlugin()
 {
-    qDebug() << m_name << this << "deleted";
+    snoreDebug( SNORE_DEBUG ) << m_name << this << "deleted";
     deinitialize();
 }
 
@@ -47,7 +47,7 @@ bool SnorePlugin::initialize( SnoreCore *snore )
         qFatal("Something went wrong, plugin %s is already initialized",this->name().toLatin1().constData());
         return false;
     }
-    qDebug() << "Initialize" << m_name << this << snore;
+    snoreDebug( SNORE_DEBUG ) << "Initialize" << m_name << this << snore;
     this->m_snore = snore;
     m_initialized = true;
     return true;
@@ -72,7 +72,7 @@ bool SnorePlugin::deinitialize()
 {
     if(m_initialized)
     {
-        qDebug() << "Deinitialize" << m_name << this;
+        snoreDebug( SNORE_DEBUG ) << "Deinitialize" << m_name << this;
         m_initialized = false;
         return true;
     }

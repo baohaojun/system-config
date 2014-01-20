@@ -56,7 +56,7 @@ Parser::Parser(SnarlNetworkFrontend *snarl):
 
 void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* client)
 {
-    qDebug() << Q_FUNC_INFO << msg;
+    snoreDebug( SNORE_DEBUG ) << msg;
     QStringList splitted(msg.split("#?"));
     snpTypes action(ERROR);
 
@@ -144,7 +144,7 @@ void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
     case ADD_CLASS:
         if(alertName.isEmpty())
         {
-            qDebug()<<"Error registering alert with empty name";
+            snoreDebug( SNORE_DEBUG )<<"Error registering alert with empty name";
             break;
         }
         if(title.isEmpty())
@@ -164,7 +164,7 @@ void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
         }
         else
         {
-            qDebug() << appName << "already registred";
+            snoreDebug( SNORE_DEBUG ) << appName << "already registred";
         }
         break;
     case UNREGISTER:

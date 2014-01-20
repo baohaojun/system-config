@@ -46,7 +46,7 @@ SnoreNotify::SnoreNotify():
     m_trayIcon->initConextMenu(m_snore);
 
     connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(exit()));
-    qDebug() << "Snorenotfiy initialized with" << m_snore->primaryNotificationBackend();
+    snoreDebug( SNORE_DEBUG ) << "Snorenotfiy initialized with" << m_snore->primaryNotificationBackend();
 }
 
 SnoreNotify::~SnoreNotify(){
@@ -69,7 +69,7 @@ void SnoreNotify::save(){
 }
 
 void SnoreNotify::exit(){
-    qDebug()<<"Saving snore settings";
+    snoreDebug( SNORE_DEBUG )<<"Saving snore settings";
     foreach(const Application &a,m_snore->aplications())
     {
         m_snore->deregisterApplication(a);

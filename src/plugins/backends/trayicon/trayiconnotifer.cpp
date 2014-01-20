@@ -58,7 +58,7 @@ void TrayIconNotifer::slotNotify( Notification notification )
 
 void TrayIconNotifer::slotCloseNotification(Notification n)
 {
-    qDebug() << Q_FUNC_INFO << n;
+    snoreDebug( SNORE_DEBUG ) << n;
     m_currentlyDisplaying = false;
     displayNotification();
 }

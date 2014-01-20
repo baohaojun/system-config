@@ -44,7 +44,7 @@ bool SnarlNetworkFrontend::initialize(SnoreCore *snore){
     tcpServer = new QTcpServer(this);
     if(!tcpServer->listen(QHostAddress::Any,port))
     {
-        qDebug()<<"The port is already used";
+        snoreDebug( SNORE_DEBUG )<<"The port is already used";
         return false;
     }
     else

@@ -109,7 +109,7 @@ void IconData::download()
     {
         if(!QFile(m_localUrl).exists())
         {
-            qDebug() << "Downloading:" << m_url;
+            snoreDebug( SNORE_DEBUG ) << "Downloading:" << m_url;
             QNetworkAccessManager manager;
             QEventLoop loop;
             QNetworkRequest request(m_url);

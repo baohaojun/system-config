@@ -92,13 +92,13 @@ public:
                 break;
                 //away stuff
             case SnarlEnums::SnarlUserAway:
-                qDebug()<<"Snalr user has gone away";
+                snoreDebug( SNORE_DEBUG )<<"Snalr user has gone away";
                 return true;
             case SnarlEnums::SnarlUserBack:
-                qDebug()<<"Snalr user has returned";
+                snoreDebug( SNORE_DEBUG )<<"Snalr user has returned";
                 return true;
             default:
-                qDebug()<<"Unknown snarl action found!!";
+                snoreDebug( SNORE_DEBUG )<<"Unknown snarl action found!!";
                 return false;
             }
             if(notification.isValid())
@@ -108,8 +108,8 @@ public:
             }
             else
             {
-                qDebug() << "Snarl notification already closed" << msg->lParam << action;
-                qDebug() << m_snarl->m_idMap;
+                snoreDebug( SNORE_DEBUG ) << "Snarl notification already closed" << msg->lParam << action;
+                snoreDebug( SNORE_DEBUG ) << m_snarl->m_idMap;
             }
             return true;
         }
@@ -144,7 +144,7 @@ bool SnarlBackend::initialize(SnoreCore *snore)
         return false;
     }
     m_eventLoop = new SnarlBackend::SnarlWidget(this);
-    qDebug() << "Initiating Snarl Backend, Snarl version: " << snarlInterface->GetVersion();
+    snoreDebug( SNORE_DEBUG ) << "Initiating Snarl Backend, Snarl version: " << snarlInterface->GetVersion();
     delete snarlInterface;
     return SnoreBackend::initialize(snore);
 }
@@ -188,7 +188,7 @@ void SnarlBackend::slotDeregisterApplication(const Application &application)
 {
     if(!m_applications.contains(application.name()))
     {
-        qDebug() << Q_FUNC_INFO << "Unknown apllication: " << application.name();
+        snoreDebug( SNORE_DEBUG ) << "Unknown apllication: " << application.name();
         return;
     }
     SnarlInterface *snarlInterface = m_applications.take(application.name());
@@ -200,7 +200,7 @@ void SnarlBackend::slotDeregisterApplication(const Application &application)
 void SnarlBackend::slotNotify(Notification notification){
     if(!m_applications.contains(notification.application().name()))
     {
-        qDebug() << Q_FUNC_INFO << "Unknown apllication: " << notification.application().name();
+        snoreDebug( SNORE_DEBUG ) << "Unknown apllication: " << notification.application().name();
         return;
     }
 
@@ -221,7 +221,7 @@ void SnarlBackend::slotNotify(Notification notification){
     }
 
      ULONG32 id = 0;
-     qDebug() << Q_FUNC_INFO << notification.icon();
+     snoreDebug( SNORE_DEBUG ) << notification.icon();
     if(!notification.isUpdate())
     {
        id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
@@ -262,7 +262,7 @@ void SnarlBackend::slotCloseNotification(Notification notification)
 {
     if(!m_applications.contains(notification.application().name()))
     {
-        qDebug() << Q_FUNC_INFO << "Unknown apllication: " << notification.application().name();
+        snoreDebug( SNORE_DEBUG ) << "Unknown apllication: " << notification.application().name();
         return;
     }
     ULONG32 id = notification.hints().privateValue(this, "id").toUInt();

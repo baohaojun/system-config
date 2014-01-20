@@ -22,6 +22,7 @@
 #include "notification/notification_p.h"
 #include "notification/icon.h"
 #include "../hint.h"
+#include "../log.h"
 
 #include <QSharedData>
 
@@ -45,7 +46,7 @@ NotificationData::NotificationData (const Snore::Application &application, const
     m_closeReason(NotificationEnums::CloseReasons::NONE)
 {
     notificationCount++;
-    qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    snoreDebug( SNORE_DEBUG ) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
 }
 
 Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, NotificationEnums::Prioritys::prioritys priority):
@@ -62,7 +63,7 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
     m_toReplace(old)
 {
     notificationCount++;
-    qDebug()<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    snoreDebug( SNORE_DEBUG )<< "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
 }
 
 NotificationData::~NotificationData()
@@ -72,7 +73,7 @@ NotificationData::~NotificationData()
         m_timeoutTimer->deleteLater();
     }
     notificationCount--;
-    qDebug() << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
+    snoreDebug( SNORE_DEBUG ) << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
 }
 
 
