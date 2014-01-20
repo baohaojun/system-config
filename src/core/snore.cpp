@@ -209,7 +209,7 @@ bool SnoreCore::setPrimaryNotificationBackend()
             return true;
     }
 #elif defined(Q_OS_LINUX)
-    if( backends.contains("FreedesktopNotification_Backend"))
+    if( backends.contains("FreedesktopNotification"))
     {
         return setPrimaryNotificationBackend("FreedesktopNotification");
     }
