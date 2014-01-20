@@ -34,48 +34,162 @@
 class QSystemTrayIcon;
 
 
+/**
+ *  Snore is a platform independent Qt notification framework.
+ *
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
+
 namespace Snore{
 class SnoreCorePrivate;
+
+/**
+ *  SnoreCore is used to manage and emit Notifications
+ *
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
 
 class SNORE_EXPORT SnoreCore : public QObject
 {
     Q_DECLARE_PRIVATE(SnoreCore)
     Q_OBJECT
 public:
+
+    /**
+     * Creates a Notification Manager SnoreCore
+     * @param trayIcon a QSystemTrayIcon which can later be used by the fallback notification backend.
+     */
     SnoreCore (QSystemTrayIcon *trayIcon = NULL );
     ~SnoreCore();
+
+    /**
+     * Load a set of plugins
+     *
+     * @param types the type of tha plugin
+     */
     void loadPlugins ( SnorePlugin::PluginTypes types );
 
 
+    /**
+     * Broadcast a notification.
+     * @param notification the Notification
+     */
     void broadcastNotification( Notification notification );
 
+    /**
+     * Register an application.
+     * Each application should only be registered once.
+     * An application must be registered before a notification can be broadcasted.
+     * @see deregisterApplication
+     * @see broadcastNotification
+     * @param application the application
+     */
     void registerApplication(const Application &application );
+
+    /**
+     * Deregisters an application.
+     * Should be called if an application is no loger used.
+     * Is called automatically if the backend changes.
+     * @see registerApplication
+     * @see setPrimaryNotificationBackend
+     * @param application the application
+     */
     void deregisterApplication(const Application &application );
 
+    /**
+     *
+     * @return a QHash of all registered applications
+     */
     const QHash<QString, Application> &aplications() const;
 
+    /**
+     *
+     * @return a list of all known notification backends
+     */
     const QStringList &notificationBackends() const;
+
+    /**
+     *
+     * @return a list of all known notification frontends
+     */
     const QStringList &notificationFrontends() const;
+
+    /**
+     *
+     * @return a list of all known notification secondary backends
+     */
     const QStringList &secondaryNotificationBackends() const;
 
+    /**
+     * Sets the primary backend.
+     *
+     * @param backend the name of the backend
+     * @return whether the backend was initialied succesfully.
+     */
     bool setPrimaryNotificationBackend( const QString &backend );
+
+    /**
+     * Tries to set one of all backends availible on this platform as backend.
+     * @see primaryNotificationBackend
+     * @return whether a backend was succesfully set
+     */
     bool setPrimaryNotificationBackend();
+    /**
+     *
+     * @return the name of the active primary backend
+     */
     const QString primaryNotificationBackend() const;
+
+    /**
+     *
+     * @return a pointer to a QSystemTrayIcon if availible, otherwise NULL
+     */
     QSystemTrayIcon *trayIcon();
 
+    /**
+     * Tries to get an Notification by id.
+     * @param id the id of the Notification
+     * @return the Notification or an invalid Notification if the Notification was not found
+     * @see Notification::isValid
+     */
     Notification getActiveNotificationByID(uint id);
 
+    /**
+     * Try to close a Notification if the backend supports the action.
+     * @see SnoreBackend::canCloseNotification
+     */
     void requestCloseNotification(Notification,NotificationEnums::CloseReasons::closeReasons);
 
+    /**
+     *
+     * @return whether the backend supports rhichtext encoding
+     */
     bool primaryBackendSupportsRichtext();
 
-    Hint &hints();
+    /**
+     * @deprecated Use Application::hints() instead
+     * @return a Hint object which contains extra information used by the backends etc.
+     */
+    SNORE_DEPRECATED Hint &hints();
 
+    /**
+     *
+     * @return a pointer to the private class, for internal use only.
+     */
     const SnoreCorePrivate *d();
 
 
 signals:
+    /**
+     * This signal is emitted when an action on the Notification was performed.
+     * @see Action
+     */
     void actionInvoked( Snore::Notification );
+
+    /**
+     * This signal is emitted when a Notification is closed.
+     * @see NotificationEnums::CloseReasons
+     */
     void notificationClosed(Snore::Notification );
 
 private:
@@ -84,7 +198,11 @@ private:
 
 };
 
-
+/**
+ *
+ * @param string A string to decode of if needed.
+ * @return if the string was rhichtext or html encoded a decoded string, else the original string.
+ */
 
 static inline QString toPlainText ( const QString &string)
 {

@@ -36,9 +36,20 @@ endif(KDE4_FOUND)
 find_package( CryptoPP )
 find_package( Boost COMPONENTS system thread)
 
-if(Boost_USE_STATIC_RUNTIME)
-    add_definitions(-DBOOST_THREAD_USE_LIB )
-endif(Boost_USE_STATIC_RUNTIME)
+find_package(Doxygen)
+
+if(DOXYGEN_FOUND)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in" "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile" @only)
+
+    add_custom_target(doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+else(DOXYGEN_FOUND)
+    message(WARNING "No doxygen package found")
+endif(DOXYGEN_FOUND)
+
 
 set(LIBSNORE_PLUGIN_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/libsnore)
 set(SNORE_PLUGIN_INSTALL_PATH LIBRARY DESTINATION ${LIBSNORE_PLUGIN_PATH})

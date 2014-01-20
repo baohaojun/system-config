@@ -118,13 +118,6 @@ bool Notification::isSticky() const
     return d->m_timeout == 0;
 }
 
-void Notification::setIsSticky(bool b)
-{
-    if(b)
-    {
-        d->m_timeout = 0;
-    }
-}
 
 NotificationEnums::Prioritys::prioritys Notification::priority() const
 {
@@ -154,11 +147,6 @@ Hint &Notification::hints()
 const Hint &Notification::constHints() const
 {
     return d->m_hints;
-}
-
-void Notification::setSilent(bool silent)
-{
-    d->m_hints.setValue("silent", silent);
 }
 
 bool Notification::isValid() const

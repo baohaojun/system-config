@@ -30,55 +30,190 @@
 #include <QDebug>
 
 
-
 namespace Snore{
 
 class NotificationData;
+
+/**
+ *  Notification contains all relevant data to notify the user.
+ *  Notification uses a shared datamodel, its content is never copied and automatically released.
+ *
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
+
 
 class SNORE_EXPORT Notification
 {
     friend class NotificationData;
 public:
     Notification();
+    /**
+     * Creates a new Notification.
+     * @param application the application emitting the Notification
+     * @param alert the associated alert
+     * @param title the title
+     * @param text the text body
+     * @param icon the icon
+     * @param timeout the timeout
+     * @param priority the priority
+     */
     explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+
+    /**
+     * Creates and update Notification replacing an existing Notification
+     * @param old the notification to replace
+     * @param title the new title
+     * @param text the new text body
+     * @param icon the icon
+     * @param timeout the timeout
+     * @param priority the piority
+     */
     explicit Notification(const Notification &old,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
 
+    /**
+     * The copy constructor
+     * @param other
+     */
     Notification(const Notification &other );
+
+    /**
+     * The copy operator
+     * @param other
+     * @return
+     */
     Notification &operator=(const Notification &other);
     ~Notification();
 
+    /**
+     *
+     * @return the internal id
+     */
     uint id() const;
-    //timeout in seconds
-    //0 means sticky
+
+    /**
+     * The timeout in seconds.
+     * A timeout of 0 means the notification isSticky and will stay visible until dismissed by the user, if supported by the backend.
+     * @see isSticky
+     */
     const int &timeout() const;
 
+    /**
+     *
+     * @return a valid Action if one was invoked otherwise an invalid.
+     */
     const Action &actionInvoked() const;
+
+    /**
+     *
+     * @return the associated application
+     */
     const Application &application() const;
+
+    /**
+     *
+     * @return the title
+     */
     QString title() const;
+
+    /**
+     *
+     * @return the text body
+     */
     QString text() const;
+
+    /**
+     *
+     * @return the icon
+     */
     const Icon &icon() const;
+
+    /**
+     *
+     * @return the associated alert
+     */
     const Alert &alert() const;
-    void setIsSticky(bool b);
+
+    /**
+     * A sticki notification will stay visible until dismissed, if supported by the backend.
+     * @return true if the timeout is 0
+     */
     bool isSticky() const;
+
+    /**
+     * Some backends support priorities to indicate the urgency of the Notification
+     * @return the priority
+     */
     NotificationEnums::Prioritys::prioritys priority() const;
+
+    /**
+     *
+     * @return the availible actions
+     * @see addAction
+     */
     const QHash<int, Action> &actions() const;
+
+    /**
+     * Adds an Action to the Notification
+     * @param a the action
+     * @see actions
+     */
     void addAction(const Action &a);
+
+    /**
+     *
+     * @return the close reason
+     */
     const NotificationEnums::CloseReasons::closeReasons &closeReason();
-    Hint &hints();    
+
+    /**
+     *
+     * @return hints associated with this notification
+     */
+    Hint &hints();
+
+    /**
+     *
+     * @return hints associated with this notification
+     */
     const Hint &constHints() const;
 
-    void setSilent(bool silent);
-
+    /**
+     *
+     * @return whether this is a valid Notification
+     */
     bool isValid() const;
 
 
+    /**
+     *
+     * @return the old notification to be replaced
+     * @see isUpdate
+     */
     Notification old() const;
+
+    /**
+     *
+     * @return whether this is an update to replace an old notification
+     * @see old
+     */
     bool isUpdate() const;
 
+    /**
+     *
+     * @return a data pointer for internal use
+     */
     NotificationData *data();
 
-
+    /**
+     *
+     * @return the default timeout
+     */
     static int defaultTimeout();
+
+    /**
+     * Sets the default timeout.
+     * @param defaultTimeout
+     */
     static void setDefaultTimeout(int defaultTimeout);
 
 private:
