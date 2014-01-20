@@ -33,15 +33,15 @@ public:
 
     static inline int debugLvl()
     {
-        static int lvl = qgetenv("SNORE_DEBUG_LVL").toInt();
-        return lvl;
+        return s_debugLevel;
     }
 
+    static setDebugLvl(int i);
+
 private:
+    static int s_debugLevel;
     int m_lvl;
     QString m_msg;
-
-    void log();
 };
 }
 

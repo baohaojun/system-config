@@ -21,22 +21,23 @@
 #include <iostream>
 
 using namespace Snore;
+int Log::s_debugLevel = qgetenv("SNORE_DEBUG_LVL").toInt();
 
 Log::Log(int lvl):
-  QDebug(&m_msg),
-  m_lvl(lvl)
+    QDebug(&m_msg),
+    m_lvl(lvl)
 {
 }
 
 Log::~Log()
 {
-  log();
+    if(debugLvl() >= m_lvl)
+    {
+        std::wcout << m_msg.toUtf8().constData() << std::endl;
+    }
 }
 
-void Log::log()
+Log::setDebugLvl(int i)
 {
-  if(debugLvl() >= m_lvl)
-  {
-    std::wcout << m_msg.toUtf8().constData() << std::endl;
-  }
+    s_debugLevel = i;
 }
