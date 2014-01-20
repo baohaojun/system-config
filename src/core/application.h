@@ -29,30 +29,82 @@ namespace Snore{
 
 class ApplicationData;
 
+/**
+ *  Application contains all relevant data to manage applications with the notification backend.
+ *  Application uses a shared datamodel, its content is never copied and automatically released.
+ *
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
+
 class SNORE_EXPORT Application
 {
 public:
     Application();
+
+    /**
+     * Creates a new Application object
+     * @param name
+     * @param icon
+     * @see SnoreCore::registerApplication
+     */
     explicit Application ( const QString &name, const Icon &icon);
+
+    /**
+     * The copy constructor
+     * @param other
+     */
     Application(const Application &other);
+
+    /**
+     * The copy operator
+     * @param other
+     */
     Application &operator=(const Application &other);
+
     ~Application();
 
+    /**
+     * Add an alert to the Application
+     * @param alert the Alert
+     */
     void addAlert(const  Alert &alert);
+
+    /**
+     *
+     * @return the name of the Application
+     */
     QString name() const;
+
+    /**
+     *
+     * @return the default icon for Notifications ans Alerts of this Application.
+     */
     const Icon &icon() const;
+
+    /**
+     * Returns a QHash with the Alers registered with this Application
+     */
     const QHash<QString,Alert> &alerts() const;
+
+    /**
+     *
+     * @return whether the Application is valid
+     */
     bool isValid() const;
 
     /**
-     * Application specific hints:
+     * Returns application specific hints:
      * <table>
      * <tr><td>desktop-entry</td><td>The name of the desktop enty associated with the application</td><td>Used for The freedesktop backend</td></tr>
      * <tr><td>windows-app-id</td><td>The app id associated with the application</td><td>Needed for the Windows 8 backend <a href="http://msdn.microsoft.com/en-us/library/windows/apps/dd378459.aspx">See MSDN</a></td></tr>
      * </table>
-     * @return the hints
      */
     Hint &hints();
+
+    /**
+     * Same as hints
+     * @see hints
+     */
     const Hint &constHints() const;
 private:
      QExplicitlySharedDataPointer<ApplicationData> d;

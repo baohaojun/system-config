@@ -35,7 +35,7 @@ SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Hint &);
 namespace Snore
 {
 /**
- * Hint contains extra information for Notifications and Applications
+ * Hint contains extra information accesible by key
  */
 
 class SNORE_EXPORT Hint
@@ -43,12 +43,49 @@ class SNORE_EXPORT Hint
 public:
     Hint();
 
+    /**
+     * Sets the value for the key
+     * @param key the key
+     * @param value the value
+     */
     void setValue(const QString &key, const QVariant &value);
+
+    /**
+     * The associated value of the key if present, returns the default value otherwise.
+     * @param key the key
+     * @param defaultValue the fallback value
+     */
     QVariant value(const QString & key, const QVariant & defaultValue = QVariant() ) const;
+
+    /**
+     *
+     * @param key the key
+     * @return whether the key is set
+     */
     bool contains ( const QString & key ) const;
 
+    /**
+     * Sets the value for the key depending on the owner
+     * @param owner the owner
+     * @param key the key
+     * @param value the value
+     */
     void setPrivateValue(const void *owner, const QString &key, const QVariant &value);
+
+    /**
+     * The associated value of the key if present, returns the default value otherwise.
+     * @param owner the owner
+     * @param key the key
+     * @param defaultValue the fallback value
+     */
     QVariant privateValue(const void *owner, const QString & key, const QVariant & defaultValue = QVariant() ) const;
+
+    /**
+     *
+     * @param owner the owner
+     * @param key the key
+     * @return whether the key is set
+     */
     bool containsPrivateValue(const void *owner, const QString & key ) const;
 
 private:

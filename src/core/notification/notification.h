@@ -79,7 +79,6 @@ public:
     /**
      * The copy operator
      * @param other
-     * @return
      */
     Notification &operator=(const Notification &other);
     ~Notification();
