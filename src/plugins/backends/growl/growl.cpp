@@ -58,7 +58,7 @@ bool Growl::initialize(SnoreCore *snore)
     }
     catch(const std::exception& e)
     {
-        qWarning() << e.what();
+        snoreDebug( SNORE_WARNING ) << e.what();
         delete m_defaultGNTP;
         m_defaultGNTP = NULL;
         return false;
@@ -100,7 +100,7 @@ void Growl::slotRegisterApplication(const Application &application)
         growl->regist(alerts);
     }catch(const std::exception& e)
     {
-        qWarning() << e.what();
+        snoreDebug( SNORE_WARNING ) << e.what();
     }
     m_applications.insert(application.name(),growl);
 }
@@ -135,7 +135,7 @@ void Growl::slotNotify(Notification notification)
     }
     catch(const std::exception& e)
     {
-        qWarning() << e.what();
+        snoreDebug( SNORE_WARNING ) << e.what();
     }
     startTimeout(notification);
 }

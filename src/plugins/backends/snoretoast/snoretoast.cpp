@@ -119,7 +119,7 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
         break;
     case -1:
         //failed
-        qWarning() << "SnoreToast failed to display " << n << p->readAll();
+        snoreDebug( SNORE_WARNING ) << "SnoreToast failed to display " << n << p->readAll();
         break;
     }
 

@@ -53,5 +53,4 @@ private:
 #define SNORE_DEBUG 3
 #define SNORE_INFO 2
 #define SNORE_WARNING 1
-#define SNORE_LOG 0
 #endif // LOG_H
