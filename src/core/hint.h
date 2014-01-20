@@ -34,13 +34,14 @@ SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Hint &);
 
 namespace Snore
 {
-
+/**
+ * Hint contains extra information for Notifications and Applications
+ */
 
 class SNORE_EXPORT Hint
 {
 public:
     Hint();
-    Hint(const Hint &other);
 
     void setValue(const QString &key, const QVariant &value);
     QVariant value(const QString & key, const QVariant & defaultValue = QVariant() ) const;
@@ -49,13 +50,13 @@ public:
     void setPrivateValue(const void *owner, const QString &key, const QVariant &value);
     QVariant privateValue(const void *owner, const QString & key, const QVariant & defaultValue = QVariant() ) const;
     bool containsPrivateValue(const void *owner, const QString & key ) const;
-    
+
 private:
     QVariantHash m_data;
     QHash<QPair<const void*,QString>, QVariant> m_privateData;
 
     friend SNORE_EXPORT QDebug (::operator<<) ( QDebug, const Snore::Hint &);
-    
+
 };
 
 

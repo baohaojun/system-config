@@ -167,12 +167,6 @@ public:
     bool primaryBackendSupportsRichtext();
 
     /**
-     * @deprecated Use Application::hints() instead
-     * @return a Hint object which contains extra information used by the backends etc.
-     */
-    SNORE_DEPRECATED Hint &hints();
-
-    /**
      *
      * @return a pointer to the private class, for internal use only.
      */

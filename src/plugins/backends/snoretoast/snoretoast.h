@@ -16,12 +16,13 @@ public:
 
 public slots:
     void slotNotify(Snore::Notification notification);
+    void slotRegisterApplication(const Snore::Application &application);
 
 private slots:
     void slotToastNotificationClosed(int code, QProcess::ExitStatus);
 
 private:
-    QString m_appID;
+    QString appId(const Snore::Application &application);
 
 
 };

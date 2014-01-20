@@ -24,21 +24,17 @@ Hint::Hint()
 {
 }
 
-Hint::Hint(const Hint &other):
-    m_data(other.m_data)
-{
-}
-
 void Hint::setValue(const QString &key, const QVariant &value)
 {
-    m_data[key] = value;
+    m_data.insert(key.toLower(), value);
 }
 
-QVariant Hint::value(const QString &key, const QVariant &defaultValue) const
+QVariant Hint::value(const QString &k, const QVariant &defaultValue) const
 {
+    QString key(k.toLower());
     if(m_data.contains(key))
     {
-        return m_data[key];
+        return m_data.value(key);
     }
     else
     {
@@ -48,7 +44,32 @@ QVariant Hint::value(const QString &key, const QVariant &defaultValue) const
 
 bool Hint::contains(const QString &key) const
 {
-    return m_data.contains(key);
+    return m_data.contains(key.toLower());
+}
+
+void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value)
+{
+    m_privateData.insert(QPair<const void*,QString>(owner,key.toLower()), value);
+}
+
+
+QVariant Hint::privateValue(const void *owner, const QString &k, const QVariant &defaultValue) const
+{
+    QPair<const void*,QString> key(owner,k.toLower());
+    if(m_privateData.contains(key))
+    {
+        return m_privateData.value(key);
+    }
+    else
+    {
+        return defaultValue;
+    }
+}
+
+
+bool Hint::containsPrivateValue(const void *owner, const QString &key) const
+{
+    return m_privateData.contains(QPair<const void*,QString>(owner,key.toLower()));
 }
 
 QDebug operator<<( QDebug debug, const Snore::Hint &hint )
@@ -72,30 +93,4 @@ QDebug operator<<( QDebug debug, const Snore::Hint &hint )
     }
     debug << ")" ;
     return debug.maybeSpace();
-}
-
-
-void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value)
-{
-    m_privateData.insert(QPair<const void*,QString>(owner,key), value);
-}
-
-
-QVariant Hint::privateValue(const void *owner, const QString &k, const QVariant &defaultValue) const
-{
-    QPair<const void*,QString> key(owner,k);
-    if(m_privateData.contains(key))
-    {
-        return m_privateData.value(key);
-    }
-    else
-    {
-        return defaultValue;
-    }
-}
-
-
-bool Hint::containsPrivateValue(const void *owner, const QString &key) const
-{
-    return m_privateData.contains(QPair<const void*,QString>(owner,key));
 }

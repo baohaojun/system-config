@@ -60,7 +60,6 @@ private slots:
 
 private:
     SnoreCore *q_ptr;
-    Hint m_hints;
 
     QHash<QString,Application> m_applications;
 

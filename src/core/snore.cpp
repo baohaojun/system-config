@@ -263,12 +263,6 @@ bool SnoreCore::primaryBackendSupportsRichtext()
     return d->m_notificationBackend->supportsRichtext();
 }
 
-Hint &SnoreCore::hints()
-{
-    Q_D(SnoreCore);
-    return d->m_hints;
-}
-
 const SnoreCorePrivate *SnoreCore::d()
 {
     Q_D(SnoreCore);
