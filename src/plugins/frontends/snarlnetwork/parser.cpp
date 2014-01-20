@@ -89,7 +89,7 @@ void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
             text = value;
             break;
         case ICON:
-            icon = value;
+            icon = Icon(value);
             break;
         case CLASS:
             alertName = value;
@@ -147,14 +147,7 @@ void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
             snoreDebug( SNORE_DEBUG )<<"Error registering alert with empty name";
             break;
         }
-        if(title.isEmpty())
-        {
-            alert = Alert(alertName, alertName, icon);
-        }
-        else
-        {
-            alert = Alert(alertName, title, icon);
-        }
+        alert = Alert(alertName, icon);
         app.addAlert(alert);
         break;
     case REGISTER:

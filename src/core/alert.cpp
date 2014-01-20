@@ -26,8 +26,8 @@ Alert::Alert() :
     d(NULL)
 {}
 
-Alert::Alert (const QString &name, const QString &title, const Icon &icon, bool active):
-    d(new AlertData(name, title, icon, active))
+Alert::Alert (const QString &name, const Icon &icon, bool active):
+    d(new AlertData(name, icon, active))
 {}
 
 Alert::Alert(const Alert &other):
@@ -47,15 +47,9 @@ Alert::~Alert()
 
 }
 
-
 QString Alert::name() const
 {
     return d->m_name;
-}
-
-QString Alert::title() const
-{
-    return d->m_title;
 }
 
 const Icon &Alert::icon() const
@@ -78,7 +72,7 @@ QDebug operator<<(QDebug debug, const Alert &alert)
 {
     if(alert.isValid())
     {
-        debug << "Snore::Alert(" << alert.name() << ", " << alert.title() << ")" ;
+        debug << "Snore::Alert(" << alert.name() << ")" ;
     }
     else
     {

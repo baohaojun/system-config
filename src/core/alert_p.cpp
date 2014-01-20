@@ -21,9 +21,8 @@
 
 using namespace Snore;
 
-AlertData::AlertData(const QString &name, const QString &title, const Icon &icon, bool active):
+AlertData::AlertData(const QString &name, const Icon &icon, bool active):
     m_name(name),
-    m_title(title),
     m_icon(icon),
     m_active(active)
 {

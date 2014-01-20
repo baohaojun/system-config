@@ -113,8 +113,8 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
 #else
         Icon appIcon(":/root/images/freedesktop-dbus.png");
 #endif
-        Alert alert("DBus Alert","DBus Alert",appIcon);
-        app = Application(app_name,appIcon);
+        Alert alert("DBus Alert", appIcon);
+        app = Application(app_name, appIcon);
         app.addAlert(alert);
         snore()->registerApplication(app);
     }

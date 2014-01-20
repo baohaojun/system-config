@@ -32,8 +32,8 @@ using namespace Snore;
 TrayIcon::TrayIcon():
     m_trayIcon(new QSystemTrayIcon(QIcon(":/root/snore.png"))),
     m_app("SnoreNotify Test", Icon(":/root/snore.png")),
-    m_alert("Default")
-{	
+    m_alert("Default",Icon(":/root/snore.png"))
+{
     m_app.addAlert(m_alert);
 }
 

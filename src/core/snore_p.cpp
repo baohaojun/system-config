@@ -54,7 +54,7 @@ SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
     m_trayIcon(trayIcon),
     m_defaultApp("SnoreNotify",Icon(":/root/snore.png"))
 {
-    m_defaultApp.addAlert(Alert("Default"));
+    m_defaultApp.addAlert(Alert("Default",Icon(":/root/snore.png")));
 }
 
 SnoreCorePrivate::~SnoreCorePrivate()

@@ -34,13 +34,12 @@ class SNORE_EXPORT Alert
     friend class AlertData;
 public:
     Alert();
-    explicit Alert(const QString &name, const QString &title="", const Icon &icon = Icon(":/root/snore.png"), bool active=true );
+    explicit Alert(const QString &name, const Icon &icon, bool active=true );
     Alert(const Alert &other);
     Alert &operator=(const Alert &other);
     ~Alert();
 
     QString name() const;
-    QString title() const;
     const Icon &icon() const;
     bool isActive() const;
     bool isValid() const;

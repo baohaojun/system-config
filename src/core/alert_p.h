@@ -32,11 +32,10 @@ class AlertData : public QSharedData
 {
     friend class Alert;
 public:
-    AlertData(const QString &name, const QString &title, const Icon &icon, bool active);
+    AlertData(const QString &name, const Icon &icon, bool active);
     ~AlertData();
 
     QString m_name;
-    QString m_title;
     Icon m_icon;
     bool m_active;
 

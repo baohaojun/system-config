@@ -30,16 +30,19 @@ namespace Snore{
 SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Icon &);
 
 namespace Snore{
-
 class IconData;
 
-
+/**
+ * Icon contains an image for Notifications.
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
 class SNORE_EXPORT Icon
 {
 public:
     Icon();
     Icon(const QImage &img);
-    Icon(const class QString &url);
+    explicit Icon(const QString &url);
+
     Icon(const Icon &other);
     Icon &operator=(const Icon &other);
     ~Icon();
