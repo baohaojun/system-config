@@ -1,4 +1,9 @@
 #!/bin/bash
 
+. ~/.renew-xauth
 xset b off
-xscreensaver-command -lock&
+if xscreensaver-command -lock 2>&1 | grep 'no screensaver is running on display'; then
+    xscreensaver -no-splash&
+    sleep 1
+    xscreensaver-command -lock
+fi

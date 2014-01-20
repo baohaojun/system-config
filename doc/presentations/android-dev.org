@@ -1,0 +1,220 @@
+#+Latex: \AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
+#+Latex: \begin{CJK*}{UTF8}{simsun}
+#+Latex: \CJKtilde
+
+
+#+TITLE:     Android网络和数据
+#+AUTHOR:    包昊军（钧钩）
+#+EMAIL:     baohaojun@gmail.com
+#+DATE:      2014-01-20
+#+LATEX_CLASS_OPTIONS: [presentation,CJKbookmarks]
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:2 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:
+#+LINK_HOME:
+
+#+LaTeX_CLASS: beamer
+#+MACRO: BEAMERMODE presentation
+#+BEAMER_THEME: Berkeley
+#+BEAMER_COLOR_THEME: spruce
+#+MACRO: BEAMERSUBJECT RMRF
+#+MACRO: BEAMERINSTITUTE Alibaba
+
+* 前情回顾
+
+** 上节内容
+*** ListView & Adapter
+*** 实现banner和列表视图List的同时滑动
+*** 删除列表中一行
+*** 双列列表
+
+** 往期回顾
+*** Android系统和环境
+*** Activity等四大组件
+*** ListView
+* 课程目的
+** 课程目的
+*** 钧钩包的工具包
+*** 网络编程介绍
+*** UI主线程和联网线程
+*** Android文件系统介绍
+*** 数据存储机制
+*** 数据传递、共享
+
+* 网络和数据
+** 网络编程介绍
+*** Socket（套接字）
+- Tcp，Udp，Unix Domain
+- 我的输入法编程
+
+*** HTTP通讯
+- HttpURLConnection
+- HttpClient
+
+*** WebView
+- 频繁变化，或轻交互
+** 把.bashrc和.emacs/.vimrc等文件放到github上管理
+
+*** 我的system-config项目和衍生项目
+
+两条命令配好一个Debian/Ubuntu系统
+
+* Git使用的各种工作流
+
+
+** 新瓶装旧水
+
+***                                                                             :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.7
+    :END:
+If your developers are already comfortable with Subversion, the
+Centralized Workflow lets you experience the benefits of Git without
+having to adapt to an entirely new process. It also serves as a
+friendly transition into more Git-oriented workflows.
+
+[[https://www.atlassian.com/git/workflows][Learn more»]]
+
+***                                                                             :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.3
+    :END:
+#+caption: 中央集权（svn）式工作流
+#+label: git-workflow-svn
+[[~/system-config/doc/presentations/git-workflow-svn.png]]
+
+
+** 分支流
+
+***                                                                             :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.7
+    :END:
+The Feature Branch Workflow builds on the Centralized Workflow by
+encapsulating new features into dedicated branches. This enables the
+use of pull requests as a means to discuss changes before they’re
+integrated into the official project.
+
+[[https://www.atlassian.com/git/workflows][Learn more»]]
+***                                                                             :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.3
+    :END:
+   #+caption: 拉出一条条的开发分支
+   #+label: git-workflow-branch
+   [[~/system-config/doc/presentations/git-workflow-feature_branch.png]]
+
+
+** Git流
+
+***                                                                             :B_block:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :END:
+The Gitflow Workflow streamlines the release cycle by using isolated
+branches for feature development, release preparation, and
+maintenance. Its strict branching model also lends some much needed
+structure to larger projects.
+
+[[https://www.atlassian.com/git/workflows][Learn more»]]
+
+***                                                                             :B_block:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :END:
+
+  #+ATTR_LATEX: :width 0.5\textwidth
+  #+caption: Git流
+  #+label: fig:git-flow
+  [[~/system-config/doc/presentations/git-workflows-gitflow.png]]
+
+** 社交流
+
+***                                                                             :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.7
+    :END:
+The Forking Workflow is a distributed workflow that takes full
+advantage of Git’s branching and cloning capabilities. It provides a
+safe, reliable way to manage large teams of developers and to accept
+commits from untrusted contributors.
+
+[[https://www.atlassian.com/git/workflows][Learn more»]]
+
+
+***                                                                             :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.3
+    :END:
+
+    #+caption: Forking Workflow
+    #+label: fig:forking-workflow
+    #+ATTR_LATEX: :width .9\linewidth
+    [[~/system-config/doc/presentations/git-workflow-forking.png]]
+
+** 最适合我们的流
+
+每个团队都有自己的特色，生硬地套某种流可能适得其反，所以需要很好的思考，
+不断地调整，找到最适合的流程。
+
+* 一些常见用法和问题（写自己的wrapper）
+
+** git与svn的集成
+
+** 我的git脚本
+*** git-pull-mac
+*** git-push-mac
+*** git-interactive-add
+
+** git在协作环境下容易引发的问题
+
+*** 不提交至上游，导致常常要做rebase
+*** 不能很好的review。
+做得最好的review是Linux内核（用邮件review的意义？邮件是通用的，文件是通
+用的，计算机是通用的...；新手可以查看邮件列表）
+*** 分支切来切去搞得一些commit找不到了？用git reflog
+*** 有一个bug搞得很头大？用git bisect二分查找
+*** 有一行代码想看看是哪个二弟写的？用git blame
+
+** git与repo的集成
+
+*** 我的repo脚本
+
+* Wait，进广告
+
+** beagrep，0.28秒grep八G源代码
+
+*** 查找一个数组的时间复杂度是O(n)，排个序后用二分查找，复杂度是？
+*** grep一个代码库的时间复杂度是~O(n)，建个搜索引擎的索引后再查找，复杂度是？
+
+** skeleton-complete.el
+
+天下武功，唯快不破——你打字再快有什么用？
+
+*** re
+*** my-select
+*** select-args
+
+** Ajoke：在Emacs下做Android应用编程
+
+* GTD
+
+** 列个列表
+
+*** 列表比什么都强，尤其如果是个org-mode下的TODO列表的话
+
+*** JMZ开发Mozilla的方法就是列个表，然后一项项叉掉
+
+
+#+Latex: \end{CJK*}
+
+# Local Variables: #
+# eval: (org-beamer-mode) #
+# eval: (mmm-mode 1) #
+# End: #
