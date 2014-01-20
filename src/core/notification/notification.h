@@ -99,7 +99,7 @@ inline QDebug operator<< ( QDebug debug, const Snore::Notification &noti )
 {
     if(noti.isValid())
     {
-        debug << "Snore::Notification(" << noti.title() << ", " << noti.text() << "," << noti.id() << ", " << noti.constHints() << ")" ;
+        debug << "Snore::Notification(" << noti.title() << ", " << noti.text() << "," << noti.id() << ")" ;
     }
     else
     {

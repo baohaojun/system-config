@@ -33,10 +33,14 @@ public:
 
     static inline int debugLvl()
     {
+        if(s_debugLevel == -1)
+        {
+            s_debugLevel = qgetenv("SNORE_DEBUG_LVL").toInt();
+        }
         return s_debugLevel;
     }
 
-    static setDebugLvl(int i);
+    static void setDebugLvl(int i);
 
 private:
     static int s_debugLevel;
@@ -49,4 +53,5 @@ private:
 #define SNORE_DEBUG 3
 #define SNORE_INFO 2
 #define SNORE_WARNING 1
+#define SNORE_LOG 0
 #endif // LOG_H

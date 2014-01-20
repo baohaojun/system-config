@@ -94,7 +94,7 @@ QDebug operator<< ( QDebug debug, const Snore::Application &app )
         {
             debug << a << ", ";
         }
-        debug << app.constHints() << ")" ;
+        debug << ")" ;
     }
     else
     {

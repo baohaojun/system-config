@@ -53,7 +53,24 @@ bool Hint::contains(const QString &key) const
 
 QDebug operator<<( QDebug debug, const Snore::Hint &hint )
 {
-    debug << "Snore::Hint(" << hint.m_data << ", " << hint.m_privateData  << ")" ;
+    debug << "Snore::Hint(";
+    for(QVariantHash::const_iterator it = hint.m_data.constBegin();it != hint.m_data.constEnd();++it)
+    {
+        if(it != hint.m_data.constBegin())
+        {
+            debug << ", ";
+        }
+        debug << "(" << it.key() << ", " << it.value();
+    }
+    for(QHash< QPair<const void*, QString>, QVariant>::const_iterator it = hint.m_privateData.constBegin();it != hint.m_privateData.constEnd();++it)
+    {
+        if(it != hint.m_privateData.constBegin())
+        {
+            debug << ", ";
+        }
+        debug << "(" << it.key() << ", " << it.value();
+    }
+    debug << ")" ;
     return debug.maybeSpace();
 }
 

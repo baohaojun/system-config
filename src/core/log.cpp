@@ -21,7 +21,7 @@
 #include <iostream>
 
 using namespace Snore;
-int Log::s_debugLevel = qgetenv("SNORE_DEBUG_LVL").toInt();
+int Log::s_debugLevel = -1;
 
 Log::Log(int lvl):
     QDebug(&m_msg),
@@ -37,7 +37,7 @@ Log::~Log()
     }
 }
 
-Log::setDebugLvl(int i)
+void Log::setDebugLvl(int i)
 {
     s_debugLevel = i;
 }
