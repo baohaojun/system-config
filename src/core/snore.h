@@ -176,13 +176,16 @@ public:
 signals:
     /**
      * This signal is emitted when an action on the Notification was performed.
+     * Some notification systems don't support actions but will report one if the notification was clicked,
+     * in this case the Action will be invalid.
+     * @todo maybe introduce a pecial action state for this case
      * @see Action
      */
     void actionInvoked( Snore::Notification );
 
     /**
      * This signal is emitted when a Notification is closed.
-     * @see NotificationEnums::CloseReasons
+     * @see Notification::CloseReasons
      */
     void notificationClosed(Snore::Notification );
 

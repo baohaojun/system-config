@@ -45,18 +45,54 @@ class SNORE_EXPORT Notification
 {
     friend class NotificationData;
 public:
+
+    /**
+     * The reason why the Notification was closed.
+     */
     enum CloseReason
     {
+       /**
+        * The default value, the notification was not closed.
+        */
         NONE = 0x0,
+
+        /**
+         * The Notification was closed becaouse it timed out.
+         */
         TIMED_OUT = 0x1,
+
+        /**
+         * The Notification was dismissed by the user, close button.
+         */
         DISMISSED = 0x2,
+
+        /**
+         * The Notification was closed after an action was invoked.
+         * @see actionInvoked()
+         */
         CLOSED = 0x4
     };
     Q_DECLARE_FLAGS(CloseReasons, CloseReason)
 
-    enum Priority{
+    /**
+     * The Priority for the Notification.
+     * Some notification systems support this flag to filter notifications or indicate different prioritys by color.
+     */
+    enum Priority
+    {
+        /**
+         * Indicates a low priority.
+         */
         LOW = -1,
+
+        /**
+         * The default priority.
+         */
         NORMAL = 0,
+
+        /**
+         * Indicates a priority above the normal level.
+         */
         HIGH = +1
     };
     Q_DECLARE_FLAGS(Prioritys, Priority)

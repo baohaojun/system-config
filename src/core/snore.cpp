@@ -106,6 +106,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             snoreDebug( SNORE_DEBUG )<<"dont load "<<info->file()<<info->type();
         }
     }
+    snoreDebug( SNORE_INFO ) << "Loaded Plugins:" << d->m_notificationBackends << d->m_Frontends << d->m_secondaryNotificationBackends << d->m_plugins;
 }
 
 void SnoreCore::broadcastNotification ( Notification notification )

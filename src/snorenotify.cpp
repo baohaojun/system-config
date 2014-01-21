@@ -29,6 +29,7 @@
 #include <QSystemTrayIcon>
 #include <QSettings>
 
+
 #include <iostream>
 #include <stdlib.h>
 

@@ -28,14 +28,42 @@
 namespace  Snore
 {
 
+/**
+ * Action contains informations about possible interactions with the notification system.
+ * Some notification systems don't support actions but will report one if the notification was clicked,
+ * in this case an invalid Action will be emitted.
+ * @see isValid
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
+
 class SNORE_EXPORT Action
 {
 public:
     Action();
+
+    /**
+     * Creates an Action
+     * @param id can be used to identify the action
+     * @param name will be displayed in the notification system.
+     */
     Action(int id,QString name);
 
+    /**
+     *
+     * @return the id
+     */
     int id() const;
+
+    /**
+     *
+     * @return the name
+     */
     QString name() const;
+
+    /**
+     *
+     * @return whether this is a valid Action
+     */
     bool isValid() const;
 
 private:

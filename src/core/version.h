@@ -9,19 +9,48 @@
 
 namespace Snore{
 
-class SNORE_EXPORT Version{
+/**
+ * Version contains relevant version informations.
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
+class SNORE_EXPORT Version
+{
 public:
-static const QString version();
+    /**
+     *
+     * @return the version "major().minor().suffix()"
+     */
+    static const QString version();
 
-static const QString major();
+    /**
+     *
+     * @return the major version
+     */
+    static const QString major();
 
-static const QString minor();
+    /**
+     *
+     * @return the minor version
+     */
+    static const QString minor();
 
-static const QString suffix();
+    /**
+     *
+     * @return the suffix ("pre", "alpha", "beta", "")
+     */
+    static const QString suffix();
 
-static const QString revision();
+    /**
+     *
+     * @return the git revision, can be empty in a release
+     */
+    static const QString revision();
 
-static const QString buildTime();
+    /**
+     *
+     * @return the build time
+     */
+    static const QString buildTime();
 
 };
 
