@@ -11,7 +11,6 @@ set ( Notification_HDR
         notification_p.h
         notificationaction.h
         icon.h
-        notificationenums.h
         )
 
 install(FILES ${Notification_HDR} DESTINATION include/snore/core/notification)

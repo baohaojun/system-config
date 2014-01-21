@@ -64,7 +64,7 @@ void  FreedesktopBackend::slotNotify ( Notification noti )
         hints["image_data"] = QVariant::fromValue(image);
     }
 
-    if(noti.priority() != NotificationEnums::Prioritys::NORMAL)
+    if(noti.priority() != Notification::NORMAL)
     {
         hints["urgency"] = (char)noti.priority()+1;
     }
@@ -121,7 +121,34 @@ void FreedesktopBackend::slotCloseNotification ( Notification notification )
 
 void FreedesktopBackend::slotNotificationClosed ( const uint &id,const uint &reason )
 {
-    NotificationEnums::CloseReasons::closeReasons closeReason = NotificationEnums::CloseReasons::closeReasons(reason);
+    /*
+     *
+     *  The reason the notification was closed.
+     *
+     *  1 - The notification expired.
+     *
+     *  2 - The notification was dismissed by the user.
+     *
+     *  3 - The notification was closed by a call to CloseNotification.
+     *
+     *  4 - Undefined/reserved reasons.
+    */
+    Notification::CloseReasons closeReason;
+    switch(reason)
+    {
+    case(1):
+        closeReason = Notification::TIMED_OUT;
+        break;
+    case(2):
+        closeReason = Notification::DISMISSED;
+        break;
+    case(3):
+        closeReason = Notification::CLOSED;
+        break;
+    default:
+        closeReason = Notification::NONE;
+    }
+
     snoreDebug( SNORE_DEBUG ) << id << "|" << closeReason << reason;
     if(id == 0)
     {
