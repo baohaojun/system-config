@@ -50,6 +50,8 @@ public:
 
     void notificationActionInvoked(Notification notification) const;
 
+    bool setBackendIfAvailible(const QString & backend);
+
 signals:
     void applicationRegistered(const Snore::Application&);
     void applicationDeregistered(const Snore::Application&);

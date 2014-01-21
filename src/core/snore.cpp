@@ -191,37 +191,28 @@ bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
 
 bool SnoreCore::setPrimaryNotificationBackend()
 {
-    QStringList backends = notificationBackends();
+    Q_D(SnoreCore);
 #ifdef Q_OS_WIN
-    if(QSysInfo::windowsVersion() == QSysInfo::WV_WINDOWS8 && backends.contains("Windows 8"))
+    if(QSysInfo::windowsVersion() == QSysInfo::WV_WINDOWS8 && d->setBackendIfAvailible("Windows 8"))
     {
-        if(setPrimaryNotificationBackend("Windows 8"))
-            return true;
+        return true;
     }
-    if( backends.contains("Growl"))
+    if(d->setBackendIfAvailible("Growl"))
     {
-        if(setPrimaryNotificationBackend("Growl"))
-            return true;
+        return true;
     }
-    if( backends.contains("Snarl"))
+    if(d->setBackendIfAvailible("Snarl"))
     {
-        if(setPrimaryNotificationBackend("Snarl"))
-            return true;
+        return true;
     }
 #elif defined(Q_OS_LINUX)
-    if( backends.contains("FreedesktopNotification"))
-    {
-        return setPrimaryNotificationBackend("FreedesktopNotification");
-    }
+        return d->setBackendIfAvailible("FreedesktopNotification");
 #elif defined(Q_OS_MAC)
-    if( backends.contains("Growl"))
-    {
-        return setPrimaryNotificationBackend("Growl");
-    }
+        return d->setBackendIfAvailible("Growl");
 #endif
-    if( trayIcon() && backends.contains("SystemTray"))
+    if( trayIcon() && d->setBackendIfAvailible("SystemTray"))
     {
-        return setPrimaryNotificationBackend("SystemTray");
+        return true;
     }
     return false;
 }
