@@ -2,4 +2,4 @@
 # name: toast
 # key: toast
 # --
-Toast.makeText(${1:this}, ${2:"hello world"}, Toast.LENGTH_SHORT).show();
+Toast.makeText(${1:$$(format "%s.this" (file-name-sans-extension (bhj-file-basename)))}, String.format("${2:hello world}"$3), Toast.LENGTH_SHORT).show();

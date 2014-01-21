@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: size
+# key: size
+# --
+android:layout_width="${1:$$(yas-choose-value "wrap_content" "match_parent")}"
+android:layout_height="${2:$$(yas-choose-value "wrap_content" "match_parent")}"

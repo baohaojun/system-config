@@ -3,7 +3,7 @@
 set -e
 
 if test $# = 1 -a "$1" = select; then
-    select-output-line cat ~/.logs/$(basename $0).rec | bash
+    adb shell am start -n "$(select-output-line cat ~/.logs/$(basename $0).rec)"
     exit
 fi
 
@@ -13,7 +13,11 @@ manifest=$(lookup-file AndroidManifest.xml)
 package=$(xmlstarlet sel -B -t -m //manifest -v @package $manifest)
 
 activities=(
-    $(xmlstarlet sel -N android="http://schemas.android.com/apk/res/android" -B -t -m //activity -n -v @android:name -o ' ' -m intent-filter -m category -v @android:name -o ' ' ${manifest:-AndroidManifest.xml}|grep android.intent.category.LAUNCHER|pn 1)
+    $(
+        (
+            grep ^$package ~/.logs/$(basename $0).rec 2>/dev/null | perl -npe 's!/!!g'
+            xmlstarlet sel -N android="http://schemas.android.com/apk/res/android" -B -t -m //activity -n -v @android:name -o ' ' -m intent-filter -m category -v @android:name -o ' ' ${manifest:-AndroidManifest.xml}|grep android.intent.category.LAUNCHER|pn 1) | uniq-even-non-ajacent
+    )
 )
 
 echo $activities
@@ -26,7 +30,7 @@ function doit() {
         cat ~/.logs/$(basename $0).rec 2>/dev/null || true
     ) | uniq-even-non-ajacent > ~/.logs/$(basename $0).rec.$$
     mv ~/.logs/$(basename $0).rec.$$ ~/.logs/$(basename $0).rec
-    "$@"
+    adb shell am start -n "$@"
 }
 
 if test ${#activities[@]} -gt 1; then
@@ -35,13 +39,13 @@ if test ${#activities[@]} -gt 1; then
 fi
 if [[ $start =~ ^$package ]]; then
     echo adb shell am start -n ${start/#$package/$package/}
-    adb shell am start -n ${start/#$package/$package/}
+    doit ${start/#$package/$package/}
 else
     echo adb shell am start -n $package/$start
     if ! [[ $start =~ \. ]]; then
-        doit adb shell am start -n $package/.$start
+        doit $package/.$start
     else
-        doit adb shell am start -n $package/$start
+        doit $package/$start
     fi
 fi
 #adb shell am start -n com.baohaojun.crossdict/.CrossDictionaryActivity
