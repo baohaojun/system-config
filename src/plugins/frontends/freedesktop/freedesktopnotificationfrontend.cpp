@@ -171,8 +171,8 @@ QStringList FreedesktopFrontend::GetCapabilities()
 
 QString FreedesktopFrontend::GetServerInformation(QString& vendor, QString& version, QString& specVersion)
 {
-    vendor = "Snore";
+    vendor = "SnoreNotify";
     version = Version::version();
-    specVersion = "0";
-    return "Snore";
+    specVersion = "0.9";
+    return "SnoreNotify";
 }

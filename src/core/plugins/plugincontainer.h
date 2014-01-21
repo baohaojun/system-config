@@ -40,16 +40,16 @@ class SNORE_EXPORT PluginContainer{
 public:
     static QHash<QString,PluginContainer*> pluginCache();
 
-    PluginContainer(QString fileName,QString pluginName,SnorePlugin::PluginType type);
+    PluginContainer(QString fileName, QString pluginName, SnorePlugin::PluginTypes type);
     ~PluginContainer();
     SnorePlugin *load();
     void unload();
     const QString &file();
     const QString &name();
-    SnorePlugin::PluginType type();
+    SnorePlugin::PluginTypes type();
 
 
-    static SnorePlugin::PluginType typeFromString(const QString &t);
+    static SnorePlugin::PluginTypes typeFromString(const QString &t);
     static const QStringList &types();
 
 private:
@@ -69,7 +69,7 @@ private:
 
     QString m_pluginFile;
     QString m_pluginName;
-    SnorePlugin::PluginType m_pluginType;
+    SnorePlugin::PluginTypes m_pluginType;
     QPluginLoader m_loader;
 };
 }

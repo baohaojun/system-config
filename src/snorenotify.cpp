@@ -55,7 +55,7 @@ SnoreNotify::~SnoreNotify(){
 }
 
 void SnoreNotify::load(){
-    if(m_settings.contains("notificationBackend"))
+    if(m_settings.contains("notificationBackend") && !m_settings.value("notificationBackend").toString().isEmpty())
     {
         m_snore->setPrimaryNotificationBackend(m_settings.value("notificationBackend").toString());
     }

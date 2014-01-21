@@ -45,6 +45,8 @@ public:
         PLUGIN = 0x8
     };
     Q_DECLARE_FLAGS(PluginTypes, PluginType)
+    Q_ENUMS(PluginType)
+
 
     SnorePlugin ( const QString &name);
     virtual ~SnorePlugin();

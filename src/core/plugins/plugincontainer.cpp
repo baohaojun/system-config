@@ -27,13 +27,14 @@
 
 #include <QDir>
 #include <QDebug>
+#include <QMetaEnum>
 
 using namespace Snore;
 
 QHash<QString,PluginContainer*> PluginContainer::s_pluginCache = QHash<QString,PluginContainer*>() ;
 
 
-PluginContainer::PluginContainer(QString fileName, QString pluginName, SnorePlugin::PluginType type):
+PluginContainer::PluginContainer(QString fileName, QString pluginName, SnorePlugin::PluginTypes type):
     m_pluginFile(fileName),
     m_pluginName(pluginName),
     m_pluginType(type),
@@ -72,39 +73,28 @@ const QString & PluginContainer::name()
     return m_pluginName;
 }
 
-SnorePlugin::PluginType PluginContainer::type()
+SnorePlugin::PluginTypes PluginContainer::type()
 {
     return m_pluginType;
 }
 
-SnorePlugin::PluginType PluginContainer::typeFromString(const QString &t)
+SnorePlugin::PluginTypes PluginContainer::typeFromString(const QString &t)
 {
-    SnorePlugin::PluginType type = SnorePlugin::PLUGIN;
-    if(t == QLatin1String("backend"))
-    {
-        type = SnorePlugin::BACKEND;
-    }
-    else if(t == QLatin1String("secondary_backend"))
-    {
-        type = SnorePlugin::SECONDARY_BACKEND;
-    }
-    else if(t == QLatin1String("frontend"))
-    {
-        type = SnorePlugin::FRONTEND;
-    }
-    return type;
+    return (SnorePlugin::PluginTypes)SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).keyToValue(t.toUpper().toLatin1());
 }
 
 const QStringList &PluginContainer::types()
 {
-    static QStringList list;
-    if(list.isEmpty()){
-        list << "backend"
-             << "secondary_backend"
-             << "frontend"
-             << "plugin";
+    static QStringList out;
+    if(out.isEmpty())
+    {
+        QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
+        for(int i=0;i<e.keyCount();++i)
+        {
+            out << QString::fromLatin1(e.key(i)).toLower();
+        }
     }
-    return list;
+    return out;
 }
 
 
