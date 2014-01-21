@@ -357,7 +357,9 @@
 (load "bhj-set-key.el")
 (load "bhj-autoloads.el")
 (load "bhj-eval-after-load.el")
-(when (file-exists-p "~/src/github/emacs.d/init.el")
+(when (and
+       (file-exists-p "~/src/github/emacs.d/init.el")
+       (not (string= (getenv "ORG2PDF") "true")))
   (load "init.el"))
 
 (condition-case nil

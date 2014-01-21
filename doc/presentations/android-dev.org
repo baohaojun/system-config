@@ -20,7 +20,7 @@
 #+LINK_HOME:
 
 #+BEAMER_THEME: Berkeley
-#+BEAMER_COLOR_THEME: spruce
+#+BEAMER_COLOR_THEME: lily
 
 * 前情回顾
 
@@ -34,15 +34,7 @@
 *** Android系统和环境
 *** Activity等四大组件
 *** ListView
-* 课程目的
-** 课程目的
-*** 网络编程介绍
-*** UI主线程和联网线程
-*** Android文件系统介绍
-*** 数据存储机制
-*** 数据传递、共享
-
-* 网络和数据
+* 网络
 ** 网络编程介绍
 *** Socket（套接字）
 - Tcp，Udp，Unix Domain
@@ -60,17 +52,32 @@
 *** 获取一段JSON数据
 - AllIn4Demo
 - MainActivity1
+*** 会Crash
+*** 原因分析
+*** 修正方法？
 
 ** UI主线程和联网线程
 - Android编程中，需要牢记：
 
-  对网络数据流的操作是阻塞的
+  + 要区分开UI主线程和工作线程
 
-- Android实现联网的时候必须用多线程编程
+- Android网络操作必须用工作线程
+  + 为什么不能用主线程？
+
+- 工作线程不允许操作UI元素
+  + 为什么？ 操作UI元素的API都是线程不安全的，只能在一个线程中调用以保证线程安全
 
 ** 工作线程与UI主线程间通信
-
 *** runOnUiThread
+- 工作线程中调用操作UI元素的Callback函数
+*** Handler
+- 工作线程发送消息，UI线程处理消息
+- 当然UI线程也可以给自己发消息
+
+*** AsyncTask
+- 更好的封装，有准备、运行（进度）、结果三个阶段
+
+** runOnUiThread
     :PROPERTIES:
     :END:
 
@@ -83,10 +90,88 @@ new Thread(new Runnable() {
      runOnUiThread(new Runnable() {
        @Override
        public void run() {
-         // manipulate the UI elements with runOnUiThread
+         // manipulate the UI elements
+         // within runOnUiThread
          mTextView.setText(mGetJsonHelper.result);
        }
      });
    }
 }).start();
 #+END_SRC
+
+** Handler
+
+#+BEGIN_SRC java
+Handler mHandler = new Handler() {
+  public void handleMessage(Message msg) {
+    switch (msg.what) { ... }
+    super.handleMessage(msg);
+  }
+};
+new Thread(new Runnable() {
+   public void run() {
+     // do something in working thread
+     Message message = new Message();
+     message.what = 1;
+     message.setData(Bundle b);
+     mHandler.sendMessage(message);
+   }
+}).start();
+#+END_SRC
+
+** AsyncTask
+#+BEGIN_SRC java
+private class MyAsyncTask
+ extends AsyncTask<Param, Progress, Result> {
+  protected void onPreExecute()
+  {...}
+  protected Result doInBackground(Param... args)
+  { publishProgress(...); return ""; }
+  protected void onProgressUpdate(Progress... args)
+  {...}
+  protected void onPostExecute(Result parsedText) {
+    mTitleBar.startAnimation(mSlideOut);
+  }
+}
+#+END_SRC
+** 小练习
+*** 用 runOnUiThread 实现线程间交互
+*** 用 Handler 实现线程间交互
+*** 用 AsyncTask 实现线程间交互
+
+** WebView应用
+
+*** 微博、微信客户端等的网页（网络应用）
+*** CrossDict的实现（离线网页应用）
+
+* 数据
+** Android文件系统介绍
+
+*** ADB的使用
+*** Android文件系统目录结构
+*** App目录结构
+
+** 小练习
+- 用ADB安装Apk
+- 用ADB卸载Apk
+- 查看App的目录
+
+** Android系统数据存取
+*** SharedPreferences
+#+BEGIN_SRC java
+SharedPreferences spf =
+  getSharedPreferences("allin4", 0);
+spf.getInt(String key, int defValue);
+spf.edit().putFloat(String key, float value).commit();
+#+END_SRC
+
+*** File
+
+* 总结
+** 从哪里来，到哪里去
+#+Latex: \end{CJK*}
+
+# Local Variables: #
+# eval: (org-beamer-mode) #
+# eval: (mmm-mode 1) #
+# End: #

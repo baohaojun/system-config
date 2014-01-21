@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+export ORG2PDF=true
 function die() {
     echo Error: "$@"
     exit -1
@@ -22,11 +23,12 @@ fi
 
 if test $org_file = true || yes-or-no-p -y "Export from .org"; then
     exp_func=org-latex-export-to-latex
-    if grep -q 'org-beamer-mode' "${1/%.tex/.org}"; then
+    if grep -q -P 'org-beamer-mode|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
         exp_func=org-beamer-export-to-latex
     fi
     eval_arg=$(cat <<EOF
 (progn
+  (package-initialize)
   (require 'ox-latex)
   (setq org-latex-listings 'minted)
   (add-to-list 'org-latex-packages-alist '("" "minted"))
