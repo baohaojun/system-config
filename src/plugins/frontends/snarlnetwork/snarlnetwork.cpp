@@ -84,7 +84,7 @@ void SnarlNetworkFrontend::actionInvoked(Snore::Notification notification)
 }
 void SnarlNetworkFrontend::notificationClosed(Snore::Notification notification)
 {
-    if(notification.closeReason() == NotificationEnums::CloseReasons::TIMED_OUT)
+    if(notification.closeReason() == Notification::TIMED_OUT)
     {
         callback(notification, "SNP/1.1/303/Notification timed out/");
     }

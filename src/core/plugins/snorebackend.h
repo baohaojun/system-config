@@ -39,7 +39,7 @@ public:
     virtual bool initialize(SnoreCore *snore);
     virtual bool deinitialize();
 
-    void requestCloseNotification( Snore::Notification notification,NotificationEnums::CloseReasons::closeReasons reason );
+    void requestCloseNotification( Snore::Notification notification,Notification::CloseReasons reason );
 
     Snore::Notification getActiveNotificationByID(uint id);
 
@@ -61,7 +61,7 @@ private slots:
 
 protected:
     void startTimeout(Notification &notification);
-    void closeNotification(Snore::Notification,Snore::NotificationEnums::CloseReasons::closeReasons);
+    void closeNotification(Snore::Notification,Snore::Notification::CloseReasons);
     void setSupportsRichtext(bool b);
 
 private:

@@ -100,22 +100,22 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
         return;
     }
 
-    NotificationEnums::CloseReasons::closeReason reason = NotificationEnums::CloseReasons::CLOSED;
+    Notification::CloseReasons reason = Notification::CLOSED;
 
     switch(code)
     {
     case 0:
-        reason = NotificationEnums::CloseReasons::CLOSED;
+        reason = Notification::CLOSED;
         snore()->d()->notificationActionInvoked(n);
         break;
     case 1:
         //hidden;
         break;
     case 2:
-        reason = NotificationEnums::CloseReasons::DISMISSED;
+        reason = Notification::DISMISSED;
         break;
     case 3:
-        reason = NotificationEnums::CloseReasons::TIMED_OUT;
+        reason = Notification::TIMED_OUT;
         break;
     case -1:
         //failed

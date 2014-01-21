@@ -23,7 +23,6 @@
 
 #include "icon.h"
 #include "notification.h"
-#include "notificationenums.h"
 #include "../hint.h"
 
 #include <QSharedData>
@@ -38,9 +37,9 @@ class SNORE_EXPORT NotificationData : public QSharedData
 friend class Notification;
 public:
     NotificationData ( const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,
-                       int timeout,NotificationEnums::Prioritys::prioritys priority );
+                       int timeout,Notification::Prioritys priority );
 
-    NotificationData(const Notification &old,const QString &title,const QString &text,const Icon &icon,int timeout, NotificationEnums::Prioritys::prioritys priority);
+    NotificationData(const Notification &old,const QString &title,const QString &text,const Icon &icon,int timeout, Notification::Prioritys priority);
 
 
     ~NotificationData();
@@ -52,7 +51,7 @@ public:
     void setActionInvoked( const int &actionID);
 
 
-    void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
+    void setCloseReason(Notification::CloseReasons r);
 
     QTimer *timeoutTimer();
 
@@ -62,14 +61,14 @@ private:
     uint m_id;
     uint m_updateID;
     int m_timeout;
-    SnoreFrontend *m_source;    
+    SnoreFrontend *m_source;
     Application m_application;
     Alert m_alert;
     QString m_title;
     QString m_text;
     Icon m_icon;
-    NotificationEnums::Prioritys::prioritys m_priority;
-    NotificationEnums::CloseReasons::closeReasons m_closeReason;
+    Notification::Prioritys m_priority;
+    Notification::CloseReasons m_closeReason;
     Action m_actionInvoked;
     QHash<int,Action> m_actions;
     Hint m_hints;

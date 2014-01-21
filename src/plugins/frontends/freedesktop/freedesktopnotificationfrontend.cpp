@@ -93,7 +93,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
 {
     Icon icon;
     Application app;
-    NotificationEnums::Prioritys::prioritys priotity = NotificationEnums::Prioritys::NORMAL;
+    Notification::Prioritys priotity = Notification::NORMAL;
 
     if(hints.contains("image_data"))
     {
@@ -123,8 +123,9 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         app = snore()->aplications()[app_name];
     }
 
-    if (hints.contains("urgency")) {
-        priotity =  NotificationEnums::Prioritys::prioritys(hints["urgency"].toInt()-1);
+    if (hints.contains("urgency"))
+    {
+        priotity =  Notification::Prioritys(hints["urgency"].toInt()-1);
     }
 
     Notification noti;
@@ -153,7 +154,7 @@ void FreedesktopFrontend::CloseNotification(uint id)
     Notification noti = snore()->getActiveNotificationByID(id);
     if(noti.isValid())
     {
-        snore()->requestCloseNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
+        snore()->requestCloseNotification(noti,Notification::TIMED_OUT);
     }
 }
 

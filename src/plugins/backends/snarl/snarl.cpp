@@ -71,13 +71,13 @@ public:
                 notification =  m_snarl->snore()->getActiveNotificationByID(m_snarl->m_idMap[ msg->lParam]);
             }
 
-            NotificationEnums::CloseReasons::closeReasons reason = NotificationEnums::CloseReasons::NONE;
+            Notification::CloseReasons reason = Notification::NONE;
             switch(action){
             case SnarlEnums::CallbackInvoked:
-                reason = NotificationEnums::CloseReasons::CLOSED;
+                reason = Notification::CLOSED;
                 break;
             case SnarlEnums::NotifyAction:
-                reason = NotificationEnums::CloseReasons::CLOSED;
+                reason = Notification::CLOSED;
                 if(notification.isValid())
                 {
                     notification.data()->setActionInvoked(data);
@@ -85,10 +85,10 @@ public:
                 }
                 break;
             case SnarlEnums::CallbackClosed:
-                reason = NotificationEnums::CloseReasons::DISMISSED;
+                reason = Notification::DISMISSED;
                 break;
             case SnarlEnums::CallbackTimedOut:
-                reason = NotificationEnums::CloseReasons::TIMED_OUT;
+                reason = Notification::TIMED_OUT;
                 break;
                 //away stuff
             case SnarlEnums::SnarlUserAway:
@@ -209,13 +209,13 @@ void SnarlBackend::slotNotify(Notification notification){
     Snarl::V42::SnarlEnums::MessagePriority priority = Snarl::V42::SnarlEnums::PriorityUndefined;
     switch(notification.priority())
     {
-    case NotificationEnums::Prioritys::LOW:
+    case Notification::LOW:
         priority = Snarl::V42::SnarlEnums::PriorityLow;
         break;
-    case NotificationEnums::Prioritys::NORMAL:
+    case Notification::NORMAL:
         priority = Snarl::V42::SnarlEnums::PriorityNormal;
         break;
-    case NotificationEnums::Prioritys::HIGH:
+    case Notification::HIGH:
         priority = Snarl::V42::SnarlEnums::PriorityHigh;
         break;
     }

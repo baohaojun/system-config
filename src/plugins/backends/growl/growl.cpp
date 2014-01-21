@@ -49,7 +49,7 @@ bool Growl::initialize(SnoreCore *snore)
 {
     const Application &app = snore->d()->defaultApplication();
     m_defaultGNTP = new gntp(app.name().toUtf8().constData(), app.icon().localUrl().toUtf8().constData());
-    
+
     std::vector<std::string> alerts;
     alerts.push_back(app.alerts().begin()->name().toUtf8().constData());
     try
@@ -144,18 +144,18 @@ void Growl::gntpCallback(const int &id,const std::string &reason,const std::stri
 {
     //    snoreDebug( SNORE_DEBUG ) << id << QString(reason.c_str()) << QString(data.c_str());
     Notification n = s_instance->snore()->getActiveNotificationByID(id);
-    NotificationEnums::CloseReasons::closeReasons r = NotificationEnums::CloseReasons::NONE;
+    Notification::CloseReasons r = Notification::NONE;
     if(reason == "TIMEDOUT")
     {
-        r = NotificationEnums::CloseReasons::TIMED_OUT;
+        r = Notification::TIMED_OUT;
     }
     else if(reason == "CLOSED")
     {
-        r = NotificationEnums::CloseReasons::DISMISSED;
+        r = Notification::DISMISSED;
     }
     else if(reason == "CLICK")
     {
-        r = NotificationEnums::CloseReasons::CLOSED;
+        r = Notification::CLOSED;
         s_instance->snore()->d()->notificationActionInvoked(n);
     }
     s_instance->closeNotification(n,r);

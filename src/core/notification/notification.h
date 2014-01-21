@@ -21,7 +21,6 @@
 #define NOTIFICATION_H
 #include "../snore_exports.h"
 #include "icon.h"
-#include "notificationenums.h"
 #include "notificationaction.h"
 #include "../hint.h"
 #include "../application.h"
@@ -46,6 +45,22 @@ class SNORE_EXPORT Notification
 {
     friend class NotificationData;
 public:
+    enum CloseReason
+    {
+        NONE = 0x0,
+        TIMED_OUT = 0x1,
+        DISMISSED = 0x2,
+        CLOSED = 0x4
+    };
+    Q_DECLARE_FLAGS(CloseReasons, CloseReason)
+
+    enum Priority{
+        LOW = -1,
+        NORMAL = 0,
+        HIGH = +1
+    };
+    Q_DECLARE_FLAGS(Prioritys, Priority)
+
     Notification();
     /**
      * Creates a new Notification.
@@ -57,7 +72,7 @@ public:
      * @param timeout the timeout
      * @param priority the priority
      */
-    explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), Notification::Prioritys priority = Notification::NORMAL );
 
     /**
      * Creates and update Notification replacing an existing Notification
@@ -68,7 +83,7 @@ public:
      * @param timeout the timeout
      * @param priority the piority
      */
-    explicit Notification(const Notification &old,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    explicit Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Snore::Notification::Prioritys priority = Notification::NORMAL );
 
     /**
      * The copy constructor
@@ -142,7 +157,7 @@ public:
      * Some backends support priorities to indicate the urgency of the Notification
      * @return the priority
      */
-    NotificationEnums::Prioritys::prioritys priority() const;
+    Notification::Prioritys priority() const;
 
     /**
      *
@@ -162,7 +177,7 @@ public:
      *
      * @return the close reason
      */
-    const NotificationEnums::CloseReasons::closeReasons &closeReason();
+    const Notification::CloseReasons &closeReason();
 
     /**
      *
@@ -224,8 +239,11 @@ private:
 };
 
 }
-
 Q_DECLARE_METATYPE(Snore::Notification)
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Notification::CloseReasons)
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Notification::Prioritys)
 
 QDataStream &operator<< ( QDataStream & stream, const Snore::Notification & noti );
 

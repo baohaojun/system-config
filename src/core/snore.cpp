@@ -251,7 +251,7 @@ Notification SnoreCore::getActiveNotificationByID(uint id)
     return d->m_notificationBackend->getActiveNotificationByID(id);
 }
 
-void SnoreCore::requestCloseNotification(Notification n, NotificationEnums::CloseReasons::closeReasons r)
+void SnoreCore::requestCloseNotification(Notification n, Notification::CloseReasons r)
 {
     Q_D(SnoreCore);
     d->m_notificationBackend->requestCloseNotification(n,r);

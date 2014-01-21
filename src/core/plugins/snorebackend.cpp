@@ -67,7 +67,7 @@ bool SnoreBackend::initialize( SnoreCore *snore )
 }
 
 
-void SnoreBackend::requestCloseNotification ( Notification notification,NotificationEnums::CloseReasons::closeReasons reason )
+void SnoreBackend::requestCloseNotification (Notification notification, Notification::CloseReasons reason )
 {
     if(canCloseNotification())
     {
@@ -75,7 +75,7 @@ void SnoreBackend::requestCloseNotification ( Notification notification,Notifica
     }
 }
 
-void SnoreBackend::closeNotification(Notification n, NotificationEnums::CloseReasons::closeReasons reason)
+void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons reason)
 {
     if(!n.isValid())
     {
@@ -156,7 +156,7 @@ bool SnoreBackend::deinitialize()
     {
         foreach(Notification n,m_activeNotifications)
         {
-            requestCloseNotification(n, NotificationEnums::CloseReasons::DISMISSED);
+            requestCloseNotification(n, Notification::DISMISSED);
         }
 
 
@@ -200,6 +200,6 @@ void SnoreBackend::notificationTimedOut()
     if(n.isValid())
     {
         snoreDebug( SNORE_DEBUG ) << n;
-        snore()->requestCloseNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
+        snore()->requestCloseNotification(n,Notification::TIMED_OUT);
     }
 }

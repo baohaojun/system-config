@@ -158,7 +158,7 @@ public:
      * Try to close a Notification if the backend supports the action.
      * @see SnoreBackend::canCloseNotification
      */
-    void requestCloseNotification(Notification,NotificationEnums::CloseReasons::closeReasons);
+    void requestCloseNotification(Notification,Notification::CloseReasons);
 
     /**
      *

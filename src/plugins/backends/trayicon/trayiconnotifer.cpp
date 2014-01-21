@@ -87,7 +87,7 @@ void TrayIconNotifer::actionInvoked()
     if(n.isValid())
     {
         snore()->d()->notificationActionInvoked(n);
-        closeNotification(n,NotificationEnums::CloseReasons::CLOSED);
+        closeNotification(n,Notification::CLOSED);
         m_currentlyDisplaying = false;
         displayNotification();
     }

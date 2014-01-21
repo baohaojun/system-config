@@ -33,7 +33,7 @@ uint NotificationData::notificationCount = 0;
 uint NotificationData::m_idCount = 1;
 
 NotificationData::NotificationData (const Snore::Application &application, const Snore::Alert &alert, const QString &title, const QString &text, const Icon &icon,
-                                     int timeout, NotificationEnums::Prioritys::prioritys priority ):
+                                     int timeout, Notification::Prioritys priority ):
     m_id ( m_idCount++ ),
     m_timeout( timeout ),
     m_source( NULL),
@@ -43,13 +43,13 @@ NotificationData::NotificationData (const Snore::Application &application, const
     m_text( text ),
     m_icon( icon ),
     m_priority(priority),
-    m_closeReason(NotificationEnums::CloseReasons::NONE)
+    m_closeReason(Notification::NONE)
 {
     notificationCount++;
     snoreDebug( SNORE_DEBUG ) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
 }
 
-Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, NotificationEnums::Prioritys::prioritys priority):
+Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
     m_id ( old.id() ),
     m_timeout( timeout ),
     m_source( NULL),
@@ -59,7 +59,7 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
     m_text( text ),
     m_icon( icon ),
     m_priority(priority),
-    m_closeReason(NotificationEnums::CloseReasons::NONE),
+    m_closeReason(Notification::NONE),
     m_toReplace(old)
 {
     notificationCount++;
@@ -97,7 +97,7 @@ SnoreFrontend *NotificationData::source() const
     return m_source;
 }
 
-void NotificationData::setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r)
+void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
 {
     m_closeReason = r;
 }

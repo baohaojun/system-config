@@ -37,13 +37,13 @@ Notification::Notification () :
 {
 }
 
-Notification::Notification(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon, int timeout, NotificationEnums::Prioritys::prioritys priority):
+Notification::Notification(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
     d(new  NotificationData(application,alert,title,text,icon,timeout,priority))
 {
 
 }
 
-Notification::Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, NotificationEnums::Prioritys::prioritys priority):
+Notification::Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
     d(new  NotificationData(old,title,text,icon,timeout,priority))
 {
 }
@@ -119,7 +119,7 @@ bool Notification::isSticky() const
 }
 
 
-NotificationEnums::Prioritys::prioritys Notification::priority() const
+Notification::Prioritys Notification::priority() const
 {
     return d->m_priority;
 }
@@ -135,7 +135,7 @@ const QHash<int, Action> &Notification::actions() const
     return d->m_actions;
 }
 
-const NotificationEnums::CloseReasons::closeReasons &Notification::closeReason(){
+const Notification::CloseReasons &Notification::closeReason(){
     return d->m_closeReason;
 }
 
