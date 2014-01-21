@@ -17,7 +17,7 @@ if ($ENV{EMACS}) {
     open ($tty, ">", "/dev/tty") or $tty = "";
 }
 
-my $accrue_prompt = "";
+my $accrue_prompt = "$ENV{ORIGINAL_MATCHER}";
 sub tty(@) {
     if ($tty) {
         print $tty "@_";

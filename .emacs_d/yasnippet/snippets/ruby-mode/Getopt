@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: Getopt
+# key: Getopt
+# --
+
+require 'getoptlong'
+
+opts = GetoptLong.new(
+  [ '--${4:prompt}', '${5:-p}', ${6:$$(yas-choose-value "GetoptLong::NO_ARGUMENT" "GetoptLong::REQUIRED_ARGUMENT" "GetoptLong::OPTIONAL_ARGUMENT")}],
+)
+g_$4 = nil
+
+opts.each do |opt, arg|
+  case opt
+    when '--$4'
+         g_$4 = ${7:arg.to_i}
+  end
+end
+$0

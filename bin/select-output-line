@@ -4,12 +4,16 @@ set -e
 export SELECT_PROMPT="Please enter your selection: "
 
 if test "${1:0:1}" = -; then
-    TEMP=$(getopt -o p: --long prompt: -n $(basename $0) -- "$@")
+    TEMP=$(getopt -o p:i: --long prompt:init: -n $(basename $0) -- "$@")
     eval set -- "$TEMP"
     while true; do
         case "$1" in
             -p|--prompt)
                 SELECT_PROMPT=$2
+                shift 2
+                ;;
+            -i|--init)
+                export ORIGINAL_MATCHER=$2
                 shift 2
                 ;;
             --)

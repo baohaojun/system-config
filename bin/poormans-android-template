@@ -1,18 +1,8 @@
 #!/usr/bin/ruby
 
 require 'xmlsimple'
-
-if not system("git-is-clean")
-  exit 1
-end
-
-xml = `select-output-line find ~/gcode/android-templates -name 'template.xml'`
-config = XmlSimple.xml_in(xml)
-
 require 'shellwords'
-def ask_for_input (prompt)
-  `ask-for-input-with-sawfish -p #{Shellwords.escape(prompt)}`
-end
+require 'getoptlong'
 
 $parameter = {
   'isNewProject' => 'false!',
@@ -26,64 +16,52 @@ $parameter = {
   "minApiLevel" => '7',
   "minApi" => '7',
   "targetSdkVersion" => '19!',
-  "isLauncher" => 'false!',
+  "isLauncher" => 'true!',
 }
 
-config.each do |element, val|
-  print "#{element} => #{val}\n"
-  if element == 'parameter'
-    val.each do |paramAttrs|
-      print "#{paramAttrs['name']}'s id is #{paramAttrs['id']}\n"
+$parameter_from_cli = {
+  'parentActivityClass' => '',
+  'isLauncher' => 'true',
+  'activityClass' => 'MainActivity',
+}
 
-      # <parameter
-      #   id="navType"
-      #   name="Navigation Type"
-      #   type="enum"
-      #   default="none"
-      #   help="The type of navigation to use for the activity" >
-      #     <option id="none" default="true">None</option>
-      #     <!--<option id="tabs" minApi="11">Fixed Tabs</option>-->
-      #     <option id="tabs_pager" minApi="11">Fixed Tabs + Swipe</option>
-      #     <option id="pager_strip" minApi="11">Scrollable Tabs + Swipe</option>
-      #     <option id="dropdown" minApi="11">Dropdown</option>
-      # </parameter>
+opts = GetoptLong.new(
+                      [ '--template', '-t', GetoptLong::REQUIRED_ARGUMENT],
+                      [ '--isLauncher', '-l', GetoptLong::REQUIRED_ARGUMENT],
+                      [ '--parentActivityClass', '-p', GetoptLong::REQUIRED_ARGUMENT],
+                      [ '--activityClass', '-a', GetoptLong::REQUIRED_ARGUMENT],
+                      )
+g_template = ''
 
-      if paramAttrs['type'] == 'enum'
-        options = ""
-        paramAttrs['option'].each do |option|
-          options += " " + Shellwords.escape("#{option['id']} : #{option['content']}")
-        end
-        prompt = Shellwords.escape "Which option for #{paramAttrs['name']}"
-        input = `select-args -p #{prompt} #{options}`
-        input.gsub!(/ : .*/, "")
-      elsif paramAttrs['id'] == "packageName"
-        packages = `rgrep '^package.*;' src | pn 2 | sort -u | grep . | perl -npe 's/;//'`
-        packages.gsub!(/\n/, " ")
-        packages += " #{paramAttrs['default']}"
-        prompt = Shellwords.escape "What is your #{paramAttrs['name']}? "
-        input = `select-args -p #{prompt} #{packages} unknown`
-        input.gsub!(/ : .*/, "")
-      else
-        prompt = Shellwords.escape "Parameter #{paramAttrs['name']}? "
-        options = Shellwords.escape "#{paramAttrs['default']} : default"
-        options += " " + Shellwords.escape("Enter your own input with ! at the end")
-        input = `select-args -p #{prompt} #{options}`
-        input.gsub!(/ : default$/, "")
-      end
-      if input == "" and paramAttrs['default']
-        $parameter[paramAttrs['id']] = paramAttrs['default']
-      else
-        $parameter[paramAttrs['id']] = input
-      end
-
-      if paramAttrs['type'] == 'boolean'
-        $parameter[paramAttrs['id']] += '!' unless $parameter[paramAttrs['id']] =~ /!$/
-      end
-
-      puts "input for #{paramAttrs['name']} is #{$parameter[paramAttrs['id']]}"
-
-    end
+opts.each do |opt, arg|
+  case opt
+  when '--template'
+    g_template = arg
+  when '--isLauncher'
+    $parameter_from_cli['isLauncher'] = arg
+  when '--parentActivityClass'
+    $parameter_from_cli['parentActivityClass'] = arg
+  when '--activityClass'
+    $parameter_from_cli['activityClass'] = arg
   end
+end
+
+
+if not system("git-is-clean")
+  puts "your git is not clean, will exit"
+  exit 1
+end
+
+g_template = Shellwords.escape(g_template)
+puts "g_template is #{g_template}"
+
+xml = `select-output-line -i #{g_template} -- find ~/gcode/android-templates -name 'template.xml'`
+puts "xml is #{xml}"
+
+config = XmlSimple.xml_in(xml)
+
+def ask_for_input (prompt)
+  `ask-for-input-with-sawfish -p #{Shellwords.escape(prompt)}`
 end
 
 def camelCaseToUnderscore(str)
@@ -124,11 +102,15 @@ $temp_methods = {
   },
 
   layoutToActivity: proc {|t|
-    underscoreToCamelCase(t.sub(/^layout_/, '')) + 'Activity'
+    underscoreToCamelCase(t.gsub(/^layout_/, '')) + 'Activity'
   },
 
   classToResource: proc {|t|
     camelCaseToUnderscore(stripActivity(t))
+  },
+
+  classToMenu: proc {|t|
+    "menu_" + camelCaseToUnderscore(stripActivity(t))
   },
 
   escapeXmlAttribute: proc {|t| t },
@@ -139,11 +121,12 @@ $temp_methods = {
 
 def templateCall(template)
   print "template is #{template}\n"
+  template.gsub!(/\$\{(.*)\}$/, '\1')
   if /(\w+)\((.*)\)/ =~ template
     func = $~[1]
     arg = templateCall $~[2]
     if defined? $temp_methods[func.to_sym]
-      $temp_methods[func.to_sym].call(arg)
+      $temp_methods[func.to_sym].call(arg).gsub(/_+/, '_')
     else
       die "no such method: #{func}"
     end
@@ -153,6 +136,74 @@ def templateCall(template)
     die "no such value: #{template}\n"
   end
 end
+
+config.each do |element, val|
+  print "#{element} => #{val}\n"
+  if element == 'parameter'
+    val.each do |paramAttrs|
+      print "#{paramAttrs['name']}'s id is #{paramAttrs['id']}\n"
+
+      # <parameter
+      #   id="navType"
+      #   name="Navigation Type"
+      #   type="enum"
+      #   default="none"
+      #   help="The type of navigation to use for the activity" >
+      #     <option id="none" default="true">None</option>
+      #     <!--<option id="tabs" minApi="11">Fixed Tabs</option>-->
+      #     <option id="tabs_pager" minApi="11">Fixed Tabs + Swipe</option>
+      #     <option id="pager_strip" minApi="11">Scrollable Tabs + Swipe</option>
+      #     <option id="dropdown" minApi="11">Dropdown</option>
+      # </parameter>
+
+      if $parameter_from_cli.key? paramAttrs['id']
+        input = $parameter_from_cli[paramAttrs['id']]
+      elsif paramAttrs['type'] == 'enum'
+        options = ""
+        paramAttrs['option'].each do |option|
+          options += " " + Shellwords.escape("#{option['id']} : #{option['content']}")
+        end
+        prompt = Shellwords.escape "Which option for #{paramAttrs['name']}"
+        input = `select-args -p #{prompt} #{options}`
+        input.gsub!(/ : .*/, "")
+      elsif paramAttrs['id'] == "packageName"
+        packages = `rgrep '^package.*;' src | pn 2 | sort -u | grep . | perl -npe 's/;//'`
+        packages.gsub!(/\n/, " ")
+        packages.gsub!(/\r/, '')
+        packages += " #{paramAttrs['default']}"
+        prompt = Shellwords.escape "What is your #{paramAttrs['name']}? "
+        input = `select-args -p #{prompt} #{packages} unknown`
+        input.gsub!(/ : .*/, "")
+      else
+        prompt = Shellwords.escape "Parameter #{paramAttrs['name']}? "
+        options = ''
+        if defined? paramAttrs['suggest']
+          begin
+            options += " " + Shellwords.escape(templateCall(paramAttrs['suggest']) + " : suggested")
+          rescue
+          end
+        end
+        options += " " + Shellwords.escape("#{paramAttrs['default']} : default")
+        options += " " + Shellwords.escape("Enter your own input with ! at the end")
+        input = `select-args -p #{prompt} #{options}`
+        input.gsub!(/ : (default|suggested)$/, "")
+      end
+      if input == "" and paramAttrs['default']
+        $parameter[paramAttrs['id']] = paramAttrs['default']
+      else
+        $parameter[paramAttrs['id']] = input
+      end
+
+      if paramAttrs['type'] == 'boolean'
+        $parameter[paramAttrs['id']] += '!' unless $parameter[paramAttrs['id']] =~ /!$/
+      end
+
+      puts "input for #{paramAttrs['name']} is #{$parameter[paramAttrs['id']]}"
+
+    end
+  end
+end
+
 
 if config['globals']
   dir = File.dirname(xml)
@@ -181,6 +232,7 @@ if config['execute']
     exec_file = File.join(dir, exec_elem['file'])
     $param_str = ""
     $parameter.each do |key, val|
+      print "parameter: key is #{key}, value is #{val}\n"
       $param_str += " %s %s" % [Shellwords.escape(key), Shellwords.escape(val)]
     end
     $recipe_str = "freemarker #{dir} #{exec_elem['file']} #{$param_str}"
@@ -188,6 +240,7 @@ if config['execute']
 end
 
 if $recipe_str
+  puts "before running, $recipe_str is #{$recipe_str}"
   $recipe_str = `#{$recipe_str}`
   puts "$recipe_str is #{$recipe_str}"
   $recipe_config = XmlSimple.xml_in($recipe_str)

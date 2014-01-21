@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: attr
+# key: attr
+# --
+  android:${2:$$(replace-regexp-in-string ".*-\\\\(.*?\\\\)>.*" "\\\\1" (yas-choose-value (split-string (shell-command-to-string "android-extract-from-sdk-txt -e \\"android.R.attr.*\\"") "\\n")))}=$3

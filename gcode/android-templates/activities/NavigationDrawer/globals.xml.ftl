@@ -4,5 +4,5 @@
     <global id="manifestOut" value="." />
     <global id="srcOut" value="src/${slashedPackageName(packageName)}" />
     <global id="resOut" value="res" />
-    <global id="menuName" value="${classToResource(activityClass)}" />
+    <global id="menuName" value="${classToMenu(activityClass)}" />
 </globals>
