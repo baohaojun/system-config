@@ -72,7 +72,7 @@ public:
      * @param timeout the timeout
      * @param priority the priority
      */
-    explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), Notification::Prioritys priority = Notification::NORMAL );
+    explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), Notification::Prioritys priority = NORMAL );
 
     /**
      * Creates and update Notification replacing an existing Notification
@@ -83,7 +83,7 @@ public:
      * @param timeout the timeout
      * @param priority the piority
      */
-    explicit Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Snore::Notification::Prioritys priority = Notification::NORMAL );
+    explicit Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Snore::Notification::Prioritys priority = NORMAL );
 
     /**
      * The copy constructor
