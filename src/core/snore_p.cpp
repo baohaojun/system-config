@@ -80,7 +80,7 @@ void SnoreCorePrivate::notificationActionInvoked(Notification notification) cons
 bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 {
     Q_Q(SnoreCore);
-    if( q->primaryNotificationBackend().contains(backend))
+    if( m_notificationBackends.contains(backend))
     {
         return q->setPrimaryNotificationBackend(backend);
     }
