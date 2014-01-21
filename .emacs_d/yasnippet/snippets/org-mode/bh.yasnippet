@@ -3,18 +3,16 @@
 # name: bh
 # --
 #+LaTeX_CLASS: beamer
-#+MACRO: BEAMERMODE presentation
-#+MACRO: BEAMERTHEME ${1:Berkeley$(yas/choose-value
-	   (split-string
-	    (shell-command-to-string "ls /usr/share/texmf/tex/latex/beamer/base/themes/theme")
-	    "beamertheme\\\\|\\\\.sty\n"
-	    t))}
-#+MACRO: BEAMERCOLORTHEME ${2:crane$(yas/choose-value
-	   (split-string
-	    (shell-command-to-string "ls /usr/share/texmf/tex/latex/beamer/base/themes/color")
-	    "beamercolortheme\\\\|\\\\.sty\n"
-	    t))}
-#+MACRO: BEAMERSUBJECT RMRF
-#+MACRO: BEAMERINSTITUTE ${3:Marvell BPE.}
+#+BEAMER_THEME: ${1:Berkeley$(yas/choose-value
+           (split-string
+            (shell-command-to-string "ls /usr/share/texmf/tex/latex/beamer/base/themes/theme")
+            "beamertheme\\\\|\\\\.sty\n"
+            t))}
+#+BEAMER_COLOR_THEME: ${2:crane$(yas/choose-value
+           (split-string
+            (shell-command-to-string "ls /usr/share/texmf/tex/latex/beamer/base/themes/color")
+            "beamercolortheme\\\\|\\\\.sty\n"
+            t))}
+#+BEAMER_INSTITUTE: ${3:Alibaba Inc.}
 #+TITLE: $0
 #+AUTHOR: ${5:Bao Haojun}

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: bmtheme
+# key: bmtheme
+# --
+${1:Berkeley$(yas/choose-value
+           (split-string
+            (shell-command-to-string "ls /usr/share/texmf/tex/latex/beamer/base/themes/theme")
+            "beamertheme\\\\|\\\\.sty\n"
+            t))}

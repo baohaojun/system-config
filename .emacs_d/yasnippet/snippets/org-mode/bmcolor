@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: bmcolor
+# key: bmcolor
+# --
+${2:crane$(yas/choose-value
+           (split-string
+            (shell-command-to-string "ls /usr/share/texmf/tex/latex/beamer/base/themes/color")
+            "beamercolortheme\\\\|\\\\.sty\n"
+            t))}
