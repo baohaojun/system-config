@@ -46,6 +46,8 @@ for x in http://android-sdk-addons.motodevupdate.com/addons.xml \
     http://dl.htcdev.com/sdk/addon.xml \
     http://innovator.samsungmobile.com/android/repository/repository.xml \
     http://dl.google.com/android/repository/addon.xml \
+    http://dl-ssl.google.com/android/repository/sys-img/x86/sys-img.xml \
+    http://dl-ssl.google.com/android/repository/sys-img.xml \
     http://software.intel.com/sites/landingpage/android/addon.xml \
     http://www.echobykyocera.com/download/echo_repository.xml; do
     wget -N -r $x || true
@@ -77,12 +79,12 @@ else
     vpattern=shit
 fi
 
-for x in dl.google.com/android/repository/*.xml; do
+for x in $(find *.google.com -name '*.xml'); do
+    xhost=$(dirname $x)
     xmlstarlet sel -N \
         $(cat $x|grep -P -e 'sdk=".*?"' -o|perl -npe 's/"//g') \
         -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum" \
-        -n $x
-done |perl -ne '
+        -n $x | perl -ne '
     BEGIN {
         sub debug {
             print STDERR "@_\n";
@@ -108,7 +110,8 @@ done |perl -ne '
             print "$hash{$_}{file}:$hash{$_}{cs}\n";
         }
     }
-' | grep -v '^:$' | sort -u | perl -npe 's!(.*):(.*)!test `shasum </dev/null \$(basename $1)|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; if [[ $1 =~ :// ]]; then wget -N $1; else wget -N http://dl.google.com/android/repository/\$(basename $1); fi)!g'|grep -i -e "$vpattern" -v|bash -x
+' | grep -v '^:$' | sort -u | perl -npe 's!(.*):(.*)!test `shasum </dev/null \$(basename $1)|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; if [[ $1 =~ :// ]]; then wget -N $1; else wget -N http://'$xhost'/\$(basename $1); fi)!g'|grep -i -e "$vpattern" -v|bash -x
+done
 
 mkdir -p ../temp
 cd ../temp

@@ -165,7 +165,7 @@ spf.getInt(String key, int defValue);
 spf.edit().putFloat(String key, float value).commit();
 #+END_SRC
 
-*** File
+*** File：私有文件和sdcard上的文件
 
 * 总结
 ** 从哪里来，到哪里去
