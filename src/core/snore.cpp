@@ -54,57 +54,27 @@ SnoreCore::~SnoreCore()
 void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
 {
     Q_D(SnoreCore);
-    snoreDebug( SNORE_DEBUG ) << "PluginInfo" << PluginContainer::pluginCache().keys();
-    foreach ( PluginContainer *info, PluginContainer::pluginCache().values())
+    foreach ( PluginContainer *info, PluginContainer::pluginCache(types).values())
     {
-        if(types == SnorePlugin::ALL || types & info->type())
+        switch(info->type())
         {
-            switch(info->type())
+        case SnorePlugin::BACKEND:
+            break;
+        case SnorePlugin::SECONDARY_BACKEND:
+        case SnorePlugin::FRONTEND:
+        case SnorePlugin::PLUGIN:
+            if(!info->load()->initialize( this ))
             {
-            case SnorePlugin::BACKEND:
-            {
-                snoreDebug( SNORE_DEBUG ) << info->name() << "is a Notification_Backend";
-                d->m_plugins.insert(SnorePlugin::BACKEND, info->name());
+                info->unload();
                 break;
             }
-            case SnorePlugin::SECONDARY_BACKEND:
-            {
-                if(!info->load()->initialize( this )){
-                    info->unload();
-                    break;
-                }
-                d->m_plugins.insert(SnorePlugin::SECONDARY_BACKEND, info->name());
-                break;
-            }
-            case SnorePlugin::FRONTEND:
-            {
-                snoreDebug( SNORE_DEBUG ) << info->name() << "is a Notification_Frontend";
-                if(!info->load()->initialize( this )){
-                    info->unload();
-                    break;
-                }
-                d->m_plugins.insert(SnorePlugin::FRONTEND, info->name());
-                break;
-            }
-            case SnorePlugin::PLUGIN:
-            {
-                snoreDebug( SNORE_DEBUG ) <<info->name()<<"is a SnorePlugin";
-                if(!info->load()->initialize(this)){
-                    info->unload();
-                    break;
-                }
-               d->m_plugins.insert(SnorePlugin::PLUGIN, info->name());
-                break;
-            }
-            default:
-            {
-                std::cerr<<"Plugin Cache corrupted"<<std::endl;
-                std::cerr<<info->file().toLocal8Bit().constData()<<QString::number((int)info->type()).toLatin1().constData()<<std::endl;
-            }
-            }
-        }else{
-            snoreDebug( SNORE_DEBUG )<<"dont load "<<info->file()<<info->type();
+            break;
+        default:
+            snoreDebug( SNORE_WARNING ) << "Plugin Cache corrupted\n" << info->file() << info->type();
+            continue;
         }
+        snoreDebug( SNORE_DEBUG ) << info->name() << "is a" << info->type();
+        d->m_plugins.insert(info->type(), info->name());
     }
     snoreDebug( SNORE_INFO ) << "Loaded Plugins:" << d->m_plugins;
 }
@@ -166,13 +136,14 @@ const QStringList SnoreCore::secondaryNotificationBackends() const
 bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
 {
     Q_D(SnoreCore);
-    if(!PluginContainer::pluginCache().contains(backend))
+    const QHash<QString,PluginContainer *> backends = PluginContainer::pluginCache(SnorePlugin::BACKEND);
+    if(!backends.contains(backend))
     {
         snoreDebug( SNORE_DEBUG ) << "Unknown Backend:" << backend;
         return false;
     }
     snoreDebug( SNORE_DEBUG ) << "Setting Notification Backend to:" << backend;
-    SnoreBackend* b = qobject_cast<SnoreBackend*>(PluginContainer::pluginCache()[backend]->load());
+    SnoreBackend* b = qobject_cast<SnoreBackend*>(backends.value(backend)->load());
     if(!b->isInitialized())
     {
         if(!b->initialize(this))
@@ -207,9 +178,9 @@ bool SnoreCore::setPrimaryNotificationBackend()
         return true;
     }
 #elif defined(Q_OS_LINUX)
-        return d->setBackendIfAvailible("FreedesktopNotification");
+    return d->setBackendIfAvailible("FreedesktopNotification");
 #elif defined(Q_OS_MAC)
-        return d->setBackendIfAvailible("Growl");
+    return d->setBackendIfAvailible("Growl");
 #endif
     if( trayIcon() && d->setBackendIfAvailible("SystemTray"))
     {

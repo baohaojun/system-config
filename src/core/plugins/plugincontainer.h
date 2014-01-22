@@ -38,7 +38,7 @@ class SnoreSecondaryBackend;
 
 class SNORE_EXPORT PluginContainer{
 public:
-    static QHash<QString,PluginContainer*> pluginCache();
+    static const QHash<QString, PluginContainer *> pluginCache(SnorePlugin::PluginTypes type);
 
     PluginContainer(QString fileName, QString pluginName, SnorePlugin::PluginTypes type);
     ~PluginContainer();
@@ -54,7 +54,7 @@ public:
 
 private:
     void static updatePluginCache();
-    static QHash<QString,PluginContainer*> s_pluginCache;
+    static QHash<SnorePlugin::PluginTypes, QHash<QString,PluginContainer*> > s_pluginCache;
 
     static inline QSettings &cache()
     {

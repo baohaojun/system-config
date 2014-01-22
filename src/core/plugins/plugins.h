@@ -38,7 +38,7 @@ class SNORE_EXPORT SnorePlugin : public QObject
     Q_OBJECT
 public:
     enum PluginType{
-        ALL = 0x0,//for loading plugins
+        ALL = 0xFFFFF,//for loading plugins
         BACKEND = 0x1,
         SECONDARY_BACKEND = 0x2,
         FRONTEND = 0x4,
