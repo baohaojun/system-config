@@ -91,7 +91,7 @@ const QStringList &PluginContainer::types()
         QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
         for(int i=0;i<e.keyCount();++i)
         {
-            out << QString::fromLatin1(e.key(i)).toLower();
+            out << QString::fromLatin1(e.key(i));
         }
     }
     return out;
@@ -107,25 +107,24 @@ void PluginContainer::updatePluginCache()
 
     foreach(const QString &type,PluginContainer::types())
     {
-        QDir plPath(SnoreCorePrivate::pluginDir().absoluteFilePath(type));
-        snoreDebug( SNORE_DEBUG ) << "Searching for plugins in" << plPath.path();
-        foreach (QString fileName, plPath.entryList(QDir::Files))
+        foreach (const QFileInfo &file, SnoreCorePrivate::pluginDir().entryInfoList(QStringList(QString("libsnore_%1_*").arg(type.toLower())), QDir::Files, QDir::Name | QDir::IgnoreCase ))
         {
-            QString filepath(plPath.absoluteFilePath(fileName));
-            snoreDebug( SNORE_DEBUG ) << "adding" << filepath;
-            QPluginLoader loader(filepath);
+            snoreDebug( SNORE_DEBUG ) << "adding" << file.absoluteFilePath();
+            QPluginLoader loader(file.absoluteFilePath());
             QObject *plugin = loader.instance();
-            if (plugin == NULL) {
-                snoreDebug( SNORE_DEBUG ) << "Failed loading plugin: " << filepath << loader.errorString();
+            if (plugin == NULL)
+            {
+                snoreDebug( SNORE_WARNING ) << "Failed loading plugin: " << file.absoluteFilePath() << loader.errorString();
                 continue;
             }
             SnorePlugin *sp = qobject_cast<SnorePlugin*>(plugin);
-            if(sp == NULL){
-                snoreDebug( SNORE_DEBUG ) << "Error:" << fileName << " is not a Snore plugin" ;
+            if(sp == NULL)
+            {
+                snoreDebug( SNORE_WARNING ) << "Error:" << file.absoluteFilePath() << " is not a Snore plugin" ;
                 loader.unload();
                 continue;
             }
-            PluginContainer *info = new PluginContainer( SnoreCorePrivate::pluginDir().relativeFilePath(filepath),sp->name(),PluginContainer::typeFromString(type));
+            PluginContainer *info = new PluginContainer(file.fileName(), sp->name() ,PluginContainer::typeFromString(type));
             s_pluginCache[info->type()].insert(info->name(),info);
             snoreDebug( SNORE_DEBUG ) << "added" << info->name() << "to cache";
         }

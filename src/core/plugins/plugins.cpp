@@ -87,7 +87,7 @@ QDebug operator <<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
     debug.nospace() << "PluginTypes(";
     bool needSeparator = false;
     int key;
-    for (uint i = 0; i < e.keyCount(); ++i)
+    for (int i = 0; i < e.keyCount(); ++i)
     {
         key = e.value(i);
         if (flags.testFlag((SnorePlugin::PluginType)key))

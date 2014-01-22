@@ -38,7 +38,7 @@
 using namespace Snore;
 using namespace Snarl::V42;
 
-Q_EXPORT_PLUGIN2(snarl,SnarlBackend)
+Q_EXPORT_PLUGIN2(libsnore_backend_snarl,SnarlBackend)
 
 class SnarlBackend::SnarlWidget:public QWidget
 {

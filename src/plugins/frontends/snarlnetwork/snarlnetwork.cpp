@@ -27,7 +27,7 @@
 #include <iostream>
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(snalnetwork,SnarlNetworkFrontend)
+Q_EXPORT_PLUGIN2(libsnore_frontend_snarlnetwork,SnarlNetworkFrontend)
 
 
 SnarlNetworkFrontend::SnarlNetworkFrontend():

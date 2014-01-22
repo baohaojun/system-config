@@ -13,7 +13,7 @@
 
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2 ( freedesktopnotificationbackend,FreedesktopBackend )
+Q_EXPORT_PLUGIN2 ( libsnore_backend_freedesktop,FreedesktopBackend )
 
 
 FreedesktopBackend::FreedesktopBackend () :

@@ -1,9 +1,8 @@
-#deprecated
 set( SNARL_NETWORK_SRC
     snarlnetwork.cpp
     parser.cpp
     )
-add_library(snarlnetwork MODULE  ${SNARL_NETWORK_SRC} )
-target_link_libraries(snarlnetwork snorecore ${QT_QTNETWORK_LIBRARY} )
+add_library(libsnore_frontend_snarlnetwork MODULE  ${SNARL_NETWORK_SRC} )
+target_link_libraries(libsnore_frontend_snarlnetwork snorecore ${QT_QTNETWORK_LIBRARY} )
 
-install(TARGETS snarlnetwork ${SNORE_FRONTEND_INSTALL_PATH})
+install(TARGETS libsnore_frontend_snarlnetwork ${SNORE_PLUGIN_INSTALL_PATH})

@@ -30,7 +30,8 @@
 using namespace Snore;
 
 
-QString const SnoreCorePrivate::snoreTMP(){
+QString const SnoreCorePrivate::snoreTMP()
+{
     static QString tmp;
     if(tmp.isNull())
     {
@@ -40,7 +41,8 @@ QString const SnoreCorePrivate::snoreTMP(){
     return tmp;
 }
 
-const QDir &SnoreCorePrivate::pluginDir(){
+const QDir &SnoreCorePrivate::pluginDir()
+{
     static QDir path(QString("%1/../%2/libsnore").arg(qApp->applicationDirPath(), CMAKE_INSTALL_LIBDIR));
     if(!path.exists())
     {

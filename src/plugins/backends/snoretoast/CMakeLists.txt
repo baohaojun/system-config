@@ -4,9 +4,9 @@ if(WIN32)
     set( TOASTER_SRC
         snoretoast.cpp
         )
-    add_library(snoretoast MODULE ${TOASTER_SRC} )
-    target_link_libraries(snoretoast snorecore ${QT_QTCORE_LIBRARY} )
+    add_library(libsnore_backend_snoretoast MODULE ${TOASTER_SRC} )
+    target_link_libraries(libsnore_backend_snoretoast snorecore ${QT_QTCORE_LIBRARY} )
 
-    install(TARGETS snoretoast ${SNORE_BACKEND_INSTALL_PATH})
+    install(TARGETS libsnore_backend_snoretoast ${SNORE_PLUGIN_INSTALL_PATH})
 
 endif(WIN32)

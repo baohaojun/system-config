@@ -9,7 +9,7 @@
 #include <QDebug>
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(trayicon,TrayIconNotifer)
+Q_EXPORT_PLUGIN2(libsnore_backend_trayicon,TrayIconNotifer)
 
 TrayIconNotifer::TrayIconNotifer () :
     SnoreBackend ( "SystemTray",true,false ),

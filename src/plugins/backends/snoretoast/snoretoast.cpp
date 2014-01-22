@@ -13,7 +13,7 @@
 
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(snoretoast,SnoreToast)
+Q_EXPORT_PLUGIN2(libsnore_backend_snoretoast,SnoreToast)
 
 
 SnoreToast::SnoreToast():

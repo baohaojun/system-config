@@ -7,12 +7,12 @@ if(WIN32)
         SnarlInterface.cpp
         snarl.cpp
         )
-    add_library(snarl MODULE ${SNARL_SRC} )
-    target_link_libraries(snarl snorecore ${QT_QTCORE_LIBRARY} )
+    add_library(libsnore_backend_snarl MODULE ${SNARL_SRC} )
+    target_link_libraries(libsnore_backend_snarl snorecore ${QT_QTCORE_LIBRARY} )
     if(MINGW)
-        set_target_properties(snarl PROPERTIES COMPILE_FLAGS "-Wno-conversion-null -Wno-unused")
+        set_target_properties(libsnore_backend_snarl PROPERTIES COMPILE_FLAGS "-Wno-conversion-null -Wno-unused")
     endif(MINGW)
 
-    install(TARGETS snarl ${SNORE_BACKEND_INSTALL_PATH})
+    install(TARGETS libsnore_backend_snarl ${SNORE_PLUGIN_INSTALL_PATH})
 
 endif(WIN32)
