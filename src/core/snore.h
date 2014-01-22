@@ -106,19 +106,19 @@ public:
      *
      * @return a list of all known notification backends
      */
-    const QStringList &notificationBackends() const;
+    const QStringList notificationBackends() const;
 
     /**
      *
      * @return a list of all known notification frontends
      */
-    const QStringList &notificationFrontends() const;
+    const QStringList notificationFrontends() const;
 
     /**
      *
      * @return a list of all known notification secondary backends
      */
-    const QStringList &secondaryNotificationBackends() const;
+    const QStringList secondaryNotificationBackends() const;
 
     /**
      * Sets the primary backend.

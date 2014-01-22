@@ -65,11 +65,7 @@ private:
 
     QHash<QString,Application> m_applications;
 
-
-    QStringList m_notificationBackends;
-    QStringList m_Frontends;
-    QStringList m_secondaryNotificationBackends;
-    QStringList m_plugins;
+    QMultiHash<SnorePlugin::PluginTypes, QString> m_plugins;
 
     QPointer<SnoreBackend> m_notificationBackend;
 

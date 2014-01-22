@@ -64,7 +64,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             case SnorePlugin::BACKEND:
             {
                 snoreDebug( SNORE_DEBUG ) << info->name() << "is a Notification_Backend";
-                d->m_notificationBackends.append( info->name());
+                d->m_plugins.insert(SnorePlugin::BACKEND, info->name());
                 break;
             }
             case SnorePlugin::SECONDARY_BACKEND:
@@ -73,7 +73,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
                     info->unload();
                     break;
                 }
-                d->m_secondaryNotificationBackends.append(info->name());
+                d->m_plugins.insert(SnorePlugin::SECONDARY_BACKEND, info->name());
                 break;
             }
             case SnorePlugin::FRONTEND:
@@ -83,7 +83,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
                     info->unload();
                     break;
                 }
-                d->m_Frontends.append(info->name());
+                d->m_plugins.insert(SnorePlugin::FRONTEND, info->name());
                 break;
             }
             case SnorePlugin::PLUGIN:
@@ -93,7 +93,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
                     info->unload();
                     break;
                 }
-                d->m_plugins.append(info->name());
+               d->m_plugins.insert(SnorePlugin::PLUGIN, info->name());
                 break;
             }
             default:
@@ -106,7 +106,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             snoreDebug( SNORE_DEBUG )<<"dont load "<<info->file()<<info->type();
         }
     }
-    snoreDebug( SNORE_INFO ) << "Loaded Plugins:" << d->m_notificationBackends << d->m_Frontends << d->m_secondaryNotificationBackends << d->m_plugins;
+    snoreDebug( SNORE_INFO ) << "Loaded Plugins:" << d->m_plugins;
 }
 
 void SnoreCore::broadcastNotification ( Notification notification )
@@ -145,22 +145,22 @@ const QHash<QString, Application> &SnoreCore::aplications() const
 }
 
 
-const QStringList &SnoreCore::notificationBackends() const
+const QStringList SnoreCore::notificationBackends() const
 {
     Q_D(const SnoreCore);
-    return d->m_notificationBackends;
+    return d->m_plugins.values(SnorePlugin::BACKEND);
 }
 
-const QStringList &SnoreCore::notificationFrontends() const
+const QStringList SnoreCore::notificationFrontends() const
 {
     Q_D(const SnoreCore);
-    return d->m_Frontends;
+    return d->m_plugins.values(SnorePlugin::FRONTEND);
 }
 
-const QStringList &SnoreCore::secondaryNotificationBackends() const
+const QStringList SnoreCore::secondaryNotificationBackends() const
 {
     Q_D(const SnoreCore);
-    return d->m_secondaryNotificationBackends;
+    return d->m_plugins.values(SnorePlugin::SECONDARY_BACKEND);
 }
 
 bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )

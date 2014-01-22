@@ -71,6 +71,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::SnorePlugin::PluginTypes)
 Q_DECLARE_INTERFACE ( Snore::SnorePlugin,
                       "org.Snore.SnorePlugin/1.0" )
 
+SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::SnorePlugin::PluginTypes &);
+
 //compatability defines to reduce the number of ifdefs to make fiat compile with qt4 and qt5
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #   if defined(Q_EXPORT_PLUGIN)

@@ -26,8 +26,9 @@
 #include <QPluginLoader>
 #include <QDir>
 #include <QDebug>
+#include <QMetaEnum>
 
-namespace Snore{
+using namespace Snore;
 
 SnorePlugin::SnorePlugin ( const QString &name ) :
     m_name ( name ),
@@ -78,5 +79,33 @@ bool SnorePlugin::deinitialize()
     }
     return false;
 }
+
+
+QDebug operator <<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
+{
+    QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
+    debug.nospace() << "PluginTypes(";
+    bool needSeparator = false;
+    int key;
+    for (uint i = 0; i < e.keyCount(); ++i)
+    {
+        key = e.value(i);
+        if (flags.testFlag((SnorePlugin::PluginType)key))
+        {
+            if (needSeparator)
+            {
+                debug.nospace() << '|';
+            }
+            else
+            {
+                needSeparator = true;
+            }
+
+            debug.nospace() << e.valueToKey(key);
+
+        }
+    }
+    debug << ')';
+    return debug.space();
 
 }
