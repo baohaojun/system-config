@@ -8,12 +8,13 @@ elif test $# = 1; then
     if test -e "$1"; then
         true
     elif test -e "$(lookup-file "$@")"; then
-        if yes-or-no-p -n "Open $(lookup-file "$@")"; then
+        res=$(lookup-file "$@")
+        if test "${res:0:${#PWD}+1}" != "$PWD/" && yes-or-no-p -n "Open $(lookup-file "$@")"; then
             set -- "$(lookup-file "$@")";
         else
             set -- "$(f "$@")"
         fi
-    else
+    elif ! echo "$@" | grep :// -q && test -e "$(f "$@")"; then
         set -- "$(f "$@")"
     fi
 else

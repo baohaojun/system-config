@@ -22,7 +22,7 @@
 #+BEAMER_THEME: Berkeley
 #+BEAMER_COLOR_THEME: lily
 
-* 前情回顾
+* 回顾
 
 ** 上节内容
 *** ListView & Adapter
@@ -34,6 +34,31 @@
 *** Android系统和环境
 *** Activity等四大组件
 *** ListView
+* 工具
+** 粗野的Beagrep
+*** Grep 9G Android代码，只需0.23秒
+*** 阅读源代码的利器之一
+** 精细的grep-gtags
+*** 综合了ctags (exuberant）、gtags、cscope
+*** 可以与beagrep组合使用，获取函数调用位置
+*** 可以定位png文件，xml元素，这些也是源代码:-)
+** 搞笑的Ajoke
+*** 主要在使用grep-gtags和一些自制脚本
+*** 可以打印继承树
+- 目前不可以打印倒继承树
+*** 可以补齐函数
+*** 可以自动import
+*** 可以重载函数
+*** 将来会支持Exception
+** 可怕的skeleton-complete.el
+*** 打几个字符（骨架），补全整字、整句、整行、整段（血肉）
+*** 其实firefox也有类似的功能
+*** Java IDE神器 IntelliJ IDEA 也有类似的功能
+
+** yasnippet
+*** 另一个非常强大的补齐展开工具
+*** 用起来更正式，需要提前准备好展开脚本
+
 * 网络
 ** 网络编程介绍
 *** Socket（套接字）
@@ -41,7 +66,7 @@
 - 我的输入法编程
 
 *** HTTP通讯
-- HttpURLConnection （Android原生，最新版本性能更好）
+- HttpURLConnection （Android原生，性能更好）
 - DefaultHttpClient （apache代码，早期bug较少）
 
 *** WebView
@@ -55,17 +80,34 @@
 *** 会Crash
 *** 原因分析
 *** 修正方法？
-
 ** UI主线程和联网线程
-- Android编程中，需要牢记：
+*** Android编程中，需要牢记：
 
   + 要区分开UI主线程和工作线程
 
-- Android网络操作必须用工作线程
-  + 为什么不能用主线程？
-
-- 工作线程不允许操作UI元素
-  + 为什么？ 操作UI元素的API都是线程不安全的，只能在一个线程中调用以保证线程安全
+*** Android网络操作必须用工作线程                                               :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :BEAMER_env: block
+    :END:
+*** 会阻塞，导致无响应                                                          :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :BEAMER_act: <2->
+    :BEAMER_env: block
+    :END:
+***
+*** 工作线程不允许操作UI元素                                                    :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :BEAMER_env: block
+    :END:
+*** 操作UI元素的API都是线程不安全的，只能在一个线程中调用以保证线程安全         :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :BEAMER_act: <3->
+    :BEAMER_env: block
+    :END:
 
 ** 工作线程与UI主线程间通信
 *** runOnUiThread

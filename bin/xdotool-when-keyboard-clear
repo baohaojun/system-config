@@ -1,0 +1,5 @@
+#!/bin/bash
+while query-keyboard-state >/dev/null 2>&1; do
+    sleep .1;
+done
+xdotool "$@"

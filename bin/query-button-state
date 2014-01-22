@@ -1,16 +1,32 @@
 #!/bin/bash
 
-if test ! -e ~/.config/pointer-dev-ids; then
-   xinput list |
-   grep pointer |
-   grep -v XTEST |
-   grep -e 'slave\s+pointer' -P|
-   grep -v 'Keyboard 4000'|
-   grep -o -e 'id=\d+' -P |
-   cut -b 4- |
-   sort -u > ~/.config/pointer-dev-ids
-fi
+if test $(basename $0) = query-button-state; then
+    if test ! -e ~/.config/pointer-dev-ids; then
+        xinput list |
+        grep pointer |
+        grep -v XTEST |
+        grep -e 'slave\s+pointer' -P|
+        grep -v 'Keyboard 4000'|
+        grep -o -e 'id=\d+' -P |
+        cut -b 4- |
+        sort -u > ~/.config/pointer-dev-ids
+    fi
 
-for x in $(cat ~/.config/pointer-dev-ids); do
-    xinput query-state $x
-done | grep -P "\[$1\].*down"
+    for x in $(cat ~/.config/pointer-dev-ids); do
+        xinput query-state $x
+    done | grep -P "\[$1\].*down"
+else
+    if test ! -e ~/.config/keyboard-dev-ids; then
+        xinput list |
+        grep keyboard |
+        grep -v XTEST |
+        grep -e 'slave\s+keyboard' -P |
+        grep -v 'Video Bus|Button' -P |
+        grep -o -e 'id=\d+' -P |
+        cut -b 4- |
+        sort -u > ~/.config/keyboard-dev-ids
+    fi
+    for x in $(cat ~/.config/keyboard-dev-ids); do
+        xinput query-state $x
+    done | grep "down"
+fi

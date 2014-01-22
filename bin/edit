@@ -15,8 +15,6 @@ if ((scalar @ARGV) > 1 and $0 =~ m!(^|/)e$!) {
     @ARGV = ($file);
 }
 
-system("find-or-exec emacs emacs.bhj");
-
 if ($ARGV[0] =~ m/^\+\d+$/) {
   my $line = substr($ARGV[0], 1);
   shift @ARGV;
@@ -79,6 +77,8 @@ sub edit_1($)
 
     } else {
 
+        debug "file $file not exist";
+
       # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
       $file =~ m,^[a|b]/, and $file = substr($file, 2); # for git diff output
       $file =~ m,:$, and chop($file);
@@ -93,9 +93,9 @@ sub edit_1($)
       }
 
       my $file_q = $file = shell_quote($file);
-      chomp($file_q = qx(lookup-file -e -r -- $file|head -n 1));
+      chomp($file_q = qx(select-output-line lookup-file -e -r -- $file));
       if (not $file_q or not -e $file_q) {
-          chomp($file_q = qx(lookup-file -r -- $file|head -n 1));
+          chomp($file_q = qx(select-output-line lookup-file -r -- $file));
       }
       return (@emacsclient, "+$line", get_emacs_file_name($file_q));
 
@@ -125,6 +125,7 @@ EOC
     print "'$_' ";
   }
   print "\n";
+  system("find-or-exec emacs emacs.bhj");
   while (1) {
       my $ret = system(@cmd);
       if ($ret != 0) {
