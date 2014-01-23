@@ -26,6 +26,7 @@
 #include <QSettings>
 #include <QFlag>
 #include <QPluginLoader>
+#include <QApplication>
 
 
 
@@ -72,7 +73,7 @@ private:
         if(_cache == NULL)
         {
             _cache = new QSettings("SnoreNotify","libsnore");
-            _cache->beginGroup( SnoreCorePrivate::computeHash(pluginDir().absolutePath().toLatin1()));
+            _cache->beginGroup( SnoreCorePrivate::computeHash(pluginDir().absolutePath().append(qApp->applicationFilePath()).toLatin1()));
         }
         return *_cache;
     }
