@@ -84,7 +84,7 @@ SnorePlugin::PluginTypes PluginContainer::typeFromString(const QString &t)
     return (SnorePlugin::PluginTypes)SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).keyToValue(t.toUpper().toLatin1());
 }
 
-const QStringList &PluginContainer::types()
+const QStringList &PluginContainer::typeNames()
 {
     static QStringList out;
     if(out.isEmpty())
@@ -98,23 +98,29 @@ const QStringList &PluginContainer::types()
     return out;
 }
 
+const QList<SnorePlugin::PluginTypes> &PluginContainer::types()
+{
+    static QList<SnorePlugin::PluginTypes> t;
+    if(t.isEmpty())
+    {
+        QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
+        for (int i = 0; i < e.keyCount(); ++i)
+        {
+            t << (SnorePlugin::PluginTypes) e.value(i);
+        }
+    }
+    return t;
+}
 
 void PluginContainer::updatePluginCache()
 {
     snoreDebug( SNORE_DEBUG ) << "Updating plugin cache";
     cache().remove("");
 
-#if defined(Q_OS_LINUX)
-    const QString extensions = "so";
-#elif defined(Q_OS_WIN)
-    const QString extensions = "dll";
-#elif defined(Q_OS_MAC)
-    const QString extensions = "dylib";
-#endif
 
-    foreach(const QString &type,PluginContainer::types())
+    foreach(const QString &type,PluginContainer::typeNames())
     {
-        foreach (const QFileInfo &file, pluginDir().entryInfoList(QStringList(QString("libsnore_%1_*.%2").arg(type.toLower(), extensions)), QDir::Files, QDir::Name | QDir::IgnoreCase ))
+        foreach (const QFileInfo &file, pluginDir().entryInfoList(QStringList(QString("libsnore_%1_*.%2").arg(type.toLower(), pluginExtention())), QDir::Files, QDir::Name | QDir::IgnoreCase ))
         {
             snoreDebug( SNORE_DEBUG ) << "adding" << file.absoluteFilePath();
             QPluginLoader loader(file.absoluteFilePath());
@@ -181,10 +187,9 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
     QHash<QString, PluginContainer *> out;
     if(type == SnorePlugin::ALL)
     {
-        QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
-        for (int i = 0; i < e.keyCount(); ++i)
+        foreach(const SnorePlugin::PluginTypes &t,types())
         {
-            out.unite(s_pluginCache.value((SnorePlugin::PluginTypes) e.value(i)));
+            out.unite(s_pluginCache.value(t));
         }
     }
     else
@@ -204,7 +209,8 @@ const QDir PluginContainer::pluginDir()
         list << QString("%1/../lib/libsnore").arg(appDir)
              << QString("%1/../lib64/libsnore").arg(appDir)
              << QString("%1/libsnore").arg(appDir)
-             << QLatin1String(LIBSNORE_PLUGIN_PATH);
+             << QLatin1String(LIBSNORE_PLUGIN_PATH)
+             << appDir;
         foreach(const QString &p, list)
         {
             QDir dir(p);

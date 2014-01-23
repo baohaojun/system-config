@@ -27,18 +27,6 @@
 
 using namespace Snore;
 
-
-QString const SnoreCorePrivate::snoreTMP()
-{
-    static QString tmp;
-    if(tmp.isNull())
-    {
-        tmp = QString("%1/libsnore/").arg(QDir::tempPath());
-        QDir(tmp).mkpath(".");
-    }
-    return tmp;
-}
-
 SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
     m_trayIcon(trayIcon),
     m_defaultApp("SnoreNotify",Icon(":/root/snore.png"))

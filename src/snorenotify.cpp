@@ -55,10 +55,15 @@ SnoreNotify::~SnoreNotify(){
     delete m_trayIcon;
 }
 
-void SnoreNotify::load(){
-    if(m_settings.contains("notificationBackend") && !m_settings.value("notificationBackend").toString().isEmpty())
+void SnoreNotify::load()
+{
+    QString backend = m_settings.value("notificationBackend").toString();
+    if(!backend.isEmpty())
     {
-        m_snore->setPrimaryNotificationBackend(m_settings.value("notificationBackend").toString());
+        if(!m_snore->setPrimaryNotificationBackend(backend))
+        {
+            m_snore->setPrimaryNotificationBackend();
+        }
     }
     else
     {

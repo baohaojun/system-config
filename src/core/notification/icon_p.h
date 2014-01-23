@@ -28,6 +28,7 @@
 #include <QBuffer>
 #include <QFile>
 #include <QDebug>
+#include <QDir>
 
 #include <QMutex>
 
@@ -46,6 +47,20 @@ public:
     QString localUrl();
     void download();
 
+
+    QImage m_img;
+    QByteArray m_data;
+    QString m_url;
+    QString m_hash;
+    QString m_localUrl;
+    bool m_isLocalFile;
+    bool m_isResource;
+    bool m_isRemoteFile;
+    QMutex m_mutex;
+
+private:
+    Q_DISABLE_COPY(IconData)
+
     inline QByteArray dataFromImage(const QImage &image)
     {
         QByteArray data;
@@ -55,17 +70,16 @@ public:
         return data;
     }
 
-    QImage m_img;
-    QByteArray m_data;
-    QString m_url;    
-    QString m_hash;
-    QString m_localUrl;
-    bool m_isLocalFile;
-    bool m_isResource;
-    bool m_isRemoteFile;
-    QMutex m_mutex;
-private:
-    Q_DISABLE_COPY(IconData)
+    inline QString createLocalFileName(const QString &hash)
+    {
+        static QString tmp;
+        if(tmp.isNull())
+        {
+            tmp = QString("%1/libsnore/").arg(QDir::tempPath());
+            QDir(tmp).mkpath(".");
+        }
+        return QString("%1%2.png").arg(tmp, hash);
+    }
 
 };
 

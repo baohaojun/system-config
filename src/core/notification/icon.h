@@ -55,7 +55,6 @@ public:
     bool isRemoteFile() const;
     bool isValid() const;
 
-
 private:
     QExplicitlySharedDataPointer<IconData> d;
     friend SNORE_EXPORT QDebug (::operator<<) ( QDebug, const Snore::Icon &);

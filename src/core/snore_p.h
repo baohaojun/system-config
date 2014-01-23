@@ -36,7 +36,6 @@ class SNORE_EXPORT SnoreCorePrivate : public QObject
     Q_OBJECT
 
 public:
-    static const QString snoreTMP();
     static inline QString computeHash(const QByteArray &data)
     {
         return QCryptographicHash::hash(data,QCryptographicHash::Md5).toHex();

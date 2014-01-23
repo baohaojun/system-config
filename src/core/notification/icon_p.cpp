@@ -27,10 +27,12 @@
 
 using namespace Snore;
 
+
+
 IconData::IconData(const QString &url):
     m_url(url),
     m_hash(SnoreCorePrivate::computeHash(m_url.toLatin1())),
-    m_localUrl(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash)),
+    m_localUrl(createLocalFileName(m_hash)),
     m_isLocalFile(false),
     m_isResource(m_url.startsWith(":/"))
 {
@@ -46,7 +48,7 @@ IconData::IconData(const QImage &img):
     m_img(img),
     m_data(dataFromImage(img)),
     m_hash(SnoreCorePrivate::computeHash(m_data)),
-    m_localUrl(QString("%1%2.png").arg(SnoreCorePrivate::snoreTMP(), m_hash)),
+    m_localUrl(createLocalFileName(m_hash)),
     m_isLocalFile(false),
     m_isResource(false),
     m_isRemoteFile(false)

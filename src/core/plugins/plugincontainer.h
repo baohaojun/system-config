@@ -29,14 +29,11 @@
 
 
 
-namespace Snore{
-class SnoreCore;
-class SnorePlugin;
-class SnoreFrontend;
-class SnoreBackend;
-class SnoreSecondaryBackend;
+namespace Snore
+{
 
-class SNORE_EXPORT PluginContainer{
+class SNORE_EXPORT PluginContainer
+{
 public:
     static const QHash<QString, PluginContainer *> pluginCache(SnorePlugin::PluginTypes type);
 
@@ -50,11 +47,23 @@ public:
 
 
     static SnorePlugin::PluginTypes typeFromString(const QString &t);
-    static const QStringList &types();
+    static const QStringList &typeNames();
+    static const QList<SnorePlugin::PluginTypes> &types();
 
 private:
     void static updatePluginCache();
     static const QDir pluginDir();
+    static inline const QString pluginExtention()
+    {
+#if defined(Q_OS_LINUX)
+        return QLatin1String("so");
+#elif defined(Q_OS_WIN)
+        return QLatin1String("dll");
+#elif defined(Q_OS_MAC)
+        return QLatin1String("dylib");
+#endif
+    }
+
     static QHash<SnorePlugin::PluginTypes, QHash<QString,PluginContainer*> > s_pluginCache;
 
     static inline QSettings &cache()
