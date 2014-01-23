@@ -204,14 +204,18 @@ const QDir PluginContainer::pluginDir()
         list << QString("%1/../lib/libsnore").arg(appDir)
              << QString("%1/../lib64/libsnore").arg(appDir)
              << QString("%1/libsnore").arg(appDir)
-             << QString("%1/").arg(appDir)
              << QLatin1String(LIBSNORE_PLUGIN_PATH);
         foreach(const QString &p, list)
         {
-            if(QDir(p).exists())
+            QDir dir(p);
+            if(dir.exists())
             {
-                path = p;
+                path = dir.absolutePath();
                 break;
+            }
+            else
+            {
+                snoreDebug( SNORE_DEBUG ) << "Possible pluginpath:" << dir.absolutePath() << "does not exist";
             }
         }
         snoreDebug( SNORE_INFO ) << "PluginPath is :" << path;
