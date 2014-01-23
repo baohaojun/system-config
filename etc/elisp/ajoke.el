@@ -528,6 +528,12 @@ beginning of current defun."
             (indent-for-tab-command)
             (insert "}")))))))
 
+(defun ajoke-get-imports-if-java-mode ()
+  "get imports if java-mode"
+  (when (eq major-mode 'java-mode)
+    (let ((before-save-hook nil))
+      (save-buffer))
+    (ajoke-get-imports)))
 
 (global-set-key [(meta g)(j)(p)] 'ajoke-insert-package)
 (global-set-key [(meta g)(j)(i)] 'ajoke-get-imports)
@@ -536,5 +542,6 @@ beginning of current defun."
 (global-set-key [(meta g)(j)(r)] 'ajoke-resolve)
 (global-set-key [(meta g)(j)(m)] 'ajoke-complete-method)
 (global-set-key [(shift meta s)] 'ajoke-search-local-id)
+(add-hook 'before-save-hook 'ajoke-get-imports-if-java-mode)
 
 (provide 'ajoke)
