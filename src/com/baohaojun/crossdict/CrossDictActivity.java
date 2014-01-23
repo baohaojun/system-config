@@ -144,27 +144,9 @@ public class CrossDictActivity extends Activity {
 
         mWorkingDir = Environment.getExternalStoragePublicDirectory("crossdict/ahd");
 
-        setContentView(R.layout.main);
+        setContentView(R.layout.crossdict);
         mListView = (SlowListView) findViewById(R.id.nearby_dict_entries);
         mEdit = (EditText) findViewById(R.id.enter_dict_entry);
-        // mEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-        //         public void onFocusChange(View v, boolean hasFocus) {
-        //             EditText mEdit = (EditText)v;
-        //             if (!hasFocus) {
-        //                 mEdit.selectAll();
-        //             }
-        //         }
-        //     });
-
-        mEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.e("bhj", String.format("%s:%d: onClick", "CrossDictActivity.java", 162));
-                    mEdit.selectAll();
-                }
-            });
-
-
         mEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
