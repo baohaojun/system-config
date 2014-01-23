@@ -54,6 +54,7 @@ public:
 
 private:
     void static updatePluginCache();
+    static const QDir pluginDir();
     static QHash<SnorePlugin::PluginTypes, QHash<QString,PluginContainer*> > s_pluginCache;
 
     static inline QSettings &cache()
@@ -62,7 +63,7 @@ private:
         if(_cache == NULL)
         {
             _cache = new QSettings("SnoreNotify","libsnore");
-            _cache->beginGroup( SnoreCorePrivate::computeHash(SnoreCorePrivate::pluginDir().absolutePath().toLatin1()));
+            _cache->beginGroup( SnoreCorePrivate::computeHash(pluginDir().absolutePath().toLatin1()));
         }
         return *_cache;
     }

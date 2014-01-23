@@ -28,6 +28,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QMetaEnum>
+#include <QApplication>
 
 using namespace Snore;
 
@@ -38,7 +39,7 @@ PluginContainer::PluginContainer(QString fileName, QString pluginName, SnorePlug
     m_pluginFile(fileName),
     m_pluginName(pluginName),
     m_pluginType(type),
-    m_loader(SnoreCorePrivate::pluginDir().absoluteFilePath(file()))
+    m_loader(pluginDir().absoluteFilePath(file()))
 {
 
 }
@@ -101,13 +102,19 @@ const QStringList &PluginContainer::types()
 void PluginContainer::updatePluginCache()
 {
     snoreDebug( SNORE_DEBUG ) << "Updating plugin cache";
-
-    s_pluginCache.clear();
     cache().remove("");
+
+#if defined(Q_OS_LINUX)
+    const QString extensions = "so";
+#elif defined(Q_OS_WIN)
+    const QString extensions = "dll";
+#elif defined(Q_OS_MAC)
+    const QString extensions = "dylib";
+#endif
 
     foreach(const QString &type,PluginContainer::types())
     {
-        foreach (const QFileInfo &file, SnoreCorePrivate::pluginDir().entryInfoList(QStringList(QString("libsnore_%1_*").arg(type.toLower())), QDir::Files, QDir::Name | QDir::IgnoreCase ))
+        foreach (const QFileInfo &file, pluginDir().entryInfoList(QStringList(QString("libsnore_%1_*.%2").arg(type.toLower(), extensions)), QDir::Files, QDir::Name | QDir::IgnoreCase ))
         {
             snoreDebug( SNORE_DEBUG ) << "adding" << file.absoluteFilePath();
             QPluginLoader loader(file.absoluteFilePath());
@@ -131,7 +138,7 @@ void PluginContainer::updatePluginCache()
     }
     cache().setValue("version",Version::revision());
     cache().setValue("buildtime",Version::buildTime());
-    cache().setValue("pluginPath",SnoreCorePrivate::pluginDir().absolutePath());
+    cache().setValue("pluginPath",pluginDir().absolutePath());
     QList<PluginContainer*> plugins = pluginCache(SnorePlugin::ALL).values();
     cache().beginWriteArray("plugins");
     for(int i=0;i< plugins.size();++i)
@@ -148,7 +155,6 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
 {
     if(s_pluginCache.isEmpty())
     {
-
         QString version = cache().value("version").toString();
         QString buildTime = cache().value("buildtime").toString();
         int size = cache().beginReadArray("plugins");
@@ -187,3 +193,30 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
     }
     return out;
 }
+
+const QDir PluginContainer::pluginDir()
+{
+    static QString path;
+    if(path.isNull())
+    {
+        const QString appDir = qApp->applicationDirPath();
+        QStringList list;
+        list << QString("%1/../lib/libsnore").arg(appDir)
+             << QString("%1/../lib64/libsnore").arg(appDir)
+             << QString("%1/libsnore").arg(appDir)
+             << QString("%1/").arg(appDir)
+             << QLatin1String(LIBSNORE_PLUGIN_PATH);
+        foreach(const QString &p, list)
+        {
+            if(QDir(p).exists())
+            {
+                path = p;
+                break;
+            }
+        }
+        snoreDebug( SNORE_INFO ) << "PluginPath is :" << path;
+    }
+    return QDir(path);
+}
+
+

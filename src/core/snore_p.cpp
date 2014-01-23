@@ -25,8 +25,6 @@
 #include "plugins/snorefrontend.h"
 #include "notification/notification_p.h"
 
-#include <QApplication>
-
 using namespace Snore;
 
 
@@ -40,17 +38,6 @@ QString const SnoreCorePrivate::snoreTMP()
     }
     return tmp;
 }
-
-const QDir &SnoreCorePrivate::pluginDir()
-{
-    static QDir path(QString("%1/../%2/libsnore").arg(qApp->applicationDirPath(), CMAKE_INSTALL_LIBDIR));
-    if(!path.exists())
-    {
-        path = QDir(LIBSNORE_PLUGIN_PATH);
-    }
-    return path;
-}
-
 
 SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
     m_trayIcon(trayIcon),
