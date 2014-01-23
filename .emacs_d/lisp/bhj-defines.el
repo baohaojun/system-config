@@ -123,7 +123,7 @@ might be bad."
   (interactive)
   (c++-mode)
   (c-set-style "k&r")
-  (setq tab-width 4)
+  (setq tab-width 8)
   (setq indent-tabs-mode nil)
   (setq c-basic-offset 4))
 

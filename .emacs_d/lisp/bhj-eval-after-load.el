@@ -157,7 +157,6 @@
 ;;      buffer-list)))
 
 ;; (add-hook 'find-file-hook 'eliminate-dup-invalid-buffers)
-(add-hook 'java-mode-hook (lambda () (setq c-basic-offset 4 tab-width 4)))
 
 (eval-after-load 'session
   '(defadvice session-save-session (before session-save-session-remove-helm-historys activate)
