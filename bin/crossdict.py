@@ -1,0 +1,1 @@
+../../src/github/semi-offline.wikipedia/mywiki/gui/crossdict.py
