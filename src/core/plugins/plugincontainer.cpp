@@ -28,6 +28,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QMetaEnum>
+#include <QApplication>
 
 using namespace Snore;
 
@@ -144,7 +145,6 @@ void PluginContainer::updatePluginCache()
     cache().setValue("version",Version::revision());
     cache().setValue("buildtime",Version::buildTime());
     cache().setValue("pluginPath",pluginDir().absolutePath());
-    cache().setValue("application", qApp->applicationFilePath());
     QList<PluginContainer*> plugins = pluginCache(SnorePlugin::ALL).values();
     cache().beginWriteArray("plugins");
     for(int i=0;i< plugins.size();++i)
