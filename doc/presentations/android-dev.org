@@ -74,12 +74,13 @@
 
 
 ** 小练习
-*** 获取一段JSON数据
-- AllIn4Demo
-- MainActivity1
-*** 会Crash
-*** 原因分析
-*** 修正方法？
+*** 获取一段JSON数据 (MainActivity1)
+- AllIn4Demo代码位置
+  [[http://10.125.206.165/allin4.zip]]
+*** 会出错
+    :PROPERTIES:
+    :BEAMER_act: <2->
+    :END:
 ** UI主线程和联网线程
 *** Android编程中，需要牢记：
 
@@ -96,7 +97,10 @@
     :BEAMER_act: <2->
     :BEAMER_env: block
     :END:
-***
+*** break the line                                                              :B_ignoreheading:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :END:
 *** 工作线程不允许操作UI元素                                                    :B_block:BMCOL:
     :PROPERTIES:
     :BEAMER_col: 0.4
@@ -175,11 +179,12 @@ private class MyAsyncTask
     mTitleBar.startAnimation(mSlideOut);
   }
 }
+new MyAsyncTask().execute(...);
 #+END_SRC
 ** 小练习
-*** 用 runOnUiThread 实现线程间交互
-*** 用 Handler 实现线程间交互
-*** 用 AsyncTask 实现线程间交互
+*** 用 runOnUiThread 实现线程间交互 (MainActivity2)
+*** 用 Handler 实现线程间交互 (MainActivity3)
+*** 用 AsyncTask 实现线程间交互 (MainActivity4)
 
 ** WebView应用
 
@@ -236,6 +241,7 @@ startActivity(intent);
 Intent intent = getIntent();
 value = intent.getStringExtra(key);
 #+END_SRC
+** 数据传递、共享（续）
 *** startActivityForResult
 #+BEGIN_SRC java
 Intent intent = new Intent(thisActivity,
@@ -254,6 +260,7 @@ protected void onActivityResult(
   if (requestCode == GET_CODE) {...}
 }
 #+END_SRC
+** 数据传递、共享（续）
 *** Singleton、Application
 *** 数据存取也是一种IPC
 
@@ -263,9 +270,32 @@ protected void onActivityResult(
 
 * 总结
 ** 查看文档的方法
+*** bhj-help-java 查看java API
+*** bhj-help-it 查看android:layout_toLeftOf android:layout_weight
+*** 上beagrep暴力搜索
 ** 下载整个Android源代码
+#+BEGIN_SRC sh
+repo_url=$(
+    echo -n https://github.com/baohaojun
+    echo -n system-config/raw/master/bin/repo
+)
+wget $repo_url -o ~/bin/repo
+
+mani_url=$(
+    echo -n https://android.googlesource.com/
+    echo -n platform/manifest
+)
+repo init -u $mani_url -b android-4.4_r1
+repo sync
+#+END_SRC
 ** ApiDemos
+   #+caption: OpenGL画图
+   #+label: opengl-img
+   #+ATTR_LATEX: :width .5\linewidth
+   [[~/doc/presentations/opengl.png]]
+
 ** 多读，多写！
+*** 写出有趣的软件，发布到Google Play上
 #+Latex: \end{CJK*}
 
 # Local Variables: #

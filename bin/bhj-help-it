@@ -76,6 +76,11 @@ case $1 in
         ;;
     *)
         if [[ "$2" =~ ^android: ]]; then
+            file=$(select-output-line -- beagrep -e '#attr_'$2 -d ~/external/bin/Linux/ext/android-sdk-linux/docs --grep -l)
+            if test -e "$file"; then
+                firefox-open-url-pattern /android-sdk-linux/ "file://$file#attr_$2"
+                exit
+            fi
             anchor=${2/android:/R.attr.html#}
             if grep -P -e "\Q$anchor\E" ~/external/bin/Linux/ext/android-sdk-linux/docs/reference/android/R.attr.html; then
                 firefox-open-url-pattern /android-sdk-linux/ file://$HOME/external/bin/Linux/ext/android-sdk-linux/docs/reference/android/$anchor

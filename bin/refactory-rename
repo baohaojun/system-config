@@ -5,7 +5,8 @@ prepend=
 postpend=
 export ASK_REPLACER=true
 
-TEMP=$(getopt -o p:P:A --long pre:post:no-ask -n $(basename $0) -- "$@")
+perl_re=-P
+TEMP=$(getopt -o p:P:A --long "no-perl-re pre:post:no-ask" -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -17,6 +18,11 @@ while true; do
             postpend=$(printf %q "$2")
             shift 2
             ;;
+        --no-perl-re)
+            perl_re=''
+            shift
+            ;;
+
         -A|--no-ask)
             ASK_REPLACER=false
             shift
@@ -56,7 +62,7 @@ function get-files-r() {
 }
 
 function get-files-this-dir() {
-    find . -maxdepth 1 -name '.git' -prune -o -print | perl -npe 's#^\./##' | grep -v -P -e '^\.$';
+    find . -maxdepth 1 -name '.git' -prune -o -print | perl -npe 's#^\./##' | grep -v $perl_re -e '^\.$';
 }
 
 if ! git-is-clean .; then
@@ -70,7 +76,7 @@ perlhash=$tmpf.hash
 get-files-r > $tmpf
 echo shit > $tmpf.tmp
 cat $tmpf |
-xargs -d \\n grep -P -l -i -I -e "$1" |
+xargs -d \\n grep $perl_re -l -i -I -e "$1" |
 xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x is a match" 1>&2 && echo "$x"; done; echo '$tmpf.tmp true |
 xargs -d \\n perl -npe '
 BEGIN{
@@ -137,7 +143,7 @@ function rename-files() {
             if test -d "$x"; then
                 test -L "$x" || rename-files "$x" "$@"
             fi
-            if echo "$x"|grep -P -q -i -e "$prepend$1" || readlink "$x" | grep -P -q -i -e "$prepend$1"; then
+            if echo "$x"|grep $perl_re -q -i -e "$prepend$1" || readlink "$x" | grep $perl_re -q -i -e "$prepend$1"; then
                 debug doing "$x"
                 y="$(compute-new-string "$x")"
 

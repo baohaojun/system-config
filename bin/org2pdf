@@ -35,7 +35,7 @@ if test $org_file = true || yes-or-no-p -y "Export from .org"; then
   (find-file "${1/%.tex/.org}") ($exp_func))
 EOF
 )
-    emacs -l ~/.emacs --batch --eval "$eval_arg"
+    emacsclient -e "$eval_arg"
     set -- "${1/%.org/.tex}"
 fi
 
