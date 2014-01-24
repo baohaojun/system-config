@@ -29,6 +29,7 @@
 #include <QDebug>
 #include <QMetaEnum>
 #include <QApplication>
+#include <QSystemSemaphore>
 
 using namespace Snore;
 
@@ -114,9 +115,25 @@ const QList<SnorePlugin::PluginTypes> &PluginContainer::types()
 
 void PluginContainer::updatePluginCache()
 {
+    QSystemSemaphore sema("cache_update", 1, QSystemSemaphore::Open);
+    if(sema.acquire())
+    {
+        cache().sync();
+        if(cache().value("buildtime").toString() == Version::buildTime())
+        {
+            sema.release();
+            return;
+        }
+    }
+    else
+    {
+        qFatal("Failed to lock cache");
+    }
+
     snoreDebug( SNORE_DEBUG ) << "Updating plugin cache";
     cache().remove("");
 
+    QList<PluginContainer*> plugins;
 
     foreach(const QString &type,PluginContainer::typeNames())
     {
@@ -139,13 +156,14 @@ void PluginContainer::updatePluginCache()
             }
             PluginContainer *info = new PluginContainer(file.fileName(), sp->name() ,PluginContainer::typeFromString(type));
             s_pluginCache[info->type()].insert(info->name(),info);
+            plugins << info;
             snoreDebug( SNORE_DEBUG ) << "added" << info->name() << "to cache";
         }
     }
     cache().setValue("version",Version::revision());
     cache().setValue("buildtime",Version::buildTime());
     cache().setValue("pluginPath",pluginDir().absolutePath());
-    QList<PluginContainer*> plugins = pluginCache(SnorePlugin::ALL).values();
+
     cache().beginWriteArray("plugins");
     for(int i=0;i< plugins.size();++i)
     {
@@ -155,24 +173,22 @@ void PluginContainer::updatePluginCache()
         cache().setValue("type",(int)plugins[i]->type());
     }
     cache().endArray();
+    cache().sync();
+    sema.release();
 }
 
 const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin::PluginTypes type)
 {
     if(s_pluginCache.isEmpty())
     {
-        QString version = cache().value("version").toString();
         QString buildTime = cache().value("buildtime").toString();
-        int size = cache().beginReadArray("plugins");
-        if(size == 0 ||
-                version != Version::revision() ||
-                buildTime != Version::buildTime())
+        if(buildTime != Version::buildTime())
         {
-            cache().endArray();
             updatePluginCache();
         }
         else
         {
+            int size = cache().beginReadArray("plugins");
             for(int i=0;i<size;++i)
             {
                 cache().setArrayIndex(i);
@@ -199,10 +215,10 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
     return out;
 }
 
-const QDir PluginContainer::pluginDir()
+const QDir &PluginContainer::pluginDir()
 {
-    static QString path;
-    if(path.isNull())
+    static QDir *path = NULL;
+    if(path == NULL)
     {
         const QString appDir = qApp->applicationDirPath();
         QStringList list;
@@ -215,7 +231,7 @@ const QDir PluginContainer::pluginDir()
             QDir dir(p);
             if(dir.exists())
             {
-                path = dir.absolutePath();
+                path = new QDir(dir);
                 break;
             }
             else
@@ -223,9 +239,9 @@ const QDir PluginContainer::pluginDir()
                 snoreDebug( SNORE_DEBUG ) << "Possible pluginpath:" << dir.absolutePath() << "does not exist";
             }
         }
-        snoreDebug( SNORE_INFO ) << "PluginPath is :" << path;
+        snoreDebug( SNORE_INFO ) << "PluginPath is :" << path->absolutePath();
     }
-    return QDir(path);
+    return *path;
 }
 
 

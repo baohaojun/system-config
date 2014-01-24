@@ -52,7 +52,7 @@ public:
 
 private:
     void static updatePluginCache();
-    static const QDir pluginDir();
+    static const QDir &pluginDir();
     static inline const QString pluginExtention()
     {
 #if defined(Q_OS_LINUX)
