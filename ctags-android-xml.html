@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>用ctags索引Android资源定义的.xml和.png文件</title>
-<!-- 2013-05-20 Mon 22:13 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="author" content="Bao Haojun"/>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
@@ -43,7 +43,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -168,7 +168,8 @@ gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-exa
 
 
 <div class="figure">
-<p><img src="images/post/grep-png.png"  alt="grep-png.png"/></p>
+<p><img src="images/post/grep-png.png" alt="grep-png.png" />
+</p>
 </div>
 
 <p>
@@ -182,8 +183,8 @@ gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-exa
 
 <pre class="src src-diff"><span class="org-diff-context">diff --git a/gcode/global/plugin-example/exuberant-ctags.c b/gcode/global/plugin-example/exuberant-ctags.c</span>
 <span class="org-diff-context">index b7ea5dd..09048d0 100644</span>
-<span class="org-diff-header">--- </span><span class="org-diff-file-header"><span class="org-diff-header">a/gcode/global/plugin-example/exuberant-ctags.c</span></span>
-<span class="org-diff-header">+++ </span><span class="org-diff-file-header"><span class="org-diff-header">b/gcode/global/plugin-example/exuberant-ctags.c</span></span>
+<span class="org-diff-header">--- </span><span class="org-diff-header"><span class="org-diff-file-header">a/gcode/global/plugin-example/exuberant-ctags.c</span></span>
+<span class="org-diff-header">+++ </span><span class="org-diff-header"><span class="org-diff-file-header">b/gcode/global/plugin-example/exuberant-ctags.c</span></span>
 <span class="org-diff-hunk-header">@@ -249,16 +249,42 @@</span><span class="org-diff-function"> put_line(char *ctags_x, const struct parser_param *param)</span>
 <span class="org-diff-context">        param-&gt;put(PARSER_DEF, tagname, lineno, param-&gt;file, p, param-&gt;arg);</span>
 <span class="org-diff-context"> }</span>
@@ -236,7 +237,7 @@ gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-exa
 
 <div class="org-src-container">
 
-<pre class="src src-xml"><span class="org-nxml-tag-delimiter">&lt;</span><span class="org-nxml-element-local-name">color</span> <span class="org-nxml-attribute-local-name">name</span>=<span class="org-nxml-attribute-value-delimiter">"</span><span class="org-nxml-attribute-value">link_text_dark</span><span class="org-nxml-attribute-value-delimiter">"</span><span class="org-nxml-tag-delimiter">&gt;</span><span class="org-nxml-text">#5c5cff</span><span class="org-nxml-tag-delimiter">&lt;</span><span class="org-nxml-tag-slash">/</span><span class="org-nxml-element-local-name">color</span><span class="org-nxml-tag-delimiter">&gt;</span>
+<pre class="src src-xml"><span class="org-nxml-tag-delimiter">&lt;</span><span class="org-nxml-element-local-name">color</span> <span class="org-nxml-attribute-local-name">name</span>=<span class="org-nxml-attribute-value-delimiter">"</span><span class="org-nxml-attribute-value">link_text_dark</span><span class="org-nxml-attribute-value-delimiter">"</span><span class="org-nxml-tag-delimiter">&gt;</span><span class="org-nxml-text"><span class="ATTRLIST"><span class="ATTRLIST-1">#5c5cff</span></span></span><span class="org-nxml-tag-delimiter">&lt;</span><span class="org-nxml-tag-slash">/</span><span class="org-nxml-element-local-name">color</span><span class="org-nxml-tag-delimiter">&gt;</span>
 </pre>
 </div>
 
@@ -260,8 +261,19 @@ gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-exa
 <!-- {%html-mode%} -->
 
 <div id="disqus_container">
-  <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-  <div style="margin-bottom:20px">
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
+    var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
+    var disqus_url = 'http://baohaojun.github.io/blog/2012/10/31/ctags-android-xml.html';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'blog/2012/10/31' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+    <div style="margin-bottom:20px">
     <script type="text/javascript" charset="utf-8">
       (function(){
       var _w = 86 , _h = 16;
@@ -358,9 +370,6 @@ gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-exa
 <!-- {%/html-mode%} -->
 <div id="postamble" class="status">
 <!-- {%html-mode%} -->
-
-<script src="/js/post.js" type="text/javascript"></script>
-
 
 <!-- {%/html-mode%} -->
 </div>
