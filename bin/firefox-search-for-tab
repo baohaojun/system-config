@@ -34,7 +34,7 @@ if test "$DEBUG" = true; then
     echo "searching for $1"
 fi
 
-for x in $(seq 1 50); do
+for x in $(seq 1 10); do
     url=$(get-firefox-tab-url)
     if test "$DEBUG" = true; then
         echo "url is $(echo "$url" | unurl.pl)"
