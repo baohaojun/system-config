@@ -52,7 +52,7 @@ for our $org_file (@ARGV) {
     $html_dir =~ s!(.*/).*!$1!;
 
     while (<$fh_html>) {
-        s!(href\s*=\s*|src\s*=\s*)(.)(.*?)\2!"$1$2" . fix_link($3) . "$2"!eg;
+        s!\s(href\s*=\s*|src\s*=\s*)(.)(.*?)\2!" $1$2" . fix_link($3) . "$2"!eg;
         print $fh_base $_;
     }
     close $fh_base;
