@@ -79,7 +79,6 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
 {
     if(!n.isValid())
     {
-        snoreDebug( SNORE_WARNING ) << "Closing a notification a second time, this should not heappen";
         return;
     }
     if(m_activeNotifications.contains(n.id()))
