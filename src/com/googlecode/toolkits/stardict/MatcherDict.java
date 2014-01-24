@@ -14,7 +14,7 @@ public class MatcherDict implements StarDictInterface {
     static String wordsStr;
     static int totalEntries;
 
-    private BaseAdapter mAdapter;
+    private BaseAdapter mAdapter = null;
     private static boolean mDebug;
     private static void debug(String format, Object... args) {
         if (mDebug) {
@@ -103,7 +103,9 @@ public class MatcherDict implements StarDictInterface {
         } else {
             mExhausted = true;
             mTotalEntries = mMatchees.size();
-            mAdapter.notifyDataSetChanged();
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
