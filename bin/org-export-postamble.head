@@ -1,11 +1,23 @@
 #!/bin/bash
 export ORG_FILE_NAME=$1
+final_url=http://baohaojun.github.io/$(echo "$1" | perl -npe 's!.*doc/baohaojun/!!; s/\.org/.html/')
 cat <<EOF
 <!-- {%html-mode%} -->
 
 <div id="disqus_container">
-  <a href="#" class="right disqus" onclick="return false;">DISQUS!</a>
-  <div style="margin-bottom:20px">
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
+    var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
+    var disqus_url = '$final_url';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+    <div style="margin-bottom:20px">
     <script type="text/javascript" charset="utf-8">
       (function(){
       var _w = 86 , _h = 16;
