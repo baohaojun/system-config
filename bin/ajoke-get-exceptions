@@ -25,8 +25,9 @@ open(my $grep_pipe, "|-", "bash | perl -mSet::Scalar -ne '" . '
             }
         }
         if (m/\\bthrows.*/) {
+            print STDERR "$_";
             my $match = $&;
-            while ($match =~ m/\w+/g) {
+            while ($match =~ m/\w+\b(?!\.)/g) {
                 $s->insert($&);
             }
         }' . "'") or die "Can not open grep pipe";
@@ -38,5 +39,5 @@ while (<$flat_pipe>) {
 }
 
 while (defined(my $id = $idset->each)) {
-    print $grep_pipe "grep-gtags -e $id -p '\\.java|\\.jar|\\.aidl'\n";
+    print $grep_pipe "grep-gtags 2>/dev/null -e $id -p '\\.java|\\.jar|\\.aidl'\n";
 }

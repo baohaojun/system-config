@@ -509,24 +509,27 @@ beginning of current defun."
   "Find out what exceptions are being thrown out of the preceding try block"
   (interactive)
   (save-excursion
-    (let* ((try-start) (progn (backward-list) (point))
+    (let* ((try-start (progn (backward-list) (point)))
            (try-end (progn (forward-list) (point)))
            (exceptions (shell-command-to-string
-                        (format "echo %s | ajoke-get-exceptions"
+                        (format "echo %s | ajoke-get-exceptions 2>/dev/null"
                                 (shell-quote-argument (buffer-substring-no-properties try-start try-end)))))
            (exceptions (split-string exceptions))
            (exceptions (cons "done" exceptions))
            (done nil))
       (while (not done)
+        (indent-for-tab-command)
         (let ((ans (ajoke--pick-one "Which exception to catch?" exceptions nil t)))
           (if (string= ans "done")
               (setq done t)
+
             (just-one-space)
             (insert "catch (" ans " e) {\n")
             (indent-for-tab-command)
-            (insert "Log.e(\"bhj\", String.format(\"%s:%d: \", \"" (bhj-file-basename) ", " (string-to-number (line-number-at-pos)) "), e);\n")
+            (insert "Log.e(\"bhj\", String.format(\"%s:%d: \", \"" (bhj-file-basename) "\", " (number-to-string (line-number-at-pos)) "), e);\n")
             (indent-for-tab-command)
-            (insert "}")))))))
+            (insert "}")
+            (just-one-space)))))))
 
 (defun ajoke-get-imports-if-java-mode ()
   "get imports if java-mode"
