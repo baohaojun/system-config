@@ -531,8 +531,10 @@ beginning of current defun."
             (insert "}")
             (just-one-space)))))))
 
+;;;###autoload
 (defun ajoke-get-imports-if-java-mode ()
   "get imports if java-mode"
+  (interactive)
   (when (eq major-mode 'java-mode)
     (let ((before-save-hook nil))
       (save-buffer))
@@ -545,6 +547,7 @@ beginning of current defun."
 (global-set-key [(meta g)(j)(r)] 'ajoke-resolve)
 (global-set-key [(meta g)(j)(m)] 'ajoke-complete-method)
 (global-set-key [(shift meta s)] 'ajoke-search-local-id)
-(add-hook 'before-save-hook 'ajoke-get-imports-if-java-mode)
+;; the correct way to do it is to customize 'before-save-hook
+;; (add-hook 'before-save-hook 'ajoke-get-imports-if-java-mode)
 
 (provide 'ajoke)

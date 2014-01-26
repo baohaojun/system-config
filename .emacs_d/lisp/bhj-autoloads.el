@@ -362,10 +362,24 @@ Key bindings:
 
 ;;;***
 
-;;;### (autoloads (ajoke-search-local-id ajoke-complete-method ajoke-resolve
-;;;;;;  ajoke-get-imports ajoke-get-override ajoke-get-hierarchy)
-;;;;;;  "ajoke" "ajoke.el" (20978 9411 730903 403000))
+;;;### (autoloads (ajoke-get-imports-if-java-mode ajoke-search-local-id
+;;;;;;  ajoke-complete-method ajoke-resolve ajoke-get-override ajoke-get-hierarchy
+;;;;;;  ajoke-get-imports ajoke--pick-one) "ajoke" "ajoke.el" (21220
+;;;;;;  60716 980381 880000))
 ;;; Generated autoloads from ajoke.el
+
+(autoload 'ajoke--pick-one "ajoke" "\
+Pick an item from COLLECTION, which is a list.
+ARGS is passed to the supporting function completing-read (or
+HELM's or Anything's version of completing-read: you are strongly
+advised to use one of these elisp tools).
+
+\(fn PROMPT COLLECTION &rest ARGS)" nil nil)
+
+(autoload 'ajoke-get-imports "ajoke" "\
+Write the java import statements automatically.
+
+\(fn)" t nil)
 
 (autoload 'ajoke-get-hierarchy "ajoke" "\
 Print the class/interface inheritance hierarchy for the
@@ -376,11 +390,6 @@ referencing.
 
 (autoload 'ajoke-get-override "ajoke" "\
 Overide a method defined in super classes/interfaces.
-
-\(fn)" t nil)
-
-(autoload 'ajoke-get-imports "ajoke" "\
-Write the java import statements automatically.
 
 \(fn)" t nil)
 
@@ -401,6 +410,11 @@ Search an identifier such as a local variable from the
 beginning of current defun.
 
 \(fn)" t nil)
+
+(autoload 'ajoke-get-imports-if-java-mode "ajoke" "\
+get imports if java-mode
+
+\(fn)" nil nil)
 
 ;;;***
 

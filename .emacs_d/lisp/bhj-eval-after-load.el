@@ -4,11 +4,6 @@
      (grep-compute-defaults)
      (load "bhj-grep")))
 
-(eval-after-load "bhj-defines"
-  '(progn
-     (add-hook 'before-save-hook 'cleanup-buffer-safe)
-     (add-hook 'before-save-hook 'confirm-risky-remote-edit)))
-
 (eval-after-load 'helm-buffers
   '(defun helm-buffers-sort-transformer (candidates _source)
      candidates))
@@ -162,3 +157,5 @@
   '(defadvice session-save-session (before session-save-session-remove-helm-historys activate)
      (dolist (helm-history-var (apropos-internal "\\`helm-.*-history\\'" 'boundp))
        (makunbound helm-history-var))))
+
+
