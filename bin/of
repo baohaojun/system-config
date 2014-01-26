@@ -14,8 +14,11 @@ elif test $# = 1; then
         else
             set -- "$(f "$@")"
         fi
-    elif ! echo "$@" | grep :// -q && test -e "$(f "$@")"; then
-        set -- "$(f "$@")"
+    elif ! echo "$@" | grep :// -q; then
+        res="$(f "$@")"
+        if test -e "$res"; then
+            set -- "$res"
+        fi
     fi
 else
     set -- "$(f "$@")"

@@ -26,11 +26,20 @@ if test ! -d ~/.cache/$(basename $1).unpack; then
     unzip "$file"
 fi
 
+
+
 cd ~/.cache/$(basename $1).unpack
 if test ! -e .AndroidManifest.xml-is-good; then
     axml2xml.pl AndroidManifest.xml > .AndroidManifest.xml.bak
     rm ./* -rf
     mv .AndroidManifest.xml.bak AndroidManifest.xml
+    if test "$(basename $0)" = android-install-and-start-apk; then
+        output=$(adb install -r "$file" 2>&1)
+        if echo "$output" | grep -e 'Failure|INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES' -P; then
+            adb uninstall $(ant-get-package)
+            adb install -r "$file"
+        fi
+    fi
     touch .AndroidManifest.xml-is-good
 fi
 echo will now start $(basename "$file")
