@@ -32,9 +32,11 @@
 
 namespace Snore{
 
+
 class SNORE_EXPORT NotificationData : public QSharedData
 {
-friend class Notification;
+
+    friend class Notification;
 public:
     NotificationData ( const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,
                        int timeout,Notification::Prioritys priority );
@@ -52,6 +54,7 @@ public:
 
 
     void setCloseReason(Notification::CloseReasons r);
+
 
     QTimer *timeoutTimer();
 

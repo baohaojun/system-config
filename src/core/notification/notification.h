@@ -43,9 +43,13 @@ class NotificationData;
 
 class SNORE_EXPORT Notification
 {
+    /*
+     Q_OBJECT
+     */
+    Q_GADGET
+    Q_PROPERTY(CloseReasons closeReason READ closeReason)
     friend class NotificationData;
 public:
-
     /**
      * The reason why the Notification was closed.
      */
@@ -54,25 +58,26 @@ public:
        /**
         * The default value, the notification was not closed.
         */
-        NONE = 0x0,
+        NONE = 0,
 
         /**
          * The Notification was closed becaouse it timed out.
          */
-        TIMED_OUT = 0x1,
+        TIMED_OUT = 1,
 
         /**
          * The Notification was dismissed by the user, close button.
          */
-        DISMISSED = 0x2,
+        DISMISSED = 2,
 
         /**
          * The Notification was closed after an action was invoked.
          * @see actionInvoked()
          */
-        CLOSED = 0x4
+        CLOSED = 3
     };
     Q_DECLARE_FLAGS(CloseReasons, CloseReason)
+    Q_ENUMS(CloseReasons)
 
     /**
      * The Priority for the Notification.
@@ -282,6 +287,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Notification::CloseReasons)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Notification::Prioritys)
 
 QDataStream &operator<< ( QDataStream & stream, const Snore::Notification & noti );
+
+SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Notification::CloseReasons &);
 
 inline QDebug operator<< ( QDebug debug, const Snore::Notification &noti )
 {

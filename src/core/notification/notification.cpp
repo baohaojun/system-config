@@ -22,6 +22,7 @@
 #include "notification/icon.h"
 #include "notification/notification_p.h"
 #include "plugins/plugincontainer.h"
+#include <QMetaEnum>
 #include <Qt>
 
 using namespace Snore;
@@ -174,5 +175,31 @@ QDataStream &operator<< ( QDataStream &stream, const Notification &noti )
     return stream;
 }
 
+QDebug operator <<(QDebug debug, const Snore::Notification::CloseReasons &flags)
+{
+    static QMetaEnum e = Notification::staticMetaObject.property(Notification::staticMetaObject.indexOfProperty("closeReason")).enumerator();
+    debug.nospace() << "CloseReasons(";
+    bool needSeparator = false;
+    int key;
+    for (int i = 0; i < e.keyCount(); ++i)
+    {
+        key = e.value(i);
+        if (flags.testFlag((Notification::CloseReason)key))
+        {
+            if (needSeparator)
+            {
+                debug.nospace() << '|';
+            }
+            else
+            {
+                needSeparator = true;
+            }
 
+            debug.nospace() << e.valueToKey(key);
+
+        }
+    }
+    debug << ')';
+    return debug.space();
+}
 

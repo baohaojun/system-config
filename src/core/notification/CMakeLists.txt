@@ -6,7 +6,7 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         notification/icon_p.cpp
         PARENT_SCOPE)
 
-set ( Notification_HDR 
+set ( Notification_HDR
         notification.h
         notification_p.h
         notificationaction.h

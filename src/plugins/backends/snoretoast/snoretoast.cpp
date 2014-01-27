@@ -17,7 +17,7 @@ Q_EXPORT_PLUGIN2(libsnore_backend_snoretoast,SnoreToast)
 
 
 SnoreToast::SnoreToast():
-    SnoreBackend("Windows 8",false,false)
+    SnoreBackend("Windows 8", true, false)
 {
 }
 
@@ -57,8 +57,9 @@ void SnoreToast::slotNotify(Notification notification)
     }
     arguements << "-w"
                << "-appID"
-               << appId(notification.application());
-    ;
+               << appId(notification.application())
+               << "-id"
+               << QString::number(notification.id());
     if(notification.hints().value("silent",true).toBool())
     {
         arguements << "-silent";
@@ -87,6 +88,22 @@ void SnoreToast::slotRegisterApplication(const Application &application)
         connect(p,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(slotToastNotificationClosed(int,QProcess::ExitStatus)));
         connect(qApp,SIGNAL(aboutToQuit()),p,SLOT(kill()));
     }
+}
+
+void SnoreToast::slotCloseNotification(Notification notification)
+{
+    QProcess *p = new QProcess(this);
+    p->setReadChannelMode(QProcess::MergedChannels);
+
+    QStringList arguements;
+    arguements << "-close"
+               << "-id"
+               << QString::number(notification.id());
+    snoreDebug( SNORE_DEBUG ) << "SnoreToast" << arguements;
+    p->start("SnoreToast", arguements);
+
+    connect(p,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(slotToastNotificationClosed(int,QProcess::ExitStatus)));
+    connect(qApp,SIGNAL(aboutToQuit()),p,SLOT(kill()));
 }
 
 void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
