@@ -2,6 +2,8 @@
 (require 'sawfish.wm.state.maximize)
 
 (load-file "~/.sawfish/bhj-draw-wininfo.jl")
+(load-file "~/.sawfish/bhj-draw-notification.jl")
+(require 'bhj-draw-notification)
 (require 'Run-application)
 (require 'bhj-draw-wininfo)
 (require 'sawfish.wm.commands.move-cursor)

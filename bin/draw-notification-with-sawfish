@@ -1,0 +1,89 @@
+#!/bin/bash
+
+TEMP=$(getopt -o i: --long icon: -n $(basename $0) -- "$@")
+icon=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -i|--icon)
+            icon=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test "$#" != 2; then
+    die "Usage: $(basename $0) [-i icon] headline content"
+fi
+
+tmp_head=/tmp/$(basename $0).$$.head
+
+echo -n "$1" > $tmp_head
+
+read_head=$(cat <<EOF
+(progn
+  (let* ((file (open-file "$tmp_head" 'read))
+         (str "")
+         (line ""))
+    (while (setq line (read-line file))
+      (setq str (concat str line)))
+    (close-file file)
+    str))
+EOF
+)
+
+tmp_content=/tmp/$(basename $0).$$.content
+
+echo -n "$2" > $tmp_content
+
+read_content=$(cat <<EOF
+(progn
+  (let* ((file (open-file "$tmp_content" 'read))
+         (str "")
+         (line ""))
+    (while (setq line (read-line file))
+      (setq str (concat str line)))
+    (close-file file)
+    str))
+EOF
+)
+
+if test "$icon"; then
+    tmp_icon=/tmp/$(basename $0).$$.icon
+
+    echo -n "$icon" > $tmp_icon
+
+    read_icon=$(cat <<EOF
+(progn
+  (let* ((file (open-file "$tmp_icon" 'read))
+         (str "")
+         (line ""))
+    (while (setq line (read-line file))
+      (setq str (concat str line)))
+    (close-file file)
+    str))
+EOF
+    )
+else
+    read_icon='"~/.sawfish/Kill.png"'
+fi
+
+
+sawfish-client -e "(bhj-draw-notification nil (make-image $read_icon) $read_head $read_content)"
+(sleep 5 && sawfish-client -e "(bhj-draw-notification t)")&
+
+if test "$(sawfish-get-key)" = C-g; then
+    sawfish-client -e "(bhj-draw-notification t)"
+fi

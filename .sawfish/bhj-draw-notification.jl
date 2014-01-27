@@ -21,7 +21,7 @@
   (defconst x-margin 10)
   (defconst y-margin 10)
 
-  (defconst icon-size 32)
+  (defconst icon-size 96)
 
   ;; window currently displayed, or nil
   (define info-window nil)
@@ -83,7 +83,8 @@
              (when icon
                (x-draw-image icon xw
                              (cons x-margin
-                                   y-margin)))
+                                   y-margin)
+                             (cons icon-size icon-size)))
 
              ;; draw lines of text one at a time
              (let ((gc (x-create-gc xw
@@ -97,8 +98,7 @@
                                              (quotient (- line-height
                                                           (font-height default-font)) 2)))
                               text-head)
-               (let* ((rest wi-list)
-                      (y (+ 2y-margin
+               (let* ((y (+ 2y-margin
                             line-height
                             (font-ascent default-font)
                             (quotient (- line-height
