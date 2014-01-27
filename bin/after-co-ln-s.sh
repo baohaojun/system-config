@@ -160,7 +160,7 @@ function symlink-map() {
 }
 
 symlink-map ~/system-config ~
-symlink-map-files ~/system-config/.subdir-symlinks ~
+symlink-map-files ~/system-config/etc/subdir-symlinks ~
 mkdir -p ~/.local/share/applications
 symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
 
