@@ -505,24 +505,41 @@ beginning of current defun."
     (insert "package " package ";\n")
     (insert "public class " class " {\n}\n")))
 
+(defun ajoke--goto-start-of-try ()
+  "Goto start of the preceeding try block"
+  (backward-list)
+  (while (not (string-match-p "try\\s *{" (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+    (backward-list)))
+
 (defun ajoke-insert-exception-catchers ()
   "Find out what exceptions are being thrown out of the preceding try block"
   (interactive)
+  (ajoke--setup-env)
   (save-excursion
-    (let* ((try-start (progn (backward-list) (point)))
-           (try-end (progn (forward-list) (point)))
+    (let* ((try-start (save-excursion (ajoke--goto-start-of-try) (point)))
+           (try-end (save-excursion (ajoke--goto-start-of-try) (forward-list) (point)))
            (exceptions (shell-command-to-string
                         (format "echo %s | ajoke-get-exceptions 2>/dev/null"
                                 (shell-quote-argument (buffer-substring-no-properties try-start try-end)))))
-           (exceptions (split-string exceptions))
+           (exceptions (split-string exceptions "\n"))
            (exceptions (cons "done" exceptions))
            (done nil))
       (while (not done)
         (indent-for-tab-command)
         (let ((ans (ajoke--pick-one "Which exception to catch?" exceptions nil t)))
           (if (string= ans "done")
-              (setq done t)
-
+              (progn
+                (setq done t)
+                (when (and (looking-at "catch (Exception e)")
+                           (yes-or-no-p "Remove the old Exception catcher?"))
+                  (let ((start (point))
+                        (end (save-excursion
+                               (forward-list)
+                               (forward-list)
+                               (point))))
+                    (kill-region start end))))
+            (setq exceptions (delete ans exceptions))
+            (setq ans (replace-regexp-in-string " <- .*" "" ans))
             (just-one-space)
             (insert "catch (" ans " e) {\n")
             (indent-for-tab-command)
@@ -546,6 +563,7 @@ beginning of current defun."
 (global-set-key [(meta g)(j)(o)] 'ajoke-get-override)
 (global-set-key [(meta g)(j)(r)] 'ajoke-resolve)
 (global-set-key [(meta g)(j)(m)] 'ajoke-complete-method)
+(global-set-key [(meta g)(j)(e)] 'ajoke-insert-exception-catchers)
 (global-set-key [(shift meta s)] 'ajoke-search-local-id)
 ;; the correct way to do it is to customize 'before-save-hook
 ;; (add-hook 'before-save-hook 'ajoke-get-imports-if-java-mode)

@@ -7,6 +7,7 @@
 use strict;
 use Getopt::Long;
 use Set::Scalar;
+use DelayedQx;
 my $idset = Set::Scalar->new;
 use BhjJava;
 sub debug(@) {
@@ -14,20 +15,58 @@ sub debug(@) {
 }
 
 open(my $flat_pipe, "-|", "flatten.pl") or die "Cannot open flatten.pl pipe";
-open(my $grep_pipe, "|-", "bash | perl -mSet::Scalar -ne '" . '
+open(my $grep_pipe, "|-", "perl -mSet::Scalar -ne '" . '
         BEGIN {
             $s = Set::Scalar->new;
+            %m = ();
+
+            $imports = Set::Scalar->new;
+            chomp(my $flatten_cache = qx(java-flatten-cache $ENV{GTAGS_START_FILE}));
+            open(my $working_file, "<", $flatten_cache) or die "Cannot open flatten cache $flatten_cache";
+            while (<$working_file>) {
+                print STDERR "$flatten_cache: $_";
+                if (m/^import (.*);/) {
+                    $imports->insert($1);
+                }
+                if (m/\{/) { # premature optimization?
+                    last;
+                }
+            }
         } END {
             $s->delete("throws");
             $s->insert("Exception");
             while (defined(my $e = $s->each)) {
-                print "$e\n";
+                if (exists $m{$e}) {
+                    print "$e <-";
+                    while (defined(my $method = $m{$e}->each)) {
+                        print " $method";
+                    }
+                    print "\n";
+                } else {
+                    print "$e\n";
+                }
             }
         }
-        if (m/\\bthrows.*/) {
+        if (m/<(.*?)>.*?\\bthrows(.*)/) {
             print STDERR "$_";
-            my $match = $&;
+            my $match = $2;
+            my $method = $1;
+            my $method_good = 0;
+            while (defined(my $import = $imports->each)) {
+                if (substr($method, 0, length($import) + 1) eq "$import.") {
+                    print STDERR "$method is good with $import\n";
+                    $method_good = 1;
+                    last;
+                } else {
+                    print STDERR "$method is no good with $import\n";
+                }
+            }
+            if ($method_good == 0) {
+                next
+            }
             while ($match =~ m/\w+\b(?!\.)/g) {
+                $m{$&} = Set::Scalar->new unless exists $m{$&};
+                $m{$&}->insert($method);
                 $s->insert($&);
             }
         }' . "'") or die "Can not open grep pipe";
@@ -38,6 +77,13 @@ while (<$flat_pipe>) {
     }
 }
 
+my %grep_gtags_set = ();
 while (defined(my $id = $idset->each)) {
-    print $grep_pipe "grep-gtags 2>/dev/null -e $id -p '\\.java|\\.jar|\\.aidl'\n";
+    $grep_gtags_set{$id} = DelayedQx->new("grep-gtags -s 2>/dev/null -e $id -p '\\.java|\\.jar|\\.aidl'\n");
+}
+
+for my $id (keys %grep_gtags_set) {
+    if (ref $grep_gtags_set{$id}) {
+        print $grep_pipe $grep_gtags_set{$id}->value();
+    }
 }
