@@ -1,0 +1,4 @@
+#!/bin/bash
+
+putclip "$(get-authinfo localhost $USER 22)"
+delayed-xdotool key "shift+Insert"
