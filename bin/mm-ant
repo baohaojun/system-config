@@ -39,9 +39,9 @@ if test "$1" = release; then
         ant installr 2>&1 | tee ~/.logs/ant-install.log
     fi
 
-    android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
+    android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
 elif test "$1" = start; then
-    android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
+    android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
 else
     ant-expect-keystore debug
     adb -w shell echo
@@ -50,7 +50,7 @@ else
         adb uninstall $(ant-get-package)
         ant installd 2>&1 | tee ~/.logs/ant-install.log
     fi
-    android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
+    android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
 fi
 
 if test $(adb devices | grep -v '^\s*$' -P | wc -l) -lt 3; then

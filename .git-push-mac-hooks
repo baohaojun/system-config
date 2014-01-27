@@ -1,6 +1,10 @@
 #!/bin/bash
 
 perl -npe 's!/usr/local!\@prefix\@!g' .globalrc > gcode/ajoke/external/global/gtags.conf.in
+function die() {
+    echo Error: "$@"
+    exit -1
+}
 
 if test $PWD = $HOME; then
     cd ~/system-config

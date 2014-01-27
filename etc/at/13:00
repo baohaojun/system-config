@@ -17,3 +17,6 @@ if curl --request POST -c ~/.logs/cookie.txt.$(basename $0) -d name='haojun.bhj'
 fi
 bhj-notify Life "Go for dinner"
 of http://bjdc.taobao.ali.com/
+if test "$(today +%H)" -lt 11; then
+    of http://www.meican.com/corps/alibaba/
+fi
