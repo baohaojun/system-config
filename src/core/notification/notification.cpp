@@ -175,31 +175,34 @@ QDataStream &operator<< ( QDataStream &stream, const Notification &noti )
     return stream;
 }
 
+#define debugPrintEnum(x) case x:  debug << #x ")"; break
+
 QDebug operator <<(QDebug debug, const Snore::Notification::CloseReasons &flags)
 {
-    static QMetaEnum e = Notification::staticMetaObject.property(Notification::staticMetaObject.indexOfProperty("closeReason")).enumerator();
     debug.nospace() << "CloseReasons(";
-    bool needSeparator = false;
-    int key;
-    for (int i = 0; i < e.keyCount(); ++i)
+    switch(flags)
     {
-        key = e.value(i);
-        if (flags.testFlag((Notification::CloseReason)key))
-        {
-            if (needSeparator)
-            {
-                debug.nospace() << '|';
-            }
-            else
-            {
-                needSeparator = true;
-            }
-
-            debug.nospace() << e.valueToKey(key);
-
-        }
+    debugPrintEnum(Notification::NONE);
+    debugPrintEnum(Notification::TIMED_OUT);
+    debugPrintEnum(Notification::DISMISSED);
+    debugPrintEnum(Notification::CLOSED);
+    default:
+        debug << QByteArray::number(flags,16) << ")";
     }
-    debug << ')';
+    return debug.space();
+}
+
+QDebug operator<< ( QDebug debug, const Snore::Notification::Prioritys &flags)
+{
+    debug.nospace() << "Prioritys(";
+    switch(flags)
+    {
+    debugPrintEnum(Notification::LOW);
+    debugPrintEnum(Notification::NORMAL);
+    debugPrintEnum(Notification::HIGH);
+    default:
+        debug << QByteArray::number(flags,16) << ")";
+    }
     return debug.space();
 }
 

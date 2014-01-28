@@ -43,11 +43,6 @@ class NotificationData;
 
 class SNORE_EXPORT Notification
 {
-    /*
-     Q_OBJECT
-     */
-    Q_GADGET
-    Q_PROPERTY(CloseReasons closeReason READ closeReason)
     friend class NotificationData;
 public:
     /**
@@ -289,6 +284,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Notification::Prioritys)
 QDataStream &operator<< ( QDataStream & stream, const Snore::Notification & noti );
 
 SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Notification::CloseReasons &);
+
+SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Notification::Prioritys &);
 
 inline QDebug operator<< ( QDebug debug, const Snore::Notification &noti )
 {
