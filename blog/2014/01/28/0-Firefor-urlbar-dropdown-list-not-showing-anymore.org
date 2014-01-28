@@ -1,7 +1,7 @@
 #+title: Firefor urlbar dropdown list not showing anymore
 # bhj-tags: Bug
 On my Linux machine, after using firefox for a while, I often suddenly
-notice that the urlbar dropdown list in not showing anymore when I
+notice that the urlbar dropdown list is not showing anymore when I
 type in it. No auto completion, no dropdown list, no anything.
 
 I used to restart the firefox and it got fixed. But this is very
