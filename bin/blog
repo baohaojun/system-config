@@ -93,6 +93,16 @@ test "$tags" || {
                 fi
             )
         done
+    else
+        for tag in $tags; do
+            (
+                cd ~/doc/baohaojun/;
+                if test ! -e meta/tags/$tag.desc; then
+                    find-or-exec konsole
+                    ./add-a-tag $tag
+                fi
+            )
+        done
     fi
 }
 title=$(echo "$title" | perl -npe 's/(^\s+|\s+$)//g')
