@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>用GreaseMonkey禁止Google搜索重定向绑架</title>
+<title>Firefor urlbar dropdown list not showing anymore</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -101,49 +101,29 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">用GreaseMonkey禁止Google搜索重定向绑架</h1>
+<h1 class="title">Firefor urlbar dropdown list not showing anymore</h1>
 <p>
-Google搜索出来的结果点击总是会到它自己的服务器去转一圈再回到最终的目标
-页面，这可以理解，它也有流量、统计之类的KPI需求嘛。
+On my Linux machine, after using firefox for a while, I often suddenly
+notice that the urlbar dropdown list in not showing anymore when I
+type in it. No auto completion, no dropdown list, no anything.
 </p>
 
 <p>
-可是一结合国内的互联网被去了势的现状，问题就来了，经常联接被重置！无语。
+I used to restart the firefox and it got fixed. But this is very
+annoying.
 </p>
 
 <p>
-网上有firefox的一个 <a href="https://addons.mozilla.org/en-US/firefox/addon/google-no-tracking-url/">插件</a> ，可以去掉这个重定向，但我试用之后效果很糟糕，
-完全不能用！
+Now I found it might be because of the ibus input method. After I
+switch on and off the Chinese input method, the urlbar dropdown list
+and auto completion is back.
 </p>
-
-<p>
-于是用GreaseMonkey自己写了一个 <a href="https://github.com/baohaojun/system-config/raw/master/doc/GreaseMonkey/no-google-redirect.user.js">脚本</a> ，很简单，只有几行代码：
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-javascript"><span class="org-comment-delimiter">// </span><span class="org-comment">==UserScript==</span>
-<span class="org-comment-delimiter">// </span><span class="org-comment">@name          link-unredirect</span>
-<span class="org-comment-delimiter">// </span><span class="org-comment">@namespace     http://github.com/baohaojun/system-config</span>
-<span class="org-comment-delimiter">// </span><span class="org-comment">@description   Script for unredirecting google search results</span>
-<span class="org-comment-delimiter">// </span><span class="org-comment">@include       *.google.*</span>
-<span class="org-comment-delimiter">// </span><span class="org-comment">==/UserScript==</span>
-
-<span class="org-keyword">var</span> <span class="org-variable-name">redirect_re</span> = <span class="org-keyword">new</span> <span class="org-type">RegExp</span>(<span class="org-string">".*//.*google.co.*&amp;url=([^&amp;]*)(&amp;.*|$)"</span>);
-
-<span class="org-keyword">for</span> (<span class="org-keyword">var</span> <span class="org-variable-name">x</span> <span class="org-keyword">in</span> document.links) {
-  <span class="org-keyword">if</span> (document.links[x].onmousedown) {
-    document.links[x].onmousedown=<span class="org-string">""</span>;
-  }
-}
-</pre>
-</div>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2014/01/03/0-7-habits-of-highly-effective-editting.html"> <!-- prev-url -->
+      <a href="blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        高效文本编辑的七个习惯 <!-- prev-title -->
+        用GreaseMonkey禁止Google搜索重定向绑架 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -161,7 +141,7 @@ Google搜索出来的结果点击总是会到它自己的服务器去转一圈�
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -232,12 +212,13 @@ Google搜索出来的结果点击总是会到它自己的服务器去转一圈�
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="meta/tags/tool.html" title="Computer tools">tool</a></li>
+                <li><a href="../../../../meta/tags/Bug.html" title="Bugs that I have encountered, see if someone else will find it useful.">Bug</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2014/01/03/0-7-habits-of-highly-effective-editting.html'> 高效文本编辑的七个习惯 </a></li>
+        <li><a href='blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html'> 用GreaseMonkey禁止Google搜索重定向绑架 </a></li>
+<li><a href='blog/2014/01/03/0-7-habits-of-highly-effective-editting.html'> 高效文本编辑的七个习惯 </a></li>
 <li><a href='blog/2013/12/11/0-ssh-remote-command-and-bash--c-string.html'> ssh执行远程命令和bash -c string的用法 </a></li>
 <li><a href='blog/2013/11/07/0-programming-discovery.html'> 发现式编程 </a></li>
 <li><a href='blog/2013/10/16/0-Interactive-Git-Add.html'> Interactive Git Add </a></li>
@@ -246,7 +227,6 @@ Google搜索出来的结果点击总是会到它自己的服务器去转一圈�
 <li><a href='blog/2013/10/01/0-Inside-Ajoke.html'> Inside Ajoke </a></li>
 <li><a href='blog/2013/09/02/0-jira-5.2-essentials-review.html'> Book Review: JIRA 5.2 Essentials </a></li>
 <li><a href='blog/2013/08/16/0-rbtree.html'> 红黑树 </a></li>
-<li><a href='blog/2013/07/20/0-grep-cross-ref.html'> Grepping Cross References </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>
