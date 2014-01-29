@@ -46,7 +46,8 @@ else
         new_tab=-current-tab
     else
         sawfish-send-window-event '(- |^)Mozilla Firefox\$' "M-1"
-        if test $(EMACS=t SELECT_PROMPT="Open in the current tab (tab 1)?" select-args yes no) = yes; then
+        if ! firefox-search-for-tab --tabs 1 'localhost.*/dict' &&
+            test  $(EMACS=t SELECT_PROMPT="Open in the current tab (tab 1)?" select-args yes no) = yes; then
             new_tab=-current-tab
         fi
     fi

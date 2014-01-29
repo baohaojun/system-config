@@ -8,13 +8,18 @@ function die() {
 }
 
 exact=0
-TEMP=$(getopt -o e --long exact -n $(basename $0) -- "$@")
+TEMP=$(getopt -o e --long "exact tabs:" -n $(basename $0) -- "$@")
+tabs=10
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -e|--exact)
             exact=1
             shift 1
+            ;;
+        --tabs)
+            tabs=$2
+            shift 2
             ;;
         --)
             shift
@@ -34,7 +39,7 @@ if test "$DEBUG" = true; then
     echo "searching for $1"
 fi
 
-for x in $(seq 1 10); do
+for x in $(seq 1 $tabs); do
     url=$(get-firefox-tab-url)
     if test "$DEBUG" = true; then
         echo "url is $(echo "$url" | unurl.pl)"
@@ -54,9 +59,14 @@ for x in $(seq 1 10); do
         exit -1
     fi
 
+    if test "$x" = "$tabs"; then
+        exit -1
+    fi
+
     next_tab_key=C-f
     if test "$FF_POP" = true; then
         next_tab_key=C-b
     fi
     sawfish-send-window-event '(- |^)Mozilla Firefox\$' $next_tab_key
 done
+exit -1
