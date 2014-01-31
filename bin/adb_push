@@ -35,7 +35,12 @@ for (@ARGV) {
         system("rsync", "-rvL", $file, "$host:$dir");
         system("ssh", $host, "adb", "push", "$file", "$dest");
     } else {
-        system("adb",  "push", "$file", "$dest");
+        if (-d $file) {
+            (my $base = $file) =~ s!.*/!!;
+            system("adb",  "push", "$file", "$dest/$base");
+        } else {
+            system("adb",  "push", "$file", "$dest");
+        }
     }
     if ($secure) {
         my $base_file = $file;
