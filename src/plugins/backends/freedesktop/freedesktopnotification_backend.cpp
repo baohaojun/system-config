@@ -17,7 +17,7 @@ Q_EXPORT_PLUGIN2 ( libsnore_backend_freedesktop,FreedesktopBackend )
 
 
 FreedesktopBackend::FreedesktopBackend () :
-    SnoreBackend ( "FreedesktopNotification",true,true)
+    SnoreBackend ( "FreedesktopNotification", true, true, true)
 {
 }
 
