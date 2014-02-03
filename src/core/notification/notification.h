@@ -69,7 +69,14 @@ public:
          * The Notification was closed after an action was invoked.
          * @see actionInvoked()
          */
-        CLOSED = 3
+        CLOSED = 3,
+
+        /**
+         * The notification was replaced by an update.
+         * This value will be used if a notification backend does not support updating.
+         *
+         */
+        REPLACED = 4
     };
     Q_DECLARE_FLAGS(CloseReasons, CloseReason)
     Q_ENUMS(CloseReasons)

@@ -68,7 +68,7 @@ public:
             Notification notification;
             if(msg->lParam != 0)
             {
-                notification =  m_snarl->snore()->getActiveNotificationByID(m_snarl->m_idMap[ msg->lParam]);
+                notification =  m_snarl->snore()->getActiveNotificationByID(m_snarl->m_idMap.value(msg->lParam));
             }
 
             Notification::CloseReasons reason = Notification::NONE;
@@ -124,7 +124,7 @@ private:
 
 
 SnarlBackend::SnarlBackend():
-    SnoreBackend("Snarl",true,false)
+    SnoreBackend("Snarl", true, false, true)
 {
 
 }

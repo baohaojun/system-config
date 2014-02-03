@@ -50,6 +50,13 @@ public:
 
     bool setBackendIfAvailible(const QString & backend);
 
+
+    /**
+     *
+     * @return whether the backend can update a notification
+     */
+    bool primaryBackendCanUpdateNotification() const;
+
 signals:
     void applicationRegistered(const Snore::Application&);
     void applicationDeregistered(const Snore::Application&);

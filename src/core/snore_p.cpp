@@ -64,6 +64,11 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
     return false;
 }
 
+bool SnoreCorePrivate::primaryBackendCanUpdateNotification() const
+{
+    return m_notificationBackend->canUpdateNotification();
+}
+
 void SnoreCorePrivate::slotNotificationClosed(Notification n)
 {
     Q_Q(SnoreCore);

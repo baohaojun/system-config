@@ -83,11 +83,15 @@ void SnoreCore::broadcastNotification ( Notification notification )
 {
     Q_D(SnoreCore);
     snoreDebug( SNORE_DEBUG )<<"Broadcasting"<<notification<<"timeout:"<<notification.timeout();
-    emit d->notify ( notification );
     if ( d->m_notificationBackend != NULL )
     {
+        if(notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification())
+        {
+            requestCloseNotification(notification.old(),Notification::REPLACED);
+        }
         d->m_notificationBackend->addActiveNotification(notification);
     }
+    emit d->notify ( notification );
 }
 
 void SnoreCore::registerApplication(const Application &application)

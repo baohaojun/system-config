@@ -50,7 +50,7 @@ NotificationData::NotificationData (const Snore::Application &application, const
 }
 
 Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
-    m_id ( old.id() ),
+    m_id ( m_idCount++ ),
     m_timeout( timeout ),
     m_source( NULL),
     m_application ( old.application()),

@@ -17,19 +17,19 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOG_H
-#define LOG_H
+#ifndef SNORELOG_H
+#define SNORELOG_H
 
 #include <QDebug>
 #include "snore_exports.h"
 
 namespace Snore
 {
-class SNORE_EXPORT Log : public QDebug
+class SNORE_EXPORT SnoreLog : public QDebug
 {
 public:
-    Log(int lvl);
-    ~Log();
+    SnoreLog(int lvl);
+    ~SnoreLog();
 
     static inline int debugLvl()
     {
@@ -49,8 +49,8 @@ private:
 };
 }
 
-#define snoreDebug(x) Snore::Log( x ) << Q_FUNC_INFO
+#define snoreDebug(x) Snore::SnoreLog( x ) << Q_FUNC_INFO
 #define SNORE_DEBUG 3
 #define SNORE_INFO 2
 #define SNORE_WARNING 1
-#endif // LOG_H
+#endif // SNORELOG_H

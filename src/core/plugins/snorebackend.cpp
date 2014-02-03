@@ -31,10 +31,11 @@
 
 using namespace Snore;
 
-SnoreBackend::SnoreBackend (const QString &name , bool canCloseNotification, bool supportsRichtext) :
+SnoreBackend::SnoreBackend (const QString &name , bool canCloseNotification, bool supportsRichtext, bool canUpdateNotifications) :
     SnorePlugin ( name ),
     m_canCloseNotification(canCloseNotification),
-    m_supportsRichtext(supportsRichtext)
+    m_supportsRichtext(supportsRichtext),
+    m_canUpdateNotification(canUpdateNotifications)
 {
 
 }
@@ -72,6 +73,7 @@ void SnoreBackend::requestCloseNotification (Notification notification, Notifica
     if(canCloseNotification())
     {
         closeNotification(notification,reason);
+        slotCloseNotification(notification);
     }
 }
 
@@ -86,7 +88,6 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
         m_activeNotifications.remove(n.id());
     }
     n.data()->setCloseReason(reason);
-    slotCloseNotification(n);
     snoreDebug( SNORE_DEBUG ) << n;
     emit notificationClosed(n);
 }
@@ -123,12 +124,17 @@ Snore::Notification SnoreBackend::getActiveNotificationByID(uint id)
     return m_activeNotifications.value(id);
 }
 
-bool SnoreBackend::canCloseNotification()
+bool SnoreBackend::canCloseNotification() const
 {
     return m_canCloseNotification;
 }
 
-bool SnoreBackend::supportsRichtext()
+bool SnoreBackend::canUpdateNotification() const
+{
+    return m_canUpdateNotification;
+}
+
+bool SnoreBackend::supportsRichtext() const
 {
     return m_supportsRichtext;
 }

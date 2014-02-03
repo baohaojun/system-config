@@ -21,15 +21,15 @@
 #include <iostream>
 
 using namespace Snore;
-int Log::s_debugLevel = -1;
+int SnoreLog::s_debugLevel = -1;
 
-Log::Log(int lvl):
+SnoreLog::SnoreLog(int lvl):
     QDebug(&m_msg),
     m_lvl(lvl)
 {
 }
 
-Log::~Log()
+SnoreLog::~SnoreLog()
 {
     if(debugLvl() >= m_lvl)
     {
@@ -37,7 +37,7 @@ Log::~Log()
     }
 }
 
-void Log::setDebugLvl(int i)
+void SnoreLog::setDebugLvl(int i)
 {
     s_debugLevel = i;
 }

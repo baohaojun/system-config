@@ -166,6 +166,7 @@ public:
      */
     bool primaryBackendSupportsRichtext();
 
+
     /**
      *
      * @return a pointer to the private class, for internal use only.
