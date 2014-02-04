@@ -29,13 +29,14 @@
 #include <QDebug>
 
 
-namespace Snore{
+namespace Snore
+{
 
 class NotificationData;
 
 /**
  *  Notification contains all relevant data to notify the user.
- *  Notification uses a shared datamodel, its content is never copied and automatically released.
+ *  Notification uses a shared datamodel, it's content is never copied and automatically released.
  *
  * @author Patrick von Reth \<vonreth at kde.org\>
  */

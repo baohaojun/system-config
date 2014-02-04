@@ -84,7 +84,6 @@ const Hint &Application::constHints() const
     return d->m_hint;
 }
 
-
 QDebug operator<< ( QDebug debug, const Snore::Application &app )
 {
     if(app.isValid())

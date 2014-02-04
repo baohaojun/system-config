@@ -106,6 +106,7 @@ public:
      * @see hints
      */
     const Hint &constHints() const;
+
 private:
      QExplicitlySharedDataPointer<ApplicationData> d;
 

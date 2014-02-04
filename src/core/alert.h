@@ -25,23 +25,66 @@
 
 #include <QSharedData>
 
-namespace Snore{
+namespace Snore
+{
 
 class AlertData;
 
+/**
+ *  Alert contains all relevant data to manage different alerts registred with the notification backend.
+ *  Application uses a shared datamodel, its content is never copied and automatically released.
+ *
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
+
 class SNORE_EXPORT Alert
 {
-    friend class AlertData;
 public:
     Alert();
-    explicit Alert(const QString &name, const Icon &icon, bool active=true );
+    /**
+     * Creates an alert
+     * @param name the name of the Alert
+     * @param icon the Icon of the Alert
+     * @param active whether the alert is active, not used yet
+     * @todo is isActive of any use?
+     */
+
+    explicit Alert(const QString &name, const Icon &icon, bool active = true );
+    /**
+     * Creates a copy of other
+     * @param other
+     */
     Alert(const Alert &other);
+
+    /**
+     * Creates a copy of other
+     * @param other
+     */
     Alert &operator=(const Alert &other);
     ~Alert();
 
+    /**
+     *
+     * @return the name
+     */
     QString name() const;
+
+    /**
+     *
+     * @return the icon
+     */
     const Icon &icon() const;
+
+    /**
+     *
+     * @return whether the Alert is active
+     */
     bool isActive() const;
+
+    /**
+     *
+     * @return whether the Alert is valid.
+     */
     bool isValid() const;
 private:
     QExplicitlySharedDataPointer<AlertData> d;

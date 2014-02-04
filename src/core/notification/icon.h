@@ -29,30 +29,86 @@ namespace Snore{
 
 SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Icon &);
 
-namespace Snore{
+namespace Snore
+{
 class IconData;
 
 /**
  * Icon contains an image for Notifications.
+ * Icon uses a shared datamodel, it's content is never copied and automatically released.
  * @author Patrick von Reth \<vonreth at kde.org\>
  */
 class SNORE_EXPORT Icon
 {
 public:
     Icon();
+
+    /**
+     * Creates an Icon from an QImage
+     * @param img the image
+     */
     Icon(const QImage &img);
+
+    /**
+     * Creates an Icon from a url
+     * Valid urls are "file://home/foo/foo.png", "C:\\foo.png", ":/root/foo.png", "http://foo.com/foo.png"
+     * @param url the url
+     */
     explicit Icon(const QString &url);
 
+    /**
+     * Creates a copy of other
+     * @param other
+     */
     Icon(const Icon &other);
+
+    /**
+     * Creates a copy of other
+     * @param other
+     */
     Icon &operator=(const Icon &other);
     ~Icon();
 
+    /**
+     *
+     * @return a QImage from the Icon
+     */
     const QImage &image() const;
+
+    /**
+     *
+     * @return a local url to a file representing the Icon
+     */
     QString localUrl() const;
+
+    /**
+     *
+     * @return the url of this Icon or an empty string if created from a QImage
+     */
     QString url() const;
+
+    /**
+     *
+     * @return a QByteArray containing the data of a png representing the Icon
+     */
     const QByteArray &imageData() const ;
+
+    /**
+     *
+     * @return whether the Icon was created from a local file
+     */
     bool isLocalFile() const;
+
+    /**
+     *
+     * @return whether the Icon was created from a remote file
+     */
     bool isRemoteFile() const;
+
+    /**
+     *
+     * @return whether this is a valid Icon
+     */
     bool isValid() const;
 
 private:

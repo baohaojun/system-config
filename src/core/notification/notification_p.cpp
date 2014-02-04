@@ -106,10 +106,10 @@ QTimer *NotificationData::timeoutTimer()
 {
     if(m_timeoutTimer.isNull())
     {
-        m_timeoutTimer = new QTimer();
+        m_timeoutTimer.reset(new QTimer());
         m_timeoutTimer->setSingleShot(true);
         m_timeoutTimer->setProperty("notificationID", m_id);
     }
-    return m_timeoutTimer;
+    return m_timeoutTimer.data();
 }
 

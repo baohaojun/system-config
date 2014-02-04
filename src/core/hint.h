@@ -100,12 +100,18 @@ private:
 
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+/**
+ * Helper function to easyly stor pointers to QObjects in  a QVariant
+ */
 template<typename Type>
 inline Type myQVariantCast(const QVariant &dat)
 {
     return qvariant_cast<Type>(dat);
 }
 
+/**
+ * Helper function to easyly stor pointers to QObjects in  a QVariant
+ */
 template<typename Type>
 inline QVariant myQVariantFromValue(const Type &dat)
 {

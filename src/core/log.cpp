@@ -23,7 +23,7 @@
 using namespace Snore;
 int SnoreLog::s_debugLevel = -1;
 
-SnoreLog::SnoreLog(int lvl):
+SnoreLog::SnoreLog(SnoreDebugLevels lvl):
     QDebug(&m_msg),
     m_lvl(lvl)
 {

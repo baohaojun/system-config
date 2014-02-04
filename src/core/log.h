@@ -23,14 +23,67 @@
 #include <QDebug>
 #include "snore_exports.h"
 
+/**
+ * @file
+ */
+
+/**
+ * SnoreDebugLevels enumerates all possible debugg levels.
+ */
+enum SnoreDebugLevels
+{
+    /**
+     * The most important messages, will be diplayed if the debug level >= 1
+     */
+    SNORE_WARNING = 1,
+
+    /**
+     * Information messages, will be diplayed if the debug level >= 2
+     */
+    SNORE_INFO = 2,
+
+    /**
+     * Debug messages will be diplayed if the debug level >= 3
+     */
+    SNORE_DEBUG = 3
+
+};
+
+
+/**
+ * Logg macro use to logg messages.
+ * snoreDebug( SNORE_DEBUG ) << "Message" << notification;
+ */
+#define snoreDebug(X) Snore::SnoreLog( X ) << Q_FUNC_INFO
+
+
 namespace Snore
 {
+
+/**
+ * SnoreLog is a helper class to provide a logging system to Snore.
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
 class SNORE_EXPORT SnoreLog : public QDebug
 {
+
 public:
-    SnoreLog(int lvl);
+    /**
+     * Creates a debugg message whith a priority lvl.
+     * Use the snoreDebug(lvl) macro for logging.<br>
+     * snoreDebug( SNORE_DEBUG ) << "Message" << notification;
+     * @param lvl
+     */
+    SnoreLog(SnoreDebugLevels lvl);
     ~SnoreLog();
 
+    /**
+     * Sets the debug threshold
+     * @param lvl the debug level
+     */
+    static void setDebugLvl(int lvl);
+
+private:
     static inline int debugLvl()
     {
         if(s_debugLevel == -1)
@@ -40,17 +93,12 @@ public:
         return s_debugLevel;
     }
 
-    static void setDebugLvl(int i);
 
-private:
     static int s_debugLevel;
-    int m_lvl;
+    SnoreDebugLevels m_lvl;
     QString m_msg;
 };
 }
 
-#define snoreDebug(x) Snore::SnoreLog( x ) << Q_FUNC_INFO
-#define SNORE_DEBUG 3
-#define SNORE_INFO 2
-#define SNORE_WARNING 1
+
 #endif // SNORELOG_H
