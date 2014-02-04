@@ -19,6 +19,11 @@
 
 #include "log.h"
 #include <iostream>
+#include <fstream>
+
+#include <QDir>
+#include <QMutex>
+#include <QApplication>
 
 using namespace Snore;
 int SnoreLog::s_debugLevel = -1;
@@ -31,10 +36,14 @@ SnoreLog::SnoreLog(SnoreDebugLevels lvl):
 
 SnoreLog::~SnoreLog()
 {
+    static std::ofstream m_logg(QString("%1/libsnore/%2-%3-log.txt").arg(QDir::tempPath(), qApp->applicationName(), QString::number(qApp->applicationPid())).toUtf8().constData());
+    static QMutex m_mutex;
+    QMutexLocker lock(&m_mutex);
     if(debugLvl() >= m_lvl)
     {
         std::cout << m_msg.toUtf8().constData() << std::endl;
     }
+    m_logg << m_msg.toUtf8().constData() << std::endl;
 }
 
 void SnoreLog::setDebugLvl(int i)
