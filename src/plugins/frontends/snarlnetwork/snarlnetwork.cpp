@@ -50,7 +50,7 @@ bool SnarlNetworkFrontend::initialize(SnoreCore *snore){
     else
     {
         connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
-        std::cout<<"The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>"<<std::endl;
+        std::cout << "The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>" << std::endl;
     }
     return SnoreFrontend::initialize(snore);
 }
@@ -129,7 +129,7 @@ void SnarlNetworkFrontend::handleMessages()
 
 void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
 {
-    QTcpSocket *client = myQVariantCast<QTcpSocket*>(sn.hints().privateValue(this, "clientSocket"));
+    QTcpSocket *client = (QTcpSocket*)qvariant_cast<void*>(sn.hints().privateValue(this, "clientSocket"));
     if(client && !msg.isEmpty())
     {
         write(client, QString("%1%2\r\n").arg(msg, QString::number(sn.id())));

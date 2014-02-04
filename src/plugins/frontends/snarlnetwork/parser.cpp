@@ -138,13 +138,13 @@ void Parser::parse(Notification &sNotification,const QString &msg,QTcpSocket* cl
         }
         sNotification = Notification(app,alert,title,text,icon,timeout);
         sNotification.data()->setSource(snarl);
-        sNotification.hints().setPrivateValue(snarl, "clientSocket", myQVariantFromValue(client));
+        sNotification.hints().setPrivateValue(snarl, "clientSocket", client);
         break;
     }
     case ADD_CLASS:
         if(alertName.isEmpty())
         {
-            snoreDebug( SNORE_DEBUG )<<"Error registering alert with empty name";
+            snoreDebug( SNORE_DEBUG ) << "Error registering alert with empty name";
             break;
         }
         alert = Alert(alertName, icon);

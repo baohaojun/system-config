@@ -27,7 +27,7 @@
 
 namespace Snore
 {
-    class Hint;
+class Hint;
 }
 
 SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Hint &);
@@ -39,8 +39,9 @@ namespace Snore
  * The keys are case insensitive.
  */
 
-class SNORE_EXPORT Hint
+class SNORE_EXPORT Hint : public QObject
 {
+    Q_OBJECT
 public:
     Hint();
 
@@ -50,6 +51,13 @@ public:
      * @param value the value
      */
     void setValue(const QString &key, const QVariant &value);
+
+    /**
+     * Sets the value for the key
+     * @param key the key
+     * @param value the value
+     */
+    void setValue(const QString &key, QObject *value);
 
     /**
      * The associated value of the key if present, returns the default value otherwise.
@@ -74,6 +82,14 @@ public:
     void setPrivateValue(const void *owner, const QString &key, const QVariant &value);
 
     /**
+     * Sets the value for the key depending on the owner
+     * @param owner the owner
+     * @param key the key
+     * @param value the value
+     */
+    void setPrivateValue(const void *owner, const QString &key, QObject *value);
+
+    /**
      * The associated value of the key if present, returns the default value otherwise.
      * @param owner the owner
      * @param key the key
@@ -88,48 +104,17 @@ public:
      * @return whether the key is set
      */
     bool containsPrivateValue(const void *owner, const QString & key ) const;
+private slots:
+    void slotValueDestroyed();
 
 private:
     QVariantHash m_data;
-    QHash<QPair<const void*,QString>, QVariant> m_privateData;
+    QHash<QPair<quintptr,QString>, QVariant> m_privateData;
 
     friend SNORE_EXPORT QDebug (::operator<<) ( QDebug, const Snore::Hint &);
 
 };
 
-
-
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-/**
- * Helper function to easyly stor pointers to QObjects in  a QVariant
- */
-template<typename Type>
-inline Type myQVariantCast(const QVariant &dat)
-{
-    return qvariant_cast<Type>(dat);
-}
-
-/**
- * Helper function to easyly stor pointers to QObjects in  a QVariant
- */
-template<typename Type>
-inline QVariant myQVariantFromValue(const Type &dat)
-{
-    return qVariantFromValue(dat);
-}
-#else
-template<typename Type>
-inline Type myQVariantCast(const QVariant &dat)
-{
-    return qobject_cast<Type>(qvariant_cast<QObject*>(dat));
-}
-
-template<typename Type>
-inline QVariant myQVariantFromValue(const Type &dat)
-{
-    return qVariantFromValue(qobject_cast<QObject*>(dat));
-}
-#endif
 
 }
 

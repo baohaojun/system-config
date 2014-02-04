@@ -42,6 +42,7 @@ SnoreLog::~SnoreLog()
     if(debugLvl() >= m_lvl)
     {
         std::cout << m_msg.toUtf8().constData() << std::endl;
+        std::cout.flush();
     }
     m_logg << m_msg.toUtf8().constData() << std::endl;
 }

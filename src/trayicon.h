@@ -21,6 +21,7 @@
 #define TRAYICON_H
 
 #include <QtCore>
+#include <QAction>
 #include "core/snore.h"
 
 
@@ -36,7 +37,7 @@ public:
 private:
     class QSystemTrayIcon *m_trayIcon;
     class QMenu *m_trayMenu;
-    class QList<class QAction*> m_backendActions;
+    QActionGroup *m_backendActions;
     Snore::SnoreCore *m_snore;
     Snore::Application m_app;
     Snore::Alert m_alert;

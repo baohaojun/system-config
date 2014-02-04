@@ -17,6 +17,7 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "hint.h"
+#include "log.h"
 
 using namespace Snore;
 
@@ -49,13 +50,21 @@ bool Hint::contains(const QString &key) const
 
 void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value)
 {
-    m_privateData.insert(QPair<const void*,QString>(owner,key.toLower()), value);
+    m_privateData.insert(QPair<quintptr,QString>((quintptr)owner,key.toLower()), value);
+}
+
+void Hint::setPrivateValue(const void *owner, const QString &key, QObject *value)
+{
+    m_privateData.insert(QPair<quintptr,QString>((quintptr)owner,key.toLower()), qVariantFromValue(value));
+    value->setProperty("hint_key",key);
+    value->setProperty("hint_owner",(quintptr)owner);
+    connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()));
 }
 
 
 QVariant Hint::privateValue(const void *owner, const QString &k, const QVariant &defaultValue) const
 {
-    QPair<const void*,QString> key(owner,k.toLower());
+    QPair<quintptr,QString> key((quintptr)owner, k.toLower());
     if(m_privateData.contains(key))
     {
         return m_privateData.value(key);
@@ -69,7 +78,23 @@ QVariant Hint::privateValue(const void *owner, const QString &k, const QVariant 
 
 bool Hint::containsPrivateValue(const void *owner, const QString &key) const
 {
-    return m_privateData.contains(QPair<const void*,QString>(owner,key.toLower()));
+    return m_privateData.contains(QPair<quintptr,QString>((quintptr)owner,key.toLower()));
+}
+
+void Hint::slotValueDestroyed()
+{
+    QObject * o = sender();
+    snoreDebug( SNORE_DEBUG ) << o << o->property("hint_key");
+    QString key = o->property("hint_key").toString();
+    if(!o->property("hint_owner").isNull())
+    {
+        m_privateData.take(QPair<quintptr,QString>(o->property("hint_owner").value<quintptr>(),key));
+    }
+    else
+    {
+        m_data.take(key);
+    }
+
 }
 
 QDebug operator<<( QDebug debug, const Snore::Hint &hint )
@@ -83,7 +108,7 @@ QDebug operator<<( QDebug debug, const Snore::Hint &hint )
         }
         debug << "(" << it.key() << ", " << it.value();
     }
-    for(QHash< QPair<const void*, QString>, QVariant>::const_iterator it = hint.m_privateData.constBegin();it != hint.m_privateData.constEnd();++it)
+    for(QHash< QPair<quintptr, QString>, QVariant>::const_iterator it = hint.m_privateData.constBegin();it != hint.m_privateData.constEnd();++it)
     {
         if(it != hint.m_privateData.constBegin())
         {

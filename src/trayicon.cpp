@@ -47,6 +47,8 @@ void TrayIcon::initConextMenu(SnoreCore *snore)
     m_trayMenu->addSeparator();
     m_trayMenu->addAction("Test Notification", this, SLOT(slotTestNotification()));
     m_trayMenu->addSeparator();
+    m_backendActions =  new QActionGroup(m_trayMenu);
+    m_backendActions->setExclusive(true);
     foreach(const QString &back,m_snore->notificationBackends())
     {
         QAction *b = m_trayMenu->addAction(back, this, SLOT(setPrimaryBackend()));
@@ -55,7 +57,7 @@ void TrayIcon::initConextMenu(SnoreCore *snore)
         {
             b->setChecked(true);
         }
-        m_backendActions.append(b);
+        m_backendActions->addAction(b);
     }
     m_trayMenu->addSeparator();
     m_trayMenu->addAction("Exit",qApp,SLOT(quit()));
@@ -78,12 +80,14 @@ void TrayIcon::setPrimaryBackend(){
     QAction *a = qobject_cast<QAction*>(sender());
     m_snore->setPrimaryNotificationBackend(a->text());
 
-    foreach(QAction *action,m_backendActions)
+    foreach (QAction *action, m_backendActions->actions())
     {
-        action->setChecked(false);
+        if(action->text() == m_snore->primaryNotificationBackend())
+        {
+            action->setChecked(true);
+            break;
+        }
     }
-    a->setChecked(true);
-
 }
 
 void TrayIcon::slotTestNotification()
