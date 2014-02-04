@@ -36,7 +36,7 @@ SnoreLog::SnoreLog(SnoreDebugLevels lvl):
 
 SnoreLog::~SnoreLog()
 {
-    static std::ofstream m_logg(QString("%1/libsnore/%2-%3-log.txt").arg(QDir::tempPath(), qApp->applicationName(), QString::number(qApp->applicationPid())).toUtf8().constData());
+    static std::ofstream m_logg(QString("%1/libsnore/%2-log.txt").arg(QDir::tempPath(), qApp->applicationName().isEmpty()?QString::number(qApp->applicationPid()):qApp->applicationName()).toUtf8().constData());
     static QMutex m_mutex;
     QMutexLocker lock(&m_mutex);
     if(debugLvl() >= m_lvl)
