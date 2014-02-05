@@ -38,6 +38,7 @@ EOF
            }
            gen2 I BACKQUOTE
            gen3 U G # for s-h g; which is for gnus
+           gen3 I C # for s-h c; which is for capture
            # end code-generator -->
       <!-- # start generated code -->
       <autogen>__KeyToKey__ KeyCode::SEMICOLON, VK_COMMAND | ModifierFlag::NONE, KeyCode::S, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
@@ -50,6 +51,7 @@ EOF
       <autogen>__KeyToKey__ KeyCode::M, VK_COMMAND | ModifierFlag::NONE, KeyCode::M, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
       <autogen>__KeyToKey__ KeyCode::I, VK_COMMAND | ModifierFlag::NONE, KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
       <autogen>__KeyToKey__ KeyCode::U, ModifierFlag::NONE, KeyCode::G, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+      <autogen>__KeyToKey__ KeyCode::I, ModifierFlag::NONE, KeyCode::C, ModifierFlag::COMMAND_L|ModifierFlag::SHIFT_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
 
       <!-- # end generated code -->
     </item>

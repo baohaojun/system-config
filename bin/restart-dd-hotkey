@@ -1,0 +1,5 @@
+#!/bin/bash
+ps-killall ddhotkey
+of ~/Applications/DDHotKey.app
+
+of /Applications/KeyRemap4MacBook.app
