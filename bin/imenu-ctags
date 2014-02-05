@@ -4,6 +4,10 @@ use strict;
 use Encode;
 
 my $filename = $ARGV[0];
+chomp(my $stdin = qx(readlink -f /dev/stdin));
+if (@ARGV > 1) { # this is for mac, where it can't readlink the /dev/stdin
+    $stdin = $ARGV[1];
+}
 @ARGV = ();
 
 my $point = 1;
@@ -24,7 +28,6 @@ sub debug(@) {
     print $debug "@_\n";
 }
 
-chomp(my $stdin = qx(readlink -f /dev/stdin));
 system("ctags-ajoke --c-kinds=+p --language-force=$mode -xu --extra=+q $stdin > ~/.imenu-ctags.$$");
 
 while (<>) { # that's true, the stdin can be read again, because it is

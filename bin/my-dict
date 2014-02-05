@@ -17,7 +17,7 @@ if test $(basename $0) = my-dict-maybe -a -e ~/.config/$USER/using-touchpad; the
 fi
 
 if test $(uname) = Darwin; then
-    new_tab=
+    new_tab=-current-tab
 else
     new_tab=-new-tab
 

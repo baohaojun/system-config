@@ -46,7 +46,7 @@ plugin-example|Example of function layer plugin parser:\
 :langmap=ObjectiveC\:.m.mm:\
 :langmap=androidpng\:.png.jpg:\
 :langmap=androidxml\:.xml:\
-:langmap=antlr\:.g:\
+:langmap=antlr\:.g.g4:\
 :langmap=asm\:.S.s:\
 :langmap=awk\:.awk:\
 :langmap=c\:.c:\

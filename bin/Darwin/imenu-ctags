@@ -1,0 +1,4 @@
+#!/bin/bash
+tmp=~/.cache/imenu-ctags.input.$$
+cat > $tmp
+~/bin/imenu-ctags "$@" $tmp < $tmp

@@ -1,0 +1,8 @@
+tell application "System Events"
+    if (name of processes) contains "Firefox" then
+        tell application "Firefox" to activate
+        keystroke "t" using command down
+    else
+        tell application "Firefox" to activate
+    end if
+end tell

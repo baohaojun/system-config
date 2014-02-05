@@ -3,7 +3,7 @@
 if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
     adb -s
 fi
-adb shell su -c 'sh /sdcard/start-debian2.sh'
+adb shell su -c 'busybox sh /sdcard/start-debian2.sh'
 if ! adb -w shell netcfg|grep -q 'rndis0.*129/'; then
     adb shell su -c "
         setsid setsid sh -c '
