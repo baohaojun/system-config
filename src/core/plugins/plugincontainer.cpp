@@ -119,7 +119,7 @@ void PluginContainer::updatePluginCache()
     if(sema.acquire())
     {
         cache().sync();
-        if(cache().value("buildtime").toString() == Version::buildTime())
+        if(cache().value("version").toString() == Version::revision())
         {
             sema.release();
             return;
@@ -181,8 +181,7 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
 {
     if(s_pluginCache.isEmpty())
     {
-        QString buildTime = cache().value("buildtime").toString();
-        if(buildTime != Version::buildTime())
+        if(cache().value("version").toString() != Version::revision())
         {
             updatePluginCache();
         }
