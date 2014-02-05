@@ -2,6 +2,8 @@
 
 if test "$1" = -current-tab; then
     shift
+elif test "$1" = -remote; then
+    exit -1
 else
     osascript ~/etc/macosx/osascripts/firefox-new-tab
 fi
