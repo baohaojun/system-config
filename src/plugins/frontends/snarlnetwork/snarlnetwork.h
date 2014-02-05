@@ -20,6 +20,7 @@
 #ifndef SNARLNETWORK_H
 #define SNARLNETWORK_H
 #include "core/plugins/snorefrontend.h"
+#include "core/log.h"
 #include "parser.h"
 
 #include <QPointer>
@@ -58,7 +59,7 @@ private:
 
     inline void write(QTcpSocket *dest,const QString &msg)
     {
-        qDebug() << Q_FUNC_INFO << msg;
+        snoreDebug( SNORE_DEBUG ) << msg;
         dest->write(msg.toAscii());
     }
 
