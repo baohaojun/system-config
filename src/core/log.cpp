@@ -18,15 +18,71 @@
 */
 
 #include "log.h"
-#include <iostream>
-#include <fstream>
 
+#include <iostream>
 #include <QDir>
-#include <QMutex>
 #include <QApplication>
+#include <QTextStream>
 
 using namespace Snore;
-int SnoreLog::s_debugLevel = -1;
+
+class Loger
+{
+public:
+static int s_debugLevel;
+static QTextStream s_textStream;
+
+
+
+static inline int debugLvl()
+{
+    if(s_debugLevel == -1)
+    {
+        s_debugLevel = qgetenv("LIBSNORE_DEBUG_LVL").toInt();
+    }
+    return s_debugLevel;
+}
+
+static inline bool isLogToFileEnabled()
+{
+    static int s_logToFile = -1;
+    if(s_logToFile == -1)
+    {
+        s_logToFile = qgetenv("LIBSNORE_LOG_TO_FILE").toInt();
+    }
+    return s_logToFile == 1;
+}
+
+static inline QTextStream &logFile()
+{
+    static QTextStream *s_out = NULL;
+    static QFile *s_file = NULL;
+    if(!s_out)
+    {
+        QString name = QString("%1/libsnore/%2-log.txt").arg(QDir::tempPath(), qApp->applicationName().isEmpty()?QString::number(qApp->applicationPid()):qApp->applicationName());
+
+        if(!qgetenv("LIBSNORE_LOGFILE").isNull())
+        {
+            name = QString(qgetenv("LIBSNORE_LOGFILE"));
+        }
+        std::cout << "Started logging to " << name.toUtf8().constData() << std::endl;
+
+        s_file = new QFile(name);
+        s_file->open(QFile::WriteOnly);
+        s_out = new QTextStream(s_file);
+    }
+    return *s_out;
+}
+
+static inline QTextStream &outStream()
+{
+    return s_textStream;
+}
+
+};
+
+int Loger::s_debugLevel = -1;
+QTextStream Loger::s_textStream(stdout);
 
 SnoreLog::SnoreLog(SnoreDebugLevels lvl):
     QDebug(&m_msg),
@@ -36,18 +92,24 @@ SnoreLog::SnoreLog(SnoreDebugLevels lvl):
 
 SnoreLog::~SnoreLog()
 {
-    static std::ofstream m_logg(QString("%1/libsnore/%2-log.txt").arg(QDir::tempPath(), qApp->applicationName().isEmpty()?QString::number(qApp->applicationPid()):qApp->applicationName()).toUtf8().constData());
-    static QMutex m_mutex;
-    QMutexLocker lock(&m_mutex);
-    if(debugLvl() >= m_lvl)
+    if(Loger::debugLvl() >= m_lvl)
     {
-        std::cout << m_msg.toUtf8().constData() << std::endl;
-        std::cout.flush();
+        Loger::outStream() << m_msg << "\n";
+        Loger::outStream().flush();
     }
-    m_logg << m_msg.toUtf8().constData() << std::endl;
+    if(Loger::isLogToFileEnabled())
+    {
+        Loger::logFile() << m_msg << "\n";
+        Loger::logFile().flush();
+    }
 }
 
 void SnoreLog::setDebugLvl(int i)
 {
-    s_debugLevel = i;
+    Loger::s_debugLevel = i;
+}
+
+void SnoreLog::setOutputDevice(QIODevice *device)
+{
+    Loger::s_textStream.setDevice(device);
 }

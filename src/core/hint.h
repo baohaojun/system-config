@@ -104,6 +104,7 @@ public:
      * @return whether the key is set
      */
     bool containsPrivateValue(const void *owner, const QString & key ) const;
+
 private slots:
     void slotValueDestroyed();
 

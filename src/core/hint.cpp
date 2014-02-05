@@ -30,6 +30,13 @@ void Hint::setValue(const QString &key, const QVariant &value)
     m_data.insert(key.toLower(), value);
 }
 
+void Hint::setValue(const QString &key, QObject *value)
+{
+    m_data.insert(key.toLower(), qVariantFromValue(value));
+    value->setProperty("hint_key",key);
+    connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()));
+}
+
 QVariant Hint::value(const QString &k, const QVariant &defaultValue) const
 {
     QString key(k.toLower());
@@ -84,17 +91,15 @@ bool Hint::containsPrivateValue(const void *owner, const QString &key) const
 void Hint::slotValueDestroyed()
 {
     QObject * o = sender();
-    snoreDebug( SNORE_DEBUG ) << o << o->property("hint_key");
     QString key = o->property("hint_key").toString();
     if(!o->property("hint_owner").isNull())
     {
-        m_privateData.take(QPair<quintptr,QString>(o->property("hint_owner").value<quintptr>(),key));
+        m_privateData.take(QPair<quintptr,QString>(o->property("hint_owner").value<quintptr>(), key));
     }
     else
     {
         m_data.take(key);
     }
-
 }
 
 QDebug operator<<( QDebug debug, const Snore::Hint &hint )

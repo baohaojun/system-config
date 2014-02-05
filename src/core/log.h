@@ -56,7 +56,12 @@ enum SnoreDebugLevels
  * Logg macro use to logg messages.
  * snoreDebug( SNORE_DEBUG ) << "Message" << notification;
  */
+
+#if !defined(QT_NO_DEBUG_OUTPUT)
 #define snoreDebug(X) Snore::SnoreLog( X ) << Q_FUNC_INFO
+#else
+#define snoreDebug(X) QNoDebug()
+#endif
 
 
 namespace Snore
@@ -85,21 +90,19 @@ public:
      */
     static void setDebugLvl(int lvl);
 
+    /**
+     * Sets the output device, the default is stdout
+     * @param device the output device
+     */
+    static void setOutputDevice(QIODevice *device);
+
 private:
-    static inline int debugLvl()
-    {
-        if(s_debugLevel == -1)
-        {
-            s_debugLevel = qgetenv("SNORE_DEBUG_LVL").toInt();
-        }
-        return s_debugLevel;
-    }
-
-
-    static int s_debugLevel;
     SnoreDebugLevels m_lvl;
     QString m_msg;
 };
+
+
+
 }
 
 
