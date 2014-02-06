@@ -1,7 +1,10 @@
 #!/bin/bash
 
 . ~/.renew-xauth
-if ps-uptime-gt /offlineimap 1200; then
+if ps-uptime-gt /offlineimap 7200; then
+    ps-killall /offlineimap
+    bhj-notify offlineimap
+elif ps-uptime-gt /offlineimap 1200; then
     bhj-notify offlineimap "It's been running for $(ps-uptime /offlineimap|head -n 1|tr -d '\n') seconds"
 else
     bhj-notify offlineimap
