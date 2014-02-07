@@ -1,4 +1,6 @@
 #!/bin/bash -i
+
+. .usb0
 # instead of scp in the name, we are going to use rsync
 if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
     adb -s
@@ -17,15 +19,16 @@ if ! adb -w shell netcfg|grep -q 'rndis0.*129/'; then
         '"
     sleep 1
 fi
-if ! ifconfig usb0 | grep 192.168.15.33; then
-    sudo ifconfig usb0 192.168.15.33
+
+if ! ifconfig $USB0 | grep 192.168.15.33; then
+    sudo ifconfig $USB0 192.168.15.33
 fi
 if test $(basename $0) = net-for-phone; then
     adb shell su -c "setprop net.dns1 $(cat /etc/resolv.conf | grep ^nameserver | pn 2 | head -n 1)"
     adb shell su -c '/system/xbin/route del default'
     adb shell su -c '/system/xbin/route add default gw 192.168.15.33'
-    for x in $(ifconfig | grep -P -e '^\S'| pn 1|grep -v -P -e '^(lo|usb0)$'); do
-        nat-vbox "$x" usb0
+    for x in $(ifconfig | grep -P -e '^\S'| pn 1|grep -v -P -e '^(lo|'$USB0')$'); do
+        nat-vbox "$x" $USB0
     done
     exit 0
 fi

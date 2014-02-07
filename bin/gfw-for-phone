@@ -3,6 +3,7 @@
 set -e
 set -x
 
+. .usb0
 function sudo() {
     command sudo env SSH_AGENT_PID=$SSH_AGENT_PID SSH_AUTH_SOCK=$SSH_AUTH_SOCK PATH=$PATH "$@"
 }
@@ -28,17 +29,22 @@ ssh bhj.dyndns.org '
 if ps.pl ssh.-w.root.443 && yes-or-no-p -y "kill the previous tunnel?"; then
     sudo ps-killall ssh.-w.root.443
 fi
-sudo ssh -o StrictHostKeyChecking=no -v -C2qN -w 0:0 root@bhj.dyndns.org -p 443&
+sudo ssh -o StrictHostKeyChecking=no -v -C2N -w 0:0 root@bhj.dyndns.org -p 443&
 
-while true; do
-    ssh bhj.dyndns.org bash -x -e -c 'true;
+ssh bhj.dyndns.org 'set -x
         set -e
-        sudo ip link set tun0 up
-        sudo ip addr add 10.0.0.200/32 peer 10.0.0.100 dev tun0
+        for x in $(seq 1 15); do
+            if command sudo ip link set tun0 up; then
+                break
+            else
+                sleep 1
+            fi
+        done
+
+        command sudo ip addr add 10.0.0.200/32 peer 10.0.0.100 dev tun0
         nat-vbox eth0 tun0
-    ' && break || true
-    sleep 1
-done
+    '
+
 
 sudo ip link set tun0 up
 sudo ip addr add 10.0.0.100/32 peer 10.0.0.200 dev tun0
@@ -48,5 +54,5 @@ sudo route del default gw "$default_gw"
 sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw "$default_gw"
 sudo route add default gw 10.0.0.200
 net-for-phone
-nat-vbox tun0 usb0
-nat-vbox wlan0 usb0
+nat-vbox tun0 $USB0
+nat-vbox wlan0 $USB0

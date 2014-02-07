@@ -3,4 +3,5 @@
 xrandr_out=$(xrandr)
 if echo "$xrandr_out" | grep LVDS -q && echo "$xrandr_out" | grep -P -e 'VGA.*\bconnect'; then
     switch-to-vga
+    switch-to-vga
 fi
