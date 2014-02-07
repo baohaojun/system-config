@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+x = open("|wget 'http://buc-uc-test.alibaba-inc.com/rpc/enhancedUserQuery/findUsers/byFuzzyQuery.json?fuzzyStr=#{ARGV[0]}' -O - 2>/dev/null") {|pipe| pipe.read};
+
+require 'json'
+
+x = JSON.parse(x)['content']['items']
+
+if x.length > 1; then
+  x[0].each {|k, v|
+    print "#{k} -> #{v}\n" unless v.to_s.empty?
+  }
+end
