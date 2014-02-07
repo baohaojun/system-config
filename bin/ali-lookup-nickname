@@ -5,7 +5,7 @@ require 'json'
 
 x = JSON.parse(x)['content']['items']
 
-if x.length > 1; then
+if x.length >= 1; then
   x[0].each {|k, v|
     print "#{k} -> #{v}\n" unless v.to_s.empty?
   }
