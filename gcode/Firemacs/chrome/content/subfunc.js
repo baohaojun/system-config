@@ -226,8 +226,10 @@ Firemacs.SubFunc = {
         var re;
         if (dir > 0) {
             re = /buttonright|next|>|下一|下页|→/i;
+          re_ptag = /next-link/; // for https://developer.apple.com/
         } else {
             re = /buttonleft|prev|<|上一|上页|←/i;
+          re_ptag = /previous-link/;
         }
         var re_exclude = /<.*>|>.*</;
         var links = doc.links;
@@ -241,7 +243,16 @@ Firemacs.SubFunc = {
           return;
         }
       }
-      for (i = 0; i < links.length; ++i) {
+      for (i = 0; i < anchors.length; ++i) {
+        the_class = anchors[i].parentNode.className;
+        if (the_class &&
+            the_class.search(re_ptag) != -1 &&
+            anchors[i].href) {
+          loadURI(anchors[i].href);
+          return;
+        }
+      }
+        for (i = 0; i < links.length; ++i) {
         if (links[i].textContent &&
             links[i].textContent.search(re) != -1 &&
             links[i].textContent.search(re_exclude) == -1 &&
