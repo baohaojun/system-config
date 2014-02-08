@@ -3,10 +3,18 @@ x = open("|wget 'http://buc-uc-test.alibaba-inc.com/rpc/enhancedUserQuery/findUs
 
 require 'json'
 
-x = JSON.parse(x)['content']['items']
+x = JSON.parse(x)
+if x
+  x = x['content']
+end
 
-if x.length >= 1; then
-  x[0].each {|k, v|
-    print "#{k} -> #{v}\n" unless v.to_s.empty?
+x = x['items'] if x
+
+if x
+  x.each {|j|
+    print "**************** split ****************\n"
+    j.each {|k, v|
+      print "#{k} -> #{v}\n" unless v.to_s.empty?
+    }
   }
 end
