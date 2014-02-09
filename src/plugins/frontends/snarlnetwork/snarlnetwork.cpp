@@ -39,12 +39,13 @@ SnarlNetworkFrontend::SnarlNetworkFrontend():
 SnarlNetworkFrontend::~SnarlNetworkFrontend(){
 }
 
-bool SnarlNetworkFrontend::initialize(SnoreCore *snore){
+bool SnarlNetworkFrontend::initialize(SnoreCore *snore)
+{
     parser = new Parser(this);
     tcpServer = new QTcpServer(this);
     if(!tcpServer->listen(QHostAddress::Any,port))
     {
-        snoreDebug( SNORE_DEBUG )<<"The port is already used";
+        snoreDebug( SNORE_DEBUG ) << "The port is already used";
         return false;
     }
     else
@@ -72,25 +73,23 @@ bool SnarlNetworkFrontend::deinitialize()
 
 void SnarlNetworkFrontend::actionInvoked(Snore::Notification notification)
 {
-    //TODO:fix callback
-    if(notification.actionInvoked().id() == 1 )
-    {
-        callback(notification,"SNP/1.1/304/Notification acknowledged/");
-    }
-    else if(notification.actionInvoked().id() == 2)
-    {
-        callback(notification,"SNP/1.1/302/Notification cancelled/");
-    }
+    snoreDebug( SNORE_DEBUG ) << notification.closeReason();
+    callback(notification,"SNP/1.1/304/Notification acknowledged/");
 }
+
 void SnarlNetworkFrontend::notificationClosed(Snore::Notification notification)
 {
-    if(notification.closeReason() == Notification::TIMED_OUT)
+    switch(notification.closeReason())
     {
+    case Notification::TIMED_OUT:
         callback(notification, "SNP/1.1/303/Notification timed out/");
-    }
-    else
-    {
+        break;
+    case Notification::CLOSED:
         callback(notification, "SNP/1.1/307/Notification closed/");
+        break;
+    case Notification::DISMISSED:
+        callback(notification,"SNP/1.1/302/Notification cancelled/");
+        break;
     }
 }
 
@@ -129,7 +128,7 @@ void SnarlNetworkFrontend::handleMessages()
 
 void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
 {
-    QTcpSocket *client = (QTcpSocket*)qvariant_cast<void*>(sn.hints().privateValue(this, "clientSocket"));
+    QTcpSocket *client = (QTcpSocket*)qvariant_cast<QObject*>(sn.hints().privateValue(this, "clientSocket"));
     if(client && !msg.isEmpty())
     {
         write(client, QString("%1%2\r\n").arg(msg, QString::number(sn.id())));
