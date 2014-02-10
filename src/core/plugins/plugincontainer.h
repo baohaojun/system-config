@@ -51,6 +51,8 @@ public:
     static const QList<SnorePlugin::PluginTypes> &types();
 
 private:
+    static QHash<SnorePlugin::PluginTypes, QHash<QString,PluginContainer*> > s_pluginCache;
+
     void static updatePluginCache();
     static const QDir &pluginDir();
     static inline const QString pluginExtention()
@@ -63,9 +65,6 @@ private:
         return QLatin1String("dylib");
 #endif
     }
-
-    static QHash<SnorePlugin::PluginTypes, QHash<QString,PluginContainer*> > s_pluginCache;
-
     static inline QSettings &cache()
     {
         static QSettings *_cache = NULL;

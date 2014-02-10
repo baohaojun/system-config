@@ -128,7 +128,7 @@ void SnarlNetworkFrontend::handleMessages()
 
 void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
 {
-    QTcpSocket *client = (QTcpSocket*)qvariant_cast<QObject*>(sn.hints().privateValue(this, "clientSocket"));
+    QTcpSocket *client = qobject_cast<QTcpSocket*>(sn.hints().privateValue(this, "clientSocket").value<QObject*>());
     if(client && !msg.isEmpty())
     {
         write(client, QString("%1%2\r\n").arg(msg, QString::number(sn.id())));
