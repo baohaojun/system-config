@@ -114,4 +114,4 @@
 (global-set-key [(super ?\\)] 'toggle-input-method)
 (define-key global-map [remap upcase-region] 'bhj-upcase-symbol-or-region)
 (define-key global-map [remap downcase-region] 'bhj-downcase-symbol-or-region)
-(define-key global-map [(meta f1)] 'x-maximize-frame)
+(define-key global-map [(super f1)] 'x-maximize-frame)
