@@ -15,6 +15,9 @@ if x
     print "**************** split ****************\n"
     j.each {|k, v|
       print "#{k} -> #{v}\n" unless v.to_s.empty?
+      if k == 'empId'
+        system("ali-view-photo #{v}")
+      end
     }
   }
 end

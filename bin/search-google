@@ -56,5 +56,10 @@ if test "$EMACS" = t; then
     firefox "$url"
 else
     firefox "$url"&
-    echo "$url"|tee /dev/tty|putclip
+    echo "$url"|
+    if is-tty-io; then
+        tee /dev/tty|putclip
+    else
+        cat
+    fi
 fi

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+mkdir -p ~/.cache/ali-photos
+cd ~/.cache/ali-photos
+wget -N https://work.alibaba-inc.com/photo/$1.jpg
+type=$(identify $1.jpg | pn 2)
+ln -s $1.jpg $1.$type || true
+
+eog $1.$type
