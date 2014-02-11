@@ -36,6 +36,12 @@ ln -s "$HOME2" /q
 export HOME=/q
 
 cd /cygdrive/c/
+(
+    mkdir -p etc/ywb/
+    cd etc/ywb/
+    cp ~/etc/ywb-disable.rc disable.rc
+)
+
 wget -N  http://cygwin.com/setup-x86_64.exe
 chmod +x setup-x86_64.exe
 
