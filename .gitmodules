@@ -13,9 +13,6 @@
 [submodule ".emacs_d/mo-git-blame"]
 	path = .emacs_d/mo-git-blame
 	url = https://github.com/baohaojun/mo-git-blame.git
-[submodule ".emacs_d/emacs-eclim"]
-	path = .emacs_d/emacs-eclim
-	url = https://github.com/baohaojun/emacs-eclim.git
 [submodule "gcode/guilt"]
 	path = gcode/guilt
 	url = https://github.com/baohaojun/guilt.git
