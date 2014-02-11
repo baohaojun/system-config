@@ -95,12 +95,6 @@
 ;;----------------------------------------------------------------------------
 (require 'init-local nil t)
 
-
-;;----------------------------------------------------------------------------
-;; Locales (setting them earlier in this file doesn't work in X)
-;;----------------------------------------------------------------------------
-(require 'init-locales)
-
 (message "init completed in %.2fms"
          (sanityinc/time-subtract-millis (current-time) before-init-time))
 
