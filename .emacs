@@ -4,6 +4,7 @@
   (load (format "~/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type))))
 
 (defconst *is-a-mac* (eq system-type 'darwin))
+(defconst *is-a-win* (eq system-type 'windows-nt))
 (when (and (file-exists-p "/etc/emacs/site-start.d/00debian-vars.el")
            (not (fboundp 'debian-file->string)))
   (load "/usr/share/emacs/site-lisp/debian-startup.el")
