@@ -39,12 +39,19 @@
 (when (file-exists-p (expand-file-name "~/.config/emacs.gen.el"))
   (load (expand-file-name "~/.config/emacs.gen.el")))
 
+
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/"))
 (package-initialize)
+
+(when (and
+       (file-exists-p "~/src/github/emacs.d/init.el")
+       (not (string= (getenv "ORG2PDF") "true")))
+  (load "init.el"))
+
 (require 'mmm-auto)
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
@@ -360,10 +367,6 @@
 (load "bhj-set-key.el")
 (load "bhj-autoloads.el")
 (load "bhj-eval-after-load.el")
-(when (and
-       (file-exists-p "~/src/github/emacs.d/init.el")
-       (not (string= (getenv "ORG2PDF") "true")))
-  (load "init.el"))
 
 (condition-case nil
     (server-start)

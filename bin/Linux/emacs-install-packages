@@ -49,7 +49,7 @@ cat <<EOF > ~/.config/emacs.gen.el
 $(
 for x in */; do
     if test "$(echo $x/*.el)" != "$x/*.el"; then
-        printf '"%s"\n' $(readlink -f $x)
+        printf '"%s"\n' $(up $x)
     fi
 done
 )
