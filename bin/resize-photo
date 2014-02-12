@@ -1,0 +1,13 @@
+#!/bin/bash
+maxw=$1
+maxh=$2
+shift 2
+
+for x in "$@"; do
+    width=$(identify $x|pn 3|perl -npe 's/x.*//');
+    height=$(identify $x| pn 3 | perl -npe 's/.*x//');
+    if (( width > maxw || height > maxh)); then
+        ((percent=maxw*100/width, percent * height / 100 > maxh ? percent=maxh*100/height : 1));
+        convert -resize $percent% $x ${x%.*}-resize.${x##*.};
+    fi;
+done

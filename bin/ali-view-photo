@@ -3,8 +3,17 @@
 set -e
 mkdir -p ~/.cache/ali-photos
 cd ~/.cache/ali-photos
-wget -N https://work.alibaba-inc.com/photo/$1.jpg
+if test ! -e "$1.jpg"; then
+    wget https://work.alibaba-inc.com/photo/$1.jpg -O $1.jpg.$$
+    mv $1.jpg.$$ $1.jpg
+fi
 type=$(identify $1.jpg | pn 2)
-ln -s $1.jpg $1.$type || true
+ln $1.jpg $1.$type || true
+eog $1.$type&
 
-eog $1.$type
+
+if test ! -e $1-resize.$type; then
+    resize-photo 96 96 $1.$type
+fi
+up $1-resize.$type
+rsync $1-resize.$type bhj-win7:Documents/SmartQa -av
