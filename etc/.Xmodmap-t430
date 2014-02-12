@@ -1,7 +1,15 @@
-
+! lines begin with ! are comments
 clear mod4
+
+! treat Menu on Microsoft Ergonomics 4000 as super
 keycode 135 = Super_L
+
+! treat PrtSc on ThinkPad T430 as super
 keycode 107 = Super_L
+
+! treat F10 as Menu, so that I can synthesize it
+keycode 76 = Menu
+
 add mod4 = Super_R Super_L
 
 clear control
@@ -20,5 +28,6 @@ remove Lock = Caps_Lock
 keycode 9 = Caps_Lock
 keycode 66 = Escape
 add Lock = Caps_Lock
+remove Lock = Escape
 
 pointer = 1 2 3 5 4 7 6 8 9 10

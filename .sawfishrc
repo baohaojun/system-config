@@ -16,7 +16,7 @@
 
 (bind-keys global-keymap "XF86Back" '(system "xdotool click 1&"))
 
-
+(setq bhj-is-gnome? nil)
 (setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal|rdesktop|urxvt|krdc|vncviewer")
 (setq s-h-keymap (make-keymap)
       c-x-esc-keymap (make-keymap)
@@ -180,28 +180,28 @@
           (let ((from (car key-map-1))
                 (to (cdr key-map-1)))
             (if (string-match "^M-" from 0 nil)
-                (bind-keys esc-map (substring from 2) (lambda () (synthesize-event to (input-focus))))
+                (bind-keys esc-map (substring from 2) (lambda () (synthesize-event-gnome? to (input-focus))))
               (bind-keys global-keymap from (lambda ()
                                               (if (stringp to)
-                                                  (synthesize-event to (input-focus))
+                                                  (synthesize-event-gnome? to (input-focus))
                                                 (mapc (lambda (key1)
-                                                        (synthesize-event key1 (input-focus)))
+                                                        (synthesize-event-gnome? key1 (input-focus)))
                                                       to)))))
-            (bind-keys c-x-map from (lambda () (synthesize-event from (input-focus))))))
+            (bind-keys c-x-map from (lambda () (synthesize-event-gnome? from (input-focus))))))
         global-remap-alist)
   (mapc (lambda (key-map-1)
           (let ((from (car key-map-1))
                 (to (cdr key-map-1)))
             (bind-keys esc-g-map (substring from 4) (lambda ()
                                                       (if (stringp to)
-                                                          (synthesize-event to (input-focus))
+                                                          (synthesize-event-gnome? to (input-focus))
                                                         (mapc (lambda (key1)
-                                                                (synthesize-event key1 (input-focus)))
+                                                                (synthesize-event-gnome? key1 (input-focus)))
                                                               to))))
             ))
         esc-g-remap-alist)
   (bind-keys global-keymap "ESC" esc-map)
-  (bind-keys esc-map "ESC" (lambda () (synthesize-event "ESC" (input-focus))))
+  (bind-keys esc-map "ESC" (lambda () (synthesize-event-gnome? "ESC" (input-focus))))
   (bind-keys esc-map "g" esc-g-map)
   (bind-keys global-keymap "C-x" c-x-map))
 
@@ -226,6 +226,9 @@
             (if (string-match emacs-style-window-class-re (window-class w) 0 t)
                 (undo-global-remap)
               (do-global-remap))
+            (if (string-match gnome-windows-re (window-class w) 0 t)
+                (setq bhj-is-gnome? t)
+              (setq bhj-is-gnome? nil))
             (if (string-match no-tap-drag-window-class-re (window-class w) 0 t)
                 (system "synclient TapAndDragGesture=0&")
               (system "synclient TapAndDragGesture=1&")))))
@@ -271,7 +274,7 @@
         ("t" . ((Firefox . ("C-t" "a" "b" "o" "u" "t" ":" "n" "e" "w" "t" "a" "b" "TAB" "C-l"))))
         ("d" . ((Firefox . ("C-x" "C-d"))))))
 
-(setq gnome-windows-re "gnome-terminal|nautilus")
+(setq gnome-windows-re "gnome-terminal|nautilus|evince")
 
 (defun rewrite-event-for-xtool (event)
   (let* ((keys-break-down (string-split "-" event))
@@ -291,11 +294,9 @@
       (setq modifiers (cdr modifiers)))
     (setq result (concat result main-key))))
 
-(defun synthesize-or-xdotool (event window gnome?)
-  (if gnome?
-      ;; The sleep is necessary for unknown reason, but it won't work
-      ;; without it.
-      (system (concat "sleep .5 && xdotool key --clearmodifiers " (rewrite-event-for-xtool event)))
+(defun synthesize-event-gnome? (event window)
+  (if bhj-is-gnome?
+      (system (concat "xdotool-when-keyboard-clear key " (rewrite-event-for-xtool event)))
     (synthesize-event event window)))
 
 (mapc
@@ -305,16 +306,15 @@
               (lambda ()
                 (let* ((fw (input-focus))
                        (class (window-class fw))
-                       (gnome? (string-match gnome-windows-re class 0 t))
                        (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))
                                             (assoc t (assoc key super-key-window-remap))))
                                    (concat "C-" key))))
                   (if (listp map-to)
                       (mapc (lambda (map-1)
-                              (synthesize-event map-1 fw))
+                              (synthesize-event-gnome? map-1 (input-focus)))
                             map-to)
 
-                    (synthesize-event map-to fw))))))
+                    (synthesize-event-gnome? map-to (input-focus)))))))
  '("t" "w" "n" "c" "v" "l" "r" "s" "d"))
 
 (bind-keys global-keymap "Super-Insert"  '(system "send-key&"))
@@ -418,6 +418,7 @@
 (bind-keys s-h-keymap "m" 'move-window-interactively)
 (bind-keys s-h-keymap "e" '(system "sawfish-click.sh&"))
 (bind-keys s-h-keymap "Super-p" '(system "input-main-passwd&"))
+(bind-keys s-h-keymap "Super-SPC" '(synthesize-event-gnome? "Menu" (input-focus)))
 
 (add-hook 'focus-in-hook
           (lambda (w focus-mode)

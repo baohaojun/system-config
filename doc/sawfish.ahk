@@ -109,6 +109,17 @@
 #h::
   Return
 
+#Space::
+  If A_PriorHotkey = #h
+  {
+    SendInput {AppsKey}
+  }
+  else
+  {
+    SendInput #{Space}
+  }
+  return
+
 #d::
 If A_PriorHotkey = #h
     Run ToggleDesktop
@@ -136,7 +147,7 @@ SendInput !{F4}
 return
 
 ;/* start code-generator "^;"
-;   for x in "w" "c" "v" "l" "\\"; do
+;   for x in $(arg1-arg2 "$(perl -e 'for (a..z) {print "$_ "}')" "t n m r h d s q") "\\"; do
 ;       echo "#$x::"
 ;       echo "    SendInput ^{$x}"
 ;       echo "return"
@@ -144,20 +155,76 @@ return
 ;   done
 ;   end code-generator */
 ; /* start generated code */
-#w::
-  SendInput ^{w}
+#a::
+  SendInput ^{a}
+  return
+
+#b::
+  SendInput ^{b}
   return
 
 #c::
   SendInput ^{c}
   return
 
-#v::
-  SendInput ^{v}
+#e::
+  SendInput ^{e}
+  return
+
+#f::
+  SendInput ^{f}
+  return
+
+#g::
+  SendInput ^{g}
+  return
+
+#i::
+  SendInput ^{i}
+  return
+
+#j::
+  SendInput ^{j}
+  return
+
+#k::
+  SendInput ^{k}
   return
 
 #l::
   SendInput ^{l}
+  return
+
+#o::
+  SendInput ^{o}
+  return
+
+#p::
+  SendInput ^{p}
+  return
+
+#u::
+  SendInput ^{u}
+  return
+
+#v::
+  SendInput ^{v}
+  return
+
+#w::
+  SendInput ^{w}
+  return
+
+#x::
+  SendInput ^{x}
+  return
+
+#y::
+  SendInput ^{y}
+  return
+
+#z::
+  SendInput ^{z}
   return
 
 #\::
@@ -177,3 +244,6 @@ WheelDown::
 
 <#Tab::AltTab
 >#Tab::AltTab
+
+~LWin Up:: return
+~RWin Up:: return

@@ -12,8 +12,11 @@ fi
 rm -f ~/today ~/last-month ~/Downloads/today
 relative-link $(pwd)/$dir ~/today
 relative-link ~/today ~/Downloads/today
-mv ~/Downloads/today.$$/* ~/Downloads/today/
-rmdir ~/Downloads/today.$$
+
+if test -d ~/Downloads/today.$$; then
+    mv ~/Downloads/today.$$/* ~/Downloads/today/
+    rmdir ~/Downloads/today.$$
+fi
 
 dir=$(today 'last month')
 dir=${dir%-*}
