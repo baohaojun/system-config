@@ -33,8 +33,8 @@ void Hint::setValue(const QString &key, const QVariant &value)
 void Hint::setValue(const QString &key, QObject *value)
 {
     m_data.insert(key.toLower(), qVariantFromValue(value));
-    value->setProperty("hint_key",key);
-    connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()));
+    value->setProperty("hint_key",key.toLower());
+    connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()),Qt::DirectConnection );
 }
 
 QVariant Hint::value(const QString &k, const QVariant &defaultValue) const
@@ -57,15 +57,17 @@ bool Hint::contains(const QString &key) const
 
 void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value)
 {
-    m_privateData.insert(QPair<quintptr,QString>((quintptr)owner,key.toLower()), value);
+    QPair<quintptr,QString> pk((quintptr)owner,key.toLower());
+    m_privateData.insert(pk, value);
 }
 
 void Hint::setPrivateValue(const void *owner, const QString &key, QObject *value)
 {
-    m_privateData.insert(QPair<quintptr,QString>((quintptr)owner,key.toLower()), qVariantFromValue(value));
-    value->setProperty("hint_key",key);
+    QPair<quintptr,QString> pk((quintptr)owner,key.toLower());
+    m_privateData.insert(pk, qVariantFromValue(value));
+    value->setProperty("hint_key",key.toLower());
     value->setProperty("hint_owner",(quintptr)owner);
-    connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()));
+    connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()), Qt::DirectConnection);
 }
 
 
@@ -85,7 +87,8 @@ QVariant Hint::privateValue(const void *owner, const QString &k, const QVariant 
 
 bool Hint::containsPrivateValue(const void *owner, const QString &key) const
 {
-    return m_privateData.contains(QPair<quintptr,QString>((quintptr)owner,key.toLower()));
+    QPair<quintptr,QString> pk((quintptr)owner,key.toLower());
+    return m_privateData.contains(pk);
 }
 
 void Hint::slotValueDestroyed()
@@ -94,11 +97,12 @@ void Hint::slotValueDestroyed()
     QString key = o->property("hint_key").toString();
     if(!o->property("hint_owner").isNull())
     {
-        m_privateData.take(QPair<quintptr,QString>(o->property("hint_owner").value<quintptr>(), key));
+        QPair<quintptr,QString> pk(o->property("hint_owner").value<quintptr>(), key);
+        m_privateData.remove(pk);
     }
     else
     {
-        m_data.take(key);
+        m_data.remove(key);
     }
 }
 
