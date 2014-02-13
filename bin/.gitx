@@ -104,7 +104,7 @@ function git()
 
             if test "$1" = submodule -a "$2" = foreach -a $# = 3; then
                 for x in ~/src/github/*/; do
-                    if test -d $x; then
+                    if test -d $x -a ! -L $x; then
                         (
                             cd $x
                             bash -c "$3"
