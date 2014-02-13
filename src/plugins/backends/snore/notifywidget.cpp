@@ -56,7 +56,7 @@ void NotifyWidget::display(const Notification &notification)
     move(m_desktop.topRight().x(), m_desktop.topRight().y() + (m_scaler->scaledY(10) + height()) * m_id);
     show();
     m_moveTimer = new QTimer(this);
-    m_moveTimer->setInterval(3);
+    m_moveTimer->setInterval(2);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
     m_moveTimer->start();
     snoreDebug( SNORE_DEBUG ) << size();
