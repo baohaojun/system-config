@@ -76,7 +76,7 @@ where a tag is defined.")
   (with-current-buffer buf
     (if (eq major-mode 'dired-mode)
         (directory-file-name default-directory)
-      (or (buffer-file-name buf) ""))))
+      (or (buffer-file-name buf) (buffer-name buf) ""))))
 
 (defun ajoke--buffer-file-name-local (&optional buf)
   (let ((name (ajoke--buffer-file-name buf)))

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: pl
+# key: pl
+# --
+print "hello `(line-number-at-pos)`"

@@ -1,9 +1,15 @@
 #!/bin/bash
 
 export PATH=~/src/lww/out/debug:$PATH
+export OLDHOME=~
 while test $(ifconfig|grep 'inet addr'|wc -l) -lt 2; do # wait for a network connection
     sleep 5
 done
+
+if test -d "$1"; then
+    set -- $(readlink -f "$1")
+    export DO_NOT_LOOP=true
+fi
 
 cd /tmp
 
@@ -11,6 +17,10 @@ flag=~/.config/no-ww
 
 function start-ww() {
     mkdir -p ~/.logs
+    mkdir -p ~/.config
+    if test ~ != $OLDHOME; then
+        ln -s $OLDHOME/.config/ibus ~/.config/ -f
+    fi
 
     (
         while true; do
@@ -21,10 +31,17 @@ function start-ww() {
                 flock 9
                 AliWangWang
             )
+            if test "$DO_NOT_LOOP"; then
+                break
+            fi
             sleep 5
         done&
     ) 9> ~/.logs/ww.lock
 }
 
-start-ww
-HOME=~/tmp start-ww
+if test -d "$1"; then
+    HOME=$1 start-ww
+else
+    start-ww
+    HOME=~/tmp start-ww
+fi

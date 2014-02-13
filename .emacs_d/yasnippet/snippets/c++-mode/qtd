@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: qtd
+# key: qtd
+# --
+    qDebug() << "`(file-name-nondirectory (ajoke--buffer-file-name))`:`(line-number-at-pos)`: bhj";
