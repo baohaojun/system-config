@@ -271,7 +271,6 @@
         ("l" . ((Firefox . ("C-x" "C-l"))))
         ("r" . ((Firefox . ("C-x" "C-r"))))
         ("s" . ((Firefox . ("C-x" "C-s"))))
-        ("t" . ((Firefox . ("C-t" "a" "b" "o" "u" "t" ":" "n" "e" "w" "t" "a" "b" "TAB" "C-l"))))
         ("d" . ((Firefox . ("C-x" "C-d"))))))
 
 (setq gnome-windows-re "gnome-terminal|nautilus|evince")
