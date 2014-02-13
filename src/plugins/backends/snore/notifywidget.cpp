@@ -37,7 +37,7 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     TomahawkUtils::DpiScaler::setFontSize(this->ui->titel->fontInfo().pointSize());
     m_scaler = new TomahawkUtils::DpiScaler(this);
     ui->closeButton->setMaximumWidth(ui->closeButton->height());
-    QSize size = m_scaler->scaled(350, 90);
+    QSize size = m_scaler->scaled(300, 80);
     setMaximumSize(size);
     setMinimumSize(size);
     resize(size);
@@ -59,6 +59,7 @@ void NotifyWidget::display(const Notification &notification)
     m_moveTimer->setInterval(3);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
     m_moveTimer->start();
+    snoreDebug( SNORE_DEBUG ) << size();
 }
 
 void NotifyWidget::update(const Notification &notification)
