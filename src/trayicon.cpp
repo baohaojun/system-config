@@ -97,20 +97,26 @@ void TrayIcon::slotTestNotification()
     {
         m_snore->registerApplication(m_app);
     }
-    m_noti = Notification(m_app, m_alert, "Hello World", "This is Snore", Icon(":/root/snore.png"));
-    m_noti.addAction(Action(1,"Test Action"));
-    m_snore->broadcastNotification(m_noti);
+    Notification noti(m_app, m_alert, "Hello World", "This is Snore", Icon(":/root/snore.png"));
+    noti.addAction(Action(1,"Test Action"));
+    m_snore->broadcastNotification(noti);
 
-    QTimer::singleShot(m_noti.timeout()/2*1000,this,SLOT(sloutUpdateTestNotification()));
-
+    QTimer *timer = new QTimer(this);
+    m_notifications[timer] = noti;
+    timer->setSingleShot(true);
+    timer->setInterval(noti.timeout()/2*1000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(sloutUpdateTestNotification()));
+    timer->start();
 
     //    m_snore->deregisterApplication(app);
 }
 
 void TrayIcon::sloutUpdateTestNotification()
 {
-    Notification update(m_noti, "Hello World", "This is Snore, color test", Icon("http://jweatherwatch.googlecode.com/svn/trunk/iconset/04.png"));
+    QTimer *timer = qobject_cast<QTimer*>(sender());
+    Notification noti = m_notifications.take(timer);
+    Notification update(noti, "Hello World", "This is Snore, color test", Icon("http://jweatherwatch.googlecode.com/svn/trunk/iconset/04.png"));
     m_snore->broadcastNotification(update);
-    m_noti = Notification();
+    timer->deleteLater();
 }
 

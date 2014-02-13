@@ -87,6 +87,10 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
     {
         m_activeNotifications.remove(n.id());
     }
+    if(n.isUpdate() && m_activeNotifications.contains(n.old().id()))
+    {
+        m_activeNotifications.remove(n.old().id());
+    }
     n.data()->setCloseReason(reason);
     snoreDebug( SNORE_DEBUG ) << n;
     emit notificationClosed(n);

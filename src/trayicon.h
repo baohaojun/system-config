@@ -41,7 +41,8 @@ private:
     Snore::SnoreCore *m_snore;
     Snore::Application m_app;
     Snore::Alert m_alert;
-    Snore::Notification m_noti;
+
+    QHash<QTimer*,Snore::Notification> m_notifications;
 
 
 public slots:
