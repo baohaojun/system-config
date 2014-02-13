@@ -1,7 +1,7 @@
 set( SNORE_SRC
     snorenotifier.cpp
     notifywidget.cpp
-    DPIScaler.cpp
+    DpiScaler.cpp
     )
 
 set( SNORE_FORMS
