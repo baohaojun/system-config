@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>303</width>
-    <height>122</height>
+    <width>359</width>
+    <height>180</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -75,8 +75,14 @@
            <property name="text">
             <string>TextLabel</string>
            </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
