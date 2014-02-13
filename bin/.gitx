@@ -1,4 +1,7 @@
 #!/bin/bash
+if test -z "$SSH_AUTH_SOCK" -a -e ~/.config/bhj-auth.rc; then
+    . ~/.config/bhj-auth.rc
+fi
 
 function git_svn() {
     if test $# = 1; then
