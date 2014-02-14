@@ -205,7 +205,6 @@
   (bind-keys esc-map "g" esc-g-map)
   (bind-keys global-keymap "C-x" c-x-map))
 
-
 (defun undo-global-remap()
   (mapc (lambda (key-map-1)
           (let ((from (car key-map-1))
@@ -355,6 +354,7 @@
   #:spec "%W")
 
 (bind-keys s-h-keymap "Super-c" 'cycle-class-bhj)
+(bind-keys global-keymap "Super-$" 'cycle-class-bhj)
 (bind-keys s-h-keymap "c"  '(system "do-capture&"))
 
 (define-cycle-command-pair
@@ -433,3 +433,16 @@
 (system "sawfish-auto-start&")
 (bind-keys global-keymap "KP_Insert" '(system "firefox-goto-next-prev-page prev&"))
 (bind-keys global-keymap "KP_Delete" '(system "firefox-goto-next-prev-page next&"))
+(setq esc-x-keymap (make-keymap))
+(bind-keys esc-map "x" esc-x-keymap)
+
+(mapc (lambda (start-and-end)
+        (let ((start (car start-and-end))
+              (end (cdr start-and-end)))
+          (do ((c start))
+              ((> c end) nil)
+            (setq cs (format nil "%c" c))
+            (bind-keys esc-x-keymap cs `(synthesize-event-gnome? ,(format nil "M-%s" cs) (input-focus)))
+            (setq c (1+ c)
+                  cs (format nil "%c" c)))))
+      '((?a . ?z) (?A . ?Z)))
