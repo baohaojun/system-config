@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+for x in ~/etc/rsync-into-git/*.src; do
+    if test ! -e $x; then
+        exit 0
+    fi
+    src=$(readlink -f $x)
+    dst=$(readlink -f ${x/%.src/.dst})
+    if test $(basename $dst) = $(basename $src); then
+        dst=$(dirname $dst)
+    fi
+    rsync -av $src $dst
+done
