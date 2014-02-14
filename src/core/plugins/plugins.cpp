@@ -35,7 +35,10 @@ SnorePlugin::SnorePlugin ( const QString &name ) :
     m_name ( name ),
     m_initialized(false)
 {
-    moveToThread( qApp->thread() );
+    if(thread() != qApp->thread())
+    {
+        moveToThread( qApp->thread() );
+    }
 }
 
 SnorePlugin::~SnorePlugin()

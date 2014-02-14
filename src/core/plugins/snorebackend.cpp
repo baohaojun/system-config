@@ -53,8 +53,8 @@ bool SnoreBackend::initialize( SnoreCore *snore )
         return false;
     }
 
-    connect( snore->d(), SIGNAL(applicationRegistered(const Snore::Application&)), this, SLOT(slotRegisterApplication(const Snore::Application&)));
-    connect( snore->d(), SIGNAL(applicationDeregistered(const Snore::Application&)), this, SLOT(slotDeregisterApplication(const Snore::Application&)));
+    connect( snore->d(), SIGNAL(applicationRegistered(const Snore::Application&)), this, SLOT(slotRegisterApplication(const Snore::Application&)), Qt::QueuedConnection);
+    connect( snore->d(), SIGNAL(applicationDeregistered(const Snore::Application&)), this, SLOT(slotDeregisterApplication(const Snore::Application&)), Qt::QueuedConnection);
 
     connect( this, SIGNAL(notificationClosed(Snore::Notification)), snore->d(), SLOT(slotNotificationClosed(Snore::Notification)));
     connect( snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
