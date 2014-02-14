@@ -58,7 +58,10 @@ protected:
     void mousePressEvent(QMouseEvent *e);
 
 
+
 private:
+
+    void setPalette(const QImage &img);
     Ui::NotifyWidget *ui;
     QTimer *m_moveTimer;
     QPoint m_dest;

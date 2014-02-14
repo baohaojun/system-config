@@ -37,10 +37,9 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     TomahawkUtils::DpiScaler::setFontSize(this->ui->titel->fontInfo().pointSize());
     m_scaler = new TomahawkUtils::DpiScaler(this);
     ui->closeButton->setMaximumWidth(ui->closeButton->height());
-    QSize size = m_scaler->scaled(300, 80);
-    setMaximumSize(size);
-    setMinimumSize(size);
-    resize(size);
+
+    setFixedSize( m_scaler->scaled(300, 80));
+
     m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + (m_scaler->scaledY(10) + height()) * pos);
 }
 
@@ -59,7 +58,7 @@ void NotifyWidget::display(const Notification &notification)
     m_moveTimer->setInterval(2);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
     m_moveTimer->start();
-    snoreDebug( SNORE_DEBUG ) << size();
+
 }
 
 void NotifyWidget::update(const Notification &notification)
@@ -70,42 +69,11 @@ void NotifyWidget::update(const Notification &notification)
 
     QSize iconSize = m_scaler->scaled(65,65);
     ui->icon->setPixmap(QPixmap::fromImage(notification.icon().image().scaled(iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
-    ui->icon->setMaximumSize(iconSize);
 
     iconSize = m_scaler->scaled(20,20);
     QImage img = notification.application().icon().image().scaled(iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     ui->appIcon->setPixmap(QPixmap::fromImage(img));
-    ui->appIcon->setMaximumSize(iconSize);
-
-    qulonglong r = 0;
-    qulonglong g = 0;
-    qulonglong b = 0;
-    for(int x=0;x<img.width();++x)
-    {
-        for(int y=0;y<img.height();++y)
-        {
-            QRgb c = img.pixel(x,y);
-            r += qRed(c);
-            g += qGreen(c);
-            b += qBlue(c);
-        }
-    }
-    int s = img.width()*img.height();
-
-    QPalette p = palette();
-    QColor bg = QColor(r/s,g/s, b/s,255);
-    p.setColor(QPalette::All, QPalette::Window, bg);
-    p.setColor(QPalette::All, QPalette::Background, bg);
-    p.setColor(QPalette::All, QPalette::Base, bg);
-    p.setColor(QPalette::All, QPalette::Text, Qt::white);
-    p.setColor(QPalette::All, QPalette::BrightText, Qt::white);
-    p.setColor(QPalette::All, QPalette::ButtonText, Qt::white);
-    p.setColor(QPalette::All, QPalette::WindowText, Qt::white);
-    setPalette(p);
-    ui->closeButton->setPalette(p);
-    ui->body->setPalette(p);
-    ui->titel->setPalette(p);
-
+    setPalette(img);
 }
 
 Notification &NotifyWidget::notification()
@@ -138,4 +106,36 @@ void NotifyWidget::mousePressEvent(QMouseEvent *e)
     emit invoked();
     hide();
     QWidget::mousePressEvent(e);
+}
+
+void NotifyWidget::setPalette(const QImage &img)
+{
+    qulonglong r = 0;
+    qulonglong g = 0;
+    qulonglong b = 0;
+    for(int x=0;x<img.width();++x)
+    {
+        for(int y=0;y<img.height();++y)
+        {
+            QRgb c = img.pixel(x,y);
+            r += qRed(c);
+            g += qGreen(c);
+            b += qBlue(c);
+        }
+    }
+    int s = img.width()*img.height();
+
+    QPalette p = palette();
+    QColor bg = QColor(r/s, g/s, b/s);
+    p.setColor(QPalette::All, QPalette::Window, bg);
+    p.setColor(QPalette::All, QPalette::Background, bg);
+    p.setColor(QPalette::All, QPalette::Base, bg);
+    p.setColor(QPalette::All, QPalette::Text, Qt::white);
+    p.setColor(QPalette::All, QPalette::BrightText, Qt::white);
+    p.setColor(QPalette::All, QPalette::ButtonText, Qt::white);
+    p.setColor(QPalette::All, QPalette::WindowText, Qt::white);
+    QWidget::setPalette(p);
+    ui->closeButton->setPalette(p);
+    ui->body->setPalette(p);
+    ui->titel->setPalette(p);
 }
