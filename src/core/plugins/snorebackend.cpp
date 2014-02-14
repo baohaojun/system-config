@@ -70,7 +70,7 @@ bool SnoreBackend::initialize( SnoreCore *snore )
 
 void SnoreBackend::requestCloseNotification (Notification notification, Notification::CloseReasons reason )
 {
-    if(canCloseNotification())
+    if(canCloseNotification() && notification.isValid())
     {
         closeNotification(notification,reason);
         slotCloseNotification(notification);

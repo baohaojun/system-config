@@ -71,7 +71,6 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
 
 void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
 {
-
     NotifyWidget *w = m_widgets[notification.hints().privateValue(this, "id").toInt()];
     if(!m_queue.isEmpty())
     {
