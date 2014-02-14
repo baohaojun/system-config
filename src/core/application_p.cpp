@@ -21,6 +21,8 @@
 
 using namespace Snore;
 
+int ApplicationData::applicationMetaID = qRegisterMetaType<Application>();
+
 ApplicationData::ApplicationData(const QString &name, const Icon &icon):
     m_name(name),
     m_icon(icon)

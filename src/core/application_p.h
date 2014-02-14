@@ -37,6 +37,8 @@ public:
     Icon m_icon;
     QHash<QString,Alert> m_alerts;
     Hint m_hint;
+
+    static int applicationMetaID;
 };
 
 }

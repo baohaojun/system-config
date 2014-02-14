@@ -114,6 +114,7 @@ private:
 };
 
 }
+Q_DECLARE_METATYPE(Snore::Application)
 
 SNORE_EXPORT QDebug operator<< ( QDebug debug, const Snore::Application &app );
 
