@@ -1,0 +1,26 @@
+[Configuration]
+FontName=Monospace 15
+MiscAlwaysShowTabs=FALSE
+MiscBell=FALSE
+MiscBordersDefault=FALSE
+MiscCursorBlinks=FALSE
+MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
+MiscDefaultGeometry=80x24
+MiscInheritGeometry=FALSE
+MiscMenubarDefault=FALSE
+MiscMouseAutohide=FALSE
+MiscToolbarDefault=FALSE
+MiscConfirmClose=TRUE
+MiscCycleTabs=TRUE
+MiscTabCloseButtons=TRUE
+MiscTabCloseMiddleClick=TRUE
+MiscTabPosition=GTK_POS_TOP
+MiscHighlightUrls=TRUE
+ScrollingBar=TERMINAL_SCROLLBAR_NONE
+ShortcutsNoMnemonics=TRUE
+ShortcutsNoMenukey=TRUE
+ColorForeground=#dcdcdc
+ColorBackground=#2c2c2c
+ColorCursor=#dcdcdc
+ColorPalette=#3f3f3f3f3f3f;#a03a7cac7cac;#6060b4b48a8a;#dfdfafaf8f8f;#9a9ab8b8d7d7;#dcdc8c8cc3c3;#8c8cd0d0d3d3;#dcdcdcdcdcdc;#707090908080;#dcdca3a3a3a3;#7272d5d5a3a3;#f0f0dfdfafaf;#9494bfbff3f3;#ecec9393d3d3;#9393e0e0e3e3;#ffffffffffff
+

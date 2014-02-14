@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channel name="xfce4-panel" version="1.0">
+  <property name="configver" type="int" value="2"/>
+  <property name="panels" type="array">
+    <value type="int" value="1"/>
+    <property name="panel-1" type="empty">
+      <property name="position" type="string" value="p=6;x=0;y=0"/>
+      <property name="length" type="uint" value="100"/>
+      <property name="position-locked" type="bool" value="true"/>
+      <property name="size" type="uint" value="30"/>
+      <property name="plugin-ids" type="array">
+        <value type="int" value="1"/>
+        <value type="int" value="3"/>
+        <value type="int" value="15"/>
+        <value type="int" value="4"/>
+        <value type="int" value="6"/>
+        <value type="int" value="2"/>
+        <value type="int" value="5"/>
+        <value type="int" value="7"/>
+      </property>
+    </property>
+  </property>
+  <property name="plugins" type="empty">
+    <property name="plugin-1" type="string" value="applicationsmenu"/>
+    <property name="plugin-3" type="string" value="tasklist"/>
+    <property name="plugin-15" type="string" value="separator">
+      <property name="expand" type="bool" value="true"/>
+      <property name="style" type="uint" value="0"/>
+    </property>
+    <property name="plugin-6" type="string" value="systray">
+      <property name="names-visible" type="array">
+        <value type="string" value="vlc"/>
+        <value type="string" value="stardict"/>
+        <value type="string" value="networkmanager applet"/>
+        <value type="string" value="ibus panel"/>
+        <value type="string" value="vpnui"/>
+        <value type="string" value="orage"/>
+        <value type="string" value="notifications"/>
+        <value type="string" value="imap4monitor.py"/>
+        <value type="string" value="aliwangwang"/>
+      </property>
+    </property>
+    <property name="plugin-2" type="string" value="xfce4-orageclock-plugin"/>
+    <property name="plugin-4" type="string" value="battery"/>
+    <property name="plugin-5" type="string" value="actions"/>
+    <property name="plugin-7" type="string" value="mixer">
+      <property name="sound-card" type="string" value="PlaybackBuiltinAudioAnalogStereoPulseAudioMixer"/>
+      <property name="track" type="string" value="Master"/>
+      <property name="command" type="string" value="xfce4-mixer"/>
+      <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
+    </property>
+  </property>
+</channel>
