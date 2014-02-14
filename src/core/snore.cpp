@@ -123,19 +123,25 @@ const QHash<QString, Application> &SnoreCore::aplications() const
 const QStringList SnoreCore::notificationBackends() const
 {
     Q_D(const SnoreCore);
-    return d->m_plugins.values(SnorePlugin::BACKEND);
+    QStringList out(d->m_plugins.values(SnorePlugin::BACKEND));
+    qSort(out);
+    return out;
 }
 
 const QStringList SnoreCore::notificationFrontends() const
 {
     Q_D(const SnoreCore);
-    return d->m_plugins.values(SnorePlugin::FRONTEND);
+    QStringList out(d->m_plugins.values(SnorePlugin::FRONTEND));
+    qSort(out);
+    return out;
 }
 
 const QStringList SnoreCore::secondaryNotificationBackends() const
 {
     Q_D(const SnoreCore);
-    return d->m_plugins.values(SnorePlugin::SECONDARY_BACKEND);
+    QStringList out(d->m_plugins.values(SnorePlugin::SECONDARY_BACKEND));
+    qSort(out);
+    return out;
 }
 
 bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
