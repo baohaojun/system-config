@@ -30,8 +30,6 @@ using namespace Snore;
 
 int Notification::m_defaultTimeout = 10;
 
-int NotificationData::notificationMetaID = qRegisterMetaType<Notification>();
-
 
 Notification::Notification () :
     d(NULL)

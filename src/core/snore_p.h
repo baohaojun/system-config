@@ -40,6 +40,8 @@ public:
     {
         return QCryptographicHash::hash(data,QCryptographicHash::Md5).toHex();
     }
+
+    static void registerMetaTypes();
 public:
     SnoreCorePrivate(QSystemTrayIcon *trayIcon);
     ~SnoreCorePrivate();
@@ -49,6 +51,8 @@ public:
     void notificationActionInvoked(Notification notification) const;
 
     bool setBackendIfAvailible(const QString & backend);
+
+
 
 
     /**

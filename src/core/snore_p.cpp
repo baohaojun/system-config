@@ -64,6 +64,12 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
     return false;
 }
 
+void SnoreCorePrivate::registerMetaTypes()
+{
+    qRegisterMetaType<Notification>();
+    qRegisterMetaType<Application>();
+}
+
 bool SnoreCorePrivate::primaryBackendCanUpdateNotification() const
 {
     return m_notificationBackend->canUpdateNotification();

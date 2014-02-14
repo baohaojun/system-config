@@ -38,9 +38,10 @@
 using namespace Snore;
 
 
-SnoreCore::SnoreCore(QSystemTrayIcon *trayIcon ):
-    d_ptr(new SnoreCorePrivate(trayIcon ))
+SnoreCore::SnoreCore(QSystemTrayIcon *trayIcon )
 {
+    SnoreCorePrivate::registerMetaTypes();
+    d_ptr = new SnoreCorePrivate(trayIcon );
     Q_D(SnoreCore);
     d->q_ptr = this;
 }

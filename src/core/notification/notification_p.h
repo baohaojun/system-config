@@ -82,7 +82,6 @@ private:
 
     static uint notificationCount;
     static uint m_idCount;
-    static int notificationMetaID;
 
 };
 
