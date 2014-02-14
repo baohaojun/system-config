@@ -1,2 +1,3 @@
 #!/bin/bash
-konsole --profile myscr --hide-menubar --hide-tabbar&
+# konsole --profile myscr --hide-menubar --hide-tabbar&
+xfce4-terminal --hide-menubar --maximize --hide-borders -x myscr

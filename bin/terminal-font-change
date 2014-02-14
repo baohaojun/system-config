@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+file=$(readlink -f ~/.config/xfce4/terminal/terminalrc)
+size=$(perl -ne 'if (m/FontName=.* (\d+)$/) {print $1; last}' $file)
+if test "$1" = +; then
+    (( size += 2 )) || true
+elif test "$1" = -; then
+    (( size -= 2 )) || true
+else
+    echo usage: $(basename $0) '+|-'
+    exit
+fi
+perl -npe "s!(FontName=.* )(\d+)\$!\${1}$size!" $file > $file.$$
+mv $file.$$ $file

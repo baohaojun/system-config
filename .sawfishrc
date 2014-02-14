@@ -17,7 +17,7 @@
 (bind-keys global-keymap "XF86Back" '(system "xdotool click 1&"))
 
 (setq bhj-is-gnome? nil)
-(setq emacs-style-window-class-re "emacs|firefox|konsole|gnome-terminal|rdesktop|urxvt|krdc|vncviewer")
+(setq emacs-style-window-class-re "emacs|xfce4-terminal|firefox|konsole|gnome-terminal|rdesktop|urxvt|krdc|vncviewer")
 (setq s-h-keymap (make-keymap)
       c-x-esc-keymap (make-keymap)
       c-x-map (make-keymap)
@@ -156,7 +156,7 @@
    ("C-,"              "hello world no such thing" "firefox pop")
    ("C-."              "hello world no such thing" "firefox push")
    ("Super-n"          "firefox" "firefox")
-   ("Super-t"          "konsole" "konsole.bhj")
+   ("Super-t"          "konsole|xfce4-terminal" "konsole.bhj")
    ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
@@ -418,6 +418,8 @@
 (bind-keys s-h-keymap "e" '(system "sawfish-click.sh&"))
 (bind-keys s-h-keymap "Super-p" '(system "input-main-passwd&"))
 (bind-keys s-h-keymap "Super-SPC" '(synthesize-event-gnome? "Menu" (input-focus)))
+(bind-keys s-h-keymap "Super-+" '(system "terminal-font-change +&"))
+(bind-keys s-h-keymap "Super--" '(system "terminal-font-change -&"))
 
 (add-hook 'focus-in-hook
           (lambda (w focus-mode)
