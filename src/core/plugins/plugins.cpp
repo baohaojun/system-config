@@ -27,13 +27,16 @@
 #include <QDir>
 #include <QDebug>
 #include <QMetaEnum>
+#include <QApplication>
 
 using namespace Snore;
 
 SnorePlugin::SnorePlugin ( const QString &name ) :
     m_name ( name ),
     m_initialized(false)
-{}
+{
+    moveToThread( qApp->thread() );
+}
 
 SnorePlugin::~SnorePlugin()
 {

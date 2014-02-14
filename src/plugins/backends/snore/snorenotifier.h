@@ -33,7 +33,9 @@ public:
     SnoreNotifier();
     ~SnoreNotifier();
 
-    // SnoreBackend interface
+    virtual bool initialize(Snore::SnoreCore *snore);
+    virtual bool deinitialize();
+
 public slots:
     virtual void slotNotify(Snore::Notification notification);
     virtual void slotCloseNotification(Snore::Notification notification);
@@ -48,6 +50,8 @@ private:
 
     QList<Snore::Notification> m_queue;
     QVector<NotifyWidget*> m_widgets;
+
+
 };
 
 #endif // SNORENOTIFIER_H

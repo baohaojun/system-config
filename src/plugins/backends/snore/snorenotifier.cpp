@@ -32,9 +32,6 @@ SnoreNotifier::SnoreNotifier():
     SnoreBackend("Snore", true, true, true),
     m_widgets(2)
 {
-    moveToThread(qApp->thread());//TODO cleanup
-    QTimer::singleShot(0, this, SLOT(setup()));
-
 }
 
 SnoreNotifier::~SnoreNotifier()
@@ -116,4 +113,27 @@ void SnoreNotifier::setup()
         connect(w, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
         connect(w, SIGNAL(invoked()), this, SLOT(slotInvoked()));
     }
+}
+
+
+bool SnoreNotifier::initialize(SnoreCore *snore)
+{
+    if(SnoreBackend::initialize(snore))
+    {
+        return metaObject()->invokeMethod(this, "setup", Qt::QueuedConnection);
+    }
+    return false;
+}
+
+bool SnoreNotifier::deinitialize()
+{
+    if(SnoreBackend::deinitialize())
+    {
+        for(int i=0;i<m_widgets.size();++i)
+        {
+            m_widgets[i]->deleteLater();
+        }
+        return true;
+    }
+    return false;
 }
