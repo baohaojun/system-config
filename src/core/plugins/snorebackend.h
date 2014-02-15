@@ -92,6 +92,8 @@ class SNORE_EXPORT SnoreSecondaryBackend : public SnorePlugin
 public:
     SnoreSecondaryBackend(const  QString &name, bool supportsRhichtext);
     virtual ~SnoreSecondaryBackend();
+    virtual bool initialize(SnoreCore *snore);
+    virtual bool deinitialize();
 
 
     bool supportsRichtext();

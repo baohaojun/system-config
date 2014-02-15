@@ -118,6 +118,26 @@ SnoreSecondaryBackend::~SnoreSecondaryBackend()
     snoreDebug( SNORE_DEBUG )<<"Deleting"<<name();
 }
 
+bool SnoreSecondaryBackend::initialize(SnoreCore *snore)
+{
+        if(!SnorePlugin::initialize(snore))
+        {
+            return false;
+        }
+        connect( snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
+        return true;
+}
+
+bool SnoreSecondaryBackend::deinitialize()
+{
+    if(SnorePlugin::deinitialize())
+    {
+        disconnect( snore()->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
+        return true;
+    }
+    return false;
+}
+
 bool SnoreSecondaryBackend::supportsRichtext()
 {
     return m_supportsRichtext;

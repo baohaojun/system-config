@@ -55,32 +55,39 @@ SnoreCore::~SnoreCore()
 void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
 {
     Q_D(SnoreCore);
-    foreach( PluginContainer *info, PluginContainer::pluginCache(types).values())
-    {
-        switch(info->type())
-        {
-        case SnorePlugin::BACKEND:
-            break;
-        case SnorePlugin::SECONDARY_BACKEND:
-        case SnorePlugin::FRONTEND:
-        case SnorePlugin::PLUGIN:
-            if(!info->load()->initialize( this ))
-            {
-                info->unload();
-                break;
-            }
-            break;
-        default:
-            snoreDebug( SNORE_WARNING ) << "Plugin Cache corrupted\n" << info->file() << info->type();
-            continue;
-        }
-        snoreDebug( SNORE_DEBUG ) << info->name() << "is a" << info->type();
-        d->m_plugins[info->type()].append(info->name());
-    }
     foreach( SnorePlugin::PluginTypes type, PluginContainer::types())
     {
-        qSort(d->m_plugins[type]);
+        if(type!= SnorePlugin::ALL && types && type)
+        {
+            foreach( PluginContainer *info, PluginContainer::pluginCache(type).values())
+            {
+                switch(info->type())
+                {
+                case SnorePlugin::BACKEND:
+                    break;
+                case SnorePlugin::SECONDARY_BACKEND:
+                case SnorePlugin::FRONTEND:
+                case SnorePlugin::PLUGIN:
+                    if(!info->load()->initialize( this ))
+                    {
+                        info->unload();
+                        break;
+                    }
+                    break;
+                default:
+                    snoreDebug( SNORE_WARNING ) << "Plugin Cache corrupted\n" << info->file() << info->type();
+                    continue;
+                }
+                snoreDebug( SNORE_DEBUG ) << info->name() << "is a" << info->type();
+                d->m_plugins[info->type()].append(info->name());
+            }
+            if(d->m_plugins.contains(type))
+            {
+                qSort(d->m_plugins[type]);
+            }
+        }
     }
+
     snoreDebug( SNORE_INFO ) << "Loaded Plugins:" << d->m_plugins;
 }
 
