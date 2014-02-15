@@ -222,6 +222,7 @@ void SnarlBackend::slotNotify(Notification notification){
 
      ULONG32 id = 0;
      snoreDebug( SNORE_DEBUG ) << notification.icon();
+
     if(!notification.isUpdate())
     {
        id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
@@ -229,7 +230,7 @@ void SnarlBackend::slotNotify(Notification notification){
                                             Snore::toPlainText(notification.text()).toUtf8().constData(),
                                             notification.timeout(),
                                             notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
-                                            !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
+                                            !notification.icon().isLocalFile()?Icon::dataFromImage(notification.icon().image()).toBase64().constData():0,
                                             priority);
 
         foreach(const Action &a, notification.actions())
@@ -249,7 +250,7 @@ void SnarlBackend::slotNotify(Notification notification){
                                Snore::toPlainText(notification.text()).toUtf8().constData(),
                                notification.timeout(),
                                notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
-                               !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
+                               !notification.icon().isLocalFile()?Icon::dataFromImage(notification.icon().image()).toBase64().constData():0,
                                priority);
     }
 

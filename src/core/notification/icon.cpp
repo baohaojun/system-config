@@ -25,6 +25,15 @@
 
 using namespace Snore;
 
+QByteArray Icon::dataFromImage(const QImage &image)
+{
+    QByteArray data;
+    QBuffer buffer( &data );
+    buffer.open( QBuffer::WriteOnly );
+    image.save( &buffer, "PNG" );
+    return data;
+}
+
 Icon::Icon() :
     d(NULL)
 {
@@ -65,10 +74,6 @@ QString Icon::localUrl()const
     return d->localUrl();
 }
 
-const QByteArray &Icon::imageData() const{
-    return d->imageData();
-}
-
 bool Icon::isLocalFile() const
 {
     return d->m_isLocalFile;
@@ -77,6 +82,11 @@ bool Icon::isLocalFile() const
 bool Icon::isValid() const
 {
     return d && !(d->m_img.isNull() && d->m_url.isEmpty());
+}
+
+Icon Icon::scaled(const QSize &s) const
+{
+    return Icon(image().scaled(s,Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 QString Icon::url() const

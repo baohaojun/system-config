@@ -41,15 +41,12 @@ public:
     IconData(const QImage &img);
     ~IconData();
 
-
-    const QByteArray &imageData();
     const QImage &image();
     QString localUrl();
     void download();
 
 
     QImage m_img;
-    QByteArray m_data;
     QString m_url;
     QString m_hash;
     QString m_localUrl;
@@ -60,15 +57,6 @@ public:
 
 private:
     Q_DISABLE_COPY(IconData)
-
-    inline QByteArray dataFromImage(const QImage &image)
-    {
-        QByteArray data;
-        QBuffer buffer( &data );
-        buffer.open( QBuffer::WriteOnly );
-        image.save( &buffer, "PNG" );
-        return data;
-    }
 
     inline QString createLocalFileName(const QString &hash)
     {

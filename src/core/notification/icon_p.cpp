@@ -46,8 +46,7 @@ IconData::IconData(const QString &url):
 
 IconData::IconData(const QImage &img):
     m_img(img),
-    m_data(dataFromImage(img)),
-    m_hash(SnoreCorePrivate::computeHash(m_data)),
+    m_hash(SnoreCorePrivate::computeHash(Icon::dataFromImage(img))),
     m_localUrl(createLocalFileName(m_hash)),
     m_isLocalFile(false),
     m_isResource(false),
@@ -58,20 +57,6 @@ IconData::IconData(const QImage &img):
 IconData::~IconData()
 {
 
-}
-
-
-const QByteArray &Snore::IconData::imageData()
-{
-    QMutexLocker lock(&m_mutex);
-    if(m_data.isEmpty())
-    {
-        if(m_isRemoteFile)
-        {
-            download();
-        }
-    }
-    return m_data;
 }
 
 const QImage &IconData::image()
@@ -107,7 +92,7 @@ QString IconData::localUrl()
 
 void IconData::download()
 {
-    if(m_isRemoteFile && m_data.isEmpty())
+    if(m_isRemoteFile)
     {
         if(!QFile(m_localUrl).exists())
         {
@@ -122,15 +107,13 @@ void IconData::download()
             loop.exec();
             if(reply->isFinished())
             {
-                m_data = reply->readAll();
-                m_img = QImage::fromData(m_data, "PNG");
+                m_img = QImage::fromData(reply->readAll(), "PNG");
                 m_img.save(m_localUrl,"PNG");
             }
         }
         else
         {
             m_img = QImage(m_localUrl);
-            m_data = dataFromImage(m_img);
         }
     }
 }

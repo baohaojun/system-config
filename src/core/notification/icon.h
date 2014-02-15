@@ -23,6 +23,7 @@
 
 #include <QSharedData>
 #include <QDebug>
+
 namespace Snore{
     class Icon;
 }
@@ -41,6 +42,9 @@ class IconData;
 class SNORE_EXPORT Icon
 {
 public:
+
+    static QByteArray dataFromImage(const QImage &image);
+
     Icon();
 
     /**
@@ -89,12 +93,6 @@ public:
 
     /**
      *
-     * @return a QByteArray containing the data of a png representing the Icon
-     */
-    const QByteArray &imageData() const ;
-
-    /**
-     *
      * @return whether the Icon was created from a local file
      */
     bool isLocalFile() const;
@@ -110,6 +108,8 @@ public:
      * @return whether this is a valid Icon
      */
     bool isValid() const;
+
+    Icon scaled(const QSize &s) const;
 
 private:
     QExplicitlySharedDataPointer<IconData> d;
