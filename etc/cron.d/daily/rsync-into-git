@@ -3,8 +3,13 @@ set -e
 reverse=false
 if test "$1" = -r; then
     reverse=true
+    shift
 fi
-for x in ~/etc/rsync-into-git/*.src; do
+
+if test "$#" = 0; then
+    set -- ''
+fi
+for x in ~/etc/rsync-into-git/*$1*.src; do
     if test ! -e $x; then
         exit 0
     fi
@@ -13,8 +18,10 @@ for x in ~/etc/rsync-into-git/*.src; do
     if test $(basename $dst) = $(basename $src); then
         if test "$reverse" = true; then
             src=$(dirname $src)
+            mkdir -p $src
         else
             dst=$(dirname $dst)
+            mkdir -p $dst
         fi
     fi
     if test "$reverse" = true; then
