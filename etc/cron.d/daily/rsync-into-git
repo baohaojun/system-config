@@ -1,5 +1,9 @@
 #!/bin/bash
 set -e
+reverse=false
+if test "$1" = -r; then
+    reverse=true
+fi
 for x in ~/etc/rsync-into-git/*.src; do
     if test ! -e $x; then
         exit 0
@@ -7,7 +11,15 @@ for x in ~/etc/rsync-into-git/*.src; do
     src=$(readlink -f $x)
     dst=$(readlink -f ${x/%.src/.dst})
     if test $(basename $dst) = $(basename $src); then
-        dst=$(dirname $dst)
+        if test "$reverse" = true; then
+            src=$(dirname $src)
+        else
+            dst=$(dirname $dst)
+        fi
     fi
-    rsync -av $src $dst
+    if test "$reverse" = true; then
+        rsync -av $dst $src
+    else
+        rsync -av $src $dst
+    fi
 done

@@ -1,0 +1,13 @@
+#!/bin/bash
+export OLDHOME=$HOME
+export HOME=$1
+shift
+mkdir -p ~/.logs
+mkdir -p ~/.config
+
+if test ~ != $OLDHOME; then
+    ln -s $OLDHOME/.config/ibus ~/.config/ -f >/dev/null 2>&1
+    cp $OLDHOME/.gdbinit ~/
+fi
+
+"$@"

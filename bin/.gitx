@@ -79,8 +79,8 @@ function git()
         then
             cd ~/system-config/;
             if test "$1" = st; then
-                for x in ~/src/github/*/; do
-                    if test -d $x; then
+                for x in ~/src/github/*; do
+                    if test -d $x -a ! -L $x; then
                         (
                             cd $x
 
@@ -103,7 +103,7 @@ function git()
             fi
 
             if test "$1" = submodule -a "$2" = foreach -a $# = 3; then
-                for x in ~/src/github/*/; do
+                for x in ~/src/github/*; do
                     if test -d $x -a ! -L $x; then
                         (
                             cd $x
