@@ -57,7 +57,7 @@ void SnoreCorePrivate::notificationActionInvoked(Notification notification) cons
 bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 {
     Q_Q(SnoreCore);
-    if( m_plugins.contains(SnorePlugin::BACKEND, backend))
+    if( m_plugins[SnorePlugin::BACKEND].contains(backend))
     {
         return q->setPrimaryNotificationBackend(backend);
     }

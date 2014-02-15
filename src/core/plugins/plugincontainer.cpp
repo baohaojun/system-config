@@ -85,18 +85,9 @@ SnorePlugin::PluginTypes PluginContainer::typeFromString(const QString &t)
     return (SnorePlugin::PluginTypes)SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).keyToValue(t.toUpper().toLatin1());
 }
 
-const QStringList &PluginContainer::typeNames()
+QString PluginContainer::typeToString(const SnorePlugin::PluginTypes t)
 {
-    static QStringList out;
-    if(out.isEmpty())
-    {
-        QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
-        for(int i=0;i<e.keyCount();++i)
-        {
-            out << QString::fromLatin1(e.key(i));
-        }
-    }
-    return out;
+    return SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).valueToKey(t);
 }
 
 const QList<SnorePlugin::PluginTypes> &PluginContainer::types()
@@ -135,9 +126,10 @@ void PluginContainer::updatePluginCache()
 
     QList<PluginContainer*> plugins;
 
-    foreach(const QString &type,PluginContainer::typeNames())
+    foreach(const SnorePlugin::PluginTypes type,PluginContainer::types())
     {
-        foreach (const QFileInfo &file, pluginDir().entryInfoList(QStringList(QString("libsnore_%1_*.%2").arg(type.toLower(), pluginExtention())), QDir::Files, QDir::Name | QDir::IgnoreCase ))
+        foreach(const QFileInfo &file, pluginDir().entryInfoList(
+                    QStringList(QString("libsnore_%1_*.%2").arg(typeToString(type).toLower(), pluginExtention())), QDir::Files))
         {
             snoreDebug( SNORE_DEBUG ) << "adding" << file.absoluteFilePath();
             QPluginLoader loader(file.absoluteFilePath());
@@ -154,8 +146,8 @@ void PluginContainer::updatePluginCache()
                 loader.unload();
                 continue;
             }
-            PluginContainer *info = new PluginContainer(file.fileName(), sp->name() ,PluginContainer::typeFromString(type));
-            s_pluginCache[info->type()].insert(info->name(),info);
+            PluginContainer *info = new PluginContainer(file.fileName(), sp->name() ,type);
+            s_pluginCache[type].insert(info->name(),info);
             plugins << info;
             snoreDebug( SNORE_DEBUG ) << "added" << info->name() << "to cache";
         }

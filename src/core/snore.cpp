@@ -55,7 +55,7 @@ SnoreCore::~SnoreCore()
 void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
 {
     Q_D(SnoreCore);
-    foreach ( PluginContainer *info, PluginContainer::pluginCache(types).values())
+    foreach( PluginContainer *info, PluginContainer::pluginCache(types).values())
     {
         switch(info->type())
         {
@@ -75,7 +75,11 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
             continue;
         }
         snoreDebug( SNORE_DEBUG ) << info->name() << "is a" << info->type();
-        d->m_plugins.insert(info->type(), info->name());
+        d->m_plugins[info->type()].append(info->name());
+    }
+    foreach( SnorePlugin::PluginTypes type, PluginContainer::types())
+    {
+        qSort(d->m_plugins[type]);
     }
     snoreDebug( SNORE_INFO ) << "Loaded Plugins:" << d->m_plugins;
 }
@@ -123,25 +127,19 @@ const QHash<QString, Application> &SnoreCore::aplications() const
 const QStringList SnoreCore::notificationBackends() const
 {
     Q_D(const SnoreCore);
-    QStringList out(d->m_plugins.values(SnorePlugin::BACKEND));
-    qSort(out);
-    return out;
+    return d->m_plugins.value(SnorePlugin::BACKEND);
 }
 
 const QStringList SnoreCore::notificationFrontends() const
 {
     Q_D(const SnoreCore);
-    QStringList out(d->m_plugins.values(SnorePlugin::FRONTEND));
-    qSort(out);
-    return out;
+    return d->m_plugins.value(SnorePlugin::FRONTEND);
 }
 
 const QStringList SnoreCore::secondaryNotificationBackends() const
 {
     Q_D(const SnoreCore);
-    QStringList out(d->m_plugins.values(SnorePlugin::SECONDARY_BACKEND));
-    qSort(out);
-    return out;
+    return d->m_plugins.value(SnorePlugin::SECONDARY_BACKEND);
 }
 
 bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )

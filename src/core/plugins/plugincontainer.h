@@ -47,7 +47,7 @@ public:
 
 
     static SnorePlugin::PluginTypes typeFromString(const QString &t);
-    static const QStringList &typeNames();
+    static QString typeToString(const SnorePlugin::PluginTypes t);
     static const QList<SnorePlugin::PluginTypes> &types();
 
 private:
