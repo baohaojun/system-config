@@ -1,26 +1,39 @@
 #!/bin/bash
 
 if test $(basename $0) != cowbuilder-bhj; then
-   user=$(echo "$@"|perl -npe 's/.*?\((.*?)\).*/$1/')
-   uid=$(echo "$@"|perl -npe 's/.*?=(\d+).*/$1/')
-   echo $user $uid
-   apt-get install sudo bash-completion software-properties-common
-   locale-gen en_US.UTF-8
-   export LC_ALL=en_US.UTF-8
-   apt-get build-dep global
+    set -x
+    prog=$1
+    shift
+    user=$(echo "$@"|perl -npe 's/.*?\((.*?)\).*/$1/')
+    uid=$(echo "$@"|perl -npe 's/.*?=(\d+).*/$1/')
+    echo $user $uid
+    apt-get install -y sudo bash-completion software-properties-common
+    locale-gen en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    apt-get build-dep -y global
 
-   apt-get install sudo bash-completion autoconf automake \
-       bison exuberant-ctags flex \
-       gperf libltdl-dev libtool netbase \
-       openjdk-6-jdk strace tasksel git python python3 \
-       libstring-approx-perl libstring-shellquote-perl \
-       libtext-glob-perl liburi-encode-perl
+    apt-get install -y sudo bash-completion autoconf automake \
+        bison exuberant-ctags flex \
+        gperf libltdl-dev libtool netbase \
+        openjdk-6-jdk strace tasksel git python python3 \
+        libstring-approx-perl libstring-shellquote-perl \
+        libtext-glob-perl liburi-encode-perl
 
-   echo "$user ALL=NOPASSWD: ALL" > /etc/sudoers.d/$user
-   chmod 440 /etc/sudoers.d/$user
-   useradd $user -u $uid -s /bin/bash
-   chown $user\: /home/$user
-   bash
+    apt-get install -y libssl-dev uuid-dev libnotify-dev libqtwebkit-dev libxext-dev gdb git-svn rsync
+    echo "$user ALL=NOPASSWD: ALL" > /etc/sudoers.d/$user
+    chmod 440 /etc/sudoers.d/$user
+    useradd $user -u $uid -s /bin/bash
+    chown $user\: /home/$user
+    if test $prog = cowbuilder-bhj-shell; then
+        bash
+    elif test $prog = cowbuilder-bhj-build-wangwang; then
+        cd /home/bhj/src/github/lww
+        su - bhj -c './system-config/bin/after-co-ln-s.sh'
+        su - bhj -c '
+        cd /home/bhj/src/github/lww/AliWangWangLinux_back
+        BUILD_DEB=true ./make.sh' || bash
+    fi
+    exit
 fi
 
 cow=$(select-output-line -- find ~/external/cowbuilder -maxdepth 1 -type d -name '*-*')
@@ -30,14 +43,30 @@ basepath=$cow/bare
 builddir=/tmp/build-cow.$$
 mkdir -p $builddir
 id=$(id)
+
+prog=cowbuilder-bhj-shell
+if test -e ~/bin/"$1"; then
+    prog=$1
+    if test $prog = cowbuilder-bhj-build-wangwang; then
+        (
+            . .gitx
+            cd ~/src/github/lww
+            git reset --hard
+            command git clean -xfd
+            git pull
+        )
+    fi
+    shift
+fi
 time sudo unshare -m -- bash -c "
     mount -o size=2000000k -t tmpfs none $builddir
     set -x
     command sudo pbuilder --execute --basetgz $basepath/base.tgz \
         --buildplace $builddir/ \
+        $@ \
         --bindmounts \"$(readlink -f $HOME/system-config)
                        $(readlink -f $HOME/src)
                        $(readlink -f $HOME/.cache)
                        $(readlink -f $HOME/.cache/beagrep-debs)
-                     \" -- ${HOME}/bin/cowbuilder-bhj-shell \"$id\"
+                     \" -- ${HOME}/bin/$prog $prog \"$id\"
 "
