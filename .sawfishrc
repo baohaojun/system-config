@@ -264,6 +264,7 @@
       '(("v" . ((t . "S-Insert")))
         ("c" . ((Emacs . "M-w")
                 (Konsole . "C-S-c")
+                (Xfce4-terminal . "C-S-c")
                 (Gnome-terminal . "C-S-c")))
         ("w" . ((Firefox . ("C-x" "k"))))
         ("l" . ((Firefox . ("C-x" "C-l"))))
