@@ -2,8 +2,8 @@
 
 #system("rm Sources.gz");
 #system("wget http://mirrors.163.com/debian/dists/sid/main/source/Sources.gz");
-#http://cn.archive.ubuntu.com/ubuntu/dists/maverick/main/source/Sources.gz
-#perl -npe 's,http://mirrors.163.com/debian,http://cn.archive.ubuntu.com/ubuntu,'
+#http://mirrors.aliyun.com/ubuntu/dists/maverick/main/source/Sources.gz
+#perl -npe 's,http://mirrors.163.com/debian,http://mirrors.aliyun.com/ubuntu,'
 
 
 

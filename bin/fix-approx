@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# W: Failed to fetch http://cn.archive.ubuntu.com/debian/dists/unstable/main/i18n/Translation-enIndex  MD5Sum mismatch
+# W: Failed to fetch http://mirrors.aliyun.com/debian/dists/unstable/main/i18n/Translation-enIndex  MD5Sum mismatch
 
-# W: Failed to fetch http://cn.archive.ubuntu.com/debian/dists/unstable/main/source/SourcesIndex  MD5Sum mismatch
+# W: Failed to fetch http://mirrors.aliyun.com/debian/dists/unstable/main/source/SourcesIndex  MD5Sum mismatch
 
 xclip -o | grep -P -e 'http://.*?\s' -o | perl -npe 's!.*9999!ssh r66 rm -v /var/cache/approx/!'
 
