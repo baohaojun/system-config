@@ -421,14 +421,15 @@
 (bind-keys s-h-keymap "Super-+" '(system "terminal-font-change +&"))
 (bind-keys s-h-keymap "Super--" '(system "terminal-font-change -&"))
 
-(add-hook 'focus-in-hook
-          (lambda (w focus-mode)
-            (if (window-get w 'scroll-lock)
-                (scroll-lock-on)
-              (scroll-lock-off))
-            (if (string= (window-class w) "Emacs")
-                (unbind-keys global-keymap "Super-\\")
-              (bind-keys global-keymap "Super-\\"  '(system "delayed-xdotool key super+F12&")))))
+(defun ime-toggle (w focus-mode)
+  (if (window-get w 'scroll-lock)
+      (scroll-lock-on)
+    (scroll-lock-off))
+  (if (string= (window-class w) "Emacs")
+      (unbind-keys global-keymap "Super-\\")
+    (bind-keys global-keymap "Super-\\"  '(system "delayed-xdotool key super+F12&"))))
+
+(add-hook 'focus-in-hook ime-toggle)
 
 (system "sawfish-auto-start&")
 (bind-keys global-keymap "KP_Insert" '(system "firefox-goto-next-prev-page prev&"))
