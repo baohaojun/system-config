@@ -116,7 +116,7 @@
   }
   else
   {
-    SendInput #{Space}
+    SendInput {PGDN}
   }
   return
 
@@ -233,6 +233,10 @@ return
 
 
 ; /* end generated code */
+
+#BackSpace::
+  SendInput {PGUP}
+  return
 
 WheelUp::
   Send {WheelDown}
