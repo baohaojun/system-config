@@ -97,7 +97,14 @@ void TrayIcon::slotTestNotification()
     {
         m_snore->registerApplication(m_app);
     }
-    Notification noti(m_app, m_alert, "Hello World", "This is Snore", Icon(":/root/snore.png"));
+    Notification noti(m_app, m_alert, "Hello World",
+                      "<i>This is Snore</i><br>"
+                      "<a href=\"https://github.com/TheOneRing/Snorenotify\">Project Website</a><br>"
+                      "1<br>"
+                      "2<br>"
+                      "3<br>"
+                      "4<br>"
+                      "5<br>", Icon(":/root/snore.png"));
     noti.addAction(Action(1,"Test Action"));
     m_snore->broadcastNotification(noti);
 
@@ -115,7 +122,10 @@ void TrayIcon::sloutUpdateTestNotification()
 {
     QTimer *timer = qobject_cast<QTimer*>(sender());
     Notification noti = m_notifications.take(timer);
-    Notification update(noti, "Hello World", "This is Snore, color test", Icon("http://jweatherwatch.googlecode.com/svn/trunk/iconset/04.png"));
+    Notification update(noti, "Hello World",
+                        "<b>This is Snore</b><br>"
+                        "<u>This icon is in color</u><br>"
+                        "<a href=\"https://github.com/TheOneRing/Snorenotify\">Project Website</a>", Icon("http://jweatherwatch.googlecode.com/svn/trunk/iconset/04.png"));
     m_snore->broadcastNotification(update);
     timer->deleteLater();
 }

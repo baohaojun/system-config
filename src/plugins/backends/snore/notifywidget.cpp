@@ -34,11 +34,11 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
 {
     ui->setupUi(this);
 
-    TomahawkUtils::DpiScaler::setFontSize(this->ui->titel->fontInfo().pointSize());
+    TomahawkUtils::DpiScaler::setFontSize(10);
     m_scaler = new TomahawkUtils::DpiScaler(this);
     ui->closeButton->setMaximumWidth(ui->closeButton->height());
 
-//    setFixedSize( m_scaler->scaled(300, 80));
+    setFixedSize( m_scaler->scaled(300, 80));
 
     m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + (m_scaler->scaledY(10) + height()) * pos);
 }
@@ -102,11 +102,10 @@ void NotifyWidget::on_closeButton_clicked()
     hide();
 }
 
-void NotifyWidget::mousePressEvent(QMouseEvent *e)
+void NotifyWidget::mousePressEvent(QMouseEvent *)
 {
     emit invoked();
     hide();
-    QWidget::mousePressEvent(e);
 }
 
 void NotifyWidget::setPalette(const QImage &img)
