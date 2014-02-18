@@ -104,13 +104,13 @@ const QList<SnorePlugin::PluginTypes> &PluginContainer::types()
     return t;
 }
 
-void PluginContainer::updatePluginCache()
+void PluginContainer::updatePluginCache(bool force)
 {
     QSystemSemaphore sema("cache_update", 1, QSystemSemaphore::Open);
     if(sema.acquire())
     {
         cache().sync();
-        if(cache().value("version").toString() == Version::revision())
+        if(!force && cache().value("version").toString() == Version::revision())
         {
             sema.release();
             return;
@@ -122,6 +122,14 @@ void PluginContainer::updatePluginCache()
     }
 
     snoreDebug( SNORE_DEBUG ) << "Updating plugin cache";
+    foreach(PluginContaienrHash list, s_pluginCache)
+    {
+        foreach(PluginContainer* p, list.values())
+        {
+            delete p;
+        }
+        list.clear();
+    }
     cache().remove("");
 
     QList<PluginContainer*> plugins;
@@ -169,6 +177,30 @@ void PluginContainer::updatePluginCache()
     sema.release();
 }
 
+void PluginContainer::loadPluginCache()
+{
+    int size = cache().beginReadArray("plugins");
+    for(int i=0;i<size;++i)
+    {
+        cache().setArrayIndex(i);
+        SnorePlugin::PluginTypes type = (SnorePlugin::PluginTypes)cache().value("type").toInt();
+        QString fileName = cache().value("fileName").toString();
+        if(QFile(pluginDir().absoluteFilePath(fileName)).exists())
+        {
+            PluginContainer *info = new PluginContainer(fileName, cache().value("name").toString(), type);
+            s_pluginCache[type].insert(info->name(), info);
+        }
+        else
+        {
+            snoreDebug( SNORE_WARNING ) << "Cache Corrupted" << fileName << cache().value("name").toString() << type;
+            cache().endArray();
+            updatePluginCache(true);
+            return;
+        }
+    }
+    cache().endArray();
+}
+
 const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin::PluginTypes type)
 {
     if(s_pluginCache.isEmpty())
@@ -179,26 +211,7 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
         }
         else
         {
-            int size = cache().beginReadArray("plugins");
-            for(int i=0;i<size;++i)
-            {
-                cache().setArrayIndex(i);
-                SnorePlugin::PluginTypes type = (SnorePlugin::PluginTypes)cache().value("type").toInt();
-                QString fileName = cache().value("fileName").toString();
-                if(QFile(pluginDir().absoluteFilePath(fileName)).exists())
-                {
-                    PluginContainer *info = new PluginContainer(fileName, cache().value("name").toString(), type);
-                    s_pluginCache[type].insert(info->name(), info);
-                }
-                else
-                {
-                    snoreDebug( SNORE_WARNING ) << "Cache Corrupted" << fileName << cache().value("name").toString() << type;
-                    cache().endArray();
-                    updatePluginCache();
-                    break;
-                }
-            }
-            cache().endArray();
+            loadPluginCache();
         }
     }
 

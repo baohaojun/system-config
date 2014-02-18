@@ -31,6 +31,9 @@
 
 namespace Snore
 {
+class PluginContainer;
+
+typedef  QHash<QString,PluginContainer*> PluginContaienrHash;
 
 class SNORE_EXPORT PluginContainer
 {
@@ -51,9 +54,10 @@ public:
     static const QList<SnorePlugin::PluginTypes> &types();
 
 private:
-    static QHash<SnorePlugin::PluginTypes, QHash<QString,PluginContainer*> > s_pluginCache;
+    static QHash<SnorePlugin::PluginTypes, PluginContaienrHash > s_pluginCache;
 
-    void static updatePluginCache();
+    void static updatePluginCache(bool force = false);
+    void static loadPluginCache();
     static const QDir &pluginDir();
     static inline const QString pluginExtention()
     {
