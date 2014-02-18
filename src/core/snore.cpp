@@ -198,7 +198,7 @@ bool SnoreCore::setPrimaryNotificationBackend()
 #elif defined(Q_OS_MAC)
     return d->setBackendIfAvailible("Growl");
 #endif
-    if( trayIcon() && d->setBackendIfAvailible("SystemTray"))
+    if(d->setBackendIfAvailible("Snore"))
     {
         return true;
     }
