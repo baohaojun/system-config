@@ -184,8 +184,19 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
             {
                 cache().setArrayIndex(i);
                 SnorePlugin::PluginTypes type = (SnorePlugin::PluginTypes)cache().value("type").toInt();
-                PluginContainer *info = new PluginContainer(cache().value("fileName").toString(),cache().value("name").toString(),type);
-                s_pluginCache[type].insert(info->name(), info);
+                QString fileName = cache().value("fileName").toString();
+                if(QFile(pluginDir().absoluteFilePath(fileName)).exists())
+                {
+                    PluginContainer *info = new PluginContainer(fileName, cache().value("name").toString(), type);
+                    s_pluginCache[type].insert(info->name(), info);
+                }
+                else
+                {
+                    snoreDebug( SNORE_WARNING ) << "Cache Corrupted" << fileName << cache().value("name").toString() << type;
+                    cache().endArray();
+                    updatePluginCache();
+                    break;
+                }
             }
             cache().endArray();
         }
