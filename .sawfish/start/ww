@@ -29,7 +29,7 @@ function start-ww() {
             fi
             (
                 flock 9
-                AliWangWang
+                $(which AliWangWang)
             )
             if test "$DO_NOT_LOOP"; then
                 break

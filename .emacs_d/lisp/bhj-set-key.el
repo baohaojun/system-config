@@ -54,6 +54,7 @@
 (global-set-key (kbd "C-x r") (make-sparse-keymap))
 (global-set-key (kbd "C-x r r") 'random-theme)
 (global-set-key [(control h) (h)] 'bhj-help-it)
+(global-set-key [(control h) (q)] 'bhj-help-qt)
 
 (global-set-key [(control x) (c)] 'visit-code-reading)
 
