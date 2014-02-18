@@ -57,7 +57,7 @@ void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
     Q_D(SnoreCore);
     foreach( SnorePlugin::PluginTypes type, PluginContainer::types())
     {
-        if(type!= SnorePlugin::ALL && types && type)
+        if(type != SnorePlugin::ALL && types & type)
         {
             foreach( PluginContainer *info, PluginContainer::pluginCache(type).values())
             {
