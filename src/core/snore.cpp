@@ -194,9 +194,15 @@ bool SnoreCore::setPrimaryNotificationBackend()
         return true;
     }
 #elif defined(Q_OS_LINUX)
-    return d->setBackendIfAvailible("FreedesktopNotification");
+    if(d->setBackendIfAvailible("FreedesktopNotification"))
+    {
+        return true;
+    }
 #elif defined(Q_OS_MAC)
-    return d->setBackendIfAvailible("Growl");
+    if(d->setBackendIfAvailible("Growl"))
+    {
+        return true;
+    }
 #endif
     if(d->setBackendIfAvailible("Snore"))
     {
