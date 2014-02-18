@@ -1,0 +1,39 @@
+# mach dist configuration                          -*- python -*-
+# -*- coding: utf-8 -*-
+
+# suse-90-i386: configuration for SuSE 9.0
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### SuSE Linux 9.0 flavours
+aptsources['suse-90-i386'] = {
+    'base':              'rpm ' + suse + ' SuSE/9.0-i386 base',
+    'security':          'rpm ' + suse + ' SuSE/9.0-i386 security',
+    'update':            'rpm ' + suse + ' SuSE/9.0-i386 update',
+}
+
+# SuSE Linux 9.0
+packages['suse-90-i386'] = {
+    'dir':      'suse-90-i386',
+    'minimal':  'bash glibc',
+    'base':     'aaa_base coreutils findutils openssh pam pam-modules',
+    'build':    'make gcc tar gzip patch unzip cpio',
+}
+sourceslist['suse-90-i386'] = {
+    'suse-90-i386': ('base', )
+}
+config['suse-90-i386'] = {
+  'macros': {},
+}
+aliases['suse-90-i386'] = ('suse9', 'suse90', )
+
+# SuSE Linux 9.0, updates
+packages['suse-90-i386-updates'] = packages['suse-90-i386']
+sourceslist['suse-90-i386-updates'] = {
+    'suse-90-i386': ('base', 'update', 'security', )
+}
+config['suse-90-i386-updates'] = config['suse-90-i386']
+aliases['suse-90-i386-updates'] = ('suse9u', 'suse90u', )

@@ -1,0 +1,57 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# redhat-70-i386: configuration for Red Hat 7.0
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Red Hat Linux 7.0 flavours
+aptsources['redhat-70-i386'] = {
+    'os':               'rpm ' + redhat      + ' 7.0/i386 os',
+    'updates':          'rpm ' + redhat      + ' 7.0/i386 updates',
+    'freshrpms':        'rpm ' + freshrpmsrh + ' 7.0/i386 freshrpms',
+}
+
+# Red Hat Linux 7.0
+packages['redhat-70-i386'] = {
+    'dir':      'redhat-70-i386',
+    'minimal':  'bash glibc',
+    # net-tools provides hostname, otherwise it complains about it for chroot
+    'base':     'fileutils findutils openssh-server net-tools file sh-utils',
+    'build':    'dev rpm-build make gcc tar gzip patch ' +
+                'unzip bzip2 diffutils cpio',
+}
+sourceslist['redhat-70-i386'] = {
+    'redhat-70-i386': ('os', )
+}
+config['redhat-70-i386'] = {
+  'macros': {},
+}
+aliases['redhat-70-i386'] = ('rh70', )
+
+# Red Hat Linux 7.0, updates (rpm 4.0.4)
+packages['redhat-70-i386-updates'] = packages['redhat-70-i386']
+sourceslist['redhat-70-i386-updates'] = {
+    'redhat-70-i386': ('os', 'updates', )
+}
+config['redhat-70-i386-updates'] = config['redhat-70-i386']
+aliases['redhat-70-i386-updates'] = ('rh70u', )
+
+# Red Hat Linux 7.0, FreshRPMS
+packages['redhat-70-i386-freshrpms'] = packages['redhat-70-i386']
+sourceslist['redhat-70-i386-freshrpms'] = {
+    'redhat-70-i386': ('os', 'freshrpms', )
+}
+config['redhat-70-i386-freshrpms'] = config['redhat-70-i386']
+aliases['redhat-70-i386-freshrpms'] = ('rh70fr', )
+
+# Red Hat Linux 7.0, updates + FreshRPMS
+packages['redhat-70-i386-updates-freshrpms'] = packages['redhat-70-i386']
+sourceslist['redhat-70-i386-updates-freshrpms'] = {
+    'redhat-70-i386': ('os', 'updates', 'freshrpms', )
+}
+config['redhat-70-i386-updates-freshrpms'] = config['redhat-70-i386-updates']
+aliases['redhat-70-i386-updates-freshrpms'] = ('rh70ufr', )

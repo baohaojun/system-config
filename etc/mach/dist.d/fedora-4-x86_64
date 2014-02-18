@@ -1,0 +1,134 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# fedora-4-x86_64: configuration for Fedora 4
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+V = '4'      # distro version
+A = 'x86_64' # architecture
+AS = '64'    # 'short' version of arch
+DIST = 'fedora-%s-%s' % (V, A)
+
+### Fedora Core flavours
+aptsources[DIST] = {
+  'core':             'rpm ' + fedora      + ' %s/%s core'            % (V, A),
+  'updates':          'rpm ' + fedora      + ' %s/%s updates'         % (V, A),
+  'extras':           'rpm ' + freshrpmsfd + ' %s/%s extras'          % (V, A),
+  'gstreamer':        'rpm ' + gstreamer   + ' fedora/%s/%s gst'      % (V, A),
+  'gstreamer-build':  'rpm ' + gstreamer   + ' fedora/%s/%s build'    % (V, A),
+  'gstreamer-deps':   'rpm ' + gstreamer   + ' fedora/%s/%s deps'     % (V, A),
+  'livna':            'rpm ' + livna       + ' fedora/%s/%s lvn'      % (V, A),
+  'freshrpms':        'rpm ' + freshrpmsfd + ' %s/%s freshrpms'       % (V, A),
+  'jpackage-generic': 'rpm ' + jpackage    + '/1.7 generic free',
+  'jpackage-fc' + V : 'rpm ' + jpackage    + '/1.7 fedora-%s free'    % V,
+  'jpackage-nonfree': 'rpm ' + jpackagenf  + '/1.7 generic non-free',
+}
+
+yumsources[DIST] = {
+  'core':             fedorayum   + '/core/%s/%s/os'                  % (V, A),
+  'updates':          fedorayum   + '/core/updates/%s/%s'             % (V, A),
+  'extras':           fedorayum   + '/extras/%s/%s'                   % (V, A),
+  'gstreamer':        gstreamer   + '/fedora/%s/%s/yum/gst'           % (V, A),
+  'gstreamer010':     gstreamer   + '/fedora/%s/%s/yum/gst010'        % (V, A),
+  'gstreamer-build':  gstreamer   + '/fedora/%s/%s/yum/build'         % (V, A),
+  'gstreamer-deps':   gstreamer   + '/fedora/%s/%s/yum/deps'          % (V, A),
+  'freshrpms':        freshrpmsfd + '/%s/%s/freshrpms'                % (V, A),
+  'livna':            livna       + '/fedora/%s/%s'                   % (V, A),
+  'jpackage-generic': jpackage    + '/1.7/generic/free',
+  'jpackage-fc' + V:  jpackage    + '/1.7/fedora-%s/free'             % V,
+  'jpackage-nonfree': jpackagenf  + '/1.7/generic/non-free',
+}
+
+# Fedora Core
+packages['%s-core' % DIST] = {
+  'dir':      DIST,
+  'minimal':  'bash glibc',
+  'base':     'coreutils findutils openssh-server',
+  'build':    'bzip2 cpio diffutils elfutils fedora-release gcc gcc-c++ ' +
+              'gzip make patch perl python redhat-rpm-config rpm-build sed ' +
+              'tar unzip which',
+}
+sourceslist['%s-core' % DIST] = {
+  DIST: ('core', )
+}
+# FC4 roots should use runuser instead of su
+config['%s-core' % DIST] = {
+  'runuser': '/sbin/runuser',
+  'excludearch': 'i386 i486 i586 i686 athlon',
+  'macros': {},
+}
+aliases['%s-core' % DIST] = ('f' + V + 'c' + AS, 'fc' + V + AS, )
+
+# Fedora Core with updates
+packages['%s-updates' % DIST] = packages['%s-core' % DIST]
+sourceslist['%s-updates' % DIST] = {
+  DIST: ('core', 'updates', )
+}
+config['%s-updates' % DIST] = config['%s-core' % DIST]
+aliases['%s-updates' % DIST] = ('f' + V + 'u'+ AS, )
+
+# Fedora Core with extras
+packages['%s-extras' % DIST] = deepcopy(packages['%s-updates' % DIST])
+packages['%s-extras' % DIST]['build'] = packages['%s-extras' % DIST]['build'] + " fedora-rpmdevtools"
+sourceslist['%s-extras' % DIST] = {
+  DIST: sourceslist['%s-updates' % DIST][DIST] + ('extras', )
+}
+config['%s-extras' % DIST] = deepcopy(config['%s-updates' % DIST])
+config['%s-extras' % DIST]['macros'].update({
+  'dist': '.fc%s' % V,
+  '__arch_install_post': '/usr/lib/rpm/check-rpaths \\\n  /usr/lib/rpm/check-buildroot',
+})
+aliases['%s-extras' % DIST] = ('f' + V + 'e' + AS, )
+
+# Fedora Core with GStreamer
+packages['%s-gstreamer' % DIST] = packages['%s-core' % DIST]
+sourceslist['%s-gstreamer' % DIST] = {
+  DIST: ('core', 'updates', 'extras', 'livna',
+         'gstreamer-deps', 'gstreamer-build', 'gstreamer', 'gstreamer010')
+}
+config['%s-gstreamer' % DIST] = deepcopy(config['%s-core' % DIST])
+config['%s-gstreamer' % DIST].update({
+  'release': V,
+})
+aliases['%s-gstreamer' % DIST] = ('f' + V + 'g' + AS, )
+
+packages['%s-gstreamer-deps' % DIST] = packages['%s-core' % DIST]
+sourceslist['%s-gstreamer-deps' % DIST] = {
+  DIST: ('core', 'updates', 'extras', 'gstreamer-deps')
+}
+config['%s-gstreamer-deps' % DIST] = config['%s-gstreamer' % DIST]
+aliases['%s-gstreamer-deps' % DIST] = ('f' + V + 'gd' + AS, )
+
+# Fedora Core with livna (+ extras)
+packages['%s-livna' % DIST] = packages['%s-extras' % DIST]
+sourceslist['%s-livna' % DIST] = {
+  DIST: sourceslist['%s-updates' % DIST][DIST] + ('extras', 'livna', )
+}
+config['%s-livna' % DIST] = deepcopy(config['%s-extras' % DIST])
+config['%s-livna' % DIST]['macros'].update({
+  'dist': '.lvn%s' % V,
+})
+aliases['%s-livna' % DIST] = ('f' + V + 'l' + AS, )
+
+# Fedora Core with freshrpms
+packages['%s-freshrpms' % DIST] = packages['%s-extras' % DIST]
+sourceslist['%s-freshrpms' % DIST] = {
+  DIST: sourceslist['%s-extras' % DIST][DIST] + ('freshrpms', )
+}
+config['%s-freshrpms' % DIST] = config['%s-extras' % DIST]
+aliases['%s-freshrpms' % DIST] = ('f' + V + 'fr' + AS, )
+
+# Fedora Core with JPackage
+packages['%s-jpackage' % DIST] = deepcopy(packages['%s-updates' % DIST])
+packages['%s-jpackage' % DIST]['base'] = packages['%s-jpackage' % DIST]['base'] + ' java-1.4.2-sun'
+packages['%s-jpackage' % DIST]['build'] = packages['%s-jpackage' % DIST]['build'] + ' java-1.4.2-sun-devel'
+sourceslist['%s-jpackage' % DIST] = {
+  DIST: sourceslist['%s-updates' % DIST][DIST] +
+  ('jpackage-generic', 'jpackage-fc' + V , 'jpackage-nonfree', ),
+}
+config['%s-jpackage' % DIST] = config['%s-core' % DIST]
+aliases['%s-jpackage' % DIST] = ('fc' + V + 'jpp' + AS, )

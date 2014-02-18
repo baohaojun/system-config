@@ -1,0 +1,54 @@
+# mach system configuration file                                 -*- python -*-
+# -*- coding: utf-8 -*-
+
+# These configuration options can be overridden on per-root basis in
+# /etc/mach/dist.d
+
+# Spinner theme
+config['spinner'] = {
+    'wheel':      '/-\|',
+    'blip':       '.o0O0o',
+    'corner':     '<^>v',
+    'text':       '<-WORKING->',
+    'subliminal': '<- send us lots of money ->',
+    'quote':      "'`" + '"' + "`",
+    'point':      ".:':",
+}
+
+# Directories
+# Don't change roots, archives, cache and states
+# they're hardcoded into mach-helper.
+config['dirs'] = {
+    'states':      '/var/lib/mach/states',
+    'roots':       '/var/lib/mach/roots',
+    'results':     '/var/tmp/mach',
+    'tmps':        '/var/tmp/mach/tmp',
+    'aptarchives': '/var/cache/mach/archives',
+    'cache':       '/var/cache',
+}
+
+# Default root
+config['defaultroot'] = ''
+
+# Files created in the root
+config['files'] = {
+    '/etc/resolv.conf': '''
+nameserver 192.168.1.1
+''',
+    '/etc/hosts': '''
+127.0.0.1 localhost localhost.localdomain
+''',
+    '/usr/bin/apt-sigchecker': '''#!/bin/bash
+while read p; do
+/bin/true
+done
+'''
+}
+
+config['script-success'] = "echo Results:"
+
+# Additional macros
+#config['macros'] = {
+#    'packager': 'Packager Name <packager@email>',
+#    'vendor':   'Vendor name',
+#}

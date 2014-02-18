@@ -1,0 +1,40 @@
+# mach dist configuration                          -*- python -*-
+# -*- coding: utf-8 -*-
+
+# davedina: configuration for Dave/Dina
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Dave/Dina
+aptsources['davedina-00'] = {
+    'os':      'rpm ' + davedina   + ' davedina-0.0 os',
+    'fridge':  'rpm ' + davedina   + ' davedina-0.0 fridge',
+    'oven':    'rpm ' + davedina   + ' davedina-0.0 oven',
+}
+
+#packages['davedina-00-fridge'] = packages['redhat-9-i386']
+packages['davedina-00-fridge'] = {
+    'dir':      'redhat-9-i386',
+    'minimal':  'bash glibc',
+    'base':     'coreutils findutils openssh-server',
+    'build':    'dev rpm-build make gcc tar gzip patch ' +
+                'unzip bzip2 diffutils cpio elfutils',
+}
+sourceslist['davedina-00-fridge'] = {
+    'davedina-00': ('os', 'fridge', ),
+}
+
+config['davedina-00-fridge'] = {
+  'macros': {},
+}
+aliases['davedina-00-fridge'] = ('dd00f', 'ddf', )
+
+packages['davedina-00-oven'] = packages['davedina-00-fridge']
+sourceslist['davedina-00-oven'] = {
+    'davedina-00': ('os', 'fridge', 'oven', ),
+}
+config['davedina-00-oven'] = config['davedina-00-fridge']
+aliases['davedina-00-oven'] = ('dd00o', 'ddo', )

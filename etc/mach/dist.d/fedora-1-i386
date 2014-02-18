@@ -1,0 +1,144 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# fedora-1-i386: configuration for Fedora 1
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Fedora Core 1 flavours
+aptsources['fedora-1-i386'] = {
+    'core':             'rpm ' + fedora      + ' 1/i386 core',
+    'updates':          'rpm ' + fedora      + ' 1/i386 updates',
+    'gstreamer':        'rpm ' + gstreamer   + ' fedora/1/i386 gst',
+    'gstreamer-build':  'rpm ' + gstreamer   + ' fedora/1/i386 build',
+    'gstreamer-deps':   'rpm ' + gstreamer   + ' fedora/1/i386 deps',
+    'fedora-stable':    'rpm ' + fedoraus    + ' fedora/1/i386 stable',
+    'fedora-testing':   'rpm ' + fedoraus    + ' fedora/1/i386 testing',
+    'fedora-unstable':  'rpm ' + fedoraus    + ' fedora/1/i386 unstable',
+    'livna-stable':     'rpm ' + livna       + ' fedora/1/i386 stable',
+    'livna-testing':    'rpm ' + livna       + ' fedora/1/i386 testing',
+    'livna-unstable':   'rpm ' + livna       + ' fedora/1/i386 unstable',
+    'freshrpms':        'rpm ' + freshrpmsfd + ' 1/i386 freshrpms',
+    'jpackage-generic': 'rpm ' + jpackage    + '/1.6 generic free',
+    'jpackage-fc1':     'rpm ' + jpackage    + '/1.6 fedora-1 free',
+    'jpackage-nonfree': 'rpm ' + jpackagenf  + '/1.6 generic non-free',
+}
+
+# Fedora Core 1
+packages['fedora-1-i386-core'] = {
+    'dir':      'fedora-1-i386',
+    'minimal':  'bash glibc',
+    'base':     'coreutils findutils openssh-server',
+    'build':    'dev rpm-build make gcc-c++ tar gzip patch ' +
+                'unzip bzip2 diffutils cpio elfutils',
+}
+sourceslist['fedora-1-i386-core'] = {
+    'fedora-1-i386': ('core', )
+}
+config['fedora-1-i386-core'] = {
+  'macros': {},
+}
+aliases['fedora-1-i386-core'] = ('f1c', 'fc1', )
+
+# Fedora Core 1 with updates
+packages['fedora-1-i386-updates'] = packages['fedora-1-i386-core']
+sourceslist['fedora-1-i386-updates'] = {
+    'fedora-1-i386': ('core', 'updates', )
+}
+config['fedora-1-i386-updates'] = config['fedora-1-i386-core']
+aliases['fedora-1-i386-updates'] = ('f1u', )
+
+# Fedora Core 1 with GStreamer
+packages['fedora-1-i386-gstreamer'] = packages['fedora-1-i386-core']
+sourceslist['fedora-1-i386-gstreamer'] = {
+    'fedora-1-i386': ('core', 'gstreamer-deps', 'gstreamer-build', 'gstreamer')
+}
+config['fedora-1-i386-gstreamer'] = { 'release': '1' }
+aliases['fedora-1-i386-gstreamer'] = ('f1g', )
+
+packages['fedora-1-i386-gstreamer-deps'] = packages['fedora-1-i386-core']
+sourceslist['fedora-1-i386-gstreamer-deps'] = {
+    'fedora-1-i386': ('core', 'gstreamer-deps')
+}
+config['fedora-1-i386-gstreamer-deps'] = { 'release': '1' }
+aliases['fedora-1-i386-gstreamer-deps'] = ('f1gd', )
+
+# Fedora Core 1 with fedora.us
+packages['fedora-1-i386-fedora-stable'] = deepcopy(packages['fedora-1-i386-updates'])
+packages['fedora-1-i386-fedora-stable']['build'] = packages['fedora-1-i386-fedora-stable']['build'] + " fedora-rpmdevtools"
+sourceslist['fedora-1-i386-fedora-stable'] = {
+    'fedora-1-i386':
+    sourceslist['fedora-1-i386-updates']['fedora-1-i386'] +
+    ('fedora-stable', )
+}
+config['fedora-1-i386-fedora-stable'] = { 'release': '1' }
+aliases['fedora-1-i386-fedora-stable'] = ('f1fs', )
+
+packages['fedora-1-i386-fedora-testing'] = packages['fedora-1-i386-fedora-stable']
+sourceslist['fedora-1-i386-fedora-testing'] = {
+    'fedora-1-i386':
+    sourceslist['fedora-1-i386-fedora-stable']['fedora-1-i386'] +
+    ('fedora-testing', )
+}
+config['fedora-1-i386-fedora-testing'] = config['fedora-1-i386-fedora-stable']
+aliases['fedora-1-i386-fedora-testing'] = ('f1ft', )
+
+packages['fedora-1-i386-fedora-unstable'] = packages['fedora-1-i386-fedora-testing']
+sourceslist['fedora-1-i386-fedora-unstable'] = {
+    'fedora-1-i386':
+    sourceslist['fedora-1-i386-fedora-testing']['fedora-1-i386'] +
+    ('fedora-unstable', )
+}
+config['fedora-1-i386-fedora-unstable'] = config['fedora-1-i386-fedora-testing']
+aliases['fedora-1-i386-fedora-unstable'] = ('f1fu', )
+
+# Fedora Core 1 with livna (+ fedora.us)
+packages['fedora-1-i386-livna-stable'] = packages['fedora-1-i386-fedora-stable']
+sourceslist['fedora-1-i386-livna-stable'] = {
+    'fedora-1-i386':
+    sourceslist['fedora-1-i386-updates']['fedora-1-i386'] +
+    ('fedora-stable', 'livna-stable', )
+}
+config['fedora-1-i386-livna-stable'] = { 'release': '1' }
+aliases['fedora-1-i386-livna-stable'] = ('f1ls', )
+
+packages['fedora-1-i386-livna-testing'] = packages['fedora-1-i386-livna-stable']
+sourceslist['fedora-1-i386-livna-testing'] = {
+    'fedora-1-i386':
+    sourceslist['fedora-1-i386-livna-stable']['fedora-1-i386'] +
+    ('fedora-testing', 'livna-testing', )
+}
+config['fedora-1-i386-livna-testing'] = config['fedora-1-i386-livna-stable']
+aliases['fedora-1-i386-livna-testing'] = ('f1lt', )
+
+packages['fedora-1-i386-livna-unstable'] = packages['fedora-1-i386-livna-testing']
+sourceslist['fedora-1-i386-livna-unstable'] = {
+    'fedora-1-i386':
+    sourceslist['fedora-1-i386-livna-testing']['fedora-1-i386'] +
+    ('fedora-unstable', 'livna-unstable', )
+}
+config['fedora-1-i386-livna-unstable'] = config['fedora-1-i386-livna-testing']
+aliases['fedora-1-i386-livna-unstable'] = ('f1lu', )
+
+# Fedora Core 1 with freshrpms
+packages['fedora-1-i386-freshrpms'] = packages['fedora-1-i386-core']
+sourceslist['fedora-1-i386-freshrpms'] = {
+    'fedora-1-i386': ('core', 'freshrpms', )
+}
+config['fedora-1-i386-freshrpms'] = config['fedora-1-i386-core']
+aliases['fedora-1-i386-freshrpms'] = ('f1fr', )
+
+# Fedora Core 1 with JPackage
+packages['fedora-1-i386-jpackage'] = deepcopy(packages['fedora-1-i386-updates'])
+packages['fedora-1-i386-jpackage']['base'] = packages['fedora-1-i386-jpackage']['base'] + ' java-1.4.2-sun'
+packages['fedora-1-i386-jpackage']['build'] = packages['fedora-1-i386-jpackage']['build'] + ' redhat-rpm-config java-1.4.2-sun-devel'
+sourceslist['fedora-1-i386-jpackage'] = {
+    'fedora-1-i386':
+    sourceslist['fedora-1-i386-updates']['fedora-1-i386'] +
+    ('jpackage-generic', 'jpackage-fc1', 'jpackage-nonfree', ),
+}
+config['fedora-1-i386-jpackage'] = config['fedora-1-i386-updates']
+aliases['fedora-1-i386-jpackage'] = ('fc1jpp', )

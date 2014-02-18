@@ -1,0 +1,155 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# redhat-80-i386: configuration for Red Hat 8.0
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Red Hat Linux 8.0 flavours
+aptsources['redhat-80-i386'] = {
+    'os':               'rpm ' + redhat      + ' 8.0/i386 os',
+    'updates':          'rpm ' + redhat      + ' 8.0/i386 updates',
+    'gstreamer':        'rpm ' + gstreamer   + ' redhat/80/i386 gst',
+    'gstreamer-build':  'rpm ' + gstreamer   + ' redhat/80/i386 build',
+    'gstreamer-deps':   'rpm ' + gstreamer   + ' redhat/80/i386 deps',
+    'fedora-stable':    'rpm ' + fedoraus    + ' redhat/8.0/i386 stable',
+    'fedora-testing':   'rpm ' + fedoraus    + ' redhat/8.0/i386 testing',
+    'fedora-unstable':  'rpm ' + fedoraus    + ' redhat/8.0/i386 unstable',
+    'livna-stable':     'rpm ' + livna       + ' redhat/8.0/i386 stable',
+    'livna-testing':    'rpm ' + livna       + ' redhat/8.0/i386 testing',
+    'livna-unstable':   'rpm ' + livna       + ' redhat/8.0/i386 unstable',
+    'freshrpms':        'rpm ' + freshrpmsrh + ' 8.0/i386 freshrpms',
+    'jpackage-generic': 'rpm ' + jpackage    + '/1.6 generic free',
+    'jpackage-rh80':    'rpm ' + jpackage    + '/1.6 redhat-8.0 free',
+    'jpackage-nonfree': 'rpm ' + jpackagenf  + '/1.6 generic non-free',
+}
+
+# Red Hat Linux 8.0
+packages['redhat-80-i386'] = {
+    'dir':      'redhat-80-i386',
+    'minimal':  'bash glibc',
+    'base':     'fileutils findutils openssh-server',
+    'build':    'dev rpm-build make gcc tar gzip patch ' +
+                'unzip bzip2 diffutils cpio',
+}
+sourceslist['redhat-80-i386'] = {
+    'redhat-80-i386': ('os', )
+}
+config['redhat-80-i386'] = {
+  'macros': {},
+}
+aliases['redhat-80-i386'] = ('rh8', 'rh80')
+
+# Red Hat Linux 8.0 with updates
+packages['redhat-80-i386-updates'] = packages['redhat-80-i386']
+sourceslist['redhat-80-i386-updates'] = {
+    'redhat-80-i386': ('os', 'updates', )
+}
+config['redhat-80-i386-updates'] = config['redhat-80-i386']
+aliases['redhat-80-i386-updates'] = ('rh8u', 'rh80u')
+
+# Red Hat Linux 8.0 with GStreamer
+packages['redhat-80-i386-gstreamer'] = packages['redhat-80-i386']
+sourceslist['redhat-80-i386-gstreamer'] = {
+    'redhat-80-i386': ('os', 'gstreamer-deps', 'gstreamer-build', 'gstreamer')
+}
+config['redhat-80-i386-gstreamer'] = deepcopy(config['redhat-80-i386'])
+config['redhat-80-i386-gstreamer'].update({ 'release': 'rh80' })
+aliases['redhat-80-i386-gstreamer'] = ('rh8g', 'rh80g')
+
+packages['redhat-80-i386-gstreamer-deps'] = packages['redhat-80-i386']
+sourceslist['redhat-80-i386-gstreamer-deps'] = {
+    'redhat-80-i386': ('os', 'gstreamer-deps')
+}
+config['redhat-80-i386-gstreamer-deps'] = deepcopy(config['redhat-80-i386'])
+config['redhat-80-i386-gstreamer-deps'].update({ 'release': 'rh80' })
+aliases['redhat-80-i386-gstreamer-deps'] = ('rh8gd', 'rh80gd')
+
+# Red Hat Linux 8.0 with fedora.us
+packages['redhat-80-i386-fedora-stable'] = deepcopy(packages['redhat-80-i386-updates'])
+packages['redhat-80-i386-fedora-stable']['build'] = packages['redhat-80-i386-fedora-stable']['build'] + " fedora-rpmdevtools"
+sourceslist['redhat-80-i386-fedora-stable'] = {
+    'redhat-80-i386':
+    sourceslist['redhat-80-i386-updates']['redhat-80-i386'] +
+    ('fedora-stable', )
+}
+config['redhat-80-i386-fedora-stable'] = deepcopy(config['redhat-80-i386'])
+config['redhat-80-i386-fedora-stable'].update({ 'release': 'rh80' })
+aliases['redhat-80-i386-fedora-stable'] = ('rh8fs', 'rh80fs')
+
+packages['redhat-80-i386-fedora-testing'] = packages['redhat-80-i386-fedora-stable']
+sourceslist['redhat-80-i386-fedora-testing'] = {
+    'redhat-80-i386':
+    sourceslist['redhat-80-i386-fedora-stable']['redhat-80-i386'] +
+    ('fedora-testing', )
+}
+config['redhat-80-i386-fedora-testing']  = config['redhat-80-i386-fedora-stable']
+aliases['redhat-80-i386-fedora-testing'] = ('rh8ft', 'rh80ft')
+
+packages['redhat-80-i386-fedora-unstable'] = packages['redhat-80-i386-fedora-testing']
+sourceslist['redhat-80-i386-fedora-unstable'] = {
+    'redhat-80-i386':
+    sourceslist['redhat-80-i386-fedora-testing']['redhat-80-i386'] +
+    ('fedora-unstable', )
+}
+config['redhat-80-i386-fedora-unstable']   = config['redhat-80-i386-fedora-testing']
+aliases['redhat-80-i386-fedora-unstable']  = ('rh8fu', 'rh80fu')
+
+# Red Hat Linux 8.0 with livna (+ fedora.us)
+packages['redhat-80-i386-livna-stable'] = packages['redhat-80-i386-fedora-stable']
+sourceslist['redhat-80-i386-livna-stable'] = {
+    'redhat-80-i386':
+    sourceslist['redhat-80-i386-updates']['redhat-80-i386'] +
+    ('fedora-stable', 'livna-stable', )
+}
+config['redhat-80-i386-livna-stable']  = config['redhat-80-i386-fedora-stable']
+aliases['redhat-80-i386-livna-stable'] = ('rh8ls', 'rh80ls', )
+
+packages['redhat-80-i386-livna-testing'] = packages['redhat-80-i386-livna-stable']
+sourceslist['redhat-80-i386-livna-testing'] = {
+    'redhat-80-i386':
+    sourceslist['redhat-80-i386-livna-stable']['redhat-80-i386'] +
+    ('fedora-testing', 'livna-testing', )
+}
+config['redhat-80-i386-livna-testing']  = config['redhat-80-i386-livna-stable']
+aliases['redhat-80-i386-livna-testing'] = ('rh8lt', 'rh80lt', )
+
+packages['redhat-80-i386-livna-unstable'] = packages['redhat-80-i386-livna-testing']
+sourceslist['redhat-80-i386-livna-unstable'] = {
+    'redhat-80-i386':
+    sourceslist['redhat-80-i386-livna-testing']['redhat-80-i386'] +
+    ('fedora-unstable', 'livna-unstable', )
+}
+config['redhat-80-i386-livna-unstable']  = config['redhat-80-i386-livna-testing']
+aliases['redhat-80-i386-livna-unstable'] = ('rh8lu', 'rh80lu', )
+
+# Red Hat Linux 8.0, FreshRPMS
+packages['redhat-80-i386-freshrpms'] = packages['redhat-80-i386']
+sourceslist['redhat-80-i386-freshrpms'] = {
+    'redhat-80-i386': ('os', 'freshrpms', )
+}
+config['redhat-80-i386-freshrpms'] = config['redhat-80-i386']
+aliases['redhat-80-i386-freshrpms'] = ('rh8fr', 'rh80fr')
+
+# Red Hat Linux 8.0, updates + FreshRPMS
+packages['redhat-80-i386-updates-freshrpms'] = packages['redhat-80-i386']
+sourceslist['redhat-80-i386-updates-freshrpms'] = {
+    'redhat-80-i386': ('os', 'updates', 'freshrpms', )
+}
+config['redhat-80-i386-updates-freshrpms'] = config['redhat-80-i386-updates']
+aliases['redhat-80-i386-updates-freshrpms'] = ('rh8ufr', 'rh80ufr')
+
+# Red Hat Linux 8.0 with JPackage
+packages['redhat-80-i386-jpackage'] = deepcopy(packages['redhat-80-i386-updates'])
+packages['redhat-80-i386-jpackage']['base'] = packages['redhat-80-i386-jpackage']['base'] + ' java-1.4.2-sun'
+packages['redhat-80-i386-jpackage']['build'] = packages['redhat-80-i386-jpackage']['build'] + ' gcc-c++ redhat-rpm-config java-1.4.2-sun-devel'
+sourceslist['redhat-80-i386-jpackage'] = {
+    'redhat-80-i386':
+    sourceslist['redhat-80-i386-updates']['redhat-80-i386'] +
+    ('jpackage-generic', 'jpackage-rh80', 'jpackage-nonfree', ),
+}
+config['redhat-80-i386-jpackage'] = config['redhat-80-i386-updates']
+aliases['redhat-80-i386-jpackage'] = ('rh8jpp', 'rh80jpp')

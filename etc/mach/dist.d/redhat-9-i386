@@ -1,0 +1,155 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# redhat-9-i386: configuration for Red Hat 9
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Red Hat Linux 9 flavours
+aptsources['redhat-9-i386'] = {
+    'os':               'rpm ' + redhat      + ' 9/i386 os',
+    'updates':          'rpm ' + redhat      + ' 9/i386 updates',
+    'gstreamer':        'rpm ' + gstreamer   + ' redhat/9/i386 gst',
+    'gstreamer-build':  'rpm ' + gstreamer   + ' redhat/9/i386 build',
+    'gstreamer-deps':   'rpm ' + gstreamer   + ' redhat/9/i386 deps',
+    'fedora-stable':    'rpm ' + fedoraus    + ' redhat/9/i386 stable',
+    'fedora-testing':   'rpm ' + fedoraus    + ' redhat/9/i386 testing',
+    'fedora-unstable':  'rpm ' + fedoraus    + ' redhat/9/i386 unstable',
+    'livna-stable':     'rpm ' + livna       + ' redhat/9/i386 stable',
+    'livna-testing':    'rpm ' + livna       + ' redhat/9/i386 testing',
+    'livna-unstable':   'rpm ' + livna       + ' redhat/9/i386 unstable',
+    'freshrpms':        'rpm ' + freshrpmsrh + ' 9/i386 freshrpms',
+    'jpackage-generic': 'rpm ' + jpackage    + '/1.6 generic free',
+    'jpackage-rh9':     'rpm ' + jpackage    + '/1.6 redhat-9 free',
+    'jpackage-nonfree': 'rpm ' + jpackagenf  + '/1.6 generic non-free',
+}
+
+# Red Hat Linux 9
+packages['redhat-9-i386'] = {
+    'dir':      'redhat-9-i386',
+    'minimal':  'bash glibc',
+    'base':     'coreutils findutils openssh-server',
+    'build':    'dev rpm-build make gcc tar gzip patch ' +
+                'unzip bzip2 diffutils cpio elfutils',
+}
+sourceslist['redhat-9-i386'] = {
+    'redhat-9-i386': ('os', )
+}
+config['redhat-9-i386'] = {
+  'macros': {},
+}
+aliases['redhat-9-i386'] = ('rh9', 'rh90')
+
+# Red Hat Linux 9 with updates
+packages['redhat-9-i386-updates'] = packages['redhat-9-i386']
+sourceslist['redhat-9-i386-updates'] = {
+    'redhat-9-i386': ('os', 'updates', )
+}
+config['redhat-9-i386-updates'] = config['redhat-9-i386']
+aliases['redhat-9-i386-updates'] = ('rh9u', 'rh90u')
+
+# Red Hat Linux 9 with GStreamer
+packages['redhat-9-i386-gstreamer'] = packages['redhat-9-i386']
+sourceslist['redhat-9-i386-gstreamer'] = {
+    'redhat-9-i386': ('os', 'gstreamer-deps', 'gstreamer-build', 'gstreamer')
+}
+config['redhat-9-i386-gstreamer'] = deepcopy(config['redhat-9-i386'])
+config['redhat-9-i386-gstreamer'].update({ 'release': 'rh90' })
+aliases['redhat-9-i386-gstreamer'] = ('rh9g', 'rh90g')
+
+packages['redhat-9-i386-gstreamer-deps'] = packages['redhat-9-i386']
+sourceslist['redhat-9-i386-gstreamer-deps'] = {
+    'redhat-9-i386': ('os', 'gstreamer-deps')
+}
+config['redhat-9-i386-gstreamer-deps'] = deepcopy(config['redhat-9-i386'])
+config['redhat-9-i386-gstreamer-deps'].update({ 'release': 'rh90' })
+aliases['redhat-9-i386-gstreamer-deps'] = ('rh9gd', 'rh90gd')
+
+# Red Hat Linux 9 with fedora.us
+packages['redhat-9-i386-fedora-stable'] = deepcopy(packages['redhat-9-i386-updates'])
+packages['redhat-9-i386-fedora-stable']['build'] = packages['redhat-9-i386-fedora-stable']['build'] + " fedora-rpmdevtools"
+sourceslist['redhat-9-i386-fedora-stable'] = {
+    'redhat-9-i386':
+    sourceslist['redhat-9-i386-updates']['redhat-9-i386'] +
+    ('fedora-stable', )
+}
+config['redhat-9-i386-fedora-stable'] = deepcopy(config['redhat-9-i386-updates'])
+config['redhat-9-i386-fedora-stable'].update({ 'release': 'rh90' })
+aliases['redhat-9-i386-fedora-stable'] = ('rh9fs', 'rh90fs')
+
+packages['redhat-9-i386-fedora-testing'] = packages['redhat-9-i386-fedora-stable']
+sourceslist['redhat-9-i386-fedora-testing'] = {
+    'redhat-9-i386':
+    sourceslist['redhat-9-i386-fedora-stable']['redhat-9-i386'] +
+    ('fedora-testing', )
+}
+config['redhat-9-i386-fedora-testing']  = config['redhat-9-i386-fedora-stable']
+aliases['redhat-9-i386-fedora-testing'] = ('rh9ft', 'rh90ft')
+
+packages['redhat-9-i386-fedora-unstable'] = packages['redhat-9-i386-fedora-testing']
+sourceslist['redhat-9-i386-fedora-unstable'] = {
+    'redhat-9-i386':
+    sourceslist['redhat-9-i386-fedora-testing']['redhat-9-i386'] +
+    ('fedora-unstable', )
+}
+config['redhat-9-i386-fedora-unstable']  = config['redhat-9-i386-fedora-testing']
+aliases['redhat-9-i386-fedora-unstable'] = ('rh9fu', 'rh90fu')
+
+# Red Hat Linux 9 with livna (+ fedora.us)
+packages['redhat-9-i386-livna-stable'] = packages['redhat-9-i386-fedora-stable']
+sourceslist['redhat-9-i386-livna-stable'] = {
+    'redhat-9-i386':
+    sourceslist['redhat-9-i386-updates']['redhat-9-i386'] +
+    ('fedora-stable', 'livna-stable', )
+}
+config['redhat-9-i386-livna-stable']  = config['redhat-9-i386-fedora-stable']
+aliases['redhat-9-i386-livna-stable'] = ('rh9ls', )
+
+packages['redhat-9-i386-livna-testing'] = packages['redhat-9-i386-livna-stable']
+sourceslist['redhat-9-i386-livna-testing'] = {
+    'redhat-9-i386':
+    sourceslist['redhat-9-i386-livna-stable']['redhat-9-i386'] +
+    ('fedora-testing', 'livna-testing', )
+}
+config['redhat-9-i386-livna-testing']  = config['redhat-9-i386-livna-stable']
+aliases['redhat-9-i386-livna-testing'] = ('rh9lt', )
+
+packages['redhat-9-i386-livna-unstable'] = packages['redhat-9-i386-livna-testing']
+sourceslist['redhat-9-i386-livna-unstable'] = {
+    'redhat-9-i386':
+    sourceslist['redhat-9-i386-livna-testing']['redhat-9-i386'] +
+    ('fedora-unstable', 'livna-unstable', )
+}
+config['redhat-9-i386-livna-unstable']  = config['redhat-9-i386-livna-testing']
+aliases['redhat-9-i386-livna-unstable'] = ('rh9lu', )
+
+# Red Hat Linux 9, FreshRPMS
+packages['redhat-9-i386-freshrpms'] = packages['redhat-9-i386']
+sourceslist['redhat-9-i386-freshrpms'] = {
+    'redhat-9-i386': ('os', 'freshrpms', )
+}
+config['redhat-9-i386-freshrpms'] = config['redhat-9-i386']
+aliases['redhat-9-i386-freshrpms'] = ('rh9fr', 'rh90fr')
+
+# Red Hat Linux 9, updates + FreshRPMS
+packages['redhat-9-i386-updates-freshrpms'] = packages['redhat-9-i386']
+sourceslist['redhat-9-i386-updates-freshrpms'] = {
+    'redhat-9-i386': ('os', 'updates', 'freshrpms', )
+}
+config['redhat-9-i386-updates-freshrpms'] = config['redhat-9-i386-updates']
+aliases['redhat-9-i386-updates-freshrpms'] = ('rh9ufr', 'rh90ufr')
+
+# Red Hat Linux 9 with JPackage
+packages['redhat-9-i386-jpackage'] = deepcopy(packages['redhat-9-i386-updates'])
+packages['redhat-9-i386-jpackage']['base'] = packages['redhat-9-i386-jpackage']['base'] + ' java-1.4.2-sun'
+packages['redhat-9-i386-jpackage']['build'] = packages['redhat-9-i386-jpackage']['build'] + ' gcc-c++ redhat-rpm-config java-1.4.2-sun-devel'
+sourceslist['redhat-9-i386-jpackage'] = {
+    'redhat-9-i386':
+    sourceslist['redhat-9-i386-updates']['redhat-9-i386'] +
+    ('jpackage-generic', 'jpackage-rh9', 'jpackage-nonfree', ),
+}
+config['redhat-9-i386-jpackage'] = config['redhat-9-i386-updates']
+aliases['redhat-9-i386-jpackage'] = ('rh9jpp', 'rh90jpp')

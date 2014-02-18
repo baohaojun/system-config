@@ -1,0 +1,39 @@
+# mach dist configuration                          -*- python -*-
+# -*- coding: utf-8 -*-
+
+# cnc-9-i386: configuration for Conectiva Linux 9
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Conectiva Linux 9 flavours
+aptsources['cnc-9-i386'] = {
+    'all':      'rpm ' + conectiva + ' 9/i386 001 002 003 004',
+    'updates':  'rpm ' + conectiva + '/updates 9/i386 updates',
+}
+
+# Conectiva Linux 9
+packages['cnc-9-i386'] = {
+    'dir':      'cnc-9-i386',
+    'minimal':  'bash glibc',
+    'base':     'filesystem fileutils findutils openssh-server textutils',
+    'build':    'rpm-build make gcc tar gzip patch unzip bzip2 ' +
+                'diffutils cpio',
+}
+sourceslist['cnc-9-i386'] = {
+    'cnc-9-i386': ('all', )
+}
+config['cnc-9-i386'] = {
+  'macros': {},
+}
+aliases['cnc-9-i386'] = ('cnc9', )
+
+# Conectiva Linux 9, updates
+packages['cnc-9-i386-updates'] = packages['cnc-9-i386']
+sourceslist['cnc-9-i386-updates'] = {
+    'cnc-9-i386': ('all', 'updates', )
+}
+config['cnc-9-i386-updates'] = config['cnc-9-i386']
+aliases['cnc-9-i386-updates'] = ('cnc9u', )

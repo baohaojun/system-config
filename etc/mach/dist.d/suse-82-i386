@@ -1,0 +1,41 @@
+# mach dist configuration                          -*- python -*-
+# -*- coding: utf-8 -*-
+
+# suse-82-i386: configuration for SuSE 8.2
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### SuSE Linux 8.2 flavours
+aptsources['suse-82-i386'] = {
+    'base':              'rpm ' + suse + ' SuSE/8.2-i386 base',
+    'security':          'rpm ' + suse + ' SuSE/8.2-i386 security',
+    'update':            'rpm ' + suse + ' SuSE/8.2-i386 update',
+}
+
+# SuSE Linux 8.2
+packages['suse-82-i386'] = {
+    'dir':      'suse-82-i386',
+    'minimal':  'bash glibc',
+    'base':     'aaa_base coreutils findutils openssh openssl=0.9.6i ' +
+                'pam-modules',
+    'build':    'make gcc tar gzip patch unzip cpio',
+}
+sourceslist['suse-82-i386'] = {
+    'suse-82-i386': ('base', )
+}
+config['suse-82-i386'] = {
+  'root_rpmbuild': 'rpm',
+  'macros': {},
+}
+aliases['suse-82-i386'] = ('suse82', )
+
+# SuSE Linux 8.2, updates
+packages['suse-82-i386-updates'] = packages['suse-82-i386']
+sourceslist['suse-82-i386-updates'] = {
+    'suse-82-i386': ('base', 'update', 'security', )
+}
+config['suse-82-i386-updates'] = config['suse-82-i386']
+aliases['suse-82-i386-updates'] = ('suse82u', )

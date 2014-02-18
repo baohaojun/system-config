@@ -1,0 +1,71 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# redhat-73-i386: configuration for Red Hat 7.3
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Red Hat Linux 7.3 flavours
+aptsources['redhat-73-i386'] = {
+    'os':               'rpm ' + redhat      + ' 7.3/i386 os',
+    'updates':          'rpm ' + redhat      + ' 7.3/i386 updates',
+    'freshrpms':        'rpm ' + freshrpmsrh + ' 7.3/i386 freshrpms',
+    'jpackage-generic': 'rpm ' + jpackage    + '/1.6 generic free',
+    'jpackage-rh73':    'rpm ' + jpackage    + '/1.6 redhat-7.3 free',
+    'jpackage-nonfree': 'rpm ' + jpackagenf  + '/1.6 generic non-free',
+}
+
+# Red Hat Linux 7.3
+packages['redhat-73-i386'] = {
+    'dir':      'redhat-73-i386',
+    'minimal':  'bash glibc',
+    'base':     'fileutils findutils file openssh-server',
+    'build':    'dev rpm-build make gcc tar gzip patch ' +
+                'unzip bzip2 diffutils cpio',
+}
+sourceslist['redhat-73-i386'] = {
+    'redhat-73-i386': ('os', )
+}
+config['redhat-73-i386'] = {
+  'macros': {},
+}
+aliases['redhat-73-i386'] = ('rh73', )
+
+# Red Hat Linux 7.3, updates
+packages['redhat-73-i386-updates'] = packages['redhat-73-i386']
+sourceslist['redhat-73-i386-updates'] = {
+    'redhat-73-i386': ('os', 'updates', )
+}
+config['redhat-73-i386-updates'] = config['redhat-73-i386']
+aliases['redhat-73-i386-updates'] = ('rh73u', )
+
+# Red Hat Linux 7.3, FreshRPMS
+packages['redhat-73-i386-freshrpms'] = packages['redhat-73-i386']
+sourceslist['redhat-73-i386-freshrpms'] = {
+    'redhat-73-i386': ('os', 'freshrpms', )
+}
+config['redhat-73-i386-freshrpms'] = config['redhat-73-i386']
+aliases['redhat-73-i386-freshrpms'] = ('rh73fr', )
+
+# Red Hat Linux 7.3, updates + FreshRPMS
+packages['redhat-73-i386-updates-freshrpms'] = packages['redhat-73-i386']
+sourceslist['redhat-73-i386-updates-freshrpms'] = {
+    'redhat-73-i386': ('os', 'updates', 'freshrpms', )
+}
+config['redhat-73-i386-updates-freshrpms'] = config['redhat-73-i386-updates']
+aliases['redhat-73-i386-updates-freshrpms'] = ('rh73ufr', )
+
+# Red Hat Linux 7.3 with JPackage
+packages['redhat-73-i386-jpackage'] = deepcopy(packages['redhat-73-i386-updates'])
+packages['redhat-73-i386-jpackage']['base'] = packages['redhat-73-i386-jpackage']['base'] + ' java-1.4.2-sun'
+packages['redhat-73-i386-jpackage']['build'] = packages['redhat-73-i386-jpackage']['build'] + ' gcc-c++ java-1.4.2-sun-devel'
+sourceslist['redhat-73-i386-jpackage'] = {
+    'redhat-73-i386':
+    sourceslist['redhat-73-i386-updates']['redhat-73-i386'] +
+    ('jpackage-generic', 'jpackage-rh73', 'jpackage-nonfree', ),
+}
+config['redhat-73-i386-jpackage'] = config['redhat-73-i386-updates']
+aliases['redhat-73-i386-jpackage'] = ('rh73jpp', )

@@ -1,0 +1,147 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# fedora-2-i386: configuration for Fedora 2
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Fedora Core 2 flavours
+aptsources['fedora-2-i386'] = {
+    'core':             'rpm ' + fedora      + ' 2/i386 core',
+    'updates':          'rpm ' + fedora      + ' 2/i386 updates',
+    'gstreamer':        'rpm ' + gstreamer   + ' fedora/2/i386 gst',
+    'gstreamer-build':  'rpm ' + gstreamer   + ' fedora/2/i386 build',
+    'gstreamer-deps':   'rpm ' + gstreamer   + ' fedora/2/i386 deps',
+    'fedora-stable':    'rpm ' + fedoraus    + ' fedora/2/i386 stable',
+    'fedora-testing':   'rpm ' + fedoraus    + ' fedora/2/i386 testing',
+    'fedora-unstable':  'rpm ' + fedoraus    + ' fedora/2/i386 unstable',
+    'livna-stable':     'rpm ' + livna       + ' fedora/2/i386 stable',
+    'livna-testing':    'rpm ' + livna       + ' fedora/2/i386 testing',
+    'livna-unstable':   'rpm ' + livna       + ' fedora/2/i386 unstable',
+    'freshrpms':        'rpm ' + freshrpmsfd + ' 2/i386 freshrpms',
+    'jpackage-generic': 'rpm ' + jpackage    + '/1.6 generic free',
+    'jpackage-fc2':     'rpm ' + jpackage    + '/1.6 fedora-2 free',
+    'jpackage-nonfree': 'rpm ' + jpackagenf  + '/1.6 generic non-free',
+}
+
+# Fedora Core 2
+packages['fedora-2-i386-core'] = {
+    'dir':      'fedora-2-i386',
+    'minimal':  'bash glibc',
+    'base':     'coreutils findutils openssh-server',
+    'build':    'dev rpm-build make gcc gcc-c++ tar gzip patch ' +
+                'unzip bzip2 diffutils cpio elfutils',
+}
+sourceslist['fedora-2-i386-core'] = {
+    'fedora-2-i386': ('core', )
+}
+config['fedora-2-i386-core'] = {
+  'macros': {},
+}
+aliases['fedora-2-i386-core'] = ('f2c', 'fc2', )
+
+# Fedora Core 2 with updates
+packages['fedora-2-i386-updates'] = packages['fedora-2-i386-core']
+sourceslist['fedora-2-i386-updates'] = {
+    'fedora-2-i386': ('core', 'updates', )
+}
+config['fedora-2-i386-updates'] = config['fedora-2-i386-core']
+aliases['fedora-2-i386-updates'] = ('f2u', )
+
+# Fedora Core 2 with GStreamer
+packages['fedora-2-i386-gstreamer'] = packages['fedora-2-i386-core']
+sourceslist['fedora-2-i386-gstreamer'] = {
+    'fedora-2-i386': ('core', 'gstreamer-deps', 'gstreamer-build', 'gstreamer')
+}
+config['fedora-2-i386-gstreamer'] = deepcopy(config['fedora-2-i386-core'])
+config['fedora-2-i386-gstreamer'].update({ 'release': '2', })
+aliases['fedora-2-i386-gstreamer'] = ('f2g', )
+
+packages['fedora-2-i386-gstreamer-deps'] = packages['fedora-2-i386-core']
+sourceslist['fedora-2-i386-gstreamer-deps'] = {
+    'fedora-2-i386': ('core', 'gstreamer-deps')
+}
+config['fedora-2-i386-gstreamer-deps'] = deepcopy(config['fedora-2-i386-core'])
+config['fedora-2-i386-gstreamer-deps'].update({ 'release': '2', })
+aliases['fedora-2-i386-gstreamer-deps'] = ('f2gd', )
+
+# Fedora Core 2 with fedora.us
+packages['fedora-2-i386-fedora-stable'] = deepcopy(packages['fedora-2-i386-updates'])
+packages['fedora-2-i386-fedora-stable']['build'] = packages['fedora-2-i386-fedora-stable']['build'] + " fedora-rpmdevtools"
+sourceslist['fedora-2-i386-fedora-stable'] = {
+    'fedora-2-i386':
+    sourceslist['fedora-2-i386-updates']['fedora-2-i386'] +
+    ('fedora-stable', )
+}
+config['fedora-2-i386-fedora-stable'] = deepcopy(config['fedora-2-i386-core'])
+config['fedora-2-i386-fedora-stable'].update({ 'release': '2', })
+aliases['fedora-2-i386-fedora-stable'] = ('f2fs', )
+
+packages['fedora-2-i386-fedora-testing'] = packages['fedora-2-i386-fedora-stable']
+sourceslist['fedora-2-i386-fedora-testing'] = {
+    'fedora-2-i386':
+    sourceslist['fedora-2-i386-fedora-stable']['fedora-2-i386'] +
+    ('fedora-testing', )
+}
+config['fedora-2-i386-fedora-testing'] = config['fedora-2-i386-fedora-stable']
+aliases['fedora-2-i386-fedora-testing'] = ('f2ft', )
+
+packages['fedora-2-i386-fedora-unstable'] = packages['fedora-2-i386-fedora-testing']
+sourceslist['fedora-2-i386-fedora-unstable'] = {
+    'fedora-2-i386':
+    sourceslist['fedora-2-i386-fedora-testing']['fedora-2-i386'] +
+    ('fedora-unstable', )
+}
+config['fedora-2-i386-fedora-unstable'] = config['fedora-2-i386-fedora-testing']
+aliases['fedora-2-i386-fedora-unstable'] = ('f2fu', )
+
+# Fedora Core 2 with livna (+ fedora.us)
+packages['fedora-2-i386-livna-stable'] = packages['fedora-2-i386-fedora-stable']
+sourceslist['fedora-2-i386-livna-stable'] = {
+    'fedora-2-i386':
+    sourceslist['fedora-2-i386-updates']['fedora-2-i386'] +
+    ('fedora-stable', 'livna-stable', )
+}
+config['fedora-2-i386-livna-stable'] = config['fedora-2-i386-fedora-stable']
+aliases['fedora-2-i386-livna-stable'] = ('f2ls', )
+
+packages['fedora-2-i386-livna-testing'] = packages['fedora-2-i386-livna-stable']
+sourceslist['fedora-2-i386-livna-testing'] = {
+    'fedora-2-i386':
+    sourceslist['fedora-2-i386-livna-stable']['fedora-2-i386'] +
+    ('fedora-testing', 'livna-testing', )
+}
+config['fedora-2-i386-livna-testing'] = config['fedora-2-i386-livna-stable']
+aliases['fedora-2-i386-livna-testing'] = ('f2lt', )
+
+packages['fedora-2-i386-livna-unstable'] = packages['fedora-2-i386-livna-testing']
+sourceslist['fedora-2-i386-livna-unstable'] = {
+    'fedora-2-i386':
+    sourceslist['fedora-2-i386-livna-testing']['fedora-2-i386'] +
+    ('fedora-unstable', 'livna-unstable', )
+}
+config['fedora-2-i386-livna-unstable'] = config['fedora-2-i386-livna-testing']
+aliases['fedora-2-i386-livna-unstable'] = ('f2lu', )
+
+# Fedora Core 2 with freshrpms
+packages['fedora-2-i386-freshrpms'] = packages['fedora-2-i386-core']
+sourceslist['fedora-2-i386-freshrpms'] = {
+    'fedora-2-i386': ('core', 'freshrpms', )
+}
+config['fedora-2-i386-freshrpms'] = config['fedora-2-i386-core']
+aliases['fedora-2-i386-freshrpms'] = ('f2fr', )
+
+# Fedora Core 2 with JPackage
+packages['fedora-2-i386-jpackage'] = deepcopy(packages['fedora-2-i386-updates'])
+packages['fedora-2-i386-jpackage']['base'] = packages['fedora-2-i386-jpackage']['base'] + ' java-1.4.2-sun'
+packages['fedora-2-i386-jpackage']['build'] = packages['fedora-2-i386-jpackage']['build'] + ' redhat-rpm-config java-1.4.2-sun-devel'
+sourceslist['fedora-2-i386-jpackage'] = {
+    'fedora-2-i386':
+    sourceslist['fedora-2-i386-updates']['fedora-2-i386'] +
+    ('jpackage-generic', 'jpackage-fc2', 'jpackage-nonfree', ),
+}
+config['fedora-2-i386-jpackage'] = config['fedora-2-i386-core']
+aliases['fedora-2-i386-jpackage'] = ('fc2jpp', )

@@ -1,0 +1,56 @@
+# mach dist configuration                          -*- python -*-
+# -*- coding: utf-8 -*-
+
+# yellowdog-30-i386: configuration for Yellowdog 3.0
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Yellow Dog Linux 3.0 flavours
+aptsources['yellowdog-30-ppc'] = {
+    'os':               'rpm ' + yellowdog   + ' 3.0/ppc os',
+    'updates':          'rpm ' + yellowdog   + ' 3.0/ppc updates',
+    'freshrpms':        'rpm ' + freshrpmsyd + ' 3.0/ppc freshrpms',
+}
+
+# Yellow Dog Linux 3.0
+packages['yellowdog-30-ppc'] = {
+    'dir':      'yellowdog-30-ppc',
+    'minimal':  'bash glibc',
+    'base':     'fileutils findutils openssh-server',
+    'build':    'dev rpm-build make gcc tar gzip patch ' +
+                'unzip bzip2 diffutils cpio',
+}
+sourceslist['yellowdog-30-ppc'] = {
+    'yellowdog-30-ppc': ('os', )
+}
+config['yellowdog-30-ppc'] = {
+  'macros': {},
+}
+aliases['yellowdog-30-ppc'] = ('yd30', )
+
+# Yellow Dog Linux 3.0 with updates
+packages['yellowdog-30-ppc-updates'] = packages['yellowdog-30-ppc']
+sourceslist['yellowdog-30-ppc-updates'] = {
+    'yellowdog-30-ppc': ('os', 'updates', )
+}
+config['yellowdog-30-ppc-updates'] = config['yellowdog-30-ppc']
+aliases['yellowdog-30-ppc-updates'] = ('yd30u', )
+
+# Yellow Dog Linux 3.0, FreshRPMS
+packages['yellowdog-30-ppc-freshrpms'] = packages['yellowdog-30-ppc']
+sourceslist['yellowdog-30-ppc-freshrpms'] = {
+    'yellowdog-30-ppc': ('os', 'freshrpms', )
+}
+config['yellowdog-30-ppc-freshrpms'] = config['yellowdog-30-ppc']
+aliases['yellowdog-30-ppc-freshrpms'] = ('yd30fr', )
+
+# Yellow Dog Linux 3.0, updates + FreshRPMS
+packages['yellowdog-30-ppc-updates-freshrpms'] = packages['yellowdog-30-ppc']
+sourceslist['yellowdog-30-ppc-updates-freshrpms'] = {
+    'yellowdog-30-ppc': ('os', 'updates', 'freshrpms', )
+}
+config['yellowdog-30-ppc-updates-freshrpms'] = config['yellowdog-30-ppc-updates']
+aliases['yellowdog-30-ppc-updates-freshrpms'] = ('yd30ufr', )

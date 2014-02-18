@@ -1,0 +1,52 @@
+# mach location configuration                          -*- python -*-
+
+# all the download locations are defined here
+# you can override them here for the whole system
+# these locations are then used by the distribution configuration files
+# under dist.d
+
+# Base download locations.
+
+# Official distributions
+
+# Red Hat Linux base; this location should contain versioned directories
+redhat      = 'http://ayo.freshrpms.net/redhat'
+#redhat      = 'http://download.fedora.us/fedora/redhat'
+
+# Fedora Core; this location should contain versioned directions
+fedora      = 'http://mirrors.aliyun.com/fedora'
+#fedora      = 'http://download.fedora.us/fedora/fedora'
+# fedorayum trees should contain their repodata/ dirs in the "official"
+# location, and start in the dir that has "core" and "extras"
+fedorayum   = 'http://mirrors.aliyun.com/fedora'
+
+# CentOS
+centos      = 'http://mirrors.aliyun.com/centos'
+centosfe    = 'http://centos.karan.org/'
+
+# Yellow Dog Linux
+yellowdog   = 'http://ayo.freshrpms.net/yellowdog'
+
+# SuSE Linux: http://apt4rpm.sourceforge.net/repos.html
+suse        = 'ftp://mirrors.mathematik.uni-bielefeld.de/pub/linux/suse/apt'
+
+# Conectiva Linux: http://distro.conectiva.com.br/atualizacoes/#aptmirrors
+#                  https://moin.conectiva.com.br/mirrors
+conectiva   = 'ftp://ftp.tiscali.nl/pub/mirrors/conectiva'
+
+# Dave/Dina: http://www.davedina.org
+davedina    = 'http://download.davedina.org/apt'
+
+# Add-on locations
+fedoraus    = 'http://download.fedora.us/fedora'
+livna       = 'http://rpm.livna.org'
+gstreamer   = 'http://gstreamer.freedesktop.org/pkg'
+freshrpmsrh = 'http://ayo.freshrpms.net/redhat'
+freshrpmsfd = 'http://ayo.freshrpms.net/fedora/linux'
+freshrpmsyd = 'http://ayo.freshrpms.net/yellowdog'
+
+jpackage    = 'http://mirrors.dotsrc.org/jpackage'
+# jpackagenf is the non-free/non-distributable JPackage repository.  You
+# must set up one yourself and point this variable at if before you can use
+# the JPackage configurations.  http://www.jpackage.org/faq.php
+jpackagenf  = ''

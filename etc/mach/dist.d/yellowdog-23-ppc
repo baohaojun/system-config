@@ -1,0 +1,56 @@
+# mach dist configuration                          -*- python -*-
+# -*- coding: utf-8 -*-
+
+# yellowdog-23-i386: configuration for Yellowdog 2.3
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Yellow Dog Linux 2.3 flavours
+aptsources['yellowdog-23-ppc'] = {
+    'os':               'rpm ' + yellowdog   + ' 2.3/ppc os',
+    'updates':          'rpm ' + yellowdog   + ' 2.3/ppc updates',
+    'freshrpms':        'rpm ' + freshrpmsyd + ' 2.3/ppc freshrpms',
+}
+
+# Yellow Dog Linux 2.3
+packages['yellowdog-23-ppc'] = {
+    'dir':      'yellowdog-23-ppc',
+    'minimal':  'bash glibc',
+    'base':     'fileutils findutils file openssh-server',
+    'build':    'dev rpm-build make gcc tar gzip patch ' +
+                'unzip bzip2 diffutils cpio glibc-devel',
+}
+sourceslist['yellowdog-23-ppc'] = {
+    'yellowdog-23-ppc': ('os', )
+}
+config['yellowdog-23-ppc'] = {
+  'macros': {},
+}
+aliases['yellowdog-23-ppc'] = ('yd23', )
+
+# Yellow Dog Linux 2.3 with updates
+packages['yellowdog-23-ppc-updates'] = packages['yellowdog-23-ppc']
+sourceslist['yellowdog-23-ppc-updates'] = {
+    'yellowdog-23-ppc': ('os', 'updates', )
+}
+config['yellowdog-23-ppc-updates'] = config['yellowdog-23-ppc']
+aliases['yellowdog-23-ppc-updates'] = ('yd23u', )
+
+# Yellow Dog Linux 2.3, FreshRPMS
+packages['yellowdog-23-ppc-freshrpms'] = packages['yellowdog-23-ppc']
+sourceslist['yellowdog-23-ppc-freshrpms'] = {
+    'yellowdog-23-ppc': ('os', 'freshrpms', )
+}
+config['yellowdog-23-ppc-freshrpms'] = config['yellowdog-23-ppc']
+aliases['yellowdog-23-ppc-freshrpms'] = ('yd23fr', )
+
+# Yellow Dog Linux 2.3, updates + FreshRPMS
+packages['yellowdog-23-ppc-updates-freshrpms'] = packages['yellowdog-23-ppc']
+sourceslist['yellowdog-23-ppc-updates-freshrpms'] = {
+    'yellowdog-23-ppc': ('os', 'updates', 'freshrpms', )
+}
+config['yellowdog-23-ppc-updates-freshrpms'] = config['yellowdog-23-ppc-updates']
+aliases['yellowdog-23-ppc-updates-freshrpms'] = ('yd23ufr', )

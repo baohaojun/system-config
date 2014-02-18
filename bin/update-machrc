@@ -1,0 +1,19 @@
+#!/bin/bash
+cat <<EOF > ~/.machrc
+config['installer'] = 'yum'
+
+config['files'] = {
+  '/etc/hosts': '''
+$(cat /etc/hosts)
+''',
+  '/etc/resolv.conf': '''
+$(cat /etc/resolv.conf)
+'''
+}
+
+config['defaultroot'] = 'fedora-development-x86_64-core'
+
+config['macros'] = {
+    'vendor':   'My Company Name',
+}
+EOF

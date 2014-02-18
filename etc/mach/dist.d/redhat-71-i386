@@ -1,0 +1,58 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# redhat-71-i386: configuration for Red Hat 7.1
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Red Hat Linux 7.1 flavours
+aptsources['redhat-71-i386'] = {
+    'os':               'rpm ' + redhat      + ' 7.1/i386 os',
+    'updates':          'rpm ' + redhat      + ' 7.1/i386 updates',
+    'freshrpms':        'rpm ' + freshrpmsrh + ' 7.1/i386 freshrpms',
+}
+
+# Red Hat Linux 7.1
+packages['redhat-71-i386'] = {
+    'dir':      'redhat-71-i386',
+    'minimal':  'bash glibc',
+    # net-tools provides hostname, otherwise it complains about it for chroot
+    # sh-utils provides 'su' on older systems
+    'base':     'fileutils findutils openssh-server net-tools file sh-utils',
+    'build':    'dev rpm-build make gcc tar gzip patch ' +
+                'unzip bzip2 diffutils cpio',
+}
+sourceslist['redhat-71-i386'] = {
+    'redhat-71-i386': ('os', )
+}
+config['redhat-71-i386'] = {
+  'macros': {},
+}
+aliases['redhat-71-i386'] = ('rh71', )
+
+# Red Hat Linux 7.1, updates (rpm 4.0.4)
+packages['redhat-71-i386-updates'] = packages['redhat-71-i386']
+sourceslist['redhat-71-i386-updates'] = {
+    'redhat-71-i386': ('os', 'updates', )
+}
+config['redhat-71-i386-updates'] = config['redhat-71-i386']
+aliases['redhat-71-i386-updates'] = ('rh71u', )
+
+# Red Hat Linux 7.1, FreshRPMS
+packages['redhat-71-i386-freshrpms'] = packages['redhat-71-i386']
+sourceslist['redhat-71-i386-freshrpms'] = {
+    'redhat-71-i386': ('os', 'freshrpms', )
+}
+config['redhat-71-i386-freshrpms'] = config['redhat-71-i386']
+aliases['redhat-71-i386-freshrpms'] = ('rh71fr', )
+
+# Red Hat Linux 7.1, updates + FreshRPMS
+packages['redhat-71-i386-updates-freshrpms'] = packages['redhat-71-i386']
+sourceslist['redhat-71-i386-updates-freshrpms'] = {
+    'redhat-71-i386': ('os', 'updates', 'freshrpms', )
+}
+config['redhat-71-i386-updates-freshrpms'] = config['redhat-71-i386-updates']
+aliases['redhat-71-i386-updates-freshrpms'] = ('rh71ufr', )

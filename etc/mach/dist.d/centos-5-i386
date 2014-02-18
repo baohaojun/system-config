@@ -1,0 +1,127 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# centos-5-i386: configuration for CentOS 5
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+V = '5'      # distro version
+A = 'i386'   # architecture
+AS = ''      # 'short' version of arch
+DIST = 'centos-%s-%s' % (V, A)
+
+### CentOS flavours
+aptsources[DIST] = {
+  'os':               'rpm ' + centos + ' %s/apt/%s os'               % (V, A),
+  'updates':          'rpm ' + centos + ' %s/apt/%s updates'          % (V, A),
+  'addons':           'rpm ' + centos + ' %s/apt/%s addons'           % (V, A),
+  'contrib':          'rpm ' + centos + ' %s/apt/%s contrib'          % (V, A),
+  'csgfs':            'rpm ' + centos + ' %s/apt/%s csgfs'            % (V, A),
+  'extras':           'rpm ' + centos + ' %s/apt/%s extras'           % (V, A),
+  'plus':             'rpm ' + centos + ' %s/apt/%s centosplus'       % (V, A),
+}
+
+yumsources[DIST] = {
+  'os':               centos + '/%s/os/%s'                            % (V, A),
+  'updates':          centos + '/%s/updates/%s'                       % (V, A),
+  'addons':           centos + '/%s/addons/%s'                        % (V, A),
+  'contrib':          centos + '/%s/contrib/%s'                       % (V, A),
+  'csgfs':            centos + '/%s/csgfs/%s'                         % (V, A),
+  'extras':           centos + '/%s/extras/%s'                        % (V, A),
+  'plus':             centos + '/%s/centosplus/%s'                    % (V, A),
+  'fextras':          centosfe + '/el4/extras/stable/%s/RPMS'         % (A),
+  'jpackage-generic': jpackage    + '/1.7/generic/free',
+  'jpackage-centos' + V: jpackage + '/1.7/redhat-el-4.0/free',
+  'jpackage-nonfree': jpackagenf  + '/1.7/generic/non-free',
+}
+
+# CentOS
+packages['%s-os' % DIST] = {
+  'dir':      DIST,
+  'minimal':  'bash glibc',
+  'base':     'coreutils findutils openssh-server',
+  'build':    'dev redhat-rpm-config rpm-build make gcc gcc-c++ tar gzip ' +
+              'patch unzip bzip2 diffutils cpio elfutils',
+}
+sourceslist['%s-os' % DIST] = {
+  DIST: ('os', )
+}
+config['%s-os' % DIST] = {
+  'runuser': '/sbin/runuser',
+  'macros':  { 'dist': '.centos' + V, },
+}
+aliases['%s-os' % DIST] = ('c' + V + 'o' + AS, 'c' + V + AS, )
+
+# CentOS with updates
+packages['%s-updates' % DIST] = packages['%s-os' % DIST]
+sourceslist['%s-updates' % DIST] = {
+  DIST: ('os', 'updates', )
+}
+config['%s-updates' % DIST] = config['%s-os' % DIST]
+aliases['%s-updates' % DIST] = ('c' + V + 'u' + AS, )
+
+# CentOS with addons
+packages['%s-addons' % DIST] = packages['%s-updates' % DIST]
+sourceslist['%s-addons' % DIST] = {
+  DIST: ('os', 'updates', 'addons', )
+}
+config['%s-addons' % DIST] = config['%s-updates' % DIST]
+aliases['%s-addons' % DIST] = ('c' + V + 'a' + AS, )
+
+# CentOS with contrib
+packages['%s-contrib' % DIST] = packages['%s-updates' % DIST]
+sourceslist['%s-contrib' % DIST] = {
+  DIST: ('os', 'updates', 'contrib', )
+}
+config['%s-contrib' % DIST] = config['%s-updates' % DIST]
+aliases['%s-contrib' % DIST] = ('c' + V + 'c' + AS, )
+
+# CentOS with csgfs
+packages['%s-csgfs' % DIST] = packages['%s-updates' % DIST]
+sourceslist['%s-csgfs' % DIST] = {
+  DIST: ('os', 'updates', 'csgfs', )
+}
+config['%s-csgfs' % DIST] = config['%s-updates' % DIST]
+aliases['%s-csgfs' % DIST] = ('c' + V + 'g' + AS, )
+
+# CentOS with extras
+packages['%s-extras' % DIST] = packages['%s-updates' % DIST]
+sourceslist['%s-extras' % DIST] = {
+  DIST: ('os', 'updates', 'extras', )
+}
+config['%s-extras' % DIST] = config['%s-updates' % DIST]
+aliases['%s-extras' % DIST] = ('c' + V + 'e' + AS, )
+
+# CentOS with centosplus
+packages['%s-plus' % DIST] = packages['%s-updates' % DIST]
+sourceslist['%s-plus' % DIST] = {
+  DIST: ('os', 'updates', 'plus', )
+}
+config['%s-plus' % DIST] = config['%s-updates' % DIST]
+aliases['%s-plus' % DIST] = ('c' + V + 'p' + AS, )
+
+# CentOS with Fedora Extras rebuilds
+packages['%s-fextras' % DIST] = deepcopy(packages['%s-updates' % DIST])
+packages['%s-fextras' % DIST]['build'] = packages['%s-fextras' % DIST]['build'] + " fedora-rpmdevtools"
+sourceslist['%s-fextras' % DIST] = {
+  DIST: ('os', 'updates', 'fextras', )
+}
+config['%s-fextras' % DIST] = deepcopy(config['%s-updates' % DIST])
+config['%s-fextras' % DIST]['macros'].update({
+  '__arch_install_post': '/usr/lib/rpm/check-rpaths \\\n  /usr/lib/rpm/check-buildroot',
+})
+aliases['%s-fextras' % DIST] = ('c' + V + 'f' + AS, )
+
+# CentOS with JPackage
+packages['%s-jpackage' % DIST] = deepcopy(packages['%s-updates' % DIST])
+packages['%s-jpackage' % DIST]['base'] = packages['%s-jpackage' % DIST]['base'] + ' java-1.4.2-sun'
+packages['%s-jpackage' % DIST]['build'] = packages['%s-jpackage' % DIST]['build'] + ' java-1.4.2-sun-devel'
+sourceslist['%s-jpackage' % DIST] = {
+  DIST: sourceslist['%s-updates' % DIST][DIST] +
+  ('jpackage-generic', 'jpackage-centos' + V , 'jpackage-nonfree', ),
+}
+config['%s-jpackage' % DIST] = config['%s-updates' % DIST]
+aliases['%s-jpackage' % DIST] = ('c' + V + 'jpp' + AS, )

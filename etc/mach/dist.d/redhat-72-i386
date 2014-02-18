@@ -1,0 +1,72 @@
+# mach dist configuration                                        -*- python -*-
+# -*- coding: utf-8 -*-
+
+# redhat-72-i386: configuration for Red Hat 7.2
+
+# each distro flavour has an aptsources line describing where to get each
+# kind of package from
+# each actual dist has a packages dict for bootstrap packages and
+# a sourceslist dict referencing aptsources lines to use
+
+### Red Hat Linux 7.2 flavours
+aptsources['redhat-72-i386'] = {
+    'os':               'rpm ' + redhat      + ' 7.2/i386 os',
+    'updates':          'rpm ' + redhat      + ' 7.2/i386 updates',
+    'freshrpms':        'rpm ' + freshrpmsrh + ' 7.2/i386 freshrpms',
+    'jpackage-generic': 'rpm ' + jpackage    + '/1.6 generic free',
+    'jpackage-rh72':    'rpm ' + jpackage    + '/1.6 redhat-7.2 free',
+    'jpackage-nonfree': 'rpm ' + jpackagenf  + '/1.6 generic non-free',
+}
+
+# Red Hat Linux 7.2
+packages['redhat-72-i386'] = {
+    'dir':      'redhat-72-i386',
+    'minimal':  'bash glibc',
+    # net-tools provides hostname, otherwise it complains about it for chroot
+    'base':     'fileutils findutils openssh-server net-tools file',
+    'build':    'dev rpm-build make gcc tar gzip patch ' +
+                'unzip bzip2 diffutils cpio',
+}
+sourceslist['redhat-72-i386'] = {
+    'redhat-72-i386': ('os', )
+}
+config['redhat-72-i386'] = {
+  'macros': {},
+}
+aliases['redhat-72-i386'] = ('rh72', )
+
+# Red Hat Linux 7.2, updates (rpm 4.0.4)
+packages['redhat-72-i386-updates'] = packages['redhat-72-i386']
+sourceslist['redhat-72-i386-updates'] = {
+    'redhat-72-i386': ('os', 'updates', )
+}
+config['redhat-72-i386-updates'] = config['redhat-72-i386']
+aliases['redhat-72-i386-updates'] = ('rh72u', )
+
+# Red Hat Linux 7.2, FreshRPMS
+packages['redhat-72-i386-freshrpms'] = packages['redhat-72-i386']
+sourceslist['redhat-72-i386-freshrpms'] = {
+    'redhat-72-i386': ('os', 'freshrpms', )
+}
+config['redhat-72-i386-freshrpms'] = config['redhat-72-i386']
+aliases['redhat-72-i386-freshrpms'] = ('rh72fr', )
+
+# Red Hat Linux 7.2, updates + FreshRPMS
+packages['redhat-72-i386-updates-freshrpms'] = packages['redhat-72-i386']
+sourceslist['redhat-72-i386-updates-freshrpms'] = {
+    'redhat-72-i386': ('os', 'updates', 'freshrpms', )
+}
+config['redhat-72-i386-updates-freshrpms'] = config['redhat-72-i386-updates']
+aliases['redhat-72-i386-updates-freshrpms'] = ('rh72ufr', )
+
+# Red Hat Linux 7.2 with JPackage
+packages['redhat-72-i386-jpackage'] = deepcopy(packages['redhat-72-i386-updates'])
+packages['redhat-72-i386-jpackage']['base'] = packages['redhat-72-i386-jpackage']['base'] + ' java-1.4.2-sun'
+packages['redhat-72-i386-jpackage']['build'] = packages['redhat-72-i386-jpackage']['build'] + ' gcc-c++ java-1.4.2-sun-devel'
+sourceslist['redhat-72-i386-jpackage'] = {
+    'redhat-72-i386':
+    sourceslist['redhat-72-i386-updates']['redhat-72-i386'] +
+    ('jpackage-generic', 'jpackage-rh72', 'jpackage-nonfree', ),
+}
+config['redhat-72-i386-jpackage'] = config['redhat-72-i386-updates']
+aliases['redhat-72-i386-jpackage'] = ('rh72jpp', )
