@@ -10,7 +10,13 @@ function die() {
 if test -z "$UNAME_CHECKED" -a "$USE_NT_SYMLINK"; then
     export UNAME_CHECKED=true
     function do_ln_1() {
-        cmd.exe /c mklink  "$1" "$2"
+        if test "$1" = -d; then
+            dirf=/d
+        else
+            dirf=
+        fi
+        shift
+        cmd.exe /c mklink $dirf  "$1" "$2"
     }
 
     export -f do_ln_1
@@ -78,7 +84,12 @@ if test -z "$UNAME_CHECKED" -a "$USE_NT_SYMLINK"; then
             elif test -e $dest; then
                 die "$dest already exist"
             fi
-            do_ln_1 "$(cygpath -wa "$dest")" "$(cygpath -wa "${args[$n]}")"
+            if test -d "${args[$n]}"; then
+                dirf=-d
+            else
+                dirf=-f
+            fi
+            do_ln_1 $dirf "$(cygpath -wa "$dest")" "$(cygpath -wa "${args[$n]}")"
         done
     }
     export -f ln
