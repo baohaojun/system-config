@@ -12,6 +12,9 @@ while test "$x"; do
     x=${x:1}
     if test "$y" = \\; then
         y=backslash
+    elif test "$y" = "
+"; then
+        y=ret
     fi
     sawfish-client -e '(synthesize-event "'"$y"'" (car (window-order)))'
 done

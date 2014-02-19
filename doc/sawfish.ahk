@@ -20,8 +20,9 @@
 ;                                m => ["emacs\@", "bash -c emacs"],
 ;                                t => [q(ahk_class mintty), "bash -c ~/bin/windows/start-putty.sh"],
 ;                                r => ["RunBhjRun", "runbhjrun"],
+;                                c => ["no such window", "c:/python2/pythonw.exe c:/find_exec.py \"\""],
 ;                            );
-;           foreach (keys %key_win_progs) {
+;           foreach (sort keys %key_win_progs) {
 ;              ($key, $win, $prog) = ($_, @{$key_win_progs{$_}});
 ;               print <<EOF;
 ;#$key\::
@@ -44,33 +45,18 @@
 ;'
 ;        end code-generator */
       ;; start generated code
-#t::
+#c::
   If A_PriorHotkey = #h
   {
     SetTitleMatchMode,2
-    IfWinExist, ahk_class mintty
+    IfWinExist, no such window
       WinActivate
     else
-      Run bash -c ~/bin/windows/start-putty.sh
+      Run c:/python2/pythonw.exe c:/find_exec.py ""
   }
   else
   {
-    SendInput ^{t}
-  }
-  return
-
-#n::
-  If A_PriorHotkey = #h
-  {
-    SetTitleMatchMode,2
-    IfWinExist, Mozilla Firefox
-      WinActivate
-    else
-      Run firefox
-  }
-  else
-  {
-    SendInput ^{n}
+    SendInput ^{c}
   }
   return
 
@@ -89,6 +75,21 @@
   }
   return
 
+#n::
+  If A_PriorHotkey = #h
+  {
+    SetTitleMatchMode,2
+    IfWinExist, Mozilla Firefox
+      WinActivate
+    else
+      Run firefox
+  }
+  else
+  {
+    SendInput ^{n}
+  }
+  return
+
 #r::
   If A_PriorHotkey = #h
   {
@@ -101,6 +102,21 @@
   else
   {
     SendInput ^{r}
+  }
+  return
+
+#t::
+  If A_PriorHotkey = #h
+  {
+    SetTitleMatchMode,2
+    IfWinExist, ahk_class mintty
+      WinActivate
+    else
+      Run bash -c ~/bin/windows/start-putty.sh
+  }
+  else
+  {
+    SendInput ^{t}
   }
   return
 
@@ -161,10 +177,6 @@ return
 
 #b::
   SendInput ^{b}
-  return
-
-#c::
-  SendInput ^{c}
   return
 
 #e::
