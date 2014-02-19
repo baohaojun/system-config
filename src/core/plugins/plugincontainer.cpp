@@ -104,23 +104,8 @@ const QList<SnorePlugin::PluginTypes> &PluginContainer::types()
     return t;
 }
 
-void PluginContainer::updatePluginCache(bool force)
+void PluginContainer::updatePluginCache()
 {
-    QSystemSemaphore sema("cache_update", 1, QSystemSemaphore::Open);
-    if(sema.acquire())
-    {
-        cache().sync();
-        if(!force && cache().value("version").toString() == Version::revision())
-        {
-            sema.release();
-            return;
-        }
-    }
-    else
-    {
-        qFatal("Failed to lock cache");
-    }
-
     snoreDebug( SNORE_DEBUG ) << "Updating plugin cache";
     foreach(PluginContaienrHash list, s_pluginCache)
     {
@@ -174,7 +159,6 @@ void PluginContainer::updatePluginCache(bool force)
     }
     cache().endArray();
     cache().sync();
-    sema.release();
 }
 
 void PluginContainer::loadPluginCache()
@@ -194,7 +178,7 @@ void PluginContainer::loadPluginCache()
         {
             snoreDebug( SNORE_WARNING ) << "Cache Corrupted" << fileName << cache().value("name").toString() << type;
             cache().endArray();
-            updatePluginCache(true);
+            updatePluginCache();
             return;
         }
     }

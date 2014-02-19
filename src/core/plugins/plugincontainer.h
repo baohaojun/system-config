@@ -56,7 +56,7 @@ public:
 private:
     static QHash<SnorePlugin::PluginTypes, PluginContaienrHash > s_pluginCache;
 
-    void static updatePluginCache(bool force = false);
+    void static updatePluginCache();
     void static loadPluginCache();
     static const QDir &pluginDir();
     static inline const QString pluginExtention()
