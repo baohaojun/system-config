@@ -124,7 +124,7 @@ void TrayIcon::sloutUpdateTestNotification()
     Notification noti = m_notifications.take(timer);
     Notification update(noti, "Hello World",
                         "<b>This is Snore</b><br>"
-                        "<u>This icon is in color</u><br>"
+                        "<u>This icon is quite a long line of text, isnt it I think it is what do you think? btw the icon should be in color</u><br>"
                         "<a href=\"https://github.com/TheOneRing/Snorenotify\">Project Website</a>", Icon("http://jweatherwatch.googlecode.com/svn/trunk/iconset/04.png"));
     m_snore->broadcastNotification(update);
     timer->deleteLater();
