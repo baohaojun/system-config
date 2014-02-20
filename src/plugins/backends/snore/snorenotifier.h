@@ -43,6 +43,7 @@ public slots:
 private slots:
     void slotDismissed();
     void slotInvoked();
+    void slotProcessQueue();
 
     void setup();
 
@@ -50,6 +51,7 @@ private:
 
     QList<Snore::Notification> m_queue;
     QVector<NotifyWidget*> m_widgets;
+    QTimer *m_timer;
 
 
 };

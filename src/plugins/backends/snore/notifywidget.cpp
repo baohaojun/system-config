@@ -30,9 +30,21 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     QWidget(parent, Qt::SplashScreen | Qt::WindowStaysOnTopHint),
     ui(new Ui::NotifyWidget),
     m_desktop(QDesktopWidget().availableGeometry()),
-    m_id(pos)
+    m_id(pos),
+    m_mem(QString("SnoreNotifyWidget%1").arg(QString::number(m_id)))
 {
     ui->setupUi(this);
+    if(m_mem.create(sizeof(SHARED_MEM_TYPE)))
+    {
+        m_mem.lock();
+        bool *data = (bool*)m_mem.data();
+        *data = true;
+        m_mem.unlock();
+    }
+    else
+    {
+        m_mem.attach();
+    }
 
     TomahawkUtils::DpiScaler::setFontSize(10);
     m_scaler = new TomahawkUtils::DpiScaler(this);
@@ -40,11 +52,13 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
 
     setFixedSize( m_scaler->scaled(300, 80));
 
-    m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + (m_scaler->scaledY(10) + height()) * pos);
+    m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + m_scaler->scaledY(10) + (m_scaler->scaledY(10) + height()) * pos);
+    m_start = QPoint(m_desktop.topRight().x(), m_dest.y());
 }
 
 NotifyWidget::~NotifyWidget()
 {
+    release();
     delete m_scaler;
     delete ui;
 }
@@ -52,13 +66,13 @@ NotifyWidget::~NotifyWidget()
 void NotifyWidget::display(const Notification &notification)
 {
     update(notification);
-    move(m_desktop.topRight().x(), m_desktop.topRight().y() + (m_scaler->scaledY(10) + height()) * m_id);
+    move(m_start);
     show();
     m_moveTimer = new QTimer(this);
     m_moveTimer->setInterval(2);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
     m_moveTimer->start();
-    snoreDebug( SNORE_DEBUG ) << size();
+    snoreDebug( SNORE_DEBUG ) << notification;
 
 }
 
@@ -75,6 +89,35 @@ void NotifyWidget::update(const Notification &notification)
     QImage img = notification.application().icon().image().scaled(iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     ui->appIcon->setPixmap(QPixmap::fromImage(img));
     setPalette(img);
+}
+
+bool NotifyWidget::acquire()
+{
+    bool out = false;
+    m_mem.lock();
+    bool *data = (bool*)m_mem.data();
+    if(*data)
+    {
+        *data = false;
+        out = true;
+    }
+    m_mem.unlock();
+    return out;
+}
+
+bool NotifyWidget::release()
+{
+    snoreDebug( SNORE_DEBUG ) << notification();
+    bool out = false;
+    m_mem.lock();
+    bool *data = (bool*)m_mem.data();
+    if(!*data)
+    {
+        *data = true;
+        out = true;
+    }
+    m_mem.unlock();
+    return out;
 }
 
 Notification &NotifyWidget::notification()

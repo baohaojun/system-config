@@ -22,6 +22,7 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QSharedMemory>
 #include "core/notification/notification.h"
 #include "DpiScaler.h"
 
@@ -29,6 +30,7 @@ namespace Ui {
 class NotifyWidget;
 }
 
+typedef bool SHARED_MEM_TYPE;
 class NotifyWidget : public QWidget
 {
     Q_OBJECT
@@ -40,9 +42,13 @@ public:
     void display(const Snore::Notification &notification);
     void update(const Snore::Notification &notification);
 
+    bool acquire();
+    bool release();
+
     Snore::Notification &notification();
 
     int id();
+
 
 
 signals:
@@ -65,11 +71,13 @@ private:
     Ui::NotifyWidget *ui;
     QTimer *m_moveTimer;
     QPoint m_dest;
+    QPoint m_start;
     QRect m_desktop;
     TomahawkUtils::DpiScaler *m_scaler;
     Snore::Notification m_notification;
 
     int m_id;
+    QSharedMemory m_mem;
 };
 
 #endif // NOTIFYWIDGET_H

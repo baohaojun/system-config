@@ -299,11 +299,16 @@ inline QDebug operator<< ( QDebug debug, const Snore::Notification &noti )
 {
     if(noti.isValid())
     {
-        debug << "Snore::Notification(" << noti.title() << ", " << noti.text() << "," << noti.id() << ")" ;
+        debug.nospace() << "Snore::Notification(" << noti.title() << ", " << noti.text() << ", id = " << noti.id();
+        if(noti.isUpdate())
+        {
+            debug << ", oldID = " << noti.old().id();
+        }
+        debug << ")" ;
     }
     else
     {
-        debug << "Snore::Notification(0x00)" ;
+        debug.nospace() << "Snore::Notification(0x00)" ;
     }
     return debug.maybeSpace();
 }
