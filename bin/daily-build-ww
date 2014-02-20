@@ -11,9 +11,14 @@ else
     exit
 fi
 
-WHICH_COW='precise i386' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
-rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)/
-WHICH_COW='precise amd64' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
-rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)/
+(
+    set -e
+    WHICH_COW='precise i386' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
+    rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)/
+    WHICH_COW='precise amd64' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
+    rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)/
 
-rsync ~/.cache/$me.log.$$ bhj-win7:/var/www/linux-wangwang/$(today)/git-svn.log
+    rsync ~/.cache/$me.log.$$ bhj-win7:/var/www/linux-wangwang/$(today)/git-svn.log
+) > ~/.logs/$me.build.log 2>&1 || (
+    mailx '"Linux旺旺开发邮件列表" <linux-wangwang-dev@list.alibaba-inc.com>' -s 'Linux wangwang 日常编译失败' -a ~/.logs/$me.build.log </dev/null
+)

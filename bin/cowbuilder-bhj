@@ -31,7 +31,7 @@ if test $(basename $0) != cowbuilder-bhj; then
         su - bhj -c './system-config/bin/after-co-ln-s.sh'
         su - bhj -c '
         cd /home/bhj/src/github/lww/AliWangWangLinux_back
-        BUILD_DEB=true ./make.sh' || bash
+        BUILD_DEB=true ./make.sh'
     fi
     exit
 fi
