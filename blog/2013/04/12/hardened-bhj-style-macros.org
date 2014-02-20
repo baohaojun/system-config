@@ -74,7 +74,7 @@ for line in ini_file:
    #+BEGIN_EXAMPLE
    t command open -a /Applications/Utilities/Terminal.app/
    n command open -a /Applications/Firefox.app/
-   m command open -a /Applications/Emacs.app/
+   m command open -a /Applications/MacPorts/Emacs.app/
    #+END_EXAMPLE
    
    第一个域是主键名，第二个域是modifier键名，之后的是要运行的程序。见代
