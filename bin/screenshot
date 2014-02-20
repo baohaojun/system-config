@@ -11,4 +11,4 @@ mkdir -p ~/shots
 now=shots/"$now"
 scrot $select ~/"$now".png
 of ~/"$now".png
-up ~/"$now".png | putclip
+mp ~/"$now".png | putclip

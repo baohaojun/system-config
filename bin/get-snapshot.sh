@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-cd ${1:-.}
+cd ${1:-~/shots}
 
 ignore_pat='\.~.*#$'
 newest=$(ls -t -A | grep -v -e "$ignore_pat" | head -n 1)
