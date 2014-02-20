@@ -2,7 +2,7 @@
 
 case "$1" in
      emacs)
-        open -a /Applications/Emacs.app
+        open -a /Applications/MacPorts/Emacs.app
         ;;
     konsole)
         open -a /Applications/Utilities/Terminal.app

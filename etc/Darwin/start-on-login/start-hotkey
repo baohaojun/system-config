@@ -1,3 +1,6 @@
 #!/bin/bash
 
-open -a ~/Applications/DDHotKey.app
+while true; do
+    open -W ~/Applications/DDHotKey.app
+    sleep 2
+done&

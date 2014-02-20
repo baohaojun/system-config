@@ -1,0 +1,14 @@
+#!/bin/bash
+sleep 1
+
+select=-s
+
+if test "$1" = focused; then
+    select=-w
+fi
+now=`now|perl -npe 's/:/./g'`
+mkdir -p ~/shots
+now=shots/"$now"
+screencapture $select ~/"$now".png
+of ~/"$now".png
+mp ~/"$now".png | putclip
