@@ -31,7 +31,8 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     ui(new Ui::NotifyWidget),
     m_desktop(QDesktopWidget().availableGeometry()),
     m_id(pos),
-    m_mem(QString("SnoreNotifyWidget%1").arg(QString::number(m_id)))
+    m_mem(QString("SnoreNotifyWidget%1").arg(QString::number(m_id))),
+    m_ready(true)
 {
     ui->setupUi(this);
     if(m_mem.create(sizeof(SHARED_MEM_TYPE)))
@@ -43,7 +44,14 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     }
     else
     {
-        m_mem.attach();
+        if(!m_mem.attach())
+        {
+            qFatal("Failed to atatche to shared mem");
+        }
+        m_mem.lock();
+        bool *data = (bool*)m_mem.data();
+        m_mem.unlock();
+        snoreDebug( SNORE_DEBUG ) << "Status" << *data;
     }
 
     TomahawkUtils::DpiScaler::setFontSize(10);
@@ -58,7 +66,6 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
 
 NotifyWidget::~NotifyWidget()
 {
-    release();
     delete m_scaler;
     delete ui;
 }
@@ -94,29 +101,38 @@ void NotifyWidget::update(const Notification &notification)
 bool NotifyWidget::acquire()
 {
     bool out = false;
-    m_mem.lock();
-    bool *data = (bool*)m_mem.data();
-    if(*data)
+    if(m_ready)
     {
-        *data = false;
-        out = true;
+        snoreDebug( SNORE_DEBUG ) << m_id;
+        m_mem.lock();
+        bool *data = (bool*)m_mem.data();
+        if(*data)
+        {
+            *data = false;
+            m_ready = false;
+            out = true;
+        }
+        m_mem.unlock();
     }
-    m_mem.unlock();
     return out;
 }
 
 bool NotifyWidget::release()
 {
-    snoreDebug( SNORE_DEBUG ) << notification();
     bool out = false;
-    m_mem.lock();
-    bool *data = (bool*)m_mem.data();
-    if(!*data)
+    if(!m_ready)
     {
-        *data = true;
-        out = true;
+        snoreDebug( SNORE_DEBUG ) << m_id;
+        m_mem.lock();
+        bool *data = (bool*)m_mem.data();
+        if(!*data)
+        {
+            *data = true;
+            m_ready = true;
+            out = true;
+        }
+        m_mem.unlock();
     }
-    m_mem.unlock();
     return out;
 }
 

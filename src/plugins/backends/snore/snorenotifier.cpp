@@ -159,6 +159,7 @@ bool SnoreNotifier::deinitialize()
     {
         for(int i=0;i<m_widgets.size();++i)
         {
+            m_widgets[i]->release();
             m_widgets[i]->deleteLater();
         }
         m_timer->deleteLater();

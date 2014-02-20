@@ -78,6 +78,7 @@ private:
 
     int m_id;
     QSharedMemory m_mem;
+    bool m_ready;
 };
 
 #endif // NOTIFYWIDGET_H
