@@ -48,6 +48,8 @@ public:
     const QString &name();
     SnorePlugin::PluginTypes type();
 
+    bool isLoaded() const;
+
 
     static SnorePlugin::PluginTypes typeFromString(const QString &t);
     static QString typeToString(const SnorePlugin::PluginTypes t);

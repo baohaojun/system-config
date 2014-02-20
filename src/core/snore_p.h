@@ -53,8 +53,6 @@ public:
     bool setBackendIfAvailible(const QString & backend);
 
 
-
-
     /**
      *
      * @return whether the backend can update a notification
@@ -68,6 +66,7 @@ signals:
 
 private slots:
     void slotNotificationClosed(Snore::Notification);
+    void slotAboutToQuit();
 
 private:
     SnoreCore *q_ptr;

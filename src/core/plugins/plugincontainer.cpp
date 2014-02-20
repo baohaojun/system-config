@@ -52,7 +52,7 @@ PluginContainer::~PluginContainer()
 
 SnorePlugin *PluginContainer::load()
 {
-    if ( !m_loader.load())
+    if(!m_loader.isLoaded() && !m_loader.load())
     {
         snoreDebug( SNORE_WARNING ) << "Failed loading plugin: " << m_loader.errorString();
         return NULL;
@@ -78,6 +78,11 @@ const QString & PluginContainer::name()
 SnorePlugin::PluginTypes PluginContainer::type()
 {
     return m_pluginType;
+}
+
+bool PluginContainer::isLoaded() const
+{
+    return m_loader.isLoaded();
 }
 
 SnorePlugin::PluginTypes PluginContainer::typeFromString(const QString &t)

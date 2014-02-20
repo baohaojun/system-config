@@ -23,7 +23,10 @@
 #include "plugins/plugins.h"
 #include "plugins/snorebackend.h"
 #include "plugins/snorefrontend.h"
+#include "plugins/plugincontainer.h"
 #include "notification/notification_p.h"
+
+#include <QApplication>
 
 using namespace Snore;
 
@@ -32,6 +35,7 @@ SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
     m_defaultApp("SnoreNotify",Icon(":/root/snore.png"))
 {
     m_defaultApp.addAlert(Alert("Default",Icon(":/root/snore.png")));
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
 }
 
 SnoreCorePrivate::~SnoreCorePrivate()
@@ -82,6 +86,17 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
     if(n.data()->source())
     {
         n.data()->source()->notificationClosed(n);
+    }
+}
+
+void SnoreCorePrivate::slotAboutToQuit()
+{
+    foreach (PluginContainer *p, PluginContainer::pluginCache(SnorePlugin::ALL))
+    {
+        if(p->isLoaded())
+        {
+            p->load()->deinitialize();
+        }
     }
 }
 
