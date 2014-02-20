@@ -19,7 +19,7 @@ const QString Version::suffix(){
 }
 
 const QString Version::revision(){
-    return QLatin1String("${SNORE_REVISION}");
+    return QLatin1String("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}${SNORE_VERSION_SUFFIX}-${SNORE_REVISION}");
 }
 
 const QString Version::buildTime(){
