@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+cd ~/src/github/lww/
+. .gitx
+git pull
+
+me=$(basename $0)
+if git log --since $(today -1) | tee ~/.cache/$me.log.$$ | grep -q .; then
+    true;
+else
+    exit
+fi
+
+WHICH_COW='precise i386' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
+rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)/
+WHICH_COW='precise amd64' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
+rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)/
+
+rsync ~/.cache/$me.log.$$ bhj-win7:/var/www/linux-wangwang/$(today)/git-svn.log
