@@ -27,7 +27,7 @@
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
-    QWidget(parent, Qt::Popup | Qt::WindowStaysOnTopHint),
+    QWidget(parent, Qt::Window | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus),
     ui(new Ui::NotifyWidget),
     m_moveTimer(new QTimer(this)),
     m_desktop(QDesktopWidget().availableGeometry()),
@@ -84,13 +84,11 @@ void NotifyWidget::display(const Notification &notification)
     snoreDebug( SNORE_DEBUG ) << notification.id();
     move(m_start);
     show();
-
 }
 
 void NotifyWidget::update(const Notification &notification)
 {
     m_notification = notification;
-    snoreDebug( SNORE_DEBUG ) << notification.id();
     ui->titel->setText(notification.title());
     ui->body->setText(notification.text());
 
