@@ -72,7 +72,7 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     m_moveTimer->setInterval(2);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0) || !Q_OS_WIN32//ugly bug in qt4 makes the widget resize
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0) || !defined(Q_OS_WIN32)//ugly bug in qt4 makes the widget resize
     ui->titel->setWordWrap(true);
     ui->body->setWordWrap(true);
 #endif
