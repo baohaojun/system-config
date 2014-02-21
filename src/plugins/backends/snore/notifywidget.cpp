@@ -27,7 +27,11 @@
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
-    QWidget(parent, Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus),
+    QWidget(parent, Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint
+            #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+            | Qt::WindowDoesNotAcceptFocus
+            #endif
+            ),
     ui(new Ui::NotifyWidget),
     m_moveTimer(new QTimer(this)),
     m_desktop(QDesktopWidget().availableGeometry()),
@@ -68,6 +72,11 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     m_moveTimer->setInterval(2);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)//ugly bug in qt4 makes the widget resize
+    ui->titel->setWordWrap(true);
+    ui->body->setWordWrap(true);
+#endif
+
 }
 
 NotifyWidget::~NotifyWidget()
@@ -78,7 +87,7 @@ NotifyWidget::~NotifyWidget()
 
 void NotifyWidget::display(const Notification &notification)
 {
-    update(notification);    
+    update(notification);
     m_dist = 0;
     m_moveTimer->start();
     snoreDebug( SNORE_DEBUG ) << notification.id();
