@@ -27,7 +27,7 @@
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
-    QWidget(parent, Qt::Window | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus),
+    QWidget(parent, Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus),
     ui(new Ui::NotifyWidget),
     m_moveTimer(new QTimer(this)),
     m_desktop(QDesktopWidget().availableGeometry()),
