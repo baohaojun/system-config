@@ -27,8 +27,9 @@
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
-    QWidget(parent, Qt::SplashScreen | Qt::WindowStaysOnTopHint),
+    QWidget(parent, Qt::Popup | Qt::WindowStaysOnTopHint),
     ui(new Ui::NotifyWidget),
+    m_moveTimer(new QTimer(this)),
     m_desktop(QDesktopWidget().availableGeometry()),
     m_id(pos),
     m_mem(QString("SnoreNotifyWidget%1").arg(QString::number(m_id))),
@@ -62,6 +63,11 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
 
     m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + m_scaler->scaledY(10) + (m_scaler->scaledY(10) + height()) * pos);
     m_start = QPoint(m_desktop.topRight().x(), m_dest.y());
+    snoreDebug( SNORE_DEBUG ) << m_dest << m_start << size();
+
+    m_moveTimer->setInterval(2);
+    connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
+
 }
 
 NotifyWidget::~NotifyWidget()
@@ -72,20 +78,19 @@ NotifyWidget::~NotifyWidget()
 
 void NotifyWidget::display(const Notification &notification)
 {
-    update(notification);
+    update(notification);    
+    m_dist = 0;
+    m_moveTimer->start();
+    snoreDebug( SNORE_DEBUG ) << notification.id();
     move(m_start);
     show();
-    m_moveTimer = new QTimer(this);
-    m_moveTimer->setInterval(2);
-    connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
-    m_moveTimer->start();
-    snoreDebug( SNORE_DEBUG ) << notification;
 
 }
 
 void NotifyWidget::update(const Notification &notification)
 {
     m_notification = notification;
+    snoreDebug( SNORE_DEBUG ) << notification.id();
     ui->titel->setText(notification.title());
     ui->body->setText(notification.text());
 
@@ -132,6 +137,7 @@ bool NotifyWidget::release()
             out = true;
         }
         m_mem.unlock();
+        hide();
     }
     return out;
 }
@@ -148,23 +154,22 @@ int NotifyWidget::id()
 
 void NotifyWidget::slotMove()
 {
-    move(pos().x()-1, pos().y());
-    if(m_dest == pos())
+    QPoint dest(m_start.x() - m_dist++, m_start.y());
+    move(dest);
+    if(m_dist >= width())
     {
-        m_moveTimer->deleteLater();
+        m_moveTimer->stop();
     }
 }
 
 void NotifyWidget::on_closeButton_clicked()
 {
     emit dismissed();
-    hide();
 }
 
 void NotifyWidget::mousePressEvent(QMouseEvent *)
 {
     emit invoked();
-    hide();
 }
 
 void NotifyWidget::setPalette(const QImage &img)
@@ -197,4 +202,9 @@ void NotifyWidget::setPalette(const QImage &img)
     ui->closeButton->setPalette(p);
     ui->body->setPalette(p);
     ui->titel->setPalette(p);
+}
+
+void NotifyWidget::on_body_linkActivated(const QString &link)
+{
+    snoreDebug( SNORE_DEBUG ) << link;
 }

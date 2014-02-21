@@ -60,6 +60,8 @@ private slots:
 
     void on_closeButton_clicked();
 
+    void on_body_linkActivated(const QString &link);
+
 protected:
     void mousePressEvent(QMouseEvent *e);
 
@@ -72,6 +74,7 @@ private:
     QTimer *m_moveTimer;
     QPoint m_dest;
     QPoint m_start;
+    int m_dist;
     QRect m_desktop;
     TomahawkUtils::DpiScaler *m_scaler;
     Snore::Notification m_notification;
