@@ -27,7 +27,7 @@
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
-    QWidget(parent, Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint
+    QWidget(parent, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint
             #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
             | Qt::WindowDoesNotAcceptFocus
             #endif
