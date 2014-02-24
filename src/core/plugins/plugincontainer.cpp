@@ -194,7 +194,7 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
 {
     if(s_pluginCache.isEmpty())
     {
-        if(cache().value("version").toString() != Version::revision() || !qgetenv("LIBSNORE_FORCE_CHACHE_UPDATE").isNull())
+        if(cache().value("version").toString() != Version::revision() || qgetenv("LIBSNORE_FORCE_CHACHE_UPDATE").toInt() == 1)
         {
             updatePluginCache();
         }
