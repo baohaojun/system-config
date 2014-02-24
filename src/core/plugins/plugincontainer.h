@@ -102,6 +102,7 @@ private:
         if(_cache == NULL)
         {
             _cache = new QSettings("SnoreNotify","libsnore");
+            snoreDebug( SNORE_DEBUG ) << _cache->fileName();
             _cache->beginGroup( SnoreCorePrivate::computeHash(pluginDir().absolutePath().toLatin1()));
         }
         return *_cache;

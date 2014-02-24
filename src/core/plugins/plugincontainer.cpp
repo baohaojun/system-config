@@ -227,9 +227,9 @@ const QDir &PluginContainer::pluginDir()
         QString appDir = qApp->applicationDirPath();
         QStringList list;
 #ifdef Q_OS_MAC
-        list << appDir;
         if ( appDir == "MacOS" )
         {
+            list << appDir;
             QDir dir(appDir);
             // Development convenience-hack
             dir.cdUp();

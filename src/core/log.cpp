@@ -92,15 +92,15 @@ SnoreLog::SnoreLog(SnoreDebugLevels lvl):
 
 SnoreLog::~SnoreLog()
 {
-    if(Loger::debugLvl() >= m_lvl)
-    {
-        Loger::outStream() << m_msg << "\n";
-        Loger::outStream().flush();
-    }
     if(Loger::isLogToFileEnabled())
     {
         Loger::logFile() << m_msg << "\n";
         Loger::logFile().flush();
+    }
+    if(Loger::debugLvl() >= m_lvl)
+    {
+        Loger::outStream() << m_msg << "\n";
+        Loger::outStream().flush();
     }
 }
 
