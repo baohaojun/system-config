@@ -1,2 +1,12 @@
 #!/bin/bash
-mach yum install autoconf bison gdb gettext git-svn libnotify-devel libuuid-devel libXext-devel ncurses-devel openssl-devel openssl-libs qconf qt4 qt4-devel  qt-devel rsync strace texinfo uuid-c++-devel uuid-devel qtwebkit-devel
+
+umask 002
+mach yum install autoconf bison gdb gettext git-svn libnotify-devel libuuid-devel libXext-devel ncurses-devel openssl-devel openssl-libs qconf qt4 qt4-devel  qt-devel rsync strace texinfo uuid-c++-devel uuid-devel qtwebkit-devel qjson-devel
+
+cd ~/src/github/lww
+git clean -xfd
+rsync AliWangWangLinux_back/* aliwangwang-1.0.0 -av
+cp ./aliwangwang-1.0.0/aliwangwang.spec .
+tar czfv ./aliwangwang-1.0.0.tar.gz aliwangwang-1.0.0
+sudo rm /var/lib/mach/roots/fedora-development-x86_64-core/usr/src/rpm/*/* -rf
+mach build -ba --nodeps -v *.spec
