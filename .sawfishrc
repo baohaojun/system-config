@@ -262,7 +262,9 @@
  '(0 1 2 3 4 5 6 7 8 9))
 
 (setq super-key-window-remap
-      '(("v" . ((t . "S-Insert")))
+      '(("v" . ((Dia . "C-v")
+                (t . "S-Insert")))
+        ("y" . ((Dia . "S-C-z")))
         ("c" . ((Emacs . "M-w")
                 (Konsole . "C-S-c")
                 (Xfce4-terminal . "C-S-c")
@@ -275,7 +277,7 @@
 
 (setq gnome-windows-re "gnome-terminal|nautilus|evince")
 
-(defun rewrite-event-for-xtool (event)
+(defun rewrite-event-for-xdotool (event)
   (let* ((keys-break-down (string-split "-" event))
          (modifiers (reverse (cdr (reverse keys-break-down))))
          (main-key (last keys-break-down))
@@ -291,11 +293,15 @@
         ((Super)
          (setq result (concat result "super+"))))
       (setq modifiers (cdr modifiers)))
+    (cond
+     ((string= main-key "RET")
+      (setq main-key "Return")))
+    (message (format nil "send: %S" (concat result main-key)))
     (setq result (concat result main-key))))
 
 (defun synthesize-event-gnome? (event window)
   (if bhj-is-gnome?
-      (system (concat "xdotool-when-keyboard-clear key " (rewrite-event-for-xtool event)))
+      (system (concat "xdotool-when-keyboard-clear key " (rewrite-event-for-xdotool event)))
     (synthesize-event event window)))
 
 (mapc
@@ -314,7 +320,7 @@
                             map-to)
 
                     (synthesize-event-gnome? map-to (input-focus)))))))
- '("t" "w" "n" "c" "v" "l" "r" "s" "d"))
+ '("a" "b" "c" "d" "e" "f" "g" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"))
 
 (bind-keys global-keymap "Super-Insert"  '(system "send-key&"))
 (bind-keys global-keymap "Super-S-RET"  '(system "send-key&"))
@@ -448,3 +454,5 @@
             (setq c (1+ c)
                   cs (format nil "%c" c)))))
       '((?a . ?z) (?A . ?Z)))
+
+(bind-keys esc-x-keymap "RET" '(synthesize-event-gnome? "M-RET" (input-focus)))

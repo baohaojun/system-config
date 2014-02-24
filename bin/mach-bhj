@@ -1,0 +1,2 @@
+#!/bin/bash
+mach yum install autoconf bison gdb gettext git-svn libnotify-devel libuuid-devel libXext-devel ncurses-devel openssl-devel openssl-libs qconf qt4 qt4-devel  qt-devel rsync strace texinfo uuid-c++-devel uuid-devel qtwebkit-devel

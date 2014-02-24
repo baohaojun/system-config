@@ -2,7 +2,24 @@
 set -e
 cd ~/src/github/lww/
 . .gitx
+git reset --hard
 git pull
+
+version=$(
+    git log -1 |perl -e '
+    $x = join("", <>);
+    if ($x =~ m/git-svn-id:.*\@(\d+)/) {
+       print "svn-$1";
+       exit;
+   } elsif ($x =~ m/^commit ([a-f0-9A-F]{6})/) {
+       print "git-$1";
+       exit;
+   } else {
+       print "unknown"
+   }'
+)
+
+perl -npe "s/%version is read from git-svn-log%/$version/" -i AliWangWangLinux_back/src/gui/main.cpp
 
 me=$(basename $0)
 if git log --since $(today -1) | tee ~/.cache/$me.log.$$ | grep -q .; then

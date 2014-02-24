@@ -7,7 +7,7 @@ mkdir -p ~/.config
 
 if test ~ != $OLDHOME; then
     ln -s $OLDHOME/.config/ibus ~/.config/ -f >/dev/null 2>&1
-    cp $OLDHOME/.gdbinit ~/
+    cp $OLDHOME/src/github/lww/.gdbinit ~/
 fi
 
 "$@"

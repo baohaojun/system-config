@@ -23,7 +23,7 @@ aptsources[DIST] = {
 }
 
 yumsources[DIST] = {
-  'core':             fedorayum   + '/core/%s/%s/os'                  % (V, A),
+  'core':             fedorayum   + '/development/20/%s/os'                  % (A),
   'extras':           fedorayum   + '/extras/%s/%s'                   % (V, A),
   'freshrpms':        freshrpmsfd + '/%s/%s/freshrpms'                % (V, A),
   'livna':            livna       + '/fedora/%s/%s'                   % (V, A),
