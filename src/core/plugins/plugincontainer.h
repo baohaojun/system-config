@@ -61,15 +61,19 @@ private:
     void static updatePluginCache();
     void static loadPluginCache();
     static const QDir &pluginDir();
-    static inline const QString pluginExtention()
+    static inline const QStringList pluginExtentions()
     {
-#if defined(Q_OS_LINUX)
-        return QLatin1String("so");
-#elif defined(Q_OS_WIN)
-        return QLatin1String("dll");
-#elif defined(Q_OS_MAC)
-        return QLatin1String("dylib");
+        QStringList out;
+#if defined(Q_OS_UNIX)
+        out << QLatin1String("so");
 #endif
+#if defined(Q_OS_WIN)
+        out << QLatin1String("dll");
+#endif
+#if defined(Q_OS_MAC)
+        out << QLatin1String("dylib");
+#endif
+        return out;
     }
     static inline QSettings &cache()
     {

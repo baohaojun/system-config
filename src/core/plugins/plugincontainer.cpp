@@ -126,28 +126,31 @@ void PluginContainer::updatePluginCache()
 
     foreach(const SnorePlugin::PluginTypes type,PluginContainer::types())
     {
-        foreach(const QFileInfo &file, pluginDir().entryInfoList(
-                    QStringList(QString("libsnore_%1_*.%2").arg(typeToString(type).toLower(), pluginExtention())), QDir::Files))
+        foreach(const QString extention,  pluginExtentions())
         {
-            snoreDebug( SNORE_DEBUG ) << "adding" << file.absoluteFilePath();
-            QPluginLoader loader(file.absoluteFilePath());
-            QObject *plugin = loader.instance();
-            if (plugin == NULL)
+            foreach(const QFileInfo &file, pluginDir().entryInfoList(
+                        QStringList(QString("libsnore_%1_*.%2").arg(typeToString(type).toLower(), extention)), QDir::Files))
             {
-                snoreDebug( SNORE_WARNING ) << "Failed loading plugin: " << file.absoluteFilePath() << loader.errorString();
-                continue;
+                snoreDebug( SNORE_DEBUG ) << "adding" << file.absoluteFilePath();
+                QPluginLoader loader(file.absoluteFilePath());
+                QObject *plugin = loader.instance();
+                if (plugin == NULL)
+                {
+                    snoreDebug( SNORE_WARNING ) << "Failed loading plugin: " << file.absoluteFilePath() << loader.errorString();
+                    continue;
+                }
+                SnorePlugin *sp = qobject_cast<SnorePlugin*>(plugin);
+                if(sp == NULL)
+                {
+                    snoreDebug( SNORE_WARNING ) << "Error:" << file.absoluteFilePath() << " is not a Snore plugin" ;
+                    loader.unload();
+                    continue;
+                }
+                PluginContainer *info = new PluginContainer(file.fileName(), sp->name() ,type);
+                s_pluginCache[type].insert(info->name(), info);
+                plugins << info;
+                snoreDebug( SNORE_DEBUG ) << "added" << info->name() << "to cache";
             }
-            SnorePlugin *sp = qobject_cast<SnorePlugin*>(plugin);
-            if(sp == NULL)
-            {
-                snoreDebug( SNORE_WARNING ) << "Error:" << file.absoluteFilePath() << " is not a Snore plugin" ;
-                loader.unload();
-                continue;
-            }
-            PluginContainer *info = new PluginContainer(file.fileName(), sp->name() ,type);
-            s_pluginCache[type].insert(info->name(),info);
-            plugins << info;
-            snoreDebug( SNORE_DEBUG ) << "added" << info->name() << "to cache";
         }
     }
     cache().setValue("version",Version::revision());
@@ -224,25 +227,41 @@ const QDir &PluginContainer::pluginDir()
     static QDir *path = NULL;
     if(path == NULL)
     {
-        const QString appDir = qApp->applicationDirPath();
+        QString appDir = qApp->applicationDirPath();
         QStringList list;
-        list << QString("%1/../lib/libsnore").arg(appDir)
+#ifdef Q_OS_MAC
+        list << appDir;
+        if ( appDir == "MacOS" )
+        {
+            QDir dir(appDir);
+            // Development convenience-hack
+            dir.cdUp();
+            dir.cdUp();
+            dir.cdUp();
+            appDir = dir.absolutePath();
+        }
+#endif
+        list << appDir
+             << QString("%1/../lib/libsnore").arg(appDir)
              << QString("%1/../lib64/libsnore").arg(appDir)
-             << QLatin1String(LIBSNORE_PLUGIN_PATH)
-             << appDir;
+             << QLatin1String(LIBSNORE_PLUGIN_PATH);
         foreach(const QString &p, list)
         {
             QDir dir(p);
-            if(!dir.entryInfoList(QStringList(QString("libsnore_*.%1").arg(pluginExtention()))).isEmpty())
+            foreach(const QString extention,  pluginExtentions())
             {
-                path = new QDir(dir);
-                break;
-            }
-            else
-            {
-                snoreDebug( SNORE_DEBUG ) << "Possible pluginpath:" << dir.absolutePath() << "does not contain plugins.";
+                if(!dir.entryInfoList(QStringList(QString("libsnore_*.%1").arg(extention))).isEmpty())
+                {
+                    path = new QDir(dir);
+                    break;
+                }
+                else
+                {
+                    snoreDebug( SNORE_DEBUG ) << "Possible pluginpath:" << dir.absolutePath() << "does not contain plugins.";
+                }
             }
         }
+        Q_ASSERT_X(path != NULL, Q_FUNC_INFO, "Failed to find a plugin dir");
         snoreDebug( SNORE_INFO ) << "PluginPath is :" << path->absolutePath();
     }
     return *path;
