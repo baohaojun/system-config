@@ -75,6 +75,27 @@ private:
 #endif
         return out;
     }
+
+    static inline const QStringList pluginFileFilters()
+    {
+        QStringList out;
+        foreach(const QString extention,  pluginExtentions())
+        {
+            out << QString("libsnore_*.%1").arg(extention);
+        }
+        return out;
+    }
+
+    static inline const QStringList pluginFileFilters(Snore::SnorePlugin::PluginTypes type)
+    {
+        QStringList out;
+        foreach(const QString extention,  pluginExtentions())
+        {
+            out << QString("libsnore_%1_*.%2").arg(typeToString(type).toLower(), extention);
+        }
+        return out;
+    }
+
     static inline QSettings &cache()
     {
         static QSettings *_cache = NULL;
