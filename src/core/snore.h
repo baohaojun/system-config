@@ -37,13 +37,13 @@ class QSystemTrayIcon;
 /**
  * Snore is a platform independent Qt notification framework.
  *
- * Environment variables:
- * <table>
- * <tr><td>LIBSNORE_DEBUG_LVL</td><td>Value betwene 0 and 3 @see SnoreDebugLevels</td></tr>
- * <tr><td>LIBSNORE_LOG_TO_FILE</td><td>If 1 write to a logfile in tmp/libsnore/appname-log.txt</td></tr>
- * <tr><td>LIBSNORE_LOGFILE</td><td>Use with LIBSNORE_LOG_TO_FILE, sets the file to log to</td></tr>
- * <tr><td>LIBSNORE_FORCE_CHACHE_UPDATE</td><td>Always update the plugin cache</td></tr>
- * </table>
+ * Environment variable             | Effect
+ * ---------------------------------|-------------------------------
+ * LIBSNORE_DEBUG_LVL               |   Value betwene 0 and 3 @see SnoreDebugLevels
+ * LIBSNORE_LOG_TO_FILE             |   If 1 write to a logfile in tmp/libsnore/appname-log.txt
+ * LIBSNORE_LOGFILE                 |   Use with LIBSNORE_LOG_TO_FILE, sets the file to log to
+ * LIBSNORE_FORCE_CHACHE_UPDATE     |   Always update the plugin cache
+ *
  *
  * @author Patrick von Reth \<vonreth at kde.org\>
  */

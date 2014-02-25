@@ -94,10 +94,10 @@ public:
 
     /**
      * Returns application specific hints:
-     * <table>
-     * <tr><td>desktop-entry</td><td>The name of the desktop enty associated with the application</td><td>Used for The freedesktop backend</td></tr>
-     * <tr><td>windows-app-id</td><td>The app id associated with the application</td><td>Needed for the Windows 8 backend <a href="http://msdn.microsoft.com/en-us/library/windows/apps/dd378459.aspx">See MSDN</a></td></tr>
-     * </table>
+     * Key              |   Value       |   Required
+     * -------------    |   ----------- |   -----------
+     * desktop-entry    |   The name of the desktop enty associated with the application |  Used for The freedesktop backend
+     * windows-app-id   |   The app id associated with the application                   |  Needed for the Windows 8 backend [See MSDN Documentation](http://msdn.microsoft.com/en-us/library/windows/apps/dd378459.aspx)
      */
     Hint &hints();
 
