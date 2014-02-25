@@ -121,7 +121,6 @@ void SnoreNotifier::slotProcessQueue()
                 startTimeout(notification);
                 free = true;
             }
-            snoreDebug( SNORE_DEBUG ) << w << free;
         }
     }
 

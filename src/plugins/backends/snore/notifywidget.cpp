@@ -69,7 +69,7 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     m_start = QPoint(m_desktop.topRight().x(), m_dest.y());
     snoreDebug( SNORE_DEBUG ) << m_dest << m_start << size();
 
-    m_moveTimer->setInterval(2);
+    m_moveTimer->setInterval(1);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
 }
 
