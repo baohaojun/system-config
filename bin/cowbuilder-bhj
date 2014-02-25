@@ -19,7 +19,8 @@ if test $(basename $0) != cowbuilder-bhj; then
         libstring-approx-perl libstring-shellquote-perl \
         libtext-glob-perl liburi-encode-perl
 
-    apt-get install -y libssl-dev uuid-dev libnotify-dev libqtwebkit-dev libxext-dev gdb git-svn rsync
+    apt-get install -y libssl-dev uuid-dev libnotify-dev libqtwebkit-dev libxext-dev gdb git-svn rsync libqjson-dev
+
     echo "$user ALL=NOPASSWD: ALL" > /etc/sudoers.d/$user
     chmod 440 /etc/sudoers.d/$user
     useradd $user -u $uid -s /bin/bash
