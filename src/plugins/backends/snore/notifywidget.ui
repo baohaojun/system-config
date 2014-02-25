@@ -116,6 +116,9 @@
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
            <property name="indent">
             <number>0</number>
            </property>
@@ -165,7 +168,7 @@
           </font>
          </property>
          <property name="text">
-          <string>TextLabel</string>
+          <string notr="true">&lt;i&gt;This is Snore&lt;/i&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/TheOneRing/Snorenotify&quot;&gt;Project Website&lt;/a&gt;&lt;br&gt;1&lt;br&gt;2&lt;br&gt;3&lt;br&gt;4&lt;br&gt;5&lt;br&gt;</string>
          </property>
          <property name="textFormat">
           <enum>Qt::RichText</enum>
@@ -175,6 +178,9 @@
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
          <property name="margin">
           <number>0</number>

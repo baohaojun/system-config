@@ -71,12 +71,6 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
 
     m_moveTimer->setInterval(2);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
-
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0) || !defined(Q_OS_WIN32)//ugly bug in qt4 makes the widget resize
-    ui->titel->setWordWrap(true);
-    ui->body->setWordWrap(true);
-#endif
-
 }
 
 NotifyWidget::~NotifyWidget()
@@ -100,6 +94,7 @@ void NotifyWidget::update(const Notification &notification)
     m_notification = notification;
     ui->titel->setText(notification.title());
     ui->body->setText(notification.text());
+    ui->body->setFixedHeight((m_scaler->scaledY(40) / ui->body->fontInfo().pointSize()) * ui->body->fontInfo().pointSize());//round it by line height
 
     QSize iconSize = m_scaler->scaled(65,65);
     ui->icon->setPixmap(QPixmap::fromImage(notification.icon().image().scaled(iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
