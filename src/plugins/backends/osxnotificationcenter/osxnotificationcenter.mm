@@ -17,6 +17,7 @@ namespace {
     NSString *appID = @"dummyID.snorenotify";
 
     // make sure __bundleIdentifier is called on every NSBundle object instead of bundleIdentifier
+    // see http://stackoverflow.com/a/14698543
     bool installNSBundleHook() {
         Class cls = objc_getClass("NSBundle");
         if (cls) {
@@ -33,6 +34,7 @@ namespace {
 }
 
 // this category adds the __bundleIdentifier method to every NSBundle object
+// see http://stackoverflow.com/a/14698543
 @implementation NSBundle(snore)
 - (NSString *)__bundleIdentifier {
     return appID;
@@ -65,8 +67,8 @@ void OSXNotificationCenter::slotNotify(Snore::Notification notification)
 
 
     NSUserNotification *osx_notification = [[NSUserNotification alloc] init];
-    osx_notification.title = NSStringFromQString(notification.title());
-    osx_notification.informativeText = NSStringFromQString(notification.text());
+    osx_notification.title = NSStringFromQString(Snore::toPlainText(notification.title()));
+    osx_notification.informativeText = NSStringFromQString(Snore::toPlainText(notification.text()));
 
     [notification_center deliverNotification: osx_notification];
 
