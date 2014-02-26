@@ -19,7 +19,11 @@
 
 
 * 工作经历
-*** 2011年11月 - 目前
+*** 2013年9月 - 目前
+ *技术专家*, Alibaba, 北京
+
+- 在技术质量部测试工具团队负责Smart安卓客户端开发
+*** 2011年11月 - 2013年9月
     *Staff Engineer*, [[http://marvell.com][Marvell]], 北京
 
     - 在Tools团队担任架构师的职务, 负责Marvell手机整体解决方案中工厂生
@@ -36,8 +40,8 @@
 
     - 在BSP团队负责与工具相关的功能模块的设计与实现, 包括Uboot, Kernel接口,
       工厂分区等
-      
-      * 在Uboot里参考原有的usbtty代码（for old cpu and usb framework）, 
+
+      * 在Uboot里参考原有的usbtty代码（for old cpu and usb framework）,
         从头重新bring up了usbtty以解决FormFactor上串口调试不便的问题
       * 实现在Linux下用fastboot对Marvell方案的整机烧写, 解决了工程师只
         能在Windows机器上用Marvell私有工具做整机烧写的问题, 提升同事的
@@ -52,7 +56,7 @@
 *** 2010年3月 - 2011年10月
 
     *Staff Engineer*, RayzerLink/Letou
-    
+
     - 负责基于Nvidia Tegra2芯片的平板电脑底层软件开发, 主要包括Linux
       Kernel bringup, 驱动（Touch、Lcd、Sensors）, Hal（硬件抽象层）的
       开发等工作
@@ -62,7 +66,7 @@
 *** 2008年11月 - 2010年3月
 
     *Senior Engineer*, [[http://www.borqs.com][播思通讯]]
-    
+
     - 在Tools组工作
 
     - 设计并实现手机开发、测试、生产以及售后等各个环节需要用到的一系列
@@ -95,13 +99,13 @@
 
 *** Android
   - [[https://github.com/baohaojun/BTAndroidWebViewSelection][CrossDict]] ::  Android下的英文字典软件, 在 [[https://play.google.com/store/apps/details?id=com.baohaojun.crossdict][Google Play]] 上发布
-                  （Java, Android). 用 Ajoke.el 开发. 
+                  （Java, Android). 用 Ajoke.el 开发.
 
 *** Input Method
   - sdim :: 跨所有主流平台（Win32/Linux/Mac OS甚至Emacs）的输入法
             （Python, C++, ObjC, Emacs-lisp）
 
-  - scim-fcitx :: GNU/Linux下的输入法, 基于scim和fcitx移植(C++, 
+  - scim-fcitx :: GNU/Linux下的输入法, 基于scim和fcitx移植(C++,
                   GNU/Linux)
 
 *** System Software
@@ -141,7 +145,7 @@
 *** 博客
     [[http://baohaojun.github.io]]
 *** 代码
-    [[https://github.com/baohaojun]]   
+    [[https://github.com/baohaojun]]
 
 
 #+BEGIN_LaTeX

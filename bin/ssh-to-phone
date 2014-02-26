@@ -1,6 +1,13 @@
 #!/bin/bash -i
 
 . .usb0
+if ! ifconfig $USB0 >/dev/null 2>&1 ; then
+    if ifconfig usb0 >/dev/null 2>&1 ; then
+        USB0=usb0
+    else
+        USB0=eth1
+    fi
+fi
 # instead of scp in the name, we are going to use rsync
 if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
     adb -s

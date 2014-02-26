@@ -56,6 +56,7 @@ function adb() {
         if test "$#" = 0; then
             exit
         fi
+        export ANDROID_SERIAL=$(cat ~/.config/adb-device)
     elif test "$1" != devices -a $(setsid $the_prog start-server >/dev/null 2>&1 ; $the_prog devices | grep .| wc -l) -gt 2; then
         if test ! -e ~/.config/adb-device || ! $the_prog devices | grep -q $(cat ~/.config/adb-device); then
             command adb -s
