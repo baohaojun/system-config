@@ -1,5 +1,16 @@
 #!/bin/bash
+exec 9>~/.logs/$(basename $0).lock
+
 set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if ! flock -n 9; then
+    die "daily-build-ww already running, can not lock ~/.logs/$(basename $0).lock"
+fi
+
 cd ~/src/github/lww/
 . .gitx
 git reset --hard
@@ -21,6 +32,7 @@ version=$(
 
 perl -npe "s/%version is read from git-svn-log%/$version/" -i AliWangWangLinux_back/src/gui/main.cpp
 perl -npe "s/--nightly--/$version/" -i AliWangWangLinux_back/aliwangwang.spec
+export WW_VERSION=$version
 mach-bhj || true
 mach-bhj -r fedora-development-i386-core || true
 
@@ -31,15 +43,16 @@ else
     exit
 fi
 
+set -o pipefail
 (
     set -e
     WHICH_COW='precise i386' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
-    rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)/
+    rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)-$WW_VERSION/
     WHICH_COW='precise amd64' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
-    rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)/
+    rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)-$WW_VERSION/
 
-    rsync ~/.cache/$me.log.$$ bhj-win7:/var/www/linux-wangwang/$(today)/git-svn.log
-) > ~/.logs/$me.build.log 2>&1 || (
+    rsync ~/.cache/$me.log.$$ bhj-win7:/var/www/linux-wangwang/$(today)-$WW_VERSION/git-svn.log
+) | tee ~/.logs/$me.build.log 2>&1 || (
     if ! is-tty-io; then
         mailx '"Linux旺旺开发邮件列表" <linux-wangwang-dev@list.alibaba-inc.com>' -s 'Linux wangwang 日常编译失败' -a ~/.logs/$me.build.log </dev/null
     else

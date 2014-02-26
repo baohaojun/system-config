@@ -33,4 +33,4 @@ sudo mount -t proc proc /var/lib/mach/roots/$root/proc
 sudo rm /var/lib/mach/states/$root/lock -f
 mach -r $root build -ba --nodeps -v *.spec || true
 cd /var/lib/mach/roots/$root/usr/src/rpm/RPMS
-rsync aliwangwang-1*.rpm bhj-win7:/var/www/linux-wangwang/$(today)/ -v
+rsync aliwangwang-1*.rpm bhj-win7:/var/www/linux-wangwang/$(today)-${WW_VERSION:-unknown}/ -v
