@@ -89,7 +89,7 @@ for file in $(beagrep -e "$re_beagrep" $ignore_case "${path_matcher[@]}" "${path
         continue
     fi
     export GTAGS_LANG_FORCE=c
-    gtags_rc=$(lookup-file .globalrc)
+    gtags_rc=$(lookup-file -e .globalrc || echo ~/.globalrc)
     if test -e "$gtags_rc"; then
         GTAGS_LANG_FORCE=$(get_lang_for_file_from_globalrc "$file" $gtags_rc)
         if test "$GTAGS_LANG_FORCE" = unknown; then

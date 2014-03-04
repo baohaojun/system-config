@@ -121,6 +121,16 @@ while(<$ctags_pipe>) {
   $def_line_map{$line} = $def;
 }
 
+sub is_ignored_type($)
+{
+    my $arg = shift;
+    if ($arg eq "member" or $arg eq "variable") {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 @def_lines = sort { $a <=> $b } keys %def_line_map;
 
 my $file;
@@ -198,9 +208,9 @@ while(<$file>) {
             $calling_tag = "<>";
         }
 
-        if ($current_def_line == $. and $type_line_map{$current_def_line} eq "member") {
+        if ($current_def_line == $. and is_ignored_type $type_line_map{$current_def_line}) {
             my $current_def_line = $current_def_line;
-            while (not $type_line_map{$current_def_line} or $type_line_map{$current_def_line} eq "member") {
+            while (not $type_line_map{$current_def_line} or is_ignored_type $type_line_map{$current_def_line}) {
                 $current_def_line--;
             }
             $calling_tag = "<=";
