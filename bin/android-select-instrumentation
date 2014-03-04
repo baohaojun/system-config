@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo -n $(select-output-line -i "$1" -- adb shell pm list instrumentation|pn 1|perl -npe 's/.*://')

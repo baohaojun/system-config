@@ -1,0 +1,9 @@
+#!/bin/bash
+
+instr=$(android-select-instrumentation "$1")
+classes=$(cd $(lookup-file -e "bin/classes")
+    find . -iname "*$2*.class" | rm-last-nl | perl -npe 's!^./!!; s!/!.!g; s/\.class$//;' | tr '\n' ',')
+
+shift 2
+set -x
+adb shell am instrument "$@" -w -e class $classes $instr

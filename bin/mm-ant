@@ -1,6 +1,26 @@
 #!/bin/bash
 
 set -e
+
+TEMP=$(getopt -o t: --long tag: -n $(basename $0) -- "$@")
+tag=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -t|--tag)
+            tag=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 adb shell echo -n
 build_xml=$(lookup-file build.xml) || true
 if test ! -e "$build_xml" -a -e AndroidManifest.xml; then
@@ -56,4 +76,5 @@ fi
 if test $(adb devices | grep -v '^\s*$' -P | wc -l) -lt 3; then
     find-or-exec emulator
 fi
-logcat
+
+logcat $tag

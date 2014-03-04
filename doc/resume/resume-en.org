@@ -17,7 +17,12 @@
 
 
 * Work Experience
-*** November 2011 - /Present/
+*** September 2013 - /Present/
+    *Technical Expert*, Alibaba, Beijing
+    - SMART (software measurement analysis reporting tool) Android
+      Client App development.
+
+*** November 2011 - September 2013
     *Staff Engineer*, [[http://marvell.com][Marvell]], Beijing
 
     - Worked as architect in the Tools team for Marvell's mobile phone
@@ -50,7 +55,7 @@
     - Drawing from my experience with open source community, gave
       advice for cooperation process with other teams and sites of
       Marvell.
-      
+
       * Update Marvell Android Makefiles to enable parallel building
         and use of ccache. Kernel build time reduced from 10min to
         2min.
@@ -58,7 +63,7 @@
 *** March 2010 - October 2011
 
     *Staff Engineer*, RayzerLink/Letou
-    
+
     - In charge of system software development for a Tablet product
       which uses Nvidia's Tegra2 CPU. Tasks include Linux Kernel
       bringup, device drivers (Touch, Lcd, Sensors), HAL.
@@ -68,7 +73,7 @@
 *** November 2008 - March 2010
 
     *Senior Engineer*, [[http://www.borqs.com][Borqs]]
-    
+
     - Worked in the Tools team at Borqs.
 
     - Designed and implemented a lot of tools for development,
@@ -95,7 +100,7 @@
 
   - [[https://github.com/baohaojun/org-jira][org-jira.el]] ::  An Emacs minor mode for using org-mode to track
                     Jira issues (Emacs-lisp).
-                    
+
   - [[https://github.com/baohaojun/ajoke][Ajoke.el]] :: A Java/Android IDE/SDK that works with Emacs.
 
 *** Android
@@ -152,7 +157,7 @@
 *** Blog
     [[http://baohaojun.github.io]]
 *** Code
-    [[https://github.com/baohaojun]]   
+    [[https://github.com/baohaojun]]
 
 
 #+BEGIN_LaTeX

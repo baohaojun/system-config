@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
-x = open("|wget 'http://buc-uc-test.alibaba-inc.com/rpc/enhancedUserQuery/findUsers/byFuzzyQuery.json?fuzzyStr=#{ARGV[0]}' -O - 2>/dev/null") {|pipe| pipe.read};
+x = open("|wget 'http://buc.alibaba-inc.com/rpc/enhancedUserQuery/findUsers/byFuzzyQuery.json?fuzzyStr=#{ARGV[0]}' -O - 2>/dev/null") {|pipe| pipe.read};
 
 require 'json'
-
 x = JSON.parse(x)
 if x
   x = x['content']

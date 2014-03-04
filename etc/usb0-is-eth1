@@ -1,6 +1,6 @@
 #!/bin/bash
 export USB0=eth1
 if ifconfig eth1 | grep 'HWaddr 00:00:00:00:00:00'; then
-    sudo ifconfig eth1 hw ether 001cfc9a94fb
+    sudo ifconfig eth1 hw ether 001cfc9a94fb || true
 fi
-sudo ifconfig eth1 up
+sudo ifconfig eth1 up || true

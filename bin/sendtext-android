@@ -4,4 +4,4 @@ if test "$#" = 0; then
     set -- "$(xclip -o)"
 fi
 x=$(echo "$@")
-adb -w shell input text "$x" >/dev/null 2>&1
+IS_TTY_IO=true adb -w shell input text "$x" >/dev/null 2>&1

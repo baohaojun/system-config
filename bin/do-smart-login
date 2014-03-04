@@ -1,6 +1,7 @@
 #!/bin/bash
+
 appcode=$(cat ~/.config/smart-appcode)
-pass=${1:-$(get-authinfo localhost $USER 22)}
+pass=${1:-$(get-authinfo smtp.alibaba-inc.com haojun.bhj@alibaba-inc.com|urlify)}
 code=$(wget "https://login.alibaba-inc.com/authorize/login.do?appcode=$appcode&name=haojun.bhj&password=$pass&authtype=user" -O - 2>/dev/null )
 
 
@@ -9,6 +10,11 @@ echo "$code"
 code=$(echo "$code" | perl -npe 's/.*:"//; s/".*//')
 
 token=$(wget -O - 2>/dev/null "https://login.alibaba-inc.com/authorize/getAccessToken.do?appcode=$appcode&authcode=$code&clienttype=1" | perl -npe 's/.*AccessToken":"(.*?)".*/$1/')
-echo $token
+echo "token is $token" 1>&2
 
-wget -O - 2>/dev/null http://10.32.232.149/smart/api/auth/login?token=$token
+wget -O - 2>/dev/null http://localhost/smart/api/auth/login?token=$token
+# wget -O - 2>/dev/null http://localhost/smart/api/org/getBuList?token=$token
+# wget -O - 2>/dev/null http://localhost/smart/api/org/searchProduct?token=$token\&name=$2\&limit=20\&page=1
+for x in $(seq 1 1); do
+    wget -O - 2>/dev/null http://localhost/smart/api/org/searchProject?token=$token\&name=$2\&limit=100\&page=$x
+done

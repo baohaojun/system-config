@@ -1371,4 +1371,8 @@ criteria can be provided via the optional match-string argument "
             (when (search-forward old-line old-line-end t)
               (replace-match (number-to-string (line-number-at-pos old-line-start))))))))))
 
+(defun bhj-c-indent-setup ()
+  (c-set-offset 'arglist-intro '+))
+(add-hook 'java-mode-hook 'bhj-c-indent-setup)
+
 (provide 'bhj-defines)
