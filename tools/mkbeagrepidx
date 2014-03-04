@@ -40,6 +40,9 @@ then
     else
         export relativeSrcDir=${srcDir/#$higherSrcDir/.}
         cd $higherSrcDir
+        if test $# = 0; then
+            set -- -i -v
+        fi
     fi
 else
     outDir=~/.cache/for-code-reading/"`pwd`"
