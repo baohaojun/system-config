@@ -33,15 +33,17 @@ version=$(
 perl -npe "s/%version is read from git-svn-log%/$version/" -i AliWangWangLinux_back/src/gui/main.cpp
 perl -npe "s/--nightly--/$version/" -i AliWangWangLinux_back/aliwangwang.spec
 export WW_VERSION=$version
-mach-bhj || true
-mach-bhj -r fedora-development-i386-core || true
 
 me=$(basename $0)
 if git log --since $(today -1) | tee ~/.cache/$me.log.$$ | grep -q .; then
     true;
 else
+    git reset --hard
     exit
 fi
+
+mach-bhj || true
+mach-bhj -r fedora-development-i386-core || true
 
 set -o pipefail
 (
