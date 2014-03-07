@@ -1,5 +1,10 @@
 #!/bin/bash
 
+for x in $(seq 1 1); do
+    wget -O - 2>/dev/null http://localhost/smart/api/org/searchProject?token=token\&name=$(echo -n "$2"|urlify|perl -npe 's/ /%20/g')\&limit=100\&page=$x
+done
+
+exit
 appcode=$(cat ~/.config/smart-appcode)
 pass=${1:-$(get-authinfo smtp.alibaba-inc.com haojun.bhj@alibaba-inc.com|urlify)}
 code=$(wget "https://login.alibaba-inc.com/authorize/login.do?appcode=$appcode&name=haojun.bhj&password=$pass&authtype=user" -O - 2>/dev/null )

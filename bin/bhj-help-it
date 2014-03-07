@@ -41,6 +41,13 @@ case $1 in
                 func=$(select-output-line -- "php-functions | grep -e $2 | pn 3")
                 firefox-open-url-pattern php.net/manual/en/ \
                     http://www.php.net/manual/en/function.$(echo $func|perl -npe s/_/-/g).php
+            else
+                file=$(select-output-line -- find ~/src/php-doc* -iname "*$2*")
+                if test -e "$file"; then
+                    url=$(echo $file | perl -npe 's!.*?src/php-doc.*?/!!; s/\.xml$/.php/; s!^!http://www.php.net/manual/!')
+                    firefox-open-url-pattern php.net/manual/en/ \
+                        $url
+                fi
             fi
         fi
         ;;
