@@ -10,6 +10,7 @@ open(my $debug, ">", glob("~/.logs/grep-func-call.log"))
 
 sub debug(@) {
     print $debug "@_\n";
+    $debug->flush();
 }
 
 my $silent = 0;
@@ -209,9 +210,15 @@ while(<$file>) {
         }
 
         if ($current_def_line == $. and is_ignored_type $type_line_map{$current_def_line}) {
+            debug "current_def_line is $. and type_line_map{$current_def_line} is $type_line_map{$current_def_line}";
             my $current_def_line = $current_def_line;
+            my $saved_current_def_line = $current_def_line;
             while (not $type_line_map{$current_def_line} or is_ignored_type $type_line_map{$current_def_line}) {
                 $current_def_line--;
+                if ($current_def_line <= 0) {
+                    $current_def_line = $saved_current_def_line;
+                    last;
+                }
             }
             $calling_tag = "<=";
             my $output = $start_file_base . ":$current_def_line: $calling_tag "
