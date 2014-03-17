@@ -1,0 +1,2 @@
+#!/bin/bash
+gpg-expect -- -- --no-use-agent -o "$1".gpg -c "$1"
