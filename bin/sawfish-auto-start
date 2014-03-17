@@ -22,15 +22,16 @@ env=$(cat <<EOF
 EOF
 )
 
-umask 0077
-cat <<EOF > ~/.config/bhj-auth.rc.$$
+(
+    umask 0077
+    cat <<EOF > ~/.config/bhj-auth.rc.$$
 export GNOME_KEYRING_CONTROL=$GNOME_KEYRING_CONTROL
 export GNOME_KEYRING_PID=$GNOME_KEYRING_PID
 export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
 export GPG_AGENT_INFO=$GPG_AGENT_INFO
 EOF
-mv ~/.config/bhj-auth.rc.$$ ~/.config/bhj-auth.rc
-
+    mv ~/.config/bhj-auth.rc.$$ ~/.config/bhj-auth.rc
+)
 sawfish-client -e "$env"
 
 python -c "
