@@ -43,5 +43,4 @@ if test -d "$1"; then
     HOME=$1 start-ww
 else
     start-ww
-    HOME=~/tmp start-ww
 fi
