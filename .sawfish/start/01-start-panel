@@ -1,5 +1,9 @@
 #!/bin/bash
 
+(
+    cd ~/.cache/sessions/
+    rm xfce4-session-* -f
+)
 while true; do
     xfce4-session
     sleep 2
