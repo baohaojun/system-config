@@ -337,7 +337,7 @@ might be bad."
       (while (and all-marvell (string-match "@" receivers start-pos))
         (setq start-pos (match-end 0))
         (unless (equal (string-match
-                    "@alibaba-inc.com"
+                    "@smartisan.cn"
                     receivers
                     (1- start-pos))
                    (1- start-pos))
@@ -359,7 +359,7 @@ might be bad."
           (insert (completing-read "use account? " `(,(shell-command-to-string "cat ~/.config/about_me/mail") "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
         (message-goto-from)
         (message-beginning-of-line)
-        (cond ((save-excursion (search-forward-regexp "@alibaba-inc.com" (line-end-position) t))
+        (cond ((save-excursion (search-forward-regexp "@smartisan.cn" (line-end-position) t))
                (kill-line)
                (insert (format "%s <%s>"
                                (shell-command-to-string "cat ~/.config/about_me/花名")

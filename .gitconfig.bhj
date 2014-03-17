@@ -2,10 +2,10 @@
 	ui = auto
 [user]
 	name = Bao Haojun
-	email = haojun.bhj@alibaba-inc.com
+	email = baohaojun@smartisan.cn
 
 [core]
-	pager = 
+	pager =
 	excludesfile = ~/.git-exclude
 [alias]
 	st = status
