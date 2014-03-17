@@ -55,7 +55,7 @@ ask-for-settings smtp "email smtp server address"
 ask-for-settings smtp-port "email smtp server port"
 ask-for-settings conn-type "connection type" -s nil -s ssl
 ask-for-settings 花名 花名
-ask-for-settings mach "Machine type" -s macbookair -s thinkpad-t430 -s generic
+ask-for-settings mach "Machine type" $(for x in ~/etc/hardware-mach/*; do echo -s $(basename $x); done)
 
 ask-for-confirmation firefox-config "browser.link.open_newwindow.override.external = 1"
 ask-for-confirmation kmail-config "prefer html in kmail? (Set in Configure Kmail -> Security)"

@@ -184,12 +184,8 @@ fi
 
 if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; then
     mach=$(get-about-me mach)
-    if test "$mach" = macbookair; then
-        ln -sf ~/system-config/etc/.Xmodmap-macbook-air ~/.Xmodmap
-    elif test "$mach" = thinkpad-t430; then
-        ln -sf ~/system-config/etc/.Xmodmap-t430 ~/.Xmodmap
-    else
-        ln -sf ~/system-config/etc/.Xmodmap ~/.Xmodmap
+    if test -d ~/etc/hardware-mach/$mach; then
+        relative-link -f ~/etc/hardware-mach/$mach/.Xmodmap ~/.Xmodmap
     fi
 fi
 sudo ln -sf ~/etc/rc.local /etc || true # no sudo on win32
