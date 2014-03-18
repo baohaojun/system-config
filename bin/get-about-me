@@ -1,4 +1,8 @@
 #!/bin/bash
+function die() {
+    echo Error: "$@"
+    exit -1
+}
 
 if test $(basename $0) = get-about-me; then
     if test -e ~/.config/about_me/$1; then
@@ -9,5 +13,8 @@ if test $(basename $0) = get-about-me; then
 elif test $(basename $0) = rm-about-me; then
     rm ~/.config/about_me/$1
 else
-    echo "$2" > ~/.config/about_me/$1
+    if test "$2" = ""; then
+        die "usage $(basename $0) setting value"
+    fi
+    echo -n "$2" > ~/.config/about_me/$1
 fi
