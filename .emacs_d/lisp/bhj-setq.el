@@ -177,7 +177,7 @@
         (".*"
          ("From" "Ask <ask@ask.com>")
          (signature "All the best\n\n Bao Haojun"))
-        (".*ali\\..*"
+        (".*smt\\..*"
          ("From" ,(format "%s <%s>"
                           (shell-command-to-string "cat ~/.config/about_me/花名")
                           (shell-command-to-string "cat ~/.config/about_me/mail"))))
