@@ -7,6 +7,8 @@ if test $# = 0; then
 elif test $# = 1; then
     if test -e "$1"; then
         true
+    elif [[ $1 =~ ^file:/// ]]; then
+        true
     elif test -e "$(lookup-file "$@")"; then
         res=$(lookup-file "$@")
         if test "${res:0:${#PWD}+1}" != "$PWD/" && yes-or-no-p -n "Open $(lookup-file "$@")"; then

@@ -43,6 +43,7 @@ if test $prog = search-taobao-item; then
 fi
 
 if test $prog = search-mantis; then
+    fill=$(echo $@|perl -npe 's/ticket:\s*(\d+)/$1/i; s/\s+//')
     url=$(get-about-me mantis)$fill
 fi
 

@@ -14,4 +14,4 @@ foreach $key (keys %rewrites) {
 }
 #{%/perl%}
 
-'
+' | perl -npe 's!^ssh://!!; s,29418/,8080/r/,'

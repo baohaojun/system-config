@@ -1,0 +1,20 @@
+#!/bin/bash
+usb=$(select-output-line lsusb)
+vid=$(echo $usb|pn 6)
+vid=${vid%:*}
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+if grep "$vid.*bhj" /etc/udev/rules.d/90-bhj-personal.rules; then
+    die "$vid already in /etc/udev/rules.d/90-bhj-personal.rules";
+fi
+
+cat <<EOF >> ~/etc/udev/rules.d/90-bhj-personal.rules
+SUBSYSTEM=="usb", ATTR{idVendor}=="$vid", MODE="0600", OWNER="bhj"
+EOF
+
+sudo cp ~/etc/udev/rules.d/90-bhj-personal.rules /etc/udev/rules.d/90-bhj-personal.rules
+sudo /etc/init.d/udev restart

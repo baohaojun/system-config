@@ -2,13 +2,13 @@
 
 test $# = 0 && set -- HEAD
 
-if test $# = 1 -a -n "$(git rev-parse "$1" 2>/dev/null)"; then
+if test $# = 1 && git rev-parse "$1" >/dev/null 2>&1; then
     change_id=$(
-	if tty >/dev/null 2>&1; then
-	    git log -1 "$(git rev-parse $1)" || echo "Change-Id: $1"
-	else 
-	    cat
-	fi | grep -P '^\s*Change-Id:' | pn 2)
+        if tty >/dev/null 2>&1; then
+            git log -1 "$(git rev-parse $1)" || echo "Change-Id: $1"
+        else
+            cat
+        fi | grep -P '^\s*Change-Id:' | pn 2)
     if test -n "$change_id"; then
         set -- $change_id
     else
@@ -18,18 +18,18 @@ fi
 
 (
     for x in "$@"; do
-	query_out=$(gerrit query $x)
-	url=$(echo "$query_out" | grep -P "^\s*url:" | pn 2 | head -n 1)
-	if test -z "$url"; then
-	    id=$(echo "$query_out" | grep -P "^\s*number:" | pn 2 | head -n 1)
-	    host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
-	    if test -z "$host"; then
-		host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
-	    fi
+        query_out=$(gerrit query $x)
+        url=$(echo "$query_out" | grep -P "^\s*url:" | pn 2 | head -n 1)
+        if test -z "$url"; then
+            id=$(echo "$query_out" | grep -P "^\s*number:" | pn 2 | head -n 1)
+            host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
+            if test -z "$host"; then
+                host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
+            fi
 
-	    url=$(printf http://%s%s $host $id)
-	fi
-	firefox "$url"
-	sleep 1;
+            url=$(printf http://%s%s $host $id)
+        fi
+        firefox "$url"
+        sleep 1;
     done
 )

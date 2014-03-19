@@ -66,6 +66,14 @@ sub edit_1($)
     $file =~ s,.*file://,,;
 
     if (-e $file) {
+        if ((! -r $file or ! -w $file) && $ENV{USER} ne "root") {
+            my $fileq = shell_quote($file);
+            my $user = qx(stat -c %U $fileq);
+            if ($user ne $ENV{USER} and system("yes-or-no-p -y 'file not readable, use root?'") == 0) {
+                system("sudoedit", $file);
+            }
+            exit;
+        }
 
         my $file_q = $file = shell_quote($file);
         chomp($file_q = qx(lookup-file -e -r -- $file));
