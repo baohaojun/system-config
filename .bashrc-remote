@@ -1,0 +1,40 @@
+#!/bin/bash
+export LOCALIP=`echo $SSH_CONNECTION|awk '{print $3}'|sed -e 's/.*://'`
+export LOCALPORT=`echo $SSH_CONNECTION|awk '{print $4}'`
+export WHOAMI=`whoami`
+export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
+if test "$DISPLAY"; then
+    echo export REMOTEIP=$REMOTEIP > ~/.remoteip
+fi
+export DISPLAY=${DISPLAY:-$REMOTEIP:0.0}
+export PS1HostName=`hostname`
+export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue '\$PROMPT_RET\$RECURSIVE_SHELL'[0m)\n\$'
+alias sudoedit='WHOAMI=root edit'
+if test "$TERM" = dumb; then
+    export PS1='\$'
+fi
+
+if test -e ~/.bash-path -a -e ~/.kill-bt; then
+    (
+        . ~/.bash-path
+        if ps.pl transmission-cli >/dev/null 2>&1 && yes-or-no-p "Kill transmission-cli?"; then
+            ps-killall transmission-cli
+        fi
+    )
+fi
+
+SSH_OK=false
+if test -z "$SSH_AGENT_PID" -a -e ~/.cache/ssh-auth; then
+    . ~/.cache/ssh-auth
+    if test "$SSH_AGENT_PID" -a "$(ps h -o command $SSH_AGENT_PID)" = ssh-agent; then
+        SSH_OK=true
+    fi
+fi
+
+if test $SSH_OK = false; then
+    ssh-agent > ~/.cache/ssh-auth.$$
+    . ~/.cache/ssh-auth.$$ >/dev/null 2>&1
+    mv ~/.cache/ssh-auth.$$ ~/.cache/ssh-auth
+    ssh-add ~/.ssh/id_rsa
+fi
+unset SSH_OK

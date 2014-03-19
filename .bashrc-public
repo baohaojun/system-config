@@ -5,29 +5,7 @@ if test -z "$SSH_CLIENT"; then
     HOSTNAME=$(hostname | perl -npe 's/\..*//')
     export PS1='\n[01;34m{ [01;31m'`whoami`'[01;34m@[01;33m'$HOSTNAME'[01;34m [01;32m'\$PWD'[01;34m '\$PROMPT_RET\$RECURSIVE_SHELL'}[0m\n\$'
 else
-    export LOCALIP=`echo $SSH_CONNECTION|awk '{print $3}'|sed -e 's/.*://'`
-    export LOCALPORT=`echo $SSH_CONNECTION|awk '{print $4}'`
-    export WHOAMI=`whoami`
-    export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
-    if test "$DISPLAY"; then
-        echo export REMOTEIP=$REMOTEIP > ~/.remoteip
-    fi
-    export DISPLAY=${DISPLAY:-$REMOTEIP:0.0}
-    export PS1HostName=`hostname`
-    export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue '\$PROMPT_RET\$RECURSIVE_SHELL'[0m)\n\$'
-    alias sudoedit='WHOAMI=root edit'
-    if test "$TERM" = dumb; then
-        export PS1='\$'
-    fi
-
-    if test -e ~/.bash-path -a -e ~/.kill-bt; then
-        (
-            . ~/.bash-path
-            if ps.pl transmission-cli >/dev/null 2>&1 && yes-or-no-p "Kill transmission-cli?"; then
-                ps-killall transmission-cli
-            fi
-        )
-    fi
+    . ~/.bashrc-remote
 fi
 
 alias rm='rm -i'
