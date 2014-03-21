@@ -8,18 +8,17 @@ function die() {
     exit -1
 }
 
-if test -z "$(lookup-file -e .repo)"; then
-    git fetch -v
-else
-    2nd repo sync -n . || git fetch origin
-fi
-
 rev=HEAD
 
-TEMP=$(getopt -o b:r: --long revision: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o nb:r: --long revision: -n $(basename $0) -- "$@")
+do_fetch=true
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -n)
+            do_fetch=false
+            shift
+            ;;
         -b)
             export REPO_BRANCH=$2
             shift 2
@@ -37,6 +36,15 @@ while true; do
             ;;
     esac
 done
+
+if test $do_fetch = true; then
+    if test -z "$(lookup-file -e .repo)"; then
+        git fetch -v
+    else
+        2nd repo sync -n . || git fetch origin
+    fi
+fi
+
 
 if ! git-is-ancestor $(repo-remote-branch) HEAD; then
     if yes-or-no-p "Not fast-forward push is not allowed, rebase? "; then
@@ -63,7 +71,7 @@ done
 
 
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
-export REMOTE=$( (repo-review-url) )
+export REMOTE=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
 
 (
     if tty >/dev/null 2>&1; then

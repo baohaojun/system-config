@@ -57,11 +57,33 @@ function adb() {
             exit
         fi
         export ANDROID_SERIAL=$(cat ~/.config/adb-device)
-    elif test "$1" != devices -a $(setsid $the_prog start-server >/dev/null 2>&1 ; $the_prog devices | grep .| wc -l) -gt 2; then
-        if test ! -e ~/.config/adb-device || ! $the_prog devices | grep -q $(cat ~/.config/adb-device); then
-            command adb -s
+    elif test "$1" != devices; then
+        setsid $the_prog start-server >/dev/null 2>&1 ;
+        devices=(
+            $($the_prog devices | perl -ne 'print unless 1..1' | pn 1)
+        )
+        if test ${#devices[@]} -gt 1; then
+            if test ! -e ~/.config/adb-device || ! echo ${devices[@]} | grep -q $(cat ~/.config/adb-device); then
+                command adb -s
+            fi
+            export ANDROID_SERIAL=$(cat ~/.config/adb-device)
+        else
+            export ANDROID_SERIAL=$devices
         fi
-        export ANDROID_SERIAL=$(cat ~/.config/adb-device)
+    fi
+    if test "$2" = su -a "$1" = shell; then
+        if test ! -e ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL \
+            -a ! -e ~/.config/adb-use-sh-as-su/no/$ANDROID_SERIAL; then
+            if yes-or-no-p -y "Use sh as su?"; then
+                touch ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL
+            else
+                touch ~/.config/adb-use-sh-as-su/no/$ANDROID_SERIAL
+            fi
+        fi
+        if test -e ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL; then
+            shift 2
+            set -- shell sh "$@"
+        fi
     fi
 
     if test "$1" = gdbserver; then

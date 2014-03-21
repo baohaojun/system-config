@@ -39,3 +39,11 @@ if test "$do_links" = true; then
     adb shell su -c 'sh -x /sdcard/ln.sh'
 fi
 for x in $(find ./sdcard -type f); do adb push $x ${x#.}; done
+if test -e ~/debian.tgz; then
+    size=$(stat -c %s -L ~/debian.tgz);
+    adb_size=$(adb shell stat -c %s /sdcard/debian.tgz)
+    if test "$size" != "$adb_size"; then
+        adb push ~/debian.tgz /sdcard/
+    fi
+fi
+adb shell sh -c 'if test ! -d /data/debian; then cd /data; tar zxvf /sdcard/debian.tgz; fi'

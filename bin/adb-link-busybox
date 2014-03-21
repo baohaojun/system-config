@@ -1,0 +1,20 @@
+#!/bin/bash
+
+applets=$(
+    adb shell busybox | perl -ne 'print if m/Currently defined functions:/..0' | perl -ne 's/,//g; print unless 1..1'
+)
+
+(
+    echo cd /system/xbin/
+    echo 'busybox=$(busybox which busybox)'
+    for x in $applets; do
+        echo ln -s \$busybox "$x"
+    done
+) > /tmp/ln.sh.$$
+adb push /tmp/ln.sh.$$ /sdcard/ln.sh
+adb remount
+adb shell mount -o rw,remount /system
+adb shell sh -x /sdcard/ln.sh
+adb shell mount -o ro,remount /system
+
+

@@ -1,0 +1,7 @@
+#!/bin/bash
+adb remount
+android-env adb sync system
+adb reboot bootloader
+cd $(lookup-file .repo)/..
+fastboot flash boot out/target/product/msm8974sfo/boot.img
+fastboot reboot

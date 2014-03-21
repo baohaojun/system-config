@@ -24,3 +24,4 @@ relative-link $(pwd)/$dir ~/last-month
 relative-link ~/Downloads/forever/* ~/today/ >/dev/null 2>&1 || true
 rm ~/today/\* -f
 relative-link ~/Downloads/forever/ ~/today/ >/dev/null 2>&1 ||true
+rm ~/.cache/open-in-emacs.d/ -rf || true

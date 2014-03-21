@@ -8,6 +8,7 @@ m=$(printf %02d $m)
 echo $h:$m
 for x in ~/system-config/etc/at/$h:$m ~/external/etc/at/$h:$m; do
     if test -e "$x"; then
+        mkdir -p ~/.logs/at-tasks
         bash $x > ~/.logs/at-tasks/$(echo $x|perl -npe 's,/,.,g') 2>&1
-    fi 
+    fi
 done
