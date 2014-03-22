@@ -65,6 +65,7 @@ done
 unset TEMP
 set -x
 if test $(basename $0) = ssh-to-phone; then
+    rsync /etc/resolv.conf root@phone:/etc/ >/dev/null 2>&1 &
     ssh phone "$@"
     exit 0
 fi

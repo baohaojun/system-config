@@ -75,8 +75,10 @@ function adb() {
         if test ! -e ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL \
             -a ! -e ~/.config/adb-use-sh-as-su/no/$ANDROID_SERIAL; then
             if yes-or-no-p -y "Use sh as su?"; then
+                mkdir -p ~/.config/adb-use-sh-as-su/yes
                 touch ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL
             else
+                mkdir -p ~/.config/adb-use-sh-as-su/no
                 touch ~/.config/adb-use-sh-as-su/no/$ANDROID_SERIAL
             fi
         fi

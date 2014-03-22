@@ -2,21 +2,26 @@
 
 set -e
 
-workdir=~/external/installed-pkgs/pkgs
-rm -rf $workdir
-mkdir -p $workdir
+workdir=${PKGDIR:-~/external/installed-pkgs/pkgs}
 
-cd $workdir
-grep-status -P -e '.*' -a -FStatus 'install ok installed' -n -s Package|xargs touch
+if test -z "${PKGDIR}"; then
+    rm -rf $workdir
+    mkdir -p $workdir
+
+    cd $workdir
+    grep-status -P -e '.*' -a -FStatus 'install ok installed' -n -s Package|xargs touch
+else
+    cd $workdir
+fi
 
 export PACKAGES_DIR=$workdir
 
-cd ..
+cd ~/external/installed-pkgs/
 
 sites=localhost:9999/debian\ localhost:9999/ubuntu
-releases=testing\ unstable\ precise\ lucid\ oneiric
-dists=main\ contrib\ non-free\ universe\ multiverse\ restricted
-archs=armel\ i386\ amd64
+releases=${RELEASES:-testing\ unstable}
+dists=${DISTS:-main\ contrib\ non-free\ universe\ multiverse\ restricted}
+archs=${ARCHS:-armel i386 amd64}
 
 for site in $sites; do
     for release in $releases; do
@@ -52,7 +57,7 @@ for site in $sites; do
             done
         done
     done
-done | mf-download.pl -n 2
+done | mf-download.pl -n ${THREADS:-2}
 
 pkgnames=$(cd $workdir; echo *)
 
@@ -73,7 +78,7 @@ done
     for release in $releases; do
         cat $release.pkgs;
     done
-) | grep '^Y: ' | pn 2 | sort -u | mf-download.pl -n 2
+) | grep '^Y: ' | pn 2 | sort -u | mf-download.pl -n ${THREADS:-2}
 
 mkdir -p debs
 rm debs/* >/dev/null 2>&1 || true

@@ -25,7 +25,7 @@ fi
 
 SSH_OK=false
 if test -z "$SSH_AGENT_PID" -a -e ~/.cache/ssh-auth; then
-    . ~/.cache/ssh-auth
+    . ~/.cache/ssh-auth >/dev/null 2>&1
     if test "$SSH_AGENT_PID" -a "$(ps h -o command $SSH_AGENT_PID)" = ssh-agent; then
         SSH_OK=true
     fi
