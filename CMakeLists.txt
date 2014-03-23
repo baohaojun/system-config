@@ -5,6 +5,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules ${C
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+cmake_policy(SET CMP0020 NEW)
+
 include(GNUInstallDirs)
 
 
@@ -35,7 +37,7 @@ if(KDE4_FOUND)
     include_directories(${KDE4_INCLUDES})
 else()
     if(NOT WITH_QT4)
-        find_package(Qt5Transitional)
+        find_package(Qt5Transitional COMPONENTS Core Widgets Dbus Network)
         set(SNORE_SUFFIX "-qt5")
     else()
         find_package(Qt4 REQUIRED)
