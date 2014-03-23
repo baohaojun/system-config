@@ -1,10 +1,8 @@
 [Desktop Entry]
 Type=Application
 Version=@SNORE_VERSION_MAJOR@.@SNORE_VERSION_MINOR@@SNORE_VERSION_SUFFIX@
-Name=SnoreNotify
+Name=SnoreNotify@SNORE_SUFFIX@
 Comment=An application redirecting freedesktop notifications to a unified notification backed
 Icon=snore
 Exec=snorenotify@SNORE_SUFFIX@
 Categories=Qt;System;
-X-KDE-StartupNotify=true
-X-DBUS-StartupType=Unique
