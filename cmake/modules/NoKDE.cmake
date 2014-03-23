@@ -27,5 +27,5 @@ if(MINGW)
 endif()
 
 if(WIN32)
-    add_definitions(-DQT_NO_DEBUG -DQT_FORCE_ASSERTS)
+    add_definitions(-DQT_NO_DEBUG -DQT_FORCE_ASSERTS -D_WIN32_WINNT=0x0501)
 endif()
