@@ -181,7 +181,7 @@ bool SnoreCore::setPrimaryNotificationBackend()
 {
     Q_D(SnoreCore);
 #ifdef Q_OS_WIN
-    if(QSysInfo::windowsVersion() == QSysInfo::WV_WINDOWS8 && d->setBackendIfAvailible("Windows 8"))
+    if(QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8 && d->setBackendIfAvailible("Windows 8"))
     {
         return true;
     }
