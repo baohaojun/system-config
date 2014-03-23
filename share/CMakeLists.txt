@@ -1,8 +1,10 @@
-install(FILES FindLibsnore.cmake DESTINATION share/apps/cmake/modules)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/FindLibsnore.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/FindLibsnore${SNORE_SUFFIX}.cmake" @ONLY)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/FindLibsnore${SNORE_SUFFIX}.cmake" DESTINATION share/apps/cmake/modules)
 
-if(KDE4_FOUND)
-  install(FILES snorenotify.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
-endif(KDE4_FOUND)
+if(KDE4_FOUND AND WITH_SNORE_DEAMON)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/snorenotify.desktop.in" "${CMAKE_CURRENT_BINARY_DIR}/snorenotify.desktop" @ONLY)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/snorenotify.desktop" DESTINATION ${XDG_APPS_INSTALL_DIR})
+endif(KDE4_FOUND AND WITH_SNORE_DEAMON)
 
 if(WIN32)
   add_subdirectory(snoretoast)

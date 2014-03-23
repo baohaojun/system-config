@@ -13,8 +13,8 @@ find_path(LIBSNORE_INCLUDE_DIR
 
 find_library(LIBSNORE_LIBRARY
   NAMES
-  libsnore
-  snore
+  libsnore@SNORE_SUFFIX@
+  snore@SNORE_SUFFIX@
   PATHS ${KDE4_LIB_DIR}
 )
 
