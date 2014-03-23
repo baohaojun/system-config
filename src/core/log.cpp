@@ -30,7 +30,6 @@ class Loger
 {
 public:
 static int s_debugLevel;
-static QTextStream s_textStream;
 
 
 
@@ -74,15 +73,10 @@ static inline QTextStream &logFile()
     return *s_out;
 }
 
-static inline QTextStream &outStream()
-{
-    return s_textStream;
-}
 
 };
 
 int Loger::s_debugLevel = -1;
-QTextStream Loger::s_textStream(stdout);
 
 SnoreLog::SnoreLog(SnoreDebugLevels lvl):
     QDebug(&m_msg),
@@ -99,17 +93,11 @@ SnoreLog::~SnoreLog()
     }
     if(Loger::debugLvl() >= m_lvl)
     {
-        Loger::outStream() << m_msg << "\n";
-        Loger::outStream().flush();
+        std::cout << m_msg.toLatin1().constData() << std::endl;
     }
 }
 
 void SnoreLog::setDebugLvl(int i)
 {
     Loger::s_debugLevel = i;
-}
-
-void SnoreLog::setOutputDevice(QIODevice *device)
-{
-    Loger::s_textStream.setDevice(device);
 }

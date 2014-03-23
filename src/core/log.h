@@ -90,12 +90,6 @@ public:
      */
     static void setDebugLvl(int lvl);
 
-    /**
-     * Sets the output device, the default is stdout
-     * @param device the output device
-     */
-    static void setOutputDevice(QIODevice *device);
-
 private:
     SnoreDebugLevels m_lvl;
     QString m_msg;
