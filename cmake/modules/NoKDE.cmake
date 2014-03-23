@@ -1,6 +1,3 @@
-find_package(Qt5Transitional)
-include_directories( ${QT_INCLUDES} )
-
 if (CMAKE_COMPILER_IS_GNUCXX)
    set (KDE4_ENABLE_EXCEPTIONS -fexceptions)
    # Select flags.

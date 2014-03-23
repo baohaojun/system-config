@@ -25,7 +25,6 @@
 #include "core/plugins/snorebackend.h"
 #include "core/notification/notification_p.h"
 
-#include <QtCore>
 #include <QtDebug>
 #include <QWidget>
 

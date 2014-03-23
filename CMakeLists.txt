@@ -14,13 +14,14 @@ option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DEAM
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
+option(WITH_QT4 "Use Qt4" ON)
 #######################################################################
 
 set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 5)
 set(SNORE_VERSION_SUFFIX "pre")
 
-if(WITH_KDE)
+if(WITH_QT4 AND WITH_KDE)
     find_package(KDE4)
 endif()
 
@@ -28,12 +29,20 @@ if(WITH_SNORE_DEAMON)
     set(WITH_FRONTENDS ON)
 endif()
 
+set(SNORE_SUFFIX "")
 if(KDE4_FOUND)
     add_definitions(-DHAVE_KDE ${KDE4_DEFINITIONS} -D_UNICODE)
     include_directories(${KDE4_INCLUDES})
-else(KDE4_FOUND)
+else()
+    if(NOT WITH_QT4)
+        find_package(Qt5Transitional)
+        set(SNORE_SUFFIX "-qt5")
+    else()
+        find_package(Qt4 REQUIRED)
+    endif()
+    include_directories( ${QT_INCLUDES} )
     include(NoKDE)
-endif(KDE4_FOUND)
+endif()
 
 
 find_package( CryptoPP )
@@ -56,7 +65,7 @@ endif(DOXYGEN_FOUND)
 
 set(LIBSNORE_PLUGIN_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/libsnore)
 set(SNORE_PLUGIN_INSTALL_PATH LIBRARY DESTINATION ${LIBSNORE_PLUGIN_PATH})
-add_definitions(-DLIBSNORE_PLUGIN_PATH="${LIBSNORE_PLUGIN_PATH}")
+add_definitions(-DLIBSNORE_PLUGIN_PATH="${LIBSNORE_PLUGIN_PATH}" -DSNORE_SUFFIX="${SNORE_SUFFIX}")
 message(STATUS "Installing plugins to ${LIBSNORE_PLUGIN_PATH}")
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
