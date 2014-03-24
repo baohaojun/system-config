@@ -1,5 +1,6 @@
 #! /bin/bash
 
+exit 0
 if dayofweek | grep -e "Sat|Sun"; then
     exit 0
 fi

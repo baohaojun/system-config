@@ -136,7 +136,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                         schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs -k $*
                     fi
                 elif test -z \"$NO_PARALLEL_BUILD\" -a -z \"\$NO_PARALLEL_BUILD\"; then
-                    make -j$jobs -l $jobs -k droid telephony uboot obm \$AFBV
+                    schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs -k
                 else
                     lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 

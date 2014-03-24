@@ -8,6 +8,11 @@ if ! which git; then
 fi
 
 mkdir -p ~/Downloads/forever
+
+for x in 15m hourly daily weekly; do
+    mkdir -p ~/external/etc/cron.d/$x;
+done
+
 mkdir -p ~/.logs
 touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
