@@ -7,5 +7,5 @@ if(UNIX  AND WITH_SNORE_DEAMON)
 endif(UNIX AND WITH_SNORE_DEAMON)
 
 if(WIN32)
-  add_subdirectory(snoretoast)
+    add_subdirectory(snoretoast)
 endif(WIN32)

@@ -12,19 +12,19 @@ include(CMakeDependentOption)
 
 
 #######################################################################
-option(WITH_KDE "Try to build with KDE support if availibe" ON)
 option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DEAMON=ON" OFF)
-cmake_dependent_option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF "WITH_SNORE_DEAMON" ON)
 option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
 option(WITH_QT4 "Use Qt4" ON)
+cmake_dependent_option(WITH_KDE "Try to build with KDE support if availibe" ON "NOT WITH_QT4" OFF)
+cmake_dependent_option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF "WITH_SNORE_DEAMON" ON)
 #######################################################################
 
 set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 5)
 set(SNORE_VERSION_SUFFIX "pre")
 
-if(WITH_QT4 AND WITH_KDE)
+if(WITH_KDE)
     find_package(KDE4)
 endif()
 
