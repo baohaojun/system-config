@@ -29,3 +29,7 @@ endif()
 if(WIN32)
     add_definitions(-DQT_NO_DEBUG -DQT_FORCE_ASSERTS -D_WIN32_WINNT=0x0501)
 endif()
+
+
+set(XDG_APPS_INSTALL_DIR  ${CMAKE_INSTALL_PREFIX}/share/applications)
+

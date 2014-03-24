@@ -4,7 +4,6 @@ add_subdirectory(core)
 if(WITH_SNORE_DEAMON)
 
     add_executable( snorenotify WIN32 main.cpp snorenotify.cpp trayicon.cpp ${SNORENOTIFY_DEAMON_DEPS})
-    set_target_properties(snorenotify PROPERTIES OUTPUT_NAME "snorenotify${SNORE_SUFFIX}")
     target_link_libraries( snorenotify snorecore ${QT_QTGUI_LIBRARY} )
 
     if(KDE4_FOUND)
@@ -20,6 +19,6 @@ if(WITH_SNORE_DEAMON)
     install(TARGETS snorenotify RUNTIME DESTINATION bin
                               LIBRARY DESTINATION lib
                               ARCHIVE DESTINATION lib)
-    endif()
+endif()
 
 add_subdirectory(plugins)
