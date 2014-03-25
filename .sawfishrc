@@ -419,7 +419,7 @@
 (bind-keys global-keymap "Scroll_Lock" #'scroll-lock-toggle)
 (bind-keys global-keymap "Super-S-SPC" #'scroll-lock-toggle)
 (bind-keys global-keymap "C-ESC" '(synthesize-event "ESC" (input-focus)))
-(bind-keys s-h-keymap "g"  '(system "emacsclient -d -e '(gnus)'&"))
+(bind-keys s-h-keymap "g"  '(system "gnus&"))
 (bind-keys s-h-keymap "w"  '(system "emacs-weibo&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
 (bind-keys s-h-keymap "e" '(system "sawfish-click.sh&"))

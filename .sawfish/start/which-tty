@@ -4,5 +4,5 @@ set -e
 exec > ~/.logs/$(basename $0).log 2>&1
 pid=$(ps.pl /bin/xorg|pn 1)
 
-ln -sf "$(sudo ls -l "/proc/$pid/fd" | grep -e '/dev/tty[0-9]' | perl -npe 's/.*->//')" ~/.xtty
+ln -sf "$(sudo ls -l "/proc/$pid/fd" | grep -e '/dev/tty[0-9]' | perl -npe 's/.*-> //')" ~/.xtty
 

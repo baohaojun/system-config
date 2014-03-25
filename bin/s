@@ -5,7 +5,7 @@ x=$(select-output-line '
             cat ~/.logs/last-search;
         fi;
         cd ~/bin;
-        for x in search-*; do
+        for x in search-* gerrit-browser-review; do
             echo $x;
         done|sort -u
     ) | uniq-even-non-ajacent '

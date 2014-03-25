@@ -72,7 +72,9 @@ sub edit_1($)
             if ($user ne $ENV{USER} and system("yes-or-no-p -y 'file not readable, use root?'") == 0) {
                 system("sudoedit", $file);
             }
-            exit;
+            if (! -d $file) {
+                exit;
+            }
         }
 
         my $file_q = $file = shell_quote($file);

@@ -124,9 +124,10 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                     . .buildenv.sh.x
                 fi
                 . ./build/envsetup.sh
-                (cd boot/uboot; git add .; git clean -xfd) || true
-                (cd boot/obm;   git add .; git clean -xfd) || true
-
+                if test -d boot/uboot -a -d boot/obm; then
+                    (cd boot/uboot; git add .; git clean -xfd) || true
+                    (cd boot/obm;   git add .; git clean -xfd) || true
+                fi
 
                 if test $# != 0; then
                     if test $# = 1 -a $1 = lk; then
@@ -167,5 +168,8 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
         echo
     )
 ) 9>.android-full-build.lock  2>&1 | tee build.log out/build.log
+if test "$#" = 0; then
+    mv out/build.log out/full-build.log
+fi
 
 grep -Hn -e 'full build result is' build.log | grep -e "all ok" # make sure it exit with the right return value

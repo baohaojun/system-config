@@ -32,9 +32,14 @@ if test -z "$SSH_AGENT_PID" -a -e ~/.cache/ssh-auth; then
 fi
 
 if test $SSH_OK = false; then
-    ssh-agent > ~/.cache/ssh-auth.$$
+    (
+        umask 077
+        ssh-agent > ~/.cache/ssh-auth.$$
+    )
     . ~/.cache/ssh-auth.$$ >/dev/null 2>&1
     mv ~/.cache/ssh-auth.$$ ~/.cache/ssh-auth
-    ssh-add ~/.ssh/id_rsa
+    if test -e ~/.ssh/id_rsa; then
+        ssh-add ~/.ssh/id_rsa
+    fi
 fi
 unset SSH_OK

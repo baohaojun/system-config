@@ -29,13 +29,6 @@ export SWDOWNLOADER=$ANDROID_BUILD_TOP/vendor/marvell/generic/software_downloade
 fi
 EOF
 
-if test -e ~/.android/gcc.mk; then
-    cat ~/.android/gcc.mk >> buildspec.mk
-else
-    echo "CC := gcc-4.5" >>buildspec.mk
-    echo "CXX := g++-4.5" >>buildspec.mk
-fi
-echo "export CC CXX" >>buildspec.mk
 echo "export TARGET_PRODUCT" >>buildspec.mk
 if test ! -e .repo/buildspec-x.mk; then
     rm .repo/buildspec-x.mk -f

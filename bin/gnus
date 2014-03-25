@@ -1,3 +1,4 @@
 #!/bin/bash
+offlineimap -a $(grep '\baccounts\b' ~/.offlineimaprc|pn 3|perl -npe 's/,//')&
 find-or-exec emacs
 emacsclient -e '(gnus)'

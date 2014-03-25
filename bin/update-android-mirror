@@ -1,22 +1,26 @@
 #!/bin/bash
 set -ex
 
-cd ~/src/android-mirror/linux-2.6.git || exit 0
-git fetch https://github.com/mirrors/linux
+(
+    cd ~/src/android-mirror/linux-2.6.git || exit 0
+    git fetch https://github.com/mirrors/linux
+)
 
-cd ~/src/android-mirror/
+(
+    cd ~/src/android-mirror/ || exit 0
 
-for branch in $(
-    cd .repo/manifests >/dev/null 2>&1 
-    git branch -a | grep -P -e '/android-\d' | sort -n | tail -n 1 | perl -npe 's,.*/,,'
-    if test ! -e .repo/update-android-branches; then
-        echo jb-dev > .repo/update-android-branches
-    fi
-    cat .repo/update-android-branches 2>/dev/null
-); do 
-    repo-switch -u https://android.googlesource.com/platform/manifest -b $branch -m default.xml
-    repo sync -j1
-done
+    for branch in $(
+        cd .repo/manifests >/dev/null 2>&1
+        git branch -a | grep -P -e '/android-\d' | sort -n | tail -n 1 | perl -npe 's,.*/,,'
+        if test ! -e .repo/update-android-branches; then
+            echo jb-dev > .repo/update-android-branches
+        fi
+        cat .repo/update-android-branches 2>/dev/null
+    ); do
+        repo-switch -u https://android.googlesource.com/platform/manifest -b $branch -m default.xml
+        repo sync -j1
+    done
+)
 
 #vendor/nvidia and hardware/tegra, we can do nothing, their git is maintained by us.
 

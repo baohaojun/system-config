@@ -7,10 +7,18 @@ echo 'echo -00122-g512f9aa; exit 0' > ./scripts/setlocalversion
 
 if test $# != 0; then # should be make i386_defconfig
     rm ~/.cache/kernel-build -rf
-    mkdir -p ~/.cache/kernel-build
+    mkdir -p ~/.cache/kernel-build/usr
     export CROSS_COMPILE=${CROSS_COMPILE:-ccache }
-    make $1 O=~/.cache/kernel-build -j8
+    if echo $1 | grep arch/arm; then
+        export PATH=$(lookup-file prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin):$PATH
+        export ARCH=arm
+        export CROSS_COMPILE="$CROSS_COMPILE arm-eabi-"
+    fi
+    make $(basename $1) O=~/.cache/kernel-build -j8
     make O=~/.cache/kernel-build -j8
+    make O=~/.cache/kernel-build -j8 modules
+    make O=~/.cache/kernel-build -j8 headers_install
+    make O=~/.cache/kernel-build -j8 INSTALL_MOD_PATH=~/.cache/kernel-build/usr INSTALL_MOD_STRIP=1 modules_install
 else
     (cd $(lookup-file vendor/marvell/generic/tcmd/kernel-helper); time mm -j8 -k kernel)
 fi | tee ~/1.txt
