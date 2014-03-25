@@ -1,0 +1,11 @@
+show_frame=true
+fg_set=false
+bg_set=false
+timezone=
+width_set=false
+height_set=false
+data0=%Y年%m月%d日 %H点%M分 第%V周%w
+font0=
+tooltip=%A %d %B %Y/%V
+hib_timing=true
+
