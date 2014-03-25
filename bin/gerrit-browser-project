@@ -1,6 +1,6 @@
 #!/bin/bash
 
-host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//; s/.*@//') 2>/dev/null )
+host=$(repo-review-host)
 
 project=$(basename $(repo-project))
 

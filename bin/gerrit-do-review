@@ -40,7 +40,7 @@ fi
 
 rev_list=$(git rev-list $rev ^$(repo-remote-branch))
 for subrev in $rev_list; do
-    gerrit review "$(git rev-parse $subrev)" $action
+    gerrit -- review "$(git rev-parse $subrev)" $action
 done
 
 if test "$DEBUG"; then

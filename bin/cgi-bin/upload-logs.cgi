@@ -31,7 +31,9 @@ if (not $boot_seq) {
 
 sub into_private_dir($$) {
     my ($dir, $desc) = @_;
-    mkdir $dir or my_die "Can't mkdir with the $desc";
+    if (not -d $dir) {
+        mkdir $dir or my_die "Can't mkdir with the $desc";
+    }
     chdir $dir or my_die "Can't chdir with the $desc";
 }
 
@@ -39,7 +41,18 @@ my $log_seq = $params{log_seq};
 delete $params{log_seq};
 
 into_private_dir $wifi_mac, "wifi mac";
-into_private_dir $boot_seq, "boot seq number";
+
+my $boot_seq_dir = $boot_seq;
+my $boot_seq_seq = 0;
+while (1) {
+    if (-d $boot_seq_dir) {
+        $boot_seq_seq += 1;
+        $boot_seq_dir = "$boot_seq.$boot_seq_seq";
+    } else {
+        last;
+    }
+}
+into_private_dir $boot_seq_dir, "boot seq number";
 
 if ($log_seq ne $boot_seq and $log_seq) {
     into_private_dir $log_seq, "old log seq number";

@@ -19,11 +19,10 @@ for x in $(echo "
     printf "export %s=%s\n" $x "$(eval echo -n \$$x)"
 done | grep -v '=$' > .buildenv.sh
 
-cat <<'EOF' >> .buildenv.sh
-export PATH=$ANDROID_BUILD_TOP/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin:$PATH
-export PATH=$ANDROID_BUILD_TOP/vendor/marvell/generic/toolchain/armv7-marvell-eabi-softfp/bin:$PATH
+cat <<EOF >> .buildenv.sh
+export PATH=$PATH
 export ARCH=arm
-if test "$BUILD_UBOOT_OBM"; then
+if test "\$BUILD_UBOOT_OBM"; then
 export CROSS_COMPILE='ccache arm-eabi-'
 export SWDOWNLOADER=$ANDROID_BUILD_TOP/vendor/marvell/generic/software_downloader
 fi

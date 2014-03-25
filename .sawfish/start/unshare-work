@@ -1,2 +1,2 @@
 #!/bin/bash
-mount --make-rprivate /home
+sudo mount --make-rprivate /home
