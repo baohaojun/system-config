@@ -50,7 +50,7 @@ function adb() {
         shift
     fi
 
-    if test "$1" = -s; then
+    if test "$1" = -S; then
         echo "$(select-output-line -- 'cat ~/.config/adb-device 2>/dev/null; adb devices 2>&1 | perl -ne "print unless 1..1"'|pn 1)" > ~/.config/adb-device.$$
         mv ~/.config/adb-device.$$ ~/.config/adb-device
         shift
@@ -65,7 +65,7 @@ function adb() {
         )
         if test ${#devices[@]} -gt 1; then
             if test ! -e ~/.config/adb-device || ! echo ${devices[@]} | grep -q $(cat ~/.config/adb-device); then
-                command adb -s
+                command adb -S
             fi
             export ANDROID_SERIAL=$(cat ~/.config/adb-device)
         else

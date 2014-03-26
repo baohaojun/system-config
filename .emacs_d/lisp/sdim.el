@@ -55,7 +55,7 @@
     inactivate-current-input-method-function)
   "A list of buffer local variable for the SDIM input method")
 
-(defvar sdim-ime-connection nil "connection to the ime server, normally localhost:12345")
+(defvar sdim-ime-connection nil "connection to the ime server, normally localhost:31415")
 
 (dolist (var sdim-local-variable-list)
   (make-variable-buffer-local var)
@@ -154,7 +154,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
     (setq sdim-ime-connection
           (make-network-process :name "ime-server"
                                 :host "localhost"
-                                :service 12345
+                                :service 31415
                                 :buffer "*ime-server*"
                                 :filter 'sdim-network-filter
                                 :sentinel 'sdim-network-sentinel))))

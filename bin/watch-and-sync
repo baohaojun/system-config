@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# -lt 2; then
+    die "Usage: $(basename $0) file command..."
+fi
+
+file=$1
+shift
+
+while true; do
+    inotifywait -e close_write "$file"
+    if test $# = 1; then
+        bash -c "$1" || true
+    else
+        "$@" || true
+    fi
+done

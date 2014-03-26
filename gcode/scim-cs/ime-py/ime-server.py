@@ -13,7 +13,7 @@ ime_listen_sock = socket(AF_INET, SOCK_STREAM);
 if os.name == 'posix':
     ime_listen_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 
-ime_listen_sock.bind(('127.0.0.1', 12345))
+ime_listen_sock.bind(('127.0.0.1', 31415))
 ime_listen_sock.listen(5)
 
 bhj_ime.init()

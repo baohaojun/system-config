@@ -1,9 +1,13 @@
 #!/usr/bin/perl
 use CGI;
+
+sub debug(@) {
+    # print "@_\n";
+}
+
 my $q = CGI->new;
 print $q->header('text/plain');
 
-system("id");
 chdir "/log-crawler" or die "Can't chdir into /log-crawler";
 
 my %params = $q->Vars;
@@ -40,19 +44,52 @@ sub into_private_dir($$) {
 my $log_seq = $params{log_seq};
 delete $params{log_seq};
 
+my $session_id = $params{session_id};
+delete $params{session_id};
+
 into_private_dir $wifi_mac, "wifi mac";
+debug "$0:" . __LINE__ . ": hello world";
 
 my $boot_seq_dir = $boot_seq;
-my $boot_seq_seq = 0;
-while (1) {
-    if (-d $boot_seq_dir) {
-        $boot_seq_seq += 1;
-        $boot_seq_dir = "$boot_seq.$boot_seq_seq";
-    } else {
-        last;
+
+my $do_seq_seq = 0;
+if ($session_id eq "unknown") {
+    $session_id = "" . rand;
+    $do_seq_seq = 1;
+} else {
+    my $boot_seq_seq = 0;
+    while (1) {
+        debug "$0:" . __LINE__ . ": hello";
+        if ($session_id eq qx(cat $boot_seq_dir/session_id 2>/dev/null)) {
+            debug "$0:" . __LINE__ . ": found session at $boot_seq_dir";
+            last;
+        } elsif (-d $boot_seq_dir) {
+            debug "$0:" . __LINE__ . ": hello";
+            $boot_seq_seq += 1;
+            $boot_seq_dir = "$boot_seq.$boot_seq_seq";
+        } else {
+            debug "$0:" . __LINE__ . ": world";
+            $boot_seq_dir = $boot_seq;
+            $do_seq_seq = 1;
+            last;
+        }
     }
 }
+
+if ($do_seq_seq) {
+    my $boot_seq_seq = 0;
+    while (1) {
+        if (-d $boot_seq_dir) {
+            $boot_seq_seq += 1;
+            $boot_seq_dir = "$boot_seq.$boot_seq_seq";
+        } else {
+            last;
+        }
+    }
+}
+
 into_private_dir $boot_seq_dir, "boot seq number";
+system("echo -n $session_id > session_id");
 
 if ($log_seq ne $boot_seq and $log_seq) {
     into_private_dir $log_seq, "old log seq number";
@@ -81,4 +118,4 @@ for my $param (keys %params) {
     }
     close $fh;
 }
-print "Upload is complete!\n";
+print "Upload is complete! $session_id\n";

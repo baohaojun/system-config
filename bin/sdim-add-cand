@@ -2,7 +2,7 @@
 if test $# = 0; then
     set -- `cat`
 fi
-echo add_cand "$@" > /dev/tcp/localhost/12345
+echo add_cand "$@" > /dev/tcp/localhost/31415
 if test -z "$SDIM_SYNC_CANDS"; then
     sdim-sync-cands
 fi

@@ -207,7 +207,7 @@ start:
 
 	sockaddr_in client_addr = {0};
 	client_addr.sin_family = AF_INET;
-	client_addr.sin_port = htons(12345);
+	client_addr.sin_port = htons(31415);
 	client_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int ret = connect(g_ime_sock, (const sockaddr*)&client_addr, sizeof(client_addr));

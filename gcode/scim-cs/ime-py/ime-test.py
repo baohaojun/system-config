@@ -4,7 +4,7 @@ from thread import *
 import sys
 
 sock = socket(AF_INET, SOCK_STREAM);
-sock.connect(('127.0.0.1', 12345))
+sock.connect(('127.0.0.1', 31415))
 
 sock = sock.makefile("rw", 0)
 

@@ -12,8 +12,14 @@ fi
 ) 9< ~/bin/.gitx
 
 if lookup-file -e .repo/manifest.xml; then
+    git-interactive-add
     git commit -s
-    git push $(repo-remote) HEAD:$(repo-branch)
+    if yes-or-no-p -y "push for review?"; then
+        gerrit-push-review baohaojun
+        gerrit-do-review
+    else
+        git push $(repo-remote) HEAD:$(repo-branch)
+    fi
     exit
 fi
 

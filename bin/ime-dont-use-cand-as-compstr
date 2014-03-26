@@ -2,4 +2,4 @@
 
 touch ~/.sdim/use_cand_as_comp=false
 rm -f ~/.sdim/use_cand_as_comp=true
-echo check_env | nc localhost 12345
+echo check_env | nc localhost 31415
