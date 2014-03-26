@@ -10,10 +10,6 @@ if(WITH_SNORE_DEAMON)
         target_link_libraries( snorenotify ${KDE4_KDEUI_LIBS} )
     endif(KDE4_FOUND)
 
-    if(MSVC)
-            set_target_properties(snorenotify PROPERTIES   LINK_FLAGS "/ENTRY:\"mainCRTStartup\"")
-    endif(MSVC)
-
     add_dependencies(snorenotify snorecore)
 
     install(TARGETS snorenotify RUNTIME DESTINATION bin
