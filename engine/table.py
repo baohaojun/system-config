@@ -104,7 +104,7 @@ class tabengine (ibus.EngineBase):
         if self.sock:
             self.do_disconnect()
         self.sock = socket(AF_INET, SOCK_STREAM)
-        self.sock.connect(("localhost", 12345))
+        self.sock.connect(("localhost", 31415))
         self.sock = self.sock.makefile("rwb", 0)
 
     def do_disconnect(self):
