@@ -192,7 +192,7 @@ while(<$file>) {
         next;
     }
 
-    if ($no_comment and m,(?:^\s*/?\*)|(?:^\s*//),) {
+    if ($no_comment and m,(?:^\s*/?\*)(?!\w)|(?:^\s*//),) {
         debug "$0:" . __LINE__ . ": no comment should be allowed";
         next;
     }
