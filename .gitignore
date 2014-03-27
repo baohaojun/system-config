@@ -7,3 +7,4 @@ ctags
 configure
 autom4te.cache/
 config.h.in
+dctags
