@@ -456,3 +456,14 @@
       '((?a . ?z) (?A . ?Z)))
 
 (bind-keys esc-x-keymap "RET" '(synthesize-event-gnome? "M-RET" (input-focus)))
+
+(defun synthesize-multiple-events (&rest events)
+  (mapc (lambda (e)
+          (synthesize-event e (input-focus)))
+        events))
+
+(bind-keys global-keymap "F1" '(synthesize-multiple-events "ESC" "g" "f" "RET"))
+(bind-keys global-keymap "F2" '(synthesize-multiple-events "ESC" "g" "r" "RET"))
+(bind-keys global-keymap "F3" '(synthesize-multiple-events "ESC" "." "RET"))
+(bind-keys global-keymap "Left" '(synthesize-multiple-events "ESC" "C-,"))
+(bind-keys global-keymap "Right" '(synthesize-multiple-events "ESC" "C-."))

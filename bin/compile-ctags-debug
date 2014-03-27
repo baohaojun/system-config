@@ -1,0 +1,5 @@
+#!/bin/bash
+cd ~/gcode/ajoke/external/ctags-exuberant
+autoreconf -i
+true;CFLAGS='-g -O0 -DDEBUG' ./configure
+make dctags
