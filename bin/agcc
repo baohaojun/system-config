@@ -38,7 +38,7 @@ chomp($arm_mk);
 
 open(my $file, "<", $arm_mk) or die "can not open build/core/combo/TARGET_linux-arm.mk";
 
-my $GCC = `lookup-file prebuilt/linux-x86/toolchain/arm-eabi-4.2.1/bin/arm-eabi-gcc`;
+my $GCC = `lookup-file prebuilts/gcc/linux-x86/arm/arm-eabi-4.7/bin/arm-eabi-gcc`;
 chomp($GCC);
 
 sub debug(@) {
@@ -55,7 +55,7 @@ while (<$file>) {
 close($file);
 
 die "bad arm-eabi-gcc path" if not -e $GCC;
-$GCC =~ m#(.*)/prebuilt/# or die "gcc not under prebuilt";
+$GCC =~ m#(.*)/prebuilts?/# or die "gcc not under prebuilt";
 my $DROID = $1;
 
 if (not -e "$DROID/target_out_symlink") {
@@ -99,7 +99,7 @@ my @preprocess_args = (
     "-DANDROID",
     "-DSK_RELEASE",
     "-DNDEBUG",
-    "-include", "$DROID/system/core/include/arch/linux-arm/AndroidConfig.h",
+    "-include", "$DROID/build/core/combo/include/arch/linux-arm/AndroidConfig.h",
     "-UDEBUG");
 
 my @warn_args = (
@@ -134,41 +134,41 @@ my @optimize_args = (
     "-funswitch-loops");
 
 my @link_args = (
-		 "-Bdynamic",
-		 "-Wl,-T,$DROID/build/core/armelf.x",
-		 "-Wl,-dynamic-linker,/system/bin/linker",
-		 "-Wl,--gc-sections",
-		 "-Wl,-z,nocopyreloc",
-		 "-Wl,--no-undefined",
-		 "-Wl,-rpath-link=$ALIB",
-		 "-L$ALIB",
-		 "-nostdlib",
-		 "$ALIB/crtend_android.o",
-		 "$ALIB/crtbegin_dynamic.o",
-		 glob("$TOOLCHAIN/lib/gcc/*/*/interwork/libgcc.a " .
-		      "$TOOLCHAIN/lib/gcc/*/*/libgcc.a " .
-		      "$TOOLCHAIN/lib/gcc/*/*/*/libgcc.a"
-		     ),
-		 "-lc",
-		 "-lm"
-		);
+                 "-Bdynamic",
+                 "-Wl,-T,$DROID/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7/arm-eabi/lib/ldscripts/armelf.x",
+                 "-Wl,-dynamic-linker,/system/bin/linker",
+                 "-Wl,--gc-sections",
+                 "-Wl,-z,nocopyreloc",
+                 "-Wl,--no-undefined",
+                 "-Wl,-rpath-link=$ALIB",
+                 "-L$ALIB",
+                 "-nostdlib",
+                 "$ALIB/crtend_android.o",
+                 "$ALIB/crtbegin_dynamic.o",
+                 glob("$TOOLCHAIN/lib/gcc/*/*/interwork/libgcc.a " .
+                      "$TOOLCHAIN/lib/gcc/*/*/libgcc.a " .
+                      "$TOOLCHAIN/lib/gcc/*/*/*/libgcc.a"
+                     ),
+                 "-lc",
+                 "-lm"
+                );
 
 # Also need: -Wl,-soname,libXXXX.so
 my @shared_args = (
-		   "-nostdlib",
-		   "-Wl,-T,$DROID/build/core/armelf.xsc",
-		   "-Wl,--gc-sections",
-		   "-Wl,-shared,-Bsymbolic",
-		   "-L$ALIB",
-		   "-Wl,--no-whole-archive",
-		   "-lc",
-		   "-lm",
-		   "-Wl,--no-undefined",
-		   glob("$TOOLCHAIN/lib/gcc/*/*/interwork/libgcc.a " .
-			"$TOOLCHAIN/lib/gcc/*/*/libgcc.a " .
-			"$TOOLCHAIN/lib/gcc/*/*/*/libgcc.a"
-		       ),
-		   "-Wl,--whole-archive"); # .a, .o input files go *after* here
+                   "-nostdlib",
+                   "-Wl,-T,$DROID/build/core/armelf.xsc",
+                   "-Wl,--gc-sections",
+                   "-Wl,-shared,-Bsymbolic",
+                   "-L$ALIB",
+                   "-Wl,--no-whole-archive",
+                   "-lc",
+                   "-lm",
+                   "-Wl,--no-undefined",
+                   glob("$TOOLCHAIN/lib/gcc/*/*/interwork/libgcc.a " .
+                        "$TOOLCHAIN/lib/gcc/*/*/libgcc.a " .
+                        "$TOOLCHAIN/lib/gcc/*/*/*/libgcc.a"
+                       ),
+                   "-Wl,--whole-archive"); # .a, .o input files go *after* here
 
 # Now implement a quick parser for a gcc-like command line
 
@@ -183,19 +183,19 @@ my $have_src = 0;
 while(@ARGV) {
     my $a = shift;
     if(defined $MODES{$a}) {
-	die "Can't specify $a and $mode" if $mode ne "DEFAULT";
-	$mode = $a;
+        die "Can't specify $a and $mode" if $mode ne "DEFAULT";
+        $mode = $a;
     } elsif($a eq "-o") {
-	die "Missing -o argument" if !@ARGV;
-	die "Duplicate -o argument" if defined $out;
-	$out = shift;
+        die "Missing -o argument" if !@ARGV;
+        die "Duplicate -o argument" if defined $out;
+        $out = shift;
     } elsif($a =~ /^-W.*/) {
-	$warn = 1;
+        $warn = 1;
     } elsif($a =~ /^-O.*/) {
-	$opt = 1;
+        $opt = 1;
     } else {
-	if($a =~ /\.(c|cpp|cxx)$/i) { $have_src = 1; }
-	push @args, $a;
+        if($a =~ /\.(c|cpp|cxx)$/i) { $have_src = 1; }
+        push @args, $a;
     }
 }
 

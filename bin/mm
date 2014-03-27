@@ -25,6 +25,10 @@ time (
     export build_mount_p=$(readlink -f ../)/.afb
     mkdir -p $build_mount_p
 
+    if test "$(find $build_mount_p -maxdepth 1 | wc -l)" != 1 && yes-or-no-p -y "unmount ~/src/.afb?"; then
+        unshare-work
+        umount ~/src/.afb
+    fi
     test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1 || die "build_mount_p already mounted"
     echo "make: Entering directory \`$(pwd)'"
     function sudo() {

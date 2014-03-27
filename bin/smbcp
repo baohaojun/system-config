@@ -1,0 +1,26 @@
+#!/bin/bash
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) source target"
+fi
+
+src=$(readlink -f "$1")
+smb=$(readlink -f ~/smb)
+
+if test "${src:0:${#smb}}"/ != "$smb/"; then
+    die "must run this command in ~/smb"
+fi
+
+
+base_src=$(basename $src)
+share=/${src:${#smb}}
+D=$share
+share=$(echo "$share" |perl -npe 's!^(//([^/]+/){2}).*!$1!')
+D=${D:${#share}}
+D=$(dirname "$D")
+smbclient "$share" -D "$D" -U "$(grep ^auth ~/.smb/smbnetfs.conf | tail -n 1 | perl -npe 's/auth\s*|\s*\$//g; s/\s+/%/')" -c "tarmode; recurse; prompt; lcd $2; mget $base_src"
