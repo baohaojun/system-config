@@ -7,7 +7,8 @@ sudo su - bhj -c "
        (
            flock -n 2 || exit
            sleep 1
-           xmodmap ~/.Xmodmap
+           xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap || true
+           xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap || true
            xmodmap -e 'keycode 197 = F23'
            xmodmap -e 'keycode 202 = F24'
            ~/bin/do-keymap

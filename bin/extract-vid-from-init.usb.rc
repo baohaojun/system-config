@@ -1,0 +1,17 @@
+#!/usr/bin/env perl
+
+while (<>) {
+    if (m/^\s*on\s+property:sys.usb.config\s*=\s*(.*?)\s*$/) {
+        $config = $1;
+    }
+    if (m!^\s*write\s+/sys/class/android_usb/android0/(idVendor|idProduct)\s+(.*?)\s*$!) {
+        $id_map{$config . "." . $1} = $2;
+    }
+}
+for (sort keys %id_map) {
+    if ($_ =~ m/idVendor/) {
+        $product = $_;
+        $product =~ s/idVendor/idProduct/;
+        print "$_: $id_map{$_}, idProduct: $id_map{$product}\n";
+    }
+}
