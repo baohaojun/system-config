@@ -368,8 +368,8 @@
 (load "bhj-set-key.el")
 (load "bhj-autoloads.el")
 (load "bhj-eval-after-load.el")
-(when (file-exists-p "~/external/etc/.emacs.d/emacs-wide")
-  (load "~/external/etc/.emacs.d/emacs-wide"))
+(when (file-exists-p "~/external/.emacs_d/emacs-wide")
+  (load "~/external/.emacs_d/emacs-wide"))
 
 (condition-case nil
     (server-start)

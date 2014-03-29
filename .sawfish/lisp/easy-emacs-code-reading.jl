@@ -1,3 +1,7 @@
+(defun synthesize-multiple-events (&rest events)
+  (mapc (lambda (e)
+          (synthesize-event e (input-focus)))
+        events))
 (bind-keys global-keymap "F1" '(synthesize-multiple-events "ESC" "g" "f" "RET"))
 (bind-keys global-keymap "F2" '(synthesize-multiple-events "ESC" "g" "r" "RET"))
 (bind-keys global-keymap "F3" '(synthesize-multiple-events "ESC" "." "RET"))
