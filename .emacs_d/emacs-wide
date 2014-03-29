@@ -1,0 +1,2 @@
+(setq split-height-threshold nil)
+(setq split-width-threshold 160)
