@@ -416,7 +416,6 @@
       (scroll-lock-on w))))
 
 (bind-keys global-keymap "XF86LaunchA" #'scroll-lock-toggle) ; The F3 key on MBA
-(bind-keys global-keymap "Scroll_Lock" #'scroll-lock-toggle)
 (bind-keys global-keymap "Super-S-SPC" #'scroll-lock-toggle)
 (bind-keys global-keymap "C-ESC" '(synthesize-event "ESC" (input-focus)))
 (bind-keys s-h-keymap "g"  '(system "gnus&"))
@@ -462,48 +461,23 @@
           (synthesize-event e (input-focus)))
         events))
 
-(bind-keys global-keymap "F1" '(synthesize-multiple-events "ESC" "g" "f" "RET"))
-(bind-keys global-keymap "F2" '(synthesize-multiple-events "ESC" "g" "r" "RET"))
-(bind-keys global-keymap "F3" '(synthesize-multiple-events "ESC" "." "RET"))
-(bind-keys global-keymap "Left" '(synthesize-multiple-events "ESC" "C-,"))
-(bind-keys global-keymap "Right" '(synthesize-multiple-events "ESC" "C-."))
-(bind-keys global-keymap "Up" '(synthesize-multiple-events "ESC" "C-a"))
-(bind-keys global-keymap "Down" '(synthesize-multiple-events "ESC" "C-e"))
-(bind-keys global-keymap "F11"  '(progn
-                                   (maximize-window (input-focus))
-                                   (synthesize-multiple-events "C-x" "1")))
-(bind-keys global-keymap "Prior" '(synthesize-multiple-events "ESC" "g" "p"))
-(bind-keys global-keymap "Next" '(synthesize-multiple-events "ESC" "g" "n"))
+(defun emacs-code-reading-toggle ()
+  (if (lookup-event-binding (lookup-event "F1"))
+      (progn
+        (let* ((file (open-file "~/.sawfish/lisp/easy-emacs-code-reading.jl" 'read))
+               (event "")
+               (line ""))
+          (while (setq line (read-line file))
+            (when (string-match "bind-keys\\s+global-keymap\\s+\"(.*?)\"" line)
+              (setq event (expand-last-match "\\1"))
+              (unbind-keys global-keymap event)))
+          (close-file file))
+        (system "switch-scroll-led off&")
+        (read-event "Switching to non-code-reading mode."))
+    (system "switch-scroll-led on&")
+    (read-event "Switching to code reading mode.")
+    (load-file "~/.sawfish/lisp/easy-emacs-code-reading.jl")))
 
-(bind-keys global-keymap "F4"
-           '(progn
-              (read-event
- "
-                ^
-
-
-
-<     Click on the screen     >
-
-
-
-                V" )
-              (let* ((xy (query-pointer))
-                     (x (car xy))
-                     (y (cdr xy))
-                     (w (screen-width))
-                     (h (screen-height)))
-                (message (format nil "x is %d, y is %d, w is %d, h is %d" x y w h))
-                (cond
-                 ((< x (/ w 3)) ; left
-                  (message "going left")
-                  (synthesize-multiple-events "ESC" "C-,"))
-                 ((> x (- w (/ w 3))) ; right
-                  (message "going right")
-                  (synthesize-multiple-events "ESC" "C-."))
-                 ((< y (/ h 3))
-                  (message "going up")
-                  (synthesize-multiple-events "ESC" "C-a"))
-                 ((> y (- h (/ h 3)))
-                  (message "going down")
-                  (synthesize-multiple-events "ESC" "C-e"))))))
+(bind-keys global-keymap "Scroll_Lock" #'emacs-code-reading-toggle)
+(bind-keys s-h-keymap "?"
+           '(read-event (format nil "%s" (lookup-event-binding (read-event)))))

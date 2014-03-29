@@ -1,7 +1,8 @@
 #!/bin/bash
 
+light=$(basename $0 | perl -npe 's/.*?-(.*?)-.*/$1/')
 toggle=-
 if test "$1" = on; then
     toggle=+
 fi
-echo setleds -D ${toggle}caps \< ~/.xtty | sudo bash
+echo setleds -D ${toggle}$light \< ~/.xtty | sudo bash
