@@ -1,0 +1,13 @@
+#!/bin/bash
+wget http://admin:$(get-authinfo 192.168.33.1 admin)@192.168.33.1/userRpm/StatusRpm.htm -O - 2>/dev/null |
+perl -ne 'BEGIN {
+              $var_wanpara_line = -10;
+          }
+          if (m/var wanPara/) {
+              $var_wanpara_line = $.;
+          }
+          if ($. == $var_wanpara_line + 3) {
+              s/"(.*?)".*/$1/;
+              print;
+          }
+'

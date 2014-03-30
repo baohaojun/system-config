@@ -76,7 +76,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     (setq chinese-font-size-scale-alist '((16 . 1.25)))))
 
 
-(defvar bhj-english-font-size-steps '(10.5 11.5 12.5 14 16 18 20 22))
+(defvar bhj-english-font-size-steps '(9 10.5 11.5 12.5 14 16 18 20 22))
 (defun bhj-step-frame-font-size (step)
   (let ((steps bhj-english-font-size-steps)
         next-size)

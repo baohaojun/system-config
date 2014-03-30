@@ -107,7 +107,6 @@
  '(shell-file-name "/bin/bash")
  '(show-paren-mode t nil (paren))
  '(show-paren-style (quote parenthesis))
- '(split-width-threshold 800)
  '(starttls-use-gnutls t)
  '(text-mode-hook (quote (text-mode-hook-identify)))
  '(tooltip-mode nil)
