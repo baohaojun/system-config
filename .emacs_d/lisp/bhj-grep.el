@@ -148,7 +148,7 @@
   (interactive)
   (let ((grep-history grep-func-call-history)
         (my-grep-command "grep-func-call -e pat")
-        (compilation-buffer-name-function (lambda (_ign) "*grep-func-call*"))
+        (grep-buffer-name (if (boundp 'grep-buffer-name) grep-buffer-name "*grep-func-call*"))
         (current-prefix-arg 4))
     (nodup-ring-insert ajoke--marker-ring (point-marker))
     (let ((file (ajoke--buffer-file-name (current-buffer)))
