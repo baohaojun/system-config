@@ -26,8 +26,12 @@ fi
 SSH_OK=false
 if test -z "$SSH_AGENT_PID" -a -e ~/.cache/ssh-auth; then
     . ~/.cache/ssh-auth >/dev/null 2>&1
-    if test "$SSH_AGENT_PID" -a "$(ps h -o command $SSH_AGENT_PID)" = ssh-agent; then
-        SSH_OK=true
+    if test "$SSH_AGENT_PID"; then
+        if uname | grep cygwin -i -q; then
+            SSH_OK=true
+        elif test "$(ps h -o command $SSH_AGENT_PID)" = ssh-agent; then
+            SSH_OK=true
+        fi
     fi
 fi
 
