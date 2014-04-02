@@ -18,6 +18,7 @@ elif test $(basename $0) = switch-to-hdmi; then
     xrandr --output $hdmi --auto
 elif test $(basename $0) = switch-to-laptop; then
     xrandr --output $lvds --auto
+    xrandr --output $hdmi --off
     xrandr --output $vga --off
 else
 

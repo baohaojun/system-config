@@ -101,8 +101,8 @@
 (global-set-key [(meta shift ?d)] 'insert-today)
 
 (define-key minibuffer-local-map [(meta shift return)] 'bhj-find-missing-file)
-(global-set-key [(meta shift return)] 'bhj-find-missing-file)
-(define-key esc-map [(shift return)] 'bhj-find-missing-file)
+; (global-set-key [(meta shift return)] 'bhj-find-missing-file)
+; (define-key esc-map [(shift return)] 'bhj-find-missing-file)
 (define-key minibuffer-local-map [(meta shift f)] 'bhj-clt-insert-file-name)
 (define-key minibuffer-local-map [(meta shift e)] 'bhj-edit-grep-pattern)
 (define-key minibuffer-local-map [(meta shift d )] 'bhj-insert-pwdu)

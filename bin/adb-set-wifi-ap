@@ -11,4 +11,5 @@ network={
         priority=1
 }
 EOF
+chown wifi:wifi /data/misc/wifi/wpa_supplicant.conf
 ' true "$@"

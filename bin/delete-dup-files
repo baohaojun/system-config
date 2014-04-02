@@ -1,0 +1,26 @@
+#!/bin/bash
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) md5dir"
+fi
+
+md5dir=$(readlink -f "$1")/.md5
+mkdir -p $md5dir
+
+IFS=$'\n'
+find ./*/ -type f | while read file; do
+    md5=$(md5sum "$file"|pn 1)
+    md5_head=${md5:0:2}
+    md5_tail=${md5:2}
+    md5file="$md5dir/$md5_head/$md5_tail"
+    if test -e "$md5dir/$md5_head/$md5_tail"; then
+        ln -sf "$(readlink -f "$md5file")" "$file"
+    else
+        mkdir -p "$(dirname "$md5file")"
+        ln -sf "$(readlink -f "$file")" "$md5file"
+    fi
+done
