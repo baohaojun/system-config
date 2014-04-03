@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd /log-crawler/
+if test $# = 0; then
+    set -- -ctime -.08
+fi
+
+command sudo env PATH=$PATH EXTRA_FIND_ARGS="${EXTRA_FIND_ARGS:-$*}" bash -x ~/bin/delete-dup-files .

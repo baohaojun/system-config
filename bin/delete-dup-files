@@ -11,14 +11,19 @@ fi
 md5dir=$(readlink -f "$1")/.md5
 mkdir -p $md5dir
 
-IFS=$'\n'
-find ./*/ -type f | while read file; do
+find ./*/ -type f $EXTRA_FIND_ARGS | while read file; do
+    basefile=$(basename "$file")
+    if test "${basefile:0:1}" = .; then
+        echo do not work with "$file";
+        continue
+    fi
     md5=$(md5sum "$file"|pn 1)
     md5_head=${md5:0:2}
     md5_tail=${md5:2}
     md5file="$md5dir/$md5_head/$md5_tail"
     if test -e "$md5dir/$md5_head/$md5_tail"; then
-        ln -sf "$(readlink -f "$md5file")" "$file"
+        ln -sf "$(readlink -f "$md5file")" "$file" >/dev/null 2>&1 &&
+        echo "$file" is already there
     else
         mkdir -p "$(dirname "$md5file")"
         ln -sf "$(readlink -f "$file")" "$md5file"

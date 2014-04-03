@@ -5,10 +5,12 @@ open (IN, "xscreensaver-command -watch |");
 while (<IN>) {
     if (m/^(BLANK|LOCK)/) {
         if (!$blanked) {
+            printf "blanked at %s", `date`;
             system "xset dpms 10 120 180; sound-off";
             $blanked = 1;
         }
     } elsif (m/^UNBLANK/) {
+        print "unblanked at %s", `date`;
         system "xset dpms 600 1200 1800; sound-on";
         $blanked = 0;
     }

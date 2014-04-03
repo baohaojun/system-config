@@ -130,7 +130,12 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                 fi
 
                 if test $# != 0; then
-                    if test $# = 1 -a $1 = lk; then
+                    if test $# = 1 -a $1 = msm-kernel; then
+                        (
+                            cd build/target/board
+                            mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs -l $jobs
+                        )
+                    elif test $# = 1 -a $1 = lk; then
                         cd bootable/bootloader/lk
                         make PROJECT=msm8974 BOOTLOADER_OUT=$(lookup-file out)/target/product/msm8974sfo/obj/EMMC_BOOTLOADER_OBJ EMMC_BOOT=1
                     else

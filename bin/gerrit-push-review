@@ -47,7 +47,7 @@ fi
 
 
 if ! git-is-ancestor $(repo-remote-branch) HEAD; then
-    if yes-or-no-p -y "Not fast-forward push is not allowed, rebase? "; then
+    if true; then
         git rebase $(repo-remote-branch) ||
         die "Rebase failed"
     else
@@ -57,7 +57,7 @@ fi
 
 reviewers=()
 if test $# = 0; then
-    if yes-or-no-p -y "Add your self as the reviewer?"; then
+    if true; then
         set -- $(git config user.email)
     else
         die "Error: Usage $(basename $0) REVIEWER..."

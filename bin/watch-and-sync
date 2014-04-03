@@ -5,18 +5,30 @@ function die() {
     exit -1
 }
 
-if test $# -lt 2; then
-    die "Usage: $(basename $0) file command..."
-fi
-
-file=$1
-shift
+TEMP=$(getopt -o f: --long file: -n $(basename $0) -- "$@")
+file=()
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -f|--file)
+            file=("${file[@]}" "$(readlink -f "$2")")
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
 
 while true; do
-    inotifywait -e close_write "$file"
     if test $# = 1; then
         bash -c "$1" || true
     else
         "$@" || true
     fi
+    inotifywait -e close_write "${file[@]}"
 done

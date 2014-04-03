@@ -12,8 +12,8 @@
 (bind-keys global-keymap "F11"  '(progn
                                    (maximize-window (input-focus))
                                    (synthesize-multiple-events "C-x" "1")))
-(bind-keys global-keymap "Prior" '(synthesize-multiple-events "ESC" "g" "p"))
-(bind-keys global-keymap "Next" '(synthesize-multiple-events "ESC" "g" "n"))
+(bind-keys global-keymap "Home" '(synthesize-multiple-events "ESC" "g" "p"))
+(bind-keys global-keymap "End" '(synthesize-multiple-events "ESC" "g" "n"))
 
 (bind-keys global-keymap "F4"
            '(progn

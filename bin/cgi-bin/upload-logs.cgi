@@ -111,11 +111,12 @@ for my $param (keys %params) {
     }
     # Upgrade the handle to one compatible with IO::Handle:
     my $io_handle = $lightweight_fh->handle;
-    open(my $fh, ">", $param) or my_die "Can't open $param for writing";
+    open(my $fh, ">", ".$param.$$") or my_die "Can't open $param for writing";
 
     while ($bytesread = $io_handle->read(my $buffer,1024)) {
         print $fh $buffer;
     }
     close $fh;
+    rename ".$param.$$", $param;
 }
 print "Upload is complete! $session_id\n";
