@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo iptables -A OUTPUT -p tcp --dport 53 -d 192.168.33.1 -j REJECT
