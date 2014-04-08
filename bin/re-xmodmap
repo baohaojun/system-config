@@ -5,7 +5,7 @@ sudo su - bhj -c "
 
    (
        (
-           flock -n 2 || exit
+           flock -n 9 || exit
            sleep 1
            xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap || true
            xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap || true
@@ -14,5 +14,5 @@ sudo su - bhj -c "
            ~/bin/do-keymap
        )&
        date
-   ) >> ~/.logs/re-xmodmap.log 2>&1
+   ) 2>&1 9> ~/.logs/re-xmodmap.lock | tee -a ~/.logs/re-xmodmap.log
 "

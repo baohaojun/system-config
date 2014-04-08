@@ -482,5 +482,4 @@
 (bind-keys s-h-keymap "?"
            '(read-event (format nil "%s" (lookup-event-binding (read-event)))))
 
-(bind-keys global-keymap "F11" '(system "switch-to-dvp.sh"))
-(bind-keys global-keymap "F12" '(system "switch-to-us.sh"))
+(bind-keys global-keymap "F12" '(system "toggle-dvp-us.sh&"))
