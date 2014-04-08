@@ -39,9 +39,12 @@ else
         rm -rf ~/external/etc/overide/
         export PATH=$(
             builtin cd ~/etc/path/$(uname)-$(uname -m);
-            for x in $(for d in *; do echo $d; done|sort -n); do
-                readlink -m -- $x;
-            done|tr '\n' ':'
+            (
+                for x in $(for d in *; do echo $d; done|sort -n); do
+                    readlink -m -- $x;
+                done
+                echo $PATH | tr ':' '\n'
+            ) | tr '\n' ':'
         )
     fi
     export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent|rm-last-nl|tr '\n' ':')

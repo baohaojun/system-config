@@ -88,7 +88,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function ipp() #http://bhj-win7/ -> http://10.125.206.165/
     {
-        echo -n "$FILE" | perl -npe 's!//(.*?)/!"//" . qx(ip-or-name $1) . "/"!e'
+        echo -n "$FILE" | perl -npe 's!//(.*?)([/:])!"//" . qx(ip-or-name $1) . "$2"!e'
     }
 
     function tmp() #tramp mail path

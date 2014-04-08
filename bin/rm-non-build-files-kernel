@@ -20,7 +20,10 @@ if test $# != 0; then # should be make i386_defconfig
     make O=~/.cache/kernel-build -j8 headers_install
     make O=~/.cache/kernel-build -j8 INSTALL_MOD_PATH=~/.cache/kernel-build/usr INSTALL_MOD_STRIP=1 modules_install
 else
-    (cd $(lookup-file vendor/marvell/generic/tcmd/kernel-helper); time mm -j8 -k kernel)
+    (
+        cd $(lookup-file .repo/..)
+        android-make
+    )
 fi | tee ~/1.txt
 
 find . -type f -anewer mark -print | perl -npe 's!^\./!!' > newer

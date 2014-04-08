@@ -246,13 +246,13 @@ might be bad."
 ;;;###autoload
 (defun bhj-occur-make-errors ()
   (interactive)
-  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|syntax error\\|invalid argument\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]elapsed \\|cannot find symbol\\|error [0-9]\\|because of errors\\|[0-9] error\\b\\|error:\\|undefined reference to"))
+  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|syntax error\\|invalid argument\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]elapsed \\|cannot find symbol\\|error [0-9]\\|because of errors\\|[0-9] error\\b\\|error:\\|undefined reference to\\|Permission denied"))
     (call-interactively 'bhj-occur)))
 
 ;;;###autoload
 (defun bhj-occur-merge-conflicts ()
   (interactive)
-  (let ((bhj-occur-regexp "<<<<<<\\|>>>>>>\\|======"))
+  (let ((bhj-occur-regexp "<<<<<<<\\|>>>>>>\\|^=======$"))
     (call-interactively 'bhj-occur)))
 
 ;;;###autoload
