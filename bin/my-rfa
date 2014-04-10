@@ -51,7 +51,7 @@ if test "${#dirs[@]}" = 0; then
     dirs=(
         $(
             if test -d .repo; then
-                if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths; then
+                if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths || grep ' ' -q .repo/repo-paths; then
                     repo forall -c 'echo $REPO_PATH' 2>&1 | perl -npe 's/^skipping //; s!/$!!' > .repo/repo-paths
                 fi
                 cat .repo/repo-paths | sort -u
@@ -94,5 +94,5 @@ export -f die
 mkdir -p ~/.logs/my-rfa-locks
 for x in "${dirs[@]}"; do
     echo "$x"
-done | xargs -P $jobs -I %N bash -c "cd %N; $@" true | tee ~/.logs/my-rfa.log
+done | xargs -d \\n -P $jobs -I %N bash -c "cd %N; $@" true | tee ~/.logs/my-rfa.log
 exit

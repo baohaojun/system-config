@@ -1,0 +1,42 @@
+#!/bin/bash
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+TEMP=$(getopt -o r: --long remote: -n $(basename $0) -- "$@")
+remote=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -r|--remote)
+            remote=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+set -e
+if test -z "$remote"; then
+    die "must specify where"
+fi
+
+cat <<EOF | bash -x
+watch-and-sync $(
+    for x in "$@"; do
+        printf -- "-f %q" "$x";
+    done)  'command rsync $(
+                               for x in "$@"; do
+                                   printf "%q" "$(readlink -f "$x")"
+                               done
+                           ) "$remote" -av'
+EOF
