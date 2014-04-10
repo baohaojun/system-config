@@ -7,3 +7,5 @@ dbprivate.xml
 proguard.cfg
 .settings
 /libs/ActionBarSherlock
+libs/locale/proguard-project.txt
+proguard-project.txt
