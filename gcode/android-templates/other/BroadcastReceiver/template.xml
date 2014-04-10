@@ -6,6 +6,13 @@
     description="Creates a new broadcast receiver component and adds it to your Android manifest.">
 
     <parameter
+    id="packageName"
+    name="Package name"
+    type="string"
+    constraints="package"
+    default="com.mycompany.myapp" />
+
+    <parameter
         id="className"
         name="Class Name"
         type="string"

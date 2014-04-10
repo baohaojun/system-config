@@ -1,0 +1,34 @@
+#!/bin/bash
+if id | grep -q '^uid=0\b' -P; then
+    su - bhj -c "~bhj/bin/ask-to-sync-org"
+    exit 0
+fi
+. ~/.bashrc
+(
+    id
+    ls -l /proc/$$/fd
+) > /tmp/$(basename $0).log
+
+function long_enough() {
+    perl -e 'exit 0 if -M(glob "~/.cache/sync-mobile-org/done") > 1; exit 1'
+}
+
+if ! long_enough; then
+    exit 0
+fi
+
+if ! is-tty-io; then
+  xfce4-terminal --maximize -e "bash -c ask-to-sync-org"
+  exit 0
+fi
+
+set -e
+if is-my-adb-device &&
+    long_enough &&
+    yes-or-no-p -y "do you want to sync your mobile org?"; then
+
+    sync-mobile-org
+    mkdir -p ~/.cache/sync-mobile-org/
+    touch ~/.cache/sync-mobile-org/done
+
+fi

@@ -4,7 +4,8 @@ if test "$IS_TTY_IO" = true; then
     exit 0
 fi
 if test $(basename $0) = is-tty-io; then
-    test "$(readlink -f /proc/$$/fd/0)" = "$(readlink -f /proc/$$/fd/1)"
+    test "$(readlink -f /proc/$$/fd/0)" = "$(readlink -f /proc/$$/fd/1)" &&
+    test "$(readlink -f /proc/$$/fd/0)" != /dev/null
 elif test $(basename $0) = is-null-output; then
     test "$(readlink -f /proc/$$/fd/1)" = /dev/null
 fi

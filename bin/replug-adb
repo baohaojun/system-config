@@ -1,0 +1,11 @@
+#!/bin/bash
+sn=$(adb devices|grep 'device$'|pn 1)
+if test "$sn"; then
+    for n in $sn; do
+        usb=$(dmesg |grep -P -o -e "usb .*: SerialNumber: $n"|tail -n 1|pn 2|perl -npe "s/:.*//");
+        sudo bash -c "
+            set -x
+            echo $usb > /sys/bus/usb/drivers/usb/unbind;
+            echo $usb > /sys/bus/usb/drivers/usb/bind"
+    done
+fi

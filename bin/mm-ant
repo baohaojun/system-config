@@ -3,7 +3,7 @@
 set -e
 
 TEMP=$(getopt -o t:c: --long tag:command: -n $(basename $0) -- "$@")
-tag=
+tag='*:s bhj:v'
 command=
 eval set -- "$TEMP"
 while true; do

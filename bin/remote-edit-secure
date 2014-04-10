@@ -1,0 +1,7 @@
+#!/bin/bash
+file=$(echo "$SSH_ORIGINAL_COMMAND" | grep '^emacsclient -n '|tail -n 1|perl -npe 's/^emacsclient -n //')
+if test "$file"; then
+    emacsclient -n "$file"
+else
+    echo "What do you want to edit?"
+fi

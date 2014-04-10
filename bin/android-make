@@ -1,6 +1,9 @@
 #!/bin/bash
 
 cd $(lookup-file .repo/..)
+if test -e .repo/AndroidKernel.mk; then
+    cp .repo/AndroidKernel.mk kernel/
+fi
 build_env=`lookup-file build/envsetup.sh`
 top_dir=$(pwd)
 
@@ -25,8 +28,8 @@ test -d .repo -a -e build/envsetup.sh
 # jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
 # jobs=$((jobs + jobs / 2))
 jobs=4
-
-TEMP=$(getopt -o j: -n $(basename $0) -- "$@")
+verbose=
+TEMP=$(getopt -o vj: -n $(basename $0) -- "$@")
 function die() {
     echo "$@"
     exit -1
@@ -38,6 +41,10 @@ while true; do
         -j)
             jobs=$2
             shift 2
+            ;;
+        -v)
+            verbose=showcommands
+            shift
             ;;
         --)
             shift
@@ -117,6 +124,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
             mount $(pwd) $build_mount_p -o bind;
             cd $build_mount_p
             su $(whoami) -c '
+                HOME=$HOME
                 . ~/.bashrc;
                 . .buildenv.sh;
                 if test -e .buildenv.sh.x; then
@@ -133,13 +141,13 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                     if test $# = 1 -a $1 = msm-kernel; then
                         (
                             cd build/target/board
-                            mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs -l $jobs
+                            mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs -l $jobs $verbose
                         )
                     elif test $# = 1 -a $1 = lk; then
                         cd bootable/bootloader/lk
                         make PROJECT=msm8974 BOOTLOADER_OUT=$(lookup-file out)/target/product/msm8974sfo/obj/EMMC_BOOTLOADER_OBJ EMMC_BOOT=1
                     else
-                        schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs -k $*
+                        schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs -k $* $verbose
                     fi
                 elif test -z \"$NO_PARALLEL_BUILD\" -a -z \"\$NO_PARALLEL_BUILD\"; then
                     schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs -k

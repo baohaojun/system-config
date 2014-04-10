@@ -4,6 +4,25 @@ if test "$DEBUG" = true; then
     set -x
 fi
 
+TEMP=$(getopt -o n --long no-submodule -n $(basename $0) -- "$@")
+no_submodule=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -n|--no-submodule)
+            no_submodule=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 . ~/bin/.gitx
 
 (
@@ -44,6 +63,9 @@ git-interactive-add
 
 
 if output=$(
+        if test "$no_submodule" = true; then
+            exit 1 # not 0!
+        fi
         git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' |
         tee /dev/stderr |
         grep "^hello.*failed$"
@@ -176,13 +198,11 @@ function die() {
     exit -1
 }
 
-branch=$(
-    if test -e ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh; then
-        bash ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh my-master;
-    else
-        echo master
-    fi
-)
+branch=master
+
+if test -e ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh; then
+  branch=$(bash ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh my-master)
+fi
 
 if test "$(git symbolic-ref --short HEAD)" != $branch; then
     if git-is-ancestor $branch HEAD; then

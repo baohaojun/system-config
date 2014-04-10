@@ -30,5 +30,5 @@ while true; do
     else
         "$@" || true
     fi
-    inotifywait -e close_write "${file[@]}"
+    inotifywait -r -e close_write "${file[@]}"
 done

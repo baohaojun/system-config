@@ -263,6 +263,7 @@
 
 (setq super-key-window-remap
       '(("v" . ((Dia . "C-v")
+                (Xfce4-terminal . "C-S-v")
                 (t . "S-Insert")))
         ("y" . ((Dia . "S-C-z")))
         ("c" . ((Emacs . "M-w")

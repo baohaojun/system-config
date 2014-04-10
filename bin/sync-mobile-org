@@ -25,15 +25,18 @@ if test ! -d ~/today/MobileOrg; then
     rm -rf ~/today/forever/MobileOrg;
     mkdir -p ~/today/forever/MobileOrg;
     download-today
-    cd ~/today/MobileOrg;
+    cd -P ~/today/MobileOrg;
     adb shell su -c sh /sdcard/start-debian2.sh && ssh-to-phone echo hello
-    rsync -av phone-sdcard:/data/media/0/MobileOrg/* .
+    rsync -av phone-sdcard:/data/media/0/MobileOrg ..
     git init
     git add .
     git commit -m 'Init version'
 fi
 
 cd ~/today/MobileOrg/
+if test ! -d .git; then
+    git init
+fi
 if git-dirty; then
     git-interactive-add
 fi
@@ -41,10 +44,11 @@ fi
 yes-or-no-p -y "Sync MobileOrg APP on you phone manually done"
 
 ssh-to-phone echo hello
-rsync -av phone-sdcard:/data/media/0/MobileOrg/* .
+rsync -av phone-sdcard:/data/media/0/MobileOrg ..
 
 find-or-exec emacs emacs.bhj
 emacsclient -e '(org-mobile-pull)'
+
 emacsclient -e '(save-some-buffers)'
 
 function check_git_dir() {
@@ -72,11 +76,8 @@ else
 fi
 
 cd ~/today/MobileOrg
-if ! grep -P -e '\S' mobileorg.org from-mobile.org; then
-    echo -n > mobile.org
-    echo -n > from-mobile.org
-fi
 check_git_dir ~/today/MobileOrg "Add all changes after org-mobile-push?"
 
 true;rsync -av * phone-sdcard:/data/media/0/MobileOrg/
+
 yes-or-no-p -y "Sync MobileOrg APP on you phone manually done"

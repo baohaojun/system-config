@@ -4,4 +4,4 @@ if test $# = 1; then
    set -- \*:s $1:v
 fi
 
-adb -r shell echo; adb logcat -v time "$@" | perl -npe 'BEGIN{$uptime=qx(adb shell uptime); $uptime =~ m/^up time: (\d\d):(\d\d):(\d\d),/; $uptime = $1*3600+$2*60+$3; $date=qx(adb shell date); $date =~ m/(\d\d):(\d\d):(\d\d)/; $date = $1*3600+$2*60+$3;} s/^(?:.*?)(\d\d):(\d\d):(\d\d)/$1*3600+$2*60+$3-$date+$uptime/e'
+adb logcat -v time "$@" | perl -npe 'BEGIN{$uptime=qx(adb shell uptime); $uptime =~ m/^up time: (\d\d):(\d\d):(\d\d),/; $uptime = $1*3600+$2*60+$3; $date=qx(adb shell date); $date =~ m/(\d\d):(\d\d):(\d\d)/; $date = $1*3600+$2*60+$3;} s/^(?:.*?)(\d\d):(\d\d):(\d\d)/$1*3600+$2*60+$3-$date+$uptime/e'
