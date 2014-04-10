@@ -1,0 +1,2 @@
+#!/bin/bash
+ip -6 addr show | perl -ne 'if (m/^\d+: (.*?):/) {print "$1 "} elsif (m/^\s+inet6 (\S+)/) {print "$1\n"}'|awk '{printf "ip -6 addr del %s dev %s\n", $2, $1}'|sudo bash

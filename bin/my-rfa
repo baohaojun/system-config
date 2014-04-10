@@ -6,6 +6,12 @@ jobs=5
 dirs=()
 export path_pattern=
 debug=0
+
+if test -f "$1" -a "$(basename "$1")" = repo-changes.log; then
+    echo "Warning: should add -d" 1>&2
+    set -- -d "$@"
+fi
+
 TEMP=$(getopt -o xd:j:p: -n $(basename $0) -- "$@")
 function die() {
     echo "$@"
