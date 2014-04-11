@@ -50,6 +50,12 @@ function adb() {
         shift
     fi
 
+    if test "$#" = 1 -a "$1" = remount; then
+        the-true-adb remount
+        adb shell mount -w -o remount,rw /system
+        exit
+    fi
+
     if test "$1" = -S; then
         echo "$(select-output-line -- 'cat ~/.config/adb-device 2>/dev/null; adb devices 2>&1 | perl -ne "print unless 1..1"'|pn 1)" > ~/.config/adb-device.$$
         mv ~/.config/adb-device.$$ ~/.config/adb-device

@@ -1,18 +1,33 @@
 #!/bin/bash
 # use evtest to see key code for keymap
-sudo su - bhj -c "
-   . ~/.renew-xauth
+set -x
 
+sudo su - bhj -c bash -c "
+   . ~/.renew-xauth
    (
+       set -x
        (
            flock -n 9 || exit
-           sleep 1
-           xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap || true
-           xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap || true
+           for x in $(seq 1 40 | tr '\n' ' '); do
+               if ! ls /dev/input/by-id/*4000-if01*; then
+                   sleep .1
+               else
+                   echo Microsoft Ergonomic keyboard found when x is \$x
+                   break
+               fi
+           done
+           for x in $(seq 1 20 | tr '\n' ' '); do
+               if xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap; then
+                   # X Error of failed request:  BadValue (integer parameter out of range for operation)
+                   break
+               else
+                   sleep .1
+               fi
+           done
            xmodmap -e 'keycode 197 = F23'
            xmodmap -e 'keycode 202 = F24'
            ~/bin/do-keymap
        )&
        date
-   ) 2>&1 9> ~/.logs/re-xmodmap.lock | tee -a ~/.logs/re-xmodmap.log
+   ) 2>&1 9> ~/.logs/re-xmodmap.lock | tee ~/.logs/re-xmodmap.log&
 "

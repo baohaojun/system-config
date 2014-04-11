@@ -7,7 +7,7 @@ dirs=()
 export path_pattern=
 debug=0
 
-if test -f "$1" -a "$(basename "$1")" = repo-changes.log; then
+if test -f "$1" -a "${1##*/}" = repo-changes.log; then
     echo "Warning: should add -d" 1>&2
     set -- -d "$@"
 fi
