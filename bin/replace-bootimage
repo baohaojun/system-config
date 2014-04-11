@@ -1,7 +1,6 @@
 #!/bin/bash
 
-boot=$(echo $(select-args $(lookup-file -e out/flashing/)/*/ramdisk.img))
-
+boot=
 TEMP=$(getopt -o b: --long boot: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
@@ -32,36 +31,17 @@ if test ! -e "$boot"; then
 fi
 echo boot image is $boot
 
-tdir=/tmp/$(basename $0).$$
-mkdir -p $tdir
+boot=$(readlink -f $boot)
+tmpd=/tmp/$(basename $0).$$
+mkdir $tmpd
 (
-    cd $tdir
-    ramdisk_len2dir $boot
+    cd $tmpd
+    cp $boot $(basename $boot)
+    unbootimg $(basename $boot)
 )
-
-tdir=$tdir/$(basename $boot)-tmp
-for x in "$@"; do
-    target=$(find $tdir -name $(basename $x))
-    if test ! -e "$target"; then
-        die "target for $x not exist: $(find $tdir)"
-    else
-        echo found $target for your $x
-    fi
-    cp $x $target
-done
-
-echo tdir is $tdir
-dir2ramdisk $tdir > $boot.2
-
-dd if=/dev/zero of=$boot.2 bs=1 count=1 seek=$(decimal $(stat -L -c %s $boot)-1)
-
-if yes-or-no-p -n "Push to the device and update the ramdisk partition?"; then
-    (
-        set +e
-        adb_push $boot.2 /data/
-        adb shell dd if=/dev/zero of=/dev/block/platform/sdhci-pxav3.2/by-name/ramdiskadb
-        adb shell dd if=/data/$(basename $boot.2) of=/dev/block/platform/sdhci-pxav3.2/by-name/ramdisk
-    )
-fi
-
-rm -rf $(dirname $tdir) -rf
+replace-ramdisk -r $tmpd/ramdisk.img "$@"
+(
+    cd $tmpd
+    bash -e mkbootimg.sh
+    cp $(basename $boot) $boot
+)

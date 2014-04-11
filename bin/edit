@@ -69,7 +69,11 @@ sub edit_1($)
         if ((! -r $file or ! -w $file) && $ENV{USER} ne "root") {
             my $fileq = shell_quote($file);
             my $user = qx(stat -c %U $fileq);
-            if ($user ne $ENV{USER} and system("yes-or-no-p -y 'file not readable, use root?'") == 0) {
+            my $action ="readable";
+            if (-r $file) {
+                $action = "writable";
+            }
+            if ($user ne $ENV{USER} and system("yes-or-no-p -y 'file not $action, use root?'") == 0) {
                 system("sudoedit", $file);
             }
             if (! -d $file) {

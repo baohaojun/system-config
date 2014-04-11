@@ -15,15 +15,5 @@ while(read($file, $cont, $final_size) > 0) {
     $ramdisk .= $cont;
 }
 
-
-$actual_size = length($ramdisk);
-print STDERR "ramdisk actual size is $actual_size\n";
-
-die "Error: ramdisk size $actual_size already bigger then $final_size" if length($ramdisk) > $final_size + 4;
-
-$packing = "\xff" x ($final_size - $actual_size - 4);
-$ramdisk = $ramdisk . $packing . pack("L", $actual_size);
-die "Error: ramdisk final size not $final_size" if length($ramdisk) != $final_size;
-
 print "$ramdisk";
 system("mv /tmp/dir2ramdisk.git ./.git") if $has_git;
