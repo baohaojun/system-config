@@ -21,6 +21,7 @@ fi
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+export LANGUAGE=en_US:
 # source the users bashrc if it exists
 if [ -e "${HOME}/.bashrc" ] ; then
   source "${HOME}/.bashrc"

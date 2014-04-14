@@ -1,0 +1,2 @@
+#!/bin/bash
+test "$(lsb_release -i | pn 3)" = Debian

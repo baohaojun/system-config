@@ -9,6 +9,11 @@ if test $# -lt 2; then
     die "Error: Usage $(basename $0) source target"
 fi
 
+set -e
+if test $# = 2 -a ! -d "$2"; then
+    mkdir -p "$2"
+fi
+
 if test $# -gt 2; then
     save_arg=$1
     shift

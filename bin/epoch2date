@@ -1,0 +1,14 @@
+#!/usr/bin/perl
+use DateTime;
+use DateTime::TimeZone;
+for my $time (@ARGV) {
+    if ($time =~ m/(.*?)(\d{13}|\d{10})(?!\d)(.*)/) {
+        $time = $2;
+        if (length($time) == 13) {
+            $time = substr($time, 0, 10);
+        }
+        printf "$1%s$3\n", DateTime->from_epoch(epoch => $time, time_zone => DateTime::TimeZone->new( name => "local" )->name());
+    } else {
+        print $time;
+    }
+}
