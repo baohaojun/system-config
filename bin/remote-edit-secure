@@ -1,5 +1,6 @@
 #!/bin/bash
-file=$(echo "$SSH_ORIGINAL_COMMAND" | grep '^emacsclient -n '|tail -n 1|perl -npe 's/^emacsclient -n //')
+set -x
+file=$(echo "$SSH_ORIGINAL_COMMAND" | grep '^emacsclient -n '|tail -n 1|perl -npe 's/^emacsclient -n (\+1 )?//')
 if test "$file"; then
     emacsclient -n "$file"
 else

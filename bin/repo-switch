@@ -34,7 +34,7 @@ while true; do
             shift
             ;;
         -p)
-            cat $(lookup-file .repo/repo-switch)
+            cat $(lookup-file .repo/repo-switch) || true
             exit 0
             ;;
         -e)
@@ -61,6 +61,9 @@ while true; do
     esac
 done
 
+if test $# != 0; then
+    die "extra args not recognized: $@"
+fi
 
 repodir=$(lookup-file -e .repo)
 if test -z "$repodir"; then

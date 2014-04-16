@@ -50,11 +50,7 @@ sub get_emacs_file_name($) {
       $myip = qx(ip-hosts $myip);
     }
 
-    if ($myport eq "22") {
-      return "/$protocol:$myname\@$myip:$file";
-    } else {
-      return "/$protocol:$myname\@$myip#$myport:$file";
-    }
+    return "/$protocol:$myname\@$myip#$myport:$file";
   } else {
     return $file;
   }

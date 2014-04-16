@@ -4,7 +4,7 @@ qcd()
 {
     local branch=$(git symbolic-ref HEAD)
     branch=${branch#refs/heads/}
-    
+
     cd .git/patches/$branch
 }
 
@@ -19,7 +19,11 @@ lcd()
         cd_beagrep;
         return 0;
     fi
-    
+
+    if test "${1:0:3}" = ' \\'; then # copied from mantis webpages, will contain space at start and end
+        set -- "${1# }"
+        set -- "${1% }"
+    fi
 
     if [[ "$1" =~ ^\\\\|^//|^smb://|/smb/ && `uname` = Linux ]]; then
         chmod 600 ~/.smb/*
@@ -32,7 +36,7 @@ lcd()
         builtin cd ~/smb/"$(ip-or-name "$1")"
         return 0
     fi
-   
+
     local ori=$1
     local start=$PWD
     local looking=$PWD
@@ -57,7 +61,7 @@ lcd()
     fi
 
     link=$1
-    if test -f "$link" && echo "${link##*.}"|grep -i '^lnk$' -q; then 
+    if test -f "$link" && echo "${link##*.}"|grep -i '^lnk$' -q; then
             link=`readshortcut "$link"`
     fi
     if test -d "$link"; then
@@ -75,7 +79,7 @@ lcd()
     fi
 }
 
-_ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will go to /home, 
+_ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will go to /home,
 {
     local x=0
     dir=`dirname "$(pwd)"`
@@ -83,9 +87,9 @@ _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will
     while ! echo $dir_basename|grep -e $1 -i -q && ((x++ < 10)); do
         dir=`dirname "$dir"`
         dir_basename=`basename "$dir"`
-	if test x"$dir" = x/; then
-	    break
-	fi
+        if test x"$dir" = x/; then
+            break
+        fi
     done
     if test x"$dir" = x/; then #obviously, we very not likely want to go to / with this complex setup
         return 1;
@@ -103,20 +107,20 @@ alias for-code-reading='for-code-reading -i -v'
 
 function hir() {
     if test $# = 0; then
-	history -r
-	backup_bash_history
+        history -r
+        backup_bash_history
         echo "~/.bash_history.bak has $(wc -l ~/.bash_history.bak|pn 1) lines"
-	cat ~/.where.bak >> ~/.where
+        cat ~/.where.bak >> ~/.where
     else
-	command hil "$@"
+        command hil "$@"
     fi
 }
 
 function _select_cd() {
 
     local IFS=$'\n'
-    local dirs=( 
-	"$@"
+    local dirs=(
+        "$@"
     )
 
     if test ${#dirs[@]} = 0; then
@@ -124,7 +128,7 @@ function _select_cd() {
         return 1
     elif test ${#dirs[@]} = 1; then
         builtin cd ${dirs[0]}
-    else 
+    else
         NUM=`my-select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
@@ -135,15 +139,15 @@ function tcd() {
     local IFS=$'\n'
 
     _select_cd $(
-	export LOOKUP_NON_EXIST_FILES=false 
-	lookup-file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
-	lookup-file `today-- "$@"`
+        export LOOKUP_NON_EXIST_FILES=false
+        lookup-file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
+        lookup-file `today-- "$@"`
     ) $(
-	export LOOKUP_NON_EXIST_FILES=false
-	pcd ~/today && {
-	    lookup-file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
-	    lookup-file `today-- "$@"`; 
-	}
+        export LOOKUP_NON_EXIST_FILES=false
+        pcd ~/today && {
+            lookup-file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
+            lookup-file `today-- "$@"`;
+        }
     )
 }
 
@@ -164,13 +168,13 @@ cd_record()
     fi
     history -a
     if test "$BHJ_PWD" = "$PWD"; then
-	return $ret
+        return $ret
     fi
     BHJ_PWD=$PWD
 
    (
        if test "$LC_ALL" != C -a "$has_python3"; then
-	   where; 
+           where;
        fi&
    )
    return $ret

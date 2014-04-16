@@ -490,7 +490,7 @@
     (close-file file))
   (system "switch-scroll-led off&"))
 
-
+(bind-keys global-keymap "Print" '(system "e /tmp/screen-exchange&"))
 (bind-keys global-keymap "Scroll_Lock" #'emacs-code-reading-toggle)
 (bind-keys s-h-keymap "?"
            '(read-event (format nil "%s" (lookup-event-binding (read-event)))))
