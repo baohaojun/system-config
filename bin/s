@@ -19,6 +19,10 @@ if test -x ~/bin/"$x"; then
    mv ~/.logs/last-search.$$ ~/.logs/last-search
 fi&
 
+if test ! -x ~/bin/"$x" -a "${x:0:2}" = "s "; then
+    s "${x:2}"
+    exit
+fi
 if test $# = 1 -a "$1" = ''; then
     set -- "$(getclip)"
 fi

@@ -2,6 +2,8 @@
   (mapc (lambda (e)
           (synthesize-event e (input-focus)))
         events))
+(bind-keys global-keymap "Next" '(synthesize-multiple-events "SPC"))
+(bind-keys global-keymap "Prior" '(synthesize-multiple-events "BS"))
 (bind-keys global-keymap "F1" '(synthesize-multiple-events "ESC" "g" "f" "RET"))
 (bind-keys global-keymap "F2" '(synthesize-multiple-events "ESC" "g" "r" "RET"))
 (bind-keys global-keymap "F3" '(synthesize-multiple-events "ESC" "." "RET"))

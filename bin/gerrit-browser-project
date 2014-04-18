@@ -1,7 +1,29 @@
 #!/bin/bash
 
+TEMP=$(getopt -o p: --long port: -n $(basename $0) -- "$@")
+port=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--port)
+            port=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 host=$(repo-review-host)
 
 project=$(basename $(repo-project))
 
+if test "$port"; then
+    host=$host:$port
+fi
 firefox "$(printf "http://%s#q,project:%%255E.*%s,n,z" $host $project)"

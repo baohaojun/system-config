@@ -495,4 +495,4 @@
 (bind-keys s-h-keymap "?"
            '(read-event (format nil "%s" (lookup-event-binding (read-event)))))
 
-(bind-keys global-keymap "F12" '(system "toggle-dvp-us.sh&"))
+(bind-keys s-h-keymap "F12" '(system "toggle-dvp-us.sh&"))

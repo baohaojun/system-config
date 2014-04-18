@@ -36,6 +36,7 @@ for (@ARGV) {
         system("ssh", $host, "adb", "push", "$file", "$dest");
     } else {
         if (-d $file) {
+            $file =~ s!/*$!!;
             (my $base = $file) =~ s!.*/!!;
             system("adb",  "push", "$file", "$dest/$base");
         } else {

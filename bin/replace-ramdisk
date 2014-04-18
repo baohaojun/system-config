@@ -47,7 +47,11 @@ for x in "$@"; do
     else
         echo found $target for your $x
     fi
-    cp $x $target
+    if test -e "$x"; then
+        cp $x $target
+    else
+        ew $target
+    fi
 done
 
 echo tdir is $tdir

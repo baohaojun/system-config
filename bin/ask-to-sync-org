@@ -10,6 +10,9 @@ fi
 ) > /tmp/$(basename $0).log
 
 function long_enough() {
+    if test ! -e ~/.cache/sync-mobile-org/done; then
+        return 0
+    fi
     perl -e 'exit 0 if -M(glob "~/.cache/sync-mobile-org/done") > 1; exit 1'
 }
 
@@ -26,7 +29,7 @@ set -e
 if is-my-adb-device &&
     long_enough &&
     yes-or-no-p -y "do you want to sync your mobile org?"; then
-
+    . ~/.config/ssh-agent
     sync-mobile-org
     mkdir -p ~/.cache/sync-mobile-org/
     touch ~/.cache/sync-mobile-org/done
