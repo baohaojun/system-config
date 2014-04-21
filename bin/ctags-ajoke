@@ -67,13 +67,16 @@ $|++;
 my $ctags_pid = open2(my $read, my $write, "ctags-exuberant", @ARGV);
 while (<STDIN>) {
     print $write "$_";
+    chomp(my $source = $_);
     $write->flush();
     my $is_java;
     if ($_ =~ m/\.java|\.aidl/) {
         $is_java = 1;
     }
 
+    my $seen_terminator;
     while (<$read>) {
+        $seen_terminator = 0;
         if ($is_java) {
             ($tag, $type, $line_num, $file) = m/^\s*(\S+)\s+(.*?)\s+(\d+)\s+(\S+)/;
             if ($type eq 'package') {
@@ -94,6 +97,7 @@ while (<STDIN>) {
                 }
                 if ($_ eq $terminator) {
                     print;
+                    $seen_terminator = 1;
                     last;
                 }
 
@@ -111,9 +115,19 @@ while (<STDIN>) {
         } else {
             print;
             if ($_ eq $terminator) {
+                $seen_terminator = 1;
                 last;
             }
         }
+    }
+    if (not $seen_terminator) {
+        debug "Ctags-ajoke $$ failed on $source";
+        print $terminator;
+        close $read;
+        close $write;
+        wait;
+        $ctags_pid = open2($read, $write, "ctags-exuberant", @ARGV)
+            or die "Can not open ctags-exuberant pipe";
     }
 }
 close($write);
