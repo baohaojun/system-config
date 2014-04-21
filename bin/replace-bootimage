@@ -27,7 +27,13 @@ function die() {
 }
 
 if test ! -e "$boot"; then
-    die "boot image $boot not found"
+    if boot=adb; then
+        adb -S shell sh -c 'cat /dev/block/platform/msm_sdcc.1/by-name/boot > /sdcard/boot.img'
+        adb pull /sdcard/boot.img .
+        boot=boot.img
+    else
+        die "boot image $boot not found"
+    fi
 fi
 echo boot image is $boot
 

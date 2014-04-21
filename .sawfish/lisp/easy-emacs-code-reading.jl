@@ -7,6 +7,7 @@
 (bind-keys global-keymap "F1" '(synthesize-multiple-events "ESC" "g" "f" "RET"))
 (bind-keys global-keymap "F2" '(synthesize-multiple-events "ESC" "g" "r" "RET"))
 (bind-keys global-keymap "F3" '(synthesize-multiple-events "ESC" "." "RET"))
+(bind-keys global-keymap "F4" '(synthesize-multiple-events "ESC" "g" "m"))
 (bind-keys global-keymap "Left" '(synthesize-multiple-events "ESC" "C-,"))
 (bind-keys global-keymap "Right" '(synthesize-multiple-events "ESC" "C-."))
 (bind-keys global-keymap "Up" '(synthesize-multiple-events "ESC" "C-a"))
@@ -17,7 +18,7 @@
 (bind-keys global-keymap "Home" '(synthesize-multiple-events "ESC" "g" "p"))
 (bind-keys global-keymap "End" '(synthesize-multiple-events "ESC" "g" "n"))
 
-(bind-keys global-keymap "F4"
+(bind-keys global-keymap "F5"
            '(progn
               (read-event
  "

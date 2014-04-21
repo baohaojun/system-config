@@ -2,14 +2,16 @@
 use String::ShellQuote;
 use Getopt::Long;
 use English;
+use strict;
 my $secure;
 GetOptions(
     "s!" => \$secure,
     );
 
-$mount_cmd = "echo adb remount\\; adb shell mount -o remount,rw /system; exec >/dev/null 2>&1; adb -r shell sync; adb remount; adb shell mount -o remount,rw /system; adb -w shell true";
-$dest = pop( @ARGV);
-
+my $mount_cmd = "echo adb remount\\; adb shell mount -o remount,rw /system; exec >/dev/null 2>&1; adb -r shell sync; adb remount; adb shell mount -o remount,rw /system; adb -w shell true";
+my $dest = pop( @ARGV);
+my $host;
+my $dir;
 if ($dest =~ m/:/) {
     $dest = $POSTMATCH;
     $host = $PREMATCH;
@@ -19,8 +21,12 @@ if ($dest =~ m/:/) {
 }
 
 for (@ARGV) {
-    $_ = shell_quote($_);
-    chomp($file=qx/lookup-file $_/);
+    my $file = $_;
+    if ($_ !~ m!^/scp:|^[^/]+:!) {
+        $_ = shell_quote($_);
+        chomp($file=qx/lookup-file $_/);
+    }
+
     if ($host) {
         $file = shell_quote($file);
         chomp($dir = qx/dirname $file/);
@@ -39,8 +45,17 @@ for (@ARGV) {
             $file =~ s!/*$!!;
             (my $base = $file) =~ s!.*/!!;
             system("adb",  "push", "$file", "$dest/$base");
-        } else {
+        } elsif (-e $file) {
             system("adb",  "push", "$file", "$dest");
+        } elsif ($file =~ m!^/scp:|^[^/]+:!) {
+            print "getting it with scp\n";
+            mkdir "/tmp/adb_push.$$";
+            system("scp -r $file /tmp/adb_push.$$/") != 0 and die "Failed to scp $file";
+            $file =~ s!/*$!!;
+            (my $base = $file) =~ s!.*/!!;
+            system("adb", "push", "/tmp/adb_push.$$/$base", "$dest/$base");
+        } else {
+            print "Warning: $file not found\n";
         }
     }
     if ($secure) {

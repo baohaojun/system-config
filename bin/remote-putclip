@@ -3,6 +3,9 @@
 set -xe
 unset REMOTEIP
 EMACS=t
+if test -e ~/.config/ssh-agent; then
+    . ~/.config/ssh-agent
+fi
 scp "$1" /tmp/remote-putclip.$$
 DISPLAY=:0
 . ~/.renew-xauth

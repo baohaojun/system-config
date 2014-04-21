@@ -86,6 +86,7 @@ sub handle_dll($)
     chomp($jar = qx(readlink -f $jar));
 
     open(my $javap_pipe, "-|", "monodis --method $jar") or
+        open (my $javap_pipe, "-|", "true") or
         die "Can not open find pipe";
 
     my $class_name;
