@@ -316,16 +316,18 @@ all 'buried buffers."
                                             (window-buffer w))
                                           (window-list)))))
         (buried-buffers (skeleton--difference (buffer-list) (cons current-buffer visible-buffers))))
-    (nconc
-     (list (cons current-buffer 'current))
-     (mapcar
-      (lambda (b)
-        (cons b 'visible))
-      visible-buffers)
-     (mapcar
-      (lambda (b)
-        (cons b 'buried))
-      buried-buffers))))
+    (delete-if
+     (lambda (buf-tag) (eq (with-current-buffer (car buf-tag) major-mode) 'image-mode))
+     (nconc
+      (list (cons current-buffer 'current))
+      (mapcar
+       (lambda (b)
+         (cons b 'visible))
+       visible-buffers)
+      (mapcar
+       (lambda (b)
+         (cons b 'buried))
+       buried-buffers)))))
 
 (defun skeleton--get-matches (re matcher buffer-filter)
   "Given a regexp RE, run MATCHER over all the buffers returned
