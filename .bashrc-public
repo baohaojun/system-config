@@ -81,7 +81,7 @@ scd()
             fi
         done
     else
-        if ! echo "$PWD" | grep -i "$1" -q && echo "$PWD" | grep -i "$2" -q; then
+        if ! echo "$PWD" | grep -i -e "$1" -q && echo "$PWD" | grep -i "$2" -q; then
             set -- "$2" "$1"
         fi
         dir1=$(pwd | perl -npe 's#'"$1"'#'"$2"'#g')

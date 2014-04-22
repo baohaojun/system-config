@@ -246,7 +246,8 @@ might be bad."
 ;;;###autoload
 (defun bhj-occur-make-errors ()
   (interactive)
-  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|syntax error\\|invalid argument\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]elapsed \\|cannot find symbol\\|error [0-9]\\|because of errors\\|[0-9] error\\b\\|error:\\|undefined reference to\\|Permission denied"))
+  ;;; xxxxxxxxxxxxxx Please note! do not use up case here!!! xxxxxxxxxxxxxxx ;;;
+  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|syntax error\\|invalid argument\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]elapsed \\|cannot find symbol\\|error [0-9]\\|because of errors\\|[0-9] error\\b\\|error:\\|undefined reference to\\|permission denied"))
     (call-interactively 'bhj-occur)))
 
 ;;;###autoload

@@ -9,6 +9,7 @@ function die() {
 local_from=false
 local_to=false
 TEMP=$(getopt -o TFf:t:r: --long from:to:remote: -n $(basename $0) -- "$@")
+remote=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -42,17 +43,22 @@ while true; do
     esac
 done
 
-if test -z "$from" -o -z "$to" -o -z "$remote"; then
-    die "Error: Usage $(basename $0) -f FROM -t TO -r REMOTE"
+if test -z "$from" -o -z "$to"; then
+    die "Error: Usage $(basename $0) -f FROM -t TO"
 fi
 
-if test $local_from = false; then
+if test $local_from = false -a "$remote"; then
     from=$remote/$from
 fi
 
-if test $local_to = false; then
+if test $local_to = false -a "$remote"; then
     to=$remote/$to
 fi
+export from
+export to
+export remote
+export local_from
+export local_to
 
 my-rfa '
     if test "$DEBUG" = true; then
@@ -61,7 +67,13 @@ my-rfa '
     TOP=$ANDROID_TOP;
     log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
     mkdir -p $(dirname $log);
-    git-change-id-ffable '"$from $to"' > $log 2>/dev/null;
+    if test ! "$remote" -a $local_from = false ; then
+        from=$(repo-remote)/$from
+    fi
+    if test ! "$remote" -a $local_to = false ; then
+        to=$(repo-remote)/$to
+    fi
+    git-change-id-ffable $from $to > $log 2>/dev/null;
     if test $(stat -c %s $log) = 0; then
         rm $log;
     fi;
