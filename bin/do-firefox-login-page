@@ -1,0 +1,13 @@
+#!/bin/bash
+url=$(firefox-get-tab-url)
+host=$(echo "$url" | perl -npe 's!^http.*?://!!; s!/.*!!')
+echo $host
+
+user=$(get-authinfo -h $host -u \?)
+
+sawfish-search-in-firefox user
+putclip "$user"
+sawfish-send-window-event Mozilla TAB C-v Tab
+putclip $(get-authinfo $host $user)
+sawfish-send-window-event Mozilla C-v
+putclip ""

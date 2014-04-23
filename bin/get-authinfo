@@ -1,15 +1,43 @@
 #!/usr/bin/perl
 use strict;
 
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+use Getopt::Long;
+my $host;
+my $user;
+my $port;
+GetOptions(
+    "h=s" => \$host,
+    "u=s" => \$user,
+    "p=s" => \$port,
+    );
+
+if (not $host and @ARGV) {
+    $host = shift @ARGV;
+}
+
+if (not $user and @ARGV) {
+    $user = shift @ARGV;
+}
+
+if (not $port and @ARGV) {
+    $port = shift @ARGV;
+}
 
 my $got_pass=0;
 open(my $auth, "<", glob("~/.authinfo")) or die "No .authinfo in your HOME";
 while (<$auth>) {
     my @fields = split;
-    my ($machine, $user, $pass, $port) = @fields[1, 3, 5, 7];
-    if ($ARGV[0] eq $machine) {
-        if ($ARGV[1] and $ARGV[1] eq $user or not $ARGV[1]) {
-            if ($ARGV[2] and $ARGV[2] eq $port or not $ARGV[2]) {
+    my ($machine, $authuser, $pass, $authport) = @fields[1, 3, 5, 7];
+    if ($host eq $machine) {
+        if ($user eq "?") {
+            print $authuser;
+            exit;
+        } elsif ($user eq $authuser or not $user) {
+            if ($port eq $authport or not $port) {
                 print $pass;
                 $got_pass = 1;
                 last;
@@ -18,6 +46,6 @@ while (<$auth>) {
     }
 }
 
-if (not $got_pass) {
+if (not $got_pass and $user ne '?') {
   system("bash </dev/tty 2>/dev/tty -c 'read -s -p \"Password: \" pass; echo \$pass'");
 }
