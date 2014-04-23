@@ -78,6 +78,10 @@ function adb() {
             export ANDROID_SERIAL=$devices
         fi
     fi
+
+    if test $# = 2 -a $1 = shell; then
+        exec adb shell sh -c "$2"
+    fi
     if test "$2" = su -a "$1" = shell; then
         if test ! -e ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL \
             -a ! -e ~/.config/adb-use-sh-as-su/no/$ANDROID_SERIAL; then
