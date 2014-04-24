@@ -1,12 +1,14 @@
 #!/bin/bash
 
+adb disconnect # make sure not use wifi
 cd ~/doc/galaxy-nexus-root/
 TEMP=$(getopt -o l --long links -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
+do_links=true
 while true; do
     case "$1" in
         -l|--links)
-        do_links=true
+        do_links=false
         shift
         ;;
         --)

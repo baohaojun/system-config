@@ -5,7 +5,7 @@ $@
 EOF
 fi
 
-if test "$EMACS" = t; then
+if test "$EMACS" = t -o "$REMOTEIP"; then
     rm-last-nl > /tmp/$$.putclip
     export FILE=/tmp/$$.putclip
     (
@@ -23,9 +23,9 @@ if test "$EMACS" = t; then
 (kill-new (filter-buffer-substring (point-min) (point-max)))
 (View-quit))"
         $prefix rm $FILE
-	xclip -o -selection clipboard|xclip -i
+        xclip -o -selection clipboard|xclip -i
     ) >~/.logs/putclip.log 2>&1&
-else 
+else
     rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
     xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
 fi

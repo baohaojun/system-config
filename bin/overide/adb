@@ -57,7 +57,17 @@ function adb() {
     fi
 
     if test "$1" = -S; then
-        echo "$(select-output-line -- '(cat ~/.config/adb-device 2>/dev/null; adb devices 2>&1 | perl -ne "print unless 1..1"|pn 1)|uniq-even-non-ajacent')" > ~/.config/adb-device.$$
+        echo "$(select-output-line -- '(
+            devices=$(adb devices 2>&1 | perl -ne "print unless 1..1"|pn 1);
+            old_dev=$(cat ~/.config/adb-device 2>/dev/null);
+            (
+                for x in $devices; do
+                    if test "$x" = "$old_dev"; then
+                        echo "$old_dev"
+                    fi
+                done
+                echo "$devices"
+            ) | uniq-even-non-ajacent)')" > ~/.config/adb-device.$$
         mv ~/.config/adb-device.$$ ~/.config/adb-device
         shift
         if test "$#" = 0; then

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="regexes" mtime="1398325005" type="string">
+		<stringvalue>CVS keywords	0	\$\w+(:[^\n$]+)?\$
+C++ comment	0	//.*
+C comment	0	/\*.*?\*/
+All whitespace	1	[ \t\r\f\v]*
+Leading whitespace	0	^[ \t\r\f\v]*
+Script comment	0	#.*
+dmesg	1	^&lt;.&gt;\[[ \t\r\f\v]*[0-9.]*\]</stringvalue>
+	</entry>
+	<entry name="window_size_y" mtime="1395999498" type="int" value="1021"/>
+	<entry name="window_size_x" mtime="1395999498" type="int" value="1909"/>
+</gconf>

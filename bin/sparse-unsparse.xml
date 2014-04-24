@@ -1,0 +1,38 @@
+#!/bin/bash
+set -e
+TEMP=$(getopt -o p: --long part: -n $(basename $0) -- "$@")
+part=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--part)
+            part=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test ! "$part"; then
+    die "part not set, should use -p to set system/userdata/cache etc"
+fi
+
+xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n ${1:-rawprogram_unsparse.xml} | grep ${part} |
+while read img start; do
+if test $img = ${part}_1.img; then
+    the_start=$start
+fi
+    start=$((start - the_start)) || true
+    dd if=$img of=${part}.img seek=$start
+done

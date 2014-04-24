@@ -1,4 +1,8 @@
 #!/bin/bash
 
 adb -S
-adb -w tcpip ${1:-5555}; adb connect $(adb -w shell netcfg|grep wlan0|pn 3|perl -npe 's!/.*!!'):${1:-5555}
+adb -w tcpip ${1:-5555};
+adb -w echo hello
+wifi_ip=$(adb-get-wifi-ip)
+echo wifi is $wifi_ip
+adb connect "$wifi_ip":${1:-5555}
