@@ -23,6 +23,10 @@ if [ -d /data/debian/sys ] && [ ! -d /data/debian/sys/class ] ; then
     mount -o bind /sys /data/debian/sys
 fi
 
+if [ -d /data/debian/sys/kernel/debug ] && [ ! -d /data/debian/sys/kernel/debug/tracing ] ; then
+    mount -o bind /sys/kernel/debug/ /data/debian/sys/kernel/debug
+fi
+
 if [ -e /data/debian/dev/.dev-not-mounted ] ; then
    mount -o bind /dev /data/debian/dev
    mount -o bind /dev/pts /data/debian/dev/pts

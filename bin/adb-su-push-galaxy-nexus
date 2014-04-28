@@ -1,16 +1,25 @@
 #!/bin/bash
 
-adb disconnect # make sure not use wifi
+if test $(adb devices|grep .|wc -l) = 2 && adb devices|grep -q : && yes-or-no-p -y "are you sure to use wifi adb?"; then
+    true
+elif adb devices|grep -q : && yes-or-no-p -y "disconnect wifi adb?"; then
+    adb disconnect # make sure not use wifi
+fi
 cd ~/doc/galaxy-nexus-root/
-TEMP=$(getopt -o l --long links -n $(basename $0) -- "$@")
+TEMP=$(getopt -o ld --long links,debian -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 do_links=true
+do_debian=true
 while true; do
     case "$1" in
         -l|--links)
         do_links=false
         shift
         ;;
+        -d|--debian)
+            do_debian=false
+            shift
+            ;;
         --)
         shift
         break
@@ -39,6 +48,10 @@ if test "$do_links" = true; then
     done > /tmp/1.sh
     adb push /tmp/1.sh /sdcard/ln.sh
     adb shell su -c 'sh -x /sdcard/ln.sh'
+fi
+
+if test $do_debian = false; then
+    exit
 fi
 for x in $(find ./sdcard -type f); do adb push $x ${x#.}; done
 if test -e ~/debian.tgz; then

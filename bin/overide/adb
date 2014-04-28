@@ -56,6 +56,14 @@ function adb() {
         exit
     fi
 
+    if test $# = 1 -a "$1" = disconnect; then
+        exec the-true-adb disconnect;
+    fi
+
+    if test $# = 1 -a "$1" = reconnect && grep : -q ~/.config/adb-device; then
+        exec the-true-adb connect $(cat ~/.config/adb-device)
+    fi
+
     if test "$1" = -S; then
         echo "$(select-output-line -- '(
             devices=$(adb devices 2>&1 | perl -ne "print unless 1..1"|pn 1);
@@ -89,7 +97,7 @@ function adb() {
         fi
     fi
 
-    if test $# = 2 -a $1 = shell; then
+    if test $# = 2 -a "$1" = shell; then # adb shell 'echo hello world'
         exec adb shell sh -c "$2"
     fi
     if test "$2" = su -a "$1" = shell; then
@@ -123,7 +131,30 @@ function adb() {
             exec adb-expect "$@"
         fi
     else
-        exec $the_prog "$@"
+
+        adb_commands=(backup bugreport emu forward get-devpath
+            get-serialno get-state help install jdwp kill-server
+            logcat ppp pull push reboot reboot-bootloader remount
+            restore root shell start-server status-window sync tcpip
+            uninstall usb version wait-for-device devices connect
+            disconnect)
+
+        is_adb_command=false
+
+        for x in "${adb_commands[@]}"; do
+            if test "$1" = $x; then
+                is_adb_command=true;
+                break
+            fi
+        done
+
+        if test $is_adb_command = true; then
+            exec $the_prog "$@"
+        elif test $# -gt 0 -a "${1:0:1}" != -; then # should not do adb -s xxx
+            exec adb shell "$@"
+        else
+            exec $the_prog
+        fi
     fi
 }
 

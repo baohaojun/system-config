@@ -1,0 +1,2 @@
+#!/bin/bash
+IS_TTY_IO=true adb "$@"

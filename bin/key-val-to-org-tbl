@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+
+while (<>) {
+    chomp;
+    if ($. % 2) {
+        push @keys, $_;
+    } else {
+        push @vals, $_;
+    }
+}
+
+print "|";
+for (@keys) {
+    print "$_|";
+}
+
+print "\n|";
+for (@vals) {
+    print "$_|";
+}

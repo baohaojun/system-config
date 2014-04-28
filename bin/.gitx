@@ -1,6 +1,6 @@
 #!/bin/bash
-if test -z "$SSH_AUTH_SOCK" -a -e ~/.config/bhj-auth.rc; then
-    . ~/.config/bhj-auth.rc
+if test -z "$SSH_AUTH_SOCK" -a -e ~/.config/ssh-agent; then
+    . ~/.config/ssh-agent
 fi
 
 function git_svn() {

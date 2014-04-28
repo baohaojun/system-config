@@ -31,12 +31,17 @@ export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
 export GPG_AGENT_INFO=$GPG_AGENT_INFO
 EOF
     mv ~/.config/bhj-auth.rc.$$ ~/.config/bhj-auth.rc
+    cat <<EOF > ~/.config/ssh-agent.$$
+export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
+EOF
+    mv ~/.config/ssh-agent.$$ ~/.config/ssh-agent # this is also set by myscr
 )
 sawfish-client -e "$env"
 
 python -c "
 import gnomekeyring
-gnomekeyring.unlock_sync(None, '$(get-authinfo localhost $USER 22)')"
+passwd = '$(get-authinfo localhost $USER 22)'
+gnomekeyring.unlock_sync(None, passwd)"
 
 run-dir-once ~/external/sawfish/start&
 run-dir-once ~/.sawfish/start&

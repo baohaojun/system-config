@@ -57,6 +57,7 @@ ask-for-settings conn-type "connection type" -s nil -s ssl
 ask-for-settings 花名 花名
 ask-for-settings mach "Machine type" $(for x in ~/etc/hardware-mach/*; do echo -s $(basename $x); done)
 
+ask-for-confirmation gnome-keyring "set default login session using seahorse"
 ask-for-confirmation firefox-config "browser.link.open_newwindow.override.external = 1"
 ask-for-confirmation kmail-config "prefer html in kmail? (Set in Configure Kmail -> Security)"
 ask-for-confirmation xfce4-ctrl-esc "Have you removed the control escape in xfce4-keyboard-settings"

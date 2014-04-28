@@ -1,0 +1,7 @@
+#!/bin/bash
+for x in "$@"; do
+    cat <<EOF
+<#part type="$(xdg-mime query filetype "$x")" filename="$(readlink -f "$x")" disposition=attachment>
+<#/part>
+EOF
+done | putclip
