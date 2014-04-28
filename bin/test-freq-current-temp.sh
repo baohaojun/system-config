@@ -12,7 +12,9 @@ else
         echo $freq > /sys/devices/system/cpu/cpu$x/cpufreq/scaling_max_freq;
     done;
     mkdir -p /sdcard/current/$freq;
-    for n in $(seq 1 60); do
+    n=0
+    while true; do
+        ((n++))
         for x in /sys/class/thermal/thermal_zone*; do
             cat $x/type;
             cat $x/temp;

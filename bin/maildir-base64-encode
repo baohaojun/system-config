@@ -1,0 +1,11 @@
+#!/bin/bash
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) utf8 string"
+fi
+
+echo -n "=?utf-8?B?$(echo -n "$1" | base64)?="
