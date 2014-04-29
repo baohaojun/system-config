@@ -2,3 +2,4 @@
 
 sleep .2
 xdotool "$@"
+putclip ""
