@@ -51,6 +51,11 @@ dpkg -i beagrep-for-ubuntu-precise-2012-09-05-ae0a1a2.deb # will probably get de
 apt-get -f install # fix the dependency errors
 #+end_src
 
+*Update (2014-05-03)* I found that building and installing the lastest
+version of beagrep deb package will sometimes cause runtime exception
+when running on Ubuntu 12.04. So you are encouraged to build and
+install from source code directly, which does not show this problem.
+
 *** Compile by yourself
 
 If you need compile by yourself, using Ubuntu precise as an example:
@@ -71,6 +76,11 @@ apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/St
 #+end_src
 
 *** Build .deb by yourself
+
+*Update (2014-05-03)* I found that building and installing the lastest
+version of beagrep deb package will sometimes cause runtime exception
+when running on Ubuntu 12.04. So you are encouraged to build and
+install from source code directly, which does not show this problem.
 
 Before someone volunteer to make beagrep into debian/ubuntu
 distribution, you might also find a need to build .deb by yourself
@@ -135,7 +145,7 @@ command's output, you should see something like
 
 ** Create index
 
-In your source code directory, using android as example: 
+In your source code directory, using android as example:
 
 #+begin_src sh
 cd ~/src/android
@@ -190,7 +200,7 @@ priority:
   #+begin_example
   "$PWD/out,*/.repo,*/.git"
   #+end_example
-  
+
   will be used.
 
 - Override it in =~/.mkbeagrepidx.rc=, setting the ~BEAGREP_IGNORE_DIR_PATTERNS~ environment variable:
@@ -207,7 +217,7 @@ priority:
   #+begin_src sh
   mkbeagrepidx --deny-directory-pattern "$PWD/out,*/.repo,*/.git,*/.svn"
   #+end_src
-  
+
 
 ** Searching using beagrep
 
@@ -407,7 +417,7 @@ wrap scripts like following in the android/system/core directory:
 
 #+begin_src sh
 generate-call-graph.pl > call_graph.org
-dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2 
+dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2
 #+end_src
 
 [fn:improve] Here's how I improved it from 0.8s to 0.23s: use Mono's
@@ -454,4 +464,3 @@ many arguments as possible. This is not the most efficient way for
 calling grep (with all the arguments creating and passing around and
 grep processes creating and exiting) and must have contributed to my
 30 minutes measurement.
-

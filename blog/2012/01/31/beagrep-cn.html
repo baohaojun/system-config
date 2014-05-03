@@ -157,6 +157,11 @@ debian testing (wheezy)的，如果你的Linux发行版恰好是这几个中的�
 dpkg -i beagrep_0.4.0-1_amd64-ubuntu-precise.deb # 会出错，因为一些依赖的.deb包没装上
 apt-get -f install # 装上依赖的.deb包，修正上面的错误
 </pre>
+
+<p>
+<b>更新（2014-05-03）</b> 目前编译出来的.deb包在ubuntu 12.04上测试发现运行会
+ 抛异常，建议用下面自己编译安装的方法。
+</p>
 </div>
 </div>
 <div id="outline-container-sec-2-1-2" class="outline-4">
@@ -276,7 +281,7 @@ index。
 <p>
 mkbeagrepidx is a simple wrapper over beagrep-build-index. You can
 configure it for which directories to ignore using
-<code>--deny-directory-pattern</code> option. By default, 
+<code>--deny-directory-pattern</code> option. By default,
 </p>
 
 <ul class="org-ul">
@@ -300,7 +305,7 @@ priority:
 </p>
 
 <ul class="org-ul">
-<li>Not customize it, then 
+<li>Not customize it, then
 
 <pre class="example">
 "$PWD/out,*/.repo,*/.git"
@@ -544,7 +549,6 @@ beagrep之所以能大大加快grep的速度，是因为它能大大缩小grep�
 <p>
 等等等等。
 </p>
-
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">

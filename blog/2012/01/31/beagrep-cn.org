@@ -36,6 +36,9 @@ dpkg -i beagrep_0.4.0-1_amd64-ubuntu-precise.deb # 会出错，因为一些依�
 apt-get -f install # 装上依赖的.deb包，修正上面的错误
 #+end_example
 
+*更新（2014-05-03）* 目前编译出来的.deb包在ubuntu 12.04上测试发现运行会
+ 抛异常，建议用下面自己编译安装的方法。
+
 *** 编译安装
 
 如果你需要自己编译，以ubuntu precise为例：
@@ -109,7 +112,7 @@ index。
 
 mkbeagrepidx is a simple wrapper over beagrep-build-index. You can
 configure it for which directories to ignore using
-~--deny-directory-pattern~ option. By default, 
+~--deny-directory-pattern~ option. By default,
 
 - The $PWD/out is ignored, because it contains android build output
 - The */.git is ignored, because of well known reason
@@ -122,12 +125,12 @@ of mkbeagrepidx output.
 You can customize it using several ways, in the order of increasing
 priority:
 
-- Not customize it, then 
+- Not customize it, then
 
   #+begin_example
   "$PWD/out,*/.repo,*/.git"
   #+end_example
-  
+
   will be used.
 
 - Overide it in =~/.mkbeagrepidx.rc=, setting the ~BEAGREP_IGNORE_DIR_PATTERNS~ environment variable:
@@ -143,7 +146,7 @@ priority:
   #+begin_example
   mkbeagrepidx --deny-directory-pattern "$PWD/out,*/.repo,*/.git,*/.svn"
   #+end_example
-  
+
 
 ** 用beagrep搜索
 
@@ -286,4 +289,3 @@ beagrep之所以能大大加快grep的速度，是因为它能大大缩小grep�
 - 不要单独grep import，因为它也不有趣，几乎所有java文件都会包含它。
 
 等等等等。
-
