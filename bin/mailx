@@ -186,7 +186,7 @@ else
 
                     fi
                     if [[ '$y' =~ cc|bcc|to ]]; then
-                        printf -- "%q" "$( echo -n "${'$y'[$x-1]}" |perl -npe "use String::ShellQuote; s/(.*?)\s*<(.*)>.*/\$name = shell_quote(\$1); qx(maildir-base64-encode \$name) . \" <\$2>\"/e")"
+                        printf -- "%q" "$( echo -n "${'$y'[$x-1]}" |perl -npe "s/.*<(.*)>.*/\$1/")"
                     else
                         printf -- "%q" "${'$y'[$x-1]}"
                     fi

@@ -1,5 +1,8 @@
 #!/bin/bash
 . ~/.bashrc
+if test -e ~/.config/ssh-agent; then
+    . ~/.config/ssh-agent;
+fi
 
 export PATH=$(echo $PATH|tr ':' '\n'| perl -ne 'next if m/overide/; chomp; $path .= ":$_"; END{print substr($path, 1)}')
 

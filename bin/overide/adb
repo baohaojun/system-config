@@ -1,27 +1,21 @@
 #!/bin/bash
 
-me=$(readlink -f $0)
+myname=$(basename $0)
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
 if which the-true-adb >/dev/null 2>&1; then
     the_prog=$(which the-true-adb)
 else
-    for x in $(type -a adb|grep 'adb is /'|grep -v /debug/|pn 3); do
-        x=$(readlink -f "$x")
-        if test "$x" = "$me"; then
-            continue
-        else
-            the_prog=$x
-            break
-        fi
-    done
+    die "the true adb is not found"
 fi
 
 export the_prog
 
 $the_prog start-server >/dev/null 2>&1
-function die() {
-    echo Error: "$@"
-    exit -1
-}
 
 if test -z "$the_prog"; then
     die "Error, the adb is not found"
@@ -52,7 +46,7 @@ function adb() {
 
     if test "$#" = 1 -a "$1" = remount; then
         the-true-adb remount
-        adb shell mount -w -o remount,rw /system
+        command adb shell su -c 'mount -o rw,remount /system; mount | grep /system'
         exit
     fi
 
@@ -113,6 +107,7 @@ function adb() {
         fi
         if test -e ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL; then
             shift 2
+            echo using sh as su 1>&2
             set -- shell sh "$@"
         fi
     fi
@@ -125,7 +120,16 @@ function adb() {
         exec $the_prog shell start $3;
     elif test $# -gt 1 -a "$1" = shell; then
         if ! is-tty-io;then
-            exec $the_prog "$@" | tr -d '\r'
+            if test $myname = adb; then
+                exec $the_prog "$@" | tr -d '\r'
+            elif test $myname = adb-quote; then
+                args=()
+                for x in "$@"; do
+                    args=("${args[@]}" $(printf %q "$x"))
+                done
+
+                exec $the_prog ${args[@]} | tr -d '\r'
+            fi
         else
             shift
             exec adb-expect "$@"

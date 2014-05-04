@@ -125,7 +125,10 @@ function rsync() {
             if test $((n + 1)) = $# -a "${x:${#x}-1}" = / -a "${last_arg:0:1}" = -; then
                 need_ask=false
             fi
-            if test $need_ask = true && yes-or-no-p -y "Remove the trailing / for $x?"; then
+            if test $need_ask = true && { test -d "$x" || yes-or-no-p -y "Remove the trailing / for $x?"; };  then
+                if test -d "$x"; then
+                    echo removing / from the end of $x 1>&2
+                fi
                 args=("${args[@]}" "${x%/}")
                 continue
             fi

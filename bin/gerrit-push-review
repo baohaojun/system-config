@@ -1,6 +1,9 @@
 #!/bin/bash
 
-set -xe
+if test "$DEBUG" = true; then
+    set -x
+fi
+set -e
 
 set -o pipefail
 function die() {
@@ -72,6 +75,10 @@ done
 
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 export REMOTE=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
+
+if is-tty-io; then
+    FOR_REVIEW=true git-interactive-add
+fi
 
 (
     if tty >/dev/null 2>&1; then

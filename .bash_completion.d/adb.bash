@@ -63,7 +63,9 @@ _adb() {
 
     case $where in
         OPTIONS|OPT_SERIAL|OPT_PATH)
-            COMPREPLY=( $(compgen -W "$OPTIONS $COMMAND" -- "$cur") )
+            local adb_commands=( $(compgen -W "$OPTIONS $COMMAND" -- "$cur") )
+            _adb_cmd_shell "$serial" $i
+            COMPREPLY=( ${COMPREPLY[@]:-} ${adb_commands[@]:-} )
             ;;
         OPT_SERIAL_ARG)
             local devices=$(command adb devices 2> /dev/null | grep -v "List of devices" | awk '{ print $1 }')
@@ -95,6 +97,9 @@ _adb() {
                         ;;
                     uninstall)
                         _adb_cmd_uninstall "$serial" $i
+                        ;;
+                    *)
+                        _adb_cmd_shell "$serial" $((i+1))
                         ;;
                 esac
             fi

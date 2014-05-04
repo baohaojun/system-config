@@ -29,6 +29,7 @@ fi
 
             url=$(printf http://%s%s $host $id)
         fi
+        echo $url
         firefox "$url"
         sleep 1;
     done

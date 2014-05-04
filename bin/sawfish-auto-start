@@ -33,6 +33,7 @@ EOF
     mv ~/.config/bhj-auth.rc.$$ ~/.config/bhj-auth.rc
     cat <<EOF > ~/.config/ssh-agent.$$
 export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
+export GNOME_KEYRING_PID=$GNOME_KEYRING_PID
 EOF
     mv ~/.config/ssh-agent.$$ ~/.config/ssh-agent # this is also set by myscr
 )

@@ -16,10 +16,10 @@ eval set -- "$TEMP"
 
 while true; do
     case "$1" in
-	-f|--from)
-	from=$2
-	shift 2
-	;;
+        -f|--from)
+        from=$2
+        shift 2
+        ;;
         -t|--to)
             to=$2
             shift 2
@@ -32,13 +32,13 @@ while true; do
             ADD_GIT_ARGS=$2
             shift 2
             ;;
-	--)
-	shift
-	break
-	;;
-	*)
-	die "internal error"
-	;;
+        --)
+        shift
+        break
+        ;;
+        *)
+        die "internal error"
+        ;;
     esac
 done
 
@@ -52,7 +52,12 @@ if test -z "$to"; then
     to=$(day-end -1)
 fi
 
-if test -z "$TODAYS_CHANGES_DIR"; then 
+if test ${from:0:1} = -; then
+    from=$(day-start $from)
+    to=$(day-end $from)
+fi
+
+if test -z "$TODAYS_CHANGES_DIR"; then
     if test "$from" = "$(day-start -1)" -a "$to" = "$(day-end -1)"; then
         TODAYS_CHANGES_DIR=$CHANGES_DIR/$(today -1)
     else

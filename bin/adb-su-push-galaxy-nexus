@@ -6,19 +6,19 @@ elif adb devices|grep -q : && yes-or-no-p -y "disconnect wifi adb?"; then
     adb disconnect # make sure not use wifi
 fi
 cd ~/doc/galaxy-nexus-root/
-TEMP=$(getopt -o ld --long links,debian -n $(basename $0) -- "$@")
+TEMP=$(getopt -o ld: --long links,debian: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
-do_links=true
-do_debian=true
+do_links=false
+do_debian=~/debian.tgz
 while true; do
     case "$1" in
         -l|--links)
-        do_links=false
+        do_links=true
         shift
         ;;
         -d|--debian)
-            do_debian=false
-            shift
+            do_debian=$2
+            shift 2
             ;;
         --)
         shift
@@ -54,11 +54,11 @@ if test $do_debian = false; then
     exit
 fi
 for x in $(find ./sdcard -type f); do adb push $x ${x#.}; done
-if test -e ~/debian.tgz; then
-    size=$(stat -c %s -L ~/debian.tgz);
+if test -e "$do_debian"; then
+    size=$(stat -c %s -L "$do_debian");
     adb_size=$(adb shell stat -c %s /sdcard/debian.tgz)
     if test "$size" != "$adb_size"; then
-        adb push ~/debian.tgz /sdcard/
+        adb push "$do_debian" /sdcard/debian.tgz
     fi
 fi
 adb shell sh -c 'if test ! -d /data/debian; then cd /data; tar zxvf /sdcard/debian.tgz; fi'

@@ -24,8 +24,8 @@ if test -e ~/.bash-path -a -e ~/.kill-bt; then
 fi
 
 SSH_OK=false
-if test -z "$SSH_AGENT_PID" -a -e ~/.cache/ssh-auth; then
-    . ~/.cache/ssh-auth >/dev/null 2>&1
+if test -z "$SSH_AGENT_PID" -a -e ~/.config/ssh-agent; then
+    . ~/.config/ssh-agent >/dev/null 2>&1
 fi
 if test "$SSH_AGENT_PID"; then
     if uname | grep cygwin -i -q; then
@@ -33,15 +33,19 @@ if test "$SSH_AGENT_PID"; then
     elif test "$(ps h -o command $SSH_AGENT_PID)" = ssh-agent; then
         SSH_OK=true
     fi
+elif test "$GNOME_KEYRING_PID"; then
+    if ps h -o command "$GNOME_KEYRING_PID" | grep -q gnome-keyring-daemon; then
+        SSH_OK=true
+    fi
 fi
 
 if test $SSH_OK = false; then
     (
         umask 077
-        ssh-agent > ~/.cache/ssh-auth.$$
+        ssh-agent > ~/.config/ssh-agent.$$
     )
-    . ~/.cache/ssh-auth.$$ >/dev/null 2>&1
-    mv ~/.cache/ssh-auth.$$ ~/.cache/ssh-auth
+    . ~/.config/ssh-agent.$$ >/dev/null 2>&1
+    mv ~/.config/ssh-agent.$$ ~/.config/ssh-agent
     if test -e ~/.ssh/id_rsa; then
         ssh-add ~/.ssh/id_rsa
     fi

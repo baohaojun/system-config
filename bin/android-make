@@ -70,7 +70,10 @@ if test $# = 0; then
         cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_BUILD_VARIANT\s*.?=\s*(.*?)\s*$/')
     echo set the build for "$@"
 fi
-if lunch "$1"; then
+
+variant=${1##*-}
+
+if test "$variant" = user -o "$variant" = userdebug -o "$variant" = eng && lunch "$1"; then
     shift
 else
     config=$(get_build_var TARGET_PRODUCT)-$(get_build_var TARGET_BUILD_VARIANT)

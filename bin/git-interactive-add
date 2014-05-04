@@ -12,6 +12,15 @@ cd $(dirname $(lookup-file -e .git))
 function git-diff() {
     clear
 
+    if test "$FOR_REVIEW"; then
+        if git diff -w $(repo-remote-branch) HEAD "$@" | grep -q .; then
+            git diff -w $(repo-remote-branch) HEAD "$@"
+        else
+            read -p "$@ seems contain only whitespace changes, press Enter to continue...  "
+        fi
+        return 0
+    fi
+
     if git status -s "$@" | grep -q -P -e '^\?\?'; then
         read -p "$@ seems to be a new file, press Enter to continue...  "
         diff /dev/null "$@"
@@ -25,7 +34,12 @@ function git-diff() {
 }
 
 IFS=$'\n'
-for x in "$@" $(if test $# == 0; then git st -s |grep '^.\S' -P | cut -b 4-; fi); do
+for x in "$@" $(
+    if test $# == 0; then git st -s |grep '^.\S' -P | cut -b 4-; fi
+    if test "$FOR_REVIEW"; then
+        git diff $(repo-remote-branch) HEAD --name-status | perl -npe 's/^\S+\s+//'
+    fi
+); do
     if test "${x:0:1}" = \" && yes-or-no-p -y "Eval $x?"; then
         eval "x=$x"
         echo "x changed to '$x'"
