@@ -147,8 +147,10 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                             mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs -l $jobs $verbose
                         )
                     elif test $# = 1 -a $1 = lk; then
-                        cd bootable/bootloader/lk
-                        make PROJECT=msm8974 BOOTLOADER_OUT=$(lookup-file out)/target/product/msm8974sfo/obj/EMMC_BOOTLOADER_OBJ EMMC_BOOT=1
+                        (
+                            cd build/target/board
+                            mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs -l $jobs $verbose
+                        )
                     else
                         schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs -k $* $verbose
                     fi

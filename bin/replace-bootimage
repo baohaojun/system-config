@@ -38,7 +38,8 @@ fi
 echo boot image is $boot
 
 boot=$(readlink -f $boot)
-tmpd=/tmp/$(basename $0).$$
+tmpd=/tmp/$(basename $0)
+rm -rf $tmpd
 mkdir $tmpd
 (
     cd $tmpd

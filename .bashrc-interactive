@@ -133,6 +133,10 @@ function rsync() {
                 continue
             fi
         fi
+        scp=/scp:
+        if test "${x:0:${#scp}}" = /scp:; then
+            x=${x#/scp:}
+        fi
         args=("${args[@]}" "${x}")
     done
     set -- "${args[@]}"

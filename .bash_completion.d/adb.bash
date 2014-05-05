@@ -23,7 +23,7 @@ _adb() {
         return
     fi
 
-    local where i cur serial
+    local where i cur serial adb_commands
     COMPREPLY=()
 
     serial="${ANDROID_SERIAL:-none}"
@@ -59,11 +59,11 @@ _adb() {
     fi
 
     OPTIONS="-d -e -s -p"
-    COMMAND="devices connect disconnect push pull sync shell emu logcat lolcat forward jdwp install uninstall bugreport help version start-server kill-server get-state get-serialno status-window remount reboot reboot-bootloader root usb tcpip"
+    COMMAND="devices connect disconnect push pull sync shell emu logcat lolcat forward jdwp install uninstall bugreport help version start-server kill-server get-state get-serialno status-window remount reboot reboot-bootloader root usb tcpip backup get-devpath ppp restore wait-for-device"
 
     case $where in
         OPTIONS|OPT_SERIAL|OPT_PATH)
-            local adb_commands=( $(compgen -W "$OPTIONS $COMMAND" -- "$cur") )
+            adb_commands=( $(compgen -W "$OPTIONS $COMMAND" -- "$cur") )
             _adb_cmd_shell "$serial" $i
             COMPREPLY=( ${COMPREPLY[@]:-} ${adb_commands[@]:-} )
             ;;

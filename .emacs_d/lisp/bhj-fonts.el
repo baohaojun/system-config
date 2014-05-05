@@ -69,12 +69,13 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (defvar chinese-font-size-scale-alist nil)
 
-(if *is-a-mac*
-    (setq chinese-font-size-scale-alist '((10.5 . 1.3) (11.5 . 1.3) (16 . 1.3) (18 . 1.25)))
-  (if *is-a-win*
-      (setq chinese-font-size-scale-alist '((11.5 . 1.25) (16 . 1.25)))
-    (setq chinese-font-size-scale-alist '((16 . 1.25)))))
-
+(cond
+ ((and (boundp '*is-a-mac*) *is-a-mac*)
+  (setq chinese-font-size-scale-alist '((10.5 . 1.3) (11.5 . 1.3) (16 . 1.3) (18 . 1.25))))
+ ((and (boundp '*is-a-win*) *is-a-win*)
+  (setq chinese-font-size-scale-alist '((11.5 . 1.25) (16 . 1.25))))
+ (t ;; is a linux:-)
+  (setq chinese-font-size-scale-alist '((16 . 1.25)))))
 
 (defvar bhj-english-font-size-steps '(9 10.5 11.5 12.5 14 16 18 20 22))
 (defun bhj-step-frame-font-size (step)

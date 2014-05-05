@@ -32,7 +32,8 @@ if test ! -e "$ramdisk"; then
 fi
 echo ramdisk image is $ramdisk
 
-tdir=/tmp/$(basename $0).$$
+tdir=/tmp/$(basename $0)
+rm -rf $tdir
 mkdir -p $tdir
 (
     cd $tdir
@@ -41,14 +42,14 @@ mkdir -p $tdir
 
 tdir=$tdir/$(basename $ramdisk)-tmp
 for x in "$@"; do
-    target=$(find $tdir -name $(basename $x))
+    target=$(select-output-line find $tdir -name $(basename $x))
     if test ! -e "$target"; then
         die "target for $x not exist: $(find $tdir)"
     else
         echo found $target for your $x
     fi
     if test -e "$x"; then
-        cp $x $target
+        cp -v $x $target
     else
         ew $target
     fi

@@ -28,6 +28,17 @@ function adb() {
         shift
     fi
 
+    if test "$1" = -W; then
+        # wait for device using a loop
+        for x in $(seq 1 60); do
+            sleep 1
+            if test $(adb devices | grep . | wc -l) -gt 1; then
+                exit 0;
+            fi
+        done
+        exit 1
+    fi
+
     if test "$1" = -r; then
         echo -n 'wait-for-device ' 1>/dev/tty
         $the_prog wait-for-device
@@ -47,6 +58,11 @@ function adb() {
     if test "$#" = 1 -a "$1" = remount; then
         the-true-adb remount
         command adb shell su -c 'mount -o rw,remount /system; mount | grep /system'
+        exit
+    fi
+
+    if test "$#" = 1 -a "$1" = romount; then
+        command adb shell su -c 'mount -o ro,remount /system; mount | grep /system'
         exit
     fi
 
