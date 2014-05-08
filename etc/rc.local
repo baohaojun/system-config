@@ -23,5 +23,5 @@ nmcli con up id DHCP
 if ! systemctl status ssh.service|grep -e 'active .running'; then
     systemctl restart ssh.service
 fi
-
+/sbin/ifup eth0
 exit 0

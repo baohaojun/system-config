@@ -100,7 +100,7 @@
  '(org2blog/wp-confirm-post t)
  '(org2blog/wp-use-tags-as-categories t)
  '(require-final-newline t)
- '(safe-local-variable-values (quote ((encoding . utf-8) (global-robe-mode) (nxml-child-indent . 4) (sgml-basic-offset . 4) (bhj-force-cleanup-buffer . t) (bhj-grep-dir . "~/src/android/") (bhj-grep-dir . ~/src/android/) (sh-indent-comment . t) (c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
+ '(safe-local-variable-values (quote ((require-final-newline) (encoding . utf-8) (global-robe-mode) (nxml-child-indent . 4) (sgml-basic-offset . 4) (bhj-force-cleanup-buffer . t) (bhj-grep-dir . "~/src/android/") (bhj-grep-dir . ~/src/android/) (sh-indent-comment . t) (c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
  '(save-place t nil (saveplace))
  '(scalable-fonts-allowed t)
  '(senator-minor-mode-hook (quote (ignore)))

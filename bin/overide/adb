@@ -30,15 +30,18 @@ function adb() {
 
     if test "$1" = -W; then
         # wait for device using a loop
-        for x in $(seq 1 60); do
+        for x in $(seq 1 ${2:-60}); do
             sleep 1
-            if test $(adb devices | grep . | wc -l) -gt 1; then
+            if test $(adb devices |grep -v 'List of devices attached'| grep $ANDROID_SERIAL. | wc -l) -gt 0; then
                 exit 0;
             fi
         done
         exit 1
     fi
 
+    if test "$1" = -r && ! adb devices?|grep -v :; then
+        shift;
+    fi
     if test "$1" = -r; then
         echo -n 'wait-for-device ' 1>/dev/tty
         $the_prog wait-for-device
@@ -59,6 +62,14 @@ function adb() {
         the-true-adb remount
         command adb shell su -c 'mount -o rw,remount /system; mount | grep /system'
         exit
+    fi
+
+    if test "$#" = 1 -a "$1" = 'devices?'; then
+        if the-true-adb devices | grep -v 'List of devices attached' | grep .; then
+            exit 0
+        else
+            exit 1
+        fi
     fi
 
     if test "$#" = 1 -a "$1" = romount; then
@@ -92,7 +103,7 @@ function adb() {
             exit
         fi
         export ANDROID_SERIAL=$(cat ~/.config/adb-device)
-    elif test "$1" != devices; then
+    elif test "$1" != devices -a -z "$ANDROID_SERIAL"; then
         setsid $the_prog start-server >/dev/null 2>&1 ;
         devices=(
             $($the_prog devices | perl -ne 'print unless 1..1' | pn 1)
@@ -110,18 +121,23 @@ function adb() {
     if test $# = 2 -a "$1" = shell; then # adb shell 'echo hello world'
         exec adb shell sh -c "$2"
     fi
+
     if test "$2" = su -a "$1" = shell; then
-        if test ! -e ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL \
-            -a ! -e ~/.config/adb-use-sh-as-su/no/$ANDROID_SERIAL; then
+        ro_sn=$ANDROID_SERIAL
+        if echo $ro_sn|grep : -q; then # 172.0.0.1:5555 tcp
+            ro_sn=$(adb getprop ro.serialno)
+        fi
+        if test ! -e ~/.config/adb-use-sh-as-su/yes/$ro_sn \
+            -a ! -e ~/.config/adb-use-sh-as-su/no/$ro_sn; then
             if yes-or-no-p -y "Use sh as su?"; then
                 mkdir -p ~/.config/adb-use-sh-as-su/yes
-                touch ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL
+                touch ~/.config/adb-use-sh-as-su/yes/$ro_sn
             else
                 mkdir -p ~/.config/adb-use-sh-as-su/no
-                touch ~/.config/adb-use-sh-as-su/no/$ANDROID_SERIAL
+                touch ~/.config/adb-use-sh-as-su/no/$ro_sn
             fi
         fi
-        if test -e ~/.config/adb-use-sh-as-su/yes/$ANDROID_SERIAL; then
+        if test -e ~/.config/adb-use-sh-as-su/yes/$ro_sn; then
             shift 2
             echo using sh as su 1>&2
             set -- shell sh "$@"

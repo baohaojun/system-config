@@ -1,0 +1,4 @@
+#!/bin/bash
+
+adb_push "$1" /data/sbl1.img
+adb shell dd if=/data/sbl1.img of=/dev/block/platform/msm_sdcc.1/by-name/sbl1

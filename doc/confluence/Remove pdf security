@@ -8,7 +8,9 @@ a. 用firefox访问https://docsec.nvidia.com
 
 b. 点击右下角的小锁图标，查看证书详情。把所有证书全部export到文件
 
-c. for x in ~/Downloads/GeoTrust* ; do  acroread -installCertificate -PEM  $x; done
+c. 把export出来的文件（假设在~/Downloads下，名字全部是以GeoTrust开头的）全部导入到acroread：
+
+    for x in ~/Downloads/GeoTrust* ; do  acroread -installCertificate -PEM  $x; done
 
 
 2. 打印成.ps文件

@@ -34,7 +34,7 @@ cat <<EOF | bash -x
 watch-and-sync $(
     for x in "$@"; do
         printf -- "-f %q" "$x";
-    done)  'command rsync $(
+    done)  'command rsync --exclude .git $(
                                for x in "$@"; do
                                    printf "%q" "$(readlink -f "$x")"
                                done

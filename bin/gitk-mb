@@ -6,4 +6,8 @@ elif test $# = 1; then
     set -- "$1" HEAD
 fi
 
-gitk $(git merge-base $1 $2)..$1 $2
+if test $(basename $0) = gitk-mb; then
+    gitk $(git merge-base $1 $2)..$1 $2
+else
+    git log $1...$2
+fi

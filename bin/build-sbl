@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+export LC_ALL=C
+
+OEM_DIR=$(lookup-file -e boot_images/..)
+
+echo "boot_images"
+
+cd $OEM_DIR/boot_images/core/boot/secboot3/hw/msm8974
+cp boot_cdt_array.c_${1:-v40} boot_cdt_array.c -v
+
+cd $OEM_DIR/boot_images/build/ms
+bash -x ./build.sh TARGET_FAMILY=8974 BUILD_ID=AAAAANAZ BUILD_VER=1234
+
+echo $OEM_DIR/boot_images/build/ms/bin/8974/sbl1.mbn

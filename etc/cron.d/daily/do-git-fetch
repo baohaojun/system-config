@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for x in ~/.config/do-git-fetch/*; do
+    if test -d $x; then
+        (
+            cd $x
+            git fetch
+        )
+    fi
+done
