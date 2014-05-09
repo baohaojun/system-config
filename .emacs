@@ -32,7 +32,6 @@
               (expand-file-name "~/system-config/.emacs_d/mo-git-blame")
               (expand-file-name "~/system-config/.emacs_d/lisp/ext")
               (expand-file-name "~/system-config/.emacs_d/weblogger")
-              (expand-file-name "~/system-config/.emacs_d/org2blog")
               (expand-file-name "~/src/github/helm")
               (expand-file-name "~/src/github/org-mode/contrib/lisp"))
              load-path))
@@ -110,10 +109,6 @@
 
 ;;popup the manual page, try:)
 (put 'narrow-to-region 'disabled nil)
-
-
-
-(require 'org2blog-autoloads)
 
 (global-set-key [(meta control \,)] 'ajoke-pop-mark)
 (global-set-key [(meta control .)] 'ajoke-pop-mark-back)

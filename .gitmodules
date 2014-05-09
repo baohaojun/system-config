@@ -1,6 +1,3 @@
-[submodule ".emacs_d/org2blog"]
-	path = .emacs_d/org2blog
-	url = https://github.com/punchagan/org2blog.git
 [submodule "gcode/beagrep"]
 	path = gcode/beagrep
 	url = https://github.com/baohaojun/beagrep.git
