@@ -148,7 +148,7 @@ might be bad."
         (includes (split-string
                    (shell-command-to-string
                     (concat "c-get-includes "
-                            (shell-quote-argument (buffer-file-name))))
+                            (shell-quote-argument (ajoke--buffer-file-name-local))))
                    "\n" t)))
     (save-excursion
       (goto-char (point-min))

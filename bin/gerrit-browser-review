@@ -29,7 +29,7 @@ fi
 
             url=$(printf http://%s%s $host $id)
         fi
-        echo $url
+        echo $url | tee /dev/stderr | putclip
         firefox "$url"
         sleep 1;
     done

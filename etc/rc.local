@@ -10,7 +10,9 @@
 # bits.
 #
 # By default this script does nothing.
-
+set +e
+set -x
+exec > ~bhj/.logs/rc.local.log 2>&1
 echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 
 if test -d ~gerrit2; then

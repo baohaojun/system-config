@@ -1,18 +1,5 @@
 #!/bin/bash -i
 
-export USB0=eth1
-if ifconfig eth1 2>/dev/null | grep 'HWaddr 00:00:00:00:00:00'; then
-    sudo ifconfig eth1 hw ether 001cfc9a94fb || true
-fi
-sudo ifconfig eth1 up >/dev/null 2>&1 || true
-
-if ! ifconfig $USB0 >/dev/null 2>&1 ; then
-    if ifconfig usb0 >/dev/null 2>&1 ; then
-        USB0=usb0
-    else
-        USB0=eth1
-    fi
-fi
 # instead of scp in the name, we are going to use rsync
 if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
     adb -S
@@ -30,6 +17,20 @@ if ! adb -w shell netcfg|grep -q 'rndis0.*129/'; then
             ifconfig rndis0 192.168.15.244
         '"
     sleep 1
+fi
+
+export USB0=eth1
+if ifconfig eth1 2>/dev/null | grep 'HWaddr 00:00:00:00:00:00'; then
+    sudo ifconfig eth1 hw ether 001cfc9a94fb || true
+fi
+sudo ifconfig eth1 up >/dev/null 2>&1 || true
+
+if ! ifconfig $USB0 >/dev/null 2>&1 ; then
+    if ifconfig usb0 >/dev/null 2>&1 ; then
+        USB0=usb0
+    else
+        USB0=eth1
+    fi
 fi
 
 if ! ifconfig $USB0 | grep 192.168.15.33; then

@@ -1,5 +1,30 @@
 #!/bin/bash
 
+TEMP=$(getopt -o u:p: --long user:pass: -n $(basename $0) -- "$@")
+user=$(get-about-me mail)
+pass=$(get-authinfo $(get-about-me smtp))
+
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -u|--user)
+            user=$2
+            shift 2
+            ;;
+        -p|--pass)
+            pass=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 test $# = 0 && { echo "Usage: $(basename $0) match1 [match2] [[--] disp1 disp2 ... ]"; exit; }
 matches=()
 matches_done=false
@@ -81,8 +106,8 @@ if (m/^dn: /) { # restart
 ' "${disps[@]}"
 }
 
-ldapsearch -LLL -b "DC=alibaba-inc.com,DC=com" \
+ldapsearch -LLL -b "$(get-about-me ldap-dc)" \
     -P 3 \
-    -H ldaps://ldap.alibaba-inc.com:636/ \
-    -D "haojun.bhj@alibaba-inc.com" \
-    -w "$(get-authinfo smtp.alibaba-inc.com)" "$query"
+    -H "$(get-about-me ldap-url)" \
+    -D "$user" \
+    -w "$pass" "$query"

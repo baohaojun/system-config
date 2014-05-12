@@ -49,9 +49,13 @@ ssh bhj.dyndns.org 'set -x
 sudo ip link set tun0 up
 sudo ip addr add 10.0.0.100/32 peer 10.0.0.200 dev tun0
 default_gw=$(route -n |grep '^0\.0\.0\.0' | awk '{print $2}')
-sudo route add $(host bhj.dyndns.org|grep 'has address'|head -n 1|pn 4) gw "$default_gw"
+sudo route add $(ip-or-name bhj.dyndns.org) gw "$default_gw"
 sudo route del default gw "$default_gw"
-sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw "$default_gw"
+if echo "$default_gw" | grep '^10\.'; then
+    sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw "$default_gw"
+elif echo "$default_gw" | grep "^172\.16\."; then
+    sudo route add -net 172.16.0.0 netmask 255.255.0.0 gw "$default_gw"
+fi
 sudo route add default gw 10.0.0.200
 net-for-phone
 nat-vbox tun0 $USB0

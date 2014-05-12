@@ -19,6 +19,7 @@ cd ~/doc/projects
 
 if git-dirty; then
     git-interactive-add
+    git commit -m 'auto commit' -s
 fi
 
 if test ! -d ~/today/MobileOrg; then
@@ -26,8 +27,11 @@ if test ! -d ~/today/MobileOrg; then
     mkdir -p ~/today/forever/MobileOrg;
     download-today
     cd -P ~/today/MobileOrg;
-    adb shell su -c sh /sdcard/start-debian2.sh && ssh-to-phone echo hello
-    rsync -av phone-sdcard:/data/media/0/MobileOrg ..
+
+    for x in $(adb ls /sdcard/MobileOrg/); do
+        adb pull /sdcard/MobileOrg/$(basename $x) .
+    done
+
     git init
     git add .
     git commit -m 'Init version'
@@ -43,8 +47,13 @@ fi
 
 yes-or-no-p -y "Sync MobileOrg APP on you phone manually done"
 
-ssh-to-phone echo hello
-rsync -av phone-sdcard:/data/media/0/MobileOrg ..
+
+for x in $(adb ls /sdcard/MobileOrg/); do
+    if test $x = from-mobile.org; then
+        continue
+    fi
+    adb pull /sdcard/MobileOrg/$(basename $x) .
+done
 
 find-or-exec emacs emacs.bhj
 emacsclient -e '(org-mobile-pull)'
@@ -66,7 +75,6 @@ function check_git_dir() {
 }
 
 check_git_dir ~/doc/projects "Add all changes from mobile to Emacs"
-check_git_dir ~/today/MobileOrg "Add all changes from Emacs to mobile"
 emacsclient -e '(org-mobile-push)'
 
 if (cd ~/doc/projects && git diff HEAD . | grep -v -e '^\+\s+:(properties|id|end):' -i -P | grep '^(-|\+) ' -P ); then
@@ -76,8 +84,11 @@ else
 fi
 
 cd ~/today/MobileOrg
+git add agendas.org checksums.dat
 check_git_dir ~/today/MobileOrg "Add all changes after org-mobile-push?"
 
-true;rsync -av * phone-sdcard:/data/media/0/MobileOrg/
+for x in *; do
+    adb push $x /sdcard/MobileOrg/$x
+done
 
 yes-or-no-p -y "Sync MobileOrg APP on you phone manually done"
