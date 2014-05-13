@@ -5,7 +5,7 @@ ps-killall firefox
 firefox -new-tab http://admin:$(get-authinfo 192.168.33.8 admin)@192.168.33.8&
 
 function send-key() {
-    sawfish-send-window-event '(- |^)Mozilla Firefox\$' "$1"
+    sawfish-browser-input "$1"
     sleep .1
 }
 

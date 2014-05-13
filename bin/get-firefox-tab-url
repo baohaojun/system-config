@@ -3,7 +3,7 @@
 putclip "shit"
 
 for x in $(seq 1 5); do
-    sawfish-send-window-event '(- |^)Mozilla Firefox\$' C-l C-c TAB TAB TAB
+    sawfish-browser-input C-l C-c TAB TAB TAB
     out=$(
         getclip |grep . ||
         xclip -o
@@ -29,4 +29,4 @@ for x in $(seq 1 5); do
     fi
 done
 
-sawfish-send-window-event '(- |^)Mozilla Firefox\$' C-l C-e SPC # so that the url bar is not empty
+sawfish-browser-input C-l C-e SPC # so that the url bar is not empty

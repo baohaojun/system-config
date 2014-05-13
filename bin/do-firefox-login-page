@@ -8,7 +8,7 @@ user=$(get-authinfo -h $host -u \?)
 sawfish-search-in-firefox user
 sawfish-ask-for-input -p "Search user done, press enter to continue> "
 putclip "$user"
-sawfish-send-window-event Mozilla TAB C-v Tab
+sawfish-browser-input TAB C-v Tab
 putclip $(get-authinfo $host $user)
-sawfish-send-window-event Mozilla C-v
+sawfish-browser-input C-v
 putclip ""

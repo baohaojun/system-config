@@ -156,7 +156,7 @@
    ("v"                "adjust-volume" "adjust-volume")
    ("C-,"              "hello world no such thing" "firefox pop")
    ("C-."              "hello world no such thing" "firefox push")
-   ("Super-n"          "firefox" "firefox")
+   ("Super-n"          "firefox|chromium" "firefox")
    ("Super-t"          "konsole|xfce4-terminal" "konsole.bhj")
    ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")

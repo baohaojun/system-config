@@ -38,18 +38,18 @@ fi | while read user pass; do
     putclip 登录名
     ask-for-input-with-sawfish -p Continue
     sleep .5
-    sawfish-send-window-event 'Mozilla Firefox\$' C-s C-y C-g
+    sawfish-browser-input C-s C-y C-g
     for x in Tab S-Tab S-Tab S-Tab S-Tab S-Tab S-Tab; do
-        sawfish-send-window-event 'Mozilla Firefox\$' $x
+        sawfish-browser-input $x
         sleep .1
     done
 
     putclip $user
     echo sending $user
-    sawfish-send-window-event 'Mozilla Firefox\$' C-y Tab
+    sawfish-browser-input C-y Tab
 
     sleep 1
     putclip $pass
     echo sending $pass
-    sawfish-send-window-event 'Mozilla Firefox\$' C-y RET
+    sawfish-browser-input C-y RET
 done

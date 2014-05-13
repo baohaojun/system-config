@@ -10,7 +10,11 @@ function debug() {
 }
 export -f debug
 
-the_firefox=~/external/firefox/firefox
+if test -e ~/external/the-firefox; then
+    the_firefox=$(readlink -f ~/external/the-firefox)
+else
+    the_firefox=$(readlink -f ~/bin/the-firefox)
+fi
 
 if test "$#" = 1 -a -e "$1" -a "${1##*.}" = pdf; then
     exec firefox-open-url-pattern -e "$(urlp "$1")" "$(urlp "$1")"

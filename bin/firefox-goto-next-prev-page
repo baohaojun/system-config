@@ -5,4 +5,5 @@ if test "$1" = prev; then
 else
     putclip 后一篇
 fi
-sawfish-send-window-event "Mozilla Firefox" C-s C-y C-g Tab RET
+
+sawfish-browser-input C-s C-v ESC Tab RET

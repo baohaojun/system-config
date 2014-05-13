@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sawfish-send-window-event '(- |^)(Mozilla Firefox|The Chromium Projects - Chromium)\$' "$@"

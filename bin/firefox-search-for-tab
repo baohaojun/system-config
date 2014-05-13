@@ -67,6 +67,6 @@ for x in $(seq 1 $tabs); do
     if test "$FF_POP" = true; then
         next_tab_key=C-b
     fi
-    sawfish-send-window-event '(- |^)Mozilla Firefox\$' $next_tab_key
+    sawfish-browser-input $next_tab_key
 done
 exit -1
