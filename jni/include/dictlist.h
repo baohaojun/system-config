@@ -42,9 +42,9 @@ class DictList {
 
   // Starting position of those words whose lengths are i+1, counted in
   // char16
-  size_t start_pos_[kMaxLemmaSize + 1];
+  uint32 start_pos_[kMaxLemmaSize + 1];
 
-  size_t start_id_[kMaxLemmaSize + 1];
+  uint32 start_id_[kMaxLemmaSize + 1];
 
   int (*cmp_func_[kMaxLemmaSize])(const void *, const void *);
 

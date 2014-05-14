@@ -109,8 +109,8 @@ typedef struct {
  * A node occupies 16 bytes. so, totallly less than 16 * 500 = 8K
  */
 struct LmaNodeLE0 {
-  size_t son_1st_off;
-  size_t homo_idx_buf_off;
+  uint32 son_1st_off;
+  uint32 homo_idx_buf_off;
   uint16 spl_idx;
   uint16 num_of_son;
   uint16 num_of_homo;

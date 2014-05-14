@@ -414,14 +414,14 @@ bool DictList::load_list(FILE *fp) {
 
   initialized_ = false;
 
-  if (fread(&scis_num_, sizeof(size_t), 1, fp) != 1)
+  if (fread(&scis_num_, sizeof(uint32), 1, fp) != 1)
     return false;
 
-  if (fread(start_pos_, sizeof(size_t), kMaxLemmaSize + 1, fp) !=
+  if (fread(start_pos_, sizeof(uint32), kMaxLemmaSize + 1, fp) !=
       kMaxLemmaSize + 1)
     return false;
 
-  if (fread(start_id_, sizeof(size_t), kMaxLemmaSize + 1, fp) !=
+  if (fread(start_id_, sizeof(uint32), kMaxLemmaSize + 1, fp) !=
       kMaxLemmaSize + 1)
     return false;
 
