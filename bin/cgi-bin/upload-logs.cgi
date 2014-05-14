@@ -15,6 +15,9 @@ my %params = $q->Vars;
 my $phone_num = $params{phone_num};
 delete $params{phone_num};
 
+my $true_wifi_mac = $params{true_wifi_mac};
+delete $params{true_wifi_mac};
+
 my $wifi_mac = $params{wifi_mac};
 delete $params{wifi_mac};
 
@@ -102,6 +105,7 @@ sub write_file($$) {
 }
 
 write_file "phone_num.txt", $phone_num;
+write_file "wifi_mac.txt", $true_wifi_mac;
 
 for my $param (keys %params) {
     my $lightweight_fh  = $q->upload($param);
@@ -117,6 +121,7 @@ for my $param (keys %params) {
         print $fh $buffer;
     }
     close $fh;
+    close $lightweight_fh;
     rename ".$param.$$", $param;
 }
 print "Upload is complete! $session_id\n";

@@ -6,4 +6,4 @@ else
     putclip 后一篇
 fi
 
-sawfish-browser-input C-s C-v ESC Tab RET
+sawfish-browser-input C-s C-v C-g Tab RET

@@ -3,7 +3,7 @@
 putclip "shit"
 
 for x in $(seq 1 5); do
-    sawfish-browser-input C-l C-c TAB TAB TAB
+    sawfish-browser-input C-l C-c $(if test $(basename $(readlink -f $(which the-firefox))) = firefox; then echo TAB TAB TAB; fi 2>/dev/null)
     out=$(
         getclip |grep . ||
         xclip -o

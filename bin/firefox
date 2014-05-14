@@ -1,6 +1,10 @@
 #!/bin/bash
 
-exec 2>>~/.logs/firefox.log
+if echo $SHELLOPTS | grep -P -e  '\bxtrace\b'; then
+    true
+else
+    exec 2>>~/.logs/firefox.log
+fi
 if test "$DISPLAY" = :0.0; then
     . ~/.renew-xauth
 fi
@@ -14,6 +18,11 @@ if test -e ~/external/the-firefox; then
     the_firefox=$(readlink -f ~/external/the-firefox)
 else
     the_firefox=$(readlink -f ~/bin/the-firefox)
+fi
+
+is_firefox=0
+if test $(basename "$the_firefox") = firefox; then
+    is_firefox=1
 fi
 
 if test "$#" = 1 -a -e "$1" -a "${1##*.}" = pdf; then
@@ -108,11 +117,27 @@ if test $# = 1; then
 fi
 
 if test "$1" = -current-tab; then
-    shift
+    if test "$is_firefox" = 1; then
+        shift
+    elif sawfish-window-exists Chromium; then
+        shift
+        find-or-exec Chromium
+        putclip "$@"
+        sawfish-browser-input C-l C-l BS
+        sawfish-browser-input C-v
+        sleep .1
+        sawfish-browser-input RET
+
+        exit 0
+    fi
+fi
+
+if test "$is_firefox" = 0; then
+    set -- --proxy-pac-url=http://localhost:8086/proxy.pac "$@"
 fi
 
 if test -x $the_firefox; then
-    if test "$(get-pid-env external/firefox/firefox DISPLAY)" != "DISPLAY=$DISPLAY"; then
+    if test "$(get-pid-env $the_firefox DISPLAY)" != "DISPLAY=$DISPLAY"; then
         debug "Won't start firefox $@ because it is running in another display"
         exit -1
     fi

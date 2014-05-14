@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if test "$1" = -d; then
+    adb 'echo 1 > /sys/module/restart/parameters/download_mode'
+    shift;
+else
+    adb 'echo 0 > /sys/module/restart/parameters/download_mode'
+fi
+
+adb 'for x in /sys/bus/msm_subsys/devices/*/restart_level; do
+         echo RELATED > $x
+     done'
+
+for x in "$@"; do
+    adb "echo restart > /d/msm_subsys/$x"
+done

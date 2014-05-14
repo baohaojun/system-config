@@ -93,6 +93,7 @@ for (@ARGV) {
                 ($base = $_) =~ s!.*/!!;
                 push_one_file($_, $base);
             }
+            system("rm -rfv /tmp/adb_push.$$");
         } else {
             print "Warning: $file not found\n";
         }

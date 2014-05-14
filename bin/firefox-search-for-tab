@@ -63,9 +63,9 @@ for x in $(seq 1 $tabs); do
         exit -1
     fi
 
-    next_tab_key=C-f
+    next_tab_key=C-Tab
     if test "$FF_POP" = true; then
-        next_tab_key=C-b
+        next_tab_key=C-S-Tab
     fi
     sawfish-browser-input $next_tab_key
 done

@@ -1,0 +1,32 @@
+#!/bin/bash
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) VID"
+fi
+vid=$1
+
+if test $(lsusb -d $vid: |wc -l) -ne 1; then
+    die "Not exactly 1 $vid device: $(lsusb -d $vid:)"
+fi
+
+bus=$(lsusb -d $vid: | pn 2 |perl -npe 's/^0*//')
+dev=$(lsusb -d $vid: | pn 4 |perl -npe 's/^0*//; s/://g')
+
+lsusb -t |
+perl -ne '
+    if (m/Bus 0*'$bus'\.Port/) {
+        while (<>) {
+            if (m!^/:\s+Bus!) {
+                exit;
+            }
+            if (m/Port (\d+): Dev '$dev',/) {
+                print "'$bus'-$1";
+                exit;
+            }
+        }
+    }'

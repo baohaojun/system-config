@@ -41,11 +41,13 @@ while true; do
 done
 
 if test $do_fetch = true; then
+    echo git fetching remote repo
     if test -z "$(lookup-file -e .repo)"; then
         git fetch -v
     else
         2nd repo sync -n . || git fetch origin
     fi
+    echo git fetch done
 fi
 
 

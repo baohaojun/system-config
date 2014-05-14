@@ -101,7 +101,7 @@ $(
 In the attached build.log, you can find the build fail reason. Here's
 a grep which hopefully can show some clue:
 
-$(grep -Hn -i -e "$(grep -o -e '".*invalid argument.*no rule to.*"' ~/.emacs|perl -npe 's,",,g; s,\\\\,\\,g')" build.log | perl -npe 's/^/    /')
+$(grep -Hn -i -e "$(grep -o -e '".*invalid argument.*no rule to.*"' ~/.emacs_d/lisp/bhj-defines.el|perl -npe 's,",,g; s,\\\\,\\,g')" build.log | perl -npe 's/^/    /')
 
 Thanks.
 

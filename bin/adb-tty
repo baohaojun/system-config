@@ -1,2 +1,6 @@
 #!/bin/bash
-IS_TTY_IO=true adb "$@"
+if test $(basename $0) = adb-tty; then
+    IS_TTY_IO=true adb "$@"
+else
+    IS_TTY_IO=false adb "$@"
+fi
