@@ -27,7 +27,7 @@ namespace ime_pinyin {
 
 class DictTrie : AtomDictBase {
  private:
-  typedef struct ParsingMark {
+  struct ParsingMark {
     size_t node_offset:24;
     size_t node_num:8;           // Number of nodes with this spelling id given
                                  // by spl_id. If spl_id is a Shengmu, for nodes
@@ -200,21 +200,21 @@ class DictTrie : AtomDictBase {
                  NPredictItem *npre_items, size_t npre_max,
                  size_t b4_used);
 
-  LemmaIdType put_lemma(char16 lemma_str[], uint16 splids[],
-                        uint16 lemma_len, uint16 count) {return 0;}
+  LemmaIdType put_lemma(char16 /*lemma_str*/[], uint16 /*splids*/[],
+                        uint16 /*lemma_len*/, uint16 /*count*/) {return 0;}
 
-  LemmaIdType update_lemma(LemmaIdType lemma_id, int16 delta_count,
-                           bool selected) {return 0;}
+  LemmaIdType update_lemma(LemmaIdType /*lemma_id*/, int16 /*delta_count*/,
+                           bool /*selected*/) {return 0;}
 
-  LemmaIdType get_lemma_id(char16 lemma_str[], uint16 splids[],
-                           uint16 lemma_len) {return 0;}
+  LemmaIdType get_lemma_id(char16 /*lemma_str*/[], uint16 /*splids*/[],
+                           uint16 /*lemma_len*/) {return 0;}
 
-  LmaScoreType get_lemma_score(LemmaIdType lemma_id) {return 0;}
+  LmaScoreType get_lemma_score(LemmaIdType /*lemma_id*/) {return 0;}
 
-  LmaScoreType get_lemma_score(char16 lemma_str[], uint16 splids[],
-                        uint16 lemma_len) {return 0;}
+  LmaScoreType get_lemma_score(char16 /*lemma_str*/[], uint16 /*splids*/[],
+                        uint16 /*lemma_len*/) {return 0;}
 
-  bool remove_lemma(LemmaIdType lemma_id) {return false;}
+  bool remove_lemma(LemmaIdType /*lemma_id*/) {return false;}
 
   size_t get_total_lemma_count() {return 0;}
   void set_total_lemma_count_of_others(size_t count);
