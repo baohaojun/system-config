@@ -284,7 +284,7 @@ is set, call FUNC with the start and end of the matched region."
            (point-min)
            (point-max)
            (concat "imenu-ctags "
-                   (file-name-nondirectory (buffer-file-name source-buffer)))
+                   (file-name-nondirectory (ajoke--buffer-file-name-local source-buffer)))
            temp-buffer))
         (with-current-buffer temp-buffer
           (goto-char (point-min))
@@ -304,7 +304,7 @@ is set, call FUNC with the start and end of the matched region."
     (let ((old-buffer (current-buffer))
           import-list)
       (with-temp-buffer
-        (shell-command (format "ajoke-get-imports.pl %s -v" (buffer-file-name old-buffer)) (current-buffer))
+        (shell-command (format "ajoke-get-imports.pl %s -v" (ajoke--buffer-file-name-local old-buffer)) (current-buffer))
         (goto-char (point-min))
         (while (search-forward-regexp "^import" nil t)
           (save-excursion
