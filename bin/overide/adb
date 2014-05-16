@@ -85,6 +85,10 @@ function adb() {
         exec the-true-adb connect $(cat ~/.config/adb-device)
     fi
 
+    if test $# = 2 -a "$1" = e; then
+        exec e /adb::"$2"
+    fi
+
     if test "$1" = -S; then
         echo "$(select-output-line -- '(
             devices=$(adb devices 2>&1 | perl -ne "print unless 1..1"|pn 1);

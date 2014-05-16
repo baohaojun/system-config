@@ -63,6 +63,7 @@ function compile_ctags() {
     ./configure
     make
     sudo make install
+    sudo mv /usr/local/bin/ctags /usr/local/bin/ctags-exuberant
     git clean -xfd
 }
 
