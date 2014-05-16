@@ -1,0 +1,11 @@
+#!/bin/bash
+adb -r echo
+
+for x in "$@"; do
+    if test $(basename $0) = adb-back-partition; then
+        adb dd if=/dev/block/platform/msm_sdcc.1/by-name/$x of=/sdcard/pt-$x
+        adb pull /sdcard/pt-$x
+    elif test $(basename $0) = adb-erase-partition; then
+        adb 'dd if=/dev/zero | tr "\000" "\377" > /dev/block/platform/msm_sdcc.1/by-name/'$x
+    fi
+done

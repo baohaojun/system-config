@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+host=$1
+shift
+for x in "$@"; do
+    if [[ "$x" =~ / ]]; then
+        die "must not contain /: $x"
+    fi
+done
+rsync -v "$@" $host:$PWD

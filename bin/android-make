@@ -25,9 +25,8 @@ if test "$hourly_build_debug" = true; then
 fi
 
 test -d .repo -a -e build/envsetup.sh
-# jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
-# jobs=$((jobs + jobs / 2))
-jobs=4
+jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
+jobs=$((jobs + jobs / 2))
 verbose=
 TEMP=$(getopt -o vj: -n $(basename $0) -- "$@")
 function die() {

@@ -16,15 +16,15 @@ if test $# != 1; then
 fi
 
 rev=$1
-my_query=$(gerrit query -- "$(git rev-parse $rev)")
+my_query=$(gerrit query "$(git rev-parse $rev)")
 
 if ! echo "$my_query" | grep -P -e "^\s*status: MERGED\s*$"; then
-    
+
     my_number=$(echo "$my_query"| grep number: | pn 2|head -n 1)
 
-    for x in $(gerrit query -- "status:open AND
+    for x in $(gerrit query "status:open AND
                             owner:$(git config user.email|perl -npe 's/\@.*//') AND
-                            project:^.*$(basename $(repo-project))" | # AND branch:$(repo-branch) 
+                            project:^.*$(basename $(repo-project))" | # AND branch:$(repo-branch)
 
         grep number: | pn 2|sort -n); do
         if gerrit-is-ancestor $x $my_number; then
@@ -32,13 +32,10 @@ if ! echo "$my_query" | grep -P -e "^\s*status: MERGED\s*$"; then
             (
                 set -x
                 gerrit review $(
-                    gerrit-fetch-review $x >/dev/null 2>&1; 
+                    gerrit-fetch-review $x >/dev/null 2>&1;
                     git rev-parse FETCH_HEAD
                 ) --submit --verified +1 --code-review +2
             )
         fi
     done
 fi
-
-
-

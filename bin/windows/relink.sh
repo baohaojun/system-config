@@ -9,7 +9,7 @@ function re_match()
 {
     if echo "$1" | grep "$2" >/dev/null; then
         return 0;
-    else 
+    else
         return 1
     fi
 }
@@ -18,9 +18,15 @@ function relink_func()
 {
     if re_match "$src" "^/a/" || re_match "$src" "^/cygdrive/a/" || ! [[ -e "$src" ]]; then
         if re_match "$src" "^/./"; then
-            for x in {c..e}; do 
+            for x in {c..e}; do
                 new_src=/cygdrive/$x/"${src:3}"
                 if [[ -e "$new_src" ]]; then
+                    echo "$1" source found at "$new_src"
+                    rm "$tgt"
+                    ln -sf "$new_src" "$tgt"
+                    return
+                elif test -e "$(echo "$new_src" | perl -npe 's!/program files/!/program files (x86)/!i')"; then
+                    new_src=$(echo "$new_src" | perl -npe 's!/program files/!/program files (x86)/!i')
                     echo "$1" source found at "$new_src"
                     rm "$tgt"
                     ln -sf "$new_src" "$tgt"
@@ -59,5 +65,5 @@ elif test $INPLACE = false; then
 else
     tgt="$1"
 fi
-    
+
 relink_func "$1"

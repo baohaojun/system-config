@@ -14,8 +14,8 @@ markkeys @=\033
 ignorecase on
 defscrollback 100000
 
-# hardstatus on
-# hardstatus alwayslastline
-# hardstatus string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %m/%d %C%a "
+hardstatus on
+hardstatus alwayslastline
+hardstatus string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %m/%d %C%a "
 
 termcapinfo xterm* ti@:te@

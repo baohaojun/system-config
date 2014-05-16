@@ -67,6 +67,11 @@ function git()
     if test $# = 1 -a "$1" = diff; then
         set -- diff -w
     fi
+
+    if test $# = 1 -a "$1" = cherry-pick; then
+        set -- cherry-pick $(select-output-line 'git reflog | head -n 20' | pn 1)
+    fi
+
     if test "$NO_SVN_CHECK" != true && command git config svn-remote.svn.url | grep -q .; then
         git_svn "$@"
         return $?

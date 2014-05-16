@@ -209,32 +209,32 @@ function _android_env()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    
-    case "$prev" in
-	*android-env)
-	    COMPREPLY=( $(skeleton_compgen_word.pl \
-		-m 1000 \
-		-d '\n' -- \
-		"$(extract-def sh $(lookup-file build/envsetup.sh))" \
-		"$cur")
-	    )
-	    return 0
-	    ;;
 
-	get*_build_var)
-	    COMPREPLY=( $(skeleton_compgen_word.pl \
-		-m 1000 \
-		-d '\n' -- \
-		"$(extract-def make $(lookup-file build/core/envsetup.mk))" \
-		"$cur")
-	    )
-	    return 0
-	    ;;
-	esac
+    case "$prev" in
+        *android-env)
+            COMPREPLY=( $(skeleton_compgen_word.pl \
+                -m 1000 \
+                -d '\n' -- \
+                "$(extract-def sh $(lookup-file build/envsetup.sh))" \
+                "$cur")
+            )
+            return 0
+            ;;
+
+        get*_build_var)
+            COMPREPLY=( $(skeleton_compgen_word.pl \
+                -m 1000 \
+                -d '\n' -- \
+                "$(extract-def make $(lookup-file build/core/envsetup.mk))" \
+                "$cur")
+            )
+            return 0
+            ;;
+        esac
 }
 
 complete -o default -F _android_env android-env
-	    
+
 function _android_full_build() {
     local cur prev
     local IFS=$'\n'
@@ -242,18 +242,18 @@ function _android_full_build() {
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     COMPREPLY=( $(skeleton_compgen_word.pl \
-	-m 1000 \
-	-d '\n' -- \
-	"$(
-	    cd $(lookup-file .repo/..) >/dev/null 2>&1
-	    . build/envsetup.sh >/dev/null 2>&1
-	    for x in "${LUNCH_MENU_CHOICES[@]}"; do
-		echo "$x"
-	    done
-	)" \
-	    "$cur")
+        -m 1000 \
+        -d '\n' -- \
+        "$(
+            cd $(lookup-file .repo/..) >/dev/null 2>&1
+            . build/envsetup.sh >/dev/null 2>&1
+            for x in "${LUNCH_MENU_CHOICES[@]}"; do
+                echo "$x"
+            done
+        )" \
+            "$cur")
     )
-    return 0 
+    return 0
 }
 
-complete -o default -F _android_full_build android-full-build android-set-product android-hourly-build
+complete -o default -F _android_full_build android-full-build android-set-product android-hourly-build android-make

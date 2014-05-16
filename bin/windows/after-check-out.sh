@@ -42,13 +42,19 @@ cd /cygdrive/c/
     cp ~/etc/ywb-disable.rc disable.rc
 )
 
-wget -N  http://cygwin.com/setup-x86_64.exe
-chmod +x setup-x86_64.exe
+if test ! -e setup-x86_64.exe; then
+    if ! which wget && yes-or-no-p -y wget not found, use browser to download; then
+        cygstart http://cygwin.com/setup-x86_64.exe
+        exit 1
+    fi
+    wget -N  http://cygwin.com/setup-x86_64.exe
+    chmod +x setup-x86_64.exe
+fi
 
-pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make screen cygutils-extra procps)
+pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make screen cygutils-extra procps wget)
 /cygdrive/c/setup-x86_64.exe -q -n -d -A -P "${pkgs[@]}" || true
 
-if yes-or-no-p "Install the packages one by one?"; then
+if true; then
     for x in "${pkgs[@]}"; do
         /cygdrive/c/setup-x86_64.exe -q -n -d -A -P $x
     done

@@ -13,7 +13,7 @@ GetOptions(
     "s!" => \$secure,
     );
 
-my $mount_cmd = "echo adb remount\\; adb shell mount -o remount,rw /system; exec >/dev/null 2>&1; adb -r shell sync; adb remount; adb shell mount -o remount,rw /system; adb -w shell true";
+my $mount_cmd = "adb remount";
 my $dest = pop( @ARGV);
 my $qdest = shell_quote($dest);
 
@@ -40,6 +40,9 @@ sub push_one_file($$)
         debug "push failed, try to use sdcard";
         system("adb", "push", $_, "/sdcard/$base");
         system("adb", "shell", "su", "-c", "cp /sdcard/$base $true_dest");
+        if ($true_dest =~ m!/xbin/|/bin/!) {
+            system("adb", "shell", "su", "-c", "chmod 755 $true_dest");
+        }
     }
 }
 

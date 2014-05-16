@@ -1,4 +1,5 @@
 #!/bin/bash
+adb -r echo
 
 boot=
 TEMP=$(getopt -o b: --long boot: -n $(basename $0) -- "$@")

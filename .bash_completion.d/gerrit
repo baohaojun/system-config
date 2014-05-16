@@ -1,103 +1,125 @@
+#!/bin/bash
+
 function _gerrit_reviewers()
 {
-    local IFS=$'\t\n' 
+    local IFS=$'\t\n'
     COMPREPLY=(
-	$(skeleton_compgen_word.pl \
-	    -m 1000 \
-	    -d '\n' -- \
-	    "$(cd ~/jira-users && 'ls')" \
-	    "$cur" > /tmp/gerrit-comp.$$;
-	    if test $(cat /tmp/gerrit-comp.$$|wc -l) = 1; then
-		cat /tmp/gerrit-comp.$$ | perl -npe 's/.*<//; s/\@.*//'
-	    else
-		cat /tmp/gerrit-comp.$$
-	    fi
-	)
+        $(skeleton_compgen_word.pl \
+            -m 1000 \
+            -d '\n' -- \
+            "$(cd ~/jira-users && 'ls')" \
+            "$cur" > /tmp/gerrit-comp.$$;
+            if test $(cat /tmp/gerrit-comp.$$|wc -l) = 1; then
+                cat /tmp/gerrit-comp.$$ | perl -npe 's/.*<//; s/\@.*//'
+            else
+                cat /tmp/gerrit-comp.$$
+            fi
+        )
     )
 }
 
 function _gerrit()
 {
-    local cur prev opts cmds type types c subcommand
+    local cur prev opts cmds type types c subcommand x
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     opts="--help --silent --verbose"
-    cmds="approve
-  create-account
-  create-group
-  create-project
-  flush-caches
-  gsql
-  ls-projects
-  query
-  receive-pack
-  replicate
-  review
-  set-project-parent
-  show-caches
-  show-connections
-  show-queue
-  stream-events
-  version
-  "
+    cmds="
+ban-commit
+create-account
+create-group
+create-project
+flush-caches
+gc
+gsql
+ls-groups
+ls-members
+ls-projects
+ls-user-refs
+plugin
+query
+receive-pack
+rename-group
+review
+set-account
+set-members
+set-project
+set-project-parent
+set-reviewers
+show-caches
+show-connections
+show-queue
+stream-events
+test-submit
+version
+"
     subcommand=""
 
   # Look for the subcommand.
     c=1
     while [ $c -lt $COMP_CWORD ]; do
-	word="${COMP_WORDS[c]}"
-	for cmd in $cmds; do
-	    if [ "$cmd" = "$word" ]; then
-		subcommand="$word"
-	    fi
-	done
-	c=$((++c))
+        word="${COMP_WORDS[c]}"
+        for cmd in $cmds; do
+            if [ "$cmd" = "$word" ]; then
+                subcommand="$word"
+            fi
+        done
+        c=$((++c))
     done
 
     case "$subcommand" in
-	"")
-	    COMPREPLY=( $(compgen -W "${cmds}" -- ${cur}) )
-	    return 0
-	    ;;
+        "")
+            COMPREPLY=( $(compgen -W "${cmds}" -- ${cur}) )
+            return 0
+            ;;
     esac
 
     case "$cur" in
-	-*)
-	    case "$subcommand" in
-		approve)
-		    COMPREPLY=( $(compgen -W "--abandon --help --message --project --restore --submit --verified --code-review " -- ${cur}) )
-		    ;; 
-		create-project)
-		    COMPREPLY=( $(compgen -W "--branch --description --empty-commit --help --name --owner --parent --require-change-id --submit-type --use-content-merge --use-contributor-agreements --use-signed-off-by " -- ${cur}) )
-		    ;; 
-		ls-projects)
-		    COMPREPLY=( $(compgen -W "--help --show-branch --tree " -- ${cur}) )
-		    ;; 
-		query)
-		    COMPREPLY=( $(compgen -W "--all-approvals --current-patch-set --format --help --patch-sets " -- ${cur}) )
-		    ;; 
-		receive-pack)
-		    COMPREPLY=( $(compgen -W "--cc --help --reviewer " -- ${cur}) )
-		    ;; 
-		review)
-		    COMPREPLY=( $(compgen -W "--abandon --help --message --project --restore --submit --verified --code-review " -- ${cur}) )
-		    ;; 
-		show-queue)
-		    COMPREPLY=( $(compgen -W "--help " -- ${cur}) )
-		    ;; 
-		stream-events)
-		    COMPREPLY=( $(compgen -W "--help " -- ${cur}) )
-		    ;; 
-		version)
-		    COMPREPLY=( $(compgen -W "--help " -- ${cur}) )
-		    ;; 
-	    esac
+        -*)
+            case "$subcommand" in
+                approve)
+                    COMPREPLY=( $(compgen -W "--abandon --help --message --project --restore --submit --verified --code-review " -- ${cur}) )
+                    ;;
+                create-project)
+                    COMPREPLY=( $(compgen -W "--branch --description --empty-commit --help --name --owner --parent --require-change-id --submit-type --use-content-merge --use-contributor-agreements --use-signed-off-by " -- ${cur}) )
+                    ;;
+                ls-projects)
+                    COMPREPLY=( $(compgen -W "--help --show-branch --tree " -- ${cur}) )
+                    ;;
+                query)
+                    COMPREPLY=( $(compgen -W "--all-approvals --current-patch-set --format --help --patch-sets " -- ${cur}) )
+                    ;;
+                receive-pack)
+                    COMPREPLY=( $(compgen -W "--cc --help --reviewer " -- ${cur}) )
+                    ;;
+                review)
+                    COMPREPLY=( $(compgen -W "--abandon --help --message --project --restore --submit --verified --code-review " -- ${cur}) )
+                    ;;
+                show-queue)
+                    COMPREPLY=( $(compgen -W "--help " -- ${cur}) )
+                    ;;
+                stream-events)
+                    COMPREPLY=( $(compgen -W "--help " -- ${cur}) )
+                    ;;
+                version)
+                    COMPREPLY=( $(compgen -W "--help " -- ${cur}) )
+                    ;;
+                *)
+                    for x in $cmds; do
+                        if test "$subcommand" = "$x"; then
+                            COMPREPLY=(
+                                $(compgen -W "$(gerrit $x --help 2>&1 | pn 1 |grep ^--)" -- ${cur}) )
+                            break
+                        fi
+                    done
+                    ;;
+            esac
     esac
     case "$prev" in
-	--reviewer|--cc)
-	    _gerrit_reviewers
-	    ;;
+        --reviewer|--cc)
+            _gerrit_reviewers
+            ;;
     esac
     return 0
 }

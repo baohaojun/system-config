@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 tmpf=/tmp/$(basename $0).$$
-gerrit -- query "$@" --current-patch-set > $tmpf
+gerrit query "$@" --current-patch-set > $tmpf
 
 function die() {
     echo "$@"

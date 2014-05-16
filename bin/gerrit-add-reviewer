@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for x in "$@"; do
+    gerrit -- set-reviewers $(git rev-parse HEAD) -a "$x"
+done

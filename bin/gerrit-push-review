@@ -24,6 +24,9 @@ while true; do
             ;;
         -b)
             export REPO_BRANCH=$2
+            if test "$REPO_BRANCH" = x; then
+                REPO_BRANCH=$(basename $(git-choose-branch))
+            fi
             shift 2
             ;;
         -r|--revision)
@@ -41,7 +44,7 @@ while true; do
 done
 
 if test $do_fetch = true; then
-    echo git fetching remote repo
+    echo git fetching remote: $(repo-remote), branch: $(repo-branch)
     if test -z "$(lookup-file -e .repo)"; then
         git fetch -v
     else
@@ -84,6 +87,7 @@ fi
 
 (
     if tty >/dev/null 2>&1; then
+        echo git push $REMOTE "$rev":refs/for/`repo-branch`
         git push  --receive-pack="$(
             echo -n 'git receive-pack ';
             for x in "${reviewers[@]}"; do

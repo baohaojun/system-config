@@ -12,9 +12,9 @@ if test "$REPO_BRANCH"; then
 fi
 
 if test -z "$(lookup-file -e .repo)"; then
-    branch=$(git symbolic-ref HEAD 2>/dev/null)
+    branch=$(git symbolic-ref HEAD 2>/dev/null | perl -npe 's,.*/,,')
     if test -z "$branch"; then
-        echo master
+        echo unknown-bhj
     else
         echo $branch|perl -npe 's,^refs/heads/,,'
     fi
@@ -22,15 +22,15 @@ if test -z "$(lookup-file -e .repo)"; then
 fi
 if test -z "$BPE_ON_APSE"; then
     if test "$REPO_INFO"; then
-	$REPO_INFO branch
+        $REPO_INFO branch
     else
-	repo forall . -c 'echo $REPO_RREV'
+        repo forall . -c 'echo $REPO_RREV'
     fi
 else
     branch=$(git symbolic-ref BPE-LOCAL | perl -npe 's,.*/,,')
     if test "$branch"; then
-	echo $branch
+        echo $branch
     else
-	BPE_ON_APSE= $0
+        BPE_ON_APSE= $0
     fi
 fi

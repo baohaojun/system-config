@@ -1,0 +1,3 @@
+#!/bin/bash
+(echo; echo Ticket: "$@"; echo) > /tmp/git-commit-t
+git commit -t /tmp/git-commit-t -s
