@@ -1,7 +1,6 @@
 ;;; This file bootstraps the configuration, which is divided into
 ;;; a number of other files.
 
-(add-to-list 'load-path user-emacs-directory)
 (require 'init-benchmarking) ;; Measure startup time
 
 (defconst *spell-check-support-enabled* nil) ;; Enable with t if you prefer
