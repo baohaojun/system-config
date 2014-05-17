@@ -1221,7 +1221,8 @@ criteria can be provided via the optional match-string argument "
 (defun bhj-clt-insert-file-name ()
   (interactive)
   (let ((prev-buffer (other-buffer (current-buffer) t)))
-
+    (when (string-match "^\\*helm-" (buffer-name prev-buffer))
+      (setq prev-buffer (nth 2 (buffer-list))))
     (insert
      (if (buffer-file-name prev-buffer)
          (replace-regexp-in-string ".*/" "" (buffer-file-name prev-buffer))

@@ -62,8 +62,23 @@ if test "${#dirs[@]}" = 0; then
     dirs=(
         $(
             if test -d .repo; then
-                if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths || grep ' ' -q .repo/repo-paths; then
-                    repo forall -c 'echo $REPO_PATH' 2>&1 | perl -npe 's/^skipping //; s!/$!!' > .repo/repo-paths
+                redo_path=false;
+                if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths; then
+                    redo_path=true;
+                fi
+                if grep ' ' -q .repo/repo-paths; then
+                    redo_path=true;
+                fi
+                if test -e .repo/repo-paths && test $(stat -c %s .repo/repo-paths) = 0; then
+                    redo_path=true
+                fi
+
+                if test $redo_path = true; then
+                    repo forall -c 'echo $REPO_PATH' 2>&1 | perl -npe 's/^skipping //; s!/$!!' > .repo/repo-paths.$$
+                    if grep ' ' .repo/repo-paths.$$; then
+                         xmlstarlet sel -t -m //project -v @path -n .repo/manifest.xml > .repo/repo-paths.$$
+                    fi
+                    mv .repo/repo-paths.$$ .repo/repo-paths
                 fi
                 cat .repo/repo-paths | sort -u
             else

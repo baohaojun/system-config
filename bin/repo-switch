@@ -8,9 +8,10 @@ repo_init_branch=
 repo_init_manifest=
 repo_url=
 
-TEMP=$(getopt -o esu:b:m:r:ip --long repo-url: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o esu:b:m:r:ipc --long repo-url: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 interactive=0
+config_name=
 while true; do
     case "$1" in
         -u)
@@ -40,6 +41,10 @@ while true; do
         -e)
             edit .repo/repo-switch
             exit 0
+            ;;
+        -c)
+            config_name=--config-name
+            shift
             ;;
         -s)
             output="$(select-output-line -- bash -c 'for x in .repo/repo-switch*; do
@@ -197,7 +202,7 @@ for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
         cd $(lookup-file .repo/repo)
         git config remote.origin.url $repo_url
     )
-    repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@"
+    repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@" $config_name
 )
 
 cd ..
