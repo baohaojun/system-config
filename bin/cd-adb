@@ -1,0 +1,23 @@
+#!/bin/bash
+time=$(epoch2date $(adb getprop ro.build.date.utc))
+date=$(echo $time | perl -npe 's/T.*//; s/-//g')
+tag=$(echo $time | perl -npe 's/-//g; s/T/-/; s/://g')
+
+if test "$1" = elf; then
+    cd ~/smb/share.smartisan.cn/SanFranciscoBuild/elf/release-$date
+    tag=$tag-elf
+
+else
+    cd ~/smb/share.smartisan.cn/SanFranciscoBuild/sanfrancisco_android/release-$date
+fi
+
+if test "$(echo *$tag)" != "*$tag"; then
+    for x in *$tag; do
+        builtin cd $x;
+        break
+    done
+fi
+pwd|putclip
+if is-tty-io; then
+    pwd
+fi

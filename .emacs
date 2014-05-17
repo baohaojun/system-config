@@ -158,13 +158,6 @@
 (defvar ajoke-output-buffer-name "*ajoke*"
   "The name of the ajoke output buffer.")
 
-(keydef "M-g r" (progn
-                  (let ((current-prefix-arg 4)
-                        ;; (default-directory (eval bhj-grep-default-directory))
-                        (grep-use-null-device nil))
-                    (nodup-ring-insert ajoke--marker-ring (point-marker))
-                    (call-interactively 'grep-bhj-dir))))
-
 (defvar grep-find-file-history nil)
 
 (defvar grep-rgrep-history nil)

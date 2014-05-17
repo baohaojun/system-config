@@ -12,3 +12,8 @@ fi
 #     )
 # fi
 GTK_IM_MODULE= XMODIFIERS= XIM= $EMACS -mm "$@"&
+
+while ! emacsclient -e '(message "hello")' | grep -q '"hello"'; do
+    sleep 1
+done
+sawfish-re-maximize

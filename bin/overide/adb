@@ -58,10 +58,15 @@ function adb() {
         shift
     fi
 
-    if test "$#" = 1 -a "$1" = remount; then
-        the-true-adb remount
-        command adb shell su -c 'mount -o rw,remount /system; mount | grep /system'
-        exit
+    if test "$1" = remount; then
+        if test "$#" = 1; then
+            the-true-adb remount
+            command adb shell su -c 'mount -o rw,remount /system; mount | grep /system'
+            exit
+        elif test "$2" = /; then
+            command adb shell su -c 'mount -o rw,remount /; mount | grep rootfs'
+            exit
+        fi
     fi
 
     if test "$#" = 1 -a "$1" = 'devices?'; then

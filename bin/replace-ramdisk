@@ -48,8 +48,8 @@ for x in "$@"; do
     else
         echo found $target for your $x
     fi
-    if test -e "$x"; then
-        cp -v $x $target
+    if bash -x my-rsync -v $x $target; then
+        true;
     else
         ew $target
     fi

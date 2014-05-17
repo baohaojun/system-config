@@ -799,10 +799,14 @@ Pop back to where ajoke was last invoked.
 
 ;;;***
 
-;;;### (autoloads (grep-func-call grep-find-file grep-gtags grep-imenu
-;;;;;;  grep-bhj-dir bhj-edit-grep-pattern) "bhj-grep" "bhj-grep.el"
-;;;;;;  (20855 20629 663417 283000))
+;;;### (autoloads nil "bhj-grep" "bhj-grep.el" (21367 14380 879985
+;;;;;;  437000))
 ;;; Generated autoloads from bhj-grep.el
+
+(autoload 'bhj-grep-tag-default "bhj-grep" "\
+
+
+\(fn)" nil nil)
 
 (autoload 'bhj-edit-grep-pattern "bhj-grep" "\
 
@@ -830,6 +834,16 @@ Pop back to where ajoke was last invoked.
 \(fn)" t nil)
 
 (autoload 'grep-func-call "bhj-grep" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-grep "bhj-grep" "\
+
+
+\(fn)" t nil)
+
+(autoload 'bhj-rgrep "bhj-grep" "\
 
 
 \(fn)" t nil)

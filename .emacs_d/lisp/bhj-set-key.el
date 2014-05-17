@@ -27,17 +27,6 @@
 
 (global-set-key [(meta p)] 'previous-error)
 
-(global-set-key [(meta s) ?r]
-                (lambda ()
-                  (interactive)
-                  (let ((grep-history grep-rgrep-history)
-                        (grep-buffer-name "*grep-rgrep*")
-                        (my-grep-command "rgrep -Hn -e pat")
-                        (current-prefix-arg 4))
-                    (nodup-ring-insert ajoke--marker-ring (point-marker))
-                    (call-interactively 'grep-bhj-dir)
-                    (setq grep-rgrep-history grep-history))))
-
 (global-set-key [(meta s) ?p] 'grep-find-file)
 
 (global-set-key [(control meta o)] 'bhj-occur)

@@ -11,6 +11,12 @@
 (eval-after-load 'c-mode '(c-set-style 'k&r))
 
 (eval-after-load 'js '(define-key js-mode-map [(meta .)] 'grep-gtags))
+(eval-after-load 'skeleton-complete
+  '(progn
+     (define-key skeleton-complete-mode-map (kbd "M-g r") 'bhj-grep)
+     (define-key skeleton-complete-mode-map (kbd "M-g f") 'grep-func-call)
+     (define-key skeleton-complete-mode-map (kbd "M-g o") 'bhj-occur)
+     (define-key skeleton-complete-mode-map (kbd "M-s r") 'bhj-rgrep)))
 
 (eval-after-load 'cc-vars '(require 'guess-offset))
 

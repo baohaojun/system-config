@@ -182,5 +182,27 @@
 
 ;; (add-hook 'grep-setup-hook (lambda () (setq compilation-exit-message-function #'bhj-goto-error-when-grep-finished)))
 
+;;;###autoload
+(defun bhj-grep ()
+  (interactive)
+  (let ((current-prefix-arg 4)
+        ;; (default-directory (eval bhj-grep-default-directory))
+        (grep-use-null-device nil))
+    (nodup-ring-insert ajoke--marker-ring (point-marker))
+    (call-interactively 'grep-bhj-dir)))
+
+;;;###autoload
+(defun bhj-rgrep ()
+  (interactive)
+  (let ((grep-history grep-rgrep-history)
+        (grep-buffer-name "*grep-rgrep*")
+        (my-grep-command "rgrep -Hn -e pat")
+        (current-prefix-arg 4))
+    (nodup-ring-insert ajoke--marker-ring (point-marker))
+    (call-interactively 'grep-bhj-dir)
+    (setq grep-rgrep-history grep-history)))
+
+; (global-set-key [(meta g) (r)] 'bhj-grep)
+(define-key goto-map "r" 'bhj-grep)
 
 (provide 'bhj-grep)
