@@ -22,7 +22,7 @@ if test ! -d "$start_dir"; then
     die "Can not find beagrep database"
 fi
 beagrep_dir=$start_dir/.beagrep
-echo Beagrep index found at "$beagrep_dir" 1>&2
+# echo Beagrep index found at "$beagrep_dir" 1>&2
 
 function wlp() {
     case $(uname) in
@@ -40,6 +40,10 @@ shift
 additional_tokens=$(echo "$@")
 
 tokens=`beagrep-get-tokens "$tokens_str"`
+if test ${0##*/} = beagrep-glob-files; then
+    tokens=$(echo -n "$tokens" | perl -npe 's/(\S{2,})/filename:*$1*/g')
+fi
+
 if test "$FIND_FILE_ONLY"; then
     tokens=$(echo -n " $tokens" | perl -npe 's/\s+/ filename:/g; s/(^ *| filename:$)//g')
     mkdir -p ~/.logs

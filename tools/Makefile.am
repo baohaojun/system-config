@@ -5,7 +5,7 @@ CSC = $(MCS) -debug
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
 	../BeagrepClient/Beagrep.dll	\
-	../beagrepd/BeagrepDaemonLib.dll	
+	../beagrepd/BeagrepDaemonLib.dll
 
 ASSEMBLIES =				\
 	$(BEAGREPD_LIBS)			\
@@ -53,7 +53,7 @@ TARGETS = 				\
 
 TARGETS_MDB = $(TARGETS:%=%.mdb)
 
-PREBUILT_WRAPPERS = beagrep beagrep-files beagrep-get-tokens mkbeagrepidx beagrep-unurl-and-filter.pl
+PREBUILT_WRAPPERS = beagrep beagrep-files beagrep-get-tokens mkbeagrepidx beagrep-unurl-and-filter.pl beagrep-glob-files
 
 BUILT_WRAPPERS = 			\
 	$(STATIC_QUERY_WRAPPER)		\
@@ -113,4 +113,3 @@ CLEANFILES = 				\
 	$(TARGETS)			\
 	$(TARGETS_MDB)			\
 	$(BUILT_WRAPPERS)
-

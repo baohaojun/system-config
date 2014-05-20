@@ -35,268 +35,274 @@ using Beagrep.Util;
 
 namespace Beagrep {
 
-	public enum QueryPartLogic {
-		Required = 1,
-		Prohibited = 2
-	}
+        public enum QueryPartLogic {
+                Required = 1,
+                Prohibited = 2
+        }
 
-	[XmlInclude (typeof (QueryPart_Text)),
-	 XmlInclude (typeof (QueryPart_Property)),
-	 XmlInclude (typeof (QueryPart_DateRange)),
-	 XmlInclude (typeof (QueryPart_Human)),
-	 XmlInclude (typeof (QueryPart_Wildcard)),
-	 XmlInclude (typeof (QueryPart_Or)),
-	 XmlInclude (typeof (QueryPart_Uri))]
-	abstract public class QueryPart {
+        [XmlInclude (typeof (QueryPart_Text)),
+         XmlInclude (typeof (QueryPart_Property)),
+         XmlInclude (typeof (QueryPart_DateRange)),
+         XmlInclude (typeof (QueryPart_Human)),
+         XmlInclude (typeof (QueryPart_Wildcard)),
+         XmlInclude (typeof (QueryPart_Or)),
+         XmlInclude (typeof (QueryPart_Uri))]
+        abstract public class QueryPart {
 
-		private QueryPartLogic logic = QueryPartLogic.Required;
+                private QueryPartLogic logic = QueryPartLogic.Required;
 
-		public QueryPart ()
-		{ }
+                public QueryPart ()
+                { }
 
-		public QueryPartLogic Logic {
-			get { return logic; }
-			set { logic = value; }
-		}
+                public QueryPartLogic Logic {
+                        get { return logic; }
+                        set { logic = value; }
+                }
 
-		public override string ToString ()
-		{
-			return String.Format ("{0}:\n  Logic: {1}\n", this.GetType (), Logic);
-		}
-	}
+                public override string ToString ()
+                {
+                        return String.Format ("{0}:\n  Logic: {1}\n", this.GetType (), Logic);
+                }
+        }
 
-	public class QueryPart_Text : QueryPart {
+        public class QueryPart_Text : QueryPart {
 
-		private string text;
-		private bool search_full_text = true;
-		private bool search_properties = true;
+                private string text;
+                private bool search_full_text = true;
+                private bool search_properties = true;
 
-		public QueryPart_Text ()
-		{ }
+                public QueryPart_Text ()
+                { }
 
-		public string Text {
-			get { return text; }
-			set { text = value; }
-		}
+                public string Text {
+                        get { return text; }
+                        set { text = value; }
+                }
 
-		public bool SearchFullText {
-			get { return search_full_text; }
-			set { search_full_text = value; }
-		}
+                public bool SearchFullText {
+                        get { return search_full_text; }
+                        set { search_full_text = value; }
+                }
 
-		public bool SearchTextProperties {
-			get { return search_properties; }
-			set { search_properties = value; }
-		}
+                public bool SearchTextProperties {
+                        get { return search_properties; }
+                        set { search_properties = value; }
+                }
 
-		public override string ToString ()
-		{
-			return String.Format (
-				base.ToString () +
-				"  Text: {0}\n" +
-				"  Search full text: {1}\n" +
-				"  Search text properties: {2}",
-				Text, SearchFullText, SearchTextProperties);
-		}
-	}
+                public override string ToString ()
+                {
+                        return String.Format (
+                                base.ToString () +
+                                "  Text: {0}\n" +
+                                "  Search full text: {1}\n" +
+                                "  Search text properties: {2}",
+                                Text, SearchFullText, SearchTextProperties);
+                }
+        }
 
-	// AllProperties queries are not allowed on keywords.
-	public class QueryPart_Property : QueryPart {
+        // AllProperties queries are not allowed on keywords.
+        public class QueryPart_Property : QueryPart {
 
-		public const string AllProperties = "_all";
+                public const string AllProperties = "_all";
 
-		private PropertyType type;
-		private string key;
-		private string value;
+                private PropertyType type;
+                private string key;
+                private string value;
 
-		public QueryPart_Property ()
-		{ }
+                public QueryPart_Property ()
+                { }
 
-		public PropertyType Type {
-			get { return type; }
-			set { type = value; }
-		}
+                public PropertyType Type {
+                        get { return type; }
+                        set { type = value; }
+                }
 
-		public string Key {
-			get { return key; }
-			set { key = value; }
-		}
+                public string Key {
+                        get { return key; }
+                        set { key = value; }
+                }
 
-		public string Value {
-			get { return value; }
-			set { this.value = value; } // ugh
-		}
+                public string Value {
+                        get { return value; }
+                        set { this.value = value; } // ugh
+                }
 
-		public override string ToString ()
-		{
-			return String.Format (
-				base.ToString () +
-				"  Type: {0}\n" +
-				"  Key: {1}\n" +
-				"  Value: {2}",
-				Type, Key, Value);
-		}
-	}
+                public override string ToString ()
+                {
+                        return String.Format (
+                                base.ToString () +
+                                "  Type: {0}\n" +
+                                "  Key: {1}\n" +
+                                "  Value: {2}",
+                                Type, Key, Value);
+                }
+        }
 
-	public class QueryPart_DateRange : QueryPart {
+        public class QueryPart_DateRange : QueryPart {
 
-		public const string AllPropertiesKey = "_all";
-		public const string TimestampKey = "Timestamp";
+                public const string AllPropertiesKey = "_all";
+                public const string TimestampKey = "Timestamp";
 
-		private string key = AllPropertiesKey;
-		private DateTime start_date;
-		private DateTime end_date;
+                private string key = AllPropertiesKey;
+                private DateTime start_date;
+                private DateTime end_date;
 
-		public QueryPart_DateRange ()
-		{ }
-		
-		public string Key {
-			get { return key; }
-			set { key = value; }
-		}
+                public QueryPart_DateRange ()
+                { }
 
-		[XmlIgnore]
-		public DateTime StartDate {
-			get { return start_date; }
-			set { start_date = value; }
-		}
+                public string Key {
+                        get { return key; }
+                        set { key = value; }
+                }
 
-		[XmlElement ("StartDate")]
-		public string StartDateAsString {
-			get { return StringFu.DateTimeToString (start_date); }
-			set { start_date = StringFu.StringToDateTime (value); }
-		}
+                [XmlIgnore]
+                public DateTime StartDate {
+                        get { return start_date; }
+                        set { start_date = value; }
+                }
 
-		[XmlIgnore]
-		public DateTime EndDate {
-			get { return end_date; }
-			set { end_date = value; }
-		}
+                [XmlElement ("StartDate")]
+                public string StartDateAsString {
+                        get { return StringFu.DateTimeToString (start_date); }
+                        set { start_date = StringFu.StringToDateTime (value); }
+                }
 
-		[XmlElement ("EndDate")]
-		public string EndDateAsLocal {
-			get { return StringFu.DateTimeToString (end_date); }
-			set { end_date = StringFu.StringToDateTime (value); }
-		}
+                [XmlIgnore]
+                public DateTime EndDate {
+                        get { return end_date; }
+                        set { end_date = value; }
+                }
 
-		public override string ToString ()
-		{
-			return String.Format (
-				base.ToString () +
-				"  Key: {0}\n" +
-				"  Start date: {1}\n" +
-				"  End date: {2}",
-				Key, StartDate, EndDate);
-		}
-	}
+                [XmlElement ("EndDate")]
+                public string EndDateAsLocal {
+                        get { return StringFu.DateTimeToString (end_date); }
+                        set { end_date = StringFu.StringToDateTime (value); }
+                }
 
-	public class QueryPart_Human : QueryPart {
+                public override string ToString ()
+                {
+                        return String.Format (
+                                base.ToString () +
+                                "  Key: {0}\n" +
+                                "  Start date: {1}\n" +
+                                "  End date: {2}",
+                                Key, StartDate, EndDate);
+                }
+        }
 
-		private string query_string;
+        public class QueryPart_Human : QueryPart {
 
-		public QueryPart_Human ()
-		{ }
+                private string query_string;
 
-		public string QueryString {
-			get { return query_string; }
-			set { query_string = value; }
-		}
+                public QueryPart_Human ()
+                { }
 
-		public override string ToString ()
-		{
-			return String.Format (
-				base.ToString () + 
-				"  QueryString: {0}",
-				QueryString);
-		}
-	}
+                public string QueryString {
+                        get { return query_string; }
+                        set { query_string = value; }
+                }
 
-	public class QueryPart_Wildcard : QueryPart {
-		
-		private string query_string;
+                public override string ToString ()
+                {
+                        return String.Format (
+                                base.ToString () +
+                                "  QueryString: {0}",
+                                QueryString);
+                }
+        }
 
-		public QueryPart_Wildcard ()
-		{ }
+        public class QueryPart_Wildcard : QueryPart {
 
-		public string QueryString {
-			get { return query_string; }
-			set { query_string = value; }
-		}
+                private string query_string;
+                private bool property_only;
 
-		public override string ToString ()
-		{
-			return String.Format (
-				base.ToString () +
-				"  QueryString: {0}",
-				QueryString);
-		}
-	}
+                public QueryPart_Wildcard ()
+                    { property_only = false;}
 
-	public class QueryPart_Or : QueryPart {
-		
-		private ArrayList sub_parts = new ArrayList ();
+                public string QueryString {
+                        get { return query_string; }
+                        set { query_string = value; }
+                }
 
-		public QueryPart_Or ()
-		{ }
+                public bool PropertyOnly {
+                    get { return property_only; }
+                    set { property_only = value; }
+                }
 
-		[XmlArray ("SubParts")]
-		[XmlArrayItem (ElementName="Part", Type=typeof (QueryPart))]
-		public ArrayList SubParts_ShouldBePrivateSoPleaseDontUseThis {
-			get { return sub_parts; }
-		}
+                public override string ToString ()
+                {
+                        return String.Format (
+                                base.ToString () +
+                                "  QueryString: {0}",
+                                QueryString);
+                }
+        }
 
-		[XmlIgnore]
-		public ICollection SubParts {
-			get { return sub_parts; }
-		}
+        public class QueryPart_Or : QueryPart {
 
-		// FIXME: Really the only thing that is allowed as a subpart
-		// of an 'Or' part are required (not prohibited) text or
-		// property queries.  We should be clearer about the rules,
-		// and enforce them.
-		public void Add (QueryPart part)
-		{
-			sub_parts.Add (part);
-		}
+                private ArrayList sub_parts = new ArrayList ();
 
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder (base.ToString ());
+                public QueryPart_Or ()
+                { }
 
-			foreach (QueryPart p in sub_parts)
-				sb.Append ("  " + p.ToString () + "\n");
+                [XmlArray ("SubParts")]
+                [XmlArrayItem (ElementName="Part", Type=typeof (QueryPart))]
+                public ArrayList SubParts_ShouldBePrivateSoPleaseDontUseThis {
+                        get { return sub_parts; }
+                }
 
-			return sb.ToString ();
-		}
-	}
+                [XmlIgnore]
+                public ICollection SubParts {
+                        get { return sub_parts; }
+                }
 
-	/* Get all indexed data about some uri. */
-	public class QueryPart_Uri : QueryPart {
+                // FIXME: Really the only thing that is allowed as a subpart
+                // of an 'Or' part are required (not prohibited) text or
+                // property queries.  We should be clearer about the rules,
+                // and enforce them.
+                public void Add (QueryPart part)
+                {
+                        sub_parts.Add (part);
+                }
 
-		private Uri uri;
+                public override string ToString ()
+                {
+                        StringBuilder sb = new StringBuilder (base.ToString ());
 
-		public QueryPart_Uri ()
-		{ }
+                        foreach (QueryPart p in sub_parts)
+                                sb.Append ("  " + p.ToString () + "\n");
 
-		[XmlIgnore]
-		public Uri Uri {
-			get { return uri; }
-			set { uri = value; }
-		}
+                        return sb.ToString ();
+                }
+        }
 
-		[XmlElement ("Uri")]
-		public string UriString {
-			get { return UriFu.UriToEscapedString (uri); }
-			set { uri = UriFu.EscapedStringToUri (value); }
-		}
+        /* Get all indexed data about some uri. */
+        public class QueryPart_Uri : QueryPart {
 
-		public override string ToString ()
-		{
-			return String.Format (
-				base.ToString () + 
-				"  Uri: {0}",
-				Uri);
-		}
-	}
+                private Uri uri;
+
+                public QueryPart_Uri ()
+                { }
+
+                [XmlIgnore]
+                public Uri Uri {
+                        get { return uri; }
+                        set { uri = value; }
+                }
+
+                [XmlElement ("Uri")]
+                public string UriString {
+                        get { return UriFu.UriToEscapedString (uri); }
+                        set { uri = UriFu.EscapedStringToUri (value); }
+                }
+
+                public override string ToString ()
+                {
+                        return String.Format (
+                                base.ToString () +
+                                "  Uri: {0}",
+                                Uri);
+                }
+        }
 
 }
