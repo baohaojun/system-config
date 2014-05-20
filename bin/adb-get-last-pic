@@ -1,0 +1,5 @@
+#!/bin/bash
+pic=$(adb busybox ls -t -1 /sdcard/DCIM/Camera/|head -n 1|perl -npe 's/\033.*?m//g')
+cd ~/Pictures/
+adb pull /sdcard/DCIM/Camera/$pic
+of $pic

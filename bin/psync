@@ -7,9 +7,5 @@ function die() {
 
 host=$1
 shift
-for x in "$@"; do
-    if [[ "$x" =~ / ]]; then
-        die "must not contain /: $x"
-    fi
-done
-rsync -v "$@" $host:$PWD
+
+my-rsync -av "$@" $host:$PWD

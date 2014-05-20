@@ -1,0 +1,25 @@
+#!/bin/bash
+TEMP=$(getopt -o h: --long host: -n $(basename $0) -- "$@")
+host=localhost
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -h|--host)
+            host=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+export symdir=~/src/android/out/target/product/msm8974sfo/symbols
+set -x
+arm-eabi-gdb --batch -q -ex "target remote $host:3333" \
+             -ex "set solib-absolute-prefix $symdir" \
+             -ex "set solib-search-path $symdir/system/lib$(for x in $symdir/system/lib/*/; do echo -n :$x; done):$symdir/system/usr/lib/alsa-lib" \
+             -ex "thread apply all bt full" -ex "quit" "$@"

@@ -1,2 +1,6 @@
 #!/bin/bash
-adb shell netcfg | grep wlan0|pn 3|perl -npe 's!/.*!!' | tee /dev/stderr
+cat=cat
+if is-tty-io; then
+    cat=putclip
+fi
+adb shell netcfg | grep wlan0|pn 3|perl -npe 's!/.*!!' | tee /dev/stderr | $cat

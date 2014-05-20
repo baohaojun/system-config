@@ -1,5 +1,9 @@
 #!/bin/bash
 for x in "$@"; do
+    if test $(basename $0) = zgp; then
+        cat $x | gzip > $x.gz
+        x=$x.gz
+    fi
     cat <<EOF
 <#part type="$(xdg-mime query filetype "$x")" filename="$(if test "$REMOTEIP"; then echo "/scp:$USER@$LOCALIP#$LOCALPORT:"; fi)$(readlink -f "$x")" disposition=attachment>
 <#/part>

@@ -44,9 +44,14 @@ if test $SSH_OK = false; then
         umask 077
         ssh-agent > ~/.config/ssh-agent.$$
     )
-    . ~/.config/ssh-agent.$$ >/dev/null 2>&1
-    mv ~/.config/ssh-agent.$$ ~/.config/ssh-agent
-    if test -e ~/.ssh/id_rsa; then
+    (
+        . ~/.config/ssh-agent.$$ >/dev/null 2>&1
+        if test -e ~/.ssh/id_rsa; then
+            ssh-add ~/.ssh/id_rsa && mv ~/.config/ssh-agent.$$ ~/.config/ssh-agent
+        fi
+    )
+    . ~/.config/ssh-agent
+    if ! ssh-add -l >/dev/null 2>&1 && test -e ~/.ssh/id_rsa; then
         ssh-add ~/.ssh/id_rsa
     fi
 fi

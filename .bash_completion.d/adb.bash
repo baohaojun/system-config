@@ -98,7 +98,7 @@ _adb() {
                     uninstall)
                         _adb_cmd_uninstall "$serial" $i
                         ;;
-                    stop)
+                    stop|start|restart)
                         COMPREPLY=( $(compgen -W "$(adb getprop|grep 'init\.svc\.'|pn 1|sort -u|perl -npe 's/.*\.//; s/\].*//')" -- "${COMP_WORDS[i]}") )
                         ;;
                     getprop|setprop)

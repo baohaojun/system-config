@@ -13,6 +13,9 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
             prefix=""
             arg_handler=echo
         else
+            if test -e ~/.config/ssh-agent; then
+                . ~/.config/ssh-agent
+            fi
             ssh ${REMOTEUSER:-$USER}@$REMOTEIP remote-putclip $(whoami)@$LOCALIP:$FILE
             exit 0
         fi

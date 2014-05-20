@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 tmpf=/tmp/$(basename $0).$$
+if test $# = 1 -a "${1:0:4}" = http; then
+    set -- "$(basename "$1")"
+fi
 gerrit query "$@" --current-patch-set > $tmpf
 
 function die() {
