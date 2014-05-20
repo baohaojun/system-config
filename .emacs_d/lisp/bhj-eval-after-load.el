@@ -16,6 +16,7 @@
      (define-key skeleton-complete-mode-map (kbd "M-g r") 'bhj-grep)
      (define-key skeleton-complete-mode-map (kbd "M-g f") 'grep-func-call)
      (define-key skeleton-complete-mode-map (kbd "M-g o") 'bhj-occur)
+     (define-key skeleton-complete-mode-map (kbd "M-s f") 'ajoke-find-file-using-beagrep)
      (define-key skeleton-complete-mode-map (kbd "M-s r") 'bhj-rgrep)))
 
 (eval-after-load 'cc-vars '(require 'guess-offset))
