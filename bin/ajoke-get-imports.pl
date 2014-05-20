@@ -135,6 +135,8 @@ while (<>) {
         while ($assign =~ m/($qualified_re)/g) {
             $refs{$1} = 1;
         }
+    } elsif (m/for\(($qualified_re) ($id_re):/) { #for (FILE ss: files[])
+        type_it($2, $1);
     } else {
         debug "not matched: $_";
         while (m/($qualified_re)=/g) {

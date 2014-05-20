@@ -557,6 +557,21 @@ beginning of current defun."
       (save-buffer))
     (ajoke-get-imports)))
 
+;;;###autoload
+(defun ajoke--pick-output-line (prompt command &rest args)
+  (ajoke--pick-one
+   prompt
+   (split-string (shell-command-to-string command))
+   args))
+
+;;;###autoload
+(defun ajoke-find-file-using-beagrep ()
+  (interactive)
+  (let* ((init-input (read-from-minibuffer "The pattern of your file: ")))
+    (find-file (ajoke--pick-output-line
+                "Select the file you want: "
+                (format "beagrep-glob-files %s" (shell-quote-argument init-input))))))
+
 (global-set-key [(meta g)(j)(p)] 'ajoke-insert-package)
 (global-set-key [(meta g)(j)(i)] 'ajoke-get-imports)
 (global-set-key [(meta g)(j)(h)] 'ajoke-get-hierarchy)
@@ -565,6 +580,7 @@ beginning of current defun."
 (global-set-key [(meta g)(j)(m)] 'ajoke-complete-method)
 (global-set-key [(meta g)(j)(e)] 'ajoke-insert-exception-catchers)
 (global-set-key [(shift meta s)] 'ajoke-search-local-id)
+(global-set-key [(meta s)(f)] 'ajoke-find-file-using-beagrep)
 ;; the correct way to do it is to customize 'before-save-hook
 ;; (add-hook 'before-save-hook 'ajoke-get-imports-if-java-mode)
 
