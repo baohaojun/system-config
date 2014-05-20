@@ -1,5 +1,11 @@
 #!/bin/bash
-pic=$(adb busybox ls -t -1 /sdcard/DCIM/Camera/|head -n 1|perl -npe 's/\033.*?m//g')
+
+dir=/sdcard/DCIM/Camera
+if test "$1"; then
+    dir=/sdcard/Pictures/Screenshots/
+fi
+
+pic=$(adb busybox ls -t -1 $dir|head -n 1|perl -npe 's/\033.*?m//g')
 cd ~/Pictures/
-adb pull /sdcard/DCIM/Camera/$pic
+adb pull $dir/$pic
 of $pic

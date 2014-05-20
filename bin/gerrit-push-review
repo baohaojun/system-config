@@ -13,8 +13,9 @@ function die() {
 
 rev=HEAD
 
-TEMP=$(getopt -o nb:r: --long revision: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o nb:r:R --long revision: -n $(basename $0) -- "$@")
 do_fetch=true
+do_review=true
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -32,6 +33,10 @@ while true; do
         -r|--revision)
             rev=$2
             shift 2
+            ;;
+        -R)
+            do_review=false
+            shift
             ;;
         --)
             shift
@@ -81,7 +86,7 @@ done
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 export REMOTE=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
 
-if is-tty-io; then
+if is-tty-io && test $do_review = true; then
     FOR_REVIEW=true git-interactive-add
 fi
 
