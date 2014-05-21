@@ -145,6 +145,10 @@ print $_ . "\n";
             if git-is-ancestor "$3" HEAD; then
                 command git "$@"
                 exit 0
+            elif yes-or-no-p -y rebase to $3 first; then
+                git rebase $3
+                command git "$@"
+                exit 0
             else
                 exit 1
             fi
