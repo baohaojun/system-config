@@ -1,0 +1,8 @@
+#!/bin/bash
+if test -e ~/.config/dvp; then
+    setxkbmap -layout us
+    rm ~/.config/dvp;
+else
+    setxkbmap -layout us -variant dvp
+    touch ~/.config/dvp;
+fi
