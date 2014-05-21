@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Firefor urlbar dropdown list not showing anymore</title>
+<title>在Debian下为安卓做一个GNU tar程序</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -101,29 +101,69 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Firefor urlbar dropdown list not showing anymore</h1>
+<h1 class="title">在Debian下为安卓做一个GNU tar程序</h1>
 <p>
-On my Linux machine, after using firefox for a while, I often suddenly
-notice that the urlbar dropdown list is not showing anymore when I
-type in it. No auto completion, no dropdown list, no anything.
+很久没有写博客了，呵呵呵。
 </p>
 
 <p>
-I used to restart the firefox and it got fixed. But this is very
-annoying.
+嘿嘿嘿。
 </p>
 
 <p>
-Now I found it might be because of the ibus input method. After I
-switch on and off the Chinese input method, the urlbar dropdown list
-and auto completion is back.
+做为一个安卓底层工程师，busybox等软件是必备的。以前我给同事提供过静态
+编译好的busybox，在android底下直接能跑。那是拿我root过的android手机，
+在上面放一个debian系统，chroot过去，configure/make出来的。
 </p>
+
+<p>
+这样做的问题是太慢了。
+</p>
+
+<p>
+今天发现可以直接用x86版本的debian来出静态的tar程序给安卓用。具体做法如
+下。
+</p>
+
+<ol class="org-ol">
+<li>安装arm交叉编译工具链
+
+<p>
+这个在Debian底下默认就有了，记得几年前还是没有的。详情见 <a href="https://wiki.debian.org/EmdebianToolchain">emdebian
+wiki</a> 。且需要折腾一下，上面有一个版本比stable的debian还要老的apt source：
+</p>
+
+<pre class="example">
+deb http://mirrors.aliyun.com/debian/ squeeze main
+deb http://www.emdebian.org/debian/ squeeze main
+</pre>
+</li>
+
+<li>下载tar的源代码
+
+<pre class="example">
+apt-get source tar
+</pre>
+</li>
+
+<li>编译
+
+<pre class="example">
+export LDFLAGS=-static
+./configure --host=arm-linux-gnueabi
+make -j8
+</pre>
+</li>
+
+<li><code>adb push src/tar /system/bin</code>
+</li>
+</ol>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html"> <!-- prev-url -->
+      <a href="blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        用GreaseMonkey禁止Google搜索重定向绑架 <!-- prev-title -->
+        Firefor urlbar dropdown list not showing anymore <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -141,7 +181,7 @@ and auto completion is back.
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -212,12 +252,13 @@ and auto completion is back.
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="meta/tags/Bug.html" title="Bugs that I have encountered, see if someone else will find it useful.">Bug</a></li>
+                <li><a href="meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html'> 用GreaseMonkey禁止Google搜索重定向绑架 </a></li>
+        <li><a href='blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html'> Firefor urlbar dropdown list not showing anymore </a></li>
+<li><a href='blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html'> 用GreaseMonkey禁止Google搜索重定向绑架 </a></li>
 <li><a href='blog/2014/01/03/0-7-habits-of-highly-effective-editting.html'> 高效文本编辑的七个习惯 </a></li>
 <li><a href='blog/2013/12/11/0-ssh-remote-command-and-bash--c-string.html'> ssh执行远程命令和bash -c string的用法 </a></li>
 <li><a href='blog/2013/11/07/0-programming-discovery.html'> 发现式编程 </a></li>
@@ -226,7 +267,6 @@ and auto completion is back.
 <li><a href='blog/2013/10/04/0-Win32-IME-Programming.html'> 我的Win32输入法编程心得 </a></li>
 <li><a href='blog/2013/10/01/0-Inside-Ajoke.html'> Inside Ajoke </a></li>
 <li><a href='blog/2013/09/02/0-jira-5.2-essentials-review.html'> Book Review: JIRA 5.2 Essentials </a></li>
-<li><a href='blog/2013/08/16/0-rbtree.html'> 红黑树 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

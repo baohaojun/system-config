@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Computer tools</title>
+<title>在Debian下为安卓做一个GNU tar程序</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -101,122 +101,79 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Computer tools</h1>
-<ul class="org-ul">
-<li>2014
-<ul class="org-ul">
-<li>2014-05
-<ul class="org-ul">
-<li>2014-05-20
+<h1 class="title">在Debian下为安卓做一个GNU tar程序</h1>
+<p>
+很久没有写博客了，呵呵呵。
+</p>
 
 <p>
-<a href="../../../blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html">在Debian下为安卓做一个GNU tar程序</a>
+嘿嘿嘿。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-01
-<ul class="org-ul">
-<li>2014-01-16
 
 <p>
-<a href="../../../blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html">用GreaseMonkey禁止Google搜索重定向绑架</a>
+做为一个安卓底层工程师，busybox等软件是必备的。以前我给同事提供过静态
+编译好的busybox，在android底下直接能跑。那是拿我root过的android手机，
+在上面放一个debian系统，chroot过去，configure/make出来的。
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2013
-<ul class="org-ul">
-<li>2013-10
-<ul class="org-ul">
-<li>2013-10-16
 
 <p>
-<a href="../../../blog/2013/10/16/0-Interactive-Git-Add.html">Interactive Git Add</a>
+这样做的问题是太慢了。
 </p>
-</li>
-
-<li>2013-10-01
 
 <p>
-<a href="../../../blog/2013/10/01/0-Inside-Ajoke.html">Inside Ajoke</a>
+今天发现可以直接用x86版本的debian来出静态的tar程序给安卓用。具体做法如
+下。
 </p>
-</li>
-</ul>
-</li>
 
-<li>2013-05
-<ul class="org-ul">
-<li>2013-05-21
+<ol class="org-ol">
+<li>安装arm交叉编译工具链
 
 <p>
-<a href="../../../blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html">Mysterious rsync/ssh/scp hang</a>
+这个在Debian底下默认就有了，记得几年前还是没有的。详情见 <a href="https://wiki.debian.org/EmdebianToolchain">emdebian
+wiki</a> 。且需要折腾一下，上面有一个版本比stable的debian还要老的apt source：
 </p>
+
+<pre class="example">
+deb http://mirrors.aliyun.com/debian/ squeeze main
+deb http://www.emdebian.org/debian/ squeeze main
+</pre>
 </li>
 
-<li>2013-05-08
+<li>下载tar的源代码
 
-<p>
-<a href="../../../blog/2013/05/08/bbs-robot.html">站友福音：在水木bbs上用Emacs的键绑定</a>
-</p>
-</li>
-</ul>
+<pre class="example">
+apt-get source tar
+</pre>
 </li>
 
-<li>2013-02
-<ul class="org-ul">
-<li>2013-02-12
+<li>编译
 
-<p>
-<a href="../../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.html">html2mht.pl and dir2html.pl</a>
-</p>
-</li>
-</ul>
-</li>
-</ul>
+<pre class="example">
+export LDFLAGS=-static
+./configure --host=arm-linux-gnueabi
+make -j8
+</pre>
 </li>
 
-<li>2012
-<ul class="org-ul">
-<li>2012-10
-<ul class="org-ul">
-<li>2012-10-29
-
-<p>
-<a href="../../../blog/2012/10/29/why-symlink-my-config.html">我的配置环境：为什么用symlink而不是cp</a>
-</p>
+<li><code>adb push src/tar /system/bin</code>
 </li>
-</ul>
-</li>
-
-<li>2012-05
-<ul class="org-ul">
-<li>2012-05-02
-
-<p>
-<a href="../../../blog/2012/05/02/pdf-for-kindle-touch.html">pdf-for-kindle-touch</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2012-02
-<ul class="org-ul">
-<li>2012-02-02
-
-<p>
-<a href="../../../blog/2012/02/02/how-to-do-long-twitter-cn.html">自己动手做长微博（推特），内嵌图片的</a>
-</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+</ol>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../../01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        Firefor urlbar dropdown list not showing anymore <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../../../../meta/Archive.html"> <!-- next-url -->
+        Archive <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
 <!-- {%html-mode%} -->
 
@@ -224,7 +181,7 @@ for the JavaScript code in this tag.
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/meta/tags/tool.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -295,12 +252,21 @@ for the JavaScript code in this tag.
 
     <h2>Tags</h2>
     <ul>
-        
+                <li><a href="../../../../meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        
+        <li><a href='../../01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html'> Firefor urlbar dropdown list not showing anymore </a></li>
+<li><a href='../../01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html'> 用GreaseMonkey禁止Google搜索重定向绑架 </a></li>
+<li><a href='../../01/03/0-7-habits-of-highly-effective-editting.html'> 高效文本编辑的七个习惯 </a></li>
+<li><a href='../../../2013/12/11/0-ssh-remote-command-and-bash--c-string.html'> ssh执行远程命令和bash -c string的用法 </a></li>
+<li><a href='../../../2013/11/07/0-programming-discovery.html'> 发现式编程 </a></li>
+<li><a href='../../../2013/10/16/0-Interactive-Git-Add.html'> Interactive Git Add </a></li>
+<li><a href='../../../2013/10/05/0-My-Own-Win32-Input-Method.html'> 自己写了一个输入法, Windows下的五笔 </a></li>
+<li><a href='../../../2013/10/04/0-Win32-IME-Programming.html'> 我的Win32输入法编程心得 </a></li>
+<li><a href='../../../2013/10/01/0-Inside-Ajoke.html'> Inside Ajoke </a></li>
+<li><a href='../../../2013/09/02/0-jira-5.2-essentials-review.html'> Book Review: JIRA 5.2 Essentials </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

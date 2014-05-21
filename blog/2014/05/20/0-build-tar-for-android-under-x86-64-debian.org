@@ -1,0 +1,40 @@
+#+title: 在Debian下为安卓做一个GNU tar程序
+# bhj-tags: tool
+很久没有写博客了，呵呵呵。
+
+嘿嘿嘿。
+
+做为一个安卓底层工程师，busybox等软件是必备的。以前我给同事提供过静态
+编译好的busybox，在android底下直接能跑。那是拿我root过的android手机，
+在上面放一个debian系统，chroot过去，configure/make出来的。
+
+这样做的问题是太慢了。
+
+今天发现可以直接用x86版本的debian来出静态的tar程序给安卓用。具体做法如
+下。
+
+1. 安装arm交叉编译工具链
+
+   这个在Debian底下默认就有了，记得几年前还是没有的。详情见 [[https://wiki.debian.org/EmdebianToolchain][emdebian
+   wiki]] 。且需要折腾一下，上面有一个版本比stable的debian还要老的apt source：
+
+   #+BEGIN_EXAMPLE
+   deb http://mirrors.aliyun.com/debian/ squeeze main
+   deb http://www.emdebian.org/debian/ squeeze main
+   #+END_EXAMPLE
+
+2. 下载tar的源代码
+
+   #+BEGIN_EXAMPLE
+   apt-get source tar
+   #+END_EXAMPLE
+
+3. 编译
+
+   #+BEGIN_EXAMPLE
+   export LDFLAGS=-static
+   ./configure --host=arm-linux-gnueabi
+   make -j8
+   #+END_EXAMPLE
+
+4. =adb push src/tar /system/bin=

@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[在Debian下为安卓做一个GNU tar程序]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html"/>
+    <updated>2014-35-21T09:05:16+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Firefor urlbar dropdown list not showing anymore]]></title>
     <link href="http://baohaojun.github.io/blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html"/>
     <updated>2014-01-28T13:58:49+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/10/01/0-Inside-Ajoke.html"/>
     <updated>2013-10-01T23:58:41+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/10/01/0-Inside-Ajoke.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[JIRA 5.2 Essentials]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/09/02/0-jira-5.2-essentials-review.html"/>
-    <updated>2013-09-04T11:05:42+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/09/02/0-jira-5.2-essentials-review.html</id>
   </entry>
 </feed>
