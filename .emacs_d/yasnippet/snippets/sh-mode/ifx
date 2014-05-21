@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: ifx
+# key: ifx
+# --
+if echo \$SHELLOPTS | grep xtrace; then
+$0
+fi
