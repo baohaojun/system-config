@@ -48,7 +48,8 @@ if test "$PWD" = ~/system-config; then
                     continue
                 fi
                 if (cd $(dirname $file); git st -s $(basename $file) | grep -P -e "^.\S"); then
-                    die "$file not clean in git"
+                    yes-or-no-p -y "$file not clean in git, exit?"
+                    exit -1
                 fi
                 cp -v "$updated_file" "$file"
                 sleep 1

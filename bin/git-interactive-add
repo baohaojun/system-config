@@ -56,15 +56,23 @@ for x in "$@" $(
     fi
     git-diff "$x";
     while true; do
-        out=$(select-args yes no discard diff edit "@ $PWD/$x");
+        out=$(select-args yes no discard diff delete edit "@ $PWD/$x");
         if test "$out" = diff; then
             git-diff "$x";
             continue;
         fi
 
+        if test "$out" = delete; then
+            rm "$x"
+            break
+        fi
+
         if test "$out" = edit; then
             ew "$x"
             find-or-exec konsole
+            if test ! -e "$x"; then
+                break
+            fi
             git-diff "$x";
             continue
         fi

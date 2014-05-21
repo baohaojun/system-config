@@ -7,14 +7,13 @@ cache=~/.cache/$(basename $0)/$(basename $last_txt|perl -npe 's/\.txt$/.java/')
 
 if test -e $cache -a $cache -nt $last_txt; then
     cd $(dirname $cache)
-    grep-gtags "$@"
-    exit
-fi
 
-rm -rf $(dirname $cache)
-rm -rf ~/.cache/for-code-reading/$(dirname $cache)
-mkdir -p $(dirname $cache)
-perl -npe 's/^package android \{/package android;/; s/^(\s+)(?:ctor|field)/$1/' $last_txt > $cache
-cd $(dirname $cache)
-mkgtags >/dev/null 2>&1
-exec $0 "$@"
+else
+    rm -rf $(dirname $cache)
+    rm -rf ~/.cache/for-code-reading/$(dirname $cache)
+    mkdir -p $(dirname $cache)
+    perl -npe 's/^package android \{/package android;/; s/^(\s+)(?:ctor|field)/$1/' $last_txt > $cache
+    cd $(dirname $cache)
+    mkgtags >/dev/null 2>&1
+fi
+grep-gtags "$@"| perl -npe 's/.*?(<.*?>).*/$1/'

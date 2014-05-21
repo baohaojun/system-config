@@ -893,7 +893,8 @@ might be bad."
   "open help for the current word"
   (interactive)
   (ajoke--setup-env)
-  (shell-command-to-string (format "bhj-help-it %s %s >~/.logs/bhj-help-it.log 2>&1&" major-mode (shell-quote-argument (bhj-current-word)))))
+  (let ((default-directory (expand-file-name "~")))
+    (shell-command-to-string (format "bhj-help-it %s %s >~/.logs/bhj-help-it.log 2>&1&" major-mode (shell-quote-argument (bhj-current-word))))))
 
 ;;;###autoload
 (defun bhj-help-qt ()
@@ -1052,7 +1053,6 @@ criteria can be provided via the optional match-string argument "
       (setq code-text (replace-regexp-in-string code-transform "" code-text)))
      ((consp code-transform)
       (setq code-text (replace-regexp-in-string (car code-transform) (cadr code-transform) code-text))))
-
     (search-forward "start generated code")
     (next-line)
     (move-beginning-of-line nil)
@@ -1061,7 +1061,9 @@ criteria can be provided via the optional match-string argument "
     (previous-line)
     (move-end-of-line nil)
     (setq end-of-text (point))
-    (shell-command-on-region start-of-text end-of-text code-text nil t)
+    (let ((output (shell-command-to-string code-text)))
+      (delete-region start-of-text end-of-text)
+      (insert output))
     (unless (or (eq major-mode 'fundamental-mode)
                 (eq major-mode 'text-mode))
       (indent-region (min (point) (mark))

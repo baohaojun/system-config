@@ -2,6 +2,10 @@
 # name: view
 # key: view
 # --
-<${1:$$(yas-choose-value (or (and (boundp 'bhj-yas-android-views) bhj-yas-android-views) (setq bhj-yas-android-views (split-string (shell-command-to-string "grep-gtags 2>/dev/null -e android.widget..* -d ~/src/android/ -t 'class|int'|perl -npe 's/.*<|>.*//g'|perl -npe 's/.*-//'|sort -u")))))} xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/$2"
+<${1:$$(yas-choose-value (or (and (boundp 'bhj-yas-android-views) bhj-yas-android-views) (setq bhj-yas-android-views (split-string (shell-command-to-string "grep-gtags 2>/dev/null -e android.widget..* -d ~/src/android/ -t 'class|int'|perl -npe 's/.*<|>.*//g'|perl -npe 's/.*-//'|sort -u")))))} ${2:xmlns:android="http://schemas.android.com/apk/res/android"}
+${3:$$(yas-choose-value "android:layout_width=\\"match_parent\\""
+                          "android:layout_width=\\"wrap_content\\"")}
+${4:$$(yas-choose-value "android:layout_height=\\"wrap_content\\""
+                        "android:layout_height=\\"match_parent\\"")}
+android:id="@+id/$5"
 $0/>

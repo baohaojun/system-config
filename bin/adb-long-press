@@ -1,0 +1,12 @@
+#!/bin/bash
+
+seconds=800
+if test $# = 5 -o $# = 3; then
+    seconds=$1
+    shift
+fi
+if test $# = 4; then
+    adb shell input touchscreen swipe $1 $2 $3 $4 $seconds
+elif test $# = 2; then
+    adb shell input touchscreen swipe $1 $2 $1 $2 $seconds
+fi

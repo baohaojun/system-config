@@ -57,6 +57,13 @@ function adb() {
         fi
         shift
     fi
+    if test "$1" = mount; then
+        for x in "$@"; do
+            if test "$x" = /mnt -o "$x" = /mnt/; then
+                die "you should never mount /mnt, it will cause you headache!"
+            fi
+        done
+    fi
 
     if test "$1" = remount; then
         if test "$#" = 1; then

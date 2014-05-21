@@ -18,7 +18,9 @@ while ! sudo apt-get install "$@" -y $packages; do
     echo installing: $packages
 done
 
-~/bin/Linux/config/install-missing-pkgs "$@"
+if test $# = 0 || yes-or-no-p -y "install missing packages?"; then
+   ~/bin/Linux/config/install-missing-pkgs "$@"
+fi
 if test "$#" = 0; then
     for x in ~/bin/Linux/config/pkgs/*:*; do
         sudo apt-get install -y "$x" || true

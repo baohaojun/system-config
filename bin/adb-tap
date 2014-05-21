@@ -1,0 +1,2 @@
+#!/bin/bash
+adb input tap $1 $2

@@ -1,0 +1,9 @@
+#!/bin/bash
+while true; do
+    putclip-android $(ask-for-input-with-emacs -p "What do you want say on weixin?")
+    sleep 2
+    adb-long-press 300 1850
+    adb-tap 129 873
+    adb-tap 1000 1020
+    adb shell input keyevent BACK
+done
