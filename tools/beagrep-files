@@ -59,4 +59,7 @@ do
     beagrep-unurl-and-filter.pl|grep -v '#' |
     sort -u
 done
-echo /dev/null
+
+if test ${0##*/} != beagrep-glob-files; then
+    echo /dev/null
+fi
