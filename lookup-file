@@ -3,6 +3,13 @@
 exact=false
 select=false
 readlink=false
+function echo() {
+    builtin echo -n "$@"
+}
+
+function readlink() {
+    command readlink "$@" | tr -d '\n'
+}
 TEMP=$(getopt -o ers --long exact,readlink,select -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
