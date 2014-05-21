@@ -97,9 +97,13 @@ record about this file is outdated since you're editing it right
 now, and thus need rebuild tags for this file."
   (let ((file (ajoke--buffer-file-name)))
     (if (file-remote-p file)
+        (progn
+          (with-parsed-tramp-file-name file nil
+            (with-tramp-file-property v localname "file-exists-p"
+              (tramp-send-command v (format "export %s=%s" "GTAGS_START_FILE" (file-remote-p file 'localname)))))
         (let ((process-environment tramp-remote-process-environment))
           (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
-          (setq tramp-remote-process-environment process-environment))
+          (setq tramp-remote-process-environment process-environment)))
       (setenv "GTAGS_START_FILE" file))))
 
 (defun ajoke--tag-current-buffer (output-buf)
@@ -519,7 +523,7 @@ beginning of current defun."
     (let* ((try-start (save-excursion (ajoke--goto-start-of-try) (point)))
            (try-end (save-excursion (ajoke--goto-start-of-try) (forward-list) (point)))
            (exceptions (shell-command-to-string
-                        (format "echo %s | ajoke-get-exceptions 2>/dev/null"
+                        (format "echo %s | ajoke-get-exceptions 2>~/.logs/ajoke-get-exceptions.log"
                                 (shell-quote-argument (buffer-substring-no-properties try-start try-end)))))
            (exceptions (split-string exceptions "\n"))
            (exceptions (cons "done" exceptions))
@@ -571,6 +575,18 @@ beginning of current defun."
     (find-file (ajoke--pick-output-line
                 "Select the file you want: "
                 (format "beagrep-glob-files %s" (shell-quote-argument init-input))))))
+
+;;;###autoload
+(defun ajoke-android-add-string ()
+  (interactive)
+  (let ((tag (bhj-grep-tag-default))
+        (string-file (shell-command-to-string "lookup-file res/values/strings.xml")))
+    (find-file (concat (file-remote-p (buffer-file-name)) string-file))
+    (goto-char (point-max))
+    (search-backward "/string")
+    (move-end-of-line nil)
+    (insert (format "\n<string name=\"%s\"></string>" tag))
+    (search-backward "<")))
 
 (global-set-key [(meta g)(j)(p)] 'ajoke-insert-package)
 (global-set-key [(meta g)(j)(i)] 'ajoke-get-imports)
