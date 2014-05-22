@@ -40,7 +40,13 @@ function Usage()
     exit "$@"
 }
 rec_type=to
-send_as=
+send_as=$(get-about-me send-as)
+if test "$send_as" = unknown; then
+    send_as=
+else
+    send_as="-r $send_as"
+fi
+
 while true; do
     case "$1" in
         [^-]*)
