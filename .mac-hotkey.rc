@@ -1,5 +1,5 @@
 t command open -a /Applications/Utilities/Terminal.app/
 n command open -a /Applications/Firefox.app/
-m command open -a /Applications/MacPorts/Emacs.app/
+m command open -a /Applications/Bhj-Emacs.app/
 g command gnus
 c command do-capture-darwin

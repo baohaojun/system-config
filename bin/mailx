@@ -40,6 +40,7 @@ function Usage()
     exit "$@"
 }
 rec_type=to
+send_as=
 while true; do
     case "$1" in
         [^-]*)
@@ -49,6 +50,11 @@ while true; do
         -h)
             Usage
             shift
+            ;;
+        -r)
+            check_arg "$2"
+            send_as="-r $2"
+            shift 2
             ;;
         -s)
             check_arg "$2"
@@ -174,7 +180,7 @@ else
 
 
         auth=$(get-authinfo $(get-about-me smtp) $(get-about-me mail))
-        printf "$the_mailx -S from=$(get-about-me mail) $STARTTLS -S smtp=$scheme$(get-about-me smtp):$(get-about-me smtp-port) -S smtp-auth-user=$(get-about-me mail) -S smtp-auth-password=%q " "$auth"
+        printf "$the_mailx $send_as -S from=$(get-about-me mail) $STARTTLS -S smtp=$scheme$(get-about-me smtp):$(get-about-me smtp-port) -S smtp-auth-user=$(get-about-me mail) -S smtp-auth-password=%q " "$auth"
         for y in attachments cc bcc subject to; do
             eval '
             if test ${#'$y'[@]} != 0; then
