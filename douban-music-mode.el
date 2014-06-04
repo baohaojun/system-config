@@ -255,8 +255,8 @@ system notification, just as rythombox does."
   (interactive)
   (let ((previous-song douban-music-current-song))
     (douban-music-kill-process)
-    (if douban-music-should-replay
-	(setq douban-music-should-replay nil)
+    (if (or douban-music-should-replay (file-exists-p "~/.logs/douban-should-loop"))
+        (setq douban-music-should-replay nil)
       (douban-music-get-next-song))
     (if (> previous-song douban-music-current-song)
         (douban-music-refresh)
