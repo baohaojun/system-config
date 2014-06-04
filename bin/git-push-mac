@@ -110,6 +110,7 @@ if git remote -v | grep baohaojun.github.com.git; then
     )
     org_changes=$(git st -S|cut -b 4-|grep -e '\.org$' || true)
     if test "$org_changes" && ! EMACS=t yes-or-no-p -y "Publish $(echo $org_changes|pn 1|head -n 1)?"; then
+        git add .
         exit 0
     fi
     git add $org_changes
