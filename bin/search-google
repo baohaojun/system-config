@@ -16,11 +16,20 @@ if [[ $host =~ wikipedia ]]; then
     domain=org/w/index.php?search=
 fi
 
+if test $host = wiki.smartisan.cn; then
+    domain="/doku.php?do=search&id="
+fi
+
 if [[ $host =~ baidu ]]; then
     domain=com/s?wd=
 fi
 
-url="http://$host.$domain$fill"
+if test ${domain:0:1} = /; then
+    dot=
+else
+    dot=.
+fi
+url="http://$host$dot$domain$fill"
 
 if test $prog = search-google; then
     url="https://www.google.com.hk/search?q=$fill"
