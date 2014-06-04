@@ -9,6 +9,9 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         if [[ "$FILE" =~ ~/smb/ ]]; then
             FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
             host=$(echo "$FILE" | perl -npe 's,^..(.*?)\\.*,$1,')
+            if ! echo $host | grep -q -P "^\d+\.\d+\.\d+\d"; then
+                host=$(ping-get-ip $host)
+            fi
             path=$(echo "$FILE" | perl -npe 's,^..(.*?)(\\.*),$2,')
             FILE=$(printf '\\\\%s%s' $(ip-or-name $host) "$path")
         elif [[ "$FILE" =~ ^// ]]; then

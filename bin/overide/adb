@@ -173,6 +173,8 @@ function adb() {
     elif test "$#" = 3 -a "$1" = shell -a "$2" = restart; then
         $the_prog shell stop $3;
         exec $the_prog shell start $3;
+    elif test "$#" = 3 -a "$1" = shell -a "$2" = sstat; then # service stat
+        exec $the_prog shell getprop init.svc.$3
     elif test $# -gt 1 -a "$1" = shell; then
         if ! is-tty-io;then
             if test $myname = adb; then

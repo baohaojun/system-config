@@ -1,0 +1,2 @@
+#!/bin/bash
+ping -c 1 $1 | head -n 1|pn 3|perl -npe 's/\(|\)//g'

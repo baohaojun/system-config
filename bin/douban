@@ -59,7 +59,7 @@ case "$1" in
                     if test -e ~/.do-not-disturb.bak; then
                         mv ~/.do-not-disturb.bak ~/.do-not-disturb
                     fi
-                    bhj-notify -i "$icon" DoubanMusic.el \
+                    bhj-notify -i "$icon" DoubanMusic.el$(if test -e ~/.logs/douban-should-loop; then echo -n -loop; fi) \
                         "$(
                                 echo channel: $channel
                                 echo
@@ -126,6 +126,9 @@ case "$1" in
             rm ~/.logs/douban-should-play
             yes
         fi
+        if test -e ~/.logs/douban-should-loop; then
+            yes
+        fi
         if test ! -e "$1"; then
             yes
         fi
@@ -162,6 +165,14 @@ case "$1" in
         fi
         emacsclient -e '(douban-music-play-previous)'
         ;;
+    loop)
+        touch ~/.logs/douban-should-loop
+        douban info
+        ;;
+    nloop)
+        rm -f ~/.logs/douban-should-loop
+        douban info
+        ;;
     nchan)
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
@@ -176,6 +187,10 @@ case "$1" in
         ;;
     pause)
         emacsclient -e '(douban-music-pause/resume)'
+        ;;
+    show)
+        emacsclient -e '(douban-music)'
+        find-or-exec emacs
         ;;
     *)
         die "not a douban.el command"

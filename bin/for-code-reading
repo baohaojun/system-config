@@ -40,7 +40,7 @@ then
     else
         export relativeSrcDir=${srcDir/#$higherSrcDir/.}
         cd $higherSrcDir
-        if test $# = 0; then
+        if test $# = 0 -a $(basename $0) != mkbeagrepidx; then
             set -- -i -v
         fi
     fi

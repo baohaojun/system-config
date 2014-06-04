@@ -1,0 +1,12 @@
+#!/bin/bash
+if id | grep -q '^uid=0\b' -P; then
+    su - bhj -c "~bhj/bin/$(basename $0)"
+    exit 0
+fi
+. ~/.bashrc
+(
+    id
+    ls -l /proc/$$/fd
+) > /tmp/$(basename $0).log
+
+bhj-notify "Phone crashed" "Please check!"

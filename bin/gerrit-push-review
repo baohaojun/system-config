@@ -13,7 +13,7 @@ function die() {
 
 rev=HEAD
 
-TEMP=$(getopt -o nb:r:R --long revision: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o nBb:r:R --long revision: -n $(basename $0) -- "$@")
 do_fetch=true
 do_review=true
 eval set -- "$TEMP"
@@ -21,6 +21,10 @@ while true; do
     case "$1" in
         -n)
             do_fetch=false
+            shift
+            ;;
+        -B)
+            export REPO_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
             shift
             ;;
         -b)

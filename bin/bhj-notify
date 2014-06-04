@@ -7,6 +7,12 @@ fi
 icon=
 if test "$1" = -i; then
     icon=$2;
+    if test -e "$icon"; then
+        if test "$(img-width "$icon")" -gt 128 -o "$(img-height "$icon")" -gt 128; then
+            resize-photo -o /tmp/resized-icon.png "$icon"
+            icon=/tmp/resized-icon.png
+        fi
+    fi
     shift 2
 fi
 

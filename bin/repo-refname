@@ -1,8 +1,32 @@
 #!/bin/bash
 
+TEMP=$(getopt -o B --long branch -n $(basename $0) -- "$@")
+branch=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -B|--branch)
+            branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 if test -d "$1"; then
     cd $(lookup-file $1)
     repo-branch
+    exit
+fi
+
+if test "$branch"; then
+    echo $branch
     exit
 fi
 

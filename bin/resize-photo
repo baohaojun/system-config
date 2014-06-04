@@ -1,18 +1,54 @@
 #!/bin/bash
-maxw=$1
-maxh=$2
+
+if test -e ~/.config/debugging; then
+    set -x
+fi
+TEMP=$(getopt -o w:h:o: --long width:height:output: -n $(basename $0) -- "$@")
+width=128
+height=128
+output=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -w|--width)
+            width=$2
+            shift 2
+            ;;
+        -h|--height)
+            height=$2
+            shift 2
+            ;;
+        -o|--output)
+            output=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
 shift 2
 
 for x in "$@"; do
-    width=$(identify $x|pn 3|perl -npe 's/x.*//');
-    height=$(identify $x| pn 3 | perl -npe 's/.*x//');
-    if (( width > maxw || height > maxh)); then
-        percent=$(perl -e "\$percent = $maxw * 100 / $width;
-                           if (\$percent * $height / 100 > $maxh) {
-                               \$percent = $maxh * 100 / $height;
+    o_width=$(img-width "$x")
+    o_height=$(img-height "$x")
+    if (( o_width > width || o_height > height)); then
+        percent=$(perl -e "\$percent = $width * 100 / $o_width;
+                           if (\$percent * $o_height / 100 > $height) {
+                               \$percent = $height * 100 / $o_height;
                            }
                            print \$percent;"
-        )
-        convert -resize $percent% $x ${x%.*}-resize.${x##*.};
+               )
+        if test "$output"; then
+            x_output=$output
+        else
+            x_output=${x%.*}-resize.${x##*.}
+        fi
+        convert -resize $percent% "$x" "$x_output.$$"
+        mv "$x_output".$$ "$x_output"
     fi;
 done

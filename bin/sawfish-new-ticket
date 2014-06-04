@@ -1,14 +1,16 @@
 #!/bin/bash
+
+build=$(cd ~/smb/share.smartisan.cn/SanFranciscoBuild/sanfrancisco_android/release-$(today--); command ls -t -1|sort -n |tail -n 1)
 putclip '*模块'; sawfish-browser-input C-s C-v C-g
 sleep 1
 sawfish-browser-input TAB Home Down Down Down Down
 sawfish-browser-input TAB Home $(for x in $(seq 1 22); do echo Down; done) Tab Tab Tab Down
 sawfish-browser-input TAB TAB TAB TAB
 
-putclip 'msm8x74sfo_w-rom-kk4-4-P2-eng-20140403-013644'; sawfish-browser-input C-v Tab
+putclip "$build"; sawfish-browser-input C-v Tab
 sleep .5
 
-putclip 'P2'; sawfish-browser-input C-v Tab End
+putclip 'P4'; sawfish-browser-input C-v Tab End
 sleep .5
 putclip '分派给'; sawfish-browser-input C-s C-v C-g
 sleep .5

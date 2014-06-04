@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+cd ~/.smb
+if test ! -e .git; then
+    git init .
+    git add .
+fi
+
+perl -ne 'if (m/auth-fix '${1}'/) {
+     print;
+     $x = <>;
+     chomp $x;
+     $x =~ s/auth\s+(\S+)\s+(.*)/auth '$(ip-or-name $1)' $2/;
+     print "$x\n";
+} else {
+  print;
+}' -i ~/.smb/smbnetfs.conf
+
+git diff -w || true
+ps-killall smbnetfs
+umount -l ~/smb

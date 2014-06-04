@@ -9,12 +9,12 @@ function die() {
 }
 
 if grep "$vid.*bhj" /etc/udev/rules.d/90-bhj-personal.rules; then
-    die "$vid already in /etc/udev/rules.d/90-bhj-personal.rules";
-fi
-
-cat <<EOF >> ~/etc/udev/rules.d/90-bhj-personal.rules
+    echo "$vid already in /etc/udev/rules.d/90-bhj-personal.rules";
+else
+    cat <<EOF >> ~/etc/udev/rules.d/90-bhj-personal.rules
 SUBSYSTEM=="usb", ATTR{idVendor}=="$vid", MODE="0600", OWNER="bhj"
 EOF
+fi
 
 sudo cp ~/etc/udev/rules.d/90-bhj-personal.rules /etc/udev/rules.d/90-bhj-personal.rules
 sudo /etc/init.d/udev restart

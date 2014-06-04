@@ -1,6 +1,6 @@
 #!/bin/bash
 
-branch=$(repo-branch)
+branch=$(repo-branch "$@")
 if test ${#branch} = 40; then
     echo $branch
 elif [[ $branch =~ /tags/ ]]; then

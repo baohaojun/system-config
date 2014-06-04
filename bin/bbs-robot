@@ -121,7 +121,7 @@ expect -timeout 150 password {
 set timeout 5
 
 expect {
-    -re "按.*RETURN.*继续|上次连线时间|按任意键继续|近期热点|如何处理以上" {
+    -re "按.*RETURN.*继续|上次连线时间|按任意键继续|近期热点" {
         send "\r\n";
         exp_continue;
     }
@@ -135,8 +135,13 @@ expect {
             }
         }
     }
+    "如何处理以上密码输入错误记录" {
+        send "y\r\n";
+        exp_continue;
+    }
     timeout {
         puts "timed out\n"; puts "timed out\n"; puts "timed out\n";    puts "timed out\n";    puts "timed out\n";
+        exp_continue;
     }
 }
 
