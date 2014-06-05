@@ -24,7 +24,12 @@ else
             cat $x/type;
             cat $x/temp;
         done | busybox tee /sdcard/current/$freq/temp-$n.txt;
-        cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq | busybox tee /sdcard/current/$freq/freq-$n.txt;
+        (for x in $(seq 0 3); do
+            if test -e /sys/devices/system/cpu/cpu$x/cpufreq/scaling_cur_freq; then
+                echo -n "$x ";
+                cat /sys/devices/system/cpu/cpu$x/cpufreq/scaling_cur_freq
+            fi
+         done) | busybox tee /sdcard/current/$freq/freq-$n.txt;
         echo round $n; sleep 1;
     done'
 fi

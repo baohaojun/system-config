@@ -8,6 +8,28 @@ function sudo() {
     command sudo env SSH_AGENT_PID=$SSH_AGENT_PID SSH_AUTH_SOCK=$SSH_AUTH_SOCK PATH=$PATH "$@"
 }
 
+tun=tun0
+tun_n=0
+
+TEMP=$(getopt -o n: --long tun: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -n|--tun)
+            tun=tun$2
+            tun_n=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 ssh bhj.dyndns.org '
     set -x
     if ! grep -P -e "^\s*PermitTunnel\s+yes" /etc/ssh/sshd_config; then
@@ -29,25 +51,26 @@ ssh bhj.dyndns.org '
 if ps.pl ssh.-w.root.443 && yes-or-no-p -y "kill the previous tunnel?"; then
     sudo ps-killall ssh.-w.root.443
 fi
-sudo ssh -o StrictHostKeyChecking=no -v -C2N -w 0:0 root@bhj.dyndns.org -p 443&
+sudo ssh -o StrictHostKeyChecking=no -v -C2N -w $tun_n:$tun_n root@bhj.dyndns.org -p 443&
 
 ssh bhj.dyndns.org 'set -x
         set -e
-        for x in $(seq 1 15); do
-            if command sudo ip link set tun0 up; then
+        command sudo ip link set tun'$tun_n' down || true
+        for x in $(seq 1 60); do
+            if command sudo ip link set tun'$tun_n' up; then
                 break
             else
                 sleep 1
             fi
         done
 
-        command sudo ip addr add 10.0.0.200/32 peer 10.0.0.100 dev tun0
-        nat-vbox eth0 tun0
+        command sudo ip addr add 10.0.0.200/32 peer 10.0.0.100 dev tun'$tun_n' || true
+        nat-vbox eth0 tun'$tun_n'
     '
 
 
-sudo ip link set tun0 up
-sudo ip addr add 10.0.0.100/32 peer 10.0.0.200 dev tun0
+sudo ip link set $tun up
+sudo ip addr add 10.0.0.100/32 peer 10.0.0.200 dev $tun
 default_gw=$(route -n |grep '^0\.0\.0\.0' | awk '{print $2}')
 sudo route add $(ip-or-name bhj.dyndns.org) gw "$default_gw"
 sudo route del default gw "$default_gw"
@@ -58,5 +81,5 @@ elif echo "$default_gw" | grep "^172\.16\."; then
 fi
 sudo route add default gw 10.0.0.200
 net-for-phone
-nat-vbox tun0 $USB0
+nat-vbox $tun $USB0
 nat-vbox wlan0 $USB0

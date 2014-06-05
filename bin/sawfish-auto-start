@@ -44,5 +44,5 @@ import gnomekeyring
 passwd = '$(get-authinfo localhost $USER 22)'
 gnomekeyring.unlock_sync(None, passwd)"
 
-run-dir-once ~/external/sawfish/start&
+run-dir-once ~/external/etc/sawfish/start&
 run-dir-once ~/.sawfish/start&

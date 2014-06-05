@@ -1,4 +1,5 @@
 #!/bin/bash
+
 if id | grep -q '^uid=0\b' -P; then
     su - bhj -c "~bhj/bin/$(basename $0)"
     exit 0
@@ -8,5 +9,20 @@ fi
     id
     ls -l /proc/$$/fd
 ) > /tmp/$(basename $0).log
+
+if test $(basename $0) = adb-fix-gms; then
+    (
+        set -ex
+        exec > ~/.logs/adb-fix-gms.log 2>&1
+        adb wait-for-device || true
+        if test "$(adb 'test -e /system/priv-app/GmsCore.apk && echo yes')" = yes; then
+            exit 0
+        fi
+        adb stop
+        adb_push ~/today/forever/gapps-system/* /system/
+        adb start
+    ) || bhj-notify "Fix Gms Failed" "Please check!"
+    exit
+fi
 
 bhj-notify "Phone crashed" "Please check!"

@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+sub eq_hex($)
+{
+    my ($str) = @_;
+    $str =~ s/(.)/"=" . sprintf("%02x", ord($1))/ge;
+    return $str;
+}
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+while (<>) {
+    chomp;
+    @f = split(',');
+    debug "name is '$f[0]'";
+    print "BEGIN:VCARD\nVERSION:2.1\n";
+    print "FN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:" . eq_hex($f[0]) . "\n";
+    print "TEL;CELL:$f[1]\n";
+    if ($f[2]) {
+        print "EMAIL:$f[2]\n";
+    }
+    print "END:VCARD\n";
+}

@@ -3,6 +3,9 @@ use String::ShellQuote;
 $dest = pop( @ARGV);
 
 for (@ARGV) {
-    system("adb",  "pull", "$_", "$dest");
+    my $x = $_;
+    $x =~ s!/*$!!;
+    $x =~ s!.*/!!;
+    system("adb",  "pull", "$_", "$dest/$x");
 }
 

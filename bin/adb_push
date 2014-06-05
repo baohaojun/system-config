@@ -14,6 +14,15 @@ GetOptions(
     );
 
 my $mount_cmd = "adb remount";
+if (@ARGV == 1) {
+    my $dest = $ARGV[0];
+    $dest =~ s!(.*)/.*!$1!;
+    if ($dest =~ s!.*(/system/.*)!$1!) {
+        push @ARGV, $1;
+        debug "using $1 as dest dir";
+    }
+}
+
 my $dest = pop( @ARGV);
 my $qdest = shell_quote($dest);
 

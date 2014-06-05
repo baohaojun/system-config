@@ -36,6 +36,7 @@ fi
 if ! ifconfig $USB0 | grep 192.168.15.33; then
     sudo ifconfig $USB0 192.168.15.33
 fi
+adb -w echo
 if test $(basename $0) = net-for-phone; then
     adb shell su -c "setprop net.dns1 $(cat /etc/resolv.conf | grep ^nameserver | pn 2 | head -n 1)"
     adb shell su -c '/system/xbin/route del default'

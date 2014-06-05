@@ -8,6 +8,7 @@ set host "localhost"
 set port "22"
 set user "bhj"
 set password ""
+set id_rsa "[lindex [array get env HOME] 1]/.ssh/id_rsa"
 
 for {set i 0} {$i < [llength $argv]} {incr i} {
     if {[string eq [lindex $argv $i] "-l"]} {
@@ -22,6 +23,9 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
     } elseif {[string eq [lindex $argv $i] "-h"]} {
         incr i;
         set host [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-k"]} {
+        incr i;
+        set id_rsa [lindex $argv $i];
     }
 }
 
@@ -49,7 +53,7 @@ if [string eq "" $password] {
     set password [qx "get-authinfo $host $user $port"]
 }
 
-spawn ssh-add
+spawn ssh-add $id_rsa
 
 expect -timeout 150 passphrase {
     puts "send password\n";
@@ -59,9 +63,12 @@ expect -timeout 150 passphrase {
     exp_continue;
 }
 
-interact;
-puts "exit";
-exit
+expect -timeout 150 "Identity added:" {
+    exit
+} timeout {
+    puts "timeout for Identity added:\n"
+}
+
 
 # Local Variables: #
 # mode: tcl #
