@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for x in "$@"; do
+    touch ~/bin/Linux/config/pkgs/$x
+done

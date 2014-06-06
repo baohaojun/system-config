@@ -23,4 +23,5 @@ echo cd ~/today/"$1"
 mkdir -p "$1"
 cd "$1"
 
-adb pull /data/logs /data/anr /data/system/dropbox ./
+adb_pull /data/logs /data/anr /data/system/dropbox ./
+echo cd ~/today/"$1"

@@ -75,15 +75,6 @@
 (bind-keys global-keymap "Super-Up" '(system "douban ba&"))
 (bind-keys global-keymap "Super-Right"  '(system "douban next&"))
 (bind-keys global-keymap "Super-Left"  '(system "douban prev&"))
-(bind-keys global-keymap "KP_End"  '(system "douban loop&"))
-(bind-keys global-keymap "KP_Up"  '(system "douban nloop&"))
-(bind-keys global-keymap "KP_Down"  '(system "douban info&"))
-(bind-keys global-keymap "KP_Prior"  '(system "douban lyrics&"))
-(bind-keys global-keymap "KP_Next"  '(system "douban show&"))
-(bind-keys global-keymap "KP_Right"  '(system "douban next&"))
-(bind-keys global-keymap "KP_Left"  '(system "douban prev&"))
-(bind-keys global-keymap "KP_Begin"  '(system "douban ba&"))
-(bind-keys global-keymap "KP_Home"  '(system "douban replay&"))
 (bind-keys global-keymap "Super-S-Right"  '(system "douban back&"))
 (bind-keys global-keymap "Super-S-Left"  '(system "douban forth&"))
 (bind-keys global-keymap "XF86AudioNext"  '(system "douban next&"))
@@ -173,8 +164,6 @@
 (bind-keys global-keymap "C-S-XF86PowerOff"  '(system "lock-screen&"))
 (bind-keys global-keymap "C-S-DEL"  '(system "lock-screen&"))
 
-(bind-keys global-keymap "KP_Add"  '(system "adjust-volume&"))
-(bind-keys global-keymap "KP_Subtract"  '(system "adjust-volume&"))
 (bind-keys global-keymap "XF86AudioRaiseVolume"  '(system "adjust-volume&"))
 (bind-keys global-keymap "XF86AudioLowerVolume"  '(system "adjust-volume&"))
 
@@ -444,8 +433,6 @@
 (add-hook 'focus-in-hook ime-toggle)
 
 (system "sawfish-auto-start&")
-(bind-keys global-keymap "KP_Insert" '(system "firefox-goto-next-prev-page prev&"))
-(bind-keys global-keymap "KP_Delete" '(system "firefox-goto-next-prev-page next&"))
 (setq esc-x-keymap (make-keymap))
 (bind-keys esc-map "x" esc-x-keymap)
 
@@ -479,18 +466,29 @@
   (system "switch-scroll-led on&")
   (load-file "~/.sawfish/lisp/easy-emacs-code-reading.jl"))
 
-(defun emacs-code-reading-off (&optional w)
-  (when w
-    (window-put w 'code-reading nil))
-  (let* ((file (open-file "~/.sawfish/lisp/easy-emacs-code-reading.jl" 'read))
+(defun unload-keys-in-file (file)
+  (let* ((file (open-file file 'read))
          (event "")
          (line ""))
     (while (setq line (read-line file))
       (when (string-match "bind-keys\\s+global-keymap\\s+\"(.*?)\"" line)
         (setq event (expand-last-match "\\1"))
         (unbind-keys global-keymap event)))
-    (close-file file))
+    (close-file file)))
+
+(defun emacs-code-reading-off (&optional w)
+  (when w
+    (window-put w 'code-reading nil))
+  (unload-keys-in-file "~/.sawfish/lisp/easy-emacs-code-reading.jl")
   (system "switch-scroll-led off&"))
+
+(defun keypad-number-on ()
+  (unload-keys-in-file "~/.sawfish/lisp/keypad.jl"))
+
+(defun keypad-number-off ()
+  (load-file "~/.sawfish/lisp/keypad.jl"))
+
+(bind-keys global-keymap "KP_Enter" '(system "toggle-number-lock&"))
 
 (bind-keys s-h-keymap "l" '(system "do-firefox-login-page&"))
 

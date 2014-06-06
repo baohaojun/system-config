@@ -16,6 +16,10 @@ if [[ $host =~ wikipedia ]]; then
     domain=org/w/index.php?search=
 fi
 
+if [[ $host =~ duckduckgo ]]; then
+    domain=com/?q=
+fi
+
 if test $host = wiki.smartisan.cn; then
     domain="/doku.php?do=search&id="
 fi

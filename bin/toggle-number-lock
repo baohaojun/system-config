@@ -1,0 +1,8 @@
+#!/bin/bash
+if test "$(numlockx status)" = "Numlock is on"; then
+    sawfish-client -e '(keypad-number-off)'
+    numlockx off
+else
+    sawfish-client -e '(keypad-number-on)'
+    numlockx on
+fi
