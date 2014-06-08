@@ -275,6 +275,23 @@ is set, call FUNC with the start and end of the matched region."
             arg))))
   (goto-line target-line)))
 
+(defun ajoke-display-the-current-function ()
+  (interactive)
+  (let* ((imenu-indices (ajoke--create-index-function))
+         (imenu-indices (sort imenu-indices (lambda (a b) (< (cdr a) (cdr b)))))
+         (point (point))
+         last-index
+         answer)
+    (while imenu-indices
+      (if (and
+           (< (cdar imenu-indices) point)
+           (or (not (cdr imenu-indices))
+               (>= (cdadr imenu-indices) point)))
+          (setq answer (caar imenu-indices)  imenu-indices nil)
+        (setq imenu-indices (cdr imenu-indices))))
+    (message "%s" answer)))
+
+
 (defun ajoke--create-index-function ()
   "Ajoke's version of `imenu-default-create-index-function'."
   (let ((source-buffer (current-buffer))
@@ -597,6 +614,7 @@ beginning of current defun."
 (global-set-key [(meta g)(j)(e)] 'ajoke-insert-exception-catchers)
 (global-set-key [(shift meta s)] 'ajoke-search-local-id)
 (global-set-key [(meta s)(f)] 'ajoke-find-file-using-beagrep)
+(global-set-key [(meta s)(??)] 'ajoke-display-the-current-function)
 ;; the correct way to do it is to customize 'before-save-hook
 ;; (add-hook 'before-save-hook 'ajoke-get-imports-if-java-mode)
 

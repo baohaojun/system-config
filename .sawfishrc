@@ -7,14 +7,10 @@
 (require 'Run-application)
 (require 'bhj-draw-wininfo)
 (require 'sawfish.wm.commands.move-cursor)
-(bind-keys global-keymap "F23" '(system "xdotool click 4&"))
-(bind-keys global-keymap "F24" '(system "xdotool click 5&"))
 (bind-keys global-keymap "C-F23" '(move-cursor-left))
 (bind-keys global-keymap "C-F24" '(move-cursor-right))
 (bind-keys global-keymap "Super-F23" '(move-cursor-up))
 (bind-keys global-keymap "Super-F24" '(move-cursor-down))
-
-(bind-keys global-keymap "XF86Back" '(system "xdotool click 1&"))
 
 (setq bhj-is-gnome? nil)
 (setq emacs-style-window-class-re "emacs|xfce4-terminal|konsole|gnome-terminal|rdesktop|urxvt|krdc|vncviewer")
@@ -480,6 +476,9 @@
   (when w
     (window-put w 'code-reading nil))
   (unload-keys-in-file "~/.sawfish/lisp/easy-emacs-code-reading.jl")
+  (bind-keys global-keymap "F23" '(system "xdotool click 4&"))
+  (bind-keys global-keymap "F24" '(system "xdotool click 5&"))
+  (bind-keys global-keymap "XF86Back" '(system "xdotool click 1&"))
   (system "switch-scroll-led off&"))
 
 (defun keypad-number-on ()

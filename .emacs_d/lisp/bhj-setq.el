@@ -87,6 +87,7 @@
 (setq waw-mode-map
       (let ((map (make-sparse-keymap)))
         (define-key map "\C-m" 'waw-ret-key)
+        (define-key map [(q)] 'delete-window)
         (define-key map [(return)] 'waw-ret-key)
         (define-key map [(meta p)] 'previous-error-no-select)
         (define-key map [(meta n)] 'next-error-no-select)
