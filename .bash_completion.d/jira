@@ -139,7 +139,7 @@ _confluence_compgen_options()
         --copyLabels
         --autoGroup
     )
-    
+
     COMPREPLY=( $(skeleton_compgen_word.pl -- "$( echo ${options[@]} )" "$cur") )
 }
 
@@ -147,18 +147,18 @@ _jira_components()
 {
     local components=(
         Unknown Apps-3rd "HW debug"
-        Apps-Backup Apps-Browser Apps-Calc 
+        Apps-Backup Apps-Browser Apps-Calc
         Apps-Calendar Apps-Clock Apps-Contact
-        Apps-Ebook Apps-EMail Apps-FileManager 
-        Apps-Gallery Apps-Home Apps-InputMethod 
-        Apps-News Apps-Search Apps-Setting 
-        Apps-Update Apps-Widget Boot 
-        Connectivity-Bluetooth Connectivity-Ethernet/ADSL Connectivity-GPS 
-        Connectivity-Wifi Framework Framework-GUI 
-        GMS Hardware Multimedia 
-        OS OS-FileSystem OS-PowerManagement 
-        OS-Sensor OS-Update Service-Search 
-        Service-Update Telephony Tools 
+        Apps-Ebook Apps-EMail Apps-FileManager
+        Apps-Gallery Apps-Home Apps-InputMethod
+        Apps-News Apps-Search Apps-Setting
+        Apps-Update Apps-Widget Boot
+        Connectivity-Bluetooth Connectivity-Ethernet/ADSL Connectivity-GPS
+        Connectivity-Wifi Framework Framework-GUI
+        GMS Hardware Multimedia
+        OS OS-FileSystem OS-PowerManagement
+        OS-Sensor OS-Update Service-Search
+        Service-Update Telephony Tools
         Vendor
     )
 
@@ -177,7 +177,7 @@ _jira_issue_types()
         Story
         "Test Task"
     )
-    
+
     COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(for x in ${types[@]}; do echo $x; done)" "$cur") )
 }
 
@@ -191,7 +191,7 @@ _jira_complete_these_words()
 _jira_file_list()
 {
     local IFS=$'\t\n'
-    COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(cd "$1"; 'ls')" "$cur") )
+    COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(cd "$1"; 'ls'; cat ~/.bbdb|perl -npe 's/.*?\"([^\"]*)@[^\"]*\".*/$1/')" "$cur") )
 }
 
 _jira_actions()
@@ -237,7 +237,7 @@ _jira_actions()
         getPluginList
         getPluginDownload
     )
-    
+
     COMPREPLY=( $(skeleton_compgen_word.pl -- "$( for x in ${actions[@]}; do echo $x; done )" "$cur") )
 }
 
@@ -374,7 +374,7 @@ _jira()
         --resolution)
             _jira_complete_these_words "Fixed" "Won't Fix" "Duplicate" "Incomplete" "Cannot Reproduce" "Not a Bug"
             return 0
-            ;;            
+            ;;
         --priority)
             _jira_complete_these_words Blocker Critical Major Minor Trivial
             return 0

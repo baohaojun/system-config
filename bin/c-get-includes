@@ -1,16 +1,27 @@
 #!/bin/bash
 
 set -e
+if test "$(readlink -f /proc/$$/fd/2)" != ~/.logs/$(basename $0).log; then
+    exec 2>~/.logs/$(basename $0).log
+fi
+set -x
+
+echo args are "$@" 1>&2
 export LANG=C
 export LC_ALL=C
 
-function get-includes-for-file()
+function get-includes-for-compilation()
 {
-    g++ -c "$1" -o /dev/null 2>&1 | perl -ne '
+    tee ~/.logs/$(basename $0).input | perl -ne '
     if (m/error: .(.*?). was not declared in this scope/) {
         print "$1\n";
     }
 ' | sort -u | xargs c-get-includes man
+}
+
+function get-includes-for-file()
+{
+    g++ -c "$1" -o /dev/null 2>&1 | get-includes-for-compilation
 }
 
 if test $# = 1 -a "$1" != man; then
@@ -18,13 +29,18 @@ if test $# = 1 -a "$1" != man; then
     exit
 fi
 
+if test $# = 0; then
+    get-includes-for-compilation | sort -u
+    exit
+fi
+
 shift # the 'man'
 
 for func in "$@"; do
     (
-	man 2 "$func" || 
-	man 3 "$func"
-    ) 2>/dev/null | 
+        man 2 "$func" ||
+        man 3 "$func"
+    ) 2>/dev/null |
     perl -ne '
         if (m/^SYN/..m/^DES/) {
             print "$&\n" if m/#include.*>/;

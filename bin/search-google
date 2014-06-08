@@ -33,6 +33,14 @@ if test ${domain:0:1} = /; then
 else
     dot=.
 fi
+
+if test $host = gerrit; then
+    host=
+    domain=$(printf "172.16.0.9:8080/#/q/%s,n,z" "$fill")
+    dot=
+    fill=
+fi
+
 url="http://$host$dot$domain$fill"
 
 if test $prog = search-google; then

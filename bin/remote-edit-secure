@@ -14,9 +14,14 @@ fi
 if test "$file"; then
     file=${file%\'};
     file=${file#\'};
+    line=
+    if test "${file:0:1}" = +; then
+        line=${file% *}
+        file=${file#* \'}
+    fi
     . ~/.renew-xauth
     find-or-exec emacs
-    emacsclient $wait "$file"
+    emacsclient $wait $line "$file"
 else
     echo "What do you want to edit?"
 fi

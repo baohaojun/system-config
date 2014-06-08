@@ -133,23 +133,32 @@ might be bad."
     (ring-insert ring obj)))
 
 ;;;###autoload
-(defun c-get-includes ()
-  (interactive)
+(defun bhj-c-get-includes (prefix)
+  (interactive "p")
   ;; when use call this function, 1) assume we will have some headers
   ;; to include, 2) assume we need insert them at a special position
   ;; marked with /**** start of bhj auto includes ****/ and /**** end
   ;; of bhj auto includes ****/.
-
+  ;;
+  ;; If prefix is set, get the missing functions from the '*compilation*' buffer.
   (let (start-include-mark-line
         end-include-mark-line
         mark-line-found
         (start-mark "/**** start of bhj auto includes ****/")
         (end-mark "/**** end of bhj auto includes ****/")
-        (includes (split-string
+        (includes
+         (if prefix
+             (with-temp-buffer
+               (let ((temp-buffer (current-buffer)))
+                 (with-current-buffer (get-buffer "*compilation*")
+                   (shell-command-on-region (point-min) (point-max) "c-get-includes" temp-buffer)
+                   (split-string (with-current-buffer temp-buffer
+                                   (buffer-substring-no-properties (point-min) (point-max))) "\n" t))))
+         (split-string
                    (shell-command-to-string
                     (concat "c-get-includes "
                             (shell-quote-argument (ajoke--buffer-file-name-local))))
-                   "\n" t)))
+                   "\n" t))))
     (save-excursion
       (goto-char (point-min))
       (if (search-forward start-mark nil t)

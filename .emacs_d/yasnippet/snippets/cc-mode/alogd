@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: alogd
+# key: alogd
+# --
+ALOGD("%s:%d: hello world${1:%s}", __FILE__, __LINE__${2:,});

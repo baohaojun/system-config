@@ -22,6 +22,9 @@ done
 
 test $# = 0 -o $# = 1
 tmp=/tmp/`basename $0`.$$
+if test "$USE_BUFFER_NAME"; then
+    tmp=/tmp/$USE_BUFFER_NAME
+fi
 touch $tmp
 
 if test "$prompt"; then

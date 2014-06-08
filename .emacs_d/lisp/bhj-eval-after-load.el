@@ -166,3 +166,4 @@
        (makunbound helm-history-var))))
 
 
+(add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)

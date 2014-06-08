@@ -44,12 +44,12 @@ rm -rf $tmpd
 mkdir $tmpd
 (
     cd $tmpd
-    cp $boot $(basename $boot)
-    unbootimg $(basename $boot)
+    cp "$boot" $(basename "$boot")
+    unbootimg $(basename "$boot")
 )
 replace-ramdisk -r $tmpd/ramdisk.img "$@"
 (
     cd $tmpd
     bash -e mkbootimg.sh
-    cp $(basename $boot) $boot
+    cp $(basename "$boot") "$boot"
 )

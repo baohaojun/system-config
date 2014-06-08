@@ -16,6 +16,18 @@ if test $(basename $0) = adb-fix-gms; then
         exec > ~/.logs/adb-fix-gms.log 2>&1
 
         adb -W || true
+
+        (
+            mkdir ~/today/logs -p
+            cd ~/today/logs
+            adb pull /data/logs/.kmsg.last kmsg.last.$$
+            if test -e kmsg.$(md5sum kmsg.last.$$ | pn 1); then
+                rm kmsg.last.$$
+            else
+                mv kmsg.last.$$ kmsg.$(md5sum kmsg.last.$$ | pn 1)
+            fi
+        )&
+
         if test "$(adb 'test -e /system/priv-app/GmsCore.apk && echo yes')" = yes; then
             exit 0
         fi

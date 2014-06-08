@@ -13,12 +13,22 @@ function die() {
 
 rev=HEAD
 
-TEMP=$(getopt -o nBb:r:R --long revision: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o nBb:r:Ra --long revision: -n $(basename $0) -- "$@")
 do_fetch=true
 do_review=true
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -a)
+            shift
+            if test "$1" = --; then
+                shift
+            fi
+            for x in "$@"; do
+                gerrit -- set-reviewers $(git rev-parse HEAD) -a "$x"
+            done
+            exit
+            ;;
         -n)
             do_fetch=false
             shift
