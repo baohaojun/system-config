@@ -23,6 +23,8 @@
 (setq global-remap-alist
       '(("C-a" . ((t "Home")))
         ("C-g" . ((Firefox "C-g") (t "ESC")))
+        ("Next" . ((Firefox "C-v") (t "Next")))
+        ("Prior" . ((Firefox "ESC" "v") (t "Prior")))
         ("C-d" . ((t "DEL")))
         ("C-e" . ((t "End")))
         ("C-b" . ((t "Left")))
