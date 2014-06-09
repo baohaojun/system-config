@@ -131,7 +131,7 @@ commits from untrusted contributors.
 
 ** 我的git脚本
 *** git-pull-mac
-*** git-push-mac
+*** git-push-rebase
 *** git-interactive-add
 
 ** git在协作环境下容易引发的问题

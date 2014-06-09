@@ -45,8 +45,8 @@ fi
 test "$(pwd)" = $HOME && cd ~/system-config
 cd "$(dirname "$(lookup-file -e .git)")"
 
-if test -e .git-push-mac-hooks; then
-    bash .git-push-mac-hooks
+if test -e .git-push-rebase-hooks; then
+    bash .git-push-rebase-hooks
 fi
 
 if git-is-ancestor master HEAD; then
@@ -66,7 +66,7 @@ if output=$(
         if test "$no_submodule" = true; then
             exit 1 # not 0!
         fi
-        git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' |
+        git submodule foreach 'bash -c "git-push-rebase || echo hello $(pwd) failed&"' |
         tee /dev/stderr |
         grep "^hello.*failed$"
     )
