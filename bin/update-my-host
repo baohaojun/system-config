@@ -1,0 +1,12 @@
+#!/bin/bash
+ssh root@$1 "
+mkdir -p .ssh
+cat << EOF > ~/.ssh/authorized_keys
+$(cat ~/.ssh/authorized_keys)
+EOF
+mkdir -p ~bhj/.ssh
+cp ~/.ssh/authorized_keys ~bhj/.ssh/
+chown bhj. ~bhj/.ssh -R
+apt-get install rsync git
+usermod -a -G sudo bhj
+"
