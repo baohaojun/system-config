@@ -3,7 +3,7 @@
 Here I've written a command line blogging tool for my github [[http://baohaojun.github.io][page]].
 
 I only need write the article in .org file, then git push it using a
-special command: [[http://github.com/baohaojun/system-config/raw/master/bin/git-push-mac][=git-push-mac=]].
+special command: [[http://github.com/baohaojun/system-config/raw/master/bin/git-push-rebase][=git-push-rebase=]].
 
 This command will automatically generate the .html file and
 create/update the links automatically, such as the next/previous blog
