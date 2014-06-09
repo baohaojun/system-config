@@ -11,7 +11,9 @@ fi
 
 set -e
 if test $# = 2 -a ! -d "$2"; then
-    mkdir -p "$2"
+    if test $(basename $0) = smbcp; then
+        mkdir -p "$2"
+    fi
 fi
 
 if test $# -gt 2; then
@@ -27,7 +29,17 @@ if test $# -gt 2; then
     exit
 fi
 
-src=$(readlink -f "$1")
+if test $(basename $0) = smbcp; then
+    src=$(readlink -f "$1")
+else
+
+    set -- "$(readlink -f "$1")" "$(readlink -m "$2")"
+    if test -d "$2"; then
+        set -- "$1" "$2/$(basename "$1")"
+    fi
+    base_dest=$(basename "$2")
+    src=$(readlink -f "$2")
+fi
 smb=$(readlink -f ~/smb)
 
 if test "${src:0:${#smb}}"/ != "$smb/"; then
@@ -41,4 +53,10 @@ D=$share
 share=$(echo "$share" |perl -npe 's!^(//([^/]+/){2}).*!$1!')
 D=${D:${#share}}
 D=$(dirname "$D")
-smbclient "$share" -D "$D" -U "$(grep ^auth ~/.smb/smbnetfs.conf | tail -n 1 | perl -npe 's/auth\s*|\s*\$//g; s/\s+/%/')" -c "tarmode; recurse; prompt; lcd $2; mget \"$base_src\""
+
+
+if test $(basename $0) = smbcp; then
+    smbclient "$share" -D "$D" -U "$(grep ^auth ~/.smb/smbnetfs.conf | tail -n 1 | perl -npe 's/auth\s*|\s*\$//g; s/\s+/%/')" -c "tarmode; recurse; prompt; lcd $2; mget \"$base_src\""
+else
+    smbclient "$share" -D "$D" -U "$(grep ^auth ~/.smb/smbnetfs.conf | tail -n 1 | perl -npe 's/auth\s*|\s*\$//g; s/\s+/%/')" -c "tarmode; recurse; prompt; put \"$1\" \"$base_dest\""
+fi

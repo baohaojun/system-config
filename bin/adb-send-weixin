@@ -8,7 +8,11 @@ export USE_BUFFER_NAME=send-to-weixin.org
         exit
     fi
     while true; do
-        putclip-android $(ask-for-input-with-emacs -p "What do you want say on weixin?")
+        input=$(ask-for-input-with-emacs -p "What do you want say on weixin?" || true)
+        if ! test "$input"; then
+            exit
+        fi
+        putclip-android "$input"
         sleep 2
         adb-long-press 300 1850
         adb-tap 129 873

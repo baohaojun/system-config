@@ -27,7 +27,7 @@ if test "$(echo *$tag*)" != "*$tag*"; then
         break
     done
 fi
-pwd|putclip
+pwd
 if is-tty-io; then
-    pwd
+    pwd|putclip
 fi
