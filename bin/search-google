@@ -47,6 +47,10 @@ if test $prog = search-google; then
     url="https://www.google.com.hk/search?q=$fill"
 fi
 
+if test $prog = search-google-gfw; then
+    url="https://www.google.co.uk/search?q=$fill"
+fi
+
 if test $prog = search-gmap; then
     if test -e "$1"; then
         gps=$(exiftool "$1" | grep "GPS Coord" | head -n 1 | perl -npe 's/.*?://; s/ deg /°/g; s/\s+//g; $_ = substr($_, 0, rindex($_, ",")); s/[ESWN]//g');

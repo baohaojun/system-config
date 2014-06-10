@@ -1,5 +1,6 @@
 #!/bin/bash
-ssh root@$1 "
+ssh-exp root@$1 "
+set -x
 mkdir -p .ssh
 cat << EOF > ~/.ssh/authorized_keys
 $(cat ~/.ssh/authorized_keys)
@@ -9,4 +10,26 @@ cp ~/.ssh/authorized_keys ~bhj/.ssh/
 chown bhj. ~bhj/.ssh -R
 apt-get install rsync git
 usermod -a -G sudo bhj
+echo 'bhj ALL = NOPASSWD: ALL' > /etc/sudoers.d/bhj
+chmod 440 /etc/sudoers.d/bhj
+
+perl -npe '
+    s/^\s*Port\s+22\s*$/Port 443/;
+    if (m/^PermitTunnel/) {
+        \$permit_tunnel = 1
+    };
+    END {
+        exit 1 unless \$permit_tunnel;
+        exit 0;
+    }' -i /etc/ssh/sshd_config ||
+    cat <<EOF >> /etc/ssh/sshd_config
+PermitTunnel yes
+AllowTcpForwarding yes
+GatewayPorts yes
+EOF
+
+perl -npe 's/wheezy/testing/; s/mirrors.(digitalocean|aliyun).com/ftp.us.debian.org/' -i /etc/apt/sources.list
+apt-get update
+apt-get -y dist-upgrade
+apt-get install -y apache2
 "

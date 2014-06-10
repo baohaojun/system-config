@@ -1,0 +1,28 @@
+#! /usr/bin/expect -f
+
+set timeout 60
+
+set host [lindex $argv 0]
+spawn ssh $host
+expect {
+    -re {#|$} {
+        if {[llength $argv] == 2} {
+            send "bash -c '\n"
+            set arg [lindex $argv 1]
+            set arg [join [split $arg "'"] {'\''}]
+            send "$arg'\n"
+        } else {
+
+            for {set i 1} {$i < [llength $argv]} {incr i} {
+                send [lindex $argv $i]
+                send " "
+            }
+            send "\n"
+        }
+    }
+}
+interact
+
+## Local Variables: **
+## mode: tcl **
+## End: **
