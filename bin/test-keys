@@ -1,0 +1,3 @@
+#!/bin/bash
+input=$(readlink -f $(select-args /dev/input/by-id/*4000-*))
+sudo evtest $input

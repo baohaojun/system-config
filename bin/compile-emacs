@@ -1,0 +1,23 @@
+#!/bin/bash
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+cd ~/src/emacs
+if ! git-is-clean; then
+    if yes-or-no-p -y "git reset"; then
+        git reset --hard;
+        git clean -xfd
+    else
+        die "Git not clean"
+    fi
+fi
+
+git clean -xfd
+
+./autogen.sh
+./configure
+make -j8
+sudo make install

@@ -7,7 +7,8 @@ if test ! -e .git; then
     git add .
 fi
 
-perl -ne 'if (m/auth-fix '${1}'/) {
+if test "$1"; then
+    perl -ne 'if (m/auth-fix '${1}'/) {
      print;
      $x = <>;
      chomp $x;
@@ -16,7 +17,8 @@ perl -ne 'if (m/auth-fix '${1}'/) {
 } else {
   print;
 }' -i ~/.smb/smbnetfs.conf
+fi
 
 git diff -w || true
-ps-killall smbnetfs
-umount -l ~/smb
+while sudo umount -l ~/smb; do true; sleep 1; done
+ps-killall smbnetfs.allow_root

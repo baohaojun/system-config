@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test "$1" = -r; then
+    reverse=true
+    shift
+fi
+
 function die() {
     echo Error: "$@"
     exit -1
@@ -8,4 +13,10 @@ function die() {
 host=$1
 shift
 
-my-rsync -av "$@" $host:$PWD
+if test "$reverse" = true; then
+    for x in "$@"; do
+        my-rsync -av $host:$PWD/$(basename $x) $(dirname $x)
+    done
+else
+    my-rsync -av "$@" $host:$PWD
+fi

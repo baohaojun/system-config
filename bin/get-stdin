@@ -24,6 +24,16 @@ test $# = 0 -o $# = 1
 tmp=/tmp/`basename $0`.$$
 if test "$USE_BUFFER_NAME"; then
     tmp=/tmp/$USE_BUFFER_NAME
+    exec 9>/tmp/$USE_BUFFER_NAME.lock
+    if ! flock -n 9; then
+        set -x
+        (
+            find-or-exec emacs
+            emacsclient -e '(switch-to-buffer "'$USE_BUFFER_NAME'")' >/dev/null 2>&1
+            ps.tree $$
+        ) >/dev/null 2>&1
+        kill $(get-ppid|tail -n 1) >/dev/null 2>&1
+    fi
 fi
 touch $tmp
 
@@ -54,5 +64,12 @@ if test "`get-rid-of-comment $tmp | wc -w`" == 0; then
     fi
 fi
 get-rid-of-comment $tmp
+if test "$USE_BUFFER_NAME"; then
+    for x in $(seq 20 -1 2); do
+        mv "$USE_BUFFER_NAME".$((x - 1)) "$USE_BUFFER_NAME".$x >/dev/null 2>&1 || true
+    done
+
+    cp "$USE_BUFFER_NAME" "$USE_BUFFER_NAME".1
+fi
 
 rm $tmp

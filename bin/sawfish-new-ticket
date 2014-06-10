@@ -1,5 +1,8 @@
 #!/bin/bash
 
+exec > ~/.logs/$(basename $0).log 2>&1
+set -x
+
 TEMP=$(getopt -o p: --long phone: -n $(basename $0) -- "$@")
 phone=
 eval set -- "$TEMP"

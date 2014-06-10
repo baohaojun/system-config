@@ -27,10 +27,12 @@
         ("Prior" . ((Firefox "ESC" "v") (t "Prior")))
         ("C-d" . ((t "DEL")))
         ("C-e" . ((t "End")))
-        ("C-b" . ((t "Left")))
-        ("C-f" . ((t "Right")))
+        ("C-b" . ((Firefox "C-b") (t "Left")))
+        ("C-f" . ((Firefox "C-f") (t "Right")))
         ("M-b" . ((t "C-Left"))) ; this is for Escape only, not Alt
         ("M-f" . ((t "C-Right")))
+        ("M-B" . ((t "C-S-Left")))
+        ("M-F" . ((t "C-S-Right")))
         ("C-s" . ((Firefox "C-s") (t "C-g")))
         ("C-v" . ((t "Next")))
         ("M-v" . ((t "Prior")))
@@ -156,7 +158,7 @@
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")))
 
-(bind-keys global-keymap "Super-Button1-Click"  '(system "my-dict-maybe&"))
+(bind-keys global-keymap "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
 (bind-keys global-keymap "XF86Search" '(system "my-dict&"))
 
 (bind-keys global-keymap "C-S-XF86PowerOff"  '(system "lock-screen&"))
@@ -499,3 +501,4 @@
            '(read-event (format nil "%s" (lookup-event-binding (read-event)))))
 
 (bind-keys s-h-keymap "F12" '(system "toggle-dvp-us.sh&"))
+(bind-keys global-keymap "XF86TouchpadToggle" '(system "edit-with-emacs&"))

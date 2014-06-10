@@ -1,2 +1,3 @@
 0xC022D 0xbd # Zoom Up which we wish to be Scroll up
 0xC022E 0xC2 # Zoom Down which we wish to be Scroll down
+0x700b6 0xbf # edit-with-emacs for keypad open paren

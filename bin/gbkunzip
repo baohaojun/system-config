@@ -4,7 +4,12 @@ set -e
 [[ "$1" =~ .zip$ ]]
 FILE=`readlink -f "$1"`
 DIR=${FILE}
-DIR=$(basename "$DIR").$$
+if test "$2"; then
+    DIR=$(readlink -m "$2")
+else
+    DIR=$(basename "$DIR").$$
+fi
+
 mkdir -p "$DIR"
 
 TD=/tmp/$$.gbkunzip

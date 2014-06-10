@@ -10,7 +10,29 @@ if test "$1" -a "$1" != elf; then
         tag=
     fi
 else
-    time=$(epoch2date $(adb getprop ro.build.date.utc))
+    TEMP=$(getopt -o u: --long utc: -n $(basename $0) -- "$@")
+    utc=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+            -u|--utc)
+                utc=$2
+                shift 2
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error"
+                ;;
+        esac
+    done
+
+    if test ! "$utc"; then
+        utc=$(adb getprop ro.build.date.utc)
+    fi
+    time=$(epoch2date $utc)
     date=$(echo $time | perl -npe 's/T.*//; s/-//g')
     tag=$(echo $time | perl -npe 's/-//g; s/T/-/; s/://g')
 fi

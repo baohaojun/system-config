@@ -1,3 +1,7 @@
+(defun synthesize-multiple-events (&rest events)
+  (mapc (lambda (e)
+          (synthesize-event e (input-focus)))
+        events))
 (bind-keys global-keymap "KP_End"  '(system "douban loop&"))
 (bind-keys global-keymap "KP_Up"  '(system "douban nloop&"))
 (bind-keys global-keymap "KP_Down"  '(system "douban info&"))

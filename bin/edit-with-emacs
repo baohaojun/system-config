@@ -1,0 +1,13 @@
+#!/bin/bash
+export USE_BUFFER_NAME=edit-with-emacs.org
+
+input=$(ask-for-input-with-emacs -p "What do you want say with emacs?")
+if ! test "$input"; then
+    exit
+fi
+
+putclip "$input"
+
+find-or-exec firefox
+
+sawfish-browser-input "C-v"
