@@ -1,0 +1,4 @@
+#!/bin/bash
+
+dns=$(adb getprop  net.dns1)
+ssh root@phone "set -x; echo nameserver $dns > /etc/resolv.conf"

@@ -1,5 +1,5 @@
 #!/bin/bash
-ssh-exp root@$1 "
+ssh-exp root@${1:-home} "
 set -x
 mkdir -p .ssh
 cat << EOF > ~/.ssh/authorized_keys
@@ -32,4 +32,26 @@ perl -npe 's/wheezy/testing/; s/mirrors.(digitalocean|aliyun).com/ftp.us.debian.
 apt-get update
 apt-get -y dist-upgrade
 apt-get install -y apache2
+apt-get install squid3
+cat << EOF > /etc/squid3/squid.conf
+auth_param basic program /usr/lib/squid3/basic_ncsa_auth /etc/squid3/passwords
+auth_param basic realm Squid of Bao Haojun
+acl authenticated proxy_auth REQUIRED
+http_access allow authenticated
+http_access deny all
+http_port 8080
+
+coredump_dir /var/spool/squid3
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+EOF
+
+/etc/init.d/squid3 restart
+if test -e /etc/squid3/passwords; then
+    htpasswd /etc/squid3/passwords bhj
+else
+    htpasswd -c /etc/squid3/passwords bhj
+fi
 "

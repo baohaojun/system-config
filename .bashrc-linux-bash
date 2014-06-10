@@ -52,7 +52,7 @@ if test -e ~/.config/sudo-ssh; then
             done
             echo
         )
-        ssh root@localhost $(cat ~/.config/sudo-ssh) bash -c "$command"
+        ssh-exp root@localhost $(cat ~/.config/sudo-ssh) "$command"
     }
 
 else

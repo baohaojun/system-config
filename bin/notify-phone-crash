@@ -33,6 +33,17 @@ if test $(basename $0) = adb-fix-gms; then
         fi
         adb stop
         adb_push ~/today/forever/gapps-system/* /system/
+        adb remount
+        adb '
+            set -x
+            for x in /data/debian/usr/lib/pt_chown.bak /data/debian/usr/bin/sudo.bak; do
+                cp $x /system/bin/$(basename $x)
+                chmod 4755 /system/bin/$(basename $x)
+                rm ${x%.bak}
+                ln -s /system/bin/$(basename $x) ${x%.bak}
+            done
+        '
+        adb romount
         adb start
     ) || bhj-notify "Fix Gms Failed" "Please check!"
     exit

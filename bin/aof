@@ -12,6 +12,7 @@ archive_mimes=(
     application/x-compressed-tar
     application/x-bzip-compressed-tar
     application/x-rar
+    application/x-deb
     application/zip
 )
 
@@ -30,7 +31,7 @@ if test "${1##*.}" = zip; then
 elif test "${1##*.}" = rar; then
     file=$(readlink -f $1)
     if test "$2"; then
-        outd=$PWD/$2
+        outd=$(readlink -m "$2")
     else
         outd=$PWD/$(basename "$1").unzip.$$
     fi
@@ -43,7 +44,7 @@ elif test "${1##*.}" = rar; then
     fi
 elif is_archive_type "$type" || test "$(xdg-mime query default "$type")" = file-roller.desktop; then
     if test "$2"; then
-        dir=$PWD/$2
+        dir=$(readlink -m "$2")
     else
         dir=./"$(basename "$1")".unzip.$$
     fi
