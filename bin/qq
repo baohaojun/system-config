@@ -1,4 +1,1 @@
-#!/bin/bash
-
-unset TZ; 
-wine ~/bin/Linux/ext/QQ/Bin/QQ.exe >/dev/null 2>&1 &
+adb-send-weixin

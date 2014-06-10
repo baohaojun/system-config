@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo bash -c "ls -l /proc/*/fd/* 2>/dev/null" | grep "$1" |tee /dev/stderr | perl -npe 's!.*/proc/(.*?)/.*!$1 !'

@@ -1,22 +1,31 @@
 #!/bin/bash
 
-export USE_BUFFER_NAME=send-to-weixin.org
+export USE_BUFFER_NAME=send-to-$(basename $0).org
 (
     if ! flock -n 9; then
         find-or-exec emacs "No such thing"
-        emacsclient -e '(switch-to-buffer "send-to-weixin.org")'
+        emacsclient -e '(switch-to-buffer "'$(basename $0)'")'
         exit
     fi
     while true; do
-        input=$(ask-for-input-with-emacs -p "What do you want say on weixin?" || true)
+        input=$(ask-for-input-with-emacs -p "What do you want say on $(basename $0)?" || true)
         if ! test "$input"; then
             exit
         fi
         putclip-android "$input"
         sleep 2
-        adb-long-press 300 1850
-        adb-tap 129 873
-        adb-tap 1000 1020
-        adb shell input keyevent BACK
+        if [[ $0 =~ weixin ]]; then
+            adb-long-press 300 1850 # 长按底部输入框
+            adb-tap 129 873 #
+            adb-tap 1000 1020
+            adb shell input keyevent BACK
+        else # qq
+            adb-tap 560 1840 # 在底部中间点一下，如果没有出键盘，这时会出键盘，否则输入一个空格
+            sleep .2 # 可能需要等键盘出来
+            adb-tap 560 1840 # 再点一下，可能在出键盘，需要输入一个空格
+            adb-long-press 560 976 # 长点输入框
+            adb-tap 525 855 # 点一下粘贴钮
+            adb-tap 976 976 # 点一下发送钮
+        fi
     done
 ) 9> ~/.logs/$(basename $(readlink -f $0)).lock
