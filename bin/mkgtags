@@ -30,7 +30,7 @@ then
             ans=N
         fi
     elif tty >/dev/null && test "$IN_EMACS" != true; then
-        read -p "Do you want update code reading for $higherSrcDir? (Y/n): " ans
+        read -e -p "Do you want update code reading for $higherSrcDir? (Y/n): " ans
     else
         ans=Y
     fi

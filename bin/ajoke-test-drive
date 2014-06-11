@@ -33,7 +33,7 @@ export PATH="$perl5d/bin:$PATH";
 
 function prompt () {
     echo
-    builtin read -p "$@"
+    builtin read -e -p "$@"
 }
 
 function test-drive() {

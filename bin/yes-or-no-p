@@ -19,7 +19,7 @@ elif ! tty >/dev/null 2>&1; then
     REPLY=
 else
     (echo -n >/dev/tty) >/dev/null 2>&1 &&
-    read -p "$user_prompt $prompt: " >/dev/tty 2>&1
+    read -e -p "$user_prompt $prompt: " >/dev/tty 2>&1
 fi
 
 if test -z "$REPLY" -a $default = yes; then
