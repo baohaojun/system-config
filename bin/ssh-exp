@@ -7,7 +7,7 @@ spawn ssh $host
 expect {
     -re {#|$} {
         if {[llength $argv] == 2} {
-            send "bash -c '\n"
+            send "exec bash -c '\n"
             set arg [lindex $argv 1]
             set arg [join [split $arg "'"] {'\''}]
             send "$arg'\n"
