@@ -10,7 +10,7 @@ for tag in $(
     mkdir meta/tags/$tag -p;
     descfile=meta/tags/$tag.desc
     if test ! -e $descfile; then
-        read -p "input desc for tag $tag: " desc;
+        read -e -p "input desc for tag $tag: " desc;
         echo $desc > $descfile;
     fi
 done
