@@ -40,9 +40,13 @@ if ($0 =~ m,/?edit-wait$, or $0 =~ m,/?ew$,) {
   @emacsclient = ('emacsclient');
 }
 
+if ($ENV{REMOTEIP} eq "127.0.0.1") {
+    @emacsclient = ('emacs', '-nw', '-q');
+}
+
 sub get_emacs_file_name($) {
   my ($file) = @_;
-  if ($ENV{"REMOTEIP"}) {
+  if ($ENV{"REMOTEIP"} and $ENV{REMOTEIP} ne "127.0.0.1") {
     my ($myname, $myip, $myport) = @ENV{"USER", "LOCALIP", "LOCALPORT"};
     if ($protocol eq "pscp") {
       # plink on win7 has a bug, can't handle ip connection, only hostname
@@ -112,7 +116,7 @@ sub edit_1($)
     }
   }
 
-if ($remote_ip) {
+if ($remote_ip and $ENV{REMOTEIP} ne "127.0.0.1") {
   my @cmd = edit_1($myfile);
   $cmd[-1] = shell_quote($cmd[-1]);
 
