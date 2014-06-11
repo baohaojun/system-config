@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+if test "$1"; then
+   cd "$1"
+fi
+
+while true; do
+    if test $(ls |wc -l) -gt 1; then
+        echo have more than 1 item in this folder, exit
+        break
+    fi
+    echo -n */
+    for x in *; do mv "$x"/ .back-up.$$; done
+    mv .back-up.$$/* .
+    rmdir .back-up.$$
+done

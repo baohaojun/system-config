@@ -31,6 +31,9 @@ sub read_ans($) {
     unless ($prompt =~ '\s$') {
         $prompt .= " ";
     }
+    if (not $tty) {
+        tty "$prompt";
+    }
     my $ans;
     if ($tty) {
         $ENV{BASH_READ_PROMPT} = $prompt;

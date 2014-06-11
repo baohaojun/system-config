@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
 myname=$(basename $0)
 
 function die() {
@@ -135,7 +139,7 @@ function adb() {
     fi
 
     if test $# = 2 -a "$1" = shell; then # adb shell 'echo hello world'
-        exec adb shell sh -c "$2"
+        exec $(basename $0) shell sh -c "$2"
     fi
 
     if test "$2" = su -a "$1" = shell; then
@@ -182,14 +186,23 @@ function adb() {
     elif test $# -gt 1 -a "$1" = shell; then
         if ! is-tty-io;then
             if test $myname = adb; then
-                exec $the_prog "$@" | tr -d '\r'
+                exec $adb-quote "$@" | tr -d '\r'
             elif test $myname = adb-quote; then
                 args=()
-                for x in "$@"; do
-                    args=("${args[@]}" $(printf %q "$x"))
-                done
+                (
+                    IFS=$'\n'
+                    for x in "$@"; do
+                        args=("${args[@]}" $(
+                                     if test "$(printf %q "$x")" != "$x"; then
+                                         # echo \"\'"$(echo -n "$x" | perl -npe "s!'!\\'!")"\'\"
+                                         printf \"%q\" "$x"
+                                     else
+                                         printf %q "$x"
+                                     fi))
+                    done
 
-                exec $the_prog ${args[@]} | tr -d '\r'
+                    exec $the_prog ${args[@]} | tr -d '\r'
+                )
             fi
         else
             shift
@@ -216,7 +229,7 @@ function adb() {
         if test $is_adb_command = true; then
             exec $the_prog "$@"
         elif test $# -gt 0 -a "${1:0:1}" != -; then # should not do adb -s xxx
-            exec adb shell "$@"
+            exec $(basename $0) shell "$@"
         else
             exec $the_prog
         fi
