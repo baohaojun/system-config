@@ -86,7 +86,7 @@ function get-tags()
         tag=$(select-output-line -p "select tags for $x" -- bash -c "echo done; echo new; arg1-arg2 \"$existing_tags\" \"$(echo ${tags[@]})\" ")
         if test $tag = done; then
             if test "${#tags[@]}" = 0; then
-                read -p "Must specifi at least one tag, press any key to continue... "
+                read -e -p "Must specifi at least one tag, press any key to continue... "
                 continue
             else
                 echo "${tags[@]}"

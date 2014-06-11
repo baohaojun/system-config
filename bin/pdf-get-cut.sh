@@ -137,9 +137,9 @@ for side in left bot right top; do
         elif test $ans = 2; then
             max=$mid
         elif test $ans = 3; then
-            read -p "New min value: (currently $min) " min
+            read -e -p "New min value: (currently $min) " min
         elif test $ans = 4; then
-            read -p "New max value: (currently $max) " max
+            read -e -p "New max value: (currently $max) " max
         else
             echo "" -${side:0:1} $mid
             break

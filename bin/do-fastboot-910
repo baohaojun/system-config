@@ -17,20 +17,20 @@ export partitions=("$@")
 function do-partition() {
     local user_arg=false
     for x in "${partitions[@]}"; do
-	if test "$1" = "$x"; then
-	    user_arg=true
-	    break
-	fi
+        if test "$1" = "$x"; then
+            user_arg=true
+            break
+        fi
     done
 
     if test $user_arg = false; then
-	return
+        return
     fi
 
     fastboot erase $1;
     if test $1 = system; then
-	fastboot oem onfly system;
-	fastboot erase userdata
+        fastboot oem onfly system;
+        fastboot erase userdata
     fi
     fastboot flash $1 ${2:-$1.img}
 }
@@ -71,5 +71,5 @@ fastboot erase nvm
 do-partition telephony "$(get-image-path PXAY)"
 # reserved          =                                       , start:      500M, size:       12M, end:        0B
 
-read -p "Press enter to restart fastboot "
+read -e -p "Press enter to restart fastboot "
 fastboot reboot

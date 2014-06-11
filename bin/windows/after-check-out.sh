@@ -13,7 +13,7 @@ BIN_WINDOWS=$(dirname "$THIS")
 
 if test "${BIN_WINDOWS:0-25}" != "system-config/bin/windows"
 then
-    read -p 'startup.sh is not in ~/system-config/bin/windows! Press any key to exit...'
+    read -e -p 'startup.sh is not in ~/system-config/bin/windows! Press any key to exit...'
     #pause and exit, it's all blowed up!
     exit
 fi
@@ -23,7 +23,7 @@ export HOME2=`pwd`
 
 function die() {
     echo "$@" 1>&2
-    read -p 'Press any key to exit...'
+    read -e -p 'Press any key to exit...'
     exit
 }
 

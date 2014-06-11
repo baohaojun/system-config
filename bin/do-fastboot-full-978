@@ -45,13 +45,13 @@ time (
 
     if test $(basename $0) = do-fastboot-full-978; then
         if test $# != 1 -o ! -e $1; then
-	    die "Usage: $(basename $0) XXX.blf"
+            die "Usage: $(basename $0) XXX.blf"
         elif test $(basename $1) = $1 -a -e ~/src/android/boot/obm/TimBuilder; then
             ~/src/android/boot/obm/TimBuilder -r $(pwd)/$1 || true
         fi
     else
         if test $# -lt 2; then
-	    die "Usage: $(basename $0) blf partitions..."
+            die "Usage: $(basename $0) blf partitions..."
         fi
     fi
 
@@ -65,13 +65,13 @@ time (
 
     function should-do-it() {
         if test $(basename $0) = do-fastboot-full-978; then
-	    return 0;
+            return 0;
         fi
 
         for x in "${partitions[@]}"; do
-	    if test "$1" = "$x"; then
-	        return 0
-	    fi
+            if test "$1" = "$x"; then
+                return 0
+            fi
         done
         return 1
     }
@@ -182,6 +182,6 @@ time (
 )"
 
 if test $(basename $0) = do-fastboot-full-978; then
-    read -p "Press enter to restart fastboot "
+    read -e -p "Press enter to restart fastboot "
     fastboot reboot
 fi

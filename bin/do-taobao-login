@@ -24,7 +24,7 @@ if test $# = 0; then
     }
 '
 elif test $# = 1; then
-    read -p Password: -s
+    read -e -p Password: -s
     echo "$1" $REPLY
 else
     echo "$@"

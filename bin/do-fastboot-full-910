@@ -46,7 +46,7 @@ fi
 function do-partition() {
     fastboot erase $1;
     if test $1 = system; then
-	fastboot oem onfly system;
+        fastboot oem onfly system;
     fi
     fastboot flash $1 ${2:-$1.img}
 }
@@ -77,9 +77,9 @@ generate-ntim.pl $blf "/tmp/ntim.$$.out" || die 'generate ntim failed, must stop
 
 # tim               =                                       , start:        0B, size:      256K, end:        0B
 fastboot erase tim # we will erase it first (in case there is BBM, bad block
-		   # management), but flash it last (in case something went
-		   # wrong, the ROM will notice the empty tim and enter flash
-		   # mode for Software Downloader).
+                   # management), but flash it last (in case something went
+                   # wrong, the ROM will notice the empty tim and enter flash
+                   # mode for Software Downloader).
 #
 # obm               =                                       , start:      256K, size:      256K, end:        0B
 do-partition obm "$(get-image-path OBMI)"
@@ -120,5 +120,5 @@ do-partition telephony "$(get-image-path PXAY)"
 # flash tim
 fastboot flash tim "/tmp/ntim.$$.out"
 
-read -p "Press enter to restart fastboot "
+read -e -p "Press enter to restart fastboot "
 fastboot reboot

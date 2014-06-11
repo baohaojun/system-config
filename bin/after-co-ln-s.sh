@@ -234,6 +234,17 @@ if test -x ~/src/github/private-config/after-co.sh; then
     ~/src/github/private-config/after-co.sh
 fi
 
+if test ! -e /etc/systemd/system/rc-local.service; then
+    sudo cp ~/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
+    sudo chmod a+X /etc/systemd/system/rc-local.service
+    sudo systemctl --system daemon-reload
+    sudo systemctl enable rc-local.service
+    sudo systemctl start rc-local.service
+else
+    sudo cp ~/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
+fi
+
+
 sudo mkdir -p /etc/acpi/local/
 
 sync-etc-files

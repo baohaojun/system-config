@@ -4,7 +4,7 @@ export confhome=~/confluence/
 
 function quote-array() {
         printf "$(
-            for x in $(seq 1 "$#"); 
+            for x in $(seq 1 "$#");
             do
                 echo -n "%q "
             done
@@ -25,7 +25,7 @@ function congfu-get() {
     cd $confhome || die "Error, I can't switch to $confhome";
     git status -s | grep -q . && die "Error, git repo is not clean";
     congfu "$@" -- -a getPageList|perl -ne 'print unless (1..1 or m/^\s+$/)'|tee ~/.congfu-get.log|xargs -d '\n' touch
-    for x in *; do 
+    for x in *; do
         congfu "$@" -- -a getSource --title "$x"|perl -ne 'print unless(1..1)' > "$x"
         confluence-unhtmlize "$x" | perl -ne 'BEGIN{$begin=0}; print $x if $begin == 1; $x = $_; $begin = 1' > "$x".bak
         mv "$x".bak "$x"
@@ -33,28 +33,28 @@ function congfu-get() {
 }
 
 function congfu-ls-new() {
-    cd $confhome || die "Error, I can't switch to $confhome";  
+    cd $confhome || die "Error, I can't switch to $confhome";
     git status -s | perl -ne \
-'chomp(); 
-$_ = substr($_, 3); 
-if (m/^"/) { 
+'chomp();
+$_ = substr($_, 3);
+if (m/^"/) {
     $_ = eval($_);
 }
 print $_ . "\n";
-' 
+'
 }
 
 function congfu-put() {
-    # we will get what files to push to the server from STDIN! 
+    # we will get what files to push to the server from STDIN!
     cd $confhome || die "Error, I can't switch to $confhome";
-    
+
 
     CONGFU_ARGS=("$@")
-    
+
     export CONGFU_ARGSTR=$(
         quote-array "${CONGFU_ARGS[@]}"
     )
-    
+
     # 最好是在这里也处理参数，但是我们已经有一个函数在处理参数了，所以好像没有这个必要了。
     # 可是那文件参数该怎么处理呢？
 
@@ -65,7 +65,7 @@ function congfu-put() {
     then
         echo "using /dev/tty, will only update git new files"  1>&2
         congfu-ls-new|grep -e '\.org$'
-    else 
+    else
         cat
     fi| xargs -d '\n' bash -c \
 '. '$0';
@@ -74,7 +74,7 @@ function die() {
     echo "$@"
     exit 1
 }
-for x in "$@"; do 
+for x in "$@"; do
     (
         bash ~/doc/confluence-head "${x%%.org}"
         cat -- "$x"
@@ -86,7 +86,7 @@ for x in "$@"; do
     rm "$x".$$
     git add -- "$x"
     done ' true
-    for x in *.$$.bak; do 
+    for x in *.$$.bak; do
         test -e "$x" || break
         git rm --cached -- "$x";
         rm -- "$x"
@@ -97,12 +97,12 @@ for x in "$@"; do
 
 function congfu-test() {
     cat > congfu-test.$$.bak
-    
+
     echo congfu-test.$$.bak|congfu-put "$@"
     congfu "$@" -a render --title congfu-test.$$.bak |perl -ne 'print unless (1..1)' > ~/1.html
     of ~/1.html
 
-    read -p "Press enter to remove the temp page: " < /dev/tty
+    read -e -p "Press enter to remove the temp page: " < /dev/tty
     congfu "$@" -a removePage --title congfu-test.$$.bak
 
 }

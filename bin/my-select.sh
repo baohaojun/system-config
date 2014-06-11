@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function my-select() 
+function my-select()
 {
     local y=1
     if test $# = 1; then
@@ -9,7 +9,7 @@ function my-select()
     fi
 
     if test -z "$ORIGINAL_MATCHER"; then
-        for x in "$@"; do 
+        for x in "$@"; do
             echo $y\) "$x" >/dev/tty;
             ((y++))
         done
@@ -19,7 +19,7 @@ function my-select()
         NUM=$ORIGINAL_MATCHER
         export ORIGINAL_MATCHER=
     else
-        read -p "#?" NUM
+        read -e -p "#?" NUM
     fi
 
     if [[ x"$NUM" = x ]] || ( [[ "$NUM" =~ ^[1-9][0-9]*$ ]] &&  (( "$NUM" > $# )) ); then
@@ -34,7 +34,7 @@ function my-select()
         for arg in "$@"; do
             match=true
             for entry in $NUM; do
-                if (test $reverse = 0 && ! echo "$arg" | grep -P -q -i -e "$entry") || (test $reverse = 1 && echo "$arg" |grep -P -i -q -e "$entry"); 
+                if (test $reverse = 0 && ! echo "$arg" | grep -P -q -i -e "$entry") || (test $reverse = 1 && echo "$arg" |grep -P -i -q -e "$entry");
                 then
                     match=false
                     break
@@ -47,7 +47,7 @@ function my-select()
         ans=$(command my-select "${matches[@]}")
         if [[ "$ans" =~ ^[1-9][0-9]*$ ]] && (( ans <= "${#matches[@]}" )); then
             ans=${matches[ans-1]}
-            
+
             num=1
             for x in "$@"; do
                 if test "$x" = "$ans"; then
@@ -58,8 +58,8 @@ function my-select()
             done
         fi
 
-        
-                
+
+
     fi
     echo $NUM
 }

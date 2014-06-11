@@ -16,19 +16,19 @@ function git-diff() {
         if git diff -w $(repo-remote-branch) HEAD "$@" | grep -q .; then
             git diff -w $(repo-remote-branch) HEAD "$@"
         else
-            read -p "$@ seems contain only whitespace changes, press Enter to continue...  "
+            read -e -p "$@ seems contain only whitespace changes, press Enter to continue...  "
         fi
         return 0
     fi
 
     if git status -s "$@" | grep -q -P -e '^\?\?'; then
-        read -p "$@ seems to be a new file, press Enter to continue...  "
+        read -e -p "$@ seems to be a new file, press Enter to continue...  "
         diff /dev/null "$@"
     else
         if git diff -w "$@" | grep -q .; then
             git diff -w "$@"
         else
-            read -p "$@ seems contain only whitespace changes, press Enter to continue...  "
+            read -e -p "$@ seems contain only whitespace changes, press Enter to continue...  "
         fi
     fi
 }

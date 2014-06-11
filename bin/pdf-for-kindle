@@ -74,7 +74,7 @@ if test ! -e odd-cut.pdf || yes-or-no-p "Redo odd.pdf cut?"; then
 fi
 
 if test ! -e even-cut.pdf || yes-or-no-p "Redo even.pdf cut?"; then
-    read -p "Press any key to continue... "
+    read -e -p "Press any key to continue... "
     if test "$CUT_SPEC_EVEN"; then
         cut=$CUT_SPEC_EVEN
     else

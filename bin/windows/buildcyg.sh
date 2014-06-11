@@ -10,7 +10,7 @@ mkdir -p build cygbin
 cd build
 ../configure CFLAGS='-g -O0' CPPFLAGS='-g -O0' --enable-debugging --prefix="$(readlink -f ../cygbin)" -v |tee -a conf.out
 
-read -p "configure finished Press Enter to continue..."
+read -e -p "configure finished Press Enter to continue..."
 make |tee -a make.out
 make install |tee -a install.out
 cat <<EOF > install.cmd

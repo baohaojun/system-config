@@ -31,10 +31,11 @@ sub read_ans($) {
     unless ($prompt =~ '\s$') {
         $prompt .= " ";
     }
-    tty "$prompt";
     my $ans;
     if ($tty) {
-        chomp($ans = <>);
+        $ENV{BASH_READ_PROMPT} = $prompt;
+        my $cmd = qq(bash -c 'read -e -p "\$BASH_READ_PROMPT"; echo -n \$REPLY');
+        chomp($ans = qx($cmd));
     } else {
         my @accrue_prompt = split("\n", $accrue_prompt);
         if (@accrue_prompt > 20) {

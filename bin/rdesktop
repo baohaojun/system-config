@@ -36,7 +36,7 @@ function rdesktop() {
     set -- -k $kbd -r clipboard:PRIMARYCLIPBOARD "$@"
     pass=$(get-authinfo $host $user rdesktop)
     if test -z "$pass"; then
-        read -p "Password: " -s pass
+        read -e -p "Password: " -s pass
     fi
     setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1 | tail -n 1) $host -u $user -p $pass "$@"&
 }

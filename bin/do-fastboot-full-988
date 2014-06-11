@@ -241,6 +241,6 @@ time (
 
 
 if [[ $(basename $0) =~ do-fastboot-full ]]; then
-    read -p "Press enter to restart fastboot "
+    read -e -p "Press enter to restart fastboot "
     fastboot reboot
 fi

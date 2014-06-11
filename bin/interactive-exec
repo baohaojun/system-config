@@ -2,13 +2,13 @@
 
 function interactive-exec() {
     args=()
-    while true; do 
+    while true; do
         arg=$(select-output-line -- bash -c 'echo nope, no more args, thank you; grep -P -e "^\s*-" ~/1.txt'|pn 1)
         if test "$arg" = "nope,"; then
             break
         fi
         args=("${args[@]}" $arg)
-        read -p "argument? " arg
+        read -e -p "argument? " arg
         args=("${args[@]}" $arg)
     done
 
