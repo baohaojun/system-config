@@ -413,7 +413,6 @@
 (bind-keys s-h-keymap "g"  '(system "gnus&"))
 (bind-keys s-h-keymap "w"  '(system "emacs-weibo&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
-(bind-keys s-h-keymap "e" '(system "sawfish-click.sh&"))
 (bind-keys s-h-keymap "Super-p" '(system "input-main-passwd&"))
 (bind-keys s-h-keymap "Super-SPC" '(synthesize-event-gnome? "Menu" (input-focus)))
 (bind-keys s-h-keymap "Super-+" '(system "terminal-font-change +&"))
@@ -502,3 +501,5 @@
 
 (bind-keys s-h-keymap "F12" '(system "toggle-dvp-us.sh&"))
 (bind-keys global-keymap "XF86TouchpadToggle" '(system "edit-with-emacs&"))
+(bind-keys global-keymap "Super-(" '(system "sawfish-start-macro&"))
+(bind-keys s-h-keymap "e" '(system "sawfish-play-macro&"))

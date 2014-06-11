@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cat ~/.cache/sawfish-macro |
+    while read key; do
+        sawfish-client -e "(synthesize-event $key (input-focus))" >/dev/null 2>&1
+    done
+while test "$(sawfish-get-key)" = e; do
+    exec $0
+done

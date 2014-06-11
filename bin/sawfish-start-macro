@@ -1,0 +1,10 @@
+#!/bin/bash
+rm -f ~/.cache/sawfish-macro
+while true; do
+    key=$(sawfish-client -e '(let ((event (read-event))) (message (format nil "%s" (event-name event))))')
+    if test "$key" = '"Super-)"'; then
+        break
+    fi
+    echo "$key" >> ~/.cache/sawfish-macro
+    sawfish-client -e "(synthesize-event $key (input-focus))" >/dev/null 2>&1
+done

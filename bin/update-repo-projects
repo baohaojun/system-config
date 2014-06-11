@@ -4,6 +4,18 @@ if test -e ~/.config/ssh-agent; then
     . ~/.config/ssh-agent;
 fi
 
+if test -e ~/src/android/kernel/; then
+    (
+        cd ~/src/android/kernel/
+        rm-non-build-files-kernel arch/arm/configs/msm8974sfo_defconfig
+        rm -f newer mark
+        git add .
+        git co HEAD Documentation
+        git commit -m "rm-non-build-kernel $(today)"
+        repo sync -d .
+    )
+fi
+
 export PATH=$(echo $PATH|tr ':' '\n'| perl -ne 'next if m/overide/; chomp; $path .= ":$_"; END{print substr($path, 1)}')
 
 if test "$RUNNING_IN_CRON" = true; then

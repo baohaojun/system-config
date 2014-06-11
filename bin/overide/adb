@@ -186,7 +186,7 @@ function adb() {
     elif test $# -gt 1 -a "$1" = shell; then
         if ! is-tty-io;then
             if test $myname = adb; then
-                exec $adb-quote "$@" | tr -d '\r'
+                exec adb-quote "$@" | tr -d '\r'
             elif test $myname = adb-quote; then
                 args=()
                 (

@@ -1,0 +1,53 @@
+#!/bin/bash
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if ! test -e vmlinux; then
+    if test -e ~/today/vmlinux && yes-or-no-p -y "use ~/today/vmlinux"; then
+        true
+    else
+        die "vmlinux not found"
+    fi
+fi
+
+TEMP=$(getopt -o x: --long hex: -n $(basename $0) -- "$@")
+hex=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -x|--hex)
+            hex=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) addr"
+fi
+
+if test "$hex" -a "${1:0:2}" != 0x; then
+    set -- 0x$1
+fi
+
+if test $(basename $0) = adb-d; then
+    cmd='disassemble /m '
+else
+    cmd='b *'
+fi
+
+if test -e vmlinux; then
+    arm-eabi-gdb -ex "$cmd"$1 vmlinux
+else
+    arm-eabi-gdb -ex "$cmd"$1 ~/today/vmlinux
+fi
