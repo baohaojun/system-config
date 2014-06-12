@@ -13,7 +13,7 @@
 (bind-keys global-keymap "Super-F24" '(move-cursor-down))
 
 (setq bhj-is-gnome? nil)
-(setq emacs-style-window-class-re "emacs|xfce4-terminal|konsole|gnome-terminal|rdesktop|urxvt|krdc|vncviewer")
+(setq emacs-style-window-class-re "emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
 (setq s-h-keymap (make-keymap)
       c-x-esc-keymap (make-keymap)
       c-x-map (make-keymap)
@@ -45,8 +45,8 @@
         ("C-n" . ((t "Down")))
         ("C-x" . ((t "C-x")))))
 
-(bind-keys c-x-map "ESC" '(let ((key (concat "M-" (event-name (read-event "M-")))))
-                             (synthesize-event key (input-focus))))
+(bind-keys s-h-keymap "ESC" '(let ((key (concat "M-" (event-name (read-event "M-")))))
+                               (synthesize-event key (input-focus))))
 
 (setq esc-g-remap-alist
       '(("M-g g" . ("M-v" "g" "p")))) ; go to page in acroread
@@ -184,8 +184,8 @@
                 (to (cdr key-map-1)))
             (if (string-match "^M-" from 0 nil)
                 (bind-keys esc-map (substring from 2) (lambda () (classed-key-synthesize from to)))
-              (bind-keys global-keymap from (lambda () (classed-key-synthesize from to))))
-            (bind-keys c-x-map from (lambda () (synthesize-event-gnome? from (input-focus))))))
+              (bind-keys c-x-map from (lambda () (synthesize-event-gnome? from (input-focus))))
+              (bind-keys global-keymap from (lambda () (classed-key-synthesize from to))))))
         global-remap-alist)
   (mapc (lambda (key-map-1)
           (let ((from (car key-map-1))
@@ -195,8 +195,8 @@
         esc-g-remap-alist)
   (bind-keys global-keymap "ESC" esc-map)
   (bind-keys esc-map "ESC" (lambda () (synthesize-event-gnome? "ESC" (input-focus))))
-  (bind-keys esc-map "g" esc-g-map)
-  (bind-keys global-keymap "C-x" c-x-map))
+  (bind-keys s-h-keymap "C-x" c-x-map)
+  (bind-keys esc-map "g" esc-g-map))
 
 (defun undo-global-remap()
   (mapc (lambda (key-map-1)
@@ -334,7 +334,7 @@
 (require 'sawfish.wm.commands.x-cycle)
 
 (setq im-class "QQ.exe|kopete|Pidgin" ;; im = instant messanger
-      br-class "Navigator|epiphany-browser|chromium|Download" ;; br = browser
+      br-class "Navigator|firefox|epiphany-browser|chromium|Download" ;; br = browser
       dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|AcroRd32.exe|acroread|evince|Gnumeric|mupdf" ;; dc = doc
       mg-class "meld|gimp|gitk|tkdiff|rdesktop" ;; mg = meld/gimp
       fm-class "nautilus|file-roller" ;; fm = file manager

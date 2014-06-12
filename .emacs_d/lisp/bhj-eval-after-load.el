@@ -167,3 +167,6 @@
 
 
 (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+(add-hook 'message-mode-hook
+          (lambda ()
+            (local-set-key "\C-c\M-o" 'org-mime-htmlize)))

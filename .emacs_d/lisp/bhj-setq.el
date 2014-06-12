@@ -34,55 +34,6 @@
 (setq tramp-remote-path '(tramp-own-remote-path tramp-default-remote-path "/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin" "/opt/sbin" "/opt/local/bin"))
 (setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
                               auto-mode-alist))
-(setq weblogger-entry-mode-hook
-      (list
-       (lambda ()
-         (make-local-variable 'fill-nobreak-predicate)
-         (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p))))
-
-(setq weblogger-pre-struct-hook
-      (list
-       (lambda ()
-         (interactive)
-         (message-goto-body)
-         (shell-command-on-region
-          (point) (point-max) "markdown" nil t nil nil)
-         (message-goto-body)
-         (save-excursion
-           (let ((body (buffer-substring-no-properties (point) (point-max))))
-             (find-file "~/markdown.html")
-             (kill-region (point-min) (point-max))
-             (insert body)
-             (save-buffer)
-             (kill-buffer)
-             (shell-command "of ~/markdown.html" nil nil)
-             (yes-or-no-p "Is the preview ok?"))))))
-
-(setq weblogger-post-struct-hook
-      (list
-       (lambda ()
-         (interactive)
-         (run-hooks 'weblogger-start-edit-entry-hook)
-         (set-buffer-modified-p t))))
-
-(setq weblogger-start-edit-entry-hook
-      (list
-       (lambda ()
-         (interactive)
-         (message-goto-body)
-         (shell-command-on-region
-          (point) (point-max) "unmarkdown" nil t nil nil)
-         (let ((paragraph-start (concat paragraph-start "\\|    \\|\t")))
-           (message-goto-body)
-           (fill-region (point) (point-max)))
-         (set-buffer-modified-p nil))))
-
-(setq weblogger-post-setup-headers-hook
-      (list
-       (lambda ()
-         (interactive)
-         (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p)
-         (set-buffer-modified-p nil))))
 
 (setq waw-mode-map
       (let ((map (make-sparse-keymap)))

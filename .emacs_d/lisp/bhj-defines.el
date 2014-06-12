@@ -1388,4 +1388,26 @@ criteria can be provided via the optional match-string argument "
   (c-set-offset 'arglist-intro '+))
 (add-hook 'java-mode-hook 'bhj-c-indent-setup)
 
+(defun org-export-string (string fmt &optional dir)
+  "Export STRING to FMT using existing export facilities.
+During export STRING is saved to a temporary file whose location
+could vary.  Optional argument DIR can be used to force the
+directory in which the temporary file is created during export
+which can be useful for resolving relative paths.  Dir defaults
+to the value of `temporary-file-directory'."
+  (let ((temporary-file-directory (or dir temporary-file-directory))
+        (tmp-file (make-temp-file "org-" nil ".org")))
+    (cond
+     ((eq fmt 'org)
+      (setq fmt 'ascii))
+     (t
+      (setq fmt 'html)))
+    (unwind-protect
+       (with-temp-buffer
+         (insert string)
+         (write-file tmp-file)
+         (org-load-modules-maybe)
+         (org-export-as fmt))
+      (delete-file tmp-file))))
+
 (provide 'bhj-defines)

@@ -29,7 +29,7 @@ is_archive_type() {
 if test "${1##*.}" = zip; then
     gbkunzip "$@"
 elif test "${1##*.}" = rar; then
-    file=$(readlink -f $1)
+    file=$(readlink -f "$1")
     if test "$2"; then
         outd=$(readlink -m "$2")
     else

@@ -68,7 +68,7 @@ _adb() {
             COMPREPLY=( ${COMPREPLY[@]:-} ${adb_commands[@]:-} )
             ;;
         OPT_SERIAL_ARG)
-            local devices=$(command adb devices 2> /dev/null | grep -v "List of devices" | awk '{ print $1 }')
+            local devices=$(command adb-noquote devices 2> /dev/null | grep -v "List of devices" | awk '{ print $1 }')
             COMPREPLY=( $(compgen -W "${devices}" -- ${cur}) )
             ;;
         COMMAND)
@@ -193,8 +193,8 @@ _adb_cmd_shell() {
     fi
 
     if [[ $i -eq $COMP_CWORD && ${cur:0:1} != "/" ]]; then
-        paths=$(command adb ${args[@]} shell echo '$'PATH 2> /dev/null | tr -d '\r' | tr : '\n')
-        COMMAND=$(command adb ${args[@]} shell ls $paths '2>' /dev/null | tr -d '\r' | {
+        paths=$(command adb-noquote ${args[@]} shell echo '$'PATH 2> /dev/null | tr -d '\r' | tr : '\n')
+        COMMAND=$(command adb-noquote ${args[@]} shell ls $paths '2>' /dev/null | tr -d '\r' | {
             while read -r tmp; do
                 command=${tmp##*/}
                 printf '%s\n' "$command"
@@ -250,7 +250,7 @@ _adb_cmd_uninstall() {
     fi
 
     packages="$(
-        command adb ${args[@]} shell pm list packages '2>' /dev/null 2> /dev/null | tr -d '\r' | {
+        command adb-noquote ${args[@]} shell pm list packages '2>' /dev/null 2> /dev/null | tr -d '\r' | {
             while read -r tmp; do
                 local package=${tmp#package:}
                 echo -n "${package} "
@@ -316,7 +316,7 @@ _adb_util_list_files() {
     fi
 
     toks=( ${toks[@]-} $(
-        command adb ${args[@]} shell ls -dF ${file}"*" '2>' /dev/null 2> /dev/null | tr -d '\r' | {
+        command adb-noquote ${args[@]} shell ls -dF ${file}"*" '2>' /dev/null 2> /dev/null | tr -d '\r' | {
             while read -r tmp; do
                 filetype=${tmp%% *}
                 filename=${tmp:${#filetype}+1}

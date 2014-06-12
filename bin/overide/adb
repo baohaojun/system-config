@@ -12,23 +12,23 @@ function die() {
 }
 
 if which the-true-adb >/dev/null 2>&1; then
-    the_prog=$(which the-true-adb)
+    the_adb=$(which the-true-adb)
 else
     die "the true adb is not found"
 fi
 
-export the_prog
+export the_adb
 
-$the_prog start-server >/dev/null 2>&1
+$the_adb start-server >/dev/null 2>&1
 
-if test -z "$the_prog"; then
+if test -z "$the_adb"; then
     die "Error, the adb is not found"
 fi
 
 function adb() {
     if test "$1" = -w; then
         echo -n 'wait-for-device ' 1>/dev/tty
-        $the_prog wait-for-device
+        $the_adb wait-for-device
         shift
     fi
 
@@ -48,12 +48,12 @@ function adb() {
     fi
     if test "$1" = -r; then
         echo -n 'wait-for-device ' 1>/dev/tty
-        $the_prog wait-for-device
+        $the_adb wait-for-device
 
-        if $the_prog root 2>&1 | grep 'restarting adbd as root'; then
+        if $the_adb root 2>&1 | grep 'restarting adbd as root'; then
             while true; do
                 echo -n '.' 1>/dev/tty
-                $the_prog wait-for-device
+                $the_adb wait-for-device
                 if adb shell id | grep uid=0 -q; then
                     break
                 fi
@@ -124,9 +124,9 @@ function adb() {
         fi
         export ANDROID_SERIAL=$(cat ~/.config/adb-device)
     elif test "$1" != devices -a -z "$ANDROID_SERIAL"; then
-        setsid $the_prog start-server >/dev/null 2>&1 ;
+        setsid $the_adb start-server >/dev/null 2>&1 ;
         devices=(
-            $($the_prog devices | perl -ne 'print unless 1..1' | pn 1)
+            $($the_adb devices | perl -ne 'print unless 1..1' | pn 1)
         )
         if test ${#devices[@]} -gt 1; then
             if test ! -e ~/.config/adb-device || ! echo ${devices[@]} | grep -q $(cat ~/.config/adb-device); then
@@ -179,14 +179,16 @@ function adb() {
         shift
         gdbserver "$@"
     elif test "$#" = 3 -a "$1" = shell -a "$2" = restart; then
-        $the_prog shell stop $3;
-        exec $the_prog shell start $3;
+        $the_adb shell stop $3;
+        exec $the_adb shell start $3;
     elif test "$#" = 3 -a "$1" = shell -a "$2" = sstat; then # service stat
-        exec $the_prog shell getprop init.svc.$3
+        exec $the_adb shell getprop init.svc.$3
     elif test $# -gt 1 -a "$1" = shell; then
         if ! is-tty-io;then
             if test $myname = adb; then
                 exec adb-quote "$@" | tr -d '\r'
+            elif test $myname = adb-noquote; then
+                exec $the_adb "$@" | tr -d '\r'
             elif test $myname = adb-quote; then
                 args=()
                 (
@@ -201,7 +203,7 @@ function adb() {
                                      fi))
                     done
 
-                    exec $the_prog ${args[@]} | tr -d '\r'
+                    exec $the_adb ${args[@]} | tr -d '\r'
                 )
             fi
         else
@@ -227,11 +229,11 @@ function adb() {
         done
 
         if test $is_adb_command = true; then
-            exec $the_prog "$@"
+            exec $the_adb "$@"
         elif test $# -gt 0 -a "${1:0:1}" != -; then # should not do adb -s xxx
             exec $(basename $0) shell "$@"
         else
-            exec $the_prog
+            exec $the_adb
         fi
     fi
 }
@@ -264,10 +266,10 @@ function gdbserver() {
     fi
     if test "$process"; then
         pid=$(select-output-line -- bash -c 'adb shell ps |grep -P -e "\Q'$process'\E"'|pn 2)
-        exec $the_prog shell gdbserver --attach :$port $pid
+        exec $the_adb shell gdbserver --attach :$port $pid
         return 0;
     fi
-    $the_prog forward tcp:$port tcp:$port || true
-    exec $the_prog shell gdbserver :$port "$@"
+    $the_adb forward tcp:$port tcp:$port || true
+    exec $the_adb shell gdbserver :$port "$@"
 }
 adb "$@"

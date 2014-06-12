@@ -53,12 +53,6 @@ if git-is-ancestor master HEAD; then
     command git co -B master
 fi
 
-if ! command git config remote.origin.url | grep -q -P -e 'baohaojun|bhj'; then
-    if ! yes-or-no-p -y "Push is ok for $(git config remote.origin.url)?"; then
-        exit 0 # this is not my github, do not try to push it.
-    fi
-fi
-
 git-interactive-add
 
 
