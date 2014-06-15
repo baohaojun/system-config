@@ -11,6 +11,11 @@ function die() {
     exit -1
 }
 
+head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
+if test "$head_branch" && yes-or-no-p -y "use $head_branch as the target branch for review?"; then
+    export REPO_BRANCH=$head_branch
+fi
+
 action='--submit --verified +1 --code-review +2'
 
 TEMP=$(getopt -o a --long abort -n $(basename $0) -- "$@")

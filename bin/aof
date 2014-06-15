@@ -18,6 +18,9 @@ archive_mimes=(
 
 type=$(xdg-mime query filetype "$1")
 is_archive_type() {
+    if echo "$1" | grep -q '/x-.*compress'; then
+        return 0
+    fi
     for x in ${archive_mimes[@]}; do
         if test "$1" = "$x"; then
             return 0;

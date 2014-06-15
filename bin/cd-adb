@@ -3,7 +3,7 @@
 
 TEMP=$(getopt -o u:d: --long utc:dir -n $(basename $0) -- "$@")
 utc=
-dir=
+dir=sanfrancisco_android
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -32,11 +32,7 @@ time=$(epoch2date $utc)
 date=$(echo $time | perl -npe 's/T.*//; s/-//g')
 tag=$(echo $time | perl -npe 's/-//g; s/T/-/; s/://g')
 
-if test "$dir" = elf; then
-    cd ~/smb/share.smartisan.cn/SanFranciscoBuild/elf/release-$date
-else
-    cd ~/smb/share.smartisan.cn/SanFranciscoBuild/sanfrancisco_android/release-$date
-fi
+cd ~/smb/share.smartisan.cn/SanFranciscoBuild/$dir/release-$date
 
 if test "$(echo *$tag*)" != "*$tag*"; then
     for x in *$tag*; do

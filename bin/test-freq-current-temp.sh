@@ -12,13 +12,15 @@ else
     else
         which=min
     fi
-    max_freq=$(select-args $(adb cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies | tr ' ' '\n' | reverse))
+    max_freq=$(select-args $(adb cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies | tr ' ' '\n' | reverse; echo no-change))
 
     adb-tty su -c '
     freq='$max_freq'
     for x in $(seq 0 3); do
         echo 1 > /sys/devices/system/cpu/cpu$x/online;
-        echo $freq > /sys/devices/system/cpu/cpu$x/cpufreq/scaling_'$which'_freq;
+        if test $freq != no-change; then
+            echo $freq > /sys/devices/system/cpu/cpu$x/cpufreq/scaling_'$which'_freq;
+        fi
     done;
     mkdir -p /sdcard/current/$freq;
     n=0
