@@ -35,6 +35,6 @@ function rsync() {
     command rsync "$@"
 }
 
-if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which -- "$0")" )"; then
+if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which -- "$0" 2>/dev/null)" )"; then
     rsync "$@"
 fi

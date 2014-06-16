@@ -4,7 +4,20 @@
 if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
     adb -S
 fi
-adb shell su -c 'busybox sh /sdcard/start-debian2.sh'
+if echo $SHELLOPTS | grep xtrace; then
+    xset=-x
+else
+    xset=
+fi
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+adb push ~/system-config/doc/galaxy-nexus-root/sdcard/start-debian2.sh /sdcard/start-debian2.sh
+if ! adb shell su -c "busybox sh $xset /sdcard/start-debian2.sh" | grep 'start debian done'; then
+    die debian not started successfully
+fi
 if ! adb -w shell netcfg|grep -q 'rndis0.*129/'; then
     adb shell su -c "
         setsid setsid sh -c '

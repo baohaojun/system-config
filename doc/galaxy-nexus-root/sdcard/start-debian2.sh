@@ -9,6 +9,8 @@ if [ ! -f /tmp/.mounted ] ; then
     mount -t tmpfs none /tmp && touch /tmp/.mounted
 fi
 
+unset LD_PRELOAD
+
 # setup posix shared memory
 if [ ! -d /dev/shm ] ; then mkdir /dev/shm ; fi
 chmod 1777 /dev/shm
@@ -27,7 +29,7 @@ if [ -d /data/debian/sys/kernel/debug ] && [ ! -d /data/debian/sys/kernel/debug/
     mount -o bind /sys/kernel/debug/ /data/debian/sys/kernel/debug
 fi
 
-if [ -e /data/debian/dev/.dev-not-mounted ] ; then
+if test ! -e /data/debian/dev/null -o -e /data/debian/dev/.dev-not-mounted -o -f /data/debian/dev/null; then
    mount -o bind /dev /data/debian/dev
    mount -o bind /dev/pts /data/debian/dev/pts
    mount -o bind /dev/shm /data/debian/dev/shm
@@ -50,12 +52,7 @@ echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 if test ! -e /data/debian/second-stage-done; then
     echo second-stage not done yet.
     exit 0
-    chroot /data/debian /debootstrap/debootstrap --second-stage
-    echo deb http://r66:9999/debian testing main contrib non-free > /etc/apt/sources.list
-    echo 192.168.15.33 r66 >> /etc/hosts
-    touch /data/debian/second-stage-done
 fi
-touch /data/debian/home/bhj/.config/sudo-ssh
 chroot /data/debian /etc/init.d/ssh start
 
 # mount sd in debian
@@ -63,3 +60,4 @@ if [ -d /mnt/sdcard/Android ] && [ -d /data/debian/mnt/sdcard/ ] && [ ! -d /data
 then
    mount -o bind /mnt/sdcard /data/debian/mnt/sdcard
 fi
+echo start debian done

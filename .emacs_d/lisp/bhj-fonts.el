@@ -69,6 +69,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (defvar chinese-font-size-scale-alist nil)
 
+;; On different platforms, I need to set different scaling rate for
+;; differnt font size.
 (cond
  ((and (boundp '*is-a-mac*) *is-a-mac*)
   (setq chinese-font-size-scale-alist '((10.5 . 1.3) (11.5 . 1.3) (16 . 1.3) (18 . 1.25))))

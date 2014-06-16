@@ -1,0 +1,4 @@
+#!/bin/bash
+for x in keystore ril-daemon cnd gsiff_daemon quipc_igsn quipc_main sensors ; do
+    adb stop $x
+done

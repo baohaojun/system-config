@@ -1,0 +1,10 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: codegen
+# key: codegen
+# --
+REM start code-generator "^\\\\s *rem\\\\s *"
+$0
+REM end code-generator
+REM start generated code
+
+REM end generated code
