@@ -1,4 +1,7 @@
 #!/bin/bash
-for x in keystore ril-daemon cnd gsiff_daemon quipc_igsn quipc_main sensors ; do
-    adb stop $x
-done
+if adb fuser -k -m /data | grep .; then
+    for x in keystore ril-daemon cnd gsiff_daemon quipc_igsn quipc_main sensors ; do
+        adb stop $x
+    done
+fi
+adb fuser -k -m /data

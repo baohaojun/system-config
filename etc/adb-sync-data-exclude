@@ -1,0 +1,7 @@
+mnt/sdcard
+data/core
+data/logs
+data/log-crawler
+data/tombstones
+data/dalvik-cache
+data/debian/android

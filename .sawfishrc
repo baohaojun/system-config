@@ -411,7 +411,7 @@
 (bind-keys global-keymap "Super-S-SPC" #'scroll-lock-toggle)
 (bind-keys global-keymap "C-ESC" '(synthesize-event "ESC" (input-focus)))
 (bind-keys s-h-keymap "g"  '(system "gnus&"))
-(bind-keys s-h-keymap "w"  '(system "emacs-weibo&"))
+(bind-keys s-h-keymap "w"  '(system "weixin&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
 (bind-keys s-h-keymap "Super-p" '(system "input-main-passwd&"))
 (bind-keys s-h-keymap "Super-SPC" '(synthesize-event-gnome? "Menu" (input-focus)))

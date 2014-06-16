@@ -134,7 +134,8 @@
  '(require-final-newline t)
  '(safe-local-variable-values
    (quote
-    ((require-final-newline)
+    ((eval activate-input-method "sdim")
+     (require-final-newline)
      (encoding . utf-8)
      (global-robe-mode)
      (nxml-child-indent . 4)

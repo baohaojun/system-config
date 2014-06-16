@@ -1,6 +1,6 @@
 #!/bin/bash
 
-seconds=800
+seconds=550
 if test $# = 5 -o $# = 3; then
     seconds=$1
     shift

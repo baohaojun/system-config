@@ -29,7 +29,7 @@ if test "$USE_BUFFER_NAME"; then
         set -x
         (
             find-or-exec emacs
-            emacsclient -e '(switch-to-buffer "'$USE_BUFFER_NAME'")' >/dev/null 2>&1
+            emacsclient -e '(progn (switch-to-buffer "'$USE_BUFFER_NAME'") (toggle-input-method t))' >/dev/null 2>&1
             ps.tree $$
         ) >/dev/null 2>&1
         kill $(get-ppid|tail -n 1) >/dev/null 2>&1
@@ -42,6 +42,9 @@ if test "$prompt"; then
 
 ###start of comment###
 "$prompt"
+# Local variables:
+# eval: (activate-input-method "sdim")
+# End:
 EOF
 elif tty >/dev/null 2>&1 || test $# = 1; then
     test $# = 1 -a "$1" != $tmp && cat $1 > $tmp
