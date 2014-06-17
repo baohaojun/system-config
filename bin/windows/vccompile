@@ -37,7 +37,7 @@ sub main
         my @version_line = grep {/Format Version (.*?)\.00/} `head -n 5 "$sln_file"`;
         die "$sln_file has no version info!" if (scalar @version_line != 1);
         $version_line[0] =~ m/Format Version (.*?)\.00/;
-        $vc_program = "vc".($1-1).".com";
+        $vc_program = "vc".$1.".com";
     }
 
     getAllSubProjs();
@@ -70,7 +70,7 @@ sub doCompile
     my $all_ok = 1;
     foreach my $p (@projs_to_compile) {
         print "make: Entering directory ", getProjDir($p), "\n";
-        
+
         foreach my $c (@configs_to_compile) {
             chdir ($sln_dir);
             #subprocess.check_call(('vc6.com', slnFile, '/make', "%s - win32 %s" % (p, c)) + options)
@@ -82,14 +82,14 @@ sub doCompile
                 #subprocess.check_call((vcExec, slnFile, '/Project', p, cmd, c) + options)
                 my $cmd = $targets_to_compile[0];
                 $cmd = "/Build" if (not $cmd);
-		print "$vc_program " . shell_quote(basename($sln_file)) . " /Project " . shell_quote($p) . " $cmd $c @targets_to_compile\n";
+                print "$vc_program " . shell_quote(basename($sln_file)) . " /Project " . shell_quote($p) . " $cmd $c @targets_to_compile\n";
                 open($vc_out, "-|", $vc_program, basename($sln_file), "/Project", $p, $cmd, $c, @targets_to_compile[1..@targets_to_compile]);
             }
             handleVcOutput($vc_out);
             close $vc_out;
-	    $all_ok = 0 if ($?);
+            $all_ok = 0 if ($?);
         }
-	die "child $vc_program exited with $?" if not $all_ok;
+        die "child $vc_program exited with $?" if not $all_ok;
         print "make: Leaving directory ", getProjDir($p), "\n";
     }
 }
@@ -98,7 +98,7 @@ sub canonic_files
 {
     (my $base, my @dirs) = @_;
     die "base is empty!" if (not $base);
-    
+
     $" = ", ";
     my $dir;
     my @existing_dirs;
@@ -122,7 +122,7 @@ sub canonic_files
             @good_base = (@good_base, @matches);
         }
         closedir $dh;
-        return @good_base;                      
+        return @good_base;
     }
 }
 
@@ -146,7 +146,7 @@ sub handleVcOutput($)
         s!^[0-9]+>!!; #get rid of `1>'
         s!^\s+(.*?): see declaration!$1: warning C2371: see declaration!;
         s!^\s+(.*?): see refer!$1: warning C2371: see refer!;
-	s!^\s+(.*?): (could be|or)!$1: warning C2222: $2!;
+        s!^\s+(.*?): (could be|or)!$1: warning C2222: $2!;
         s!\):!) :!g;
         s!\(([0-9]+),[0-9]+\)!($1)!;
         s!error (?:CS|RC)([0-9]+) ?:!error C$1:!;
@@ -162,7 +162,7 @@ sub handleVcOutput($)
             chdir $proj_dir[0];
         }
         if (m/^(\s*)(.*?)(\([0-9]+(?:,[0-9]+)?\).*:.*)/) {
-            
+
             chomp(my $key = `cygpath -au "$2"`);
             $key or die "cygpath failed";
             $key = uc($key);
@@ -174,10 +174,10 @@ sub handleVcOutput($)
                 $err_file or die "cygpath failed";
                 my @err_file = canonic_files(basename($err_file), dirname($err_file));
                 die "File `$2' doesn't exist!" if (scalar @err_file != 1);
-                
+
                 $err_file = $err_file[0];
                 $err_file_canonic{$key} = $err_file;
-            }            
+            }
 
             print $1, $err_file, $3, "\n";
         } else {
@@ -207,7 +207,7 @@ sub getProjDir($)
     chomp(my $proj_dir = `cygpath -au "$proj_dir[0]"`);
     $proj_dir or die "Error: $proj in getProjDir, no such project?";
     return dirname($proj_dir);
-    
+
 }
 
 sub getSlnFile
@@ -215,9 +215,9 @@ sub getSlnFile
     while (1) {
         @dsw_slns = glob("*.dsw *.sln");
         die "Found more than 1 .dsw or .sln files" if (scalar @dsw_slns > 1);
-        
+
         die "Can't find any .dsw or .sln files" if (not @dsw_slns and `pwd` =~ m#^/$#);
-        
+
         last if @dsw_slns; #found exactly 1 .dsw or .sln file
 
         chdir "..";

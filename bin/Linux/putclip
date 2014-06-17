@@ -1,4 +1,7 @@
 #!/bin/bash
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
 if test $# != 0; then
     exec <<EOF
 $@

@@ -1,0 +1,6 @@
+#!/bin/bash
+if test "$1" = -i; then
+   /bin/putclip
+else
+    /bin/getclip
+fi

@@ -13,9 +13,15 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
             exit
         fi
         putclip-android "$input"&
-        adb-tap 560 1840 # 再点一下，可能在出键盘，需要输入一个空格
-        adb-long-press 560 976 # 长点输入框
-        adb-tap 525 855 # 点一下粘贴钮
-        adb-tap 976 976 # 点一下发送钮
+        if test $(basename $0) = google+; then
+            adb-long-press 144 374 # long press
+            adb-tap 117 273 # paste
+            adb-tap 949 935 # send
+        else
+            adb-tap 560 1840 # 再点一下，可能在出键盘，需要输入一个空格
+            adb-long-press 560 976 # 长点输入框
+            adb-tap 525 855 # 点一下粘贴钮
+            adb-tap 976 976 # 点一下发送钮
+        fi
     done
 ) 9> ~/.logs/$(basename $0).lock

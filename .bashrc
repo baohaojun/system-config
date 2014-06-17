@@ -10,11 +10,16 @@ alias l='ls -CFl --show-control-chars --block-size=1'                           
 alias vi=vim
 export HISTSIZE=2000
 export HISTFILESIZE=2000
-. ~/.bashrc-public
+if test ! "$EMACS"; then
+    . ~/.bashrc-public
+fi
 
-if test `uname` = CYGWIN_NT-5.1 -o `uname` = CYGWIN_NT-6.1
+uname=$(uname)
+if test "$uname" = CYGWIN_NT-5.1 -o "$uname" = CYGWIN_NT-6.1
 then
-    . ~/.bashrc-windows
+    if test ! "$EMACS"; then
+        . ~/.bashrc-windows
+    fi
 else
     . ~/.bashrc-linux
 fi

@@ -51,7 +51,12 @@ if test ! -e setup-x86_64.exe; then
     chmod +x setup-x86_64.exe
 fi
 
-pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make screen cygutils-extra procps wget)
+pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make
+      gnome-common gcc-core gcc-g++ mingw-gcc-core mingw-gcc-g++
+      mingw64-i686-gcc-core mingw64-i686-gcc-g++
+      mingw64-x86_64-gcc-core mingw64-x86_64-gcc-g++ screen
+      cygutils-extra procps wget git-svn libcrypt-devel flex gperf bison)
+
 /cygdrive/c/setup-x86_64.exe -q -n -d -A -P "${pkgs[@]}" || true
 
 if true; then

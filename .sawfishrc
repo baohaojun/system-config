@@ -88,6 +88,7 @@
 (bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))
 (bind-keys s-h-keymap "C-s"  '(system "screenshot&"))
 (bind-keys s-h-keymap "C-S"  '(system "screenshot focused&"))
+(bind-keys s-h-keymap "Print"  '(system "screenshot focused&"))
 (bind-keys global-keymap "Pause"  '(system "screenshot focused&"))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
