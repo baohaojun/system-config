@@ -117,7 +117,26 @@ pre-warned, it's not easy...
 
 *** Install dependencies
 
-You need install CYGWIN and Mono for Windows.
+You need install CYGWIN, Mono and sqlite for Windows.
+
+For cygwin, you will need the following packages as the minimum (there
+might be more, though I have tested these should be enough):
+
+#+BEGIN_EXAMPLE
+      nc util-linux git vim rsync inetutils apache2 shutdown make
+      gnome-common gcc-core gcc-g++ mingw-gcc-core mingw-gcc-g++
+      mingw64-i686-gcc-core mingw64-i686-gcc-g++
+      mingw64-x86_64-gcc-core mingw64-x86_64-gcc-g++ screen
+      cygutils-extra procps wget git-svn
+#+END_EXAMPLE
+
+
+(see [[https://github.com/baohaojun/system-config/raw/master/bin/windows/after-check-out.sh][after-check-out.sh]] for how I installed these packages automatically).
+
+For Mono, default download and install from mono project website is OK.
+
+For sqlite, you need download the .zip file for Windows and extract
+the .dll into your $PATH.
 
 *** Get beagrep Windows code
 
@@ -129,8 +148,24 @@ git clone git://github.com/baohaojun/beagrep.git -b for-windows
 
 #+begin_src sh
 cd beagrep
-bash build-win.sh
+bash build-win.sh "/cygdrive/c/Program Files (x86)/Mono-3.2.3"
 #+end_src
+
+Now, the argument to build-win.sh is the folder where I have installed
+mono, on my windows7, it is ~/cygdrive/c/Program Files
+(x86)/Mono-3.2.3~. One thing very important in building and using
+beagrep on Windows is to get the directory name format correct,
+because Windows has very weird characters in its pathname, =:= and
+=Space=, which is harmful for writing Makefile and Shell scripts,
+respectively.
+
+**** Fixing errors during build
+
+Note that when you are building, compilation will fail complaining
+=/usr/lib/gcc/i686-pc-mingw32/4.5.2/libstdc++.la= not found, this is
+because it is specified in =C:/Program Files
+(x86)/Mono-3.2.3/lib/pkgconfig/mono.pc=, and you need to edit this
+file to remove it.
 
 * Usage
 

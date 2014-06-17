@@ -153,6 +153,7 @@ outdated).
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> Install</h2>
 <div class="outline-text-2" id="text-2">
@@ -185,6 +186,7 @@ install from source code directly, which does not show this problem.
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-1-2" class="outline-4">
 <h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> Compile by yourself</h4>
 <div class="outline-text-4" id="text-2-1-2">
@@ -210,6 +212,7 @@ apt-get install $(<span class="org-sh-quoted-exec">cat</span> debian/control | p
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-1-3" class="outline-4">
 <h4 id="sec-2-1-3"><span class="section-number-4">2.1.3</span> Build .deb by yourself</h4>
 <div class="outline-text-4" id="text-2-1-3">
@@ -264,6 +267,7 @@ The .deb file is generated in the <code>~/tmp</code> directory.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2"><span class="section-number-3">2.2</span> Windows install</h3>
 <div class="outline-text-3" id="text-2-2">
@@ -277,10 +281,38 @@ pre-warned, it's not easy&#x2026;
 <h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> Install dependencies</h4>
 <div class="outline-text-4" id="text-2-2-1">
 <p>
-You need install CYGWIN and Mono for Windows.
+You need install CYGWIN, Mono and sqlite for Windows.
+</p>
+
+<p>
+For cygwin, you will need the following packages as the minimum (there
+might be more, though I have tested these should be enough):
+</p>
+
+<pre class="example">
+nc util-linux git vim rsync inetutils apache2 shutdown make
+gnome-common gcc-core gcc-g++ mingw-gcc-core mingw-gcc-g++
+mingw64-i686-gcc-core mingw64-i686-gcc-g++
+mingw64-x86_64-gcc-core mingw64-x86_64-gcc-g++ screen
+cygutils-extra procps wget git-svn
+</pre>
+
+
+<p>
+(see <a href="https://github.com/baohaojun/system-config/raw/master/bin/windows/after-check-out.sh">after-check-out.sh</a> for how I installed these packages automatically).
+</p>
+
+<p>
+For Mono, default download and install from mono project website is OK.
+</p>
+
+<p>
+For sqlite, you need download the .zip file for Windows and extract
+the .dll into your $PATH.
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2-2" class="outline-4">
 <h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> Get beagrep Windows code</h4>
 <div class="outline-text-4" id="text-2-2-2">
@@ -291,19 +323,42 @@ You need install CYGWIN and Mono for Windows.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2-3" class="outline-4">
 <h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> Compile and install</h4>
 <div class="outline-text-4" id="text-2-2-3">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-builtin">cd</span> beagrep
-bash build-win.sh
+bash build-win.sh <span class="org-string">"/cygdrive/c/Program Files (x86)/Mono-3.2.3"</span>
 </pre>
 </div>
+
+<p>
+Now, the argument to build-win.sh is the folder where I have installed
+mono, on my windows7, it is <code>/cygdrive/c/Program Files
+(x86)/Mono-3.2.3</code>. One thing very important in building and using
+beagrep on Windows is to get the directory name format correct,
+because Windows has very weird characters in its pathname, <code>:</code> and
+<code>Space</code>, which is harmful for writing Makefile and Shell scripts,
+respectively.
+</p>
+</div>
+
+<ol class="org-ol"><li>Fixing errors during build<br  /><div class="outline-text-5" id="text-2-2-3-1">
+<p>
+Note that when you are building, compilation will fail complaining
+<code>/usr/lib/gcc/i686-pc-mingw32/4.5.2/libstdc++.la</code> not found, this is
+because it is specified in <code>C:/Program Files
+(x86)/Mono-3.2.3/lib/pkgconfig/mono.pc</code>, and you need to edit this
+file to remove it.
+</p>
+</div>
+</li></ol>
 </div>
 </div>
 </div>
-</div>
+
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> Usage</h2>
 <div class="outline-text-2" id="text-3">
@@ -323,6 +378,7 @@ command's output, you should see something like
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-3-2" class="outline-3">
 <h3 id="sec-3-2"><span class="section-number-3">3.2</span> Create index</h3>
 <div class="outline-text-3" id="text-3-2">
@@ -368,6 +424,7 @@ on the size of the sub-folder.
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-3-3" class="outline-3">
 <h3 id="sec-3-3"><span class="section-number-3">3.3</span> Man page for mkbeagrepidx</h3>
 <div class="outline-text-3" id="text-3-3">
@@ -437,6 +494,7 @@ because it won't append):
 </ul>
 </div>
 </div>
+
 
 <div id="outline-container-sec-3-4" class="outline-3">
 <h3 id="sec-3-4"><span class="section-number-3">3.4</span> Searching using beagrep</h3>
@@ -527,6 +585,7 @@ not show that file as a match.
 </div>
 </div>
 </div>
+
 
 <div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4"><span class="section-number-2">4</span> How does it work?</h2>
@@ -632,6 +691,7 @@ for definition of <code>grep-default-command</code> and
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-4-2" class="outline-3">
 <h3 id="sec-4-2"><span class="section-number-3">4.2</span> grep keywords are usually interesting</h3>
 <div class="outline-text-3" id="text-4-2">
@@ -681,6 +741,7 @@ And so on.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-5" class="outline-2">
 <h2 id="sec-5"><span class="section-number-2">5</span> Other projects using beagrep</h2>
 <div class="outline-text-2" id="text-5">
@@ -704,6 +765,7 @@ didn't make it a stand-alone project, it's under the
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-5-2" class="outline-3">
 <h3 id="sec-5-2"><span class="section-number-3">5.2</span> <code>grep-func-call</code> and <code>grep-func-call-all</code></h3>
 <div class="outline-text-3" id="text-5-2">
@@ -713,6 +775,7 @@ functions called a specific function. It's under the <code>bin/</code> directory
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-5-3" class="outline-3">
 <h3 id="sec-5-3"><span class="section-number-3">5.3</span> Generate call graph</h3>
 <div class="outline-text-3" id="text-5-3">

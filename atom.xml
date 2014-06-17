@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[binder]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/06/04/0-binder.html"/>
+    <updated>2014-06-08T16:30:04+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/06/04/0-binder.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[在Debian下为安卓做一个GNU tar程序]]></title>
     <link href="http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html"/>
-    <updated>2014-35-21T09:05:16+08:00</updated>
+    <updated>2014-05-21T09:36:37+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/10/04/0-Win32-IME-Programming.html"/>
     <updated>2013-10-04T23:27:06+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/10/04/0-Win32-IME-Programming.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Inside Ajoke]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/10/01/0-Inside-Ajoke.html"/>
-    <updated>2013-10-01T23:58:41+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/10/01/0-Inside-Ajoke.html</id>
   </entry>
 </feed>
