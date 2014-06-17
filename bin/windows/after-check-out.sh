@@ -116,6 +116,15 @@ ln -s ~/user/AppData/Local ~/.localw
 ln -s "$(cygpath -D)" ~/Desktop
 ln -s ~/user/Application\ Data/Mozilla  ~/.mozilla
 at 15:00 /every:monday,tuesday,wednesday,thursday,friday  "$(wlp $(which 15-00.bat))"
+for x in /c/Python2?; do
+    ln -s $x /c/Python2
+    break
+done
 
-echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/system-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
+for x in /c/Python3?; do
+    ln -s $x /c/Python3
+    break
+done
+
+echo -n "$(cygpath -alm c:/Python3/python.exe)" \"$(cygpath -aml ~/system-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
 echo "After check out success!"

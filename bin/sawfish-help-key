@@ -1,0 +1,13 @@
+#!/bin/bash
+map=${1:-global-keymap}
+cmd=$(cat <<EOF
+    (let ((event (read-event)))
+      (read-event
+          (format nil "binding %s for %s (raw %s)\n\nPress any key to dismiss.."
+                  (let ((global-keymap $map)) (lookup-event-binding event))
+                  (event-name event)
+                  event)))
+EOF
+   )
+
+sawfish-client -e "$cmd"

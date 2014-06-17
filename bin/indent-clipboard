@@ -1,0 +1,9 @@
+#!/bin/bash
+getclip > ~/.logs/$(basename $0).$$
+if test $(basename $0) = indent-clipboard; then
+    perl -npe 's/^/    /' -i ~/.logs/$(basename $0).$$
+else
+    perl -npe 's/^    //' -i ~/.logs/$(basename $0).$$
+fi
+cat ~/.logs/$(basename $0).$$|putclip
+rm ~/.logs/$(basename $0).$$

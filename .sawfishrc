@@ -97,6 +97,8 @@
                                                                        (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
                                                                        ";\n\nand Window class is: "
                                                                        (window-class (input-focus))))))
+(bind-keys s-h-keymap "i" '(system "indent-clipboard&"))
+(bind-keys s-h-keymap "I" '(system "deindent-clipboard&"))
 
 (bind-keys window-keymap "Super-q"
              (lambda ()
