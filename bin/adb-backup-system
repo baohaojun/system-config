@@ -1,0 +1,4 @@
+#!/bin/bash
+ssh-to-phone echo shit
+cd ~/today/forever/system-f9e6c95
+sudo rsync root@phone:/android/system  . -avz --exclude-from /home/bhj/etc/adb-sync-data-exclude --delete --delete-excluded

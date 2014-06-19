@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+android_mk=$(lookup-file -e Android.mk)
+cd $(dirname $android_mk)
+psync "$1" .
+ssh "$1" "cd $PWD; mm"

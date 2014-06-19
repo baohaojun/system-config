@@ -1,0 +1,6 @@
+#!/bin/bash
+(
+    for x in /usr/include/ $(lookup-file -e ".git/.."); do
+        find "$x" -name "$(basename "$1")"
+    done
+)

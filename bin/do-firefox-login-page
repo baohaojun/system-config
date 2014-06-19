@@ -6,9 +6,11 @@ echo $host
 user=$(get-authinfo -h $host -u \?)
 
 sawfish-search-in-firefox user
-sawfish-ask-for-input -p "Search user done, press enter to continue> "
 putclip "$user"
+sleep .5
 sawfish-browser-input TAB C-v Tab
 putclip $(get-authinfo $host $user)
+sleep .1
 sawfish-browser-input C-v
 putclip ""
+sawfish-browser-input RET

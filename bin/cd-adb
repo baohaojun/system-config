@@ -32,7 +32,7 @@ time=$(epoch2date $utc)
 date=$(echo $time | perl -npe 's/T.*//; s/-//g')
 tag=$(echo $time | perl -npe 's/-//g; s/T/-/; s/://g')
 
-cd ~/smb/share.smartisan.cn/SanFranciscoBuild/$dir/release-$date
+cd ~/smb/share.smartisan.cn/SanFranciscoBuild/*$dir/release-$date
 
 if test "$(echo *$tag*)" != "*$tag*"; then
     for x in *$tag*; do

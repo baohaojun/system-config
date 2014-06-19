@@ -68,11 +68,14 @@ if test "`get-rid-of-comment $tmp | wc -w`" == 0; then
 fi
 get-rid-of-comment $tmp
 if test "$USE_BUFFER_NAME"; then
-    for x in $(seq 20 -1 2); do
-        mv "$USE_BUFFER_NAME".$((x - 1)) "$USE_BUFFER_NAME".$x >/dev/null 2>&1 || true
-    done
+    (
+        cd /tmp
+        for x in $(seq 20 -1 2); do
+            mv "$USE_BUFFER_NAME".$((x - 1)) "$USE_BUFFER_NAME".$x >/dev/null 2>&1 || true
+        done
 
-    cp "$USE_BUFFER_NAME" "$USE_BUFFER_NAME".1
+        cp "$USE_BUFFER_NAME" "$USE_BUFFER_NAME".1
+    )
 fi
 
 rm $tmp

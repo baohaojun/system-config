@@ -140,6 +140,15 @@ print $_ . "\n";
                 fi
             fi
         fi
+        if test $# = 1 -a "$1" = co; then
+            git co "$(git-choose-branch)"
+            exit
+        fi
+
+        if test $# = 2 -a "$1" = co -a "$2" = -B; then
+            git co -B "$(git-choose-branch)"
+            exit
+        fi
         if test $# = 3 -a "$1" = co -a "$2" = -B; then
             git co -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
             exit

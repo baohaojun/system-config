@@ -1,0 +1,12 @@
+#!/bin/bash
+(
+    cd $(lookup-file -e .git/..)
+    find . -iname '*.h*'
+    cd /usr/include/
+    find . \( -type f -o -type l \) -print
+) | cut -b 3- |
+if test $# = 0; then
+   head -n 20
+else
+    expanded-grep "$@" | sort -u
+fi

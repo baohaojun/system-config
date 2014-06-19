@@ -167,6 +167,23 @@
 
 
 (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+(add-hook 'emacs-lisp-mode-hook (lambda ()
+                                  (make-local-variable
+                                   (quote ajoke-symbol-chars))
+                                  (setq ajoke-symbol-chars "-A-Za-z0-9_")))
+
 (add-hook 'message-mode-hook
           (lambda ()
             (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
+
+(require 'auto-complete-clang)
+(defun my-ac-cc-mode-setup ()
+  (setq ac-sources (append '(ac-source-clang ac-source-yasnippet) ac-sources)))
+(add-hook 'c-mode-common-hook 'my-ac-cc-mode-setup)
+(eval-after-load 'auto-complete
+  '(progn
+     (define-key ac-completing-map (kbd "C-n") 'ac-next)
+     (define-key ac-completing-map (kbd "C-p") 'ac-previous)
+     (require 'ac-helm)
+     (global-set-key (kbd "C-.") 'ac-complete-with-helm)
+     (define-key ac-complete-mode-map (kbd "C-.") 'ac-complete-with-helm)))

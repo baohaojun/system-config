@@ -230,7 +230,7 @@ function adb() {
 
         if test $is_adb_command = true; then
             exec $the_adb "$@"
-        elif test $# -gt 0 -a "${1:0:1}" != -; then # should not do adb -s xxx
+        elif test $# -gt 0 && test "${1:0:1}" != -; then # should not do adb -s xxx
             exec $(basename $0) shell "$@"
         else
             exec $the_adb
