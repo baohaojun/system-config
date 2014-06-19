@@ -247,6 +247,9 @@ most interested in the current tag."
                 (t ; (> nth-tag-cur 0)
                  (+ mid -1 nth-tag-cur)))))))
 
+(defun ajoke--delete-current-regexp (re)
+  (ajoke--current-regexp re (lambda (start end) (delete-region start end))))
+
 (defun ajoke--current-regexp (re &optional func)
   "Look for regular expression RE around the current point.
 
@@ -317,55 +320,78 @@ is set, call FUNC with the start and end of the matched region."
                         result-alist))))))
     (nreverse result-alist)))
 
+(defun ajoke-find-header ()
+  (interactive)
+  (let* ((current-regexp (shell-quote-argument (ajoke--current-regexp "\\(\\w\\|/\\)+")))
+         (header (ajoke--pick-output-line "Which header to find" (format "cc-find-header %s" current-regexp))))
+    (find-file header)))
+
+(defun ajoke-get-includes ()
+  (interactive)
+  (save-excursion
+    (search-backward "#include")
+    (goto-char (line-end-position))
+    (insert "\n")
+    (insert "#include ")
+    (let* ((head-regexp (read-string "What header to include (such as q/qtline for QLineEdit)? "))
+           (head-regexp (shell-quote-argument head-regexp))
+           (header (ajoke--pick-output-line "Which header to include" (format "cc-get-include %s" head-regexp))))
+      (insert (format (if (file-exists-p header)
+                          "\"%s\""
+                        "<%s>")
+                      header)))))
+
 ;;;###autoload
 (defun ajoke-get-imports ()
   "Write the java import statements automatically."
   (interactive)
-  (save-excursion
-    (let ((old-buffer (current-buffer))
-          import-list)
-      (with-temp-buffer
-        (shell-command (format "ajoke-get-imports.pl %s -v" (ajoke--buffer-file-name-local old-buffer)) (current-buffer))
-        (goto-char (point-min))
-        (while (search-forward-regexp "^import" nil t)
-          (save-excursion
-            (if (looking-at "-multi")
-                (setq
-                 import-list
-                 (cons
-                  (format
-                   "import %s;\n"
-                   (ajoke--pick-one
-                    "Import which? "
-                    (cdr
-                     (ajoke--delete-empty-strings
-                      (split-string (ajoke--current-line) "\\s +")))
-                    nil
-                    t))
-                  import-list))
-              (setq import-list (cons (format "%s;\n" (ajoke--current-line)) import-list))))
-          (forward-line)
-          (beginning-of-line)))
-      (goto-char (point-max))
-      (or (search-backward-regexp "^import\\s +" nil t)
-          (search-backward-regexp "^package\\s +" nil t))
-      (forward-line)
-      (beginning-of-line)
-      (while import-list
-        (insert (car import-list))
-        (setq import-list (cdr import-list)))
-      (let ((end-imports (point))
-            (start-imports
-             (save-excursion
-               (previous-line)
-               (beginning-of-line)
-               (while (looking-at "^import\\s +")
+  (if (not (eq major-mode 'java-mode))
+      (ajoke-get-includes)
+    (save-excursion
+      (let ((old-buffer (current-buffer))
+            import-list)
+        (with-temp-buffer
+          (shell-command (format "ajoke-get-imports.pl %s -v" (ajoke--buffer-file-name-local old-buffer)) (current-buffer))
+          (goto-char (point-min))
+          (while (search-forward-regexp "^import" nil t)
+            (save-excursion
+              (if (looking-at "-multi")
+                  (setq
+                   import-list
+                   (cons
+                    (format
+                     "import %s;\n"
+                     (ajoke--pick-one
+                      "Import which? "
+                      (cdr
+                       (ajoke--delete-empty-strings
+                        (split-string (ajoke--current-line) "\\s +")))
+                      nil
+                      t))
+                    import-list))
+                (setq import-list (cons (format "%s;\n" (ajoke--current-line)) import-list))))
+            (forward-line)
+            (beginning-of-line)))
+        (goto-char (point-max))
+        (or (search-backward-regexp "^import\\s +" nil t)
+            (search-backward-regexp "^package\\s +" nil t))
+        (forward-line)
+        (beginning-of-line)
+        (while import-list
+          (insert (car import-list))
+          (setq import-list (cdr import-list)))
+        (let ((end-imports (point))
+              (start-imports
+               (save-excursion
                  (previous-line)
-                 (beginning-of-line))
-               (next-line)
-               (beginning-of-line)
-               (point))))
-        (shell-command-on-region start-imports end-imports "sort -u" nil t)))))
+                 (beginning-of-line)
+                 (while (looking-at "^import\\s +")
+                   (previous-line)
+                   (beginning-of-line))
+                 (next-line)
+                 (beginning-of-line)
+                 (point))))
+          (shell-command-on-region start-imports end-imports "sort -u" nil t))))))
 
 ;;;###autoload
 (defun ajoke-get-hierarchy ()
@@ -579,11 +605,11 @@ beginning of current defun."
     (ajoke-get-imports)))
 
 ;;;###autoload
-(defun ajoke--pick-output-line (prompt command &rest args)
+(defun ajoke--pick-output-line (prompt command &rest comp-read-args)
   (ajoke--pick-one
    prompt
    (split-string (shell-command-to-string command))
-   args))
+   comp-read-args))
 
 ;;;###autoload
 (defun ajoke-find-file-using-beagrep ()
@@ -612,6 +638,7 @@ beginning of current defun."
 (global-set-key [(meta g)(j)(r)] 'ajoke-resolve)
 (global-set-key [(meta g)(j)(m)] 'ajoke-complete-method)
 (global-set-key [(meta g)(j)(e)] 'ajoke-insert-exception-catchers)
+(global-set-key [(meta g)(j)(f)] 'ajoke-find-header)
 (global-set-key [(shift meta s)] 'ajoke-search-local-id)
 (global-set-key [(meta s)(f)] 'ajoke-find-file-using-beagrep)
 (global-set-key [(meta s)(??)] 'ajoke-display-the-current-function)

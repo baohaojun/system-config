@@ -31,6 +31,7 @@ my $path_matcher;
 my $path_matcher_inv;
 my $ignore_case = "";
 my $type_re;
+my $saved_type_re;
 my $reverse_type_re;
 my $fall_back = 0; # fall back only if 1, both if 0, no fall back if -1
 my $do_dir;
@@ -59,6 +60,7 @@ GetOptions(
     "T=s" => sub {$type_re = qr($_[1])i; $reverse_type_re = 1},
     );
 
+$saved_type_re = $type_re;
 if ($lookup_needle =~ m/^\w+\.\.\*/ or $member_lookup and $lookup_needle =~ m/\./) {
 # so that when I search for String.* it will allow me to select java.lang.String..*
     (my $id = $lookup_needle) =~ s/(\..*)//;
@@ -454,5 +456,6 @@ for (@gtags_fallback_dir) {
       next;
   }
   debug "Not found in current dir; search in $dir";
+  $type_re = $saved_type_re;
   do_cscope($dir, $lookup_needle, $lookup_restrict_regexp) and not @java_fallback_dir and last;
 }
