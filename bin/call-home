@@ -7,17 +7,18 @@ fi
 
 (
     flock -n 9 || { echo 'lock failed for home at '$(date); exit 0; }
-    while true; do
-        sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
-        home=bhj.dyndns.org
-        ssh -o ServerAliveInterval=300 -i ~/.ssh/id_rsa_nopass -C2qN -D 7070 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 $home -p 443
-        if test $? = 137; then
-            continue
-        fi
-        x=30
-        y=$(random 30)
-        ((x = x + y))
-        sleep $x
+    for home in bhj.dyndns.org realhome; do
+        while true; do
+            sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
+            ssh -o ServerAliveInterval=300 -i ~/.ssh/id_rsa_nopass -C2qN -D 7070 -R :$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3)):localhost:22 $home -p 443
+            if test $? = 137; then
+                continue
+            fi
+            x=30
+            y=$(random 30)
+            ((x = x + y))
+            sleep $x
+            done&
     done
 ) 9>~/.logs/$(basename $0).lock  2>&1 &
 
