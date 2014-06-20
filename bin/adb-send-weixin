@@ -19,6 +19,10 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                 adb-long-press 144 374 # long press
                 adb-tap 117 273 # paste
                 adb-tap 949 935 # send
+            elif test $(basename $0) = weibo; then
+                adb input keyevent SPACE
+                adb-long-press 440 281; sleep .5; adb-tap 545 191
+                adb-tap 991 166
             else
                 adb-tap 560 1840 #
                 sleep .1

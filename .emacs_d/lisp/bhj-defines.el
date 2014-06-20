@@ -1075,8 +1075,7 @@ criteria can be provided via the optional match-string argument "
       (insert output))
     (unless (or (eq major-mode 'fundamental-mode)
                 (eq major-mode 'text-mode))
-      (indent-region (min (point) (mark))
-                     (max (point) (mark))))))
+      (indent-region start-of-text (point)))))
 
 (defun bh/display-inline-images ()
   (condition-case nil
