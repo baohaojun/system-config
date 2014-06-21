@@ -47,8 +47,10 @@ sub push_one_file($$)
     }
     if (system("adb", "push", $file, "$true_dest")) {
         debug "push failed, try to use sdcard";
-        system("adb", "push", $_, "/sdcard/$base");
-        system("adb", "shell", "su", "-c", "cp /sdcard/$base $true_dest");
+        system("adb", "mkdir", "-p", "/sdcard/adb_push");
+        system("adb", "push", $_, "/sdcard/adb_push/$base");
+        system("adb", "shell", "su", "-c", "cp -r /sdcard/adb_push/$base \"\$(dirname $true_dest)\"");
+        system("adb rm -r /sdcard/adb_push");
         if ($true_dest =~ m!/xbin/|/bin/!) {
             system("adb", "shell", "su", "-c", "chmod 755 $true_dest");
         }

@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+test "$(adb echo hello)" = hello
+test "$(adb echo 'hello     world')" = 'hello     world'
+adb-tty echo 'hello     world' | grep 'exec.*echo' -q
+echo test 'ok!'

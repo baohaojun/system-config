@@ -1,7 +1,7 @@
 #!/usr/bin/expect -f
 
 
-spawn adb shell;
+spawn the-true-adb shell;
 
 proc shell-quote {str} {
     # puts [regsub -all ' "hello ' world" '\\''];

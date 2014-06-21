@@ -25,6 +25,49 @@ if test -z "$the_adb"; then
     die "Error, the adb is not found"
 fi
 
+function exec_the_adb() {
+    DO_ADB_EXEC=exec run_the_adb "$@"
+}
+
+function run_the_adb() {
+    shell=shell
+
+    if test -e ~/.configs/adb-root; then
+        if test "$the_adb" = adb-expect; then
+            set -- shell "$@"
+            shell=
+        fi
+        if test "$1" = shell -a "$2" != su -a "$quote_the_args" != false; then
+            shift
+            local arg=$(for x in "$@"; do printf "%q " "$x"; done)
+            set -- $shell su -c "$arg"
+        elif test "$the_adb" = adb-expect; then
+            shift
+        fi
+    fi
+
+    if test "$quote_the_args" = true; then
+        args=()
+        (
+            IFS=$'\n'
+            for x in "$@"; do
+                args=("${args[@]}" $(
+                             if test "$(printf %q "$x")" != "$x"; then
+                                 # echo \"\'"$(echo -n "$x" | perl -npe "s!'!\\'!")"\'\"
+                                 printf \"%q\" "$x"
+                             else
+                                 printf %q "$x"
+                             fi))
+            done
+
+            quote_the_args=false exec_the_adb ${args[@]}
+        )
+    else
+
+        $DO_ADB_EXEC $the_adb "$@"
+    fi
+}
+
 function adb() {
     if test "$1" = -w; then
         echo -n 'wait-for-device ' 1>/dev/tty
@@ -47,6 +90,11 @@ function adb() {
         shift;
     fi
     if test "$1" = -r; then
+        if test -e ~/.configs/adb-root; then
+            shift
+            exec adb "$@"
+        fi
+
         echo -n 'wait-for-device ' 1>/dev/tty
         $the_adb wait-for-device
 
@@ -97,6 +145,16 @@ function adb() {
         exec the-true-adb disconnect;
     fi
 
+    if test "$1" = root-mode; then
+        set -x
+        if test "$2" = on || test $# = 1; then
+            touch ~/.configs/adb-root
+        else
+            rm ~/.configs/adb-root
+        fi
+        exit
+    fi
+
     if test $# = 1 -a "$1" = reconnect && grep : -q ~/.config/adb-device; then
         exec the-true-adb connect $(cat ~/.config/adb-device)
     fi
@@ -141,6 +199,19 @@ function adb() {
     if test $# = 2 -a "$1" = shell; then # adb shell 'echo hello world'
         exec $(basename $0) shell sh -c "$2"
     fi
+    if test "$1" = fix-su -a "$#" = 1; then
+        if command adb sh -c 'su -c id' | grep -q "uid=0\b" -P; then
+            ro_sn=$ANDROID_SERIAL
+            if echo $ro_sn|grep : -q; then # 172.0.0.1:5555 tcp
+                set -x
+                ro_sn=$(adb-ntty getprop ro.serialno)
+                set +x
+            fi
+            rm ~/.config/adb-use-sh-as-su/yes/$ro_sn
+            touch ~/.config/adb-use-sh-as-su/no/$ro_sn
+        fi
+        exit
+    fi
 
     if test "$2" = su -a "$1" = shell; then
         ro_sn=$ANDROID_SERIAL
@@ -179,10 +250,10 @@ function adb() {
         shift
         gdbserver "$@"
     elif test "$#" = 3 -a "$1" = shell -a "$2" = restart; then
-        $the_adb shell stop $3;
-        exec $the_adb shell start $3;
+        run_the_adb shell stop $3;
+        exec_the_adb shell start $3;
     elif test "$#" = 3 -a "$1" = shell -a "$2" = sstat; then # service stat
-        exec $the_adb shell getprop init.svc.$3
+        exec_the_adb shell getprop init.svc.$3
     elif test "$1" = getprop -a $# -gt 2; then
         shift
         for prop in "$@"; do
@@ -194,28 +265,16 @@ function adb() {
             if test $myname = adb; then
                 exec adb-quote "$@" | tr -d '\r'
             elif test $myname = adb-noquote; then
-                exec $the_adb "$@" | tr -d '\r'
+                quote_the_args=false exec_the_adb "$@" | tr -d '\r'
             elif test $myname = adb-quote; then
-                args=()
-                (
-                    IFS=$'\n'
-                    for x in "$@"; do
-                        args=("${args[@]}" $(
-                                     if test "$(printf %q "$x")" != "$x"; then
-                                         # echo \"\'"$(echo -n "$x" | perl -npe "s!'!\\'!")"\'\"
-                                         printf \"%q\" "$x"
-                                     else
-                                         printf %q "$x"
-                                     fi))
-                    done
-
-                    exec $the_adb ${args[@]} | tr -d '\r'
-                )
+                quote_the_args=true exec_the_adb "$@" | tr -d '\r'
             fi
         else
             shift
-            exec adb-expect "$@"
+            the_adb=adb-expect exec_the_adb "$@"
         fi
+    elif test $# = 1 -a "$1" = shell -a -e ~/.configs/adb-root && is-tty-io; then
+        the_adb=adb-expect exec_the_adb sh
     else
 
         adb_commands=(backup bugreport emu forward get-devpath
@@ -235,11 +294,11 @@ function adb() {
         done
 
         if test $is_adb_command = true; then
-            exec $the_adb "$@"
+            exec_the_adb "$@"
         elif test $# -gt 0 && test "${1:0:1}" != -; then # should not do adb -s xxx
             exec $(basename $0) shell "$@"
         else
-            exec $the_adb
+            exec_the_adb
         fi
     fi
 }
@@ -272,10 +331,10 @@ function gdbserver() {
     fi
     if test "$process"; then
         pid=$(select-output-line -- bash -c 'adb shell ps |grep -P -e "\Q'$process'\E"'|pn 2)
-        exec $the_adb shell gdbserver --attach :$port $pid
+        exec_the_adb shell gdbserver --attach :$port $pid
         return 0;
     fi
     $the_adb forward tcp:$port tcp:$port || true
-    exec $the_adb shell gdbserver :$port "$@"
+    exec_the_adb shell gdbserver :$port "$@"
 }
 adb "$@"

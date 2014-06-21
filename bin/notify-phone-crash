@@ -17,6 +17,12 @@ if test $(basename $0) = adb-fix-gms; then
 
         adb -W || true
 
+        if test $(adb getprop ro.build.type) = user; then
+            exit
+        fi
+        if test -e ~/.configs/adb-root; then
+            exit
+        fi
         if ! adb id | grep -P -e 'uid=0\b'; then
             adb root
             exit
