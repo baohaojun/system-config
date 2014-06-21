@@ -49,7 +49,7 @@ Binder IPC机制跟其它常见的IPC机制一样，里面包含一些基本的�
   我可以写这样的一段淘气的脚本，不停地随机地给系统中的进程发
   sigkill（其中random是一个附助的生成随机整数的脚本）：
 
-  #+BEGIN_SRC shell
+  #+BEGIN_SRC sh
   while true; do kill -9 $(random); done
   #+END_SRC
 
@@ -57,9 +57,223 @@ Binder IPC机制跟其它常见的IPC机制一样，里面包含一些基本的�
   来，把子进程创建出来，把输入输出配置好，再把相应的程序执行起来。
 
   而Binder机制里，系统中所有的进程都可以参与其中，只要它们打开了
-  /dev/binder这个设备节点就可以。
+  /dev/binder这个设备节点就可以。但其中有一个比较特殊一点，一般是第一
+  个打开/dev/binder节点并成为context manager的那个进程。
+
 
   * 角色
 
     对，IPC中的各方是可以有不同的角色的。比如signal，有一个杀的，有一
     个被杀的（kill:-)）。
+
+    而在Binder通讯机制里，有一个角色比较特殊，那就是context manager。
+    这个在kernel里是叫context manager，其实在user space里是叫service
+    manager。它允许系统里其它进程向它注册，比如这个进程向service
+    manager注册：“我的进程号是NNNN，我的名字叫media server”，以后别的
+    进程想进行多媒体相关的调用的话，就会向service manager查询，“media
+    server”的进程是哪个？
+
+    所以除了这个service manager之外，可以有很多其他的server，其实
+    service manager自身也是一个server，只不过是最特殊的那个罢了。其他
+    所有server都要向它来注册。
+
+大体看过Binder的一些特点之后，我们来场景分析一下Binder相关的一些细节。
+您可以别看了，我写得太乱了...
+
+* Binder是一种面向对象的IPC机制
+
+作为一种很牛逼的IPC机制，Binder想要作到让跨进程间通讯的远程调用，使用
+起来感觉就像是进程内的函数调用一样。这个就有难度了。让我们来看看它是怎
+么实现的。
+
+首先，在远程server端会实现一套接口（Interface）。啊，算了，让我们先来
+说一说如果没有binder机制，我们会怎么样来实现远程通讯吧。
+
+我最熟悉的远程通讯就是tcp/ip了，这个通讯机制非常的通用，我们就不提那些
+大家都熟知的http/ftp/ssh/telnet等协议了。
+
+我曾经实现过一个手机测试命令工具箱，tcmd，采用了server/client机制实现。
+首先一个server在一端监听某tcp端口，比如54321，客户端会给它发一个命令，
+比如wifi-off，那么服务端读到这个命令之后，会以这样的代码去做相应的事情：
+
+#+BEGIN_SRC c
+    read(socket, cmd ...
+    if (strcmp(cmd, "wifi-on") == 0) {
+        wifi_on();
+    } else if (strcmp(cmd, "wifi-off") == 0) {
+        wifi_off();
+    } else if ...
+
+void wifi_off()
+{
+    write 0 /sys/wifi/power
+}
+#+END_SRC
+
+也就是说，服务端系统会根据读到不同的命令去封装不同的函数。
+
+比较妙的是，在客户端系统会去实现类似的逻辑，只不过是反过来，像一面镜子，它是往socket里写：
+
+#+BEGIN_SRC c
+void client_wifi_on()
+{
+    socket = open_socket("localhost", 54321);
+    write(socket, "wifi-on"...
+    close(socket);
+}
+
+void client_wifi_off()
+{
+    socket = open_socket("localhost", 54321);
+    write(socket, "wifi-off"...
+    close(socket);
+}
+#+END_SRC
+
+这里你也看到了，我们可以像模板一样，生成很多的函数，每个函数做一个命令。
+当然，没有什么能阴止你使用跟server端一样的名字，比如你的
+client_wifi_off完全也可以叫做wifi_off，这样做是有好处的，使两个本来非
+常相关的函数变得更紧密了，但也有坏处，阅读代码的时候常常不知道该看哪个。
+其实看多了很快会明白，所有的client端的实现都是个模板而已（boilerplate）。
+
+然而我也非常喜欢这样的client实现：
+
+#+BEGIN_SRC c
+void test_cmd(const char *cmd)
+{
+    socket = open_socket("localhost", 54321);
+    write(socket, cmd...
+    close(socket);
+}
+#+END_SRC
+
+然后再用到client_wifi_on()的地方就代以test_cmd("wifi-on")，在用到
+wifi_off()的地方就代以test_cmd("wifi-off")，等等。这样做的好处是少了很
+多函数和很多boilerplate代码（每个命令都要open/close socket！）。
+
+当然，你也可以再在test_cmd的基础上把wifi_on/wifi_off给包装出来：
+
+#+BEGIN_SRC c
+void wifi_on()
+{
+    test_cmd("wifi-on");
+}
+#+END_SRC
+
+太棒了，这就跟我们最终要看的binder机制有点像了。好，我们接着来看一下
+binder机制是怎么做的。
+
+** 接口、继承树
+
+Binder机制从最底层讲，只是数据的封装、传送、解析而已，所以它并不是只有
+特定语言可以使用的，至少在Android系统里C/C++/Java都可以使用Binder。
+
+但它最重要的优点之一，应该是它与面向对象编程之间比较友好的关系。我们就
+先来看看Java里面是怎么使用Binder机制的。
+
+题外话：我在用ajoke.el/beagrep/ctags/global等开源软件阅读源代码，以下
+会有一些这些工具的运行结果。
+
+以MountService.java为例，它有一个shutdown函数，我们看看它是哪个binder
+的：
+
+#+BEGIN_SRC compout
+-*- mode: compilation; default-directory: "~/src/android/frameworks/base/services/java/com/android/server/" -*-
+Compilation started at Sat Jun 21 21:24:30
+
+ajoke-get-hierarchy.pl com.android.server.MountService -m shutdown
+make: Entering directory `/home/bhj/src/android'
+
+=> class com.android.server.MountService at frameworks/base/services/java/com/android/server/MountService.java line 103.
+      public void shutdown(final IMountShutdownObserver observer){
+   => class android.os.storage.IMountService.Stub at frameworks/base/core/java/android/os/storage/IMountService.java line 37.
+      => class android.os.Binder at frameworks/base/core/java/android/os/Binder.java line 43.
+         => interface android.os.IBinder at frameworks/base/core/java/android/os/IBinder.java line 86.
+         => class java.lang.Object at libcore/luni/src/main/java/java/lang/Object.java line 131.
+      => interface android.os.storage.IMountService at frameworks/base/core/java/android/os/storage/IMountService.java line 35.
+            public void shutdown(IMountShutdownObserver observer)throws RemoteException;
+         => interface android.os.IInterface at frameworks/base/core/java/android/os/IInterface.java line 23.
+   => interface com.android.server.INativeDaemonConnectorCallbacks at frameworks/base/services/java/com/android/server/INativeDaemonConnectorCallbacks.java line 20.
+   => interface com.android.server.Watchdog.Monitor at frameworks/base/services/java/com/android/server/Watchdog.java line 170.
+
+Compilation finished at Sat Jun 21 21:24:31
+#+END_SRC
+
+哦，对了，你看到的上面这段代码就是它在我的Emacs编辑器里显示的样子，为
+了让它正确的代码高亮，我还颇费了一番功夫呢！首先，上面的代码是
+compilation-mode，这个在Emacs里是一种read-only的模式，然而org-html-fontify-code的代码是这样写的：
+
+#+BEGIN_SRC emacs-lisp
+          (setq code (with-temp-buffer
+                       ;; Switch to language-specific mode.
+                       (funcall lang-mode)
+                       (insert code)
+                       ;; Fontify buffer.
+                       (font-lock-fontify-buffer)
+#+END_SRC
+
+可见，它先设置了mode =(funcall lang-mode)= 为compilation-mode，然后再
+插入code =(insert code)= ，这就出问题了，compilation-mode是只读的，不
+允许插入。为了绕过这个问题，我定义了一种新的compout-mode，很简单，就是可写的compilation-mode：
+
+#+BEGIN_SRC emacs-lisp
+(defun compout-mode ()
+  "compilation mode, which is not buffer readonly for org export"
+  (interactive)
+  (compilation-mode)
+  (setq buffer-read-only nil))
+#+END_SRC
+
+另外，做成这样之后，还是有问题，上面的代码输出到html之后没有全部高亮，
+经查，应该是compilation-mode对temp-buffer有歧视，在temp-buffer里不会最
+努力地高亮（见上面的 =with-temp-buffer= ）。
+
+=with-temp-buffer= 的定义是这样的：
+
+#+BEGIN_SRC emacs-lisp
+(defmacro with-temp-buffer (&rest body)
+  "Create a temporary buffer, and evaluate BODY there like `progn'.
+See also `with-temp-file' and `with-output-to-string'."
+  (declare (indent 0) (debug t))
+  (let ((temp-buffer (make-symbol "temp-buffer")))
+    `(let ((,temp-buffer (generate-new-buffer " *temp*")))
+       ;; FIXME: kill-buffer can change current-buffer in some odd cases.
+       (with-current-buffer ,temp-buffer
+         (unwind-protect
+             (progn ,@body)
+           (and (buffer-name ,temp-buffer)
+                (kill-buffer ,temp-buffer)))))))
+#+END_SRC
+
+问题出在 =(generate-new-buffer " *temp*")= 这个语句，buffer名字不能叫
+=*temp*= ，所以我定义了一个advice来绕开这个问题：
+
+#+BEGIN_SRC emacs-lisp
+(defun org-html-fontify-code-compout (orig-fun &rest args)
+  "Make compilation output htmlized."
+  (if (string= (cadr args) "compout")
+      (flet ((generate-new-buffer (name)
+                                  (when (string= name " *temp*")
+                                    (setq name "temp-ox"))
+                                  (get-buffer-create (generate-new-buffer-name name))))
+        (apply orig-fun args))
+    (apply orig-fun args)))
+
+(eval-after-load 'ox-html
+  '(advice-add 'org-html-fontify-code :around #'org-html-fontify-code-compout))
+#+END_SRC
+
+当第二个参数 =(cadr args)= 为 "compout" 时，让generate-new-buffer的定
+义发生变化，如果其参数名为 =*temp*= ，则改成 temp-ox 。
+
+好了，从上面我用 ajoke-get-hierarchy 搞出来的继承树来看， shutdown 函数最早是在IMountService里定义的：
+
+#+BEGIN_SRC compout
+      => interface android.os.storage.IMountService at frameworks/base/core/java/android/os/storage/IMountService.java line 35.
+            public void shutdown(IMountShutdownObserver observer)throws RemoteException;
+#+END_SRC
+
+#+BEGIN_SRC grepout
+grep-func-call -e "asInterface" --nc -a  --add "IMountService"
+
+#+END_SRC
