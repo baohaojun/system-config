@@ -6,7 +6,7 @@ use String::ShellQuote;
 
 my $pat = '';
 my $pathpat = '.';
-my $additional_tokens = '';
+my $additional_tokens = $ENV{BEAGREP_ADDITIONAL_TOKENS};
 my $use_tokens = '';
 my $pathdeny = '^$';
 chomp(my $pwd = qx/readlink -f "`pwd`"/);
