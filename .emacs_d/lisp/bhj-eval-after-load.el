@@ -187,3 +187,17 @@
      (require 'ac-helm)
      (global-set-key (kbd "C-.") 'ac-complete-with-helm)
      (define-key ac-complete-mode-map (kbd "C-.") 'ac-complete-with-helm)))
+
+(defun org-html-fontify-code-compout (orig-fun &rest args)
+  "Make compilation output htmlized."
+  (if (string= (cadr args) "compout")
+      (flet ((generate-new-buffer (name)
+                                  (when (string= name " *temp*")
+                                    (setq name "temp-ox"))
+                                  (get-buffer-create (generate-new-buffer-name name))))
+        (apply orig-fun args))
+    (apply orig-fun args)))
+
+(eval-after-load 'ox-html
+  '(advice-add 'org-html-fontify-code :around #'org-html-fontify-code-compout))
+

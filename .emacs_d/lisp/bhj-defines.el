@@ -127,6 +127,13 @@ might be bad."
   (setq indent-tabs-mode nil)
   (setq c-basic-offset 4))
 
+;;;###autoload
+(defun compout-mode ()
+  "compilation mode, which is not buffer readonly for org export"
+  (interactive)
+  (compilation-mode)
+  (setq buffer-read-only nil))
+
 (defun nodup-ring-insert (ring obj)
   (unless (and (not (ring-empty-p ring))
                (equal (ring-ref ring 0) obj))

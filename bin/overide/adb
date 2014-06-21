@@ -32,7 +32,7 @@ function exec_the_adb() {
 function run_the_adb() {
     shell=shell
 
-    if test -e ~/.configs/adb-root; then
+    if test -e ~/.config/adb-root; then
         if test "$the_adb" = adb-expect; then
             set -- shell "$@"
             shell=
@@ -90,7 +90,7 @@ function adb() {
         shift;
     fi
     if test "$1" = -r; then
-        if test -e ~/.configs/adb-root; then
+        if test -e ~/.config/adb-root; then
             shift
             exec adb "$@"
         fi
@@ -148,9 +148,9 @@ function adb() {
     if test "$1" = root-mode; then
         set -x
         if test "$2" = on || test $# = 1; then
-            touch ~/.configs/adb-root
+            touch ~/.config/adb-root
         else
-            rm ~/.configs/adb-root
+            rm ~/.config/adb-root
         fi
         exit
     fi
@@ -273,7 +273,7 @@ function adb() {
             shift
             the_adb=adb-expect exec_the_adb "$@"
         fi
-    elif test $# = 1 -a "$1" = shell -a -e ~/.configs/adb-root && is-tty-io; then
+    elif test $# = 1 -a "$1" = shell -a -e ~/.config/adb-root && is-tty-io; then
         the_adb=adb-expect exec_the_adb sh
     else
 
