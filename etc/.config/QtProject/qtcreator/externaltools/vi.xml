@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Written on Fri Jun 20 17:45:31 2014 by Qt Creator 3.0.1-->
+<externaltool id="vi">
+    <description>Opens the current file in e</description>
+    <displayname>Edit with Emacs</displayname>
+    <category>Text</category>
+    <executable output="showinpane" error="showinpane" modifiesdocument="yes">
+        <path>e</path>
+        <arguments>&quot;%{CurrentDocument:FilePath}&quot;:%{CurrentDocument:Row}</arguments>
+        <workingdirectory>%{CurrentDocument:Path}</workingdirectory>
+    </executable>
+</externaltool>

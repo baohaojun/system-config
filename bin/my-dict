@@ -16,40 +16,4 @@ if test $(basename $0) = my-dict-maybe -a -e ~/.config/$USER/using-touchpad; the
     exit 0;
 fi
 
-if test $(uname) = Darwin; then
-    new_tab=-current-tab
-else
-    new_tab=-new-tab
-
-    in_firefox=false
-    if sawfish-client -e '(window-name (input-focus))'| grep -q -i 'mozilla firefox'; then
-        in_firefox=true
-    fi
-
-    if test "$EMACS"; then
-        function firefox() {
-            setsid firefox "$@"
-        }
-    fi
-
-    current_url=$(get-firefox-tab-url)
-
-    if echo "$current_url" | grep -P -e '^shit$|localhost:34567'; then
-        echo nothing to do
-    else
-        firefox push "$current_url"
-    fi
-
-    if test $in_firefox = true -a "${current_url:0-8}" = 'file:///' || echo $current_url|grep -q 'localhost.*/dict'; then
-        new_tab=-current-tab
-    elif firefox-search-for-tab 'localhost.*/dict'; then
-        new_tab=-current-tab
-    else
-        sawfish-browser-input "M-1"
-        if ! firefox-search-for-tab --tabs 1 'localhost.*/dict' &&
-            test  $(EMACS=t SELECT_PROMPT="Open in the current tab (tab 1)?" select-args yes no) = yes; then
-            new_tab=-current-tab
-        fi
-    fi
-fi
-firefox $new_tab http://localhost:34567/dict/"$(echo "$@" | urlify)"
+WHICH_TAB=1 firefox-open-url-pattern "localhost.*/dict" http://localhost:34567/dict/"$(echo "$@" | urlify)"

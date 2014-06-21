@@ -183,6 +183,12 @@ function adb() {
         exec $the_adb shell start $3;
     elif test "$#" = 3 -a "$1" = shell -a "$2" = sstat; then # service stat
         exec $the_adb shell getprop init.svc.$3
+    elif test "$1" = getprop -a $# -gt 2; then
+        shift
+        for prop in "$@"; do
+            command adb "echo -n '$prop: '; getprop $prop" </dev/null
+        done
+        exit
     elif test $# -gt 1 -a "$1" = shell; then
         if ! is-tty-io;then
             if test $myname = adb; then

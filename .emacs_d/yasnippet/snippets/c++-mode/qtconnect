@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: qtconnect
+# key: qtcon
+# --
+connect(${1:&infoThread}, SIGNAL(${2:updateMobileInfo}(${3:QString, QString})), ${4:this}, SLOT(${5:onInfoUpdate}($3)));

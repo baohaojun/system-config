@@ -33,10 +33,70 @@ url=$2
 
 new_tab=-new-tab
 
-firefox push "$(get-firefox-tab-url)"
+if test ! "$WHICH_TAB"; then
+    md5=$(echo "$exact$pattern" | md5sum | pn 1)
+    mkdir -p ~/.configs/firefox-pattern/
+    (
+        flock 9
+        if test ! -e ~/.configs/firefox-pattern/$md5; then
+            tab=2
+            if test -e ~/.configs/firefox-pattern/last-tab; then
+                tab=$(cat ~/.configs/firefox-pattern/last-tab)
+                ((tab++)) || true
+            fi
+            echo $tab > ~/.configs/firefox-pattern/last-tab
+            echo $tab > ~/.configs/firefox-pattern/$md5
+        fi
+    ) 9> ~/.configs/firefox-pattern/.lock
+    WHICH_TAB=$(cat ~/.configs/firefox-pattern/$md5)
+fi
 
-if firefox-search-for-tab $exact "$pattern"; then
+function current_url_matches() {
+    local exact=$1
+    local current_url=$2
+    local pattern=$3
+
+    if (test "$exact" -a "$(echo "$current_url" | unurl.pl)" = "$pattern") || (test ! "$exact" && echo "$current_url" | grep -q -P -e "$pattern"); then
+        return 0
+    else
+        return 1
+    fi
+}
+
+if test $(uname) = Darwin; then
     new_tab=-current-tab
+    exec firefox $new_tab "$url"
+fi
+
+current_url=$(get-firefox-tab-url)
+
+if current_url_matches "$exact" "$current_url" "$pattern"; then
+    echo nothing to do
+else
+    firefox push "$current_url"
+fi
+
+in_firefox=false
+if sawfish-client -e '(window-name (input-focus))'| grep -q -i 'mozilla firefox'; then
+    in_firefox=true
+fi
+
+if test $in_firefox = true -a "${current_url:0-8}" = 'file:///' || current_url_matches "$exact" "$current_url" "$pattern"; then
+    new_tab=-current-tab
+elif firefox-search-for-tab $exact "$pattern"; then
+    new_tab=-current-tab
+else
+    sawfish-browser-input "M-$WHICH_TAB"
+    this_url=$(get-firefox-tab-url)
+    if current_url_matches "$exact" "this_url" "$pattern"; then
+        new_tab=-current-tab
+    elif ! firefox-search-for-tab --tabs 1 $exact "$pattern" &&
+         (
+             find-or-exec firefox || true;
+             EMACS=t yes-or-no-p -y "Open in tab $WHICH_TAB: $this_url?"
+         ); then
+        new_tab=-current-tab
+    fi
 fi
 
 if test "$exact"; then
@@ -45,6 +105,4 @@ if test "$exact"; then
         exit 0;
     fi
 fi
-
 exec firefox $new_tab "$url"
-

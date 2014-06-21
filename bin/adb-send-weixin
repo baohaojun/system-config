@@ -21,8 +21,13 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                 adb-tap 949 935 # send
             elif test $(basename $0) = weibo; then
                 adb input keyevent SPACE
-                adb-long-press 440 281; sleep .5; adb-tap 545 191
+                adb-long-press 440 281; adb-tap 545 191
                 adb-tap 991 166
+            elif test $(basename $0) = cell-mail; then
+                adb input keyevent SPACE
+                adb-long-press 488 1006
+                adb-tap 529 887
+                adb-tap 998 174
             else
                 adb-tap 560 1840 #
                 sleep .1
