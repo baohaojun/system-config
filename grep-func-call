@@ -34,6 +34,7 @@ GetOptions(
     "p=s" => \$path_matcher,
     "r=s" => \$reverse_matcher,
     "v=s" => \$path_matcher_inv,
+    "add=s" => sub { $ENV{BEAGREP_ADDITIONAL_TOKENS} = $_[1]},
     "nc!" => \$no_comment,
     );
 

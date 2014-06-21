@@ -20,7 +20,7 @@ function debug() {
     echo "$@" >> ~/.logs/$(basename $0).log
 }
 
-TEMP=$(getopt -o e:p:r:v:sima --long nc -n $(basename $0) -- "$@")
+TEMP=$(getopt -o e:p:r:v:sima --long "nc,add:" -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -38,6 +38,9 @@ while true; do
             ;;
         -v)
             path_matcher_inv=(-v "$2")
+            shift 2
+            ;;
+        --add)
             shift 2
             ;;
         --nc)
