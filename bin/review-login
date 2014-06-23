@@ -3,7 +3,7 @@ firefox -current-tab "http://172.16.0.9:8080/login/q/status:open,n,z"
 sleep 1
 
 sawfish-search-in-firefox "username"
-sleep .1
+sleep .2
 putclip baohaojun
 sleep .1
 sawfish-browser-input TAB C-v

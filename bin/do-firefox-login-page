@@ -7,7 +7,7 @@ user=$(get-authinfo -h $host -u \?)
 
 sawfish-search-in-firefox user
 putclip "$user"
-sleep .5
+sleep 1
 sawfish-browser-input TAB C-v Tab
 putclip $(get-authinfo $host $user)
 sleep .1

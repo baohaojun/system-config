@@ -45,7 +45,7 @@ while true; do
         -b)
             export REPO_BRANCH=$2
             if test "$REPO_BRANCH" = x; then
-                REPO_BRANCH=$(basename $(git-choose-branch))
+                REPO_BRANCH=$(git-choose-branch | perl -npe 's!^\s*remotes/!!; s!.*?/!!')
             fi
             shift 2
             ;;

@@ -441,7 +441,10 @@
     (scroll-lock-off))
   (if (window-get w 'code-reading)
       (emacs-code-reading-on w)
-    (emacs-code-reading-off w)))
+    (emacs-code-reading-off w))
+  (if (string= (window-class w) "Emacs")
+      (unbind-keys global-keymap "Super-\\")
+    (bind-keys global-keymap "Super-\\"  '(system "xdotool-when-keyboard-clear key super+F12&"))))
 
 (add-hook 'focus-in-hook ime-toggle)
 

@@ -141,7 +141,7 @@ print $_ . "\n";
             fi
         fi
         if test $# = 1 -a "$1" = co; then
-            git co "$(git-choose-branch)"
+            git co "$(select-output-line 'git reflog | head -n 20' | pn 1)"
             exit
         fi
 
