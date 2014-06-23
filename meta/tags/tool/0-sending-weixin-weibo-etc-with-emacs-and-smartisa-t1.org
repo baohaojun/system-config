@@ -1,0 +1,1 @@
+../../../blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.org

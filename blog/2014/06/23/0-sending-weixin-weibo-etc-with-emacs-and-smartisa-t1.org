@@ -1,0 +1,507 @@
+#+title: 在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email/sms
+# bhj-tags: tool
+大家好，今天我们来讲一讲怎么在Linux下，用Emacs+Smartisan T1来发微信、
+微博、QQ等操作。
+
+其实这只是一个高度自动化的过程，我把几个关键点先说一说。
+
+1. 用Emacs编辑要发送的内容
+2. 把内容adb push到手机上，放入手机的剪贴板
+3. 操作手机的输入，一般是长按编辑框，点粘贴，再点发送按钮
+
+为了完成以上的步骤，我写了很多脚本，下面是更详细的说明。
+
+* 用Emacs编辑内容
+
+这里我会用到几个脚本，比如一个叫weixin的脚本，还有一个叫weibo的脚本。
+它们分别是用来发微信和微博用的。但实际上，这两个脚本是一模一样的。嗯，
+在这里我采取了busybox的做法，根据 =argv[0]= 来决定程序不同的行为（在
+shell编程中相应的是 =$(basename $0)= 了）。
+
+这个脚本的位置在 [[https://github.com/baohaojun/system-config/raw/master/bin/adb-send-weixin][adb-send-weixin]]：
+#+BEGIN_SRC sh
+#!/bin/bash
+
+export USE_BUFFER_NAME=send-to-$(basename $0).org
+(
+    if ! flock -n 9; then
+        find-or-exec emacs "No such thing"
+        emacsclient -e '(switch-to-buffer "'$USE_BUFFER_NAME'")'
+        exit
+    fi
+
+    while true; do
+        input=$(ask-for-input-with-emacs -p "What do you want say on $(basename $0)?" || true)
+        if ! test "$input"; then
+            exit
+        fi
+        (
+            flock 10
+            putclip-android "$input"&
+            if test $(basename $0) = google+; then
+                adb-long-press 144 374 # long press
+                adb-tap 117 273 # paste
+                adb-tap 949 935 # send
+            elif test $(basename $0) = weibo; then
+                adb input keyevent SPACE
+                adb-long-press 440 281; adb-tap 545 191
+                adb-tap 991 166
+            elif test $(basename $0) = t1-sms; then
+                adb-tap 560 1840 # 点空格
+                adb-long-press 522 912 # 长按输入框
+                adb-tap 480 802
+                adb-tap 864 921
+            elif test $(basename $0) = cell-mail; then
+                adb shell input touchscreen swipe 586 878 586 268 500
+                adb-tap 560 1840 #
+                adb-long-press 322 283
+                adb-tap 505 192
+                adb-tap 998 174
+            else # weixin and qq
+                adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
+                sleep .1
+                adb-tap 560 1840 # 再点一下，可能在出键盘，需要输入一个空格
+                adb-long-press 560 976 # 长点输入框
+                adb-tap 525 855 # 点一下粘贴钮
+                adb-tap 976 976 # 点一下发送钮
+            fi
+        ) 10> ~/.logs/$(basename $0).lock-send &
+    done
+) 9> ~/.logs/$(basename $0).lock
+#+END_SRC
+
+然后有N个脚本都是指向这个 adb-send-weixin 的软链接：
+
+#+BEGIN_EXAMPLE
+$ls -l |grep weixin
+-rwxr-xr-x 1 bhj bhj    1807 Jun 23 16:53 adb-send-weixin*
+lrwxrwxrwx 1 bhj bhj      15 Jun 20 11:55 cell-mail -> adb-send-weixin*
+lrwxrwxrwx 1 bhj bhj       6 Jun 17 11:16 google+ -> weixin*
+lrwxrwxrwx 1 bhj bhj      15 Jun 10 11:27 qq -> adb-send-weixin*
+lrwxrwxrwx 1 bhj bhj       6 Jun 23 16:47 t1-sms -> weixin*
+lrwxrwxrwx 1 bhj bhj      15 Jun 20 10:36 weibo -> adb-send-weixin*
+lrwxrwxrwx 1 bhj bhj      15 Jun  7 12:04 weixin -> adb-send-weixin*
+#+END_EXAMPLE
+
+这个脚本大致的工作是启动一个死循环，第二段里的 =while true; do
+... done= ，先用ask-for-input-with-emacs获取我要在weixin/weibo里输入的
+内容，然后用putclip-android把这个内容放到手机的剪贴板里去，然后用一堆
+adb-long-press/adb-tap等操作把贴到手机应用程序里并发送出去。
+
+上面用的坐标全是用我厂的Smartisan T1手机适配出来的，如果用别的厂的手机
+的话，大家需要自己适配一下啦。
+
+适配的方法有两种，一种是打开手机设置里的开发者选项，勾选上显示触摸操作
+和指针位置，这样你在屏幕上指指点点的时候，X/Y的座标会被显示上屏幕上方。
+另一种则是我写的另一个小脚本，在屏幕上长按手指在一个位置，会打应出相应
+的坐标。二者各有利弊，主要是第一种老是要打开之后又要记得关闭，操作比较
+繁琐，第二种呢，则不是实时的显示坐标。哦对了，我自己现在是用第二种比较
+多了，因为我可以截一张图下来慢慢点。Smartisan T1截图真的是超方便。小脚
+本的位置在[[https://github.com/baohaojun/system-config/raw/master/bin/adb-get-xy][adb-get-xy]]。
+
+#+BEGIN_SRC sh
+#!/bin/bash
+
+adb getevent -l |perl -ne '
+    if (m/ABS_MT_POSITION_/) {
+        chomp;
+        @fields = split;
+        ($name, $val) = @fields[2,3];
+        $val = hex($val);
+        print "$name: $val\n";
+    }
+'
+#+END_SRC
+
+其输出结果大概是这样的：
+
+#+BEGIN_EXAMPLE
+$adb-get-xy
+ABS_MT_POSITION_X: 550
+ABS_MT_POSITION_Y: 1006
+ABS_MT_POSITION_X: 549
+ABS_MT_POSITION_X: 548
+ABS_MT_POSITION_X: 547
+ABS_MT_POSITION_X: 546
+ABS_MT_POSITION_X: 545
+ABS_MT_POSITION_X: 544
+ABS_MT_POSITION_X: 543
+#+END_EXAMPLE
+
+下面来讲一下adb-send-to-weixin里用到的一些其他辅助脚本和命令。
+
+** flock
+
+flock是常用的一个shell下通过文件锁来进行进程间同步互斥的机制，在这里我
+用了两个flock，其中一个是说如果发现weixin死循环已经在跑的话，新的死循
+环就不开启了，而是通过find-or-exec把Emacs窗口提到前面来，再通过
+emacsclient把正在进行weixin编辑的Emacs buffer调到前面来。
+
+另一个flock则是为了进行性能优化，每次我编辑完一条weixin内容之后，我就
+在后台(bash的&符号)执行手机上的操作（放剪贴板、各种长按短按），这些后
+台操作我是肯定不希望它们有重合的，否则就会乱套。这样呢，我可以马上进行
+下一条微信的编辑，然后是再下一条，不需要等手机把上一条微信发出去先，如
+果weixin聊天也能有flow的状态的话，这样就能保证我的flow状态不会被打断了:-)
+
+** find-or-exec
+
+这是一段sawfish脚本，对我的Linux桌面管理器是sawfish。见 [[https://github.com/baohaojun/system-config/raw/master/bin/find-or-exec][find-or-exec]] 。
+
+#+BEGIN_SRC sh
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# = 0; then
+    die "Error: Usage $(basename $0) window_class [program_to_exec]"
+fi
+
+if test "$1" = konsole; then
+    shift;
+    set -- "konsole|xfce4-terminal" "$@"
+fi
+
+sawfish_exp=$(printf '(find-window-or-exec "%s" "%s")' "$1" "${2:-true}")
+
+sawfish-client -e "$sawfish_exp" >/dev/null 2>&1 &
+#+END_SRC
+
+这是一段bash脚本，如果你用bash -x看它的trace的话，你会发现：
+
+#+BEGIN_EXAMPLE
+$bash -x find-or-exec emacs
++ set -e
++ test 1 = 0
++ test emacs = konsole
+++ printf '(find-window-or-exec "%s" "%s")' emacs true
++ sawfish_exp='(find-window-or-exec "emacs" "true")'
++ sawfish-client -e '(find-window-or-exec "emacs" "true")'
+#+END_EXAMPLE
+
+最后会调一个find-window-or-exec的sawfish函数，我是这样定义的 （见我的
+[[https://github.com/baohaojun/system-config/raw/master/.sawfishrc][.sawfishrc]]）：
+
+#+BEGIN_SRC sawfish
+(defun find-window-or-exec (wclass-or-lambda #!optional wcommand)
+  (if (eq (catch 'wFound
+            (mapc (lambda (window)
+                    (when (if (stringp wclass-or-lambda)
+                              (string-match wclass-or-lambda (bhj-window-class window) 0 t)
+                            (when functionp wclass-or-lambda
+                                  (write (stderr-file) "hello world\n")
+                                  (wclass-or-lambda window)))
+
+                      (bhj-activate-window window)
+                      (throw 'wFound 'wFound)))
+                  (stacking-order)))
+          'wFound)
+      t
+    (if wcommand
+        (system (concat wcommand "&")))
+    nil))
+#+END_SRC
+
+这个就不展开了，再展开就要栈溢出了:-)
+
+但是find-or-exec的确是一个我很常用的方便我在Emacs/Terminal之间切换的程
+序。设想我在Terminal底下执行一段bash脚本，里面用到了emacs，它能直接帮
+我把Emacs窗口弹到前面来；等Emacs操作结束后，它又能把Terminal给我弹回来。
+
+常有一些Emacs的大仙说用Emacs可以在Emacs内开eshell什么的，永远不需要离
+开Emacs窗口。但首先eshell等都比较有问题，还有性能什么的。并且你还是得
+切换buffer嘛。然后我的find-or-exec可以做到自动帮我切换，所以这回我就没
+听大仙们的。
+
+** putclip-android
+
+putclip/getclip是cygwin下的程序。在Linux底下有一个xclip，在Mac OS X底
+下有一个pbcopy/pbpaste。
+
+但为了我自己编程写脚本、终端上打命令能够统一，我使用了design pattern里
+的不知哪种模式，在Linux下和Mac OS X下也实现了一个相应地用xclip和
+pbcopy/pbpaste实现了putclip/getclip。
+
+在Linux下的putclip功能最复杂，也最强大。见 [[https://github.com/baohaojun/system-config/raw/master/bin/Linux/putclip][putclip]] 。
+
+#+BEGIN_SRC sh
+#!/bin/bash
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+if test $# != 0; then
+    exec <<EOF
+$@
+EOF
+fi
+
+if test "$EMACS" = t -o "$REMOTEIP"; then
+    rm-last-nl > /tmp/$$.putclip
+    export FILE=/tmp/$$.putclip
+    (
+        if test "$REMOTEIP" = ""; then
+            prefix=""
+            arg_handler=echo
+        else
+            if test -e ~/.config/ssh-agent; then
+                . ~/.config/ssh-agent
+            fi
+            ssh ${REMOTEUSER:-$USER}@$REMOTEIP remote-putclip $(whoami)@$LOCALIP:$FILE
+            exit 0
+        fi
+
+        $prefix emacsclient --eval "
+(let ((default-directory \"/tmp/\"))
+(view-file \"$FILE\")
+(kill-new (filter-buffer-substring (point-min) (point-max)))
+(View-quit))"
+        $prefix rm $FILE
+        xclip -o -selection clipboard|xclip -i
+    ) >~/.logs/putclip.log 2>&1&
+else
+    rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
+    xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
+fi
+#+END_SRC
+
+简单地说，它在ssh远程登录和Emacs底下都能用。为什么这个事情值得说一下呢？
+因为首先ssh登录之后如果还能继续用putclip的话（没有用ssh -X，所以不能
+xclip），命令行和GUI能结合得更好。然后在Emacs下，直接操作xclip是会引起
+死锁的，因为Emacs是个单线程程序，它执行xclip命令之后，就会等待结束，可
+是呢xclip又要等持有着X剪贴板内容的程序跟它通讯，把剪贴板内容传过来。设
+想一下持有X剪贴板内容的程序大部分情况下会是谁呢？就是Emacs自己！
+
+这些是题外话，您看我的博客买一送一，跟putclip-android没什么关系。这个脚本见 [[https://github.com/baohaojun/system-config/raw/master/bin/putclip-android][putclip-android]] 。
+
+
+#+BEGIN_SRC sh
+#!/bin/bash
+
+if test "$#" = 0; then
+    set -- "$(ask-for-input-with-emacs)"
+fi
+echo -n "$@" > ~/.logs/$(basename $0).txt
+
+adb "set -x;
+echo -n $(printf %q "$@") > /sdcard/putclip.txt
+am startservice -n com.bhj.setclip/.PutClipService
+for x in \$(seq 1 20); do if test -e /sdcard/putclip.txt; then busybox sleep .1; echo \$x; else exit; fi; done"
+#+END_SRC
+
+*** adb
+
+第三层标题了。我保证不会出现第四层标题。
+
+上面这个脚本里我的adb命令用法很奇特，它直接跟了一大段shell脚本，没有用
+adb shell COMMAND这个形式。这是因为我嫌每次都要打shell这个单词太累了。
+
+如果你以为我只是把shell去掉而已的话你就错了！
+
+我更多的工作是在引号的处理和终端的交互上。
+
+先说说终端的交互。像su命令那样，su -c "echo hello world" 有点像adb
+shell "echo hello world"，但 su -c "bash"就跟adb shell bash很不一样了，
+前者你能得到一个可以交互的shell，后者你输入任何命令都没有响应。这个问
+题我是通过expect解决的。
+
+我的adb包装过之后执行adb shell bash时，它会执行expect，然后spawn出一个
+adb shell，然后把所有的参数（在这里是bash）发过去，所以最后的结果就像
+是你自己启动了一个adb shell，然后再在可以交互的提示符下输入了bash。见
+[[https://github.com/baohaojun/system-config/raw/master/bin/adb-expect][adb-expect]]。
+
+引号的处理则相当的奇葩。adb的.c程序在处理参数的时候如果发现某个参数里
+带有空格，就会在它的两头各加上一个双引号。所以：
+
+#+BEGIN_EXAMPLE
+{ bhj@bhj-laptop /home/bhj/bin Ret: 130 @ 21:51:38 }
+$the-true-adb shell echo "hello    world"
+hello    world
+
+{ bhj@bhj-laptop /home/bhj/bin }
+$echo "hello    world"
+hello    world
+#+END_EXAMPLE
+
+这个跟直接在bash里打 =(echo "hello world")= 效果是一致的（为了让这个命
+令在org-mode里变成monospace字体，我必须加一个括号，有谁知道更好的办法
+么？）。可是在bash里你还可以 =(echo 'hello   "   world')= ，可是在adb下就会出错：
+
+#+BEGIN_EXAMPLE
+{ bhj@bhj-laptop /home/bhj/bin Ret: 130 @ 21:54:59 }
+$(echo 'hello   "   world')
+hello   "   world
+
+{ bhj@bhj-laptop /home/bhj/bin }
+$the-true-adb shell echo 'hello   "   world'
+/system/bin/sh: no closing quote
+#+END_EXAMPLE
+
+如果你用strace去看怎么回事儿的话，你会发现adb送给手机执行的命令是这样的：
+
+#+BEGIN_EXAMPLE
+{ bhj@bhj-laptop /home/bhj/bin Ret: 130 @ 21:55:55 }
+$strace -e write -f the-true-adb shell echo 'hello   "   world'
+[ Process PID=7340 runs in 32 bit mode. ]
+write(3, "000c", 4)                     = 4
+write(3, "host:version", 12)            = 12
+write(3, "0012", 4)                     = 4
+write(3, "host:transport-any", 18)      = 18
+write(3, "001e", 4)                     = 4
+write(3, "shell:echo \"hello   \"   world\"", 30) = 30
+write(1, "/system/bin/sh: no closing quote"..., 34/system/bin/sh: no closing quote
+) = 34
+#+END_EXAMPLE
+
+把引号归整一下，手机的sh看到的命令是 =(echo "hello " world")= （去掉括
+号）。
+
+查看一下adb对引号的处理：
+
+#+BEGIN_SRC c
+            quote = (**argv == 0 || strchr(*argv, ' '));
+            if (quote)
+                strcat(buf, "\"");
+            strcat(buf, *argv++);
+            if (quote)
+                strcat(buf, "\"");
+#+END_SRC
+
+能不能把引号弄对是bash脚本编程功底的一种体现:-) 如之前所述，如果我是在
+用adb-expect打开一个终端给每个非交互式的 =adb shell echo hello= 调用的
+话，那引号不是一个问题：
+
+#+BEGIN_EXAMPLE
+{ bhj@bhj-laptop /home/bhj/src/android/system/core/adb }
+$adb-expect echo 'hello   "   world'
+spawn the-true-adb shell
+root@msm8974sfo:/ # exec 'echo' 'hello   "   world'
+hello   "   world
+#+END_EXAMPLE
+
+可是这样太影响性能了，并且会影响我对adb进行编程，我必须把前面的两行输
+出给过滤掉。
+
+所以我还是把引号机制硬生生给它掰正了：
+
+#+BEGIN_SRC sh
+            IFS=$'\n'
+            for x in "$@"; do
+                args=("${args[@]}" $(
+                             if test "$(printf %q "$x")" != "$x"; then
+                                 # echo \"\'"$(echo -n "$x" | perl -npe "s!'!\\'!")"\'\"
+                                 printf \"%q\" "$x"
+                             else
+                                 printf %q "$x"
+                             fi))
+            done
+
+            exec the-true-adb ${args[@]}
+#+END_SRC
+
+如果发现某个参数 (the x in "$@") 需要 quote 的话( ~(test "$(printf %q
+"$x")" != "$x")~ )，那我们就给它quote，并前后各加一个双引号：
+（ ~(printf \"%q\" "$x")~ ）。否则就只quote但不加双引号。因为在底下
+=exec the-true-adb ${args[@]}= 的时候，我们没有给 =${args[@]}= 加上双
+引号，所以之前的quote被取消（printf %q），传过去的参数跟之前是一样的，
+但不同的是有一些参数前后各加了一个双引号，这些参数被adb的.c程序再在前
+后各加一双引号，最后结果等于没加，得到了我们想要的bash引号行为！
+
+我的adb脚本在 [[https://github.com/baohaojun/system-config/raw/master/bin/overide/adb][adb]] ，我自己已经快看不明白了。
+
+*** PutClipService
+
+又一个第三级标题，putclip-android用到的一个手机小apk。这个程序见 [[https://github.com/baohaojun/system-config/raw/master/gcode/SetClip/src/com/bhj/setclip/PutClipService.java][PutClipService.java]] 。
+
+#+BEGIN_SRC java
+package com.bhj.setclip;
+
+import android.app.Service;
+import android.content.ClipboardManager;
+import android.content.ClipData;
+import android.content.Intent;
+import android.os.IBinder;
+import android.widget.Toast;
+import java.io.File;
+import java.io.FileReader;
+
+public class PutClipService extends Service {
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent,  int flags,  int startId)  {
+        try {
+            FileReader f = new FileReader(new File("/sdcard/putclip.txt"));
+            char[] buffer = new char[1024];
+            int n = f.read(buffer);
+            String str = new String(buffer, 0, n);
+            ClipboardManager mClipboard;
+            mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+            mClipboard.setPrimaryClip(ClipData.newPlainText("Styled Text", str));
+            File putclip = new File("/sdcard/putclip.txt");
+            putclip.delete();
+        } catch (Exception e) {
+            Toast.makeText(this, "Something went wrong in putclip: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+    }
+}
+#+END_SRC
+
+最后putclip-android里是通过am startservice来启动这个service的。这个
+java程序会打开adb push上来的weixin内容文件(/sdcard/putclip.txt），读出
+来，放进剪贴板，删掉这个文件。脚本里有一个死循环一直在等待这个文件被删
+除才返回。
+
+* adb-long-press 和 adb-tap
+
+这两个基本上就是adb自带的input命令的封装。其中long-press在adb input命
+令里是没有的，但是网上查一下也能查到用swipe来可以模拟出来（见
+[[https://github.com/baohaojun/system-config/raw/master/bin/adb-long-press][adb-long-press]]）：
+
+#+BEGIN_SRC sh
+#!/bin/bash
+
+seconds=550
+if test $# = 5 -o $# = 3; then
+    seconds=$1
+    shift
+fi
+if test $# = 4; then
+    adb shell input touchscreen swipe $1 $2 $3 $4 $seconds
+elif test $# = 2; then
+    adb shell input touchscreen swipe $1 $2 $1 $2 $seconds
+fi
+#+END_SRC
+
+* sawfish快捷键
+
+#+BEGIN_SRC sawfish
+(bind-keys s-h-keymap "w"  '(system "weixin&"))
+(bind-keys global-keymap "XF86Mail" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
+#+END_SRC
+
+这样，我按一下 =s-h w= 就能调出weixin的Emacs编辑，输入完内容之后，按一
+下我的微软人体工学4000键盘上的Mail键，就会像按键小精灵一样给Emacs发4个
+键， =C-x C-s C-x #= ，我的微信就发出去了。
+
+当然，这之前你需要做是的确保已经调出来微信聊天窗口。
+
+另外，这些脚本都只能在adb root过后使用吧好像？主要是adb input命令必须
+有root权限？这个不确定，但即使我用的是user版本的手机，不能adb root，我
+的adb包装也有一个adb root-mode命令，进入之后每个adb shell COMMAND都会
+被重新解释成 adb shell su -c 'quoted COMMAND'，相当地绕呢，我自己都快
+被绕晕了。
+
+我的微博账号是 baohaojun，欢迎粉我。微信号是beagrep，欢迎加我。我聊天
+打字速度很快的。

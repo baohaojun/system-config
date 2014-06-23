@@ -1,5 +1,10 @@
 #+title: Computer tools
  * 2014
+  - 2014-06
+   * 2014-06-23
+
+     [[../../../blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.org][在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email/sms]]
+
   - 2014-05
    * 2014-05-20
 

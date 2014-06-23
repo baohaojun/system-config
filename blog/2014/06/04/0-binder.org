@@ -80,6 +80,7 @@ Binder IPC机制跟其它常见的IPC机制一样，里面包含一些基本的�
 大体看过Binder的一些特点之后，我们来场景分析一下Binder相关的一些细节。
 您可以别看了，我写得太乱了...
 
+
 * Binder是一种面向对象的IPC机制
 
 作为一种很牛逼的IPC机制，Binder想要作到让跨进程间通讯的远程调用，使用
@@ -132,7 +133,7 @@ void client_wifi_off()
 
 这里你也看到了，我们可以像模板一样，生成很多的函数，每个函数做一个命令。
 当然，没有什么能阴止你使用跟server端一样的名字，比如你的
-client_wifi_off完全也可以叫做wifi_off，这样做是有好处的，使两个本来非
+=client_wifi_off= 完全也可以叫做 =wifi_off= ，这样做是有好处的，使两个本来非
 常相关的函数变得更紧密了，但也有坏处，阅读代码的时候常常不知道该看哪个。
 其实看多了很快会明白，所有的client端的实现都是个模板而已（boilerplate）。
 
@@ -147,11 +148,11 @@ void test_cmd(const char *cmd)
 }
 #+END_SRC
 
-然后再用到client_wifi_on()的地方就代以test_cmd("wifi-on")，在用到
-wifi_off()的地方就代以test_cmd("wifi-off")，等等。这样做的好处是少了很
+然后再用到 =client_wifi_on()= 的地方就代以 =test_cmd("wifi-on")= ，在用到
+=wifi_off()= 的地方就代以 =test_cmd("wifi-off")= ，等等。这样做的好处是少了很
 多函数和很多boilerplate代码（每个命令都要open/close socket！）。
 
-当然，你也可以再在test_cmd的基础上把wifi_on/wifi_off给包装出来：
+当然，你也可以再在 =test_cmd= 的基础上把 =wifi_on/wifi_off= 给包装出来：
 
 #+BEGIN_SRC c
 void wifi_on()

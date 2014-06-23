@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email/sms]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html"/>
+    <updated>2014-47-23T22:06:07+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[binder]]></title>
     <link href="http://baohaojun.github.io/blog/2014/06/04/0-binder.html"/>
     <updated>2014-06-08T16:30:04+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2013/10/05/0-My-Own-Win32-Input-Method.html"/>
     <updated>2013-10-05T07:33:54+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/10/05/0-My-Own-Win32-Input-Method.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[我的Win32输入法编程心得]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/10/04/0-Win32-IME-Programming.html"/>
-    <updated>2013-10-04T23:27:06+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/10/04/0-Win32-IME-Programming.html</id>
   </entry>
 </feed>
