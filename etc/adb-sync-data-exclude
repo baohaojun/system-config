@@ -5,3 +5,4 @@ data/log-crawler
 data/tombstones
 data/dalvik-cache
 data/debian/android
+data/media/0/diag_logs

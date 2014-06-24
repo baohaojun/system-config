@@ -71,6 +71,7 @@ if test "$#" != 0; then
             ;;
         e)
             shift
+            cd ~/doc/baohaojun/
             e "$@"
             ;;
         *)

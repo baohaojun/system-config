@@ -17,7 +17,7 @@ if test $(basename $0) = adb-fix-gms; then
 
         adb -W || true
 
-        if test $(adb getprop ro.build.type) = user; then
+        if test $(adb getprop ro.debuggable) = 0; then
             exit
         fi
         if test -e ~/.configs/adb-root; then

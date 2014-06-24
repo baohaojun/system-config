@@ -14,6 +14,9 @@ GetOptions(
     );
 
 my $mount_cmd = "adb remount";
+if (@ARGV == 0) {
+    @ARGV = (qx(getclip));
+}
 if (@ARGV == 1) {
     my $dest = $ARGV[0];
     $dest =~ s!(.*)/.*!$1!;
@@ -45,6 +48,13 @@ sub push_one_file($$)
     if (not $dest_is_dir) {
         $true_dest = $dest;
     }
+
+    if ($true_dest =~ m!/system/app/[^/]*.apk!) {
+        my $apk = $&;
+        (my $odex = $apk) =~ s/apk$/odex/;
+        system("adb 'set -x; rm $odex'");
+    }
+
     if (system("adb", "push", $file, "$true_dest")) {
         debug "push failed, try to use sdcard";
         system("adb", "mkdir", "-p", "/sdcard/adb_push");

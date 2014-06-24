@@ -15,8 +15,8 @@ shift
 
 if test "$reverse" = true; then
     for x in "$@"; do
-        my-rsync -av $host:$PWD/$(basename $x) $(dirname $x) --exclude .git
+        my-rsync -av $host:$PWD/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*"
     done
 else
-    my-rsync -av "$@" $host:$PWD --exclude .git
+    my-rsync -av "$@" $host:$PWD --exclude .git --exclude "*#*" --exclude ".#*"
 fi

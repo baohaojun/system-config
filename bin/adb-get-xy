@@ -1,0 +1,11 @@
+#!/bin/bash
+
+adb-tty getevent -l </dev/tty | perl -ne '
+    if (m/ABS_MT_POSITION_/) {
+        chomp;
+        @fields = split;
+        ($name, $val) = @fields[2,3];
+        $val = hex($val);
+        print "$name: $val\r\n";
+    }
+'

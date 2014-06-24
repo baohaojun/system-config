@@ -5,12 +5,13 @@ echo $host
 
 user=$(get-authinfo -h $host -u \?)
 
+sleep .2
 sawfish-search-in-firefox user
 putclip "$user"
-sleep 1
-sawfish-browser-input TAB C-v Tab
+sleep .2
+sawfish-browser-input TAB DEL C-v
 putclip $(get-authinfo $host $user)
 sleep .1
-sawfish-browser-input C-v
+sawfish-browser-input TAB DEL C-v
 putclip ""
 sawfish-browser-input RET

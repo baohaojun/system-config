@@ -120,7 +120,9 @@ function adb() {
     if test "$1" = remount; then
         if test "$#" = 1; then
             the-true-adb remount
-            command adb shell su -c 'mount -o rw,remount /system; mount | grep /system'
+            command adb shell su -c 'mount -o rw,remount /system;
+                                     mount -o remount,rw /system /data/debian/android/system
+                                     mount | grep /system'
             exit
         elif test "$2" = /; then
             command adb shell su -c 'mount -o rw,remount /; mount | grep rootfs'
@@ -147,6 +149,9 @@ function adb() {
 
     if test "$1" = root-mode; then
         set -x
+        if test -e ~/.config/adb-root && yes-or-no-p -y "stop root mode?"; then
+            set -- root-mode off
+        fi
         if test "$2" = on || test $# = 1; then
             touch ~/.config/adb-root
         else
@@ -243,7 +248,7 @@ function adb() {
     fi
 
     if test "$1" = logcat -a "${2:0:1}" = :; then
-       exec the-true-adb logcat *:s $(echo ${2:1} | perl -npe 's/,/:v /g')
+       exec the-true-adb logcat *:s $(echo -n ${2:1} | perl -npe 's/,|$/:v /g')
     fi
 
     if test "$1" = gdbserver; then

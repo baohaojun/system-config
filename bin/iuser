@@ -1,0 +1,4 @@
+#!/bin/bash
+sudo bash -c "for x in /proc/*/fd; do
+    ls -l /proc/*/fd/* | grep \"$1\"
+done"
