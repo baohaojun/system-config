@@ -739,11 +739,11 @@ java程序会打开adb push上来的weixin内容文件(/sdcard/putclip.txt），
 </p>
 
 <p>
-另外，这些脚本都只能在adb root过后使用吧好像？主要是adb input命令必须
-有root权限？这个不确定，但即使我用的是user版本的手机，不能adb root，我
-的adb包装也有一个adb root-mode命令，进入之后每个adb shell COMMAND都会
-被重新解释成 adb shell su -c 'quoted COMMAND'，相当地绕呢，我自己都快
-被绕晕了。
+<del>另外，这些脚本都只能在adb root过后使用吧好像？主要是adb input命令必须有root权限？这个不确定，但即使我用的是user版本的手机，不能adb root，我的adb包装也有一个adb root-mode命令，进入之后每个adb shell COMMAND都会被重新解释成 adb shell su -c 'quoted COMMAND'，相当地绕呢，我自己都快被绕晕了。</del>
+</p>
+
+<p>
+我记错了，这些脚本是不需要root权限的。Anyway, adb root-mode:-)
 </p>
 
 <p>
