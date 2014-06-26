@@ -1,0 +1,23 @@
+#!/bin/bash
+
+vc=
+format="/cygdrive/%s/Program Files%s/Microsoft Visual Studio 12.0/VC/bin/amd64/vcvars64.bat"
+for x in c d e; do
+    for y in "" " (x86)"; do
+        if test -e "$(printf "$format" "$x" "$y")"; then
+            vc="$(printf "$format" "$x" "$y")"
+            break
+        fi
+    done
+done
+
+for x in "$@"; do
+    printf '%q ' "$x"
+done > ~/.logs/vc2013env.sh.$$
+cat <<EOF > ~/.logs/vc2013env.bat
+call "$(cygpath -alw "$vc")"
+bash ~/.logs/vc2013env.sh.$$
+EOF
+
+cmd.exe /c "$(cygpath -alw ~/.logs/vc2013env.bat)"
+rm ~/.logs/vc2013env.sh.$$

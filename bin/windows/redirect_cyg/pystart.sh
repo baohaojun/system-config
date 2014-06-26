@@ -13,5 +13,5 @@ pyfile="$1"
  fi
 shift
 pyfile=`cygpath -alw "$pyfile"`
-set -x 
-cygstart /cygdrive/c/python25/python \""$pyfile"\" "$@"
+set -x
+cygstart /cygdrive/c/Python2/python \""$pyfile"\" "$@"

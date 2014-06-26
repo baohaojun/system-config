@@ -121,7 +121,7 @@ function adb() {
         if test "$#" = 1; then
             the-true-adb remount
             command adb shell su -c 'mount -o rw,remount /system;
-                                     mount -o remount,rw /system /data/debian/android/system
+                                     mount -o remount,rw /system /data/debian/android/system >/dev/null 2>&1
                                      mount | grep /system'
             exit
         elif test "$2" = /; then

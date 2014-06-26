@@ -2,3 +2,4 @@
 
 putclip "$(get-authinfo localhost $USER 22)"
 xdotool-when-keyboard-clear key "shift+Insert"
+putclip ""

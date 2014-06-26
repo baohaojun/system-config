@@ -2,6 +2,8 @@
 
 ps-killall gnome-keyring-daemon
 
+exec > ~/.xsession-errors 2>&1
+
 for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; do
     unset $x
 done

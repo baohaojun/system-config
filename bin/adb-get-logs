@@ -23,6 +23,6 @@ echo cd ~/today/"$1"
 mkdir -p "$1"
 cd "$1"
 
-adb_pull /data/logs /data/anr /data/system/dropbox ./
+adb_pull /data/logs /data/anr /data/system/dropbox /data/core ./
 adb_pull /sdcard/smartisan ./
 echo cd ~/today/"$1" | tee /dev/stderr | putclip

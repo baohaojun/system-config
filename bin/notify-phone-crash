@@ -27,7 +27,6 @@ if test $(basename $0) = adb-fix-gms; then
             adb root
             exit
         fi
-
         (
             mkdir ~/today/logs -p
             cd ~/today/logs
@@ -66,6 +65,7 @@ if test $(basename $0) = adb-fix-gms; then
             adb reboot
         fi
         adb start
+        ssh-to-phone echo hello
     ) || bhj-notify "Fix Gms Failed" "Please check!"
     exit
 fi

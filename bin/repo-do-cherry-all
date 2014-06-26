@@ -12,12 +12,17 @@ if test $# == 0; then
 fi
 
 shell=false
-TEMP=$(getopt -o s --long shell -n $(basename $0) -- "$@")
+do_here=false
+TEMP=$(getopt -o sh --long shell,here -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -s|--shell)
             shell=true
+            shift
+            ;;
+        -h|--here)
+            do_here=true
             shift
             ;;
         --)
@@ -47,12 +52,18 @@ for x in $diffs; do
             start_recursive_shell 'shell for cherry'
             exit
         fi
-        target_branch=$(grep -o 'not found in .*' $x|pn 4|head -n 1)
+        if test $do_here = true; then
+            target_branch=HEAD
+        else
+            target_branch=$(grep -o 'not found in .*' $x|pn 4|head -n 1)
+        fi
         if test -z "$target_branch"; then
             echo target branch is not found in $x'!'
             start_recursive_shell "No target branch"
         else
-            git co $target_branch -b $(basename $target_branch) || true
+            if test $do_here = false; then
+                git co $target_branch -b $(basename $target_branch) || true
+            fi
             for y in $(grep -e "$1" $x |grep -v 'Merge commit.*into'| pn 3); do
                 export WORKING_REV=$y
                 git cherry-pick $y || start_recursive_shell "cherry failed: $y" || true
