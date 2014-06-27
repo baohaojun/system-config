@@ -68,6 +68,11 @@ function git()
         set -- diff -w
     fi
 
+    if test "$1" = export; then
+        command git archive --output "$3" "$2"
+        return $?
+    fi
+
     if test $# = 1 -a "$1" = cherry-pick; then
         set -- cherry-pick $(select-output-line 'git reflog | head -n 20' | pn 1)
     fi

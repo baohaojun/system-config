@@ -23,3 +23,5 @@ mkdir $TD
 )
 cp $TD/* "$DIR" -va
 rm $TD -rf
+cd "$DIR"
+fix-deep-dirs

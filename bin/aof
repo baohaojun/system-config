@@ -45,6 +45,7 @@ elif test "${1##*.}" = rar; then
         echo unrar "$file" failed\!
         exit -1
     fi
+    fix-deep-dirs
 elif is_archive_type "$type" || test "$(xdg-mime query default "$type")" = file-roller.desktop; then
     if test "$2"; then
         dir=$(readlink -m "$2")
@@ -56,6 +57,7 @@ elif is_archive_type "$type" || test "$(xdg-mime query default "$type")" = file-
     cd "$dir"
     file-roller --extract-to="$PWD" "$1"
     up "$PWD"
+    fix-deep-dirs
     exit
 else
     yes-or-no-p "Not an archive type? Will open it using system program."

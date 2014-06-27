@@ -1,8 +1,12 @@
-mnt/sdcard
+data/anr
 data/core
-data/logs
-data/log-crawler
-data/tombstones
 data/dalvik-cache
 data/debian/android
+data/log-crawler
+data/logs
 data/media/0/diag_logs
+data/media/0/Download
+data/media/0/smartisan
+data/system/dropbox
+data/tombstones
+mnt/sdcard

@@ -78,10 +78,14 @@ case $1 in
         fi
         ;;
     qt|qt-mode)
-        file=$(select-output-line beagrep -e 'a name="'$2'"' -d /usr/share/qt5/doc --grep -l)
+        file=$(select-output-line beagrep -e 'a name="'$2'(-prop|-enum)?"' -t "a name $2" -d /usr/share/qt5/doc --grep "-l -P")
         if test -z "$file" -a "${2:0:3}" = set; then
             file=$(select-output-line beagrep -e 'a name="'${2:3}-prop'"' -d /usr/share/qt5/doc --grep -l -i)
             set -- "$1" "$(lc ${2:3:1})${2:4}-prop"
+        elif grep -P -e 'a name="'$2'(-prop)"' "$file" -q; then
+            set -- "$1" "$2-prop"
+        elif grep -P -e 'a name="'$2'(-enum)"' "$file" -q; then
+            set -- "$1" "$2-enum"
         fi
 
         firefox-open-url-pattern usr/share/qt5/doc file://$file#$2

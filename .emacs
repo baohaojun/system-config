@@ -5,16 +5,22 @@
 
 (defconst *is-a-mac* (eq system-type 'darwin))
 (defconst *is-a-win* (eq system-type 'windows-nt))
-;; (when (and (file-exists-p "/etc/emacs/site-start.d/00debian-vars.el")
-;;            (not (fboundp 'debian-file->string)))
-;;   (load "/usr/share/emacs/site-lisp/debian-startup.el")
-;;   (setq debian-emacs-flavor
-;;         (intern
-;;          (concat "emacs" (replace-regexp-in-string "\\..*" "" emacs-version))))
-;;   (let ((flavor 'emacs))
-;;     (mapc (lambda (file)
-;;             (load file))
-;;           (directory-files "/etc/emacs/site-start.d/" t ".*.el"))))
+(setq load-path
+      (nconc (list
+              "/usr/local/no-such-files")
+             load-path))
+
+(when (and (file-exists-p "/etc/emacs/site-start.d/00debian-vars.el")
+           (not (fboundp 'debian-file->string)))
+  (load "/usr/share/emacs/site-lisp/debian-startup.el")
+  (setq debian-emacs-flavor
+        (intern
+         (concat "emacs" (replace-regexp-in-string "\\..*" "" emacs-version))))
+  (let ((flavor 'emacs))
+    (mapc (lambda (file)
+            (load file))
+          (directory-files "/etc/emacs/site-start.d/" t ".*.el"))))
+
 (when (file-exists-p (expand-file-name "~/.emacs-path.el"))
   (load-file (expand-file-name "~/.emacs-path.el")))
 

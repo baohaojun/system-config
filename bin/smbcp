@@ -67,7 +67,11 @@ user_pass=$(
 
 
 if test $(basename $0) = smbcp; then
-    smbclient "$share" -D "$D" -U "$user_pass" -c "tarmode; recurse; prompt; lcd $2; mget \"$base_src\""
+    smbclient "$share" -D "$D" -U "$user_pass" -c "tarmode; recurse; prompt; lcd \"$2\"; mget \"$base_src\""
 else
-    smbclient "$share" -D "$D" -U "$user_pass" -c "tarmode; recurse; prompt; put \"$1\" \"$base_dest\""
+    if test -d "$1"; then
+        smbclient "$share" -D "$D" -U "$user_pass" -c "tarmode; recurse; prompt; lcd \"$1\"; mkdir \"$base_src\"; cd \"$base_src\"; mput *"
+    else
+        smbclient "$share" -D "$D" -U "$user_pass" -c "tarmode; recurse; prompt; put \"$1\" \"$base_dest\""
+    fi
 fi

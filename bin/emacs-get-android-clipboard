@@ -1,0 +1,3 @@
+#!/bin/bash
+putclip "$(getclip-android)"
+sawfish-client -e '(synthesize-event "C-y" (input-focus))'
