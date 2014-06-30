@@ -7,11 +7,11 @@ fi
 
 (
     flock -n 9 || { echo 'lock failed for home at '$(date); exit 0; }
-    for home in bhj.dyndns.org realhome; do
+    for home in home realhome; do
         while true; do
             sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
             ssh -o ServerAliveInterval=300 -i ~/.ssh/id_rsa_nopass -C2qN $(
-                if test $home = bhj.dyndns.org; then
+                if test $home = home; then
                     echo -D 7070
                 fi
                 ) -R :$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3)):localhost:22 $home -p 443
