@@ -80,6 +80,8 @@ function find-curr() {
     echo "(progn"
     echo "(setq bhj-no-random-theme t)"
     echo '(load "~/.emacs")'
+    echo '(load "~/system-config/.emacs_d/lisp/bhj-eval-after-load.el")'
+    echo '(load "~/system-config/.emacs_d/lisp/bhj-defines.el")'
     next=0
     export title
     for x in "$@"; do
