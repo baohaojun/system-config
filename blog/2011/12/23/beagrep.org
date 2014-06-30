@@ -547,8 +547,7 @@ if you do not use Emacs for reading and writing code.
 
 These 2 tools are faster grep, they do not use indexing. Author of Ack
 has maintained a quite complete list of other grep-like tools at [[http://beyondgrep.com/more-tools/][this
-web page]].
-
+web page]]. Both opengrok and beagrep are listed there.
 
 [fn:improve] Here's how I improved it from 0.8s to 0.23s: use Mono's
 AOT option to do the JIT optimization Ahead Of Time. I found out about
