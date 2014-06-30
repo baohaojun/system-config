@@ -223,7 +223,17 @@ if [string eq "" $mode] {
 
         # end generated code
         $CTRLX$ESC   {send $ESC}
-        timeout 180 {send \000}
+        timeout 180 {
+            send \000;
+            send $LEFT;
+            send $RIGHT;
+            send "\r\n";
+            expect {
+                -timeout 1 "您有回复提醒" {
+                    exec bhj-notify bbs 您有回复提醒
+                }
+            }
+        }
     }
 }
 exit

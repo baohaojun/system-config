@@ -418,27 +418,8 @@ get imports if java-mode
 
 ;;;***
 
-;;;### (autoloads (bhj-c-show-current-func ajoke-pop-mark-back ajoke-pop-mark
-;;;;;;  bhj-jdk-help bhj-insert-pwdu bhj-insert-pwdw bhj-file-basename
-;;;;;;  bhj-clt-insert-file-name wiki-local-bhj weekrep bhj-downcase-symbol-or-region
-;;;;;;  bhj-upcase-symbol-or-region source-code-help bhj-find-missing-file
-;;;;;;  bhj-open-android-doc-on-java-buffer bhj-do-dictionary insert-today
-;;;;;;  dos2unix bhj-do-code-generation bhj-org-tasks-closed-last-week
-;;;;;;  bbdb-complete-mail bhj-flatten-list my-bbdb-canonicalize
-;;;;;;  my-bbdb/gnus-update-records-mode bhj-view-mail-external bhj-help-it
-;;;;;;  gnus-gmail-search-subject localedit bhj-sudoedit switch-buffer-same-filename-rev
-;;;;;;  switch-buffer-same-filename revert-all-buffers save-all-buffers-no-check-modified
-;;;;;;  back-to-indent-same-space-as-prev-line indent-same-space-as-prev-line
-;;;;;;  java-bt-mode java-bt-next-error java-bt-ret-key waw-mode
-;;;;;;  waw-ret-key waw-next-error visit-code-reading android-get-help
-;;;;;;  where-are-we try-all-color-themes try-all-themes random-theme
-;;;;;;  devenv-debug devenv-toggle-breakpoint switch-to-devenv bhj-set-reply
-;;;;;;  bhj-set-smtp-cred-to-company-mail bhj-mimedown bhj-w3m-scroll-down-or-previous-url
-;;;;;;  bhj-w3m-scroll-up-or-next-url bhj-occur-merge-conflicts bhj-occur-make-errors
-;;;;;;  bhj-occur bhj-indent-region-as-prev-line c-get-includes linux-c++-mode
-;;;;;;  linux-c-mode bhj-douban-start confirm-risky-remote-edit fix-latex-cjk
-;;;;;;  bhj-2-window-visit-next-file cleanup-buffer-safe) "bhj-defines"
-;;;;;;  "bhj-defines.el" (21211 11280 0 0))
+;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21424 62379
+;;;;;;  47967 36000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -478,10 +459,20 @@ C mode with adjusted defaults for use with the Linux kernel.
 
 \(fn)" t nil)
 
-(autoload 'c-get-includes "bhj-defines" "\
-
+(autoload 'compout-mode "bhj-defines" "\
+compilation mode, which is not buffer readonly for org export
 
 \(fn)" t nil)
+
+(autoload 'grepout-mode "bhj-defines" "\
+grep mode, which is not buffer readonly for org export
+
+\(fn)" t nil)
+
+(autoload 'bhj-c-get-includes "bhj-defines" "\
+
+
+\(fn PREFIX)" t nil)
 
 (autoload 'bhj-indent-region-as-prev-line "bhj-defines" "\
 
@@ -650,6 +641,11 @@ Major mode for output from java back trace.
 
 (autoload 'bhj-help-it "bhj-defines" "\
 open help for the current word
+
+\(fn)" t nil)
+
+(autoload 'bhj-help-qt "bhj-defines" "\
+open help for the current word for qt
 
 \(fn)" t nil)
 
