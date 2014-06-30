@@ -21,7 +21,7 @@ sub timetag_human_to_sec($)
     if ($tag =~ m/(\d+):(\d+):(\d+),(\d+)/) {
         return $1 * 3600 + $2 * 60 + $3 + "0.$4";
     } else {
-        die "$tag not match";
+        warn "$tag not match";
     }
     return $tag;
 }

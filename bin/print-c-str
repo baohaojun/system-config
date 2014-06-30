@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+set -- "${1:-$(getclip|tr -d \\n)}"
+cat<<EOF > /tmp/1.c
+int main()
+{
+    printf("%s\n", $1);
+}
+EOF
+
+cd /tmp;
+gcc /tmp/1.c
+./a.out
