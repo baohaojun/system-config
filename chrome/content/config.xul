@@ -46,7 +46,7 @@
         </columns>
         <rows>
           <row>
-            <checkbox id="UseEscape" checked="true" />
+            <checkbox id="UseEscape" checked="false" />
             <description value="use ESC as 'M-'" />
           </row>
           <row>
@@ -62,7 +62,7 @@
             <description value="is the prefix key" />
           </row>
           <row>
-            <textbox id="AccessRegex" value="wiki" />
+            <textbox id="AccessRegex" value="" />
             <description value="URL regex to disable access keys" />
           </row>
           <row>
@@ -120,24 +120,32 @@
             <description value="scrolls right" />
           </row>
           <row>
-            <textbox id="ViPreviousTab" value="h" />
+            <textbox id="ViPreviousTab" value="p" />
             <description value="moves to the previous tab" />
           </row>
           <row>
-            <textbox id="ViNextTab" value="l" />
+            <textbox id="ViNextTab" value="n" />
             <description value="moves to the next tab" />
           </row>
           <row>
-            <textbox id="ViScrollPageUp" value="b" />
+            <textbox id="ViScrollPageUp" value="DEL" />
             <description value="scrolls a page up" />
           </row>
           <row>
-            <textbox id="ViScrollPageDown" value="u" />
+            <textbox id="ViScrollPageDown" value="SPC" />
             <description value="scrolls a page down" />
           </row>
           <row>
-            <textbox id="PreviousPage" value="B" />
+            <textbox id="PreviousPage" value="l" />
             <description value="moves to the previous page" />
+          </row>
+          <row>
+            <textbox id="NextPage" value="r" />
+            <description value="moves to the next page" />
+          </row>
+          <row>
+            <textbox id="ReloadPage" value="R" />
+            <description value="reloads the page" />
           </row>
         </rows>
       </grid>
@@ -258,11 +266,11 @@
             <description value="deletes the next char" />
           </row>
           <row>
-            <textbox id="DeleteCharBackward" value="C-h" />
+            <textbox id="DeleteCharBackward" value="C-x" />
             <description value="deletes the previous char" />
           </row>
           <row>
-            <textbox id="Undo" value="C-xu" />
+            <textbox id="Undo" value="C-/" />
             <description value="executes undo" />
           </row>
           <row>
@@ -344,11 +352,11 @@
             <description value="moves to the first button" />
           </row>
           <row>
-            <textbox id="CmPreviousTab" value="C-M-b" />
+            <textbox id="CmPreviousTab" value="p" />
             <description value="moves to the previous tab" />
           </row>
           <row>
-            <textbox id="CmNextTab" value="C-M-f" />
+            <textbox id="CmNextTab" value="n" />
             <description value="moves to the next tab" />
           </row>
         </rows>

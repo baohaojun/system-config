@@ -37,10 +37,22 @@ Firemacs.Commands.View = {
         this._sfun.moveTab(1);
     },
     ViScrollPageUp: function(e) {
-        goDoCommand('cmd_scrollPageUp');
+        this._sfun.subPageUp(e);
     },
     ViScrollPageDown: function(e) {
-        goDoCommand('cmd_scrollPageDown');
+        this._sfun.subPageDown(e);
+    },
+    ViScrollPageUp2: function(e) {
+        this._sfun.subPageUp(e);
+    },
+    ViScrollPageDown2: function(e) {
+        this._sfun.subPageDown(e);
+    },
+    PrevLink: function(e) {
+        this._sfun.subPrevLink(e);
+    },
+    NextLink: function(e) {
+        this._sfun.subNextLink(e);
     },
     PreviousPage: function(e) {
         if (typeof(BrowserBack) == 'function') { BrowserBack(); }
@@ -186,6 +198,9 @@ Firemacs.Commands.Common = {
     CloseTab: function(e) {
         if (typeof(BrowserCloseTabOrWindow) == 'function') { BrowserCloseTabOrWindow(); }
     },
+    bhjUndoCloseTab: function(e) {
+        undoCloseTab();
+    },
     OpenFile: function(e) {
         if (typeof(BrowserOpenFileWindow) == 'function') { BrowserOpenFileWindow(); }
     },
@@ -243,7 +258,7 @@ Firemacs.CmdKey.Option = {
     UseAlt: true,
     UseMeta: false,
     XPrefix: 'C-x',
-    AccessRegex: 'wiki',
+    AccessRegex: '',
     TurnoffRegex: '',
     WalkForm: true,
     EditOnly: false
@@ -258,12 +273,16 @@ Firemacs.CmdKey.View = {
     ViScrollLineDown: 'j',
     ViScrollLeft: 'H',
     ViScrollRight: 'L',
-    ViPreviousTab: 'h',
-    ViNextTab: 'l',
-    ViScrollPageUp: 'b',
-    ViScrollPageDown: 'u',
-    PreviousPage: 'B',
-    NextPage: 'F',
+    ViScrollPageUp: 'DEL',
+    ViScrollPageUp2: 'M-v',
+    ViScrollPageDown: 'SPC',
+    ViScrollPageDown2: 'C-v',
+    PrevLink: 'C-xDEL',
+    NextLink: 'C-xSPC',
+    PrevLink: 'p',
+    NextLink: 'n',
+    PreviousPage: 'l',
+    NextPage: 'r',
     ReloadPage: 'R',
     ViScrollTop: '<',
     ViScrollBottom: '>',
@@ -289,8 +308,8 @@ Firemacs.CmdKey.Edit = {
     KillLineBackward: 'C-u',
     Paste: 'C-y',
     DeleteCharForward: 'C-d',
-    DeleteCharBackward: 'C-h',
-    Undo: 'C-xu',
+    DeleteCharBackward: 'C-x',
+    Undo: 'C-/',
     NextWord: 'M-f',
     PreviousWord: 'M-b',
     DeleteWordForward: 'M-d',
@@ -304,16 +323,17 @@ Firemacs.CmdKey.Common = {
     SearchForward: 'C-s',
     SearchBackword: 'C-r',
     ScrollPageUp: 'M-v',
+    ScrollPageUp: 'Prior',
     ScrollPageDown: 'C-v',
+    ScrollPageDown: 'Next',
     ResetMark: 'C-g',
-    JumpURLBar: 'C-xl',
+    JumpURLBar: 'C-l',
     JumpSearchBar: 'C-xg',
     FocusBody: 'C-x.',
     JumpInput: 'C-xt',
     JumpSubmit: 'C-xs',
-    CmPreviousTab: 'C-M-b',
-    CmNextTab: 'C-M-f',
     CloseTab: 'C-xk',
+    bhjUndoCloseTab: 'C-xr',
     OpenFile: 'C-xC-f',
     Copy: 'M-w',
     NextButton: 'M-n',
@@ -333,4 +353,3 @@ Firemacs.CmdKey.Menu = {
     PreviousCompletion: 'C-p',
     NextCompletion: 'C-n'
 };
-

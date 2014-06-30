@@ -1,7 +1,7 @@
 -
 name: UseEscape
 case: Option
-keyx: true
+keyx: false
 body: 
 desc: use ESC as 'M-'
 type: boolean
@@ -29,7 +29,7 @@ type:
 -
 name: AccessRegex
 case: Option
-keyx: wiki
+keyx: 
 body: 
 desc: URL regex to disable access keys
 type: 
@@ -120,42 +120,42 @@ type:
 -
 name: ViPreviousTab
 case: View
-keyx: h
+keyx: p
 body: this._sfun.moveTab(-1);
 desc: moves to the previous tab
 type: 
 -
 name: ViNextTab
 case: View
-keyx: l
+keyx: n
 body: this._sfun.moveTab(1);
 desc: moves to the next tab
 type: 
 -
 name: ViScrollPageUp
 case: View
-keyx: b
-body: goDoCommand('cmd_scrollPageUp');
+keyx: DEL
+body: this._sfun.subPageUp(e);
 desc: scrolls a page up
 type: 
 -
 name: ViScrollPageDown
 case: View
-keyx: u
-body: goDoCommand('cmd_scrollPageDown');
+keyx: SPC
+body: this._sfun.subPageDown(e);
 desc: scrolls a page down
 type: 
 -
 name: PreviousPage
 case: View
-keyx: B
+keyx: l
 body: if (typeof(BrowserBack) == 'function') { BrowserBack(); }
 desc: moves to the previous page
 type: 
 -
 name: NextPage
 case: View
-keyx: F
+keyx: r
 body: if (typeof(BrowserForward) == 'function') { BrowserForward(); }
 desc: moves to the next page
 type: 
@@ -316,14 +316,14 @@ type:
 -
 name: DeleteCharBackward
 case: Edit
-keyx: C-h
+keyx: C-x
 body: goDoCommand('cmd_deleteCharBackward');
 desc: deletes the previous char
 type: 
 -
 name: Undo
 case: Edit
-keyx: C-xu
+keyx: C-/
 body: goDoCommand('cmd_undo');
 desc: executes undo
 type: 
@@ -442,14 +442,14 @@ type:
 -
 name: CmPreviousTab
 case: Common
-keyx: C-M-b
+keyx: p
 body: this._sfun.moveTab(-1);
 desc: moves to the previous tab
 type: 
 -
 name: CmNextTab
 case: Common
-keyx: C-M-f
+keyx: n
 body: this._sfun.moveTab(1);
 desc: moves to the next tab
 type: 
