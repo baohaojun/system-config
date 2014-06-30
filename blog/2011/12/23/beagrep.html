@@ -814,7 +814,8 @@ source repo.
 </p>
 
 <p>
-See the following output:
+See the following output, note that grep-mode is used for jumping
+around, and <code>=&gt; and &lt;=</code> is used to denote the caller and caller:
 </p>
 
 <div class="org-src-container">
@@ -825,40 +826,40 @@ Grep started at Mon Jun 30 13:18:42
 grep-func-call -e "BINDER_WRITE_READ" --nc -a
 
 
-Entering directory `/home/bhj/src/android/bionic/libc/kernel/common/linux'
-binder.h:61: &lt;=  signed long protocol_version;
-binder.h:65: =&gt; #define BINDER_WRITE_READ _IOWR('b', 1, struct binder_write_read)
-Entering directory `/home/bhj/src/android/external/kernel-headers/original/linux'
-binder.h:81: &lt;=         signed long     protocol_version;
-binder.h:87: =&gt; #define BINDER_WRITE_READ               _IOWR('b', 1, struct binder_write_read)
-Entering directory `/home/bhj/src/android/external/valgrind/main/coregrind/m_syswrap'
-syswrap-linux.c:4258: &lt;= PRE(sys_ioctl)
-syswrap-linux.c:5498: =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).write_buffer",
-syswrap-linux.c:5500: =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).write_size",
-syswrap-linux.c:5502: =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).write_consumed",
-syswrap-linux.c:5504: =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).read_buffer",
-syswrap-linux.c:5506: =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).read_size",
-syswrap-linux.c:5508: =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).read_consumed",
-syswrap-linux.c:5511: =&gt;            PRE_FIELD_WRITE("ioctl(BINDER_WRITE_READ).write_consumed",
-syswrap-linux.c:5513: =&gt;            PRE_FIELD_WRITE("ioctl(BINDER_WRITE_READ).read_consumed",
-syswrap-linux.c:5517: =&gt;                PRE_MEM_WRITE("ioctl(BINDER_WRITE_READ).read_buffer[]",
-syswrap-linux.c:5520: =&gt;                PRE_MEM_READ("ioctl(BINDER_WRITE_READ).write_buffer[]",
-Entering directory `/home/bhj/src/android/frameworks/native/cmds/servicemanager'
-binder.c:142: &lt;= int binder_write(struct binder_state *bs, void *data, unsigned len)
-binder.c:152: =&gt;     res = ioctl(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);
-binder.c:303: &lt;= int binder_call(struct binder_state *bs,
-binder.c:339: =&gt;         res = ioctl(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);
-binder.c:357: &lt;= void binder_loop(struct binder_state *bs, binder_handler func)
-binder.c:375: =&gt;         res = ioctl(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);
-Entering directory `/home/bhj/src/android/frameworks/native/libs/binder'
-IPCThreadState.cpp:795: &lt;= status_t IPCThreadState::talkWithDriver(bool doReceive)
-IPCThreadState.cpp:848: =&gt;         if (ioctl(mProcess-&gt;mDriverFD, BINDER_WRITE_READ, &amp;bwr) &gt;= 0)
-Entering directory `/home/bhj/src/android/kernel/drivers/staging/android'
-binder.c:2690: &lt;= static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-binder.c:2712: =&gt;       case BINDER_WRITE_READ: {
-Entering directory `/home/bhj/src/android/kernel/drivers/staging/android'
-binder.h:81: &lt;=         signed long     protocol_version;
-binder.h:87: =&gt; #define BINDER_WRITE_READ               _IOWR('b', 1, struct binder_write_read)
+Entering directory `<span class="org-function-name">/home/bhj/src/android/bionic/libc/kernel/common/linux</span>'
+<span class="org-underline"><span class="org-compilation-info">binder.h</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">61</span></span><span class="org-underline">:</span> &lt;=  signed long protocol_version;
+<span class="org-underline"><span class="org-compilation-info">binder.h</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">65</span></span><span class="org-underline">:</span> =&gt; #define BINDER_WRITE_READ _IOWR('b', 1, struct binder_write_read)
+Entering directory `<span class="org-function-name">/home/bhj/src/android/external/kernel-headers/original/linux</span>'
+<span class="org-underline"><span class="org-compilation-info">binder.h</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">81</span></span><span class="org-underline">:</span> &lt;=         signed long     protocol_version;
+<span class="org-underline"><span class="org-compilation-info">binder.h</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">87</span></span><span class="org-underline">:</span> =&gt; #define BINDER_WRITE_READ               _IOWR('b', 1, struct binder_write_read)
+Entering directory `<span class="org-function-name">/home/bhj/src/android/external/valgrind/main/coregrind/m_syswrap</span>'
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">4258</span></span><span class="org-underline">:</span> &lt;= PRE(sys_ioctl)
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5498</span></span><span class="org-underline">:</span> =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).write_buffer",
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5500</span></span><span class="org-underline">:</span> =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).write_size",
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5502</span></span><span class="org-underline">:</span> =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).write_consumed",
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5504</span></span><span class="org-underline">:</span> =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).read_buffer",
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5506</span></span><span class="org-underline">:</span> =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).read_size",
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5508</span></span><span class="org-underline">:</span> =&gt;            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).read_consumed",
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5511</span></span><span class="org-underline">:</span> =&gt;            PRE_FIELD_WRITE("ioctl(BINDER_WRITE_READ).write_consumed",
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5513</span></span><span class="org-underline">:</span> =&gt;            PRE_FIELD_WRITE("ioctl(BINDER_WRITE_READ).read_consumed",
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5517</span></span><span class="org-underline">:</span> =&gt;                PRE_MEM_WRITE("ioctl(BINDER_WRITE_READ).read_buffer[]",
+<span class="org-underline"><span class="org-compilation-info">syswrap-linux.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">5520</span></span><span class="org-underline">:</span> =&gt;                PRE_MEM_READ("ioctl(BINDER_WRITE_READ).write_buffer[]",
+Entering directory `<span class="org-function-name">/home/bhj/src/android/frameworks/native/cmds/servicemanager</span>'
+<span class="org-underline"><span class="org-compilation-info">binder.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">142</span></span><span class="org-underline">:</span> &lt;= int binder_write(struct binder_state *bs, void *data, unsigned len)
+<span class="org-underline"><span class="org-compilation-info">binder.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">152</span></span><span class="org-underline">:</span> =&gt;     res = ioctl(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);
+<span class="org-underline"><span class="org-compilation-info">binder.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">303</span></span><span class="org-underline">:</span> &lt;= int binder_call(struct binder_state *bs,
+<span class="org-underline"><span class="org-compilation-info">binder.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">339</span></span><span class="org-underline">:</span> =&gt;         res = ioctl(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);
+<span class="org-underline"><span class="org-compilation-info">binder.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">357</span></span><span class="org-underline">:</span> &lt;= void binder_loop(struct binder_state *bs, binder_handler func)
+<span class="org-underline"><span class="org-compilation-info">binder.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">375</span></span><span class="org-underline">:</span> =&gt;         res = ioctl(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);
+Entering directory `<span class="org-function-name">/home/bhj/src/android/frameworks/native/libs/binder</span>'
+<span class="org-underline"><span class="org-compilation-info">IPCThreadState.cpp</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">795</span></span><span class="org-underline">:</span> &lt;= status_t IPCThreadState::talkWithDriver(bool doReceive)
+<span class="org-underline"><span class="org-compilation-info">IPCThreadState.cpp</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">848</span></span><span class="org-underline">:</span> =&gt;         if (ioctl(mProcess-&gt;mDriverFD, BINDER_WRITE_READ, &amp;bwr) &gt;= 0)
+Entering directory `<span class="org-function-name">/home/bhj/src/android/kernel/drivers/staging/android</span>'
+<span class="org-underline"><span class="org-compilation-info">binder.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">2690</span></span><span class="org-underline">:</span> &lt;= static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+<span class="org-underline"><span class="org-compilation-info">binder.c</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">2712</span></span><span class="org-underline">:</span> =&gt;       case BINDER_WRITE_READ: {
+Entering directory `<span class="org-function-name">/home/bhj/src/android/kernel/drivers/staging/android</span>'
+<span class="org-underline"><span class="org-compilation-info">binder.h</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">81</span></span><span class="org-underline">:</span> &lt;=         signed long     protocol_version;
+<span class="org-underline"><span class="org-compilation-info">binder.h</span></span><span class="org-underline">:</span><span class="org-underline"><span class="org-compilation-line-number">87</span></span><span class="org-underline">:</span> =&gt; #define BINDER_WRITE_READ               _IOWR('b', 1, struct binder_write_read)
 
 Grep finished (<span class="org-compilation-info">matches found</span>) at Mon Jun 30 13:18:46
 </pre>

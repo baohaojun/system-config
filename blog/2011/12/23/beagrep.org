@@ -462,7 +462,8 @@ The first script works with the current Emacs buffer only, the 2nd
 works system-wide, searching function call sites though out the whole
 source repo.
 
-See the following output:
+See the following output, note that grep-mode is used for jumping
+around, and ~=> and <=~ is used to denote the caller and caller:
 
 #+BEGIN_SRC grepout
 -*- mode: grep; default-directory: "~/src/android/kernel/drivers/staging/android/" -*-
