@@ -109,8 +109,6 @@
             return false;
         }
     </script>")
- '(org-export-html-style-include-default nil)
- '(org-export-htmlize-output-type (quote css))
  '(org-export-with-sub-superscripts (quote {}))
  '(org-file-apps
    (quote

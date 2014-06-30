@@ -196,6 +196,7 @@
                                   (when (string= name " *temp*")
                                     (setq name "temp-ox"))
                                   (get-buffer-create (generate-new-buffer-name name))))
+        (message "Working with %s" (cadr args))
         (apply orig-fun args))
     (apply orig-fun args)))
 

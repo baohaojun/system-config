@@ -166,11 +166,12 @@ EOF
         org-export.help $(basename $tf.org)
     done
     echo ")"
+    echo '(kill-emacs)'
 ) > $tmp_el
 
 (
     cd /tmp
-    emacs -q --batch -l $tmp_el
+    emacs -q -l $tmp_el
 )
 
 for x in "$@"; do
