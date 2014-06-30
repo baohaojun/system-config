@@ -29,7 +29,15 @@ set of possible matching files (i.e., files that contained the word
 only. Usually the job can be done in the blink of an eye.
 
 Beagrep is available on GNU/Linux, Mac OS (requires MacPorts) and
-Windows (requires CYGWIN).
+Windows (requires CYGWIN). It also works with CJK characters
+correctly, as long as the document is in utf8.
+
+Because beagrep is so fast, I have also developped some more use cases
+besides simply grepping through Android source code, for e.g., finding
+function call sites.
+
+There are other tools similar to beagrep, discussed at the end of this
+blog.
 
 (Note a Chinese version of this page is available [[../../../2012/01/31/beagrep-cn.org][here]], but it may be
 outdated).
@@ -40,21 +48,24 @@ outdated).
 *** Using .deb under debian/ubuntu
 # <<using.deb>>
 
-I have provided several .deb package files on github, one for debian
-testing, 3 for ubuntu lucid(10.04), oneiric(11.10) and
-precise(12.04). They are all for amd64. If you happen to be using one
-of these, you can download them [[https://github.com/baohaojun/beagrep/downloads][here]]. Here's how to install it using
-ubuntu 12.04 as an example:
-
-#+begin_src sh
-dpkg -i beagrep-for-ubuntu-precise-2012-09-05-ae0a1a2.deb # will probably get dependency errors
-apt-get -f install # fix the dependency errors
-#+end_src
-
 *Update (2014-05-03)* I found that building and installing the lastest
 version of beagrep deb package will sometimes cause runtime exception
 when running on Ubuntu 12.04. So you are encouraged to build and
 install from source code directly, which does not show this problem.
+
+I have provided several .deb package files on github, one for debian
+testing, 3 for ubuntu lucid(10.04), oneiric(11.10) and
+precise(12.04). They are all for amd64. If you happen to be using one
+of these, you can download them [[https://github.com/baohaojun/beagrep/downloads][here]]. Here's how to install it using
+ubuntu 12.04 as an example. After you have downloaded the .deb file:
+
+#+begin_src sh
+dpkg -i beagrep-for-ubuntu-precise-2012-09-05-ae0a1a2.deb
+# The above step will probably get dependency errors, so you fix it:
+apt-get -f install
+# This will install the dependence packages.
+#+end_src
+
 
 *** Compile by yourself
 
@@ -432,8 +443,71 @@ didn't make it a stand-alone project, it's under the
 
 ** ~grep-func-call~ and ~grep-func-call-all~
 
-The latter used beagrep and ctags-exuberant to search for which
-functions called a specific function. It's under the ~bin/~ directory.
+These 2 scripts generate the function usage relationship for easier
+code reading. Given a function funcA, which is used in a bunch of other functions in the system, these 2 scripts work like this:
+
+1. Use beagrep to find out in which files funcA appears.
+
+2. Run ctags-exuberant to tag these files, get the function definition
+   lines: In file FileF, funcB is defined on line N, funcC is defined
+   on line M, and no other functions are between N and M.
+
+3. If funcA appears in FileF, between line N and line M, then funcB
+   calls funcA. This is not precise, but it's good enough.
+
+4. It not only works with functions, but also with almost all complete
+   words that beagrep can handle.
+
+The first script works with the current Emacs buffer only, the 2nd
+works system-wide, searching function call sites though out the whole
+source repo.
+
+See the following output:
+
+#+BEGIN_SRC grepout
+-*- mode: grep; default-directory: "~/src/android/kernel/drivers/staging/android/" -*-
+Grep started at Mon Jun 30 13:18:42
+
+grep-func-call -e "BINDER_WRITE_READ" --nc -a
+
+
+Entering directory `/home/bhj/src/android/bionic/libc/kernel/common/linux'
+binder.h:61: <=  signed long protocol_version;
+binder.h:65: => #define BINDER_WRITE_READ _IOWR('b', 1, struct binder_write_read)
+Entering directory `/home/bhj/src/android/external/kernel-headers/original/linux'
+binder.h:81: <= 	signed long	protocol_version;
+binder.h:87: => #define BINDER_WRITE_READ   		_IOWR('b', 1, struct binder_write_read)
+Entering directory `/home/bhj/src/android/external/valgrind/main/coregrind/m_syswrap'
+syswrap-linux.c:4258: <= PRE(sys_ioctl)
+syswrap-linux.c:5498: =>            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).write_buffer",
+syswrap-linux.c:5500: =>            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).write_size",
+syswrap-linux.c:5502: =>            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).write_consumed",
+syswrap-linux.c:5504: =>            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).read_buffer",
+syswrap-linux.c:5506: =>            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).read_size",
+syswrap-linux.c:5508: =>            PRE_FIELD_READ("ioctl(BINDER_WRITE_READ).read_consumed",
+syswrap-linux.c:5511: =>            PRE_FIELD_WRITE("ioctl(BINDER_WRITE_READ).write_consumed",
+syswrap-linux.c:5513: =>            PRE_FIELD_WRITE("ioctl(BINDER_WRITE_READ).read_consumed",
+syswrap-linux.c:5517: =>                PRE_MEM_WRITE("ioctl(BINDER_WRITE_READ).read_buffer[]",
+syswrap-linux.c:5520: =>                PRE_MEM_READ("ioctl(BINDER_WRITE_READ).write_buffer[]",
+Entering directory `/home/bhj/src/android/frameworks/native/cmds/servicemanager'
+binder.c:142: <= int binder_write(struct binder_state *bs, void *data, unsigned len)
+binder.c:152: =>     res = ioctl(bs->fd, BINDER_WRITE_READ, &bwr);
+binder.c:303: <= int binder_call(struct binder_state *bs,
+binder.c:339: =>         res = ioctl(bs->fd, BINDER_WRITE_READ, &bwr);
+binder.c:357: <= void binder_loop(struct binder_state *bs, binder_handler func)
+binder.c:375: =>         res = ioctl(bs->fd, BINDER_WRITE_READ, &bwr);
+Entering directory `/home/bhj/src/android/frameworks/native/libs/binder'
+IPCThreadState.cpp:795: <= status_t IPCThreadState::talkWithDriver(bool doReceive)
+IPCThreadState.cpp:848: =>         if (ioctl(mProcess->mDriverFD, BINDER_WRITE_READ, &bwr) >= 0)
+Entering directory `/home/bhj/src/android/kernel/drivers/staging/android'
+binder.c:2690: <= static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+binder.c:2712: => 	case BINDER_WRITE_READ: {
+Entering directory `/home/bhj/src/android/kernel/drivers/staging/android'
+binder.h:81: <= 	signed long	protocol_version;
+binder.h:87: => #define BINDER_WRITE_READ		_IOWR('b', 1, struct binder_write_read)
+
+Grep finished (matches found) at Mon Jun 30 13:18:46
+#+END_SRC
 
 ** Generate call graph
 
@@ -454,6 +528,27 @@ wrap scripts like following in the android/system/core directory:
 generate-call-graph.pl > call_graph.org
 dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2
 #+end_src
+
+* Other tools similar to beagrep
+
+** Opengrok
+
+[[https://blogs.oracle.com/chandan/entry/the_story_of_opengrok_the][This tool]] is very much like beagrep, it also uses the Lucene search
+engine! Beagrep uses beagle, which uses the C# implementation of
+Lucene. I probably wouldn't start working on beagrep had I known
+opengrok earlier. That said, I'm glad I have beagrep, because it is
+Emacs friendlier:-)
+
+I do not use opengrok myself since I have beagrep already, but you are
+encouraged to try it out, it has quite a few nice features. Especially
+if you do not use Emacs for reading and writing code.
+
+** Ack/Ag
+
+These 2 tools are faster grep, they do not use indexing. Author of Ack
+has maintained a quite complete list of other grep-like tools at [[http://beyondgrep.com/more-tools/][this
+web page]].
+
 
 [fn:improve] Here's how I improved it from 0.8s to 0.23s: use Mono's
 AOT option to do the JIT optimization Ahead Of Time. I found out about
