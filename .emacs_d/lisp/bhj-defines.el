@@ -134,6 +134,13 @@ might be bad."
   (compilation-mode)
   (setq buffer-read-only nil))
 
+;;;###autoload
+(defun grepout-mode ()
+  "grep mode, which is not buffer readonly for org export"
+  (interactive)
+  (grep-mode)
+  (setq buffer-read-only nil))
+
 (defun nodup-ring-insert (ring obj)
   (unless (and (not (ring-empty-p ring))
                (equal (ring-ref ring 0) obj))

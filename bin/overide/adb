@@ -219,23 +219,7 @@ function adb() {
     fi
 
     if test "$2" = su -a "$1" = shell; then
-        ro_sn=$ANDROID_SERIAL
-        if echo $ro_sn|grep : -q; then # 172.0.0.1:5555 tcp
-            set -x
-            ro_sn=$(adb-ntty getprop ro.serialno)
-            set +x
-        fi
-        if test ! -e ~/.config/adb-use-sh-as-su/yes/$ro_sn \
-            -a ! -e ~/.config/adb-use-sh-as-su/no/$ro_sn; then
-            if yes-or-no-p -y "Use sh as su?"; then
-                mkdir -p ~/.config/adb-use-sh-as-su/yes
-                touch ~/.config/adb-use-sh-as-su/yes/$ro_sn
-            else
-                mkdir -p ~/.config/adb-use-sh-as-su/no
-                touch ~/.config/adb-use-sh-as-su/no/$ro_sn
-            fi
-        fi
-        if test -e ~/.config/adb-use-sh-as-su/yes/$ro_sn; then
+        if the-true-adb shell su -c 'echo hello' 2>&1 | grep -q 'exec failed for echo hello'; then
             shift 2
             echo using sh as su 1>&2
             set -- shell sh "$@"

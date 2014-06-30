@@ -5,8 +5,12 @@ data/debian/android
 data/log-crawler
 data/logs
 data/media/0/diag_logs
+data/diag_logs
+data/dontpanic
 data/media/0/Download
 data/media/0/smartisan
 data/system/dropbox
 data/tombstones
+data/debian/var/cache/apt/archives/*.deb
 mnt/sdcard
+data/debian.tgz

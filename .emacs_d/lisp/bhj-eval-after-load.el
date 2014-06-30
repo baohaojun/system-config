@@ -190,7 +190,8 @@
 
 (defun org-html-fontify-code-compout (orig-fun &rest args)
   "Make compilation output htmlized."
-  (if (string= (cadr args) "compout")
+  (if (or (string= (cadr args) "compout")
+          (string= (cadr args) "grepout"))
       (flet ((generate-new-buffer (name)
                                   (when (string= name " *temp*")
                                     (setq name "temp-ox"))
