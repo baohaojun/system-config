@@ -28,3 +28,6 @@
 [submodule "gcode/ajoke"]
 	path = gcode/ajoke
 	url = https://github.com/baohaojun/ajoke
+[submodule "gcode/Firemacs"]
+	path = gcode/Firemacs
+	url = https://github.com/baohaojun/Firemacs
