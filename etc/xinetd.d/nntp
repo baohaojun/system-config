@@ -1,0 +1,11 @@
+# update-inetd --group MAIL --add --comment-chars "#disabled#" \
+# "nntp   stream  tcp     nowait  news    /usr/sbin/tcpd  /usr/sbin/leafnode"
+
+service nntp
+{
+        socket_type             = stream
+        protocol                = tcp
+        wait                    = no
+        user                    = news
+        server                  = /usr/sbin/leafnode
+}

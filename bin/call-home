@@ -26,6 +26,7 @@ fi
     done
 ) 9>~/.logs/$(basename $0).lock  2>&1 &
 
+exit
 (
     flock -n 9 || { echo 'lock failed for vpn at '$(date); exit 0; }
     if test -e ~/.at-home -o -e ~/.no-vpn; then

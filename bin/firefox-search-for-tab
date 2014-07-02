@@ -9,7 +9,7 @@ function die() {
 
 exact=0
 TEMP=$(getopt -o e --long "exact tabs:" -n $(basename $0) -- "$@")
-tabs=10
+tabs=1
 eval set -- "$TEMP"
 while true; do
     case "$1" in

@@ -282,7 +282,8 @@
         ("w" . ((Firefox . ("C-x" "k"))))
         ("l" . ((Firefox . ("C-x" "C-l"))))
         ("r" . ((Firefox . ("C-x" "C-r"))))
-        ("s" . ((Firefox . ("C-x" "C-s"))))
+        ("s" . ((Firefox . ("C-x" "C-s"))
+                (Qtcreator . "C-S-s")))
         ("d" . ((Firefox . ("C-x" "C-d"))))))
 
 

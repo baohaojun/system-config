@@ -1,0 +1,7 @@
+#!/bin/bash
+
+dir=~bhj/.cache/etc-hosts/
+mkdir -p $dir
+if test ! -e $dir/etc-hosts.$(md5sum /etc/hosts | pn 1); then
+    cp /etc/hosts $dir/etc-hosts.$(md5sum /etc/hosts | pn 1)
+fi

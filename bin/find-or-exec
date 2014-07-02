@@ -18,5 +18,10 @@ fi
 
 sawfish_exp=$(printf '(find-window-or-exec "%s" "%s")' "$1" "${2:-true}")
 
-sawfish-client -e "$sawfish_exp" >/dev/null 2>&1 &
+if echo $SHELLOPTS | grep xtrace; then
+    true
+else
+    exec >/dev/null 2>&1 &
+fi
+sawfish-client -e "$sawfish_exp"
 

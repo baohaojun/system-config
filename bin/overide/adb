@@ -80,7 +80,9 @@ function adb() {
         for x in $(seq 1 ${2:-60}); do
             sleep 1
             if test $(adb devices |grep -v 'List of devices attached'| grep $ANDROID_SERIAL. | wc -l) -gt 0; then
-                exit 0;
+                if test $(command adb echo hello) = hello; then
+                    exit 0;
+                fi
             fi
         done
         exit 1

@@ -43,7 +43,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                 cell-mail)
                     adb shell input touchscreen swipe 586 878 586 268 500
                     adb-tap 560 1840 #
-                    adb-long-press 322 283
+                    adb-tap-2 299 299
                     adb-tap 505 192
                     adb-tap 998 174
                     ;;

@@ -1,7 +1,15 @@
 #!/bin/bash
 set -e
 
-android_mk=$(lookup-file -e Android.mk)
-cd $(dirname $android_mk)
-psync "$1" .
-ssh "$1" "cd $PWD; mm"
+if test $(basename $0) = remote-mm; then
+
+    android_mk=$(lookup-file -e Android.mk)
+    cd $(dirname $android_mk)
+    psync "$1" .
+    ssh "$1" "cd $PWD; mm"
+elif test $(basename $0) = remote-qt; then
+    qt_pro=$(lookup-file -e '*.pro')
+    cd $(dirname $qt_pro)
+    psync "$1" .
+    ssh "$1" "cd $PWD; ./build-win.sh"
+fi

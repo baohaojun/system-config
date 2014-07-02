@@ -248,5 +248,5 @@ fi
 sudo mkdir -p /etc/acpi/local/
 
 sync-etc-files
-sudo update-host-ip phone 192.168.15.244
-sudo update-host-ip home 128.199.178.185
+update-host-ip phone 192.168.15.244
+update-host-ip home 128.199.178.185

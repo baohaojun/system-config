@@ -185,6 +185,12 @@ if [string eq "" $mode] {
         [strcat $CTRLC p] {
             same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q p
         }
+
+        #view my replies
+        [strcat $CTRLC $CTRLM] {
+            send_all $LEFT $LEFT $LEFT "m\r\nl\r\n"
+        }
+
         # F3
         [strcat $ESC O R] {
             same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q p
@@ -225,9 +231,7 @@ if [string eq "" $mode] {
         $CTRLX$ESC   {send $ESC}
         timeout 180 {
             send \000;
-            send $LEFT;
-            send $RIGHT;
-            send "\r\n";
+            send "\r\n\r\n";
             expect {
                 -timeout 1 "您有回复提醒" {
                     exec bhj-notify bbs 您有回复提醒

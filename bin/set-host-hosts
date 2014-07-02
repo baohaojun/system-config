@@ -11,12 +11,14 @@ BEGIN
             $hosts{$_} = $ip;
         }
     }
+    close $file;
 }
 
 $host = $ARGV[0];
 $ip = $ARGV[1];
 
 $hosts{$host} = $ip;
+system("backup-etc-hosts");
 
 open($file, ">", "/etc/hosts") or die "Error: can not open /etc/hosts, are you root?";
 
@@ -44,12 +46,17 @@ delete $ip_map{"127.0.1.1"};
 
 for my $ip ("127.0.0.1", "::1") {
     if (exists $ip_map{$ip}) {
-        @{$ip_map{$ip}} = sort {count_dot $b <=> count_dot $a} @{$ip_map{$ip}};
+        @{$ip_map{$ip}} = sort {
+            (count_dot $b <=> count_dot $a)
+                or ($a cmp $b)
+        } @{$ip_map{$ip}};
         print $file "$ip @{$ip_map{$ip}}\n";
         delete $ip_map{$ip};
     }
 }
 
-for my $ip ((sort grep {! /:/} keys %ip_map), (sort grep {/:/} keys %ip_map)) {
+for my $ip ((sort {$a cmp $b} grep {! /:/} keys %ip_map), (sort {$a cmp $b} grep {/:/} keys %ip_map)) {
+    @{$ip_map{$ip}} = sort {$a cmp $b} @{$ip_map{$ip}};
     print $file "$ip @{$ip_map{$ip}}\n";
 }
+close $file;
