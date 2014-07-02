@@ -24,14 +24,12 @@
 #include <QTimer>
 #include <QSharedMemory>
 #include "core/notification/notification.h"
-#include "DpiScaler.h"
 
-namespace Ui {
-class NotifyWidget;
-}
+#include <QtDeclarative>
+
 
 typedef bool SHARED_MEM_TYPE;
-class NotifyWidget : public QWidget
+class NotifyWidget : public QDeclarativeView
 {
     Q_OBJECT
 
@@ -58,26 +56,25 @@ signals:
 private slots:
     void slotMove();
 
-    void on_closeButton_clicked();
+    void slotDismissed();
 
-    void on_body_linkActivated(const QString &link);
+    void slotInvoked();
 
-protected:
-    void mousePressEvent(QMouseEvent *e);
+    void slotLinkClicked(QString link);
 
 
 
 private:
 
-    void setPalette(const QImage &img);
-    Ui::NotifyWidget *ui;
+    QColor computeBackgrondColor(const QImage &img);
     QTimer *m_moveTimer;
     QPoint m_dest;
     QPoint m_start;
     int m_dist;
     QRect m_desktop;
-    TomahawkUtils::DpiScaler *m_scaler;
     Snore::Notification m_notification;
+
+    QObject *qmlNotification;
 
     int m_id;
     QSharedMemory m_mem;

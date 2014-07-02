@@ -18,28 +18,31 @@
 */
 
 #include "notifywidget.h"
-#include "ui_notifywidget.h"
 #include "core/log.h"
 
 #include <QDesktopWidget>
+#include <QDesktopServices>
 #include <QPicture>
+#include <QtDeclarative/QDeclarativeView>
+#include <QLayout>
+#include <QSize>
 
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
-    QWidget(parent, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint
-            #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-            | Qt::WindowDoesNotAcceptFocus
-            #endif
-            ),
-    ui(new Ui::NotifyWidget),
+    QDeclarativeView(QUrl("qrc:/notification.qml"), parent),
     m_moveTimer(new QTimer(this)),
     m_desktop(QDesktopWidget().availableGeometry()),
     m_id(pos),
     m_mem(QString("SnoreNotifyWidget%1").arg(QString::number(m_id))),
     m_ready(true)
 {
-    ui->setupUi(this);
+    qmlNotification = rootObject();
+    this->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint
+                     #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+                         | Qt::WindowDoesNotAcceptFocus
+                     #endif
+                         );
     if(m_mem.create(sizeof(SHARED_MEM_TYPE)))
     {
         m_mem.lock();
@@ -59,24 +62,26 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
         snoreDebug( SNORE_DEBUG ) << "Status" << *data;
     }
 
-    TomahawkUtils::DpiScaler::setFontSize(10);
-    m_scaler = new TomahawkUtils::DpiScaler(this);
-    ui->closeButton->setMaximumWidth(ui->closeButton->height());
 
-    setFixedSize( m_scaler->scaled(300, 80));
 
-    m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + m_scaler->scaledY(10) + (m_scaler->scaledY(10) + height()) * pos);
+
+    m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + 10 + 10 + height() * pos);
     m_start = QPoint(m_desktop.topRight().x(), m_dest.y());
     snoreDebug( SNORE_DEBUG ) << m_dest << m_start << size();
 
+
+
+
     m_moveTimer->setInterval(1);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
+
+    connect(qmlNotification, SIGNAL(invoked()),this, SLOT(slotInvoked()));
+    connect(qmlNotification, SIGNAL(dismissed()),this, SLOT(slotDismissed()));
+    connect(qmlNotification, SIGNAL(linkClicked(QString)),this, SLOT(slotLinkClicked(QString)));
 }
 
 NotifyWidget::~NotifyWidget()
 {
-    delete m_scaler;
-    delete ui;
 }
 
 void NotifyWidget::display(const Notification &notification)
@@ -92,17 +97,14 @@ void NotifyWidget::display(const Notification &notification)
 void NotifyWidget::update(const Notification &notification)
 {
     m_notification = notification;
-    ui->titel->setText(notification.title());
-    ui->body->setText(notification.text());
-    ui->body->setFixedHeight((m_scaler->scaledY(40) / ui->body->fontInfo().pointSize()) * ui->body->fontInfo().pointSize());//round it by line height
+    QMetaObject::invokeMethod(qmlNotification, "update", Qt::QueuedConnection,
+                              Q_ARG( QVariant, notification.title()),
+                              Q_ARG( QVariant, notification.text()),
+                              Q_ARG( QVariant, QUrl::fromLocalFile(notification.icon().localUrl())),
+                              Q_ARG( QVariant, QUrl::fromLocalFile(notification.application().icon().localUrl())),
+                              Q_ARG( QVariant, computeBackgrondColor(notification.application().icon().image())));
 
-    QSize iconSize = m_scaler->scaled(65,65);
-    ui->icon->setPixmap(QPixmap::fromImage(notification.icon().image().scaled(iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 
-    iconSize = m_scaler->scaled(20,20);
-    QImage img = notification.application().icon().image().scaled(iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    ui->appIcon->setPixmap(QPixmap::fromImage(img));
-    setPalette(img);
 }
 
 bool NotifyWidget::acquire()
@@ -164,17 +166,17 @@ void NotifyWidget::slotMove()
     }
 }
 
-void NotifyWidget::on_closeButton_clicked()
+void NotifyWidget::slotDismissed()
 {
     emit dismissed();
 }
 
-void NotifyWidget::mousePressEvent(QMouseEvent *)
+void NotifyWidget::slotInvoked()
 {
     emit invoked();
 }
 
-void NotifyWidget::setPalette(const QImage &img)
+QColor NotifyWidget::computeBackgrondColor(const QImage &img)
 {
     qulonglong r = 0;
     qulonglong g = 0;
@@ -191,22 +193,11 @@ void NotifyWidget::setPalette(const QImage &img)
     }
     int s = img.width()*img.height();
 
-    QPalette p = palette();
-    QColor bg = QColor(r/s, g/s, b/s);
-    p.setColor(QPalette::All, QPalette::Window, bg);
-    p.setColor(QPalette::All, QPalette::Background, bg);
-    p.setColor(QPalette::All, QPalette::Base, bg);
-    p.setColor(QPalette::All, QPalette::Text, Qt::white);
-    p.setColor(QPalette::All, QPalette::BrightText, Qt::white);
-    p.setColor(QPalette::All, QPalette::ButtonText, Qt::white);
-    p.setColor(QPalette::All, QPalette::WindowText, Qt::white);
-    QWidget::setPalette(p);
-    ui->closeButton->setPalette(p);
-    ui->body->setPalette(p);
-    ui->titel->setPalette(p);
+    return QColor(r/s, g/s, b/s);
+
 }
 
-void NotifyWidget::on_body_linkActivated(const QString &link)
+void NotifyWidget::slotLinkClicked(QString link)
 {
-    snoreDebug( SNORE_DEBUG ) << link;
+    QDesktopServices::openUrl( QUrl(link));
 }
