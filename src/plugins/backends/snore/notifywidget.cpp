@@ -93,10 +93,10 @@ void NotifyWidget::update(const Notification &notification)
     m_notification = notification;
 
     QRect desktop = QDesktopWidget().availableGeometry();
-    float scale = 96.0;
-    resize(width() * logicalDpiX() / scale, height() * logicalDpiY() / scale);
 
-    int space = 10 * logicalDpiY() / scale;
+    resize(computeSize());
+
+    int space = 10 * logicalDpiY() / dpisScale();
 
     m_dest = QPoint(desktop.topRight().x() - width(), desktop.topRight().y() + space + (space + height()) * m_id);
     m_start = QPoint(desktop.topRight().x(), m_dest.y());
@@ -208,4 +208,11 @@ QColor NotifyWidget::computeBackgrondColor(const QImage &img)
 void NotifyWidget::slotLinkClicked(QString link)
 {
     QDesktopServices::openUrl( QUrl(link));
+}
+
+QSize NotifyWidget::computeSize()
+{
+    int width = 365;
+    int height = 100;
+    return QSize(width * logicalDpiX() / dpisScale(), height * logicalDpiY() / dpisScale());
 }

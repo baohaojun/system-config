@@ -62,7 +62,13 @@ private slots:
 
     void slotLinkClicked(QString link);
 
+protected:
+    QSize computeSize();
 
+    inline float dpisScale()
+    {
+        return 96.0;
+    }
 
 private:
 
