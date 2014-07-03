@@ -71,7 +71,6 @@ private:
     QPoint m_dest;
     QPoint m_start;
     int m_dist;
-    QRect m_desktop;
     Snore::Notification m_notification;
 
     QObject *qmlNotification;
