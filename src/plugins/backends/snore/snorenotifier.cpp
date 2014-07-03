@@ -49,7 +49,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
     if(notification.isUpdate())
     {
         NotifyWidget *w = m_widgets[notification.old().hints().privateValue(this, "id").toInt()];
-        if(w->isVisible() && w->notification().id() == notification.old().id())
+        if(w->isVisible() && w->notification().isValid() && w->notification().id() == notification.old().id())
         {
             w->update(notification);
             notification.hints().setPrivateValue(this, "id", w->id());

@@ -18,13 +18,16 @@ Rectangle {
 
 
 
-    function update(nTitle, bBody, nImage, nAppIcon, color)
+    function update(nTitle, bBody, nImage, nAppIcon, color, textColor)
     {
         title.text = nTitle
+        title.color = textColor
         body.text = bBody
+        body.color = textColor
         appIcon.source = nAppIcon
         image.source = nImage
         root.color = color
+
     }
 
 
@@ -36,6 +39,9 @@ Rectangle {
         anchors.fill: parent
         z: -1
         onClicked: root.invoked()
+        hoverEnabled: true
+        onEntered: closeButton.visible = true
+        onExited: closeButton.visible = false
     }
 
     Text {
@@ -48,7 +54,6 @@ Rectangle {
 
         text: qsTr("Title")
         wrapMode: Text.WordWrap
-        font.pixelSize: 12
     }
 
     Text {
@@ -60,7 +65,6 @@ Rectangle {
         color: "#ffffff"
         text: qsTr("Body")
         wrapMode: Text.WordWrap
-        font.pixelSize: 12
         onLinkActivated: root.linkClicked(link)
 
     }
@@ -94,6 +98,7 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
         z: 3
         source: "qrc:/resources/close.png"
+        visible: false
 
         MouseArea {
             id: mouseArea1
@@ -101,6 +106,7 @@ Rectangle {
             onClicked: root.dismissed()
         }
     }
+
 
 
 

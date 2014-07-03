@@ -67,10 +67,6 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
 
     m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + 10 + 10 + height() * pos);
     m_start = QPoint(m_desktop.topRight().x(), m_dest.y());
-    snoreDebug( SNORE_DEBUG ) << m_dest << m_start << size();
-
-
-
 
     m_moveTimer->setInterval(1);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
@@ -97,12 +93,16 @@ void NotifyWidget::display(const Notification &notification)
 void NotifyWidget::update(const Notification &notification)
 {
     m_notification = notification;
+    QColor color = computeBackgrondColor(notification.application().icon().image());
+    QRgb gray = qGray(qGray(color.rgb()) - qGray(QColor(Qt::white).rgb()));
+    QColor textColor = QColor(gray, gray, gray);
     QMetaObject::invokeMethod(qmlNotification, "update", Qt::QueuedConnection,
                               Q_ARG( QVariant, notification.title()),
                               Q_ARG( QVariant, notification.text()),
                               Q_ARG( QVariant, QUrl::fromLocalFile(notification.icon().localUrl())),
                               Q_ARG( QVariant, QUrl::fromLocalFile(notification.application().icon().localUrl())),
-                              Q_ARG( QVariant, computeBackgrondColor(notification.application().icon().image())));
+                              Q_ARG( QVariant, color),
+                              Q_ARG( QVariant, textColor ));
 
 
 }
