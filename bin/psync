@@ -13,6 +13,7 @@ function die() {
 host=$1
 shift
 
+ssh $host mkdir -p "$PWD"
 if test "$reverse" = true; then
     for x in "$@"; do
         my-rsync -av $host:$PWD/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*"

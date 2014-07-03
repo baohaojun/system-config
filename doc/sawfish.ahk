@@ -163,11 +163,25 @@ SendInput !{F4}
 return
 
 ;/* start code-generator "^;"
-;   for x in $(arg1-arg2 "$(perl -e 'for (a..z) {print "$_ "}')" "t n m r h d s q") "\\"; do
+;   for x in $(arg1-arg2 "$(perl -e 'for (a..z) {print "$_ "}')" "c t n m r h d s q") "\\"; do
+;       if test $x = v; then
+;           cat <<EOF
+;#$x::
+; {
+;    SetTitleMatchMode,2
+;    IfWinActive ahk_class mintty
+;      SendInput +{Insert}
+;    else
+;      SendInput ^{$x}
+; }
+; Return
+;EOF
+;    else
 ;       echo "#$x::"
 ;       echo "    SendInput ^{$x}"
 ;       echo "return"
 ;       echo
+;    fi
 ;   done
 ;   end code-generator */
 ; /* start generated code */
@@ -220,9 +234,14 @@ return
   return
 
 #v::
-  SendInput ^{v}
-  return
-
+{
+  SetTitleMatchMode,2
+  IfWinActive ahk_class mintty
+    SendInput +{Insert}
+  else
+    SendInput ^{v}
+}
+Return
 #w::
   SendInput ^{w}
   return

@@ -1,0 +1,21 @@
+#!/bin/bash
+go_back=Prior
+if test $(basename \$0) = sawfish-get-screen-shot-whole; then
+    go_back=C-Home
+fi
+rm /tmp/screen-exchange
+sawfish-send-focused-window-event "C-a" "ESC" "$go_back" "y" "G" "RET" "C-a" ">"
+
+for x in $(seq 1 20); do
+    if test -e /tmp/screen-exchange; then
+        perl -ne '
+        if (($. == 1 and ! m/./) .. m/./) {
+            print if m/./;
+        } else {
+            print
+        }' -i /tmp/screen-exchange
+        cat /tmp/screen-exchange
+        exit
+    fi
+    sleep .1
+done

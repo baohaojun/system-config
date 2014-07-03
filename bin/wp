@@ -53,6 +53,10 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function wp()
     {
+        if uname | grep cygwin -i -q; then
+            cygpath -alw "$FILE"
+            return
+        fi
         FILE=z:$FILE
         echo -n "$FILE"|perl -npe 's,/,\\,g'
     }

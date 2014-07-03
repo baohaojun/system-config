@@ -13,13 +13,17 @@ my @projs_to_compile;
 my @configs_to_compile;
 my @targets_to_compile;
 my $is_proj_vc6;
-my $vc_program;
+my $vc_program = $ENV{VC_PROGRAM};
 my $sln_file;
 my $cwd;
 my $sln_dir;
 my $debug_mode;
 
 $debug_mode = 1 if ($ENV{VCDBG});
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
 
 main();
 
@@ -32,12 +36,12 @@ sub main
     getSlnFile();
     $is_proj_vc6 = 1 if ($sln_file =~ m/\.dsw$/i);
     if ($is_proj_vc6) {
-        $vc_program = "vc6.com";
+        $vc_program = $vc_program or "vc6.com";
     } else {
         my @version_line = grep {/Format Version (.*?)\.00/} `head -n 5 "$sln_file"`;
         die "$sln_file has no version info!" if (scalar @version_line != 1);
         $version_line[0] =~ m/Format Version (.*?)\.00/;
-        $vc_program = "vc".$1.".com";
+        $vc_program = $vc_program or "vc".$1.".com";
     }
 
     getAllSubProjs();
@@ -154,7 +158,9 @@ sub handleVcOutput($)
         if (m!^-+Configuration: (.*?) ! or m!^------ Build started: Project: (.*?), !) {
             chdir($sln_dir);
             my $proj_dir = getProjDir($1);
+            debug "proj_dir is $proj_dir";
             chomp($proj_dir = `cygpath -au "$proj_dir"`);
+            debug "proj_dir is $proj_dir";
             $proj_dir or die "cygpath failed";
             die "proj_dir is empty!" if (not $proj_dir);
             my @proj_dir = canonic_files(".", $proj_dir);
@@ -191,7 +197,7 @@ sub getProjDir($)
 {
 
     (my $proj) = (@_);
-    #print "In getProjDir for $proj\n" if ($debug_mode);
+    debug "In getProjDir for $proj\n";
     open (SLN_FILE, $sln_file) or die "can't open $sln_file";
     my @proj_dir;
 
@@ -204,8 +210,10 @@ sub getProjDir($)
     }
 
     close SLN_FILE;
+    debug "proj_dir is @proj_dir";
     chomp(my $proj_dir = `cygpath -au "$proj_dir[0]"`);
-    $proj_dir or die "Error: $proj in getProjDir, no such project?";
+    debug "proj_dir is '$proj_dir'";
+    $proj_dir or die "Error: $proj in getProjDir, no such project (Usage: vccompile projects(all) configs(all)?";
     return dirname($proj_dir);
 
 }

@@ -1,7 +1,15 @@
 #!/bin/bash
 
-
-script=$(cat <<EOF
+if test $(basename $0) = sawfish-send-focused-window-event; then
+    script=$(cat <<EOF
+(progn
+  $(for x in "$@"; do
+        echo "(synthesize-event \"$x\" (input-focus))"
+    done))
+EOF
+          )
+else
+    script=$(cat <<EOF
 (catch 'TAG
  (mapc
    (lambda (w)
@@ -15,5 +23,6 @@ script=$(cat <<EOF
        (throw 'TAG)))
    (managed-windows)))
 EOF
-)
+          )
+fi
 sawfish-client -e "$script" >~/.logs/$(basename $0).log 2>&1

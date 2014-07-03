@@ -30,8 +30,9 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                     # do nothing, I will post it myself
                     ;;
                 weibo)
-                    adb input keyevent SPACE
-                    adb-long-press 440 281; adb-tap 545 191
+                    adb shell input keyevent SPACE
+                    adb-long-press 440 281
+                    adb-tap 545 191
                     adb-tap 991 166
                     ;;
                 t1-sms)

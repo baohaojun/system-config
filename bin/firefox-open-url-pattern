@@ -88,7 +88,7 @@ elif firefox-search-for-tab $exact "$pattern"; then
 else
     sawfish-browser-input "M-$WHICH_TAB"
     this_url=$(get-firefox-tab-url)
-    if current_url_matches "$exact" "this_url" "$pattern"; then
+    if current_url_matches "$exact" "$this_url" "$pattern"; then
         new_tab=-current-tab
     elif ! firefox-search-for-tab --tabs 1 $exact "$pattern" &&
          (

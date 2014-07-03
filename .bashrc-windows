@@ -105,8 +105,6 @@ alias virus='clamscan --database="d:\profiles\All Users\.clamwin\db" --recursive
 alias vcenv6='. ~/bin/windows/vcenv6.sh'
 alias wdkenv='. ~/bin/windows/wdkenv.sh'
 alias repo='PATH=/bin:$PATH repo'
-alias wp="winpath.sh"
-alias up="unipath.sh"
 
 if test -e ~/.bash-path; then
     . ~/.bash-path

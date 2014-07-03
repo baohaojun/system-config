@@ -75,9 +75,9 @@ function do_it() {
 
                     if (
                         if test -e $list_f; then
-                            grep -P -e "\Q$x\E" $list_f && firefox-search-for-tab "\Q$x\E"
+                            grep -P -e "\Q$x\E" $list_f && firefox-search-for-tab --tabs 20 "\Q$x\E"
                         else
-                            DEBUG=true firefox-search-for-tab "\Q$x\E" > $list
+                            DEBUG=true firefox-search-for-tab --tabs 20 "\Q$x\E" > $list
                         fi
                        ); then
                         echo "will open $x"
