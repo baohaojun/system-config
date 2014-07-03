@@ -1,4 +1,4 @@
-QT4_ADD_RESOURCES(SNORE_RCS ${CMAKE_CURRENT_SOURCE_DIR}/snore.qrc)
+QT4_ADD_RESOURCES(SNORE_RCS ${CMAKE_CURRENT_SOURCE_DIR}/snore_notification.qrc)
 
 set( SNORE_SRC
     snorenotifier.cpp
