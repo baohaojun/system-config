@@ -8,7 +8,7 @@ Rectangle {
     id: root
     width: 365
     height: 100
-    clip: true
+    clip: false
 
     signal dismissed()
 
@@ -47,9 +47,10 @@ Rectangle {
     Text {
         id: title
         height: 14
-        color: "#ffffff"
+        color: "#000000"
 
         text: qsTr("Title")
+        font.bold: true
         font.pixelSize: 12
         anchors.right: closeButton.left
         anchors.rightMargin: 22
@@ -62,7 +63,7 @@ Rectangle {
 
     Text {
         id: body
-        color: "#ffffff"
+        color: "#000000"
         text: qsTr("Body")
         font.pixelSize: 12
         anchors.right: appIcon.left
@@ -90,7 +91,7 @@ Rectangle {
         anchors.topMargin: 0
         z: 4
         fillMode: Image.PreserveAspectFit
-        source: "qrc:/root/images/freedesktop-dbus.png"
+        source: "../../../../data/freedesktop-dbus.png"
     }
 
     Image {
@@ -104,7 +105,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
         fillMode: Image.PreserveAspectFit
-        source: "qrc:/root/snore.png"
+        source: "../../../../data/snore.png"
     }
 
     Image {
@@ -118,7 +119,7 @@ Rectangle {
         anchors.rightMargin: 0
         fillMode: Image.PreserveAspectFit
         z: 3
-        source: "qrc:/resources/close.png"
+        source: "resources/close.png"
         visible: false
 
         MouseArea {
