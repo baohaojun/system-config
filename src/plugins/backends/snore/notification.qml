@@ -46,24 +46,33 @@ Rectangle {
 
     Text {
         id: title
-        x: 106
-        y: 3
-        width: 217
         height: 14
         color: "#ffffff"
 
         text: qsTr("Title")
+        font.pixelSize: 12
+        anchors.right: closeButton.left
+        anchors.rightMargin: 22
+        anchors.top: parent.top
+        anchors.topMargin: 3
+        anchors.left: image.right
+        anchors.leftMargin: 6
         wrapMode: Text.WordWrap
     }
 
     Text {
         id: body
-        x: 106
-        y: 23
-        width: 217
-        height: 69
         color: "#ffffff"
         text: qsTr("Body")
+        font.pixelSize: 12
+        anchors.right: appIcon.left
+        anchors.rightMargin: 6
+        anchors.top: title.bottom
+        anchors.topMargin: 6
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 8
+        anchors.left: image.right
+        anchors.leftMargin: 6
         wrapMode: Text.WordWrap
         onLinkActivated: root.linkClicked(link)
 
@@ -73,7 +82,12 @@ Rectangle {
     Image {
         id: image
         width: 100
-        height: 100
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        anchors.top: parent.top
+        anchors.topMargin: 0
         z: 4
         fillMode: Image.PreserveAspectFit
         source: "qrc:/root/images/freedesktop-dbus.png"
@@ -85,6 +99,10 @@ Rectangle {
         y: 62
         width: 30
         height: 30
+        anchors.right: parent.right
+        anchors.rightMargin: 6
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 8
         fillMode: Image.PreserveAspectFit
         source: "qrc:/root/snore.png"
     }
@@ -92,9 +110,12 @@ Rectangle {
     Image {
         id: closeButton
         x: 345
-        y: 0
         width: 20
         height: 20
+        anchors.top: parent.top
+        anchors.topMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 0
         fillMode: Image.PreserveAspectFit
         z: 3
         source: "qrc:/resources/close.png"
@@ -102,7 +123,8 @@ Rectangle {
 
         MouseArea {
             id: mouseArea1
-            anchors.fill: parent
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
             onClicked: root.dismissed()
         }
     }

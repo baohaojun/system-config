@@ -38,6 +38,7 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     m_ready(true)
 {
     qmlNotification = rootObject();
+
     this->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint
                      #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
                          | Qt::WindowDoesNotAcceptFocus
@@ -63,7 +64,9 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     }
 
 
-
+    setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    float scale = 96.0;
+    resize(width() * logicalDpiX() / scale, height() * logicalDpiY() / scale);
 
     m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + 10 + 10 + height() * pos);
     m_start = QPoint(m_desktop.topRight().x(), m_dest.y());
