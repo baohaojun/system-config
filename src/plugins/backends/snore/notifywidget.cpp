@@ -101,7 +101,17 @@ void NotifyWidget::update(const Notification &notification)
     m_dest = QPoint(desktop.topRight().x() - width(), desktop.topRight().y() + space + (space + height()) * m_id);
     m_start = QPoint(desktop.topRight().x(), m_dest.y());
 
-    QColor color = computeBackgrondColor(notification.application().icon().image());
+    QColor color;
+    QVariant vcolor = notification.application().constHints().privateValue(parent(), "backgroundColor");
+    if(vcolor.isValid())
+    {
+        color = vcolor.value<QColor>();
+    }
+    else
+    {
+       color = computeBackgrondColor(notification.application().icon().image().scaled(20,20));
+       notification.application().constHints().setPrivateValue(parent(), "backgroundColor", color);
+    }
     QRgb gray = qGray(qGray(color.rgb()) - qGray(QColor(Qt::white).rgb()));
     QColor textColor = QColor(gray, gray, gray);
     QMetaObject::invokeMethod(qmlNotification, "update", Qt::QueuedConnection,
