@@ -418,8 +418,8 @@ get imports if java-mode
 
 ;;;***
 
-;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21424 62379
-;;;;;;  47967 36000))
+;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21430 17263
+;;;;;;  881190 613000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -714,6 +714,11 @@ Convert this entire buffer from MS-DOS text file format to UNIX.
 \(fn)" t nil)
 
 (autoload 'bhj-do-dictionary "bhj-defines" "\
+lookup the current word (or region) in dictionary
+
+\(fn WORD)" t nil)
+
+(autoload 'bhj-do-search "bhj-defines" "\
 lookup the current word (or region) in dictionary
 
 \(fn WORD)" t nil)

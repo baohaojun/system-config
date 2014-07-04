@@ -7,10 +7,15 @@ function die() {
 function rdesktop() {
 
     kbd=en-dvp
-    TEMP=$(getopt -o k: -n $(basename $0) -- "$@")
+    TEMP=$(getopt -o d:k: -n $(basename $0) -- "$@")
     eval set -- "$TEMP"
+    display=" connected"
     while true; do
         case "$1" in
+            -d)
+                display=$2
+                shift 2
+                ;;
             -k)
                 kbd=$2
                 shift 2
@@ -38,7 +43,7 @@ function rdesktop() {
     if test -z "$pass"; then
         read -e -p "Password: " -s pass
     fi
-    setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1 | tail -n 1) $host -u $user -p $pass "$@"&
+    setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr | grep "$display" -A 1 |grep '\*'|pn 1 | tail -n 1) $host -u $user -p $pass "$@"&
 }
 
 rdesktop "$@"

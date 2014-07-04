@@ -13,7 +13,7 @@
 (bind-keys global-keymap "Super-F24" '(move-cursor-down))
 
 (setq bhj-is-gnome? nil)
-(setq emacs-style-window-class-re "emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
+(setq emacs-style-window-class-re "rdesktop|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
 (setq s-h-keymap (make-keymap)
       c-x-esc-keymap (make-keymap)
       c-x-map (make-keymap)

@@ -7,7 +7,11 @@ function die() {
 }
 
 if test $# -lt 2; then
-    die "Error: Usage $(basename $0) source target"
+    if test $(basename $0) = smb_push -a $# = 1; then
+        set -- "$1" /home/bhj/smb/share.smartisan.cn/share/baohaojun
+    else
+        die "Error: Usage $(basename $0) source target"
+    fi
 fi
 
 set -e

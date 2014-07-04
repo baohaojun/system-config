@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if ! adb devices?; then
+    bash ~/.logs/adb-over-tcp
+    exit
+fi
 
 if adb devices | grep : -q && yes-or-no-p -y adb disconnect?; then
     adb disconnect
@@ -11,4 +15,5 @@ sleep 1
 adb -w shell echo hello
 wifi_ip=$(adb-get-wifi-ip)
 echo wifi is $wifi_ip
+echo adb connect "$wifi_ip":${1:-5555} > ~/.logs/adb-over-tcp
 adb connect "$wifi_ip":${1:-5555}

@@ -316,6 +316,7 @@
 
 
 (define-key esc-map [(meta d)] 'bhj-do-dictionary)
+(define-key esc-map [(meta s)] 'bhj-do-search)
 
 
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)

@@ -50,6 +50,7 @@ if test ! "$WHICH_TAB"; then
     ) 9> ~/.config/firefox-pattern/.lock
     WHICH_TAB=$(cat ~/.config/firefox-pattern/$md5)
 fi
+WHICH_TAB=$((WHICH_TAB % 9 + 1))
 
 function current_url_matches() {
     local exact=$1

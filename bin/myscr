@@ -6,7 +6,7 @@ if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then
     export SHELL=/bin/bash
 fi
 
-if test ! "$SSH_AUTH_SOCK"; then
+if test ! "$SSH_AUTH_SOCK" && ! uname | grep cygwin -i -q; then
     (
         set -e
         set -x

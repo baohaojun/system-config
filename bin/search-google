@@ -2,8 +2,9 @@
 
 #http://work.alibaba-inc.com/work/search?keywords=%E5%85%83%E4%BB%B2&type=person&offset=0&tabIndex=1
 
+url=
 prog=$(basename $0)
-host=$(basename $0 | perl -npe 's/.*-//')
+host=$(basename $0 | perl -npe 's/.*?-//')
 domain=com/search?q=
 
 if test $# = 0; then
@@ -24,6 +25,11 @@ if test $host = wiki.smartisan.cn; then
     domain="/doku.php?do=search&id="
 fi
 
+if test $host = msdn-lucky; then
+    url="https://www.google.co.uk/search?btnI=1&q=site%3Amsdn.microsoft.com+$fill"
+    exec firefox-open-url-pattern "http://msdn.microsoft.com" "$url"
+fi
+
 if [[ $host =~ baidu ]]; then
     domain=com/s?wd=
 fi
@@ -41,7 +47,7 @@ if test $host = gerrit; then
     fill=
 fi
 
-url="http://$host$dot$domain$fill"
+url=${url:-http://$host$dot$domain$fill}
 
 if test $prog = search-google; then
     url="https://www.google.com.hk/search?q=$fill"

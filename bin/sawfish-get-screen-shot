@@ -1,4 +1,9 @@
 #!/bin/bash
+
+if test "$DEBUG"; then
+    set -x
+fi
+
 go_back=Prior
 if test $(basename \$0) = sawfish-get-screen-shot-whole; then
     go_back=C-Home

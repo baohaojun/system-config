@@ -1132,6 +1132,19 @@ criteria can be provided via the optional match-string argument "
                                   (shell-quote-argument word))))))
 
 ;;;###autoload
+(defun bhj-do-search (word)
+  "lookup the current word (or region) in dictionary"
+  (interactive
+   (list (if mark-active
+             (buffer-substring-no-properties (region-beginning)
+                                             (region-end))
+           (current-word))))
+  (shell-command (format "setsid bash -c %s\\& >/dev/null 2>&1"
+                         (shell-quote-argument
+                          (format "s %s"
+                                  (shell-quote-argument word))))))
+
+;;;###autoload
 (defun bhj-open-android-doc-on-java-buffer ()
   (interactive)
   (save-excursion

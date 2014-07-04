@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if echo $SHELLOPTS | grep xtrace; then
+    export DEBUG=true
+fi
+
 exec 9> ~/.logs/bbs-robot.lock
 if flock -n 9; then
     exec bbs-robot.exp "$@"

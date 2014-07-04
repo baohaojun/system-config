@@ -61,6 +61,11 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo -n "$FILE"|perl -npe 's,/,\\,g'
     }
 
+    function wcp()
+    {
+        wp "$FILE" | perl -npe 's/\\/\\\\/g'
+    }
+
     function realp()
     {
         readlink -f "$FILE"
