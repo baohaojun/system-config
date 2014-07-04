@@ -55,13 +55,13 @@ bool Hint::contains(const QString &key) const
     return m_data.contains(key.toLower());
 }
 
-void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value)
+void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value) const
 {
     QPair<quintptr,QString> pk((quintptr)owner,key.toLower());
     m_privateData.insert(pk, value);
 }
 
-void Hint::setPrivateValue(const void *owner, const QString &key, QObject *value)
+void Hint::setPrivateValue(const void *owner, const QString &key, QObject *value) const
 {
     QPair<quintptr,QString> pk((quintptr)owner,key.toLower());
     m_privateData.insert(pk, qVariantFromValue(value));

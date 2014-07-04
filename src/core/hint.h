@@ -79,7 +79,7 @@ public:
      * @param key the key
      * @param value the value
      */
-    void setPrivateValue(const void *owner, const QString &key, const QVariant &value);
+    void setPrivateValue(const void *owner, const QString &key, const QVariant &value) const;
 
     /**
      * Sets the value for the key depending on the owner
@@ -87,7 +87,7 @@ public:
      * @param key the key
      * @param value the value
      */
-    void setPrivateValue(const void *owner, const QString &key, QObject *value);
+    void setPrivateValue(const void *owner, const QString &key, QObject *value) const;
 
     /**
      * The associated value of the key if present, returns the default value otherwise.
@@ -110,7 +110,7 @@ private slots:
 
 private:
     QVariantHash m_data;
-    QHash<QPair<quintptr,QString>, QVariant> m_privateData;
+    mutable QHash<QPair<quintptr,QString>, QVariant> m_privateData;
 
     friend SNORE_EXPORT QDebug (::operator<<) ( QDebug, const Snore::Hint &);
 
