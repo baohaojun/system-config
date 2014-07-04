@@ -45,13 +45,13 @@ outdated).
 * Install
 ** Linux install
 
-*** Using .deb under debian/ubuntu
-# <<using.deb>>
+***  <<using.deb>> Using .deb under debian/ubuntu
 
 *Update (2014-05-03)* I found that building and installing the lastest
 version of beagrep deb package will sometimes cause runtime exception
 when running on Ubuntu 12.04. So you are encouraged to build and
-install from source code directly, which does not show this problem.
+install from source code directly, which does not show this
+problem. Another reason is these packages is quite outdated.
 
 I have provided several .deb package files on github, one for debian
 testing, 3 for ubuntu lucid(10.04), oneiric(11.10) and
@@ -119,12 +119,12 @@ Here's how I do it:
 
    The .deb file is generated in the =~/tmp= directory.
 
-4. Refer to [[#using.deb]] for how to install.
+4. Refer to [[using.deb]] for how to install.
 
 ** Windows install
 
-Windows install can only be done compiling by yourself, and be
-pre-warned, it's not easy...
+Windows install can only be done compiling by yourself, and be warned,
+it's not easy...
 
 *** Install dependencies
 
@@ -142,7 +142,7 @@ might be more, though I have tested these should be enough):
 #+END_EXAMPLE
 
 
-(see [[https://github.com/baohaojun/system-config/raw/master/bin/windows/after-check-out.sh][after-check-out.sh]] for how I installed these packages automatically).
+(See [[https://github.com/baohaojun/system-config/raw/master/bin/windows/after-check-out.sh][after-check-out.sh]] for how I installed these packages automatically).
 
 For Mono, default download and install from mono project website is OK.
 
@@ -463,7 +463,7 @@ works system-wide, searching function call sites though out the whole
 source repo.
 
 See the following output, note that grep-mode is used for jumping
-around, and ~=> and <=~ is used to denote the caller and caller:
+around, and ~=> and <=~ is used to denote the caller and callee:
 
 #+BEGIN_SRC grepout
 -*- mode: grep; default-directory: "~/src/android/kernel/drivers/staging/android/" -*-
