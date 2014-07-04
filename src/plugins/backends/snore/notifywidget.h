@@ -60,8 +60,6 @@ private slots:
 
     void slotInvoked();
 
-    void slotLinkClicked(QString link);
-
 protected:
     QSize computeSize();
 

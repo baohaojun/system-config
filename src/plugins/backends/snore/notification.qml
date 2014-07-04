@@ -2,7 +2,6 @@ import QtQuick 1.1
 
 
 
-
 Rectangle {
     objectName: "qmlNotification"
     id: root
@@ -12,9 +11,9 @@ Rectangle {
 
     signal dismissed()
 
-    signal linkClicked(string link)
-
     signal invoked()
+
+
 
 
 
@@ -50,8 +49,8 @@ Rectangle {
         color: "#000000"
 
         text: qsTr("Title")
+        font.pointSize: 10
         font.bold: true
-        font.pixelSize: 12
         anchors.right: closeButton.left
         anchors.rightMargin: 22
         anchors.top: parent.top
@@ -65,7 +64,7 @@ Rectangle {
         id: body
         color: "#000000"
         text: qsTr("Body")
-        font.pixelSize: 12
+        font.pointSize: 10
         anchors.right: appIcon.left
         anchors.rightMargin: 6
         anchors.top: title.bottom
@@ -75,7 +74,7 @@ Rectangle {
         anchors.left: image.right
         anchors.leftMargin: 6
         wrapMode: Text.WordWrap
-        onLinkActivated: root.linkClicked(link)
+        onLinkActivated: Qt.openUrlExternally(link)
 
     }
 

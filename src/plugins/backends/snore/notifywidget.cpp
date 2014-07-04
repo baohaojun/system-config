@@ -71,7 +71,6 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
 
     connect(qmlNotification, SIGNAL(invoked()),this, SLOT(slotInvoked()));
     connect(qmlNotification, SIGNAL(dismissed()),this, SLOT(slotDismissed()));
-    connect(qmlNotification, SIGNAL(linkClicked(QString)),this, SLOT(slotLinkClicked(QString)));
 }
 
 NotifyWidget::~NotifyWidget()
@@ -120,7 +119,7 @@ void NotifyWidget::update(const Notification &notification)
                               Q_ARG( QVariant, QUrl::fromLocalFile(notification.icon().localUrl())),
                               Q_ARG( QVariant, QUrl::fromLocalFile(notification.application().icon().localUrl())),
                               Q_ARG( QVariant, color),
-                              Q_ARG( QVariant, textColor ));
+                              Q_ARG( QVariant, textColor));
 
 
 }
@@ -213,11 +212,6 @@ QColor NotifyWidget::computeBackgrondColor(const QImage &img)
 
     return QColor(r/s, g/s, b/s);
 
-}
-
-void NotifyWidget::slotLinkClicked(QString link)
-{
-    QDesktopServices::openUrl( QUrl(link));
 }
 
 QSize NotifyWidget::computeSize()
