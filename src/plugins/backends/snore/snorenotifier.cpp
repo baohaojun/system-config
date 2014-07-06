@@ -48,30 +48,48 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
 
     if(notification.isUpdate())
     {
-        NotifyWidget *w = m_widgets[notification.old().hints().privateValue(this, "id").toInt()];
-        if(w->isVisible() && w->notification().isValid() && w->notification().id() == notification.old().id())
+        if(notification.old().hints().privateValue(this, "id").isValid())
         {
-            w->update(notification);
-            notification.hints().setPrivateValue(this, "id", w->id());
-            startTimeout(notification);
-            return;
-        }
-    }
-    if(m_queue.isEmpty())
-    {
-        foreach (NotifyWidget *w, m_widgets)
-        {
-            if(w->acquire())
+            NotifyWidget *w = m_widgets[notification.old().hints().privateValue(this, "id").toInt()];
+            if(w->isVisible() && w->notification().isValid() && w->notification().id() == notification.old().id())
             {
-                w->display(notification);
+                qDebug() << "replacing notification" << w->notification().id() << notification.id();
+                w->update(notification);
                 notification.hints().setPrivateValue(this, "id", w->id());
                 startTimeout(notification);
-                return;
+            }
+        }
+        else
+        {
+            for(int i = 0; i < m_queue.length(); ++i)
+            {
+                Notification n = m_queue.at(i);
+                if(n.id() == notification.old().id())
+                {
+                    qDebug() << "replacing qued notification" << n.id() << notification.id();
+                    m_queue.replace(i,notification);
+                }
             }
         }
     }
-    m_queue.append(notification);
-    m_timer->start();
+    else
+    {
+        if(m_queue.isEmpty())
+        {
+            foreach (NotifyWidget *w, m_widgets)
+            {
+                if(w->acquire())
+                {
+                    w->display(notification);
+                    notification.hints().setPrivateValue(this, "id", w->id());
+                    startTimeout(notification);
+                    return;
+                }
+            }
+        }
+        m_queue.append(notification);
+        m_timer->start();
+    }
 }
 
 void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
@@ -104,7 +122,6 @@ void SnoreNotifier::slotProcessQueue()
 {
     if(m_queue.isEmpty())
     {
-
         snoreDebug( SNORE_DEBUG ) << "queue is empty";
         m_timer->stop();
     }
@@ -120,6 +137,7 @@ void SnoreNotifier::slotProcessQueue()
                 startTimeout(notification);
                 if(m_queue.isEmpty())
                 {
+                    m_timer->stop();
                     return;
                 }
             }
