@@ -53,7 +53,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
             NotifyWidget *w = m_widgets[notification.old().hints().privateValue(this, "id").toInt()];
             if(w->isVisible() && w->notification().isValid() && w->notification().id() == notification.old().id())
             {
-                qDebug() << "replacing notification" << w->notification().id() << notification.id();
+                snoreDebug( SNORE_DEBUG ) << "replacing notification" << w->notification().id() << notification.id();
                 w->update(notification);
                 notification.hints().setPrivateValue(this, "id", w->id());
                 startTimeout(notification);
@@ -66,7 +66,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
                 Notification n = m_queue.at(i);
                 if(n.id() == notification.old().id())
                 {
-                    qDebug() << "replacing qued notification" << n.id() << notification.id();
+                    snoreDebug( SNORE_DEBUG ) << "replacing qued notification" << n.id() << notification.id();
                     m_queue.replace(i,notification);
                 }
             }

@@ -28,7 +28,18 @@
 #include <QtDeclarative>
 
 
-typedef bool SHARED_MEM_TYPE;
+typedef struct
+{
+    bool free;
+    QTime date;
+
+}SHARED_MEM_TYPE;
+
+inline int SHARED_MEM_TYPE_REV()
+{
+    return 1;
+}
+
 class NotifyWidget : public QDeclarativeView
 {
     Q_OBJECT

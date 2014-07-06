@@ -33,7 +33,7 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     QDeclarativeView(QUrl("qrc:/notification.qml"), parent),
     m_moveTimer(new QTimer(this)),
     m_id(pos),
-    m_mem(QString("SnoreNotifyWidget%1").arg(QString::number(m_id))),
+    m_mem(QString("SnoreNotifyWidget_rev%1_id%2").arg(QString::number(SHARED_MEM_TYPE_REV()), QString::number(m_id))),
     m_ready(true)
 {
     qmlNotification = rootObject();
@@ -46,8 +46,9 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     if(m_mem.create(sizeof(SHARED_MEM_TYPE)))
     {
         m_mem.lock();
-        bool *data = (bool*)m_mem.data();
-        *data = true;
+        SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE*)m_mem.data();
+        data->free = true;
+        data->date = QTime::currentTime();
         m_mem.unlock();
     }
     else
@@ -57,9 +58,9 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
             qFatal("Failed to atatche to shared mem");
         }
         m_mem.lock();
-        bool *data = (bool*)m_mem.data();
+        SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE*)m_mem.data();
         m_mem.unlock();
-        snoreDebug( SNORE_DEBUG ) << "Status" << *data;
+        snoreDebug( SNORE_DEBUG ) << "Status" << data->free << data->date.elapsed() / 1000;
     }
 
 
@@ -69,8 +70,8 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     m_moveTimer->setInterval(1);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
 
-    connect(qmlNotification, SIGNAL(invoked()),this, SLOT(slotInvoked()));
-    connect(qmlNotification, SIGNAL(dismissed()),this, SLOT(slotDismissed()));
+    connect( qmlNotification, SIGNAL(invoked()), this, SLOT(slotInvoked()));
+    connect( qmlNotification, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
 }
 
 NotifyWidget::~NotifyWidget()
@@ -89,6 +90,7 @@ void NotifyWidget::display(const Notification &notification)
 
 void NotifyWidget::update(const Notification &notification)
 {
+    snoreDebug( SNORE_DEBUG ) << m_id << notification.id();
     m_notification = notification;
 
     QRect desktop = QDesktopWidget().availableGeometry();
@@ -108,13 +110,13 @@ void NotifyWidget::update(const Notification &notification)
     }
     else
     {
-       color = computeBackgrondColor(notification.application().icon().image().scaled(20,20));
-       notification.application().constHints().setPrivateValue(parent(), "backgroundColor", color);
+        color = computeBackgrondColor(notification.application().icon().image().scaled(20,20));
+        notification.application().constHints().setPrivateValue(parent(), "backgroundColor", color);
     }
     QRgb gray = qGray(qGray(color.rgb()) - qGray(QColor(Qt::white).rgb()));
     QColor textColor = QColor(gray, gray, gray);
     QMetaObject::invokeMethod(qmlNotification, "update", Qt::QueuedConnection,
-                              Q_ARG( QVariant, notification.title()),
+                              Q_ARG( QVariant, notification.title()+ QString::number(notification.id())),
                               Q_ARG( QVariant, notification.text()),
                               Q_ARG( QVariant, QUrl::fromLocalFile(notification.icon().localUrl())),
                               Q_ARG( QVariant, QUrl::fromLocalFile(notification.application().icon().localUrl())),
@@ -129,12 +131,18 @@ bool NotifyWidget::acquire()
     bool out = false;
     if(m_ready)
     {
-        snoreDebug( SNORE_DEBUG ) << m_id;
         m_mem.lock();
-        bool *data = (bool*)m_mem.data();
-        if(*data)
+        SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE*)m_mem.data();
+        snoreDebug( SNORE_DEBUG ) << m_id << data->free << data->date.elapsed() / 1000;
+        bool timedout = data->date.elapsed() / 1000 > 60;
+        if(data->free || timedout)
         {
-            *data = false;
+            if(timedout)
+            {
+                snoreDebug( SNORE_DEBUG ) << "Notification Lock timed out" << data->date.elapsed() / 1000;
+            }
+            data->free = false;
+            data->date = QTime::currentTime();
             m_ready = false;
             out = true;
         }
@@ -148,12 +156,12 @@ bool NotifyWidget::release()
     bool out = false;
     if(!m_ready)
     {
-        snoreDebug( SNORE_DEBUG ) << m_id;
         m_mem.lock();
-        bool *data = (bool*)m_mem.data();
-        if(!*data)
+        SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE*)m_mem.data();
+        snoreDebug( SNORE_DEBUG ) << m_id << data->free << data->date.elapsed() / 1000 << m_notification.id();
+        if(!data->free)
         {
-            *data = true;
+            data->free = true;
             m_ready = true;
             out = true;
         }

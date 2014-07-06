@@ -26,7 +26,6 @@ Rectangle {
         appIcon.source = nAppIcon
         image.source = nImage
         root.color = color
-
     }
 
 
