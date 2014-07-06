@@ -80,7 +80,6 @@ Rectangle {
 
     Image {
         id: image
-        width: 100
         anchors.left: parent.left
         anchors.leftMargin: 0
         anchors.bottom: parent.bottom
