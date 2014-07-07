@@ -1,0 +1,22 @@
+#!/bin/bash
+tmpf=/tmp/$(basename $0).$$
+
+echo -n "$@" > $tmpf
+
+read_file=$(cat <<EOF
+(progn
+  (let* ((file (open-file "$tmpf" 'read))
+         (str "")
+         (line ""))
+    (while (setq line (read-line file))
+      (setq str (concat str line)))
+    (close-file file)
+    str))
+EOF
+)
+
+sawfish-client -e "(display-message $read_file)"
+(
+    sleep 5
+    sawfish-client -e "(display-message)"
+)&

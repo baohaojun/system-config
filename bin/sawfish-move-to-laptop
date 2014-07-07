@@ -1,0 +1,6 @@
+#!/bin/bash
+if test $(basename $0) = sawfish-move-to-laptop; then
+    sawfish-client -e '(move-window-to (input-focus) 1920 0)'
+else
+    sawfish-client -e '(move-window-to (input-focus) 0 0)'
+fi

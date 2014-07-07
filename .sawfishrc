@@ -13,6 +13,8 @@
 (bind-keys global-keymap "Super-F24" '(move-cursor-down))
 
 (setq bhj-is-gnome? nil)
+(setq warp-to-window-offset 50
+      warp-to-window-enabled t)
 (setq emacs-style-window-class-re "rdesktop|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
 (setq s-h-keymap (make-keymap)
       c-x-esc-keymap (make-keymap)
@@ -113,7 +115,11 @@
 (defun bhj-activate-window (window)
   (if (window-iconified-p window)
       (uniconify-window window))
-  (activate-window window))
+  (activate-window window)
+  (let* ((focus window)
+         (width (car (window-dimensions focus)))
+         (height (cdr (window-dimensions focus))))
+    (warp-cursor-to-window (input-focus) (quotient width 2) (quotient height 2))))
 
 (defun window-exists-p (wclass)
   (if (eq 'wFound
@@ -434,6 +440,8 @@
 (bind-keys s-h-keymap "g"  '(system "gnus&"))
 (bind-keys s-h-keymap "w"  '(system "weixin&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
+(bind-keys s-h-keymap "l" '(system "sawfish-move-to-laptop&"))
+(bind-keys s-h-keymap "L" '(system "sawfish-move-to-home-screen&"))
 (bind-keys s-h-keymap "Super-p" '(system "input-main-passwd&"))
 (bind-keys s-h-keymap "Super-SPC" '(synthesize-event-gnome? "Menu" (input-focus)))
 (bind-keys s-h-keymap "Super-+" '(system "terminal-font-change +&"))
@@ -446,6 +454,9 @@
   (if (window-get w 'code-reading)
       (emacs-code-reading-on w)
     (emacs-code-reading-off w))
+  (if (string= (window-class w) "rdesktop")
+      (bind-keys global-keymap "M-C-RET" '(system "toggle-rdesktop-keys&"))
+    (system "toggle-rdesktop-keys off&"))
   (if (string= (window-class w) "Emacs")
       (unbind-keys global-keymap "Super-\\")
     (bind-keys global-keymap "Super-\\"  '(system "xdotool-when-keyboard-clear key super+F12&"))))
@@ -512,8 +523,6 @@
   (load-file "~/.sawfish/lisp/keypad.jl"))
 
 (bind-keys global-keymap "KP_Enter" '(system "toggle-number-lock&"))
-
-(bind-keys s-h-keymap "l" '(system "do-firefox-login-page&"))
 
 (bind-keys global-keymap "Print" '(system "e /tmp/screen-exchange&"))
 (bind-keys global-keymap "Scroll_Lock" #'emacs-code-reading-toggle)

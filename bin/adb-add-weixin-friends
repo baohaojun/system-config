@@ -1,0 +1,28 @@
+#!/bin/bash
+
+sleepx=.5
+
+for ypos in 337 665 951 1208; do
+    for x in $(seq 0 3); do
+        xpos=$((144 + 1080 / 4 * x))
+
+        adb-tap $xpos $ypos
+        sleep $sleepx
+        android-screenshot /tmp/add-friend.bmp
+        line=$(od -x /tmp/add-friend.bmp | grep 'ff45 c01a ff45 c01a ff45 c01a ff45 c01a'|head -n 300|tail -n 1|pn 1)
+        line_chat=$(od -x /tmp/add-friend.bmp | grep 'fff1 f1f1 fff1 f1f1 fff1 f1f1 fff1 f1f1'|head -n 300|tail -n 1|pn 1)
+        line_y=$(python -c "print 1920 - 0$line/4/1080")
+        line_chaty=$(python -c "print 1920 - 0$line_chat/4/1080")
+        echo $line_y $line_chaty
+        if test $line_chaty -gt $line_y -a $line_chaty != 1920; then
+            adb-key BACK
+            continue
+        fi
+        adb-tap 558 $(python -c "print 1920 - 0$line/4/1080")
+        sleep $sleepx
+        adb-tap 966 149
+        sleep $sleepx
+        adb-key BACK
+        sleep $sleepx
+    done
+done

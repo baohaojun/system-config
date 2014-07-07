@@ -2,6 +2,12 @@
 
 adb shell screencap /sdcard/screen.png
 
+if test "$1"; then
+    adb pull /sdcard/screen.png /tmp/android-screen.$$.png
+    convert /tmp/android-screen.$$.png "$1"
+    rm /tmp/android-screen.$$.png
+    exit
+fi
 now=`now|perl -npe 's/:/./g'`
 mkdir -p ~/shots
 now=shots/"$now"
