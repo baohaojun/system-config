@@ -88,7 +88,7 @@ private:
     int m_dist;
     Snore::Notification m_notification;
 
-    QObject *qmlNotification;
+    QObject *m_qmlNotification;
 
     int m_id;
     QSharedMemory m_mem;

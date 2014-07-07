@@ -7,7 +7,9 @@ Rectangle {
     id: root
     width: 365
     height: 100
-    clip: false
+
+    property int startWidth: 350
+    property int startHeight: 100
 
     signal dismissed()
 
@@ -26,7 +28,14 @@ Rectangle {
         appIcon.source = nAppIcon
         image.source = nImage
         root.color = color
+
+        appIcon.height = root.height * 0.30
+        appIcon.width = appIcon.height
+
+        closeButton.height = root.height * 0.20
+        closeButton.width = closeButton.height
     }
+
 
 
 
@@ -93,8 +102,6 @@ Rectangle {
 
     Image {
         id: appIcon
-        x: 329
-        y: 62
         width: 30
         height: 30
         anchors.right: parent.right
@@ -107,7 +114,6 @@ Rectangle {
 
     Image {
         id: closeButton
-        x: 345
         width: 20
         height: 20
         anchors.top: parent.top

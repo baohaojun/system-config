@@ -36,7 +36,7 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     m_mem(QString("SnoreNotifyWidget_rev%1_id%2").arg(QString::number(SHARED_MEM_TYPE_REV()), QString::number(m_id))),
     m_ready(true)
 {
-    qmlNotification = rootObject();
+    m_qmlNotification = rootObject();
 
     this->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint
                      #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
@@ -70,8 +70,8 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     m_moveTimer->setInterval(1);
     connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
 
-    connect( qmlNotification, SIGNAL(invoked()), this, SLOT(slotInvoked()));
-    connect( qmlNotification, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
+    connect( m_qmlNotification, SIGNAL(invoked()), this, SLOT(slotInvoked()));
+    connect( m_qmlNotification, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
 }
 
 NotifyWidget::~NotifyWidget()
@@ -115,7 +115,7 @@ void NotifyWidget::update(const Notification &notification)
     }
     QRgb gray = qGray(qGray(color.rgb()) - qGray(QColor(Qt::white).rgb()));
     QColor textColor = QColor(gray, gray, gray);
-    QMetaObject::invokeMethod(qmlNotification, "update", Qt::QueuedConnection,
+    QMetaObject::invokeMethod(m_qmlNotification, "update", Qt::QueuedConnection,
                               Q_ARG( QVariant, notification.title()),
                               Q_ARG( QVariant, notification.text()),
                               Q_ARG( QVariant, QUrl::fromLocalFile(notification.icon().localUrl())),
