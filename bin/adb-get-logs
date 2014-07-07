@@ -1,27 +1,34 @@
 #!/bin/bash
 
-if test $# = 0; then
-   set -- logs-$(today)
-fi
+if test $(basename $0) = adb-get-logs; then
 
-set -e
+    if test $# = 0; then
+        set -- logs-$(today)
+    fi
 
-cd ~/today
+    set -e
 
-if test -d "$1"; then
-    x=0;
-    while true; do
-        ((x++)) || true
-        if test ! -d "$1".$x; then
-            set -- "$1".$x;
-            break
-        fi
+    cd ~/today
+
+    if test -d "$1"; then
+        x=0;
+        while true; do
+            ((x++)) || true
+            if test ! -d "$1".$x; then
+                set -- "$1".$x;
+                break
+            fi
+        done
+    fi
+
+    echo cd ~/today/"$1"
+    mkdir -p "$1"
+    cd "$1"
+
+    adb_pull /data/logs /data/anr /data/system/dropbox /data/core /data/tombstones /sdcard/smartisan ./
+    echo cd ~/today/"$1" | tee /dev/stderr | putclip
+else
+    for x in /data/logs /data/anr /data/system/dropbox /data/core /data/tombstones /sdcard/smartisan; do
+        adb "rm -r $x/*"
     done
 fi
-
-echo cd ~/today/"$1"
-mkdir -p "$1"
-cd "$1"
-
-adb_pull /data/logs /data/anr /data/system/dropbox /data/core /data/tombstones /sdcard/smartisan ./
-echo cd ~/today/"$1" | tee /dev/stderr | putclip

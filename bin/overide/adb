@@ -70,7 +70,7 @@ function run_the_adb() {
 
 function adb() {
     if test "$1" = -w; then
-        echo -n 'wait-for-device ' 1>/dev/tty
+        echo -n 'wait-for-device ' 1>&2
         $the_adb wait-for-device
         shift
     fi
