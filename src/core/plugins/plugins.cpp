@@ -44,7 +44,6 @@ SnorePlugin::SnorePlugin ( const QString &name ) :
 SnorePlugin::~SnorePlugin()
 {
     snoreDebug( SNORE_DEBUG ) << m_name << this << "deleted";
-    deinitialize();
 }
 
 bool SnorePlugin::initialize( SnoreCore *snore )
