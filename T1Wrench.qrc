@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/red.png</file>
+        <file>images/green.png</file>
+        <file>images/weixin.png</file>
+        <file>images/cell-mail.png</file>
+    </qresource>
+</RCC>
