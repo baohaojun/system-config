@@ -20,3 +20,4 @@ sawfish-client -e "(display-message $read_file)"
     sleep 5
     sawfish-client -e "(display-message)"
 )&
+rm -f $tmpf

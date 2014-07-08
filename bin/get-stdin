@@ -70,7 +70,7 @@ get-rid-of-comment $tmp
 if test "$USE_BUFFER_NAME"; then
     (
         cd /tmp
-        for x in $(seq 20 -1 2); do
+        for x in $(seq 5 -1 2); do
             mv "$USE_BUFFER_NAME".$((x - 1)) "$USE_BUFFER_NAME".$x >/dev/null 2>&1 || true
         done
 

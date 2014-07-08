@@ -1,3 +1,6 @@
 #!/bin/bash
-sawfish-client -e "(display-message)"
-sawfish-client -e "(bhj-draw-notification t)"
+sawfish-client -e "(progn
+                     (display-message)
+                     (bhj-draw-notification t)
+                     (unbind-keys global-keymap \"Button1-Click\")
+                     (bind-keys window-keymap \"Button1-Click\" 'raise-and-pass-through-click))"
