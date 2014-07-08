@@ -48,6 +48,13 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                     adb-tap 505 192
                     adb-tap 998 174
                     ;;
+                weixin-new)
+                    adb shell input keyevent SPACE
+                    adb-tap 303 335
+                    adb-tap 303 335
+                    adb-tap 496 196
+                    adb-tap 989 183
+                    ;;
                 *) # weixin and qq
                     adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
                     sleep .1

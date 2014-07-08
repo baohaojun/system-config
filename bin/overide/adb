@@ -52,7 +52,7 @@ function run_the_adb() {
             IFS=$'\n'
             for x in "$@"; do
                 args=("${args[@]}" $(
-                             if test "$(printf %q "$x")" != "$x"; then
+                             if test "${x/ /}" != "$x"; then
                                  # echo \"\'"$(echo -n "$x" | perl -npe "s!'!\\'!")"\'\"
                                  printf \"%q\" "$x"
                              else
