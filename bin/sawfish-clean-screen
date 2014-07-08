@@ -1,0 +1,3 @@
+#!/bin/bash
+sawfish-client -e "(display-message)"
+sawfish-client -e "(bhj-draw-notification t)"

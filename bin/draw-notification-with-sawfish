@@ -82,8 +82,4 @@ fi
 
 
 sawfish-client -e "(bhj-draw-notification nil (make-image $read_icon) $read_head $read_content)"
-(sleep 5 && sawfish-client -e "(bhj-draw-notification t)")&
-
-if test "$(sawfish-get-key)" = C-g; then
-    sawfish-client -e "(bhj-draw-notification t)"
-fi
+(sleep 15 && sawfish-client -e "(bhj-draw-notification t)")&

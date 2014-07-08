@@ -4,6 +4,13 @@ if ! test -e "$XAUTHORITY"; then
     exit 0;
 fi
 
+if test -e /tmp/bhj-notify-not-working; then
+    set -x
+    exec > /tmp/bhj-notify-not-working 2>&1
+    draw-notification-with-sawfish "$@"
+    exit 0
+fi
+
 icon=
 if test "$1" = -i; then
     icon=$2;

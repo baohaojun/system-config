@@ -52,7 +52,7 @@
   ;;  * The window icon at left.
   ;;  * At right, the window's title and (maybe) its class.
 
-  (define line-height (+ icon-size 4))
+  (define line-height (+ (font-height default-font) 4))
   (define (bhj-draw-notification #!optional close icon text-head text-content)
     "Shows the icon, the head, and the content"
 
@@ -71,8 +71,8 @@
                                             (mapcar (lambda (line) (text-width line default-font))
                                                     (string-split "\n" text-content)))))
                              (+ (* 3 y-margin)
-                                (* (1+ (length (string-split "\n" text-content)))
-                                   line-height)))))
+                                (max icon-size (* (1+ (length (string-split "\n" text-content)))
+                                    line-height))))))
 
         (define (event-handler type xw)
           ;; XW is the handle of the X drawable to draw in
@@ -102,8 +102,14 @@
                             line-height
                             (font-ascent default-font)
                             (quotient (- line-height
-                                         (font-height default-font)) 2))))
-                 (x-draw-string xw gc (cons x y) text-content))
+                                         (font-height default-font)) 2)))
+                      (text-lines (string-split "\n" text-content))
+                      line)
+                 (while text-lines
+                   (setq line (car text-lines) text-lines (cdr text-lines))
+                   (x-draw-string xw gc (cons x y) line)
+                   (format t "%s" (format nil "drawn %s with y: %d" line y))
+                   (setq y (+ y line-height))))
                (x-destroy-gc gc)))))
 
         ;; create new window

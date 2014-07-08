@@ -2,7 +2,8 @@
 
 sleepx=.5
 
-for ypos in 337 665 951 1208; do
+for y in $(seq 0 5); do
+    ypos=$((337 + 1920 / 7 * y))
     for x in $(seq 0 3); do
         xpos=$((144 + 1080 / 4 * x))
 
