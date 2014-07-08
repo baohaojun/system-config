@@ -62,7 +62,13 @@ if (not $comment) { print }
 '
 }
 if test "`get-rid-of-comment $tmp | wc -w`" == 0; then
+    if ! ps.pl emacs.mm; then
+        exit -1
+    fi
     if EMACS=t yes-or-no-p -y "Error: input can not be empty, try again?"; then
+        if test "$USE_BUFFER_NAME"; then
+            cp /tmp/"$USE_BUFFER_NAME".1 /tmp/"$USE_BUFFER_NAME"
+        fi
         exec get-stdin $tmp
     fi
 fi

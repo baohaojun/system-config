@@ -6,7 +6,8 @@ for x in "$@"; do
         adb pull /sdcard/pt-$x
     elif test $(basename $0) = adb-erase-partition; then
         adb 'if test -e /dev/block/platform/msm_sdcc.1/by-name/'$x'; then
-                 dd if=/dev/zero | tr "\000" "\377" > /dev/block/platform/msm_sdcc.1/by-name/'$x';
+                 #dd if=/dev/zero | tr "\000" "\377" > /dev/block/platform/msm_sdcc.1/by-name/'$x';
+                 dd if=/dev/zero  of=/dev/block/platform/msm_sdcc.1/by-name/'$x';
              else
                  echo /dev/block/platform/msm_sdcc.1/by-name/'$x' not exist
              fi'
