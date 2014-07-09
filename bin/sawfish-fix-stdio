@@ -1,0 +1,2 @@
+#!/bin/bash
+sawfish-client -e '(progn (close-file (stdout-file)) (close-file (stderr-file)))'
