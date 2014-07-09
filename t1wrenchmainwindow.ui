@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>782</width>
-    <height>552</height>
+    <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>0</x>
       <y>0</y>
       <width>771</width>
-      <height>441</height>
+      <height>491</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -46,49 +46,49 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QPushButton" name="qqButton">
+          <widget class="QRadioButton" name="radioButton">
            <property name="text">
             <string>微信、QQ</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="cellMailButton">
+          <widget class="QRadioButton" name="radioButton_2">
            <property name="text">
             <string>回邮件</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="t1SmsButton">
+          <widget class="QRadioButton" name="radioButton_3">
            <property name="text">
             <string>回短信</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="weiboButton">
+          <widget class="QRadioButton" name="radioButton_4">
            <property name="text">
             <string>微博</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="googlePlusButton">
+          <widget class="QRadioButton" name="radioButton_5">
            <property name="text">
             <string>Google+</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="toPhoneClipboardButton">
+          <widget class="QRadioButton" name="radioButton_6">
            <property name="text">
             <string>-&gt;剪贴板</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="fromPhoneClipboardButton">
+          <widget class="QRadioButton" name="radioButton_7">
            <property name="text">
             <string>&lt;-剪贴板</string>
            </property>
@@ -114,14 +114,79 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>410</y>
+        <width>521</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>配置</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>发送</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>450</y>
-      <width>751</width>
+      <y>500</y>
+      <width>761</width>
       <height>91</height>
      </rect>
     </property>

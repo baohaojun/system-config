@@ -1,3 +1,4 @@
+
 #-------------------------------------------------
 #
 # Project created by QtCreator 2014-06-18T15:01:49
@@ -15,16 +16,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
 	t1wrenchmainwindow.cpp \
 	adbstatethread.cpp \
-	readinfothread.cpp \
-    promptdialog.cpp
+	readinfothread.cpp 
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
-	    readinfothread.hpp \
-    promptdialog.h
+	    readinfothread.hpp 
 
-FORMS    += t1wrenchmainwindow.ui \
-    promptdialog.ui
+FORMS    += t1wrenchmainwindow.ui
 
 RESOURCES += \
     T1Wrench.qrc
