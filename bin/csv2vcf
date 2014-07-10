@@ -14,6 +14,9 @@ sub debug(@) {
 while (<>) {
     chomp;
     @f = split(',');
+    if (@f = 1) {
+        @f = split(' ');
+    }
     debug "name is '$f[0]'";
     print "BEGIN:VCARD\nVERSION:2.1\n";
     print "FN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:" . eq_hex($f[0]) . "\n";
