@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: ll
+# key: ll
+# --
+> ~/.logs/\$(basename \$0).log 2>&1

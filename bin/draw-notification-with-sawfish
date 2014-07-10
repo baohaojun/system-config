@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# debug-args $(basename "$0") "$@" > ~/.logs/$(basename $0).log 2>&1
 TEMP=$(getopt -o i: --long icon: -n $(basename $0) -- "$@")
 icon=
 eval set -- "$TEMP"
@@ -60,7 +61,7 @@ read_content=$(cat <<EOF
 EOF
 )
 
-if test "$icon"; then
+if test "$icon" -a -r "$icon"; then
     tmp_icon=/tmp/$(basename $0).$$.icon
 
     echo -n "$icon" > $tmp_icon
