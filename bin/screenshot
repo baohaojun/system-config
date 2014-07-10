@@ -3,8 +3,12 @@ sleep 1
 
 select=-s
 
-if test "$1" = focused; then
+if test "$1" = current; then
     select=-u
+elif test "$1" = full; then
+    select=-m
+elif test "$1" = selected; then
+    true # the default
 fi
 now=`now|perl -npe 's/:/./g'`
 mkdir -p ~/shots

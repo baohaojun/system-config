@@ -39,12 +39,12 @@
   (define (get-window-pos w dims)
     (let ((head (current-head w)))
       (if head
-          (cons (+ (quotient (- (car (head-dimensions head)) (car dims)) 2)
+          (cons (+ (quotient (- (car (head-dimensions head)) (car dims)) 1)
                    (car (head-offset head)))
-                (+ (quotient (- (cdr (head-dimensions head)) (cdr dims)) 2)
+                (+ (quotient (- (cdr (head-dimensions head)) (cdr dims)) 1)
                    (cdr (head-offset head))))
-        (cons (quotient (- (screen-width) (car dims)) 2)
-              (quotient (- (screen-height) (cdr dims)) 2)))))
+        (cons (quotient (- (screen-width) (car dims)) 1)
+              (quotient (- (screen-height) (cdr dims)) 1)))))
 
 ;;; entry point
 

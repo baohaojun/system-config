@@ -81,10 +81,21 @@ else
 fi
 
 
-sawfish-client -e "
+(
+    flock 9
+    sawfish-client -e "
 (progn
   (bind-keys window-keymap \"Button1-Click\" '(system \"sawfish-clean-screen&\"))
   (bind-keys global-keymap \"Button1-Click\" '(system \"sawfish-clean-screen&\"))
   (bhj-draw-notification nil (make-image $read_icon) $read_head $read_content))"
 
-(sleep 15 && sawfish-clean-screen)&
+    rm -f "$tmp_icon" "$tmp_content" "$tmp_head"
+
+    (
+        (
+            flock 9
+            sleep 15
+        ) 9>~/.logs/$(basename $0).lock2 &&
+            sawfish-clean-screen
+    )&
+) 9>~/.logs/$(basename $0).lock

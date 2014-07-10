@@ -35,6 +35,7 @@ function douban-misc() {
                 (shell-quote-argument url))))'
 }
 
+sawfish-clean-screen&
 export douban_action=${douban_action:-unknown}
 case "$1" in
     like)

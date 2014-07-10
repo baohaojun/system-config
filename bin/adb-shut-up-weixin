@@ -1,0 +1,7 @@
+#!/bin/bash
+adb-tap 932 1022
+adb-tap 964 170
+adb-tap 640 568
+adb-tap 840 725
+adb-key BACK
+adb-key BACK

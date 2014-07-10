@@ -17,6 +17,7 @@
       warp-to-window-enabled t)
 (setq emacs-style-window-class-re "rdesktop|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
 (setq s-h-keymap (make-keymap)
+      print-keymap (make-keymap)
       c-x-esc-keymap (make-keymap)
       c-x-map (make-keymap)
       esc-map (make-keymap)
@@ -25,8 +26,8 @@
 (setq global-remap-alist
       '(("C-a" . '((t "Home")))
         ("C-g" . '((Firefox "C-g") (t "ESC")))
-        ("Next" . '((Firefox "C-v") (t "Next")))
-        ("Prior" . '((Firefox "ESC" "v") (t "Prior")))
+        ("Next" . '((Firefox "C-v") (Qpdfview "SPC")))
+        ("Prior" . '((Firefox "ESC" "v") (Qpdfview "BS")))
         ("C-d" . '((t "DEL")))
         ("C-e" . '((t "End")))
         ("C-b" . '((Firefox "C-b") (t "Left")))
@@ -48,6 +49,9 @@
         ("M-BS" . '((t "C-BS")))
         ("C-p" . '((t "Up")))
         ("C-n" . '((t "Down")))
+        ("M-Left" . '((Qpdfview "C-RET")
+                      (t nil)))
+        ("M-Right" . '((Qpdfview "C-S-RET")))
         ("C-x" . '((Firefox "C-x") (t c-x-map)))))
 
 (bind-keys s-h-keymap "ESC" '(let ((key (concat "M-" (event-name (read-event "M-")))))
@@ -91,13 +95,8 @@
 (bind-keys global-keymap "XF86AudioPlay"  '(system "douban pause&"))
 (bind-keys global-keymap "XF86Launch7"  '(system "douban info&"))
 (bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))
-(bind-keys s-h-keymap "C-s"  '(system "screenshot&"))
-(bind-keys s-h-keymap "C-S"  '(system "screenshot focused&"))
-(bind-keys s-h-keymap "Print"  '(system "screenshot&"))
-(bind-keys global-keymap "Pause"  '(system "screenshot&"))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
-(bind-keys global-keymap "Super-Print"  '(system "super-print.sh&"))
 (bind-keys s-h-keymap "Super-i" '(read-event (concat "wm_class is: "
                                                                        (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
                                                                        ";\n\nand Window class is: "
@@ -198,17 +197,27 @@
     (cadr (or (assoc (intern class) window-map-assoc)
              (assoc t window-map-assoc)))))
 
+(defun bind-keys-nil-unbind (keymap key action)
+  (if action
+      (bind-keys keymap key action)
+    (unbind-keys keymap key)))
+
 (defun do-global-remap()
   (mapc (lambda (key-map-1)
-          (let ((from (car key-map-1))
-                (to (cdr key-map-1)))
-            (if (string-match "^M-" from 0 nil)
-                (bind-keys esc-map (substring from 2) `(classed-key-synthesize ,from ,to))
-              (bind-keys c-x-map from `(synthesize-event-gnome? ,from (input-focus)))
-              (bind-keys global-keymap from
-                         (if (symbolp (get-window-map to))
-                             (symbol-value (get-window-map to))
-                           `(classed-key-synthesize ,from ,to))))))
+          (let* ((from (car key-map-1))
+                 (to (cdr key-map-1))
+                 (window-mapped-to (get-window-map to)))
+            (when (string-match "^M-" from 0 nil)
+              (bind-keys esc-map (substring from 2) `(classed-key-synthesize ,from ,to)))
+            (bind-keys c-x-map from `(synthesize-event-gnome? ,from (input-focus)))
+            (bind-keys-nil-unbind global-keymap from
+                                  (cond
+                                   ((null window-mapped-to)
+                                    nil)
+                                   ((symbolp window-mapped-to)
+                                    (symbol-value (get-window-map to)))
+                                   (t
+                                    `(classed-key-synthesize ,from ,to))))))
         global-remap-alist)
   (mapc (lambda (key-map-1)
           (let ((from (car key-map-1))
@@ -537,3 +546,7 @@
 (bind-keys global-keymap "XF86HomePage" '(synthesize-multiple-events "C-S-s" "M-t" "e" "Down" "Down" "RET" "Down" "RET"))
 (bind-keys s-h-keymap "k" '(system "sawfish-help-key&"))
 (bind-keys global-keymap "Super-ESC" '(system "sawfish-clean-screen&"))
+(bind-keys global-keymap "Print" print-keymap)
+(bind-keys print-keymap "Print" '(system "screenshot full&"))
+(bind-keys print-keymap "s" '(system "screenshot selected&"))
+(bind-keys print-keymap "c" '(system "screenshot current&"))
