@@ -2,6 +2,7 @@
 #define T1WRENCHMAINWINDOW_H
 
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QRadioButton>
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -30,25 +31,27 @@ private slots:
 
     void on_toPhoneClipboardButton_clicked();
 
-    void on_fromPhoneClipboardButton_clicked();
+    void on_weixinQqRadio_toggled(bool checked);
 
-    void on_qqButton_pressed();
+    void on_replyMailRadio_toggled(bool checked);
 
-    void on_cellMailButton_pressed();
+    void on_replySmsRadio_toggled(bool checked);
 
-    void on_t1SmsButton_pressed();
+    void on_weiboRadio_toggled(bool checked);
 
-    void on_weiboButton_pressed();
+    void on_googlePlusRadio_toggled(bool checked);
 
-    void on_googlePlusButton_pressed();
+    void on_toClipBoardRadio_toggled(bool checked);
 
-    void on_toPhoneClipboardButton_pressed();
+    void on_fromClipBoard_toggled(bool checked);
 
-    void on_fromPhoneClipboardButton_pressed();
+    void on_sendItPushButton_clicked();
 
 private:
     Ui::T1WrenchMainWindow *ui;
     void putclip_android();
+    void getclip_android();
+    QRadioButton* mLastRadioButton;
 };
 
 #endif // T1WRENCHMAINWINDOW_H

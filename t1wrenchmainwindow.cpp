@@ -18,6 +18,7 @@
 #pragma comment(lib,"shell32.lib")
 #endif
 #include <QtGui/QPixmap>
+#include <QtCore/QCoreApplication>
 
 
 const char* qpstDir = "C:\\Program Files (x86)\\Qualcomm\\QPST";
@@ -36,6 +37,7 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->qqHintLabel->setText("<a href='http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'>锤子手机小扳手1.0</a>");
     ui->qqHintLabel->setOpenExternalLinks(true);
+    mLastRadioButton = NULL;
 }
 
 T1WrenchMainWindow::~T1WrenchMainWindow()
@@ -175,16 +177,6 @@ void T1WrenchMainWindow::putclip_android()
 
 void T1WrenchMainWindow::on_qqButton_clicked()
 {
-    putclip_android();
-    QList<QStringList> cmds2;
-    cmds2 << (QStringList() << "adb shell input tap 560 1840")
-          << (QStringList() << "sleep .1")
-          << (QStringList() << "adb shell input tap 560 1840")
-          << (QStringList() << "adb shell input tap 560 976")
-          << (QStringList() << "adb shell input tap 560 976")
-          << (QStringList() << "adb shell input tap 525 855")
-          << (QStringList() << "adb shell input tap 976 976");
-    do_button_click(this, cmds2, "click weixin", false);
 
 }
 
@@ -222,7 +214,7 @@ void fillFromAdbTaps(QList<QStringList>& cmds, QString& shellScript)
                 shCopy.replace(QRegExp("^adb-long-press "), "");
                 shCopy = "adb shell input touchscreen swipe " + shCopy + " " + shCopy + " 550";
                 cmds << QStringList(shCopy);
-            } else if (shCopy == "adb shell input keyevent SPACE") {
+            } else if (shCopy == "adb-key") {
                 cmds << QStringList(shCopy);
             } else {
                 prompt_user("Unknown shell script: " + shCopy );
@@ -282,7 +274,7 @@ void T1WrenchMainWindow::on_toPhoneClipboardButton_clicked()
     putclip_android();
 }
 
-void T1WrenchMainWindow::on_fromPhoneClipboardButton_clicked()
+void T1WrenchMainWindow::getclip_android()
 {
     QStringList args;
     args << "shell"
@@ -317,37 +309,120 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
     }
 }
 
-void T1WrenchMainWindow::on_qqButton_pressed()
+void T1WrenchMainWindow::on_weixinQqRadio_toggled(bool checked)
 {
-    ui->qqHintLabel->setPixmap(QPixmap(":/images/weixin.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
+    if (checked == false) {
+        mLastRadioButton = ui->weixinQqRadio;
+    } else {
+        ui->qqHintLabel->setPixmap(QPixmap(":/images/weixin.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
+    }
 }
 
-void T1WrenchMainWindow::on_cellMailButton_pressed()
+void T1WrenchMainWindow::on_replyMailRadio_toggled(bool checked)
 {
-    ui->qqHintLabel->setPixmap(QPixmap(":/images/cell-mail.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
+    if (checked == false) {
+        mLastRadioButton = ui->replyMailRadio;
+    } else {
+        ui->qqHintLabel->setPixmap(QPixmap(":/images/cell-mail.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
+    }
 }
 
-void T1WrenchMainWindow::on_t1SmsButton_pressed()
+void T1WrenchMainWindow::on_replySmsRadio_toggled(bool checked)
 {
-    ui->qqHintLabel->setText("暂无适用场景示意图");
+    if (checked == false) {
+        mLastRadioButton = ui->replySmsRadio;
+    } else {
+        ui->qqHintLabel->setText("暂无适用场景示意图");
+    }
 }
 
-void T1WrenchMainWindow::on_weiboButton_pressed()
+void T1WrenchMainWindow::on_weiboRadio_toggled(bool checked)
 {
-    ui->qqHintLabel->setText("暂无适用场景示意图");
+    if (checked == false) {
+        mLastRadioButton = ui->weiboRadio;
+    } else {
+        ui->qqHintLabel->setText("暂无适用场景示意图");
+    }
 }
 
-void T1WrenchMainWindow::on_googlePlusButton_pressed()
+void T1WrenchMainWindow::on_googlePlusRadio_toggled(bool checked)
 {
-    ui->qqHintLabel->setText("暂无适用场景示意图");
+    if (checked == false) {
+        mLastRadioButton = ui->googlePlusRadio;
+    } else {
+        ui->qqHintLabel->setText("暂无适用场景示意图");
+    }
 }
 
-void T1WrenchMainWindow::on_toPhoneClipboardButton_pressed()
+void T1WrenchMainWindow::on_toClipBoardRadio_toggled(bool checked)
 {
-    ui->qqHintLabel->setText("把左边编辑框里的内容\n放到手机的剪贴板里去");
+    if (checked == false) {
+        mLastRadioButton = ui->toClipBoardRadio;
+    } else {
+        ui->qqHintLabel->setText("把左边编辑框里的内容\n放到手机的剪贴板里去");
+    }
 }
 
-void T1WrenchMainWindow::on_fromPhoneClipboardButton_pressed()
+void T1WrenchMainWindow::on_fromClipBoard_toggled(bool checked)
 {
-    ui->qqHintLabel->setText("把手机剪贴板里的内容\n粘到左边的编辑框中");
+    if (checked == false) {
+        mLastRadioButton = ui->fromClipBoard;
+    } else {
+        ui->qqHintLabel->setText("把手机剪贴板里的内容\n粘到左边的编辑框中");
+    }
+}
+
+QString getActionScript(const QString& scenario)
+{
+    QString emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
+    QFile emacsWeixinFile(emacsWeixinSh);
+    if (!emacsWeixinFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return "";
+
+    QTextStream in(&emacsWeixinFile);
+    QString res;
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        if (line.contains(scenario)) {
+            while (!in.atEnd()) {
+                QString add = in.readLine();
+                if (add.contains(QRegExp("^\\s*;;\\s*$"))) {
+                    goto end;
+                }
+                res += add;
+            }
+        }
+    }
+end:
+    return res;
+}
+
+void T1WrenchMainWindow::on_sendItPushButton_clicked()
+{
+    if (ui->fromClipBoard->isChecked()) {
+        getclip_android();
+        return;
+    }
+    putclip_android();
+    if (ui->toClipBoardRadio->isChecked()) {
+        return;
+    }
+
+
+    QString actionShellScript;
+    if (ui->weixinQqRadio->isChecked()) {
+        actionShellScript = getActionScript("最常见情形");
+    } else if (ui->replyMailRadio->isChecked()) {
+        actionShellScript = getActionScript("回邮件");
+    } else if (ui->replySmsRadio->isChecked()) {
+        actionShellScript = getActionScript("快速回短信");
+    } else if (ui->weiboRadio->isChecked()) {
+        actionShellScript = getActionScript("发微博");
+    } else if (ui->googlePlusRadio->isChecked()) {
+        actionShellScript = getActionScript("发 Google Plus");
+    }
+
+    QList<QStringList> cmds;
+    fillFromAdbTaps(cmds, actionShellScript);
+    do_button_click(this, cmds2, "action clicked", false);
 }
