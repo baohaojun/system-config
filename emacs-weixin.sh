@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ls -l /proc/$(ps.pl adb.fork-server|pn 1)/fd | grep '\.logs.*\.lock'; then
+    ps-killall adb.fork-server
+    adb devices
+fi
+
 export USE_BUFFER_NAME=send-to-$(basename $0).org
 (
     if ! flock -n 9; then
