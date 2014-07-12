@@ -26,6 +26,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
 
             case $(basename $0) in
                 google+) # 发 Google Plus
+                    adb-tap 560 500 # get rid of the pictures
                     adb-tap 560 1840
                     adb-long-press 99 383 # long press
                     adb-tap 497 281 # paste

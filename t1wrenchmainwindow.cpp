@@ -21,19 +21,10 @@
 #include <QtCore/QCoreApplication>
 
 
-const char* qpstDir = "C:\\Program Files (x86)\\Qualcomm\\QPST";
-const char* qdartDir = "C:\\Program Files (x86)\\Qualcomm\\QDART";
-const char* qcnTool = "C:\\Program Files (x86)\\Qualcomm\\QDART\\bin\\qcnTool.exe";
-
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::T1WrenchMainWindow)
 {
-    if (QFile("C:\\Program Files\\Qualcomm\\QPST").exists()) {
-        qpstDir = "C:\\Program Files\\Qualcomm\\QPST";
-        qdartDir = "C:\\Program Files\\Qualcomm\\QDART";
-        qcnTool = "C:\\Program Files\\Qualcomm\\QDART\\bin\\qcnTool.exe";
-    }
     ui->setupUi(this);
     ui->qqHintLabel->setText("<a href='http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'>锤子手机小扳手1.0</a>");
     ui->qqHintLabel->setOpenExternalLinks(true);
@@ -170,29 +161,9 @@ void T1WrenchMainWindow::putclip_android()
     QList<QStringList> cmds;
     cmds << (QStringList() << "adb" << "push" << tmpDir.filePath("send-to-phone.txt") << "/sdcard/putclip.txt")
          << (QStringList() << "adb" << "shell" << "am startservice -n com.bhj.setclip/.PutClipService;"
-             "for x in $(seq 1 20); do if test -e /sdcard/putclip.txt; then busybox sleep .1; echo $x; else exit; fi; done;");
+             "for x in 0 1 2 3 4 5 6 7 8 9; do if test -e /sdcard/putclip.txt; then sleep .1; echo $x; else exit; fi; done;");
 
     do_button_click(this, cmds, "putclip-android", false);
-}
-
-void T1WrenchMainWindow::on_qqButton_clicked()
-{
-
-}
-
-void T1WrenchMainWindow::on_cellMailButton_clicked()
-{
-    putclip_android();
-
-    QList<QStringList> cmds2;
-    cmds2 << (QStringList() << "adb shell input touchscreen swipe 586 878 586 268 500")
-          << (QStringList() << "adb shell input tap 560 1840")
-          << (QStringList() << "adb shell input tap 299 299")
-          << (QStringList() << "adb shell input tap 299 299")
-          << (QStringList() << "adb shell input tap 505 192")
-          << (QStringList() << "adb shell input tap 998 174");
-
-    do_button_click(this, cmds2, "click mail", false);
 }
 
 void fillFromAdbTaps(QList<QStringList>& cmds, QString& shellScript)
@@ -214,7 +185,22 @@ void fillFromAdbTaps(QList<QStringList>& cmds, QString& shellScript)
                 shCopy.replace(QRegExp("^adb-long-press "), "");
                 shCopy = "adb shell input touchscreen swipe " + shCopy + " " + shCopy + " 550";
                 cmds << QStringList(shCopy);
-            } else if (shCopy == "adb-key") {
+            } else if (shCopy.contains(QRegExp("^adb-swipe "))) {
+                shCopy.replace(QRegExp("^adb-swipe "), "");
+                QStringList args = shCopy.split(QRegExp("\\s+"));
+                if (args.length() != 5) {
+                    prompt_user("Error: usage: adb-swipe x1 y1 x2 y2 micro-seconds");
+                }
+                shCopy = "adb shell input touchscreen swipe " + shCopy;
+                cmds << QStringList(shCopy);
+            } else if (shCopy.contains(QRegExp("^adb-key "))) {
+                shCopy.replace(QRegExp("^adb-key "), "");
+                shCopy = "adb shell input keyevent " + shCopy;
+                cmds << QStringList(shCopy);
+            } else if (shCopy.contains(QRegExp("^sleep "))) {
+#ifdef Q_OS_WIN32
+                shCopy = "adb shell " + shCopy;
+#endif
                 cmds << QStringList(shCopy);
             } else {
                 prompt_user("Unknown shell script: " + shCopy );
@@ -223,56 +209,6 @@ void fillFromAdbTaps(QList<QStringList>& cmds, QString& shellScript)
     }
 }
 
-void T1WrenchMainWindow::on_t1SmsButton_clicked()
-{
-    putclip_android();
-
-    QString t1ShellScript =
-        "                    adb-tap 560 1840 # 点空格\n"
-        "                    adb-long-press 522 912 # 长按输入框\n"
-        "                    adb-tap 480 802\n"
-        "                    adb-tap 864 921\n";
-
-    QList<QStringList> cmds2;
-    fillFromAdbTaps(cmds2, t1ShellScript);
-    do_button_click(this, cmds2, "click mail", false);
-}
-
-void T1WrenchMainWindow::on_weiboButton_clicked()
-{
-    putclip_android();
-
-    QString t1ShellScript =
-        "                    adb shell input keyevent SPACE\n"
-        "                    adb-long-press 440 281\n"
-        "                    adb-tap 545 191\n"
-        "                    adb-tap 991 166\n";
-
-    QList<QStringList> cmds2;
-    fillFromAdbTaps(cmds2, t1ShellScript);
-    do_button_click(this, cmds2, "click weibo", false);
-}
-
-void T1WrenchMainWindow::on_googlePlusButton_clicked()
-{
-    putclip_android();
-
-    QString t1ShellScript =
-        "                    adb-tap 560 1840\n"
-        "                    adb-long-press 99 383 # long press\n"
-        "                    adb-tap 497 281 # paste\n"
-        "                    adb-tap 985 935 # send\n";
-
-    QList<QStringList> cmds2;
-    fillFromAdbTaps(cmds2, t1ShellScript);
-    do_button_click(this, cmds2, "click google+", false);
-
-}
-
-void T1WrenchMainWindow::on_toPhoneClipboardButton_clicked()
-{
-    putclip_android();
-}
 
 void T1WrenchMainWindow::getclip_android()
 {
@@ -365,10 +301,13 @@ void T1WrenchMainWindow::on_toClipBoardRadio_toggled(bool checked)
 
 void T1WrenchMainWindow::on_fromClipBoard_toggled(bool checked)
 {
-    if (checked == false) {
-        mLastRadioButton = ui->fromClipBoard;
-    } else {
-        ui->qqHintLabel->setText("把手机剪贴板里的内容\n粘到左边的编辑框中");
+
+    if (checked == true) {
+        getclip_android();
+        if (mLastRadioButton) {
+            mLastRadioButton->setChecked(true);
+        }
+        return;
     }
 }
 
@@ -389,7 +328,7 @@ QString getActionScript(const QString& scenario)
                 if (add.contains(QRegExp("^\\s*;;\\s*$"))) {
                     goto end;
                 }
-                res += add;
+                res += add + "\n";
             }
         }
     }
@@ -399,10 +338,6 @@ end:
 
 void T1WrenchMainWindow::on_sendItPushButton_clicked()
 {
-    if (ui->fromClipBoard->isChecked()) {
-        getclip_android();
-        return;
-    }
     putclip_android();
     if (ui->toClipBoardRadio->isChecked()) {
         return;
@@ -426,4 +361,22 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
     QList<QStringList> cmds;
     fillFromAdbTaps(cmds, actionShellScript);
     do_button_click(this, cmds, "action clicked", false);
+}
+
+void T1WrenchMainWindow::on_configurePushButton_clicked()
+{
+    QString screenPng = QDir::tempPath() + QDir::separator() + "screencap.png";
+    QFile(screenPng).remove();
+    getExecutionOutput("adb shell screencap /sdcard/screen.png");
+    getExecutionOutput("adb pull /sdcard/screen.png " + screenPng);
+    if (!QFile(screenPng).exists()) {
+        prompt_user("无法获取手机截图及其屏幕尺寸, 无法完成配置");
+        return;
+    }
+
+    QPixmap screenPixmap(screenPng);
+    int w = screenPixmap.width();
+    int h = screenPixmap.height();
+
+    prompt_user(QString().sprintf("width is %d, height is %d", w, h));
 }

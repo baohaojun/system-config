@@ -19,18 +19,6 @@ public slots:
     void adbStateUpdated(const QString& state);
     void onInfoUpdate(const QString& key, const QString& val);
 private slots:
-    void on_qqButton_clicked();
-
-    void on_cellMailButton_clicked();
-
-    void on_t1SmsButton_clicked();
-
-    void on_weiboButton_clicked();
-
-    void on_googlePlusButton_clicked();
-
-    void on_toPhoneClipboardButton_clicked();
-
     void on_weixinQqRadio_toggled(bool checked);
 
     void on_replyMailRadio_toggled(bool checked);
@@ -46,6 +34,8 @@ private slots:
     void on_fromClipBoard_toggled(bool checked);
 
     void on_sendItPushButton_clicked();
+
+    void on_configurePushButton_clicked();
 
 private:
     Ui::T1WrenchMainWindow *ui;
