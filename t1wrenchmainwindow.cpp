@@ -20,13 +20,16 @@
 #include <QtGui/QPixmap>
 #include <QtCore/QCoreApplication>
 
-
+QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::T1WrenchMainWindow)
 {
+    emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
     ui->setupUi(this);
-    ui->qqHintLabel->setText("<a href='http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'>锤子手机小扳手1.0</a>");
+    ui->qqHintLabel->setText(
+        "<a href='http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'>锤子手机小扳手1.0</a><p/>"
+        );
     ui->qqHintLabel->setOpenExternalLinks(true);
     mLastRadioButton = NULL;
 }
@@ -313,7 +316,6 @@ void T1WrenchMainWindow::on_fromClipBoard_toggled(bool checked)
 
 QString getActionScript(const QString& scenario)
 {
-    QString emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
     QFile emacsWeixinFile(emacsWeixinSh);
     if (!emacsWeixinFile.open(QIODevice::ReadOnly | QIODevice::Text))
         return "";
@@ -365,6 +367,34 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
 
 void T1WrenchMainWindow::on_configurePushButton_clicked()
 {
+    // 实在是不想写异步调用的了。
+    if (prompt_user("将检查adb，继续？") == "yes") {
+        QDir::home().mkpath(".android");
+        QString adbConfig = QDir::homePath() + QDir::separator() + ".android" + QDir::separator() + "adb_usb.ini";
+        QFile adbConfigFile(adbConfig);
+        adbConfigFile.open(QIODevice::WriteOnly);
+        QTextStream out(&adbConfigFile);
+        out << "0x29a9\n";
+        out.flush();
+        adbConfigFile.close();
+        getExecutionOutput("adb kill-server");
+        QString uname = getExecutionOutput("adb shell uname");
+        if (!uname.contains("Linux")) {
+            prompt_user("手机状态错误：uname应该是Linux，无法完成配置：\n\n" + uname);
+        }
+    }
+
+    if (prompt_user("将会安装操作手机剪贴板的SetClip.apk，继续？") == "yes") {
+        QString apk = QCoreApplication::applicationDirPath() + QDir::separator() + "SetClip.apk";
+        QString res = getExecutionOutput("adb install -r " + apk);
+        if (!res.contains(QRegExp("^Success$"))) {
+            prompt_user("SetClip.apk安装失败：\n\n" + res);
+        }
+    }
+
+    if (prompt_user("将获取手机屏幕尺寸，继续？") != "yes") {
+        return;
+    }
     QString screenPng = QDir::tempPath() + QDir::separator() + "screencap.png";
     QFile(screenPng).remove();
     getExecutionOutput("adb shell screencap /sdcard/screen.png");
@@ -379,4 +409,12 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     int h = screenPixmap.height();
 
     prompt_user(QString().sprintf("width is %d, height is %d", w, h));
+    if (w != 1080 || h != 1920) {
+        QString newEmacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + QString().sprintf("emacs-weixin-%dx%d.sh", w, h);
+        if (QFile(newEmacsWeixinSh).exists()) {
+            emacsWeixinSh = newEmacsWeixinSh;
+        } else {
+            prompt_user("你的手机尺寸未进行过适配，需要自行修改" + emacsWeixinSh + "，将里面的各个座标按比例缩放，并将新的文件保存在" + newEmacsWeixinSh + "\n\n" + "详情请点击启动时右边的超级链接（我写的关于T1小扳手的博客）查看帮助");
+        }
+    }
 }
