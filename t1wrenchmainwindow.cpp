@@ -422,7 +422,8 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         actionShellScript = getActionScript("发 Google Plus");
     }
 
+    qDebug() << "actionShellScript is '" << actionShellScript <<"'";
     QList<QStringList> cmds;
     fillFromAdbTaps(cmds, actionShellScript);
-    do_button_click(this, cmds2, "action clicked", false);
+    do_button_click(this, cmds, "action clicked", false);
 }
