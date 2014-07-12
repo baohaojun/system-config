@@ -1,0 +1,12 @@
+#!/bin/bash
+cd ~/Music/like/
+n=$(find . -name '*.mp3'|wc -l)
+
+while true; do
+    ps-killall mplayer;
+    r=$(random)
+    mp3=$(find . -name '*.mp3' | head -n $(( r % n + 1)) | tail -n 1)
+
+    bhj-notify -i "${mp3/%.mp3/.png}" Douban-Music "$mp3"
+    mplayer "$mp3"
+done

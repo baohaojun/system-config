@@ -5,6 +5,7 @@ set -x
 sudo su - bhj -c bash -c "
    . ~/.renew-xauth
    (
+       rm ~/.config/keyboard-dev-ids
        set -x
        (
            flock -n 9 || exit
