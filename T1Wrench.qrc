@@ -4,5 +4,8 @@
         <file>images/green.png</file>
         <file>images/weixin.png</file>
         <file>images/cell-mail.png</file>
+        <file>images/sms.png</file>
+        <file>images/weibo.png</file>
+        <file>images/googlePlus.png</file>
     </qresource>
 </RCC>

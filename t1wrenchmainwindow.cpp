@@ -19,6 +19,7 @@
 #endif
 #include <QtGui/QPixmap>
 #include <QtCore/QCoreApplication>
+#include "bhj_help.hpp"
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -271,7 +272,7 @@ void T1WrenchMainWindow::on_replySmsRadio_toggled(bool checked)
     if (checked == false) {
         mLastRadioButton = ui->replySmsRadio;
     } else {
-        ui->qqHintLabel->setText("暂无适用场景示意图");
+        ui->qqHintLabel->setPixmap(QPixmap(":/images/sms.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
     }
 }
 
@@ -280,7 +281,7 @@ void T1WrenchMainWindow::on_weiboRadio_toggled(bool checked)
     if (checked == false) {
         mLastRadioButton = ui->weiboRadio;
     } else {
-        ui->qqHintLabel->setText("暂无适用场景示意图");
+        ui->qqHintLabel->setPixmap(QPixmap(":/images/weibo.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
     }
 }
 
@@ -289,7 +290,7 @@ void T1WrenchMainWindow::on_googlePlusRadio_toggled(bool checked)
     if (checked == false) {
         mLastRadioButton = ui->googlePlusRadio;
     } else {
-        ui->qqHintLabel->setText("暂无适用场景示意图");
+        ui->qqHintLabel->setPixmap(QPixmap(":/images/googlePlus.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
     }
 }
 
