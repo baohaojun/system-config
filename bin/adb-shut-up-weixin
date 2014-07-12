@@ -1,5 +1,6 @@
 #!/bin/bash
 adb-tap 932 1022
+sleep .1
 adb-tap 964 170
 adb-tap 640 568
 adb-tap 840 725

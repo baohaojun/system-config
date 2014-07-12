@@ -1,12 +1,20 @@
 #!/bin/bash
 
 seconds=550
-if test $# = 5 -o $# = 3; then
-    seconds=$1
-    shift
+if test $# = 5; then
+    seconds=$5
+    set -- $1 $2 $3 $4
+elif test $# = 3; then
+    seconds=$3
+    set -- $1 $2
 fi
-if test $# = 4; then
-    adb shell input touchscreen swipe $1 $2 $3 $4 $seconds
-elif test $# = 2; then
-    adb shell input touchscreen swipe $1 $2 $1 $2 $seconds
+
+if test $# = 2; then
+    set -- $1 $2 $1 $2
 fi
+
+if test $# != 4; then
+    die "Error usage: adb-swipe should have 4 args at the end"
+fi
+
+adb shell input touchscreen swipe $1 $2 $3 $4 $seconds
