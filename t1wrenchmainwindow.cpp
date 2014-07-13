@@ -318,8 +318,10 @@ void T1WrenchMainWindow::on_fromClipBoard_toggled(bool checked)
 QString getActionScript(const QString& scenario)
 {
     QFile emacsWeixinFile(emacsWeixinSh);
-    if (!emacsWeixinFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!emacsWeixinFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        prompt_user("Cannot open " + emacsWeixinSh);
         return "";
+    }
 
     QTextStream in(&emacsWeixinFile);
     QString res;
@@ -349,15 +351,15 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
 
     QString actionShellScript;
     if (ui->weixinQqRadio->isChecked()) {
-        actionShellScript = getActionScript("最常见情形");
+        actionShellScript = getActionScript("# most cases");
     } else if (ui->replyMailRadio->isChecked()) {
-        actionShellScript = getActionScript("回邮件");
+        actionShellScript = getActionScript("# reply mail");
     } else if (ui->replySmsRadio->isChecked()) {
-        actionShellScript = getActionScript("快速回短信");
+        actionShellScript = getActionScript("# quick reply sms");
     } else if (ui->weiboRadio->isChecked()) {
-        actionShellScript = getActionScript("发微博");
+        actionShellScript = getActionScript("# send weibo");
     } else if (ui->googlePlusRadio->isChecked()) {
-        actionShellScript = getActionScript("发 Google Plus");
+        actionShellScript = getActionScript("# send google plus");
     }
 
     qDebug() << "actionShellScript is '" << actionShellScript <<"'";
@@ -390,6 +392,8 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
         QString res = getExecutionOutput("adb install -r " + apk);
         if (!res.contains("Success")) {
             prompt_user("SetClip.apk安装失败：\n\n" + res);
+        } else {
+            prompt_user("SetClip.apk安装成功：\n\n" + res);
         }
     }
 
