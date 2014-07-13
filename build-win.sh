@@ -3,6 +3,7 @@
 if test $(uname) = Linux; then
     psync pub .; ssh pub "cd $PWD; ./build-win.sh"
 else
+    perl -npe "$(grep 's/.*ord' ~/bin/vc-utf8-escape)" -i t1wrenchmainwindow.cpp
     /c/Qt/5.3/msvc2013_64/bin/qmake.exe
     set -e
     set -o pipefail

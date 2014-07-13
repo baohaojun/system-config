@@ -29,7 +29,7 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
     ui->setupUi(this);
     ui->qqHintLabel->setText(
-        "<a href='http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'>锤子手机小扳手1.0</a><p/>"
+        "<a href='http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'>锤子手机小扳手 1.0</a><p/>"
         );
     ui->qqHintLabel->setOpenExternalLinks(true);
     mLastRadioButton = NULL;
@@ -369,7 +369,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
 void T1WrenchMainWindow::on_configurePushButton_clicked()
 {
     // 实在是不想写异步调用的了。
-    if (prompt_user("将检查adb，继续？") == "yes") {
+    if (prompt_user("将检查 adb，继续？") == "yes") {
         QDir::home().mkpath(".android");
         QString adbConfig = QDir::homePath() + QDir::separator() + ".android" + QDir::separator() + "adb_usb.ini";
         QFile adbConfigFile(adbConfig);
@@ -388,7 +388,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     if (prompt_user("将会安装操作手机剪贴板的SetClip.apk，继续？") == "yes") {
         QString apk = QCoreApplication::applicationDirPath() + QDir::separator() + "SetClip.apk";
         QString res = getExecutionOutput("adb install -r " + apk);
-        if (!res.contains(QRegExp("^Success$"))) {
+        if (!res.contains("Success")) {
             prompt_user("SetClip.apk安装失败：\n\n" + res);
         }
     }
