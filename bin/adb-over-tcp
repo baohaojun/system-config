@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if test "$1"; then
+    wifi_ip=$1
+    echo adb connect "$wifi_ip":${2:-5555} > ~/.logs/adb-over-tcp
+    adb connect "$wifi_ip":${2:-5555}
+    exit
+fi
+
 if ! adb devices?; then
     bash ~/.logs/adb-over-tcp
     exit

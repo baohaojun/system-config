@@ -28,7 +28,7 @@ for x in remotes/origin/master; do
     fi
 done
 
-if test -e ~/.crontab.$USER -a "$FETCH_ONLY" != true; then
+if which crontab && test -e ~/.crontab.$USER -a "$FETCH_ONLY" != true; then
     crontab ~/.crontab.$USER
 fi
 
