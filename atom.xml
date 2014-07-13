@@ -12,6 +12,13 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Smartisan T1 Wrench
+Smartisan T1小扳手使用指南]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/07/13/0-Smartisan-T1-Wrench.html"/>
+    <updated>2014-31-13T23:07:44+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/07/13/0-Smartisan-T1-Wrench.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email/sms]]></title>
     <link href="http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html"/>
     <updated>2014-06-23T22:47:58+08:00</updated>
@@ -64,11 +71,5 @@
     <link href="http://baohaojun.github.io/blog/2013/10/16/0-Interactive-Git-Add.html"/>
     <updated>2013-10-16T10:53:22+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/10/16/0-Interactive-Git-Add.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[自己写了一个输入法, Windows下的五笔]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/10/05/0-My-Own-Win32-Input-Method.html"/>
-    <updated>2013-10-05T07:33:54+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/10/05/0-My-Own-Win32-Input-Method.html</id>
   </entry>
 </feed>

@@ -339,22 +339,22 @@ $bash -x find-or-exec emacs
 
 <div class="org-src-container">
 
-<pre class="src src-sawfish">(defun find-window-or-exec (wclass-or-lambda #!optional wcommand)
-  (if (eq (catch 'wFound
-            (mapc (lambda (window)
-                    (when (if (stringp wclass-or-lambda)
+<pre class="src src-sawfish">(<span class="org-keyword">defun</span> <span class="org-function-name">find-window-or-exec</span> (wclass-or-lambda #!optional wcommand)
+  (<span class="org-keyword">if</span> (eq (<span class="org-keyword">catch</span> '<span class="org-constant">wFound</span>
+            (mapc (<span class="org-keyword">lambda</span> (window)
+                    (<span class="org-keyword">when</span> (<span class="org-keyword">if</span> (stringp wclass-or-lambda)
                               (string-match wclass-or-lambda (bhj-window-class window) 0 t)
-                            (when functionp wclass-or-lambda
-                                  (write (stderr-file) "hello world\n")
+                            (<span class="org-keyword">when</span> functionp wclass-or-lambda
+                                  (write (stderr-file) <span class="org-string">"hello world\n"</span>)
                                   (wclass-or-lambda window)))
 
                       (bhj-activate-window window)
-                      (throw 'wFound 'wFound)))
+                      (<span class="org-keyword">throw</span> '<span class="org-constant">wFound</span> 'wFound)))
                   (stacking-order)))
           'wFound)
       t
-    (if wcommand
-        (system (concat wcommand "&amp;")))
+    (<span class="org-keyword">if</span> wcommand
+        (system (concat wcommand <span class="org-string">"&amp;"</span>)))
     nil))
 </pre>
 </div>
@@ -723,8 +723,8 @@ java程序会打开adb push上来的weixin内容文件(/sdcard/putclip.txt），
 <div class="outline-text-2" id="text-3">
 <div class="org-src-container">
 
-<pre class="src src-sawfish">(bind-keys s-h-keymap "w"  '(system "weixin&amp;"))
-(bind-keys global-keymap "XF86Mail" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
+<pre class="src src-sawfish">(bind-keys s-h-keymap <span class="org-string">"w"</span>  '(system <span class="org-string">"weixin&amp;"</span>))
+(bind-keys global-keymap <span class="org-string">"XF86Mail"</span> '(synthesize-multiple-events <span class="org-string">"C-x"</span> <span class="org-string">"C-s"</span> <span class="org-string">"C-x"</span> <span class="org-string">"#"</span>))
 </pre>
 </div>
 
@@ -750,22 +750,23 @@ java程序会打开adb push上来的weixin内容文件(/sdcard/putclip.txt），
 我的微博账号是 baohaojun，欢迎粉我。微信号是beagrep，欢迎加我。我聊天
 打字速度很快的。
 </p>
-<nav>
-  <ul id="prev_next_posts">
-    <li class="prev_post">
-      <a href="../04/0-binder.html"> <!-- prev-url -->
-        <i class="icon-chevron-left">《</i>
-        binder <!-- prev-title -->
-      </a>
-    </li>
-    <li class="next_post" style="text-align: right;">
-      <a href="../../../../meta/Archive.html"> <!-- next-url -->
-        Archive <!-- next-title -->
-        <i class="icon-chevron-right">》</i>
-      </a>
-    </li>
-  </ul>
-</nav>
+      <nav>
+        <ul id="prev_next_posts">
+          <li class="prev_post">
+            <a href="../04/0-binder.html"> <!-- prev-url -->
+              <i class="icon-chevron-left">《</i>
+              binder <!-- prev-title -->
+            </a>
+          </li>
+          <li class="next_post" style="text-align: right;">
+            <a href="../../07/13/0-Smartisan-T1-Wrench.html"> <!-- next-url -->
+              Smartisan T1 Wrench
+Smartisan T1小扳手使用指南 <!-- next-title -->
+              <i class="icon-chevron-right">》</i>
+            </a>
+          </li>
+        </ul>
+      </nav>
 </div>
 </div>
 </div>
