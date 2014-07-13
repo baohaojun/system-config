@@ -9,7 +9,11 @@ case $1 in
         ;;
     resume|post)
         (
-            su bhj -c "sleep 1 && bash -x ~bhj/bin/switch-touchpad &"
+            su - bhj -c "
+                         set -x
+                         sleep 1 && bash -x ~bhj/bin/switch-touchpad &
+                         sleep 1 && re-xmodmap&
+            " >~bhj/.logs/99-switch-touchpad.log 2>&1
             echo done "$@"
             echo
         ) > ~bhj/.logs/$(basename $0).log 2>&1

@@ -9,14 +9,20 @@ sudo su - bhj -c bash -c "
        set -x
        (
            flock -n 9 || exit
+           e4000_found=false
            for x in $(seq 1 40 | tr '\n' ' '); do
                if ! ls /dev/input/by-id/*4000-if01*; then
                    sleep .1
                else
                    echo Microsoft Ergonomic keyboard found when x is \$x
+                   e4000_found=true
                    break
                fi
            done
+           if test \$e4000_found = false; then
+               xmodmap ~/.Xmodmap
+               exit
+           fi
            for x in $(seq 1 20 | tr '\n' ' '); do
                if xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap; then
                    # X Error of failed request:  BadValue (integer parameter out of range for operation)
