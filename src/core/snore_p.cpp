@@ -95,6 +95,7 @@ void SnoreCorePrivate::slotAboutToQuit()
     {
         if(p->isLoaded())
         {
+            snoreDebug( SNORE_DEBUG ) << "deinitialize" << p->name();
             p->load()->deinitialize();
         }
     }

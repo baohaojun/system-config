@@ -68,10 +68,6 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
 
 NotificationData::~NotificationData()
 {
-    if(!m_timeoutTimer.isNull())
-    {
-        m_timeoutTimer->deleteLater();
-    }
     notificationCount--;
     snoreDebug( SNORE_DEBUG ) << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
 }
