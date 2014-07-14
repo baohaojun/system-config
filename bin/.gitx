@@ -108,10 +108,10 @@ function git()
                                 echo ---------------- 1>&2
                                 exit 0
                             fi
-                            y=$(git diff --name-status origin/master)
+                            y=$(git diff --name-status $(git-remote-branch))
                             if test "$y"; then
                                 echo $x not clean 1>&2
-                                git diff --name-status origin/master
+                                git diff --name-status $(git-remote-branch)
                                 echo ---------------- 1>&2
                             fi
                         )

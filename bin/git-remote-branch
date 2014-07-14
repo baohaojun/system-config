@@ -1,0 +1,11 @@
+#!/bin/bash
+
+branch=$(git symbolic-ref --short HEAD)
+if test "$branch"; then
+    remote=$(git config branch.$branch.remote)
+    if test "$remote"; then
+        echo $remote/$branch
+        exit 0
+    fi
+fi
+echo origin/master
