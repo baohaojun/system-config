@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd /cygdrive/c/
+
+if test ! -e setup-x86_64.exe; then
+    if ! which wget && yes-or-no-p -y wget not found, use browser to download; then
+        cygstart http://cygwin.com/setup-x86_64.exe
+        exit 1
+    fi
+    wget -N  http://cygwin.com/setup-x86_64.exe
+    chmod +x setup-x86_64.exe
+fi
+
+/cygdrive/c/setup-x86_64.exe -q -n -d -A -P "$@"
