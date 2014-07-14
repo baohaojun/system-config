@@ -27,7 +27,7 @@
 ;; C-z,A-z        iconify window
 ;; C-h,A-h        shade window
 ;; RET            select window
-;; 
+;;
 ;; Other keys insert themselves. A-s (or H-s, depending on your
 ;; modifiers) would be a good key to bind iswitch-window to; for example,
 ;;
@@ -86,24 +86,24 @@
 (defun iswitch-filter-wlist-func (window)
   (let loop ((fow-nrl iswitch-filter-out-window-name-regexp-list))
        (cond
-	 ((null fow-nrl) t)
-	 ((string-match (car fow-nrl) (window-name window) 0 nil) nil)
-	 (t (loop (cdr fow-nrl))))))
+         ((null fow-nrl) t)
+         ((string-match (car fow-nrl) (window-name window) 0 nil) nil)
+         (t (loop (cdr fow-nrl))))))
 
 (defun iswitch-get-window ()
   "Let user pick a window with incremental search and return that window."
   (when (grab-keyboard)
     (unwind-protect
         (let* ((override-keymap '(keymap))
-	      (input "")
-	      (key "")
+              (input "")
+              (key "")
               (active 0)
               (active-win nil)
-	      (init-wlist (filter iswitch-filter-wlist-func (window-order nil t t)))
-	      (focused-window (car init-wlist))
-	      wlist)
-	  (setq init-wlist (append (cdr init-wlist) (list focused-window))
-		wlist init-wlist)
+              (init-wlist (filter iswitch-filter-wlist-func (window-order nil t t)))
+              (focused-window (car init-wlist))
+              wlist)
+          (setq init-wlist (append (cdr init-wlist) (list focused-window))
+                wlist init-wlist)
           (add-hook 'unbound-key-hook iswitch-read-event)
           (catch 'exit-iswitch
             (while t
@@ -112,62 +112,69 @@
                     (catch 'iswitch-read
                       (recursive-edit)))
               (cond ((or (equal key "C-g")
-			 (equal key "A-g")
+                         (equal key "A-g")
                          (equal key "ESC"))
                      (throw 'exit-iswitch nil))
                     ((or (equal key "C-u")
-			 (equal key "A-u"))
-		     (setq input ""
+                         (equal key "A-u"))
+                     (setq input ""
                            active 0))
                     ((equal key "BS")
                      (when (> (length input) 0)
-			 (setq input (substring input 0 (1- (length input)))
+                         (setq input (substring input 0 (1- (length input)))
                                active 0)))
-		    ((or (equal key "C-s")
-			 (equal key "A-s")
+                    ((or (equal key "C-s")
+                         (equal key "A-s")
                          (equal key "C-n")
                          (equal key "TAB"))
                      (setq active (1+ active)))
-		    ((or (equal key "C-r")
+                    ((or (equal key "C-r")
                          (equal key "C-p")
-			 (equal key "A-r")
+                         (equal key "A-r")
                          (equal key "M-TAB"))
                      (setq active (1- active)))
-		    ((equal key "SPC")
-		     (setq input (concat input " ")
+                    ((equal key "SPC")
+                     (setq input (concat input " ")
                            active 0))
-		    ((equal key "RET")
-		     (throw 'exit-iswitch active-win))
-		    ((or (equal key "C-z")
+                    ((equal key "RET")
+                     (throw 'exit-iswitch active-win))
+                    ((or (equal key "C-z")
                          (equal key "A-z"))
-		     (let ((w (car wlist)))
-		       (if (window-get w 'iconified)
-			   (uniconify-window w)
-			 (iconify-window w))))
-		    ((or (equal key "C-h")
+                     (let ((w (car wlist)))
+                       (if (window-get w 'iconified)
+                           (uniconify-window w)
+                         (iconify-window w))))
+                    ((or (equal key "C-h")
                          (equal key "A-h"))
-		     (toggle-window-shaded (car wlist)))
-		    ((= 1 (length key))
-		     (setq input (concat input key)
+                     (toggle-window-shaded (car wlist)))
+                    ((= 1 (length key))
+                     (setq input (concat input key)
                            active 0))))))
       (remove-hook 'unbound-key-hook iswitch-read-event)
       (bhj-draw-wininfo (window-order) t)
       (ungrab-keyboard))))
 
+
+(defun bhj-display-window (window)
+  (display-window window)
+  (let* ((focus window)
+         (width (car (window-dimensions focus)))
+         (height (cdr (window-dimensions focus))))
+    (warp-cursor-to-window window (quotient width 2) (quotient height 2))))
+
 (defun iswitch-window ()
   "Pick a window by incremental search and select it."
   (interactive)
-  (display-window (iswitch-get-window)))
+  (bhj-display-window (iswitch-get-window)))
 
 (defun iswitch-window-with (act)
   "Pick a window by incremental search, select it and ACT on previous."
   (interactive)
   (let ((old (car (window-order)))
-	(new (iswitch-get-window)))
+        (new (iswitch-get-window)))
     (when new
       (unless (or (eq new old)
-		  (window-get old 'sticky)
-		  (window-outside-viewport-p new))
-	(act old))
+                  (window-get old 'sticky)
+                  (window-outside-viewport-p new))
+        (act old))
       (display-window new))))
-

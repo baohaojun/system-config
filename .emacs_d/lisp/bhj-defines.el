@@ -1262,7 +1262,9 @@ criteria can be provided via the optional match-string argument "
       (setq prev-buffer (nth 2 (buffer-list))))
     (insert
      (if (buffer-file-name prev-buffer)
-         (replace-regexp-in-string ".*/" "" (buffer-file-name prev-buffer))
+         (if current-prefix-arg
+             (buffer-file-name prev-buffer)
+           (replace-regexp-in-string ".*/" "" (buffer-file-name prev-buffer)))
        (buffer-name prev-buffer)))))
 
 ;;;###autoload
