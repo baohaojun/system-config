@@ -29,9 +29,12 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
     ui->setupUi(this);
     ui->qqHintLabel->setText(
-        "<a href='http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'>锤子手机小扳手 1.0</a><p/>"
+        "<a href='http://baohaojun.github.io/blog/2014/07/13/0-Smartisan-T1-Wrench.html'>Smartisan T1手机聊天小扳手 1.0</a><p/>"
+        "<a href='http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'>用Emacs + Smartisan T1聊天</a>"
         );
     ui->qqHintLabel->setOpenExternalLinks(true);
+    connect(ui->phoneTextEdit, SIGNAL(controlEnterPressed()), this, SLOT(on_sendItPushButton_clicked()));
+    ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLastRadioButton = NULL;
 }
 
@@ -362,12 +365,17 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         actionShellScript = getActionScript("# send weibo");
     } else if (ui->googlePlusRadio->isChecked()) {
         actionShellScript = getActionScript("# send google plus");
+    } else {
+        prompt_user("尚未选定执行何种操作，默认选为微信、QQ（最常见）");
+        ui->weixinQqRadio->setChecked(true);
+        actionShellScript = getActionScript("# most cases");
     }
 
     qDebug() << "actionShellScript is '" << actionShellScript <<"'";
     QList<QStringList> cmds;
     fillFromAdbTaps(cmds, actionShellScript);
     do_button_click(this, cmds, "action clicked", false);
+    ui->phoneTextEdit->selectAll();
 }
 
 void T1WrenchMainWindow::on_configurePushButton_clicked()

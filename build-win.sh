@@ -24,6 +24,8 @@ function make-release-tgz()
     rm -rf ./release/*.o
     rm -rf ./release/*.cpp
     rm -rf t1wrench-release
+    cp readme.* ./release/
+    cp *.png ./release/
     cp -av release t1wrench-release
     set -x
     tar czfv ${1:-t1wrench-release.tgz} t1wrench-release

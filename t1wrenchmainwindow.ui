@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>T1WrenchMainWindow</string>
+   <string>Smartisan T1聊天小扳手</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidget">
@@ -41,7 +41,7 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QPlainTextEdit" name="phoneTextEdit"/>
+        <widget class="QCellPhoneTextEdit" name="phoneTextEdit"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -160,7 +160,7 @@
        <item>
         <widget class="QPushButton" name="sendItPushButton">
          <property name="text">
-          <string>发送</string>
+          <string>扳动</string>
          </property>
         </widget>
        </item>
@@ -271,6 +271,13 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCellPhoneTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">qcellphonetextedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="T1Wrench.qrc"/>
  </resources>

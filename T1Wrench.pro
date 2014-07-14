@@ -16,11 +16,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
 	t1wrenchmainwindow.cpp \
 	adbstatethread.cpp \
-	readinfothread.cpp 
+        readinfothread.cpp \
+        qcellphonetextedit.cpp 
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
-	    readinfothread.hpp 
+            readinfothread.hpp \
+            qcellphonetextedit.h
 
 FORMS    += t1wrenchmainwindow.ui
 
