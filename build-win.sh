@@ -7,7 +7,7 @@ function copy-dlls()
         chmod 555 ./release/$x
     done
 
-    for x in libEGL.dll libGLESv2.dll libstdc++-6.dll libwinpthread-1.dll; do
+    for x in libEGL.dll libGLESv2.dll libstdc++-6.dll libwinpthread-1.dll libgcc_s_dw2-1.dll; do
         rsync $1/bin/$x ./release -av || continue
         chmod 555 ./release/$x
     done
@@ -25,7 +25,8 @@ function make-release-tgz()
     rm -rf ./release/*.cpp
     rm -rf t1wrench-release
     cp -av release t1wrench-release
-    tar czfv t1wrench-release.tgz t1wrench-release
+    set -x
+    tar czfv ${1:-t1wrench-release.tgz} t1wrench-release
 }
 
 if test $# = 0; then
@@ -51,6 +52,6 @@ else
         export PATH=/cygdrive/c/Qt-mingw/Qt5.3.1/5.3/mingw482_32/bin:/c/Qt-mingw/Qt5.3.1/Tools/mingw482_32/bin:$PATH
         mingw32-make.exe | perl -npe 's/\\/\//g'
         copy-dlls /c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32
-        make-release-tgz
+        make-release-tgz t1wrench-32bit.tgz
     fi
 fi

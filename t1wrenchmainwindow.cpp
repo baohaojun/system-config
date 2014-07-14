@@ -158,6 +158,7 @@ void T1WrenchMainWindow::putclip_android()
     QFile phoneTxtFile(tmpDir.filePath("send-to-phone.txt"));
     phoneTxtFile.open(QIODevice::WriteOnly);
     QTextStream out(&phoneTxtFile);
+    out.setCodec("UTF-8");
     out << text;
     out.flush();
     phoneTxtFile.close();
@@ -324,6 +325,7 @@ QString getActionScript(const QString& scenario)
     }
 
     QTextStream in(&emacsWeixinFile);
+    in.setCodec("UTF-8");
     QString res;
     while (!in.atEnd()) {
         QString line = in.readLine();
