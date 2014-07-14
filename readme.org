@@ -1,5 +1,9 @@
 #+title: Smartisan T1小扳手使用指南
 
+注：请察看
+http://baohaojun.github.io/blog/2014/07/13/0-Smartisan-T1-Wrench.html
+下的指南，可能会比本指南更新。
+
 * 适用PC系统要求
 
 目前只在Windows 7上测试过，应该32位和64位的Win7都可以运行。
@@ -34,7 +38,7 @@ C:/Windows 下，注意不要放到 C:/Windows/System32 下，这个在64位的�
 
 * 发送微信、微博
 
-在文本框中输入，然后点击发送。下一个版本会增加一个Ctrl+Enter的快捷键，这个版本就这样了，我要快点发布:-)
+在文本框中输入，然后点击“扳动”按钮。
 
 * 适配其他手机
 

@@ -4,10 +4,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Smartisan T1小扳手使用指南</title>
-<!-- 2014-07-13 Sun 22:47 -->
+<!-- 2014-07-14 Mon 22:58 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
-<meta  name="author" content="Bao Haojun" />
+<meta  name="author" content="Haojun Bao" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
   .title  { text-align: center; }
@@ -144,19 +144,24 @@ for the JavaScript code in this tag.
 <ul>
 <li><a href="#sec-1">1. 适用PC系统要求</a></li>
 <li><a href="#sec-2">2. 安装adb驱动</a></li>
-<li><a href="#sec-3">3. 安装VC2013发布包</a></li>
+<li><a href="#sec-3">3. 安装adb.exe程序</a></li>
 <li><a href="#sec-4">4. 配置手机</a></li>
 <li><a href="#sec-5">5. 发送微信、微博</a></li>
 <li><a href="#sec-6">6. 适配其他手机</a></li>
 </ul>
 </div>
 </div>
+<p>
+注：请察看
+<a href="http://baohaojun.github.io/blog/2014/07/13/0-Smartisan-T1-Wrench.html">http://baohaojun.github.io/blog/2014/07/13/0-Smartisan-T1-Wrench.html</a>
+下的指南，可能会比本指南更新。
+</p>
 
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> 适用PC系统要求</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-目前只支持64位的Windows 7以上的系统。
+目前只在Windows 7上测试过，应该32位和64位的Win7都可以运行。
 </p>
 </div>
 </div>
@@ -178,12 +183,15 @@ Smartisa T1的adb驱动安装有两种方法。
 </div>
 
 <div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> 安装VC2013发布包</h2>
+<h2 id="sec-3"><span class="section-number-2">3</span> 安装adb.exe程序</h2>
 <div class="outline-text-2" id="text-3">
 <p>
-点击安装自带的 <a href="./vcredist-vs2013-x86_64.exe">./vcredist-vs2013-x86_64.exe</a> 程序。也可以去微软网站下载：
-<a href="http://www.microsoft.com/en-gb/download/details.aspx?id=40784">http://www.microsoft.com/en-gb/download/details.aspx?id=40784</a> 选那个64
-位的版本，因为我们的小扳手只支持64位的。
+可以在这里下载
+<a href="http://dl.google.com/android/repository/platform-tools_r19.0.1-windows.zip">http://dl.google.com/android/repository/platform-tools_r19.0.1-windows.zip</a>
+，最新版的可能有更新了，但这个版本我测了是可用的。然后把解压出来的3个
+adb相关的文件： <code>adb.exe AdbWinApi.dll AdbWinUsbApi.dll</code> 放到
+C:/Windows 下，注意不要放到 C:/Windows/System32 下，这个在64位的系统上
+是会有问题的。
 </p>
 </div>
 </div>
@@ -218,7 +226,7 @@ Smartisa T1的adb驱动安装有两种方法。
 <h2 id="sec-5"><span class="section-number-2">5</span> 发送微信、微博</h2>
 <div class="outline-text-2" id="text-5">
 <p>
-在文本框中输入，然后点击发送。下一个版本会增加一个Ctrl+Enter的快捷键，这个版本就这样了，我要快点发布:-)
+在文本框中输入，然后点击“扳动”按钮。
 </p>
 </div>
 </div>
@@ -254,8 +262,8 @@ Smartisa T1的adb驱动安装有两种方法。
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="author">Author: Bao Haojun</p>
-<p class="date">Created: 2014-07-13 Sun 22:47</p>
+<p class="author">Author: Haojun Bao</p>
+<p class="date">Created: 2014-07-14 Mon 22:58</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.50.1 (<a href="http://orgmode.org">Org</a> mode 8.2.7a)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
