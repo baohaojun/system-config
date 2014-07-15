@@ -2,6 +2,11 @@
 
 set -e
 
+(
+    grep -v wine-ext ~/.local/share/applications/mimeinfo.cache > ~/.local/share/applications/mimeinfo.cache.$$
+    mv ~/.local/share/applications/mimeinfo.cache.$$ ~/.local/share/applications/mimeinfo.cache
+) || true
+
 if test $# != 2; then
     die "Error: Usage $(basename $0) ext program"
 fi

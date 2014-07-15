@@ -1,0 +1,3 @@
+#!/bin/bash
+set -- ${1:-baohaojun} ${2:-google}
+sendtext-android $1@gmail.com; yes-or-no-p -y "Change field or phone"; sendtext-android "$(get-authinfo $2 $1)"

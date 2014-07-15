@@ -1,0 +1,9 @@
+#!/bin/bash
+
+t=$1
+shift
+
+for x in "$@"; do
+    sawfish-send-focused-window-event "$x"
+    sleep $t
+done

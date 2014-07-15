@@ -5,7 +5,7 @@ if test "$DEBUG"; then
 fi
 
 go_back=Prior
-if test $(basename \$0) = sawfish-get-screen-shot-whole; then
+if test $(basename $0) = sawfish-get-screen-shot-whole; then
     go_back=C-Home
 fi
 rm /tmp/screen-exchange

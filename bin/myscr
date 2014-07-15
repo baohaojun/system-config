@@ -29,7 +29,12 @@ source ~/.bash_profile
 session_name=${1:-first}
 
 screen -wipe
-if  screen -list|grep $session_name
-        then exec screen -h 100000 -x -r $session_name -t $session_name -s $SHELL
-        else exec screen -h 100000 -S $session_name -t $session_name -s $SHELL
+if screen -list|grep $session_name; then
+    shift;
+    if test $# != 0; then
+        exec screen -X -S $session_name "$@"
+    fi
+    exec screen -h 100000 -x -r $session_name -t $session_name -s $SHELL
+else
+    exec screen -h 100000 -S $session_name -t $session_name -s $SHELL
 fi

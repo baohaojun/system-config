@@ -550,3 +550,4 @@
 (bind-keys print-keymap "Print" '(system "screenshot full&"))
 (bind-keys print-keymap "s" '(system "screenshot selected&"))
 (bind-keys print-keymap "c" '(system "screenshot current&"))
+(bind-keys print-keymap "k" '(system "sawfish-get-screen-shot-whole&"))
