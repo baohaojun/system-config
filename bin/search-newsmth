@@ -1,9 +1,13 @@
 #!/bin/bash
 
+author=flonk
+if test $# = 1; then
+    author=$1
+    shift
+fi
+
 TEMP=$(getopt -o a:Ab: --long author:board: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
-
-author=flonk
 att='&sbyt=true&aonly=true'
 def_board=(MyPhoto Pictures)
 board=()
