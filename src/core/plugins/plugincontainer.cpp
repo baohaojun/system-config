@@ -29,7 +29,7 @@
 #include <QDebug>
 #include <QMetaEnum>
 #include <QApplication>
-#include <QSystemSemaphore>
+#include <QTime>
 
 using namespace Snore;
 
@@ -120,7 +120,6 @@ void PluginContainer::updatePluginCache()
         }
         list.clear();
     }
-    cache().remove("");
 
     QList<PluginContainer*> plugins;
 
@@ -150,58 +149,16 @@ void PluginContainer::updatePluginCache()
             snoreDebug( SNORE_DEBUG ) << "added" << info->name() << "to cache";
         }
     }
-    cache().setValue("version",Version::revision());
-    cache().setValue("buildtime",Version::buildTime());
-    cache().setValue("pluginPath",pluginDir().absolutePath());
-
-    cache().beginWriteArray("plugins");
-    for(int i=0;i< plugins.size();++i)
-    {
-        cache().setArrayIndex(i);
-        cache().setValue("fileName",plugins[i]->file());
-        cache().setValue("name", plugins[i]->name());
-        cache().setValue("type",(int)plugins[i]->type());
-    }
-    cache().endArray();
-    cache().sync();
-}
-
-void PluginContainer::loadPluginCache()
-{
-    int size = cache().beginReadArray("plugins");
-    for(int i=0;i<size;++i)
-    {
-        cache().setArrayIndex(i);
-        SnorePlugin::PluginTypes type = (SnorePlugin::PluginTypes)cache().value("type").toInt();
-        QString fileName = cache().value("fileName").toString();
-        if(QFile(pluginDir().absoluteFilePath(fileName)).exists())
-        {
-            PluginContainer *info = new PluginContainer(fileName, cache().value("name").toString(), type);
-            s_pluginCache[type].insert(info->name(), info);
-        }
-        else
-        {
-            snoreDebug( SNORE_WARNING ) << "Cache Corrupted" << fileName << cache().value("name").toString() << type;
-            cache().endArray();
-            updatePluginCache();
-            return;
-        }
-    }
-    cache().endArray();
 }
 
 const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin::PluginTypes type)
 {
     if(s_pluginCache.isEmpty())
     {
-        if(cache().value("version").toString() != Version::revision() || qgetenv("LIBSNORE_FORCE_CHACHE_UPDATE").toInt() == 1)
-        {
-            updatePluginCache();
-        }
-        else
-        {
-            loadPluginCache();
-        }
+        QTime time;
+        time.start();
+        updatePluginCache();
+        snoreDebug( SNORE_DEBUG ) << "Plugins loaded in:" << time.elapsed();
     }
 
     QHash<QString, PluginContainer *> out;

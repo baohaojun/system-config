@@ -59,7 +59,6 @@ private:
     static QHash<SnorePlugin::PluginTypes, PluginContaienrHash > s_pluginCache;
 
     void static updatePluginCache();
-    void static loadPluginCache();
     static const QDir &pluginDir();
     static inline const QStringList pluginExtentions()
     {
@@ -94,18 +93,6 @@ private:
             out << QString("libsnore_%1_*.%2").arg(typeToString(type).toLower(), extention);
         }
         return out;
-    }
-
-    static inline QSettings &cache()
-    {
-        static QSettings *_cache = NULL;
-        if(_cache == NULL)
-        {
-            _cache = new QSettings("SnoreNotify","libsnore");
-            snoreDebug( SNORE_DEBUG ) << _cache->fileName();
-            _cache->beginGroup( SnoreCorePrivate::computeHash(pluginDir().absolutePath().toLatin1()));
-        }
-        return *_cache;
     }
 
     QString m_pluginFile;
