@@ -19,12 +19,6 @@ function SetPath()
 
 }
 
-#Open Containing folder..
-function oc()
-{
-    cygstart `which explorer.exe` /n,/select,\""`cygpath -alw \"$1\"`"\"
-}
-
 function cmd()
 {
     if [[ -z "$1" ]]; then

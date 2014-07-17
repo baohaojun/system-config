@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if test -e "$1"; then
+    pic=$1
+else
+    pic=$(get-newest-file ~/shots/)
+fi
+ext=${pic##*.}
+adb push "$pic" /sdcard/toqq.$ext
+adb am startservice -n com.bhj.setclip/.PutClipService --es picture /sdcard/toqq.$ext
+adb-tap-mid-bot
+adb-tap 151 999
+adb-tap 125 1476
+adb-tap 161 423
+adb-tap 917 1848
+adb-tap 433 1264
+adb-key BS

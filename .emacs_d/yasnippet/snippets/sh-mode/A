@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: A
+# key: A
+# --
+"\${$1[@]}"

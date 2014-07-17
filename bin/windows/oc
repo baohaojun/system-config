@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#Open Containing folder..
+function oc()
+{
+    cygstart `which explorer.exe` /n,/select,\""`cygpath -alw \"$1\"`"\"
+}
+
+oc "$@"

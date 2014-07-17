@@ -26,6 +26,9 @@ fi
 
 source ~/.bash_profile
 #. /etc/bash_completion
+if test "$1" != first; then
+    set -- first "$@"
+fi
 session_name=${1:-first}
 
 screen -wipe
@@ -35,7 +38,12 @@ if screen -list|grep $session_name; then
         if test "$1" != screen; then
             set -- screen "$@"
         fi
-        exec screen -X -S $session_name "$@"
+        for x in "$@"; do
+            printf "%q " "$x"
+        done > /tmp/screen-exec.$$
+
+        exec screen -X -S $session_name screen bash /tmp/screen-exec.$$
+        (sleep 1 && rm /tmp/screen-exec.$$);
     fi
     exec screen -h 100000 -x -r $session_name -t $session_name -s $SHELL
 else
