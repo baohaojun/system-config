@@ -38,6 +38,19 @@ done
 
 rev=${1-HEAD}
 
+if test "${rev:0:4}" = http; then
+    review_id=$(basename $rev)
+    rev=$(gerrit query --current-patch-set $(basename $rev)|grep revision: | pn 2)
+    gerrit review $rev $action
+    if gerrit query --current-patch-set $review_id | grep 'status: MERGED'; then
+        echo done
+    else
+        echo not Merged: $(gerrit query --current-patch-set $review_id | grep 'status:')
+        exit 1
+    fi
+    exit
+fi
+
 repo sync -n .
 if ! git-is-ancestor $(repo-remote-branch) $rev; then
     die "Not fast-forward push is not allowed"
@@ -61,4 +74,3 @@ if test -z "$GERRIT_HOST"; then
         fi
     )
 fi
-

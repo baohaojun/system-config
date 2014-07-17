@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.ClipboardManager;
 import android.content.ClipData;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
@@ -21,7 +22,11 @@ public class PutClipService extends Service {
     @Override
     public int onStartCommand(Intent intent,  int flags,  int startId)  {
         try {
-            if (intent.getIntExtra("getclip", 0) == 1) {
+            String picName = intent.getStringExtra("picture");
+            if (picName != null) {
+                picName = picName.replaceFirst("^/sdcard/", "");
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(Environment.getExternalStorageDirectory(), picName))));
+            } else if (intent.getIntExtra("getclip", 0) == 1) {
                 FileWriter f = new FileWriter(new File(Environment.getExternalStorageDirectory(), "putclip.txt.1"));
                 ClipboardManager mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                 String str = mClipboard.getPrimaryClip().getItemAt(0).getText().toString();

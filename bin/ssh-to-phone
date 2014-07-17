@@ -16,7 +16,11 @@ function die() {
 }
 adb push ~/system-config/doc/galaxy-nexus-root/data/start-debian2.sh /data/start-debian2.sh
 if ! adb shell su -c "busybox sh $xset /data/start-debian2.sh" | grep 'start debian done'; then
-    die debian not started successfully
+    if test $(basename $0) = net-for-phone; then
+        true;
+    else
+        die debian not started successfully
+    fi
 fi
 if ! adb -w shell netcfg|grep -q 'rndis0.*129/'; then
     adb shell su -c "

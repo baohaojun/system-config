@@ -239,7 +239,9 @@ function adb() {
     fi
 
     if test "$1" = logcat -a "${2:0:1}" = :; then
-       exec the-true-adb logcat *:s $(echo -n ${2:1} | perl -npe 's/,|$/:v /g')
+        x=$2
+        shift 2
+       exec the-true-adb logcat "$@" *:s $(echo -n ${x:1} | perl -npe 's/,|$/:v /g')
     fi
 
     if test "$1" = gdbserver; then
