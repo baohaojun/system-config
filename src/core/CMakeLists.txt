@@ -2,8 +2,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}  ${CMAKE_CURRENT_BINARY_DIR})
 
 include(GetGitRevisionDescription)
 
-
 get_git_head_revision(GIT_REFSPEC SNORE_REVISION)
+
+if(NOT SNORE_REVISION)
+    set(SNORE_REVISION "")
+endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 

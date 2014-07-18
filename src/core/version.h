@@ -36,6 +36,12 @@ public:
 
     /**
      *
+     * @return the patch version
+     */
+    static const QString patch();
+
+    /**
+     *
      * @return the suffix ("pre", "alpha", "beta", "")
      */
     static const QString suffix();

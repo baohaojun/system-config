@@ -43,7 +43,12 @@ void TrayIcon::initConextMenu(SnoreCore *snore)
     m_trayIcon->setVisible(true);
 
     m_trayMenu = new QMenu("SnoreNotify");
-    m_trayMenu->addAction(QString("SnoreNotify ").append(Version::version()));
+    QString version = QString("SnoreNotify %1").arg(Version::version());
+    if(Version::revision() != "")
+    {
+        version += QString("-%1").arg(Version::revision());
+    }
+    m_trayMenu->addAction(version);
     m_trayMenu->addSeparator();
     m_trayMenu->addAction("Test Notification", this, SLOT(slotTestNotification()));
     m_trayMenu->addSeparator();

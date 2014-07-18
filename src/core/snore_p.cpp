@@ -25,6 +25,7 @@
 #include "plugins/snorefrontend.h"
 #include "plugins/plugincontainer.h"
 #include "notification/notification_p.h"
+#include "version.h"
 
 #include <QApplication>
 
@@ -34,6 +35,11 @@ SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
     m_trayIcon(trayIcon),
     m_defaultApp("SnoreNotify",Icon(":/root/snore.png"))
 {
+    snoreDebug( SNORE_INFO ) << "Version:" << Version::version();
+    if( !Version::revision().isEmpty() )
+    {
+        snoreDebug( SNORE_INFO ) << "Revision:" << Version::revision();
+    }
     m_defaultApp.addAlert(Alert("Default",Icon(":/root/snore.png")));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
 }
