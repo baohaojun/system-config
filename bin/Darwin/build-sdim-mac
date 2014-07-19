@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd ~/src/github/sdim-mac/
+xcodebuild
+for x in $(find . -name '*.app'); do ps-killall $(basename $x|perl -npe 's/.app$//'); sudo cp $x /Library/Input\ Methods/ -av; done
