@@ -1,0 +1,15 @@
+#!/bin/bash
+
+host=$1
+echo mkdir ~/ssh
+ssh $host mkdir -p ~/.ssh/
+
+echo copy ssh/authorized_keys
+rsync ~/.ssh/authorized_keys bhj@$host:.ssh/
+
+rsync ~/system-config $host: -av
+
+ssh-exp $host "bash -c 'echo bhj ALL=NOPASSWD: ALL | sudo tee /etc/sudoers.d/bhj; sudo chmod 440 /etc/sudoers.d/bhj'"
+ssh-exp $host "sudo perl -npe 's!cn.archive.ubuntu.com!mirrors.aliyun.com!g' -i /etc/apt/sources.list"
+ssh-exp $host "sudo apt-get update"
+ssh-exp -- $host "bash -x ~/system-config/bin/Linux/after-check-out.sh"

@@ -1,0 +1,6 @@
+#!/bin/bash
+url=$(sawfish-get-screen-shot | grep "全文：" | perl -npe 's/.*全文：//')
+
+for x in $url; do
+    firefox "$x"
+done

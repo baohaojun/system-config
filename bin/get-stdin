@@ -61,7 +61,7 @@ if (m/###start of comment###/) { $comment = 1; }
 if (not $comment) { print }
 '
 }
-if test "`get-rid-of-comment $tmp | wc -w`" == 0; then
+if test "`get-rid-of-comment $tmp | perl -npe 's/\s//g' | wc -c`" == 0; then
     if ! ps.pl emacs.mm >/dev/null 2>&1; then
         exit -1
     fi

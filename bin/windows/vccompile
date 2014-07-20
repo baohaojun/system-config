@@ -1,13 +1,10 @@
-#!/bin/perl
+#!/usr/bin/perl
 
 use strict;
 use File::Glob qw(:globally :nocase);
 use File::Basename;
 use String::ShellQuote;
 
-
-
-my @dsw_slns;
 my @sub_projs;
 my @projs_to_compile;
 my @configs_to_compile;
@@ -25,6 +22,12 @@ sub debug(@) {
     print STDERR "@_\n";
 }
 
+use Getopt::Long;
+GetOptions(
+    "s=s" => \$sln_file,
+    );
+
+
 main();
 
 sub main
@@ -41,7 +44,12 @@ sub main
         my @version_line = grep {/Format Version (.*?)\.00/} `head -n 5 "$sln_file"`;
         die "$sln_file has no version info!" if (scalar @version_line != 1);
         $version_line[0] =~ m/Format Version (.*?)\.00/;
-        $vc_program = $vc_program or "vc".$1.".com";
+        my $v = $1;
+        if ($v < 12) {
+            $v -= 1;
+        }
+        $vc_program = $vc_program || "vc".$v.".com";
+        print "vc program is found to be '$vc_program'\n";
     }
 
     getAllSubProjs();
@@ -220,21 +228,25 @@ sub getProjDir($)
 
 sub getSlnFile
 {
-    while (1) {
-        @dsw_slns = glob("*.dsw *.sln");
-        die "Found more than 1 .dsw or .sln files" if (scalar @dsw_slns > 1);
+    unless ($sln_file) {
+        my @dsw_slns;
+        while (1) {
+            @dsw_slns = glob("*.dsw *.sln");
+            die "Found more than 1 .dsw or .sln files" if (scalar @dsw_slns > 1);
 
-        die "Can't find any .dsw or .sln files" if (not @dsw_slns and `pwd` =~ m#^/$#);
+            die "Can't find any .dsw or .sln files" if (not @dsw_slns and `pwd` =~ m#^/$#);
 
-        last if @dsw_slns; #found exactly 1 .dsw or .sln file
+            last if @dsw_slns; #found exactly 1 .dsw or .sln file
 
-        chdir "..";
+            chdir "..";
+        }
+
+        $sln_file = $dsw_slns[0];
     }
-
-    $dsw_slns[0] = shell_quote($dsw_slns[0]);
-    chomp($sln_file = `readlink -f $dsw_slns[0]`);
+    $sln_file = shell_quote($sln_file);
+    chomp($sln_file = qx(readlink -f $sln_file));
     my $sln_fileq = shell_quote($sln_file);
-    chomp($sln_dir = `dirname $sln_fileq`);
+    chomp($sln_dir = qx(dirname $sln_fileq));
 }
 
 sub getAllSubProjs

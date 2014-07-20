@@ -1,4 +1,8 @@
 #!/bin/bash
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
 src=$(/bin/readlink -f "$1")
 if [[ -z "$src" ]]; then
     src=$(/bin/readlink "$1")
@@ -38,6 +42,12 @@ function relink_func()
             for x in {c..e}; do
                 new_src=/cygdrive/$x/"${src:12}"
                 if [[ -e "$new_src" ]]; then
+                    echo "$1" source found at "$new_src"
+                    rm "$tgt"
+                    ln -sf "$new_src" "$tgt"
+                    return
+                elif test -e "$(echo "$new_src" | perl -npe 's!/program files/!/program files (x86)/!i')"; then
+                    new_src=$(echo "$new_src" | perl -npe 's!/program files/!/program files (x86)/!i')
                     echo "$1" source found at "$new_src"
                     rm "$tgt"
                     ln -sf "$new_src" "$tgt"

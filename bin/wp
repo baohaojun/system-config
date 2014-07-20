@@ -57,7 +57,11 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
             cygpath -alw "$FILE"
             return
         fi
-        FILE=z:$FILE
+        if echo "$FILE" | grep -q '^/./'; then
+            FILE=$(echo "$FILE" | perl -npe 's!^/(.)/!$1:/!')
+        else
+            FILE=z:$FILE
+        fi
         echo -n "$FILE"|perl -npe 's,/,\\,g'
     }
 

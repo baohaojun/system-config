@@ -10,11 +10,11 @@ expect {
             send "exec bash -c '\n"
             set arg [lindex $argv 1]
             set arg [join [split $arg "'"] {'\''}]
-            send "$arg'\n"
+            send -- "$arg'\n"
         } else {
 
             for {set i 1} {$i < [llength $argv]} {incr i} {
-                send [lindex $argv $i]
+                send -- [lindex $argv $i]
                 send " "
             }
             send "\n"

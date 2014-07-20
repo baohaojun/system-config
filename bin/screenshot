@@ -1,18 +1,45 @@
 #!/bin/bash
 sleep 1
 
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
 select=-s
 
-if test "$1" = current; then
-    select=-u
-elif test "$1" = full; then
-    select=-m
-elif test "$1" = selected; then
-    true # the default
+case "$1" in
+    current|-c)
+        shift;
+        select=-u
+        ;;
+    full|-f)
+        shift;
+        select=-m
+        ;;
+    selected|-s)
+        shift;
+        ;;
+    *)
+        out=$1
+        shift
+        ;;
+esac
+
+if test "$1"; then
+    if test "$out"; then
+        die "Error: 2 out args seen"
+    fi
 fi
-now=`now|perl -npe 's/:/./g'`
-mkdir -p ~/shots
-now=shots/"$now"
-scrot $select ~/"$now".png
-of ~/"$now".png
-mp ~/"$now".png | putclip
+
+if test ! "$out"; then
+    now=`now|perl -npe 's/:/./g'`
+    mkdir -p ~/shots
+    now=shots/"$now"
+    out=~/"$now".png
+fi
+scrot $select "$out"
+if test -e "$out"; then
+    of "$out"
+    mp "$out" | putclip
+fi

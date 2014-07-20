@@ -14,7 +14,11 @@ unset LD_PRELOAD
 # setup posix shared memory
 if [ ! -d /dev/shm ] ; then mkdir /dev/shm ; fi
 chmod 1777 /dev/shm
-mount -t tmpfs none /dev/shm/
+if mount | grep /dev/shm; then
+    true
+else
+    mount -t tmpfs none /dev/shm/
+fi
 
 # configure debian chroot
 if [ -d /data/debian/proc ] && [ ! -d /data/debian/proc/1 ] ; then

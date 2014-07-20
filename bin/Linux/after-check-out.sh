@@ -1,5 +1,6 @@
 #!/bin/bash
 
+~/system-config/bin/after-co-ln-s.sh
 . ~/.bashrc
 touch ~/.where ~/.where.lock
 

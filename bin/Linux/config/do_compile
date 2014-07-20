@@ -76,7 +76,7 @@ function do_compile() {
     compile_ctags "$@"
 }
 
-if test "$DEBUG" = true; then
+if test "$DEBUG_COMPILE" = true; then
     export CFLAGS='-g -O0 -DDEBUG'
     function git() {
         if test $# = 2 -a "$1" = clean; then
