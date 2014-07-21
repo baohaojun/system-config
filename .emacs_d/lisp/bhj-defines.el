@@ -919,12 +919,14 @@ might be bad."
   (let ((default-directory (expand-file-name "~")))
     (shell-command-to-string (format "bhj-help-it %s %s >~/.logs/bhj-help-it.log 2>&1&" major-mode (shell-quote-argument (bhj-current-word))))))
 
+(defcustom bhj-help-qt-prog "bhj-help-qt"
+  "The program to run when user want MSDN like help.")
 ;;;###autoload
 (defun bhj-help-qt ()
   "open help for the current word for qt"
   (interactive)
   (ajoke--setup-env)
-    (shell-command-to-string (format "bhj-help-qt %s >~/.logs/bhj-help-qt.log 2>&1&" (shell-quote-argument (bhj-current-word)))))
+  (shell-command-to-string (format "%s %s >~/.logs/bhj-help-qt.log 2>&1&" bhj-help-qt-prog (shell-quote-argument (bhj-current-word)))))
 
 ;;;###autoload
 (defun bhj-view-mail-external ()

@@ -94,7 +94,7 @@ else
     elif ! firefox-search-for-tab --tabs 1 $exact "$pattern" &&
          (
              find-or-exec firefox || true;
-             EMACS=t yes-or-no-p -y "Open in tab $WHICH_TAB: $this_url?"
+             # EMACS=t yes-or-no-p -y "Open in tab $WHICH_TAB: $this_url?"
          ); then
         new_tab=-current-tab
     fi

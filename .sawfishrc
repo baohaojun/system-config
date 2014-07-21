@@ -447,7 +447,7 @@
 (bind-keys global-keymap "Super-S-SPC" #'scroll-lock-toggle)
 (bind-keys global-keymap "C-ESC" '(synthesize-event "ESC" (input-focus)))
 (bind-keys s-h-keymap "g"  '(system "gnus&"))
-(bind-keys s-h-keymap "w"  '(system "weixin&"))
+(bind-keys s-h-keymap "w"  '(system "s-weixin&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
 (bind-keys s-h-keymap "l" '(system "sawfish-move-to-laptop&"))
 (bind-keys s-h-keymap "L" '(system "sawfish-move-to-home-screen&"))

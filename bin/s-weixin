@@ -1,0 +1,29 @@
+#!/bin/bash
+x=$(select-output-line '
+    (
+        if test -e ~/.logs/last-weixin; then
+            cat ~/.logs/last-weixin;
+        fi;
+        cd ~/bin;
+        for x in $(ls -l |grep emacs-weixin.sh | pn 9) t1-putclip; do
+            echo $x;
+        done|sort -u
+    ) | uniq-even-non-ajacent '
+)
+
+if test -x ~/bin/"$x"; then
+   (
+       echo $x
+       cat ~/.logs/last-weixin
+   ) |uniq-even-non-ajacent > ~/.logs/last-weixin.$$
+   mv ~/.logs/last-weixin.$$ ~/.logs/last-weixin
+fi&
+
+if test ! -x ~/bin/"$x" -a "${x:0:2}" = "s "; then
+    s "${x:2}"
+    exit
+fi
+if test $# = 1 -a "$1" = ''; then
+    set -- "$(getclip)"
+fi
+"$x" "$@"
