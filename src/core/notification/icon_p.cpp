@@ -23,25 +23,24 @@
 #include <QEventLoop>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QHash>
 
 using namespace Snore;
 
-
+QSet<QString> IconData::s_localImageCache;
 
 IconData::IconData(const QString &url):
     m_url(url),
     m_hash(SnoreCorePrivate::computeHash(m_url.toLatin1())),
     m_localUrl(createLocalFileName(m_hash)),
     m_isLocalFile(false),
-    m_isResource(m_url.startsWith(":/"))
+    m_isResource(m_url.startsWith(":/") || m_url.startsWith("qrc:/"))
 {
-    if(!m_isResource && QFile(url).exists())
+    if(!m_isResource && QFile::exists(url))
     {
         m_isLocalFile = true;
         m_localUrl = url;
     }
-    m_isRemoteFile = !m_isLocalFile && ! m_isResource;
+    m_isRemoteFile = !m_isLocalFile && !m_isResource;
 }
 
 IconData::IconData(const QImage &img):
@@ -78,13 +77,12 @@ const QImage &IconData::image()
 
 QString IconData::localUrl()
 {
-    if(!m_isLocalFile && !QFile(m_localUrl).exists())
+    if(!m_isLocalFile && !s_localImageCache.contains(m_localUrl))
     {
         QImage img = image();
-        if(!QFile(m_localUrl).exists())
-        {
-            img.save(m_localUrl ,"PNG");
-        }
+        img.save(m_localUrl ,"PNG");
+        s_localImageCache.insert(m_localUrl);
+        snoreDebug( SNORE_DEBUG ) << m_localUrl << "added to cache";
     }
     return m_localUrl;
 }
@@ -94,7 +92,7 @@ void IconData::download()
 {
     if(m_isRemoteFile)
     {
-        if(!QFile(m_localUrl).exists())
+        if(!s_localImageCache.contains(m_localUrl))
         {
             snoreDebug( SNORE_DEBUG ) << "Downloading:" << m_url;
             QNetworkAccessManager manager;

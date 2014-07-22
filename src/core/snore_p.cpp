@@ -28,6 +28,7 @@
 #include "version.h"
 
 #include <QApplication>
+#include <QTemporaryDir>
 
 using namespace Snore;
 
@@ -40,6 +41,9 @@ SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
     {
         snoreDebug( SNORE_INFO ) << "Revision:" << Version::revision();
     }
+
+    snoreDebug( SNORE_DEBUG ) << "Temp dir is" << tempPath();
+
     m_defaultApp.addAlert(Alert("Default",Icon(":/root/snore.png")));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
 }
@@ -78,6 +82,12 @@ void SnoreCorePrivate::registerMetaTypes()
 {
     qRegisterMetaType<Notification>();
     qRegisterMetaType<Application>();
+}
+
+QString SnoreCorePrivate::tempPath()
+{
+    static QTemporaryDir dir;
+    return dir.path();
 }
 
 bool SnoreCorePrivate::primaryBackendCanUpdateNotification() const

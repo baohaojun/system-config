@@ -22,13 +22,14 @@
 
 
 #include "notification.h"
+#include "snore_p.h"
 
 #include <QImage>
 #include <QSharedData>
 #include <QBuffer>
 #include <QFile>
 #include <QDebug>
-#include <QDir>
+#include <QSet>
 
 #include <QMutex>
 
@@ -55,18 +56,15 @@ public:
     bool m_isRemoteFile;
     QMutex m_mutex;
 
+
+    static QSet<QString> s_localImageCache;
+
 private:
     Q_DISABLE_COPY(IconData)
 
     inline QString createLocalFileName(const QString &hash)
     {
-        static QString tmp;
-        if(tmp.isNull())
-        {
-            tmp = QString("%1/libsnore/").arg(QDir::tempPath());
-            QDir(tmp).mkpath(".");
-        }
-        return QString("%1%2.png").arg(tmp, hash);
+        return QString("%1/%2.png").arg(SnoreCorePrivate::tempPath(), hash);
     }
 
 };

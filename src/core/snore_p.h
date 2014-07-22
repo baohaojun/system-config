@@ -42,6 +42,13 @@ public:
     }
 
     static void registerMetaTypes();
+
+    /**
+     * @brief tempPath
+     * @return the path of a QTemporaryDir, this location is used to store images.
+     */
+    static QString tempPath();
+
 public:
     SnoreCorePrivate(QSystemTrayIcon *trayIcon);
     ~SnoreCorePrivate();

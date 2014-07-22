@@ -42,7 +42,6 @@ class QSystemTrayIcon;
  * LIBSNORE_DEBUG_LVL               |   Value betwene 0 and 3 @see SnoreDebugLevels
  * LIBSNORE_LOG_TO_FILE             |   If 1 write to a logfile in tmp/libsnore/appname-log.txt
  * LIBSNORE_LOGFILE                 |   Use with LIBSNORE_LOG_TO_FILE, sets the file to log to
- * LIBSNORE_FORCE_CHACHE_UPDATE     |   Always update the plugin cache
  *
  *
  * @author Patrick von Reth \<vonreth at kde.org\>
