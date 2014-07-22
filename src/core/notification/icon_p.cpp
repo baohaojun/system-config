@@ -80,9 +80,12 @@ QString IconData::localUrl()
     if(!m_isLocalFile && !s_localImageCache.contains(m_localUrl))
     {
         QImage img = image();
-        img.save(m_localUrl ,"PNG");
-        s_localImageCache.insert(m_localUrl);
-        snoreDebug( SNORE_DEBUG ) << m_localUrl << "added to cache";
+        if(!s_localImageCache.contains(m_localUrl))//double check as image() could have called download
+        {
+            img.save(m_localUrl ,"PNG");
+            s_localImageCache.insert(m_localUrl);
+            snoreDebug( SNORE_DEBUG ) << m_localUrl << "added to cache";
+        }
     }
     return m_localUrl;
 }
@@ -107,6 +110,8 @@ void IconData::download()
             {
                 m_img = QImage::fromData(reply->readAll(), "PNG");
                 m_img.save(m_localUrl,"PNG");
+                s_localImageCache.insert(m_localUrl);
+                snoreDebug( SNORE_DEBUG ) << m_localUrl << "added to cache";
             }
         }
         else
