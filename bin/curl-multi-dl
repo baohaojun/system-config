@@ -1,0 +1,26 @@
+#!/bin/bash
+TEMP=$(getopt -o s: --long size: -n $(basename $0) -- "$@")
+size=50M
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -s|--size)
+            size=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+size=$(pretty $size | pn 2)
+for x in $(seq 1 10); do
+    s=$((size * (x - 1)))
+    e=$((size * x - 1))
+    curl $1 -r $s-$e -o $(basename $1).$x&
+done
