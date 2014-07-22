@@ -28,7 +28,9 @@
 #include "version.h"
 
 #include <QApplication>
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QTemporaryDir>
+#endif
 
 using namespace Snore;
 
@@ -86,8 +88,12 @@ void SnoreCorePrivate::registerMetaTypes()
 
 QString SnoreCorePrivate::tempPath()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     static QTemporaryDir dir;
     return dir.path();
+#else
+    return QString("%1/%2").arg(QDir::tempPath(), "libsnore");
+#endif
 }
 
 bool SnoreCorePrivate::primaryBackendCanUpdateNotification() const
