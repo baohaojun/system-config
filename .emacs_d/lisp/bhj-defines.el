@@ -909,7 +909,9 @@ might be bad."
     nnmaildir-article-file-name))
 
 (defun bhj-current-word ()
-  (bhj-grep-tag-default))
+    (if current-prefix-arg
+        (read-shell-command "What word do you want? ")
+      (bhj-grep-tag-default)))
 
 ;;;###autoload
 (defun bhj-help-it ()
