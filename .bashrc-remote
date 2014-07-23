@@ -35,7 +35,7 @@ if test "$SSH_AGENT_PID"; then
             fi&
         )
         SSH_OK=true
-    elif test "$(ps h -o command $SSH_AGENT_PID)" = ssh-agent; then
+    elif test ps h -o command "$SSH_AGENT_PID" |grep -q ssh-agent; then
         SSH_OK=true
     fi
 elif test "$GNOME_KEYRING_PID"; then
