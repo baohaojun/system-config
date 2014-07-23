@@ -1,5 +1,29 @@
 #!/bin/bash
 
+TEMP=$(getopt -o rd --long reverse,delete -n $(basename $0) -- "$@")
+reverse=false
+delete=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -r|--reverse)
+            reverse=true
+            shift 1
+            ;;
+        -d|--delete)
+            delete=-d
+            shift 1
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 if test "$1" = -r; then
     reverse=true
     shift
@@ -19,5 +43,5 @@ if test "$reverse" = true; then
         my-rsync -av $host:$(up .)/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*"
     done
 else
-    my-rsync -av "$@" $host:$(up .) --exclude .git --exclude "*#*" --exclude ".#*"
+    my-rsync -av "$@" $host:$(up .) --exclude .git --exclude "*#*" --exclude ".#*" -d
 fi
