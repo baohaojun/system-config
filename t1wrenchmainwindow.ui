@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>782</width>
-    <height>596</height>
+    <height>592</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -181,17 +181,17 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="horizontalLayoutWidget">
+   <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>500</y>
       <width>761</width>
-      <height>91</height>
+      <height>80</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
       <widget class="QTextEdit" name="cmdOutputEdit">
        <property name="minimumSize">
         <size>
@@ -207,62 +207,23 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QLabel" name="adbStateLabel">
        <property name="text">
         <string>Disconnected</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="adbStateIndicator">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
+     <item row="0" column="2">
+      <widget class="QLabel" name="adbStateIndicator">
        <property name="text">
         <string/>
        </property>
-       <property name="icon">
-        <iconset resource="T1Wrench.qrc">
-         <normaloff>:/images/red.png</normaloff>
-         <disabledoff>images/red.png</disabledoff>
-         <disabledon>images/green.png</disabledon>:/images/red.png</iconset>
+       <property name="pixmap">
+        <pixmap resource="T1Wrench.qrc">:/images/red.png</pixmap>
        </property>
-       <property name="iconSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>

@@ -20,12 +20,27 @@
 #include <QtGui/QPixmap>
 #include <QtCore/QCoreApplication>
 #include "bhj_help.hpp"
+#include <stdlib.h>
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::T1WrenchMainWindow)
 {
+    QString pathEnv = QProcessEnvironment::systemEnvironment().value("PATH");
+#ifdef Q_OS_WIN32
+    pathEnv += ";";
+#else
+    pathEnv += ":";
+#endif
+    pathEnv += QCoreApplication::applicationDirPath();
+
+    QByteArray pathBA = pathEnv.toLocal8Bit();
+    char *pathBuf = new char[pathBA.size() + 1];
+    strcpy(pathBuf, pathBA.data());
+    setenv("PATH", pathBuf, 1);
+    delete[] pathBuf;
+
     emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
     ui->setupUi(this);
     ui->qqHintLabel->setText(
@@ -47,9 +62,9 @@ void T1WrenchMainWindow::adbStateUpdated(const QString& state)
 {
     ui->adbStateLabel->setText(state);
     if (state.toLower() == "online") {
-        ui->adbStateIndicator->setChecked(1);
+        ui->adbStateIndicator->setPixmap(QPixmap(":/images/green.png"));
     } else {
-        ui->adbStateIndicator->setChecked(0);
+        ui->adbStateIndicator->setPixmap(QPixmap(":/images/red.png"));
     }
 }
 
