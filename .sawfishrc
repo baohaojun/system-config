@@ -543,7 +543,7 @@
 (bind-keys global-keymap "Super-(" '(system "sawfish-start-macro&"))
 (bind-keys s-h-keymap "e" '(system "sawfish-play-macro&"))
 (bind-keys global-keymap "XF86Mail" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
-(bind-keys global-keymap "XF86HomePage" '(synthesize-multiple-events "C-S-s" "M-t" "e" "Down" "Down" "RET" "Down" "RET"))
+(bind-keys global-keymap "XF86HomePage" '(system "qtcreator-edit-with-emacs&"))
 (bind-keys s-h-keymap "k" '(system "sawfish-help-key&"))
 (bind-keys global-keymap "Super-ESC" '(system "sawfish-clean-screen&"))
 (bind-keys global-keymap "Print" print-keymap)

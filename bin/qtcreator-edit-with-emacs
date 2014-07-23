@@ -1,0 +1,2 @@
+#!/bin/bash
+sawfish-events-delayed .1 "C-S-s" "M-t" "e" "Up" "Up" "RET"
