@@ -11,7 +11,7 @@ while true; do
             shift 1
             ;;
         -d|--delete)
-            delete=-d
+            delete=--delete
             shift 1
             ;;
         --)
@@ -43,5 +43,5 @@ if test "$reverse" = true; then
         my-rsync -av $host:$(up .)/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*"
     done
 else
-    my-rsync -av "$@" $host:$(up .) --exclude .git --exclude "*#*" --exclude ".#*" -d
+    my-rsync -av "$@" $host:$(up .) --exclude .git --exclude "*#*" --exclude ".#*" $delete
 fi
