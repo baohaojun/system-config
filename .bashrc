@@ -24,10 +24,6 @@ else
     . ~/.bashrc-linux
 fi
 
-case $- in
-    *i*) . ~/.bashrc-interactive;;
-esac
-
 alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
 export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
@@ -81,3 +77,6 @@ export LANGUAGE=en_US:
 export INFOPATH=${HOME}/src/github/org-mode/doc:${INFOPATH}
 export ANDROID_HOME=/home/bhj/external/bin/Linux/ext/android-sdk-linux
 export ANDROIDSDK_HOME=$ANDROID_HOME
+case $- in
+    *i*) . ~/.bashrc-interactive;;
+esac
