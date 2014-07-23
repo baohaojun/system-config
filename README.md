@@ -10,6 +10,15 @@ Using a plugin system it is possible to create notifications with many different
 
 [ ![Windows 8 Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/win8_high.jpg) ](http://winkde.org/~pvonreth/other/snore/img/win8.png)
 
+- OSX Notification Center
+
+![OSX Notification Center](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/mac2.png)
+![OSX Notification Center](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/mac.png)
+
+- Free Desktop Notifications
+
+[![Free Desktop Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/fd_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/fd.png)
+
 - [Growl for Windows](http://www.growlforwindows.com/)
 
 [![Growl for Windows Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/growl_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/growl.png)
@@ -18,22 +27,17 @@ Using a plugin system it is possible to create notifications with many different
 
 [![Snarl Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/snarl_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/snarl.png)
 
-- Free Desktop Notifications
-
-[![Free Desktop Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/fd_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/fd.png)
 
 - Integrated notifications
 
-[![Snore Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/snore-xp_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/snore-xp.png)
+[![Snore Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/snore_high.png
+)](http://winkde.org/~pvonreth/other/snore/img/snore.png)
 
 - System Tray
 
 [![System Tray Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/tray_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/tray.png)
 
-- OSX Notification Center
 
-![OSX Notification Center](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/mac2.png)
-![OSX Notification Center](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/mac.png)
 
 ## Projects using Snore ##
 - [Quassel IRC](http://www.quassel-irc.org/)
