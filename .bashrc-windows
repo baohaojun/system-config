@@ -34,6 +34,9 @@ function cmd()
 
 function of()
 {
+    if test "$(lc ${1##*.})" = msi -a -e "$1"; then
+        chmod a+rx "$1"
+    fi
     if test -e "$1"; then
         cygstart "$@"
         return

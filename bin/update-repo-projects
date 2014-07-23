@@ -8,11 +8,13 @@ if test -e ~/src/android/kernel/; then
     (
         set +e
         cd ~/src/android/kernel/
+        repo sync -d .
         rm-non-build-files-kernel arch/arm/configs/msm8974sfo_defconfig
         rm -f newer mark
         git add .
         git co HEAD Documentation
         git commit -m "rm-non-build-kernel $(today)"
+        command git co -B rm-non-build-kernel
         repo sync -d .
     ) || true
 fi
