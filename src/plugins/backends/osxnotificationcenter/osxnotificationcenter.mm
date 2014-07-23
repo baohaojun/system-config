@@ -20,15 +20,6 @@ namespace {
     }
 }
 
-// this category adds the __bundleIdentifier method to every NSBundle object
-// see http://stackoverflow.com/a/14698543
-@implementation NSBundle(snore)
-- (NSString *)__bundleIdentifier {
-    return appID;
-}
-@end
-
-
 OSXNotificationCenter::OSXNotificationCenter() : SnoreBackend("OSX Notification Center", false, false, false)
 {
 }
