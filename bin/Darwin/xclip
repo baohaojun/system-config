@@ -1,0 +1,6 @@
+#!/bin/bash
+if test "$1" = -i; then
+    pbcopy
+else
+    pbpaste
+fi
