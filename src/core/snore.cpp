@@ -199,7 +199,7 @@ bool SnoreCore::setPrimaryNotificationBackend()
         return true;
     }
 #elif defined(Q_OS_MAC)
-    if(d->setBackendIfAvailible("Growl"))
+    if(d->setBackendIfAvailible("OSX Notification Center"))
     {
         return true;
     }
