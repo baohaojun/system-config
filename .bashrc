@@ -1,18 +1,4 @@
 export PATH=/bin:"$PATH"
-export HISTCONTROL="ignoredups"
-export HISTIGNORE="bg:fg:exit"
-alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
-alias dir='ls --color=auto --format=vertical --show-control-chars'
-alias vdir='ls --color=auto --format=long --show-control-chars'
-alias ll='ls -l --show-control-chars'                              # long list
-alias la='ls -A --show-control-chars'                              # all but . and ..
-alias l='ls -CFl --show-control-chars --block-size=1'                              #
-alias vi=vim
-export HISTSIZE=2000
-export HISTFILESIZE=2000
-if test ! "$EMACS"; then
-    . ~/.bashrc-public
-fi
 
 uname=$(uname)
 if test "$uname" = CYGWIN_NT-5.1 -o "$uname" = CYGWIN_NT-6.1
@@ -24,10 +10,6 @@ else
     . ~/.bashrc-linux
 fi
 
-alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
-export DISPLAY=${DISPLAY:-:0} #if it is already set...
-export USER=`whoami`
-export USE_CCACHE=1
 if test -e ~/.bash-path; then
     if test -z "$RECURSIVE_SHELL"; then
         . ~/.bash-path
@@ -62,6 +44,10 @@ EOF
 fi
     . ~/.bash-path
 fi
+
+if test ! "$EMACS"; then
+    . ~/.bashrc-public
+fi
 if test "$TERM" = dumb; then
     . ~/.bashrc-in-emacs
 else
@@ -77,6 +63,23 @@ export LANGUAGE=en_US:
 export INFOPATH=${HOME}/src/github/org-mode/doc:${INFOPATH}
 export ANDROID_HOME=/home/bhj/external/bin/Linux/ext/android-sdk-linux
 export ANDROIDSDK_HOME=$ANDROID_HOME
+export HISTCONTROL="ignoredups"
+export HISTIGNORE="bg:fg:exit"
+export HISTSIZE=2000
+export HISTFILESIZE=2000
+export DISPLAY=${DISPLAY:-:0} #if it is already set...
+export USER=`whoami`
+export USE_CCACHE=1
+
+alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
+alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
+alias dir='ls --color=auto --format=vertical --show-control-chars'
+alias vdir='ls --color=auto --format=long --show-control-chars'
+alias ll='ls -l --show-control-chars'                              # long list
+alias la='ls -A --show-control-chars'                              # all but . and ..
+alias l='ls -CFl --show-control-chars --block-size=1'                              #
+alias vi=vim
+
 case $- in
     *i*) . ~/.bashrc-interactive;;
 esac
