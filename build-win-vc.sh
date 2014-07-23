@@ -26,6 +26,7 @@ function make-release-tgz()
     rm -rf t1wrench-release
     cp readme.* ./release/
     cp *.png ./release/
+    cp ~/adb/* ./release/
     cp -av release t1wrench-release
     set -x
     tar czfv ${1:-t1wrench-release.tgz} t1wrench-release
@@ -36,12 +37,13 @@ if test $# = 0; then
 fi
 if test $(uname) = Linux; then
     psync $1 .; ssh $1 "cd $PWD; ./$(basename $0)"
+    rsync $1:$(up .)/t1wrench-release ../ -av
 else
     set -e
     set -o pipefail
     /cygdrive/c/Python2/python.exe "C:\cygwin64\home\bhj\system-config\bin\windows\terminateModule.py" T1Wrench || true
 
-    if test $(basename $0) = build-win.sh; then
+    if test $(basename $0) = build-win-vc.sh; then
         perl -npe "$(grep 's/.*ord' ~/bin/vc-utf8-escape)" -i t1wrenchmainwindow.cpp
         /c/Qt/5.3/msvc2013_64/bin/qmake.exe
 

@@ -1,1 +1,1 @@
-build-win.sh
+build-win-vc.sh

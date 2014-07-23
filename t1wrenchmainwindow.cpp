@@ -22,6 +22,13 @@
 #include "bhj_help.hpp"
 #include <stdlib.h>
 
+#ifdef Q_OS_WIN32
+void setenv(const char* name, const char* val, int overide)
+{
+    _putenv_s(name, val);
+}
+#endif
+
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
