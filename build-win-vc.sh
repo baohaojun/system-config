@@ -36,8 +36,10 @@ if test $# = 0; then
     set -- pub
 fi
 if test $(uname) = Linux; then
-    psync $1 .; ssh $1 "cd $PWD; ./$(basename $0)"
+    psync -d $1 .; ssh $1 "cd $PWD; ./$(basename $0)"
     rsync $1:$(up .)/t1wrench-release ../ -av
+    rsync $1:$(up .)/t1wrench-windows.tgz ~/today/
+    smb_push ~/today/t1wrench-windows.tgz
 else
     set -e
     set -o pipefail
@@ -56,6 +58,6 @@ else
         export PATH=/cygdrive/c/Qt-mingw/Qt5.3.1/5.3/mingw482_32/bin:/c/Qt-mingw/Qt5.3.1/Tools/mingw482_32/bin:$PATH
         mingw32-make.exe | perl -npe 's/\\/\//g'
         copy-dlls /c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32
-        make-release-tgz t1wrench-32bit.tgz
+        make-release-tgz t1wrench-windows.tgz
     fi
 fi
