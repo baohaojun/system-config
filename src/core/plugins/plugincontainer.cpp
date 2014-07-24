@@ -178,9 +178,11 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
 
 const QDir &PluginContainer::pluginDir()
 {
-    static QDir *path = NULL;
-    if(path == NULL)
+    static bool isLoaded = false;
+    static QDir path;
+    if(!isLoaded)
     {
+        isLoaded = true;
         QString appDir = qApp->applicationDirPath();
         QStringList list;
 #ifdef Q_OS_MAC
@@ -202,22 +204,24 @@ const QDir &PluginContainer::pluginDir()
              << QLatin1String(LIBSNORE_PLUGIN_PATH);
         foreach(const QString &p, list)
         {
-            QDir dir(p);
+            path = QDir(p);
 
-            if(!dir.entryInfoList(pluginFileFilters()).isEmpty())
+            if(!path.entryInfoList(pluginFileFilters()).isEmpty())
             {
-                path = new QDir(dir);
                 break;
             }
             else
             {
-                snoreDebug( SNORE_DEBUG ) << "Possible pluginpath:" << dir.absolutePath() << "does not contain plugins.";
+                snoreDebug( SNORE_DEBUG ) << "Possible pluginpath:" << path.absolutePath() << "does not contain plugins.";
             }
         }
-        Q_ASSERT_X(path != NULL, Q_FUNC_INFO, "Failed to find a plugin dir");
-        snoreDebug( SNORE_INFO ) << "PluginPath is :" << path->absolutePath();
+        if(path.entryInfoList(pluginFileFilters()).isEmpty())
+        {
+            snoreDebug( SNORE_WARNING ) << "Couldnt find any plugins";
+        }
+        snoreDebug( SNORE_INFO ) << "PluginPath is :" << path.absolutePath();
     }
-    return *path;
+    return path;
 }
 
 
