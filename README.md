@@ -1,12 +1,12 @@
 Snorenotify
 ===========
 
-Snorenotify is a multi platform Qt based notification framework. 
+Snorenotify is a multi platform Qt notification framework. 
 Using a plugin system it is possible to create notifications with many different notification systems on Windows, Unix and Mac.
 
 
 ## Supported Backends ##
-- [Windows 8 toast notifications](https://github.com/TheOneRing/Snoretoast) 
+- [Windows 8 toast notifications](https://github.com/Snorenotify/Snoretoast) 
 
 [ ![Windows 8 Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/win8_high.jpg) ](http://winkde.org/~pvonreth/other/snore/img/win8.png)
 
@@ -45,3 +45,18 @@ Using a plugin system it is possible to create notifications with many different
 
 ## API Doc ##
 [A documentation of the API can be found here](http://winkde.org/~pvonreth/other/snore/doc/html/index.html)
+
+## Dependencies ##
+Required dependencies:
+
+- [CMake](http://www.cmake.org/)
+- [Qt4 or Qt5](http://qt-project.org/)
+
+
+In order to build the Growl notification backend you need the following optional dependencies:
+
+- [Crypto++](http://www.cryptopp.com/)
+- [Boost](http://www.boost.org/)
+	- system
+	- thread
+
