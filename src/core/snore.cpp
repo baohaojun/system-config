@@ -203,6 +203,10 @@ bool SnoreCore::setPrimaryNotificationBackend()
     {
         return true;
     }
+    if(d->setBackendIfAvailible("Growl"))
+    {
+        return true;
+    }
 #endif
     if(d->setBackendIfAvailible("Snore"))
     {
