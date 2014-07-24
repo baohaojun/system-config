@@ -8,10 +8,11 @@ x=$(select-output-line '
         for x in $(ls -l |grep emacs-weixin.sh | pn 9) t1-putclip; do
             echo $x;
         done|sort -u
+        echo do-work
     ) | uniq-even-non-ajacent '
 )
 
-if test -x ~/bin/"$x"; then
+if test -x ~/bin/"$x" -a "$x" != do-work; then
    (
        echo $x
        cat ~/.logs/last-weixin
@@ -19,11 +20,4 @@ if test -x ~/bin/"$x"; then
    mv ~/.logs/last-weixin.$$ ~/.logs/last-weixin
 fi&
 
-if test ! -x ~/bin/"$x" -a "${x:0:2}" = "s "; then
-    s "${x:2}"
-    exit
-fi
-if test $# = 1 -a "$1" = ''; then
-    set -- "$(getclip)"
-fi
 "$x" "$@"

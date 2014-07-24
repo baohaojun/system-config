@@ -1,0 +1,15 @@
+#!/home/bhj/system-config/bin/emacsexec
+;;; -*- mode: emacs-lisp -*-
+(let* ((buffers (buffer-list))
+       (buffer (car buffers)))
+  (while buffers
+    (cond
+     ((not (buffer-file-name buffer)))
+     ((string-match "^/tmp/" (buffer-file-name buffer))
+      (message "found temp buffer %s" (buffer-file-name buffer)))
+     (t
+      (message "found buffer %s" (buffer-file-name buffer))
+      (switch-to-buffer buffer)
+      (setq buffers nil)))
+    (setq buffer (car buffers)
+          buffers (cdr buffers))))

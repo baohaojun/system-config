@@ -4,13 +4,13 @@ exec > ~/.logs/$(basename $0).log 2>&1
 set -x
 
 TEMP=$(getopt -o p: --long phone: -n $(basename $0) -- "$@")
-phone=
+phone=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -p|--phone)
-            phone=$2
-            shift 2
+            phone=true
+            shift
             ;;
         --)
             shift
@@ -22,7 +22,11 @@ while true; do
     esac
 done
 
-if test "$phone"; then
+if test "$phone" != true && adb devices? && EMACS=t yes-or-no-p -y "Use phone as the software version?"; then
+    phone=true;
+fi
+
+if test "$phone" = true; then
     build=$(cd-adb | xargs basename)
 else
     build=$(cd ~/smb/share.smartisan.cn/SanFranciscoBuild/sanfrancisco_android/release-$(today--); command ls -t -1|sort -n |tail -n 1)
