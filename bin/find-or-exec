@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if echo $SHELLOPTS | grep xtrace; then
+    true
+else
+    exec >/dev/null 2>&1
+fi
+
 set -e
 
 function die() {
@@ -18,10 +24,4 @@ fi
 
 sawfish_exp=$(printf '(find-window-or-exec "%s" "%s")' "$1" "${2:-true}")
 
-if echo $SHELLOPTS | grep xtrace; then
-    true
-else
-    exec >/dev/null 2>&1 &
-fi
 sawfish-client -e "$sawfish_exp"
-
