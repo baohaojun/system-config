@@ -7,6 +7,11 @@
      ((not (buffer-file-name buffer)))
      ((string-match "^/tmp/" (buffer-file-name buffer))
       (message "found temp buffer %s" (buffer-file-name buffer)))
+     ((boundp 'bhj-working-buffer)
+      (when (eq bhj-working-buffer buffer)
+        (message "found buffer %s" (buffer-file-name buffer))
+        (switch-to-buffer buffer)
+        (setq buffers nil)))
      (t
       (message "found buffer %s" (buffer-file-name buffer))
       (switch-to-buffer buffer)

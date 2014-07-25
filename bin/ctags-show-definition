@@ -37,7 +37,7 @@ while (<$ctags_pipe>) {
         $last_non_member_line = $line;
     }
 
-    if ($def eq $target_def) {
+    if (substr($def, -len($target_def)) eq $target_def) {
         debug "got matching $def on $line";
         $matching_def_map{$last_non_member_line} = [$def, $type];
     }

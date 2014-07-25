@@ -923,6 +923,12 @@ might be bad."
 
 (defcustom bhj-help-qt-prog "bhj-help-qt"
   "The program to run when user want MSDN like help.")
+
+;;;###autoload
+(defun bhj-set-working-buffer ()
+  "set the current working buffer"
+  (setq bhj-working-buffer (current-buffer)))
+
 ;;;###autoload
 (defun bhj-help-qt ()
   "open help for the current word for qt"
