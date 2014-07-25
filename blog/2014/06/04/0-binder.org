@@ -275,6 +275,266 @@ See also `with-temp-file' and `with-output-to-string'."
 #+END_SRC
 
 #+BEGIN_SRC grepout
-grep-func-call -e "asInterface" --nc -a  --add "IMountService"
+-*- mode: grep; default-directory: "~/src/android/frameworks/base/core/java/android/os/" -*-
+Grep started at Fri Jul 25 10:02:01
 
+grep-func-call -e "IMountService.*asInterface" --nc -a -v /tests/
+
+
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/android/app'
+ContextImpl.java:2172: <=     private File[] ensureDirsExistOrFilter(File[] dirs) {
+ContextImpl.java:2182: =>                         final IMountService mount = IMountService.Stub.asInterface(
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/android/os'
+Environment.java:74: <=     private static StorageVolume getPrimaryVolume() {
+Environment.java:83: =>                         IMountService mountService = IMountService.Stub.asInterface(ServiceManager
+Environment.java:707: <=     public static String getStorageState(File path) {
+Environment.java:717: =>             final IMountService mountService = IMountService.Stub.asInterface(
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/android/os/storage'
+IMountService.java:836: <>         public static IMountService asInterface(IBinder obj) {
+IMountService.java:857: <=         public boolean onTransact(int code, Parcel data, Parcel reply,
+IMountService.java:867: =>                     listener = IMountServiceListener.Stub.asInterface(data.readStrongBinder());
+IMountService.java:875: =>                     listener = IMountServiceListener.Stub.asInterface(data.readStrongBinder());
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/android/os/storage'
+StorageManager.java:315: <=     public StorageManager(ContentResolver resolver, Looper tgtLooper) throws RemoteException {
+StorageManager.java:318: =>         mMountService = IMountService.Stub.asInterface(ServiceManager.getService("mount"));
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/com/android/internal/content'
+PackageHelper.java:61: <=     public static IMountService getMountService() throws RemoteException {
+PackageHelper.java:64: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/com/android/internal/os/storage'
+ExternalStorageFormatter.java:319: <=     IMountService getMountService() {
+ExternalStorageFormatter.java:323: =>                 mMountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/com/android/internal/widget'
+LockPatternUtils.java:632: <=     private void updateEncryptionPassword(String password) {
+LockPatternUtils.java:645: =>         IMountService mountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/frameworks/base/packages/BackupRestoreConfirmation/src/com/android/backupconfirm'
+BackupRestoreConfirmation.java:131: <=     public void onCreate(Bundle icicle) {
+BackupRestoreConfirmation.java:159: =>         mMountService = IMountService.Stub.asInterface(ServiceManager.getService("mount"));
+Entering directory `/home/bhj/src/android/frameworks/base/packages/SystemUI/src/com/android/systemui/usb'
+UsbStorageActivity.java:202: <=     private IMountService getMountService() {
+UsbStorageActivity.java:205: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/frameworks/base/services/java/com/android/server'
+BackupManagerService.java:773: <=     public BackupManagerService(Context context) {
+BackupManagerService.java:781: =>         mMountService = IMountService.Stub.asInterface(ServiceManager.getService("mount"));
+Entering directory `/home/bhj/src/android/frameworks/base/services/java/com/android/server/power'
+ShutdownThread.java:295: <=     public void run() {
+ShutdownThread.java:374: =>                 final IMountService mount = IMountService.Stub.asInterface(
+Entering directory `/home/bhj/src/android/packages/apps/SettingsSmartisan/src/com/android/settings'
+CryptKeeperConfirm.java:41: <=         public void onCreate(Bundle savedInstanceState) {
+CryptKeeperConfirm.java:72: =>                     IMountService mountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/SettingsSmartisan/src/com/android/settings'
+CryptKeeper.java:614: <=     private IMountService getMountService() {
+CryptKeeper.java:617: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/SettingsSmartisan/src/com/android/settings/deviceinfo'
+Memory.java:214: <=     private synchronized IMountService getMountService() {
+Memory.java:218: =>                mMountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/Settings/src/com/android/settings'
+CryptKeeperConfirm.java:41: <=         public void onCreate(Bundle savedInstanceState) {
+CryptKeeperConfirm.java:72: =>                     IMountService mountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/Settings/src/com/android/settings'
+CryptKeeper.java:614: <=     private IMountService getMountService() {
+CryptKeeper.java:617: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/Settings/src/com/android/settings/deviceinfo'
+Memory.java:203: <=     private synchronized IMountService getMountService() {
+Memory.java:207: =>                mMountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/SystemUISmartisan/src/com/smartisanos/systemui/usb'
+UsbStorageActivity.java:204: <=     private IMountService getMountService() {
+UsbStorageActivity.java:207: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/vendor/qcom/proprietary/QualcommSettings/src/com/qualcomm/qualcommsettings'
+QualcommSettings.java:687: <=    private void updateUsbMassStorageStatus() {
+QualcommSettings.java:689: =>         IMountService mountService = IMountService.Stub.asInterface(ServiceManager
+
+Grep finished (matches found) at Fri Jul 25 10:02:02
+#+END_SRC
+
+啊，还是看一看shutdown在I?MountService里都有谁定义的：
+
+#+BEGIN_SRC grepout
+-*- mode: grep; default-directory: "~/src/android/frameworks/base/core/java/android/os/storage/" -*-
+Grep started at Fri Jul 25 10:17:13
+
+grep-gtags -e "shutdown" -p MountServ
+Found total 4/1728 definitions: Entering directory `/home/bhj/src/android'
+frameworks/base/core/java/android/os/storage/IMountService.java:451: method: <android.os.storage.IMountService.Stub.Proxy.shutdown> : public void shutdown(IMountShutdownObserver observer) throws RemoteException {
+frameworks/base/core/java/android/os/storage/IMountService.java:1310: method: <android.os.storage.IMountService.shutdown> : public void shutdown(IMountShutdownObserver observer) throws RemoteException;
+frameworks/base/services/java/com/android/server/MountService.java:1423: method: <com.android.server.MountService.shutdown> : public void shutdown(final IMountShutdownObserver observer) {
+frameworks/base/libs/storage/IMountService.cpp:403: function: <android::BpMountService::shutdown> : void shutdown(const sp<IMountShutdownObserver>& observer) {
+    403:     void shutdown(const sp<IMountShutdownObserver>& observer)
+    404:     {
+    405:         Parcel data, reply;
+    406:         data.writeInterfaceToken(IMountService::getInterfaceDescriptor());
+    407:         data.writeStrongBinder(observer->asBinder());
+    408:         if (remote()->transact(TRANSACTION_shutdown, data, &reply) != NO_ERROR) {
+    409:             ALOGD("shutdown could not contact remote\n");
+    410:             return;
+    411:         }
+    412:         int32_t err = reply.readExceptionCode();
+    413:         if (err < 0) {
+    ...
+
+Grep finished (matches found) at Fri Jul 25 10:17:14
+#+END_SRC
+
+可见有一个interface里声明了这个函数的原型android.os.storage.IMountService.shutdown，然后有一个stub.proxy的实现：
+android.os.storage.IMountService.Stub.Proxy.shutdown，但它的实现只是进行了binder的系统调用而已：
+
+#+BEGIN_SRC java
+            public void shutdown(IMountShutdownObserver observer)
+                    throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                Parcel _reply = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeStrongBinder((observer != null ? observer.asBinder() : null));
+                    mRemote.transact(Stub.TRANSACTION_shutdown, _data, _reply, 0);
+                    _reply.readException();
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+#+END_SRC
+
+然后 android.os.storage.IMountService.Stub 实现了这个Interface，但 android.server.MountService 又扩展了这个 Stub:
+#+BEGIN_SRC java
+    public static abstract class Stub extends Binder implements IMountService {}
+class MountService extends IMountService.Stub
+        implements INativeDaemonConnectorCallbacks, Watchdog.Monitor {}
+#+END_SRC
+
+然后注意上面proxy里的实现，发了一个 TRANSACTION_shutdown 的transact，先搜一下 TRANSACTION_shutdown 吧：
+#+BEGIN_SRC grepout
+-*- mode: grep; default-directory: "~/system-config/doc/baohaojun/blog/2014/06/04/" -*-
+Grep started at Fri Jul 25 10:27:07
+
+beagrep -e "TRANSACTION_shutdown" -d ~/src/android
+/home/bhj/src/android/frameworks/base/core/java/android/os/storage/IMountService.java:458:                    mRemote.transact(Stub.TRANSACTION_shutdown, _data, _reply, 0);
+/home/bhj/src/android/frameworks/base/core/java/android/os/storage/IMountService.java:800:        static final int TRANSACTION_shutdown = IBinder.FIRST_CALL_TRANSACTION + 19;
+/home/bhj/src/android/frameworks/base/core/java/android/os/storage/IMountService.java:1048:                case TRANSACTION_shutdown: {
+/home/bhj/src/android/frameworks/base/libs/storage/IMountService.cpp:44:    TRANSACTION_shutdown,
+/home/bhj/src/android/frameworks/base/libs/storage/IMountService.cpp:408:        if (remote()->transact(TRANSACTION_shutdown, data, &reply) != NO_ERROR) {
+
+Grep finished (matches found) at Fri Jul 25 10:27:07
+#+END_SRC
+
+.cpp的那个我们就不看了，完全在拷贝.java这边的代码。当然也可能是.java在拷贝.cpp的。
+
+处理的地方是在IMountService.java:1048:行，这个是Stub里定义的，也就是说
+Stub只实现了针对每个 TRANSACTION_xxx 应该怎么调用由子类(MountService)
+实现的函数，它自己是一个也没有实现过的。
+
+再看一下Stub自己一共定义了多少个函数吧：
+#+BEGIN_SRC grepout
+-*- mode: grep; default-directory: "~/src/android/frameworks/base/core/java/android/os/storage/" -*-
+Grep started at Fri Jul 25 14:44:33
+
+grep-gtags -e "android.os.storage.IMountService.Stub..*" -t method |grep -v Proxy
+Found total 42/38 definitions: Entering directory `/home/bhj/src/android'
+frameworks/base/core/java/android/os/storage/IMountService.java:836: method: <android-os-storage-IMountService-Stub-asInterface> : public static IMountService asInterface(IBinder obj) {
+frameworks/base/core/java/android/os/storage/IMountService.java:848: method: <android-os-storage-IMountService-Stub-Stub> : public Stub() {
+frameworks/base/core/java/android/os/storage/IMountService.java:852: method: <android-os-storage-IMountService-Stub-asBinder> : public IBinder asBinder() {
+frameworks/base/core/java/android/os/storage/IMountService.java:857: method: <android-os-storage-IMountService-Stub-onTransact> : public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+
+Grep finished (matches found) at Fri Jul 25 14:44:36
+#+END_SRC
+
+其中asInterface的定义：
+#+BEGIN_SRC java
+        public static IMountService asInterface(IBinder obj) {
+            if (obj == null) {
+                return null;
+            }
+            IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
+            if (iin != null && iin instanceof IMountService) {
+                return (IMountService) iin;
+            }
+            return new IMountService.Stub.Proxy(obj);
+        }
+#+END_SRC
+
+会传进来一个obj，这个obj会被调到queryLocalInterface，最后调到的应该是：
+
+#+BEGIN_SRC java
+    public IInterface queryLocalInterface(String descriptor) {
+        if (mDescriptor.equals(descriptor)) {
+            return mOwner;
+        }
+        return null;
+    }
+#+END_SRC
+这个在Binder.java里。mOwner被设值的地方：
+
+
+
+回到IMountService，asInterface用到的地方：
+
+#+BEGIN_SRC grepout
+asIt-*- mode: grep; default-directory: "~/src/android/frameworks/base/core/java/android/os/storage/" -*-
+Grep started at Fri Jul 25 14:53:30
+
+grep-func-call -e "IMountService.*asInterface" --nc -a -v /tests/
+
+
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/android/app'
+ContextImpl.java:2172: <=     private File[] ensureDirsExistOrFilter(File[] dirs) {
+ContextImpl.java:2182: =>                         final IMountService mount = IMountService.Stub.asInterface(
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/android/os'
+Environment.java:74: <=     private static StorageVolume getPrimaryVolume() {
+Environment.java:83: =>                         IMountService mountService = IMountService.Stub.asInterface(ServiceManager
+Environment.java:707: <=     public static String getStorageState(File path) {
+Environment.java:717: =>             final IMountService mountService = IMountService.Stub.asInterface(
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/android/os/storage'
+IMountService.java:836: <>         public static IMountService asInterface(IBinder obj) {
+IMountService.java:857: <=         public boolean onTransact(int code, Parcel data, Parcel reply,
+IMountService.java:867: =>                     listener = IMountServiceListener.Stub.asInterface(data.readStrongBinder());
+IMountService.java:875: =>                     listener = IMountServiceListener.Stub.asInterface(data.readStrongBinder());
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/android/os/storage'
+StorageManager.java:315: <=     public StorageManager(ContentResolver resolver, Looper tgtLooper) throws RemoteException {
+StorageManager.java:318: =>         mMountService = IMountService.Stub.asInterface(ServiceManager.getService("mount"));
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/com/android/internal/content'
+PackageHelper.java:61: <=     public static IMountService getMountService() throws RemoteException {
+PackageHelper.java:64: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/com/android/internal/os/storage'
+ExternalStorageFormatter.java:319: <=     IMountService getMountService() {
+ExternalStorageFormatter.java:323: =>                 mMountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/frameworks/base/core/java/com/android/internal/widget'
+LockPatternUtils.java:632: <=     private void updateEncryptionPassword(String password) {
+LockPatternUtils.java:645: =>         IMountService mountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/frameworks/base/packages/BackupRestoreConfirmation/src/com/android/backupconfirm'
+BackupRestoreConfirmation.java:131: <=     public void onCreate(Bundle icicle) {
+BackupRestoreConfirmation.java:159: =>         mMountService = IMountService.Stub.asInterface(ServiceManager.getService("mount"));
+Entering directory `/home/bhj/src/android/frameworks/base/packages/SystemUI/src/com/android/systemui/usb'
+UsbStorageActivity.java:202: <=     private IMountService getMountService() {
+UsbStorageActivity.java:205: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/frameworks/base/services/java/com/android/server'
+BackupManagerService.java:773: <=     public BackupManagerService(Context context) {
+BackupManagerService.java:781: =>         mMountService = IMountService.Stub.asInterface(ServiceManager.getService("mount"));
+Entering directory `/home/bhj/src/android/frameworks/base/services/java/com/android/server/power'
+ShutdownThread.java:295: <=     public void run() {
+ShutdownThread.java:374: =>                 final IMountService mount = IMountService.Stub.asInterface(
+Entering directory `/home/bhj/src/android/packages/apps/SettingsSmartisan/src/com/android/settings'
+CryptKeeperConfirm.java:41: <=         public void onCreate(Bundle savedInstanceState) {
+CryptKeeperConfirm.java:72: =>                     IMountService mountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/SettingsSmartisan/src/com/android/settings'
+CryptKeeper.java:614: <=     private IMountService getMountService() {
+CryptKeeper.java:617: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/SettingsSmartisan/src/com/android/settings/deviceinfo'
+Memory.java:214: <=     private synchronized IMountService getMountService() {
+Memory.java:218: =>                mMountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/Settings/src/com/android/settings'
+CryptKeeperConfirm.java:41: <=         public void onCreate(Bundle savedInstanceState) {
+CryptKeeperConfirm.java:72: =>                     IMountService mountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/Settings/src/com/android/settings'
+CryptKeeper.java:614: <=     private IMountService getMountService() {
+CryptKeeper.java:617: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/Settings/src/com/android/settings/deviceinfo'
+Memory.java:203: <=     private synchronized IMountService getMountService() {
+Memory.java:207: =>                mMountService = IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/packages/apps/SystemUISmartisan/src/com/smartisanos/systemui/usb'
+UsbStorageActivity.java:204: <=     private IMountService getMountService() {
+UsbStorageActivity.java:207: =>             return IMountService.Stub.asInterface(service);
+Entering directory `/home/bhj/src/android/vendor/qcom/proprietary/QualcommSettings/src/com/qualcomm/qualcommsettings'
+QualcommSettings.java:687: <=    private void updateUsbMassStorageStatus() {
+QualcommSettings.java:689: =>         IMountService mountService = IMountService.Stub.asInterface(ServiceManager
+
+Grep finished (matches found) at Fri Jul 25 14:53:31
 #+END_SRC
