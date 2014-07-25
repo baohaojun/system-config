@@ -25,6 +25,7 @@
 
 
 #include <QtCore>
+#include <QTcpSocket>
 
 using namespace Snore;
 
@@ -34,50 +35,32 @@ Growl *Growl::s_instance = NULL;
 
 Growl::Growl():
     SnoreBackend("Growl",false,false),
-    m_id(0),
-    m_defaultGNTP(NULL)
+    m_id(0)
 {
     s_instance = this;
 }
 
 Growl::~Growl()
 {
-    delete m_defaultGNTP;
 }
 
 bool Growl::initialize(SnoreCore *snore)
 {
-    const Application &app = snore->d()->defaultApplication();
-    m_defaultGNTP = new gntp(app.name().toUtf8().constData(), app.icon().localUrl().toUtf8().constData());
 
-    std::vector<std::string> alerts;
-    alerts.push_back(app.alerts().begin()->name().toUtf8().constData());
-    try
+    QTcpSocket qsocket;
+    qsocket.connectToHost("localhost", 23053);
+    if(qsocket.waitForConnected(100))
     {
-        m_defaultGNTP->regist(alerts);
-    }
-    catch(const std::exception& e)
-    {
-        snoreDebug( SNORE_WARNING ) << e.what();
-        delete m_defaultGNTP;
-        m_defaultGNTP = NULL;
-        return false;
-    }
-    return SnoreBackend::initialize(snore);
-}
-
-bool Growl::deinitialize()
-{
-    if(SnoreBackend::deinitialize())
-    {
-        if(m_defaultGNTP)
+        qsocket.write(QString("GNTP/1.0\r\n").toUtf8());
+        if(qsocket.waitForReadyRead(100))
         {
-            delete m_defaultGNTP;
-            m_defaultGNTP = NULL;
+            snoreDebug( SNORE_DEBUG ) << QString::fromUtf8(qsocket.readAll());
+            return SnoreBackend::initialize(snore);
         }
-        return true;
     }
+    snoreDebug( SNORE_DEBUG ) << "Growl is not running";
     return false;
+
 }
 
 void Growl::slotRegisterApplication(const Application &application)
@@ -87,11 +70,11 @@ void Growl::slotRegisterApplication(const Application &application)
     gntp::gntp_callback callback(&Growl::gntpCallback);
     growl->set_gntp_callback(callback);
 
-    //    snoreDebug( SNORE_DEBUG ) << application->name().toUtf8().constData();
+    //    snoreDebug( SNORE_DEBUG ) << application.name().toUtf8().constData();
     std::vector<std::string> alerts;
     foreach(const Alert &a,application.alerts())
     {
-        //        snoreDebug( SNORE_DEBUG ) << a->name().toUtf8().constData();
+        snoreDebug( SNORE_DEBUG ) << a.name().toUtf8().constData();
         alerts.push_back(a.name().toUtf8().constData());
     }
 
@@ -119,12 +102,7 @@ void Growl::slotNotify(Notification notification)
 {
     gntp *growl = m_applications.value(notification.application().name());
     QString alert = notification.alert().name();
-    if(growl == NULL)
-    {
-        growl = m_defaultGNTP;
-        alert = "Default";
-    }
-    //    snoreDebug( SNORE_DEBUG ) << "Notify Growl:" <<notification.application() << alert << Snore::toPlainText(notification.title());
+    snoreDebug( SNORE_DEBUG ) << "Notify Growl:" <<notification.application() << alert << Snore::toPlainText(notification.title());
     try
     {
         growl->notify(alert.toUtf8().constData(),notification.id(),
