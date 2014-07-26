@@ -463,7 +463,57 @@ Grep finished (matches found) at Fri Jul 25 14:44:36
 #+END_SRC
 这个在Binder.java里。mOwner被设值的地方：
 
+#+BEGIN_SRC java
+    public void attachInterface(IInterface owner, String descriptor) {
+        mOwner = owner;
+        mDescriptor = descriptor;
+    }
+#+END_SRC
 
+attachInterface 是在MountService的Stub里调用的：
+
+#+BEGIN_SRC grepout
+-*- mode: grep; default-directory: "~/src/android/frameworks/base/core/java/android/os/storage/" -*-
+Grep started at Sat Jul 26 22:04:08
+
+grep-gtags -e "Stub" -d ~/src/android -o
+Found total 2/8 definitions: Entering directory `/home/bhj/src/android'
+frameworks/base/core/java/android/os/storage/IMountService.java:37: class: <android.os.storage.IMountService.Stub> : public static abstract class Stub extends Binder implements IMountService {
+    37:     public static abstract class Stub extends Binder implements IMountService {
+frameworks/base/core/java/android/os/storage/IMountService.java:830: method: <android.os.storage.IMountService.Stub.Stub> : public Stub() {
+    830:         public Stub() {
+    831:             attachInterface(this, DESCRIPTOR);
+    832:         }
+    833:
+
+Grep finished (matches found) at Sat Jul 26 22:04:09
+#+END_SRC
+
+再看一下这个Stub的继承树：
+
+#+BEGIN_SRC compout
+-*- mode: compilation; default-directory: "~/src/android/frameworks/base/core/java/android/os/storage/" -*-
+Compilation started at Sat Jul 26 22:06:28
+
+ajoke-get-hierarchy.pl android.os.storage.IMountService.Stub -m Stub
+make: Entering directory `/home/bhj/src/android'
+
+=> class android.os.storage.IMountService.Stub at frameworks/base/core/java/android/os/storage/IMountService.java line 37.
+      public Stub(){
+   => class android.os.Binder at frameworks/base/core/java/android/os/Binder.java line 43.
+      => interface android.os.IBinder at frameworks/base/core/java/android/os/IBinder.java line 86.
+      => class java.lang.Object at libcore/luni/src/main/java/java/lang/Object.java line 131.
+   => interface android.os.storage.IMountService at frameworks/base/core/java/android/os/storage/IMountService.java line 35.
+         public static abstract class Stub extends Binder implements IMountService{
+      => interface android.os.IInterface at frameworks/base/core/java/android/os/IInterface.java line 23.
+
+Compilation finished at Sat Jul 26 22:06:30
+#+END_SRC
+
+这时候就非常清楚的可以看到了，C++里的RTTI（Run Time Type Infomation）
+的一种机制，在这个java代码里用obj+descriptor的方式重新实现了一遍。为什
+么不直接用isinstanceof呢？有点想不明白。可能是这些源码的作者想尽量保持
+java与c++接口名字上的一致性？
 
 回到IMountService，asInterface用到的地方：
 
@@ -538,3 +588,7 @@ QualcommSettings.java:689: =>         IMountService mountService = IMountService
 
 Grep finished (matches found) at Fri Jul 25 14:53:31
 #+END_SRC
+
+* ServiceManager.getService()
+
+TBD.
