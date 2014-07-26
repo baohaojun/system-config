@@ -23,7 +23,7 @@ cmake_dependent_option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend
 set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 5)
 set(SNORE_VERSION_PATCH 0)
-set(SNORE_VERSION_SUFFIX "beta4")
+set(SNORE_VERSION_SUFFIX "rc1")
 
 if(WITH_KDE)
     find_package(KDE4)
