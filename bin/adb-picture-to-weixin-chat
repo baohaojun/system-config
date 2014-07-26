@@ -1,0 +1,33 @@
+#!/bin/bash
+if echo $SHELLOPTS | grep xtrace; then
+    function debug() {
+        read -p "press any key to continue..."
+    }
+else
+    function debug() {
+        sleep .5
+    }
+fi
+
+
+if test -e "$1"; then
+    pic=$1
+else
+    pic=$(get-newest-file ~/shots/)
+fi
+ext=${pic##*.}
+adb push "$pic" /sdcard/toqq.$ext
+adb am startservice -n com.bhj.setclip/.PutClipService --es picture /sdcard/toqq.$ext
+adb-tap-mid-bot
+debug
+adb-tap 966 999
+debug
+adb-tap 125 1285
+debug
+adb-tap 519 417
+debug
+adb-tap 917 1848
+debug
+adb-tap 953 182
+debug
+adb-key BS
