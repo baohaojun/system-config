@@ -927,6 +927,7 @@ might be bad."
 ;;;###autoload
 (defun bhj-set-working-buffer ()
   "set the current working buffer"
+  (interactive)
   (setq bhj-working-buffer (current-buffer)))
 
 ;;;###autoload
