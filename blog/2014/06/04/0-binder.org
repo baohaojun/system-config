@@ -591,4 +591,122 @@ Grep finished (matches found) at Fri Jul 25 14:53:31
 
 * ServiceManager.getService()
 
-TBD.
+这个函数：
+
+#+BEGIN_SRC java
+    public static IBinder getService(String name) {
+        try {
+            IBinder service = sCache.get(name);
+            if (service != null) {
+                return service;
+            } else {
+                return getIServiceManager().getService(name);
+            }
+        } catch (RemoteException e) {
+            Log.e(TAG, "error in getService", e);
+        }
+        return null;
+    }
+#+END_SRC
+
+
+会调到 getIServiceManager：
+
+#+BEGIN_SRC java
+    private static IServiceManager getIServiceManager() {
+        if (sServiceManager != null) {
+            return sServiceManager;
+        }
+
+        // Find the service manager
+        sServiceManager = ServiceManagerNative.asInterface(BinderInternal.getContextObject());
+        return sServiceManager;
+    }
+#+END_SRC
+
+会调到 ServiceManagerNative.asInterface(BinderInternal.getContextObject())
+
+其中 BinderInternal.getContextObject() 是个native的函数，它会调到 c++ 的 getContextObject：
+
+#+BEGIN_SRC c++
+sp<IBinder> ProcessState::getContextObject(const sp<IBinder>& caller)
+{
+    return getStrongProxyForHandle(0);
+}
+#+END_SRC
+
+可以看到，这里的caller参数都没有用到，不知道是为什么要有这个caller参数。
+
+getStrongProxyForHandle的定义如下：
+
+#+BEGIN_SRC c++
+sp<IBinder> ProcessState::getStrongProxyForHandle(int32_t handle)
+{
+    sp<IBinder> result;
+
+    AutoMutex _l(mLock);
+
+    handle_entry* e = lookupHandleLocked(handle);
+
+    if (e != NULL) {
+        // We need to create a new BpBinder if there isn't currently one, OR we
+        // are unable to acquire a weak reference on this current one.  See comment
+        // in getWeakProxyForHandle() for more info about this.
+        IBinder* b = e->binder;
+        if (b == NULL || !e->refs->attemptIncWeak(this)) {
+            b = new BpBinder(handle);
+            e->binder = b;
+            if (b) e->refs = b->getWeakRefs();
+            result = b;
+        } else {
+            // This little bit of nastyness is to allow us to add a primary
+            // reference to the remote proxy when this team doesn't have one
+            // but another team is sending the handle to us.
+            result.force_set(b);
+            e->refs->decWeak(this);
+        }
+    }
+
+    return result;
+}
+#+END_SRC
+
+所以这里我们要看一下 lookupHandleLocked 这个函数，此处传进去的handle为0。
+
+#+BEGIN_SRC c++
+ProcessState::handle_entry* ProcessState::lookupHandleLocked(int32_t handle)
+{
+    const size_t N=mHandleToObject.size();
+    if (N <= (size_t)handle) {
+        handle_entry e;
+        e.binder = NULL;
+        e.refs = NULL;
+        status_t err = mHandleToObject.insertAt(e, N, handle+1-N);
+        if (err < NO_ERROR) return NULL;
+    }
+    return &mHandleToObject.editItemAt(handle);
+}
+#+END_SRC
+
+因为handle为0，所以 mHandleToObject 的.size() 和 handle 一比，如果
+handle 不在 mHandleToObject 里，就需要插一个新的 handle_entry 进去，否
+则直接从 mHandleToObject 里抽一个 editItemAt 出来交差。
+
+看一下 mHandleToObject 是怎么初始化的：
+
+#+BEGIN_SRC grepout
+-*- mode: grep; default-directory: "~/src/android/frameworks/native/libs/binder/" -*-
+Grep started at Sun Jul 27 22:16:08
+
+beagrep -e "mHandleToObject"
+/home/bhj/src/android/frameworks/native/include/binder/ProcessState.h:96:            Vector<handle_entry>mHandleToObject;
+/home/bhj/src/android/frameworks/native/libs/binder/ProcessState.cpp:172:    const size_t N=mHandleToObject.size();
+/home/bhj/src/android/frameworks/native/libs/binder/ProcessState.cpp:177:        status_t err = mHandleToObject.insertAt(e, N, handle+1-N);
+/home/bhj/src/android/frameworks/native/libs/binder/ProcessState.cpp:180:    return &mHandleToObject.editItemAt(handle);
+
+Grep finished (matches found) at Sun Jul 27 22:16:08
+#+END_SRC
+
+完了，mHandleToObject根本没有正规的初始化，都是在 lookupHandleLocked
+里完成对它的操作的，如果handle没有找到的话，就放一个handle_entry进去跟
+这个handle对应，其binder和refs均为空值。
