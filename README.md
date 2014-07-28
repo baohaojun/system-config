@@ -60,3 +60,6 @@ In order to build the Growl notification backend you need the following optional
 	- system
 	- thread
 
+## Third party libraries that we ship with our source##
+
+
