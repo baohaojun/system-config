@@ -64,9 +64,8 @@ function current_url_matches() {
     fi
 }
 
-if test $(uname) = Darwin; then
-    new_tab=-current-tab
-    exec firefox $new_tab "$url"
+if test $(uname) != Linux; then
+    exec firefox "$url"
 fi
 
 current_url=$(get-firefox-tab-url)
