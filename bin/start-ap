@@ -2,7 +2,11 @@
 
 set -x
 set -e
-sudo apt-get install udhcpd hostapd
+if which udhcpd && which hostapd; then
+    true
+else
+    sudo apt-get install udhcpd hostapd || true
+fi
 wlan0_ip=${1:-192.168.0.1}
 name_servers=$(grep -P -e '^\s*nameserver' /etc/resolv.conf | pn 2 | tr '\n' ' ')
 net_prefix=${wlan0_ip%.*}
@@ -17,7 +21,7 @@ opt     router  $wlan0_ip
 option  domain  local
 option  lease   864000          # 10 days of seconds
 EOF
-
+# sudo ifconfig wlan0 up
 sudo ifconfig wlan0 $wlan0_ip
 
 if ! grep 'DHCPD_ENABLED="yes"' /etc/default/udhcpd; then
@@ -31,5 +35,13 @@ fi
 
 ssid=$(select-args baohaojun unknown)
 passwd=$(select-args helloworld iamsofunny)
-sudo perl -npe "s/^ssid=.*/ssid=$ssid/; s/#?wpa_passphrase=.*/wpa_passphrase=$passwd/" -i /etc/hostapd/hostapd.conf
+sudo perl -npe "s/^ssid=.*/ssid=$ssid/;
+s/#?wpa=.*/wpa=1/g;
+s/#?wpa_passphrase=.*/wpa_passphrase=$passwd/" -i /etc/hostapd/hostapd.conf
+
+# sudo ifconfig wlan0 up
+if ! grep '^iface wlan0 inet manual' /etc/network/interfaces; then
+    sudo bash -c "echo 'iface wlan0 inet manual' >> /etc/network/interfaces";
+    sudo /etc/init.d/network-manager restart
+fi
 sudo hostapd /etc/hostapd/hostapd.conf
