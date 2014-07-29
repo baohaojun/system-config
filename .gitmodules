@@ -1,0 +1,3 @@
+[submodule "thirdparty/gntp-send"]
+	path = thirdparty/gntp-send
+	url = https://github.com/Snorenotify/gntp-send.git

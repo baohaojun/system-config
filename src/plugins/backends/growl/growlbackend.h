@@ -21,26 +21,28 @@
 #define GROWL_BACKEND_H
 #include "core/plugins/snorebackend.h"
 
+#include <gntp/growl.hpp>
 #include <string>
 
-class Growl:public Snore::SnoreBackend
+class GrowlBackend:public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0")
 
 public:
-    Growl();
-    ~Growl();    
+    GrowlBackend();
+    ~GrowlBackend();
     virtual bool initialize(Snore::SnoreCore *snore);
+    virtual bool deinitialize();
     
-    static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
+    static void gntpCallback(growl_callback_data *data);
 
 private:
 	//a static instance for the static callback methode
-    static Growl *s_instance;
+    static GrowlBackend *s_instance;
     uint m_id;
-    QHash<QString,class gntp*> m_applications;
+    QHash<QString,Growl*> m_applications;
 
 public slots:
     void slotRegisterApplication(const Snore::Application &application);
