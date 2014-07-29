@@ -24,7 +24,7 @@ done&
     while true; do
         wget -N http://dl.google.com/android/ndk/android-ndk-r$x-linux-x86.tar.bz2 || break
         wget -N http://dl.google.com/android/ndk/android-ndk-r$x-darwin-x86.tar.bz2
-        wget -N http://dl.google.com/android/ndk/android-ndk-r$x-windows.zip
+        wget -N http://dl.google.com/android/ndk/android-ndk-r$x-windows-x86.zip
         ((x++))
     done
 
@@ -35,7 +35,7 @@ done&
             break;
         fi
         wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-darwin-x86.tar.bz2 || continue
-        if wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-windows.zip; then break; fi
+        if wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-windows-x86.zip; then break; fi
     done
 )&
 

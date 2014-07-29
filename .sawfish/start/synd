@@ -1,2 +1,3 @@
 #!/bin/bash
-exec syndaemon -t
+(sleep 5; ps-killall syndaemon.-i)&
+exec syndaemon -R -t -i 2 -d
