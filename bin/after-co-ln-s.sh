@@ -39,7 +39,13 @@ if test $uname = CYGWIN; then
         }
     else
         function do_ln_1() {
-            cmd.exe /c mklink  "$1" "$2"
+            if test -d "$2" -o -d "$1"; then
+                dflag=/d
+            else
+                dflag=
+            fi
+            echo cmd.exe /c mklink $dflag "$1" "$2"
+            cmd.exe /c mklink $dflag "$1" "$2" >/dev/null 2>&1
         }
     fi
 
@@ -106,11 +112,7 @@ if test $uname = CYGWIN; then
             elif test -e $dest; then
                 die "$dest already exist"
             fi
-            if test -d "${args[$n]}"; then
-                command ln -s "${args[$n]}" "$dest"
-            else
-                do_ln_1 "$(cygpath -wa "$dest")" "$(cygpath -wa "${args[$n]}")"
-            fi
+            do_ln_1 "$(cygpath -wa "$dest")" "$(cygpath -wa "${args[$n]}")"
         done
     }
 fi

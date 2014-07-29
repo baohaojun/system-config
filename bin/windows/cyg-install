@@ -1,0 +1,4 @@
+#!/bin/bash
+for x in "$@"; do
+    /cygdrive/c/setup-x86_64.exe -q -n -d -A -P $x
+done

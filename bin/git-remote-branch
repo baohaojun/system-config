@@ -1,6 +1,6 @@
 #!/bin/bash
 
-branch=$(git symbolic-ref --short HEAD)
+branch=$(wgit symbolic-ref --short HEAD)
 if test "$branch"; then
     remote=$(git config branch.$branch.remote)
     if test "$remote"; then

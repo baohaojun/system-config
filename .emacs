@@ -56,7 +56,11 @@
 (when (and
        (file-exists-p "~/src/github/emacs.d/init.el")
        (not (string= (getenv "ORG2PDF") "true")))
-  (load "init.el"))
+(setq load-path
+      (nconc (list
+              (expand-file-name "~/src/github/emacs.d"))
+             load-path))
+  (load "~/src/github/emacs.d/init.el"))
 
 (require 'mmm-auto)
 

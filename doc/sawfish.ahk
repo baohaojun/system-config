@@ -237,7 +237,7 @@ return
 {
   SetTitleMatchMode,2
   IfWinActive ahk_class mintty
-    SendInput +{Insert}
+    SendInput {RButton}
   else
     SendInput ^{v}
 }

@@ -49,7 +49,7 @@ if test -e .git-push-rebase-hooks; then
     bash .git-push-rebase-hooks
 fi
 
-if test ! "$(git symbolic-ref --short HEAD)" && git-is-ancestor master HEAD; then
+if test ! "$(wgit symbolic-ref --short HEAD)" && git-is-ancestor master HEAD; then
     command git co -B master
 fi
 
@@ -201,7 +201,7 @@ function die() {
     exit -1
 }
 
-branch=$(git symbolic-ref --short HEAD) || true
+branch=$(wgit symbolic-ref --short HEAD) || true
 if test ! "$branch"; then
     branch=master
 fi
@@ -210,7 +210,7 @@ if test -e ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-con
   branch=$(bash ~/system-config/etc/branch-fileters/$(relative-path $PWD ~/system-config).sh my-master)
 fi
 
-if test "$(git symbolic-ref --short HEAD)" != $branch; then
+if test "$(wgit symbolic-ref --short HEAD)" != $branch; then
     if git-is-ancestor $branch HEAD; then
         git co -B $branch
     fi

@@ -1,5 +1,5 @@
 #!/bin/bash
-for x in ~/.mozilla/firefox/*/ ~/Library/"Application Support"/Firefox/{Profiles/,}*/ ~/"Application Data"/Mozilla/Firefox/Profiles/*/; do
+for x in ~/.mozilla/firefox/*/ ~/Library/"Application Support"/Firefox/{Profiles/,}*/ ~/"Application Data"/Mozilla/Firefox/{Profiles/,}*/; do
     test -d "$x"/extensions || continue
     dir="$x"/"extensions/{e98b7313-167d-48c6-89be-bc514d6de8d9}"
     rm -rf "$dir" "$dir".xpi

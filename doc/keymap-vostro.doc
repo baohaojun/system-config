@@ -1,0 +1,9 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout]
+"Scancode Map"=hex:00,00,00,00,00,00,00,00, : 这八个字符是版本号
+08,00,00,00, ：有八组映射
+01,00,3a,00,3a,00,01,00, caps lock/escape 原键->替代键？搞不明白，从最后一行看，应该是第一个是被映射后的键，另一个则是真正的键。
+1d,00,38,00,38,00,1d,00, control和alt
+1d,e0,38,e0,38,e0,1d,e0, control和alt 1d是control，38是alt
+5b,e0,5d,e0,00,00,00,00

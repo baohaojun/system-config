@@ -11,6 +11,10 @@ if test $# = 0; then
     die "Error: Usage $(basename $0) window_class [program_to_exec]"
 fi
 
+if test "$1" = konsole; then
+    shift
+    set -- mintty "$@"
+fi
 
 if ! findexec -c $1 && test "$2"; then
     shift

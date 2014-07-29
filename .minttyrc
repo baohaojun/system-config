@@ -1,6 +1,7 @@
 BoldAsFont=no
-Font=Lucida Console
+Font=Monaco
 FontHeight=12
 CursorType=block
 Scrollbar=none
 BackgroundColour=63,63,63
+RightClickAction=paste

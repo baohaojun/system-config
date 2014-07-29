@@ -66,12 +66,12 @@ function relink_func()
 INPLACE=${INPLACE:-false}
 if test $# -eq 0; then
     INPLACE=false
-    find ~/bin/windows/ -path "*/lnks" -prune -o -type l -exec relink.sh '{}' \;
+    find ~/system-config/bin/windows/ -path "*/lnks" -prune -o -type l -exec relink.sh '{}' \;
     exit
 elif test $# -ne 1; then
     echo Error: can take at most 1 argument
 elif test $INPLACE = false; then
-    tgt=~/bin/windows/ext/"$(basename "$1")"
+    tgt=~/system-config/bin/windows/ext/"$(basename "$1")"
 else
     tgt="$1"
 fi

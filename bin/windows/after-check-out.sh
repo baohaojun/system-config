@@ -58,12 +58,16 @@ pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make
       cygutils-extra procps wget git-svn libcrypt-devel flex gperf
       bison)
 
+if test "$NO_INSTALL" = true; then 
+    true
+else
 /cygdrive/c/setup-x86_64.exe -q -n -d -A -P "${pkgs[@]}" || true
 
 if true; then
     for x in "${pkgs[@]}"; do
         /cygdrive/c/setup-x86_64.exe -q -n -d -A -P $x
     done
+fi
 fi
 
 cpan String::ShellQuote
