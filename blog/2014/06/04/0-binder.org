@@ -707,6 +707,7 @@ beagrep -e "mHandleToObject"
 Grep finished (matches found) at Sun Jul 27 22:16:08
 #+END_SRC
 
-完了，mHandleToObject根本没有正规的初始化，都是在 lookupHandleLocked
-里完成对它的操作的，如果handle没有找到的话，就放一个handle_entry进去跟
-这个handle对应，其binder和refs均为空值。
+完了，mHandleToObject根本没有正规的初始化，都是在 lookupHandleLocked里
+完成对它的操作的，如果handle没有找到的话，就放一个handle_entry进去跟这
+个handle对应，其binder和refs均为空值。然后在 getStrongProxyForHandle
+里，看到了 binder 成员为空，就会 new 一个 BpBinder(handle) 出来赋给它, 并且
