@@ -10,7 +10,7 @@ sudo su - bhj -c bash -c "
        (
            flock -n 9 || exit
            e4000_found=false
-           for x in $(seq 1 40 | tr '\n' ' '); do
+           for x in $(seq 1 180 | tr '\n' ' '); do
                if ! ls /dev/input/by-id/*4000-if01*; then
                    sleep .1
                else
@@ -36,5 +36,5 @@ sudo su - bhj -c bash -c "
            ~/bin/do-keymap
        )&
        date
-   ) 2>&1 9> ~/.logs/re-xmodmap.lock | tee ~/.logs/re-xmodmap.log&
-"
+   )  > ~/.logs/re-xmodmap.log 2>&1 9> ~/.logs/re-xmodmap.lock &
+"&

@@ -203,3 +203,5 @@
 (eval-after-load 'ox-html
   '(advice-add 'org-html-fontify-code :around #'org-html-fontify-code-compout))
 
+(eval-after-load 'elisp-slime-nav
+  '(define-key elisp-slime-nav-mode-map (kbd "M-.") 'grep-gtags))

@@ -1,0 +1,2 @@
+#!/bin/bash
+USE_NT_SYMLINK=true relative-link "$@"

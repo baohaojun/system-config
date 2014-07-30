@@ -8,4 +8,5 @@ fi
 pic=$(adb busybox ls -t -1 $dir|head -n 1|perl -npe 's/\033.*?m//g')
 cd ~/Pictures/
 adb pull $dir/$pic
+up $pic
 of $pic

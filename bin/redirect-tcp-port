@@ -1,0 +1,9 @@
+#!/bin/bash
+function redirect_tcp_port() {
+    if sudo iptables-save | grep "PREROUTING.*$1.*$2"; then
+        return 0
+    fi
+    sudo iptables -t nat -A PREROUTING -p tcp -m tcp --dport $1 -j DNAT --to-destination :$2
+}
+
+redirect_tcp_port "$@"

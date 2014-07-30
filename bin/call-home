@@ -14,7 +14,7 @@ fi
                 if test $home = home; then
                     echo -D 7070
                 fi
-                ) -R :$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3)):localhost:22 $home -p 443
+                ) -R :$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3)):localhost:22 $home -p 22
             if test $? = 137; then
                 continue
             fi
