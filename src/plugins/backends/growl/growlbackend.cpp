@@ -125,6 +125,10 @@ void GrowlBackend::gntpCallback(growl_callback_data *data)
     {
         snoreDebug( SNORE_DEBUG ) << data->id << QString(data->reason) << QString(data->data);
         Notification n = s_instance->snore()->getActiveNotificationByID(data->id);
+        if(!n.isValid())
+        {
+            return;
+        }
         Notification::CloseReasons r = Notification::NONE;
         std::string reason(data->reason);
         if(reason == "TIMEDOUT")
