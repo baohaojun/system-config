@@ -305,7 +305,7 @@ class ime:
             min_cand = self.cand_index // ime.page_size * ime.page_size
             max_cand_p1 = min (min_cand + ime.page_size, num_cands)
             self.__cands = _g_ime_quail.get_cands(self.compstr)[min_cand : max_cand_p1]
-        else:
+        elif self.compstr[0:2] != "zu":
             self.__cands = ()
 
     @property
@@ -535,6 +535,16 @@ class ime:
 
 
     def __english_mode(self, key):
+        if self.__cands:
+            if key == 'C n':
+                self.cand_index += ime.page_size
+            elif key == 'C p':
+                self.cand_index -= ime.page_size
+            elif key == 'C f':
+                self.cand_index += 1
+            elif key == 'C b':
+                self.cand_index -= 1
+            return
         if self.compstr == '; ' and key == 'space':
             self.commitstr += '；'
             self.compstr = ''
@@ -547,6 +557,10 @@ class ime:
                 self.compstr = ''
             except:
                 pass
+        elif self.compstr[0:2] == "zu" and \
+             self.compstr[-1] == " " and \
+             key == 'space':
+            self.__cands = ("hello", "world")
         elif key.isprint():
             self.compstr += key.name
         elif key == 'backspace':

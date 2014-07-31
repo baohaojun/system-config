@@ -46,6 +46,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size (+ 0.0 english-font-size)))
 
     (set-fontset-font t 'symbol (font-spec :family "Courier New"))
+    (set-fontset-font t nil (font-spec :family "DejaVu Sans"))
 
     ;; Set Chinese font
     ;; Do not use 'unicode charset, it will cause the english font setting invalid
