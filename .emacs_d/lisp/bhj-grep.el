@@ -74,12 +74,14 @@
     (when (< min max)
       (delete-region min max))))
 
+(defcustom bhj-grep-dir nil "The default directory for grep")
+
 ;;;###autoload
 (defun grep-bhj-dir ()
   (interactive)
   (let ((default-directory
-          (if (boundp 'bhj-grep-dir)
-              bhj-grep-dir
+          (if bhj-grep-dir
+              (expand-file-name bhj-grep-dir)
             default-directory))
         (compilation-buffer-name-function (lambda (_ign) (if (boundp 'grep-buffer-name)
                                                              grep-buffer-name
