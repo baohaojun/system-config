@@ -154,7 +154,7 @@ bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
     Q_D(SnoreCore);
     if(backend == primaryNotificationBackend())
     {
-        return;
+        return true;
     }
     const QHash<QString,PluginContainer *> backends = PluginContainer::pluginCache(SnorePlugin::BACKEND);
     if(!backends.contains(backend))
