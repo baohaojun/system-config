@@ -21,7 +21,7 @@
 #define GROWL_BACKEND_H
 #include "core/plugins/snorebackend.h"
 
-#include <gntp/growl.hpp>
+#include "growl.hpp"
 #include <string>
 
 class GrowlBackend:public Snore::SnoreBackend

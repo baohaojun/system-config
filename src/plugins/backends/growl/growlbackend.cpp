@@ -23,8 +23,6 @@
 #include "core/snore_p.h"
 
 
-
-
 #include <QtCore>
 #include <QTcpSocket>
 
@@ -38,7 +36,7 @@ GrowlBackend::GrowlBackend():
     SnoreBackend("Growl",false,false),
     m_id(0)
 {
-
+    s_instance = this;
 }
 
 GrowlBackend::~GrowlBackend()
@@ -47,29 +45,22 @@ GrowlBackend::~GrowlBackend()
 
 bool GrowlBackend::initialize(SnoreCore *snore)
 {
-
-    QTcpSocket qsocket;
-    qsocket.connectToHost("localhost", 23053);
-    if(qsocket.waitForConnected(100))
+    if(Growl::init((GROWL_CALLBACK)&GrowlBackend::gntpCallback) && Growl::isRunning(GROWL_TCP))
     {
-        qsocket.write(QString("GNTP/1.0\r\n").toUtf8());
-        if(qsocket.waitForReadyRead(100))
-        {
-            snoreDebug( SNORE_DEBUG ) << QString::fromUtf8(qsocket.readAll());
-            s_instance = this;
-            Growl::setCallback((GROWL_CALLBACK)&GrowlBackend::gntpCallback);
-            return SnoreBackend::initialize(snore);
-        }
+        return SnoreBackend::initialize(snore);
     }
     snoreDebug( SNORE_DEBUG ) << "Growl is not running";
     return false;
-
 }
 
 bool GrowlBackend::deinitialize()
 {
-        s_instance = NULL;
-        return SnoreBackend::deinitialize();
+    if(!Growl::shutdown())
+    {
+        return false;
+    }
+    s_instance = NULL;
+    return SnoreBackend::deinitialize();
 }
 
 void GrowlBackend::slotRegisterApplication(const Application &application)
@@ -104,7 +95,7 @@ void GrowlBackend::slotNotify(Notification notification)
     QString alert = notification.alert().name();
     snoreDebug( SNORE_DEBUG ) << "Notify Growl:" <<notification.application() << alert << Snore::toPlainText(notification.title());
 
-    GrowlNotificationData data(growl, alert.toUtf8().constData(),notification.id(),
+    GrowlNotificationData data(alert.toUtf8().constData(),notification.id(),
                                Snore::toPlainText(notification.title()).toUtf8().constData(),
                                Snore::toPlainText(notification.text()).toUtf8().constData());
 
