@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+use Encode;
+use strict;
+use String::ShellQuote;
+my $ord = sprintf("%X", ord(decode_utf8($ARGV[0])));
+$ord = shell_quote($ord);
+system("(grep '$ord;' ~/.emacs_d/UnicodeData.txt | head -n 1; cat ~/.logs/ime-unicode.txt) | uniq-even-non-ajacent > ~/.logs/ime-unicode.$$");
+rename(glob("~/.logs/ime-unicode.$$"), glob("~/.logs/ime-unicode.txt"));

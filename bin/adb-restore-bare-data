@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+cd ~/today/forever/data-f9e6c95/data/
+sudo tar czfv ../data/debian.tgz debian start-debian2.sh --exclude-vcs
+sudo tar czfv ../data.tgz .
+remote-cmd root@phone 'mkdir -p ~/data; sshfs bhj@192.168.15.33:/home/bhj/today/forever/data-f9e6c95/ ~/data'

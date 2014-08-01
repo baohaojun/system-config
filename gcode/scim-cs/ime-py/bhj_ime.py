@@ -6,10 +6,20 @@ from ime_ascii import *
 from contextlib import contextmanager, closing
 import threading, special_keys, pickle
 from OrderedSet import OrderedSet
+import subprocess
 
 def debug(*args):
     print(*args)
     sys.stdout.flush()
+
+def get_shell_ouput(args):
+    """Invoke a pipe, and read the output back as a string"""
+    p = subprocess.Popen(args, stdout = subprocess.PIPE)
+    return p.stdout.read().decode('utf-8')
+
+def shell_command(args):
+    """Execute a shell command"""
+    subprocess.call(args)
 
 @contextmanager
 def autolock(lock):
@@ -247,6 +257,8 @@ class ime:
     page_size = 10 #max cands per page
     use_cand_as_comp = True
     def __init__(self, in_, out_):
+        self.escape_mode = False
+        self.__unicode_cands = []
         self.special_keys = special_keys.special_keys
         self.check_env();
         self.__on = False
@@ -292,8 +304,12 @@ class ime:
     def cand_index(self, value):
         self.__cand_index = value
 
-        if _g_ime_quail.has_quail(self.compstr):
-            num_cands = len(_g_ime_quail.get_cands(self.compstr))
+        if _g_ime_quail.has_quail(self.compstr) or self.compstr[0:2] == "zu" and self.__cands:
+            if _g_ime_quail.has_quail(self.compstr):
+                num_cands = len(_g_ime_quail.get_cands(self.compstr))
+            else:
+                num_cands = len(self.__unicode_cands)
+
             if not self.cand_index < num_cands:
                 self.cand_index = max(0, num_cands-1)
                 self.beepstr = 'Y'
@@ -304,7 +320,10 @@ class ime:
 
             min_cand = self.cand_index // ime.page_size * ime.page_size
             max_cand_p1 = min (min_cand + ime.page_size, num_cands)
-            self.__cands = _g_ime_quail.get_cands(self.compstr)[min_cand : max_cand_p1]
+            if _g_ime_quail.has_quail(self.compstr):
+                self.__cands = _g_ime_quail.get_cands(self.compstr)[min_cand : max_cand_p1]
+            else:
+                self.__cands = self.__unicode_cands[min_cand : max_cand_p1]
         elif self.compstr[0:2] != "zu":
             self.__cands = ()
 
@@ -439,6 +458,22 @@ class ime:
         else:
             self.__english_mode(key)
 
+    def is_selection_key(self, key):
+        """Handle selection keys"""
+        if key == 'C n' or key == 'C f' or key == 'down':
+            self.cand_index += 1
+            return True
+        elif key == 'C p' or key == 'C b' or key == 'up':
+            self.cand_index -= 1
+            return True
+        elif key == 'next':
+            self.cand_index += ime.page_size
+            return True
+        elif key == 'prior':
+            self.cand_index -= ime.page_size
+            return True
+        return False
+
     def cand_possible_before_key(self, key): #impossible after key
         global _g_ime_single_mode
         if key == 'return':
@@ -456,14 +491,8 @@ class ime:
             else:
                 self.__commit_cand()
                 self.__keyed_when_no_comp(key)
-        elif key == 'C n':
-            self.cand_index += ime.page_size
-        elif key == 'C p':
-            self.cand_index -= ime.page_size
-        elif key == 'C f':
-            self.cand_index += 1
-        elif key == 'C b':
-            self.cand_index -= 1
+        elif self.is_selection_key(key):
+            pass
         else:
             self.beepstr = 'y'
 
@@ -509,13 +538,39 @@ class ime:
 
     def keyed(self, arg):
         debug('keyed args:', arg)
+        escape_mode = self.escape_mode
         self.key = arg
         key = ime_keyboard(arg)
+        if key == 'escape':
+            self.escape_mode = True
+        else:
+            self.escape_mode = False
 
         if key == 'C \\':
             self.__toggle()
-        elif key == 'C g' or key == 'escape' or key == 'C /':
+        elif key == 'C y':
+            self.compstr += get_shell_ouput(["getclip"])
+        elif key == 'C g' or key == 'C /':
             self.compstr = ''
+        elif key == 'C v':
+            key = ime_keyboard('next')
+            self.keyed_when_comp(key)
+        elif key == 'escape' and escape_mode == True:
+            self.escape_mode = False
+            self.compstr = ''
+        elif escape_mode == True:
+            if key == 'v':
+                key = ime_keyboard('prior')
+                self.keyed_when_comp(key)
+            elif key == 'backspace':
+                last_word_re = re.compile(r'\b\w+\W*$')
+                match = last_word_re.search(self.compstr)
+                if match:
+                    self.compstr = self.compstr[0:match.start()]
+                else:
+                    self.compstr = ''
+            else:
+                pass
         elif not self.compstr:
             self.__keyed_when_no_comp(key)
         elif self.compstr[0:4] == '!add':
@@ -533,18 +588,45 @@ class ime:
 
 
 
+    def is_commit_key(self, key):
+        """Should we commit?"""
+        if self.compstr[0:2] == "zu":
+            if key == 'C space':
+                commitstr = self.__cands[self.cand_index % ime.page_size]
+                commitstr = commitstr.split()[0]
+                shell_command(["ime-commit-unicode", commitstr])
+                self.compstr = ''
+                self.__cands = []
+                self.commitstr = commitstr
+                return True
+            elif key == 'C return':
+                commitstr = "%0a".join(self.__unicode_cands)
+                self.compstr = ''
+                self.__cands = []
+                self.commitstr = commitstr
+                return True
 
     def __english_mode(self, key):
         if self.__cands:
-            if key == 'C n':
-                self.cand_index += ime.page_size
-            elif key == 'C p':
-                self.cand_index -= ime.page_size
-            elif key == 'C f':
-                self.cand_index += 1
-            elif key == 'C b':
-                self.cand_index -= 1
-            return
+            if self.is_selection_key(key):
+                return
+
+        if self.compstr[0:2] == "zu":
+            if (key == 'space' or self.__cands and key.isprint()):
+                if key == 'space' and self.compstr[-1] != ' ':
+                    self.compstr += ' '
+                else:
+                    self.compstr += key.name
+                if self.compstr != 'zu ':
+                    args = self.compstr[2:].split()
+                    out = get_shell_ouput(["get-unicode-char"] + args).split("\n")
+                    out = [x for x in out if x]
+                    self.__unicode_cands = out
+                    self.__cands = self.__unicode_cands[0 : 10]
+                return
+            elif self.is_commit_key(key):
+                return
+
         if self.compstr == '; ' and key == 'space':
             self.commitstr += '；'
             self.compstr = ''
@@ -557,10 +639,6 @@ class ime:
                 self.compstr = ''
             except:
                 pass
-        elif self.compstr[0:2] == "zu" and \
-             self.compstr[-1] == " " and \
-             key == 'space':
-            self.__cands = ("hello", "world")
         elif key.isprint():
             self.compstr += key.name
         elif key == 'backspace':
@@ -596,8 +674,11 @@ class ime:
         if self.__cands and ime.use_cand_as_comp:
             comp = ''
             try:
-                bytes(self.__cands[self.cand_index % ime.page_size], 'utf-8')
-                comp = self.__cands[self.cand_index % ime.page_size]
+                if self.compstr[0:2] == 'zu':
+                    comp = self.compstr
+                else:
+                    bytes(self.__cands[self.cand_index % ime.page_size], 'utf-8')
+                    comp = self.__cands[self.cand_index % ime.page_size]
             except:
                 comp = '?'
             self.__reply('comp: ' + comp)

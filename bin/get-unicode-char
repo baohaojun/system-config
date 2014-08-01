@@ -1,18 +1,24 @@
 #!/usr/bin/perl
 use strict;
 use Encode;
-open(my $unicodeData, "<", glob("~/.emacs_d/UnicodeData.txt")) or die "Can't open unicode file";
+my @patARGV = sort {length($b) <=> length($a)} @ARGV;
 
-@ARGV = sort {length($b) <=> length($a)} @ARGV;
+@ARGV = ();
+if (-e glob("~/.logs/ime-unicode.txt")) {
+    @ARGV = (glob("~/.logs/ime-unicode.txt"));
+}
+@ARGV = (@ARGV, glob("~/.emacs_d/UnicodeData.txt"));
 
 my @lines;
 my @argv_re;
-for (@ARGV) {
+for (@patARGV) {
     push @argv_re, qr(\Q$_\E)i;
 }
-while (<$unicodeData>) {
-    if (m/$argv_re[0]/) {
+my %lines;
+while (<>) {
+    if (m/$argv_re[0]/ and not $lines{$_}) {
         push @lines, $_;
+        $lines{$_} = 1;
     }
     if (@lines > 1000) {
         last;
@@ -29,6 +35,6 @@ for my $line (@lines) {
     }
     if ($match) {
         my ($code, $name) = split(';', $line);
-        print encode_utf8(chr(hex($code))), "   $name\n";
+        print encode_utf8(chr(hex($code))), " $name\n";
     }
 }

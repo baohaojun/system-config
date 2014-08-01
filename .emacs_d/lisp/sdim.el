@@ -114,7 +114,17 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
 
   (if sdim-minor-mode
       (run-mode-hooks 'sdim-minor-mode-hook)))
-
+(defun sdim--formalize-str (s)
+  (let ((replaces '(("%0a" . "\n")
+                    ("%20" . " ")
+                    ("%25" . "%")))
+        from to)
+    (while replaces
+      (setq from (caar replaces)
+            to (cdar replaces)
+            replaces (cdr replaces)
+            s (replace-regexp-in-string from to s)))
+    s))
 (defun sdim-got-ime-answer (answer)
   (let ((answer (split-string answer "\n" t)))
     (setq sdim-comp-str "" sdim-cands-str "" sdim-cand-index "0" sdim-beep? "" sdim-commit-str "" sdim-hint-str "" sdim-active? "")
@@ -125,7 +135,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
        ((string-match "^cands: " (car answer))
         (setq sdim-cands-str (substring (car answer) (match-end 0))))
        ((string-match "^commit: " (car answer))
-        (setq sdim-commit-str (substring (car answer) (match-end 0))))
+        (setq sdim-commit-str (sdim--formalize-str (substring (car answer) (match-end 0)))))
        ((string-match "^hint: " (car answer))
         (setq sdim-hint-str (substring (car answer) (match-end 0))))
        ((string-match "^beep: " (car answer))
@@ -238,7 +248,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
     (move-overlay sdim-overlay (point) (point)))
 
   (if (not (string-equal "" sdim-cands-str))
-      (let ((cands-list (mapcar (lambda (str) (replace-regexp-in-string "%20" " " str))
+      (let ((cands-list (mapcar #'sdim--formalize-str
                                  (split-string sdim-cands-str " ")))
              (cand-index (% (read sdim-cand-index) 10)))
         (setq sdim-comp-str (substring (nth cand-index cands-list) 0))
