@@ -1,0 +1,11 @@
+#+title: 微信中的Unicode表情字符
+# bhj-tags: programming
+* TODO 未完成
+  - State "TODO"       from ""           [2014-08-03 Sun 22:19]
+最近因为在写Emacs+Smartisan T1发微信、微博、聊QQ等的工具，研究了一下微信的emotican，实在是太有意思了，在此写出来，与大家分享。
+
+首先，在Android手机上，我所见的从多客户端只有微信重起炉灶，另搞了一套
+Unicode自定义字符空间里的字符来作emoji表情字符。其他家的比如微博、QQ、
+短信、邮件等都已经用标准的Unicode emoji表情字符了。
+
+我的目标是让 =:-)= 这样的古老的emoji等自动替换成 [[../../../../images/laugh-emoji.png][file:../../../../images/laugh-emoji.png]] 。

@@ -1,4 +1,10 @@
 #+title: General programming
+ * 2014
+  - 2014-08
+   * 2014-08-03
+
+     [[../../../blog/2014/08/03/0-emoji-in-weixin-and-unicode.org][微信中的Unicode表情字符]]
+
  * 2013
   - 2013-11
    * 2013-11-07

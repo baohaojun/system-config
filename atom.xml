@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[微信中的Unicode表情字符]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/08/03/0-emoji-in-weixin-and-unicode.html"/>
+    <updated>2014-20-03T22:08:18+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/08/03/0-emoji-in-weixin-and-unicode.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Smartisan T1 Wrench
 Smartisan T1小扳手使用指南]]></title>
     <link href="http://baohaojun.github.io/blog/2014/07/13/0-Smartisan-T1-Wrench.html"/>
@@ -65,11 +71,5 @@ Smartisan T1小扳手使用指南]]></title>
     <link href="http://baohaojun.github.io/blog/2013/11/07/0-programming-discovery.html"/>
     <updated>2013-11-09T23:25:05+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/11/07/0-programming-discovery.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Interactive Git Add]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/10/16/0-Interactive-Git-Add.html"/>
-    <updated>2013-10-16T10:53:22+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/10/16/0-Interactive-Git-Add.html</id>
   </entry>
 </feed>
