@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+use Encode;
+use strict;
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+my $chr = decode_utf8($ARGV[0]);
+if (length($chr) != 1) {
+    if (encode_utf8($chr) =~ m/^\d+$/) {
+        $chr = chr(encode_utf8($chr));
+        print encode_utf8($chr);
+    } elsif (encode_utf8($chr) =~ m/^0x/i) {
+        $chr = chr(hex(encode_utf8($chr)));
+        print encode_utf8($chr);
+    }
+} else {
+    printf("chr %s is decimal %d, hex %x\n", encode_utf8($chr), ord($chr), ord($chr));
+}
