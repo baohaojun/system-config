@@ -9,6 +9,7 @@ elif test $(basename $0) = adb-backup-data; then
     sudo rsync root@phone:/android/data  . -avz --exclude-from /home/bhj/etc/adb-sync-data-exclude --delete --delete-excluded
 elif test $(basename $0) = adb-restore-data; then
     cd ~/today/forever/data-f9e6c95
+    adb-fix-gms
     sudo rsync data root@phone:/android/ -av "$@" --delete
 elif test $(basename $0) = adb-restore-system; then
     cd ~/today/forever/system-f9e6c95
