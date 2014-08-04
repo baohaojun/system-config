@@ -9,6 +9,7 @@ data/diag_logs
 data/dontpanic
 data/media/0/Download
 data/media/0/smartisan
+data/media/0/current
 data/system/dropbox
 data/tombstones
 data/debian/var/cache/apt/archives/*.deb

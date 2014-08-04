@@ -64,7 +64,8 @@ if test $(basename $0) = adb-fix-gms; then
             adb romount
         fi
         if test "$(adb netcfg | grep wlan0 | pn 5)" = 00:0a:f5:79:b2:54; then
-            adb wifimactool -b 00:0c:f5:99:b2:54 00:0c:f5:99:b2:56
+            wifi_mac=$( (echo -n 000af5; adb devices? | md5sum) | cut -b 1-11 | perl -npe 's/../$&:/g')
+            adb wifimactool -b ${wifi_mac}2 ${wifi_mac}4
             adb reboot
         fi
         adb start

@@ -334,7 +334,10 @@ class ime:
     @commitstr.setter
     def commitstr(self, value):
         assert isinstance(value, str), "commitstr must be set to be a string"
-        self.__commitstr = value
+        if self.last_key == "=" and value == "》":
+            self.__commitstr = "> "
+        else:
+            self.__commitstr = value
         self.last_key = self.key
 
     @property
@@ -372,8 +375,6 @@ class ime:
 
     def __error(self):
         exc_info = sys.exc_info()
-        traceback.print_stack()
-        sys.stderr.flush()
         debug("%s: %s\n" % (repr(exc_info[0]), repr(exc_info[1])))
         self.__write("%s: %s\n" % (repr(exc_info[0]), repr(exc_info[1])))
 
@@ -407,7 +408,9 @@ class ime:
                 else:
                     eval('self.%s' % func)(arg)
             except:
+                traceback.print_exc()
                 self.__error()
+                sys.stderr.flush()
             finally:
                 self.__qa_end()
 
@@ -590,8 +593,10 @@ class ime:
 
     def is_commit_key(self, key):
         """Should we commit?"""
-        if self.compstr[0:2] == "zu":
-            if key == 'C space':
+        if self.compstr[0:2] == "zu" and self.__cands:
+            if key == 'space' or key.isdigit():
+                if key.isdigit():
+                    self.cand_index = (int(key.name) + 9) % 10 + self.cand_index // 10 * 10;
                 commitstr = self.__cands[self.cand_index % ime.page_size]
                 commitstr = commitstr.split()[0]
                 shell_command(["ime-commit-unicode", commitstr])
@@ -612,19 +617,21 @@ class ime:
                 return
 
         if self.compstr[0:2] == "zu":
-            if (key == 'space' or self.__cands and key.isprint()):
-                if key == 'space' and self.compstr[-1] != ' ':
-                    self.compstr += ' '
-                else:
+            if self.is_commit_key(key):
+                return
+            if (key == '.' or key != 'space'):
+                if key == '.' and self.compstr[-1] != '.':
+                    self.compstr += '.'
+                elif key.isgraph():
                     self.compstr += key.name
-                if self.compstr != 'zu ':
-                    args = self.compstr[2:].split()
+                elif key == 'backspace':
+                    self.compstr = self.compstr[0:-1]
+                if len(self.compstr) > 4:
+                    args = self.compstr[2:].split('.')
                     out = get_shell_ouput(["get-unicode-char"] + args).split("\n")
                     out = [x for x in out if x]
                     self.__unicode_cands = out
                     self.__cands = self.__unicode_cands[0 : 10]
-                return
-            elif self.is_commit_key(key):
                 return
 
         if self.compstr == '; ' and key == 'space':

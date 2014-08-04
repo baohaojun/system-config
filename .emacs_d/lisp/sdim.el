@@ -250,8 +250,9 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
   (if (not (string-equal "" sdim-cands-str))
       (let ((cands-list (mapcar #'sdim--formalize-str
                                  (split-string sdim-cands-str " ")))
-             (cand-index (% (read sdim-cand-index) 10)))
-        (setq sdim-comp-str (substring (nth cand-index cands-list) 0))
+            (cand-index (% (read sdim-cand-index) 10)))
+        (unless (string-match "^zu" sdim-comp-str)
+         (setq sdim-comp-str (substring (nth cand-index cands-list) 0)))
         (let ((i 0))
           (setq sdim-cands-str "")
           (mapc (lambda (str)

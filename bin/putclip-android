@@ -5,15 +5,23 @@ if test $(basename $0) = putclip-android; then
         set -- "$(ask-for-input-with-emacs)"
     fi
     set -- "$(echo "$@")"
-    echo -n "$@" > ~/.logs/$(basename $0).txt
-    adb push ~/.logs/$(basename $0).txt /sdcard/putclip.txt
+    echo -n "$@" |emoji-to-unicode.pl > ~/.logs/$(basename $0).txt
+    adb push ~/.logs/$(basename $0).txt /sdcard/putclip.txt&
+    unicode-to-wx.pl ~/.logs/$(basename $0).txt > ~/.logs/$(basename $0).txt.wx
+    adb push ~/.logs/$(basename $0).txt.wx /sdcard/putclip-wx.txt
     adb "
          am startservice -n com.bhj.setclip/.PutClipService&
          for x in \$(seq 1 20); do if test -e /sdcard/putclip.txt; then busybox sleep .1; echo \$x; else exit; fi; done"
-else
+elif test $(basename $0) = getclip-android; then
     adb '
         rm -f /sdcard/putclip.txt
         am startservice -n com.bhj.setclip/.PutClipService --ei getclip 1 >/dev/null 2>&1&
         for x in $(seq 1 20); do if test -e /sdcard/putclip.txt; then cat /sdcard/putclip.txt; break; else sleep .1; fi; done
+' | cat
+elif test $(basename $0) = gettask-android; then
+     adb '
+         rm -f /sdcard/putclip.txt
+         am startservice -n com.bhj.setclip/.PutClipService --ei gettask 1 >/dev/null 2>&1&
+         for x in $(seq 1 20); do if test -e /sdcard/putclip.txt; then cat /sdcard/putclip.txt; break; else sleep .1; fi; done
 ' | cat
 fi
