@@ -1,5 +1,7 @@
 package com.bhj.setclip;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Service;
 import android.content.ClipboardManager;
 import android.content.ClipData;
@@ -19,6 +21,12 @@ public class PutClipService extends Service {
         return null;
     }
 
+    private String getTask() {
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
+        return foregroundTaskInfo .topActivity.getPackageName();
+    }
+
     @Override
     public int onStartCommand(Intent intent,  int flags,  int startId)  {
         try {
@@ -26,6 +34,13 @@ public class PutClipService extends Service {
             if (picName != null) {
                 picName = picName.replaceFirst("^/sdcard/", "");
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(Environment.getExternalStorageDirectory(), picName))));
+            } else if (intent.getIntExtra("gettask", 0) == 1) {
+                String foregroundTaskPackageName = getTask();
+                FileWriter f = new FileWriter(new File(Environment.getExternalStorageDirectory(), "putclip.txt.1"));
+                f.write(foregroundTaskPackageName);
+                f.close();
+                File txt = new File(Environment.getExternalStorageDirectory(), "putclip.txt.1");
+                txt.renameTo(new File(Environment.getExternalStorageDirectory(), "putclip.txt"));
             } else if (intent.getIntExtra("getclip", 0) == 1) {
                 FileWriter f = new FileWriter(new File(Environment.getExternalStorageDirectory(), "putclip.txt.1"));
                 ClipboardManager mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
@@ -36,6 +51,10 @@ public class PutClipService extends Service {
                 txt.renameTo(new File(Environment.getExternalStorageDirectory(), "putclip.txt"));
             } else {
                 FileReader f = new FileReader(new File(Environment.getExternalStorageDirectory(), "putclip.txt"));
+                if (getTask().equals("com.tencent.mm")) {
+                    f.close();
+                    f = new FileReader(new File(Environment.getExternalStorageDirectory(), "putclip-wx.txt"));
+                }
                 char[] buffer = new char[1024 * 1024];
                 int n = f.read(buffer);
                 String str = new String(buffer, 0, n);
