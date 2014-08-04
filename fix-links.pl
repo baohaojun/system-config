@@ -21,7 +21,7 @@ sub fix_link($)
     if ($link =~ m!^~/!) {
         $link =~ s!^~/!$ENV{HOME}/!;
         chomp(my $abs_path = qx(readlink -f $link));
-        if ($abs_path !~ m!^$ENV{HOME}/doc/baohaojun/!) {
+        if ($abs_path !~ m!^$ENV{PWD}/!) {
             my $base;
             while (1) {
                 chomp(my $opt = qx(select-args open keep));
@@ -39,8 +39,8 @@ sub fix_link($)
                 }
             }
 
-            system("mv $link $ENV{HOME}/doc/baohaojun/images/$base");
-            $link = "$ENV{HOME}/doc/baohaojun/images/$base";
+            system("mv $link $ENV{PWD}/images/$base");
+            $link = "$ENV{PWD}/images/$base";
         }
     }
 
