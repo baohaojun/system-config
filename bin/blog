@@ -1,7 +1,13 @@
 #!/bin/bash
 
 set -e
-cd ~/doc/baohaojun/
+blogdir=~/doc/baohaojun
+do_blog=$(lookup-file -e .do-blog) || true
+if test -e "$do_blog"; then
+    blogdir=$(dirname $do_blog)
+fi
+cd $blogdir
+mkdir -p meta/tags
 dir=blog/$(today|tr - /)
 mkdir -p $dir
 
@@ -63,7 +69,7 @@ if test "$#" != 0; then
                 link=http://baohaojun.github.io/${blog#./}
                 link=${link%.org}.html
             fi
-            putclip "[[$link][$(grep -i -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//i')]]"
+            putclip "[[$link][$(grep -i -e '#.title:' "$blog (TODO)"|perl -npe 's/#.title:\s*//i')]]"
             ;;
         u)
             shift
@@ -71,7 +77,7 @@ if test "$#" != 0; then
             ;;
         e)
             shift
-            cd ~/doc/baohaojun/
+            cd $blogdir
             e "$@"
             ;;
         *)
@@ -83,7 +89,7 @@ fi
 
 test "$title" || title=$(ask what is your new blog title)
 test "$tags" || {
-    tags=$(ask -- what are your new blog\'s tags? One of: "$(echo; cd ~/doc/baohaojun/meta/tags; for x in *.desc; do echo -n ${x%.desc}:\ ; cat $x; done)")
+    tags=$(ask -- what are your new blog\'s tags? One of: "$(echo; cd $blogdir/meta/tags; for x in *.desc; do echo -n ${x%.desc}:\ ; cat $x; done)")
     if echo $tags|grep : -q; then
         echo "$tags" | while read tag desc; do
             tag=${tag%:}

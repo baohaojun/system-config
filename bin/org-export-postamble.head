@@ -1,6 +1,11 @@
 #!/bin/bash
 export ORG_FILE_NAME=$1
-final_url=http://baohaojun.github.io/$(echo "$1" | perl -npe 's!.*doc/baohaojun/!!; s/\.org/.html/')
+website=http://baohaojun.github.io/
+START_DIR=${START_DIR:-$PWD}
+if test -e $START_DIR/.do-blog-site; then
+    website=$(cat $START_DIR/.do-blog-site)
+fi
+final_url=$website$(readlink -f "$1" | perl -npe 's!$ENV{START_DIR}/!!; s/\.org/.html/')
 cat <<EOF
 <!-- {%html-mode%} -->
 

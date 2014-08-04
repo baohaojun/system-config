@@ -95,7 +95,7 @@ function get-tags()
     done
 }
 
-if git remote -v | grep baohaojun.github.com.git; then
+if test -e ".do-blog"; then
     (
         cd $(dirname $(lookup-file .git))
         for x in *.org; do
@@ -228,6 +228,9 @@ fi
 
 git pull --rebase
 git push origin HEAD:refs/heads/$branch || die "you need to merge it!"
+if test -e .after-push-hook; then
+    bash .after-push-hook
+fi
 
 if test $(pwd) = ~/system-config; then
     CHECKING_SUBMODULE= git-notify-push
