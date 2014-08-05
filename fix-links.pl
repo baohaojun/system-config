@@ -24,7 +24,8 @@ sub fix_link($)
         if ($abs_path !~ m!^$ENV{PWD}/!) {
             my $base;
             while (1) {
-                chomp(my $opt = qx(select-args open keep));
+                my $abs_path_q = shell_quote("what to do for $abs_path");
+                chomp(my $opt = qx(select-args -p $abs_path_q open keep));
                 if ($opt eq "open") {
                     system("of $link&");
                     system(qq!sawfish-client -e '(event-name (read-event "Press any key to continue..."))' !);

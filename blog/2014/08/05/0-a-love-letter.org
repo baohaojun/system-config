@@ -62,7 +62,7 @@ perl -e '$x = "😃"; use Encode; $x=decode_utf8($x); for (0..1800) { print ":",
 
 在Web版的微信里，发出去的是这样的：
 
-[[/home/bhj/shots/2014-08-06-00.30.30.png][file:/home/bhj/shots/2014-08-06-00.30.30.png]]
+[[../../../../images/web-qq.png][file:../../../../images/web-qq.png]]
 
 在手机上，我看到的是这样的：
 
