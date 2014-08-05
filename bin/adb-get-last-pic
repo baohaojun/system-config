@@ -7,7 +7,10 @@ elif echo "$1" | grep d -i; then
     dir=/sdcard/Download/
 fi
 
-pic=$(adb busybox ls -t -1 $dir|head -n 1|perl -npe 's/\033.*?m//g')
+pic=$(adb busybox ls -t -1 $dir|head -n 1|perl -npe 's/\033.*?m//g; s/\?+/*/g')
+if [[ $pic =~ \* ]]; then
+    pic=$(adb bash -c "ls $dir/$pic"|perl -npe 's!.*/!!')
+fi
 cd ~/Pictures/
 adb pull $dir/$pic
 up $pic
