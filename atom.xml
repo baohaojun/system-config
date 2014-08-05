@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[一封情书]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/08/05/0-a-love-letter.html"/>
+    <updated>2014-04-06T01:08:43+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/08/05/0-a-love-letter.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[微信中的Unicode表情字符]]></title>
     <link href="http://baohaojun.github.io/blog/2014/08/03/0-emoji-in-weixin-and-unicode.html"/>
     <updated>2014-08-03T22:20:58+08:00</updated>
@@ -65,11 +71,5 @@ Smartisan T1小扳手使用指南]]></title>
     <link href="http://baohaojun.github.io/blog/2013/12/11/0-ssh-remote-command-and-bash--c-string.html"/>
     <updated>2013-12-11T14:05:50+08:00</updated>
     <id>http://baohaojun.github.io/blog/2013/12/11/0-ssh-remote-command-and-bash--c-string.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[发现式编程]]></title>
-    <link href="http://baohaojun.github.io/blog/2013/11/07/0-programming-discovery.html"/>
-    <updated>2013-11-09T23:25:05+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2013/11/07/0-programming-discovery.html</id>
   </entry>
 </feed>

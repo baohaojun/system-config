@@ -1,148 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<title>一封情书</title>
-<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta  name="generator" content="Org-mode" />
-<meta  name="author" content="Bao Haojun" />
-<link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="shortcut icon" href="/poison.png" type="image/png" />
-
-    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript">
-        var BYB = {};
-    </script>
-    <script type="text/javascript">
-        BYB.includeScript = function(file,callback){
-            var _doc = document.getElementsByTagName('head')[0];
-            var js = document.createElement('script');
-            js.setAttribute('type', 'text/javascript');
-            js.setAttribute('src', file);
-            _doc.appendChild(js);
-
-            if (!/*@cc_on!@*/0) { //if not IE
-                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
-                js.onload = function () {
-                    callback();
-                }
-            } else {
-                //IE6、IE7 support js.onreadystatechange
-                js.onreadystatechange = function () {
-                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
-                        callback();
-                    }
-                }
-            }
-            return false;
-        }
-    </script>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
-</head>
-<body>
-<div id="preamble" class="status">
-<div id="header">
-
-  <h1 id="blog-title">
-
-    包昊军的博客
-
-  </h1>
-  <p id="description">What you don't know, won't hurt you.</p>
-
-</div>
-</div>
-<div id='bhj_article'>
-  <div id='bhj_leftpane'>
-<div id="content">
-<h1 class="title">一封情书</h1>
-<p>
+#+title: 一封情书
+# bhj-tags: tool
 这是一封让人面红耳赤、心惊肉跳、非常🐮逼的情书
-（<a href="images/love-letter.png"><img src="images/love-letter.png" alt="love-letter.png" /></a>），未满十八岁者请由父母陪同阅
+（[[../../../../images/love-letter.png][file:../../../../images/love-letter.png]]），未满十八岁者请由父母陪同阅
 读。
-</p>
 
-<p>
 话说我用Emacs+Smartisan T1发微博、聊微信/QQ、发朋友圈、回邮件、回短信
 等等已经不是一天两天了，中间基本上非常爽，唯一觉得美中不足的是，我没有
-办法发表情符号，每次只能很老土的发一个 <code>:-)</code> ，或者发一个 <code>:-(</code> ，土死
+办法发表情符号，每次只能很老土的发一个 =:-)= ，或者发一个 =:-(= ，土死
 了，是吧。
-</p>
 
-<p>
-作为一个逼格颇高（见我的 <a href="blog/2012/01/31/beagrep-cn.html">逼格咧</a> 开源项目）的老黑客，我急切的需要向这个
-世界宣布，我也可以很90后，我除了 <code>:-)</code> 和 <code>:-(</code> ，还会用 😁 和 😞 。相应
+作为一个逼格颇高（见我的 [[../../../2012/01/31/beagrep-cn.org][逼格咧]] 开源项目）的老黑客，我急切的需要向这个
+世界宣布，我也可以很90后，我除了 =:-)= 和 =:-(= ，还会用 😁 和 😞 。相应
 地，如果在手机上聊QQ、微信的话，我还会用
-<a href="mood-smile.png"><img src="mood-smile.png" alt="mood-smile.png" /></a> 和
-<a href="images/disappointed-face.png"><img src="images/disappointed-face.png" alt="disappointed-face.png" /></a> 。
-</p>
+[[../../../../mood-smile.png][file:../../../../mood-smile.png]] 和
+[[../../../../images/disappointed-face.png][file:../../../../images/disappointed-face.png]] 。
 
-<p>
 所以我就开始着手研究这个问题。首先，在Android上，几乎所有的Unicode表情
 字符，Android都给它定制了一种彩色的字体，这个不知道它是怎么做到的。但
 是用起来的感觉的确超级棒。
-</p>
 
-<p>
 于是几乎所有Android的应用程序都自动支持了这些表情，我只要打出 😞 然后从
 手机上发出去，手机上的显示自动就成了
-<a href="images/disappointed-face.png"><img src="images/disappointed-face.png" alt="disappointed-face.png" /></a> 的样子。
-</p>
+[[../../../../images/disappointed-face.png][file:../../../../images/disappointed-face.png]] 的样子。
 
-<p>
 问题出在微信上。它自起炉灶自己在Unicode的Private私有定制区里造了一堆的
 表情符号，然后如果我打个 😞 再用微信发出去的话，手机上显示的是两个点点
-<code>..</code> 。这让我非常地头大，联系到本文的题目，这简直是逼我这个纯情的老黑
+=..= 。这让我非常地头大，联系到本文的题目，这简直是逼我这个纯情的老黑
 客同时追两个姑娘，一个美国的，点头Yes摇头No，另一个印度的，刚好反一反！ 😭 。
-</p>
 
-<p>
 我一直没有想到好的办法解决这个问题，郁闷啊郁闷。一度想要吞枪，不是自杀，
 而是身为一个黑客，有时候不得不干点苦力活，英文叫bite the bullet，很洋
 气是吧。我就想，我先在QQ里发一个笑脸，然后把字符拷贝回到PC上，然后在微
@@ -150,98 +35,57 @@ for the JavaScript code in this tag.
 每个QQ(Unicode)表情字符和微信的表情字符是怎么对应的给一一对照出来，以
 后我在Emacs里统一打标准的Unicode表情字符，然后如果要在微信里发的话，就
 查一下这个表，挨个翻译一下。
-</p>
 
-<p>
 很庆幸我没有这样做，因为我真的是好懒啊。懒惰，是黑客的美德。
-</p>
 
-<p>
 因为我偶然发现有一个很简单的方法，可以帮我找出这个字符表的对应关系。
-</p>
 
-<p>
 那就是，Web版的微信:-)
-</p>
 
-<p>
 在Web版的微信里，你可以用标准的Unicode表情字符！到了手机上，它会自动翻
 译成微信版的表情！ 👏 （这是一个鼓掌的Unicode，但是很可惜，我的系统上显
 示不出来）
-</p>
 
-<p>
 所以我写了一段脚本，
-</p>
 
-<div class="org-src-container">
+#+BEGIN_SRC sh
+perl -e '$x = "😃"; use Encode; $x=decode_utf8($x); for (0..1800) { print ":", encode_utf8 chr(ord($x) + -1541 + $_)}'
+#+END_SRC
 
-<pre class="src src-sh">perl -e <span class="org-string">'$x = "&#128515;"; use Encode; $x=decode_utf8($x); for (0..1800) { print ":", encode_utf8 chr(ord($x) + -1541 + $_)}'</span>
-</pre>
-</div>
-
-<p>
 它的输出结果是这样的：
-</p>
 
-<pre class="example">
+#+BEGIN_EXAMPLE
 :𞿾:𞿿:🀀:🀁:🀂:🀃:🀄:🀅:🀆:🀇:🀈:🀉:🀊:🀋:🀌:🀍:🀎:🀏:🀐:🀑:🀒:🀓:🀔:🀕:🀖:🀗:🀘:🀙:🀚:🀛:🀜:🀝:🀞:🀟:🀠:🀡:🀢:🀣:🀤:🀥:🀦:🀧:🀨:🀩:🀪:🀫:🀬:🀭:🀮:🀯:🀰:🀱:🀲:🀳:🀴:🀵:🀶:🀷:🀸:🀹:🀺:🀻:🀼:🀽:🀾:🀿:🁀:🁁:🁂:🁃:🁄:🁅:🁆:🁇:🁈:🁉:🁊:🁋:🁌:🁍:🁎:🁏:🁐:🁑:🁒:🁓:🁔:🁕:🁖:🁗:🁘:🁙:🁚:🁛:🁜:🁝:🁞:🁟:🁠:🁡:🁢:🁣:🁤:🁥:🁦:🁧:🁨:🁩:🁪:🁫:🁬:🁭:🁮:🁯:🁰:🁱:🁲:🁳:🁴:🁵:🁶:🁷:🁸:🁹:🁺:🁻:🁼:🁽:🁾:🁿:🂀:🂁:🂂:🂃:🂄:🂅:🂆:🂇:🂈:🂉:🂊:🂋:🂌:🂍:🂎:🂏:🂐:🂑:🂒:🂓:🂔:🂕:🂖:🂗:🂘:🂙:🂚:🂛:🂜:🂝:🂞:🂟:🂠:🂡:🂢:🂣:🂤:🂥:🂦:🂧:🂨:🂩:🂪:🂫:🂬:🂭:🂮:🂯:🂰:🂱:🂲:🂳:🂴:🂵:🂶:🂷:🂸:🂹:🂺:🂻:🂼:🂽:🂾:🂿:🃀:🃁:🃂:🃃:🃄:🃅:🃆:🃇:🃈:🃉:🃊:🃋:🃌:🃍:🃎:🃏:🃐:🃑:🃒:🃓:🃔:🃕:🃖:🃗:🃘:🃙:🃚:🃛:🃜:🃝:🃞:🃟:🃠:🃡:🃢:🃣:🃤:🃥:🃦:🃧:🃨:🃩:🃪:🃫:🃬:🃭:🃮:🃯:🃰:🃱:🃲:🃳:🃴:🃵:🃶:🃷:🃸:🃹:🃺:🃻:🃼:🃽:🃾:🃿:🄀:🄁:🄂:🄃:🄄:🄅:🄆:🄇:🄈:🄉:🄊:🄋:🄌:🄍:🄎:🄏:🄐:🄑:🄒:🄓:🄔:🄕:🄖:🄗:🄘:🄙:🄚:🄛:🄜:🄝:🄞:🄟:🄠:🄡:🄢:🄣:🄤:🄥:🄦:🄧:🄨:🄩:🄪:🄫:🄬:🄭:🄮:🄯:🄰:🄱:🄲:🄳:🄴:🄵:🄶:🄷:🄸:🄹:🄺:🄻:🄼:🄽:🄾:🄿:🅀:🅁:🅂:🅃:🅄:🅅:🅆:🅇:🅈:🅉:🅊:🅋:🅌:🅍:🅎:🅏:🅐:🅑:🅒:🅓:🅔:🅕:🅖:🅗:🅘:🅙:🅚:🅛:🅜:🅝:🅞:🅟:🅠:🅡:🅢:🅣:🅤:🅥:🅦:🅧:🅨:🅩:🅪:🅫:🅬:🅭:🅮:🅯:🅰:🅱:🅲:🅳:🅴:🅵:🅶:🅷:🅸:🅹:🅺:🅻:🅼:🅽:🅾:🅿:🆀:🆁:🆂:🆃:🆄:🆅:🆆:🆇:🆈:🆉:🆊:🆋:🆌:🆍:🆎:🆏:🆐:🆑:🆒:🆓:🆔:🆕:🆖:🆗:🆘:🆙:🆚:🆛:🆜:🆝:🆞:🆟:🆠:🆡:🆢:🆣:🆤:🆥:🆦:🆧:🆨:🆩:🆪:🆫:🆬:🆭:🆮:🆯:🆰:🆱:🆲:🆳:🆴:🆵:🆶:🆷:🆸:🆹:🆺:🆻:🆼:🆽:🆾:🆿:🇀:🇁:🇂:🇃:🇄:🇅:🇆:🇇:🇈:🇉:🇊:🇋:🇌:🇍:🇎:🇏:🇐:🇑:🇒:🇓:🇔:🇕:🇖:🇗:🇘:🇙:🇚:🇛:🇜:🇝:🇞:🇟:🇠:🇡:🇢:🇣:🇤:🇥:🇦:🇧:🇨:🇩:🇪:🇫:🇬:🇭:🇮:🇯:🇰:🇱:🇲:🇳:🇴:🇵:🇶:🇷:🇸:🇹:🇺:🇻:🇼:🇽:🇾:🇿:🈀:🈁:🈂:🈃:🈄:🈅:🈆:🈇:🈈:🈉:🈊:🈋:🈌:🈍:🈎:🈏:🈐:🈑:🈒:🈓:🈔:🈕:🈖:🈗:🈘:🈙:🈚:🈛:🈜:🈝:🈞:🈟:🈠:🈡:🈢:🈣:🈤:🈥:🈦:🈧:🈨:🈩:🈪:🈫:🈬:🈭:🈮:🈯:🈰:🈱:🈲:🈳:🈴:🈵:🈶:🈷:🈸:🈹:🈺:🈻:🈼:🈽:🈾:🈿:🉀:🉁:🉂:🉃:🉄:🉅:🉆:🉇:🉈:🉉:🉊:🉋:🉌:🉍:🉎:🉏:🉐:🉑:🉒:🉓:🉔:🉕:🉖:🉗:🉘:🉙:🉚:🉛:🉜:🉝:🉞:🉟:🉠:🉡:🉢:🉣:🉤:🉥:🉦:🉧:🉨:🉩:🉪:🉫:🉬:🉭:🉮:🉯:🉰:🉱:🉲:🉳:🉴:🉵:🉶:🉷:🉸:🉹:🉺:🉻:🉼:🉽:🉾:🉿:🊀:🊁:🊂:🊃:🊄:🊅:🊆:🊇:🊈:🊉:🊊:🊋:🊌:🊍:🊎:🊏:🊐:🊑:🊒:🊓:🊔:🊕:🊖:🊗:🊘:🊙:🊚:🊛:🊜:🊝:🊞:🊟:🊠:🊡:🊢:🊣:🊤:🊥:🊦:🊧:🊨:🊩:🊪:🊫:🊬:🊭:🊮:🊯:🊰:🊱:🊲:🊳:🊴:🊵:🊶:🊷:🊸:🊹:🊺:🊻:🊼:🊽:🊾:🊿:🋀:🋁:🋂:🋃:🋄:🋅:🋆:🋇:🋈:🋉:🋊:🋋:🋌:🋍:🋎:🋏:🋐:🋑:🋒:🋓:🋔:🋕:🋖:🋗:🋘:🋙:🋚:🋛:🋜:🋝:🋞:🋟:🋠:🋡:🋢:🋣:🋤:🋥:🋦:🋧:🋨:🋩:🋪:🋫:🋬:🋭:🋮:🋯:🋰:🋱:🋲:🋳:🋴:🋵:🋶:🋷:🋸:🋹:🋺:🋻:🋼:🋽:🋾:🋿:🌀:🌁:🌂:🌃:🌄:🌅:🌆:🌇:🌈:🌉:🌊:🌋:🌌:🌍:🌎:🌏:🌐:🌑:🌒:🌓:🌔:🌕:🌖:🌗:🌘:🌙:🌚:🌛:🌜:🌝:🌞:🌟:🌠:🌡:🌢:🌣:🌤:🌥:🌦:🌧:🌨:🌩:🌪:🌫:🌬:🌭:🌮:🌯:🌰:🌱:🌲:🌳:🌴:🌵:🌶:🌷:🌸:🌹:🌺:🌻:🌼:🌽:🌾:🌿:🍀:🍁:🍂:🍃:🍄:🍅:🍆:🍇:🍈:🍉:🍊:🍋:🍌:🍍:🍎:🍏:🍐:🍑:🍒:🍓:🍔:🍕:🍖:🍗:🍘:🍙:🍚:🍛:🍜:🍝:🍞:🍟:🍠:🍡:🍢:🍣:🍤:🍥:🍦:🍧:🍨:🍩:🍪:🍫:🍬:🍭:🍮:🍯:🍰:🍱:🍲:🍳:🍴:🍵:🍶:🍷:🍸:🍹:🍺:🍻:🍼:🍽:🍾:🍿:🎀:🎁:🎂:🎃:🎄:🎅:🎆:🎇:🎈:🎉:🎊:🎋:🎌:🎍:🎎:🎏:🎐:🎑:🎒:🎓:🎔:🎕:🎖:🎗:🎘:🎙:🎚:🎛:🎜:🎝:🎞:🎟:🎠:🎡:🎢:🎣:🎤:🎥:🎦:🎧:🎨:🎩:🎪:🎫:🎬:🎭:🎮:🎯:🎰:🎱:🎲:🎳:🎴:🎵:🎶:🎷:🎸:🎹:🎺:🎻:🎼:🎽:🎾:🎿:🏀:🏁:🏂:🏃:🏄:🏅:🏆:🏇:🏈:🏉:🏊:🏋:🏌:🏍:🏎:🏏:🏐:🏑:🏒:🏓:🏔:🏕:🏖:🏗:🏘:🏙:🏚:🏛:🏜:🏝:🏞:🏟:🏠:🏡:🏢:🏣:🏤:🏥:🏦:🏧:🏨:🏩:🏪:🏫:🏬:🏭:🏮:🏯:🏰:🏱:🏲:🏳:🏴:🏵:🏶:🏷:🏸:🏹:🏺:🏻:🏼:🏽:🏾:🏿:🐀:🐁:🐂:🐃:🐄:🐅:🐆:🐇:🐈:🐉:🐊:🐋:🐌:🐍:🐎:🐏:🐐:🐑:🐒:🐓:🐔:🐕:🐖:🐗:🐘:🐙:🐚:🐛:🐜:🐝:🐞:🐟:🐠:🐡:🐢:🐣:🐤:🐥:🐦:🐧:🐨:🐩:🐪:🐫:🐬:🐭:🐮:🐯:🐰:🐱:🐲:🐳:🐴:🐵:🐶:🐷:🐸:🐹:🐺:🐻:🐼:🐽:🐾:🐿:👀:👁:👂:👃:👄:👅:👆:👇:👈:👉:👊:👋:👌:👍:👎:👏:👐:👑:👒:👓:👔:👕:👖:👗:👘:👙:👚:👛:👜:👝:👞:👟:👠:👡:👢:👣:👤:👥:👦:👧:👨:👩:👪:👫:👬:👭:👮:👯:👰:👱:👲:👳:👴:👵:👶:👷:👸:👹:👺:👻:👼:👽:👾:👿:💀:💁:💂:💃:💄:💅:💆:💇:💈:💉:💊:💋:💌:💍:💎:💏:💐:💑:💒:💓:💔:💕:💖:💗:💘:💙:💚:💛:💜:💝:💞:💟:💠:💡:💢:💣:💤:💥:💦:💧:💨:💩:💪:💫:💬:💭:💮:💯:💰:💱:💲:💳:💴:💵:💶:💷:💸:💹:💺:💻:💼:💽:💾:💿:📀:📁:📂:📃:📄:📅:📆:📇:📈:📉:📊:📋:📌:📍:📎:📏:📐:📑:📒:📓:📔:📕:📖:📗:📘:📙:📚:📛:📜:📝:📞:📟:📠:📡:📢:📣:📤:📥:📦:📧:📨:📩:📪:📫:📬:📭:📮:📯:📰:📱:📲:📳:📴:📵:📶:📷:📸:📹:📺:📻:📼:📽:📾:📿:🔀:🔁:🔂:🔃:🔄:🔅:🔆:🔇:🔈:🔉:🔊:🔋:🔌:🔍:🔎:🔏:🔐:🔑:🔒:🔓:🔔:🔕:🔖:🔗:🔘:🔙:🔚:🔛:🔜:🔝:🔞:🔟:🔠:🔡:🔢:🔣:🔤:🔥:🔦:🔧:🔨:🔩:🔪:🔫:🔬:🔭:🔮:🔯:🔰:🔱:🔲:🔳:🔴:🔵:🔶:🔷:🔸:🔹:🔺:🔻:🔼:🔽:🔾:🔿:🕀:🕁:🕂:🕃:🕄:🕅:🕆:🕇:🕈:🕉:🕊:🕋:🕌:🕍:🕎:🕏:🕐:🕑:🕒:🕓:🕔:🕕:🕖:🕗:🕘:🕙:🕚:🕛:🕜:🕝:🕞:🕟:🕠:🕡:🕢:🕣:🕤:🕥:🕦:🕧:🕨:🕩:🕪:🕫:🕬:🕭:🕮:🕯:🕰:🕱:🕲:🕳:🕴:🕵:🕶:🕷:🕸:🕹:🕺:🕻:🕼:🕽:🕾:🕿:🖀:🖁:🖂:🖃:🖄:🖅:🖆:🖇:🖈:🖉:🖊:🖋:🖌:🖍:🖎:🖏:🖐:🖑:🖒:🖓:🖔:🖕:🖖:🖗:🖘:🖙:🖚:🖛:🖜:🖝:🖞:🖟:🖠:🖡:🖢:🖣:🖤:🖥:🖦:🖧:🖨:🖩:🖪:🖫:🖬:🖭:🖮:🖯:🖰:🖱:🖲:🖳:🖴:🖵:🖶:🖷:🖸:🖹:🖺:🖻:🖼:🖽:🖾:🖿:🗀:🗁:🗂:🗃:🗄:🗅:🗆:🗇:🗈:🗉:🗊:🗋:🗌:🗍:🗎:🗏:🗐:🗑:🗒:🗓:🗔:🗕:🗖:🗗:🗘:🗙:🗚:🗛:🗜:🗝:🗞:🗟:🗠:🗡:🗢:🗣:🗤:🗥:🗦:🗧:🗨:🗩:🗪:🗫:🗬:🗭:🗮:🗯:🗰:🗱:🗲:🗳:🗴:🗵:🗶:🗷:🗸:🗹:🗺:🗻:🗼:🗽:🗾:🗿:😀:😁:😂:😃:😄:😅:😆:😇:😈:😉:😊:😋:😌:😍:😎:😏:😐:😑:😒:😓:😔:😕:😖:😗:😘:😙:😚:😛:😜:😝:😞:😟:😠:😡:😢:😣:😤:😥:😦:😧:😨:😩:😪:😫:😬:😭:😮:😯:😰:😱:😲:😳:😴:😵:😶:😷:😸:😹:😺:😻:😼:😽:😾:😿:🙀:🙁:🙂:🙃:🙄:🙅:🙆:🙇:🙈:🙉:🙊:🙋:🙌:🙍:🙎:🙏:🙐:🙑:🙒:🙓:🙔:🙕:🙖:🙗:🙘:🙙:🙚:🙛:🙜:🙝:🙞:🙟:🙠:🙡:🙢:🙣:🙤:🙥:🙦:🙧:🙨:🙩:🙪:🙫:🙬:🙭:🙮:🙯:🙰:🙱:🙲:🙳:🙴:🙵:🙶:🙷:🙸:🙹:🙺:🙻:🙼:🙽:🙾:🙿:🚀:🚁:🚂:🚃:🚄:🚅:🚆:🚇:🚈:🚉:🚊:🚋:🚌:🚍:🚎:🚏:🚐:🚑:🚒:🚓:🚔:🚕:🚖:🚗:🚘:🚙:🚚:🚛:🚜:🚝:🚞:🚟:🚠:🚡:🚢:🚣:🚤:🚥:🚦:🚧:🚨:🚩:🚪:🚫:🚬:🚭:🚮:🚯:🚰:🚱:🚲:🚳:🚴:🚵:🚶:🚷:🚸:🚹:🚺:🚻:🚼:🚽:🚾:🚿:🛀:🛁:🛂:🛃:🛄:🛅:🛆:🛇:🛈:🛉:🛊:🛋:🛌:🛍:🛎:🛏:🛐:🛑:🛒:🛓:🛔:🛕:🛖:🛗:🛘:🛙:🛚:🛛:🛜:🛝:🛞:🛟:🛠:🛡:🛢:🛣:🛤:🛥:🛦:🛧:🛨:🛩:🛪:🛫:🛬:🛭:🛮:🛯:🛰:🛱:🛲:🛳:🛴:🛵:🛶:🛷:🛸:🛹:🛺:🛻:🛼:🛽:🛾:🛿:🜀:🜁:🜂:🜃:🜄:🜅:🜆
-</pre>
+#+END_EXAMPLE
 
-<p>
 你可以看一下你的系统里能显示多少个字符:-) 有很多还不是微信的表情符呢。
-</p>
 
-<p>
 在Web版的微信里，发出去的是这样的：
-</p>
 
+[[/home/bhj/shots/2014-08-06-00.30.30.png][file:/home/bhj/shots/2014-08-06-00.30.30.png]]
 
-<div class="figure">
-<p><a href="file:///home/bhj/shots/2014-08-06-00.30.30.png"><img src="file:///home/bhj/shots/2014-08-06-00.30.30.png" alt="2014-08-06-00.30.30.png" /></a>
-</p>
-</div>
-
-<p>
 在手机上，我看到的是这样的：
-</p>
 
+[[../../../../images/weixin-full-emoji.png][file:../../../../images/weixin-full-emoji.png]]
 
-<div class="figure">
-<p><a href="images/weixin-full-emoji.png"><img src="images/weixin-full-emoji.png" alt="weixin-full-emoji.png" /></a>
-</p>
-</div>
-
-<p>
 这里可以长按弹出菜单拷贝下来，传回到PC上就得到了微信版表情字符的码表。
-</p>
 
-<p>
 你可以看到我在每个表情字符中间都夹了一个冒号。接下来说一说这个原因。
-</p>
 
-<p>
 我曾经想得挺美，生成这个对应表也可以用一行长长的perl代码搞定。结果发现
 不行，Unicode发出去的字符和微信版本返回来的字符不是一一对应关系！也就
-是说Unicode发出去 <code>ABCD</code> ，微信返回来 <code>UVWXY</code> ，多了一个出来，我没法很
+是说Unicode发出去 =ABCD= ，微信返回来 =UVWXY= ，多了一个出来，我没法很
 容易地确定中间是ABCD里的哪个，对应了 UVWXY 里的哪两个。
-</p>
 
-<p>
 做为一个老黑客，我真的是很有点小聪明的呢，我想到的办法是在 ABCD 中间夹
 一个冒号，A:B:C:D，这样微信返回来的也有一个冒号，U:VW:X:Y，一眼就能看
 出来是谁多了一个字符出来，就是那个B呀！
-</p>
 
-<p>
 最后我又非常注意软件重用，没有全部用perl去生成这个表，而是先用了一下diff，这样的话对应关系更明显了：
-</p>
 
-<p>
 Unicode的表是这样的：
-</p>
 
-<pre class="example">
+#+BEGIN_EXAMPLE
 58, :
 127214, 🃮
 58, :
@@ -262,12 +106,10 @@ Unicode的表是这样的：
 127222, 🃶
 58, :
 127223, 🃷
-</pre>
+#+END_EXAMPLE
 
-<p>
 微信的表是这样的：
-</p>
-<pre class="example">
+#+BEGIN_EXAMPLE
 58, :
 127214, 🃮
 58, :
@@ -288,205 +130,56 @@ Unicode的表是这样的：
 127222, 🃶
 58, :
 127223, 🃷
-</pre>
+#+END_EXAMPLE
 
-<p>
 可以看到并不是每个Unicode表情符微信都会造一个自己的版本，有些没有造的
 它就直接给你显示个..，但拷贝出来之后的码跟原来的Unicode码还是一样的。
 我做个diff，就把这些一样的码全部都过滤掉了，只剩下那些需要到最后的表里
 来的表情：
-</p>
 
-<pre class="example">
+#+BEGIN_EXAMPLE
 14c14
-&lt; 57645, 
+< 57645, 
 ---
-&gt; 126980, 🀄
+> 126980, 🀄
 742c742
-&lt; 58674, 
+< 58674, 
 ---
-&gt; 127344, 🅰
+> 127344, 🅰
 744c744
-&lt; 58675, 
+< 58675, 
 ---
-&gt; 127345, 🅱
+> 127345, 🅱
 770c770
-&lt; 58677, 
+< 58677, 
 ---
-&gt; 127358, 🅾
+> 127358, 🅾
 772c772
-&lt; 57679, 
+< 57679, 
 ---
-&gt; 127359, 🅿
-</pre>
+> 127359, 🅿
+#+END_EXAMPLE
 
-<p>
 最后，写出了一个脚本，能直接把Unicode表情符转换成微信的表情符：
-<a href="https://github.com/baohaojun/system-config/raw/master/bin/unicode-to-wx.pl">unicode-to-wx.pl</a> 。
-</p>
+[[https://github.com/baohaojun/system-config/raw/master/bin/unicode-to-wx.pl][unicode-to-wx.pl]] 。
 
-<p>
-最后，又写了一个脚本，能把 <code>:-)</code> 等古典的表情符转换成Unicode的表情符：
-<a href="https://github.com/baohaojun/system-config/raw/master/bin/emoji-to-unicode.pl">emoji-to-unicode.pl</a> 。
-</p>
+最后，又写了一个脚本，能把 =:-)= 等古典的表情符转换成Unicode的表情符：
+[[https://github.com/baohaojun/system-config/raw/master/bin/emoji-to-unicode.pl][emoji-to-unicode.pl]] 。
 
-<p>
-最后，又更新了我的SDIM输入法，能够用zuface.disappointed来打出一个苦逼的脸：😞。<a href="https://github.com/baohaojun/system-config/raw/master/gcode/scim-cs/ime-py/bhj_ime.py">bhj_ime.py</a> 。
-</p>
+最后，又更新了我的SDIM输入法，能够用zuface.disappointed来打出一个苦逼的脸：😞。[[https://github.com/baohaojun/system-config/raw/master/gcode/scim-cs/ime-py/bhj_ime.py][bhj_ime.py]] 。
 
-<p>
 最后，更新了我的Emacs + Smartisan T1发微信朋友圈和微博的脚本，我可以编
 辑一段文本，然后同时自动发在微信朋友圈和微博上。等我发完这篇博客我会演
 示一下，一会儿见哦！
-</p>
 
-<p>
 最后，那个Unicode转成微信表情会多出来一个字符的表情就是，本文的题目，
 一封情书。💌，你把这个字符发到微博上，看到的是
-<a href="images/love-letter.png"><img src="images/love-letter.png" alt="love-letter.png" /></a> ，发到微信上，看到的是
-<a href="images/love-letter-wx.png"><img src="images/love-letter-wx.png" alt="love-letter-wx.png" /></a> 。
-</p>
+[[../../../../images/love-letter.png][file:../../../../images/love-letter.png]] ，发到微信上，看到的是
+[[../../../../images/love-letter-wx.png][file:../../../../images/love-letter-wx.png]] 。
 
-<p>
 最后的最后的最后，如果你看了我这封情书，愿意跟我在一起的话，我已经开好
 了 🏩 ，又是一个无法显示的Unicode表情，Unicode Name is Love Hotel，日本
 人搞出来的东东，在微信上会这样显示：
-<a href="images/love-hotel.png"><img src="images/love-hotel.png" alt="love-hotel.png" /></a> ，等你来啊。
-</p>
+[[../../../../images/love-hotel.png][file:../../../../images/love-hotel.png]] ，等你来啊。
 
-<p>
 Love Hotel纯属开个玩笑，请考虑投简历到锤子科技，来跟我们一起，干！
-</p>
-<nav>
-  <ul id="prev_next_posts">
-    <li class="prev_post">
-      <a href="blog/2014/08/03/0-emoji-in-weixin-and-unicode.html"> <!-- prev-url -->
-        <i class="icon-chevron-left">《</i>
-        微信中的Unicode表情字符 <!-- prev-title -->
-      </a>
-    </li>
-    <li class="next_post" style="text-align: right;">
-      <a href="meta/Archive.html"> <!-- next-url -->
-        Archive <!-- next-title -->
-        <i class="icon-chevron-right">》</i>
-      </a>
-    </li>
-  </ul>
-</nav>
-</div>
-<!-- {%html-mode%} -->
-
-<div id="disqus_container">
-  <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2014/08/05/0-a-love-letter.html';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-    <div style="margin-bottom:20px">
-    <script type="text/javascript" charset="utf-8">
-      (function(){
-      var _w = 86 , _h = 16;
-      var param = {
-      url:location.href,
-      type:'6',
-      count:'', /**是否显示分享数，1显示(可选)*/
-      appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-      title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-      pic:'', /**分享图片的路径(可选)*/
-      ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-      language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-      rnd:new Date().valueOf()
-      }
-      var temp = [];
-      for( var p in param ){
-      temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-      }
-      document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-      })()
-    </script>
-  </div>
-  <div id="disqus_thread"></div>
-</div>
-
-</div> <!-- bhj_leftpane -->
-<div id="sidebar"><div id="sidebar2">
-
-
-  <!-- Begin #profile-container -->
-
-   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
-<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
-<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
-<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
-
-<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
-
-  <!-- End #profile -->
-
-
-
-  <h2 class="sidebar-title">Feeds</h2>
-    <ul>
-        <li><a href="/atom.xml">Atom</a></li>
-    </ul>
-
-  <h2 class="sidebar-title">Projects</h2>
-    <dl>
-        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
-        <dd> Grep 2G source code in 0.23 second </dd>
-
-        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
-        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
-
-        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
-        <dd> Use JIRA with org-mode </dd>
-    </dl>
-
-    <h2>Tags</h2>
-    <ul>
-                <li><a href="meta/tags/tool.html" title="Computer tools">tool</a></li>
-    </ul>
-
-  <h2 class="sidebar-title">Previous Posts</h2>
-    <ul id="recently">
-        <li><a href='blog/2014/08/03/0-emoji-in-weixin-and-unicode.html'> 微信中的Unicode表情字符 </a></li>
-<li><a href='blog/2014/07/13/0-Smartisan-T1-Wrench.html'> Smartisan T1 WrenchSmartisan T1小扳手使用指南 </a></li>
-<li><a href='blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'> 在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email... </a></li>
-<li><a href='blog/2014/06/04/0-binder.html'> binder </a></li>
-<li><a href='blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html'> 在Debian下为安卓做一个GNU tar程序 </a></li>
-<li><a href='blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html'> Firefor urlbar dropdown list not showing anymore </a></li>
-<li><a href='blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html'> 用GreaseMonkey禁止Google搜索重定向绑架 </a></li>
-<li><a href='blog/2014/01/03/0-7-habits-of-highly-effective-editting.html'> 高效文本编辑的七个习惯 </a></li>
-<li><a href='blog/2013/12/11/0-ssh-remote-command-and-bash--c-string.html'> ssh执行远程命令和bash -c string的用法 </a></li>
-<li><a href='blog/2013/11/07/0-programming-discovery.html'> 发现式编程 </a></li>
-    </ul>
-
-    <h2 class="sidebar-title">Archive</h2>
-      <ul id="archives">
-        <li><a href="/meta/Archive.html"> The complete archive </a></li>
-      </ul>
-
-  <!--
-  <p>This is a paragraph of text that could go in the sidebar.</p>
-  -->
-
-
-
-</div></div>
-<!-- End #sidebar -->
-</div> <!-- End #bhj_article -->
-<!-- {%/html-mode%} -->
-<div id="postamble" class="status">
-<!-- {%html-mode%} -->
-
-<!-- {%/html-mode%} -->
-</div>
-</body>
-</html>
