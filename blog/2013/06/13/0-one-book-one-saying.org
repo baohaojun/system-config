@@ -96,4 +96,9 @@ Programming Perl那本书里，也出现了:-) 不过我几年前看那本书的
 
 比如Code Complete，啰嗦的不行，但句句听起来是肺胕之言。
 
+比如那本非常非常经典的SICP，里面有一句，许愿式编程。编程时就是许一个一
+个愿，然后一个一个地去实现。Programming by wishing，这是我以前没有想过
+的一种编程境界。好吧，我现在就许个愿先，愿自己勇敢一点，不要忘了，What
+you don't know, won't hurt you.
+
 ...
