@@ -1,8 +1,10 @@
 #!/bin/bash
 
 dir=/sdcard/DCIM/Camera
-if test "$1"; then
+if echo "$1" | grep s -i; then
     dir=/sdcard/Pictures/Screenshots/
+elif echo "$1" | grep d -i; then
+    dir=/sdcard/Download/
 fi
 
 pic=$(adb busybox ls -t -1 $dir|head -n 1|perl -npe 's/\033.*?m//g')
