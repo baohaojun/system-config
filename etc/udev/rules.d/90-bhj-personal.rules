@@ -1,5 +1,4 @@
 SUBSYSTEM=="usb", ATTR{idVendor}=="096e", MODE="0600", OWNER="bhj"
-SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", MODE="0600", OWNER="bhj", RUN+="/home/bhj/bin/ask-to-sync-org"
 SUBSYSTEM=="usb", ATTR{idVendor}=="0955", MODE="0600", OWNER="bhj"
 SUBSYSTEM=="usb", ATTR{idVendor}=="0bb4", MODE="0600", OWNER="bhj"
 SUBSYSTEM=="usb", ATTR{idVendor}=="1949", MODE="0600", OWNER="bhj", RUN+="/home/bhj/bin/ask-to-sync-org"
