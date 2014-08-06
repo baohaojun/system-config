@@ -1,3 +1,7 @@
 #!/bin/bash
-putclip "$(getclip-android)"
+if test $(basename $0) = emacs-get-android-clipboard; then
+    putclip "$(getclip-android)"
+else
+    putclip "$(getphone-android|perl -npe 's/\+86//')"
+fi
 sawfish-client -e '(synthesize-event "C-y" (input-focus))'

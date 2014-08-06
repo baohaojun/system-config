@@ -17,7 +17,7 @@ $emoticons{laugh} = [":-D :D 8-D 8D x-D xD X-D XD =-D =D =-3 =3 B^D", "😄"];
 $emoticons{sad} = [">:[ :-( :(  :-c :c :-<  :っC :< :-[ :[ :{", "😢"]; # Frown,[3][4][5] sad[7]
 $emoticons{wink} = [";(", "😉"];   # Winky frowny, used to signify sadness, with a bit of sarcasm. It is easily misunderstood.[8]
 $emoticons{angry} = [":-|| :@ >:(", "😠"]; # Angry[6]
-$emoticons{crying} = [":'-( :'(", "😢"]; # Crying[7]
+$emoticons{crying} = [":'-( :'(", "😭"]; # Crying[7]
 $emoticons{tears_of_happiness} = [":'-) :')", "😂"]; # Tears of happiness[7]
 $emoticons{horror} = ["D:< D: D8 D; D= DX v.v D-':", "😱"]; # Horror, disgust, sadness, great dismay[4][5]
 $emoticons{shock} = [">:O :-O :O :-o :o 8-0 O_O o-o O_o o_O o_o O-O", "😲"]; #   Surprise,[2] shock,[3][9] yawn[10]
@@ -54,6 +54,7 @@ $emoticons{heart_broken} = ["</3 [heart broken] [broken heart] [心碎] [心碎�
 $emoticons{good} = ["[good] [强]", "👍"];
 $emoticons{weak} = ["[weak] [弱]", "👎"];
 $emoticons{cow} = ["[cow] [牛] [牛逼]", "🐮"];
+$emoticons{sweat} = ["[汗] [sweat]", "😓"];
 
 my %unicode_emoticons;
 for (keys %emoticons) {

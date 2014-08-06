@@ -89,6 +89,7 @@
 (bind-keys global-keymap "XF86AudioNext"  '(system "douban next&"))
 (bind-keys global-keymap "XF86Launch9"  '(system "douban next&"))
 (bind-keys s-h-keymap "p"  '(system "emacs-get-android-clipboard&"))
+(bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
 (bind-keys global-keymap "XF86AudioPrev"  '(system "douban prev&"))
 (bind-keys global-keymap "XF86Launch8"  '(system "douban prev&"))
 (bind-keys global-keymap "Super-XF86AudioPlay"  '(system "douban info&"))

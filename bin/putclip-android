@@ -12,10 +12,13 @@ if test $(basename $0) = putclip-android; then
     adb "
          am startservice -n com.bhj.setclip/.PutClipService&
          for x in \$(seq 1 20); do if test -e /sdcard/putclip.txt; then busybox sleep .1; echo \$x; else exit; fi; done"
-elif test $(basename $0) = getclip-android; then
+elif test $(basename $0) = getclip-android -o $(basename $0) = getphone-android; then
+    cmd=$(basename $0)
+    cmd=${cmd%-*}
+
     adb '
         rm -f /sdcard/putclip.txt
-        am startservice -n com.bhj.setclip/.PutClipService --ei getclip 1 >/dev/null 2>&1&
+        am startservice -n com.bhj.setclip/.PutClipService --ei '$cmd' 1 >/dev/null 2>&1&
         for x in $(seq 1 20); do if test -e /sdcard/putclip.txt; then cat /sdcard/putclip.txt; break; else sleep .1; fi; done
 ' | cat
 elif test $(basename $0) = gettask-android; then
