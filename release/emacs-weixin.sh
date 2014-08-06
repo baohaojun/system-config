@@ -50,7 +50,11 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 560 1840 #
                             adb-tap-2 299 299
                             adb-tap 505 192
-                            adb-tap 998 174
+                            if test "$(gettask-android)" = com.google.android.gm; then
+                                adb-tap 806 178
+                            else
+                                adb-tap 998 174
+                            fi
                             ;;
                         both-weixin-and-weibo)
                             emacs-cell-phone weibo-brand-new
