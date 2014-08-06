@@ -86,6 +86,14 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 496 196
                             adb-tap 989 183
                             ;;
+                        weixin-note3)
+                            adb-tap 560 1840 #
+                            sleep .1
+                            adb-tap 560 1840 #
+                            adb-long-press 491 1000
+                            adb-tap 179 872
+                            adb-tap 1001 983
+                            ;;
                         *) # most cases
                             adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
                             sleep .1
