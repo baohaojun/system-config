@@ -7,6 +7,7 @@ print $log_ "@ARGV\n";
 
 sub debug(@) {
     print $log_ "@_\n";
+    print STDERR "@_\n";
 }
 
 if ((scalar @ARGV) > 1 and $0 =~ m!(^|/)e$!) {
@@ -143,11 +144,14 @@ EOC
   while (1) {
       my $ret = system(@cmd);
       if ($ret != 0) {
+          debug "ret is", $ret >> 8, "and", $ret & 0xff;
           if ($ret == 2) {
               die "@cmd got interrupt";
           }
           warn("ret is $ret for @cmd");
-          system("sleep 5");
+          if (system("sleep 5") == 2) {
+              die "@cmd got interrupt while sleeping"
+          }
       } else {
           last;
       }
@@ -157,6 +161,8 @@ EOC
 while (@ARGV) {
     my $arg = shell_quote(shift @ARGV);
     while (system("$0 $arg") != 0) {
-        system("sleep 1");
+        if (system("sleep 1") == 2) {
+            die "e $arg got interrupt while sleeping"
+        }
     }
 }

@@ -5,6 +5,22 @@ if test "$1" = -d; then
     find-or-exec emacs&
 fi
 
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test "$EC_CHECK_DIR" = no -o "$1" = -e; then
+    true
+else
+    for x in "$@"; do
+        if [[ "$x" =~ / ]] && test ! -e "$(dirname -- "$x")" &&
+           ! echo "$x" | grep -q -P -e '^/(scp|adb):'; then
+            die "$(dirname -- "$x") not exist, will cause trouble for emacs"
+        fi
+    done
+fi
+
 if test $# = 1; then
     set -- "$(ulp "$1")"
 elif test $# = 2 && test -e "$2"; then
