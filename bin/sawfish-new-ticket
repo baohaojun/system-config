@@ -1,6 +1,11 @@
 #!/bin/bash
 
-exec > ~/.logs/$(basename $0).log 2>&1
+if echo $SHELLOPTS | grep xtrace; then
+    export DEBUG=true
+else
+    exec > ~/.logs/$(basename $0).log 2>&1
+fi
+
 set -x
 
 TEMP=$(getopt -o p: --long phone: -n $(basename $0) -- "$@")

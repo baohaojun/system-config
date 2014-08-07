@@ -1,0 +1,3 @@
+#!/bin/bash
+wifi_mac=$( (echo -n 000af5; adb devices? | md5sum) | cut -b 1-11 | perl -npe 's/../$&:/g')
+adb wifimactool -b ${wifi_mac}2 ${wifi_mac}4
