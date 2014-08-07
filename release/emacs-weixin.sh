@@ -91,7 +91,11 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             sleep .1
                             adb-tap 560 1840 #
                             adb-long-press 491 1000
-                            adb-tap 179 872
+                            if test "$(gettask-android)" = com.tencent.mobileqq; then
+                                adb-tap 255 849
+                            else
+                                adb-tap 179 872
+                            fi
                             adb-tap 1001 983
                             ;;
                         *) # most cases
