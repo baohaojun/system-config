@@ -107,9 +107,10 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-里面最开始只是我的.bashrc、.emacs等文件，但很快我就把它的目标修正为：当
-我新安装一台机器后，我可以通过一个简单的 <code>git clone --recursive http://github.com/baohaojun/system-config</code> 和额外的几条脚本，把
-我的个人环境快速重建出来。
+里面最开始只是我的.bashrc、.emacs等文件，但很快我就把它的目标修正为：
+当我新安装一台机器后，我可以通过一个简单的 <code>git clone --recursive
+https://github.com/baohaojun/system-config</code> 和额外的几条脚本，把我的个
+人环境快速重建出来。
 </p>
 
 <p>
@@ -138,21 +139,27 @@ linux底下搞个linux-config的，但后来发现完全没必要，它们可以
 </ul>
 
 <p>
-最后，“额外的几条脚本”是指何意？把代码checkout到
-<code>$HOME/system-config/</code> 下之后，只要记得跑这两条命令就搞定了：
+最后，“额外的几条脚本”是指何意？把代码checkout到~$HOME/system-config/~
+下之后，只要再跑 <del>两条</del> <b>一条</b> 命令就搞定了，所以总共就这两条命令（跑
+的过程中如果出现错误的话可以考虑自己修正一下bug，非常涨经验值的！最后
+你可以把修正的结果告诉我，比如给我发个pull request，我会很感动、感谢、
+感激。当然，也可以直接报个bug，请我帮你修正，但我可能会太忙，不能及时
+搭理你。当然，如果你请我喝过咖啡的话，那就又不一样了:-)）：
 </p>
 
 <div class="org-src-container">
 
-<pre class="src src-sh">~/system-config/bin/after-co-ln-s.sh
+<pre class="src src-sh">git clone --recursive https://github.com/baohaojun/system-config
 ~/system-config/bin/Linux/after-check-out.sh
 </pre>
 </div>
 
 <p>
-其中第一条就是要把相应的该放在 <code>$HOME</code> 下的文件/目录通过symlink给放出来，
-让bash/emacs等程序能读到。用symlink而不是拷贝出来有一个额外的好处，你能
-猜到 <a href="blog/2012/10/29/why-symlink-my-config.html">是什么</a> 吗？第二条则是做一些.deb包的安装、编译工作。
+<del>其中第一条就是要把相应的该放在 <code>$HOME</code> 下的文件/目录通过symlink给放出来，让bash/emacs等程序能读到。用symlink而不是拷贝出来有一个额外的好处，你能猜到 <a href="blog/2012/10/29/why-symlink-my-config.html">是什么</a> 吗？</del>
+</p>
+
+<p>
+<del>第二条则是做一些.deb包的安装、编译工作。</del>
 </p>
 
 <p>

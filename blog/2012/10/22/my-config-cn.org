@@ -3,9 +3,10 @@
 
 我的配置系统是github上的一个项目，[[https://github.com/baohaojun/system-config][System-config]]。
 
-里面最开始只是我的.bashrc、.emacs等文件，但很快我就把它的目标修正为：当
-我新安装一台机器后，我可以通过一个简单的 ~git clone --recursive http://github.com/baohaojun/system-config~ 和额外的几条脚本，把
-我的个人环境快速重建出来。
+里面最开始只是我的.bashrc、.emacs等文件，但很快我就把它的目标修正为：
+当我新安装一台机器后，我可以通过一个简单的 ~git clone --recursive
+https://github.com/baohaojun/system-config~ 和额外的几条脚本，把我的个
+人环境快速重建出来。
 
 整个项目必须checkout到你的 ~$HOME/system-config~ 下。你可能会觉得奇
 怪，.bashrc/.emacs等文件不是应该放在 ~$HOME/~ 下吗，为什么要放到一个叫
@@ -24,17 +25,21 @@ system-config的子目录下呢？别急，听我慢慢道来:-)
   linux底下搞个linux-config的，但后来发现完全没必要，它们可以用设计模式
   中factory的模式共用大部分代码，见[[./fun-design-pattern.org][在shell脚本里的抽象工厂模式]]:-)
 
-最后，“额外的几条脚本”是指何意？把代码checkout到
-~$HOME/system-config/~ 下之后，只要记得跑这两条命令就搞定了：
+最后，“额外的几条脚本”是指何意？把代码checkout到~$HOME/system-config/~
+下之后，只要再跑 +两条+ *一条* 命令就搞定了，所以总共就这两条命令（跑
+的过程中如果出现错误的话可以考虑自己修正一下bug，非常涨经验值的！最后
+你可以把修正的结果告诉我，比如给我发个pull request，我会很感动、感谢、
+感激。当然，也可以直接报个bug，请我帮你修正，但我可能会太忙，不能及时
+搭理你。当然，如果你请我喝过咖啡的话，那就又不一样了:-)）：
 
 #+begin_src sh
-~/system-config/bin/after-co-ln-s.sh
+git clone --recursive https://github.com/baohaojun/system-config
 ~/system-config/bin/Linux/after-check-out.sh
 #+end_src
 
-其中第一条就是要把相应的该放在 ~$HOME~ 下的文件/目录通过symlink给放出来，
-让bash/emacs等程序能读到。用symlink而不是拷贝出来有一个额外的好处，你能
-猜到 [[../29/why-symlink-my-config.org][是什么]] 吗？第二条则是做一些.deb包的安装、编译工作。
++其中第一条就是要把相应的该放在 ~$HOME~ 下的文件/目录通过symlink给放出来，让bash/emacs等程序能读到。用symlink而不是拷贝出来有一个额外的好处，你能猜到 [[../29/why-symlink-my-config.org][是什么]] 吗？+
+
++第二条则是做一些.deb包的安装、编译工作。+
 
 其中.deb包的安装有点意思，可以跟大家说说：
 
