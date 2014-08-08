@@ -55,6 +55,7 @@ $emoticons{good} = ["[good] [强]", "👍"];
 $emoticons{weak} = ["[weak] [弱]", "👎"];
 $emoticons{cow} = ["[cow] [牛] [牛逼]", "🐮"];
 $emoticons{sweat} = ["[汗] [sweat]", "😓"];
+$emoticons{baby} = ["[baby] [orz]", "🚼"];
 
 my %unicode_emoticons;
 for (keys %emoticons) {
