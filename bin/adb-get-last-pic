@@ -1,10 +1,15 @@
 #!/bin/bash
 
 dir=/sdcard/DCIM/Camera
-if echo "$1" | grep s -i; then
+
+if test "$1" = m; then
+    dir=/sdcard/Download/mail_attachments/
+elif test "$1" = s; then
     dir=/sdcard/Pictures/Screenshots/
-elif echo "$1" | grep d -i; then
+elif test "$1" = d; then
     dir=/sdcard/Download/
+elif test "$1"; then
+    echo should be one of '"msd"'
 fi
 
 pic=$(adb busybox ls -t -1 $dir|head -n 1|perl -npe 's/\033.*?m//g; s/\?+/*/g')

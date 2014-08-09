@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+for ip3 in 0 1; do
+    for x in $(seq 1 254); do
+        ( setsid ssh -o StrictHostKeyChecking=no bhj@172.16.$ip3.$x ifconfig 2>/dev/null </dev/null&);
+    done
+done
