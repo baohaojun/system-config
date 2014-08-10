@@ -1,0 +1,10 @@
+#!/bin/bash
+putclip-android "$1"&
+adb am start -n com.tencent.mm/.ui.LauncherUI
+sleep .5
+adb-tap-2 141 178
+adb-tap-2 141 178
+adb-tap 642 144
+adb-long-press 375 137
+adb-tap 275 405
+adb-tap 248 474
