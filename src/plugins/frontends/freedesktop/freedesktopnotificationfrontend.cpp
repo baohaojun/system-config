@@ -91,6 +91,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
                                  const QString &app_icon, const QString &summary, const QString &body,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
+    Q_UNUSED(app_icon);
     Icon icon;
     Application app;
     Notification::Prioritys priotity = Notification::NORMAL;
