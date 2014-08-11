@@ -48,14 +48,16 @@
   (load (expand-file-name "~/.config/emacs.gen.el")))
 
 
-(require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/"))
-(package-initialize)
+(when (> emacs-major-version 23)
+  (require 'package)
+  (add-to-list 'package-archives
+               '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (add-to-list 'package-archives
+               '("melpa" . "http://melpa.milkbox.net/packages/"))
+  (package-initialize))
 
 (when (and
+       (> emacs-major-version 23)
        (file-exists-p "~/src/github/emacs.d/init.el")
        (not (string= (getenv "ORG2PDF") "true")))
 (setq load-path
@@ -63,8 +65,6 @@
               (expand-file-name "~/src/github/emacs.d"))
              load-path))
   (load "~/src/github/emacs.d/init.el"))
-
-(require 'mmm-auto)
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
   ;;press F2 to get MSDN help
@@ -331,15 +331,6 @@
                            ((string-match "/smb/" file) t)
                            (t (funcall saved-file-remote-p file identification connected)))))
       ad-do-it)))
-
-(require 'helm-config)
-(helm-mode 1)
-
-(define-key global-map [remap find-file] 'helm-find-files)
-(define-key global-map [remap occur] 'helm-occur)
-(define-key global-map [remap list-buffers] 'helm-buffers-list)
-(define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
-(define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point)
 
 (add-hook 'vc-git-log-view-mode-hook
           (lambda ()

@@ -2,7 +2,7 @@
 set -e
 
 emacs_code=$(cat <<EOF
-(progn
+(when (> emacs-major-version 23)
     (require 'package)
     (add-to-list 'package-archives
                  '("marmalade" . "http://marmalade-repo.org/packages/"))
@@ -16,7 +16,7 @@ emacs_code=$(cat <<EOF
                        if test $# != 0; then
                            echo "$@";
                        else
-                           echo ~/bin/Linux/config/emacs-pkgs/*;
+                           echo org
                        fi
                    ); do
             echo "(ignore-errors (package-install '$(basename $x)))"
