@@ -20,6 +20,16 @@
 ;;----------------------------------------------------------------------------
 
 (require-package 'wgrep)
+(require-package 'browse-kill-ring)
+(require-package 'bbdb)
+(require-package 'helm)
+(require-package 'keydef)
+(require-package 'lua-mode)
+(require-package 'mmm-mode)
+(require-package 'oauth2)
+(require-package 'session)
+(require-package 'yasnippet)
+(browse-kill-ring-default-keybindings)
 (require-package 'project-local-variables)
 (require-package 'diminish)
 (require-package 'scratch)
