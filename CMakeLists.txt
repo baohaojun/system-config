@@ -8,7 +8,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 cmake_policy(SET CMP0020 NEW)
 
 include(GNUInstallDirs)
-include(CMakeDependentOption)
 include(GenerateExportHeader)
 
 
@@ -18,7 +17,7 @@ option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
 option(WITH_QT4 "Use Qt4" ON)
 option(WITH_KDE "Try to build with KDE support if available" ON)
-cmake_dependent_option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF "WITH_SNORE_DEAMON" ON)
+option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 #######################################################################
 
 set(SNORE_VERSION_MAJOR 0)
