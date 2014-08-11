@@ -418,8 +418,8 @@ get imports if java-mode
 
 ;;;***
 
-;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21430 17263
-;;;;;;  881190 613000))
+;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21480 30746
+;;;;;;  244526 283000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -644,6 +644,11 @@ open help for the current word
 
 \(fn)" t nil)
 
+(autoload 'bhj-set-working-buffer "bhj-defines" "\
+set the current working buffer
+
+\(fn)" t nil)
+
 (autoload 'bhj-help-qt "bhj-defines" "\
 open help for the current word for qt
 
@@ -658,11 +663,6 @@ open the current maildir file in kmail
 
 
 \(fn)" nil nil)
-
-(autoload 'my-bbdb-canonicalize "bhj-defines" "\
-
-
-\(fn ADDR)" nil nil)
 
 (autoload 'bhj-flatten-list "bhj-defines" "\
 Return a new, flat list that contains all elements of LIST.

@@ -236,7 +236,7 @@ if test -x ~/src/github/private-config/after-co.sh; then
     ~/src/github/private-config/after-co.sh
 fi
 
-if test ! -e /etc/systemd/system/rc-local.service; then
+if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service; then
     sudo cp ~/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
     sudo chmod a+X /etc/systemd/system/rc-local.service
     sudo systemctl --system daemon-reload
@@ -250,5 +250,7 @@ fi
 sudo mkdir -p /etc/acpi/local/
 
 sync-etc-files
+mkdir -p ~/.cache # just in case the following command will create
+                  # .cache with root permission.
 update-host-ip phone 192.168.15.244
 update-host-ip home 128.199.178.185

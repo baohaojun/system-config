@@ -18,7 +18,9 @@
          (concat "emacs" (replace-regexp-in-string "\\..*" "" emacs-version))))
   (let ((flavor 'emacs))
     (mapc (lambda (file)
-            (load file))
+            (condition-case nil
+                (load file)
+              (error nil)))
           (directory-files "/etc/emacs/site-start.d/" t ".*.el"))))
 
 (when (file-exists-p (expand-file-name "~/.emacs-path.el"))
@@ -111,9 +113,6 @@
 (put 'downcase-region 'disabled nil)
 (put 'LaTeX-hide-environment 'disabled nil)
 
-
-(require 'browse-kill-ring-autoloads)
-(browse-kill-ring-default-keybindings)
 
 ;; enable visual feedback on selections
 
@@ -290,12 +289,6 @@
 (when (eq system-type 'windows-nt)
   (setq file-name-coding-system 'gbk)
   (set-selection-coding-system 'gbk))
-
-(require 'bbdb-autoloads)
-
-(add-hook 'bbdb-canonicalize-net-hook
-      'my-bbdb-canonicalize)
-
 
 (when (eq system-type 'windows-nt)
   (setq nntp-authinfo-file "~/../.authinfo"

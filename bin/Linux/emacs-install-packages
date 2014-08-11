@@ -39,6 +39,7 @@ fi
 
 if test ! -e emacs.d/.git; then
     git clone http://github.com/baohaojun/emacs.d
+    mkdir -p ~/.emacs.d/
     relative-link emacs.d/site-lisp ~/.emacs.d/
 fi
 

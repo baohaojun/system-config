@@ -967,12 +967,6 @@ might be bad."
           'searching)
       'annotating)))
 
-;;;###autoload
-(defun my-bbdb-canonicalize (addr)
-  (if (stringp addr)
-      (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr)
-    addr))
-
 (defun rename-refactory ()
   (interactive)
   (save-excursion

@@ -24,9 +24,23 @@ if (m/^Package: (.*)$/) {
             last;
         }
     }
-}')")
+}')" | sort -u)
 
 echo "missing_packages are $missing_packages" >> ~/.logs/$(basename $0).log
+
+if test "$(echo "$missing_packages" | wc -l)" -gt 50; then
+    if yes-or-no-p -y  "There are too many missing packages, check ~/.logs/$(basename $0).log. Stop?"; then
+        exit 1
+    else
+        true
+    fi
+fi
+
+if ask-if-not-bhj -y "$missing_packages
+
+The above packages are missing, try to install them one by one?"; then
+    exit 0
+fi
 
 for x in $missing_packages; do
     sudo apt-get install "$@" -y $x || true

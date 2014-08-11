@@ -9,6 +9,10 @@ function die() {
 if test $# -lt 2; then
     if test $(basename $0) = smb_push -a $# = 1; then
         set -- "$1" /home/bhj/smb/share.smartisan.cn/share/baohaojun
+        if test ! -d ~/smb/share.smartisan.cn/share/baohaojun; then
+            umount -l ~/smb
+            smbnetfs ~/smb
+        fi
         swp /home/bhj/smb/share.smartisan.cn/share/baohaojun/$(basename $1)
     else
         die "Error: Usage $(basename $0) source target"

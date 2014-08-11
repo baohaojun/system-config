@@ -64,7 +64,7 @@ mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
 
-if ask-if-not-bhj "Install texlive?"; then
+if ask-if-not-bhj "Install texlive?" && test ! -e ~/.config/no-texlive; then
     sudo apt-get install -y texlive-full || true
 fi
 
