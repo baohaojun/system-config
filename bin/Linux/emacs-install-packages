@@ -2,7 +2,9 @@
 set -e
 
 emacs_code=$(cat <<EOF
-(when (> emacs-major-version 23)
+(when (and
+        (> emacs-major-version 23)
+        $( if test $# != 0; then echo t; else echo nil; fi))
     (require 'package)
     (add-to-list 'package-archives
                  '("marmalade" . "http://marmalade-repo.org/packages/"))
