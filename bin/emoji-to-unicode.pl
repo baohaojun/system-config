@@ -14,7 +14,7 @@ my %emoticons;
 $emoticons{big_laugh} = [":-))", "😝"]; # Very happy or double chin[6]
 $emoticons{smile} = [":-) :) :o) :] :3 :c) :> =] 8)", "😊"];
 $emoticons{laugh} = [":-D :D 8-D 8D x-D xD X-D XD =-D =D =-3 =3 B^D", "😄"];
-$emoticons{sad} = [">:[ :-( :(  :-c :c :-<  :っC :< :-[ :[ :{", "😢"]; # Frown,[3][4][5] sad[7]
+$emoticons{sad} = [">:[ :-( :( :-c :c :-< :っC :< :-[ :[ :{", "😢"]; # Frown,[3][4][5] sad[7]
 $emoticons{wink} = [";(", "😉"];   # Winky frowny, used to signify sadness, with a bit of sarcasm. It is easily misunderstood.[8]
 $emoticons{angry} = [":-|| :@ >:(", "😠"]; # Angry[6]
 $emoticons{crying} = [":'-( :'(", "😭"]; # Crying[7]
