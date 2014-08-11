@@ -5,6 +5,7 @@ echo mkdir ~/ssh
 cat ~/.ssh/authorized_keys | ssh -o PreferredAuthentications=password $host 'mkdir -p ~/.ssh/ && cat > ~/.ssh/authorized_keys'
 
 rsync ~/system-config $host: -av
+rsync ~/.ssh/id_rsa_nopass $host:.ssh/id_rsa
 
 ssh-exp $host "bash -c 'echo bhj ALL=NOPASSWD: ALL | sudo tee /etc/sudoers.d/bhj; sudo chmod 440 /etc/sudoers.d/bhj'"
 ssh-exp $host "sudo perl -npe 's!cn.archive.ubuntu.com!mirrors.aliyun.com!g' -i /etc/apt/sources.list"
