@@ -23,12 +23,27 @@
 (require-package 'browse-kill-ring)
 (require-package 'bbdb)
 (require-package 'helm)
+(require 'helm-config)
+(helm-mode 1)
+
+(define-key global-map [remap find-file] 'helm-find-files)
+(define-key global-map [remap occur] 'helm-occur)
+(define-key global-map [remap list-buffers] 'helm-buffers-list)
+(define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
+(define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point)
+
+(require-package 'auto-complete-clang)
 (require-package 'keydef)
 (require-package 'lua-mode)
 (require-package 'mmm-mode)
+(require 'mmm-auto)
 (require-package 'oauth2)
 (require-package 'session)
 (require-package 'yasnippet)
+(yas-global-mode)
+(setq yas-snippet-dirs
+      '("~/system-config/.emacs_d/yasnippet/snippets" "~/system-config/.emacs_d/yasnippet-snippets"))
+
 (browse-kill-ring-default-keybindings)
 (require-package 'project-local-variables)
 (require-package 'diminish)
