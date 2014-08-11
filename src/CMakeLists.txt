@@ -1,5 +1,6 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/core)
 add_subdirectory(core)
+add_subdirectory(snore-send)
 
 if(WITH_SNORE_DEAMON)
 
@@ -9,8 +10,6 @@ if(WITH_SNORE_DEAMON)
     if(KDE5_FOUND)
         target_link_libraries( snorenotify KF5::CoreAddons KF5::I18n)
     endif()
-
-    add_dependencies(snorenotify libsnore)
 
     install(TARGETS snorenotify RUNTIME DESTINATION bin
                               LIBRARY DESTINATION lib
