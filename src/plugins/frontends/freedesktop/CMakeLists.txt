@@ -1,5 +1,6 @@
 if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
     message(STATUS "Adding freedesktop notification frontend")
+    find_package(KF5 COMPONENTS IconThemes)
 
     set( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC
             freedesktopnotificationfrontend.cpp
@@ -9,11 +10,11 @@ if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
     qt4_add_dbus_adaptor( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC org.freedesktop.Notifications.xml freedesktopnotificationfrontend.h FreedesktopFrontend)
 
     add_library(libsnore_frontend_freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_FRONTEND_SRC} )
-    target_link_libraries(libsnore_frontend_freedesktop snorecore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )
+    target_link_libraries(libsnore_frontend_freedesktop libsnore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )
 
-    if(KDE4_FOUND)
-            target_link_libraries(libsnore_frontend_freedesktop   ${KDE4_KDEUI_LIBRARY})
-    endif(KDE4_FOUND)
+    if(KF5_IconThemes_FOUND)
+        target_link_libraries(libsnore_frontend_freedesktop KF5::IconThemes)
+    endif()
 
 
     #install the dbus interface

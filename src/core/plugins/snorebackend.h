@@ -19,7 +19,7 @@
 
 #ifndef SNORE_BACKEND_H
 #define SNORE_BACKEND_H
-#include "../snore_exports.h"
+#include "snore_exports.h"
 #include "plugins.h"
 #include "../notification/notification.h"
 #include "../snore.h"

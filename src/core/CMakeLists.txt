@@ -1,5 +1,4 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}  ${CMAKE_CURRENT_BINARY_DIR})
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 include(GetGitRevisionDescription)
 
 get_git_head_revision(GIT_REFSPEC SNORE_REVISION)
@@ -35,18 +34,27 @@ set ( SnoreNotify_HDR ${SnoreNotify_HDR}
         alert.h
         hint.h
         log.h
-        snore_exports.h
+        ${CMAKE_CURRENT_BINARY_DIR}/snore_exports.h
         version.h
         )
 
-add_library( snorecore  SHARED ${SnoreNotify_SRCS})
-set_target_properties( snorecore PROPERTIES OUTPUT_NAME "snore${SNORE_SUFFIX}" DEFINE_SYMBOL "SNORECORE_DLL" )
-target_link_libraries ( snorecore ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY}  )
 
+add_library( libsnore SHARED ${SnoreNotify_SRCS})
+set_target_properties( libsnore PROPERTIES OUTPUT_NAME "snore${SNORE_SUFFIX}")
+target_link_libraries( libsnore PUBLIC ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY}  )
 
-install(TARGETS snorecore RUNTIME DESTINATION bin
-                          LIBRARY DESTINATION lib
-                          ARCHIVE DESTINATION lib)
+generate_export_header(libsnore
+  EXPORT_FILE_NAME snore_exports.h
+  EXPORT_MACRO_NAME SNORE_EXPORT
+)
+
+install(TARGETS libsnore EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Config
+                         RUNTIME DESTINATION bin
+                         LIBRARY DESTINATION lib
+                         ARCHIVE DESTINATION lib
+                         INCLUDES DESTINATION include/snore)
+
+install(EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Config DESTINATION lib/cmake/libsnore${SNORE_CamelCase_SUFFIX})
 
 install(FILES ${SnoreNotify_HDR} DESTINATION include/snore/core)
 

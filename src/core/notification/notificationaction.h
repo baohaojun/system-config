@@ -20,7 +20,7 @@
 #ifndef NOTIFICATIONACTION_H
 #define NOTIFICATIONACTION_H
 
-#include "../snore_exports.h"
+#include "snore_exports.h"
 
 #include <QDataStream>
 

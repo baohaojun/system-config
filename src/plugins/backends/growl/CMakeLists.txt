@@ -12,7 +12,7 @@ if( WITH_GROWL_BACKEND )
                         ${CMAKE_SOURCE_DIR}/thirdparty/gntp-send/src/growl.cpp)
 
         add_library(libsnore_backend_growl MODULE  ${GROWL_SRC} )
-        target_link_libraries(libsnore_backend_growl snorecore ${QT_QTCORE_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(libsnore_backend_growl libsnore ${QT_QTCORE_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
         set_target_properties(libsnore_backend_growl PROPERTIES COMPILE_FLAGS "-DGROWL_DLL -DGROWL_CPP_DLL" )
 
         if( WIN32 )

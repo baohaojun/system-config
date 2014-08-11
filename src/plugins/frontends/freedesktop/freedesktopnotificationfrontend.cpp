@@ -29,8 +29,8 @@
 #include <QtDBus>
 #include <QImage>
 
-#ifdef HAVE_KDE
-#include <KIconLoader>
+#ifdef HAVE_KDE5
+#include <KIconThemes/KIconLoader>
 #endif
 using namespace Snore;
 
@@ -91,7 +91,6 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
                                  const QString &app_icon, const QString &summary, const QString &body,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
-    Q_UNUSED(app_icon);
     Icon icon;
     Application app;
     Notification::Prioritys priotity = Notification::NORMAL;
@@ -109,9 +108,10 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
 
     if(!snore()->aplications().contains(app_name))
     {
-#ifdef HAVE_KDE
+#ifdef HAVE_KDE5
         Icon appIcon(KIconLoader::global()->iconPath(app_icon, KIconLoader::Desktop));
 #else
+        Q_UNUSED(app_icon);
         Icon appIcon(":/root/images/freedesktop-dbus.png");
 #endif
         Alert alert("DBus Alert", appIcon);

@@ -3,23 +3,22 @@
 
 #include <QApplication>
 
-#ifdef HAVE_KDE
+#ifdef HAVE_KDE5
 #include "core/version.h"
 #include <KAboutData>
-#include <KCmdLineArgs>
-#include <KUniqueApplication>
+#include <KI18n/KLocalizedString>
 #endif
 
 int main ( int argc, char *argv[] )
 {
 
-#ifdef HAVE_KDE
-    KAboutData about("SnoreNotify",0,ki18n("SnoreNotify"),Snore::Version::version().toLatin1(),
-                     ki18n("A notification deamon."),KAboutData::License_LGPL_V3, ki18n("Copyright (c) 2010-2014 Patrick von Reth <vonreth@kde.org>"));
-    KCmdLineArgs::init(argc, argv, &about);
-    KUniqueApplication app;
-#else
     QApplication app ( argc, argv );
+
+#ifdef HAVE_KDE5
+    KAboutData about("SnoreNotify",i18n("SnoreNotify"),Snore::Version::version(),
+                     i18n("A notification deamon."),KAboutLicense::LGPL_V3, i18n("Copyright (c) 2010-2014 Patrick von Reth <vonreth@kde.org>"));
+
+    KAboutData::setApplicationData(about);
 #endif
 
     SnoreNotify sn;

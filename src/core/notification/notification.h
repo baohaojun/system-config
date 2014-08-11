@@ -19,7 +19,7 @@
 
 #ifndef NOTIFICATION_H
 #define NOTIFICATION_H
-#include "../snore_exports.h"
+#include "snore_exports.h"
 #include "icon.h"
 #include "notificationaction.h"
 #include "../hint.h"

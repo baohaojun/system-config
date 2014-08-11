@@ -19,7 +19,7 @@
 
 #ifndef SNORE_FRONTEND_H
 #define SNORE_FRONTEND_H
-#include "../snore_exports.h"
+#include "snore_exports.h"
 #include "../notification/notification.h"
 #include "plugins.h"
 

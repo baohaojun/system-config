@@ -19,7 +19,7 @@
 
 #ifndef SNORE_PLUGINS_H
 #define SNORE_PLUGINS_H
-#include "../snore_exports.h"
+#include "snore_exports.h"
 #include "../notification/notification.h"
 
 #include <QPointer>

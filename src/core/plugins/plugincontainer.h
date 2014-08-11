@@ -19,7 +19,7 @@
 
 #ifndef PLUGINCONTAINER_H
 #define PLUGINCONTAINER_H
-#include "../snore_exports.h"
+#include "snore_exports.h"
 #include "../snore_p.h"
 
 #include <QPointer>
