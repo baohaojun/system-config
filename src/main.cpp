@@ -70,15 +70,16 @@ int main ( int argc, char *argv[] )
 
         core.broadcastNotification(n);
         int returnCode = -1;
-        if(!parser.isSet(silent))
-        {
-            app.connect(&core, &SnoreCore::notificationClosed, [&returnCode](Notification noti){
+
+        app.connect(&core, &SnoreCore::notificationClosed, [&returnCode,&parser](Notification noti){
+            if(!parser.isSet(silent))
+            {
                 QString reason;
                 QDebug(&reason) << noti.closeReason();
                 std::cout << qPrintable(reason) << std::endl;
-                returnCode = noti.closeReason();
-            });
-        }
+            }
+            returnCode = noti.closeReason();
+        });
         app.connect(&core, &SnoreCore::notificationClosed, &app, &QApplication::quit);
         app.exec();
         return returnCode;
