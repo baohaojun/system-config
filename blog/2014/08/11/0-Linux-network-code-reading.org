@@ -1,0 +1,15 @@
+#+title: Linux network code reading (TODO)
+# bhj-tags: code-reading
+接收packet的时候，Kernel有两套机制。一套是传统的，但其在高速网络上已经不够用了。另一套的API命名为NAPI（New API）的意思。
+
+在传统机制下，系统收到一个网络包时，会调用三个函数。 =net_interrupt=
+ 和 =net_rx= 和 =netif_rx= 。前两个是网卡设备相关的，后面那个则已经是
+ 设备无关的，它会把收到的网络包放到wait-queue里去，最后产生一个软中断。
+
+在新的API机制下，中断和轮循被同时采用。当收到第一个packet的时候，系统
+会产生中断，然后关中断——采用一直轮循该网卡设备的方式，看有没有新的
+packet要处理。
+
+这个新机制要求设备能缓存一定数量的网络包。比如缓存在DMA中。另外还要求
+设备必须可以关闭收数据包的中断。如果有多个新机制的设备的话，多个设备之间采用 round
+robin 的方式。
