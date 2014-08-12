@@ -71,7 +71,7 @@ int main ( int argc, char *argv[] )
         core.broadcastNotification(n);
         int returnCode = -1;
 
-        app.connect(&core, &SnoreCore::notificationClosed, [&returnCode,&parser](Notification noti){
+        app.connect(&core, &SnoreCore::notificationClosed, [&](Notification noti){
             if(!parser.isSet(silent))
             {
                 QString reason;
