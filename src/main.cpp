@@ -43,9 +43,12 @@ int main ( int argc, char *argv[] )
     QCommandLineOption backend(QStringList() << "b" << "backend", "Set the notification backend.","backend");
     parser.addOption(backend);
 
+    QCommandLineOption silent(QStringList() << "silent", "Don't print to stdout.");
+    parser.addOption(silent);
+
+
 
     parser.process(app);
-    snoreDebug( SNORE_DEBUG ) << parser.positionalArguments();
     if(parser.isSet(title) && parser.isSet(message))
     {
         SnoreCore core;
@@ -53,7 +56,7 @@ int main ( int argc, char *argv[] )
         core.loadPlugins(SnorePlugin::BACKEND);
         if(parser.isSet(backend)?!core.setPrimaryNotificationBackend(parser.value(backend)):!core.setPrimaryNotificationBackend())
         {
-            std::cout << "Failed to set backend: " << qPrintable(parser.value(backend)) << " avalible backends: " << qPrintable(core.notificationBackends().join(", ")) << std::endl;
+            std::cerr << "Failed to set backend: " << qPrintable(parser.value(backend)) << " avalible backends: " << qPrintable(core.notificationBackends().join(", ")) << std::endl;
             return 1;
         }
         Icon icon(parser.value(iconPath));
@@ -67,12 +70,15 @@ int main ( int argc, char *argv[] )
 
         core.broadcastNotification(n);
         int returnCode = -1;
-        app.connect(&core, &SnoreCore::notificationClosed, [&returnCode](Notification noti){
-            QString reason;
-            QDebug(&reason) << noti.closeReason();
-            std::cout << qPrintable(reason) << std::endl;
-            returnCode = noti.closeReason();
-        });
+        if(!parser.isSet(silent))
+        {
+            app.connect(&core, &SnoreCore::notificationClosed, [&returnCode](Notification noti){
+                QString reason;
+                QDebug(&reason) << noti.closeReason();
+                std::cout << qPrintable(reason) << std::endl;
+                returnCode = noti.closeReason();
+            });
+        }
         app.connect(&core, &SnoreCore::notificationClosed, &app, &QApplication::quit);
         app.exec();
         return returnCode;
