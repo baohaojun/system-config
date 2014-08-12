@@ -1,9 +1,18 @@
 #!/bin/bash
 
-adb-swipe 200 200 200 1000
+adb-swipe 200 300 200 1000
 adb-tap 713 147
 
 adb-tap $((0 + 249)) $((1080 - 950))
 adb-tap $((0 + 238)) $((1080 - 842))
 adb-tap $((0 + 277)) $((1080 - 693))
-adb-tap $((0 + 425)) $((1080 - 672))
+
+sleep .5
+popup_win=$(adb dumpsys window | grep '^  Window.*#.*popupw' -P -i -A 8 | perl -ne 'm/mShownFrame=\[(\d+).0,(\d+).0\]/ and print "$1 $2\n"'| head -n 1)
+xy=($popup_win)
+x=${xy[0]}
+y=${xy[1]}
+
+# 624 400
+adb-tap $((x + 624 - 355)) $((y + 400 - 302))
+firefox "$(getclip-android)"
