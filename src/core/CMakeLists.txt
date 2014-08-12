@@ -7,6 +7,7 @@ if(NOT SNORE_REVISION)
 endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/LibsnoreConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake" @ONLY)
 
 QT4_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 
@@ -71,5 +72,5 @@ install(EXPORT LibsnoreTarget DESTINATION lib/cmake/libsnore${SNORE_CamelCase_SU
 
 install(FILES ${SnoreNotify_HDR} DESTINATION include/snore/core)
 
-install(FILES LibsnoreConfig.cmake DESTINATION lib/cmake/libsnore${SNORE_CamelCase_SUFFIX} RENAME Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake DESTINATION lib/cmake/libsnore${SNORE_CamelCase_SUFFIX})
 
