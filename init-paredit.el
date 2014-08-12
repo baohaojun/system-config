@@ -52,5 +52,6 @@
 (require-package 'paredit-everywhere)
 (add-hook 'prog-mode-hook 'paredit-everywhere-mode)
 (add-hook 'css-mode-hook 'paredit-everywhere-mode)
+(add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
 
 (provide 'init-paredit)
