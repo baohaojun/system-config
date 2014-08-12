@@ -1,0 +1,3 @@
+#!/bin/bash
+adb-key 26
+adb-swipe 100 1900 100 20

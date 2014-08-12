@@ -165,8 +165,6 @@
      (dolist (helm-history-var (apropos-internal "\\`helm-.*-history\\'" 'boundp))
        (makunbound helm-history-var))))
 
-
-(add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
 (add-hook 'emacs-lisp-mode-hook (lambda ()
                                   (make-local-variable
                                    (quote ajoke-symbol-chars))
