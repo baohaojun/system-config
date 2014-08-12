@@ -68,7 +68,11 @@ if test $(basename $0) = adb-fix-gms; then
             adb reboot
         fi
         adb start
-        ssh-to-phone echo hello
+        if adb getprop persist.sys.usb.config | grep diag -q; then
+            true
+        else
+            ssh-to-phone echo hello
+        fi
     ) || bhj-notify "Fix Gms Failed" "Please check!"
     exit
 fi
