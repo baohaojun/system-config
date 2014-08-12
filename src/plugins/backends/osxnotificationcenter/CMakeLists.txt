@@ -5,6 +5,6 @@ if(APPLE)
         osxnotificationcenter.mm
     )
     add_library(libsnore_backend_osxnotificationcenter MODULE ${OSXNOTIFICATIONCENTER_SRC})
-    target_link_libraries(libsnore_backend_osxnotificationcenter libsnore /System/Library/Frameworks/Foundation.framework)
+    target_link_libraries(libsnore_backend_osxnotificationcenter Snore::Libsnore /System/Library/Frameworks/Foundation.framework)
     install(TARGETS libsnore_backend_osxnotificationcenter ${SNORE_PLUGIN_INSTALL_PATH})
 endif(APPLE)

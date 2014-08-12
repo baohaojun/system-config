@@ -1,4 +1,3 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 include(GetGitRevisionDescription)
 
 get_git_head_revision(GIT_REFSPEC SNORE_REVISION)
@@ -40,22 +39,37 @@ set ( SnoreNotify_HDR ${SnoreNotify_HDR}
 
 
 add_library( libsnore SHARED ${SnoreNotify_SRCS})
-set_target_properties( libsnore PROPERTIES OUTPUT_NAME "snore${SNORE_SUFFIX}")
+set_target_properties( libsnore PROPERTIES
+                                OUTPUT_NAME "snore${SNORE_SUFFIX}"
+                                VERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}.${SNORE_VERSION_SUFFIX}"
+                                SOVERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}"
+                                EXPORT_NAME Libsnore)
 target_link_libraries( libsnore PUBLIC ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY}  )
+
+add_library(Snore::Libsnore ALIAS libsnore)
+
+
 
 generate_export_header(libsnore
   EXPORT_FILE_NAME snore_exports.h
   EXPORT_MACRO_NAME SNORE_EXPORT
 )
 
-install(TARGETS libsnore EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Config
+#TODO: drop /core/
+target_include_directories(libsnore PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+$<INSTALL_INTERFACE:include>
+$<INSTALL_INTERFACE:include/snore/core>)
+
+install(TARGETS libsnore EXPORT LibsnoreTarget
                          RUNTIME DESTINATION bin
                          LIBRARY DESTINATION lib
-                         ARCHIVE DESTINATION lib
-                         INCLUDES DESTINATION include/snore)
+                         ARCHIVE DESTINATION lib)
 
-install(EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Config DESTINATION lib/cmake/libsnore${SNORE_CamelCase_SUFFIX})
+install(EXPORT LibsnoreTarget DESTINATION lib/cmake/libsnore${SNORE_CamelCase_SUFFIX} NAMESPACE Snore::)
 
 install(FILES ${SnoreNotify_HDR} DESTINATION include/snore/core)
 
+install(FILES LibsnoreConfig.cmake DESTINATION lib/cmake/libsnore${SNORE_CamelCase_SUFFIX} RENAME Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake)
 

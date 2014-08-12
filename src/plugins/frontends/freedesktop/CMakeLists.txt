@@ -10,7 +10,7 @@ if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
     qt4_add_dbus_adaptor( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC org.freedesktop.Notifications.xml freedesktopnotificationfrontend.h FreedesktopFrontend)
 
     add_library(libsnore_frontend_freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_FRONTEND_SRC} )
-    target_link_libraries(libsnore_frontend_freedesktop libsnore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )
+    target_link_libraries(libsnore_frontend_freedesktop Snore::Libsnore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )
 
     if(KF5_IconThemes_FOUND)
         target_link_libraries(libsnore_frontend_freedesktop KF5::IconThemes)
