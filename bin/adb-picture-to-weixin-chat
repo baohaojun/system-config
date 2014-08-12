@@ -10,8 +10,14 @@ else
 fi
 
 
-if test -e "$1"; then
+if test "$1"; then
     pic=$1
+    if test ! -e "$1" && echo "$1" | grep '://'; then
+        ext=${1##*.}
+        rm -rf /tmp/$(basename $0).$ext
+        curl -o /tmp/$(basename $0).$ext "$1"
+        pic=/tmp/$(basename $0).$ext
+    fi
 else
     pic=$(get-newest-file ~/shots/)
 fi

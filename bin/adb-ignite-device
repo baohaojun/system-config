@@ -1,3 +1,6 @@
 #!/bin/bash
-adb-key 26
+
+if adb dumpsys power | grep mWakefulness=Asleep; then
+    adb-key 26
+fi
 adb-swipe 100 1900 100 20
