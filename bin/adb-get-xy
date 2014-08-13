@@ -7,5 +7,11 @@ adb-tty getevent -l </dev/tty | perl -ne '
         ($name, $val) = @fields[2,3];
         $val = hex($val);
         print "$name: $val\r\n";
+        if ($name =~ m/ABS_MT_POSITION_X/) {
+            $x = $val;
+        } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
+            $y = $val;
+        }
+        system("putclip $x $y");
     }
 '

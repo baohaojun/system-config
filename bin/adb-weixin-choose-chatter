@@ -1,10 +1,28 @@
 #!/bin/bash
 putclip-android "$1"&
-adb am start -n com.tencent.mm/.ui.LauncherUI
-sleep .5
-adb-tap-2 141 178
-adb-tap-2 141 178
-adb-tap 642 144
-adb-long-press 375 137
-adb-tap 275 405
-adb-tap 248 474
+if test "$(basename $0)" = adb-weixin-choose-chatter; then
+    adb am start -n com.tencent.mm/.ui.LauncherUI
+    sleep .5
+    adb-tap-2 141 178
+    adb-tap-2 141 178
+    adb-tap 642 144
+    adb-long-press 375 137
+    adb-tap 275 405
+    adb-tap 248 474
+elif test "$(basename $0)" = adb-call; then
+    adb am start -n com.android.contacts/.activities.DialtactsActivity
+    if echo "$1" | grep -q -P -e '^\d+$'; then
+        adb-tap-2 614 1829
+        adb-long-press 898 1689
+        sendtext-android "$1"
+        adb-tap 479 1640
+        exit
+    fi
+    sleep .5
+    adb-tap-2 332 1879
+    adb-tap 132 260
+    adb-long-press 183 146
+    adb-tap 72 403
+    adb-tap 253 270
+    adb-tap 637 665
+fi
