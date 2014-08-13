@@ -33,6 +33,7 @@
 (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point)
 
 (require-package 'auto-complete-clang)
+(require 'auto-complete-clang)
 (require-package 'keydef)
 (require-package 'lua-mode)
 (require-package 'mmm-mode)
