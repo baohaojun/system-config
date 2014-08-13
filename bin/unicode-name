@@ -1,0 +1,2 @@
+#!/bin/bash
+grep -P "^$1;" -i ~/.emacs_d/UnicodeData.txt | awk -F\; '{print $2}'|grep . || echo private-$1
