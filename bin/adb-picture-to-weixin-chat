@@ -27,6 +27,9 @@ adb push "$pic" $adb_pic
 adb am startservice -n com.bhj.setclip/.PutClipService --es picture $adb_pic
 
 case $(basename $0) in
+    adb-picture-to-phone)
+        exit
+        ;;
     adb-picture-to-weixin-chat)
         adb-tap-mid-bot # 把输入栏调到中间固定位置，如果已经在固定位置，则只不过多出一个空格来
         debug

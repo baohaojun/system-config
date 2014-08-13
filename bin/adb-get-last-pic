@@ -2,7 +2,9 @@
 
 dir=/sdcard/DCIM/Camera
 
-if test "$1" = m; then
+if test "$1" = c; then
+    dir=/sdcard/DCIM/Camera
+elif test "$1" = m; then
     dir=/sdcard/Download/mail_attachments/
 elif test "$1" = s; then
     dir=/sdcard/Pictures/Screenshots/

@@ -3,6 +3,12 @@ set -e
 touch ~/.authinfo ~/.netrc
 chmod og-rwx ~/.authinfo ~/.netrc
 
+export PATH=/opt/local/libexec/gnubin:~/system-config/bin/Linux:~/system-config/bin:$PATH
+
+if test -d  /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && ask-if-not-bhj "Make your sudo command not ask for password?"; then
+    sudo bash -c "echo $USER ALL=NOPASSWD: ALL > /etc/sudoers.d/$USER; chmod 440 /etc/sudoers.d/$USER"
+fi
+
 if ! which git; then
     sudo apt-get install -y git
 fi
@@ -24,7 +30,6 @@ mkdir -p ~/external/bin/$uname/ext
 mkdir -p ~/.cache/notification-manager
 mkdir -p ~/external/etc/at
 echo ~/external/etc/at >> ~/.where
-export PATH=/opt/local/libexec/gnubin:~/system-config/bin/Linux:~/system-config/bin:$PATH
 
 function die() {
     echo "$@"
@@ -184,6 +189,10 @@ else
 fi
 
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
+
+if ask-if-not-bhj "Do you want to use bhj's power button behavior (hibernate)?"; then
+    sudo perl -npe 's/.*HandlePowerKey=.*/HandlePowerKey=hibernate/' -i /etc/systemd/logind.conf
+fi
 
 if ask-if-not-bhj "Do you want to use bhj's git-exclude file?"; then
     git config --global core.excludesfile '~/.git-exclude'
