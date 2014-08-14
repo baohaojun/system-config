@@ -1,0 +1,103 @@
+#!/usr/bin/perl
+use strict;
+my %email_map;
+my %phone_map;
+my %name_phone_map;
+my %phone_name_map;
+my $name_email_map;
+my $email_name_map;
+use Getopt::Long;
+my $debug;
+GetOptions(
+    "d!" => \$debug,
+    );
+
+sub debug(@) {
+    print STDERR "@_\n" if $debug;
+}
+
+sub checkNil($) {
+    if ($_[0] eq "nil") {
+        return "";
+    }
+    return $_[0];
+}
+
+sub dq($) {
+    my ($str) = @_;
+    debug "str is $str";
+    $str =~ s/\QCHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:\E//g;
+    $str =~ s/=([a-f0-9]{2})/chr(hex("0x$1"))/egi;
+    $str =~ s/("|\\)/\\$1/g;
+    $str = '"' . $str . '"';
+    debug "str is $str";
+    return $str;
+}
+
+while (<>) {
+    if (m/^BEGIN:VCARD/) {
+        my @names;
+        my $fn;
+        my @emails;
+        my @phones;
+        while (<>) {
+            # [nil "艾迪" nil nil nil nil nil ("aidi@smartisan.com") ((creation-date . "2014-05-16 05:32:02 +0000") (timestamp . "2014-05-16 05:32:02 +0000")) nil]
+            chomp;
+
+            if (m/=$/) {
+                my $line = $_;
+                $line =~ s/=$//;
+                do {
+                    my $new_line = <>;
+                    $new_line =~ s/^=//;
+                    $line .= $new_line;
+                    if ($new_line !~ m/=$/) {
+                        last;
+                    }
+                    $line =~ s/=$//;
+                } while (1);
+                $_ = $line;
+            }
+            if (m/^N:(.*)/) {
+                @names = grep {m/./} split(';', $1);
+            } elsif (m/^EMAIL:/) {
+                push @emails, $';
+            } elsif (m/^TEL;/) {
+                my $phone = $';
+                $phone =~ s/-//g;
+                push @phones, $phone;
+            } elsif (m/^FN;/) {
+                $fn = $';
+            } elsif (m/^END:VCARD/) {
+                my $firstName;
+                my $lastName;
+                my $phones;
+                my $emails;
+                if (@names) {
+                    ($lastName, $firstName) = @names;
+                    ($lastName, $firstName) = (dq($lastName), dq($firstName));
+                } else {
+                    $firstName = "nil";
+                    $lastName = dq($fn);
+                }
+                for (@phones) {
+                    my ($type, $number) = split(':');
+                    $phones .= ($phones ? " " : '') . sprintf("[%s %s]", dq(lc $type), dq($number));
+                }
+                $phones = $phones ? sprintf("(%s)", $phones) : "nil";
+                for (@emails) {
+                    $emails .= ($emails ? " " : '') . dq($_);
+                }
+                $emails = $emails ? sprintf("(%s)", $emails) : "nil";
+                if ($phones eq "nil" and $emails eq "nil") {
+                    last;
+                }
+                printf "[%s %s nil nil %s nil %s nil]\n", $firstName, $lastName, $phones, $emails;
+                last;
+            }
+        }
+    } elsif (m/\[(nil|".*?")\s+(nil|".*?")\s+/) {
+        my ($firstName, $lastName) = map {checkNil $_} ($1, $2);
+        debug "got firstName: $firstName, last: $lastName";
+    }
+}
