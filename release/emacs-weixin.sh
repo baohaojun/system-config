@@ -2,13 +2,19 @@
 
 export USE_BUFFER_NAME=send-to-$(basename $0).org
 (
-    if ! flock -n 9; then
+    if test $# != 0; then
+        true
+    elif ! flock -n 9; then
         find-or-exec emacs "No such thing"
         emacsclient -e '(switch-to-buffer "'$USE_BUFFER_NAME'")'
         exit
     fi
     while true; do
-        input=$(ask-for-input-with-emacs -p "What do you want say on $(basename $0)?" || true)
+        if test $# != 0; then
+            input=$*
+        else
+            input=$(ask-for-input-with-emacs -p "What do you want say on $(basename $0)?" || true)
+        fi
         if ! test "$input"; then
             exit
         fi
@@ -111,5 +117,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                 emacs-cell-phone $(basename $0)
             )
         ) 10> ~/.logs/$(basename $0).lock-send &
+        if test $# != 0; then
+            exit
+        fi
     done
 ) 9> ~/.logs/$(basename $0).lock
