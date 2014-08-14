@@ -10,6 +10,10 @@ function die() {
     exit -1
 }
 
+if test $# = 2 -a -e "$2" && basename "$2" | grep -e '^#.*#$'; then
+    set -- "$1" "$(echo "$2" | perl -npe 's/#//g')"
+fi
+
 if test "$EC_CHECK_DIR" = no -o "$1" = -e; then
     true
 else

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+adb-weixin-choose-chatter "$1"
+shift
+weixin "$@"

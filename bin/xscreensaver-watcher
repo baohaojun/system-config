@@ -6,7 +6,10 @@ while (<IN>) {
     if (m/^(BLANK|LOCK)/) {
         if (!$blanked) {
             printf "blanked at %s", `date`;
-            system "xset dpms 10 120 180; sound-off";
+            system "xset dpms 10 120 180";
+            unless (-e glob("~/.logs/screensaver-no-sound-off")) {
+                system("sound-off");
+            }
             $blanked = 1;
         }
     } elsif (m/^UNBLANK/) {

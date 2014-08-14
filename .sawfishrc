@@ -555,3 +555,4 @@
 (bind-keys print-keymap "e" '(system "e /tmp/screen-exchange&"))
 (bind-keys global-keymap "XF86Favorites" '(system "do-work&"))
 (bind-keys s-h-keymap "a" '(system "find-or-exec Qpdfview&"))
+(bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))

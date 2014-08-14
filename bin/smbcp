@@ -10,7 +10,7 @@ if test $# -lt 2; then
     if test $(basename $0) = smb_push -a $# = 1; then
         set -- "$1" /home/bhj/smb/share.smartisan.cn/share/baohaojun
         if test ! -d ~/smb/share.smartisan.cn/share/baohaojun; then
-            umount -l ~/smb
+            sudo umount -l ~/smb
             smbnetfs ~/smb
         fi
         swp /home/bhj/smb/share.smartisan.cn/share/baohaojun/$(basename $1)
@@ -48,7 +48,7 @@ else
         set -- "$1" "$2/$(basename "$1")"
     fi
     base_dest=$(basename "$2")
-    src=$(readlink -f "$2")
+    src=$(readlink -m "$2")
 fi
 smb=$(readlink -f ~/smb)
 
