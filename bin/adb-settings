@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if test "$1"; then
+    adb am start -n com.smartisanos.updater/$1
+else
+    x=$(select-args \
+            .UpdatesCheck \
+            .ContactsSettingActivity \
+     )
+    adb am start -n com.smartisanos.updater/$x
+fi
