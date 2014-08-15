@@ -18,6 +18,9 @@ if test "$EC_CHECK_DIR" = no -o "$1" = -e; then
     true
 else
     for x in "$@"; do
+        if test "$x" = --eval; then
+            break
+        fi
         if [[ "$x" =~ / ]] && test ! -e "$(dirname -- "$x")" &&
            ! echo "$x" | grep -q -P -e '^/(scp|adb):'; then
             die "$(dirname -- "$x") not exist, will cause trouble for emacs"
