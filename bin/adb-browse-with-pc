@@ -1,11 +1,14 @@
 #!/bin/bash
-
-adb-swipe 200 300 200 1000
-adb-tap 713 147
-
-adb-tap $((0 + 249)) $((1080 - 950))
-adb-tap $((0 + 238)) $((1080 - 842))
-adb-tap $((0 + 277)) $((1080 - 693))
+if test "$(gettask-android)" = com.android.browser; then
+    adb-swipe 200 300 200 1000
+    adb-tap 713 147
+    adb-wide-tap-2 1031 274
+    adb-wide-tap 767 291
+else
+    adb-tap $((0 + 249)) $((1080 - 950))
+    adb-tap $((0 + 238)) $((1080 - 842))
+    adb-tap $((0 + 277)) $((1080 - 693))
+fi
 
 sleep .5
 popup_win=$(adb dumpsys window | grep '^  Window.*#.*popupw' -P -i -A 8 | perl -ne 'm/mShownFrame=\[(\d+).0,(\d+).0\]/ and print "$1 $2\n"'| head -n 1)
@@ -15,4 +18,4 @@ y=${xy[1]}
 
 # 624 400
 adb-tap $((x + 624 - 355)) $((y + 400 - 302))
-firefox "$(getclip-android)"
+firefox -new-tab "$(getclip-android)"

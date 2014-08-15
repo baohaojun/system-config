@@ -4,9 +4,10 @@ my %email_map;
 my %phone_map;
 my %name_phone_map;
 my %phone_name_map;
-my $name_email_map;
-my $email_name_map;
+my %name_email_map;
+my %email_name_map;
 use Getopt::Long;
+use String::ShellQuote;
 my $debug;
 GetOptions(
     "d!" => \$debug,
@@ -21,6 +22,11 @@ sub checkNil($) {
         return "";
     }
     return $_[0];
+}
+sub unhex($) {
+    my ($str) = @_;
+    $str =~ s/=([a-f0-9]{2})/chr(hex("0x$1"))/egi;
+    return $str;
 }
 
 sub dq($) {
@@ -58,46 +64,66 @@ while (<>) {
                 } while (1);
                 $_ = $line;
             }
-            if (m/^N:(.*)/) {
-                @names = grep {m/./} split(';', $1);
-            } elsif (m/^EMAIL:/) {
+            if (m/^(?:N:|N;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:)(.*)/) {
+                @names = grep {m/./} split(';', unhex ($1));
+            } elsif (m/^EMAIL:|EMAIL;TYPE=INTERNET:/) {
                 push @emails, $';
             } elsif (m/^TEL;/) {
                 my $phone = $';
                 $phone =~ s/-//g;
                 push @phones, $phone;
-            } elsif (m/^FN;/) {
-                $fn = $';
+            } elsif (m/^(FN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:|FN;)/) {
+                $fn = unhex $';
             } elsif (m/^END:VCARD/) {
                 my $firstName;
                 my $lastName;
                 my $phones;
                 my $emails;
+                my $name;
                 if (@names) {
                     ($lastName, $firstName) = @names;
                     ($lastName, $firstName) = (dq($lastName), dq($firstName));
+                    $name = join(";", @names);
                 } else {
                     $firstName = "nil";
                     $lastName = dq($fn);
+                    $name = join(";", "", $fn);
                 }
                 for (@phones) {
                     my ($type, $number) = split(':');
+                    $name_phone_map{$name}{$number} = $type;
+                    if ($phone_name_map{$number} eq $name) {
+                        next;
+                    } elsif ($phone_name_map{$number}) {
+                        my $prompt = shell_quote("Which name do you want for $number");
+                        my $name1 = shell_quote($name);
+                        my $name2 = shell_quote($phone_name_map{$number});
+                        $name = qx(select-args -p $prompt $name1 $name2);
+                    }
+                    $phone_name_map{$number} = $name;
                     $phones .= ($phones ? " " : '') . sprintf("[%s %s]", dq(lc $type), dq($number));
                 }
                 $phones = $phones ? sprintf("(%s)", $phones) : "nil";
                 for (@emails) {
+                    my $email = $_;
                     $emails .= ($emails ? " " : '') . dq($_);
+                    $name_email_map{$name}{$email} = 1;
+                    if ($email_name_map{$email} eq $name) {
+                        next;
+                    } elsif ($email_name_map{$email}) {
+                        my $prompt = shell_quote("Which name do you want for $email");
+                        my $name1 = shell_quote($name);
+                        my $name2 = shell_quote($email_name_map{$email});
+                        $name = qx(select-args -p $prompt $name1 $name2);
+                    }
+                    $email_name_map{$email} = $name;
                 }
                 $emails = $emails ? sprintf("(%s)", $emails) : "nil";
                 if ($phones eq "nil" and $emails eq "nil") {
                     last;
                 }
-                printf "[%s %s nil nil %s nil %s nil]\n", $firstName, $lastName, $phones, $emails;
                 last;
             }
         }
-    } elsif (m/\[(nil|".*?")\s+(nil|".*?")\s+/) {
-        my ($firstName, $lastName) = map {checkNil $_} ($1, $2);
-        debug "got firstName: $firstName, last: $lastName";
     }
 }

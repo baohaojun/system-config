@@ -1,0 +1,7 @@
+#!/bin/bash
+if test $(basename $0) = adb-wide-tap; then
+    adb-tap $2 $((1080 - $1))
+elif test $(basename $0) = adb-wide-tap-2; then
+    adb-wide-tap "$@"
+    adb-wide-tap "$@"
+fi
