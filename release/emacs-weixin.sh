@@ -52,7 +52,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 864 921
                             ;;
                         cell-mail) # reply mail
-                            adb-swipe 586 878 586 268 500
+                            adb-swipe 586 878 586 268 .5
                             adb-tap 560 1840 #
                             adb-tap-2 299 299
                             adb-tap 505 192
