@@ -5,6 +5,9 @@ use File::Glob qw(:globally :nocase);
 use File::Basename;
 use String::ShellQuote;
 
+use Getopt::Long;
+my $debug_mode;
+
 my @sub_projs;
 my @projs_to_compile;
 my @configs_to_compile;
@@ -14,19 +17,20 @@ my $vc_program = $ENV{VC_PROGRAM};
 my $sln_file;
 my $cwd;
 my $sln_dir;
-my $debug_mode;
+my $list_info;
 
-$debug_mode = 1 if ($ENV{VCDBG});
+GetOptions(
+    "d!" => \$debug_mode,
+    "p=s" => sub {shift; push @projs_to_compile, @_},
+    "c=s" => sub {shift; push @configs_to_compile, @_},
+    "t=s" => sub {shift; push @targets_to_compile, @_},
+    "s=s" => \$sln_file,
+    "l!" => \$list_info,
+    );
 
 sub debug(@) {
     print STDERR "@_\n";
 }
-
-use Getopt::Long;
-GetOptions(
-    "s=s" => \$sln_file,
-    );
-
 
 main();
 
@@ -54,25 +58,20 @@ sub main
 
     getAllSubProjs();
 
-    my $arg = shift @ARGV;
-    if (not $arg) {
-        @projs_to_compile = @sub_projs[0];
-    } elsif ($arg eq "all") {
+    if (not @projs_to_compile) {
+        @projs_to_compile = ($sub_projs[0]);
+    } elsif (@projs_to_compile == 1 and $projs_to_compile[0] eq "all") {
         @projs_to_compile = @sub_projs;
-    } else {
-        @projs_to_compile = ($arg);
     }
 
-    $arg = shift @ARGV;
-    if (not $arg) {
+    if ($list_info) {
+        print "Projects are @sub_projs\n";
+        exit;
+    }
+
+    if (not @configs_to_compile) {
         @configs_to_compile = qw(release);
-    } elsif ($arg eq "all") {
-        @configs_to_compile = qw(release debug);
-    } else {
-        @configs_to_compile = ($arg);
     }
-
-    @targets_to_compile = @ARGV;
 
     doCompile();
 }

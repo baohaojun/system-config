@@ -4,7 +4,17 @@ if test "$(gettask-android)" = com.android.browser; then
     adb-tap 713 147
     adb-wide-tap-2 1031 274
     adb-wide-tap 767 291
-else
+elif test "$(gettask-android)" = com.tencent.mobileqq; then
+    adb-tap 990 114
+    adb-tap 367 1486
+    firefox -new-tab "$(getclip-android)"
+    exit
+elif test "$(gettask-android)" = com.sina.weibo; then
+    adb-tap 990 114
+    adb-tap 318 1562
+    firefox -new-tab "$(getclip-android)"
+    exit
+else # firefox?
     adb-tap $((0 + 249)) $((1080 - 950))
     adb-tap $((0 + 238)) $((1080 - 842))
     adb-tap $((0 + 277)) $((1080 - 693))

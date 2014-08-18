@@ -12,6 +12,6 @@ adb-tty getevent -l </dev/tty | perl -ne '
         } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
             $y = $val;
         }
-        system("putclip $x $y");
+        system("putclip adb-tap $x $y");
     }
 '

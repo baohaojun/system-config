@@ -1,5 +1,16 @@
 #!/bin/bash
+if echo $SHELLOPTS | grep xtrace; then
+    function debug() {
+        read -p "press any key to continue..."
+    }
+else
+    function debug() {
+        sleep .5
+    }
+fi
+
 putclip-android "$1"&
+debug
 if test "$(basename $0)" = adb-weixin-choose-chatter; then
     adb am start -n com.tencent.mm/.ui.LauncherUI
     sleep .5
@@ -25,4 +36,23 @@ elif test "$(basename $0)" = adb-call; then
     adb-tap 72 403
     adb-tap 253 270
     adb-tap 637 665
+elif test "$(basename $0)" = adb-qq-choose-chatter; then
+    adb am start -n com.tencent.mobileqq/.activity.SplashActivity
+    debug
+    while true; do
+        window=$(adb dumpsys window|grep mFocusedWindow)
+        if echo $window|grep -q SplashActivity; then
+            break
+        else
+            adb-key BACK
+        fi
+    done
+    adb-tap-mid-bot
+    adb-tap 433 284
+    adb-long-press 190 149
+    adb-tap 79 391
+    debug
+    adb-tap 287 272
+    debug
+    adb-tap 616 1830
 fi
