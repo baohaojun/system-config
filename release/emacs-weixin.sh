@@ -25,7 +25,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
             flock 10
             (
                 exec 9>/dev/null 10>&9
-                putclip-android "$input"&
+                putclip-android "$input"
 
                 function emacs-cell-phone() {
                     case "$1" in
@@ -46,9 +46,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 991 166
                             ;;
                         t1-sms) # quick reply sms
-                            adb-tap 560 1840 # 点空格
                             adb-long-press 522 912 # 长按输入框
-                            adb-tap 480 802
+                            adb-tap 149 786
                             adb-tap 864 921
                             ;;
                         cell-mail) # reply mail
@@ -105,11 +104,17 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 1001 983
                             ;;
                         *) # most cases
+                            window=$(adb-focused-window)
+                            if test "$window" = SmsPopupDialog; then
+                                emacs-cell-phone t1-sms
+                                exit
+                            fi
                             adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
                             sleep .1
                             adb-tap 560 1840 # 再点一下，可能在出键盘，需要输入一个空格
                             adb-tap-2 560 976 # 双击输入框
-                            adb-tap 525 855 # 点一下粘贴钮
+                            adb-tap 296 830 # 全选
+                            adb-tap 888 849 # 点一下粘贴钮
                             adb-tap 976 976 # 点一下发送钮
                             ;;
                     esac
