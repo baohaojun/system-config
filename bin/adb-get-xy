@@ -1,5 +1,10 @@
 #!/bin/bash
 
+export TAP=adb-tap
+if test "$1"; then
+    export TAP=$1
+fi
+
 adb-tty getevent -l </dev/tty | perl -ne '
     if (m/ABS_MT_POSITION_/) {
         chomp;
@@ -12,6 +17,6 @@ adb-tty getevent -l </dev/tty | perl -ne '
         } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
             $y = $val;
         }
-        system("putclip adb-tap $x $y");
+        system("putclip $ENV{TAP} $x $y");
     }
 '

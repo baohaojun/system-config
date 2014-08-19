@@ -1,0 +1,14 @@
+#!/usr/bin/perl
+use Encode;
+for (@ARGV) {
+    chomp;
+    $_ = decode_utf8 $_;
+    s/./$&.*/g;
+    $_ = substr($_, 0, -2);
+    if (@ARGV == 1) {
+        use String::ShellQuote;
+        my $p = shell_quote($_);
+        system("putclip $p");
+    }
+    print "$_\0";
+}

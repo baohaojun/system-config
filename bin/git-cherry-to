@@ -1,0 +1,33 @@
+#!/bin/bash
+. .gitx
+TEMP=$(getopt -o r:b: --long rev:branch: -n $(basename $0) -- "$@")
+branch=
+rev=$(git rev-parse HEAD)
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -b|--branch)
+            branch=$2
+            shift 2
+            ;;
+        -r|--rev)
+            rev=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+if test ! "$branch"; then
+    git co -B
+else
+    git co $branch
+fi
+
+git cherry-pick $rev

@@ -47,20 +47,30 @@ case $(basename $0) in
         adb-tap 953 182
         debug
         adb-key BS
+        adb-key DEL
         ;;
     adb-picture-to-qq-chat)
         adb-tap-mid-bot
         debug
-        adb-tap 151 999
+        adb-tap 151 999 # 点一下加号
         debug
-        adb-tap 125 1476
+        adb-tap 125 1476 # 点一下图片按钮
         debug
-        adb-tap 161 423
+        while ! adb-is-activity com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity; do
+            adb-tap 118 152 # 点一下相册
+            debug
+        done
         debug
-        adb-tap 917 1848
+        adb-tap 457 493 # 点一下第二行，Camera
         debug
-        adb-tap 433 1264
+        adb-tap 161 423 # 点一下第一张照片
         debug
-        adb-key BS
+        adb-tap 917 1848 # 点一下发送
+        debug
+        adb-key BACK
+        adb-key DEL
         ;;
 esac
+
+adb rm $adb_pic
+adb am startservice -n com.bhj.setclip/.PutClipService --es picture $adb_pic

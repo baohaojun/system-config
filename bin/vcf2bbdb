@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use strict;
+use Encode;
 my %email_map;
 my %phone_map;
 my %name_phone_map;
@@ -12,6 +13,22 @@ my $debug;
 GetOptions(
     "d!" => \$debug,
     );
+
+# 10 matches for "cjk.*\(first\|last\)" in buffer: UnicodeData.txt
+#   11878:3400;<CJK Ideograph Extension A, First>;Lo;0;L;;;;;N;;;;;
+#   11879:4DB5;<CJK Ideograph Extension A, Last>;Lo;0;L;;;;;N;;;;;
+#   11944:4E00;<CJK Ideograph, First>;Lo;0;L;;;;;N;;;;;
+#   11945:9FCC;<CJK Ideograph, Last>;Lo;0;L;;;;;N;;;;;
+#   26380:20000;<CJK Ideograph Extension B, First>;Lo;0;L;;;;;N;;;;;
+#   26381:2A6D6;<CJK Ideograph Extension B, Last>;Lo;0;L;;;;;N;;;;;
+#   26382:2A700;<CJK Ideograph Extension C, First>;Lo;0;L;;;;;N;;;;;
+#   26383:2B734;<CJK Ideograph Extension C, Last>;Lo;0;L;;;;;N;;;;;
+#   26384:2B740;<CJK Ideograph Extension D, First>;Lo;0;L;;;;;N;;;;;
+#   26385:2B81D;<CJK Ideograph Extension D, Last>;Lo;0;L;;;;;N;;;;;
+
+sub isCjkChar(@) {
+    return grep {m/^[\x{3400}-\x{4db5}\x{4e00}-\x{9fcc}\x{20000}-\x{2a6d6}\x{2a700}-\x{2b734}\x{2b740}-\x{2b81d}]$/} @_;
+}
 
 sub debug(@) {
     print STDERR "@_\n" if $debug;
@@ -26,17 +43,41 @@ sub checkNil($) {
 sub unhex($) {
     my ($str) = @_;
     $str =~ s/=([a-f0-9]{2})/chr(hex("0x$1"))/egi;
+    $str =~ s/\r//g;
     return $str;
+}
+
+sub choose_name($$$) {
+    my ($name1, $name2, $prompt) = @_;
+    my @name1 = grep {m/./} split(';', $name1);
+    my @name2 = grep {m/./} split(';', $name2);
+
+    debug "name1 is '$name1', name2 is '$name2'";
+    if (not @name2) {
+        return $name1;
+    }
+    if (not @name1) {
+        return $name2;
+    }
+    if (@name2 == 1 and join('', @name1[0, 2, 1]) eq $name2[0]) {
+        return $name2;
+    } elsif (@name1 == 1 and join('', @name2[0, 2, 1]) eq $name1[0]) {
+        return $name1;
+    }
+    $name1 = shell_quote($name1);
+    $name2 = shell_quote($name2);
+    $prompt = shell_quote($prompt);
+    return qx(select-args -p $prompt $name1 $name2);
 }
 
 sub dq($) {
     my ($str) = @_;
-    debug "str is $str";
+    # debug "str is $str";
     $str =~ s/\QCHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:\E//g;
     $str =~ s/=([a-f0-9]{2})/chr(hex("0x$1"))/egi;
     $str =~ s/("|\\)/\\$1/g;
     $str = '"' . $str . '"';
-    debug "str is $str";
+    # debug "str is $str";
     return $str;
 }
 
@@ -75,18 +116,12 @@ while (<>) {
             } elsif (m/^(FN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:|FN;)/) {
                 $fn = unhex $';
             } elsif (m/^END:VCARD/) {
-                my $firstName;
-                my $lastName;
                 my $phones;
                 my $emails;
                 my $name;
                 if (@names) {
-                    ($lastName, $firstName) = @names;
-                    ($lastName, $firstName) = (dq($lastName), dq($firstName));
                     $name = join(";", @names);
                 } else {
-                    $firstName = "nil";
-                    $lastName = dq($fn);
                     $name = join(";", "", $fn);
                 }
                 for (@phones) {
@@ -95,10 +130,24 @@ while (<>) {
                     if ($phone_name_map{$number} eq $name) {
                         next;
                     } elsif ($phone_name_map{$number}) {
-                        my $prompt = shell_quote("Which name do you want for $number");
-                        my $name1 = shell_quote($name);
-                        my $name2 = shell_quote($phone_name_map{$number});
-                        $name = qx(select-args -p $prompt $name1 $name2);
+                        my $new_name = choose_name($name, $phone_name_map{$number}, "Which name do you want for $number");
+                        my $delname;
+                        if ($new_name ne $name) {
+                            $delname = $name;
+                        } else {
+                            $delname = $phone_name_map{$number};
+                        }
+                        $name = $delname;
+                        debug "discarding $name for phone $number to $new_name";
+                        delete $name_phone_map{$name}{$number};
+                        delete $name_phone_map{$name} unless %{$name_phone_map{$name}};
+                        if ($name_email_map{$name} and %{$name_email_map{$name}}) {
+                            die "already has a email map for $new_name" if ($name_email_map{$new_name} and %{$name_email_map{$new_name}});
+                            $name_email_map{$new_name} = $name_email_map{$name};
+                            delete $name_email_map{$name};
+                        }
+                        $name_phone_map{$new_name}{$number} = $type;
+                        $name = $new_name;
                     }
                     $phone_name_map{$number} = $name;
                     $phones .= ($phones ? " " : '') . sprintf("[%s %s]", dq(lc $type), dq($number));
@@ -111,10 +160,29 @@ while (<>) {
                     if ($email_name_map{$email} eq $name) {
                         next;
                     } elsif ($email_name_map{$email}) {
-                        my $prompt = shell_quote("Which name do you want for $email");
-                        my $name1 = shell_quote($name);
-                        my $name2 = shell_quote($email_name_map{$email});
-                        $name = qx(select-args -p $prompt $name1 $name2);
+                        my $new_name = choose_name($name, $email_name_map{$email}, "Which name do you want for $email");
+                        my $delname;
+                        if ($new_name ne $name) {
+                            $delname = $name;
+                        } else {
+                            $delname = $email_name_map{$email};
+                        }
+                        $name = $delname;
+                        debug "discarding $name for email $email for $new_name";
+                        delete $name_email_map{$name}{$email};
+                        delete $name_email_map{$name} unless %{$name_email_map{$name}};
+                        if ($name_phone_map{$name} and %{$name_phone_map{$name}}) {
+                            debug "The old name has got phones: ", keys %{$name_phone_map{$name}};
+                            if ($name_phone_map{$new_name} and %{$name_phone_map{$new_name}}) {
+                                for (keys %{$name_phone_map{$name}}) {
+                                    $name_phone_map{$new_name}{$_} = $name_phone_map{$name}{$_};
+                                }
+                            } else {
+                                $name_phone_map{$new_name} = $name_phone_map{$name};
+                            }
+                            delete $name_phone_map{$name};
+                        }
+                        $name = $new_name;
                     }
                     $email_name_map{$email} = $name;
                 }
@@ -125,5 +193,44 @@ while (<>) {
                 last;
             }
         }
+    }
+}
+
+for my $name (sort (keys %name_phone_map, grep {not exists $name_phone_map{$_}} keys %name_email_map)) {
+    my $phones;
+    for my $number ($name_phone_map{$name} ? keys %{$name_phone_map{$name}} : ()) {
+        my $type = $name_phone_map{$name}{$number};
+        $phones .= ($phones ? " " : '') . sprintf("[%s %s]", dq(lc $type), dq($number));
+    }
+    $phones = $phones ? sprintf("(%s)", $phones) : "nil";
+
+    my $emails;
+    for my $email ($name_email_map{$name} ? keys %{$name_email_map{$name}} : ()) {
+        $emails .= ($emails ? " " : '') . dq($email);
+    }
+    $emails = $emails ? sprintf("(%s)", $emails) : "nil";
+    my @name = grep {m/./} split(";", $name);
+
+    my ($firstName, $lastName) = map {dq $_} @name;
+    if (@name >= 3) {
+        if (@name == 3) {
+            my @name_ch = isCjkChar(map{$_ = decode_utf8($_)} @name);
+            if (@name_ch == 3) {
+                debug "change @name to @name[0, 2, 1]";
+                @name = @name[0, 2, 1];
+            }
+        }
+        $firstName = dq join("", @name);
+        $lastName = "nil";
+    }
+    $lastName = "nil" unless $lastName;
+    $firstName = "nil" unless $firstName;
+    if ($lastName eq "nil" and $firstName eq "nil") {
+        while ($emails =~ m/".*?"/g) {
+            my $email = $&;
+            printf "[%s %s nil nil nil %s nil %s nil nil]\n", $email, "nil", "nil", "($email)";
+        }
+    } else {
+        printf "[%s %s nil nil nil %s nil %s nil nil]\n", $firstName, $lastName, $phones, $emails;
     }
 }

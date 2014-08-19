@@ -1,0 +1,14 @@
+#!/bin/bash
+dump=$(adb dumpsys window)
+window=$(echo "$dump" | grep mFocusedWindow | perl -npe 's/.*?(\S+)\}$/$1/')
+if test "$1"; then
+   if test "$window" = "$1"; then
+       true
+   else
+       false
+   fi
+   exit
+fi
+
+echo $window
+echo $window | putclip

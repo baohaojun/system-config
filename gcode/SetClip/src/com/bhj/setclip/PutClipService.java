@@ -43,8 +43,8 @@ public class PutClipService extends Service {
         try {
             String picName = intent.getStringExtra("picture");
             if (picName != null) {
-                picName = picName.replaceFirst("^/sdcard/", "");
-                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(Environment.getExternalStorageDirectory(), picName))));
+                Uri picUri = Uri.parse("file://" + picName);
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, picUri));
             } else if (intent.getIntExtra("gettask", 0) == 1) {
                 String foregroundTaskPackageName = getTask();
                 writeFile(foregroundTaskPackageName);

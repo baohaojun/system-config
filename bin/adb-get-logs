@@ -26,6 +26,7 @@ if test $(basename $0) = adb-get-logs; then
     cd "$1"
 
     adb_pull /data/logs /data/anr /data/system/dropbox /data/tombstones /sdcard/smartisan /data/core ./
+    rm ./smartisan/*/ -rf
     smb_push ~/today/"$1"
     rm ~/today/"$1" -rf
 else

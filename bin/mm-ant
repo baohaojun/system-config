@@ -28,6 +28,7 @@ done
 
 adb shell echo -n
 build_xml=$(lookup-file build.xml) || true
+
 if test ! -e "$build_xml" -a -e AndroidManifest.xml; then
     ant-build
     exit
@@ -42,6 +43,9 @@ elif grep 'android.library=true' $(dirname $(lookup-file build.xml))/project.pro
     fi
 fi
 cd $(dirname $(lookup-file build.xml))
+if test $# = 0 -a -e .release-build; then
+    set -- release
+fi
 if test "$1" = clean; then
     ant clean
     shift
