@@ -1,0 +1,1 @@
+../../../blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.org

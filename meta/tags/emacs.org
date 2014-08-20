@@ -1,4 +1,10 @@
 #+title: Emacs the editor
+ * 2014
+  - 2014-08
+   * 2014-08-20
+
+     [[../../../blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.org][Using Emacs as a better Source Insight]]
+
  * 2013
   - 2013-06
    * 2013-06-18

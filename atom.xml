@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Using Emacs as a better Source Insight]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.html"/>
+    <updated>2014-16-20T10:08:04+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Linux network code reading (TODO)]]></title>
     <link href="http://baohaojun.github.io/blog/2014/08/11/0-Linux-network-code-reading.html"/>
-    <updated>2014-30-12T14:08:03+08:00</updated>
+    <updated>2014-08-12T14:30:29+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/08/11/0-Linux-network-code-reading.html</id>
   </entry>
   <entry>
@@ -65,11 +71,5 @@ Smartisan T1小扳手使用指南]]></title>
     <link href="http://baohaojun.github.io/blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html"/>
     <updated>2014-01-16T17:37:48+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[高效文本编辑的七个习惯]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/01/03/0-7-habits-of-highly-effective-editting.html"/>
-    <updated>2014-01-03T11:00:55+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/01/03/0-7-habits-of-highly-effective-editting.html</id>
   </entry>
 </feed>
