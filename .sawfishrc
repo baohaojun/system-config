@@ -549,6 +549,7 @@
 (bind-keys global-keymap "Super-ESC" '(system "sawfish-clean-screen&"))
 (bind-keys global-keymap "Print" print-keymap)
 (bind-keys print-keymap "Print" '(system "screenshot full&"))
+(bind-keys print-keymap "d" '(system "sleep 10 && screenshot full&"))
 (bind-keys print-keymap "s" '(system "screenshot selected&"))
 (bind-keys print-keymap "c" '(system "screenshot current&"))
 (bind-keys print-keymap "k" '(system "sawfish-get-screen-shot-whole&"))
