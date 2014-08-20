@@ -28,10 +28,8 @@
 #include <QtCore>
 #include <QtDBus>
 #include <QImage>
+#include <QIcon>
 
-#ifdef HAVE_KDE5
-#include <KIconThemes/KIconLoader>
-#endif
 using namespace Snore;
 
 Q_EXPORT_PLUGIN2(libsnore_frontend_freedesktop,FreedesktopFrontend)
@@ -103,17 +101,21 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     }
     else
     {
-        icon = Icon(":/root/images/freedesktop-dbus.png");
+        icon = Icon(":/root/snore.png");
     }
 
     if(!snore()->aplications().contains(app_name))
     {
-#ifdef HAVE_KDE5
-        Icon appIcon(KIconLoader::global()->iconPath(app_icon, KIconLoader::Desktop));
-#else
-        Q_UNUSED(app_icon);
-        Icon appIcon(":/root/images/freedesktop-dbus.png");
-#endif
+        qDebug() << QIcon::themeSearchPaths();
+        QIcon qicon = QIcon::fromTheme(app_icon, QIcon(":/root/snore.png") );
+        QSize max;
+        foreach (const QSize &s, qicon.availableSizes()) {
+            if(s.width()*s.height()>max.width()*max.height())
+            {
+                max = s;
+            }
+        }
+        Icon appIcon( qicon.pixmap( max ).toImage());
         Alert alert("DBus Alert", appIcon);
         app = Application(app_name, appIcon);
         app.addAlert(alert);

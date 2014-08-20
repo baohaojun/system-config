@@ -2,7 +2,4 @@
     <qresource prefix="/root">
         <file>snore.png</file>
     </qresource>
-    <qresource prefix="/root/images">
-        <file>freedesktop-dbus.png</file>
-    </qresource>
 </RCC>
