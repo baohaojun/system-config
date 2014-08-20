@@ -164,7 +164,7 @@ I don't know why I don't do it in Emacs itself. Anyway, I have
 customized my sawfish desktop so that when I press =F1=, it will
 synthesize some events to the focused window (i.e. Emacs):
 
-[[/home/bhj/shots/2014-08-20-10.37.31.png][file:/home/bhj/shots/2014-08-20-10.37.31.png]]
+[[../../../../images/sawfish-binding-for-f1.png][sawfish-binding-for-f1.png]]
 
 And the synthesized keys will invoke =grep-func-call= for me in Emacs.
 

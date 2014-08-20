@@ -18,19 +18,19 @@ sub fix_link($)
     my ($link) = @_;
     my $file;
     my $anchor;
-    if ($link =~ m!^~/!) {
+    if ($link =~ m!^~/|^$ENV{HOME}/!) {
         $link =~ s!^~/!$ENV{HOME}/!;
         chomp(my $abs_path = qx(readlink -f $link));
         if ($abs_path !~ m!^$ENV{PWD}/!) {
             my $base;
             while (1) {
-                my $abs_path_q = shell_quote("what to do for $abs_path");
-                chomp(my $opt = qx(select-args -p $abs_path_q open keep));
-                if ($opt eq "open") {
+                my $abs_path_q = shell_quote("what to do for $abs_path? (type XXX.png! for a more meaningful name)");
+                chomp(my $opt = qx(select-args -p $abs_path_q '> images' review));
+                if ($opt eq "review") {
                     system("of $link&");
                     system(qq!sawfish-client -e '(event-name (read-event "Press any key to continue..."))' !);
                     system("find-or-exec konsole");
-                } elsif ($opt eq "keep") {
+                } elsif ($opt eq "> images") {
                     $base = $link;
                     $base =~ s!.*/!!;
                     last;
