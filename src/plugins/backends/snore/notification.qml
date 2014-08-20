@@ -97,7 +97,6 @@ Rectangle {
         anchors.topMargin: 0
         z: 4
         fillMode: Image.PreserveAspectFit
-        source: "../../../../data/freedesktop-dbus.png"
     }
 
     Image {
@@ -109,7 +108,6 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
         fillMode: Image.PreserveAspectFit
-        source: "../../../../data/snore.png"
     }
 
     Image {
@@ -122,7 +120,6 @@ Rectangle {
         anchors.rightMargin: 0
         fillMode: Image.PreserveAspectFit
         z: 3
-        source: "resources/close.png"
         visible: false
 
         MouseArea {
