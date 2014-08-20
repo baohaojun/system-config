@@ -305,8 +305,74 @@ mean😊​) <code>addToMediaDB</code>.
 </div>
 
 <div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> How to try out my setup</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> Use sawfish to customize more key binding</h2>
 <div class="outline-text-2" id="text-2">
+<p>
+I don't know why I don't do it in Emacs itself. Anyway, I have
+customized my sawfish desktop so that when I press <code>F1</code>, it will
+synthesize some events to the focused window (i.e. Emacs):
+</p>
+
+
+<div class="figure">
+<p><a href="file:///home/bhj/shots/2014-08-20-10.37.31.png"><img src="file:///home/bhj/shots/2014-08-20-10.37.31.png" alt="2014-08-20-10.37.31.png" /></a>
+</p>
+</div>
+
+<p>
+And the synthesized keys will invoke <code>grep-func-call</code> for me in Emacs.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sawfish">(bind-keys global-keymap <span class="org-string">"F1"</span> '(synthesize-multiple-events <span class="org-string">"ESC"</span> <span class="org-string">"g"</span> <span class="org-string">"f"</span> <span class="org-string">"RET"</span>))
+</pre>
+</div>
+
+<p>
+I used the <code>ScrLk</code> key in sawfish to toggle a code reading mode for
+Emacs (think <code>ECS/i</code> toggle in vim😊) so that when this mode is on, I
+can press F1-F5 for all the above mentioned grepping commands, with
+just a single key, so this is very convinient, just like <del>Source
+Insight</del>, right?
+</p>
+
+<p>
+And in the code reading mode, I can use Home/End keys to jump to the
+prev/next grep result, Left/Right to back/forth where I started
+grepping. The idea is from xcscope.el where the tags can be popped, I
+took it a step further, that they can also be pushed. So that when
+code reading, I can follow very deep down where the functions are
+called one by one using <code>grep-func-call</code> again and again, and then I
+can press Left key again and again to come back where I started. Then
+I can use the Right key to go down the call stack again.
+</p>
+
+<p>
+For e.g., here's the binding in sawfish for Home/End:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sawfish">(bind-keys global-keymap <span class="org-string">"Home"</span> '(synthesize-multiple-events <span class="org-string">"ESC"</span> <span class="org-string">"g"</span> <span class="org-string">"p"</span>))
+(bind-keys global-keymap <span class="org-string">"End"</span> '(synthesize-multiple-events <span class="org-string">"ESC"</span> <span class="org-string">"g"</span> <span class="org-string">"n"</span>))
+</pre>
+</div>
+
+<p>
+And here's the help for the synthesized key in Emacs:
+</p>
+<pre class="example">
+M-g p (translated from &lt;escape&gt; g p) runs the command previous-error
+(found in global-map), which is an interactive compiled Lisp function
+in `simple.el'.
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> How to try out my setup</h2>
+<div class="outline-text-2" id="text-3">
 <p>
 I must apologize that I have not put too much thinking (actually I put
 a lot but not enough) into how other people can use my setup. On
@@ -321,8 +387,9 @@ But, in case you are not daunted by my mess, here's how to use my setup:
 </p>
 
 <ol class="org-ol">
-<li>Get debian. Ubuntu will do (I tested). Get sudo. Maybe get a new
-user account.
+<li>Get debian. Ubuntu will do (I tested). Maybe get a new user account
+(or back up <b>all</b> of your account's config files). Get sudo for
+your account.
 </li>
 <li><code>cd ~; git clone --recursive https://github.com/baohaojun/system-config</code>
 </li>

@@ -158,6 +158,49 @@ assume that =ACTION_MEDIA_SCANNER_SCAN_FILE= is called by (actually
 used by, because it's not a callable thing but you know what I
 mean😊​) =addToMediaDB=.
 
+* Use sawfish to customize more key binding
+
+I don't know why I don't do it in Emacs itself. Anyway, I have
+customized my sawfish desktop so that when I press =F1=, it will
+synthesize some events to the focused window (i.e. Emacs):
+
+[[/home/bhj/shots/2014-08-20-10.37.31.png][file:/home/bhj/shots/2014-08-20-10.37.31.png]]
+
+And the synthesized keys will invoke =grep-func-call= for me in Emacs.
+
+#+BEGIN_SRC sawfish
+(bind-keys global-keymap "F1" '(synthesize-multiple-events "ESC" "g" "f" "RET"))
+#+END_SRC
+
+I used the =ScrLk= key in sawfish to toggle a code reading mode for
+Emacs (think =ECS/i= toggle in vim😊) so that when this mode is on, I
+can press F1-F5 for all the above mentioned grepping commands, with
+just a single key, so this is very convinient, just like +Source
+Insight+, right?
+
+And in the code reading mode, I can use Home/End keys to jump to the
+prev/next grep result, Left/Right to back/forth where I started
+grepping. The idea is from xcscope.el where the tags can be popped, I
+took it a step further, that they can also be pushed. So that when
+code reading, I can follow very deep down where the functions are
+called one by one using =grep-func-call= again and again, and then I
+can press Left key again and again to come back where I started. Then
+I can use the Right key to go down the call stack again.
+
+For e.g., here's the binding in sawfish for Home/End:
+
+#+BEGIN_SRC sawfish
+(bind-keys global-keymap "Home" '(synthesize-multiple-events "ESC" "g" "p"))
+(bind-keys global-keymap "End" '(synthesize-multiple-events "ESC" "g" "n"))
+#+END_SRC
+
+And here's the help for the synthesized key in Emacs:
+#+BEGIN_EXAMPLE
+M-g p (translated from <escape> g p) runs the command previous-error
+(found in global-map), which is an interactive compiled Lisp function
+in `simple.el'.
+#+END_EXAMPLE
+
 * How to try out my setup
 
 I must apologize that I have not put too much thinking (actually I put
@@ -169,8 +212,9 @@ with your =.emacs= and your =emacs.d=, but also your =.bashrc= and
 
 But, in case you are not daunted by my mess, here's how to use my setup:
 
-1. Get debian. Ubuntu will do (I tested). Get sudo. Maybe get a new
-   user account.
+1. Get debian. Ubuntu will do (I tested). Maybe get a new user account
+   (or back up *all* of your account's config files). Get sudo for
+   your account.
 2. =cd ~; git clone --recursive https://github.com/baohaojun/system-config=
 3. =~/system-config/bin/Linux/after-check-out.sh=
 
