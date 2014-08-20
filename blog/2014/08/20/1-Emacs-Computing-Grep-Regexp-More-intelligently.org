@@ -1,0 +1,142 @@
+#+title: Emacs Computing Grep Regexp More intelligently
+# bhj-tags: emacs
+
+When in the Emacs default =*scratch*= buffer, you select the following line with the mouse:
+
+#+BEGIN_EXAMPLE
+Emacs Tutorial	Learn basic keystroke commands
+#+END_EXAMPLE
+And the you press =C-u M-x grep=, what you get on the minibuffer
+prompt is a default grep command that Emacs has computed for you:
+
+#+BEGIN_SRC sh
+grep -nH Emacs\ Tutorial\	Learn\ basic\ keystroke\ commands
+#+END_SRC
+
+This is unwieldy, and IIRC, it does not always use the right number of
+backslashes.
+
+So I did some customization in my [[https://github.com/baohaojun/system-config][system-config]] project for grep-mode
+and made it compute the default grep command like the following:
+
+#+BEGIN_SRC sh
+beagrep -e "Emacs Tutorial	Learn basic keystroke commands"
+#+END_SRC
+
+Which is a lot more clear. And IIRC, it also uses the right number of
+backslashes most of the time (I havn't seen it failed yet).
+
+For e.g., given this familiar string =("hello world\n")=, with both
+parenthesis included, my grep elisp code will compute it like this:
+
+#+BEGIN_SRC sh
+beagrep -e "(\"hello world\\\\n\")"
+#+END_SRC
+
+With Emacs vanilla grep, the grep command will be like:
+
+#+BEGIN_SRC sh
+grep -nH \(\"hello\ world\\n\"\) ~/1.txt
+#+END_SRC
+
+Which is wrong! So I did recall correctly about this. If you put the
+=("hello world\n")= string into =~/1.txt=, the above command will show
+no match. But if you replace the =beagrep= with =grep= in my command,
+to get =grep -e "(\"hello world\\\\n\")" ~/1.txt=, then you will see
+the match.
+
+I have extracted my customization into [[../../../../.emacs-grep.el]], which is reproduced here:
+
+#+BEGIN_SRC emacs-lisp
+(require 'grep)
+(setq my-grep-command "beagrep -e pat") ;; should not put it into custom, the custom will be read every time and so the `(let ((grep-command ..' scheme will fail
+(defcustom bhj-grep-dir nil "The default directory for grep")
+(defvar ajoke--marker-ring (make-ring 32)
+  "Ring of markers which are locations from which ajoke was invoked.")
+
+(defun grep-default-command ()
+  "Compute the default grep command for C-u M-x grep to offer."
+  (let ((tag-default (grep-shell-quote-argument (bhj-grep-tag-default)))
+        ;; This a regexp to match single shell arguments.
+        ;; Could someone please add comments explaining it?
+        (sh-arg-re "\\(\\(?:\"\\(?:\\\\\"\\|[^\"]\\)*\"\\|'[^']+'\\|\\(?:\\\\.\\|[^\"' \\|><\t\n]\\)\\)+\\)")
+
+        (grep-default (or (car grep-history) my-grep-command)))
+    ;; In the default command, find the arg that specifies the pattern.
+    (when (or (string-match
+               (concat "[^ ]+\\s +\\(?:-[^ ]+\\s +\\)*"
+                       sh-arg-re "\\(\\s +\\(\\S +\\)\\)?")
+               grep-default)
+              ;; If the string is not yet complete.
+              (string-match "\\(\\)\\'" grep-default))
+      ;; Maybe we will replace the pattern with the default tag.
+      ;; But first, maybe replace the file name pattern.
+
+      ;; Now replace the pattern with the default tag.
+      (replace-match tag-default t t grep-default 1))))
+
+
+(defun grep-shell-quote-argument (argument)
+  "Quote ARGUMENT for passing as argument to an inferior shell."
+  (cond
+   ((and (boundp 'no-grep-quote)
+         no-grep-quote)
+    (format "\"%s\"" argument))
+   ((equal argument "")
+    "\"\"")
+   (t
+    ;; Quote everything except POSIX filename characters.
+    ;; This should be safe enough even for really weird shells.
+    (let ((result "") (start 0) end)
+      (while (string-match "[].*[^$\"\\]" argument start)
+        (setq end (match-beginning 0)
+              result (concat result (substring argument start end)
+                             (let ((char (aref argument end)))
+                               (cond
+                                ((eq ?$ char)
+                                 "\\\\\\")
+                                ((eq ?\\  char)
+                                 "\\\\\\")
+                                (t
+                                 "\\"))) (substring argument end (1+ end)))
+              start (1+ end)))
+      (concat "\"" result (substring argument start) "\"")))))
+
+(defun bhj-grep-tag-default ()
+  (let ((tag (grep-tag-default)))
+  (cond
+   ((region-active-p)
+    tag)
+   ((string-match "/res/.*\.xml\\|AndroidManifest.xml" (or (buffer-file-name) ""))
+    (replace-regexp-in-string "</\\w+>\\|^<\\|^.*?/" "" tag))
+   (t
+    (replace-regexp-in-string "^<\\|>$" "" tag)))))
+
+;;;###autoload
+(defun grep-bhj-dir ()
+  (interactive)
+  (let ((default-directory
+          (if bhj-grep-dir
+              (expand-file-name bhj-grep-dir)
+            default-directory))
+        (compilation-buffer-name-function (lambda (_ign) (if (boundp 'grep-buffer-name)
+                                                             grep-buffer-name
+                                                           "*grep*"))))
+    (call-interactively 'grep)))
+
+(defun bhj-grep ()
+  (interactive)
+  (let ((current-prefix-arg 4)
+        ;; (default-directory (eval bhj-grep-default-directory))
+        (grep-use-null-device nil))
+    (nodup-ring-insert ajoke--marker-ring (point-marker))
+    (call-interactively 'grep-bhj-dir)))
+
+(defun nodup-ring-insert (ring obj)
+  (unless (and (not (ring-empty-p ring))
+               (equal (ring-ref ring 0) obj))
+    (ring-insert ring obj)))
+
+
+(define-key goto-map "r" 'bhj-grep)
+#+END_SRC

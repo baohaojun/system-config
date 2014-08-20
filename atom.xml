@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Emacs Computing Grep Regexp More intelligently]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html"/>
+    <updated>2014-34-20T19:08:51+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Using Emacs as a better Source Insight]]></title>
     <link href="http://baohaojun.github.io/blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.html"/>
     <updated>2014-08-20T10:16:30+08:00</updated>
@@ -65,11 +71,5 @@ Smartisan T1小扳手使用指南]]></title>
     <link href="http://baohaojun.github.io/blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html"/>
     <updated>2014-01-28T13:58:49+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[用GreaseMonkey禁止Google搜索重定向绑架]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html"/>
-    <updated>2014-01-16T17:37:48+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html</id>
   </entry>
 </feed>

@@ -3,6 +3,8 @@
   - 2014-08
    * 2014-08-20
 
+     [[../blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.org][Emacs Computing Grep Regexp More intelligently]]
+
      [[../blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.org][Using Emacs as a better Source Insight]]
 
    * 2014-08-11
