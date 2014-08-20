@@ -108,6 +108,9 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             if test "$window" = SmsPopupDialog; then
                                 emacs-cell-phone t1-sms
                                 exit
+                            elif test "$window" = com.google.android.apps.plus/com.google.android.apps.plus.phone.HostStreamOneUpActivity; then
+                                emacs-cell-phone google+
+                                exit
                             fi
                             adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
                             sleep .1
