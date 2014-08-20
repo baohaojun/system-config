@@ -30,11 +30,10 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                 function emacs-cell-phone() {
                     case "$1" in
                         google+) # send google plus
-                            adb-tap 560 500 # get rid of the pictures
-                            adb-tap 560 1840
-                            adb-long-press 99 383 # long press
-                            adb-tap 497 281 # paste
-                            adb-tap 985 935 # send
+                            adb-tap 467 650
+                            adb-long-press 278 544
+                            adb-tap 102 286
+                            adb-tap 932 1818
                             ;;
                         t1-putclip)
                             # do nothing, I will post it myself
@@ -108,7 +107,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             if test "$window" = SmsPopupDialog; then
                                 emacs-cell-phone t1-sms
                                 exit
-                            elif test "$window" = com.google.android.apps.plus/com.google.android.apps.plus.phone.HostStreamOneUpActivity; then
+                            elif test "$window" = com.google.android.apps.plus/com.google.android.apps.plus.phone.sharebox.PlusShareboxActivity; then
                                 emacs-cell-phone google+
                                 exit
                             fi
