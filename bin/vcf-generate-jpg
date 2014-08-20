@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+use strict;
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+my $x=qx(base64 $ARGV[0]);
+my $first_line = 1;
+my $last_line;
+my $print;
+my $last_n = 27;
+$x =~ s/\n//g;
+my $prefix="PHOTO;ENCODING=BASE64;JPEG:";
+my $start = 0;
+my $lengthx = length($x);
+debug "length is $lengthx";
+while (1) {
+    print "$prefix";
+    print substr($x, $start, 74 - length($prefix));
+    print "\n";
+    $start = $start + 74 - length($prefix);
+    $prefix = " ";
+    if ($start >= $lengthx) {
+        last;
+    }
+}
+
+print "\n\n";

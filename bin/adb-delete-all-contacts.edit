@@ -1,0 +1,17 @@
+#!/bin/bash
+
+for x in $(seq 1 ${1:-10}); do
+    adb-tap 446 789
+    sleep .1
+    adb-tap 924 155
+    adb-key BACK
+    adb-swipe 209 1850 209 100 .1
+    sleep .3
+    adb-tap 411 1734
+    adb-tap 511 1800
+    if adb-is-activity com.android.contacts/com.android.contacts.activities.ContactDetailActivity; then
+        adb-key BACK
+        adb-key BACK
+        adb-delete-all-contacts 1
+    fi
+done

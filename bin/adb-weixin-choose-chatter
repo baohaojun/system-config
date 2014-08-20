@@ -49,6 +49,7 @@ elif test "$(basename $0)" = adb-qq-choose-chatter; then
     done
     adb-tap-mid-bot
     adb-tap 433 284
+    sleep .2
     adb-long-press 190 149
     adb-tap 79 391
     debug

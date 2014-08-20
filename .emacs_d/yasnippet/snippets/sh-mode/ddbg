@@ -1,0 +1,13 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: ddbg
+# key: ddbg
+# --
+if echo \$SHELLOPTS | grep xtrace; then
+    function debug() {
+        read -p "press any key to continue..."
+    }
+else
+    function debug() {
+        sleep .5
+    }
+fi

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+for x in $(seq 1 ${1:-10}); do
+    adb-tap 446 789
+    sleep .1
+    adb-swipe 209 950 209 100 .1
+    adb-screenshot /tmp/adb-delete-all-contacts.$$
+    xy=$(picture-locate /tmp/adb-delete-all-contacts.$$ 208 118 117)
+    if test "$xy"; then
+        true
+    else
+        adb-swipe 20 1900 20 100 .2
+        sleep .1
+        adb-screenshot /tmp/adb-delete-all-contacts.$$
+        xy=$(picture-locate /tmp/adb-delete-all-contacts.$$ 208 118 117)
+    fi
+    adb-tap $xy
+    sleep .1
+    adb-tap 511 1800
+    sleep .1
+done

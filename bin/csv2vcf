@@ -24,5 +24,13 @@ while (<>) {
     if ($f[2]) {
         print "EMAIL:$f[2]\n";
     }
+    my $email = $f[2];
+    if ($email =~ m/\@smartisan.com/) {
+        if (-e glob("~/src/tools/SmartisanPhotos/$email.jpg")) {
+            system("vcf-generate-jpg ~/src/tools/SmartisanPhotos/$email.jpg");
+        } else {
+            system("cat ~/src/tools/SmartisanPhotos/vcf-default-jpg.snippet");
+        }
+    }
     print "END:VCARD\n";
 }

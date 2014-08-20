@@ -1,0 +1,42 @@
+#!/usr/bin/python3
+import sys
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QGridLayout, QLabel, QLineEdit, QTextEdit, QWidget
+from PyQt5.QtGui import QImage
+from PyQt5.QtGui import QColor
+
+def picture_locate():
+    """locate a pixel"""
+    if len(sys.argv) != 5:
+        print("Usage: picture-locate image r g b\n")
+        exit(1)
+    img = QImage(sys.argv[1])
+    r = int(sys.argv[2])
+    g = int(sys.argv[3])
+    b = int(sys.argv[4])
+
+    for x in range(0, img.width()):
+        for y in range(0, img.height()):
+            color = QColor(img.pixel(x, y))
+            if r == color.red() and g == color.green() and b == color.blue():
+                print(x, y)
+                exit(0)
+
+def picture_color():
+    """print pixel color"""
+    if len(sys.argv) != 4:
+        print("Usage: picture-color image x y\n")
+        exit(1)
+
+    img = QImage(sys.argv[1])
+    x = int(sys.argv[2])
+    y = int(sys.argv[3])
+
+    color = QColor(img.pixel(x, y))
+    print("%d %d %d\n" % (color.red(), color.green(), color.blue()))
+
+
+if sys.argv[0].find("picture-locate") >= 0:
+    picture_locate() # adb-tap 175 1381
+elif sys.argv[0].find("picture-color") >= 0:
+    picture_color()

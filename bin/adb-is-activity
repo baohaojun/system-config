@@ -2,6 +2,7 @@
 activity=$(adb dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
 if test $(basename $0) = adb-top-activity; then
     echo $activity
+    echo $activity | putclip
     exit
 fi
 if test "$activity" = "$1"; then

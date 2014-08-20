@@ -4,8 +4,8 @@ if test "$1"; then
     adb am start -n com.smartisanos.updater/$1
 else
     x=$(select-args \
-            .UpdatesCheck \
-            .ContactsSettingActivity \
+            com.smartisanos.updater/.UpdatesCheck \
+            com.android.contacts/com.android.contacts.activities.ContactsSettingIEActivity \
      )
-    adb am start -n com.smartisanos.updater/$x
+    adb am start -n $x
 fi

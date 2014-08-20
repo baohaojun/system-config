@@ -122,7 +122,7 @@ fi
 
 # it would be crazy for me to write more than 20 blogs a day.
 for n in $(seq 0 20); do
-    if test -e $dir/$n-*; then
+    if ls $dir/$n-* >/dev/null 2>&1; then
         continue
     else
         filename="$n-$filename"
