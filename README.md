@@ -53,14 +53,6 @@ Required dependencies:
 - [Qt4 or Qt5](http://qt-project.org/)
 
 
-In order to build the Growl notification backend you need the following optional dependencies:
-
-- [Crypto++](http://www.cryptopp.com/)
-- [Boost](http://www.boost.org/)
-	- system
-	- thread
-
 ## Third party libraries that we ship with our source ##
-- [GNTP++](https://github.com/mattn/gntppp) used for Growl
 - [Snarl C++](http://sourceforge.net/p/snarlwin/code/HEAD/tree/trunk/hdr/C++/SnarlInterface_v42/) used for Snarl
 
