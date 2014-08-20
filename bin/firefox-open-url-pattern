@@ -41,16 +41,16 @@ if test ! "$WHICH_TAB"; then
         if test ! -e ~/.config/firefox-pattern/$md5; then
             tab=2
             if test -e ~/.config/firefox-pattern/last-tab; then
-                tab=$(cat ~/.config/firefox-pattern/last-tab)
+                tab=$(cat ~/.config/firefox-pattern/last-tab|pn 1)
                 ((tab++)) || true
             fi
-            echo $tab > ~/.config/firefox-pattern/last-tab
+            echo $tab "$exact$pattern" > ~/.config/firefox-pattern/last-tab
             echo $tab > ~/.config/firefox-pattern/$md5
         fi
     ) 9> ~/.config/firefox-pattern/.lock
     WHICH_TAB=$(cat ~/.config/firefox-pattern/$md5)
 fi
-WHICH_TAB=$((WHICH_TAB % 9 + 1))
+WHICH_TAB=$(( (WHICH_TAB - 1) % 9 + 1))
 
 function current_url_matches() {
     local exact=$1

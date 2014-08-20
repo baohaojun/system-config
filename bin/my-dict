@@ -1,4 +1,8 @@
 #!/bin/bash
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
 
 if test $# = 0 -a $(basename $0 | perl -npe 's/my-dict//;' | cut -b 1) = -; then
         set -- "$(xclip -o)"
