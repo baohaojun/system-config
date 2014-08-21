@@ -1,2 +1,23 @@
 #!/bin/bash
-adb input tap $1 $2
+if test $# = 2; then
+    adb input tap $1 $2
+else
+    (
+        echo -n "input tap $1 $2;"
+        shift 2
+        while true; do
+            cmd=$1
+            shift
+            if test $cmd = adb-tap; then
+                echo -n "input tap $1 $2;"
+            elif test $cmd = adb-tap-2; then
+                echo -n "input tap $1 $2;"
+                echo -n "input tap $1 $2;"
+            fi
+            shift 2
+            if test $# = 0; then
+                break
+            fi
+        done
+    ) | xargs -d \\n adb-quote sh -c
+fi

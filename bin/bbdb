@@ -1,0 +1,6 @@
+#!/bin/bash
+emacsclient -e "
+    (progn
+      (bbdb \"$1\")
+      (with-current-buffer \"*BBDB*\"
+        (buffer-substring-no-properties (point-min) (point-max))))"

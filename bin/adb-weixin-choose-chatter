@@ -9,7 +9,11 @@ else
     }
 fi
 
-putclip-android "$1"&
+if test "$(basename $0)" = adb-call && ! echo "$1" | grep -q -P -e '^\d+$'; then
+    true
+else
+    putclip-android "$1"
+fi
 debug
 if test "$(basename $0)" = adb-weixin-choose-chatter; then
     adb am start -n com.tencent.mm/.ui.LauncherUI
@@ -21,7 +25,15 @@ if test "$(basename $0)" = adb-weixin-choose-chatter; then
     adb-tap 275 405
     adb-tap 248 474
 elif test "$(basename $0)" = adb-call; then
-    adb am start -n com.android.contacts/.activities.DialtactsActivity
+    adb am start -n com.android.contacts/.activities.DialtactsActivity >/dev/null 2>&1 &
+    sleep .5
+    if ! echo "$1" | grep -q -P -e '^\d+$'; then
+        number=$(select-output-line 'bbdb '"$1"'|perl -npe "s/\\\\n/\\n/g"' | grep -o -P '\d+$')
+        if test "$number"; then
+            set -- "$number"
+        fi
+    fi
+
     if echo "$1" | grep -q -P -e '^\d+$'; then
         adb-tap-2 614 1829
         adb-long-press 898 1689
@@ -29,7 +41,7 @@ elif test "$(basename $0)" = adb-call; then
         adb-tap 479 1640
         exit
     fi
-    sleep .5
+
     adb-tap-2 332 1879
     adb-tap 132 260
     adb-long-press 183 146

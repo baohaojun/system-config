@@ -12,20 +12,19 @@ sub debug(@) {
 my %emoticons;
 
 $emoticons{big_laugh} = [":-))", "😝"]; # Very happy or double chin[6]
-$emoticons{smile} = [":-) :) :o) :] :c) :> =] 8)", "😊"];
-$emoticons{laugh} = [":-D :D 8-D 8D x-D xD X-D XD =-D =D =-3 =3 B^D", "😄"];
-$emoticons{sad} = [">:[ :-( :( :-c :c :-< :っC :< :-[ :[ :{", "😢"]; # Frown,[3][4][5] sad[7]
-$emoticons{wink} = [";(", "😉"];   # Winky frowny, used to signify sadness, with a bit of sarcasm. It is easily misunderstood.[8]
+$emoticons{smile} = [":-) :)", "😊"];
+$emoticons{laugh} = [":-D :D", "😄"];
+$emoticons{sad} = [":-( :(", "😞"]; # Frown,[3][4][5] sad[7]
 $emoticons{angry} = [":-|| :@ >:(", "😠"]; # Angry[6]
-$emoticons{crying} = [":'-( :'(", "😭"]; # Crying[7]
+$emoticons{crying} = [":'(", "😭"]; # Crying[7]
 $emoticons{tears_of_happiness} = [":')", "😂"]; # Tears of happiness[7]
-$emoticons{horror} = ["D:< D: D8 D; D= DX v.v D-':", "😱"]; # Horror, disgust, sadness, great dismay[4][5]
-$emoticons{shock} = [">:O :-O :O :-o :o 8-0 O_O o-o O_o o_O o_o O-O", "😲"]; #   Surprise,[2] shock,[3][9] yawn[10]
+$emoticons{horror} = ["[horror] [惊] [害怕] [尖叫]", "😱"]; # Horror, disgust, sadness, great dismay[4][5]
+$emoticons{shock} = [":-O :O", "😲"]; #   Surprise,[2] shock,[3][9] yawn[10]
 $emoticons{kiss} = [":* :^*", "😗"]; #         Kiss, couple kissing[6]
 $emoticons{wink} = [";-)", "😉"]; #         Wink,[3][4][5] smirk[9][10]
 $emoticons{tongue_out} = [":-P", "😛"]; # Tongue sticking out, cheeky/playful,[3] blowing a raspberry
 $emoticons{uneasy} = [">:\ >:/ :-/ :-. :/ :\ =/ =\ :L =L :S >.<", ]; # Skeptical, annoyed, undecided, uneasy, hesitant[3]
-$emoticons{straight_face} = [":| :-|", ]; # Straight face[4] no expression, indecision[7]
+$emoticons{straight_face} = [":| :-|", "😒"]; # Straight face[4] no expression, indecision[7]
 $emoticons{blushing} = [":\$", "😳"]; # Embarrassed,[5] blushing[6]
 $emoticons{sealed_lips} = [":-X :X :-# :#", ]; #   Sealed lips or wearing braces[3]
 $emoticons{angel} = ["O:-) 0:-3 0:3 0:-) 0:) 0;^)", "😇"]; # Angel,[3][4][9] saint,[7] innocent
@@ -40,7 +39,7 @@ $emoticons{sick} = [":-###.. :###..", "😷"]; # Being sick[7]
 $emoticons{dumb} = ["<:-|", ]; # Dumb, dunce-like[9]
 $emoticons{disapproval} = ["ಠ_ಠ", ]; #Look of disapproval[11] The Unicode character ಠ is from the Kannada alphabet and can be called differently in HTML notation: &#3232; and &#x0CA0; (for Unicode)
 $emoticons{fish} = ["<*)))-{ ><(((*> ><>", ]; # Fish, something's fishy,[9] Christian fish[6]
-$emoticons{yay} = ["\\o/", ]; # Cheer "Yay, yay."[6]
+$emoticons{yay} = ["\\o/", "🙌" ]; # Cheer "Yay, yay."[6]
 $emoticons{cheerleader} = ["*\\0/*", ]; # Cheerleader[6]
 $emoticons{rose} = ["@}-;-'--- @>-->--", ]; # Rose[3][9]
 $emoticons{homer_simpson} = ["~(_8^(I)", ];    # Homer Simpson[9]

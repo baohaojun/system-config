@@ -4,7 +4,9 @@ sub debug(@) {
     print STDERR "@_\n";
 }
 
-my $x=qx(base64 $ARGV[0]);
+use String::ShellQuote;
+my $img = shell_quote($ARGV[0]);
+my $x=qx(base64 $img);
 my $first_line = 1;
 my $last_line;
 my $print;

@@ -1,5 +1,8 @@
 #!/bin/bash
-
-adb-weixin-choose-chatter "$1"
+if test $(basename $0) = weixin-to; then
+    adb-weixin-choose-chatter "$1"
+elif test $(basename $0) = qq-to; then
+    adb-qq-choose-chatter "$1"
+fi
 shift
 weixin "$@"

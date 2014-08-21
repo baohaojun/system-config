@@ -30,7 +30,7 @@ while true; do
     esac
 done
 
-if test "$phone" != true && adb devices? && EMACS=t yes-or-no-p -y "Use phone as the software version?"; then
+if test "$phone" != true && adb devices? ; then
     phone=true;
 fi
 

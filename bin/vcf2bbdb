@@ -107,7 +107,7 @@ while (<>) {
             }
             if (m/^(?:N:|N;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:)(.*)/) {
                 @names = grep {m/./} split(';', unhex ($1));
-            } elsif (m/^EMAIL:|EMAIL;TYPE=INTERNET:/) {
+            } elsif (m/^EMAIL:|EMAIL;.*?:/) {
                 push @emails, $';
             } elsif (m/^TEL;/) {
                 my $phone = $';

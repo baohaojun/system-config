@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+use String::ShellQuote;
 
 sub eq_hex($)
 {
@@ -33,7 +34,8 @@ while (<>) {
             for my $ext ("png", "jpg") {
                 if (-e "$ENV{HOME}/src/tools/SmartisanPhotos/$base.$ext") {
                     debug "output avatar from $base.$ext";
-                    system("vcf-generate-jpg ~/src/tools/SmartisanPhotos/$base.$ext");
+                    my $img = shell_quote("$base.$ext");
+                    system("vcf-generate-jpg ~/src/tools/SmartisanPhotos/$img");
                     $output_avatar = 1;
                     last avatar;
                 } else {

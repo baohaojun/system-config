@@ -1,3 +1,2 @@
 #!/bin/bash
-adb-tap "$@"
-adb-tap "$@"
+adb sh -c "input tap $*; input tap $*"

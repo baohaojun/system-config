@@ -22,4 +22,6 @@ while true; do
             ;;
     esac
 done
-select-output-line -p "$prompt" -- bash -c 'for x in "$@"; do echo "$x"; done' true "$@"
+mv ~/.logs/last-selected-arg ~/.logs/last-selected-arg.$$ >/dev/null 2>&1 ||true
+select-output-line -p "$prompt" -- bash -c '(cat '~/.logs/last-selected-arg.$$'; echo; for x in "$@"; do echo "$x"; done)|uniq-even-non-ajacent' true "$@" |tee ~/.logs/last-selected-arg
+rm ~/.logs/last-selected-arg.$$ -f

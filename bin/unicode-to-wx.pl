@@ -466,7 +466,7 @@ $unicode_wx_map{"🚽"} = ""; #  1F6BD;TOILET;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"🚾"} = ""; #  1F6BE;WATER CLOSET;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"🛀"} = ""; #  1F6C0;BATH;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"💳"} = "[信用卡]";
-
+$unicode_wx_map{"😕"} = "/:?";
 my $unicode_wx_regexp = "";
 for (keys %unicode_wx_map) {
     $unicode_wx_regexp .= "$_|";
