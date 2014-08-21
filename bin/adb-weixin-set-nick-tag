@@ -1,0 +1,24 @@
+#!/bin/bash
+adb-tap 991 117
+adb-tap 739 284
+
+if test "$1"; then
+    putclip-android "$1"
+    adb-tap 372 450
+    adb-tap-2 372 450
+    adb-tap 300 333
+    adb-tap 908 288
+fi
+putclip-android "$2"
+adb-tap 245 732
+if ! adb-is-activity com.tencent.mm/com.tencent.mm.plugin.label.ui.ContactLabelUI; then
+    adb-tap 212 865
+fi
+
+adb-long-press 115 281
+adb-tap 117 190
+adb-tap 438 319
+adb-tap 133 298
+adb-tap 967 121
+adb-tap 979 146
+adb-key BACK

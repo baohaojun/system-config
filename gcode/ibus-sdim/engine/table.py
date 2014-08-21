@@ -117,6 +117,7 @@ class tabengine (ibus.EngineBase):
         super(tabengine,self).__init__ (bus,obj_path)
         self._bus = bus
         self.sock = None
+        self.last_key = ""
 
         self.do_connect()
 
@@ -216,7 +217,6 @@ class tabengine (ibus.EngineBase):
         key = KeyEvent(keyval, state & modifier.RELEASE_MASK == 0, state)
         # ignore NumLock mask
         key.mask &= ~modifier.MOD2_MASK
-
         result = self._process_key_event (key)
         return result
 
@@ -224,6 +224,10 @@ class tabengine (ibus.EngineBase):
         '''Internal method to process key event'''
         key = str(key)
         if key == '':
+            return False
+        last_key = self.last_key
+        self.last_key = key
+        if last_key == "escape":
             return False
         if self._preedit_str == '' and len(key) != 1:
             return False
