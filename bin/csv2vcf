@@ -18,6 +18,7 @@ while (<>) {
         @f = split(' ');
     }
     debug "name is '$f[0]'";
+    my $name = $f[0];
     print "BEGIN:VCARD\nVERSION:2.1\n";
     print "FN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:" . eq_hex($f[0]) . "\n";
     print "TEL;CELL:$f[1]\n";
@@ -26,9 +27,21 @@ while (<>) {
     }
     my $email = $f[2];
     if ($email =~ m/\@smartisan.com/) {
-        if (-e glob("~/src/tools/SmartisanPhotos/$email.jpg")) {
-            system("vcf-generate-jpg ~/src/tools/SmartisanPhotos/$email.jpg");
-        } else {
+        my $output_avatar = 0;
+      avatar:
+        for my $base ($name, $email) {
+            for my $ext ("png", "jpg") {
+                if (-e "$ENV{HOME}/src/tools/SmartisanPhotos/$base.$ext") {
+                    debug "output avatar from $base.$ext";
+                    system("vcf-generate-jpg ~/src/tools/SmartisanPhotos/$base.$ext");
+                    $output_avatar = 1;
+                    last avatar;
+                } else {
+                    debug "$ENV{HOME}/src/tools/SmartisanPhotos/$base.$ext" . " is not there, base is $base, ext is $ext";
+                }
+            }
+        }
+        if (not $output_avatar) {
             system("cat ~/src/tools/SmartisanPhotos/vcf-default-jpg.snippet");
         }
     }

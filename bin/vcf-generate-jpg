@@ -11,6 +11,10 @@ my $print;
 my $last_n = 27;
 $x =~ s/\n//g;
 my $prefix="PHOTO;ENCODING=BASE64;JPEG:";
+if ($ARGV[0] =~ m/\.png$/i) {
+    $prefix="PHOTO;ENCODING=BASE64;PNG:";
+}
+
 my $start = 0;
 my $lengthx = length($x);
 debug "length is $lengthx";

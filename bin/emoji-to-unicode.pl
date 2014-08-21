@@ -18,12 +18,12 @@ $emoticons{sad} = [">:[ :-( :( :-c :c :-< :っC :< :-[ :[ :{", "😢"]; # Frown,
 $emoticons{wink} = [";(", "😉"];   # Winky frowny, used to signify sadness, with a bit of sarcasm. It is easily misunderstood.[8]
 $emoticons{angry} = [":-|| :@ >:(", "😠"]; # Angry[6]
 $emoticons{crying} = [":'-( :'(", "😭"]; # Crying[7]
-$emoticons{tears_of_happiness} = [":'-) :')", "😂"]; # Tears of happiness[7]
+$emoticons{tears_of_happiness} = [":')", "😂"]; # Tears of happiness[7]
 $emoticons{horror} = ["D:< D: D8 D; D= DX v.v D-':", "😱"]; # Horror, disgust, sadness, great dismay[4][5]
 $emoticons{shock} = [">:O :-O :O :-o :o 8-0 O_O o-o O_o o_O o_o O-O", "😲"]; #   Surprise,[2] shock,[3][9] yawn[10]
-$emoticons{kiss} = [":* :^*\n( '}{' )", "😗"]; #         Kiss, couple kissing[6]
-$emoticons{wink} = [";-) ;) *-) *) ;-] ;] ;D ;^) :-,", "😉"]; #         Wink,[3][4][5] smirk[9][10]
-$emoticons{tongue_out} = [">:P :-P :P X-P x-p xp XP :-p :p =p :-Þ :Þ :þ :-þ :-b :b d:", "😛"]; # Tongue sticking out, cheeky/playful,[3] blowing a raspberry
+$emoticons{kiss} = [":* :^*", "😗"]; #         Kiss, couple kissing[6]
+$emoticons{wink} = [";-)", "😉"]; #         Wink,[3][4][5] smirk[9][10]
+$emoticons{tongue_out} = [":-P", "😛"]; # Tongue sticking out, cheeky/playful,[3] blowing a raspberry
 $emoticons{uneasy} = [">:\ >:/ :-/ :-. :/ :\ =/ =\ :L =L :S >.<", ]; # Skeptical, annoyed, undecided, uneasy, hesitant[3]
 $emoticons{straight_face} = [":| :-|", ]; # Straight face[4] no expression, indecision[7]
 $emoticons{blushing} = [":\$", "😳"]; # Embarrassed,[5] blushing[6]

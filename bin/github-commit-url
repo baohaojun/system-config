@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo $(git-remote-url)/commit/$1
+echo $(git-remote-url)/commit/$1 | putclip

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 firefox "http://mantis.smartisan.cn/bug_report_page.php"&
+sleep 2
 
 if echo $SHELLOPTS | grep xtrace; then
     export DEBUG=true
