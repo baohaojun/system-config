@@ -50,8 +50,13 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 864 921
                             ;;
                         cell-mail) # reply mail
+                            if adb-is-activity com.android.email/com.android.email.activity.Welcome; then
+                                adb-tap-mid-bot
+                                sleep .5
+                            fi
                             adb-swipe 586 878 586 268 .5
                             adb-tap 560 1840 #
+                            adb-tap 969 1620
                             adb-tap-2 299 299
                             adb-tap 505 192
                             if test "$(gettask-android)" = com.google.android.gm; then
@@ -90,6 +95,14 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 496 196
                             adb-tap 989 183
                             ;;
+                        SmartisanNote)
+                            adb-long-press 428 412
+                            adb-tap 80 271
+                            adb-tap 940 140
+                            adb-tap 933 117
+                            adb-tap 323 1272
+                            adb-tap 919 123
+                            ;;
                         weixin-note3)
                             adb-tap 560 1840 #
                             sleep .1
@@ -110,14 +123,22 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             elif test "$window" = com.google.android.apps.plus/com.google.android.apps.plus.phone.sharebox.PlusShareboxActivity; then
                                 emacs-cell-phone google+
                                 exit
+                            elif test "$window" = com.smartisanos.notes/com.smartisanos.notes.NotesActivity; then
+                                emacs-cell-phone SmartisanNote
+                                exit
+                            elif test "$window" = com.android.email/com.android.mail.compose.ComposeActivity ||
+                                 test "$window" = com.android.email/com.android.email.activity.Welcome; then
+                                emacs-cell-phone cell-mail
+                                exit
                             fi
-                            adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
-                            sleep .1
-                            adb-tap 560 1840 # 再点一下，可能在出键盘，需要输入一个空格
-                            adb-tap-2 560 976 # 双击输入框
-                            adb-tap 296 830 # 全选
-                            adb-tap 888 849 # 点一下粘贴钮
-                            adb-tap 976 976 # 点一下发送钮
+                            input_method=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/' | grep -o mHasSurface=true)
+                            if test "$input_method"; then
+                                true
+                            else
+                                adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
+                                sleep .1
+                            fi
+                            adb-tap 560 1840 adb-tap-2 560 976 adb-tap 296 830 adb-tap 888 849 adb-tap 976 976
                             ;;
                     esac
                 }
