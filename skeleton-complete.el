@@ -480,7 +480,7 @@ This func is copied and modified from `ecomplete-display-matches'."
       (if (= max-line-num 0)
           (nth line (split-string matches "\n"))
         (setq highlight (skeleton--highlight-match-line matches line max-line-num))
-        (while (not (memq (setq command (read-event highlight)) '(? return)))
+        (while (not (memq (setq command (read-event highlight)) '(?  return ?\C-m)))
           (cond
            ((or (eq command ?\M-n)
                 (eq command ?\C-n)
@@ -491,7 +491,8 @@ This func is copied and modified from `ecomplete-display-matches'."
                 (eq command ?p))
             (setq line (% (+ max-line-num line) (1+ max-line-num)))))
           (setq highlight (skeleton--highlight-match-line matches line max-line-num)))
-        (when (eq command 'return)
+        (when (or (eq command 'return)
+                  (eq command ?\C-m))
           (nth line (split-string matches "\n")))))))
 
 (defun skeleton--clean-up (list)
