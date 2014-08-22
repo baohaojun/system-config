@@ -31,7 +31,7 @@ beagrep -e "(\"hello world\\\\n\")"
 /home/bhj/src/android/external/clang/bindings/python/tests/cindex/INPUTS/hello.cpp:4:    printf("hello world\n");
 /home/bhj/src/android/external/clang/www/get_started.html:213:int main(int argc, char **argv) { printf("hello world\n"); }
 /home/bhj/src/android/external/compiler-rt/BlocksRuntime/tests/localisglobal.c:19:void (^global)(void) = ^{ printf("hello world\n"); };
-/home/bhj/src/android/external/compiler-rt/BlocksRuntime/tests/shorthande😛ression.c:18:    void (^b)(void) = ^(void)printf("hello world\n");
+/home/bhj/src/android/external/compiler-rt/BlocksRuntime/tests/shorthandexpression.c:18:    void (^b)(void) = ^(void)printf("hello world\n");
 /home/bhj/src/android/prebuilts/python/darwin-x86/2.7.5/lib/python2.7/test/test_memoryio.py:81:        buf = self.buftype("hello world\n")
 /home/bhj/src/android/prebuilts/python/linux-x86/2.7.5/lib/python2.7/test/test_memoryio.py:81:        buf = self.buftype("hello world\n")
 
@@ -46,7 +46,7 @@ can be htmlized too😝
 
 Also note how I put 4 backslashes before the n to grep the newline
 character =\n= in C. This is automatic, I wrote some Emacs Lisp for
-grep-mode, so that the correct grep rege😛 can be generated
+grep-mode, so that the correct grep regeex can be generated
 automatically.
 
 ** Grepping for definitions
@@ -58,11 +58,11 @@ Grep started at Wed Aug 20 09:33:29
 
 grep-gtags -e "getExternalStorageDirectory" -v .xml
 Found total 5/13 definitions: Entering directory `/home/bhj/src/android'
-frameworks/base/core/java/android/os/Environment.java:177: metho😛 <android.os.Environment.UserEnvironment.getExternalStorageDirectory> : public File getExternalStorageDirectory() {
-frameworks/base/core/java/android/os/Environment.java:383: metho😛 <android.os.Environment.getExternalStorageDirectory> : public static File getExternalStorageDirectory() {
-frameworks/base/core/java/android/os/Environment.java:387: metho😛 <android.os.Environment.getExternalStorageDirectory> : public static File getExternalStorageDirectory() {
-external/robolectric/src/main/java/com/xtremelabs/robolectric/shadows/ShadowEnvironment.java:26: metho😛 <com.xtremelabs.robolectric.shadows.ShadowEnvironment.getExternalStorageDirectory> : public static File getExternalStorageDirectory() {
-external/chromium_org/base/android/java/src/org/chromium/base/PathUtils.java:114: metho😛 <org.chromium.base.PathUtils.getExternalStorageDirectory> : public static String getExternalStorageDirectory() {
+frameworks/base/core/java/android/os/Environment.java:177: method: <android.os.Environment.UserEnvironment.getExternalStorageDirectory> : public File getExternalStorageDirectory() {
+frameworks/base/core/java/android/os/Environment.java:383: method: <android.os.Environment.getExternalStorageDirectory> : public static File getExternalStorageDirectory() {
+frameworks/base/core/java/android/os/Environment.java:387: method: <android.os.Environment.getExternalStorageDirectory> : public static File getExternalStorageDirectory() {
+external/robolectric/src/main/java/com/xtremelabs/robolectric/shadows/ShadowEnvironment.java:26: method: <com.xtremelabs.robolectric.shadows.ShadowEnvironment.getExternalStorageDirectory> : public static File getExternalStorageDirectory() {
+external/chromium_org/base/android/java/src/org/chromium/base/PathUtils.java:114: method: <org.chromium.base.PathUtils.getExternalStorageDirectory> : public static String getExternalStorageDirectory() {
 
 Grep finished (matches found) at Wed Aug 20 09:33:30
 #+END_SRC
@@ -108,8 +108,8 @@ Entering directory `/home/bhj/src/android/packages/apps/Browser/src/com/android/
 UploadHandler.java:59: <=     void onResult(int resultCode, Intent intent) {
 UploadHandler.java:84: =>                         new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, result));
 Entering directory `/home/bhj/src/android/packages/apps/ContactsSmartisan/src/com/android/contacts/vcard'
-E😛ortProcessor.java:96: <=     private void runInternal() {
-E😛ortProcessor.java:211: =>             mService.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+ExportProcessor.java:96: <=     private void runInternal() {
+ExportProcessor.java:211: =>             mService.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
 Entering directory `/home/bhj/src/android/packages/apps/MmsSmartisan/src/com/android/mms/ui'
 ComposeMessageActivity.java:2310: <=     private boolean copyPart(PduPart part, String fallback) {
 ComposeMessageActivity.java:2402: =>                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
@@ -134,7 +134,7 @@ Entering directory `/home/bhj/src/android/packages/apps/UnifiedEmail/src/com/and
 EmlAttachmentProvider.java:253: <=     private int copyAttachment(Uri uri, ContentValues values) {
 EmlAttachmentProvider.java:338: =>                 final Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 Entering directory `/home/bhj/src/android/packages/apps/VideoEditor/src/com/android/videoeditor/service'
-ApiService.java:4297: <=     private Uri e😛ortToGallery(String filename) {
+ApiService.java:4297: <=     private Uri exportToGallery(String filename) {
 ApiService.java:4305: =>         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
 Entering directory `/home/bhj/src/android/packages/providers/MediaProvider/src/com/android/providers/media'
 MediaScannerReceiver.java:35: <=     public void onReceive(Context context, Intent intent) {
@@ -150,7 +150,7 @@ Here's how it works. First I use beagrep (which is very fast) to find
 out all the files that contain =ACTION_MEDIA_SCANNER_SCAN_FILE=, then
 I use =ctags-exuberant= to parse each of these files. For e.g., in the
 file =FMRecordingService.java= above, =ctags-exuberant= tells me
-😛rivate Uri addToMediaDB(File file) {= appears on line 391 and
+=private Uri addToMediaDB(File file) {= appears on line 391 and
 beagrep tells me that =ACTION_MEDIA_SCANNER_SCAN_FILE= is on line 431
 in this file, and =ctags-exuberant= also tells me that there is no
 other function definition in between line 391 and 431, so I can safely
