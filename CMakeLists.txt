@@ -50,9 +50,9 @@ endif()
 
 find_package(Doxygen QUIET)
 set_package_properties(Doxygen  PROPERTIES
-                                DESCRIPTION "Application for documentation generation"
-                                URL "https://github.com/Snorenotify/SnoreGrowl"
-                                PURPOSE "Generation API documentation"
+                                DESCRIPTION "Doxygen is the de facto standard tool for generating documentation from annotated C++ sources, but it also supports other popular programming languages such as C, Objective-C, C#, PHP, Java, Python, IDL (Corba, Microsoft, and UNO/OpenOffice flavors), Fortran, VHDL, Tcl, and to some extent D."
+                                URL "http://www.stack.nl/~dimitri/doxygen/"
+                                PURPOSE "Generation of API documentation"
                                 TYPE OPTIONAL)
 
 if(DOXYGEN_FOUND)
