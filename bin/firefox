@@ -116,6 +116,10 @@ if test $# = 1; then
     set -- -new-tab "$@"
 fi
 
+if test $# = 2 -a "$1" =  -remote && echo "$2" | perl -ne 'exit(1) unless (m/^openURL\(.*\)$/ && ! (m/^openURL\(.*,\s*new-tab\)$/))'; then
+    set -- -remote "${2/%)/,new-tab)}"
+fi
+
 if test "$1" = -current-tab; then
     if test "$is_firefox" = 1; then
         shift

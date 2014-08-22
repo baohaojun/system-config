@@ -2,12 +2,17 @@
 set -e
 
 export SELECT_PROMPT="Please enter your selection: "
+ORDERED=false
 
 if test "${1:0:1}" = -; then
-    TEMP=$(getopt -o p:i: --long prompt:init: -n $(basename $0) -- "$@")
+    TEMP=$(getopt -o op:i: --long prompt:init: -n $(basename $0) -- "$@")
     eval set -- "$TEMP"
     while true; do
         case "$1" in
+            -o)
+                ORDERED=true
+                shift
+                ;;
             -p|--prompt)
                 SELECT_PROMPT=$2
                 shift 2
@@ -27,23 +32,48 @@ if test "${1:0:1}" = -; then
     done
 fi
 
+if test $ORDERED = true; then
+    md5=$(echo "$@" | md5sum | pn 1)
+    cmdfile=~/.cache/bhj/select-output-line/$md5.cmd
+    histfile=~/.cache/bhj/select-output-line/$md5.hist
+    mv $histfile $histfile.$$ >/dev/null 2>&1 || true
+    mkdir -p $(dirname $cmdfile);
+    echo "$@" > $cmdfile
+fi
+
 IFS=$'\n'
 dood=(
     $(
-        if test $# = 1; then
-            bash -c "$1"
-        else
-            "$@"
-        fi
+        (
+            if test $ORDERED = true; then
+               cat $histfile.$$ 2>/dev/null || true
+            fi
+            if test $# = 1; then
+                bash -c "$1"
+            else
+                "$@"
+            fi
+        ) | uniq-even-non-ajacent
     )
 ) || true
 if test ${#dood[@]} = 0; then
     exit -1
 fi
+
 n=$(my-select "${dood[@]}")
+
+
 
 if echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#dood[@]}; then
     echo -n ${dood[n-1]}
+    if test $ORDERED = true; then
+
+        (
+            echo ${dood[n-1]}
+            cat $histfile.$$ 2>/dev/null || true
+        ) | uniq-even-non-ajacent > $histfile.$$.2 &&
+            mv $histfile.$$.2 $histfile && rm $histfile.$$ -f
+    fi&
 else
     echo -n "$n"
 fi

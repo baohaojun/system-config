@@ -108,9 +108,9 @@ sub edit_1($)
       }
 
       my $file_q = $file = shell_quote($file);
-      chomp($file_q = qx(select-output-line lookup-file -e -r -- $file));
+      chomp($file_q = qx(select-output-line -- lookup-file -e -r -- $file));
       if (not $file_q or not -e $file_q) {
-          chomp($file_q = qx(select-output-line lookup-file -r -- $file));
+          chomp($file_q = qx(select-output-line -- lookup-file -r -- $file));
       }
       return (@emacsclient, "+$line", get_emacs_file_name($file_q));
 

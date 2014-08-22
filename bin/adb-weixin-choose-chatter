@@ -20,7 +20,13 @@ if test "$(basename $0)" = adb-weixin-choose-chatter; then
     sleep .5
     adb-tap-2 141 178
     adb-tap-2 141 178
-    adb-tap 642 144
+    for x in $(seq 1 10); do
+        adb-tap 642 144
+        if adb-is-activity com.tencent.mm/com.tencent.mm.plugin.search.ui.SearchContactUI; then
+            break
+        fi
+        sleep .5
+    done
     adb-long-press 375 137
     adb-tap 275 405
     adb-tap 248 474

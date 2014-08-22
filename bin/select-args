@@ -1,10 +1,15 @@
 #!/bin/bash
 
 prompt="Please enter your selection: "
-TEMP=$(getopt -o p:i: --long prompt:init: -n $(basename $0) -- "$@")
+order=
+TEMP=$(getopt -o op:i: --long prompt:init: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -o)
+            order=-o
+            shift
+            ;;
         -p|--prompt)
             prompt=$2
             shift 2
@@ -22,6 +27,4 @@ while true; do
             ;;
     esac
 done
-mv ~/.logs/last-selected-arg ~/.logs/last-selected-arg.$$ >/dev/null 2>&1 ||true
-select-output-line -p "$prompt" -- bash -c '(cat '~/.logs/last-selected-arg.$$'; echo; for x in "$@"; do echo "$x"; done)|uniq-even-non-ajacent' true "$@" |tee ~/.logs/last-selected-arg
-rm ~/.logs/last-selected-arg.$$ -f
+select-output-line $order -p "$prompt" -- bash -c 'for x in "$@"; do echo "$x"; done' true "$@"
