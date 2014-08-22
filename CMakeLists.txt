@@ -9,6 +9,7 @@ cmake_policy(SET CMP0020 NEW)
 
 include(GNUInstallDirs)
 include(GenerateExportHeader)
+include(FeatureSummary)
 
 
 #######################################################################
@@ -47,7 +48,12 @@ else()
 endif()
 
 
-find_package(Doxygen)
+find_package(Doxygen QUIET)
+set_package_properties(Doxygen  PROPERTIES
+                                DESCRIPTION "Application for documentation generation"
+                                URL "https://github.com/Snorenotify/SnoreGrowl"
+                                PURPOSE "Generation API documentation"
+                                TYPE OPTIONAL)
 
 if(DOXYGEN_FOUND)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in" "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile" @only)
@@ -57,8 +63,6 @@ if(DOXYGEN_FOUND)
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
-else(DOXYGEN_FOUND)
-    message(STATUS "No doxygen package found")
 endif(DOXYGEN_FOUND)
 
 
@@ -80,3 +84,4 @@ add_subdirectory(share)
 add_subdirectory(src)
 
 
+feature_summary(WHAT ALL)
