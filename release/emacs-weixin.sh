@@ -50,11 +50,13 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 864 921
                             ;;
                         cell-mail) # reply mail
-                            if adb-is-activity com.android.email/com.android.email.activity.Welcome; then
+                            activity=$(adb-top-activity)
+                            if test "$activity" = com.android.email/com.android.email.activity.Welcome ||
+                               test "$activity" = com.android.email/com.android.email2.ui.MailActivityEmail; then
                                 adb-tap-mid-bot
-                                sleep .5
+                                sleep 2
                             fi
-                            adb-swipe 586 878 586 268 .5
+                            adb-swipe 586 878 586 268 .1
                             adb-tap 560 1840 #
                             adb-tap 969 1620
                             adb-tap-2 299 299
@@ -127,7 +129,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 emacs-cell-phone SmartisanNote
                                 exit
                             elif test "$window" = com.android.email/com.android.mail.compose.ComposeActivity ||
-                                 test "$window" = com.android.email/com.android.email.activity.Welcome; then
+                                     test "$window" = com.android.email/com.android.email.activity.Welcome ||
+                                     test "$window" = com.android.email/com.android.email2.ui.MailActivityEmail; then
                                 emacs-cell-phone cell-mail
                                 exit
                             fi
