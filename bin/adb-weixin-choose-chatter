@@ -42,7 +42,7 @@ elif test "$(basename $0)" = adb-call; then
 
     if echo "$1" | grep -q -P -e '^\d+$'; then
         adb-tap-2 614 1829
-        adb-long-press 898 1689
+        adb-long-press 898 1689 .8
         sendtext-android "$1"
         adb-tap 479 1640
         exit

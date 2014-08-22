@@ -42,7 +42,7 @@ sub checkNil($) {
 }
 sub unhex($) {
     my ($str) = @_;
-    $str =~ s/=([a-f0-9]{2})/chr(hex("0x$1"))/egi;
+    $str =~ s/=([a-f0-9]{2})\b/chr(hex("0x$1"))/egi;
     $str =~ s/\r//g;
     return $str;
 }
@@ -67,7 +67,7 @@ sub choose_name($$$) {
     $name1 = shell_quote($name1);
     $name2 = shell_quote($name2);
     $prompt = shell_quote($prompt);
-    return qx(select-args -p $prompt $name1 $name2);
+    return qx(select-args -o -p $prompt $name1 $name2);
 }
 
 sub dq($) {
@@ -88,9 +88,10 @@ while (<>) {
         my @emails;
         my @phones;
         while (<>) {
+            next if m/^PHOTO/ .. m/^\s*$/;
             # [nil "艾迪" nil nil nil nil nil ("aidi@smartisan.com") ((creation-date . "2014-05-16 05:32:02 +0000") (timestamp . "2014-05-16 05:32:02 +0000")) nil]
             chomp;
-
+            s/\r//;
             if (m/=$/) {
                 my $line = $_;
                 $line =~ s/=$//;
@@ -112,6 +113,7 @@ while (<>) {
             } elsif (m/^TEL;/) {
                 my $phone = $';
                 $phone =~ s/-//g;
+                $phone =~ s/TYPE=//g;
                 push @phones, $phone;
             } elsif (m/^(FN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:|FN;)/) {
                 $fn = unhex $';
@@ -142,8 +144,14 @@ while (<>) {
                         delete $name_phone_map{$name}{$number};
                         delete $name_phone_map{$name} unless %{$name_phone_map{$name}};
                         if ($name_email_map{$name} and %{$name_email_map{$name}}) {
-                            die "already has a email map for $new_name" if ($name_email_map{$new_name} and %{$name_email_map{$new_name}});
-                            $name_email_map{$new_name} = $name_email_map{$name};
+                            debug "The old name has got emails: ", keys %{$name_email_map{$name}};
+                            if ($name_email_map{$new_name} and %{$name_email_map{$new_name}}) {
+                                for (keys %{$name_email_map{$name}}) {
+                                    $name_email_map{$new_name}{$_} = $name_email_map{$name}{$_};
+                                }
+                            } else {
+                                $name_email_map{$new_name} = $name_email_map{$name};
+                            }
                             delete $name_email_map{$name};
                         }
                         $name_phone_map{$new_name}{$number} = $type;

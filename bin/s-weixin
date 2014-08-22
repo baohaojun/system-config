@@ -9,6 +9,7 @@ x=$(select-output-line '
             echo $x;
         done|sort -u
         echo do-work
+        echo adb-browse-with-pc
     ) | uniq-even-non-ajacent '
 )
 
@@ -20,4 +21,4 @@ if test -x ~/bin/"$x" -a "$x" != do-work; then
    mv ~/.logs/last-weixin.$$ ~/.logs/last-weixin
 fi&
 
-"$x" "$@"
+"$x" "$@"&
