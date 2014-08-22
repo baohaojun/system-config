@@ -46,6 +46,7 @@ else()
     set(SNORE_CamelCase_SUFFIX "Qt5")
 endif()
 
+
 find_package(Doxygen)
 
 if(DOXYGEN_FOUND)

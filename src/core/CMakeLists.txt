@@ -49,8 +49,6 @@ target_link_libraries( libsnore PUBLIC ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} 
 
 add_library(Snore::Libsnore ALIAS libsnore)
 
-
-
 generate_export_header(libsnore
   EXPORT_FILE_NAME snore_exports.h
   EXPORT_MACRO_NAME SNORE_EXPORT
