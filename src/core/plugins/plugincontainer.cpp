@@ -131,7 +131,7 @@ void PluginContainer::updatePluginCache()
             snoreDebug( SNORE_DEBUG ) << "adding" << file.absoluteFilePath();
             QPluginLoader loader(file.absoluteFilePath());
             QObject *plugin = loader.instance();
-            if (plugin == NULL)
+            if (plugin == NULL)//TODO: Qt5 json stuff
             {
                 snoreDebug( SNORE_WARNING ) << "Failed loading plugin: " << file.absoluteFilePath() << loader.errorString();
                 continue;

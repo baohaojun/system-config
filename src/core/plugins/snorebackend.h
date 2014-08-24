@@ -60,8 +60,10 @@ public slots:
 private slots:
     void notificationTimedOut();
 
-protected:
+protected slots:
     void startTimeout(Notification &notification);
+
+protected:
     void closeNotification(Snore::Notification,Snore::Notification::CloseReasons);
     void setSupportsRichtext(bool b);
 

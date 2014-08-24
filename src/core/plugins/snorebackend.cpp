@@ -27,6 +27,8 @@
 #include <QTimer>
 #include <QDir>
 #include <QDebug>
+#include <QThread>
+#include <QMetaMethod>
 
 
 using namespace Snore;
@@ -120,12 +122,12 @@ SnoreSecondaryBackend::~SnoreSecondaryBackend()
 
 bool SnoreSecondaryBackend::initialize(SnoreCore *snore)
 {
-        if(!SnorePlugin::initialize(snore))
-        {
-            return false;
-        }
-        connect( snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
-        return true;
+    if(!SnorePlugin::initialize(snore))
+    {
+        return false;
+    }
+    connect( snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
+    return true;
 }
 
 bool SnoreSecondaryBackend::deinitialize()
@@ -206,6 +208,11 @@ bool SnoreBackend::deinitialize()
 
 void SnoreBackend::startTimeout(Notification &notification)
 {
+    if(thread() != QThread::currentThread())
+    {
+        metaObject()->invokeMethod(this, "startTimeout", Qt::QueuedConnection, Q_ARG(Notification,notification));
+        return;
+    }
     if(notification.isSticky())
     {
         return;
