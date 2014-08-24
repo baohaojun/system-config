@@ -27,7 +27,7 @@
 
 #include <QSharedData>
 #include <QTimer>
-#include <QScopedPointer>
+#include <QPointer>
 
 
 namespace Snore{
@@ -76,7 +76,7 @@ private:
     QHash<int,Action> m_actions;
     Hint m_hints;
     Notification m_toReplace;
-    QScopedPointer<QTimer> m_timeoutTimer;
+    QPointer<QTimer> m_timeoutTimer;
 
 
 
