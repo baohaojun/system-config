@@ -1,0 +1,31 @@
+#+title: Connecting Iphone Under Debian Linux
+# bhj-tags: tool
+标  题: 在Debian下用ifuse同步Ipad上的文件
+发信站: 水木社区 (Mon Jun 30 23:30:07 2014), 站内
+
+媳妇让我给她拷电影，以前我只能到Windows底下用itunes的File Sharing来拷，Linux底下据说有个libimobiledevice的
+库可以用来同步iphone/ipad，但我从来没有配成功过。
+
+今天也是一样，再一次的尝试，还是不成功。然后静下心来表示跟它干上了，最后终于配成功了。
+
+可能是debian下的包本身版本有点问题？或者这个包的软件质量也还不够？
+
+我跑个ideviceinfo命令都会segfault，于是用strace跟踪了一下，发现ideviceinfo命令会跟一个usbmuxd的程序进行
+IPC。
+
+然后杀掉usbmuxd，手动在命令行上重启一下：
+
+sudo usbmuxd -f -u -U usbmux
+
+发现它在抱怨 ListDevice 命令是未知的。
+
+于是从github上下载最新的usbmuxd命令，编译，重启，发现ideviceinfo可以出信息了。
+
+然后安装usbmuxd，用ideviceinstaller -l -o list_all发现我要同步文件的电影应用的appid:
+com.olimsoft.oplayer.hd.lite
+
+然后用ifuse mount这个应用的documents:
+
+ifuse --appid com.olimsoft.oplayer.hd.lite ifuse
+
+成功！

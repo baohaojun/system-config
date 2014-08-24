@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Connecting Iphone Under Debian Linux]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html"/>
+    <updated>2014-52-24T13:08:02+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Emacs Computing Grep Regexp More intelligently]]></title>
     <link href="http://baohaojun.github.io/blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html"/>
     <updated>2014-08-20T19:35:28+08:00</updated>
@@ -65,11 +71,5 @@ Smartisan T1小扳手使用指南]]></title>
     <link href="http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html"/>
     <updated>2014-05-21T09:36:37+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Firefor urlbar dropdown list not showing anymore]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html"/>
-    <updated>2014-01-28T13:58:49+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html</id>
   </entry>
 </feed>

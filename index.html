@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Emacs Computing Grep Regexp More intelligently</title>
+<title>Connecting Iphone Under Debian Linux</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -101,180 +101,68 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Emacs Computing Grep Regexp More intelligently</h1>
+<h1 class="title">Connecting Iphone Under Debian Linux</h1>
 <p>
-When in the Emacs default <code>*scratch*</code> buffer, you select the following line with the mouse:
-</p>
-
-<pre class="example">
-Emacs Tutorial	Learn basic keystroke commands
-</pre>
-<p>
-And the you press <code>C-u M-x grep</code>, what you get on the minibuffer
-prompt is a default grep command that Emacs has computed for you:
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh">grep -nH Emacs<span class="org-string">\ </span>Tutorial<span class="org-string">\ </span>      Learn<span class="org-string">\ </span>basic<span class="org-string">\ </span>keystroke<span class="org-string">\ </span>commands
-</pre>
-</div>
-
-<p>
-This is unwieldy, and IIRC, it does not always use the right number of
-backslashes.
+标  题: 在Debian下用ifuse同步Ipad上的文件
+发信站: 水木社区 (Mon Jun 30 23:30:07 2014), 站内
 </p>
 
 <p>
-So I did some customization in my <a href="https://github.com/baohaojun/system-config">system-config</a> project for grep-mode
-and made it compute the default grep command like the following:
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh">beagrep -e <span class="org-string">"Emacs Tutorial      Learn basic keystroke commands"</span>
-</pre>
-</div>
-
-<p>
-Which is a lot more clear. And IIRC, it also uses the right number of
-backslashes most of the time (I havn't seen it failed yet).
+媳妇让我给她拷电影，以前我只能到Windows底下用itunes的File Sharing来拷，Linux底下据说有个libimobiledevice的
+库可以用来同步iphone/ipad，但我从来没有配成功过。
 </p>
 
 <p>
-For e.g., given this familiar string <code>("hello world\n")</code>, with both
-parenthesis included, my grep elisp code will compute it like this:
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh">beagrep -e <span class="org-string">"(\"hello world\\\\n\")"</span>
-</pre>
-</div>
-
-<p>
-With Emacs vanilla grep, the grep command will be like:
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh">grep -nH <span class="org-string">\(\"</span>hello<span class="org-string">\ </span>world<span class="org-string">\\</span>n<span class="org-string">\"\)</span> ~/1.txt
-</pre>
-</div>
-
-<p>
-Which is wrong! So I did recall correctly about this. If you put the
-<code>("hello world\n")</code> string into <code>~/1.txt</code>, the above command will show
-no match. But if you replace the <code>beagrep</code> with <code>grep</code> in my command,
-to get <code>grep -e "(\"hello world\\\\n\")" ~/1.txt</code>, then you will see
-the match.
+今天也是一样，再一次的尝试，还是不成功。然后静下心来表示跟它干上了，最后终于配成功了。
 </p>
 
 <p>
-I have extracted my customization into <a href=".emacs-grep.el">../../../../.emacs-grep.el</a>, which is reproduced here:
+可能是debian下的包本身版本有点问题？或者这个包的软件质量也还不够？
 </p>
 
-<div class="org-src-container">
+<p>
+我跑个ideviceinfo命令都会segfault，于是用strace跟踪了一下，发现ideviceinfo命令会跟一个usbmuxd的程序进行
+IPC。
+</p>
 
-<pre class="src src-emacs-lisp">(<span class="org-keyword">require</span> '<span class="org-constant">grep</span>)
-(setq my-grep-command <span class="org-string">"beagrep -e pat"</span>) <span class="org-comment-delimiter">;; </span><span class="org-comment">should not put it into custom, the custom will be read every time and so the `(let ((grep-command ..' scheme will fail</span>
-(<span class="org-keyword">defcustom</span> <span class="org-variable-name">bhj-grep-dir</span> nil <span class="org-doc">"The default directory for grep"</span>)
-(<span class="org-keyword">defvar</span> <span class="org-variable-name">ajoke--marker-ring</span> (make-ring 32)
-  <span class="org-doc">"Ring of markers which are locations from which ajoke was invoked."</span>)
+<p>
+然后杀掉usbmuxd，手动在命令行上重启一下：
+</p>
 
-(<span class="org-keyword">defun</span> <span class="org-function-name">grep-default-command</span> ()
-  <span class="org-doc">"Compute the default grep command for C-u M-x grep to offer."</span>
-  (<span class="org-keyword">let</span> ((tag-default (grep-shell-quote-argument (bhj-grep-tag-default)))
-        <span class="org-comment-delimiter">;; </span><span class="org-comment">This a regexp to match single shell arguments.</span>
-        <span class="org-comment-delimiter">;; </span><span class="org-comment">Could someone please add comments explaining it?</span>
-        (sh-arg-re <span class="org-string">"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(</span></span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(?:</span></span><span class="org-string">\"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(?:</span></span><span class="org-string">\\\\\"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">[</span><span class="org-string"><span class="org-negation-char">^</span></span><span class="org-string">\"]</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">*\"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">'[</span><span class="org-string"><span class="org-negation-char">^</span></span><span class="org-string">']+'</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(?:</span></span><span class="org-string">\\\\.</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">[</span><span class="org-string"><span class="org-negation-char">^</span></span><span class="org-string">\"' </span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">&gt;&lt;\t\n]</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">+</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">"</span>)
+<p>
+sudo usbmuxd -f -u -U usbmux
+</p>
 
-        (grep-default (or (car grep-history) my-grep-command)))
-    <span class="org-comment-delimiter">;; </span><span class="org-comment">In the default command, find the arg that specifies the pattern.</span>
-    (<span class="org-keyword">when</span> (or (string-match
-               (concat <span class="org-string">"[</span><span class="org-string"><span class="org-negation-char">^</span></span><span class="org-string"> ]+\\s +</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(?:</span></span><span class="org-string">-[</span><span class="org-string"><span class="org-negation-char">^</span></span><span class="org-string"> ]+\\s +</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">*"</span>
-                       sh-arg-re <span class="org-string">"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(</span></span><span class="org-string">\\s +</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(</span></span><span class="org-string">\\S +</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">?"</span>)
-               grep-default)
-              <span class="org-comment-delimiter">;; </span><span class="org-comment">If the string is not yet complete.</span>
-              (string-match <span class="org-string">"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(</span></span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">\\'"</span> grep-default))
-      <span class="org-comment-delimiter">;; </span><span class="org-comment">Maybe we will replace the pattern with the default tag.</span>
-      <span class="org-comment-delimiter">;; </span><span class="org-comment">But first, maybe replace the file name pattern.</span>
+<p>
+发现它在抱怨 ListDevice 命令是未知的。
+</p>
 
-      <span class="org-comment-delimiter">;; </span><span class="org-comment">Now replace the pattern with the default tag.</span>
-      (replace-match tag-default t t grep-default 1))))
+<p>
+于是从github上下载最新的usbmuxd命令，编译，重启，发现ideviceinfo可以出信息了。
+</p>
 
+<p>
+然后安装usbmuxd，用ideviceinstaller -l -o list_all发现我要同步文件的电影应用的appid:
+com.olimsoft.oplayer.hd.lite
+</p>
 
-(<span class="org-keyword">defun</span> <span class="org-function-name">grep-shell-quote-argument</span> (argument)
-  <span class="org-doc">"Quote ARGUMENT for passing as argument to an inferior shell."</span>
-  (<span class="org-keyword">cond</span>
-   ((and (boundp 'no-grep-quote)
-         no-grep-quote)
-    (format <span class="org-string">"\"%s\""</span> argument))
-   ((equal argument <span class="org-string">""</span>)
-    <span class="org-string">"\"\""</span>)
-   (t
-    <span class="org-comment-delimiter">;; </span><span class="org-comment">Quote everything except POSIX filename characters.</span>
-    <span class="org-comment-delimiter">;; </span><span class="org-comment">This should be safe enough even for really weird shells.</span>
-    (<span class="org-keyword">let</span> ((result <span class="org-string">""</span>) (start 0) end)
-      (<span class="org-keyword">while</span> (string-match <span class="org-string">"[].*[</span><span class="org-string"><span class="org-negation-char">^</span></span><span class="org-string">$\"\\]"</span> argument start)
-        (setq end (match-beginning 0)
-              result (concat result (substring argument start end)
-                             (<span class="org-keyword">let</span> ((char (aref argument end)))
-                               (<span class="org-keyword">cond</span>
-                                ((eq ?$ char)
-                                 <span class="org-string">"\\\\\\"</span>)
-                                ((eq ?\\  char)
-                                 <span class="org-string">"\\\\\\"</span>)
-                                (t
-                                 <span class="org-string">"\\"</span>))) <span class="org-warning">(substring argument end (1+ end)))</span>
-              start (1+ end)))
-      (concat <span class="org-string">"\""</span> result (substring argument start) <span class="org-string">"\""</span>)))))
+<p>
+然后用ifuse mount这个应用的documents:
+</p>
 
-(<span class="org-keyword">defun</span> <span class="org-function-name">bhj-grep-tag-default</span> ()
-  (<span class="org-keyword">let</span> ((tag (grep-tag-default)))
-  (<span class="org-keyword">cond</span>
-   ((region-active-p)
-    tag)
-   ((string-match <span class="org-string">"/res/.*\.xml</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">AndroidManifest.xml"</span> (or (buffer-file-name) <span class="org-string">""</span>))
-    (replace-regexp-in-string <span class="org-string">"&lt;/\\w+&gt;</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">^&lt;</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">^.*?/"</span> <span class="org-string">""</span> tag))
-   (t
-    (replace-regexp-in-string <span class="org-string">"^&lt;</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">&gt;$"</span> <span class="org-string">""</span> tag)))))
+<p>
+ifuse &#x2013;appid com.olimsoft.oplayer.hd.lite ifuse
+</p>
 
-<span class="org-comment-delimiter">;;;</span><span class="org-comment">###</span><span class="org-comment"><span class="org-warning">autoload</span></span>
-(<span class="org-keyword">defun</span> <span class="org-function-name">grep-bhj-dir</span> ()
-  (interactive)
-  (<span class="org-keyword">let</span> ((default-directory
-          (<span class="org-keyword">if</span> bhj-grep-dir
-              (expand-file-name bhj-grep-dir)
-            default-directory))
-        (compilation-buffer-name-function (<span class="org-keyword">lambda</span> (_ign) (<span class="org-keyword">if</span> (boundp 'grep-buffer-name)
-                                                             grep-buffer-name
-                                                           <span class="org-string">"*grep*"</span>))))
-    (call-interactively 'grep)))
-
-(<span class="org-keyword">defun</span> <span class="org-function-name">bhj-grep</span> ()
-  (interactive)
-  (<span class="org-keyword">let</span> ((current-prefix-arg 4)
-        <span class="org-comment-delimiter">;; </span><span class="org-comment">(default-directory (eval bhj-grep-default-directory))</span>
-        (grep-use-null-device nil))
-    (nodup-ring-insert ajoke--marker-ring (point-marker))
-    (call-interactively 'grep-bhj-dir)))
-
-(<span class="org-keyword">defun</span> <span class="org-function-name">nodup-ring-insert</span> (ring obj)
-  (<span class="org-keyword">unless</span> (and (not (ring-empty-p ring))
-               (equal (ring-ref ring 0) obj))
-    (ring-insert ring obj)))
-
-
-(define-key goto-map <span class="org-string">"r"</span> 'bhj-grep)
-</pre>
-</div>
+<p>
+成功！
+</p>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.html"> <!-- prev-url -->
+      <a href="blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        Using Emacs as a better Source Insight <!-- prev-title -->
+        Emacs Computing Grep Regexp More intelligently <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -292,7 +180,7 @@ I have extracted my customization into <a href=".emacs-grep.el">../../../../.ema
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -363,12 +251,13 @@ I have extracted my customization into <a href=".emacs-grep.el">../../../../.ema
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="meta/tags/emacs.html" title="Emacs the editor">emacs</a></li>
+                <li><a href="meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.html'> Using Emacs as a better Source Insight </a></li>
+        <li><a href='blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html'> Emacs Computing Grep Regexp More intelligently </a></li>
+<li><a href='blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.html'> Using Emacs as a better Source Insight </a></li>
 <li><a href='blog/2014/08/11/0-Linux-network-code-reading.html'> Linux network code reading (TODO) </a></li>
 <li><a href='blog/2014/08/05/0-a-love-letter.html'> 一封情书 </a></li>
 <li><a href='blog/2014/08/03/0-emoji-in-weixin-and-unicode.html'> 微信中的Unicode表情字符 </a></li>
@@ -377,7 +266,6 @@ I have extracted my customization into <a href=".emacs-grep.el">../../../../.ema
 <li><a href='blog/2014/06/04/0-binder.html'> binder </a></li>
 <li><a href='blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html'> 在Debian下为安卓做一个GNU tar程序 </a></li>
 <li><a href='blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html'> Firefor urlbar dropdown list not showing anymore </a></li>
-<li><a href='blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html'> 用GreaseMonkey禁止Google搜索重定向绑架 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

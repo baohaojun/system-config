@@ -1,6 +1,10 @@
 #+title: Archive
  * 2014
   - 2014-08
+   * 2014-08-24
+
+     [[../blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.org][Connecting Iphone Under Debian Linux]]
+
    * 2014-08-20
 
      [[../blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.org][Emacs Computing Grep Regexp More intelligently]]

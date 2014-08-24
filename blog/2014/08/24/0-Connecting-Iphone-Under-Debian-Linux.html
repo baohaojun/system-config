@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Computer tools</title>
+<title>Connecting Iphone Under Debian Linux</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -101,162 +101,78 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Computer tools</h1>
-<ul class="org-ul">
-<li>2014
-<ul class="org-ul">
-<li>2014-08
-<ul class="org-ul">
-<li>2014-08-24
+<h1 class="title">Connecting Iphone Under Debian Linux</h1>
+<p>
+标  题: 在Debian下用ifuse同步Ipad上的文件
+发信站: 水木社区 (Mon Jun 30 23:30:07 2014), 站内
+</p>
 
 <p>
-<a href="../../../blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html">Connecting Iphone Under Debian Linux</a>
+媳妇让我给她拷电影，以前我只能到Windows底下用itunes的File Sharing来拷，Linux底下据说有个libimobiledevice的
+库可以用来同步iphone/ipad，但我从来没有配成功过。
 </p>
-</li>
-
-<li>2014-08-05
 
 <p>
-<a href="../../../blog/2014/08/05/0-a-love-letter.html">一封情书</a>
+今天也是一样，再一次的尝试，还是不成功。然后静下心来表示跟它干上了，最后终于配成功了。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-07
-<ul class="org-ul">
-<li>2014-07-13
 
 <p>
-<a href="../../../blog/2014/07/13/0-Smartisan-T1-Wrench.html">Smartisan T1 WrenchSmartisan T1小扳手使用指南</a>
+可能是debian下的包本身版本有点问题？或者这个包的软件质量也还不够？
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-06
-<ul class="org-ul">
-<li>2014-06-23
 
 <p>
-<a href="../../../blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html">在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email/sms</a>
+我跑个ideviceinfo命令都会segfault，于是用strace跟踪了一下，发现ideviceinfo命令会跟一个usbmuxd的程序进行
+IPC。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-05
-<ul class="org-ul">
-<li>2014-05-20
 
 <p>
-<a href="../../../blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html">在Debian下为安卓做一个GNU tar程序</a>
+然后杀掉usbmuxd，手动在命令行上重启一下：
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-01
-<ul class="org-ul">
-<li>2014-01-16
 
 <p>
-<a href="../../../blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html">用GreaseMonkey禁止Google搜索重定向绑架</a>
+sudo usbmuxd -f -u -U usbmux
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2013
-<ul class="org-ul">
-<li>2013-10
-<ul class="org-ul">
-<li>2013-10-16
 
 <p>
-<a href="../../../blog/2013/10/16/0-Interactive-Git-Add.html">Interactive Git Add</a>
+发现它在抱怨 ListDevice 命令是未知的。
 </p>
-</li>
-
-<li>2013-10-01
 
 <p>
-<a href="../../../blog/2013/10/01/0-Inside-Ajoke.html">Inside Ajoke</a>
+于是从github上下载最新的usbmuxd命令，编译，重启，发现ideviceinfo可以出信息了。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2013-05
-<ul class="org-ul">
-<li>2013-05-21
 
 <p>
-<a href="../../../blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html">Mysterious rsync/ssh/scp hang</a>
+然后安装usbmuxd，用ideviceinstaller -l -o list_all发现我要同步文件的电影应用的appid:
+com.olimsoft.oplayer.hd.lite
 </p>
-</li>
-
-<li>2013-05-08
 
 <p>
-<a href="../../../blog/2013/05/08/bbs-robot.html">站友福音：在水木bbs上用Emacs的键绑定</a>
+然后用ifuse mount这个应用的documents:
 </p>
-</li>
-</ul>
-</li>
-
-<li>2013-02
-<ul class="org-ul">
-<li>2013-02-12
 
 <p>
-<a href="../../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.html">html2mht.pl and dir2html.pl</a>
+ifuse &#x2013;appid com.olimsoft.oplayer.hd.lite ifuse
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2012
-<ul class="org-ul">
-<li>2012-10
-<ul class="org-ul">
-<li>2012-10-29
 
 <p>
-<a href="../../../blog/2012/10/29/why-symlink-my-config.html">我的配置环境：为什么用symlink而不是cp</a>
+成功！
 </p>
-</li>
-</ul>
-</li>
-
-<li>2012-05
-<ul class="org-ul">
-<li>2012-05-02
-
-<p>
-<a href="../../../blog/2012/05/02/pdf-for-kindle-touch.html">pdf-for-kindle-touch</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2012-02
-<ul class="org-ul">
-<li>2012-02-02
-
-<p>
-<a href="../../../blog/2012/02/02/how-to-do-long-twitter-cn.html">自己动手做长微博（推特），内嵌图片的</a>
-</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        Emacs Computing Grep Regexp More intelligently <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../../../../meta/Archive.html"> <!-- next-url -->
+        Archive <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
 <!-- {%html-mode%} -->
 
@@ -264,7 +180,7 @@ for the JavaScript code in this tag.
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/meta/tags/tool.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -335,12 +251,21 @@ for the JavaScript code in this tag.
 
     <h2>Tags</h2>
     <ul>
-        
+                <li><a href="../../../../meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        
+        <li><a href='../20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html'> Emacs Computing Grep Regexp More intelligently </a></li>
+<li><a href='../20/0-Using-Emacs-as-a-better-source-insight.html'> Using Emacs as a better Source Insight </a></li>
+<li><a href='../11/0-Linux-network-code-reading.html'> Linux network code reading (TODO) </a></li>
+<li><a href='../05/0-a-love-letter.html'> 一封情书 </a></li>
+<li><a href='../03/0-emoji-in-weixin-and-unicode.html'> 微信中的Unicode表情字符 </a></li>
+<li><a href='../../07/13/0-Smartisan-T1-Wrench.html'> Smartisan T1 WrenchSmartisan T1小扳手使用指南 </a></li>
+<li><a href='../../06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'> 在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email... </a></li>
+<li><a href='../../06/04/0-binder.html'> binder </a></li>
+<li><a href='../../05/20/0-build-tar-for-android-under-x86-64-debian.html'> 在Debian下为安卓做一个GNU tar程序 </a></li>
+<li><a href='../../01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html'> Firefor urlbar dropdown list not showing anymore </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

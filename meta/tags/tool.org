@@ -1,6 +1,10 @@
 #+title: Computer tools
  * 2014
   - 2014-08
+   * 2014-08-24
+
+     [[../../../blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.org][Connecting Iphone Under Debian Linux]]
+
    * 2014-08-05
 
      [[../../../blog/2014/08/05/0-a-love-letter.org][一封情书]]
