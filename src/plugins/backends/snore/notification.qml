@@ -120,6 +120,7 @@ Rectangle {
         anchors.rightMargin: 0
         fillMode: Image.PreserveAspectFit
         z: 3
+        source: "resources/close.png"
         visible: false
 
         MouseArea {
