@@ -18,8 +18,7 @@ debug
 if test "$(basename $0)" = adb-weixin-choose-chatter; then
     adb am start -n com.tencent.mm/.ui.LauncherUI
     sleep .5
-    adb-tap-2 141 178
-    adb-tap-2 141 178
+    adb-tap 141 178 adb-tap-2 141 178
     for x in $(seq 1 10); do
         adb-tap 642 144
         if adb-is-activity com.tencent.mm/com.tencent.mm.plugin.search.ui.SearchContactUI; then
@@ -34,6 +33,7 @@ elif test "$(basename $0)" = adb-call; then
     adb am start -n com.android.contacts/.activities.DialtactsActivity >/dev/null 2>&1 &
     sleep .5
     if ! echo "$1" | grep -q -P -e '^\d+$'; then
+        set -- "$(echo "$@" | perl -npe 's/\s+/.*/g')"
         number=$(select-output-line 'bbdb '"$1"'|perl -npe "s/\\\\n/\\n/g"' | grep -o -P '\d+$')
         if test "$number"; then
             set -- "$number"

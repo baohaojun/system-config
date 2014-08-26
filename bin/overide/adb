@@ -140,6 +140,10 @@ function adb() {
         fi
     fi
 
+    if test "$#" = 2 -a "$1" = 'start-activity'; then
+        adb am start -n $2
+        exit 0
+    fi
     if test "$#" = 1 -a "$1" = romount; then
         command adb shell su -c 'mount -o ro,remount /system; mount | grep /system'
         exit

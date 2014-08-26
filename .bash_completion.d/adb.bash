@@ -309,14 +309,14 @@ _adb_util_list_files() {
     local -a args
 
     serial="$1"
-    file="$2"
+    file=$2
 
     if [ "$serial" != "none" ]; then
         args=(-s $serial)
     fi
 
     toks=( ${toks[@]-} $(
-        command adb-noquote ${args[@]} shell ls -dF ${file}"*" '2>' /dev/null 2> /dev/null | tr -d '\r' | {
+        command adb-quote ${args[@]} shell sh -c "ls -dF ${file}* 2>/dev/null" 2> /dev/null | tr -d '\r' | {
             while read -r tmp; do
                 filetype=${tmp%% *}
                 filename=${tmp:${#filetype}+1}
@@ -388,7 +388,7 @@ _adb_util_complete_local_file()
 
 
 if [[ $(type -t compopt) = "builtin" ]]; then
-    complete -F _adb adb
+    complete -o filenames -F _adb adb
 else
     complete -o nospace -F _adb adb
 fi

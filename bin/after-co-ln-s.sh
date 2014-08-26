@@ -204,7 +204,12 @@ if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; the
         relative-link -f ~/etc/hardware-mach/$mach/.Xmodmap ~/.Xmodmap
     fi
 fi
-sudo ln -sf ~/etc/rc.local /etc || true # no sudo on win32
+if test -L /etc/rc.local || yes-or-no-p -N "Replace /etc/rc.local with system-config's version?"; then
+    if ! test -L /etc/rc.local; then
+        cp /etc/rc.local /etc/rc.local.bak
+    fi
+    sudo ln -sf ~/etc/rc.local /etc || true # no sudo on win32
+fi
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
 if test -L ~/.git; then rm -f ~/.git; fi
 if test $(uname) = Linux; then

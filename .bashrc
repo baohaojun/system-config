@@ -83,3 +83,7 @@ alias vi=vim
 case $- in
     *i*) . ~/.bashrc-interactive;;
 esac
+
+if test -e ~/.bashrc-cust; then
+    . ~/.bashrc-cust;
+fi

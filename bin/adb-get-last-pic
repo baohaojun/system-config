@@ -1,24 +1,52 @@
 #!/bin/bash
+TEMP=$(getopt -o r --long remove -n $(basename $0) -- "$@")
+remove=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -r|--remove)
+            remove=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $@"
+            ;;
+    esac
+done
 
-dir=/sdcard/DCIM/Camera
-
-if test "$1" = c; then
+{
     dir=/sdcard/DCIM/Camera
-elif test "$1" = m; then
-    dir=/sdcard/Download/mail_attachments/
-elif test "$1" = s; then
-    dir=/sdcard/Pictures/Screenshots/
-elif test "$1" = d; then
-    dir=/sdcard/Download/
-elif test "$1"; then
-    echo should be one of '"msd"'
-fi
 
-pic=$(adb busybox ls -t -1 $dir|head -n 1|perl -npe 's/\033.*?m//g; s/\?+/*/g')
-if [[ $pic =~ \* ]]; then
-    pic=$(adb bash -c "ls $dir/$pic"|perl -npe 's!.*/!!')
-fi
-cd ~/Pictures/
-adb pull $dir/$pic
+    if test "$1" = c; then
+        dir=/sdcard/DCIM/Camera
+    elif test "$1" = m; then
+        dir=/sdcard/Download/mail_attachments/
+    elif test "$1" = s; then
+        dir=/sdcard/Pictures/Screenshots/
+    elif test "$1" = n; then
+        dir=/sdcard/smartisan/Notes
+    elif test "$1" = d; then
+        dir=/sdcard/Download/
+    elif test "$1"; then
+        echo should be one of '"msd"'
+    fi
+
+    pic=$(adb busybox ls -t -1 $dir|head -n 1|perl -npe 's/\033.*?m//g; s/\?+/*/g')
+    if [[ $pic =~ \* ]]; then
+        pic=$(adb bash -c "ls $dir/$pic"|perl -npe 's!.*/!!')
+    fi
+    cd ~/Pictures/
+    adb pull $dir/$pic
+    if test $remove = true; then
+        adb rm $dir/$pic
+        adb am startservice -n com.bhj.setclip/.PutClipService --es picture $dir/$pic
+    fi
+} 1>&2
 up $pic
-of $pic
+if is-tty-io; then
+    of $pic >/dev/null 2>&1
+fi

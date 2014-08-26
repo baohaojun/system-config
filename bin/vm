@@ -1,0 +1,3 @@
+#!/bin/bash
+set -e
+mv -i "$2" "$1"

@@ -1,0 +1,21 @@
+#!/bin/bash
+{
+    adb start-activity com.smartisanos.notes/com.smartisanos.notes.NotesActivity
+    adb-tap-2 71 162
+    adb-tap 941 163
+    adb-long-press 226 440
+    adb-tap 106 258
+    adb-tap 934 155
+    adb-tap 984 149
+    adb-tap 409 1256
+    adb-tap 906 207
+    while adb-is-activity com.smartisanos.notes/com.smartisanos.notes.LongLengthWeiboActivity; do
+        sleep .1
+    done
+    adb-tap-2 71 162
+    adb-swipe 100 561 332 561 .2
+    adb-tap 192 510
+    adb-key BACK
+} 1>&2
+
+adb-get-last-pic -r n

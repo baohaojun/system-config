@@ -1,0 +1,12 @@
+#!/bin/bash
+adb start-activity fq.router2/.MainActivity
+for x in $(seq 0 10); do
+    if ! adb-is-activity com.android.vpndialogs/com.android.vpndialogs.ConfirmDialog; then
+        sleep .5
+    else
+        adb-tap 156 1225
+        adb-tap 778 1453
+        adb-key BACK
+        break
+    fi
+done
