@@ -1,0 +1,14 @@
+#!/bin/bash
+for y in 0 1; do for x in $(seq 1 254); do (ssh -o StrictHostKeyChecking=no 172.16.$y.$x uname >/tmp/$y.$x.ssh 2>&1&); done; done >/dev/null 2>&1
+
+for x in $(seq 1 10); do
+    x=$(grep cygwin -i -l /tmp/*.*.ssh);
+    if test "$x"; then
+        basename "$x" | perl -npe 's/.ssh//; s/^/172.16./'
+        break
+    fi
+    if ps.pl ssh.uname 1>&2; then
+        sleep 1
+    fi
+done
+rm /tmp/*.*.ssh

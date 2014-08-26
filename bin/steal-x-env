@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cat /proc/$1/environ|tr \\0 \\n| grep 'XAUTHORITY|DBUS_SESSION_BUS_ADDRESS|DISPLAY|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|SSH_AUTH_SOCK|GPG_AGENT_INFO' -P|perl -npe 's/^/export /' > ~/.renew-xauth.$$
+mv ~/.renew-xauth.$$ ~/.renew-xauth
