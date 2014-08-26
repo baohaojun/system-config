@@ -45,6 +45,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 991 166
                             ;;
                         t1-sms) # quick reply sms
+                            adb-tap 182 1079
                             adb-long-press 522 912 # 长按输入框
                             adb-tap 149 786
                             adb-tap 864 921
@@ -116,6 +117,13 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 adb-tap 179 872
                             fi
                             adb-tap 1001 983
+                            ;;
+                        notes-weixin)
+                            pic=$(adb-get-a-note|perl -npe 's/^~/$ENV{HOME}/')
+                            activity=$(adb-top-activity)
+                            if test "$activity" = com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity; then
+                                adb-picture-to-qq-chat $pic
+                            fi
                             ;;
                         *) # most cases
                             window=$(adb-focused-window)
