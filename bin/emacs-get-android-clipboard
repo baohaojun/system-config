@@ -4,4 +4,4 @@ if test $(basename $0) = emacs-get-android-clipboard; then
 else
     putclip "$(getphone-android|perl -npe 's/\+86//')"
 fi
-sawfish-client -e '(synthesize-event "C-y" (input-focus))'
+sawfish-client -e '(call-command (lookup-event-binding (lookup-event "Super-v")))'

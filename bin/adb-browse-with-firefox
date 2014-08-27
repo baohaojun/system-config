@@ -1,11 +1,11 @@
 #!/bin/bash
-if test $(basename $0) = adb-open-with-firefox; then
+if test $(basename $0) = adb-browse-with-firefox; then
     mod=org.mozilla.firefox/.App
-elif test $(basename $0) = adb-open-with-chrome; then
+elif test $(basename $0) = adb-browse-with-chrome; then
     mod=com.android.chrome/com.google.android.apps.chrome.Main
-elif test $(basename $0) = adb-open-with-weibo; then
+elif test $(basename $0) = adb-browse-with-weibo; then
     mod=com.sina.weibo/.WeiboBrowser\ -d
-elif test $(basename $0) = adb-open-with-wx; then
+elif test $(basename $0) = adb-browse-with-wx; then
     mod=com.tencent.mm/.plugin.webview.ui.tools.WebViewUI
 fi
 

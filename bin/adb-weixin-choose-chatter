@@ -9,7 +9,9 @@ else
     }
 fi
 
-if test "$(basename $0)" = adb-call && ! echo "$1" | grep -q -P -e '^\d+$'; then
+if (
+    test "$(basename $0)" = adb-call || test "$(basename $0)" = adb-sms-to
+) && ! echo "$1" | grep -q -P -e '^\d+$'; then
     true
 else
     putclip-android "$1"
@@ -29,9 +31,7 @@ if test "$(basename $0)" = adb-weixin-choose-chatter; then
     adb-long-press 375 137
     adb-tap 275 405
     adb-tap 248 474
-elif test "$(basename $0)" = adb-call; then
-    adb am start -n com.android.contacts/.activities.DialtactsActivity >/dev/null 2>&1 &
-    sleep .5
+elif test "$(basename $0)" = adb-call -o "$(basename $0)" = adb-sms-to; then
     if ! echo "$1" | grep -q -P -e '^\d+$'; then
         set -- "$(echo "$@" | perl -npe 's/\s+/.*/g')"
         number=$(select-output-line 'bbdb '"$1"'|perl -npe "s/\\\\n/\\n/g"' | grep -o -P '\d+$')
@@ -41,20 +41,32 @@ elif test "$(basename $0)" = adb-call; then
         fi
     fi
 
-    if echo "$1" | grep -q -P -e '^\+?\d+$'; then
-        adb-tap-2 614 1829
-        adb-long-press 898 1689 .8
-        sendtext-android "$1"
-        adb-tap 479 1640
-        exit
-    fi
+    if test "$(basename $0)" = adb-call; then
+        adb am start -n com.android.contacts/.activities.DialtactsActivity >/dev/null 2>&1 &
+        sleep .5
 
-    adb-tap-2 332 1879
-    adb-tap 132 260
-    adb-long-press 183 146
-    adb-tap 72 403
-    adb-tap 253 270
-    adb-tap 637 665
+        if echo "$1" | grep -q -P -e '^\+?\d+$'; then
+            adb-tap-2 614 1829
+            adb-long-press 898 1689 .8
+            sendtext-android "$1"
+            adb-tap 479 1640
+            exit
+        fi
+
+        adb-tap-2 332 1879
+        adb-tap 132 260
+        adb-long-press 183 146
+        adb-tap 72 403
+        adb-tap 253 270
+        adb-tap 637 665
+    elif test "$(basename $0)" = adb-sms-to; then
+        adb start-activity com.android.mms/.ui.ConversationList
+        adb-tap 958 149
+        sendtext-android "$1"
+        adb-tap 294 995
+        shift
+        weixin "$@"
+    fi
 elif test "$(basename $0)" = adb-qq-choose-chatter; then
     adb am start -n com.tencent.mobileqq/.activity.SplashActivity
     debug
