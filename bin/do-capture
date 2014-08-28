@@ -4,7 +4,7 @@ if test $(basename $0) = do-capture-darwin; then
     export EMACS=t
 fi
 
-file=$(select-output-line -- bash -c 'cd ~/doc/projects; ls -t *.org; echo daily; echo agenda')
+file=$(select-output-line -o -- bash -c 'cd ~/doc/projects; ls -t *.org; echo daily; echo agenda')
 
 if test -e ~/doc/projects/$file; then
    e ~/doc/projects/$file;

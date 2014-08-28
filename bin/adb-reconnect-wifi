@@ -1,0 +1,6 @@
+#!/bin/bash
+adb-swipe 500 10 500 1800 .5
+adb-tap 932 58
+adb-tap 509 403
+sleep 2
+adb-tap 509 403

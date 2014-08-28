@@ -1,0 +1,40 @@
+#!/usr/bin/env perl
+
+use Getopt::Long;
+use String::Approx 'adistr';
+my $pre;
+GetOptions(
+    "pre=s" => \$pre,
+    );
+
+if ($pre) {
+    $pre_re = qr/^\Q$pre\E/;
+}
+
+my $str = $ARGV[0];
+shift @ARGV;
+
+while (<>)
+{
+    if (not exists $file{$_}) {
+        $file{$_} = 1;
+        push @file, $_;
+
+        if ($pre and m/$pre_re/) {
+            $file_pre{$_} = 1;
+            push @file_pre, $_;
+        }
+    }
+}
+
+if ($pre) {
+    for (@file_pre) {
+        print $_;
+    }
+}
+@file = sort {abs(adistr($a, $str)) <=> abs(adistr($b, $str))} @file;
+
+for (@file) {
+    next if ($pre and exists $file{$pre . $_} or exists $file_pre{$_});
+    print $_;
+}

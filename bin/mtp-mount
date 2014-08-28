@@ -1,0 +1,4 @@
+#!/bin/bash
+usb=$(select-output-line -O mtp-mount lsusb|awk '{print $2","$4}'|tr -d :)
+
+gvfs-mount "mtp://[usb:$usb]/" ~/tmp/android/

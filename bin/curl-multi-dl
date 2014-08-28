@@ -22,5 +22,5 @@ size=$(pretty $size | pn 2)
 for x in $(seq 1 10); do
     s=$((size * (x - 1)))
     e=$((size * x - 1))
-    curl $1 -r $s-$e -o $(basename $1).$x&
+    curl $1 -L -r $s-$e -o $(basename $1).$x&
 done

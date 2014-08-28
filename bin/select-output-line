@@ -3,12 +3,20 @@ set -e
 
 export SELECT_PROMPT="Please enter your selection: "
 ORDERED=false
-
+max=-1
 if test "${1:0:1}" = -; then
-    TEMP=$(getopt -o op:i: --long prompt:init: -n $(basename $0) -- "$@")
+    TEMP=$(getopt -o m:O:op:i: --long order-name:prompt:init: -n $(basename $0) -- "$@")
     eval set -- "$TEMP"
     while true; do
         case "$1" in
+            -O|--order-name)
+                ORDERED=$2
+                shift 2
+                ;;
+            -m)
+                max=$((0 + $2))
+                shift 2
+                ;;
             -o)
                 ORDERED=true
                 shift
@@ -32,11 +40,18 @@ if test "${1:0:1}" = -; then
     done
 fi
 
-if test $ORDERED = true; then
+if test $ORDERED != false; then
     md5=$(echo "$@" | md5sum | pn 1)
+    if test $ORDERED != true; then
+        md5=$ORDERED
+    fi
     cmdfile=~/.cache/bhj/select-output-line/$md5.cmd
     histfile=~/.cache/bhj/select-output-line/$md5.hist
-    mv $histfile $histfile.$$ >/dev/null 2>&1 || true
+    (
+        mv $histfile $histfile.$$ &&
+            cp $histfile.$$ $histfile.$$.2 &&
+            mv $histfile.$$.2 $histfile
+    ) >/dev/null 2>&1 || true
     mkdir -p $(dirname $cmdfile);
     echo "$@" > $cmdfile
 fi
@@ -53,7 +68,13 @@ dood=(
             else
                 "$@"
             fi
-        ) | uniq-even-non-ajacent
+        ) |
+        if test $ORDERED != true -a $ORDERED != false; then
+            uniq-and-dist-sort "$(cat $histfile.$$  2>/dev/null | head -n 1)"
+        else
+            uniq-even-non-ajacent
+        fi
+
     )
 ) || true
 if test ${#dood[@]} = 0; then
@@ -66,12 +87,12 @@ n=$(my-select "${dood[@]}")
 
 if echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#dood[@]}; then
     echo -n ${dood[n-1]}
-    if test $ORDERED = true; then
+    if test $ORDERED != false; then
 
         (
             echo ${dood[n-1]}
             cat $histfile.$$ 2>/dev/null || true
-        ) | uniq-even-non-ajacent > $histfile.$$.2 &&
+        ) | perl -ne "print if 1..$max" | uniq-even-non-ajacent > $histfile.$$.2 &&
             mv $histfile.$$.2 $histfile && rm $histfile.$$ -f
     fi&
 else
