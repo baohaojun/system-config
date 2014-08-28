@@ -4,6 +4,10 @@ if test -e ~/.config/ssh-agent; then
     . ~/.config/ssh-agent;
 fi
 
+if test -e ~/.config/no-$(basename $0); then
+    exit
+fi
+
 if test -e ~/src/android/kernel/; then
     (
         set +e
