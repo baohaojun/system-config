@@ -1,0 +1,11 @@
+#!/bin/bash
+for x in /dev/disk/by-uuid/*; do
+    y=$(readlink -f $x);
+    if test $y = "$1"; then
+        basename $x
+        if is-tty-io; then
+            basename $x | putclip
+        fi
+        break
+    fi
+done
