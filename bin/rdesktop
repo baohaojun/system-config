@@ -35,7 +35,7 @@ function rdesktop() {
         user=$1
         shift
     else
-        user=$(select-output-line "grep -P -e "$host" ~/.authinfo | pn 4 | sort -u")
+        user=$(select-output-line -o "grep -P -e "$host" ~/.authinfo | pn 4 | sort -u")
     fi
 
     set -- -k $kbd -r clipboard:PRIMARYCLIPBOARD "$@"
