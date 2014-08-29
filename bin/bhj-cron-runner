@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . ~/.bashrc
+. ~/.config/ssh-agent || true
 run_dir=$(basename $1)
 
 export USER=$(whoami) #in cron daemon, this env variable is not set by default.

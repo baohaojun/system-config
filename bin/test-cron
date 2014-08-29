@@ -6,5 +6,5 @@ if test $minute = 60; then
     minute=0
     ((hour++))
 fi
-echo "$minute $hour * * * . ~/.bash-path; strace -f -o ~/test-cron.txt $(readlink -f $1)" >> ~/.crontab.bhj
+echo "$minute $hour * * * . ~/.bash-path; $(readlink -f $1)" >> ~/.crontab.bhj
 crontab ~/.crontab.bhj

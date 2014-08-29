@@ -14,7 +14,8 @@ if test "$(gettask-android)" = com.android.browser; then
     adb-wide-tap 767 291
 elif test "$(gettask-android)" = com.tencent.mm; then
     adb-tap 990 114
-    adb-tap 666 999
+    adb-tap 666 847
+    #adb-tap 666 999
     firefox -new-tab "$(getclip-android)"
     exit
 elif test "$(gettask-android)" = com.tencent.mobileqq; then
