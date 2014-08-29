@@ -1,0 +1,4 @@
+#!/bin/bash
+cd ~/system-config/
+git co .crontab.bhj
+crontab .crontab.bhj

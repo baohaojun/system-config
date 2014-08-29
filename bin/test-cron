@@ -1,0 +1,10 @@
+#!/bin/bash
+minute=$(date +%M | perl -npe 's/^0+//')
+minute=$((minute + 1))
+hour=$(date +%H|perl -npe 's/^0+//')
+if test $minute = 60; then
+    minute=0
+    ((hour++))
+fi
+echo "$minute $hour * * * . ~/.bash-path; strace -f -o ~/test-cron.txt $(readlink -f $1)" >> ~/.crontab.bhj
+crontab ~/.crontab.bhj

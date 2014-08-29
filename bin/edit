@@ -10,7 +10,7 @@ sub debug(@) {
     print STDERR "@_\n";
 }
 
-if ((scalar @ARGV) > 1 and $0 =~ m!(^|/)e$!) {
+if (@ARGV > 1 and $0 =~ m!(^|/)e$!) {
     map {$_ = shell_quote($_)} @ARGV;
     chomp(my $file = qx(select-file-from-where @ARGV));
     @ARGV = ($file);
