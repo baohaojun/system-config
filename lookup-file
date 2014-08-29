@@ -41,7 +41,7 @@ file=$1
 x=0
 
 function find() {
-    command find 2>/dev/null "$@"
+    command find 2>/dev/null "$@"|xargs ls -td|grep -v '^\.$' -P
 }
 
 # builtin cd -P . >/dev/null 2>&1
