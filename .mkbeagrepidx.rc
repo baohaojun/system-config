@@ -1,2 +1,2 @@
 #!/bin/bash
-BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/.git,$PWD/development/ndk/platforms/android-*,$PWD/prebuilts/ndk,$PWD/external/kernel-headers,$PWD/bionic/libc/kernel/common/linux"
+BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/po,*/.git,$PWD/development/ndk/platforms/android-*,$PWD/prebuilts/ndk,$PWD/external/kernel-headers,$PWD/bionic/libc/kernel/common/linux"
