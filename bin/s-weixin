@@ -1,9 +1,6 @@
 #!/bin/bash
-x=$(select-output-line '
+x=$(select-output-line -o '
     (
-        if test -e ~/.logs/last-weixin; then
-            cat ~/.logs/last-weixin;
-        fi;
         cd ~/bin;
         for x in $(ls -l |grep emacs-weixin.sh | pn 9) t1-putclip; do
             echo $x;
@@ -12,13 +9,5 @@ x=$(select-output-line '
         echo adb-browse-with-pc
     ) | uniq-even-non-ajacent '
 )
-
-if test -x ~/bin/"$x" -a "$x" != do-work; then
-   (
-       echo $x
-       cat ~/.logs/last-weixin
-   ) |uniq-even-non-ajacent > ~/.logs/last-weixin.$$
-   mv ~/.logs/last-weixin.$$ ~/.logs/last-weixin
-fi&
 
 "$x" "$@"&

@@ -30,6 +30,17 @@ case $(basename $0) in
     adb-picture-to-phone)
         exit
         ;;
+    adb-picture-to-weixin-friends)
+        adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI;
+        while ! adb-is-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI; do
+            adb-key BACK
+            adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI;
+        done
+        adb-tap 991 170
+        adb-tap 626 278
+        adb-tap 909 145
+        weixin-new
+        ;;
     adb-picture-to-weixin-chat)
         adb-tap-mid-bot # 把输入栏调到中间固定位置，如果已经在固定位置，则只不过多出一个空格来
         debug
