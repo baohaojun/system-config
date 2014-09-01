@@ -2,6 +2,7 @@
 adb start-activity fq.router2/.MainActivity
 for x in $(seq 0 20); do
     if ! adb-is-activity com.android.vpndialogs/com.android.vpndialogs.ConfirmDialog; then
+        echo $x
         sleep 1
     else
         adb-tap 164 1245

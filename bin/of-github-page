@@ -6,7 +6,11 @@ fi
 
 set -- $(relative-path $1 $(lookup-file .git))
 
-x=http://baohaojun.github.io/${1/%.org/.html}
+site=http://baohaojun.github.io
+if test -e .github-page; then
+    site=$(cat .github-page)
+fi
+x=$site/${1/%.org/.html}
 
 echo "$x"
 if is-tty-io; then

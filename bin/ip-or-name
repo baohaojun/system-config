@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-BEGIN 
+BEGIN
   {
     our %hostname_ip_map;
     our %ip_hostname_map;
@@ -11,8 +11,8 @@ BEGIN
       @line = split;
       $ip = shift @line;
       for (@line) {
-	$hostname_ip_map{$_} = $ip;
-	$ip_hostname_map{$ip} = $_;
+        $hostname_ip_map{$_} = $ip;
+        $ip_hostname_map{$ip} = $_;
       }
     }
   }
@@ -20,7 +20,8 @@ BEGIN
 $arg = $ARGV[0];
 if ($0 =~ m/ip-or-name/) {
 
-  $home = $ENV{'HOME'};
+    $home = $ENV{'HOME'};
+    $arg =~ s!^file:/!!;
   $arg =~ s,^(?:\\\\|//|smb://|$home/smb/)*(.*?)(\\|/|$),$2,;
   $host = $1;
   $arg =~ s,\\,/,g;
@@ -36,4 +37,3 @@ if ($0 =~ m/ip-or-name/) {
   $host_or_ip = ($ip_hostname_map{$host_or_ip} or $host_or_ip);
   print "$host_or_ip$arg";
 }
-

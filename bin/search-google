@@ -25,6 +25,11 @@ if test $host = wiki.smartisan.cn; then
     domain="/doku.php?do=search&id="
 fi
 
+if test $host = cpan; then
+    url="http://search.cpan.org/search?mode=all&query=$fill"
+    exec firefox-open-url-pattern "http://search.cpan.org" "$url"
+fi
+
 if test $host = msdn-lucky; then
     url="https://www.google.co.uk/search?btnI=1&q=site%3Amsdn.microsoft.com+$fill"
     exec firefox-open-url-pattern "http://msdn.microsoft.com" "$url"
