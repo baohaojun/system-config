@@ -1,0 +1,11 @@
+#+title: Config adb for smartisan t1
+# bhj-tags: tool
+1. 启动cmd.exe
+2. 在cmd.exe里输入以下命令：
+
+   #+BEGIN_SRC bat
+   cd %userprofile%
+   md .android
+   cd .android
+   echo 0x29a9 > adb_usb.ini
+   #+END_SRC
