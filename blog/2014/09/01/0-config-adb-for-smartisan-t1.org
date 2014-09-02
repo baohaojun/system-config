@@ -1,5 +1,9 @@
 #+title: Config adb for smartisan t1
 # bhj-tags: tool
+
+* 安装usb驱动
+
+点 [[https://github.com/baohaojun/T1Wrench/archive/windows-release.zip][这个链接]] 下载usb驱动，安装的方法是：
 1. 启动cmd.exe
 2. 在cmd.exe里输入以下命令：
 
