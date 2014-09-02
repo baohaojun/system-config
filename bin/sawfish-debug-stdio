@@ -1,0 +1,8 @@
+#!/bin/bash
+sawfish-client -e "(system \"debug-fds&\")"
+myscr first bash -c 'cat ~/.logs/debug-fds;
+    if cat ~/.logs/debug-fds|grep -q "not ok" && yes-or-no-p -y "fix stdio?"; then
+        sawfish-fix-stdio;
+    else
+        read -p "press any key to continue"
+    fi'
