@@ -9,6 +9,9 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
         emacsclient -e '(switch-to-buffer "'$USE_BUFFER_NAME'")'
         exit
     fi
+    if test $(basename $0) = notes-weixin; then
+        export NO_WEIXIN_EMOJI=true
+    fi
     while true; do
         if test $# != 0; then
             input=$*
@@ -75,7 +78,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                         weibo-brand-new)
                             adb am start -n com.sina.weibo/.MainTabActivity
                             sleep .5
-                            putclip-android "$input"&
+                            putclip-android "$input"
                             adb-tap-mid-bot
                             adb-tap 193 924
                             emacs-cell-phone weixin-new
@@ -83,7 +86,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                         weixin-brand-new)
                             adb am start -n com.tencent.mm/.ui.LauncherUI
                             sleep .5
-                            putclip-android "$input"&
+                            putclip-android "$input"
                             adb-tap-2 141 178
                             adb-tap-2 141 178
                             adb-tap 510 290
@@ -123,6 +126,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             activity=$(adb-top-activity)
                             if test "$activity" = com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity; then
                                 adb-picture-to-qq-chat $pic
+                            elif test "$activity" = com.tencent.mm/com.tencent.mm.ui.LauncherUI; then
+                                adb-picture-to-weixin-chat $pic
                             fi
                             ;;
                         *) # most cases
