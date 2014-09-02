@@ -127,7 +127,10 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             ;;
                         *) # most cases
                             window=$(adb-focused-window)
-                            if test "$window" = SmsPopupDialog; then
+                            if test "$window" = com.sina.weibo/com.sina.weibo.EditActivity; then
+                                emacs-cell-phone weibo
+                                exit
+                            elif test "$window" = SmsPopupDialog; then
                                 emacs-cell-phone t1-sms
                                 exit
                             elif test "$window" = com.google.android.apps.plus/com.google.android.apps.plus.phone.sharebox.PlusShareboxActivity; then
