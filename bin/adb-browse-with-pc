@@ -24,8 +24,13 @@ elif test "$(gettask-android)" = com.tencent.mobileqq; then
     firefox -new-tab "$(getclip-android)"
     exit
 elif test "$(gettask-android)" = com.sina.weibo; then
-    adb-tap 990 114
-    adb-tap 318 1562
+    if adb-is-activity com.sina.weibo/com.sina.weibo.ProfileInfoActivity; then
+        adb-tap 990 114
+        adb-tap 556 1590
+    else
+        adb-tap 990 114
+        adb-tap 318 1562
+    fi
     firefox -new-tab "$(getclip-android)"
     exit
 else # firefox?

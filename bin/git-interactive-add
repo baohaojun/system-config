@@ -7,7 +7,26 @@ if test "$PWD" = ~; then
     cd ~/system-config/
 fi
 
-cd $(dirname $(lookup-file -e .git))
+# cd $(dirname $(lookup-file -e .git))
+
+TEMP=$(getopt -o r: --long revision: -n $(basename $0) -- "$@")
+revision=HEAD
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -r|--revision)
+            revision=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
 
 function git-diff() {
     clear
@@ -25,8 +44,8 @@ function git-diff() {
         read -e -p "$@ seems to be a new file, press Enter to continue...  "
         diff /dev/null "$@"
     else
-        if git diff -w "$@" | grep -q .; then
-            git diff -w "$@"
+        if git diff -w $revision "$@" | grep -q .; then
+            git diff -w $revision "$@"
         else
             read -e -p "$@ seems contain only whitespace changes, press Enter to continue...  "
         fi
@@ -35,9 +54,23 @@ function git-diff() {
 
 IFS=$'\n'
 for x in "$@" $(
-    if test $# == 0; then git st -s |grep '^.\S' -P | cut -b 4-; fi
+              if test $# == 0; then
+                  if test $revision = HEAD; then
+                      git st -s .|grep '^.\S' -P | cut -b 4-;
+                  else
+                      gitp=$(gitp .)
+                      case "$gitp" in
+                          ../*)
+                              gitp=
+                              ;;
+                      esac
+                      len=${#gitp}
+                      start=$((4 + len))
+                      git diff --name-status $revision . | cut -b $start-;
+                  fi
+              fi
     if test "$FOR_REVIEW"; then
-        git diff $(repo-remote-branch) HEAD --name-status | perl -npe 's/^\S+\s+//'
+        git diff $(repo-remote-branch) HEAD --name-status .| perl -npe 's/^\S+\s+//'
     fi
 ); do
     if test "${x:0:1}" = \" && yes-or-no-p -y "Eval $x?"; then

@@ -105,7 +105,7 @@ function _adb_push()
     return 0
 }
 
-complete -o default -o filenames -o nospace -F _adb_push adb_push adb_pull
+complete -o default -o filenames -o nospace -F _adb_push adb_push adb_pull adb-scan-media
 
 function _fastboot()
 {

@@ -1,0 +1,4 @@
+#!/bin/bash
+git_url=$(git-remote-url)
+echo $git_url/archive/$(repo-branch).zip
+echo $git_url/archive/$(repo-branch).zip | putclip
