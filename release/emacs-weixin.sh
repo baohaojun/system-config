@@ -76,21 +76,18 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             emacs-cell-phone weixin-brand-new
                             ;;
                         weibo-brand-new)
-                            adb am start -n com.sina.weibo/.MainTabActivity
-                            sleep .5
+                            adb start-activity com.sina.weibo/.MainTabActivity
                             putclip-android "$input"
                             adb-tap-mid-bot
                             adb-tap 193 924
                             emacs-cell-phone weixin-new
                             ;;
                         weixin-brand-new)
-                            adb am start -n com.tencent.mm/.ui.LauncherUI
-                            sleep .5
+                            adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI
                             putclip-android "$input"
-                            adb-tap-2 141 178
-                            adb-tap-2 141 178
-                            adb-tap 510 290
-                            adb-tap 347 487
+                            if adb-is-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsBrowseUI; then
+                                adb-key BACK
+                            fi
                             adb-long-press 947 186
                             emacs-cell-phone weixin-new
                             ;;
