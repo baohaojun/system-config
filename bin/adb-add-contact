@@ -1,0 +1,54 @@
+#!/bin/bash
+
+## start generated code
+TEMP=$(getopt -o c:p:n:e: --long "phone:name:email:comment:"  -n $(basename $0) -- "$@")
+phone=
+name=
+email=
+comment=锤子
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--phone)
+            phone=$2
+            shift 2
+            ;;
+        -n|--name)
+            name=$2
+            shift 2
+            ;;
+        -c|--comment)
+            comment=$2
+            shift 2
+            ;;
+        -e|--email)
+            email=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+adb start-activity com.android.contacts/com.android.contacts.activities.DialtactsActivity
+adb-tap 366 1865
+adb-tap-top-right
+putclip-android "$name"
+adb-long-press 355 296
+adb-tap 291 270
+
+adb-tap 81 742 # get rid of hint
+
+putclip-android "$comment"
+adb-tap 413 749
+adb-long-press 413 749
+adb-tap 302 633
+
+adb-tap 467 927
+sendtext-android "$phone"

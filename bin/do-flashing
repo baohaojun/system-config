@@ -1,0 +1,19 @@
+#!/bin/bash
+if test "$(uname)" = Linux; then
+    (
+        cd ~/bin
+        psync pub do-flashing
+    )
+    set -- $(printf %q "$(swp)")
+    ssh-exp pub "do-flashing $@";
+else
+    set -x
+    cd /d/share2/RDL_Automation_v2.10.6.0614
+    if ps.pl rdl.exe; then
+        pycyg terminateModule.py rdl.exe;
+    fi
+    set -- "$(printf %q "$1")"
+    perl -npe '$p = q('$1'); s/^!set refpath .*/!set refpath $p/' application > application.bak
+    mv application.bak application
+    myscr first bash -c "./RDL.exe; read -p hello"
+fi

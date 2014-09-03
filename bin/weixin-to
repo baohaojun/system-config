@@ -1,4 +1,7 @@
 #!/bin/bash
+if adb dumpsys power | grep mWakefulness=Asleep; then
+    adb-ignite-device
+fi
 if test $(basename $0) = weixin-to; then
     adb-weixin-choose-chatter "$1"
 elif test $(basename $0) = qq-to; then

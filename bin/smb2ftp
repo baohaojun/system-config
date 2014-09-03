@@ -1,9 +1,14 @@
 #!/bin/bash
 set -e
 smbcp "$1" ~/today/
-set -- "$(basename "$1")"
+target=$(basename "$1")
+source=$target
 cd ~/today/
-tar czfv "${1%/}.tgz" "$1"
-lftp -c "connect ftp://foxconn:Bg1upNVztqgSo@172.16.16.220/; put ${1%/}.tgz"
-rm "$1" -rf
-rm ${1%/}.tgz -f
+if test "$2"; then
+    target=$(basename "$2")
+fi
+
+tar czfv "${target}.tgz" "$source"
+lftp -c "connect ftp://foxconn:Bg1upNVztqgSo@172.16.16.220/; put ${target}.tgz"
+rm "$source" -rf
+rm ${target}.tgz -f

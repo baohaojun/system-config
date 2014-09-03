@@ -70,7 +70,10 @@ elif test "$(basename $0)" = adb-call -o "$(basename $0)" = adb-sms-to; then
             adb-key BACK
         fi
         adb-tap 958 149
-        sendtext-android "$1"
+        putclip-android "$1"
+        adb-long-press 378 299
+        adb-tap 129 206
+        adb-key TAB
         shift
         weixin "$@"
     fi

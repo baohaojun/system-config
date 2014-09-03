@@ -7,11 +7,14 @@ else
         shift 2
         while true; do
             cmd=$1
-            shift
             if test $cmd = adb-tap; then
+                shift
                 echo -n "input tap $1 $2;"
             elif test $cmd = adb-tap-2; then
+                shift
                 echo -n "input tap $1 $2;"
+                echo -n "input tap $1 $2;"
+            elif test "$1"; then
                 echo -n "input tap $1 $2;"
             fi
             shift 2
@@ -19,5 +22,8 @@ else
                 break
             fi
         done
-    ) | xargs -d \\n adb-quote sh -c
+    ) | xargs -d \\n adb-quote sh $(if echo $SHELLOPTS | grep -q xtrace; then
+                                           echo -x
+                                       fi) -c
+
 fi

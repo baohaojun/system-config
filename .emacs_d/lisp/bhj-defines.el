@@ -1094,7 +1094,11 @@ criteria can be provided via the optional match-string argument "
       (insert output))
     (unless (or (eq major-mode 'fundamental-mode)
                 (eq major-mode 'text-mode))
-      (indent-region start-of-text (point)))))
+      (indent-region start-of-text (point)))
+    (save-excursion
+      (search-backward "start code-generator")
+      (when (string-match "once start code-generator" (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+        (delete-region (line-beginning-position) (save-excursion (search-forward "end code-generator") (line-end-position)))))))
 
 (defun bh/display-inline-images ()
   (condition-case nil

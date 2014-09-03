@@ -1,4 +1,5 @@
 #!/bin/bash
+oldpwd=$PWD
 cd
 
 echo shell is $SHELL > ~/.logs/myscr.log
@@ -40,9 +41,12 @@ if screen -list|grep $session_name; then
         if test "$1" != screen; then
             set -- screen "$@"
         fi
-        for x in "$@"; do
-            printf "%q " "$x"
-        done > /tmp/screen-exec.$$
+        (
+            printf "cd %q;" "$oldpwd"
+            for x in "$@"; do
+                printf "%q " "$x"
+            done
+        ) > /tmp/screen-exec.$$
 
         exec screen -X -S $session_name screen bash /tmp/screen-exec.$$
         (sleep 1 && rm /tmp/screen-exec.$$);

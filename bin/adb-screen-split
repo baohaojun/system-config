@@ -1,0 +1,49 @@
+#!/bin/bash
+
+TEMP=$(getopt -o x:y:X:Y: -n $(basename $0) -- "$@")
+x=4
+y=7
+ys=2
+X=4
+Y=8
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -x)
+            x=$2
+            shift 2
+            ;;
+        -y)
+            y=$2
+            shift 2
+            ;;
+        -X)
+            X=$2
+            shift 2
+            ;;
+        -Y)
+            Y=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+XP=1080
+YP=1920
+for yn in $(seq $ys $((y - 1)) ); do
+    for xn in $(seq 1 $X); do
+        echo $((XP / X * xn - XP / X / 2)) $((YP / Y * yn - YP / Y / 2))
+    done
+done
+
+yn=$y
+for xn in $(seq 1 $x); do
+    echo $((XP / X * xn - XP / X / 2)) $((YP / Y * yn - YP / Y / 2))
+done

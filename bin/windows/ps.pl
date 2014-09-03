@@ -44,7 +44,7 @@ for (@ps_args) {
 my $width = 12;
 sub my_mktime($) {
   my $create= $_[0];
-  my ($year, $mon, $mday, $hour, $min, $sec) = 
+  my ($year, $mon, $mday, $hour, $min, $sec) =
     (
      substr($create, 0, 4) - 1900,
      substr($create, 4, 2) - 1,
@@ -56,7 +56,7 @@ sub my_mktime($) {
 
   return mktime($sec, $min, $hour, $mday, $mon, $year);
 }
-push @to_print, \@ps_args;  
+push @to_print, \@ps_args;
 for (@Processes[1..$#Processes]) {
     chomp();
     my @ps_fields;
@@ -69,14 +69,14 @@ for (@Processes[1..$#Processes]) {
     }
 
     if (@unknown_args) {
-	my $match = 1;
-	for (@unknown_args) {
-	    unless ($ps_fields{"CommandLine"} =~ m/$_/i or $ps_fields{"ProcessId"} eq $_) {
-		$match = 0;
-		last;
-	    }
-	}
-	next unless $match;
+        my $match = 1;
+        for (@unknown_args) {
+            unless ($ps_fields{"CommandLine"} =~ m/$_/i or $ps_fields{"ProcessId"} eq $_) {
+                $match = 0;
+                last;
+            }
+        }
+        next unless $match;
     }
 
     if ($ps_args{"CreationDate"}) {
@@ -88,7 +88,7 @@ for (@Processes[1..$#Processes]) {
 
     for (@ps_args) {
       if (length($ps_fields{$_}) > $max_ps_arg{$_}) {
-	$max_ps_arg{$_} = length($ps_fields{$_});
+        $max_ps_arg{$_} = length($ps_fields{$_});
       }
     }
 
@@ -103,7 +103,12 @@ for (@ps_args) {
 }
 
 $format_str =~ s/(.*)%.*s/$1 %-s/;
+print STDERR sprintf("$format_str\n", @{shift @to_print});
 for (@to_print) {
   printf "$format_str\n", @{$_};
 }
-
+if (@to_print) {
+    exit 0;
+} else {
+    exit 1;
+}

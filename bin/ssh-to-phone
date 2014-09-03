@@ -29,6 +29,10 @@ if ! adb -w shell netcfg|grep -q 'rndis0.*129/'; then
                 setprop persist.sys.usb.config rndis,adb;
             fi
             while ! netcfg|grep 'rndis0.*UP'; do
+                if ! netcfg|grep 'rndis0.*'; then
+                    setprop persist.sys.usb.config rndis,adb;
+                    sleep 1
+                fi
                 netcfg rndis0 up
             done;
             ifconfig rndis0 192.168.15.244

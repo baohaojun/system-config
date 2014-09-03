@@ -8,6 +8,9 @@ TODAYS_CHANGES_DIR=$CHANGES_DIR/$(today)
 
 from=
 to=
+if is-tty-io && test $# = 0; then
+    set -- -f -0
+fi
 TODAYS_CHANGES_DIR=
 ADD_GIT_ARGS=
 
