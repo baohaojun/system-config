@@ -1,0 +1,8 @@
+#!/bin/bash
+# push the current playing music to my phone
+set -e
+pid=$(ps.pl mplayer.like|pn 1);
+cd /proc/$pid/fd
+y=$(for x in *; do readlink -f $x; done | grep '\.mp3')
+adb push "$y" /sdcard/Music/
+adb-scan-media "/sdcard/Music/$(basename "$y")"

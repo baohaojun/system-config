@@ -1,11 +1,13 @@
 #!/bin/bash
 
 if test $(basename $0) = adb-ignite-device; then
-
-if adb dumpsys power | grep mWakefulness=Asleep; then
-    adb-key 26
-fi
-adb-swipe 100 1900 100 20
+    if adb dumpsys power | grep mWakefulness=Asleep; then
+        adb-key 26
+    fi
+    activity=$(adb-top-activity)
+    if test "$activity" = Keyguard -o "$activity" = StatusBar; then
+        adb-swipe 100 1900 100 20
+    fi
 elif test $(basename $0) = adb-mute; then
     adb-key VOLUME_UP
     adb-tap 778 788

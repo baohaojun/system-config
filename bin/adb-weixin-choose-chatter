@@ -1,4 +1,5 @@
 #!/bin/bash
+adb-ignite-device
 if echo $SHELLOPTS | grep xtrace; then
     function debug() {
         read -p "press any key to continue..."
@@ -36,7 +37,7 @@ elif test "$(basename $0)" = adb-call -o "$(basename $0)" = adb-sms-to; then
         who=$1
         set -x
         shift
-        number=$(select-output-line 'bbdb '"$who"'|perl -npe "s/\\\\n/\\n/g"' | grep -o -P '\d+$')
+        number=$(select-output-line -o -- bbdb "$who" | grep -o -P '\d+$')
         if test "$number"; then
             echo "using $number" "$@"
             set -- "$number" "$@"

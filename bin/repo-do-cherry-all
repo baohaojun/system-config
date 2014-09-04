@@ -62,7 +62,9 @@ for x in $diffs; do
             start_recursive_shell "No target branch"
         else
             if test $do_here = false; then
-                git co $target_branch -b $(basename $target_branch) || true
+                git co $target_branch -b $(
+                    echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
+                    ) || true
             fi
             for y in $(grep -e "$1" $x |grep -v 'Merge commit.*into'| pn 3); do
                 export WORKING_REV=$y

@@ -5,7 +5,7 @@ if test $(basename $0) = remote-mm; then
 
     android_mk=$(lookup-file -e Android.mk)
     cd $(dirname $android_mk)
-    psync "$1" .
+    psync -c "$1" .
     ssh "$1" "cd $PWD; mm"
 elif test $(basename $0) = remote-qt; then
     qt_pro=$(lookup-file -e '*.pro')

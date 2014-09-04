@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ORIGINAL_MATCHER="$@" select-output-line -o -m 5 -- git branch -a
+ORIGINAL_MATCHER="$@" select-output-line -o -m 5 -- 'git branch -a|perl -npe "s/^ *\\*//"'

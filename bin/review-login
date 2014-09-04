@@ -13,3 +13,4 @@ sleep .1
 sawfish-browser-input TAB C-v
 sleep .1
 sawfish-browser-input TAB SPC RET
+putclip ""

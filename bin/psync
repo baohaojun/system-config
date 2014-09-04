@@ -50,8 +50,8 @@ else
 fi
 if test "$reverse" = true; then
     for x in "$@"; do
-        my-rsync $checksum -av $host:$(up .)/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*" $local_exclude
+        my-rsync $checksum -av $host:$(up .)/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*" $local_exclude |grep -v '/$' -P
     done
 else
-    my-rsync $checksum -av "$@" $host:$(up .) --exclude .git --exclude "*#*" --exclude ".#*" $delete $local_exclude
+    my-rsync $checksum -av "$@" $host:$(up .) --exclude .git --exclude "*#*" --exclude ".#*" $delete $local_exclude |grep -v '/$' -P
 fi

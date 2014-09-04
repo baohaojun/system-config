@@ -3,6 +3,7 @@
 use Getopt::Long;
 use strict;
 use String::ShellQuote;
+$ENV{LC_ALL} = "C";
 
 my $pat = '';
 my $pathpat = '.';

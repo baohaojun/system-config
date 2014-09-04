@@ -9,7 +9,15 @@ else
     }
 fi
 
-
+if test $(basename $0) = adb-picture-clean; then
+    adb 'for x in /sdcard/DCIM/Camera/toqq-*; do
+             if test -e "$x"; then
+                 rm -f "$x"
+                 am startservice -n com.bhj.setclip/.PutClipService --es picture "$x"
+             fi
+         done'
+    exit
+fi
 if test "$1"; then
     pic=$1
     if test ! -e "$1" && echo "$1" | grep '://'; then

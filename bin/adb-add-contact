@@ -1,7 +1,8 @@
 #!/bin/bash
 
 ## start generated code
-TEMP=$(getopt -o c:p:n:e: --long "phone:name:email:comment:"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o c:p:P:n:e: --long "picture:phone:name:email:comment:"  -n $(basename $0) -- "$@")
+picture=~/src/tools/SmartisanPhotos/smartisan.jpg
 phone=
 name=
 email=
@@ -9,6 +10,10 @@ comment=锤子
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -P|--picture)
+            picture=$2
+            shift 2
+            ;;
         -p|--phone)
             phone=$2
             shift 2
@@ -44,6 +49,24 @@ adb-long-press 355 296
 adb-tap 291 270
 
 adb-tap 81 742 # get rid of hint
+
+if test "$picture"; then
+    adb-picture-to-phone "$picture"
+    adb-tap 144 363
+    adb-tap 164 676
+    sleep 1
+    adb-tap 344 318
+    sleep 1
+    adb-tap 104 418
+    for x in $(seq 1 5); do
+        if adb-is-activity com.android.gallery3d/com.android.gallery3d.app.CropImage; then
+            break
+        fi
+        sleep .5
+    done
+    adb-tap 721 1866
+    adb-picture-clean
+fi
 
 putclip-android "$comment"
 adb-tap 413 749

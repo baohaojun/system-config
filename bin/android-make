@@ -28,7 +28,8 @@ test -d .repo -a -e build/envsetup.sh
 jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
 jobs=$((jobs + jobs / 2))
 verbose=
-TEMP=$(getopt -o vj: -n $(basename $0) -- "$@")
+config=
+TEMP=$(getopt -o vj:c: -n $(basename $0) -- "$@")
 function die() {
     echo "$@"
     exit -1
@@ -37,6 +38,10 @@ function die() {
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -c)
+            config=$2
+            shift 2
+            ;;
         -j)
             jobs=$2
             shift 2
@@ -58,22 +63,22 @@ done
 cd $top_dir || exit
 . build/envsetup.sh >/dev/null 2>&1
 
-if test $# = 0 -a ! -e buildspec.mk; then
+if test ! "$config" -a ! -e buildspec.mk; then
     die "lunch combo must be specified because a previous buildspec.mk is not found"
 fi
 
-if test $# = 0; then
+if test -z "$config"; then
 
-    set -- $(
+    config=$(
         cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_PRODUCT\s*.?=\s*(.*?)\s*$/')-$(
         cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_BUILD_VARIANT\s*.?=\s*(.*?)\s*$/')
-    echo set the build for "$@"
+    echo set the build for "$config"
 fi
 
-variant=${1##*-}
+variant=${config##*-}
 
 if test "$variant" = user -o "$variant" = userdebug -o "$variant" = eng && lunch "$1"; then
-    shift
+    true
 else
     config=$(get_build_var TARGET_PRODUCT)-$(get_build_var TARGET_BUILD_VARIANT)
     echo using old config $config

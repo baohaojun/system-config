@@ -1,12 +1,14 @@
 #!/bin/bash
 if test $(basename $0) = adb-browse-with-firefox; then
-    mod=org.mozilla.firefox/.App
+    cmp=org.mozilla.firefox/.App
 elif test $(basename $0) = adb-browse-with-chrome; then
-    mod=com.android.chrome/com.google.android.apps.chrome.Main
+    cmp=com.android.chrome/com.google.android.apps.chrome.Main
 elif test $(basename $0) = adb-browse-with-weibo; then
-    mod=com.sina.weibo/.WeiboBrowser\ -d
+    cmp=com.sina.weibo/.WeiboBrowser\ -d
 elif test $(basename $0) = adb-browse-with-wx; then
-    mod=com.tencent.mm/.plugin.webview.ui.tools.WebViewUI
+    cmp=com.tencent.mm/.plugin.webview.ui.tools.WebViewUI
+elif test $(basename $0) = adb-browse-with-youtube; then
+    cmp='com.google.android.youtube/.app.honeycomb.Shell$HomeActivity'
 fi
 
-adb shell am start -n $mod "${1:-$(getclip)}"
+adb shell am start -n $cmp "${1:-$(getclip)}"

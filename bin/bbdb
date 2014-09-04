@@ -3,4 +3,5 @@ emacsclient -e "
     (progn
       (bbdb \"$1\")
       (with-current-buffer \"*BBDB*\"
-        (buffer-substring-no-properties (point-min) (point-max))))"
+        (buffer-substring-no-properties (point-min) (point-max))))" | perl -npe 's/\\n/\n/g; s/"//g;' |
+perl -ne 'if (m/^\S/) {chomp; $name = $_;} elsif (m/\S/) {s/^\s*//; print "$name $_";}'
