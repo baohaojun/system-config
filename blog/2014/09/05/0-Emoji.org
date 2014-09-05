@@ -6,6 +6,8 @@
 
 以下是每个iPhone表情的unicode含义，从 http://www.unicode.org/Public/UNIDATA/UnicodeData.txt 获得。
 
+点击可看“大图”😄
+
 | [[./COPYRIGHT-SIGN.png][file:./COPYRIGHT-SIGN.png]] : COPYRIGHT SIGN                                                                                                                                 |
 | [[./REGISTERED-SIGN.png][file:./REGISTERED-SIGN.png]] : REGISTERED SIGN                                                                                                                               |
 | [[./DOUBLE-EXCLAMATION-MARK.png][file:./DOUBLE-EXCLAMATION-MARK.png]] : DOUBLE EXCLAMATION MARK                                                                                                               |
