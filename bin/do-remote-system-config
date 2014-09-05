@@ -1,10 +1,28 @@
 #!/bin/bash
 
 host=$1
-echo mkdir ~/ssh
-cat ~/.ssh/authorized_keys | ssh -o PreferredAuthentications=password $host 'mkdir -p ~/.ssh/ && cat > ~/.ssh/authorized_keys'
+echo mkdir ~/.ssh
+set -e
+if yes-or-no-p "You can use root@$host without a password?"; then
+    auth=$(cat ~/.ssh/authorized_keys)
+    ssh root@$host echo hello
+    ssh-exp root@$host 'adduser bhj;
+                        adduser gfw;
+                        usermod -a -G sudo bhj;
+                        mkdir -p ~bhj/.ssh
+                        mkdir -p ~gfw/.ssh
+                        echo "'"$auth"'" > ~bhj/.ssh/authorized_keys
+                        echo "'"$auth"'" | grep command= > ~gfw/.ssh/authorized_keys
+                        chown bhj\. ~bhj/.ssh -R
+                        chown gfw\. ~gfw/.ssh -R
+                        echo bhj ALL=NOPASSWD: ALL | sudo tee /etc/sudoers.d/bhj;
+                        sudo chmod 440 /etc/sudoers.d/bhj
+                       '
+else
+    cat ~/.ssh/authorized_keys | ssh -o PreferredAuthentications=password $host 'mkdir -p ~/.ssh/ && cat > ~/.ssh/authorized_keys'
+fi
 
-rsync ~/system-config $host: -av
+rsync ~/system-config $host: -avz
 rsync ~/.ssh/id_rsa_nopass $host:.ssh/id_rsa
 
 ssh-exp $host "bash -c 'echo bhj ALL=NOPASSWD: ALL | sudo tee /etc/sudoers.d/bhj; sudo chmod 440 /etc/sudoers.d/bhj'"

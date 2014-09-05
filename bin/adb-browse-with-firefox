@@ -8,7 +8,7 @@ elif test $(basename $0) = adb-browse-with-weibo; then
 elif test $(basename $0) = adb-browse-with-wx; then
     cmp=com.tencent.mm/.plugin.webview.ui.tools.WebViewUI
 elif test $(basename $0) = adb-browse-with-youtube; then
-    cmp='com.google.android.youtube/.app.honeycomb.Shell$HomeActivity'
+    cmp='com.google.android.youtube/com.google.android.apps.youtube.app.honeycomb.Shell$UrlActivity'
 fi
 
-adb shell am start -n $cmp "${1:-$(getclip)}"
+adb shell am start -n "$cmp" "${1:-$(getclip)}"
