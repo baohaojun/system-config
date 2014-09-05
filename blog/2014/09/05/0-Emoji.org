@@ -1,0 +1,839 @@
+#+title: Emoji
+# bhj-tags: tool
+祝大家[[./MOON-VIEWING-CEREMONY.png][file:./MOON-VIEWING-CEREMONY.png]]快乐
+
+有 iPhone 的同学可以输入一下中秋节试试，第二个候选词就是上面的这个表情，MOON VIEWING CEREMONY。
+
+以下是每个iPhone表情的unicode含义，从 http://www.unicode.org/Public/UNIDATA/UnicodeData.txt 获得。
+
+| [[./COPYRIGHT-SIGN.png][file:./COPYRIGHT-SIGN.png]] : COPYRIGHT SIGN                                                                                                                                 |
+| [[./REGISTERED-SIGN.png][file:./REGISTERED-SIGN.png]] : REGISTERED SIGN                                                                                                                               |
+| [[./DOUBLE-EXCLAMATION-MARK.png][file:./DOUBLE-EXCLAMATION-MARK.png]] : DOUBLE EXCLAMATION MARK                                                                                                               |
+| [[./EXCLAMATION-QUESTION-MARK.png][file:./EXCLAMATION-QUESTION-MARK.png]] : EXCLAMATION QUESTION MARK                                                                                                           |
+| [[./TRADE-MARK-SIGN.png][file:./TRADE-MARK-SIGN.png]] : TRADE MARK SIGN                                                                                                                               |
+| [[./INFORMATION-SOURCE.png][file:./INFORMATION-SOURCE.png]] : INFORMATION SOURCE                                                                                                                         |
+| [[./LEFT-RIGHT-ARROW.png][file:./LEFT-RIGHT-ARROW.png]] : LEFT RIGHT ARROW                                                                                                                             |
+| [[./UP-DOWN-ARROW.png][file:./UP-DOWN-ARROW.png]] : UP DOWN ARROW                                                                                                                                   |
+| [[./NORTH-WEST-ARROW.png][file:./NORTH-WEST-ARROW.png]] : NORTH WEST ARROW                                                                                                                             |
+| [[./NORTH-EAST-ARROW.png][file:./NORTH-EAST-ARROW.png]] : NORTH EAST ARROW                                                                                                                             |
+| [[./SOUTH-EAST-ARROW.png][file:./SOUTH-EAST-ARROW.png]] : SOUTH EAST ARROW                                                                                                                             |
+| [[./SOUTH-WEST-ARROW.png][file:./SOUTH-WEST-ARROW.png]] : SOUTH WEST ARROW                                                                                                                             |
+| [[./LEFTWARDS-ARROW-WITH-HOOK.png][file:./LEFTWARDS-ARROW-WITH-HOOK.png]] : LEFTWARDS ARROW WITH HOOK                                                                                                           |
+| [[./RIGHTWARDS-ARROW-WITH-HOOK.png][file:./RIGHTWARDS-ARROW-WITH-HOOK.png]] : RIGHTWARDS ARROW WITH HOOK                                                                                                         |
+| [[./WATCH.png][file:./WATCH.png]] : WATCH                                                                                                                                                   |
+| [[./HOURGLASS.png][file:./HOURGLASS.png]] : HOURGLASS                                                                                                                                           |
+| [[./BLACK-RIGHT-POINTING-DOUBLE-TRIANGLE.png][file:./BLACK-RIGHT-POINTING-DOUBLE-TRIANGLE.png]] : BLACK RIGHT-POINTING DOUBLE TRIANGLE                                                                                     |
+| [[./BLACK-LEFT-POINTING-DOUBLE-TRIANGLE.png][file:./BLACK-LEFT-POINTING-DOUBLE-TRIANGLE.png]] : BLACK LEFT-POINTING DOUBLE TRIANGLE                                                                                       |
+| [[./BLACK-UP-POINTING-DOUBLE-TRIANGLE.png][file:./BLACK-UP-POINTING-DOUBLE-TRIANGLE.png]] : BLACK UP-POINTING DOUBLE TRIANGLE                                                                                           |
+| [[./BLACK-DOWN-POINTING-DOUBLE-TRIANGLE.png][file:./BLACK-DOWN-POINTING-DOUBLE-TRIANGLE.png]] : BLACK DOWN-POINTING DOUBLE TRIANGLE                                                                                       |
+| [[./ALARM-CLOCK.png][file:./ALARM-CLOCK.png]] : ALARM CLOCK                                                                                                                                       |
+| [[./HOURGLASS-WITH-FLOWING-SAND.png][file:./HOURGLASS-WITH-FLOWING-SAND.png]] : HOURGLASS WITH FLOWING SAND                                                                                                       |
+| [[./CIRCLED-LATIN-CAPITAL-LETTER-M.png][file:./CIRCLED-LATIN-CAPITAL-LETTER-M.png]] : CIRCLED LATIN CAPITAL LETTER M                                                                                                 |
+| [[./BLACK-SMALL-SQUARE.png][file:./BLACK-SMALL-SQUARE.png]] : BLACK SMALL SQUARE                                                                                                                         |
+| [[./WHITE-SMALL-SQUARE.png][file:./WHITE-SMALL-SQUARE.png]] : WHITE SMALL SQUARE                                                                                                                         |
+| [[./BLACK-RIGHT-POINTING-TRIANGLE.png][file:./BLACK-RIGHT-POINTING-TRIANGLE.png]] : BLACK RIGHT-POINTING TRIANGLE                                                                                                   |
+| [[./BLACK-LEFT-POINTING-TRIANGLE.png][file:./BLACK-LEFT-POINTING-TRIANGLE.png]] : BLACK LEFT-POINTING TRIANGLE                                                                                                     |
+| [[./WHITE-MEDIUM-SQUARE.png][file:./WHITE-MEDIUM-SQUARE.png]] : WHITE MEDIUM SQUARE                                                                                                                       |
+| [[./BLACK-MEDIUM-SQUARE.png][file:./BLACK-MEDIUM-SQUARE.png]] : BLACK MEDIUM SQUARE                                                                                                                       |
+| [[./WHITE-MEDIUM-SMALL-SQUARE.png][file:./WHITE-MEDIUM-SMALL-SQUARE.png]] : WHITE MEDIUM SMALL SQUARE                                                                                                           |
+| [[./BLACK-MEDIUM-SMALL-SQUARE.png][file:./BLACK-MEDIUM-SMALL-SQUARE.png]] : BLACK MEDIUM SMALL SQUARE                                                                                                           |
+| [[./BLACK-SUN-WITH-RAYS.png][file:./BLACK-SUN-WITH-RAYS.png]] : BLACK SUN WITH RAYS                                                                                                                       |
+| [[./CLOUD.png][file:./CLOUD.png]] : CLOUD                                                                                                                                                   |
+| [[./BLACK-TELEPHONE.png][file:./BLACK-TELEPHONE.png]] : BLACK TELEPHONE                                                                                                                               |
+| [[./BALLOT-BOX-WITH-CHECK.png][file:./BALLOT-BOX-WITH-CHECK.png]] : BALLOT BOX WITH CHECK                                                                                                                   |
+| [[./UMBRELLA-WITH-RAIN-DROPS.png][file:./UMBRELLA-WITH-RAIN-DROPS.png]] : UMBRELLA WITH RAIN DROPS                                                                                                             |
+| [[./HOT-BEVERAGE.png][file:./HOT-BEVERAGE.png]] : HOT BEVERAGE                                                                                                                                     |
+| [[./WHITE-UP-POINTING-INDEX.png][file:./WHITE-UP-POINTING-INDEX.png]] : WHITE UP POINTING INDEX                                                                                                               |
+| [[./WHITE-SMILING-FACE.png][file:./WHITE-SMILING-FACE.png]] : WHITE SMILING FACE                                                                                                                         |
+| [[./ARIES.png][file:./ARIES.png]] : ARIES                                                                                                                                                   |
+| [[./TAURUS.png][file:./TAURUS.png]] : TAURUS                                                                                                                                                 |
+| [[./GEMINI.png][file:./GEMINI.png]] : GEMINI                                                                                                                                                 |
+| [[./CANCER.png][file:./CANCER.png]] : CANCER                                                                                                                                                 |
+| [[./LEO.png][file:./LEO.png]] : LEO                                                                                                                                                       |
+| [[./VIRGO.png][file:./VIRGO.png]] : VIRGO                                                                                                                                                   |
+| [[./LIBRA.png][file:./LIBRA.png]] : LIBRA                                                                                                                                                   |
+| [[./SCORPIUS.png][file:./SCORPIUS.png]] : SCORPIUS                                                                                                                                             |
+| [[./SAGITTARIUS.png][file:./SAGITTARIUS.png]] : SAGITTARIUS                                                                                                                                       |
+| [[./CAPRICORN.png][file:./CAPRICORN.png]] : CAPRICORN                                                                                                                                           |
+| [[./AQUARIUS.png][file:./AQUARIUS.png]] : AQUARIUS                                                                                                                                             |
+| [[./PISCES.png][file:./PISCES.png]] : PISCES                                                                                                                                                 |
+| [[./BLACK-SPADE-SUIT.png][file:./BLACK-SPADE-SUIT.png]] : BLACK SPADE SUIT                                                                                                                             |
+| [[./BLACK-CLUB-SUIT.png][file:./BLACK-CLUB-SUIT.png]] : BLACK CLUB SUIT                                                                                                                               |
+| [[./BLACK-HEART-SUIT.png][file:./BLACK-HEART-SUIT.png]] : BLACK HEART SUIT                                                                                                                             |
+| [[./BLACK-DIAMOND-SUIT.png][file:./BLACK-DIAMOND-SUIT.png]] : BLACK DIAMOND SUIT                                                                                                                         |
+| [[./HOT-SPRINGS.png][file:./HOT-SPRINGS.png]] : HOT SPRINGS                                                                                                                                       |
+| [[./BLACK-UNIVERSAL-RECYCLING-SYMBOL.png][file:./BLACK-UNIVERSAL-RECYCLING-SYMBOL.png]] : BLACK UNIVERSAL RECYCLING SYMBOL                                                                                             |
+| [[./WHEELCHAIR-SYMBOL.png][file:./WHEELCHAIR-SYMBOL.png]] : WHEELCHAIR SYMBOL                                                                                                                           |
+| [[./ANCHOR.png][file:./ANCHOR.png]] : ANCHOR                                                                                                                                                 |
+| [[./WARNING-SIGN.png][file:./WARNING-SIGN.png]] : WARNING SIGN                                                                                                                                     |
+| [[./HIGH-VOLTAGE-SIGN.png][file:./HIGH-VOLTAGE-SIGN.png]] : HIGH VOLTAGE SIGN                                                                                                                           |
+| [[./MEDIUM-WHITE-CIRCLE.png][file:./MEDIUM-WHITE-CIRCLE.png]] : MEDIUM WHITE CIRCLE                                                                                                                       |
+| [[./MEDIUM-BLACK-CIRCLE.png][file:./MEDIUM-BLACK-CIRCLE.png]] : MEDIUM BLACK CIRCLE                                                                                                                       |
+| [[./SOCCER-BALL.png][file:./SOCCER-BALL.png]] : SOCCER BALL                                                                                                                                       |
+| [[./BASEBALL.png][file:./BASEBALL.png]] : BASEBALL                                                                                                                                             |
+| [[./SNOWMAN-WITHOUT-SNOW.png][file:./SNOWMAN-WITHOUT-SNOW.png]] : SNOWMAN WITHOUT SNOW                                                                                                                     |
+| [[./SUN-BEHIND-CLOUD.png][file:./SUN-BEHIND-CLOUD.png]] : SUN BEHIND CLOUD                                                                                                                             |
+| [[./OPHIUCHUS.png][file:./OPHIUCHUS.png]] : OPHIUCHUS                                                                                                                                           |
+| [[./NO-ENTRY.png][file:./NO-ENTRY.png]] : NO ENTRY                                                                                                                                             |
+| [[./CHURCH.png][file:./CHURCH.png]] : CHURCH                                                                                                                                                 |
+| [[./FOUNTAIN.png][file:./FOUNTAIN.png]] : FOUNTAIN                                                                                                                                             |
+| [[./FLAG-IN-HOLE.png][file:./FLAG-IN-HOLE.png]] : FLAG IN HOLE                                                                                                                                     |
+| [[./SAILBOAT.png][file:./SAILBOAT.png]] : SAILBOAT                                                                                                                                             |
+| [[./TENT.png][file:./TENT.png]] : TENT                                                                                                                                                     |
+| [[./FUEL-PUMP.png][file:./FUEL-PUMP.png]] : FUEL PUMP                                                                                                                                           |
+| [[./BLACK-SCISSORS.png][file:./BLACK-SCISSORS.png]] : BLACK SCISSORS                                                                                                                                 |
+| [[./WHITE-HEAVY-CHECK-MARK.png][file:./WHITE-HEAVY-CHECK-MARK.png]] : WHITE HEAVY CHECK MARK                                                                                                                 |
+| [[./AIRPLANE.png][file:./AIRPLANE.png]] : AIRPLANE                                                                                                                                             |
+| [[./ENVELOPE.png][file:./ENVELOPE.png]] : ENVELOPE                                                                                                                                             |
+| [[./RAISED-FIST.png][file:./RAISED-FIST.png]] : RAISED FIST                                                                                                                                       |
+| [[./RAISED-HAND.png][file:./RAISED-HAND.png]] : RAISED HAND                                                                                                                                       |
+| [[./VICTORY-HAND.png][file:./VICTORY-HAND.png]] : VICTORY HAND                                                                                                                                     |
+| [[./PENCIL.png][file:./PENCIL.png]] : PENCIL                                                                                                                                                 |
+| [[./BLACK-NIB.png][file:./BLACK-NIB.png]] : BLACK NIB                                                                                                                                           |
+| [[./HEAVY-CHECK-MARK.png][file:./HEAVY-CHECK-MARK.png]] : HEAVY CHECK MARK                                                                                                                             |
+| [[./HEAVY-MULTIPLICATION-X.png][file:./HEAVY-MULTIPLICATION-X.png]] : HEAVY MULTIPLICATION X                                                                                                                 |
+| [[./SPARKLES.png][file:./SPARKLES.png]] : SPARKLES                                                                                                                                             |
+| [[./EIGHT-SPOKED-ASTERISK.png][file:./EIGHT-SPOKED-ASTERISK.png]] : EIGHT SPOKED ASTERISK                                                                                                                   |
+| [[./EIGHT-POINTED-BLACK-STAR.png][file:./EIGHT-POINTED-BLACK-STAR.png]] : EIGHT POINTED BLACK STAR                                                                                                             |
+| [[./SNOWFLAKE.png][file:./SNOWFLAKE.png]] : SNOWFLAKE                                                                                                                                           |
+| [[./SPARKLE.png][file:./SPARKLE.png]] : SPARKLE                                                                                                                                               |
+| [[./CROSS-MARK.png][file:./CROSS-MARK.png]] : CROSS MARK                                                                                                                                         |
+| [[./NEGATIVE-SQUARED-CROSS-MARK.png][file:./NEGATIVE-SQUARED-CROSS-MARK.png]] : NEGATIVE SQUARED CROSS MARK                                                                                                       |
+| [[./BLACK-QUESTION-MARK-ORNAMENT.png][file:./BLACK-QUESTION-MARK-ORNAMENT.png]] : BLACK QUESTION MARK ORNAMENT                                                                                                     |
+| [[./WHITE-QUESTION-MARK-ORNAMENT.png][file:./WHITE-QUESTION-MARK-ORNAMENT.png]] : WHITE QUESTION MARK ORNAMENT                                                                                                     |
+| [[./WHITE-EXCLAMATION-MARK-ORNAMENT.png][file:./WHITE-EXCLAMATION-MARK-ORNAMENT.png]] : WHITE EXCLAMATION MARK ORNAMENT                                                                                               |
+| [[./HEAVY-EXCLAMATION-MARK-SYMBOL.png][file:./HEAVY-EXCLAMATION-MARK-SYMBOL.png]] : HEAVY EXCLAMATION MARK SYMBOL                                                                                                   |
+| [[./HEAVY-BLACK-HEART.png][file:./HEAVY-BLACK-HEART.png]] : HEAVY BLACK HEART                                                                                                                           |
+| [[./HEAVY-PLUS-SIGN.png][file:./HEAVY-PLUS-SIGN.png]] : HEAVY PLUS SIGN                                                                                                                               |
+| [[./HEAVY-MINUS-SIGN.png][file:./HEAVY-MINUS-SIGN.png]] : HEAVY MINUS SIGN                                                                                                                             |
+| [[./HEAVY-DIVISION-SIGN.png][file:./HEAVY-DIVISION-SIGN.png]] : HEAVY DIVISION SIGN                                                                                                                       |
+| [[./BLACK-RIGHTWARDS-ARROW.png][file:./BLACK-RIGHTWARDS-ARROW.png]] : BLACK RIGHTWARDS ARROW                                                                                                                 |
+| [[./CURLY-LOOP.png][file:./CURLY-LOOP.png]] : CURLY LOOP                                                                                                                                         |
+| [[./DOUBLE-CURLY-LOOP.png][file:./DOUBLE-CURLY-LOOP.png]] : DOUBLE CURLY LOOP                                                                                                                           |
+| [[./ARROW-POINTING-RIGHTWARDS-THEN-CURVING-UPWARDS.png][file:./ARROW-POINTING-RIGHTWARDS-THEN-CURVING-UPWARDS.png]] : ARROW POINTING RIGHTWARDS THEN CURVING UPWARDS                                                                 |
+| [[./ARROW-POINTING-RIGHTWARDS-THEN-CURVING-DOWNWARDS.png][file:./ARROW-POINTING-RIGHTWARDS-THEN-CURVING-DOWNWARDS.png]] : ARROW POINTING RIGHTWARDS THEN CURVING DOWNWARDS                                                             |
+| [[./LEFTWARDS-BLACK-ARROW.png][file:./LEFTWARDS-BLACK-ARROW.png]] : LEFTWARDS BLACK ARROW                                                                                                                   |
+| [[./UPWARDS-BLACK-ARROW.png][file:./UPWARDS-BLACK-ARROW.png]] : UPWARDS BLACK ARROW                                                                                                                       |
+| [[./DOWNWARDS-BLACK-ARROW.png][file:./DOWNWARDS-BLACK-ARROW.png]] : DOWNWARDS BLACK ARROW                                                                                                                   |
+| [[./BLACK-LARGE-SQUARE.png][file:./BLACK-LARGE-SQUARE.png]] : BLACK LARGE SQUARE                                                                                                                         |
+| [[./WHITE-LARGE-SQUARE.png][file:./WHITE-LARGE-SQUARE.png]] : WHITE LARGE SQUARE                                                                                                                         |
+| [[./WHITE-MEDIUM-STAR.png][file:./WHITE-MEDIUM-STAR.png]] : WHITE MEDIUM STAR                                                                                                                           |
+| [[./HEAVY-LARGE-CIRCLE.png][file:./HEAVY-LARGE-CIRCLE.png]] : HEAVY LARGE CIRCLE                                                                                                                         |
+| [[./WAVY-DASH.png][file:./WAVY-DASH.png]] : WAVY DASH                                                                                                                                           |
+| [[./PART-ALTERNATION-MARK.png][file:./PART-ALTERNATION-MARK.png]] : PART ALTERNATION MARK                                                                                                                   |
+| [[./CIRCLED-IDEOGRAPH-CONGRATULATION.png][file:./CIRCLED-IDEOGRAPH-CONGRATULATION.png]] : CIRCLED IDEOGRAPH CONGRATULATION                                                                                             |
+| [[./CIRCLED-IDEOGRAPH-SECRET.png][file:./CIRCLED-IDEOGRAPH-SECRET.png]] : CIRCLED IDEOGRAPH SECRET                                                                                                             |
+| [[./MAHJONG-TILE-RED-DRAGON.png][file:./MAHJONG-TILE-RED-DRAGON.png]] : MAHJONG TILE RED DRAGON                                                                                                               |
+| [[./PLAYING-CARD-BLACK-JOKER.png][file:./PLAYING-CARD-BLACK-JOKER.png]] : PLAYING CARD BLACK JOKER                                                                                                             |
+| [[./NEGATIVE-SQUARED-LATIN-CAPITAL-LETTER-A.png][file:./NEGATIVE-SQUARED-LATIN-CAPITAL-LETTER-A.png]] : NEGATIVE SQUARED LATIN CAPITAL LETTER A                                                                               |
+| [[./NEGATIVE-SQUARED-LATIN-CAPITAL-LETTER-B.png][file:./NEGATIVE-SQUARED-LATIN-CAPITAL-LETTER-B.png]] : NEGATIVE SQUARED LATIN CAPITAL LETTER B                                                                               |
+| [[./NEGATIVE-SQUARED-LATIN-CAPITAL-LETTER-O.png][file:./NEGATIVE-SQUARED-LATIN-CAPITAL-LETTER-O.png]] : NEGATIVE SQUARED LATIN CAPITAL LETTER O                                                                               |
+| [[./NEGATIVE-SQUARED-LATIN-CAPITAL-LETTER-P.png][file:./NEGATIVE-SQUARED-LATIN-CAPITAL-LETTER-P.png]] : NEGATIVE SQUARED LATIN CAPITAL LETTER P                                                                               |
+| [[./NEGATIVE-SQUARED-AB.png][file:./NEGATIVE-SQUARED-AB.png]] : NEGATIVE SQUARED AB                                                                                                                       |
+| [[./SQUARED-CL.png][file:./SQUARED-CL.png]] : SQUARED CL                                                                                                                                         |
+| [[./SQUARED-COOL.png][file:./SQUARED-COOL.png]] : SQUARED COOL                                                                                                                                     |
+| [[./SQUARED-FREE.png][file:./SQUARED-FREE.png]] : SQUARED FREE                                                                                                                                     |
+| [[./SQUARED-ID.png][file:./SQUARED-ID.png]] : SQUARED ID                                                                                                                                         |
+| [[./SQUARED-NEW.png][file:./SQUARED-NEW.png]] : SQUARED NEW                                                                                                                                       |
+| [[./SQUARED-NG.png][file:./SQUARED-NG.png]] : SQUARED NG                                                                                                                                         |
+| [[./SQUARED-OK.png][file:./SQUARED-OK.png]] : SQUARED OK                                                                                                                                         |
+| [[./SQUARED-SOS.png][file:./SQUARED-SOS.png]] : SQUARED SOS                                                                                                                                       |
+| [[./SQUARED-UP-WITH-EXCLAMATION-MARK.png][file:./SQUARED-UP-WITH-EXCLAMATION-MARK.png]] : SQUARED UP WITH EXCLAMATION MARK                                                                                             |
+| [[./SQUARED-VS.png][file:./SQUARED-VS.png]] : SQUARED VS                                                                                                                                         |
+| [[./SQUARED-KATAKANA-KOKO.png][file:./SQUARED-KATAKANA-KOKO.png]] : SQUARED KATAKANA KOKO                                                                                                                   |
+| [[./SQUARED-KATAKANA-SA.png][file:./SQUARED-KATAKANA-SA.png]] : SQUARED KATAKANA SA                                                                                                                       |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-7121.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-7121.png]] : SQUARED CJK UNIFIED IDEOGRAPH-7121                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-6307.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-6307.png]] : SQUARED CJK UNIFIED IDEOGRAPH-6307                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-7981.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-7981.png]] : SQUARED CJK UNIFIED IDEOGRAPH-7981                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-7A7A.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-7A7A.png]] : SQUARED CJK UNIFIED IDEOGRAPH-7A7A                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-5408.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-5408.png]] : SQUARED CJK UNIFIED IDEOGRAPH-5408                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-6E80.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-6E80.png]] : SQUARED CJK UNIFIED IDEOGRAPH-6E80                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-6709.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-6709.png]] : SQUARED CJK UNIFIED IDEOGRAPH-6709                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-6708.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-6708.png]] : SQUARED CJK UNIFIED IDEOGRAPH-6708                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-7533.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-7533.png]] : SQUARED CJK UNIFIED IDEOGRAPH-7533                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-5272.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-5272.png]] : SQUARED CJK UNIFIED IDEOGRAPH-5272                                                                                         |
+| [[./SQUARED-CJK-UNIFIED-IDEOGRAPH-55B6.png][file:./SQUARED-CJK-UNIFIED-IDEOGRAPH-55B6.png]] : SQUARED CJK UNIFIED IDEOGRAPH-55B6                                                                                         |
+| [[./CIRCLED-IDEOGRAPH-ADVANTAGE.png][file:./CIRCLED-IDEOGRAPH-ADVANTAGE.png]] : CIRCLED IDEOGRAPH ADVANTAGE                                                                                                       |
+| [[./CIRCLED-IDEOGRAPH-ACCEPT.png][file:./CIRCLED-IDEOGRAPH-ACCEPT.png]] : CIRCLED IDEOGRAPH ACCEPT                                                                                                             |
+| [[./CYCLONE.png][file:./CYCLONE.png]] : CYCLONE                                                                                                                                               |
+| [[./FOGGY.png][file:./FOGGY.png]] : FOGGY                                                                                                                                                   |
+| [[./CLOSED-UMBRELLA.png][file:./CLOSED-UMBRELLA.png]] : CLOSED UMBRELLA                                                                                                                               |
+| [[./NIGHT-WITH-STARS.png][file:./NIGHT-WITH-STARS.png]] : NIGHT WITH STARS                                                                                                                             |
+| [[./SUNRISE-OVER-MOUNTAINS.png][file:./SUNRISE-OVER-MOUNTAINS.png]] : SUNRISE OVER MOUNTAINS                                                                                                                 |
+| [[./SUNRISE.png][file:./SUNRISE.png]] : SUNRISE                                                                                                                                               |
+| [[./CITYSCAPE-AT-DUSK.png][file:./CITYSCAPE-AT-DUSK.png]] : CITYSCAPE AT DUSK                                                                                                                           |
+| [[./SUNSET-OVER-BUILDINGS.png][file:./SUNSET-OVER-BUILDINGS.png]] : SUNSET OVER BUILDINGS                                                                                                                   |
+| [[./RAINBOW.png][file:./RAINBOW.png]] : RAINBOW                                                                                                                                               |
+| [[./BRIDGE-AT-NIGHT.png][file:./BRIDGE-AT-NIGHT.png]] : BRIDGE AT NIGHT                                                                                                                               |
+| [[./WATER-WAVE.png][file:./WATER-WAVE.png]] : WATER WAVE                                                                                                                                         |
+| [[./VOLCANO.png][file:./VOLCANO.png]] : VOLCANO                                                                                                                                               |
+| [[./MILKY-WAY.png][file:./MILKY-WAY.png]] : MILKY WAY                                                                                                                                           |
+| [[./EARTH-GLOBE-EUROPE-AFRICA.png][file:./EARTH-GLOBE-EUROPE-AFRICA.png]] : EARTH GLOBE EUROPE-AFRICA                                                                                                           |
+| [[./EARTH-GLOBE-AMERICAS.png][file:./EARTH-GLOBE-AMERICAS.png]] : EARTH GLOBE AMERICAS                                                                                                                     |
+| [[./EARTH-GLOBE-ASIA-AUSTRALIA.png][file:./EARTH-GLOBE-ASIA-AUSTRALIA.png]] : EARTH GLOBE ASIA-AUSTRALIA                                                                                                         |
+| [[./GLOBE-WITH-MERIDIANS.png][file:./GLOBE-WITH-MERIDIANS.png]] : GLOBE WITH MERIDIANS                                                                                                                     |
+| [[./NEW-MOON-SYMBOL.png][file:./NEW-MOON-SYMBOL.png]] : NEW MOON SYMBOL                                                                                                                               |
+| [[./WAXING-CRESCENT-MOON-SYMBOL.png][file:./WAXING-CRESCENT-MOON-SYMBOL.png]] : WAXING CRESCENT MOON SYMBOL                                                                                                       |
+| [[./FIRST-QUARTER-MOON-SYMBOL.png][file:./FIRST-QUARTER-MOON-SYMBOL.png]] : FIRST QUARTER MOON SYMBOL                                                                                                           |
+| [[./WAXING-GIBBOUS-MOON-SYMBOL.png][file:./WAXING-GIBBOUS-MOON-SYMBOL.png]] : WAXING GIBBOUS MOON SYMBOL                                                                                                         |
+| [[./FULL-MOON-SYMBOL.png][file:./FULL-MOON-SYMBOL.png]] : FULL MOON SYMBOL                                                                                                                             |
+| [[./WANING-GIBBOUS-MOON-SYMBOL.png][file:./WANING-GIBBOUS-MOON-SYMBOL.png]] : WANING GIBBOUS MOON SYMBOL                                                                                                         |
+| [[./LAST-QUARTER-MOON-SYMBOL.png][file:./LAST-QUARTER-MOON-SYMBOL.png]] : LAST QUARTER MOON SYMBOL                                                                                                             |
+| [[./WANING-CRESCENT-MOON-SYMBOL.png][file:./WANING-CRESCENT-MOON-SYMBOL.png]] : WANING CRESCENT MOON SYMBOL                                                                                                       |
+| [[./CRESCENT-MOON.png][file:./CRESCENT-MOON.png]] : CRESCENT MOON                                                                                                                                   |
+| [[./NEW-MOON-WITH-FACE.png][file:./NEW-MOON-WITH-FACE.png]] : NEW MOON WITH FACE                                                                                                                         |
+| [[./FIRST-QUARTER-MOON-WITH-FACE.png][file:./FIRST-QUARTER-MOON-WITH-FACE.png]] : FIRST QUARTER MOON WITH FACE                                                                                                     |
+| [[./LAST-QUARTER-MOON-WITH-FACE.png][file:./LAST-QUARTER-MOON-WITH-FACE.png]] : LAST QUARTER MOON WITH FACE                                                                                                       |
+| [[./FULL-MOON-WITH-FACE.png][file:./FULL-MOON-WITH-FACE.png]] : FULL MOON WITH FACE                                                                                                                       |
+| [[./SUN-WITH-FACE.png][file:./SUN-WITH-FACE.png]] : SUN WITH FACE                                                                                                                                   |
+| [[./GLOWING-STAR.png][file:./GLOWING-STAR.png]] : GLOWING STAR                                                                                                                                     |
+| [[./SHOOTING-STAR.png][file:./SHOOTING-STAR.png]] : SHOOTING STAR                                                                                                                                   |
+| [[./CHESTNUT.png][file:./CHESTNUT.png]] : CHESTNUT                                                                                                                                             |
+| [[./SEEDLING.png][file:./SEEDLING.png]] : SEEDLING                                                                                                                                             |
+| [[./EVERGREEN-TREE.png][file:./EVERGREEN-TREE.png]] : EVERGREEN TREE                                                                                                                                 |
+| [[./DECIDUOUS-TREE.png][file:./DECIDUOUS-TREE.png]] : DECIDUOUS TREE                                                                                                                                 |
+| [[./PALM-TREE.png][file:./PALM-TREE.png]] : PALM TREE                                                                                                                                           |
+| [[./CACTUS.png][file:./CACTUS.png]] : CACTUS                                                                                                                                                 |
+| [[./TULIP.png][file:./TULIP.png]] : TULIP                                                                                                                                                   |
+| [[./CHERRY-BLOSSOM.png][file:./CHERRY-BLOSSOM.png]] : CHERRY BLOSSOM                                                                                                                                 |
+| [[./ROSE.png][file:./ROSE.png]] : ROSE                                                                                                                                                     |
+| [[./HIBISCUS.png][file:./HIBISCUS.png]] : HIBISCUS                                                                                                                                             |
+| [[./SUNFLOWER.png][file:./SUNFLOWER.png]] : SUNFLOWER                                                                                                                                           |
+| [[./BLOSSOM.png][file:./BLOSSOM.png]] : BLOSSOM                                                                                                                                               |
+| [[./EAR-OF-MAIZE.png][file:./EAR-OF-MAIZE.png]] : EAR OF MAIZE                                                                                                                                     |
+| [[./EAR-OF-RICE.png][file:./EAR-OF-RICE.png]] : EAR OF RICE                                                                                                                                       |
+| [[./HERB.png][file:./HERB.png]] : HERB                                                                                                                                                     |
+| [[./FOUR-LEAF-CLOVER.png][file:./FOUR-LEAF-CLOVER.png]] : FOUR LEAF CLOVER                                                                                                                             |
+| [[./MAPLE-LEAF.png][file:./MAPLE-LEAF.png]] : MAPLE LEAF                                                                                                                                         |
+| [[./FALLEN-LEAF.png][file:./FALLEN-LEAF.png]] : FALLEN LEAF                                                                                                                                       |
+| [[./LEAF-FLUTTERING-IN-WIND.png][file:./LEAF-FLUTTERING-IN-WIND.png]] : LEAF FLUTTERING IN WIND                                                                                                               |
+| [[./MUSHROOM.png][file:./MUSHROOM.png]] : MUSHROOM                                                                                                                                             |
+| [[./TOMATO.png][file:./TOMATO.png]] : TOMATO                                                                                                                                                 |
+| [[./AUBERGINE.png][file:./AUBERGINE.png]] : AUBERGINE                                                                                                                                           |
+| [[./GRAPES.png][file:./GRAPES.png]] : GRAPES                                                                                                                                                 |
+| [[./MELON.png][file:./MELON.png]] : MELON                                                                                                                                                   |
+| [[./WATERMELON.png][file:./WATERMELON.png]] : WATERMELON                                                                                                                                         |
+| [[./TANGERINE.png][file:./TANGERINE.png]] : TANGERINE                                                                                                                                           |
+| [[./LEMON.png][file:./LEMON.png]] : LEMON                                                                                                                                                   |
+| [[./BANANA.png][file:./BANANA.png]] : BANANA                                                                                                                                                 |
+| [[./PINEAPPLE.png][file:./PINEAPPLE.png]] : PINEAPPLE                                                                                                                                           |
+| [[./RED-APPLE.png][file:./RED-APPLE.png]] : RED APPLE                                                                                                                                           |
+| [[./GREEN-APPLE.png][file:./GREEN-APPLE.png]] : GREEN APPLE                                                                                                                                       |
+| [[./PEAR.png][file:./PEAR.png]] : PEAR                                                                                                                                                     |
+| [[./PEACH.png][file:./PEACH.png]] : PEACH                                                                                                                                                   |
+| [[./CHERRIES.png][file:./CHERRIES.png]] : CHERRIES                                                                                                                                             |
+| [[./STRAWBERRY.png][file:./STRAWBERRY.png]] : STRAWBERRY                                                                                                                                         |
+| [[./HAMBURGER.png][file:./HAMBURGER.png]] : HAMBURGER                                                                                                                                           |
+| [[./SLICE-OF-PIZZA.png][file:./SLICE-OF-PIZZA.png]] : SLICE OF PIZZA                                                                                                                                 |
+| [[./MEAT-ON-BONE.png][file:./MEAT-ON-BONE.png]] : MEAT ON BONE                                                                                                                                     |
+| [[./POULTRY-LEG.png][file:./POULTRY-LEG.png]] : POULTRY LEG                                                                                                                                       |
+| [[./RICE-CRACKER.png][file:./RICE-CRACKER.png]] : RICE CRACKER                                                                                                                                     |
+| [[./RICE-BALL.png][file:./RICE-BALL.png]] : RICE BALL                                                                                                                                           |
+| [[./COOKED-RICE.png][file:./COOKED-RICE.png]] : COOKED RICE                                                                                                                                       |
+| [[./CURRY-AND-RICE.png][file:./CURRY-AND-RICE.png]] : CURRY AND RICE                                                                                                                                 |
+| [[./STEAMING-BOWL.png][file:./STEAMING-BOWL.png]] : STEAMING BOWL                                                                                                                                   |
+| [[./SPAGHETTI.png][file:./SPAGHETTI.png]] : SPAGHETTI                                                                                                                                           |
+| [[./BREAD.png][file:./BREAD.png]] : BREAD                                                                                                                                                   |
+| [[./FRENCH-FRIES.png][file:./FRENCH-FRIES.png]] : FRENCH FRIES                                                                                                                                     |
+| [[./ROASTED-SWEET-POTATO.png][file:./ROASTED-SWEET-POTATO.png]] : ROASTED SWEET POTATO                                                                                                                     |
+| [[./DANGO.png][file:./DANGO.png]] : DANGO                                                                                                                                                   |
+| [[./ODEN.png][file:./ODEN.png]] : ODEN                                                                                                                                                     |
+| [[./SUSHI.png][file:./SUSHI.png]] : SUSHI                                                                                                                                                   |
+| [[./FRIED-SHRIMP.png][file:./FRIED-SHRIMP.png]] : FRIED SHRIMP                                                                                                                                     |
+| [[./FISH-CAKE-WITH-SWIRL-DESIGN.png][file:./FISH-CAKE-WITH-SWIRL-DESIGN.png]] : FISH CAKE WITH SWIRL DESIGN                                                                                                       |
+| [[./SOFT-ICE-CREAM.png][file:./SOFT-ICE-CREAM.png]] : SOFT ICE CREAM                                                                                                                                 |
+| [[./SHAVED-ICE.png][file:./SHAVED-ICE.png]] : SHAVED ICE                                                                                                                                         |
+| [[./ICE-CREAM.png][file:./ICE-CREAM.png]] : ICE CREAM                                                                                                                                           |
+| [[./DOUGHNUT.png][file:./DOUGHNUT.png]] : DOUGHNUT                                                                                                                                             |
+| [[./COOKIE.png][file:./COOKIE.png]] : COOKIE                                                                                                                                                 |
+| [[./CHOCOLATE-BAR.png][file:./CHOCOLATE-BAR.png]] : CHOCOLATE BAR                                                                                                                                   |
+| [[./CANDY.png][file:./CANDY.png]] : CANDY                                                                                                                                                   |
+| [[./LOLLIPOP.png][file:./LOLLIPOP.png]] : LOLLIPOP                                                                                                                                             |
+| [[./CUSTARD.png][file:./CUSTARD.png]] : CUSTARD                                                                                                                                               |
+| [[./HONEY-POT.png][file:./HONEY-POT.png]] : HONEY POT                                                                                                                                           |
+| [[./SHORTCAKE.png][file:./SHORTCAKE.png]] : SHORTCAKE                                                                                                                                           |
+| [[./BENTO-BOX.png][file:./BENTO-BOX.png]] : BENTO BOX                                                                                                                                           |
+| [[./POT-OF-FOOD.png][file:./POT-OF-FOOD.png]] : POT OF FOOD                                                                                                                                       |
+| [[./COOKING.png][file:./COOKING.png]] : COOKING                                                                                                                                               |
+| [[./FORK-AND-KNIFE.png][file:./FORK-AND-KNIFE.png]] : FORK AND KNIFE                                                                                                                                 |
+| [[./TEACUP-WITHOUT-HANDLE.png][file:./TEACUP-WITHOUT-HANDLE.png]] : TEACUP WITHOUT HANDLE                                                                                                                   |
+| [[./SAKE-BOTTLE-AND-CUP.png][file:./SAKE-BOTTLE-AND-CUP.png]] : SAKE BOTTLE AND CUP                                                                                                                       |
+| [[./WINE-GLASS.png][file:./WINE-GLASS.png]] : WINE GLASS                                                                                                                                         |
+| [[./COCKTAIL-GLASS.png][file:./COCKTAIL-GLASS.png]] : COCKTAIL GLASS                                                                                                                                 |
+| [[./TROPICAL-DRINK.png][file:./TROPICAL-DRINK.png]] : TROPICAL DRINK                                                                                                                                 |
+| [[./BEER-MUG.png][file:./BEER-MUG.png]] : BEER MUG                                                                                                                                             |
+| [[./CLINKING-BEER-MUGS.png][file:./CLINKING-BEER-MUGS.png]] : CLINKING BEER MUGS                                                                                                                         |
+| [[./BABY-BOTTLE.png][file:./BABY-BOTTLE.png]] : BABY BOTTLE                                                                                                                                       |
+| [[./RIBBON.png][file:./RIBBON.png]] : RIBBON                                                                                                                                                 |
+| [[./WRAPPED-PRESENT.png][file:./WRAPPED-PRESENT.png]] : WRAPPED PRESENT                                                                                                                               |
+| [[./BIRTHDAY-CAKE.png][file:./BIRTHDAY-CAKE.png]] : BIRTHDAY CAKE                                                                                                                                   |
+| [[./JACK-O-LANTERN.png][file:./JACK-O-LANTERN.png]] : JACK-O-LANTERN                                                                                                                                 |
+| [[./CHRISTMAS-TREE.png][file:./CHRISTMAS-TREE.png]] : CHRISTMAS TREE                                                                                                                                 |
+| [[./FATHER-CHRISTMAS.png][file:./FATHER-CHRISTMAS.png]] : FATHER CHRISTMAS                                                                                                                             |
+| [[./FIREWORKS.png][file:./FIREWORKS.png]] : FIREWORKS                                                                                                                                           |
+| [[./FIREWORK-SPARKLER.png][file:./FIREWORK-SPARKLER.png]] : FIREWORK SPARKLER                                                                                                                           |
+| [[./BALLOON.png][file:./BALLOON.png]] : BALLOON                                                                                                                                               |
+| [[./PARTY-POPPER.png][file:./PARTY-POPPER.png]] : PARTY POPPER                                                                                                                                     |
+| [[./CONFETTI-BALL.png][file:./CONFETTI-BALL.png]] : CONFETTI BALL                                                                                                                                   |
+| [[./TANABATA-TREE.png][file:./TANABATA-TREE.png]] : TANABATA TREE                                                                                                                                   |
+| [[./CROSSED-FLAGS.png][file:./CROSSED-FLAGS.png]] : CROSSED FLAGS                                                                                                                                   |
+| [[./PINE-DECORATION.png][file:./PINE-DECORATION.png]] : PINE DECORATION                                                                                                                               |
+| [[./JAPANESE-DOLLS.png][file:./JAPANESE-DOLLS.png]] : JAPANESE DOLLS                                                                                                                                 |
+| [[./CARP-STREAMER.png][file:./CARP-STREAMER.png]] : CARP STREAMER                                                                                                                                   |
+| [[./WIND-CHIME.png][file:./WIND-CHIME.png]] : WIND CHIME                                                                                                                                         |
+| [[./MOON-VIEWING-CEREMONY.png][file:./MOON-VIEWING-CEREMONY.png]] : MOON VIEWING CEREMONY                                                                                                                   |
+| [[./SCHOOL-SATCHEL.png][file:./SCHOOL-SATCHEL.png]] : SCHOOL SATCHEL                                                                                                                                 |
+| [[./GRADUATION-CAP.png][file:./GRADUATION-CAP.png]] : GRADUATION CAP                                                                                                                                 |
+| [[./CAROUSEL-HORSE.png][file:./CAROUSEL-HORSE.png]] : CAROUSEL HORSE                                                                                                                                 |
+| [[./FERRIS-WHEEL.png][file:./FERRIS-WHEEL.png]] : FERRIS WHEEL                                                                                                                                     |
+| [[./ROLLER-COASTER.png][file:./ROLLER-COASTER.png]] : ROLLER COASTER                                                                                                                                 |
+| [[./FISHING-POLE-AND-FISH.png][file:./FISHING-POLE-AND-FISH.png]] : FISHING POLE AND FISH                                                                                                                   |
+| [[./MICROPHONE.png][file:./MICROPHONE.png]] : MICROPHONE                                                                                                                                         |
+| [[./MOVIE-CAMERA.png][file:./MOVIE-CAMERA.png]] : MOVIE CAMERA                                                                                                                                     |
+| [[./CINEMA.png][file:./CINEMA.png]] : CINEMA                                                                                                                                                 |
+| [[./HEADPHONE.png][file:./HEADPHONE.png]] : HEADPHONE                                                                                                                                           |
+| [[./ARTIST-PALETTE.png][file:./ARTIST-PALETTE.png]] : ARTIST PALETTE                                                                                                                                 |
+| [[./TOP-HAT.png][file:./TOP-HAT.png]] : TOP HAT                                                                                                                                               |
+| [[./CIRCUS-TENT.png][file:./CIRCUS-TENT.png]] : CIRCUS TENT                                                                                                                                       |
+| [[./TICKET.png][file:./TICKET.png]] : TICKET                                                                                                                                                 |
+| [[./CLAPPER-BOARD.png][file:./CLAPPER-BOARD.png]] : CLAPPER BOARD                                                                                                                                   |
+| [[./PERFORMING-ARTS.png][file:./PERFORMING-ARTS.png]] : PERFORMING ARTS                                                                                                                               |
+| [[./VIDEO-GAME.png][file:./VIDEO-GAME.png]] : VIDEO GAME                                                                                                                                         |
+| [[./DIRECT-HIT.png][file:./DIRECT-HIT.png]] : DIRECT HIT                                                                                                                                         |
+| [[./SLOT-MACHINE.png][file:./SLOT-MACHINE.png]] : SLOT MACHINE                                                                                                                                     |
+| [[./BILLIARDS.png][file:./BILLIARDS.png]] : BILLIARDS                                                                                                                                           |
+| [[./GAME-DIE.png][file:./GAME-DIE.png]] : GAME DIE                                                                                                                                             |
+| [[./BOWLING.png][file:./BOWLING.png]] : BOWLING                                                                                                                                               |
+| [[./FLOWER-PLAYING-CARDS.png][file:./FLOWER-PLAYING-CARDS.png]] : FLOWER PLAYING CARDS                                                                                                                     |
+| [[./MUSICAL-NOTE.png][file:./MUSICAL-NOTE.png]] : MUSICAL NOTE                                                                                                                                     |
+| [[./MULTIPLE-MUSICAL-NOTES.png][file:./MULTIPLE-MUSICAL-NOTES.png]] : MULTIPLE MUSICAL NOTES                                                                                                                 |
+| [[./SAXOPHONE.png][file:./SAXOPHONE.png]] : SAXOPHONE                                                                                                                                           |
+| [[./GUITAR.png][file:./GUITAR.png]] : GUITAR                                                                                                                                                 |
+| [[./MUSICAL-KEYBOARD.png][file:./MUSICAL-KEYBOARD.png]] : MUSICAL KEYBOARD                                                                                                                             |
+| [[./TRUMPET.png][file:./TRUMPET.png]] : TRUMPET                                                                                                                                               |
+| [[./VIOLIN.png][file:./VIOLIN.png]] : VIOLIN                                                                                                                                                 |
+| [[./MUSICAL-SCORE.png][file:./MUSICAL-SCORE.png]] : MUSICAL SCORE                                                                                                                                   |
+| [[./RUNNING-SHIRT-WITH-SASH.png][file:./RUNNING-SHIRT-WITH-SASH.png]] : RUNNING SHIRT WITH SASH                                                                                                               |
+| [[./TENNIS-RACQUET-AND-BALL.png][file:./TENNIS-RACQUET-AND-BALL.png]] : TENNIS RACQUET AND BALL                                                                                                               |
+| [[./SKI-AND-SKI-BOOT.png][file:./SKI-AND-SKI-BOOT.png]] : SKI AND SKI BOOT                                                                                                                             |
+| [[./BASKETBALL-AND-HOOP.png][file:./BASKETBALL-AND-HOOP.png]] : BASKETBALL AND HOOP                                                                                                                       |
+| [[./CHEQUERED-FLAG.png][file:./CHEQUERED-FLAG.png]] : CHEQUERED FLAG                                                                                                                                 |
+| [[./SNOWBOARDER.png][file:./SNOWBOARDER.png]] : SNOWBOARDER                                                                                                                                       |
+| [[./RUNNER.png][file:./RUNNER.png]] : RUNNER                                                                                                                                                 |
+| [[./SURFER.png][file:./SURFER.png]] : SURFER                                                                                                                                                 |
+| [[./TROPHY.png][file:./TROPHY.png]] : TROPHY                                                                                                                                                 |
+| [[./HORSE-RACING.png][file:./HORSE-RACING.png]] : HORSE RACING                                                                                                                                     |
+| [[./AMERICAN-FOOTBALL.png][file:./AMERICAN-FOOTBALL.png]] : AMERICAN FOOTBALL                                                                                                                           |
+| [[./RUGBY-FOOTBALL.png][file:./RUGBY-FOOTBALL.png]] : RUGBY FOOTBALL                                                                                                                                 |
+| [[./SWIMMER.png][file:./SWIMMER.png]] : SWIMMER                                                                                                                                               |
+| [[./HOUSE-BUILDING.png][file:./HOUSE-BUILDING.png]] : HOUSE BUILDING                                                                                                                                 |
+| [[./HOUSE-WITH-GARDEN.png][file:./HOUSE-WITH-GARDEN.png]] : HOUSE WITH GARDEN                                                                                                                           |
+| [[./OFFICE-BUILDING.png][file:./OFFICE-BUILDING.png]] : OFFICE BUILDING                                                                                                                               |
+| [[./JAPANESE-POST-OFFICE.png][file:./JAPANESE-POST-OFFICE.png]] : JAPANESE POST OFFICE                                                                                                                     |
+| [[./EUROPEAN-POST-OFFICE.png][file:./EUROPEAN-POST-OFFICE.png]] : EUROPEAN POST OFFICE                                                                                                                     |
+| [[./HOSPITAL.png][file:./HOSPITAL.png]] : HOSPITAL                                                                                                                                             |
+| [[./BANK.png][file:./BANK.png]] : BANK                                                                                                                                                     |
+| [[./AUTOMATED-TELLER-MACHINE.png][file:./AUTOMATED-TELLER-MACHINE.png]] : AUTOMATED TELLER MACHINE                                                                                                             |
+| [[./HOTEL.png][file:./HOTEL.png]] : HOTEL                                                                                                                                                   |
+| [[./LOVE-HOTEL.png][file:./LOVE-HOTEL.png]] : LOVE HOTEL                                                                                                                                         |
+| [[./CONVENIENCE-STORE.png][file:./CONVENIENCE-STORE.png]] : CONVENIENCE STORE                                                                                                                           |
+| [[./SCHOOL.png][file:./SCHOOL.png]] : SCHOOL                                                                                                                                                 |
+| [[./DEPARTMENT-STORE.png][file:./DEPARTMENT-STORE.png]] : DEPARTMENT STORE                                                                                                                             |
+| [[./FACTORY.png][file:./FACTORY.png]] : FACTORY                                                                                                                                               |
+| [[./IZAKAYA-LANTERN.png][file:./IZAKAYA-LANTERN.png]] : IZAKAYA LANTERN                                                                                                                               |
+| [[./JAPANESE-CASTLE.png][file:./JAPANESE-CASTLE.png]] : JAPANESE CASTLE                                                                                                                               |
+| [[./EUROPEAN-CASTLE.png][file:./EUROPEAN-CASTLE.png]] : EUROPEAN CASTLE                                                                                                                               |
+| [[./RAT.png][file:./RAT.png]] : RAT                                                                                                                                                       |
+| [[./MOUSE.png][file:./MOUSE.png]] : MOUSE                                                                                                                                                   |
+| [[./OX.png][file:./OX.png]] : OX                                                                                                                                                         |
+| [[./WATER-BUFFALO.png][file:./WATER-BUFFALO.png]] : WATER BUFFALO                                                                                                                                   |
+| [[./COW.png][file:./COW.png]] : COW                                                                                                                                                       |
+| [[./TIGER.png][file:./TIGER.png]] : TIGER                                                                                                                                                   |
+| [[./LEOPARD.png][file:./LEOPARD.png]] : LEOPARD                                                                                                                                               |
+| [[./RABBIT.png][file:./RABBIT.png]] : RABBIT                                                                                                                                                 |
+| [[./CAT.png][file:./CAT.png]] : CAT                                                                                                                                                       |
+| [[./DRAGON.png][file:./DRAGON.png]] : DRAGON                                                                                                                                                 |
+| [[./CROCODILE.png][file:./CROCODILE.png]] : CROCODILE                                                                                                                                           |
+| [[./WHALE.png][file:./WHALE.png]] : WHALE                                                                                                                                                   |
+| [[./SNAIL.png][file:./SNAIL.png]] : SNAIL                                                                                                                                                   |
+| [[./SNAKE.png][file:./SNAKE.png]] : SNAKE                                                                                                                                                   |
+| [[./HORSE.png][file:./HORSE.png]] : HORSE                                                                                                                                                   |
+| [[./RAM.png][file:./RAM.png]] : RAM                                                                                                                                                       |
+| [[./GOAT.png][file:./GOAT.png]] : GOAT                                                                                                                                                     |
+| [[./SHEEP.png][file:./SHEEP.png]] : SHEEP                                                                                                                                                   |
+| [[./MONKEY.png][file:./MONKEY.png]] : MONKEY                                                                                                                                                 |
+| [[./ROOSTER.png][file:./ROOSTER.png]] : ROOSTER                                                                                                                                               |
+| [[./CHICKEN.png][file:./CHICKEN.png]] : CHICKEN                                                                                                                                               |
+| [[./DOG.png][file:./DOG.png]] : DOG                                                                                                                                                       |
+| [[./PIG.png][file:./PIG.png]] : PIG                                                                                                                                                       |
+| [[./BOAR.png][file:./BOAR.png]] : BOAR                                                                                                                                                     |
+| [[./ELEPHANT.png][file:./ELEPHANT.png]] : ELEPHANT                                                                                                                                             |
+| [[./OCTOPUS.png][file:./OCTOPUS.png]] : OCTOPUS                                                                                                                                               |
+| [[./SPIRAL-SHELL.png][file:./SPIRAL-SHELL.png]] : SPIRAL SHELL                                                                                                                                     |
+| [[./BUG.png][file:./BUG.png]] : BUG                                                                                                                                                       |
+| [[./ANT.png][file:./ANT.png]] : ANT                                                                                                                                                       |
+| [[./HONEYBEE.png][file:./HONEYBEE.png]] : HONEYBEE                                                                                                                                             |
+| [[./LADY-BEETLE.png][file:./LADY-BEETLE.png]] : LADY BEETLE                                                                                                                                       |
+| [[./FISH.png][file:./FISH.png]] : FISH                                                                                                                                                     |
+| [[./TROPICAL-FISH.png][file:./TROPICAL-FISH.png]] : TROPICAL FISH                                                                                                                                   |
+| [[./BLOWFISH.png][file:./BLOWFISH.png]] : BLOWFISH                                                                                                                                             |
+| [[./TURTLE.png][file:./TURTLE.png]] : TURTLE                                                                                                                                                 |
+| [[./HATCHING-CHICK.png][file:./HATCHING-CHICK.png]] : HATCHING CHICK                                                                                                                                 |
+| [[./BABY-CHICK.png][file:./BABY-CHICK.png]] : BABY CHICK                                                                                                                                         |
+| [[./FRONT-FACING-BABY-CHICK.png][file:./FRONT-FACING-BABY-CHICK.png]] : FRONT-FACING BABY CHICK                                                                                                               |
+| [[./BIRD.png][file:./BIRD.png]] : BIRD                                                                                                                                                     |
+| [[./PENGUIN.png][file:./PENGUIN.png]] : PENGUIN                                                                                                                                               |
+| [[./KOALA.png][file:./KOALA.png]] : KOALA                                                                                                                                                   |
+| [[./POODLE.png][file:./POODLE.png]] : POODLE                                                                                                                                                 |
+| [[./DROMEDARY-CAMEL.png][file:./DROMEDARY-CAMEL.png]] : DROMEDARY CAMEL                                                                                                                               |
+| [[./BACTRIAN-CAMEL.png][file:./BACTRIAN-CAMEL.png]] : BACTRIAN CAMEL                                                                                                                                 |
+| [[./DOLPHIN.png][file:./DOLPHIN.png]] : DOLPHIN                                                                                                                                               |
+| [[./MOUSE-FACE.png][file:./MOUSE-FACE.png]] : MOUSE FACE                                                                                                                                         |
+| [[./COW-FACE.png][file:./COW-FACE.png]] : COW FACE                                                                                                                                             |
+| [[./TIGER-FACE.png][file:./TIGER-FACE.png]] : TIGER FACE                                                                                                                                         |
+| [[./RABBIT-FACE.png][file:./RABBIT-FACE.png]] : RABBIT FACE                                                                                                                                       |
+| [[./CAT-FACE.png][file:./CAT-FACE.png]] : CAT FACE                                                                                                                                             |
+| [[./DRAGON-FACE.png][file:./DRAGON-FACE.png]] : DRAGON FACE                                                                                                                                       |
+| [[./SPOUTING-WHALE.png][file:./SPOUTING-WHALE.png]] : SPOUTING WHALE                                                                                                                                 |
+| [[./HORSE-FACE.png][file:./HORSE-FACE.png]] : HORSE FACE                                                                                                                                         |
+| [[./MONKEY-FACE.png][file:./MONKEY-FACE.png]] : MONKEY FACE                                                                                                                                       |
+| [[./DOG-FACE.png][file:./DOG-FACE.png]] : DOG FACE                                                                                                                                             |
+| [[./PIG-FACE.png][file:./PIG-FACE.png]] : PIG FACE                                                                                                                                             |
+| [[./FROG-FACE.png][file:./FROG-FACE.png]] : FROG FACE                                                                                                                                           |
+| [[./HAMSTER-FACE.png][file:./HAMSTER-FACE.png]] : HAMSTER FACE                                                                                                                                     |
+| [[./WOLF-FACE.png][file:./WOLF-FACE.png]] : WOLF FACE                                                                                                                                           |
+| [[./BEAR-FACE.png][file:./BEAR-FACE.png]] : BEAR FACE                                                                                                                                           |
+| [[./PANDA-FACE.png][file:./PANDA-FACE.png]] : PANDA FACE                                                                                                                                         |
+| [[./PIG-NOSE.png][file:./PIG-NOSE.png]] : PIG NOSE                                                                                                                                             |
+| [[./PAW-PRINTS.png][file:./PAW-PRINTS.png]] : PAW PRINTS                                                                                                                                         |
+| [[./EYES.png][file:./EYES.png]] : EYES                                                                                                                                                     |
+| [[./EAR.png][file:./EAR.png]] : EAR                                                                                                                                                       |
+| [[./NOSE.png][file:./NOSE.png]] : NOSE                                                                                                                                                     |
+| [[./MOUTH.png][file:./MOUTH.png]] : MOUTH                                                                                                                                                   |
+| [[./TONGUE.png][file:./TONGUE.png]] : TONGUE                                                                                                                                                 |
+| [[./WHITE-UP-POINTING-BACKHAND-INDEX.png][file:./WHITE-UP-POINTING-BACKHAND-INDEX.png]] : WHITE UP POINTING BACKHAND INDEX                                                                                             |
+| [[./WHITE-DOWN-POINTING-BACKHAND-INDEX.png][file:./WHITE-DOWN-POINTING-BACKHAND-INDEX.png]] : WHITE DOWN POINTING BACKHAND INDEX                                                                                         |
+| [[./WHITE-LEFT-POINTING-BACKHAND-INDEX.png][file:./WHITE-LEFT-POINTING-BACKHAND-INDEX.png]] : WHITE LEFT POINTING BACKHAND INDEX                                                                                         |
+| [[./WHITE-RIGHT-POINTING-BACKHAND-INDEX.png][file:./WHITE-RIGHT-POINTING-BACKHAND-INDEX.png]] : WHITE RIGHT POINTING BACKHAND INDEX                                                                                       |
+| [[./FISTED-HAND-SIGN.png][file:./FISTED-HAND-SIGN.png]] : FISTED HAND SIGN                                                                                                                             |
+| [[./WAVING-HAND-SIGN.png][file:./WAVING-HAND-SIGN.png]] : WAVING HAND SIGN                                                                                                                             |
+| [[./OK-HAND-SIGN.png][file:./OK-HAND-SIGN.png]] : OK HAND SIGN                                                                                                                                     |
+| [[./THUMBS-UP-SIGN.png][file:./THUMBS-UP-SIGN.png]] : THUMBS UP SIGN                                                                                                                                 |
+| [[./THUMBS-DOWN-SIGN.png][file:./THUMBS-DOWN-SIGN.png]] : THUMBS DOWN SIGN                                                                                                                             |
+| [[./CLAPPING-HANDS-SIGN.png][file:./CLAPPING-HANDS-SIGN.png]] : CLAPPING HANDS SIGN                                                                                                                       |
+| [[./OPEN-HANDS-SIGN.png][file:./OPEN-HANDS-SIGN.png]] : OPEN HANDS SIGN                                                                                                                               |
+| [[./CROWN.png][file:./CROWN.png]] : CROWN                                                                                                                                                   |
+| [[./WOMANS-HAT.png][file:./WOMANS-HAT.png]] : WOMANS HAT                                                                                                                                         |
+| [[./EYEGLASSES.png][file:./EYEGLASSES.png]] : EYEGLASSES                                                                                                                                         |
+| [[./NECKTIE.png][file:./NECKTIE.png]] : NECKTIE                                                                                                                                               |
+| [[./T-SHIRT.png][file:./T-SHIRT.png]] : T-SHIRT                                                                                                                                               |
+| [[./JEANS.png][file:./JEANS.png]] : JEANS                                                                                                                                                   |
+| [[./DRESS.png][file:./DRESS.png]] : DRESS                                                                                                                                                   |
+| [[./KIMONO.png][file:./KIMONO.png]] : KIMONO                                                                                                                                                 |
+| [[./BIKINI.png][file:./BIKINI.png]] : BIKINI                                                                                                                                                 |
+| [[./WOMANS-CLOTHES.png][file:./WOMANS-CLOTHES.png]] : WOMANS CLOTHES                                                                                                                                 |
+| [[./PURSE.png][file:./PURSE.png]] : PURSE                                                                                                                                                   |
+| [[./HANDBAG.png][file:./HANDBAG.png]] : HANDBAG                                                                                                                                               |
+| [[./POUCH.png][file:./POUCH.png]] : POUCH                                                                                                                                                   |
+| [[./MANS-SHOE.png][file:./MANS-SHOE.png]] : MANS SHOE                                                                                                                                           |
+| [[./ATHLETIC-SHOE.png][file:./ATHLETIC-SHOE.png]] : ATHLETIC SHOE                                                                                                                                   |
+| [[./HIGH-HEELED-SHOE.png][file:./HIGH-HEELED-SHOE.png]] : HIGH-HEELED SHOE                                                                                                                             |
+| [[./WOMANS-SANDAL.png][file:./WOMANS-SANDAL.png]] : WOMANS SANDAL                                                                                                                                   |
+| [[./WOMANS-BOOTS.png][file:./WOMANS-BOOTS.png]] : WOMANS BOOTS                                                                                                                                     |
+| [[./FOOTPRINTS.png][file:./FOOTPRINTS.png]] : FOOTPRINTS                                                                                                                                         |
+| [[./BUST-IN-SILHOUETTE.png][file:./BUST-IN-SILHOUETTE.png]] : BUST IN SILHOUETTE                                                                                                                         |
+| [[./BUSTS-IN-SILHOUETTE.png][file:./BUSTS-IN-SILHOUETTE.png]] : BUSTS IN SILHOUETTE                                                                                                                       |
+| [[./BOY.png][file:./BOY.png]] : BOY                                                                                                                                                       |
+| [[./GIRL.png][file:./GIRL.png]] : GIRL                                                                                                                                                     |
+| [[./MAN.png][file:./MAN.png]] : MAN                                                                                                                                                       |
+| [[./WOMAN.png][file:./WOMAN.png]] : WOMAN                                                                                                                                                   |
+| [[./FAMILY.png][file:./FAMILY.png]] : FAMILY                                                                                                                                                 |
+| [[./MAN-AND-WOMAN-HOLDING-HANDS.png][file:./MAN-AND-WOMAN-HOLDING-HANDS.png]] : MAN AND WOMAN HOLDING HANDS                                                                                                       |
+| [[./TWO-MEN-HOLDING-HANDS.png][file:./TWO-MEN-HOLDING-HANDS.png]] : TWO MEN HOLDING HANDS                                                                                                                   |
+| [[./TWO-WOMEN-HOLDING-HANDS.png][file:./TWO-WOMEN-HOLDING-HANDS.png]] : TWO WOMEN HOLDING HANDS                                                                                                               |
+| [[./POLICE-OFFICER.png][file:./POLICE-OFFICER.png]] : POLICE OFFICER                                                                                                                                 |
+| [[./WOMAN-WITH-BUNNY-EARS.png][file:./WOMAN-WITH-BUNNY-EARS.png]] : WOMAN WITH BUNNY EARS                                                                                                                   |
+| [[./BRIDE-WITH-VEIL.png][file:./BRIDE-WITH-VEIL.png]] : BRIDE WITH VEIL                                                                                                                               |
+| [[./PERSON-WITH-BLOND-HAIR.png][file:./PERSON-WITH-BLOND-HAIR.png]] : PERSON WITH BLOND HAIR                                                                                                                 |
+| [[./MAN-WITH-GUA-PI-MAO.png][file:./MAN-WITH-GUA-PI-MAO.png]] : MAN WITH GUA PI MAO                                                                                                                       |
+| [[./MAN-WITH-TURBAN.png][file:./MAN-WITH-TURBAN.png]] : MAN WITH TURBAN                                                                                                                               |
+| [[./OLDER-MAN.png][file:./OLDER-MAN.png]] : OLDER MAN                                                                                                                                           |
+| [[./OLDER-WOMAN.png][file:./OLDER-WOMAN.png]] : OLDER WOMAN                                                                                                                                       |
+| [[./BABY.png][file:./BABY.png]] : BABY                                                                                                                                                     |
+| [[./CONSTRUCTION-WORKER.png][file:./CONSTRUCTION-WORKER.png]] : CONSTRUCTION WORKER                                                                                                                       |
+| [[./PRINCESS.png][file:./PRINCESS.png]] : PRINCESS                                                                                                                                             |
+| [[./JAPANESE-OGRE.png][file:./JAPANESE-OGRE.png]] : JAPANESE OGRE                                                                                                                                   |
+| [[./JAPANESE-GOBLIN.png][file:./JAPANESE-GOBLIN.png]] : JAPANESE GOBLIN                                                                                                                               |
+| [[./GHOST.png][file:./GHOST.png]] : GHOST                                                                                                                                                   |
+| [[./BABY-ANGEL.png][file:./BABY-ANGEL.png]] : BABY ANGEL                                                                                                                                         |
+| [[./EXTRATERRESTRIAL-ALIEN.png][file:./EXTRATERRESTRIAL-ALIEN.png]] : EXTRATERRESTRIAL ALIEN                                                                                                                 |
+| [[./ALIEN-MONSTER.png][file:./ALIEN-MONSTER.png]] : ALIEN MONSTER                                                                                                                                   |
+| [[./IMP.png][file:./IMP.png]] : IMP                                                                                                                                                       |
+| [[./SKULL.png][file:./SKULL.png]] : SKULL                                                                                                                                                   |
+| [[./INFORMATION-DESK-PERSON.png][file:./INFORMATION-DESK-PERSON.png]] : INFORMATION DESK PERSON                                                                                                               |
+| [[./GUARDSMAN.png][file:./GUARDSMAN.png]] : GUARDSMAN                                                                                                                                           |
+| [[./DANCER.png][file:./DANCER.png]] : DANCER                                                                                                                                                 |
+| [[./LIPSTICK.png][file:./LIPSTICK.png]] : LIPSTICK                                                                                                                                             |
+| [[./NAIL-POLISH.png][file:./NAIL-POLISH.png]] : NAIL POLISH                                                                                                                                       |
+| [[./FACE-MASSAGE.png][file:./FACE-MASSAGE.png]] : FACE MASSAGE                                                                                                                                     |
+| [[./HAIRCUT.png][file:./HAIRCUT.png]] : HAIRCUT                                                                                                                                               |
+| [[./BARBER-POLE.png][file:./BARBER-POLE.png]] : BARBER POLE                                                                                                                                       |
+| [[./SYRINGE.png][file:./SYRINGE.png]] : SYRINGE                                                                                                                                               |
+| [[./PILL.png][file:./PILL.png]] : PILL                                                                                                                                                     |
+| [[./KISS-MARK.png][file:./KISS-MARK.png]] : KISS MARK                                                                                                                                           |
+| [[./LOVE-LETTER.png][file:./LOVE-LETTER.png]] : LOVE LETTER                                                                                                                                       |
+| [[./RING.png][file:./RING.png]] : RING                                                                                                                                                     |
+| [[./GEM-STONE.png][file:./GEM-STONE.png]] : GEM STONE                                                                                                                                           |
+| [[./KISS.png][file:./KISS.png]] : KISS                                                                                                                                                     |
+| [[./BOUQUET.png][file:./BOUQUET.png]] : BOUQUET                                                                                                                                               |
+| [[./COUPLE-WITH-HEART.png][file:./COUPLE-WITH-HEART.png]] : COUPLE WITH HEART                                                                                                                           |
+| [[./WEDDING.png][file:./WEDDING.png]] : WEDDING                                                                                                                                               |
+| [[./BEATING-HEART.png][file:./BEATING-HEART.png]] : BEATING HEART                                                                                                                                   |
+| [[./BROKEN-HEART.png][file:./BROKEN-HEART.png]] : BROKEN HEART                                                                                                                                     |
+| [[./TWO-HEARTS.png][file:./TWO-HEARTS.png]] : TWO HEARTS                                                                                                                                         |
+| [[./SPARKLING-HEART.png][file:./SPARKLING-HEART.png]] : SPARKLING HEART                                                                                                                               |
+| [[./GROWING-HEART.png][file:./GROWING-HEART.png]] : GROWING HEART                                                                                                                                   |
+| [[./HEART-WITH-ARROW.png][file:./HEART-WITH-ARROW.png]] : HEART WITH ARROW                                                                                                                             |
+| [[./BLUE-HEART.png][file:./BLUE-HEART.png]] : BLUE HEART                                                                                                                                         |
+| [[./GREEN-HEART.png][file:./GREEN-HEART.png]] : GREEN HEART                                                                                                                                       |
+| [[./YELLOW-HEART.png][file:./YELLOW-HEART.png]] : YELLOW HEART                                                                                                                                     |
+| [[./PURPLE-HEART.png][file:./PURPLE-HEART.png]] : PURPLE HEART                                                                                                                                     |
+| [[./HEART-WITH-RIBBON.png][file:./HEART-WITH-RIBBON.png]] : HEART WITH RIBBON                                                                                                                           |
+| [[./REVOLVING-HEARTS.png][file:./REVOLVING-HEARTS.png]] : REVOLVING HEARTS                                                                                                                             |
+| [[./HEART-DECORATION.png][file:./HEART-DECORATION.png]] : HEART DECORATION                                                                                                                             |
+| [[./DIAMOND-SHAPE-WITH-A-DOT-INSIDE.png][file:./DIAMOND-SHAPE-WITH-A-DOT-INSIDE.png]] : DIAMOND SHAPE WITH A DOT INSIDE                                                                                               |
+| [[./ELECTRIC-LIGHT-BULB.png][file:./ELECTRIC-LIGHT-BULB.png]] : ELECTRIC LIGHT BULB                                                                                                                       |
+| [[./ANGER-SYMBOL.png][file:./ANGER-SYMBOL.png]] : ANGER SYMBOL                                                                                                                                     |
+| [[./BOMB.png][file:./BOMB.png]] : BOMB                                                                                                                                                     |
+| [[./SLEEPING-SYMBOL.png][file:./SLEEPING-SYMBOL.png]] : SLEEPING SYMBOL                                                                                                                               |
+| [[./COLLISION-SYMBOL.png][file:./COLLISION-SYMBOL.png]] : COLLISION SYMBOL                                                                                                                             |
+| [[./SPLASHING-SWEAT-SYMBOL.png][file:./SPLASHING-SWEAT-SYMBOL.png]] : SPLASHING SWEAT SYMBOL                                                                                                                 |
+| [[./DROPLET.png][file:./DROPLET.png]] : DROPLET                                                                                                                                               |
+| [[./DASH-SYMBOL.png][file:./DASH-SYMBOL.png]] : DASH SYMBOL                                                                                                                                       |
+| [[./PILE-OF-POO.png][file:./PILE-OF-POO.png]] : PILE OF POO                                                                                                                                       |
+| [[./FLEXED-BICEPS.png][file:./FLEXED-BICEPS.png]] : FLEXED BICEPS                                                                                                                                   |
+| [[./DIZZY-SYMBOL.png][file:./DIZZY-SYMBOL.png]] : DIZZY SYMBOL                                                                                                                                     |
+| [[./SPEECH-BALLOON.png][file:./SPEECH-BALLOON.png]] : SPEECH BALLOON                                                                                                                                 |
+| [[./THOUGHT-BALLOON.png][file:./THOUGHT-BALLOON.png]] : THOUGHT BALLOON                                                                                                                               |
+| [[./WHITE-FLOWER.png][file:./WHITE-FLOWER.png]] : WHITE FLOWER                                                                                                                                     |
+| [[./HUNDRED-POINTS-SYMBOL.png][file:./HUNDRED-POINTS-SYMBOL.png]] : HUNDRED POINTS SYMBOL                                                                                                                   |
+| [[./MONEY-BAG.png][file:./MONEY-BAG.png]] : MONEY BAG                                                                                                                                           |
+| [[./CURRENCY-EXCHANGE.png][file:./CURRENCY-EXCHANGE.png]] : CURRENCY EXCHANGE                                                                                                                           |
+| [[./HEAVY-DOLLAR-SIGN.png][file:./HEAVY-DOLLAR-SIGN.png]] : HEAVY DOLLAR SIGN                                                                                                                           |
+| [[./CREDIT-CARD.png][file:./CREDIT-CARD.png]] : CREDIT CARD                                                                                                                                       |
+| [[./BANKNOTE-WITH-YEN-SIGN.png][file:./BANKNOTE-WITH-YEN-SIGN.png]] : BANKNOTE WITH YEN SIGN                                                                                                                 |
+| [[./BANKNOTE-WITH-DOLLAR-SIGN.png][file:./BANKNOTE-WITH-DOLLAR-SIGN.png]] : BANKNOTE WITH DOLLAR SIGN                                                                                                           |
+| [[./BANKNOTE-WITH-EURO-SIGN.png][file:./BANKNOTE-WITH-EURO-SIGN.png]] : BANKNOTE WITH EURO SIGN                                                                                                               |
+| [[./BANKNOTE-WITH-POUND-SIGN.png][file:./BANKNOTE-WITH-POUND-SIGN.png]] : BANKNOTE WITH POUND SIGN                                                                                                             |
+| [[./MONEY-WITH-WINGS.png][file:./MONEY-WITH-WINGS.png]] : MONEY WITH WINGS                                                                                                                             |
+| [[./CHART-WITH-UPWARDS-TREND-AND-YEN-SIGN.png][file:./CHART-WITH-UPWARDS-TREND-AND-YEN-SIGN.png]] : CHART WITH UPWARDS TREND AND YEN SIGN                                                                                   |
+| [[./SEAT.png][file:./SEAT.png]] : SEAT                                                                                                                                                     |
+| [[./PERSONAL-COMPUTER.png][file:./PERSONAL-COMPUTER.png]] : PERSONAL COMPUTER                                                                                                                           |
+| [[./BRIEFCASE.png][file:./BRIEFCASE.png]] : BRIEFCASE                                                                                                                                           |
+| [[./MINIDISC.png][file:./MINIDISC.png]] : MINIDISC                                                                                                                                             |
+| [[./FLOPPY-DISK.png][file:./FLOPPY-DISK.png]] : FLOPPY DISK                                                                                                                                       |
+| [[./OPTICAL-DISC.png][file:./OPTICAL-DISC.png]] : OPTICAL DISC                                                                                                                                     |
+| [[./DVD.png][file:./DVD.png]] : DVD                                                                                                                                                       |
+| [[./FILE-FOLDER.png][file:./FILE-FOLDER.png]] : FILE FOLDER                                                                                                                                       |
+| [[./OPEN-FILE-FOLDER.png][file:./OPEN-FILE-FOLDER.png]] : OPEN FILE FOLDER                                                                                                                             |
+| [[./PAGE-WITH-CURL.png][file:./PAGE-WITH-CURL.png]] : PAGE WITH CURL                                                                                                                                 |
+| [[./PAGE-FACING-UP.png][file:./PAGE-FACING-UP.png]] : PAGE FACING UP                                                                                                                                 |
+| [[./CALENDAR.png][file:./CALENDAR.png]] : CALENDAR                                                                                                                                             |
+| [[./TEAR-OFF-CALENDAR.png][file:./TEAR-OFF-CALENDAR.png]] : TEAR-OFF CALENDAR                                                                                                                           |
+| [[./CARD-INDEX.png][file:./CARD-INDEX.png]] : CARD INDEX                                                                                                                                         |
+| [[./CHART-WITH-UPWARDS-TREND.png][file:./CHART-WITH-UPWARDS-TREND.png]] : CHART WITH UPWARDS TREND                                                                                                             |
+| [[./CHART-WITH-DOWNWARDS-TREND.png][file:./CHART-WITH-DOWNWARDS-TREND.png]] : CHART WITH DOWNWARDS TREND                                                                                                         |
+| [[./BAR-CHART.png][file:./BAR-CHART.png]] : BAR CHART                                                                                                                                           |
+| [[./CLIPBOARD.png][file:./CLIPBOARD.png]] : CLIPBOARD                                                                                                                                           |
+| [[./PUSHPIN.png][file:./PUSHPIN.png]] : PUSHPIN                                                                                                                                               |
+| [[./ROUND-PUSHPIN.png][file:./ROUND-PUSHPIN.png]] : ROUND PUSHPIN                                                                                                                                   |
+| [[./PAPERCLIP.png][file:./PAPERCLIP.png]] : PAPERCLIP                                                                                                                                           |
+| [[./STRAIGHT-RULER.png][file:./STRAIGHT-RULER.png]] : STRAIGHT RULER                                                                                                                                 |
+| [[./TRIANGULAR-RULER.png][file:./TRIANGULAR-RULER.png]] : TRIANGULAR RULER                                                                                                                             |
+| [[./BOOKMARK-TABS.png][file:./BOOKMARK-TABS.png]] : BOOKMARK TABS                                                                                                                                   |
+| [[./LEDGER.png][file:./LEDGER.png]] : LEDGER                                                                                                                                                 |
+| [[./NOTEBOOK.png][file:./NOTEBOOK.png]] : NOTEBOOK                                                                                                                                             |
+| [[./NOTEBOOK-WITH-DECORATIVE-COVER.png][file:./NOTEBOOK-WITH-DECORATIVE-COVER.png]] : NOTEBOOK WITH DECORATIVE COVER                                                                                                 |
+| [[./CLOSED-BOOK.png][file:./CLOSED-BOOK.png]] : CLOSED BOOK                                                                                                                                       |
+| [[./OPEN-BOOK.png][file:./OPEN-BOOK.png]] : OPEN BOOK                                                                                                                                           |
+| [[./GREEN-BOOK.png][file:./GREEN-BOOK.png]] : GREEN BOOK                                                                                                                                         |
+| [[./BLUE-BOOK.png][file:./BLUE-BOOK.png]] : BLUE BOOK                                                                                                                                           |
+| [[./ORANGE-BOOK.png][file:./ORANGE-BOOK.png]] : ORANGE BOOK                                                                                                                                       |
+| [[./BOOKS.png][file:./BOOKS.png]] : BOOKS                                                                                                                                                   |
+| [[./NAME-BADGE.png][file:./NAME-BADGE.png]] : NAME BADGE                                                                                                                                         |
+| [[./SCROLL.png][file:./SCROLL.png]] : SCROLL                                                                                                                                                 |
+| [[./MEMO.png][file:./MEMO.png]] : MEMO                                                                                                                                                     |
+| [[./TELEPHONE-RECEIVER.png][file:./TELEPHONE-RECEIVER.png]] : TELEPHONE RECEIVER                                                                                                                         |
+| [[./PAGER.png][file:./PAGER.png]] : PAGER                                                                                                                                                   |
+| [[./FAX-MACHINE.png][file:./FAX-MACHINE.png]] : FAX MACHINE                                                                                                                                       |
+| [[./SATELLITE-ANTENNA.png][file:./SATELLITE-ANTENNA.png]] : SATELLITE ANTENNA                                                                                                                           |
+| [[./PUBLIC-ADDRESS-LOUDSPEAKER.png][file:./PUBLIC-ADDRESS-LOUDSPEAKER.png]] : PUBLIC ADDRESS LOUDSPEAKER                                                                                                         |
+| [[./CHEERING-MEGAPHONE.png][file:./CHEERING-MEGAPHONE.png]] : CHEERING MEGAPHONE                                                                                                                         |
+| [[./OUTBOX-TRAY.png][file:./OUTBOX-TRAY.png]] : OUTBOX TRAY                                                                                                                                       |
+| [[./INBOX-TRAY.png][file:./INBOX-TRAY.png]] : INBOX TRAY                                                                                                                                         |
+| [[./PACKAGE.png][file:./PACKAGE.png]] : PACKAGE                                                                                                                                               |
+| [[./E-MAIL-SYMBOL.png][file:./E-MAIL-SYMBOL.png]] : E-MAIL SYMBOL                                                                                                                                   |
+| [[./INCOMING-ENVELOPE.png][file:./INCOMING-ENVELOPE.png]] : INCOMING ENVELOPE                                                                                                                           |
+| [[./ENVELOPE-WITH-DOWNWARDS-ARROW-ABOVE.png][file:./ENVELOPE-WITH-DOWNWARDS-ARROW-ABOVE.png]] : ENVELOPE WITH DOWNWARDS ARROW ABOVE                                                                                       |
+| [[./CLOSED-MAILBOX-WITH-LOWERED-FLAG.png][file:./CLOSED-MAILBOX-WITH-LOWERED-FLAG.png]] : CLOSED MAILBOX WITH LOWERED FLAG                                                                                             |
+| [[./CLOSED-MAILBOX-WITH-RAISED-FLAG.png][file:./CLOSED-MAILBOX-WITH-RAISED-FLAG.png]] : CLOSED MAILBOX WITH RAISED FLAG                                                                                               |
+| [[./OPEN-MAILBOX-WITH-RAISED-FLAG.png][file:./OPEN-MAILBOX-WITH-RAISED-FLAG.png]] : OPEN MAILBOX WITH RAISED FLAG                                                                                                   |
+| [[./OPEN-MAILBOX-WITH-LOWERED-FLAG.png][file:./OPEN-MAILBOX-WITH-LOWERED-FLAG.png]] : OPEN MAILBOX WITH LOWERED FLAG                                                                                                 |
+| [[./POSTBOX.png][file:./POSTBOX.png]] : POSTBOX                                                                                                                                               |
+| [[./POSTAL-HORN.png][file:./POSTAL-HORN.png]] : POSTAL HORN                                                                                                                                       |
+| [[./NEWSPAPER.png][file:./NEWSPAPER.png]] : NEWSPAPER                                                                                                                                           |
+| [[./MOBILE-PHONE.png][file:./MOBILE-PHONE.png]] : MOBILE PHONE                                                                                                                                     |
+| [[./MOBILE-PHONE-WITH-RIGHTWARDS-ARROW-AT-LEFT.png][file:./MOBILE-PHONE-WITH-RIGHTWARDS-ARROW-AT-LEFT.png]] : MOBILE PHONE WITH RIGHTWARDS ARROW AT LEFT                                                                         |
+| [[./VIBRATION-MODE.png][file:./VIBRATION-MODE.png]] : VIBRATION MODE                                                                                                                                 |
+| [[./MOBILE-PHONE-OFF.png][file:./MOBILE-PHONE-OFF.png]] : MOBILE PHONE OFF                                                                                                                             |
+| [[./NO-MOBILE-PHONES.png][file:./NO-MOBILE-PHONES.png]] : NO MOBILE PHONES                                                                                                                             |
+| [[./ANTENNA-WITH-BARS.png][file:./ANTENNA-WITH-BARS.png]] : ANTENNA WITH BARS                                                                                                                           |
+| [[./CAMERA.png][file:./CAMERA.png]] : CAMERA                                                                                                                                                 |
+| [[./VIDEO-CAMERA.png][file:./VIDEO-CAMERA.png]] : VIDEO CAMERA                                                                                                                                     |
+| [[./TELEVISION.png][file:./TELEVISION.png]] : TELEVISION                                                                                                                                         |
+| [[./RADIO.png][file:./RADIO.png]] : RADIO                                                                                                                                                   |
+| [[./VIDEOCASSETTE.png][file:./VIDEOCASSETTE.png]] : VIDEOCASSETTE                                                                                                                                   |
+| [[./TWISTED-RIGHTWARDS-ARROWS.png][file:./TWISTED-RIGHTWARDS-ARROWS.png]] : TWISTED RIGHTWARDS ARROWS                                                                                                           |
+| [[./CLOCKWISE-RIGHTWARDS-AND-LEFTWARDS-OPEN-CIRCLE-ARROWS.png][file:./CLOCKWISE-RIGHTWARDS-AND-LEFTWARDS-OPEN-CIRCLE-ARROWS.png]] : CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS                                                   |
+| [[./CLOCKWISE-RIGHTWARDS-AND-LEFTWARDS-OPEN-CIRCLE-ARROWS-WITH-CIRCLED-ONE-OVERLAY.png][file:./CLOCKWISE-RIGHTWARDS-AND-LEFTWARDS-OPEN-CIRCLE-ARROWS-WITH-CIRCLED-ONE-OVERLAY.png]] : CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY |
+| [[./CLOCKWISE-DOWNWARDS-AND-UPWARDS-OPEN-CIRCLE-ARROWS.png][file:./CLOCKWISE-DOWNWARDS-AND-UPWARDS-OPEN-CIRCLE-ARROWS.png]] : CLOCKWISE DOWNWARDS AND UPWARDS OPEN CIRCLE ARROWS                                                         |
+| [[./ANTICLOCKWISE-DOWNWARDS-AND-UPWARDS-OPEN-CIRCLE-ARROWS.png][file:./ANTICLOCKWISE-DOWNWARDS-AND-UPWARDS-OPEN-CIRCLE-ARROWS.png]] : ANTICLOCKWISE DOWNWARDS AND UPWARDS OPEN CIRCLE ARROWS                                                 |
+| [[./LOW-BRIGHTNESS-SYMBOL.png][file:./LOW-BRIGHTNESS-SYMBOL.png]] : LOW BRIGHTNESS SYMBOL                                                                                                                   |
+| [[./HIGH-BRIGHTNESS-SYMBOL.png][file:./HIGH-BRIGHTNESS-SYMBOL.png]] : HIGH BRIGHTNESS SYMBOL                                                                                                                 |
+| [[./SPEAKER-WITH-CANCELLATION-STROKE.png][file:./SPEAKER-WITH-CANCELLATION-STROKE.png]] : SPEAKER WITH CANCELLATION STROKE                                                                                             |
+| [[./SPEAKER.png][file:./SPEAKER.png]] : SPEAKER                                                                                                                                               |
+| [[./SPEAKER-WITH-ONE-SOUND-WAVE.png][file:./SPEAKER-WITH-ONE-SOUND-WAVE.png]] : SPEAKER WITH ONE SOUND WAVE                                                                                                       |
+| [[./SPEAKER-WITH-THREE-SOUND-WAVES.png][file:./SPEAKER-WITH-THREE-SOUND-WAVES.png]] : SPEAKER WITH THREE SOUND WAVES                                                                                                 |
+| [[./BATTERY.png][file:./BATTERY.png]] : BATTERY                                                                                                                                               |
+| [[./ELECTRIC-PLUG.png][file:./ELECTRIC-PLUG.png]] : ELECTRIC PLUG                                                                                                                                   |
+| [[./LEFT-POINTING-MAGNIFYING-GLASS.png][file:./LEFT-POINTING-MAGNIFYING-GLASS.png]] : LEFT-POINTING MAGNIFYING GLASS                                                                                                 |
+| [[./RIGHT-POINTING-MAGNIFYING-GLASS.png][file:./RIGHT-POINTING-MAGNIFYING-GLASS.png]] : RIGHT-POINTING MAGNIFYING GLASS                                                                                               |
+| [[./LOCK-WITH-INK-PEN.png][file:./LOCK-WITH-INK-PEN.png]] : LOCK WITH INK PEN                                                                                                                           |
+| [[./CLOSED-LOCK-WITH-KEY.png][file:./CLOSED-LOCK-WITH-KEY.png]] : CLOSED LOCK WITH KEY                                                                                                                     |
+| [[./KEY.png][file:./KEY.png]] : KEY                                                                                                                                                       |
+| [[./LOCK.png][file:./LOCK.png]] : LOCK                                                                                                                                                     |
+| [[./OPEN-LOCK.png][file:./OPEN-LOCK.png]] : OPEN LOCK                                                                                                                                           |
+| [[./BELL.png][file:./BELL.png]] : BELL                                                                                                                                                     |
+| [[./BELL-WITH-CANCELLATION-STROKE.png][file:./BELL-WITH-CANCELLATION-STROKE.png]] : BELL WITH CANCELLATION STROKE                                                                                                   |
+| [[./BOOKMARK.png][file:./BOOKMARK.png]] : BOOKMARK                                                                                                                                             |
+| [[./LINK-SYMBOL.png][file:./LINK-SYMBOL.png]] : LINK SYMBOL                                                                                                                                       |
+| [[./RADIO-BUTTON.png][file:./RADIO-BUTTON.png]] : RADIO BUTTON                                                                                                                                     |
+| [[./BACK-WITH-LEFTWARDS-ARROW-ABOVE.png][file:./BACK-WITH-LEFTWARDS-ARROW-ABOVE.png]] : BACK WITH LEFTWARDS ARROW ABOVE                                                                                               |
+| [[./END-WITH-LEFTWARDS-ARROW-ABOVE.png][file:./END-WITH-LEFTWARDS-ARROW-ABOVE.png]] : END WITH LEFTWARDS ARROW ABOVE                                                                                                 |
+| [[./ON-WITH-EXCLAMATION-MARK-WITH-LEFT-RIGHT-ARROW-ABOVE.png][file:./ON-WITH-EXCLAMATION-MARK-WITH-LEFT-RIGHT-ARROW-ABOVE.png]] : ON WITH EXCLAMATION MARK WITH LEFT RIGHT ARROW ABOVE                                                     |
+| [[./SOON-WITH-RIGHTWARDS-ARROW-ABOVE.png][file:./SOON-WITH-RIGHTWARDS-ARROW-ABOVE.png]] : SOON WITH RIGHTWARDS ARROW ABOVE                                                                                             |
+| [[./TOP-WITH-UPWARDS-ARROW-ABOVE.png][file:./TOP-WITH-UPWARDS-ARROW-ABOVE.png]] : TOP WITH UPWARDS ARROW ABOVE                                                                                                     |
+| [[./NO-ONE-UNDER-EIGHTEEN-SYMBOL.png][file:./NO-ONE-UNDER-EIGHTEEN-SYMBOL.png]] : NO ONE UNDER EIGHTEEN SYMBOL                                                                                                     |
+| [[./KEYCAP-TEN.png][file:./KEYCAP-TEN.png]] : KEYCAP TEN                                                                                                                                         |
+| [[./INPUT-SYMBOL-FOR-LATIN-CAPITAL-LETTERS.png][file:./INPUT-SYMBOL-FOR-LATIN-CAPITAL-LETTERS.png]] : INPUT SYMBOL FOR LATIN CAPITAL LETTERS                                                                                 |
+| [[./INPUT-SYMBOL-FOR-LATIN-SMALL-LETTERS.png][file:./INPUT-SYMBOL-FOR-LATIN-SMALL-LETTERS.png]] : INPUT SYMBOL FOR LATIN SMALL LETTERS                                                                                     |
+| [[./INPUT-SYMBOL-FOR-NUMBERS.png][file:./INPUT-SYMBOL-FOR-NUMBERS.png]] : INPUT SYMBOL FOR NUMBERS                                                                                                             |
+| [[./INPUT-SYMBOL-FOR-SYMBOLS.png][file:./INPUT-SYMBOL-FOR-SYMBOLS.png]] : INPUT SYMBOL FOR SYMBOLS                                                                                                             |
+| [[./INPUT-SYMBOL-FOR-LATIN-LETTERS.png][file:./INPUT-SYMBOL-FOR-LATIN-LETTERS.png]] : INPUT SYMBOL FOR LATIN LETTERS                                                                                                 |
+| [[./FIRE.png][file:./FIRE.png]] : FIRE                                                                                                                                                     |
+| [[./ELECTRIC-TORCH.png][file:./ELECTRIC-TORCH.png]] : ELECTRIC TORCH                                                                                                                                 |
+| [[./WRENCH.png][file:./WRENCH.png]] : WRENCH                                                                                                                                                 |
+| [[./HAMMER.png][file:./HAMMER.png]] : HAMMER                                                                                                                                                 |
+| [[./NUT-AND-BOLT.png][file:./NUT-AND-BOLT.png]] : NUT AND BOLT                                                                                                                                     |
+| [[./HOCHO.png][file:./HOCHO.png]] : HOCHO                                                                                                                                                   |
+| [[./PISTOL.png][file:./PISTOL.png]] : PISTOL                                                                                                                                                 |
+| [[./MICROSCOPE.png][file:./MICROSCOPE.png]] : MICROSCOPE                                                                                                                                         |
+| [[./TELESCOPE.png][file:./TELESCOPE.png]] : TELESCOPE                                                                                                                                           |
+| [[./CRYSTAL-BALL.png][file:./CRYSTAL-BALL.png]] : CRYSTAL BALL                                                                                                                                     |
+| [[./SIX-POINTED-STAR-WITH-MIDDLE-DOT.png][file:./SIX-POINTED-STAR-WITH-MIDDLE-DOT.png]] : SIX POINTED STAR WITH MIDDLE DOT                                                                                             |
+| [[./JAPANESE-SYMBOL-FOR-BEGINNER.png][file:./JAPANESE-SYMBOL-FOR-BEGINNER.png]] : JAPANESE SYMBOL FOR BEGINNER                                                                                                     |
+| [[./TRIDENT-EMBLEM.png][file:./TRIDENT-EMBLEM.png]] : TRIDENT EMBLEM                                                                                                                                 |
+| [[./BLACK-SQUARE-BUTTON.png][file:./BLACK-SQUARE-BUTTON.png]] : BLACK SQUARE BUTTON                                                                                                                       |
+| [[./WHITE-SQUARE-BUTTON.png][file:./WHITE-SQUARE-BUTTON.png]] : WHITE SQUARE BUTTON                                                                                                                       |
+| [[./LARGE-RED-CIRCLE.png][file:./LARGE-RED-CIRCLE.png]] : LARGE RED CIRCLE                                                                                                                             |
+| [[./LARGE-BLUE-CIRCLE.png][file:./LARGE-BLUE-CIRCLE.png]] : LARGE BLUE CIRCLE                                                                                                                           |
+| [[./LARGE-ORANGE-DIAMOND.png][file:./LARGE-ORANGE-DIAMOND.png]] : LARGE ORANGE DIAMOND                                                                                                                     |
+| [[./LARGE-BLUE-DIAMOND.png][file:./LARGE-BLUE-DIAMOND.png]] : LARGE BLUE DIAMOND                                                                                                                         |
+| [[./SMALL-ORANGE-DIAMOND.png][file:./SMALL-ORANGE-DIAMOND.png]] : SMALL ORANGE DIAMOND                                                                                                                     |
+| [[./SMALL-BLUE-DIAMOND.png][file:./SMALL-BLUE-DIAMOND.png]] : SMALL BLUE DIAMOND                                                                                                                         |
+| [[./UP-POINTING-RED-TRIANGLE.png][file:./UP-POINTING-RED-TRIANGLE.png]] : UP-POINTING RED TRIANGLE                                                                                                             |
+| [[./DOWN-POINTING-RED-TRIANGLE.png][file:./DOWN-POINTING-RED-TRIANGLE.png]] : DOWN-POINTING RED TRIANGLE                                                                                                         |
+| [[./UP-POINTING-SMALL-RED-TRIANGLE.png][file:./UP-POINTING-SMALL-RED-TRIANGLE.png]] : UP-POINTING SMALL RED TRIANGLE                                                                                                 |
+| [[./DOWN-POINTING-SMALL-RED-TRIANGLE.png][file:./DOWN-POINTING-SMALL-RED-TRIANGLE.png]] : DOWN-POINTING SMALL RED TRIANGLE                                                                                             |
+| [[./CLOCK-FACE-ONE-OCLOCK.png][file:./CLOCK-FACE-ONE-OCLOCK.png]] : CLOCK FACE ONE OCLOCK                                                                                                                   |
+| [[./CLOCK-FACE-TWO-OCLOCK.png][file:./CLOCK-FACE-TWO-OCLOCK.png]] : CLOCK FACE TWO OCLOCK                                                                                                                   |
+| [[./CLOCK-FACE-THREE-OCLOCK.png][file:./CLOCK-FACE-THREE-OCLOCK.png]] : CLOCK FACE THREE OCLOCK                                                                                                               |
+| [[./CLOCK-FACE-FOUR-OCLOCK.png][file:./CLOCK-FACE-FOUR-OCLOCK.png]] : CLOCK FACE FOUR OCLOCK                                                                                                                 |
+| [[./CLOCK-FACE-FIVE-OCLOCK.png][file:./CLOCK-FACE-FIVE-OCLOCK.png]] : CLOCK FACE FIVE OCLOCK                                                                                                                 |
+| [[./CLOCK-FACE-SIX-OCLOCK.png][file:./CLOCK-FACE-SIX-OCLOCK.png]] : CLOCK FACE SIX OCLOCK                                                                                                                   |
+| [[./CLOCK-FACE-SEVEN-OCLOCK.png][file:./CLOCK-FACE-SEVEN-OCLOCK.png]] : CLOCK FACE SEVEN OCLOCK                                                                                                               |
+| [[./CLOCK-FACE-EIGHT-OCLOCK.png][file:./CLOCK-FACE-EIGHT-OCLOCK.png]] : CLOCK FACE EIGHT OCLOCK                                                                                                               |
+| [[./CLOCK-FACE-NINE-OCLOCK.png][file:./CLOCK-FACE-NINE-OCLOCK.png]] : CLOCK FACE NINE OCLOCK                                                                                                                 |
+| [[./CLOCK-FACE-TEN-OCLOCK.png][file:./CLOCK-FACE-TEN-OCLOCK.png]] : CLOCK FACE TEN OCLOCK                                                                                                                   |
+| [[./CLOCK-FACE-ELEVEN-OCLOCK.png][file:./CLOCK-FACE-ELEVEN-OCLOCK.png]] : CLOCK FACE ELEVEN OCLOCK                                                                                                             |
+| [[./CLOCK-FACE-TWELVE-OCLOCK.png][file:./CLOCK-FACE-TWELVE-OCLOCK.png]] : CLOCK FACE TWELVE OCLOCK                                                                                                             |
+| [[./CLOCK-FACE-ONE-THIRTY.png][file:./CLOCK-FACE-ONE-THIRTY.png]] : CLOCK FACE ONE-THIRTY                                                                                                                   |
+| [[./CLOCK-FACE-TWO-THIRTY.png][file:./CLOCK-FACE-TWO-THIRTY.png]] : CLOCK FACE TWO-THIRTY                                                                                                                   |
+| [[./CLOCK-FACE-THREE-THIRTY.png][file:./CLOCK-FACE-THREE-THIRTY.png]] : CLOCK FACE THREE-THIRTY                                                                                                               |
+| [[./CLOCK-FACE-FOUR-THIRTY.png][file:./CLOCK-FACE-FOUR-THIRTY.png]] : CLOCK FACE FOUR-THIRTY                                                                                                                 |
+| [[./CLOCK-FACE-FIVE-THIRTY.png][file:./CLOCK-FACE-FIVE-THIRTY.png]] : CLOCK FACE FIVE-THIRTY                                                                                                                 |
+| [[./CLOCK-FACE-SIX-THIRTY.png][file:./CLOCK-FACE-SIX-THIRTY.png]] : CLOCK FACE SIX-THIRTY                                                                                                                   |
+| [[./CLOCK-FACE-SEVEN-THIRTY.png][file:./CLOCK-FACE-SEVEN-THIRTY.png]] : CLOCK FACE SEVEN-THIRTY                                                                                                               |
+| [[./CLOCK-FACE-EIGHT-THIRTY.png][file:./CLOCK-FACE-EIGHT-THIRTY.png]] : CLOCK FACE EIGHT-THIRTY                                                                                                               |
+| [[./CLOCK-FACE-NINE-THIRTY.png][file:./CLOCK-FACE-NINE-THIRTY.png]] : CLOCK FACE NINE-THIRTY                                                                                                                 |
+| [[./CLOCK-FACE-TEN-THIRTY.png][file:./CLOCK-FACE-TEN-THIRTY.png]] : CLOCK FACE TEN-THIRTY                                                                                                                   |
+| [[./CLOCK-FACE-ELEVEN-THIRTY.png][file:./CLOCK-FACE-ELEVEN-THIRTY.png]] : CLOCK FACE ELEVEN-THIRTY                                                                                                             |
+| [[./CLOCK-FACE-TWELVE-THIRTY.png][file:./CLOCK-FACE-TWELVE-THIRTY.png]] : CLOCK FACE TWELVE-THIRTY                                                                                                             |
+| [[./MOUNT-FUJI.png][file:./MOUNT-FUJI.png]] : MOUNT FUJI                                                                                                                                         |
+| [[./TOKYO-TOWER.png][file:./TOKYO-TOWER.png]] : TOKYO TOWER                                                                                                                                       |
+| [[./STATUE-OF-LIBERTY.png][file:./STATUE-OF-LIBERTY.png]] : STATUE OF LIBERTY                                                                                                                           |
+| [[./SILHOUETTE-OF-JAPAN.png][file:./SILHOUETTE-OF-JAPAN.png]] : SILHOUETTE OF JAPAN                                                                                                                       |
+| [[./MOYAI.png][file:./MOYAI.png]] : MOYAI                                                                                                                                                   |
+| [[./GRINNING-FACE.png][file:./GRINNING-FACE.png]] : GRINNING FACE                                                                                                                                   |
+| [[./GRINNING-FACE-WITH-SMILING-EYES.png][file:./GRINNING-FACE-WITH-SMILING-EYES.png]] : GRINNING FACE WITH SMILING EYES                                                                                               |
+| [[./FACE-WITH-TEARS-OF-JOY.png][file:./FACE-WITH-TEARS-OF-JOY.png]] : FACE WITH TEARS OF JOY                                                                                                                 |
+| [[./SMILING-FACE-WITH-OPEN-MOUTH.png][file:./SMILING-FACE-WITH-OPEN-MOUTH.png]] : SMILING FACE WITH OPEN MOUTH                                                                                                     |
+| [[./SMILING-FACE-WITH-OPEN-MOUTH-AND-SMILING-EYES.png][file:./SMILING-FACE-WITH-OPEN-MOUTH-AND-SMILING-EYES.png]] : SMILING FACE WITH OPEN MOUTH AND SMILING EYES                                                                   |
+| [[./SMILING-FACE-WITH-OPEN-MOUTH-AND-COLD-SWEAT.png][file:./SMILING-FACE-WITH-OPEN-MOUTH-AND-COLD-SWEAT.png]] : SMILING FACE WITH OPEN MOUTH AND COLD SWEAT                                                                       |
+| [[./SMILING-FACE-WITH-OPEN-MOUTH-AND-TIGHTLY-CLOSED-EYES.png][file:./SMILING-FACE-WITH-OPEN-MOUTH-AND-TIGHTLY-CLOSED-EYES.png]] : SMILING FACE WITH OPEN MOUTH AND TIGHTLY-CLOSED EYES                                                     |
+| [[./SMILING-FACE-WITH-HALO.png][file:./SMILING-FACE-WITH-HALO.png]] : SMILING FACE WITH HALO                                                                                                                 |
+| [[./SMILING-FACE-WITH-HORNS.png][file:./SMILING-FACE-WITH-HORNS.png]] : SMILING FACE WITH HORNS                                                                                                               |
+| [[./WINKING-FACE.png][file:./WINKING-FACE.png]] : WINKING FACE                                                                                                                                     |
+| [[./SMILING-FACE-WITH-SMILING-EYES.png][file:./SMILING-FACE-WITH-SMILING-EYES.png]] : SMILING FACE WITH SMILING EYES                                                                                                 |
+| [[./FACE-SAVOURING-DELICIOUS-FOOD.png][file:./FACE-SAVOURING-DELICIOUS-FOOD.png]] : FACE SAVOURING DELICIOUS FOOD                                                                                                   |
+| [[./RELIEVED-FACE.png][file:./RELIEVED-FACE.png]] : RELIEVED FACE                                                                                                                                   |
+| [[./SMILING-FACE-WITH-HEART-SHAPED-EYES.png][file:./SMILING-FACE-WITH-HEART-SHAPED-EYES.png]] : SMILING FACE WITH HEART-SHAPED EYES                                                                                       |
+| [[./SMILING-FACE-WITH-SUNGLASSES.png][file:./SMILING-FACE-WITH-SUNGLASSES.png]] : SMILING FACE WITH SUNGLASSES                                                                                                     |
+| [[./SMIRKING-FACE.png][file:./SMIRKING-FACE.png]] : SMIRKING FACE                                                                                                                                   |
+| [[./NEUTRAL-FACE.png][file:./NEUTRAL-FACE.png]] : NEUTRAL FACE                                                                                                                                     |
+| [[./EXPRESSIONLESS-FACE.png][file:./EXPRESSIONLESS-FACE.png]] : EXPRESSIONLESS FACE                                                                                                                       |
+| [[./UNAMUSED-FACE.png][file:./UNAMUSED-FACE.png]] : UNAMUSED FACE                                                                                                                                   |
+| [[./FACE-WITH-COLD-SWEAT.png][file:./FACE-WITH-COLD-SWEAT.png]] : FACE WITH COLD SWEAT                                                                                                                     |
+| [[./PENSIVE-FACE.png][file:./PENSIVE-FACE.png]] : PENSIVE FACE                                                                                                                                     |
+| [[./CONFUSED-FACE.png][file:./CONFUSED-FACE.png]] : CONFUSED FACE                                                                                                                                   |
+| [[./CONFOUNDED-FACE.png][file:./CONFOUNDED-FACE.png]] : CONFOUNDED FACE                                                                                                                               |
+| [[./KISSING-FACE.png][file:./KISSING-FACE.png]] : KISSING FACE                                                                                                                                     |
+| [[./FACE-THROWING-A-KISS.png][file:./FACE-THROWING-A-KISS.png]] : FACE THROWING A KISS                                                                                                                     |
+| [[./KISSING-FACE-WITH-SMILING-EYES.png][file:./KISSING-FACE-WITH-SMILING-EYES.png]] : KISSING FACE WITH SMILING EYES                                                                                                 |
+| [[./KISSING-FACE-WITH-CLOSED-EYES.png][file:./KISSING-FACE-WITH-CLOSED-EYES.png]] : KISSING FACE WITH CLOSED EYES                                                                                                   |
+| [[./FACE-WITH-STUCK-OUT-TONGUE.png][file:./FACE-WITH-STUCK-OUT-TONGUE.png]] : FACE WITH STUCK-OUT TONGUE                                                                                                         |
+| [[./FACE-WITH-STUCK-OUT-TONGUE-AND-WINKING-EYE.png][file:./FACE-WITH-STUCK-OUT-TONGUE-AND-WINKING-EYE.png]] : FACE WITH STUCK-OUT TONGUE AND WINKING EYE                                                                         |
+| [[./FACE-WITH-STUCK-OUT-TONGUE-AND-TIGHTLY-CLOSED-EYES.png][file:./FACE-WITH-STUCK-OUT-TONGUE-AND-TIGHTLY-CLOSED-EYES.png]] : FACE WITH STUCK-OUT TONGUE AND TIGHTLY-CLOSED EYES                                                         |
+| [[./DISAPPOINTED-FACE.png][file:./DISAPPOINTED-FACE.png]] : DISAPPOINTED FACE                                                                                                                           |
+| [[./WORRIED-FACE.png][file:./WORRIED-FACE.png]] : WORRIED FACE                                                                                                                                     |
+| [[./ANGRY-FACE.png][file:./ANGRY-FACE.png]] : ANGRY FACE                                                                                                                                         |
+| [[./POUTING-FACE.png][file:./POUTING-FACE.png]] : POUTING FACE                                                                                                                                     |
+| [[./CRYING-FACE.png][file:./CRYING-FACE.png]] : CRYING FACE                                                                                                                                       |
+| [[./PERSEVERING-FACE.png][file:./PERSEVERING-FACE.png]] : PERSEVERING FACE                                                                                                                             |
+| [[./FACE-WITH-LOOK-OF-TRIUMPH.png][file:./FACE-WITH-LOOK-OF-TRIUMPH.png]] : FACE WITH LOOK OF TRIUMPH                                                                                                           |
+| [[./DISAPPOINTED-BUT-RELIEVED-FACE.png][file:./DISAPPOINTED-BUT-RELIEVED-FACE.png]] : DISAPPOINTED BUT RELIEVED FACE                                                                                                 |
+| [[./FROWNING-FACE-WITH-OPEN-MOUTH.png][file:./FROWNING-FACE-WITH-OPEN-MOUTH.png]] : FROWNING FACE WITH OPEN MOUTH                                                                                                   |
+| [[./ANGUISHED-FACE.png][file:./ANGUISHED-FACE.png]] : ANGUISHED FACE                                                                                                                                 |
+| [[./FEARFUL-FACE.png][file:./FEARFUL-FACE.png]] : FEARFUL FACE                                                                                                                                     |
+| [[./WEARY-FACE.png][file:./WEARY-FACE.png]] : WEARY FACE                                                                                                                                         |
+| [[./SLEEPY-FACE.png][file:./SLEEPY-FACE.png]] : SLEEPY FACE                                                                                                                                       |
+| [[./TIRED-FACE.png][file:./TIRED-FACE.png]] : TIRED FACE                                                                                                                                         |
+| [[./GRIMACING-FACE.png][file:./GRIMACING-FACE.png]] : GRIMACING FACE                                                                                                                                 |
+| [[./LOUDLY-CRYING-FACE.png][file:./LOUDLY-CRYING-FACE.png]] : LOUDLY CRYING FACE                                                                                                                         |
+| [[./FACE-WITH-OPEN-MOUTH.png][file:./FACE-WITH-OPEN-MOUTH.png]] : FACE WITH OPEN MOUTH                                                                                                                     |
+| [[./HUSHED-FACE.png][file:./HUSHED-FACE.png]] : HUSHED FACE                                                                                                                                       |
+| [[./FACE-WITH-OPEN-MOUTH-AND-COLD-SWEAT.png][file:./FACE-WITH-OPEN-MOUTH-AND-COLD-SWEAT.png]] : FACE WITH OPEN MOUTH AND COLD SWEAT                                                                                       |
+| [[./FACE-SCREAMING-IN-FEAR.png][file:./FACE-SCREAMING-IN-FEAR.png]] : FACE SCREAMING IN FEAR                                                                                                                 |
+| [[./ASTONISHED-FACE.png][file:./ASTONISHED-FACE.png]] : ASTONISHED FACE                                                                                                                               |
+| [[./FLUSHED-FACE.png][file:./FLUSHED-FACE.png]] : FLUSHED FACE                                                                                                                                     |
+| [[./SLEEPING-FACE.png][file:./SLEEPING-FACE.png]] : SLEEPING FACE                                                                                                                                   |
+| [[./DIZZY-FACE.png][file:./DIZZY-FACE.png]] : DIZZY FACE                                                                                                                                         |
+| [[./FACE-WITHOUT-MOUTH.png][file:./FACE-WITHOUT-MOUTH.png]] : FACE WITHOUT MOUTH                                                                                                                         |
+| [[./FACE-WITH-MEDICAL-MASK.png][file:./FACE-WITH-MEDICAL-MASK.png]] : FACE WITH MEDICAL MASK                                                                                                                 |
+| [[./GRINNING-CAT-FACE-WITH-SMILING-EYES.png][file:./GRINNING-CAT-FACE-WITH-SMILING-EYES.png]] : GRINNING CAT FACE WITH SMILING EYES                                                                                       |
+| [[./CAT-FACE-WITH-TEARS-OF-JOY.png][file:./CAT-FACE-WITH-TEARS-OF-JOY.png]] : CAT FACE WITH TEARS OF JOY                                                                                                         |
+| [[./SMILING-CAT-FACE-WITH-OPEN-MOUTH.png][file:./SMILING-CAT-FACE-WITH-OPEN-MOUTH.png]] : SMILING CAT FACE WITH OPEN MOUTH                                                                                             |
+| [[./SMILING-CAT-FACE-WITH-HEART-SHAPED-EYES.png][file:./SMILING-CAT-FACE-WITH-HEART-SHAPED-EYES.png]] : SMILING CAT FACE WITH HEART-SHAPED EYES                                                                               |
+| [[./CAT-FACE-WITH-WRY-SMILE.png][file:./CAT-FACE-WITH-WRY-SMILE.png]] : CAT FACE WITH WRY SMILE                                                                                                               |
+| [[./KISSING-CAT-FACE-WITH-CLOSED-EYES.png][file:./KISSING-CAT-FACE-WITH-CLOSED-EYES.png]] : KISSING CAT FACE WITH CLOSED EYES                                                                                           |
+| [[./POUTING-CAT-FACE.png][file:./POUTING-CAT-FACE.png]] : POUTING CAT FACE                                                                                                                             |
+| [[./CRYING-CAT-FACE.png][file:./CRYING-CAT-FACE.png]] : CRYING CAT FACE                                                                                                                               |
+| [[./WEARY-CAT-FACE.png][file:./WEARY-CAT-FACE.png]] : WEARY CAT FACE                                                                                                                                 |
+| [[./FACE-WITH-NO-GOOD-GESTURE.png][file:./FACE-WITH-NO-GOOD-GESTURE.png]] : FACE WITH NO GOOD GESTURE                                                                                                           |
+| [[./FACE-WITH-OK-GESTURE.png][file:./FACE-WITH-OK-GESTURE.png]] : FACE WITH OK GESTURE                                                                                                                     |
+| [[./PERSON-BOWING-DEEPLY.png][file:./PERSON-BOWING-DEEPLY.png]] : PERSON BOWING DEEPLY                                                                                                                     |
+| [[./SEE-NO-EVIL-MONKEY.png][file:./SEE-NO-EVIL-MONKEY.png]] : SEE-NO-EVIL MONKEY                                                                                                                         |
+| [[./HEAR-NO-EVIL-MONKEY.png][file:./HEAR-NO-EVIL-MONKEY.png]] : HEAR-NO-EVIL MONKEY                                                                                                                       |
+| [[./SPEAK-NO-EVIL-MONKEY.png][file:./SPEAK-NO-EVIL-MONKEY.png]] : SPEAK-NO-EVIL MONKEY                                                                                                                     |
+| [[./HAPPY-PERSON-RAISING-ONE-HAND.png][file:./HAPPY-PERSON-RAISING-ONE-HAND.png]] : HAPPY PERSON RAISING ONE HAND                                                                                                   |
+| [[./PERSON-RAISING-BOTH-HANDS-IN-CELEBRATION.png][file:./PERSON-RAISING-BOTH-HANDS-IN-CELEBRATION.png]] : PERSON RAISING BOTH HANDS IN CELEBRATION                                                                             |
+| [[./PERSON-FROWNING.png][file:./PERSON-FROWNING.png]] : PERSON FROWNING                                                                                                                               |
+| [[./PERSON-WITH-POUTING-FACE.png][file:./PERSON-WITH-POUTING-FACE.png]] : PERSON WITH POUTING FACE                                                                                                             |
+| [[./PERSON-WITH-FOLDED-HANDS.png][file:./PERSON-WITH-FOLDED-HANDS.png]] : PERSON WITH FOLDED HANDS                                                                                                             |
+| [[./ROCKET.png][file:./ROCKET.png]] : ROCKET                                                                                                                                                 |
+| [[./HELICOPTER.png][file:./HELICOPTER.png]] : HELICOPTER                                                                                                                                         |
+| [[./STEAM-LOCOMOTIVE.png][file:./STEAM-LOCOMOTIVE.png]] : STEAM LOCOMOTIVE                                                                                                                             |
+| [[./RAILWAY-CAR.png][file:./RAILWAY-CAR.png]] : RAILWAY CAR                                                                                                                                       |
+| [[./HIGH-SPEED-TRAIN.png][file:./HIGH-SPEED-TRAIN.png]] : HIGH-SPEED TRAIN                                                                                                                             |
+| [[./HIGH-SPEED-TRAIN-WITH-BULLET-NOSE.png][file:./HIGH-SPEED-TRAIN-WITH-BULLET-NOSE.png]] : HIGH-SPEED TRAIN WITH BULLET NOSE                                                                                           |
+| [[./TRAIN.png][file:./TRAIN.png]] : TRAIN                                                                                                                                                   |
+| [[./METRO.png][file:./METRO.png]] : METRO                                                                                                                                                   |
+| [[./LIGHT-RAIL.png][file:./LIGHT-RAIL.png]] : LIGHT RAIL                                                                                                                                         |
+| [[./STATION.png][file:./STATION.png]] : STATION                                                                                                                                               |
+| [[./TRAM.png][file:./TRAM.png]] : TRAM                                                                                                                                                     |
+| [[./TRAM-CAR.png][file:./TRAM-CAR.png]] : TRAM CAR                                                                                                                                             |
+| [[./BUS.png][file:./BUS.png]] : BUS                                                                                                                                                       |
+| [[./ONCOMING-BUS.png][file:./ONCOMING-BUS.png]] : ONCOMING BUS                                                                                                                                     |
+| [[./TROLLEYBUS.png][file:./TROLLEYBUS.png]] : TROLLEYBUS                                                                                                                                         |
+| [[./BUS-STOP.png][file:./BUS-STOP.png]] : BUS STOP                                                                                                                                             |
+| [[./MINIBUS.png][file:./MINIBUS.png]] : MINIBUS                                                                                                                                               |
+| [[./AMBULANCE.png][file:./AMBULANCE.png]] : AMBULANCE                                                                                                                                           |
+| [[./FIRE-ENGINE.png][file:./FIRE-ENGINE.png]] : FIRE ENGINE                                                                                                                                       |
+| [[./POLICE-CAR.png][file:./POLICE-CAR.png]] : POLICE CAR                                                                                                                                         |
+| [[./ONCOMING-POLICE-CAR.png][file:./ONCOMING-POLICE-CAR.png]] : ONCOMING POLICE CAR                                                                                                                       |
+| [[./TAXI.png][file:./TAXI.png]] : TAXI                                                                                                                                                     |
+| [[./ONCOMING-TAXI.png][file:./ONCOMING-TAXI.png]] : ONCOMING TAXI                                                                                                                                   |
+| [[./AUTOMOBILE.png][file:./AUTOMOBILE.png]] : AUTOMOBILE                                                                                                                                         |
+| [[./ONCOMING-AUTOMOBILE.png][file:./ONCOMING-AUTOMOBILE.png]] : ONCOMING AUTOMOBILE                                                                                                                       |
+| [[./RECREATIONAL-VEHICLE.png][file:./RECREATIONAL-VEHICLE.png]] : RECREATIONAL VEHICLE                                                                                                                     |
+| [[./DELIVERY-TRUCK.png][file:./DELIVERY-TRUCK.png]] : DELIVERY TRUCK                                                                                                                                 |
+| [[./ARTICULATED-LORRY.png][file:./ARTICULATED-LORRY.png]] : ARTICULATED LORRY                                                                                                                           |
+| [[./TRACTOR.png][file:./TRACTOR.png]] : TRACTOR                                                                                                                                               |
+| [[./MONORAIL.png][file:./MONORAIL.png]] : MONORAIL                                                                                                                                             |
+| [[./MOUNTAIN-RAILWAY.png][file:./MOUNTAIN-RAILWAY.png]] : MOUNTAIN RAILWAY                                                                                                                             |
+| [[./SUSPENSION-RAILWAY.png][file:./SUSPENSION-RAILWAY.png]] : SUSPENSION RAILWAY                                                                                                                         |
+| [[./MOUNTAIN-CABLEWAY.png][file:./MOUNTAIN-CABLEWAY.png]] : MOUNTAIN CABLEWAY                                                                                                                           |
+| [[./AERIAL-TRAMWAY.png][file:./AERIAL-TRAMWAY.png]] : AERIAL TRAMWAY                                                                                                                                 |
+| [[./SHIP.png][file:./SHIP.png]] : SHIP                                                                                                                                                     |
+| [[./ROWBOAT.png][file:./ROWBOAT.png]] : ROWBOAT                                                                                                                                               |
+| [[./SPEEDBOAT.png][file:./SPEEDBOAT.png]] : SPEEDBOAT                                                                                                                                           |
+| [[./HORIZONTAL-TRAFFIC-LIGHT.png][file:./HORIZONTAL-TRAFFIC-LIGHT.png]] : HORIZONTAL TRAFFIC LIGHT                                                                                                             |
+| [[./VERTICAL-TRAFFIC-LIGHT.png][file:./VERTICAL-TRAFFIC-LIGHT.png]] : VERTICAL TRAFFIC LIGHT                                                                                                                 |
+| [[./CONSTRUCTION-SIGN.png][file:./CONSTRUCTION-SIGN.png]] : CONSTRUCTION SIGN                                                                                                                           |
+| [[./POLICE-CARS-REVOLVING-LIGHT.png][file:./POLICE-CARS-REVOLVING-LIGHT.png]] : POLICE CARS REVOLVING LIGHT                                                                                                       |
+| [[./TRIANGULAR-FLAG-ON-POST.png][file:./TRIANGULAR-FLAG-ON-POST.png]] : TRIANGULAR FLAG ON POST                                                                                                               |
+| [[./DOOR.png][file:./DOOR.png]] : DOOR                                                                                                                                                     |
+| [[./NO-ENTRY-SIGN.png][file:./NO-ENTRY-SIGN.png]] : NO ENTRY SIGN                                                                                                                                   |
+| [[./SMOKING-SYMBOL.png][file:./SMOKING-SYMBOL.png]] : SMOKING SYMBOL                                                                                                                                 |
+| [[./NO-SMOKING-SYMBOL.png][file:./NO-SMOKING-SYMBOL.png]] : NO SMOKING SYMBOL                                                                                                                           |
+| [[./PUT-LITTER-IN-ITS-PLACE-SYMBOL.png][file:./PUT-LITTER-IN-ITS-PLACE-SYMBOL.png]] : PUT LITTER IN ITS PLACE SYMBOL                                                                                                 |
+| [[./DO-NOT-LITTER-SYMBOL.png][file:./DO-NOT-LITTER-SYMBOL.png]] : DO NOT LITTER SYMBOL                                                                                                                     |
+| [[./POTABLE-WATER-SYMBOL.png][file:./POTABLE-WATER-SYMBOL.png]] : POTABLE WATER SYMBOL                                                                                                                     |
+| [[./NON-POTABLE-WATER-SYMBOL.png][file:./NON-POTABLE-WATER-SYMBOL.png]] : NON-POTABLE WATER SYMBOL                                                                                                             |
+| [[./BICYCLE.png][file:./BICYCLE.png]] : BICYCLE                                                                                                                                               |
+| [[./NO-BICYCLES.png][file:./NO-BICYCLES.png]] : NO BICYCLES                                                                                                                                       |
+| [[./BICYCLIST.png][file:./BICYCLIST.png]] : BICYCLIST                                                                                                                                           |
+| [[./MOUNTAIN-BICYCLIST.png][file:./MOUNTAIN-BICYCLIST.png]] : MOUNTAIN BICYCLIST                                                                                                                         |
+| [[./PEDESTRIAN.png][file:./PEDESTRIAN.png]] : PEDESTRIAN                                                                                                                                         |
+| [[./NO-PEDESTRIANS.png][file:./NO-PEDESTRIANS.png]] : NO PEDESTRIANS                                                                                                                                 |
+| [[./CHILDREN-CROSSING.png][file:./CHILDREN-CROSSING.png]] : CHILDREN CROSSING                                                                                                                           |
+| [[./MENS-SYMBOL.png][file:./MENS-SYMBOL.png]] : MENS SYMBOL                                                                                                                                       |
+| [[./WOMENS-SYMBOL.png][file:./WOMENS-SYMBOL.png]] : WOMENS SYMBOL                                                                                                                                   |
+| [[./RESTROOM.png][file:./RESTROOM.png]] : RESTROOM                                                                                                                                             |
+| [[./BABY-SYMBOL.png][file:./BABY-SYMBOL.png]] : BABY SYMBOL                                                                                                                                       |
+| [[./TOILET.png][file:./TOILET.png]] : TOILET                                                                                                                                                 |
+| [[./WATER-CLOSET.png][file:./WATER-CLOSET.png]] : WATER CLOSET                                                                                                                                     |
+| [[./SHOWER.png][file:./SHOWER.png]] : SHOWER                                                                                                                                                 |
+| [[./BATH.png][file:./BATH.png]] : BATH                                                                                                                                                     |
+| [[./BATHTUB.png][file:./BATHTUB.png]] : BATHTUB                                                                                                                                               |
+| [[./PASSPORT-CONTROL.png][file:./PASSPORT-CONTROL.png]] : PASSPORT CONTROL                                                                                                                             |
+| [[./CUSTOMS.png][file:./CUSTOMS.png]] : CUSTOMS                                                                                                                                               |
+| [[./BAGGAGE-CLAIM.png][file:./BAGGAGE-CLAIM.png]] : BAGGAGE CLAIM                                                                                                                                   |
+| [[./LEFT-LUGGAGE.png][file:./LEFT-LUGGAGE.png]] : LEFT LUGGAGE                                                                                                                                     |
+
+
+###start of comment###
+"What do you want say on notes-weixin?"
+# Local variables:
+# eval: (activate-input-method "sdim")
+# End:

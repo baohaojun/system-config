@@ -12,9 +12,21 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Emoji]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/09/05/0-Emoji.html"/>
+    <updated>2014-21-05T16:09:04+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/09/05/0-Emoji.html</id>
+  </entry>
+  <entry>
+    <title type="html"><![CDATA[Config adb for smartisan t1]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/09/01/0-config-adb-for-smartisan-t1.html"/>
+    <updated>2014-09-01T20:23:38+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/09/01/0-config-adb-for-smartisan-t1.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Connecting Iphone Under Debian Linux]]></title>
     <link href="http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html"/>
-    <updated>2014-52-24T13:08:02+08:00</updated>
+    <updated>2014-08-24T13:53:02+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html</id>
   </entry>
   <entry>
@@ -59,17 +71,5 @@ Smartisan T1小扳手使用指南]]></title>
     <link href="http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html"/>
     <updated>2014-06-23T22:47:58+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[binder]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/06/04/0-binder.html"/>
-    <updated>2014-06-08T16:30:04+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/06/04/0-binder.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[在Debian下为安卓做一个GNU tar程序]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html"/>
-    <updated>2014-05-21T09:36:37+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html</id>
   </entry>
 </feed>
