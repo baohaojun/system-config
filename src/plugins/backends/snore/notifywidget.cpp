@@ -90,7 +90,7 @@ void NotifyWidget::display(const Notification &notification)
     QPoint dest(desktop.topRight().x() - width(), desktop.topRight().y() + space + (space + height()) * m_id);
     QPoint start(desktop.topRight().x(), dest.y());
     
-    m_animation->setDuration(1000);
+    m_animation->setDuration(500);
     m_animation->setStartValue(start);
     m_animation->setEndValue(dest);
     m_animation->start();
