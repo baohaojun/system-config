@@ -26,6 +26,7 @@
 #include "core/notification/notification.h"
 
 #include <QtDeclarative>
+#include <QPropertyAnimation>
 
 
 typedef struct
@@ -58,15 +59,11 @@ public:
 
     int id();
 
-
-
 signals:
     void invoked();
     void dismissed();
 
 private slots:
-    void slotMove();
-
     void slotDismissed();
 
     void slotInvoked();
@@ -80,16 +77,11 @@ protected:
     }
 
 private:
-
     QColor computeBackgrondColor(const QImage &img);
-    QTimer *m_moveTimer;
-    QPoint m_dest;
-    QPoint m_start;
-    int m_dist;
+
+    QPropertyAnimation *m_animation;
     Snore::Notification m_notification;
-
     QObject *m_qmlNotification;
-
     int m_id;
     QSharedMemory m_mem;
     bool m_ready;

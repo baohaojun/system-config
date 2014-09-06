@@ -31,7 +31,7 @@ using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
     QDeclarativeView(QUrl("qrc:/notification.qml"), parent),
-    m_moveTimer(new QTimer(this)),
+    m_animation( new QPropertyAnimation(this, "pos")),
     m_id(pos),
     m_mem(QString("SnoreNotifyWidget_rev%1_id%2").arg(QString::number(SHARED_MEM_TYPE_REV()), QString::number(m_id))),
     m_ready(true)
@@ -66,12 +66,9 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
 
     setResizeMode(QDeclarativeView::SizeRootObjectToView);
 
-
-    m_moveTimer->setInterval(1);
-    connect( m_moveTimer, SIGNAL(timeout()), this, SLOT(slotMove()));
-
     connect( m_qmlNotification, SIGNAL(invoked()), this, SLOT(slotInvoked()));
     connect( m_qmlNotification, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
+    
 }
 
 NotifyWidget::~NotifyWidget()
@@ -81,27 +78,28 @@ NotifyWidget::~NotifyWidget()
 void NotifyWidget::display(const Notification &notification)
 {
     update(notification);
-    m_dist = 0;
-    m_moveTimer->start();
     snoreDebug( SNORE_DEBUG ) << notification.id();
-    move(m_start);
     show();
-}
-
-void NotifyWidget::update(const Notification &notification)
-{
-    snoreDebug( SNORE_DEBUG ) << m_id << notification.id();
-    m_notification = notification;
-
+    
     QRect desktop = QDesktopWidget().availableGeometry();
 
     resize(computeSize());
 
     int space = 10 * logicalDpiY() / dpisScale();
 
-    m_dest = QPoint(desktop.topRight().x() - width(), desktop.topRight().y() + space + (space + height()) * m_id);
-    m_start = QPoint(desktop.topRight().x(), m_dest.y());
+    QPoint dest(desktop.topRight().x() - width(), desktop.topRight().y() + space + (space + height()) * m_id);
+    QPoint start(desktop.topRight().x(), dest.y());
+    
+    m_animation->setDuration(1000);
+    m_animation->setStartValue(start);
+    m_animation->setEndValue(dest);
+    m_animation->start();
+}
 
+void NotifyWidget::update(const Notification &notification)
+{
+    snoreDebug( SNORE_DEBUG ) << m_id << notification.id();
+    m_notification = notification;
     QColor color;
     QVariant vcolor = notification.application().constHints().privateValue(parent(), "backgroundColor");
     if(vcolor.isValid())
@@ -122,8 +120,6 @@ void NotifyWidget::update(const Notification &notification)
                               Q_ARG( QVariant, QUrl::fromLocalFile(notification.application().icon().localUrl())),
                               Q_ARG( QVariant, color),
                               Q_ARG( QVariant, textColor));
-
-
 }
 
 bool NotifyWidget::acquire()
@@ -179,16 +175,6 @@ Notification &NotifyWidget::notification()
 int NotifyWidget::id()
 {
     return m_id;
-}
-
-void NotifyWidget::slotMove()
-{
-    QPoint dest(m_start.x() - m_dist++, m_start.y());
-    move(dest);
-    if(m_dist >= width())
-    {
-        m_moveTimer->stop();
-    }
 }
 
 void NotifyWidget::slotDismissed()
