@@ -62,9 +62,9 @@ Rectangle {
         anchors.right: closeButton.left
         anchors.rightMargin: 22
         anchors.top: parent.top
-        anchors.topMargin: 3
+        anchors.topMargin: 5
         anchors.left: image.right
-        anchors.leftMargin: 6
+        anchors.leftMargin: 5
         wrapMode: Text.WordWrap
     }
 
@@ -74,13 +74,13 @@ Rectangle {
         text: qsTr("Body")
         font.pointSize: 10
         anchors.right: appIcon.left
-        anchors.rightMargin: 6
+        anchors.rightMargin: 5
         anchors.top: title.bottom
-        anchors.topMargin: 6
+        anchors.topMargin: 5
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
+        anchors.bottomMargin: 5
         anchors.left: image.right
-        anchors.leftMargin: 6
+        anchors.leftMargin: 5
         wrapMode: Text.WordWrap
         onLinkActivated: Qt.openUrlExternally(link)
 
@@ -89,25 +89,25 @@ Rectangle {
 
     Image {
         id: image
+        smooth: true
         anchors.left: parent.left
-        anchors.leftMargin: 0
+        anchors.leftMargin: 5
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        anchors.bottomMargin: 5
         anchors.top: parent.top
-        anchors.topMargin: 0
+        anchors.topMargin: 5
         z: 4
-        fillMode: Image.PreserveAspectFit
     }
 
     Image {
         id: appIcon
         width: 30
         height: 30
+        smooth: true
         anchors.right: parent.right
-        anchors.rightMargin: 6
+        anchors.rightMargin: 5
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
-        fillMode: Image.PreserveAspectFit
+        anchors.bottomMargin: 5
     }
 
     Image {
@@ -118,10 +118,10 @@ Rectangle {
         anchors.topMargin: 0
         anchors.right: parent.right
         anchors.rightMargin: 0
-        fillMode: Image.PreserveAspectFit
         z: 3
         source: "resources/close.png"
         visible: false
+        smooth: true
 
         MouseArea {
             id: mouseArea1
