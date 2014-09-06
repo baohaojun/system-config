@@ -15,10 +15,6 @@ Rectangle {
 
     signal invoked()
 
-
-
-
-
     function update(nTitle, bBody, nImage, nAppIcon, color, textColor)
     {
         title.text = nTitle
@@ -30,16 +26,9 @@ Rectangle {
         root.color = color
 
         appIcon.height = root.height * 0.30
-        appIcon.width = appIcon.height
 
         closeButton.height = root.height * 0.20
-        closeButton.width = closeButton.height
     }
-
-
-
-
-
 
     MouseArea {
         id: mouseArea2
@@ -89,6 +78,7 @@ Rectangle {
 
     Image {
         id: image
+        width: height
         smooth: true
         anchors.left: parent.left
         anchors.leftMargin: 5
@@ -101,8 +91,7 @@ Rectangle {
 
     Image {
         id: appIcon
-        width: 30
-        height: 30
+        width: height
         smooth: true
         anchors.right: parent.right
         anchors.rightMargin: 5
@@ -112,12 +101,11 @@ Rectangle {
 
     Image {
         id: closeButton
-        width: 20
-        height: 20
+        width: height
         anchors.top: parent.top
-        anchors.topMargin: 0
+        anchors.topMargin: 5
         anchors.right: parent.right
-        anchors.rightMargin: 0
+        anchors.rightMargin: 5
         z: 3
         source: "resources/close.png"
         visible: false
