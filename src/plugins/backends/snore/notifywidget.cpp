@@ -192,9 +192,9 @@ QColor NotifyWidget::computeBackgrondColor(const QImage &img)
     qulonglong r = 0;
     qulonglong g = 0;
     qulonglong b = 0;
-    for(int x=0;x<img.width();++x)
+    for(int x = 0; x < img.width(); ++x)
     {
-        for(int y=0;y<img.height();++y)
+        for(int y = 0; y < img.height(); ++y)
         {
             QRgb c = img.pixel(x,y);
             r += qRed(c);
@@ -202,9 +202,9 @@ QColor NotifyWidget::computeBackgrondColor(const QImage &img)
             b += qBlue(c);
         }
     }
-    int s = img.width()*img.height();
+    int s = img.width() * img.height();
 
-    return QColor(r/s, g/s, b/s);
+    return QColor(r / s, g / s, b / s);
 
 }
 
