@@ -50,7 +50,6 @@ Rectangle {
         anchors.topMargin: 5
         anchors.left: image.right
         anchors.leftMargin: 5
-        wrapMode: Text.WordWrap
     }
 
     Text {
