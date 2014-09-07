@@ -24,10 +24,6 @@ Rectangle {
         appIcon.source = nAppIcon
         image.source = nImage
         root.color = color
-
-        appIcon.height = root.height * 0.30
-
-        closeButton.height = root.height * 0.20
     }
 
     MouseArea {
@@ -91,7 +87,8 @@ Rectangle {
 
     Image {
         id: appIcon
-        width: height
+        height: root.height * 0.30
+        width: root.height * 0.30
         smooth: true
         anchors.right: parent.right
         anchors.rightMargin: 5
@@ -101,7 +98,8 @@ Rectangle {
 
     Image {
         id: closeButton
-        width: height
+        height: root.height * 0.20
+        width: root.height * 0.20
         anchors.top: parent.top
         anchors.topMargin: 5
         anchors.right: parent.right
