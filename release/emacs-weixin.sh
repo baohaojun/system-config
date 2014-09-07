@@ -81,12 +81,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             emacs-cell-phone weixin-new
                             ;;
                         weixin-brand-new)
-                            adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI
-                            putclip-android "$input"
-                            if adb-is-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsBrowseUI; then
-                                adb-key BACK
-                            fi
-                            adb-long-press 947 186
+                            adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI
                             emacs-cell-phone weixin-new
                             ;;
                         weixin-new) # weixin friends
