@@ -1,0 +1,16 @@
+#!/bin/bash
+up=0
+down=0
+
+while true; do
+    phone_up=$(adb cat /proc/interrupts|grep volume_up|pn 2|perl -ne 'chomp; $n += $_; END{print $n}')
+    phone_down=$(adb cat /proc/interrupts|grep volume_down|pn 2|perl -ne 'chomp; $n += $_; END{print $n}')
+    if test $phone_up -ne $up; then
+        sawfish-send-focused-window-event "Up"
+    elif test $phone_down -ne $down; then
+        sawfish-send-focused-window-event "Down"
+    fi
+    up=$phone_up
+    down=$phone_down
+    sleep .5
+done

@@ -89,6 +89,13 @@ case $(basename $0) in
         adb-key BACK
         adb-key DEL
         ;;
+    adb-picture-to-weibo)
+        adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
+        adb-tap 104 980
+        adb-tap 629 290
+        adb-tap 923 1850
+        weibo
+        ;;
 esac
 
 adb rm $adb_pic
