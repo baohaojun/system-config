@@ -76,10 +76,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             emacs-cell-phone weixin-brand-new
                             ;;
                         weibo-brand-new)
-                            adb start-activity com.sina.weibo/.MainTabActivity
+                            adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
                             putclip-android "$input"
-                            adb-tap-mid-bot
-                            adb-tap 193 924
                             emacs-cell-phone weixin-new
                             ;;
                         weixin-brand-new)
