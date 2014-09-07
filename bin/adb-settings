@@ -9,6 +9,7 @@ else
                     com.smartisanos.notes/com.smartisanos.notes.NotesActivity \
                     com.android.settings/com.android.settings.accounts.AccountSettingsActivity \
                     com.smartisanos.updater/.UpdatesCheck \
+                    com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI \
                     com.android.contacts/com.android.contacts.activities.ContactsSettingIEActivity \
      )
     adb am start -n $x
