@@ -39,12 +39,8 @@ case $(basename $0) in
         exit
         ;;
     adb-picture-to-weixin-friends)
-        adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI;
-        while ! adb-is-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI; do
-            adb-key BACK
-            adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI;
-        done
-        adb-tap 991 170
+        adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI
+        adb-tap 166 537 # + a picture
         adb-tap 626 278
         adb-tap 909 145
         weixin-new
