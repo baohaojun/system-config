@@ -14,7 +14,6 @@ include(FeatureSummary)
 
 #######################################################################
 option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DEAMON=ON" OFF)
-option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
 option(WITH_QT4 "Use Qt4" ON)
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
@@ -40,7 +39,6 @@ else()
     find_package(Qt5Core REQUIRED)
     find_package(Qt5Widgets REQUIRED)
     find_package(Qt5Network REQUIRED)
-    find_package(Qt5DBus QUIET)
     find_package(Qt5Declarative REQUIRED)
     include(ECMQt4To5Porting)
     set(SNORE_SUFFIX "-qt5")
@@ -50,7 +48,7 @@ endif()
 
 find_package(Doxygen QUIET)
 set_package_properties(Doxygen  PROPERTIES
-                                DESCRIPTION "Doxygen is the de facto standard tool for generating documentation from annotated C++ sources, but it also supports other popular programming languages such as C, Objective-C, C#, PHP, Java, Python, IDL (Corba, Microsoft, and UNO/OpenOffice flavors), Fortran, VHDL, Tcl, and to some extent D."
+                                DESCRIPTION "Doxygen a tool for generating documentation."
                                 URL "http://www.stack.nl/~dimitri/doxygen/"
                                 PURPOSE "Generation of API documentation"
                                 TYPE OPTIONAL)
@@ -84,4 +82,4 @@ add_subdirectory(share)
 add_subdirectory(src)
 
 
-feature_summary(WHAT ALL)
+feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)

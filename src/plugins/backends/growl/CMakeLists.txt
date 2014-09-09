@@ -1,4 +1,4 @@
-find_package(SnoreGrowl++)
+find_package(SnoreGrowl++ QUIET)
 set_package_properties(SnoreGrowl++ PROPERTIES
                                     DESCRIPTION "SnoreGrowl is a library providing Growl network notifications."
                                     URL "https://github.com/Snorenotify/SnoreGrowl"
