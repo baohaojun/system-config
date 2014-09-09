@@ -51,7 +51,7 @@ ssh bhj.dyndns.org '
 if ps.pl ssh.-w.root.443 && yes-or-no-p -y "kill the previous tunnel?"; then
     sudo ps-killall ssh.-w.root.443
 fi
-sudo ssh -o StrictHostKeyChecking=no -v -C2N -w $tun_n:$tun_n root@bhj.dyndns.org -p 443&
+sudo ssh -o StrictHostKeyChecking=no -v -C2N -w $tun_n:$tun_n root@home&
 
 ssh bhj.dyndns.org 'set -x
         set -e

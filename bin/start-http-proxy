@@ -2,14 +2,15 @@
 
 set -e
 port=8888
-if type ziproxy >/dev/null 2>&1; then
+if test "$1" = tiny; then
+    shift
+    sudo ps-killall tinyproxy
+    sudo tsocks tinyproxy
+elif type ziproxy >/dev/null 2>&1; then
     port=8080
     sudo /etc/init.d/ziproxy stop || true
     sudo ps-killall ziproxy
     tsocks ziproxy -d
-else
-    sudo ps-killall tinyproxy
-    tsocks tinyproxy
 fi
 
 export http_proxy=localhost:$port
