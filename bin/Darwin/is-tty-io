@@ -1,3 +1,0 @@
-#!/bin/bash
-
-tty >/dev/null 2>&1 
