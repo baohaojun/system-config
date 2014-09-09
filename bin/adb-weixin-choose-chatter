@@ -45,7 +45,7 @@ elif test "$(basename $0)" = adb-call -o "$(basename $0)" = adb-sms-to; then
     fi
 
     if test "$(basename $0)" = adb-call; then
-        adb am start -n com.android.contacts/.activities.DialtactsActivity >/dev/null 2>&1 &
+        adb am start -n com.android.contacts/.activities.DialtactsActivity
         sleep .5
 
         if echo "$1" | grep -q -P -e '^\+?\d+$'; then
@@ -53,7 +53,7 @@ elif test "$(basename $0)" = adb-call -o "$(basename $0)" = adb-sms-to; then
             adb-long-press 898 1689 .8
             # sendtext-android "$1"
             putclip-android "$1"
-            adb-long-press 646 174
+            adb-long-press 646 174 .8
             adb-tap 559 452
             adb-tap 479 1640
             exit

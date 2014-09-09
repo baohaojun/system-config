@@ -29,10 +29,13 @@ if test ! "$part"; then
 fi
 
 xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n ${1:-rawprogram_unsparse.xml} | grep ${part} |
-while read img start; do
-if test $img = ${part}_1.img; then
-    the_start=$start
-fi
-    start=$((start - the_start)) || true
-    dd if=$img of=${part}.img seek=$start
-done
+{
+    while read img start; do
+        if test $img = ${part}_1.img; then
+            the_start=$start
+        fi
+        start=$((start - the_start)) || true
+        dd if=$img of=${part}.img seek=$start
+    done
+    dd if=/dev/zero of=${part}.img seek=$(pretty 1000000+$(stat -c %s ${part}.img)/512|pn 2) count=1
+}

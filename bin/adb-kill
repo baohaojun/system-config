@@ -1,0 +1,4 @@
+#!/bin/bash
+for x in "$@"; do
+    adb kill "$x"
+done
