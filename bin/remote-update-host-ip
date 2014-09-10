@@ -1,0 +1,2 @@
+#!/bin/bash
+ssh $1 update-host-ip $2 $(ip-or-name $2)
