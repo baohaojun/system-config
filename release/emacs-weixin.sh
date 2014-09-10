@@ -78,18 +78,18 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                         weibo-brand-new)
                             adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
                             putclip-android "$input"
-                            emacs-cell-phone weixin-new
+                            emacs-cell-phone weibo
                             ;;
                         weixin-brand-new)
-                            adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI
+                            adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI --ei sns_comment_type 1
                             emacs-cell-phone weixin-new
                             ;;
                         weixin-new) # weixin friends
                             adb-key SPACE
-                            adb-tap 303 335
-                            adb-tap 303 335
-                            adb-tap 496 196
-                            adb-tap 989 183
+                            adb-long-press 106 368
+                            adb-tap 303 246
+                            adb-tap 881 220
+                            adb-tap-top-right
                             ;;
                         SmartisanNote)
                             adb-long-press 428 412
