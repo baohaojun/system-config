@@ -1,12 +1,17 @@
 #!/bin/bash
 set -e
-TEMP=$(getopt -o p: --long part: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o p:o: --long part:output: -n $(basename $0) -- "$@")
 part=
+out=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -p|--part)
             part=$2
+            shift 2
+            ;;
+        -o|--output)
+            out=$2
             shift 2
             ;;
         --)
@@ -18,6 +23,9 @@ while true; do
             ;;
     esac
 done
+if test -z "$out"; then
+    out=${part}.img
+fi
 
 function die() {
     echo Error: "$@"
@@ -35,7 +43,7 @@ xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n ${1:-rawp
             the_start=$start
         fi
         start=$((start - the_start)) || true
-        dd if=$img of=${part}.img seek=$start
+        dd if=$img of=${out} seek=$start
     done
-    dd if=/dev/zero of=${part}.img seek=$(pretty 1000000+$(stat -c %s ${part}.img)/512|pn 2) count=1
+    dd if=/dev/zero of=${out} seek=$(pretty 1000000+$(stat -c %s ${out})/512|pn 2) count=1
 }
