@@ -7,6 +7,8 @@ if test $(basename $0) = adb-ignite-device; then
     activity=$(adb-top-activity)
     if test "$activity" = Keyguard -o "$activity" = StatusBar; then
         adb-swipe 100 1900 100 20
+    elif test "$activity" = RecentsPanel; then
+        adb-key BACK
     fi
 elif test $(basename $0) = adb-mute; then
     adb-key VOLUME_UP

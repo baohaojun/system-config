@@ -106,7 +106,10 @@ done
 export REMOTE=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
 
 if is-tty-io && test $do_review = true; then
-    FOR_REVIEW=true git-interactive-add
+    (
+        cd $(dirname $(lookup-file -e .git))
+        FOR_REVIEW=true git-interactive-add
+    )
 fi
 
 (

@@ -12,6 +12,9 @@ if test "$(gettask-android)" = com.android.browser; then
     adb-wide-tap 983 727
     adb-wide-tap-2 1031 274
     adb-wide-tap 767 291
+elif test "$(gettask-android)" = com.android.email; then
+    firefox -new-tab "$(getclip-android)"
+    exit
 elif test "$(gettask-android)" = com.tencent.mm; then
     adb-tap 990 114
     adb-tap 666 847
