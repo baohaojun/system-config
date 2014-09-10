@@ -86,6 +86,7 @@
 (require 'init-javascript)
 (require 'init-php)
 (require 'init-org)
+(require-package 'org-mime)
 (require 'init-nxml)
 (require 'init-css)
 (require 'init-haml)
