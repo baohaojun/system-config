@@ -86,11 +86,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             ;;
                         weixin-new) # weixin friends
                             adb-key SPACE
-                            adb-long-press 106 368
-                            adb-tap 303 246
-                            adb-tap 881 220
-                            adb-tap-top-right
-                            ;;
+                            adb-tap
+                            adb-tap 117 283 adb-tap 117 283 adb-tap 325 170 adb-tap 860 155 adb-tap 961 171               ;;
                         SmartisanNote)
                             adb-long-press 428 412
                             adb-tap 80 271
@@ -117,6 +114,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             if test "$activity" = com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity; then
                                 adb-picture-to-qq-chat $pic
                             elif test "$activity" = com.tencent.mm/com.tencent.mm.ui.LauncherUI; then
+                                adb-picture-to-weixin-chat $pic
+                            elif test "$activity" = com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI; then
                                 adb-picture-to-weixin-chat $pic
                             elif test "$activity" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI; then
                                 adb-picture-to-weixin-friends $pic
