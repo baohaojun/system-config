@@ -28,7 +28,7 @@ for x in remotes/$(git-remote-branch); do
     fi
 done
 
-if which crontab && test -e ~/.crontab.$USER -a "$FETCH_ONLY" != true; then
+if which crontab >/dev/null 2>&1 && test -e ~/.crontab.$USER -a "$FETCH_ONLY" != true; then
     crontab ~/.crontab.$USER
 fi
 
