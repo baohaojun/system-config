@@ -10,7 +10,7 @@ fi
     for home in home realhome; do
         while true; do
             sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
-            ssh -o ServerAliveInterval=300 -i ~/.ssh/id_rsa_nopass -C2qN $(
+            ssh -o ServerAliveInterval=300 -i ~/.ssh/id_rsa_nopass -2qN $(
                 if test $home = home; then
                     echo -D 7070
                 fi

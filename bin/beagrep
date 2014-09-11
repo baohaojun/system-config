@@ -3,7 +3,6 @@
 use Getopt::Long;
 use strict;
 use String::ShellQuote;
-$ENV{LC_ALL} = "C";
 
 my $pat = '';
 my $pathpat = '.';
@@ -44,6 +43,7 @@ GetOptions(
     "v=s" => \$pathdeny,
     "d=s" => \$pwd_opt,
     "i!" => \$ignore_case,
+    "c!" => sub {$ENV{LC_ALL} = "C"},
     "f!" => \$find_file_only,
     "l!" => \$list_beagrep,
     "s!" => \$short_format,

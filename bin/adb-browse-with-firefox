@@ -4,7 +4,8 @@ if test $(basename $0) = adb-browse-with-firefox; then
 elif test $(basename $0) = adb-browse-with-chrome; then
     cmp=com.android.chrome/com.google.android.apps.chrome.Main
 elif test $(basename $0) = adb-browse-with-weibo; then
-    cmp=com.sina.weibo/.WeiboBrowser\ -d
+    adb start-activity com.sina.weibo/.WeiboBrowser  --es com_sina_weibo_weibobrowser_url "${1:-$(getclip)}"
+    exit
 elif test $(basename $0) = adb-browse-with-weixin; then
     cmp=com.tencent.mm/.plugin.webview.ui.tools.WebViewUI
 elif test $(basename $0) = adb-browse-with-youtube; then

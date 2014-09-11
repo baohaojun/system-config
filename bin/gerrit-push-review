@@ -72,7 +72,7 @@ if test $do_fetch = true; then
     if test -z "$(lookup-file -e .repo)"; then
         git fetch -v
     else
-        2nd repo sync -n . || git fetch origin
+        2nd repo sync -c -n . || git fetch origin
     fi
     echo git fetch done
 fi

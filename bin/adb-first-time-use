@@ -33,3 +33,6 @@ while true; do
             ;;
     esac
 done
+adb start-activity com.android.settings/com.android.settings.PackageInstallerSettingsActivity
+adb-tap 899 645
+adb-tap 781 1156

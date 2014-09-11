@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -- "$(readlink -f "${1:-.}")"
 smbcp "$1" ~/today/
 target=$(basename "$1")
 source=$target
