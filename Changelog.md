@@ -1,3 +1,9 @@
+# Changes since 0.5.0rc3 #
+- Readded the missing close button for the snore backend
+- Cleaned up snore backend use a QPropertyAnimation instead of a custom timer code.
+- Cleaned up qml in snore backend.
+- Some buildsystem fixes.
+
 # Changes since 0.5.0rc2 #
 - Fixed a crash related to a QTimer deleted in the wrong thread.
 
