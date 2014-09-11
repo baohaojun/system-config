@@ -13,7 +13,6 @@ alias la='ls -A --show-control-chars'                              # all but . a
 alias l='ls -CFl --show-control-chars --block-size=1'                              #
 alias cd='cd -P'
 
-alias vi=vim
 export EDITOR=vim
 export HISTSIZE=2000
 export HISTFILESIZE=2000

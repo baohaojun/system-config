@@ -1,4 +1,12 @@
 #!/bin/bash
+url=${1:-$(getclip)}
+adb-ignite-device&
+if echo "$url" | grep -q "^http://weibo.com/"; then
+    sid=$(echo $url | perl -npe 's!http://weibo.com/.*?/(.*?)(\?.*)?$!$1!')
+    adb am start "sinaweibo://detail?mblogid=$sid"
+    exit
+fi
+
 if test $(basename $0) = adb-browse-with-firefox; then
     cmp=org.mozilla.firefox/.App
 elif test $(basename $0) = adb-browse-with-chrome; then
