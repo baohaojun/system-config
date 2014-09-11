@@ -7,7 +7,8 @@
 
 #include <QString>
 
-namespace Snore{
+namespace Snore
+{
 
 /**
  * Version contains relevant version informations.

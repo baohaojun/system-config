@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -28,13 +27,11 @@
 #include <QtDeclarative>
 #include <QPropertyAnimation>
 
-
-typedef struct
-{
+typedef struct {
     bool free;
     QTime date;
 
-}SHARED_MEM_TYPE;
+} SHARED_MEM_TYPE;
 
 inline int SHARED_MEM_TYPE_REV()
 {

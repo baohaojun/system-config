@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +23,12 @@
 #include <QSharedData>
 #include <QDebug>
 
-namespace Snore{
-    class Icon;
+namespace Snore
+{
+class Icon;
 }
 
-SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Icon &);
+SNORE_EXPORT QDebug operator<< (QDebug, const Snore::Icon &);
 
 namespace Snore
 {
@@ -113,10 +113,8 @@ public:
 
 private:
     QExplicitlySharedDataPointer<IconData> d;
-    friend SNORE_EXPORT QDebug (::operator<<) ( QDebug, const Snore::Icon &);
+    friend SNORE_EXPORT QDebug(::operator<<)(QDebug, const Snore::Icon &);
 };
 }
-
-
 
 #endif // NOTIFICATION_ICON_H

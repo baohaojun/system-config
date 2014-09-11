@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -35,8 +34,7 @@ IconData::IconData(const QString &url):
     m_isLocalFile(false),
     m_isResource(m_url.startsWith(":/") || m_url.startsWith("qrc:/"))
 {
-    if(!m_isResource && QFile::exists(url))
-    {
+    if (!m_isResource && QFile::exists(url)) {
         m_isLocalFile = true;
         m_localUrl = url;
     }
@@ -61,14 +59,10 @@ IconData::~IconData()
 const QImage &IconData::image()
 {
     QMutexLocker lock(&m_mutex);
-    if(m_img.isNull())
-    {
-        if(!m_isRemoteFile )
-        {
+    if (m_img.isNull()) {
+        if (!m_isRemoteFile) {
             m_img = QImage(m_url);
-        }
-        else
-        {
+        } else {
             download();
         }
     }
@@ -77,45 +71,37 @@ const QImage &IconData::image()
 
 QString IconData::localUrl()
 {
-    if(!m_isLocalFile && !s_localImageCache.contains(m_localUrl))
-    {
+    if (!m_isLocalFile && !s_localImageCache.contains(m_localUrl)) {
         QImage img = image();
-        if(!s_localImageCache.contains(m_localUrl))//double check as image() could have called download
-        {
-            img.save(m_localUrl ,"PNG");
+        if (!s_localImageCache.contains(m_localUrl)) { //double check as image() could have called download
+            img.save(m_localUrl , "PNG");
             s_localImageCache.insert(m_localUrl);
-            snoreDebug( SNORE_DEBUG ) << m_localUrl << "added to cache";
+            snoreDebug(SNORE_DEBUG) << m_localUrl << "added to cache";
         }
     }
     return m_localUrl;
 }
 
-
 void IconData::download()
 {
-    if(m_isRemoteFile)
-    {
-        if(!s_localImageCache.contains(m_localUrl))
-        {
-            snoreDebug( SNORE_DEBUG ) << "Downloading:" << m_url;
+    if (m_isRemoteFile) {
+        if (!s_localImageCache.contains(m_localUrl)) {
+            snoreDebug(SNORE_DEBUG) << "Downloading:" << m_url;
             QNetworkAccessManager manager;
             QEventLoop loop;
             QNetworkRequest request(m_url);
             request.setRawHeader("User-Agent", "SnoreNotify");
             QNetworkReply *reply = manager.get(request);
             QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-            QTimer::singleShot(1000,&loop, SLOT(quit()));//timeout
+            QTimer::singleShot(1000, &loop, SLOT(quit())); //timeout
             loop.exec();
-            if(reply->isFinished())
-            {
+            if (reply->isFinished()) {
                 m_img = QImage::fromData(reply->readAll(), "PNG");
-                m_img.save(m_localUrl,"PNG");
+                m_img.save(m_localUrl, "PNG");
                 s_localImageCache.insert(m_localUrl);
-                snoreDebug( SNORE_DEBUG ) << m_localUrl << "added to cache";
+                snoreDebug(SNORE_DEBUG) << m_localUrl << "added to cache";
             }
-        }
-        else
-        {
+        } else {
             m_img = QImage(m_localUrl);
         }
     }

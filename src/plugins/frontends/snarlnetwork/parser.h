@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -25,20 +24,18 @@
 #include <QSharedPointer>
 #include <QObject>
 
-
-
 class Parser : public QObject
 {
     Q_OBJECT
 public:
-    Parser(class SnarlNetworkFrontend* snarl);
+    Parser(class SnarlNetworkFrontend *snarl);
 
-     void parse(Snore::Notification &sNotification, const QString &msg, class QTcpSocket* client);
+    void parse(Snore::Notification &sNotification, const QString &msg, class QTcpSocket *client);
 
 private:
     class SnarlNetworkFrontend *snarl;
 
-    enum snpTypes{
+    enum snpTypes {
         TYPE,
         APP,
         VERSION,
@@ -56,7 +53,7 @@ private:
 
     };
 
-    QHash<QString,Parser::snpTypes> getSnpType;
+    QHash<QString, Parser::snpTypes> getSnpType;
 
 };
 

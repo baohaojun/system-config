@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -23,8 +22,6 @@
 #include <QDebug>
 #include "snore_exports.h"
 
-
-
 /**
  * @file
  */
@@ -32,8 +29,7 @@
 /**
  * SnoreDebugLevels enumerates all possible debugg levels.
  */
-enum SnoreDebugLevels
-{
+enum SnoreDebugLevels {
     /**
      * The most important messages, will be diplayed if the debug level >= 1
      */
@@ -51,7 +47,6 @@ enum SnoreDebugLevels
 
 };
 
-
 /**
  * Logg macro use to logg messages.
  * snoreDebug( SNORE_DEBUG ) << "Message" << notification;
@@ -62,7 +57,6 @@ enum SnoreDebugLevels
 #else
 #define snoreDebug(X) QNoDebug()
 #endif
-
 
 namespace Snore
 {
@@ -95,9 +89,6 @@ private:
     QString m_msg;
 };
 
-
-
 }
-
 
 #endif // SNORELOG_H

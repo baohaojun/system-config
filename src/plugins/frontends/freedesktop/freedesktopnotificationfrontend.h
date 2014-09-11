@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -39,20 +38,19 @@ public:
     void actionInvoked(Snore::Notification notification);
     void notificationClosed(Snore::Notification notification);
     uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
-    void CloseNotification( uint id );
+    void CloseNotification(uint id);
 
     QStringList GetCapabilities();
-    QString GetServerInformation(QString& vendor, QString& version, QString& specVersion);	
+    QString GetServerInformation(QString &vendor, QString &version, QString &specVersion);
 
 signals:
-    void NotificationClosed( uint id, uint reason );
-    void ActionInvoked( uint id, const QString& actionKey );
+    void NotificationClosed(uint id, uint reason);
+    void ActionInvoked(uint id, const QString &actionKey);
 
 private:
     Snore::Alert m_alert;
     Snore::Icon m_icon;
     NotificationsAdaptor *m_adaptor;
-
 
 };
 

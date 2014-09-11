@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -28,7 +27,6 @@
 #include <QVariant>
 #include <QDebug>
 
-
 namespace Snore
 {
 
@@ -41,7 +39,6 @@ class NotificationData;
  * @author Patrick von Reth \<vonreth at kde.org\>
  */
 
-
 class SNORE_EXPORT Notification
 {
     friend class NotificationData;
@@ -49,11 +46,10 @@ public:
     /**
      * The reason why the Notification was closed.
      */
-    enum CloseReason
-    {
-       /**
-        * The default value, the notification was not closed.
-        */
+    enum CloseReason {
+        /**
+         * The default value, the notification was not closed.
+         */
         NONE = 0,
 
         /**
@@ -86,8 +82,7 @@ public:
      * The Priority for the Notification.
      * Some notification systems support this flag to filter notifications or indicate different prioritys by color.
      */
-    enum Priority
-    {
+    enum Priority {
         /**
          * Indicates a low priority.
          */
@@ -116,7 +111,7 @@ public:
      * @param timeout the timeout
      * @param priority the priority
      */
-    explicit Notification(const Application &application,const Alert &alert,const QString &title,const QString &text,const Icon &icon,int timeout = defaultTimeout(), Notification::Prioritys priority = NORMAL );
+    explicit Notification(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Notification::Prioritys priority = NORMAL);
 
     /**
      * Creates and update Notification replacing an existing Notification
@@ -127,13 +122,13 @@ public:
      * @param timeout the timeout
      * @param priority the piority
      */
-    explicit Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Snore::Notification::Prioritys priority = NORMAL );
+    explicit Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Snore::Notification::Prioritys priority = NORMAL);
 
     /**
      * The copy constructor
      * @param other
      */
-    Notification(const Notification &other );
+    Notification(const Notification &other);
 
     /**
      * The copy operator
@@ -241,7 +236,6 @@ public:
      */
     bool isValid() const;
 
-
     /**
      *
      * @return the old notification to be replaced
@@ -279,7 +273,6 @@ private:
 
     static int m_defaultTimeout;
 
-
 };
 
 }
@@ -289,29 +282,24 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Notification::CloseReasons)
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Notification::Prioritys)
 
-QDataStream &operator<< ( QDataStream & stream, const Snore::Notification & noti );
+QDataStream &operator<< (QDataStream &stream, const Snore::Notification &noti);
 
-SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Notification::CloseReasons &);
+SNORE_EXPORT QDebug operator<< (QDebug, const Snore::Notification::CloseReasons &);
 
-SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Notification::Prioritys &);
+SNORE_EXPORT QDebug operator<< (QDebug, const Snore::Notification::Prioritys &);
 
-inline QDebug operator<< ( QDebug debug, const Snore::Notification &noti )
+inline QDebug operator<< (QDebug debug, const Snore::Notification &noti)
 {
-    if(noti.isValid())
-    {
+    if (noti.isValid()) {
         debug.nospace() << "Snore::Notification(" << noti.title() << ", " << noti.text() << ", id = " << noti.id();
-        if(noti.isUpdate())
-        {
+        if (noti.isUpdate()) {
             debug << ", oldID = " << noti.old().id();
         }
         debug << ")" ;
-    }
-    else
-    {
+    } else {
         debug.nospace() << "Snore::Notification(0x00)" ;
     }
     return debug.maybeSpace();
 }
-
 
 #endif // NOTIFICATION_H

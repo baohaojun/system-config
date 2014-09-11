@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -24,7 +23,7 @@
 #include "growl.hpp"
 #include <string>
 
-class GrowlBackend:public Snore::SnoreBackend
+class GrowlBackend: public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreBackend)
@@ -35,20 +34,19 @@ public:
     ~GrowlBackend();
     virtual bool initialize(Snore::SnoreCore *snore);
     virtual bool deinitialize();
-    
+
     static void gntpCallback(growl_callback_data *data);
 
 private:
-	//a static instance for the static callback methode
+    //a static instance for the static callback methode
     static GrowlBackend *s_instance;
     uint m_id;
-    QHash<QString,Growl*> m_applications;
+    QHash<QString, Growl *> m_applications;
 
 public slots:
     void slotRegisterApplication(const Snore::Application &application);
     void slotDeregisterApplication(const Snore::Application &application);
     void slotNotify(Snore::Notification notification);
 };
-
 
 #endif // GROWL_BACKEND_H

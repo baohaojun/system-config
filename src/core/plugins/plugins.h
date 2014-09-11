@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -27,17 +26,16 @@
 #include <QTimer>
 #include <QtPlugin>
 
-
-namespace Snore{
+namespace Snore
+{
 class Application;
 class SnoreCore;
-
 
 class SNORE_EXPORT SnorePlugin : public QObject
 {
     Q_OBJECT
 public:
-    enum PluginType{
+    enum PluginType {
         ALL = 0xFFFFF,//for loading plugins
         BACKEND = 0x1,
         SECONDARY_BACKEND = 0x2,
@@ -47,13 +45,12 @@ public:
     Q_DECLARE_FLAGS(PluginTypes, PluginType)
     Q_ENUMS(PluginType)
 
-
-    SnorePlugin ( const QString &name);
+    SnorePlugin(const QString &name);
     virtual ~SnorePlugin();
-    virtual bool initialize( SnoreCore *snore );
+    virtual bool initialize(SnoreCore *snore);
     virtual bool deinitialize();
     bool isInitialized();
-    SnoreCore* snore();
+    SnoreCore *snore();
     const QString &name() const;
 
 private:
@@ -62,16 +59,14 @@ private:
     bool m_initialized;
     QPointer<SnoreCore> m_snore;
 
-
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::SnorePlugin::PluginTypes)
 
-
 }
-Q_DECLARE_INTERFACE ( Snore::SnorePlugin,
-                      "org.Snore.SnorePlugin/1.0" )
+Q_DECLARE_INTERFACE(Snore::SnorePlugin,
+                    "org.Snore.SnorePlugin/1.0")
 
-SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::SnorePlugin::PluginTypes &);
+SNORE_EXPORT QDebug operator<< (QDebug, const Snore::SnorePlugin::PluginTypes &);
 
 //compatability defines to reduce the number of ifdefs to make fiat compile with qt4 and qt5
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
@@ -86,7 +81,5 @@ SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::SnorePlugin::PluginTypes &
 #else
 #   define Q_PLUGIN_METADATA(a)
 #endif
-
-
 
 #endif//SNORE_PLUGINS_H

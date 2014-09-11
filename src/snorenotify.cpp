@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -35,7 +34,7 @@
 using namespace Snore;
 
 SnoreNotify::SnoreNotify():
-    m_settings("SnoreNotify","SnoreNotify")
+    m_settings("SnoreNotify", "SnoreNotify")
 {
     m_trayIcon = new TrayIcon();
     m_snore = new SnoreCore(m_trayIcon->trayIcon());
@@ -43,11 +42,12 @@ SnoreNotify::SnoreNotify():
     load();
     m_trayIcon->initConextMenu(m_snore);
 
-    connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(exit()));
-    snoreDebug( SNORE_DEBUG ) << "Snorenotfiy initialized with" << m_snore->primaryNotificationBackend();
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(exit()));
+    snoreDebug(SNORE_DEBUG) << "Snorenotfiy initialized with" << m_snore->primaryNotificationBackend();
 }
 
-SnoreNotify::~SnoreNotify(){
+SnoreNotify::~SnoreNotify()
+{
     delete m_snore;
     delete m_trayIcon;
 }
@@ -55,26 +55,23 @@ SnoreNotify::~SnoreNotify(){
 void SnoreNotify::load()
 {
     QString backend = m_settings.value("notificationBackend").toString();
-    if(!backend.isEmpty())
-    {
-        if(!m_snore->setPrimaryNotificationBackend(backend))
-        {
+    if (!backend.isEmpty()) {
+        if (!m_snore->setPrimaryNotificationBackend(backend)) {
             m_snore->setPrimaryNotificationBackend();
         }
-    }
-    else
-    {
+    } else {
         m_snore->setPrimaryNotificationBackend();
     }
 }
-void SnoreNotify::save(){
-    m_settings.setValue("notificationBackend",m_snore->primaryNotificationBackend());
+void SnoreNotify::save()
+{
+    m_settings.setValue("notificationBackend", m_snore->primaryNotificationBackend());
 }
 
-void SnoreNotify::exit(){
-    snoreDebug( SNORE_DEBUG )<<"Saving snore settings";
-    foreach(const Application &a,m_snore->aplications())
-    {
+void SnoreNotify::exit()
+{
+    snoreDebug(SNORE_DEBUG) << "Saving snore settings";
+    foreach(const Application & a, m_snore->aplications()) {
         m_snore->deregisterApplication(a);
     }
     save();

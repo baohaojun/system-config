@@ -9,10 +9,10 @@
 #include <QDebug>
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(libsnore_backend_trayicon,TrayIconNotifer)
+Q_EXPORT_PLUGIN2(libsnore_backend_trayicon, TrayIconNotifer)
 
-TrayIconNotifer::TrayIconNotifer () :
-    SnoreBackend ( "SystemTray",true,false ),
+TrayIconNotifer::TrayIconNotifer() :
+    SnoreBackend("SystemTray", true, false),
     m_trayIcon(NULL),
     m_displayed(-1),
     m_currentlyDisplaying(false)
@@ -25,23 +25,21 @@ TrayIconNotifer::~TrayIconNotifer()
 
 }
 
-bool TrayIconNotifer::initialize(SnoreCore *snore){
+bool TrayIconNotifer::initialize(SnoreCore *snore)
+{
     m_trayIcon = snore->trayIcon();
-    if(m_trayIcon == NULL)
-    {
+    if (m_trayIcon == NULL) {
         return false;
     }
-    connect(m_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
+    connect(m_trayIcon, SIGNAL(messageClicked()), this, SLOT(actionInvoked()));
     return SnoreBackend::initialize(snore);
 }
 
 bool TrayIconNotifer::deinitialize()
 {
-    if(SnoreBackend::deinitialize())
-    {
-        if(m_trayIcon)
-        {
-            disconnect(m_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
+    if (SnoreBackend::deinitialize()) {
+        if (m_trayIcon) {
+            disconnect(m_trayIcon, SIGNAL(messageClicked()), this, SLOT(actionInvoked()));
             m_trayIcon = NULL;
             m_currentlyDisplaying = false;
         }
@@ -50,7 +48,7 @@ bool TrayIconNotifer::deinitialize()
     return false;
 }
 
-void TrayIconNotifer::slotNotify( Notification notification )
+void TrayIconNotifer::slotNotify(Notification notification)
 {
     m_notificationQue.append(notification);
     displayNotification();
@@ -58,36 +56,33 @@ void TrayIconNotifer::slotNotify( Notification notification )
 
 void TrayIconNotifer::slotCloseNotification(Notification n)
 {
-    snoreDebug( SNORE_DEBUG ) << n;
+    snoreDebug(SNORE_DEBUG) << n;
     m_currentlyDisplaying = false;
     displayNotification();
 }
 
 void TrayIconNotifer::displayNotification()
 {
-    if(m_currentlyDisplaying)
-    {
+    if (m_currentlyDisplaying) {
         return;
     }
-    if(m_notificationQue.isEmpty())
-    {
+    if (m_notificationQue.isEmpty()) {
         m_currentlyDisplaying = false;
         return;
     }
     m_currentlyDisplaying = true;
     Notification notification =  m_notificationQue.takeFirst();
     m_displayed = notification.id();
-    m_trayIcon->showMessage ( Snore::toPlainText(notification.title()),Snore::toPlainText(notification.text()),QSystemTrayIcon::NoIcon,notification.timeout() *1000 );
+    m_trayIcon->showMessage(Snore::toPlainText(notification.title()), Snore::toPlainText(notification.text()), QSystemTrayIcon::NoIcon, notification.timeout() * 1000);
     startTimeout(notification);
 }
 
 void TrayIconNotifer::actionInvoked()
 {
     Notification n = getActiveNotificationByID(m_displayed);
-    if(n.isValid())
-    {
+    if (n.isValid()) {
         snore()->d()->notificationActionInvoked(n);
-        closeNotification(n,Notification::CLOSED);
+        closeNotification(n, Notification::CLOSED);
         m_currentlyDisplaying = false;
         displayNotification();
     }

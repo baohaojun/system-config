@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -27,13 +26,11 @@
 #include <QFlag>
 #include <QPluginLoader>
 
-
-
 namespace Snore
 {
 class PluginContainer;
 
-typedef  QHash<QString,PluginContainer*> PluginContaienrHash;
+typedef  QHash<QString, PluginContainer *> PluginContaienrHash;
 
 class SNORE_EXPORT PluginContainer
 {
@@ -49,7 +46,6 @@ public:
     SnorePlugin::PluginTypes type();
 
     bool isLoaded() const;
-
 
     static SnorePlugin::PluginTypes typeFromString(const QString &t);
     static QString typeToString(const SnorePlugin::PluginTypes t);
@@ -78,8 +74,7 @@ private:
     static inline const QStringList pluginFileFilters()
     {
         QStringList out;
-        foreach(const QString extention,  pluginExtentions())
-        {
+        foreach(const QString extention,  pluginExtentions()) {
             out << QString("libsnore_*.%1").arg(extention);
         }
         return out;
@@ -88,8 +83,7 @@ private:
     static inline const QStringList pluginFileFilters(Snore::SnorePlugin::PluginTypes type)
     {
         QStringList out;
-        foreach(const QString extention,  pluginExtentions())
-        {
+        foreach(const QString extention,  pluginExtentions()) {
             out << QString("libsnore_%1_*.%2").arg(typeToString(type).toLower(), extention);
         }
         return out;
@@ -101,6 +95,5 @@ private:
     QPluginLoader m_loader;
 };
 }
-
 
 #endif//PLUGINCONTAINER_H

@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -25,7 +24,8 @@
 #include "alert.h"
 
 #include <QHash>
-namespace Snore{
+namespace Snore
+{
 
 class ApplicationData;
 
@@ -47,7 +47,7 @@ public:
      * @param icon
      * @see SnoreCore::registerApplication
      */
-    explicit Application ( const QString &name, const Icon &icon);
+    explicit Application(const QString &name, const Icon &icon);
 
     /**
      * The copy constructor
@@ -84,7 +84,7 @@ public:
     /**
      * Returns a QHash with the Alers registered with this Application
      */
-    const QHash<QString,Alert> &alerts() const;
+    const QHash<QString, Alert> &alerts() const;
 
     /**
      *
@@ -108,16 +108,13 @@ public:
     const Hint &constHints() const;
 
 private:
-     QExplicitlySharedDataPointer<ApplicationData> d;
-
+    QExplicitlySharedDataPointer<ApplicationData> d;
 
 };
 
 }
 Q_DECLARE_METATYPE(Snore::Application)
 
-SNORE_EXPORT QDebug operator<< ( QDebug debug, const Snore::Application &app );
-
-
+SNORE_EXPORT QDebug operator<< (QDebug debug, const Snore::Application &app);
 
 #endif // APPLICATION_H

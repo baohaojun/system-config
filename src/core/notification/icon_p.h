@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -20,7 +19,6 @@
 #ifndef ICONDATA_H
 #define ICONDATA_H
 
-
 #include "notification.h"
 #include "snore_p.h"
 
@@ -33,7 +31,8 @@
 
 #include <QMutex>
 
-namespace Snore{
+namespace Snore
+{
 
 class IconData : public QSharedData
 {
@@ -46,7 +45,6 @@ public:
     QString localUrl();
     void download();
 
-
     QImage m_img;
     QString m_url;
     QString m_hash;
@@ -55,7 +53,6 @@ public:
     bool m_isResource;
     bool m_isRemoteFile;
     QMutex m_mutex;
-
 
     static QSet<QString> s_localImageCache;
 

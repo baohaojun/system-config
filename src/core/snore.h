@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -33,7 +32,6 @@
 
 class QSystemTrayIcon;
 
-
 /**
  * Snore is a platform independent Qt notification framework.
  *
@@ -47,7 +45,8 @@ class QSystemTrayIcon;
  * @author Patrick von Reth \<vonreth at kde.org\>
  */
 
-namespace Snore{
+namespace Snore
+{
 class SnoreCorePrivate;
 
 /**
@@ -66,7 +65,7 @@ public:
      * Creates a Notification Manager SnoreCore
      * @param trayIcon a QSystemTrayIcon which can later be used by the fallback notification backend.
      */
-    SnoreCore (QSystemTrayIcon *trayIcon = NULL );
+    SnoreCore(QSystemTrayIcon *trayIcon = NULL);
     ~SnoreCore();
 
     /**
@@ -74,14 +73,13 @@ public:
      *
      * @param types the type of tha plugin
      */
-    void loadPlugins ( SnorePlugin::PluginTypes types );
-
+    void loadPlugins(SnorePlugin::PluginTypes types);
 
     /**
      * Broadcast a notification.
      * @param notification the Notification
      */
-    void broadcastNotification( Notification notification );
+    void broadcastNotification(Notification notification);
 
     /**
      * Register an application.
@@ -91,7 +89,7 @@ public:
      * @see broadcastNotification
      * @param application the application
      */
-    void registerApplication(const Application &application );
+    void registerApplication(const Application &application);
 
     /**
      * Deregisters an application.
@@ -101,7 +99,7 @@ public:
      * @see setPrimaryNotificationBackend
      * @param application the application
      */
-    void deregisterApplication(const Application &application );
+    void deregisterApplication(const Application &application);
 
     /**
      *
@@ -133,7 +131,7 @@ public:
      * @param backend the name of the backend
      * @return whether the backend was initialied succesfully.
      */
-    bool setPrimaryNotificationBackend( const QString &backend );
+    bool setPrimaryNotificationBackend(const QString &backend);
 
     /**
      * Tries to set one of all backends availible on this platform as backend.
@@ -165,7 +163,7 @@ public:
      * Try to close a Notification if the backend supports the action.
      * @see SnoreBackend::canCloseNotification
      */
-    void requestCloseNotification(Notification,Notification::CloseReasons);
+    void requestCloseNotification(Notification, Notification::CloseReasons);
 
     /**
      *
@@ -173,13 +171,11 @@ public:
      */
     bool primaryBackendSupportsRichtext();
 
-
     /**
      *
      * @return a pointer to the private class, for internal use only.
      */
     const SnoreCorePrivate *d();
-
 
 signals:
     /**
@@ -189,17 +185,16 @@ signals:
      * @todo maybe introduce a pecial action state for this case
      * @see Action
      */
-    void actionInvoked( Snore::Notification );
+    void actionInvoked(Snore::Notification);
 
     /**
      * This signal is emitted when a Notification is closed.
      * @see Notification::CloseReasons
      */
-    void notificationClosed(Snore::Notification );
+    void notificationClosed(Snore::Notification);
 
 private:
     SnoreCorePrivate *d_ptr;
-
 
 };
 
@@ -209,14 +204,11 @@ private:
  * @return if the string was rhichtext or html encoded a decoded string, else the original string.
  */
 
-static inline QString toPlainText ( const QString &string)
+static inline QString toPlainText(const QString &string)
 {
-    if(Qt::mightBeRichText(string))
-    {
+    if (Qt::mightBeRichText(string)) {
         return QTextDocumentFragment::fromHtml(string).toPlainText();
-    }
-    else
-    {
+    } else {
         return string;
     }
 }

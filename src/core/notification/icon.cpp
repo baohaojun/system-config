@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -28,9 +27,9 @@ using namespace Snore;
 QByteArray Icon::dataFromImage(const QImage &image)
 {
     QByteArray data;
-    QBuffer buffer( &data );
-    buffer.open( QBuffer::WriteOnly );
-    image.save( &buffer, "PNG" );
+    QBuffer buffer(&data);
+    buffer.open(QBuffer::WriteOnly);
+    image.save(&buffer, "PNG");
     return data;
 }
 
@@ -65,7 +64,8 @@ Icon::~Icon()
 
 }
 
-const QImage &Icon::image() const{
+const QImage &Icon::image() const
+{
     return d->image();
 }
 
@@ -86,7 +86,7 @@ bool Icon::isValid() const
 
 Icon Icon::scaled(const QSize &s) const
 {
-    return Icon(image().scaled(s,Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    return Icon(image().scaled(s, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 QString Icon::url() const
@@ -94,14 +94,13 @@ QString Icon::url() const
     return d->m_url;
 }
 
-
 bool Snore::Icon::isRemoteFile() const
 {
     return d->m_isRemoteFile;
 }
 
-QDebug operator<< ( QDebug debug, const Snore::Icon &icon )
+QDebug operator<< (QDebug debug, const Snore::Icon &icon)
 {
-    debug << "Snore::Icon(" << (icon.url().isEmpty()?icon.d->m_localUrl:icon.url()) <<  ")" ;
+    debug << "Snore::Icon(" << (icon.url().isEmpty() ? icon.d->m_localUrl : icon.url()) <<  ")" ;
     return debug.maybeSpace();
 }

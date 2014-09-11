@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -26,7 +25,7 @@ Alert::Alert() :
     d(NULL)
 {}
 
-Alert::Alert (const QString &name, const Icon &icon, bool active):
+Alert::Alert(const QString &name, const Icon &icon, bool active):
     d(new AlertData(name, icon, active))
 {}
 
@@ -67,15 +66,11 @@ bool Alert::isValid() const
     return d;
 }
 
-
 QDebug operator<<(QDebug debug, const Alert &alert)
 {
-    if(alert.isValid())
-    {
+    if (alert.isValid()) {
         debug << "Snore::Alert(" << alert.name() << ")" ;
-    }
-    else
-    {
+    } else {
         debug << "Snore::Alert(0x00)" ;
     }
     return debug.maybeSpace();

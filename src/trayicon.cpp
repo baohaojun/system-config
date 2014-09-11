@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -32,7 +31,7 @@ using namespace Snore;
 TrayIcon::TrayIcon():
     m_trayIcon(new QSystemTrayIcon(QIcon(":/root/snore.png"))),
     m_app("SnoreNotify Test", Icon(":/root/snore.png")),
-    m_alert("Default",Icon(":/root/snore.png"))
+    m_alert("Default", Icon(":/root/snore.png"))
 {
     m_app.addAlert(m_alert);
 }
@@ -44,8 +43,7 @@ void TrayIcon::initConextMenu(SnoreCore *snore)
 
     m_trayMenu = new QMenu("SnoreNotify");
     QString version = QString("SnoreNotify %1").arg(Version::version());
-    if(Version::revision() != "")
-    {
+    if (Version::revision() != "") {
         version += QString("-%1").arg(Version::revision());
     }
     m_trayMenu->addAction(version);
@@ -54,19 +52,16 @@ void TrayIcon::initConextMenu(SnoreCore *snore)
     m_trayMenu->addSeparator();
     m_backendActions =  new QActionGroup(m_trayMenu);
     m_backendActions->setExclusive(true);
-    foreach(const QString &back,m_snore->notificationBackends())
-    {
+    foreach(const QString & back, m_snore->notificationBackends()) {
         QAction *b = m_trayMenu->addAction(back, this, SLOT(setPrimaryBackend()));
         b->setCheckable(true);
-        if(back == m_snore->primaryNotificationBackend())
-        {
+        if (back == m_snore->primaryNotificationBackend()) {
             b->setChecked(true);
         }
         m_backendActions->addAction(b);
     }
     m_trayMenu->addSeparator();
-    m_trayMenu->addAction("Exit",qApp,SLOT(quit()));
-
+    m_trayMenu->addAction("Exit", qApp, SLOT(quit()));
 
     m_trayIcon->setContextMenu(m_trayMenu);
 }
@@ -76,19 +71,18 @@ void TrayIcon::hide()
     m_trayIcon->setVisible(false);
 }
 
-QSystemTrayIcon* TrayIcon::trayIcon()
+QSystemTrayIcon *TrayIcon::trayIcon()
 {
     return m_trayIcon;
 }
 
-void TrayIcon::setPrimaryBackend(){
-    QAction *a = qobject_cast<QAction*>(sender());
+void TrayIcon::setPrimaryBackend()
+{
+    QAction *a = qobject_cast<QAction *>(sender());
     m_snore->setPrimaryNotificationBackend(a->text());
 
-    foreach (QAction *action, m_backendActions->actions())
-    {
-        if(action->text() == m_snore->primaryNotificationBackend())
-        {
+    foreach(QAction * action, m_backendActions->actions()) {
+        if (action->text() == m_snore->primaryNotificationBackend()) {
             action->setChecked(true);
             break;
         }
@@ -98,8 +92,7 @@ void TrayIcon::setPrimaryBackend(){
 void TrayIcon::slotTestNotification()
 {
 
-    if(!m_snore->aplications().contains(m_app.name()))
-    {
+    if (!m_snore->aplications().contains(m_app.name())) {
         m_snore->registerApplication(m_app);
     }
     Notification noti(m_app, m_alert, "Hello World",
@@ -110,13 +103,13 @@ void TrayIcon::slotTestNotification()
                       "3<br>"
                       "4<br>"
                       "5<br>", Icon(":/root/snore.png"));
-    noti.addAction(Action(1,"Test Action"));
+    noti.addAction(Action(1, "Test Action"));
     m_snore->broadcastNotification(noti);
 
     QTimer *timer = new QTimer(this);
     m_notifications[timer] = noti;
     timer->setSingleShot(true);
-    timer->setInterval(noti.timeout()/2*1000);
+    timer->setInterval(noti.timeout() / 2 * 1000);
     connect(timer, SIGNAL(timeout()), this, SLOT(sloutUpdateTestNotification()));
     timer->start();
 
@@ -125,7 +118,7 @@ void TrayIcon::slotTestNotification()
 
 void TrayIcon::sloutUpdateTestNotification()
 {
-    QTimer *timer = qobject_cast<QTimer*>(sender());
+    QTimer *timer = qobject_cast<QTimer *>(sender());
     Notification noti = m_notifications.take(timer);
     Notification update(noti, "Hello World",
                         "<b>This is Snore</b><br>"

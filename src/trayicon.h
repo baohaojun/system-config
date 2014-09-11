@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -24,15 +23,14 @@
 #include <QAction>
 #include "core/snore.h"
 
-
-class TrayIcon:public QObject
+class TrayIcon: public QObject
 {
     Q_OBJECT
 public:
     TrayIcon();
     void initConextMenu(Snore::SnoreCore *snore);
     void hide();
-    class QSystemTrayIcon* trayIcon();
+    class QSystemTrayIcon *trayIcon();
 
 private:
     class QSystemTrayIcon *m_trayIcon;
@@ -42,8 +40,7 @@ private:
     Snore::Application m_app;
     Snore::Alert m_alert;
 
-    QHash<QTimer*,Snore::Notification> m_notifications;
-
+    QHash<QTimer *, Snore::Notification> m_notifications;
 
 public slots:
     void setPrimaryBackend();

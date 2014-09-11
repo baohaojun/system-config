@@ -3,28 +3,26 @@
 #include "core/plugins/snorebackend.h"
 #include "notificationinterface.h"
 
-class  FreedesktopBackend:public Snore::SnoreBackend
+class  FreedesktopBackend: public Snore::SnoreBackend
 {
     Q_OBJECT
-    Q_INTERFACES ( Snore::SnoreBackend )
+    Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0")
 public:
     FreedesktopBackend();
     virtual bool initialize(Snore::SnoreCore *snore);
     virtual bool deinitialize();
-    
+
 public slots:
-    void slotNotify( Snore::Notification notification );
-    void slotCloseNotification ( Snore::Notification notification );
+    void slotNotify(Snore::Notification notification);
+    void slotCloseNotification(Snore::Notification notification);
 
-    void slotActionInvoked(const uint &id,const QString &actionID);
-    void slotNotificationClosed ( const uint &id,const uint &reason );
-
+    void slotActionInvoked(const uint &id, const QString &actionID);
+    void slotNotificationClosed(const uint &id, const uint &reason);
 
 private:
-    org::freedesktop::Notifications* m_interface;
-    QHash<uint,uint> m_dbusIdMap;
-
+    org::freedesktop::Notifications *m_interface;
+    QHash<uint, uint> m_dbusIdMap;
 
 };
 

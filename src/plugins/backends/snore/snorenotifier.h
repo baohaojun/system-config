@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -50,9 +49,8 @@ private slots:
 private:
 
     QList<Snore::Notification> m_queue;
-    QVector<NotifyWidget*> m_widgets;
+    QVector<NotifyWidget *> m_widgets;
     QTimer *m_timer;
-
 
 };
 

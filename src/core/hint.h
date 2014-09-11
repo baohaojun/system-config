@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -30,7 +29,7 @@ namespace Snore
 class Hint;
 }
 
-SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Hint &);
+SNORE_EXPORT QDebug operator<< (QDebug, const Snore::Hint &);
 
 namespace Snore
 {
@@ -64,14 +63,14 @@ public:
      * @param key the key
      * @param defaultValue the fallback value
      */
-    QVariant value(const QString & key, const QVariant & defaultValue = QVariant() ) const;
+    QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
 
     /**
      *
      * @param key the key
      * @return whether the key is set
      */
-    bool contains ( const QString & key ) const;
+    bool contains(const QString &key) const;
 
     /**
      * Sets the value for the key depending on the owner
@@ -95,7 +94,7 @@ public:
      * @param key the key
      * @param defaultValue the fallback value
      */
-    QVariant privateValue(const void *owner, const QString & key, const QVariant & defaultValue = QVariant() ) const;
+    QVariant privateValue(const void *owner, const QString &key, const QVariant &defaultValue = QVariant()) const;
 
     /**
      *
@@ -103,23 +102,19 @@ public:
      * @param key the key
      * @return whether the key is set
      */
-    bool containsPrivateValue(const void *owner, const QString & key ) const;
+    bool containsPrivateValue(const void *owner, const QString &key) const;
 
 private slots:
     void slotValueDestroyed();
 
 private:
     QVariantHash m_data;
-    mutable QHash<QPair<quintptr,QString>, QVariant> m_privateData;
+    mutable QHash<QPair<quintptr, QString>, QVariant> m_privateData;
 
-    friend SNORE_EXPORT QDebug (::operator<<) ( QDebug, const Snore::Hint &);
+    friend SNORE_EXPORT QDebug(::operator<<)(QDebug, const Snore::Hint &);
 
 };
 
-
 }
-
-
-
 
 #endif // HINT_H

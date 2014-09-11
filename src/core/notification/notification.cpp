@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -27,27 +26,25 @@
 
 using namespace Snore;
 
-
 int Notification::m_defaultTimeout = 10;
 
-
-Notification::Notification () :
+Notification::Notification() :
     d(NULL)
 {
 }
 
 Notification::Notification(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
-    d(new  NotificationData(application,alert,title,text,icon,timeout,priority))
+    d(new  NotificationData(application, alert, title, text, icon, timeout, priority))
 {
 
 }
 
 Notification::Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
-    d(new  NotificationData(old,title,text,icon,timeout,priority))
+    d(new  NotificationData(old, title, text, icon, timeout, priority))
 {
 }
 
-Notification::Notification ( const Notification &other ) :
+Notification::Notification(const Notification &other) :
     d(other.d)
 {
 }
@@ -117,7 +114,6 @@ bool Notification::isSticky() const
     return d->m_timeout == 0;
 }
 
-
 Notification::Prioritys Notification::priority() const
 {
     return d->m_priority;
@@ -125,16 +121,16 @@ Notification::Prioritys Notification::priority() const
 
 void Notification::addAction(const Action &a)
 {
-    d->m_actions.insert(a.id(),a);
+    d->m_actions.insert(a.id(), a);
 }
-
 
 const QHash<int, Action> &Notification::actions() const
 {
     return d->m_actions;
 }
 
-const Notification::CloseReasons &Notification::closeReason(){
+const Notification::CloseReasons &Notification::closeReason()
+{
     return d->m_closeReason;
 }
 
@@ -167,7 +163,7 @@ void Notification::setDefaultTimeout(int defaultTimeout)
     m_defaultTimeout = defaultTimeout;
 }
 
-QDataStream &operator<< ( QDataStream &stream, const Notification &noti )
+QDataStream &operator<< (QDataStream &stream, const Notification &noti)
 {
     stream << "Title: " << noti.title() << " Text: " << noti.text() << " ID: " << noti.id() ;
     return stream;
@@ -178,29 +174,27 @@ QDataStream &operator<< ( QDataStream &stream, const Notification &noti )
 QDebug operator <<(QDebug debug, const Snore::Notification::CloseReasons &flags)
 {
     debug.nospace() << "CloseReasons(";
-    switch(flags)
-    {
-    debugPrintEnum(Notification::NONE);
-    debugPrintEnum(Notification::TIMED_OUT);
-    debugPrintEnum(Notification::DISMISSED);
-    debugPrintEnum(Notification::CLOSED);
-    debugPrintEnum(Notification::REPLACED);
+    switch (flags) {
+        debugPrintEnum(Notification::NONE);
+        debugPrintEnum(Notification::TIMED_OUT);
+        debugPrintEnum(Notification::DISMISSED);
+        debugPrintEnum(Notification::CLOSED);
+        debugPrintEnum(Notification::REPLACED);
     default:
-        debug << QByteArray::number(flags,16) << ")";
+        debug << QByteArray::number(flags, 16) << ")";
     }
     return debug.space();
 }
 
-QDebug operator<< ( QDebug debug, const Snore::Notification::Prioritys &flags)
+QDebug operator<< (QDebug debug, const Snore::Notification::Prioritys &flags)
 {
     debug.nospace() << "Prioritys(";
-    switch(flags)
-    {
-    debugPrintEnum(Notification::LOW);
-    debugPrintEnum(Notification::NORMAL);
-    debugPrintEnum(Notification::HIGH);
+    switch (flags) {
+        debugPrintEnum(Notification::LOW);
+        debugPrintEnum(Notification::NORMAL);
+        debugPrintEnum(Notification::HIGH);
     default:
-        debug << QByteArray::number(flags,16) << ")";
+        debug << QByteArray::number(flags, 16) << ")";
     }
     return debug.space();
 }

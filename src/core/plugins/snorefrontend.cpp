@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -24,17 +23,18 @@
 #include <QDir>
 #include <QDebug>
 
-namespace Snore{
+namespace Snore
+{
 
-SnoreFrontend::SnoreFrontend ( const QString &name ) :
-    SnorePlugin ( name )
+SnoreFrontend::SnoreFrontend(const QString &name) :
+    SnorePlugin(name)
 {
 
 }
 
 SnoreFrontend::~SnoreFrontend()
 {
-    snoreDebug( SNORE_DEBUG ) << "Deleting" << name();
+    snoreDebug(SNORE_DEBUG) << "Deleting" << name();
 }
 
 }

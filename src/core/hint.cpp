@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -33,19 +32,16 @@ void Hint::setValue(const QString &key, const QVariant &value)
 void Hint::setValue(const QString &key, QObject *value)
 {
     m_data.insert(key.toLower(), qVariantFromValue(value));
-    value->setProperty("hint_key",key.toLower());
-    connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()),Qt::DirectConnection );
+    value->setProperty("hint_key", key.toLower());
+    connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()), Qt::DirectConnection);
 }
 
 QVariant Hint::value(const QString &k, const QVariant &defaultValue) const
 {
     QString key(k.toLower());
-    if(m_data.contains(key))
-    {
+    if (m_data.contains(key)) {
         return m_data.value(key);
-    }
-    else
-    {
+    } else {
         return defaultValue;
     }
 }
@@ -57,70 +53,58 @@ bool Hint::contains(const QString &key) const
 
 void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value) const
 {
-    QPair<quintptr,QString> pk((quintptr)owner,key.toLower());
+    QPair<quintptr, QString> pk((quintptr)owner, key.toLower());
     m_privateData.insert(pk, value);
 }
 
 void Hint::setPrivateValue(const void *owner, const QString &key, QObject *value) const
 {
-    QPair<quintptr,QString> pk((quintptr)owner,key.toLower());
+    QPair<quintptr, QString> pk((quintptr)owner, key.toLower());
     m_privateData.insert(pk, qVariantFromValue(value));
-    value->setProperty("hint_key",key.toLower());
-    value->setProperty("hint_owner",(quintptr)owner);
+    value->setProperty("hint_key", key.toLower());
+    value->setProperty("hint_owner", (quintptr)owner);
     connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()), Qt::DirectConnection);
 }
 
-
 QVariant Hint::privateValue(const void *owner, const QString &k, const QVariant &defaultValue) const
 {
-    QPair<quintptr,QString> key((quintptr)owner, k.toLower());
-    if(m_privateData.contains(key))
-    {
+    QPair<quintptr, QString> key((quintptr)owner, k.toLower());
+    if (m_privateData.contains(key)) {
         return m_privateData.value(key);
-    }
-    else
-    {
+    } else {
         return defaultValue;
     }
 }
 
-
 bool Hint::containsPrivateValue(const void *owner, const QString &key) const
 {
-    QPair<quintptr,QString> pk((quintptr)owner,key.toLower());
+    QPair<quintptr, QString> pk((quintptr)owner, key.toLower());
     return m_privateData.contains(pk);
 }
 
 void Hint::slotValueDestroyed()
 {
-    QObject * o = sender();
+    QObject *o = sender();
     QString key = o->property("hint_key").toString();
-    if(!o->property("hint_owner").isNull())
-    {
-        QPair<quintptr,QString> pk(o->property("hint_owner").value<quintptr>(), key);
+    if (!o->property("hint_owner").isNull()) {
+        QPair<quintptr, QString> pk(o->property("hint_owner").value<quintptr>(), key);
         m_privateData.remove(pk);
-    }
-    else
-    {
+    } else {
         m_data.remove(key);
     }
 }
 
-QDebug operator<<( QDebug debug, const Snore::Hint &hint )
+QDebug operator<<(QDebug debug, const Snore::Hint &hint)
 {
     debug << "Snore::Hint(";
-    for(QVariantHash::const_iterator it = hint.m_data.constBegin();it != hint.m_data.constEnd();++it)
-    {
-        if(it != hint.m_data.constBegin())
-        {
+    for (QVariantHash::const_iterator it = hint.m_data.constBegin(); it != hint.m_data.constEnd(); ++it) {
+        if (it != hint.m_data.constBegin()) {
             debug << ", ";
         }
         debug << "(" << it.key() << ", " << it.value();
     }
-    for(QHash< QPair<quintptr, QString>, QVariant>::const_iterator it = hint.m_privateData.constBegin();it != hint.m_privateData.constEnd();++it)
-    {
-        if(it != hint.m_privateData.constBegin())
-        {
+    for (QHash< QPair<quintptr, QString>, QVariant>::const_iterator it = hint.m_privateData.constBegin(); it != hint.m_privateData.constEnd(); ++it) {
+        if (it != hint.m_privateData.constBegin()) {
             debug << ", ";
         }
         debug << "(" << it.key() << ", " << it.value();

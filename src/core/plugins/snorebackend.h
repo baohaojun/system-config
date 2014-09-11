@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -27,7 +26,8 @@
 #include <QPointer>
 #include <QFlag>
 
-namespace Snore{
+namespace Snore
+{
 
 class SNORE_EXPORT SnoreBackend : public SnorePlugin
 {
@@ -39,7 +39,7 @@ public:
     virtual bool initialize(SnoreCore *snore);
     virtual bool deinitialize();
 
-    void requestCloseNotification( Snore::Notification notification,Notification::CloseReasons reason );
+    void requestCloseNotification(Snore::Notification notification, Notification::CloseReasons reason);
 
     Snore::Notification getActiveNotificationByID(uint id);
 
@@ -48,14 +48,13 @@ public:
     bool supportsRichtext() const;
 
 signals:
-    void notificationClosed( Snore::Notification );
-
+    void notificationClosed(Snore::Notification);
 
 public slots:
-    virtual void slotRegisterApplication(const Snore::Application &application );
-    virtual void slotDeregisterApplication(const Snore::Application &application );
-    virtual void slotNotify ( Snore::Notification notification ) = 0;
-    virtual void slotCloseNotification ( Snore::Notification notification );
+    virtual void slotRegisterApplication(const Snore::Application &application);
+    virtual void slotDeregisterApplication(const Snore::Application &application);
+    virtual void slotNotify(Snore::Notification notification) = 0;
+    virtual void slotCloseNotification(Snore::Notification notification);
 
 private slots:
     void notificationTimedOut();
@@ -64,11 +63,11 @@ protected slots:
     void startTimeout(Notification &notification);
 
 protected:
-    void closeNotification(Snore::Notification,Snore::Notification::CloseReasons);
+    void closeNotification(Snore::Notification, Snore::Notification::CloseReasons);
     void setSupportsRichtext(bool b);
 
 private:
-    QHash<uint,Notification> m_activeNotifications;
+    QHash<uint, Notification> m_activeNotifications;
 
     bool m_canCloseNotification;
     bool m_supportsRichtext;
@@ -77,14 +76,14 @@ private:
     void addActiveNotification(Notification n);
     friend void SnoreCore::broadcastNotification(Notification notification);
 
-
 };
 
 }
-Q_DECLARE_INTERFACE ( Snore::SnoreBackend,
-                      "org.Snore.NotificationBackend/1.0" )
+Q_DECLARE_INTERFACE(Snore::SnoreBackend,
+                    "org.Snore.NotificationBackend/1.0")
 
-namespace Snore{
+namespace Snore
+{
 class SnoreCore;
 
 class SNORE_EXPORT SnoreSecondaryBackend : public SnorePlugin
@@ -97,11 +96,10 @@ public:
     virtual bool initialize(SnoreCore *snore);
     virtual bool deinitialize();
 
-
     bool supportsRichtext();
 
 public slots:
-    virtual void slotNotify ( Snore::Notification notification ) = 0;
+    virtual void slotNotify(Snore::Notification notification) = 0;
 
 protected:
     bool m_supportsRichtext;
@@ -110,7 +108,7 @@ protected:
 
 }
 
-Q_DECLARE_INTERFACE ( Snore::SnoreSecondaryBackend,
-                      "org.Snore.SecondaryNotificationBackend/1.0" )
+Q_DECLARE_INTERFACE(Snore::SnoreSecondaryBackend,
+                    "org.Snore.SecondaryNotificationBackend/1.0")
 
 #endif//SNORE_BACKEND_H

@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -16,7 +15,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 
 #ifndef SNORECOREPRIVATE_H
 #define SNORECOREPRIVATE_H
@@ -38,7 +36,7 @@ class SNORE_EXPORT SnoreCorePrivate : public QObject
 public:
     static inline QString computeHash(const QByteArray &data)
     {
-        return QCryptographicHash::hash(data,QCryptographicHash::Md5).toHex();
+        return QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex();
     }
 
     static void registerMetaTypes();
@@ -54,11 +52,9 @@ public:
     ~SnoreCorePrivate();
     const Application defaultApplication() const;
 
-
     void notificationActionInvoked(Notification notification) const;
 
-    bool setBackendIfAvailible(const QString & backend);
-
+    bool setBackendIfAvailible(const QString &backend);
 
     /**
      *
@@ -67,8 +63,8 @@ public:
     bool primaryBackendCanUpdateNotification() const;
 
 signals:
-    void applicationRegistered(const Snore::Application&);
-    void applicationDeregistered(const Snore::Application&);
+    void applicationRegistered(const Snore::Application &);
+    void applicationDeregistered(const Snore::Application &);
     void notify(Snore::Notification noti);
 
 private slots:
@@ -78,7 +74,7 @@ private slots:
 private:
     SnoreCore *q_ptr;
 
-    QHash<QString,Application> m_applications;
+    QHash<QString, Application> m_applications;
 
     QHash<SnorePlugin::PluginTypes, QStringList> m_plugins;
 

@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -30,11 +29,10 @@
 #include <QThread>
 #include <QMetaMethod>
 
-
 using namespace Snore;
 
-SnoreBackend::SnoreBackend (const QString &name , bool canCloseNotification, bool supportsRichtext, bool canUpdateNotifications) :
-    SnorePlugin ( name ),
+SnoreBackend::SnoreBackend(const QString &name , bool canCloseNotification, bool supportsRichtext, bool canUpdateNotifications) :
+    SnorePlugin(name),
     m_canCloseNotification(canCloseNotification),
     m_supportsRichtext(supportsRichtext),
     m_canUpdateNotification(canUpdateNotifications)
@@ -44,57 +42,49 @@ SnoreBackend::SnoreBackend (const QString &name , bool canCloseNotification, boo
 
 SnoreBackend::~SnoreBackend()
 {
-    snoreDebug( SNORE_DEBUG )<<"Deleting"<<name();
+    snoreDebug(SNORE_DEBUG) << "Deleting" << name();
 }
 
-
-bool SnoreBackend::initialize( SnoreCore *snore )
+bool SnoreBackend::initialize(SnoreCore *snore)
 {
-    if(!SnorePlugin::initialize(snore))
-    {
+    if (!SnorePlugin::initialize(snore)) {
         return false;
     }
 
-    connect( snore->d(), SIGNAL(applicationRegistered(const Snore::Application&)), this, SLOT(slotRegisterApplication(const Snore::Application&)), Qt::QueuedConnection);
-    connect( snore->d(), SIGNAL(applicationDeregistered(const Snore::Application&)), this, SLOT(slotDeregisterApplication(const Snore::Application&)), Qt::QueuedConnection);
+    connect(snore->d(), SIGNAL(applicationRegistered(Snore::Application)), this, SLOT(slotRegisterApplication(Snore::Application)), Qt::QueuedConnection);
+    connect(snore->d(), SIGNAL(applicationDeregistered(Snore::Application)), this, SLOT(slotDeregisterApplication(Snore::Application)), Qt::QueuedConnection);
 
-    connect( this, SIGNAL(notificationClosed(Snore::Notification)), snore->d(), SLOT(slotNotificationClosed(Snore::Notification)), Qt::QueuedConnection);
-    connect( snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
+    connect(this, SIGNAL(notificationClosed(Snore::Notification)), snore->d(), SLOT(slotNotificationClosed(Snore::Notification)), Qt::QueuedConnection);
+    connect(snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
 
-    foreach(const Application &a,snore->aplications())
-    {
+    foreach(const Application & a, snore->aplications()) {
         this->slotRegisterApplication(a);
     }
 
     return true;
 }
 
-
-void SnoreBackend::requestCloseNotification (Notification notification, Notification::CloseReasons reason )
+void SnoreBackend::requestCloseNotification(Notification notification, Notification::CloseReasons reason)
 {
-    if(canCloseNotification() && notification.isValid())
-    {
-        closeNotification(notification,reason);
+    if (canCloseNotification() && notification.isValid()) {
+        closeNotification(notification, reason);
         slotCloseNotification(notification);
     }
 }
 
 void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons reason)
 {
-    if(!n.isValid())
-    {
+    if (!n.isValid()) {
         return;
     }
-    if(m_activeNotifications.contains(n.id()))
-    {
+    if (m_activeNotifications.contains(n.id())) {
         m_activeNotifications.remove(n.id());
     }
-    if(n.isUpdate() && m_activeNotifications.contains(n.old().id()))
-    {
+    if (n.isUpdate() && m_activeNotifications.contains(n.old().id())) {
         m_activeNotifications.remove(n.old().id());
     }
     n.data()->setCloseReason(reason);
-    snoreDebug( SNORE_DEBUG ) << n;
+    snoreDebug(SNORE_DEBUG) << n;
     emit notificationClosed(n);
 }
 
@@ -117,24 +107,22 @@ SnoreSecondaryBackend::SnoreSecondaryBackend(const QString &name, bool supportsR
 
 SnoreSecondaryBackend::~SnoreSecondaryBackend()
 {
-    snoreDebug( SNORE_DEBUG )<<"Deleting"<<name();
+    snoreDebug(SNORE_DEBUG) << "Deleting" << name();
 }
 
 bool SnoreSecondaryBackend::initialize(SnoreCore *snore)
 {
-    if(!SnorePlugin::initialize(snore))
-    {
+    if (!SnorePlugin::initialize(snore)) {
         return false;
     }
-    connect( snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
+    connect(snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
     return true;
 }
 
 bool SnoreSecondaryBackend::deinitialize()
 {
-    if(SnorePlugin::deinitialize())
-    {
-        disconnect( snore()->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
+    if (SnorePlugin::deinitialize()) {
+        disconnect(snore()->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
         return true;
     }
     return false;
@@ -180,62 +168,52 @@ void SnoreBackend::addActiveNotification(Notification n)
     m_activeNotifications.insert(n.id(), n);
 }
 
-
 bool SnoreBackend::deinitialize()
 {
-    if(SnorePlugin::deinitialize())
-    {
-        foreach(Notification n,m_activeNotifications)
-        {
+    if (SnorePlugin::deinitialize()) {
+        foreach(Notification n, m_activeNotifications) {
             requestCloseNotification(n, Notification::DISMISSED);
         }
 
-
-        foreach(const Application &a,snore()->aplications())
-        {
+        foreach(const Application & a, snore()->aplications()) {
             slotDeregisterApplication(a);
         }
-        disconnect( snore()->d(), SIGNAL(applicationRegistered(const Snore::Application&)), this, SLOT(slotRegisterApplication(const Snore::Application&)));
-        disconnect( snore()->d(), SIGNAL(applicationDeregistered(const Snore::Application&)), this, SLOT(slotDeregisterApplication(const Snore::Application&)));
+        disconnect(snore()->d(), SIGNAL(applicationRegistered(Snore::Application)), this, SLOT(slotRegisterApplication(Snore::Application)));
+        disconnect(snore()->d(), SIGNAL(applicationDeregistered(Snore::Application)), this, SLOT(slotDeregisterApplication(Snore::Application)));
 
-        disconnect( this, SIGNAL(notificationClosed(Snore::Notification)), snore()->d(), SLOT(slotNotificationClosed(Snore::Notification)));
-        disconnect( snore()->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
+        disconnect(this, SIGNAL(notificationClosed(Snore::Notification)), snore()->d(), SLOT(slotNotificationClosed(Snore::Notification)));
+        disconnect(snore()->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
         return true;
     }
     return false;
 }
 
-
 void SnoreBackend::startTimeout(Notification &notification)
 {
-    if(thread() != QThread::currentThread())
-    {
-        metaObject()->invokeMethod(this, "startTimeout", Qt::QueuedConnection, Q_ARG(Notification,notification));
+    if (thread() != QThread::currentThread()) {
+        metaObject()->invokeMethod(this, "startTimeout", Qt::QueuedConnection, Q_ARG(Notification, notification));
         return;
     }
-    if(notification.isSticky())
-    {
+    if (notification.isSticky()) {
         return;
     }
     QTimer *timer = notification.data()->timeoutTimer();
     timer->stop();
-    if(notification.isUpdate())
-    {
+    if (notification.isUpdate()) {
         notification.old().data()->timeoutTimer()->stop();
     }
     timer->setInterval(notification.timeout() * 1000);
-    connect(timer,SIGNAL(timeout()),this,SLOT(notificationTimedOut()), Qt::QueuedConnection);
+    connect(timer, SIGNAL(timeout()), this, SLOT(notificationTimedOut()), Qt::QueuedConnection);
     timer->start();
 }
 
 void SnoreBackend::notificationTimedOut()
 {
 
-    QTimer *timer = qobject_cast<QTimer*>(sender());
+    QTimer *timer = qobject_cast<QTimer *>(sender());
     Notification n = snore()->getActiveNotificationByID(timer->property("notificationID").toUInt());
-    if(n.isValid())
-    {
-        snoreDebug( SNORE_DEBUG ) << n;
-        snore()->requestCloseNotification(n,Notification::TIMED_OUT);
+    if (n.isValid()) {
+        snoreDebug(SNORE_DEBUG) << n;
+        snore()->requestCloseNotification(n, Notification::TIMED_OUT);
     }
 }

@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +22,6 @@
 #include "snore_exports.h"
 
 #include <QDataStream>
-
 
 namespace  Snore
 {
@@ -46,7 +44,7 @@ public:
      * @param id can be used to identify the action
      * @param name will be displayed in the notification system.
      */
-    Action(int id,QString name);
+    Action(int id, QString name);
 
     /**
      *
@@ -72,5 +70,5 @@ private:
 };
 }
 
-QDataStream &operator<< ( QDataStream & stream, const Snore::Action &action);
+QDataStream &operator<< (QDataStream &stream, const Snore::Action &action);
 #endif // NOTIFICATIONACTION_H

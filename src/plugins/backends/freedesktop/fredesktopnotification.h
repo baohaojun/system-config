@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -25,10 +24,9 @@
 #include <QtDBus>
 #include <QMetaType>
 
-
 class FreedesktopImageHint
 {
-public:    
+public:
     FreedesktopImageHint();
     FreedesktopImageHint(const QImage &img);
     QImage toQImage()const;
@@ -44,12 +42,11 @@ public:
 private:
     static int imageHintID;
 
-
 };
 
 Q_DECLARE_METATYPE(FreedesktopImageHint);
 
 QDBusArgument &operator<<(QDBusArgument &a,  const FreedesktopImageHint &i);
-const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopImageHint  &i) ;
+const QDBusArgument &operator >>(const QDBusArgument &a,  FreedesktopImageHint  &i) ;
 
 #endif // FreedesktopNotification_H

@@ -2,7 +2,6 @@
     SnoreNotify is a Notification Framework based on Qt
     Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
 
-
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -37,11 +36,10 @@
 
 using namespace Snore;
 
-
-SnoreCore::SnoreCore(QSystemTrayIcon *trayIcon )
+SnoreCore::SnoreCore(QSystemTrayIcon *trayIcon)
 {
     SnoreCorePrivate::registerMetaTypes();
-    d_ptr = new SnoreCorePrivate(trayIcon );
+    d_ptr = new SnoreCorePrivate(trayIcon);
     Q_D(SnoreCore);
     d->q_ptr = this;
 }
@@ -52,76 +50,67 @@ SnoreCore::~SnoreCore()
     d->deleteLater();
 }
 
-void SnoreCore::loadPlugins( SnorePlugin::PluginTypes types )
+void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
 {
     Q_D(SnoreCore);
-    foreach( SnorePlugin::PluginTypes type, PluginContainer::types())
-    {
-        if(type != SnorePlugin::ALL && types & type)
-        {
-            foreach( PluginContainer *info, PluginContainer::pluginCache(type).values())
-            {
-                switch(info->type())
-                {
+    foreach(SnorePlugin::PluginTypes type, PluginContainer::types()) {
+        if (type != SnorePlugin::ALL && types & type) {
+            foreach(PluginContainer * info, PluginContainer::pluginCache(type).values()) {
+                switch (info->type()) {
                 case SnorePlugin::BACKEND:
                     break;
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN:
-                    if(!info->load()->initialize( this ))
-                    {
+                    if (!info->load()->initialize(this)) {
                         info->unload();
                         break;
                     }
                     break;
                 default:
-                    snoreDebug( SNORE_WARNING ) << "Plugin Cache corrupted\n" << info->file() << info->type();
+                    snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
                 }
-                snoreDebug( SNORE_DEBUG ) << info->name() << "is a" << info->type();
+                snoreDebug(SNORE_DEBUG) << info->name() << "is a" << info->type();
                 d->m_plugins[info->type()].append(info->name());
             }
-            if(d->m_plugins.contains(type))
-            {
+            if (d->m_plugins.contains(type)) {
                 qSort(d->m_plugins[type]);
             }
         }
     }
 
-    snoreDebug( SNORE_INFO ) << "Loaded Plugins:" << d->m_plugins;
+    snoreDebug(SNORE_INFO) << "Loaded Plugins:" << d->m_plugins;
 }
 
-void SnoreCore::broadcastNotification ( Notification notification )
+void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
-    snoreDebug( SNORE_DEBUG )<<"Broadcasting"<<notification<<"timeout:"<<notification.timeout();
-    if ( d->m_notificationBackend != NULL )
-    {
-        if(notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification())
-        {
-            requestCloseNotification(notification.old(),Notification::REPLACED);
+    snoreDebug(SNORE_DEBUG) << "Broadcasting" << notification << "timeout:" << notification.timeout();
+    if (d->m_notificationBackend != NULL) {
+        if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
+            requestCloseNotification(notification.old(), Notification::REPLACED);
         }
         d->m_notificationBackend->addActiveNotification(notification);
     }
-    emit d->notify ( notification );
+    emit d->notify(notification);
 }
 
 void SnoreCore::registerApplication(const Application &application)
 {
     Q_D(SnoreCore);
-    if(!d->m_applications.contains(application.name()))
-    {
-        snoreDebug( SNORE_DEBUG ) << "Registering Application:" << application;
-        d->m_applications.insert ( application.name(),application );
-        emit d->applicationRegistered ( application );
+    if (!d->m_applications.contains(application.name())) {
+        snoreDebug(SNORE_DEBUG) << "Registering Application:" << application;
+        d->m_applications.insert(application.name(), application);
+        emit d->applicationRegistered(application);
     }
 }
 
 void SnoreCore::deregisterApplication(const Application &application)
 {
     Q_D(SnoreCore);
-    emit d->applicationDeregistered (application );
-    d->m_applications.take ( application.name() );
+    emit d->applicationDeregistered(application);
+    d->m_applications.take(application.name());
 }
 
 const QHash<QString, Application> &SnoreCore::aplications() const
@@ -129,7 +118,6 @@ const QHash<QString, Application> &SnoreCore::aplications() const
     Q_D(const SnoreCore);
     return d->m_applications;
 }
-
 
 const QStringList SnoreCore::notificationBackends() const
 {
@@ -149,31 +137,26 @@ const QStringList SnoreCore::secondaryNotificationBackends() const
     return d->m_plugins.value(SnorePlugin::SECONDARY_BACKEND);
 }
 
-bool SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
+bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
 {
     Q_D(SnoreCore);
-    if(backend == primaryNotificationBackend())
-    {
+    if (backend == primaryNotificationBackend()) {
         return true;
     }
-    const QHash<QString,PluginContainer *> backends = PluginContainer::pluginCache(SnorePlugin::BACKEND);
-    if(!backends.contains(backend))
-    {
-        snoreDebug( SNORE_DEBUG ) << "Unknown Backend:" << backend;
+    const QHash<QString, PluginContainer *> backends = PluginContainer::pluginCache(SnorePlugin::BACKEND);
+    if (!backends.contains(backend)) {
+        snoreDebug(SNORE_DEBUG) << "Unknown Backend:" << backend;
         return false;
     }
-    snoreDebug( SNORE_DEBUG ) << "Setting Notification Backend to:" << backend;
-    SnoreBackend* b = qobject_cast<SnoreBackend*>(backends.value(backend)->load());
-    if(!b->isInitialized())
-    {
-        if(!b->initialize(this))
-        {
-            snoreDebug( SNORE_DEBUG ) << "Failed to initialize" << b->name();
+    snoreDebug(SNORE_DEBUG) << "Setting Notification Backend to:" << backend;
+    SnoreBackend *b = qobject_cast<SnoreBackend *>(backends.value(backend)->load());
+    if (!b->isInitialized()) {
+        if (!b->initialize(this)) {
+            snoreDebug(SNORE_DEBUG) << "Failed to initialize" << b->name();
             return false;
         }
     }
-    if(d->m_notificationBackend)
-    {
+    if (d->m_notificationBackend) {
         d->m_notificationBackend->deinitialize();
     }
 
@@ -185,35 +168,28 @@ bool SnoreCore::setPrimaryNotificationBackend()
 {
     Q_D(SnoreCore);
 #ifdef Q_OS_WIN
-    if(QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8 && d->setBackendIfAvailible("Windows 8"))
-    {
+    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8 && d->setBackendIfAvailible("Windows 8")) {
         return true;
     }
-    if(d->setBackendIfAvailible("Growl"))
-    {
+    if (d->setBackendIfAvailible("Growl")) {
         return true;
     }
-    if(d->setBackendIfAvailible("Snarl"))
-    {
+    if (d->setBackendIfAvailible("Snarl")) {
         return true;
     }
 #elif defined(Q_OS_LINUX)
-    if(d->setBackendIfAvailible("FreedesktopNotification"))
-    {
+    if (d->setBackendIfAvailible("FreedesktopNotification")) {
         return true;
     }
 #elif defined(Q_OS_MAC)
-    if(d->setBackendIfAvailible("OSX Notification Center"))
-    {
+    if (d->setBackendIfAvailible("OSX Notification Center")) {
         return true;
     }
-    if(d->setBackendIfAvailible("Growl"))
-    {
+    if (d->setBackendIfAvailible("Growl")) {
         return true;
     }
 #endif
-    if(d->setBackendIfAvailible("Snore"))
-    {
+    if (d->setBackendIfAvailible("Snore")) {
         return true;
     }
     return false;
@@ -222,14 +198,14 @@ bool SnoreCore::setPrimaryNotificationBackend()
 const QString SnoreCore::primaryNotificationBackend() const
 {
     Q_D(const SnoreCore);
-    if(d->m_notificationBackend.isNull())
-    {
+    if (d->m_notificationBackend.isNull()) {
         return QString::null;
     }
     return d->m_notificationBackend->name();
 }
 
-QSystemTrayIcon *SnoreCore::trayIcon(){
+QSystemTrayIcon *SnoreCore::trayIcon()
+{
     Q_D(SnoreCore);
     return d->m_trayIcon;
 }
@@ -237,9 +213,8 @@ QSystemTrayIcon *SnoreCore::trayIcon(){
 Notification SnoreCore::getActiveNotificationByID(uint id)
 {
     Q_D(SnoreCore);
-    if(!d->m_notificationBackend->isInitialized())
-    {
-        qFatal("Notification backend %s isn't initialized will snore will exit now",d->m_notificationBackend->name().toLatin1().constData());
+    if (!d->m_notificationBackend->isInitialized()) {
+        qFatal("Notification backend %s isn't initialized will snore will exit now", d->m_notificationBackend->name().toLatin1().constData());
     }
     return d->m_notificationBackend->getActiveNotificationByID(id);
 }
@@ -247,7 +222,7 @@ Notification SnoreCore::getActiveNotificationByID(uint id)
 void SnoreCore::requestCloseNotification(Notification n, Notification::CloseReasons r)
 {
     Q_D(SnoreCore);
-    d->m_notificationBackend->requestCloseNotification(n,r);
+    d->m_notificationBackend->requestCloseNotification(n, r);
 }
 
 bool SnoreCore::primaryBackendSupportsRichtext()
