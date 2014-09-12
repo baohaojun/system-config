@@ -14,19 +14,24 @@ no_comment=
 reverse_matcher=()
 path_matcher=()
 path_matcher_inv=()
+lang_c=
 
 echo -n > ~/.logs/$(basename $0).log
 function debug() {
     echo "$@" >> ~/.logs/$(basename $0).log
 }
 
-TEMP=$(getopt -o e:p:r:v:sima --long "nc,add:" -n $(basename $0) -- "$@")
+TEMP=$(getopt -o ce:p:r:v:sima --long "nc,add:" -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -e)
             regexp=$2
             shift 2
+            ;;
+        -c)
+            lang_c=-c
+            shift
             ;;
         -p)
             path_matcher=(-p "$2")
@@ -86,7 +91,7 @@ if echo "$regexp" | grep -q -e "\b$"; then
 fi
 
 debug "re_beagrep is $re_beagrep"
-for file in $(beagrep -e "$re_beagrep" $ignore_case "${path_matcher[@]}" "${path_matcher_inv[@]}" --grep "-l -P"); do
+for file in $(beagrep -e "$re_beagrep" $lang_c $ignore_case "${path_matcher[@]}" "${path_matcher_inv[@]}" --grep "-l -P"); do
     debug "got file $file";
     if test ! -e "$file"; then
         continue

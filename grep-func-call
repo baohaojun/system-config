@@ -24,12 +24,14 @@ my $path_matcher = "";
 my $path_matcher_inv = "";
 my @beagrep_path_arg;
 my $reverse_matcher;
+my $lang_c = 0;
 
 GetOptions(
     "s!" => \$silent,
     "i!" => \$ignore_case,
     "a!" => sub { $grep_all = !$grep_all},
     "m!" => \$members,
+    "c!" => sub { $lang_c = 1 },
     "e=s" => \$target,
     "p=s" => \$path_matcher,
     "r=s" => \$reverse_matcher,
@@ -40,6 +42,10 @@ GetOptions(
 
 if ($path_matcher) {
     @beagrep_path_arg = ("-p", $path_matcher);
+}
+
+if ($lang_c) {
+    @beagrep_path_arg = (@beagrep_path_arg, "-c");
 }
 
 if ($path_matcher_inv) {
