@@ -148,7 +148,7 @@ while ($supers =~ m/($qualified_re)/g) {
 }
 
 unless ($should_recurse) {
-    print join(" ", keys $super_classes{$q_class});
+    print join(" ", keys %{$super_classes{$q_class}});
     exit 0;
 }
 
@@ -204,7 +204,7 @@ sub print_hierarchy($$)
         }
     }
     if ($super_classes{$q_class}) {
-        for (sort keys $super_classes{$q_class}) {
+        for (sort keys %{$super_classes{$q_class}}) {
             print_hierarchy($_, $indent + 1);
         }
     }
