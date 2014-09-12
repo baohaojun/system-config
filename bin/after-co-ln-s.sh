@@ -206,7 +206,7 @@ if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; the
 fi
 if test -L /etc/rc.local || yes-or-no-p -N "Replace /etc/rc.local with system-config's version?"; then
     if ! test -L /etc/rc.local; then
-        cp /etc/rc.local /etc/rc.local.bak
+        sudo cp /etc/rc.local /etc/rc.local.bak
     fi
     sudo ln -sf ~/etc/rc.local /etc || true # no sudo on win32
 fi
@@ -267,4 +267,4 @@ sync-etc-files
 mkdir -p ~/.cache # just in case the following command will create
                   # .cache with root permission.
 update-host-ip phone 192.168.15.244
-update-host-ip home 128.199.178.185
+update-host-ip home 128.199.228.174

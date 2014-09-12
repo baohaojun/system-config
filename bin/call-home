@@ -9,8 +9,13 @@ fi
     flock -n 9 || { echo 'lock failed for home at '$(date); exit 0; }
     for home in home realhome; do
         while true; do
+            if test $home = home; then
+                C=C;
+            else
+                C=
+            fi
             sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
-            ssh -o ServerAliveInterval=300 -i ~/.ssh/id_rsa_nopass -2qN $(
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=300 -i ~/.ssh/id_rsa_nopass -${C}2qN $(
                 if test $home = home; then
                     echo -D 7070
                 fi

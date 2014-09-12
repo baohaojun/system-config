@@ -1,1 +1,15 @@
 #!/bin/bash
+set -e
+if test ! -e "$1"; then
+    adb am start "$1"
+    exit
+fi
+ext=${1##*.}
+if test "$ext" = mp3; then
+    out=/sdcard/Music/"$(basename "$1")"
+else
+    out=/sdcard/adb-of.$ext
+fi
+adb push "$1" "$out"
+adb-scan-media "$out"
+adb am start file://"$out"

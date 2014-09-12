@@ -5,6 +5,7 @@ echo mkdir ~/.ssh
 set -e
 if yes-or-no-p "You can use root@$host without a password?"; then
     auth=$(cat ~/.ssh/authorized_keys)
+    auth2=$(printf %q 'command="/home/bhj/bin/remote-edit-secure"'; echo -n ' '; cat ~/.ssh/id_rsa_nopass.pub)
     ssh root@$host echo hello
     ssh-exp root@$host 'adduser bhj;
                         adduser gfw;
@@ -12,25 +13,28 @@ if yes-or-no-p "You can use root@$host without a password?"; then
                         mkdir -p ~bhj/.ssh
                         mkdir -p ~gfw/.ssh
                         echo "'"$auth"'" > ~bhj/.ssh/authorized_keys
-                        echo "'"$auth"'" | grep command= > ~gfw/.ssh/authorized_keys
+                        echo "'"$auth2"'" | grep command= > ~gfw/.ssh/authorized_keys
                         chown bhj\. ~bhj/.ssh -R
                         chown gfw\. ~gfw/.ssh -R
                         echo bhj ALL=NOPASSWD: ALL | sudo tee /etc/sudoers.d/bhj;
                         sudo chmod 440 /etc/sudoers.d/bhj
                        '
+    rsync ~/.ssh/id_rsa $host:.ssh/id_rsa
 else
     cat ~/.ssh/authorized_keys | ssh -o PreferredAuthentications=password $host 'mkdir -p ~/.ssh/ && cat > ~/.ssh/authorized_keys'
+    rsync ~/.ssh/id_rsa_nopass $host:.ssh/id_rsa
 fi
 
-rsync ~/system-config $host: -avz
-rsync ~/.ssh/id_rsa_nopass $host:.ssh/id_rsa
+
 
 ssh-exp $host "bash -c 'echo bhj ALL=NOPASSWD: ALL | sudo tee /etc/sudoers.d/bhj; sudo chmod 440 /etc/sudoers.d/bhj'"
 ssh-exp $host "sudo mkdir -p ~root/.ssh/; cat ~/.ssh/authorized_keys | sudo tee -a ~root/.ssh/authorized_keys"
-ssh-exp $host "touch ~/.config/no-texlive"
+ssh-exp $host "mkdir -p ~/.config; touch ~/.config/no-texlive"
+
 if test "$NO_SYSTEM_CONFIG" = true; then
     true
 else
+    rsync ~/system-config $host: -avz
     ssh-exp $host "sudo perl -npe 's!cn.archive.ubuntu.com!mirrors.aliyun.com!g' -i /etc/apt/sources.list"
     ssh-exp $host "sudo apt-get update"
     ssh-exp -- $host "bash -x ~/system-config/bin/Linux/after-check-out.sh"

@@ -5,6 +5,10 @@ if echo "$url" | grep -q "^http://weibo.com/"; then
     sid=$(echo $url | perl -npe 's!http://weibo.com/.*?/(.*?)(\?.*)?$!$1!')
     adb am start "sinaweibo://detail?mblogid=$sid"
     exit
+elif echo "$url" | grep -q "v.qq.com/"; then
+    sid=$(echo $url | perl -npe 's!.*/(.*)\.html!tenvideo2://?action=5&video_id=$1!')
+    adb am start "$sid"
+    exit
 fi
 
 if test $(basename $0) = adb-browse-with-firefox; then

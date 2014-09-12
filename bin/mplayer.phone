@@ -1,0 +1,24 @@
+#!/bin/bash
+if echo "$@" | grep -q "http://"; then
+    x=$(random 10000)
+    ((x++))
+    mp3=$(find ~/Music/like/ -name "*.mp3" | head -n $x|tail -n 1)
+    exec mplayer.phone -slave "$mp3"
+fi
+
+if test $# != 2 -o x"$1" != x-slave -o ! -e "$2"; then
+    exec /usr/bin/mplayer "$@"
+fi
+
+if ! readlink -f "$2" | grep "/like/"; then
+    exec /usr/bin/mplayer "$@"
+fi
+adb-ignite-device&
+
+like-mp3-tags "$2"
+adb-of "$2"
+sleep 5
+
+while adb fuser /sdcard/Music/"$(basename "$2")" | grep .; do
+    sleep 1
+done

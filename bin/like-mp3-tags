@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+mp3=$(readlink -f "$1")
+album=$(basename "$(dirname "$mp3")")
+singer=$(basename "$(dirname "$(dirname "$mp3")")")
+title=$(basename "$mp3"|perl -npe 's/\.mp3$//i')
+png=${mp3/%.mp3/.png}
+if file "$png" | grep 'jpeg image data' -i; then
+    ln -s "$png" "${png/%.png/.jpg}" || true
+    png=${mp3/%.mp3/.jpg}
+fi
+
+type=FRONT_COVER
+eyeD3 --remove-all "$mp3"
+eyeD3 --set-encoding=utf8 -t "$title" -a "$singer" -A "$album" --add-image="$png":$type "$mp3"
