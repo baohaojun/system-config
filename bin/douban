@@ -65,7 +65,7 @@ case "$1" in
                                 echo channel: $channel
                                 echo
                                 echo album: $album
-                                echo title: $title
+                                echo title: $title$(if test ! -e "$song"; then echo -??; fi)
                                 echo artist: $artist
                          )"
                     ;;

@@ -1,6 +1,7 @@
 #!/bin/bash
 if echo "$@" | grep -q "http://"; then
-    x=$(random 10000)
+    total=$(find ~/Music/like/ -name "*.mp3"|wc -l)
+    x=$(random $total)
     ((x++))
     mp3=$(find ~/Music/like/ -name "*.mp3" | head -n $x|tail -n 1)
     exec mplayer.phone -slave "$mp3"
