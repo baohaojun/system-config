@@ -61,7 +61,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 sleep 2
                             fi
                             adb-swipe 586 878 586 68 .3
-                            adb-tap 560 1840 #
+                            adb-key SPACE #
                             adb-tap 969 1620
                             adb-tap-2 299 299
                             adb-tap 505 192
