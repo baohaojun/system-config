@@ -126,8 +126,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             if test "$window" = com.sina.weibo/com.sina.weibo.EditActivity; then
                                 emacs-cell-phone weibo
                                 exit
-                            elif test "$window" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI; then
-                                emacs-cell-phone weixin-brand-new
+                            elif test "$window" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI; then
+                                emacs-cell-phone weixin-new
                                 exit
                             elif test "$window" = SmsPopupDialog; then
                                 emacs-cell-phone t1-sms
