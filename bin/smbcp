@@ -8,7 +8,7 @@ function die() {
 
 if test $# -lt 2; then
     if test $(basename $0) = smb_push -a $# = 1; then
-        set -- "$1" /home/bhj/smb/share.smartisan.cn/share/baohaojun
+        set -- "$(readlink -f "$1")" /home/bhj/smb/share.smartisan.cn/share/baohaojun
         if test ! -d ~/smb/share.smartisan.cn/share/baohaojun; then
             sudo umount -l ~/smb
             smbnetfs ~/smb
