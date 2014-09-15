@@ -43,4 +43,8 @@ if test ! -e .AndroidManifest.xml-is-good; then
     touch .AndroidManifest.xml-is-good
 fi
 echo will now start $(basename "$file")
+if test $(basename $0) = android-view-manifest.xml; then
+    e AndroidManifest.xml
+    exit
+fi
 android-start-activity

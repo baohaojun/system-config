@@ -33,4 +33,7 @@ else
     for x in /data/logs /data/anr /data/system/dropbox /data/tombstones /sdcard/smartisan /data/core; do
         adb "rm -r $x/*"
     done
+    the-true-adb logcat -c
+    adb restart systemlog
+    adb restart eventslog
 fi

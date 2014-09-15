@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+cd ~/external/bin/Linux/ext/android-sdk-linux/platform-tools
+if test ! -e the-true-adb; then
+    mv adb the-true-adb
+    relative-link ~/system-config/bin/overide/adb adb
+fi
