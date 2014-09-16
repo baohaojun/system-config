@@ -85,6 +85,7 @@ function mkcscope_files() {
             \) -prune -o -type f -print |
             perl -ne 'print unless m,
                 (?:frameworks/base/api/[0-9]+.xml)|
+                (?:prebuilts/sdk/api/\d+.xml)|
                 (?:frameworks/base/docs/html/sdk/api_diff/.*\.xml)|
                 (?:development/sdk/api-versions.xml),x' |
             tee "$outDir"/cscope.files
