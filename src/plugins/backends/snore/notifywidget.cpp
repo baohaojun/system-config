@@ -37,11 +37,20 @@ NotifyWidget::NotifyWidget(int pos, QWidget *parent) :
 {
     m_qmlNotification = rootObject();
 
-    this->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint
+    this->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint
+#ifdef Q_OS_MAC
+                         | Qt::SubWindow
+#else
+                         | Qt::ToolTip
+#endif
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
                          | Qt::WindowDoesNotAcceptFocus
 #endif
                         );
+
+    setFocusPolicy(Qt::NoFocus);
+    setAttribute(Qt::WA_ShowWithoutActivating,true);
+
     if (m_mem.create(sizeof(SHARED_MEM_TYPE))) {
         m_mem.lock();
         SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
