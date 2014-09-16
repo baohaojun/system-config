@@ -53,14 +53,17 @@ public:
         static QFile *s_file = NULL;
         if (!s_out) {
             QString name = QString("%1/libsnore/%2-log.txt").arg(QDir::tempPath(), qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName());
-
             if (!qgetenv("LIBSNORE_LOGFILE").isNull()) {
                 name = QString(qgetenv("LIBSNORE_LOGFILE"));
+            } else {
+                QDir::temp().mkpath("libsnore");
             }
             std::cout << "Started logging to " << name.toUtf8().constData() << std::endl;
 
             s_file = new QFile(name);
-            s_file->open(QFile::WriteOnly);
+            if(!s_file->open(QFile::WriteOnly)) {
+                qFatal("Failed to open log file %s", qPrintable(name));
+            }
             s_out = new QTextStream(s_file);
         }
         return *s_out;

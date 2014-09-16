@@ -87,7 +87,12 @@ QString SnoreCorePrivate::tempPath()
     static QTemporaryDir dir;
     return dir.path();
 #else
-    return QString("%1/%2").arg(QDir::tempPath(), "libsnore");
+    static QString dir;
+    if(dir.isEmpty()) {
+        dir = QString("%1/%2").arg(QDir::tempPath(), "libsnore");
+        QDir::temp().mkpath("libsnore");
+    }
+    return dir;
 #endif
 }
 
