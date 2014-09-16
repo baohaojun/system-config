@@ -2,15 +2,20 @@
 
 set -e
 
-TEMP=$(getopt -o t:c: --long tag:command: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o rt:c: --long tag:command: -n $(basename $0) -- "$@")
 tag='*:s bhj:v'
 command=
+run=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -t|--tag)
             tag=$2
             shift 2
+            ;;
+        -r)
+            run=true
+            shift
             ;;
         -c|--command)
             command=$2
@@ -68,7 +73,9 @@ if test "$1" = release; then
         ant installr 2>&1 | tee ~/.logs/ant-install.log
     fi
 
-    android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
+    if test $run = true; then
+        android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
+    fi
 elif test "$1" = start; then
     android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
 else
@@ -86,11 +93,14 @@ else
         adb uninstall $(ant-get-package)
         ant installd 2>&1 | tee ~/.logs/ant-install.log
     fi
-    android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
+    if test $run = true; then
+        android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
+    fi
 fi
 
 if test $(adb devices | grep -v '^\s*$' -P | wc -l) -lt 3; then
     find-or-exec emulator
 fi
-
-logcat $tag
+if test $run = true; then
+   logcat $tag
+fi

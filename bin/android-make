@@ -77,7 +77,7 @@ fi
 
 variant=${config##*-}
 
-if test "$variant" = user -o "$variant" = userdebug -o "$variant" = eng && lunch "$1"; then
+if test "$variant" = user -o "$variant" = userdebug -o "$variant" = eng && lunch "$config"; then
     true
 else
     config=$(get_build_var TARGET_PRODUCT)-$(get_build_var TARGET_BUILD_VARIANT)
