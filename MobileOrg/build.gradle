@@ -1,0 +1,72 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.7.+'
+    }
+}
+apply plugin: 'android'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.android.support:support-v4:13.0.+'
+    compile 'com.jcraft:jsch:0.1.50'
+    compile project(':libraries:locale')
+    compile fileTree(dir: 'libs', include: '*.jar')
+}
+
+
+def getVersionName = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.1"
+
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 17
+        versionCode 913
+        versionName getVersionName()
+    }
+
+    signingConfigs {
+        matburt {
+            storeFile file("other.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.matburt
+        }
+        donate {
+            packageNameSuffix ".donate"
+            signingConfig signingConfigs.matburt
+        }
+        debug {
+            debuggable true
+        }
+    }
+
+    packagingOptions { // This is a fix for a bug in the Android gradle plugin v. 0.7.0
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+}
+

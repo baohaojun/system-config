@@ -1,0 +1,95 @@
+MobileOrg Upgrade Notes
+
+Changes for 0.9.13:
+- Fix a bug where you couldn't capture from the share menu (#400)
+- Implement capture from Google Now
+
+Changes for 0.9.11 & 12:
+- Fix bugs and crashes that crept into the .10 release
+
+Changes for 0.9.10:
+- Support for BUSY/AVAILABLE
+- Clean up Settings activity
+- Wifi only settings for sync
+- Add timestamp setting
+- Clickable todo items in outlines
+- Bug Fixes and other smaller things
+
+Changes for 0.9.8:
+- Fix the issue preventing Dropbox sync
+- Other bug fixes and cleanups
+
+Changes for 0.9.7:
+- Many bug fixes
+- Calendar improvements
+- Pull data from Calendar
+- SSH Key based auth
+- Dynamic Agenda
+- All new capture widget
+- Support inherited tags
+- Font size preferencees
+
+Changes for 0.9.6:
+
+- Fix error reporting in Dropbox Synchronizer
+- Fix UI inconsistency on capture screen
+- Fix a bug that would lose the payload when
+  changing screen orientation in capture
+- Fix an issue with Calendar synchronization
+  regarding including entries that don't have
+  a TODO keyword
+- Fix a bug where the sdcard synchronizer would
+  use the parent folder of the folder actually
+  selected
+
+Changes for 0.9.5:
+
+- Whole new look and feel
+- Major refactoring thanks to hdweiss
+- Upgraded Dropbox library
+- Fix many bugs
+
+Changes for 0.9.0:
+
+- Basic Time Clocking support
+- Support Ubuntu One as a Synchronizer
+- Updated Spanish translation
+
+Changes for 0.8.5:
+
+- Chinese Translation
+- Fix crash on empty files bug
+- Change default between View Node and Edit Node
+- Add timestamped entries to calendar
+- Add location to calendar entries (from LOCATION property)
+- Fix timezone and scheduling bugs
+
+Changes for 0.8.4:
+- "Schedule" and "Deadline" support in capture and edit
+- Revamped Capture/Edit Display
+- Calendar Support Bug fixes
+- Add ability to add sub-nodes to capture (require org-mode patch)
+- Edit Dialog Improvements
+- Bug fixes
+- Better support for Android 4.0
+
+MobileOrg has gone through a lot of changes recently. Because of this you will need to re-synchronize all of your org files.
+
+Some of the great new features:
+
+- New Storage System (org content is now stored in the database)
+- Search Support
+- Calendar Integration
+- Synchronize over SSH/SCP
+- Calendar Integration (with reminders)
+- Locale/Tasker Plugin
+- Self-signed ssl webdav certificates
+- Edit tags
+- Capture only mode
+- Complete UI revamp
+- Spanish translation
+- Improved synchronization system
+- Improved edit and capture modes
+- Full documentation in wiki
+
+Check out the "Settings" menu for new options.
