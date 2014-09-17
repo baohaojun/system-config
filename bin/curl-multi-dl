@@ -1,6 +1,6 @@
 #!/bin/bash
 TEMP=$(getopt -o s: --long size: -n $(basename $0) -- "$@")
-size=50M
+size=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -18,9 +18,32 @@ while true; do
     esac
 done
 
+if test ! "$size"; then
+    size=$(curl -L -I "$1" 2>&1 | grep Content-Length: | pn 2 |tr -d '\r')
+    size=$(( (size + 10) / 10 ))
+fi
+
 size=$(pretty $size | pn 2)
-for x in $(seq 1 10); do
-    s=$((size * (x - 1)))
-    e=$((size * x - 1))
-    curl $1 -L -r $s-$e -o $(basename $1).$x&
-done
+
+(
+    for x in $(seq 1 10); do
+        s=$((size * (x - 1)))
+        e=$((size * x - 1))
+        curl $1 -L -r $s-$e -o $(basename $1).$x&
+    done
+) 9>~/.logs/$(basename $0).lock.$$
+
+(
+    while true; do
+        if fuser ~/.logs/$(basename $0).lock.$$; then
+            sleep 1
+        else
+            break
+        fi
+    done
+    for x in $(seq 1 10); do
+        cat $(basename $1).$x
+    done > $(basename $1)
+)
+
+rm ~/.logs/$(basename $0).lock.$$

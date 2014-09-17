@@ -204,6 +204,7 @@ if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; the
         relative-link -f ~/etc/hardware-mach/$mach/.Xmodmap ~/.Xmodmap
     fi
 fi
+
 if test -L /etc/rc.local || yes-or-no-p -N "Replace /etc/rc.local with system-config's version?"; then
     if ! test -L /etc/rc.local; then
         sudo cp /etc/rc.local /etc/rc.local.bak
@@ -268,3 +269,10 @@ mkdir -p ~/.cache # just in case the following command will create
                   # .cache with root permission.
 update-host-ip phone 192.168.15.244
 update-host-ip home 128.199.228.174
+(
+    set +e
+    (
+        cd ~/src/github/mobileorg-android/
+        git remote add up https://github.com/matburt/mobileorg-android
+    )
+) >/dev/null 2>&1

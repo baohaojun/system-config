@@ -47,7 +47,11 @@
         (grep-default (or (car grep-history) my-grep-command)))
     ;; In the default command, find the arg that specifies the pattern.
     (when (or (string-match
-               (concat "[^ ]+\\s +\\(?:-[^ ]+\\s +\\)*"
+               (concat "[^ ]+\\s +\\(?:-[^ ]+\\s +\\)+"
+                       sh-arg-re "\\(\\s +\\(\\S +\\)\\)?")
+               grep-default)
+              (string-match
+               (concat "[^ ]+\\s +\\(?:-[^ ]+\\s +\\)*" ; the only difference with the above is + vs. *
                        sh-arg-re "\\(\\s +\\(\\S +\\)\\)?")
                grep-default)
               ;; If the string is not yet complete.

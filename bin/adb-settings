@@ -3,14 +3,7 @@
 if test "$1"; then
     adb am start -n com.smartisanos.updater/$1
 else
-    x=$(select-args -o \
-                    'com.android.settings/.Settings$UsbSettingsActivity' \
-                    com.android.settings/com.android.settings.applications.ManageApplicationsActivity \
-                    com.smartisanos.notes/com.smartisanos.notes.NotesActivity \
-                    com.android.settings/com.android.settings.accounts.AccountSettingsActivity \
-                    com.smartisanos.updater/.UpdatesCheck \
-                    com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI \
-                    com.android.contacts/com.android.contacts.activities.ContactsSettingIEActivity \
-     )
+    x=$(select-output-line -o 'cd ~/etc/adb-settings;
+                               find . -type f|perl -npe "s/^\\.\\///"|grep /')
     adb am start -n $x
 fi

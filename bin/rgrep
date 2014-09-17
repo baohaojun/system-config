@@ -1,4 +1,7 @@
 #!/bin/sh
 echo
+if test "$EMACS"; then
+    echo grep: Entering directory \`$PWD\'
+fi
 
 exec grep -r "$@" --exclude-dir=.git 2>/dev/null

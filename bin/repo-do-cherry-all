@@ -62,7 +62,7 @@ for x in $diffs; do
             start_recursive_shell "No target branch"
         else
             if test $do_here = false; then
-                git co $target_branch -b $(
+                git co $target_branch -B $(
                     echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
                     ) || true
             fi
