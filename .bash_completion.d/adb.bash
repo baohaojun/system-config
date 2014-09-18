@@ -104,6 +104,9 @@ _adb() {
                     getprop|setprop)
                         COMPREPLY=( $(compgen -W "$(adb getprop|pn 1|sort -u|perl -npe 's/.*\[//; s/\].*//')" -- "${COMP_WORDS[i]}") )
                         ;;
+                    dumpsys)
+                        COMPREPLY=( $(compgen -W "$(adb dumpsys -l)" -- "${COMP_WORDS[i]}") )
+                        ;;
                     *)
                         _adb_cmd_shell "$serial" $((i+1))
                         ;;

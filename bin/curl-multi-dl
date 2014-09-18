@@ -43,6 +43,7 @@ size=$(pretty $size | pn 2)
     done
     for x in $(seq 1 10); do
         cat $(basename $1).$x
+        rm $(basename $1).$x >/dev/null 2>&1
     done > $(basename $1)
 )
 

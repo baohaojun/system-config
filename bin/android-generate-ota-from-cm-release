@@ -1,0 +1,130 @@
+#!/bin/bash
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+## start generated code
+TEMP=$(getopt -o d:t: --long "cmReleaseDir:tmpPostfix"  -n $(basename $0) -- "$@")
+cmReleaseDir=.
+export tmpPostfix=$$
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -d|--cmReleaseDir)
+            cmReleaseDir=$2
+            shift 2
+            ;;
+        -t|--tmpPostfix)
+            tmpPostfix=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+if test ! -d $cmReleaseDir/sparse_images; then
+    die "Can't open sparse_images from cm release"
+fi
+cmReleaseDir=$(readlink -f $cmReleaseDir)
+
+(
+    cd $cmReleaseDir/sparse_images;
+    if test ! -e ~/tmp/system-$tmpPostfix.img; then
+        sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2
+        mv ~/tmp/system-$tmpPostfix.img.2 ~/tmp/system-$tmpPostfix.img
+    fi
+    mkdir -p ~/tmp/system-$tmpPostfix/system
+    cd ~/tmp/system-$tmpPostfix
+    sudo umount system >/dev/null 2>&1 || true
+    sudo umount SYSTEM >/dev/null 2>&1 || true
+    sudo mount -o loop ../system-$tmpPostfix.img system
+    sudo chown $USER\. -R system
+    find ./system -type f | xargs md5sum > cm.md5
+    adb 'cd /; set -e; if test ! -e /data/phone.md5; then find ./system -type f |xargs md5sum > /data/system-files.md5 && mv /data/system-files.md5 /data/phone.md5; fi; echo yes'.$$ | grep yes.$$
+    adb pull /data/phone.md5
+    perl -e 'open($phone, "<", "phone.md5");
+             open($cm, "<", "cm.md5");
+             while (<$phone>) {
+                 chomp;
+                 ($md5, $file) = split(" ");
+                 $phone{$file} = $md5;
+             }
+             while (<$cm>) {
+                 chomp;
+                 ($md5, $file) = split(" ");
+                 $cm{$file} = $md5;
+             }
+             for (keys %cm) {
+                 if ($cm{$_} eq $phone{$_}) {
+                     print "rm -f $_\n";
+                 }
+             }
+             for (keys %phone) {
+                 if ($cm{$_} ne $phone{$_}) {
+                     print "rm-phone $_\n";
+                 }
+             }
+         ' > rm-same-files.sh
+    perl -ne 'print if m/^rm-phone/' rm-same-files.sh > rm-phone.sh
+    perl -ne 'print unless m/^rm-phone/' -i rm-same-files.sh
+    bash rm-same-files.sh
+    rm -rf SYSTEM
+    cp system SYSTEM -av
+    rm -rf RECOVERY BOOT BOOTABLE_IMAGES
+    mkdir -p RECOVERY BOOT BOOTABLE_IMAGES
+    for type in boot recovery; do
+        (
+            TYPE=$(uc $type)
+            cd $TYPE
+            cp $cmReleaseDir/$type.img .
+            cp $cmReleaseDir/$type.img ../BOOTABLE_IMAGES
+            unbootimg $type.img
+            ramdisk_len2dir ramdisk.img
+            rm ramdisk.img
+            mv ramdisk.img-tmp RAMDISK
+            mv kernel.img kernel
+            echo $PWD/dt.img > dt_args
+            perl -ne "if (m/--base (\S+)/) {print \$1}" mkbootimg.sh > base
+            perl -ne "if (m/--cmdline '(.*?)'/) {print \$1}" mkbootimg.sh > cmdline
+            perl -ne "if (m/--pagesize (\d+)/) {print \$1}" mkbootimg.sh > pagesize
+            echo 0x02000000 > ramdisk_offset
+            echo 0x01E00000 > tags_offset
+        )
+    done
+    cp ~/etc/ota/* ./ -av
+    find SYSTEM -type f -name '*.apk' |xargs bash -c 'for apk in "$@"; do
+cat <<EOF
+name="$apk" certificate="PRESIGNED" private_key=""
+EOF
+    done' true > META/apkcerts.txt
+    perl -npe 's/~/$ENV{HOME}/g; s/\$PWD/$ENV{PWD}/g' -i META/misc_info.txt
+
+    for x in alterable.bin emmc_appsboot.mbn NON-HLOS.bin rpm.mbn sbl1.mbn sdi.mbn splash.img tz.mbn udisk.bin; do
+        cp $cmReleaseDir/$x RADIO
+    done
+    mv RADIO/splash.img RADIO/splash.bin
+
+    mkdir -p DATA
+
+    zip -qry ota-files.zip BOOT BOOTABLE_IMAGES DATA META OTA RADIO RECOVERY SYSTEM
+    zipinfo -1 ota-files.zip | awk 'BEGIN { FS="SYSTEM/" } /^SYSTEM\// {print "system/" $2}' | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/filesystem_config.txt
+    zipinfo -1 ota-files.zip | awk 'BEGIN { FS="BOOT/RAMDISK/" } /^BOOT\/RAMDISK\// {print $2}' | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/boot_filesystem_config.txt
+    zipinfo -1 ota-files.zip | awk 'BEGIN { FS="RECOVERY/RAMDISK/" } /^RECOVERY\/RAMDISK\// {print $2}' | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/recovery_filesystem_config.txt
+    zip -q ota-files.zip META/*filesystem_config.txt rm-phone.sh
+    psync rem ota-files.zip
+    ssh-exp rem "
+        cd ~/src/android
+        ./build/tools/releasetools/ota_from_target_files -v -p out/host/linux-x86 -d MMC -k vendor/smartisan/security/releasekey -i '' -f 0 $PWD/ota-files.zip ~/tmp/ota.zip"
+    rsync rem:tmp/ota.zip .
+    adb push ota.zip /sdcard/
+    bash
+)

@@ -1,4 +1,6 @@
 #!/bin/bash
+export SCRIPT=$(readlink -f $0)
+adb-ignite-device
 if echo $SHELLOPTS | grep xtrace; then
     function debug() {
         read -p "press any key to continue..."
@@ -25,6 +27,8 @@ if test "$1"; then
         rm -rf /tmp/$(basename $0).$ext
         curl -o /tmp/$(basename $0).$ext "$1"
         pic=/tmp/$(basename $0).$ext
+    elif test ! -e "$1" -a ${#1} = 1; then
+        pic=$(adb-get-last-pic -r "$1"|perl -npe 's!^~/!$ENV{HOME}/!')
     fi
 else
     pic=$(get-newest-file ~/shots/)
@@ -34,65 +38,87 @@ adb_pic=/sdcard/DCIM/Camera/toqq-$(now|perl -npe 's/://g').$ext
 adb push "$pic" $adb_pic
 adb am startservice -n com.bhj.setclip/.PutClipService --es picture $adb_pic
 
-case $(basename $0) in
-    adb-picture-to-phone)
-        exit
-        ;;
-    adb-picture-to-weixin-friends)
-        adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI
-        adb-tap 166 537 # + a picture
-        adb-tap 626 278
-        adb-tap 909 145
-        weixin-new
-        ;;
-    adb-picture-to-weixin-chat)
-        adb-tap-mid-bot # 把输入栏调到中间固定位置，如果已经在固定位置，则只不过多出一个空格来
-        debug
-        adb-tap 966 999 # 按一下右边的+号，选择图片
-        debug
-        adb-swipe 125 1285 500 1285 # 右滑一下，微信太他娘的人性化，会把刚扫描出来的那张图片缩略显示出来让你选，取消这个可能的缩略显示☠
-        debug
-        adb-tap 125 1285 # 按一下选图片按钮
-        debug
-        debug # 多等一下
-        adb-tap 519 417 # 选第一张图片
-        debug
-        adb-tap 917 1848
-        debug
-        adb-tap 953 182
-        debug
-        adb-key BS
-        adb-key DEL
-        ;;
-    adb-picture-to-qq-chat)
-        adb-tap-mid-bot
-        debug
-        adb-tap 151 999 # 点一下加号
-        debug
-        adb-tap 125 1476 # 点一下图片按钮
-        debug
-        while ! adb-is-activity com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity; do
-            adb-tap 118 152 # 点一下相册
+function adb-picture-to() {
+    case "$1" in
+        adb-picture-to-unknown)
+            activity=$(adb-top-activity)
+            if test "$activity" = com.tencent.mm/com.tencent.mm.ui.LauncherUI; then
+                adb-picture-to adb-picture-to-weixin-chat
+            elif test "$activity" = com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity; then
+                adb-picture-to adb-picture-to-qq-chat
+            else
+                task=$(gettask-android)
+                if test "$task" = com.sina.weibo; then
+                    adb-picture-to adb-picture-to-weibo
+                elif test "$task" = com.tencent.mm; then
+                    adb-picture-to adb-picture-to-weixin-friends
+                else
+                    which=$(select-output-line 'cat $SCRIPT|grep "^\s+adb-picture-to-.*\)\s*$" -P |perl -npe "s/\)//"')
+                    adb-picture-to $which
+                fi
+            fi
+            ;;
+        adb-picture-to-phone)
+            exit
+            ;;
+        adb-picture-to-weixin-friends)
+            adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI
+            adb-tap 166 537 # + a picture
+            sleep .5
+            adb-tap 626 278
+            adb-tap 909 145
+            weixin
+            ;;
+        adb-picture-to-weixin-chat)
+            adb-tap-mid-bot # 把输入栏调到中间固定位置，如果已经在固定位置，则只不过多出一个空格来
             debug
-        done
-        debug
-        adb-tap 457 493 # 点一下第二行，Camera
-        debug
-        adb-tap 161 423 # 点一下第一张照片
-        debug
-        adb-tap 917 1848 # 点一下发送
-        debug
-        adb-key BACK
-        adb-key DEL
-        ;;
-    adb-picture-to-weibo)
-        adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
-        adb-tap 104 980
-        adb-tap 629 290
-        adb-tap 923 1850
-        weibo
-        ;;
-esac
+            adb-tap 966 999 # 按一下右边的+号，选择图片
+            debug
+            adb-swipe 125 1285 500 1285 # 右滑一下，微信太他娘的人性化，会把刚扫描出来的那张图片缩略显示出来让你选，取消这个可能的缩略显示☠
+            debug
+            adb-tap 125 1285 # 按一下选图片按钮
+            debug
+            debug # 多等一下
+            adb-tap 519 417 # 选第一张图片
+            debug
+            adb-tap 917 1848
+            debug
+            adb-tap 953 182
+            debug
+            adb-key BS
+            adb-key DEL
+            ;;
+        adb-picture-to-qq-chat)
+            adb-tap-mid-bot
+            debug
+            adb-tap 151 999 # 点一下加号
+            debug
+            adb-tap 125 1476 # 点一下图片按钮
+            debug
+            while ! adb-is-activity com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity; do
+                adb-tap 118 152 # 点一下相册
+                debug
+            done
+            debug
+            adb-tap 457 493 # 点一下第二行，Camera
+            debug
+            adb-tap 161 423 # 点一下第一张照片
+            debug
+            adb-tap 917 1848 # 点一下发送
+            debug
+            adb-key BACK
+            adb-key DEL
+            ;;
+        adb-picture-to-weibo)
+            adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
+            adb-tap 104 980
+            adb-tap 629 290
+            adb-tap 923 1850
+            weibo
+            ;;
+    esac
+}
 
+adb-picture-to $(basename $0)
 adb rm $adb_pic
 adb am startservice -n com.bhj.setclip/.PutClipService --es picture $adb_pic
