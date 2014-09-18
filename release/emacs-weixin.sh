@@ -151,7 +151,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
                                 sleep .1
                             fi
-                            adb-tap 560 1840 adb-tap-2 560 976 adb-tap 296 830 adb-tap 888 849 adb-tap 976 976
+                            adb-tap 560 1840 adb-tap-2 560 976 adb-tap 296 830 adb-tap 888 849 adb-tap 976 950
                             ;;
                     esac
                 }
