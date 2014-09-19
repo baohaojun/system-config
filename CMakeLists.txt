@@ -11,6 +11,20 @@ include(GNUInstallDirs)
 include(GenerateExportHeader)
 include(FeatureSummary)
 
+if(NOT MSVC)
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag( "-std=c++11" CXX11_FOUND )
+    check_cxx_compiler_flag( "-std=c++0x" CXX0X_FOUND )
+    if(CXX11_FOUND)
+         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    elseif(CXX0X_FOUND)
+         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+    else()
+        message(STATUS "${CMAKE_CXX_COMPILER} does not support C++11, please use a different compiler")
+    endif()
+endif()
+
+
 
 #######################################################################
 option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DEAMON=ON" OFF)
