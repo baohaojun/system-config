@@ -42,6 +42,15 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             # do nothing, I will post it myself
                             ;;
                         weibo) # send weibo
+                            if test "$(adb-top-activity)" = com.sina.weibo/com.sina.weibo.DetailWeiboActivity; then
+                                repost=$(select-args -o repost comment)
+                                if test $repost = repost; then
+                                    adb-tap-bot-left
+                                else
+                                    adb-tap-mid-bot
+                                fi
+                                sleep .5
+                            fi
                             adb-key SPACE
                             adb-long-press 17 294
                             adb-tap 545 191
@@ -123,7 +132,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             ;;
                         *) # most cases
                             window=$(adb-focused-window)
-                            if test "$window" = com.sina.weibo/com.sina.weibo.EditActivity; then
+                            if test "$window" = com.sina.weibo/com.sina.weibo.EditActivity -o "$window" = com.sina.weibo/com.sina.weibo.DetailWeiboActivity; then
                                 emacs-cell-phone weibo
                                 exit
                             elif test "$window" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI; then
