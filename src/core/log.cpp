@@ -61,7 +61,7 @@ public:
             std::cout << "Started logging to " << name.toUtf8().constData() << std::endl;
 
             s_file = new QFile(name);
-            if(!s_file->open(QFile::WriteOnly)) {
+            if (!s_file->open(QFile::WriteOnly)) {
                 qFatal("Failed to open log file %s", qPrintable(name));
             }
             s_out = new QTextStream(s_file);

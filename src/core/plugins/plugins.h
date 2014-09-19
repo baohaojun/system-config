@@ -25,6 +25,7 @@
 #include <QHash>
 #include <QTimer>
 #include <QtPlugin>
+#include <QSettings>
 
 namespace Snore
 {
@@ -53,8 +54,14 @@ public:
     SnoreCore *snore();
     const QString &name() const;
 
+    QVariant value(const QString &key);
+    void setValue(const QString &key, const QVariant &value);
+    void setDefaultValue(const QString &key, const QVariant &value);
+
 private:
     SnorePlugin() {}
+    QString normaliseKey(const QString &key);
+
     QString m_name;
     bool m_initialized;
     QPointer<SnoreCore> m_snore;

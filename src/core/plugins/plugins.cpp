@@ -17,6 +17,7 @@
 */
 
 #include "../snore.h"
+#include "../snore_p.h"
 #include "snorebackend.h"
 #include "snorefrontend.h"
 #include "../notification/notification_p.h"
@@ -64,6 +65,29 @@ bool SnorePlugin::isInitialized()
 SnoreCore *SnorePlugin::snore()
 {
     return m_snore.data();
+}
+
+QVariant SnorePlugin::value(const QString &key)
+{
+    return snore()->d()->settings()->value(normaliseKey(key));
+}
+
+void SnorePlugin::setValue(const QString &key, const QVariant &value)
+{
+    snore()->d()->settings()->setValue(normaliseKey(key), value);
+}
+
+void SnorePlugin::setDefaultValue(const QString &key, const QVariant &value)
+{
+    QString pk(normaliseKey(key));
+    if (!snore()->d()->settings()->contains(pk)) {
+        snore()->d()->settings()->setValue(normaliseKey(key), value);
+    }
+}
+
+QString SnorePlugin::normaliseKey(const QString &key)
+{
+    return QString("%1/%2").arg(name(), key);
 }
 
 const QString &SnorePlugin::name() const

@@ -34,7 +34,8 @@ using namespace Snore;
 
 SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
     m_trayIcon(trayIcon),
-    m_defaultApp("SnoreNotify", Icon(":/root/snore.png"))
+    m_defaultApp("SnoreNotify", Icon(":/root/snore.png")),
+    m_settings(new QSettings("Snorenotify", "libsnore", this))
 {
     snoreDebug(SNORE_INFO) << "Version:" << Version::version();
     if (!Version::revision().isEmpty()) {
@@ -42,6 +43,7 @@ SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
     }
 
     snoreDebug(SNORE_DEBUG) << "Temp dir is" << tempPath();
+    snoreDebug(SNORE_DEBUG) << "Snore settings are located in" << m_settings->fileName();
 
     m_defaultApp.addAlert(Alert("Default", Icon(":/root/snore.png")));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
@@ -88,7 +90,7 @@ QString SnoreCorePrivate::tempPath()
     return dir.path();
 #else
     static QString dir;
-    if(dir.isEmpty()) {
+    if (dir.isEmpty()) {
         dir = QString("%1/%2").arg(QDir::tempPath(), "libsnore");
         QDir::temp().mkpath("libsnore");
     }
@@ -99,6 +101,11 @@ QString SnoreCorePrivate::tempPath()
 bool SnoreCorePrivate::primaryBackendCanUpdateNotification() const
 {
     return m_notificationBackend->canUpdateNotification();
+}
+
+QSettings *SnoreCorePrivate::settings() const
+{
+    return m_settings;
 }
 
 void SnoreCorePrivate::slotNotificationClosed(Notification n)

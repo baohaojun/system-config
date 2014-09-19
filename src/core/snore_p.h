@@ -62,6 +62,8 @@ public:
      */
     bool primaryBackendCanUpdateNotification() const;
 
+    QSettings *settings() const;
+
 signals:
     void applicationRegistered(const Snore::Application &);
     void applicationDeregistered(const Snore::Application &);
@@ -83,6 +85,8 @@ private:
     QSystemTrayIcon *m_trayIcon;
 
     Application m_defaultApp;
+
+    QSettings *m_settings;
 };
 }
 

@@ -49,7 +49,7 @@ NotifyWidget::NotifyWidget(int pos, QWidget *parent) :
                         );
 
     setFocusPolicy(Qt::NoFocus);
-    setAttribute(Qt::WA_ShowWithoutActivating,true);
+    setAttribute(Qt::WA_ShowWithoutActivating, true);
 
     if (m_mem.create(sizeof(SHARED_MEM_TYPE))) {
         m_mem.lock();
