@@ -1,8 +1,17 @@
 #!/bin/bash
+activity=$(adb-top-activity)
+if test "$activity" = com.tencent.mobileqq/cooperation.qzone.QzoneGPUPluginProxyActivity; then
+    adb-tap 952 155
+    adb-tap 314 1678
+    adb-tap 906 608
+    adb-tap 76 161
+    exit
+fi
 adb-tap 932 1022
 sleep .1
 adb-tap 964 170
 adb-tap 640 568
-adb-tap 840 725
+adb-tap 908 560
+sleep .5
 adb-key BACK
 adb-key BACK
