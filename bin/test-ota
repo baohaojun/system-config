@@ -1,0 +1,15 @@
+#!/bin/bash
+(
+    cd ~/src/android/build/tools/releasetools
+    psync rem .
+)
+
+psync rem ota-files.zip
+ssh-exp rem "
+        cd ~/src/android
+        ./build/tools/releasetools/ota_from_target_files -v -p out/host/linux-x86 -d MMC -k vendor/smartisan/security/releasekey -i '' -f 0 $PWD/ota-files.zip $PWD/ota.zip"
+rsync rem:$PWD/ota.zip ota.zip
+rm ota -rf
+mkdir ota
+cd ota
+unzip ../ota.zip

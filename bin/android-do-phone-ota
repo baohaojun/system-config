@@ -7,12 +7,18 @@ set -e
 )
 
 ## start generated code
-TEMP=$(getopt -o d:t: --long "cmReleaseDir:tmpTag:"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o Dd:t: --long "debug,cmReleaseDir:tmpTag:"  -n $(basename $0) -- "$@")
 cmReleaseDir=.
 tmpTag=$$
+debug=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -D|--debug)
+            debug=true
+            set -x
+            shift
+            ;;
         -d|--cmReleaseDir)
             cmReleaseDir=$2
             shift 2
@@ -39,8 +45,15 @@ cmReleaseDir=$(readlink -f $cmReleaseDir)
 
 android-generate-ota-from-cm-release -d $cmReleaseDir -t $tmpTag
 cd ~/tmp/system-$tmpTag
-adb push ota.zip /sdcard/
-adb reboot-rom /sdcard/ota.zip
+(
+    set -e
+    adb push ota.zip /sdcard/
+    adb reboot-rom /sdcard/ota.zip
+)&
 sudo umount system
-cd ../
-rm system-$tmpTag -rf
+if test $debug = true; then
+    bash
+else
+    cd ../
+    rm system-$tmpTag -rf
+fi

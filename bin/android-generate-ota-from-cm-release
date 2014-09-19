@@ -37,6 +37,7 @@ fi
 cmReleaseDir=$(readlink -f $cmReleaseDir)
 
 (
+    adb 'cd /; set -ex; rm -f /data/phone.md5; find ./system/ -type f | xargs md5sum > /data/system-files.md5.$$ && mv /data/system-files.md5.$$ /data/phone.md5; echo yes'.$$ | grep yes.$$&
     cd $cmReleaseDir/sparse_images;
     if test ! -e ~/tmp/system-$tmpPostfix.img; then
         sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2
@@ -48,9 +49,19 @@ cmReleaseDir=$(readlink -f $cmReleaseDir)
     sudo umount SYSTEM >/dev/null 2>&1 || true
     sudo mount -o loop ../system-$tmpPostfix.img system
     sudo chown $USER\. -R system
-    find ./system -type f | xargs md5sum > cm.md5
-    adb 'cd /; set -e; if test ! -e /data/phone.md5; then find ./system -type f |xargs md5sum > /data/system-files.md5 && mv /data/system-files.md5 /data/phone.md5; fi; echo yes'.$$ | grep yes.$$
-    adb pull /data/phone.md5
+    find system -type f -o -type l > system.list
+    find system -type d |perl -npe 's!$!/!' >> system.list
+
+    find ./system -type f |grep -v system/build.prop | xargs md5sum > cm.md5
+
+    for x in $(seq 1 20); do
+        if adb pull /data/phone.md5; then
+            break
+        fi
+        echo wait for phone md5 $x
+        sleep 1
+    done
+
     perl -e 'open($phone, "<", "phone.md5");
              open($cm, "<", "cm.md5");
              while (<$phone>) {
@@ -116,7 +127,7 @@ EOF
     mkdir -p DATA
 
     zip -qry ota-files.zip BOOT BOOTABLE_IMAGES DATA META OTA RADIO RECOVERY SYSTEM
-    zipinfo -1 ota-files.zip | awk 'BEGIN { FS="SYSTEM/" } /^SYSTEM\// {print "system/" $2}' | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/filesystem_config.txt
+    sort system.list | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/filesystem_config.txt
     zipinfo -1 ota-files.zip | awk 'BEGIN { FS="BOOT/RAMDISK/" } /^BOOT\/RAMDISK\// {print $2}' | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/boot_filesystem_config.txt
     zipinfo -1 ota-files.zip | awk 'BEGIN { FS="RECOVERY/RAMDISK/" } /^RECOVERY\/RAMDISK\// {print $2}' | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/recovery_filesystem_config.txt
     zip -q ota-files.zip META/*filesystem_config.txt rm-phone.sh
