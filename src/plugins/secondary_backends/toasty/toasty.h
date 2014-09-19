@@ -12,11 +12,12 @@ class Toasty : public Snore::SnoreSecondaryBackend
     Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0")
 public:
     Toasty();
-    virtual bool initialize(Snore::SnoreCore *snore);
-    virtual bool deinitialize();
+    ~Toasty();
+    virtual bool initialize(Snore::SnoreCore *snore) override;
+    virtual bool deinitialize() override;
 
 public slots:
-    virtual void slotNotify(Snore::Notification notification);
+    virtual void slotNotify(Snore::Notification notification) override;
 
 private slots:
     void slotRequestFinished();

@@ -1,6 +1,7 @@
 #include "toasty.h"
 
 #include <QtNetwork>
+#include <QImage>
 
 Q_EXPORT_PLUGIN2(libsnore_secondary_backend_toasty, Toasty)
 
@@ -9,6 +10,11 @@ using namespace Snore;
 Toasty::Toasty():
     SnoreSecondaryBackend("Toasty", false)
 {
+}
+
+Toasty::~Toasty()
+{
+
 }
 
 void Toasty::slotNotify(Notification notification)
@@ -33,7 +39,12 @@ void Toasty::slotNotify(Notification notification)
         mp->append(app);
 
         QHttpPart icon;
-        Icon sIcon(notification.icon().scaled(QSize(127, 127)));
+
+        Icon sIcon = notification.icon();
+        QSize iconSize = notification.icon().image().size();
+        if (iconSize.height() > 128 || iconSize.width() > 128 ) {
+            sIcon = sIcon.scaled(QSize(128, 128));
+        }
         icon.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QString("form-data; name=\"image\"; filename=\"%1\"").arg(sIcon.localUrl())));
         icon.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/png"));
         QFile *file = new QFile(sIcon.localUrl());
