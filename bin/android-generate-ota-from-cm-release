@@ -125,6 +125,4 @@ EOF
         cd ~/src/android
         ./build/tools/releasetools/ota_from_target_files -v -p out/host/linux-x86 -d MMC -k vendor/smartisan/security/releasekey -i '' -f 0 $PWD/ota-files.zip ~/tmp/ota.zip"
     rsync rem:tmp/ota.zip .
-    adb push ota.zip /sdcard/
-    bash
 )

@@ -1,0 +1,46 @@
+#!/bin/bash
+set -e
+
+(
+    cd ~/src/android/build/tools/releasetools
+    psync rem .
+)
+
+## start generated code
+TEMP=$(getopt -o d:t: --long "cmReleaseDir:tmpTag:"  -n $(basename $0) -- "$@")
+cmReleaseDir=.
+tmpTag=$$
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -d|--cmReleaseDir)
+            cmReleaseDir=$2
+            shift 2
+            ;;
+        -t|--tmpTag)
+            tmpTag=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+if test ! -d $cmReleaseDir/sparse_images; then
+    die "Can't open sparse_images from cm release"
+fi
+cmReleaseDir=$(readlink -f $cmReleaseDir)
+
+android-generate-ota-from-cm-release -d $cmReleaseDir -t $tmpTag
+cd ~/tmp/system-$tmpTag
+adb push ota.zip /sdcard/
+adb reboot-rom /sdcard/ota.zip
+sudo umount system
+cd ../
+rm system-$tmpTag -rf

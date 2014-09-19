@@ -1,3 +1,3 @@
 #!/bin/bash
-adb "mkdir -p /cache/recovery/; echo -n --update_package=$(echo "$1"|perl -npe 's!.*sdcard/!/data/media/0/!') > /cache/recovery/command";
+adb "rm -f /data/phone.md5; mkdir -p /cache/recovery/; echo -n --update_package=$(echo "$1"|perl -npe 's!.*sdcard/!/data/media/0/!') > /cache/recovery/command";
 adb reboot recovery
