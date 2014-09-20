@@ -63,6 +63,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN:
                     if (!info->load()->initialize(this)) {
+                        info->load()->deinitialize();
                         info->unload();
                         break;
                     }

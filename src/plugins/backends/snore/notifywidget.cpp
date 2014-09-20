@@ -25,19 +25,18 @@
 #include <QtDeclarative/QDeclarativeView>
 #include <QLayout>
 #include <QSize>
-
 using namespace Snore;
 
-NotifyWidget::NotifyWidget(int pos, QWidget *parent) :
-    QDeclarativeView(QUrl("qrc:/notification.qml"), parent),
-    m_animation(new QPropertyAnimation(this, "pos")),
+NotifyWidget::NotifyWidget(int pos, QWindow *parent) :
+    QQuickView(QUrl("qrc:/notification.qml"), parent),
+    m_animationX(new QPropertyAnimation(this, "x")),
     m_id(pos),
     m_mem(QString("SnoreNotifyWidget_rev%1_id%2").arg(QString::number(SHARED_MEM_TYPE_REV()), QString::number(m_id))),
     m_ready(true)
 {
     m_qmlNotification = rootObject();
 
-    this->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
+    setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
 #ifdef Q_OS_MAC
                          | Qt::SubWindow
 #else
@@ -45,8 +44,8 @@ NotifyWidget::NotifyWidget(int pos, QWidget *parent) :
 #endif
                         );
 
-    setFocusPolicy(Qt::NoFocus);
-    setAttribute(Qt::WA_ShowWithoutActivating, true);
+//    setFocusPolicy(Qt::NoFocus);
+//    setAttribute(Qt::WA_ShowWithoutActivating, true);
 
     if (m_mem.create(sizeof(SHARED_MEM_TYPE))) {
         m_mem.lock();
@@ -64,7 +63,7 @@ NotifyWidget::NotifyWidget(int pos, QWidget *parent) :
         snoreDebug(SNORE_DEBUG) << "Status" << data->free << data->date.elapsed() / 1000;
     }
 
-    setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    setResizeMode(QQuickView::SizeRootObjectToView);
 
     connect(m_qmlNotification, SIGNAL(invoked()), this, SLOT(slotInvoked()));
     connect(m_qmlNotification, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
@@ -83,17 +82,17 @@ void NotifyWidget::display(const Notification &notification)
 
     QRect desktop = QDesktopWidget().availableGeometry();
 
+//    snoreDebug( SNORE_DEBUG ) << computeSize() << devicePixelRatio();
     resize(computeSize());
 
-    int space = 10 * logicalDpiY() / dpisScale();
+    int space = 10 * devicePixelRatio();
 
-    QPoint dest(desktop.topRight().x() - width(), desktop.topRight().y() + space + (space + height()) * m_id);
-    QPoint start(desktop.topRight().x(), dest.y());
+    setY(desktop.topRight().y() + space + (space + height()) * m_id);
 
-    m_animation->setDuration(500);
-    m_animation->setStartValue(start);
-    m_animation->setEndValue(dest);
-    m_animation->start();
+    m_animationX->setDuration(500);
+    m_animationX->setStartValue(desktop.topRight().x());
+    m_animationX->setEndValue(desktop.topRight().x() - width());
+    m_animationX->start();
 }
 
 void NotifyWidget::update(const Notification &notification)
@@ -202,5 +201,5 @@ QSize NotifyWidget::computeSize()
 {
     int width = 365;
     int height = 100;
-    return QSize(width * logicalDpiX() / dpisScale(), height * logicalDpiY() / dpisScale());
+    return QSize(width * devicePixelRatio(), height * devicePixelRatio());
 }

@@ -24,7 +24,7 @@
 #include <QSharedMemory>
 #include "core/notification/notification.h"
 
-#include <QtDeclarative>
+#include <QtQuick/QtQuick>
 #include <QPropertyAnimation>
 
 typedef struct {
@@ -38,12 +38,12 @@ inline int SHARED_MEM_TYPE_REV()
     return 1;
 }
 
-class NotifyWidget : public QDeclarativeView
+class NotifyWidget : public QQuickView
 {
     Q_OBJECT
 
 public:
-    explicit NotifyWidget(int pos, QWidget *parent = 0);
+    explicit NotifyWidget(int pos, QWindow *parent = 0);
     ~NotifyWidget();
 
     void display(const Snore::Notification &notification);
@@ -76,7 +76,7 @@ protected:
 private:
     QColor computeBackgrondColor(const QImage &img);
 
-    QPropertyAnimation *m_animation;
+    QPropertyAnimation *m_animationX;
     Snore::Notification m_notification;
     QObject *m_qmlNotification;
     int m_id;

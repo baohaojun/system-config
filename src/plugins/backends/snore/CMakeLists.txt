@@ -8,7 +8,7 @@ set( SNORE_SRC
 
 
 add_library(libsnore_backend_snore MODULE ${SNORE_SRC} )
-target_link_libraries(libsnore_backend_snore Snore::Libsnore Qt5::Declarative)
+target_link_libraries(libsnore_backend_snore Snore::Libsnore Qt5::Quick)
 
 install(TARGETS libsnore_backend_snore ${SNORE_PLUGIN_INSTALL_PATH})
 

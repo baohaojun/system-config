@@ -33,7 +33,7 @@ include(KDECompilerSettings)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Network REQUIRED)
-find_package(Qt5Declarative REQUIRED)
+find_package(Qt5Quick REQUIRED)
 
 
 

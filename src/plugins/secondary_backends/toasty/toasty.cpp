@@ -65,7 +65,7 @@ bool Toasty::initialize(SnoreCore *snore)
     if (SnoreSecondaryBackend::initialize(snore)) {
         setDefaultValue("DeviceID", "", "The ID provided for your device by Toasty");
         m_key = value("DeviceID").toString();
-        snoreDebug(SNORE_DEBUG) << m_key;
+        snoreDebug(SNORE_DEBUG) << m_key << !m_key.isEmpty();
         return !m_key.isEmpty();
     }
     return false;
