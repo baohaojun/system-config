@@ -23,6 +23,7 @@ private slots:
     void slotRequestFinished();
 
 private:
+    QString m_key;
     QNetworkAccessManager m_manager;
 
 };

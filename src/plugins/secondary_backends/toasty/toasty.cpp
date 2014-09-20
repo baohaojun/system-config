@@ -17,9 +17,8 @@ Toasty::~Toasty()
 
 void Toasty::slotNotify(Notification notification)
 {
-    QString id = value("DEVICEID").toString();
-    if (!id.isEmpty()) {
-        QNetworkRequest request(QString("http://api.supertoasty.com/notify/%1").arg(id));
+    if (!m_key.isEmpty()) {
+        QNetworkRequest request(QString("http://api.supertoasty.com/notify/%1").arg(m_key));
         QHttpMultiPart *mp = new QHttpMultiPart(QHttpMultiPart::FormDataType);
         QHttpPart title;
         title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
@@ -71,8 +70,9 @@ bool Toasty::initialize(SnoreCore *snore)
 {
     if (SnoreSecondaryBackend::initialize(snore)) {
         setDefaultValue("DeviceID", "", "The ID provided for your device by Toasty");
-        snoreDebug(SNORE_DEBUG) << value("DeviceID");
-        return true;
+        m_key = value("DeviceID").toString();
+        snoreDebug(SNORE_DEBUG) << m_key;
+        return !m_key.isEmpty();
     }
     return false;
 }
