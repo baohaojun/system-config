@@ -19,9 +19,6 @@ public:
 public slots:
     virtual void slotNotify(Snore::Notification notification) override;
 
-private slots:
-    void slotRequestFinished();
-
 private:
     QString m_key;
     QNetworkAccessManager m_manager;
