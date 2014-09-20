@@ -26,8 +26,6 @@
 #include <iostream>
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(libsnore_frontend_snarlnetwork, SnarlNetworkFrontend)
-
 SnarlNetworkFrontend::SnarlNetworkFrontend():
     SnoreFrontend("SnarlNetwork")
 {
@@ -98,7 +96,7 @@ void SnarlNetworkFrontend::handleMessages()
     const QString out("SNP/1.1/0/OK");
     QTcpSocket *client = qobject_cast<QTcpSocket *>(sender());
 
-    QStringList messages(QString::fromAscii(client->readAll()).trimmed().split("\r\n"));
+    QStringList messages(QString::fromLatin1(client->readAll()).trimmed().split("\r\n"));
     foreach(const QString & s, messages) {
         if (s.isEmpty()) {
             continue;

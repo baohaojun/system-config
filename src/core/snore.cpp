@@ -231,6 +231,18 @@ bool SnoreCore::primaryBackendSupportsRichtext()
     return d->m_notificationBackend->supportsRichtext();
 }
 
+QSettings *SnoreCore::settings()
+{
+    Q_D(SnoreCore);
+    return d->m_settings;
+}
+
+const QHash<QString, QString> &SnoreCore::settingsDescription() const
+{
+    Q_D(const SnoreCore);
+    return d->m_help;
+}
+
 const SnoreCorePrivate *SnoreCore::d()
 {
     Q_D(SnoreCore);

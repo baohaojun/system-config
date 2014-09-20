@@ -65,7 +65,7 @@ public:
      * Creates a Notification Manager SnoreCore
      * @param trayIcon a QSystemTrayIcon which can later be used by the fallback notification backend.
      */
-    SnoreCore(QSystemTrayIcon *trayIcon = NULL);
+    SnoreCore(QSystemTrayIcon *trayIcon = nullptr);
     ~SnoreCore();
 
     /**
@@ -171,8 +171,18 @@ public:
      */
     bool primaryBackendSupportsRichtext();
 
+
     /**
-     *
+     * @return a pointer to the global settings
+     */
+    QSettings *settings();
+
+    /**
+     * @return a hashmap containing the documentation of the settings keys.
+     */
+    const QHash<QString,QString> &settingsDescription() const;
+
+    /**
      * @return a pointer to the private class, for internal use only.
      */
     const SnoreCorePrivate *d();

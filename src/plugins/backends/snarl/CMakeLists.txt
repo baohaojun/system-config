@@ -8,7 +8,7 @@ if(WIN32)
         snarl.cpp
         )
     add_library(libsnore_backend_snarl MODULE ${SNARL_SRC} )
-    target_link_libraries(libsnore_backend_snarl Snore::Libsnore ${QT_QTCORE_LIBRARY} )
+    target_link_libraries(libsnore_backend_snarl Snore::Libsnore )
     if(MINGW)
         set_target_properties(libsnore_backend_snarl PROPERTIES COMPILE_FLAGS "-Wno-conversion-null -Wno-unused")
     endif(MINGW)

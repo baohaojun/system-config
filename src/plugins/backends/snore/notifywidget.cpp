@@ -37,14 +37,11 @@ NotifyWidget::NotifyWidget(int pos, QWidget *parent) :
 {
     m_qmlNotification = rootObject();
 
-    this->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint
+    this->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
 #ifdef Q_OS_MAC
                          | Qt::SubWindow
 #else
                          | Qt::ToolTip
-#endif
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-                         | Qt::WindowDoesNotAcceptFocus
 #endif
                         );
 

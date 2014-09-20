@@ -23,8 +23,6 @@
 #include <QApplication>
 #include <QThread>
 
-Q_EXPORT_PLUGIN2(libsnore_backend_snore, SnoreNotifier)
-
 using namespace Snore;
 
 SnoreNotifier::SnoreNotifier():

@@ -5,8 +5,7 @@ add_subdirectory(core)
 if(WITH_SNORE_DEAMON)
 
     add_executable( snorenotify WIN32 main.cpp snorenotify.cpp trayicon.cpp ${SNORENOTIFY_DEAMON_DEPS})
-    target_link_libraries( snorenotify libsnore ${QT_QTGUI_LIBRARY} )
-
+    target_link_libraries( snorenotify libsnore Qt5::Gui Qt5::Widgets )
     install(TARGETS snorenotify RUNTIME DESTINATION bin
                               LIBRARY DESTINATION lib
                               ARCHIVE DESTINATION lib)

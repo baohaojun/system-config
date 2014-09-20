@@ -1,4 +1,4 @@
-QT4_ADD_RESOURCES(SNORE_RCS ${CMAKE_CURRENT_SOURCE_DIR}/snore_notification.qrc)
+QT5_ADD_RESOURCES(SNORE_RCS ${CMAKE_CURRENT_SOURCE_DIR}/snore_notification.qrc)
 
 set( SNORE_SRC
     snorenotifier.cpp
@@ -8,7 +8,7 @@ set( SNORE_SRC
 
 
 add_library(libsnore_backend_snore MODULE ${SNORE_SRC} )
-target_link_libraries(libsnore_backend_snore Snore::Libsnore ${QT_QTCORE_LIBRARY} ${QT_QTDECLARATIVE_LIBRARY})
+target_link_libraries(libsnore_backend_snore Snore::Libsnore Qt5::Declarative)
 
 install(TARGETS libsnore_backend_snore ${SNORE_PLUGIN_INSTALL_PATH})
 

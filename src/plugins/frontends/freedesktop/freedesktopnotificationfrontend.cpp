@@ -31,8 +31,6 @@
 
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(libsnore_frontend_freedesktop, FreedesktopFrontend)
-
 FreedesktopFrontend::FreedesktopFrontend():
     SnoreFrontend("Freedesktop")
 {

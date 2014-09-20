@@ -11,21 +11,6 @@ include(GNUInstallDirs)
 include(GenerateExportHeader)
 include(FeatureSummary)
 
-if(NOT MSVC)
-    include(CheckCXXCompilerFlag)
-    check_cxx_compiler_flag( "-std=c++11" CXX11_FOUND )
-    check_cxx_compiler_flag( "-std=c++0x" CXX0X_FOUND )
-    if(CXX11_FOUND)
-         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    elseif(CXX0X_FOUND)
-         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-    else()
-        message(STATUS "${CMAKE_CXX_COMPILER} does not support C++11, please use a different compiler")
-    endif()
-endif()
-
-
-
 #######################################################################
 option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DEAMON=ON" OFF)
 option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
@@ -35,29 +20,22 @@ option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 
 set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 5)
-set(SNORE_VERSION_PATCH 1)
+set(SNORE_VERSION_PATCH 90)
 set(SNORE_VERSION_SUFFIX "")
 
-set(SNORE_SUFFIX "")
-set(SNORE_CamelCase_SUFFIX "")
+set(SNORE_SUFFIX "-qt5")
+set(SNORE_CamelCase_SUFFIX "Qt5")
 
-if(WITH_QT4)
-    find_package(Qt4 REQUIRED)
-    include_directories( ${QT_INCLUDES} )
-    include(NoKDE)
-else()
-    find_package(ECM 0.0.9 NO_MODULE REQUIRED)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
-    include(KDECompilerSettings)
+find_package(ECM 0.0.9 NO_MODULE REQUIRED)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
+include(KDECompilerSettings)
 
-    find_package(Qt5Core REQUIRED)
-    find_package(Qt5Widgets REQUIRED)
-    find_package(Qt5Network REQUIRED)
-    find_package(Qt5Declarative REQUIRED)
-    include(ECMQt4To5Porting)
-    set(SNORE_SUFFIX "-qt5")
-    set(SNORE_CamelCase_SUFFIX "Qt5")
-endif()
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Network REQUIRED)
+find_package(Qt5Declarative REQUIRED)
+
+
 
 
 find_package(Doxygen QUIET)

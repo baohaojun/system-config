@@ -31,6 +31,7 @@
 #include <iostream>
 #include <stdlib.h>
 
+
 using namespace Snore;
 
 SnoreNotify::SnoreNotify():

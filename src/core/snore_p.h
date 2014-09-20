@@ -62,7 +62,7 @@ public:
      */
     bool primaryBackendCanUpdateNotification() const;
 
-    QSettings *settings() const;
+    void addSettingsDescription(const QString &key, const QString &help) const;
 
 signals:
     void applicationRegistered(const Snore::Application &);
@@ -87,6 +87,7 @@ private:
     Application m_defaultApp;
 
     QSettings *m_settings;
+    mutable QHash<QString,QString> m_help;
 };
 }
 

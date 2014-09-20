@@ -26,8 +26,6 @@
 
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(libsnore_backend_growl, GrowlBackend)
-
 GrowlBackend *GrowlBackend::s_instance = NULL;
 
 GrowlBackend::GrowlBackend():

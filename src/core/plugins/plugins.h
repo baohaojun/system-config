@@ -56,7 +56,7 @@ public:
 
     QVariant value(const QString &key);
     void setValue(const QString &key, const QVariant &value);
-    void setDefaultValue(const QString &key, const QVariant &value);
+    void setDefaultValue(const QString &key, const QVariant &value,const QString &help);
 
 private:
     SnorePlugin() {}
@@ -74,19 +74,5 @@ Q_DECLARE_INTERFACE(Snore::SnorePlugin,
                     "org.Snore.SnorePlugin/1.0")
 
 SNORE_EXPORT QDebug operator<< (QDebug, const Snore::SnorePlugin::PluginTypes &);
-
-//compatability defines to reduce the number of ifdefs to make fiat compile with qt4 and qt5
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-#   if defined(Q_EXPORT_PLUGIN)
-#       undef Q_EXPORT_PLUGIN
-#   endif
-#   if defined(Q_EXPORT_PLUGIN2)
-#       undef Q_EXPORT_PLUGIN2
-#   endif
-#   define Q_EXPORT_PLUGIN(a)
-#   define Q_EXPORT_PLUGIN2(a, b)
-#else
-#   define Q_PLUGIN_METADATA(a)
-#endif
 
 #endif//SNORE_PLUGINS_H

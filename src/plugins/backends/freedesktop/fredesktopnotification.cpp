@@ -31,7 +31,7 @@ FreedesktopImageHint::FreedesktopImageHint()
 FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
 {
     QImage image(img.convertToFormat(QImage::Format_ARGB32));
-    imageData = QByteArray((char *)image.rgbSwapped().bits(), image.numBytes());
+    imageData = QByteArray((char *)image.rgbSwapped().bits(), image.byteCount());
     width = image.width();
     height = image.height();
     rowstride = image.bytesPerLine();

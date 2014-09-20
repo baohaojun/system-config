@@ -18,10 +18,10 @@ if(WITH_FREEDESKTOP_FRONTEND)
                 ../../backends/freedesktop/fredesktopnotification.cpp
             )
 
-        qt4_add_dbus_adaptor( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC org.freedesktop.Notifications.xml freedesktopnotificationfrontend.h FreedesktopFrontend)
+        qt5_add_dbus_adaptor( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC org.freedesktop.Notifications.xml freedesktopnotificationfrontend.h FreedesktopFrontend)
 
         add_library(libsnore_frontend_freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_FRONTEND_SRC} )
-        target_link_libraries(libsnore_frontend_freedesktop Snore::Libsnore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )
+        target_link_libraries(libsnore_frontend_freedesktop Snore::Libsnore Qt5::DBus )
 
 
         #install the dbus interface

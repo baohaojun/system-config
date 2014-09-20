@@ -3,8 +3,6 @@
 #include <QtNetwork>
 #include <QImage>
 
-Q_EXPORT_PLUGIN2(libsnore_secondary_backend_toasty, Toasty)
-
 using namespace Snore;
 
 Toasty::Toasty():
@@ -72,8 +70,8 @@ void Toasty::slotRequestFinished()
 bool Toasty::initialize(SnoreCore *snore)
 {
     if (SnoreSecondaryBackend::initialize(snore)) {
-        setDefaultValue("DEVICEID", "");
-        snoreDebug(SNORE_DEBUG) << value("DEVICEID");
+        setDefaultValue("DeviceID", "", "The ID provided for your device by Toasty");
+        snoreDebug(SNORE_DEBUG) << value("DeviceID");
         return true;
     }
     return false;

@@ -58,7 +58,7 @@ private:
     inline void write(QTcpSocket *dest, const QString &msg)
     {
         snoreDebug(SNORE_DEBUG) << msg;
-        dest->write(msg.toAscii());
+        dest->write(msg.toLatin1());
     }
 
 };

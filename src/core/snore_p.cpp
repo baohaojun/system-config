@@ -26,9 +26,7 @@
 #include "version.h"
 
 #include <QApplication>
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QTemporaryDir>
-#endif
 
 using namespace Snore;
 
@@ -85,17 +83,8 @@ void SnoreCorePrivate::registerMetaTypes()
 
 QString SnoreCorePrivate::tempPath()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     static QTemporaryDir dir;
     return dir.path();
-#else
-    static QString dir;
-    if (dir.isEmpty()) {
-        dir = QString("%1/%2").arg(QDir::tempPath(), "libsnore");
-        QDir::temp().mkpath("libsnore");
-    }
-    return dir;
-#endif
 }
 
 bool SnoreCorePrivate::primaryBackendCanUpdateNotification() const
@@ -103,9 +92,9 @@ bool SnoreCorePrivate::primaryBackendCanUpdateNotification() const
     return m_notificationBackend->canUpdateNotification();
 }
 
-QSettings *SnoreCorePrivate::settings() const
+void SnoreCorePrivate::addSettingsDescription(const QString &key, const QString &help) const
 {
-    return m_settings;
+    m_help[key] = help;
 }
 
 void SnoreCorePrivate::slotNotificationClosed(Notification n)

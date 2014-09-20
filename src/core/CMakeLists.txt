@@ -9,7 +9,7 @@ endif()
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/LibsnoreConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake" @ONLY)
 
-QT4_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
+QT5_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 
 add_subdirectory(notification)
 add_subdirectory(plugins)
@@ -45,7 +45,7 @@ set_target_properties( libsnore PROPERTIES
                                 VERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}.${SNORE_VERSION_SUFFIX}"
                                 SOVERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}"
                                 EXPORT_NAME Libsnore)
-target_link_libraries( libsnore PUBLIC ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY}  )
+target_link_libraries( libsnore PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network)
 
 add_library(Snore::Libsnore ALIAS libsnore)
 
