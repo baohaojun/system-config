@@ -1,15 +1,12 @@
 import QtQuick 2.3
-
-
+import QtQuick.Window 2.2
 
 Rectangle {
-    objectName: "qmlNotification"
     id: root
-    width: 365
-    height: 100
+    property int dpi: Screen.pixelDensity*25.4
 
-    property int startWidth: 350
-    property int startHeight: 100
+    width: 3.7 * dpi
+    height: 1 * dpi
 
     signal dismissed()
 
@@ -24,8 +21,25 @@ Rectangle {
         appIcon.source = nAppIcon
         image.source = nImage
         root.color = color
+
+
+        var id = window.id
+        var space = (id + 1) * dpi * 0.1
+        window.y = space + (space + height) * id
+        console.debug("space: " + space)
+        animation.target = window
+        animation.from = Screen.desktopAvailableWidth
+        animation.to = Screen.desktopAvailableWidth - width
+        console.debug(window.x + "x" + window.y)
+        animation.start()
+
     }
 
+    NumberAnimation{
+        id: animation
+        properties: "x"
+        duration: 500
+    }
     MouseArea {
         id: mouseArea2
         anchors.fill: parent

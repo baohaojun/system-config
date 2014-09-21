@@ -28,12 +28,12 @@
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos, QWindow *parent) :
-    QQuickView(QUrl("qrc:/notification.qml"), parent),
-    m_animationX(new QPropertyAnimation(this, "x")),
+    QQuickView(QUrl("qrc:/notification.qml"),parent),
     m_id(pos),
     m_mem(QString("SnoreNotifyWidget_rev%1_id%2").arg(QString::number(SHARED_MEM_TYPE_REV()), QString::number(m_id))),
     m_ready(true)
 {
+    rootContext()->setContextProperty("window", this);
     m_qmlNotification = rootObject();
 
     setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
@@ -63,11 +63,10 @@ NotifyWidget::NotifyWidget(int pos, QWindow *parent) :
         snoreDebug(SNORE_DEBUG) << "Status" << data->free << data->date.elapsed() / 1000;
     }
 
-    setResizeMode(QQuickView::SizeRootObjectToView);
+    setResizeMode(QQuickView::SizeViewToRootObject);
 
     connect(m_qmlNotification, SIGNAL(invoked()), this, SLOT(slotInvoked()));
     connect(m_qmlNotification, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
-
 }
 
 NotifyWidget::~NotifyWidget()
@@ -79,20 +78,6 @@ void NotifyWidget::display(const Notification &notification)
     update(notification);
     snoreDebug(SNORE_DEBUG) << notification.id();
     show();
-
-    QRect desktop = QDesktopWidget().availableGeometry();
-
-//    snoreDebug( SNORE_DEBUG ) << computeSize() << devicePixelRatio();
-    resize(computeSize());
-
-    int space = 10 * devicePixelRatio();
-
-    setY(desktop.topRight().y() + space + (space + height()) * m_id);
-
-    m_animationX->setDuration(500);
-    m_animationX->setStartValue(desktop.topRight().x());
-    m_animationX->setEndValue(desktop.topRight().x() - width());
-    m_animationX->start();
 }
 
 void NotifyWidget::update(const Notification &notification)
@@ -195,11 +180,4 @@ QColor NotifyWidget::computeBackgrondColor(const QImage &img)
 
     return QColor(r / s, g / s, b / s);
 
-}
-
-QSize NotifyWidget::computeSize()
-{
-    int width = 365;
-    int height = 100;
-    return QSize(width * devicePixelRatio(), height * devicePixelRatio());
 }

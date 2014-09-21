@@ -27,7 +27,7 @@ using namespace Snore;
 
 SnoreNotifier::SnoreNotifier():
     SnoreBackend("Snore", true, true, true),
-    m_widgets(2)
+    m_widgets(3)
 {
 }
 
@@ -78,7 +78,6 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
 void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
 {
     NotifyWidget *w = m_widgets[notification.hints().privateValue(this, "id").toInt()];
-    w->hide();
     w->release();
     //the timer will show the next
 }

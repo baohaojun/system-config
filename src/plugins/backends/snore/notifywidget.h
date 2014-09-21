@@ -43,6 +43,7 @@ class NotifyWidget : public QQuickView
     Q_OBJECT
 
 public:
+    Q_PROPERTY(int id READ id)
     explicit NotifyWidget(int pos, QWindow *parent = 0);
     ~NotifyWidget();
 
@@ -65,18 +66,9 @@ private slots:
 
     void slotInvoked();
 
-protected:
-    QSize computeSize();
-
-    inline float dpisScale()
-    {
-        return 96.0;
-    }
-
 private:
     QColor computeBackgrondColor(const QImage &img);
 
-    QPropertyAnimation *m_animationX;
     Snore::Notification m_notification;
     QObject *m_qmlNotification;
     int m_id;
