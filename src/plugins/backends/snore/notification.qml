@@ -24,13 +24,11 @@ Rectangle {
 
 
         var id = window.id
-        var space = (id + 1) * dpi * 0.1
+        var space = (id + 1) * dpi * 0.025
         window.y = space + (space + height) * id
-        console.debug("space: " + space)
         animation.target = window
         animation.from = Screen.desktopAvailableWidth
         animation.to = Screen.desktopAvailableWidth - width
-        console.debug(window.x + "x" + window.y)
         animation.start()
 
     }
@@ -40,6 +38,7 @@ Rectangle {
         properties: "x"
         duration: 500
     }
+
     MouseArea {
         id: mouseArea2
         anchors.fill: parent
@@ -80,6 +79,7 @@ Rectangle {
         anchors.left: image.right
         anchors.leftMargin: 5
         wrapMode: Text.WordWrap
+        maximumLineCount: 4
         onLinkActivated: Qt.openUrlExternally(link)
 
     }
