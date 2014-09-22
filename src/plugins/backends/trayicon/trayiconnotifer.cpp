@@ -10,7 +10,7 @@
 using namespace Snore;
 
 TrayIconNotifer::TrayIconNotifer() :
-    SnoreBackend("SystemTray", true, false),
+    SnoreBackend("System Tray Icon", true, false),
     m_trayIcon(NULL),
     m_displayed(-1),
     m_currentlyDisplaying(false)

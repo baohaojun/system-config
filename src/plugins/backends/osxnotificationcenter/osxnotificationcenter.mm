@@ -7,8 +7,6 @@
 #import <QThread.h>
 #import <QApplication.h>
 
-Q_EXPORT_PLUGIN2(libsnore_backend_osxnotificationcenter, OSXNotificationCenter)
-
 using namespace Snore;
 
 // store some variables that are needed (since obj-c++ does not allow having obj-c classes as c++ members)

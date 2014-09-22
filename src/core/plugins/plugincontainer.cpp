@@ -54,7 +54,9 @@ SnorePlugin *PluginContainer::load()
         snoreDebug(SNORE_WARNING) << "Failed loading plugin: " << m_loader.errorString();
         return NULL;
     }
-    return qobject_cast<SnorePlugin *> (m_loader.instance());
+    SnorePlugin *plugin = qobject_cast<SnorePlugin *> (m_loader.instance());
+    Q_ASSERT_X(m_pluginName == plugin->name(),Q_FUNC_INFO, "The plugin name is different to the one in the meta data.");
+    return plugin;
 }
 
 void PluginContainer::unload()
@@ -121,21 +123,14 @@ void PluginContainer::updatePluginCache()
                     QStringList(pluginFileFilters(type)), QDir::Files)) {
             snoreDebug(SNORE_DEBUG) << "adding" << file.absoluteFilePath();
             QPluginLoader loader(file.absoluteFilePath());
-            QObject *plugin = loader.instance();
-            if (plugin == NULL) { //TODO: Qt5 json stuff
-                snoreDebug(SNORE_WARNING) << "Failed loading plugin: " << file.absoluteFilePath() << loader.errorString();
-                continue;
+            QJsonObject data = loader.metaData()["MetaData"].toObject();
+            QString name = data.value("name").toString();
+            if (!name.isEmpty()) {
+                PluginContainer *info = new PluginContainer(file.fileName(), name, type);
+                s_pluginCache[type].insert(name, info);
+                plugins << info;
+                snoreDebug(SNORE_DEBUG) << "added" << name << "to cache";
             }
-            SnorePlugin *sp = qobject_cast<SnorePlugin *>(plugin);
-            if (sp == NULL) {
-                snoreDebug(SNORE_WARNING) << "Error:" << file.absoluteFilePath() << " is not a Snore plugin" ;
-                loader.unload();
-                continue;
-            }
-            PluginContainer *info = new PluginContainer(file.fileName(), sp->name() , type);
-            s_pluginCache[type].insert(info->name(), info);
-            plugins << info;
-            snoreDebug(SNORE_DEBUG) << "added" << info->name() << "to cache";
         }
     }
 }

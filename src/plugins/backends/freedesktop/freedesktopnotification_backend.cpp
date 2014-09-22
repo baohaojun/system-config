@@ -12,10 +12,8 @@
 
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(libsnore_backend_freedesktop, FreedesktopBackend)
-
 FreedesktopBackend::FreedesktopBackend() :
-    SnoreBackend("FreedesktopNotification", true, true, true)
+    SnoreBackend("Freedesktop Notification", true, true, true)
 {
 }
 

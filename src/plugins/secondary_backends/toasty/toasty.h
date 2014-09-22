@@ -9,7 +9,7 @@ class Toasty : public Snore::SnoreSecondaryBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreSecondaryBackend)
-    Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0")
+    Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "plugin.json")
 public:
     Toasty();
     ~Toasty();

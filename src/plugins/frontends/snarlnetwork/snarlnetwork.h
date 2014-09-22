@@ -30,7 +30,7 @@ class SnarlNetworkFrontend : public Snore::SnoreFrontend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreFrontend)
-    Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0")
+    Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0" FILE "plugin.json")
     friend class Parser;
 public:
     static const int port = 9887;
