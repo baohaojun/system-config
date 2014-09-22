@@ -69,8 +69,10 @@ IconData::IconData(const QString &url):
                 m_isDownloading = false;
             });
         } else if(m_isResource) {
-            QFile file(url);
-            file.copy(m_localUrl);
+            m_img = QImage(url);
+            m_img.save(m_localUrl, "PNG");
+            s_localImageCache.insert(m_localUrl);
+            snoreDebug(SNORE_DEBUG) << m_localUrl << "added to cache";
         }
     }
 
@@ -97,11 +99,11 @@ IconData::~IconData()
 
 const QImage &IconData::image()
 {
-    while(m_isDownloading)
-    {
-        qApp->processEvents();
-    }
     if (m_img.isNull()) {
+        while(m_isDownloading)
+        {
+            qApp->processEvents();
+        }
         if (!m_isRemoteFile) {
             m_img = QImage(m_url);
         }
