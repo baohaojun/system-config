@@ -31,6 +31,8 @@
 
 #include <QMutex>
 
+class QNetworkAccessManager;
+
 namespace Snore
 {
 
@@ -43,7 +45,6 @@ public:
 
     const QImage &image();
     QString localUrl();
-    void download();
 
     QImage m_img;
     QString m_url;
@@ -52,7 +53,8 @@ public:
     bool m_isLocalFile;
     bool m_isResource;
     bool m_isRemoteFile;
-    QMutex m_mutex;
+
+    bool m_isDownloading = false;
 
     static QSet<QString> s_localImageCache;
 

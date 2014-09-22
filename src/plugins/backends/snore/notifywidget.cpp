@@ -95,8 +95,9 @@ void NotifyWidget::display(const Notification &notification)
                               Q_ARG(QVariant, color),
                               Q_ARG(QVariant, textColor),
                               Q_ARG(QVariant, notification.isUpdate()));
-    snoreDebug(SNORE_DEBUG) << notification.id();
-    show();
+    if (!notification.isUpdate()) {
+        show();
+    }
 }
 
 

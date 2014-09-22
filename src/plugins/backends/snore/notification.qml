@@ -22,17 +22,17 @@ Rectangle {
         root.color = color
 
 
-        var id = window.id
-        var space = (id + 1) * height * 0.025
-
-        window.y = space + (space + height) * id
-        animation.target = window
-        animation.from = Screen.desktopAvailableWidth
-        animation.to = Screen.desktopAvailableWidth - width
         if (!isUpdate) {
-            animation.start()
-        }
+            var id = window.id
+            var space = (id + 1) * height * 0.025
 
+            window.y = space + (space + height) * id
+            animation.target = window
+            animation.from = Screen.desktopAvailableWidth
+            animation.to = Screen.desktopAvailableWidth - width
+            animation.start()
+
+        }
 
     }
 

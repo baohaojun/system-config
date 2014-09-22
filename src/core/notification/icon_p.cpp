@@ -22,6 +22,7 @@
 #include <QEventLoop>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QApplication>
 
 using namespace Snore;
 
@@ -39,6 +40,40 @@ IconData::IconData(const QString &url):
         m_localUrl = url;
     }
     m_isRemoteFile = !m_isLocalFile && !m_isResource;
+
+    if(!m_isLocalFile && !s_localImageCache.contains(m_localUrl)) {
+        if (m_isRemoteFile) {
+            m_isDownloading = true;
+            snoreDebug(SNORE_DEBUG) << "Downloading:" << m_url;
+            QNetworkAccessManager *manager = new QNetworkAccessManager();
+            QNetworkRequest request(m_url);
+            QNetworkReply *reply = manager->get(request);
+            QObject::connect(reply,&QNetworkReply::downloadProgress,[&](qint64 bytesReceived, qint64 bytesTotal){
+                snoreDebug(SNORE_DEBUG) << "Downloading:" << m_localUrl << bytesReceived/double(bytesTotal) * 100.0 << "%";
+            });
+
+            QObject::connect(reply,static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),[&,reply,manager](QNetworkReply::NetworkError code){
+                snoreDebug(SNORE_WARNING) << "Error:" << code;
+                reply->deleteLater();
+                manager->deleteLater();
+                m_isDownloading = false;
+            });
+            QObject::connect(reply, &QNetworkReply::finished, [&,reply,manager]() {
+                m_img = QImage::fromData(reply->readAll(), "PNG");
+                m_img.save(m_localUrl, "PNG");
+                s_localImageCache.insert(m_localUrl);
+                snoreDebug(SNORE_DEBUG) << m_localUrl << "added to cache";
+                reply->close();
+                reply->deleteLater();
+                manager->deleteLater();
+                m_isDownloading = false;
+            });
+        } else if(m_isResource) {
+            QFile file(url);
+            file.copy(m_localUrl);
+        }
+    }
+
 }
 
 IconData::IconData(const QImage &img):
@@ -49,21 +84,26 @@ IconData::IconData(const QImage &img):
     m_isResource(false),
     m_isRemoteFile(false)
 {
+    if (!s_localImageCache.contains(m_localUrl)) { //double check as image() could have called download
+        img.save(m_localUrl , "PNG");
+        s_localImageCache.insert(m_localUrl);
+        snoreDebug(SNORE_DEBUG) << m_localUrl << "added to cache";
+    }
 }
 
 IconData::~IconData()
 {
-
 }
 
 const QImage &IconData::image()
 {
-    QMutexLocker lock(&m_mutex);
+    while(m_isDownloading)
+    {
+        qApp->processEvents();
+    }
     if (m_img.isNull()) {
         if (!m_isRemoteFile) {
             m_img = QImage(m_url);
-        } else {
-            download();
         }
     }
     return m_img;
@@ -71,38 +111,9 @@ const QImage &IconData::image()
 
 QString IconData::localUrl()
 {
-    if (!m_isLocalFile && !s_localImageCache.contains(m_localUrl)) {
-        QImage img = image();
-        if (!s_localImageCache.contains(m_localUrl)) { //double check as image() could have called download
-            img.save(m_localUrl , "PNG");
-            s_localImageCache.insert(m_localUrl);
-            snoreDebug(SNORE_DEBUG) << m_localUrl << "added to cache";
-        }
+    while(m_isDownloading)
+    {
+        qApp->processEvents();
     }
     return m_localUrl;
-}
-
-void IconData::download()
-{
-    if (m_isRemoteFile) {
-        if (!s_localImageCache.contains(m_localUrl)) {
-            snoreDebug(SNORE_DEBUG) << "Downloading:" << m_url;
-            QNetworkAccessManager manager;
-            QEventLoop loop;
-            QNetworkRequest request(m_url);
-            request.setRawHeader("User-Agent", "SnoreNotify");
-            QNetworkReply *reply = manager.get(request);
-            QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-            QTimer::singleShot(1000, &loop, SLOT(quit())); //timeout
-            loop.exec();
-            if (reply->isFinished()) {
-                m_img = QImage::fromData(reply->readAll(), "PNG");
-                m_img.save(m_localUrl, "PNG");
-                s_localImageCache.insert(m_localUrl);
-                snoreDebug(SNORE_DEBUG) << m_localUrl << "added to cache";
-            }
-        } else {
-            m_img = QImage(m_localUrl);
-        }
-    }
 }
