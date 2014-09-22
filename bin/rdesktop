@@ -46,4 +46,8 @@ function rdesktop() {
     setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr | grep "$display" -A 1 |grep '\*'|pn 1 | tail -n 1) $host -u $user -p $pass "$@"&
 }
 
-rdesktop "$@"
+if echo $SHELLOPTS | grep xtrace; then
+    rdesktop "$@"
+else
+    rdesktop "$@" >/dev/null 2>&1
+fi
