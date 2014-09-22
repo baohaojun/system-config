@@ -4,6 +4,7 @@ set -e
 (
     cd ~/src/android/build/tools/releasetools
     psync rem .
+    sudo modprobe loop >/dev/null 2>&1 || true
 )
 
 ## start generated code
@@ -52,8 +53,11 @@ cd ~/tmp/system-$tmpTag
 )&
 sudo umount system
 if test $debug = true; then
-    bash
+    bash || true
 else
     cd ../
+    set -x
+    sleep 5
+    wait || true
     rm system-$tmpTag -rf
 fi

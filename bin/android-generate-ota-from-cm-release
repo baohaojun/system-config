@@ -130,7 +130,7 @@ EOF
     sort system.list | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/filesystem_config.txt
     zipinfo -1 ota-files.zip | awk 'BEGIN { FS="BOOT/RAMDISK/" } /^BOOT\/RAMDISK\// {print $2}' | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/boot_filesystem_config.txt
     zipinfo -1 ota-files.zip | awk 'BEGIN { FS="RECOVERY/RAMDISK/" } /^RECOVERY\/RAMDISK\// {print $2}' | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/recovery_filesystem_config.txt
-    zip -q ota-files.zip META/*filesystem_config.txt rm-phone.sh
+    zip -q ota-files.zip META/*filesystem_config.txt rm-phone.sh system.list
     psync rem ota-files.zip
     ssh-exp rem "
         cd ~/src/android

@@ -148,7 +148,7 @@ might be bad."
 
 ;;;###autoload
 (defun bhj-c-get-includes (prefix)
-  (interactive "p")
+  (interactive "P")
   ;; when use call this function, 1) assume we will have some headers
   ;; to include, 2) assume we need insert them at a special position
   ;; marked with /**** start of bhj auto includes ****/ and /**** end
