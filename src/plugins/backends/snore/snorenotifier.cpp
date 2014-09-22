@@ -46,7 +46,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
             NotifyWidget *w = m_widgets[notification.old().hints().privateValue(this, "id").toInt()];
             if (w->isVisible() && w->notification().isValid() && w->notification().id() == notification.old().id()) {
                 snoreDebug(SNORE_DEBUG) << "replacing notification" << w->notification().id() << notification.id();
-                w->update(notification);
+                w->display(notification);
                 notification.hints().setPrivateValue(this, "id", w->id());
                 startTimeout(notification);
             }

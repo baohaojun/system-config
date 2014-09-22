@@ -75,13 +75,6 @@ NotifyWidget::~NotifyWidget()
 
 void NotifyWidget::display(const Notification &notification)
 {
-    update(notification);
-    snoreDebug(SNORE_DEBUG) << notification.id();
-    show();
-}
-
-void NotifyWidget::update(const Notification &notification)
-{
     snoreDebug(SNORE_DEBUG) << m_id << notification.id();
     m_notification = notification;
     QColor color;
@@ -100,8 +93,12 @@ void NotifyWidget::update(const Notification &notification)
                               Q_ARG(QVariant, QUrl::fromLocalFile(notification.icon().localUrl())),
                               Q_ARG(QVariant, QUrl::fromLocalFile(notification.application().icon().localUrl())),
                               Q_ARG(QVariant, color),
-                              Q_ARG(QVariant, textColor));
+                              Q_ARG(QVariant, textColor),
+                              Q_ARG(QVariant, notification.isUpdate()));
+    snoreDebug(SNORE_DEBUG) << notification.id();
+    show();
 }
+
 
 bool NotifyWidget::acquire()
 {

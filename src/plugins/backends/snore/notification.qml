@@ -3,16 +3,15 @@ import QtQuick.Window 2.2
 
 Rectangle {
     id: root
-    property int dpi: Screen.pixelDensity*25.4
 
-    width: 3.7 * dpi
-    height: 1 * dpi
+    width: Screen.width * 0.2
+    height: Screen.height * 0.1
 
     signal dismissed()
 
     signal invoked()
 
-    function update(nTitle, bBody, nImage, nAppIcon, color, textColor)
+    function update(nTitle, bBody, nImage, nAppIcon, color, textColor, isUpdate)
     {
         title.text = nTitle
         title.color = textColor
@@ -24,12 +23,16 @@ Rectangle {
 
 
         var id = window.id
-        var space = (id + 1) * dpi * 0.025
+        var space = (id + 1) * height * 0.025
+
         window.y = space + (space + height) * id
         animation.target = window
         animation.from = Screen.desktopAvailableWidth
         animation.to = Screen.desktopAvailableWidth - width
-        animation.start()
+        if (!isUpdate) {
+            animation.start()
+        }
+
 
     }
 
@@ -54,7 +57,7 @@ Rectangle {
         height: 14
         color: "#000000"
 
-        text: qsTr("Title")
+        text: "Title"
         font.pointSize: 10
         font.bold: true
         anchors.right: closeButton.left
@@ -68,7 +71,7 @@ Rectangle {
     Text {
         id: body
         color: "#000000"
-        text: qsTr("Body")
+        text: "Body"
         font.pointSize: 10
         anchors.right: appIcon.left
         anchors.rightMargin: 5
@@ -79,7 +82,7 @@ Rectangle {
         anchors.left: image.right
         anchors.leftMargin: 5
         wrapMode: Text.WordWrap
-        maximumLineCount: 4
+        maximumLineCount: root.height / font.pointSize
         onLinkActivated: Qt.openUrlExternally(link)
 
     }

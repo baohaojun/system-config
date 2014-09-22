@@ -48,7 +48,6 @@ public:
     ~NotifyWidget();
 
     void display(const Snore::Notification &notification);
-    void update(const Snore::Notification &notification);
 
     bool acquire();
     bool release();
