@@ -1,3 +1,8 @@
+# Changes since 0.5.0 #
+- Ship  a staticaly linked version of Snoretoast
+- Fix window comming to front on mac osx on snore notifications
+- Fixed creation of tmp dir on qt4
+
 # Changes since 0.5.0rc3 #
 - Readded the missing close button for the snore backend
 - Cleaned up snore backend use a QPropertyAnimation instead of a custom timer code.
