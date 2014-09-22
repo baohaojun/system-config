@@ -51,7 +51,7 @@ if test "${rev:0:4}" = http; then
     exit
 fi
 
-repo sync -n .
+git fetch $(repo-remote) $(repo-branch):$(repo-branch)
 if ! git-is-ancestor $(repo-remote-branch) $rev; then
     die "Not fast-forward push is not allowed"
 fi

@@ -164,7 +164,7 @@ might be bad."
          (if prefix
              (with-temp-buffer
                (let ((temp-buffer (current-buffer)))
-                 (with-current-buffer (get-buffer "*compilation*")
+                 (with-current-buffer (get-buffer-create "*compilation*")
                    (shell-command-on-region (point-min) (point-max) "c-get-includes" temp-buffer)
                    (split-string (with-current-buffer temp-buffer
                                    (buffer-substring-no-properties (point-min) (point-max))) "\n" t))))
