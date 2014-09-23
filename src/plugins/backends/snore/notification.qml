@@ -33,9 +33,7 @@ Rectangle {
             animation.start()
 
         }
-        
-        console.debug(width + "x" + height)
-        console.debug(body.maximumLineCount)
+
     }
 
     NumberAnimation{
@@ -84,7 +82,7 @@ Rectangle {
         anchors.left: image.right
         anchors.leftMargin: 5
         wrapMode: Text.WordWrap
-        maximumLineCount: root.height / font.pixelSize - 3
+        maximumLineCount: height / font.pixelSize - 1
         onLinkActivated: Qt.openUrlExternally(link)
 
     }
