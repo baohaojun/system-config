@@ -4,7 +4,7 @@ import QtQuick.Window 2.2
 Rectangle {
     id: root
 
-    width: body.font.pixelSize * 3 * 9
+    width: body.font.pixelSize * 30
     height: body.font.pixelSize * 9
 
     signal dismissed()
@@ -31,9 +31,7 @@ Rectangle {
             animation.from = Screen.desktopAvailableWidth
             animation.to = Screen.desktopAvailableWidth - width
             animation.start()
-
         }
-
     }
 
     NumberAnimation{
