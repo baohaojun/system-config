@@ -4,8 +4,8 @@ import QtQuick.Window 2.2
 Rectangle {
     id: root
 
-    width: Screen.width * 0.2
-    height: Screen.height * 0.1
+    width: body.font.pixelSize * 3 * 9
+    height: body.font.pixelSize * 9
 
     signal dismissed()
 
@@ -33,7 +33,9 @@ Rectangle {
             animation.start()
 
         }
-
+        
+        console.debug(width + "x" + height)
+        console.debug(body.maximumLineCount)
     }
 
     NumberAnimation{
@@ -82,7 +84,7 @@ Rectangle {
         anchors.left: image.right
         anchors.leftMargin: 5
         wrapMode: Text.WordWrap
-        maximumLineCount: root.height / font.pointSize
+        maximumLineCount: root.height / font.pixelSize - 3
         onLinkActivated: Qt.openUrlExternally(link)
 
     }
