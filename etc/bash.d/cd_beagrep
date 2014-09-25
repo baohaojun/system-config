@@ -16,8 +16,8 @@ cd_beagrep()
         dest=${dest%/*};
     done
     if test "$dest" = / -o "$dest" = ""; then
-        echo 'You have not run for-code-reading yet, please run it first!'
-        return 1;
+        echo 'You have not run for-code-reading (mkgtags) yet, please run it first!'
+        exit 1 #return 1;
     else
         cd_ok "$dest"
         return 0

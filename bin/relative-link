@@ -97,7 +97,9 @@ fi
 
 no_clobber=false
 ln_force=false
+if [ x`uname -s` != x"Darwin" ];then
 TEMP=$(getopt -o fn --long no-clobber -n $(basename $0) -- "$@")
+echo ">$TEMP<"  #DEBUG_MAC
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -118,6 +120,7 @@ while true; do
             ;;
     esac
 done
+fi
 target_file=''
 
 test $# = 0 && die "ln: missing file operand"
@@ -132,6 +135,7 @@ n_targets=$#
 
 target_dir=${args[$#-1]}
 
+#echo $1,$2,$3,$4,$5,$6,$7,$8,$9 #DEBUG_MAC
 if (($# > 2)) && test ! -d "$target_dir"; then
     die "ln: target_dir \`$target_dir' is not a directory"
 fi

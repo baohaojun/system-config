@@ -12,9 +12,11 @@ function die() {
     exit -1
 }
 
+if [ x`uname -s` != "xDarwin" ];then
 at_head=false
 TEMP=$(getopt -o a -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
+echo $1,$2,$3,$4,$5,%6
 while true; do
     case "$1" in
         -a)
@@ -30,6 +32,9 @@ while true; do
             ;;
     esac
 done
+else
+at_head=true
+fi
 
 if test $# != 1; then
     die "Error: Usage $(basename $0) fallback_code_dir"
@@ -37,6 +42,7 @@ fi
 
 this_db_dir=$(cd -P .; cd_beagrep; pwd)
 that_db_dir=$(cd -P "$1"; cd_beagrep; pwd)
+#that_db_dir=$(cd -P "$1"; cd_beagrep && pwd) # DEBUG_MAC
 
 if test $at_head = true; then
     for x in $(seq 100 -1 0); do
@@ -59,4 +65,6 @@ for x in $(seq 0 100); do
     fi
 done
 
+#echo "#70|$that_db_dir|$this_db_dir|"  #DEBUG_MAC
+#echo relative-link $that_db_dir $this_db_dir/.java-fallback.$x  #DEBUG_MAC
 relative-link $that_db_dir $this_db_dir/.java-fallback.$x
