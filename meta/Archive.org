@@ -1,6 +1,10 @@
 #+title: Archive
  * 2014
   - 2014-09
+   * 2014-09-26
+
+     [[../blog/2014/09/26/0-WYPIWYG.org][WYPIWYG (What you print is what you get）]]
+
    * 2014-09-05
 
      [[../blog/2014/09/05/0-Emoji.org][Emoji]]

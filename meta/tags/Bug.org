@@ -1,5 +1,10 @@
 #+title: Bugs that I have encountered, see if someone else will find it useful.
  * 2014
+  - 2014-09
+   * 2014-09-26
+
+     [[../../../blog/2014/09/26/0-WYPIWYG.org][WYPIWYG (What you print is what you get）]]
+
   - 2014-01
    * 2014-01-28
 

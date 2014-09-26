@@ -1,0 +1,11 @@
+#+title: WYPIWYG (What you print is what you get）
+# bhj-tags: Bug
+前阵子一个同事找我看一个问题，他的手机连上了串口线，结果串口终端里不停
+地在输出东西，基本上看不清。不停地说什么Linux command not found，
+kernel command not found等等之类的话。把我给吓坏了。
+
+最后猛地猜了一把，会不会是串口的Tx线和Rx线粘上了，本来Kernel要通过Tx线
+打印出去的内容又被Rx线读回来，当成用户用键盘敲上来的东西，最后形成了一
+个死循环。
+
+后来这个同事去找硬件同事确认了一把，还真是这样的😄。
