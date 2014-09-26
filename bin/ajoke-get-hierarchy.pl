@@ -65,8 +65,6 @@ if ( $^O eq "linux" ) {
 }
 
 if ($flatten_cache) {
-    # $def_line = qx(grep -P -e '(?:class|interface).*\\b$class\\b.*\\{' $flatten_cache | grep -v '\\b$class\\b\\.');
-    #$def_line = qx(grep $grep_opt -e '(?:class|interface).*\\b$class\\b.*\\{' $flatten_cache | grep -v '\\b$class\\b\\.');
     $def_line = qx(grep $grep_opt -e '(?:class|interface).*\\b$class\\b.*' $flatten_cache | grep -v '\\b$class\\b\\.');
 } else {
     $def_line = qx(grep-gtags -e '$class' -t 'class|interface' -s |

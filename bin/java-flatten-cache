@@ -15,7 +15,6 @@ else
  _grep_opt="-q -P -e"
 fi
 if echo "$1"|grep ${_grep_opt} '\.jar$|\.dll$'; then
-#if echo "$1"|grep -q -P -e '\.jar$|\.dll$'; then
     exit 0;
 fi
 unset _grep_opt

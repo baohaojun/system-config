@@ -116,10 +116,10 @@ function mkgtags() {
     mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
 
     if [ OS`uname -s` != OSDarwin ];then
-    (
-        flock 9
-        GTAGSROOT=$PWD GTAGSDBPATH=$outDir global -x '.*' | awk '{print $1" "$4}' | sort -u > "$outDir"/GTAGS.dump
-    ) 9<"$outDir"/GTAGS &
+        (
+            flock 9
+            GTAGSROOT=$PWD GTAGSDBPATH=$outDir global -x '.*' | awk '{print $1" "$4}' | sort -u > "$outDir"/GTAGS.dump
+        ) 9<"$outDir"/GTAGS &
     fi
 
 }
