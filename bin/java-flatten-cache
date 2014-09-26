@@ -9,7 +9,7 @@ if test $# != 1; then
     die "Error: Usage $(basename $0) file, not $@"
 fi
 
-if echo "$1"|grep -q -P -e '\.jar$|\.dll$'; then
+if echo "$1"|grep -q -E -e '\.jar$|\.dll$'; then
     exit 0;
 fi
 

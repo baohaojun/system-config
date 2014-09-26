@@ -13,23 +13,10 @@ function die() {
 }
 
 at_head=false
-TEMP=$(getopt -o a -n $(basename $0) -- "$@")
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
-        -a)
-            at_head=true
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error"
-            ;;
-    esac
-done
+if test "$1" = -a; then
+    at_head=true
+    shift
+fi
 
 if test $# != 1; then
     die "Error: Usage $(basename $0) fallback_code_dir"
