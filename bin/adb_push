@@ -4,6 +4,7 @@ use Getopt::Long;
 use English;
 use strict;
 my $secure;
+my $executable;
 
 sub debug(@) {
     print STDERR "@_\n";
@@ -11,6 +12,7 @@ sub debug(@) {
 
 GetOptions(
     "s!" => \$secure,
+    "x!" => \$executable,
     );
 
 my $mount_cmd = "adb remount";
@@ -61,7 +63,7 @@ sub push_one_file($$)
         system("adb", "push", $_, "/sdcard/adb_push/$base");
         system("adb", "shell", "su", "-c", "cp -r /sdcard/adb_push/$base \"\$(dirname $true_dest)\"");
         system("adb rm -r /sdcard/adb_push");
-        if ($true_dest =~ m!/xbin/|/bin/!) {
+        if ($true_dest =~ m!/xbin/|/bin/! or $executable) {
             system("adb", "shell", "su", "-c", "chmod 755 $true_dest");
         }
     }
@@ -130,8 +132,14 @@ for (@ARGV) {
 
         if ($base_file eq $base_dest) {
             system("adb", "shell", "chmod", "644", $dest);
+            if ($executable) {
+                system("adb", "shell", "chmod", "755", $dest);
+            }
         } else {
             system("adb", "shell", "chmod", "644", "$dest/$base_file");
+            if ($executable) {
+                system("adb", "shell", "chmod", "755", "$dest/$base_file");
+            }
         }
     }
 }

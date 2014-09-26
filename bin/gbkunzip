@@ -7,12 +7,12 @@ DIR=${FILE}
 if test "$2"; then
     DIR=$(readlink -m "$2")
 else
-    DIR=$(basename "$DIR").$$
+    DIR=$(readlink -f "$(dirname "$DIR")")/$(basename "$DIR").$$
 fi
 
 mkdir -p "$DIR"
 
-TD=/tmp/$$.gbkunzip
+TD=$DIR.td
 mkdir $TD
 
 (
@@ -21,7 +21,7 @@ mkdir $TD
     LANG=C LC_ALL=C 7z x "$FILE" >/dev/null 2>&1
     convmv -f gbk -t utf8 -r --notest -- * >/dev/null 2>&1
 )
-cp $TD/* "$DIR" -va
-rm $TD -rf
+mv $TD/* "$DIR" -v
+rmdir $TD
 cd "$DIR"
 fix-deep-dirs

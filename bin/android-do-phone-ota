@@ -3,6 +3,8 @@ set -e
 
 (
     cd ~/src/android/build/tools/releasetools
+    git fetch smartisan sandbox-for-linux-ota
+    git co FETCH_HEAD
     psync rem .
     sudo modprobe loop >/dev/null 2>&1 || true
 )
@@ -49,7 +51,7 @@ cd ~/tmp/system-$tmpTag
 (
     set -e
     adb push ota.zip /sdcard/
-    adb reboot-rom /sdcard/ota.zip
+    adb bash -x stcmd-subcase.sh reboot-rom /sdcard/ota.zip
 )&
 sudo umount system
 if test $debug = true; then

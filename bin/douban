@@ -35,7 +35,7 @@ function douban-misc() {
                 (shell-quote-argument url))))'
 }
 
-sawfish-clean-screen&
+sawfish-clean-screen >/dev/null 2>&1 &
 export douban_action=${douban_action:-unknown}
 case "$1" in
     like)
@@ -51,6 +51,14 @@ case "$1" in
                     url=$(search-lyrics "$artist" "$title")
                     host=$(echo $url|perl -npe 's!((?:.*://)?.*?)/.*!$1!')
                     firefox-open-url-pattern $host "$url"
+                    ;;
+                print)
+                    (
+                        echo channel: $channel
+                        echo album: $album
+                        echo title: $title
+                        echo artist: $artist
+                    ) > ~/.logs/douban.print
                     ;;
                 bagua)
                     search-baidu "$artist" "$title" site:baike.baidu.com
@@ -92,6 +100,12 @@ case "$1" in
 
         douban_action=bagua
         douban-misc
+        ;;
+    print)
+        shift
+        douban_action=print
+        douban-misc >/dev/null 2>&1
+        cat ~/.logs/douban.print
         ;;
     start-play-hook)
         douban_action=start-play-hook

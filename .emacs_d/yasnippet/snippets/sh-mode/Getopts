@@ -1,0 +1,10 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Getopts
+# key: Getopts
+# --
+## start code-generator "^\\\\s *#\\\\s *"
+# generate-getopts ${1:ggnu p:phone}
+## end code-generator
+## start generated code
+
+## end generated code

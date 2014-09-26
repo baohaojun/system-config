@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: logfac
+# key: logfac
+# --
+write_factory("hello world `(line-number-at-pos)`");

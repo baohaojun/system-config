@@ -60,13 +60,16 @@ for x in "$@" $(
                   else
                       gitp=$(gitp .)
                       case "$gitp" in
-                          ../*)
+                          ./)
                               gitp=
+                              ;;
+                          *)
+                              gitp=$gitp/
                               ;;
                       esac
                       len=${#gitp}
-                      start=$((4 + len))
-                      git diff --name-status $revision . | cut -b $start-;
+                      start=$((9 + len))
+                      git diff --name-status $revision . | expand | cut -b $start-;
                   fi
               fi
     if test "$FOR_REVIEW"; then

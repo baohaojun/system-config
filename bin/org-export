@@ -13,16 +13,16 @@ function debug() {
 }
 
 export START_DIR=$(readlink -f .)
-function org-export-generate-tags() {
+function org_export_generate_tags() {
     the_ORG_FILE_NAME=$1
-    echo "arg1 is $the_ORG_FILE_NAME" > ~/.logs/relative-url.log
+    echo "arg1 is $the_ORG_FILE_NAME" > ~/.logs/relative_url.log
     for tag in $(grep '# bhj-tags:' $the_ORG_FILE_NAME|perl -npe 's/.*?://'); do
         desc=$START_DIR/meta/tags/$tag.desc
         (
             cd $START_DIR
         cat <<EOF
         <li><a href="$(
-                relative-url meta/tags/$tag.html $the_ORG_FILE_NAME 2>>~/.logs/relative-url.log
+                relative_url meta/tags/$tag.html $the_ORG_FILE_NAME 2>>~/.logs/relative_url.log
             )" title="$(
                 cat $START_DIR/meta/tags/$tag.desc
             )">$tag</a></li>
@@ -31,12 +31,12 @@ EOF
     done
 }
 
-export -f org-export-generate-tags
-function relative-url() {
+export -f org_export_generate_tags
+function relative_url() {
 
     relative-path "$@" | perl -e 'use URI::Encode qw(uri_encode); $_ = (<>); print uri_encode($_)'
 }
-export -f relative-url
+export -f relative_url
 
 link=true
 TEMP=$(getopt -o L --long no-link -n $(basename $0) -- "$@")
@@ -137,8 +137,8 @@ EOF
                 next_url=${orgs[$next]/%.org/.html}
             fi
 
-            rel_prev_url=$(relative-url $prev_url $curr_url)
-            rel_next_url=$(relative-url $next_url $curr_url)
+            rel_prev_url=$(relative_url $prev_url $curr_url)
+            rel_next_url=$(relative_url $next_url $curr_url)
             cat "$x"
             cat <<EOF
 #+BEGIN_HTML

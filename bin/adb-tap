@@ -14,6 +14,8 @@ else
                 shift
                 echo -n "input tap $1 $2;"
                 echo -n "input tap $1 $2;"
+            elif test $cmd = key; then
+                echo -n "input keyevent $2;"
             elif test "$1"; then
                 echo -n "input tap $1 $2;"
             fi

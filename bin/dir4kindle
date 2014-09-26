@@ -21,7 +21,7 @@ run-in-parallel -I %N '(
         index=index-kindle.html
     fi
     mv -v ~/index.html.$$ $index
-    fix-relative-url-for-dir2html $index > $index.bak
+    fix-relative_url-for-dir2html $index > $index.bak
     mv $index.bak $index
 )' $(find . -type d)
 

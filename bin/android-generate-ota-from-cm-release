@@ -37,7 +37,9 @@ fi
 cmReleaseDir=$(readlink -f $cmReleaseDir)
 
 (
-    adb 'cd /; set -ex; rm -f /data/phone.md5; find ./system/ -type f | xargs md5sum > /data/system-files.md5.$$ && mv /data/system-files.md5.$$ /data/phone.md5; echo yes'.$$ | grep yes.$$&
+    # adb 'cd /; set -ex; rm -f /data/phone.md5; find ./system/ -type f | xargs md5sum > /data/system-files.md5.$$ && mv /data/system-files.md5.$$ /data/phone.md5; echo yes'.$$ | grep yes.$$&
+    adb rm -f /sdcard/phone.md5
+    adb-quote bash -x stcmd-subcase.sh get-system-md5s&
     cd $cmReleaseDir/sparse_images;
     if test ! -e ~/tmp/system-$tmpPostfix.img; then
         sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2
@@ -49,13 +51,18 @@ cmReleaseDir=$(readlink -f $cmReleaseDir)
     sudo umount SYSTEM >/dev/null 2>&1 || true
     sudo mount -o loop ../system-$tmpPostfix.img system
     sudo chown $USER\. -R system
+    if test ! -e system/etc/stcmd-scripts/reboot-rom -o ! -e system/etc/stcmd-scripts/get-system-md5s; then
+        cp ~/src/android/vendor/smartisanhw/log-crawler/scripts/reboot-rom system/etc/stcmd-scripts/
+        cp ~/src/android/vendor/smartisanhw/log-crawler/scripts/get-system-md5s system/etc/stcmd-scripts/
+    fi
+    cp ~/today/forever/gapps-system/* system/ -av
     find system -type f -o -type l > system.list
     find system -type d |perl -npe 's!$!/!' >> system.list
 
     find ./system -type f |grep -v system/build.prop | xargs md5sum > cm.md5
 
     for x in $(seq 1 20); do
-        if adb pull /data/phone.md5; then
+        if adb pull /sdcard/phone.md5; then
             break
         fi
         echo wait for phone md5 $x

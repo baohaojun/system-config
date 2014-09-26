@@ -1,15 +1,43 @@
 #!/bin/bash
 set -e
 
+
+## start generated code
+TEMP=$(getopt -o s --long "sync"  -n $(basename $0) -- "$@")
+sync=true
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -s|--sync)
+            sync=false
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+
 if test $(basename $0) = remote-mm; then
 
     android_mk=$(lookup-file -e Android.mk)
     cd $(dirname $android_mk)
-    psync -c "$1" .
+    if test "$sync" = true; then
+        psync -c "$1" .
+    fi
     ssh "$1" "cd $PWD; mm"
 elif test $(basename $0) = remote-qt; then
     qt_pro=$(lookup-file -e '*.pro')
     cd $(dirname $qt_pro)
-    psync "$1" .
+    if test "$sync" = true; then
+        psync "$1" .
+    fi
     ssh "$1" "cd $PWD; ./build-win.sh"
 fi

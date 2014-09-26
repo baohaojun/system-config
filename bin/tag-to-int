@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+# "dump" -> 0x????
+
+for (@ARGV) {
+    @chars = split('', $_);
+    @chars = reverse @chars; # little endian
+    for (@chars) {
+        $x *= 256;
+        $x += ord($_);
+    }
+    printf "0x%x\n", $x;
+}

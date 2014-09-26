@@ -114,6 +114,10 @@ if test -e ".do-blog"; then
     git add $org_changes
     for x in $org_changes; do
         if test -e $x; then
+            emoji-to-unicode.pl $x > $x.$$
+            mv $x.$$ $x
+            git-interactive-add $x
+
             ./fix-links.pl $x
             if grep -i %3D -- $x && yes-or-no-p -y "Fix all %3D as ="; then
                 perl -npe 's/(\[\[[^]]*%3D[^]]*\])/join("=", split("%3D", $1))/eg' -i $x

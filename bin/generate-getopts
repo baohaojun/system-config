@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+use strict;
+my @args;
+for (@ARGV) {
+    my $opt = substr($_, 0, 1);
+    $_ = substr($_, 1);
+
+    my $need_arg = 0;
+    if (m/^:/) {
+        $need_arg = 1;
+        $_ = substr($_, 1);
+    }
+    my $name = $_;
+    push @args, {
+        opt => $opt,
+        need_arg => $need_arg,
+        name => $name,
+    };
+}
+
+for (@args) {
+    print $_->{name} . "=";
+    if (not $_->{need_arg}) {
+        print "false";
+    }
+    print "\n";
+}
+
+printf "while getopts '%s' opt; do\n", join ("", map {$_->{opt} . ($_->{need_arg} ? ':' : '')} @args);
+print 'case "$opt" in' . "\n";
+
+for (@args) {
+    my ($opt, $need_arg, $name) = @$_{"opt", "need_arg", "name"};
+    if ($need_arg) {
+        printf '%s)    %s=$OPTARG;;%s', $opt, $name, "\n";
+    } else {
+        printf '%s)    %s=true;;%s', $opt, $name, "\n";
+    }
+}
+
+print <<'EOF';
+    *)    echo Usage Error;;
+    esac
+done
+shift $(($OPTIND - 1))
+EOF
+
+
+# while getopts "n:h" opt; do
+#         case "$opt" in
+#         n)      LinesPerPage=$OPTARG;;
+#         h)      phelp; exit 0;;
+#         *)      usage; exit 2;;
+#         esac
+# done
+
+# shift $(($OPTIND - 1))

@@ -1,4 +1,8 @@
 #!/bin/bash
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
 
 if test -d "$1" -a $# = 1; then
     set -- "$(get-newest-file "$1")"

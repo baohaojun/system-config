@@ -6,6 +6,10 @@ m=$((m - m % 15))
 m=$(printf %02d $m)
 
 echo $h:$m
+if test $# = 2; then
+    h=$1
+    m=$2
+fi
 for x in ~/system-config/etc/at/$h:$m ~/external/etc/at/$h:$m; do
     if test -e "$x"; then
         mkdir -p ~/.logs/at-tasks

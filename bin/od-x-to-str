@@ -1,0 +1,7 @@
+#!/usr/bin/perl
+# 434f 4d49 4d45 422e 4e49
+
+$args = join("", @ARGV);
+$args =~ s/(..)/chr(hex("0x$1"))/eg;
+$args =~ s/(.)(.)/$2$1/g;
+print $args;

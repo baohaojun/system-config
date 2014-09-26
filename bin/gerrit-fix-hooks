@@ -1,0 +1,3 @@
+#!/bin/bash
+cd $(lookup-file .git/hooks)
+relative-link ~/src/android/build/.git/hooks/commit-msg
