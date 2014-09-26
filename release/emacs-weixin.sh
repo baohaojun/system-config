@@ -40,6 +40,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             ;;
                         t1-putclip)
                             # do nothing, I will post it myself
+                            adb-key SCROLL_LOCK
                             ;;
                         weibo) # send weibo
                             if test "$(adb-top-activity)" = com.sina.weibo/com.sina.weibo.DetailWeiboActivity; then
@@ -51,9 +52,13 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 fi
                                 sleep .5
                             fi
-                            adb-key SPACE
-                            adb-long-press 17 294
-                            adb-tap 545 191
+                            if test -e ~/.config/adb-scroll-lock-is-paste; then
+                                adb-key SCROLL_LOCK;
+                            else
+                                adb-key SPACE
+                                adb-long-press 17 294
+                                adb-tap 545 191
+                            fi
                             adb-tap 991 166
                             ;;
                         t1-sms) # quick reply sms
@@ -69,11 +74,15 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 adb-tap-mid-bot
                                 sleep 2
                             fi
-                            adb-swipe 586 878 586 68 .3
-                            adb-key SPACE #
-                            adb-tap 969 1620
-                            adb-tap-2 299 299
-                            adb-tap 505 192
+                            if test -e ~/.config/adb-scroll-lock-is-paste; then
+                                adb-key SCROLL_LOCK
+                            else
+                                adb-swipe 586 878 586 68 .3
+                                adb-key SPACE #
+                                adb-tap 969 1620
+                                adb-tap-2 299 299
+                                adb-tap 505 192
+                            fi
                             if test "$(gettask-android)" = com.google.android.gm; then
                                 adb-tap 806 178
                             else
@@ -153,14 +162,18 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 emacs-cell-phone cell-mail
                                 exit
                             fi
-                            input_method=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/' | grep -o mHasSurface=true)
-                            if test "$input_method"; then
-                                true
+                            if test -e ~/.config/adb-scroll-lock-is-paste; then
+                                adb-tap 560 1840 key DEL key SCROLL_LOCK adb-tap 958 1820
                             else
-                                adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
-                                sleep .1
+                                input_method=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/' | grep -o mHasSurface=true)
+                                if test "$input_method"; then
+                                    true
+                                else
+                                    adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
+                                    sleep .1
+                                fi
+                                adb-tap 560 1840 adb-tap-2 560 976 adb-tap 296 830 adb-tap 888 849 adb-tap 976 950
                             fi
-                            adb-tap 560 1840 adb-tap-2 560 976 adb-tap 296 830 adb-tap 888 849 adb-tap 976 950
                             ;;
                     esac
                 }
