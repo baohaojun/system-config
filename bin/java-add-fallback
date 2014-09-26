@@ -12,27 +12,10 @@ function die() {
     exit -1
 }
 
-if [ x`uname -s` != "xDarwin" ];then
-    at_head=false
-    TEMP=$(getopt -o a -n $(basename $0) -- "$@")
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-            -a)
-                at_head=true
-                shift
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error"
-                ;;
-        esac
-    done
-else
+at_head=false
+if test "$1" = -a; then
     at_head=true
+    shift
 fi
 
 if test $# != 1; then

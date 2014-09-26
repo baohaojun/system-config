@@ -338,8 +338,7 @@ sub do_cscope($$$) {
     if (not $imenu_mode) {
 
 
-        #;; Avoid message 'GTAGS not found' on darwin with redirect to /dev/null.
-        my $child_pid = open2(my $child_out, my $child_in, "gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted 2>/dev/null")
+        my $child_pid = open2(my $child_out, my $child_in, "gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
         or die "Can not query update on gtags";
 
         if (fork() == 0) {

@@ -2,8 +2,6 @@
 use strict;
 use Getopt::Long;
 
-my $grep_opt ="";
-
 use BhjJava;
 sub debug(@) {
     print $debug "@_\n";
@@ -55,17 +53,20 @@ $class =~ s/.*\.//;
 
 my $def_line;
 
-if ( $^O eq "linux" ) {
- $grep_opt="-P";
-} elsif ( $^O eq "darwin") {
- $grep_opt="";
-} else {
-#TBD
- $grep_opt="";
+sub get_def_line_from_flatten_cache() {
+    open(my $file, "<", $flatten_cache) or die "Can't open $flatten_cache";
+    while (<$file>) {
+        if (m/(?:class|interface).*\b\Q$class\E\b/ and not m/\b\Q$class\E\b\./) {
+            close $file;
+            return $_;
+        }
+    }
+    close $file;
+    return "Can't find def line in $flatten_cache for $class";
 }
 
 if ($flatten_cache) {
-    $def_line = qx(grep $grep_opt -e '(?:class|interface).*\\b$class\\b.*' $flatten_cache | grep -v '\\b$class\\b\\.');
+    $def_line = get_def_line_from_flatten_cache();
 } else {
     $def_line = qx(grep-gtags -e '$class' -t 'class|interface' -s |
     perl -ne 'if (m/(?:class|interface) $q_class(?!\\\$)/) {

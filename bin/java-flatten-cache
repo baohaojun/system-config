@@ -9,15 +9,9 @@ if test $# != 1; then
     die "Error: Usage $(basename $0) file, not $@"
 fi
 
-if [ x`uname -s` == xDarwin ];then
- _grep_opt="-q -e"
-else
- _grep_opt="-q -P -e"
-fi
-if echo "$1"|grep ${_grep_opt} '\.jar$|\.dll$'; then
+if echo "$1"|grep -q -E -e '\.jar$|\.dll$'; then
     exit 0;
 fi
-unset _grep_opt
 
 set -e
 file=$1

@@ -95,31 +95,22 @@ if test -z "$UNAME_CHECKED" -a "$USE_NT_SYMLINK"; then
     export -f ln
 fi
 
-no_clobber=false
+## start code-generator "^\\s *#\\s *"
+# generate-getopts fln_force nno_clobber
+## end code-generator
+## start generated code
 ln_force=false
-if [ x`uname -s` != x"Darwin" ];then
-    TEMP=$(getopt -o fn --long no-clobber -n $(basename $0) -- "$@")
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-            -n|--no-clobber)
-                no_clobber=true
-                shift
-                ;;
-            -f)
-                ln_force=true
-                shift
-                ;;
-                --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error"
-                ;;
-        esac
-    done
-fi
+no_clobber=false
+while getopts 'fn' opt; do
+    case "$opt" in
+        f)    ln_force=true;;
+        n)    no_clobber=true;;
+        *)    echo Usage Error;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
 target_file=''
 
 test $# = 0 && die "ln: missing file operand"
