@@ -134,6 +134,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                 HOME=$HOME
                 . ~/.bashrc;
                 . .buildenv.sh;
+                export PATH=~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin:\$PATH
                 if test -e .buildenv.sh.x; then
                     set -x
                     . .buildenv.sh.x
