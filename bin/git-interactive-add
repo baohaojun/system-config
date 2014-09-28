@@ -10,7 +10,7 @@ fi
 # cd $(dirname $(lookup-file -e .git))
 
 TEMP=$(getopt -o r: --long revision: -n $(basename $0) -- "$@")
-revision=HEAD
+revision=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -55,7 +55,7 @@ function git-diff() {
 IFS=$'\n'
 for x in "$@" $(
               if test $# == 0; then
-                  if test $revision = HEAD; then
+                  if test "$revision" = ""; then
                       git st -s .|grep '^.\S' -P | cut -b 4-;
                   else
                       gitp=$(gitp .)
@@ -77,7 +77,9 @@ for x in "$@" $(
     fi
 ); do
     if test "${x:0:1}" = \" && yes-or-no-p -y "Eval $x?"; then
-        eval "x=$x"
+        eval x=\$\'"$x"\'
+        x=${x#\"}
+        x=${x%\"}
         echo "x changed to '$x'"
     fi
     if test -d "$x"; then

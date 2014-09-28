@@ -7,7 +7,7 @@ function die() {
 }
 
 if test $# -lt 2; then
-    if test $(basename $0) = smb_push -a $# = 1; then
+    if test $(basename $0) = smb-push -a $# = 1; then
         set -- "$(readlink -f "$1")" /home/bhj/smb/share.smartisan.cn/share/baohaojun
         if test ! -d ~/smb/share.smartisan.cn/share/baohaojun; then
             sudo umount -l ~/smb
@@ -21,7 +21,7 @@ fi
 
 set -e
 if test $# = 2 -a ! -d "$2"; then
-    if test $(basename $0) = smbcp; then
+    if test $(basename $0) = smb-pull; then
         mkdir -p "$2"
     fi
 fi
@@ -39,7 +39,7 @@ if test $# -gt 2; then
     exit
 fi
 
-if test $(basename $0) = smbcp; then
+if test $(basename $0) = smb-pull; then
     src=$(readlink -f "$1")
 else
 
@@ -75,7 +75,7 @@ user_pass=$(
 
 
 
-if test $(basename $0) = smbcp; then
+if test $(basename $0) = smb-pull; then
     smbclient "$share" -D "$D" -U "$user_pass" -c "tarmode; recurse; prompt; lcd \"$2\"; mget \"$base_src\""
 else
     if test -d "$1"; then

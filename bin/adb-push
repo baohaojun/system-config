@@ -59,10 +59,10 @@ sub push_one_file($$)
 
     if (system("adb", "push", $file, "$true_dest")) {
         debug "push failed, try to use sdcard";
-        system("adb", "mkdir", "-p", "/sdcard/adb_push");
-        system("adb", "push", $_, "/sdcard/adb_push/$base");
-        system("adb", "shell", "su", "-c", "cp -r /sdcard/adb_push/$base \"\$(dirname $true_dest)\"");
-        system("adb rm -r /sdcard/adb_push");
+        system("adb", "mkdir", "-p", "/sdcard/adb-push");
+        system("adb", "push", $_, "/sdcard/adb-push/$base");
+        system("adb", "shell", "su", "-c", "cp -r /sdcard/adb-push/$base \"\$(dirname $true_dest)\"");
+        system("adb rm -r /sdcard/adb-push");
         if ($true_dest =~ m!/xbin/|/bin/! or $executable) {
             system("adb", "shell", "su", "-c", "chmod 755 $true_dest");
         }
@@ -100,7 +100,7 @@ for (@ARGV) {
             push_one_file($_, $base);
         } elsif ($file =~ m!^/scp:|^[^/]+:!) {
             print "getting it with scp\n";
-            mkdir "/tmp/adb_push.$$";
+            mkdir "/tmp/adb-push.$$";
             my $port = "";
             if ($file =~ m!^/scp:([^@]+\@[^#]+)(?:#(\d+))?:(.*)!) {
                 if ($2 ne "") {
@@ -108,18 +108,18 @@ for (@ARGV) {
                 }
                 $file = "$1:$3";
             }
-            if (system("scp $port -r $file /tmp/adb_push.$$/") != 0 and system("yes-or-no-p -y 'Failed to scp $file, continue?'") !=0) {
+            if (system("scp $port -r $file /tmp/adb-push.$$/") != 0 and system("yes-or-no-p -y 'Failed to scp $file, continue?'") !=0) {
                 die "Failed to scp $file";
             }
             $file =~ s!/*$!!;
             (my $base = $file) =~ s!.*/!!;
-            my @files = glob("/tmp/adb_push.$$/$base");
+            my @files = glob("/tmp/adb-push.$$/$base");
             debug "files are @files";
             for (@files) {
                 ($base = $_) =~ s!.*/!!;
                 push_one_file($_, $base);
             }
-            system("rm -rfv /tmp/adb_push.$$");
+            system("rm -rfv /tmp/adb-push.$$");
         } else {
             print "Warning: $file not found\n";
         }

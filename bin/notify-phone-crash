@@ -45,7 +45,7 @@ if test $(basename $0) = adb-fix-gms; then
             true
         else
             adb stop
-            adb_push ~/today/forever/gapps-system/* /system/
+            adb-push ~/today/forever/gapps-system/* /system/
         fi
 
         if test "$(adb 'test -e /data/debian/usr/bin/sudo && echo yes')" = yes; then

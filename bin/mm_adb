@@ -13,7 +13,7 @@ copy_files=($(cat /tmp/$LOG|grep -v '.ogg$'|grep "^Copy:"|perl -npe 's/'"^Copy"'
 echo install_files are: ${install_files[@]}, copy_files are: ${copy_files[@]}
 for x in "${install_files[@]}" "${copy_files[@]}"; do
     y=`echo $x|perl -npe 's,.*/target/product/.*?/,/,'|perl -npe 's,^/data/app/,/system/app/,'`
-    printf "adb_push %q %q\n" "$x" "$y"
-    adb_push $x $y
+    printf "adb-push %q %q\n" "$x" "$y"
+    adb-push $x $y
 done
 

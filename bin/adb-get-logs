@@ -25,9 +25,9 @@ if test $(basename $0) = adb-get-logs; then
     mkdir -p "$1"
     cd "$1"
     adb shell 'ps -t > /data/logs/ps.$$'
-    adb_pull /data/logs /data/anr /data/system/dropbox /data/tombstones /sdcard/smartisan /data/core ./
+    adb-pull /data/logs /data/anr /data/system/dropbox /data/tombstones /sdcard/smartisan /data/core ./
     rm ./smartisan/*/ -rf
-    smb_push ~/today/"$1"
+    smb-push ~/today/"$1"
     rm ~/today/"$1" -rf
 else
     for x in /data/logs /data/anr /data/system/dropbox /data/tombstones /sdcard/smartisan /data/core; do

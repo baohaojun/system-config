@@ -1,7 +1,7 @@
 #!/bin/bash
 adb remount
 if test "$1" != -n; then
-    (cd $(android-env get_abs_build_var TARGET_OUT ); adb_push ./lib/modules/* /system/lib/modules) #android-env adb sync system
+    (cd $(android-env get_abs_build_var TARGET_OUT ); adb-push ./lib/modules/* /system/lib/modules) #android-env adb sync system
 fi
 adb shell setprop persist.sys.usb.config adb
 adb -w shell echo xx

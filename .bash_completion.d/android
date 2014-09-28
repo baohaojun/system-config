@@ -98,14 +98,14 @@ function _android()
 }
 complete -o default -F _android android
 
-function _adb_push()
+function _adb-push()
 {
     cur="${COMP_WORDS[COMP_CWORD]}"
     _adb_util_list_files none "$cur"
     return 0
 }
 
-complete -o default -o filenames -o nospace -F _adb_push adb_push adb_pull adb-scan-media
+complete -o default -o filenames -o nospace -F _adb-push adb-push adb-pull adb-scan-media
 
 function _fastboot()
 {
