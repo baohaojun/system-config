@@ -165,17 +165,24 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 adb-key SCROLL_LOCK
                                 exit
                             fi
+
+                            input_window_dump=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/')
+                            input_method=$(echo "$input_window_dump" | grep -o mHasSurface=true)
+                            ime_xy=$(echo "$input_window_dump" | grep -P -o 'Requested w=1080 h=\d+')
                             if test -e ~/.config/adb-scroll-lock-is-paste; then
-                                input_method=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/' | grep -o mHasSurface=true)
                                 if test "$input_method"; then
                                     add="key BACK"
                                 else
                                     add=
                                     # add="560 1840 key DEL key BACK"
                                 fi
+                                if test "$window" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI -a "$input_method"; then
+                                    if test "$ime_xy" = 'Requested w=1080 h=810'; then
+                                        add='adb-tap 997 1199'
+                                    fi
+                                fi
                                 adb-tap $add key SCROLL_LOCK adb-tap 958 1820
                             else
-                                input_method=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/' | grep -o mHasSurface=true)
                                 if test "$input_method"; then
                                     true
                                 else
