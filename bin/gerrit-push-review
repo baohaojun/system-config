@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if test "$DEBUG" = true; then
-    set -x
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
 fi
 set -e
 
@@ -70,7 +70,7 @@ done
 if test $do_fetch = true; then
     echo git fetching remote: $(repo-remote), branch: $(repo-branch)
     if test -z "$(lookup-file -e .repo)"; then
-        git fetch -v
+        git fetch -v $(repo-remote) $(repo-branch)
     else
         2nd repo sync -c -n . || git fetch origin
     fi

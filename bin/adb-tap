@@ -1,31 +1,22 @@
 #!/bin/bash
-if test $# = 2; then
-    adb input tap $1 $2
-else
-    (
+while true; do
+    cmd=$1
+    if test $cmd = adb-tap; then
+        shift
         echo -n "input tap $1 $2;"
-        shift 2
-        while true; do
-            cmd=$1
-            if test $cmd = adb-tap; then
-                shift
-                echo -n "input tap $1 $2;"
-            elif test $cmd = adb-tap-2; then
-                shift
-                echo -n "input tap $1 $2;"
-                echo -n "input tap $1 $2;"
-            elif test $cmd = key; then
-                echo -n "input keyevent $2;"
-            elif test "$1"; then
-                echo -n "input tap $1 $2;"
-            fi
-            shift 2
-            if test $# = 0; then
-                break
-            fi
-        done
-    ) | xargs -d \\n adb-quote sh $(if echo $SHELLOPTS | grep -q xtrace; then
-                                           echo -x
-                                       fi) -c
-
-fi
+    elif test $cmd = adb-tap-2; then
+        shift
+        echo -n "input tap $1 $2;"
+        echo -n "input tap $1 $2;"
+    elif test $cmd = key; then
+        echo -n "input keyevent $2;"
+    elif test "$1"; then
+        echo -n "input tap $1 $2;"
+    fi
+    shift 2
+    if test $# = 0; then
+        break
+    fi
+done | xargs -d \\n adb-quote sh $(if echo $SHELLOPTS | grep -q xtrace; then
+                                    echo -x
+                                fi) -c

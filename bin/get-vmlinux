@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+if test -e DDRCS0.BIN; then
+    vmversion=$(strings DDRCS0.BIN |grep --line-buffered 'Linux version' |perl -ne 'print; exit')
+fi
+vmversion=$(echo -n "$vmversion"|urlify|perl -npe 's/ /+/g')
+vmlinux=$(curl "http://172.16.0.251/cgi-bin/vmlinux-lookup.cgi?version=$vmversion"|pn 2|perl -npe 's!\\!/!g; s!//!$ENV{HOME}/smb/!')
+smb-pull $vmlinux .

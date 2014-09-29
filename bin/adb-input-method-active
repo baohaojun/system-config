@@ -1,0 +1,6 @@
+#!/bin/bash
+input_method=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/' | grep -o mHasSurface=true)
+if test "$input_method" = mHasSurface=true; then
+    exit 0
+fi
+exit 1

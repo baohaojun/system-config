@@ -297,7 +297,7 @@
                 (Konsole . "C-S-c")
                 (Xfce4-terminal . "C-S-c")
                 (Gnome-terminal . "C-S-c")))
-        ("w" . ((Firefox . ("C-x" "k"))))
+        ("w" . ((Firefox . ("C-x" "C-w"))))
         ("l" . ((Firefox . ("C-x" "C-l"))))
         ("r" . ((Firefox . ("C-x" "C-r"))))
         ("s" . ((Firefox . ("C-x" "C-s"))

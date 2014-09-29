@@ -20,10 +20,18 @@ fi
 debug
 if test "$(basename $0)" = adb-weixin-choose-chatter; then
     adb start-activity com.tencent.mm/com.tencent.mm.plugin.search.ui.SearchUI
-    adb-key SPACE
-    adb-tap 441 164 adb-tap 441 164 adb-tap 337 401 adb-tap 886 393
-    sleep .5
+    adb-tap key SPACE 441 164 adb-tap 441 164 adb-tap 337 401 adb-tap 886 393
+    sleep .8
     adb-tap 291 415
+    while ! adb-is-activity com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI; do
+        sleep .5
+    done
+    adb-tap-mid-bot
+    if adb-input-method-active; then
+        true
+    else
+        adb-tap 52 1812
+    fi
 elif test "$(basename $0)" = adb-call -o "$(basename $0)" = adb-sms-to; then
     if ! echo "$1" | grep -q -P -e '^\d+$'; then
         who=$1

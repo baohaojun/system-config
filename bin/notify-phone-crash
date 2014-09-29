@@ -4,7 +4,7 @@ if id | grep -q '^uid=0\b' -P; then
     su - bhj -c "~bhj/bin/$(basename $0)"&
     exit 0
 fi
-if test -e ~/.no-adb-fix-gms; then
+if test -e ~/.no-adb-fix-gms -a $(basename $0) = adb-fix-gms; then
     exit
 fi
 . ~/.bashrc
