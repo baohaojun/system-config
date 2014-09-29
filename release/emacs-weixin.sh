@@ -161,9 +161,19 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                      test "$window" = com.android.email/com.android.email2.ui.MailActivityEmail; then
                                 emacs-cell-phone cell-mail
                                 exit
+                            elif [[ "$window" =~ ^PopupWindow: ]]; then
+                                adb-key SCROLL_LOCK
+                                exit
                             fi
                             if test -e ~/.config/adb-scroll-lock-is-paste; then
-                                adb-tap 560 1840 key DEL key SCROLL_LOCK adb-tap 958 1820
+                                input_method=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/' | grep -o mHasSurface=true)
+                                if test "$input_method"; then
+                                    add="key BACK"
+                                else
+                                    add=
+                                    # add="560 1840 key DEL key BACK"
+                                fi
+                                adb-tap $add key SCROLL_LOCK adb-tap 958 1820
                             else
                                 input_method=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/' | grep -o mHasSurface=true)
                                 if test "$input_method"; then
