@@ -56,7 +56,7 @@ org-mode里的中英文混排、尤其是在表格中，如果不选等宽（指
 
 改完之后由于缩放对中文也有效，我只要把输入法的中文字体设小一点就可以了。见图：
 
-[[../../../../images/post/perfect-emacs-chinese-font.png]]
+[[../../../../images/post/perfect-emacs-chinese-font.png][file:../../../../images/post/perfect-emacs-chinese-font.png]]
 
 配置脚本见 [[http://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-fonts.el][github]] 。
 
@@ -70,4 +70,29 @@ org-mode里的中英文混排、尤其是在表格中，如果不选等宽（指
 
 见图：
 
-[[../../../../images/post/perfect-emacs-chinese-font-win7.png]]
+[[../../../../images/post/perfect-emacs-chinese-font-win7.png][file:../../../../images/post/perfect-emacs-chinese-font-win7.png]]
+
+* 全局缩放
+见 [[../../../2013/05/09/0-emacs-font-global-scaling.org][这篇博客]] 。
+* 完美英文斜体
+先贴一下效果：
+
+[[../../../../images/post/italic-font.png][file:../../../../images/post/italic-font.png]]
+
+当初在水木Emacs版的 [[http://www.newsmth.net/bbscon.php?bid=573&id=104729][这个贴子]] 里提了一下，这里自己再转一遍：
+
+#+BEGIN_EXAMPLE
+发信人: flonk (flonk), 信区: Emacs
+标  题: 完美搞定Emacs英文斜体
+发信站: 水木社区 (Fri May 10 11:39:06 2013), 转信  [累计积分奖励: 100/0]
+
+所谓完美，就是跟正体保持等高等宽，并且一起（全局）缩放
+
+提供斜体的等宽字体好像只知道Courier New。
+
+要点在于一定要用浮点数指定point size，而不是整数指定pixel size。
+
+代码见：https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-fonts.el
+
+全局放到最大后效果图：http://baohaojun.github.io/images/post/italic-font.png
+#+END_EXAMPLE
