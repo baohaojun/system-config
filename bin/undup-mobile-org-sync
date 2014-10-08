@@ -1,0 +1,23 @@
+#!/usr/bin/env perl
+use strict;
+my %edits;
+my @edits;
+my $edit;
+while (<>) {
+    if (m/^\Q* F(edit\E/ .. m/^\Q** End of edit\E$/) {
+        if (m/^\Q* F(edit\E/) {
+            $edit = '';
+        }
+        $edit .= $_;
+        if (m/^\Q** End of edit\E$/) {
+            if (not $edits{$edit}) {
+                $edits{$edit} = 1;
+                push @edits, $edit;
+            }
+        }
+    }
+}
+
+for (@edits) {
+    print "$_\n";
+}

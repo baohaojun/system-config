@@ -2,6 +2,30 @@
 
 set -e
 
+
+## start generated code
+TEMP=$(getopt -o d --long "debug"  -n $(basename $0) -- "$@")
+debug=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -d|--debug)
+            debug=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+
 function die() {
     echo Error: "$@"
     find-or-exec konsole
@@ -44,9 +68,16 @@ fi
 if git-dirty; then
     git-interactive-add
 fi
-
-yes-or-no-p -y "Sync MobileOrg APP on you phone manually done"
-
+function sync-on-phone() {
+    adb touch /sdcard/MobileOrg/mobileorg.org.bak
+    adb am startservice -a com.matburt.mobileorg.SYNC_SERVICE
+    for x in $(seq 1 10); do
+        if adb 'if test -e /sdcard/MobileOrg/mobileorg.org.bak; then echo yes; fi' | grep -q yes; then
+            sleep .5
+        fi
+    done
+}
+sync-on-phone
 
 for x in $(adb ls /sdcard/MobileOrg/); do
     if test $x = from-mobile.org; then
@@ -54,6 +85,15 @@ for x in $(adb ls /sdcard/MobileOrg/); do
     fi
     adb pull /sdcard/MobileOrg/$(basename $x) .
 done
+
+if test -e mobileorg.org; then
+    if test "$debug" = true; then
+        cat mobileorg.org
+    fi
+    # undup-mobile-org-sync mobileorg.org > mobileorg.org2
+    # mv mobileorg.org2 mobileorg.org
+
+fi
 
 find-or-exec emacs emacs.bhj
 emacsclient -e '(org-mobile-pull)'
@@ -91,4 +131,4 @@ for x in *; do
     adb push $x /sdcard/MobileOrg/$x
 done
 
-yes-or-no-p -y "Sync MobileOrg APP on you phone manually done"
+sync-on-phone&
