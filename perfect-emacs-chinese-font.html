@@ -274,6 +274,28 @@ org-mode里的中英文混排、尤其是在表格中，如果不选等宽（指
 
 全局放到最大后效果图：http://baohaojun.github.io/images/post/italic-font.png
 </pre>
+</div>
+</div>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Mac和Linux下的不同参数</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+在不同的系统下和不同的字体尺寸下，要达到中英文等宽，中文的scale参数要设成不一样。所以我后来增加了相应的变参机制，见代码：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">On different platforms, I need to set different scaling rate for</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">differnt font size.</span>
+(<span class="org-keyword">cond</span>
+ ((and (boundp '*is-a-mac*) *is-a-mac*)
+  (setq chinese-font-size-scale-alist '((10.5 . 1.3) (11.5 . 1.3) (16 . 1.3) (18 . 1.25))))
+ ((and (boundp '*is-a-win*) *is-a-win*)
+  (setq chinese-font-size-scale-alist '((11.5 . 1.25) (16 . 1.25))))
+ (t <span class="org-comment-delimiter">;; </span><span class="org-comment">is a linux&#128522;</span>
+  (setq chinese-font-size-scale-alist '((16 . 1.25)))))
+</pre>
+</div>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
