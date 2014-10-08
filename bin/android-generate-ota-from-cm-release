@@ -132,6 +132,10 @@ EOF
     mv RADIO/splash.img RADIO/splash.bin
 
     mkdir -p DATA
+    (
+        cd BOOTABLE_IMAGES
+        replace-bootimage -b boot.img -- -d
+    )
 
     zip -qry ota-files.zip BOOT BOOTABLE_IMAGES DATA META OTA RADIO RECOVERY SYSTEM
     sort system.list | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/filesystem_config.txt

@@ -33,6 +33,9 @@ else
     for x in /data/logs /data/anr /data/system/dropbox /data/tombstones /sdcard/smartisan /data/core; do
         adb "rm -r $x/*"
     done
+    for x in /sdcard/ota.zip /data/boot.img /data/nohup.out /data/fac_handle; do
+        adb rm $x
+    done
     the-true-adb logcat -c
     adb restart systemlog
     adb restart eventslog

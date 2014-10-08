@@ -1,11 +1,19 @@
 #!/bin/bash
 
 ramdisk=
-
-TEMP=$(getopt -o r: --long ramdisk: -n $(basename $0) -- "$@")
+debuggable=
+TEMP=$(getopt -o Ddr: --long ramdisk: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -D)
+            debuggable=false
+            shift
+            ;;
+        -d)
+            debuggable=true
+            shift
+            ;;
         -r|--ramdisk)
             ramdisk=$2
             shift 2
@@ -41,6 +49,10 @@ mkdir -p $tdir
 )
 
 tdir=$tdir/$(basename $ramdisk)-tmp
+if test "$debuggable" = true; then
+    echo ro.DEBUGGABLE=1 >> $tdir/default.prop
+    perl -npe 's/ro.debuggable/ro.DEBUGGABLE/' -i $tdir/sbin/adbd
+fi
 for x in "$@"; do
     target=$(select-output-line find $tdir -name $(basename $x))
     if test ! -e "$target"; then
