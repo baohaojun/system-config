@@ -9,7 +9,7 @@ mkdir -p $dir
 if test -e ~/Downloads/today -a ! -L ~/Downloads/today; then
     mv ~/Downloads/today ~/Downloads/today.$$
 fi
-rm -f ~/today ~/last-month ~/Downloads/today
+rm -f ~/today ~/Downloads/today
 relative-link $(pwd)/$dir ~/today
 relative-link ~/today ~/Downloads/today
 
@@ -18,9 +18,6 @@ if test -d ~/Downloads/today.$$; then
     rmdir ~/Downloads/today.$$
 fi
 
-dir=$(today 'last month')
-dir=${dir%-*}
-relative-link $(pwd)/$dir ~/last-month
 relative-link ~/Downloads/forever/* ~/today/ >/dev/null 2>&1 || true
 rm ~/today/\* -f
 relative-link ~/Downloads/forever/ ~/today/ >/dev/null 2>&1 ||true
