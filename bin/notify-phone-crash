@@ -5,7 +5,11 @@ if id | grep -q '^uid=0\b' -P; then
     exit 0
 fi
 if test -e ~/.no-adb-fix-gms -a $(basename $0) = adb-fix-gms; then
-    exit
+    if is-tty-io; then
+        true
+    else
+        exit
+    fi
 fi
 . ~/.bashrc
 (

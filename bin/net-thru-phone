@@ -1,4 +1,4 @@
 #!/bin/bash
-ssh-to-phone sudo nat-vbox rmnet0 rndis0
+ssh-to-phone 'sudo nat-vbox rmnet0 rndis0; sudo nat-vbox wlan0 rndis0'
 sudo route add default gw $(ip-or-name phone)
 echo nameserver $(adb getprop net.dns1) | sudo tee /etc/resolv.conf

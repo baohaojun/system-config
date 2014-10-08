@@ -43,7 +43,7 @@ function rdesktop() {
     if test -z "$pass"; then
         read -e -p "Password: " -s pass
     fi
-    setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr | grep "$display" -A 1 |grep '\*'|pn 1 | tail -n 1) $host -u $user -p $pass "$@"&
+    setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr | grep "$display" -A 1 |grep -P '\+'|pn 1 | tail -n 1) $host -u $user -p $pass "$@"&
 }
 
 if echo $SHELLOPTS | grep xtrace; then

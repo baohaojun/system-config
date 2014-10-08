@@ -62,4 +62,5 @@ else
     sleep 5
     wait || true
     rm system-$tmpTag -rf
+    rm system-$tmpTag.img -f
 fi

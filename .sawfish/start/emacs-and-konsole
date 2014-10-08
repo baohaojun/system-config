@@ -12,4 +12,5 @@ done
 
 if xrandr | grep 'HDMI. connected'; then
     switch-to-hdmi
+    switch-to-hdmi-and-laptop
 fi
