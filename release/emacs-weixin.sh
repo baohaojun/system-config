@@ -63,7 +63,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             ;;
                         t1-sms) # quick reply sms
                             adb-tap 182 1079
-                            adb-long-press 522 912 # 长按输入框
+                            adb-long-press 522 921 # 长按输入框
                             adb-tap 149 786
                             adb-tap 864 921
                             ;;
