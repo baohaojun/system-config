@@ -34,10 +34,11 @@ public class SDCardSynchronizer implements SynchronizerInterface {
 	public void putRemoteFile(String filename, String contents) throws IOException {
 		String outfilePath = this.remotePath + filename;
 		
-		File file = new File(outfilePath);
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+		File file = new File(outfilePath + ".bak");
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		writer.write(contents);
 		writer.close();
+                file.renameTo(new File(outfilePath));
 	}
 
 	public BufferedReader getRemoteFile(String filename) throws FileNotFoundException {
