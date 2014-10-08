@@ -176,11 +176,16 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                     add=
                                     # add="560 1840 key DEL key BACK"
                                 fi
-                                if test "$window" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI -a "$input_method"; then
+                                if test "$input_method"; then
                                     if test "$ime_xy" = 'Requested w=1080 h=810'; then
                                         add='adb-tap 997 1199'
                                     fi
+                                else
+                                    if adb dumpsys input_method | grep mServedInputConnection=null -q; then
+                                        add='adb-tap 560 1840 997 1199'
+                                    fi
                                 fi
+
                                 adb-tap $add key SCROLL_LOCK adb-tap 958 1820
                             else
                                 if test "$input_method"; then
