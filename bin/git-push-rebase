@@ -4,6 +4,13 @@ if test "$DEBUG" = true; then
     set -x
 fi
 
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+export -f die
+
 TEMP=$(getopt -o n --long no-submodule -n $(basename $0) -- "$@")
 no_submodule=
 eval set -- "$TEMP"
@@ -53,14 +60,16 @@ if test ! "$(wgit symbolic-ref --short HEAD)" && git-is-ancestor master HEAD; th
     command git co -B master
 fi
 
-git-interactive-add
+if test "$ADD_DONE" != true; then
+    git-interactive-add
+fi
 
 
 if output=$(
         if test "$no_submodule" = true; then
             exit 1 # not 0!
         fi
-        cmd='bash -c "git-push-rebase || echo hello $(pwd) failed&"'
+        cmd='bash -c "ADD_DONE=true git-push-rebase || echo hello $(pwd) failed&"'
         if test "$REMOTEIP" = 127.0.0.1; then
             cmd=${cmd/%'&"'/'"'}
         fi
@@ -115,8 +124,15 @@ if test -e ".do-blog"; then
     for x in $org_changes; do
         if test -e $x; then
             emoji-to-unicode.pl $x > $x.$$
-            mv $x.$$ $x
-            git-interactive-add $x
+            if diff -q $x $x.$$; then
+                rm $x.$$
+            else
+                mv $x.$$ $x
+                if ! is-tty-io; then
+                    die "Can't do git-interactive-add when it's not tty"
+                fi
+                git-interactive-add $x
+            fi
 
             ./fix-links.pl $x
             if grep -i %3D -- $x && yes-or-no-p -y "Fix all %3D as ="; then
@@ -199,11 +215,6 @@ EOF
         get-stdin /tmp/$(basename $0).$$
     )" ||true # " to fix the font-lock...
 fi
-
-function die() {
-    echo Error: "$@"
-    exit -1
-}
 
 branch=$(wgit symbolic-ref --short HEAD) || true
 if test ! "$branch"; then

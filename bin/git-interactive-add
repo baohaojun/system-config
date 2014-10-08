@@ -9,6 +9,15 @@ fi
 
 # cd $(dirname $(lookup-file -e .git))
 
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if ! is-tty-io; then
+    die "Can't do it in non tty env"
+fi
+
 TEMP=$(getopt -o r: --long revision: -n $(basename $0) -- "$@")
 revision=
 eval set -- "$TEMP"
