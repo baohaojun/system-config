@@ -75,6 +75,7 @@ elif test "$(basename $0)" = adb-call -o "$(basename $0)" = adb-sms-to; then
         adb-long-press 378 299
         adb-tap 129 206
         adb-key TAB
+        adb-tap-mid-bot
         shift
         weixin "$@"
     fi

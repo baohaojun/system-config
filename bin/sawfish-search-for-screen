@@ -20,4 +20,5 @@ for x in $(seq 1 10); do
         sawfish-send-focused-window-event C-a SPC
         ((start = (start + 1) % 10))
     fi
+    cp /tmp/screen-exchange /tmp/screen-exchange.$x
 done

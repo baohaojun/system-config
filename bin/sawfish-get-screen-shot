@@ -9,7 +9,7 @@ if test $(basename $0) = sawfish-get-screen-shot-whole; then
     go_back=C-Home
 fi
 rm /tmp/screen-exchange
-sawfish-send-focused-window-event "C-a" "ESC" "$go_back" "y" "G" "RET" "C-a" ">"
+sawfish-send-focused-window-event "C-a" "ESC" "$go_back" "y" "G" "C-e" "RET" "C-a" ">"
 
 for x in $(seq 1 20); do
     if test -e /tmp/screen-exchange; then

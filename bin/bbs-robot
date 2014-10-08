@@ -13,7 +13,7 @@ exec 9> /dev/null
 
 ans=$(select-args -p "Can't lock bbs-robot, already executing?" "Find the screen of bbs-robot" "Kill locking processes")
 if test "$ans" = "Find the screen of bbs-robot"; then
-    sawfish-search-for-screen "发信人|版主|主选单|水木"
+    sawfish-search-for-screen "发信人|版主|主选单|水木|下面还有喔"
 elif test "$ans" = "Kill locking processes"; then
     ps-killall bbs-robot.exp
 fi
