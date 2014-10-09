@@ -178,7 +178,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 fi
                                 if test "$input_method"; then
                                     if test "$ime_xy" = 'Requested w=1080 h=810'; then
-                                        add='adb-tap 997 1199 sleep .1'
+                                        add='adb-tap key SPACE 997 1199 key DEL'
                                     fi
                                 else
                                     if adb dumpsys input_method | grep mServedInputConnection=null -q; then
