@@ -1446,5 +1446,5 @@ to the value of `temporary-file-directory'."
          (org-load-modules-maybe)
          (org-export-as fmt))
       (delete-file tmp-file))))
-
+(load "emacs-25.el")
 (provide 'bhj-defines)

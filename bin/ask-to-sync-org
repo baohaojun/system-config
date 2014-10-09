@@ -40,6 +40,10 @@ function need-sync() {
 if ! is-tty-io; then
     adb -w echo shit
 fi
+
+if test "$(adb getprop sys.usb.config)" = mtp,adb; then
+    exit 0
+fi
 if ! need-sync; then
     exit 0
 fi
