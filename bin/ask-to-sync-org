@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 if id | grep -q '^uid=0\b' -P; then
     su - bhj -c "~bhj/bin/ask-to-sync-org&"
     exit 0
@@ -13,6 +14,26 @@ function need-sync() {
     if adb 'if test $(stat -c %s /sdcard/MobileOrg/mobileorg.org) != 0; then echo yes; fi' | grep -q yes; then
         return 0
     fi
+    oldver=$(
+        cd ~/today/MobileOrg
+        cat .last_version 2>/dev/null
+          )
+    olddiff=$(
+        cd ~/today/MobileOrg
+        cat .last_diff 2>/dev/null
+           )
+    newver=$(
+        cd ~/src/github/projects/
+        git log --pretty=%H -1
+          )
+    newdiff=$(
+        cd ~/src/github/projects/
+        git diff HEAD
+           )
+    if test "$oldver" != "$newver" -o "$olddiff" != "$newdiff"; then
+        return 0;
+    fi
+
     return 1
 }
 
@@ -24,7 +45,7 @@ if ! need-sync; then
 fi
 
 if ! is-tty-io; then
-  xfce4-terminal --maximize -e "bash -c ask-to-sync-org"
+  xfce4-terminal --maximize -e "bash -c ask-to-sync-org || read -p 'ask-to-sync-org failed'"
   exit 0
 fi
 
@@ -34,4 +55,18 @@ if need-sync; then
     sync-mobile-org
     mkdir -p ~/.cache/sync-mobile-org/
     touch ~/.cache/sync-mobile-org/done
+    newver=$(
+        cd ~/src/github/projects/
+        git log --pretty=%H -1
+          )
+    newdiff=$(
+        cd ~/src/github/projects/
+        git diff HEAD
+           )
+    (
+        cd ~/today/MobileOrg
+        echo $newver > .last_version
+        echo -n "$newdiff" > .last_diff
+        git add .last_diff .last_version
+    )
 fi

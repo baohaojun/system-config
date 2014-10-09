@@ -3,7 +3,8 @@ export SCRIPT=$(readlink -f $0)
 adb-ignite-device
 if echo $SHELLOPTS | grep xtrace; then
     function debug() {
-        read -p "press any key to continue..."
+        # read -p "press any key to continue..."
+        sleep .5
     }
 else
     function debug() {
@@ -44,7 +45,8 @@ function adb-picture-to() {
             activity=$(adb-top-activity)
             if test "$activity" = com.tencent.mm/com.tencent.mm.ui.LauncherUI; then
                 adb-picture-to adb-picture-to-weixin-chat
-            elif test "$activity" = com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity; then
+            elif test "$activity" = com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity \
+                 -o "$activity" = com.tencent.qqlite/com.tencent.mobileqq.activity.ChatActivity; then
                 adb-picture-to adb-picture-to-qq-chat
             else
                 task=$(gettask-android)
@@ -91,13 +93,24 @@ function adb-picture-to() {
             adb-key DEL
             ;;
         adb-picture-to-qq-chat)
+            task=$(gettask-android)
             adb-tap-mid-bot
             debug
-            adb-tap 151 999 # 点一下加号
-            debug
-            adb-tap 125 1476 # 点一下图片按钮
-            debug
-            while ! adb-is-activity com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity; do
+            package=com.tencent.mobileqq
+            if test "$task" = com.tencent.qqlite; then
+                adb-key DEL
+                adb-tap 973 998
+                debug
+                adb-tap 110 1779
+                debug
+                package=com.tencent.qqlite
+            else
+                adb-tap 151 999 # 点一下加号
+                debug
+                adb-tap 125 1476 # 点一下图片按钮
+                debug
+            fi
+            while ! adb-is-activity $package/com.tencent.mobileqq.activity.photo.AlbumListActivity; do
                 adb-tap 118 152 # 点一下相册
                 debug
             done
@@ -108,8 +121,12 @@ function adb-picture-to() {
             debug
             adb-tap 917 1848 # 点一下发送
             debug
-            adb-key BACK
-            adb-key DEL
+            if test "$task" = com.tencent.qqlite; then
+                adb-tap 265 1547
+            else
+                adb-key BACK
+                adb-key DEL
+            fi
             ;;
         adb-picture-to-weibo)
             adb start-activity com.sina.weibo/com.sina.weibo.EditActivity

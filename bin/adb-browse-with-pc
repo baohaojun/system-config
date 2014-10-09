@@ -17,7 +17,8 @@ elif test "$(gettask-android)" = com.android.email; then
     exit
 elif test "$(gettask-android)" = com.tencent.mm; then
     adb-tap 990 114
-    adb-tap 666 847
+    #adb-tap 666 847
+    adb-tap 654 729
     #adb-tap 666 999
     firefox -new-tab "$(getclip-android)"
     exit

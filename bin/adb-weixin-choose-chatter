@@ -80,18 +80,30 @@ elif test "$(basename $0)" = adb-call -o "$(basename $0)" = adb-sms-to; then
         weixin "$@"
     fi
 elif test "$(basename $0)" = adb-qq-choose-chatter; then
-    adb am start -n com.tencent.mobileqq/.activity.SplashActivity
+    package=com.tencent.mobileqq
+    adb am start -n $package/.activity.SplashActivity
     debug
     while true; do
         window=$(adb-focused-window)
         if echo $window|grep -q SplashActivity; then
             break
         elif test "$window" = com.smartisanos.launcher/com.smartisanos.launcher.Launcher; then
-            exet adb-qq-choose-chatter "$@"
+            exec adb-qq-choose-chatter "$@"
         else
-            adb-key BACK
+            if test $package = com.tencent.qqlite; then
+                adb-tap 70 143 adb-tap 70 143 adb-tap 70 143
+                break
+            else
+                adb-key BACK
+            fi
         fi
     done
+    if test $package = com.tencent.qqlite; then
+        adb-tap 817 128
+        adb-key SCROLL_LOCK
+        adb-tap 344 309
+        exit
+    fi
     adb-tap-mid-bot
     adb-tap 433 284
     sleep .2
@@ -100,7 +112,7 @@ elif test "$(basename $0)" = adb-qq-choose-chatter; then
     debug
     adb-tap 287 272
     debug
-    if adb-is-activity com.tencent.mobileqq/com.tencent.mobileqq.activity.FriendProfileCardActivity; then
+    if adb-is-activity $package/com.tencent.mobileqq.activity.FriendProfileCardActivity; then
         adb-tap 816 1830
     fi
 fi

@@ -119,6 +119,7 @@ test "$filename" || filename=$(ask -e -- what is your .org file name "(default: 
 if test -z "$filename"; then
     filename=$(echo -n $title|perl -npe 's/\s/-/g').org
 fi
+filename=${filename// /-}
 
 # it would be crazy for me to write more than 20 blogs a day.
 for n in $(seq 0 20); do
