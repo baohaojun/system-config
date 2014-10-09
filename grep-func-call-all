@@ -91,6 +91,7 @@ if echo "$regexp" | grep -q -e "\b$"; then
 fi
 
 debug "re_beagrep is $re_beagrep"
+lastdir=
 for file in $(beagrep -e "$re_beagrep" $lang_c $ignore_case "${path_matcher[@]}" "${path_matcher_inv[@]}" --grep "-l -P"); do
     debug "got file $file";
     if test ! -e "$file"; then
@@ -103,6 +104,11 @@ for file in $(beagrep -e "$re_beagrep" $lang_c $ignore_case "${path_matcher[@]}"
         if test "$GTAGS_LANG_FORCE" = unknown; then
             continue
         fi
+    fi
+    dir=$(dirname "$file")
+    if test "$lastdir" != "$dir"; then
+        echo Entering directory \`$dir\'
+        lastdir="$dir"
     fi
     export GTAGS_START_FILE=$file
     grep-func-call -e "$regexp" $silent $ignore_case $members $no_comment "${reverse_matcher[@]}"| grep -v '^$'

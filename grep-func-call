@@ -155,8 +155,6 @@ my %printed_func_map;
 (my $dir = $ENV{GTAGS_START_FILE}) =~ s!(.*)/.*!$1!;
 (my $start_file_base = $ENV{GTAGS_START_FILE}) =~ s!.*/!!;
 
-printf "Entering directory `%s'\n", $dir;
-
 while(<$file>) {
     $file_line_map{$.} = $_;
     next unless m/$target/;
