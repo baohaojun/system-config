@@ -1,6 +1,6 @@
 #!/bin/bash
 if id | grep -q '^uid=0\b' -P; then
-    su - bhj -c "~bhj/bin/ask-to-sync-org"
+    su - bhj -c "~bhj/bin/ask-to-sync-org&"
     exit 0
 fi
 . ~/.bashrc
@@ -9,14 +9,17 @@ fi
     ls -l /proc/$$/fd
 ) > /tmp/$(basename $0).log
 
-function long_enough() {
-    if test ! -e ~/.cache/sync-mobile-org/done; then
+function need-sync() {
+    if adb 'if test $(stat -c %s /sdcard/MobileOrg/mobileorg.org) != 0; then echo yes; fi' | grep -q yes; then
         return 0
     fi
-    perl -e 'exit 0 if -M(glob "~/.cache/sync-mobile-org/done") > 1; exit 1'
+    return 1
 }
 
-if ! long_enough; then
+if ! is-tty-io; then
+    adb -w echo shit
+fi
+if ! need-sync; then
     exit 0
 fi
 
@@ -26,12 +29,9 @@ if ! is-tty-io; then
 fi
 
 set -e
-if is-my-adb-device &&
-    long_enough &&
-    yes-or-no-p -y "do you want to sync your mobile org?"; then
+if need-sync; then
     . ~/.config/ssh-agent
     sync-mobile-org
     mkdir -p ~/.cache/sync-mobile-org/
     touch ~/.cache/sync-mobile-org/done
-
 fi

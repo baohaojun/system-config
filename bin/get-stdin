@@ -84,7 +84,7 @@ if test "$USE_BUFFER_NAME"; then
             mv "$USE_BUFFER_NAME".$((x - 1)) "$USE_BUFFER_NAME".$x >/dev/null 2>&1 || true
         done
 
-        cp "$USE_BUFFER_NAME" "$USE_BUFFER_NAME".1
+        mv "$USE_BUFFER_NAME" "$USE_BUFFER_NAME".1
     )
 fi
 

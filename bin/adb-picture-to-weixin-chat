@@ -66,6 +66,8 @@ function adb-picture-to() {
             adb-tap 166 537 # + a picture
             sleep .5
             adb-tap 626 278
+            adb-tap 934 1854 # 预览
+            adb-tap 70 1834 # 原图
             adb-tap 909 145
             weixin
             ;;
@@ -112,7 +114,9 @@ function adb-picture-to() {
         adb-picture-to-weibo)
             adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
             adb-tap 104 980
+            sleep 1
             adb-tap 629 290
+            adb-tap 116 1864 # 原图
             adb-tap 923 1850
             weibo
             ;;
