@@ -38,7 +38,7 @@ fi
 touch $tmp
 
 if test "$prompt"; then
-    cat <<EOF > $tmp
+    cat <<EOF >> $tmp
 
 ###start of comment###
 "$prompt"
@@ -58,7 +58,11 @@ echo " done" 1>&2
 function get-rid-of-comment() {
     cat "$@" | perl -ne '
 if (m/###start of comment###/) { $comment = 1; }
-if (not $comment) { print }
+if (not $comment) {
+    if ($ENV{USE_BUFFER_NAME} and m/^$/) {print "​"}
+    print
+}
+
 '
 }
 if test "`get-rid-of-comment $tmp | perl -npe 's/\s//g' | wc -c`" == 0; then

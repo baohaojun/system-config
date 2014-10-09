@@ -1,0 +1,87 @@
+#!/bin/bash
+if test $# = 0; then
+    set -- "$(sawfish-ask-for-input -s)"
+fi
+set -e
+row1=(q w e r t y u i o p)
+row2=(a s d f g h j k l)
+row3=(z x c v b n m)
+row4=(1 2 3 4 5 6 7 8 9 0)
+row5=(- / : \; \( \) \$ \& @ \")
+row6=(. , \? \! \')
+
+function do-char() {
+    c=$1
+    x=$2
+    n=$3
+    r=$4
+    e=${5:-0}
+    case $r in
+        1)
+            h=1409
+            ;;
+        2)
+            h=1546
+            ;;
+        3)
+            h=1692
+            ;;
+    esac
+    if test "$(lc "$c")" = "$x"; then
+       if test "$c" != "$x"; then
+           adb-tap 108 1692
+       fi
+       adb-tap $((40 + e + 1080 / 10 * n)) $h
+       if test "$c" != "$x"; then
+           adb-tap 108 1692
+       fi
+       exit
+    fi
+}
+
+
+while test "$1"; do
+    c=${1:0:1}
+    set -- "${1:1}"
+    (
+        n=0
+        for x in "${row1[@]}"; do
+            do-char "$c" "$x" $n 1
+            n=$((n + 1)) || true
+        done
+
+        n=0
+        for x in "${row2[@]}"; do
+            do-char "$c" "$x" $n 2 $((1080 / 10 / 2))
+            n=$((n + 1)) || true
+        done
+
+        n=1
+        for x in "${row3[@]}"; do
+            do-char "$c" "$x" $n 3 $((1080 / 10 / 2))
+            n=$((n + 1)) || true
+        done
+
+        adb-tap 69 1859
+        (
+            n=0
+            for x in "${row4[@]}"; do
+                do-char "$c" "$x" $n 1
+                n=$((n + 1)) || true
+            done
+
+            n=0
+            for x in "${row5[@]}"; do
+                do-char "$c" "$x" $n 2
+                n=$((n + 1)) || true
+            done
+
+            n=2
+            for x in "${row6[@]}"; do
+                do-char "$c" "$x" $n 3 $((1080 / 10 / 2))
+                n=$((n + 1)) || true
+            done
+        )
+        adb-tap 69 1859
+    )
+done
