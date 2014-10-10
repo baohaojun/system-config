@@ -9,7 +9,8 @@ if test $(basename $0) = putclip-android; then
         if test $# != 0; then
             die "PUTCLIP_ANDROID_FILE set but arg number is $# not 0"
         fi
-        mv "$PUTCLIP_ANDROID_FILE" ~/.logs/$(basename $0).txt
+        cat "$PUTCLIP_ANDROID_FILE" |emoji-to-unicode.pl > ~/.logs/$(basename $0).txt
+        rm "$PUTCLIP_ANDROID_FILE"
     else
         if test "$#" = 0; then
             set -- "$(ask-for-input-with-emacs)"

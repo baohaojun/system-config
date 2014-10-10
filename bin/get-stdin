@@ -64,13 +64,14 @@ BEGIN {
 }
 if (m/###start of comment###/) { $comment = 1; }
 if (not $comment) {
+    print;
     if ($ENV{USE_BUFFER_NAME}) {
         if (m/^$/) {print $out "​" unless 1..1}
+        chomp;
+        print $out "\n" unless 1..1;
         print $out $_;
     }
-    print
 }
-
 '
 }
 if test "`get-rid-of-comment $tmp | perl -npe 's/\s//g' | wc -c`" == 0; then
