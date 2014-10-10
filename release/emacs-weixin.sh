@@ -28,7 +28,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
             flock 10
             (
                 exec 9>/dev/null 10>&9
-                putclip-android "$input"
+                PUTCLIP_ANDROID_FILE=/tmp/$USE_BUFFER_NAME.out putclip-android
 
                 function emacs-cell-phone() {
                     case "$1" in
@@ -95,7 +95,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             ;;
                         weibo-brand-new)
                             adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
-                            putclip-android "$input"
+                            PUTCLIP_ANDROID_FILE=/tmp/$USE_BUFFER_NAME.out putclip-android
                             emacs-cell-phone weibo
                             ;;
                         weixin-brand-new)
@@ -104,8 +104,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             ;;
                         weixin-new) # weixin friends
                             adb-key SPACE
-                            adb-tap
-                            adb-tap 117 283 adb-tap 117 283 adb-tap 325 170 adb-tap 860 155 adb-tap 961 171               ;;
+                            adb-tap 117 283 adb-tap 117 283 adb-tap 325 170 adb-tap 860 155 adb-tap 961 171
+                            ;;
                         SmartisanNote)
                             adb-long-press 428 412
                             adb-tap 80 271
@@ -145,6 +145,9 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 emacs-cell-phone weibo
                                 exit
                             elif test "$window" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI; then
+                                emacs-cell-phone weixin-new
+                                exit
+                            elif test "$window" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI; then
                                 emacs-cell-phone weixin-new
                                 exit
                             elif test "$window" = SmsPopupDialog; then
