@@ -1,0 +1,1 @@
+../../../blog/2014/10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.org

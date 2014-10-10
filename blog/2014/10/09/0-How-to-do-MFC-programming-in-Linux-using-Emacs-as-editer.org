@@ -1,0 +1,5 @@
+#+title: 如何在Linux + Emacs下进行MFC编程（代码补齐）
+#+Html: <b>not finished yet</b>
+# bhj-tags: tool
+#+Html: <b>not finished yet</b>
+http://www.newsmth.net/bbstcon.php?board=Emacs&gid=107420
