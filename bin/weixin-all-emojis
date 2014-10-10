@@ -1,0 +1,28 @@
+#!/bin/bash
+x=72
+y=1240
+Y=1717 # these are for weixin
+
+if test $(gettask-android) = com.sina.weibo; then
+    x=65
+    y=1339
+    Y=1755
+elif test $(gettask-android) = com.tencent.mobileqq; then
+    x=73
+    y=1410
+    Y=1809
+fi
+for page in $(seq 1 6); do
+    for row in 1 2 3; do
+        for col in 1 2 3 4 5 6 7; do
+            if test $row = 3 -a $col = 7; then
+                if test $(gettask-android) = com.sina.weibo; then
+                    read -p "Remove some chars"
+                fi
+                continue
+            fi
+            adb-tap $((x + (1080 / 7) * (col - 1))) $((y + (Y - y) / 3 * (row - 1)))
+        done
+    done
+    adb-swipe 800 $y 20 $y
+done

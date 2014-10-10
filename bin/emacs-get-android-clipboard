@@ -1,6 +1,6 @@
 #!/bin/bash
 if test $(basename $0) = emacs-get-android-clipboard; then
-    putclip "$(getclip-android)"
+    getclip-android|putclip
 else
     putclip "$(getphone-android|perl -npe 's/\+86//')"
 fi

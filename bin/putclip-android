@@ -1,11 +1,22 @@
 #!/bin/bash
+function die() {
+    echo Error: "$@"
+    exit -1
+}
 
 if test $(basename $0) = putclip-android; then
-    if test "$#" = 0; then
-        set -- "$(ask-for-input-with-emacs)"
+    if test "$PUTCLIP_ANDROID_FILE"; then
+        if test $# != 0; then
+            die "PUTCLIP_ANDROID_FILE set but arg number is $# not 0"
+        fi
+        mv "$PUTCLIP_ANDROID_FILE" ~/.logs/$(basename $0).txt
+    else
+        if test "$#" = 0; then
+            set -- "$(ask-for-input-with-emacs)"
+        fi
+        set -- "$(echo "$@")"
+        echo -n "$@" |emoji-to-unicode.pl > ~/.logs/$(basename $0).txt
     fi
-    set -- "$(echo "$@")"
-    echo -n "$@" |emoji-to-unicode.pl > ~/.logs/$(basename $0).txt
     adb push ~/.logs/$(basename $0).txt /sdcard/putclip.txt&
     if test "$NO_WEIXIN_EMOJI"; then
         cp ~/.logs/$(basename $0).txt ~/.logs/$(basename $0).txt.wx
@@ -33,12 +44,15 @@ elif test $(basename $0) = getclip-android -o $(basename $0) = getphone-android;
         am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei '$cmd' 1 >/dev/null 2>&1&
         for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
             if test -e /sdcard/putclip.txt; then
-                cat /sdcard/putclip.txt; break;
+                break;
             else
                 sleep .1;
             fi;
         done
-' | cat
+' | true
+    adb pull /sdcard/putclip.txt /tmp/$(basename $0).$$ >/dev/null 2>&1
+    cat /tmp/$(basename $0).$$
+    rm /tmp/$(basename $0).$$
 elif test $(basename $0) = gettask-android; then
      adb '
          rm -f /sdcard/putclip.txt

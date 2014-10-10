@@ -57,9 +57,17 @@ edit-wait $tmp >/dev/null 2>&1
 echo " done" 1>&2
 function get-rid-of-comment() {
     cat "$@" | perl -ne '
+BEGIN {
+    if ($ENV{USE_BUFFER_NAME}) {
+        open($out, ">", "/tmp/$ENV{USE_BUFFER_NAME}.out");
+    }
+}
 if (m/###start of comment###/) { $comment = 1; }
 if (not $comment) {
-    if ($ENV{USE_BUFFER_NAME} and m/^$/) {print "​"}
+    if ($ENV{USE_BUFFER_NAME}) {
+        if (m/^$/) {print $out "​" unless 1..1}
+        print $out $_;
+    }
     print
 }
 
