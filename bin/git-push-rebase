@@ -116,10 +116,14 @@ if test -e ".do-blog"; then
         done
     )
     org_changes=$(git st -S|cut -b 4-|grep -e '\.org$' || true)
-    if test "$org_changes" && ! EMACS=t yes-or-no-p -y "Publish $(echo $org_changes|pn 1|head -n 1)?"; then
-        git add .
-        exit 0
-    fi
+    for x in $org_changes; do
+        if test -e $x; then
+            if ! git log "${x/%.org/.html}" 2>/dev/null |grep . && ! EMACS=t yes-or-no-p -y "Publish $x?"; then
+                perl -npe 's!^(\Q#+title:\E.*)!$1\n#+Html: <b>not finished yet</b>!' -i $x
+            fi
+        fi
+    done
+
     git add $org_changes
     for x in $org_changes; do
         if test -e $x; then
