@@ -15,6 +15,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
     while true; do
         if test $# != 0; then
             input=$*
+            echo -n "$@" > /tmp/$USE_BUFFER_NAME.out
         else
             input=$(ask-for-input-with-emacs -p "What do you want say on $(basename $0)?" || true)
         fi
@@ -23,6 +24,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
         fi
         if test -e ~/.t1-sig; then
             input=$(echo "$input"; echo; cat ~/.t1-sig)
+            (echo; cat ~/.t1-sig) >> /tmp/$USE_BUFFER_NAME.out
         fi
         (
             flock 10
@@ -169,9 +171,9 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 exit
                             fi
 
-                            input_window_dump=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface=/')
+                            input_window_dump=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
                             input_method=$(echo "$input_window_dump" | grep -o mHasSurface=true)
-                            ime_xy=$(echo "$input_window_dump" | grep -P -o 'Requested w=1080 h=\d+')
+                            ime_xy=$(echo "$input_window_dump" | grep -P -o 'Requested w=1080 h=\d+'|tail -n 1)
                             if test -e ~/.config/adb-scroll-lock-is-paste; then
                                 if test "$input_method"; then
                                     add="key BACK"
