@@ -1,5 +1,8 @@
 #!/bin/bash
 
+if test -e ~/.config/bhj/weixin-adb-serial; then
+    export ANDROID_SERIAL=$(cat ~/.config/bhj/weixin-adb-serial)
+fi
 export USE_BUFFER_NAME=send-to-$(basename $0).org
 (
     if test $# != 0; then
