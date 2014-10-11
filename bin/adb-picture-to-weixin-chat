@@ -1,4 +1,9 @@
 #!/bin/bash
+
+if test -e ~/.config/bhj/weixin-adb-serial; then
+    export ANDROID_SERIAL=$(cat ~/.config/bhj/weixin-adb-serial)
+fi
+
 export SCRIPT=$(readlink -f $0)
 adb-ignite-device
 if echo $SHELLOPTS | grep xtrace; then

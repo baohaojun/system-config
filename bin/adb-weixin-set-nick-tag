@@ -1,4 +1,8 @@
 #!/bin/bash
+if test -e ~/.config/bhj/weixin-adb-serial; then
+    export ANDROID_SERIAL=$(cat ~/.config/bhj/weixin-adb-serial)
+fi
+
 adb-tap 991 117
 adb-tap 739 284
 

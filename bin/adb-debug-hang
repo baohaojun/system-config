@@ -1,0 +1,25 @@
+#!/bin/bash
+## start code-generator "^\\s *#\\s *"
+# generate-getopts s:skip
+## end code-generator
+## start generated code
+skip=
+while getopts 's:' opt; do
+    case "$opt" in
+        s)    skip=$OPTARG;;
+        *)    echo Usage Error;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+if test $# != 0; then
+    for proc in "$@"; do
+        adb 'for x in /proc/'$proc'/fd/; do x=${x%fd/}; echo $x; cat $x/stat; cat $x/status; done'
+    done
+elif test "$skip"; then
+    true
+else
+    adb 'for x in /proc/*/fd/; do x=${x%fd/}; echo $x; cat $x/stat; done'
+fi

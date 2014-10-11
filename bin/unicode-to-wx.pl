@@ -383,7 +383,7 @@ $unicode_wx_map{"😁"} = ""; #  1F601;GRINNING FACE WITH SMILING EYES;So;0;O
 $unicode_wx_map{"😂"} = ""; #  1F602;FACE WITH TEARS OF JOY;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"😃"} = ""; #  1F603;SMILING FACE WITH OPEN MOUTH;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"😄"} = ""; #  1F604;SMILING FACE WITH OPEN MOUTH AND SMILING EYES;So;0;ON;;;;;N;;;;;
-$unicode_wx_map{"😅"} = ""; #  1F605;SMILING FACE WITH OPEN MOUTH AND COLD SWEAT;So;0;ON;;;;;N;;;;;
+$unicode_wx_map{"😅"} = "/:wipe"; #  1F605;SMILING FACE WITH OPEN MOUTH AND COLD SWEAT;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"😆"} = ""; #  1F606;SMILING FACE WITH OPEN MOUTH AND TIGHTLY-CLOSED EYES;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"😉"} = ""; #  1F609;WINKING FACE;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"😊"} = ""; #  1F60A;SMILING FACE WITH SMILING EYES;So;0;ON;;;;;N;;;;;
@@ -421,8 +421,8 @@ $unicode_wx_map{"😸"} = ""; #  1F638;GRINNING CAT FACE WITH SMILING EYES;So
 $unicode_wx_map{"😹"} = ""; #  1F639;CAT FACE WITH TEARS OF JOY;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"😺"} = ""; #  1F63A;SMILING CAT FACE WITH OPEN MOUTH;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"😻"} = ""; #  1F63B;SMILING CAT FACE WITH HEART-SHAPED EYES;So;0;ON;;;;;N;;;;;
-$unicode_wx_map{"😼"} = ""; #  1F63C;CAT FACE WITH WRY SMILE;So;0;ON;;;;;N;;;;;
-$unicode_wx_map{"😽"} = ""; #  1F63D;KISSING CAT FACE WITH CLOSED EYES;So;0;ON;;;;;N;;;;;
+$unicode_wx_map{"😼"} = "[Sly]"; #  1F63C;CAT FACE WITH WRY SMILE;So;0;ON;;;;;N;;;;;
+$unicode_wx_map{"😽"} = "[献吻]"; #  1F63D;KISSING CAT FACE WITH CLOSED EYES;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"😾"} = ""; #  1F63E;POUTING CAT FACE;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"😿"} = ""; #  1F63F;CRYING CAT FACE;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"🙀"} = ""; #  1F640;WEARY CAT FACE;So;0;ON;;;;;N;;;;;
@@ -467,7 +467,6 @@ $unicode_wx_map{"🚾"} = ""; #  1F6BE;WATER CLOSET;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"🛀"} = ""; #  1F6C0;BATH;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"💳"} = "[信用卡]";
 $unicode_wx_map{"😕"} = "/:?";
-$unicode_wx_map{"😕"} = "/::*";
 my $unicode_wx_regexp = "";
 for (keys %unicode_wx_map) {
     $unicode_wx_regexp .= "$_|";
@@ -478,3 +477,109 @@ while (<>) {
     s/$unicode_wx_regexp/$unicode_wx_map{$&}/ge;
     print $_;
 }
+
+# /[Smile]       == /微笑   == /::)
+# /[Grimace]     == /撇嘴   == /::~
+# /[Drool]       == /色     == /::B
+# /[Scowl]       == /发呆   == /::|
+# /[CoolGuy]     == /得意   == /:8-)
+# /[Sob]         == /流泪   == /::<
+# /[Shy]         == /害羞   == /::$
+# /[Silent]      == /闭嘴   == /::X
+# /[Sleep]       == /睡     == /::Z
+# /[Cry]         == /大哭   == /::'(
+# /[Awkward]     == /尴尬   == /::-|
+# /[Angry]       == /发怒   == /::@
+# /[Tongue]      == /调皮   == /::P
+# /[Grin]        == /呲牙   == /::D
+# /[Surprise]    == /惊讶   == /::O
+# /[Frown]       == /难过   == /::(
+# /[Ruthless]    == /酷     == /::+
+# /[Blush]       == /冷汗   == /:--b
+# /[Scream]      == /抓狂   == /::Q
+# /[Puke]        == /吐     == /::T
+# /[Chuckle]     == /偷笑   == /:,@P
+# /[Joyful]      == /可爱   == /:,@-D
+# /[Slight]      == /白眼   == /::d
+# /[Smug]        == /傲慢   == /:,@o
+# /[Hungry]      == /饥饿   == /::g
+# /[Drowsy]      == /困     == /:|-)
+# /[Panic]       == /惊恐   == /::!
+# /[Sweat]       == /流汗   == /::L
+# /[Laugh]       == /憨笑   == /::>
+# /[Commando]    == /大兵   == /::,@
+# /[Determined]  == /奋斗   == /:,@f
+# /[Scold]       == /咒骂   == /::-S
+# /[Shocked]     == /疑问   == /:?
+# /[Shhh]        == /嘘     == /:,@x
+# /[Dizzy]       == /晕     == /:,@@
+# /[Tormented]   == /折磨   == /::8
+# /[Toasted]     == /衰     == /:,@!
+# /[Skull]       == /骷髅   == /:!!!
+# /[Hammer]      == /敲打   == /:xx
+# /[Wave]        == /再见   == /:bye
+# /[Speechless]  == /擦汗   == /:wipe
+# /[NosePick]    == /抠鼻   == /:dig
+# /[Clap]        == /鼓掌   == /:handclap
+# /[Shame]       == /糗大了 == /:&-(
+# /[Trick]       == /坏笑   == /:B-)
+# /[Bah ! L]     == /左哼哼 == /:<@
+# /[Bah ! R]     == /右哼哼 == /:@>
+# /[Yawn]        == /哈欠   == /::-O
+# /[Pooh-pooh]   == /鄙视   == /:>-|
+# /[Shrunken]    == /委屈   == /:P-(
+# /[TearingUp]   == /快哭了 == /::'|
+# /[Sly]         == /阴险   == /:X-)
+# /[Kiss]        == /亲亲   == /::*
+# /[Wrath]       == /吓     == /:@x
+# /[Whimper]     == /可怜   == /:8*
+# /[Cleaver]     == /菜刀   == /:pd
+# /[Watermelon]  == /西瓜   == /:<W>
+# /[Beer]        == /啤酒   == /:beer
+# /[Basketball]  == /篮球   == /:basketb
+# /[PingPong]    == /乒乓   == /:oo
+# /[Coffee]      == /咖啡   == /:coffee
+# /[Rice]        == /饭     == /:eat
+# /[Pig]         == /猪头   == /:pig
+# /[Rose]        == /玫瑰   == /:rose
+# /[Wilt]        == /凋谢   == /:fade
+# /[Lips]        == /示爱   == /:showlove
+# /[Heart]       == /爱心   == /:heart
+# /[BrokenHeart] == /心碎   == /:break
+# /[Cake]        == /蛋糕   == /:cake
+# /[Lightning]   == /闪电   == /:li
+# /[Bomb]        == /炸弹   == /:bome
+# /[Dagger]      == /刀     == /:kn
+# /[Soccer]      == /足球   == /:footb
+# /[Ladybug]     == /瓢虫   == /:ladybug
+# /[Poop]        == /便便   == /:shit
+# /[Moon]        == /月亮   == /:moon
+# /[Sun]         == /太阳   == /:sun
+# /[Gift]        == /礼物   == /:gift
+# /[Hug]         == /拥抱   == /:hug
+# /[Strong]      == /强     == /:strong
+# /[Weak]        == /弱     == /:weak
+# /[Shake]       == /握手   == /:share
+# /[Peace]       == /胜利   == /:v
+# /[Fight]       == /抱拳   == /:@)
+# /[Beckon]      == /勾引   == /:jj
+# /[Fist]        == /拳头   == /:@@
+# /[Pinky]       == /差劲   == /:bad
+# /[RockOn]      == /爱你   == /:lvu
+# /[NO]          == /NO     == /:no
+# /[OK]          == /OK     == /:ok
+# /[InLove]      == /爱情   == /:love
+# /[Blowkiss]    == /飞吻   == /:<L>
+# /[Waddle]      == /跳跳   == /:jump
+# /[Tremble]     == /发抖   == /:shake
+# /[Aaagh]       == /怄火   == /:<O>
+# /[Twirl]       == /转圈   == /:circle
+# /[Kotow]       == /磕头   == /:kotow
+# /[Dramatic]    == /回头   == /:turn
+# /[JumpRope]    == /跳绳   == /:skip
+# /[Surrender]   == /挥手   == /:oY
+# /[Exciting]    == /激动   == /:#-0
+# /[HipHot]      == /街舞   == /:hiphot
+# /[ShowLove]    == /献吻   == /:kiss
+# /[Tai Chi L]   == /左太极 == /:<&
+# /[Tai Chi R]   == /右太极 == /:&>

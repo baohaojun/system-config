@@ -10,6 +10,12 @@ sub debug(@) {
     print STDERR "@_\n";
 }
 
+if (@ARGV == 3 and $ARGV[0] =~ m/,$/ and $ARGV[1] eq "line" and $ARGV[2] =~ m/^\d+$/) {
+    chop $ARGV[0];
+    system("e", "$ARGV[0]:$ARGV[2]");
+    exit;
+}
+
 if (@ARGV > 1 and $0 =~ m!(^|/)e$!) {
     map {$_ = shell_quote($_)} @ARGV;
     chomp(my $file = qx(select-file-from-where @ARGV));

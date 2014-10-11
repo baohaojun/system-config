@@ -1,4 +1,7 @@
 #!/bin/bash
+if test -e ~/.config/bhj/weixin-adb-serial; then
+    export ANDROID_SERIAL=$(cat ~/.config/bhj/weixin-adb-serial)
+fi
 adb-ignite-device
 if echo $SHELLOPTS | grep xtrace; then
     function debug() {
@@ -45,19 +48,18 @@ elif test "$(basename $0)" = adb-call -o "$(basename $0)" = adb-sms-to; then
     fi
 
     if test "$(basename $0)" = adb-call; then
-        adb am start -n com.android.contacts/.activities.DialtactsActivity
-        sleep .5
+        adb-key HOME
+
 
         if echo "$1" | grep -q -P -e '^\+?\d+$'; then
-            adb-tap-2 614 1829
-            adb-long-press 898 1689 .8
-            # sendtext-android "$1"
-            putclip-android "$1"
-            adb-long-press 646 174 .8
-            adb-tap 559 452
+            adb am start -a android.intent.action.DIAL tel:$1
+            adb sleep .5
             adb-tap 479 1640
             exit
         fi
+
+        adb am start -n com.android.contacts/.activities.DialtactsActivity
+        sleep .5
 
         adb-tap-2 332 1879
         adb-tap 132 260
