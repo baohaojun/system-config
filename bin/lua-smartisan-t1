@@ -1,0 +1,36 @@
+#!/usr/bin/lua
+function shell_quote(str)
+   return "'" .. string.gsub(str, "'", "'\\''") .. "'"
+end
+function system(cmds)
+   if type(cmds) == 'string' then
+      os.execute(cmds)
+   elseif type(cmds) == 'table' then
+      command_str = ''
+      for i = 1, #cmds do
+         command_str = command_str .. shell_quote(cmds[i]) .. ' ';
+      end
+      os.execute(command_str)
+   end
+end
+function adb_shell(cmds)
+   if type(cmds) == 'string' then
+      adb_shell{"sh", "-c", cmds}
+   else
+      assert(type(cmds) == 'table', "command must be a sequence");
+      if (#cmds == 1) then
+         return adb_shell(cmds[1])
+      end
+
+      command_str = ''
+      for i = 1, #cmds do
+         cmds[i] = shell_quote(shell_quote(cmds[i]))
+         if string.find(cmds[i], " ") then
+            cmds[i] = '\\"' .. cmds[i] .. '\\"'
+         end
+         command_str = command_str .. cmds[i] .. ' '
+      end
+      os.execute("the-true-adb shell " .. command_str)
+   end
+end
+adb_shell(arg)
