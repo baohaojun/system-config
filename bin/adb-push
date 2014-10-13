@@ -53,7 +53,7 @@ sub push_one_file($$)
 
     if ($true_dest =~ m!/system/app/[^/]*.apk!) {
         my $apk = $&;
-        (my $odex = $apk) =~ s/apk$/odex/;
+        (my $odex = $apk) =~ s/(apk|jar)$/odex/;
         system("adb 'set -x; rm $odex'");
     }
 
