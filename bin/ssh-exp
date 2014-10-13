@@ -14,10 +14,10 @@ expect {
         } else {
 
             for {set i 1} {$i < [llength $argv]} {incr i} {
-                send -- [lindex $argv $i]
+                send -- [string cat "'" [string map {"'" "'\\''"} [lindex $argv $i]] "'"]
                 send " "
             }
-            send "\n"
+            send ";exit\n"
         }
     }
 }
