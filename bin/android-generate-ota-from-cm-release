@@ -6,8 +6,9 @@ function die() {
 }
 
 ## start generated code
-TEMP=$(getopt -o d:t: --long "cmReleaseDir:tmpPostfix"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o fd:t: --long "fullSystem,cmReleaseDir:tmpPostfix"  -n $(basename $0) -- "$@")
 cmReleaseDir=.
+fullSystem=false
 export tmpPostfix=$$
 eval set -- "$TEMP"
 while true; do
@@ -19,6 +20,10 @@ while true; do
         -t|--tmpPostfix)
             tmpPostfix=$2
             shift 2
+            ;;
+        -f|--fullSystem)
+            fullSystem=true
+            shift
             ;;
         --)
             shift
@@ -38,8 +43,10 @@ cmReleaseDir=$(readlink -f $cmReleaseDir)
 
 (
     # adb 'cd /; set -ex; rm -f /data/phone.md5; find ./system/ -type f | xargs md5sum > /data/system-files.md5.$$ && mv /data/system-files.md5.$$ /data/phone.md5; echo yes'.$$ | grep yes.$$&
-    adb rm -f /sdcard/phone.md5
-    adb-quote bash -x stcmd-subcase.sh get-system-md5s&
+    if test $fullSystem != true; then
+        adb rm -f /sdcard/phone.md5
+        adb-quote bash -x stcmd-subcase.sh get-system-md5s&
+    fi
     cd $cmReleaseDir/sparse_images;
     if test ! -e ~/tmp/system-$tmpPostfix.img; then
         sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2
@@ -61,13 +68,17 @@ cmReleaseDir=$(readlink -f $cmReleaseDir)
 
     find ./system -type f |grep -v system/build.prop | xargs md5sum > cm.md5
 
-    for x in $(seq 1 20); do
-        if adb pull /sdcard/phone.md5; then
-            break
-        fi
-        echo wait for phone md5 $x
-        sleep 1
-    done
+    if test $fullSystem != true; then
+        for x in $(seq 1 20); do
+            if adb pull /sdcard/phone.md5; then
+                break
+            fi
+            echo wait for phone md5 $x
+            sleep 1
+        done
+    else
+        echo -n > phone.md5
+    fi
 
     perl -e 'open($phone, "<", "phone.md5");
              open($cm, "<", "cm.md5");
@@ -132,10 +143,12 @@ EOF
     mv RADIO/splash.img RADIO/splash.bin
 
     mkdir -p DATA
-    (
-        cd BOOTABLE_IMAGES
-        replace-bootimage -b boot.img -- -d
-    )
+    if test $fullSystem != true; then
+        (
+            cd BOOTABLE_IMAGES
+            replace-bootimage -b boot.img -- -d
+        )
+    fi
 
     zip -qry ota-files.zip BOOT BOOTABLE_IMAGES DATA META OTA RADIO RECOVERY SYSTEM
     sort system.list | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/filesystem_config.txt

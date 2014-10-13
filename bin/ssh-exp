@@ -5,7 +5,7 @@ set timeout 60
 set host [lindex $argv 0]
 spawn ssh $host
 expect {
-    -re {#|$} {
+    -re {#|\$} {
         if {[llength $argv] == 2} {
             send "exec bash -c '\n"
             set arg [lindex $argv 1]

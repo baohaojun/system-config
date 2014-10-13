@@ -4,6 +4,9 @@ while true; do
         com.android.settings/com.android.settings.inputmethod.LocalePickerActivity)
             adb-tap-mid-bot
             ;;
+        com.smartisanos.cloudsync/com.smartisanos.accounts.AccountsActivity)
+            adb-tap-top-right
+            ;;
         com.smartisanos.setupwizard/com.smartisanos.setupwizard.LicenseActivity)
             adb-tap 105 1545
             adb-tap-mid-bot

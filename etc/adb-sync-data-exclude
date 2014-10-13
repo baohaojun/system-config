@@ -16,3 +16,7 @@ data/debian/var/cache/apt/archives/*.deb
 mnt/sdcard
 data/debian.tgz
 data/media/0/DCIM/.thumbnails
+data/media/0/tencent/tassistant/apk/
+data/s.wap
+data/s.wap.tmp
+data/media/0/tencent/TMAssistantSDK/Download/com.tencent.mobileqq
