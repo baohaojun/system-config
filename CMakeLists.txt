@@ -1,20 +1,22 @@
 project( SnoreNotify )
-cmake_minimum_required( VERSION 2.8.9 )
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_PREFIX_PATH}/share/apps/cmake/modules)
+cmake_minimum_required( VERSION 2.8.12 )
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+find_package(ECM 1.2.0 REQUIRED NO_MODULE)
 
-cmake_policy(SET CMP0020 NEW)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
 
-include(GNUInstallDirs)
+include(KDEInstallDirs)
+include(KDECompilerSettings)
+include(KDECMakeSettings)
+
 include(GenerateExportHeader)
 include(FeatureSummary)
+
+
 
 #######################################################################
 option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DEAMON=ON" OFF)
 option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
-option(WITH_QT4 "Use Qt4" ON)
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 #######################################################################
 
@@ -26,16 +28,11 @@ set(SNORE_VERSION_SUFFIX "")
 set(SNORE_SUFFIX "-qt5")
 set(SNORE_CamelCase_SUFFIX "Qt5")
 
-find_package(ECM 0.0.9 NO_MODULE REQUIRED)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
-include(KDECompilerSettings)
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Quick REQUIRED)
-
-
 
 
 find_package(Doxygen QUIET)

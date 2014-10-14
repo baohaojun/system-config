@@ -22,7 +22,6 @@
 #include <QDesktopWidget>
 #include <QDesktopServices>
 #include <QPicture>
-#include <QtDeclarative/QDeclarativeView>
 #include <QLayout>
 #include <QSize>
 using namespace Snore;

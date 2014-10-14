@@ -1,14 +1,10 @@
 if(NOT WITH_FREEDESKTOP_FRONTEND AND UNIX AND NOT APPLE)
-
-    if(NOT WITH_QT4)
-        find_package(Qt5DBus QUIET)
-        set_package_properties(Qt5DBus  PROPERTIES
-                                        PURPOSE "Support for Freedesktop Notifications"
-                                        TYPE OPTIONAL)
-        set(QT_QTDBUS_FOUND TRUE)
-        set(QT_QTDBUS_LIBRARY Qt5::DBus)
-    endif()
-
+    find_package(Qt5DBus QUIET)
+    set_package_properties(Qt5DBus  PROPERTIES
+                                    PURPOSE "Support for Freedesktop Notifications"
+                                    TYPE OPTIONAL)
+    set(QT_QTDBUS_FOUND TRUE)
+    set(QT_QTDBUS_LIBRARY Qt5::DBus)
 
     if(QT_QTDBUS_FOUND)
         message(STATUS "Adding Freedesktop notification backend")
@@ -18,7 +14,7 @@ if(NOT WITH_FREEDESKTOP_FRONTEND AND UNIX AND NOT APPLE)
               fredesktopnotification.cpp
           )
 
-        qt4_add_dbus_interface( FREEDESKTOP_NOTIFICATION_SRC ../../frontends/freedesktop/org.freedesktop.Notifications.xml notificationinterface )
+        qt5_add_dbus_interface( FREEDESKTOP_NOTIFICATION_SRC ../../frontends/freedesktop/org.freedesktop.Notifications.xml notificationinterface )
 
 
         add_library(libsnore_backend_freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_SRC} )
