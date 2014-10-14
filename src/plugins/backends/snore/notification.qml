@@ -31,6 +31,7 @@ Rectangle {
             animation.from = Screen.desktopAvailableWidth
             animation.to = Screen.desktopAvailableWidth - width
             animation.start()
+            window.visible = true
         }
     }
 
