@@ -36,10 +36,10 @@
 
 using namespace Snore;
 
-SnoreCore::SnoreCore(QSystemTrayIcon *trayIcon)
+SnoreCore::SnoreCore()
 {
     SnoreCorePrivate::registerMetaTypes();
-    d_ptr = new SnoreCorePrivate(trayIcon);
+    d_ptr = new SnoreCorePrivate();
     Q_D(SnoreCore);
     d->q_ptr = this;
 }
@@ -203,12 +203,6 @@ const QString SnoreCore::primaryNotificationBackend() const
         return QString::null;
     }
     return d->m_notificationBackend->name();
-}
-
-QSystemTrayIcon *SnoreCore::trayIcon()
-{
-    Q_D(SnoreCore);
-    return d->m_trayIcon;
 }
 
 Notification SnoreCore::getActiveNotificationByID(uint id)

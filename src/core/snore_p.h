@@ -48,7 +48,7 @@ public:
     static QString tempPath();
 
 public:
-    SnoreCorePrivate(QSystemTrayIcon *trayIcon);
+    SnoreCorePrivate();
     ~SnoreCorePrivate();
     const Application defaultApplication() const;
 
@@ -81,8 +81,6 @@ private:
     QHash<SnorePlugin::PluginTypes, QStringList> m_plugins;
 
     QPointer<SnoreBackend> m_notificationBackend;
-
-    QSystemTrayIcon *m_trayIcon;
 
     Application m_defaultApp;
 

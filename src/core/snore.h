@@ -30,8 +30,6 @@
 #include <QTextDocument>
 #include <QTextDocumentFragment>
 
-class QSystemTrayIcon;
-
 /**
  * Snore is a platform independent Qt notification framework.
  *
@@ -63,9 +61,8 @@ public:
 
     /**
      * Creates a Notification Manager SnoreCore
-     * @param trayIcon a QSystemTrayIcon which can later be used by the fallback notification backend.
      */
-    SnoreCore(QSystemTrayIcon *trayIcon = nullptr);
+    SnoreCore();
     ~SnoreCore();
 
     /**
@@ -144,12 +141,6 @@ public:
      * @return the name of the active primary backend
      */
     const QString primaryNotificationBackend() const;
-
-    /**
-     *
-     * @return a pointer to a QSystemTrayIcon if availible, otherwise NULL
-     */
-    QSystemTrayIcon *trayIcon();
 
     /**
      * Tries to get an Notification by id.

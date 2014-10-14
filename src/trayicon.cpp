@@ -34,6 +34,7 @@ TrayIcon::TrayIcon():
     m_alert("Default", Icon(":/root/snore.png"))
 {
     m_app.addAlert(m_alert);
+    m_app.hints().setValue("tray-icon",m_trayIcon);
 }
 
 void TrayIcon::initConextMenu(SnoreCore *snore)

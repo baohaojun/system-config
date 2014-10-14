@@ -30,8 +30,7 @@
 
 using namespace Snore;
 
-SnoreCorePrivate::SnoreCorePrivate(QSystemTrayIcon *trayIcon):
-    m_trayIcon(trayIcon),
+SnoreCorePrivate::SnoreCorePrivate():
     m_defaultApp("SnoreNotify", Icon(":/root/snore.png")),
     m_settings(new QSettings("Snorenotify", "libsnore", this))
 {

@@ -53,6 +53,7 @@ void Toasty::slotNotify(Notification notification)
     file->setParent(reply);
 
     connect(reply, &QNetworkReply::finished, [reply](){
+        snoreDebug(SNORE_DEBUG) << reply->error();
         snoreDebug(SNORE_DEBUG) << reply->readAll();
         reply->close();
         reply->deleteLater();

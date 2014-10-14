@@ -98,6 +98,7 @@ public:
      * -------------    |   ----------- |   -----------
      * desktop-entry    |   The name of the desktop enty associated with the application |  Used for The freedesktop backend
      * windows-app-id   |   The app id associated with the application                   |  Needed for the Windows 8 backend [See MSDN Documentation](http://msdn.microsoft.com/en-us/library/windows/apps/dd378459.aspx)
+     * tray-icon        |   A instance of QSystemTray                                    |  Needed for the System Tray Backend
      */
     Hint &hints();
 
