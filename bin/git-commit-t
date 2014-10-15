@@ -1,6 +1,8 @@
 #!/bin/bash
-if test $# = 0; then
-    set -- $(git log -1 | grep "Ticket:" | pn 2 | head -n 1)
+if test $# = 0 -o "$1" = ""; then
+    shift
+    set -- $(git log -1 | grep "Ticket:" | pn 2 | head -n 1) "$@"
 fi
-(echo; echo Ticket: "$@"; echo) > /tmp/git-commit-t
-git commit -t /tmp/git-commit-t -s
+(echo; echo Ticket: "$1"; echo) > /tmp/git-commit-t
+shift
+git commit -t /tmp/git-commit-t -s "$@"

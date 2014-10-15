@@ -19,8 +19,13 @@ fi
 
 if test $(basename $0) = adb-fix-gms; then
     (
-        set -ex
-        exec > ~/.logs/adb-fix-gms.log 2>&1
+        set -e
+        if echo $SHELLOPTS | grep xtrace; then
+            true
+        else
+            set -x
+            exec > ~/.logs/adb-fix-gms.log 2>&1
+        fi
 
         adb -W || true
 

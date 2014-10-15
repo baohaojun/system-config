@@ -1,9 +1,1 @@
-#!/bin/bash
-
-if test "$1"; then
-    adb am start -n com.smartisanos.updater/$1
-else
-    x=$(select-output-line -o 'cd ~/etc/adb-settings;
-                               find . -type f|perl -npe "s/^\\.\\///"|grep /')
-    adb am start -n $x
-fi
+../../src/github/private-config/bin/adb-settings

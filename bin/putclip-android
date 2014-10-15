@@ -1,5 +1,5 @@
 #!/bin/bash
-if test -e ~/.config/bhj/weixin-adb-serial; then
+if test "$(adb devices?|wc -l)" -gt 1 -a -e ~/.config/bhj/weixin-adb-serial; then
     export ANDROID_SERIAL=$(cat ~/.config/bhj/weixin-adb-serial)
 fi
 

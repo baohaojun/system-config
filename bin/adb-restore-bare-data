@@ -10,4 +10,4 @@ if test "$1" = debian; then
 fi
 sudo tar czfv ../data.tgz . &
 sleep 10
-remote-cmd root@phone 'mkdir -p ~/data; sshfs bhj@192.168.15.33:/home/bhj/today/forever/data-f9e6c95/ ~/data; cd /android/data; tar zxvf ~/data/data.tgz'
+ssh-exp root@phone 'mkdir -p ~/data; sshfs bhj@192.168.15.33:/home/bhj/today/forever/data-f9e6c95/ ~/data; cd /android/data; tar zxvf ~/data/data.tgz; exit'

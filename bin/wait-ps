@@ -1,0 +1,9 @@
+#!/bin/bash
+if test "$wait_ps"; then
+    while ps.pl "$wait_ps"; do
+        sleep 1
+    done
+else
+    export wait_ps=$(echo "$@")
+    exec wait-ps
+fi

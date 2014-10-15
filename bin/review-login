@@ -1,6 +1,25 @@
 #!/bin/bash
-firefox -current-tab "http://172.16.0.9:8080/login/q/status:open,n,z"
-sleep 1
+if sawfish-window-exists Firefox; then
+    s=1
+else
+    s=5
+fi
+firefox -current-tab "http://172.16.0.9:8080/login/q/status:open,n,z"&
+sleep $s
+
+if echo $SHELLOPTS | grep xtrace; then
+    function sleep() {
+        find-or-exec konsole
+        read -p "xx "
+        find-or-exec firefox
+        command sleep 2
+    }
+fi
+
+# sawfish-send-focused-window-event Escape
+sawfish-send-window-event '^Password Required$' Escape
+find-or-exec firefox
+sleep .2
 
 sawfish-search-in-firefox "username"
 sleep .2
@@ -14,3 +33,6 @@ sawfish-browser-input TAB C-v
 sleep .1
 sawfish-browser-input TAB SPC RET
 putclip ""
+sleep .1
+# sawfish-send-focused-window-event Escape
+sawfish-send-window-event '^Password Required$' Escape

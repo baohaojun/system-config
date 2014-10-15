@@ -89,7 +89,7 @@ while (<>) {
         my @phones;
         while (<>) {
             next if m/^PHOTO/ .. m/^\s*$/;
-            # [nil "艾迪" nil nil nil nil nil ("aidi@smartisan.com") ((creation-date . "2014-05-16 05:32:02 +0000") (timestamp . "2014-05-16 05:32:02 +0000")) nil]
+            # [nil "艾迪" nil nil nil nil nil ("aidi@sm.com") ((creation-date . "2014-05-16 05:32:02 +0000") (timestamp . "2014-05-16 05:32:02 +0000")) nil]
             chomp;
             s/\r//;
             if (m/=$/) {

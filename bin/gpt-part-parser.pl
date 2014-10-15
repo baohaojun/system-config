@@ -18,5 +18,5 @@ while (read(STDIN, $gpt, 128) == 128) {
                          join('', reverse @guid_part[4..5]),
                          join('', reverse @guid_part[6..7]),
                          @guid_part[8..15]);
-    print "$guid_type : $guid_part : $name\n";
+    print "$guid_type : $guid_part : $lba1 : $lba2 : $name\n";
 }
