@@ -1,3 +1,7 @@
+# Changes since 0.5.1 #
+- Updated the shiped version of SnoreToast
+	- SnoreToast reported succes even if notifications failed because they where disabled by the system. This lead to a crash in snorenotify.
+
 # Changes since 0.5.0 #
 - Ship  a staticaly linked version of Snoretoast
 - Fix window comming to front on mac osx on snore notifications
