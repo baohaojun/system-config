@@ -77,7 +77,7 @@ void SnoreToast::slotRegisterApplication(const Application &application)
         snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
         p->start("SnoreToast", arguements);
 
-        connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotToastNotificationClosed(int,QProcess::ExitStatus)));
+        connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int,QProcess::ExitStatus)));
         connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
     }
 }
@@ -93,7 +93,7 @@ void SnoreToast::slotCloseNotification(Notification notification)
     snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
     p->start("SnoreToast", arguements);
 
-    connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotToastNotificationClosed(int,QProcess::ExitStatus)));
+    connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int,QProcess::ExitStatus)));
     connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
 }
 
@@ -101,12 +101,13 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
 {
     QProcess *p = qobject_cast<QProcess *>(sender());
     snoreDebug(SNORE_DEBUG) << p->readAll();
+    snoreDebug(SNORE_DEBUG) << "Exit code:" << code;
     if (p->property("SNORE_NOTIFICATION_ID").isNull()) {
         return;
     }
 
     Notification n = getActiveNotificationByID(p->property("SNORE_NOTIFICATION_ID").toUInt());
-    Notification::CloseReasons reason = Notification::CLOSED;
+    Notification::CloseReasons reason = Notification::NONE;
 
     switch (code) {
     case 0:
@@ -129,7 +130,14 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
     }
 
     closeNotification(n, reason);
+    p->deleteLater();
+}
 
+void SnoreToast::slotPrintExitStatus(int, QProcess::ExitStatus)
+{
+    QProcess *p = qobject_cast<QProcess *>(sender());
+    snoreDebug(SNORE_DEBUG) << p->readAll();
+    p->deleteLater();
 }
 
 QString SnoreToast::appId(const Application &application)

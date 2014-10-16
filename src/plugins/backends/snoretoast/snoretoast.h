@@ -21,7 +21,7 @@ public slots:
 
 private slots:
     void slotToastNotificationClosed(int code, QProcess::ExitStatus);
-
+    void slotPrintExitStatus(int code, QProcess::ExitStatus);
 private:
     QString appId(const Snore::Application &application);
 
