@@ -4,4 +4,4 @@ shift
 if test $# = 1; then
     set -- -F "$@"
 fi
-awk "$@" '{print $'$which'}'
+awk "$@" '{print $'$which'}' | rm-last-nl

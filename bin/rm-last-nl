@@ -1,12 +1,7 @@
 #!/usr/bin/env perl
 
 while (<>) {
-  if (not $is_first_line) {
-    $is_first_line = 1;
-  } else {
-    print "\n";
-  }
-
-  chomp;
-  print $_;
+    chomp;
+    print "\n" unless $. == 1;
+    print;
 }
