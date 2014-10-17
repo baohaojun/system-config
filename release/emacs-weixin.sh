@@ -173,7 +173,10 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 adb-key SCROLL_LOCK
                                 exit
                             fi
-
+                            postkeys='adb-tap 958 1820'
+                            if test "$window" = com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity; then
+                                postkeys='adb-tap 954 166'
+                            fi
                             input_window_dump=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
                             input_method=$(echo "$input_window_dump" | grep -o mHasSurface=true)
                             ime_xy=$(echo "$input_window_dump" | grep -P -o 'Requested w=1080 h=\d+'|tail -n 1)
@@ -194,7 +197,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                     fi
                                 fi
 
-                                adb-tap $add key SCROLL_LOCK adb-tap 958 1820
+                                adb-tap $add key SCROLL_LOCK $postkeys
                             else
                                 if test "$input_method"; then
                                     true
