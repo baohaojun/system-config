@@ -15,7 +15,7 @@ function die() {
     exit -1
 }
 adb push ~/system-config/doc/galaxy-nexus-root/data/start-debian2.sh /data/start-debian2.sh
-if ! adb shell su -c "busybox sh $xset /data/start-debian2.sh" | grep 'start debian done'; then
+if ! adb shell su -c "bash $xset /data/start-debian2.sh" | grep 'start debian done'; then
     if test $(basename $0) = net-for-phone; then
         true;
     else

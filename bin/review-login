@@ -2,7 +2,7 @@
 if sawfish-window-exists Firefox; then
     s=1
 else
-    s=5
+    s=15
 fi
 firefox -current-tab "http://172.16.0.9:8080/login/q/status:open,n,z"&
 sleep $s

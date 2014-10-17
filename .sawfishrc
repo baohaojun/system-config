@@ -74,6 +74,18 @@
 (load-file "~/.sawfish/iswitch-window.jl")
 (bind-keys global-keymap "Super-s" 'iswitch-window)
 
+(defun bhj-global-cycle-class (window)
+  (let ((class (window-class window)))
+    (cond
+     ((string-match im-class class 0 t)
+      im-class)
+     ((string-match br-class class 0 t)
+      br-class)
+     ((string-match dc-class class 0 t)
+      dc-class)
+     (t
+      class))))
+
 (defun bhj-window-class (window)
   (window-class window))
 
@@ -371,21 +383,21 @@
 (require 'sawfish.wm.commands.x-cycle)
 
 (setq im-class "QQ.exe|kopete|Pidgin" ;; im = instant messanger
-      br-class "Navigator|firefox|epiphany-browser|chromium|Download" ;; br = browser
+      br-class "Navigator|firefox|epiphany-browser|chromium|Download|Google-chrome" ;; br = browser
       dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|AcroRd32.exe|acroread|evince|Gnumeric|mupdf" ;; dc = doc
       mg-class "meld|gimp|gitk|tkdiff|rdesktop" ;; mg = meld/gimp
       fm-class "nautilus|file-roller" ;; fm = file manager
-      cycle-groups (list im-class
+      bhj-cycle-groups (list im-class
                      br-class
                      dc-class))
 
 (define-cycle-command-pair
   'cycle-class-bhj 'cycle-class-bhj-backwards
   (lambda (w)
-    (let ((class (bhj-window-class w)))
+    (let ((class (bhj-global-cycle-class w)))
       (delete-if-not window-in-cycle-p
                      (filter-windows
-                      (lambda (x) (equal (bhj-window-class x) class))
+                      (lambda (x) (equal (bhj-global-cycle-class x) class))
                       (window-order)))))
   #:spec "%W")
 

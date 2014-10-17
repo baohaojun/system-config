@@ -18,12 +18,17 @@ if test "$head_branch" && yes-or-no-p -y "use $head_branch as the target branch 
     export REPO_BRANCH=$head_branch
 fi
 
-TEMP=$(getopt -o nBb:r:Ra --long revision: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o nBb:r:Ra --long revision:,norebase -n $(basename $0) -- "$@")
 do_fetch=true
+do_rebase=true
 do_review=true
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        --norebase)
+            do_rebase=false;
+            shift
+            ;;
         -a)
             shift
             if test "$1" = --; then
@@ -78,7 +83,7 @@ if test $do_fetch = true; then
 fi
 
 
-if ! git-is-ancestor $(repo-remote-branch) HEAD; then
+if test $do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD; then
     if true; then
         git rebase $(repo-remote-branch) ||
         die "Rebase failed"

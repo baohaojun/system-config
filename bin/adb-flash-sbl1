@@ -3,6 +3,7 @@
 adb-push "$1" /data/sbl1.img
 adb shell "dd if=/data/sbl1.img of=/dev/block/platform/msm_sdcc.1/by-name/sbl1; sync"
 adb shell dd if=/data/s.wap of=/dev/block/platform/msm_sdcc.1/by-name/factory count=$(pretty 3M/4096|pn 2) bs=4096 seek=$(pretty 20M/4K|pn 2) ;
+adb "echo -n DUMP | dd of=/dev/block/platform/msm_sdcc.1/by-name/factory count=1 bs=4096 seek=$(pretty 20M/4K|pn 2)"
 adb-ntty md5sum /data/sbl1.img </dev/null
 adb dd bs=$(stat -c %s "$1") count=1 if=/dev/block/platform/msm_sdcc.1/by-name/sbl1 of=/data/sbl1.img >/dev/null 2>&1
 adb-quote md5sum /data/sbl1.img </dev/null

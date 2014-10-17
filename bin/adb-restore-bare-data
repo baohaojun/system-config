@@ -1,13 +1,19 @@
 #!/bin/bash
 set -e
 cd ~/today/forever/data-f9e6c95/data/
-sudo tar czfv ../debian.tgz debian start-debian2.sh --exclude-vcs
+if test ! -e ../debian.tgz; then
+    sudo tar czfv ../debian.tgz debian start-debian2.sh --exclude-vcs
+fi
 adb push ../debian.tgz /data
 adb 'cd /data; tar zxvf debian.tgz'
 ssh-to-phone echo hello
 if test "$1" = debian; then
     exit
 fi
-sudo tar czfv ../data.tgz . &
-sleep 10
+if test -e ../data.tgz; then
+    true
+else
+    sudo tar czfv ../data.tgz . &
+    sleep 10
+fi
 ssh-exp root@phone 'mkdir -p ~/data; sshfs bhj@192.168.15.33:/home/bhj/today/forever/data-f9e6c95/ ~/data; cd /android/data; tar zxvf ~/data/data.tgz; exit'

@@ -24,7 +24,9 @@ done
 
 ## end generated code
 
-
+if test $# = 0; then
+    set -- rem
+fi
 if test $(basename $0) = remote-mm; then
 
     android_mk=$(lookup-file -e Android.mk)
