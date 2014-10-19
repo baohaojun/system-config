@@ -1,5 +1,105 @@
 #+title: 如何在Linux + Emacs下进行MFC编程（代码补齐）
-#+Html: <b>not finished yet</b>
+
 # bhj-tags: tool
-#+Html: <b>not finished yet</b>
-http://www.newsmth.net/bbstcon.php?board=Emacs&gid=107420
+最早在 [[http://www.newsmth.net/bbstcon.php?board=Emacs&gid=107420][水木的这个贴子]] 里说了这件事。回头想想，自己是不是真的更适合去搞行为艺术呢？头脑正常一点的程序员应该不会这么干的😄。
+
+既然做了，就说说怎么做的吧，说不定有后来人也想这么干...
+
+首先，先讲点背景。这个补齐要用到clang，也就是苹果公司在召集开发的一个
+比gcc更新的一个开源编译器，与llvm相结合，据说很大的一个特点是代码组织
+得比gcc更好一些...
+
+它有一个自带的补齐功能（ =-code-completion-at= 的命令行选项）！这个补
+齐功能不需要整个C源文件能正确编译才可以正确补齐，因为否则的话就成了鸡
+肋了。所以用它来做Linux+Emacs下的MFC编程补齐是完全可行的，我只需要把
+MFC相关的一些头文件给弄到Linux底下来。
+
+然后就是如水木上的那个贴子里所说的，不停地修正了clang补齐时报出来的一
+些错误。这些错误都会放在一个临时的（*xx*这样命名的）buffer里，一条一条
+的修正就好了，最后也没必要全部修完，因为有些东西可能是微软自己的编译器
+特有的对C++语言的扩充，clang是处理不了的。
+
+有几个很容易修的错误，形成的原因都是一个：微软的文件名不区分大小写。然
+后就经常可以看到 =StdAfx.h= 和 =stdafx.h= 这样的写法到处都是，貌似是随
+机的😂 对这个错误的话幸好我以前有积累，写过一个 [[https://github.com/baohaojun/system-config/raw/master/bin/refactory-rename][rename-refactory]] 的脚
+本，很快就全部改完了。
+
+哦，我刚才checkout出来我的改动看了一下，我的习惯真是太好了，把自己以前
+怎么做的全部写成了一个脚本，然后现在写文章的时候看一下脚本就全想起来了：
+
+#+BEGIN_SRC sh
+#!/bin/bash
+set -e
+# ./fix-compile.h '(cd ~/src/tools/SmartisanTestFrame/branch_DailyDev/TestFrame; cat /home/bhj/src/tools/SmartisanTestFrame/branch_DailyDev/TestFrame/TestFrameDlg.cpp | /usr/bin/clang -cc1 -fsyntax-only -x c++ -I/home/bhj/.cache/vc/include -I/home/bhj/.cache/vc/atlmfc/include -I/home/bhj/.cache/vc/sdk/include -I/home/bhj/src/tools/SmartisanTestFrame/branch_DailyDev/Public/Smartisan/ -I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGLExtensions -I/usr/include/x86_64-linux-gnu/qt5/QtPlatformSupport -I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/c++/4.9 -I/usr/include/x86_64-linux-gnu/c++/4.9 -I/usr/include/c++/4.9/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.9/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -code-completion-at -:711:61 -)'
+
+while true; do
+    x=$(bash -c "$@" 2>&1 | tr -d '\r' | grep "fatal error:.*' file not found") || true
+    if test "$x"; then
+        x=$(echo "$x" | perl -npe "s/.*fatal error: '(.*)' file not found.*/\$1/")
+        for y in $x; do ./fix-it.sh "$y"; done
+    else
+        break
+    fi
+done
+#+END_SRC
+
+最前面你甚至可以看到我记录了一下这个脚本是怎么用的（因为.bash_history
+并不能无限地记录你用过的所有命令，而是有一个可以自己设的上限，但如果你
+设得超级大的话会导致你的bash交互启动变慢😊）。这是我的又一个好习惯，防止
+自己以后忘了怎么用，包括写博客文章时）。这个脚本基本上就是我不停地在用
+clang去补齐，然后把 =file not found= 的错误全部揪出来，用一个
+=fix-it.sh= 做一个简单粗暴的修正。
+
+=fix-it.sh= 脚本是这样的：
+
+#+BEGIN_SRC sh
+#!/bin/bash
+for x in $(find . -iname $1); do
+    ln -s "$(basename "$x")" "$(dirname "$x")"/$1 -v
+    exit 0
+done
+exit -1
+#+END_SRC
+
+我找到一个（ =-iname= 参数，不区分大小写） =$1= 指定的文件，就用 =ln=
+把这个找到的文件 =$x= 做一个到目标文件 =$1= 的软链接。你体会一下😄
+
+最后，把这类文件名不区分大小写造成的错误全修正完之后，就是一个
+=fix-it.h= 文件，里面的内容是这样（再次，简单粗暴）的：
+
+#+BEGIN_SRC c
+#define __int64 long long
+#define __int32 int
+#define __int16 short
+#define __int8 char
+#define __w64
+#define __possibly_notnullterminated
+#define SORTPP_PASS
+#define _M_IX86
+#define _WCHAR_T_DEFINED
+#define _WIN32
+#define __uuidof(a) (*(CLSID*)((a*)0))
+#define _inline
+#define __thiscall
+#define _CRTNOALIAS
+#define _CRTRESTRICT
+#define DECLSPEC_IMPORT
+#define _NTSYSTEM_
+#define AFXAPI
+#define _DLL
+#define _CRTIMP2
+#define _CRTIMP
+#define _MRTIMP2
+#define __stdcall
+#define __interface class
+#define __pragma(...)
+#define __fastcall
+#define __forceinline
+class type_info;
+#+END_SRC
+
+最后，就是clang和gcc都支持的一个 =-include= 参数，把这个 =fix-it.h= 文
+件每次都include进来再做补齐，就不会有那么多错误了。这些设置最后会写到
+Emacs 的 =.dir-locals.el= 文件里，知道的就不用多说了😄。
+
+以上行为艺术完成于我在锤子科技工作时，感谢。

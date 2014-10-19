@@ -102,10 +102,139 @@ for the JavaScript code in this tag.
   <div id='bhj_leftpane'>
 <div id="content">
 <h1 class="title">如何在Linux + Emacs下进行MFC编程（代码补齐）</h1>
-<b>not finished yet</b>
-<b>not finished yet</b>
 <p>
-<a href="http://www.newsmth.net/bbstcon.php?board=Emacs&gid=107420">http://www.newsmth.net/bbstcon.php?board=Emacs&gid=107420</a>
+最早在 <a href="http://www.newsmth.net/bbstcon.php?board=Emacs&gid=107420">水木的这个贴子</a> 里说了这件事。回头想想，自己是不是真的更适合去搞行为艺术呢？头脑正常一点的程序员应该不会这么干的😄。
+</p>
+
+<p>
+既然做了，就说说怎么做的吧，说不定有后来人也想这么干&#x2026;
+</p>
+
+<p>
+首先，先讲点背景。这个补齐要用到clang，也就是苹果公司在召集开发的一个
+比gcc更新的一个开源编译器，与llvm相结合，据说很大的一个特点是代码组织
+得比gcc更好一些&#x2026;
+</p>
+
+<p>
+它有一个自带的补齐功能（ <code>-code-completion-at</code> 的命令行选项）！这个补
+齐功能不需要整个C源文件能正确编译才可以正确补齐，因为否则的话就成了鸡
+肋了。所以用它来做Linux+Emacs下的MFC编程补齐是完全可行的，我只需要把
+MFC相关的一些头文件给弄到Linux底下来。
+</p>
+
+<p>
+然后就是如水木上的那个贴子里所说的，不停地修正了clang补齐时报出来的一
+些错误。这些错误都会放在一个临时的（*xx*这样命名的）buffer里，一条一条
+的修正就好了，最后也没必要全部修完，因为有些东西可能是微软自己的编译器
+特有的对C++语言的扩充，clang是处理不了的。
+</p>
+
+<p>
+有几个很容易修的错误，形成的原因都是一个：微软的文件名不区分大小写。然
+后就经常可以看到 <code>StdAfx.h</code> 和 <code>stdafx.h</code> 这样的写法到处都是，貌似是随
+机的😂 对这个错误的话幸好我以前有积累，写过一个 <a href="https://github.com/baohaojun/system-config/raw/master/bin/refactory-rename">rename-refactory</a> 的脚
+本，很快就全部改完了。
+</p>
+
+<p>
+哦，我刚才checkout出来我的改动看了一下，我的习惯真是太好了，把自己以前
+怎么做的全部写成了一个脚本，然后现在写文章的时候看一下脚本就全想起来了：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">!/bin/</span><span class="org-keyword">bash</span>
+<span class="org-builtin">set</span> -e
+<span class="org-comment-delimiter"># </span><span class="org-comment">./fix-compile.h '(cd ~/src/tools/SmartisanTestFrame/branch_DailyDev/TestFrame; cat /home/bhj/src/tools/SmartisanTestFrame/branch_DailyDev/TestFrame/TestFrameDlg.cpp | /usr/bin/clang -cc1 -fsyntax-only -x c++ -I/home/bhj/.cache/vc/include -I/home/bhj/.cache/vc/atlmfc/include -I/home/bhj/.cache/vc/sdk/include -I/home/bhj/src/tools/SmartisanTestFrame/branch_DailyDev/Public/Smartisan/ -I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGLExtensions -I/usr/include/x86_64-linux-gnu/qt5/QtPlatformSupport -I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/c++/4.9 -I/usr/include/x86_64-linux-gnu/c++/4.9 -I/usr/include/c++/4.9/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.9/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -code-completion-at -:711:61 -)'</span>
+
+<span class="org-keyword">while</span> true; <span class="org-keyword">do</span>
+    <span class="org-variable-name">x</span>=$(<span class="org-sh-quoted-exec">bash</span> -c <span class="org-string">"$@"</span> 2&gt;&amp;1 | tr -d <span class="org-string">'\r'</span> | grep <span class="org-string">"fatal error:.*' file not found"</span>) || true
+    <span class="org-keyword">if </span><span class="org-builtin">test</span> <span class="org-string">"$x"</span>; <span class="org-keyword">then</span>
+        <span class="org-variable-name">x</span>=$(<span class="org-sh-quoted-exec">echo</span> <span class="org-string">"$x"</span> | perl -npe <span class="org-string">"s/.*fatal error: '(.*)' file not found.*/\$1/"</span>)
+        <span class="org-keyword">for</span> y<span class="org-keyword"> in</span> $<span class="org-variable-name">x</span>; <span class="org-keyword">do</span> ./fix-it.sh <span class="org-string">"$y"</span>; <span class="org-keyword">done</span>
+    <span class="org-keyword">else</span>
+        <span class="org-keyword">break</span>
+    <span class="org-keyword">fi</span>
+<span class="org-keyword">done</span>
+</pre>
+</div>
+
+<p>
+最前面你甚至可以看到我记录了一下这个脚本是怎么用的（因为.bash_history
+并不能无限地记录你用过的所有命令，而是有一个可以自己设的上限，但如果你
+设得超级大的话会导致你的bash交互启动变慢😊）。这是我的又一个好习惯，防止
+自己以后忘了怎么用，包括写博客文章时）。这个脚本基本上就是我不停地在用
+clang去补齐，然后把 <code>file not found</code> 的错误全部揪出来，用一个
+<code>fix-it.sh</code> 做一个简单粗暴的修正。
+</p>
+
+<p>
+<code>fix-it.sh</code> 脚本是这样的：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">!/bin/</span><span class="org-keyword">bash</span>
+<span class="org-keyword">for</span> x<span class="org-keyword"> in</span> $(<span class="org-sh-quoted-exec">find</span> . -iname $<span class="org-variable-name">1</span>); <span class="org-keyword">do</span>
+    ln -s <span class="org-string">"$(</span><span class="org-sh-quoted-exec">basename</span><span class="org-string"> "$x")"</span> <span class="org-string">"$(</span><span class="org-sh-quoted-exec">dirname</span><span class="org-string"> "$x")"</span>/$<span class="org-variable-name">1</span> -v
+    <span class="org-keyword">exit</span> 0
+<span class="org-keyword">done</span>
+<span class="org-keyword">exit</span> -1
+</pre>
+</div>
+
+<p>
+我找到一个（ <code>-iname</code> 参数，不区分大小写） <code>$1</code> 指定的文件，就用 <code>ln</code>
+把这个找到的文件 <code>$x</code> 做一个到目标文件 <code>$1</code> 的软链接。你体会一下😄
+</p>
+
+<p>
+最后，把这类文件名不区分大小写造成的错误全修正完之后，就是一个
+<code>fix-it.h</code> 文件，里面的内容是这样（再次，简单粗暴）的：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span class="org-preprocessor">#define</span> <span class="org-variable-name">__int64</span> <span class="org-type">long</span> <span class="org-type">long</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__int32</span> <span class="org-type">int</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__int16</span> <span class="org-type">short</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__int8</span> <span class="org-type">char</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__w64</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__possibly_notnullterminated</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">SORTPP_PASS</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_M_IX86</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_WCHAR_T_DEFINED</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_WIN32</span>
+<span class="org-preprocessor">#define</span> <span class="org-function-name">__uuidof</span>(<span class="org-variable-name">a</span>) (*(<span class="org-type">CLSID</span>*)((<span class="org-type">a</span>*)0))
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_inline</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__thiscall</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_CRTNOALIAS</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_CRTRESTRICT</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">DECLSPEC_IMPORT</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_NTSYSTEM_</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">AFXAPI</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_DLL</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_CRTIMP2</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_CRTIMP</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">_MRTIMP2</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__stdcall</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__interface</span> class
+<span class="org-preprocessor">#define</span> <span class="org-function-name">__pragma</span>(...)
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__fastcall</span>
+<span class="org-preprocessor">#define</span> <span class="org-variable-name">__forceinline</span>
+<span class="org-type">class</span> <span class="org-variable-name">type_info</span>;
+</pre>
+</div>
+
+<p>
+最后，就是clang和gcc都支持的一个 <code>-include</code> 参数，把这个 <code>fix-it.h</code> 文
+件每次都include进来再做补齐，就不会有那么多错误了。这些设置最后会写到
+Emacs 的 <code>.dir-locals.el</code> 文件里，知道的就不用多说了😄。
+</p>
+
+<p>
+以上行为艺术完成于我在锤子科技工作时，感谢。
 </p>
 <nav>
   <ul id="prev_next_posts">
