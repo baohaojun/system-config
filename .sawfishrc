@@ -58,7 +58,7 @@
                                (synthesize-event key (input-focus))))
 
 (setq esc-g-remap-alist
-      '(("M-g g" . ("M-v" "g" "p")))) ; go to page in acroread
+      '(("M-g g" . '((Qpdfview "C-j") (t "M-v" "g" "p"))))) ; go to page in acroread
 
 
 
@@ -233,10 +233,17 @@
                                     `(classed-key-synthesize ,from ,to))))))
         global-remap-alist)
   (mapc (lambda (key-map-1)
-          (let ((from (car key-map-1))
-                (to (cdr key-map-1)))
-            (bind-keys esc-g-map (substring from 4) (lambda ()
-                                                      (classed-key-synthesize from to)))))
+          (let* ((from (substring (car key-map-1) 4))
+                 (to (cdr key-map-1))
+                 (window-mapped-to (get-window-map to)))
+            (bind-keys-nil-unbind esc-g-map from
+                                  (cond
+                                   ((null window-mapped-to)
+                                    nil)
+                                   ((symbolp window-mapped-to)
+                                    (symbol-value (get-window-map to)))
+                                   (t
+                                    `(classed-key-synthesize ,from ,to))))))
         esc-g-remap-alist)
   (bind-keys global-keymap "ESC" esc-map)
   (bind-keys esc-map "ESC" (lambda () (synthesize-event-gnome? "ESC" (input-focus))))
