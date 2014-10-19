@@ -45,6 +45,9 @@ if test "$#" != 0; then
             remote=$(git remote -v |pn 2|head -n 1)
             putclip "[[$remote][$(basename $remote)]]"
             ;;
+        f)
+            rgrep 'Not finished yet.' -l|xargs -d \\n bash -c 'for x in "$@"; do test -e "$x" && ew "$x"; done' true
+            ;;
         c)
             cd -
             shift
