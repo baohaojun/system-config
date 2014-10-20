@@ -44,6 +44,7 @@ if test "$prompt"; then
 "$prompt"
 # Local variables:
 # eval: (activate-input-method "sdim")
+# whitespace-cleanup-mode: nil
 # End:
 EOF
 elif tty >/dev/null 2>&1 || test $# = 1; then

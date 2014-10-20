@@ -363,7 +363,7 @@ might be bad."
       (while (and all-marvell (string-match "@" receivers start-pos))
         (setq start-pos (match-end 0))
         (unless (equal (string-match
-                        (if (bound-p my-company-mail-regexp)
+                        (if (boundp 'my-company-mail-regexp)
                             my-company-mail-regexp
                           "example.com")
                     receivers
@@ -389,7 +389,7 @@ might be bad."
         (message-beginning-of-line)
         (cond ((save-excursion
                  (search-forward-regexp
-                  (if (bound-p my-company-mail-regexp)
+                  (if (boundp 'my-company-mail-regexp)
                       my-company-mail-regexp
                     "example.com")
                   (line-end-position) t))
