@@ -1,0 +1,3 @@
+#!/bin/bash
+set -- ${1:-pub}
+ssh-exp $1 'set -x; mkfifo /tmp/getclip-remote.$$; cat /tmp/getclip-remote.$$& myscr first bash -c "getclip > /tmp/getclip-remote.$$; rm /getclip-remote.$$"; wait'
