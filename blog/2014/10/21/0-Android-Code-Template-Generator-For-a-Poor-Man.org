@@ -1,0 +1,98 @@
+#+title: 穷汉的安卓代码模板生成工具
+# bhj-tags: tool
+我刚刚又看了一遍 [[https://developer.android.com/tools/projects/templates.html][安卓SDK相关的页面]] ，吓我一跳，看到了一个 “[[https://developer.android.com/tools/projects/templates.html][From the
+Command Line]]” 这样的字眼，还以为安卓SDK也支持这样的命令行工具了，那我
+的行为艺术就没有价值了😂。幸好，虚惊一场，那个链接指向的是如何用命令
+行生成一个安卓项目，但并不能生成代码。想生成代码，还是只能用Eclipse或
+者Android Studio。
+
+我在大半年之前就已经写出了这个在命令行上生成Android代码的脚本。基本上
+只要是Eclipse支持的每个模板，我的脚本也全部支持，比如project、activity、
+service等等。只要是Eclipse支持的可选参数（比如package的名字、activity
+的名字，navigator的类型），我的脚本也全部支持。因为我完全是抠着Eclipse
+里面的代码重写的，包括它使用的freemarker这个java包。
+
+里面用到的模板也基本上复用了Android SDK提供的那一套模板，只是修改了一
+些明显的bug和一些在命令行上重做时不切实际的代码。
+
+以BlankActivity为例，在我的system-config里，它的路径在 [[https://github.com/baohaojun/system-config/tree/master/gcode/android-templates/activities/BlankActivity][这里]] ，但事实上
+你可以对比一下，我是从
+=android-sdk-linux/tools/templates/activities/BlankActivity= 里拷贝出
+来的，然后只做过一个改动。
+
+安卓SDK的这套代码模板基本上都是这样组织的：
+
+1. 有一个 [[https://github.com/baohaojun/system-config/raw/master/gcode/android-templates/activities/BlankActivity/template.xml][template.xml]] 。里面我主要用到了它给出的各个参数，比如package
+   名字，layout的名字，Activity的名字，是不是Launcher Activity（桌面上
+   有图标的Activity）。等等。
+
+   如果是在Eclipse里的话，这个文件还提供了各种缩略图，比如你选了一个
+   layout之后，Eclipse就会显示一个此layout的示意图给你看。但这个对我们
+   这样的穷汉来说，有点太奢侈了，所以只要自己脑洞大开，脑补一下这个示
+   意图就好了😂
+
+2. 有一个 [[https://github.com/baohaojun/system-config/raw/master/gcode/android-templates/activities/BlankActivity/globals.xml.ftl][globals.xml.ftl]] 。所有以.ftl为扩展名的文件，都是freemarker
+   template的意思，需要交给freemarker程序处理一下才可以。这个文件里的
+   内容就是一些变量的默认值。
+
+3. 有一个 [[https://github.com/baohaojun/system-config/raw/master/gcode/android-templates/activities/BlankActivity/recipe.xml.ftl][recipe.xml.ftl]] 文件。这个文件顾名思义，就是菜谱的意思，告诉
+   freemarker应该怎么一步一步地把所有代码文件从模板中生成出来（其实就
+   是变量替换而已，比如把 [[https://github.com/baohaojun/system-config/raw/master/gcode/android-templates/activities/BlankActivity/root/AndroidManifest.xml.ftl][root/AndroidManifest.xml.ftl]] 文件里的这样一
+   行：
+
+   #+BEGIN_EXAMPLE
+   android:label="@string/title_${activityToLayout(activityClass)}"
+   #+END_EXAMPLE
+
+   里面的activityClass通过一个freemarker的activityToLayout库函数（由我
+   提供）改写成另一个标识符。
+
+4. 一堆的模板文件，基本上全以.ftl为扩展名。比如BlankActivity有这么些：
+
+   #+BEGIN_EXAMPLE
+    ./root/src/app_package/TabsActivity.java.ftl
+    ./root/src/app_package/DropdownActivity.java.ftl
+    ./root/src/app_package/include_onCreateOptionsMenu.java.ftl
+    ./root/src/app_package/TabsAndPagerActivity.java.ftl
+    ./root/src/app_package/include_DummySectionFragment.java.ftl
+    ./root/src/app_package/SimpleActivity.java.ftl
+    ./root/src/app_package/include_onOptionsItemSelected.java.ftl
+    ./root/res/menu/main.xml.ftl
+    ./root/res/values/strings.xml.ftl
+    ./root/res/layout/fragment_dummy.xml.ftl
+    ./root/res/layout/activity_pager.xml.ftl
+    ./root/res/layout/activity_simple.xml.ftl
+    ./root/AndroidManifest.xml.ftl
+    ./recipe.xml.ftl
+    ./globals.xml.ftl
+   #+END_EXAMPLE
+
+其中要注意的是，freemarker除了简单的变量替换功能，还有复杂的if/else逻
+辑，应此可以实现一些比如根据所选的Activity NavType的不同而生成不同的代
+码。
+
+我的freemarker脚本只是对Debian自带的libfreemarker-java包的一个封装，脚
+本在 [[https://github.com/baohaojun/system-config/raw/master/bin/freemarker][这里]] 。Java代码在 [[https://github.com/baohaojun/system-config/tree/master/bin/FreeMarker.d][这里]] 。这个脚本如果发现需要重新编译一下的话会自
+动处理，所以我修改完Java代码之后不需要手动更新.class文件，真是人生何处
+不自动化哈😊。
+
+总驱动脚本，poormans-android-template，在 [[https://github.com/baohaojun/system-config/raw/master/bin/poormans-android-template][这里]] 。
+
+用法是：
+
+#+BEGIN_SRC sh
+poormans-android-template -t 'appli'
+poormans-android-template -t 'blank activity' --isLauncher true --activityClass TheRightApkActivity
+#+END_SRC
+
+其中第一句是生成一个application，也就是一个project了；第二句则是生成一
+个空白的Activity。你可以看到我不需要打完格的 -t 参数，后面只跟了一个
+“appli”，脚本就会自动匹配出最合适的template给我，如果有多个的话还会让
+我选，这个特性你在Firefox的地址栏里也可以看到。更具体的用法见脚本，是
+用ruby写的，其实我不会ruby😄。
+
+关于这个名字为什么这么倒霉，poor man，其实不是穷汉的意思，而是因为这个
+脚本写得有点粗糙，生成完application再生成activity之后需要手动改一下
+AndroidManifest.xml文件，否则不是一个合法的.xml😄。谁用谁知道😂。
+
+以上工作完成于在阿里巴巴工作期间，感谢。

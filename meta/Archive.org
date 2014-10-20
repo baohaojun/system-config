@@ -1,6 +1,10 @@
 #+title: Archive
  * 2014
   - 2014-10
+   * 2014-10-21
+
+     [[../blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.org][穷汉的安卓代码模板生成工具]]
+
    * 2014-10-09
 
      [[../blog/2014/10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.org][如何在Linux + Emacs下进行MFC编程（代码补齐）]]

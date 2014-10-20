@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[穷汉的安卓代码模板生成工具]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html"/>
+    <updated>2014-04-20T23:10:33+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[如何在Linux + Emacs下进行MFC编程（代码补齐）]]></title>
     <link href="http://baohaojun.github.io/blog/2014/10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html"/>
     <updated>2014-10-10T17:52:14+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/08/05/0-a-love-letter.html"/>
     <updated>2014-08-06T01:08:20+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/08/05/0-a-love-letter.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[微信中的Unicode表情字符]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/08/03/0-emoji-in-weixin-and-unicode.html"/>
-    <updated>2014-08-03T22:20:58+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/08/03/0-emoji-in-weixin-and-unicode.html</id>
   </entry>
 </feed>
