@@ -296,7 +296,7 @@ if ($resolve) {
     if ($simple_qualified_map{$resolve}) {
         print $simple_qualified_map{$resolve} . "$postfix";
     } elsif ($var_type_map{$resolve}) {
-        for my $type (keys $var_type_map{$resolve}) {
+        for my $type (keys %{$var_type_map{$resolve}}) {
             my $prefix = prefix($type);
             if ($simple_qualified_map{$prefix}) {
                 print $simple_qualified_map{$prefix} . substr($type, length($prefix)) . "$postfix\n";
