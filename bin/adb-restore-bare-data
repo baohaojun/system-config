@@ -13,7 +13,11 @@ fi
 if test -e ../data.tgz; then
     true
 else
-    sudo tar czfv ../data.tgz . &
+    if test $(basename $0) = adb-restore-bare-data; then
+        sudo tar czf ../data.tgz . &
+    elif test $(basename $0) = adb-restore-bare-data-no-sdcard; then
+        sudo tar czf ../data.tgz . --exclude=./media/* --exclude=./debian/* &
+    fi
     sleep 10
 fi
 ssh-exp root@phone 'mkdir -p ~/data; sshfs bhj@192.168.15.33:/home/bhj/today/forever/data-f9e6c95/ ~/data; cd /android/data; tar zxvf ~/data/data.tgz; exit'

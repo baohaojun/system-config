@@ -10,7 +10,11 @@ elif test $(basename $0) = adb-backup-data; then
 elif test $(basename $0) = adb-restore-data; then
     cd ~/today/forever/data-f9e6c95
      adb-fix-gms
-    sudo rsync data root@phone:/android/ -av "$@" --delete
+     sudo rsync data root@phone:/android/ -av "$@" --delete
+elif test $(basename $0) = adb-restore-data-no-sdcard; then
+    cd ~/today/forever/data-f9e6c95/
+    adb-fix-gms
+    sudo rsync data root@phone:/android/ -av "$@" --delete --exclude='data/media/*'
 elif test $(basename $0) = adb-restore-system; then
     cd ~/today/forever/system-f9e6c95
     sudo rsync system root@phone:/android/ -av "$@"

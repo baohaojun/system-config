@@ -20,3 +20,10 @@ data/media/0/tencent/tassistant/apk/
 data/s.wap
 data/s.wap.tmp
 data/media/0/tencent/TMAssistantSDK/Download/com.tencent.mobileqq
+data/media/0/ota.zip
+*/Cache/*
+*/cache/*
+*/cache2/*
+*/.wbadcache/*
+data/media/0/DCIM/Camera/QuickCapture/
+*/.weibo_pic_new/*
