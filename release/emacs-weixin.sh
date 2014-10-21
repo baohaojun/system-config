@@ -142,6 +142,8 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 adb-picture-to-weixin-chat $pic
                             elif test "$activity" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI; then
                                 adb-picture-to-weixin-friends $pic
+                            elif test "$activity" = com.sina.weibo/com.sina.weibo.MainTabActivity; then
+                                adb-picture-to-weibo $pic
                             fi
                             ;;
                         *) # most cases
