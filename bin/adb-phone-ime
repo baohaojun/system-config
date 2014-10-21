@@ -1,0 +1,8 @@
+#!/bin/bash
+while true; do
+    adb 'while test ! -e /sdcard/voice-ime.txt; do sleep .5; done; mv /sdcard/voice-ime.txt /sdcard/voice-ime.out;'
+    adb pull /sdcard/voice-ime.out /tmp/voice-ime.txt
+    cat /tmp/voice-ime.txt|perl -npe '$unicode = 1 if m/[\177-\377]/; END {print $unicode ? "，" : ", "}'|putclip
+    sawfish-send-focused-window-event "S-Insert"
+    adb-tap 811 1175
+done

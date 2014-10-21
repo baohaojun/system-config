@@ -10,8 +10,9 @@ sub debug(@) {
     print STDERR "@_\n";
 }
 
-if (@ARGV == 3 and $ARGV[0] =~ m/,$/ and $ARGV[1] eq "line" and $ARGV[2] =~ m/^\d+$/) {
-    chop $ARGV[0];
+if (@ARGV == 3 and $ARGV[1] eq "line" and $ARGV[2] =~ m/^\d+\.?$/) {
+    chop $ARGV[0] if $ARGV[0] =~ m/,$/;
+    chop $ARGV[2] if $ARGV[2] =~ m/\.$/;
     system("e", "$ARGV[0]:$ARGV[2]");
     exit;
 }
