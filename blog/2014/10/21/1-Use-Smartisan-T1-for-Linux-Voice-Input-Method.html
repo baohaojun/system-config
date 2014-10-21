@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>穷汉的安卓代码模板生成工具</title>
+<title>反了反了！用Smartisan T1手机当Linux的语音输入法</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -101,150 +101,88 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">穷汉的安卓代码模板生成工具</h1>
+<h1 class="title">反了反了！用Smartisan T1手机当Linux的语音输入法</h1>
 <p>
-我刚刚又看了一遍 <a href="https://developer.android.com/tools/projects/templates.html">安卓SDK相关的页面</a> ，吓我一跳，看到了一个 “<a href="https://developer.android.com/tools/projects/templates.html">From the
-Command Line</a>” 这样的字眼，还以为安卓SDK也支持这样的命令行工具了，那我
-的行为艺术就没有价值了😂。幸好，虚惊一场，那个链接指向的是如何用命令
-行生成一个安卓项目，但并不能生成代码。想生成代码，还是只能用Eclipse或
-者Android Studio。
+Hello world, 今天给大家演示一下，用smartisan t1王手机，给linux pct单语音输入法，从今以后妈妈再也不用担，担心我的学习，
 </p>
 
 <p>
-我在大半年之前就已经写出了这个在命令行上生成Android代码的脚本。基本上
-只要是Eclipse支持的每个模板，我的脚本也全部支持，比如project、activity、
-service等等。只要是Eclipse支持的可选参数（比如package的名字、activity
-的名字，navigator的类型），我的脚本也全部支持。因为我完全是抠着Eclipse
-里面的代码重写的，包括它使用的freemarker这个java包。
+下面跟大家说一下具体是怎么做的，其实很简单，在手机上起一个activity，里面有一个edittext，这个id的text属收到任何输入，晚上写到sd卡上，皇后在linux pc上有一个脚本，不停的检测sd卡上的那个文件，18现有新文件，就把他一出来，马内容输入到我的emacs里面，牛逼不，
 </p>
 
 <p>
-里面用到的模板也基本上复用了Android SDK提供的那一套模板，只是修改了一
-些明显的bug和一些在命令行上重做时不切实际的代码。
+好了，以下是PC键盘手打输入。
 </p>
 
 <p>
-以BlankActivity为例，在我的system-config里，它的路径在 <a href="https://github.com/baohaojun/system-config/tree/master/gcode/android-templates/activities/BlankActivity">这里</a> ，但事实上
-你可以对比一下，我是从
-<code>android-sdk-linux/tools/templates/activities/BlankActivity</code> 里拷贝出
-来的，然后只做过一个改动。
-</p>
-
-<p>
-安卓SDK的这套代码模板基本上都是这样组织的：
-</p>
-
-<ol class="org-ol">
-<li>有一个 <a href="https://github.com/baohaojun/system-config/raw/master/gcode/android-templates/activities/BlankActivity/template.xml">template.xml</a> 。里面我主要用到了它给出的各个参数，比如package
-名字，layout的名字，Activity的名字，是不是Launcher Activity（桌面上
-有图标的Activity）。等等。
-
-<p>
-如果是在Eclipse里的话，这个文件还提供了各种缩略图，比如你选了一个
-layout之后，Eclipse就会显示一个此layout的示意图给你看。但这个对我们
-这样的穷汉来说，有点太奢侈了，所以只要自己脑洞大开，脑补一下这个示
-意图就好了😂
-</p>
-</li>
-
-<li>有一个 <a href="https://github.com/baohaojun/system-config/raw/master/gcode/android-templates/activities/BlankActivity/globals.xml.ftl">globals.xml.ftl</a> 。所有以.ftl为扩展名的文件，都是freemarker
-template的意思，需要交给freemarker程序处理一下才可以。这个文件里的
-内容就是一些变量的默认值。
-</li>
-
-<li>有一个 <a href="https://github.com/baohaojun/system-config/raw/master/gcode/android-templates/activities/BlankActivity/recipe.xml.ftl">recipe.xml.ftl</a> 文件。这个文件顾名思义，就是菜谱的意思，告诉
-freemarker应该怎么一步一步地把所有代码文件从模板中生成出来（其实就
-是变量替换而已，比如把 <a href="https://github.com/baohaojun/system-config/raw/master/gcode/android-templates/activities/BlankActivity/root/AndroidManifest.xml.ftl">root/AndroidManifest.xml.ftl</a> 文件里的这样一
-行：
-
-<pre class="example">
-android:label="@string/title_${activityToLayout(activityClass)}"
-</pre>
-
-<p>
-里面的activityClass通过一个freemarker的activityToLayout库函数（由我
-提供）改写成另一个标识符。
-</p>
-</li>
-
-<li>一堆的模板文件，基本上全以.ftl为扩展名。比如BlankActivity有这么些：
-
-<pre class="example">
-./root/src/app_package/TabsActivity.java.ftl
-./root/src/app_package/DropdownActivity.java.ftl
-./root/src/app_package/include_onCreateOptionsMenu.java.ftl
-./root/src/app_package/TabsAndPagerActivity.java.ftl
-./root/src/app_package/include_DummySectionFragment.java.ftl
-./root/src/app_package/SimpleActivity.java.ftl
-./root/src/app_package/include_onOptionsItemSelected.java.ftl
-./root/res/menu/main.xml.ftl
-./root/res/values/strings.xml.ftl
-./root/res/layout/fragment_dummy.xml.ftl
-./root/res/layout/activity_pager.xml.ftl
-./root/res/layout/activity_simple.xml.ftl
-./root/AndroidManifest.xml.ftl
-./recipe.xml.ftl
-./globals.xml.ftl
-</pre>
-</li>
-</ol>
-
-<p>
-其中要注意的是，freemarker除了简单的变量替换功能，还有复杂的if/else逻
-辑，应此可以实现一些比如根据所选的Activity NavType的不同而生成不同的代
-码。
-</p>
-
-<p>
-我的freemarker脚本只是对Debian自带的libfreemarker-java包的一个封装，脚
-本在 <a href="https://github.com/baohaojun/system-config/raw/master/bin/freemarker">这里</a> 。Java代码在 <a href="https://github.com/baohaojun/system-config/tree/master/bin/FreeMarker.d">这里</a> 。这个脚本如果发现需要重新编译一下的话会自
-动处理，所以我修改完Java代码之后不需要手动更新.class文件，真是人生何处
-不自动化哈😊。
-</p>
-
-<p>
-总驱动脚本，poormans-android-template，在 <a href="https://github.com/baohaojun/system-config/raw/master/bin/poormans-android-template">这里</a> 。
-</p>
-
-<p>
-用法是：
+这个Activity的onCreate是这样写的：
 </p>
 
 <div class="org-src-container">
 
-<pre class="src src-sh">poormans-android-template -t <span class="org-string">'appli'</span>
-poormans-android-template -t <span class="org-string">'blank activity'</span> --isLauncher true --activityClass TheRightApkActivity
+<pre class="src src-java"><span class="org-keyword">super</span>.onCreate(savedInstanceState);
+setContentView(R.layout.layout_the_right_apk);
+
+<span class="org-type">EditText</span> <span class="org-variable-name">edit</span> = (<span class="org-type">EditText</span>) findViewById(R.id.hello_world);
+edit.addTextChangedListener(<span class="org-keyword">new</span> <span class="org-type">TextWatcher</span>() {
+        <span class="org-c-annotation">@Override</span>
+        <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">afterTextChanged</span>(<span class="org-type">Editable</span> <span class="org-variable-name">s</span>) {
+            <span class="org-type">String</span> <span class="org-variable-name">str</span> = s.toString();
+            <span class="org-keyword">if</span> (<span class="org-negation-char">!</span> str.isEmpty()) {
+                s.delete(0, str.length());
+
+                <span class="org-keyword">try</span> {
+                    <span class="org-type">FileWriter</span> <span class="org-variable-name">fw</span> = <span class="org-keyword">new</span> <span class="org-type">FileWriter</span>(<span class="org-keyword">new</span> <span class="org-type">File</span>(Environment.getExternalStorageDirectory(), <span class="org-string">"voice-ime.txt.1"</span>));
+                    fw.write(str);
+                    fw.close();
+                    <span class="org-type">File</span> <span class="org-variable-name">voice</span> = <span class="org-keyword">new</span> <span class="org-type">File</span>(Environment.getExternalStorageDirectory(), <span class="org-string">"voice-ime.txt.1"</span>);
+                    voice.renameTo(<span class="org-keyword">new</span> <span class="org-type">File</span>(Environment.getExternalStorageDirectory(), <span class="org-string">"voice-ime.txt"</span>));
+                } <span class="org-keyword">catch</span> (<span class="org-type">Exception</span> <span class="org-variable-name">e</span>) {
+                    Log.e(<span class="org-string">"bhj"</span>, String.format(<span class="org-string">"%s:%d: text is %s"</span>, <span class="org-string">"TheRightApkActivity.java"</span>, 135, str), e);
+                }
+            }
+        }
+        <span class="org-c-annotation">@Override</span>
+        <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">beforeTextChanged</span>(<span class="org-type">CharSequence</span> <span class="org-variable-name">s</span>,  <span class="org-type">int</span> <span class="org-variable-name">start</span>, <span class="org-type">int</span> <span class="org-variable-name">before</span>, <span class="org-type">int</span> <span class="org-variable-name">after</span>) {
+        }
+        <span class="org-c-annotation">@Override</span>
+        <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">onTextChanged</span>(<span class="org-type">CharSequence</span> <span class="org-variable-name">s</span>,  <span class="org-type">int</span> <span class="org-variable-name">start</span>,  <span class="org-type">int</span> <span class="org-variable-name">before</span>,  <span class="org-type">int</span> <span class="org-variable-name">count</span>) {
+        }
+    });
 </pre>
 </div>
 
 <p>
-其中第一句是生成一个application，也就是一个project了；第二句则是生成一
-个空白的Activity。你可以看到我不需要打完格的 -t 参数，后面只跟了一个
-“appli”，脚本就会自动匹配出最合适的template给我，如果有多个的话还会让
-我选，这个特性你在Firefox的地址栏里也可以看到。更具体的用法见脚本，是
-用ruby写的，其实我不会ruby😄。
+然后在Linux上的脚本是这样的：
 </p>
 
-<p>
-关于这个名字为什么这么倒霉，poor man，其实不是穷汉的意思，而是因为这个
-脚本写得有点粗糙，生成完application再生成activity之后需要手动改一下
-AndroidManifest.xml文件，否则不是一个合法的.xml😄。谁用谁知道😂。
-</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-comment-delimiter">#</span><span class="org-comment">!/bin/</span><span class="org-keyword">bash</span>
+<span class="org-keyword">while</span> true; <span class="org-keyword">do</span>
+    adb <span class="org-string">'while test ! -e /sdcard/voice-ime.txt; do sleep .5; done; mv /sdcard/voice-ime.txt /sdcard/voice-ime.out;'</span>
+    adb pull /sdcard/voice-ime.out /tmp/voice-ime.txt
+    cat /tmp/voice-ime.txt|perl -npe <span class="org-string">'$unicode = 1 if m/[\177-\377]/; END {print $unicode ? "&#65292;" : ", "}'</span>|putclip
+    sawfish-send-focused-window-event <span class="org-string">"S-Insert"</span>
+    adb-tap 811 1175
+<span class="org-keyword">done</span>
+</pre>
+</div>
 
 <p>
-以上工作完成于在阿里巴巴工作期间，感谢。
+注意！里面对中文输入和英文输入我分别使用了两种不一样的逗号哦！这叫情怀吧？里面用到的其他辅助脚本都在我的 <a href="https://github.com/baohaojun/system-config">system-config</a> 项目中可以找到。
 </p>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="../09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html"> <!-- prev-url -->
+      <a href="0-Android-Code-Template-Generator-For-a-Poor-Man.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        如何在Linux + Emacs下进行MFC编程（代码补齐） <!-- prev-title -->
+        穷汉的安卓代码模板生成工具 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
-      <a href="1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html"> <!-- next-url -->
-        反了反了！用Smartisan T1手机当Linux的语音输入法 <!-- next-title -->
+      <a href="../../../../meta/Archive.html"> <!-- next-url -->
+        Archive <!-- next-title -->
         <i class="icon-chevron-right">》</i>
       </a>
     </li>
@@ -257,7 +195,7 @@ AndroidManifest.xml文件，否则不是一个合法的.xml😄。谁用谁知�
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -333,7 +271,8 @@ AndroidManifest.xml文件，否则不是一个合法的.xml😄。谁用谁知�
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='../09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html'> 如何在Linux + Emacs下进行MFC编程（代码补齐） </a></li>
+        <li><a href='0-Android-Code-Template-Generator-For-a-Poor-Man.html'> 穷汉的安卓代码模板生成工具 </a></li>
+<li><a href='../09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html'> 如何在Linux + Emacs下进行MFC编程（代码补齐） </a></li>
 <li><a href='../../09/26/0-WYPIWYG.html'> WYPIWYG (What you print is what you get） </a></li>
 <li><a href='../../09/05/0-Emoji.html'> Emoji </a></li>
 <li><a href='../../09/01/0-config-adb-for-smartisan-t1.html'> Config adb for smartisan t1 </a></li>
@@ -342,7 +281,6 @@ AndroidManifest.xml文件，否则不是一个合法的.xml😄。谁用谁知�
 <li><a href='../../08/20/0-Using-Emacs-as-a-better-source-insight.html'> Using Emacs as a better Source Insight </a></li>
 <li><a href='../../08/11/0-Linux-network-code-reading.html'> Linux network code reading (TODO) </a></li>
 <li><a href='../../08/05/0-a-love-letter.html'> 一封情书 </a></li>
-<li><a href='../../08/03/0-emoji-in-weixin-and-unicode.html'> 微信中的Unicode表情字符 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

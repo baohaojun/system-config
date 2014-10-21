@@ -1,0 +1,57 @@
+#+title: 反了反了！用Smartisan T1手机当Linux的语音输入法
+# bhj-tags: tool
+Hello world, 今天给大家演示一下，用smartisan t1王手机，给linux pct单语音输入法，从今以后妈妈再也不用担，担心我的学习，
+
+下面跟大家说一下具体是怎么做的，其实很简单，在手机上起一个activity，里面有一个edittext，这个id的text属收到任何输入，晚上写到sd卡上，皇后在linux pc上有一个脚本，不停的检测sd卡上的那个文件，18现有新文件，就把他一出来，马内容输入到我的emacs里面，牛逼不，
+
+好了，以下是PC键盘手打输入。
+
+这个Activity的onCreate是这样写的：
+
+#+BEGIN_SRC java
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_the_right_apk);
+
+        EditText edit = (EditText) findViewById(R.id.hello_world);
+        edit.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void afterTextChanged(Editable s) {
+                    String str = s.toString();
+                    if (! str.isEmpty()) {
+                        s.delete(0, str.length());
+
+                        try {
+                            FileWriter fw = new FileWriter(new File(Environment.getExternalStorageDirectory(), "voice-ime.txt.1"));
+                            fw.write(str);
+                            fw.close();
+                            File voice = new File(Environment.getExternalStorageDirectory(), "voice-ime.txt.1");
+                            voice.renameTo(new File(Environment.getExternalStorageDirectory(), "voice-ime.txt"));
+                        } catch (Exception e) {
+                            Log.e("bhj", String.format("%s:%d: text is %s", "TheRightApkActivity.java", 135, str), e);
+                        }
+                    }
+                }
+                @Override
+                public void beforeTextChanged(CharSequence s,  int start, int before, int after) {
+                }
+                @Override
+                public void onTextChanged(CharSequence s,  int start,  int before,  int count) {
+                }
+            });
+
+#+END_SRC
+
+然后在Linux上的脚本是这样的：
+
+#+BEGIN_SRC sh
+#!/bin/bash
+while true; do
+    adb 'while test ! -e /sdcard/voice-ime.txt; do sleep .5; done; mv /sdcard/voice-ime.txt /sdcard/voice-ime.out;'
+    adb pull /sdcard/voice-ime.out /tmp/voice-ime.txt
+    cat /tmp/voice-ime.txt|perl -npe '$unicode = 1 if m/[\177-\377]/; END {print $unicode ? "，" : ", "}'|putclip
+    sawfish-send-focused-window-event "S-Insert"
+    adb-tap 811 1175
+done
+#+END_SRC
+
+注意！里面对中文输入和英文输入我分别使用了两种不一样的逗号哦！这叫情怀吧？里面用到的其他辅助脚本都在我的 [[https://github.com/baohaojun/system-config][system-config]] 项目中可以找到。
