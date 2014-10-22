@@ -1,5 +1,10 @@
 #+title: Bugs that I have encountered, see if someone else will find it useful.
  * 2014
+  - 2014-10
+   * 2014-10-22
+
+     [[../../../blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.org][A Bug in Android MobileOrg Sync]]
+
   - 2014-09
    * 2014-09-26
 

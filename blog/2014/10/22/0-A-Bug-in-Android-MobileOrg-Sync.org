@@ -1,0 +1,69 @@
+#+title: A Bug in Android MobileOrg Sync
+# bhj-tags: Bug
+Emacs用户想必都知道org-mode是什么东东。这是一个非常非常🐮的笔记软件。
+我用它写我的博客，用它管理我的任务列表。你看我好像经常能折腾出一些新奇
+的东西，主要是我把我的想法记在org-mode里，然后就变成了我的todo list。
+总有一天我有空的时候就会去实现自己的想法。当然有时候也会抛弃一些不太实
+际的狂想，但主动地、清醒地做出抛弃的决定，总比[卧槽]忘记了要好😊
+
+在安卓上有一个专门为org-mode而生的apk（在iPhone上也有，并且安卓版本是
+iPhone版本的克隆😊），是一款 [[https://github.com/matburt/mobileorg-android][自由软件]] 。它允许你在安卓手机上记事，然
+后同步到Emacs的org-mode里。
+
+我在使用的过程中，发现一个很严重的Bug。我选的同步选项是同步到SD卡，然
+后我就发现SD卡上的同步文件越来越大，呈几何级数的增长，每点一次同步按钮
+这个文件就会变大一倍。直到最后out of memory而导致同步失败。
+
+读了代码之后发现它的逻辑是这样的：
+
+1. 读已有的同步文件的内容。
+2. 把用户的改动与1中读到的内容相加。
+3. 把2中相加的结果写回到同步文件中去。
+
+问题是，在3中，它采用的打开文件的方式指定了append的模式。我们可以分析
+一下它为什么这样做：为了确保不丢失数据。因为如果采用覆盖的方式写同步文
+件的话，万一在写的过程中出错，比如写了一半的时候突然出了个Exception，
+那么我们的结果就是丢数据了：
+
+- 在上面步骤1的时候，我们手里有一个完整的同步文件
+- 在步骤3中，如果写完成的话，我们还是有一个完整的、新的同步文件
+- 但如果步骤3出错的话，我们手里留下了一个不完整的文件。
+
+但这只是我的猜测。不管我的猜测对不对，这样做却实实在在地造成了一个很严
+重的问题：文件内容呈几何级数增长：每次读出来的内容原封不动地在最后又写了一份！
+
+解决这个问题的方法很简单，就是用临时文件。写完之后一个重命名。这样，
+
+- 在写的过程中出错的话，原文件不受破坏。
+- 在写的过程中没有出错的话，重命名操作是一个原子操作，要不成功，要不失
+  败，不会出现丢掉一半数据的情况。
+
+上面这个办法你如果读过谷歌大数据的三篇白皮书论文之一 [[http://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf][map reduce]] 的话，
+你就会有点印象，[卧槽]，这么高大上！其实不要太简单😄。
+
+[[../../../../images/atomic-move-in-map-reduce.png][file:../../../../images/atomic-move-in-map-reduce.png]]
+
+最后的patch是这样的：
+
+#+BEGIN_SRC diff
+diff --git a/MobileOrg/src/main/java/com/matburt/mobileorg/Synchronizers/SDCardSynchronizer.java b/MobileOrg/src/main/java/com/matburt/mobileorg/Synchronizers/SDCardSynchronizer.java
+index f7f52fd..09d04df 100644
+--- a/MobileOrg/src/main/java/com/matburt/mobileorg/Synchronizers/SDCardSynchronizer.java
++++ b/MobileOrg/src/main/java/com/matburt/mobileorg/Synchronizers/SDCardSynchronizer.java
+@@ -34,10 +34,11 @@ public class SDCardSynchronizer implements SynchronizerInterface {
+        public void putRemoteFile(String filename, String contents) throws IOException {
+                String outfilePath = this.remotePath + filename;
+
+-		File file = new File(outfilePath);
+-		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
++		File file = new File(outfilePath + ".bak");
++		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                writer.write(contents);
+                writer.close();
++                file.renameTo(new File(outfilePath));
+        }
+
+        public BufferedReader getRemoteFile(String filename) throws FileNotFoundException {
+#+END_SRC
+
+从此，我的烦心事又少了一件😄。
