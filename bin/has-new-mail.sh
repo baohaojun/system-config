@@ -11,21 +11,24 @@ fi
 cd ~/Maildir || exit 1
 
 function not_intesting_now() {
-    if ((hour >= 8 && hour <= 18)); then
-	[[ "$1" =~ - ]] #the only not interesting mail box is orgmode-inbox (which has a `-' in it)
-	return $?
-    else
-	return 1 #everything is interesting out of working hour
+    if (cd "$1" && lookup-file -e .ignore-this); then
+        return 0
     fi
-}    
+    if ((hour >= 8 && hour <= 18)); then
+        [[ "$1" =~ - ]] #the only not interesting mail box is orgmode-inbox (which has a `-' in it)
+        return $?
+    else
+        return 1 #everything is interesting out of working hour
+    fi
+}
 
 # this function will always exit
 function got-mail() {
     echo $1 > $result
     if test $1 = true; then
-	exit 0
+        exit 0
     else
-	exit 1
+        exit 1
     fi
 }
 
@@ -44,7 +47,7 @@ function got-mail() {
         hour=$(date +%_H)
         for x in */new */cur */.nnmaildir/marks/read; do
             if not_intesting_now "$x"; then
-	        continue
+                continue
             fi
             if test $x -nt $result; then
                 echo "$x is newer than $result"
@@ -54,12 +57,12 @@ function got-mail() {
                 else
                     sync_nnmaildir -g
                 fi
-	        need_recheck=true;
-	        break
+                need_recheck=true;
+                break
             fi
         done
     fi
-    
+
     if test $need_recheck = false; then
         if test "$(cat $result)" = true; then
             exit 0;
@@ -70,7 +73,7 @@ function got-mail() {
 
     for x in */new; do
         if not_intesting_now "$x"; then
-	    continue
+            continue
         fi
         test $(ls $x|wc -l) == 0 || got-mail true
     done
@@ -82,10 +85,10 @@ function got-mail() {
 
     for x in */cur; do
         if not_intesting_now "$x"; then
-	    continue
+            continue
         fi
         echo checking $x
-        ls $x|perl -npe 's/.*'"$maildir_sep"'//'|grep -v S && 
+        ls $x|perl -npe 's/.*'"$maildir_sep"'//'|grep -v S &&
         {
             echo has got mail in $x
             got-mail true
