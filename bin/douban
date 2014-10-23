@@ -39,7 +39,10 @@ sawfish-clean-screen >/dev/null 2>&1 &
 export douban_action=${douban_action:-unknown}
 case "$1" in
     like)
-        true
+        douban_action=like douban-misc
+        ;;
+    unlike)
+        douban_action=unlike douban-misc
         ;;
     misc)
         shift
@@ -77,11 +80,31 @@ case "$1" in
                                 echo artist: $artist
                          )"
                     ;;
+                unlike)
+                    rm "$song".like -f
+                    touch "$song".unlike
+                    adb rm /sdcard/Music/"$(basename "$song")"
+                    ;;
+                like)
+                    mkdir -p "$(dirname "$song")"
+                    touch "$song".like
+                    if test -e "$song" -a -e "$icon"; then
+                        like-mp3-tags "$song"
+                        adb push "$song" /sdcard/Music/
+                        douban_action=info douban-misc
+                    fi
+                    ;;
                 start-play-hook)
                     if test ! -e "$song" -o ! -e "$icon" ; then
                         mkdir -p "$(dirname "$song")"
                         wget "$picture_url" -O "$icon".$$ && mv "$icon".$$ "$icon"
-                        wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"&
+                        if wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"; then
+                            if test -e "$song".like; then
+                                like-mp3-tags "$song"
+                                adb push "$song" /sdcard/Music/
+                                douban_action=info douban-misc
+                            fi
+                        fi&
                     fi
 
                     if test ! -e ~/.do-not-disturb; then
@@ -103,17 +126,14 @@ case "$1" in
         ;;
     print)
         shift
-        douban_action=print
-        douban-misc >/dev/null 2>&1
+        douban_action=print douban-misc >/dev/null 2>&1
         cat ~/.logs/douban.print
         ;;
     start-play-hook)
-        douban_action=start-play-hook
-        douban-misc
+        douban_action=start-play-hook douban-misc
         ;;
     info)
-        douban_action=info
-        douban-misc
+        douban_action=info douban-misc
         ;;
     lyrics)
         shift

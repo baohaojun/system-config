@@ -2,6 +2,10 @@
 use strict;
 use Encode;
 my %unicode_wx_map;
+while (<>) {
+    print;
+}
+exit;
 
 $unicode_wx_map{"🀄"} = ""; #  1F004;MAHJONG TILE RED DRAGON;So;0;ON;;;;;N;;;;;
 $unicode_wx_map{"🅰"} = ""; #  1F170;NEGATIVE SQUARED LATIN CAPITAL LETTER A;So;0;L;;;;;N;;;;;

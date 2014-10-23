@@ -1,8 +1,9 @@
-My customizations of Posix systems (Linux/Cygwin/Darwin).
+My customizations of Posix systems (Linux/Cygwin/Mac OS X).
 
 * How to use it
 
 #+BEGIN_SRC sh
+cd ~
 git clone --recursive https://github.com/baohaojun/system-config/
 ~/system-config/bin/Linux/after-check-out.sh
 #+END_SRC

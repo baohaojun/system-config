@@ -29,7 +29,7 @@ $emoticons{wink} = [";-)", "😉"]; #         Wink,[3][4][5] smirk[9][10]
 $emoticons{tongue_out} = [":-P", "😛"]; # Tongue sticking out, cheeky/playful,[3] blowing a raspberry
 $emoticons{uneasy} = [">:\ >:/ :-/ :-. :/ :\ =/ =\ :L =L :S >.<", ]; # Skeptical, annoyed, undecided, uneasy, hesitant[3]
 $emoticons{straight_face} = [":| :-|", "😒"]; # Straight face[4] no expression, indecision[7]
-$emoticons{blushing} = [":\$", "😳"]; # Embarrassed,[5] blushing[6]
+$emoticons{blushing} = ["[flush] [embarrassed] [blushing]", "😳"]; # Embarrassed,[5] blushing[6]
 $emoticons{sealed_lips} = [":-X :X :-# :#", ]; #   Sealed lips or wearing braces[3]
 $emoticons{angel} = ["O:-) 0:-3 0:3 0:-) 0:) 0;^)", "😇"]; # Angel,[3][4][9] saint,[7] innocent
 $emoticons{evil} = [">:) >;) >:-)", "😏"]; #    Evil[4]
