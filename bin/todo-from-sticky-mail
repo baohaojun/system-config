@@ -1,0 +1,43 @@
+#!/bin/bash
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
+
+if test $# = 0; then
+    cd ~/Maildir/
+
+    (
+        flock 9
+        find . -maxdepth 3 -type f -name '*:*F*'|xargs -d \\n todo-from-sticky-mail /dev/null
+        sync_nnmaildir -m
+        emacsclient -d -e "(let ((gnus-interactive-exit nil)) (gnus-group-exit))"
+    ) 9> ~/.offlineimap/lock
+    exit
+fi
+
+for x in "$@"; do
+    if test "$x" = /dev/null; then
+        continue
+    fi
+    if test ! -e "$x"; then
+        die "No such file: $x "
+    fi
+    subject=$(maildir-extract-head "$x" | perl -ne 'print if s/^subject:\s*//i')
+    org=$(cd "$(dirname "$x")"; lookup-file -e ".todo-from-sticky-mail.org" || echo ~/src/github/projects/Career.org)
+    cat <<EOF >> "$org"
+
+* TODO $subject
+  :PROPERTIES:
+  :FROM:       $(readlink -f "$x")
+  :END:
+EOF
+
+    mv "$x" "$(echo "$x" | perl -npe 's/F([^F]*)$/$1/')"
+done

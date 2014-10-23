@@ -1434,6 +1434,12 @@ criteria can be provided via the optional match-string argument "
   (c-set-offset 'arglist-intro '+))
 (add-hook 'java-mode-hook 'bhj-c-indent-setup)
 
+(defun bhj-todo-from-mail-view-mail ()
+  (interactive)
+  (let ((mail (org-entry-get (point) "FROM")))
+    (setq mail (shell-quote-argument mail))
+    (shell-command-to-string (format "maildir-view %s >/dev/null 2>&1&" mail))))
+
 (defun org-export-string (string fmt &optional dir)
   "Export STRING to FMT using existing export facilities.
 During export STRING is saved to a temporary file whose location

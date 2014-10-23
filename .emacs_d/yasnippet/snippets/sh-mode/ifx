@@ -3,6 +3,6 @@
 # key: ifx
 # --
 if echo \$SHELLOPTS | grep xtrace; then
-   ${1:export DEBUG=true}
+   ${1:export SHELLOPTS}
 fi
 $0

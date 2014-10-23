@@ -99,6 +99,7 @@ find-or-exec emacs emacs.bhj
 emacsclient -e '(org-mobile-pull)'
 
 emacsclient -e '(save-some-buffers)'
+todo-from-sticky-mail
 
 function check_git_dir() {
     if test $# != 2; then

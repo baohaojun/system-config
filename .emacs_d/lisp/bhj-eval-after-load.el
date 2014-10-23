@@ -51,7 +51,11 @@
               (latex . t))))
      (require 'org-md)
      (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
-     (add-hook 'org-mode-hook (lambda () (org-jira-mode t)))))
+     (add-hook 'org-mode-hook (lambda ()
+                                (define-key org-mode-map [(control c) (v)] 'bhj-todo-from-mail-view-mail)
+                                (define-key org-mode-map [(control c) (s)] (lambda () (interactive) (shell-command-to-string "ask-to-sync-org >/dev/null 2>&1&")))
+                                (define-key org-agenda-mode-map [(control c) (s)] (lambda () (interactive) (shell-command-to-string "ask-to-sync-org >/dev/null 2>&1&")))
+                                (org-jira-mode t)))))
 
 (eval-after-load "diff-mode"
   '(define-key diff-mode-map (kbd "M-g") (lookup-key global-map (kbd "M-g"))))
