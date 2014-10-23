@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[把邮件的星标移到我的todo list里]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html"/>
+    <updated>2014-05-24T00:10:12+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[A Bug in Android MobileOrg Sync]]></title>
     <link href="http://baohaojun.github.io/blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.html"/>
-    <updated>2014-55-22T20:10:42+08:00</updated>
+    <updated>2014-10-22T20:58:14+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html"/>
     <updated>2014-08-20T19:35:28+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Using Emacs as a better Source Insight]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.html"/>
-    <updated>2014-08-20T10:16:30+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.html</id>
   </entry>
 </feed>
