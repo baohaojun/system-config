@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[不用鼠标在Linux命令行下启动Windows上的图形界面程序]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html"/>
+    <updated>2014-42-24T21:10:33+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[把邮件的星标移到我的todo list里]]></title>
     <link href="http://baohaojun.github.io/blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html"/>
-    <updated>2014-05-24T00:10:12+08:00</updated>
+    <updated>2014-10-24T00:06:59+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html"/>
     <updated>2014-08-24T13:53:02+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Emacs Computing Grep Regexp More intelligently]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html"/>
-    <updated>2014-08-20T19:35:28+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.html</id>
   </entry>
 </feed>

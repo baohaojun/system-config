@@ -1,6 +1,10 @@
 #+title: Archive
  * 2014
   - 2014-10
+   * 2014-10-24
+
+     [[../blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.org][不用鼠标在Linux命令行下启动Windows上的图形界面程序]]
+
    * 2014-10-23
 
      [[../blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.org][把邮件的星标移到我的todo list里]]

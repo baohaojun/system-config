@@ -1,0 +1,77 @@
+#+title: 不用鼠标在Linux命令行下启动Windows上的图形界面程序
+# bhj-tags: tool
+好了，这个礼拜最后一发，本来我想来个一个月天天来一贴的疯狂博客，结果只
+持续了一个礼拜，眼看肚里已经没有什么存货了...
+
+图形界面程序为计算机的普及有着无可比拟的贡献，但是作为一个程序员，还是
+不能太依赖于图形界面，因为它很难通过自动化来提升效率。即使在Windows下
+用类似按键精灵、Linux下用xdotool等等之类的工具，其健壮性也很难保证。
+
+而命令行程序则不同，因为它的输入和输出通常有着清晰明确的定义，本身就很
+符合数学里函数一样的操作要求，自动化编程也非常简单。
+
+从另外一个角度说，由于命令行和图形界面的操作存在一定的重合，所以很多时
+候也会造成操作上的浪费。比如，在命令行上你可以通过cd去改变当前的路径；
+在图形的文件管理器里你可以用鼠标一层一层地去点到你想要的目录。其实如果
+你已经在命令行上cd到了某个目录下，你完全可以用一个很简单的命令打开图形
+文件管理器——一开启就打开这个目录，不需要点。
+
+以上这些在 [[http://baohaojun.github.io/blog/2013/03/17/cli%2Bgui.html][我的这篇博客]] 里已经说过了，这里就不啰嗦了，我有时间去写完那
+篇博客好了。
+
+今天要说的是一件我以前一直以为没法实现的功能，就是题目里说的，在Linux
+的命令行上，直接启动另一台Windows机器上的一个图形程序。
+
+首先，从Linux到Windows的连接有两种方式，一种是图形的远程桌面，在Linux
+下有个程序叫rdesktop；另一种就是命令行界面，比如可以在Windows下装个
+Cygwin，配个ssh服务器，然后从Linux下用ssh连上去。
+
+但这两个你怎么给它弄成一块儿去呢？在ssh上启动一个notepad，它是无法显示
+出来的，不知道它的窗口显示到哪里去了！你所能做的唯一的操作，就是Ctrl-C
+中断它😂。
+
+对Windows工具比较了解的话，你可能知道有一个psexec的小工具，大神Mark
+Russinovich写的，倒的确能从ssh上启动一个notepad，但那个好像是用system
+账号启动的，写程序、调试的时候有诸多不便，并且其对命令行参数的处理令我
+非常地头疼，完全记不住其规则😄。
+
+好吧，不卖关子了，我的方法是通过GNU Screen。其man手册说它是一个虚拟终
+端下的屏幕管理器。它在第一次启动的时候会启动一个后台类似于Daemon一样的
+东西，然后你可以注销后再登录，用attach的方式重新打开screen——原来的
+screen后台打开的终端窗口还在！——你可以体会一下。
+
+另一个好处就很明显了，当你在Windows图形界面下打开一个全新的screen
+session之后，你可以从Linux下ssh到这个Windows上，然后用screen程序attach
+到那个screen session，然后让它运行一个notepad（比如），因为这个session
+是图形环境下启动的，这个notepad就像是你在Windows桌面上的screen程序里打
+开的一样，在桌面上你能看到它的窗口的！
+
+Screen另一个很强的特性是，它和gnome-terminal、konsole、xfce4-terminal、
+xterm等所有虚拟终端程序一样，允许你指定它打开的时候执行一个程序，而不
+是每次都执行系统默认的交互shell。当然，对于screen来说，则变成了每次
+attach上之后马上执行一个新的终端来执行你指定的程序了。这里面需要注意地
+是引号的用法，shell下的引号用法真的是一门非常大的学问，让那个“窃书不是
+偷书”的老先生来评一下的话，他肯定比茴香豆的茴字有多少种写法更兴奋一百
+倍，说不定直接高潮了呢！😄
+
+具体的您可以看我的 [[https://github.com/baohaojun/system-config/raw/master/bin/myscr][这个脚本]] ，用法是（打开一个虚拟终端比如gnome-terminal后）：
+
+#+BEGIN_SRC sh
+myscr # 先启动一个screen session
+myscr bash -c 'echo hello; read -p world' # 从自己内部attach，启动一个新的tty。
+#+END_SRC
+
+前面我写了一管 [[../09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.org][在Linux下写MFC程序]] ，你可以想像一下我写完程序以后是怎么
+编译，怎么调试的。我可以告诉你，我不是这样编译，不是这样调试的：
+
+1. 把代码同步到Windows上
+2. 切换到Windows桌面，打开Visual Studio，编译。
+3. 在Visual Studio里发现编译错误，把代码同步回Linux，用Emacs修改之
+4. 再来一遍。
+5. 在Visual Studio下编译通过，点一下执行按钮，开始执行。
+
+呵呵呵，开个玩笑😂
+
+另外，如果你想要写一个Linux下crontab的程序，到点自动启动，但又希望能有
+图形界面，不访参考一下这篇博客哦！默认crontab启动的程序，可是连tty都没
+有的呢（但这个你可以用 =expect(1)= 来解决啦）！
