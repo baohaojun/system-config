@@ -38,7 +38,11 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function ap()
     {
-        relative-path "$FILE" $(readlink -f $(lookup-file .repo/..))/
+        if test "$ANDROID_TOP"; then
+            relative-path "$FILE" $(readlink -f "$ANDROID_TOP")
+        else
+            relative-path "$FILE" $(readlink -f $(lookup-file .repo/..))/
+        fi
     }
 
     function gitp()

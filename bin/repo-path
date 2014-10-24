@@ -1,6 +1,8 @@
 #!/bin/bash
 if test "$REPO_INFO"; then
     $REPO_INFO path
-else
+elif lookup-file -e .repo/manifest.xml; then
     repo forall . -c 'echo $REPO_PATH'
+else
+    basename "$PWD"
 fi

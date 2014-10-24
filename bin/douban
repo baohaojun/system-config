@@ -71,12 +71,23 @@ case "$1" in
                     if test -e ~/.do-not-disturb.bak; then
                         mv ~/.do-not-disturb.bak ~/.do-not-disturb
                     fi
+                    if test -e "$song".like; then
+                        postfix=-*
+                    elif
+                        test -e "$song".unlike; then
+                        postfix=-/
+                    elif test ! -e "$song"; then
+                        postfix=-??
+                    else
+                        postfix=
+                    fi
+
                     bhj-notify -i "$icon" DoubanMusic.el$(if test -e ~/.logs/douban-should-loop; then echo -n -loop; fi) \
                         "$(
                                 echo channel: $channel
                                 echo
                                 echo album: $album
-                                echo title: $title$(if test ! -e "$song"; then echo -??; fi)
+                                echo title: $title$postfix
                                 echo artist: $artist
                          )"
                     ;;
@@ -84,6 +95,7 @@ case "$1" in
                     rm "$song".like -f
                     touch "$song".unlike
                     adb rm /sdcard/Music/"$(basename "$song")"
+                    douban next
                     ;;
                 like)
                     mkdir -p "$(dirname "$song")"
@@ -167,8 +179,15 @@ case "$1" in
         if test ! -e "$1"; then
             yes
         fi
+        grade=50
+        if test -e "$1".like; then
+            grade=5
+        elif test -e "$1".unlike; then
+            grade=500
+        fi
+
         age=$(perl -e 'print 100 * -A "$ARGV[0]"' "$1")
-        if test $(random $age) -gt 50; then
+        if test $(random $age) -gt $grade; then
             if test "$EMACS"; then
                 touch "$1"
             fi

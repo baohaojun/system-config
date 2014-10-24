@@ -17,7 +17,7 @@ if test $# = 0; then
         flock 9
         find . -maxdepth 3 -type f -name '*:*F*'|xargs -d \\n todo-from-sticky-mail /dev/null
         sync_nnmaildir -m
-        emacsclient -d -e "(let ((gnus-interactive-exit nil)) (gnus-group-exit))"
+        emacsclient -d -e "(let ((gnus-interactive-exit nil)) (gnus-group-exit))" || true
     ) 9> ~/.offlineimap/lock
     exit
 fi
@@ -30,7 +30,7 @@ for x in "$@"; do
         die "No such file: $x "
     fi
     subject=$(maildir-extract-head "$x" | perl -ne 'print if s/^subject:\s*//i')
-    org=$(cd "$(dirname "$x")"; lookup-file -e ".todo-from-sticky-mail.org" || echo ~/src/github/projects/Career.org)
+    org=~/src/github/projects/Mail.org
     cat <<EOF >> "$org"
 
 * TODO $subject

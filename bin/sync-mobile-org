@@ -2,6 +2,34 @@
 
 set -e
 
+rsync=false
+ssh-to-phone echo
+if ssh phone echo hello | grep hello; then
+    rsync=true
+fi
+
+function sync-phone-files() {
+    if test "$1" = ""; then
+        if test $rsync = true; then
+            rsync -av media_rw@phone:/data/media/0/MobileOrg ..
+        else
+            for x in $(adb ls /sdcard/MobileOrg/); do
+                adb pull /sdcard/MobileOrg/$(basename $x) .
+            done
+        fi
+    elif test "$1" = "-r"; then
+        if test $rsync = true; then
+            rsync -av * media_rw@phone:/data/media/0/MobileOrg/
+        else
+            for x in *; do
+                adb push $x /sdcard/MobileOrg/$x
+            done
+        fi
+    else
+        die "can't do sync-phone-files $@"
+    fi
+}
+
 
 ## start generated code
 TEMP=$(getopt -o d --long "debug"  -n $(basename $0) -- "$@")
@@ -43,7 +71,7 @@ cd ~/doc/projects
 
 if git-dirty; then
     git-interactive-add
-    git commit -m 'auto commit' -s
+    git commit -m 'auto commit' -s || true
 fi
 
 if test ! -d ~/today/MobileOrg; then
@@ -52,9 +80,7 @@ if test ! -d ~/today/MobileOrg; then
     download-today
     cd -P ~/today/MobileOrg;
 
-    for x in $(adb ls /sdcard/MobileOrg/); do
-        adb pull /sdcard/MobileOrg/$(basename $x) .
-    done
+    sync-phone-files
 
     git init
     git add .
@@ -79,12 +105,7 @@ function sync-on-phone() {
 }
 sync-on-phone
 
-for x in $(adb ls /sdcard/MobileOrg/); do
-    if test $x = from-mobile.org; then
-        continue
-    fi
-    adb pull /sdcard/MobileOrg/$(basename $x) .
-done
+sync-phone-files
 
 if test -e mobileorg.org; then
     if test "$debug" = true; then
@@ -96,7 +117,7 @@ if test -e mobileorg.org; then
 fi
 
 find-or-exec emacs emacs.bhj
-emacsclient -e '(org-mobile-pull)'
+emacsclient -e '(progn (find-file "~/src/github/projects/Career.org") (org-mobile-pull))'
 
 emacsclient -e '(save-some-buffers)'
 todo-from-sticky-mail
@@ -128,8 +149,6 @@ cd ~/today/MobileOrg
 git add agendas.org checksums.dat
 check_git_dir ~/today/MobileOrg "Add all changes after org-mobile-push?"
 
-for x in *; do
-    adb push $x /sdcard/MobileOrg/$x
-done
+sync-phone-files -r
 
 sync-on-phone&

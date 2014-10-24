@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+if test $# = 0; then
+    set -- $(select-output-line git reflog | pn 1)
+fi
+old_head=$(git log --pretty=%H -1 HEAD)
+refs=$(git log --pretty=%H $1..HEAD|reverse)
+patch=$(git diff HEAD)
+
+git reset --hard $1
+echo "$patch" | git apply -
+git commit --amend -a
+for x in $refs; do
+    git cherry-pick $x
+done

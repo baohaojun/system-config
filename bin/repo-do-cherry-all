@@ -39,7 +39,11 @@ if test -d .repo; then
     diffs=$(rgrep -l -e "$1" out/diff | sort)
 else
     diffs=out/diff/$(ap . | perl -npe 's!/!%!g').log
-    cd $(lookup-file .repo/..)
+    if test "$ANDROID_TOP"; then
+        cd "$ANDROID_TOP"
+    else
+        cd $(lookup-file .repo/..)
+    fi
 fi
 
 for x in $diffs; do

@@ -24,10 +24,16 @@ function die() {
 }
 
 export -f die
-
-if test ! -e "$(lookup-file -e .repo/manifest.xml)"; then
-    die "Error: .repo/manifest.xml not found"
-fi
+function parallel-xargs() {
+    set -- "${cmds[@]}"
+    xargs -d \\n -P $jobs -I %N bash -c "cd %N; ""$(
+    if test $# = 1; then
+        echo "$@"
+    else
+        for x in "$@"; do printf '%q ' "$x"; done
+    fi
+)" true | tee ~/.logs/my-rfa.log
+}
 
 eval set -- "$TEMP"
 while true; do
@@ -57,6 +63,14 @@ while true; do
             ;;
     esac
 done
+
+if test ! -e "$(lookup-file -e .repo/manifest.xml)"; then
+    cd $(dirname $(lookup-file -e .git))
+    export cmds=("$@")
+    export ANDROID_TOP=$(readlink -f ..)
+    echo $PWD | parallel-xargs
+    exit
+fi
 
 if test "${#dirs[@]}" = 0; then
     dirs=(
@@ -119,13 +133,8 @@ function die() {
 export -f die
 mkdir -p ~/.logs/my-rfa-locks
 
+export cmds=("$@")
 for x in "${dirs[@]}"; do
     echo "$x"
-done | xargs -d \\n -P $jobs -I %N bash -c "cd %N; ""$(
-    if test $# = 1; then
-        echo "$@"
-    else
-        for x in "$@"; do printf '%q ' "$x"; done
-    fi
-)" true | tee ~/.logs/my-rfa.log
+done | parallel-xargs
 exit

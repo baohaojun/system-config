@@ -6,6 +6,11 @@ function die() {
     exit -1
 }
 
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
+
 local_from=false
 local_to=false
 TEMP=$(getopt -o TFf:t:r: --long from:to:remote: -n $(basename $0) -- "$@")
