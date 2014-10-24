@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 
 if test -e ~/etc/bash.d/cd_beagrep; then
     . ~/etc/bash.d/cd_beagrep
@@ -20,6 +20,11 @@ fi
 
 if test $# != 1; then
     die "Error: Usage $(basename $0) fallback_code_dir"
+fi
+
+if [[ "$PWD" =~ /for-code-reading/ ]]; then
+    set -- $(readlink -f "$1")
+    cd_beagrep
 fi
 
 this_db_dir=$(cd -P .; cd_beagrep; pwd)
