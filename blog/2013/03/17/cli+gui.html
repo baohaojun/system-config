@@ -148,20 +148,133 @@ for the JavaScript code in this tag.
 爱情。
 </p>
 
+<p>
+下面简单介绍几个我用过（写过）的结合命令行和图形界面的小程序。
+</p>
+
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> 抛绣球</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> 抛绣球（of/oc）</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-of/oc
+<code>of</code> 这个命令是open file的意思，通过这个命令我可以在命令行上打开某个文
+件，在Windows上cmd.exe下有个start命令有相同的功能，Cygwin里模访了一下，
+有一个cygstart程序。注意，start在cmd.exe里是一个内置的命令，你在文件系
+统上找不到一个对应的start.exe或start.com（能找到的话也是跟这个命令风马
+牛不相及的）；而cygstart则是一个独立的.exe程序文件。在Linux下的话就更
+多了，好像有一个叫xdg-open，也有叫gnome-open的等等。在Mac下则有一个
+/usr/bin/open命令。
+</p>
+
+<p>
+通过这个 <code>of</code> 命令的话，我就不需要从文件管理器的（我的电脑）文件夹开始
+一层一层找到我的文件所在的目录，再找到我想要到文件（有时万一这个目录下
+有成百上千几万个文件的话，作为一个男人，我会很不争气的有一种想哭的感觉）
+然后双击打开它。
+</p>
+
+<p>
+然后这个 <code>oc</code> 的话就是open containing folder的意思。在Firefox下如果你
+下载了一个文件你可以右键点击这个下载的文件，这时会弹出菜单，里面有一个
+菜单项叫做“打开所在的文件夹”，点了之后会打开这个新下载的文件所在的文件
+夹，注意！一打开之后默认就会选中这个文件。
+</p>
+
+<p>
+我现在这个 <code>oc</code> 命令用的比较少了。但是 <code>of</code> 还是很有用的，通过它我不需
+要去记比如一个网页是什么用firefox打开，一个pdf文件的是用acrobat打开，
+那么这样子的话我就不需要记那么多的文件和相应的命令之间的对应关系，所以
+觉得这个命令是非常有用的，至少在命令行上的使用效率相当的高。
+</p>
+
+<p>
+这两个命令就像是男女之间抛绣球一样，哎我扔个球出来你接着，我扔个文件出
+来你给我打开😄
 </p>
 </div>
 </div>
 
 <div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> 互留电话号码</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> 小姐，能不能给我你的电话号码（up/swp）</h2>
 <div class="outline-text-2" id="text-2">
 <p>
-up/swp
+关于这个 <code>up</code> 就是Unix Path的意思，在命令行上我打一个 <code>up</code> 后面跟一个
+比方说当前文件夹下面某个文件的名字（注意！是有补齐和通配符的哦，很方便
+耶），它就能帮我把这个文件的全路径放到剪贴板里去。关于这个 <code>swp</code> 则是
+samba windows path 的意思，在Linux下我通过smbnetfs加载了Windows的一个
+共享目录，然后我用swp了就可以获得其下某个文件的Windows共享目录格式的路
+径，放到剪贴板里，然后我可以通过邮件粘贴这个路径去跟同事们分享。或者我
+在Firefox里发个微博要上传图片时，我直接粘贴一下路径就可以了，不用一层
+一层去找。
+</p>
+
+<p>
+反过来在Windows或者Linux的文件管理器里，通过修过系统注册表（Windows）
+之类的办法，我可以点一个文件然后右键菜单中增加一个比方说叫 <code>up</code> 的菜单
+项，点一下就把这个文件的全路径放到剪贴板里，然后我可以很方便地把这个路
+径粘贴到我的命令行窗口上，打开这个文件、或者可以很容易的改变我的目录cd
+到那个文件的目录下、或者用一些别的命令来处理这个文件、我还可以把它粘贴
+到我的邮件里去。这个用过UltraEdit的同学可能会有点印象，文件管理器里会
+多出一个“用UltraEdit打开”的右键菜单项。
+</p>
+
+<p>
+这些命令是不是就像男女之间互相写情书？
+</p>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 剪贴板的更多用途</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+剪贴板真的是一个很好的媒婆一样的角色，为命令行和图形界面起到一个穿针引
+线的作用。你在命令行上操作剪贴板在不管那个平台下都是有办法的，在
+Windows下你可以通过安装Cygwin获得一对叫putclip/getclip的程序。然后在那
+个Linux下的话有一个叫xclip的程序，在Mac下则有一对pbcopy/pbpaste程序。
+我在bash底下定义了一个快捷键可以把当前输入的这一行文本直接放到剪贴板里
+去，这样的话我跟同事共享一下我的小命令是非常有用的可以直接粘贴到我的邮
+件里去发送。在 <a href="../../../2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html">这篇博客</a> 里我也提到了我对putclip/getclip的一些跟Emacs有
+关的改动。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 不爱了，把它们全干掉吧！</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+一般我们比方说图形界面的程序出了一点问题什么的情况下我们可能会想要那个，
+重头来过，reboot或者logout。一般Linux下只要logout就可以了，但logout的
+操作你需要用鼠标去点，另外的话你可能还需要去等待所有程序被关闭。所以我
+自己的话在命令行上直接退出图形界面的方法是非常简单粗暴的，将所有属于我
+自己的进程全部kill掉😄 。
+</p>
+
+<p>
+这个命令是这样的：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">sudo setsid bash -c <span class="org-string">'ps -eo user,pid|grep bhj|pn 2|xargs kill'</span>&amp;
+</pre>
+</div>
+
+<p>
+这里面sudo是为了让这个脚本本身跑到root用户底下去，不是为了要得到root权
+限才能kill——都是我自己的权限，都可以kill的——而是为了不要误伤到自己这个
+终结者进程：终结者，去，把所有bhj的进程都干掉。OK，终结者自己也是bhj的
+进程，先把自己给干掉的话就太二了。
+</p>
+
+<p>
+Setsid也是差不多的意思，只用sudo是不够的，因为终结者的父进程被干掉的话
+在终端上它们属于一个session的，终结者本身也是要一起毁灭的。
+</p>
+
+<p>
+最后有一个 <code>&amp;</code> 字符，你可以猜猜是什么目的？猜到的话我可以请你喝咖啡😊。
+注意，我要的答案不是“为了把这个程序放到后台”，这不是我的目的。
 </p>
 <nav>
   <ul id="prev_next_posts">
