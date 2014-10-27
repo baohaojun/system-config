@@ -156,13 +156,11 @@ EOF
     zipinfo -1 ota-files.zip | awk 'BEGIN { FS="RECOVERY/RAMDISK/" } /^RECOVERY\/RAMDISK\// {print $2}' | ~/src/android/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/recovery_filesystem_config.txt
     zip -q ota-files.zip META/*filesystem_config.txt rm-phone.sh system.list
     psync rem ota-files.zip
-    ssh-exp rem "
+    bash -c "
         set -e
         cd ~/src/android
         if test ! -e out/host/linux-x86/framework/signapk.jar -o ! -e out/host/linux-x86/bin/imgdiff  -o ! -e out/host/linux-x86/bin/fs_config; then
             android-make -j8 signapk imgdiff fs_config;
         fi
         ./build/tools/releasetools/ota_from_target_files -v -p out/host/linux-x86 -d MMC -k vendor/smartisan/security/releasekey -i '' -f 0 $PWD/ota-files.zip $PWD/ota.zip"
-    rsync rem:$PWD/ota.zip .
-    ssh rem "rm -rf $PWD"
 )

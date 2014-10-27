@@ -5,7 +5,6 @@ set -e
     cd ~/src/android/build/tools/releasetools
     git fetch smartisan sandbox-for-linux-ota
     git co FETCH_HEAD
-    psync rem .
     sudo modprobe loop >/dev/null 2>&1 || true
 )
 
