@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 TEMP=$(getopt -o p:o: --long part:output: -n $(basename $0) -- "$@")
-part=
+part=system
 out=
 eval set -- "$TEMP"
 while true; do
@@ -35,7 +35,9 @@ function die() {
 if test ! "$part"; then
     die "part not set, should use -p to set system/userdata/cache etc"
 fi
-
+if test -d sparse_images -a ! -e userdata_1.img; then
+    cd sparse_images
+fi
 xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n ${1:-rawprogram_unsparse.xml} | grep ${part} |
 {
     while read img start; do
