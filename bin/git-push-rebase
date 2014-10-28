@@ -64,6 +64,10 @@ if test "$ADD_DONE" != true; then
     git-interactive-add
 fi
 
+if test -e .before-push-hook; then
+    bash .before-push-hook
+    git-interactive-add || true
+fi
 
 if output=$(
         if test "$no_submodule" = true; then
@@ -106,7 +110,6 @@ function get-tags()
 
 if test -e ".do-blog"; then
     (
-        cd $(dirname $(lookup-file .git))
         for x in *.org; do
             test -f "$x" || continue
             mkdir -p blog/$(today|perl -npe 's!-!/!g')

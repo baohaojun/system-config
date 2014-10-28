@@ -81,6 +81,12 @@ if test "$#" != 0; then
         e)
             shift
             cd $blogdir
+            if test $# = 0; then
+                set -- .org
+            fi
+            if test $# = 1; then
+                set -- "$@" ''
+            fi
             e "$@"
             ;;
         *)
