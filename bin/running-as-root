@@ -1,0 +1,2 @@
+#!/bin/bash
+id | grep -P '^uid=0\b' -q

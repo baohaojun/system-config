@@ -1,6 +1,4 @@
 #!/usr/bin/expect -f
-
-
 spawn the-true-adb shell;
 
 proc shell-quote {str} {

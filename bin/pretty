@@ -16,17 +16,16 @@ if (@ARGV) {
   for (@ARGV) {
     printf("%s %d 0x%08x\n", pretty(un_pretty($_)), un_pretty($_), un_pretty($_));
     if ($binary) {
-	my @x;
-	my $num = un_pretty($_);
+        my @x;
+        my $num = un_pretty($_);
 
-	while ($num) {
-	    push @x, "" . ($num % 2);
-	    $num -= ($num % 2);
-	    $num /= 2;
-	}
-	print "0b" . join("", reverse(@x)) . "\n";
+        while ($num) {
+            push @x, "" . ($num % 2);
+            $num -= ($num % 2);
+            $num /= 2;
+        }
+        print "0b" . join("", reverse(@x)) . "\n";
     }
-	    
   }
 } else {
   while (<>) {

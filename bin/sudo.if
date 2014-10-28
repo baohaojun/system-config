@@ -1,0 +1,6 @@
+#!/bin/bash
+if id |grep '^uid=0\b -P -q'; then
+    "$@"
+else
+    /usr/bin/sudo "$@"
+fi

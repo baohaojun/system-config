@@ -1,11 +1,11 @@
 #!/bin/bash
 
 tmpf=/tmp/$(basename $0).$$
-
-
+set -e
+mkdir -p ~/tmp
 (
     trap 'echo shit' SIGINT;
-    strace -e trace=open,execve -f -q -o /dev/stdout "$@" 2>&1 | tee $tmpf
+    strace -e trace=open,execve -f -q -o $tmpf "$@" 2>&1 | tee $tmpf.out
 )
 
 cat $tmpf

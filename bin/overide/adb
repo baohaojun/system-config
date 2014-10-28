@@ -14,7 +14,18 @@ function die() {
 if which the-true-adb >/dev/null 2>&1; then
     the_adb=$(which the-true-adb)
 else
-    die "the true adb is not found"
+    the_adb_found=false
+    for the_adb in $(type -a adb | grep 'adb is' | pn 3); do
+        if test -f "$the_adb" -a -x "$the_adb"; then
+            if file "$the_adb" | grep "/adb: ELF" -q; then
+                the_adb_found=true
+                break
+            fi
+        fi
+    done
+    if test $the_adb_found = false; then
+        die "The adb program is not found, please install google sdk and config your \$PATH."
+    fi
 fi
 
 export the_adb
@@ -216,7 +227,7 @@ function adb() {
     fi
 
     if test $# = 2 -a "$1" = shell -a "$2" != restart; then # adb shell 'echo hello world'
-        exec $(basename $0) shell sh -c "$2"
+        exec $myname shell sh -c "$2"
     fi
     if test "$1" = fix-su -a "$#" = 1; then
         if command adb sh -c 'su -c id' | grep -q "uid=0\b" -P; then
@@ -272,7 +283,7 @@ function adb() {
         exit
     elif test $# -gt 1 -a "$1" = shell; then
         if ! is-tty-io;then
-            if test $myname = adb; then
+            if test $myname = adb -o $myname = my-adb; then
                 exec adb-quote "$@" | tr -d '\r'
             elif test $myname = adb-noquote; then
                 quote_the_args=false exec_the_adb "$@" | tr -d '\r'
@@ -311,7 +322,7 @@ function adb() {
                 "$@"
                 exit
             fi
-            exec $(basename $0) shell "$@"
+            exec $myname shell "$@"
         else
             exec_the_adb
         fi
@@ -320,7 +331,7 @@ function adb() {
 
 function gdbserver() {
     port=3333
-    TEMP=$(getopt -o p:P: --long process:port: -n $(basename $0) -- "$@")
+    TEMP=$(getopt -o p:P: --long process:port: -n $myname -- "$@")
     eval set -- "$TEMP"
     while true; do
         case "$1" in
@@ -342,7 +353,7 @@ function gdbserver() {
         esac
     done
     if test "$process" -a $# != 0; then
-        die "Error: Usage $(basename $0) -p process -P port, or, $(basename $0) -P port CMD ARGS"
+        die "Error: Usage $myname -p process -P port, or, $myname -P port CMD ARGS"
     fi
     if test "$process"; then
         pid=$(select-output-line -- bash -c 'adb shell ps |grep -P -e "\Q'$process'\E"'|pn 2)
