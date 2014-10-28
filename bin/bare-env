@@ -8,7 +8,12 @@ function die() {
 mypath=$(dirname $(readlink -f $0))
 export PATH=$(
     (
-        echo $PATH|tr ':' '\n' | grep -v ~ |perl -ne 'chomp; next if m/^$/; print ":" unless 1..1; print'
+        echo $PATH |
+            if test $(basename $0) = bare-env; then
+                tr ':' '\n' | grep -v ~ |perl -ne 'chomp; next if m/^$/; print ":" unless 1..1; print'
+            else
+                cat
+            fi
         echo -n :$mypath
     ) | perl -npe 's/:+/:/g; s/:$//'
        )
@@ -16,10 +21,13 @@ if test "$ANDROID_HOME"; then
     export PATH=$PATH:$ANDROID_HOME/platform-tools
 fi
 
-unset PERL_LOCAL_LIB_ROOT
-unset PERL_MB_OPT
-unset PERL_MM_OPT
-unset PERL5LIB
+if test $(basename $0) = bare-env; then
+    unset PERL_LOCAL_LIB_ROOT
+    unset PERL_MB_OPT
+    unset PERL_MM_OPT
+    unset PERL5LIB
+fi
+
 function check-program() {
     if test $# = 1; then
         set -- $1 $1
