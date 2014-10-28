@@ -35,6 +35,7 @@ size=$(pretty $size | pn 2)
 
 (
     while true; do
+        echo
         if fuser ~/.logs/$(basename $0).lock.$$; then
             sleep 1
         else
