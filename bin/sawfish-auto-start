@@ -7,7 +7,7 @@ exec > ~/.xsession-errors 2>&1
 for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; do
     unset $x
 done
-
+. ~/.bash-path
 env=$(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
 eval $env
 
@@ -17,6 +17,7 @@ done
 
 env=$(cat <<EOF
 (progn
+  (setenv "PATH" "$PATH")
   (setenv "GNOME_KEYRING_CONTROL" "$GNOME_KEYRING_CONTROL")
   (setenv "GNOME_KEYRING_PID" "$GNOME_KEYRING_PID")
   (setenv "SSH_AUTH_SOCK" "$SSH_AUTH_SOCK")

@@ -494,7 +494,7 @@
 
 (add-hook 'focus-in-hook ime-toggle)
 
-(system "sawfish-auto-start&")
+(system "~/bin/sawfish-auto-start&")
 (setq esc-x-keymap (make-keymap))
 (bind-keys esc-map "x" esc-x-keymap)
 

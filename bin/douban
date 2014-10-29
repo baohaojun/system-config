@@ -6,6 +6,10 @@ function die() {
     exit -1
 }
 
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
 function douban-misc() {
     emacsclient -e '
         (let* ((song-info (elt douban-music-song-list douban-music-current-song))
