@@ -84,7 +84,7 @@ cat <<EOF
 
     <h2>Tags</h2>
     <ul>
-        $(org_export_generate_tags $1)
+        $(. ~/bin/org-export.func; org_export_generate_tags $1)
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
@@ -122,7 +122,7 @@ cat <<EOF
             }
 
             for x in $(find-last-10|reverse); do
-                echo "<li><a href='$(relative_url $x $ORG_FILE_NAME | perl -npe 's/\.org$/.html/')'> $(title-of $x) </a></li>"
+                echo "<li><a href='$(. ~/bin/org-export.func; relative_url $x $ORG_FILE_NAME | perl -npe 's/\.org$/.html/')'> $(title-of $x) </a></li>"
             done
         )
     </ul>

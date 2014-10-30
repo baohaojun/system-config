@@ -461,14 +461,14 @@ might be bad."
 )
 
 ;;;###autoload
-(defun random-theme()
+(defun random-theme(&optional specified-theme)
   (interactive)
   (dolist (theme custom-enabled-themes)
     (disable-theme theme))
-  (load-theme (let ((theme (nth (random (length (custom-available-themes))) (custom-available-themes))))
-                (message "loaded theme: %s" theme)
-                theme)))
-
+  (load-theme (or specified-theme
+                  (let ((theme (nth (random (length (custom-available-themes))) (custom-available-themes))))
+                    (message "loaded theme: %s" theme)
+                    theme))))
 ;;;###autoload
 (defun try-all-themes()
   (interactive)
