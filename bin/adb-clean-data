@@ -1,3 +1,3 @@
 #!/bin/bash
 
-adb 'cd /data; for x in */; do if test $x = media/ -o $x = debian/; then continue; else rm -r $x; fi; done'
+my-adb 'cd /data; for x in */; do if test $x = media/ -o $x = debian/; then continue; else rm -r $x; fi; done'

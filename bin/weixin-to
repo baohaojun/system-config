@@ -1,5 +1,5 @@
 #!/bin/bash
-if adb dumpsys power | grep mWakefulness=Asleep; then
+if my-adb dumpsys power | grep mWakefulness=Asleep; then
     adb-ignite-device
 fi
 if test $(basename $0) = weixin-to; then

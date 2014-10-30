@@ -1,5 +1,5 @@
 #!/bin/bash
-activity=$(adb dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
+activity=$(my-adb dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
 if test $(basename $0) = adb-top-activity; then
     echo $activity
     echo $activity | putclip

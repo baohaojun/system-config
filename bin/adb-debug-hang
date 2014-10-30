@@ -16,10 +16,10 @@ shift $(($OPTIND - 1))
 
 if test $# != 0; then
     for proc in "$@"; do
-        adb 'for x in /proc/'$proc'/fd/; do x=${x%fd/}; echo $x; cat $x/stat; cat $x/status; done'
+        my-adb 'for x in /proc/'$proc'/fd/; do x=${x%fd/}; echo $x; cat $x/stat; cat $x/status; done'
     done
 elif test "$skip"; then
     true
 else
-    adb 'for x in /proc/*/fd/; do x=${x%fd/}; echo $x; cat $x/stat; done'
+    my-adb 'for x in /proc/*/fd/; do x=${x%fd/}; echo $x; cat $x/stat; done'
 fi

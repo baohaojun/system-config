@@ -1,2 +1,2 @@
 #!/bin/bash
-adb -S shell "echo 1 >  /sys/devices/system/cpu/cpu${1:-1}/online"
+my-adb -S shell "echo 1 >  /sys/devices/system/cpu/cpu${1:-1}/online"

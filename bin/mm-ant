@@ -31,7 +31,7 @@ while true; do
     esac
 done
 
-adb shell echo -n
+my-adb shell echo -n
 build_xml=$(lookup-file build.xml) || true
 
 if test ! -e "$build_xml" -a -e AndroidManifest.xml; then
@@ -69,7 +69,7 @@ function do_install() {
     install_type=${1:-installd}
     ant "$install_type" 2>&1 | tee ~/.logs/ant-install.log
     if grep '\Q[exec] Failure\E' -P ~/.logs/ant-install.log; then
-        adb uninstall $(ant-get-package)
+        my-adb uninstall $(ant-get-package)
         ant "$install_type" 2>&1 | tee ~/.logs/ant-install.log
     fi
 
@@ -88,7 +88,7 @@ elif test "$1" = start; then
     android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
 else
     ant-expect-keystore debug
-    adb -w shell echo
+    my-adb -w shell echo
     if test "$command"; then
         set -x
         $command
@@ -98,7 +98,7 @@ else
     do_install installd
 fi
 
-if test $(adb devices | grep -v '^\s*$' -P | wc -l) -lt 3; then
+if test $(my-adb devices | grep -v '^\s*$' -P | wc -l) -lt 3; then
     find-or-exec emulator
 fi
 if test $run = true; then

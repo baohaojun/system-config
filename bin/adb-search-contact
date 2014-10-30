@@ -1,6 +1,6 @@
 #!/bin/bash
 putclip-android "$1"
-adb start-activity com.android.contacts/com.android.contacts.activities.DialtactsActivity
+my-adb start-activity com.android.contacts/com.android.contacts.activities.DialtactsActivity
 adb-tap 438 1863
 adb-tap 167 271
 sleep .1

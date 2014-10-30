@@ -1,9 +1,9 @@
 #!/bin/bash
-adb stop
+my-adb stop
 for x in keystore ril-daemon cnd gsiff_daemon quipc_igsn quipc_main sensors ; do
-    adb stop $x
+    my-adb stop $x
 done
 
-adb fuser -k -TERM -m /data | grep .
-adb fuser -k -TERM -m /data | grep .
-adb fuser -k -m /data
+my-adb fuser -k -TERM -m /data | grep .
+my-adb fuser -k -TERM -m /data | grep .
+my-adb fuser -k -m /data

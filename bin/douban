@@ -98,7 +98,7 @@ case "$1" in
                 unlike)
                     rm "$song".like -f
                     touch "$song".unlike
-                    adb rm /sdcard/Music/"$(basename "$song")"
+                    my-adb rm /sdcard/Music/"$(basename "$song")"
                     douban next
                     ;;
                 like)
@@ -106,7 +106,7 @@ case "$1" in
                     touch "$song".like
                     if test -e "$song" -a -e "$icon"; then
                         like-mp3-tags "$song"
-                        adb push "$song" /sdcard/Music/
+                        my-adb push "$song" /sdcard/Music/
                         douban_action=info douban-misc
                     fi
                     ;;
@@ -117,7 +117,7 @@ case "$1" in
                         if wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"; then
                             if test -e "$song".like; then
                                 like-mp3-tags "$song"
-                                adb push "$song" /sdcard/Music/
+                                my-adb push "$song" /sdcard/Music/
                                 douban_action=info douban-misc
                             fi
                         fi&

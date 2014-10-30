@@ -8,4 +8,4 @@ else
     done
     exit
 fi
-adb push $1 /data/; adb shell dd if=/data/$1 of=/dev/block/platform/msm_sdcc.1/by-name/$2
+my-adb push $1 /data/; my-adb shell dd if=/data/$1 of=/dev/block/platform/msm_sdcc.1/by-name/$2

@@ -20,6 +20,6 @@ if test -x /system/bin/toolbox; then
         fi
     done >/dev/null 2>&1 </dev/null&
 else
-    adb rm /data/nohup.out
-    adb nohup bash -c "set -x; $(echo; cat $0)"
+    my-adb rm /data/nohup.out
+    my-adb nohup bash -c "set -x; $(echo; cat $0)"
 fi

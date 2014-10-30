@@ -1,2 +1,2 @@
 #!/bin/bash
-adb -w shell tcmd-subcase.sh "$@"
+my-adb -w shell tcmd-subcase.sh "$@"

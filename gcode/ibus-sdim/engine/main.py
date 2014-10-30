@@ -22,8 +22,8 @@
 import os
 import sys
 import optparse
-import ibus
-import gobject
+from gi.repository import IBus
+from gi.repository import GObject
 import re
 patt = re.compile (r'<\?.*\?>\n')
 from signal import signal, SIGTERM, SIGINT
@@ -67,15 +67,15 @@ if (not options.xml) and options.debug:
 
 class IMApp:
     def __init__(self, exec_by_ibus):
-        self.__mainloop = gobject.MainLoop()
-        self.__bus = ibus.Bus()
+        self.__mainloop = GObject.MainLoop()
+        self.__bus = IBus.Bus()
         self.__bus.connect("disconnected", self.__bus_destroy_cb)
         self.__factory = factory.EngineFactory(self.__bus)
         self.destroied = False
         if exec_by_ibus:
             self.__bus.request_name("org.freedesktop.IBus.Sdim", 0)
         else:
-            self.__component = ibus.Component("org.freedesktop.IBus.Sdim",
+            self.__component = IBus.Component("org.freedesktop.IBus.Sdim",
                                               "Sdim Component",
                                               "0.1.0",
                                               "GPL",
@@ -92,7 +92,7 @@ class IMApp:
                 if not os.access( icon, os.F_OK):
                     icon = ''
             layout = 'us'
-            
+
             self.__component.add_engine(name,
                                         longname,
                                         description,
@@ -170,4 +170,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -8,4 +8,4 @@ for x in $(find . -name '*.jpg'); do convert -resize $1x$2 $x $x; done
 
 7z a -mx=0 bootanimation.zip desc.txt $(find part*)
 adb-push  bootanimation.zip /system/media/
-adb shell bootanimation
+my-adb shell bootanimation

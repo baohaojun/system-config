@@ -1,7 +1,7 @@
 #!/bin/bash
 while true; do
-    adb 'while test ! -e /sdcard/voice-ime.txt; do sleep .5; done; mv /sdcard/voice-ime.txt /sdcard/voice-ime.out;'
-    if ! adb pull /sdcard/voice-ime.out /tmp/voice-ime.txt; then
+    my-adb 'while test ! -e /sdcard/voice-ime.txt; do sleep .5; done; mv /sdcard/voice-ime.txt /sdcard/voice-ime.out;'
+    if ! my-adb pull /sdcard/voice-ime.out /tmp/voice-ime.txt; then
         sleep 1
         continue
     fi

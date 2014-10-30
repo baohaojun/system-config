@@ -1,4 +1,4 @@
 #!/bin/bash
 for x in "$@"; do
-    adb shell input keyevent "$x"
+    my-adb shell input keyevent "$x"
 done

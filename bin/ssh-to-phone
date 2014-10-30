@@ -2,7 +2,7 @@
 
 # instead of scp in the name, we are going to use rsync
 if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
-    adb -S
+    my-adb -S
 fi
 if echo $SHELLOPTS | grep xtrace; then
     xset=-x
@@ -14,16 +14,16 @@ function die() {
     echo Error: "$@"
     exit -1
 }
-adb push ~/system-config/doc/galaxy-nexus-root/data/start-debian2.sh /data/start-debian2.sh
-if ! adb shell su -c "bash $xset /data/start-debian2.sh" | grep 'start debian done'; then
+my-adb push ~/system-config/doc/galaxy-nexus-root/data/start-debian2.sh /data/start-debian2.sh
+if ! my-adb shell su -c "bash $xset /data/start-debian2.sh" | grep 'start debian done'; then
     if test $(basename $0) = net-for-phone; then
         true;
     else
         die debian not started successfully
     fi
 fi
-if ! adb -w shell netcfg|grep -q 'rndis0.*129/'; then
-    adb shell su -c "
+if ! my-adb -w shell netcfg|grep -q 'rndis0.*129/'; then
+    my-adb shell su -c "
         setsid setsid sh -c '
             if test \"\$(getprop persist.sys.usb.config)\" != rndis,adb; then
                 setprop persist.sys.usb.config rndis,adb;
@@ -57,11 +57,11 @@ fi
 if ! ifconfig $USB0 | grep 192.168.15.33; then
     sudo ifconfig $USB0 192.168.15.33
 fi
-adb -w echo
+my-adb -w echo
 if test $(basename $0) = net-for-phone; then
-    adb shell su -c "setprop net.dns1 $(cat /etc/resolv.conf | grep ^nameserver | pn 2 | head -n 1)"
-    adb shell su -c '/system/xbin/route del default'
-    adb shell su -c '/system/xbin/route add default gw 192.168.15.33'
+    my-adb shell su -c "setprop net.dns1 $(cat /etc/resolv.conf | grep ^nameserver | pn 2 | head -n 1)"
+    my-adb shell su -c '/system/xbin/route del default'
+    my-adb shell su -c '/system/xbin/route add default gw 192.168.15.33'
     for x in $(ifconfig | grep -P -e '^\S'| pn 1|grep -v -P -e '^(lo|'$USB0')$'); do
         nat-vbox "$x" $USB0
     done

@@ -28,7 +28,7 @@ function apk_main_activity() {
 
 function anduninst() {
     apkgname "$@"
-    adb shell pm uninstall $package
+    my-adb shell pm uninstall $package
 }
 
 if test "$BASH_SOURCE" = "$0"; then

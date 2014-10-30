@@ -2,25 +2,25 @@
 
 if test "$1"; then
     wifi_ip=$1
-    echo adb connect "$wifi_ip":${2:-5555} > ~/.logs/adb-over-tcp
-    adb connect "$wifi_ip":${2:-5555}
+    echo my-adb connect "$wifi_ip":${2:-5555} > ~/.logs/adb-over-tcp
+    my-adb connect "$wifi_ip":${2:-5555}
     exit
 fi
 
-if ! adb devices?; then
+if ! my-adb devices?; then
     bash ~/.logs/adb-over-tcp
     exit
 fi
 
-if adb devices | grep : -q && yes-or-no-p -y adb disconnect?; then
-    adb disconnect
+if my-adb devices | grep : -q && yes-or-no-p -y my-adb disconnect?; then
+    my-adb disconnect
 fi
 
-adb -S
-adb -w tcpip ${1:-5555};
+my-adb -S
+my-adb -w tcpip ${1:-5555};
 sleep 1
-adb -w shell echo hello
+my-adb -w shell echo hello
 wifi_ip=$(adb-get-wifi-ip)
 echo wifi is $wifi_ip
-echo adb connect "$wifi_ip":${1:-5555} > ~/.logs/adb-over-tcp
-adb connect "$wifi_ip":${1:-5555}
+echo my-adb connect "$wifi_ip":${1:-5555} > ~/.logs/adb-over-tcp
+my-adb connect "$wifi_ip":${1:-5555}

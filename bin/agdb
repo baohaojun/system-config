@@ -80,7 +80,7 @@ EOF
 if test -n "$EMACS"; then
     annotate="-f $(if test $(basename $0) = agdb; then echo --interpreter=mi; fi) $annotate"
 fi
-adb forward tcp:$port tcp:$port || true
+my-adb forward tcp:$port tcp:$port || true
 exe_to_dbg=$(select-output-line -- bash -c "find ./out/target/product/*/symbols/{system,}/*bin -name '*$1*'")
 echo $gdb_exe $annotate -x /tmp/gdbclient.cmds $core $exe_to_dbg > ~/.logs/agdb.txt
 #exec $gdb_exe $annotate -x /tmp/gdbclient.cmds $core $exe_to_dbg

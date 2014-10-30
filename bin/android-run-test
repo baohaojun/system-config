@@ -6,4 +6,4 @@ classes=$(cd $(lookup-file -e "bin/classes")
 
 shift 2
 set -x
-adb shell am instrument "$@" -w -e class $classes $instr
+my-adb shell am instrument "$@" -w -e class $classes $instr

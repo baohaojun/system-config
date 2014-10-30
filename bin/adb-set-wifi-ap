@@ -1,5 +1,5 @@
 #!/bin/bash
-adb shell sh -c '
+my-adb shell sh -c '
 cat > /data/misc/wifi/wpa_supplicant.conf <<EOF
 ctrl_interface=wlan0
 update_config=1

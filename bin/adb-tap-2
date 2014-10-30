@@ -1,2 +1,2 @@
 #!/bin/bash
-adb sh -c "input tap $*; input tap $*"
+my-adb sh -c "input tap $*; input tap $*"

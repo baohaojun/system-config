@@ -1,15 +1,15 @@
 #!/bin/bash
 set -e
-dev=$(adb devices? | pn 1)
+dev=$(my-adb devices? | pn 1)
 mkdir -p ~/today/forever/gpt-$dev
 cd ~/today/forever/gpt-$dev
-adb "dd if=/dev/block/mmcblk0 of=/data/gpt bs=$(pretty 17K|pn 2) count=1 && echo shit" | grep shit
-adb pull /data/gpt gpt-primary
+my-adb "dd if=/dev/block/mmcblk0 of=/data/gpt bs=$(pretty 17K|pn 2) count=1 && echo shit" | grep shit
+my-adb pull /data/gpt gpt-primary
 dd if=gpt-primary bs=1 count=4 skip=544 | od -x
 back_block=$(dd if=gpt-primary bs=1 count=4 skip=544 | od -x|head -n 1|perl -a -ne 'print "0x$F[2]$F[1]"')
 back_block=$(pretty $back_block|pn 2)
-adb "dd if=/dev/block/mmcblk0 of=/data/gpt bs=512 count=$(pretty 16K512/512|pn 2) skip=$back_block && echo shit" | grep shit
-adb pull /data/gpt gpt-back
+my-adb "dd if=/dev/block/mmcblk0 of=/data/gpt bs=512 count=$(pretty 16K512/512|pn 2) skip=$back_block && echo shit" | grep shit
+my-adb pull /data/gpt gpt-back
 git init . || true
 git add .
 git commit -m "$(now)"

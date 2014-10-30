@@ -30,11 +30,10 @@ def _str_percent_decode(str):
 
 
 import os
-import ibus
+from gi.repository import IBus
+from curses import ascii
 #from ibus import Property
-from ibus import keysyms
-from ibus import modifier
-from ibus import ascii
+import keysyms
 import re
 
 from gettext import dgettext
@@ -60,7 +59,7 @@ class KeyEvent:
         self.mask = state
         self.name = ''
         if not is_press:
-            self.mask |= modifier.RELEASE_MASK
+            self.mask |= IBus.ModifierType.RELEASE_MASK
             return
 
         try:
@@ -68,7 +67,7 @@ class KeyEvent:
             if self.name == ' ':
                 self.name = 'space'
             else:
-                self.mask &= ~modifier.SHIFT_MASK
+                self.mask &= ~IBus.ModifierType.SHIFT_MASK
         except:
             self.name = keysyms.keycode_to_name(self.code).lower()
 
@@ -83,11 +82,11 @@ class KeyEvent:
             return
 
         mods = ''
-        if self.mask & modifier.ALT_MASK:
+        if self.mask & IBus.ModifierType.MOD1_MASK:
             mods += 'A'
-        if self.mask & modifier.CONTROL_MASK:
+        if self.mask & IBus.ModifierType.CONTROL_MASK:
             mods += 'C'
-        if self.mask & modifier.SHIFT_MASK:
+        if self.mask & IBus.ModifierType.SHIFT_MASK:
             mods += 'S'
 
         if mods != '':
@@ -96,7 +95,7 @@ class KeyEvent:
         return self.name
 
 
-class tabengine (ibus.EngineBase):
+class tabengine (IBus.Engine):
     '''The IM Engine for Tables'''
 
     _page_size = 10
@@ -114,7 +113,8 @@ class tabengine (ibus.EngineBase):
 
     def __init__ (self, bus, obj_path):
         print 'obj_path is', obj_path
-        super(tabengine,self).__init__ (bus,obj_path)
+        super(tabengine,self).__init__ (connection=bus.get_connection(),
+                                        object_path=obj_path)
         self._bus = bus
         self.sock = None
         self.last_key = ""
@@ -122,7 +122,7 @@ class tabengine (ibus.EngineBase):
         self.do_connect()
 
         self.clear_data()
-        self._lookup_table = ibus.LookupTable (tabengine._page_size)
+        self._lookup_table = IBus.LookupTable (tabengine._page_size)
 
         self._name = 'sdim'
         print 'name is', self._name
@@ -147,31 +147,46 @@ class tabengine (ibus.EngineBase):
 
     def do_destroy(self):
         self.reset ()
-        self.focus_out ()
+        self.do_focus_out ()
         self.do_disconnect()
-        super(tabengine,self).do_destroy()
+        super(tabengine,self).destroy()
 
     def _update_preedit (self):
         '''Update Preedit String in UI'''
         _str = self._preedit_str
         if _str == '':
-            super(tabengine, self).update_preedit_text(ibus.Text('',None), 0, False)
+            super(tabengine, self).update_preedit_text(IBus.Text.new_from_string(''), 0, False)
         else:
-            attrs = ibus.AttrList()
-            attrs.append( ibus.AttributeForeground(0x1b3f03,0,len(_str)) )
             # because ibus now can only insert preedit into txt, so...
-            attrs = ibus.AttrList()
-            attrs.append(ibus.AttributeUnderline(ibus.ATTR_UNDERLINE_SINGLE, 0, len(_str)))
-
-
-            super(tabengine, self).update_preedit_text(ibus.Text(_str.decode('utf-8'), attrs), len(_str), True)
+            attrs = IBus.AttrList()
+            attrs.append(IBus.attr_underline_new(IBus.AttrUnderline.SINGLE, 0, len(_str)))
+            text = IBus.Text.new_from_string(_str)
+            i = 0
+            while attrs.get(i) != None:
+                attr = attrs.get(i)
+                text.append_attribute(attr.get_attr_type(),
+                                      attr.get_value(),
+                                      attr.get_start_index(),
+                                      attr.get_end_index())
+                i += 1
+            super(tabengine, self).update_preedit_text(text, len(_str), True)
 
     def _update_aux (self):
         '''Update Aux String in UI'''
         _aux = self._aux_str
         if _aux:
-            attrs = ibus.AttrList([ ibus.AttributeForeground(0x9515b5, 0, len(_aux)) ])
-            super(tabengine, self).update_auxiliary_text(ibus.Text(_aux.decode('utf-8'), attrs), True)
+            attrs = IBus.AttrList()
+            attrs.append(IBus.attr_foreground_new(0x9515b5, 0, len(_aux)))
+            text = IBus.Text.new_from_string(_aux)
+            i = 0
+            while attrs.get(i) != None:
+                attr = attrs.get(i)
+                text.append_attribute(attr.get_attr_type(),
+                                      attr.get_value(),
+                                      attr.get_start_index(),
+                                      attr.get_end_index())
+                i += 1
+            super(tabengine, self).update_auxiliary_text(text, True)
         else:
             self.hide_auxiliary_text()
 
@@ -188,12 +203,12 @@ class tabengine (ibus.EngineBase):
         self._lookup_table.clean()
 
         for cand in _cands:
-            self._lookup_table.append_candidate(ibus.Text(cand.decode('utf-8'), None))
+            self._lookup_table.append_candidate(IBus.Text.new_from_string(cand))
 
         index = int(self._cand_idx) % 10
-        self._lookup_table.set_cursor_pos_in_current_page(index)
+        self._lookup_table.set_cursor_pos(index)
         self._lookup_table.show_cursor(True)
-        self.update_lookup_table ( self._lookup_table, True, True )
+        self.update_lookup_table ( self._lookup_table, True)
 
     def _update_ui (self):
         '''Update User Interface'''
@@ -207,16 +222,16 @@ class tabengine (ibus.EngineBase):
             return
         commit = self._commit_str
         self._commit_str = ''
-        super(tabengine,self).commit_text(ibus.Text(commit.decode('utf-8')))
+        super(tabengine,self).commit_text(IBus.Text.new_from_string(commit))
 
-    def process_key_event(self, keyval, keycode, state):
+    def do_process_key_event(self, keyval, keycode, state):
         '''Process Key Events
         Key Events include Key Press and Key Release,
-        modifier means Key Pressed
+        IBus.ModifierType.means Key Pressed
         '''
-        key = KeyEvent(keyval, state & modifier.RELEASE_MASK == 0, state)
+        key = KeyEvent(keyval, state & IBus.ModifierType.RELEASE_MASK == 0, state)
         # ignore NumLock mask
-        key.mask &= ~modifier.MOD2_MASK
+        key.mask &= ~IBus.ModifierType.MOD2_MASK
         result = self._process_key_event (key)
         return result
 
@@ -277,21 +292,20 @@ class tabengine (ibus.EngineBase):
             else:
                 self._aux_str = line
 
-    def focus_in (self):
+    def do_focus_in (self):
         if self._on:
             self._update_ui ()
 
-    def focus_out (self):
-        super(tabengine,self).focus_out()
+    def do_focus_out (self):
         pass
 
-    def enable (self):
+    def do_enable (self):
         self._on = True
         if not self.sock:
             self.do_connect()
-        self.focus_in()
+        self.do_focus_in()
 
-    def disable (self):
+    def do_disable (self):
         self.reset()
         self.do_disconnect()
         self._on = False

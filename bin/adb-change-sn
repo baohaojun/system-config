@@ -1,8 +1,8 @@
 #!/bin/bash
 if test $# = 1 -a -z "$1"; then
-    set -- $(adb cat /proc/cmdline|grep -o 'androidboot.serialno=\S*' -P|perl -npe 's/.*=//')
+    set -- $(my-adb cat /proc/cmdline|grep -o 'androidboot.serialno=\S*' -P|perl -npe 's/.*=//')
 fi
-adb shell 'setsid setsid nohup bash -x -c "
+my-adb shell 'setsid setsid nohup bash -x -c "
        usb=$(getprop persist.sys.usb.config)
        x='${1:-222222}'
        setprop persist.usb.serialno \$x

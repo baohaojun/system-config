@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if test $(basename $0) = adb-ignite-device; then
-    if adb dumpsys power | grep mWakefulness=Asleep; then
+    if my-adb dumpsys power | grep mWakefulness=Asleep; then
         adb-key 26
     fi
     activity=$(adb-top-activity)

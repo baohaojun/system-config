@@ -99,13 +99,13 @@ _adb() {
                         _adb_cmd_uninstall "$serial" $i
                         ;;
                     stop|start|restart|sstat)
-                        COMPREPLY=( $(compgen -W "$(adb getprop|grep 'init\.svc\.'|pn 1|sort -u|perl -npe 's/.*\.//; s/\].*//')" -- "${COMP_WORDS[i]}") )
+                        COMPREPLY=( $(compgen -W "$(my-adb getprop|grep 'init\.svc\.'|pn 1|sort -u|perl -npe 's/.*\.//; s/\].*//')" -- "${COMP_WORDS[i]}") )
                         ;;
                     getprop|setprop)
-                        COMPREPLY=( $(compgen -W "$(adb getprop|pn 1|sort -u|perl -npe 's/.*\[//; s/\].*//')" -- "${COMP_WORDS[i]}") )
+                        COMPREPLY=( $(compgen -W "$(my-adb getprop|pn 1|sort -u|perl -npe 's/.*\[//; s/\].*//')" -- "${COMP_WORDS[i]}") )
                         ;;
                     dumpsys)
-                        COMPREPLY=( $(compgen -W "$(adb dumpsys -l)" -- "${COMP_WORDS[i]}") )
+                        COMPREPLY=( $(compgen -W "$(my-adb dumpsys -l)" -- "${COMP_WORDS[i]}") )
                         ;;
                     *)
                         _adb_cmd_shell "$serial" $((i+1))

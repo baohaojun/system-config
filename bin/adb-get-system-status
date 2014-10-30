@@ -1,6 +1,6 @@
 #!/bin/bash
-# function adb() {
-#     time command adb "$@"
+# function my-adb() {
+#     time command my-adb "$@"
 # }
-adb shell sh -c 'dumpsys meminfo'
-adb shell cat /d/ion/heaps/system|perl -ne 'chomp; if (m/pages in.*pool = (\d+) total/) {$x += $1;} if (m/^\s+total\s+(\d+)$/) {$y += $1} END {printf "use: %d kb, cache: %d kb; total: %d kb", $y/1024, $x/1024, ($x + $y)/1024}'
+my-adb shell sh -c 'dumpsys meminfo'
+my-adb shell cat /d/ion/heaps/system|perl -ne 'chomp; if (m/pages in.*pool = (\d+) total/) {$x += $1;} if (m/^\s+total\s+(\d+)$/) {$y += $1} END {printf "use: %d kb, cache: %d kb; total: %d kb", $y/1024, $x/1024, ($x + $y)/1024}'

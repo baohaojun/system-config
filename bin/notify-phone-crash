@@ -27,22 +27,22 @@ if test $(basename $0) = adb-fix-gms; then
             exec > ~/.logs/adb-fix-gms.log 2>&1
         fi
 
-        adb -W || true
+        my-adb -W || true
 
-        if test $(adb getprop ro.debuggable) = 0; then
+        if test $(my-adb getprop ro.debuggable) = 0; then
             exit
         fi
         if test -e ~/.configs/adb-root; then
             exit
         fi
-        if ! adb id | grep -P -e 'uid=0\b'; then
-            adb root
+        if ! my-adb id | grep -P -e 'uid=0\b'; then
+            my-adb root
             exit
         fi
         (
             mkdir ~/today/logs -p
             cd ~/today/logs
-            adb pull /data/logs/.kmsg.last kmsg.last.$$
+            my-adb pull /data/logs/.kmsg.last kmsg.last.$$
             if test -e kmsg.$(md5sum kmsg.last.$$ | pn 1); then
                 rm kmsg.last.$$
             else
@@ -50,18 +50,18 @@ if test $(basename $0) = adb-fix-gms; then
             fi
         )&
 
-        if test "$(adb 'test -e /system/priv-app/GmsCore.apk && echo yes')" = yes; then
+        if test "$(my-adb 'test -e /system/priv-app/GmsCore.apk && echo yes')" = yes; then
             true
         else
-            adb stop
+            my-adb stop
             adb-push ~/today/forever/gapps-system/* /system/
         fi
 
-        if test "$(adb 'test -e /data/debian/usr/bin/sudo && echo yes')" = yes; then
+        if test "$(my-adb 'test -e /data/debian/usr/bin/sudo && echo yes')" = yes; then
             true
         else
-            adb remount
-            adb '
+            my-adb remount
+            my-adb '
             set -x
             for x in /data/debian/usr/lib/pt_chown.bak /data/debian/usr/bin/sudo.bak; do
                 cp $x /system/bin/$(basename $x)
@@ -70,14 +70,14 @@ if test $(basename $0) = adb-fix-gms; then
                 ln -s /system/bin/$(basename $x) ${x%.bak}
             done
         '
-            adb romount
+            my-adb romount
         fi
-        if test "$(adb netcfg | grep wlan0 | pn 5)" = 00:0a:f5:79:b2:54; then
+        if test "$(my-adb netcfg | grep wlan0 | pn 5)" = 00:0a:f5:79:b2:54; then
             adb-fix-wifi-mac
-            adb reboot
+            my-adb reboot
         fi
-        adb start
-        if adb getprop persist.sys.usb.config | grep rndis -q; then
+        my-adb start
+        if my-adb getprop persist.sys.usb.config | grep rndis -q; then
             ssh-to-phone echo hello
         fi
     ) || bhj-notify "Fix Gms Failed" "Please check!"

@@ -25,14 +25,14 @@ function ainstall() {
             echo 'Error: apk file is empty'
             exit -1
         fi
-        adb install $File
+        my-adb install $File
         . apk_main_activity
         apk_main_activity
         if test "x$DO_START" = "xno"; then
             echo no start
         else
-            echo adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n $main_activity
-            adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n $main_activity
+            echo my-adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n $main_activity
+            my-adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n $main_activity
         fi
     else
         exe=`grep 'LOCAL_MODULE\b' $Android_mk|perl -npe 's/.*=//g; s/\s*//g;'`
@@ -41,8 +41,8 @@ function ainstall() {
             echo 'Error: exe file is empty'
             return 1
         fi
-        adb push $File /data
-        adb shell chmod 777 /data/`basename $File`
+        my-adb push $File /data
+        my-adb shell chmod 777 /data/`basename $File`
     fi
 }
 

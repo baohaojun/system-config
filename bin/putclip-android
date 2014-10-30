@@ -1,5 +1,5 @@
 #!/bin/bash
-if test "$(adb devices?|wc -l)" -gt 1 -a -e ~/.config/bhj/weixin-adb-serial; then
+if test "$(my-adb devices?|wc -l)" -gt 1 -a -e ~/.config/bhj/weixin-adb-serial; then
     export ANDROID_SERIAL=$(cat ~/.config/bhj/weixin-adb-serial)
 fi
 
@@ -22,14 +22,14 @@ if test $(basename $0) = putclip-android; then
         set -- "$(echo "$@")"
         echo -n "$@" |emoji-to-unicode.pl > ~/.logs/$(basename $0).txt
     fi
-    adb push ~/.logs/$(basename $0).txt /sdcard/putclip.txt&
+    my-adb push ~/.logs/$(basename $0).txt /sdcard/putclip.txt&
     if test "$NO_WEIXIN_EMOJI"; then
         cp ~/.logs/$(basename $0).txt ~/.logs/$(basename $0).txt.wx
     else
         unicode-to-wx.pl ~/.logs/$(basename $0).txt > ~/.logs/$(basename $0).txt.wx
     fi
-    adb push ~/.logs/$(basename $0).txt.wx /sdcard/putclip-wx.txt
-    adb "
+    my-adb push ~/.logs/$(basename $0).txt.wx /sdcard/putclip-wx.txt
+    my-adb "
          am startservice --user 0 -n com.bhj.setclip/.PutClipService&
          for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
              if test -e /sdcard/putclip.txt; then
@@ -44,7 +44,7 @@ elif test $(basename $0) = getclip-android -o $(basename $0) = getphone-android;
     cmd=$(basename $0)
     cmd=${cmd%-*}
 
-    adb '
+    my-adb '
         rm -f /sdcard/putclip.txt
         am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei '$cmd' 1 >/dev/null 2>&1&
         for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
@@ -55,11 +55,11 @@ elif test $(basename $0) = getclip-android -o $(basename $0) = getphone-android;
             fi;
         done
 ' | true
-    adb pull /sdcard/putclip.txt /tmp/$(basename $0).$$ >/dev/null 2>&1
+    my-adb pull /sdcard/putclip.txt /tmp/$(basename $0).$$ >/dev/null 2>&1
     cat /tmp/$(basename $0).$$
     rm /tmp/$(basename $0).$$
 elif test $(basename $0) = gettask-android; then
-     adb '
+     my-adb '
          rm -f /sdcard/putclip.txt
          am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei gettask 1 >/dev/null 2>&1&
          for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do

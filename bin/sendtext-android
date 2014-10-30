@@ -7,4 +7,4 @@ if test "$#" = 0; then
     set -- "$(xclip -o)"
 fi
 x=$(echo "$@")
-IS_TTY_IO=true adb -w shell input text "$x" >/dev/null 2>&1
+IS_TTY_IO=true my-adb -w shell input text "$x" >/dev/null 2>&1

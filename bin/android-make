@@ -86,6 +86,8 @@ else
 fi
 export CCACHE_DIR=~/.ccache-$( (cat .repo/manifest.xml; echo $config) | md5sum | pn 1 | cut -b 1-6)
 echo CCACHE_DIR is $CCACHE_DIR
+rm ~/.ccache || rm -rf ~/.ccache
+ln -s $CCACHE_DIR ~/.ccache
 . ~/bin/.android-set-outdir
 android-set-product
     # re-lunch, so that the ANDROID_PRODUCT_OUT can inherit from the new OUT_DIR

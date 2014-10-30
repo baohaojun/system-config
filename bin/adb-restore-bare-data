@@ -4,8 +4,8 @@ cd ~/today/forever/data-f9e6c95/data/
 if test ! -e ../debian.tgz; then
     sudo tar czfv ../debian.tgz debian start-debian2.sh --exclude-vcs
 fi
-adb push ../debian.tgz /data
-adb 'cd /data; tar zxvf debian.tgz'
+my-adb push ../debian.tgz /data
+my-adb 'cd /data; tar zxvf debian.tgz'
 ssh-to-phone echo hello
 if test "$1" = debian; then
     exit

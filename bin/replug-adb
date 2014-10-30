@@ -1,5 +1,5 @@
 #!/bin/bash
-sn=$(adb devices|grep 'device$'|pn 1)
+sn=$(my-adb devices|grep 'device$'|pn 1)
 if test "$sn"; then
     for n in $sn; do
         usb=$(dmesg |grep -P -o -e "usb .*: SerialNumber: $n"|tail -n 1|pn 2|perl -npe "s/:.*//");

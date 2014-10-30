@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if test $(adb devices|grep .|wc -l) = 2 && adb devices|grep -q : && yes-or-no-p -y "are you sure to use wifi adb?"; then
+if test $(my-adb devices|grep .|wc -l) = 2 && my-adb devices|grep -q : && yes-or-no-p -y "are you sure to use wifi adb?"; then
     true
-elif adb devices|grep -q : && yes-or-no-p -y "disconnect wifi adb?"; then
-    adb disconnect # make sure not use wifi
+elif my-adb devices|grep -q : && yes-or-no-p -y "disconnect wifi adb?"; then
+    my-adb disconnect # make sure not use wifi
 fi
 cd ~/doc/galaxy-nexus-root/
 TEMP=$(getopt -o ld: --long links,debian: -n $(basename $0) -- "$@")
@@ -30,15 +30,15 @@ while true; do
     esac
 done
 
-adb shell su -c 'mount -w -o remount /system; true; mount | grep system'
+my-adb shell su -c 'mount -w -o remount /system; true; mount | grep system'
 
-for x in $(find ./ -type d); do adb shell su -c "mkdir -p ${x#.}"; done
+for x in $(find ./ -type d); do my-adb shell su -c "mkdir -p ${x#.}"; done
 
 for x in $(find ./system -type f); do
-    adb push $x /sdcard/sys_$(basename $x);
-    adb shell su -c "cat /sdcard/sys_$(basename $x) > ${x#.}";
+    my-adb push $x /sdcard/sys_$(basename $x);
+    my-adb shell su -c "cat /sdcard/sys_$(basename $x) > ${x#.}";
     if test -x $x; then
-        adb shell su -c "chmod 555 ${x#.}"
+        my-adb shell su -c "chmod 555 ${x#.}"
     fi
 done
 
@@ -46,19 +46,19 @@ if test "$do_links" = true; then
     for x in $(find ./system -type l); do
         echo ln -s $(readlink $x) ${x#.}
     done > /tmp/1.sh
-    adb push /tmp/1.sh /sdcard/ln.sh
-    adb shell su -c 'sh -x /sdcard/ln.sh'
+    my-adb push /tmp/1.sh /sdcard/ln.sh
+    my-adb shell su -c 'sh -x /sdcard/ln.sh'
 fi
 
 if test $do_debian = false; then
     exit
 fi
-for x in $(find ./sdcard -type f); do adb push $x ${x#.}; done
+for x in $(find ./sdcard -type f); do my-adb push $x ${x#.}; done
 if test -e "$do_debian"; then
     size=$(stat -c %s -L "$do_debian");
-    adb_size=$(adb shell stat -c %s /sdcard/debian.tgz)
+    adb_size=$(my-adb shell stat -c %s /sdcard/debian.tgz)
     if test "$size" != "$adb_size"; then
-        adb push "$do_debian" /sdcard/debian.tgz
+        my-adb push "$do_debian" /sdcard/debian.tgz
     fi
 fi
-adb shell sh -c 'if test ! -d /data/debian; then cd /data; tar zxvf /sdcard/debian.tgz; fi'
+my-adb shell sh -c 'if test ! -d /data/debian; then cd /data; tar zxvf /sdcard/debian.tgz; fi'

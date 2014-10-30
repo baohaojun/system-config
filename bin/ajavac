@@ -9,5 +9,5 @@ target_device=$(cd $top_dir >/dev/null 2>&1; . build/envsetup.sh >/dev/null 2>&1
 (set -- $(readlink -f $1); cd $top_dir; javac -J-Xmx512M -target 1.5 -Xmaxerrs 9999999 -encoding ascii -g  -bootclasspath out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar -classpath out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/core-junit_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/classes.jar  -extdirs "" $1)
 
 dx --dex --output=foo.jar $(echo $1 | sed -e 's/.java$/.class/')
-adb push foo.jar /sdcard/
-adb shell dalvikvm -cp /sdcard/foo.jar $(basename $1|sed -e 's/.java$//')
+my-adb push foo.jar /sdcard/
+my-adb shell dalvikvm -cp /sdcard/foo.jar $(basename $1|sed -e 's/.java$//')

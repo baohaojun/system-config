@@ -1,4 +1,4 @@
 #!/bin/bash
 for x in "$@"; do
-    adb shell kill "$x"
+    my-adb shell kill "$x"
 done

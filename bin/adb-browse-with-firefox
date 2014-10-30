@@ -3,11 +3,11 @@ url=${1:-$(getclip)}
 adb-ignite-device&
 if echo "$url" | grep -q "^http://weibo.com/"; then
     sid=$(echo $url | perl -npe 's!http://weibo.com/.*?/(.*?)(\?.*)?$!$1!')
-    adb am start "sinaweibo://detail?mblogid=$sid"
+    my-adb am start "sinaweibo://detail?mblogid=$sid"
     exit
 elif echo "$url" | grep -q "v.qq.com/"; then
     sid=$(echo $url | perl -npe 's!.*/(.*)\.html!tenvideo2://?action=5&video_id=$1!')
-    adb am start "$sid"
+    my-adb am start "$sid"
     exit
 fi
 
@@ -16,7 +16,7 @@ if test $(basename $0) = adb-browse-with-firefox; then
 elif test $(basename $0) = adb-browse-with-chrome; then
     cmp=com.android.chrome/com.google.android.apps.chrome.Main
 elif test $(basename $0) = adb-browse-with-weibo; then
-    adb start-activity com.sina.weibo/.WeiboBrowser  --es com_sina_weibo_weibobrowser_url "${1:-$(getclip)}"
+    my-adb start-activity com.sina.weibo/.WeiboBrowser  --es com_sina_weibo_weibobrowser_url "${1:-$(getclip)}"
     exit
 elif test $(basename $0) = adb-browse-with-weixin; then
     cmp=com.tencent.mm/.plugin.webview.ui.tools.WebViewUI
@@ -24,4 +24,4 @@ elif test $(basename $0) = adb-browse-with-youtube; then
     cmp='com.google.android.youtube/com.google.android.apps.youtube.app.honeycomb.Shell$UrlActivity'
 fi
 
-adb shell am start -n "$cmp" "${1:-$(getclip)}"
+my-adb shell am start -n "$cmp" "${1:-$(getclip)}"

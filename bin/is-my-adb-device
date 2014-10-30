@@ -1,10 +1,10 @@
 #!/bin/bash
-if adb devices | grep 'device$' -q; then
+if my-adb devices | grep 'device$' -q; then
     true
 else
     sleep 1
 fi
-for x in $(adb devices | grep 'device$' | pn 1); do
+for x in $(my-adb devices | grep 'device$' | pn 1); do
     if test -e ~/etc/adb/my-devices/"$x"; then
         exit 0
     fi

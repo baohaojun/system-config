@@ -2,10 +2,10 @@
 
 for x in "$@"; do
     if test $(basename $0) = adb-back-partition; then
-        adb su -c "dd if=/dev/block/platform/msm_sdcc.1/by-name/$x of=/sdcard/pt-$x"
-        adb pull /sdcard/pt-$x
+        my-adb su -c "dd if=/dev/block/platform/msm_sdcc.1/by-name/$x of=/sdcard/pt-$x"
+        my-adb pull /sdcard/pt-$x
     elif test $(basename $0) = adb-erase-partition; then
-        adb 'if test -e /dev/block/platform/msm_sdcc.1/by-name/'$x'; then
+        my-adb 'if test -e /dev/block/platform/msm_sdcc.1/by-name/'$x'; then
                  #dd if=/dev/zero | tr "\000" "\377" > /dev/block/platform/msm_sdcc.1/by-name/'$x';
                  dd if=/dev/zero  of=/dev/block/platform/msm_sdcc.1/by-name/'$x';
              else

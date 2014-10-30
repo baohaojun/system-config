@@ -11,7 +11,7 @@ fi
 ) > /tmp/$(basename $0).log
 
 function need-sync() {
-    if adb 'if test $(stat -c %s /sdcard/MobileOrg/mobileorg.org) != 0; then echo yes; fi' | grep -q yes; then
+    if my-adb 'if test $(stat -c %s /sdcard/MobileOrg/mobileorg.org) != 0; then echo yes; fi' | grep -q yes; then
         return 0
     fi
     oldver=$(
@@ -38,10 +38,10 @@ function need-sync() {
 }
 
 if ! is-tty-io; then
-    adb -w echo shit
+    my-adb -w echo shit
 fi
 
-if test "$(adb getprop sys.usb.config)" = mtp,adb; then
+if test "$(my-adb getprop sys.usb.config)" = mtp,adb; then
     exit 0
 fi
 if ! need-sync; then

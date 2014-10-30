@@ -20,7 +20,7 @@ fi
 OUT_SYMBOLS="$1"
 OUT_SO_SYMBOLS="$1"/system/lib
 PORT=:5039
-adb forward tcp:5039 tcp:5039
+my-adb forward tcp:5039 tcp:5039
 echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
 echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS"
 if test x$CORE = x; then

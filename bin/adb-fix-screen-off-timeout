@@ -1,6 +1,6 @@
 #!/bin/bash
 
-adb start-activity com.android.settings/com.android.settings.BrightnessSettingsActivity
+my-adb start-activity com.android.settings/com.android.settings.BrightnessSettingsActivity
 adb-tap 274 806
 adb-tap 339 1455
 adb-key BACK

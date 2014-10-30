@@ -22,6 +22,7 @@ if test "$ANDROID_HOME"; then
 fi
 
 if test $(basename $0) = bare-env; then
+    unset EDITOR
     unset PERL_LOCAL_LIB_ROOT
     unset PERL_MB_OPT
     unset PERL_MM_OPT
@@ -37,8 +38,21 @@ function check-program() {
     fi
 }
 
+function check-perl-module() {
+    if test $# != 2; then
+        die "Error: check-perl-module perl.module debian.package"
+    fi
+
+    if perl -m$1 -e '' >/dev/null 2>&1; then
+        true
+    else
+        die "Perl module $1 not installed: please try: sudo apt-get install $2"
+    fi
+}
+
 check-program expect
 check-program xmlstarlet
+check-perl-module String::ShellQuote libstring-shellquote-perl
 mkdir -p ~/tmp ~/.logs
 
 "$@"

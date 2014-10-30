@@ -96,8 +96,6 @@ alias regsub.py='regsub.py 2>/dev/null'
 alias ps='ps aux -W'
 alias locate=llocate
 alias pdfnup='cygexec pdfnup'
-alias aks="adb kill-server"
-alias ash="adb shell"
 alias virus='clamscan --database="d:\profiles\All Users\.clamwin\db" --recursive'
 alias vcenv6='. ~/bin/windows/vcenv6.sh'
 alias wdkenv='. ~/bin/windows/wdkenv.sh'

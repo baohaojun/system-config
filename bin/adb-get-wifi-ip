@@ -4,8 +4,8 @@ if is-tty-io; then
     cat=putclip
 fi
 
-if ! adb devices? >/dev/null 2>&1 ; then
+if ! my-adb devices? >/dev/null 2>&1 ; then
     cat ~/.cache/adb-wifi-ip
     exit
 fi
-adb shell netcfg | grep wlan0|pn 3|perl -npe 's!/.*!!' | tee ~/.cache/adb-wifi-ip /dev/stderr | $cat
+my-adb shell netcfg | grep wlan0|pn 3|perl -npe 's!/.*!!' | tee ~/.cache/adb-wifi-ip /dev/stderr | $cat

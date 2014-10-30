@@ -18,7 +18,7 @@ else
 fi
 
 if test $(basename $0) = adb-picture-clean; then
-    adb 'for x in /sdcard/DCIM/Camera/toqq-*; do
+    my-adb 'for x in /sdcard/DCIM/Camera/toqq-*; do
              if test -e "$x"; then
                  rm -f "$x"
                  am startservice -n com.bhj.setclip/.PutClipService --es picture "$x"
@@ -41,8 +41,8 @@ else
 fi
 ext=${pic##*.}
 adb_pic=/sdcard/DCIM/Camera/toqq-$(now|perl -npe 's/://g').$ext
-adb push "$pic" $adb_pic
-adb am startservice -n com.bhj.setclip/.PutClipService --es picture $adb_pic
+my-adb push "$pic" $adb_pic
+my-adb am startservice -n com.bhj.setclip/.PutClipService --es picture $adb_pic
 
 function adb-picture-to() {
     case "$1" in
@@ -69,7 +69,7 @@ function adb-picture-to() {
             exit
             ;;
         adb-picture-to-weixin-friends)
-            adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI
+            my-adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI
             adb-tap 166 537 # + a picture
             sleep .5
             adb-tap 626 278
@@ -134,7 +134,7 @@ function adb-picture-to() {
             fi
             ;;
         adb-picture-to-weibo)
-            adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
+            my-adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
             adb-tap 104 980
             sleep 1
             adb-tap 629 290
@@ -146,5 +146,5 @@ function adb-picture-to() {
 }
 
 adb-picture-to $(basename $0)
-adb rm $adb_pic
-adb am startservice -n com.bhj.setclip/.PutClipService --es picture $adb_pic
+my-adb rm $adb_pic
+my-adb am startservice -n com.bhj.setclip/.PutClipService --es picture $adb_pic

@@ -19,6 +19,7 @@ else
         if test -f "$the_adb" -a -x "$the_adb"; then
             if file "$the_adb" | grep "/adb: ELF" -q; then
                 the_adb_found=true
+                ln -sf adb ${the_adb%/adb}/the-true-adb
                 break
             fi
         fi

@@ -13,8 +13,8 @@ function sync-phone-files() {
         if test $rsync = true; then
             rsync -av media_rw@phone:/data/media/0/MobileOrg ..
         else
-            for x in $(adb ls /sdcard/MobileOrg/); do
-                adb pull /sdcard/MobileOrg/$(basename $x) .
+            for x in $(my-adb ls /sdcard/MobileOrg/); do
+                my-adb pull /sdcard/MobileOrg/$(basename $x) .
             done
         fi
     elif test "$1" = "-r"; then
@@ -22,7 +22,7 @@ function sync-phone-files() {
             rsync -av * media_rw@phone:/data/media/0/MobileOrg/
         else
             for x in *; do
-                adb push $x /sdcard/MobileOrg/$x
+                my-adb push $x /sdcard/MobileOrg/$x
             done
         fi
     else
@@ -95,10 +95,10 @@ if git-dirty; then
     git-interactive-add
 fi
 function sync-on-phone() {
-    adb touch /sdcard/MobileOrg/mobileorg.org.bak
-    adb am startservice -a com.matburt.mobileorg.SYNC_SERVICE
+    my-adb touch /sdcard/MobileOrg/mobileorg.org.bak
+    my-adb am startservice -a com.matburt.mobileorg.SYNC_SERVICE
     for x in $(seq 1 10); do
-        if adb 'if test -e /sdcard/MobileOrg/mobileorg.org.bak; then echo yes; fi' | grep -q yes; then
+        if my-adb 'if test -e /sdcard/MobileOrg/mobileorg.org.bak; then echo yes; fi' | grep -q yes; then
             sleep .5
         fi
     done

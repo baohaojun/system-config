@@ -52,7 +52,7 @@ else # firefox?
 fi
 
 sleep .5
-popup_win=$(adb dumpsys window | grep '^  Window.*#.*popupw' -P -i -A 8 | perl -ne 'm/mShownFrame=\[(\d+).0,(\d+).0\]/ and print "$1 $2\n"'| head -n 1)
+popup_win=$(my-adb dumpsys window | grep '^  Window.*#.*popupw' -P -i -A 8 | perl -ne 'm/mShownFrame=\[(\d+).0,(\d+).0\]/ and print "$1 $2\n"'| head -n 1)
 xy=($popup_win)
 x=${xy[0]}
 y=${xy[1]}

@@ -42,7 +42,6 @@ function compile_fcitx() {
 function compile_ibus_sdim() {
     cd ~/gcode/ibus-sdim/
     ./autogen.sh
-    ./configure --prefix=/usr
     make
     sudo make DESTDIR=/ install
     git clean -xfd
@@ -75,6 +74,10 @@ function do_compile() {
     compile_ibus_sdim "$@"
     compile_ctags "$@"
 }
+
+if echo $SHELLOPTS | grep xtrace; then
+    export DEBUG_COMPILE=true
+fi
 
 if test "$DEBUG_COMPILE" = true; then
     export CFLAGS='-g -O0 -DDEBUG'

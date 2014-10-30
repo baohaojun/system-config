@@ -20,6 +20,6 @@ like-mp3-tags "$2"
 adb-of "$2"
 sleep 5
 
-while adb fuser /sdcard/Music/"$(basename "$2")" | grep .; do
+while my-adb fuser /sdcard/Music/"$(basename "$2")" | grep .; do
     sleep 1
 done

@@ -1,11 +1,11 @@
 #!/bin/bash
 
 if test $(basename $0) = test-freq-current-temp.sh; then
-    adb remount
-    adb mv /etc/thermal-engine-8974.conf /etc/thermal-engine-8974.conf.bak
-    adb stop mpdecision
-    adb restart thermal-engine
-    adb shell su -c 'stop;
+    my-adb remount
+    my-adb mv /etc/thermal-engine-8974.conf /etc/thermal-engine-8974.conf.bak
+    my-adb stop mpdecision
+    my-adb restart thermal-engine
+    my-adb shell su -c 'stop;
                      for freq in $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies); do
                          minfreq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies|awk "{print \$1}")
                          for x in $(seq 0 3); do
@@ -36,7 +36,7 @@ else
     else
         which=min
     fi
-    max_freq=$(select-args $(adb cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies | tr ' ' '\n' | reverse; echo no-change))
+    max_freq=$(select-args $(my-adb cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies | tr ' ' '\n' | reverse; echo no-change))
 
     adb-tty su -c '
     freq='$max_freq'

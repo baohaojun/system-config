@@ -1,4 +1,4 @@
 #+begin_example
-adb shell fw_setenv power_mode normal
-adb shell fw_setenv power_mode product
+my-adb shell fw_setenv power_mode normal
+my-adb shell fw_setenv power_mode product
 #+end_example

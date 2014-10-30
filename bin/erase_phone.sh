@@ -1,5 +1,5 @@
 #!/bin/bash
-adb -w reboot bootloader
+my-adb -w reboot bootloader
 fastboot wait-for-device
 fastboot flash partition dummy_gpt_both0.bin
 fastboot erase aboot

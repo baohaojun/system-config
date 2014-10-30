@@ -3,7 +3,7 @@
 set -e
 
 if test $# = 1 -a "$1" = select; then
-    adb shell am start -n "$(select-output-line cat ~/.logs/$(basename $0).rec)"
+    my-adb shell am start -n "$(select-output-line cat ~/.logs/$(basename $0).rec)"
     exit
 fi
 
@@ -30,7 +30,7 @@ function doit() {
         cat ~/.logs/$(basename $0).rec 2>/dev/null || true
     ) | uniq-even-non-ajacent > ~/.logs/$(basename $0).rec.$$
     mv ~/.logs/$(basename $0).rec.$$ ~/.logs/$(basename $0).rec
-    adb shell am start -n "$@"
+    my-adb shell am start -n "$@"
 }
 
 if test ${#activities[@]} -gt 1; then
@@ -38,14 +38,14 @@ if test ${#activities[@]} -gt 1; then
     start=${activities[$select -  1]}
 fi
 if [[ $start =~ ^$package ]]; then
-    echo adb shell am start -n ${start/#$package/$package/}
+    echo my-adb shell am start -n ${start/#$package/$package/}
     doit ${start/#$package/$package/}
 else
-    echo adb shell am start -n $package/$start
+    echo my-adb shell am start -n $package/$start
     if ! [[ $start =~ \. ]]; then
         doit $package/.$start
     else
         doit $package/$start
     fi
 fi
-#adb shell am start -n com.baohaojun.crossdict/.CrossDictionaryActivity
+#my-adb shell am start -n com.baohaojun.crossdict/.CrossDictionaryActivity

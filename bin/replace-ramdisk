@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 ramdisk=
 debuggable=
@@ -47,6 +48,16 @@ mkdir -p $tdir
     cd $tdir
     ramdisk_len2dir $ramdisk
 )
+
+function ew() {
+    if test "$EDITOR"; then
+        command "$EDITOR" "$@"
+    else
+        echo "You have not set EDITOR, using vi by default."
+        read -p "Press any key to continue... "
+        vi "$@"
+    fi
+}
 
 tdir=$tdir/$(basename $ramdisk)-tmp
 if test "$debuggable" = true; then

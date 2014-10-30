@@ -2,11 +2,11 @@
 
 function adb() {
     if test $# = 4 -a "$1" = shell -a "$2" = su -a "$3" = -c; then
-	command adb -r shell true
+	command my-adb -r shell true
 	echo shit
-	command adb shell sh -c "$4"
+	command my-adb shell sh -c "$4"
     else 
-	command adb "$@"
+	command my-adb "$@"
     fi
 }
 

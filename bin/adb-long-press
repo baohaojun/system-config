@@ -17,4 +17,4 @@ if test $# != 4; then
     die "Error usage: adb-swipe should have 4 args at the end"
 fi
 ms=$(perl -e "print int($seconds * 1000)")
-adb shell input touchscreen swipe $1 $2 $3 $4 $ms
+my-adb shell input touchscreen swipe $1 $2 $3 $4 $ms
