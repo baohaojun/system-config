@@ -182,33 +182,23 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             input_window_dump=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
                             input_method=$(echo "$input_window_dump" | grep -o mHasSurface=true)
                             ime_xy=$(echo "$input_window_dump" | grep -P -o 'Requested w=1080 h=\d+'|tail -n 1)
-                            if test -e ~/.config/adb-scroll-lock-is-paste; then
-                                if test "$input_method"; then
-                                    add="key BACK"
-                                else
-                                    add=
-                                    # add="560 1840 key DEL key BACK"
-                                fi
-                                if test "$input_method"; then
-                                    if test "$ime_xy" = 'Requested w=1080 h=810'; then
-                                        add='adb-tap key SPACE 997 1199 key DEL'
-                                    fi
-                                else
-                                    if adb dumpsys input_method | grep mServedInputConnection=null -q; then
-                                        add='adb-tap 560 1840 sleep .1 adb-tap 997 1199 sleep .1'
-                                    fi
-                                fi
-
-                                adb-tap $add key SCROLL_LOCK $postkeys
+                            if test "$input_method"; then
+                                add="key BACK"
                             else
-                                if test "$input_method"; then
-                                    true
-                                else
-                                    adb-tap 560 1840 # 点一下底部输入框，弹出软键盘
-                                    sleep .1
-                                fi
-                                adb-tap 560 1840 adb-tap-2 560 976 adb-tap 296 830 adb-tap 888 849 adb-tap 976 950
+                                add=
+                                # add="560 1840 key DEL key BACK"
                             fi
+                            if test "$input_method"; then
+                                if test "$ime_xy" = 'Requested w=1080 h=810'; then
+                                    add='key SPACE adb-tap 997 1199 key DEL'
+                                fi
+                            else
+                                if adb dumpsys input_method | grep mServedInputConnection=null -q; then
+                                    add='adb-tap 560 1840 sleep .1 adb-tap 997 1199 sleep .1'
+                                fi
+                            fi
+
+                            adb-tap $add key SCROLL_LOCK $postkeys
                             ;;
                     esac
                 }
