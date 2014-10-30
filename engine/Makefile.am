@@ -23,6 +23,7 @@ engine_table_PYTHON = \
 	factory.py \
 	main.py \
 	table.py \
+        keysyms.py \
 	$(NULL)
 engine_table_DATA = \
 	$(NULL)
@@ -65,4 +66,3 @@ test:
 		LANG=en_US \
 		PYTHONPATH=$(abs_top_srcdir) \
 		$(PYTHON) $(srcdir)/main.py
-

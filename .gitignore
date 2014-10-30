@@ -51,3 +51,4 @@ sdims/Makefile.in
 sdims/additional/Makefile.in
 sdims/additional/compose.db
 sdims/additional/latex.db
+compile
