@@ -41,7 +41,7 @@ if test ! -e "$ramdisk"; then
 fi
 echo ramdisk image is $ramdisk
 
-tdir=/tmp/$(basename $0)
+tdir=/tmp/$(basename $0).$$
 rm -rf $tdir
 mkdir -p $tdir
 (
@@ -82,3 +82,8 @@ echo tdir is $tdir
 dir2ramdisk $tdir > $ramdisk.2
 
 mv $ramdisk.2 $ramdisk
+if echo $SHELLOPTS | grep xtrace; then
+    true;
+else
+    rm -rf $(dirname $tdir)
+fi

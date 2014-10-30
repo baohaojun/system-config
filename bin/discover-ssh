@@ -1,0 +1,9 @@
+#!/bin/bash
+cd ~/tmp
+for y in 0 1; do
+    for x in $(seq 1 254); do
+        (ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no 172.16.$y.$x uname -a >$y.$x.ssh 2>&1 && echo -n&);
+    done;
+done 9> ssh.lock
+fuser-wait ssh.lock
+rm ssh.lock

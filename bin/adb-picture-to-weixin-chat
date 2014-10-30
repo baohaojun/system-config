@@ -137,9 +137,12 @@ function adb-picture-to() {
             my-adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
             adb-tap 104 980
             sleep 1
-            adb-tap 629 290
-            adb-tap 116 1864 # 原图
-            adb-tap 923 1850
+            while adb-is-activity com.sina.weibo/com.sina.weibo.PhotoAlbumActivity; do
+                adb-tap 629 290
+                adb-tap 116 1864 # 原图
+                adb-tap 923 1850
+                sleep .5
+            done
             weibo
             ;;
     esac

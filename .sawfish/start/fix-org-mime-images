@@ -1,0 +1,4 @@
+#!/bin/bash
+if test ! -e /tmp/file:; then
+    ln -s / /tmp/file:
+fi

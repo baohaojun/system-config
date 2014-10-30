@@ -1,0 +1,9 @@
+#!/bin/bash
+while true; do
+    echo
+    if fuser "$1"; then
+        sleep 1
+    else
+        break
+    fi
+done

@@ -46,7 +46,7 @@ fi
 echo boot image is $boot
 
 boot=$(readlink -f $boot)
-tmpd=/tmp/$(basename $0)
+tmpd=/tmp/$(basename $0).$$
 rm -rf $tmpd
 mkdir $tmpd
 (
@@ -60,3 +60,8 @@ replace-ramdisk -r $tmpd/ramdisk.img "$@"
     bash -e mkbootimg.sh
     cp $(basename "$boot") "$boot"
 )
+if echo $SHELLOPTS | grep xtrace; then
+    true
+else
+    rm -rf $tmpd
+fi

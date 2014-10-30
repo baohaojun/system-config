@@ -1,8 +1,10 @@
 #!/bin/bash
-
 if test "$IS_TTY_IO" = true; then
     exit 0
+elif test "$IS_TTY_IO" = false; then
+    exit 1
 fi
+
 if test $(basename $0) = is-tty-io; then
     if test "$(uname)" = Darwin; then
         if tty >/dev/null 2>&1 && tty 0<&1 >/dev/null 2>&1 && tty 0<&2 >/dev/null 2>&1; then

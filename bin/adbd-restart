@@ -1,0 +1,2 @@
+#!/bin/bash
+adb 'setsid nohup bash -c "stop adbd; start adbd"'

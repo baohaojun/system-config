@@ -1,4 +1,8 @@
 #!/bin/bash
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
 if test $(basename $0) = adb-tty; then
     IS_TTY_IO=true my-adb "$@"
 else

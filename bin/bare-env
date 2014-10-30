@@ -6,11 +6,13 @@ function die() {
 }
 
 mypath=$(dirname $(readlink -f $0))
+export LANG=C
+export LC_ALL=C
 export PATH=$(
     (
-        echo $PATH |
+        echo -n $PATH |
             if test $(basename $0) = bare-env; then
-                tr ':' '\n' | grep -v ~ |perl -ne 'chomp; next if m/^$/; print ":" unless 1..1; print'
+                tr ':' '\n' | grep -v ~ | perl -ne 'chomp; next if m/^$/; print ":" unless 1..1; print'
             else
                 cat
             fi
