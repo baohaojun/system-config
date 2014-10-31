@@ -57,13 +57,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 fi
                                 sleep .5
                             fi
-                            if test -e ~/.config/adb-scroll-lock-is-paste; then
-                                adb-key SCROLL_LOCK;
-                            else
-                                adb-key SPACE
-                                adb-long-press 17 294
-                                adb-tap 545 191
-                            fi
+                            adb-key SCROLL_LOCK;
                             adb-tap 991 166
                             ;;
                         t1-sms) # quick reply sms
@@ -79,15 +73,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                                 adb-tap-mid-bot
                                 sleep 2
                             fi
-                            if test -e ~/.config/adb-scroll-lock-is-paste; then
-                                adb-key SCROLL_LOCK
-                            else
-                                adb-swipe 586 878 586 68 .3
-                                adb-key SPACE #
-                                adb-tap 969 1620
-                                adb-tap-2 299 299
-                                adb-tap 505 192
-                            fi
+                            adb-key SCROLL_LOCK
                             if test "$(gettask-android)" = com.google.android.gm; then
                                 adb-tap 806 178
                             else
