@@ -153,8 +153,9 @@
                             (when functionp wclass-or-lambda
                                   (write (stderr-file) "hello world\n")
                                   (wclass-or-lambda window)))
-
-                      (bhj-activate-window window)
+                      (if (string-match "firefox" wcommand)
+                          (system "wait-keys-clear find-or-exec firefox&")
+                        (bhj-activate-window window))
                       (throw 'wFound 'wFound)))
                   (stacking-order)))
           'wFound)
@@ -312,6 +313,7 @@
                 (Xfce4-terminal . "C-S-v")
                 (Qtcreator . "C-v")
                 (t . "S-Insert")))
+        ("n" . ((Firefox . "Down")))
         ("y" . ((Dia . "S-C-z")
                 (Qtcreator . "S-C-z")))
         ("c" . ((Emacs . "M-w")
