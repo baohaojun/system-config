@@ -14,12 +14,16 @@ function system(cmds)
    end
 end
 function adb_shell(cmds)
+   return adb_do(os.execute, cmds)
+end
+
+function adb_do(func, cmds)
    if type(cmds) == 'string' then
-      adb_shell{"sh", "-c", cmds}
+      return adb_do(func, {"sh", "-c", cmds})
    else
       assert(type(cmds) == 'table', "command must be a sequence");
       if (#cmds == 1) then
-         return adb_shell(cmds[1])
+         return adb_do(func, cmds[1])
       end
 
       command_str = ''
@@ -30,9 +34,15 @@ function adb_shell(cmds)
          end
          command_str = command_str .. cmds[i] .. ' '
       end
-      os.execute("the-true-adb shell " .. command_str)
+      return func("the-true-adb shell " .. command_str)
    end
 end
+
+function adb_pipe(cmds)
+   return adb_do(io.popen, cmds):read():gsub("\r", "")
+end
+
+print(adb_pipe(arg))
 
 function t1_post(text) -- use weixin
    window = adb_focused_window()
@@ -72,19 +82,16 @@ function t1_post(text) -- use weixin
       else
          add="" -- # add="560 1840 key DEL key BACK"
       end
-                            if test "$input_method"; then
-                                if test "$ime_xy" = 'Requested w=1080 h=810'; then
-                                    add='key SPACE adb-tap 997 1199 key DEL'
-                                fi
-                            else
-                                if adb dumpsys input_method | grep mServedInputConnection=null -q; then
-                                    add='adb-tap 560 1840 sleep .1 adb-tap 997 1199 sleep .1'
-                                fi
-                            fi
-
-                            adb-tap $add key SCROLL_LOCK $postkeys
-                            ;;
-
-
+      if input_method != "" then
+         if ime_xy == 'Requested w=1080 h=810' then
+            add='key SPACE adb-tap 997 1199 key DEL'
+         end
+      else
+         if adb_input_method_is_null() then --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
+            add='adb-tap 560 1840 sleep .1 adb-tap 997 1199 sleep .1'
+         end
+      end
+      adb_tap(add, "key", "SCROLL_LOCK", postkeys)
+   end
 end
 adb_shell(arg)
