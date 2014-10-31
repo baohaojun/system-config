@@ -18,8 +18,14 @@ if test ! -e "$1"; then
 fi
 msg_id=$(perl -ne 'chomp; print "\n" unless 1..1 or m/^\s+/; print if 1..m/^$/' "$1"|perl -ne 'print "$1\n" if m/^Message-Id:\s+<(.*)>/i' | head -n 1)
 msg_dir=$(basename $(dirname $PWD))
-if test "$msg_id"; then
-    emacsclient -d -e '(org-open-link-from-string "gnus:'$msg_dir'#'"$msg_id"'")'
+if test $(basename $0) = maildir-view; then
+    if test "$msg_id"; then
+        emacsclient -d -e '(org-open-link-from-string "gnus:'$msg_dir'#'"$msg_id"'")'
+    else
+        e "$1"
+    fi
 else
-    e "$1"
+    if test "$msg_id"; then
+        echo -n "gnus:$msg_dir#$msg_id"
+    fi
 fi

@@ -148,7 +148,7 @@ function adb() {
         echo -n 'wait-for-device ' 1>/dev/tty
         $the_adb wait-for-device
 
-        if $the_adb root 2>&1 | grep 'restarting adbd as root'; then
+        if ! adb shell id | grep uid=0 -q && $the_adb root 2>&1 | grep 'restarting adbd as root'; then
             while true; do
                 echo -n '.' 1>/dev/tty
                 $the_adb wait-for-device

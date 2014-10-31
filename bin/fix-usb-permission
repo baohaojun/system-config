@@ -17,7 +17,7 @@ else
         echo "$vid already in /etc/udev/rules.d/90-bhj-personal.rules";
     else
         cat <<EOF >> ~/etc/udev/rules.d/90-bhj-personal.rules
-SUBSYSTEM=="usb", ATTR{idVendor}=="$vid", MODE="0600", OWNER="bhj"
+SUBSYSTEM=="usb", ATTR{idVendor}=="$vid", OWNER="bhj"
 EOF
     fi
 

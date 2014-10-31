@@ -5,7 +5,7 @@ for x in "$@"; do
         my-adb su -c "dd if=/dev/block/platform/msm_sdcc.1/by-name/$x of=/sdcard/pt-$x"
         my-adb pull /sdcard/pt-$x
     elif test $(basename $0) = adb-erase-partition; then
-        adb-ntty 'if test -e /dev/block/platform/msm_sdcc.1/by-name/'$x'; then
+        adb-ntty -r 'if test -e /dev/block/platform/msm_sdcc.1/by-name/'$x'; then
                  #dd if=/dev/zero | tr "\000" "\377" > /dev/block/platform/msm_sdcc.1/by-name/'$x';
                  dd if=/dev/zero  of=/dev/block/platform/msm_sdcc.1/by-name/'$x';
              else

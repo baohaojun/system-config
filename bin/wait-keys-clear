@@ -1,7 +1,7 @@
 #!/bin/bash
 
-while query-keyboard-state >/dev/null 2>&1; do
-    sleep .1;
+while query-keyboard-state | grep -P '\Qkey[46]=down\E' >/dev/null 2>&1; do
+    sleep .01;
 done
 
 "$@"

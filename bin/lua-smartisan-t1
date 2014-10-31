@@ -33,4 +33,58 @@ function adb_shell(cmds)
       os.execute("the-true-adb shell " .. command_str)
    end
 end
+
+function t1_post(text) -- use weixin
+   window = adb_focused_window()
+   if window == "com.sina.weibo/com.sina.weibo.EditActivity" or window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
+      t1_weibo()
+      return
+   elseif window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI" or window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI" then
+      t1_weixin_new()
+      return
+   elseif window == "SmsPopupDialog" then
+      t1_sms()
+      return
+   elseif window == "com.google.android.apps.plus/com.google.android.apps.plus.phone.sharebox.PlusShareboxActivity" then
+      t1_google_plus()
+      return
+   elseif window == "com.smartisanos.notes/com.smartisanos.notes.NotesActivity" then
+      t1_smartisan_notes()
+      return
+   elseif window == "com.android.email/com.android.mail.compose.ComposeActivity" or
+      window == "com.android.email/com.android.email.activity.Welcome" or
+   window == "com.android.email/com.android.email2.ui.MailActivityEmail" then
+      t1_mail()
+      return
+   elseif string.match(window, "^PopupWindow:") then
+      t1_paste()
+      return
+   else
+      postkeys = 'adb-tap 958 1820'
+      if window == "com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity" then
+         postkeys='adb-tap 954 166'
+      end
+      input_window_dump = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
+      input_method = string.match(input_window_dump, "mHasSurface=true")
+      ime_xy = last(string.gmatch(input_window_dump, "Requested w=1080 h=%d+"))
+      if input_method != "" then
+         add="key BACK"
+      else
+         add="" -- # add="560 1840 key DEL key BACK"
+      end
+                            if test "$input_method"; then
+                                if test "$ime_xy" = 'Requested w=1080 h=810'; then
+                                    add='key SPACE adb-tap 997 1199 key DEL'
+                                fi
+                            else
+                                if adb dumpsys input_method | grep mServedInputConnection=null -q; then
+                                    add='adb-tap 560 1840 sleep .1 adb-tap 997 1199 sleep .1'
+                                fi
+                            fi
+
+                            adb-tap $add key SCROLL_LOCK $postkeys
+                            ;;
+
+
+end
 adb_shell(arg)

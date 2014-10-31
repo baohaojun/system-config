@@ -35,6 +35,7 @@ for x in "$@"; do
 
 * TODO $subject
   :PROPERTIES:
+  :MESSAGE_ID: [[$(maildir-get-id $(readlink -f "$x"))]]
   :FROM:       $(readlink -f "$x")
   :END:
 EOF
