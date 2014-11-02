@@ -1,5 +1,7 @@
 #!/bin/bash
-sudo apt-get install aptitude
+if ! which aptitude >/dev/null 2>&1; then
+    sudo apt-get install aptitude
+fi
 export LANG=C
 export LC_ALL=C
 
@@ -7,23 +9,12 @@ packages_dir=${PACKAGES_DIR:-~/bin/Linux/config/pkgs/}
 packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,')
 err_packages=""
 
-while ! aptitude show $packages >/dev/null 2>&1; do
-    err_packages=$(echo $err_packages; aptitude show $packages 2>&1|grep 'E: Unable to locate package '|perl -npe 'chomp; s/.*E: Unable to locate package//');
-    packages=$(arg1-arg2 "$packages" "$err_packages")
-done
-echo "err_packages are $err_packages" > ~/.logs/$(basename $0).log
 
-missing_packages=$(arg1-arg2 "$packages" "$(aptitude show $packages |perl -ne '
+missing_packages=$(arg1-arg2 "$packages" "$(aptitude versions '~i' | perl -ne '
 chomp;
-if (m/^Package: (.*)$/) {
+if (m/^Package\s+(\S+):/) {
     $pkg = $1;
-    while (<>) {
-        chomp;
-        if (m/^State: (.*)$|^$/) {
-            print $pkg . "\n" if $1 eq "installed";
-            last;
-        }
-    }
+    print "$pkg\n";
 }')" | sort -u)
 
 echo "missing_packages are $missing_packages" >> ~/.logs/$(basename $0).log
@@ -45,10 +36,3 @@ fi
 for x in $missing_packages; do
     sudo apt-get install "$@" -y $x || true
 done
-
-(
-    cd ~/bin/Linux/config/pkgs;
-    for x in *:*; do
-        test -e "$x" && sudo apt-get install -y "$x" || true
-    done
-)
