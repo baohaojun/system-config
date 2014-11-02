@@ -5,7 +5,16 @@ if test "${1:0:1}" = -; then
     sig=$1
     shift
 fi
-    
+
 match=$1
 shift
-ps.pl $match | grep -v $(basename $0) | tee /dev/stderr | pn 1  | xargs bash -c 'for x in $@; do  kill $sig "$x"; done' true
+ps.pl $match | grep -v $(basename $0) | tee /dev/stderr | pn 1  |
+    xargs bash -c '
+                      for x in $@; do
+                          if is-ppid $x $$; then
+                              echo $x is in loop of ppid
+                              continue
+                          fi
+                          kill $sig "$x";
+                      done
+                  ' true

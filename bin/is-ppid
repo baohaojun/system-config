@@ -1,0 +1,11 @@
+#!/bin/bash
+child=${2:-$$}
+parent=$1
+
+while test $child != 1 -a $child != 0; do
+    if test $child = $parent; then
+        exit 0
+    fi
+    child=$(ps h -o ppid $child)
+done
+exit 1

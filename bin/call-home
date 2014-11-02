@@ -15,12 +15,18 @@ fi
                 C=
             fi
             sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
+            ssh_start_time=$(date +%s)
             ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=300 -i ~/.ssh/id_rsa_nopass -${C}2qN $(
                 if test $home = home; then
                     echo -D 7070
                 fi
                 ) -R :$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3)):localhost:22 $home -p 22
             if test $? = 137; then
+                continue
+            fi
+            ssh_end_time=$(date +%s)
+            ssh_used_time=$((ssh_end_time - ssh_start_time)) || true
+            if test $ssh_used_time -gt 100; then
                 continue
             fi
             x=30
