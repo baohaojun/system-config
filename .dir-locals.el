@@ -25,6 +25,7 @@
                   "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed"
                   "-I/usr/include/x86_64-linux-gnu"
                   "-I/usr/include"
+                  "-I/usr/include/lua5.2"
                   "-I.")
   (flycheck-clang-include-path "/usr/include/x86_64-linux-gnu/qt5/QtConcurrent"
                                "/usr/include/x86_64-linux-gnu/qt5/QtCore"

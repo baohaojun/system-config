@@ -2,7 +2,7 @@
 #include "ui_t1wrenchmainwindow.h"
 #include <QtCore/QThread>
 #include "bhj_help.hpp"
-#include "readinfothread.hpp"
+#include "luaexecutethread.hpp"
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QDate>
@@ -21,6 +21,7 @@
 #include <QtCore/QCoreApplication>
 #include "bhj_help.hpp"
 #include <stdlib.h>
+#include "lua.hpp"
 
 #ifdef Q_OS_WIN32
 void setenv(const char* name, const char* val, int overide)
@@ -120,44 +121,6 @@ void open_it(const QString &fileOrUrl)
 
 static QString logDir;
 
-
-void do_progressive_command(T1WrenchMainWindow* window, const QString& cmd, const QStringList& args, const QString& returnKey, bool verifyRet = false)
-{
-    ReadInfoThread* infoThread = new ReadInfoThread(window);
-    window->connect(infoThread, SIGNAL(updateMobileInfo(QString, QString)), window, SLOT(onInfoUpdate(QString, QString)));
-    infoThread->setCommandArgsAndReturnKey(cmd, args, returnKey, verifyRet);
-    infoThread->setProgressive();
-    infoThread->start();
-}
-
-static void do_button_click(T1WrenchMainWindow* window, const QList<QStringList>& cmds, const QString& returnKey, bool verifyRet = true)
-{
-    ReadInfoThread* infoThread = new ReadInfoThread(window);
-    window->connect(infoThread, SIGNAL(updateMobileInfo(QString, QString)), window, SLOT(onInfoUpdate(QString, QString)));
-    infoThread->setMultipleCommandsAndReturnKey(cmds, returnKey, verifyRet);
-    infoThread->start();
-}
-
-static void do_button_click(T1WrenchMainWindow* window, const QString& cmd, const QStringList& args, const QString& returnKey, bool verifyRet = true)
-{
-    ReadInfoThread* infoThread = new ReadInfoThread(window);
-    window->connect(infoThread, SIGNAL(updateMobileInfo(QString, QString)), window, SLOT(onInfoUpdate(QString, QString)));
-    infoThread->setCommandArgsAndReturnKey(cmd, args, returnKey, verifyRet);
-    infoThread->start();
-}
-
-static void do_button_click(T1WrenchMainWindow* window, const QString& cmd, const QString& returnKey, bool verifyRet = true)
-{
-    do_button_click(window, cmd, QStringList(), returnKey, verifyRet);
-}
-
-QString quoteCmdArg(const QString& arg)
-{
-    QString res = arg;
-    res.replace("\"", "\"\"\"");
-    return "\"" + res + "\"";
-}
-
 QString fixPathName(const QString& path)
 {
 #ifdef Q_OS_WIN32
@@ -192,8 +155,7 @@ void T1WrenchMainWindow::putclip_android()
     cmds << (QStringList() << "adb" << "push" << tmpDir.filePath("send-to-phone.txt") << "/sdcard/putclip.txt")
          << (QStringList() << "adb" << "shell" << "am startservice -n com.bhj.setclip/.PutClipService;"
              "for x in 0 1 2 3 4 5 6 7 8 9; do if test -e /sdcard/putclip.txt; then sleep .1; echo $x; else exit; fi; done;");
-
-    do_button_click(this, cmds, "putclip-android", false);
+    //do_button_click(this, cmds, "putclip-android", false);
 }
 
 void fillFromAdbTaps(QList<QStringList>& cmds, QString& shellScript)
@@ -247,8 +209,7 @@ void T1WrenchMainWindow::getclip_android()
          << "rm -f /sdcard/putclip.txt;"
         "am startservice -n com.bhj.setclip/.PutClipService --ei getclip 1 >/dev/null 2>&1&\n"
         "for x in $(seq 1 20); do if test -e /sdcard/putclip.txt; then cat /sdcard/putclip.txt; break; else sleep .1; fi; done";
-
-    do_button_click(this, "adb", args, "getclip-android", false);
+        // do_button_click(this, "adb", args, "getclip-android", false);
 }
 
 
@@ -396,7 +357,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
     qDebug() << "actionShellScript is '" << actionShellScript <<"'";
     QList<QStringList> cmds;
     fillFromAdbTaps(cmds, actionShellScript);
-    do_button_click(this, cmds, "action clicked", false);
+    //do_button_click(this, cmds, "action clicked", false);
     ui->phoneTextEdit->selectAll();
 }
 
