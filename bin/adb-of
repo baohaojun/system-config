@@ -1,7 +1,24 @@
 #!/bin/bash
 set -e
 if test ! -e "$1"; then
-    my-adb am start "$1"
+    perl -e '$_ = $ARGV[0];
+             if (m!https://login.weibo.cn/login/.*backURL=http%3A%2F%2Fweibo.cn%2F[^%]*%2F([^%&]+)!i) {
+                 open_sina($1);
+             } elsif (m!http://weibo.(?:com|cn)/[^/]*/([^?/]+)!) {
+                 open_sina($1);
+             } elsif (m!http://m.weibo.cn/[^/]*/([^/?]*)!) {
+                 open_sina($1);
+             } elsif (m!https://passport.sina.cn/.*r=http%3A%2F%2Fm.weibo.cn%2F[^%]*%2F([^%&]+)!) {
+                 open_sina($1);
+             } elsif (m!http://(?:m\\.)?weibo\\.cn/u/([^?/&%]+)!) {
+                 open_sina_user($1);
+             } else {
+                 system("my-adb", "am", "start", $_);
+             }
+             sub open_sina($) {
+                 system("my-adb", "am", "start", "sinaweibo://detail?mblogid=$_[0]");
+             }
+         ' "$1"
     exit
 fi
 ext=${1##*.}

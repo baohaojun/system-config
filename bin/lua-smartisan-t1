@@ -1,8 +1,9 @@
 #!/usr/bin/lua
-function shell_quote(str)
+local function shell_quote(str)
    return "'" .. string.gsub(str, "'", "'\\''") .. "'"
 end
-function system(cmds)
+
+local function system(cmds)
    if type(cmds) == 'string' then
       os.execute(cmds)
    elseif type(cmds) == 'table' then
@@ -13,11 +14,8 @@ function system(cmds)
       os.execute(command_str)
    end
 end
-function adb_shell(cmds)
-   return adb_do(os.execute, cmds)
-end
 
-function adb_do(func, cmds)
+local function adb_do(func, cmds)
    if type(cmds) == 'string' then
       return adb_do(func, {"sh", "-c", cmds})
    else
@@ -39,33 +37,37 @@ function adb_do(func, cmds)
    end
 end
 
-function adb_pipe(cmds)
+local function adb_shell(cmds)
+   return adb_do(os.execute, cmds)
+end
+
+local function adb_pipe(cmds)
    return adb_do(io.popen, cmds):read('*a'):gsub("\r", "")
 end
 
-function adb_focused_window()
+local function adb_focused_window()
    wdump = adb_pipe{"dumpsys", "window"}
    print('wdump is ' .. wdump)
    return string.match(wdump, "mFocusedWindow[^}]*%s(%S+)}")
 end
 
-function select_args(args)
+local function select_args(args)
    return args[1]
 end
 
-function adb_tap_bot_left()
+local function adb_tap_bot_left()
    adb_event{20, 1882}
 end
 
-function adb_tap_mid_bot()
+local function adb_tap_mid_bot()
    adb_event{560, 1840}
 end
 
-function sleep(time)
+local function sleep(time)
    system("sleep " .. time)
 end
 
-function adb_event(events)
+local function adb_event(events)
    command_str = ''
    i = 1
    while true do
@@ -94,7 +96,7 @@ function adb_event(events)
    adb_shell(command_str)
 end
 
-function t1_weibo(window)
+local function t1_weibo(window)
    if window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
       repost = select_args{'repost', 'comment'}
       if repost == 'repost' then
@@ -107,23 +109,23 @@ function t1_weibo(window)
    adb_event{'key', 'scroll_lock', 991, 166}
 end
 
-function t1_weixin_new(window)
+local function t1_weixin_new(window)
    adb_event{'key', 'scroll_lock', 961, 171}
 end
 
-function t1_sms(window)
+local function t1_sms(window)
    adb_event{182, 1079, 'key', 'scroll_lock', 864, 921}
 end
 
-function t1_google_plus(window)
+local function t1_google_plus(window)
    adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
 end
 
-function t1_smartisan_notes(window)
+local function t1_smartisan_notes(window)
    adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
 end
 
-function t1_mail(window)
+local function t1_mail(window)
    if window == 'com.android.email/com.android.email.activity.Welcome' or window == 'com.android.email/com.android.email2.ui.MailActivityEmail' then
       adb_tap_mid_bot()
       sleep(2)
@@ -136,10 +138,11 @@ function t1_mail(window)
    end
 end
 
-function t1_paste()
+local function t1_paste()
    adb_event{'key', 'scroll_lock'}
 end
-function split(pat, str)
+
+local function split(pat, str)
    start = 1
    if pat == ' ' then
       pat = "%s+"
@@ -164,7 +167,7 @@ function split(pat, str)
    return list
 end
 
-function join(mid, args)
+local function join(mid, args)
    text = ''
    for i = 1, #args do
       if i ~= 1 then
@@ -175,7 +178,8 @@ function join(mid, args)
    return text
 end
 
-function adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
+local function adb_get_input_window_dump()
+   -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
    local dump = adb_pipe{'dumpsys', 'window'}
    local input_method = {}
    local started = false
@@ -194,7 +198,8 @@ function adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print i
    return join("\n", input_method)
 end
 
-function adb_input_method_is_null() --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
+local function adb_input_method_is_null()
+   --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
    local dump = adb_pipe{'dumpsys', 'input_method'}
    if dump:match("mServedInputConnection=null") then
       return true
@@ -203,7 +208,7 @@ function adb_input_method_is_null() --         if adb dumpsys input_method | gre
    end
 end
 
-function last(func)
+local function last(func)
    local x, y
    y = func()
    while y do
@@ -213,11 +218,11 @@ function last(func)
    return x
 end
 
-function debug(fmt, ...)
+local function debug(fmt, ...)
    print(string.format(fmt, ...))
 end
 
-function t1_post(text) -- use weixin
+local function t1_post(text) -- use weixin
    local file = io.open("/tmp/lua-smartisan-t1.txt", "w")
    file:write(text)
    file:close()
@@ -287,4 +292,14 @@ function t1_post(text) -- use weixin
       adb_event(split(" ", string.format("%s key scroll_lock %s", add, post_button)))
    end
 end
-t1_post(join(' ', arg))
+
+local M = {}
+M.t1_post = t1_post
+M.adb_shell = adb_shell
+M.adb_pipe = adb_pipe
+if string.find(arg[0], "lua.smartisan.t1") then
+   t1_post(join(' ', arg))
+else
+   print(arg[0])
+   return M
+end
