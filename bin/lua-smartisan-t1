@@ -43,8 +43,6 @@ function adb_pipe(cmds)
    return adb_do(io.popen, cmds):read('*a'):gsub("\r", "")
 end
 
-print(adb_pipe(arg))
-
 function adb_focused_window()
    wdump = adb_pipe{"dumpsys", "window"}
    print('wdump is ' .. wdump)
@@ -71,7 +69,7 @@ function adb_event(events)
    command_str = ''
    i = 1
    while true do
-      if type(events[i]) == 'number' then
+      if tonumber(events[i]) then
          command_str = command_str .. ('input tap %d %d;'):format(events[i], events[i+1])
          i = i + 2
       elseif events[i] == 'tap2' then
@@ -86,9 +84,9 @@ function adb_event(events)
          command_str = command_str .. ('input keyevent %s;'):format(events[i+1])
          i = i + 2
       elseif events[i] then
-         die("Error: unknown event", events[i])
+         error(string.format("Error: unknown event: %d: '%s' (%s)", i, events[i], join(' ', events)))
       elseif not events[i - 1] then
-         die("Error: wrong number of events?")
+         error("Error: wrong number of events?")
       else
          break
       end
@@ -141,7 +139,7 @@ end
 function t1_paste()
    adb_event{'key', 'scroll_lock'}
 end
-function split(str, pat)
+function split(pat, str)
    start = 1
    if pat == ' ' then
       pat = "%s+"
@@ -150,10 +148,14 @@ function split(str, pat)
    list = {}
    while true do
       i, j = str:find(pat, start)
-      if (i and i > start) then
-         list[#list + 1] = str:sub(start, i)
+      if (i and i >= start) then
+         if i > start then
+            list[#list + 1] = str:sub(start, i - 1)
+         end
+      elseif #str > start then
+         list[#list + 1] = str:sub(start)
       end
-      if (i) then
+      if i then
          start = j + 1
       else
          break
@@ -162,19 +164,61 @@ function split(str, pat)
    return list
 end
 
-function join(args)
+function join(mid, args)
    text = ''
    for i = 1, #args do
       if i ~= 1 then
-         text = text .. ' '
+         text = text .. mid
       end
       text = text .. args[i]
    end
    return text
 end
 
+function adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
+   local dump = adb_pipe{'dumpsys', 'window'}
+   local input_method = {}
+   local started = false
+   dump = split("\n", dump)
+   for i = 1, #dump do
+      if not started and dump[i]:match("^%s*Window #%d+ Window{[a-f0-9]* u0 InputMethod}") then
+         started = true
+      end
+      if started == true then
+         input_method[#input_method + 1] = dump[i]
+         if dump[i]:match("^%s*mHasSurface") then
+            started = false
+         end
+      end
+   end
+   return join("\n", input_method)
+end
+
+function adb_input_method_is_null() --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
+   local dump = adb_pipe{'dumpsys', 'input_method'}
+   if dump:match("mServedInputConnection=null") then
+      return true
+   else
+      return false
+   end
+end
+
+function last(func)
+   local x, y
+   y = func()
+   while y do
+      x = y
+      y = func()
+   end
+   return x
+end
+
+function debug(fmt, ...)
+   print(string.format(fmt, ...))
+end
+
 function t1_post(text) -- use weixin
-   file = io.open("/tmp/lua-smartisan-t1.txt", "w")
+   local file = io.open("/tmp/lua-smartisan-t1.txt", "w")
    file:write(text)
    file:close()
    system{'adb', 'push', '/tmp/lua-smartisan-t1.txt', '/sdcard/putclip.txt'}
@@ -215,29 +259,32 @@ function t1_post(text) -- use weixin
       t1_paste()
       return
    else
-      postkeys = '958 1820'
+      post_button = '958 1820'
       if window == "com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity" then
-         postkeys = '954 166'
+         post_button = '954 166'
       end
       input_window_dump = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
       input_method = string.match(input_window_dump, "mHasSurface=true")
       ime_xy = last(string.gmatch(input_window_dump, "Requested w=1080 h=%d+"))
-      if input_method ~= "" then
-         add="key BACK"
+      -- debug("input_window_dump is %s", input_window_dump)
+      -- debug("input_method is %s", input_method)
+      -- debug("ime_xy is %s", ime_xy)
+
+      if input_method then
+         add = "key BACK"
       else
-         add="" -- # add="560 1840 key DEL key BACK"
+         add = "" -- # add="560 1840 key DEL key BACK"
       end
-      if input_method ~= "" then
+      if input_method then
          if ime_xy == 'Requested w=1080 h=810' then
-            add='key SPACE 997 1199 key DEL'
+            add = 'key SPACE 997 1199 key DEL'
          end
       else
          if adb_input_method_is_null() then --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
-            add='560 1840 sleep .1 997 1199 sleep .1'
+            add = '560 1840 sleep .1 997 1199 sleep .1'
          end
       end
-      adb_event(split(string.format("%s key scroll_lock %s", add, postkeys), " "))
+      adb_event(split(" ", string.format("%s key scroll_lock %s", add, post_button)))
    end
 end
-adb_shell(arg)
-t1_post(join(arg))
+t1_post(join(' ', arg))

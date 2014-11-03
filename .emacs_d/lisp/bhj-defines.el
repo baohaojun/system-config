@@ -103,7 +103,7 @@ might be bad."
         (setq douban-music-not-playing (1+ douban-music-not-playing))
       (setq douban-music-not-playing 0)
       (shell-command-to-string "douban start-play-hook >/dev/null 2>&1 &"))
-    (when (> douban-music-not-playing 1)
+    (when (> douban-music-not-playing 5)
       (douban-music-set-channel (string-to-int (shell-command-to-string "random 7"))))
     (if (file-exists-p icon)
         (setq douban-music-local-icon icon)

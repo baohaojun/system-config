@@ -58,10 +58,6 @@ public class PutClipService extends Service {
                 writeFile(mPhoneNumber);
             } else {
                 FileReader f = new FileReader(new File(Environment.getExternalStorageDirectory(), "putclip.txt"));
-                if (getTask().equals("com.tencent.mm")) {
-                    f.close();
-                    f = new FileReader(new File(Environment.getExternalStorageDirectory(), "putclip-wx.txt"));
-                }
                 char[] buffer = new char[1024 * 1024];
                 int n = f.read(buffer);
                 String str = new String(buffer, 0, n);

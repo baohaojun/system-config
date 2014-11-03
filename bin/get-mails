@@ -2,6 +2,10 @@
 
 if (
     set -e
+    version=$(offlineimap --version | perl -npe 's/\.//g')
+    if test $version -lt 655; then
+        exit 1
+    fi
     exec offlineimap
 ); then
     fail=false
@@ -17,4 +21,3 @@ if test $fail = true; then
     fi
 fi
 exit 0;
-
