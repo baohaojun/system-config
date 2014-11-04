@@ -284,10 +284,6 @@ Firemacs.CmdKey.View = {
     PreviousPage: 'l',
     NextPage: 'r',
     ReloadPage: 'R',
-    ViScrollTop: '<',
-    ViScrollBottom: '>',
-    ScrollTop: 'M-<',
-    ScrollBottom: 'M->'
 };
 
 Firemacs.CmdKey.Edit = {
@@ -314,8 +310,6 @@ Firemacs.CmdKey.Edit = {
     PreviousWord: 'M-b',
     DeleteWordForward: 'M-d',
     DeleteWordBackward: 'M-DEL',
-    MoveTop: 'M-<',
-    MoveBottom: 'M->'
 };
 
 Firemacs.CmdKey.Common = {
