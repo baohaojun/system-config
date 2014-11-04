@@ -3,6 +3,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QRadioButton>
+#include "luaexecutethread.hpp"
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -38,8 +39,9 @@ private slots:
     void on_configurePushButton_clicked();
 
 private:
+    LuaExecuteThread* mLuaThread;
     Ui::T1WrenchMainWindow *ui;
-    void putclip_android();
+    QString get_text();
     void getclip_android();
     QRadioButton* mLastRadioButton;
 };

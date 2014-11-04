@@ -20,9 +20,12 @@ void LuaExecuteThread::run()
 
     lua_getglobal(L, "t1wrench");
     while (true) {
+        QStringList script;
         mMutex.lock();
-        mWait.wait(&mMutex);
-        QStringList script = mActions.at(0);
+        if (mActions.length() == 0) {
+            mWait.wait(&mMutex);
+        }
+        script = mActions.at(0);
         mActions.removeFirst();
         mMutex.unlock();
         QString func = script.at(0);
@@ -37,7 +40,7 @@ void LuaExecuteThread::run()
             lua_close(L);
             return;
         }
-        lua_pop(L, 2);
+        lua_pop(L, 1);
     }
 }
 

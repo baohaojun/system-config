@@ -11,7 +11,7 @@ local function system(cmds)
       for i = 1, #cmds do
          command_str = command_str .. shell_quote(cmds[i]) .. ' ';
       end
-      os.execute(command_str)
+      os.execute("set -x; " .. command_str)
    end
 end
 
@@ -227,7 +227,8 @@ local function t1_post(text) -- use weixin
    file:write(text)
    file:close()
    system{'adb', 'push', '/tmp/lua-smartisan-t1.txt', '/sdcard/putclip.txt'}
-   adb_shell([[
+   adb_shell(
+      [[
          am startservice --user 0 -n com.bhj.setclip/.PutClipService&
          for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
              if test -e /sdcard/putclip.txt; then
@@ -298,7 +299,7 @@ M.t1_post = t1_post
 M.adb_shell = adb_shell
 M.adb_pipe = adb_pipe
 
-if arg and type(arg) == 'table' and string.find(arg[0], "lua.smartisan.t1") then
+if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
    t1_post(join(' ', arg))
 else
    return M

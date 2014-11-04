@@ -35,6 +35,8 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::T1WrenchMainWindow)
 {
+    mLuaThread = new LuaExecuteThread(this);
+    mLuaThread->start();
     QString pathEnv = QProcessEnvironment::systemEnvironment().value("PATH");
 #ifdef Q_OS_WIN32
     pathEnv += ";";
@@ -74,20 +76,6 @@ void T1WrenchMainWindow::adbStateUpdated(const QString& state)
     } else {
         ui->adbStateIndicator->setPixmap(QPixmap(":/images/red.png"));
     }
-}
-
-static void updateEditTextKeyVal(QTextEdit* edit, const QString& key, const QString& val)
-{
-    QString text = edit->toPlainText();
-    QStringList keyVals = text.split("\n");
-    if (keyVals.filter(QRegExp("^" + key)).isEmpty()) {
-        keyVals << (key + val);
-        keyVals.sort();
-    } else {
-        keyVals.replaceInStrings(QRegExp("^" + key + ".*"), (key + val));
-    }
-    while (keyVals.removeOne("")) ; // remove empty ones
-    edit->setText(keyVals.join("\n"));
 }
 
 // static void appendCmdOutput(QTextEdit *cmdOutputEdit, const QString& output)
@@ -131,7 +119,7 @@ QString fixPathName(const QString& path)
 #endif
 }
 
-void T1WrenchMainWindow::putclip_android()
+QString T1WrenchMainWindow::get_text()
 {
     QString text = ui->phoneTextEdit->toPlainText();
     while (text.endsWith("\r") || text.endsWith("\n") || text.endsWith("\t") ||
@@ -141,21 +129,7 @@ void T1WrenchMainWindow::putclip_android()
     if (text.isEmpty()) {
         prompt_user("输入手机中的文字必须不能为空", QMessageBox::Ok);
     }
-
-    QDir tmpDir = QDir::temp();
-    QFile phoneTxtFile(tmpDir.filePath("send-to-phone.txt"));
-    phoneTxtFile.open(QIODevice::WriteOnly);
-    QTextStream out(&phoneTxtFile);
-    out.setCodec("UTF-8");
-    out << text;
-    out.flush();
-    phoneTxtFile.close();
-
-    QList<QStringList> cmds;
-    cmds << (QStringList() << "adb" << "push" << tmpDir.filePath("send-to-phone.txt") << "/sdcard/putclip.txt")
-         << (QStringList() << "adb" << "shell" << "am startservice -n com.bhj.setclip/.PutClipService;"
-             "for x in 0 1 2 3 4 5 6 7 8 9; do if test -e /sdcard/putclip.txt; then sleep .1; echo $x; else exit; fi; done;");
-    //do_button_click(this, cmds, "putclip-android", false);
+    return text;
 }
 
 void fillFromAdbTaps(QList<QStringList>& cmds, QString& shellScript)
@@ -331,33 +305,7 @@ end:
 
 void T1WrenchMainWindow::on_sendItPushButton_clicked()
 {
-    putclip_android();
-    if (ui->toClipBoardRadio->isChecked()) {
-        return;
-    }
-
-
-    QString actionShellScript;
-    if (ui->weixinQqRadio->isChecked()) {
-        actionShellScript = getActionScript("# most cases");
-    } else if (ui->replyMailRadio->isChecked()) {
-        actionShellScript = getActionScript("# reply mail");
-    } else if (ui->replySmsRadio->isChecked()) {
-        actionShellScript = getActionScript("# quick reply sms");
-    } else if (ui->weiboRadio->isChecked()) {
-        actionShellScript = getActionScript("# send weibo");
-    } else if (ui->googlePlusRadio->isChecked()) {
-        actionShellScript = getActionScript("# send google plus");
-    } else {
-        prompt_user("尚未选定执行何种操作，默认选为微信、QQ（最常见）");
-        ui->weixinQqRadio->setChecked(true);
-        actionShellScript = getActionScript("# most cases");
-    }
-
-    qDebug() << "actionShellScript is '" << actionShellScript <<"'";
-    QList<QStringList> cmds;
-    fillFromAdbTaps(cmds, actionShellScript);
-    //do_button_click(this, cmds, "action clicked", false);
+    mLuaThread->addScript(QStringList() << "t1_post" << get_text());
     ui->phoneTextEdit->selectAll();
 }
 
