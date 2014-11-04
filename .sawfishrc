@@ -330,7 +330,7 @@
         ("d" . ((Firefox . ("C-x" "C-d"))))))
 
 
-(setq gnome-windows-re "gnome-terminal|nautilus|evince")
+(setq gnome-windows-re "gnome-terminal|nautilus|evince|gedit")
 
 (defun rewrite-event-for-xdotool (event)
   (let* ((keys-break-down (string-split "-" event))

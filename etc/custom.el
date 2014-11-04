@@ -129,7 +129,8 @@
  '(require-final-newline t)
  '(safe-local-variable-values
    (quote
-    ((ac-clang-flags "-I/usr/include/c++/4.9" "-I/usr/include/x86_64-linux-gnu/c++/4.9" "-I/usr/include/c++/4.9/backward" "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include" "-I/usr/local/include" "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed" "-I/usr/include/x86_64-linux-gnu" "-I/usr/include" "-I/home/bhj/src/android/bionic/libc/include" "-I.")
+    ((ac-clang-flags "-I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent" "-I/usr/include/x86_64-linux-gnu/qt5/QtCore" "-I/usr/include/x86_64-linux-gnu/qt5/QtDBus" "-I/usr/include/x86_64-linux-gnu/qt5/QtGui" "-I/usr/include/x86_64-linux-gnu/qt5/QtNetwork" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGLExtensions" "-I/usr/include/x86_64-linux-gnu/qt5/QtPlatformSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtSql" "-I/usr/include/x86_64-linux-gnu/qt5/QtTest" "-I/usr/include/x86_64-linux-gnu/qt5/QtWidgets" "-I/usr/include/x86_64-linux-gnu/qt5/QtXml" "-I/usr/include/x86_64-linux-gnu/qt5" "-I/usr/include/c++/4.9" "-I/usr/include/x86_64-linux-gnu/c++/4.9" "-I/usr/include/c++/4.9/backward" "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include" "-I/usr/local/include" "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed" "-I/usr/include/x86_64-linux-gnu" "-I/usr/include" "-I/usr/include/lua5.2" "-I.")
+     (ac-clang-flags "-I/usr/include/c++/4.9" "-I/usr/include/x86_64-linux-gnu/c++/4.9" "-I/usr/include/c++/4.9/backward" "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include" "-I/usr/local/include" "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed" "-I/usr/include/x86_64-linux-gnu" "-I/usr/include" "-I/home/bhj/src/android/bionic/libc/include" "-I.")
      (bhj-grep-dir . "~/src/android/.repo")
      (bhj-grep-dir . "~/src/android")
      (bhj-help-qt-prog . "search-msdn-lucky")

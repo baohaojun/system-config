@@ -4,19 +4,38 @@
 #include "lauxlib.h"
 #include "lualib.h"
 int main (void) {
-    char buff[256];
-    int error;
+
     lua_State *L = luaL_newstate();             /* opens Lua */
     luaL_openlibs(L);        /* opens the standard libraries */
-    printf("hello top is %d\n", lua_gettop(L));
-    lua_getglobal(L, "require");
-    lua_pushstring(L, "t1wrench");
-    lua_pcall(L, 1, 1, 0);
 
-    lua_getfield(L, -1, "t1_post");
-    lua_pushstring(L, "hello world");
-    lua_pcall(L, 1, 1, 0);
+    int error = luaL_loadstring(L, "t1wrench = require('t1wrench')") || lua_pcall(L, 0, 0, 0);
+    if (error) {
+        printf("exit %s\n", "Can't load t1wrench");
+        lua_close(L);
+        return;
+    }
+
     printf("hello top is %d\n", lua_gettop(L));
-    lua_close(L);
+    lua_getglobal(L, "t1wrench");
+    printf("hello top is %d\n", lua_gettop(L));
+    while (1) {
+        const char *func = "t1_post";
+        lua_getfield(L, -1, (func));
+        printf("hello top is %d\n", lua_gettop(L));
+        lua_pushstring(L, "hello world");
+        printf("hello top is %d\n", lua_gettop(L));
+        fprintf(stderr, "Press return to continue... ");
+        fflush(stderr);
+        fgetc(stdin);
+
+        error = lua_pcall(L, 1, 1, 0);
+        if (error) {
+            printf("exit %s\n", "Can't run %s");
+            lua_close(L);
+            return -1;
+        }
+        printf("hello top is %d\n", lua_gettop(L));
+        lua_pop(L, 1);
+    }
     return 0;
 }
