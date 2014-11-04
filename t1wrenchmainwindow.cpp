@@ -1,3 +1,6 @@
+/**** start of bhj auto includes ****/
+/**** end of bhj auto includes ****/
+
 #include "t1wrenchmainwindow.h"
 #include "ui_t1wrenchmainwindow.h"
 #include <QtCore/QThread>
@@ -22,6 +25,7 @@
 #include "bhj_help.hpp"
 #include <stdlib.h>
 #include "lua.hpp"
+#include "screencapture.h"
 
 #ifdef Q_OS_WIN32
 void setenv(const char* name, const char* val, int overide)
@@ -363,4 +367,22 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
             prompt_user("你的手机尺寸未进行过适配，需要自行修改" + emacsWeixinSh + "，将里面的各个座标按比例缩放，并将新的文件保存在" + newEmacsWeixinSh + "\n\n" + "详情请点击启动时右边的超级链接（我写的关于T1小扳手的博客）查看帮助");
         }
     }
+}
+
+void T1WrenchMainWindow::on_tbScreenCapture_clicked()
+{
+    if (mScreenCapture.isNull()) {
+        mScreenCapture = QSharedPointer<ScreenCapture>(new ScreenCapture());
+        connect(mScreenCapture.data(), SIGNAL(screenCaptured(const QPixmap &)), SLOT(slotHandleCaptureScreen(const QPixmap &)));
+    }
+}
+
+void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
+{
+    QObject::sender()->deleteLater();
+    mScreenCapture.clear();
+    if (pix.isNull()) return;
+
+    pix.save("screen-shot.png", "PNG");
+    mLuaThread->addScript(QStringList() << "t1_picture" << "screen-shot.png");
 }

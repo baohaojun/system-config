@@ -4,6 +4,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QRadioButton>
 #include "luaexecutethread.hpp"
+#include "screencapture.h"
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -20,6 +21,7 @@ public slots:
     void adbStateUpdated(const QString& state);
     void onInfoUpdate(const QString& key, const QString& val);
 private slots:
+    void slotHandleCaptureScreen(const QPixmap &);
     void on_weixinQqRadio_toggled(bool checked);
 
     void on_replyMailRadio_toggled(bool checked);
@@ -38,7 +40,10 @@ private slots:
 
     void on_configurePushButton_clicked();
 
+    void on_tbScreenCapture_clicked();
+
 private:
+    QSharedPointer<ScreenCapture> mScreenCapture;
     LuaExecuteThread* mLuaThread;
     Ui::T1WrenchMainWindow *ui;
     QString get_text();

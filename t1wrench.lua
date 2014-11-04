@@ -294,10 +294,15 @@ local function t1_post(text) -- use weixin
    end
 end
 
+local function t1_picture(pic)
+   system{'adb-picture-to-unknown', pic}
+end
+
 local M = {}
 M.t1_post = t1_post
 M.adb_shell = adb_shell
 M.adb_pipe = adb_pipe
+M.t1_picture = t1_picture
 
 if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
    t1_post(join(' ', arg))

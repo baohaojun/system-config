@@ -19,12 +19,21 @@ SOURCES += main.cpp\
 	t1wrenchmainwindow.cpp \
 	adbstatethread.cpp \
         luaexecutethread.cpp \
-        qcellphonetextedit.cpp 
+        qcellphonetextedit.cpp \
+        screencapture.cpp \
+        painterwidget.cpp \
+        painterrectitem.cpp \
+        painterpathitem.cpp
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
             luaexecutethread.hpp \
-            qcellphonetextedit.h
+            qcellphonetextedit.h \
+            screencapture.h \
+            painterwidget.h \
+            painteritem.h \
+            painterrectitem.h \
+            painterpathitem.h
 
 FORMS    += t1wrenchmainwindow.ui
 
