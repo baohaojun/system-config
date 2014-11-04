@@ -20,6 +20,12 @@ for x in 15m hourly daily weekly; do
 done
 
 mkdir -p ~/.logs
+
+if test ! -e ~/.logs/offline-is-unstable; then
+    sudo apt-get install -t unstable offlineimap
+    touch ~/.logs/offline-is-unstable
+fi
+
 touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
 mkdir -p ~/tmp

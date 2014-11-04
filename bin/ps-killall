@@ -6,7 +6,7 @@ if test "${1:0:1}" = -; then
     shift
 fi
 
-match=$1
+match=${1:-xxxxxyyy}
 shift
 ps.pl $match | grep -v $(basename $0) | tee /dev/stderr | pn 1  |
     xargs bash -c '
