@@ -153,13 +153,12 @@
                             (when functionp wclass-or-lambda
                                   (write (stderr-file) "hello world\n")
                                   (wclass-or-lambda window)))
-                      (if (string-match "firefox" wcommand)
-                          (system "wait-keys-clear find-or-exec firefox&")
-                        (bhj-activate-window window))
+                      (bhj-activate-window window)
                       (throw 'wFound 'wFound)))
                   (stacking-order)))
           'wFound)
-      t
+      (when (string-equal (event-name (current-event)) "Super-n")
+        (eat-a-key-release "n"))
     (if wcommand
         (system (concat wcommand "&")))
     nil))
@@ -204,7 +203,10 @@
                   from)))
     (mapc (lambda (map-1)
             (synthesize-event-gnome? map-1 (input-focus)))
-          map-to)))
+          map-to)
+    (when (and (string-equal ">" (event-name (current-event)))
+               (string-equal "Firefox" class))
+      (eat-a-key-release ">"))))
 
 (defun get-window-map (window-map-assoc)
   (setq window-map-assoc (cadr window-map-assoc))
@@ -356,22 +358,40 @@
       (system (concat "xdotool-when-keyboard-clear key " (rewrite-event-for-xdotool event)))
     (synthesize-event event window)))
 
-(mapc
- (lambda (key)
-   (bind-keys global-keymap
-              (concat "Super-" key)
-              (lambda ()
-                (let* ((fw (input-focus))
-                       (class (window-class fw))
-                       (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))
-                                            (assoc t (assoc key super-key-window-remap))))
-                                   (concat "C-" key))))
-                  (if (listp map-to)
-                      (mapc (lambda (map-1)
-                              (synthesize-event-gnome? map-1 (input-focus)))
-                            map-to)
+(defun eat-a-key-release (key)
+  (let ((eval-key-release-events t) event)
+    (while eval-key-release-events
+      (setq event (read-event (format nil "Release the %s to eat it" key)))
+      (when (string-match (format nil "Release-%s$" key) (event-name event))
+        (setq eval-key-release-events nil)))))
 
-                    (synthesize-event-gnome? map-to (input-focus)))))))
+(defun my-debug (fmt &rest args)
+  (message (apply format nil fmt args)))
+
+(defun super-key-binding (key)
+  (message (format nil "hello world"))
+  (let* ((fw (input-focus))
+         (class (window-class fw))
+         (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))
+                              (assoc t (assoc key super-key-window-remap))))
+                     (concat "C-" key))))
+    (if (listp map-to)
+        (mapc (lambda (map-1)
+                (synthesize-event-gnome? map-1 (input-focus)))
+              map-to)
+      (synthesize-event-gnome? map-to (input-focus)))
+    (when (and (string-equal key "n")
+               (string-match "Firefox|Iceweasel" class)
+               (not eval-key-release-events))
+      (eat-a-key-release key))))
+
+(defun bind-super-key (key)
+  (bind-keys global-keymap
+             (concat "Super-" key)
+             `(super-key-binding ,key)))
+
+(mapc
+ #'bind-super-key
  '("a" "b" "c" "d" "e" "f" "g" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"))
 
 (bind-keys global-keymap "Super-Insert"  '(system "send-key&"))

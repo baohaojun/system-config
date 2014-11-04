@@ -12,6 +12,8 @@ if test ! -e "$1"; then
                  open_sina($1);
              } elsif (m!http://(?:m\\.)?weibo\\.cn/u/([^?/&%]+)!) {
                  open_sina_user($1);
+             } elsif (m!http://v.youku.com/v_show/id_([^.]+)!) {
+                 system("my-adb", "am", "start", "-n", "com.youku.phone/com.youku.ui.activity.DetailActivity", "--es", "video_id", $1);
              } else {
                  system("my-adb", "am", "start", $_);
              }

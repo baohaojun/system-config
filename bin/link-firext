@@ -11,7 +11,7 @@ if test $# != 1; then
 fi
 
 ext_name=$1
-ext_dir=~/gcode/fireforx-extensions/$1
+ext_dir=~/gcode/firefox-extensions/$1
 if test ! -d $ext_dir; then
     die "$ext_dir not a directory"
 fi
@@ -22,28 +22,28 @@ if test -z "$ext_guid"; then
     die "ext_guid for $ext_dir is empty";
 fi
 
-for x in ~/.mozilla/firefox/*/ ~/Library/"Application Support"/Firefox/Profiles/*/; do 
+for x in ~/.mozilla/firefox/*/ ~/Library/"Application Support"/Firefox/Profiles/*/; do
     test -d "$x" || continue
     dir="$x"/"extensions/$ext_guid"
     rm -rf "$dir" "$dir".xpi
     mkdir -p "$dir"
     case $(uname) in
-	CYGWIN*)
-	    cp $ext_dir/* "$dir" -av
-	    ;;
-	*)
-	    for x in $ext_dir/*; do 
-		if test -d $x; then
-		    mkdir "$dir"/$(basename $x)
-		    ln -sf $x/* "$dir"/$(basename $x)/
-		else
-		    ln -sf $x "$dir"
-		fi
-	    done
-	    (
-		cd "$dir"/chrome
-		jar cfv $(basename $ext_dir).jar */
-	    ) || true
-	    ;;
+        CYGWIN*)
+            cp $ext_dir/* "$dir" -av
+            ;;
+        *)
+            for x in $ext_dir/*; do
+                if test -d $x; then
+                    mkdir "$dir"/$(basename $x)
+                    ln -sf $x/* "$dir"/$(basename $x)/
+                else
+                    ln -sf $x "$dir"
+                fi
+            done
+            (
+                cd "$dir"/chrome
+                jar cfv $(basename $ext_dir).jar */
+            ) || true
+            ;;
     esac
 done

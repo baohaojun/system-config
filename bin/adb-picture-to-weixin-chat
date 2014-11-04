@@ -38,6 +38,7 @@ if test "$1"; then
     fi
 else
     pic=$(get-newest-file ~/shots/)
+    echo using pic: $pic
 fi
 ext=${pic##*.}
 adb_pic=/sdcard/DCIM/Camera/toqq-$(now|perl -npe 's/://g').$ext
@@ -135,6 +136,7 @@ function adb-picture-to() {
             ;;
         adb-picture-to-weibo)
             my-adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
+            sleep 1
             adb-tap 104 980
             sleep 1
             while adb-is-activity com.sina.weibo/com.sina.weibo.PhotoAlbumActivity; do

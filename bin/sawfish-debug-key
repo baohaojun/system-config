@@ -1,0 +1,5 @@
+#!/bin/bash
+sawfish-client -e '(let ((eval-key-release-events t)(event (read-event)))
+                      (message (format nil "binding %s for %s (raw %s)" (let () (lookup-event-binding event)) (event-name event) event))
+                      (setq event (read-event))
+                      (message (format nil "binding %s for %s (raw %s)" (let () (lookup-event-binding event)) (event-name event) event)))'
