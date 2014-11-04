@@ -117,7 +117,6 @@ class tabengine (IBus.Engine):
                                         object_path=obj_path)
         self._bus = bus
         self.sock = None
-        self.last_key = ""
 
         self.do_connect()
 
@@ -239,10 +238,6 @@ class tabengine (IBus.Engine):
         '''Internal method to process key event'''
         key = str(key)
         if key == '':
-            return False
-        last_key = self.last_key
-        self.last_key = key
-        if last_key == "escape":
             return False
         if self._preedit_str == '' and len(key) != 1:
             return False
