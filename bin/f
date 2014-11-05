@@ -17,6 +17,11 @@ function f()
         set -- "$(echo "$file"|perl -npe 's/:(\d+):?$//')" "$@"
     fi
 
+    if test "$#" -gt 2 -a "$1" = -w ; then
+        shift
+        select-output-line -- lookup-file-from-where "$@";
+        exit
+    fi
     set -e
     out=$(ORIGINAL_MATCHER="$@ "'!\.class$' select-output-line -- "find . -type f -iname '*$1*'|xargs ls -t")
     echo $out

@@ -1,3 +1,4 @@
+(message "start")
 (require 'sawfish.wm.util.keymap)
 (require 'sawfish.wm.state.maximize)
 
@@ -26,8 +27,8 @@
 (setq global-remap-alist
       '(("C-a" . '((t "Home")))
         ("C-g" . '((Firefox "C-g") (t "ESC")))
-        ("Next" . '((Firefox "C-v") (Qpdfview "SPC")))
-        ("Prior" . '((Firefox "ESC" "v") (Qpdfview "BS")))
+        ("Next" . '((Firefox "C-v") (qpdfview "SPC")))
+        ("Prior" . '((Firefox "ESC" "v") (qpdfview "BS")))
         ("C-d" . '((t "DEL")))
         ("C-e" . '((t "End")))
         ("C-b" . '((Firefox "C-b") (t "Left")))
@@ -38,27 +39,27 @@
         ("M-B" . '((t "C-S-Left")))
         ("M-F" . '((t "C-S-Right")))
         ("C-s" . '((Firefox "C-s") (t "C-g")))
-        ("C-v" . '((Qpdfview "SPC") (t "Next")))
-        ("M-v" . '((Qpdfview "BS") (t "Prior")))
-        ("M-<" . '((Qpdfview "Home")
+        ("C-v" . '((qpdfview "SPC") (t "Next")))
+        ("M-v" . '((qpdfview "BS") (t "Prior")))
+        ("M-<" . '((qpdfview "Home")
                    (t "C-Home")))
-        ("M->" . '((Qpdfview "End")
+        ("M->" . '((qpdfview "End")
                    (t "C-End")))
         ("C-r" . '((Firefox "C-r") (t "C-S-g")))
         ("C-k" . '((t "S-End" "Del")))
         ("M-BS" . '((t "C-BS")))
         ("C-p" . '((t "Up")))
         ("C-n" . '((t "Down")))
-        ("M-Left" . '((Qpdfview "C-RET")
+        ("M-Left" . '((qpdfview "C-RET")
                       (t nil)))
-        ("M-Right" . '((Qpdfview "C-S-RET")))
+        ("M-Right" . '((qpdfview "C-S-RET")))
         ("C-x" . '((Firefox "C-x") (t c-x-map)))))
 
 (bind-keys s-h-keymap "ESC" '(let ((key (concat "M-" (event-name (read-event "M-")))))
-                               (synthesize-event key (input-focus))))
+                               (synthesize-event-gnome? key (input-focus))))
 
 (setq esc-g-remap-alist
-      '(("M-g g" . '((Qpdfview "C-j") (t "M-v" "g" "p"))))) ; go to page in acroread
+      '(("M-g g" . '((qpdfview "C-j") (t "M-v" "g" "p"))))) ; go to page in acroread
 
 
 
@@ -112,11 +113,11 @@
 (bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
-(bind-keys s-h-keymap "Super-i" '(read-event (concat "wm_class is: "
-                                                                       (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
-                                                                       ";\n\nand Window class is: "
-                                                                       (window-class (input-focus))
-                                                                       "\n\nPress any key to continue...")))
+(bind-keys s-h-keymap "Super-i" '(read-event (format nil "Window is %s;\n\n WM_CLASS is: %s;\n\n and Window class is: %s\n\n and Window name is %s\n\nPress any key to continue..."
+                                                     (input-focus)
+                                                     (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
+                                                     (window-class (input-focus))
+                                                     (window-name (input-focus)))))
 (bind-keys s-h-keymap "i" '(system "indent-clipboard&"))
 (bind-keys s-h-keymap "I" '(system "deindent-clipboard&"))
 
@@ -157,7 +158,8 @@
                       (throw 'wFound 'wFound)))
                   (stacking-order)))
           'wFound)
-      (when (string-equal (event-name (current-event)) "Super-n")
+      (when  (and (current-event)
+                  (string-equal (event-name (current-event)) "Super-n"))
         (eat-a-key-release "n"))
     (if wcommand
         (system (concat wcommand "&")))
@@ -225,9 +227,10 @@
           (let* ((from (car key-map-1))
                  (to (cdr key-map-1))
                  (window-mapped-to (get-window-map to)))
+            (my-debug "from is %s, to is %s, window-mapped-to is %s class is %s" from to window-mapped-to (window-class (input-focus)))
             (when (string-match "^M-" from 0 nil)
               (bind-keys esc-map (substring from 2) `(classed-key-synthesize ,from ,to)))
-            (bind-keys c-x-map from `(synthesize-event-gnome? ,from (input-focus)))
+            (bind-keys c-x-map from `(synthesize-event-gnome? ,from ,(input-focus)))
             (bind-keys-nil-unbind global-keymap from
                                   (cond
                                    ((null window-mapped-to)
@@ -330,7 +333,7 @@
         ("d" . ((Firefox . ("C-x" "C-d"))))))
 
 
-(setq gnome-windows-re "gnome-terminal|nautilus|evince|gedit")
+(setq gnome-windows-re "gnome-terminal|nautilus|evince")
 
 (defun rewrite-event-for-xdotool (event)
   (let* ((keys-break-down (string-split "-" event))
@@ -355,7 +358,12 @@
 
 (defun synthesize-event-gnome? (event window)
   (if bhj-is-gnome?
-      (system (concat "xdotool-when-keyboard-clear key " (rewrite-event-for-xdotool event)))
+      (progn
+        (my-debug "using gnome style key input to window %s" window)
+        (system
+         (concat "xdotool-when-keyboard-clear key "
+                 (rewrite-event-for-xdotool event))))
+    (my-debug "sending event %s to window %s" event window)
     (synthesize-event event window)))
 
 (defun eat-a-key-release (key)
@@ -598,5 +606,6 @@
 (bind-keys print-keymap "k" '(system "sawfish-get-screen-shot-whole&"))
 (bind-keys print-keymap "e" '(system "e /tmp/screen-exchange&"))
 (bind-keys global-keymap "XF86Favorites" '(system "do-work&"))
-(bind-keys s-h-keymap "a" '(system "find-or-exec Qpdfview&"))
+(bind-keys s-h-keymap "a" '(system "find-or-exec qpdfview&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
+(message "hello")

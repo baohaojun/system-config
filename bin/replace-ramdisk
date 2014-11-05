@@ -62,6 +62,9 @@ function ew() {
 tdir=$tdir/$(basename $ramdisk)-tmp
 if test "$debuggable" = true; then
     echo ro.DEBUGGABLE=1 >> $tdir/default.prop
+    if test "$USER" = bhj; then
+        perl -npe 's/ro.debuggable=1/ro.debuggable=0/' -i $tdir/default.prop
+    fi
     perl -npe 's/ro.debuggable/ro.DEBUGGABLE/' -i $tdir/sbin/adbd
 fi
 for x in "$@"; do

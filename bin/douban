@@ -83,7 +83,13 @@ case "$1" in
                     elif test ! -e "$song"; then
                         postfix=-??
                     else
-                        postfix=
+                        postfix=--
+                    fi
+
+                    if test -e "$(dirname "$song")"/.like; then
+                        postfix=$postfix'**'
+                    elif test -e "$(dirname "$song")"/.unlike; then
+                        postfix=$postfix'//'
                     fi
 
                     bhj-notify -i "$icon" DoubanMusic.el$(if test -e ~/.logs/douban-should-loop; then echo -n -loop; fi) \
@@ -97,12 +103,24 @@ case "$1" in
                     ;;
                 unlike)
                     rm "$song".like -f
+                    perl -e 'if (-e "$ENV{song}.unlike" and -M "$ENV{song}.unlike" < 1 / 3600 / 24) { # like the artist
+                        $song = $ENV{song};
+                        ($dir = $song) =~ s!(.*/).*!$1!;
+                        system("touch", "$dir.unlike");
+                        system("rm", "-f", "$dir.like");
+                    }'
                     touch "$song".unlike
                     my-adb rm /sdcard/Music/"$(basename "$song")"
                     douban next
                     ;;
                 like)
                     mkdir -p "$(dirname "$song")"
+                    perl -e 'if (-e "$ENV{song}.like" and -M "$ENV{song}.like" < 1 / 3600 / 24) { # like the artist
+                        $song = $ENV{song};
+                        ($dir = $song) =~ s!(.*/).*!$1!;
+                        system("touch", "$dir.like");
+                        system("rm", "-f", "$dir.unlike");
+                    }'
                     touch "$song".like
                     if test -e "$song" -a -e "$icon"; then
                         like-mp3-tags "$song"
@@ -115,7 +133,7 @@ case "$1" in
                         mkdir -p "$(dirname "$song")"
                         wget "$picture_url" -O "$icon".$$ && mv "$icon".$$ "$icon"
                         if wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"; then
-                            if test -e "$song".like; then
+                            if test -e "$song".like || test -e "$(dirname "$song")"/.like -a ! -e "$song".unlike; then
                                 like-mp3-tags "$song"
                                 my-adb push "$song" /sdcard/Music/
                                 douban_action=info douban-misc
