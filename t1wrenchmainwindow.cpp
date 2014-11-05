@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include "lua.hpp"
 #include "screencapture.h"
+#include <QtWidgets/QFileDialog>
 
 #ifdef Q_OS_WIN32
 void setenv(const char* name, const char* val, int overide)
@@ -385,4 +386,20 @@ void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
 
     pix.save("screen-shot.png", "PNG");
     mLuaThread->addScript(QStringList() << "t1_picture" << "screen-shot.png");
+}
+
+void T1WrenchMainWindow::on_tbPicture_clicked()
+{
+    QStringList suffixes;
+    suffixes << "png" << "jpg" << "gif" << "bmp";
+
+    QStringList fns = QFileDialog::getOpenFileNames(this, tr("选择图片"), QString(), tr("Image Files(*.png *.jpg *.gif *.bmp)"));
+    foreach (QString fn, fns) {
+        if (!suffixes.contains(QFileInfo(fn).suffix())) {
+            prompt_user(QString().sprintf("未知图片文件类型：%s，不能分享", qPrintable(fn)));
+            continue;
+        }
+        mLuaThread->addScript(QStringList() << "t1_picture" << fn);
+        break;
+    }
 }

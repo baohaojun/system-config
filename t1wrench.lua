@@ -282,8 +282,14 @@ local function t1_post(text) -- use weixin
          add = "" -- # add="560 1840 key DEL key BACK"
       end
       if input_method then
-         if ime_xy == 'Requested w=1080 h=810' then
-            add = 'key SPACE 997 1199 key DEL'
+         if ime_xy:match('Requested w=1080 h=') then
+            y = ime_xy:sub(#'Requested w=1080 h=' + 1)
+            if y == '1525' then -- this is latin input method, it's wrong
+               y = 800
+            end
+            -- debug("y is %d", y)
+            add = ''
+            post_button = ('984 %d'):format(1920 - y - 50)
          end
       else
          if adb_input_method_is_null() then --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
@@ -294,6 +300,8 @@ local function t1_post(text) -- use weixin
    end
 end
 
+local function t1_picture_weibo_share(...)
+   pics = {...}
 local function t1_picture(pic)
    system{'adb-picture-to-unknown', pic}
 end

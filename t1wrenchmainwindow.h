@@ -42,6 +42,8 @@ private slots:
 
     void on_tbScreenCapture_clicked();
 
+    void on_tbPicture_clicked();
+
 private:
     QSharedPointer<ScreenCapture> mScreenCapture;
     LuaExecuteThread* mLuaThread;
