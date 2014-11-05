@@ -1,4 +1,3 @@
-(message "start")
 (require 'sawfish.wm.util.keymap)
 (require 'sawfish.wm.state.maximize)
 
@@ -53,7 +52,16 @@
         ("M-Left" . '((qpdfview "C-RET")
                       (t nil)))
         ("M-Right" . '((qpdfview "C-S-RET")))
-        ("C-x" . '((Firefox "C-x") (t c-x-map)))))
+        ("C-x" . '((Firefox "C-x") (t do-ctrl-x)))))
+
+(defun do-ctrl-x ()
+  (let* ((event (read-event "C-x"))
+         (key (event-name event)))
+    (my-debug "hello 1 do-ctrl-x key is %s" key)
+    (when (let ((global-keymap c-x-map))
+            (lookup-event-binding event))
+        (my-debug "hello world do-ctrl-x")
+        (synthesize-event-gnome? key (input-focus)))))
 
 (bind-keys s-h-keymap "ESC" '(let ((key (concat "M-" (event-name (read-event "M-")))))
                                (synthesize-event-gnome? key (input-focus))))
@@ -359,11 +367,9 @@
 (defun synthesize-event-gnome? (event window)
   (if bhj-is-gnome?
       (progn
-        (my-debug "using gnome style key input to window %s" window)
         (system
          (concat "xdotool-when-keyboard-clear key "
                  (rewrite-event-for-xdotool event))))
-    (my-debug "sending event %s to window %s" event window)
     (synthesize-event event window)))
 
 (defun eat-a-key-release (key)
@@ -608,4 +614,3 @@
 (bind-keys global-keymap "XF86Favorites" '(system "do-work&"))
 (bind-keys s-h-keymap "a" '(system "find-or-exec qpdfview&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
-(message "hello")

@@ -97,7 +97,7 @@ function git()
             cd ~/system-config/;
             if test "$1" = st; then
                 for x in ~/src/github/*; do
-                    if test -d $x -a ! -L $x; then
+                    if test -d $x -a ! -L $x -a -e $x/.git; then
                         (
                             cd $x
 
