@@ -86,20 +86,6 @@
      (bbdb-insinuate-message)
      (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)))
 
-(eval-after-load 'browse-kill-ring
-  '(setq browse-kill-ring-quit-action
-         (lambda ()
-            (mapc
-             (lambda (w)
-               (when (eq browse-kill-ring-original-buffer (window-buffer w))
-                 (set-window-point w
-                  (with-current-buffer browse-kill-ring-original-buffer
-                    (point)))))
-             (window-list))
-            (bury-buffer)
-            (unless (= (count-windows) 1)
-              (delete-window)))))
-
 (eval-after-load 'douban-music-mode
   '(progn
      (add-hook 'douban-song-before-info-hook #'bhj-douban-start)))

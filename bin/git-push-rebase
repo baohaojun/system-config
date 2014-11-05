@@ -211,6 +211,7 @@ if git status -s | grep . ; then
             fi
             echo "###start of comment###"
             echo in $(pwd):
+            echo -e "remotes:\n$(git remote -v|pn 2|sort -u)"
             git diff -w HEAD | perl -npe 's,^diff --git ,* ,'
             LOCAL=Local
             cat <<EOF
