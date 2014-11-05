@@ -18,7 +18,7 @@ else
 fi
 
 if test $(basename $0) = adb-picture-clean; then
-    my-adb 'for x in /sdcard/DCIM/Camera/toqq-*; do
+    my-adb 'for x in /sdcard/DCIM/Camera/t1wrench-*; do
              if test -e "$x"; then
                  rm -f "$x"
                  am startservice -n com.bhj.setclip/.PutClipService --es picture "$x"
@@ -41,7 +41,7 @@ else
     echo using pic: $pic
 fi
 ext=${pic##*.}
-adb_pic=/sdcard/DCIM/Camera/toqq-$(now|perl -npe 's/://g').$ext
+adb_pic=/sdcard/DCIM/Camera/t1wrench-$(now|perl -npe 's/://g').$ext
 my-adb push "$pic" $adb_pic
 my-adb am startservice -n com.bhj.setclip/.PutClipService --es picture $adb_pic
 
