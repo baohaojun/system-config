@@ -325,7 +325,7 @@ end
 local function t1_picture(...)
    pics = {...}
    upload_pics{...}
-   activity
+   window = adb_focused_window()
    system{'adb-picture-to-unknown', pic}
 end
 
