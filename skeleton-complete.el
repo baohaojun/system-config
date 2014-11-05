@@ -438,7 +438,7 @@ S-expression enclosing the matched region."
 (defun skeleton--highlight-match-line (matches line max-line-num)
   "This function is copy and modified from ecomplete-highlight-match-line"
   (let* ((max-lines (skeleton--max-minibuffer-lines))
-         (max-lines-1 (1- max-lines))
+         (max-lines-1 (- max-lines 2))
          (max-lines-2 (1- max-lines-1)))
     (cond
      ((< max-line-num max-lines)
