@@ -8,6 +8,14 @@ mkdir -p $TMPDIR
 mkdir -p ~/.logs
 
 cd -P .
+if test $PWD = ~; then
+    if yes-or-no-p -y "Should not do for-code-reading in your HOME; are you sure?"; then
+        true
+    else
+        exit
+    fi
+
+fi
 outDir=~/.cache/for-code-reading/"`pwd`"
 srcDir=`pwd`
 export relativeSrcDir=.
