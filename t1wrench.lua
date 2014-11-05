@@ -300,9 +300,32 @@ local function t1_post(text) -- use weixin
    end
 end
 
+local function upload_pics(...)
+   pics = {...}
+   adb_shell(
+      [[
+            for x in /sdcard/DCIM/Camera/t1wrench-*; do
+               if test -e "$x"; then
+                  rm -f "$x"
+                  am startservice -n com.bhj.setclip/.PutClipService --es picture "$x"
+               fi
+           done
+   ]])
+   for i = 1, #pics do
+      local ext = last(pics[i]:gmatch("%.[^.]+"))
+      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      system{'adb', 'push', pics[i], target}
+      adb_shell{"am", "startservice", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
+   end
+end
+
 local function t1_picture_weibo_share(...)
    pics = {...}
-local function t1_picture(pic)
+end
+local function t1_picture(...)
+   pics = {...}
+   upload_pics{...}
+   activity
    system{'adb-picture-to-unknown', pic}
 end
 
