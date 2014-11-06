@@ -52,15 +52,30 @@
         ("M-Left" . '((qpdfview "C-RET")
                       (t nil)))
         ("M-Right" . '((qpdfview "C-S-RET")))
-        ("C-x" . '((Firefox "C-x") (t do-ctrl-x)))))
+        ("C-x" . '((Firefox "C-x") (t do-c-x-map)))))
 
-(defun do-ctrl-x ()
+(defun do-esc-map ()
+  (let* ((event (read-event "ESC"))
+         (key (event-name event))
+         (binding (let ((global-keymap esc-map))
+                    (lookup-event-binding event))))
+    (when binding
+      (apply-command (car binding) (cdr binding)))))
+
+(defun do-esc-g-map ()
+  (let* ((event (read-event "ESC g"))
+         (key (event-name event))
+         (binding (let ((global-keymap esc-g-map))
+                    (lookup-event-binding event))))
+    (when binding
+      (apply-command (car binding) (cdr binding)))))
+
+(defun do-c-x-map ()
   (let* ((event (read-event "C-x"))
          (key (event-name event)))
-    (my-debug "hello 1 do-ctrl-x key is %s" key)
     (when (let ((global-keymap c-x-map))
             (lookup-event-binding event))
-        (my-debug "hello world do-ctrl-x")
+
         (synthesize-event-gnome? key (input-focus)))))
 
 (bind-keys s-h-keymap "ESC" '(let ((key (concat "M-" (event-name (read-event "M-")))))
@@ -205,6 +220,8 @@
 (bind-keys global-keymap "XF86AudioLowerVolume"  '(system "adjust-volume&"))
 
 (defun classed-key-synthesize (from to)
+  (when (eq (car to) 'quote)
+    (setq to (cadr to)))
   (let* ((fw (input-focus))
          (class (window-class fw))
          (map-to (or
@@ -235,7 +252,6 @@
           (let* ((from (car key-map-1))
                  (to (cdr key-map-1))
                  (window-mapped-to (get-window-map to)))
-            (my-debug "from is %s, to is %s, window-mapped-to is %s class is %s" from to window-mapped-to (window-class (input-focus)))
             (when (string-match "^M-" from 0 nil)
               (bind-keys esc-map (substring from 2) `(classed-key-synthesize ,from ,to)))
             (bind-keys c-x-map from `(synthesize-event-gnome? ,from ,(input-focus)))
@@ -261,10 +277,10 @@
                                    (t
                                     `(classed-key-synthesize ,from ,to))))))
         esc-g-remap-alist)
-  (bind-keys global-keymap "ESC" esc-map)
-  (bind-keys esc-map "ESC" (lambda () (synthesize-event-gnome? "ESC" (input-focus))))
+  (bind-keys global-keymap "ESC" do-esc-map)
+  (bind-keys esc-map "ESC" `(synthesize-event-gnome? "ESC" ,(input-focus)))
   (bind-keys s-h-keymap "C-x" c-x-map)
-  (bind-keys esc-map "g" esc-g-map))
+  (bind-keys esc-map "g" '(do-esc-g-map)))
 
 (defun undo-global-remap()
   (mapc (lambda (key-map-1)
