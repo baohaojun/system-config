@@ -12,6 +12,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = T1Wrench
 TEMPLATE = app
 
+win32:INCLUDEPATH += ./windows
+win32:LIBS += -L./windows -llua52
+win32:CONFIG += console
+
 unix:INCLUDEPATH += /usr/include/lua5.2
 unix:LIBS += -llua5.2
 

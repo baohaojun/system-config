@@ -36,7 +36,7 @@ void LuaExecuteThread::run()
         }
         error = lua_pcall(L, script.length(), 1, 0);
         if (error) {
-            emit gotSomeLog("exit", QString().sprintf("Can't run %s", qPrintable(func)));
+            emit gotSomeLog("exit", QString().sprintf("Can't run %s: %s", qPrintable(func), lua_tolstring(L, -1, NULL)));
             lua_close(L);
             return;
         }

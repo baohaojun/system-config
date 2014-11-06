@@ -139,6 +139,8 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
 
     if (key == "getclip-android") {
         ui->phoneTextEdit->insertPlainText(val);
+    } else if (key == "exit") {
+        prompt_user(QString().sprintf("后台出错，请重启小扳手: %s", qPrintable(val)));
     } else if (key == "") {
         // do nothing.
     } else if (key == "start task") {

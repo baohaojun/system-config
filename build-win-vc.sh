@@ -2,6 +2,9 @@
 
 function copy-dlls()
 {
+    rsync windows/*.dll ./release -v
+    rsync t1wrench.lua ./release -v
+
     for x in icudt52.dll icuin52.dll icuuc52.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL; do
         rsync $1/bin/$x ./release -av
         chmod 555 ./release/$x
@@ -36,10 +39,10 @@ if test $# = 0; then
     set -- pub
 fi
 if test $(uname) = Linux; then
-    psync -d $1 .; ssh $1 "cd $PWD; ./$(basename $0)"
+    psync $1 .; ssh $1 "cd $PWD; ./$(basename $0)"
     rsync $1:$(up .)/t1wrench-release ../ -av
     rsync $1:$(up .)/t1wrench-windows.tgz ~/today/
-    smb_push ~/today/t1wrench-windows.tgz
+    smb-push ~/today/t1wrench-windows.tgz
 else
     set -e
     set -o pipefail
@@ -53,11 +56,15 @@ else
         copy-dlls /c/Qt/5.3/msvc2013_64/
         rsync ~/vcredist_x64.exe ./release/vcredist-vs2013-x86_64.exe
         make-release-tgz
-    else
+    else # mingw
         /c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32/bin/qmake.exe
         export PATH=/cygdrive/c/Qt-mingw/Qt5.3.1/5.3/mingw482_32/bin:/c/Qt-mingw/Qt5.3.1/Tools/mingw482_32/bin:$PATH
         mingw32-make.exe | perl -npe 's/\\/\//g'
         copy-dlls /c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32
+        set -x
+        (
+            myscr bash -c 'cd t1wrench-release; of ./T1Wrench.exe'
+        )&
         make-release-tgz t1wrench-windows.tgz
     fi
 fi

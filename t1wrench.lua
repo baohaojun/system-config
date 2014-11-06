@@ -1,6 +1,39 @@
 #!/usr/bin/lua
-local function shell_quote(str)
-   return "'" .. string.gsub(str, "'", "'\\''") .. "'"
+local shell_quote, adb_unquoter
+local is_windows = false
+local debug_set_x = ""
+if package.config:sub(1, 1) == '/' then
+   shell_quote = function (str)
+      return "'" .. string.gsub(str, "'", "'\\''") .. "'"
+   end
+   debug_set_x = "set -x; "
+   adb_unquoter = '\\"'
+else -- windows
+   shell_quote = function (str)
+      str = str:gsub('\n', '')
+      str = str:gsub('\\', '\\\\')
+      str = str:gsub('"', '\\"')
+      return '"' .. str .. '"'
+   end
+   debug_set_x = ""
+   adb_unquoter = '\\"'
+   is_windows = true
+end
+
+local function system(cmds)
+   if type(cmds) == 'string' then
+      os.execute(cmds)
+   elseif type(cmds) == 'table' then
+      command_str = ''
+      for i = 1, #cmds do
+         if i == 1 and is_windows then
+            command_str = command_str .. cmds[i] .. ' '
+         else
+            command_str = command_str .. shell_quote(cmds[i]) .. ' '
+         end
+      end
+      os.execute(debug_set_x .. command_str)
+   end
 end
 
 local function debug(fmt, ...)
@@ -43,18 +76,6 @@ local function join(mid, args)
    return text
 end
 
-local function system(cmds)
-   if type(cmds) == 'string' then
-      os.execute(cmds)
-   elseif type(cmds) == 'table' then
-      command_str = ''
-      for i = 1, #cmds do
-         command_str = command_str .. shell_quote(cmds[i]) .. ' ';
-      end
-      os.execute("set -x; " .. command_str)
-   end
-end
-
 local function adb_do(func, cmds)
    if type(cmds) == 'string' then
       return adb_do(func, {"sh", "-c", cmds})
@@ -69,11 +90,11 @@ local function adb_do(func, cmds)
       for i = 1, #cmds do
          quoted_cmds[i] = shell_quote(shell_quote(cmds[i]))
          if string.find(quoted_cmds[i], " ") then
-            quoted_cmds[i] = '\\"' .. quoted_cmds[i] .. '\\"'
+            quoted_cmds[i] = adb_unquoter .. quoted_cmds[i] .. adb_unquoter
          end
          command_str = command_str .. quoted_cmds[i] .. ' '
       end
-      return func("set -x; the-true-adb shell " .. command_str)
+      return func(debug_set_x .. "the-true-adb shell " .. command_str)
    end
 end
 
@@ -87,7 +108,6 @@ end
 
 local function adb_focused_window()
    wdump = adb_pipe{"dumpsys", "window"}
-   print('wdump is ' .. wdump)
    return string.match(wdump, "mFocusedWindow[^}]*%s(%S+)}")
 end
 
@@ -144,7 +164,7 @@ local function adb_tap_mid_bot()
 end
 
 local function sleep(time)
-   system("sleep " .. time)
+   adb_shell{"sleep", time}
 end
 
 local function t1_weibo(window)
@@ -244,10 +264,16 @@ local function adb_input_method_is_null()
 end
 
 local function t1_post(text) -- use weixin
-   local file = io.open("/tmp/lua-smartisan-t1.txt", "w")
+   local file, path
+   local tmp = os.getenv("TEMP") or "/tmp"
+   path = tmp .. package.config:sub(1, 1) .. "lua-smartisan-t1.txt"
+   file = io.open(path, "w")
+   if not file then
+      error("TEMP env not set")
+   end
    file:write(text)
    file:close()
-   system{'adb', 'push', '/tmp/lua-smartisan-t1.txt', '/sdcard/putclip.txt'}
+   system{'adb', 'push', path, '/sdcard/putclip.txt'}
    adb_shell(
       [[
          am startservice --user 0 -n com.bhj.setclip/.PutClipService&
@@ -322,25 +348,29 @@ local function upload_pics(...)
       [[
             for x in /sdcard/DCIM/Camera/t1wrench-*; do
                if test -e "$x"; then
-                  rm -f "$x"
-                  am startservice -n com.bhj.setclip/.PutClipService --es picture "$x"
-               fi
-           done
+                  rm -f "$x";
+                  am startservice -n com.bhj.setclip/.PutClipService --es picture "$x";
+               fi;
+            done
    ]])
-   debug("pics[1] is %s", pics[1])
+
+   print("hello world")
+   local targets = {}
+   time = os.time()
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      local target = ('/sdcard/DCIM/Camera/t1wrench-%d-%d%s'):format(time, i, ext)
+      targets[#targets + 1] = target
       system{'adb', 'push', pics[i], target}
       adb_shell{"am", "startservice", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
    end
+   return targets
 end
 
-local function picture_to_weixin_share(...)
-   local pics = {...}
+local function picture_to_weixin_share(pics)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      local target = pics[i]
 
       if i == 1 then
          adb_shell("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
@@ -359,11 +389,10 @@ local function picture_to_weixin_share(...)
    return "Prompt: please say something"
 end
 
-local function picture_to_weibo_share(...)
-   local pics = {...}
+local function picture_to_weibo_share(pics)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      local target = pics[i]
 
       if i == 1 then
          adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity")
@@ -381,13 +410,12 @@ local function picture_to_weibo_share(...)
    adb_event("adb-tap 141 1849 adb-tap 922 1891")
 end
 
-local function picture_to_weixin_chat(...)
-   local pics = {...}
+local function picture_to_weixin_chat(pics)
    local input_method, ime_height = adb_get_input_window_dump()
    local post_button = ('984 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      local target = pics[i]
       if i == 1 then
          local events = post_button .. " sleep .1 swipe 125 1285 500 1285 sleep .1 " ..
             "125 1285 sleep 1"
@@ -405,13 +433,12 @@ local function picture_to_weixin_chat(...)
    adb_event("adb-tap 944 1894 adb-tap 59 1871 adb-tap 927 148")
 end
 
-local function picture_to_qq_chat(...)
-   local pics = {...}
+local function picture_to_qq_chat(pics)
    local input_method, ime_height = adb_get_input_window_dump()
    local post_button = ('159 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      local target = pics[i]
       if i == 1 then
          local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1"
          adb_event(split(" ", events))
@@ -432,13 +459,12 @@ local function picture_to_qq_chat(...)
    adb_event("adb-tap 608 1831 adb-tap 403 1679 adb-tap 918 1862 sleep .5 adb-tap 312 1275")
 end
 
-local function picture_to_qqlite_chat(...)
-   local pics = {...}
+local function picture_to_qqlite_chat(pics)
    local input_method, ime_height = adb_get_input_window_dump()
    local post_button = ('984 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      local target = pics[i]
       if i == 1 then
          local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1"
          adb_event(split(" ", events))
@@ -459,13 +485,12 @@ local function picture_to_qqlite_chat(...)
    adb_event("adb-tap 519 1841 adb-tap 434 1071 adb-tap 918 1862 sleep .5 adb-tap 279 1221")
 end
 
-local function picture_to_weibo_chat(...)
-   local pics = {...}
+local function picture_to_weibo_chat(pics)
    local input_method, ime_height = adb_get_input_window_dump()
    local post_button = ('984 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      local target = pics[i]
       if i == 1 then
          local events = post_button .. " sleep .1 adb-tap 375 1410 sleep .1 adb-tap 645 135 sleep .2 adb-tap 369 679 sleep 2"
          adb_event(split(" ", events))
@@ -482,21 +507,20 @@ local function picture_to_weibo_chat(...)
 end
 
 local function t1_picture(...)
-   local pics = {...}
-   upload_pics(...)
+   local pics = upload_pics(...)
    local window = adb_focused_window()
    if window == "com.tencent.mm/com.tencent.mm.ui.LauncherUI" then
-      picture_to_weixin_chat(...)
+      picture_to_weixin_chat(pics)
    elseif window == "com.tencent.qqlite/com.tencent.mobileqq.activity.ChatActivity" then
-      picture_to_qqlite_chat(...)
+      picture_to_qqlite_chat(pics)
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity" then
-      picture_to_qq_chat(...)
+      picture_to_qq_chat(pics)
    elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then
-      picture_to_weibo_chat(...)
+      picture_to_weibo_chat(pics)
    elseif window:match("com.sina.weibo") then
-      picture_to_weibo_share(...)
+      picture_to_weibo_share(pics)
    elseif window:match("com.tencent.mm") then
-      picture_to_weixin_share(...)
+      picture_to_weixin_share(pics)
    else
       return "Error: can't decide where to share"
    end
@@ -511,7 +535,15 @@ M.t1_picture = t1_picture
 
 if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
    -- t1_post(join(' ', arg))
-   t1_picture(arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9])
+   t1_picture(arg[1]) -- , arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9])
+   exit(0)
+   print(5)
+   debug_set_x = arg[#arg]
+   arg[#arg] = nil
+   -- adb_unquoter = arg[#arg]
+   -- arg[#arg] = nil
+   adb_shell(arg)
+   -- system{'adb', 'push', arg[1], "/sdcard/1.txt"}
 else
    return M
 end

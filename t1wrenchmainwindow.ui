@@ -41,7 +41,11 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QCellPhoneTextEdit" name="phoneTextEdit"/>
+        <widget class="QCellPhoneTextEdit" name="phoneTextEdit">
+         <property name="toolTip">
+          <string>在这里输入聊天内容</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -100,6 +104,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="configurePushButton">
+         <property name="toolTip">
+          <string/>
+         </property>
          <property name="text">
           <string>配置</string>
          </property>
@@ -107,6 +114,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="sendItPushButton">
+         <property name="toolTip">
+          <string>快捷键Ctrl-n</string>
+         </property>
          <property name="text">
           <string>扳动</string>
          </property>

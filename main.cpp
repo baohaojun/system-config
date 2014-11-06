@@ -11,8 +11,19 @@
 #include <QtCore/QByteArray>
 using namespace std;
 
+#ifdef Q_OS_WIN32
+#include <windows.h>
+#endif
 int main(int argc, char *argv[])
 {
+
+#ifdef Q_OS_WIN32
+    HWND hwnd = GetConsoleWindow();
+    if (hwnd) {
+        ShowWindow(hwnd, SW_HIDE);
+    }
+#endif
+
     QApplication a(argc, argv);
     T1WrenchMainWindow w;
     w.show();
