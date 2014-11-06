@@ -7,7 +7,7 @@ int main (void) {
 
     lua_State *L = luaL_newstate();             /* opens Lua */
     luaL_openlibs(L);        /* opens the standard libraries */
-
+    fprintf(stderr, "hello world %s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
     int error = luaL_loadstring(L, "t1wrench = require('t1wrench')") || lua_pcall(L, 0, 0, 0);
     if (error) {
         printf("exit %s\n", "Can't load t1wrench");
@@ -30,7 +30,7 @@ int main (void) {
 
         error = lua_pcall(L, 1, 1, 0);
         if (error) {
-            printf("exit %s\n", "Can't run %s");
+            printf("Exit %s\n", lua_tolstring(L, -1, NULL));
             lua_close(L);
             return -1;
         }

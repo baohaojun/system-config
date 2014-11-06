@@ -1,7 +1,8 @@
 #!/bin/bash
 
-TEMP=$(getopt -o rdc --long reverse,delete,checksum -n $(basename $0) -- "$@")
+TEMP=$(getopt -o rdcL --long reverse,delete,checksum -n $(basename $0) -- "$@")
 reverse=false
+symlink=
 delete=
 checksum=
 eval set -- "$TEMP"
@@ -9,6 +10,10 @@ while true; do
     case "$1" in
         -r|--reverse)
             reverse=true
+            shift 1
+            ;;
+        -L)
+            symlink=-L
             shift 1
             ;;
         -d|--delete)
@@ -50,8 +55,8 @@ else
 fi
 if test "$reverse" = true; then
     for x in "$@"; do
-        my-rsync $checksum -av $host:$(up .)/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*" $local_exclude |grep -v '/$' -P
+        my-rsync $symlink $checksum -av $host:$(up .)/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*" $local_exclude |grep -v '/$' -P
     done
 else
-    my-rsync $checksum -av "$@" $host:$(up .) --exclude .git --exclude "*#*" --exclude ".#*" $delete $local_exclude |grep -v '/$' -P
+    my-rsync $symlink $checksum -av "$@" $host:$(up .) --exclude .git --exclude "*#*" --exclude ".#*" $delete $local_exclude |grep -v '/$' -P
 fi
