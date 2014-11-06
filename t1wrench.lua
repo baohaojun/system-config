@@ -3,6 +3,46 @@ local function shell_quote(str)
    return "'" .. string.gsub(str, "'", "'\\''") .. "'"
 end
 
+local function debug(fmt, ...)
+   print(string.format(fmt, ...))
+end
+
+local function split(pat, str)
+   local start = 1
+   if pat == ' ' then
+      pat = "%s+"
+   end
+
+   local list, i, j = {}
+   while true do
+      i, j = str:find(pat, start)
+      if (i and i >= start) then
+         if i > start then
+            list[#list + 1] = str:sub(start, i - 1)
+         end
+      elseif #str >= start then
+         list[#list + 1] = str:sub(start)
+      end
+      if i then
+         start = j + 1
+      else
+         break
+      end
+   end
+   return list
+end
+
+local function join(mid, args)
+   text = ''
+   for i = 1, #args do
+      if i ~= 1 then
+         text = text .. mid
+      end
+      text = text .. args[i]
+   end
+   return text
+end
+
 local function system(cmds)
    if type(cmds) == 'string' then
       os.execute(cmds)
@@ -55,19 +95,11 @@ local function select_args(args)
    return args[1]
 end
 
-local function adb_tap_bot_left()
-   adb_event{20, 1882}
-end
-
-local function adb_tap_mid_bot()
-   adb_event{560, 1840}
-end
-
-local function sleep(time)
-   system("sleep " .. time)
-end
-
 local function adb_event(events)
+   if type(events) == 'string' then
+      adb_event(split(" ", events))
+      return
+   end
    command_str = ''
    i = 1
    while true do
@@ -83,17 +115,36 @@ local function adb_event(events)
          command_str = command_str .. ('input keyevent %s;'):format(events[i+1]:upper())
          i = i + 2
       elseif events[i] == 'sleep' then
-         command_str = command_str .. ('input keyevent %s;'):format(events[i+1])
+         command_str = command_str .. ('sleep %s;'):format(events[i+1])
          i = i + 2
+      elseif events[i] == 'swipe' then
+         command_str = command_str .. ('input touchscreen swipe %s %s %s %s 500;'):format(
+            events[i+1], events[i+2], events[i+3], events[i+4])
+         i = i + 5
+      elseif events[i] == 'adb-tap' then
+         i = i + 1
       elseif events[i] then
          error(string.format("Error: unknown event: %d: '%s' (%s)", i, events[i], join(' ', events)))
       elseif not events[i - 1] then
+         debug("Error at i = %d, events: %s", i, join(' ', events))
          error("Error: wrong number of events?")
       else
          break
       end
    end
    adb_shell(command_str)
+end
+
+local function adb_tap_bot_left()
+   adb_event{20, 1882}
+end
+
+local function adb_tap_mid_bot()
+   adb_event{560, 1840}
+end
+
+local function sleep(time)
+   system("sleep " .. time)
 end
 
 local function t1_weibo(window)
@@ -142,40 +193,14 @@ local function t1_paste()
    adb_event{'key', 'scroll_lock'}
 end
 
-local function split(pat, str)
-   start = 1
-   if pat == ' ' then
-      pat = "%s+"
+local function last(func)
+   local x, y
+   y = func()
+   while y do
+      x = y
+      y = func()
    end
-
-   list = {}
-   while true do
-      i, j = str:find(pat, start)
-      if (i and i >= start) then
-         if i > start then
-            list[#list + 1] = str:sub(start, i - 1)
-         end
-      elseif #str > start then
-         list[#list + 1] = str:sub(start)
-      end
-      if i then
-         start = j + 1
-      else
-         break
-      end
-   end
-   return list
-end
-
-local function join(mid, args)
-   text = ''
-   for i = 1, #args do
-      if i ~= 1 then
-         text = text .. mid
-      end
-      text = text .. args[i]
-   end
-   return text
+   return x
 end
 
 local function adb_get_input_window_dump()
@@ -195,7 +220,17 @@ local function adb_get_input_window_dump()
          end
       end
    end
-   return join("\n", input_method)
+   local input_window_dump = join("\n", input_method)
+   local input_method = string.match(input_window_dump, "mHasSurface=true")
+   local ime_xy = last(string.gmatch(input_window_dump, "Requested w=1080 h=%d+"))
+   local ime_height = 0
+   if input_method and ime_xy:match('Requested w=1080 h=') then
+      ime_height = ime_xy:sub(#'Requested w=1080 h=' + 1)
+      if ime_height == '1525' then -- this is latin input method, it's wrong
+         ime_height = 800
+      end
+   end
+   return input_method, ime_height
 end
 
 local function adb_input_method_is_null()
@@ -206,20 +241,6 @@ local function adb_input_method_is_null()
    else
       return false
    end
-end
-
-local function last(func)
-   local x, y
-   y = func()
-   while y do
-      x = y
-      y = func()
-   end
-   return x
-end
-
-local function debug(fmt, ...)
-   print(string.format(fmt, ...))
 end
 
 local function t1_post(text) -- use weixin
@@ -265,14 +286,8 @@ local function t1_post(text) -- use weixin
       t1_paste()
       return
    else
-      post_button = '958 1820'
-      if window == "com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity" then
-         post_button = '954 166'
-      end
-      input_window_dump = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
-      input_method = string.match(input_window_dump, "mHasSurface=true")
-      ime_xy = last(string.gmatch(input_window_dump, "Requested w=1080 h=%d+"))
-      -- debug("input_window_dump is %s", input_window_dump)
+      local add, post_button = '', '958 1820'
+      local input_method, ime_height = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
       -- debug("input_method is %s", input_method)
       -- debug("ime_xy is %s", ime_xy)
 
@@ -282,26 +297,26 @@ local function t1_post(text) -- use weixin
          add = "" -- # add="560 1840 key DEL key BACK"
       end
       if input_method then
-         if ime_xy:match('Requested w=1080 h=') then
-            y = ime_xy:sub(#'Requested w=1080 h=' + 1)
-            if y == '1525' then -- this is latin input method, it's wrong
-               y = 800
-            end
-            -- debug("y is %d", y)
+         if ime_height ~= 0 then
             add = ''
-            post_button = ('984 %d'):format(1920 - y - 50)
+            post_button = ('984 %d'):format(1920 - ime_height - 50)
          end
       else
          if adb_input_method_is_null() then --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
             add = '560 1840 sleep .1 997 1199 sleep .1'
          end
       end
+
+      if window == "com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity" then
+         post_button = '954 166'
+      end
+
       adb_event(split(" ", string.format("%s key scroll_lock %s", add, post_button)))
    end
 end
 
 local function upload_pics(...)
-   pics = {...}
+   local pics = {...}
    adb_shell(
       [[
             for x in /sdcard/DCIM/Camera/t1wrench-*; do
@@ -311,6 +326,7 @@ local function upload_pics(...)
                fi
            done
    ]])
+   debug("pics[1] is %s", pics[1])
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
@@ -319,14 +335,170 @@ local function upload_pics(...)
    end
 end
 
-local function t1_picture_weibo_share(...)
-   pics = {...}
+local function picture_to_weixin_share(...)
+   local pics = {...}
+   for i = 1, #pics do
+      local ext = last(pics[i]:gmatch("%.[^.]+"))
+      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+
+      if i == 1 then
+         adb_shell("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
+         adb_event("sleep .5 adb-tap 141 597 sleep .5")
+      end
+
+      local pic_share_buttons = {
+         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
+         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
+         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
+      }
+      local i_button = pic_share_buttons[i]
+      adb_event(split(" ", i_button))
+   end
+   adb_event("adb-tap 901 1841 adb-tap 75 1867 adb-tap 903 133")
+   return "Prompt: please say something"
 end
+
+local function picture_to_weibo_share(...)
+   local pics = {...}
+   for i = 1, #pics do
+      local ext = last(pics[i]:gmatch("%.[^.]+"))
+      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+
+      if i == 1 then
+         adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity")
+         adb_event("sleep 1 adb-tap 104 980 sleep 2")
+      end
+
+      local pic_share_buttons = {
+         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
+         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
+         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
+      }
+      local i_button = pic_share_buttons[i]
+      adb_event(split(" ", i_button))
+   end
+   adb_event("adb-tap 141 1849 adb-tap 922 1891")
+end
+
+local function picture_to_weixin_chat(...)
+   local pics = {...}
+   local input_method, ime_height = adb_get_input_window_dump()
+   local post_button = ('984 %d'):format(1920 - ime_height - 50)
+   for i = 1, #pics do
+      local ext = last(pics[i]:gmatch("%.[^.]+"))
+      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      if i == 1 then
+         local events = post_button .. " sleep .1 swipe 125 1285 500 1285 sleep .1 " ..
+            "125 1285 sleep 1"
+         adb_event(split(" ", events))
+      end
+
+      local pic_share_buttons = {
+         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
+         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
+         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
+      }
+      local i_button = pic_share_buttons[i]
+      adb_event(split(" ", i_button))
+   end
+   adb_event(split(" ", "adb-tap 927 148"))
+end
+
+local function picture_to_qq_chat(...)
+   local pics = {...}
+   local input_method, ime_height = adb_get_input_window_dump()
+   local post_button = ('159 %d'):format(1920 - ime_height - 50)
+   for i = 1, #pics do
+      local ext = last(pics[i]:gmatch("%.[^.]+"))
+      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      if i == 1 then
+         local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1"
+         adb_event(split(" ", events))
+         while adb_focused_window() ~= "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity" do
+            adb_event{118, 152, "sleep", .5}
+         end
+         adb_event("457 493 sleep .1 swipe 519 403 519 1800 sleep .3")
+      end
+      local pic_share_buttons = {
+         "adb-tap 191 394",
+         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
+         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
+         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
+      }
+      local i_button = pic_share_buttons[i]
+      adb_event(split(" ", i_button))
+   end
+   adb_event("adb-tap 608 1831 adb-tap 403 1679 adb-tap 918 1862 sleep .5 adb-tap 312 1275")
+end
+
+local function picture_to_qqlite_chat(...)
+   local pics = {...}
+   local input_method, ime_height = adb_get_input_window_dump()
+   local post_button = ('984 %d'):format(1920 - ime_height - 50)
+   for i = 1, #pics do
+      local ext = last(pics[i]:gmatch("%.[^.]+"))
+      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      if i == 1 then
+         local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1"
+         adb_event(split(" ", events))
+         while adb_focused_window() ~= "com.tencent.qqlite/com.tencent.mobileqq.activity.photo.AlbumListActivity" do
+            adb_event{118, 152, "sleep", .5}
+         end
+         adb_event{457, 493, 'sleep', .5}
+      end
+      local pic_share_buttons = {
+         "adb-tap 191 394",
+         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
+         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
+         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
+      }
+      local i_button = pic_share_buttons[i]
+      adb_event(split(" ", i_button))
+   end
+   adb_event("adb-tap 519 1841 adb-tap 434 1071 adb-tap 918 1862 sleep .5 adb-tap 279 1221")
+end
+
+local function picture_to_weibo_chat(...)
+   local pics = {...}
+   local input_method, ime_height = adb_get_input_window_dump()
+   local post_button = ('984 %d'):format(1920 - ime_height - 50)
+   for i = 1, #pics do
+      local ext = last(pics[i]:gmatch("%.[^.]+"))
+      local target = ('/sdcard/DCIM/Camera/t1wrench-%d%s'):format(i, ext)
+      if i == 1 then
+         local events = post_button .. " sleep .1 adb-tap 375 1410 sleep .1 adb-tap 645 135 sleep .2 adb-tap 369 679 sleep 2"
+         adb_event(split(" ", events))
+      end
+      local pic_share_buttons = {
+         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
+         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
+         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
+      }
+      local i_button = pic_share_buttons[i]
+      adb_event(split(" ", i_button))
+   end
+   adb_event("adb-tap 943 1868 adb-tap 194 1163")
+end
+
 local function t1_picture(...)
-   pics = {...}
-   upload_pics{...}
-   window = adb_focused_window()
-   system{'adb-picture-to-unknown', pic}
+   local pics = {...}
+   upload_pics(...)
+   local window = adb_focused_window()
+   if window == "com.tencent.mm/com.tencent.mm.ui.LauncherUI" then
+      picture_to_weixin_chat(...)
+   elseif window == "com.tencent.qqlite/com.tencent.mobileqq.activity.ChatActivity" then
+      picture_to_qqlite_chat(...)
+   elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity" then
+      picture_to_qq_chat(...)
+   elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then
+      picture_to_weibo_chat(...)
+   elseif window:match("com.sina.weibo") then
+      picture_to_weibo_share(...)
+   elseif window:match("com.tencent.mm") then
+      picture_to_weixin_share(...)
+   else
+      return "Error: can't decide where to share"
+   end
 end
 
 local M = {}
@@ -336,7 +508,8 @@ M.adb_pipe = adb_pipe
 M.t1_picture = t1_picture
 
 if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
-   t1_post(join(' ', arg))
+   -- t1_post(join(' ', arg))
+   t1_picture(arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9])
 else
    return M
 end
