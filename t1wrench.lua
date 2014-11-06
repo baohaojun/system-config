@@ -313,6 +313,7 @@ local function t1_post(text) -- use weixin
 
       adb_event(split(" ", string.format("%s key scroll_lock %s", add, post_button)))
    end
+   return "text sent\n"
 end
 
 local function upload_pics(...)
@@ -401,7 +402,7 @@ local function picture_to_weixin_chat(...)
       local i_button = pic_share_buttons[i]
       adb_event(split(" ", i_button))
    end
-   adb_event(split(" ", "adb-tap 927 148"))
+   adb_event("adb-tap 944 1894 adb-tap 59 1871 adb-tap 927 148")
 end
 
 local function picture_to_qq_chat(...)
@@ -499,6 +500,7 @@ local function t1_picture(...)
    else
       return "Error: can't decide where to share"
    end
+   return #pics .. " pictures sent\n"
 end
 
 local M = {}

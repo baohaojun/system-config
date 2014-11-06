@@ -40,6 +40,9 @@ void LuaExecuteThread::run()
             lua_close(L);
             return;
         }
+        if (lua_isstring(L, -1)) {
+            emit gotSomeLog("info", lua_tolstring(L, -1, NULL));
+        }
         lua_pop(L, 1);
     }
 }

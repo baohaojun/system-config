@@ -41,6 +41,7 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     ui(new Ui::T1WrenchMainWindow)
 {
     mLuaThread = new LuaExecuteThread(this);
+    connect(mLuaThread, SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
     mLuaThread->start();
     QString pathEnv = QProcessEnvironment::systemEnvironment().value("PATH");
 #ifdef Q_OS_WIN32
@@ -58,11 +59,6 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
 
     emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
     ui->setupUi(this);
-    ui->qqHintLabel->setText(
-        "<a href='http://baohaojun.github.io/blog/2014/07/13/0-Smartisan-T1-Wrench.html'>Smartisan T1手机聊天小扳手 1.0</a><p/>"
-        "<a href='http://baohaojun.github.io/blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html'>用Emacs + Smartisan T1聊天</a>"
-        );
-    ui->qqHintLabel->setOpenExternalLinks(true);
     connect(ui->phoneTextEdit, SIGNAL(controlEnterPressed()), this, SLOT(on_sendItPushButton_clicked()));
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLastRadioButton = NULL;
@@ -137,61 +133,6 @@ QString T1WrenchMainWindow::get_text()
     return text;
 }
 
-void fillFromAdbTaps(QList<QStringList>& cmds, QString& shellScript)
-{
-    foreach (const QString &sh, shellScript.split("\n")) {
-        QString shCopy = sh;
-        shCopy.replace(QRegExp("^\\s+"), "");
-        shCopy.replace(QRegExp("#.*"), "");
-        shCopy.replace(QRegExp("\\s+$"), "");
-        if (!shCopy.isEmpty()) {
-            if (shCopy.contains(QRegExp("^adb-tap "))) {
-                shCopy.replace(QRegExp("^adb-tap "), "adb shell input tap ");
-                cmds << QStringList(shCopy);
-            } else if (shCopy.contains(QRegExp("^adb-tap-2 "))) {
-                shCopy.replace(QRegExp("^adb-tap-2 "), "adb shell input tap ");
-                cmds << QStringList(shCopy);
-                cmds << QStringList(shCopy);
-            } else if (shCopy.contains(QRegExp("^adb-long-press "))) {
-                shCopy.replace(QRegExp("^adb-long-press "), "");
-                shCopy = "adb shell input touchscreen swipe " + shCopy + " " + shCopy + " 550";
-                cmds << QStringList(shCopy);
-            } else if (shCopy.contains(QRegExp("^adb-swipe "))) {
-                shCopy.replace(QRegExp("^adb-swipe "), "");
-                QStringList args = shCopy.split(QRegExp("\\s+"));
-                if (args.length() != 5) {
-                    prompt_user("Error: usage: adb-swipe x1 y1 x2 y2 micro-seconds");
-                }
-                shCopy = "adb shell input touchscreen swipe " + shCopy;
-                cmds << QStringList(shCopy);
-            } else if (shCopy.contains(QRegExp("^adb-key "))) {
-                shCopy.replace(QRegExp("^adb-key "), "");
-                shCopy = "adb shell input keyevent " + shCopy;
-                cmds << QStringList(shCopy);
-            } else if (shCopy.contains(QRegExp("^sleep "))) {
-#ifdef Q_OS_WIN32
-                shCopy = "adb shell " + shCopy;
-#endif
-                cmds << QStringList(shCopy);
-            } else {
-                prompt_user("Unknown shell script: " + shCopy );
-            }
-        }
-    }
-}
-
-
-void T1WrenchMainWindow::getclip_android()
-{
-    QStringList args;
-    args << "shell"
-         << "rm -f /sdcard/putclip.txt;"
-        "am startservice -n com.bhj.setclip/.PutClipService --ei getclip 1 >/dev/null 2>&1&\n"
-        "for x in $(seq 1 20); do if test -e /sdcard/putclip.txt; then cat /sdcard/putclip.txt; break; else sleep .1; fi; done";
-        // do_button_click(this, "adb", args, "getclip-android", false);
-}
-
-
 void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
 {
     static int nTasks;
@@ -215,102 +156,13 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
     }
 }
 
-void T1WrenchMainWindow::on_weixinQqRadio_toggled(bool checked)
-{
-    if (checked == false) {
-        mLastRadioButton = ui->weixinQqRadio;
-    } else {
-        ui->qqHintLabel->setPixmap(QPixmap(":/images/weixin.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
-    }
-}
-
-void T1WrenchMainWindow::on_replyMailRadio_toggled(bool checked)
-{
-    if (checked == false) {
-        mLastRadioButton = ui->replyMailRadio;
-    } else {
-        ui->qqHintLabel->setPixmap(QPixmap(":/images/cell-mail.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
-    }
-}
-
-void T1WrenchMainWindow::on_replySmsRadio_toggled(bool checked)
-{
-    if (checked == false) {
-        mLastRadioButton = ui->replySmsRadio;
-    } else {
-        ui->qqHintLabel->setPixmap(QPixmap(":/images/sms.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
-    }
-}
-
-void T1WrenchMainWindow::on_weiboRadio_toggled(bool checked)
-{
-    if (checked == false) {
-        mLastRadioButton = ui->weiboRadio;
-    } else {
-        ui->qqHintLabel->setPixmap(QPixmap(":/images/weibo.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
-    }
-}
-
-void T1WrenchMainWindow::on_googlePlusRadio_toggled(bool checked)
-{
-    if (checked == false) {
-        mLastRadioButton = ui->googlePlusRadio;
-    } else {
-        ui->qqHintLabel->setPixmap(QPixmap(":/images/googlePlus.png").scaled(ui->qqHintLabel->width(), ui->qqHintLabel->height()));
-    }
-}
-
-void T1WrenchMainWindow::on_toClipBoardRadio_toggled(bool checked)
-{
-    if (checked == false) {
-        mLastRadioButton = ui->toClipBoardRadio;
-    } else {
-        ui->qqHintLabel->setText("把左边编辑框里的内容\n放到手机的剪贴板里去");
-    }
-}
-
-void T1WrenchMainWindow::on_fromClipBoard_toggled(bool checked)
-{
-
-    if (checked == true) {
-        getclip_android();
-        if (mLastRadioButton) {
-            mLastRadioButton->setChecked(true);
-        }
-        return;
-    }
-}
-
-QString getActionScript(const QString& scenario)
-{
-    QFile emacsWeixinFile(emacsWeixinSh);
-    if (!emacsWeixinFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        prompt_user("Cannot open " + emacsWeixinSh);
-        return "";
-    }
-
-    QTextStream in(&emacsWeixinFile);
-    in.setCodec("UTF-8");
-    QString res;
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        if (line.contains(scenario)) {
-            while (!in.atEnd()) {
-                QString add = in.readLine();
-                if (add.contains(QRegExp("^\\s*;;\\s*$"))) {
-                    goto end;
-                }
-                res += add + "\n";
-            }
-        }
-    }
-end:
-    return res;
-}
-
 void T1WrenchMainWindow::on_sendItPushButton_clicked()
 {
-    mLuaThread->addScript(QStringList() << "t1_post" << get_text());
+    QString text = get_text();
+    if (text.isEmpty()) {
+        return;
+    }
+    mLuaThread->addScript(QStringList() << "t1_post" << text);
     ui->phoneTextEdit->selectAll();
 }
 
@@ -361,12 +213,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
 
     prompt_user(QString().sprintf("width is %d, height is %d", w, h));
     if (w != 1080 || h != 1920) {
-        QString newEmacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + QString().sprintf("emacs-weixin-%dx%d.sh", w, h);
-        if (QFile(newEmacsWeixinSh).exists()) {
-            emacsWeixinSh = newEmacsWeixinSh;
-        } else {
-            prompt_user("你的手机尺寸未进行过适配，需要自行修改" + emacsWeixinSh + "，将里面的各个座标按比例缩放，并将新的文件保存在" + newEmacsWeixinSh + "\n\n" + "详情请点击启动时右边的超级链接（我写的关于T1小扳手的博客）查看帮助");
-        }
+        prompt_user("你的手机尺寸未进行过适配，默认只支持1920x1080");
     }
 }
 
@@ -394,12 +241,10 @@ void T1WrenchMainWindow::on_tbPicture_clicked()
     suffixes << "png" << "jpg" << "gif" << "bmp";
 
     QStringList fns = QFileDialog::getOpenFileNames(this, tr("选择图片"), QString(), tr("Image Files(*.png *.jpg *.gif *.bmp)"));
-    foreach (QString fn, fns) {
-        if (!suffixes.contains(QFileInfo(fn).suffix())) {
-            prompt_user(QString().sprintf("未知图片文件类型：%s，不能分享", qPrintable(fn)));
-            continue;
-        }
-        mLuaThread->addScript(QStringList() << "t1_picture" << fn);
-        break;
-    }
+    mLuaThread->addScript((QStringList() << "t1_picture") + fns);
+}
+
+void T1WrenchMainWindow::on_tbEmoji_clicked()
+{
+    prompt_user("暂时还没有实现，请期待下个版本");
 }

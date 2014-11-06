@@ -22,20 +22,6 @@ public slots:
     void onInfoUpdate(const QString& key, const QString& val);
 private slots:
     void slotHandleCaptureScreen(const QPixmap &);
-    void on_weixinQqRadio_toggled(bool checked);
-
-    void on_replyMailRadio_toggled(bool checked);
-
-    void on_replySmsRadio_toggled(bool checked);
-
-    void on_weiboRadio_toggled(bool checked);
-
-    void on_googlePlusRadio_toggled(bool checked);
-
-    void on_toClipBoardRadio_toggled(bool checked);
-
-    void on_fromClipBoard_toggled(bool checked);
-
     void on_sendItPushButton_clicked();
 
     void on_configurePushButton_clicked();
@@ -43,6 +29,8 @@ private slots:
     void on_tbScreenCapture_clicked();
 
     void on_tbPicture_clicked();
+
+    void on_tbEmoji_clicked();
 
 private:
     QSharedPointer<ScreenCapture> mScreenCapture;
