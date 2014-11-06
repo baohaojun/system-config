@@ -1,2 +1,4 @@
 #!/bin/bash
-my-adb am startservice -n com.bhj.setclip/.PutClipService --es picture "$1"
+for x in "$@"; do
+    my-adb am startservice -n com.bhj.setclip/.PutClipService --es picture "$x"
+done
