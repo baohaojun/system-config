@@ -1,9 +1,12 @@
 #!/usr/bin/lua
 
 -- functions
-local shell_quote, putclip, t1_post, picture_to_weixin_share, picture_to_weibo_share
+local shell_quote, putclip, t1_post
+local picture_to_weixin_share, picture_to_weibo_share
+local adb_get_input_window_dump
 
 -- variables
+local using_scroll_lock
 local adb_unquoter
 local is_windows = false
 local debug_set_x = ""
@@ -128,33 +131,45 @@ local function adb_event(events)
    command_str = ''
    i = 1
    while true do
+      if not events[i] then
+         if not events[i - 1] then
+            debug("Error at i = %d, events: %s", i, join(' ', events))
+            error("Error: wrong number of events?")
+         else
+            break
+         end
+      end
+
       if tonumber(events[i]) then
          command_str = command_str .. ('input tap %d %d;'):format(events[i], events[i+1])
          i = i + 2
-      elseif events[i] == 'tap2' then
+      elseif events[i] == 'tap2' or events[i] == 'adb-tap-2' then
          i = i + 1
          command_str = command_str .. ('input tap %d %d;'):format(events[i], events[i+1])
          command_str = command_str .. ('input tap %d %d;'):format(events[i], events[i+1])
          i = i + 2
-      elseif events[i] == 'key' then
+      elseif events[i] == 'adb-long-press' then
+         command_str = command_str .. ('input touchscreen swipe %s %s %s %s 500;'):format(
+            events[i+1], events[i+2], events[i+1], events[i+2])
+         i = i + 3
+      elseif events[i] == 'key' or events[i] == 'adb-key' then
          command_str = command_str .. ('input keyevent %s;'):format(events[i+1]:upper())
          i = i + 2
       elseif events[i] == 'sleep' then
          command_str = command_str .. ('sleep %s;'):format(events[i+1])
          i = i + 2
-      elseif events[i] == 'swipe' then
-         command_str = command_str .. ('input touchscreen swipe %s %s %s %s 500;'):format(
-            events[i+1], events[i+2], events[i+3], events[i+4])
+      elseif events[i] == 'swipe' or (events[i]):match('adb%-swipe%-') then
+         ms = 500
+         if (events[i]):match('adb%-swipe%-') then
+            ms = (events[i]):sub(#'adb-swipe-' + 1)
+         end
+         command_str = command_str .. ('input touchscreen swipe %s %s %s %s %d;'):format(
+            events[i+1], events[i+2], events[i+3], events[i+4], ms)
          i = i + 5
       elseif events[i] == 'adb-tap' then
          i = i + 1
-      elseif events[i] then
-         error(string.format("Error: unknown event: %d: '%s' (%s)", i, events[i], join(' ', events)))
-      elseif not events[i - 1] then
-         debug("Error at i = %d, events: %s", i, join(' ', events))
-         error("Error: wrong number of events?")
       else
-         break
+         error(string.format("Error: unknown event: %d: '%s' (%s)", i, events[i], join(' ', events)))
       end
    end
    adb_shell(command_str)
@@ -182,7 +197,12 @@ local function t1_weibo(window)
       end
       sleep(.5)
    end
-   adb_event{'key', 'scroll_lock', 991, 166}
+   if using_scroll_lock == 1 then
+      adb_event{'key', 'scroll_lock', 991, 166}
+   else
+      adb_event("adb-key SPACE adb-long-press 17 294 adb-tap 545 191 adb-tap 991 166")
+   end
+
 end
 
 local function t1_share_to_weibo(text)
@@ -198,19 +218,87 @@ local function t1_share_to_weixin(text)
 end
 
 local function t1_weixin_new(window)
-   adb_event{'key', 'scroll_lock', 961, 171}
+   if using_scroll_lock == 1 then
+      adb_event{'key', 'scroll_lock', 961, 171}
+   else
+      adb_event(
+         [[
+               adb-key SPACE
+               adb-tap
+               adb-tap 117 283 adb-tap 117 283 adb-tap 325 170 adb-tap 860 155 adb-tap 961 171
+      ]])
+   end
 end
 
 local function t1_sms(window)
-   adb_event{182, 1079, 'key', 'scroll_lock', 864, 921}
+   if using_scroll_lock == 1 then
+      adb_event{182, 1079, 'key', 'scroll_lock', 864, 921}
+   else
+      adb_event("adb-tap 182 1079 sleep .8")
+
+      local input_method, ime_height = adb_get_input_window_dump()
+      local ime_height_ref = 1920 - 1140
+      local ime_height_diff = ime_height - ime_height_ref
+      local y_double_click = 947  - ime_height_diff
+      local y_paste = 823 - ime_height_diff
+      local y_send = y_double_click
+
+      adb_event(
+         ([[
+               adb-long-press 522 %d
+               adb-tap 149 %d
+               adb-tap 919 %d
+         ]]):format(y_double_click, y_paste, y_send)
+      )
+   end
 end
 
 local function t1_google_plus(window)
-   adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
+   if using_scroll_lock == 1 then
+      adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
+   else
+      adb_event(
+         [[
+               adb-tap 233 503
+               sleep .5
+               adb-tap 571 1821
+               adb-tap 571 1821
+
+      ]])
+
+      local input_method, ime_height = adb_get_input_window_dump()
+      local ime_height_ref = 1920 - 1140
+      local ime_height_diff = ime_height - ime_height_ref
+      local y_double_click = 947  - ime_height_diff
+      local y_paste = 823 - ime_height_diff
+      local y_send = 1062 - ime_height_diff
+
+      adb_event(
+         ([[
+               adb-tap-2 105 464
+               adb-tap 286 259
+               adb-tap 875 255
+               adb-tap 922 %d
+         ]]):format(y_send)
+      )
+   end
 end
 
 local function t1_smartisan_notes(window)
-   adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
+   if using_scroll_lock == 1 then
+      adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
+   else
+      adb_event(
+         [[
+                            adb-long-press 428 412
+                            adb-tap 80 271
+                            adb-tap 940 140
+                            adb-tap 933 117
+                            adb-tap 323 1272
+                            adb-tap 919 123
+         ]]
+      )
+   end
 end
 
 local function t1_mail(window)
@@ -218,7 +306,24 @@ local function t1_mail(window)
       adb_tap_mid_bot()
       sleep(2)
    end
-   adb_event{'key', 'scroll_lock'}
+   if using_scroll_lock == 1 then
+      adb_event{'key', 'scroll_lock'}
+   else
+
+      local input_method, ime_height = adb_get_input_window_dump()
+      local ime_height_ref = 1920 - 1140
+      local ime_height_diff = ime_height - ime_height_ref
+      local y_start_scroll = 1048 - ime_height_diff
+
+      adb_event(
+         ([[
+               adb-swipe-300 586 %d 586 68
+               adb-tap 560 1840
+               adb-tap-2 299 299
+               adb-tap 505 192
+         ]]):format(y_start_scroll)
+      )
+   end
    if window == 'com.google.android.gm/com.google.android.gm.ComposeActivityGmail' then
       adb_event{806, 178}
    else
@@ -227,7 +332,11 @@ local function t1_mail(window)
 end
 
 local function t1_paste()
-   adb_event{'key', 'scroll_lock'}
+   if using_scroll_lock == 1 then
+      adb_event{'key', 'scroll_lock'}
+   else
+      return "无法在此窗口内贴粘"
+   end
 end
 
 local function last(func)
@@ -240,7 +349,7 @@ local function last(func)
    return x
 end
 
-local function adb_get_input_window_dump()
+adb_get_input_window_dump = function()
    -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
    local dump = adb_pipe{'dumpsys', 'window'}
    local input_method = {}
@@ -265,7 +374,7 @@ local function adb_get_input_window_dump()
       ime_height = ime_xy:sub(#'Requested w=1080 h=' + 1)
       if ime_height == '1525' then -- this is latin input method, it's wrong
          ime_height = 800
-      elseif ime_height == '1842' then -- new version of google pinyin ime
+      elseif tonumber(ime_height) >= 1200 then -- new version of google pinyin ime?
          if input_window_dump:match('package=com.google.android.inputmethod.pinyin') then
             ime_height = 1920 - 1140
          end
@@ -363,7 +472,31 @@ t1_post = function(text) -- use weixin
          post_button = '954 166'
       end
 
-      adb_event(split(" ", string.format("%s key scroll_lock %s", add, post_button)))
+      if using_scroll_lock == 1 then
+         adb_event(string.format("%s key scroll_lock %s", add, post_button))
+      else
+         if not input_method then
+            adb_event(
+               [[
+                     adb-tap 560 1840
+                     sleep .1
+               ]]
+            )
+         end
+         local input_method, ime_height = adb_get_input_window_dump()
+         local ime_height_ref = 1920 - 1140
+         local ime_height_diff = ime_height - ime_height_ref
+         local y_double_click = 1073 - ime_height_diff
+         local y_select_all = 917 - ime_height_diff
+         local y_paste = 936 - ime_height_diff
+         local y_send = 1030 - ime_height_diff
+
+         adb_event(
+            ([[
+                adb-tap 560 1840 adb-tap-2 560 %d adb-tap 296 %d adb-tap 888 %d adb-tap 976 %d
+            ]]):format(y_double_click, y_select_all, y_paste, y_send)
+         )
+      end
    end
    return "text sent\n"
 end
