@@ -14,5 +14,12 @@
       <file>resources/capture-screen.png</file>
       <file>resources/picture.png</file>
       <file>resources/emoji.png</file>
+      <file>resources/com_sina_weibo_icon.png</file>
+      <file>resources/com_tencent_mm_icon.png</file>
+      <file>resources/thumbs-up.png</file>
     </qresource>
 </RCC>
+
+<!--Local Variables: -->
+<!--mode: nxml -->
+<!--End: -->

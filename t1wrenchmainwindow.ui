@@ -36,7 +36,7 @@
         <x>10</x>
         <y>10</y>
         <width>521</width>
-        <height>351</height>
+        <height>391</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -53,9 +53,9 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>370</y>
+        <y>411</y>
         <width>519</width>
-        <height>82</height>
+        <height>41</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -90,6 +90,32 @@
         </widget>
        </item>
        <item>
+        <widget class="QToolButton" name="tbWeibo">
+         <property name="toolTip">
+          <string>分享到微博</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="tbWeixin">
+         <property name="toolTip">
+          <string>分享到微信朋友圈</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -103,7 +129,20 @@
         </spacer>
        </item>
        <item>
+        <widget class="QToolButton" name="tbThumbsUp">
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="configurePushButton">
+         <property name="maximumSize">
+          <size>
+           <width>40</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string/>
          </property>
@@ -114,6 +153,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="sendItPushButton">
+         <property name="maximumSize">
+          <size>
+           <width>40</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>快捷键Ctrl-n</string>
          </property>

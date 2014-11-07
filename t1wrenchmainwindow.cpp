@@ -38,7 +38,8 @@ void setenv(const char* name, const char* val, int overide)
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::T1WrenchMainWindow)
+    ui(new Ui::T1WrenchMainWindow),
+    mSettings("Smartisan", "Wrench", parent)
 {
     mLuaThread = new LuaExecuteThread(this);
     connect(mLuaThread, SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
@@ -85,7 +86,7 @@ void T1WrenchMainWindow::adbStateUpdated(const QString& state)
 //     cmdOutputEdit->insertPlainText(output);
 // }
 
-QString prompt_user(const QString &info, QMessageBox::StandardButtons buttons = (QMessageBox::Ok | QMessageBox::Cancel))
+QString prompt_user(const QString &info, QMessageBox::StandardButtons buttons = QMessageBox::Ok)
 {
     QMessageBox msgBox;
     msgBox.setText(info);
@@ -95,6 +96,11 @@ QString prompt_user(const QString &info, QMessageBox::StandardButtons buttons = 
     if (ret == QMessageBox::Ok)
         return "yes";
     return "";
+}
+
+QString yes_or_no_p(const QString &info)
+{
+    return prompt_user(info, QMessageBox::Ok | QMessageBox::Cancel);
 }
 
 void open_it(const QString &fileOrUrl)
@@ -127,9 +133,6 @@ QString T1WrenchMainWindow::get_text()
            text.endsWith(" ")) {
         text = text.left(text.length() -1);
     }
-    if (text.isEmpty()) {
-        prompt_user("输入手机中的文字必须不能为空", QMessageBox::Ok);
-    }
     return text;
 }
 
@@ -161,17 +164,50 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
 void T1WrenchMainWindow::on_sendItPushButton_clicked()
 {
     QString text = get_text();
-    if (text.isEmpty()) {
+    if (text.isEmpty() && mPictures.isEmpty()) {
+        prompt_user("输入手机中的文字必须不能为空", QMessageBox::Ok);
         return;
     }
-    mLuaThread->addScript(QStringList() << "t1_post" << text);
+
+    qDebug() << "Sharing text: " << text << " and pictures: " << mPictures;
+
+    bool share = 0;
+    if (ui->tbWeibo->isChecked()) {
+        share = 1;
+        if (mPictures.isEmpty()) {
+            mLuaThread->addScript(QStringList() << "t1_share_to_weibo" << text);
+        } else {
+            mLuaThread->addScript((QStringList() << "picture_to_weibo_share") + mPictures);
+            mLuaThread->addScript(QStringList() << "t1_post" << text);
+        }
+    }
+
+    if (ui->tbWeixin->isChecked()) {
+        share = 1;
+        if (mPictures.isEmpty()) {
+            mLuaThread->addScript(QStringList() << "t1_share_to_weixin" << text);
+        } else {
+            mLuaThread->addScript((QStringList() << "picture_to_weixin_share") + mPictures);
+            mLuaThread->addScript(QStringList() << "t1_post" << text);
+        }
+    }
+
+    if (share && !mPictures.isEmpty()) {
+        mPictures.clear();
+        ui->tbPicture->setChecked(false);
+        ui->tbScreenCapture->setChecked(false);
+    }
+
+    if (! share) {
+        mLuaThread->addScript(QStringList() << "t1_post" << text);
+    }
     ui->phoneTextEdit->selectAll();
 }
 
 void T1WrenchMainWindow::on_configurePushButton_clicked()
 {
     // 实在是不想写异步调用的了。
-    if (prompt_user("将检查 adb，继续？") == "yes") {
+    if (yes_or_no_p("将检查 adb，继续？") == "yes") {
         QDir::home().mkpath(".android");
         QString adbConfig = QDir::homePath() + QDir::separator() + ".android" + QDir::separator() + "adb_usb.ini";
         QFile adbConfigFile(adbConfig);
@@ -187,7 +223,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
         }
     }
 
-    if (prompt_user("将会安装操作手机剪贴板的SetClip.apk，继续？") == "yes") {
+    if (yes_or_no_p("将会安装操作手机剪贴板的SetClip.apk，继续？") == "yes") {
         QString apk = QCoreApplication::applicationDirPath() + QDir::separator() + "SetClip.apk";
         QString res = getExecutionOutput("adb install -r " + apk);
         if (!res.contains("Success")) {
@@ -197,7 +233,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
         }
     }
 
-    if (prompt_user("将获取手机屏幕尺寸，继续？") != "yes") {
+    if (yes_or_no_p("将获取手机屏幕尺寸，继续？") != "yes") {
         return;
     }
     QString screenPng = QDir::tempPath() + QDir::separator() + "screencap.png";
@@ -205,7 +241,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     getExecutionOutput("adb shell screencap /sdcard/screen.png");
     getExecutionOutput("adb pull /sdcard/screen.png " + screenPng);
     if (!QFile(screenPng).exists()) {
-        prompt_user("无法获取手机截图及其屏幕尺寸, 无法完成配置");
+        yes_or_no_p("无法获取手机截图及其屏幕尺寸, 无法完成配置");
         return;
     }
 
@@ -234,19 +270,92 @@ void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
     if (pix.isNull()) return;
 
     pix.save("screen-shot.png", "PNG");
-    mLuaThread->addScript(QStringList() << "t1_picture" << "screen-shot.png");
+
+    if ((ui->tbWeixin->isChecked() || ui->tbWeibo->isChecked()) && ui->tbScreenCapture->isChecked() && !mPictures.isEmpty()) {
+        ui->tbScreenCapture->setChecked(false);
+        mPictures.removeOne("screen-shot.png");
+        return;
+    }
+
+    if ((ui->tbWeixin->isChecked() || ui->tbWeibo->isChecked())) {
+        QString text = get_text();
+        ui->tbScreenCapture->setCheckable(true);
+        ui->tbScreenCapture->setChecked(true);
+        if (text.isEmpty()) {
+            if (yes_or_no_p("不想说点儿什么了？\n\n点 确定 直接分享，点 取消 输入文字再点 扳动 分享") != "yes") {
+                return;
+            }
+        }
+        mPictures = QStringList() << "screen-shot.png";
+        emit ui->sendItPushButton->clicked();
+    } else {
+        mLuaThread->addScript(QStringList() << "t1_picture" << "screen-shot.png");
+    }
 }
 
 void T1WrenchMainWindow::on_tbPicture_clicked()
 {
+    if ((ui->tbWeixin->isChecked() || ui->tbWeibo->isChecked()) && !mPictures.isEmpty()) {
+        ui->tbPicture->setChecked(false);
+        mPictures.clear();
+        return;
+    }
     QStringList suffixes;
     suffixes << "png" << "jpg" << "gif" << "bmp";
 
     QStringList fns = QFileDialog::getOpenFileNames(this, tr("选择图片"), QString(), tr("Image Files(*.png *.jpg *.gif *.bmp)"));
-    mLuaThread->addScript((QStringList() << "t1_picture") + fns);
+    if (fns.isEmpty()) {
+        return;
+    }
+
+    if ((ui->tbWeixin->isChecked() || ui->tbWeibo->isChecked())) {
+        QString text = get_text();
+        ui->tbPicture->setCheckable(true);
+        ui->tbPicture->setChecked(true);
+        if (text.isEmpty()) {
+            if (yes_or_no_p("不想说点儿什么了？\n\n点 确定 直接分享，点 取消 输入文字再点 扳动 分享") != "yes") {
+                return;
+            }
+        }
+        mPictures = fns;
+        emit ui->sendItPushButton->clicked();
+    } else {
+        mLuaThread->addScript((QStringList() << "t1_picture") + fns);
+    }
 }
 
 void T1WrenchMainWindow::on_tbEmoji_clicked()
 {
     prompt_user("暂时还没有实现，请期待下个版本");
+}
+
+void T1WrenchMainWindow::on_tbWeibo_clicked()
+{
+    if (ui->tbWeibo->isChecked() && mSettings.value("firstTimeWeibo", 0).toInt() == 0) {
+        mSettings.setValue("firstTimeWeibo", 1);
+        prompt_user("您之后输入的文字和选择的照片、截图将被分享到微博");
+    }
+
+    if (!ui->tbWeibo->isChecked() && !ui->tbWeixin->isChecked()) {
+        ui->tbPicture->setCheckable(false);
+        mPictures.clear();
+    }
+
+}
+
+void T1WrenchMainWindow::on_tbWeixin_clicked()
+{
+    if (ui->tbWeixin->isChecked() && mSettings.value("firstTimeWeixin", 0).toInt() == 0) {
+        mSettings.setValue("firstTimeWeixin", 1);
+        prompt_user("您之后输入的文字和选择的照片、截图将被分享到微信朋友圈");
+    }
+    if (!ui->tbWeibo->isChecked() && !ui->tbWeixin->isChecked()) {
+        ui->tbPicture->setCheckable(false);
+        mPictures.clear();
+    }
+}
+
+void T1WrenchMainWindow::on_tbThumbsUp_clicked()
+{
+
 }

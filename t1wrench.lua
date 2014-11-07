@@ -1,5 +1,10 @@
 #!/usr/bin/lua
-local shell_quote, adb_unquoter
+
+-- functions
+local shell_quote, putclip, t1_post, picture_to_weixin_share, picture_to_weibo_share
+
+-- variables
+local adb_unquoter
 local is_windows = false
 local debug_set_x = ""
 if package.config:sub(1, 1) == '/' then
@@ -180,6 +185,18 @@ local function t1_weibo(window)
    adb_event{'key', 'scroll_lock', 991, 166}
 end
 
+local function t1_share_to_weibo(text)
+   adb_shell{"am", "start", "-n", "com.sina.weibo/com.sina.weibo.EditActivity"}
+   if text then putclip(text) else sleep(1) end
+   t1_post()
+end
+
+local function t1_share_to_weixin(text)
+   adb_shell{"am", "start", "-n", "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI", "--ei", "sns_comment_type", "1"}
+   if text then putclip(text) else sleep(1) end
+   t1_post()
+end
+
 local function t1_weixin_new(window)
    adb_event{'key', 'scroll_lock', 961, 171}
 end
@@ -248,6 +265,10 @@ local function adb_get_input_window_dump()
       ime_height = ime_xy:sub(#'Requested w=1080 h=' + 1)
       if ime_height == '1525' then -- this is latin input method, it's wrong
          ime_height = 800
+      elseif ime_height == '1842' then -- new version of google pinyin ime
+         if input_window_dump:match('package=com.google.android.inputmethod.pinyin') then
+            ime_height = 1920 - 1140
+         end
       end
    end
    return input_method, ime_height
@@ -262,8 +283,7 @@ local function adb_input_method_is_null()
       return false
    end
 end
-
-local function t1_post(text) -- use weixin
+putclip = function(text)
    local file, path
    local tmp = os.getenv("TEMP") or "/tmp"
    path = tmp .. package.config:sub(1, 1) .. "lua-smartisan-t1.txt"
@@ -276,18 +296,24 @@ local function t1_post(text) -- use weixin
    system{'adb', 'push', path, '/sdcard/putclip.txt'}
    adb_shell(
       [[
-         am startservice --user 0 -n com.bhj.setclip/.PutClipService&
-         for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
-             if test -e /sdcard/putclip.txt; then
-                 sleep .1;
-                 echo $x;
-             else
-                 exit;
-             fi;
-         done
-        ]])
-   window = adb_focused_window()
-   print("window is " .. window)
+               am startservice --user 0 -n com.bhj.setclip/.PutClipService&
+               for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+                  if test -e /sdcard/putclip.txt; then
+                     sleep .1;
+                     echo $x;
+                  else
+                     exit;
+                 fi;
+              done
+      ]])
+end
+
+t1_post = function(text) -- use weixin
+   if text then
+      putclip(text)
+   end
+   local window = adb_focused_window()
+   if window then print("window is " .. window) end
    if window == "com.sina.weibo/com.sina.weibo.EditActivity" or window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
       t1_weibo(window)
       return
@@ -367,7 +393,11 @@ local function upload_pics(...)
    return targets
 end
 
-local function picture_to_weixin_share(pics)
+picture_to_weixin_share = function(pics, ...)
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
@@ -389,14 +419,28 @@ local function picture_to_weixin_share(pics)
    return "Prompt: please say something"
 end
 
-local function picture_to_weibo_share(pics)
+local function picture_to_weibo_share_upload(...)
+   local pics = upload_pics(...)
+   picture_to_weibo_share(pics)
+end
+
+local function picture_to_weixin_share_upload(...)
+   local pics = upload_pics(...)
+   picture_to_weixin_share(pics)
+end
+
+picture_to_weibo_share = function(pics, ...)
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
 
       if i == 1 then
          adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity")
-         adb_event("sleep 1 adb-tap 104 980 sleep 2")
+         adb_event("sleep .5 key back sleep .5 adb-tap 62 1843 sleep 2")
       end
 
       local pic_share_buttons = {
@@ -410,7 +454,11 @@ local function picture_to_weibo_share(pics)
    adb_event("adb-tap 141 1849 adb-tap 922 1891")
 end
 
-local function picture_to_weixin_chat(pics)
+local function picture_to_weixin_chat(pics, ...)
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
    local input_method, ime_height = adb_get_input_window_dump()
    local post_button = ('984 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
@@ -433,7 +481,11 @@ local function picture_to_weixin_chat(pics)
    adb_event("adb-tap 944 1894 adb-tap 59 1871 adb-tap 927 148")
 end
 
-local function picture_to_qq_chat(pics)
+local function picture_to_qq_chat(pics, ...)
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
    local input_method, ime_height = adb_get_input_window_dump()
    local post_button = ('159 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
@@ -459,7 +511,11 @@ local function picture_to_qq_chat(pics)
    adb_event("adb-tap 608 1831 adb-tap 403 1679 adb-tap 918 1862 sleep .5 adb-tap 312 1275")
 end
 
-local function picture_to_qqlite_chat(pics)
+local function picture_to_qqlite_chat(pics, ...)
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
    local input_method, ime_height = adb_get_input_window_dump()
    local post_button = ('984 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
@@ -485,7 +541,11 @@ local function picture_to_qqlite_chat(pics)
    adb_event("adb-tap 519 1841 adb-tap 434 1071 adb-tap 918 1862 sleep .5 adb-tap 279 1221")
 end
 
-local function picture_to_weibo_chat(pics)
+local function picture_to_weibo_chat(pics, ...)
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
    local input_method, ime_height = adb_get_input_window_dump()
    local post_button = ('984 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
@@ -527,16 +587,44 @@ local function t1_picture(...)
    return #pics .. " pictures sent\n"
 end
 
+local function t1_follow_me()
+   -- http://weibo.com/u/1611427581 (baohaojun)
+   -- http://weibo.com/u/1809968333 (beagrep)
+   adb_shell{"am", "start", "-n", "com.sina.weibo/.ProfileInfoActivity", "--es", "uid", "1611427581"}
+   adb_event("sleep 1 adb-tap 659 875 key back")
+end
+
 local M = {}
+M.putclip = putclip
 M.t1_post = t1_post
 M.adb_shell = adb_shell
 M.adb_pipe = adb_pipe
 M.t1_picture = t1_picture
+M.t1_follow_me = t1_follow_me
+M.t1_share_to_weibo = t1_share_to_weibo
+M.t1_share_to_weixin = t1_share_to_weixin
+M.picture_to_weibo_share = picture_to_weibo_share_upload
+M.picture_to_weixin_share = picture_to_weixin_share_upload
 
 if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
    -- t1_post(join(' ', arg))
+   if type(M[arg[1]]) == 'function' then
+      _G.M = M
+      cmd = "M[arg[1]]("
+      for i = 2, #arg do
+         if i ~= 2 then
+            cmd = cmd .. ', '
+         end
+
+         cmd = cmd .. "arg[" .. i .. "]"
+      end
+      cmd = cmd .. ")"
+      debug("cmd is %s", cmd)
+      loadstring(cmd)()
+   end
+   os.exit(0)
    t1_picture(arg[1]) -- , arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9])
-   exit(0)
+   os.exit(0)
    print(5)
    debug_set_x = arg[#arg]
    arg[#arg] = nil

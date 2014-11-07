@@ -5,6 +5,7 @@
 #include <QtWidgets/QRadioButton>
 #include "luaexecutethread.hpp"
 #include "screencapture.h"
+#include <QtCore/QSettings>
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -32,10 +33,18 @@ private slots:
 
     void on_tbEmoji_clicked();
 
+    void on_tbWeibo_clicked();
+
+    void on_tbWeixin_clicked();
+
+    void on_tbThumbsUp_clicked();
+
 private:
     QSharedPointer<ScreenCapture> mScreenCapture;
     LuaExecuteThread* mLuaThread;
     Ui::T1WrenchMainWindow *ui;
+    QSettings mSettings;
+    QStringList mPictures;
     QString get_text();
     void getclip_android();
     QRadioButton* mLastRadioButton;

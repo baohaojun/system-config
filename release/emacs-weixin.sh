@@ -133,58 +133,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             fi
                             ;;
                         *) # most cases
-                            window=$(adb-focused-window)
-                            if test "$window" = com.sina.weibo/com.sina.weibo.EditActivity -o "$window" = com.sina.weibo/com.sina.weibo.DetailWeiboActivity; then
-                                emacs-cell-phone weibo
-                                exit
-                            elif test "$window" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI; then
-                                emacs-cell-phone weixin-new
-                                exit
-                            elif test "$window" = com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI; then
-                                emacs-cell-phone weixin-new
-                                exit
-                            elif test "$window" = SmsPopupDialog; then
-                                emacs-cell-phone t1-sms
-                                exit
-                            elif test "$window" = com.google.android.apps.plus/com.google.android.apps.plus.phone.sharebox.PlusShareboxActivity; then
-                                emacs-cell-phone google+
-                                exit
-                            elif test "$window" = com.smartisanos.notes/com.smartisanos.notes.NotesActivity; then
-                                emacs-cell-phone SmartisanNote
-                                exit
-                            elif test "$window" = com.android.email/com.android.mail.compose.ComposeActivity ||
-                                     test "$window" = com.android.email/com.android.email.activity.Welcome ||
-                                     test "$window" = com.android.email/com.android.email2.ui.MailActivityEmail; then
-                                emacs-cell-phone cell-mail
-                                exit
-                            elif [[ "$window" =~ ^PopupWindow: ]]; then
-                                adb-key SCROLL_LOCK
-                                exit
-                            fi
-                            postkeys='adb-tap 958 1820'
-                            if test "$window" = com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity; then
-                                postkeys='adb-tap 954 166'
-                            fi
-                            input_window_dump=$(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
-                            input_method=$(echo "$input_window_dump" | grep -o mHasSurface=true)
-                            ime_xy=$(echo "$input_window_dump" | grep -P -o 'Requested w=1080 h=\d+'|tail -n 1)
-                            if test "$input_method"; then
-                                add="key BACK"
-                            else
-                                add=
-                                # add="560 1840 key DEL key BACK"
-                            fi
-                            if test "$input_method"; then
-                                if test "$ime_xy" = 'Requested w=1080 h=810'; then
-                                    add='key SPACE adb-tap 997 1199 key DEL'
-                                fi
-                            else
-                                if adb dumpsys input_method | grep mServedInputConnection=null -q; then
-                                    add='adb-tap 560 1840 sleep .1 adb-tap 997 1199 sleep .1'
-                                fi
-                            fi
-
-                            adb-tap $add key SCROLL_LOCK $postkeys
+                            t1wrench.lua t1_post
                             ;;
                     esac
                 }

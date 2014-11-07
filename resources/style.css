@@ -1,302 +1,113 @@
 #LoginWin #lbLoginLogo {
-min-width: 200px;
-min-height: 100px;
-qproperty-pixmap: url(skin:login/login-logo.png);
+    min-width: 200px;
+    min-height: 100px;
+    qproperty-pixmap: url(skin:login/login-logo.png);
 }
 
 #LoginWin QPushButton {
-min-width: 91px;
-min-height: 40px;
-max-width: 91px;
-max-height: 40px;
-border-style: none;
-background: url(skin:login/login-btn.png);
+    min-width: 91px;
+    min-height: 40px;
+    max-width: 91px;
+    max-height: 40px;
+    border-style: none;
+    background: url(skin:login/login-btn.png);
 }
 
 #LoginWin QPushButton:hover {
-background: url(skin:login/login-btn-hover.png);
+    background: url(skin:login/login-btn-hover.png);
 }
 
 #LoginWin QPushButton:pressed {
-background: url(skin:login/login-btn-pressed.png);
+    background: url(skin:login/login-btn-pressed.png);
 }
 
-/* --- main window style --- */
-
-#MainWin #tbPortrait {
-border: 4px solid;
-min-width: 44px;
-min-height: 44px;
-max-width: 44px;
-max-height: 44px;
-border-image: url(skin:main/portrait-frame.png) 4 4 4 4 stretch stretch;
-/*qproperty-icon: url(skin:main/portrait-default.png);*/
-}
-
-#MainWin #tbAccountSignature {
-border: 0px;
-text-align : left;
-}
-
-/*
-#LoginWin #cbChangeStatus::drop-down {
-width: 0px;
-image: url(skin:chat/toolbtn-arrow.png);
-}
-*/
-
-/*
-QTreeView::branch {
-         background-color: white;
-*/
-
- QTreeView::branch  {
-         border-image: none;
-         image: url(skin:chat/tray-tm.png); /* transparent png */
- }
-
- QTreeView::branch:has-children  {
-         border-image: none;
-         image: url(skin:main/branch-closed.png);
- }
-
- QTreeView::branch:has-children:open  {
-         border-image: none;
-         image: url(skin:main/branch-opened.png);
- }
-
- /*
- QTreeView::branch:has-siblings:adjoins-item {
-     border-image: url(skin:main/branch-closed.png) 0;
- }
-
- QTreeView::branch:!has-children:!has-siblings:adjoins-item {
-     border-image: url(skin:main/branch-closed.png) 0;
- }*/
-
-#MainWin #btMenu {
-qproperty-icon: url(skin:logo.png);
-}
-
-/*
-#MainWin #btMenu::menu-indicator {
-image: url(skin:chat/zone-user.png);
-}
-*/
-
-#MainWin #btAddContacterZone {
-qproperty-icon: url(skin:main/add-contact.png);
-}
-
-#MainWin #btMsgManager {
-qproperty-icon: url(skin:main/msg-manager.png);
-}
-
-#MainWin #btMessageBox {
-qproperty-icon: url(skin:main/system-message.png);
-}
-
-#MainWin #btTaobao {
-qproperty-icon: url(skin:main/taobao.png);
-}
-/* --- Contacter Preview widget style --- */
-
-#ContacterPreviewWidget {
-background: #f7f7ff;
-}
-
-#ContacterPreviewWidget #btPortrait {
-min-width: 64px;
-min-height: 64px;
-max-width: 64px;
-max-height: 64px;
-qproperty-iconSize:64px 64px;
-border-image: url(skin:main/portrait-preview-frame.png);
-}
-
-#ContacterPreviewWidget #lbLocalAlias {
-font: large "Times New Roman";
-}
-
-/* --- Search Widget style --- */
-
-/*
-#SearchPopup QLabel {
-background: #dde7ef;
-}
-#SearchPopup QTreeView {
-background: #dde7ef;
-}
-*/
-/* --- chat window style --- */
-
-#tbSendMsg {
-min-width: 59px;
-min-height: 18px;
-max-width: 59px;
-max-height: 18px;
-border-style: none;
-background: url(skin:chat/send-msg.png) no-repeat;
-}
-
-#tbSendMsg[popupMode="1"] {
-padding-right: 13px
-}
-
-#tbSendMsg::menu-button {
-border:none;
-width:13px;
-background: url(skin:chat/send-msg-arrow.png) no-repeat;
-}
-
-#tbSendMsg::menu-arrow {
-image: url(skin:chat/toolbtn-arrow.png);
-}
-#tbSendMsg::hover {
-background: url(skin:chat/send-msg-hover.png) no-repeat;
-}
-#tbSendMsg::menu-button::hover {
-background: url(skin:chat/send-msg-arrow-hover.png) no-repeat;
-}
-#tbSendMsg::pressed {
-background: url(skin:chat/send-msg-pressed.png) no-repeat;
-}
-#tbSendMsg::menu-button::pressed {
-background: url(skin:chat/send-msg-arrow-pressed.png) no-repeat;
-}
-
-#tbSendMsg::disabled {
-background: url(skin:chat/send-msg-disabled.png);
-}
-
-#tbFont, #tbPicture, #tbEmoji, #tbScreenCapture, #tbShakeScreen, #tbQuickReply, #tbViewHistory,
-#tbFontBold, #tbFontItalic, #tbFontUnderline, #tbFontColor {
-qproperty-iconSize: 24px 22px;
+#tbPicture, #tbEmoji, #tbScreenCapture, #tbWeibo, #tbWeixin {
+    qproperty-iconSize: 24px 24px;
 }
 
 #tbFont  {
-qproperty-icon: url(skin:chat/font.png);
+    qproperty-icon: url(skin:chat/font.png);
 }
 
 
 #tbEmoji {
-qproperty-icon: url(skin:emoji.png);
+    qproperty-icon: url(skin:emoji.png);
 }
 
 #tbPicture {
-qproperty-icon: url(skin:picture.png);
+    qproperty-icon: url(skin:picture.png);
+}
+
+#tbWeibo {
+    qproperty-icon: url(skin:com_sina_weibo_icon.png)
+}
+
+#tbWeixin {
+    qproperty-icon: url(skin:com_tencent_mm_icon.png)
 }
 
 #tbQuickReply {
-qproperty-icon: url(skin:chat/quick-reply.png);
-}
-
-#tbShakeScreen {
-qproperty-icon: url(skin:chat/shake-screen.png);
+    qproperty-icon: url(skin:chat/quick-reply.png);
 }
 
 #tbScreenCapture {
-qproperty-icon: url(skin:capture-screen.png);
+    qproperty-icon: url(skin:capture-screen.png);
 }
 
 #tbViewHistory {
-qproperty-icon: url(skin:chat/view-history.png);
+    qproperty-icon: url(skin:chat/view-history.png);
 }
 
 #tbFontBold {
-qproperty-icon: url(skin:chat/font-bold.png);
+    qproperty-icon: url(skin:chat/font-bold.png);
 }
 
 #tbFontItalic {
-qproperty-icon: url(skin:chat/font-italic.png);
+    qproperty-icon: url(skin:chat/font-italic.png);
 }
 
 #tbFontUnderline {
-qproperty-icon: url(skin:chat/font-underline.png);
+    qproperty-icon: url(skin:chat/font-underline.png);
 }
 
 #tbFontColor {
-qproperty-icon: url(skin:chat/font-color.png);
+    qproperty-icon: url(skin:chat/font-color.png);
 }
-
-/*
-#tbPicture::hover, #tbEmoji::hover, #tbShakeScreen::hover, #tbQuickReply::hover, #tbFont::hover,#tbFontBold::hover, #tbFontItalic::hover, #tbFontUnderline::hover, #tbFontColor::hover {
-background: url(skin:chat/edit-toolbarbtn-normal-bg-hover.png) no-repeat center;
-}
-#tbFont::pressed, #tbPicture::pressed, #tbEmoji::pressed, #tbShakeScreen::pressed, #tbQuickReply::pressed, #tbFontBold::pressed, #tbFontItalic::pressed, #tbFontUnderline::pressed, #tbFontColor::pressed  {
-background: url(skin:chat/edit-toolbarbtn-normal-bg-pressed.png) no-repeat center;
-}
-#tbFont::checked, #tbFontBold::checked, #tbFontItalic::checked, #tbFontUnderline::checked {
-background: url(skin:chat/edit-toolbarbtn-normal-bg-pressed.png) no-repeat center;
-}
-
-#tbScreenCapture,#tbViewHistory {
-border: none;
-min-width: 27px;
-min-height: 23px;
-max-width: 27px;
-max-height: 23px;
-}
-
-#tbScreenCapture[popupMode="1"],#tbViewHistory[popupMode="1"] {
-    padding-right: 12px;
-}
-#tbScreenCapture::menu-button, #tbViewHistory::menu-button {
-    border: none;
-    width: 12px;
-}
-#tbScreenCapture::menu-arrow,#tbViewHistory::menu-arrow {
-    image: url(skin:chat/toolbtn-arrow.png);
-}
-
-#tbScreenCapture::hover,#tbViewHistory::hover {
-background: url(skin:chat/edit-toolbarbtn-bg-hover.png) no-repeat
-}
-#tbScreenCapture::menu-button::hover,#tbViewHistory::menu-button::hover {
-background: url(skin:chat/edit-toolbarbtn-drop-arrow-hover.png) no-repeat
-}
-#tbScreenCapture::pressed,#tbViewHistory::pressed {
-background: url(skin:chat/edit-toolbarbtn-bg-pressed.png) no-repeat
-}
-#tbScreenCapture::menu-button::pressed,#tbViewHistory::menu-button::pressed {
-background: url(skin:chat/edit-toolbarbtn-drop-arrow-pressed.png) no-repeat
-}
-*/
 
 
 /* --- message manage window style --- */
 
 #MsgManagerWin #tbSearch {
-qproperty-icon: url(skin:msgmgr/search.png);
+    qproperty-icon: url(skin:msgmgr/search.png);
 }
 
 #MsgManagerWin #tbAdvSearch {
-qproperty-icon: url(skin:msgmgr/adv-search.png);
+    qproperty-icon: url(skin:msgmgr/adv-search.png);
 }
 
 #MsgManagerWin #tbImportMsg {
-qproperty-icon: url(skin:msgmgr/import-msg.png);
+    qproperty-icon: url(skin:msgmgr/import-msg.png);
 }
 
 #MsgManagerWin #tbExportMsg {
-qproperty-icon: url(skin:msgmgr/export-msg.png);
+    qproperty-icon: url(skin:msgmgr/export-msg.png);
 }
 
 #MsgManagerWin #tbRefresh {
-qproperty-icon: url(skin:msgmgr/refresh.png);
+    qproperty-icon: url(skin:msgmgr/refresh.png);
 }
 
 /* --- Find contact window style --- */
 
 #ContacterZoneFindWin QPushButton {
-min-width: 72px;
-min-height: 22px;
-max-width: 72px;
-max-height: 22px;
+    min-width: 72px;
+    min-height: 22px;
+    max-width: 72px;
+    max-height: 22px;
 }
 
 #ContacterZoneFindWin #tbViewPersonalInfo {
-qproperty-icon: url(skin:findcontact/view-personal-info.png);
+    qproperty-icon: url(skin:findcontact/view-personal-info.png);
 }
 
 /*
@@ -307,151 +118,151 @@ font: 15px bold;
 
 /* --- Single Chat window style --- */
 #SingleChatWin #tbChatPortrait {
-border: 4px solid;
-min-width: 42px;
-min-height: 42px;
-max-width: 42px;
-max-height: 42px;
-border-image: url(skin:chat/portrait-frame.png) 4 4 4 4 stretch stretch;
-/*qproperty-icon: url(skin:chat/portrait-default.png);*/
+    border: 4px solid;
+    min-width: 42px;
+    min-height: 42px;
+    max-width: 42px;
+    max-height: 42px;
+    border-image: url(skin:chat/portrait-frame.png) 4 4 4 4 stretch stretch;
+    /*qproperty-icon: url(skin:chat/portrait-default.png);*/
 }
 #SingleChatWin #tbSendFile {
-qproperty-icon: url(skin:chat/send-file.png);
+    qproperty-icon: url(skin:chat/send-file.png);
 }
 
 #SingleChatWin #tbSendSms {
-qproperty-icon: url(skin:chat/send-sms.png);
+    qproperty-icon: url(skin:chat/send-sms.png);
 }
 
 #SingleChatWin #tbInviteMultiChat {
-qproperty-icon: url(skin:chat/multi-chat.png);
+    qproperty-icon: url(skin:chat/multi-chat.png);
 }
 
 #SingleChatWin #tabFileTransfer {
-qproperty-icon: url(skin:chat/send-file.png);
+    qproperty-icon: url(skin:chat/send-file.png);
 }
 
 #SingleChatWin #tabNameCard {
-qproperty-icon: url(skin:findcontact/view-personal-info.png);
+    qproperty-icon: url(skin:findcontact/view-personal-info.png);
 }
 
 /* --- Multi Chat window style --- */
 #MultiChatWin #tbChatPortrait {
-border: 4px solid;
-min-width: 42px;
-min-height: 42px;
-max-width: 42px;
-max-height: 42px;
-border-image: url(skin:chat/portrait-frame.png) 4 4 4 4 stretch stretch;
-qproperty-icon: url(skin:chat/portrait-default.png);
+    border: 4px solid;
+    min-width: 42px;
+    min-height: 42px;
+    max-width: 42px;
+    max-height: 42px;
+    border-image: url(skin:chat/portrait-frame.png) 4 4 4 4 stretch stretch;
+    qproperty-icon: url(skin:chat/portrait-default.png);
 }
 
 #MultiChatWin #tbInviteMultiChat {
-qproperty-icon: url(skin:chat/multi-chat.png);
+    qproperty-icon: url(skin:chat/multi-chat.png);
 }
 #MultiChatWin #tbQuitChat {
-qproperty-icon: url(skin:chat/quit-chat.png);
+    qproperty-icon: url(skin:chat/quit-chat.png);
 }
 
 /* --- Zone Chat window style --- */
 #ZoneChatWin #tbChatPortrait {
-border: 4px solid;
-min-width: 42px;
-min-height: 42px;
-max-width: 42px;
-max-height: 42px;
-border-image: url(skin:chat/portrait-frame.png) 4 4 4 4 stretch stretch;
-/*qproperty-icon: url(skin:chat/portrait-default.png);*/
+    border: 4px solid;
+    min-width: 42px;
+    min-height: 42px;
+    max-width: 42px;
+    max-height: 42px;
+    border-image: url(skin:chat/portrait-frame.png) 4 4 4 4 stretch stretch;
+    /*qproperty-icon: url(skin:chat/portrait-default.png);*/
 }
 
 #ZoneChatWin #tbSendSms {
-qproperty-icon: url(skin:chat/send-sms.png);
+    qproperty-icon: url(skin:chat/send-sms.png);
 }
 
 #ZoneChatWin #tbSendSms {
-qproperty-icon: url(skin:chat/send-sms.png);
+    qproperty-icon: url(skin:chat/send-sms.png);
 }
 
 #ZoneChatWin #tbSetZoneOption {
-qproperty-icon: url(skin:chat/zone-option.png);
+    qproperty-icon: url(skin:chat/zone-option.png);
 }
 
 #ZoneChatWin #tbRefreshZoneNotice {
-qproperty-icon: url(skin:chat/refresh-notice.png);
+    qproperty-icon: url(skin:chat/refresh-notice.png);
 }
 
 #ZoneChatWin #tbSearchZoneMember, #tbInviteFriendToZone {
-min-width: 22px;
-min-height: 22px;
-max-width: 22px;
-max-height: 22px;
+    min-width: 22px;
+    min-height: 22px;
+    max-width: 22px;
+    max-height: 22px;
 }
 
 #ZoneChatWin #tbSearchZoneMember {
-qproperty-icon: url(skin:chat/search.png);
+    qproperty-icon: url(skin:chat/search.png);
 }
 
 #ZoneChatWin #tbInviteFriendToZone {
-qproperty-icon: url(skin:chat/invite-member.png);
+    qproperty-icon: url(skin:chat/invite-member.png);
 }
 
 /* --- Zone Management window style --- */
 #ZoneInfoWin #tbZonePortrait {
-border: 4px solid;
-min-width: 80px;
-min-height: 80px;
-max-width: 80px;
-max-height: 80px;
-border-image: url(skin:chat/portrait-frame-80x80.png) 4 4 4 4 stretch stretch;
-qproperty-icon: url(skin:chat/zone-portrait.png);
+    border: 4px solid;
+    min-width: 80px;
+    min-height: 80px;
+    max-width: 80px;
+    max-height: 80px;
+    border-image: url(skin:chat/portrait-frame-80x80.png) 4 4 4 4 stretch stretch;
+    qproperty-icon: url(skin:chat/zone-portrait.png);
 }
 
 #ZoneInfoWin #lbZoneLevelIcon,#lbZoneActiveIcon {
-min-width: 15px;
-min-height: 15px;
-max-width: 15px;
-max-height: 15px;
+    min-width: 15px;
+    min-height: 15px;
+    max-width: 15px;
+    max-height: 15px;
 }
 
 #ZoneInfoWin #lbZoneLevelIcon {
-qproperty-pixmap: url(skin:chat/zone-level.png);
+    qproperty-pixmap: url(skin:chat/zone-level.png);
 }
 
 #ZoneInfoWin #lbZoneActiveIcon {
-qproperty-pixmap: url(skin:chat/zone-active.png);
+    qproperty-pixmap: url(skin:chat/zone-active.png);
 }
 
 /* --- set zone flag style --- */
 #ZonePortraitSelectWin #tbIconPreview {
-border: 4px solid;
-min-width: 80px;
-min-height: 80px;
-max-width: 80px;
-max-height: 80px;
-border-image: url(skin:chat/portrait-frame-80x80.png) 4 4 4 4 stretch stretch;
+    border: 4px solid;
+    min-width: 80px;
+    min-height: 80px;
+    max-width: 80px;
+    max-height: 80px;
+    border-image: url(skin:chat/portrait-frame-80x80.png) 4 4 4 4 stretch stretch;
 }
 #ZonePortraitSelectWin #frIconView {
-border:1px solid #2d8cc2;
-background: white;
+    border:1px solid #2d8cc2;
+    background: white;
 }
 
 /* --- AuthWordsWidget style --- */
 
 #AuthWordsWidget #tbPortrait {
-border: 4px solid;
-border-image: url(skin:main/portrait-frame-middle.png) 4 4 4 4 stretch stretch;
-/*qproperty-icon: url(skin:main/portrait-default.png);*/
+    border: 4px solid;
+    border-image: url(skin:main/portrait-frame-middle.png) 4 4 4 4 stretch stretch;
+    /*qproperty-icon: url(skin:main/portrait-default.png);*/
 }
 
 /* --- Personal Info style --- */
 #PersonalInfoWin #tbPortrait {
-border: 4px solid;
-border-image: url(skin:main/portrait-frame-big.png) 4 4 4 4 stretch stretch;
+    border: 4px solid;
+    border-image: url(skin:main/portrait-frame-big.png) 4 4 4 4 stretch stretch;
 }
 
 /* ---  AboutWangWang style --- */
 #AboutWangWang #lbAbout {
-min-width: 410px;
-min-height: 53px;
-qproperty-pixmap: url(skin:main/AboutWangWang.jpg);
+    min-width: 410px;
+    min-height: 53px;
+    qproperty-pixmap: url(skin:main/AboutWangWang.jpg);
 }

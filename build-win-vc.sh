@@ -2,7 +2,7 @@
 
 function copy-dlls()
 {
-    rsync windows/*.dll ./release -v
+    rsync windows/binaries/* ./release -v -L
     rsync t1wrench.lua ./release -v
 
     for x in icudt52.dll icuin52.dll icuuc52.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL; do
@@ -26,11 +26,9 @@ function make-release-tgz()
     rm -rf ./release/*.obj
     rm -rf ./release/*.o
     rm -rf ./release/*.cpp
-    rm -rf t1wrench-release
-    cp readme.* ./release/
-    cp *.png ./release/
-    cp ~/adb/* ./release/
-    cp -av release t1wrench-release
+    rsync readme.* ./release/
+    rsync -av *.png ./release/
+    command rsync -av -d release/ t1wrench-release
     set -x
     tar czfv ${1:-t1wrench-release.tgz} t1wrench-release
 }
@@ -46,7 +44,7 @@ if test $(uname) = Linux; then
 else
     set -e
     set -o pipefail
-    /cygdrive/c/Python2/python.exe "C:\cygwin64\home\bhj\system-config\bin\windows\terminateModule.py" T1Wrench || true
+    /cygdrive/c/Python2/python.exe "C:\cygwin64\home\bhj\system-config\bin\windows\terminateModule.py" T1Wrench.exe || true
 
     if test $(basename $0) = build-win-vc.sh; then
         perl -npe "$(grep 's/.*ord' ~/bin/vc-utf8-escape)" -i t1wrenchmainwindow.cpp
@@ -57,8 +55,10 @@ else
         rsync ~/vcredist_x64.exe ./release/vcredist-vs2013-x86_64.exe
         make-release-tgz
     else # mingw
-        /c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32/bin/qmake.exe
         export PATH=/cygdrive/c/Qt-mingw/Qt5.3.1/5.3/mingw482_32/bin:/c/Qt-mingw/Qt5.3.1/Tools/mingw482_32/bin:$PATH
+        if test ! -e Makefile; then
+            qmake.exe
+        fi
         mingw32-make.exe | perl -npe 's/\\/\//g'
         copy-dlls /c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32
         set -x
