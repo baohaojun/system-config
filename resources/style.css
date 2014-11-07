@@ -21,7 +21,8 @@
     background: url(skin:login/login-btn-pressed.png);
 }
 
-#tbPicture, #tbEmoji, #tbScreenCapture, #tbWeibo, #tbWeixin {
+#tbPicture, #tbEmoji, #tbScreenCapture, #tbWeibo, #tbWeixin, #tbThumbsUp,
+#sendItPushButton, #configurePushButton {
     qproperty-iconSize: 24px 24px;
 }
 
@@ -44,6 +45,18 @@
 
 #tbWeixin {
     qproperty-icon: url(skin:com_tencent_mm_icon.png)
+}
+
+#configurePushButton {
+    qproperty-icon: url(skin:config.png)
+}
+
+#tbThumbsUp {
+    qproperty-icon: url(skin:thumbs-up.png)
+}
+
+#sendItPushButton {
+    qproperty-icon: url(skin:smartisan.png)
 }
 
 #tbQuickReply {

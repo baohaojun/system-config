@@ -17,6 +17,8 @@
       <file>resources/com_sina_weibo_icon.png</file>
       <file>resources/com_tencent_mm_icon.png</file>
       <file>resources/thumbs-up.png</file>
+      <file>resources/smartisan.png</file>
+      <file>resources/config.png</file>
     </qresource>
 </RCC>
 

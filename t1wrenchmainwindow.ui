@@ -136,34 +136,22 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="configurePushButton">
-         <property name="maximumSize">
-          <size>
-           <width>40</width>
-           <height>16777215</height>
-          </size>
-         </property>
+        <widget class="QToolButton" name="configurePushButton">
          <property name="toolTip">
           <string/>
          </property>
          <property name="text">
-          <string>配置</string>
+          <string>...</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="sendItPushButton">
-         <property name="maximumSize">
-          <size>
-           <width>40</width>
-           <height>16777215</height>
-          </size>
-         </property>
+        <widget class="QToolButton" name="sendItPushButton">
          <property name="toolTip">
-          <string>快捷键Ctrl-n</string>
+          <string>发送（Ctrl-n）</string>
          </property>
          <property name="text">
-          <string>扳动</string>
+          <string>...</string>
          </property>
         </widget>
        </item>
