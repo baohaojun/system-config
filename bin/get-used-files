@@ -10,10 +10,11 @@ mkdir -p ~/tmp
 
 cat $tmpf
 
-# perl -npe '@x = split(/"/); $_ = $x[1] . "\n"' -i $tmpf
+perl -npe '@x = split(/"/); $_ = $x[1] . "\n"' -i $tmpf
 
-# perl -ne 'if (m/^[0-9a-f]{32}  (.*)/) {system("readlink", "-f", "$1")}' -i $tmpf
-sort -u $tmpf | xargs -d '\n' bash -c 'for x in "$@"; do test -f $x && md5sum $x || echo $x; done' true > $tmpf.bak
+
+sort -u $tmpf | xargs -d '\n' bash -c 'for x in "$@"; do if test -f $x; then x=$(readlink -f $x); md5sum $x; else echo $x; fi; done' true |tee $tmpf.bak
+# perl -ne 'if (m/^[0-9a-f]{32}  (.*)/) {system("readlink", "-f", "$1")}' -i $tmpf.bak
 mv $tmpf.bak $tmpf
 edit-wait $tmpf
 test $(whoami) = root || rm $tmpf

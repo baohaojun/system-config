@@ -1,3 +1,4 @@
 #!/bin/bash
 adb start-activity com.android.settings/com.android.settings.DevelopmentSettings
+sleep 1
 adb-tap 888 1275 adb-tap 859 1489

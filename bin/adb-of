@@ -4,18 +4,21 @@ if test ! -e "$1"; then
     perl -e '$_ = $ARGV[0];
              if (m!https://login.weibo.cn/login/.*backURL=http%3A%2F%2Fweibo.cn%2F[^%]*%2F([^%&]+)!i) {
                  open_sina($1);
+             } elsif (m!http://(?:m\.)?weibo\.(?:cn|com)/(?:u|p)/([^?/&%]+)!) {
+                 open_sina_user($1);
+             } elsif (m!http://v.youku.com/v_show/id_([^.]+)!) {
+                 system("my-adb", "am", "start", "-n", "com.youku.phone/com.youku.ui.activity.DetailActivity", "--es", "video_id", $1);
              } elsif (m!http://weibo.(?:com|cn)/[^/]*/([^?/]+)!) {
                  open_sina($1);
              } elsif (m!http://m.weibo.cn/[^/]*/([^/?]*)!) {
                  open_sina($1);
              } elsif (m!https://passport.sina.cn/.*r=http%3A%2F%2Fm.weibo.cn%2F[^%]*%2F([^%&]+)!) {
                  open_sina($1);
-             } elsif (m!http://(?:m\\.)?weibo\\.cn/u/([^?/&%]+)!) {
-                 open_sina_user($1);
-             } elsif (m!http://v.youku.com/v_show/id_([^.]+)!) {
-                 system("my-adb", "am", "start", "-n", "com.youku.phone/com.youku.ui.activity.DetailActivity", "--es", "video_id", $1);
              } else {
                  system("my-adb", "am", "start", $_);
+             }
+             sub open_sina_user($1) {
+                 system("my-adb", "am", "start", "-n", "com.sina.weibo/.ProfileInfoActivity", "--es", "uid", "$1");
              }
              sub open_sina($) {
                  system("my-adb", "am", "start", "sinaweibo://detail?mblogid=$_[0]");

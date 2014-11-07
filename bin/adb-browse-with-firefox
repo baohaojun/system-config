@@ -1,11 +1,7 @@
 #!/bin/bash
 url=${1:-$(getclip)}
 adb-ignite-device&
-if echo "$url" | grep -q "^http://weibo.com/"; then
-    sid=$(echo $url | perl -npe 's!http://weibo.com/.*?/(.*?)(\?.*)?$!$1!')
-    my-adb am start "sinaweibo://detail?mblogid=$sid"
-    exit
-elif echo "$url" | grep -q "v.qq.com/"; then
+if echo "$url" | grep -q "v.qq.com/"; then
     sid=$(echo $url | perl -npe 's!.*/(.*)\.html!tenvideo2://?action=5&video_id=$1!')
     my-adb am start "$sid"
     exit
