@@ -262,12 +262,19 @@ end
 
 local function t1_share_to_weixin(text)
    adb_start_weixin_share('text')
-
-   if text then putclip(text) else sleep(1) end
+   if text then
+      text = text:gsub("\n", "​\n")
+      putclip(text)
+   else
+      sleep(1)
+   end
    t1_post()
 end
 
-local function t1_weixin_new(window)
+local function t1_weixin_new(window, text)
+   if text then
+      text = text:gsub("\n", "​\n")
+   end
    if using_scroll_lock == 1 then
       adb_event{'key', 'scroll_lock', 961, 171}
    else
@@ -477,7 +484,7 @@ t1_post = function(text) -- use weixin
       t1_weibo(window)
       return
    elseif window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI" or window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI" then
-      t1_weixin_new(window)
+      t1_weixin_new(window, text)
       return
    elseif window == "SmsPopupDialog" then
       t1_sms(window)
