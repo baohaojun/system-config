@@ -1,0 +1,6 @@
+#!/bin/bash
+emacs --eval '(let ((gnus-always-read-dribble-file t)
+                         (gnus-interactive-exit nil))
+                      (gnus)
+                      (gnus-group-exit)
+                      (kill-emacs))'

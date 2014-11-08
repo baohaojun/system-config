@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Written on Sat Nov 8 12:01:45 2014 by Qt Creator 3.2.1-->
+<externaltool id="Edit_with_Emacs">
+    <description>Edit with Emacs</description>
+    <displayname>Edit with Emacs</displayname>
+    <category></category>
+    <executable output="showinpane" error="showinpane" modifiesdocument="yes">
+        <path>e</path>
+        <arguments>&quot;%{CurrentDocument:FilePath}&quot;:%{CurrentDocument:Row}</arguments>
+        <workingdirectory>%{CurrentDocument:Path}</workingdirectory>
+    </executable>
+</externaltool>

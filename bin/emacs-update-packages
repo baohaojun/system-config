@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd ~/.emacs.d/elpa
+if test ! -d .git; then
+    git init
+    cp ~/etc/elpa.gitignore .gitignore
+fi
+git add .
+git commit -m "$(now)" || true
+emacs -nw --eval '(progn
+                   (list-packages)
+                   (package-menu-mark-upgrades)
+                   (package-menu-execute t)
+                   (kill-emacs))'
