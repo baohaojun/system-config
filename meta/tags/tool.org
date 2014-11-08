@@ -1,5 +1,10 @@
 #+title: Computer tools
  * 2014
+  - 2014-11
+   * 2014-11-08
+
+     [[../../../blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.org][专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明]]
+
   - 2014-10
    * 2014-10-24
 

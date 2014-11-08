@@ -1,0 +1,91 @@
+#+title: 专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明
+# bhj-tags: tool
+
+做这个软件最初的原因，是因为我在Linux下没有QQ可以用。后来发现可以把手
+机上的QQ通过安卓的input机制控制键盘、触摸屏进行操作的时候，我就想能不
+能把整个聊天的功能给它打通。大概就是这样子😊
+
+* 功能简介
+
+** 用它聊微信
+
+[[../../../../images/weixin-chat.png][file:../../../../images/weixin-chat.png]]
+
+** 用它聊微博
+
+[[../../../../images/weibo-chat.png][file:../../../../images/weibo-chat.png]]
+
+** 用它聊QQ
+
+[[../../../../images/qq-chat.png][file:../../../../images/qq-chat.png]]
+
+哦，对了，我有说以上三种聊天，它都是支持发图片、截屏的吗？
+
+** 用它聊旺旺
+
+[[../../../../images/wangwang-chat.png][file:../../../../images/wangwang-chat.png]]
+
+** 用它发短信、回短信、回邮件、发Google+，等等等等
+
+无限种可能😄
+
+** 用它在微信朋友圈里评论、回复
+
+** 用它在微信朋友圈里发带段落的文字分享
+
+[[../../../../images/weixin-sns.png][file:../../../../images/weixin-sns.png]]
+
+** 用它发文字微博
+
+[[../../../../images/weibo-share.png][file:../../../../images/weibo-share.png]]
+
+** 用它发文字微信朋友圈分享
+
+[[../../../../images/weixin-share.png][file:../../../../images/weixin-share.png]]
+
+** 用它同时发文字微博和文字微信朋友圈分享
+
+好吧，你是社交达人，影响力无限😄
+
+方法就是同时点中这两个按钮😼
+
+[[../../../../images/both-share.png][file:../../../../images/both-share.png]]
+
+** 用它发图文并茂的微博
+
+** 用它发图文并茂的微信朋友圈分享
+
+** 用它同时发图文并茂的微博和微信朋友圈分享
+
+** 用它为我点赞、涨粉
+
+如果您觉得这个软件好用、有趣，请点一下这个按钮：
+
+[[../../../../images/thumbs-up.png][file:../../../../images/thumbs-up.png]]
+
+* 核心源码公开
+
+所有的核心逻辑都在 [[https://github.com/baohaojun/T1Wrench/raw/windows-release/t1wrench.lua][这个.lua文件]] 里。
+
+比如你可以轻易地在命令行上：
+
+#+BEGIN_SRC sh
+t1wrench.lua t1_post 'hello world'
+#+END_SRC
+
+如果你跟我一样，是个Linux + Emacs爱好者，建议你用这个脚本自己写一套在
+Emacs下聊天的工具，这样即使在Linux下，你也可以聊QQ找女朋友了😄
+
+或者你还可以试试，能不能在Linux下用Emacs聊陌陌，直接约一个？
+
+** 其他手机支不支持？
+
+安卓4.4以上，分辨率为1920x1080的手机，很有可能可以支持。但有个虚拟按键
+适配的问题，它会导致屏幕真正的可用空间不足1920x1080。
+
+我现在手上只有一个联通版的三星Note3，试了一下，那个点赞的按钮的功能是
+完好的，其余的功能大部分都不行，因为它是4.3版的安卓，并且不支持升级😠。
+
+有兴趣的同学可以试一下，欢迎给我发patch。
+
+当然，作为锤子科技的员工，更欢迎您购买我们公司的手机😄

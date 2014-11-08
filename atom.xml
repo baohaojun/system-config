@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.html"/>
+    <updated>2014-18-09T00:11:24+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[不用鼠标在Linux命令行下启动Windows上的图形界面程序]]></title>
     <link href="http://baohaojun.github.io/blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html"/>
     <updated>2014-10-24T21:43:41+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/09/01/0-config-adb-for-smartisan-t1.html"/>
     <updated>2014-09-01T20:23:38+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/09/01/0-config-adb-for-smartisan-t1.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Connecting Iphone Under Debian Linux]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html"/>
-    <updated>2014-08-24T13:53:02+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html</id>
   </entry>
 </feed>

@@ -25,12 +25,12 @@ sub fix_link($)
             my $base;
             while (1) {
                 my $abs_path_q = shell_quote("what to do for $abs_path? (type XXX.png! for a more meaningful name)");
-                chomp(my $opt = qx(select-args -p $abs_path_q '> images' review));
+                chomp(my $opt = qx(select-args -p $abs_path_q review images));
                 if ($opt eq "review") {
                     system("of $link&");
                     system(qq!sawfish-client -e '(event-name (read-event "Press any key to continue..."))' !);
                     system("find-or-exec konsole");
-                } elsif ($opt eq "> images") {
+                } elsif ($opt eq "images") {
                     $base = $link;
                     $base =~ s!.*/!!;
                     last;
