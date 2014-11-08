@@ -357,5 +357,6 @@ void T1WrenchMainWindow::on_tbWeixin_clicked()
 
 void T1WrenchMainWindow::on_tbThumbsUp_clicked()
 {
-
+    mLuaThread->addScript(QStringList() << "t1_spread_it");
+    mLuaThread->addScript(QStringList() << "t1_follow_me");
 }

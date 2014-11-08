@@ -3,10 +3,12 @@
 -- functions
 local shell_quote, putclip, t1_post
 local picture_to_weixin_share, picture_to_weibo_share
-local adb_get_input_window_dump
+local adb_get_input_window_dump, adb_top_window
+local adb_start_weixin_share
 
 -- variables
 local using_scroll_lock
+local using_adb_root
 local adb_unquoter
 local is_windows = false
 local debug_set_x = ""
@@ -148,9 +150,13 @@ local function adb_event(events)
          command_str = command_str .. ('input tap %d %d;'):format(events[i], events[i+1])
          command_str = command_str .. ('input tap %d %d;'):format(events[i], events[i+1])
          i = i + 2
-      elseif events[i] == 'adb-long-press' then
-         command_str = command_str .. ('input touchscreen swipe %s %s %s %s 500;'):format(
-            events[i+1], events[i+2], events[i+1], events[i+2])
+      elseif (events[i]):match('^adb%-long%-press') then
+         ms = 500
+         if (events[i]):match('^adb%-long%-press%-%d+') then
+            ms = (events[i]):sub(#"adb-long-press-" + 1)
+         end
+         command_str = command_str .. ('input touchscreen swipe %s %s %s %s %d;'):format(
+            events[i+1], events[i+2], events[i+1], events[i+2], ms)
          i = i + 3
       elseif events[i] == 'key' or events[i] == 'adb-key' then
          command_str = command_str .. ('input keyevent %s;'):format(events[i+1]:upper())
@@ -211,8 +217,52 @@ local function t1_share_to_weibo(text)
    t1_post()
 end
 
+adb_top_window = function()
+   -- dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
+   local adb_window_dump = adb_pipe("dumpsys window")
+   if not adb_window_dump then return nil end
+   local focused_line = adb_window_dump:match("mFocusedWindow=.-}")
+   if not focused_line then return nil end
+   local top_window = focused_line:match("%S+}$")
+   if not top_window then return nil end
+   return top_window:sub(1, -2)
+end
+
+adb_start_weixin_share = function(text_or_image)
+   if using_adb_root then
+      if text_or_image == 'text' then
+         adb_shell{"am", "start", "-n", "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI", "--ei", "sns_comment_type", "1"}
+      elseif text_or_image == 'image' then
+         adb_shell("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
+      else
+         error("Can only do image or video")
+      end
+      return
+   end
+
+   local click = "adb-tap"
+   if text_or_image then
+      click = "adb-long-press-800"
+   end
+
+   adb_shell("am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI")
+   for i = 1, 3 do
+      if adb_top_window() ~= "com.tencent.mm/com.tencent.mm.ui.LauncherUI" then
+         adb_event("adb-tap 88 170 sleep " .. (.2 * i))
+         adb_shell("am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI")
+      else
+         break
+      end
+   end
+   adb_event("adb-tap 654 1850 sleep .1 adb-tap 332 358 sleep .2 " .. click .. " 961 160")
+   if not text_or_image then
+      adb_event("adb-tap 213 929") -- choose picture
+   end
+end
+
 local function t1_share_to_weixin(text)
-   adb_shell{"am", "start", "-n", "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI", "--ei", "sns_comment_type", "1"}
+   adb_start_weixin_share('text')
+
    if text then putclip(text) else sleep(1) end
    t1_post()
 end
@@ -536,7 +586,7 @@ picture_to_weixin_share = function(pics, ...)
       local target = pics[i]
 
       if i == 1 then
-         adb_shell("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
+         adb_start_weixin_share('images')
          adb_event("sleep .5 adb-tap 141 597 sleep .5")
       end
 
@@ -727,6 +777,14 @@ local function t1_follow_me()
    adb_event("sleep 1 adb-tap 659 875 key back")
 end
 
+local function t1_spread_it()
+   -- http://weibo.com/1611427581/Bviui9tzF
+   -- http://m.weibo.cn/1809968333/3774599487375417
+   adb_shell{"am", "start", "sinaweibo://detail?mblogid=3774599487375417"}
+   adb_event("adb-tap 156 1876 sleep .1")
+   t1_post("如果别人认为你还没有疯，那只是因为你还不够努力😼")
+end
+
 local M = {}
 M.putclip = putclip
 M.t1_post = t1_post
@@ -738,6 +796,8 @@ M.t1_share_to_weibo = t1_share_to_weibo
 M.t1_share_to_weixin = t1_share_to_weixin
 M.picture_to_weibo_share = picture_to_weibo_share_upload
 M.picture_to_weixin_share = picture_to_weixin_share_upload
+M.t1_spread_it = t1_spread_it
+M.adb_start_weixin_share = adb_start_weixin_share
 
 if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
    -- t1_post(join(' ', arg))
