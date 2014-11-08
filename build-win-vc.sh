@@ -18,7 +18,6 @@ function copy-dlls()
     mkdir -p ./release/platforms
     rsync $1/plugins/platforms/qwindows.dll ./release/platforms -av
     chmod 555 ./release/platforms/*
-    rsync ~/adb_usb_driver_smartisan ./release -av
 }
 
 function make-release-tgz()
