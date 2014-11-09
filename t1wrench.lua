@@ -206,7 +206,7 @@ local function t1_weibo(window)
    if using_scroll_lock == 1 then
       adb_event{'key', 'scroll_lock', 991, 166}
    else
-      adb_event("adb-key SPACE adb-long-press 17 294 adb-tap 545 191 adb-tap 991 166")
+      adb_event("adb-tap 24 308 adb-key SPACE adb-long-press-800 17 294 adb-tap 545 191 adb-tap 991 166")
    end
 
 end
@@ -235,14 +235,16 @@ adb_start_weixin_share = function(text_or_image)
       elseif text_or_image == 'image' then
          adb_shell("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
       else
-         error("Can only do image or video")
+         error("Can only do image or text")
       end
       return
    end
 
    local click = "adb-tap"
-   if text_or_image then
+   if text_or_image == 'text' then
       click = "adb-long-press-800"
+   elseif text_or_image ~= 'image' then
+      error("Can only do image or text")
    end
 
    adb_shell("am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI")
@@ -255,7 +257,7 @@ adb_start_weixin_share = function(text_or_image)
       end
    end
    adb_event("adb-tap 654 1850 sleep .1 adb-tap 332 358 sleep .2 " .. click .. " 961 160")
-   if not text_or_image then
+   if text_or_image == 'image' then
       adb_event("adb-tap 213 929") -- choose picture
    end
 end
@@ -546,7 +548,7 @@ t1_post = function(text) -- use weixin
          local y_double_click = 1073 - ime_height_diff
          local y_select_all = 917 - ime_height_diff
          local y_paste = 936 - ime_height_diff
-         local y_send = 1030 - ime_height_diff
+         local y_send = 1041 - ime_height_diff
 
          adb_event(
             ([[
@@ -593,8 +595,12 @@ picture_to_weixin_share = function(pics, ...)
       local target = pics[i]
 
       if i == 1 then
-         adb_start_weixin_share('images')
-         adb_event("sleep .5 adb-tap 141 597 sleep .5")
+         adb_start_weixin_share('image')
+         if using_adb_root then
+             adb_event("sleep .5 adb-tap 141 597 sleep .5")
+         else
+             sleep(.5)
+         end
       end
 
       local pic_share_buttons = {
@@ -786,10 +792,11 @@ end
 
 local function t1_spread_it()
    -- http://weibo.com/1611427581/Bviui9tzF
+   -- http://weibo.com/1611427581/BvnNk2PwH?from=page_1005051611427581_profile&wvr=6&mod=weibotime&type=comment
    -- http://m.weibo.cn/1809968333/3774599487375417
-   adb_shell{"am", "start", "sinaweibo://detail?mblogid=3774599487375417"}
-   adb_event("adb-tap 156 1876 sleep .1")
-   t1_post("如果别人认为你还没有疯，那只是因为你还不够努力😼")
+   adb_shell{"am", "start", "sinaweibo://detail?mblogid=BvnNk2PwH"}
+   adb_event("adb-tap 911 1863 adb-tap 156 1876 sleep .1")
+   t1_post("#如果别人认为你还没有疯，那只是因为你还不够努力😼#")
 end
 
 local M = {}
