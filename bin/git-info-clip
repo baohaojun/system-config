@@ -16,9 +16,9 @@ cd -P .
 git_dir=$(dirname $(lookup-file .git))
 git_proj_http=$(repo-remote-url|perl -npe 's,git\@github.com:,http://github.com/,; s,git://,http://,; s,\.git$,,')
 
-stem=/raw/master
+stem=/raw/$(git symbolic-ref --short HEAD || echo master)
 if test -d "$1"; then
-    stem=/tree/master
+    stem=/tree/${stem#/raw/}
 fi
 
 url=$(lookup-file "$1" |perl -npe 's,'$git_dir','$git_proj_http$stem','|tr -d '\r\n')
