@@ -12,7 +12,7 @@ cd ~/external/bin/Linux/ext/android-sdk-linux/google
 rm -rf sdk.html
 wget -O sdk.html http://developer.android.com/sdk/index.html
 
-for x in $(grep -P -o -e 'http://dl.google.com/android/.*?"' sdk.html | perl -npe 's/"//'); do
+for x in $(grep -P -o -e 'https?://dl(-ssl)?.google.com/android/.*?"' sdk.html | perl -npe 's/"//'); do
     if ! echo $x|grep adt-; then
         wget -N $x
     fi
@@ -22,20 +22,20 @@ done&
     x=$(if test -e ndk.ver; then cat ndk.ver; else echo 8; fi)
     ((x++))
     while true; do
-        wget -N http://dl.google.com/android/ndk/android-ndk-r$x-linux-x86.tar.bz2 || break
-        wget -N http://dl.google.com/android/ndk/android-ndk-r$x-darwin-x86.tar.bz2
-        wget -N http://dl.google.com/android/ndk/android-ndk-r$x-windows-x86.zip
+        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x-linux-x86.tar.bz2 || break
+        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x-darwin-x86.tar.bz2
+        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x-windows-x86.zip
         ((x++))
     done
 
     ((x--))
     for r in f e d c b; do
-        wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-linux-x86.tar.bz2 || continue
+        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x$r-linux-x86.tar.bz2 || continue
         if tty >/dev/null 2>&1; then
             break;
         fi
-        wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-darwin-x86.tar.bz2 || continue
-        if wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-windows-x86.zip; then break; fi
+        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x$r-darwin-x86.tar.bz2 || continue
+        if wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x$r-windows-x86.zip; then break; fi
     done
 )&
 
@@ -45,7 +45,7 @@ for x in http://android-sdk-addons.motodevupdate.com/addons.xml \
     http://developer.sonyericsson.com/edk/android/repository.xml \
     http://dl.htcdev.com/sdk/addon.xml \
     http://innovator.samsungmobile.com/android/repository/repository.xml \
-    http://dl.google.com/android/repository/addon.xml \
+    http://dl-ssl.google.com/android/repository/addon.xml \
     http://dl-ssl.google.com/android/repository/sys-img/x86/sys-img.xml \
     http://dl-ssl.google.com/android/repository/sys-img.xml \
     http://software.intel.com/sites/landingpage/android/addon.xml \
@@ -54,24 +54,27 @@ for x in http://android-sdk-addons.motodevupdate.com/addons.xml \
 done
 
 re_ok=false
-first_good_sdk=5
+first_good_sdk=8
 if test -e ~/.logs/first-good-sdk-xml.n; then
     first_good_sdk=$(cat ~/.logs/first-good-sdk-xml.n)
 fi
+fail_times=0
 for x in $(seq $first_good_sdk 1000); do
-    if wget -N -r http://dl.google.com/android/repository/repository-$x.xml; then
+    if wget -N -r http://dl-ssl.google.com/android/repository/repository-$x.xml; then
         if test $re_ok = false; then
             echo $x > ~/.logs/first-good-sdk-xml.n
         fi
         re_ok=true;
     else
+        ((fail_times++)) || true
+        if test $fail_times -lt 5; then
+            continue
+        fi
         if test $re_ok = true; then
             break
         fi
     fi
 done
-
-((x--))
 
 if tty >/dev/null 2>&1; then
     vpattern='windows\|macos'
