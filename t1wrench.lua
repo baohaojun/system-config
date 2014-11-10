@@ -461,7 +461,7 @@ putclip = function(text)
    end
    file:write(text)
    file:close()
-   system{'adb', 'push', path, '/sdcard/putclip.txt'}
+   system{'the-true-adb', 'push', path, '/sdcard/putclip.txt'}
    adb_shell(
       [[
                am startservice --user 0 -n com.bhj.setclip/.PutClipService&
@@ -579,7 +579,7 @@ local function upload_pics(...)
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = ('/sdcard/DCIM/Camera/t1wrench-%d-%d%s'):format(time, i, ext)
       targets[#targets + 1] = target
-      system{'adb', 'push', pics[i], target}
+      system{'the-true-adb', 'push', pics[i], target}
       adb_shell{"am", "startservice", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
    end
    return targets
@@ -838,7 +838,7 @@ if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
    -- adb_unquoter = arg[#arg]
    -- arg[#arg] = nil
    adb_shell(arg)
-   -- system{'adb', 'push', arg[1], "/sdcard/1.txt"}
+   -- system{'the-true-adb', 'push', arg[1], "/sdcard/1.txt"}
 else
    return M
 end

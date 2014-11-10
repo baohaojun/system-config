@@ -16,8 +16,15 @@ win32:INCLUDEPATH += ./windows
 win32:LIBS += -L./windows -llua52
 win32:CONFIG += console
 
-unix:INCLUDEPATH += /usr/include/lua5.2
-unix:LIBS += -llua5.2
+unix {
+  !macx {
+    INCLUDEPATH += /usr/include/lua5.2
+    LIBS += -llua5.2
+  } else {
+    INCLUDEPATH += ./macx
+    LIBS += -L./macx -llua
+  }
+}
 
 SOURCES += main.cpp\
 	t1wrenchmainwindow.cpp \

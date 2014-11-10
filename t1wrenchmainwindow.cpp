@@ -28,13 +28,6 @@
 #include "screencapture.h"
 #include <QtWidgets/QFileDialog>
 
-#ifdef Q_OS_WIN32
-void setenv(const char* name, const char* val, int overide)
-{
-    _putenv_s(name, val);
-}
-#endif
-
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -44,19 +37,6 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     mLuaThread = new LuaExecuteThread(this);
     connect(mLuaThread, SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
     mLuaThread->start();
-    QString pathEnv = QProcessEnvironment::systemEnvironment().value("PATH");
-#ifdef Q_OS_WIN32
-    pathEnv += ";";
-#else
-    pathEnv += ":";
-#endif
-    pathEnv += QCoreApplication::applicationDirPath();
-
-    QByteArray pathBA = pathEnv.toLocal8Bit();
-    char *pathBuf = new char[pathBA.size() + 1];
-    strcpy(pathBuf, pathBA.data());
-    setenv("PATH", pathBuf, 1);
-    delete[] pathBuf;
 
     emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
     ui->setupUi(this);

@@ -1,4 +1,9 @@
 #include "t1wrenchmainwindow.h"
+
+#ifdef Q_OS_WIN32
+#include <windows.h>
+#endif
+
 #include <QApplication>
 #include <QPushButton>
 #include <QFrame>
@@ -9,11 +14,22 @@
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 #include <QtCore/QByteArray>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <QtCore/QProcessEnvironment>
+
 using namespace std;
 
 #ifdef Q_OS_WIN32
-#include <windows.h>
+void setenv(const char* name, const char* val, int overide)
+{
+    _putenv_s(name, val);
+}
 #endif
+
 int main(int argc, char *argv[])
 {
 
@@ -23,7 +39,34 @@ int main(int argc, char *argv[])
         ShowWindow(hwnd, SW_HIDE);
     }
 #endif
+    QString appDir = QCoreApplication::applicationDirPath();
+    if (appDir.isEmpty()) { // happens on mac, =open T1Wrench.app=
+        // google for "When OS X is set to use Japanese, a bug causes this sequence"
+        char exe[PATH_MAX] = "";
+        realpath(argv[0], exe);
+        appDir = exe;
+        appDir = appDir.left(appDir.lastIndexOf('/'));
+    }
+    chdir(qPrintable(appDir));
 
+    QString pathEnv = appDir;
+#ifdef Q_OS_WIN32
+    pathEnv += ";";
+#else
+    pathEnv += ":";
+#endif
+    pathEnv += QProcessEnvironment::systemEnvironment().value("PATH");
+
+    setenv("PATH", qPrintable(pathEnv), 1);
+    // FILE* fp = fopen("/Users/bhj/t1.log", "w");
+    // if (fp) {
+    //     char cwd[1024];
+    //     fprintf(fp, "cwd is %s, app is %s\n", getcwd(cwd, sizeof(cwd)), qPrintable(QCoreApplication::applicationDirPath()));
+    //     if (QCoreApplication::applicationDirPath().isEmpty()) {
+    //         fprintf(fp, "app path is ''\n");
+    //     }
+    //     fclose(fp);
+    // }
     QApplication a(argc, argv);
     T1WrenchMainWindow w;
     w.show();
