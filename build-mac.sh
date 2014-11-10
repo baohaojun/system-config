@@ -20,9 +20,9 @@ else
     fi
     qmake
     make -j8
-    cp t1wrench.lua macx/binaries/the-true-adb T1Wrench.app/Contents/MacOS/
+    rsync -L t1wrench.lua macx/binaries/* T1Wrench.app/Contents/MacOS/
     rm T1Wrench.dmg -f
     macdeployqt T1Wrench.app -dmg -verbose=1
     mv ~/Qt5 ~/Qt5.bak
-    myscr bash -c 'ps-killall T1Wrench; of T1Wrench.app'
+    myscr bash -c 'ps-killall T1Wrench; of T1Wrench.app' || true
 fi
