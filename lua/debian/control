@@ -1,0 +1,81 @@
+Source: lua5.2
+Section: interpreters
+Priority: optional
+Maintainer: Enrico Tassi <gareuselesinge@debian.org>
+Uploaders: John V. Belmonte <jbelmonte@debian.org>
+Build-Depends: debhelper (>= 9), quilt (>= 0.40), libtool, libtool-bin, libreadline-dev
+Standards-Version: 3.9.3
+Vcs-Git: git://git.debian.org/git/pkg-lua/lua5.2.git
+Vcs-Browser: http://git.debian.org/?p=pkg-lua/lua5.2.git
+Homepage: http://www.lua.org
+
+Package: lua5.2-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}
+Description: Documentation for the Lua language version 5.2
+ Lua is a powerful, light-weight programming language designed for extending
+ applications.  The language engine is accessible as a library, having a C
+ API which allows the application to exchange data with Lua programs and also
+ to extend Lua with C functions.  Lua is also used as a general-purpose,
+ stand-alone language through the simple command line interpreter provided.
+ .
+ This package contains the official manual covering the Lua language and C API,
+ examples, etc.
+
+Package: lua5.2
+Architecture: any
+Multi-Arch: foreign
+Provides: lua
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Simple, extensible, embeddable programming language
+ Lua is a powerful, light-weight programming language designed for extending
+ applications.  The language engine is accessible as a library, having a C
+ API which allows the application to exchange data with Lua programs and also
+ to extend Lua with C functions.  Lua is also used as a general-purpose,
+ stand-alone language through the simple command line interpreter provided.
+ .
+ This package contains the Lua command line interpreter and bytecode compiler.
+ Install it if you are developing or using Lua scripts.
+
+Package: liblua5.2-dev
+Architecture: any
+Multi-Arch: same
+Depends: liblua5.2-0 (= ${binary:Version}), libc6-dev|libc-dev, libreadline-dev, ${misc:Depends}
+Recommends: pkg-config, libtool, libtool-bin
+Section: libdevel
+Description: Development files for the Lua language version 5.2
+ Lua is a powerful, light-weight programming language designed for extending
+ applications.  The language engine is accessible as a library, having a C
+ API which allows the application to exchange data with Lua programs and also
+ to extend Lua with C functions.  Lua is also used as a general-purpose,
+ stand-alone language through the simple command line interpreter provided.
+ .
+ This package contains developer resources for using the Lua library.
+ Install it if you are developing programs which use the Lua C API.
+
+Package: liblua5.2-0
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Section: libs
+Description: Shared library for the Lua interpreter version 5.2
+ Lua is a powerful, light-weight programming language designed for extending
+ applications.  The language engine is accessible as a library, having a C
+ API which allows the application to exchange data with Lua programs and also
+ to extend Lua with C functions.  Lua is also used as a general-purpose,
+ stand-alone language through the simple command line interpreter provided.
+ .
+ This package contains runtime libraries.  You shouldn't need to install it
+ explicitly.
+
+Package: liblua5.2-0-dbg
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, liblua5.2-0 (= ${binary:Version}), ${misc:Depends}
+Section: debug
+Priority: extra
+Description: Debug symbols for the Lua shared library interpreter
+ This package contains the debugging symbols for liblua5.2 and lua5.2
+

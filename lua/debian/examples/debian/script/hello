@@ -1,0 +1,3 @@
+#!/usr/bin/env lua5.2
+
+print 'hello from Lua 5.2'

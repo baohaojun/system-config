@@ -1,0 +1,96 @@
+lua5.2 (5.2.3-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Build-depend on libtool-bin. Closes: #761774.
+  * liblua5.2-dev: Recommend libtool-bin.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 09 Oct 2014 09:51:41 +0000
+
+lua5.2 (5.2.3-1) unstable; urgency=medium
+
+  * New upstream release (Closes: #734757)
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Fri, 10 Jan 2014 17:16:40 +0100
+
+lua5.2 (5.2.2-3) unstable; urgency=low
+
+  * Put ./?.lua in last position in package.path 
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Mon, 25 Nov 2013 11:55:23 +0100
+
+lua5.2 (5.2.2-2) unstable; urgency=low
+
+  * Fix .pc to spit -L/usr/lib/$DEB_HOST_MULTIARCH 
+  * Fix interpreter version used in sample hello world script
+    (Closes: #704526)
+  * Fix alternative for luac (Closes: #702133) 
+  * Remove redundant ./?.lua entry in package.path (Closes: #688679)
+  * debian-make patch fixed to use MYLDFLAGS when building the .so 
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Tue, 17 Sep 2013 23:49:47 +0200
+
+lua5.2 (5.2.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Packaging moved to git
+  * Fix watch file
+  * Call update-alternatives --remove in prerm (thanks lintian) 
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Mon, 23 Jul 2012 15:00:02 +0200
+
+lua5.2 (5.2.1-3) unstable; urgency=low
+
+  * Rename lua-deb-multiarch.h into lua5.2-deb-multiarch.h and install it in
+    /usr/include/$DEB_HOST_MULTIARCH/ to make it available with no extra
+    -I directive
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Wed, 18 Jul 2012 18:43:06 +0200
+
+lua5.2 (5.2.1-2) unstable; urgency=low
+
+  * Install architecture dependent .h file in /usr/lib and fix .pc files
+    accordingly to fix multiarch issues
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Fri, 15 Jun 2012 10:13:41 +0200
+
+lua5.2 (5.2.1-1) unstable; urgency=low
+
+  * New upstream release 
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Fri, 04 May 2012 16:34:31 +0200
+
+lua5.2 (5.2.0-3) unstable; urgency=low
+
+  * Add DEB_HOST_MULTIARCH to cflags in the .pc file (see #671286).
+  * On hurd add -lpthreads 
+  * Quilt patches refreshed
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Fri, 04 May 2012 16:29:29 +0200
+
+lua5.2 (5.2.0-2) unstable; urgency=low
+
+  * Add pre/postrm scripts to remove alternatives (Closes: #668434)
+  * debian/compat set to 9 to install debug symbols in the right place 
+  * Standards-version set to 3.9.3, no changes
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Thu, 12 Apr 2012 10:00:25 +0200
+
+lua5.2 (5.2.0-1) unstable; urgency=low
+
+  * Final 5.2 release
+  * Link the shared library with -lm and -ldl
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 24 Dec 2011 11:44:39 +0100
+
+lua5.2 (5.2.0~rc5-1) experimental; urgency=low
+
+  * Do not link against ncurses (patch by Sven Joachim) (Closes: #646165) 
+  * Include manpages (Closes: #636149) 
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Wed, 07 Dec 2011 18:40:43 +0100
+
+lua5.2 (5.2.0~beta-1) experimental; urgency=low
+
+  * Initial release. (Closes: #604972)
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 30 Jul 2011 10:42:07 +0200

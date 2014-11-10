@@ -1,0 +1,25 @@
+#prefix=/usr
+#major_version=5.1
+#version=5.1.0
+#deb_host_multiarch=x86_64-linux-gnu
+
+lib_name=lua${major_version}
+libdir=${prefix}/lib/${deb_host_multiarch}
+includedir=${prefix}/include
+
+#
+# The following are intended to be used via "pkg-config --variable".
+
+# Install paths for Lua modules.  For example, if a package wants to install
+# Lua source modules to the /usr/local tree, call pkg-config with
+# "--define-variable=prefix=/usr/local" and "--variable=INSTALL_LMOD".
+INSTALL_LMOD=${prefix}/share/lua/${major_version}
+INSTALL_CMOD=${prefix}/lib/${deb_host_multiarch}/lua/${major_version}
+
+Name: Lua
+Description: Lua language engine
+Version: ${version}
+Requires:
+Libs: -L${libdir} -l${lib_name}
+Libs.private: -lm -ldl
+Cflags: -I${includedir}/${lib_name_include}

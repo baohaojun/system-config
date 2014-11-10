@@ -1,0 +1,30 @@
+Binary Lua modules: best practices for Unix
+
+
+Key points
+----------
+    * don't hard-code Lua header, library, or module paths in your build script
+    * use pkg-config tool
+    * use libtool, especially for modules to be loaded dynamically
+    * for general modules which are to be published for use by various apps:
+        * provide both static and dynamic library files
+
+
+Real example
+------------
+In this directory is a minimal binary Lua module called "foo" which has
+a single function "get_greeting" which returns a string.  The purpose
+is to show how to build and use both dynamic and static modules in a
+portable way (as far as Unix goes).
+
+If you don't have libtool installed, try:
+
+    $ apt-get install libtool
+
+Build and run the dynamic test with:
+
+    $ make test-dynamic
+
+or the static test with:
+
+    $ make test-dynamic

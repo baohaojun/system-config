@@ -1,0 +1,11 @@
+Index of examples:
+
+    script - how to create an executable script
+    static_app - how to build an app which uses the Lua C library
+    binary_module - how to build static and shared binary modules
+
+To build and run all examples:
+
+    $ make test
+
+For a quieter run use the "-s" option.  Another useful target is "clean".

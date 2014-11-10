@@ -1,0 +1,4 @@
+This is a minimal example of an application binary linked to the Lua library.
+The main points are to show the proper way to include a Lua header (e.g.
+"#include <lua.h>") and how to use pkg-config to avoid hard-coding Lua header
+paths, library names, and dependent libraries.

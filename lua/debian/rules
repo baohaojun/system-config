@@ -1,0 +1,48 @@
+#!/usr/bin/make -f
+
+ifeq (hurd,$(shell dpkg-architecture -qDEB_HOST_ARCH_OS))
+	MYLIBS=-lpthread
+endif
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	$(MAKE) linux \
+	MYCFLAGS="$(CFLAGS)" \
+	MYLDFLAGS="$(LDFLAGS)" \
+	MYLIBS=$(MYLIBS)
+
+PKG_CONFIG_FILE=debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig/lua5.2.pc
+LUA_MULTIARCH_INCLUDE = debian/tmp/usr/include/$(DEB_HOST_MULTIARCH)/
+LUA_MULTIARCH = lua5.2-deb-multiarch.h
+
+override_dh_auto_configure:
+	echo "#ifndef _LUA_DEB_MULTIARCH_" > src/$(LUA_MULTIARCH)
+	echo "#define _LUA_DEB_MULTIARCH_" >> src/$(LUA_MULTIARCH)
+	echo "#define DEB_HOST_MULTIARCH \"$(DEB_HOST_MULTIARCH)\"" >> \
+		src/$(LUA_MULTIARCH)
+	echo "#endif" >> src/$(LUA_MULTIARCH)
+
+override_dh_auto_install:
+	dh_auto_install
+	mkdir -p `dirname $(PKG_CONFIG_FILE)`
+	echo "prefix=/usr" > $(PKG_CONFIG_FILE)
+	echo "major_version=5.2" >> $(PKG_CONFIG_FILE)
+	echo "version=5.2.0" >> $(PKG_CONFIG_FILE)
+	echo "lib_name_include=lua5.2" >> $(PKG_CONFIG_FILE)
+	echo "deb_host_multiarch=$(DEB_HOST_MULTIARCH)" >> $(PKG_CONFIG_FILE)
+	cat debian/lua.pc.in >> $(PKG_CONFIG_FILE)
+	cat doc/lua.1  | sed 's/TH LUA 1/TH LUA5.2 1/' > lua5.2.1
+	cat doc/luac.1 | sed 's/TH LUAC 1/TH LUAC5.2 1/' > luac5.2.1
+	mkdir -p $(LUA_MULTIARCH_INCLUDE)
+	cp src/$(LUA_MULTIARCH) $(LUA_MULTIARCH_INCLUDE)
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -f lua5.2.1 luac5.2.1
+	rm -f src/$(LUA_MULTIARCH)
+
+override_dh_strip:
+	dh_strip --dbg-package=liblua5.2-0-dbg
+

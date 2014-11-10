@@ -1,0 +1,5 @@
+# test this watch file using:
+# uscan --watchfile debian/watch --upstream-version 0.0.1 --package lua5.2
+#
+version=3
+http://www.lua.org/ftp/		lua-(5.2.\d).tar.gz

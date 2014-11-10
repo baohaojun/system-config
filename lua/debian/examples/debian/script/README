@@ -1,0 +1,9 @@
+This is just a minimal example of an executable Lua script.  Main points:
+
+    * use the "env" tool to avoid hard-coding the Lua interpreter path.  This
+allows programs calling your script to control the interpreter run via PATH.
+
+    * don't use the ".lua" suffix on executable scripts.  You may want to
+change the implementation language later (e.g. to C, LuaJIT, etc.).  Your
+editor should be smart enough to detect a script's language by looking at
+the first line of the file, so that is not a valid excuse.

@@ -1,0 +1,230 @@
+From: Enrico Tassi <gareuselesinge@debian.org>
+Date: Sun, 30 Jun 2013 22:55:45 +0200
+Subject: debian-make
+
+===================================================================
+---
+ Makefile     |  22 ++++++-------
+ src/Makefile | 103 +++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 66 insertions(+), 59 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index bd9515f..e173fea 100644
+--- a/Makefile
++++ b/Makefile
+@@ -10,17 +10,17 @@ PLAT= none
+ # so take care if INSTALL_TOP is not an absolute path. See the local target.
+ # You may want to make INSTALL_LMOD and INSTALL_CMOD consistent with
+ # LUA_ROOT, LUA_LDIR, and LUA_CDIR in luaconf.h.
+-INSTALL_TOP= /usr/local
++INSTALL_TOP= $(DESTDIR)/usr
+ INSTALL_BIN= $(INSTALL_TOP)/bin
+-INSTALL_INC= $(INSTALL_TOP)/include
+-INSTALL_LIB= $(INSTALL_TOP)/lib
+-INSTALL_MAN= $(INSTALL_TOP)/man/man1
+-INSTALL_LMOD= $(INSTALL_TOP)/share/lua/$V
+-INSTALL_CMOD= $(INSTALL_TOP)/lib/lua/$V
++INSTALL_INC= $(INSTALL_TOP)/include/lua$(V)
++INSTALL_LIB= $(INSTALL_TOP)/lib/$(DEB_HOST_MULTIARCH)
++INSTALL_MAN= $(INSTALL_TOP)/share/man/man1
++INSTALL_LMOD= $(INSTALL_TOP)/share/lua/$(V)
++INSTALL_CMOD= $(INSTALL_TOP)/lib/$(DEB_HOST_MULTIARCH)/lua/$(V)
+ 
+ # How to install. If your install program does not support "-p", then
+ # you may have to run ranlib on the installed liblua.a.
+-INSTALL= install -p
++INSTALL= libtool --quiet --mode=install install -p
+ INSTALL_EXEC= $(INSTALL) -m 0755
+ INSTALL_DATA= $(INSTALL) -m 0644
+ #
+@@ -39,9 +39,9 @@ RM= rm -f
+ PLATS= aix ansi bsd freebsd generic linux macosx mingw posix solaris
+ 
+ # What to install.
+-TO_BIN= lua luac
++TO_BIN= lua$(V) luac$(V)
+ TO_INC= lua.h luaconf.h lualib.h lauxlib.h lua.hpp
+-TO_LIB= liblua.a
++TO_LIB= liblua$(V).la
+ TO_MAN= lua.1 luac.1
+ 
+ # Lua version and release.
+@@ -52,10 +52,10 @@ R= $V.1
+ all:	$(PLAT)
+ 
+ $(PLATS) clean:
+-	cd src && $(MAKE) $@
++	cd src && $(MAKE) $@ INSTALL_LIB=$(INSTALL_LIB)
+ 
+ test:	dummy
+-	src/lua -v
++	-src/lua$(V) -v
+ 
+ install: dummy
+ 	cd src && $(MKDIR) $(INSTALL_BIN) $(INSTALL_INC) $(INSTALL_LIB) $(INSTALL_MAN) $(INSTALL_LMOD) $(INSTALL_CMOD)
+diff --git a/src/Makefile b/src/Makefile
+index fea895b..086d36c 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -4,9 +4,10 @@
+ # == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
+ 
+ # Your platform. See PLATS for possible values.
+-PLAT= none
++PLAT= 
+ 
+-CC= gcc
++CC= libtool --quiet --mode=compile --tag=CC gcc
++LD= libtool --quiet --mode=link --tag=CC gcc
+ CFLAGS= -O2 -Wall -DLUA_COMPAT_ALL $(SYSCFLAGS) $(MYCFLAGS)
+ LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
+ LIBS= -lm $(SYSLIBS) $(MYLIBS)
+@@ -28,19 +29,19 @@ MYOBJS=
+ 
+ PLATS= aix ansi bsd freebsd generic linux macosx mingw posix solaris
+ 
+-LUA_A=	liblua.a
+-CORE_O=	lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
+-	lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o \
+-	ltm.o lundump.o lvm.o lzio.o
+-LIB_O=	lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
+-	lmathlib.o loslib.o lstrlib.o ltablib.o loadlib.o linit.o
++LUA_A=	liblua5.2.la
++CORE_O=	lapi.lo lcode.lo lctype.lo ldebug.lo ldo.lo ldump.lo lfunc.lo lgc.lo llex.lo \
++	lmem.lo lobject.lo lopcodes.lo lparser.lo lstate.lo lstring.lo ltable.lo \
++	ltm.lo lundump.lo lvm.lo lzio.lo
++LIB_O=	lauxlib.lo lbaselib.lo lbitlib.lo lcorolib.lo ldblib.lo liolib.lo \
++	lmathlib.lo loslib.lo lstrlib.lo ltablib.lo loadlib.lo linit.lo
+ BASE_O= $(CORE_O) $(LIB_O) $(MYOBJS)
+ 
+-LUA_T=	lua
+-LUA_O=	lua.o
++LUA_T=	lua5.2
++LUA_O=	lua.lo
+ 
+-LUAC_T=	luac
+-LUAC_O=	luac.o
++LUAC_T=	luac5.2
++LUAC_O=	luac.lo
+ 
+ ALL_O= $(BASE_O) $(LUA_O) $(LUAC_O)
+ ALL_T= $(LUA_A) $(LUA_T) $(LUAC_T)
+@@ -58,12 +59,13 @@ a:	$(ALL_A)
+ $(LUA_A): $(BASE_O)
+ 	$(AR) $@ $(BASE_O)
+ 	$(RANLIB) $@
++	$(LD) -o $@ $(LDFLAGS) -version-info 0:0:0 -rpath $(INSTALL_LIB) $(BASE_O) -lm -ldl
+ 
+ $(LUA_T): $(LUA_O) $(LUA_A)
+-	$(CC) -o $@ $(LDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
++	$(LD) -o $@ $(LDFLAGS) -static -Wl,-E lua.o $(LUA_A) $(LIBS)
+ 
+ $(LUAC_T): $(LUAC_O) $(LUA_A)
+-	$(CC) -o $@ $(LDFLAGS) $(LUAC_O) $(LUA_A) $(LIBS)
++	$(LD) -o $@ $(LDFLAGS) -static luac.o lundump.o lopcodes.o $(LUA_A) -lm -ldl
+ 
+ clean:
+ 	$(RM) $(ALL_T) $(ALL_O)
+@@ -125,63 +127,68 @@ solaris:
+ 
+ # DO NOT DELETE
+ 
+-lapi.o: lapi.c lua.h luaconf.h lapi.h llimits.h lstate.h lobject.h ltm.h \
++%.lo:%.c
++	$(CC) $(CFLAGS) -c $<
++
++
++
++lapi.lo: lapi.c lua.h luaconf.h lapi.h llimits.h lstate.h lobject.h ltm.h \
+  lzio.h lmem.h ldebug.h ldo.h lfunc.h lgc.h lstring.h ltable.h lundump.h \
+  lvm.h
+-lauxlib.o: lauxlib.c lua.h luaconf.h lauxlib.h
+-lbaselib.o: lbaselib.c lua.h luaconf.h lauxlib.h lualib.h
+-lbitlib.o: lbitlib.c lua.h luaconf.h lauxlib.h lualib.h
+-lcode.o: lcode.c lua.h luaconf.h lcode.h llex.h lobject.h llimits.h \
++lauxlib.lo: lauxlib.c lua.h luaconf.h lauxlib.h
++lbaselib.lo: lbaselib.c lua.h luaconf.h lauxlib.h lualib.h
++lbitlib.lo: lbitlib.c lua.h luaconf.h lauxlib.h lualib.h
++lcode.lo: lcode.c lua.h luaconf.h lcode.h llex.h lobject.h llimits.h \
+  lzio.h lmem.h lopcodes.h lparser.h ldebug.h lstate.h ltm.h ldo.h lgc.h \
+  lstring.h ltable.h lvm.h
+-lcorolib.o: lcorolib.c lua.h luaconf.h lauxlib.h lualib.h
+-lctype.o: lctype.c lctype.h lua.h luaconf.h llimits.h
+-ldblib.o: ldblib.c lua.h luaconf.h lauxlib.h lualib.h
+-ldebug.o: ldebug.c lua.h luaconf.h lapi.h llimits.h lstate.h lobject.h \
++lcorolib.lo: lcorolib.c lua.h luaconf.h lauxlib.h lualib.h
++lctype.lo: lctype.c lctype.h lua.h luaconf.h llimits.h
++ldblib.lo: ldblib.c lua.h luaconf.h lauxlib.h lualib.h
++ldebug.lo: ldebug.c lua.h luaconf.h lapi.h llimits.h lstate.h lobject.h \
+  ltm.h lzio.h lmem.h lcode.h llex.h lopcodes.h lparser.h ldebug.h ldo.h \
+  lfunc.h lstring.h lgc.h ltable.h lvm.h
+-ldo.o: ldo.c lua.h luaconf.h lapi.h llimits.h lstate.h lobject.h ltm.h \
++ldo.lo: ldo.c lua.h luaconf.h lapi.h llimits.h lstate.h lobject.h ltm.h \
+  lzio.h lmem.h ldebug.h ldo.h lfunc.h lgc.h lopcodes.h lparser.h \
+  lstring.h ltable.h lundump.h lvm.h
+-ldump.o: ldump.c lua.h luaconf.h lobject.h llimits.h lstate.h ltm.h \
++ldump.lo: ldump.c lua.h luaconf.h lobject.h llimits.h lstate.h ltm.h \
+  lzio.h lmem.h lundump.h
+-lfunc.o: lfunc.c lua.h luaconf.h lfunc.h lobject.h llimits.h lgc.h \
++lfunc.lo: lfunc.c lua.h luaconf.h lfunc.h lobject.h llimits.h lgc.h \
+  lstate.h ltm.h lzio.h lmem.h
+-lgc.o: lgc.c lua.h luaconf.h ldebug.h lstate.h lobject.h llimits.h ltm.h \
++lgc.lo: lgc.c lua.h luaconf.h ldebug.h lstate.h lobject.h llimits.h ltm.h \
+  lzio.h lmem.h ldo.h lfunc.h lgc.h lstring.h ltable.h
+-linit.o: linit.c lua.h luaconf.h lualib.h lauxlib.h
+-liolib.o: liolib.c lua.h luaconf.h lauxlib.h lualib.h
+-llex.o: llex.c lua.h luaconf.h lctype.h llimits.h ldo.h lobject.h \
++linit.lo: linit.c lua.h luaconf.h lualib.h lauxlib.h
++liolib.lo: liolib.c lua.h luaconf.h lauxlib.h lualib.h
++llex.lo: llex.c lua.h luaconf.h lctype.h llimits.h ldo.h lobject.h \
+  lstate.h ltm.h lzio.h lmem.h llex.h lparser.h lstring.h lgc.h ltable.h
+-lmathlib.o: lmathlib.c lua.h luaconf.h lauxlib.h lualib.h
+-lmem.o: lmem.c lua.h luaconf.h ldebug.h lstate.h lobject.h llimits.h \
++lmathlib.lo: lmathlib.c lua.h luaconf.h lauxlib.h lualib.h
++lmem.lo: lmem.c lua.h luaconf.h ldebug.h lstate.h lobject.h llimits.h \
+  ltm.h lzio.h lmem.h ldo.h lgc.h
+-loadlib.o: loadlib.c lua.h luaconf.h lauxlib.h lualib.h
+-lobject.o: lobject.c lua.h luaconf.h lctype.h llimits.h ldebug.h lstate.h \
++loadlib.lo: loadlib.c lua.h luaconf.h lauxlib.h lualib.h
++lobject.lo: lobject.c lua.h luaconf.h lctype.h llimits.h ldebug.h lstate.h \
+  lobject.h ltm.h lzio.h lmem.h ldo.h lstring.h lgc.h lvm.h
+-lopcodes.o: lopcodes.c lopcodes.h llimits.h lua.h luaconf.h
+-loslib.o: loslib.c lua.h luaconf.h lauxlib.h lualib.h
+-lparser.o: lparser.c lua.h luaconf.h lcode.h llex.h lobject.h llimits.h \
++lopcodes.lo: lopcodes.c lopcodes.h llimits.h lua.h luaconf.h
++loslib.lo: loslib.c lua.h luaconf.h lauxlib.h lualib.h
++lparser.lo: lparser.c lua.h luaconf.h lcode.h llex.h lobject.h llimits.h \
+  lzio.h lmem.h lopcodes.h lparser.h ldebug.h lstate.h ltm.h ldo.h lfunc.h \
+  lstring.h lgc.h ltable.h
+-lstate.o: lstate.c lua.h luaconf.h lapi.h llimits.h lstate.h lobject.h \
++lstate.lo: lstate.c lua.h luaconf.h lapi.h llimits.h lstate.h lobject.h \
+  ltm.h lzio.h lmem.h ldebug.h ldo.h lfunc.h lgc.h llex.h lstring.h \
+  ltable.h
+-lstring.o: lstring.c lua.h luaconf.h lmem.h llimits.h lobject.h lstate.h \
++lstring.lo: lstring.c lua.h luaconf.h lmem.h llimits.h lobject.h lstate.h \
+  ltm.h lzio.h lstring.h lgc.h
+-lstrlib.o: lstrlib.c lua.h luaconf.h lauxlib.h lualib.h
+-ltable.o: ltable.c lua.h luaconf.h ldebug.h lstate.h lobject.h llimits.h \
++lstrlib.lo: lstrlib.c lua.h luaconf.h lauxlib.h lualib.h
++ltable.lo: ltable.c lua.h luaconf.h ldebug.h lstate.h lobject.h llimits.h \
+  ltm.h lzio.h lmem.h ldo.h lgc.h lstring.h ltable.h lvm.h
+-ltablib.o: ltablib.c lua.h luaconf.h lauxlib.h lualib.h
+-ltm.o: ltm.c lua.h luaconf.h lobject.h llimits.h lstate.h ltm.h lzio.h \
++ltablib.lo: ltablib.c lua.h luaconf.h lauxlib.h lualib.h
++ltm.lo: ltm.c lua.h luaconf.h lobject.h llimits.h lstate.h ltm.h lzio.h \
+  lmem.h lstring.h lgc.h ltable.h
+-lua.o: lua.c lua.h luaconf.h lauxlib.h lualib.h
+-luac.o: luac.c lua.h luaconf.h lauxlib.h lobject.h llimits.h lstate.h \
++lua.lo: lua.c lua.h luaconf.h lauxlib.h lualib.h
++luac.lo: luac.c lua.h luaconf.h lauxlib.h lobject.h llimits.h lstate.h \
+  ltm.h lzio.h lmem.h lundump.h ldebug.h lopcodes.h
+-lundump.o: lundump.c lua.h luaconf.h ldebug.h lstate.h lobject.h \
++lundump.lo: lundump.c lua.h luaconf.h ldebug.h lstate.h lobject.h \
+  llimits.h ltm.h lzio.h lmem.h ldo.h lfunc.h lstring.h lgc.h lundump.h
+-lvm.o: lvm.c lua.h luaconf.h ldebug.h lstate.h lobject.h llimits.h ltm.h \
++lvm.lo: lvm.c lua.h luaconf.h ldebug.h lstate.h lobject.h llimits.h ltm.h \
+  lzio.h lmem.h ldo.h lfunc.h lgc.h lopcodes.h lstring.h ltable.h lvm.h
+-lzio.o: lzio.c lua.h luaconf.h llimits.h lmem.h lstate.h lobject.h ltm.h \
++lzio.lo: lzio.c lua.h luaconf.h llimits.h lmem.h lstate.h lobject.h ltm.h \
+  lzio.h
+ 
