@@ -233,7 +233,7 @@
           map-to)
     (when (and (string-equal ">" (event-name (current-event)))
                (string-equal "Firefox" class))
-      (eat-a-key-release ">"))))
+      (eat-a-key-release ">" "Release->$|Release-\\.$"))))
 
 (defun get-window-map (window-map-assoc)
   (setq window-map-assoc (cadr window-map-assoc))
@@ -388,18 +388,17 @@
                  (rewrite-event-for-xdotool event))))
     (synthesize-event event window)))
 
-(defun eat-a-key-release (key)
+(defun eat-a-key-release (key &optional regexp)
   (let ((eval-key-release-events t) event)
     (while eval-key-release-events
       (setq event (read-event (format nil "Release the %s to eat it" key)))
-      (when (string-match (format nil "Release-%s$" key) (event-name event))
+      (when (string-match (or regexp (format nil "Release-%s$" key)) (event-name event))
         (setq eval-key-release-events nil)))))
 
 (defun my-debug (fmt &rest args)
   (message (apply format nil fmt args)))
 
 (defun super-key-binding (key)
-  (message (format nil "hello world"))
   (let* ((fw (input-focus))
          (class (window-class fw))
          (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))

@@ -2,8 +2,14 @@
 
 set -e
 port=8888
+if test $# = 0; then
+    set -- tiny
+fi
 if test "$1" = tiny; then
     shift
+    if ! type tinyproxy >/dev/null 2>&1; then
+        sudo apt-get install -y tinyproxy
+    fi
     sudo ps-killall tinyproxy
     sudo tsocks tinyproxy
 elif type ziproxy >/dev/null 2>&1; then
