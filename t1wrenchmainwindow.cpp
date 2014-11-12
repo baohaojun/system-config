@@ -27,6 +27,7 @@
 #include "lua.hpp"
 #include "screencapture.h"
 #include <QtWidgets/QFileDialog>
+#include <QtCore/QSharedPointer>
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -34,9 +35,7 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     ui(new Ui::T1WrenchMainWindow),
     mSettings("Smartisan", "Wrench", parent)
 {
-    mLuaThread = new LuaExecuteThread(this);
-    connect(mLuaThread, SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
-    mLuaThread->start();
+    on_configurePushButton_clicked();
 
     emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
     ui->setupUi(this);
@@ -52,6 +51,13 @@ T1WrenchMainWindow::~T1WrenchMainWindow()
 
 void T1WrenchMainWindow::adbStateUpdated(const QString& state)
 {
+    if (state.toLower() == "online" && ui->adbStateLabel->text().toLower() != "online") {
+        if (!mLuaThread.isNull() && mLuaThread->isRunning()) {
+            mLuaThread->addScript(QStringList() << "t1_config");
+        } else {
+            on_configurePushButton_clicked();
+        }
+    }
     ui->adbStateLabel->setText(state);
     if (state.toLower() == "online") {
         ui->adbStateIndicator->setPixmap(QPixmap(":/images/green.png"));
@@ -186,52 +192,34 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
 
 void T1WrenchMainWindow::on_configurePushButton_clicked()
 {
-    // 实在是不想写异步调用的了。
-    if (yes_or_no_p("将检查 adb，继续？") == "yes") {
-        QDir::home().mkpath(".android");
-        QString adbConfig = QDir::homePath() + QDir::separator() + ".android" + QDir::separator() + "adb_usb.ini";
-        QFile adbConfigFile(adbConfig);
-        adbConfigFile.open(QIODevice::WriteOnly);
-        QTextStream out(&adbConfigFile);
-        out << "0x29a9\n";
-        out.flush();
-        adbConfigFile.close();
-        getExecutionOutput("adb kill-server");
-        QString uname = getExecutionOutput("adb shell uname");
-        if (!uname.contains("Linux")) {
-            prompt_user("手机状态错误：uname应该是Linux，无法完成配置：\n\n" + uname);
+    bool is_starting = false;
+    if (mLuaThread.isNull()) {
+        is_starting = true;
+    }
+    if (!mLuaThread.isNull()) {
+        if (mLuaThread->isRunning()) {
+            if (yes_or_no_p("后台仍在运行，点 确定 按钮重新配置，点 取消 继续使用当前设置？") != "yes") {
+                return;
+            }
         }
-    }
-
-    if (yes_or_no_p("将会安装操作手机剪贴板的SetClip.apk，继续？") == "yes") {
-        QString apk = QCoreApplication::applicationDirPath() + QDir::separator() + "SetClip.apk";
-        QString res = getExecutionOutput("adb install -r " + apk);
-        if (!res.contains("Success")) {
-            prompt_user("SetClip.apk安装失败：\n\n" + res);
-        } else {
-            prompt_user("SetClip.apk安装成功：\n\n" + res);
+        mLuaThread->quitLua();
+        disconnect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
+        if (!mLuaThread->wait(1000)) {
+            for (int i = 0; i < 10; i ++) {
+                getExecutionOutput("the-true-adb kill-server");
+                getExecutionOutput("the-true-adb devices");
+                if (mLuaThread->wait(100)) {
+                    break;
+                }
+            }
         }
+        mLuaThread.clear();
     }
-
-    if (yes_or_no_p("将获取手机屏幕尺寸，继续？") != "yes") {
-        return;
-    }
-    QString screenPng = QDir::tempPath() + QDir::separator() + "screencap.png";
-    QFile(screenPng).remove();
-    getExecutionOutput("adb shell screencap /sdcard/screen.png");
-    getExecutionOutput("adb pull /sdcard/screen.png " + screenPng);
-    if (!QFile(screenPng).exists()) {
-        yes_or_no_p("无法获取手机截图及其屏幕尺寸, 无法完成配置");
-        return;
-    }
-
-    QPixmap screenPixmap(screenPng);
-    int w = screenPixmap.width();
-    int h = screenPixmap.height();
-
-    prompt_user(QString().sprintf("width is %d, height is %d", w, h));
-    if (w != 1080 || h != 1920) {
-        prompt_user("你的手机尺寸未进行过适配，默认只支持1920x1080");
+    mLuaThread = QSharedPointer<LuaExecuteThread>(new LuaExecuteThread(this));
+    connect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
+    mLuaThread->start();
+    if (! is_starting) {
+        mLuaThread->addScript(QStringList() << "t1_config");
     }
 }
 

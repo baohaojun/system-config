@@ -12,10 +12,12 @@ class LuaExecuteThread : public QThread
 public:
     LuaExecuteThread(QObject* parent = NULL);
     void addScript(QStringList script);
+    void quitLua();
     void run();
 signals:
     void gotSomeLog(const QString& key, const QString& val);
 private:
+    bool mQuit;
     QMutex mMutex;
     QList<QStringList> mActions;
     QWaitCondition mWait;

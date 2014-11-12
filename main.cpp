@@ -82,7 +82,6 @@ int main(int argc, char *argv[])
     QFile cssFile("skin:style.css");
     cssFile.open(QIODevice::ReadOnly | QIODevice::Text);
     QByteArray ba = cssFile.readAll();
-    fprintf(stderr, "hello ba is %s\n", ba.constData());
     qApp->setStyleSheet(ba);
     cssFile.close();
     return a.exec();

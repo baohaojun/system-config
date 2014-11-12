@@ -41,7 +41,7 @@ private slots:
 
 private:
     QSharedPointer<ScreenCapture> mScreenCapture;
-    LuaExecuteThread* mLuaThread;
+    QSharedPointer<LuaExecuteThread> mLuaThread;
     Ui::T1WrenchMainWindow *ui;
     QSettings mSettings;
     QStringList mPictures;

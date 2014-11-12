@@ -20,6 +20,7 @@ local app_width, app_height = 1080,1920
 local width_ratio, height_ratio = app_width / default_width,  app_height / default_height
 local using_smartisan_os
 local brand = "smartisan"
+local model = "T1"
 
 if package.config:sub(1, 1) == '/' then
    shell_quote = function (str)
@@ -130,11 +131,12 @@ local function adb_focused_window()
    local match = string.match(wdump, "mFocusedWindow[^}]*%s(%S+)}")
    if match then
       return match
-   else
-      match = wdump:match("mTopFullscreenOpaqueWindowState=Window.-(%S+)%s+paused=false}")
-      debug("match is %s", match)
+   end
+   match = wdump:match("mTopFullscreenOpaqueWindowState=Window.-(%S+)%s+paused=false}")
+   if match then
       return match
    end
+   error("Can't find focused window: " .. wdump:sub(1, 20))
 end
 
 local function select_args(args)
@@ -222,7 +224,7 @@ local function weibo_text_share(window)
       end
       sleep(.5)
    end
-   if using_scroll_lock == 1 then
+   if using_scroll_lock then
       adb_event{'key', 'scroll_lock', 991, 166}
    elseif using_smartisan_os then
       adb_event("adb-tap 24 308 adb-key SPACE adb-long-press-800 17 294 adb-tap 545 191 adb-tap 991 166")
@@ -299,7 +301,7 @@ local function weixin_text_share(window, text)
    if text then
       text = text:gsub("\n", "​\n")
    end
-   if using_scroll_lock == 1 then
+   if using_scroll_lock then
       adb_event{'key', 'scroll_lock', 961, 171}
    elseif using_smartisan_os then
       adb_event(
@@ -314,7 +316,7 @@ local function weixin_text_share(window, text)
 end
 
 local function t1_sms(window)
-   if using_scroll_lock == 1 then
+   if using_scroll_lock then
       adb_event{182, 1079, 'key', 'scroll_lock', 864, 921}
    else
       local input_method, ime_height = adb_get_input_window_dump()
@@ -337,7 +339,7 @@ local function t1_sms(window)
 end
 
 local function t1_google_plus(window)
-   if using_scroll_lock == 1 then
+   if using_scroll_lock then
       adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
    else
       adb_event(
@@ -365,7 +367,7 @@ local function t1_google_plus(window)
 end
 
 local function t1_smartisan_notes(window)
-   if using_scroll_lock == 1 then
+   if using_scroll_lock then
       adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
    else
       adb_event(
@@ -386,7 +388,7 @@ local function t1_mail(window)
       adb_tap_mid_bot()
       sleep(2)
    end
-   if using_scroll_lock == 1 then
+   if using_scroll_lock then
       adb_event{'key', 'scroll_lock'}
    else
 
@@ -412,7 +414,7 @@ local function t1_mail(window)
 end
 
 local function t1_paste()
-   if using_scroll_lock == 1 then
+   if using_scroll_lock then
       adb_event{'key', 'scroll_lock'}
    else
       return "无法在此窗口内贴粘"
@@ -499,7 +501,8 @@ end
 
 t1_config = function()
    local sdk_version = adb_pipe("getprop ro.build.version.sdk")
-   brand = adb_pipe("getprop ro.product.brand")
+   brand = adb_pipe("getprop ro.product.brand"):gsub("\n.*", "")
+   model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
 
    if tonumber(sdk_version) < 18 then
        error("Error, you phone's sdk version is " .. sdk_version .. ",  must be at least 18")
@@ -515,19 +518,26 @@ t1_config = function()
    width_ratio, height_ratio = app_width / default_width,  app_height / default_height
 
 
-   local model = adb_pipe("getprop ro.product.model")
-   if model:match("SM705") then
+   if brand:match("smartisan") then
       using_smartisan_os = true
+   else
+      using_smartisan_os = false
    end
 
    local id = adb_pipe("id")
    if id:match("uid=0") then
       using_adb_root = true
+   else
+      using_adb_root = false
    end
 
    local scroll = adb_pipe("getprop persist.smartisan.pastetool")
-   if scroll:match(1) then
-      using_scroll_lock = ture
+   if scroll:match("1") then
+      debug("pastetool is true")
+      using_scroll_lock = true
+   else
+      using_scroll_lock = false
+      debug("pastetool is false")
    end
 end
 
@@ -586,7 +596,7 @@ t1_post = function(text) -- use weixin
          post_button = '954 166'
       end
 
-      if using_scroll_lock == 1 then
+      if using_scroll_lock then
          adb_event(string.format("%s key scroll_lock %s", add, post_button))
       else
          if not input_method then
@@ -604,7 +614,7 @@ t1_post = function(text) -- use weixin
          local y_double_click = 951 / virtual_key_ratio - ime_height_diff
          local y_select_all = 862 / virtual_key_ratio - ime_height_diff
          local y_paste = y_select_all
-         local y_send = (945 - ((default_height - init_height) / 70 + (init_height - app_height) / 22)) / virtual_key_ratio - ime_height_diff
+         local y_send = (945 - ((default_height - init_height) / 70 + (init_height - app_height - 44) / 22)) / virtual_key_ratio - ime_height_diff
 
          if using_smartisan_os then
             adb_event(
@@ -613,6 +623,7 @@ t1_post = function(text) -- use weixin
             ]]):format(y_double_click, y_select_all, y_paste, y_send)
             )
          else
+            debug("not using smartisan os")
             adb_event(
                ([[
                         adb-tap 560 1824 adb-long-press-800 353 %d adb-tap 220 %d adb-tap 995 %d
@@ -699,8 +710,12 @@ picture_to_weibo_share = function(pics, ...)
       local target = pics[i]
 
       if i == 1 then
-         adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity")
-         adb_event("sleep .5 key back sleep .5 adb-tap 62 1843 sleep 2")
+         adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity; sleep .5")
+         local input_method, ime_height = adb_get_input_window_dump()
+         if ime_height ~= 0 then
+            adb_event("key back")
+         end
+         adb_event("sleep .5 adb-tap 62 1843 sleep 2")
       end
 
       local pic_share_buttons = {
@@ -885,7 +900,7 @@ local function t1_spread_it()
    elseif brand:match("Xiaomi") then
       t1_post("我在小米手机上用Smartisan T1小扳手，赞！下一台手机考虑换Smartisan T1吧😼")
    else
-     t1_post(("我在%s的手机上用Smartisan T1小扳手，赞！下一台手机考虑换Smartisan T1吧😼"):format(brand))
+     t1_post(("我在%s的%s手机上用Smartisan T1小扳手，赞！下一台手机考虑换Smartisan T1吧😼"):format(brand, model))
    end
 end
 

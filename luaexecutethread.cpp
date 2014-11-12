@@ -25,6 +25,12 @@ void LuaExecuteThread::run()
         if (mActions.length() == 0) {
             mWait.wait(&mMutex);
         }
+        if (mQuit) {
+            mMutex.unlock();
+            lua_close(L);
+            return;
+        }
+
         script = mActions.at(0);
         mActions.removeFirst();
         mMutex.unlock();
@@ -48,15 +54,23 @@ void LuaExecuteThread::run()
 }
 
 LuaExecuteThread::LuaExecuteThread(QObject* parent)
-    : QThread(parent)
+    : QThread(parent),
+      mQuit(false)
 {
-
 }
 
 void LuaExecuteThread::addScript(QStringList script)
 {
     mMutex.lock();
     mActions.append(script);
+    mMutex.unlock();
+    mWait.wakeOne();
+}
+
+void LuaExecuteThread::quitLua()
+{
+    mMutex.lock();
+    mQuit = true;
     mMutex.unlock();
     mWait.wakeOne();
 }

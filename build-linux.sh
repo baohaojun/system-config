@@ -9,4 +9,5 @@ cd ~/tmp/build-t1
 set -o pipefail
 qtchooser -qt=5 -run-tool=qmake && make -j8 | perl -npe "s|$PWD|$oldpwd|g"
 relative-link -f $oldpwd/release/* .
+relative-link -f $oldpwd/*.lua .
 ./T1Wrench
