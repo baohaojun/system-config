@@ -19,6 +19,7 @@ local init_width, init_height = 1080, 1920
 local app_width, app_height = 1080,1920
 local width_ratio, height_ratio = app_width / default_width,  app_height / default_height
 local using_smartisan_os
+local brand = "smartisan"
 
 if package.config:sub(1, 1) == '/' then
    shell_quote = function (str)
@@ -429,13 +430,13 @@ local function last(func)
 end
 
 adb_get_input_window_dump = function()
-   -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
+   -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]+.*\SInputMethod/i .. m/^\s*mHasSurface/')
    local dump = adb_pipe{'dumpsys', 'window'}
    local input_method = {}
    local started = false
    dump = split("\n", dump)
    for i = 1, #dump do
-      if not started and dump[i]:match("^%s*Window #%d+ Window{[a-f0-9]* u0 InputMethod}") then
+      if not started and dump[i]:match("^%s*Window #?%d* ?Window{[a-f0-9]+.*%sInputMethod") then
          started = true
       end
       if started == true then
@@ -497,10 +498,16 @@ putclip = function(text)
 end
 
 t1_config = function()
+   local sdk_version = adb_pipe("getprop ro.build.version.sdk")
+   brand = adb_pipe("getprop ro.product.brand")
+
+   if tonumber(sdk_version) < 18 then
+       error("Error, you phone's sdk version is " .. sdk_version .. ",  must be at least 18")
+   end
    local dump = adb_pipe{'dumpsys', 'window'}
    init_width = dump:match('init=(%d+x%d+)')
-   init_height = init_width:match('x(%d+)')
-   init_width = init_width:match('(%d+)x')
+   init_height = tonumber(init_width:match('x(%d+)'))
+   init_width = tonumber(init_width:match('(%d+)x'))
 
    app_width = dump:match('app=(%d+x%d+)')
    app_height = app_width:match('x(%d+)')
@@ -608,7 +615,7 @@ t1_post = function(text) -- use weixin
          else
             adb_event(
                ([[
-                        adb-tap 560 1824 adb-long-press-800 253 %d adb-tap 220 %d adb-tap 995 %d
+                        adb-tap 560 1824 adb-long-press-800 353 %d adb-tap 220 %d adb-tap 995 %d
                ]]):format(y_double_click, y_paste, y_send)
             )
          end
@@ -624,7 +631,7 @@ local function upload_pics(...)
             for x in /sdcard/DCIM/Camera/t1wrench-*; do
                if test -e "$x"; then
                   rm -f "$x";
-                  am startservice -n com.bhj.setclip/.PutClipService --es picture "$x";
+                  am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture "$x";
                fi;
             done
    ]])
@@ -637,7 +644,7 @@ local function upload_pics(...)
       local target = ('/sdcard/DCIM/Camera/t1wrench-%d-%d%s'):format(time, i, ext)
       targets[#targets + 1] = target
       system{'the-true-adb', 'push', pics[i], target}
-      adb_shell{"am", "startservice", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
+      adb_shell{"am", "startservice", "--user", "0", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
    end
    return targets
 end
@@ -860,7 +867,11 @@ local function t1_follow_me()
    -- http://weibo.com/u/1611427581 (baohaojun)
    -- http://weibo.com/u/1809968333 (beagrep)
    adb_shell{"am", "start", "-n", "com.sina.weibo/.ProfileInfoActivity", "--es", "uid", "1611427581"}
-   adb_event("sleep 1 adb-tap 659 875 key back")
+   if init_width < 720 then
+      adb_event("sleep 1 adb-tap 659 950 key back")
+   else
+      adb_event("sleep 1 adb-tap 659 880 key back")
+   end
 end
 
 local function t1_spread_it()
@@ -868,8 +879,14 @@ local function t1_spread_it()
    -- http://weibo.com/1611427581/BvnNk2PwH?from=page_1005051611427581_profile&wvr=6&mod=weibotime&type=comment
    -- http://m.weibo.cn/1809968333/3774599487375417
    adb_shell{"am", "start", "sinaweibo://detail?mblogid=BvnNk2PwH"}
-   adb_event("adb-tap 911 1863 adb-tap 156 1876 sleep .1")
-   t1_post("#如果别人认为你还没有疯，那只是因为你还不够努力😼#")
+   adb_event("sleep 1 adb-tap 911 1863 adb-tap 156 1876 sleep .1")
+   if using_smartisan_os then
+      t1_post("#如果别人认为你还没有疯，那只是因为你还不够努力😼#")
+   elseif brand:match("Xiaomi") then
+      t1_post("我在小米手机上用Smartisan T1小扳手，赞！下一台手机考虑换Smartisan T1吧😼")
+   else
+     t1_post(("我在%s的手机上用Smartisan T1小扳手，赞！下一台手机考虑换Smartisan T1吧😼"):format(brand))
+   end
 end
 
 local M = {}
