@@ -597,7 +597,7 @@ t1_post = function(text) -- use weixin
          local y_double_click = 951 / virtual_key_ratio - ime_height_diff
          local y_select_all = 862 / virtual_key_ratio - ime_height_diff
          local y_paste = y_select_all
-         local y_send = (945 - ((default_height - init_height) / 40 + (init_height - app_height) / 20)) / virtual_key_ratio - ime_height_diff
+         local y_send = (945 - ((default_height - init_height) / 70 + (init_height - app_height) / 22)) / virtual_key_ratio - ime_height_diff
 
          if using_smartisan_os then
             adb_event(
