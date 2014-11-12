@@ -80,7 +80,7 @@ if test "${#dirs[@]}" = 0; then
                 if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths; then
                     redo_path=true;
                 fi
-                if grep ' ' -q .repo/repo-paths; then
+                if test -e .repo/repo-paths && grep ' ' -q .repo/repo-paths; then
                     redo_path=true;
                 fi
                 if test -e .repo/repo-paths && test $(stat -c %s .repo/repo-paths) = 0; then

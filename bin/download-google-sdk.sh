@@ -51,6 +51,7 @@ for x in http://android-sdk-addons.motodevupdate.com/addons.xml \
     http://dl-ssl.google.com/android/repository/sys-img/android/sys-img.xml \
     http://dl-ssl.google.com/android/repository/sys-img/android-wear/sys-img.xml \
     http://dl-ssl.google.com/android/repository/sys-img/android-tv/sys-img.xml \
+    http://dl-ssl.google.com/android/repository/sys-img/google_apis/sys-img.xml \
     http://software.intel.com/sites/landingpage/android/addon.xml \
     http://www.echobykyocera.com/download/echo_repository.xml; do
     wget -N -r $x || true
@@ -120,5 +121,5 @@ for x in $(find *.google.com -name '*.xml'); do
 done
 
 mkdir -p ../temp
-cd ../temp
-ln ../google/* . -f || true
+
+relative-link -f ./* ../temp

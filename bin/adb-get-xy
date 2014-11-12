@@ -5,18 +5,27 @@ if test "$1"; then
     export TAP=$1
 fi
 
+(sleep 5 && adb root-mode off)&
 adb-tty getevent -l </dev/tty | perl -ne '
+    BEGIN {
+        $xy = qx(adb dumpsys window);
+        if ($xy =~ m/app=(\d+)x(\d+)/) {
+          $true_x = $1;
+          $true_y = $2;
+        }
+    }
     if (m/ABS_MT_POSITION_/) {
         chomp;
         @fields = split;
         ($name, $val) = @fields[2,3];
         $val = hex($val);
-        print "$name: $val\r\n";
+        # print "$name: $val\r\n";
         if ($name =~ m/ABS_MT_POSITION_X/) {
-            $x = $val;
+            $x = int($val * 1080 / $true_x);
         } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
-            $y = $val;
+            $y = int($val * 1920 / $true_y);
         }
+        print "$ENV{TAP} $x $y\r\n";
         system("putclip $ENV{TAP} $x $y");
     }
 '

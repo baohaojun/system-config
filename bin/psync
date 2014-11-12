@@ -1,8 +1,10 @@
 #!/bin/bash
 
-TEMP=$(getopt -o rdcL --long reverse,delete,checksum -n $(basename $0) -- "$@")
+TEMP=$(getopt -o t:SrdcL --long target-dir:,git-st,reverse,delete,checksum -n $(basename $0) -- "$@")
 reverse=false
 symlink=
+git_st=
+target_dir=$(up .)
 delete=
 checksum=
 eval set -- "$TEMP"
@@ -15,6 +17,14 @@ while true; do
         -L)
             symlink=-L
             shift 1
+            ;;
+        -S|--git-st)
+            git_st='--files-from=-'
+            shift 1
+            ;;
+        -t|--target-dir)
+            target_dir=$(up $2)
+            shift 2
             ;;
         -d|--delete)
             delete=--delete
@@ -53,10 +63,18 @@ if test -e psync-exclude.rc -a -z "$delete"; then
 else
     local_exclude=
 fi
+
+if test "$git_st"; then
+    cd $(dirname $(lookup-file -e .git))
+fi
+if test "$git_st"; then
+    . .gitx
+    (git st -S | grep . ||getclip) | cut -b 4-
+fi |
 if test "$reverse" = true; then
     for x in "$@"; do
-        my-rsync $symlink $checksum -av $host:$(up .)/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*" $local_exclude |grep -v '/$' -P
+        my-rsync $git_st $symlink $checksum -av $host:$target_dir/$(basename $x) $(dirname $x) --exclude .git --exclude "*#*" --exclude ".#*" $local_exclude |grep -v '/$' -P
     done
 else
-    my-rsync $symlink $checksum -av "$@" $host:$(up .) --exclude .git --exclude "*#*" --exclude ".#*" $delete $local_exclude |grep -v '/$' -P
+    my-rsync $git_st $symlink $checksum -av "$@" $host:$target_dir --exclude .git --exclude "*#*" --exclude ".#*" $delete $local_exclude |grep -v '/$' -P
 fi

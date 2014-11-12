@@ -4,27 +4,31 @@ if test $(basename $0) = repo-not-clean; then
     export DO_GIT_ST_ONLY=true
 fi
 
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
 export path_pattern=
 export GIT_END_DATE=
 TEMP=$(getopt -o e:p: --long end:,pattern: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-	-e|--end)
-	    export GIT_END_DATE=$(day-end $2)
-	    shift 2
-	    ;;
+        -e|--end)
+            export GIT_END_DATE=$(day-end $2)
+            shift 2
+            ;;
         -p|--path)
             path_pattern=$2
             shift 2
             ;;
-	--)
-	    shift
-	    break
-	    ;;
-	*)
-	    die "internal error"
-	    ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
     esac
 done
 
@@ -38,7 +42,7 @@ fi
 
 set -- $(
     for x in "$@"; do
-	echo -d "$x"
+        echo -d "$x"
     done
 )
 
@@ -48,7 +52,7 @@ if test "$DEBUG" = true; then
     set -x
     function git()
     {
-        command git "$@" || 
+        command git "$@" ||
         {
             case "$1" in
                 *)
@@ -116,7 +120,7 @@ if test "$DO_GIT_ST_ONLY" != true -a "$head_rev" != "$rev"; then
         if [[ $branch =~ /tags/ ]]; then
             git fetch $remote $branch >/dev/null 2>&1
         else
-            git fetch $remote refs/heads/$branch >/dev/null 2>&1 
+            git fetch $remote refs/heads/$branch >/dev/null 2>&1
         fi
         fetch_rev=$(git rev-parse FETCH_HEAD^0)
 
@@ -144,5 +148,5 @@ fi
     tee "$lognow" 2>/dev/null
     ln -sf $(basename "$lognow") "$log" >/dev/null 2>&1
     cp "$log" .repo/repo-changes.log >/dev/null 2>&1
-    ln -sf .repo/repo-changes.log 
+    ln -sf .repo/repo-changes.log
 )
