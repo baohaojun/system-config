@@ -38,8 +38,12 @@ if test ! "$out"; then
     now=shots/"$now"
     out=~/"$now".png
 fi
-scrot $select "$out"
-if test -e "$out"; then
-    of "$out"
-    mp "$out" | putclip
-fi
+while true; do
+    scrot $select "$out"
+    if test -e "$out"; then
+        of "$out"
+        mp "$out" | putclip
+        exit 0
+    fi
+    sleep 1
+done
