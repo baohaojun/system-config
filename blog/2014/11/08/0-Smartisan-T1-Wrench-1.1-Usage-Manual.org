@@ -61,8 +61,8 @@
 
    [[../../../../images/Screenshot_2014-11-10-16-21-52_QQ.png][file:../../../../images/Screenshot_2014-11-10-16-21-52_QQ.png]]
 
-   这时可以在小扳手上方的窗口输入，并按Ctrl-n即可发送，也可以点击右下
-   方的锤子按钮：
+   这时可以在小扳手上方的窗口输入，并按Ctrl-Enter（Control+回车键）即
+   可发送，也可以点击右下方的锤子按钮：
 
    [[../../../../images/chat-hello.png][file:../../../../images/chat-hello.png]]
 
