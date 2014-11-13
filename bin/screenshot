@@ -1,5 +1,7 @@
 #!/bin/bash
-sleep 1
+if test $(basename $0) = screenshot; then
+    sleep 1
+fi
 
 function die() {
     echo Error: "$@"
@@ -41,7 +43,12 @@ fi
 while true; do
     scrot $select "$out"
     if test -e "$out"; then
-        of "$out"
+        if test "$(basename $0)" = screenshot-edit; then
+            gimp -n "$out" >/dev/null 2>&1
+        else
+            of "$out" >/dev/null 2>&1
+        fi
+        mp "$out"
         mp "$out" | putclip
         exit 0
     fi

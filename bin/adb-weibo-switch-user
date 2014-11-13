@@ -1,0 +1,6 @@
+#!/bin/bash
+adb start-activity com.sina.weibo/com.sina.weibo.MainTabActivity
+adb-tap 959 1857
+adb-tap 974 122
+adb-tap 125 320
+adb-tap 283 535
