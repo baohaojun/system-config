@@ -47,47 +47,15 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             # do nothing, I will post it myself
                             adb-key SCROLL_LOCK
                             ;;
-                        weibo) # send weibo
-                            if test "$(adb-top-activity)" = com.sina.weibo/com.sina.weibo.DetailWeiboActivity; then
-                                repost=$(select-args -o repost comment)
-                                if test $repost = repost; then
-                                    adb-tap-bot-left
-                                else
-                                    adb-tap-mid-bot
-                                fi
-                                sleep .5
-                            fi
-                            adb-key SCROLL_LOCK;
-                            adb-tap 991 166
-                            ;;
-                        t1-sms) # quick reply sms
-                            adb-tap 182 1079
-                            adb-long-press 522 921 # 长按输入框
-                            adb-tap 149 786
-                            adb-tap 864 921
-                            ;;
-                        cell-mail) # reply mail
-                            activity=$(adb-top-activity)
-                            if test "$activity" = com.android.email/com.android.email.activity.Welcome ||
-                               test "$activity" = com.android.email/com.android.email2.ui.MailActivityEmail; then
-                                adb-tap-mid-bot
-                                sleep 2
-                            fi
-                            adb-key SCROLL_LOCK
-                            if test "$(gettask-android)" = com.google.android.gm; then
-                                adb-tap 806 178
-                            else
-                                adb-tap 998 174
-                            fi
-                            ;;
                         both-weixin-and-weibo)
                             emacs-cell-phone weibo-brand-new
                             emacs-cell-phone weixin-brand-new
                             ;;
                         weibo-brand-new)
-                            adb start-activity com.sina.weibo/com.sina.weibo.EditActivity
-                            PUTCLIP_ANDROID_FILE=/tmp/$USE_BUFFER_NAME.out putclip-android
-                            emacs-cell-phone weibo
+                            if tail -n 1 /tmp/$USE_BUFFER_NAME.out| grep -P '^\(图\)$'; then
+                                t1wrench-get-pictures | xargs -d \\n t1wrench.lua picture_to_weibo_share
+                            fi
+                            t1wrench.lua t1_share_to_weibo
                             ;;
                         weixin-brand-new)
                             adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI --ei sns_comment_type 1

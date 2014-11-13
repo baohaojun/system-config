@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+tmpf=/tmp/$(basename $0).$$
+for x in $(seq 1 9); do
+    if EMACS=t yes-or-no-p -y "Do a screenshot?"; then
+        screenshot-edit   >> $tmpf
+    else
+        break
+    fi
+done
+ew $tmpf >/dev/null 2>&1
+cat $tmpf
+rm $tmpf
