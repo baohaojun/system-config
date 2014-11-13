@@ -148,7 +148,7 @@
        <item>
         <widget class="QToolButton" name="sendItPushButton">
          <property name="toolTip">
-          <string>发送（Ctrl-n）</string>
+          <string>发送（Ctrl-Enter）</string>
          </property>
          <property name="text">
           <string>...</string>
