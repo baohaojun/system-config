@@ -28,8 +28,9 @@ function make-release-tgz()
     rsync readme.* ./release/
     rsync -av *.png ./release/
     command rsync -av -d release/ t1wrench-release
+
     set -x
-    tar czfv ${1:-t1wrench-release.tgz} t1wrench-release
+    tar czfv ${1:-T1Wrench-windows.tgz} T1Wrench-windows -h
 }
 
 if test $# = 0; then
@@ -37,9 +38,14 @@ if test $# = 0; then
 fi
 if test $(uname) = Linux; then
     psync $1 .; ssh $1 "cd $PWD; ./$(basename $0)"
-    rsync $1:$(up .)/t1wrench-release ../ -av
-    rsync $1:$(up .)/t1wrench-windows.tgz ~/today/
-    smb-push ~/today/t1wrench-windows.tgz
+    rsync $1:$(up .)/T1Wrench-windows ../ -av
+    rsync $1:$(up .)/T1Wrench-windows.tgz ~/today/
+    smb-push ~/today/T1Wrench-windows.tgz
+    (
+        cd ~/today
+        mv T1Wrench-windows.tgz T1Wrench-windows-$(today).tgz
+        smb-push T1Wrench-windows-$(today).tgz
+    )
 else
     set -e
     set -o pipefail
@@ -61,9 +67,11 @@ else
         mingw32-make.exe | perl -npe 's/\\/\//g'
         copy-dlls /c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32
         set -x
+        rm -f T1Wrench-windows
+        ln -sf t1wrench-release T1Wrench-windows
         (
-            myscr bash -c 'cd t1wrench-release; of ./T1Wrench.exe'
+            myscr bash -c 'cd T1Wrench-windows; of ./T1Wrench.exe'
         )&
-        make-release-tgz t1wrench-windows.tgz
+        make-release-tgz T1Wrench-windows.tgz
     fi
 fi

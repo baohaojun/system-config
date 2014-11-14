@@ -500,6 +500,24 @@ putclip = function(text)
 end
 
 t1_config = function()
+   -- install the apk
+   local setclip_phone_md5 = adb_pipe("cat /sdcard/t1wrench-setclip.md5")
+   local setclip_local_md5 = io.open("setclip.apk.md5"):read("*a")
+   debug("on phone: %s, local: %s", setclip_phone_md5, setclip_local_md5)
+   if setclip_phone_md5 ~= setclip_local_md5 then
+      local install_output = io.popen("adb install -r SetClip.apk"):read("*a")
+      if install_output:match("\nSuccess\r?\n") then
+         system("adb push setclip.apk.md5 /sdcard/t1wrench-setclip.md5")
+         local setclip_phone_md5 = adb_pipe("cat /sdcard/t1wrench-setclip.md5")
+         local setclip_local_md5 = io.open("setclip.apk.md5"):read("*a")
+         if setclip_phone_md5 ~= setclip_local_md5 then
+            error("Can't mark the setclip.apk as been installed")
+         end
+      else
+         error("Install setclip.apk failed, 不能操作剪贴板, output is " .. install_output)
+      end
+   end
+
    local sdk_version = adb_pipe("getprop ro.build.version.sdk")
    brand = adb_pipe("getprop ro.product.brand"):gsub("\n.*", "")
    model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
@@ -632,7 +650,7 @@ t1_post = function(text) -- use weixin
          end
       end
    end
-   return "text sent\n"
+   return "text sent"
 end
 
 local function upload_pics(...)
@@ -875,7 +893,7 @@ local function t1_picture(...)
    else
       return "Error: can't decide where to share"
    end
-   return #pics .. " pictures sent\n"
+   return #pics .. " pictures sent"
 end
 
 local function t1_follow_me()

@@ -20,6 +20,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <QtCore/QProcessEnvironment>
+#include <QtCore/QDebug>
 
 using namespace std;
 
@@ -32,6 +33,7 @@ void setenv(const char* name, const char* val, int overide)
 
 int main(int argc, char *argv[])
 {
+    QApplication a(argc, argv);
 
 #ifdef Q_OS_WIN32
     HWND hwnd = GetConsoleWindow();
@@ -42,11 +44,14 @@ int main(int argc, char *argv[])
     QString appDir = QCoreApplication::applicationDirPath();
     if (appDir.isEmpty()) { // happens on mac, =open T1Wrench.app=
         // google for "When OS X is set to use Japanese, a bug causes this sequence"
+#ifndef Q_OS_WIN32
         char exe[PATH_MAX] = "";
         realpath(argv[0], exe);
         appDir = exe;
         appDir = appDir.left(appDir.lastIndexOf('/'));
+#endif
     }
+    qDebug() << "appDir is " << appDir;
     chdir(qPrintable(appDir));
 
     QString pathEnv = appDir;
@@ -67,7 +72,6 @@ int main(int argc, char *argv[])
     //     }
     //     fclose(fp);
     // }
-    QApplication a(argc, argv);
     T1WrenchMainWindow w;
     w.show();
 
