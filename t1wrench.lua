@@ -5,7 +5,7 @@ local shell_quote, putclip, t1_post
 local picture_to_weixin_share, picture_to_weibo_share
 local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share
-local t1_config
+local t1_config, check_phone
 
 -- variables
 local using_scroll_lock
@@ -474,6 +474,13 @@ local function adb_input_method_is_null()
       return false
    end
 end
+
+check_phone = function()
+   if not adb_pipe("uname"):match("Linux") then
+      error("Error: can't put text on phone, not connected?")
+   end
+end
+
 putclip = function(text)
    local file, path
    local tmp = os.getenv("TEMP") or "/tmp"
@@ -484,6 +491,7 @@ putclip = function(text)
    end
    file:write(text)
    file:close()
+   check_phone()
    system{'the-true-adb', 'push', path, '/sdcard/putclip.txt'}
    adb_shell(
       [[
@@ -501,20 +509,29 @@ end
 
 t1_config = function()
    -- install the apk
+   system("adb devices")
+   local uname = adb_pipe("uname")
+   if not uname:match("Linux") then
+      error("No phone found, can't set up.")
+   end
    local setclip_phone_md5 = adb_pipe("cat /sdcard/t1wrench-setclip.md5")
-   local setclip_local_md5 = io.open("setclip.apk.md5"):read("*a")
+   local md5file = io.open("setclip.apk.md5")
+   local setclip_local_md5 = md5file:read("*a")
+   io.close(md5file)
    debug("on phone: %s, local: %s", setclip_phone_md5, setclip_local_md5)
    if setclip_phone_md5 ~= setclip_local_md5 then
       local install_output = io.popen("adb install -r SetClip.apk"):read("*a")
       if install_output:match("\nSuccess\r?\n") then
          system("adb push setclip.apk.md5 /sdcard/t1wrench-setclip.md5")
          local setclip_phone_md5 = adb_pipe("cat /sdcard/t1wrench-setclip.md5")
-         local setclip_local_md5 = io.open("setclip.apk.md5"):read("*a")
+         local md5file = io.open("setclip.apk.md5")
+         local setclip_local_md5 = md5file:read("*a")
+         io.close(md5file)
          if setclip_phone_md5 ~= setclip_local_md5 then
             error("Can't mark the setclip.apk as been installed")
          end
       else
-         error("Install setclip.apk failed, 不能操作剪贴板, output is " .. install_output)
+         error("Install setclip.apk failed, output is " .. install_output)
       end
    end
 
@@ -897,6 +914,7 @@ local function t1_picture(...)
 end
 
 local function t1_follow_me()
+   check_phone()
    -- http://weibo.com/u/1611427581 (baohaojun)
    -- http://weibo.com/u/1809968333 (beagrep)
    adb_shell{"am", "start", "-n", "com.sina.weibo/.ProfileInfoActivity", "--es", "uid", "1611427581"}
@@ -908,6 +926,7 @@ local function t1_follow_me()
 end
 
 local function t1_spread_it()
+   check_phone()
    -- http://weibo.com/1611427581/Bviui9tzF
    -- http://weibo.com/1611427581/BvnNk2PwH?from=page_1005051611427581_profile&wvr=6&mod=weibotime&type=comment
    -- http://m.weibo.cn/1809968333/3774599487375417

@@ -22,12 +22,12 @@ function copy-dlls()
 
 function make-release-tgz()
 {
-    rm -rf ./release/*.obj
-    rm -rf ./release/*.o
-    rm -rf ./release/*.cpp
     rsync readme.* ./release/
     rsync -av *.png ./release/
-    command rsync -av -d release/ t1wrench-release
+    command rsync -av -d release/ t1wrench-release --exclude="*.obj" \
+            --exclude="*.o" \
+            --exclude="*.cpp"
+
 
     set -x
     tar czfv ${1:-T1Wrench-windows.tgz} T1Wrench-windows -h
@@ -38,7 +38,9 @@ if test $# = 0; then
 fi
 if test $(uname) = Linux; then
     psync $1 .; ssh $1 "cd $PWD; ./$(basename $0)"
-    rsync $1:$(up .)/T1Wrench-windows ../ -av
+    echo doing windows to linux rsync
+    command rsync $1:$(up .)/T1Wrench-windows/ ../T1Wrench-windows/ -av
+    rm -fv ../T1Wrench-windows/screen-shot.png
     rsync $1:$(up .)/T1Wrench-windows.tgz ~/today/
     smb-push ~/today/T1Wrench-windows.tgz
     (
@@ -50,6 +52,7 @@ else
     set -e
     set -o pipefail
     /cygdrive/c/Python2/python.exe "C:\cygwin64\home\bhj\system-config\bin\windows\terminateModule.py" T1Wrench.exe || true
+    /cygdrive/c/Python2/python.exe "C:\cygwin64\home\bhj\system-config\bin\windows\terminateModule.py" adb.exe || true
 
     if test $(basename $0) = build-win-vc.sh; then
         perl -npe "$(grep 's/.*ord' ~/bin/vc-utf8-escape)" -i t1wrenchmainwindow.cpp
@@ -69,9 +72,10 @@ else
         set -x
         rm -f T1Wrench-windows
         ln -sf t1wrench-release T1Wrench-windows
+        make-release-tgz T1Wrench-windows.tgz
         (
             myscr bash -c 'cd T1Wrench-windows; of ./T1Wrench.exe'
         )&
-        make-release-tgz T1Wrench-windows.tgz
+
     fi
 fi

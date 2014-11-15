@@ -101,7 +101,10 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             fi
                             ;;
                         *) # most cases
-                            t1wrench.lua t1_post
+                            (
+                                cd $(dirname $(readlink -f $(which t1wrench.lua)))
+                                t1wrench.lua t1_post
+                            )
                             ;;
                     esac
                 }

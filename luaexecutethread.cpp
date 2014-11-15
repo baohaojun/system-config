@@ -5,6 +5,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QProcess>
 #include "lua.hpp"
+#include <QtWidgets/QMessageBox>
 
 void LuaExecuteThread::run()
 {
@@ -61,6 +62,10 @@ LuaExecuteThread::LuaExecuteThread(QObject* parent)
 
 void LuaExecuteThread::addScript(QStringList script)
 {
+    extern QString prompt_user(const QString &info, QMessageBox::StandardButtons buttons = QMessageBox::Ok);
+    if (!this->isRunning()) {
+        prompt_user("后台已停止运行，无法执行此动作，请连接手机或点一下设置按钮");
+    }
     mMutex.lock();
     mActions.append(script);
     mMutex.unlock();
