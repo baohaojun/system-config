@@ -774,14 +774,18 @@ local function picture_to_weixin_chat(pics, ...)
        ime_height = 0
        adb_event("key back")
    end
-   local post_button = ('984 %d'):format(1920 - ime_height - 50)
+   local post_button = ('984 %d'):format(1920 - 50)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
-         local events = post_button .. " sleep .1 swipe 125 1285 500 1285 sleep .1 " ..
-            "125 1285 sleep 1"
-         adb_event(split(" ", events))
+         local events = post_button .. " sleep .1 " ..
+            "125 1285 sleep .1"
+         adb_event(events)
+         if adb_focused_window() ~= "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI" then
+            adb_event("125 1285")
+         end
+         sleep(1)
       end
 
       local pic_share_buttons = {
@@ -896,6 +900,8 @@ local function t1_picture(...)
    local pics = upload_pics(...)
    local window = adb_focused_window()
    if window == "com.tencent.mm/com.tencent.mm.ui.LauncherUI" then
+      picture_to_weixin_chat(pics)
+   elseif window == "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI" then
       picture_to_weixin_chat(pics)
    elseif window == "com.tencent.qqlite/com.tencent.mobileqq.activity.ChatActivity" then
       picture_to_qqlite_chat(pics)
