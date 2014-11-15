@@ -15,21 +15,16 @@ fi
 friday=Fri
 monday="Last Mon"
 
-if test $# = 1; then
-    if test "$(today-weekday "$1")" != Friday; then
-        die "The last day you specified is not a Friday"
-    fi
-    friday=$(today $1)
-
-    for y in $(seq 7 -1 -365); do
-        if test $(today $y) = $(today "$1"); then
-            break
-        fi
-    done
-
-    ((y -= 4)) || true
-    monday="$y days"
+if test "$(today-weekday)" != Friday; then
+    friday="last fri"
 fi
+
+if test $# = 1; then
+    monday="$monday $1"
+fi
+
+monday=$(today "$monday")
+friday=$(today "$friday")
 
 bhj_page=$PWD/bhj_$(date +%Y.%m.%d -d "$friday")
 set -x
@@ -44,7 +39,7 @@ function separate() {
 
 { test $do_overwrite = true || ! test -e $bhj_page; }  && (
     echo 本周：
-    emacsclient -e "$(bash do-weekly.help '+CLOSED>=\"['$(today "last mon")']\"' $bhj_page.1)" >/dev/null 2>&1
+    emacsclient -e "$(bash do-weekly.help '+CLOSED>=\"['$monday']\"' $bhj_page.1)" >/dev/null 2>&1
     cat $bhj_page.1 | separate
     rm $bhj_page.1
 
@@ -57,7 +52,7 @@ function separate() {
     rm $bhj_page.1
 ) > $bhj_page
 
-gnus-mailx -s "包昊军周报 （$(today "last mon") - $(today Fri)）" \
+gnus-mailx -s "包昊军周报 （"$monday" - "$friday"）" \
     -c $(for x in ~/external/etc/weekly.receipts/cc/*; do basename "$x,"; done) \
     -t $(for x in ~/external/etc/weekly.receipts/to/*; do basename "$x"; done) \
     -m "$(cat $bhj_page)"
