@@ -1,5 +1,5 @@
 #!/bin/bash
-my-adb -r echo
+
 if echo $SHELLOPTS | grep xtrace; then
     export SHELLOPTS
 fi
