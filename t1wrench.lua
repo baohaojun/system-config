@@ -8,7 +8,7 @@ local adb_start_weixin_share
 local t1_config, check_phone
 
 -- variables
-local using_scroll_lock
+local using_scroll_lock = true
 local using_adb_root
 local adb_unquoter
 local is_windows = false
@@ -18,7 +18,7 @@ local default_width, default_height = 1080, 1920
 local init_width, init_height = 1080, 1920
 local app_width, app_height = 1080,1920
 local width_ratio, height_ratio = app_width / default_width,  app_height / default_height
-local using_smartisan_os
+local using_smartisan_os = true
 local brand = "smartisan"
 local model = "T1"
 
@@ -964,7 +964,7 @@ M.t1_config = t1_config
 
 if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
    -- t1_post(join(' ', arg))
-   t1_config()
+   -- t1_config()
    if type(M[arg[1]]) == 'function' then
       _G.M = M
       cmd = "M[arg[1]]("
