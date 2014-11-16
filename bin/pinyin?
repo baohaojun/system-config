@@ -1,0 +1,48 @@
+#!/usr/bin/perl
+use strict;
+use Encode;
+open(my $tbl, "<", glob("~/etc/uc-to-py.tbl")) or die "can't open pinyin table";
+
+my %pinyin_map;
+while (<$tbl>) {
+    if (m/^([0-9a-f]+)\s+\((.*)\)/i) {
+        my $hanzi = encode_utf8(chr(hex("0x$1")));
+        my @pinyin = split(/,\s*/, $2);
+        map {s/\d+//g; s/u:/v/g} @pinyin;
+        $pinyin_map{$hanzi} = \@pinyin;
+    }
+}
+
+sub product(\@\@) {
+    my ($pre, $post) = @_;
+    my @res;
+    for my $e_pre (@{$pre}) {
+        for my $e_post (@{$post}) {
+            $e_post = ucfirst($e_post);
+            push @res, "$e_pre$e_post";
+        }
+    }
+    return @res;
+}
+
+my @res = ("");
+for (@ARGV) {
+    $_ = decode_utf8($_);
+    while (m/./g) {
+        my $hanzi = encode_utf8($&);
+        if ($pinyin_map{$hanzi}) {
+            @res = product(@res, @{$pinyin_map{$hanzi}});
+        } else {
+            my @hanzi = ($hanzi);
+            @res = product(@res, @hanzi);
+        }
+    }
+}
+my %printed;
+
+for (@res) {
+    if (not $printed{$_}) {
+        print "$_\n";
+        $printed{$_} = 1;
+    }
+}
