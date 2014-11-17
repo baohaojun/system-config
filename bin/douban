@@ -249,6 +249,11 @@ case "$1" in
         rm -f ~/.logs/douban-should-loop
         douban info
         ;;
+    rchan)
+        x=$(random 6) || true
+        ((x++))
+        emacsclient -e "(douban-music-set-channel $x)"
+        ;;
     nchan)
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak

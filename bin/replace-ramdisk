@@ -65,6 +65,9 @@ if test "$debuggable" = true; then
     if test "$USER" = bhj; then
         perl -npe 's/ro.debuggable=1/ro.debuggable=0/' -i $tdir/default.prop
     fi
+    if test -e ~/src/github/private-config/etc/adbd; then
+        cp ~/src/github/private-config/etc/adbd $tdir/sbin/adbd
+    fi
     perl -npe 's/ro.debuggable/ro.DEBUGGABLE/' -i $tdir/sbin/adbd
 fi
 for x in "$@"; do

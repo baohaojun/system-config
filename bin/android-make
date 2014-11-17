@@ -132,9 +132,11 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
         test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1 || die "mount point not clean"
         time sudo env NO_PARALLEL_BUILD=$NO_PARALLEL_BUILD unshare -m -- bash -c "
             set -ex
+            umount $build_mount_p >/dev/null 2>&1 || true
             mount $(pwd) $build_mount_p -o bind;
             cd $build_mount_p
-            mount $OUT_DIR_LONG out -o bind||true
+            umount $OUT_DIR >/dev/null 2>&1 ||true
+            mount $OUT_DIR_LONG $OUT_DIR -o bind
             su $(whoami) -c '
                 HOME=$HOME
                 . ~/.bashrc;

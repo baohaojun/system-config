@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test "$REPO_REMOTE"; then
+    echo $REPO_REMOTE
+    exit
+fi
+
 if test "$GERRIT_HOST"; then
     git remote -v | perl -ne '$url = "'$(repo-remote-url)'"; print if m/\Q$url\E/'|pn 1|uniq-even-non-ajacent|head -n 1
     exit

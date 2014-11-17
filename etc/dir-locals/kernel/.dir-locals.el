@@ -4,6 +4,7 @@
 ((c-mode
   (flycheck-mode . nil)
   (ac-clang-flags
+   "-D__KERNEL__"
    "-include"
    "/home/bhj/src/linux/include/generated/autoconf.h"
    "-I/home/bhj/src/linux/arch/arm/mach-msm/include/"
