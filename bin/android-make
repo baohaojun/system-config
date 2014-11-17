@@ -134,6 +134,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
             set -ex
             mount $(pwd) $build_mount_p -o bind;
             cd $build_mount_p
+            mount $OUT_DIR_LONG out -o bind||true
             su $(whoami) -c '
                 HOME=$HOME
                 . ~/.bashrc;
@@ -144,6 +145,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                     . .buildenv.sh.x
                 fi
                 . ./build/envsetup.sh
+
                 if test -d boot/uboot -a -d boot/obm; then
                     (cd boot/uboot; git add .; git clean -xfd) || true
                     (cd boot/obm;   git add .; git clean -xfd) || true

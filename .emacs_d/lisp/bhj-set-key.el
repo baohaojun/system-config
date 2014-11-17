@@ -108,3 +108,4 @@
 (define-key global-map [(control x) (b)] 'ido-switch-buffer)
 (define-key global-map [(control c) (w)] 'bhj-set-working-buffer)
 (define-key global-map [(control z)] 'undo-tree-undo)
+(define-key global-map [(super ?*)] 'enter-emoji)

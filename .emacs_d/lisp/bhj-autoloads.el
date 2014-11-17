@@ -851,6 +851,16 @@ Pop back to where ajoke was last invoked.
 
 ;;;***
 
+;;;### (autoloads nil "emojis" "emojis.el" (21609 25372 9764 792000))
+;;; Generated autoloads from emojis.el
+
+(autoload 'enter-emoji "emojis" "\
+Let the user input an emoji interactively
+
+\(fn)" t nil)
+
+;;;***
+
 ;;;### (autoloads (weblogger-fetch-entries weblogger-start-entry
 ;;;;;;  weblogger-setup-weblog weblogger-select-configuration) "../weblogger/weblogger"
 ;;;;;;  "../weblogger/weblogger.el" (20622 27199 0 0))
