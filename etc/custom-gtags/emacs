@@ -1,0 +1,2 @@
+#!/bin/bash
+beagrep -e "DEFUN.*\b$1\b"
