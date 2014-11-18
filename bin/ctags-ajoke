@@ -17,11 +17,16 @@ my $is_java;
 my $terminator;
 my ($old_tag, $old_type, $old_line_num, $old_file);
 my ($tag, $type, $line_num, $file);
+my $custom_parser = qx(lookup-file -e ctags-custom);
+print stderr "parser is $custom_parser\n";
 
 if (not grep {$_ eq "--filter"} @ARGV) {
     use IPC::Open2;
     $|++;
 
+    if ($custom_parser) {
+        system($custom_parser, @ARGV);
+    }
     my $ctags_pid = open2(my $read, my $write, "ctags-exuberant", @ARGV);
     my $is_java = grep {$_ eq "--language-force=java"} @ARGV;
     while (<$read>) {
@@ -69,6 +74,9 @@ while (<STDIN>) {
     print $write "$_";
     chomp(my $source = $_);
     $write->flush();
+    if ($custom_parser) {
+        system($custom_parser, $source);
+    }
     my $is_java;
     if ($_ =~ m/\.java|\.aidl/) {
         $is_java = 1;
