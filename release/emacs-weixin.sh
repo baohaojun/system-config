@@ -33,7 +33,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
             flock 10
             (
                 exec 9>/dev/null 10>&9
-                PUTCLIP_ANDROID_FILE=/tmp/$USE_BUFFER_NAME.out putclip-android
+                PUTCLIP_ANDROID_FILE=/tmp/$USE_BUFFER_NAME.out t1wrench.lua putclip
 
                 function emacs-cell-phone() {
                     case "$1" in
@@ -101,10 +101,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             fi
                             ;;
                         *) # most cases
-                            (
-                                cd $(dirname $(readlink -f $(which t1wrench.lua)))
-                                t1wrench.lua t1_post
-                            )
+                            t1wrench.lua t1_post
                             ;;
                     esac
                 }

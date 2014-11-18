@@ -6,7 +6,7 @@ local picture_to_weixin_share, picture_to_weibo_share
 local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share
 local t1_config, check_phone
-
+local emoji_for_qq, debug
 -- variables
 local using_scroll_lock = true
 local using_adb_root
@@ -21,6 +21,27 @@ local width_ratio, height_ratio = app_width / default_width,  app_height / defau
 local using_smartisan_os = true
 local brand = "smartisan"
 local model = "T1"
+local qq_emojis
+
+
+
+local qq_emoji_table = {
+   "微笑", "撇嘴", "色", "发呆", "得意", "流泪", "害羞", "闭嘴", "睡", "大哭",
+   "尴尬", "发怒", "调皮", "呲牙", "惊讶", "难过", "酷", "冷汗", "抓狂", "吐",
+   "偷笑", "可爱", "白眼", "傲慢", "饥饿", "困", "惊恐", "流汗", "憨笑", "大兵",
+   "奋斗", "咒骂", "疑问", "嘘", "晕", "折磨", "衰", "骷髅", "敲打", "再见",
+   "擦汗", "抠鼻", "鼓掌", "糗大了", "坏笑", "左哼哼", "右哼哼", "哈欠", "鄙视",
+   "委屈", "快哭了", "阴险", "亲亲", "吓", "可怜", "菜刀", "西瓜", "啤酒",
+   "篮球", "乒乓", "咖啡", "饭", "猪头", "玫瑰", "凋谢", "示爱", "爱心", "心碎",
+   "蛋糕", "闪电", "炸弹", "刀", "足球", "瓢虫", "便便", "月亮", "太阳", "礼物",
+   "拥抱", "强", "弱", "握手", "胜利", "抱拳", "勾引", "拳头", "差劲", "爱你",
+   "NO", "OK", "爱情", "飞吻", "跳跳", "发抖", "怄火", "转圈", "磕头", "回头",
+   "跳绳", "挥手", "激动", "街舞", "献吻", "左太极", "右太极",
+}
+
+for i in ipairs(qq_emoji_table) do
+   qq_emoji_table[qq_emoji_table[i]] = i;
+end
 
 if package.config:sub(1, 1) == '/' then
    shell_quote = function (str)
@@ -40,6 +61,31 @@ else -- windows
    is_windows = true
 end
 
+
+emoji_for_qq = function(text)
+   local s = 1
+   local replace = ""
+   repeat
+      local fs, fe = text:find("%[.-%]", s)
+      if fs then
+         local emoji = text:sub(fs + 1, fe - 1)
+         if qq_emoji_table[emoji] then
+            replace = replace .. text:sub(s, fs - 1)
+            local idx = qq_emoji_table[emoji]
+            replace = replace .. qq_emojis[idx]
+            s = fe + 1
+         else
+            replace = replace .. text:sub(s, fs)
+            s = fs + 1
+         end
+      else
+         replace = replace .. text:sub(s)
+         break
+      end
+   until s > #text
+   return replace
+end
+
 local function system(cmds)
    if type(cmds) == 'string' then
       os.execute(cmds)
@@ -56,7 +102,7 @@ local function system(cmds)
    end
 end
 
-local function debug(fmt, ...)
+debug = function(fmt, ...)
    print(string.format(fmt, ...))
 end
 
@@ -482,6 +528,15 @@ check_phone = function()
 end
 
 putclip = function(text)
+   if not text and os.getenv("PUTCLIP_ANDROID_FILE") then
+      local file = io.open(os.getenv("PUTCLIP_ANDROID_FILE"))
+      text = file:read("*a")
+      file:close()
+      local window = adb_focused_window()
+      if window:match("com.tencent.mobileqq") then
+         text = emoji_for_qq(text)
+      end
+   end
    local file, path
    local tmp = os.getenv("TEMP") or "/tmp"
    path = tmp .. package.config:sub(1, 1) .. "lua-smartisan-t1.txt"
@@ -577,10 +632,14 @@ t1_config = function()
 end
 
 t1_post = function(text) -- use weixin
-   if text then
-      putclip(text)
-   end
    local window = adb_focused_window()
+   if text then
+      if window:match("com.tencent.mobileqq") then
+         putclip(emoji_for_qq(text))
+      else
+         putclip(text)
+      end
+   end
    if window then print("window is " .. window) end
    if window == "com.sina.weibo/com.sina.weibo.EditActivity" or window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
       weibo_text_share(window)
@@ -961,34 +1020,56 @@ M.picture_to_weixin_share = picture_to_weixin_share_upload
 M.t1_spread_it = t1_spread_it
 M.adb_start_weixin_share = adb_start_weixin_share
 M.t1_config = t1_config
+M.emoji_for_qq = emoji_for_qq
 
-if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
-   -- t1_post(join(' ', arg))
-   -- t1_config()
-   if type(M[arg[1]]) == 'function' then
-      _G.M = M
-      cmd = "M[arg[1]]("
-      for i = 2, #arg do
-         if i ~= 2 then
-            cmd = cmd .. ', '
+local function do_it()
+   if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
+      -- t1_post(join(' ', arg))
+      -- t1_config()
+      if type(M[arg[1]]) == 'function' then
+         _G.M = M
+         cmd = "M[arg[1]]("
+         for i = 2, #arg do
+            if i ~= 2 then
+               cmd = cmd .. ', '
+            end
+
+            cmd = cmd .. "arg[" .. i .. "]"
          end
-
-         cmd = cmd .. "arg[" .. i .. "]"
+         cmd = cmd .. ")"
+         debug("cmd is %s", cmd)
+         loadstring(cmd)()
       end
-      cmd = cmd .. ")"
-      debug("cmd is %s", cmd)
-      loadstring(cmd)()
+      os.exit(0)
+      t1_picture(arg[1]) -- , arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9])
+      os.exit(0)
+      print(5)
+      debug_set_x = arg[#arg]
+      arg[#arg] = nil
+      -- adb_unquoter = arg[#arg]
+      -- arg[#arg] = nil
+      adb_shell(arg)
+      -- system{'the-true-adb', 'push', arg[1], "/sdcard/1.txt"}
+   else
+      return M
    end
-   os.exit(0)
-   t1_picture(arg[1]) -- , arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9])
-   os.exit(0)
-   print(5)
-   debug_set_x = arg[#arg]
-   arg[#arg] = nil
-   -- adb_unquoter = arg[#arg]
-   -- arg[#arg] = nil
-   adb_shell(arg)
-   -- system{'the-true-adb', 'push', arg[1], "/sdcard/1.txt"}
-else
-   return M
 end
+qq_emojis = {
+[[]], [[(]], [[]], [[+]], [[]], [[	]], [[]], [[j]],
+[[#]], [[ú]], [[]], [[]], [[]], [[ ]], [[!]], [[ ]],
+[[]], [[]], [[]] .. "\r", [[]], [[]], [[]], [[]], [[]],
+[[Q]], [[R]], [[]], [[]], [[%]], [[2]], [[*]], [[S]],
+[["]], [[]], [[1]], [[T]], [[']], [[N]], [[]], [[]],
+[[]], [[U]], [[V]], [[W]], [[.]], [[X]], [[,]],
+[[Y]], [[0]], [[]], [[Z]], [[)]], [[$]], [[[]], [[3]],
+[[]], [[<]], [[=]], [[\]], [=[]]=], [[B]], [[:]], [[]],
+[[]], [[9]], [[]], [[]], [[J]], [[;]], [[P]], [[]],
+[[F]], [[M]], [[>]], [[]], [[D]], [[K]], [[L]], [[-]],
+[[4]], [[5]], [[6]], [[7]], [[8]], [[?]], [[I]], [[H]],
+[[A]], [[^]], [[@]], [[&]], [[/]], [[_]], [[G]], [[`]],
+[[a]], [[b]], [[c]], [[d]], [[O]], [[e]], [[f]], [[g]],
+[[h]], [[i]], [[l]], [[m]], [[n]], [[o]], [[p]], [[q]],
+[[r]], [[s]], [[t]], [[u]], [[v]], [[w]], [[x]], [[y]], [[z]]
+}
+
+do_it()
