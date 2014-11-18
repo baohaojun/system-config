@@ -23,13 +23,13 @@
 (bind-keys global-keymap "KP_Equal" '(synthesize-multiple-events "C-x" "w"))
 (bind-keys global-keymap "Left" '(synthesize-multiple-events "ESC" "C-,"))
 (bind-keys global-keymap "Right" '(synthesize-multiple-events "ESC" "C-."))
-(bind-keys global-keymap "Up" '(synthesize-multiple-events "ESC" "C-a"))
-(bind-keys global-keymap "Down" '(synthesize-multiple-events "ESC" "C-e"))
+(bind-keys global-keymap "Home" '(synthesize-multiple-events "ESC" "C-a"))
+(bind-keys global-keymap "End" '(synthesize-multiple-events "ESC" "C-e"))
 (bind-keys global-keymap "F11"  '(progn
                                    (maximize-window (input-focus))
                                    (synthesize-multiple-events "C-x" "1")))
-(bind-keys global-keymap "Home" '(synthesize-multiple-events "ESC" "g" "p"))
-(bind-keys global-keymap "End" '(synthesize-multiple-events "ESC" "g" "n"))
+(bind-keys global-keymap "Up" '(synthesize-multiple-events "ESC" "g" "p"))
+(bind-keys global-keymap "Down" '(synthesize-multiple-events "ESC" "g" "n"))
 
 (bind-keys global-keymap "F5"
            '(progn
