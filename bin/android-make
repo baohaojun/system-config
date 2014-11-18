@@ -29,7 +29,8 @@ jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
 jobs=$((jobs + jobs / 2))
 verbose=
 config=
-TEMP=$(getopt -o vj:c: -n $(basename $0) -- "$@")
+keep=-k
+TEMP=$(getopt -o vkj:c: -n $(basename $0) -- "$@")
 function die() {
     echo "$@"
     exit -1
@@ -38,6 +39,10 @@ function die() {
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -k)
+            keep=
+            shift
+            ;;
         -c)
             config=$2
             shift 2
@@ -142,6 +147,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                 . ~/.bashrc;
                 . .buildenv.sh;
                 export PATH=~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin:\$PATH
+                export PATH=$OUT_DIR/host/linux-x86/bin/:$PATH
                 if test -e .buildenv.sh.x; then
                     set -x
                     . .buildenv.sh.x
@@ -165,10 +171,10 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                             mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs -l $jobs $verbose
                         )
                     else
-                        schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs -k $* $verbose
+                        schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs $keep $* $verbose
                     fi
                 elif test -z \"$NO_PARALLEL_BUILD\" -a -z \"\$NO_PARALLEL_BUILD\"; then
-                    schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs -k
+                    schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs $keep
                 else
                     lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 
