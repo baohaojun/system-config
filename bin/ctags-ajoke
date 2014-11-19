@@ -18,7 +18,6 @@ my $terminator;
 my ($old_tag, $old_type, $old_line_num, $old_file);
 my ($tag, $type, $line_num, $file);
 my $custom_parser = qx(lookup-file -e ctags-custom);
-print stderr "parser is $custom_parser\n";
 
 if (not grep {$_ eq "--filter"} @ARGV) {
     use IPC::Open2;
