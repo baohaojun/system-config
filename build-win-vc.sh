@@ -63,7 +63,7 @@ else
         rsync ~/vcredist_x64.exe ./release/vcredist-vs2013-x86_64.exe
         make-release-tgz
     else # mingw
-        export PATH=/cygdrive/c/Qt-mingw/Qt5.3.1/5.3/mingw482_32/bin:/c/Qt-mingw/Qt5.3.1/Tools/mingw482_32/bin:$PATH
+        export PATH=/cygdrive/c/Qt-mingw/Qt5.3.1/5.3/mingw482_32/bin:/cygdrive/c/Qt-mingw/Qt5.3.1/Tools/mingw482_32/bin:$PATH
         if test ! -e Makefile; then
             qmake.exe
         fi

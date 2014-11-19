@@ -23,6 +23,7 @@ local using_xiaomi_os = false
 local brand = "smartisan"
 local model = "T1"
 local qq_emojis
+local sdk_version = 19
 
 
 
@@ -224,24 +225,46 @@ local function adb_event(events)
          if (events[i]):match('^adb%-long%-press%-%d+') then
             ms = (events[i]):sub(#"adb-long-press-" + 1)
          end
-         command_str = command_str .. ('input touchscreen swipe %d %d %d %d %d;'):format(
+         if sdk_version < 18 then
+            ms = ""
+         end
+         local add = ('input touchscreen swipe %d %d %d %d %s;'):format(
             events[i+1] * width_ratio, events[i+2] * height_ratio,
             events[i+1] * width_ratio, events[i+2] * height_ratio, ms)
+         if sdk_version < 17 then
+            add = add:gsub("touchscreen ", "")
+         end
+         command_str = command_str .. add
+
+         if sdk_version < 18 then
+            command_str = command_str .. add
+         end
          i = i + 3
       elseif events[i] == 'key' or events[i] == 'adb-key' then
          command_str = command_str .. ('input keyevent %s;'):format(events[i+1]:upper())
          i = i + 2
       elseif events[i] == 'sleep' then
-         command_str = command_str .. ('sleep %s;'):format(events[i+1])
+         command_str = command_str .. ('sleep %s || busybox sleep %s;'):format(events[i+1], events[i+1])
          i = i + 2
       elseif events[i] == 'swipe' or (events[i]):match('adb%-swipe%-') then
          ms = 500
          if (events[i]):match('adb%-swipe%-') then
             ms = (events[i]):sub(#'adb-swipe-' + 1)
          end
-         command_str = command_str .. ('input touchscreen swipe %d %d %d %d %d;'):format(
+         if sdk_version < 18 then
+            ms = ""
+         end
+
+         local add = ('input touchscreen swipe %d %d %d %d %s;'):format(
             events[i+1] * width_ratio, events[i+2] * height_ratio,
             events[i+3] * width_ratio, events[i+4] * height_ratio, ms)
+         if sdk_version < 17 then
+            add = add:gsub("touchscreen ", "")
+         end
+         command_str = command_str .. add
+         if sdk_version < 18 then
+            command_str = command_str .. add
+         end
          i = i + 5
       elseif events[i] == 'adb-tap' then
          i = i + 1
@@ -261,7 +284,7 @@ local function adb_tap_mid_bot()
 end
 
 local function sleep(time)
-   adb_shell{"sleep", time}
+   adb_shell(("sleep %s || busybox sleep %s"):format(time, time))
 end
 
 local function weibo_text_share(window)
@@ -561,7 +584,7 @@ putclip = function(text)
                am startservice --user 0 -n com.bhj.setclip/.PutClipService&
                for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
                   if test -e /sdcard/putclip.txt; then
-                     sleep .1;
+                     sleep .1 || busybox sleep .1;
                      echo $x;
                   else
                      exit;
@@ -598,13 +621,14 @@ t1_config = function()
       end
    end
 
-   local sdk_version = adb_pipe("getprop ro.build.version.sdk")
+   sdk_version = adb_pipe("getprop ro.build.version.sdk")
    brand = adb_pipe("getprop ro.product.brand"):gsub("\n.*", "")
    model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
 
    debug("sdk is %s\nbrand is %s\nmodel is %s\n", sdk_version, brand, model)
-   if tonumber(sdk_version) < 18 then
-       error("Error, you phone's sdk version is " .. sdk_version .. ",  must be at least 18")
+   sdk_version = tonumber(sdk_version)
+   if tonumber(sdk_version) < 16 then
+       error("Error, you phone's sdk version is " .. sdk_version .. ",  must be at least 16")
    end
    local dump = adb_pipe{'dumpsys', 'window'}
    init_width = dump:match('init=(%d+x%d+)')
@@ -825,7 +849,7 @@ picture_to_weibo_share = function(pics, ...)
       local target = pics[i]
 
       if i == 1 then
-         adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity; sleep .5")
+         adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity; sleep .5 || busybox sleep .5")
          local input_method, ime_height = adb_get_input_window_dump()
          if ime_height ~= 0 then
             adb_event("key back")

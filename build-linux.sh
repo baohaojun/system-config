@@ -25,8 +25,7 @@ rsync -L $(which the-true-adb) ~/src/github/T1Wrench-linux
     cd ~/src/github/
     tar czfv ~/tmp/T1Wrench-linux.tgz T1Wrench-linux --exclude-vcs
     cd ~/tmp
-    smb-push T1Wrench-linux.tgz
-    mv T1Wrench-linux.tgz T1Wrench-linux-$(today).tgz
-    smb-push T1Wrench-linux-$(today).tgz
+    smb-push T1Wrench-linux.tgz ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
+    rsync T1Wrench-linux.tgz rem:/var/www/html/baohaojun/
 )&
 ./T1Wrench

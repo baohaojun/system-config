@@ -6,8 +6,12 @@ if test $(uname) = Linux; then
     psync bhj-mac .
     remote-cmd bhj-mac bash -c "set -x; cd $(up .); ./build-mac.sh"
     rsync bhj-mac:$(up .)/T1Wrench.app ../T1Wrench-macos/ -av
-    rsync bhj-mac:$(up .)/T1Wrench.dmg ~/today/T1Wrench.dmg
-    smb-push ~/today/T1Wrench.dmg
+    (
+        cd ../T1Wrench-macos/
+        zip -r ~/tmp/T1Wrench-macos.zip T1Wrench.app
+    )
+    smb-push ~/tmp/T1Wrench-macos.zip ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
+    rsync ~/tmp/T1Wrench-macos.zip rem:/var/www/html/baohaojun/ -v
 else
     set -e
     (
@@ -20,7 +24,7 @@ else
     fi
     qmake
     make -j8
-    rsync -L t1wrench.lua macx/binaries/* T1Wrench.app/Contents/MacOS/
+    rsync -L t1wrench.lua macx/binaries/* release/* T1Wrench.app/Contents/MacOS/
     rm T1Wrench.dmg -f
     macdeployqt T1Wrench.app -dmg -verbose=1
     mv ~/Qt5 ~/Qt5.bak
