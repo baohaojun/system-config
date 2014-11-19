@@ -1,11 +1,19 @@
 #!/bin/bash
 set -e
 cd $(dirname $(readlink -f $0))
-mkdir -p ~/tmp/build-t1
-rsync * ~/tmp/build-t1 -av
+build_dir=~/tmp/build-t1
+if test $# = 1 -a "$1" = debug; then
+    build_dir=~/tmp/build-t1-debug
+fi
+
+mkdir -p $build_dir
+rsync * $build_dir -av
 
 oldpwd=$PWD
-cd ~/tmp/build-t1
+cd $build_dir
+if test $# = 1 -a "$1" = debug; then
+    perl -npe 'print "CONFIG += debug\n" if 1..1' -i *.pro
+fi
 set -o pipefail
 qtchooser -qt=5 -run-tool=qmake && make -j8 | perl -npe "s|$PWD|$oldpwd|g"
 relative-link -f $oldpwd/release/* .

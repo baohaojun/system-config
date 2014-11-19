@@ -78,11 +78,11 @@ void AdbStateThread::run()
 
     while (1) {
         // at the start, suppose the adb not connected.
-        QString uname = getExecutionOutput("adb shell uname");
+        QString uname = getExecutionOutput("the-true-adb shell sh -c 'uname || busybox uname'");
         if (uname.contains("Linux")) {
             qDebug() << "adb output is " << uname;
             emit adbStateUpdate("Online");
-            if (getExecutionOutput("adb", QStringList() << "shell" << "bash" << "-c" << "sleep 300; uname").contains("Linux")) {
+            if (getExecutionOutput("the-true-adb", QStringList() << "shell" << "sh" << "-c" << "sleep 300; uname || busybox uname").contains("Linux")) {
                 //do nothing
             }
         } else {

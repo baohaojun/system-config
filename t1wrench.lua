@@ -19,6 +19,7 @@ local init_width, init_height = 1080, 1920
 local app_width, app_height = 1080,1920
 local width_ratio, height_ratio = app_width / default_width,  app_height / default_height
 local using_smartisan_os = true
+local using_xiaomi_os = false
 local brand = "smartisan"
 local model = "T1"
 local qq_emojis
@@ -182,6 +183,9 @@ local function adb_focused_window()
    if match then
       return match
    end
+   if check_phone() or true then
+      return adb_focused_window()
+   end
    error("Can't find focused window: " .. wdump:sub(1, 20))
 end
 
@@ -274,6 +278,8 @@ local function weibo_text_share(window)
       adb_event{'key', 'scroll_lock', 991, 166}
    elseif using_smartisan_os then
       adb_event("adb-tap 24 308 adb-key SPACE adb-long-press-800 17 294 adb-tap 545 191 adb-tap 991 166")
+   elseif using_xiaomi_os then
+      adb_event("adb-tap-2 24 308 sleep .1 adb-tap 77 179 adb-tap 991 166")
    else
       adb_event("adb-key space adb-long-press-800 17 294 adb-tap-2 991 166")
    end
@@ -356,6 +362,8 @@ local function weixin_text_share(window, text)
                adb-tap
                adb-tap 117 283 adb-tap 117 283 adb-tap 325 170 adb-tap 860 155 adb-tap 961 171
       ]])
+   elseif using_xiaomi_os then
+      adb_event("adb-long-press-800 422 270 adb-tap 147 213 adb-tap 1007 134")
    else
       adb_event("adb-key space adb-long-press-800 111 369 adb-tap 97 265 adb-tap 991 166")
    end
@@ -522,7 +530,7 @@ local function adb_input_method_is_null()
 end
 
 check_phone = function()
-   if not adb_pipe("uname"):match("Linux") then
+   if not adb_pipe("uname || busybox uname"):match("Linux") then
       error("Error: can't put text on phone, not connected?")
    end
 end
@@ -565,7 +573,7 @@ end
 t1_config = function()
    -- install the apk
    system("adb devices")
-   local uname = adb_pipe("uname")
+   local uname = adb_pipe("uname || busybox uname")
    if not uname:match("Linux") then
       error("No phone found, can't set up.")
    end
@@ -594,6 +602,7 @@ t1_config = function()
    brand = adb_pipe("getprop ro.product.brand"):gsub("\n.*", "")
    model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
 
+   debug("sdk is %s\nbrand is %s\nmodel is %s\n", sdk_version, brand, model)
    if tonumber(sdk_version) < 18 then
        error("Error, you phone's sdk version is " .. sdk_version .. ",  must be at least 18")
    end
@@ -612,6 +621,12 @@ t1_config = function()
       using_smartisan_os = true
    else
       using_smartisan_os = false
+   end
+
+   if brand:match("Xiaomi") then
+      using_xiaomi_os = true
+   else
+      using_xiaomi_os = false
    end
 
    local id = adb_pipe("id")
@@ -715,6 +730,12 @@ t1_post = function(text) -- use weixin
                ([[
                 adb-tap 560 1840 adb-tap-2 560 %d adb-tap 296 %d adb-tap 888 %d adb-tap 976 %d
             ]]):format(y_double_click, y_select_all, y_paste, y_send)
+            )
+         elseif using_xiaomi_os then
+            adb_event(
+               ([[
+                        adb-tap 560 1840 adb-long-press-800 560 %d adb-tap 310 %d adb-tap 501 %d adb-tap 976 %d
+               ]]):format(y_double_click, y_select_all, y_paste, y_send)
             )
          else
             debug("not using smartisan os")
@@ -986,7 +1007,7 @@ local function t1_follow_me()
    if init_width < 720 then
       adb_event("sleep 1 adb-tap 659 950 key back")
    else
-      adb_event("sleep 1 adb-tap 659 880 key back")
+      adb_event("sleep 1 adb-tap 659 870 key back")
    end
 end
 
@@ -1025,7 +1046,11 @@ M.emoji_for_qq = emoji_for_qq
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
       -- t1_post(join(' ', arg))
-      -- t1_config()
+      local file = io.open("setclip.apk.md5")
+      if file then
+         t1_config()
+         file:close()
+      end
       if type(M[arg[1]]) == 'function' then
          _G.M = M
          cmd = "M[arg[1]]("
@@ -1072,4 +1097,8 @@ qq_emojis = {
 [[r]], [[s]], [[t]], [[u]], [[v]], [[w]], [[x]], [[y]], [[z]]
 }
 
-do_it()
+return do_it()
+
+-- Local variables:
+-- coding: utf-8
+-- End:
