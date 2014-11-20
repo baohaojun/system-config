@@ -108,6 +108,12 @@ for the JavaScript code in this tag.
 能把整个聊天的功能给它打通。大概就是这样子😊
 </p>
 
+
+<div class="figure">
+<p><a href="../../../../images/t1wrench-macos.png"><img src="../../../../images/t1wrench-macos.png" alt="t1wrench-macos.png" /></a>
+</p>
+</div>
+
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> 安装使用步骤</h2>
 <div class="outline-text-2" id="text-1">
@@ -115,11 +121,15 @@ for the JavaScript code in this tag.
 <li>下载
 
 <p>
-Windows版本的下载地址在： <a href="https://github.com/baohaojun/T1Wrench/archive/windows-release.zip">https://github.com/baohaojun/T1Wrench/archive/windows-release.zip</a>
+Windows版本的下载地址在： <a href="https://github.com/baohaojun/T1Wrench/archive/T1Wrench-windows.zip">https://github.com/baohaojun/T1Wrench/archive/T1Wrench-windows.zip</a>
 </p>
 
 <p>
-Mac版本的下载地址在： <a href="https://github.com/baohaojun/T1Wrench/archive/macos-release.zip">https://github.com/baohaojun/T1Wrench/archive/macos-release.zip</a>
+Mac版本的下载地址在： <a href="https://github.com/baohaojun/T1Wrench/archive/T1Wrench-macos.zip">https://github.com/baohaojun/T1Wrench/archive/T1Wrench-macos.zip</a>
+</p>
+
+<p>
+Linux版本的下载地址在： <a href="https://github.com/baohaojun/T1Wrench/archive/T1Wrench-linux.zip">https://github.com/baohaojun/T1Wrench/archive/T1Wrench-linux.zip</a>
 </p>
 </li>
 
@@ -132,9 +142,29 @@ Mac版本的下载地址在： <a href="https://github.com/baohaojun/T1Wrench/ar
 
 <li>运行
 
+<dl class="org-dl">
+<dt> Windows </dt><dd>点击T1Wrench.exe
+</dd>
+<dt> Mac </dt><dd>点击T1Wrench.app
+</dd>
+<dt> Linux </dt><dd><code>./T1Wrench</code>
+</dd>
+</dl>
 <p>
-Windows: 点击T1Wrench.exe
-Mac: 点击T1Wrench.app
+注意Linux上运行小扳手需要自己安装qt5的库和liblua5.2。比如我在Debian上可以这样安装：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">sudo apt-get install qt5-default
+sudo apt-get install liblua5.2-0
+</pre>
+</div>
+
+<p>
+如果你在用老版本的Ubuntu的话（比如12.04，代号precise），你需要上网
+查一下怎么装这两个包。lua的话自己下载源代码编一个都很简单，
+Windows/Mac下的小扳手的Lua就都是我自己build的。
 </p>
 </li>
 </ol>
@@ -160,7 +190,7 @@ Mac: 点击T1Wrench.app
 <li>连接手机
 
 <p>
-手机与PC之间通过adb连上之后，右下角图标变成绿色，如图所示：
+用USB数据线把手机与PC通过adb连上之后，右下角图标变成绿色，如图所示：
 </p>
 
 
@@ -176,14 +206,49 @@ Mac: 点击T1Wrench.app
 </p>
 
 <p>
-注意小扳手自己带了一个adb，是谷歌官方的 1.0.31 版，如果你系统里安装
-了最新的1.0.32版的话，强烈建议删掉，这个版本跟小扳手完全不兼容😭。
+这里简单提一下Windows上配adb要注意的几个点：
+</p>
+
+<ul class="org-ul">
+<li>装驱动，小扳手Windows版带了驱动，在adb_usb_driver_smartisan目录下，
+     省得您还要再上网下载
+</li>
+<li>配adb_usb.ini，里面要有一个0x29a9，这个是锤子科技的usb厂商id。
+</li>
+<li>确保手机上的开发者模式和usb调试已经打开。
+</li>
+</ul>
+<p>
+如果以上搞不定的小白、妹子用户，可以就近找一个电脑高手帮你一下😀。
+</p>
+
+<p>
+最后，注意小扳手自己带了一个adb，是谷歌官方的 1.0.31 版，如果你系统
+里安装了最新的1.0.32版的话，强烈建议删掉，这个版本跟小扳手完全不兼
+容😭。你可以在终端（Windows下的cmd.exe）打一下 <code>adb version</code> 命令，
+如果不是1.0.31的话都建议把它换掉。
 </p>
 </li>
 
-<li>点击“设置”按钮。一步一步按照它的提示往下走，目前的Smartisan T1上市
-版本自带的剪贴板程序比较老，需要更新一下，这个按钮最主要的功能就是
-做这个。需要确保手机系统设置里的这个选项是勾上的才能成功：
+<li>设置小扳手（通过“设置”按钮）
+
+<p>
+注意每次小扳手发现手机连上来的时候它都会自动重新设置。所以你不点也
+没有关系。
+</p>
+
+<p>
+这个设置程序主要会做以下几件事件：
+</p>
+
+<ul class="org-ul">
+<li>获取系统屏幕尺寸。虽然小扳手是为Smartisan T1而生，但是基本上所有
+的安卓手机应该都是支持的，我在小米2上已经做过适配，也可以用。这些
+不同机型、不同屏幕尺寸需要在用小扳手开始聊天之前就确定下来。
+</li>
+
+<li>目前的Smartisan T1上市版本自带的剪贴板程序比较老，需要更新一下。
+注意需要确保手机系统设置里的这个选项是勾上的才能成功：
 
 
 <div class="figure">
@@ -205,6 +270,8 @@ Mac: 点击T1Wrench.app
 为了系统安全起见，可以在安装完成之后取消这个手机上这个未知来源选项。
 </p>
 </li>
+</ul>
+</li>
 
 <li>文字聊天
 
@@ -220,7 +287,7 @@ Mac: 点击T1Wrench.app
 
 <p>
 这时可以在小扳手上方的窗口输入，并按Ctrl-Enter（Control+回车键）即
-可发送，也可以点击右下方的锤子按钮：
+可发送，也可以点击右下方的锤子按钮（图中用红色圈出部分）：
 </p>
 
 
@@ -297,7 +364,7 @@ Mac: 点击T1Wrench.app
 </div>
 
 <div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> 功能简介</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> 功能演示</h2>
 <div class="outline-text-2" id="text-2">
 </div><div id="outline-container-sec-2-1" class="outline-3">
 <h3 id="sec-2-1"><span class="section-number-3">2.1</span> 用它聊微信</h3>
@@ -471,21 +538,27 @@ Emacs下聊天的工具，这样即使在Linux下，你也可以聊QQ找女朋�
 <h3 id="sec-3-1"><span class="section-number-3">3.1</span> 其他手机支不支持？</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
-安卓4.4以上，分辨率为1920x1080的手机，很有可能可以支持。但有个虚拟按键
-适配的问题，它会导致屏幕真正的可用空间不足1920x1080。
+<del>安卓4.4以上，分辨率为1920x1080的手机，很有可能可以支持。但有个虚拟按键适配的问题，它会导致屏幕真正的可用空间不足1920x1080。</del>
 </p>
 
 <p>
-我现在手上只有一个联通版的三星Note3，试了一下，那个点赞的按钮的功能是
-完好的，其余的功能大部分都不行，因为它是4.3版的安卓，并且不支持升级😠。
+<del>我现在手上只有一个联通版的三星Note3，试了一下，那个点赞的按钮的功能是完好的，其余的功能大部分都不行，因为它是4.3版的安卓，并且不支持升级😠。</del>
 </p>
 
 <p>
-有兴趣的同学可以试一下，欢迎给我发patch。
+以上划掉的都已经不是问题了。
 </p>
 
 <p>
-当然，作为锤子科技的员工，更欢迎您购买我们公司的手机😄
+我做了一定的适配工作，目前试过可以适配的机型有：小米4/小米2S/红米/联想A360t（一款移动定制机，屏幕分辨率相当低）。
+</p>
+
+<p>
+有兴趣的同学可以试一下，如果自己的机型不适配的话欢迎给我发patch。
+</p>
+
+<p>
+当然，作为锤子科技的员工，更欢迎您购买我们公司的手机😄。
 </p>
 <nav>
   <ul id="prev_next_posts">

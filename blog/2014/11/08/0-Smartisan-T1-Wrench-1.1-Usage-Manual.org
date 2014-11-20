@@ -5,13 +5,17 @@
 机上的QQ通过安卓的input机制控制键盘、触摸屏进行操作的时候，我就想能不
 能把整个聊天的功能给它打通。大概就是这样子😊
 
+[[../../../../images/t1wrench-macos.png][file:../../../../images/t1wrench-macos.png]]
+
 * 安装使用步骤
 
 1. 下载
 
-   Windows版本的下载地址在： https://github.com/baohaojun/T1Wrench/archive/windows-release.zip
+   Windows版本的下载地址在： https://github.com/baohaojun/T1Wrench/archive/T1Wrench-windows.zip
 
-   Mac版本的下载地址在： https://github.com/baohaojun/T1Wrench/archive/macos-release.zip
+   Mac版本的下载地址在： https://github.com/baohaojun/T1Wrench/archive/T1Wrench-macos.zip
+
+   Linux版本的下载地址在： https://github.com/baohaojun/T1Wrench/archive/T1Wrench-linux.zip
 
 2. 安装
 
@@ -19,8 +23,20 @@
 
 3. 运行
 
-   Windows: 点击T1Wrench.exe
-   Mac: 点击T1Wrench.app
+   - Windows :: 点击T1Wrench.exe
+   - Mac :: 点击T1Wrench.app
+   - Linux :: =./T1Wrench=
+
+   注意Linux上运行小扳手需要自己安装qt5的库和liblua5.2。比如我在Debian上可以这样安装：
+
+   #+BEGIN_SRC sh
+   sudo apt-get install qt5-default
+   sudo apt-get install liblua5.2-0
+   #+END_SRC
+
+   如果你在用老版本的Ubuntu的话（比如12.04，代号precise），你需要上网
+   查一下怎么装这两个包。lua的话自己下载源代码编一个都很简单，
+   Windows/Mac下的小扳手的Lua就都是我自己build的。
 
 ** 使用
 
@@ -32,7 +48,7 @@
 
 2. 连接手机
 
-   手机与PC之间通过adb连上之后，右下角图标变成绿色，如图所示：
+   用USB数据线把手机与PC通过adb连上之后，右下角图标变成绿色，如图所示：
 
    [[../../../../images/wrench-adb-connected.png][file:../../../../images/wrench-adb-connected.png]]
 
@@ -40,20 +56,41 @@
    赘述。可以参考一下锤子科技论坛的这篇文章：
    http://bbs.smartisan.cn/thread-60797-1-1.html。
 
-   注意小扳手自己带了一个adb，是谷歌官方的 1.0.31 版，如果你系统里安装
-   了最新的1.0.32版的话，强烈建议删掉，这个版本跟小扳手完全不兼容😭。
+   这里简单提一下Windows上配adb要注意的几个点：
 
-3. 点击“设置”按钮。一步一步按照它的提示往下走，目前的Smartisan T1上市
-   版本自带的剪贴板程序比较老，需要更新一下，这个按钮最主要的功能就是
-   做这个。需要确保手机系统设置里的这个选项是勾上的才能成功：
+   - 装驱动，小扳手Windows版带了驱动，在adb_usb_driver_smartisan目录下，
+     省得您还要再上网下载
+   - 配adb_usb.ini，里面要有一个0x29a9，这个是锤子科技的usb厂商id。
+   - 确保手机上的开发者模式和usb调试已经打开。
 
-   [[../../../../images/adb-setting-unknown-apk.png][file:../../../../images/adb-setting-unknown-apk.png]]
+   如果以上搞不定的小白、妹子用户，可以就近找一个电脑高手帮你一下😀。
 
-   否则会提示安装失败：
+   最后，注意小扳手自己带了一个adb，是谷歌官方的 1.0.31 版，如果你系统
+   里安装了最新的1.0.32版的话，强烈建议删掉，这个版本跟小扳手完全不兼
+   容😭。你可以在终端（Windows下的cmd.exe）打一下 =adb version= 命令，
+   如果不是1.0.31的话都建议把它换掉。
 
-   [[../../../../images/adb-apk-failed.png][file:../../../../images/adb-apk-failed.png]]
+3. 设置小扳手（通过“设置”按钮）
 
-   为了系统安全起见，可以在安装完成之后取消这个手机上这个未知来源选项。
+   注意每次小扳手发现手机连上来的时候它都会自动重新设置。所以你不点也
+   没有关系。
+
+   这个设置程序主要会做以下几件事件：
+
+   - 获取系统屏幕尺寸。虽然小扳手是为Smartisan T1而生，但是基本上所有
+     的安卓手机应该都是支持的，我在小米2上已经做过适配，也可以用。这些
+     不同机型、不同屏幕尺寸需要在用小扳手开始聊天之前就确定下来。
+
+   - 目前的Smartisan T1上市版本自带的剪贴板程序比较老，需要更新一下。
+     注意需要确保手机系统设置里的这个选项是勾上的才能成功：
+
+     [[../../../../images/adb-setting-unknown-apk.png][file:../../../../images/adb-setting-unknown-apk.png]]
+
+     否则会提示安装失败：
+
+     [[../../../../images/adb-apk-failed.png][file:../../../../images/adb-apk-failed.png]]
+
+     为了系统安全起见，可以在安装完成之后取消这个手机上这个未知来源选项。
 
 3. 文字聊天
 
@@ -62,7 +99,7 @@
    [[../../../../images/Screenshot_2014-11-10-16-21-52_QQ.png][file:../../../../images/Screenshot_2014-11-10-16-21-52_QQ.png]]
 
    这时可以在小扳手上方的窗口输入，并按Ctrl-Enter（Control+回车键）即
-   可发送，也可以点击右下方的锤子按钮：
+   可发送，也可以点击右下方的锤子按钮（图中用红色圈出部分）：
 
    [[../../../../images/chat-hello.png][file:../../../../images/chat-hello.png]]
 
@@ -107,7 +144,7 @@
   天时各种动作的一个录制回放，所以偶尔某些步骤不一致时操作会失败。比如
   有时手机在后台打开一个大文件，然后QQ聊天的窗口打开速度慢了一点...
 
-* 功能简介
+* 功能演示
 
 ** 用它聊微信
 
@@ -182,12 +219,14 @@ Emacs下聊天的工具，这样即使在Linux下，你也可以聊QQ找女朋�
 
 ** 其他手机支不支持？
 
-安卓4.4以上，分辨率为1920x1080的手机，很有可能可以支持。但有个虚拟按键
-适配的问题，它会导致屏幕真正的可用空间不足1920x1080。
++安卓4.4以上，分辨率为1920x1080的手机，很有可能可以支持。但有个虚拟按键适配的问题，它会导致屏幕真正的可用空间不足1920x1080。+
 
-我现在手上只有一个联通版的三星Note3，试了一下，那个点赞的按钮的功能是
-完好的，其余的功能大部分都不行，因为它是4.3版的安卓，并且不支持升级😠。
++我现在手上只有一个联通版的三星Note3，试了一下，那个点赞的按钮的功能是完好的，其余的功能大部分都不行，因为它是4.3版的安卓，并且不支持升级😠。+
 
-有兴趣的同学可以试一下，欢迎给我发patch。
+以上划掉的都已经不是问题了。
 
-当然，作为锤子科技的员工，更欢迎您购买我们公司的手机😄
+我做了一定的适配工作，目前试过可以适配的机型有：小米4/小米2S/红米/联想A360t（一款移动定制机，屏幕分辨率相当低）。
+
+有兴趣的同学可以试一下，如果自己的机型不适配的话欢迎给我发patch。
+
+当然，作为锤子科技的员工，更欢迎您购买我们公司的手机😄。
