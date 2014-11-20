@@ -57,7 +57,7 @@ if test -e ~/.config/sudo-ssh; then
 
 else
     function sudo {
-        command sudo env SSH_AGENT_PID=$SSH_AGENT_PID SSH_AUTH_SOCK=$SSH_AUTH_SOCK PATH=$PATH  "$@"
+        command sudo env SSH_AUTH_SOCK=$SSH_AUTH_SOCK PATH=$PATH  "$@"
     }
 fi
 export -f sudo

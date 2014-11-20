@@ -23,41 +23,34 @@ if test -e ~/.bash-path -a -e ~/.kill-bt; then
     )
 fi
 
-SSH_OK=false
-if test -z "$SSH_AGENT_PID" -a -e ~/.config/ssh-agent; then
-    . ~/.config/ssh-agent >/dev/null 2>&1
-fi
-if test "$SSH_AGENT_PID"; then
-    if uname | grep cygwin -i -q; then
-        (
-            if ! ssh-add -l >/dev/null 2>&1; then
-                rm ~/.config/ssh-agent
-            fi&
-        )
-        SSH_OK=true
-    elif ps h -o command "$SSH_AGENT_PID" |grep -q ssh-agent; then
-        SSH_OK=true
-    fi
-elif test "$GNOME_KEYRING_PID"; then
-    if ps h -o command "$GNOME_KEYRING_PID" | grep -q gnome-keyring-daemon; then
-        SSH_OK=true
-    fi
-fi
-
-if test $SSH_OK = false; then
+function start-ssh-agent() {
     (
+        set -e
         umask 077
         ssh-agent > ~/.config/ssh-agent.$$
-    )
-    (
-        . ~/.config/ssh-agent.$$ >/dev/null 2>&1
-        if test -e ~/.ssh/id_rsa; then
-            ssh-add ~/.ssh/id_rsa && mv ~/.config/ssh-agent.$$ ~/.config/ssh-agent
-        fi
+        grep "^echo" -v ~/.config/ssh-agent.$$ > ~/.config/ssh-agent.$$.2
+        rm ~/.config/ssh-agent.$$
+        mv ~/.config/ssh-agent.$$.2 ~/.config/ssh-agent
     )
     . ~/.config/ssh-agent
-    if ! ssh-add -l >/dev/null 2>&1 && test -e ~/.ssh/id_rsa; then
-        ssh-add ~/.ssh/id_rsa
-    fi
+}
+
+if test ! -e ~/.config/ssh-agent; then
+    echo 1>&2 no ssh-agent found, restart it
+    start-ssh-agent
+else
+    . ~/.config/ssh-agent
 fi
-unset SSH_OK
+
+ssh-add -l >/dev/null 2>&1
+val=$?
+if test $val = 2; then
+    echo 1>&2 "can't connect to ssh-agent, restart it"
+    rm ~/.config/ssh-agent
+    start-ssh-agent
+fi
+
+if test $val != 0 -a -e ~/.ssh/id_rsa && tty >/dev/null 2>&1; then
+    echo "Need add the rsa"
+    ssh-add ~/.ssh/id_rsa
+fi

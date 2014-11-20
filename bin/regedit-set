@@ -1,0 +1,17 @@
+#!/bin/bash
+(
+echo "REGEDIT4"
+echo
+
+echo "[${1/HKCU/HKEY_CURRENT_USER}]"
+echo "\"$2\"=\"$3\""
+) > ~/tmp/regedit-set.reg
+ps-killall wine.regedit
+
+wine regedit ~/tmp/regedit-set.reg
+regedit-open "$1" > ~/tmp/regedit-open.reg
+(
+    cd ~/tmp
+    wine regedit regedit-open.reg
+)
+wine regedit

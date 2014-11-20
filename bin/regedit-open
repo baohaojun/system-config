@@ -1,0 +1,57 @@
+#!/usr/bin/python
+# -*- coding: gbk -*-
+
+import sys, os, traceback, re, subprocess
+
+HKEY_CLASSES_ROOT = "HKEY_CLASSES_ROOT"
+HKEY_CURRENT_USER = "HKEY_CURRENT_USER"
+HKEY_LOCAL_MACHINE = "HKEY_LOCAL_MACHINE"
+HKEY_USERS = "HKEY_USERS"
+
+if len(sys.argv) != 2:
+    print 'Usage: regopen.py reg_key'
+    sys.exit(-1)
+
+
+
+keyToOpen = sys.argv[1]
+while keyToOpen[0] == '\\':
+    keyToOpen = keyToOpen[1:]
+
+if keyToOpen[0:5] == '/proc': #/proc/registry
+    keyToOpen = keyToOpen[len('/proc/registry/'):]
+    reobj = re.compile('/')
+    keyToOpen = reobj.sub('\\\\', keyToOpen)
+
+    if '%' in keyToOpen:
+        keyToOpenSub = keyToOpen
+        keyToOpen = ''
+        while '%' in keyToOpenSub:
+            i = keyToOpenSub.find('%')
+            hexStr = '0x'+keyToOpenSub[i+1:i+3]
+            print 'hexStr is', hexStr
+            hexVal = int(hexStr, 16)
+            keyToOpen = keyToOpen + keyToOpenSub[0:i] + chr(hexVal)
+            keyToOpenSub = keyToOpenSub[i+3:]
+        keyToOpen = keyToOpen + keyToOpenSub
+
+regAbrevMap = {'HKLM':'HKEY_LOCAL_MACHINE',
+               'HKCU':'HKEY_CURRENT_USER',
+               'HKCR':'HKEY_CLASSES_ROOT',
+               'HKU':'HKEY_USERS',
+               'HKCC':'HKEY_CURRENT_CONFIG',
+               }
+
+for x in regAbrevMap:
+    if keyToOpen[:len(x)] == x:
+        keyToOpen = regAbrevMap[x] + keyToOpen[len(x):]
+        break
+
+keyToOpen = keyToOpen
+
+print "REGEDIT4\n"
+print ("[%s\\%s]" % (HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit'))
+print ('"LastKey"="%s"\n' % keyToOpen).replace("\\", "\\\\")
+
+print ("[%s\\%s]" % (HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit\\Favorites'))
+print ('@="%s"' % "from regopen.py")

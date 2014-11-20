@@ -3,7 +3,7 @@
 set -e
 
 rsync=false
-ssh-to-phone echo
+ssh-to-phone echo || true
 if ssh phone echo hello | grep hello; then
     rsync=true
 fi
