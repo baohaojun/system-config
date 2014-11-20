@@ -14,7 +14,7 @@ void LuaExecuteThread::run()
 
     int error = luaL_loadstring(L, "t1wrench = require('t1wrench')") || lua_pcall(L, 0, 0, 0);
     if (error) {
-        emit gotSomeLog("exit", "Can't load t1wrench");
+        emit gotSomeLog("exit", QString().sprintf("Can't load t1wrench: %s", lua_tolstring(L, -1, NULL)));
         lua_close(L);
         return;
     }
