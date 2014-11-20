@@ -1,3 +1,6 @@
 [submodule "luasocket"]
 	path = luasocket
 	url = https://github.com/diegonehab/luasocket
+[submodule "luamd5"]
+	path = luamd5
+	url = https://github.com/baohaojun/md5

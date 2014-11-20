@@ -61,6 +61,12 @@ cd $build_dir
     PATH=~/bin/mingw:$PATH make mingw
 )
 
+(
+    cd luasocket
+    x=~/src/github/T1Wrench/;
+    PATH=~/bin/mingw/:$PATH make PLAT=mingw LUAINC_mingw_base=$x LUALIB_mingw_base=$x LUAV=5.2
+)
+
 if test ! -e Makefile; then
     wine qmake.exe
 fi
