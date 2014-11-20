@@ -2,13 +2,14 @@
 
 set -e
 
-rsync=false
-ssh-to-phone echo || true
-if ssh phone echo hello | grep hello; then
-    rsync=true
-fi
 
 function sync-phone-files() {
+    rsync=false
+    ssh-to-phone echo || true
+    if ssh phone echo hello | grep hello; then
+        rsync=true
+    fi
+
     if test "$1" = ""; then
         if test $rsync = true; then
             rsync -av media_rw@phone:/data/media/0/MobileOrg ..
