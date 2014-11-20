@@ -1,6 +1,6 @@
 T1Wrench
 *.user
-Makefile
+./Makefile
 *.autosave
 moc_t1wrenchmainwindow.cpp
 ui_t1wrenchmainwindow.h

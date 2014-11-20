@@ -486,7 +486,7 @@ local function t1_mail(window)
    if window == 'com.google.android.gm/com.google.android.gm.ComposeActivityGmail' then
       adb_event{806, 178}
    else
-      adb_event{998, 174}
+      adb_event("sleep .1 adb-tap 998 174")
    end
 end
 

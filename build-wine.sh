@@ -56,6 +56,11 @@ rsync * $build_dir -av
 cd $build_dir
 
 
+(
+    cd lua
+    PATH=~/bin/mingw:$PATH make mingw
+)
+
 if test ! -e Makefile; then
     wine qmake.exe
 fi
