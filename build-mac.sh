@@ -18,15 +18,24 @@ else
         cd lua
         make macosx
     )
+
+    (
+        cd luamd5
+        make PLATFORM=macx
     rm T1Wrench.app -rf
     if test ! -d ~/Qt5 -a -d ~/Qt5.bak; then
         mv ~/Qt5.bak ~/Qt5
     fi
-    qmake
-    make -j8
-    rsync -L t1wrench.lua macx/binaries/* release/* T1Wrench.app/Contents/MacOS/
+    for dir in . download; do
+        (
+            cd $dir
+            qmake
+            make -j8
+        )
+    done
+    rsync -L t1wrench.lua macx/binaries/* release/* T1Wrench.app/Contents/MacOS/ -r
     rm T1Wrench.dmg -f
-    macdeployqt T1Wrench.app -dmg -verbose=1
+    macdeployqt T1Wrench.app -dmg -verbose=1 -executable=T1Wrench.app/Contents/MacOS/download
     mv ~/Qt5 ~/Qt5.bak
     myscr bash -c 'ps-killall T1Wrench; of T1Wrench.app' || true
 fi

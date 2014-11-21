@@ -2,13 +2,20 @@
 
 function copy-dlls()
 {
-    rsync windows/binaries/* ./release -v -L
+    rsync windows/binaries/* ./release -v -L -r
     rsync t1wrench.lua ./release -v
 
-    for x in icudt52.dll icuin52.dll icuuc52.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL; do
-        rsync $(find $1/bin/ -maxdepth 1 -iname $x) ./release -av
+    req_dlls=( icudt52.dll icuin52.dll icuuc52.dll
+               qt5network.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL
+             )
+
+    for x in "${req_dlls[@]}"; do
+        rsync $(find $1/bin/ -maxdepth 1 -iname $x | grep . || echo $1/bin/$x) ./release -av
         chmod 555 $(find ./release/ -iname $x)
     done
+
+    rsync ~/.wine/drive_c/OpenSSL-Win32/*.dll ./release/ -av
+    chmod 555 ./release/*.dll
 
     for x in libEGL.dll libGLESv2.dll libstdc++-6.dll libwinpthread-1.dll libgcc_s_dw2-1.dll; do
         rsync $(find $1/bin/ -maxdepth 1 -iname $x | grep . || echo $1/bin/$x) ./release -av || continue
@@ -24,10 +31,10 @@ function make-release-tgz()
 {
     rsync readme.* ./release/
     rsync -av *.png ./release/
-    command rsync -av -d release/ t1wrench-release --exclude="*.obj" \
+    command rsync -av -d release/ download/release/ t1wrench-release --exclude="*.obj" \
             --exclude="*.o" \
-            --exclude="*.cpp"
-
+            --exclude="*.cpp" \
+            --exclude="*.moc"
 
     set -x
     (
@@ -36,6 +43,8 @@ function make-release-tgz()
         rsync T1Wrench-windows.zip rem:/var/www/html/baohaojun/ -v
     )&
     command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git
+    cd $release_dir
+    ./update-md5s.sh
 }
 
 
@@ -62,22 +71,28 @@ cd $build_dir
 )
 
 (
-    cd luasocket
-    x=~/src/github/T1Wrench/;
-    PATH=~/bin/mingw/:$PATH make PLAT=mingw LUAINC_mingw_base=$x LUALIB_mingw_base=$x LUAV=5.2
+    cd luamd5
+    PATH=~/bin/mingw/:$PATH make PLATFORM=mingw
 )
 
-if test ! -e Makefile; then
-    wine qmake.exe
-fi
-wine mingw32-make.exe -j8 | perl -npe 's/\\/\//g'
+for x in . download; do
+    (
+        cd $x
+        if test ! -e Makefile; then
+            wine qmake.exe
+        fi
+        wine mingw32-make.exe -j8 | perl -npe 's/\\/\//g'
+    )
+done
+
 copy-dlls /cygdrive/c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32
 set -x
 rm -f T1Wrench-windows
 ln -sf t1wrench-release T1Wrench-windows
 make-release-tgz
+
 (
     cd $release_dir
     rm build.bat -f
-    command wine ./T1Wrench.exe
+    command wine ./T1Wrench.exe&
 )

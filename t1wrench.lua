@@ -90,7 +90,7 @@ end
 
 local function system(cmds)
    if type(cmds) == 'string' then
-      os.execute(cmds)
+      return os.execute(cmds)
    elseif type(cmds) == 'table' then
       command_str = ''
       for i = 1, #cmds do
@@ -100,7 +100,7 @@ local function system(cmds)
             command_str = command_str .. shell_quote(cmds[i]) .. ' '
          end
       end
-      os.execute(debug_set_x .. command_str)
+      return os.execute(debug_set_x .. command_str)
    end
 end
 
@@ -823,7 +823,7 @@ picture_to_weixin_share = function(pics, ...)
          "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
       }
       local i_button = pic_share_buttons[i]
-      adb_event(split(" ", i_button))
+      adb_event(i_button)
    end
    adb_event("adb-tap 901 1841 adb-tap 75 1867 adb-tap 903 133")
    return "Prompt: please say something"
@@ -863,7 +863,7 @@ picture_to_weibo_share = function(pics, ...)
          "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
       }
       local i_button = pic_share_buttons[i]
-      adb_event(split(" ", i_button))
+      adb_event(i_button)
    end
    adb_event("adb-tap 141 1849 adb-tap 922 1891")
 end
@@ -898,7 +898,7 @@ local function picture_to_weixin_chat(pics, ...)
          "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
       }
       local i_button = pic_share_buttons[i]
-      adb_event(split(" ", i_button))
+      adb_event(i_button)
    end
    adb_event("adb-tap 944 1894 adb-tap 59 1871 adb-tap 927 148")
 end
@@ -919,7 +919,7 @@ local function picture_to_qq_chat(pics, ...)
       local target = pics[i]
       if i == 1 then
          local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1"
-         adb_event(split(" ", events))
+         adb_event(events)
          while adb_focused_window() ~= "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity" do
             adb_event{118, 152, "sleep", .5}
          end
@@ -932,7 +932,7 @@ local function picture_to_qq_chat(pics, ...)
          "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
       }
       local i_button = pic_share_buttons[i]
-      adb_event(split(" ", i_button))
+      adb_event(i_button)
    end
    adb_event("adb-tap 608 1831 adb-tap 403 1679 adb-tap 918 1862 sleep .5 adb-tap 312 1275")
 end
@@ -953,7 +953,7 @@ local function picture_to_qqlite_chat(pics, ...)
       local target = pics[i]
       if i == 1 then
          local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1"
-         adb_event(split(" ", events))
+         adb_event(events)
          while adb_focused_window() ~= "com.tencent.qqlite/com.tencent.mobileqq.activity.photo.AlbumListActivity" do
             adb_event{118, 152, "sleep", .5}
          end
@@ -966,7 +966,7 @@ local function picture_to_qqlite_chat(pics, ...)
          "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
       }
       local i_button = pic_share_buttons[i]
-      adb_event(split(" ", i_button))
+      adb_event(i_button)
    end
    adb_event("adb-tap 519 1841 adb-tap 434 1071 adb-tap 918 1862 sleep .5 adb-tap 279 1221")
 end
@@ -987,7 +987,7 @@ local function picture_to_weibo_chat(pics, ...)
       local target = pics[i]
       if i == 1 then
          local events = post_button .. " sleep .1 adb-tap 375 1410 sleep .1 adb-tap 645 135 sleep .2 adb-tap 369 679 sleep 2"
-         adb_event(split(" ", events))
+         adb_event(events)
       end
       local pic_share_buttons = {
          "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
@@ -995,7 +995,7 @@ local function picture_to_weibo_chat(pics, ...)
          "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
       }
       local i_button = pic_share_buttons[i]
-      adb_event(split(" ", i_button))
+      adb_event(i_button)
    end
    adb_event("adb-tap 943 1868 adb-tap 194 1163")
 end
@@ -1066,6 +1066,9 @@ M.t1_spread_it = t1_spread_it
 M.adb_start_weixin_share = adb_start_weixin_share
 M.t1_config = t1_config
 M.emoji_for_qq = emoji_for_qq
+M.split = split
+M.system = system
+M.debug = debug
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
