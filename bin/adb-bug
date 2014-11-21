@@ -1,0 +1,8 @@
+#!/bin/bash
+adb-of mailto:bug@smartisan.com
+sleep 1
+adb-tap 160 1662
+adb-key DPAD_DOWN
+putclip-android "$1"
+adb-key SCROLL_LOCK
+adb-key DPAD_DOWN

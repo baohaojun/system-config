@@ -1,7 +1,15 @@
 #!/bin/bash
 cat <<EOF
 ; {%emacs-lisp%}
-(progn
+(let (org-html-style-include-default
+      org-export-with-toc
+      org-export-with-timestamps
+      org-export-time-stamp-file
+      org-html-htmlize-output-type
+      org-html-head-extra
+      org-html-preamble
+      org-html-postamble
+      (load-path load-path))
   (global-font-lock-mode)
   ; (toggle-debug-on-error)
   (setq bhj-org-export-file "$ORG_FILE_NAME")

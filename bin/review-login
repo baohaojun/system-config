@@ -1,6 +1,6 @@
 #!/bin/bash
 if sawfish-window-exists Firefox; then
-    s=1
+    s=3
 else
     s=15
 fi

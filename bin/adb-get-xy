@@ -5,7 +5,7 @@ if test "$1"; then
     export TAP=$1
 fi
 
-(sleep 5 && adb root-mode off)&
+(sleep 5 && adb root-mode off) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
 adb-tty getevent -l </dev/tty | perl -ne '
     BEGIN {
         $xy = qx(adb dumpsys window);

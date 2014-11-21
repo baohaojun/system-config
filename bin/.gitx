@@ -142,7 +142,11 @@ print $_ . "\n";
           exit
         fi
         if test "$1" = clean; then
-            if command git st -s | grep '??'; then
+            where=
+            if test $# = 2 -o $# = 1; then
+                where=.
+            fi
+            if command git st -s $where | grep '??'; then
                 echo Warning: git not clean, will not clean it
                 if yes-or-no-p -n "Continue?"; then
                     true;

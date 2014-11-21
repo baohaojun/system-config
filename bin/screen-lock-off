@@ -3,6 +3,7 @@ exec > ~/.logs/screen-lock-on-off.log 2>&1
 if test $(basename $0) = screen-lock-off; then
     if test -e ~/.logs/do-review-login; then
         rm ~/.logs/do-review-login;
+        EMACS=t yes-or-no-p -y "Will now do review login, continue? "
         sleep 2
         review-login
     fi

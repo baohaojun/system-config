@@ -1,5 +1,5 @@
 #!/bin/bash
 adb start-activity com.android.settings/com.android.settings.DevelopmentSettings
 sleep 1
-adb-tap 888 1275 adb-tap 859 1489
+adb-tap 860 1435 adb-tap 908 1669
 adb-key BACK
