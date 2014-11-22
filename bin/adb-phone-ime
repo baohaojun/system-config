@@ -7,5 +7,5 @@ while true; do
     fi
     cat /tmp/voice-ime.txt|perl -npe '$unicode = 1 if m/[\177-\377]/; END {print $unicode ? "，" : ", "}'|putclip
     sawfish-send-focused-window-event "S-Insert"
-    adb-tap 811 1175
+    adb-tap 521 1126
 done

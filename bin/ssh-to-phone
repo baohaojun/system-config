@@ -41,11 +41,6 @@ if ! my-adb -w shell netcfg|grep -q 'rndis0.*129/'; then
 fi
 
 export USB0=eth1
-if ifconfig eth1 2>/dev/null | grep 'HWaddr 00:00:00:00:00:00'; then
-    sudo ifconfig eth1 hw ether 001cfc9a94fb || true
-fi
-sudo ifconfig eth1 up >/dev/null 2>&1 || true
-
 if ! ifconfig $USB0 >/dev/null 2>&1 ; then
     if ifconfig usb0 >/dev/null 2>&1 ; then
         USB0=usb0
@@ -53,6 +48,10 @@ if ! ifconfig $USB0 >/dev/null 2>&1 ; then
         USB0=eth1
     fi
 fi
+if ifconfig $USB0 2>/dev/null | grep 'HWaddr 00:00:00:00:00:00'; then
+    sudo ifconfig $USB0 hw ether 001cfc9a94fb || true
+fi
+sudo ifconfig $USB0 up >/dev/null 2>&1 || true
 
 if ! ifconfig $USB0 | grep 192.168.15.33; then
     sudo ifconfig $USB0 192.168.15.33

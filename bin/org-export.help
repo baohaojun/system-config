@@ -2,7 +2,7 @@
 cat <<EOF
 ; {%emacs-lisp%}
 (let (org-html-style-include-default
-      org-export-with-toc
+      old-org-export-with-toc
       org-export-with-timestamps
       org-export-time-stamp-file
       org-html-htmlize-output-type
@@ -71,9 +71,9 @@ cat <<EOF
         org-html-preamble (lambda (arg) (shell-command-to-string (format "org-export-preamble %s" (shell-quote-argument bhj-org-export-file))))
         org-html-postamble (lambda (arg) (shell-command-to-string (format "org-export-postamble %s" (shell-quote-argument bhj-org-export-file)))))
 
-  (require 'ox-html)
   (setq org-use-sub-superscripts (quote {})
         org-export-with-sub-superscripts (quote {}))
+  (require 'ox-html)
   (defadvice org-html--build-pre/postamble (around my-pre/postamble first activate)
            ad-do-it
            (if (eq (ad-get-arg 0) 'preamble)
