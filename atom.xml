@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[更新Kernel以解决opengl程序在休眠后无法运行的问题]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.html"/>
+    <updated>2014-19-23T23:11:06+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明]]></title>
     <link href="http://baohaojun.github.io/blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.html"/>
     <updated>2014-11-09T00:19:28+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/09/05/0-Emoji.html"/>
     <updated>2014-09-05T16:22:55+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/09/05/0-Emoji.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Config adb for smartisan t1]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/09/01/0-config-adb-for-smartisan-t1.html"/>
-    <updated>2014-09-01T20:23:38+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/09/01/0-config-adb-for-smartisan-t1.html</id>
   </entry>
 </feed>

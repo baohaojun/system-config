@@ -1,6 +1,10 @@
 #+title: Archive
  * 2014
   - 2014-11
+   * 2014-11-23
+
+     [[../blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.org][更新Kernel以解决opengl程序在休眠后无法运行的问题]]
+
    * 2014-11-08
 
      [[../blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.org][专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明]]

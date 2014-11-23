@@ -1,0 +1,21 @@
+#+title: 更新Kernel以解决opengl程序在休眠后无法运行的问题
+# bhj-tags: Bug
+不知何时起，发现自己的机器在休眠唤醒之后就无法运行opengl程序了。一开始
+是在哄女儿的时候会给她看xscreensaver-demo，里面有五颜六色的灯，还有五
+颜六色的蚂蚁，结果发现一休眠唤醒就没法运行蚂蚁的那个demo程序。
+
+今天晚上终于受不了了，因为发现qtcreator也会启动失败😿。之前查过几次谷歌，
+都没有查到点子上，因为都是以机器的型号（dell optiplex 960） + Linux
+hibernate opengl crash 之类为关键字去查的，无果，会出来很多dell机器的
+广告。今天用的是lspci出来的显卡型号 =Intel Corporation 4 Series
+Chipset Integrated Graphics Controller (rev 03)= 为关键字加上opengl
+hibernate去查，很快就看到archlinux社区里已经在反映这个问题，并且好像升
+级kernel版本到3.17就可以解决了。
+
+在Debian下升级kernel比较简单的方法是用make-kpkg命令：
+
+1. 把早的kernel（比如官方的）的config文件拷贝过来，比如 =cp
+   /boot/config-3.16.0-4-amd64 .config=
+2. sudo make-kpkg --initrd kernel_image -j8
+
+对，就是这么简单。

@@ -1,5 +1,10 @@
 #+title: Bugs that I have encountered, see if someone else will find it useful.
  * 2014
+  - 2014-11
+   * 2014-11-23
+
+     [[../../../blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.org][更新Kernel以解决opengl程序在休眠后无法运行的问题]]
+
   - 2014-10
    * 2014-10-22
 
