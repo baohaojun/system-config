@@ -34,7 +34,9 @@ SOURCES += main.cpp\
         screencapture.cpp \
         painterwidget.cpp \
         painterrectitem.cpp \
-        painterpathitem.cpp
+        painterpathitem.cpp \
+    dialoggetemoji.cpp \
+    emojimodel.cpp
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
@@ -44,9 +46,13 @@ HEADERS  += t1wrenchmainwindow.h \
             painterwidget.h \
             painteritem.h \
             painterrectitem.h \
-            painterpathitem.h
+            painterpathitem.h \
+            dialoggetemoji.h \
+            emojimodel.h \
+            t1wrench.h
 
-FORMS    += t1wrenchmainwindow.ui
+FORMS    += t1wrenchmainwindow.ui \
+    dialoggetemoji.ui
 
 RESOURCES += \
     T1Wrench.qrc

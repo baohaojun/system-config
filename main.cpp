@@ -9,7 +9,7 @@
 #include <QFrame>
 #include <string>
 #include <QLineEdit>
-#include <QPlainTextEdit>
+#include <QTextEdit>
 #include "adbstatethread.hpp"
 #include <QtCore/QFile>
 #include <QtCore/QDir>

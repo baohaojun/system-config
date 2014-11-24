@@ -28,4 +28,10 @@ rsync -L $(which the-true-adb) ~/src/github/T1Wrench-linux
     smb-push T1Wrench-linux.tgz ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
     rsync T1Wrench-linux.tgz rem:/var/www/html/baohaojun/
 )&
-./T1Wrench
+if test $# = 1 -a "$1" = debug; then
+    ps-killall gdb.T1Wrench
+    myscr gdb ./T1Wrench
+    find-or-exec konsole
+else
+    ./T1Wrench
+fi

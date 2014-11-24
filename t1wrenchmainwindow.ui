@@ -222,7 +222,7 @@
  <customwidgets>
   <customwidget>
    <class>QCellPhoneTextEdit</class>
-   <extends>QPlainTextEdit</extends>
+   <extends>QTextEdit</extends>
    <header location="global">qcellphonetextedit.h</header>
   </customwidget>
  </customwidgets>

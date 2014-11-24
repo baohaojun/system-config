@@ -6,6 +6,7 @@
 #include "luaexecutethread.hpp"
 #include "screencapture.h"
 #include <QtCore/QSettings>
+#include "dialoggetemoji.h"
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -42,6 +43,7 @@ private slots:
 private:
     QSharedPointer<ScreenCapture> mScreenCapture;
     QSharedPointer<LuaExecuteThread> mLuaThread;
+    QSharedPointer<DialogGetEmoji> mEmojiDialog;
     Ui::T1WrenchMainWindow *ui;
     QSettings mSettings;
     QStringList mPictures;

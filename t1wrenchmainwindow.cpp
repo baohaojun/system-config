@@ -28,6 +28,7 @@
 #include "screencapture.h"
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QSharedPointer>
+#include "dialoggetemoji.h"
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -114,7 +115,7 @@ QString fixPathName(const QString& path)
 
 QString T1WrenchMainWindow::get_text()
 {
-    QString text = ui->phoneTextEdit->toPlainText();
+    QString text = ui->phoneTextEdit->getMyText();
     while (text.endsWith("\r") || text.endsWith("\n") || text.endsWith("\t") ||
            text.endsWith(" ")) {
         text = text.left(text.length() -1);
@@ -294,7 +295,11 @@ void T1WrenchMainWindow::on_tbPicture_clicked()
 
 void T1WrenchMainWindow::on_tbEmoji_clicked()
 {
-    prompt_user("暂时还没有实现，请期待下个版本");
+    if (mEmojiDialog.isNull()) {
+        mEmojiDialog = QSharedPointer<DialogGetEmoji>(new DialogGetEmoji(this));
+        connect(mEmojiDialog.data(), SIGNAL(emojiSelected(QString, QString)), ui->phoneTextEdit, SLOT(on_emojiSelected(QString, QString)));
+    }
+    mEmojiDialog->exec();
 }
 
 void T1WrenchMainWindow::on_tbWeibo_clicked()

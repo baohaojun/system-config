@@ -108,7 +108,7 @@ debug = function(fmt, ...)
    print(string.format(fmt, ...))
 end
 
-local function split(pat, str)
+local function split(pat, str, allow_null)
    local start = 1
    if pat == ' ' then
       pat = "%s+"
@@ -120,9 +120,13 @@ local function split(pat, str)
       if (i and i >= start) then
          if i > start then
             list[#list + 1] = str:sub(start, i - 1)
+         elseif allow_null then
+            list[#list + 1] = ""
          end
       elseif #str >= start then
          list[#list + 1] = str:sub(start)
+      elseif allow_null then
+         list[#list + 1] = ""
       end
       if i then
          start = j + 1
@@ -131,6 +135,26 @@ local function split(pat, str)
       end
    end
    return list
+end
+
+local function replace_img_with_emoji(text, html)
+   debug("text is %s, html is %s", text, html)
+   local texts = split("￼", text, true)
+   for k, v in pairs(texts) do
+      print(k, v)
+   end
+   local n = 2
+   local res = texts[1]
+   for emoji in html:gmatch('img src="(.-)"') do
+      debug("emoji is %s", emoji)
+      res = res .. emoji
+      if texts[n] then
+         res = res .. texts[n]
+      end
+      n = n + 1
+   end
+   debug("res is %s", res)
+   return res
 end
 
 local function join(mid, args)
@@ -1067,6 +1091,7 @@ M.adb_start_weixin_share = adb_start_weixin_share
 M.t1_config = t1_config
 M.emoji_for_qq = emoji_for_qq
 M.split = split
+M.replace_img_with_emoji = replace_img_with_emoji
 M.system = system
 M.debug = debug
 
