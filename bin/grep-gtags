@@ -419,11 +419,8 @@ sub do_cscope($$$) {
 my @java_fallback_dir = glob("$db_dir/.java-fallback*");
 if (do_cscope($db_dir, $lookup_needle, $lookup_restrict_regexp)) {
     exit unless @java_fallback_dir;
-} elsif (not @java_fallback_dir) {
-    if (-e "$db_dir/custom-gtags.sh") {
-        system("$db_dir/custom-gtags.sh", $lookup_needle);
-        exit(0);
-    }
+} elsif (-e "$db_dir/custom-gtags.sh") {
+    system("$db_dir/custom-gtags.sh", $lookup_needle);
 }
 
 exit 1 if $do_dir or -e "$db_dir/.no-fallback";
