@@ -234,7 +234,7 @@ if [string eq "" $mode] {
             send "\r\n\r\n";
             expect {
                 -timeout 1 "您有回复提醒" {
-                    exec bhj-notify bbs 您有回复提醒
+                    exec bhj-notify bbs 您有回复提醒 &
                 }
             }
         }

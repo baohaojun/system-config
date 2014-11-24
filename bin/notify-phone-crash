@@ -32,12 +32,14 @@ if test $(basename $0) = adb-fix-gms; then
             true
         else
             set -x
-            exec > ~/.logs/adb-fix-gms.log 2>&1
+            if ! is-tty-io; then
+                exec > ~/.logs/adb-fix-gms.log 2>&1
+            fi
         fi
 
         my-adb -W || true
 
-        if test $(my-adb getprop ro.debuggable) = 0; then
+        if test $(my-adb getprop ro.debuggable) = 0 -a "$(my-adb getprop ro.DEBUGGABLE)" != 1; then
             exit
         fi
         if test -e ~/.configs/adb-root; then
@@ -58,13 +60,6 @@ if test $(basename $0) = adb-fix-gms; then
             fi
         )&
 
-        if test "$(my-adb 'test -e /system/priv-app/GmsCore.apk && echo yes')" = yes; then
-            true
-        else
-            my-adb stop
-            adb-push ~/today/forever/gapps-system/* /system/
-        fi
-
         if test "$(my-adb 'test -e /data/debian/usr/bin/sudo && echo yes')" = yes; then
             true
         else
@@ -80,6 +75,15 @@ if test $(basename $0) = adb-fix-gms; then
         '
             my-adb romount
         fi
+
+        if test "$(my-adb 'test -e /system/priv-app/GmsCore.apk && echo yes')" = yes; then
+            true
+        else
+            my-adb stop
+            adb-push ~/today/forever/gapps-system/* /system/
+        fi
+
+
         if test "$(my-adb netcfg | grep wlan0 | pn 5)" = 00:0a:f5:79:b2:54; then
             adb-fix-wifi-mac
             my-adb reboot

@@ -1091,9 +1091,8 @@
           ("[激动]" "~/src/github/private-config/etc/qq-emojis/smiley_100.png" ("JiDong" "[Exciting]" "weixin-qq"))
           ("[街舞]" "~/src/github/private-config/etc/qq-emojis/smiley_101.png" ("JieWu" "[HipHot]" "weixin-qq"))
           ("[献吻]" "~/src/github/private-config/etc/qq-emojis/smiley_102.png" ("XianWen" "[ShowLove]" "weixin-qq"))
-          ("[左太极]" "~/src/github/private-config/etc/qq-emojis/smiley_103.png" ("ZuoTaiJi" "[Tai Chi L]" "weixin-qq"))
-          ("[右太极]" "~/src/github/private-config/etc/qq-emojis/smiley_104.png" ("YouTaiJi" "[Tai Chi R]" "weixin-qq"))
-
+          ("[左太极]" "~/src/github/private-config/etc/qq-emojis/smiley_103.png" ("ZuoTaiJi" "[TaiChi L]" "weixin-qq"))
+          ("[右太极]" "~/src/github/private-config/etc/qq-emojis/smiley_104.png" ("YouTaiJi" "[TaiChi R]" "weixin-qq"))
           ))
 
   (while emojis-string-list
