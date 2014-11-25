@@ -14,6 +14,8 @@ public:
 
 signals:
     void controlEnterPressed();
+    void emojiShortcutPressed();
+
 public slots:
     void on_emojiSelected(const QString& emoji, const QString& emojiPath);
 private:

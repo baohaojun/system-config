@@ -15,13 +15,106 @@ QCellPhoneTextEdit::~QCellPhoneTextEdit()
 
 void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
 {
-    QTextEdit::keyPressEvent(e);
-    if (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter) {
-        Qt::KeyboardModifiers m = e->modifiers() & (Qt::ShiftModifier | Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier);
-        if (m == Qt::ControlModifier) {
+    int key = e->key();
+    Qt::KeyboardModifiers m = e->modifiers();
+    const Qt::KeyboardModifiers generalMods = Qt::ShiftModifier | Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier;
+
+    if (key == Qt::Key_Return || key == Qt::Key_Enter) {
+        if ((m & generalMods) == Qt::ControlModifier) {
             emit controlEnterPressed();
+            return;
         }
     }
+
+    if ((key == Qt::Key_8 || key == Qt::Key_Asterisk) && (m & (Qt::AltModifier | Qt::MetaModifier))) {
+        emit emojiShortcutPressed();
+        return;
+    }
+
+    static bool last_is_escape = false;
+    typedef struct {
+        int from;
+        Qt::KeyboardModifiers mod_from;
+        int to;
+        Qt::KeyboardModifiers mod_to;
+    } single_keymap_t;
+
+    static single_keymap_t single_map[] = {
+        { Qt::Key_B, Qt::ControlModifier, Qt::Key_Left, 0, },
+        { Qt::Key_F, Qt::ControlModifier, Qt::Key_Right, 0, },
+        { Qt::Key_P, Qt::ControlModifier, Qt::Key_Up, 0, },
+        { Qt::Key_N, Qt::ControlModifier, Qt::Key_Down, 0, },
+        { Qt::Key_A, Qt::ControlModifier, Qt::Key_Home, 0, },
+        { Qt::Key_G, Qt::ControlModifier, Qt::Key_Escape, 0, },
+        { Qt::Key_D, Qt::ControlModifier, Qt::Key_Delete, 0, },
+        { Qt::Key_E, Qt::ControlModifier, Qt::Key_End, 0, },
+        { Qt::Key_Y, Qt::ControlModifier, Qt::Key_Insert, Qt::ShiftModifier, },
+        { Qt::Key_V, Qt::ControlModifier, Qt::Key_PageDown, 0, },
+        { Qt::Key_V, Qt::AltModifier,     Qt::Key_PageUp, 0, },
+        { Qt::Key_E, Qt::ControlModifier, Qt::Key_End, 0, },
+        { Qt::Key_B, Qt::AltModifier,     Qt::Key_Left, Qt::ControlModifier, },
+        { Qt::Key_F, Qt::AltModifier,     Qt::Key_Right, Qt::ControlModifier, },
+        { Qt::Key_B, Qt::AltModifier | Qt::ShiftModifier, Qt::Key_Left, Qt::ControlModifier | Qt::ShiftModifier, },
+        { Qt::Key_F, Qt::AltModifier | Qt::ShiftModifier, Qt::Key_Right, Qt::ControlModifier | Qt::ShiftModifier, },
+        { Qt::Key_Less, Qt::AltModifier | Qt::ShiftModifier, Qt::Key_Home, Qt::ControlModifier, },
+        { Qt::Key_Greater, Qt::AltModifier | Qt::ShiftModifier, Qt::Key_End, Qt::ControlModifier, },
+        { Qt::Key_Backspace, Qt::AltModifier, Qt::Key_Backspace, Qt::ControlModifier, },
+    };
+
+    typedef struct {
+        int from;
+        Qt::KeyboardModifiers mod_from;
+        struct {
+            int to;
+            Qt::KeyboardModifiers mod_to;
+        } mto[5];
+    } multi_keymap_t;
+
+    static multi_keymap_t multi_map[] = {
+        { Qt::Key_K, Qt::ControlModifier,
+          { { Qt::Key_End, Qt::ShiftModifier, },
+            { Qt::Key_Delete, 0, },
+          },
+        },
+    };
+
+    if (last_is_escape) {
+        qDebug() << "m was " << m;
+        if (key == Qt::Key_Shift || key == Qt::Key_Meta || key == Qt::Key_Control || key == Qt::Key_Alt) {
+            true;
+        } else {
+            last_is_escape = false;
+        }
+        if (m & Qt::AltModifier) {
+            m &= ~Qt::AltModifier;
+        } else {
+            m |= Qt::AltModifier;
+        }
+        qDebug() << "m is " << m << ", key is " << key;
+    } else if (m == 0 && key == Qt::Key_Escape) {
+        last_is_escape = true;
+        return;
+    }
+
+    for (size_t i = 0; i < sizeof(single_map) / sizeof(single_map[0]); i++) {
+        if (m == single_map[i].mod_from)
+            qDebug() << "Sending " << single_map[i].to << " for " << key;
+        if (key == single_map[i].from && m == single_map[i].mod_from) {
+            QKeyEvent nkey = QKeyEvent(e->type(), single_map[i].to, single_map[i].mod_to);
+            QTextEdit::keyPressEvent(&nkey);
+            return;
+        }
+    }
+    for (size_t i = 0; i < sizeof(multi_map) / sizeof(multi_map[0]); i++) {
+        if (key == multi_map[i].from && m == multi_map[i].mod_from) {
+            for (int j = 0; multi_map[i].mto[j].to; j++) {
+                QKeyEvent nkey = QKeyEvent(e->type(), multi_map[i].mto[j].to, multi_map[i].mto[j].mod_to);
+                QTextEdit::keyPressEvent(&nkey);
+            }
+            return;
+        }
+    }
+    QTextEdit::keyPressEvent(e);
 }
 
 void QCellPhoneTextEdit::on_emojiSelected(const QString& emoji, const QString& emojiPath)
