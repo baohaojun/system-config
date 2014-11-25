@@ -36,7 +36,9 @@ SOURCES += main.cpp\
         painterrectitem.cpp \
         painterpathitem.cpp \
     dialoggetemoji.cpp \
-    emojimodel.cpp
+    emojimodel.cpp \
+    emojifilteredit.cpp \
+    emojilistview.cpp
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
@@ -49,7 +51,9 @@ HEADERS  += t1wrenchmainwindow.h \
             painterpathitem.h \
             dialoggetemoji.h \
             emojimodel.h \
-            t1wrench.h
+            t1wrench.h \
+    emojifilteredit.h \
+    emojilistview.h
 
 FORMS    += t1wrenchmainwindow.ui \
     dialoggetemoji.ui

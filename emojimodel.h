@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include <QSharedPointer>
 #include <lua.hpp>
+#include <QSettings>
 
 class EmojiModel : public QAbstractListModel
 {
@@ -25,10 +26,14 @@ private:
     QMap<int, QString> mKeyMap;
     QStringList mFilteredKeys;
     lua_State *L;
+    int mHistoryHead;
+    QSettings mSettings;
 
  public:
     QString getEmojiText(int i);
     QString getEmojiPath(int i);
+    void updateHistory(int i);
+    void updateHistory(QString key);
 signals:
 
 public slots:

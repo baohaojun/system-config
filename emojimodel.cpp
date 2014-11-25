@@ -3,9 +3,11 @@
 #include <QFont>
 #include <QBrush>
 #include <lua.hpp>
+#include <QSettings>
 
 EmojiModel::EmojiModel(QObject *parent) :
-    QAbstractListModel(parent)
+    QAbstractListModel(parent),
+    mSettings("Smartisan", "Wrench", parent)
 {
     L = luaL_newstate();             /* opens Lua */
     luaL_openlibs(L);        /* opens the standard libraries */
@@ -39,6 +41,10 @@ EmojiModel::EmojiModel(QObject *parent) :
         mKeyMap[i - 1] = key;
     }
     lua_settop(L, 0);
+    mHistoryHead = mSettings.value("emoji-history-head", QVariant(0)).toInt();
+    for (int i = 0; i < 20; i++) {
+        updateHistory(mSettings.value(QString().sprintf("emoji-history-%d", (mHistoryHead - 1 - i + 20) % 20), QVariant("")).toString());
+    }
     setFilter("");
 }
 
@@ -128,4 +134,28 @@ QString EmojiModel::getEmojiPath(int i)
         return mEmojiIconPathMap[key];
     }
     return "";
+}
+
+void EmojiModel::updateHistory(int i)
+{
+    if (i >= 0 && i < mFilteredKeys.size()) {
+        QString key = mFilteredKeys[i];
+        updateHistory(key);
+        mSettings.setValue(QString().sprintf("emoji-history-%d", mHistoryHead++ % 20),
+                          QVariant(key));
+        mSettings.setValue("emoji-history-head", QVariant(mHistoryHead));
+    }
+}
+
+void EmojiModel::updateHistory(QString key)
+{
+    for (int n = 0; n < mKeyMap.size(); n++) {
+        if (mKeyMap[n] == key) {
+            for (; n > 0; n--) {
+                mKeyMap[n] = mKeyMap[n - 1];
+            }
+            mKeyMap[0] = key;
+            break;
+        }
+    }
 }

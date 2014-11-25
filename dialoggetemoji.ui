@@ -24,11 +24,15 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QListView" name="emojiListView"/>
+     <widget class="EmojiListView" name="emojiListView">
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QPlainTextEdit" name="emojiFilter">
+  <widget class="EmojiFilterEdit" name="emojiFilter" native="true">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -37,11 +41,23 @@
      <height>31</height>
     </rect>
    </property>
-   <property name="placeholderText">
+   <property name="placeholderText" stdset="0">
     <string>表情过滤</string>
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>EmojiFilterEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>emojifilteredit.h</header>
+  </customwidget>
+  <customwidget>
+    <class>EmojiListView</class>
+    <extends>QListView</extends>
+    <header>emojilistview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

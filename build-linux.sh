@@ -33,5 +33,8 @@ if test $# = 1 -a "$1" = debug; then
     myscr gdb ./T1Wrench
     find-or-exec konsole
 else
-    ./T1Wrench
+    mkfifo /tmp/build-linux.$$
+    myscr bash -c "./T1Wrench > /tmp/build-linux.$$ 2>&1"
+    cat /tmp/build-linux.$$
+    rm /tmp/build-linux.$$
 fi

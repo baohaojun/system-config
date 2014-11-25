@@ -1,35 +1,16 @@
-#include <QKeyEvent>
-#include "qcellphonetextedit.h"
+#include "emojifilteredit.h"
 #include <QDebug>
-#include "t1wrench.h"
 
-
-QCellPhoneTextEdit::QCellPhoneTextEdit(QWidget* parent) : QTextEdit(parent)
-{
-    L = NULL;
-}
-
-QCellPhoneTextEdit::~QCellPhoneTextEdit()
+EmojiFilterEdit::EmojiFilterEdit(QWidget *parent) :
+    QPlainTextEdit(parent)
 {
 }
 
-void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
+void EmojiFilterEdit::keyPressEvent(QKeyEvent *e)
 {
     int key = e->key();
     Qt::KeyboardModifiers m = e->modifiers();
     const Qt::KeyboardModifiers generalMods = Qt::ShiftModifier | Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier;
-
-    if (key == Qt::Key_Return || key == Qt::Key_Enter) {
-        if ((m & generalMods) == Qt::ControlModifier) {
-            emit controlEnterPressed();
-            return;
-        }
-    }
-
-    if ((key == Qt::Key_8 || key == Qt::Key_Asterisk) && (m & (Qt::AltModifier | Qt::MetaModifier))) {
-        emit emojiShortcutPressed();
-        return;
-    }
 
     static bool last_is_escape = false;
     typedef struct {
@@ -42,15 +23,11 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
     static single_keymap_t single_map[] = {
         { Qt::Key_B, Qt::ControlModifier, Qt::Key_Left, 0, },
         { Qt::Key_F, Qt::ControlModifier, Qt::Key_Right, 0, },
-        { Qt::Key_P, Qt::ControlModifier, Qt::Key_Up, 0, },
-        { Qt::Key_N, Qt::ControlModifier, Qt::Key_Down, 0, },
         { Qt::Key_A, Qt::ControlModifier, Qt::Key_Home, 0, },
         { Qt::Key_G, Qt::ControlModifier, Qt::Key_Escape, 0, },
         { Qt::Key_D, Qt::ControlModifier, Qt::Key_Delete, 0, },
         { Qt::Key_E, Qt::ControlModifier, Qt::Key_End, 0, },
         { Qt::Key_Y, Qt::ControlModifier, Qt::Key_Insert, Qt::ShiftModifier, },
-        { Qt::Key_V, Qt::ControlModifier, Qt::Key_PageDown, 0, },
-        { Qt::Key_V, Qt::AltModifier,     Qt::Key_PageUp, 0, },
         { Qt::Key_E, Qt::ControlModifier, Qt::Key_End, 0, },
         { Qt::Key_B, Qt::AltModifier,     Qt::Key_Left, Qt::ControlModifier, },
         { Qt::Key_F, Qt::AltModifier,     Qt::Key_Right, Qt::ControlModifier, },
@@ -83,6 +60,12 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
             true;
         } else {
             last_is_escape = false;
+            if (m == 0 && key == Qt::Key_Escape) {
+                if (toPlainText() != "") {
+                    setPlainText("");
+                    return;
+                }
+            }
         }
         if (m & Qt::AltModifier) {
             m &= ~Qt::AltModifier;
@@ -94,11 +77,56 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
         return;
     }
 
+    if (m == Qt::ControlModifier) {
+        if (key == Qt::Key_P) {
+            emit prevEmoji();
+            return;
+        }
+        if (key == Qt::Key_N) {
+            emit nextEmoji();
+            return;
+        }
+        if (key == Qt::Key_V) {
+            emit nextPageEmoji();
+            return;
+        }
+    }
+
+    if (key == Qt::Key_Return || key == Qt::Key_Enter) {
+        if (m == 0) {
+            emit selectedEmoji();
+            return;
+        }
+        if (m == Qt::ShiftModifier) {
+            emit selectAllEmojis();
+            return;
+        }
+    }
+
+
+    if (m == Qt::AltModifier) {
+        if (key == Qt::Key_V) {
+            emit prevPageEmoji();
+            return;
+        }
+    }
+
+    if (m == Qt::AltModifier | Qt::ShiftModifier) {
+        if (key == Qt::Key_Less) {
+            emit firstEmoji();
+            return;
+        }
+        if (key == Qt::Key_Greater) {
+            emit lastEmoji();
+            return;
+        }
+    }
+
     for (size_t i = 0; i < sizeof(single_map) / sizeof(single_map[0]); i++) {
         if (m == single_map[i].mod_from)
         if (key == single_map[i].from && m == single_map[i].mod_from) {
             QKeyEvent nkey = QKeyEvent(e->type(), single_map[i].to, single_map[i].mod_to);
-            QTextEdit::keyPressEvent(&nkey);
+            QPlainTextEdit::keyPressEvent(&nkey);
             return;
         }
     }
@@ -106,54 +134,10 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
         if (key == multi_map[i].from && m == multi_map[i].mod_from) {
             for (int j = 0; multi_map[i].mto[j].to; j++) {
                 QKeyEvent nkey = QKeyEvent(e->type(), multi_map[i].mto[j].to, multi_map[i].mto[j].mod_to);
-                QTextEdit::keyPressEvent(&nkey);
+                QPlainTextEdit::keyPressEvent(&nkey);
             }
             return;
         }
     }
-    QTextEdit::keyPressEvent(e);
-}
-
-void QCellPhoneTextEdit::on_emojiSelected(const QString& emoji, const QString& emojiPath)
-{
-    document()->addResource(QTextDocument::ImageResource, QUrl(emoji), QImage(emojiPath));
-    textCursor().insertHtml(QString().sprintf("<img src='%s' width=16 height=16 />", qPrintable(emoji)));
-
-}
-
-QString QCellPhoneTextEdit::getMyText()
-{
-    QString html = toHtml();
-    QString text = toPlainText();
-    return replaceImagesWithEmoji(text, html);
-}
-
-QString QCellPhoneTextEdit::replaceImagesWithEmoji(const QString& text, const QString& html)
-{
-    if (! L) {
-        L = luaL_newstate();
-        luaL_openlibs(L);        /* opens the standard libraries */
-
-        int error = luaL_loadstring(L, "t1wrench = require('t1wrench')") || lua_pcall(L, 0, 0, 0);
-        if (error) {
-            prompt_user(QString().sprintf("Error loading emojis: %s", lua_tolstring(L, -1, NULL)));
-            lua_close(L);
-            L = NULL;
-            return text;
-        }
-    }
-
-    lua_getglobal(L, "t1wrench");
-    lua_getfield(L, -1, "replace_img_with_emoji");
-    lua_pushstring(L, text.toUtf8().constData());
-    lua_pushstring(L, html.toUtf8().constData());
-    int error = lua_pcall(L, 2, 1, 0);
-    if (error) {
-        prompt_user(QString().sprintf("Error img -> emojis: %s", lua_tolstring(L, -1, NULL)));
-        L = NULL;
-        return text;
-    }
-    QString res = QString::fromUtf8(lua_tolstring(L, -1, NULL));
-    lua_settop(L, 0);
-    return res;
+    QPlainTextEdit::keyPressEvent(e);
 }
