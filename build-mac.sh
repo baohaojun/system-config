@@ -14,12 +14,6 @@ if test $(uname) = Linux; then
 
     if test "$DOING_T1WRENCH_RELEASE"; then
         rsync bhj-mac:$(up .)/T1Wrench.app ../T1Wrench-macos/ -av
-        (
-            cd ../T1Wrench-macos/
-            zip -r ~/tmp/T1Wrench-macos.zip T1Wrench.app
-        )
-        smb-push ~/tmp/T1Wrench-macos.zip ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
-        rsync ~/tmp/T1Wrench-macos.zip rem:/var/www/html/baohaojun/ -v
     fi
 else
     set -e

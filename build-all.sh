@@ -44,29 +44,34 @@ wait
 
 if test ! -e ~/tmp/build-t1-windows/build-ok; then
     die "Windows build failed"
-else
-    (
-        cd ~/src/github/T1Wrench-windows
-        ./update-md5s.sh
-    )
 fi
 
 if test ! -e ~/tmp/build-t1/build-ok; then
     die "Linux build failed"
-else
-    (
-        cd ~/src/github/T1Wrench-linux
-        ./update-md5s.sh
-    )
 fi
 
 if test ! -e ~/tmp/build-t1-mac/build-ok; then
     die "Mac build failed"
-else
-    (
-        cd ~/src/github/T1Wrench-macos/T1Wrench.app/Contents/MacOS/
-        ./update-md5s.sh
-    )
 fi
+
+for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Contents/MacOS/ ~/tmp/build-t1-windows; do
+    (
+        cd $x
+        ./update-md5s.sh
+        cd $(dirname $(lookup-file -e .git))
+        dir=$(basename $PWD)
+        cd ..
+
+        file=~/tmp/$dir.zip
+        if test "$dir" = T1Wrench-linux; then
+            file=~/tmp/$dir.tgz
+            tar czfv $file $dir --exclude-vcs
+        else
+            zip -r $file $dir -x .git
+        fi
+        smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
+        rsync $file rem:/var/www/html/baohaojun/ -v
+    )
+done
 
 echo all done
