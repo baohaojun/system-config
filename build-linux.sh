@@ -8,7 +8,7 @@ fi
 
 mkdir -p $build_dir
 rsync * $build_dir -av --exclude=release
-rsync release $build_dir -av -L --exclude=*/adb_usb_driver_smartisan
+rsync release/ $build_dir -av -L --exclude=adb_usb_driver_smartisan
 
 oldpwd=$PWD
 cd $build_dir
@@ -20,7 +20,7 @@ qtchooser -qt=5 -run-tool=qmake && make -j8 | perl -npe "s|$PWD|$oldpwd|g"
 relative-link -f $oldpwd/release/* .
 relative-link -f $oldpwd/*.lua .
 mkdir -p ~/src/github/T1Wrench-linux
-rsync -L T1Wrench $oldpwd/release/* $oldpwd/*.lua ~/src/github/T1Wrench-linux --exclude=*/adb_usb_driver_smartisan -av
+command rsync -L T1Wrench $oldpwd/release/ $oldpwd/*.lua ~/src/github/T1Wrench-linux --exclude=adb_usb_driver_smartisan -av
 rsync -L $(which the-true-adb) ~/src/github/T1Wrench-linux
 (
     cd ~/src/github/T1Wrench-linux
