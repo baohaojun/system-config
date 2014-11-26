@@ -1,6 +1,7 @@
 #!/bin/bash
 cd $(dirname $(readlink -f $0))
 export DOING_T1WRENCH_RELEASE=true
+export ReleaseVersion="$1"
 
 set -e
 
@@ -43,14 +44,29 @@ wait
 
 if test ! -e ~/tmp/build-t1-windows/build-ok; then
     die "Windows build failed"
+else
+    (
+        cd ~/src/github/T1Wrench-windows
+        ./update-md5s.sh
+    )
 fi
 
 if test ! -e ~/tmp/build-t1/build-ok; then
     die "Linux build failed"
+else
+    (
+        cd ~/src/github/T1Wrench-linux
+        ./update-md5s.sh
+    )
 fi
 
 if test ! -e ~/tmp/build-t1-mac/build-ok; then
     die "Mac build failed"
+else
+    (
+        cd ~/src/github/T1Wrench-macos
+        ./update-md5s.sh
+    )
 fi
 
 echo all done

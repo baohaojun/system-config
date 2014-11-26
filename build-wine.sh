@@ -42,10 +42,6 @@ function make-release-tgz()
     command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git
 
     if test "$DOING_T1WRENCH_RELEASE"; then
-        (
-            cd $release_dir
-            ./update-md5s.sh
-        )
         zip -r ${1:-T1Wrench-windows.zip} T1Wrench-windows
         smb-push ${1:-T1Wrench-windows.zip} ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
         rsync T1Wrench-windows.zip rem:/var/www/html/baohaojun/ -v
