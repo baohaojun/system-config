@@ -23,11 +23,6 @@ mkdir -p ~/src/github/T1Wrench-linux
 command rsync -L T1Wrench $oldpwd/release/ $oldpwd/*.lua ~/src/github/T1Wrench-linux --exclude=adb_usb_driver_smartisan -av
 rsync -L $(which the-true-adb) ~/src/github/T1Wrench-linux
 (
-    cd ~/src/github/T1Wrench-linux
-    ./update-md5s.sh
-)
-
-(
     if test "$DOING_T1WRENCH_RELEASE"; then
         (
             cd ~/src/github/
