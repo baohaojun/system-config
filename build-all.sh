@@ -64,7 +64,7 @@ if test ! -e ~/tmp/build-t1-mac/build-ok; then
     die "Mac build failed"
 else
     (
-        cd ~/src/github/T1Wrench-macos
+        cd ~/src/github/T1Wrench-macos/T1Wrench.app/Contents/MacOS/
         ./update-md5s.sh
     )
 fi

@@ -6,6 +6,7 @@ function die() {
     exit -1
 }
 
+(git co HEAD .start-upgrade.hash || true)>/dev/null 2>&1
 if test ! -e .start-upgrade.hash; then
     echo -n > t1wrench.md5
     exit
