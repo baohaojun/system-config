@@ -1,5 +1,8 @@
 #!/bin/bash
 mkdir -p ~/.logs
+if test "$#" = 1; then
+    set -- "$1" .
+fi
 function calc_relative() {
     local source=$(formal-path "$1")
     local target=$(formal-path "$2")

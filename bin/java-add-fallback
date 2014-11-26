@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 
 if test -e ~/etc/bash.d/cd_beagrep; then
     . ~/etc/bash.d/cd_beagrep
@@ -25,6 +25,10 @@ fi
 if [[ "$PWD" =~ /for-code-reading/ ]]; then
     set -- $(readlink -f "$1")
     cd_beagrep
+fi
+
+if [[ "$1" =~ /for-code-reading/ ]]; then
+    set -- $(cd "$1"; cd_beagrep >/dev/null 2>&1; pwd)
 fi
 
 this_db_dir=$(cd -P .; cd_beagrep; pwd)
