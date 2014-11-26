@@ -25,25 +25,27 @@ rsync -L $(which the-true-adb) ~/src/github/T1Wrench-linux
     cd ~/src/github/T1Wrench-linux
     ./update-md5s.sh
 )
+
 (
-    cd ~/src/github/
-    tar czfv ~/tmp/T1Wrench-linux.tgz T1Wrench-linux --exclude-vcs
-    cd ~/tmp
-    smb-push T1Wrench-linux.tgz ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
-    rsync T1Wrench-linux.tgz rem:/var/www/html/baohaojun/
-)&
+    if test "$DOING_T1WRENCH_RELEASE"; then
+        (
+            cd ~/src/github/
+            tar czfv ~/tmp/T1Wrench-linux.tgz T1Wrench-linux --exclude-vcs
+            cd ~/tmp
+            smb-push T1Wrench-linux.tgz ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
+            rsync T1Wrench-linux.tgz rem:/var/www/html/baohaojun/
+        )
+        exit
+    fi
 
-if test "$DOING_T1WRENCH_RELEASE"; then
-    exit
-fi
-
-if test $# = 1 -a "$1" = debug; then
-    ps-killall gdb.T1Wrench
-    myscr gdb ./T1Wrench
-    find-or-exec konsole
-else
-    mkfifo /tmp/build-linux.$$
-    myscr bash -c "./T1Wrench > /tmp/build-linux.$$ 2>&1"
-    cat /tmp/build-linux.$$
-    rm /tmp/build-linux.$$
-fi
+    if test $# = 1 -a "$1" = debug; then
+        ps-killall gdb.T1Wrench
+        myscr gdb ./T1Wrench
+        find-or-exec konsole
+    else
+        mkfifo /tmp/build-linux.$$
+        myscr bash -c "./T1Wrench > /tmp/build-linux.$$ 2>&1"
+        cat /tmp/build-linux.$$
+        rm /tmp/build-linux.$$
+    fi
+)

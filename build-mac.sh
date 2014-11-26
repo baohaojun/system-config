@@ -3,16 +3,19 @@ set -e
 cd $(dirname $(readlink -f $0))
 
 if test $(uname) = Linux; then
-    rsync --exclude=release -av * bhj-mac:$(up .)
+    rsync --exclude=release -av * bhj-mac:$(up $PWD)
     rsync release bhj-mac:$(up .) -av -L --exclude=*/adb_usb_driver_smartisan
     remote-cmd bhj-mac bash -c "export DOING_T1WRENCH_RELEASE=$DOING_T1WRENCH_RELEASE; set -x; cd $(up .); ./build-mac.sh"
-    rsync bhj-mac:$(up .)/T1Wrench.app ../T1Wrench-macos/ -av
-    (
-        cd ../T1Wrench-macos/
-        zip -r ~/tmp/T1Wrench-macos.zip T1Wrench.app
-    )
-    smb-push ~/tmp/T1Wrench-macos.zip ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
-    rsync ~/tmp/T1Wrench-macos.zip rem:/var/www/html/baohaojun/ -v
+
+    if test "$DOING_T1WRENCH_RELEASE"; then
+        rsync bhj-mac:$(up .)/T1Wrench.app ../T1Wrench-macos/ -av
+        (
+            cd ../T1Wrench-macos/
+            zip -r ~/tmp/T1Wrench-macos.zip T1Wrench.app
+        )
+        smb-push ~/tmp/T1Wrench-macos.zip ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
+        rsync ~/tmp/T1Wrench-macos.zip rem:/var/www/html/baohaojun/ -v
+    fi
 else
     set -e
     (

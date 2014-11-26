@@ -39,14 +39,24 @@ function make-release-tgz()
             --exclude="*.moc"
 
     set -x
-    (
+    command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git
+
+    if test "$DOING_T1WRENCH_RELEASE"; then
+        (
+            cd $release_dir
+            ./update-md5s.sh
+        )
         zip -r ${1:-T1Wrench-windows.zip} T1Wrench-windows
         smb-push ${1:-T1Wrench-windows.zip} ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
         rsync T1Wrench-windows.zip rem:/var/www/html/baohaojun/ -v
-    )&
-    command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git
+        exit
+    fi
     cd $release_dir
-    ./update-md5s.sh
+    rm build.bat -f
+    mkfifo /tmp/build-wine.$$
+    myscr bash -c "wine ./T1Wrench.exe >/tmp/build-wine.$$ 2>&1"
+    cat /tmp/build-wine.$$
+    rm /tmp/build-wine.$$
 }
 
 
@@ -93,16 +103,3 @@ set -x
 rm -f T1Wrench-windows
 ln -sf t1wrench-release T1Wrench-windows
 make-release-tgz
-
-if test "$DOING_T1WRENCH_RELEASE"; then
-    exit
-fi
-
-(
-    cd $release_dir
-    rm build.bat -f
-    mkfifo /tmp/build-wine.$$
-    myscr bash -c "wine ./T1Wrench.exe >/tmp/build-wine.$$ 2>&1"
-    cat /tmp/build-wine.$$
-    rm /tmp/build-wine.$$
-)

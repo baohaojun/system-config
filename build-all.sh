@@ -40,8 +40,14 @@ git submodule foreach 'git clean -xfd'
 
 wait
 
-if test -e ~/tmp/build-t1-windows/build-ok -a -e ~/tmp/build-t1/build-ok -a -e ~/tmp/build-t1-mac/build-ok; then
-    echo release done.
-else
-    echo release failed.
+if test ! -e ~/tmp/build-t1-windows/build-ok; then
+    die "Windows build failed"
+fi
+
+if test ! -e ~/tmp/build-t1/build-ok; then
+    die "Linux build failed"
+fi
+
+if test ! -e ~/tmp/build-t1-mac/build-ok; then
+    die "Mac build failed"
 fi
