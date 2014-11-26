@@ -3,7 +3,8 @@
 
 ((c++-mode
   (flycheck-mode . nil)
-  (ac-clang-flags "-I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent"
+  (ac-clang-flags "-DQT_BOOTSTRAPPED"
+                  "-I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent"
                   "-I/usr/include/x86_64-linux-gnu/qt5/QtCore"
                   "-I/usr/include/x86_64-linux-gnu/qt5/QtDBus"
                   "-I/usr/include/x86_64-linux-gnu/qt5/QtGui"

@@ -6,7 +6,8 @@ local picture_to_weixin_share, picture_to_weibo_share
 local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share
 local t1_config, check_phone
-local emoji_for_qq, debug
+local emoji_for_qq, debug, get_a_note
+local adb_get_last_pic
 -- variables
 local using_scroll_lock = true
 local using_adb_root
@@ -24,6 +25,7 @@ local brand = "smartisan"
 local model = "T1"
 local qq_emojis
 local sdk_version = 19
+local emojis, emojis_map
 
 
 
@@ -147,6 +149,14 @@ local function replace_img_with_emoji(text, html)
    local res = texts[1]
    for emoji in html:gmatch('img src="(.-)"') do
       debug("emoji is %s", emoji)
+      if not emojis then
+         emojis = require"emojis"
+         emojis_map = {}
+         for k, v in ipairs(emojis) do
+            emojis_map[v[3]] = v[1]
+         end
+      end
+      emoji = emojis_map[emoji] or "[unknown emoji]"
       res = res .. emoji
       if texts[n] then
          res = res .. texts[n]
@@ -195,7 +205,12 @@ local function adb_shell(cmds)
 end
 
 local function adb_pipe(cmds)
-   return adb_do(io.popen, cmds):read('*a'):gsub("\r", "")
+   local pipe = adb_do(io.popen, cmds)
+   if pipe then
+      return pipe:read('*a'):gsub("\r", "")
+   else
+      return ""
+   end
 end
 
 local function adb_focused_window()
@@ -308,7 +323,7 @@ local function adb_tap_mid_bot()
 end
 
 local function sleep(time)
-   adb_shell(("sleep %s || busybox sleep %s"):format(time, time))
+   adb_event(("sleep %s"):format(time))
 end
 
 local function weibo_text_share(window)
@@ -320,6 +335,10 @@ local function weibo_text_share(window)
          adb_tap_mid_bot()
       end
       sleep(.5)
+   end
+   local input_method, ime_height = adb_get_input_window_dump()
+   if ime_height ~= 0 then
+      adb_event("key back")
    end
    if using_scroll_lock then
       adb_event{'key', 'scroll_lock', 991, 166}
@@ -694,6 +713,71 @@ t1_config = function()
    end
 end
 
+get_a_note = function(text)
+   if text then
+      putclip(text)
+   end
+   adb_shell("am start -n com.smartisanos.notes/com.smartisanos.notes.NotesActivity")
+   adb_event(
+      [[
+            sleep .1
+            adb-tap-2 71 162
+            adb-tap 941 163
+   ]])
+   if using_scroll_lock then
+      adb_event("sleep .2 key scroll_lock sleep .2")
+   else
+      adb_event(
+         [[
+                adb-long-press-800 226 440
+                adb-tap 106 258
+         ]])
+      end
+   adb_event(
+      [[
+            adb-tap 934 155
+            adb-tap 984 149
+            adb-tap 409 1256
+            adb-tap 906 207
+   ]])
+   for i = 1, 10 do
+      local window = adb_focused_window()
+      if window == 'com.smartisanos.notes/com.smartisanos.notes.LongLengthWeiboActivity' then
+         sleep(.1 * i)
+      end
+   end
+   adb_event(
+      [[
+            adb-tap-2 71 162
+            adb-swipe-200 100 561 332 561
+            adb-tap 192 510
+            adb-key BACK
+   ]])
+   adb_get_last_pic('notes', true)
+end
+
+adb_get_last_pic = function(which, remove)
+   if which == 'notes' then
+      local dir = '/sdcard/smartisan/Notes'
+      local ls_out1 = adb_pipe("busybox ls -t -1 " .. dir)
+      ls_out1 = ls_out1:gsub("\n.*", "")
+      ls_out1 = ls_out1:gsub("\x1b.-m", "")
+      ls_out1 = ls_out1:gsub("%?+", "*")
+
+      if ls_out1:match('%*') then
+         ls_out1 = adb_pipe(('bash -c "ls %s/%s"'):format(dir, ls_out1))
+         ls_out1 = ls_out1:gsub("\n", "")
+         ls_out1 = ls_out1:gsub(".*/", "")
+      end
+
+      system{"adb", "pull", ("%s/%s"):format(dir, ls_out1), ("last-pic-%s.png"):format(which)}
+      if remove then
+         system{"adb", "shell", "rm", ("%s/%s"):format(dir, ls_out1)}
+         adb_shell(("am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture %s/%s"):format(dir, ls_out1))
+      end
+   end
+end
+
 t1_post = function(text) -- use weixin
    local window = adb_focused_window()
    if text then
@@ -907,8 +991,11 @@ local function picture_to_weixin_chat(pics, ...)
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
-         local events = post_button .. " sleep .1 " ..
-            "125 1285 sleep .1"
+         local events = post_button .. [[
+             sleep .1
+             adb-tap 125 1285
+             sleep .1
+         ]]
          adb_event(events)
          if adb_focused_window() ~= "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI" then
             adb_event("125 1285")
@@ -1094,6 +1181,8 @@ M.split = split
 M.replace_img_with_emoji = replace_img_with_emoji
 M.system = system
 M.debug = debug
+M.get_a_note = get_a_note
+M.adb_get_last_pic = adb_get_last_pic
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then

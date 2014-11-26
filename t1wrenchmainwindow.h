@@ -40,6 +40,8 @@ private slots:
 
     void on_tbThumbsUp_clicked();
 
+    void on_tbNotes_clicked();
+
 private:
     QSharedPointer<ScreenCapture> mScreenCapture;
     QSharedPointer<LuaExecuteThread> mLuaThread;

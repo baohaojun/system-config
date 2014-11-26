@@ -14,7 +14,7 @@ EmojiModel::EmojiModel(QObject *parent) :
 
     int error = luaL_loadstring(L, "emojis = require('emojis')") || lua_pcall(L, 0, 0, 0);
     if (error) {
-        qDebug() << "Error loading emojis: " << lua_tolstring(L, -1, NULL);
+        qDebug() << "Error loading emojis: " << QString::fromUtf8(lua_tolstring(L, -1, NULL));
         return;
     }
 
@@ -24,16 +24,16 @@ EmojiModel::EmojiModel(QObject *parent) :
         lua_rawgeti(L, -1, i);
 
         lua_rawgeti(L, -1, 1);
-        QString text = lua_tolstring(L, -1, NULL);
+        QString text = QString::fromUtf8(lua_tolstring(L, -1, NULL));
         lua_settop(L, -2);
 
         lua_rawgeti(L, -1, 2);
-        QString key = lua_tolstring(L, -1, NULL);
+        QString key = QString::fromUtf8(lua_tolstring(L, -1, NULL));
         key = key.sprintf("%04d %s", i, qPrintable(key));
         lua_settop(L, -2);
 
         lua_rawgeti(L, -1, 3);
-        QString pngPath = lua_tolstring(L, -1, NULL);
+        QString pngPath = QString::fromUtf8(lua_tolstring(L, -1, NULL));
         lua_settop(L, 1); // finished with this small table
 
         mEmojiTextMap[key] = text;
@@ -87,7 +87,7 @@ void EmojiModel::setFilter(QString filter)
     lua_pushstring(L, mFilter.toUtf8().constData());
     error = lua_pcall(L, 2, 1, 0);
     if (error) {
-        qDebug() << "Error calling split:" << lua_tolstring(L, -1, NULL);
+        qDebug() << "Error calling split:" << QString::fromUtf8(lua_tolstring(L, -1, NULL));
         return;
     }
     int nOldRows = mFilteredKeys.length();
@@ -97,7 +97,7 @@ void EmojiModel::setFilter(QString filter)
     int n = luaL_len(L, -1);
     for (int i = 1; i <= n; i++) {
         lua_rawgeti(L, -1, i);
-        split << lua_tolstring(L, -1, NULL);
+        split << QString::fromUtf8(lua_tolstring(L, -1, NULL));
         lua_settop(L, -2);
     }
     lua_settop(L, 0);

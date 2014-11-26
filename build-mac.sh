@@ -3,7 +3,8 @@ set -e
 cd $(dirname $(readlink -f $0))
 
 if test $(uname) = Linux; then
-    psync bhj-mac .
+    rsync --exclude=release -av * bhj-mac:$(up .)
+    rsync release bhj-mac:$(up .) -av -L --exclude=*/adb_usb_driver_smartisan
     remote-cmd bhj-mac bash -c "set -x; cd $(up .); ./build-mac.sh"
     rsync bhj-mac:$(up .)/T1Wrench.app ../T1Wrench-macos/ -av
     (
@@ -18,10 +19,10 @@ else
         cd lua
         make macosx
     )
-
     (
         cd luamd5
         make PLATFORM=macx
+    )
     rm T1Wrench.app -rf
     if test ! -d ~/Qt5 -a -d ~/Qt5.bak; then
         mv ~/Qt5.bak ~/Qt5

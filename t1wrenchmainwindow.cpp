@@ -158,6 +158,16 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
     }
 
     qDebug() << "Sharing text: " << text << " and pictures: " << mPictures;
+    if (ui->tbNotes->isChecked()) {
+        mLuaThread->addScript(QStringList() << "get_a_note" << text);
+        mPictures.insert(0, "last-pic-notes.png");
+        text = "#小扳手便笺#";
+        if (! ui->tbWeibo->isChecked() && ! ui->tbWeixin->isChecked()) {
+            mLuaThread->addScript((QStringList() << "t1_picture") + mPictures);
+            mPictures.clear();
+            return;
+        }
+    }
 
     bool share = 0;
     if (ui->tbWeibo->isChecked()) {
@@ -300,13 +310,19 @@ void T1WrenchMainWindow::on_tbEmoji_clicked()
         mEmojiDialog = QSharedPointer<DialogGetEmoji>(new DialogGetEmoji(this));
         connect(mEmojiDialog.data(), SIGNAL(emojiSelected(QString, QString)), ui->phoneTextEdit, SLOT(on_emojiSelected(QString, QString)));
     }
+    QPoint pos = mSettings.value("emoji-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
+    if (pos != QPoint(0, 0)) {
+        mEmojiDialog->move(pos);
+    }
     mEmojiDialog->exec();
+    pos = mEmojiDialog->pos();
+    mSettings.setValue("emoji-dialog-pos", QVariant(pos));
 }
 
 void T1WrenchMainWindow::on_tbWeibo_clicked()
 {
-    if (ui->tbWeibo->isChecked() && mSettings.value("firstTimeWeibo", 0).toInt() == 0) {
-        mSettings.setValue("firstTimeWeibo", 1);
+    if (ui->tbWeibo->isChecked() && mSettings.value("firstTimeWeibo", 1).toInt() == 1) {
+        mSettings.setValue("firstTimeWeibo", 0);
         prompt_user("您之后输入的文字和选择的照片、截图将被分享到微博");
     }
 
@@ -319,8 +335,8 @@ void T1WrenchMainWindow::on_tbWeibo_clicked()
 
 void T1WrenchMainWindow::on_tbWeixin_clicked()
 {
-    if (ui->tbWeixin->isChecked() && mSettings.value("firstTimeWeixin", 0).toInt() == 0) {
-        mSettings.setValue("firstTimeWeixin", 1);
+    if (ui->tbWeixin->isChecked() && mSettings.value("firstTimeWeixin", 1).toInt() == 1) {
+        mSettings.setValue("firstTimeWeixin", 0);
         prompt_user("您之后输入的文字和选择的照片、截图将被分享到微信朋友圈");
     }
     if (!ui->tbWeibo->isChecked() && !ui->tbWeixin->isChecked()) {
@@ -333,4 +349,12 @@ void T1WrenchMainWindow::on_tbThumbsUp_clicked()
 {
     mLuaThread->addScript(QStringList() << "t1_spread_it");
     mLuaThread->addScript(QStringList() << "t1_follow_me");
+}
+
+void T1WrenchMainWindow::on_tbNotes_clicked()
+{
+    if (ui->tbNotes->isChecked() && mSettings.value("firstTimeNotes", 1).toInt() == 1) {
+        mSettings.setValue("firstTimeNotes", 0);
+        prompt_user("您之后输入的文字将生成便笺再发送");
+    }
 }

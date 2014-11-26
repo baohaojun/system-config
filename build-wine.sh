@@ -1,9 +1,11 @@
 #!/bin/bash
 
+cd $(dirname $(readlink -f $0))
+
 function copy-dlls()
 {
     rsync windows/binaries/* ./release -v -L -r
-    rsync t1wrench.lua ./release -v
+    rsync *.lua  ./release -v
 
     req_dlls=( icudt52.dll icuin52.dll icuuc52.dll
                qt5network.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL
@@ -44,7 +46,7 @@ function make-release-tgz()
     )&
     command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git
     cd $release_dir
-    ./update-md5s.sh
+    ./update-md5s.sh&
 }
 
 
@@ -61,7 +63,8 @@ EOF
 
 build_dir=~/tmp/build-t1-windows
 release_dir=~/src/github/T1Wrench-windows
-rsync * $build_dir -av
+rsync * $build_dir -av --exclude release
+rsync release $build_dir -av -L
 cd $build_dir
 
 
@@ -94,5 +97,8 @@ make-release-tgz
 (
     cd $release_dir
     rm build.bat -f
-    command wine ./T1Wrench.exe&
+    mkfifo /tmp/build-wine.$$
+    myscr bash -c "wine ./T1Wrench.exe >/tmp/build-wine.$$ 2>&1"
+    cat /tmp/build-wine.$$
+    rm /tmp/build-wine.$$
 )

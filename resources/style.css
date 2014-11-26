@@ -1,5 +1,5 @@
 #tbPicture, #tbEmoji, #tbScreenCapture, #tbWeibo, #tbWeixin, #tbThumbsUp,
-#sendItPushButton, #configurePushButton {
+#sendItPushButton, #configurePushButton, #tbCommandLine, #tbNotes {
     qproperty-iconSize: 24px 24px;
 }
 
@@ -33,4 +33,12 @@
 
 #tbScreenCapture {
     qproperty-icon: url(skin:capture-screen.png);
+}
+
+#tbCommandLine {
+    qproperty-icon: url(skin:console.png);
+}
+
+#tbNotes {
+    qproperty-icon: url(skin:notes.png);
 }
