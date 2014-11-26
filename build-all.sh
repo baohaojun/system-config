@@ -34,6 +34,7 @@ git submodule foreach 'git clean -xfd'
 (
     ssh bhj-mac rm $(up) -rf
     rm ~/tmp/build-t1-mac -rf
+    mkdir ~/tmp/build-t1-mac -p
     ./build-mac.sh
     touch ~/tmp/build-t1-mac/build-ok
 )&
