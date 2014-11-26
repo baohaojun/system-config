@@ -1,5 +1,6 @@
 #!/bin/bash
 echo sawfish starting sub programs
+touch /tmp/bhj-notify-not-working
 
 if test -e ~/.fonts/symbol.ttf; then
     mv ~/.fonts/symbol.ttf ~/.cache/symbol.ttf.$$
