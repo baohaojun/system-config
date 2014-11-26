@@ -9,10 +9,15 @@ function die() {
     exit -1
 }
 
+. .gitx
+
 if git st -s | grep . -q; then
     git st -s
     die "Can't do release build when git not clean: see output above"
 fi
+
+git clean -xfd
+git submodule foreach 'git clean -xfd'
 
 (
     rm ~/tmp/build-t1-windows -rf
