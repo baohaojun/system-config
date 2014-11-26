@@ -22,12 +22,21 @@ mkdir -p ~/src/github/T1Wrench-linux
 rsync -L T1Wrench $oldpwd/release/* $oldpwd/*.lua ~/src/github/T1Wrench-linux
 rsync -L $(which the-true-adb) ~/src/github/T1Wrench-linux
 (
+    cd ~/src/github/T1Wrench-linux
+    ./update-md5s.sh
+)
+(
     cd ~/src/github/
     tar czfv ~/tmp/T1Wrench-linux.tgz T1Wrench-linux --exclude-vcs
     cd ~/tmp
     smb-push T1Wrench-linux.tgz ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
     rsync T1Wrench-linux.tgz rem:/var/www/html/baohaojun/
 )&
+
+if test "$DOING_T1WRENCH_RELEASE"; then
+    exit
+fi
+
 if test $# = 1 -a "$1" = debug; then
     ps-killall gdb.T1Wrench
     myscr gdb ./T1Wrench

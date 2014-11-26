@@ -46,7 +46,7 @@ function make-release-tgz()
     )&
     command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git
     cd $release_dir
-    ./update-md5s.sh&
+    ./update-md5s.sh
 }
 
 
@@ -93,6 +93,10 @@ set -x
 rm -f T1Wrench-windows
 ln -sf t1wrench-release T1Wrench-windows
 make-release-tgz
+
+if test "$DOING_T1WRENCH_RELEASE"; then
+    exit
+fi
 
 (
     cd $release_dir

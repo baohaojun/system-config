@@ -1,5 +1,6 @@
 #!/bin/bash
 if test ! -e .start-upgrade.hash; then
+    echo -n > t1wrench.md5
     exit
 fi
 find $(relative-path $(dirname $(lookup-file -e .git)) .) -type f -o -type l | sort -u | grep -P -v '/\.git/'|xargs bash -c '
