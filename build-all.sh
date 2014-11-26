@@ -52,3 +52,5 @@ fi
 if test ! -e ~/tmp/build-t1-mac/build-ok; then
     die "Mac build failed"
 fi
+
+echo all done
