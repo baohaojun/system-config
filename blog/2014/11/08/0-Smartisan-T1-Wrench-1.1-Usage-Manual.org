@@ -32,10 +32,13 @@
    #+BEGIN_SRC sh
    sudo apt-get install qt5-default
    sudo apt-get install liblua5.2-0
+   sudo apt-get install lua-md5
    #+END_SRC
 
-   如果你在用老版本的Ubuntu的话（比如12.04，代号precise），你需要上网
-   查一下怎么装这两个包。lua的话自己下载源代码编一个都很简单，
+   (最后一条是要升级T1Wrench时才需要的，平时运行小扳手并不需要）。
+
+   如果你在用老版本的Ubuntu Linux的话（比如12.04，代号precise），你需
+   要上网查一下怎么装这两个包。lua的话自己下载源代码编一个都很简单，
    Windows/Mac下的小扳手的Lua就都是我自己build的。
 
 ** 使用
