@@ -1,7 +1,7 @@
 #!/bin/bash
 cat <<EOF
 ; {%emacs-lisp%}
-(let (org-html-style-include-default
+(let (old-org-html-style-include-default
       old-org-export-with-toc
       org-export-with-timestamps
       org-export-time-stamp-file

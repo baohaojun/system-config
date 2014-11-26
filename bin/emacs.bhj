@@ -16,4 +16,9 @@ GTK_IM_MODULE= XMODIFIERS= XIM= $EMACS -mm "$@"&
 while ! emacsclient -e '(message "hello")' | grep -q '"hello"'; do
     sleep 1
 done
+emacsclient -e '(progn
+                   (setenv "GTK_IM_MODULE" "'$GTK_IM_MODULE'")
+                   (setenv "XMODIFIERS" "'$XMODIFIERS'")
+                   (setenv "XIM" "'$XIM'"))'
+
 sawfish-re-maximize

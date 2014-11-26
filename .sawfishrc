@@ -15,7 +15,7 @@
 (setq bhj-is-gnome? nil)
 (setq warp-to-window-offset 50
       warp-to-window-enabled t)
-(setq emacs-style-window-class-re "rdesktop|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
+(setq emacs-style-window-class-re "rdesktop|t1wrench|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
 (setq s-h-keymap (make-keymap)
       print-keymap (make-keymap)
       c-x-esc-keymap (make-keymap)
@@ -299,7 +299,9 @@
 (progn
   (add-hook 'focus-in-hook
           (lambda (w focus-mode)
-            (if (string-match emacs-style-window-class-re (window-class w) 0 t)
+            (if (or (string-match emacs-style-window-class-re (window-class w) 0 t)
+                    (and (string-match "Wine" (window-class w))
+                         (string-match emacs-style-window-class-re (translate-string (substring (caddr (get-x-property w (quote WM_CLASS))) 0) "|") 0 t)))
                 (undo-global-remap)
               (do-global-remap))
             (if (string-match gnome-windows-re (window-class w) 0 t)
