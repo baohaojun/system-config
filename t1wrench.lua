@@ -957,12 +957,13 @@ picture_to_weibo_share = function(pics, ...)
       local target = pics[i]
 
       if i == 1 then
-         adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity; sleep .5 || busybox sleep .5")
+         adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity")
+         adb_event("sleep .5")
          local input_method, ime_height = adb_get_input_window_dump()
          if ime_height ~= 0 then
             adb_event("key back")
          end
-         adb_event("sleep .5 adb-tap 62 1843 sleep 2")
+         adb_event("sleep 1 adb-tap 62 1843 sleep 2")
       end
 
       local pic_share_buttons = {

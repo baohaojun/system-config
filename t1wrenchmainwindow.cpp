@@ -29,6 +29,7 @@
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QSharedPointer>
 #include "dialoggetemoji.h"
+#include <QInputDialog>
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -166,6 +167,14 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
             mLuaThread->addScript((QStringList() << "t1_picture") + mPictures);
             mPictures.clear();
             return;
+        } else {
+            bool ok = false;
+            text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                         tr("请输入分享文字内容"), QLineEdit::Normal,
+                                         text, &ok);
+            if (!ok) {
+                text = "#小扳手便笺#";
+            }
         }
     }
 
