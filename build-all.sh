@@ -39,4 +39,9 @@ git submodule foreach 'git clean -xfd'
 )&
 
 wait
-echo release done.
+
+if test -e ~/tmp/build-t1-windows/build-ok -a -e ~/tmp/build-t1/build-ok -a -e ~/tmp/build-t1-mac/build-ok; then
+    echo release done.
+else
+    echo release failed.
+fi
