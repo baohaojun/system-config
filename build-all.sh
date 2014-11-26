@@ -54,7 +54,7 @@ if test ! -e ~/tmp/build-t1-mac/build-ok; then
     die "Mac build failed"
 fi
 
-for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Contents/MacOS/ ~/tmp/build-t1-windows; do
+for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Contents/MacOS/ ~/src/github/T1Wrench-windows; do
     (
         cd $x
         ./update-md5s.sh
@@ -67,7 +67,7 @@ for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Co
             file=~/tmp/$dir.tgz
             tar czfv $file $dir --exclude-vcs
         else
-            zip -r $file $dir -x .git
+            zip -r $file $dir -x '*/.git/*'
         fi
         smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
         rsync $file rem:/var/www/html/baohaojun/ -v
