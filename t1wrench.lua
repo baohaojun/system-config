@@ -805,7 +805,8 @@ t1_post = function(text) -- use weixin
       return
    elseif window == "com.android.email/com.android.mail.compose.ComposeActivity" or
       window == "com.android.email/com.android.email.activity.Welcome" or
-   window == "com.android.email/com.android.email2.ui.MailActivityEmail" then
+      window == "com.android.email/com.android.email2.ui.MailActivityEmail" or
+   window == "com.android.email/com.android.email.activity.ComposeActivityEmail" then
       t1_mail(window)
       return
    elseif string.match(window, "^PopupWindow:") then
