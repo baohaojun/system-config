@@ -276,6 +276,13 @@ might be bad."
     (call-interactively 'bhj-occur)))
 
 ;;;###autoload
+(defun bhj-occur-logcat-errors ()
+  (interactive)
+  ;;; xxxxxxxxxxxxxx Please note! do not use up case here!!! xxxxxxxxxxxxxxx ;;;
+  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|method does not override or implement\\|syntax error\\|invalid argument\\|circular.*dropped\\|no rule to\\|[0-9]elapsed \\|cannot find symbol\\| : error \\|because of errors\\|[0-9] error\\b\\|undefined reference to\\|fatal exception"))
+    (call-interactively 'bhj-occur)))
+
+;;;###autoload
 (defun bhj-occur-merge-conflicts ()
   (interactive)
   (let ((bhj-occur-regexp "<<<<<<<\\|>>>>>>\\|^=======$"))
@@ -711,10 +718,9 @@ might be bad."
             (end-of-line)
             (setq grep-output (cdr (assoc-string start-line-str java-bt-tag-alist)))
             (unless grep-output
-              (setq grep-output (progn
-                                  (shell-command (concat "java-trace-grep " (shell-quote-argument (ajoke--current-line))))
-                                  (with-current-buffer "*Shell Command Output*"
-                                    (buffer-substring-no-properties (point-min) (point-max)))))
+              (setq grep-output (shell-command-to-string (concat "java-trace-grep " (shell-quote-argument (ajoke--current-line)))))
+              (when (string-equal grep-output "")
+                (setq grep-output (shell-command-to-string (concat "cd ~/src/android/; java-trace-grep " (shell-quote-argument (ajoke--current-line))))))
               (setq java-bt-tag-alist (cons (cons start-line-str grep-output) java-bt-tag-alist))))
 
         (when (string-match "^\\(.*\\):\\([0-9]+\\):" grep-output)

@@ -43,6 +43,7 @@ fi
 export USB0=eth1
 if ! ifconfig $USB0 >/dev/null 2>&1 ; then
     if ifconfig usb0 >/dev/null 2>&1 ; then
+        echo change it to usb0
         USB0=usb0
     else
         USB0=eth1

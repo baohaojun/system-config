@@ -11,8 +11,12 @@ if test $# != 1; then
 fi
 list=$(git rev-list HEAD ^$1|reverse)
 
-git co $1
-git commit --amend
+git reset --hard $1
+if test $(basename $0) = git-rework-change; then
+    start_recursive_shell
+fi
+
+git commit --amend --allow-empty
 
 for x in $list; do
     git cherry-pick $x

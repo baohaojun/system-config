@@ -53,7 +53,8 @@ if ! is-tty-io; then
         set -e
         flock -n 9
         mkfifo ~/tmp/ask-to-sync-org.$$
-        xfce4-terminal --maximize -e "bash -c '(trap \"exit 0\" SIGINT; ask-to-sync-org) || read -p \"ask-to-sync-org failed, press Enter to continue.. \"; echo done > ~/tmp/ask-to-sync-org.$$'" &
+        find-or-exec konsole
+        myscr bash -c "bash -c '(trap \"exit 0\" SIGINT; ask-to-sync-org) || read -p \"ask-to-sync-org failed, press Enter to continue.. \"; echo done > ~/tmp/ask-to-sync-org.$$'" &
         cat ~/tmp/ask-to-sync-org.$$
         rm ~/tmp/ask-to-sync-org.$$
     ) 9> ~/.logs/ask-to-sync-org.term.lock

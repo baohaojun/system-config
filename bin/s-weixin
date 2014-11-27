@@ -7,7 +7,8 @@ x=$(select-output-line -o '
         done|sort -u
         echo do-work
         echo adb-browse-with-pc
+        echo find-or-exec T1Wrench T1Wrench
     ) | uniq-even-non-ajacent '
 )
 
-"$x" "$@"&
+$x "$@"&

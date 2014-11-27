@@ -1,6 +1,6 @@
 #!/bin/bash
 . ~/.renew-xauth >/dev/null 2>&1
-if ! test -e "$XAUTHORITY"; then
+if ! test "$DBUS_SESSION_BUS_ADDRESS"; then
     exit 0;
 fi
 
