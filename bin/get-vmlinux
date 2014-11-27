@@ -5,4 +5,5 @@ if test -e DDRCS0.BIN; then
 fi
 vmversion=$(echo -n "$vmversion"|urlify|perl -npe 's/ /+/g')
 vmlinux=$(curl "http://172.16.0.251/cgi-bin/vmlinux-lookup.cgi?version=$vmversion"|pn 2|perl -npe 's!\\!/!g; s!//!$ENV{HOME}/smb/!')
+vmlinux=${vmlinux/172.16.2.16/share.smartisan.cn}
 smb-pull $vmlinux .
