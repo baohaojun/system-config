@@ -4,8 +4,9 @@ if test "$(uname)" = Linux; then
         cd ~/bin
         psync pub do-flashing
     )
-    set -- $(printf %q "$(swp)")
+    set -- $(printf %q "$(swp|perl -npe 's/share.smartisan.cn/172.16.2.16/')")
     ssh-exp pub "do-flashing $@";
+    find-or-exec rdesktop
 else
     set -x
     cd /d/share2/RDL_Automation_v2.10.6.0614

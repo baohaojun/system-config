@@ -9,9 +9,15 @@ if test -d  /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && ask-if-not-bhj "Make
     sudo bash -c "echo $USER ALL=NOPASSWD: ALL > /etc/sudoers.d/$USER; chmod 440 /etc/sudoers.d/$USER"
 fi
 
-if ! which git; then
-    sudo apt-get install -y git
+if ! which sudo; then
+    function sudo() {
+        "$@"
+    }
 fi
+if ! which git; then
+    sudo apt-get install -y git || /cygdrive/c/setup-x86_64.exe -q -n -d -A -P git
+fi
+
 
 mkdir -p ~/Downloads/forever
 
@@ -21,7 +27,7 @@ done
 
 mkdir -p ~/.logs
 
-if test ! -e ~/.logs/offline-is-unstable; then
+if which sudo && test ! -e ~/.logs/offline-is-unstable; then
     sudo apt-get install -t unstable offlineimap
     touch ~/.logs/offline-is-unstable
 fi

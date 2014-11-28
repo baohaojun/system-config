@@ -43,6 +43,11 @@ log_in_dest=$(
 
 need_die=0
 for x in $commit_in_src; do
+    if ! git diff $x $x^ | grep -q .; then
+        echo "$PWD commit $x is empty"
+        continue
+    fi
+
     cid=$(gerrit-change-id $x);
     if test -z "$cid"; then
         echo "$PWD commit $x has no change id ($(git log -1 --format='%ae %ce : %s' $x))";
@@ -52,7 +57,7 @@ for x in $commit_in_src; do
         need_die=1
         continue
     fi
-    
+
     if ! echo "$log_in_dest" | grep -q -e "Change-Id: $cid$"; then
         echo "$PWD commit $x cid $cid not found in $dest ($(git log -1 --format='%ae %ce : %s' $x))"
         if test "$verbose" != false; then
@@ -66,6 +71,3 @@ if test $need_die = 1; then
     exit -1
 fi
 true
-
-
-

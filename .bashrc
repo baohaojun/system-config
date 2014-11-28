@@ -21,7 +21,10 @@ else
     if test -d ~/etc/path/$(uname)-$(uname -m); then
         rm -rf ~/external/etc/overide/
         export PATH=$(
-            builtin cd ~/system-config/etc/path/$(uname)-$(uname -m);
+            builtin cd ~/system-config/etc/path/$(uname)-$(uname -m) ||
+                builtin cd ~/system-config/etc/path/$(uname) ||
+                builtin cd ~/system-config/etc/path/$(uname|sed -e 's/-.*//') ||
+                builtin cd ~/system-config/etc/path/$(uname|sed -e 's/_.*//')
             (
                 for x in $(for d in *; do echo $d; done|sort -n); do
                     readlink -m -- $x;

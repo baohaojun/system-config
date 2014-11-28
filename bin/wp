@@ -3,6 +3,15 @@
 
 if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are being executed
 
+    function _cygwin_share_path() {
+        FILE=$1
+        host=$(echo "$FILE" | perl -npe 's/.*?:server=(.*?),.*/$1/')
+        share=$(echo "$FILE" | perl -npe 's!.*?,share=(.*?)/.*!$1!')
+        path=$(echo "$FILE" | perl -npe 's!.*?,share=.*?/!!')
+        FILE=//$host/$share/$path
+        echo "$FILE"
+    }
+
 # redefine these functions
     function swp()
     {
@@ -18,6 +27,10 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
             fi
             path=$(echo "$FILE" | perl -npe 's,^..(.*?)(\\.*),$2,')
             FILE=$(printf '\\\\%s%s' $(ip-or-name $host) "$path")$isdir
+        elif [[ "$FILE" =~ /smb-share:server ]]; then
+             #smb-share:server=share.smartisan.cn,share=sanfranciscobuild
+            FILE=$(_cygwin_share_path "$FILE")
+            FILE=$(echo "$FILE" | perl -npe 's!/!\\!g')
         elif [[ "$FILE" =~ ^// ]]; then
             FILE=`echo "$FILE"|perl -npe 's,/,\\\\,g'`
         else
@@ -30,6 +43,9 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     {
         if [[ "$FILE" =~ ~/smb/ ]]; then
             FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,smb://,g'`
+        elif [[ "$FILE" =~ /smb-share:server ]]; then
+            FILE=$(_cygwin_share_path "$FILE")
+            FILE=smb:$FILE
         else
             FILE=z:$FILE
         fi

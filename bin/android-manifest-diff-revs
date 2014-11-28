@@ -33,8 +33,10 @@ for my $x1 (keys %f1) {
     next;
   }
   if (exists($f2{$x1})) {
-    chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
-    chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f2));
+      chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
+      chomp(my $up1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@upstream $f1));
+      chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f2));
+      chomp(my $up2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@upstream $f2));
     if ($rev1) {
       $rev1 = "revision=\"$rev1\"";
     }
@@ -42,7 +44,7 @@ for my $x1 (keys %f1) {
     if ($rev2) {
       $rev2 = "revision=\"$rev2\"";
     }
-    printf('(cd %s; export REV1=%s; export REV2=%s; bash)' . "\n", $x1, $f1{$x1}, $f2{$x1});
+      printf('(cd %s; export REV1=%s; export REV2=%s; export UP1=%s; export UP2=%s; bash)' . "\n", $x1, $f1{$x1}, $f2{$x1}, $up1, $up2) if $x1;
   } else {
     chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
     if ($rev1) {

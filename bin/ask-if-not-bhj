@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if test $USER = bhj; then
+if test "$USER" = bhj; then
    true;
    exit
 fi
