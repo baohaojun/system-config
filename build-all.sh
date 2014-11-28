@@ -17,6 +17,11 @@ if git st -s | grep . -q; then
     die "Can't do release build when git not clean: see output above"
 fi
 
+if is-tty-io; then
+    src_version=$(cat .src-version.txt)
+    git log $src_version..HEAD
+fi
+
 git clean -xfd
 git submodule foreach 'git clean -xfd'
 

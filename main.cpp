@@ -27,7 +27,9 @@ using namespace std;
 #ifdef Q_OS_WIN32
 void setenv(const char* name, const char* val, int overide)
 {
-    _putenv_s(name, val);
+    QString str;
+    str.sprintf("%s=%s", name, val);
+    _putenv(qPrintable(str));
 }
 #endif
 
