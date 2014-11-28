@@ -18,7 +18,7 @@ if git st -s | grep . -q; then
 fi
 
 if is-tty-io; then
-    src_version=$(cat .src-version.txt)
+    src_version=$(cd ~/src/github/T1Wrench-linux; cat .src-version.txt)
     git log $src_version..HEAD
 fi
 
