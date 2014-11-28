@@ -20,6 +20,7 @@ fi
 if is-tty-io; then
     src_version=$(cd ~/src/github/T1Wrench-linux; cat .src-version.txt)
     git log $src_version..HEAD
+    yes-or-no-p -y "Continue?"
 fi
 
 git clean -xfd
