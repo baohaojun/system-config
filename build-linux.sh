@@ -26,7 +26,7 @@ relative-link -f $oldpwd/release/* .
 relative-link -f $oldpwd/*.lua .
 mkdir -p ~/src/github/T1Wrench-linux
 command rsync -L T1Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/T1Wrench-linux --exclude=adb_usb_driver_smartisan -av
-rsync -L $(which the-true-adb) ~/src/github/T1Wrench-linux
+command rsync -L $oldpwd/linux/binaries/* ~/src/github/T1Wrench-linux -av
 (
     if test "$DOING_T1WRENCH_RELEASE"; then
         exit
