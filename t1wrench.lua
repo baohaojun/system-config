@@ -206,11 +206,14 @@ end
 
 local function adb_pipe(cmds)
    local pipe = adb_do(io.popen, cmds)
-   if pipe then
-      return pipe:read('*a'):gsub("\r", "")
-   else
+   if not pipe then
       return ""
    end
+   local out = pipe:read('*a')
+   if not out then
+      return ""
+   end
+   return out:gsub("\r", "")
 end
 
 local function adb_focused_window()
