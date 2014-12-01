@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[小扳手2.0版使用手册]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html"/>
+    <updated>2014-17-01T23:12:43+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[更新Kernel以解决opengl程序在休眠后无法运行的问题]]></title>
     <link href="http://baohaojun.github.io/blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.html"/>
     <updated>2014-11-23T23:20:34+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/09/26/0-WYPIWYG.html"/>
     <updated>2014-09-26T20:49:24+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/09/26/0-WYPIWYG.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Emoji]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/09/05/0-Emoji.html"/>
-    <updated>2014-09-05T16:22:55+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/09/05/0-Emoji.html</id>
   </entry>
 </feed>

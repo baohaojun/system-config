@@ -1,0 +1,194 @@
+#+title: 小扳手2.0版使用手册
+# bhj-tags: tool
+* 小扳手是什么
+
+打过游戏没有？打游戏作过弊没有？兄弟我以前打真侍魂，霸王丸有一个绝招非常变态，叫天霸封神斩，在手柄上要按↘←↙↓↘→←↓↙·B+C 才能按出来，因为我们玩的是PC版，在键盘上就更不好按了。这时有人想出了一个很妙的主意：用按键小精灵！以后只要按一个键就能发天霸封神斩了，这就是作弊啊！开挂啊！🃏
+
+小扳手就相当于是手机上的按键小精灵，你可以在PC上输入，然后通过手机发送！怎么样，是不是挂开得有点大了？想想你的朋友们都在手机上一个字一个字的打完再发朋友圈，你可以在PC键盘上运指如飞，打出一篇又一篇的美文，打得你的朋友们满地找牙，不亦乐乎！😄
+
+您可以看一下这个视频，小扳手在不停地帮我约陌陌呢！😻从视频里您应该可以看到，正常的人类控制手机是不可能做到这么精准的。😅
+
+告诉你一个秘密！在微信朋友圈里发文章，是不是大家发出来的文章都像浆糊一样糊在一块儿，根本没有分段的概念？你可以在输入的时候空一行——这看上去就是分了段了——但是没用的，微信会自动把你的空行给“吃”掉，发出来的东西还是糊在一起的。但是如果用小扳手，你就可以发出分段的文章！😸
+
+* 小扳手能干什么
+
+小扳手可厉害啦！它是锤子科技的一个热心员工（也就是区区在下🙇）专门为锤子科技出品的Smartisan T1手机开发的（其他厂商的手机有的也可以，在后面会说），主要功能有：
+
+1. 聊天
+
+- 陌陌（这个您已经看过视频了）
+- 微信
+- QQ
+- 微博私信
+- 旺旺
+- 其它聊天界面与陌陌类似的安卓应用，比如发短信
+
+其中，微信、QQ、微博私信这三个应用聊天的时候是支持发送PC上的图片和截屏的。
+
+2. 回复短信
+
+收到一条短信之后，在Smartisan T1手机上，您可以直接操作小扳手进行回复，非常简单：输入想要回复的内容，然后发送。这个是特别针对Smartisan T1手机做过适配的，精确的知道系统收到短信的界面应该怎么用“按键小精灵”进行操作。
+
+[[../../../../images/wrench-reply-sms.png][file:../../../../images/wrench-reply-sms.png]]
+
+3. 回复邮件
+
+这个也是针结Smartisan T1手机做过优化的。当您在用T1的邮件程序阅读一封邮件时，您可以直接操作小扳手回复邮件。默认它会群回，也就是点下图正中间的那个按钮，但如果您已经自己点了单独回复，那小扳手也可以很智能的识别出来哦。
+
+[[../../../../images/wrench-reply-email.png][file:../../../../images/wrench-reply-email.png]]
+
+4. 微博分享
+
+既能分享文字，也可以分享图片哦！👌
+
+5. 微信朋友圈分享
+
+跟上面一样，也可以同时分享文字和图片啊！👍
+
+6. 同时分享微博和朋友圈
+
+啊，你只要把两个分享的按钮都选中，再点发送，就可以同时分享到微博和微信朋友圈了！是不是太淘气了？🐵
+
+7. 丰富的表情
+
+- 所有iPhone手机上支持的表情（比如在iPhone上输入中文葡萄，会出现一串彩色的葡萄）。在小扳手上，你可以点表情按钮，然后输入grape再回车（抱歉，只能用英文）。
+- 所有微信/QQ系的表情
+- 大部分的微博表情，包括那些贱贱的浪小花的表情哦🌝
+8. 所有平台上都可以用
+
+- Windows
+- Mac
+- Linux
+
+* 怎么用小扳手
+
+很简单的，您只要下载、安装、运行、连接手机，就可以开始使用小扳手了🌞！
+** 下载
+首先，您需要下载小扳手。官方的地址是：
+
+- Windows :: https://github.com/baohaojun/T1Wrench/archive/T1Wrench-windows.zip
+- Mac :: https://github.com/baohaojun/T1Wrench/archive/T1Wrench-macos.zip
+- Linux :: https://github.com/baohaojun/T1Wrench/archive/T1Wrench-linux.zip
+
+但是，如果您觉得从github下载太慢的话，可以用新浪微盘的这几个地址下载目前的最新版：
+
+- Windows :: http://t.cn/Rzx06iM
+- Mac :: http://t.cn/Rzx0KnP
+- Linux :: http://t.cn/RzxfIMB
+
+（以后会考虑自动更新，github下载太慢，微盘共享太麻烦😿）
+** 安装
+
+小扳手是一款绿色软件，不需要安装，您只要解压就可以了哦！
+
+** 运行
+
+- Windows :: 解压之后双击T1Wrench.exe开始运行
+- Mac :: 解压之后双击T1Wrench.app开始运行
+- Linux :: 解压之后运行./T1Wrench
+
+** 连接手机
+
+这一步稍微麻烦一点，但是也只是第一次配置的时候有点麻烦，配好了就爽了，所以，加油哦！您都看到这儿了，再加把劲儿！马上就能用上这款神奇的软件了！😅
+
+小扳手启动之后，如果没有连上安卓手机，默认右下角的图标是红色的，意思是没有连接。下面以Windows系统为例，详细介绍一下怎么让红灯变成绿灯。
+
+[[../../../../images/wrench-not-connected.png][file:../../../../images/wrench-not-connected.png]]
+
+0. 确保手机已经开启USB调试
+
+    - 打开开发者模式
+
+      在手机的 “设置” 应用中，滑动到最下方，有一个 “关于本机” ，点进去之后，再滑动到最下方，有一个 “Smartisan OS 版本” ，连续不停地点按它，就能打开开发者模式，如图：
+
+      [[../../../../images/dev-mode.png][file:../../../../images/dev-mode.png]]
+
+    - 打开 USB 调试
+
+      回到上一级设置，进入 “关于本机” 上方的 “高级设置” ，这时您应该可以看到有一个 “开发者选项” （本来是没有的，上一步刚打开才有的）。点这个 “高级设置” 进入之后，打开 “USB 调试”，选 “确定”（见图）：
+
+      [[../../../../images/confirm-allow-adb.png][file:../../../../images/confirm-allow-adb.png]]
+
+1. 通过USB线连接PC和手机
+
+
+2. 安装驱动 （Mac和Linux系统不需要这一步）
+
+   如果您的手机以前没有安装过安卓USB调试驱动的话，这时候打开设备管理器，您会发现有一个打了未知的Android设备，见图：
+
+   [[../../../../images/android-eclamation-mark.png][file:../../../../images/android-eclamation-mark.png]]
+
+
+   这时候您可以从小扳手的解压目录下安装Smartisan T1的USB调试驱动，下面用几张图详细的描述如何操作：
+
+   点击右键：
+
+   [[../../../../images/right-key-adb.png][file:../../../../images/right-key-adb.png]]
+
+   点击属性：
+
+   [[../../../../images/update-new-driver.png][file:../../../../images/update-new-driver.png]]
+
+   点击更新驱动程序：
+
+   [[../../../../images/browse-computer-adb-driver.png][file:../../../../images/browse-computer-adb-driver.png]]
+
+   点击浏览计算机以查找驱动程序软件：
+
+   [[../../../../images/where-adb-driver.png][file:../../../../images/where-adb-driver.png]]
+
+   输入您的T1Wrench解压的位置，并选中 “包括子文件夹” （如上图，我的T1Wrench放在了D:盘下面），点击下一步：
+
+   [[../../../../images/always-install-adb.png][file:../../../../images/always-install-adb.png]]
+
+   选择 “始终安装此驱动程序软件” ：
+
+   [[../../../../images/installing-adb-driver.png][file:../../../../images/installing-adb-driver.png]]
+
+   安装完毕后出现一个SUMSANG Android Phone（瀑布汗，这个不知道为什么会这样啊，好像跟这台PC上第一次安装USB调试驱动是一台三星手机有关，以后你再插随便什么手机都是SUMSANG的了💦）：
+
+   [[../../../../images/adb-driver-installed.png][file:../../../../images/adb-driver-installed.png]]
+
+3. 配置Smartisan T1手机的USB调试
+
+   下载 https://github.com/baohaojun/T1Wrench/raw/T1Wrench-windows/config-adb.bat 到小扳手解压目录下，双击 config-adb.bat 运行。
+
+   Mac和Linux的用户，请您在命令行上运行如下代码：
+
+   #+BEGIN_SRC
+   cd ~
+   mkdir -p .android
+   cd .android
+   echo 0x29a9 > adb_usb.ini
+   #+END_SRC
+
+4. 在手机上接受小扳手的连接请求
+
+   运行完上面的 config-adb.bat 之后，手机上应该会出现这样的一个对话框
+
+   [[../../../../images/allow-adb-on-phone.png][file:../../../../images/allow-adb-on-phone.png]]
+
+   勾选 “永远允许这台电脑” 并点击确定，小扳手的图标应该就会变绿了！㊗贺！
+5. 最后一步
+
+   慢着！高兴得有点早了😂。小扳手要正确运行，它会往您的手机里安装一个小应用（就像豌豆荚、91手机助手等软件一样，只不过小扳手的应用比起来要小得多）。因为Smartisan T1手机的安全设置的关系，这个应用安装一般都是会失败的，所以它会弹出一个这样的框来：
+
+   [[../../../../images/setclip-install-error.png][file:../../../../images/setclip-install-error.png]]
+
+   这时候您需要做如下操作：
+
+   点开 设置 ，选 “锁屏和安全” （如图）
+   [[../../../../images/adb-sec.png][file:../../../../images/adb-sec.png]]
+
+   选 “应用程序安装来源管理” （如图）
+
+   [[../../../../images/apk-source-sec.png][file:../../../../images/apk-source-sec.png]]
+
+   勾选上 “未知来源” ，选 “确定” （不用担心，我们之后再关掉这个不安全的选项）
+
+   [[../../../../images/adb-source-confirm.png][file:../../../../images/adb-source-confirm.png]]
+
+   重新插拔一下手机USB线，这回小扳手的绿灯亮起的时候应该就不会再弹出那个出错的框的（如果还弹的话，请您找我反馈这个问题，微博上@我也可以，私信也可以）。
+
+   然后，您就可以试着点一下小扳手上那个大拇指👍，给我点个赞啦！
+   最后，不要忘了把之前手机上点开的那个 “未知来源” 的选项给关掉，省得不小心被装了流氓软件😼。这个我觉得小米的系统做得不错，从USB上安装软件的时候会提示你同意/拒绝，这样用户就能有知情权了，虽然您可能会觉得说每次都提示会不会太麻烦了？

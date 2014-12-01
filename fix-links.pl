@@ -36,6 +36,10 @@ sub fix_link($)
                     last;
                 } else {
                     $base = $opt;
+                    if (-e "$ENV{PWD}/images/$base") {
+                        print "$ENV{PWD}/images/$base already exist, input again\n";
+                        next;
+                    }
                     last;
                 }
             }
