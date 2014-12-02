@@ -160,6 +160,10 @@
    mkdir -p .android
    cd .android
    echo 0x29a9 > adb_usb.ini
+   cd T1Wrench # 这里假设了你的小扳手就解压放在了~/T1Wrench下面，请你输入时换成自己解压的位置
+   cd $(dirname $(find . -name the-true-adb))
+   ./the-true-adb kill-server
+   ./the-true-adb devices
    #+END_SRC
 
 4. 在手机上接受小扳手的连接请求
