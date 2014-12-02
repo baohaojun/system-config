@@ -279,7 +279,7 @@ might be bad."
 (defun bhj-occur-logcat-errors ()
   (interactive)
   ;;; xxxxxxxxxxxxxx Please note! do not use up case here!!! xxxxxxxxxxxxxxx ;;;
-  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|method does not override or implement\\|syntax error\\|invalid argument\\|circular.*dropped\\|no rule to\\|[0-9]elapsed \\|cannot find symbol\\| : error \\|because of errors\\|[0-9] error\\b\\|undefined reference to\\|fatal exception"))
+  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|method does not override or implement\\|syntax error\\|invalid argument\\|circular.*dropped\\|no rule to\\|[0-9]elapsed \\|cannot find symbol\\| : error \\|because of errors\\|[0-9] error\\b\\|heap corruption detected by dlfree\\|undefined reference to\\|fatal exception"))
     (call-interactively 'bhj-occur)))
 
 ;;;###autoload

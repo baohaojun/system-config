@@ -4,7 +4,11 @@ my-adb shell screencap /sdcard/screen.png
 
 if test "$1"; then
     my-adb pull /sdcard/screen.png /tmp/android-screen.$$.png
-    convert /tmp/android-screen.$$.png "$1"
+    if test "${1##*.}" != png; then
+        convert /tmp/android-screen.$$.png "$1"
+    else
+        mv /tmp/android-screen.$$.png "$1"
+    fi
     rm /tmp/android-screen.$$.png
     exit
 fi

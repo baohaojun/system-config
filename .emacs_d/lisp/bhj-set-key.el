@@ -71,6 +71,7 @@
 (global-set-key (kbd "M-g f") 'grep-func-call)
 
 (global-set-key (kbd "M-s e") 'bhj-occur-make-errors)
+(global-set-key (kbd "M-s E") 'bhj-occur-logcat-errors)
 (global-set-key (kbd "M-s m") 'bhj-occur-merge-conflicts)
 
 (global-set-key (kbd "M-s x") 'compilation-minor-mode)

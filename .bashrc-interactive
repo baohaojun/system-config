@@ -102,6 +102,12 @@ function rcd() {
     fi
 }
 
+function cds() {
+    if test $# = 1 -a "${1:0:1}" = \\; then
+        cd_bhj smb://share.smar"t"isan.cn/share/baohaojun/"${1:1}"
+    fi
+}
+
 . ~/bin/my-rsync
 . ~/bin/.gitx
 

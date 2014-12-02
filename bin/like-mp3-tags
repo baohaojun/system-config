@@ -12,4 +12,6 @@ fi
 
 type=FRONT_COVER
 eyeD3 --remove-all "$mp3"
-eyeD3 --set-encoding=utf8 -t "$title" -a "$singer" -A "$album" --add-image="$png":$type "$mp3"
+cp "$mp3" "$mp3"-$$.mp3
+eyeD3 --set-encoding=utf8 -t "$title" -a "$singer" -A "$album" --add-image="$png":$type "$mp3"-$$.mp3
+mv "$mp3"-$$.mp3 "$mp3"

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+adb-screenshot ~/tmp/adb-screenshot-$$.png
+putclip "[[~/tmp/adb-screenshot-$$.png]]"
+sawfish-send-focused-window-event Shift-Insert

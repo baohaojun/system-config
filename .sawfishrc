@@ -629,6 +629,7 @@
 (bind-keys print-keymap "c" '(system "screenshot current&"))
 (bind-keys print-keymap "k" '(system "sawfish-get-screen-shot-whole&"))
 (bind-keys print-keymap "e" '(system "e /tmp/screen-exchange&"))
+(bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
 (bind-keys global-keymap "XF86Favorites" '(system "do-work&"))
 (bind-keys s-h-keymap "a" '(system "find-or-exec Okular&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))

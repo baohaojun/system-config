@@ -110,7 +110,7 @@ if ($do_dir) {
     $db_dir = "$ENV{HOME}/.cache/for-code-reading$do_dir";
 }
 
-$start_file = $working_file || $ENV{GTAGS_START_FILE} || ".";
+$start_file = $working_file || shell_quote($ENV{GTAGS_START_FILE} || ".");
 chomp($start_file = qx/readlink -f $start_file/);
 my $start_file_abs = $start_file;
 

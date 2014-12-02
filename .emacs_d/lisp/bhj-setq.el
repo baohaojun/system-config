@@ -9,6 +9,7 @@
                                 (".*\\.aidl$" . java-mode)
                                 (".*\\.mm?$" . objc-mode)
                                 (".*/tmp/.*\\.[0-9]" . text-mode)
+                                (".*/Downloads/.*\\.[0-9]" . text-mode)
                                 ("Kbuild*" . makefile-gmake-mode)
                                 (".*/java/.*\\.wiki$" . org-mode)
                                 ("makefile*" . makefile-gmake-mode))
