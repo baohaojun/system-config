@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <QtCore/QProcessEnvironment>
 #include <QtCore/QDebug>
+#include <QStandardPaths>
 
 using namespace std;
 
@@ -74,6 +75,15 @@ int main(int argc, char *argv[])
     //     }
     //     fclose(fp);
     // }
+
+#ifndef Q_OS_WIN32
+    QString home = QProcessEnvironment::systemEnvironment().value("HOME");
+    if (home.isEmpty()) {
+        home = QDir::homePath();
+        qDebug() << "home is " << home << " (from qt)";
+        setenv("HOME", qPrintable(home), 1);
+    }
+#endif
     T1WrenchMainWindow w;
     w.show();
 

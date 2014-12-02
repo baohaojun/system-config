@@ -7,7 +7,7 @@ local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share
 local t1_config, check_phone
 local emoji_for_qq, debug, get_a_note
-local adb_get_last_pic, is_windows
+local adb_get_last_pic
 -- variables
 local using_scroll_lock = true
 local using_adb_root
@@ -27,15 +27,6 @@ local qq_emojis
 local sdk_version = 19
 local emojis, emojis_map
 
-
-is_windows = function ()
-   if package.config:sub(1, 1) == '\\' then
-      return true
-   else
-      return false
-   end
-end
-
 local qq_emoji_table = {
    "微笑", "撇嘴", "色", "发呆", "得意", "流泪", "害羞", "闭嘴", "睡", "大哭",
    "尴尬", "发怒", "调皮", "呲牙", "惊讶", "难过", "酷", "冷汗", "抓狂", "吐",
@@ -54,7 +45,7 @@ for i in ipairs(qq_emoji_table) do
    qq_emoji_table[qq_emoji_table[i]] = i;
 end
 
-if is_windows() then
+if package.config:sub(1, 1) == '/' then
    shell_quote = function (str)
       return "'" .. string.gsub(str, "'", "'\\''") .. "'"
    end
@@ -652,11 +643,14 @@ t1_config = function()
    local uname = adb_pipe("uname || busybox uname")
    if not uname:match("Linux") then
       local home = os.getenv("HOME")
-      if is_windows() then
+      if is_windows then
          home = os.getenv("USERPROFILE")
       end
+      if not home or home == "" or home == "/" then
+         error("Your HOME environment variable is not set up correctly: '" .. home .. "'")
+      end
       local dot_android = home .. package.config:sub(1, 1) .. ".android"
-      if is_windows() then
+      if is_windows then
          system{"md", dot_android}
       else
          system{"mkdir", "-p", dot_android}
@@ -668,14 +662,18 @@ t1_config = function()
          done_vid = false
       else
          local ini_lines = ini_file:read("*a")
-         if not ini_lines:match("0x29a9") then
+         if ini_lines ~= "0x29a9\n" then
             done_vid = false
          end
-         ini_lines:close()
+         ini_file:close()
       end
       if not done_vid then
-         ini_file = io.open(ini, "a")
-         ini_file:write("\n0x29a9\n")
+         local err
+         ini_file, err = io.open(ini, "w")
+         if not ini_file then
+            error("can't open " .. ini .. ": " .. err)
+         end
+         ini_file:write("0x29a9\n")
          ini_file:close()
          system{"the-true-adb", "kill-server"}
          error("Done config for your adb devices, please try again")
