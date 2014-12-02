@@ -7,7 +7,7 @@ local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share
 local t1_config, check_phone
 local emoji_for_qq, debug, get_a_note
-local adb_get_last_pic
+local adb_get_last_pic, is_windows
 -- variables
 local using_scroll_lock = true
 local using_adb_root
@@ -28,6 +28,13 @@ local sdk_version = 19
 local emojis, emojis_map
 
 
+is_windows = function ()
+   if package.config:sub(1, 1) == '\\' then
+      return true
+   else
+      return false
+   end
+end
 
 local qq_emoji_table = {
    "微笑", "撇嘴", "色", "发呆", "得意", "流泪", "害羞", "闭嘴", "睡", "大哭",
@@ -47,7 +54,7 @@ for i in ipairs(qq_emoji_table) do
    qq_emoji_table[qq_emoji_table[i]] = i;
 end
 
-if package.config:sub(1, 1) == '/' then
+if is_windows() then
    shell_quote = function (str)
       return "'" .. string.gsub(str, "'", "'\\''") .. "'"
    end
@@ -644,7 +651,37 @@ t1_config = function()
    system("adb devices")
    local uname = adb_pipe("uname || busybox uname")
    if not uname:match("Linux") then
-      error("No phone found, can't set up.")
+      local home = os.getenv("HOME")
+      if is_windows() then
+         home = os.getenv("USERPROFILE")
+      end
+      local dot_android = home .. package.config:sub(1, 1) .. ".android"
+      if is_windows() then
+         system{"md", dot_android}
+      else
+         system{"mkdir", "-p", dot_android}
+      end
+      local ini = dot_android .. package.config:sub(1, 1) .. "adb_usb.ini"
+      local ini_file = io.open(ini, "r")
+      local done_vid = true
+      if not ini_file then
+         done_vid = false
+      else
+         local ini_lines = ini_file:read("*a")
+         if not ini_lines:match("0x29a9") then
+            done_vid = false
+         end
+         ini_lines:close()
+      end
+      if not done_vid then
+         ini_file = io.open(ini, "a")
+         ini_file:write("\n0x29a9\n")
+         ini_file:close()
+         system{"the-true-adb", "kill-server"}
+         error("Done config for your adb devices, please try again")
+      else
+         error("No phone found, can't set up, uname is: " .. uname)
+      end
    end
    local setclip_phone_md5 = adb_pipe("cat /sdcard/t1wrench-setclip.md5")
    local md5file = io.open("setclip.apk.md5")
