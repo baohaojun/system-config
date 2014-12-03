@@ -373,7 +373,7 @@ end
 adb_start_weixin_share = function(text_or_image)
    if using_adb_root then
       if text_or_image == 'text' then
-         adb_shell{"am", "start", "-n", "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI", "--ei", "sns_comment_type", "1"}
+         adb_shell("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI --ei sns_comment_type 1")
       elseif text_or_image == 'image' then
          adb_shell("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
       else
