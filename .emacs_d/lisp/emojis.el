@@ -1115,6 +1115,7 @@
   (unless emoji-names
     (setup-emoji-hash))
   (let ((key (completing-read "Enter your emoji: " emoji-names nil t nil 'emoji-history)))
+    (setq emoji-names (cons (find-if (lambda (n) (string= key n)) emoji-names) (delete-if (lambda (n) (string= key n)) emoji-names)))
     (insert (gethash key emoji-hash-table))))
 
 (provide 'emojis)

@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: setprop
+# key: setprop
+# --
+property_set("${1:service.adb.tcp.port}", ${2:value});

@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: getprop
+# key: getprop
+# --
+${1:char value[PROPERTY_VALUE_MAX+1];}
+int len = property_get("${2:ro.debuggable}", ${3:value}, ${4:""});

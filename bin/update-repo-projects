@@ -32,7 +32,10 @@ if test "$RUNNING_IN_CRON" = true; then
         cd ~/src/android
         if test -e .do-update -a ! -e .do-not-update; then
             repo-sync -n -j4
+        else
+            ~/bin/repo -n -j4 -c
         fi
+        repo-changes\?
     )
     set -- `locate -b -r '^\.repo$'|grep src | grep -v ics-autobuild`
     echo will update: "$@"

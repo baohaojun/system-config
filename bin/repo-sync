@@ -11,4 +11,4 @@ fi
 cd "$repo_dir";
 test -d manifests
 cd -
-repo sync "$@"
+~/bin/repo sync "$@" -c
