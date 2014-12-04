@@ -1,3 +1,27 @@
 #!/bin/bash
 
-ORIGINAL_MATCHER="$@" select-output-line -o -m 5 -- 'git branch -a|perl -npe "s/^ *\\*//"'
+
+
+## start generated code
+TEMP=$(getopt -o p: --long "prompt:"  -n $(basename $0) -- "$@")
+prompt="choose git branch"
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--prompt)
+            prompt=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+ORIGINAL_MATCHER="$@" select-output-line -p "$prompt" -o -m 5 -- 'git branch -a|perl -npe "s/^ *\\*//"'

@@ -1,9 +1,36 @@
 #!/bin/bash
 
+
+## start generated code
+TEMP=$(getopt -o r: --long "res:"  -n $(basename $0) -- "$@")
+res=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -r|--res)
+            res=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+
 xrandr_out=$(xrandr)
 lvds=$(echo "$xrandr_out" | grep '^LVDS' | pn 1)
 vga=$(echo "$xrandr_out" | grep '^VGA' | pn 1)
 hdmi=$(echo "$xrandr_out" | grep '^HDMI' | pn 1)
+if echo "$xrandr_out" | grep '^VGA\S* disconnected' -P; then
+    vga=$hdmi
+fi
 
 if test $(basename $0) = switch-to-vga; then
     xrandr --output $lvds --auto --below $vga
@@ -26,11 +53,13 @@ elif test $(basename $0) = switch-to-laptop; then
     xrandr --output $vga --off
 else
 
-    res=$(xrandr |
-        pn 1 |
-        grep -P '^\d'|
-        sort -n  -r |
-        perl -e '
+    res=$(
+        xrandr |
+            pn 1 |
+            uniq |
+            grep -P '^\d'|
+            sort -n  -r |
+            perl -e '
             @x = <>;
             $last = 0;
             for $res (@x) {
@@ -40,7 +69,7 @@ else
                 }
                 $last = $res
             }'
-    )
+       )
     xrandr --output $lvds --mode $res --same-as $vga
     xrandr --output $vga --mode $res
 fi

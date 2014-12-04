@@ -102,12 +102,12 @@ while true; do
     esac
 done
 
-if test "$body" -o $(basename $0) = gnus-mailx; then
-    true
-elif tty >/dev/null 2>&1; then
-    body=("$(get-stdin)")
-else
-    body=("$(cat)")
+if test -z "$body" -a $(basename $0) = mailx; then
+    if tty >/dev/null 2>&1; then
+        body=("$(get-stdin -p "input the mail body")")
+    else
+        body=("$(cat)")
+    fi
 fi
 
 test -z "${body[0]}" && body=("=")
@@ -163,7 +163,7 @@ $(
 )
 EOF
 
-emacsclient -d -e "
+    emacsclient -d -e "
 (progn
   (require 'gnus)
   (gnus-summary-mail-other-window)
@@ -171,42 +171,93 @@ emacsclient -d -e "
   (insert-file \"/tmp/mail.txt.$$\")
   (message-goto-body))"
 
-else
-    (
-
-        scheme=$(
-            if test $(get-about-me conn-type) = ssl; then
-                echo smtps://
-            fi
-        )
-        STARTTLS=
-        if test $(get-about-me conn-type) = starttls; then
-            STARTTLS="-S smtp-use-starttls=on"
-        fi
-
-
-        auth=$(get-authinfo $(get-about-me smtp) $(get-about-me mail))
-        printf "$the_mailx $send_as -S from=$(get-about-me mail) $STARTTLS -S smtp=$scheme$(get-about-me smtp):$(get-about-me smtp-port) -S smtp-auth-user=$(get-about-me mail) -S smtp-auth-password=%q " "$auth"
-        for y in attachments cc bcc subject to; do
-            eval '
-            if test ${#'$y'[@]} != 0; then
-                for x in $(seq 1 "${#'$y'[@]}"); do
-                    if test '$y' = to; then
-                        printf -- " ";
-                    else
-                        printf -- \ -'${y:0:1}'\ \
-
-                    fi
-                    if [[ '$y' =~ cc|bcc|to ]]; then
-                        printf -- "%q" "$( echo -n "${'$y'[$x-1]}" |perl -npe "s/.*<(.*)>.*/\$1/")"
-                    else
-                        printf -- "%q" "${'$y'[$x-1]}"
-                    fi
-                done
-            fi'
+elif test $(basename $0) = adb-mail; then
+    adb-of mailto://
+    adb-tap 143 1692
+    adb-tap 842 434
+    if test "$attachments"; then
+        adb mkdir -p /sdcard/adb-mail
+        for a in "${attachments[@]}"; do
+            adb-tap 993 883
+            adb-tap 153 1455
+            am=/sdcard/adb-mail/$(echo "$a"|perl -npe 's!/!_!g')
+            adb push "$a" "$am"
+            putclip-android "$am"
+            adb-key SCROLL_LOCK
+            adb-tap 965 1061
+            sleep 1
         done
-        printf " << '31a1b9affa4ee4c6520ac20bb7c16f69'\n"
-        echo "$body"
-        echo "31a1b9affa4ee4c6520ac20bb7c16f69"
+    fi
+
+    function add_contacts() {
+        contacts=$(
+            for x in "$@"; do
+                echo -n "$x" | perl -npe 's/.*<(.*)>.*/$1/'; echo -n ","
+            done)
+        putclip-android "$contacts"
+        adb-key SCROLL_LOCK
+    }
+
+    adb-tap 247 287
+    if test "$to"; then
+        add_contacts "${to[@]}"
+    fi
+
+    adb-key DPAD_DOWN
+    if test "$cc"; then
+        add_contacts "${cc[@]}"
+    fi
+
+    adb-key DPAD_DOWN
+    if test "$bcc"; then
+        add_contacts "${bcc[@]}"
+    fi
+
+    adb-key DPAD_DOWN
+    if test "$subject"; then
+        putclip-android "$subject"
+        adb-key SCROLL_LOCK
+    fi
+    adb-key DPAD_DOWN
+    adb-key DPAD_UP
+    adb-key DPAD_UP
+
+    find-or-exec T1Wrench T1Wrench
+
+elif test $(basename $0) = mailx; then
+    scheme=$(
+        if test $(get-about-me conn-type) = ssl; then
+            echo smtps://
+        fi
+          )
+    STARTTLS=
+    if test $(get-about-me conn-type) = starttls; then
+        STARTTLS="-S smtp-use-starttls=on"
+    fi
+
+
+    auth=$(get-authinfo $(get-about-me smtp) $(get-about-me mail))
+    (printf "$the_mailx $send_as -S from=$(get-about-me mail) $STARTTLS -S smtp=$scheme$(get-about-me smtp):$(get-about-me smtp-port) -S smtp-auth-user=$(get-about-me mail) -S smtp-auth-password=%q " "$auth"
+     for y in attachments cc bcc subject to; do
+         eval '
+                    if test ${#'$y'[@]} != 0; then
+                        for x in $(seq 1 "${#'$y'[@]}"); do
+                            if test '$y' = to; then
+                                printf -- " ";
+                            else
+                                printf -- \ -'${y:0:1}'\ \
+
+                            fi
+                            if [[ '$y' =~ cc|bcc|to ]]; then
+                                printf -- "%q" "$( echo -n "${'$y'[$x-1]}" |perl -npe "s/.*<(.*)>.*/\$1/")"
+                            else
+                                printf -- "%q" "${'$y'[$x-1]}"
+                            fi
+                        done
+                    fi'
+     done
+     printf " << '31a1b9affa4ee4c6520ac20bb7c16f69'\n"
+     echo "$body"
+     echo "31a1b9affa4ee4c6520ac20bb7c16f69"
     ) | bash $(if test "$DEBUG" = true; then echo -x; fi)
 fi

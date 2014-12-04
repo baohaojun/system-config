@@ -236,6 +236,7 @@
         ("M-v" . '((qpdfview "BS") (t "Prior")))
         ("M-<" . '((qpdfview "Home")
                    (t "C-Home")))
+        ("M-d" . '((t "C-S-Right" "DEL")))
         ("M->" . '((qpdfview "End")
                    (t "C-End")))
         ("C-r" . '((Firefox "C-r") (Okular "S-F3") (t "C-S-g")))
