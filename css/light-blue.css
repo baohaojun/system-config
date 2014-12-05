@@ -1990,7 +1990,7 @@
         /* org-document-info-keyword */
         color: #7f7f7f;
       }
-      .org-org-document-title {
+      h1.title, .org-org-document-title {
         /* org-document-title */
         color: #191970;
         font-weight: bold;
@@ -2062,19 +2062,19 @@
         /* org-latex-and-related */
         color: #8b4513;
       }
-      .org-org-level-1 {
+      h2, .org-org-level-1 {
         /* org-level-1 */
         color: #ff0000;
       }
-      .org-org-level-2 {
+      h3, .org-org-level-2 {
         /* org-level-2 */
         color: #a0522d;
       }
-      .org-org-level-3 {
+      h4, .org-org-level-3 {
         /* org-level-3 */
         color: #0000cd;
       }
-      .org-org-level-4 {
+      h5, .org-org-level-4 {
         /* org-level-4 */
         color: #b22222;
       }
