@@ -1,9 +1,6 @@
 [submodule "gcode/beagrep"]
 	path = gcode/beagrep
 	url = https://github.com/baohaojun/beagrep.git
-[submodule "doc/baohaojun"]
-	path = doc/baohaojun
-	url = https://github.com/baohaojun/baohaojun.github.com.git
 [submodule ".emacs_d/org-jira"]
 	path = .emacs_d/org-jira
 	url = https://github.com/baohaojun/org-jira.git
