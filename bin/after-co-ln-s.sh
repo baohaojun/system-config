@@ -27,7 +27,7 @@ done
 
 mkdir -p ~/.logs
 
-if which sudo && test ! -e ~/.logs/offline-is-unstable; then
+if which sudo && test $(uname)  = Linux -a ! -e ~/.logs/offline-is-unstable; then
     sudo apt-get install -t unstable offlineimap
     touch ~/.logs/offline-is-unstable
 fi
