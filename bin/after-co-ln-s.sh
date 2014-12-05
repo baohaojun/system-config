@@ -28,8 +28,7 @@ done
 mkdir -p ~/.logs
 
 if which sudo && test $(uname)  = Linux -a ! -e ~/.logs/offline-is-unstable; then
-    sudo apt-get install -t unstable offlineimap
-    touch ~/.logs/offline-is-unstable
+    (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.logs/offline-is-unstable) || true
 fi
 
 touch ~/.where.bak
