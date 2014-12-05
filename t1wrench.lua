@@ -9,7 +9,7 @@ local t1_config, check_phone
 local emoji_for_qq, debug, get_a_note
 local adb_get_last_pic
 -- variables
-local using_scroll_lock = true
+local using_scroll_lock = false
 local using_adb_root
 local adb_unquoter
 local is_windows = false
@@ -21,6 +21,7 @@ local app_width, app_height = 1080,1920
 local width_ratio, height_ratio = app_width / default_width,  app_height / default_height
 local using_smartisan_os = true
 local using_xiaomi_os = false
+local using_oppo_os = false
 local brand = "smartisan"
 local model = "T1"
 local qq_emojis
@@ -347,6 +348,8 @@ local function weibo_text_share(window)
       adb_event("adb-tap 24 308 adb-key SPACE adb-long-press-800 17 294 adb-tap 545 191 adb-tap 991 166")
    elseif using_xiaomi_os then
       adb_event("adb-tap-2 24 308 sleep .1 adb-tap 77 179 adb-tap 991 166")
+   elseif using_oppo_os then
+      adb_event("adb-long-press-800 34 312 adb-tap 72 149 adb-tap 991 166")
    else
       adb_event("adb-key space adb-long-press-800 17 294 adb-tap-2 991 166")
    end
@@ -431,6 +434,8 @@ local function weixin_text_share(window, text)
       ]])
    elseif using_xiaomi_os then
       adb_event("adb-long-press-800 422 270 adb-tap 147 213 adb-tap 1007 134")
+   elseif using_oppo_os then
+      adb_event("adb-tap 87 312 adb-tap 92 156 adb-tap 947 132")
    else
       adb_event("adb-key space adb-long-press-800 111 369 adb-tap 97 265 adb-tap 991 166")
    end
@@ -730,8 +735,8 @@ t1_config = function()
 
    if brand:match("Xiaomi") then
       using_xiaomi_os = true
-   else
-      using_xiaomi_os = false
+   elseif brand:match("OPPO") then
+      using_oppo_os = true
    end
 
    local id = adb_pipe("id")
@@ -749,6 +754,7 @@ t1_config = function()
       using_scroll_lock = false
       debug("pastetool is false")
    end
+   return "brand is " .. brand
 end
 
 get_a_note = function(text)
@@ -906,6 +912,12 @@ t1_post = function(text) -- use weixin
             adb_event(
                ([[
                         adb-tap 560 1840 adb-long-press-800 560 %d adb-tap 310 %d adb-tap 501 %d adb-tap 976 %d
+               ]]):format(y_double_click, y_select_all, y_paste, y_send)
+            )
+         elseif using_oppo_os then
+            adb_event(
+               ([[
+                        adb-tap 560 1840 adb-long-press-800 560 %d adb-tap 263 %d sleep .1 adb-tap 452 %d adb-tap 976 %d
                ]]):format(y_double_click, y_select_all, y_paste, y_send)
             )
          else
