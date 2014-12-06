@@ -292,7 +292,7 @@ void T1WrenchMainWindow::on_tbPicture_clicked()
     QStringList suffixes;
     suffixes << "png" << "jpg" << "gif" << "bmp";
 
-    QStringList fns = QFileDialog::getOpenFileNames(this, tr("选择图片"), QString(), tr("Image Files(*.png *.jpg *.gif *.bmp)"));
+    QStringList fns = QFileDialog::getOpenFileNames(this, tr("选择图片/视频"), QString(), tr("Image/Video Files(*.png *.jpg *.gif *.bmp *.mp4 *.avi)"));
     if (fns.isEmpty()) {
         return;
     }
