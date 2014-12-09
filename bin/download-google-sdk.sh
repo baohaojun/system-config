@@ -6,6 +6,9 @@ function wget() {
 }
 
 mkdir ~/external/bin/Linux/ext/android-sdk-linux/google -p
+if test -e ~/external/bin/Linux/ext/android-sdk-linux/google/download-all; then
+    export DOWNLOAD_ALL=true
+fi
 test -e ~/external/bin/Linux/ext/android-sdk-linux/google/do.not.download && exit 0
 cd ~/external/bin/Linux/ext/android-sdk-linux/google
 
@@ -104,7 +107,13 @@ for x in $(find *.google.com -name '*.xml'); do
 
     $cur_ver = $hash{$non_version}{version} || 0;
 
-    if (qx(compare-version $cur_ver $version) eq "<") {
+    if ($ENV{DOWNLOAD_ALL} eq "true") {
+        $hash{$file} = {
+            version => $version,
+            file => $file,
+            cs => $cs,
+        }
+    } elsif (qx(compare-version $cur_ver $version) eq "<") {
         $hash{$non_version} = {
             version => $version,
             file => $file,
@@ -122,4 +131,4 @@ done
 
 mkdir -p ../temp
 
-relative-link -f ./* ../temp
+relative-link -f ./* ~/external/bin/Linux/ext/android-sdk-linux/temp
