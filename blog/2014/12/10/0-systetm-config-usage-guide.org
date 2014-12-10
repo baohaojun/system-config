@@ -1,0 +1,9 @@
+#+title: 我的system-config使用指南
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+# bhj-tags: tool
+
+前一阵子，公司终于有一个同事开始正式用我的system-config了，赞。觉得应该好好说说我的system-config项目，是什么，干什么用的，怎么用。
+
+System-config是github上的一个项目，里面包含了我的所有配置文件和脚本，比如.bashrc和.emacs文件等。你可以在Debian和Ubuntu系统上方便的使用它。
+
+使用本文中描述的方法配置完system-config之后，你可以直接用上 [[../../../2011/12/23/beagrep.org][beagrep, grep 2G source code in 0.23 second]] 等我的博客里几乎一切你觉得有意思的工具、软件。

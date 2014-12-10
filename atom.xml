@@ -12,6 +12,18 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[我的system-config使用指南]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/12/10/0-systetm-config-usage-guide.html"/>
+    <updated>2014-25-10T13:12:05+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/12/10/0-systetm-config-usage-guide.html</id>
+  </entry>
+  <entry>
+    <title type="html"><![CDATA[新的博客风格]]></title>
+    <link href="http://baohaojun.github.io/blog/2014/12/06/0-New-Blog-Style.html"/>
+    <updated>2014-12-06T06:23:47+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2014/12/06/0-New-Blog-Style.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[小扳手2.0版使用手册]]></title>
     <link href="http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html"/>
     <updated>2014-12-01T23:19:26+08:00</updated>
@@ -58,17 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html"/>
     <updated>2014-10-20T23:06:10+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[如何在Linux + Emacs下进行MFC编程（代码补齐）]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html"/>
-    <updated>2014-10-10T17:52:14+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[WYPIWYG (What you print is what you get）]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/09/26/0-WYPIWYG.html"/>
-    <updated>2014-09-26T20:49:24+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/09/26/0-WYPIWYG.html</id>
   </entry>
 </feed>

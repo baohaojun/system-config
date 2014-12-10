@@ -1,6 +1,14 @@
 #+title: Archive
  * 2014
   - 2014-12
+   * 2014-12-10
+
+     [[../blog/2014/12/10/0-systetm-config-usage-guide.org][我的system-config使用指南]]
+
+   * 2014-12-06
+
+     [[../blog/2014/12/06/0-New-Blog-Style.org][新的博客风格]]
+
    * 2014-12-01
 
      [[../blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.org][小扳手2.0版使用手册]]
