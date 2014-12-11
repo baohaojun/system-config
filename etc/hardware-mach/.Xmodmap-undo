@@ -1,0 +1,24 @@
+clear mod4
+clear control
+clear mod1
+clear mod5
+
+keycode 135 = Super_R
+keycode 37 = Control_L
+keycode 64 = Alt_L
+keycode 105 = Control_R
+keycode 108 = Alt_R
+
+add mod4 = Super_R Super_L
+add control = Control_L Control_R
+add mod1 = Alt_L Alt_R
+
+remove Lock = Caps_Lock
+keycode 66 = Caps_Lock
+keycode 9 = Escape
+add Lock = Caps_Lock
+
+keycode 197 = F23
+keycode 202 = F24
+
+pointer = 1 2 3 4 5 6 7 8 9 10
