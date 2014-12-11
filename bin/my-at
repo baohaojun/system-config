@@ -1,0 +1,11 @@
+#!/bin/bash
+time=$1
+
+shift
+(
+    echo . ~/.bash-path
+    echo . ~/.renew-xauth
+    for x in "$@"; do
+        printf "%q " "$x"
+    done
+) | at "$time"

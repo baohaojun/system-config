@@ -1,0 +1,2 @@
+#!/bin/bash
+sawfish-client -e '(window-class (input-focus))'|perl -npe 's/"//g'|tr -d '\n'

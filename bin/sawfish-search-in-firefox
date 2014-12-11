@@ -1,3 +1,5 @@
 #!/bin/bash
 putclip "$1"
-sawfish-browser-input C-s C-v C-g
+sawfish-browser-input C-s
+sleep .1
+sawfish-browser-input C-v C-g

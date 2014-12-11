@@ -22,7 +22,7 @@ sudo perl -npe 's/ main$/ main contrib non-free/' -i /etc/apt/sources.list
 download_external >/dev/null 2>&1 &
 
 set -e
-export PATH=~/bin/Linux/config:$PATH
+export PATH=~/system-config/bin/Linux/config:~/system/bin/Linux:~/system/bin:$PATH
 
 #update the system
 upd_system

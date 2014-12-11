@@ -4,7 +4,7 @@ if test $(basename $0) = sawfish-send-focused-window-event; then
     script=$(cat <<EOF
 (progn
   $(for x in "$@"; do
-        echo "(synthesize-event \"$x\" (input-focus))"
+        echo "(synthesize-event-gnome? \"$x\" (input-focus))"
     done))
 EOF
           )
@@ -17,7 +17,7 @@ else
        $(
            shift;
            for x in "$@"; do
-               echo "(synthesize-event \"$x\" w)"
+               echo "(synthesize-event-gnome? \"$x\" w)"
            done
        )
        (throw 'TAG)))

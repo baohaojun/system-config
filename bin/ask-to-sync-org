@@ -1,5 +1,9 @@
 #!/bin/bash
 set -e
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
 if id | grep -q '^uid=0\b' -P; then
     su - bhj -c "~bhj/bin/ask-to-sync-org&"
     exit 0
@@ -48,6 +52,9 @@ if ! need-sync; then
     exit 0
 fi
 
+lock=~/.logs/ask-to-sync-org.term.lock.$(adb devices? | pn 1)
+touch $lock
+fuser -k $lock || true
 if ! is-tty-io; then
     (
         set -e
@@ -57,7 +64,7 @@ if ! is-tty-io; then
         myscr bash -c "bash -c '(trap \"exit 0\" SIGINT; ask-to-sync-org) || read -p \"ask-to-sync-org failed, press Enter to continue.. \"; echo done > ~/tmp/ask-to-sync-org.$$'" &
         cat ~/tmp/ask-to-sync-org.$$
         rm ~/tmp/ask-to-sync-org.$$
-    ) 9> ~/.logs/ask-to-sync-org.term.lock
+    ) 9> $lock
     exit 0
 fi
 

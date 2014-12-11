@@ -54,7 +54,7 @@ if test "$#" != 0; then
             remote=$(git remote -v |pn 2|head -n 1)
             putclip "[[$remote/commit/"$@"][this commit at my $(basename $remote) project]]"
             ;;
-        g)
+        g) #github url
             cd -
             shift
             putclip "[[$(git-info-clip "$@")][$@]]"
@@ -62,6 +62,14 @@ if test "$#" != 0; then
         v)
             shift
             firefox $(github-pagep $(f "$@"))
+            ;;
+        m) # match
+            shift
+            files=($(beagrep -e "$1" -i --grep '-P -l' -p \\.org|grep -v '\*\*\*\*'))
+            file=$(select-output-line -- bash -c "for blog in ${files[*]}; do echo -n \$blog\ ; grep -i -e '#.title:' \$blog|perl -npe 's/#.title:\s*//i'; done"|pn 1)
+            link=$file
+            blog=$file
+            putclip "[[$link][$(grep -i -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//i')]]"
             ;;
         p|P)
             a1=$1
@@ -72,7 +80,7 @@ if test "$#" != 0; then
                 link=http://baohaojun.github.io/${blog#./}
                 link=${link%.org}.html
             fi
-            putclip "[[$link][$(grep -i -e '#.title:' "$blog (TODO)"|perl -npe 's/#.title:\s*//i')]]"
+            putclip "[[$link][$(grep -i -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//i')]]"
             ;;
         u)
             shift

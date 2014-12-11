@@ -6,7 +6,7 @@ set -e
 function sync-phone-files() {
     rsync=false
     ssh-to-phone echo || true
-    if ssh phone echo hello | grep hello; then
+    if adb id | grep 'uid=0(root)' -q && ssh phone echo hello | grep hello; then
         rsync=true
     fi
 

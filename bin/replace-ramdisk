@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+mydir=$(dirname $(readlink -f $0))
 ramdisk=
 debuggable=
 TEMP=$(getopt -o Ddr: --long ramdisk: -n $(basename $0) -- "$@")
@@ -67,6 +68,8 @@ if test "$debuggable" = true; then
     fi
     if test -e ~/src/github/private-config/etc/adbd; then
         cp ~/src/github/private-config/etc/adbd $tdir/sbin/adbd
+    elif test -e $mydir/root-adbd; then
+        cp $mydir/root-adbd $tdir/sbin/adbd
     fi
     perl -npe 's/ro.debuggable/ro.DEBUGGABLE/' -i $tdir/sbin/adbd
 fi

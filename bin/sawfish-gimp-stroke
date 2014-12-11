@@ -1,0 +1,37 @@
+#!/bin/bash
+function debug() {
+    return
+    EMACS=t yes-or-no-p -y "Continue?"
+}
+
+(
+    flock -n 9 || exit
+    if test "$(sawfish-top-window)" = Eog; then
+        sawfish-send-focused-window-event "C-q"
+        file=$(getclip)
+        if test -e "$file"; then
+            (gimp "$file"&) 9>/dev/null
+            exit
+        fi
+    fi
+
+
+    while query-keyboard-state | grep .; do
+        sleep .1
+    done
+    sawfish-send-focused-window-event "M-e"
+
+    sawfish-send-focused-window-event "s"
+    debug
+    sleep .2
+    sawfish-send-focused-window-event "TAB"
+    debug
+    sawfish-send-focused-window-event "TAB"
+    debug
+    sawfish-send-focused-window-event "TAB"
+    debug
+    sawfish-send-focused-window-event "2"
+    debug
+    sawfish-send-focused-window-event "M-s"
+    # sawfish-send-focused-window-event "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"
+) 9> ~/.logs/$(basename $0).locks

@@ -42,6 +42,9 @@ if screen -list|grep $session_name; then
             set -- screen "$@"
         fi
         (
+            if echo $SHELLOPTS | grep xtrace; then
+                echo 'set -x;'
+            fi
             printf "cd %q;" "$oldpwd"
             for x in "$@"; do
                 printf "%q " "$x"

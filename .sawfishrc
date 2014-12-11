@@ -250,6 +250,8 @@
         ("C-x" . '((Firefox "C-x") (t do-c-x-map)))
         ("Super-*" . '((T1Wrench "Meta-*") (Firefox "Meta-*")))))
 
+(bind-keys global-keymap "Super-XF86Favorites" '(system "sawfish-gimp-stroke&"))
+
 (defun do-bind-keys-nil-unbind (keymap from to window-mapped-to class)
   (bind-keys-nil-unbind
    keymap
@@ -367,7 +369,7 @@
         ("d" . ((Firefox . ("C-x" "C-d"))))))
 
 
-(setq gnome-windows-re "gnome-terminal|nautilus|evince")
+(setq gnome-windows-re "gnome-terminal|nautilus|evince|eog|gedit")
 
 (defun rewrite-event-for-xdotool (event)
   (let* ((keys-break-down (string-split "-" event))

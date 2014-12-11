@@ -13,7 +13,15 @@ fi
 
 export LC_ALL=C
 export LANG=C
+export retry=1
 while ! sudo apt-get install "$@" -y $packages; do
+    retry=$((retry + 1))
+    if (( retry % 20 == 0)) && yes-or-no-p "I have tried 20 times, should we continue trying to install?"; then
+        true
+    else
+        echo "Failed: package installation not complete. Please ask for help."
+        exit 1
+    fi
     packages=$(arg1-arg2 "$packages" "$(sudo apt-get install "$@" -y $packages 2>&1)");
     echo installing: $packages
 done
@@ -23,6 +31,6 @@ if test $# = 0 || yes-or-no-p -y "install missing packages?"; then
 fi
 if test "$#" = 0; then
     for x in ~/bin/Linux/config/pkgs/*:*; do
-        sudo apt-get install -y "$x" || true
+        sudo apt-get install -y "${x##*/}" || true
     done
 fi

@@ -28,8 +28,9 @@ sleep .1
 sawfish-browser-input TAB C-v
 sleep .1
 putclip $(get-authinfo localhost)
+sawfish-browser-input TAB
 sleep .1
-sawfish-browser-input TAB C-BS C-v
+sawfish-browser-input C-BS C-v
 sleep .1
 sawfish-browser-input TAB SPC RET
 putclip ""

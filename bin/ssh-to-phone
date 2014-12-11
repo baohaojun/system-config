@@ -14,6 +14,10 @@ function die() {
     echo Error: "$@"
     exit -1
 }
+if ! adb id | grep 'uid=0(root)' -q; then
+    exit 1
+fi
+
 my-adb push ~/system-config/doc/galaxy-nexus-root/data/start-debian2.sh /data/start-debian2.sh
 if ! my-adb shell su -c "bash $xset /data/start-debian2.sh" | grep 'start debian done'; then
     if test $(basename $0) = net-for-phone; then
@@ -89,7 +93,7 @@ unset TEMP
 set -x
 if test $(basename $0) = ssh-to-phone; then
     rsync /etc/resolv.conf root@phone:/etc/ >/dev/null 2>&1 &
-    ssh phone "$@"
+    ssh phone -o ConnectTimeout=2 "$@"
     exit 0
 fi
 ssh media_rw@phone mkdir -p /data/media/0/$WHERE
