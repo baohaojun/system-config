@@ -120,6 +120,10 @@ System-config是github上的一个项目，里面包含了我的所有配置文�
 说不定你还能学会一两个新工具的用法😁。
 </p>
 
+<p>
+如果没有看过 <a href="../../01/03/0-7-habits-of-highly-effective-editting.html">高效文本编辑的七个习惯</a> 的话，强烈推荐在看本文之前或/和之后看看那篇文章，Vim作者写的，我翻译的。
+</p>
+
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> system-config 是什么</h2>
 <div class="outline-text-2" id="text-1">
@@ -132,11 +136,15 @@ system-config 里面最重要的可以分为几个部分：整个系统相关的
 </p>
 
 <p>
-github上有一些跟system-config类似的项目，但没有一个是像我的这个这样，可以让我自己拿到一台新机器后，很方便地重现自己的工作环境的。比如这个项目：<a href="https://github.com/rupa/z">https://github.com/rupa/z</a> ，允许你方便地跳转目录。但这些项目有一个问题，就是你不能拥有一个完整的工作环境。
+github上有一些跟system-config类似的项目，但好像还没有像我的这个这样，可以让我自己拿到一台新机器后，很方便地重现自己的工作环境的。比如这个项目：<a href="https://github.com/rupa/z">https://github.com/rupa/z</a> ，允许你方便地跳转目录。但这些项目有一个问题，就是你不能拥有一个完整的工作环境。
 </p>
 
 <p>
-我的system-config最佳的使用方法是你把它给fork出去，以后你会有一些你自己觉得适合你个人的特殊的使用习惯，然后你就可以考虑把它们放到你自己的system-config里。当然，初期的话，你可以先考虑直接用我的，然后再考虑fork。这样即使中间你已经有了一些改进，基本上应该也不会丢失。因为我们是在用git管理我们的配置代码。
+我最早开始折腾这些配置，是在当年很有名的清华大学王垠的博客上，看到他把自己的配置一条一条地粘贴在自己的文章里，我就一条一条地拷贝下来，中间经常容易出错。即使没有出错，我也非常担心自己是不是在拷贝的时候少拷了一行代码之类的，非常没有保证。所以后来我学会了svn之后就把这些程序放到了google-code上。后来学了git之后就转移到github了。不知道大家有没有过类似地从网上到处拷一小段配置、代码的经历😁。
+</p>
+
+<p>
+我的system-config最佳的使用方法是你把它给fork出去，以后你会有一些你自己觉得适合你个人的特殊的使用习惯，然后你就可以考虑把它们放到你自己的system-config里。当然，初期的话，你可以先考虑直接用我的，然后再考虑fork。这样即使中间你已经有了一些改进，基本上应该也不会丢失。因为我们是在用git管理我们的配置代码。另外，当你觉得你发现了我写的一些不够合理的地方，欢迎在github上给我提merge request。
 </p>
 </div>
 </div>
@@ -186,6 +194,7 @@ system-config的配置很简单，你只需要两条命令就可以搞定：
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> bash相关的操作</h2>
 <div class="outline-text-2" id="text-3">
@@ -337,23 +346,10 @@ getclip则可以用于在命令行上获取剪贴板里的内容。
 </p>
 </div>
 </div>
-</div>
 
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> Emacs相关</h2>
-<div class="outline-text-2" id="text-4">
-</div><div id="outline-container-sec-4-1" class="outline-3">
-<h3 id="sec-4-1"><span class="section-number-3">4.1</span> e/ew</h3>
-<div class="outline-text-3" id="text-4-1">
-<p>
-这个已经在bash相关里提到过了。
-</p>
-</div>
-</div>
-
-<div id="outline-container-sec-4-2" class="outline-3">
-<h3 id="sec-4-2"><span class="section-number-3">4.2</span> bash的快捷键</h3>
-<div class="outline-text-3" id="text-4-2">
+<div id="outline-container-sec-3-6" class="outline-3">
+<h3 id="sec-3-6"><span class="section-number-3">3.6</span> bash的快捷键</h3>
+<div class="outline-text-3" id="text-3-6">
 <p>
 bash下自定义了很多快捷键。你可以用bind -p来查看都有哪些功能，你可以自己再定义几个，只要修改 <a href="https://github.com/baohaojun/system-config/raw/master/.inputrc">.inputrc</a> 文件就好了。
 </p>
@@ -368,10 +364,24 @@ bash下自定义了很多快捷键。你可以用bind -p来查看都有哪些功
 </dl>
 </div>
 </div>
+</div>
 
-<div id="outline-container-sec-4-3" class="outline-3">
-<h3 id="sec-4-3"><span class="section-number-3">4.3</span> 常用快捷键</h3>
-<div class="outline-text-3" id="text-4-3">
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Emacs相关</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> e/ew</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+这个已经在bash相关里提到过了。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 常用快捷键</h3>
+<div class="outline-text-3" id="text-4-2">
 <p>
 我会以学Emacs最有效的顺序来列出我认为比较有用的快捷键。
 </p>
@@ -479,9 +489,9 @@ major-mode下单词字符的定义可能不一样。参考 <a href="../../../201
 </div>
 
 
-<div id="outline-container-sec-4-3-1" class="outline-4">
-<h4 id="sec-4-3-1"><span class="section-number-4">4.3.1</span> C++/C文件的补齐</h4>
-<div class="outline-text-4" id="text-4-3-1">
+<div id="outline-container-sec-4-2-1" class="outline-4">
+<h4 id="sec-4-2-1"><span class="section-number-4">4.2.1</span> C++/C文件的补齐</h4>
+<div class="outline-text-4" id="text-4-2-1">
 <p>
 我现在在用 ac-clang 来进行C/C++语言的补齐，见 <a href="../../10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html">如何在Linux + Emacs下进行MFC编程（代码补齐）</a> 。
 </p>
