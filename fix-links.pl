@@ -29,7 +29,7 @@ sub fix_link($)
                 if ($opt eq "review") {
                     system("of $link&");
                     system(qq!sawfish-client -e '(event-name (read-event "Press any key to continue..."))' !);
-                    system("find-or-exec konsole");
+                    system("find-or-exec konsole; destroy-windows eog");
                 } elsif ($opt eq "images") {
                     $base = $link;
                     $base =~ s!.*/!!;
@@ -68,15 +68,19 @@ sub fix_link($)
         $org_file =~ s/\.html$/.org/;
     }
 
-
     $org_file = shell_quote($org_file);
     chomp($org_file =
           (qx(find blog -name $org_file) or
            qx(find . -name $org_file)));
 
     if ($org_file =~ m/\n/) {
+        $org_file =~ s/\n/ /g;
+        chomp($org_file = qx(select-args $org_file));
+    }
+
+    if (not -e $org_file) {
         die "$link matched with multiple files";
-    } elsif (-e $org_file) {
+    } else {
         $file = $org_file;
     }
 

@@ -113,7 +113,394 @@ System-config是github上的一个项目，里面包含了我的所有配置文�
 </p>
 
 <p>
-使用本文中描述的方法配置完system-config之后，你可以直接用上 <a href="../../../2011/12/23/beagrep.html">beagrep, grep 2G source code in 0.23 second</a> 等我的博客里几乎一切你觉得有意思的工具、软件。
+使用本文中描述的方法配置完system-config之后，你可以直接用上 <a href="../../../2011/12/23/beagrep.html">beagrep, grep 2G source code in 0.23 second</a> 等我的博客里几乎一切你看了觉得有意思的工具、软件。
+</p>
+
+<p>
+说不定你还能学会一两个新工具的用法😁。
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> system-config 是什么</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+system-config 是我在github上最早的一个代码库，里面包含了我所有配置文件和脚本。很多人都会配置一下自己的工作环境，但大多数人还没有意识到这些配置文件其实都是代码，都可以/应该用版本管理工具把它们管理起来。这样你才可以不断地提升自己的工作效率，因为你对自己工作环境的配置在持续地改进中。
+</p>
+
+<p>
+system-config 里面最重要的可以分为几个部分：整个系统相关的部分，bash相关的部分，emacs相关的部分，其它工具相关的部分。
+</p>
+
+<p>
+github上有一些跟system-config类似的项目，但没有一个是像我的这个这样，可以让我自己拿到一台新机器后，很方便地重现自己的工作环境的。比如这个项目：<a href="https://github.com/rupa/z">https://github.com/rupa/z</a> ，允许你方便地跳转目录。但这些项目有一个问题，就是你不能拥有一个完整的工作环境。
+</p>
+
+<p>
+我的system-config最佳的使用方法是你把它给fork出去，以后你会有一些你自己觉得适合你个人的特殊的使用习惯，然后你就可以考虑把它们放到你自己的system-config里。当然，初期的话，你可以先考虑直接用我的，然后再考虑fork。这样即使中间你已经有了一些改进，基本上应该也不会丢失。因为我们是在用git管理我们的配置代码。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 如何配置system-config</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+system-config的配置很简单，你只需要两条命令就可以搞定：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">git clone --recursive https://github.com/baohaojun/system-config ~/system-config
+~/system-config/bin/Linux/after-check-out.sh
+</pre>
+</div>
+
+<p>
+其中，第一步是在下载system-config项目的代码。 <code>--recursive</code> 参数是因为 <code>system-config</code> 项目还有好几个子项目，需要一起下载下来。
+</p>
+
+<p>
+第二步则运行一些配置角本，把我的工作环境能自动化配置的部分全部重新配置出来。这个配置的时间可能会有点长，尤其是如果你的Debian/Ubuntu机器是新装的，很多软件会在配置system-config的时候被自动安装，花的时间会更长一点。请一定要有耐心，相信最后的system-config会让你觉得是值得的😅。
+</p>
+
+<p>
+运行的过程中可能需要你输入几次sudo密码，以及按几次回车、输入yes/no再回车等。其他的一般都已经尽量做到自动化了。
+</p>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 系统debian包的安装</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+最费时间的就是这个步骤。 <code>after-check-out.sh</code> 会把我常用的debian包全部用apt-get安装下来。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 配置过程中出了问题怎么办</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+可以的话让我直接过来看一下。或者请直接截个屏或者拷贝下出错时的终端输出发邮件给我。当然，最喜欢的是能自己google解决问题的朋友了😆。
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> bash相关的操作</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+接下来要开始讲一些我的system-config下与一般的Linux系统不大一样的一些用法。
+</p>
+
+<p>
+我在写system-config的时候绝大多数情况下都会尽量注意与原有的命令兼容。因为否则的话有些命令在别人写的脚本里被用到，如果我重写过这个命令，并且不兼容的话，我运行这个脚本就会失败，这是不能接受的。
+</p>
+
+<p>
+但是接下来要讲的是那些不一样的地方，所以请一定在配置了我的system-config之后再来尝试这些命令。
+</p>
+</div>
+
+<div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> cd命令</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+正常情况下，我的cd命令是跟系统自带的bash内置cd命令一模一样的：cd后面跟一个目录的名字，直接就改变当前目录到那个目录下。
+</p>
+
+<p>
+但我的cd命令会默默地帮你做很多事（这个跟上面提到的那个 <a href="https://github.com/rupa/z">https://github.com/rupa/z</a> 项目非常类似）：
+</p>
+
+<ol class="org-ol">
+<li><code>cd DIR</code> 会把 <code>DIR</code> 记到你的 <code>~/.where</code> 文件里，按最近使用的在最前的方式排序。
+</li>
+
+<li><code>cd foo bar</code> 会从你的 <code>~/.where</code> 文件里过滤出符合条件的目录，如果只有一个，直接跳转过去，如果不只一个，会有一个简单有效的选择方法让你选（因为之前的排序方式是最近使用排最前，所以大多数情况下你直接回车就行，因为第一条往往就是你想要的那条）。
+
+<p>
+比如我在终端里打 <code>cd fra base</code> ，在我的系统上会让我选哪个目录：
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/cd-completion.png"><img src="../../../../images/cd-completion.png" alt="cd-completion.png" /></a>
+</p>
+</div>
+
+<p>
+这个匹配的规则是这样的：一个目录想要匹配成功，必须：1. 绝对路径匹配cd的每一个参数；2. 最后一个子目录匹配cd的至少一个参数。
+</p>
+
+<p>
+可以参考图中红色标注的部分，注意最后一个子目录必须有匹配（已用红色标注）。
+</p>
+</li>
+
+<li>如果cd的后面跟的是一个文件，那就自动替换为cd到这个文件所在的目录下。因为有很多时候你比如会从邮件里拷贝到一个文件的路径，这时想cd到这个文件的目录下，你粘贴之后还需要删掉文件的那部分，我认为这个可以自动化一下😁。
+</li>
+
+<li><code>cd smb://windows-share-folder/path</code> 和 <code>{cd '\\windows-share-folder\path'}</code>
+
+<p>
+如果你配过一些软链接的话，你可以通过这种用法直接在命令行上访问Windows的共享文件夹。在Linux下你用文件管理器访问过一个samba目录之后，会在某个gvfs mount的目录下生成一个跟这个共享文件夹对应的目录，比如我的是在 <code>/run/user/1000/gvfs/smb-share:xxx</code> 下，然后我在 <code>~/smb/</code> 目录下生成了这样的软链接：
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/symlink-share-folders.png"><img src="../../../../images/symlink-share-folders.png" alt="symlink-share-folders.png" /></a>
+</p>
+</div>
+
+<p>
+你在用文件管理器访问过某个共享目录后，可以用 <a href="https://github.com/baohaojun/system-config/raw/master/bin/smb-links">smb-links</a> 这个命令来直接生成相应的软链接。
+</p>
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> putclip/getclip</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+putclip这个命令可以用于在命令行上把文本放到系统剪贴板里去，然后很方便的在邮件程序、网页编辑框里去粘贴。
+</p>
+
+<p>
+getclip则可以用于在命令行上获取剪贴板里的内容。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> up/wp/sup/swp/ap/gitp</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+这些命令是对putclip/getclip的进一步封装。在命令行上它们可以用特殊的格式把当前目录或你指定的文件的绝对路径放到剪贴板里去。因为前面我的特殊的cd的关系，你在命令行上找目录、找文件是特别方便的对不对？现在因为这些命令的关系，你找到一个文件并把它的路径放到剪贴板里的步骤也特别方便了。比如我在发邮件、发微博的时候想要上传一张图片的话，我是不会在浏览器的文件对话框里点来点去找文件的：
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/no-file-dialog.png"><img src="../../../../images/no-file-dialog.png" alt="no-file-dialog.png" /></a>
+</p>
+</div>
+
+<p>
+因为这个效率实在是不如在命令行上拷贝下文件的路径，然后直接在这个对话框里粘贴一下就好了。
+</p>
+
+<p>
+你可以猜一下up/wp/sup/swp/ap/gitp分别都是什么意思😁。
+想知道总共有多少类似的命令的话，可以打开 <a href="https://github.com/baohaojun/system-config/raw/master/bin/wp">wp</a> 文件看一下。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> bash历史命令搜索</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+很多同学都知道bash下如果搜历史命令的话有一个ctrl-r键可以往回搜。但ctrl-r的一个缺点是，它在搜索的时候要求你连续打出一整段和历史命令匹配的文本才能匹配，中间打个错别字或者有几个字符太难打太难记想跳过去都是不行的。
+</p>
+
+<p>
+所以我提供了一个re命令。这个re命令什么也不做，唯一做的就是帮助bash进行补齐。对，以前的bash补齐机制（打了一个命令、文件名、路径名的一部分之后按Tab键）实现比较简单，不支持太智能的补齐。现在的bash已经提供可编程补齐的机制。
+</p>
+
+<p>
+我在bash下打re getprop adb  persi之后按Tab补齐，它就会把 <code>~/.bash_history.bak</code> 里的历史命令匹配的全都帮我列出来，如果只有一个匹配就直接帮我补齐了。否则会按使用远近排序，最近使用的排在最前让我选。选的方法是输入 <code>.N</code> 然后再按一次Tab，比如 <code>.0</code> 就是选第一个补齐：
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/re-for-completion.png"><img src="../../../../images/re-for-completion.png" alt="re-for-completion.png" /></a>
+</p>
+</div>
+
+<p>
+关于那个 <code>~/.bash_history.bak</code> 文件，你可以在bash下打 <code>hir</code> 命令，这是我定义的一个函数，它会把bash自己记下来的历史命令 <code>~/.bash_history</code> 导入到 <code>~/.bash_history.bak</code> 里去。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-5" class="outline-3">
+<h3 id="sec-3-5"><span class="section-number-3">3.5</span> e/ew命令</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+这两个命令可以用来在命令行上远程控制emacs打开某个文件。如果当前桌面下还没有打开emacs程序，它会先启动一个。注意如果emacs启动出错的话，这两个命令会进入死循环等待。
+</p>
+
+<p>
+其中 <code>e</code> 命令会打开一个文件后直接返回。 <code>ew</code> 会一直等待emacs编辑完文件之后用户按 <code>C-x #</code> ( <code>server-edit</code> ) 退出编辑才返回。所以你可以把它设为你的 <code>EDITOR</code> 环境变量。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Emacs相关</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> e/ew</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+这个已经在bash相关里提到过了。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> bash的快捷键</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+bash下自定义了很多快捷键。你可以用bind -p来查看都有哪些功能，你可以自己再定义几个，只要修改 <a href="https://github.com/baohaojun/system-config/raw/master/.inputrc">.inputrc</a> 文件就好了。
+</p>
+
+<p>
+这里说一下我自己定义的最重要的一个：
+</p>
+
+<dl class="org-dl">
+<dt> M-k </dt><dd>把当前命令行上输入的东西放到剪贴板里去。你可以跟 C-r 或者 re 历史命令组合使用，先搜到一条历史命令，然后放到剪贴板里去。在终端上打过一条 one-liner，用这个方法可以很方便地把它写到emacs里去，成为一条以后经常使用的脚本。
+</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> 常用快捷键</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+我会以学Emacs最有效的顺序来列出我认为比较有用的快捷键。
+</p>
+
+<dl class="org-dl">
+<dt> C-h ? </dt><dd>你需要尽快学会查看Emacs下的帮助。这里会列出所有的帮助大纲。
+</dd>
+
+<dt> C-s 和 C-r </dt><dd>前后搜索。按C-h k看一下这个键的帮助，非常重要！如果看过 Vim 作都写的高效编辑器使用的七种习惯的话，就会明白搜索还是一种非常重要的移动、定位方法。
+</dd>
+
+<dt> M-g o </dt><dd>这个是我写的bhj-occur，列出在整个buffer里和你输入的pattern匹配的行，你可以用 M-g n 和 M-g p 进行来回跳转。你可以试试在看帮助文档的时候有意识地用这个键去过滤自己想找来看看的东西。
+</dd>
+
+<dt> M-g n 和 M-g p </dt><dd>这个就是上面提到的编译出错、occur、grep等命令之后在N个匹配行之前来回跳转的快捷键。
+</dd>
+
+<dt> C-M-, 和 C-M-. </dt><dd>跑过occur、grep等命令并跳转出去之后，可以用这两个
+按键一路来回跳转到开始的地方。类似于浏览器上的前进后退按钮。
+</dd>
+
+<dt> M-g r </dt><dd>运行beagrep。默认以当前 <code>point</code> 附近的单词为目标进行搜索，
+你可以编辑这个pattern。也可以先选上一段文本，然后再按这个组
+合键，它会以被高亮选中的文本为目标pattern运行beagrep命令。
+这些pattern里的特殊字符会按grep(1)的格式被转义，比如 <code>^.</code>
+会被转义成 <code>\\^\\.</code> 。你看到两个 <code>\</code> 字符进行转义是因为bash
+的双引号要吃掉一个。你可以在命令行后增加一些额外的参数。
+
+<p>
+beagrep的使用帮助见 <a href="../../../2011/12/23/beagrep.html">beagrep, grep 2G source code in 0.23 second</a> 。
+</p>
+</dd>
+
+<dt> M-s r </dt><dd>运行rgrep，Debian系统自带的，我在自己的system-config里也放
+了一份，因为Ubuntu有些版本上没有该命令。有时候beagrep还是比
+较慢，如果你能限定在一个比较小的目录下搜的话，可以试试直接
+用rgrep。
+</dd>
+
+<dt> M-. </dt><dd>用来查找一个函数的定义。会以grep的格式列出来，你可以用同样的
+快捷键去跳转。前提是你运行过 <code>mkgtags</code> 。建议和beagrep的索引
+数据库一起创建，用 <code>for-code-reading</code> 命令就可以。
+</dd>
+
+<dt> M-g f </dt><dd>用来查找一个函数/一个pattern在哪里被调用。参考 <a href="../../08/20/0-Using-Emacs-as-a-better-source-insight.html">Using Emacs
+as a better Source Insight</a> 。它会调用 <code>grep-func-call</code> ，默
+认它会在当前文件查调用；如果有 <code>-a</code> 参数的话它会在整个
+code-reading目录底下查找。
+</dd>
+</dl>
+
+<p>
+以上基本上都是在阅读源代码时比较有用，接下来要说的是写源代码时比较有用的快捷键。
+</p>
+
+<dl class="org-dl">
+<dt> M-/ </dt><dd>hippie-expand，一种简单粗暴的补齐方式
+</dd>
+
+<dt> M-g &lt;return&gt; </dt><dd>我写的skeleton-complete.el里按单词补齐。注意在不同的
+major-mode下单词字符的定义可能不一样。参考 <a href="../../../2013/04/13/skeleton-complete.html">skeleton-complete</a> 。
+
+<p>
+给定一个lisp函数名， <code>this-useful-function-is-so-long</code> ，你可以打 <code>uncsolo</code> 再按这个键来补齐它。
+</p>
+</dd>
+
+<dt> M-s &lt;return&gt; </dt><dd>skeleton-complete.el里定义的任意字符串补齐。有头部匹
+配的限制。给定上面的函数名，你打 <code>uncsolo</code> 再按 M-s
+&lt;return&gt; 是无法补齐的，因为头部的 <code>u</code> 不能匹配一个单
+词的头部。可以试试 <code>funsolo</code> ，看看会补什么出来。
+</dd>
+
+<dt> C-M-i 或 M-tab </dt><dd>yasnippet补齐。在写一个bash脚本的时候你输入 <code>Getopt</code> 然后按这个键试试。yasnippet是一个非常有用的Emacs插件！唯一缺点是要提前准备模板。
+
+<dl class="org-dl">
+<dt> C-c y v </dt><dd>问某个 yasnippet 模板。
+</dd>
+
+<dt> C-c y n </dt><dd>新建一个 yasnippet 模板。
+</dd>
+</dl>
+</dd>
+
+<dt> M-s c </dt><dd>进行编译，第一次要求输入编译命令，出错的话可以跳转定位。
+</dd>
+</dl>
+
+<p>
+以下为写Java代码时特别相关的快捷键。参考 <a href="../../../2013/10/01/0-Inside-Ajoke.html">Inside Ajoke</a> 。也可以看一下源代码 <a href="https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/ajoke.el">ajoke.el</a> 。
+</p>
+
+<dl class="org-dl">
+<dt> M-g j h </dt><dd>显示当前类的继承树。
+</dd>
+</dl>
+
+<p>
+其它相关的快捷键可以直接打开 <a href="https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/ajoke.el">ajoke.el</a> 看一下。
+</p>
+
+<p>
+<a href="../../../../images/the-ajoke-key-bindings.el">../../../../images/the-ajoke-key-bindings.el</a>
+</p>
+</div>
+
+
+<div id="outline-container-sec-4-3-1" class="outline-4">
+<h4 id="sec-4-3-1"><span class="section-number-4">4.3.1</span> C++/C文件的补齐</h4>
+<div class="outline-text-4" id="text-4-3-1">
+<p>
+我现在在用 ac-clang 来进行C/C++语言的补齐，见 <a href="../../10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html">如何在Linux + Emacs下进行MFC编程（代码补齐）</a> 。
+</p>
+
+<p>
+快捷键是：
+</p>
+
+<dl class="org-dl">
+<dt> C-. </dt><dd>ac-complete-with-helm
+</dd>
+</dl>
+
+<p>
+一般这个都是需要特别配过的。你可以参考我的 <a href="https://github.com/baohaojun/T1Wrench/raw/master/.dir-locals.el">.dir-locals.el</a> ，这个是为qt配的，把它拷到你的qt项目底下，就可以补齐了。
+</p>
+
+<p>
+出错的话可以自己看一下 <b>clang error</b> 这个buffer里，看看有什么头文件没有找到之类的错误，然后加到 .dir-locals.el 文件里之后，记得一定要重新打开 .c/.cpp 文件。并且找开的时候一般Emacs会问你确认这些变量设置是不是安全的，选Yes就好了。
 </p>
 <nav>
   <ul id="prev_next_posts">
@@ -131,6 +518,10 @@ System-config是github上的一个项目，里面包含了我的所有配置文�
     </li>
   </ul>
 </nav>
+</div>
+</div>
+</div>
+</div>
 </div>
 <!-- {%html-mode%} -->
 
