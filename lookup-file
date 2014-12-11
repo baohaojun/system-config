@@ -101,6 +101,10 @@ fi
         builtin cd ..
     done
 
+    if test "$PWD" = / -a -L "$file"; then
+        exit 1
+    fi
+
     if test "${file:0:1}" = /; then
         if test -e "$file" -a $readlink = true; then
             readlink -f "$file"
@@ -134,8 +138,13 @@ fi
     base=`basename -- "$file"`
 
     while true; do
-        if find "$dir" -maxdepth 1 -iname "*$base*"|grep -q .; then
-            find "$PWD"/"$dir" -maxdepth 1 -iname "*$base*"
+        if test "$PWD" = /; then
+            typef='-type f'
+        else
+            typef=
+        fi
+        if find "$dir" -maxdepth 1 -iname "*$base*" $typef|grep -q .; then
+            find "$PWD"/"$dir" -maxdepth 1 -iname "*$base*" $typef
             exit 0
         fi
 
