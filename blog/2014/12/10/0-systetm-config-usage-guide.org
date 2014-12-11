@@ -199,7 +199,7 @@ bash下自定义了很多快捷键。你可以用bind -p来查看都有哪些功
 
 其它相关的快捷键可以直接打开 [[https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/ajoke.el][ajoke.el]] 看一下。
 
-[[../../../../images/the-ajoke-key-bindings.el]]
+[[../../../../images/the-ajoke-key-bindings.el.png][file:../../../../images/the-ajoke-key-bindings.el.png]]
 
 
 *** C++/C文件的补齐
