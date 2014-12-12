@@ -782,7 +782,7 @@ get_a_note = function(text)
             adb-tap 941 163
    ]])
    if using_scroll_lock then
-      adb_event("sleep .2 key scroll_lock sleep .4")
+      adb_event("sleep .5 key scroll_lock sleep .4")
    else
       adb_event(
          [[
