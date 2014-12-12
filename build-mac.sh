@@ -44,5 +44,5 @@ else
         exit
     fi
 
-    myscr bash -c 'ps-killall T1Wrench; of T1Wrench.app' || true
+    myscr bash -c 'ps-killall T1Wrench; of T1Wrench.app; oc T1Wrench.app' || true
 fi

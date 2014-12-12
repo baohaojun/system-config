@@ -116,6 +116,19 @@
         </widget>
        </item>
        <item>
+         <widget class="QToolButton" name="tbMomo">
+           <property name="toolTip">
+             <string>分享到陌陌留言板</string>
+           </property>
+           <property name="text">
+             <string>...</string>
+           </property>
+           <property name="checkable">
+             <bool>true</bool>
+           </property>
+         </widget>
+       </item>
+       <item>
         <widget class="QToolButton" name="tbNotes">
          <property name="toolTip">
           <string>生成便笺再发送</string>

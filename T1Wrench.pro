@@ -12,9 +12,12 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = T1Wrench
 TEMPLATE = app
 
-win32:INCLUDEPATH += ./windows
-win32:LIBS += -L./windows -llua52
-win32:CONFIG += console
+win32 {
+    RC_FILE = T1Wrench.rc
+    INCLUDEPATH += ./windows
+    LIBS += -L./windows -llua52
+    CONFIG += console
+}
 
 unix {
   !macx {
@@ -23,6 +26,7 @@ unix {
   } else {
     INCLUDEPATH += ./macx
     LIBS += -L./macx -llua
+    ICON = T1Wrench.icns
   }
 }
 

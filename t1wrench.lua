@@ -2,14 +2,17 @@
 
 -- functions
 local shell_quote, putclip, t1_post
+local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share
+local picture_to_momo_share
 local adb_get_input_window_dump, adb_top_window
-local adb_start_weixin_share
+local adb_start_weixin_share, adb_is_window
+local adb_focused_window
 local t1_config, check_phone
 local emoji_for_qq, debug, get_a_note
 local adb_get_last_pic
 -- variables
-local using_scroll_lock = false
+local using_scroll_lock = true
 local using_adb_root
 local adb_unquoter
 local is_windows = false
@@ -217,7 +220,15 @@ local function adb_pipe(cmds)
    return out:gsub("\r", "")
 end
 
-local function adb_focused_window()
+adb_is_window = function (w)
+   return w == adb_focused_window()
+end
+
+adb_start_activity = function(a)
+   adb_shell("am start -n " .. a)
+end
+
+adb_focused_window = function()
    local wdump = adb_pipe{"dumpsys", "window"}
    local match = string.match(wdump, "mFocusedWindow[^}]*%s(%S+)}")
    if match then
@@ -756,7 +767,7 @@ t1_config = function()
       using_scroll_lock = false
       debug("pastetool is false")
    end
-   return "brand is " .. brand
+   return ("brand is %s, paste is %s"):format(brand, using_scroll_lock)
 end
 
 get_a_note = function(text)
@@ -771,7 +782,7 @@ get_a_note = function(text)
             adb-tap 941 163
    ]])
    if using_scroll_lock then
-      adb_event("sleep .2 key scroll_lock sleep .2")
+      adb_event("sleep .2 key scroll_lock sleep .4")
    else
       adb_event(
          [[
@@ -795,8 +806,6 @@ get_a_note = function(text)
    adb_event(
       [[
             adb-tap-2 71 162
-            adb-swipe-200 100 561 332 561
-            adb-tap 192 510
             adb-key BACK
    ]])
    adb_get_last_pic('notes', true)
@@ -834,7 +843,7 @@ t1_post = function(text) -- use weixin
       end
    end
    if window then print("window is " .. window) end
-   if window == "com.sina.weibo/com.sina.weibo.EditActivity" or window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
+   if window == "com.sina.weibo/com.sina.weibo.EditActivity" or window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" or window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity" then
       weibo_text_share(window)
       return
    elseif window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI" or window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI" then
@@ -995,6 +1004,11 @@ local function picture_to_weibo_share_upload(...)
    picture_to_weibo_share(pics)
 end
 
+local function picture_to_momo_share_upload(...)
+   local pics = upload_pics(...)
+   picture_to_momo_share(pics)
+end
+
 local function picture_to_weixin_share_upload(...)
    local pics = upload_pics(...)
    picture_to_weixin_share(pics)
@@ -1028,6 +1042,39 @@ picture_to_weibo_share = function(pics, ...)
       adb_event(i_button)
    end
    adb_event("adb-tap 141 1849 adb-tap 922 1891")
+end
+
+picture_to_momo_share = function(pics, ...)
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
+   for i = 1, #pics do
+      local ext = last(pics[i]:gmatch("%.[^.]+"))
+      local target = pics[i]
+
+      if i == 1 then
+         local momoStart = "com.immomo.momo/com.immomo.momo.android.activity.WelcomeActivity"
+         local momoActivity = "com.immomo.momo/com.immomo.momo.android.activity.maintab.MaintabActivity"
+         adb_start_activity(momoStart)
+         for try = 1, 5 do
+            adb_event("sleep .2")
+            if not adb_is_window(momoActivity) then
+               adb_event("key back")
+               adb_start_activity(momoStart)
+            end
+         end
+         adb_event("sleep .2 adb-tap 288 1821 adb-tap 261 337 adb-tap 972 165 sleep 1")
+      end
+
+      local pic_share_buttons = {
+         "adb-tap 141 408", "adb-tap 387 368", "adb-tap 689 360", "adb-tap 913 324",
+         "adb-tap 142 687", "adb-tap 379 612",
+      }
+      local i_button = pic_share_buttons[i]
+      adb_event(i_button)
+   end
+   adb_event("adb-tap 404 1854 adb-tap 201 534")
 end
 
 local function picture_to_weixin_chat(pics, ...)
@@ -1237,6 +1284,7 @@ M.system = system
 M.debug = debug
 M.get_a_note = get_a_note
 M.adb_get_last_pic = adb_get_last_pic
+M.picture_to_momo_share = picture_to_momo_share_upload
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then

@@ -38,6 +38,8 @@ private slots:
 
     void on_tbWeixin_clicked();
 
+    void on_tbMomo_clicked();
+
     void on_tbThumbsUp_clicked();
 
     void on_tbNotes_clicked();

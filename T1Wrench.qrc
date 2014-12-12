@@ -20,6 +20,7 @@
       <file>resources/smartisan.png</file>
       <file>resources/config.png</file>
       <file>resources/notes.png</file>
+      <file>resources/momo.png</file>
       <file>resources/console.png</file>
     </qresource>
 </RCC>
