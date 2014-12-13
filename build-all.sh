@@ -1,14 +1,37 @@
 #!/bin/bash
-cd $(dirname $(readlink -f $0))
-export DOING_T1WRENCH_RELEASE=true
-export ReleaseVersion="$1"
-
 set -e
 
 function die() {
     echo Error: "$@"
     exit -1
 }
+
+cd $(dirname $(readlink -f $0))
+export DOING_T1WRENCH_RELEASE=true
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts ssmb r:ReleaseVersion
+## end code-generator
+## start generated code
+smb=true
+ReleaseVersion=
+while getopts 'sr:' opt; do
+    case "$opt" in
+        s)    smb=false;;
+        r)    ReleaseVersion=$OPTARG;;
+        *)    echo Usage Error;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+export ReleaseVersion
+export shortVersion=$ReleaseVersion
+
+ReleaseVersion="$shortVersion $@"
+if test ! "$shortVersion"; then
+    die "No shortVersion defined"
+fi
 
 . .gitx
 
@@ -17,10 +40,22 @@ if git st -s | grep . -q; then
     die "Can't do release build when git not clean: see output above"
 fi
 
+oldVersion=$(perl -ne 'print $1 if m!<string>Smartisan T1聊天小扳手\s*(.*)</string>!' t1wrenchmainwindow.ui)
+perl -npe 's!<string>Smartisan T1聊天小扳手.*</string>!<string>Smartisan T1聊天小扳手 $ENV{shortVersion}</string>!' -i t1wrenchmainwindow.ui
+
+if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
+    if test $(compare-version "$oldVersion" "$shortVersion") = "=" &&
+            yes-or-no-p -n "Use the same version $shortVersion = $oldVersion?"; then
+        true
+    else
+        die "old version $oldVersion >= new version $shortVersion"
+    fi
+fi
+
 if is-tty-io; then
     src_version=$(cd ~/src/github/T1Wrench-linux; cat .src-version.txt)
     git log $src_version..HEAD
-    yes-or-no-p -y "Continue?"
+    yes-or-no-p -y "Continue '$oldVersion' -> '$shortVersion'?"
 fi
 
 git clean -xfd
@@ -78,8 +113,10 @@ for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Co
         else
             zip -r $file $dir -x '*/.git/*'
         fi
-        smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
-        rsync $file rem:/var/www/html/baohaojun/ -v
+        if test $smb = true; then
+            smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
+            rsync $file rem:/var/www/html/baohaojun/ -v
+        fi
     )
 done
 

@@ -58,7 +58,10 @@ set -o pipefail
 
 function wine() {
     cat > build.bat<<EOF
-set path=c:/Qt-mingw/Qt5.3.1/5.3/mingw482_32/bin;c:/Qt-mingw/Qt5.3.1/Tools/mingw482_32/bin;%path
+set path=$(for x in ~/.wine/drive_c/Qt*/Qt*/*/mingw*/bin; do
+               echo $x;
+           done |
+           perl -npe 'chomp; s!$ENV{HOME}/.wine/drive_c!c:!; s!$!;!')%path%
 $@
 EOF
     command wine cmd.exe /c build.bat
@@ -91,7 +94,7 @@ for x in . download; do
     )
 done
 
-copy-dlls /cygdrive/c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32
+copy-dlls ~/.wine/drive_c/Qt*/Qt*/[0-9]*/mingw*/
 set -x
 rm -f T1Wrench-windows
 ln -sf t1wrench-release T1Wrench-windows
