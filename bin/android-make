@@ -113,7 +113,7 @@ fi
     # rm kernel telephony uboot-obm -rf # see what will happen?
 ) || true
 
-test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
+test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use android-make -c CONFIG, for e.g., aosp_x86-eng; exit; }
 
 (
     time (
@@ -126,7 +126,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
         echo 'about to lock at '$(date)
         flock 9
         echo 'lock success! at '$(date)
-        sudo umount ~/src/.afb >/dev/null 2>&1 || true
+        sudo umount ../.afb >/dev/null 2>&1 || true
         rm */out/ -rf || true
         if test "$DO_REPO_UPDATE" = true; then
             rm out/*/ -rf || true

@@ -101,6 +101,8 @@ function sync-on-phone() {
     for x in $(seq 1 10); do
         if my-adb 'if test -e /sdcard/MobileOrg/mobileorg.org.bak; then echo yes; fi' | grep -q yes; then
             sleep .5
+        else
+            break
         fi
     done
 }
