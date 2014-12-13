@@ -8,11 +8,13 @@
 net='0 1'
 command=uname
 out=cygwin
-while getopts 'n:c:o:' opt; do
+prefix=172.16.
+while getopts 'p:n:c:o:' opt; do
     case "$opt" in
         n)    net=$OPTARG;;
         c)    command=$OPTARG;;
         o)    out=$OPTARG;;
+        p)    prefix=$OPTARG;;
         *)    echo Usage Error;;
     esac
 done
@@ -20,12 +22,12 @@ shift $(($OPTIND - 1))
 
 ## end generated code
 
-for y in $net; do for x in $(seq 1 254); do (ssh -o StrictHostKeyChecking=no 172.16.$y.$x $command >/tmp/$y.$x.ssh 2>&1&); done; done >/dev/null 2>&1
+for y in $net; do for x in $(seq 1 254); do (ssh -o StrictHostKeyChecking=no $prefix$y.$x $command >/tmp/$y.$x.ssh 2>&1&); done; done >/dev/null 2>&1
 
 for x in $(seq 1 10); do
     x=$(grep $out -i -l /tmp/*.*.ssh);
     if test "$x"; then
-        basename "$x" | perl -npe 's/.ssh//; s/^/172.16./'
+        basename "$x" | perl -npe 's/.ssh//; s/^/'$prefix'/'
         break
     fi
     if ps.pl ssh.uname >/dev/null 2>&1 ; then

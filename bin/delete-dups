@@ -1,0 +1,35 @@
+#!/bin/bash
+
+size=${1:--size +10M}
+
+list=~/tmp/ls.txt
+
+find . -type f $size |xargs -d \\n ls -l > $list
+sort -n -k 5 $list|
+    if test $(basename $0) = delete-dups; then
+        perl -a -ne '
+            $size = $F[4];
+            if ($size == $last) {
+                ($last_file = $last_line) =~ s/.*?\././;
+                ($file = $_) =~ s/.*?\././;
+                chomp ($last_file);
+                chomp ($file);
+                if (system("diff", "-q", $last_file, $file) == 0) {
+                    system("relative-link", "-f", $last_file, $file);
+                } else {
+                    print STDERR "$last_file != $file\n";
+                }
+            }
+            $last_line = $_;
+            $last = $size; '
+    else
+        perl -a -ne '
+            $size = $F[4];
+            if ($size == $last_size) {
+                print $last_line unless $last_line eq $last_print;
+                print $_;
+                $last_print = $_;
+            }
+            $last_line = $_;
+            $last_size = $size;'
+    fi

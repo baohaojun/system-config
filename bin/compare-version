@@ -4,8 +4,10 @@ use strict;
 
 my ($v1, $v2) = @ARGV;
 
-my @v1 = split(/\./, $v1);
-my @v2 = split(/\./, $v2);
+$v1 =~ s/[^0-9_.]//;
+$v2 =~ s/[^0-9_.]//;
+my @v1 = split(/\.|_/, $v1);
+my @v2 = split(/\.|_/, $v2);
 
 while (@v1) {
     $v1 = int shift @v1;
