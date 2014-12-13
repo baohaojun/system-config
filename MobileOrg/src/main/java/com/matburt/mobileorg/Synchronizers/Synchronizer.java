@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import java.io.File;
 import javax.net.ssl.SSLHandshakeException;
 
 /**
@@ -110,8 +111,13 @@ public class Synchronizer {
 		
 		localContents += OrgEdit.editsToString(resolver);
 
-		if (localContents.equals(""))
-			return;
+		if (localContents.equals("")) {
+                    File backFile = new File("/sdcard/MobileOrg/mobileorg.org.bak");
+                    if (backFile.exists()) {
+                        backFile.delete();
+                    }
+                    return;
+                }
 		String remoteContent = FileUtils.read(syncher.getRemoteFile(filename));
 
 		if (remoteContent.indexOf("{\"error\":") == -1)
