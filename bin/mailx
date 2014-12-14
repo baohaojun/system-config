@@ -144,7 +144,7 @@ fi
 
 ## end generated code
 )
-Gcc: nnfolder+archive:sent-mails
+Gcc: nnmaildir+Gmail:SentMails
 --text follows this line--
 $(echo "$body")
 
