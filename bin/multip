@@ -1,0 +1,6 @@
+#!/bin/bash
+y=
+for x in "$@"; do
+    y="$y \"$(mp $x)\""
+done
+putclip "$y"

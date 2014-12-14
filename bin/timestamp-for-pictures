@@ -1,9 +1,10 @@
 #!/bin/bash
-
+check-program exiftool libimage-exiftool-perl || exit 1
+check-program exiv2 exiv2 || exit 1
 export OUTPUT_DIR=$(select-args -p "output directory: " . */)
 find "${1:-$(select-args -p 'which folder to search? ' */)}" \( -iname '*.jpg' -o -iname '*.mov' -o -iname '*.mp4' \) -type f|xargs -d \\n bash -c 'for x in "$@"; do
  set -x
- read a b c date time <<< $(exiftool "$x" |grep -P -i -e "^create date\s+:");
+ read a b c date time <<< $(exiftool "$x" |grep -P -i -e "^create date\s+:"|head -n 1);
  ext=$(echo ${x##*.} | perl -npe "\$_ = lc \$_")
  date=${date//:/-};
  time=${time//:/：};

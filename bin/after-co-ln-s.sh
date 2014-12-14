@@ -202,7 +202,7 @@ fi
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
 if ask-if-not-bhj "Do you want to use bhj's power button behavior (hibernate)?"; then
-    sudo perl -npe 's/.*HandlePowerKey=.*/HandlePowerKey=hibernate/' -i /etc/systemd/logind.conf
+    sudo cp ~/etc/systemd/logind.conf /etc/systemd/logind.conf
 fi
 
 if ask-if-not-bhj "Do you want to use bhj's git-exclude file?"; then
