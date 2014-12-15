@@ -43,7 +43,7 @@
           "sent-messages")
          ((message-mail-p)
           ;; Mail
-          "sent-mails"))))
+          "nnmaildir+Gmail:SentMails"))))
 
 (setq gnus-select-method
       '(nnmaildir "Gmail"
