@@ -56,8 +56,10 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     {
         if test "$ANDROID_TOP"; then
             relative-path "$FILE" $(readlink -f "$ANDROID_TOP")
-        else
+        elif lookup-file -e .repo >/dev/null 2>&1; then
             relative-path "$FILE" $(readlink -f $(lookup-file .repo/..))/
+        else
+            relative-path "$FILE" ..
         fi
     }
 

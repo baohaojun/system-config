@@ -49,7 +49,14 @@ while true; do
 done
 
 if test -z "$from" -o -z "$to"; then
-    die "Error: Usage $(basename $0) -f FROM -t TO"
+    if test -e .git; then
+        export from=$(git-choose-branch -p from)
+        export to=$(git-choose-branch -p to)
+        local_from=true
+        local_to=true
+    else
+        die "Error: Usage $(basename $0) -f FROM -t TO"
+    fi
 fi
 
 if test $local_from = false -a "$remote"; then

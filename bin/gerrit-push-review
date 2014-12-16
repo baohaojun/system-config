@@ -16,6 +16,7 @@ rev=HEAD
 head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
 if test "$head_branch" && yes-or-no-p -y "use $head_branch as the target branch for review?"; then
     export REPO_BRANCH=$head_branch
+    export REPO_REMOTE=$(git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!')
 fi
 
 TEMP=$(getopt -o nBb:r:Ra --long revision:,norebase,remote: -n $(basename $0) -- "$@")

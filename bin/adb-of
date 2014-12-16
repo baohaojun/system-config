@@ -4,11 +4,11 @@ if test ! -e "$1"; then
     perl -e '$_ = $ARGV[0];
              if (m!https://login.weibo.cn/login/.*backURL=http%3A%2F%2Fweibo.cn%2F[^%]*%2F([^%&]+)!i) {
                  open_sina($1);
-             } elsif (m!http://(?:m\.)?weibo\.(?:cn|com)/(?:u|p)/([^?/&%]+)!) {
-                 open_sina_user($1);
+             } elsif (m!http://(?:m\.)?weibo\.(?:cn|com)/(d|u|p)/([^?/&%]+)!) {
+                 open_sina_user($1, $2);
              } elsif (m!http://v.youku.com/v_show/id_([^.]+)!) {
                  system("my-adb", "am", "start", "-n", "com.youku.phone/com.youku.ui.activity.DetailActivity", "--es", "video_id", $1);
-             } elsif (m!http://weibo.(?:com|cn)/[^/]*/([^?/]+)!) {
+             } elsif (m!http://(?:www.)?weibo.(?:com|cn)/[^/]*/([^?/]+)!) {
                  open_sina($1);
              } elsif (m!http://m.weibo.cn/[^/]*/([^/?]*)!) {
                  open_sina($1);
@@ -17,8 +17,14 @@ if test ! -e "$1"; then
              } else {
                  system("my-adb", "am", "start", $_);
              }
-             sub open_sina_user($1) {
-                 system("my-adb", "am", "start", "-n", "com.sina.weibo/.ProfileInfoActivity", "--es", "uid", "$1");
+             sub open_sina_user($$) {
+                 ($type, $param) = @_;
+                 if ($type eq "d") {
+                     $name = "nick";
+                 } else {
+                     $name = "uid";
+                 }
+                 system("my-adb", "am", "start", "-n", "com.sina.weibo/.ProfileInfoActivity", "--es", "$name", "$param");
              }
              sub open_sina($) {
                  system("my-adb", "am", "start", "sinaweibo://detail?mblogid=$_[0]");
