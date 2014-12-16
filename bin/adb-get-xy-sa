@@ -1,0 +1,35 @@
+#!/bin/bash
+
+export TAP=adb-tap
+if test "$1"; then
+    export TAP=$1
+fi
+
+(sleep 5 && adb root-mode off) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
+expect -c 'spawn adb shell; expect "#"; send "getevent -l\n"; interact {
+        -reset \032 {exec kill -STOP [pid]}
+        -reset \003 {exec kill -TERM [pid]}
+    }' </dev/tty | perl -ne '
+    BEGIN {
+        $xy = qx(adb shell dumpsys window);
+        if ($xy =~ m/app=(\d+)x(\d+)/) {
+          $true_x = $1;
+          $true_y = $2;
+        }
+    }
+    if (m/ABS_MT_POSITION_/) {
+        chomp;
+        @fields = split;
+        ($name, $val) = @fields[2,3];
+        $val = hex($val);
+        # print "$name: $val\r\n";
+        if ($name =~ m/ABS_MT_POSITION_X/) {
+            $x = int($val * 1080 / $true_x);
+        } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
+            $y = int($val * 1920 / $true_y);
+        }
+        print "$ENV{TAP} $x $y\r\n";
+        system("echo -n $ENV{TAP} $x $y|xclip -i");
+        system("echo -n $ENV{TAP} $x $y|xclip -i -selection clipboard");
+    }
+'

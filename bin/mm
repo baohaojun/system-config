@@ -27,7 +27,7 @@ time (
 
     if test "$(find $build_mount_p -maxdepth 1 | wc -l)" != 1 && yes-or-no-p -y "unmount ~/src/.afb?"; then
         unshare-work
-        umount ~/src/.afb
+        umount ~/src/.afb || true
     fi
     test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1 || die "build_mount_p already mounted"
     echo "make: Entering directory \`$(pwd)'"
