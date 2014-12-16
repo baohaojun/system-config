@@ -54,8 +54,8 @@ fi
 
 lock=~/.logs/ask-to-sync-org.term.lock.$(adb devices? | pn 1)
 touch $lock
-fuser -k $lock || true
 if ! is-tty-io; then
+    fuser -k $lock || true
     (
         set -e
         flock -n 9
