@@ -898,7 +898,7 @@ t1_post = function(text) -- use weixin
       if input_method then
          if ime_height ~= 0 then
             add = ''
-            post_button = ('984 %d'):format(1920 - ime_height - 50)
+            post_button = ('984 %d'):format(1920 - ime_height - 100)
          end
       else
          if adb_input_method_is_null() then --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
