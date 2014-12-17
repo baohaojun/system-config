@@ -79,7 +79,9 @@ sub fix_link($)
     }
 
     if (not -e $org_file) {
-        die "$link matched with multiple files";
+        if (system("yes-or-no-p", "-y", "$link does not exist or matched with too many files, continue?") != 0) {
+            die "$link matched with multiple files or no files at all";
+        }
     } else {
         $file = $org_file;
     }

@@ -45,11 +45,34 @@ outdated).
 * Install
 ** Linux install
 
+*** Compile by yourself (the preferred way for Linux install)
+
+To compile beagrep by yourself, using Ubuntu precise as an example:
+
+#+begin_src sh
+git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
+# you can also run "git branch -a" to see other versions of debian/ubuntu supported
+
+# Install build dependencies. You can open debian/control and check
+# the build dependencies and install all of them. The following
+# command will try to install them automatically, but if it fails then
+# you need figure out which packages to install manually. Good luck!
+# Or you can contact some debian/ubuntu advanced user for help.
+apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
+
+# do the build
+(set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
+#+end_src
+
 ***  <<using.deb>> Using .deb under debian/ubuntu
+
+*Help!* This has stopped working, help needed. Really appreciate if
+someone can fix this and tell me what went wrong. See the update
+below.
 
 *Update (2014-05-03)* I found that building and installing the lastest
 version of beagrep deb package will sometimes cause runtime exception
-when running on Ubuntu 12.04. So you are encouraged to build and
+when running on Ubuntu 12.04 (and maybe other versions too /2014-12-17/). So you are encouraged to build and
 install from source code directly, which does not show this
 problem. Another reason is these packages is quite outdated.
 
@@ -67,31 +90,18 @@ apt-get -f install
 #+end_src
 
 
-*** Compile by yourself
-
-If you need compile by yourself, using Ubuntu precise as an example:
-
-#+begin_src sh
-git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
-# you can also run "git branch -a" to see other versions of debian/ubuntu supported
-
-# Install build dependencies. You can open debian/control and check
-# the build dependencies and install all of them. The following
-# command will try to install them automatically, but if it fails then
-# you need figure out which packages to install manually. Good luck!
-# Or you can contact some debian/ubuntu advanced user for help.
-apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
-
-# do the build
-(set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
-#+end_src
 
 *** Build .deb by yourself
 
+*Help!* This has stopped working, help needed. Really appreciate if
+someone can fix this and tell me what went wrong. See the update
+below.
+
 *Update (2014-05-03)* I found that building and installing the lastest
 version of beagrep deb package will sometimes cause runtime exception
-when running on Ubuntu 12.04. So you are encouraged to build and
-install from source code directly, which does not show this problem.
+when running on Ubuntu 12.04 (and maybe other versions too
+/2014-12-17/). So you are encouraged to build and install from source
+code directly, which does not show this problem.
 
 Before someone volunteer to make beagrep into debian/ubuntu
 distribution, you might also find a need to build .deb by yourself
@@ -538,7 +548,7 @@ dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2
 engine! Beagrep uses beagle, which uses the C# implementation of
 Lucene. I probably wouldn't start working on beagrep had I known
 opengrok earlier. That said, I'm glad I have beagrep, because it is
-Emacs friendlier:-)
+Emacs friendlier😊
 
 I do not use opengrok myself since I have beagrep already, but you are
 encouraged to try it out, it has quite a few nice features. Especially
