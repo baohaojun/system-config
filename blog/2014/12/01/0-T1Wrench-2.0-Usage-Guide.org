@@ -84,7 +84,7 @@
 
 - Windows :: 解压之后双击T1Wrench.exe开始运行
 - Mac :: 解压之后双击T1Wrench.app开始运行
-- Linux :: 解压之后运行./T1Wrench
+- Linux :: 解压之后运行./T1Wrench。您需要自己安装qt5的支持库。我是在debian testing上编出来的，但是我有个同事用ubuntu 12.04也可以运行小扳手。还有一个方案是用wine，我的Windows版的小扳手就是用wine编译、测试的🃏。
 
 ** 连接手机
 
