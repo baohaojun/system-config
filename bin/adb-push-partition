@@ -2,10 +2,5 @@
 set -x
 if test $# = 1; then
     set -- "$1" "$(basename "$1"|perl -npe 's/pt-//')"
-else
-    for x in "$@"; do
-        adb-push-partition "$x"
-    done
-    exit
 fi
 my-adb push $1 /data/; my-adb shell dd if=/data/$1 of=/dev/block/platform/msm_sdcc.1/by-name/$2

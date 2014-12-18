@@ -178,6 +178,11 @@ print $_ . "\n";
             exit
         fi
 
+        if test "$1" = fetch -a $# = 1; then
+            command git fetch $(select-output-line -o -m 1 git remote)
+            exit
+        fi
+
         if test "$1" = commit; then
             if test "$(arg1-arg2 -s "$@")" = -s && yes-or-no-p -y "Add signed-off-by?"; then
                 shift

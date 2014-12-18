@@ -172,8 +172,10 @@ EOF
   (message-goto-body))"
 
 elif test $(basename $0) = adb-mail; then
+    adb-ignite-device
     adb-of mailto://
     adb-tap 143 1692
+    sleep 1
     adb-tap 842 434
     if test "$attachments"; then
         adb mkdir -p /sdcard/adb-mail

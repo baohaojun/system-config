@@ -1,4 +1,5 @@
 (require 'ajoke)
+(require 'grep)
 
 (defun grep-shell-quote-argument (argument)
   "Quote ARGUMENT for passing as argument to an inferior shell."

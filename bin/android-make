@@ -134,7 +134,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
         result=''
         export build_mount_p=$(readlink -f ../)/.afb
         mkdir -p $build_mount_p
-        test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1 || die "mount point not clean"
+        test "$(find $build_mount_p -maxdepth 1 -type l -prune -o -print | wc -l)" = 1 || die "mount point $build_mount_p not clean"
         time sudo env NO_PARALLEL_BUILD=$NO_PARALLEL_BUILD unshare -m -- bash -c "
             set -ex
             umount $build_mount_p >/dev/null 2>&1 || true
@@ -146,13 +146,13 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
                 HOME=$HOME
                 . ~/.bashrc;
                 . .buildenv.sh;
-                export PATH=~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin:\$PATH
-                export PATH=$OUT_DIR/host/linux-x86/bin/:$PATH
                 if test -e .buildenv.sh.x; then
                     set -x
                     . .buildenv.sh.x
                 fi
                 . ./build/envsetup.sh
+                export PATH=~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin:\$PATH
+                export PATH=$PWD/$OUT_DIR/host/linux-x86/bin/:\$PATH
 
                 if test -d boot/uboot -a -d boot/obm; then
                     (cd boot/uboot; git add .; git clean -xfd) || true

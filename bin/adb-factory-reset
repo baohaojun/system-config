@@ -1,0 +1,11 @@
+#!/bin/bash
+
+adb '
+mkdir -p /cache/recovery/
+
+(
+    echo --wipe_data
+    echo --locale=en_US
+) > /cache/recovery/command
+reboot recovery
+'

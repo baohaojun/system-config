@@ -32,10 +32,12 @@ function die() {
 
 if test ! -e "$boot"; then
     if test "$boot" = adb; then
+        my-adb -r echo hello
         my-adb -S shell sh -c 'cat /dev/block/platform/msm_sdcc.1/by-name/boot > /sdcard/boot.img'
         my-adb pull /sdcard/boot.img .
         boot=boot.img
     elif test "$boot" = adb.recovery; then
+        my-adb -r echo hello
         my-adb -S shell sh -c 'cat /dev/block/platform/msm_sdcc.1/by-name/recovery > /sdcard/boot.img'
         my-adb pull /sdcard/boot.img .
         boot=boot.img

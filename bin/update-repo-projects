@@ -108,10 +108,10 @@ fi
         rm .repo/out-*/ -rf || true
         if test $(wc -w .do-update|pn 1) != 0; then
             for x in $(cat .do-update); do
-                android-full-build $x || true
+                android-make -c $x || true
             done
         else
-            android-full-build
+            android-make
         fi
         bhj-short-notify $(basename $0) "$(pwd): build completed"
     ) 9>.android-full-build.lock

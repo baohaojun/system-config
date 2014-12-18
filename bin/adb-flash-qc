@@ -1,0 +1,22 @@
+#!/bin/bash
+#alterable.bin emmc_appsboot.mbn NON-HLOS.bin rpm.mbn sbl1.mbn sdi.mbn splash.img tz.mbn udisk.bin
+# NON-HLOS.bin                  /dev/block/platform/msm_sdcc.1/by-name/modem
+# sbl1.mbn                              /dev/block/platform/msm_sdcc.1/by-name/sbl1
+# sbl2.mbn                              /dev/block/platform/msm_sdcc.1/by-name/sbl2
+# sbl3.mbn                              /dev/block/platform/msm_sdcc.1/by-name/sbl3
+# tz.mbn                                        /dev/block/platform/msm_sdcc.1/by-name/tz
+# rpm.mbn                                       /dev/block/platform/msm_sdcc.1/by-name/rpm
+# emmc_appsboot.mbn             /dev/block/platform/msm_sdcc.1/by-name/aboot
+# sdi.mbn                                       /dev/block/platform/msm_sdcc.1/by-name/dbi
+# udisk.bin                             /dev/block/platform/msm_sdcc.1/by-name/udisk
+# alterable.bin                         /dev/block/platform/msm_sdcc.1/by-name/alterable
+# splash.bin                              /dev/block/platform/msm_sdcc.1/by-name/splash
+
+adb-push-partition alterable.bin alterable
+adb-push-partition emmc_appsboot.mbn aboot
+adb-push-partition NON-HLOS.bin modem
+adb-push-partition rpm.mbn rpm
+adb-push-partition sbl1.mbn sbl1
+adb-push-partition sdi.mbn dbi
+adb-push-partition splash.img splash
+adb-push-partition tz.mbn tz

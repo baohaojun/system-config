@@ -87,4 +87,4 @@ if test $# -gt 1 -a "$1" = sync; then
    fi
 fi
 
-$the_prog "$@"
+time $the_prog "$@"
