@@ -731,7 +731,9 @@ t1_config = function()
             error("Can't mark the setclip.apk as been installed")
          end
       else
-         error("Install setclip.apk failed, output is " .. install_output)
+         if not os.execute("test -e .quiet-apk-install-failure") then
+            error("Install setclip.apk failed, output is " .. install_output)
+         end
       end
    end
 
