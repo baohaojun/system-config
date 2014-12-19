@@ -20,6 +20,8 @@ if test $# = 0 || test $# = 1 -a "$1" = first; then
         ) 9<~/bin/myscr >~/.logs/ssh-agent.log 2>&1
 
         . ~/.config/ssh-agent
+    elif ! ssh-add -l >/dev/null 2>&1 ; then
+        ssh-add
     fi
 fi
 
