@@ -2,6 +2,7 @@
 
 the_prog=~/bin/repo
 export the_prog
+using_jobs=
 
 if test $# -gt 1 -a "$1" = sync; then
    shift
@@ -51,7 +52,11 @@ if test $# -gt 1 -a "$1" = sync; then
                ;;
            -j|-m|-u|-p|-t|--jobs|--manifest-name|--manifest-server-username|--manifest-server-password|--smart-tag)
                options=("${options[@]}" "$1" "$2")
+               if test $1 = -j; then
+                   using_jobs=time
+               fi
                shift 2
+
                ;;
            --)
                shift
@@ -87,4 +92,4 @@ if test $# -gt 1 -a "$1" = sync; then
    fi
 fi
 
-time $the_prog "$@"
+$using_jobs $the_prog "$@"

@@ -26,11 +26,13 @@ fi
 
 test -d .repo -a -e build/envsetup.sh
 jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
-jobs=$((jobs + jobs / 2))
+jobs=$((jobs * 2))
 verbose=
 config=
 keep=-k
-TEMP=$(getopt -o vkj:c: -n $(basename $0) -- "$@")
+make_dir=
+targets=
+TEMP=$(getopt -o vd:kj:c: -n $(basename $0) -- "$@")
 function die() {
     echo "$@"
     exit -1
@@ -45,6 +47,19 @@ while true; do
             ;;
         -c)
             config=$2
+            shift 2
+            ;;
+        -d)
+            cd -
+            make_dir=$(readlink -f $2)
+            targets=$(
+                cd $make_dir;
+                find . -maxdepth 3 -name Android.mk |
+                    xargs grep '^\s*LOCAL_MODULE\b.*=' -P |
+                    perl -npe 's/.*=//' | tr \\n ' '
+                   )
+
+            cd -
             shift 2
             ;;
         -j)
@@ -142,6 +157,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
             cd $build_mount_p
             umount $OUT_DIR >/dev/null 2>&1 ||true
             mount $OUT_DIR_LONG $OUT_DIR -o bind
+            perl -npe 's!^\\\$\(error stopping\)!#\\\$(error stopping)!' -i build/core/main.mk
             su $(whoami) -c '
                 HOME=$HOME
                 . ~/.bashrc;
@@ -151,7 +167,6 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
                     . .buildenv.sh.x
                 fi
                 . ./build/envsetup.sh
-                export PATH=~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin:\$PATH
                 export PATH=$PWD/$OUT_DIR/host/linux-x86/bin/:\$PATH
 
                 if test -d boot/uboot -a -d boot/obm; then
@@ -163,18 +178,18 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
                     if test $# = 1 -a $1 = msm-kernel; then
                         (
                             cd build/target/board
-                            mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs -l $jobs $verbose
+                            mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs $verbose
                         )
                     elif test $# = 1 -a $1 = lk; then
                         (
                             cd build/target/board
-                            mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs -l $jobs $verbose
+                            mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs $verbose
                         )
                     else
-                        schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs $keep $* $verbose
+                        schedtool -B -n 1 -e ionice -n 1 make -j$jobs $keep $* $verbose
                     fi
                 elif test -z \"$NO_PARALLEL_BUILD\" -a -z \"\$NO_PARALLEL_BUILD\"; then
-                    schedtool -B -n 1 -e ionice -n 1 make -j$jobs -l $jobs $keep
+                    schedtool -B -n 1 -e ionice -n 1 make -j$jobs $keep $targets
                 else
                     lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 
@@ -208,5 +223,5 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
 if test "$#" = 0; then
     mv out/build.log out/full-build.log
 fi
-
+perl -npe 's!^#\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
 grep -Hn -e 'full build result is' build.log | grep -e "all ok" # make sure it exit with the right return value

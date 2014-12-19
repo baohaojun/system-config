@@ -28,6 +28,7 @@ if (@ARGV == 1) {
     }
 }
 
+system("my-adb -r echo hello");
 my $dest = pop( @ARGV);
 my $qdest = shell_quote($dest);
 
