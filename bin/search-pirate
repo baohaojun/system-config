@@ -1,11 +1,12 @@
 #!/bin/bash
 
 test $# = 0 && set -- "$(getclip)"
-
+#https://oldpiratebay.org/search.php?q=ohashi+miku&Torrent_sort=seeders.desc
 url=$(
-    echo -n "http://thepiratebay.se/search/";
+    #echo -n "http://thepiratebay.se/search/";
+    echo -n "https://oldpiratebay.org/search.php?q="
     echo -n "$@" | perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g'
-    echo /0/7/0
+    echo '&Torrent_sort=seeders.desc'
 )
 echo "$url"|tee /dev/tty|putclip
 firefox "$url"&

@@ -228,6 +228,7 @@
   (dolist (theme custom-enabled-themes)
     (disable-theme theme))
   (load-theme (or specified-theme
+                  (and current-prefix-arg (intern (completing-read "Which theme?" (custom-available-themes) nil t)))
                   (let ((theme (nth (random (length (custom-available-themes))) (custom-available-themes))))
                     (message "loaded theme: %s" theme)
                     theme))))

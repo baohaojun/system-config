@@ -1,0 +1,7 @@
+#!/bin/bash
+
+perl -npe 's/^(\s+)(\.org-link \{)/$1a, $2/;
+           s/^(\s+)(\.org-link-visited \{)/$1a:visited, $2/;
+           s/^(\s+)(\.org-org-level-(\d+) \{)/$1 . "h" . ($3 + 1) . ", " . $2/e;
+           s/^(\s+)(\.org-org-document-title \{)/$1h1.title, $2/;
+' -i $1
