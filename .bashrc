@@ -85,6 +85,9 @@ case $- in
     *i*) . ~/.bashrc-interactive;;
 esac
 
+if test -x ~/external/firefox/firefox; then
+    export BROWSER=firefox
+fi
 if test -e ~/.bashrc-cust; then
     . ~/.bashrc-cust;
 fi

@@ -42,7 +42,7 @@ if test "$#" != 0; then
         project)
             cd -
             shift
-            remote=$(git remote -v |pn 2|head -n 1)
+            remote=$(git-remote-url)
             putclip "[[$remote][$(basename $remote)]]"
             ;;
         f)
@@ -51,7 +51,7 @@ if test "$#" != 0; then
         c)
             cd -
             shift
-            remote=$(git remote -v |pn 2|head -n 1)
+            remote=$(git-remote-url)
             putclip "[[$remote/commit/"$@"][this commit at my $(basename $remote) project]]"
             ;;
         g) #github url

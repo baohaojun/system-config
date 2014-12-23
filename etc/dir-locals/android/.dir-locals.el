@@ -12,6 +12,11 @@
                   "-I/usr/include/x86_64-linux-gnu"
                   "-I/usr/include"
                   "-I/home/bhj/src/android/bionic/libc/include"
+                  "-I/home/bhj/src/android/system/core/include"
+                  "-I/home/bhj/src/android/bionic/libc/stdlib"
+                  "-I/home/bhj/src/android/bionic/libc/string"
+                  "-I/home/bhj/src/android/bionic/libc/stdio"
+                  "-I/home/bhj/src/android/external/safe-iop/include"
                   "-I.")
   (flycheck-clang-include-path "/usr/include/c++/4.9"
                                "/usr/include/x86_64-linux-gnu/c++/4.9"

@@ -8,7 +8,7 @@ gitd=$(lookup-file -e .git)
 if test -e $gitd/svn/.metadata; then
     url=$(git svn info | grep "^URL:" | pn 2 | head -n 1)
 else
-    test $# == 0 -o -z "$1" && set -- $(git remote | pn 1 | head -n 1)
+    test $# == 0 -o -z "$1" && set -- $(repo-remote)
 
     url=$(git config remote.$1.url | (
                  if test "$BPE_ON_APSE"; then

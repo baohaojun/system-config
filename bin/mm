@@ -12,6 +12,7 @@ time (
     top_dir=$(readlink -f $top_dir/..)
 
     cd $top_dir/
+    perl -npe 's!^\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
     . build/envsetup.sh
     set_stuff_for_environment
     cd -
@@ -58,6 +59,6 @@ time (
     perl -ne 'print unless /unmappable character for encoding ascii/' |
     perl -npe 's/(\.o\(.*?\.o\):)/$1\n/'
 
-
+    perl -npe 's!^#\$\(error stopping\)!\$(error stopping)!' -i build/core/main.mk
     echo OK
 )

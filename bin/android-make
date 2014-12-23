@@ -223,5 +223,5 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
 if test "$#" = 0; then
     mv out/build.log out/full-build.log
 fi
-perl -npe 's!^#\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
+perl -npe 's!^#\$\(error stopping\)!\$(error stopping)!' -i build/core/main.mk
 grep -Hn -e 'full build result is' build.log | grep -e "all ok" # make sure it exit with the right return value

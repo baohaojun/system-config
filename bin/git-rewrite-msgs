@@ -6,18 +6,27 @@ function die() {
     exit -1
 }
 
-if test $# != 1; then
-    die "Error: Usage $(basename $0) REV"
+if test $# = 1; then
+    set -- "$1" HEAD
 fi
-list=$(git rev-list HEAD ^$1|reverse)
 
-git reset --hard $1
+if test $# != 2; then
+    die "Usage: $(basename $0) START_REV END_REV(default to HEAD)"
+fi
+
+export list=$(git rev-list $1..$2|reverse)
+
+if test $2 = HEAD; then
+    git reset --hard $1
+fi
 if test $(basename $0) = git-rework-change; then
-    start_recursive_shell
+    start_recursive_shell "Rework commit $1" || true
+    git cherry-pick $1..$2
+    exit
 fi
-
-git commit --amend --allow-empty
 
 for x in $list; do
-    git cherry-pick $x
+    export WORKING_REV=$x
+    git cherry-pick $x || start_recursive_shell "cherry-pick $x failed" || true
+    start_recursive_shell "Rewrite $x" || true
 done

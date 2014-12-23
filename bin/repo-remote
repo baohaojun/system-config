@@ -12,6 +12,8 @@ fi
 
 if test "$REPO_INFO"; then
     $REPO_INFO remote
+elif lookup-file -e .repo/.. >/dev/null 2>&1; then
+    repo forall . -c 'echo $REPO_REMOTE' 2>/dev/null
 else
-    repo forall . -c 'echo $REPO_REMOTE' 2>/dev/null || git remote
+    git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!'
 fi
