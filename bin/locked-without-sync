@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+
+use strict;
+for my $java_file (@ARGV) {
+    chomp(my $flat_java_file = qx(java-flatten-cache $java_file));
+    open(my $fd, "<", $flat_java_file) or die "can't open $flat_java_file";
+    my %indent_map;
+    my %line_number_map;
+    while (<$fd>) {
+        m/^\s+/;
+        my $indent = length $&;
+        $indent_map{$indent} = $_;
+        $line_number_map{$indent} = $.;
+
+        if (m/Locked\(/ and not m/Locked\([^()]*\)\{$/) {
+            my $is_ok;
+            for my $prev_indent (sort {$b <=> $a} (keys %indent_map)) {
+                if ($prev_indent < $indent) {
+                    if ($indent_map{$prev_indent} =~ m/Locked\([^()]*\)\{$|synchronized/) {
+                        $is_ok = 1;
+                        last;
+                    }
+                    if ($prev_indent == 0) {
+                        last;
+                    }
+                }
+            }
+            if (not $is_ok) {
+                for my $prev_indent (sort {$a <=> $b} (keys %indent_map)) {
+                    if ($prev_indent <= $indent) {
+                        print "$flat_java_file:$line_number_map{$prev_indent}: $indent_map{$prev_indent}";
+                    }
+                }
+                print "\n";
+            }
+        }
+    }
+}
