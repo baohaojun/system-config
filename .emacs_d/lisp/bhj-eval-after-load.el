@@ -190,5 +190,14 @@
 (eval-after-load 'ox-html
   '(advice-add 'org-html-fontify-code :around #'org-html-fontify-code-compout))
 
+(defun bhj-hack-helm-s-return ()
+  (interactive)
+  (bhj-hack-helm-s-return-helper))
+
+(defun bhj-hack-helm-s-return-helper ()
+    (message "hello world: %s" (buffer-substring-no-properties (point-min) (point-max))))
+
+(eval-after-load 'helm
+  '(define-key helm-map [(shift return)] 'bhj-hack-helm-s-return))
 (eval-after-load 'elisp-slime-nav
   '(define-key elisp-slime-nav-mode-map (kbd "M-.") 'grep-gtags))

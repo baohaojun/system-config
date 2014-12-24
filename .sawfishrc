@@ -51,7 +51,7 @@
                                (synthesize-event-gnome? key (input-focus))))
 
 (setq esc-g-remap-alist
-      '(("M-g g" . '((qpdfview "C-j") (t "M-v" "g" "p"))))) ; go to page in acroread
+      '(("M-g g" . '((t "C-g") (qpdfview "C-j") (acroread "M-v" "g" "p"))))) ; go to page in acroread
 
 
 

@@ -12,11 +12,11 @@ for my $java_file (@ARGV) {
         $indent_map{$indent} = $_;
         $line_number_map{$indent} = $.;
 
-        if (m/Locked\(/ and not m/Locked\([^()]*\)\{$/) {
+        if (m/Locked\(/ and not m/Locked\([^()]*\)(throws.*)?\{$/) {
             my $is_ok;
             for my $prev_indent (sort {$b <=> $a} (keys %indent_map)) {
                 if ($prev_indent < $indent) {
-                    if ($indent_map{$prev_indent} =~ m/Locked\([^()]*\)\{$|synchronized/) {
+                    if ($indent_map{$prev_indent} =~ m/Locked\([^()]*\)(throws.*)?\{$|synchronized/) {
                         $is_ok = 1;
                         last;
                     }
@@ -27,7 +27,7 @@ for my $java_file (@ARGV) {
             }
             if (not $is_ok) {
                 for my $prev_indent (sort {$a <=> $b} (keys %indent_map)) {
-                    if ($prev_indent <= $indent) {
+                    if ($prev_indent == $indent) {
                         print "$flat_java_file:$line_number_map{$prev_indent}: $indent_map{$prev_indent}";
                     }
                 }

@@ -1114,9 +1114,41 @@
   (interactive)
   (unless emoji-names
     (setup-emoji-hash))
-  (let ((key (completing-read "Enter your emoji: " emoji-names nil t nil 'emoji-history)))
-    (setq emoji-names (cons (find-if (lambda (n) (string= key n)) emoji-names) (delete-if (lambda (n) (string= key n)) emoji-names)))
-    (insert (gethash key emoji-hash-table))))
+  (let ((emoji))
+   (flet ((bhj-hack-helm-s-return-helper () (interactive) (throw 's-return (buffer-substring-no-properties (point-min) (point-max)))))
+     (let ((key (catch 's-return
+                  (completing-read "Enter your emoji: " emoji-names nil t nil 'emoji-history))))
+       (setq emoji (gethash key emoji-hash-table))
+       (if emoji
+           (progn
+             (setq emoji-names (cons (find-if (lambda (n) (string= key n)) emoji-names) (delete-if (lambda (n) (string= key n)) emoji-names)))
+             (with-temp-buffer
+               (let ((emoji-names-frecency (subseq emoji-names 0 20)))
+                 (recentf-dump-variable 'emoji-names-frecency))
+               (write-file "~/.config/emacs-local-custom.el"))
+             (insert emoji))
+         (setq key (substring key (length "Enter your emoji: ")))
+         (let  ((emoji-names-copy (copy-sequence emoji-names))
+                (stems (split-string key "\\s +")))
+           (while stems
+             (setq emoji-names-copy (delete-if (lambda (n)
+                                                 (let* ((stem (car stems))
+                                                        (not? (string-match "^!" stem))
+                                                        match)
+                                                   (when not? (setq stem (substring stem 1)))
+                                                   (setq match
+                                                         (let ((case-fold-search t))
+                                                           (string-match (regexp-quote stem) n)))
+                                                   (if not?
+                                                       match
+                                                     (not match))))
+                                          emoji-names-copy))
+             (setq stems (cdr stems)))
+           (while emoji-names-copy
+             (setq key (car emoji-names-copy))
+             (setq emoji (gethash key emoji-hash-table))
+             (insert emoji)
+             (setq emoji-names-copy (cdr emoji-names-copy)))))))))
 
 (provide 'emojis)
 ;;; emojis.el ends here
