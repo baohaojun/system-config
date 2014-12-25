@@ -9,34 +9,36 @@ sub debug(@) {
 }
 
 
-my %f1;
-my %f2;
+my %path_rev1;
+my %path_rev2;
 
-open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@revision -n $f1") or die "Error opening $f1\n";
+open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -o '=' -v \@revision -n $f1") or die "Error opening $f1\n";
 
 while (<$F1>) {
-  next unless m/^(.*?)\s*=\s*(.*)\s*$/;
-  $f1{$1} = $2;
+    next unless m/^(.*?)\s*=\s*(.*?)\s*=\s*(.*)\s*$/;
+    my $path = ($1 or $2);
+    $path_rev1{$path} = $3;
 }
 close $F1;
 
-open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@revision -n $f2") or die "Error opening $f2\n";
+open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -o '=' -v \@revision -n $f2") or die "Error opening $f2\n";
 while (<$F2>) {
-  next unless m/^(.*?)\s*=\s*(.*)\s*$/;
-  $f2{$1} = $2;
+    next unless m/^(.*?)\s*=\s*(.*?)\s*=\s*(.*)\s*$/;
+    my $path = ($1 or $2);
+    $path_rev2{$path} = $3;
 }
 close $F2;
 
-for my $x1 (keys %f1) {
-  if ($f1{$x1} eq $f2{$x1}) {
-    delete $f2{$x1};
+for my $path1 (sort {"$a" cmp "$b"} keys %path_rev1) {
+  if ($path_rev1{$path1} eq $path_rev2{$path1}) {
+    delete $path_rev2{$path1};
     next;
   }
-  if (exists($f2{$x1})) {
-      chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
-      chomp(my $up1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@upstream $f1));
-      chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f2));
-      chomp(my $up2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@upstream $f2));
+  if (exists($path_rev2{$path1})) {
+      chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@revision $f1));
+      chomp(my $up1 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@upstream $f1));
+      chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@revision $f2));
+      chomp(my $up2 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@upstream $f2));
     if ($rev1) {
       $rev1 = "revision=\"$rev1\"";
     }
@@ -44,22 +46,22 @@ for my $x1 (keys %f1) {
     if ($rev2) {
       $rev2 = "revision=\"$rev2\"";
     }
-      printf('(cd %s; export REV1=%s; export REV2=%s; export UP1=%s; export UP2=%s; bash)' . "\n", $x1, $f1{$x1}, $f2{$x1}, $up1, $up2) if $x1;
+      printf('(cd %s; export REV1=%s; export REV2=%s; export UP1=%s; export UP2=%s; bash)' . "\n", $path1, $path_rev1{$path1}, $path_rev2{$path1}, $up1, $up2) if $path1;
   } else {
-    chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
+    chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@revision $f1));
     if ($rev1) {
       $rev1 = " revision=\"$rev1\"";
     }
-    printf('1: <project path="%s" name="%s"%s />' . "\n", $x1, $f1{$x1}, $rev1);
+    printf('1: <project path="%s" name="%s"%s />' . "\n", $path1, $path_rev1{$path1}, $rev1);
   }
-  delete $f2{$x1};
+  delete $path_rev2{$path1};
 }
 
-for my $x2 (keys %f2) {
-  chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x2'" -v \@revision $f2));
+for my $path2 (sort {"$a" cmp "$b"} keys %path_rev2) {
+  chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$path2'" -v \@revision $f2));
   if ($rev2) {
     $rev2 = "revision=\"$rev2\"";
   }
 
-  printf('2: <project path="%s" name="%s"%s />' . "\n", $x2, $f2{$x2}, $rev2);
+  printf('2: <project path="%s" name="%s"%s />' . "\n", $path2, $path_rev2{$path2}, $rev2);
 }

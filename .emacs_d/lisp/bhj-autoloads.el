@@ -418,8 +418,8 @@ get imports if java-mode
 
 ;;;***
 
-;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21480 30746
-;;;;;;  244526 283000))
+;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21659 45997
+;;;;;;  221666 183000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -489,6 +489,11 @@ grep mode, which is not buffer readonly for org export
 
 \(fn)" t nil)
 
+(autoload 'bhj-occur-logcat-errors "bhj-defines" "\
+
+
+\(fn)" t nil)
+
 (autoload 'bhj-occur-merge-conflicts "bhj-defines" "\
 
 
@@ -534,10 +539,10 @@ Run the debugger in VS.NET
 
 \(fn)" t nil)
 
-(autoload 'random-theme "bhj-defines" "\
+(autoload 'poor-mans-csharp-mode "bhj-defines" "\
 
 
-\(fn)" t nil)
+\(fn)" nil nil)
 
 (autoload 'try-all-themes "bhj-defines" "\
 

@@ -183,6 +183,13 @@ print $_ . "\n";
             exit
         fi
 
+        if test "$1" = fetch -a "$#" = 2 && [[ "$2" =~ ^remotes/ ]]; then
+            remote=$(echo "$2" | perl -npe 's!remotes/!!; s!/.*!!')
+            branch=$(echo "$2" | perl -npe 's!remotes/.*?/!!;')
+            command git fetch $remote $branch:$branch
+            exit
+        fi
+
         if test "$1" = commit; then
             if test "$(arg1-arg2 -s "$@")" = -s && yes-or-no-p -y "Add signed-off-by?"; then
                 shift

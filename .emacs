@@ -97,16 +97,17 @@
                     (local-set-key [?\C-\M-e] 'end-of-defun))))
         (list 'c-mode-hook 'c++-mode-hook 'csharp-mode-hook 'java-mode-hook))
 
+(defun csharp-end-of-defun (&optional arg)
+  (interactive)
+  (if (eq major-mode 'csharp-mode)
+      (beginning-of-defun-raw -1)
+    (end-of-defun arg)))
+
 (mapcar (lambda (x) (add-hook x (lambda ()
                     (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
                     (c-set-offset 'innamespace 0)
                     (c-set-offset 'substatement-open 0))))
         (list 'c-mode-hook 'c++-mode-hook))
-
-
-
-
-
 
 (auto-image-file-mode)
 (put 'set-goal-column 'disabled nil)
@@ -340,11 +341,6 @@
             (when (string= log-view-message-re "^commit *\\([0-9a-z]+\\)")
               (setq log-view-message-re "^commit +\\([0-9a-z]+\\)"))))
 
-
-(add-hook 'python-mode-hook
-          (lambda ()
-            (setq imenu-create-index-function #'ajoke--create-index-function))
-          t)
 
 (add-hook 'grep-mode-hook
           (lambda ()

@@ -457,6 +457,7 @@ might be bad."
   (interactive)
   (devenv-cmd "Debug.Start"))
 
+;;;###autoload
 (defun poor-mans-csharp-mode ()
   (csharp-mode)
   (setq mode-name "C#")

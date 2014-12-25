@@ -201,3 +201,17 @@
   '(define-key helm-map [(shift return)] 'bhj-hack-helm-s-return))
 (eval-after-load 'elisp-slime-nav
   '(define-key elisp-slime-nav-mode-map (kbd "M-.") 'grep-gtags))
+
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq imenu-create-index-function #'ajoke--create-index-function))
+          t)
+
+(add-hook 'csharp-mode-hook
+          (lambda ()
+            (defun csharp-imenu-create-index ()
+              (ajoke--create-index-function))
+            (setq imenu-create-index-function #'ajoke--create-index-function))
+          t)
+
+
