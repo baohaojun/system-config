@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "$@" | tr : \\n |
+    while read jar; do
+        if test -e $jar; then
+            real_jar=$jar
+        elif test -e /usr/share/java/$jar; then
+            real_jar=/usr/share/java/$jar
+        else
+            jar=${jar%.jar}
+            real_jar=$(echo /usr/share/java/$jar-[0-9]*.jar|pn 1)
+        fi
+        echo -n :$real_jar
+    done | cut -b 2-
