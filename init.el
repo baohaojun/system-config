@@ -23,6 +23,7 @@
 (require-package 'browse-kill-ring)
 (require-package 'bbdb)
 (require-package 'helm)
+(require-package 'csharp-mode)
 (require 'helm-config)
 (helm-mode 1)
 
