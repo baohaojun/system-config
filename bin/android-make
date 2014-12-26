@@ -1,6 +1,10 @@
 #!/bin/bash
 
 cd $(lookup-file .repo/..)
+if test -e .buildenv.sh.x; then
+    . .buildenv.sh.x
+fi
+
 if test -e .repo/AndroidKernel.mk; then
     cp .repo/AndroidKernel.mk kernel/
 fi

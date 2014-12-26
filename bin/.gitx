@@ -183,11 +183,16 @@ print $_ . "\n";
             exit
         fi
 
-        if test "$1" = fetch -a "$#" = 2 && [[ "$2" =~ ^remotes/ ]]; then
-            remote=$(echo "$2" | perl -npe 's!remotes/!!; s!/.*!!')
-            branch=$(echo "$2" | perl -npe 's!remotes/.*?/!!;')
-            command git fetch $remote $branch:$branch
-            exit
+        if test "$1" = fetch -a "$#" = 2; then
+            if test "$2" = ?; then
+                set -- "$1" $(git-choose-branch)
+            fi
+            if [[ "$2" =~ ^remotes/ ]]; then
+                remote=$(echo "$2" | perl -npe 's!remotes/!!; s!/.*!!')
+                branch=$(echo "$2" | perl -npe 's!remotes/.*?/!!;')
+                command git fetch $remote $branch:$branch
+                exit
+            fi
         fi
 
         if test "$1" = commit; then
