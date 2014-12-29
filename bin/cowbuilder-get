@@ -27,7 +27,7 @@ systems=$(
 
 if test $# = 0; then
     while true; do
-        system=$(select-args $systems)
+        system=$(select-args -o $systems)
         arch=$(select-args amd64 i386)
         $0 $system-$arch
     done
