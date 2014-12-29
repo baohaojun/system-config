@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+rm -f ~/.cache/kernel-build.ok
 git ls-tree -r HEAD --name-only |tee mark| xargs touch
 touch mark
 echo 'echo -00122-g512f9aa; exit 0' > ./scripts/setlocalversion
@@ -19,20 +20,28 @@ if test $# != 0; then # should be make i386_defconfig
     make O=~/.cache/kernel-build -j8 modules
     make O=~/.cache/kernel-build -j8 headers_install
     make O=~/.cache/kernel-build -j8 INSTALL_MOD_PATH=~/.cache/kernel-build/usr INSTALL_MOD_STRIP=1 modules_install
+    touch ~/.cache/kernel-build.ok
 else
     (
         cd $(lookup-file .repo/..)
-        android-make
+        android-make msm-kernel
+        touch ~/.cache/kernel-build.ok
     )
-fi | tee ~/1.txt
+fi | tee ~/tmp/1.txt
+
+if test ! -e ~/.cache/kernel-build.ok; then
+    die "build kernel failed, please check ~/tmp/1.txt"
+fi
 
 find . -type f -anewer mark -print | perl -npe 's!^\./!!' > newer
 file-arg1-arg2 mark newer | pn 1 | xargs git rm -f
 
 if test $# != 0; then # should be make i386_defconfig
     headers=$(find ~/.cache/kernel-build/ -name '*.h')
-    echo "$headers"|perl -npe 'chomp; s!.*?kernel-build/!!; s![^/]*$!!; $_ .= "\n"'|sort -u | xargs mkdir -p
-    for x in $headers; do
-        cp $x $(echo $x | perl -npe 'chomp; s!.*?kernel-build/!!; s![^/]*$!!; $_ .= "\n"')
-    done
+else
+    headers=$(find $(android-env get_abs_build_var PRODUCT_OUT)/obj/KERNEL_OBJ/ -name '*.h')
 fi
+echo "$headers"|perl -npe 'chomp; s!.*?kernel-build/!!; s![^/]*$!!; $_ .= "\n"'|sort -u | xargs mkdir -p
+for x in $headers; do
+    cp $x $(echo $x | perl -npe 'chomp; s!.*?kernel-build/!!; s![^/]*$!!; $_ .= "\n"')
+done
