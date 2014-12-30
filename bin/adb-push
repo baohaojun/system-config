@@ -22,7 +22,7 @@ if (@ARGV == 0) {
 if (@ARGV == 1) {
     my $dest = $ARGV[0];
     $dest =~ s!(.*)/.*!$1!;
-    if ($dest =~ s!.*(/system/.*)!$1!) {
+    if ($dest =~ s!.*(/system/.*|/data/.*)!$1!) {
         push @ARGV, $1;
         debug "using $1 as dest dir";
     }
