@@ -5,15 +5,15 @@ set -e
 
 test $PWD = ~ && cd ~/system-config/
 cd "$(dirname "$(lookup-file .git)")"
-
-if git config remote.origin.url; then
-    git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git://github.com,https://github.com,')
+origin=$(repo-remote)
+if git config remote.$origin.url; then
+    git config remote.$origin.url $(git config remote.$origin.url | perl -npe 's,^git://github.com,https://github.com,')
 else
     # for git svn
     git pull
     exit
 fi
-git fetch origin -v
+git fetch $origin -v
 for x in remotes/$(git-remote-branch); do
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
