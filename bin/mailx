@@ -171,16 +171,37 @@ EOF
   (insert-file \"/tmp/mail.txt.$$\")
   (message-goto-body))"
 
-elif test $(basename $0) = adb-mail; then
+elif test $(basename $0) = adb-mail -o $(basename $0) = adb-gmail; then
+    gmail=false;
+    if test $(basename $0) = adb-gmail; then
+        gmail=true;
+    fi
     adb-ignite-device
-    adb-of mailto://
-    adb-tap 143 1692
+    adb-of mailto:
+
+    if test $gmail = true; then
+        adb-tap 529 1724
+    else
+        adb-tap 143 1692
+    fi
     sleep 1
-    adb-tap 842 434
+
+    if test $gmail = true; then
+        adb-tap 932 472
+    else
+        adb-tap 842 434
+    fi
+
+
     if test "$attachments"; then
         adb mkdir -p /sdcard/adb-mail
         for a in "${attachments[@]}"; do
-            adb-tap 993 883
+            if test $gmail = true; then
+                adb-tap 730 167
+                adb-tap 612 168
+            else
+                adb-tap 993 883
+            fi
             adb-tap 153 1455
             am=/sdcard/adb-mail/$(echo "$a"|perl -npe 's!/!_!g')
             adb push "$a" "$am"
@@ -200,7 +221,11 @@ elif test $(basename $0) = adb-mail; then
         adb-key SCROLL_LOCK
     }
 
-    adb-tap 247 287
+    if test $gmail = true; then
+        adb-tap 321 524
+    else
+        adb-tap 247 287
+    fi
     if test "$to"; then
         add_contacts "${to[@]}"
     fi
@@ -221,8 +246,11 @@ elif test $(basename $0) = adb-mail; then
         adb-key SCROLL_LOCK
     fi
     adb-key DPAD_DOWN
-    adb-key DPAD_UP
-    adb-key DPAD_UP
+
+    if test $gmail = false; then
+        adb-key DPAD_UP
+        adb-key DPAD_UP
+    fi
 
     find-or-exec T1Wrench T1Wrench
 

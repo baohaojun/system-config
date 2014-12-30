@@ -47,4 +47,4 @@ function _mailx()
         esac
 }
 
-complete -o default -o filenames -F _mailx mailx gnus-mailx adb-mail
+complete -o default -o filenames -F _mailx mailx gnus-mailx adb-mail adb-gmail
