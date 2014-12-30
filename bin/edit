@@ -74,6 +74,21 @@ sub edit_1($)
     $file =~ s,.*file://,,;
 
     if (-e $file) {
+
+        if (-e $file) {
+            my $file = shell_quote($file);
+            chomp($file = qx(readlink -f $file));
+            if ($file =~ m!/Maildir/[^/]*/cur/!) {
+                debug "working with $file";
+                $file = shell_quote($file);
+                chomp(my $gnus_link = qx(maildir-get-id $file));
+                # $gnus_link = shell_quote($gnus_link);
+                system("find-or-exec emacs");
+                system("emacsclient", "-e", sprintf('(org-open-link-from-string "%s")', $gnus_link));
+                exit 0;
+            }
+        }
+
         if ((! -r $file or ! -w $file) && $ENV{USER} ne "root") {
             my $fileq = shell_quote($file);
             my $user = qx(stat -c %U $fileq);

@@ -1,5 +1,11 @@
 #!/bin/bash
-exec > ~/.logs/of.log 2>&1
+
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+else
+    exec > ~/.logs/of.log 2>&1
+fi
+
 set -x
 
 if test $# = 0; then
@@ -39,6 +45,8 @@ fi
 
 if test "${1##*.}" = chm; then
     $setsid ffchm "$@"
+elif readlink -f "$1" | grep -P '/Maildir/.*/cur/'; then
+    $setsid emacsclient -e "(org-open-link-from-string \"$(maildir-get-id "$(readlink -f "$1")")\")"&
 else
     $setsid xdg-open "$@"
 fi
