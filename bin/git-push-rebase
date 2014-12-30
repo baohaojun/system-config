@@ -191,13 +191,6 @@ fi
 
 git add .
 
-while test "$(git log --pretty=oneline -1 | cut -b 42-)" = mf; do
-    if git config remote.origin.url | grep bhj.dyndns.org; then
-        break
-    fi
-    git reset --soft HEAD^
-done
-
 if git status -s | grep . ; then
     git commit -s -m "$(
         if test -e .default-commit-msg -a ! -e .commit-msg-bhj; then
@@ -239,18 +232,19 @@ if test "$(wgit symbolic-ref --short HEAD)" != $branch; then
     fi
 fi
 
-if git diff --quiet origin/$branch; then
+origin=$(repo-remote)
+if git diff --quiet $origin/$branch; then
     echo HEAD already containd in a remote $branch, no need to push
     exit
 fi
 
-if git-is-ancestor HEAD origin/$branch; then
-    git co -B $branch origin/$branch
+if git-is-ancestor HEAD $origin/$branch; then
+    git co -B $branch $origin/$branch
     exit
 fi
 
 git pull --rebase
-git push origin HEAD:refs/heads/$branch || die "you need to merge it!"
+git push $origin HEAD:refs/heads/$branch || die "you need to merge it!"
 if test -e .after-push-hook; then
     bash .after-push-hook
 fi
