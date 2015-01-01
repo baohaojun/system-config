@@ -12,7 +12,6 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -41,6 +40,10 @@ public class PutClipService extends Service {
     @Override
     public int onStartCommand(Intent intent,  int flags,  int startId)  {
         try {
+            if (intent == null) {
+                return START_STICKY;
+            }
+
             String picName = intent.getStringExtra("picture");
             if (picName != null) {
                 Uri picUri = Uri.parse("file://" + picName);
@@ -69,7 +72,6 @@ public class PutClipService extends Service {
                 putclip.delete();
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Something went wrong in putclip: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 77), e);
         }
         return START_STICKY;

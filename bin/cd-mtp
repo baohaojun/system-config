@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if test "$(adb getprop persist.sys.usb.config)" != mtp,adb || yes-or-no-p "Restart mtp,adb?"; then
+    adb -r shell setprop persist.sys.usb.config mtp,adb
+    adb -w am startservice -n com.android.providers.media/.MtpService
+fi
+
+mtp=$(lsusb|grep 29a9:|perl -npe 's!^Bus (.*?) Device (.*?):.*!mtp://[usb:$1,$2]/!')
+of "$mtp"
+
+sleep 1;
+rm -f ~/smb/mtp
+relative-link /run/user/1000/gvfs/mtp* ~/smb/mtp
+mp ~/smb/mtp/*

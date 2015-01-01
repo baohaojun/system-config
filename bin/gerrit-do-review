@@ -75,3 +75,5 @@ if test -z "$GERRIT_HOST"; then
         fi
     )
 fi
+
+git fetch $(repo-remote) $(repo-branch)

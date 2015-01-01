@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: getprop
+# key: getprop
+# --
+SystemProperties.${1:getInt}("${2:ro.debuggable}", 0)$0

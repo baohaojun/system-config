@@ -10,6 +10,7 @@
 (bind-keys global-keymap "KP_Right"  '(system "douban next&"))
 (bind-keys global-keymap "KP_Left"  '(system "douban prev&"))
 (bind-keys global-keymap "KP_Begin"  '(system "douban ba&"))
+(bind-keys global-keymap "KP_6" '(system "douban rchan&"))
 (bind-keys global-keymap "KP_Home"  '(system "douban replay&"))
 (bind-keys global-keymap "KP_Add"  '(system "adjust-volume&"))
 (bind-keys global-keymap "KP_Subtract"  '(system "adjust-volume&"))
