@@ -42,49 +42,13 @@ namespace Beagrep.Filters {
 
                 protected override void RegisterSupportedTypes ()
                 {
-                        AddSupportedFlavor (Beagrep.Daemon.FilterFlavor.NewFromMimeType ("text/x-bibtex"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xhtml+xml"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sln"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-designer"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/html"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/plain"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-authors"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-boo"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-chdr"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c-header"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-comma-separated-values"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-copying"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-credits"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csharp"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++src"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csrc"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-fortran"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-install"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-java"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-latex"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-log"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/xml"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-pascal"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-patch")); // patch files
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-perl"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-php"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-python"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-readme"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-scheme"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-emacs-lisp"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sun-c-file"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sun-h-file"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-tex"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-texinfo"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-xslt"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-markdown"));
+                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/*"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-shellscript"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-yaml"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xslt+xml"));
@@ -105,18 +69,6 @@ namespace Beagrep.Filters {
                         AddSupportedFlavor (FilterFlavor.NewFromExtension (".ini"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.mozilla.xul+xml"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml-dtd"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/css"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++hdr"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-dsrc"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-idl"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-makefile"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-matlab"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-ms-regedit"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-objcsrc"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-rpm-spec"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-mm"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-vhdl"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/atom+xml"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/rdf+xml"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/rss+xml"));
@@ -128,16 +80,6 @@ namespace Beagrep.Filters {
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-mozilla-bookmarks"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/rfc822"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/news"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/css"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-dsrc"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-gettext-translation"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-makefile"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-matlab"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-ocaml"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sql"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-uri"));
-                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-vhdl"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("addsapplication/xspf+xml"));
                 }
 
