@@ -45,6 +45,7 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     connect(ui->phoneTextEdit, SIGNAL(emojiShortcutPressed()), this, SLOT(on_tbEmoji_clicked()));
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLastRadioButton = NULL;
+    on_tbPhoneCall_clicked();
 }
 
 T1WrenchMainWindow::~T1WrenchMainWindow()
@@ -384,10 +385,31 @@ void T1WrenchMainWindow::on_tbThumbsUp_clicked()
     mLuaThread->addScript(QStringList() << "t1_follow_me");
 }
 
+void T1WrenchMainWindow::on_tbPhoneCall_clicked()
+{
+
+    if (mContactDialog.isNull()) {
+        mContactDialog = QSharedPointer<DialogGetContact>(new DialogGetContact(this));
+        connect(mContactDialog.data(), SIGNAL(contactSelected(QString)), this, SLOT(on_contactSelected(QString)));
+    }
+    QPoint pos = mSettings.value("contact-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
+    if (pos != QPoint(0, 0)) {
+        mContactDialog->move(pos);
+    }
+    mContactDialog->exec();
+    pos = mContactDialog->pos();
+    mSettings.setValue("contact-dialog-pos", QVariant(pos));
+}
+
 void T1WrenchMainWindow::on_tbNotes_clicked()
 {
     if (ui->tbNotes->isChecked() && mSettings.value("firstTimeNotes", 1).toInt() == 1) {
         mSettings.setValue("firstTimeNotes", 0);
         prompt_user("您之后输入的文字将生成便笺再发送");
     }
+}
+
+void T1WrenchMainWindow::on_contactSelected(const QString&contact)
+{
+    mLuaThread->addScript(QStringList() << "t1_call" << contact);
 }

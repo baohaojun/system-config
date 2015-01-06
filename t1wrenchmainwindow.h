@@ -7,6 +7,7 @@
 #include "screencapture.h"
 #include <QtCore/QSettings>
 #include "dialoggetemoji.h"
+#include "dialoggetcontact.h"
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -42,12 +43,17 @@ private slots:
 
     void on_tbThumbsUp_clicked();
 
+    void on_tbPhoneCall_clicked();
+
     void on_tbNotes_clicked();
+
+    void on_contactSelected(const QString&);
 
 private:
     QSharedPointer<ScreenCapture> mScreenCapture;
     QSharedPointer<LuaExecuteThread> mLuaThread;
     QSharedPointer<DialogGetEmoji> mEmojiDialog;
+    QSharedPointer<DialogGetContact> mContactDialog;
     Ui::T1WrenchMainWindow *ui;
     QSettings mSettings;
     QStringList mPictures;

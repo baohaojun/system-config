@@ -32,17 +32,22 @@ unix {
 
 SOURCES += main.cpp\
 	t1wrenchmainwindow.cpp \
-	adbstatethread.cpp \
+        adbstatethread.cpp \
+        bhj_help.cpp \
         luaexecutethread.cpp \
         qcellphonetextedit.cpp \
         screencapture.cpp \
         painterwidget.cpp \
         painterrectitem.cpp \
         painterpathitem.cpp \
-    dialoggetemoji.cpp \
-    emojimodel.cpp \
-    emojifilteredit.cpp \
-    emojilistview.cpp
+        dialoggetemoji.cpp \
+        emojimodel.cpp \
+        contactmodel.cpp \
+        contactfilteredit.cpp \
+        contactlistview.cpp \
+        dialoggetcontact.cpp \
+        emojifilteredit.cpp \
+        emojilistview.cpp
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
@@ -55,12 +60,18 @@ HEADERS  += t1wrenchmainwindow.h \
             painterpathitem.h \
             dialoggetemoji.h \
             emojimodel.h \
+            contactmodel.h \
             t1wrench.h \
-    emojifilteredit.h \
-    emojilistview.h
+            emojifilteredit.h \
+            emojilistview.h \
+            contactfilteredit.h \
+            contactlistview.h \
+            contactmodel.h \
+            dialoggetcontact.h 
 
 FORMS    += t1wrenchmainwindow.ui \
-    dialoggetemoji.ui
+            dialoggetemoji.ui \
+            dialoggetcontact.ui
 
 RESOURCES += \
     T1Wrench.qrc

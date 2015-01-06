@@ -1,4 +1,5 @@
 #tbPicture, #tbEmoji, #tbScreenCapture, #tbWeibo, #tbWeixin, #tbThumbsUp,
+#tbPhoneCall,
 #sendItPushButton, #configurePushButton, #tbCommandLine, #tbNotes, #tbMomo {
     qproperty-iconSize: 24px 24px;
 }
@@ -25,6 +26,10 @@
 
 #tbThumbsUp {
     qproperty-icon: url(skin:thumbs-up.png)
+}
+
+#tbPhoneCall {
+    qproperty-icon: url(skin:phone-call.png)
 }
 
 #sendItPushButton {

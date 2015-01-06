@@ -843,7 +843,7 @@ local emojis = {
    {'[偷笑]', '[偷笑] TouXiao sina-weibo', 'emojis/weibo-emojis/d_touxiao.png'},
    {'[笑cry]', '[笑cry] XiaoCRY sina-weibo', 'emojis/weibo-emojis/d_xiaoku.png'},
    {'[doge]', '[doge] DOGE sina-weibo', 'emojis/weibo-emojis/d_doge.png'},
-   {'[喵喵]', '[喵喵] MiaoMiao sina-weibo', '/home/bhj/tmp/weibo/res/drawable-hdpi/d_miao.png'},
+   {'[喵喵]', '[喵喵] MiaoMiao sina-weibo', 'emojis/weibo-emojis/d_miao.png'},
    {'[酷]', '[酷] Ku sina-weibo', 'emojis/weibo-emojis/d_ku.png'},
    {'[衰]', '[衰] Shuai sina-weibo', 'emojis/weibo-emojis/d_shuai.png'},
    {'[闭嘴]', '[闭嘴] BiZui sina-weibo', 'emojis/weibo-emojis/d_bizui.png'},

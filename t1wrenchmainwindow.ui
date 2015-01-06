@@ -116,17 +116,17 @@
         </widget>
        </item>
        <item>
-         <widget class="QToolButton" name="tbMomo">
-           <property name="toolTip">
-             <string>分享到陌陌留言板</string>
-           </property>
-           <property name="text">
-             <string>...</string>
-           </property>
-           <property name="checkable">
-             <bool>true</bool>
-           </property>
-         </widget>
+        <widget class="QToolButton" name="tbMomo">
+         <property name="toolTip">
+          <string>分享到陌陌留言板</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="tbNotes">
@@ -155,7 +155,20 @@
         </spacer>
        </item>
        <item>
+        <widget class="QToolButton" name="tbPhoneCall">
+         <property name="toolTip">
+          <string>打电话</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QToolButton" name="tbThumbsUp">
+         <property name="toolTip">
+          <string>点赞有惊喜，只是不知道是惊还是喜</string>
+         </property>
          <property name="text">
           <string>...</string>
          </property>
@@ -164,7 +177,7 @@
        <item>
         <widget class="QToolButton" name="configurePushButton">
          <property name="toolTip">
-          <string/>
+          <string>重新配置一下小扳手</string>
          </property>
          <property name="text">
           <string>...</string>
