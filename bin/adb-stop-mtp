@@ -1,0 +1,9 @@
+#!/bin/bash
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
+my-adb -r setprop persist.sys.usb.config rndis,adb
+my-adb -w echo -n
+my-adb -w kill $(my-adb pidof android.process.media)
+my-adb restart media

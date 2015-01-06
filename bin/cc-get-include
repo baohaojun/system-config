@@ -1,6 +1,16 @@
 #!/bin/bash
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
 (
+    set -e
     cd $(lookup-file -e .git/..)
+    if test ! -d .git; then
+        die "Can't find .git"
+    fi
+
     find . -iname '*.h*'
     cd /usr/include/
     find . \( -type f -o -type l \) -print

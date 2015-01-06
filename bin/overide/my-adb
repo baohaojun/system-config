@@ -153,6 +153,7 @@ function adb() {
                 echo -n '.' 1>/dev/tty
                 $the_adb wait-for-device
                 if adb shell id | grep uid=0 -q; then
+                    echo "root is here" 1>/dev/tty
                     break
                 fi
             done
