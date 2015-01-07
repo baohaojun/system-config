@@ -270,7 +270,8 @@ case "$1" in
         emacsclient -e '(douban-music-pause/resume)'
         ;;
     show)
-        emacsclient -e '(douban-music)'
+        emacsclient -e "(progn (setq douban-music-default-channel (1+ $(random 6)))
+                               (douban-music))"
         find-or-exec emacs
         ;;
     *)

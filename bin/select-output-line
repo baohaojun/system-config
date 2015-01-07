@@ -71,6 +71,8 @@ dood=(
         ) |
         if test $ORDERED != true -a $ORDERED != false; then
             uniq-and-dist-sort "$(cat $histfile.$$  2>/dev/null | head -n 1)"
+        elif test "$SELECT_DIST_WORD"; then
+            uniq-and-dist-sort "$SELECT_DIST_WORD"
         else
             uniq-even-non-ajacent
         fi

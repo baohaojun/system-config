@@ -393,5 +393,5 @@ _adb_util_complete_local_file()
 if [[ $(type -t compopt) = "builtin" ]]; then
     complete -o filenames -F _adb adb
 else
-    complete -o nospace -F _adb adb
+    complete -o nospace -F _adb adb adb-of
 fi
