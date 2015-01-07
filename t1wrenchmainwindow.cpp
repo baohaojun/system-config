@@ -43,9 +43,9 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->phoneTextEdit, SIGNAL(controlEnterPressed()), this, SLOT(on_sendItPushButton_clicked()));
     connect(ui->phoneTextEdit, SIGNAL(emojiShortcutPressed()), this, SLOT(on_tbEmoji_clicked()));
+    connect(ui->phoneTextEdit, SIGNAL(phoneCallShortcutPressed()), this, SLOT(on_tbPhoneCall_clicked()));
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLastRadioButton = NULL;
-    on_tbPhoneCall_clicked();
 }
 
 T1WrenchMainWindow::~T1WrenchMainWindow()

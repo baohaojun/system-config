@@ -15,6 +15,7 @@ public:
 signals:
     void controlEnterPressed();
     void emojiShortcutPressed();
+    void phoneCallShortcutPressed();
 
 public slots:
     void on_emojiSelected(const QString& emoji, const QString& emojiPath);

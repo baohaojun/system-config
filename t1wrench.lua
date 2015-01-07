@@ -1,6 +1,7 @@
 #!/usr/bin/lua
 
 -- functions
+local t1_call
 local shell_quote, putclip, t1_post
 local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share
@@ -1266,6 +1267,10 @@ local function t1_follow_me()
    end
 end
 
+t1_call = function(number)
+   adb_shell("am start -a android.intent.action.DIAL tel:" .. number)
+end
+
 local function t1_spread_it()
    check_phone()
    -- http://weibo.com/1611427581/Bviui9tzF
@@ -1304,6 +1309,7 @@ M.debug = debug
 M.get_a_note = get_a_note
 M.adb_get_last_pic = adb_get_last_pic
 M.picture_to_momo_share = picture_to_momo_share_upload
+M.t1_call = t1_call
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then

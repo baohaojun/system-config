@@ -8,11 +8,20 @@ struct VCard {
     QStringList mTels;
     QStringList mEmails;
     QPixmap mAvatar;
+    mutable QStringList mPinyin;
 
     VCard(const VCard& vcard) :
         mName(vcard.mName),
         mTels(vcard.mTels),
-        mEmails(vcard.mEmails) {};
+        mEmails(vcard.mEmails),
+        mAvatar(vcard.mAvatar)
+    {};
+
+    bool operator==(const VCard& other) const {
+        return mName == other.mName &&
+            mTels == other.mTels &&
+            mEmails == other.mEmails;
+    };
 
     VCard() {};
 

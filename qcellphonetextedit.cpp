@@ -31,6 +31,11 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
         return;
     }
 
+    if ((key == Qt::Key_7 || key == Qt::Key_Ampersand) && (m & (Qt::AltModifier | Qt::MetaModifier))) {
+        emit phoneCallShortcutPressed();
+        return;
+    }
+
     static bool last_is_escape = false;
     typedef struct {
         int from;

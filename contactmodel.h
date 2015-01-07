@@ -21,6 +21,12 @@ public:
     void setFilter(QString filter);
 
 private:
+    QMap<QString, VCard> mContactMap;
+
+    QMap<QString, bool> mContactIsHistory;
+    QList<QString> mContactHistoryList;
+
+    QPixmap mDefaultAvatar;
     QList<SelectedItem> mSelectedItems;
     QList<VCard> mVcards;
     QString mFilter;

@@ -29,13 +29,11 @@ QStringList filterMatchedStrings(const QStringList& strList, const QString& str)
 
 QStringList getPinyinSpelling(const QString& str)
 {
-    qDebug() << "get spell for " << str;
     static QMap<QString, QStringList> pinYinMap;
 
     if (pinYinMap.isEmpty()) {
         QFile py("uc-to-py.tbl");
         if (!py.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qDebug() << "Can't open uc-to-py.tbl";
             return QStringList(str);
         }
         QTextStream in(&py);
@@ -51,9 +49,6 @@ QStringList getPinyinSpelling(const QString& str)
                 QStringList pinyinList  = pinyinStr.split(splitRe, QString::SkipEmptyParts);
 
                 QChar ch = chr.toInt(0, 16);
-                if (chr.toInt(0, 16) % 1000 == 0) {
-                    qDebug() << "ch is " << ch;
-                }
                 pinYinMap[ch] = pinyinList;
             }
         }
@@ -61,10 +56,8 @@ QStringList getPinyinSpelling(const QString& str)
 
     QStringList res("");
     foreach(const QChar& ch, str) {
-        qDebug() << "ch.2 is " << ch;
         QStringList pyList;
         if (pinYinMap.contains(QString(ch))) {
-            qDebug() << "yes " << ch << " is there";
             pyList = pinYinMap[QString(ch)];
         } else {
             pyList << ch;
@@ -72,12 +65,10 @@ QStringList getPinyinSpelling(const QString& str)
         QStringList midRes;
         foreach(const QString& pre, res) {
             foreach(const QString& post, pyList) {
-                qDebug() << "pre is " << pre << ", post is " << post;
                 midRes << (pre + post);
             }
         }
         res = midRes;
     }
-    qDebug() << "return is " << res;
     return res;
 }
