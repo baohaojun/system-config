@@ -72,9 +72,7 @@
 
 这几个地址不管小扳手怎么升级，始终都会是最新的版本供大家下载。
 
-但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：三个版本的链接都在里面，自取所需吧： http://pan.baidu.com/share/link?shareid=3230736514&uk=3189286838
-
-用网盘的一个缺点是它们不能随着小扳手的更新而更新，一更新小扳手我就需要手工提供一组新的下载。目前百度网盘上的下载是最新的（2014-12-03）。以后会考虑自动更新，github下载太慢，微盘百度云共享太麻烦😿
+但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：三个版本的链接都在里面，自取所需吧： http://t.cn/RZMWJgn
 
 ** 安装
 
@@ -225,3 +223,36 @@
 - 怎么关掉开发者模式
 
   从 设置 -> 高级设置 -> 应用程序管理 -> 设置 -> 清除数据 一路点进去，就可以关闭开发者模式了。
+
+- <<exporting.contacts>> 怎么把手机上的联系人导出给小扳手用？
+
+  您可以从“设置”、“联系人”、
+
+  [[../../../../images/setting-export-contact.png][file:../../../../images/setting-export-contact.png]]
+
+  “导入/导出”
+
+  [[../../../../images/imp-exp-setting-export-contact.png][file:../../../../images/imp-exp-setting-export-contact.png]]
+
+  “导出联系人”
+
+  [[../../../../images/export-contact.png][file:../../../../images/export-contact.png]]
+
+  一路点下去把联系人导出到 =/sdcard/smartisan/contact/0000X.vcf= 文件：
+
+  [[../../../../images/confirm-export-contact.png][file:../../../../images/confirm-export-contact.png]]
+
+  然后把手机连上你的PC之后，在便携式设备里可以看到这个文件，把它拷贝到你的小扳手解压目录下，重命名为 =contacts.vcf= 就可以了。
+
+  [[../../../../images/exported.vcf-on-pc.png][file:../../../../images/exported.vcf-on-pc.png]]
+
+* 版本变更记录
+
+** V2.2.0
+
+- 所有微信表情可用
+- 修正微信聊天发送按钮位置，输入多行文字时也可正确发送
+- 更新SetClip.apk，需要打开“未知来源”重新安装一下
+- 可以拨打电话
+- 修正了Windows上所有微博、微信表情中文字符显示错误
+- 下载地址： http://t.cn/RZMWJgn

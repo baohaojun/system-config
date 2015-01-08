@@ -254,11 +254,7 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：三个版本的链接都在里面，自取所需吧： <a href="http://pan.baidu.com/share/link?shareid=3230736514&uk=3189286838">http://pan.baidu.com/share/link?shareid=3230736514&uk=3189286838</a>
-</p>
-
-<p>
-用网盘的一个缺点是它们不能随着小扳手的更新而更新，一更新小扳手我就需要手工提供一组新的下载。目前百度网盘上的下载是最新的（2014-12-03）。以后会考虑自动更新，github下载太慢，微盘百度云共享太麻烦😿
+但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：三个版本的链接都在里面，自取所需吧： <a href="http://t.cn/RZMWJgn">http://t.cn/RZMWJgn</a>
 </p>
 </div>
 </div>
@@ -588,6 +584,82 @@ for the JavaScript code in this tag.
 从 设置 -&gt; 高级设置 -&gt; 应用程序管理 -&gt; 设置 -&gt; 清除数据 一路点进去，就可以关闭开发者模式了。
 </p>
 </li>
+
+<li><a id="exporting.contacts" name="exporting.contacts"></a> 怎么把手机上的联系人导出给小扳手用？
+
+<p>
+您可以从“设置”、“联系人”、
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/setting-export-contact.png"><img src="../../../../images/setting-export-contact.png" alt="setting-export-contact.png" /></a>
+</p>
+</div>
+
+<p>
+“导入/导出”
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/imp-exp-setting-export-contact.png"><img src="../../../../images/imp-exp-setting-export-contact.png" alt="imp-exp-setting-export-contact.png" /></a>
+</p>
+</div>
+
+<p>
+“导出联系人”
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/export-contact.png"><img src="../../../../images/export-contact.png" alt="export-contact.png" /></a>
+</p>
+</div>
+
+<p>
+一路点下去把联系人导出到 <code>/sdcard/smartisan/contact/0000X.vcf</code> 文件：
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/confirm-export-contact.png"><img src="../../../../images/confirm-export-contact.png" alt="confirm-export-contact.png" /></a>
+</p>
+</div>
+
+<p>
+然后把手机连上你的PC之后，在便携式设备里可以看到这个文件，把它拷贝到你的小扳手解压目录下，重命名为 <code>contacts.vcf</code> 就可以了。
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/exported.vcf-on-pc.png"><img src="../../../../images/exported.vcf-on-pc.png" alt="exported.vcf-on-pc.png" /></a>
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> 版本变更记录</h2>
+<div class="outline-text-2" id="text-5">
+</div><div id="outline-container-sec-5-1" class="outline-3">
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> V2.2.0</h3>
+<div class="outline-text-3" id="text-5-1">
+<ul class="org-ul">
+<li>所有微信表情可用
+</li>
+<li>修正微信聊天发送按钮位置，输入多行文字时也可正确发送
+</li>
+<li>更新SetClip.apk，需要打开“未知来源”重新安装一下
+</li>
+<li>可以拨打电话
+</li>
+<li>修正了Windows上所有微博、微信表情中文字符显示错误
+</li>
+<li>下载地址： <a href="http://t.cn/RZMWJgn">http://t.cn/RZMWJgn</a>
+</li>
 </ul>
 <nav>
   <ul id="prev_next_posts">
@@ -605,6 +677,7 @@ for the JavaScript code in this tag.
     </li>
   </ul>
 </nav>
+</div>
 </div>
 </div>
 </div>
