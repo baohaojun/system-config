@@ -29,7 +29,7 @@ EmojiModel::EmojiModel(QObject *parent) :
 
         lua_rawgeti(L, -1, 2);
         QString key = QString::fromUtf8(lua_tolstring(L, -1, NULL));
-        key = key.sprintf("%04d %s", i, qPrintable(key));
+        key = QString().sprintf("%04d", i) + key;
         lua_settop(L, -2);
 
         lua_rawgeti(L, -1, 3);

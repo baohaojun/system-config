@@ -233,7 +233,7 @@ void ContactModel::setFilter(QString filter)
 
         if (match) {
             foreach (const QString& tel, tels) {
-                SelectedItem si(tel, QString().sprintf("%s %s", qPrintable(vcard.mName), qPrintable(tel)));
+                SelectedItem si(tel, vcard.mName + " " + tel);
                 si.icon = vcard.mAvatar;
                 if (!mContactMap.contains(si.displayText)) {
                     mContactMap[si.displayText] = vcard;

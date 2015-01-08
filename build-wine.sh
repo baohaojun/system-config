@@ -7,7 +7,7 @@ function copy-dlls()
     rsync windows/binaries/* ./release -v -L -r
     rsync *.lua  ./release -v
 
-    req_dlls=( icudt52.dll icuin52.dll icuuc52.dll
+    req_dlls=( icudt5?.dll icuin5?.dll icuuc5?.dll
                qt5network.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL
              )
 
@@ -58,7 +58,7 @@ set -o pipefail
 
 function wine() {
     cat > build.bat<<EOF
-set path=$(for x in ~/.wine/drive_c/Qt*/Qt*/*/mingw*/bin; do
+set path=$(for x in ~/.wine/drive_c/Qt/Qt*/*/mingw*/bin; do
                echo $x;
            done |
            perl -npe 'chomp; s!$ENV{HOME}/.wine/drive_c!c:!; s!$!;!')%path%
@@ -94,7 +94,7 @@ for x in . download; do
     )
 done
 
-copy-dlls ~/.wine/drive_c/Qt*/Qt*/[0-9]*/mingw*/
+copy-dlls ~/.wine/drive_c/Qt/Qt*/[0-9]*/mingw*/
 set -x
 rm -f T1Wrench-windows
 ln -sf t1wrench-release T1Wrench-windows
