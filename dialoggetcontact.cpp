@@ -17,9 +17,10 @@ DialogGetContact::DialogGetContact(QWidget *parent) :
     connect(ui->contactFilter, SIGNAL(lastContact()), ui->contactListView, SLOT(lastContact()));
     connect(ui->contactFilter, SIGNAL(nextPageContact()), ui->contactListView, SLOT(nextPageContact()));
     connect(ui->contactFilter, SIGNAL(prevPageContact()), ui->contactListView, SLOT(prevPageContact()));
-    connect(ui->contactFilter, SIGNAL(selectedContact()), ui->contactListView, SLOT(selectedContact()));
+    connect(ui->contactFilter, SIGNAL(selectedContact(QString)), ui->contactListView, SLOT(selectedContact(QString)));
     connect(ui->contactFilter, SIGNAL(selectAllContacts()), ui->contactListView, SLOT(selectAllContacts()));
     connect(ui->contactListView, SIGNAL(selectedContact(QModelIndex)), this, SLOT(on_contactListView_doubleClicked(QModelIndex)));
+    connect(ui->contactListView, SIGNAL(selectedContactString(QString)), this, SLOT(on_contactSelected(QString)));
     connect(ui->contactListView, SIGNAL(selectedContactNoHistory(QModelIndex)), this, SLOT(selectedContactNoHistory(QModelIndex)));
 
     ui->contactListView->selectionModel()->select(mContactModel->index(0, 0), QItemSelectionModel::Select);
@@ -40,10 +41,15 @@ void DialogGetContact::on_contactListView_doubleClicked(const QModelIndex &index
 {
     int row = index.row();
     QString contact = mContactModel->getContactSelectedText(row);
-    emit contactSelected(contact);
+    on_contactSelected(contact);
     if (updateContactHistory) {
         mContactModel->updateHistory(row);
     }
+}
+
+void DialogGetContact::on_contactSelected(const QString& contact)
+{
+    emit contactSelected(contact);
 }
 
 void DialogGetContact::selectedContactNoHistory(const QModelIndex &index)

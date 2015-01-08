@@ -1269,6 +1269,7 @@ end
 
 t1_call = function(number)
    adb_shell("am start -a android.intent.action.DIAL tel:" .. number)
+   adb_event("adb-tap 554 1668")
 end
 
 local function t1_spread_it()

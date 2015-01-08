@@ -16,7 +16,7 @@ signals:
     void prevPageContact();
     void firstContact();
     void lastContact();
-    void selectedContact();
+    void selectedContact(QString);
     void selectAllContacts();
 public slots:
 

@@ -11,16 +11,20 @@ void ContactListView::nextContact()
     changeContact(1);
 }
 
-void ContactListView::changeContact(int how)
+void ContactListView::changeContact(int how, const QString& input)
 {
     QModelIndexList ml = selectedIndexes();
-    int selected = 0;
+    int selected = -1;
     if (!ml.isEmpty()) {
         selected = ml[0].row();
     }
 
     if (how == 0) {
-        emit selectedContact(model()->index(selected, 0));
+        if (selected < 0) {
+            emit selectedContactString(input);
+        } else {
+            emit selectedContact(model()->index(selected, 0));
+        }
         return;
     }
 
@@ -70,9 +74,9 @@ void ContactListView::dataChanged(const QModelIndex & topLeft, const QModelIndex
     selectionModel()->select(model()->index(0, 0), QItemSelectionModel::Select);
 }
 
-void ContactListView::selectedContact()
+void ContactListView::selectedContact(const QString& input)
 {
-    changeContact(0);
+    changeContact(0, input);
 }
 
 void ContactListView::selectAllContacts()

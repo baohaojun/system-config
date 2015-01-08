@@ -11,6 +11,7 @@ public:
 
 signals:
     void selectedContact(const QModelIndex&);
+    void selectedContactString(const QString&);
     void selectedContactNoHistory(const QModelIndex&);
 
 public slots:
@@ -20,14 +21,14 @@ public slots:
     void lastContact();
     void nextPageContact();
     void prevPageContact();
-    void selectedContact();
+    void selectedContact(const QString& input = "");
     void selectAllContacts();
 
 protected slots:
     void dataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int> ());
 
 private:
-    void changeContact(int how);
+    void changeContact(int how, const QString& input = "");
 };
 
 #endif // CONTACTLISTVIEW_H

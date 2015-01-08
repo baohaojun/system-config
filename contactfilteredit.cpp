@@ -94,7 +94,7 @@ void ContactFilterEdit::keyPressEvent(QKeyEvent *e)
 
     if (key == Qt::Key_Return || key == Qt::Key_Enter) {
         if (m == 0) {
-            emit selectedContact();
+            emit selectedContact(this->toPlainText());
             return;
         }
         if (m == Qt::ShiftModifier) {

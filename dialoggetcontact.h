@@ -21,6 +21,7 @@ private slots:
 
     void on_contactListView_doubleClicked(const QModelIndex &index);
     void selectedContactNoHistory(const QModelIndex &index);
+    void on_contactSelected(const QString& contact);
  signals:
     void contactSelected(const QString&);
 
