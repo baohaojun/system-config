@@ -585,6 +585,101 @@ for the JavaScript code in this tag.
 </p>
 </li>
 
+<li>小扳手的快捷键
+
+<p>
+小扳手有很多快捷键的哦，不知道大家有没有发现。下面跟大家说一说这些快捷键，下文中C-代表Ctrl键，M-代表Alt键，比如C-b就是按着Ctrl不放再按下b，M-f就是按着Alt不放，再按下f键。M-键也可以先按一下Esc键放开，再按一下后面的主键。
+</p>
+
+<p>
+C-b: 向后移动一个字符（b for back），也可以用Left
+</p>
+
+<p>
+C-f: 向前移动一个字符（f for forth)，也可以用Right
+</p>
+
+<p>
+M-b: 向后移动一个单词，也可以用C-Left
+</p>
+
+<p>
+M-f: 向前移动一个单词，也可以用C-Right
+</p>
+
+<p>
+C-p: 向上移动一行，Up (p for prev)
+</p>
+
+<p>
+C-n: 向下移动一行，Down (n for next)
+</p>
+
+<p>
+C-a: 移动到行首，Home (a是第一个字母）
+</p>
+
+<p>
+C-e: 移动到行末，End (e for end)
+</p>
+
+<p>
+C-d: 删除下一个字符，Delete (d for delete)
+</p>
+
+<p>
+C-v: 向下翻动一页，对不起不是大家熟悉的粘贴功能（v看起来是向下的箭头）
+</p>
+
+<p>
+M-v: 向上翻动一页。
+</p>
+
+<p>
+M-&lt;: 移动到全文最开始，也可以用C-Home（&lt;看起来像什么？）
+</p>
+
+<p>
+M-&gt;: 移动到全文最末尾，也可以用C-End （&gt;看起来像什么？）
+</p>
+
+<p>
+C-y: 粘贴
+</p>
+
+<p>
+C-k: 删除本行余下的内容。(k for kill)
+</p>
+
+<p>
+M-* 或 M-8: 打开表情选择窗口（^_*）
+</p>
+
+<p>
+在表情选择窗口里，你可以输入文本进行表情过滤，比如输入“weixin xiao”，可以过滤出微信的4个笑的表情。这里也有几个快捷键可以用：
+</p>
+
+<p>
+C-n: 选择下一个表情
+</p>
+
+<p>
+C-p: 选择上一个表情
+</p>
+
+<p>
+Enter: 输入当前选中的表情
+</p>
+
+<p>
+Shift-Enter: 输入当前过滤出来的所有表情
+</p>
+
+<p>
+这些快捷键是让我自己也可以一直用小扳手聊天的源动力之一，没有这些快捷键的话小扳手对我的吸引力就大打折扣啊。希望你也喜欢￼
+</p>
+</li>
+
 <li><a id="exporting.contacts" name="exporting.contacts"></a> 怎么把手机上的联系人导出给小扳手用？
 
 <p>
@@ -647,18 +742,54 @@ for the JavaScript code in this tag.
 </div><div id="outline-container-sec-5-1" class="outline-3">
 <h3 id="sec-5-1"><span class="section-number-3">5.1</span> V2.2.0</h3>
 <div class="outline-text-3" id="text-5-1">
+<p>
+小扳手 V2.2.0发布，这一版加上了打电话的功能。下载地址在 <a href="http://t.cn/RZMWJgn">http://t.cn/RZMWJgn</a> 。
+</p>
+
+<p>
+使用方法是点击那个 “电话” 按钮，然后在弹出来的对话框里输入电话号码，或输入文字以选择匹配的联系人。注意如果你的联系人里有“包昊军”的话，在我厂的手机上你可以用bhj来匹配到我，但在小扳手上是不行的，但你可以试试 <code>b h j</code> 。
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/phone-call-howto.png"><img src="../../../../images/phone-call-howto.png" alt="phone-call-howto.png" /></a>
+</p>
+</div>
+
+<p>
+电话按钮的快捷键是 “Alt-&amp;” 或 “Alt-7”，因为 <code>&amp;</code> 的意思是“和”，你和你的意中人💓。都说了，早点用上小扳手，早点追到女朋友💕。
+</p>
+
+<p>
+需要您手动把手机上的联系人导出成.vcf文件，然后拷贝到小扳手的解压目录下，重命为contacts.vcf，具体步骤请看 <a href="http://t.cn/RZMjSjs">http://t.cn/RZMjSjs</a> 实在抱歉目前只能您受累🙇，以后咱们再考虑做成自动同步联系人👻。
+</p>
+
+<p>
+选联系人的操作界面简直跟选表情的界面一模一样，包括几乎所有的快捷键。由此您可以看出我的#村炮编程哲学#😼。
+</p>
+
+<p>
+如果您没有导出过联系人的话，那电话也还是可以打的，但是您只能自己输入电话号码并按回车了😭。
+</p>
+
+<p>
+另外还有一些小细节（其中第三条特别重要，您需要按照 <a href="http://t.cn/RZMYoSW">http://t.cn/RZMYoSW</a> 这里的说明确保安装成功）：
+</p>
+
 <ul class="org-ul">
-<li>所有微信表情可用
+<li>修正某些微信表情不可用的Bug
 </li>
+
 <li>修正微信聊天发送按钮位置，输入多行文字时也可正确发送
 </li>
+
 <li>更新SetClip.apk，需要打开“未知来源”重新安装一下
 </li>
+
 <li>可以拨打电话
 </li>
+
 <li>修正了Windows上所有微博、微信表情中文字符显示错误
-</li>
-<li>下载地址： <a href="http://t.cn/RZMWJgn">http://t.cn/RZMWJgn</a>
 </li>
 </ul>
 <nav>
