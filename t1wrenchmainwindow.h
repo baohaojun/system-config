@@ -8,6 +8,10 @@
 #include <QtCore/QSettings>
 #include "dialoggetemoji.h"
 #include "dialoggetcontact.h"
+#include <QMenu>
+#include <QSystemTrayIcon>
+#include <QAction>
+#include <QCloseEvent>
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -24,6 +28,7 @@ public slots:
     void adbStateUpdated(const QString& state);
     void onInfoUpdate(const QString& key, const QString& val);
 private slots:
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
     void on_sendItPushButton_clicked();
 
@@ -48,8 +53,16 @@ private slots:
     void on_tbNotes_clicked();
 
     void on_contactSelected(const QString&);
+    void quitMyself();
 
 private:
+    void createTrayIcon();
+    void closeEvent(QCloseEvent *event);
+
+    QAction* quitAction;
+    QSystemTrayIcon* trayIcon;
+    QMenu* trayIconMenu;
+    bool mQuit;
     QSharedPointer<ScreenCapture> mScreenCapture;
     QSharedPointer<LuaExecuteThread> mLuaThread;
     QSharedPointer<DialogGetEmoji> mEmojiDialog;

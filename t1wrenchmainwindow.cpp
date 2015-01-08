@@ -30,10 +30,15 @@
 #include <QtCore/QSharedPointer>
 #include "dialoggetemoji.h"
 #include <QInputDialog>
+#include <QMenu>
+#include <QSystemTrayIcon>
+#include <QAction>
+#include <QIcon>
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
+    mQuit(false),
     ui(new Ui::T1WrenchMainWindow),
     mSettings("Smartisan", "Wrench", parent)
 {
@@ -46,6 +51,7 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     connect(ui->phoneTextEdit, SIGNAL(phoneCallShortcutPressed()), this, SLOT(on_tbPhoneCall_clicked()));
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLastRadioButton = NULL;
+    createTrayIcon();
 }
 
 T1WrenchMainWindow::~T1WrenchMainWindow()
@@ -412,4 +418,55 @@ void T1WrenchMainWindow::on_tbNotes_clicked()
 void T1WrenchMainWindow::on_contactSelected(const QString&contact)
 {
     mLuaThread->addScript(QStringList() << "t1_call" << contact);
+}
+
+void T1WrenchMainWindow::quitMyself()
+{
+    mQuit = true;
+    close();
+}
+
+void T1WrenchMainWindow::createTrayIcon()
+{
+
+    quitAction = new QAction(tr("&Quit"), this);
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(quitMyself()));
+
+    trayIconMenu = new QMenu(this);
+    trayIconMenu->addAction(quitAction);
+
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setContextMenu(trayIconMenu);
+
+    QIcon icon("emojis/iphone-emoji/WRENCH.png");
+    trayIcon->setIcon(icon);
+
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+    trayIcon->show();
+}
+
+void T1WrenchMainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason) {
+    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::DoubleClick:
+        this->show();
+        break;
+    default:
+        ;
+    }
+}
+
+void T1WrenchMainWindow::closeEvent(QCloseEvent *event)
+{
+    if (mQuit == true) {
+        QMainWindow::closeEvent(event);
+        return;
+    }
+
+    if (trayIcon->isVisible()) {
+        hide();
+        event->ignore();
+    }
 }
