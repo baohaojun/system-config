@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: wish
+# key: wish
+# --
+* TODO the event handlers
+* TODO the stop-when function
+* TODO the scene-rendering function
