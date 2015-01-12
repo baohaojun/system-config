@@ -1,0 +1,34 @@
+#+title: 从QtSingleApplication的API看Qt的设计
+# bhj-tags: blog
+
+QtSingleApplication顾名思义就是一个单实例应用。很多写桌面窗口程序的人都会有过这个需求，即让他的窗口程序单实例运行，每次点击程序图标的时候如果已经有这个程序的窗口开着了，就把它弹到前面来，而不是每次重新打开一个新的窗口，最后会有一堆窗口，看着很难受的。
+
+Qt把这个需求也给封装了，所以实现这样的应用就非常方便了。
+
+这里来看一下QtSingleApplication的API里是怎么实现这个功能的。
+
+最简单的需求是当发现一个应用已经在运行的时候，新的这个实例就默默地退出，同时最好能把已有的实例弹出到前台来。
+
+这个是用 =isRunning= 这个函数实现的。判断出已经在运行的话，就可以退出了。但我不知道旧的实例会不会被弹到前台来。
+
+另一个复杂点的需求是当新的实例启动的时候，它还带着任务，比如浏览器，需要打开某个网址，这时候它在退出之前，要把任务通知给旧的实例，让它不仅把已有的窗口弹到前面来，还是帮忙执行这个任务，比如在新的标签页里打开这个网页。
+
+这里涉及到两个API：
+
+#+BEGIN_EXAMPLE
+bool QtSingleApplication::sendMessage ( const QString & message, int timeout = 5000 )   [slot]
+#+END_EXAMPLE
+
+和
+
+#+BEGIN_EXAMPLE
+void QtSingleApplication::messageReceived ( const QString & message )   [signal]
+#+END_EXAMPLE
+
+前面那个比较好理解，直接调用就好了，后面那个我第一眼看到的感觉是头皮一阵发麻，哇靠，这个东西，好像我需要继承一下这个函数，在子类里实现一下，具体需要做什么操作...
+
+错！这个根本不是一个函数，你没法继承它，没法实现它，你能做的，只是连接它...
+
+因为这是一个signal。
+
+唉，理论功底还是不够，回头再好好琢磨一下。

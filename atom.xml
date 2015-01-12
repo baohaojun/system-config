@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[从QtSingleApplication的API看Qt的设计]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html"/>
+    <updated>2015-55-12T09:01:28+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[我的system-config使用指南]]></title>
     <link href="http://baohaojun.github.io/blog/2014/12/10/0-systetm-config-usage-guide.html"/>
     <updated>2014-12-10T13:25:46+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html"/>
     <updated>2014-10-21T20:57:42+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[穷汉的安卓代码模板生成工具]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html"/>
-    <updated>2014-10-20T23:06:10+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html</id>
   </entry>
 </feed>
