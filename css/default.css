@@ -10,9 +10,6 @@
 .left   {margin-left:0px;  margin-right:auto; text-align:left;}
 .center {margin-left:auto; margin-right:auto; text-align:center;}
 p.verse { margin-left: 3% }
-.left,.right{display:inline;}
-.left{float:left;}
-.right{float:right;}
 
 pre, tt, code {
     font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier,

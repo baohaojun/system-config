@@ -1,6 +1,10 @@
 #+title: Archive
  * 2015
   - 2015-01
+   * 2015-01-12
+
+     [[../blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.org][怎样交换键盘Escape和Caps Lock键]]
+
    * 2015-01-09
 
      [[../blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.org][从QtSingleApplication的API看Qt的设计]]

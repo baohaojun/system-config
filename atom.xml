@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[怎样交换键盘Escape和Caps Lock键]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html"/>
+    <updated>2015-40-12T13:01:00+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[从QtSingleApplication的API看Qt的设计]]></title>
     <link href="http://baohaojun.github.io/blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html"/>
-    <updated>2015-55-12T09:01:28+08:00</updated>
+    <updated>2015-01-12T09:55:52+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.html"/>
     <updated>2014-10-22T20:58:14+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[反了反了！用Smartisan T1手机当Linux的语音输入法]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html"/>
-    <updated>2014-10-21T20:57:42+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html</id>
   </entry>
 </feed>

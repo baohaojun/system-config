@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>从QtSingleApplication的API看Qt的设计</title>
+<title>怎样交换键盘Escape和Caps Lock键</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -102,68 +102,211 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">从QtSingleApplication的API看Qt的设计</h1>
+<h1 class="title">怎样交换键盘Escape和Caps Lock键</h1>
 <p>
-QtSingleApplication顾名思义就是一个单实例应用。很多写桌面窗口程序的人都会有过这个需求，即让他的窗口程序单实例运行，每次点击程序图标的时候如果已经有这个程序的窗口开着了，就把它弹到前面来，而不是每次重新打开一个新的窗口，最后会有一堆窗口，看着很难受的。
+最近在微博上传得沸沸扬扬的一件事，说苹果的下一代Mac笔记本要把电源键放到Escape键的旁边，让一众Vim的用户觉得非常受不了。因为这个键他们一天不知道要按多少次，弄成这个样子一不小心就按错到旁边的关机键上，然后就😭了。
 </p>
 
 <p>
-Qt把这个需求也给封装了，所以实现这样的应用就非常方便了。
+其实不管在哪个平台下，Windows、Mac、Linux，都有办法可以交换Escape键和Caps Lock键的位置。并且不仅仅是这两个，其他如Ctrl键、Alt键（Mac上叫option）、Win键（Mac上叫cmd，Linux下叫Super），都是可以交换位置的。
 </p>
 
 <p>
-这里来看一下QtSingleApplication的API里是怎么实现这个功能的。
+我们先看看为什么要这样做。
 </p>
 
 <p>
-最简单的需求是当发现一个应用已经在运行的时候，新的这个实例就默默地退出，同时最好能把已有的实例弹出到前台来。
+对Vim用户来说，Escape是一个特别关键的键，因为所有Vim的命令都需要按一下Escape切换到命令模式才可以。对Emacs用户来说，Escape好像没有那么重要，因为所有的命令都可以用Alt-x来输入（Emacs里管Alt叫Meta，所以Alt-x也叫M-x）。但是很多人没有特别注意的是，Emacs下几乎所有Alt-系的组合键，都可以用Escape来代替。比如Alt-x（按住Alt不放的同时，按一下x键）也可以用 <code>Esc x</code> 来代替（按一下Escape键放开，再按一下x键）。所以一个Emacs用户如果他的使用习惯是用Escape来代替Alt，那么Escape也是一个非常重要一天不知道要按多少次的键。
 </p>
 
 <p>
-这个是用 <code>isRunning</code> 这个函数实现的。判断出已经在运行的话，就可以退出了。但我不知道旧的实例会不会被弹到前台来。
+所以即使没有Mac这种设计，也已经有很多经常用Escape的用户把Escape键和Caps Lock键互换了位置。这样做的好处非常明显，几乎可以说有百利而无一害。首先你的左手尾指如果去按左上方的Escape键的话，手指的行程更长，肌肉要更紧张，时间长了，更容易得小指肌肉劳损。如果把Escape键的功能换到左边的Caps Lock键上的话，左小指的行程可以大大缩短，能够更有效的防止小指肌肉劳损的发生。Caps Lock这个功能使用的场景要比Escape少得多得多，而它占得位置有点儿太好了，所以我们可以考虑一下怎么给它搬个家😁。
 </p>
 
 <p>
-另一个复杂点的需求是当新的实例启动的时候，它还带着任务，比如浏览器，需要打开某个网址，这时候它在退出之前，要把任务通知给旧的实例，让它不仅把已有的窗口弹到前面来，还是帮忙执行这个任务，比如在新的标签页里打开这个网页。
+搬家以后唯一的坏处是有时候你到了一台没有做过这种交换设置的新机器上（比如同事的机器），你可能会有点不习惯。但是如果Mac系统下个版本真的那样设计的话，说不定大家都会考虑本文中所描述的这个小技巧，这样这个坏处碰到的机率就更小了，不改的人反而要不习惯了😆。
 </p>
 
 <p>
-这里涉及到两个API：
+下面我们系统地看一下如何在各大平台上更改这些个辅助键。
 </p>
 
-<pre class="example">
-bool QtSingleApplication::sendMessage ( const QString &amp; message, int timeout = 5000 )   [slot]
-</pre>
-
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Mac</h2>
+<div class="outline-text-2" id="text-1">
 <p>
-和
+Mac系统自带的设置里允许你更改Caps Lock、Control、Option(Alt)、Command(Win/Super)键的功能，你可以在 <code>System Preferences -&gt; Keyboard -&gt; Modifier Keys...</code> 里找到这些选项。但是很可惜，这里面没有Escape键。不知道Mac以后的版本会不会把Escape键加上。请看下图：
 </p>
 
-<pre class="example">
-void QtSingleApplication::messageReceived ( const QString &amp; message )   [signal]
-</pre>
+
+<div class="figure">
+<p><i><img src="images/mac-system-keyboard-hack.png" alt="mac-system-keyboard-hack.png" /></i>
+</p>
+</div>
 
 <p>
-前面那个比较好理解，直接调用就好了，后面那个我第一眼看到的感觉是头皮一阵发麻，哇靠，这个东西，好像我需要继承一下这个函数，在子类里实现一下，具体需要做什么操作&#x2026;
+所以我没有用Mac系统自带的这个更改辅助键的功能，最后使用的是一个叫“Seil”的软件，一个日本人开发的开源软件，以前的版本名字叫PCKeyboardHack，不知道为什么现在改名字了。下载请点 <a href="https://pqrs.org/osx/karabiner/seil.html.en">这里</a> 。下面是一张截图，你在上半个窗口里可以比如把Caps Lock改成 53，因为在下半个窗口里你可以查到Escape的键值（keycode）就是53。
+</p>
+
+
+<div class="figure">
+<p><i><img src="images/seil-keyboard-hack-mac.png" alt="seil-keyboard-hack-mac.png" /></i>
+</p>
+</div>
+
+<p>
+从图中你可以看到我把Mac的Command_L（也就是空格键左边的那个Command键，相当于Windows系统的左Win键）给改成了59，从下半窗口里你可以看到这个键对应的是Left Control。为什么这样做我们最后再说。包括其他所有的Ctrl/Option/Cmd我都换了一个遍😅。
 </p>
 
 <p>
-错！这个根本不是一个函数，你没法继承它，没法实现它，你能做的，只是连接它&#x2026;
+最后要注意的一点是，从Mac系统自带辅助键设置的截图里你可以看到，我把Caps Lock的功能改成了No Action。这点很重要，好像不这样改的话我们即使用Seil也是无法把物理的Caps Lock键换成Escape功能的。并且最后我改完之后，原来的物理Escape键也还是Escape的功能，所以相当于我的键盘上就有了两个Escape，没有Caps Lock了。这个在我看来是可以接受的，因为我从来没有用过Caps Lock的功能，用Shift不一样能搞定么？在Emacs里我先输入小写的英文文本，然后有个功能可以让我把选中的文本变成大写的，这个也可以让我丢弃Caps Lock😄。
+Seil的作者还写过一个叫 Karabiner 的软件，早先的版本叫 KeyRemap4MacBook。也很厉害，我一直在用，通过它实现了Mac下的DVP（Programmer's Dvorak）的键盘布局，和一些Sawfish的桌面快捷键功能。我的配置文件在 <a href="https://github.com/baohaojun/system-config/raw/master/doc/keyremap4macbook-dvp.xml">这里</a> ，感兴趣的同学可以关注一下这个软件😃。DVP的作者自己给Mac提拱了一个DVP的键盘布局，但是那个是一个英文输入法来着，你换成中文输入法之后，就又变成qwerty的布局了😅！
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Windows</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+在Windows下换这些键的位置最简单了，在网上能查到很多种做法，比如用AutoHotkey这个软件，或者用Windows注册表。个人强烈推荐改注册表，因为AutoHotkey在XP之后开始有了管理员权限的问题，有些软件比如360的软件管家之类的上来就是系统权限，AutoHotkey以普通用户权限运行的话，改不了这些软件的键盘布局，最后有些改了有些没改，整个人搞不好的话会很分裂😆。
+比如 <a href="https://github.com/baohaojun/system-config/raw/master/doc/caps-to-escape-and-scoll-to-caps.reg">这个文件</a> ，你下载之后双击把它导入注册表，重启电脑之后，应该就成了，Escape还是Escape，Caps Lock也成为Escape，Scoll Lock变成Caps Lock，原来的Scoll Lock功能则没有了。来源： <a href="http://vim.wikia.com/wiki/Map_caps_lock_to_escape_in_Windows">Vim Wikia</a> 。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Linux</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+在Linux下这些更改快捷键的功能可以用xmodmap，这个也是网上都很容易查到的，比如李杀大哥的 <a href="http://xahlee.info/kbd/linux_make_capslock_esc_key.html">这个网页</a> 。另一个很有用的配套工具是 xev，可以查看键盘上所有按键的键值。
 </p>
 
 <p>
-因为这是一个signal。
+也可以参考一下我的已经写好了的 .Xmodmap 文件，在 <a href="https://github.com/baohaojun/system-config/raw/master/etc/.Xmodmap">https://github.com/baohaojun/system-config/raw/master/etc/.Xmodmap</a> 这里可以找到。
 </p>
 
 <p>
-唉，理论功底还是不够，回头再好好琢磨一下。
+我还有好几个其他的版本，但主要的不同都是在其他的辅助键上，比如在这个笔记本键盘上，我要把红色标出的键改成右Alt键，
+</p>
+
+
+<div class="figure">
+<p><i><img src="images/dell-vostro-keyboard.png" alt="dell-vostro-keyboard.png" /></i>
+</p>
+</div>
+
+<p>
+而在这个大键盘上，我会把红色标出的键改成右Win键：
+</p>
+
+
+<div class="figure">
+<p><i><img src="images/ergo-microsoft-right-keyboard.png" alt="ergo-microsoft-right-keyboard.png" /></i>
+</p>
+</div>
+
+<p>
+为什么呢？请接着往下看。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> 更激进的键盘更改</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+所有的辅助键中，用的最多的是Ctrl，比如Ctrl-c/Ctrl-x/Ctrl-v，Emacs里就更不要说了。可是它却相对占了一个不怎么样的位置。杀哥曾给出几套解决方案，比如用鱼际去按Ctrl，用关节去按Ctrl，总之就是建议不要用指头去按，因为尾指弯曲得太厉害了，很容易劳损。但我最喜欢的解决方案（也是从杀哥的博客上看来的）试了一圈之后发现还是把Ctrl键和Alt键换一下位置，这样就可以用大拇指去按Ctrl了！而Alt键则用Escape代替（至少在Emacs下如此，其他的软件我就尽量用鼠标点菜单也不用Alt，反正用得也少，或者就不盲打了，用两只手一起按Alt相关的快捷键）。
+</p>
+
+<p>
+所以我最后的键盘更改是这样的：
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="all" frame="border">
+<caption class="t-above"><span class="table-number">Table 1:</span> 我的键盘辅助键设置</caption>
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">物理键</td>
+<td class="left">改了之后的功能键</td>
+<td class="left">备注</td>
+</tr>
+
+<tr>
+<td class="left">Caps Lock</td>
+<td class="left">Escape</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">Escape</td>
+<td class="left">Caps Lock</td>
+<td class="left">在Mac上还是Escape，Caps Lock的功能不要了</td>
+</tr>
+
+<tr>
+<td class="left">左Alt</td>
+<td class="left">左Ctrl</td>
+<td class="left">在Mac上物理键是左Command</td>
+</tr>
+
+<tr>
+<td class="left">左Win</td>
+<td class="left">左Win</td>
+<td class="left">在Mac上物理键是左option（alt）</td>
+</tr>
+
+<tr>
+<td class="left">左Ctrl</td>
+<td class="left">左Alt</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">右Alt</td>
+<td class="left">右Ctrl</td>
+<td class="left">在Mac上物理键是右Command</td>
+</tr>
+
+<tr>
+<td class="left">右Win</td>
+<td class="left">右Win</td>
+<td class="left">在Mac上物理键是右Alt，有些PC键盘上是菜单键，还有的是打印机键</td>
+</tr>
+
+<tr>
+<td class="left">右Ctrl</td>
+<td class="left">右Alt</td>
+<td class="left">有些PC上是菜单键，还有Mac上没有右Ctrl键</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+所有的更改方法都与之前的一样。在Windows上查键值比较麻烦。可以参考我的这两个注册表文件： <a href="https://github.com/baohaojun/system-config/raw/master/doc/keymap-vostro.reg">Dell Vostro笔记本（空格右边依次是Alt/Ctrl/菜单）</a> 和 <a href="https://github.com/baohaojun/system-config/raw/master/doc/keymap-win.reg">其他键盘（空格右边依次是Alt/菜单/Ctrl）</a> 。
+</p>
+
+<p>
+最后，差点儿忘了，Linux下真正的终端（也就是没启桌面之前的那个命令行登录）怎么办？
+</p>
+
+<p>
+我有一个脚本： <a href="https://github.com/baohaojun/system-config/raw/master/bin/swap-control-alt">swap-control-alt</a> 。需要sudo权限😅。
 </p>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2014/12/10/0-systetm-config-usage-guide.html"> <!-- prev-url -->
+      <a href="blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        我的system-config使用指南 <!-- prev-title -->
+        从QtSingleApplication的API看Qt的设计 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -175,13 +318,15 @@ void QtSingleApplication::messageReceived ( const QString &amp; message )   [sig
   </ul>
 </nav>
 </div>
+</div>
+</div>
 <!-- {%html-mode%} -->
 
 <div id="disqus_container">
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -252,12 +397,13 @@ void QtSingleApplication::messageReceived ( const QString &amp; message )   [sig
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="meta/tags/blog.html" title="Blogging">blog</a></li>
+                <li><a href="meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2014/12/10/0-systetm-config-usage-guide.html'> 我的system-config使用指南 </a></li>
+        <li><a href='blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html'> 从QtSingleApplication的API看Qt的设计 </a></li>
+<li><a href='blog/2014/12/10/0-systetm-config-usage-guide.html'> 我的system-config使用指南 </a></li>
 <li><a href='blog/2014/12/06/0-New-Blog-Style.html'> 新的博客风格 </a></li>
 <li><a href='blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html'> 小扳手2.0版使用手册 </a></li>
 <li><a href='blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.html'> 更新Kernel以解决opengl程序在休眠后无法运行的问题 </a></li>
@@ -266,7 +412,6 @@ void QtSingleApplication::messageReceived ( const QString &amp; message )   [sig
 <li><a href='blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html'> 把邮件的星标移到我的todo list里 </a></li>
 <li><a href='blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.html'> A Bug in Android MobileOrg Sync </a></li>
 <li><a href='blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html'> 反了反了！用Smartisan T1手机当Linux的语音输入法 </a></li>
-<li><a href='blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html'> 穷汉的安卓代码模板生成工具 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

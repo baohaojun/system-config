@@ -20,14 +20,15 @@ sub fix_link($)
     my $anchor;
     if ($link =~ m!^~/|^$ENV{HOME}/!) {
         $link =~ s!^~/!$ENV{HOME}/!;
-        chomp(my $abs_path = qx(readlink -f $link));
+        my $q_link = shell_quote($link);
+        chomp(my $abs_path = qx(readlink -f $q_link));
         if ($abs_path !~ m!^$ENV{PWD}/!) {
             my $base;
             while (1) {
                 my $abs_path_q = shell_quote("what to do for $abs_path? (type XXX.png! for a more meaningful name)");
                 chomp(my $opt = qx(select-args -p $abs_path_q review images));
                 if ($opt eq "review") {
-                    system("of $link&");
+                    system("of $q_link&");
                     system(qq!sawfish-client -e '(event-name (read-event "Press any key to continue..."))' !);
                     system("find-or-exec konsole; destroy-windows eog");
                 } elsif ($opt eq "images") {
@@ -44,7 +45,7 @@ sub fix_link($)
                 }
             }
 
-            system("mv $link $ENV{PWD}/images/$base");
+            system("mv $q_link $ENV{PWD}/images/$base");
             $link = "$ENV{PWD}/images/$base";
         }
     }
