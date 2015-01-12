@@ -12,6 +12,8 @@
 #include <QSystemTrayIcon>
 #include <QAction>
 #include <QCloseEvent>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -24,9 +26,13 @@ class T1WrenchMainWindow : public QMainWindow
 public:
     explicit T1WrenchMainWindow(QWidget *parent = 0);
     ~T1WrenchMainWindow();
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
+
 public slots:
     void adbStateUpdated(const QString& state);
     void onInfoUpdate(const QString& key, const QString& val);
+    void startTask(const QString& task);
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
@@ -73,6 +79,8 @@ private:
     QString get_text();
     void getclip_android();
     QRadioButton* mLastRadioButton;
+signals:
+    void activateWindow();
 };
 
 #endif // T1WRENCHMAINWINDOW_H

@@ -22,6 +22,8 @@
 #include <QtCore/QProcessEnvironment>
 #include <QtCore/QDebug>
 #include <QStandardPaths>
+#include <QtSingleApplication>
+
 
 using namespace std;
 
@@ -36,7 +38,10 @@ void setenv(const char* name, const char* val, int overide)
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QtSingleApplication a(argc, argv);
+    if (a.sendMessage(""))
+        return 0;
+
 
 #ifdef Q_OS_WIN32
     HWND hwnd = GetConsoleWindow();
@@ -85,7 +90,14 @@ int main(int argc, char *argv[])
     }
 #endif
     T1WrenchMainWindow w;
+    a.setActivationWindow(&w);
     w.show();
+
+    QObject::connect(&a, SIGNAL(messageReceived(const QString&)),
+                     &w, SLOT(startTask(const QString&)));
+    QObject::connect(&w, SIGNAL(activateWindow()),
+                     &a, SLOT(activateWindow()));
+
 
     AdbStateThread adbState(&w);
     w.connect(&adbState, SIGNAL(adbStateUpdate(QString)), &w, SLOT(adbStateUpdated(QString)));

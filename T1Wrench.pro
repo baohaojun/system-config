@@ -5,6 +5,8 @@
 #
 #-------------------------------------------------
 
+include(qt-solutions/qtsingleapplication/src/qtsingleapplication.pri)
+
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

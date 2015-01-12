@@ -52,6 +52,7 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLastRadioButton = NULL;
     createTrayIcon();
+    this->setAcceptDrops(true);
 }
 
 T1WrenchMainWindow::~T1WrenchMainWindow()
@@ -451,7 +452,8 @@ void T1WrenchMainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
     switch (reason) {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::DoubleClick:
-        this->show();
+        this->showNormal();
+        emit activateWindow();
         break;
     default:
         ;
@@ -469,4 +471,20 @@ void T1WrenchMainWindow::closeEvent(QCloseEvent *event)
         hide();
         event->ignore();
     }
+}
+
+void T1WrenchMainWindow::startTask(const QString& task)
+{
+    showNormal();
+    emit activateWindow();
+}
+
+void T1WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    event->acceptProposedAction();
+}
+void T1WrenchMainWindow::dropEvent(QDropEvent *event)
+{
+
+    event->acceptProposedAction();
 }

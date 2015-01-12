@@ -1,3 +1,6 @@
 [submodule "luamd5"]
 	path = luamd5
 	url = https://github.com/baohaojun/md5
+[submodule "qt-solutions"]
+	path = qt-solutions
+	url = home:repos/qt-solutions

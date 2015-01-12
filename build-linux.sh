@@ -34,6 +34,8 @@ relative-link -f $oldpwd/linux/binaries/* $build_dir
         exit
     fi
 
+    destroy-windows T1Wrench
+    ps-killall bash.T1Wrench.tmp.build
     if test $# = 1 -a "$1" = debug; then
         ps-killall gdb.T1Wrench
         myscr gdb ./T1Wrench
