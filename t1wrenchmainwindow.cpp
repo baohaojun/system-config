@@ -34,6 +34,10 @@
 #include <QSystemTrayIcon>
 #include <QAction>
 #include <QIcon>
+#include <QMimeData>
+#include <QUrl>
+#include <QList>
+#include <QFileInfo>
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -485,6 +489,15 @@ void T1WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)
 }
 void T1WrenchMainWindow::dropEvent(QDropEvent *event)
 {
-
     event->acceptProposedAction();
+    if (event->mimeData()->hasUrls()) {
+        QList<QUrl> urls = event->mimeData()->urls();
+        if (urls.size() == 1 && urls[0].isLocalFile()) {
+            QString path = urls[0].toLocalFile();
+            QFileInfo fileInfo = QFileInfo(path);
+            if (fileInfo.isReadable() && fileInfo.isFile()) {
+                mLuaThread->addScript(QStringList() << "t1_run" << path);
+            }
+        }
+    }
 }

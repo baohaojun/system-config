@@ -1,7 +1,10 @@
 #!/usr/bin/lua
 
+-- module
+local M
+
 -- functions
-local t1_call
+local t1_call, t1_run
 local shell_quote, putclip, t1_post
 local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share
@@ -12,6 +15,7 @@ local adb_focused_window
 local t1_config, check_phone
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic
+
 -- variables
 local using_scroll_lock = true
 local using_adb_root
@@ -1272,6 +1276,20 @@ t1_call = function(number)
    adb_event("adb-tap 554 1668")
 end
 
+t1_run = function (file)
+   local ext = file:gsub(".*%.", "")
+   if ext ~= "twa" and ext ~= "小扳手" then
+      return "Can not run this script, must be a .twa file"
+   end
+   local f = loadfile(file)
+   for k, v in pairs(M) do
+      if not _ENV[k] then
+         _ENV[k] = v
+      end
+   end
+   f()
+end
+
 local function t1_spread_it()
    check_phone()
    -- http://weibo.com/1611427581/Bviui9tzF
@@ -1288,7 +1306,7 @@ local function t1_spread_it()
    end
 end
 
-local M = {}
+M = {}
 M.putclip = putclip
 M.t1_post = t1_post
 M.adb_shell = adb_shell
@@ -1311,6 +1329,7 @@ M.get_a_note = get_a_note
 M.adb_get_last_pic = adb_get_last_pic
 M.picture_to_momo_share = picture_to_momo_share_upload
 M.t1_call = t1_call
+M.t1_run = t1_run
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
