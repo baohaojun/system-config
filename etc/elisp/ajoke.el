@@ -331,14 +331,12 @@ is set, call FUNC with the start and end of the matched region."
   (save-excursion
     (search-backward "#include")
     (goto-char (line-end-position))
-    (insert "\n")
-    (insert "#include ")
     (let* ((head-regexp (read-string "What header to include (such as q/qtline for QLineEdit)? "))
            (head-regexp (shell-quote-argument head-regexp))
            (header (ajoke--pick-output-line "Which header to include" (format "cc-get-include %s" head-regexp))))
       (insert (format (if (file-exists-p header)
-                          "\"%s\""
-                        "<%s>")
+                          "\n#include \"%s\""
+                        "\n#include <%s>")
                       header)))))
 
 ;;;###autoload
