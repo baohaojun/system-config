@@ -6,7 +6,7 @@ fi
 
 export SCRIPT=$(readlink -f $0)
 adb-ignite-device
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     function debug() {
         # read -p "press any key to continue..."
         sleep .5

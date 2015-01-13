@@ -4,7 +4,7 @@
 if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
     my-adb -S
 fi
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     xset=-x
 else
     xset=

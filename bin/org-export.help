@@ -82,9 +82,9 @@ cat <<EOF
              (setq ad-return-value (concat (shell-command-to-string (format "org-export-postamble.head %s" (shell-quote-argument bhj-org-export-file))) ad-return-value))))
 
   (find-file "$1")
-  (random-theme 'wombat)
   (org-html-export-to-html)
-  (random-theme old-theme))
+  (kill-buffer "$(basename "$1")")
+  ())
 ; {%/emacs-lisp%}
 EOF
 

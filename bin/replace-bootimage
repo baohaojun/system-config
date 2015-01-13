@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 
@@ -62,7 +62,7 @@ replace-ramdisk -r $tmpd/ramdisk.img "$@"
     bash -e mkbootimg.sh
     cp $(basename "$boot") "$boot"
 )
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     true
 else
     rm -rf $tmpd

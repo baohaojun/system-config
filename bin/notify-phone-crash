@@ -28,7 +28,7 @@ fi
 if test $(basename $0) = adb-fix-gms; then
     (
         set -e
-        if echo $SHELLOPTS | grep xtrace; then
+        if echo $SHELLOPTS | grep -q xtrace; then
             true
         else
             set -x

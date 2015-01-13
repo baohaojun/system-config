@@ -139,7 +139,7 @@ EOF
         ) > $tf.org
 
 
-        org-export.help $(basename $tf.org)
+        org-export.help $tf.org
     done
     echo "))"
 ) > $tmp_el

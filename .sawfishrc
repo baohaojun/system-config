@@ -181,7 +181,7 @@
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")))
 
 (bind-keys global-keymap "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
-(bind-keys global-keymap "XF86Search" '(system "my-dict&"))
+(bind-keys global-keymap "XF86Search" '(system "find-or-exec Search beagle-search&"))
 
 (bind-keys global-keymap "C-S-XF86PowerOff"  '(system "lock-screen&"))
 (bind-keys global-keymap "C-S-DEL"  '(system "lock-screen&"))

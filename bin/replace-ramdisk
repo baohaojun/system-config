@@ -91,7 +91,7 @@ echo tdir is $tdir
 dir2ramdisk $tdir > $ramdisk.2
 
 mv $ramdisk.2 $ramdisk
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     true;
 else
     rm -rf $(dirname $tdir)

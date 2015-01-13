@@ -4,7 +4,7 @@ if test $(basename $0) = repo-not-clean; then
     export DO_GIT_ST_ONLY=true
 fi
 
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 

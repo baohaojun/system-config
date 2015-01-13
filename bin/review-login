@@ -7,7 +7,7 @@ fi
 firefox -current-tab "http://172.16.0.9:8080/login/q/status:open,n,z"&
 sleep $s
 
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     function sleep() {
         find-or-exec konsole
         read -p "xx "

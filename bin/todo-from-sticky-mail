@@ -5,7 +5,7 @@ function die() {
     echo Error: "$@"
     exit -1
 }
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 

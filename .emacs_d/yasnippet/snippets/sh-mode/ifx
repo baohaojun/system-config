@@ -2,7 +2,7 @@
 # name: ifx
 # key: ifx
 # --
-if echo \$SHELLOPTS | grep xtrace; then
+if echo \$SHELLOPTS | grep -q xtrace; then
    ${1:export SHELLOPTS}
 fi
 $0

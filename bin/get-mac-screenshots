@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+cd ~/Pictures/
+rsync bhj-mac:Desktop/*.png . -v
+get-newest-file . | putclip

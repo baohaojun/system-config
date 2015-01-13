@@ -75,7 +75,7 @@ function do_compile() {
     compile_ctags "$@"
 }
 
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     export DEBUG_COMPILE=true
 fi
 

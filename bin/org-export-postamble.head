@@ -67,7 +67,7 @@ cat <<EOF
 
   <h2 class="sidebar-title">Feeds</h2>
     <ul>
-        <li><a href="/atom.xml">Atom</a></li>
+        <li><a href="$(if test -e $START_DIR/.do-blog-site; then cat $START_DIR/.do-blog-site |perl -npe 's!.*?://.*?/!/!'; else echo /; fi)atom.xml">Atom</a></li>
     </ul>
 
   <h2 class="sidebar-title">Projects</h2>

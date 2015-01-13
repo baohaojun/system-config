@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-if echo $SHELLOPTS | grep xtrace; then
+if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 

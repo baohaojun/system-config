@@ -22,3 +22,4 @@ Mail
 .for-code-reading
 .yas-compiled-snippets.el
 .DS_Store
+*.org.[0-9]*.html

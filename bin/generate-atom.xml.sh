@@ -1,9 +1,13 @@
 #!/bin/bash
 
 exec >atom.xml
+site=http://baohaojun.github.io/
+if test -e .do-blog-site; then
+    site=$(cat .do-blog-site)
+fi
 function github-pagep()
 {
-    echo http://baohaojun.github.io/${1/%.org/.html}
+    echo ${site}${1/%.org/.html}
 }
 
 cat <<EOF
@@ -11,10 +15,10 @@ cat <<EOF
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Bao Haojun - Happy Hacking]]></title>
-  <link href="http://baohaojun.github.io/atom.xml" rel="self"/>
-  <link href="http://baohaojun.github.io/"/>
+  <link href="${site}atom.xml" rel="self"/>
+  <link href="${site}"/>
   <updated>2013-01-09T16:02:42+00:00</updated>
-  <id>http://baohaojun.github.io/</id>
+  <id>${site}</id>
   <author>
     <name><![CDATA[Bao Haojun]]></name>
 

@@ -4,6 +4,11 @@ if test "$DEBUG" = true; then
     set -x
 fi
 
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
+
 function die() {
     echo Error: "$@"
     exit -1
@@ -118,7 +123,7 @@ if test -e ".do-blog"; then
             git add blog/$(today|perl -npe 's!-!/!g')/$x
         done
     )
-    org_changes=$(git st -S|cut -b 4-|grep -e '\.org$' || true)
+    org_changes=$(git st -S|cut -b 4-|grep -e '\.org$' | grep -v meta/tags || true)
     for x in $org_changes; do
         if test -e $x; then
             if ! git log "${x/%.org/.html}" 2>/dev/null |grep . && ! EMACS=t yes-or-no-p -y "Publish $x?"; then
