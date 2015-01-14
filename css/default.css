@@ -97,12 +97,6 @@ textarea { overflow-x: auto; }
     color: #cae682;
 }
 
-a {
-    color: inherit;
-    background-color: inherit;
-    font: inherit;
-    text-decoration: inherit;
-}
 a:hover {
     text-decoration: underline;
 }
@@ -2508,7 +2502,7 @@ a img {
   /*text-transform:uppercase;*/
   letter-spacing:.2em;
   }
-#blog-title a {
+#blog-title {
   text-decoration:none;
   }
 #blog-title a:hover {
