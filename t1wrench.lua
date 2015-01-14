@@ -14,9 +14,11 @@ local adb_start_weixin_share, adb_is_window
 local adb_focused_window
 local t1_config, check_phone
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
-local adb_get_last_pic
+local adb_get_last_pic, debugging
 
 -- variables
+local UNAME_CMD = "uname || busybox uname || echo -n Lin && echo -n ux"
+local is_debugging = nil
 local using_scroll_lock = true
 local using_adb_root
 local adb_unquoter
@@ -127,6 +129,12 @@ local function system(cmds)
          end
       end
       return os.execute(debug_set_x .. command_str)
+   end
+end
+
+debugging = function(fmt, ...)
+   if is_debugging then
+      debug(fmt, ...)
    end
 end
 
@@ -365,6 +373,7 @@ local function weibo_text_share(window)
    if window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
       repost = select_args{'repost', 'comment'}
       if repost == 'repost' then
+         debugging("doing post")
          adb_tap_bot_left()
       else
          adb_tap_mid_bot()
@@ -599,8 +608,10 @@ adb_get_input_window_dump = function()
    for i = 1, #dump do
       if not started and dump[i]:match("^%s*Window #?%d* ?Window{[a-f0-9]+.*%sInputMethod") then
          started = true
+         debugging("started is true")
       end
       if started == true then
+         debugging("got a line: %s", dump[i])
          input_method[#input_method + 1] = dump[i]
          if dump[i]:match("^%s*mHasSurface") then
             started = false
@@ -635,7 +646,7 @@ local function adb_input_method_is_null()
 end
 
 check_phone = function()
-   if not adb_pipe("uname || busybox uname"):match("Linux") then
+   if not adb_pipe(UNAME_CMD):match("Linux") then
       error("Error: can't put text on phone, not connected?")
    end
 end
@@ -678,7 +689,7 @@ end
 t1_config = function()
    -- install the apk
    system(the_true_adb .. " devices")
-   local uname = adb_pipe("uname || busybox uname")
+   local uname = adb_pipe(UNAME_CMD)
    if not uname:match("Linux") then
       local home = os.getenv("HOME")
       if is_windows then

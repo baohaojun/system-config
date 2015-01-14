@@ -199,6 +199,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
             mLuaThread->addScript((QStringList() << "picture_to_weibo_share") + mPictures);
             mLuaThread->addScript(QStringList() << "t1_post" << text);
         }
+        ui->tbWeibo->setChecked(false);
     }
 
     if (ui->tbWeixin->isChecked()) {
@@ -209,6 +210,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
             mLuaThread->addScript((QStringList() << "picture_to_weixin_share") + mPictures);
             mLuaThread->addScript(QStringList() << "t1_post" << text);
         }
+        ui->tbWeixin->setChecked(false);
     }
 
     if (ui->tbMomo->isChecked()) {
@@ -219,6 +221,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
             mLuaThread->addScript((QStringList() << "picture_to_momo_share") + mPictures);
             mLuaThread->addScript(QStringList() << "t1_post" << text);
         }
+        ui->tbMomo->setChecked(false);
     }
 
     if (share && !mPictures.isEmpty()) {
