@@ -1,12 +1,12 @@
-#include "contactfilteredit.h"
+#include "filteringedit.h"
 #include <QDebug>
 
-ContactFilterEdit::ContactFilterEdit(QWidget *parent) :
+FilteringEdit::FilteringEdit(QWidget *parent) :
     QPlainTextEdit(parent)
 {
 }
 
-void ContactFilterEdit::keyPressEvent(QKeyEvent *e)
+void FilteringEdit::keyPressEvent(QKeyEvent *e)
 {
     int key = e->key();
     Qt::KeyboardModifiers m = e->modifiers();
@@ -79,26 +79,26 @@ void ContactFilterEdit::keyPressEvent(QKeyEvent *e)
 
     if (m == Qt::ControlModifier) {
         if (key == Qt::Key_P) {
-            emit prevContact();
+            emit prevEntry();
             return;
         }
         if (key == Qt::Key_N) {
-            emit nextContact();
+            emit nextEntry();
             return;
         }
         if (key == Qt::Key_V) {
-            emit nextPageContact();
+            emit nextPageOfEntries();
             return;
         }
     }
 
     if (key == Qt::Key_Return || key == Qt::Key_Enter) {
         if (m == 0) {
-            emit selectedContact(this->toPlainText());
+            emit selectedCurrentEntryWithText(this->toPlainText());
             return;
         }
         if (m == Qt::ShiftModifier) {
-            emit selectAllContacts();
+            emit selectAllEntries();
             return;
         }
     }
@@ -106,18 +106,18 @@ void ContactFilterEdit::keyPressEvent(QKeyEvent *e)
 
     if (m == Qt::AltModifier) {
         if (key == Qt::Key_V) {
-            emit prevPageContact();
+            emit prevPageOfEntries();
             return;
         }
     }
 
     if (m == Qt::AltModifier | Qt::ShiftModifier) {
         if (key == Qt::Key_Less) {
-            emit firstContact();
+            emit firstEntry();
             return;
         }
         if (key == Qt::Key_Greater) {
-            emit lastContact();
+            emit lastEntry();
             return;
         }
     }

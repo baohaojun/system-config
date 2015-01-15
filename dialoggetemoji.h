@@ -19,8 +19,8 @@ public:
 private slots:
     void on_emojiFilter_textChanged();
 
-    void on_emojiListView_doubleClicked(const QModelIndex &index);
-    void selectedEmojiNoHistory(const QModelIndex &index);
+    void on_filteringListView_doubleClicked(const QModelIndex &index);
+    void selectedCurrentEntryNoHistory(const QModelIndex &index);
  signals:
     void emojiSelected(const QString&, const QString&);
 

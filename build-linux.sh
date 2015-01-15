@@ -42,7 +42,7 @@ relative-link -f $oldpwd/linux/binaries/* $build_dir
         find-or-exec konsole
     else
         mkfifo /tmp/build-linux.$$
-        myscr bash -c "./T1Wrench > /tmp/build-linux.$$ 2>&1"
+        myscr bash -c "echo T1Wrench; ./T1Wrench > /tmp/build-linux.$$ 2>&1"
         cat /tmp/build-linux.$$
         rm /tmp/build-linux.$$
     fi

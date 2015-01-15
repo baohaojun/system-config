@@ -19,8 +19,8 @@ public:
 private slots:
     void on_contactFilter_textChanged();
 
-    void on_contactListView_doubleClicked(const QModelIndex &index);
-    void selectedContactNoHistory(const QModelIndex &index);
+    void on_filteringListView_doubleClicked(const QModelIndex &index);
+    void selectedCurrentEntryNoHistory(const QModelIndex &index);
     void on_contactSelected(const QString& contact);
  signals:
     void contactSelected(const QString&);

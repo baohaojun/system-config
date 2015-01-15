@@ -490,6 +490,7 @@ void T1WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
     event->acceptProposedAction();
 }
+
 void T1WrenchMainWindow::dropEvent(QDropEvent *event)
 {
     event->acceptProposedAction();

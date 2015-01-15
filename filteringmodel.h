@@ -1,0 +1,49 @@
+#ifndef FILTERINGMODEL_H
+#define FILTERINGMODEL_H
+
+#include <QAbstractTableModel>
+#include <QAbstractListModel>
+#include <QMap>
+#include <QPixmap>
+#include <QSharedPointer>
+#include <lua.hpp>
+#include <QSettings>
+#include "selectoutput.h"
+#include "vcard.h"
+
+class FilteringModel : public QAbstractListModel
+{
+    Q_OBJECT
+ public:
+    explicit FilteringModel(QObject *parent = 0);
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const ;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual void setFilter(QString filter);
+
+ protected:
+    QList<SelectedItem> mSelectedItems;
+    lua_State *L;
+    virtual void filterSelectedItems(const QStringList&) = 0;
+    virtual QString getHistoryName() = 0;
+    QMap<QString, SelectedItem> mSelectedItemsRevMap;
+    int mHistoryHead;
+    QSettings mSettings;
+    virtual void initHistory();
+
+ private:
+    QString mFilter;
+    QList<QString> mHistoryList;
+
+
+
+ public:
+    QString getSelectedText(int i);
+    void updateHistory(int i);
+    void updateHistory(QString key);
+signals:
+
+public slots:
+
+};
+
+#endif // FILTERINGMODEL_H

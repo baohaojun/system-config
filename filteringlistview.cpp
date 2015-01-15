@@ -1,31 +1,22 @@
-#include "contactlistview.h"
+#include "filteringlistview.h"
 #include "t1wrench.h"
 
-ContactListView::ContactListView(QWidget *parent) :
+FilteringListView::FilteringListView(QWidget *parent) :
     QListView(parent)
 {
 }
 
-void ContactListView::nextContact()
+void FilteringListView::nextEntry()
 {
     changeContact(1);
 }
 
-void ContactListView::changeContact(int how, const QString& input)
+void FilteringListView::changeContact(int how)
 {
     QModelIndexList ml = selectedIndexes();
     int selected = -1;
     if (!ml.isEmpty()) {
         selected = ml[0].row();
-    }
-
-    if (how == 0) {
-        if (selected < 0) {
-            emit selectedContactString(input);
-        } else {
-            emit selectedContact(model()->index(selected, 0));
-        }
-        return;
     }
 
     selected = selected + how;
@@ -42,46 +33,57 @@ void ContactListView::changeContact(int how, const QString& input)
     }
 }
 
-void ContactListView::prevContact()
+void FilteringListView::prevEntry()
 {
     changeContact(-1);
 }
 
-void ContactListView::firstContact()
+void FilteringListView::firstEntry()
 {
     changeContact(-model()->rowCount());
 }
 
-void ContactListView::lastContact()
+void FilteringListView::lastEntry()
 {
     changeContact(model()->rowCount());
 }
 
-void ContactListView::nextPageContact()
+void FilteringListView::nextPageOfEntries()
 {
     changeContact(this->height() / 50);
 }
 
-void ContactListView::prevPageContact()
+void FilteringListView::prevPageOfEntries()
 {
     changeContact(this->height() / -50);
 }
 
-void ContactListView::dataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles)
+void FilteringListView::dataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles)
 {
     QListView::dataChanged(topLeft, bottomRight, roles);
     this->clearSelection();
     selectionModel()->select(model()->index(0, 0), QItemSelectionModel::Select);
 }
 
-void ContactListView::selectedContact(const QString& input)
+void FilteringListView::selectedCurrentEntryWithText(const QString& input)
 {
-    changeContact(0, input);
+    QModelIndexList ml = selectedIndexes();
+    int selected = -1;
+    if (!ml.isEmpty()) {
+        selected = ml[0].row();
+    }
+
+    if (selected < 0) {
+        emit selectedCurrentText(input);
+    } else {
+        emit selectedCurrentEntry(model()->index(selected, 0));
+    }
+    return;
 }
 
-void ContactListView::selectAllContacts()
+void FilteringListView::selectAllEntries()
 {
     for (int i = 0; i < model()->rowCount(); i++) {
-        emit selectedContactNoHistory(model()->index(i, 0));
+        emit selectedCurrentEntryNoHistory(model()->index(i, 0));
     }
 }

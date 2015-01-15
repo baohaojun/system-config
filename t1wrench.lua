@@ -18,7 +18,7 @@ local adb_get_last_pic, debugging
 
 -- variables
 local UNAME_CMD = "uname || busybox uname || echo -n Lin && echo -n ux"
-local is_debugging = nil
+local is_debugging = true
 local using_scroll_lock = true
 local using_adb_root
 local adb_unquoter
@@ -920,13 +920,15 @@ t1_post = function(text) -- use weixin
          end
       else
          if adb_input_method_is_null() then --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
-            add = '560 1840 sleep .1 997 1199 sleep .1'
+            add = '560 1840 sleep .1 key back sleep .1'
          end
       end
 
       if window == "com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity" then
          post_button = '954 166'
       end
+
+      debugging("add is %s", add)
 
       if using_scroll_lock then
          adb_event(string.format("%s key scroll_lock %s", add, post_button))

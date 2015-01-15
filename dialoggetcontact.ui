@@ -24,7 +24,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="ContactListView" name="contactListView">
+     <widget class="FilteringListView" name="filteringListView">
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
       </property>
@@ -32,7 +32,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="ContactFilterEdit" name="contactFilter" native="true">
+  <widget class="FilteringEdit" name="contactFilter" native="true">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -48,14 +48,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ContactFilterEdit</class>
+   <class>FilteringEdit</class>
    <extends>QPlainTextEdit</extends>
-   <header>contactfilteredit.h</header>
+   <header>filteringedit.h</header>
   </customwidget>
   <customwidget>
-    <class>ContactListView</class>
+    <class>FilteringListView</class>
     <extends>QListView</extends>
-    <header>contactlistview.h</header>
+    <header>filteringlistview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

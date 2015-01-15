@@ -44,12 +44,11 @@ SOURCES += main.cpp\
         painterpathitem.cpp \
         dialoggetemoji.cpp \
         emojimodel.cpp \
+        filteringmodel.cpp \
         contactmodel.cpp \
-        contactfilteredit.cpp \
-        contactlistview.cpp \
+        filteringedit.cpp \
         dialoggetcontact.cpp \
-        emojifilteredit.cpp \
-        emojilistview.cpp
+        filteringlistview.cpp
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
@@ -62,13 +61,12 @@ HEADERS  += t1wrenchmainwindow.h \
             painterpathitem.h \
             dialoggetemoji.h \
             emojimodel.h \
+            filteringmodel.h \
             contactmodel.h \
             t1wrench.h \
-            emojifilteredit.h \
-            emojilistview.h \
-            contactfilteredit.h \
-            contactlistview.h \
-            contactmodel.h \
+            filteringedit.h \
+            filteringlistview.h \
+            filteringmodel.h \
             dialoggetcontact.h 
 
 FORMS    += t1wrenchmainwindow.ui \
