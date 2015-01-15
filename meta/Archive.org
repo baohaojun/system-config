@@ -13,7 +13,7 @@
   - 2014-12
    * 2014-12-10
 
-     [[../blog/2014/12/10/0-systetm-config-usage-guide.org][我的system-config使用指南]]
+     [[../blog/2014/12/10/0-system-config-usage-guide.org][我的system-config使用指南]]
 
    * 2014-12-06
 
