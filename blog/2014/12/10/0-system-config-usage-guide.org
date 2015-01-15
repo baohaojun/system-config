@@ -26,7 +26,27 @@ github上有一些跟system-config类似的项目，但好像还没有像我的�
 
 * 如何配置system-config
 
-system-config的配置很简单，你只需要两条命令就可以搞定：
+system-config的配置很简单，你只需要下载 [[https://github.com/baohaojun/baohaojun.github.com//raw/master/system-config.sh][这个文件]] ，然后运行它就可以。在运行的过程中，脚本会询问你是要简易版配置还是火力全开版：
+
+[[../../../../images/confirm-which-system-config.png][file:../../../../images/confirm-which-system-config.png]]
+
+如果是第一次配置system-config，建议使用简易版配置。
+
+** 简易版配置
+
+在上图的命令行提示下直接按回车，等待 =Simple config OK.= 这样的输出就表示配置成功了，可以开始试用。否则说明有Bug了，可以考虑给我提个Bug。
+
+此过程中会问你几个问题，比如你的邮箱地址，因为在之后配git/repo的时候会用，请参考下图输入你自己的信息：
+
+[[../../../../images/about-me-settings.png][file:../../../../images/about-me-settings.png]]
+
+** 完整版配置
+
+此配置在简易版的基础上还会安装、编译我常用的一些软件。
+
+在上面的命令行提示下输入 =yes= 再回车，最后输出 =Full config OK= 的话就表示成功了。中间可能需要回答几个问题。
+
+也可以自己手动运行下面这两条命令进行完整版的配置：
 
 #+BEGIN_SRC sh
 git clone --recursive https://github.com/baohaojun/system-config ~/system-config
@@ -35,13 +55,9 @@ git clone --recursive https://github.com/baohaojun/system-config ~/system-config
 
 其中，第一步是在下载system-config项目的代码。 =--recursive= 参数是因为 =system-config= 项目还有好几个子项目，需要一起下载下来。
 
-第二步则运行一些配置角本，把我的工作环境能自动化配置的部分全部重新配置出来。这个配置的时间可能会有点长，尤其是如果你的Debian/Ubuntu机器是新装的，很多软件会在配置system-config的时候被自动安装，花的时间会更长一点。请一定要有耐心，相信最后的system-config会让你觉得是值得的😅。
+第二步则运行一些配置脚本，把我的工作环境能自动化配置的部分全部重新配置出来。这个配置的时间可能会有点长，尤其是如果你的Debian/Ubuntu机器是新装的，很多软件会在配置system-config的时候被自动安装，花的时间会更长一点。请一定要有耐心，相信最后的system-config会让你觉得是值得的😅。
 
 运行的过程中可能需要你输入几次sudo密码，以及按几次回车、输入yes/no再回车等。其他的一般都已经尽量做到自动化了。
-
-** 系统debian包的安装
-
-最费时间的就是这个步骤。 =after-check-out.sh= 会把我常用的debian包全部用apt-get安装下来。
 
 ** 配置过程中出了问题怎么办
 
