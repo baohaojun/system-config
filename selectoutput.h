@@ -13,8 +13,13 @@ struct SelectedItem {
         return displayText == si.displayText;
     }
 
-    SelectedItem(QString name, QString display) : selectedText(name), displayText(display) {};
+    SelectedItem(const QString& name, const QString& display) : selectedText(name), displayText(display) {};
+
+    SelectedItem(const QString& name, const QString& display, const QPixmap& iconArg) :
+        selectedText(name), displayText(display), icon(iconArg)  {};
+
     SelectedItem(const SelectedItem& si) : selectedText(si.selectedText), displayText(si.displayText), icon(si.icon) {};
+
     SelectedItem& operator=(const SelectedItem& si) {
         selectedText = si.selectedText;
         displayText = si.displayText;

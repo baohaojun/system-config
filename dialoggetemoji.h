@@ -22,7 +22,7 @@ private slots:
     void on_filteringListView_doubleClicked(const QModelIndex &index);
     void selectedCurrentEntryNoHistory(const QModelIndex &index);
  signals:
-    void emojiSelected(const QString&, const QString&);
+    void emojiSelected(const QString&);
 
 private:
     Ui::DialogGetEmoji *ui;

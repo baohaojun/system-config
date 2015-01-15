@@ -344,7 +344,7 @@ void T1WrenchMainWindow::on_tbEmoji_clicked()
 {
     if (mEmojiDialog.isNull()) {
         mEmojiDialog = QSharedPointer<DialogGetEmoji>(new DialogGetEmoji(this));
-        connect(mEmojiDialog.data(), SIGNAL(emojiSelected(QString, QString)), ui->phoneTextEdit, SLOT(on_emojiSelected(QString, QString)));
+        connect(mEmojiDialog.data(), SIGNAL(emojiSelected(QString)), ui->phoneTextEdit, SLOT(on_emojiSelected(QString)));
     }
     QPoint pos = mSettings.value("emoji-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
     if (pos != QPoint(0, 0)) {

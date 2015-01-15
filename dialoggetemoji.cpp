@@ -39,9 +39,8 @@ void DialogGetEmoji::on_emojiFilter_textChanged()
 void DialogGetEmoji::on_filteringListView_doubleClicked(const QModelIndex &index)
 {
     int row = index.row();
-    QString emoji = mEmojiModel->getEmojiText(row);
-    QString emojiPath = mEmojiModel->getEmojiPath(row);
-    emit emojiSelected(emoji, emojiPath);
+    QString emojiPath = mEmojiModel->getSelectedText(row);
+    emit emojiSelected(emojiPath);
     if (updateEmojiHistory) {
         mEmojiModel->updateHistory(row);
     }

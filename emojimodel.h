@@ -8,32 +8,21 @@
 #include <QSharedPointer>
 #include <lua.hpp>
 #include <QSettings>
+#include "filteringmodel.h"
 
-class EmojiModel : public QAbstractListModel
+class EmojiModel : public FilteringModel
 {
     Q_OBJECT
 public:
     explicit EmojiModel(QObject *parent = 0);
-    int rowCount(const QModelIndex &parent = QModelIndex()) const ;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    void setFilter(QString filter);
+    void filterSelectedItems(const QStringList& split);
+    QString getHistoryName();
 
 private:
-    QString mFilter;
-    QMap<QString, QString> mEmojiTextMap;
     QMap<QString, QString> mEmojiIconPathMap;
     QMap<QString, QPixmap> mEmojiIconMap;
-    QMap<int, QString> mKeyMap;
-    QStringList mFilteredKeys;
-    lua_State *L;
-    int mHistoryHead;
-    QSettings mSettings;
+    QStringList mEmojis;
 
- public:
-    QString getEmojiText(int i);
-    QString getEmojiPath(int i);
-    void updateHistory(int i);
-    void updateHistory(QString key);
 signals:
 
 public slots:

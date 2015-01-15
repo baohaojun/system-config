@@ -119,7 +119,7 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
     QTextEdit::keyPressEvent(e);
 }
 
-void QCellPhoneTextEdit::on_emojiSelected(const QString& emoji, const QString& emojiPath)
+void QCellPhoneTextEdit::on_emojiSelected(const QString& emojiPath)
 {
     textCursor().insertHtml(QString().sprintf("<img src='%s' width=16 height=16 />", qPrintable(emojiPath)));
 }

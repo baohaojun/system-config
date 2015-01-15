@@ -18,7 +18,7 @@ signals:
     void phoneCallShortcutPressed();
 
 public slots:
-    void on_emojiSelected(const QString& emoji, const QString& emojiPath);
+    void on_emojiSelected(const QString& emojiPath);
 private:
     QString replaceImagesWithEmoji(const QString& text, const QString& html);
     void keyPressEvent(QKeyEvent *);
