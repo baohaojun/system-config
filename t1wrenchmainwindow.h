@@ -6,8 +6,7 @@
 #include "luaexecutethread.hpp"
 #include "screencapture.h"
 #include <QtCore/QSettings>
-#include "dialoggetemoji.h"
-#include "dialoggetcontact.h"
+#include "dialoggetentry.h"
 #include <QMenu>
 #include <QSystemTrayIcon>
 #include <QAction>
@@ -72,8 +71,8 @@ private:
     bool mQuit;
     QSharedPointer<ScreenCapture> mScreenCapture;
     QSharedPointer<LuaExecuteThread> mLuaThread;
-    QSharedPointer<DialogGetEmoji> mEmojiDialog;
-    QSharedPointer<DialogGetContact> mContactDialog;
+    QSharedPointer<DialogGetEntry> mEmojiDialog;
+    QSharedPointer<DialogGetEntry> mContactDialog;
     Ui::T1WrenchMainWindow *ui;
     QSettings mSettings;
     QStringList mPictures;

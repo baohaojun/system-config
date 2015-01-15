@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogGetContact</class>
- <widget class="QDialog" name="DialogGetContact">
+ <class>DialogGetEntry</class>
+ <widget class="QDialog" name="DialogGetEntry">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -32,7 +32,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="FilteringEdit" name="contactFilter" native="true">
+  <widget class="FilteringEdit" name="entryFilter" native="true">
    <property name="geometry">
     <rect>
      <x>10</x>

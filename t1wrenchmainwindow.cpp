@@ -28,7 +28,6 @@
 #include "screencapture.h"
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QSharedPointer>
-#include "dialoggetemoji.h"
 #include <QInputDialog>
 #include <QMenu>
 #include <QSystemTrayIcon>
@@ -38,6 +37,8 @@
 #include <QUrl>
 #include <QList>
 #include <QFileInfo>
+#include "emojimodel.h"
+#include "contactmodel.h"
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -348,8 +349,8 @@ void T1WrenchMainWindow::on_tbPicture_clicked()
 void T1WrenchMainWindow::on_tbEmoji_clicked()
 {
     if (mEmojiDialog.isNull()) {
-        mEmojiDialog = QSharedPointer<DialogGetEmoji>(new DialogGetEmoji(this));
-        connect(mEmojiDialog.data(), SIGNAL(emojiSelected(QString)), ui->phoneTextEdit, SLOT(on_emojiSelected(QString)));
+        mEmojiDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(new EmojiModel(0), "表情过滤", this));
+        connect(mEmojiDialog.data(), SIGNAL(entrySelected(QString)), ui->phoneTextEdit, SLOT(on_emojiSelected(QString)));
     }
     QPoint pos = mSettings.value("emoji-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
     if (pos != QPoint(0, 0)) {
@@ -408,8 +409,8 @@ void T1WrenchMainWindow::on_tbPhoneCall_clicked()
 {
 
     if (mContactDialog.isNull()) {
-        mContactDialog = QSharedPointer<DialogGetContact>(new DialogGetContact(this));
-        connect(mContactDialog.data(), SIGNAL(contactSelected(QString)), this, SLOT(on_contactSelected(QString)));
+        mContactDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(new ContactModel(0), "联系人过滤", this));
+        connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_contactSelected(QString)));
     }
     QPoint pos = mSettings.value("contact-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
     if (pos != QPoint(0, 0)) {

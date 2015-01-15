@@ -42,12 +42,11 @@ SOURCES += main.cpp\
         painterwidget.cpp \
         painterrectitem.cpp \
         painterpathitem.cpp \
-        dialoggetemoji.cpp \
         emojimodel.cpp \
         filteringmodel.cpp \
         contactmodel.cpp \
         filteringedit.cpp \
-        dialoggetcontact.cpp \
+        dialoggetentry.cpp \
         filteringlistview.cpp
 
 HEADERS  += t1wrenchmainwindow.h \
@@ -59,7 +58,6 @@ HEADERS  += t1wrenchmainwindow.h \
             painteritem.h \
             painterrectitem.h \
             painterpathitem.h \
-            dialoggetemoji.h \
             emojimodel.h \
             filteringmodel.h \
             contactmodel.h \
@@ -67,11 +65,10 @@ HEADERS  += t1wrenchmainwindow.h \
             filteringedit.h \
             filteringlistview.h \
             filteringmodel.h \
-            dialoggetcontact.h 
+            dialoggetentry.h 
 
 FORMS    += t1wrenchmainwindow.ui \
-            dialoggetemoji.ui \
-            dialoggetcontact.ui
+            dialoggetentry.ui
 
 RESOURCES += \
     T1Wrench.qrc
