@@ -24,13 +24,13 @@ for x in . download; do
 done
 relative-link -f $oldpwd/release/* .
 relative-link -f $oldpwd/*.lua .
-mkdir -p ~/src/github/T1Wrench-linux
-command rsync -L T1Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/T1Wrench-linux -av
-command rsync -L $oldpwd/linux/binaries/* ~/src/github/T1Wrench-linux -av
 relative-link -f $oldpwd/release/* $oldpwd/*.lua $build_dir
 relative-link -f $oldpwd/linux/binaries/* $build_dir
 (
     if test "$DOING_T1WRENCH_RELEASE"; then
+        mkdir -p ~/src/github/T1Wrench-linux
+        command rsync -L T1Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/T1Wrench-linux -av
+        command rsync -L $oldpwd/linux/binaries/* ~/src/github/T1Wrench-linux -av
         exit
     fi
 
