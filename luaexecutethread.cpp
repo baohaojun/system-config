@@ -79,3 +79,21 @@ void LuaExecuteThread::quitLua()
     mMutex.unlock();
     mWait.wakeOne();
 }
+
+QString LuaExecuteThread::selectArgs(const QStringList& args)
+{
+    emit selectArgsSig(args);
+    mSelectArgsMutex.lock();
+    mSelectArgsWait.wait(&mSelectArgsMutex);
+    QString res = mSelectedArg;
+    mSelectArgsMutex.unlock();
+    return res;
+}
+
+void LuaExecuteThread::setSelectedArg(const QString& arg)
+{
+    mSelectArgsMutex.lock();
+    mSelectedArg = arg;
+    mSelectArgsMutex.unlock();
+    mSelectArgsWait.wakeOne();
+}

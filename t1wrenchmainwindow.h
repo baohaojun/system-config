@@ -32,6 +32,7 @@ public:
 public slots:
     void adbStateUpdated(const QString& state);
     void onInfoUpdate(const QString& key, const QString& val);
+    void onSelectArgs(const QStringList& args);
     void startTask(const QString& task);
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);

@@ -28,7 +28,7 @@ protected slots:
     void dataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int> ());
 
 private:
-    void changeContact(int how);
+    void changeSelection(int how);
 };
 
 #endif // FILTERINGLISTVIEW_H

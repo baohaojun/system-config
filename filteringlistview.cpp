@@ -8,10 +8,10 @@ FilteringListView::FilteringListView(QWidget *parent) :
 
 void FilteringListView::nextEntry()
 {
-    changeContact(1);
+    changeSelection(1);
 }
 
-void FilteringListView::changeContact(int how)
+void FilteringListView::changeSelection(int how)
 {
     QModelIndexList ml = selectedIndexes();
     int selected = -1;
@@ -35,27 +35,27 @@ void FilteringListView::changeContact(int how)
 
 void FilteringListView::prevEntry()
 {
-    changeContact(-1);
+    changeSelection(-1);
 }
 
 void FilteringListView::firstEntry()
 {
-    changeContact(-model()->rowCount());
+    changeSelection(-model()->rowCount());
 }
 
 void FilteringListView::lastEntry()
 {
-    changeContact(model()->rowCount());
+    changeSelection(model()->rowCount());
 }
 
 void FilteringListView::nextPageOfEntries()
 {
-    changeContact(this->height() / 50);
+    changeSelection(this->height() / 50);
 }
 
 void FilteringListView::prevPageOfEntries()
 {
-    changeContact(this->height() / -50);
+    changeSelection(this->height() / -50);
 }
 
 void FilteringListView::dataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles)

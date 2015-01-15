@@ -162,6 +162,9 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
     }
 }
 
+void T1WrenchMainWindow::onSelectArgs(const QStringList& args)
+{
+}
 void T1WrenchMainWindow::on_sendItPushButton_clicked()
 {
     QString text = get_text();
@@ -250,6 +253,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
         }
         mLuaThread->quitLua();
         disconnect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
+        disconnect(mLuaThread.data(), SIGNAL(selectArgs(QStringList)), this, SLOT(onSelectArgs(QStringList)));
         if (!mLuaThread->wait(1000)) {
             for (int i = 0; i < 10; i ++) {
                 getExecutionOutput("the-true-adb kill-server");
@@ -263,6 +267,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     }
     mLuaThread = QSharedPointer<LuaExecuteThread>(new LuaExecuteThread(this));
     connect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
+    connect(mLuaThread.data(), SIGNAL(selectArgs(QStringList)), this, SLOT(onSelectArgs(QStringList)));
     mLuaThread->start();
     if (! is_starting) {
         mLuaThread->addScript(QStringList() << "t1_config");

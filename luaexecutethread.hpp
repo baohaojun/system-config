@@ -14,13 +14,19 @@ public:
     void addScript(QStringList script);
     void quitLua();
     void run();
+    QString selectArgs(const QStringList&);
+    void setSelectedArg(const QString& arg);
 signals:
     void gotSomeLog(const QString& key, const QString& val);
+    void selectArgsSig(const QStringList&);
 private:
+    QString mSelectedArg;
     bool mQuit;
     QMutex mMutex;
     QList<QStringList> mActions;
     QWaitCondition mWait;
+    QWaitCondition mSelectArgsWait;
+    QMutex mSelectArgsMutex;
 };
 
 #endif /* _LUAEXECUTETHREAD_H_ */
