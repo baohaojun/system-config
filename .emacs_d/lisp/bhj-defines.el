@@ -402,7 +402,7 @@ might be bad."
                   (line-end-position) t))
                (kill-line)
                (insert (format "%s <%s>"
-                               (shell-command-to-string "cat ~/.config/about_me/花名")
+                               (shell-command-to-string "cat ~/.config/about_me/FullName")
                                (shell-command-to-string "cat ~/.config/about_me/mail")))
                (bhj-set-smtp-cred-to-company-mail))
 

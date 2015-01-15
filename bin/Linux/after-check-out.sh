@@ -51,4 +51,4 @@ sudo  /etc/init.d/postfix restart
 #编译一些软件
 do_compile
 
-echo 'OK'
+echo 'Full config OK'

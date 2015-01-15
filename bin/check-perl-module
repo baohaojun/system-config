@@ -1,0 +1,19 @@
+#!/bin/bash
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+function check-perl-module() {
+    if test $# != 2; then
+        die "Error: check-perl-module perl.module debian.package"
+    fi
+
+    if perl -m$1 -e '' >/dev/null 2>&1; then
+        true
+    elif yes-or-no-p -y "Perl module $1 not installed, install it now?"; then
+        sudo apt-get install $2
+    fi
+}
+
+check-perl-module "$@"

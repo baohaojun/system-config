@@ -223,11 +223,11 @@ if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; the
     fi
 fi
 
-if test -L /etc/rc.local || yes-or-no-p -N "Replace /etc/rc.local with system-config's version?"; then
+if test -L /etc/rc.local || yes-or-no-p "Replace /etc/rc.local with system-config's version?"; then
     if ! test -L /etc/rc.local; then
         sudo cp /etc/rc.local /etc/rc.local.bak
     fi
-    sudo ln -sf ~/etc/rc.local /etc || true # no sudo on win32
+    sudo ln -sf ~/etc/rc.local /etc >/dev/null 2>&1 || true # no sudo on win32
 fi
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
 if test -L ~/.git; then rm -f ~/.git; fi
@@ -249,8 +249,6 @@ fi
 if test -e ~/src/github/private-config/.bbdb; then
     ln -s ~/src/github/private-config/.bbdb ~/ -f
 fi
-
-echo OK
 
 if test ! -d ~/.config/about_me; then
     mkdir -p ~/.config/about_me;
@@ -284,13 +282,24 @@ sudo mkdir -p /etc/acpi/local/
 
 sync-etc-files
 mkdir -p ~/.cache # just in case the following command will create
-                  # .cache with root permission.
-update-host-ip phone 192.168.15.244
-update-host-ip home 128.199.228.174
+# .cache with root permission.
+
+if test "$USER" = bhj; then
+    update-host-ip phone 192.168.15.244
+    update-host-ip home 128.199.228.174
+fi || true
 (
     set +e
     (
         cd ~/src/github/mobileorg-android/
         git remote add up https://github.com/matburt/mobileorg-android
     )
-) >/dev/null 2>&1
+) >/dev/null 2>&1 || true
+
+if which emacs >/dev/null 2>&1 && test ! -e ~/.config/emacs-config-done; then
+    touch ~/.config/emacs-config-done
+    ~/system-config/bin/Linux/emacs-install-packages
+fi || true
+
+check-perl-module String::ShellQuote libstring-shellquote-perl
+echo Simple config OK.

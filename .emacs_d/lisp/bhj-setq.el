@@ -133,7 +133,7 @@
          (signature "All the best\n\n Bao Haojun"))
         (".*smt\\..*"
          ("From" ,(format "%s <%s>"
-                          (shell-command-to-string "cat ~/.config/about_me/花名")
+                          (shell-command-to-string "cat ~/.config/about_me/FullName")
                           (shell-command-to-string "cat ~/.config/about_me/mail"))))
         (".*gmail.*"
          ("From" "Bao Haojun <baohaojun@gmail.com>"))))
