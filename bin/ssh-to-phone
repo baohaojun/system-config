@@ -14,12 +14,13 @@ function die() {
     echo Error: "$@"
     exit -1
 }
-if ! adb id | grep 'uid=0(root)' -q; then
+if ! adb -r id | grep 'uid=0(root)' -q; then
     exit 1
 fi
 
 my-adb push ~/system-config/doc/galaxy-nexus-root/data/start-debian2.sh /data/start-debian2.sh
-if ! my-adb shell su -c "bash $xset /data/start-debian2.sh" | grep 'start debian done'; then
+my-adb shell su -c "set -x; rm -r /data/start-debian.done; bash $xset /data/start-debian2.sh && touch /data/start-debian.done"
+if ! my-adb 'if test -e /data/start-debian.done; then echo start debian done; fi' | grep 'start debian done'; then
     if test $(basename $0) = net-for-phone; then
         true;
     else

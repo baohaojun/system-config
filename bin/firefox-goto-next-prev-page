@@ -1,5 +1,27 @@
 #!/bin/bash
 
+taburl=$(firefox-get-tab-url)
+
+if echo "$taburl" | grep http://osdir.com/ml/; then
+    putclip Thread:
+    sawfish-browser-input C-s C-v C-g
+    if test "$1" = prev; then
+        putclip Prev
+    else
+        putclip Next
+    fi
+    sawfish-browser-input C-s C-v C-g RET
+    exit
+elif echo "$taburl" | grep lists.gnu.org/archive/html; then
+    if test "$1" = prev; then
+        putclip "Thread Prev"
+    else
+        putclip "Thread Next"
+    fi
+    sawfish-browser-input C-s C-v C-g RET
+    exit
+fi
+
 if test "$1" = prev; then
     putclip 前一篇
 else

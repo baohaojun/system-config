@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if my-adb shell 'which busybox && echo yes' |grep -q yes; then
+    true
+else
+    adb-push ~/system-config/doc/galaxy-nexus-root/system/xbin/busybox /system/xbin
+fi
+
 applets=$(
     my-adb shell busybox | perl -ne 'print if m/Currently defined functions:/..0' | perl -ne 's/,//g; print unless 1..1'
 )

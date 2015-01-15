@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BeagleConf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="FilesQueryable">
+  <ListOption Name="Roots" Description="Root directories that the file system backend will index" Params="Root" Separator=",">
+    <Value>/home/bhj/src/github</Value>
+    <Value>/home/bhj/system-config</Value>
+  </ListOption>
+  <BoolOption Name="IndexHomeDir" Description="To index home directory">False</BoolOption>
+</BeagleConf>

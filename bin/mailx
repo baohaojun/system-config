@@ -182,7 +182,9 @@ elif test $(basename $0) = adb-mail -o $(basename $0) = adb-gmail; then
     if test $gmail = true; then
         adb-tap 529 1724
     else
-        adb-tap 143 1692
+        if adb-is-activity smartisanos/smartisanos.app.ChooserActivity; then
+            adb-tap 143 1692
+        fi
     fi
     sleep 1
 

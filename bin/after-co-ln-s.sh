@@ -5,16 +5,23 @@ chmod og-rwx ~/.authinfo ~/.netrc
 
 export PATH=/opt/local/libexec/gnubin:~/system-config/bin/Linux:~/system-config/bin:$PATH
 
+if test ! -e /etc/sudoers.d/$USER && ! yes-or-no-p "Do you have sudo power?"; then
+    function sudo() {
+        true
+    }
+    export -f sudo
+fi
+
 if test -d  /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && ask-if-not-bhj "Make your sudo command not ask for password?"; then
     sudo bash -c "echo $USER ALL=NOPASSWD: ALL > /etc/sudoers.d/$USER; chmod 440 /etc/sudoers.d/$USER"
 fi
 
-if ! which sudo; then
+if ! which sudo >/dev/null 2>&1 ; then
     function sudo() {
         "$@"
     }
 fi
-if ! which git; then
+if ! which git >/dev/null 2>&1 ; then
     sudo apt-get install -y git || /cygdrive/c/setup-x86_64.exe -q -n -d -A -P git
 fi
 
@@ -190,7 +197,7 @@ symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
 if test -e ~/.gitconfig.$USER; then
     ln -sf ~/.gitconfig.$USER ~/.gitconfig
 else
-    cp ~/.gitconfig.bhj ~/.gitconfig
+    cp ~/.gitconfig.bhj ~/.gitconfig || true
     name=$(finger $USER | grep Name: | perl -npe 's/.*Name: //')
     if test "$name"; then
         git config --global user.name "$name"
