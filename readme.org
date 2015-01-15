@@ -1,58 +1,15 @@
-#+title: Smartisan T1小扳手使用指南
+#+title: Smartisan T1小扳手
 
-注：请察看
-http://baohaojun.github.io/blog/2014/07/13/0-Smartisan-T1-Wrench.html
-下的指南，可能会比本指南更新。
+* 使用手册
 
-* 适用PC系统要求
+请查看 [[http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html][我的博客]] 。
 
-目前只在Windows 7上测试过，应该32位和64位的Win7都可以运行。
+* 开发手册
 
-* 安装adb驱动
+** 编译
 
-Smartisa T1的adb驱动安装有两种方法。
+小扳手主要是一个Qt程序，我在Linux下开发，其中编译的时候使用了一个脚本： [[home:repos/t1wrench/raw/master/build-linux.sh][build-linux.sh]] （就在本项目的顶层目录下）。
 
-1. 装豌豆荚，会自动安装adb驱动
-2. 用本软件自带的adb_usb_driver_smartisan下的驱动。
+这个编译脚本不仅会把小扳手编译出来，还会设置好运行环境（主要是有一些文件需要拷贝到相应的位置上，比如图标）。
 
-* 安装adb.exe程序
-
-可以在这里下载
-http://dl.google.com/android/repository/platform-tools_r19.0.1-windows.zip
-，最新版的可能有更新了，但这个版本我测了是可用的。然后把解压出来的3个
-adb相关的文件： =adb.exe AdbWinApi.dll AdbWinUsbApi.dll= 放到
-C:/Windows 下，注意不要放到 C:/Windows/System32 下，这个在64位的系统上
-是会有问题的。
-
-* 配置手机
-
-在打开本软件 T1Wrench.exe 后，第一次运行需点一下左下角的配置按钮。见图：
-
-[[./config.png]]
-
-1. 此操作会在之前安装完adb驱动的基础上，确保adb devices命令能看到T1手
-   机（具体点说，是会往 %profile%/.android/adb_usb.ini 下写入T1的usb厂
-   商id 0x29a9）。
-2. 会向手机中自动安装SetClip.apk，一个操作手机剪贴板的程序。
-3. 会获取手机的屏幕大小。这在配合小扳手使用其他手机比如小米的情况下才需要。
-
-* 发送微信、微博
-
-在文本框中输入，然后点击“扳动”按钮。
-
-* 适配其他手机
-
-需要自己获取每个点的座标。但我曾用同事的小米2手机只需一个简单的修改即可使用：
-
-把emacs-weixin.sh中的每个座标按比例缩放一下，X = X / 1080 * 720；Y = Y
-/ 1920 * 1280，这是因为T1的屏幕大小是1080x1920，而小米的大小则是
-720x1280。但也有一些手机是例外的，比如我的Galaxy Nexus（谷哥三儿子），
-它的屏幕大小与小米2一样，但是一部分屏幕空间分给了三个虚拟按键。另外，
-换了一个输入法布局也会导致这些座标发生变化！这种情况只能自己再去适配了。
-话说有了T1小扳手，你还需要折腾手机上的输入法么？随便装一个就好了:-)
-
-适配座标的方法是打开开发者选项里的显示触摸操作和指针位置两个选项，然后
-在微信等应用中实际操作一遍，记下每个操作点按的位置的座标。有点麻烦的。
-见图（有点大，建议右键->显示图片）：
-
-[[./point.png]]
+在使用这个脚本的过程中会需要用到我的 [[https://github.com/baohaojun/system-config][system-config]] 项目，用简易版的配置就可以。
