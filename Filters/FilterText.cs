@@ -48,6 +48,7 @@ namespace Beagrep.Filters {
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-designer"));
+                        AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.nokia.xml.qt.resource"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/*"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-shellscript"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-yaml"));
