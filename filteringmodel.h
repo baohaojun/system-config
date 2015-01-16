@@ -42,6 +42,7 @@ class FilteringModel : public QAbstractListModel
 
  public:
     QString getSelectedText(int i);
+    QString getSelectedDisplayText(int i);
     void updateHistory(int i);
     void updateHistory(QString key);
 signals:

@@ -24,6 +24,7 @@ private slots:
     void on_entrySelected(const QString& entry);
  signals:
     void entrySelected(const QString&);
+    void entrySelectedWithDisplayText(const QString&, const QString&);
 
 private:
     Ui::DialogGetEntry *ui;

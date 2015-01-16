@@ -55,6 +55,7 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     connect(ui->phoneTextEdit, SIGNAL(controlEnterPressed()), this, SLOT(on_sendItPushButton_clicked()));
     connect(ui->phoneTextEdit, SIGNAL(emojiShortcutPressed()), this, SLOT(on_tbEmoji_clicked()));
     connect(ui->phoneTextEdit, SIGNAL(phoneCallShortcutPressed()), this, SLOT(on_tbPhoneCall_clicked()));
+    connect(ui->phoneTextEdit, SIGNAL(MmsShortcutPressed()), this, SLOT(on_tbMms_clicked()));
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLastRadioButton = NULL;
     createTrayIcon();
@@ -175,8 +176,9 @@ void T1WrenchMainWindow::onSelectArgs(const QStringList& args)
     connect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_argSelected(QString)));
     mSelectArgDialog = &dialog;
     dialog.exec();
-    disconnect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_argSelected(QString)));
+    dialog.disconnect();
 }
+
 void T1WrenchMainWindow::on_sendItPushButton_clicked()
 {
     QString text = get_text();
@@ -263,8 +265,8 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
             }
         }
         mLuaThread->quitLua();
-        disconnect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
-        disconnect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
+        mLuaThread->disconnect();
+
         if (!mLuaThread->wait(1000)) {
             for (int i = 0; i < 10; i ++) {
                 getExecutionOutput("the-true-adb kill-server");
@@ -415,18 +417,53 @@ void T1WrenchMainWindow::on_tbThumbsUp_clicked()
     mLuaThread->addScript(QStringList() << "t1_follow_me");
 }
 
-void T1WrenchMainWindow::on_tbPhoneCall_clicked()
+void T1WrenchMainWindow::initContactDialog()
+{
+    if (mContactDialog.isNull()) {
+        mContactModel = new ContactModel(0);
+        mContactDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(mContactModel, "联系人过滤", this));
+    }
+}
+
+void T1WrenchMainWindow::on_tbMms_clicked()
 {
 
-    if (mContactDialog.isNull()) {
-        mContactDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(new ContactModel(0), "联系人过滤", this));
-        connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_contactSelected(QString)));
-    }
+    initContactDialog();
+    mMmsReceiverMap.clear();
+    connect(mContactDialog.data(), SIGNAL(entrySelectedWithDisplayText(QString, QString)), this, SLOT(on_addMmsReceiver(QString, QString)));
+
     QPoint pos = mSettings.value("contact-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
     if (pos != QPoint(0, 0)) {
         mContactDialog->move(pos);
     }
     mContactDialog->exec();
+    mContactDialog->disconnect();
+    pos = mContactDialog->pos();
+    mSettings.setValue("contact-dialog-pos", QVariant(pos));
+
+    if (mMmsReceiverMap.isEmpty()) {
+        onInfoUpdate("info", "没有指定短信接收人");
+        return;
+    }
+
+    QString receivers;
+    foreach (const QString& receiver, mMmsReceiverMap.keys()) {
+        receivers += receiver + ",";
+    }
+    mLuaThread->addScript(QStringList() << "t1_add_mms_receiver" << receivers);
+}
+
+void T1WrenchMainWindow::on_tbPhoneCall_clicked()
+{
+
+    initContactDialog();
+    connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_Dial(QString)));
+    QPoint pos = mSettings.value("contact-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
+    if (pos != QPoint(0, 0)) {
+        mContactDialog->move(pos);
+    }
+    mContactDialog->exec();
+    mContactDialog->disconnect();
     pos = mContactDialog->pos();
     mSettings.setValue("contact-dialog-pos", QVariant(pos));
 }
@@ -439,7 +476,18 @@ void T1WrenchMainWindow::on_tbNotes_clicked()
     }
 }
 
-void T1WrenchMainWindow::on_contactSelected(const QString&contact)
+void T1WrenchMainWindow::on_addMmsReceiver(const QString&contact, const QString& display)
+{
+    if (mMmsReceiverMap.contains(contact) && yes_or_no_p(mMmsReceiverMap[contact] +
+                                                         "已经在短信接收人名单里，删除？") == "yes") {
+        mMmsReceiverMap.remove(contact);
+        return;
+    }
+    onInfoUpdate("info", "发短信给 " + display);
+    mMmsReceiverMap[contact] = display;
+}
+
+void T1WrenchMainWindow::on_Dial(const QString&contact)
 {
     mLuaThread->addScript(QStringList() << "t1_call" << contact);
 }

@@ -41,7 +41,9 @@ void DialogGetEntry::on_filteringListView_doubleClicked(const QModelIndex &index
 {
     int row = index.row();
     QString entry = mEntryModel->getSelectedText(row);
+    QString entryDisplay = mEntryModel->getSelectedDisplayText(row);
     on_entrySelected(entry);
+    emit entrySelectedWithDisplayText(entry, entryDisplay);
     if (updateEntryHistory) {
         mEntryModel->updateHistory(row);
     }

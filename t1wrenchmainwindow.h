@@ -13,6 +13,8 @@
 #include <QCloseEvent>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include "contactmodel.h"
+#include <QMap>
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -56,13 +58,18 @@ private slots:
     void on_tbThumbsUp_clicked();
 
     void on_tbPhoneCall_clicked();
+    void on_tbMms_clicked();
 
     void on_tbNotes_clicked();
 
-    void on_contactSelected(const QString&);
+    void on_Dial(const QString&);
+    void on_addMmsReceiver(const QString&, const QString&);
     void quitMyself();
 
 private:
+
+    QMap<QString, QString> mMmsReceiverMap;
+
     DialogGetEntry* mSelectArgDialog;
     void createTrayIcon();
     void closeEvent(QCloseEvent *event);
@@ -75,6 +82,8 @@ private:
     QSharedPointer<LuaExecuteThread> mLuaThread;
     QSharedPointer<DialogGetEntry> mEmojiDialog;
     QSharedPointer<DialogGetEntry> mContactDialog;
+    ContactModel* mContactModel;
+    void initContactDialog();
     Ui::T1WrenchMainWindow *ui;
     QSettings mSettings;
     QStringList mPictures;

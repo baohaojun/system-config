@@ -103,6 +103,16 @@ QString FilteringModel::getSelectedText(int i)
     return "";
 }
 
+QString FilteringModel::getSelectedDisplayText(int i)
+{
+
+    if (i >= 0 && i < mSelectedItems.length()) {
+        SelectedItem si = mSelectedItems[i];
+        return si.displayText;
+    }
+    return "";
+}
+
 void FilteringModel::updateHistory(int i)
 {
     if (i >= 0 && i < mSelectedItems.size()) {

@@ -22,6 +22,7 @@
       <file>resources/notes.png</file>
       <file>resources/momo.png</file>
       <file>resources/phone-call.png</file>
+      <file>resources/mms.png</file>
       <file>resources/console.png</file>
     </qresource>
 </RCC>

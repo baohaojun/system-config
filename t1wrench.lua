@@ -8,7 +8,7 @@ local t1_call, t1_run
 local shell_quote, putclip, t1_post
 local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share
-local picture_to_momo_share
+local picture_to_momo_share, t1_add_mms_receiver
 local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share, adb_is_window
 local adb_focused_window
@@ -1289,6 +1289,18 @@ t1_call = function(number)
    adb_event("adb-tap 554 1668")
 end
 
+t1_add_mms_receiver = function(number)
+   while adb_is_window('com.android.mms/com.android.mms.ui.ComposeMessageActivity') do
+      adb_event("key back sleep .1")
+   end
+   adb_shell("am start -n com.android.mms/com.android.mms.ui.ComposeMessageActivity")
+
+   putclip(number .. ',')
+
+   adb_event("sleep 1 key scroll_lock")
+   return "请在小扳手文字输入区输入短信内容并发送"
+end
+
 t1_run = function (file)
    local ext = file:gsub(".*%.", "")
    if ext ~= "twa" and ext ~= "小扳手" then
@@ -1343,6 +1355,7 @@ M.adb_get_last_pic = adb_get_last_pic
 M.picture_to_momo_share = picture_to_momo_share_upload
 M.t1_call = t1_call
 M.t1_run = t1_run
+M.t1_add_mms_receiver = t1_add_mms_receiver
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
