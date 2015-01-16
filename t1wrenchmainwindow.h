@@ -63,8 +63,11 @@ private slots:
     void on_tbNotes_clicked();
 
     void on_Dial(const QString&);
+    void on_MailTo(const QString&);
     void on_addMmsReceiver(const QString&, const QString&);
     void quitMyself();
+
+    void on_tbMailAddTo_clicked();
 
 private:
 
@@ -82,8 +85,10 @@ private:
     QSharedPointer<LuaExecuteThread> mLuaThread;
     QSharedPointer<DialogGetEntry> mEmojiDialog;
     QSharedPointer<DialogGetEntry> mContactDialog;
+
+    void afterUsingContactDialog();
     ContactModel* mContactModel;
-    void initContactDialog();
+    void initContactDialog(bool isMail = false);
     Ui::T1WrenchMainWindow *ui;
     QSettings mSettings;
     QStringList mPictures;

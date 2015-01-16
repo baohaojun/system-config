@@ -19,8 +19,10 @@ public:
     explicit ContactModel(QObject *parent = 0);
     void filterSelectedItems(const QStringList& split);
     QString getHistoryName();
+    void setMail(bool isMail) {mIsMail = isMail; setFilter("\t");};
 
 private:
+    bool mIsMail;
     QPixmap mDefaultAvatar;
     QList<VCard> mVcards;
     QSettings mSettings;

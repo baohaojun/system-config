@@ -144,21 +144,34 @@ void ContactModel::filterSelectedItems(const QStringList& split)
 {
     foreach (const VCard& vcard, mVcards) {
         QStringList tels = vcard.mTels;
+        QStringList mails = vcard.mEmails;
         int match = 1;
 
         QStringList namePinyin;
         foreach(const QString& stem, split) {
-            if (matchOneString(tels, stem)) {
-                tels = filterMatchedStrings(tels, stem);
-                continue;
-            }
 
             if (vcard.mName.indexOf(stem, 0, Qt::CaseInsensitive) >= 0) {
                 continue;
             }
 
-            if (matchOneString(vcard.mEmails, stem)) {
-                continue;
+            if (!mIsMail) { // doing tels
+                if (matchOneString(tels, stem)) {
+                    tels = filterMatchedStrings(tels, stem);
+                    continue;
+                }
+
+                if (matchOneString(vcard.mEmails, stem)) {
+                    continue;
+                }
+
+            } else {
+                if (matchOneString(mails, stem)) {
+                    mails = filterMatchedStrings(mails, stem);
+                    continue;
+                }
+                if (matchOneString(vcard.mTels, stem)) {
+                    continue;
+                }
             }
 
             if (namePinyin.isEmpty()) {
@@ -174,8 +187,12 @@ void ContactModel::filterSelectedItems(const QStringList& split)
         }
 
         if (match) {
-            foreach (const QString& tel, tels) {
-                SelectedItem si(tel, vcard.mName + " " + tel);
+            QStringList whichList = tels;
+            if (mIsMail) {
+                whichList = mails;
+            }
+            foreach (const QString& telOrMail, whichList) {
+                SelectedItem si(telOrMail, vcard.mName + " " + telOrMail);
                 si.icon = vcard.mAvatar;
                 if (!mSelectedItemsRevMap.contains(si.displayText)) {
                     mSelectedItems << si;

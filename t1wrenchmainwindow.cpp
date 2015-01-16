@@ -417,12 +417,13 @@ void T1WrenchMainWindow::on_tbThumbsUp_clicked()
     mLuaThread->addScript(QStringList() << "t1_follow_me");
 }
 
-void T1WrenchMainWindow::initContactDialog()
+void T1WrenchMainWindow::initContactDialog(bool isMail)
 {
     if (mContactDialog.isNull()) {
         mContactModel = new ContactModel(0);
         mContactDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(mContactModel, "联系人过滤", this));
     }
+    mContactModel->setMail(isMail);
 }
 
 void T1WrenchMainWindow::on_tbMms_clicked()
@@ -432,15 +433,7 @@ void T1WrenchMainWindow::on_tbMms_clicked()
     mMmsReceiverMap.clear();
     connect(mContactDialog.data(), SIGNAL(entrySelectedWithDisplayText(QString, QString)), this, SLOT(on_addMmsReceiver(QString, QString)));
 
-    QPoint pos = mSettings.value("contact-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
-    if (pos != QPoint(0, 0)) {
-        mContactDialog->move(pos);
-    }
-    mContactDialog->exec();
-    mContactDialog->disconnect();
-    pos = mContactDialog->pos();
-    mSettings.setValue("contact-dialog-pos", QVariant(pos));
-
+    afterUsingContactDialog();
     if (mMmsReceiverMap.isEmpty()) {
         onInfoUpdate("info", "没有指定短信接收人");
         return;
@@ -453,11 +446,8 @@ void T1WrenchMainWindow::on_tbMms_clicked()
     mLuaThread->addScript(QStringList() << "t1_add_mms_receiver" << receivers);
 }
 
-void T1WrenchMainWindow::on_tbPhoneCall_clicked()
+void T1WrenchMainWindow::afterUsingContactDialog()
 {
-
-    initContactDialog();
-    connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_Dial(QString)));
     QPoint pos = mSettings.value("contact-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
     if (pos != QPoint(0, 0)) {
         mContactDialog->move(pos);
@@ -466,6 +456,13 @@ void T1WrenchMainWindow::on_tbPhoneCall_clicked()
     mContactDialog->disconnect();
     pos = mContactDialog->pos();
     mSettings.setValue("contact-dialog-pos", QVariant(pos));
+}
+void T1WrenchMainWindow::on_tbPhoneCall_clicked()
+{
+
+    initContactDialog();
+    connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_Dial(QString)));
+    afterUsingContactDialog();
 }
 
 void T1WrenchMainWindow::on_tbNotes_clicked()
@@ -574,4 +571,15 @@ void T1WrenchMainWindow::on_argSelected(const QString& arg)
 {
     mSelectArgDialog->close();
     mLuaThread->on_argSelected(arg);
+}
+
+void T1WrenchMainWindow::on_tbMailAddTo_clicked()
+{
+    initContactDialog(true);
+    connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_MailTo(QString)));
+    afterUsingContactDialog();
+}
+
+void T1WrenchMainWindow::on_MailTo(const QString& to)
+{
 }
