@@ -2,9 +2,11 @@
 set -e
 cd $(dirname $(readlink -f $0))
 build_dir=~/tmp/build-t1
-if test $# = 1 -a "$1" = debug; then
+if test $# = 1 && [[ "$1" =~ debug ]]; then
     build_dir=~/tmp/build-t1-debug
 fi
+
+relative-link -f $build_dir/T1Wrench ~/system-config/bin/overide
 
 mkdir -p $build_dir
 rsync * $build_dir -av --exclude=release
@@ -36,7 +38,7 @@ relative-link -f $oldpwd/linux/binaries/* $build_dir
 
     destroy-windows T1Wrench
     ps-killall bash.T1Wrench.tmp.build
-    if test $# = 1 -a "$1" = debug; then
+    if test $# = 1 && [[ "$1" =~ debug ]]; then
         ps-killall gdb.T1Wrench
         myscr gdb ./T1Wrench
         find-or-exec konsole

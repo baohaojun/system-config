@@ -33,6 +33,7 @@ public slots:
     void onInfoUpdate(const QString& key, const QString& val);
     void onSelectArgs(const QStringList& args);
     void startTask(const QString& task);
+    void on_argSelected(const QString& arg);
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
@@ -62,6 +63,7 @@ private slots:
     void quitMyself();
 
 private:
+    DialogGetEntry* mSelectArgDialog;
     void createTrayIcon();
     void closeEvent(QCloseEvent *event);
 

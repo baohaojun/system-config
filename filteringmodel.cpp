@@ -47,9 +47,21 @@ QVariant FilteringModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+void FilteringModel::sortEntriesWithHistory(int oldRows)
+{
+    foreach(const QString& history, mHistoryList) {
+        if (mSelectedItemsRevMap.contains(history)) {
+            mSelectedItems.removeOne(mSelectedItemsRevMap[history]);
+            mSelectedItems.push_front(mSelectedItemsRevMap[history]);
+        }
+    }
+    this->dataChanged(index(0, 0), index(oldRows || mSelectedItems.size(), 0));
+}
+
 void FilteringModel::setFilter(QString filter)
 {
     if (filter == mFilter) {
+        sortEntriesWithHistory();
         return;
     }
     mFilter = filter;
@@ -78,14 +90,7 @@ void FilteringModel::setFilter(QString filter)
     mSelectedItemsRevMap.clear();
     filterSelectedItems(split);
 
-    foreach(const QString& history, mHistoryList) {
-        if (mSelectedItemsRevMap.contains(history)) {
-            mSelectedItems.removeOne(mSelectedItemsRevMap[history]);
-            mSelectedItems.push_front(mSelectedItemsRevMap[history]);
-        }
-    }
-
-    this->dataChanged(index(0, 0), index(nOldRows, 0));
+    sortEntriesWithHistory(nOldRows);
 }
 
 QString FilteringModel::getSelectedText(int i)
@@ -103,9 +108,9 @@ void FilteringModel::updateHistory(int i)
     if (i >= 0 && i < mSelectedItems.size()) {
         QString key = mSelectedItems[i].displayText;
         updateHistory(key);
-        mSettings.setValue(getHistoryName() + QString().sprintf("%d", mHistoryHead++ % 20),
+        mSettings.setValue(getNthHistoryVarName(mHistoryHead++),
                           QVariant(key));
-        mSettings.setValue(getHistoryName() + "-head", QVariant(mHistoryHead));
+        mSettings.setValue(getHistoryHeadName(), QVariant(mHistoryHead));
     }
 }
 
@@ -120,11 +125,19 @@ void FilteringModel::updateHistory(QString key)
 
 void FilteringModel::initHistory()
 {
-    mHistoryHead = mSettings.value(getHistoryName() + "-head", QVariant(0)).toInt();
+    mHistoryHead = mSettings.value(getHistoryHeadName(), QVariant(0)).toInt();
     for (int j = 0; j < 20; j++) {
         int i = 20 - j - 1;
-        updateHistory(mSettings.value(getHistoryName() + QString().sprintf("-%d", (mHistoryHead - 1 - i + 20) % 20), QVariant("")).toString());
+        updateHistory(mSettings.value(getNthHistoryVarName(mHistoryHead + j), QVariant("")).toString());
     }
     setFilter("");
+}
 
+QString FilteringModel::getNthHistoryVarName(int n)
+{
+    return getHistoryName() + QString().sprintf("-%d", n % 20);
+}
+QString FilteringModel::getHistoryHeadName()
+{
+    return getHistoryName() + "-head";
 }

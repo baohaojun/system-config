@@ -14,7 +14,7 @@
 #include <QPixmap>
 #include <algorithm>
 
-bool vCardLess(const VCard& v1, const VCard& v2)
+static bool vCardLess(const VCard& v1, const VCard& v2)
 {
     if (v1.mPinyin.isEmpty()) {
         v1.mPinyin = getPinyinSpelling(v1.mName);

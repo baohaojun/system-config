@@ -45,6 +45,7 @@ SOURCES += main.cpp\
         emojimodel.cpp \
         filteringmodel.cpp \
         contactmodel.cpp \
+        strlistmodel.cpp \
         filteringedit.cpp \
         dialoggetentry.cpp \
         filteringlistview.cpp
@@ -61,6 +62,7 @@ HEADERS  += t1wrenchmainwindow.h \
             emojimodel.h \
             filteringmodel.h \
             contactmodel.h \
+            strlistmodel.h \
             t1wrench.h \
             filteringedit.h \
             filteringlistview.h \

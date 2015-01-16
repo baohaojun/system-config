@@ -29,10 +29,14 @@ class FilteringModel : public QAbstractListModel
     int mHistoryHead;
     QSettings mSettings;
     virtual void initHistory();
+    virtual QString getNthHistoryVarName(int n);
+    virtual QString getHistoryHeadName();
 
  private:
     QString mFilter;
     QList<QString> mHistoryList;
+    void sortEntriesWithHistory(int oldRows = 0);
+
 
 
 

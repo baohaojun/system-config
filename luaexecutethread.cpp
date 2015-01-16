@@ -7,10 +7,28 @@
 #include "lua.hpp"
 #include <QtWidgets/QMessageBox>
 
+LuaExecuteThread* that;
+static int l_selectArg(lua_State* L)
+{
+    int n = luaL_len(L, -1);
+    QStringList args;
+    for (int i = 1; i <= n; i++) {
+        lua_rawgeti(L, -1, i);
+        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
+        lua_settop(L, -2);
+    }
+    QString res = that->selectArgs(args);
+    lua_pushstring(L, res.toUtf8().constData());
+    return 1;
+}
+
 void LuaExecuteThread::run()
 {
-    lua_State *L = luaL_newstate();             /* opens Lua */
+    L = luaL_newstate();             /* opens Lua */
     luaL_openlibs(L);        /* opens the standard libraries */
+    lua_pushcfunction(L, l_selectArg);
+    lua_setglobal(L, "select_args");
+
 
     int error = luaL_loadstring(L, "t1wrench = require('t1wrench')") || lua_pcall(L, 0, 0, 0);
     if (error) {
@@ -66,6 +84,10 @@ void LuaExecuteThread::addScript(QStringList script)
     if (!this->isRunning()) {
         prompt_user("后台已停止运行，无法执行此动作，请连接手机或点一下设置按钮");
     }
+
+    if (this != that) {
+        that = this;
+    }
     mMutex.lock();
     mActions.append(script);
     mMutex.unlock();
@@ -90,7 +112,7 @@ QString LuaExecuteThread::selectArgs(const QStringList& args)
     return res;
 }
 
-void LuaExecuteThread::setSelectedArg(const QString& arg)
+void LuaExecuteThread::on_argSelected(const QString& arg)
 {
     mSelectArgsMutex.lock();
     mSelectedArg = arg;

@@ -5,6 +5,7 @@
 #include <QtCore/QList>
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
+#include <lua.hpp>
 
 class LuaExecuteThread : public QThread
 {
@@ -15,11 +16,12 @@ public:
     void quitLua();
     void run();
     QString selectArgs(const QStringList&);
-    void setSelectedArg(const QString& arg);
+    void on_argSelected(const QString& arg);
 signals:
     void gotSomeLog(const QString& key, const QString& val);
     void selectArgsSig(const QStringList&);
 private:
+    lua_State *L;
     QString mSelectedArg;
     bool mQuit;
     QMutex mMutex;

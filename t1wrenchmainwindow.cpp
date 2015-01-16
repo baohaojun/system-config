@@ -39,6 +39,7 @@
 #include <QFileInfo>
 #include "emojimodel.h"
 #include "contactmodel.h"
+#include "strlistmodel.h"
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -165,6 +166,16 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
 
 void T1WrenchMainWindow::onSelectArgs(const QStringList& args)
 {
+    QString prompt = args[0];
+    QStringList argsCopy = args;
+    argsCopy.pop_front();
+    StrlistModel model(argsCopy);
+
+    DialogGetEntry dialog(&model, prompt, this);
+    connect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_argSelected(QString)));
+    mSelectArgDialog = &dialog;
+    dialog.exec();
+    disconnect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_argSelected(QString)));
 }
 void T1WrenchMainWindow::on_sendItPushButton_clicked()
 {
@@ -174,7 +185,6 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         return;
     }
 
-    qDebug() << "Sharing text: " << text << " and pictures: " << mPictures;
     if (ui->tbNotes->isChecked()) {
         mLuaThread->addScript(QStringList() << "get_a_note" << text);
         mPictures.insert(0, "last-pic-notes.png");
@@ -254,7 +264,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
         }
         mLuaThread->quitLua();
         disconnect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
-        disconnect(mLuaThread.data(), SIGNAL(selectArgs(QStringList)), this, SLOT(onSelectArgs(QStringList)));
+        disconnect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
         if (!mLuaThread->wait(1000)) {
             for (int i = 0; i < 10; i ++) {
                 getExecutionOutput("the-true-adb kill-server");
@@ -268,7 +278,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     }
     mLuaThread = QSharedPointer<LuaExecuteThread>(new LuaExecuteThread(this));
     connect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
-    connect(mLuaThread.data(), SIGNAL(selectArgs(QStringList)), this, SLOT(onSelectArgs(QStringList)));
+    connect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
     mLuaThread->start();
     if (! is_starting) {
         mLuaThread->addScript(QStringList() << "t1_config");
@@ -510,4 +520,10 @@ void T1WrenchMainWindow::dropEvent(QDropEvent *event)
             }
         }
     }
+}
+
+void T1WrenchMainWindow::on_argSelected(const QString& arg)
+{
+    mSelectArgDialog->close();
+    mLuaThread->on_argSelected(arg);
 }

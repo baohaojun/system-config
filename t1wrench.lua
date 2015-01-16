@@ -17,7 +17,7 @@ local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic, debugging
 
 -- variables
-local UNAME_CMD = "uname || busybox uname || echo -n Lin && echo -n ux"
+local UNAME_CMD = "uname || busybox uname || { echo -n Lin && echo -n ux; }"
 local is_debugging = true
 local using_scroll_lock = true
 local using_adb_root
@@ -272,10 +272,6 @@ adb_focused_window = function()
    error("Can't find focused window: " .. wdump:sub(1, 20))
 end
 
-local function select_args(args)
-   return args[1]
-end
-
 local function adb_event(events)
    if type(events) == 'string' then
       adb_event(split(" ", events))
@@ -370,19 +366,23 @@ local function sleep(time)
 end
 
 local function weibo_text_share(window)
+   local repost = '?'
    if window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
-      repost = select_args{'repost', 'comment'}
-      if repost == 'repost' then
+      repost = select_args{'转发还是评论', '转发', '评论', '转发并评论'}
+      if repost:match('转发') then
          debugging("doing post")
          adb_tap_bot_left()
       else
          adb_tap_mid_bot()
       end
-      sleep(.5)
+      sleep(1)
    end
    local input_method, ime_height = adb_get_input_window_dump()
    if ime_height ~= 0 then
       adb_event("key back")
+   end
+   if repost:match('并') then
+      adb_event("sleep .1 adb-tap 57 1704")
    end
    if using_scroll_lock then
       adb_event{'key', 'scroll_lock', 991, 166}
