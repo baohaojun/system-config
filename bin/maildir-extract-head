@@ -7,9 +7,9 @@ while (<>) {
     chomp;
     tr/\r//;
     if (1 .. /^$/) {
-        s/=\?(.*?)\?B\?(.*?)\?=/my $enc = lc $1 eq "gb2312" ? gbk : $1; qx(maildir-base64-decode-iconv $enc $2)/eg;
+        s/=\?(.*?)\?B\?(.*?)\?=/my $enc = lc $1 eq "gb2312" ? gbk : $1; qx(maildir-base64-decode-iconv $enc $2)/egi;
         s/=\?(.*?)\?Q\?(.*?)\?=/my $enc = lc $1 eq "gb2312" ? gbk : $1; qx(maildir-quote-decode-iconv $enc $2)/egi;
-        if (m/^\s/) {
+        if (s/^\s+//) {
             $line = $line . $_;
         } else {
             print "$line\n";
