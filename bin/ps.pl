@@ -49,6 +49,14 @@ if ($ENV{MATCH_PROG_ONLY} eq "true")  {
 next if ($pid == $my_pid or $ppid == $my_pid);
 for (@args) {
     for (split(/\.|\\* /, $_)) {
+        if ($_ =~ s/^!//) {
+            if ($to_match =~ m/$_/i) {
+                $match = 0;
+                last;
+            } else {
+                next;
+            }
+        }
         unless ($to_match =~ m/$_/i) {
             $match = 0;
             last;

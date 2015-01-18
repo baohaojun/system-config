@@ -440,7 +440,7 @@
 
 (bind-keys global-keymap "Super-Insert"  '(system "send-key&"))
 (bind-keys global-keymap "Super-S-RET"  '(system "send-key&"))
-(bind-keys global-keymap "Super-RET" (lambda () (synthesize-event "S-Insert" (input-focus))))
+(bind-keys global-keymap "Super-RET" (lambda () (synthesize-event "Menu" (input-focus))))
 (bind-keys global-keymap "Super-BS" (lambda () (synthesize-event "Prior" (input-focus))))
 (bind-keys global-keymap "Super-SPC" (lambda () (synthesize-event "Next" (input-focus))))
 (bind-keys global-keymap "Super-Control-o"  '(system "emacsclient -n ~/doc/notes.org&"))
