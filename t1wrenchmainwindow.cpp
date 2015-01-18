@@ -582,4 +582,67 @@ void T1WrenchMainWindow::on_tbMailAddTo_clicked()
 
 void T1WrenchMainWindow::on_MailTo(const QString& to)
 {
+    ui->ptMailTo->setPlainText(ui->ptMailTo->toPlainText() + to + ",");
+}
+
+void T1WrenchMainWindow::on_tbMailAddCc_clicked()
+{
+    initContactDialog(true);
+    connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_MailCc(QString)));
+    afterUsingContactDialog();
+}
+
+void T1WrenchMainWindow::on_MailCc(const QString& to)
+{
+    ui->ptMailCc->setPlainText(ui->ptMailCc->toPlainText() + to + ",");
+}
+
+void T1WrenchMainWindow::on_tbMailAddBcc_clicked()
+{
+    initContactDialog(true);
+    connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_MailBcc(QString)));
+    afterUsingContactDialog();
+}
+
+void T1WrenchMainWindow::on_MailBcc(const QString& to)
+{
+    ui->ptMailBcc->setPlainText(ui->ptMailBcc->toPlainText() + to + ",");
+}
+
+void T1WrenchMainWindow::on_tbMailAddAttachment_clicked()
+{
+    QStringList fns = QFileDialog::getOpenFileNames(this, tr("选择附件"), QString(), tr("All Files(*)"));
+    if (fns.isEmpty()) {
+        return;
+    }
+    foreach (const QString& file, fns) {
+        ui->ptMailAttachments->setPlainText(ui->ptMailAttachments->toPlainText() + file + "\n");
+    }
+}
+
+void T1WrenchMainWindow::on_tbMailDone_clicked()
+{
+    ui->tabWidget->setCurrentIndex(0);
+    ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
+    mLuaThread->addScript(QStringList() << "t1_adb_mail"
+                          << ui->ptMailSubject->toPlainText()
+                          << ui->ptMailTo->toPlainText()
+                          << ui->ptMailCc->toPlainText()
+                          << ui->ptMailBcc->toPlainText()
+                          << ui->ptMailAttachments->toPlainText());
+}
+
+void T1WrenchMainWindow::on_tbMailLoad_clicked()
+{
+
+}
+
+void T1WrenchMainWindow::on_tbMailSave_clicked()
+{
+
+}
+
+void T1WrenchMainWindow::on_tbMailClear_clicked()
+{
+
 }

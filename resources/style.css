@@ -55,3 +55,19 @@
 #tbMms {
     qproperty-icon: url(skin:mms.png);
 }
+
+#tbMailAddTo, #tbMailAddCc, #tbMailAddBcc, #tbMailAddAttachment, #tbMailLoad {
+    qproperty-icon: url(skin:add-recipients.png);
+}
+
+#tbMailDone {
+    qproperty-icon: url(skin:mail-new.png);
+}
+
+#tbMailSave {
+    qproperty-icon: url(skin:mail-save.png);
+}
+
+#tbMailClear {
+    qproperty-icon: url(skin:mail-clear.png);
+}

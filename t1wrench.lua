@@ -4,7 +4,7 @@
 local M
 
 -- functions
-local t1_call, t1_run
+local t1_call, t1_run, t1_adb_mail
 local shell_quote, putclip, t1_post
 local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share
@@ -1284,6 +1284,44 @@ local function t1_follow_me()
    end
 end
 
+t1_adb_mail = function(subject, to, cc, bcc, attachments)
+   adb_shell("am start -n com.android.email/com.android.email.activity.ComposeActivityEmail mailto:; sleep 1; mkdir -p /sdcard/adb-mail")
+
+   adb_event("adb-tap 842 434")
+
+   if attachments:gsub("%s", "") ~= "" then
+      local files = split("\n", attachments)
+      for i in ipairs(files) do
+         local file = files[i]
+         adb_event"adb-tap 993 883"
+         adb_event"adb-tap 153 1455"
+
+         local target = file:gsub(".*[\\/]", "")
+         target = "/sdcard/adb-mail/" .. i .. "." .. target
+         system{the_true_adb, "push", file, target}
+         putclip(target)
+         adb_event"adb-swipe-300 54 273 800 273"
+         adb_event"adb-tap 54 273"
+         adb_event"key back key scroll_lock"
+         adb_event"adb-tap 959 1876 sleep 1"
+      end
+   end
+   local insert_text = function(contact)
+      if contact ~= "" then
+         putclip(contact)
+         adb_event"key scroll_lock"
+      end
+      adb_event"key DPAD_DOWN"
+   end
+   adb_event"adb-tap 247 287"
+   insert_text(to)
+   insert_text(cc)
+   insert_text(bcc)
+   insert_text(subject)
+
+   adb_event"key DPAD_UP key DPAD_UP"
+end
+
 t1_call = function(number)
    adb_shell("am start -a android.intent.action.DIAL tel:" .. number)
    adb_event("adb-tap 554 1668")
@@ -1356,6 +1394,7 @@ M.picture_to_momo_share = picture_to_momo_share_upload
 M.t1_call = t1_call
 M.t1_run = t1_run
 M.t1_add_mms_receiver = t1_add_mms_receiver
+M.t1_adb_mail = t1_adb_mail
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then

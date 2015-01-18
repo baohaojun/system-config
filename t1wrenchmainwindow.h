@@ -64,10 +64,26 @@ private slots:
 
     void on_Dial(const QString&);
     void on_MailTo(const QString&);
+    void on_MailCc(const QString&);
+    void on_MailBcc(const QString&);
     void on_addMmsReceiver(const QString&, const QString&);
     void quitMyself();
 
     void on_tbMailAddTo_clicked();
+
+    void on_tbMailAddCc_clicked();
+
+    void on_tbMailAddBcc_clicked();
+
+    void on_tbMailAddAttachment_clicked();
+
+    void on_tbMailDone_clicked();
+
+    void on_tbMailLoad_clicked();
+
+    void on_tbMailSave_clicked();
+
+    void on_tbMailClear_clicked();
 
 private:
 

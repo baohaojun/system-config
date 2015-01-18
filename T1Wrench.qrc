@@ -24,6 +24,10 @@
       <file>resources/phone-call.png</file>
       <file>resources/mms.png</file>
       <file>resources/console.png</file>
+      <file>resources/add-recipients.png</file>
+      <file>resources/mail-save.png</file>
+      <file>resources/mail-clear.png</file>
+      <file>resources/mail-new.png</file>
     </qresource>
 </RCC>
 
