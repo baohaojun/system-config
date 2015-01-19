@@ -17,9 +17,11 @@ public:
     void run();
     QString selectArgs(const QStringList&);
     void on_argSelected(const QString& arg);
+    void load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments);
 signals:
     void gotSomeLog(const QString& key, const QString& val);
     void selectArgsSig(const QStringList&);
+    void load_mail_heads_sig(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments);
 private:
     lua_State *L;
     QString mSelectedArg;

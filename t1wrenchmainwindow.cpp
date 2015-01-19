@@ -281,6 +281,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     mLuaThread = QSharedPointer<LuaExecuteThread>(new LuaExecuteThread(this));
     connect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
     connect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
+    connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     mLuaThread->start();
     if (! is_starting) {
         mLuaThread->addScript(QStringList() << "t1_config");
@@ -620,29 +621,44 @@ void T1WrenchMainWindow::on_tbMailAddAttachment_clicked()
     }
 }
 
+static QStringList getMailHeads(Ui::T1WrenchMainWindow* ui)
+{
+    return QStringList() << ui->ptMailSubject->toPlainText()
+                         << ui->ptMailTo->toPlainText()
+                         << ui->ptMailCc->toPlainText()
+                         << ui->ptMailBcc->toPlainText()
+                         << ui->ptMailAttachments->toPlainText();
+}
+
 void T1WrenchMainWindow::on_tbMailDone_clicked()
 {
     ui->tabWidget->setCurrentIndex(0);
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
-    mLuaThread->addScript(QStringList() << "t1_adb_mail"
-                          << ui->ptMailSubject->toPlainText()
-                          << ui->ptMailTo->toPlainText()
-                          << ui->ptMailCc->toPlainText()
-                          << ui->ptMailBcc->toPlainText()
-                          << ui->ptMailAttachments->toPlainText());
+    mLuaThread->addScript((QStringList() << "t1_adb_mail") + getMailHeads(ui));
 }
 
 void T1WrenchMainWindow::on_tbMailLoad_clicked()
 {
-
+    QString file = QFileDialog::getOpenFileName(0, "请选择打开哪个邮件小扳手脚本文件", QString(), "小扳手脚本文件(*.twa)");
+    mLuaThread->addScript(QStringList() << "t1_run" << file);
 }
 
 void T1WrenchMainWindow::on_tbMailSave_clicked()
 {
-
+    QString file = QFileDialog::getSaveFileName(0, "请选择保存常用联系方式到哪个文件", QString(), "小扳手脚本文件(*.twa)");
+    mLuaThread->addScript((QStringList() << "t1_save_mail_heads" << file) + getMailHeads(ui));
 }
 
 void T1WrenchMainWindow::on_tbMailClear_clicked()
 {
+    onLoadMailHeads("", "", "", "", "");
+}
 
+void T1WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments)
+{
+    ui->ptMailSubject->setPlainText(subject);
+    ui->ptMailTo->setPlainText(to);
+    ui->ptMailCc->setPlainText(cc);
+    ui->ptMailBcc->setPlainText(bcc);
+    ui->ptMailAttachments->setPlainText(attachments);
 }

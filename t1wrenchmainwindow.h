@@ -39,6 +39,7 @@ public slots:
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
+    void onLoadMailHeads(const QString& , const QString& , const QString& , const QString& , const QString&);
     void on_sendItPushButton_clicked();
 
     void on_configurePushButton_clicked();

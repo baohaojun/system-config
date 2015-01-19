@@ -22,13 +22,27 @@ static int l_selectArg(lua_State* L)
     return 1;
 }
 
+//f:write(('t1_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments));
+static int l_t1_load_mail_heads(lua_State* L)
+{
+    QString subject = QString::fromUtf8(lua_tolstring(L, 1, NULL));
+    QString to = QString::fromUtf8(lua_tolstring(L, 2, NULL));
+    QString cc = QString::fromUtf8(lua_tolstring(L, 3, NULL));
+    QString bcc = QString::fromUtf8(lua_tolstring(L, 4, NULL));
+    QString attachments = QString::fromUtf8(lua_tolstring(L, 5, NULL));
+
+    that->load_mail_heads(subject, to, cc, bcc, attachments);
+    return 0;
+}
+
 void LuaExecuteThread::run()
 {
     L = luaL_newstate();             /* opens Lua */
     luaL_openlibs(L);        /* opens the standard libraries */
     lua_pushcfunction(L, l_selectArg);
     lua_setglobal(L, "select_args");
-
+    lua_pushcfunction(L, l_t1_load_mail_heads);
+    lua_setglobal(L, "t1_load_mail_heads");
 
     int error = luaL_loadstring(L, "t1wrench = require('t1wrench')") || lua_pcall(L, 0, 0, 0);
     if (error) {
@@ -118,4 +132,9 @@ void LuaExecuteThread::on_argSelected(const QString& arg)
     mSelectedArg = arg;
     mSelectArgsMutex.unlock();
     mSelectArgsWait.wakeOne();
+}
+
+void LuaExecuteThread::load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments)
+{
+    emit load_mail_heads_sig(subject, to, cc, bcc, attachments);
 }

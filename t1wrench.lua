@@ -4,7 +4,7 @@
 local M
 
 -- functions
-local t1_call, t1_run, t1_adb_mail
+local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local shell_quote, putclip, t1_post
 local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share
@@ -1284,6 +1284,13 @@ local function t1_follow_me()
    end
 end
 
+t1_save_mail_heads = function(file, subject, to, cc, bcc, attachments)
+   local f = io.open(file, "w")
+   f:write(('t1_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments))
+   f:close()
+   debug("hello saving to %s t1_save_mail_heads", file)
+end
+
 t1_adb_mail = function(subject, to, cc, bcc, attachments)
    adb_shell("am start -n com.android.email/com.android.email.activity.ComposeActivityEmail mailto:; sleep 1; mkdir -p /sdcard/adb-mail")
 
@@ -1395,6 +1402,7 @@ M.t1_call = t1_call
 M.t1_run = t1_run
 M.t1_add_mms_receiver = t1_add_mms_receiver
 M.t1_adb_mail = t1_adb_mail
+M.t1_save_mail_heads = t1_save_mail_heads
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
