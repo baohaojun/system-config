@@ -1,0 +1,44 @@
+#!/bin/bash
+function install-one() {
+    rm -rf ~/tmp/$1
+    mkdir -p ~/tmp/$1
+    cd ~/tmp/$1
+    apt-get source $1 || true
+    cd ./*/
+    confout=$(./configure --help 2>&1)
+    add=
+    if echo "$confout" | grep -e --with-zlib -q; then
+        add="$add --with-zlib=$(echo ~/external/local)"
+    fi
+
+    if echo "$confout" | grep -e --with-libxslt-prefix -q; then
+        add="$add --with-libxslt-prefix=$(echo ~/external/local)"
+    fi
+
+    if echo "$confout" | grep -e --with-libxml-prefix -q; then
+        add="$add --with-libxml-prefix=$(echo ~/external/local)"
+    fi
+
+    CPPFLAGS=-I$(echo ~/external/local/include) \
+            LDFLAGS=-L$(echo ~/external/local/lib) \
+            ./configure --prefix=$(echo ~/external/local) $add
+    make -j20
+    make install
+}
+
+if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep -e / || which "$0" 2>/dev/null)" )"; then
+    set -e
+    if test $# != 0; then
+        for x in "$@"; do
+            install-one $x
+        done
+        exit
+    fi
+    set -e
+    install-one gettext
+    install-one zlib1g-dev
+    install-one git-core
+    install-one libxml2-dev
+    install-one libxslt1-dev
+    install-one xmlstarlet
+fi

@@ -49,21 +49,21 @@ function compile_ibus_sdim() {
 
 function compile_gtags() {
     cd ~/gcode/global/
+    git clean -xfd
     sh reconf.sh
     ./configure
     make
     sudo make install
-    git clean -xfd
 }
 
 function compile_ctags() {
     cd ~/gcode/ctags-exuberant
+    git clean -xfd
     autoreconf -i
     ./configure
     make
     sudo make install
     sudo mv /usr/local/bin/ctags /usr/local/bin/ctags-exuberant
-    git clean -xfd
 }
 
 

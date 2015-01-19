@@ -2,6 +2,6 @@
 # key: if0
 # name: if0
 # --
-if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "\$0" | grep / || which "\$0" 2>/dev/null)" )"; then
-    "$(basename \$0)" "$@"
+if test "\$(readlink -f "\$BASH_SOURCE")" = "\$(readlink -f "\$(echo "\$0" | grep / || which "\$0" 2>/dev/null)" )"; then
+    ${1:"\$(basename \$0)" "$@"}
 fi

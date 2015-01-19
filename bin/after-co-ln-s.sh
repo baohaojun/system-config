@@ -26,7 +26,7 @@ if ! which git >/dev/null 2>&1 ; then
 fi
 
 
-mkdir -p ~/Downloads/forever
+mkdir -p ~/Downloads/forever ~/external/local
 
 for x in 15m hourly daily weekly; do
     mkdir -p ~/external/etc/cron.d/$x;
