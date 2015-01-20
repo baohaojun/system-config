@@ -22,7 +22,7 @@ shift $(($OPTIND - 1))
 
 ## end generated code
 
-for y in $net; do for x in $(seq 1 254); do (ssh -o StrictHostKeyChecking=no $prefix$y.$x $command >/tmp/$y.$x.ssh 2>&1&); done; done >/dev/null 2>&1
+for y in $net; do for x in $(seq 1 254); do (ssh -o PreferredAuthentications=publickey -o StrictHostKeyChecking=no $prefix$y.$x $command >/tmp/$y.$x.ssh 2>&1&); done; done >/dev/null 2>&1
 
 for x in $(seq 1 10); do
     x=$(grep $out -i -l /tmp/*.*.ssh);

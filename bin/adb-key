@@ -1,4 +1,8 @@
 #!/bin/bash
 for x in "$@"; do
+    if test "$x" = key; then
+        shift
+        continue
+    fi
     my-adb shell input keyevent "${x^^}"
 done
