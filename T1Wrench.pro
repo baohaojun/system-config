@@ -48,7 +48,8 @@ SOURCES += main.cpp\
         strlistmodel.cpp \
         filteringedit.cpp \
         dialoggetentry.cpp \
-        filteringlistview.cpp
+        filteringlistview.cpp \
+    fileopenfilter.cpp
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
@@ -67,7 +68,8 @@ HEADERS  += t1wrenchmainwindow.h \
             filteringedit.h \
             filteringlistview.h \
             filteringmodel.h \
-            dialoggetentry.h 
+            dialoggetentry.h \ 
+    fileopenfilter.h
 
 FORMS    += t1wrenchmainwindow.ui \
             dialoggetentry.ui

@@ -23,6 +23,9 @@
 #include <QtCore/QDebug>
 #include <QStandardPaths>
 #include <QtSingleApplication>
+#include <QFileOpenEvent>
+#include "fileopenfilter.h"
+
 
 
 using namespace std;
@@ -40,14 +43,16 @@ int main(int argc, char *argv[])
 {
     QtSingleApplication a(argc, argv);
     if (a.isRunning()) {
-        for (int i = 0; i < argc; i++) {
-            qDebug() << "argv[" << i << "] is" << argv[i];
-        }
         if (argc == 2) {
             a.sendMessage(argv[1]);
         }
         return 0;
     }
+
+#ifdef Q_OS_DARWIN
+    FileOpenFilter fof(NULL);
+    a.installEventFilter(&fof);
+#endif
 
 #ifdef Q_OS_WIN32
     HWND hwnd = GetConsoleWindow();
