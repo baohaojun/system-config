@@ -546,6 +546,13 @@ void T1WrenchMainWindow::startTask(const QString& task)
 {
     showNormal();
     emit activateWindow();
+
+    QString path = task;
+    QFileInfo fileInfo = QFileInfo(path);
+    if (fileInfo.isReadable() && fileInfo.isFile()) {
+        mLuaThread->addScript(QStringList() << "t1_run" << path);
+    }
+
 }
 
 void T1WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -559,11 +566,7 @@ void T1WrenchMainWindow::dropEvent(QDropEvent *event)
     if (event->mimeData()->hasUrls()) {
         QList<QUrl> urls = event->mimeData()->urls();
         if (urls.size() == 1 && urls[0].isLocalFile()) {
-            QString path = urls[0].toLocalFile();
-            QFileInfo fileInfo = QFileInfo(path);
-            if (fileInfo.isReadable() && fileInfo.isFile()) {
-                mLuaThread->addScript(QStringList() << "t1_run" << path);
-            }
+            startTask(urls[0].toLocalFile());
         }
     }
 }
@@ -661,4 +664,5 @@ void T1WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& 
     ui->ptMailCc->setPlainText(cc);
     ui->ptMailBcc->setPlainText(bcc);
     ui->ptMailAttachments->setPlainText(attachments);
+    ui->tabWidget->setCurrentIndex(1);
 }

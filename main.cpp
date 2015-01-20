@@ -39,9 +39,15 @@ void setenv(const char* name, const char* val, int overide)
 int main(int argc, char *argv[])
 {
     QtSingleApplication a(argc, argv);
-    if (a.sendMessage(""))
+    if (a.isRunning()) {
+        for (int i = 0; i < argc; i++) {
+            qDebug() << "argv[" << i << "] is" << argv[i];
+        }
+        if (argc == 2) {
+            a.sendMessage(argv[1]);
+        }
         return 0;
-
+    }
 
 #ifdef Q_OS_WIN32
     HWND hwnd = GetConsoleWindow();
@@ -97,7 +103,9 @@ int main(int argc, char *argv[])
                      &w, SLOT(startTask(const QString&)));
     QObject::connect(&w, SIGNAL(activateWindow()),
                      &a, SLOT(activateWindow()));
-
+    if (argc == 2) {
+        w.startTask(argv[1]);
+    }
 
     AdbStateThread adbState(&w);
     w.connect(&adbState, SIGNAL(adbStateUpdate(QString)), &w, SLOT(adbStateUpdated(QString)));

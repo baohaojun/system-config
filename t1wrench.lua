@@ -17,6 +17,8 @@ local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic, debugging
 
 -- variables
+local where_is_dial_key
+local rows_mail_att_finder
 local UNAME_CMD = "uname || busybox uname || { echo -n Lin && echo -n ux; }"
 local is_debugging = true
 local using_scroll_lock = true
@@ -881,6 +883,20 @@ t1_post = function(text) -- use weixin
    if window == "com.sina.weibo/com.sina.weibo.EditActivity" or window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" or window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity" then
       weibo_text_share(window)
       return
+   elseif window == "com.google.android.gm/com.google.android.gm.ConversationListActivityGmail" then
+      local how = select_args{"请选择回复方法", "单独回复", "群体回复", "手动回复"}
+      if how == "单独回复" then
+         adb_event("key dpad_down key dpad_down key tab key tab key enter sleep 1")
+      elseif how == "群体回复" then
+         adb_event("key dpad_down key tab key dpad_down key enter key enter key tab key tab key enter sleep 1")
+      else
+         adb_event("sleep 1")
+      end
+      t1_post()
+      return
+   elseif window == "com.google.android.gm/com.google.android.gm.ComposeActivityGmail" then
+      adb_event("key scroll_lock adb-tap 870 173")
+      return
    elseif window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI" or window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI" then
       weixin_text_share(window, text)
       return
@@ -1301,12 +1317,29 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
       for i in ipairs(files) do
          local file = files[i]
          adb_event"adb-tap 993 883"
-         adb_event"adb-tap 153 1455"
+
+         if not rows_mail_att_finder or rows_mail_att_finder == "手动点" then
+            rows_mail_att_finder = select_args{"有几行邮件附件添加应用图标？", "一行", "两行", "手动点（训练）"}
+         end
+         if rows_mail_att_finder == "一行" then
+            adb_event"adb-tap 201 1760"
+         elseif rows_mail_att_finder == "两行" then
+            adb_event"adb-tap 153 1455"
+         else
+            select_args{"手动点完之后请回车", "请回车", "请回车!"}
+         end
+
 
          local target = file:gsub(".*[\\/]", "")
          target = "/sdcard/adb-mail/" .. i .. "." .. target
          system{the_true_adb, "push", file, target}
          putclip(target)
+
+         local window = adb_focused_window()
+         if window ~= "org.openintents.filemanager/org.openintents.filemanager.IntentFilterActivity" then
+            window = window:gsub("/.*", "")
+            error("必须安装并使用OI文件管理器才能选择附件，你使用的是： " .. window)
+         end
          adb_event"adb-swipe-300 54 273 800 273"
          adb_event"adb-tap 54 273"
          adb_event"key back key scroll_lock"
@@ -1331,7 +1364,16 @@ end
 
 t1_call = function(number)
    adb_shell("am start -a android.intent.action.DIAL tel:" .. number)
-   adb_event("adb-tap 554 1668")
+   if not where_is_dial_key then
+      where_is_dial_key = select_args{"拨号键在哪儿呢？", "中间", "左数第一个", "左数第二个"}
+   end
+   if where_is_dial_key == "中间" then
+      adb_event("adb-tap 554 1668")
+   elseif where_is_dial_key == "左数第一个" then
+      adb_event"adb-tap 156 1633"
+   elseif where_is_dial_key == "左数第二个" then
+      adb_event"adb-tap 420 1634"
+   end
 end
 
 t1_add_mms_receiver = function(number)
