@@ -17,6 +17,7 @@
 */
 
 #include "notifywidget.h"
+#include "snorenotifier.h"
 #include "core/log.h"
 
 #include <QDesktopWidget>
@@ -24,12 +25,13 @@
 #include <QPicture>
 #include <QLayout>
 #include <QSize>
+
 using namespace Snore;
 
-NotifyWidget::NotifyWidget(int pos, Qt::Corner corner, QWindow *parent) :
-    QQuickView(QUrl("qrc:/notification.qml"),parent),
+NotifyWidget::NotifyWidget(int pos, SnoreNotifier *parent) :
+    QQuickView(QUrl("qrc:/notification.qml")),
     m_id(pos),
-    m_corner(corner),
+    m_parent(parent),
     m_mem(QString("SnoreNotifyWidget_rev%1_id%2").arg(QString::number(SHARED_MEM_TYPE_REV()), QString::number(m_id))),
     m_ready(true)
 {
@@ -150,7 +152,7 @@ int NotifyWidget::id()
 
 Qt::Corner NotifyWidget::corner()
 {
-    return m_corner;
+    return static_cast<Qt::Corner>(m_parent->value("Position").toInt());
 }
 
 void NotifyWidget::slotDismissed()

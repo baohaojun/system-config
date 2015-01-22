@@ -123,9 +123,8 @@ void SnoreNotifier::slotProcessQueue()
 
 void SnoreNotifier::setup()
 {
-    Qt::Corner displayPos = static_cast<Qt::Corner>(value("Position").toInt());
     for (int i = 0; i < m_widgets.size(); ++i) {
-        NotifyWidget *w = new NotifyWidget(i,displayPos);
+        NotifyWidget *w = new NotifyWidget(i,this);
         m_widgets[i] = w;
         connect(w, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
         connect(w, SIGNAL(invoked()), this, SLOT(slotInvoked()));

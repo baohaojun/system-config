@@ -27,6 +27,8 @@
 #include <QtQuick/QtQuick>
 #include <QPropertyAnimation>
 
+class SnoreNotifier;
+
 typedef struct {
     bool free;
     QTime date;
@@ -45,7 +47,7 @@ class NotifyWidget : public QQuickView
 public:
     Q_PROPERTY(int id READ id)
     Q_PROPERTY(Qt::Corner corner READ corner)
-    explicit NotifyWidget(int pos, Qt::Corner corner, QWindow *parent = 0);
+    explicit NotifyWidget(int pos, SnoreNotifier *parent);
     ~NotifyWidget();
 
     void display(const Snore::Notification &notification);
@@ -73,7 +75,7 @@ private:
     Snore::Notification m_notification;
     QObject *m_qmlNotification;
     int m_id;
-    Qt::Corner m_corner;
+    SnoreNotifier *m_parent;
     QSharedMemory m_mem;
     bool m_ready;
 };
