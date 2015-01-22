@@ -232,6 +232,11 @@ QSettings *SnoreCore::settings()
     return d->m_settings;
 }
 
+const QSettings *SnoreCore::settings() const{
+    Q_D(const SnoreCore);
+    return d->m_settings;
+}
+
 const QHash<QString, QString> &SnoreCore::settingsDescription() const
 {
     Q_D(const SnoreCore);

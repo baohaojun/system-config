@@ -167,6 +167,7 @@ public:
      * @return a pointer to the global settings
      */
     QSettings *settings();
+    const QSettings *settings() const;
 
     /**
      * @return a hashmap containing the documentation of the settings keys.

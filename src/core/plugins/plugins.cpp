@@ -67,6 +67,11 @@ SnoreCore *SnorePlugin::snore()
     return m_snore.data();
 }
 
+const SnoreCore *SnorePlugin::snore() const
+{
+    return m_snore.data();
+}
+
 QVariant SnorePlugin::value(const QString &key) const
 {
     return snore()->settings()->value(normaliseKey(key));
@@ -86,7 +91,7 @@ void SnorePlugin::setDefaultValue(const QString &key, const QVariant &value, con
     }
 }
 
-QString SnorePlugin::normaliseKey(const QString &key)
+QString SnorePlugin::normaliseKey(const QString &key) const
 {
     return QString("%1/%2").arg(m_name, key);
 }

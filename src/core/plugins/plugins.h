@@ -52,6 +52,8 @@ public:
     virtual bool deinitialize();
     bool isInitialized();
     SnoreCore *snore();
+    const SnoreCore *snore() const;
+
     const QString &name() const;
 
     QVariant value(const QString &key) const;
@@ -60,7 +62,7 @@ public:
 
 private:
     SnorePlugin() {}
-    QString normaliseKey(const QString &key);
+    QString normaliseKey(const QString &key) const;
 
     QString m_name;
     bool m_initialized;
