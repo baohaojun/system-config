@@ -28,7 +28,7 @@
 
 using namespace Snore;
 
-NotifyWidget::NotifyWidget(int pos, SnoreNotifier *parent) :
+NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
     QQuickView(QUrl("qrc:/notification.qml")),
     m_id(pos),
     m_parent(parent),
