@@ -23,13 +23,26 @@ Rectangle {
 
 
         if (!isUpdate) {
+            var corner = window.corner
             var id = window.id
             var space = (id + 1) * height * 0.025
 
-            window.y = space + (space + height) * id
             animation.target = window
-            animation.from = Screen.desktopAvailableWidth
-            animation.to = Screen.desktopAvailableWidth - width
+
+            window.y = space + (space + height) * id
+            if (corner == Qt.TopRightCorner || corner == Qt.BottomRightCorner) {
+                animation.from = Screen.desktopAvailableWidth
+                animation.to = Screen.desktopAvailableWidth - width
+            } else if(corner == Qt.TopLeftCorner || corner == Qt.BottomLeftCorner) {
+                animation.from = -width
+                animation.to = 0
+            }
+            if (corner == Qt.TopRightCorner || corner == Qt.TopLeftCorner) {
+                window.y = space + (space + height) * id
+            } else {
+                window.y = Screen.desktopAvailableHeight - (space + (space + height) * (id + 1))
+            }
+
             animation.start()
             window.visible = true
         }

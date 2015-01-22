@@ -26,9 +26,10 @@
 #include <QSize>
 using namespace Snore;
 
-NotifyWidget::NotifyWidget(int pos, QWindow *parent) :
+NotifyWidget::NotifyWidget(int pos, Qt::Corner corner, QWindow *parent) :
     QQuickView(QUrl("qrc:/notification.qml"),parent),
     m_id(pos),
+    m_corner(corner),
     m_mem(QString("SnoreNotifyWidget_rev%1_id%2").arg(QString::number(SHARED_MEM_TYPE_REV()), QString::number(m_id))),
     m_ready(true)
 {
@@ -145,6 +146,11 @@ Notification &NotifyWidget::notification()
 int NotifyWidget::id()
 {
     return m_id;
+}
+
+Qt::Corner NotifyWidget::corner()
+{
+    return m_corner;
 }
 
 void NotifyWidget::slotDismissed()

@@ -123,8 +123,9 @@ void SnoreNotifier::slotProcessQueue()
 
 void SnoreNotifier::setup()
 {
+    Qt::Corner displayPos = static_cast<Qt::Corner>(value("Position").toInt());
     for (int i = 0; i < m_widgets.size(); ++i) {
-        NotifyWidget *w = new NotifyWidget(i);
+        NotifyWidget *w = new NotifyWidget(i,displayPos);
         m_widgets[i] = w;
         connect(w, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
         connect(w, SIGNAL(invoked()), this, SLOT(slotInvoked()));
@@ -138,6 +139,7 @@ void SnoreNotifier::setup()
 bool SnoreNotifier::initialize(SnoreCore *snore)
 {
     if (SnoreBackend::initialize(snore)) {
+        setDefaultValue("Position", Qt::TopRightCorner, "The position for the notification.");
         return metaObject()->invokeMethod(this, "setup", Qt::QueuedConnection);
     }
     return false;
