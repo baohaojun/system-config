@@ -33,7 +33,7 @@ Rectangle {
             if (corner == Qt.TopRightCorner || corner == Qt.BottomRightCorner) {
                 animation.from = Screen.desktopAvailableWidth
                 animation.to = Screen.desktopAvailableWidth - width
-            } else if(corner == Qt.TopLeftCorner || corner == Qt.BottomLeftCorner) {
+            } else {
                 animation.from = -width
                 animation.to = 0
             }
