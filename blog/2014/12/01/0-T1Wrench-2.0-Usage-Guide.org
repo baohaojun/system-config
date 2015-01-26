@@ -72,7 +72,7 @@
 
 这几个地址不管小扳手怎么升级，始终都会是最新的版本供大家下载。
 
-但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：三个版本的链接都在里面，自取所需吧： http://t.cn/RZMWJgn
+但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：三个版本的链接都在里面，自取所需吧： http://t.cn/RZEILeE
 
 ** 安装
 
@@ -295,6 +295,10 @@
   [[../../../../images/exported.vcf-on-pc.png][file:../../../../images/exported.vcf-on-pc.png]]
 
 * 版本变更记录
+
+** V2.3.0 <<V2.3.0>>
+
+见 http://baohaojun.github.io/blog/2015/01/26/0-T1Wrench-2.3.0-Released.html
 
 ** V2.2.0 <<V2.2.0>>
 
