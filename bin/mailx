@@ -166,6 +166,7 @@ EOF
     emacsclient -d -e "
 (progn
   (require 'gnus)
+  (gnus)
   (gnus-summary-mail-other-window)
   (delete-region (point-min) (point-max))
   (insert-file \"/tmp/mail.txt.$$\")
@@ -177,15 +178,12 @@ elif test $(basename $0) = adb-mail -o $(basename $0) = adb-gmail; then
         gmail=true;
     fi
     adb-ignite-device
-    adb-of mailto:
+
 
     if test $gmail = true; then
-        adb-tap 529 1724
+        my-adb am start -n com.google.android.gm/com.google.android.gm.ComposeActivityGmail
     else
-        topActivity=$(adb-top-activity)
-        if test "$topActivity" = smartisanos/smartisanos.app.ChooserActivity -o "$topActivity" = smartisanos/smartisanos.app.ResolverActivity; then
-            adb-tap 143 1692
-        fi
+        my-adb am start -n com.android.email/com.android.email.activity.ComposeActivityEmail
     fi
     sleep 1
 
@@ -208,7 +206,7 @@ elif test $(basename $0) = adb-mail -o $(basename $0) = adb-gmail; then
             adb-tap 153 1455
             am=/sdcard/adb-mail/$(echo "$a"|perl -npe 's!/!_!g')
             adb push "$a" "$am"
-            putclip-android "${am#/sdcard/}"
+            putclip-android ../../../../../../"${am}"
             adb-key SCROLL_LOCK
             adb-tap 965 1061
             sleep 1
