@@ -45,6 +45,8 @@ int main(int argc, char *argv[])
     if (a.isRunning()) {
         if (argc == 2) {
             a.sendMessage(argv[1]);
+        } else {
+            a.sendMessage("");
         }
         return 0;
     }

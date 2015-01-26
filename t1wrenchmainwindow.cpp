@@ -544,6 +544,7 @@ void T1WrenchMainWindow::closeEvent(QCloseEvent *event)
 
 void T1WrenchMainWindow::startTask(const QString& task)
 {
+    qDebug() << qPrintable(QString().sprintf("%s:%d:", __FILE__, __LINE__));
     showNormal();
     emit activateWindow();
 
