@@ -1,0 +1,42 @@
+#+title: T1Wrench 2.3.0 Released
+# bhj-tags: tool
+* 下载
+
+百度网盘下载地址：http://t.cn/RZEILeE
+
+* 新增功能
+
+- 关闭窗口时隐藏到系统托盘
+
+- 可以发送新邮件。见下图：
+
+  [[../../../../images/mail-with-wrench.png][file:../../../../images/mail-with-wrench.png]]
+
+  注意如果要使用附件功能的话，必须保证已经安装了 OI文件管理器 （在我司自带的应用商店里可以搜到，但比较靠后，是由应用宝提供的）：
+
+  [[../../../../images/install-oi-file-manager.png][file:../../../../images/install-oi-file-manager.png]]
+
+  另外，在添加附件的时候，小扳手需要知道 OI文件管理器 的位置，所以它会问你这样的问题：
+
+  [[../../../../images/how-mana-lines-of-app.png][file:../../../../images/how-mana-lines-of-app.png]]
+
+  如果 OI文件管理器 没有排在第一的位置，你可以用 “手动点” 这个选项去训练手机，每次都手动选 OI文件管理器 ，这样它的位置会越来越靠前，直到最后它排在第一的位置，这时候你只需要告诉它手机上一共有多少行可以点的图标，小扳手就能自动点到正确的位置，比如下图，我有两行图标，第一行是 OI文件管理器、相册、照片；第二行是 OfficeSuite：
+
+  [[../../../../images/mail-choose-attachment-app.png][file:../../../../images/mail-choose-attachment-app.png]]
+
+- 可以保存邮件脚本
+
+  如果你像我一样有一些经常要发的接收者、Cc、主题每次都差不多的邮件，那这个功能你会很喜欢。比如我在开发的过程中，有一些关键的代码提交每次都需要报告给项目经理和我的老板，那我就会在第一次输入完主题、接收者、Cc等信息之后，点一下那个 保存 按钮，比如把它保存为 “code-mail.twa”，然后下次我只要点一下 load 按钮，就可以重新得到这些输入的主题、接收者、Cc信息。
+
+- 可以双击脚本给心上人打电话
+
+  像之前的这个 code-mail.twa 被保存下来之后，我下次可以点 load 按钮，但是！我还可以在文件管理器里双击这个 code-mail.twa 文件，然后选择用 T1Wrench 打开（这个只需要在第一次双击时需要选择，之后Windows/Mac等系统都会帮你记住你的选择）。以Mac系统为例，注意图中标注的部分，选上 =All Applications= 才可以选中 T1Wrench ，否则T1Wrench是灰的，不能选。另外要选上 =Always Open With= ，这样下次你就可以不用选了。
+
+  [[../../../../images/choose-app-for.twa.png][file:../../../../images/choose-app-for.twa.png]]
+
+  也可以试试双击新版小扳手里自带的 CallMyLove.twa，看看会发生什么🆒。
+
+  你可以用记事本或类似的简单的文件编辑工具打开 CallMyLove.twa 文件，然后把里面的号码换成你的心上人的号码，我只能帮你这么多了，不用谢👌😁
+- 可以自己编写脚本
+
+  以后会考虑开展小扳手脚本挑战赛，比如怎样编写用小扳手打开微信，找到你想要聊天的人，并发一句话给他/她？

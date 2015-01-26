@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>怎样交换键盘Escape和Caps Lock键</title>
+<title>T1Wrench 2.3.0 Released</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
-<meta  name="author" content="Bao Haojun" />
+<meta  name="author" content="Haojun Bao" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="stylesheet" href="/css/org.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
@@ -102,211 +102,102 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">怎样交换键盘Escape和Caps Lock键</h1>
-<p>
-最近在微博上传得沸沸扬扬的一件事，说苹果的下一代Mac笔记本要把电源键放到Escape键的旁边，让一众Vim的用户觉得非常受不了。因为这个键他们一天不知道要按多少次，弄成这个样子一不小心就按错到旁边的关机键上，然后就😭了。
-</p>
-
-<p>
-其实不管在哪个平台下，Windows、Mac、Linux，都有办法可以交换Escape键和Caps Lock键的位置。并且不仅仅是这两个，其他如Ctrl键、Alt键（Mac上叫option）、Win键（Mac上叫cmd，Linux下叫Super），都是可以交换位置的。
-</p>
-
-<p>
-我们先看看为什么要这样做。
-</p>
-
-<p>
-对Vim用户来说，Escape是一个特别关键的键，因为所有Vim的命令都需要按一下Escape切换到命令模式才可以。对Emacs用户来说，Escape好像没有那么重要，因为所有的命令都可以用Alt-x来输入（Emacs里管Alt叫Meta，所以Alt-x也叫M-x）。但是很多人没有特别注意的是，Emacs下几乎所有Alt-系的组合键，都可以用Escape来代替。比如Alt-x（按住Alt不放的同时，按一下x键）也可以用 <code>Esc x</code> 来代替（按一下Escape键放开，再按一下x键）。所以一个Emacs用户如果他的使用习惯是用Escape来代替Alt，那么Escape也是一个非常重要一天不知道要按多少次的键。
-</p>
-
-<p>
-所以即使没有Mac这种设计，也已经有很多经常用Escape的用户把Escape键和Caps Lock键互换了位置。这样做的好处非常明显，几乎可以说有百利而无一害。首先你的左手尾指如果去按左上方的Escape键的话，手指的行程更长，肌肉要更紧张，时间长了，更容易得小指肌肉劳损。如果把Escape键的功能换到左边的Caps Lock键上的话，左小指的行程可以大大缩短，能够更有效的防止小指肌肉劳损的发生。Caps Lock这个功能使用的场景要比Escape少得多得多，而它占得位置有点儿太好了，所以我们可以考虑一下怎么给它搬个家😁。
-</p>
-
-<p>
-搬家以后唯一的坏处是有时候你到了一台没有做过这种交换设置的新机器上（比如同事的机器），你可能会有点不习惯。但是如果Mac系统下个版本真的那样设计的话，说不定大家都会考虑本文中所描述的这个小技巧，这样这个坏处碰到的机率就更小了，不改的人反而要不习惯了😆。
-</p>
-
-<p>
-下面我们系统地看一下如何在各大平台上更改这些个辅助键。
-</p>
-
+<h1 class="title">T1Wrench 2.3.0 Released</h1>
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Mac</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> 下载</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-Mac系统自带的设置里允许你更改Caps Lock、Control、Option(Alt)、Command(Win/Super)键的功能，你可以在 <code>System Preferences -&gt; Keyboard -&gt; Modifier Keys...</code> 里找到这些选项。但是很可惜，这里面没有Escape键。不知道Mac以后的版本会不会把Escape键加上。请看下图：
-</p>
-
-
-<div class="figure">
-<p><i><img src="images/mac-system-keyboard-hack.png" alt="mac-system-keyboard-hack.png" /></i>
-</p>
-</div>
-
-<p>
-所以我没有用Mac系统自带的这个更改辅助键的功能，最后使用的是一个叫“Seil”的软件，一个日本人开发的开源软件，以前的版本名字叫PCKeyboardHack，不知道为什么现在改名字了。下载请点 <a href="https://pqrs.org/osx/karabiner/seil.html.en">这里</a> 。下面是一张截图，你在上半个窗口里可以比如把Caps Lock改成 53，因为在下半个窗口里你可以查到Escape的键值（keycode）就是53。
-</p>
-
-
-<div class="figure">
-<p><i><img src="images/seil-keyboard-hack-mac.png" alt="seil-keyboard-hack-mac.png" /></i>
-</p>
-</div>
-
-<p>
-从图中你可以看到我把Mac的Command_L（也就是空格键左边的那个Command键，相当于Windows系统的左Win键）给改成了59，从下半窗口里你可以看到这个键对应的是Left Control。为什么这样做我们最后再说。包括其他所有的Ctrl/Option/Cmd我都换了一个遍😅。
-</p>
-
-<p>
-最后要注意的一点是，从Mac系统自带辅助键设置的截图里你可以看到，我把Caps Lock的功能改成了No Action。这点很重要，好像不这样改的话我们即使用Seil也是无法把物理的Caps Lock键换成Escape功能的。并且最后我改完之后，原来的物理Escape键也还是Escape的功能，所以相当于我的键盘上就有了两个Escape，没有Caps Lock了。这个在我看来是可以接受的，因为我从来没有用过Caps Lock的功能，用Shift不一样能搞定么？在Emacs里我先输入小写的英文文本，然后有个功能可以让我把选中的文本变成大写的，这个也可以让我丢弃Caps Lock😄。
-Seil的作者还写过一个叫 Karabiner 的软件，早先的版本叫 KeyRemap4MacBook。也很厉害，我一直在用，通过它实现了Mac下的DVP（Programmer's Dvorak）的键盘布局，和一些Sawfish的桌面快捷键功能。我的配置文件在 <a href="https://github.com/baohaojun/system-config/raw/master/doc/keyremap4macbook-dvp.xml">这里</a> ，感兴趣的同学可以关注一下这个软件😃。DVP的作者自己给Mac提拱了一个DVP的键盘布局，但是那个是一个英文输入法来着，你换成中文输入法之后，就又变成qwerty的布局了😅！
+百度网盘下载地址：<a href="http://t.cn/RZEILeE">http://t.cn/RZEILeE</a>
 </p>
 </div>
 </div>
 
 <div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Windows</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> 新增功能</h2>
 <div class="outline-text-2" id="text-2">
-<p>
-在Windows下换这些键的位置最简单了，在网上能查到很多种做法，比如用AutoHotkey这个软件，或者用Windows注册表。个人强烈推荐改注册表，因为AutoHotkey在XP之后开始有了管理员权限的问题，有些软件比如360的软件管家之类的上来就是系统权限，AutoHotkey以普通用户权限运行的话，改不了这些软件的键盘布局，最后有些改了有些没改，整个人搞不好的话会很分裂😆。
-比如 <a href="https://github.com/baohaojun/system-config/raw/master/doc/caps-to-escape-and-scoll-to-caps.reg">这个文件</a> ，你下载之后双击把它导入注册表，重启电脑之后，应该就成了，Escape还是Escape，Caps Lock也成为Escape，Scoll Lock变成Caps Lock，原来的Scoll Lock功能则没有了。来源： <a href="http://vim.wikia.com/wiki/Map_caps_lock_to_escape_in_Windows">Vim Wikia</a> 。
+<ul class="org-ul">
+<li>关闭窗口时隐藏到系统托盘
+</li>
+
+<li>可以发送新邮件。见下图：
+
+
+<div class="figure">
+<p><a href="images/mail-with-wrench.png"><img src="images/mail-with-wrench.png" alt="mail-with-wrench.png" /></a>
 </p>
 </div>
-</div>
-
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Linux</h2>
-<div class="outline-text-2" id="text-3">
-<p>
-在Linux下这些更改快捷键的功能可以用xmodmap，这个也是网上都很容易查到的，比如李杀大哥的 <a href="http://xahlee.info/kbd/linux_make_capslock_esc_key.html">这个网页</a> 。另一个很有用的配套工具是 xev，可以查看键盘上所有按键的键值。
-</p>
 
 <p>
-也可以参考一下我的已经写好了的 .Xmodmap 文件，在 <a href="https://github.com/baohaojun/system-config/raw/master/etc/.Xmodmap">https://github.com/baohaojun/system-config/raw/master/etc/.Xmodmap</a> 这里可以找到。
-</p>
-
-<p>
-我还有好几个其他的版本，但主要的不同都是在其他的辅助键上，比如在这个笔记本键盘上，我要把红色标出的键改成右Alt键，
+注意如果要使用附件功能的话，必须保证已经安装了 OI文件管理器 （在我司自带的应用商店里可以搜到，但比较靠后，是由应用宝提供的）：
 </p>
 
 
 <div class="figure">
-<p><i><img src="images/dell-vostro-keyboard.png" alt="dell-vostro-keyboard.png" /></i>
+<p><a href="images/install-oi-file-manager.png"><img src="images/install-oi-file-manager.png" alt="install-oi-file-manager.png" /></a>
 </p>
 </div>
 
 <p>
-而在这个大键盘上，我会把红色标出的键改成右Win键：
+另外，在添加附件的时候，小扳手需要知道 OI文件管理器 的位置，所以它会问你这样的问题：
 </p>
 
 
 <div class="figure">
-<p><i><img src="images/ergo-microsoft-right-keyboard.png" alt="ergo-microsoft-right-keyboard.png" /></i>
+<p><a href="images/how-mana-lines-of-app.png"><img src="images/how-mana-lines-of-app.png" alt="how-mana-lines-of-app.png" /></a>
 </p>
 </div>
 
 <p>
-为什么呢？请接着往下看。
+如果 OI文件管理器 没有排在第一的位置，你可以用 “手动点” 这个选项去训练手机，每次都手动选 OI文件管理器 ，这样它的位置会越来越靠前，直到最后它排在第一的位置，这时候你只需要告诉它手机上一共有多少行可以点的图标，小扳手就能自动点到正确的位置，比如下图，我有两行图标，第一行是 OI文件管理器、相册、照片；第二行是 OfficeSuite：
+</p>
+
+
+<div class="figure">
+<p><a href="images/mail-choose-attachment-app.png"><img src="images/mail-choose-attachment-app.png" alt="mail-choose-attachment-app.png" /></a>
 </p>
 </div>
+</li>
+
+<li>可以保存邮件脚本
+
+<p>
+如果你像我一样有一些经常要发的接收者、Cc、主题每次都差不多的邮件，那这个功能你会很喜欢。比如我在开发的过程中，有一些关键的代码提交每次都需要报告给项目经理和我的老板，那我就会在第一次输入完主题、接收者、Cc等信息之后，点一下那个 保存 按钮，比如把它保存为 “code-mail.twa”，然后下次我只要点一下 load 按钮，就可以重新得到这些输入的主题、接收者、Cc信息。
+</p>
+</li>
+
+<li>可以双击脚本给心上人打电话
+
+<p>
+像之前的这个 code-mail.twa 被保存下来之后，我下次可以点 load 按钮，但是！我还可以在文件管理器里双击这个 code-mail.twa 文件，然后选择用 T1Wrench 打开（这个只需要在第一次双击时需要选择，之后Windows/Mac等系统都会帮你记住你的选择）。以Mac系统为例，注意图中标注的部分，选上 <code>All Applications</code> 才可以选中 T1Wrench ，否则T1Wrench是灰的，不能选。另外要选上 <code>Always Open With</code> ，这样下次你就可以不用选了。
+</p>
+
+
+<div class="figure">
+<p><a href="images/choose-app-for.twa.png"><img src="images/choose-app-for.twa.png" alt="choose-app-for.twa.png" /></a>
+</p>
 </div>
 
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> 更激进的键盘更改</h2>
-<div class="outline-text-2" id="text-4">
 <p>
-所有的辅助键中，用的最多的是Ctrl，比如Ctrl-c/Ctrl-x/Ctrl-v，Emacs里就更不要说了。可是它却相对占了一个不怎么样的位置。杀哥曾给出几套解决方案，比如用鱼际去按Ctrl，用关节去按Ctrl，总之就是建议不要用指头去按，因为尾指弯曲得太厉害了，很容易劳损。但我最喜欢的解决方案（也是从杀哥的博客上看来的）试了一圈之后发现还是把Ctrl键和Alt键换一下位置，这样就可以用大拇指去按Ctrl了！而Alt键则用Escape代替（至少在Emacs下如此，其他的软件我就尽量用鼠标点菜单也不用Alt，反正用得也少，或者就不盲打了，用两只手一起按Alt相关的快捷键）。
+也可以试试双击新版小扳手里自带的 CallMyLove.twa，看看会发生什么🆒。
 </p>
 
 <p>
-所以我最后的键盘更改是这样的：
+你可以用记事本或类似的简单的文件编辑工具打开 CallMyLove.twa 文件，然后把里面的号码换成你的心上人的号码，我只能帮你这么多了，不用谢👌😁
 </p>
-
-<table border="2" cellspacing="0" cellpadding="6" rules="all" frame="border">
-<caption class="t-above"><span class="table-number">Table 1:</span> 我的键盘辅助键设置</caption>
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<tbody>
-<tr>
-<td class="left">物理键</td>
-<td class="left">改了之后的功能键</td>
-<td class="left">备注</td>
-</tr>
-
-<tr>
-<td class="left">Caps Lock</td>
-<td class="left">Escape</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">Escape</td>
-<td class="left">Caps Lock</td>
-<td class="left">在Mac上还是Escape，Caps Lock的功能不要了</td>
-</tr>
-
-<tr>
-<td class="left">左Alt</td>
-<td class="left">左Ctrl</td>
-<td class="left">在Mac上物理键是左Command</td>
-</tr>
-
-<tr>
-<td class="left">左Win</td>
-<td class="left">左Win</td>
-<td class="left">在Mac上物理键是左option（alt）</td>
-</tr>
-
-<tr>
-<td class="left">左Ctrl</td>
-<td class="left">左Alt</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">右Alt</td>
-<td class="left">右Ctrl</td>
-<td class="left">在Mac上物理键是右Command</td>
-</tr>
-
-<tr>
-<td class="left">右Win</td>
-<td class="left">右Win</td>
-<td class="left">在Mac上物理键是右Alt，有些PC键盘上是菜单键，还有的是打印机键</td>
-</tr>
-
-<tr>
-<td class="left">右Ctrl</td>
-<td class="left">右Alt</td>
-<td class="left">有些PC上是菜单键，还有Mac上没有右Ctrl键</td>
-</tr>
-</tbody>
-</table>
+</li>
+<li>可以自己编写脚本
 
 <p>
-所有的更改方法都与之前的一样。在Windows上查键值比较麻烦。可以参考我的这两个注册表文件： <a href="https://github.com/baohaojun/system-config/raw/master/doc/keymap-vostro.reg">Dell Vostro笔记本（空格右边依次是Alt/Ctrl/菜单）</a> 和 <a href="https://github.com/baohaojun/system-config/raw/master/doc/keymap-win.reg">其他键盘（空格右边依次是Alt/菜单/Ctrl）</a> 。
+以后会考虑开展小扳手脚本挑战赛，比如怎样编写用小扳手打开微信，找到你想要聊天的人，并发一句话给他/她？
 </p>
-
-<p>
-最后，差点儿忘了，Linux下真正的终端（也就是没启桌面之前的那个命令行登录）怎么办？
-</p>
-
-<p>
-我有一个脚本： <a href="https://github.com/baohaojun/system-config/raw/master/bin/swap-control-alt">swap-control-alt</a> 。需要sudo权限😅。
-</p>
+</li>
+</ul>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html"> <!-- prev-url -->
+      <a href="blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        从QtSingleApplication的API看Qt的设计 <!-- prev-title -->
+        怎样交换键盘Escape和Caps Lock键 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -326,7 +217,7 @@ Seil的作者还写过一个叫 Karabiner 的软件，早先的版本叫 KeyRema
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2015/01/26/0-T1Wrench-2.3.0-Released.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -402,7 +293,8 @@ Seil的作者还写过一个叫 Karabiner 的软件，早先的版本叫 KeyRema
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html'> 从QtSingleApplication的API看Qt的设计 </a></li>
+        <li><a href='blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html'> 怎样交换键盘Escape和Caps Lock键 </a></li>
+<li><a href='blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html'> 从QtSingleApplication的API看Qt的设计 </a></li>
 <li><a href='blog/2014/12/10/0-system-config-usage-guide.html'> 我的system-config使用指南 </a></li>
 <li><a href='blog/2014/12/06/0-New-Blog-Style.html'> 新的博客风格 </a></li>
 <li><a href='blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html'> 小扳手2.0版使用手册 </a></li>
@@ -411,7 +303,6 @@ Seil的作者还写过一个叫 Karabiner 的软件，早先的版本叫 KeyRema
 <li><a href='blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html'> 不用鼠标在Linux命令行下启动Windows上的图形界面程序 </a></li>
 <li><a href='blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html'> 把邮件的星标移到我的todo list里 </a></li>
 <li><a href='blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.html'> A Bug in Android MobileOrg Sync </a></li>
-<li><a href='blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html'> 反了反了！用Smartisan T1手机当Linux的语音输入法 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>
