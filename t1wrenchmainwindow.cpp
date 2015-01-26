@@ -176,6 +176,12 @@ void T1WrenchMainWindow::onSelectArgs(const QStringList& args)
     connect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_argSelected(QString)));
     mSelectArgDialog = &dialog;
     dialog.exec();
+    if (mSelectArgDialog != NULL) {
+        on_argSelected(args[1]);
+    } else {
+        qDebug() << qPrintable(QString().sprintf("%s:%d:", __FILE__, __LINE__));
+    }
+
     dialog.disconnect();
 }
 
@@ -575,6 +581,7 @@ void T1WrenchMainWindow::dropEvent(QDropEvent *event)
 void T1WrenchMainWindow::on_argSelected(const QString& arg)
 {
     mSelectArgDialog->close();
+    mSelectArgDialog = NULL;
     mLuaThread->on_argSelected(arg);
 }
 

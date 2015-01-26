@@ -1367,12 +1367,15 @@ t1_call = function(number)
    if not where_is_dial_key then
       where_is_dial_key = select_args{"拨号键在哪儿呢？", "中间", "左数第一个", "左数第二个"}
    end
+   debug("where_is_dial_key is %s", where_is_dial_key)
    if where_is_dial_key == "中间" then
       adb_event("adb-tap 554 1668")
    elseif where_is_dial_key == "左数第一个" then
       adb_event"adb-tap 156 1633"
    elseif where_is_dial_key == "左数第二个" then
       adb_event"adb-tap 420 1634"
+   else
+      where_is_dial_key = nil
    end
 end
 
