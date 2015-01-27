@@ -2,4 +2,4 @@
 # name: logq
 # key: logq
 # --
-qDebug() << qPrintable(QString().sprintf("%s:%d:", __FILE__, __LINE__))$0;
+qDebug() << qPrintable(QString().sprintf("%s:%d:", __FILE__, __LINE__))$1;$0

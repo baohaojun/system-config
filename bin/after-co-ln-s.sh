@@ -294,6 +294,11 @@ fi || true
         cd ~/src/github/mobileorg-android/
         git remote add up https://github.com/matburt/mobileorg-android
     )
+
+    (
+        cd ~/src/github/emacs.d
+        git remote add up https://github.com/purcell/emacs.d
+    )
 ) >/dev/null 2>&1 || true
 
 if which emacs >/dev/null 2>&1 && test ! -e ~/.config/emacs-config-done; then

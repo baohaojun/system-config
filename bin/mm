@@ -25,20 +25,47 @@ time (
 
     export build_mount_p=$(readlink -f ../)/.afb
     mkdir -p $build_mount_p
+    if test -e ~/.no-sudo; then
+        function sudo() {
+            while test "$1" != bash; do
+                shift
+            done
+            "$@"
+        }
+        export -f sudo
+        export build_mount_p=$PWD
+        function mount() {
+            true
+        }
+        function su() {
+            while test "$1" != -c; do
+                shift
+            done
+            bash "$@"
+        }
+        export -f su
+        export -f mount
+    else
+        function sudo() {
+            if test "$KERNEL_CONFIG"; then
+                command sudo env KERNEL_CONFIG=$KERNEL_CONFIG PATH=$PATH "$@"
+            else
+                command sudo env PATH=$PATH "$@"
+            fi
+        }
 
-    if test "$(find $build_mount_p -maxdepth 1 -type l -prune -o -print | wc -l)" != 1 && yes-or-no-p -y "unmount ~/src/.afb?"; then
-        unshare-work
-        umount ~/src/.afb || true
+        export -f sudo
     fi
-    test "$(find $build_mount_p -maxdepth 1 -type l -prune -o -print | wc -l)" = 1 || die "build_mount_p already mounted"
-    echo "make: Entering directory \`$(pwd)'"
-    function sudo() {
-        if test "$KERNEL_CONFIG"; then
-            command sudo env KERNEL_CONFIG=$KERNEL_CONFIG PATH=$PATH "$@"
-        else
-            command sudo env PATH=$PATH "$@"
+
+    if test ! -e ~/.no-sudo; then
+        if test "$(find $build_mount_p -maxdepth 1 -type l -prune -o -print | wc -l)" != 1 && yes-or-no-p -y "unmount $build_mount_p?"; then
+            unshare-work
+            sudo umount $build_mount_p || true
         fi
-    }
+
+        test "$(find $build_mount_p -maxdepth 1 -type l -prune -o -print | wc -l)" = 1 || die "build_mount_p already mounted"
+    fi
+    echo "make: Entering directory \`$(pwd)'"
     (
         echo '# -*- mode: compilation -*-'
         echo "make: Entering directory \`$(lookup-file .repo/..)'"

@@ -5,10 +5,6 @@
 
 (defconst *is-a-mac* (eq system-type 'darwin))
 (defconst *is-a-win* (eq system-type 'windows-nt))
-(setq load-path
-      (nconc (list
-              "/usr/local/no-such-files")
-             load-path))
 
 (when (and (file-exists-p "/etc/emacs/site-start.d/00debian-vars.el")
            (not (fboundp 'debian-file->string)))
@@ -62,7 +58,9 @@
        (not (string= (getenv "ORG2PDF") "true")))
 (setq load-path
       (nconc (list
-              (expand-file-name "~/src/github/emacs.d"))
+              (expand-file-name "~/src/github/emacs.d")
+              (expand-file-name "~/src/github/emacs.d/lisp")
+              )
              load-path))
   (load "~/src/github/emacs.d/init.el"))
 

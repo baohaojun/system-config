@@ -8,7 +8,7 @@ function rsync() {
 
     local n=0
     for x in "$@"; do
-        ((n++))
+        ((n++)) || true
         if test "${x:0:1}" != -; then
             need_ask=false
             if test $n != $# -a "${x:${#x}-1}" = /; then

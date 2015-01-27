@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+if echo $SHELLOPTS | grep -q xtrace; then
+    export SHELLOPTS
+fi
 
 ## start generated code
 TEMP=$(getopt -o s --long "sync"  -n $(basename $0) -- "$@")
@@ -27,6 +30,13 @@ done
 if test $# = 0; then
     set -- rem
 fi
+
+if echo $SHELLOPTS | grep -q xtrace; then
+    extra='bash -x'
+else
+    extra=
+fi
+
 if test $(basename $0) = remote-mm; then
 
     android_mk=$(lookup-file -e Android.mk)
@@ -34,12 +44,13 @@ if test $(basename $0) = remote-mm; then
     if test "$sync" = true; then
         psync -c "$1" .
     fi
-    ssh "$1" "cd $PWD; mm"
+
+    ssh "$1" "cd $PWD; $extra mm"
 elif test $(basename $0) = remote-qt; then
     qt_pro=$(lookup-file -e '*.pro')
     cd $(dirname $qt_pro)
     if test "$sync" = true; then
         psync "$1" .
     fi
-    ssh "$1" "cd $PWD; ./build-win.sh"
+    ssh "$1" "cd $PWD; $extra ./build-win.sh"
 fi
