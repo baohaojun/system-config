@@ -1,0 +1,1 @@
+../../../blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.org

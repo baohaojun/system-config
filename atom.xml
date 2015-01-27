@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[配置postfix用sohu smtpcloud进行relay]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html"/>
+    <updated>2015-44-27T19:01:58+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[T1Wrench 2.3.0 Released]]></title>
     <link href="http://baohaojun.github.io/blog/2015/01/26/0-T1Wrench-2.3.0-Released.html"/>
     <updated>2015-01-26T14:47:00+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html"/>
     <updated>2014-10-24T21:43:41+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[把邮件的星标移到我的todo list里]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html"/>
-    <updated>2014-10-24T00:06:59+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html</id>
   </entry>
 </feed>

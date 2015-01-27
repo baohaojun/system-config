@@ -1,0 +1,47 @@
+#+title: 配置postfix用sohu smtpcloud进行relay
+# bhj-tags: tool
+之前发现一台gerrit代码服务器发生很多邮件任务的拥堵，有好几个月、几千封的代码review的邮件都没有发送成功。作为一个运营小白，我觉得自己基本没有能力直接解决掉这个问题。既然是邮件问题，只能从它的邮件配置上入手。查了一下它的邮件配置，smtp服务器直接用的是sohu的smtpcloud。
+
+这是我觉得不够合理的地方，直接用一个外网的smtp服务器，如果你是一个个人用户，配一下你自己的邮件客户端，这是没有大问题的，因为如果有一两封邮件发不成功，你很容易自己发现，并手动重发。但把它配到gerrit这种服务器里，就有可能出了问题却不能及时发现、解决了。
+
+所以我的思路就是在这台gerrit服务器的机器上再配一个postfix邮件服务，然后让这个邮件服务通过sohu的smtpcloud账号进行转发。结果证明这样的确能解决问题，几个月下来再也没有出现过邮件任务堵塞的现象。原理其实很简单，之前gerrit自己通过sohu网络直接发邮件，万一网络有问题、协议实现有问题，都有可能导致邮件任务挂住；现在改成用postfix，gerrit只要把邮件发给本地的邮件服务，虽然也是用的网络协议，但这个是本地的，所以基本上不会发生网络问题、协议问题。所以gerrit服务自己最关键的任务（代码review）就不会因为邮件而受影响了。
+
+这就是一个分层的概念。另外也有一个软件重用的思想在里面，处理邮件网络问题、协议问题、发送失败后重发等等复杂的工作，交给postfix这样一个专门的邮件服务器，肯定在健壮性上更有保障一些。
+
+最后讲一下在配置postfix时发现的几个小坑。
+
+首先是我用apt-get装postfix是在很早前装系统的时候，后来一直没有真正用过这个服务，所以这回上来配外网转发就出问题了。
+
+[[../../../../images/postfix-config.png][file:../../../../images/postfix-config.png]]
+
+见上面这张图，我重新运行的一遍 =sudo dpkg-reconfigure postfix= ，最初的时候我选的是 =Local only= ！结果我不管怎么改配置文件，愣是转发不出去！后来终于怀疑到这上头，半天已经过去了...
+
+接下来就是这样的一个错误：
+
+#+BEGIN_EXAMPLE
+HELO Denied. SendCloud only supports ehlo
+#+END_EXAMPLE
+
+最后发现需要加一行 =smtp_always_send_ehlo = yes= ，所以最后对 =/etc/postfix/main.cf= 的改动如下：
+
+#+BEGIN_EXAMPLE
+relayhost = [smtpcloud.sohu.com]
+smtp_sasl_auth_enable = yes
+# api_user和api_key
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_pix_workarounds =
+
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+default_transport = smtp
+relay_transport = smtp
+
+inet_protocols = all
+home_mailbox = Maildir/bhj.localhost/
+mailbox_command =
+smtpd_tls_auth_only = no
+smtp_always_send_ehlo = yes
+#+END_EXAMPLE
