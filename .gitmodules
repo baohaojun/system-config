@@ -1,30 +1,30 @@
 [submodule "gcode/beagrep"]
-	path = gcode/beagrep
-	url = https://github.com/baohaojun/beagrep.git
+        path = gcode/beagrep
+        url = https://github.com/baohaojun/beagrep.git
 [submodule ".emacs_d/org-jira"]
-	path = .emacs_d/org-jira
-	url = https://github.com/baohaojun/org-jira.git
+        path = .emacs_d/org-jira
+        url = https://github.com/baohaojun/org-jira.git
 [submodule ".emacs_d/mo-git-blame"]
-	path = .emacs_d/mo-git-blame
-	url = https://github.com/baohaojun/mo-git-blame.git
+        path = .emacs_d/mo-git-blame
+        url = https://github.com/baohaojun/mo-git-blame.git
 [submodule "gcode/guilt"]
-	path = gcode/guilt
-	url = https://github.com/baohaojun/guilt.git
+        path = gcode/guilt
+        url = https://github.com/baohaojun/guilt.git
 [submodule "gcode/crossdict"]
-	path = gcode/crossdict
-	url = https://github.com/baohaojun/BTAndroidWebViewSelection
+        path = gcode/crossdict
+        url = https://github.com/baohaojun/BTAndroidWebViewSelection
 [submodule ".emacs_d/yasnippet-snippets"]
-	path = .emacs_d/yasnippet-snippets
-	url = https://github.com/baohaojun/yasnippet-snippets.git
+        path = .emacs_d/yasnippet-snippets
+        url = https://github.com/baohaojun/yasnippet-snippets.git
 [submodule ".emacs_d/skeleton-complete"]
-	path = .emacs_d/skeleton-complete
-	url = https://github.com/baohaojun/skeleton-complete
+        path = .emacs_d/skeleton-complete
+        url = https://github.com/baohaojun/bbyac
 [submodule "gcode/gxr"]
-	path = gcode/gxr
-	url = https://github.com/baohaojun/gxr
+        path = gcode/gxr
+        url = https://github.com/baohaojun/gxr
 [submodule "gcode/ajoke"]
-	path = gcode/ajoke
-	url = https://github.com/baohaojun/ajoke
+        path = gcode/ajoke
+        url = https://github.com/baohaojun/ajoke
 [submodule "gcode/Firemacs"]
-	path = gcode/Firemacs
-	url = https://github.com/baohaojun/Firemacs
+        path = gcode/Firemacs
+        url = https://github.com/baohaojun/Firemacs

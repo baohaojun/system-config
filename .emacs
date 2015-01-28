@@ -191,8 +191,8 @@
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
 
-(require 'skeleton-complete)
-(skeleton-complete-global-mode 1)
+(require 'bbyac)
+(bbyac-global-mode 1)
 
 
 (keydef "C-M-j" 'bhj-jdk-help)
