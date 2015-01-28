@@ -1,0 +1,35 @@
+#+title: ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑
+# bhj-tags: Bug
+我一直把Windows下的C:盘mount到Linux下的/c目录底下，可以废物利用一下Windows的空间，放一些备份文件。
+
+以下是ntfs mount的输出：
+
+#+BEGIN_EXAMPLE
+/dev/sda3 on /c type fuseblk (rw,relatime,user_id=0,group_id=0,default_permissions,allow_other,blksize=4096)
+#+END_EXAMPLE
+
+然后我进去用ls -l /c看里面的文件、目录，的确所有文件都是属于root用户的，但都设置了全局可写，所以我作为普通用户登录，也可以操作这个分区下的文件。
+
+后来因为一个某个原因，我需要让ntfs分区下的文件mount上来以后权限属于另一个普通用户，而不是root，所以我就改了一下 =/etc/fstab= 文件：
+
+#+BEGIN_EXAMPLE
+UUID=E090FD4290FD2028                     /c              auto    uid=1023,gid=1023,dmask=002,fmask=111 0       0
+#+END_EXAMPLE
+
+结果重新mount了之后，发现用mount去看，看到的还是跟之前一样的输出：
+
+#+BEGIN_EXAMPLE
+/dev/sda3 on /c type fuseblk (rw,relatime,user_id=0,group_id=0,default_permissions,allow_other,blksize=4096)
+#+END_EXAMPLE
+
+这就让我非常困惑了，更奇怪的是， ls -l /c 去看，也是一样的，还是属于root用户！
+
+最后，重启了一下，结果mount显示还是user_id=0,group_id=0，我直接就崩溃了。来回试了十好几遍，user_id=0,group_id=0，一直是这样。最后终于想起来 ls -l /c 进去看一眼，嘿！ls -l /c的输出显示，所有文件的确已经属于 1023/1023
+ 用户了...
+
+坑死个人儿啊😅。
+
+总结：
+
+1. 改完fstab里关于ntfs的mount选项，改了mount之用文件用户/组的归属之后，一定要重启才能生效。
+2. 重启之后只看mount的输出，user_id=0,group_id=0，这会让你很困惑，一定要看ls -l MOUNT-POINT的输出。

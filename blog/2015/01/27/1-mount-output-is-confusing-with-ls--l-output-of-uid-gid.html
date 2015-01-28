@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Bugs that I have encountered, see if someone else will find it useful.</title>
+<title>ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -102,71 +102,78 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Bugs that I have encountered, see if someone else will find it useful.</h1>
-<ul class="org-ul">
-<li>2015
-<ul class="org-ul">
-<li>2015-01
-<ul class="org-ul">
-<li>2015-01-27
+<h1 class="title">ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑</h1>
+<p>
+我一直把Windows下的C:盘mount到Linux下的/c目录底下，可以废物利用一下Windows的空间，放一些备份文件。
+</p>
 
 <p>
-<a href="../../../blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html">ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑</a>
+以下是ntfs mount的输出：
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 
-<li>2014
-<ul class="org-ul">
-<li>2014-11
-<ul class="org-ul">
-<li>2014-11-23
+<pre class="example">
+/dev/sda3 on /c type fuseblk (rw,relatime,user_id=0,group_id=0,default_permissions,allow_other,blksize=4096)
+</pre>
 
 <p>
-<a href="../../../blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.html">更新Kernel以解决opengl程序在休眠后无法运行的问题</a>
+然后我进去用ls -l /c看里面的文件、目录，的确所有文件都是属于root用户的，但都设置了全局可写，所以我作为普通用户登录，也可以操作这个分区下的文件。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-10
-<ul class="org-ul">
-<li>2014-10-22
 
 <p>
-<a href="../../../blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.html">A Bug in Android MobileOrg Sync</a>
+后来因为一个某个原因，我需要让ntfs分区下的文件mount上来以后权限属于另一个普通用户，而不是root，所以我就改了一下 <code>/etc/fstab</code> 文件：
 </p>
-</li>
-</ul>
-</li>
 
-<li>2014-09
-<ul class="org-ul">
-<li>2014-09-26
+<pre class="example">
+UUID=E090FD4290FD2028                     /c              auto    uid=1023,gid=1023,dmask=002,fmask=111 0       0
+</pre>
 
 <p>
-<a href="../../../blog/2014/09/26/0-WYPIWYG.html">WYPIWYG (What you print is what you get）</a>
+结果重新mount了之后，发现用mount去看，看到的还是跟之前一样的输出：
 </p>
-</li>
-</ul>
-</li>
 
-<li>2014-01
-<ul class="org-ul">
-<li>2014-01-28
+<pre class="example">
+/dev/sda3 on /c type fuseblk (rw,relatime,user_id=0,group_id=0,default_permissions,allow_other,blksize=4096)
+</pre>
 
 <p>
-<a href="../../../blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.html">Firefor urlbar dropdown list not showing anymore</a>
+这就让我非常困惑了，更奇怪的是， ls -l /c 去看，也是一样的，还是属于root用户！
 </p>
+
+<p>
+最后，重启了一下，结果mount显示还是user_id=0,group_id=0，我直接就崩溃了。来回试了十好几遍，user_id=0,group_id=0，一直是这样。最后终于想起来 ls -l /c 进去看一眼，嘿！ls -l /c的输出显示，所有文件的确已经属于 1023/1023
+ 用户了&#x2026;
+</p>
+
+<p>
+坑死个人儿啊😅。
+</p>
+
+<p>
+总结：
+</p>
+
+<ol class="org-ol">
+<li>改完fstab里关于ntfs的mount选项，改了mount之用文件用户/组的归属之后，一定要重启才能生效。
 </li>
-</ul>
+<li>重启之后只看mount的输出，user_id=0,group_id=0，这会让你很困惑，一定要看ls -l MOUNT-POINT的输出。
 </li>
-</ul>
-</li>
-</ul>
+</ol>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="0-config-postfix-to-use-sohu-smtpcloud-for-relay.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        配置postfix用sohu smtpcloud进行relay <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../../../../meta/Archive.html"> <!-- next-url -->
+        Archive <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
 <!-- {%html-mode%} -->
 
@@ -174,7 +181,7 @@ for the JavaScript code in this tag.
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/meta/tags/Bug.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -245,12 +252,21 @@ for the JavaScript code in this tag.
 
     <h2>Tags</h2>
     <ul>
-        
+                <li><a href="../../../../meta/tags/Bug.html" title="Bugs that I have encountered, see if someone else will find it useful.">Bug</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        
+        <li><a href='0-config-postfix-to-use-sohu-smtpcloud-for-relay.html'> 配置postfix用sohu smtpcloud进行relay </a></li>
+<li><a href='../26/0-T1Wrench-2.3.0-Released.html'> T1Wrench 2.3.0 Released </a></li>
+<li><a href='../12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html'> 怎样交换键盘Escape和Caps Lock键 </a></li>
+<li><a href='../09/0-From-QtSingleApplication-To-Design-Of-Qt.html'> 从QtSingleApplication的API看Qt的设计 </a></li>
+<li><a href='../../../2014/12/10/0-system-config-usage-guide.html'> 我的system-config使用指南 </a></li>
+<li><a href='../../../2014/12/06/0-New-Blog-Style.html'> 新的博客风格 </a></li>
+<li><a href='../../../2014/12/01/0-T1Wrench-2.0-Usage-Guide.html'> 小扳手2.0版使用手册 </a></li>
+<li><a href='../../../2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.html'> 更新Kernel以解决opengl程序在休眠后无法运行的问题 </a></li>
+<li><a href='../../../2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.html'> 专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明 </a></li>
+<li><a href='../../../2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html'> 不用鼠标在Linux命令行下启动Windows上的图形界面程序 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

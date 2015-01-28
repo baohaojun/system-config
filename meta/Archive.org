@@ -3,6 +3,8 @@
   - 2015-01
    * 2015-01-27
 
+     [[../blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.org][ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑]]
+
      [[../blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.org][配置postfix用sohu smtpcloud进行relay]]
 
    * 2015-01-26

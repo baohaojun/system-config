@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>配置postfix用sohu smtpcloud进行relay</title>
+<title>ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
-<meta  name="author" content="Haojun Bao" />
+<meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="stylesheet" href="/css/org.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
@@ -102,80 +102,68 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">配置postfix用sohu smtpcloud进行relay</h1>
+<h1 class="title">ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑</h1>
 <p>
-之前发现一台gerrit代码服务器发生很多邮件任务的拥堵，有好几个月、几千封的代码review的邮件都没有发送成功。作为一个运营小白，我觉得自己基本没有能力直接解决掉这个问题。既然是邮件问题，只能从它的邮件配置上入手。查了一下它的邮件配置，smtp服务器直接用的是sohu的smtpcloud。
+我一直把Windows下的C:盘mount到Linux下的/c目录底下，可以废物利用一下Windows的空间，放一些备份文件。
 </p>
 
 <p>
-这是我觉得不够合理的地方，直接用一个外网的smtp服务器，如果你是一个个人用户，配一下你自己的邮件客户端，这是没有大问题的，因为如果有一两封邮件发不成功，你很容易自己发现，并手动重发。但把它配到gerrit这种服务器里，就有可能出了问题却不能及时发现、解决了。
-</p>
-
-<p>
-所以我的思路就是在这台gerrit服务器的机器上再配一个postfix邮件服务，然后让这个邮件服务通过sohu的smtpcloud账号进行转发。结果证明这样的确能解决问题，几个月下来再也没有出现过邮件任务堵塞的现象。原理其实很简单，之前gerrit自己通过sohu网络直接发邮件，万一网络有问题、协议实现有问题，都有可能导致邮件任务挂住；现在改成用postfix，gerrit只要把邮件发给本地的邮件服务，虽然也是用的网络协议，但这个是本地的，所以基本上不会发生网络问题、协议问题。所以gerrit服务自己最关键的任务（代码review）就不会因为邮件而受影响了。
-</p>
-
-<p>
-这就是一个分层的概念。另外也有一个软件重用的思想在里面，处理邮件网络问题、协议问题、发送失败后重发等等复杂的工作，交给postfix这样一个专门的邮件服务器，肯定在健壮性上更有保障一些。
-</p>
-
-<p>
-最后讲一下在配置postfix时发现的几个小坑。
-</p>
-
-<p>
-首先是我用apt-get装postfix是在很早前装系统的时候，后来一直没有真正用过这个服务，所以这回上来配外网转发就出问题了。
-</p>
-
-
-<div class="figure">
-<p><a href="images/postfix-config.png"><img src="images/postfix-config.png" alt="postfix-config.png" /></a>
-</p>
-</div>
-
-<p>
-见上面这张图，我重新运行的一遍 <code>sudo dpkg-reconfigure postfix</code> ，最初的时候我选的是 <code>Local only</code> ！结果我不管怎么改配置文件，愣是转发不出去！后来终于怀疑到这上头，半天已经过去了&#x2026;
-</p>
-
-<p>
-接下来就是这样的一个错误：
+以下是ntfs mount的输出：
 </p>
 
 <pre class="example">
-HELO Denied. SendCloud only supports ehlo
+/dev/sda3 on /c type fuseblk (rw,relatime,user_id=0,group_id=0,default_permissions,allow_other,blksize=4096)
 </pre>
 
 <p>
-最后发现需要加一行 <code>smtp_always_send_ehlo = yes</code> ，所以最后对 <code>/etc/postfix/main.cf</code> 的改动如下：
+然后我进去用ls -l /c看里面的文件、目录，的确所有文件都是属于root用户的，但都设置了全局可写，所以我作为普通用户登录，也可以操作这个分区下的文件。
+</p>
+
+<p>
+后来因为一个某个原因，我需要让ntfs分区下的文件mount上来以后权限属于另一个普通用户，而不是root，所以我就改了一下 <code>/etc/fstab</code> 文件：
 </p>
 
 <pre class="example">
-relayhost = [smtpcloud.sohu.com]
-smtp_sasl_auth_enable = yes
-# api_user和api_key
-smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
-smtp_sasl_security_options = noanonymous
-smtp_pix_workarounds =
-
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
-mailbox_size_limit = 0
-recipient_delimiter = +
-inet_interfaces = all
-default_transport = smtp
-relay_transport = smtp
-
-inet_protocols = all
-home_mailbox = Maildir/bhj.localhost/
-mailbox_command =
-smtpd_tls_auth_only = no
-smtp_always_send_ehlo = yes
+UUID=E090FD4290FD2028                     /c              auto    uid=1023,gid=1023,dmask=002,fmask=111 0       0
 </pre>
+
+<p>
+结果重新mount了之后，发现用mount去看，看到的还是跟之前一样的输出：
+</p>
+
+<pre class="example">
+/dev/sda3 on /c type fuseblk (rw,relatime,user_id=0,group_id=0,default_permissions,allow_other,blksize=4096)
+</pre>
+
+<p>
+这就让我非常困惑了，更奇怪的是， ls -l /c 去看，也是一样的，还是属于root用户！
+</p>
+
+<p>
+最后，重启了一下，结果mount显示还是user_id=0,group_id=0，我直接就崩溃了。来回试了十好几遍，user_id=0,group_id=0，一直是这样。最后终于想起来 ls -l /c 进去看一眼，嘿！ls -l /c的输出显示，所有文件的确已经属于 1023/1023
+ 用户了&#x2026;
+</p>
+
+<p>
+坑死个人儿啊😅。
+</p>
+
+<p>
+总结：
+</p>
+
+<ol class="org-ol">
+<li>改完fstab里关于ntfs的mount选项，改了mount之用文件用户/组的归属之后，一定要重启才能生效。
+</li>
+<li>重启之后只看mount的输出，user_id=0,group_id=0，这会让你很困惑，一定要看ls -l MOUNT-POINT的输出。
+</li>
+</ol>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2015/01/26/0-T1Wrench-2.3.0-Released.html"> <!-- prev-url -->
+      <a href="blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        T1Wrench 2.3.0 Released <!-- prev-title -->
+        配置postfix用sohu smtpcloud进行relay <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -193,7 +181,7 @@ smtp_always_send_ehlo = yes
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -264,12 +252,13 @@ smtp_always_send_ehlo = yes
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="meta/tags/tool.html" title="Computer tools">tool</a></li>
+                <li><a href="meta/tags/Bug.html" title="Bugs that I have encountered, see if someone else will find it useful.">Bug</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2015/01/26/0-T1Wrench-2.3.0-Released.html'> T1Wrench 2.3.0 Released </a></li>
+        <li><a href='blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html'> 配置postfix用sohu smtpcloud进行relay </a></li>
+<li><a href='blog/2015/01/26/0-T1Wrench-2.3.0-Released.html'> T1Wrench 2.3.0 Released </a></li>
 <li><a href='blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html'> 怎样交换键盘Escape和Caps Lock键 </a></li>
 <li><a href='blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html'> 从QtSingleApplication的API看Qt的设计 </a></li>
 <li><a href='blog/2014/12/10/0-system-config-usage-guide.html'> 我的system-config使用指南 </a></li>
@@ -278,7 +267,6 @@ smtp_always_send_ehlo = yes
 <li><a href='blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.html'> 更新Kernel以解决opengl程序在休眠后无法运行的问题 </a></li>
 <li><a href='blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.html'> 专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明 </a></li>
 <li><a href='blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html'> 不用鼠标在Linux命令行下启动Windows上的图形界面程序 </a></li>
-<li><a href='blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html'> 把邮件的星标移到我的todo list里 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>
