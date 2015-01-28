@@ -1,14 +1,14 @@
-;;; skeleton-complete.el --- Dynamically expand expressions by provided skeleton (flex matching)
+;;; bbyac.el --- Type a little Bit, and Bang! You Are Completed.
 
-;; Copyright (C) 2013 Bao Haojun
+;; Copyright (C) 2015 Bao Haojun
 
 ;; Author: Bao Haojun <baohaojun@gmail.com>
 ;; Maintainer: Bao Haojun <baohaojun@gmail.com>
-;; Created: 15th April 2013
+;; Created: 28th January 2015
 ;; Package-Requires: ((browse-kill-ring "1.3"))
 ;; Keywords: abbrev
-;; Version: 0.0.20130419
-;; URL: https://github.com/baohaojun/skeleton-complete
+;; Version: 0.0.20150128
+;; URL: https://github.com/baohaojun/bbyac
 
 ;; This file is not part of GNU Emacs.
 
@@ -30,7 +30,7 @@
 ;;; Commentary:
 
 ;; For more information see the readme at:
-;; https://github.com/baohaojun/skeleton-complete
+;; https://github.com/baohaojun/bbyac
 
 ;;; Code:
 
@@ -39,52 +39,55 @@
 (require 'thingatpt)
 (require 'browse-kill-ring)
 
-(defgroup skeleton-complete nil
-  "Dynamically expand expressions by provided skeleton (flex matching)."
+(defgroup bbyac nil
+  "Type a little Bit, and Bang! You Are Completed."
   :group 'abbrev)
 
-(defcustom skeleton--max-chars 80
+(defcustom bbyac-max-chars 80
   "Maximum chars in any single match to use ecomplete.
 
 If exceeded, will use other schemes (such as browse-kill-ring) to
-select from the matches."
+select from the matches.
+
+If you don't like the ecomplete style or think ecomplete is
+unreliable, change this to a very small value, such as 1 to force browse-kill-ring."
   :type 'integer
-  :group 'skeleton-complete)
+  :group 'bbyac)
 
-(defvar skeleton--start
+(defvar bbyac--start
   nil
-  "The start of the skeleton that is to be replaced with the
+  "The start of the bit that is to be replaced with the
 expansion.
 
-This var should be set when you are extracting the skeleton, and
-it is used when the expansion of the skeleton is to be inserted.")
+This var should be set when you are extracting the bit, and
+it is used when the expansion of the bit is to be inserted.")
 
-(defvar skeleton--end
+(defvar bbyac--end
   nil
-  "The end of the skeleton that is to be replaced with the
+  "The end of the bit that is to be replaced with the
 expansion.
 
-See `skeleton--start'.")
+See `bbyac--start'.")
 
-(defvar skeleton--the-skeleton
+(defvar bbyac--the-bit
   nil
-  "The skeleton that is extracted with a skeleton extracter.")
+  "The bit that is extracted with a bit extracter.")
 
-(defvar skeleton--contains-upcase
+(defvar bbyac--contains-upcase
   nil
-  "Whether the skeleton contains upcase char.")
+  "Whether the bit contains upcase char.")
 
-(defun skeleton--contains-upcase-p (str)
+(defun bbyac--contains-upcase-p (str)
   (let ((case-fold-search nil))
     (string-match-p "[[:upper:]]" str)))
 
-(defun skeleton--clear-vars ()
-  (setq skeleton--start nil
-        skeleton--end nil
-        skeleton--the-skeleton nil
-        skeleton--contains-upcase nil))
+(defun bbyac--clear-vars ()
+  (setq bbyac--start nil
+        bbyac--end nil
+        bbyac--the-bit nil
+        bbyac--contains-upcase nil))
 
-(defun skeleton--interleave (l1 l2)
+(defun bbyac--interleave (l1 l2)
   (let (result)
     (while (and l1 l2)
       (setq result (cons (car l1) result) ; consing like this makes strlist in bad order
@@ -93,12 +96,12 @@ See `skeleton--start'.")
             l2 (cdr l2)))
     (append (nreverse result) l1 l2)))
 
-(defun skeleton--difference (l1 l2)
+(defun bbyac--difference (l1 l2)
   (delete-if (lambda (e) (member e l2)) l1))
 
-(defun skeleton--regexp-quote (char)
+(defun bbyac--regexp-quote (char)
   "Regexp-quote char smartly.
-If skeleton--the-skeleton contains upcase chars, then
+If bbyac--the-bit contains upcase chars, then
 case-fold-search will be turned on, in that case, we want the
 upcase char to match exactly, but the downcase char to match
 either an upcase or a downcase.
@@ -107,60 +110,60 @@ For e.g., given HelloWorld and helloWorld, we want Hw to match
 the former, but not the later. If the w in Hw was to made to
 match w only, then none will match, which sometimes is a
 surprise."
-  (if (and skeleton--contains-upcase
+  (if (and bbyac--contains-upcase
            (>= char ?a)
            (<= char ?z))
       (format "[%c%c]" char (upcase char))
     (regexp-quote (string char))))
 
-(defun skeleton--symbol-skeleton-extracter ()
-  "Extract a skeleton for symbol-completing.
+(defun bbyac--symbol-bbyac-extracter ()
+  "Extract a bit for symbol-completing.
 
-Return a regexp rewritten from the skeleton.
+Return a regexp rewritten from the bit.
 
 In addition, extracters can also set the variables
-`skeleton--the-skeleton', `skeleton--start' and `skeleton--end'."
+`bbyac--the-bit', `bbyac--start' and `bbyac--end'."
   (if mark-active
-      (setq skeleton--start (region-beginning)
-            skeleton--end (region-end))
+      (setq bbyac--start (region-beginning)
+            bbyac--end (region-end))
     (when (looking-back "\\w\\|_" 1)
-      (setq skeleton--end (point)
-            skeleton--start (or (save-excursion
+      (setq bbyac--end (point)
+            bbyac--start (or (save-excursion
                                   (search-backward-regexp "\\_<" (line-beginning-position) t))
-                                skeleton--end))))
-  (setq skeleton--the-skeleton (buffer-substring-no-properties skeleton--start skeleton--end)
-        skeleton--contains-upcase (skeleton--contains-upcase-p skeleton--the-skeleton))
-  (unless (string= "" skeleton--the-skeleton)
+                                bbyac--end))))
+  (setq bbyac--the-bit (buffer-substring-no-properties bbyac--start bbyac--end)
+        bbyac--contains-upcase (bbyac--contains-upcase-p bbyac--the-bit))
+  (unless (string= "" bbyac--the-bit)
     (let ((symbol-chars "\\(?:\\sw\\|\\s_\\)*?"))
       (concat
        "\\_<"
        symbol-chars
        (mapconcat
-        #'skeleton--regexp-quote
-        (string-to-list skeleton--the-skeleton)
+        #'bbyac--regexp-quote
+        (string-to-list bbyac--the-bit)
         symbol-chars)
        symbol-chars
        "\\_>"))))
 
-(defun skeleton--line-skeleton-extracter ()
-  "Extract a skeleton for line-completing.
+(defun bbyac--line-bbyac-extracter ()
+  "Extract a bit for line-completing.
 
-If the region is active, the skeleton is what is in the region.
+If the region is active, the bit is what is in the region.
 
-If the region is not active, the skeleton should be found by
+If the region is not active, the bit should be found by
 checking white spaces (see the code). For e.g., if we are looking
 back at (with the last * denoting where the point is):
 
     [{)}& aonehua naoehu[)+{ *
 
-we will get the skeleton:
+we will get the bit:
 
     \"naoehu[)+{ \"
 
-See also `skeleton--symbol-skeleton-extracter'."
+See also `bbyac--symbol-bbyac-extracter'."
   (if mark-active
-      (setq skeleton--start (region-beginning)
-            skeleton--end (region-end))
+      (setq bbyac--start (region-beginning)
+            bbyac--end (region-end))
       (save-excursion
         (let* ((back-limit (line-beginning-position))
                (cp (point)))
@@ -168,36 +171,36 @@ See also `skeleton--symbol-skeleton-extracter'."
             (backward-char))
           (while (and (not (looking-back "\\s ")) (< back-limit (point)))
             (backward-char))
-          (setq skeleton--start (point)
-                skeleton--end cp))))
-  (setq skeleton--the-skeleton (buffer-substring-no-properties skeleton--start skeleton--end)
-        skeleton--contains-upcase (skeleton--contains-upcase-p skeleton--the-skeleton))
-  (when skeleton--the-skeleton
+          (setq bbyac--start (point)
+                bbyac--end cp))))
+  (setq bbyac--the-bit (buffer-substring-no-properties bbyac--start bbyac--end)
+        bbyac--contains-upcase (bbyac--contains-upcase-p bbyac--the-bit))
+  (when bbyac--the-bit
     (let ((the-regexp
            (mapconcat
-            #'skeleton--regexp-quote
-            (string-to-list skeleton--the-skeleton)
+            #'bbyac--regexp-quote
+            (string-to-list bbyac--the-bit)
             ".*?")))
-      ;; performance consideration: if syntax of skeleton's first char
+      ;; performance consideration: if syntax of bit's first char
       ;; is word, then it must match word boundary
-      (when (string-match-p "^\\w" skeleton--the-skeleton)
+      (when (string-match-p "^\\w" bbyac--the-bit)
         (setq the-regexp (concat "\\b" the-regexp)))
-      ;; if skeleton's last char is word syntax, should extend the
+      ;; if bit's last char is word syntax, should extend the
       ;; completion to word boundaries
-      (when (string-match-p "\\w$" skeleton--the-skeleton)
+      (when (string-match-p "\\w$" bbyac--the-bit)
         (setq the-regexp (concat the-regexp "\\w*?\\b")))
       ;; extend the regexp rewrite: use Ctrl-e to mean $ and Ctrl-a to mean ^
       (setq the-regexp (replace-regexp-in-string "$" "$" the-regexp)
             the-regexp (replace-regexp-in-string "^" "^" the-regexp))
       the-regexp)))
 
-(defmacro skeleton--make-matcher (matcher-name doc extract-match move-along)
+(defmacro bbyac--make-matcher (matcher-name doc extract-match move-along)
   "Make a new matcher named as MATCHER-NAME with EXTRACT-MATCH and MOVE-ALONG.
 
 The function MATCHER-NAME thus created will take 3 arguments, RE,
 BUFFER, and TAG. When called, it will search the BUFFER for RE,
 return all the matching substrings in an order dependent on
-TAG. See `skeleton--matcher'.
+TAG. See `bbyac--matcher'.
 
 EXTRACT-MATCH and MOVE-ALONG are 2 lisp sexp, you can use the
 variables mb and me in these sexps. Result of EXTRACT-MATCH
@@ -217,8 +220,8 @@ should be a string; MOVE-ALONG is only used for its side-effects."
                (let ((substr ,extract-match))
                  (cond
                   ((and (eq tag 'current)
-                       (< mb skeleton--start)
-                       (> me skeleton--start)))
+                       (< mb bbyac--start)
+                       (> me bbyac--start)))
                   (t
                    (if (and (< (point) old-point) (eq tag 'current))
                        ;; substr closer to the old-point is at the head of strlist-before, in good order
@@ -226,19 +229,19 @@ should be a string; MOVE-ALONG is only used for its side-effects."
                      ;; substr further to the old-point is at the head of strlist-after, in bad order
                      (setq strlist-after (cons substr strlist-after))))))
                ,move-along))
-           (setq strlist (skeleton--interleave strlist-before (nreverse strlist-after)))
-           ;; This expansion is useless, it's the same as the skeleton
+           (setq strlist (bbyac--interleave strlist-before (nreverse strlist-after)))
+           ;; This expansion is useless, it's the same as the bit
            ;; (in fact, extracted from the same place, and thus at the
            ;; car of strlist. We must remove it here, or else the
            ;; buried buffers will never get matched).
            (if (and (eq tag 'current)
                     (stringp (car strlist))
-                    (string= (car strlist) skeleton--the-skeleton))
+                    (string= (car strlist) bbyac--the-bit))
                (cdr strlist)
              strlist))))))
 
-(skeleton--make-matcher
- skeleton--matcher
+(bbyac--make-matcher
+ bbyac--matcher
  "Search the buffer to collect a list of all strings matching `re'.
 
 If TAG is 'current, the returned list is sorted (interleaved)
@@ -250,19 +253,19 @@ Or else the returned list of strings is in the order they appear in the buffer."
  (buffer-substring-no-properties mb me)
  (goto-char (1+ mb)))
 
-(skeleton--make-matcher
- skeleton--line-extracting-matcher
+(bbyac--make-matcher
+ bbyac--line-extracting-matcher
  "Search the buffer to collect a list of all lines matching `re'.
 
-See `skeleton--matcher'."
+See `bbyac--matcher'."
  (buffer-substring-no-properties (line-beginning-position) (line-end-position))
  (end-of-line))
 
-(skeleton--make-matcher
- skeleton--sexp-extracting-matcher
+(bbyac--make-matcher
+ bbyac--sexp-extracting-matcher
  "Search the buffer to collect a list of all balanced expressions matching `re'.
 
-See `skeleton--matcher'."
+See `bbyac--matcher'."
  (let ((e (save-excursion
             (goto-char mb)
             (condition-case nil (forward-sexp)
@@ -278,11 +281,11 @@ See `skeleton--matcher'."
                   (1+ mb)
                 e))))
 
-(skeleton--make-matcher
- skeleton--paragraph-extracting-matcher
+(bbyac--make-matcher
+ bbyac--paragraph-extracting-matcher
  "Search the buffer to collect a list of all paragraphs matching `re'.
 
-See `skeleton--matcher'."
+See `bbyac--matcher'."
  (buffer-substring-no-properties
   (save-excursion
     (start-of-paragraph-text)
@@ -292,8 +295,8 @@ See `skeleton--matcher'."
     (point)))
  (end-of-paragraph-text))
 
-(defun skeleton--buffer-filter ()
-  "Return an alist of buffers to be matched againt the skeleton for completions.
+(defun bbyac--buffer-filter ()
+  "Return an alist of buffers to be matched againt the bit for completions.
 
 The entries in the returned alist is of the form (BUFFER . TAG)
 where TAG is one of 'current, 'visible and 'buried.
@@ -315,7 +318,7 @@ all 'buried buffers."
                                   (mapcar (lambda (w)
                                             (window-buffer w))
                                           (window-list)))))
-        (buried-buffers (skeleton--difference (buffer-list) (cons current-buffer visible-buffers))))
+        (buried-buffers (bbyac--difference (buffer-list) (cons current-buffer visible-buffers))))
     (delete-if
      (lambda (buf-tag) (eq (with-current-buffer (car buf-tag) major-mode) 'image-mode))
      (nconc
@@ -329,14 +332,14 @@ all 'buried buffers."
          (cons b 'buried))
        buried-buffers)))))
 
-(defun skeleton--get-matches (re matcher buffer-filter)
+(defun bbyac--get-matches (re matcher buffer-filter)
   "Given a regexp RE, run MATCHER over all the buffers returned
   BUFFER-FILTER.
 
 Return the list of strings thus matched.
 
-See `skeleton--matcher' and `skeleton--buffer-filter'."
-  (skeleton--clean-up
+See `bbyac--matcher' and `bbyac--buffer-filter'."
+  (bbyac--clean-up
    (let ((matched-buried nil)
          (matched-any nil)
          result)
@@ -355,89 +358,89 @@ See `skeleton--matcher' and `skeleton--buffer-filter'."
                        (setq matched-buried t))))))
              (funcall buffer-filter)))))
 
-(defun skeleton--string-multiline-p (str)
+(defun bbyac--string-multiline-p (str)
   "Return t if STR is too long or span multilines"
-  (or (> (length str) skeleton--max-chars)
+  (or (> (length str) bbyac-max-chars)
       (string-match-p "\n" str)))
 
-(defun skeleton--general-expand (extracter &optional matcher buffer-filter)
-  "General function to expand a skeleton using the functional arguments.
+(defun bbyac--general-expand (extracter &optional matcher buffer-filter)
+  "General function to expand a bit using the functional arguments.
 
-See `skeleton--symbol-skeleton-extracter' for EXTRACTER. See
-`skeleton--matcher' for MATCHER. See `skeleton--buffer-filter' for BUFFER-FILTER.
+See `bbyac--symbol-bbyac-extracter' for EXTRACTER. See
+`bbyac--matcher' for MATCHER. See `bbyac--buffer-filter' for BUFFER-FILTER.
 
-If wanted, user can extend skeleton-complete with their own
+If wanted, user can extend bbyac with their own
 EXTRACTER, MATCHER and BUFFER-FILTER."
-  (skeleton--clear-vars)
-  (setq matcher (or matcher #'skeleton--matcher)
-        buffer-filter (or buffer-filter #'skeleton--buffer-filter))
+  (bbyac--clear-vars)
+  (setq matcher (or matcher #'bbyac--matcher)
+        buffer-filter (or buffer-filter #'bbyac--buffer-filter))
   (let* ((the-regexp (funcall extracter))
-         (case-fold-search (not skeleton--contains-upcase))
+         (case-fold-search (not bbyac--contains-upcase))
          matches
          match)
     (when (and the-regexp
-               (setq matches (skeleton--get-matches the-regexp matcher buffer-filter)))
+               (setq matches (bbyac--get-matches the-regexp matcher buffer-filter)))
       (if (or (minibufferp)
-           (cl-notany #'skeleton--string-multiline-p matches))
+           (cl-notany #'bbyac--string-multiline-p matches))
           (progn
-            (setq match (skeleton--display-matches matches))
-            (when (and skeleton--start skeleton--end)
-              (delete-region skeleton--start skeleton--end))
+            (setq match (bbyac--display-matches matches))
+            (when (and bbyac--start bbyac--end)
+              (delete-region bbyac--start bbyac--end))
             (insert match))
-        (when (and skeleton--start skeleton--end)
-          (delete-region skeleton--start skeleton--end))
+        (when (and bbyac--start bbyac--end)
+          (delete-region bbyac--start bbyac--end))
         (let ((kill-ring matches)
               (kill-ring-yank-pointer matches))
           (browse-kill-ring))))))
 
-(defun skeleton-expand-symbols ()
-  "Find and expand the skeleton into a symbol.
+(defun bbyac-expand-symbols ()
+  "Find and expand the bit into a symbol.
 
-The skeleton itself is constructed by symbol constituting
+The bit itself is constructed by symbol constituting
 characters before the point."
   (interactive)
-  (skeleton--general-expand #'skeleton--symbol-skeleton-extracter))
+  (bbyac--general-expand #'bbyac--symbol-bbyac-extracter))
 
-(defun skeleton-expand-partial-lines ()
-  "Expand the skeleton into a partial line match.
+(defun bbyac-expand-partial-lines ()
+  "Expand the bit into a partial line match.
 
 This means expand to string from the beginning to the end of the
 matched region."
   (interactive)
-  (skeleton--general-expand #'skeleton--line-skeleton-extracter))
+  (bbyac--general-expand #'bbyac--line-bbyac-extracter))
 
-(defun skeleton-expand-lines ()
-  "Expand the skeleton into a full line match.
+(defun bbyac-expand-lines ()
+  "Expand the bit into a full line match.
 
 This means expand to string from the beginning to the end of the
 line where the match occured."
   (interactive)
-  (skeleton--general-expand #'skeleton--line-skeleton-extracter
-                            #'skeleton--line-extracting-matcher))
+  (bbyac--general-expand #'bbyac--line-bbyac-extracter
+                            #'bbyac--line-extracting-matcher))
 
-(defun skeleton-expand-sexp ()
-  "Expand the skeleton into an S-expression.
+(defun bbyac-expand-sexp ()
+  "Expand the bit into an S-expression.
 
 This means expand to string from the beginning to the end of the
 S-expression enclosing the matched region."
   (interactive)
-  (skeleton--general-expand #'skeleton--line-skeleton-extracter
-                            #'skeleton--sexp-extracting-matcher))
+  (bbyac--general-expand #'bbyac--line-bbyac-extracter
+                            #'bbyac--sexp-extracting-matcher))
 
-(defun skeleton-expand-paragraph ()
-  "Expand the skeleton into a whole paragraph."
+(defun bbyac-expand-paragraph ()
+  "Expand the bit into a whole paragraph."
     (interactive)
-    (skeleton--general-expand #'skeleton--line-skeleton-extracter
-                              #'skeleton--paragraph-extracting-matcher))
+    (bbyac--general-expand #'bbyac--line-bbyac-extracter
+                              #'bbyac--paragraph-extracting-matcher))
 
-(defmacro skeleton--max-minibuffer-lines ()
+(defmacro bbyac--max-minibuffer-lines ()
   `(if (floatp max-mini-window-height)
        (truncate (* (frame-height) max-mini-window-height))
      max-mini-window-height))
 
-(defun skeleton--highlight-match-line (matches line max-line-num)
+(defun bbyac--highlight-match-line (matches line max-line-num)
   "This function is copy and modified from ecomplete-highlight-match-line"
-  (let* ((max-lines (skeleton--max-minibuffer-lines))
+  (let* ((max-lines (bbyac--max-minibuffer-lines))
          (max-lines-1 (- max-lines 2))
          (max-lines-2 (1- max-lines-1)))
     (cond
@@ -462,7 +465,7 @@ S-expression enclosing the matched region."
                  (format "\nmin: %d, max: %d, total: %d" min-disp max-disp max-line-num)))))
         (ecomplete-highlight-match-line matches line))))))
 
-(defun skeleton--display-matches (strlist)
+(defun bbyac--display-matches (strlist)
   "Display a list of matches, allow the user to choose from them.
 
 This func is copied and modified from `ecomplete-display-matches'."
@@ -475,11 +478,11 @@ This func is copied and modified from `ecomplete-display-matches'."
          command highlight)
     (if (not matches)
         (progn
-          (message "No skeleton matches")
+          (message "No bit matches")
           nil)
       (if (= max-line-num 0)
           (nth line (split-string matches "\n"))
-        (setq highlight (skeleton--highlight-match-line matches line max-line-num))
+        (setq highlight (bbyac--highlight-match-line matches line max-line-num))
         (while (not (memq (setq command (read-event highlight)) '(?  return ?\C-m)))
           (cond
            ((or (eq command ?\M-n)
@@ -490,45 +493,45 @@ This func is copied and modified from `ecomplete-display-matches'."
                 (eq command ?\C-p)
                 (eq command ?p))
             (setq line (% (+ max-line-num line) (1+ max-line-num)))))
-          (setq highlight (skeleton--highlight-match-line matches line max-line-num)))
+          (setq highlight (bbyac--highlight-match-line matches line max-line-num)))
         (when (or (eq command 'return)
                   (eq command ?\C-m))
           (nth line (split-string matches "\n")))))))
 
-(defun skeleton--clean-up (list)
+(defun bbyac--clean-up (list)
   (delete-dups
    (delete ""
-           (if (and (boundp 'skeleton--the-skeleton)
-                    (stringp skeleton--the-skeleton))
-               (delete skeleton--the-skeleton list)
+           (if (and (boundp 'bbyac--the-bit)
+                    (stringp bbyac--the-bit))
+               (delete bbyac--the-bit list)
              list))))
 
-(defvar skeleton-complete-mode-map (make-sparse-keymap)
-  "Skeleton-complete mode map.")
-(define-key skeleton-complete-mode-map (kbd "M-g <return>") 'skeleton-expand-symbols)
-(define-key skeleton-complete-mode-map (kbd "M-g <RET>") 'skeleton-expand-symbols)
-(define-key skeleton-complete-mode-map (kbd "M-s <return>") 'skeleton-expand-partial-lines)
-(define-key skeleton-complete-mode-map (kbd "M-s <RET>") 'skeleton-expand-partial-lines)
-(define-key skeleton-complete-mode-map (kbd "M-g x") 'skeleton-expand-partial-lines)
-(define-key skeleton-complete-mode-map (kbd "M-s l") 'skeleton-expand-lines)
-(define-key skeleton-complete-mode-map (kbd "M-s s") 'skeleton-expand-sexp)
-(define-key skeleton-complete-mode-map (kbd "M-s p") 'skeleton-expand-paragraph)
+(defvar bbyac-mode-map (make-sparse-keymap)
+  "Bbyac mode map.")
+(define-key bbyac-mode-map (kbd "M-g <return>") 'bbyac-expand-symbols)
+(define-key bbyac-mode-map (kbd "M-g <RET>") 'bbyac-expand-symbols)
+(define-key bbyac-mode-map (kbd "M-s <return>") 'bbyac-expand-partial-lines)
+(define-key bbyac-mode-map (kbd "M-s <RET>") 'bbyac-expand-partial-lines)
+(define-key bbyac-mode-map (kbd "M-g x") 'bbyac-expand-partial-lines)
+(define-key bbyac-mode-map (kbd "M-s l") 'bbyac-expand-lines)
+(define-key bbyac-mode-map (kbd "M-s s") 'bbyac-expand-sexp)
+(define-key bbyac-mode-map (kbd "M-s p") 'bbyac-expand-paragraph)
 
-(define-minor-mode skeleton-complete-mode
-  "Toggle the `skeleton-complete-mode' minor mode."
-  :lighter " SkelC"
-  :keymap skeleton-complete-mode-map
-  :group 'skeleton-complete)
+(define-minor-mode bbyac-mode
+  "Toggle the `bbyac-mode' minor mode."
+  :lighter " BBC"
+  :keymap bbyac-mode-map
+  :group 'bbyac)
 
-(define-globalized-minor-mode skeleton-complete-global-mode
-  skeleton-complete-mode
-  turn-on-skeleton-complete-mode)
+(define-globalized-minor-mode bbyac-global-mode
+  bbyac-mode
+  turn-on-bbyac-mode)
 
-(defun turn-on-skeleton-complete-mode ()
-  "Turn on `skeleton-complete-mode'."
+(defun turn-on-bbyac-mode ()
+  "Turn on `bbyac-mode'."
   (interactive)
-  (skeleton-complete-mode 1))
+  (bbyac-mode 1))
 
-(provide 'skeleton-complete)
+(provide 'bbyac)
 
-;;; skeleton-complete.el ends here
+;;; bbyac.el ends here

@@ -1,60 +1,82 @@
-#+title: =skeleton-complete=: text matching based completion pushed to extremes
+#+title: =bbyac=: Type a little Bit, and Bang! Yet Another Completion.
 
-Geeks like one-liners. A mental twist: one-lines are not
-one-timers. Often after you write a long one-liner and are proud of
-yourself, you will want to repeat it for many times.
+Or you can think it as: type a little Bit, and Bang! Your Are Completed.
 
-Do you need (re-)type the whole one-liner every time?
+Or you can call it The Bit Bang Completion, if you like watching The Big Bang Theory😁。
 
-With =skeleton-complete=, you need type any long expression only once,
-and later you can type as little as possible (much less than
-=hippie-expand=), and use =skeleton-complete= to reproduce the long
-expression.
+With bbyac, you can type a little bit, and bang❗, you can complete it
+into a much longer string. Isn't this what every completion method do?
+😼, the secret is, with bbyac, the *a little bit* you need to type
+before you bang it, is actually almost *any* little bit.
 
-It has 2 flavors: identifier completion and single-line string
-completion, corresponding to =hippie-expand='s =try-expand-dabbrev=
-and =try-expand-line= respectively.
+Say you have a =very-very-long-emacs-lisp-variable-name=, you need only type =vvn= and press a shortcut key (=M-s <return>=), it will be completed into that long name! Or you can type =vln= if you like that better!
 
-To taste the 1st flavor, say in an emacs-lisp buffer, you have a long
-variable name, =this-is-a-very-long-var-name=, and a long function
-name, =this-is-a-very-long-function-name=, to reproduce the first
-name, you can simply type =tvv=, and press =M-g <return>=; or =tvf=
-and =M-g <return>= for the second (compare this to
-=try-expand-dabbrev=).
-
-For the 2nd flavor, in the buffer I'm editting this readme, I can type
-=(')= and =M-s <return>= to reproduce the following expression
-(compare this to =try-expand-line=) :
-
-#+BEGIN_SRC emacs-lisp
-  (require 'skeleton-complete)
-#+END_SRC
-
-You can consider it as =abbrev-mode= or =yasnippet= on the go (with no
-need to prepare the long completion into a template beforehand: it's
-less formal and more free style!).
-
-=skeleton-complete= is not related to [[http://www.emacswiki.org/emacs/SkeletonMode][skeleton-mode]], except they both
-have =skeleton= in their names.
+You can type the *bit* that you like better, or is easier to remember, or is easier to type.
 
 * Usage
 
 0. Install [[https://github.com/browse-kill-ring/browse-kill-ring][browse-kill-ring]].
 
-1. =(require 'skeleton-complete)=
+1. =(require 'bbyac)=
 
-2. =(skeleton-complete-global-mode 1)=
+2. =(bbyac-global-mode 1)=
 
-3. Type a skeleton and press =M-g <return>= or =M-s <return>= based on
-   the flavor you wanted.
+3. Type a little bit and press =M-g <return>= to complete a /word/ or =M-s <return>= to complete a whole line.
 
-For more detailed discussion about this dark magic, see [[http://baohaojun.github.io/skeleton-complete.html][this github page]].
+For more detailed discussion, see [[http://baohaojun.github.io/skeleton-complete.html][this github page]] (bbyac used to be name skeleton-complete.el, but I have renamed it to avoid confusion with skeleton.el).
 
-* Ack
+* The Gory Details
 
-Thank [[http://www.newsmth.net/bbscon.php?bid=573&id=88915][wuhaochi]] from NewSmth BBS's Emacs board (best Chinese Emacs
-forum) for suggesting the (more useful) 2nd flavor when I posted about
-the 1st flavor there.
+Bbyac has several flavors of completion: the most usefull two being
+single word completion and arbitrary string completion, which is like
+=hippie-expand='s =try-expand-dabbrev= and =try-expand-line=.
+
+To taste the single word flavor, say in an emacs-lisp buffer, you have a long
+variable name, =this-is-a-very-long-var-name=, and a long function
+name, =this-is-a-very-long-function-name=, to reproduce the first
+name, you can simply type =tvv=, and press =M-g <return>=; or =tvf=
+and =M-g <return>= for the second. You don't need selecte from the 2
+names. Compare this to =try-expand-dabbrev=, where you will need type
+=this-is-=, i.e., you MUST start typing from the start without
+skipping any characters. And then you hit M-/, but you may NEED select
+from the 2 names by pressing M-/ again (and again if there is =this-is-a-second-very-long-name= 😁).
+When you do need to select from multiple completions, bbyac will sort them according to their distance to the point approximately, and use ecomplete or browse-kill-ring to let you select them:
+
+[[http://baohaojun.github.io/images/bbyac-completion-select.png]]
+
+For the arbitrary string flavor, in the buffer I'm editting this readme, I can type
+=(')= and =M-s <return>= to reproduce the following expression
+(compare this to =try-expand-line=) :
+
+#+BEGIN_SRC emacs-lisp
+  (require 'bbyac)
+#+END_SRC
+
+You can consider it as =abbrev-mode= or =yasnippet= on the go, with no
+need to prepare the long completion with a template.
+
+* The Algorithm
+
+You can take a look at the source code. But here's a simplified explanation:
+
+1. You type =vvn=
+2. Bbyac rewrite it as a regexp: =v.*?v.*?n= or =\bv.*?v.*?n= according to the flavor.
+3. Bbyac search the regexp in the current buffer (and some other buffers, which you are referred to the code) according to the flavor you are using.
+4. All matching words/strings are collected into a list
+5. The list is sorted
+6. If only one match in the list, complete it; or else display them for selection.
+
+* Bugs/Limitations
+
+If there are very long strings in the buffer, the regexp may become too complex to search and take a long time. You need press C-g😭.
+
+To wordly complete =HelloWorld=, you can type =eW=. But to stringly complete =HelloWorld=, =eW= won't match it, because it will be rewritten as =\be.*?W=. This is to reduce the number of arbitrary string matches. You must start the *bit* with =h= or =H= to string complete =HelloWorld=.
+
+
+
+* Thanks
+
+Thank [[http://www.newsmth.net/bbscon.php?bid=573&id=88915][wuhaochi]] from NewSmth BBS's Emacs board (best Chinese Emacs forum) for suggesting the very useful arbitrary string flavor when I posted about the single word flavor there.
 
 Thank Matus Goljer (author of [[https://github.com/Fuco1/smartparens][smartparens]]) for teaching me a lot on
 emacs lisp programming (see the [[https://github.com/baohaojun/skeleton-complete/issues][issues of skeleton-complete]]).
