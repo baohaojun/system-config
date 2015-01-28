@@ -28,7 +28,10 @@ But I have found it insufficient, for the following reasons.
    anything.el (now renamed helm); Firefox's URL type and match; and
    Emacs's built in =C-h f= (where you can type =-hello= and =Tab=,
    and Emacs will expand it to =view-hello-file=: you do not need
-   start with =view=. Not so with hippie-expand).
+   start with =view=. Not so with hippie-expand). See the following
+   picture for firefox URL completion (you do not need start with =http://=):
+
+   [[../../../../images/firefox-complete-xx.png][file:../../../../images/firefox-complete-xx.png]]
 
 2. Selecting from multiple matches is not instinctive.
 
@@ -104,7 +107,7 @@ But of course, often the user still need to choose from multiple
 matches. =Skeleton-complete= uses =ecomplete.el= for presenting the
 user the matches he/she can choose from:
 
-[[../../../../images/post/skeleton-id.png]]
+[[../../../../images/post/skeleton-id.png][file:../../../../images/post/skeleton-id.png]]
 
 From the screenshot, you can see that the matches are presented in a
 order according to their distance to the point. According to principle
@@ -126,7 +129,7 @@ only. Say I have a long expression, and I will complete the whole
 expression, once again you type an “interesting” skeleton, and type
 =M-s <return>=, it will get fleshed out:
 
-[[../../../../images/post/skeleton-exp.png]]
+[[../../../../images/post/skeleton-exp.png][file:../../../../images/post/skeleton-exp.png]]
 
 Here's how it works. First the skeleton is broken down to bare bones,
 =$=, =h=, =1= and =}=. Then they are stringed to become
@@ -207,7 +210,7 @@ don't try to use 2nd flavor skeleton-complete with them, run away!
 
 [fn:dvu] I typed the 2nd and this =Déjà vu= with =dvu= and =M-s
 <return>=. And the 1st is typed as =D\'ej\`a vu= and =M-x
-iso-tex2iso=, if you don't know already:-)
+iso-tex2iso=, if you don't know already😊
 
 [fn:why-non-greedy] In the first flavor, either greedy or non-greedy
 will do. But in the 2nd flaver, I must use non-greedy to give user
