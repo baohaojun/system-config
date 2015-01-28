@@ -1400,7 +1400,11 @@ criteria can be provided via the optional match-string argument "
   (when (or (eobp)
             (looking-at "\n###start of comment###"))
     (save-excursion
-    (insert "\n"))))
+      (insert "\n"))))
+
+(defadvice helm-initialize (around helm-initialize-no-input-method activate)
+  (let ((current-input-method nil))
+    ad-do-it))
 
 (defun bhj-update-loge ()
   "Update logs in java files"

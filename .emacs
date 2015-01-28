@@ -1,5 +1,6 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
+;;; Code:
 (when (file-exists-p (format "~/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type)))
   (load (format "~/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type))))
 
@@ -43,31 +44,21 @@
 (when (file-exists-p (expand-file-name "~/.config/emacs.gen.el"))
   (load (expand-file-name "~/.config/emacs.gen.el")))
 
-
-(when (> emacs-major-version 23)
-  (require 'package)
-  (add-to-list 'package-archives
-               '("marmalade" . "http://marmalade-repo.org/packages/"))
-  (add-to-list 'package-archives
-               '("melpa" . "http://melpa.milkbox.net/packages/"))
-  (package-initialize))
-
 (when (and
        (> emacs-major-version 23)
        (file-exists-p "~/src/github/emacs.d/init.el")
        (not (string= (getenv "ORG2PDF") "true")))
-(setq load-path
-      (nconc (list
-              (expand-file-name "~/src/github/emacs.d")
-              (expand-file-name "~/src/github/emacs.d/lisp")
-              )
-             load-path))
+  (setq load-path
+        (nconc (list
+                (expand-file-name "~/src/github/emacs.d")
+                (expand-file-name "~/src/github/emacs.d/lisp")
+                )
+               load-path))
   (load "~/src/github/emacs.d/init.el"))
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
   ;;press F2 to get MSDN help
-  (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
-  (setq locate-command "locateEmacs.sh"))
+  (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word)))))
 
 (when (eq system-type 'windows-nt)
   (require 'cygwin-mount)
@@ -89,11 +80,11 @@
 (register-input-method
  "sdim" "euc-cn" 'sdim-use-package "影舞笔")
 
-(mapcar (lambda (x) (add-hook x (lambda ()
-                    (setq beginning-of-defun-function #'ajoke--beginning-of-defun-function)
-                    (local-set-key [?\C-\M-a] 'beginning-of-defun)
-                    (local-set-key [?\C-\M-e] 'end-of-defun))))
-        (list 'c-mode-hook 'c++-mode-hook 'csharp-mode-hook 'java-mode-hook))
+(mapc (lambda (x) (add-hook x (lambda ()
+                           (setq beginning-of-defun-function #'ajoke--beginning-of-defun-function)
+                           (local-set-key [?\C-\M-a] 'beginning-of-defun)
+                           (local-set-key [?\C-\M-e] 'end-of-defun))))
+      (list 'c-mode-hook 'c++-mode-hook 'csharp-mode-hook 'java-mode-hook))
 
 (defun csharp-end-of-defun (&optional arg)
   (interactive)
@@ -101,11 +92,11 @@
       (beginning-of-defun-raw -1)
     (end-of-defun arg)))
 
-(mapcar (lambda (x) (add-hook x (lambda ()
-                    (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
-                    (c-set-offset 'innamespace 0)
-                    (c-set-offset 'substatement-open 0))))
-        (list 'c-mode-hook 'c++-mode-hook))
+(mapc (lambda (x) (add-hook x (lambda ()
+                           (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
+                           (c-set-offset 'innamespace 0)
+                           (c-set-offset 'substatement-open 0))))
+      (list 'c-mode-hook 'c++-mode-hook))
 
 (auto-image-file-mode)
 (put 'set-goal-column 'disabled nil)
@@ -139,7 +130,7 @@
 (standard-display-ascii ?\227 "\-")
 (standard-display-ascii ?\225 "\*")
 
-(keydef "C-S-g" (progn (setq grep-buffers-buffer-name "*grep-buffers*")(grep-buffers)))
+(keydef "C-S-g" (let ((grep-buffers-buffer-name "*grep-buffers*")) (grep-buffers)))
 
 
 

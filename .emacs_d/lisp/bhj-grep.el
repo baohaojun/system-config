@@ -1,5 +1,16 @@
+;;; bhj-grep --- My grep setup.
+
+;;; Commentary:
+
+
 (require 'ajoke)
 (require 'grep)
+
+;;; Code:
+(defgroup bhj-grep nil
+  "My grep setup"
+  :group 'grep)
+
 
 (defun grep-shell-quote-argument (argument)
   "Quote ARGUMENT for passing as argument to an inferior shell."
@@ -209,7 +220,29 @@
     (call-interactively 'grep-bhj-dir)
     (setq grep-rgrep-history grep-history)))
 
-; (global-set-key [(meta g) (r)] 'bhj-grep)
-(define-key goto-map "r" 'bhj-grep)
+(defvar bhj-grep-mode-map (make-sparse-keymap)
+  "Bhj-Grep mode map.")
+(define-key bhj-grep-mode-map (kbd "M-g r") 'bhj-grep)
+(define-key bhj-grep-mode-map (kbd "M-s E") 'bhj-occur-logcat-errors)
+(define-key bhj-grep-mode-map (kbd "M-s e") 'bhj-occur-make-errors)
+(define-key bhj-grep-mode-map (kbd "M-s g") 'bhj-do-code-generation)
+(define-key bhj-grep-mode-map (kbd "M-s m") 'bhj-occur-merge-conflicts)
+(define-key bhj-grep-mode-map (kbd "M-g o") 'bhj-occur)
+(define-key bhj-grep-mode-map (kbd "M-.") 'grep-gtags)
+
+(define-minor-mode bhj-grep-mode
+  "Toggle the `bhj-grep-mode' minor mode."
+  :lighter " BG"
+  :keymap bhj-grep-mode-map
+  :group 'bhj-grep)
+
+(define-globalized-minor-mode bhj-grep-global-mode
+  bhj-grep-mode
+  turn-on-bhj-grep-mode)
+
+(defun turn-on-bhj-grep-mode ()
+  "Turn on `bhj-grep-mode'."
+  (interactive)
+  (bhj-grep-mode 1))
 
 (provide 'bhj-grep)
