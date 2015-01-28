@@ -862,7 +862,7 @@
           ("[偷笑]" "~/src/github/private-config/etc/weibo-emojis/d_touxiao.png" ("TouXiao" "sina-weibo"))
           ("[笑cry]" "~/src/github/private-config/etc/weibo-emojis/d_xiaoku.png" ("XiaoCRY" "sina-weibo"))
           ("[doge]" "~/src/github/private-config/etc/weibo-emojis/d_doge.png" ("DOGE" "sina-weibo"))
-          ("[喵喵]" "~/tmp/weibo/res/drawable-hdpi/d_miao.png" ("MiaoMiao" "sina-weibo"))
+          ("[喵喵]" "~/src/github/private-config/etc/weibo-emojis/d_miao.png" ("MiaoMiao" "sina-weibo"))
           ("[酷]" "~/src/github/private-config/etc/weibo-emojis/d_ku.png" ("Ku" "sina-weibo"))
           ("[衰]" "~/src/github/private-config/etc/weibo-emojis/d_shuai.png" ("Shuai" "sina-weibo"))
           ("[闭嘴]" "~/src/github/private-config/etc/weibo-emojis/d_bizui.png" ("BiZui" "sina-weibo"))
