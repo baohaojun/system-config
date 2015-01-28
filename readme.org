@@ -1,4 +1,4 @@
-#+title: =bbyac=: Type a little Bit, and Bang! Yet Another Completion.
+#+title: Bit Bang! Yet Another Completion.
 
 Or you can think it as: type a little Bit, and Bang! Your Are Completed.
 
@@ -9,7 +9,10 @@ into a much longer string. Isn't this what every completion method do?
 😼, the secret is, with bbyac, the *a little bit* you need to type
 before you bang it, is actually almost *any* little bit.
 
-Say you have a =very-very-long-emacs-lisp-variable-name=, you need only type =vvn= and press a shortcut key (=M-s <return>=), it will be completed into that long name! Or you can type =vln= if you like that better!
+Say you have a =very-very-long-emacs-lisp-variable-name=, you need
+only type =vvn= and press a shortcut key (=M-s <return>=), it will be
+completed into that long name. Or you can type =vln= if you like that
+better.
 
 You can type the *bit* that you like better, or is easier to remember, or is easier to type.
 
@@ -21,7 +24,7 @@ You can type the *bit* that you like better, or is easier to remember, or is eas
 
 2. =(bbyac-global-mode 1)=
 
-3. Type a little bit and press =M-g <return>= to complete a /word/ or =M-s <return>= to complete a whole line.
+3. Type a little bit and press =M-g <return>= to complete a /word/ or =M-s <return>= to complete an arbitrary string.
 
 For more detailed discussion, see [[http://baohaojun.github.io/skeleton-complete.html][this github page]] (bbyac used to be name skeleton-complete.el, but I have renamed it to avoid confusion with skeleton.el).
 
