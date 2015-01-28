@@ -35,8 +35,11 @@
 ;;; Code:
 
 (require 'ecomplete)
-(require 'cl)
+
+(eval-when-compile
+  (require 'cl))
 (require 'thingatpt)
+(require 'ecomplete)
 (require 'browse-kill-ring)
 
 (defgroup bbyac nil
@@ -56,16 +59,14 @@ unreliable, change this to a very small value, such as 1 to force browse-kill-ri
 
 (defvar bbyac--start
   nil
-  "The start of the bit that is to be replaced with the
-expansion.
+  "The start of the bit that is to be expanded.
 
 This var should be set when you are extracting the bit, and
 it is used when the expansion of the bit is to be inserted.")
 
 (defvar bbyac--end
   nil
-  "The end of the bit that is to be replaced with the
-expansion.
+  "The end of the bit that is to be expanded.
 
 See `bbyac--start'.")
 
@@ -78,16 +79,19 @@ See `bbyac--start'.")
   "Whether the bit contains upcase char.")
 
 (defun bbyac--contains-upcase-p (str)
+  "Return non-nil if STR contain upcase chars."
   (let ((case-fold-search nil))
     (string-match-p "[[:upper:]]" str)))
 
 (defun bbyac--clear-vars ()
+  "Clear the vars used by this package."
   (setq bbyac--start nil
         bbyac--end nil
         bbyac--the-bit nil
         bbyac--contains-upcase nil))
 
 (defun bbyac--interleave (l1 l2)
+  "Interleave the elements from the 2 lists L1 and L2."
   (let (result)
     (while (and l1 l2)
       (setq result (cons (car l1) result) ; consing like this makes strlist in bad order
@@ -97,17 +101,19 @@ See `bbyac--start'.")
     (append (nreverse result) l1 l2)))
 
 (defun bbyac--difference (l1 l2)
+  "Return a list of L1 with the elements also in L2 removed."
   (delete-if (lambda (e) (member e l2)) l1))
 
 (defun bbyac--regexp-quote (char)
-  "Regexp-quote char smartly.
+  "Regexp-quote CHAR.
+
 If bbyac--the-bit contains upcase chars, then
-case-fold-search will be turned on, in that case, we want the
+`case-fold-search will be turned on, in that case, we want the
 upcase char to match exactly, but the downcase char to match
 either an upcase or a downcase.
 
 For e.g., given HelloWorld and helloWorld, we want Hw to match
-the former, but not the later. If the w in Hw was to made to
+the former, but not the later.  If the w in Hw was to made to
 match w only, then none will match, which sometimes is a
 surprise."
   (if (and bbyac--contains-upcase
@@ -150,9 +156,9 @@ In addition, extracters can also set the variables
 
 If the region is active, the bit is what is in the region.
 
-If the region is not active, the bit should be found by
-checking white spaces (see the code). For e.g., if we are looking
-back at (with the last * denoting where the point is):
+If the region is not active, the bit should be found by checking
+white spaces (see the code).  For e.g., if we are looking back
+at (with the last * denoting where the point is):
 
     [{)}& aonehua naoehu[)+{ *
 
@@ -194,16 +200,22 @@ See also `bbyac--symbol-bbyac-extracter'."
             the-regexp (replace-regexp-in-string "^" "^" the-regexp))
       the-regexp)))
 
-(defmacro bbyac--make-matcher (matcher-name doc extract-match move-along)
-  "Make a new matcher named as MATCHER-NAME with EXTRACT-MATCH and MOVE-ALONG.
+(defmacro bbyac--make-matcher (matcher-name matcher-doc extract-match move-along)
+  "Make a new matcher function named as MATCHER-NAME.
+
+MATCHER-DOC is the doc for the new matcher function.
+
+EXTRACT-MATCH and MOVE-ALONG specifies how to extract the bit and
+how to move to the next position after a match is found.
+
 
 The function MATCHER-NAME thus created will take 3 arguments, RE,
-BUFFER, and TAG. When called, it will search the BUFFER for RE,
+BUFFER, and TAG.  When called, it will search the BUFFER for RE,
 return all the matching substrings in an order dependent on
-TAG. See `bbyac--matcher'.
+TAG.  See `bbyac--matcher'.
 
-EXTRACT-MATCH and MOVE-ALONG are 2 lisp sexp, you can use the
-variables mb and me in these sexps. Result of EXTRACT-MATCH
+EXTRACT-MATCH and MOVE-ALONG are 2 Lisp sexp, you can use the
+variables mb and me in these sexps.  Result of EXTRACT-MATCH
 should be a string; MOVE-ALONG is only used for its side-effects."
   (declare (doc-string 2))
   `(defun ,matcher-name (re buffer tag)
@@ -220,8 +232,8 @@ should be a string; MOVE-ALONG is only used for its side-effects."
                (let ((substr ,extract-match))
                  (cond
                   ((and (eq tag 'current)
-                       (< mb bbyac--start)
-                       (> me bbyac--start)))
+                        (< mb bbyac--start)
+                        (> me bbyac--start)))
                   (t
                    (if (and (< (point) old-point) (eq tag 'current))
                        ;; substr closer to the old-point is at the head of strlist-before, in good order
@@ -333,12 +345,17 @@ all 'buried buffers."
        buried-buffers)))))
 
 (defun bbyac--get-matches (re matcher buffer-filter)
-  "Given a regexp RE, run MATCHER over all the buffers returned
-  BUFFER-FILTER.
+  "Find all matching strings.
 
-Return the list of strings thus matched.
+RE is the regexp for the matching.
 
-See `bbyac--matcher' and `bbyac--buffer-filter'."
+MATCHER specifies how to match.  See `bbyac--matcher'.
+
+BUFFER-FILTER specifies which buffers should be searched.  See
+`bbyac--buffer-filter'.
+
+Return the list of strings thus matched."
+
   (bbyac--clean-up
    (let ((matched-buried nil)
          (matched-any nil)
@@ -359,15 +376,16 @@ See `bbyac--matcher' and `bbyac--buffer-filter'."
              (funcall buffer-filter)))))
 
 (defun bbyac--string-multiline-p (str)
-  "Return t if STR is too long or span multilines"
+  "Return t if STR is too long or span multilines."
   (or (> (length str) bbyac-max-chars)
       (string-match-p "\n" str)))
 
 (defun bbyac--general-expand (extracter &optional matcher buffer-filter)
   "General function to expand a bit using the functional arguments.
 
-See `bbyac--symbol-bbyac-extracter' for EXTRACTER. See
-`bbyac--matcher' for MATCHER. See `bbyac--buffer-filter' for BUFFER-FILTER.
+See `bbyac--symbol-bbyac-extracter' for EXTRACTER.  See
+`bbyac--matcher' for MATCHER.  See `bbyac--buffer-filter' for
+BUFFER-FILTER.
 
 If wanted, user can extend bbyac with their own
 EXTRACTER, MATCHER and BUFFER-FILTER."
@@ -434,12 +452,17 @@ S-expression enclosing the matched region."
                               #'bbyac--paragraph-extracting-matcher))
 
 (defmacro bbyac--max-minibuffer-lines ()
+  "Compute the max number of lines the minibuffer can display."
   `(if (floatp max-mini-window-height)
        (truncate (* (frame-height) max-mini-window-height))
      max-mini-window-height))
 
 (defun bbyac--highlight-match-line (matches line max-line-num)
-  "This function is copy and modified from ecomplete-highlight-match-line"
+  "Highlight the light matching line.
+
+This function is copy and modified from
+`ecomplete-highlight-match-line'.  MATCHES and LINE are used by
+that function.  MAX-LINE-NUM is the max number of lines."
   (let* ((max-lines (bbyac--max-minibuffer-lines))
          (max-lines-1 (- max-lines 2))
          (max-lines-2 (1- max-lines-1)))
@@ -466,7 +489,7 @@ S-expression enclosing the matched region."
         (ecomplete-highlight-match-line matches line))))))
 
 (defun bbyac--display-matches (strlist)
-  "Display a list of matches, allow the user to choose from them.
+  "Display STRLIST for the user to choose from its elements.
 
 This func is copied and modified from `ecomplete-display-matches'."
   (let* ((matches (concat
@@ -499,6 +522,7 @@ This func is copied and modified from `ecomplete-display-matches'."
           (nth line (split-string matches "\n")))))))
 
 (defun bbyac--clean-up (list)
+  "Clean up the LIST."
   (delete-dups
    (delete ""
            (if (and (boundp 'bbyac--the-bit)
