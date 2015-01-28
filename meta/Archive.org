@@ -1,6 +1,10 @@
 #+title: Archive
  * 2015
   - 2015-01
+   * 2015-01-28
+
+     [[../blog/2015/01/28/0-xdotool-is-fucking-with-dvp.org][xdotool is fucking with dvp]]
+
    * 2015-01-27
 
      [[../blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.org][ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑]]

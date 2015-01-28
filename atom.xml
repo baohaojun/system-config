@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[xdotool is fucking with dvp]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/01/28/0-xdotool-is-fucking-with-dvp.html"/>
+    <updated>2015-26-28T10:01:22+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/01/28/0-xdotool-is-fucking-with-dvp.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑]]></title>
     <link href="http://baohaojun.github.io/blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html"/>
-    <updated>2015-45-28T09:01:33+08:00</updated>
+    <updated>2015-01-28T09:46:06+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.html"/>
     <updated>2014-11-23T23:20:34+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.html"/>
-    <updated>2014-11-09T00:19:28+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.html</id>
   </entry>
 </feed>
