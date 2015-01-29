@@ -5,7 +5,7 @@
 ;; Author: Bao Haojun <baohaojun@gmail.com>
 ;; Maintainer: Bao Haojun <baohaojun@gmail.com>
 ;; Created: 28th January 2015
-;; Package-Requires: ((browse-kill-ring "1.3"))
+;; Package-Requires: ((browse-kill-ring "1.3") (cl-lib "0.5"))
 ;; Keywords: abbrev
 ;; Version: 0.0.20150128
 ;; URL: https://github.com/baohaojun/bbyac
@@ -36,8 +36,7 @@
 
 (require 'ecomplete)
 
-(eval-when-compile
-  (require 'cl))
+(require 'cl-lib)
 (require 'thingatpt)
 (require 'ecomplete)
 (require 'browse-kill-ring)
@@ -102,7 +101,7 @@ See `bbyac--start'.")
 
 (defun bbyac--difference (l1 l2)
   "Return a list of L1 with the elements also in L2 removed."
-  (delete-if (lambda (e) (member e l2)) l1))
+  (cl-delete-if (lambda (e) (member e l2)) l1))
 
 (defun bbyac--regexp-quote (char)
   "Regexp-quote CHAR.
@@ -331,7 +330,7 @@ all 'buried buffers."
                                             (window-buffer w))
                                           (window-list)))))
         (buried-buffers (bbyac--difference (buffer-list) (cons current-buffer visible-buffers))))
-    (delete-if
+    (cl-delete-if
      (lambda (buf-tag) (eq (with-current-buffer (car buf-tag) major-mode) 'image-mode))
      (nconc
       (list (cons current-buffer 'current))
@@ -360,20 +359,20 @@ Return the list of strings thus matched."
    (let ((matched-buried nil)
          (matched-any nil)
          result)
-     (mapcan (lambda (tagged-buffer)
-               (let ((buffer (car tagged-buffer))
-                     (tag (cdr tagged-buffer))
-                     strlist)
-                 (if matched-buried
-                     nil
-                   (prog1
-                       (unless (and matched-any (eq tag 'buried))
-                         (setq strlist (funcall matcher re buffer tag)))
-                     (when strlist
-                       (setq matched-any t))
-                     (when (and strlist (eq tag 'buried))
-                       (setq matched-buried t))))))
-             (funcall buffer-filter)))))
+     (cl-mapcan (lambda (tagged-buffer)
+                  (let ((buffer (car tagged-buffer))
+                        (tag (cdr tagged-buffer))
+                        strlist)
+                    (if matched-buried
+                        nil
+                      (prog1
+                          (unless (and matched-any (eq tag 'buried))
+                            (setq strlist (funcall matcher re buffer tag)))
+                        (when strlist
+                          (setq matched-any t))
+                        (when (and strlist (eq tag 'buried))
+                          (setq matched-buried t))))))
+                (funcall buffer-filter)))))
 
 (defun bbyac--string-multiline-p (str)
   "Return t if STR is too long or span multilines."
