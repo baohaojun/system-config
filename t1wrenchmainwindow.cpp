@@ -592,9 +592,18 @@ void T1WrenchMainWindow::on_tbMailAddTo_clicked()
     afterUsingContactDialog();
 }
 
+static void addMailContact(const QString& contact, QPlainTextEdit* where)
+{
+    QString text = where->toPlainText();
+    if (text.startsWith(contact + ",") || text.contains("," + contact + ",")) {
+        return;
+    }
+    where->setPlainText(text + contact + ",");
+}
+
 void T1WrenchMainWindow::on_MailTo(const QString& to)
 {
-    ui->ptMailTo->setPlainText(ui->ptMailTo->toPlainText() + to + ",");
+    addMailContact(to, ui->ptMailTo);
 }
 
 void T1WrenchMainWindow::on_tbMailAddCc_clicked()
@@ -606,7 +615,7 @@ void T1WrenchMainWindow::on_tbMailAddCc_clicked()
 
 void T1WrenchMainWindow::on_MailCc(const QString& to)
 {
-    ui->ptMailCc->setPlainText(ui->ptMailCc->toPlainText() + to + ",");
+    addMailContact(to, ui->ptMailCc);
 }
 
 void T1WrenchMainWindow::on_tbMailAddBcc_clicked()
@@ -618,7 +627,7 @@ void T1WrenchMainWindow::on_tbMailAddBcc_clicked()
 
 void T1WrenchMainWindow::on_MailBcc(const QString& to)
 {
-    ui->ptMailBcc->setPlainText(ui->ptMailBcc->toPlainText() + to + ",");
+    addMailContact(to, ui->ptMailBcc);
 }
 
 void T1WrenchMainWindow::on_tbMailAddAttachment_clicked()
