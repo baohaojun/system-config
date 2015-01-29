@@ -344,6 +344,38 @@ Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
 
 ;;;***
 
+;;;### (autoloads nil "../skeleton-complete/bbyac" "../skeleton-complete/bbyac.el"
+;;;;;;  (21706 12568 336956 481000))
+;;; Generated autoloads from ../skeleton-complete/bbyac.el
+
+(autoload 'bbyac-mode "../skeleton-complete/bbyac" "\
+Toggle the `bbyac-mode' minor mode.
+
+\(fn &optional ARG)" t nil)
+
+(defvar bbyac-global-mode nil "\
+Non-nil if Bbyac-Global mode is enabled.
+See the command `bbyac-global-mode' for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `bbyac-global-mode'.")
+
+(custom-autoload 'bbyac-global-mode "../skeleton-complete/bbyac" nil)
+
+(autoload 'bbyac-global-mode "../skeleton-complete/bbyac" "\
+Toggle Bbyac mode in all buffers.
+With prefix ARG, enable Bbyac-Global mode if ARG is positive;
+otherwise, disable it.  If called from Lisp, enable the mode if
+ARG is omitted or nil.
+
+Bbyac mode is enabled in all buffers where
+`turn-on-bbyac-mode' would do it.
+See `bbyac-mode' for more information on Bbyac mode.
+
+\(fn &optional ARG)" t nil)
+
+;;;***
+
 ;;;### (autoloads (ahk-mode) "ahk-mode" "ahk-mode.el" (21104 33899
 ;;;;;;  312653 180000))
 ;;; Generated autoloads from ahk-mode.el
@@ -805,8 +837,8 @@ Pop back to where ajoke was last invoked.
 
 ;;;***
 
-;;;### (autoloads nil "bhj-grep" "bhj-grep.el" (21367 14380 879985
-;;;;;;  437000))
+;;;### (autoloads nil "bhj-grep" "bhj-grep.el" (21706 12324 252963
+;;;;;;  618000))
 ;;; Generated autoloads from bhj-grep.el
 
 (autoload 'bhj-grep-tag-default "bhj-grep" "\
@@ -853,6 +885,32 @@ Pop back to where ajoke was last invoked.
 
 
 \(fn)" t nil)
+
+(autoload 'bhj-grep-mode "bhj-grep" "\
+Toggle the `bhj-grep-mode' minor mode.
+
+\(fn &optional ARG)" t nil)
+
+(defvar bhj-grep-global-mode nil "\
+Non-nil if Bhj-Grep-Global mode is enabled.
+See the command `bhj-grep-global-mode' for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `bhj-grep-global-mode'.")
+
+(custom-autoload 'bhj-grep-global-mode "bhj-grep" nil)
+
+(autoload 'bhj-grep-global-mode "bhj-grep" "\
+Toggle Bhj-Grep mode in all buffers.
+With prefix ARG, enable Bhj-Grep-Global mode if ARG is positive;
+otherwise, disable it.  If called from Lisp, enable the mode if
+ARG is omitted or nil.
+
+Bhj-Grep mode is enabled in all buffers where
+`turn-on-bhj-grep-mode' would do it.
+See `bhj-grep-mode' for more information on Bhj-Grep mode.
+
+\(fn &optional ARG)" t nil)
 
 ;;;***
 

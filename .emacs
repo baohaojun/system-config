@@ -191,8 +191,6 @@
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
 
-(require 'bbyac)
-(bbyac-global-mode 1)
 
 
 (keydef "C-M-j" 'bhj-jdk-help)
@@ -339,6 +337,8 @@
 (load "bhj-set-key.el")
 (load "bhj-autoloads.el")
 (load "bhj-eval-after-load.el")
+(bbyac-global-mode 1)
+(bhj-grep-global-mode 1)
 (when (file-exists-p "~/external/.emacs_d/emacs-wide")
   (load "~/external/.emacs_d/emacs-wide"))
 

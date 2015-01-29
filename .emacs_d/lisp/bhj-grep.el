@@ -227,15 +227,20 @@
 (define-key bhj-grep-mode-map (kbd "M-s e") 'bhj-occur-make-errors)
 (define-key bhj-grep-mode-map (kbd "M-s g") 'bhj-do-code-generation)
 (define-key bhj-grep-mode-map (kbd "M-s m") 'bhj-occur-merge-conflicts)
+(define-key bhj-grep-mode-map (kbd "M-s r") 'bhj-rgrep)
 (define-key bhj-grep-mode-map (kbd "M-g o") 'bhj-occur)
 (define-key bhj-grep-mode-map (kbd "M-.") 'grep-gtags)
+(define-key bhj-grep-mode-map (kbd "M-g n") 'next-error)
+(define-key bhj-grep-mode-map (kbd "M-g p") 'previous-error)
 
+;;;###autoload
 (define-minor-mode bhj-grep-mode
   "Toggle the `bhj-grep-mode' minor mode."
   :lighter " BG"
   :keymap bhj-grep-mode-map
   :group 'bhj-grep)
 
+;;;###autoload
 (define-globalized-minor-mode bhj-grep-global-mode
   bhj-grep-mode
   turn-on-bhj-grep-mode)
