@@ -1,1 +1,134 @@
-../../src/github/private-config/bin/android-do-phone-ota
+#!/bin/bash
+set -e
+if test -z "$ANDROID_SERIAL"; then
+    export ANDROID_SERIAL=$(my-adb devices?|pn 1)
+fi
+
+export FORWARD_PORT=$(perl -e 'print 54321 + '0x$(echo $ANDROID_SERIAL | md5sum | cut -b 1-3))
+
+if echo $SHELLOPTS | grep xtrace; then
+    export SHELLOPTS
+fi
+
+android_dir=${android_dir:-~/src/android}
+if test ! -e $android_dir/build/envsetup.sh; then
+    echo "Can't find android source repo at ~/src/android."
+    read -e -p "Please input your android source code directory: " android_dir
+    android_dir=${android_dir/\~/$HOME}
+fi
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test ! -e $android_dir/build/envsetup.sh; then
+    die "Can't find android source repo at '$android_dir'"
+fi
+
+export android_dir
+
+if ! running-as-root; then
+    (
+        flock 9
+        cd $android_dir/build/tools/releasetools
+        git fetch smartisan sandbox-for-linux-ota
+        git co FETCH_HEAD
+        sudo modprobe loop >/dev/null 2>&1 || true
+    ) 9> /tmp/$(basename $0).patch.lock
+fi
+
+## start generated code
+TEMP=$(getopt -o fhDd:t:s:b: --long "help,debug,cmReleaseDir:tmpTag:"  -n $(basename $0) -- "$@")
+cmReleaseDir=.
+tmpTag=$$
+export ANDROID_SYSTEM_IMG=
+export ANDROID_BOOT_IMG=
+debug=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -h|--help)
+            cat <<EOF
+Usage:
+    android-do-phone-ota [-f] [-h|--help] [-D|--debug] [-d|--cmReleaseDir cm-release-dir] [-t|--tmpTag] [-s system_img] [-b boot_img]
+
+        -f: full system, do not compare with phone
+        -h: help
+        -D: enable debugging
+        -d: use the cm release dir specified, or the current dir by default
+        -t: use a tmp tag, mainly for debugging
+        -s: do not use cm released system.img, but use a self built sparse system.img
+        -b: do not use cm released boot.img, but use a self built sparse boot.img
+EOF
+            exit
+            ;;
+        -f)
+            export FULL_SYSTEM_OTA=true
+            shift
+            ;;
+        -D|--debug)
+            debug=true
+            set -x
+            shift
+            ;;
+        -s)
+            ANDROID_SYSTEM_IMG=$2
+            shift 2
+            ;;
+        -b)
+            ANDROID_BOOT_IMG=$2
+            shift 2
+            ;;
+        -d|--cmReleaseDir)
+            cmReleaseDir=$2
+            shift 2
+            ;;
+        -t|--tmpTag)
+            tmpTag=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+if test ! -d "$cmReleaseDir"/sparse_images; then
+    die "Can't open sparse_images from cm release"
+fi
+cmReleaseDir=$(readlink -f $cmReleaseDir)
+
+android-generate-ota-from-cm-release -d "$cmReleaseDir" -t $tmpTag
+cd ~/tmp/system-$tmpTag
+rm push-done -f
+(
+    set -ex
+    my-adb push ota.zip /sdcard/
+    if test "$USER" = bhj -a -e ~/.android/adbkey.pub && ! my-adb cat /data/misc/adb/adb_keys | grep "$(cat ~/.android/adbkey.pub)"; then
+        my-adb 'if test ! -d /data/misc/adb; then mkdir /data/misc/adb; chown system.shell /data/misc/adb; chmod 2750 /data/misc/adb; fi'
+        adb push ~/.android/adbkey.pub /data/misc/adb/adb_keys
+    fi
+    adb forward tcp:$FORWARD_PORT localreserved:scitd
+    my-adb bash -x stcmd-subcase.sh reboot-rom
+    echo srem-helper reboot-rom | nc localhost $FORWARD_PORT
+    touch push-done
+)&
+sudo umount system
+if test $debug = true; then
+    bash || true
+else
+    set -x
+    sleep 5
+    my-adb echo hello
+    wait || true
+    test -e push-done || yes-or-no-p "push-done not found, continue to rm system-$tmpTag?"
+    cd ../
+    rm system-$tmpTag -rf
+    rm system-$tmpTag.img -f
+fi

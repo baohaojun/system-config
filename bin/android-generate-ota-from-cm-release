@@ -1,1 +1,209 @@
-../../src/github/private-config/bin/android-generate-ota-from-cm-release
+#!/bin/bash
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+function sudo() {
+    sudo.if "$@"
+}
+
+export android_dir=${android_dir:-~/src/android}
+
+(
+    flock 9
+    cd $android_dir
+    if test ! -e out/host/linux-x86/framework/signapk.jar -o ! -e out/host/linux-x86/bin/imgdiff  -o ! -e out/host/linux-x86/bin/fs_config; then
+        . build/envsetup.sh
+        lunch msm8974sfo_lte-user
+        if test -x ~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin/make; then
+            export PATH=~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin:$PATH
+        fi
+        if test -x ~/external/bin/Linux/ext/jdk/bin/java; then
+            export PATH=~/external/bin/Linux/ext/jdk/bin:$PATH
+        fi
+        make -j8 signapk imgdiff fs_config;
+    fi
+) 9> /tmp/$(basename $0).build.lock
+
+
+mypath=$(dirname $(readlink -f "$0"))
+## start generated code
+TEMP=$(getopt -o fd:t: --long "fullSystem,cmReleaseDir:tmpPostfix"  -n $(basename $0) -- "$@")
+cmReleaseDir=.
+fullSystem=${FULL_SYSTEM_OTA:-false}
+export tmpPostfix=$$
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -d|--cmReleaseDir)
+            cmReleaseDir=$2
+            shift 2
+            ;;
+        -t|--tmpPostfix)
+            tmpPostfix=$2
+            shift 2
+            ;;
+        -f|--fullSystem)
+            fullSystem=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+if test ! -d "$cmReleaseDir"/sparse_images; then
+    die "Can't open sparse_images from cm release"
+fi
+cmReleaseDir=$(readlink -f "$cmReleaseDir")
+
+(
+    # my-adb 'cd /; set -ex; rm -f /data/phone.md5; find ./system/ -type f | xargs md5sum > /data/system-files.md5.$$ && mv /data/system-files.md5.$$ /data/phone.md5; echo yes'.$$ | grep yes.$$&
+    if test $fullSystem != true; then
+        my-adb rm -f /sdcard/phone.md5
+        (
+            adb forward tcp:$FORWARD_PORT localreserved:scitd
+            echo srem-helper get-system-md5s | nc localhost $FORWARD_PORT
+        )&
+        my-adb bash -x stcmd-subcase.sh get-system-md5s&
+    fi
+    cd "$cmReleaseDir"/sparse_images;
+    if test ! -e ~/tmp/system-$tmpPostfix.img; then
+        if test -e "$ANDROID_SYSTEM_IMG"; then
+            if test "$ANDROID_SYSTEM_IMG" = /dev/zero -o "$ANDROID_SYSTEM_IMG" = /dev/null; then
+                dd if=/dev/zero of=~/tmp/system-$tmpPostfix.img.2 bs=1024 count=1 seek=$(pretty 1024*1024|pn 2)
+                mkfs.ext4 ~/tmp/system-$tmpPostfix.img.2
+            else
+                simg2img "$ANDROID_SYSTEM_IMG" ~/tmp/system-$tmpPostfix.img.2;
+            fi
+        else
+            sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2
+        fi
+        mv ~/tmp/system-$tmpPostfix.img.2 ~/tmp/system-$tmpPostfix.img
+    fi
+    mkdir -p ~/tmp/system-$tmpPostfix/system
+    cd ~/tmp/system-$tmpPostfix
+    sudo umount system >/dev/null 2>&1 || true
+    sudo umount SYSTEM >/dev/null 2>&1 || true
+    sudo mount -o loop ../system-$tmpPostfix.img system
+    sudo chown $USER\. -R system
+    if test ! -e system/etc/stcmd-scripts/reboot-rom -o ! -e system/etc/stcmd-scripts/get-system-md5s; then
+        mkdir -p system/etc/stcmd-scripts/
+        cp $android_dir/vendor/smartisanhw/log-crawler/scripts/reboot-rom system/etc/stcmd-scripts/
+        cp $android_dir/vendor/smartisanhw/log-crawler/scripts/get-system-md5s system/etc/stcmd-scripts/
+        if test ! -e system/build.prop; then
+            adb pull /system/build.prop system/build.prop
+        fi
+    fi
+    cp $mypath/gapps-system/* system/ -av
+    find system -type f -o -type l > system.list
+    find system -type d |perl -npe 's!$!/!' >> system.list
+
+    find ./system -type f |grep -v system/build.prop | xargs md5sum > cm.md5
+
+    if test $fullSystem != true; then
+        for x in $(seq 1 20); do
+            if my-adb pull /sdcard/phone.md5; then
+                break
+            fi
+            echo wait for phone md5 $x
+            sleep 1
+        done
+        if test ! -e phone.md5; then
+            echo -n > phone.md5
+        fi
+    else
+        echo -n > phone.md5
+    fi
+
+    perl -e 'open($phone, "<", "phone.md5");
+             open($cm, "<", "cm.md5");
+             while (<$phone>) {
+                 chomp;
+                 ($md5, $file) = split(" ");
+                 $phone{$file} = $md5;
+             }
+             while (<$cm>) {
+                 chomp;
+                 ($md5, $file) = split(" ");
+                 $cm{$file} = $md5;
+             }
+             for (keys %cm) {
+                 if ($cm{$_} eq $phone{$_}) {
+                     print "rm -f $_\n";
+                 }
+             }
+             for (keys %phone) {
+                 if ($cm{$_} ne $phone{$_}) {
+                     print "rm-phone $_\n";
+                 }
+             }
+         ' > rm-same-files.sh
+    perl -ne 'print if m/^rm-phone/' rm-same-files.sh > rm-phone.sh
+    perl -ne 'print unless m/^rm-phone/' -i rm-same-files.sh
+    bash rm-same-files.sh
+    rm -rf SYSTEM
+    cp system SYSTEM -av
+    rm -rf RECOVERY BOOT BOOTABLE_IMAGES
+    mkdir -p RECOVERY BOOT BOOTABLE_IMAGES
+    for type in boot recovery; do
+        (
+            TYPE=$(uc $type)
+            cd $TYPE
+            cp "$cmReleaseDir"/$type.img .
+            cp "$cmReleaseDir"/$type.img ../BOOTABLE_IMAGES
+            unbootimg $type.img
+            ramdisk_len2dir ramdisk.img
+            rm ramdisk.img
+            mv ramdisk.img-tmp RAMDISK
+            mv kernel.img kernel
+            echo $PWD/dt.img > dt_args
+            perl -ne "if (m/--base (\S+)/) {print \$1}" mkbootimg.sh > base
+            perl -ne "if (m/--cmdline '(.*?)'/) {print \$1}" mkbootimg.sh > cmdline
+            perl -ne "if (m/--pagesize (\d+)/) {print \$1}" mkbootimg.sh > pagesize
+            echo 0x02000000 > ramdisk_offset
+            echo 0x01E00000 > tags_offset
+        )
+    done
+    cp $mypath/ota/* ./ -av
+    find SYSTEM -type f -name '*.apk' |xargs bash -c 'for apk in "$@"; do
+cat <<EOF
+name="$apk" certificate="PRESIGNED" private_key=""
+EOF
+    done' true > META/apkcerts.txt
+    perl -npe 's/~/$ENV{HOME}/g; s/\$PWD/$ENV{PWD}/g' -i META/misc_info.txt
+
+    for x in alterable.bin emmc_appsboot.mbn NON-HLOS.bin rpm.mbn sbl1.mbn sdi.mbn splash.img tz.mbn udisk.bin; do
+        cp "$cmReleaseDir"/$x RADIO
+    done
+    mv RADIO/splash.img RADIO/splash.bin
+
+    mkdir -p DATA
+    if test $fullSystem != true -o -e ~/src/github/private-config/etc/adbd; then
+        (
+            cd BOOTABLE_IMAGES
+            if test -e "$ANDROID_BOOT_IMG"; then
+                cp "$ANDROID_BOOT_IMG" .
+            fi
+            replace-bootimage -b boot.img -- -d
+        )
+    fi
+
+    zip -qry ota-files.zip BOOT BOOTABLE_IMAGES DATA META OTA RADIO RECOVERY SYSTEM
+    sort system.list | $android_dir/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/filesystem_config.txt
+    zipinfo -1 ota-files.zip | awk 'BEGIN { FS="BOOT/RAMDISK/" } /^BOOT\/RAMDISK\// {print $2}' | $android_dir/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/boot_filesystem_config.txt
+    zipinfo -1 ota-files.zip | awk 'BEGIN { FS="RECOVERY/RAMDISK/" } /^RECOVERY\/RAMDISK\// {print $2}' | $android_dir/out/host/linux-x86/bin/fs_config -C -S BOOT/RAMDISK/file_contexts > META/recovery_filesystem_config.txt
+    zip -q ota-files.zip META/*filesystem_config.txt rm-phone.sh system.list
+    bash -c "
+        set -e
+        cd $android_dir
+        ./build/tools/releasetools/ota_from_target_files -v -p out/host/linux-x86 -d MMC -k vendor/smartisan/security/releasekey -i '' -f 0 $PWD/ota-files.zip $PWD/ota.zip"
+)
