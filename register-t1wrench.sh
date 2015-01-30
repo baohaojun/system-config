@@ -1,0 +1,1 @@
+linux/binaries/register-t1wrench.sh

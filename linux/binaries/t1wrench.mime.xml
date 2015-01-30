@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+ <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+   <mime-type type="text/x-t1wrench">
+   <comment>T1Wrench scripts</comment>
+   <glob pattern="*.twa"/>
+  </mime-type>
+ </mime-info>
