@@ -1,0 +1,83 @@
+#+title: 怎样在命令行上测试小扳手
+# bhj-tags: tool
+很早之前，小扳手就是在命令行上可以用的，我开发一个新功能总喜欢先在命令行上实现出来，然后再在图形界面下考虑该怎么实现。
+
+现在有个朋友说碰到他用小扳手发一条消息用时特别长，所以把怎么在命令行上测试小扳手写出来，希望可以帮他解决这个问题。
+
+以Windows为例。强烈建议在Windows下安装一个Cygwin，这个可以提供一个非常像Linux的环境，可以上网查一下怎么装，弄一个默认安装应该就可以了，不会太麻烦的。下文就假设已经装了Cygwin🌞。
+小扳手发布的时候，解开那个压缩包，你还能看到一个lua.exe文件。lua是一种非常精干的脚本编程语言，兄弟我也是刚学的。你可以直接用lua.exe来运行小扳手的一些功能。比如：
+
+（打开一个命令行cmd.exe或者Cygwin的bash，cd到T1Wrench-windows目录底下）
+#+BEGIN_SRC bat
+lua.exe ./t1wrench.lua t1_post hello
+#+END_SRC
+
+运行一下上面的这条命令，如果你的手机在QQ聊天的界面下，它就会给你的聊天对象发一句“hello”。
+
+这个脚本会花很长的时间，因为它会先按你的手机config一遍小扳手，比如会获取是T1手机还是其他厂商手机之类的信息。这个你可以打开 t1wrench.lua 这个文件来看一下，里面有个t1_config函数，就是干这个用的。这个config在小扳手图形界面下是不会每次发消息都运行的，只会在手机刚连上来的时候运行一次。
+
+所以你也可以把t1_config函数的调用去掉，因为我们测量时只关注真正发消息所用的时间。方法是修改一下小扳手的这个核心脚本 t1wrench.lua ，在里面一些关键位置加入一些系统时间信息。
+
+你可以直接用我改过的 [[https://github.com/baohaojun/T1Wrench/raw/TimeUsage/t1wrench.lua][这个脚本]] ，把它放到T1Wrench-windows的解压目录下（把原来那个改个名字备份一下），然后运行，就会在命令行cmd.exe/bash终端窗口里打印出很详细的时间信息。运行方法就是上面说的这条命令：
+
+#+BEGIN_EXAMPLE
+lua.exe ./t1wrench.lua t1_post hello
+#+END_EXAMPLE
+
+哦对了，差点忘了，你在运行这个改过的脚本的时候，需要把 cygwin 的date.exe命令拷贝一份到相同目录下的 dates.exe 。因为Windows的命令行自带了一个date.exe命令，lua.exe跑脚本的时候会先找到那个命令，那个是有问题的。比如我的date.exe是在 =C:\cygwin64\bin\date.exe= ，所以我把它拷贝为 =C:\cygwin64\bin\dates.exe= 。
+
+如果是在bash而不是cmd.exe下运行这个脚本命令的话，你还可以在前面加一个time，这样就会打印出整个命令所花的时间。你跑完了以后把终端上的输出发给我看一下，我们来分析一下哪里慢了。从下面的输出可以看到我发一条信息需要3秒。
+
+#+BEGIN_SRC compout
+-*- mode: compilation; default-directory: "~/src/github/T1Wrench-windows/" -*-
+Compilation started at Fri Jan 30 15:04:07
+
+time lua ./t1wrench.lua t1_post hello
+cmd is M[arg[1]](arg[2])
+2015-01-30 15:06:03.882772700+08:00
+t1wrench.lua:905: xx
+2015-01-30 15:06:03.917774700+08:00
+t1wrench.lua:273: before pipe: "dumpsys window"
+2015-01-30 15:06:04.083784200+08:00
+t1wrench.lua:282: after pipe: "dumpsys window"
+2015-01-30 15:06:04.124786500+08:00
+t1wrench.lua:907: xx
+2015-01-30 15:06:04.176789500+08:00
+t1wrench.lua:708: xx
+0 KB/s (4 bytes in 0.008s)
+2015-01-30 15:06:04.255794000+08:00
+t1wrench.lua:710: xx
+Starting service: Intent { cmp=com.bhj.setclip/.PutClipService }
+2015-01-30 15:06:04.961834400+08:00
+t1wrench.lua:721: xx
+2015-01-30 15:06:04.992836200+08:00
+t1wrench.lua:917: xx
+window is com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity
+2015-01-30 15:06:05.034838600+08:00
+t1wrench.lua:273: before pipe: "dumpsys window"
+2015-01-30 15:06:05.155845500+08:00
+t1wrench.lua:282: after pipe: "dumpsys window"
+started is true
+got a line:   Window #11 Window{42472a60 u0 InputMethod}:
+got a line:     mDisplayId=0 mSession=Session{432392e8 1914:u0a10158} mClient=android.os.BinderProxy@4236d8c8
+got a line:     mOwnerUid=10158 mShowToOwnerOnly=true package=com.google.android.inputmethod.pinyin appop=NONE
+got a line:     mAttrs=WM.LayoutParams{(0,0)(fillxfill) gr=#50 sim=#20 ty=2011 fl=#1800108 pfl=0x8 fmt=-2 wanim=0x1030056 vsysui=0x300}
+got a line:     Requested w=1080 h=1842 mLayoutSeq=7775
+got a line:     mIsImWindow=true mIsWallpaper=false mIsFloatingLayer=true mWallpaperVisible=false
+got a line:     mHasSurface=false mShownFrame=[0.0,78.0][1080.0,1920.0] isReadyForDisplay()=false
+2015-01-30 15:06:05.197847900+08:00
+t1wrench.lua:273: before pipe: "dumpsys input_method"
+2015-01-30 15:06:05.313854600+08:00
+t1wrench.lua:282: after pipe: "dumpsys input_method"
+add is
+wait putclip done
+2015-01-30 15:06:06.839941800+08:00
+t1wrench.lua:1510: xx
+
+real	0m3.015s
+user	0m0.015s
+sys	0m0.000s
+
+Compilation finished at Fri Jan 30 15:04:11
+
+#+END_SRC
