@@ -94,6 +94,13 @@ cmReleaseDir=$(readlink -f "$cmReleaseDir")
     sudo umount system >/dev/null 2>&1 || true
     sudo umount SYSTEM >/dev/null 2>&1 || true
     sudo mount -o loop ../system-$tmpPostfix.img system
+    (
+        cd system/xbin
+        sudo rm -f su
+        if test -e ~/src/github/private-config/etc/su.exe; then
+            sudo cp ~/src/github/private-config/etc/su.exe ./
+        fi
+    )
     sudo chown $USER\. -R system
     if test ! -e system/etc/stcmd-scripts/reboot-rom -o ! -e system/etc/stcmd-scripts/get-system-md5s; then
         mkdir -p system/etc/stcmd-scripts/
