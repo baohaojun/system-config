@@ -20,7 +20,7 @@
                  '(("#[0-9a-fA-F]\\{2\\}\\([0-9a-fA-F]\\{6\\}\\)<"
                    (1 (rainbow-colorize-hexadecimal-without-sharp)))))))
 
-(eval-after-load 'org-mode
+(eval-after-load 'org
   '(progn
      (require 'org-jira)
      (condition-case nil
@@ -42,7 +42,6 @@
               (org . t)
               (plantuml . t)
               (latex . t))))
-     (require 'org-md)
      (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
      (add-hook 'org-mode-hook (lambda ()
                                 (visual-line-mode 1)

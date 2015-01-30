@@ -16,7 +16,7 @@ cd -P .
 git_dir=$(dirname $(lookup-file .git))
 git_proj_http=$(repo-remote-url|perl -npe 's,git\@github.com:,http://github.com/,; s,git://,http://,; s,\.git$,,')
 
-stem=/raw/$(git symbolic-ref --short HEAD || echo master)
+stem=/raw/$(git-remote-branch|xargs basename)
 if test -d "$1"; then
     stem=/tree/${stem#/raw/}
 fi
