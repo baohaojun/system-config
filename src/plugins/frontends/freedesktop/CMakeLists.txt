@@ -25,7 +25,7 @@ if(WITH_FREEDESKTOP_FRONTEND)
 
 
         #install the dbus interface
-        if(WITH_SNORE_DEAMON)
+        if(WITH_SNORE_DAEMON)
             if(WIN32)
                 set(SNORE_LOCATION ../bin/snorenotify)
             else(WIN32)
@@ -35,7 +35,7 @@ if(WITH_FREEDESKTOP_FRONTEND)
 
             install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
                                   DESTINATION share/dbus-1/services/)
-        endif(WITH_SNORE_DEAMON)
+        endif(WITH_SNORE_DAEMON)
 
         install(TARGETS libsnore_frontend_freedesktop ${SNORE_PLUGIN_INSTALL_PATH})
 

@@ -15,8 +15,8 @@ include(FeatureSummary)
 
 
 #######################################################################
-option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DEAMON=ON" OFF)
-option(WITH_SNORE_DEAMON "Build the Snore deamon, which redirects notifications" OFF)
+option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DAEMON=ON" OFF)
+option(WITH_SNORE_DAEMON "Build the Snore daemon, which redirects notifications" OFF)
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 #######################################################################
 
