@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/root">
-        <file alias="snore.png">128-snore.png</file>
+        <file alias="snore.png">128-apps-snore.png</file>
     </qresource>
 </RCC>

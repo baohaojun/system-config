@@ -1,6 +1,7 @@
 if(WITH_SNORE_DAEMON)
     include(ECMAddAppIcon)
-    ecm_add_app_icon(SNORENOTIFY_DEAMON_DEPS ICONS ${PROJECT_SOURCE_DIR}/data/128-snore.png)
+    include(ECMInstallIcons)
+    ecm_add_app_icon(SNORENOTIFY_DEAMON_DEPS ICONS ${PROJECT_SOURCE_DIR}/data/128-apps-snore.png)
 
     add_executable( snorenotify WIN32 main.cpp snorenotify.cpp trayicon.cpp ${SNORENOTIFY_DEAMON_DEPS})
     target_link_libraries( snorenotify libsnore Qt5::Gui Qt5::Widgets )
@@ -9,9 +10,9 @@ if(WITH_SNORE_DAEMON)
                                 ARCHIVE DESTINATION lib)
 
     if(UNIX)
-        install(FILES ${PROJECT_SOURCE_DIR }/data/128-snore.png DESTINATION ${KDE_ICONDIR}/snore.png)
+        ecm_install_icons(ICONS ${PROJECT_SOURCE_DIR}/data/128-apps-snore.png DESTINATION ${KDE_INSTALL_ICONDIR})
         configure_file("${CMAKE_CURRENT_SOURCE_DIR}/snorenotify.desktop.in" "${CMAKE_CURRENT_BINARY_DIR}/snorenotify.desktop" @ONLY)
-        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/snorenotify.desktop" DESTINATION ${KDE_APPDIR})
+        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/snorenotify.desktop" DESTINATION ${KDE_INSTALL_APPDIR})
     endif()
 
 endif()

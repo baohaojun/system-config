@@ -3,10 +3,7 @@ if(NOT WITH_FREEDESKTOP_FRONTEND AND UNIX AND NOT APPLE)
     set_package_properties(Qt5DBus  PROPERTIES
                                     PURPOSE "Support for Freedesktop Notifications"
                                     TYPE OPTIONAL)
-    set(QT_QTDBUS_FOUND TRUE)
-    set(QT_QTDBUS_LIBRARY Qt5::DBus)
-
-    if(QT_QTDBUS_FOUND)
+    if(Qt5DBus_FOUND)
         message(STATUS "Adding Freedesktop notification backend")
 
         set ( FREEDESKTOP_NOTIFICATION_SRC
@@ -18,7 +15,7 @@ if(NOT WITH_FREEDESKTOP_FRONTEND AND UNIX AND NOT APPLE)
 
 
         add_library(libsnore_backend_freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_SRC} )
-        target_link_libraries(libsnore_backend_freedesktop Snore::Libsnore  Qt5::DBus )
+        target_link_libraries(libsnore_backend_freedesktop Snore::Libsnore Qt5::DBus )
 
         install(TARGETS libsnore_backend_freedesktop ${SNORE_PLUGIN_INSTALL_PATH})
     endif()
