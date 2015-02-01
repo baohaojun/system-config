@@ -70,7 +70,7 @@ private:
     QHash<int, Action> m_actions;
     Hint m_hints;
     Notification m_toReplace;
-    QPointer<QTimer> m_timeoutTimer;
+    QScopedPointer<QTimer> m_timeoutTimer;
 
     static uint notificationCount;
     static uint m_idCount;
