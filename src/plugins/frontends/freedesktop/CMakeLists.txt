@@ -1,16 +1,10 @@
 if(WITH_FREEDESKTOP_FRONTEND)
+    find_package(Qt5DBus QUIET)
+    set_package_properties(Qt5DBus  PROPERTIES
+                                    PURPOSE "Support for Freedesktop Notifications"
+                                    TYPE OPTIONAL)
 
-    if(NOT WITH_QT4)
-        find_package(Qt5DBus QUIET)
-        set_package_properties(Qt5DBus  PROPERTIES
-                                        PURPOSE "Support for Freedesktop Notifications"
-                                        TYPE OPTIONAL)
-        set(QT_QTDBUS_FOUND TRUE)
-        set(QT_QTDBUS_LIBRARY Qt5::DBus)
-    endif()
-
-
-    if(QT_QTDBUS_FOUND)
+    if(Qt5DBus_FOUND)
         message(STATUS "Adding freedesktop notification frontend")
 
         set( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC
@@ -28,9 +22,9 @@ if(WITH_FREEDESKTOP_FRONTEND)
         if(WITH_SNORE_DAEMON)
             if(WIN32)
                 set(SNORE_LOCATION ../bin/snorenotify)
-            else(WIN32)
-                    set(SNORE_LOCATION ${CMAKE_INSTALL_PREFIX}/bin/snorenotify)
-            endif(WIN32)
+            else()
+                set(SNORE_LOCATION ${CMAKE_INSTALL_PREFIX}/bin/snorenotify)
+            endif()
             configure_file(${CMAKE_CURRENT_SOURCE_DIR}/org.freedesktop.Notifications.service.cmake ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service)
 
             install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
