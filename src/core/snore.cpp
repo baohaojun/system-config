@@ -1,6 +1,6 @@
 /*
     SnoreNotify is a Notification Framework based on Qt
-    Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
+    Copyright (C) 2013-2015  Patrick von Reth <vonreth@kde.org>
 
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -232,7 +232,7 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
     QList<PluginSettingsWidget*> list;
     for(auto p:PluginContainer::pluginCache(SnorePlugin::ALL))
     {
-//TODO: set parent
+//TODO: mem leak?
         PluginSettingsWidget *w = p->load()->settingsWidget();
         if(w) {
             list.append(w);

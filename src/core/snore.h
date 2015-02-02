@@ -163,6 +163,10 @@ public:
     bool primaryBackendSupportsRichtext();
 
 
+    /**
+     *
+     * @return A list of widgets a settings dialog.
+     */
     QList<PluginSettingsWidget*> settingWidgets();
 
     /**

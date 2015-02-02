@@ -1,6 +1,6 @@
 /*
     SnoreNotify is a Notification Framework based on Qt
-    Copyright (C) 2014-2015  Patrick von Reth <vonreth@kde.org>
+    Copyright (C) 2015  Patrick von Reth <vonreth@kde.org>
 
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -15,32 +15,29 @@
     You should have received a copy of the GNU Lesser General Public License
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TOASTY_H
-#define TOASTY_H
+#ifndef TOASTYSETTINGS_H
+#define TOASTYSETTINGS_H
 
-#include "core/plugins/snorebackend.h"
+#include "plugins/pluginsettingswidget.h"
 
-#include <QNetworkAccessManager>
+namespace Ui {
+class ToastySettings;
+}
 
-class Toasty : public Snore::SnoreSecondaryBackend
+class ToastySettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnoreSecondaryBackend)
-    Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "plugin.json")
+
 public:
-    Toasty();
-    ~Toasty();
-    bool initialize(Snore::SnoreCore *snore) override;
-    bool deinitialize() override;
+    explicit ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
+    ~ToastySettings();
 
-    Snore::PluginSettingsWidget *settingsWidget() override;
-
-public slots:
-    void slotNotify(Snore::Notification notification) override;
+    void load() override;
+    void save() override;
 
 private:
-    QNetworkAccessManager m_manager;
+    Ui::ToastySettings *ui;
 
 };
 
-#endif // TOASTY_H
+#endif // TOASTYSETTINGS_H
