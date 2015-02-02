@@ -17,6 +17,7 @@
 */
 
 #include "trayicon.h"
+#include "settingsdialog.h"
 #include "core/snore.h"
 #include "core/snore_p.h"
 
@@ -40,6 +41,8 @@ TrayIcon::TrayIcon():
 void TrayIcon::initConextMenu(SnoreCore *snore)
 {
     m_snore = snore;
+
+    m_settings = new SettingsDialog(snore);
     m_trayIcon->setVisible(true);
 
     m_trayMenu = new QMenu("SnoreNotify");
@@ -61,6 +64,8 @@ void TrayIcon::initConextMenu(SnoreCore *snore)
         }
         m_backendActions->addAction(b);
     }
+    m_trayMenu->addSeparator();
+    m_trayMenu->addAction("Settings", this, SLOT(slotSettings()));
     m_trayMenu->addSeparator();
     m_trayMenu->addAction("Exit", qApp, SLOT(quit()));
 
@@ -128,5 +133,10 @@ void TrayIcon::sloutUpdateTestNotification()
                         Icon("http://winkde.org/~pvonreth/other/kde-logo.png"));
     m_snore->broadcastNotification(update);
     timer->deleteLater();
+}
+
+void TrayIcon::slotSettings()
+{
+    m_settings->show();
 }
 

@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QMetaEnum>
 #include <QApplication>
+#include <QWidget>
 
 using namespace Snore;
 
@@ -89,6 +90,11 @@ void SnorePlugin::setDefaultValue(const QString &key, const QVariant &value, con
     if (!snore()->settings()->contains(pk)) {
         snore()->settings()->setValue(normaliseKey(key), value);
     }
+}
+
+Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()
+{
+    return nullptr;
 }
 
 QString SnorePlugin::normaliseKey(const QString &key) const

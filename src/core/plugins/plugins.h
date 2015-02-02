@@ -19,6 +19,7 @@
 #ifndef SNORE_PLUGINS_H
 #define SNORE_PLUGINS_H
 #include "snore_exports.h"
+#include "pluginsettingswidget.h"
 #include "../notification/notification.h"
 
 #include <QPointer>
@@ -59,6 +60,8 @@ public:
     QVariant value(const QString &key) const;
     void setValue(const QString &key, const QVariant &value);
     void setDefaultValue(const QString &key, const QVariant &value,const QString &help);
+
+    virtual PluginSettingsWidget *settingsWidget();
 
 private:
     SnorePlugin() {}

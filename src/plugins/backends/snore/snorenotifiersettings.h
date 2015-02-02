@@ -1,6 +1,6 @@
 /*
     SnoreNotify is a Notification Framework based on Qt
-    Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
+    Copyright (C) 2013-2015  Patrick von Reth <vonreth@kde.org>
 
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -15,39 +15,31 @@
     You should have received a copy of the GNU Lesser General Public License
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef SNORENOTIFIERSETTINGS_H
+#define SNORENOTIFIERSETTINGS_H
 
-#ifndef TRAYICON_H
-#define TRAYICON_H
+#include "plugins/pluginsettingswidget.h"
 
-#include <QtCore>
-#include <QAction>
-#include "core/snore.h"
+namespace Snore{
+class SnorePlugin;
+}
 
-class TrayIcon: public QObject
+namespace Ui {
+class SnoreNotifierSettings;
+}
+
+class SnoreNotifierSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
+
 public:
-    TrayIcon();
-    void initConextMenu(Snore::SnoreCore *snore);
-    void hide();
-    class QSystemTrayIcon *trayIcon();
+    explicit SnoreNotifierSettings(Snore::SnorePlugin *snore, QWidget *parent = nullptr);
+    ~SnoreNotifierSettings();
+    void load();
+    void save();
 
 private:
-    class QSystemTrayIcon *m_trayIcon;
-    class QMenu *m_trayMenu;
-    QActionGroup *m_backendActions;
-    Snore::SnoreCore *m_snore;
-    Snore::Application m_app;
-    Snore::Alert m_alert;
-    class SettingsDialog *m_settings;
-
-    QHash<QTimer *, Snore::Notification> m_notifications;
-
-public slots:
-    void setPrimaryBackend();
-    void slotTestNotification();
-    void sloutUpdateTestNotification();
-    void slotSettings();
+    Ui::SnoreNotifierSettings *ui;
 };
 
-#endif // TRAYICON_H
+#endif // SNORENOTIFIERSETTINGS_H

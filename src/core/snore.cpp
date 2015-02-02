@@ -226,6 +226,21 @@ bool SnoreCore::primaryBackendSupportsRichtext()
     return d->m_notificationBackend->supportsRichtext();
 }
 
+QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
+{
+    Q_D(SnoreCore);
+    QList<PluginSettingsWidget*> list;
+    for(auto p:PluginContainer::pluginCache(SnorePlugin::ALL))
+    {
+//TODO: set parent
+        PluginSettingsWidget *w = p->load()->settingsWidget();
+        if(w) {
+            list.append(w);
+        }
+    }
+    return list;
+}
+
 QSettings *SnoreCore::settings()
 {
     Q_D(SnoreCore);

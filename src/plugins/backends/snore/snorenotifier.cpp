@@ -18,8 +18,11 @@
 
 #include "snorenotifier.h"
 #include "notifywidget.h"
+#include "snorenotifiersettings.h"
 #include "core/notification/notification_p.h"
 #include "core/snore_p.h"
+
+
 #include <QApplication>
 #include <QThread>
 
@@ -155,4 +158,9 @@ bool SnoreNotifier::deinitialize()
         return true;
     }
     return false;
+}
+
+PluginSettingsWidget *SnoreNotifier::settingsWidget()
+{
+    return new SnoreNotifierSettings(this);
 }

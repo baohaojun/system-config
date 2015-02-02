@@ -3,7 +3,10 @@ if(WITH_SNORE_DAEMON)
     include(ECMInstallIcons)
     ecm_add_app_icon(SNORENOTIFY_DAEMON_DEPS ICONS ${PROJECT_SOURCE_DIR}/data/128-apps-snore.png)
 
-    add_executable( snorenotify WIN32 main.cpp snorenotify.cpp trayicon.cpp ${SNORENOTIFY_DAEMON_DEPS})
+
+    qt5_wrap_ui(UI settingsdialog.ui)
+
+    add_executable( snorenotify WIN32 main.cpp snorenotify.cpp trayicon.cpp settingsdialog.cpp ${SNORENOTIFY_DAEMON_DEPS} ${UI})
     target_link_libraries( snorenotify libsnore Qt5::Gui Qt5::Widgets )
     install(TARGETS snorenotify ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 

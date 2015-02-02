@@ -163,6 +163,8 @@ public:
     bool primaryBackendSupportsRichtext();
 
 
+    QList<PluginSettingsWidget*> settingWidgets();
+
     /**
      * @return a pointer to the global settings
      */

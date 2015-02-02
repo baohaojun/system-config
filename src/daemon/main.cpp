@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     app.setApplicationName("SnoreNotify");
     app.setOrganizationName("SnoreNotify");
     app.setApplicationVersion(Snore::Version::version());
+    app.setQuitOnLastWindowClosed(false);
 
     SnoreNotify sn;
     return app.exec();
