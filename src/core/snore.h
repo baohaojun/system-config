@@ -168,7 +168,17 @@ public:
      */
     const QHash<QString,QString> &settingsDescription() const;
 
+    /**
+     * Enables or disables a plugin
+     * @param pluginName
+     * @param enable
+     * @return whether the backend is enabled
+     */
     bool setPluginEnabled(const QString& pluginName,bool enable);
+
+    /**
+     * @return whether the backend is enabled
+     */
     bool pluginIsEnabled(const QString& pluginName) const;
 
     /**
@@ -181,7 +191,7 @@ signals:
      * This signal is emitted when an action on the Notification was performed.
      * Some notification systems don't support actions but will report one if the notification was clicked,
      * in this case the Action will be invalid.
-     * @todo maybe introduce a pecial action state for this case
+     * @todo maybe introduce a special action state for this case
      * @see Action
      */
     void actionInvoked(Snore::Notification);

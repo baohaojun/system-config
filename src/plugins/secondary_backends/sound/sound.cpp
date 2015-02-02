@@ -27,12 +27,12 @@ Sound::Sound():
     m_player(new QMediaPlayer(this))
 {
     m_player->setVolume(50);
-    connect(m_player,QMediaPlayer::positionChanged,[](qint64 pos){
-        snoreDebug(SNORE_DEBUG) << "Player: " << pos;
-    });
-    connect(m_player,QMediaPlayer::stateChanged,[](QMediaPlayer::State state){
-        snoreDebug(SNORE_DEBUG) << "Player: " << state;
-    });
+//    connect(m_player,QMediaPlayer::positionChanged,[](qint64 pos){
+//        snoreDebug(SNORE_DEBUG) << "Player: " << pos;
+//    });
+//    connect(m_player,QMediaPlayer::stateChanged,[](QMediaPlayer::State state){
+//        snoreDebug(SNORE_DEBUG) << "Player: " << state;
+//    });
 }
 
 Sound::~Sound()

@@ -31,13 +31,12 @@ SettingsDialog::SettingsDialog(SnoreCore *snore, QWidget *parent) :
     m_snore(snore)
 {
     ui->setupUi(this);
-    for(const QString &plugin : snore->pluginNames(SnorePlugin::FRONTEND|SnorePlugin::SECONDARY_BACKEND|SnorePlugin::PLUGIN))
+    for(const QString &plugin : snore->pluginNames(SnorePlugin::PluginTypes(SnorePlugin::ALL) ^ SnorePlugin::BACKEND))
     {
         QCheckBox *box = new QCheckBox(plugin);
         box->setChecked(snore->pluginIsEnabled(plugin));
         connect(box,QCheckBox::toggled,[plugin,snore,box](bool checked){
-            snore->setPluginEnabled(plugin,checked);
-            box->setChecked(snore->pluginIsEnabled(plugin));
+            box->setChecked(snore->setPluginEnabled(plugin,checked));
         });
         ui->verticalLayout2->addWidget(box);
     }

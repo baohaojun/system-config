@@ -261,12 +261,12 @@ bool SnoreCore::setPluginEnabled(const QString &pluginName, bool enable)
     SnorePlugin *plugin = d->m_plugins.value(pluginName);
     if(!plugin->isInitialized() && enable)
     {
-        return plugin->initialize(this);
+        plugin->initialize(this);
     } else if(plugin->isInitialized() && !enable)
     {
-        return plugin->deinitialize();
+        plugin->deinitialize();
     }
-    return false;
+    return plugin->isInitialized();
 }
 
 bool SnoreCore::pluginIsEnabled(const QString &pluginName) const
