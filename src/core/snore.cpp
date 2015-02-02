@@ -226,9 +226,8 @@ bool SnoreCore::primaryBackendSupportsRichtext()
     return d->m_notificationBackend->supportsRichtext();
 }
 
-QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
+QList<PluginSettingsWidget*> SnoreCore::settingWidgets()
 {
-    Q_D(SnoreCore);
     QList<PluginSettingsWidget*> list;
     for(auto p:PluginContainer::pluginCache(SnorePlugin::ALL))
     {
