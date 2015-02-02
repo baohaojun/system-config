@@ -21,13 +21,9 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Tab 1</string>
+       <string>Active Backends</string>
       </attribute>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Tab 2</string>
-      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout2"/>
      </widget>
     </widget>
    </item>

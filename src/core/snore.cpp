@@ -73,15 +73,16 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                     continue;
                 }
                 snoreDebug(SNORE_DEBUG) << info->name() << "is a" << info->type();
-                d->m_plugins[info->type()].append(info->name());
+                d->m_pluginNames[info->type()].append(info->name());
+                d->m_plugins[info->name()] = info->load();
             }
-            if (d->m_plugins.contains(type)) {
-                qSort(d->m_plugins[type]);
+            if (d->m_pluginNames.contains(type)) {
+                qSort(d->m_pluginNames[type]);
             }
         }
     }
 
-    snoreDebug(SNORE_INFO) << "Loaded Plugins:" << d->m_plugins;
+    snoreDebug(SNORE_INFO) << "Loaded Plugins:" << d->m_pluginNames;
 }
 
 void SnoreCore::broadcastNotification(Notification notification)
@@ -120,22 +121,17 @@ const QHash<QString, Application> &SnoreCore::aplications() const
     return d->m_applications;
 }
 
-const QStringList SnoreCore::notificationBackends() const
+const QStringList SnoreCore::pluginNames(SnorePlugin::PluginTypes type) const
 {
     Q_D(const SnoreCore);
-    return d->m_plugins.value(SnorePlugin::BACKEND);
-}
-
-const QStringList SnoreCore::notificationFrontends() const
-{
-    Q_D(const SnoreCore);
-    return d->m_plugins.value(SnorePlugin::FRONTEND);
-}
-
-const QStringList SnoreCore::secondaryNotificationBackends() const
-{
-    Q_D(const SnoreCore);
-    return d->m_plugins.value(SnorePlugin::SECONDARY_BACKEND);
+    QStringList out;
+    for(auto t:PluginContainer::types()){
+        if(t & type)
+        {
+            out.append(d->m_pluginNames.value(t));
+        }
+    }
+    return out;
 }
 
 bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
@@ -228,11 +224,12 @@ bool SnoreCore::primaryBackendSupportsRichtext()
 
 QList<PluginSettingsWidget*> SnoreCore::settingWidgets()
 {
+    Q_D(SnoreCore);
     QList<PluginSettingsWidget*> list;
-    for(auto p:PluginContainer::pluginCache(SnorePlugin::ALL))
+    for(auto p:d->m_plugins)
     {
 //TODO: mem leak?
-        PluginSettingsWidget *w = p->load()->settingsWidget();
+        PluginSettingsWidget *w = p->settingsWidget();
         if(w) {
             list.append(w);
         }
@@ -255,6 +252,27 @@ const QHash<QString, QString> &SnoreCore::settingsDescription() const
 {
     Q_D(const SnoreCore);
     return d->m_help;
+}
+
+
+bool SnoreCore::setPluginEnabled(const QString &pluginName, bool enable)
+{
+    Q_D(SnoreCore);
+    SnorePlugin *plugin = d->m_plugins.value(pluginName);
+    if(!plugin->isInitialized() && enable)
+    {
+        return plugin->initialize(this);
+    } else if(plugin->isInitialized() && !enable)
+    {
+        return plugin->deinitialize();
+    }
+    return false;
+}
+
+bool SnoreCore::pluginIsEnabled(const QString &pluginName) const
+{
+    Q_D(const SnoreCore);
+    return d->m_plugins.value(pluginName)->isInitialized();
 }
 
 const SnoreCorePrivate *SnoreCore::d()

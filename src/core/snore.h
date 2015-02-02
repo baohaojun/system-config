@@ -106,21 +106,9 @@ public:
 
     /**
      *
-     * @return a list of all known notification backends
+     * @return a list of plugins
      */
-    const QStringList notificationBackends() const;
-
-    /**
-     *
-     * @return a list of all known notification frontends
-     */
-    const QStringList notificationFrontends() const;
-
-    /**
-     *
-     * @return a list of all known notification secondary backends
-     */
-    const QStringList secondaryNotificationBackends() const;
+    const QStringList pluginNames(SnorePlugin::PluginTypes type) const;
 
     /**
      * Sets the primary backend.
@@ -179,6 +167,9 @@ public:
      * @return a hashmap containing the documentation of the settings keys.
      */
     const QHash<QString,QString> &settingsDescription() const;
+
+    bool setPluginEnabled(const QString& pluginName,bool enable);
+    bool pluginIsEnabled(const QString& pluginName) const;
 
     /**
      * @return a pointer to the private class, for internal use only.

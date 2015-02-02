@@ -56,7 +56,7 @@ void TrayIcon::initConextMenu(SnoreCore *snore)
     m_trayMenu->addSeparator();
     m_backendActions =  new QActionGroup(m_trayMenu);
     m_backendActions->setExclusive(true);
-    foreach(const QString & back, m_snore->notificationBackends()) {
+    for(const QString & back : m_snore->pluginNames(SnorePlugin::BACKEND)) {
         QAction *b = m_trayMenu->addAction(back, this, SLOT(setPrimaryBackend()));
         b->setCheckable(true);
         if (back == m_snore->primaryNotificationBackend()) {

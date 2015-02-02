@@ -51,7 +51,7 @@ public:
     virtual ~SnorePlugin();
     virtual bool initialize(SnoreCore *snore);
     virtual bool deinitialize();
-    bool isInitialized();
+    bool isInitialized() const;
     SnoreCore *snore();
     const SnoreCore *snore() const;
 

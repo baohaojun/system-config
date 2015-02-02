@@ -58,7 +58,7 @@ bool SnorePlugin::initialize(SnoreCore *snore)
     return true;
 }
 
-bool SnorePlugin::isInitialized()
+bool SnorePlugin::isInitialized() const
 {
     return m_initialized;
 }

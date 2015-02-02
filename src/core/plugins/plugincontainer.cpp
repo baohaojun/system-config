@@ -137,6 +137,7 @@ void PluginContainer::updatePluginCache()
 
 const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin::PluginTypes type)
 {
+    snoreDebug(SNORE_DEBUG) << type;
     if (s_pluginCache.isEmpty()) {
         QTime time;
         time.start();
@@ -145,12 +146,11 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
     }
 
     QHash<QString, PluginContainer *> out;
-    if (type == SnorePlugin::ALL) {
-        foreach(const SnorePlugin::PluginTypes & t, types()) {
+    for(auto t:types()){
+        if(t & type)
+        {
             out.unite(s_pluginCache.value(t));
         }
-    } else {
-        out = s_pluginCache[type];
     }
     return out;
 }
