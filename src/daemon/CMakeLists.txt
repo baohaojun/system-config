@@ -5,9 +5,7 @@ if(WITH_SNORE_DAEMON)
 
     add_executable( snorenotify WIN32 main.cpp snorenotify.cpp trayicon.cpp ${SNORENOTIFY_DEAMON_DEPS})
     target_link_libraries( snorenotify libsnore Qt5::Gui Qt5::Widgets )
-    install(TARGETS snorenotify RUNTIME DESTINATION bin
-                                LIBRARY DESTINATION lib
-                                ARCHIVE DESTINATION lib)
+    install(TARGETS snorenotify ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
     if(UNIX)
         ecm_install_icons(ICONS ${PROJECT_SOURCE_DIR}/data/128-apps-snore.png DESTINATION ${KDE_INSTALL_ICONDIR})

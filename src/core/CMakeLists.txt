@@ -61,14 +61,11 @@ $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 $<INSTALL_INTERFACE:include>
 $<INSTALL_INTERFACE:include/snore/core>)
 
-install(TARGETS libsnore EXPORT LibsnoreTarget
-                         RUNTIME DESTINATION bin
-                         LIBRARY DESTINATION lib
-                         ARCHIVE DESTINATION lib)
+install(TARGETS libsnore EXPORT LibsnoreTarget ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(EXPORT LibsnoreTarget DESTINATION lib/cmake/libsnore${SNORE_CamelCase_SUFFIX} NAMESPACE Snore::)
+install(EXPORT LibsnoreTarget DESTINATION ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX} NAMESPACE Snore::)
 
-install(FILES ${SnoreNotify_HDR} DESTINATION include/snore/core)
+install(FILES ${SnoreNotify_HDR} DESTINATION ${KDE_INSTALL_INCLUDEDIR}/snore/core)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake DESTINATION lib/cmake/libsnore${SNORE_CamelCase_SUFFIX})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake DESTINATION ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX})
 
