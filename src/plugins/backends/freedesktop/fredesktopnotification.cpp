@@ -19,6 +19,7 @@
 #include "fredesktopnotification.h"
 
 #include <QImage>
+#include <QDBusMetaType>
 
 int FreedesktopImageHint::imageHintID = qDBusRegisterMetaType<FreedesktopImageHint>();
 

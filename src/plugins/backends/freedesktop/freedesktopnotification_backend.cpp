@@ -13,7 +13,7 @@ FreedesktopBackend::FreedesktopBackend() :
 {
 }
 
-bool FreedesktopBackend::initialize(SnoreCore *snore)
+bool FreedesktopBackend::initialize()
 {
 
     m_interface = new org::freedesktop::Notifications("org.freedesktop.Notifications", "/org/freedesktop/Notifications",
@@ -26,7 +26,7 @@ bool FreedesktopBackend::initialize(SnoreCore *snore)
     connect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
     connect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
 
-    return SnoreBackend::initialize(snore);
+    return SnoreBackend::initialize();
 }
 
 bool FreedesktopBackend::deinitialize()
