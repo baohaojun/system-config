@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
         SnoreCore core;
 
         core.loadPlugins(SnorePlugin::BACKEND | SnorePlugin::SECONDARY_BACKEND);
-        if (parser.isSet(backend) ? !core.setPrimaryNotificationBackend(parser.value(backend)) : !core.setPrimaryNotificationBackend()) {
+        if (parser.isSet(backend) && !core.setPrimaryNotificationBackend(parser.value(backend))) {
             std::cerr << "Failed to set backend: " << qPrintable(parser.value(backend)) << " avalible backends: " << qPrintable(core.pluginNames(SnorePlugin::BACKEND).join(", ")) << std::endl;
             return 1;
         }
