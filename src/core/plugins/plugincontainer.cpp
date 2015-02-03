@@ -52,7 +52,7 @@ SnorePlugin *PluginContainer::load()
 {
     if (!m_loader.isLoaded() && !m_loader.load()) {
         snoreDebug(SNORE_WARNING) << "Failed loading plugin: " << m_loader.errorString();
-        return NULL;
+        return nullptr;
     }
     SnorePlugin *plugin = qobject_cast<SnorePlugin *> (m_loader.instance());
     Q_ASSERT_X(m_pluginName == plugin->name(),Q_FUNC_INFO, "The plugin name is different to the one in the meta data.");
@@ -135,7 +135,6 @@ void PluginContainer::updatePluginCache()
 
 const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin::PluginTypes type)
 {
-    snoreDebug(SNORE_DEBUG) << type;
     if (s_pluginCache.isEmpty()) {
         QTime time;
         time.start();
