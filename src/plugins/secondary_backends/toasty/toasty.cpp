@@ -95,11 +95,6 @@ bool Toasty::initialize()
     return false;
 }
 
-bool Toasty::deinitialize()
-{
-    return SnoreSecondaryBackend::deinitialize();
-}
-
 PluginSettingsWidget *Toasty::settingsWidget()
 {
     return new ToastySettings(this);

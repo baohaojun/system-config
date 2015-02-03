@@ -161,12 +161,16 @@ bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
     }
 
     d->m_notificationBackend = b;
+    settings()->setValue("PrimaryBackend", backend);
     return true;
 }
 
 bool SnoreCore::setPrimaryNotificationBackend()
 {
     Q_D(SnoreCore);
+    if (d->setBackendIfAvailible(settings()->value("PrimaryBackend").toString())) {
+        return true;
+    }
 #ifdef Q_OS_WIN
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8 && d->setBackendIfAvailible("Windows 8")) {
         return true;

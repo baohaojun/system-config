@@ -31,6 +31,10 @@ SettingsDialog::SettingsDialog(SnoreCore *snore, QWidget *parent) :
     m_snore(snore)
 {
     ui->setupUi(this);
+
+    QStringList list = snore->pluginNames(SnorePlugin::BACKEND);
+    ui->primaryBackendComboBox->addItems(list);
+    ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(snore->primaryNotificationBackend()));
     for (auto widget : snore->settingWidgets()) {
         ui->tabWidget->addTab(widget, widget->name());
         widget->loadSettings();
@@ -45,6 +49,7 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::on_buttonBox_accepted()
 {
+    m_snore->setPrimaryNotificationBackend(ui->primaryBackendComboBox->currentText());
     for (auto w : m_tabs) {
         w->saveSettings();
     }

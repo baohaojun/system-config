@@ -49,23 +49,12 @@ void TrayIcon::initConextMenu(SnoreCore *snore)
 
     m_trayMenu = new QMenu("SnoreNotify");
     QString version = QString("SnoreNotify %1").arg(Version::version());
-    if (Version::revision() != "") {
+    if (!Version::revision().isEmpty()) {
         version += QString("-%1").arg(Version::revision());
     }
     m_trayMenu->addAction(version);
     m_trayMenu->addSeparator();
     m_trayMenu->addAction("Test Notification", this, SLOT(slotTestNotification()));
-    m_trayMenu->addSeparator();
-    m_backendActions =  new QActionGroup(m_trayMenu);
-    m_backendActions->setExclusive(true);
-    for (const QString &back : m_snore->pluginNames(SnorePlugin::BACKEND)) {
-        QAction *b = m_trayMenu->addAction(back, this, SLOT(setPrimaryBackend()));
-        b->setCheckable(true);
-        if (back == m_snore->primaryNotificationBackend()) {
-            b->setChecked(true);
-        }
-        m_backendActions->addAction(b);
-    }
     m_trayMenu->addSeparator();
     m_trayMenu->addAction("Settings", this, SLOT(slotSettings()));
     m_trayMenu->addSeparator();

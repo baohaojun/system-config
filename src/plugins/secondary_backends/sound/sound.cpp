@@ -30,9 +30,9 @@ Sound::Sound():
 //    connect(m_player,QMediaPlayer::positionChanged,[](qint64 pos){
 //        snoreDebug(SNORE_DEBUG) << "Player: " << pos;
 //    });
-//    connect(m_player,QMediaPlayer::stateChanged,[](QMediaPlayer::State state){
-//        snoreDebug(SNORE_DEBUG) << "Player: " << state;
-//    });
+    connect(m_player, &QMediaPlayer::stateChanged, [](QMediaPlayer::State state) {
+        snoreDebug(SNORE_DEBUG) << "Player: " << state;
+    });
 }
 
 Sound::~Sound()
@@ -47,6 +47,10 @@ PluginSettingsWidget *Sound::settingsWidget()
 
 void Sound::slotNotify(Snore::Notification notification)
 {
+    if (notification.hints().value("silent", false).toBool()) {
+        return;
+    }
+
     QString sound = notification.hints().value("sound").toString();
     if (sound.isEmpty()) {
         sound = value("Sound").toString();

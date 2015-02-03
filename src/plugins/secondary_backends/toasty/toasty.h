@@ -31,7 +31,6 @@ public:
     Toasty();
     ~Toasty();
     bool initialize() override;
-    bool deinitialize() override;
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 
