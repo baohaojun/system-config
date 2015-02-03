@@ -25,7 +25,6 @@
 #include "../version.h"
 
 #include <QDir>
-#include <QDebug>
 #include <QMetaEnum>
 #include <QApplication>
 #include <QTime>

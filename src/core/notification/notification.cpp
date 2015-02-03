@@ -21,7 +21,6 @@
 #include "notification/icon.h"
 #include "notification/notification_p.h"
 #include "plugins/plugincontainer.h"
-#include <QMetaEnum>
 #include <Qt>
 
 using namespace Snore;

@@ -21,9 +21,11 @@
 #include "core/snore.h"
 #include "core/snore_p.h"
 
-#include <QSystemTrayIcon>
-#include <QMenu>
 #include <QAction>
+#include <QApplication>
+#include <QMenu>
+#include <QSystemTrayIcon>
+#include <QTimer>
 
 #include "core/version.h"
 

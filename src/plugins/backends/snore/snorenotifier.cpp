@@ -23,7 +23,6 @@
 #include "core/snore_p.h"
 
 
-#include <QApplication>
 #include <QThread>
 
 using namespace Snore;

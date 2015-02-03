@@ -28,10 +28,6 @@
 
 #include <iostream>
 
-#include <QDebug>
-#include <QDir>
-#include <QSystemTrayIcon>
-#include <QApplication>
 #include <QSettings>
 
 using namespace Snore;

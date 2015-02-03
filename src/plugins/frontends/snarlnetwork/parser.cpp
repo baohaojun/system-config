@@ -23,10 +23,6 @@
 #include "core/notification/notification.h"
 #include "core/notification/notification_p.h"
 
-#include <QDir>
-#include <QNetworkAccessManager>
-#include <QEventLoop>
-#include <QNetworkReply>
 #include <QObject>
 #include <QTcpSocket>
 

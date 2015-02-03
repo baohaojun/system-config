@@ -18,8 +18,11 @@
 #include "toasty.h"
 #include "toastysettings.h"
 
-#include <QtNetwork>
-#include <QImage>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QHttpMultiPart>
+#include <QFile>
 
 using namespace Snore;
 

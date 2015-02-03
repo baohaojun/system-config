@@ -24,8 +24,6 @@
 #include "core/version.h"
 #include "core/notification/notification_p.h"
 
-#include <QtCore>
-#include <QtDBus>
 #include <QImage>
 #include <QIcon>
 

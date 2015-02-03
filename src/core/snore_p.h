@@ -22,7 +22,6 @@
 #include "snore.h"
 #include "plugins/snorebackend.h"
 
-#include <QDir>
 #include <QPointer>
 #include <QCryptographicHash>
 

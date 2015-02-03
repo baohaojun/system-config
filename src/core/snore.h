@@ -26,6 +26,7 @@
 #include "plugins/plugins.h"
 #include "hint.h"
 
+#include <QSettings>
 #include <QStringList>
 #include <QTextDocument>
 #include <QTextDocumentFragment>

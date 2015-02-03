@@ -1,12 +1,8 @@
 #include "freedesktopnotification_backend.h"
 
-#include <QtGlobal>
-#include <QDebug>
 #include "core/notification/notification.h"
 #include "core/notification/notification_p.h"
 #include "core/snore_p.h"
-#include <QtCore>
-#include <QImage>
 #include "fredesktopnotification.h"
 #include "core/snore.h"
 

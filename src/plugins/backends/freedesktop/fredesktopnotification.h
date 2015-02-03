@@ -21,7 +21,6 @@
 
 #include "core/notification/notification.h"
 
-#include <QtDBus>
 #include <QMetaType>
 
 class FreedesktopImageHint

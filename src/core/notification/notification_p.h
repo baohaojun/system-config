@@ -25,7 +25,6 @@
 
 #include <QSharedData>
 #include <QTimer>
-#include <QPointer>
 
 namespace Snore
 {

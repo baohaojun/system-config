@@ -22,6 +22,8 @@
 
 #include "notification/icon_p.h"
 
+#include <QBuffer>
+
 using namespace Snore;
 
 QByteArray Icon::dataFromImage(const QImage &image)

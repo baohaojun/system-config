@@ -21,10 +21,8 @@
 #include "snore_exports.h"
 #include "../snore_p.h"
 
-#include <QPointer>
-#include <QSettings>
-#include <QFlag>
 #include <QPluginLoader>
+#include <QDir>
 
 namespace Snore
 {

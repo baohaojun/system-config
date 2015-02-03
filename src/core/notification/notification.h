@@ -24,7 +24,6 @@
 #include "../hint.h"
 #include "../application.h"
 
-#include <QVariant>
 #include <QDebug>
 
 namespace Snore

@@ -19,7 +19,7 @@
 #ifndef SNORENOTIFY_H
 #define SNORENOTIFY_H
 
-#include <QtCore>
+#include <QSettings>
 
 namespace Snore
 {
@@ -38,7 +38,7 @@ public:
 private:
     class TrayIcon *m_trayIcon;
     Snore::SnoreCore *m_snore;
-    class QSettings m_settings;
+    QSettings m_settings;
 
 private slots:
     void exit();

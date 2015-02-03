@@ -21,8 +21,6 @@
 #include "core/snore.h"
 #include "core/snore_p.h"
 
-#include <QtCore>
-#include <QTcpSocket>
 
 using namespace Snore;
 

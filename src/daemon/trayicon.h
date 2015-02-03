@@ -19,7 +19,6 @@
 #ifndef TRAYICON_H
 #define TRAYICON_H
 
-#include <QtCore>
 #include <QAction>
 #include "core/snore.h"
 

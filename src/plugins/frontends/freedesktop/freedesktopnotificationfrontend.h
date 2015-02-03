@@ -20,7 +20,6 @@
 #define FREEDESKTOPNOTIFICATION_FRONTEND_H
 #include "core/plugins/snorefrontend.h"
 #include "core/application.h"
-#include <QtDBus>
 
 class NotificationsAdaptor;
 

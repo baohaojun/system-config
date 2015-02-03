@@ -22,8 +22,6 @@
 #include "../notification/notification.h"
 #include "plugins.h"
 
-#include <QPointer>
-#include <QFlag>
 
 namespace Snore
 {

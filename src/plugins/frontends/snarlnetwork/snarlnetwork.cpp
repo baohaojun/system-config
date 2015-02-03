@@ -19,7 +19,6 @@
 #include "snarlnetwork.h"
 #include "core/snore.h"
 
-#include <QtCore>
 #include <QTcpServer>
 #include <QTcpSocket>
 

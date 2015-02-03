@@ -2,11 +2,7 @@
 #include "core/snore.h"
 #include "core/snore_p.h"
 
-#include <QtCore>
 #include <QSystemTrayIcon>
-#include <QTimer>
-#include <QTime>
-#include <QDebug>
 using namespace Snore;
 
 TrayIconNotifer::TrayIconNotifer() :

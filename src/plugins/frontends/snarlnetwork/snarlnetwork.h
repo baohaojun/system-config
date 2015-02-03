@@ -22,7 +22,6 @@
 #include "core/log.h"
 #include "parser.h"
 
-#include <QPointer>
 #include <QTcpSocket>
 #include <QTcpServer>
 

@@ -19,10 +19,10 @@
 #include "icon_p.h"
 #include "../snore_p.h"
 
-#include <QEventLoop>
+#include <QApplication>
+#include <QFile>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QApplication>
 
 using namespace Snore;
 

@@ -24,8 +24,6 @@
 #include "../notification/notification_p.h"
 
 #include <QTimer>
-#include <QDir>
-#include <QDebug>
 #include <QThread>
 #include <QMetaMethod>
 

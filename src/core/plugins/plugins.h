@@ -22,11 +22,7 @@
 #include "pluginsettingswidget.h"
 #include "../notification/notification.h"
 
-#include <QPointer>
 #include <QHash>
-#include <QTimer>
-#include <QtPlugin>
-#include <QSettings>
 
 namespace Snore
 {

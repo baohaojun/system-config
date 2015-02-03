@@ -19,13 +19,10 @@
 #ifndef NOTIFYWIDGET_H
 #define NOTIFYWIDGET_H
 
-#include <QWidget>
-#include <QTimer>
 #include <QSharedMemory>
 #include "core/notification/notification.h"
 
 #include <QtQuick/QtQuick>
-#include <QPropertyAnimation>
 
 class SnoreNotifier;
 

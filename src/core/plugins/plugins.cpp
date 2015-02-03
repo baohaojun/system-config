@@ -23,13 +23,9 @@
 #include "../notification/notification_p.h"
 #include "plugincontainer.h"
 
-#include <QTimer>
-#include <QPluginLoader>
-#include <QDir>
 #include <QDebug>
 #include <QMetaEnum>
 #include <QApplication>
-#include <QWidget>
 
 using namespace Snore;
 

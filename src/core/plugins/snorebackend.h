@@ -23,8 +23,6 @@
 #include "../notification/notification.h"
 #include "../snore.h"
 
-#include <QPointer>
-#include <QFlag>
 
 namespace Snore
 {

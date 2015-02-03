@@ -4,7 +4,6 @@
 #include "core/plugins/plugins.h"
 #include "core/plugins/snorebackend.h"
 
-#include <QDebug>
 #include <QDir>
 #include <QApplication>
 #include <QSysInfo>

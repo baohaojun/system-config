@@ -24,12 +24,8 @@
 
 #include <QImage>
 #include <QSharedData>
-#include <QBuffer>
-#include <QFile>
-#include <QDebug>
 #include <QSet>
 
-#include <QMutex>
 
 class QNetworkAccessManager;
 

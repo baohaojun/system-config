@@ -19,9 +19,6 @@
 #include "snorefrontend.h"
 #include "../snore.h"
 
-#include <QTimer>
-#include <QDir>
-#include <QDebug>
 
 namespace Snore
 {

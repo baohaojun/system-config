@@ -20,17 +20,11 @@
 #include "trayicon.h"
 #include "core/snore.h"
 
-#include <QDir>
-#include <QFile>
-#include <QList>
-#include <QDebug>
-#include <QPluginLoader>
-#include <QSystemTrayIcon>
-#include <QSettings>
 
 #include <iostream>
 #include <stdlib.h>
 
+#include <QApplication>
 
 using namespace Snore;
 
