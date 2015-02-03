@@ -20,6 +20,7 @@
 #include "snore.h"
 
 #include <QCheckBox>
+#include <QLabel>
 
 
 using namespace Snore;
@@ -31,7 +32,7 @@ PluginSettingsWidget::PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *pa
     m_enabled(new QCheckBox)
 {
     setLayout(m_layout);
-    addRow(snorePlugin->typeName(),nullptr);
+    addRow("Type:", new QLabel(snorePlugin->typeName()));
     addRow("Enabled:",m_enabled);
 
 }
