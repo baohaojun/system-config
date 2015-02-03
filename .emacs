@@ -111,7 +111,6 @@
 
 (global-set-key [(meta control \,)] 'ajoke-pop-mark)
 (global-set-key [(meta control .)] 'ajoke-pop-mark-back)
-(prefer-coding-system 'gbk)
 (prefer-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8-unix)
 

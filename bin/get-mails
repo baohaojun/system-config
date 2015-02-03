@@ -6,7 +6,7 @@ if (
     if test $version -lt 655; then
         exit 1
     fi
-    exec offlineimap
+    exec tsocks offlineimap
 ); then
     fail=false
 else

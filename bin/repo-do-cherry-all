@@ -38,11 +38,16 @@ done
 if test -d .repo; then
     diffs=$(rgrep -l -e "$1" out/diff | sort)
 else
-    diffs=out/diff/$(ap . | perl -npe 's!/!%!g').log
+    diffs=$(lookup-file -e out/diff/$(ap . | perl -npe 's!/!%!g').log)
+    if test ! -e "$diffs"; then
+        die "diff file not found"
+    fi
     if test "$ANDROID_TOP"; then
         cd "$ANDROID_TOP"
+    elif test -e "$(lookup-file -e .repo/..)"; then
+        cd $(lookup-file -e .repo/..)
     else
-        cd $(lookup-file .repo/..)
+        cd $(lookup-file -e out/..)
     fi
 fi
 

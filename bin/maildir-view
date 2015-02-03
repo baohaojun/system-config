@@ -16,7 +16,21 @@ set -- "$(basename "$1")"
 if test ! -e "$1"; then
     set -- "$(perl -e 'print glob($ARGV[0] . ":*")' "${1%:*}")"
 fi
-msg_id=$(perl -ne 'chomp; print "\n" unless 1..1 or m/^\s+/; print if 1..m/^$/' "$1"|perl -ne 'print "$1\n" if m/^Message-Id:\s+<(.*)>/i' | head -n 1)
+
+mailfile=$1
+if test ! -e "$mailfile"; then
+    die "can't locate mail file $mailfile"
+fi
+
+msg_id=$(perl -ne 'chomp; print "\n" unless 1..1 or m/^\s+/; print if 1..m/^$/' "$mailfile"|perl -ne 'print "$1\n" if m/^Message-Id:\s+<(.*)>/i' | head -n 1)
+
+if test ! "$msg_id"; then
+    msg_id=$( # use the number instead.
+        cd ../.nnmaildir/nov/
+        cat "${mailfile%:*}" | pn 2
+          )
+fi
+
 msg_dir=$(basename $(dirname $PWD))
 if test $(basename $0) = maildir-view; then
     if test "$msg_id"; then

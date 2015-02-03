@@ -157,7 +157,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
         mkdir -p $build_mount_p
         if test -e ~/.no-sudo; then
             function sudo() {
-                while test "$1" != bash; do
+                while test "$1" -a "$1" != bash; do
                     shift
                 done
                 "$@"
@@ -168,7 +168,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
                 true
             }
             function su() {
-                while test "$1" != -c; do
+                while test "$1" -a "$1" != -c; do
                     shift
                 done
                 bash "$@"

@@ -60,6 +60,10 @@ function git_svn() {
 
 function git()
 {
+    if test "$#" = 1 -a "$1" = st -a "$WORKING_REV"; then
+        git log -p -1 "$WORKING_REV"
+    fi
+
     if test $# = 1 -a "$1" = st -a ! -e .git; then
         echo only stat the current folder 1>&2
         set -- st .

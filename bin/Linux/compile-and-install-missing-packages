@@ -22,7 +22,11 @@ function install-one() {
     CPPFLAGS=-I$(echo ~/external/local/include) \
             LDFLAGS=-L$(echo ~/external/local/lib) \
             ./configure --prefix=$(echo ~/external/local) $add
-    make -j20
+    if test "$1" = mono-mcs; then
+        make
+    else
+        make -j20
+    fi
     make install
 }
 

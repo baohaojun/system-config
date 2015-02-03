@@ -83,9 +83,13 @@ sub edit_1($)
                 $file = shell_quote($file);
                 chomp(my $gnus_link = qx(maildir-get-id $file));
                 # $gnus_link = shell_quote($gnus_link);
-                system("find-or-exec emacs");
-                system("emacsclient", "-e", sprintf('(org-open-link-from-string "%s")', $gnus_link));
-                exit 0;
+                if ($gnus_link) {
+                    system("find-or-exec emacs");
+                    system("emacsclient", "-e", sprintf('(org-open-link-from-string "%s")', $gnus_link));
+                    exit 0;
+                } else {
+                    system("bhj-notify hello 'This mail has no link'")
+                }
             }
         }
 

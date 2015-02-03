@@ -10,6 +10,11 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 
+if test $# = 0; then
+    set -- -f $(if test -d bionic; then cd bionic; fi; git-choose-branch -p from) -t \
+        $(if test -d bionic; then cd bionic; fi; git-choose-branch -p to) -F -T
+fi
+
 
 local_from=false
 local_to=false
