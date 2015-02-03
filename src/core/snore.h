@@ -120,12 +120,6 @@ public:
     bool setPrimaryNotificationBackend(const QString &backend);
 
     /**
-     * Tries to set one of all backends availible on this platform as backend.
-     * @see primaryNotificationBackend
-     * @return whether a backend was succesfully set
-     */
-    bool setPrimaryNotificationBackend();
-    /**
      *
      * @return the name of the active primary backend
      */

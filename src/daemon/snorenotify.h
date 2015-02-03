@@ -32,16 +32,10 @@ class SnoreNotify: public QObject
 public:
     SnoreNotify();
     ~SnoreNotify();
-    void load();
-    void save();
 
 private:
     class TrayIcon *m_trayIcon;
     Snore::SnoreCore *m_snore;
-    QSettings m_settings;
-
-private slots:
-    void exit();
 };
 
 #endif // SNORENOTIFY_H

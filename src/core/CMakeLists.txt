@@ -14,6 +14,9 @@ QT5_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 add_subdirectory(notification)
 add_subdirectory(plugins)
 
+
+qt5_wrap_ui(UI settingsdialog.ui)
+
 list(APPEND SnoreNotify_SRCS
         snore.cpp
         snore_p.cpp
@@ -23,6 +26,8 @@ list(APPEND SnoreNotify_SRCS
         alert_p.cpp
         hint.cpp
         log.cpp
+        settingsdialog.cpp
+        ${UI}
         ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
         ${SNORENOTIFY_RCS}
         )
@@ -34,6 +39,7 @@ list(APPEND SnoreNotify_HDR
         alert.h
         hint.h
         log.h
+        settingsdialog.h
         ${CMAKE_CURRENT_BINARY_DIR}/snore_exports.h
         version.h
         )

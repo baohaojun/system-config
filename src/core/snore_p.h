@@ -68,6 +68,8 @@ public:
         return q_ptr;
     }
 
+    bool initPrimaryNotificationBackend();
+
 signals:
     void applicationRegistered(const Snore::Application &);
     void applicationDeregistered(const Snore::Application &);

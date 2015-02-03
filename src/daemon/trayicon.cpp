@@ -17,7 +17,7 @@
 */
 
 #include "trayicon.h"
-#include "settingsdialog.h"
+#include "core/settingsdialog.h"
 #include "core/snore.h"
 #include "core/snore_p.h"
 

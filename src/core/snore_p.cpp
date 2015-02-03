@@ -71,7 +71,62 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 {
     Q_Q(SnoreCore);
     if (m_pluginNames[SnorePlugin::BACKEND].contains(backend)) {
-        return q->setPrimaryNotificationBackend(backend);
+        if (backend == q->primaryNotificationBackend()) {
+            return true;
+        }
+        const QHash<QString, PluginContainer *> backends = PluginContainer::pluginCache(SnorePlugin::BACKEND);
+        if (!backends.contains(backend)) {
+            snoreDebug(SNORE_DEBUG) << "Unknown Backend:" << backend;
+            return false;
+        }
+        snoreDebug(SNORE_DEBUG) << "Setting Notification Backend to:" << backend;
+        SnoreBackend *b = qobject_cast<SnoreBackend *>(backends.value(backend)->load());
+        if (!b->isInitialized()) {
+            if (!b->initialize()) {
+                snoreDebug(SNORE_DEBUG) << "Failed to initialize" << b->name();
+                return false;
+            }
+        }
+        if (m_notificationBackend) {
+            m_notificationBackend->deinitialize();
+        }
+
+        m_notificationBackend = b;
+        m_settings->setValue("PrimaryBackend", backend);
+        return true;
+    }
+    return false;
+}
+
+bool SnoreCorePrivate::initPrimaryNotificationBackend()
+{
+    if (setBackendIfAvailible(m_settings->value("PrimaryBackend").toString())) {
+        return true;
+    }
+#ifdef Q_OS_WIN
+    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8 && setBackendIfAvailible("Windows 8")) {
+        return true;
+    }
+    if (setBackendIfAvailible("Growl")) {
+        return true;
+    }
+    if (setBackendIfAvailible("Snarl")) {
+        return true;
+    }
+#elif defined(Q_OS_LINUX)
+    if (setBackendIfAvailible("FreedesktopNotification")) {
+        return true;
+    }
+#elif defined(Q_OS_MAC)
+    if (setBackendIfAvailible("OSX Notification Center")) {
+        return true;
+    }
+    if (setBackendIfAvailible("Growl")) {
+        return true;
+    }
+#endif
+    if (setBackendIfAvailible("Snore")) {
+        return true;
     }
     return false;
 }

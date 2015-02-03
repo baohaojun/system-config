@@ -27,16 +27,13 @@
 
 using namespace Snore;
 
-SnoreNotify::SnoreNotify():
-    m_settings("SnoreNotify", "SnoreNotify")
+SnoreNotify::SnoreNotify()
 {
     m_trayIcon = new TrayIcon();
     m_snore = new SnoreCore();
     m_snore->loadPlugins(SnorePlugin::ALL);
-    load();
     m_trayIcon->initConextMenu(m_snore);
 
-    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(exit()));
     snoreDebug(SNORE_DEBUG) << "Snorenotfiy initialized with" << m_snore->primaryNotificationBackend();
 }
 
@@ -44,31 +41,5 @@ SnoreNotify::~SnoreNotify()
 {
     delete m_snore;
     delete m_trayIcon;
-}
-
-void SnoreNotify::load()
-{
-    QString backend = m_settings.value("notificationBackend").toString();
-    if (!backend.isEmpty()) {
-        if (!m_snore->setPrimaryNotificationBackend(backend)) {
-            m_snore->setPrimaryNotificationBackend();
-        }
-    } else {
-        m_snore->setPrimaryNotificationBackend();
-    }
-}
-void SnoreNotify::save()
-{
-    m_settings.setValue("notificationBackend", m_snore->primaryNotificationBackend());
-}
-
-void SnoreNotify::exit()
-{
-    snoreDebug(SNORE_DEBUG) << "Saving snore settings";
-    foreach(const Application & a, m_snore->aplications()) {
-        m_snore->deregisterApplication(a);
-    }
-    save();
-    m_trayIcon->hide();
 }
 

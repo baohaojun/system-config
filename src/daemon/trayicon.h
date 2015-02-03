@@ -22,6 +22,11 @@
 #include <QAction>
 #include "core/snore.h"
 
+namespace Snore
+{
+class SettingsDialog;
+}
+
 class TrayIcon: public QObject
 {
     Q_OBJECT
@@ -38,7 +43,7 @@ private:
     Snore::SnoreCore *m_snore;
     Snore::Application m_app;
     Snore::Alert m_alert;
-    class SettingsDialog *m_settings;
+    Snore::SettingsDialog *m_settings;
 
     QHash<QTimer *, Snore::Notification> m_notifications;
 

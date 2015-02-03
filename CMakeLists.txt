@@ -9,6 +9,9 @@ include(KDEInstallDirs)
 include(KDECompilerSettings)
 include(KDECMakeSettings)
 
+include(ECMAddAppIcon)
+include(ECMInstallIcons)
+
 include(GenerateExportHeader)
 include(FeatureSummary)
 

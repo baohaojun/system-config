@@ -18,12 +18,19 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
+#include "snore_exports.h"
+
 #include <QDialog>
+#include <QScopedPointer>
+
+class QAbstractButton;
 
 namespace Snore
 {
 class SnoreCore;
 class PluginSettingsWidget;
+class Application;
+class Alert;
 }
 
 namespace Ui
@@ -31,21 +38,31 @@ namespace Ui
 class SettingsDialog;
 }
 
-class SettingsDialog : public QDialog
+namespace Snore
+{
+class SNORE_EXPORT SettingsDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(Snore::SnoreCore *snore, QWidget *parent = 0);
+    explicit SettingsDialog(SnoreCore *snore, QWidget *parent = 0);
     ~SettingsDialog();
 
 private slots:
-    void on_buttonBox_accepted();
+    void on_pushButton_clicked();
+    void load();
+    void save();
+
+    void on_buttonBox_clicked(QAbstractButton *button);
 
 private:
     Ui::SettingsDialog *ui;
-    Snore::SnoreCore *m_snore;
+    SnoreCore *m_snore;
+    QScopedPointer<Application> m_app;
+    QScopedPointer<Alert> m_alert;
     QList<Snore::PluginSettingsWidget *> m_tabs;
+
 };
+}
 
 #endif // SETTINGSDIALOG_H

@@ -85,7 +85,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
             }
         }
     }
-
+    d->initPrimaryNotificationBackend();
     snoreDebug(SNORE_INFO) << "Loaded Plugins:" << d->m_pluginNames;
 }
 
@@ -140,63 +140,7 @@ const QStringList SnoreCore::pluginNames(SnorePlugin::PluginTypes type) const
 bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
 {
     Q_D(SnoreCore);
-    if (backend == primaryNotificationBackend()) {
-        return true;
-    }
-    const QHash<QString, PluginContainer *> backends = PluginContainer::pluginCache(SnorePlugin::BACKEND);
-    if (!backends.contains(backend)) {
-        snoreDebug(SNORE_DEBUG) << "Unknown Backend:" << backend;
-        return false;
-    }
-    snoreDebug(SNORE_DEBUG) << "Setting Notification Backend to:" << backend;
-    SnoreBackend *b = qobject_cast<SnoreBackend *>(backends.value(backend)->load());
-    if (!b->isInitialized()) {
-        if (!b->initialize()) {
-            snoreDebug(SNORE_DEBUG) << "Failed to initialize" << b->name();
-            return false;
-        }
-    }
-    if (d->m_notificationBackend) {
-        d->m_notificationBackend->deinitialize();
-    }
-
-    d->m_notificationBackend = b;
-    settings()->setValue("PrimaryBackend", backend);
-    return true;
-}
-
-bool SnoreCore::setPrimaryNotificationBackend()
-{
-    Q_D(SnoreCore);
-    if (d->setBackendIfAvailible(settings()->value("PrimaryBackend").toString())) {
-        return true;
-    }
-#ifdef Q_OS_WIN
-    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8 && d->setBackendIfAvailible("Windows 8")) {
-        return true;
-    }
-    if (d->setBackendIfAvailible("Growl")) {
-        return true;
-    }
-    if (d->setBackendIfAvailible("Snarl")) {
-        return true;
-    }
-#elif defined(Q_OS_LINUX)
-    if (d->setBackendIfAvailible("FreedesktopNotification")) {
-        return true;
-    }
-#elif defined(Q_OS_MAC)
-    if (d->setBackendIfAvailible("OSX Notification Center")) {
-        return true;
-    }
-    if (d->setBackendIfAvailible("Growl")) {
-        return true;
-    }
-#endif
-    if (d->setBackendIfAvailible("Snore")) {
-        return true;
-    }
-    return false;
+    return d->setBackendIfAvailible(backend);
 }
 
 const QString SnoreCore::primaryNotificationBackend() const
