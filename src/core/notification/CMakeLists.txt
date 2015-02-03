@@ -6,9 +6,11 @@ set(SnoreNotify_SRCS ${SnoreNotify_SRCS}
         notification/icon_p.cpp
         PARENT_SCOPE)
 
-set(SnoreNotify_HDR ${SnoreNotify_HDR}
-        notification/notification.h
-        notification/notification_p.h
-        notification/notificationaction.h
-        notification/icon.h
-        PARENT_SCOPE)
+set(SnoreNotify_HDR
+        notification.h
+        notification_p.h
+        notificationaction.h
+        icon.h
+        )
+
+install(FILES ${SnoreNotify_HDR} DESTINATION ${KDE_INSTALL_INCLUDEDIR}/snore/core/notification)

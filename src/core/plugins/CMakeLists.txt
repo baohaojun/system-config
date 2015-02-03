@@ -6,11 +6,11 @@ set(SnoreNotify_SRCS ${SnoreNotify_SRCS}
         plugins/pluginsettingswidget.cpp
         PARENT_SCOPE)
 
-set(SnoreNotify_HDR ${SnoreNotify_HDR}
-        plugins/plugins.h
-        plugins/snorefrontend.h
-        plugins/snorebackend.h
-        plugins/pluginsettingswidget.h
-        PARENT_SCOPE)
+set(SnoreNotify_HDR
+        plugins.h
+        snorefrontend.h
+        snorebackend.h
+        pluginsettingswidget.h)
 
 
+install(FILES ${SnoreNotify_HDR} DESTINATION ${KDE_INSTALL_INCLUDEDIR}/snore/core/plugins)
