@@ -48,9 +48,9 @@ int main(int argc, char *argv[])
     if (parser.isSet(title) && parser.isSet(message)) {
         SnoreCore core;
 
-        core.loadPlugins(SnorePlugin::BACKEND);
+        core.loadPlugins(SnorePlugin::BACKEND | SnorePlugin::SECONDARY_BACKEND);
         if (parser.isSet(backend) ? !core.setPrimaryNotificationBackend(parser.value(backend)) : !core.setPrimaryNotificationBackend()) {
-            std::cerr << "Failed to set backend: " << qPrintable(parser.value(backend)) << " avalible backends: " << qPrintable(core.notificationBackends().join(", ")) << std::endl;
+            std::cerr << "Failed to set backend: " << qPrintable(parser.value(backend)) << " avalible backends: " << qPrintable(core.pluginNames(SnorePlugin::BACKEND).join(", ")) << std::endl;
             return 1;
         }
         Icon icon(parser.value(iconPath));
