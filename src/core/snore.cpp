@@ -62,11 +62,16 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN:
-                    if (!info->load()->initialize()) {
-                        info->load()->deinitialize();
-                        info->unload();
-                        break;
+                {
+                    SnorePlugin *plugin = info->load();
+                    if(plugin->value("Enabled").toBool()) {
+                        if (!plugin->initialize()) {
+                            plugin->deinitialize();
+                            info->unload();
+                            break;
+                        }
                     }
+                }
                     break;
                 default:
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();

@@ -6,25 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>979</width>
     <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Settings</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../data/snore.qrc">
+    <normaloff>:/root/snore.png</normaloff>:/root/snore.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>-1</number>
      </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Active Backends</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout2"/>
-     </widget>
     </widget>
    </item>
    <item>
@@ -39,7 +37,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../data/snore.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

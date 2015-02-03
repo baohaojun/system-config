@@ -31,15 +31,6 @@ SettingsDialog::SettingsDialog(SnoreCore *snore, QWidget *parent) :
     m_snore(snore)
 {
     ui->setupUi(this);
-    for(const QString &plugin : snore->pluginNames(SnorePlugin::PluginTypes(SnorePlugin::ALL) ^ SnorePlugin::BACKEND))
-    {
-        QCheckBox *box = new QCheckBox(plugin);
-        box->setChecked(snore->pluginIsEnabled(plugin));
-        connect(box,&QCheckBox::toggled,[plugin,snore,box](bool checked){
-            box->setChecked(snore->setPluginEnabled(plugin,checked));
-        });
-        ui->verticalLayout2->addWidget(box);
-    }
     for(auto widget : snore->settingWidgets())
     {
         ui->tabWidget->addTab(widget,widget->name());

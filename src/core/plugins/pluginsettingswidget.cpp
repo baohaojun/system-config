@@ -17,6 +17,7 @@
 */
 #include "pluginsettingswidget.h"
 #include "plugins.h"
+#include "snore.h"
 
 #include <QCheckBox>
 
@@ -58,6 +59,7 @@ void PluginSettingsWidget::loadSettings()
 void PluginSettingsWidget::saveSettings()
 {
     m_snorePlugin->setValue("Enabled",m_enabled->isChecked());
+    m_snorePlugin->snore()->setPluginEnabled(m_snorePlugin->name(),m_enabled->isChecked());
     save();
 }
 
