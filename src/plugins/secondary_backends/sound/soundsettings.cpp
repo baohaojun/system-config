@@ -22,16 +22,15 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-
 using namespace Snore;
 
 SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
-    PluginSettingsWidget(snorePlugin,parent),
+    PluginSettingsWidget(snorePlugin, parent),
     m_lineEdit(new QLineEdit)
 {
-    addRow("Sound File:",m_lineEdit);
+    addRow("Sound File:", m_lineEdit);
     QPushButton *button = new QPushButton("Select a sound File");
-    connect(button, &QPushButton::clicked, [this](){
+    connect(button, &QPushButton::clicked, [this]() {
         QFileDialog dialog;
         dialog.setNameFilter("All Audio files (*.mp3 *.wav *.ogg)");
         dialog.setFilter(QDir::Files);
@@ -39,7 +38,7 @@ SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
         dialog.exec();
         m_lineEdit->setText(dialog.selectedFiles().first());
     });
-    addRow("",button);
+    addRow("", button);
 }
 
 SoundSettings::~SoundSettings()
@@ -53,6 +52,6 @@ void SoundSettings::load()
 
 void SoundSettings::save()
 {
-    m_snorePlugin->setValue("Sound",m_lineEdit->text());
+    m_snorePlugin->setValue("Sound", m_lineEdit->text());
 }
 

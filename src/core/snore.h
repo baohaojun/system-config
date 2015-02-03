@@ -151,12 +151,11 @@ public:
      */
     bool primaryBackendSupportsRichtext();
 
-
     /**
      *
      * @return A list of widgets a settings dialog.
      */
-    QList<PluginSettingsWidget*> settingWidgets();
+    QList<PluginSettingsWidget *> settingWidgets();
 
     /**
      * @return a pointer to the global settings
@@ -167,7 +166,7 @@ public:
     /**
      * @return a hashmap containing the documentation of the settings keys.
      */
-    const QHash<QString,QString> &settingsDescription() const;
+    const QHash<QString, QString> &settingsDescription() const;
 
     /**
      * Enables or disables a plugin
@@ -175,12 +174,12 @@ public:
      * @param enable
      * @return whether the backend is enabled
      */
-    bool setPluginEnabled(const QString& pluginName,bool enable);
+    bool setPluginEnabled(const QString &pluginName, bool enable);
 
     /**
      * @return whether the backend is enabled
      */
-    bool pluginIsEnabled(const QString& pluginName) const;
+    bool pluginIsEnabled(const QString &pluginName) const;
 
     /**
      * @return a pointer to the private class, for internal use only.

@@ -32,10 +32,10 @@ public:
     FreedesktopFrontend();
     ~FreedesktopFrontend();
     virtual bool initialize() override;
-	virtual bool deinitialize() override;
+    virtual bool deinitialize() override;
 
-	void actionInvoked(Snore::Notification notification) override;
-	void notificationClosed(Snore::Notification notification) override;
+    void actionInvoked(Snore::Notification notification) override;
+    void notificationClosed(Snore::Notification notification) override;
 
     uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
     void CloseNotification(uint id);

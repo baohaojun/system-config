@@ -19,7 +19,6 @@
 #include "snorefrontend.h"
 #include "../snore.h"
 
-
 namespace Snore
 {
 

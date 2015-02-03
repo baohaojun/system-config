@@ -23,14 +23,14 @@
 using namespace Snore;
 
 SnoreNotifierSettings::SnoreNotifierSettings(SnorePlugin *snore, QWidget *parent) :
-    PluginSettingsWidget(snore,parent),
+    PluginSettingsWidget(snore, parent),
     m_comboBox(new QComboBox)
 {
 
-    m_comboBox->addItem("TopLeftCorner",Qt::TopLeftCorner);
-    m_comboBox->addItem("TopRightCorner",Qt::TopRightCorner);
-    m_comboBox->addItem("BottomLeftCorner",Qt::BottomLeftCorner);
-    m_comboBox->addItem("BottomRightCorner",Qt::BottomRightCorner);
+    m_comboBox->addItem("TopLeftCorner", Qt::TopLeftCorner);
+    m_comboBox->addItem("TopRightCorner", Qt::TopRightCorner);
+    m_comboBox->addItem("BottomLeftCorner", Qt::BottomLeftCorner);
+    m_comboBox->addItem("BottomRightCorner", Qt::BottomRightCorner);
     addRow("Position:", m_comboBox);
 }
 

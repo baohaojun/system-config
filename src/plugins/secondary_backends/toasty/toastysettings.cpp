@@ -22,10 +22,10 @@
 #include <QLineEdit>
 
 ToastySettings::ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent) :
-    Snore::PluginSettingsWidget(plugin,parent),
+    Snore::PluginSettingsWidget(plugin, parent),
     m_lineEdit(new QLineEdit)
 {
-    addRow("Device ID:",m_lineEdit);
+    addRow("Device ID:", m_lineEdit);
 }
 
 ToastySettings::~ToastySettings()
@@ -39,5 +39,5 @@ void ToastySettings::load()
 
 void ToastySettings::save()
 {
-    m_snorePlugin->setValue("DeviceID",m_lineEdit->text());
+    m_snorePlugin->setValue("DeviceID", m_lineEdit->text());
 }

@@ -23,7 +23,6 @@
 #include "../notification/notification.h"
 #include "../snore.h"
 
-
 namespace Snore
 {
 

@@ -63,7 +63,10 @@ public:
 
     void addSettingsDescription(const QString &key, const QString &help) const;
 
-    static SnoreCore *snoreInstance(){ return q_ptr; }
+    static SnoreCore *snoreInstance()
+    {
+        return q_ptr;
+    }
 
 signals:
     void applicationRegistered(const Snore::Application &);
@@ -81,14 +84,14 @@ private:
     QHash<QString, Application> m_applications;
 
     QHash<SnorePlugin::PluginTypes, QStringList> m_pluginNames;
-    QHash<QString, SnorePlugin*> m_plugins;
+    QHash<QString, SnorePlugin *> m_plugins;
 
     QPointer<SnoreBackend> m_notificationBackend;
 
     Application m_defaultApp;
 
     QSettings *m_settings;
-    mutable QHash<QString,QString> m_help;
+    mutable QHash<QString, QString> m_help;
 };
 }
 

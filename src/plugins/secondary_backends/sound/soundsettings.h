@@ -4,7 +4,6 @@
 
 #include "plugins/pluginsettingswidget.h"
 
-
 class QLineEdit;
 class SoundSettings : public Snore::PluginSettingsWidget
 {
@@ -19,7 +18,6 @@ public:
 
 private:
     QLineEdit *m_lineEdit;
-
 
 };
 

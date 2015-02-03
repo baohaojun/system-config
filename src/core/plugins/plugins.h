@@ -26,7 +26,6 @@
 
 namespace Snore
 {
-class Application;
 class SnoreCore;
 
 class SNORE_EXPORT SnorePlugin : public QObject
@@ -56,10 +55,9 @@ public:
     PluginTypes type() const;
     const QString typeName() const;
 
-
     QVariant value(const QString &key) const;
     void setValue(const QString &key, const QVariant &value);
-    void setDefaultValue(const QString &key, const QVariant &value,const QString &help);
+    void setDefaultValue(const QString &key, const QVariant &value, const QString &help);
 
     virtual PluginSettingsWidget *settingsWidget();
 

@@ -20,12 +20,14 @@
 
 #include <QDialog>
 
-namespace Snore {
+namespace Snore
+{
 class SnoreCore;
 class PluginSettingsWidget;
 }
 
-namespace Ui {
+namespace Ui
+{
 class SettingsDialog;
 }
 
@@ -34,7 +36,7 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(Snore::SnoreCore *snore,QWidget *parent = 0);
+    explicit SettingsDialog(Snore::SnoreCore *snore, QWidget *parent = 0);
     ~SettingsDialog();
 
 private slots:
@@ -43,7 +45,7 @@ private slots:
 private:
     Ui::SettingsDialog *ui;
     Snore::SnoreCore *m_snore;
-    QList<Snore::PluginSettingsWidget*> m_tabs;
+    QList<Snore::PluginSettingsWidget *> m_tabs;
 };
 
 #endif // SETTINGSDIALOG_H

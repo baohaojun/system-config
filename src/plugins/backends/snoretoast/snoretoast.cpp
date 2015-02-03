@@ -36,7 +36,7 @@ void SnoreToast::slotNotify(Notification notification)
     QProcess *p = new QProcess(this);
     p->setReadChannelMode(QProcess::MergedChannels);
 
-    connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotToastNotificationClosed(int,QProcess::ExitStatus)));
+    connect(p, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotToastNotificationClosed(int, QProcess::ExitStatus)));
     connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
 
     QStringList arguements;
@@ -77,7 +77,7 @@ void SnoreToast::slotRegisterApplication(const Application &application)
         snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
         p->start("SnoreToast", arguements);
 
-        connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int,QProcess::ExitStatus)));
+        connect(p, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int, QProcess::ExitStatus)));
         connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
     }
 }
@@ -93,7 +93,7 @@ void SnoreToast::slotCloseNotification(Notification notification)
     snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
     p->start("SnoreToast", arguements);
 
-    connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int,QProcess::ExitStatus)));
+    connect(p, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int, QProcess::ExitStatus)));
     connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
 }
 

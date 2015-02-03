@@ -23,7 +23,7 @@
 using namespace Snore;
 
 Sound::Sound():
-    SnoreSecondaryBackend("Sound",false),
+    SnoreSecondaryBackend("Sound", false),
     m_player(new QMediaPlayer(this))
 {
     m_player->setVolume(50);
@@ -48,11 +48,11 @@ PluginSettingsWidget *Sound::settingsWidget()
 void Sound::slotNotify(Snore::Notification notification)
 {
     QString sound = notification.hints().value("sound").toString();
-    if(sound.isEmpty()) {
+    if (sound.isEmpty()) {
         sound = value("Sound").toString();
     }
     snoreDebug(SNORE_DEBUG) << "SoundFile:" << sound;
-    if(!sound.isEmpty()) {
+    if (!sound.isEmpty()) {
         m_player->setMedia(QUrl::fromLocalFile(sound));
         snoreDebug(SNORE_DEBUG) << "SoundFile:" << m_player->media().canonicalUrl();
         m_player->play();

@@ -35,7 +35,7 @@ public slots:
     void slotNotify(Snore::Notification notification) override;
 
 private:
-    class QMediaPlayer* m_player;
+    class QMediaPlayer *m_player;
 };
 
 #endif // SOUND_H

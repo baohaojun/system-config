@@ -22,11 +22,8 @@
 #include "../notification/notification.h"
 #include "plugins.h"
 
-
 namespace Snore
 {
-class Application;
-class SnoreCore;
 class SnorePlugin;
 
 class SNORE_EXPORT SnoreFrontend: public SnorePlugin

@@ -20,7 +20,7 @@ TrayIconNotifer::~TrayIconNotifer()
 
 bool TrayIconNotifer::deinitialize()
 {
-    if(SnoreBackend::deinitialize()) {
+    if (SnoreBackend::deinitialize()) {
         m_currentlyDisplaying = false;
         return true;
     }
@@ -30,7 +30,7 @@ bool TrayIconNotifer::deinitialize()
 void TrayIconNotifer::slotNotify(Notification notification)
 {
     QSystemTrayIcon *icon = trayIcon(notification.application());
-    if(icon) {
+    if (icon) {
         m_notificationQue.append(notification);
         displayNotification(icon);
     }
@@ -39,7 +39,7 @@ void TrayIconNotifer::slotNotify(Notification notification)
 void TrayIconNotifer::slotCloseNotification(Notification n)
 {
     QSystemTrayIcon *icon = trayIcon(n.application());
-    if(icon) {
+    if (icon) {
         snoreDebug(SNORE_DEBUG) << n;
         m_currentlyDisplaying = false;
         displayNotification(icon);
@@ -49,7 +49,7 @@ void TrayIconNotifer::slotCloseNotification(Notification n)
 void TrayIconNotifer::slotRegisterApplication(const Application &application)
 {
     QSystemTrayIcon *icon = trayIcon(application);
-    if(icon) {
+    if (icon) {
         connect(icon, SIGNAL(messageClicked()), this, SLOT(actionInvoked()));
     }
 }
@@ -57,15 +57,15 @@ void TrayIconNotifer::slotRegisterApplication(const Application &application)
 void TrayIconNotifer::slotDeregisterApplication(const Application &application)
 {
     QSystemTrayIcon *icon = trayIcon(application);
-    if(icon) {
+    if (icon) {
         disconnect(icon, SIGNAL(messageClicked()), this, SLOT(actionInvoked()));
     }
 }
 
 QSystemTrayIcon *TrayIconNotifer::trayIcon(const Application &app)
 {
-    if(app.constHints().contains("tray-icon")) {
-        return app.constHints().value("tray-icon").value<QSystemTrayIcon*>();
+    if (app.constHints().contains("tray-icon")) {
+        return app.constHints().value("tray-icon").value<QSystemTrayIcon *>();
     }
     return nullptr;
 }

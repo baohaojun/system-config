@@ -20,7 +20,8 @@
 
 #include "plugins/pluginsettingswidget.h"
 
-namespace Snore{
+namespace Snore
+{
 class SnorePlugin;
 }
 class QComboBox;

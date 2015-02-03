@@ -26,9 +26,6 @@
 #include <QSharedData>
 #include <QSet>
 
-
-class QNetworkAccessManager;
-
 namespace Snore
 {
 

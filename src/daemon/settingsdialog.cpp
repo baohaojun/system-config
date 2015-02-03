@@ -31,9 +31,8 @@ SettingsDialog::SettingsDialog(SnoreCore *snore, QWidget *parent) :
     m_snore(snore)
 {
     ui->setupUi(this);
-    for(auto widget : snore->settingWidgets())
-    {
-        ui->tabWidget->addTab(widget,widget->name());
+    for (auto widget : snore->settingWidgets()) {
+        ui->tabWidget->addTab(widget, widget->name());
         widget->loadSettings();
         m_tabs.append(widget);
     }
@@ -46,8 +45,7 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::on_buttonBox_accepted()
 {
-    for( auto w:m_tabs)
-    {
+    for (auto w : m_tabs) {
         w->saveSettings();
     }
 }

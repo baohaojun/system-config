@@ -35,7 +35,7 @@ SnorePlugin::SnorePlugin(const QString &name) :
     if (thread() != qApp->thread()) {
         moveToThread(qApp->thread());
     }
-    setDefaultValue("Enabled",true,"Whether the plugin is enabled");
+    setDefaultValue("Enabled", true, "Whether the plugin is enabled");
 }
 
 SnorePlugin::~SnorePlugin()
@@ -82,7 +82,7 @@ void SnorePlugin::setValue(const QString &key, const QVariant &value)
 void SnorePlugin::setDefaultValue(const QString &key, const QVariant &value, const QString &help)
 {
     QString pk(normaliseKey(key));
-    snore()->d()->addSettingsDescription(pk,help);
+    snore()->d()->addSettingsDescription(pk, help);
     if (!snore()->settings()->contains(pk)) {
         snore()->settings()->setValue(normaliseKey(key), value);
     }

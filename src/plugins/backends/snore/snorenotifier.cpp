@@ -22,7 +22,6 @@
 #include "core/notification/notification_p.h"
 #include "core/snore_p.h"
 
-
 #include <QThread>
 
 using namespace Snore;
@@ -125,7 +124,7 @@ void SnoreNotifier::slotProcessQueue()
 void SnoreNotifier::setup()
 {
     for (int i = 0; i < m_widgets.size(); ++i) {
-        NotifyWidget *w = new NotifyWidget(i,this);
+        NotifyWidget *w = new NotifyWidget(i, this);
         m_widgets[i] = w;
         connect(w, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
         connect(w, SIGNAL(invoked()), this, SLOT(slotInvoked()));

@@ -41,24 +41,24 @@ IconData::IconData(const QString &url):
     }
     m_isRemoteFile = !m_isLocalFile && !m_isResource;
 
-    if(!m_isLocalFile && !s_localImageCache.contains(m_localUrl)) {
+    if (!m_isLocalFile && !s_localImageCache.contains(m_localUrl)) {
         if (m_isRemoteFile) {
             m_isDownloading = true;
             snoreDebug(SNORE_DEBUG) << "Downloading:" << m_url;
             QNetworkAccessManager *manager = new QNetworkAccessManager();
             QNetworkRequest request(m_url);
             QNetworkReply *reply = manager->get(request);
-            QObject::connect(reply,&QNetworkReply::downloadProgress,[&](qint64 bytesReceived, qint64 bytesTotal){
-                snoreDebug(SNORE_DEBUG) << "Downloading:" << m_localUrl << bytesReceived/double(bytesTotal) * 100.0 << "%";
+            QObject::connect(reply, &QNetworkReply::downloadProgress, [&](qint64 bytesReceived, qint64 bytesTotal) {
+                snoreDebug(SNORE_DEBUG) << "Downloading:" << m_localUrl << bytesReceived / double(bytesTotal) * 100.0 << "%";
             });
 
-            QObject::connect(reply,static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),[&,reply,manager](QNetworkReply::NetworkError code){
+            QObject::connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [ &, reply, manager](QNetworkReply::NetworkError code) {
                 snoreDebug(SNORE_WARNING) << "Error:" << code;
                 reply->deleteLater();
                 manager->deleteLater();
                 m_isDownloading = false;
             });
-            QObject::connect(reply, &QNetworkReply::finished, [&,reply,manager]() {
+            QObject::connect(reply, &QNetworkReply::finished, [ &, reply, manager]() {
                 m_img = QImage::fromData(reply->readAll(), "PNG");
                 m_img.save(m_localUrl, "PNG");
                 s_localImageCache.insert(m_localUrl);
@@ -68,7 +68,7 @@ IconData::IconData(const QString &url):
                 manager->deleteLater();
                 m_isDownloading = false;
             });
-        } else if(m_isResource) {
+        } else if (m_isResource) {
             m_img = QImage(url);
             m_img.save(m_localUrl, "PNG");
             s_localImageCache.insert(m_localUrl);
@@ -100,8 +100,7 @@ IconData::~IconData()
 const QImage &IconData::image()
 {
     if (m_img.isNull()) {
-        while(m_isDownloading)
-        {
+        while (m_isDownloading) {
             qApp->processEvents();
         }
         if (!m_isRemoteFile) {
@@ -113,8 +112,7 @@ const QImage &IconData::image()
 
 QString IconData::localUrl()
 {
-    while(m_isDownloading)
-    {
+    while (m_isDownloading) {
         qApp->processEvents();
     }
     return m_localUrl;

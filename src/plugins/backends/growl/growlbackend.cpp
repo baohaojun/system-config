@@ -21,7 +21,6 @@
 #include "core/snore.h"
 #include "core/snore_p.h"
 
-
 using namespace Snore;
 
 GrowlBackend *GrowlBackend::s_instance = NULL;

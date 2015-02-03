@@ -37,7 +37,7 @@ TrayIcon::TrayIcon():
     m_alert("Default", Icon(":/root/snore.png"))
 {
     m_app.addAlert(m_alert);
-    m_app.hints().setValue("tray-icon",m_trayIcon);
+    m_app.hints().setValue("tray-icon", m_trayIcon);
 }
 
 void TrayIcon::initConextMenu(SnoreCore *snore)
@@ -58,7 +58,7 @@ void TrayIcon::initConextMenu(SnoreCore *snore)
     m_trayMenu->addSeparator();
     m_backendActions =  new QActionGroup(m_trayMenu);
     m_backendActions->setExclusive(true);
-    for(const QString & back : m_snore->pluginNames(SnorePlugin::BACKEND)) {
+    for (const QString &back : m_snore->pluginNames(SnorePlugin::BACKEND)) {
         QAction *b = m_trayMenu->addAction(back, this, SLOT(setPrimaryBackend()));
         b->setCheckable(true);
         if (back == m_snore->primaryNotificationBackend()) {

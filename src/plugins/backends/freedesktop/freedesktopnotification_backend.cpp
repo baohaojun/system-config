@@ -23,8 +23,8 @@ bool FreedesktopBackend::initialize(SnoreCore *snore)
     reply.waitForFinished();
     QStringList caps  = reply.value();
     setSupportsRichtext(caps.contains("body-markup"));
-    connect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
-    connect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
+    connect(m_interface, SIGNAL(ActionInvoked(uint, QString)), this, SLOT(slotActionInvoked(uint, QString)));
+    connect(m_interface, SIGNAL(NotificationClosed(uint, uint)), this , SLOT(slotNotificationClosed(uint, uint)));
 
     return SnoreBackend::initialize(snore);
 }
@@ -32,8 +32,8 @@ bool FreedesktopBackend::initialize(SnoreCore *snore)
 bool FreedesktopBackend::deinitialize()
 {
     if (SnoreBackend::deinitialize()) {
-        disconnect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
-        disconnect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
+        disconnect(m_interface, SIGNAL(ActionInvoked(uint, QString)), this, SLOT(slotActionInvoked(uint, QString)));
+        disconnect(m_interface, SIGNAL(NotificationClosed(uint, uint)), this , SLOT(slotNotificationClosed(uint, uint)));
         m_interface->deleteLater();
         m_interface = NULL;
         return true;

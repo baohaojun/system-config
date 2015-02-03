@@ -49,11 +49,11 @@ SnoreCore::~SnoreCore()
 void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
 {
     Q_D(SnoreCore);
-    for(SnorePlugin::PluginTypes type : PluginContainer::types()) {
+    for (SnorePlugin::PluginTypes type : PluginContainer::types()) {
         if (type != SnorePlugin::ALL && types & type) {
-            for(PluginContainer * info : PluginContainer::pluginCache(type).values()) {
+            for (PluginContainer *info : PluginContainer::pluginCache(type).values()) {
                 SnorePlugin *plugin = info->load();
-                if(!plugin) {
+                if (!plugin) {
                     continue;
                 }
 
@@ -62,9 +62,8 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                     break;
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
-                case SnorePlugin::PLUGIN:
-                {
-                    if(plugin->value("Enabled").toBool()) {
+                case SnorePlugin::PLUGIN: {
+                    if (plugin->value("Enabled").toBool()) {
                         if (!plugin->initialize()) {
                             plugin->deinitialize();
                             info->unload();
@@ -72,7 +71,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                         }
                     }
                 }
-                    break;
+                break;
                 default:
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
@@ -130,9 +129,8 @@ const QStringList SnoreCore::pluginNames(SnorePlugin::PluginTypes type) const
 {
     Q_D(const SnoreCore);
     QStringList out;
-    for(auto t:PluginContainer::types()){
-        if(t & type)
-        {
+    for (auto t : PluginContainer::types()) {
+        if (t & type) {
             out.append(d->m_pluginNames.value(t));
         }
     }
@@ -227,12 +225,11 @@ bool SnoreCore::primaryBackendSupportsRichtext()
     return d->m_notificationBackend->supportsRichtext();
 }
 
-QList<PluginSettingsWidget*> SnoreCore::settingWidgets()
+QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
 {
     Q_D(SnoreCore);
-    QList<PluginSettingsWidget*> list;
-    for(auto p:d->m_plugins)
-    {
+    QList<PluginSettingsWidget *> list;
+    for (auto p : d->m_plugins) {
 //TODO: mem leak?
         list.append(p->settingsWidget());
     }
@@ -245,7 +242,8 @@ QSettings *SnoreCore::settings()
     return d->m_settings;
 }
 
-const QSettings *SnoreCore::settings() const{
+const QSettings *SnoreCore::settings() const
+{
     Q_D(const SnoreCore);
     return d->m_settings;
 }
@@ -256,16 +254,13 @@ const QHash<QString, QString> &SnoreCore::settingsDescription() const
     return d->m_help;
 }
 
-
 bool SnoreCore::setPluginEnabled(const QString &pluginName, bool enable)
 {
     Q_D(SnoreCore);
     SnorePlugin *plugin = d->m_plugins.value(pluginName);
-    if(!plugin->isInitialized() && enable)
-    {
+    if (!plugin->isInitialized() && enable) {
         plugin->initialize();
-    } else if(plugin->isInitialized() && !enable)
-    {
+    } else if (plugin->isInitialized() && !enable) {
         plugin->deinitialize();
     }
     return plugin->isInitialized();

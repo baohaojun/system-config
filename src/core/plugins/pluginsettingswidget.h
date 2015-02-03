@@ -24,7 +24,6 @@
 #include <QFormLayout>
 #include <QCheckBox>
 
-
 namespace Snore
 {
 class SnorePlugin;
@@ -38,7 +37,7 @@ public:
 
     const QString name() const;
 
-    void addRow(const QString &label,QWidget *widget);
+    void addRow(const QString &label, QWidget *widget);
 
     void loadSettings();
     void saveSettings();
@@ -52,7 +51,6 @@ protected:
 private:
     QFormLayout *m_layout;
     QCheckBox *m_enabled;
-
 
 };
 }

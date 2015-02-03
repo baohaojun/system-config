@@ -5,7 +5,6 @@
 
 namespace Snore
 {
-class SnoreCore;
 }
 
 class QSystemTrayIcon;
@@ -30,7 +29,6 @@ private:
     QList<Snore::Notification > m_notificationQue;
     uint m_displayed;
     bool m_currentlyDisplaying;
-
 
 private slots:
     void displayNotification(QSystemTrayIcon *icon);

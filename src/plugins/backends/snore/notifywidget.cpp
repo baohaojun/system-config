@@ -20,7 +20,6 @@
 #include "snorenotifier.h"
 #include "core/log.h"
 
-
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
@@ -35,11 +34,11 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 
     setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
 #ifdef Q_OS_MAC
-                         | Qt::SubWindow
+             | Qt::SubWindow
 #else
-                         | Qt::ToolTip
+             | Qt::ToolTip
 #endif
-                        );
+            );
 
 //    setFocusPolicy(Qt::NoFocus);
 //    setAttribute(Qt::WA_ShowWithoutActivating, true);
@@ -93,7 +92,6 @@ void NotifyWidget::display(const Notification &notification)
                               Q_ARG(QVariant, textColor),
                               Q_ARG(QVariant, notification.isUpdate()));
 }
-
 
 bool NotifyWidget::acquire()
 {

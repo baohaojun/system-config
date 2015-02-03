@@ -20,7 +20,6 @@
 #include "trayicon.h"
 #include "core/snore.h"
 
-
 #include <iostream>
 #include <stdlib.h>
 
