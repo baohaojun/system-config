@@ -64,6 +64,8 @@ public:
 
     void addSettingsDescription(const QString &key, const QString &help) const;
 
+    static SnoreCore *snoreInstance(){ return q_ptr; }
+
 signals:
     void applicationRegistered(const Snore::Application &);
     void applicationDeregistered(const Snore::Application &);
@@ -74,7 +76,8 @@ private slots:
     void slotAboutToQuit();
 
 private:
-    SnoreCore *q_ptr;
+    //TODO: cleanup the static instance
+    static SnoreCore *q_ptr;
 
     QHash<QString, Application> m_applications;
 

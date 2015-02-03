@@ -36,7 +36,7 @@ class SNORE_EXPORT SnoreBackend : public SnorePlugin
 public:
     SnoreBackend(const  QString &name, bool canCloseNotification, bool supportsRichtext, bool canUpdateNotifications = false);
     virtual ~SnoreBackend();
-    virtual bool initialize(SnoreCore *snore) override;
+    virtual bool initialize() override;
     virtual bool deinitialize() override;
 
     void requestCloseNotification(Snore::Notification notification, Notification::CloseReasons reason);
@@ -93,7 +93,7 @@ class SNORE_EXPORT SnoreSecondaryBackend : public SnorePlugin
 public:
     SnoreSecondaryBackend(const  QString &name, bool supportsRhichtext);
     virtual ~SnoreSecondaryBackend();
-    virtual bool initialize(SnoreCore *snore);
+    virtual bool initialize();
     virtual bool deinitialize();
 
     bool supportsRichtext();

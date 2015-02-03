@@ -12,12 +12,12 @@ class SnoreToast : public Snore::SnoreBackend
 public:
     SnoreToast();
     ~SnoreToast();
-    virtual bool initialize(Snore::SnoreCore *snore);
+    virtual bool initialize() override;
 
 public slots:
-    void slotNotify(Snore::Notification notification);
-    void slotRegisterApplication(const Snore::Application &application);
-    void slotCloseNotification(Snore::Notification notification);
+    void slotNotify(Snore::Notification notification) override;
+    void slotRegisterApplication(const Snore::Application &application) override;
+    void slotCloseNotification(Snore::Notification notification) override;
 
 private slots:
     void slotToastNotificationClosed(int code, QProcess::ExitStatus);

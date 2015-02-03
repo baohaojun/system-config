@@ -36,7 +36,7 @@ SnarlNetworkFrontend::~SnarlNetworkFrontend()
 {
 }
 
-bool SnarlNetworkFrontend::initialize(SnoreCore *snore)
+bool SnarlNetworkFrontend::initialize()
 {
     parser = new Parser(this);
     tcpServer = new QTcpServer(this);
@@ -47,7 +47,7 @@ bool SnarlNetworkFrontend::initialize(SnoreCore *snore)
         connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
         std::cout << "The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>" << std::endl;
     }
-    return SnoreFrontend::initialize(snore);
+    return SnoreFrontend::initialize();
 }
 
 bool SnarlNetworkFrontend::deinitialize()

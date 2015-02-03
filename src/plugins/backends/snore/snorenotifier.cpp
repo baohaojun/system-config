@@ -121,7 +121,6 @@ void SnoreNotifier::slotProcessQueue()
             }
         }
     }
-
 }
 
 void SnoreNotifier::setup()
@@ -138,9 +137,9 @@ void SnoreNotifier::setup()
     connect(m_timer, SIGNAL(timeout()), this, SLOT(slotProcessQueue()));
 }
 
-bool SnoreNotifier::initialize(SnoreCore *snore)
+bool SnoreNotifier::initialize()
 {
-    if (SnoreBackend::initialize(snore)) {
+    if (SnoreBackend::initialize()) {
         setDefaultValue("Position", Qt::TopRightCorner, "The position for the notification.");
         return metaObject()->invokeMethod(this, "setup", Qt::QueuedConnection);
     }

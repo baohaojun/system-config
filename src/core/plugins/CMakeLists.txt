@@ -1,4 +1,4 @@
-set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
+set(SnoreNotify_SRCS ${SnoreNotify_SRCS}
         plugins/plugincontainer.cpp
         plugins/plugins.cpp
         plugins/snorefrontend.cpp
@@ -6,15 +6,11 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         plugins/pluginsettingswidget.cpp
         PARENT_SCOPE)
 
-set ( Plugins_HDR
-        plugins.h
-        snorefrontend.h
-        snorebackend.h
-        pluginsettingswidget.h
-        )
-
-install(FILES ${Plugins_HDR} DESTINATION include/snore/core/plugins)
-
-
+set(SnoreNotify_HDR ${SnoreNotify_HDR}
+        plugins/plugins.h
+        plugins/snorefrontend.h
+        plugins/snorebackend.h
+        plugins/pluginsettingswidget.h
+        PARENT_SCOPE)
 
 

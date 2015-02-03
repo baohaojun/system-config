@@ -32,14 +32,14 @@ public:
     SnoreNotifier();
     ~SnoreNotifier();
 
-    bool initialize(Snore::SnoreCore *snore) override;
+    bool initialize() override;
     bool deinitialize() override;
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 
 public slots:
-    virtual void slotNotify(Snore::Notification notification);
-    virtual void slotCloseNotification(Snore::Notification notification);
+    virtual void slotNotify(Snore::Notification notification) override;
+    virtual void slotCloseNotification(Snore::Notification notification) override;
 
 private slots:
     void slotDismissed();

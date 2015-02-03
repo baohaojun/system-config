@@ -122,7 +122,7 @@ SnarlBackend::~SnarlBackend()
 
 }
 
-bool SnarlBackend::initialize(SnoreCore *snore)
+bool SnarlBackend::initialize()
 {
     SnarlInterface *snarlInterface = new SnarlInterface();
     if (!snarlInterface->IsSnarlRunning()) {
@@ -132,7 +132,7 @@ bool SnarlBackend::initialize(SnoreCore *snore)
     m_eventLoop = new SnarlBackend::SnarlWidget(this);
     snoreDebug(SNORE_DEBUG) << "Initiating Snarl Backend, Snarl version: " << snarlInterface->GetVersion();
     delete snarlInterface;
-    return SnoreBackend::initialize(snore);
+    return SnoreBackend::initialize();
 }
 
 bool SnarlBackend::deinitialize()

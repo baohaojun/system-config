@@ -83,9 +83,9 @@ void Toasty::slotNotify(Notification notification)
 
 }
 
-bool Toasty::initialize(SnoreCore *snore)
+bool Toasty::initialize()
 {
-    if (SnoreSecondaryBackend::initialize(snore)) {
+    if (SnoreSecondaryBackend::initialize()) {
         setDefaultValue("DeviceID", "", "The ID provided for your device by Toasty");
         return true;
     }

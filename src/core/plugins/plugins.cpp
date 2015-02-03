@@ -39,6 +39,7 @@ SnorePlugin::SnorePlugin(const QString &name) :
     if (thread() != qApp->thread()) {
         moveToThread(qApp->thread());
     }
+    setDefaultValue("Enabled",true,"Whether the plugin is enabled");
 }
 
 SnorePlugin::~SnorePlugin()
@@ -46,14 +47,13 @@ SnorePlugin::~SnorePlugin()
     snoreDebug(SNORE_DEBUG) << m_name << this << "deleted";
 }
 
-bool SnorePlugin::initialize(SnoreCore *snore)
+bool SnorePlugin::initialize()
 {
     if (m_initialized) {
         qFatal("Something went wrong, plugin %s is already initialized", this->name().toLatin1().constData());
         return false;
     }
-    snoreDebug(SNORE_DEBUG) << "Initialize" << m_name << this << snore;
-    this->m_snore = snore;
+    snoreDebug(SNORE_DEBUG) << "Initialize" << m_name << this;
     m_initialized = true;
     return true;
 }
@@ -65,12 +65,12 @@ bool SnorePlugin::isInitialized() const
 
 SnoreCore *SnorePlugin::snore()
 {
-    return m_snore.data();
+    return SnoreCorePrivate::snoreInstance();
 }
 
 const SnoreCore *SnorePlugin::snore() const
 {
-    return m_snore.data();
+    return SnoreCorePrivate::snoreInstance();
 }
 
 QVariant SnorePlugin::value(const QString &key) const
@@ -94,7 +94,7 @@ void SnorePlugin::setDefaultValue(const QString &key, const QVariant &value, con
 
 Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()
 {
-    return nullptr;
+    return new PluginSettingsWidget(this);
 }
 
 QString SnorePlugin::normaliseKey(const QString &key) const

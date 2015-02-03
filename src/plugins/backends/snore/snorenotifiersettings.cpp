@@ -16,33 +16,34 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "snorenotifiersettings.h"
-#include "ui_snorenotifiersettings.h"
 #include "snore.h"
+
+#include <QComboBox>
 
 using namespace Snore;
 
 SnoreNotifierSettings::SnoreNotifierSettings(SnorePlugin *snore, QWidget *parent) :
     PluginSettingsWidget(snore,parent),
-    ui(new Ui::SnoreNotifierSettings)
+    m_comboBox(new QComboBox)
 {
-    ui->setupUi(this);
-    ui->comboBox->addItem("TopLeftCorner",Qt::TopLeftCorner);
-    ui->comboBox->addItem("TopRightCorner",Qt::TopRightCorner);
-    ui->comboBox->addItem("BottomLeftCorner",Qt::BottomLeftCorner);
-    ui->comboBox->addItem("BottomRightCorner",Qt::BottomRightCorner);
+
+    m_comboBox->addItem("TopLeftCorner",Qt::TopLeftCorner);
+    m_comboBox->addItem("TopRightCorner",Qt::TopRightCorner);
+    m_comboBox->addItem("BottomLeftCorner",Qt::BottomLeftCorner);
+    m_comboBox->addItem("BottomRightCorner",Qt::BottomRightCorner);
+    addRow("Position:", m_comboBox);
 }
 
 SnoreNotifierSettings::~SnoreNotifierSettings()
 {
-    delete ui;
 }
 
 void SnoreNotifierSettings::load()
 {
-    ui->comboBox->setCurrentIndex(m_snorePlugin->value("Position").toInt());
+    m_comboBox->setCurrentIndex(m_snorePlugin->value("Position").toInt());
 }
 
 void SnoreNotifierSettings::save()
 {
-    m_snorePlugin->setValue("Position", ui->comboBox->currentIndex());
+    m_snorePlugin->setValue("Position", m_comboBox->currentIndex());
 }

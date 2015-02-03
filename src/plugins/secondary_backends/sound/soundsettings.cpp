@@ -16,42 +16,43 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "soundsettings.h"
-#include "ui_soundsettings.h"
 #include "plugins/plugins.h"
 
 #include <QFileDialog>
+#include <QLineEdit>
+#include <QPushButton>
 
 
 using namespace Snore;
 
 SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
     PluginSettingsWidget(snorePlugin,parent),
-    ui(new Ui::SoundSettings)
+    m_lineEdit(new QLineEdit)
 {
-    ui->setupUi(this);
+    addRow("Sound File:",m_lineEdit);
+    QPushButton *button = new QPushButton("Select a sound File");
+    connect(button,&QPushButton::clicked,[&](){
+        QFileDialog dialog;
+        dialog.setNameFilter("All Audio files (*.mp3 *.wav *.ogg)");
+        dialog.setFilter(QDir::Files);
+        dialog.setDirectory(m_lineEdit->text());
+        dialog.exec();
+        m_lineEdit->setText(dialog.selectedFiles().first());
+    });
+    addRow("",button);
 }
 
 SoundSettings::~SoundSettings()
 {
-    delete ui;
 }
 
 void SoundSettings::load()
 {
-    ui->soundFileLineEdit->setText(m_snorePlugin->value("Sound").toString());
+    m_lineEdit->setText(m_snorePlugin->value("Sound").toString());
 }
 
 void SoundSettings::save()
 {
-    m_snorePlugin->setValue("Sound",ui->soundFileLineEdit->text());
+    m_snorePlugin->setValue("Sound",m_lineEdit->text());
 }
 
-void SoundSettings::on_pushButton_clicked()
-{
-    QFileDialog dialog;
-    dialog.setNameFilter("All Audio files (*.mp3 *.wav *.ogg)");
-    dialog.setFilter(QDir::Files);
-    dialog.setDirectory(ui->soundFileLineEdit->text());
-    dialog.exec();
-    ui->soundFileLineEdit->setText(dialog.selectedFiles().first());
-}

@@ -38,11 +38,11 @@ public:
 public:
     SnarlNetworkFrontend();
     ~SnarlNetworkFrontend();
-    virtual bool initialize(Snore::SnoreCore *snore);
-    virtual bool deinitialize();
+    virtual bool initialize() override;
+    virtual bool deinitialize() override;
 
-    void actionInvoked(Snore::Notification notification);
-    void notificationClosed(Snore::Notification notification);
+    void actionInvoked(Snore::Notification notification) override;
+    void notificationClosed(Snore::Notification notification) override;
 
 private slots:
     void handleConnection();

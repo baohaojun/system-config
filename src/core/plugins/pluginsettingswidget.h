@@ -21,6 +21,8 @@
 #include "snore_exports.h"
 
 #include <QWidget>
+#include <QFormLayout>
+#include <QCheckBox>
 
 
 namespace Snore
@@ -34,13 +36,24 @@ public:
     explicit PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *parent = nullptr);
     ~PluginSettingsWidget();
 
-    virtual void load() = 0;
-    virtual void save() = 0;
-
     const QString name() const;
+
+    void addRow(const QString &label,QWidget *widget);
+
+    void loadSettings();
+    void saveSettings();
 
 protected:
     SnorePlugin *m_snorePlugin;
+
+    virtual void load();
+    virtual void save();
+
+private:
+    QFormLayout *m_layout;
+    QCheckBox *m_enabled;
+
+
 };
 }
 

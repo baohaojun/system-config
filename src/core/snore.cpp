@@ -62,7 +62,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN:
-                    if (!info->load()->initialize(this)) {
+                    if (!info->load()->initialize()) {
                         info->load()->deinitialize();
                         info->unload();
                         break;
@@ -148,7 +148,7 @@ bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
     snoreDebug(SNORE_DEBUG) << "Setting Notification Backend to:" << backend;
     SnoreBackend *b = qobject_cast<SnoreBackend *>(backends.value(backend)->load());
     if (!b->isInitialized()) {
-        if (!b->initialize(this)) {
+        if (!b->initialize()) {
             snoreDebug(SNORE_DEBUG) << "Failed to initialize" << b->name();
             return false;
         }
@@ -229,10 +229,7 @@ QList<PluginSettingsWidget*> SnoreCore::settingWidgets()
     for(auto p:d->m_plugins)
     {
 //TODO: mem leak?
-        PluginSettingsWidget *w = p->settingsWidget();
-        if(w) {
-            list.append(w);
-        }
+        list.append(p->settingsWidget());
     }
     return list;
 }
@@ -261,7 +258,7 @@ bool SnoreCore::setPluginEnabled(const QString &pluginName, bool enable)
     SnorePlugin *plugin = d->m_plugins.value(pluginName);
     if(!plugin->isInitialized() && enable)
     {
-        plugin->initialize(this);
+        plugin->initialize();
     } else if(plugin->isInitialized() && !enable)
     {
         plugin->deinitialize();

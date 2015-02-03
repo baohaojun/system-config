@@ -35,7 +35,7 @@ SettingsDialog::SettingsDialog(SnoreCore *snore, QWidget *parent) :
     {
         QCheckBox *box = new QCheckBox(plugin);
         box->setChecked(snore->pluginIsEnabled(plugin));
-        connect(box,QCheckBox::toggled,[plugin,snore,box](bool checked){
+        connect(box,&QCheckBox::toggled,[plugin,snore,box](bool checked){
             box->setChecked(snore->setPluginEnabled(plugin,checked));
         });
         ui->verticalLayout2->addWidget(box);
@@ -43,7 +43,7 @@ SettingsDialog::SettingsDialog(SnoreCore *snore, QWidget *parent) :
     for(auto widget : snore->settingWidgets())
     {
         ui->tabWidget->addTab(widget,widget->name());
-        widget->load();
+        widget->loadSettings();
         m_tabs.append(widget);
     }
 }
@@ -57,6 +57,6 @@ void SettingsDialog::on_buttonBox_accepted()
 {
     for( auto w:m_tabs)
     {
-        w->save();
+        w->saveSettings();
     }
 }

@@ -30,7 +30,7 @@ class Toasty : public Snore::SnoreSecondaryBackend
 public:
     Toasty();
     ~Toasty();
-    bool initialize(Snore::SnoreCore *snore) override;
+    bool initialize() override;
     bool deinitialize() override;
 
     Snore::PluginSettingsWidget *settingsWidget() override;

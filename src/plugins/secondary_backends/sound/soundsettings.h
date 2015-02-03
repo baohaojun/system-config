@@ -5,10 +5,7 @@
 #include "plugins/pluginsettingswidget.h"
 
 
-namespace Ui {
-class SoundSettings;
-}
-
+class QLineEdit;
 class SoundSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
@@ -20,11 +17,9 @@ public:
     void load() override;
     void save() override;
 
-private slots:
-    void on_pushButton_clicked();
-
 private:
-    Ui::SoundSettings *ui;
+    QLineEdit *m_lineEdit;
+
 
 };
 

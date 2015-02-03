@@ -18,12 +18,19 @@
 #include "pluginsettingswidget.h"
 #include "plugins.h"
 
+#include <QCheckBox>
+
+
 using namespace Snore;
 
 PluginSettingsWidget::PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *parent ) :
     QWidget(parent),
-    m_snorePlugin(snorePlugin)
+    m_snorePlugin(snorePlugin),
+    m_layout(new QFormLayout),
+    m_enabled(new QCheckBox)
 {
+    setLayout(m_layout);
+    addRow("Enabled:",m_enabled);
 
 }
 
@@ -34,6 +41,33 @@ PluginSettingsWidget::~PluginSettingsWidget()
 
 const QString PluginSettingsWidget::name() const
 {
- return m_snorePlugin->name();
+    return m_snorePlugin->name();
+}
+
+void PluginSettingsWidget::addRow(const QString &label, QWidget *widget)
+{
+    m_layout->addRow(label,widget);
+}
+
+void PluginSettingsWidget::loadSettings()
+{
+    m_enabled->setChecked(m_snorePlugin->value("Enabled").toBool());
+    load();
+}
+
+void PluginSettingsWidget::saveSettings()
+{
+    m_snorePlugin->setValue("Enabled",m_enabled->isChecked());
+    save();
+}
+
+void PluginSettingsWidget::load()
+{
+
+}
+
+void PluginSettingsWidget::save()
+{
+
 }
 

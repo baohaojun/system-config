@@ -14,7 +14,7 @@ QT5_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 add_subdirectory(notification)
 add_subdirectory(plugins)
 
-set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
+list(APPEND SnoreNotify_SRCS
         snore.cpp
         snore_p.cpp
         application.cpp
@@ -27,7 +27,7 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         ${SNORENOTIFY_RCS}
         )
 
-set ( SnoreNotify_HDR ${SnoreNotify_HDR}
+list(APPEND SnoreNotify_HDR
         snore.h
         snore_p.h
         application.h

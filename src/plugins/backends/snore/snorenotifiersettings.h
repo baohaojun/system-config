@@ -23,10 +23,7 @@
 namespace Snore{
 class SnorePlugin;
 }
-
-namespace Ui {
-class SnoreNotifierSettings;
-}
+class QComboBox;
 
 class SnoreNotifierSettings : public Snore::PluginSettingsWidget
 {
@@ -39,7 +36,7 @@ public:
     void save();
 
 private:
-    Ui::SnoreNotifierSettings *ui;
+    QComboBox *m_comboBox;
 };
 
 #endif // SNORENOTIFIERSETTINGS_H

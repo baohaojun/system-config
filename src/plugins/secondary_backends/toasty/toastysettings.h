@@ -20,9 +20,7 @@
 
 #include "plugins/pluginsettingswidget.h"
 
-namespace Ui {
-class ToastySettings;
-}
+class QLineEdit;
 
 class ToastySettings : public Snore::PluginSettingsWidget
 {
@@ -36,7 +34,7 @@ public:
     void save() override;
 
 private:
-    Ui::ToastySettings *ui;
+    QLineEdit *m_lineEdit;
 
 };
 

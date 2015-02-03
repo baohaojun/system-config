@@ -29,7 +29,7 @@ class SnarlBackend: public Snore::SnoreBackend
 public:
     SnarlBackend();
     ~SnarlBackend();
-    virtual bool initialize(Snore::SnoreCore *snore);
+    virtual bool initialize();
     virtual bool deinitialize();
 
 private:

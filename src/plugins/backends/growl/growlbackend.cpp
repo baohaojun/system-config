@@ -39,10 +39,10 @@ GrowlBackend::~GrowlBackend()
 {
 }
 
-bool GrowlBackend::initialize(SnoreCore *snore)
+bool GrowlBackend::initialize()
 {
     if (Growl::init((GROWL_CALLBACK)&GrowlBackend::gntpCallback) && Growl::isRunning(GROWL_TCP)) {
-        return SnoreBackend::initialize(snore);
+        return SnoreBackend::initialize();
     }
     snoreDebug(SNORE_DEBUG) << "Growl is not running";
     return false;

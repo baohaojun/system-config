@@ -16,28 +16,28 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "toastysettings.h"
-#include "ui_toastysettings.h"
 
 #include "plugins/plugins.h"
 
+#include <QLineEdit>
+
 ToastySettings::ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent) :
     Snore::PluginSettingsWidget(plugin,parent),
-    ui(new Ui::ToastySettings)
+    m_lineEdit(new QLineEdit)
 {
-    ui->setupUi(this);
+    addRow("Device ID:",m_lineEdit);
 }
 
 ToastySettings::~ToastySettings()
 {
-    delete ui;
 }
 
 void ToastySettings::load()
 {
-    ui->lineEdit->setText(m_snorePlugin->value("DeviceID").toString());
+    m_lineEdit->setText(m_snorePlugin->value("DeviceID").toString());
 }
 
 void ToastySettings::save()
 {
-    m_snorePlugin->setValue("DeviceID",ui->lineEdit->text());
+    m_snorePlugin->setValue("DeviceID",m_lineEdit->text());
 }

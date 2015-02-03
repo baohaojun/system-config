@@ -45,19 +45,19 @@ SnoreBackend::~SnoreBackend()
     snoreDebug(SNORE_DEBUG) << "Deleting" << name();
 }
 
-bool SnoreBackend::initialize(SnoreCore *snore)
+bool SnoreBackend::initialize()
 {
-    if (!SnorePlugin::initialize(snore)) {
+    if (!SnorePlugin::initialize()) {
         return false;
     }
 
-    connect(snore->d(), SIGNAL(applicationRegistered(Snore::Application)), this, SLOT(slotRegisterApplication(Snore::Application)), Qt::QueuedConnection);
-    connect(snore->d(), SIGNAL(applicationDeregistered(Snore::Application)), this, SLOT(slotDeregisterApplication(Snore::Application)), Qt::QueuedConnection);
+    connect(snore()->d(), SIGNAL(applicationRegistered(Snore::Application)), this, SLOT(slotRegisterApplication(Snore::Application)), Qt::QueuedConnection);
+    connect(snore()->d(), SIGNAL(applicationDeregistered(Snore::Application)), this, SLOT(slotDeregisterApplication(Snore::Application)), Qt::QueuedConnection);
 
-    connect(this, SIGNAL(notificationClosed(Snore::Notification)), snore->d(), SLOT(slotNotificationClosed(Snore::Notification)), Qt::QueuedConnection);
-    connect(snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
+    connect(this, SIGNAL(notificationClosed(Snore::Notification)), snore()->d(), SLOT(slotNotificationClosed(Snore::Notification)), Qt::QueuedConnection);
+    connect(snore()->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
 
-    foreach(const Application & a, snore->aplications()) {
+    foreach(const Application & a, snore()->aplications()) {
         this->slotRegisterApplication(a);
     }
 
@@ -110,12 +110,12 @@ SnoreSecondaryBackend::~SnoreSecondaryBackend()
     snoreDebug(SNORE_DEBUG) << "Deleting" << name();
 }
 
-bool SnoreSecondaryBackend::initialize(SnoreCore *snore)
+bool SnoreSecondaryBackend::initialize()
 {
-    if (!SnorePlugin::initialize(snore)) {
+    if (!SnorePlugin::initialize()) {
         return false;
     }
-    connect(snore->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
+    connect(snore()->d(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
     return true;
 }
 

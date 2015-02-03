@@ -49,7 +49,7 @@ public:
 
     SnorePlugin(const QString &name);
     virtual ~SnorePlugin();
-    virtual bool initialize(SnoreCore *snore);
+    virtual bool initialize();
     virtual bool deinitialize();
     bool isInitialized() const;
     SnoreCore *snore();
@@ -69,7 +69,6 @@ private:
 
     QString m_name;
     bool m_initialized;
-    QPointer<SnoreCore> m_snore;
 
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::SnorePlugin::PluginTypes)

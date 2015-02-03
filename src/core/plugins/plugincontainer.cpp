@@ -116,8 +116,6 @@ void PluginContainer::updatePluginCache()
         list.clear();
     }
 
-    QList<PluginContainer *> plugins;
-
     foreach(const SnorePlugin::PluginTypes type, PluginContainer::types()) {
         foreach(const QFileInfo & file, pluginDir().entryInfoList(
                     QStringList(pluginFileFilters(type)), QDir::Files)) {
@@ -128,7 +126,6 @@ void PluginContainer::updatePluginCache()
             if (!name.isEmpty()) {
                 PluginContainer *info = new PluginContainer(file.fileName(), name, type);
                 s_pluginCache[type].insert(name, info);
-                plugins << info;
                 snoreDebug(SNORE_DEBUG) << "added" << name << "to cache";
             }
         }

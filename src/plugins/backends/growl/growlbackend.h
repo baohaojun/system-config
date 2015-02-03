@@ -32,8 +32,8 @@ class GrowlBackend: public Snore::SnoreBackend
 public:
     GrowlBackend();
     ~GrowlBackend();
-    virtual bool initialize(Snore::SnoreCore *snore);
-    virtual bool deinitialize();
+    virtual bool initialize() override;
+    virtual bool deinitialize() override;
 
     static void gntpCallback(growl_callback_data *data);
 
@@ -44,9 +44,9 @@ private:
     QHash<QString, Growl *> m_applications;
 
 public slots:
-    void slotRegisterApplication(const Snore::Application &application);
-    void slotDeregisterApplication(const Snore::Application &application);
-    void slotNotify(Snore::Notification notification);
+    void slotRegisterApplication(const Snore::Application &application) override;
+    void slotDeregisterApplication(const Snore::Application &application) override;
+    void slotNotify(Snore::Notification notification) override;
 };
 
 #endif // GROWL_BACKEND_H

@@ -23,13 +23,13 @@ SnoreToast::~SnoreToast()
 
 }
 
-bool SnoreToast::initialize(SnoreCore *snore)
+bool SnoreToast::initialize()
 {
     if (QSysInfo::windowsVersion() < QSysInfo::WV_WINDOWS8) {
         snoreDebug(SNORE_DEBUG) << "SnoreToast does not work on windows" << QSysInfo::windowsVersion();
         return false;
     }
-    return SnoreBackend::initialize(snore);
+    return SnoreBackend::initialize();
 }
 
 void SnoreToast::slotNotify(Notification notification)

@@ -1,4 +1,4 @@
-set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
+set(SnoreNotify_SRCS ${SnoreNotify_SRCS}
         notification/notification.cpp
         notification/notification_p.cpp
         notification/notificationaction.cpp
@@ -6,15 +6,9 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         notification/icon_p.cpp
         PARENT_SCOPE)
 
-set ( Notification_HDR
-        notification.h
-        notification_p.h
-        notificationaction.h
-        icon.h
-        )
-
-install(FILES ${Notification_HDR} DESTINATION include/snore/core/notification)
-
-
-
-
+set(SnoreNotify_HDR ${SnoreNotify_HDR}
+        notification/notification.h
+        notification/notification_p.h
+        notification/notificationaction.h
+        notification/icon.h
+        PARENT_SCOPE)
