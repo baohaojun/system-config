@@ -31,6 +31,7 @@ PluginSettingsWidget::PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *pa
     m_enabled(new QCheckBox)
 {
     setLayout(m_layout);
+    addRow(snorePlugin->typeName(),nullptr);
     addRow("Enabled:",m_enabled);
 
 }

@@ -38,6 +38,7 @@ class SNORE_EXPORT SnorePlugin : public QObject
     Q_OBJECT
 public:
     enum PluginType {
+        NONE = 0,
         ALL = 0xFFFFF,//for loading plugins
         BACKEND = 0x1,
         SECONDARY_BACKEND = 0x2,
@@ -56,6 +57,9 @@ public:
     const SnoreCore *snore() const;
 
     const QString &name() const;
+    PluginTypes type() const;
+    const QString typeName() const;
+
 
     QVariant value(const QString &key) const;
     void setValue(const QString &key, const QVariant &value);
@@ -68,7 +72,9 @@ private:
     QString normaliseKey(const QString &key) const;
 
     QString m_name;
-    bool m_initialized;
+    bool m_initialized = false;
+    PluginTypes m_type = NONE;
+    friend class PluginContainer;
 
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::SnorePlugin::PluginTypes)

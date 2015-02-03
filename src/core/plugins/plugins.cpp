@@ -21,6 +21,7 @@
 #include "snorebackend.h"
 #include "snorefrontend.h"
 #include "../notification/notification_p.h"
+#include "plugincontainer.h"
 
 #include <QTimer>
 #include <QPluginLoader>
@@ -33,8 +34,7 @@
 using namespace Snore;
 
 SnorePlugin::SnorePlugin(const QString &name) :
-    m_name(name),
-    m_initialized(false)
+    m_name(name)
 {
     if (thread() != qApp->thread()) {
         moveToThread(qApp->thread());
@@ -105,6 +105,16 @@ QString SnorePlugin::normaliseKey(const QString &key) const
 const QString &SnorePlugin::name() const
 {
     return m_name;
+}
+
+SnorePlugin::PluginTypes SnorePlugin::type() const
+{
+    return m_type;
+}
+
+const QString SnorePlugin::typeName() const
+{
+    return PluginContainer::typeToString(m_type);
 }
 
 bool SnorePlugin::deinitialize()
