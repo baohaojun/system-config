@@ -31,7 +31,7 @@ SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
 {
     addRow("Sound File:",m_lineEdit);
     QPushButton *button = new QPushButton("Select a sound File");
-    connect(button,&QPushButton::clicked,[&](){
+    connect(button, &QPushButton::clicked, [this](){
         QFileDialog dialog;
         dialog.setNameFilter("All Audio files (*.mp3 *.wav *.ogg)");
         dialog.setFilter(QDir::Files);
