@@ -12,15 +12,14 @@ int main(int argc, char *argv[])
     app.setApplicationName("SnoreSettings");
     app.setOrganizationName("SnoreNotify");
     app.setApplicationVersion(Snore::Version::version());
-    app.setQuitOnLastWindowClosed(true);
 
     Snore::SnoreCore &snore = Snore::SnoreCore::instance();
     snore.loadPlugins(Snore::SnorePlugin::ALL);
 
     Snore::SettingsDialog diag;
-//    diag.setWindowIcon(QIcon(":/root/snore.png"));
     diag.setWindowTitle("SnoreSettings");
     diag.show();
+    QObject::connect(&diag,&Snore::SettingsDialog::finished,&app,&QApplication::quit);
     return app.exec();
 }
 
