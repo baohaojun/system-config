@@ -30,8 +30,6 @@
 
 using namespace Snore;
 
-SnoreCore *SnoreCorePrivate::q_ptr = nullptr;
-
 SnoreCorePrivate::SnoreCorePrivate():
     m_defaultApp("SnoreNotify", Icon(":/root/snore.png")),
     m_settings(new QSettings("Snorenotify", "libsnore", this))

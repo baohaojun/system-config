@@ -30,16 +30,14 @@ using namespace Snore;
 SnoreNotify::SnoreNotify()
 {
     m_trayIcon = new TrayIcon();
-    m_snore = new SnoreCore();
-    m_snore->loadPlugins(SnorePlugin::ALL);
-    m_trayIcon->initConextMenu(m_snore);
+    SnoreCore::instance().loadPlugins(SnorePlugin::ALL);
+    m_trayIcon->initConextMenu();
 
-    snoreDebug(SNORE_DEBUG) << "Snorenotfiy initialized with" << m_snore->primaryNotificationBackend();
+    snoreDebug(SNORE_DEBUG) << "Snorenotfiy initialized with" << SnoreCore::instance().primaryNotificationBackend();
 }
 
 SnoreNotify::~SnoreNotify()
 {
-    delete m_snore;
     delete m_trayIcon;
 }
 

@@ -61,12 +61,12 @@ bool SnorePlugin::isInitialized() const
 
 SnoreCore *SnorePlugin::snore()
 {
-    return SnoreCorePrivate::snoreInstance();
+    return &SnoreCore::instance();
 }
 
 const SnoreCore *SnorePlugin::snore() const
 {
-    return SnoreCorePrivate::snoreInstance();
+    return &SnoreCore::instance();
 }
 
 QVariant SnorePlugin::value(const QString &key) const

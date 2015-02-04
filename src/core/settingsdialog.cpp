@@ -27,10 +27,9 @@
 
 using namespace Snore;
 
-SettingsDialog::SettingsDialog(SnoreCore *snore, QWidget *parent) :
+SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SettingsDialog),
-    m_snore(snore),
     m_app(new Application("SnoreSettings", Icon(":/root/snore.png"))),
     m_alert(new Alert("Test", Icon(":/root/snore.png")))
 {
@@ -38,7 +37,7 @@ SettingsDialog::SettingsDialog(SnoreCore *snore, QWidget *parent) :
 
     m_app->addAlert(*m_alert);
 
-    for (auto widget : snore->settingWidgets()) {
+    for (auto widget : SnoreCore::instance().settingWidgets()) {
         ui->tabWidget->addTab(widget, widget->name());
         m_tabs.append(widget);
     }
@@ -52,24 +51,24 @@ SettingsDialog::~SettingsDialog()
 
 void Snore::SettingsDialog::on_pushButton_clicked()
 {
-    if (!m_snore->aplications().contains(m_app->name())) {
-        m_snore->registerApplication(*m_app);
+    if (!SnoreCore::instance().aplications().contains(m_app->name())) {
+        SnoreCore::instance().registerApplication(*m_app);
     }
     Notification noti(*m_app, *m_alert, "Hello World",
                       "<i>This is Snore</i><br>"
                       "<a href=\"https://github.com/TheOneRing/Snorenotify\">Project Website</a><br>",
                       Icon(":/root/snore.png"));
     noti.addAction(Action(1, "Test Action"));
-    m_snore->broadcastNotification(noti);
+    SnoreCore::instance().broadcastNotification(noti);
 }
 
 void SettingsDialog::load()
 {
     snoreDebug(SNORE_DEBUG) << "loading";
     ui->primaryBackendComboBox->clear();
-    QStringList list = m_snore->pluginNames(SnorePlugin::BACKEND);
+    QStringList list = SnoreCore::instance().pluginNames(SnorePlugin::BACKEND);
     ui->primaryBackendComboBox->addItems(list);
-    ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(m_snore->primaryNotificationBackend()));
+    ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(SnoreCore::instance().primaryNotificationBackend()));
     for (auto widget : m_tabs) {
         widget->loadSettings();
     }
@@ -78,7 +77,7 @@ void SettingsDialog::load()
 void SettingsDialog::save()
 {
     snoreDebug(SNORE_DEBUG) << "saving";
-    m_snore->d()->setBackendIfAvailible(ui->primaryBackendComboBox->currentText());
+    SnoreCore::instance().d()->setBackendIfAvailible(ui->primaryBackendComboBox->currentText());
     for (auto w : m_tabs) {
         w->saveSettings();
     }

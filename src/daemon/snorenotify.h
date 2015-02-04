@@ -35,7 +35,6 @@ public:
 
 private:
     class TrayIcon *m_trayIcon;
-    Snore::SnoreCore *m_snore;
 };
 
 #endif // SNORENOTIFY_H

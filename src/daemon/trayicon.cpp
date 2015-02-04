@@ -40,11 +40,9 @@ TrayIcon::TrayIcon():
     m_app.hints().setValue("tray-icon", m_trayIcon);
 }
 
-void TrayIcon::initConextMenu(SnoreCore *snore)
+void TrayIcon::initConextMenu()
 {
-    m_snore = snore;
-
-    m_settings = new SettingsDialog(snore);
+    m_settings = new SettingsDialog();
     m_trayIcon->setVisible(true);
 
     m_trayMenu = new QMenu("SnoreNotify");
@@ -76,8 +74,8 @@ QSystemTrayIcon *TrayIcon::trayIcon()
 void TrayIcon::slotTestNotification()
 {
 
-    if (!m_snore->aplications().contains(m_app.name())) {
-        m_snore->registerApplication(m_app);
+    if (!SnoreCore::instance().aplications().contains(m_app.name())) {
+        SnoreCore::instance().registerApplication(m_app);
     }
     Notification noti(m_app, m_alert, "Hello World",
                       "<i>This is Snore</i><br>"
@@ -88,7 +86,7 @@ void TrayIcon::slotTestNotification()
                       "4<br>"
                       "5<br>", Icon(":/root/snore.png"));
     noti.addAction(Action(1, "Test Action"));
-    m_snore->broadcastNotification(noti);
+    SnoreCore::instance().broadcastNotification(noti);
 
     QTimer *timer = new QTimer(this);
     m_notifications[timer] = noti;
@@ -97,7 +95,7 @@ void TrayIcon::slotTestNotification()
     connect(timer, SIGNAL(timeout()), this, SLOT(sloutUpdateTestNotification()));
     timer->start();
 
-    //    m_snore->deregisterApplication(app);
+    //    SnoreCore::instance().deregisterApplication(app);
 }
 
 void TrayIcon::sloutUpdateTestNotification()
@@ -109,7 +107,7 @@ void TrayIcon::sloutUpdateTestNotification()
                         "<u>This icon is quite a long line of text, isnt it I think it is what do you think? btw the icon should be in color</u><br>"
                         "<a href=\"https://github.com/TheOneRing/Snorenotify\">Project Website</a>",
                         Icon("http://winkde.org/~pvonreth/other/kde-logo.png"));
-    m_snore->broadcastNotification(update);
+    SnoreCore::instance().broadcastNotification(update);
     timer->deleteLater();
 }
 

@@ -40,6 +40,12 @@ SnoreCore::SnoreCore()
     d->q_ptr = this;
 }
 
+SnoreCore &SnoreCore::instance()
+{
+    static SnoreCore instance;
+    return instance;
+}
+
 SnoreCore::~SnoreCore()
 {
     Q_D(SnoreCore);

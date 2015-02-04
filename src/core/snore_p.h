@@ -63,11 +63,6 @@ public:
 
     void addSettingsDescription(const QString &key, const QString &help) const;
 
-    static SnoreCore *snoreInstance()
-    {
-        return q_ptr;
-    }
-
     bool initPrimaryNotificationBackend();
 
 signals:
@@ -80,8 +75,7 @@ private slots:
     void slotAboutToQuit();
 
 private:
-    //TODO: cleanup the static instance
-    static SnoreCore *q_ptr;
+    SnoreCore *q_ptr;
 
     QHash<QString, Application> m_applications;
 

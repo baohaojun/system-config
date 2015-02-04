@@ -63,7 +63,7 @@ public:
     /**
      * Creates a Notification Manager SnoreCore
      */
-    SnoreCore();
+    static SnoreCore &instance();
     ~SnoreCore();
 
     /**
@@ -189,6 +189,7 @@ signals:
     void notificationClosed(Snore::Notification);
 
 private:
+    SnoreCore();
     SnoreCorePrivate *d_ptr;
 
 };

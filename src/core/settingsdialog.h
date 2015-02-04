@@ -45,7 +45,7 @@ class SNORE_EXPORT SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(SnoreCore *snore, QWidget *parent = 0);
+    explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
 
 private slots:
@@ -57,7 +57,6 @@ private slots:
 
 private:
     Ui::SettingsDialog *ui;
-    SnoreCore *m_snore;
     QScopedPointer<Application> m_app;
     QScopedPointer<Alert> m_alert;
     QList<Snore::PluginSettingsWidget *> m_tabs;

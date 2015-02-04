@@ -32,7 +32,7 @@ class TrayIcon: public QObject
     Q_OBJECT
 public:
     TrayIcon();
-    void initConextMenu(Snore::SnoreCore *snore);
+    void initConextMenu();
     void hide();
     class QSystemTrayIcon *trayIcon();
 
@@ -40,7 +40,6 @@ private:
     class QSystemTrayIcon *m_trayIcon;
     class QMenu *m_trayMenu;
     QActionGroup *m_backendActions;
-    Snore::SnoreCore *m_snore;
     Snore::Application m_app;
     Snore::Alert m_alert;
     Snore::SettingsDialog *m_settings;

@@ -14,10 +14,10 @@ int main(int argc, char *argv[])
     app.setApplicationVersion(Snore::Version::version());
     app.setQuitOnLastWindowClosed(true);
 
-    Snore::SnoreCore snore;
+    Snore::SnoreCore &snore = Snore::SnoreCore::instance();
     snore.loadPlugins(Snore::SnorePlugin::ALL);
 
-    Snore::SettingsDialog diag(&snore);
+    Snore::SettingsDialog diag;
 //    diag.setWindowIcon(QIcon(":/root/snore.png"));
     diag.setWindowTitle("SnoreSettings");
     diag.show();
