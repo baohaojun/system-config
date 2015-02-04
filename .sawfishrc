@@ -233,6 +233,8 @@
         ("M-F" . '((t "C-S-Right")))
         ("C-s" . '((Firefox "C-s") (Okular "F3") (t "C-g")))
         ("C-v" . '((qpdfview "SPC") (t "Next")))
+        ("SPC" . '((Fbreader "Next") (t "SPC")))
+        ("BS" . '((Fbreader "Prior") (t "BS")))
         ("M-v" . '((qpdfview "BS") (t "Prior")))
         ("M-<" . '((qpdfview "Home")
                    (t "C-Home")))
