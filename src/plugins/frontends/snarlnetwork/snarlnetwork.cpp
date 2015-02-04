@@ -103,7 +103,7 @@ void SnarlNetworkFrontend::handleMessages()
         Notification noti;
         parser->parse(noti, s, client);
         if (noti.isValid()) {
-            snore()->broadcastNotification(noti);
+            SnoreCore::instance().broadcastNotification(noti);
             write(client, QString("%1/%2\r\n").arg(out, QString::number(noti.id())));
         } else {
             write(client, QString("%1\r\n").arg(out));

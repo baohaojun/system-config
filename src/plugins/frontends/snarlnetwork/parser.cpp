@@ -108,8 +108,8 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
 
     switch (action) {
     case NOTIFICATION: {
-        if (!snarl->snore()->aplications().contains(app.name())) {
-            snarl->snore()->registerApplication(app);
+        if (!SnoreCore::instance().aplications().contains(app.name())) {
+            SnoreCore::instance().registerApplication(app);
         }
 
         if (!alert.isActive()) {
@@ -136,7 +136,7 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
         }
         break;
     case UNREGISTER:
-        snarl->snore()->deregisterApplication(app);
+        SnoreCore::instance().deregisterApplication(app);
         snarl->m_applications.take(client);
         break;
     case ERROR:

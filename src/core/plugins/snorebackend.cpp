@@ -173,7 +173,7 @@ bool SnoreBackend::deinitialize()
             requestCloseNotification(n, Notification::DISMISSED);
         }
 
-        foreach(const Application & a, snore()->aplications()) {
+        for(const Application & a : SnoreCore::instance().aplications()) {
             slotDeregisterApplication(a);
         }
         disconnect(SnoreCorePrivate::instance(), SIGNAL(applicationRegistered(Snore::Application)), this, SLOT(slotRegisterApplication(Snore::Application)));

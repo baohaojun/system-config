@@ -96,7 +96,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         icon = Icon(":/root/snore.png");
     }
 
-    if (!snore()->aplications().contains(app_name)) {
+    if (!SnoreCore::instance().aplications().contains(app_name)) {
         qDebug() << QIcon::themeSearchPaths();
         QIcon qicon = QIcon::fromTheme(app_icon, QIcon(":/root/snore.png"));
         QSize max;
@@ -109,9 +109,9 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         Alert alert("DBus Alert", appIcon);
         app = Application(app_name, appIcon);
         app.addAlert(alert);
-        snore()->registerApplication(app);
+        SnoreCore::instance().registerApplication(app);
     } else {
-        app = snore()->aplications()[app_name];
+        app = SnoreCore::instance().aplications()[app_name];
     }
 
     if (hints.contains("urgency")) {
@@ -119,8 +119,8 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     }
 
     Notification noti;
-    if (replaces_id != 0 && snore()->getActiveNotificationByID(replaces_id).isValid()) {
-        noti = Notification(snore()->getActiveNotificationByID(replaces_id), summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
+    if (replaces_id != 0 && SnoreCore::instance().getActiveNotificationByID(replaces_id).isValid()) {
+        noti = Notification(SnoreCore::instance().getActiveNotificationByID(replaces_id), summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
     } else {
         noti = Notification(app, *app.alerts().begin(), summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
     }
@@ -129,15 +129,15 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         noti.addAction(Action(actions.at(i).toInt(), actions.at(i + 1)));
     }
 
-    snore()->broadcastNotification(noti);
+    SnoreCore::instance().broadcastNotification(noti);
     return noti.id();
 }
 
 void FreedesktopFrontend::CloseNotification(uint id)
 {
-    Notification noti = snore()->getActiveNotificationByID(id);
+    Notification noti = SnoreCore::instance().getActiveNotificationByID(id);
     if (noti.isValid()) {
-        snore()->requestCloseNotification(noti, Notification::TIMED_OUT);
+        SnoreCore::instance().requestCloseNotification(noti, Notification::TIMED_OUT);
     }
 }
 

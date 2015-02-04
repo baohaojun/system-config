@@ -49,7 +49,7 @@ public:
         if (msg->message == SNARL_GLOBAL_MESSAGE) {
             int action = msg->wParam;
             if (action == SnarlEnums::SnarlLaunched) {
-                foreach(const Application & a, m_snarl->snore()->aplications()) {
+                for(const Application & a : SnoreCore::instance().aplications()) {
                     m_snarl->slotRegisterApplication(a);
                 }
             }

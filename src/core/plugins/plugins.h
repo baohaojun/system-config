@@ -48,8 +48,6 @@ public:
     virtual bool initialize();
     virtual bool deinitialize();
     bool isInitialized() const;
-    LIBSNORE_DEPRECATED SnoreCore *snore();
-    LIBSNORE_DEPRECATED const SnoreCore *snore() const;
 
     const QString &name() const;
     PluginTypes type() const;

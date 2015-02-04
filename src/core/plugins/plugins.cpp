@@ -59,16 +59,6 @@ bool SnorePlugin::isInitialized() const
     return m_initialized;
 }
 
-SnoreCore *SnorePlugin::snore()
-{
-    return &SnoreCore::instance();
-}
-
-const SnoreCore *SnorePlugin::snore() const
-{
-    return &SnoreCore::instance();
-}
-
 QVariant SnorePlugin::value(const QString &key) const
 {
     return SnoreCore::instance().settings()->value(normaliseKey(key));
