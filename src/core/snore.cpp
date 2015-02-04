@@ -182,7 +182,7 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
 //TODO: mem leak?
         PluginSettingsWidget *widget = p->settingsWidget();
         if (widget) {
-            list.append(p->settingsWidget());
+            list.append(widget);
         }
     }
     return list;
