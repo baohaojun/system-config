@@ -67,8 +67,8 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                         if (!plugin->initialize()) {
                             snoreDebug(SNORE_WARNING) << "Failed to initialize" << plugin->name();
                             plugin->deinitialize();
-                            info->unload();
-                            continue;
+                            //info->unload();
+                            break;
                         }
                     }
                 }
@@ -94,7 +94,7 @@ void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
     snoreDebug(SNORE_DEBUG) << "Broadcasting" << notification << "timeout:" << notification.timeout();
-    if (d->m_notificationBackend != NULL) {
+    if (d->m_notificationBackend != nullptr) {
         if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
             requestCloseNotification(notification.old(), Notification::REPLACED);
         }
