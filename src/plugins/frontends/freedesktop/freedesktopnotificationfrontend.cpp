@@ -37,17 +37,20 @@ FreedesktopFrontend::FreedesktopFrontend():
 
 FreedesktopFrontend::~FreedesktopFrontend()
 {
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.unregisterService("org.freedesktop.Notifications");
 }
 
 bool FreedesktopFrontend::initialize()
 {
     m_adaptor = new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    if (dbus.registerService("org.freedesktop.Notifications") &&
-            dbus.registerObject("/org/freedesktop/Notifications", this)) {
-        return SnoreFrontend::initialize();
+    if (dbus.registerService("org.freedesktop.Notifications")) {
+        if(dbus.registerObject("/org/freedesktop/Notifications", this)) {
+            return SnoreFrontend::initialize();
+        } else {
+            snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register object";
+        }
+    } else {
+        snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register service";
     }
     return false;
 }
@@ -59,7 +62,7 @@ bool FreedesktopFrontend::deinitialize()
         dbus.unregisterService("org.freedesktop.Notifications");
         dbus.unregisterObject("/org/freedesktop/Notifications");
         m_adaptor->deleteLater();
-        m_adaptor = NULL;
+        m_adaptor = nullptr;
         return true;
     }
     return false;
