@@ -154,6 +154,11 @@ QString SnoreCorePrivate::tempPath()
     return dir.path();
 }
 
+SnoreCorePrivate *SnoreCorePrivate::instance()
+{
+    return SnoreCore::instance().d_ptr;
+}
+
 bool SnoreCorePrivate::primaryBackendCanUpdateNotification() const
 {
     return m_notificationBackend->canUpdateNotification();

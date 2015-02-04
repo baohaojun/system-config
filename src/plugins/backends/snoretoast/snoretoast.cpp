@@ -112,7 +112,7 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
     switch (code) {
     case 0:
         reason = Notification::CLOSED;
-        snore()->d()->notificationActionInvoked(n);
+        SnoreCorePrivate::instance()->notificationActionInvoked(n);
         break;
     case 1:
         //hidden;

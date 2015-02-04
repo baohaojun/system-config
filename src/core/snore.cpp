@@ -209,9 +209,3 @@ const QHash<QString, QString> &SnoreCore::settingsDescription() const
     Q_D(const SnoreCore);
     return d->m_help;
 }
-
-SnoreCorePrivate *SnoreCore::d()
-{
-    Q_D(SnoreCore);
-    return d;
-}

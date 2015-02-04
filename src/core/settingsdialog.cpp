@@ -77,7 +77,7 @@ void SettingsDialog::load()
 void SettingsDialog::save()
 {
     snoreDebug(SNORE_DEBUG) << "saving";
-    SnoreCore::instance().d()->setBackendIfAvailible(ui->primaryBackendComboBox->currentText());
+    SnoreCorePrivate::instance()->setBackendIfAvailible(ui->primaryBackendComboBox->currentText());
     for (auto w : m_tabs) {
         w->saveSettings();
     }

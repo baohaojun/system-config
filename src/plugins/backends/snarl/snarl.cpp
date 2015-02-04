@@ -60,7 +60,7 @@ public:
 
             Notification notification;
             if (msg->lParam != 0) {
-                notification =  m_snarl->snore()->getActiveNotificationByID(m_snarl->m_idMap.value(msg->lParam));
+                notification =  SnoreCore::instance().getActiveNotificationByID(m_snarl->m_idMap.value(msg->lParam));
             }
 
             Notification::CloseReasons reason = Notification::NONE;
@@ -72,7 +72,7 @@ public:
                 reason = Notification::CLOSED;
                 if (notification.isValid()) {
                     notification.data()->setActionInvoked(data);
-                    m_snarl->snore()->d()->notificationActionInvoked(notification);
+                    SnoreCorePrivate::instance()->notificationActionInvoked(notification);
                 }
                 break;
             case SnarlEnums::CallbackClosed:

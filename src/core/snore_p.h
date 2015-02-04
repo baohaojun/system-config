@@ -47,7 +47,7 @@ public:
     static QString tempPath();
 
 public:
-    SnoreCorePrivate();
+    static SnoreCorePrivate *instance();
     ~SnoreCorePrivate();
     const Application defaultApplication() const;
 
@@ -76,7 +76,8 @@ private slots:
     void slotNotificationClosed(Snore::Notification);
     void slotAboutToQuit();
 
-private:
+private:    
+    SnoreCorePrivate();
     SnoreCore *q_ptr;
 
     QHash<QString, Application> m_applications;

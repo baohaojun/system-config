@@ -154,11 +154,6 @@ public:
      */
     const QHash<QString, QString> &settingsDescription() const;
 
-    /**
-     * @return a pointer to the private class, for internal use only.
-     */
-    SnoreCorePrivate *d();
-
 signals:
     /**
      * This signal is emitted when an action on the Notification was performed.

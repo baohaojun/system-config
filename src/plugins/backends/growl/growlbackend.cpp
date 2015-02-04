@@ -101,7 +101,7 @@ void GrowlBackend::gntpCallback(growl_callback_data *data)
 {
     if (s_instance) {
         snoreDebug(SNORE_DEBUG) << data->id << QString(data->reason) << QString(data->data);
-        Notification n = s_instance->snore()->getActiveNotificationByID(data->id);
+        Notification n = SnoreCore::instance().getActiveNotificationByID(data->id);
         if (!n.isValid()) {
             return;
         }
@@ -113,7 +113,7 @@ void GrowlBackend::gntpCallback(growl_callback_data *data)
             r = Notification::DISMISSED;
         } else if (reason == "CLICK") {
             r = Notification::CLOSED;
-            s_instance->snore()->d()->notificationActionInvoked(n);
+            SnoreCorePrivate::instance()->notificationActionInvoked(n);
         }
         s_instance->closeNotification(n, r);
     }

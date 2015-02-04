@@ -71,20 +71,20 @@ const SnoreCore *SnorePlugin::snore() const
 
 QVariant SnorePlugin::value(const QString &key) const
 {
-    return snore()->settings()->value(normaliseKey(key));
+    return SnoreCore::instance().settings()->value(normaliseKey(key));
 }
 
 void SnorePlugin::setValue(const QString &key, const QVariant &value)
 {
-    snore()->settings()->setValue(normaliseKey(key), value);
+    SnoreCore::instance().settings()->setValue(normaliseKey(key), value);
 }
 
 void SnorePlugin::setDefaultValue(const QString &key, const QVariant &value, const QString &help)
 {
     QString pk(normaliseKey(key));
-    snore()->d()->addSettingsDescription(pk, help);
-    if (!snore()->settings()->contains(pk)) {
-        snore()->settings()->setValue(normaliseKey(key), value);
+    SnoreCorePrivate::instance()->addSettingsDescription(pk, help);
+    if (!SnoreCore::instance().settings()->contains(pk)) {
+        SnoreCore::instance().settings()->setValue(normaliseKey(key), value);
     }
 }
 
