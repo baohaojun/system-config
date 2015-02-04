@@ -38,21 +38,15 @@ int main(int argc, char *argv[])
     QCommandLineOption iconPath(QStringList() << "i" << "icon", "Set the notification icon.", "icon", ":/root/snore.png");
     parser.addOption(iconPath);
 
-    QCommandLineOption backend(QStringList() << "b" << "backend", "Set the notification backend.", "backend");
-    parser.addOption(backend);
-
     QCommandLineOption silent(QStringList() << "silent", "Don't print to stdout.");
     parser.addOption(silent);
 
     parser.process(app);
     if (parser.isSet(title) && parser.isSet(message)) {
-        SnoreCore core;
+        SnoreCore &core = SnoreCore::instance();
 
         core.loadPlugins(SnorePlugin::BACKEND | SnorePlugin::SECONDARY_BACKEND);
-        if (parser.isSet(backend) && !core.setPrimaryNotificationBackend(parser.value(backend))) {
-            std::cerr << "Failed to set backend: " << qPrintable(parser.value(backend)) << " avalible backends: " << qPrintable(core.pluginNames(SnorePlugin::BACKEND).join(", ")) << std::endl;
-            return 1;
-        }
+
         Icon icon(parser.value(iconPath));
         Application application(parser.value(applicationName), icon);
         Alert alert(parser.value(alertName), icon);
