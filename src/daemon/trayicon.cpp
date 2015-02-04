@@ -73,19 +73,6 @@ QSystemTrayIcon *TrayIcon::trayIcon()
     return m_trayIcon;
 }
 
-void TrayIcon::setPrimaryBackend()
-{
-    QAction *a = qobject_cast<QAction *>(sender());
-    m_snore->setPrimaryNotificationBackend(a->text());
-
-    foreach(QAction * action, m_backendActions->actions()) {
-        if (action->text() == m_snore->primaryNotificationBackend()) {
-            action->setChecked(true);
-            break;
-        }
-    }
-}
-
 void TrayIcon::slotTestNotification()
 {
 

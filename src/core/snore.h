@@ -112,14 +112,6 @@ public:
     const QStringList pluginNames(SnorePlugin::PluginTypes type) const;
 
     /**
-     * Sets the primary backend.
-     *
-     * @param backend the name of the backend
-     * @return whether the backend was initialied succesfully.
-     */
-    bool setPrimaryNotificationBackend(const QString &backend);
-
-    /**
      *
      * @return the name of the active primary backend
      */
@@ -178,7 +170,7 @@ public:
     /**
      * @return a pointer to the private class, for internal use only.
      */
-    const SnoreCorePrivate *d();
+    SnoreCorePrivate *d();
 
 signals:
     /**

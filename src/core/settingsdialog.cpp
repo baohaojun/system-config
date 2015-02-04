@@ -18,6 +18,7 @@
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
 #include "snore.h"
+#include "snore_p.h"
 
 #include <QAbstractButton>
 #include <QTabWidget>
@@ -77,7 +78,7 @@ void SettingsDialog::load()
 void SettingsDialog::save()
 {
     snoreDebug(SNORE_DEBUG) << "saving";
-    m_snore->setPrimaryNotificationBackend(ui->primaryBackendComboBox->currentText());
+    m_snore->d()->setBackendIfAvailible(ui->primaryBackendComboBox->currentText());
     for (auto w : m_tabs) {
         w->saveSettings();
     }

@@ -48,7 +48,6 @@ private:
     QHash<QTimer *, Snore::Notification> m_notifications;
 
 public slots:
-    void setPrimaryBackend();
     void slotTestNotification();
     void sloutUpdateTestNotification();
     void slotSettings();

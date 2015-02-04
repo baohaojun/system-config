@@ -138,12 +138,6 @@ const QStringList SnoreCore::pluginNames(SnorePlugin::PluginTypes type) const
     return out;
 }
 
-bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
-{
-    Q_D(SnoreCore);
-    return d->setBackendIfAvailible(backend);
-}
-
 const QString SnoreCore::primaryNotificationBackend() const
 {
     Q_D(const SnoreCore);
@@ -224,7 +218,7 @@ bool SnoreCore::pluginIsEnabled(const QString &pluginName) const
     return d->m_plugins.value(pluginName)->isInitialized();
 }
 
-const SnoreCorePrivate *SnoreCore::d()
+SnoreCorePrivate *SnoreCore::d()
 {
     Q_D(SnoreCore);
     return d;
