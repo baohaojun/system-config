@@ -32,7 +32,10 @@ PluginSettingsWidget::PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *pa
 {
     setLayout(m_layout);
     addRow("Type:", new QLabel(snorePlugin->typeName()));
-    addRow("Enabled:", m_enabled);
+    if (m_snorePlugin->type() != SnorePlugin::BACKEND) {
+        // backends are handled through a combo box.
+        addRow("Enabled:", m_enabled);
+    }
 
 }
 
@@ -53,14 +56,19 @@ void PluginSettingsWidget::addRow(const QString &label, QWidget *widget)
 
 void PluginSettingsWidget::loadSettings()
 {
-    m_enabled->setChecked(m_snorePlugin->value("Enabled").toBool());
+    if (m_snorePlugin->type() != SnorePlugin::BACKEND) {
+        m_enabled->setChecked(m_snorePlugin->value("Enabled").toBool());
+    }
     load();
 }
 
 void PluginSettingsWidget::saveSettings()
 {
-    m_snorePlugin->setValue("Enabled", m_enabled->isChecked());
-    m_snorePlugin->snore()->setPluginEnabled(m_snorePlugin->name(), m_enabled->isChecked());
+    if (m_snorePlugin->type() != SnorePlugin::BACKEND) {
+        m_snorePlugin->setValue("Enabled", m_enabled->isChecked());
+        // we only allow one active primary backend
+        m_snorePlugin->snore()->setPluginEnabled(m_snorePlugin->name(), m_enabled->isChecked());
+    }
     save();
 }
 

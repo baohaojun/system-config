@@ -90,7 +90,11 @@ void SnorePlugin::setDefaultValue(const QString &key, const QVariant &value, con
 
 Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()
 {
-    return new PluginSettingsWidget(this);
+    if(type() != SnorePlugin::BACKEND) {
+        // don't display a useless default widget for backends
+        return new PluginSettingsWidget(this);
+    }
+    return nullptr;
 }
 
 QString SnorePlugin::normaliseKey(const QString &key) const
