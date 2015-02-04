@@ -155,19 +155,6 @@ public:
     const QHash<QString, QString> &settingsDescription() const;
 
     /**
-     * Enables or disables a plugin
-     * @param pluginName
-     * @param enable
-     * @return whether the backend is enabled
-     */
-    bool setPluginEnabled(const QString &pluginName, bool enable);
-
-    /**
-     * @return whether the backend is enabled
-     */
-    bool pluginIsEnabled(const QString &pluginName) const;
-
-    /**
      * @return a pointer to the private class, for internal use only.
      */
     SnoreCorePrivate *d();

@@ -66,8 +66,6 @@ void PluginSettingsWidget::saveSettings()
 {
     if (m_snorePlugin->type() != SnorePlugin::BACKEND) {
         m_snorePlugin->setValue("Enabled", m_enabled->isChecked());
-        // we only allow one active primary backend
-        m_snorePlugin->snore()->setPluginEnabled(m_snorePlugin->name(), m_enabled->isChecked());
     }
     save();
 }

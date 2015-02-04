@@ -100,6 +100,10 @@ void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
     snoreDebug(SNORE_DEBUG) << "Broadcasting" << notification << "timeout:" << notification.timeout();
+    if(!notification.isUpdate())
+    {
+        d->syncSettings();
+    }
     if (d->m_notificationBackend != nullptr) {
         if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
             requestCloseNotification(notification.old(), Notification::REPLACED);
@@ -204,24 +208,6 @@ const QHash<QString, QString> &SnoreCore::settingsDescription() const
 {
     Q_D(const SnoreCore);
     return d->m_help;
-}
-
-bool SnoreCore::setPluginEnabled(const QString &pluginName, bool enable)
-{
-    Q_D(SnoreCore);
-    SnorePlugin *plugin = d->m_plugins.value(pluginName);
-    if (!plugin->isInitialized() && enable) {
-        plugin->initialize();
-    } else if (plugin->isInitialized() && !enable) {
-        plugin->deinitialize();
-    }
-    return plugin->isInitialized();
-}
-
-bool SnoreCore::pluginIsEnabled(const QString &pluginName) const
-{
-    Q_D(const SnoreCore);
-    return d->m_plugins.value(pluginName)->isInitialized();
 }
 
 SnoreCorePrivate *SnoreCore::d()

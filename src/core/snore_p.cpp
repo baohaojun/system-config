@@ -129,6 +129,19 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
     return false;
 }
 
+void SnoreCorePrivate::syncSettings() {
+    setBackendIfAvailible(m_settings->value("PrimaryBackend").toString());
+    for(auto pluginName : m_pluginNames[SnorePlugin::SECONDARY_BACKEND]) {
+        SnorePlugin *plugin = m_plugins.value(pluginName);
+        bool enable = m_plugins[pluginName]->value("Enabled").toBool();
+        if (!plugin->isInitialized() && enable) {
+            plugin->initialize();
+        } else if (plugin->isInitialized() && !enable) {
+            plugin->deinitialize();
+        }
+    }
+}
+
 void SnoreCorePrivate::registerMetaTypes()
 {
     qRegisterMetaType<Notification>();

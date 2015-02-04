@@ -65,6 +65,8 @@ public:
 
     bool initPrimaryNotificationBackend();
 
+    void syncSettings();
+
 signals:
     void applicationRegistered(const Snore::Application &);
     void applicationDeregistered(const Snore::Application &);
