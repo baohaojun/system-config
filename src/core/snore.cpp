@@ -65,9 +65,10 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::PLUGIN: {
                     if (plugin->value("Enabled").toBool()) {
                         if (!plugin->initialize()) {
+                            snoreDebug(SNORE_WARNING) << "Failed to initialize" << plugin->name();
                             plugin->deinitialize();
                             info->unload();
-                            break;
+                            continue;
                         }
                     }
                 }
