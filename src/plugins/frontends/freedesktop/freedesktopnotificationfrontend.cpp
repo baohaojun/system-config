@@ -44,7 +44,7 @@ bool FreedesktopFrontend::initialize()
     m_adaptor = new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     if (dbus.registerService("org.freedesktop.Notifications")) {
-        if(dbus.registerObject("/org/freedesktop/Notifications", this)) {
+        if (dbus.registerObject("/org/freedesktop/Notifications", this)) {
             return SnoreFrontend::initialize();
         } else {
             snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register object";

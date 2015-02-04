@@ -100,8 +100,7 @@ void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
     snoreDebug(SNORE_DEBUG) << "Broadcasting" << notification << "timeout:" << notification.timeout();
-    if(!notification.isUpdate())
-    {
+    if (!notification.isUpdate()) {
         d->syncSettings();
     }
     if (d->m_notificationBackend != nullptr) {

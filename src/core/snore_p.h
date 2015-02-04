@@ -76,7 +76,7 @@ private slots:
     void slotNotificationClosed(Snore::Notification);
     void slotAboutToQuit();
 
-private:    
+private:
     SnoreCorePrivate();
     SnoreCore *q_ptr;
 

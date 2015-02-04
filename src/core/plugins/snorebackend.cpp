@@ -55,7 +55,7 @@ bool SnoreBackend::initialize()
     connect(this, SIGNAL(notificationClosed(Snore::Notification)), SnoreCorePrivate::instance(), SLOT(slotNotificationClosed(Snore::Notification)), Qt::QueuedConnection);
     connect(SnoreCorePrivate::instance(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
 
-    for(const Application & a : SnoreCore::instance().aplications()) {
+    for (const Application &a : SnoreCore::instance().aplications()) {
         this->slotRegisterApplication(a);
     }
 
@@ -173,7 +173,7 @@ bool SnoreBackend::deinitialize()
             requestCloseNotification(n, Notification::DISMISSED);
         }
 
-        for(const Application & a : SnoreCore::instance().aplications()) {
+        for (const Application &a : SnoreCore::instance().aplications()) {
             slotDeregisterApplication(a);
         }
         disconnect(SnoreCorePrivate::instance(), SIGNAL(applicationRegistered(Snore::Application)), this, SLOT(slotRegisterApplication(Snore::Application)));

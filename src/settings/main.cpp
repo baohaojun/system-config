@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     Snore::SettingsDialog diag;
     diag.setWindowTitle("SnoreSettings");
     diag.show();
-    QObject::connect(&diag,&Snore::SettingsDialog::finished,&app,&QApplication::quit);
+    QObject::connect(&diag, &Snore::SettingsDialog::finished, &app, &QApplication::quit);
     return app.exec();
 }
 
