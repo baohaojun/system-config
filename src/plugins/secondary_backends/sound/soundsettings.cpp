@@ -35,8 +35,9 @@ SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
         dialog.setNameFilter("All Audio files (*.mp3 *.wav *.ogg)");
         dialog.setFileMode(QFileDialog::ExistingFile);
         dialog.setDirectory(m_lineEdit->text());
-        dialog.exec();
-        m_lineEdit->setText(dialog.selectedFiles().first());
+        if (dialog.exec()) {
+            m_lineEdit->setText(dialog.selectedFiles().first());
+        }
     });
     addRow("", button);
 }
