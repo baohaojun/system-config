@@ -90,7 +90,7 @@ void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &action
         return;
     }
     noti.data()->setActionInvoked(actionID.toInt());
-    snore()->d()->notificationActionInvoked(noti);
+    SnoreCorePrivate::instance()->notificationActionInvoked(noti);
 }
 
 void FreedesktopBackend::slotCloseNotification(Notification notification)
