@@ -17,3 +17,5 @@
 	diffstat = true
 [format]
 	pretty = fuller
+[push]
+	default = simple
