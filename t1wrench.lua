@@ -1333,6 +1333,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
          local target = file:gsub(".*[\\/]", "")
          target = "/sdcard/adb-mail/" .. i .. "." .. target
          system{the_true_adb, "push", file, target}
+         target = "../../../../../.." .. target
          putclip(target)
 
          local window = adb_focused_window()
@@ -1340,8 +1341,6 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
             window = window:gsub("/.*", "")
             error("必须安装并使用OI文件管理器才能选择附件，你使用的是： " .. window)
          end
-         adb_event"adb-swipe-300 54 273 800 273"
-         adb_event"adb-tap 54 273"
          adb_event"key back key scroll_lock"
          adb_event"adb-tap 959 1876 sleep 1"
       end
