@@ -5,6 +5,7 @@ use English;
 use strict;
 my $secure;
 my $executable;
+my $root_boot_image;
 
 sub debug(@) {
     print STDERR "@_\n";
@@ -12,6 +13,7 @@ sub debug(@) {
 
 GetOptions(
     "s!" => \$secure,
+    "d!" => \$root_boot_image,
     "x!" => \$executable,
     );
 
@@ -48,6 +50,9 @@ sub push_one_file($$)
 {
     my ($file, $base) = @_;
     my $true_dest = "$dest/$base";
+    if ($base eq "boot.img" and $root_boot_image) {
+        system("replace-bootimage", "-b", $file, "--", "-d");
+    }
     if (not $dest_is_dir) {
         $true_dest = $dest;
     }

@@ -12,6 +12,11 @@ elif test "$1" = yes; then
     exit
 fi
 
+slab=$(adb cat /proc/meminfo|grep SUnreclaim|pn 2)
+if test "$slab" -gt 100000; then
+    bhj-notify "hello" "Your phon's slab is too big"
+fi
+
 if test -e ~/.no-adb-fix-gms -a $(basename $0) = adb-fix-gms; then
     if is-tty-io; then
         true

@@ -647,3 +647,4 @@
 (bind-keys global-keymap "XF86Favorites" '(system "do-work&"))
 (bind-keys s-h-keymap "a" '(system "find-or-exec Okular&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
+(bind-keys global-keymap "Super-Control-F1" '(system "sawfish-force-maximize&"))

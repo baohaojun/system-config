@@ -59,7 +59,7 @@ while true; do
             targets=$(
                 cd $make_dir;
                 find . -maxdepth 3 -name Android.mk |
-                    xargs grep '^\s*LOCAL_MODULE\b.*=' -P |
+                    xargs grep '^\s*(LOCAL_MODULE|LOCAL_PACKAGE_NAME)\b.*=' -P |
                     perl -npe 's/.*=//' | tr \\n ' '
                    )
 

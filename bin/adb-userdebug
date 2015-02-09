@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+cd ~/tmp
+my-adb -r echo hello
+my-adb -S shell sh -c 'cat /dev/block/platform/msm_sdcc.1/by-name/boot > /sdcard/boot.img'
+my-adb pull /sdcard/boot.img .
+replace-bootimage -b boot.img -- -u
+adb-push boot.img /data && adb shell dd if=/data/boot.img of=/dev/block/platform/msm_sdcc.1/by-name/boot

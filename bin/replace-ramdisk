@@ -4,12 +4,17 @@ set -e
 mydir=$(dirname $(readlink -f $0))
 ramdisk=
 debuggable=
-TEMP=$(getopt -o Ddr: --long ramdisk: -n $(basename $0) -- "$@")
+userdebug=
+TEMP=$(getopt -o Ddur: --long ramdisk: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -D)
             debuggable=false
+            shift
+            ;;
+        -u)
+            userdebug=true
             shift
             ;;
         -d)
@@ -73,6 +78,11 @@ if test "$debuggable" = true; then
     fi
     perl -npe 's/ro.debuggable/ro.DEBUGGABLE/' -i $tdir/sbin/adbd
 fi
+
+if test "$userdebug" = true; then
+    perl -npe 's/ro.debuggable=0/ro.debuggable=1/' -i $tdir/default.prop
+fi
+
 for x in "$@"; do
     target=$(select-output-line find $tdir -name $(basename $x))
     if test ! -e "$target"; then

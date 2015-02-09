@@ -43,6 +43,8 @@ elif test $(basename $0) = switch-to-hdmi-and-laptop; then
     touch /tmp/bhj-notify-not-working
     xrandr --output $lvds --auto --below $hdmi
     xrandr --output $hdmi --auto
+    xrandr --output $lvds --auto --below $hdmi
+    xrandr --output $hdmi --auto
 elif test $(basename $0) = switch-to-hdmi; then
     xrandr --output $lvds --off
     xrandr --output $vga --off
@@ -52,6 +54,13 @@ elif test $(basename $0) = switch-to-laptop; then
     xrandr --output $hdmi --off
     xrandr --output $vga --off
 else
+
+    (
+        set +x
+        newmode=$(cvt 1360 768 | perl -ne 's/"//g; print $'\'' if m/^Modeline /')
+        xrandr --newmode $newmode
+        xrandr --addmode HDMI1 ${newmode%% *}
+    )
 
     res=$(
         xrandr |
@@ -63,6 +72,7 @@ else
             @x = <>;
             $last = 0;
             for $res (@x) {
+                $res =~ s/_.*//;
                 if ($res eq $last) {
                     print $last;
                     last;
@@ -70,8 +80,15 @@ else
                 $last = $res
             }'
        )
-    xrandr --output $lvds --mode $res --same-as $vga
-    xrandr --output $vga --mode $res
+
+    xrandr --output $lvds --mode $(xrandr |perl -ne "print if m/\Q$lvds\E.*connected/ .. (m/connected/ and not m/\Q$lvds\E/)" |pn 1 | grep $res|head -n 1) --same-as $vga
+    xrandr --output $vga --mode $(xrandr |perl -ne "print if m/\Q$vga\E.*connected/ .. (m/connected/ and not m/\Q$vga\E/)" |pn 1 | grep $res|head -n 1)
+fi
+
+if test $(basename $0) = switch-to-both-display; then
+    sawfish-client -e '(bind-keys window-keymap "Super-F1" '\''(system "sawfish-force-maximize&"))'
+else
+    sawfish-client -e '(bind-keys window-keymap "Super-F1" '\''maximize-window-toggle)'
 fi
 
 sawfish-re-maximize

@@ -29,3 +29,6 @@ data/media/0/DCIM/Camera/QuickCapture/
 data/media/0/tencent/MobileQQ/diskcache/
 data/media/0/tieba/
 */.weibo_pic_new/*
+data/app-lib
+data/media/0/smartisan/update
+data/data/com.smartisan.rem/.rem.log

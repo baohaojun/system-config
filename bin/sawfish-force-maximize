@@ -1,0 +1,16 @@
+#!/bin/bash
+xrandr_out=$(xrandr)
+lvds=$(echo "$xrandr_out" | grep '^LVDS' | pn 1)
+
+(
+    flock 9
+    set -x
+    mode=$(xrandr |perl -ne "print if m/\Q$lvds\E.*connected/ .. (m/connected/ and not m/\Q$lvds\E/)" | grep '\*' | pn 1)
+    xrandr --output $lvds --off
+    sawfish-client -e '(maximize-window-toggle (input-focus))'
+    if test "$mode"; then
+        xrandr --output $lvds --mode $mode
+    else
+        xrandr --output $lvds --auto
+    fi
+) 9> /tmp/$(basename $0).$UID.lock 2> ~/.logs/$(basename $0)

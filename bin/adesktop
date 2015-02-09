@@ -1,13 +1,20 @@
 #! /bin/bash
 (
-mkdir -p ~/bin/Linux/ext/android-screen
-cd ~/bin/Linux/ext/android-screen
-for x in androidscreencast.jar androidscreencast.jnlp ddmlib.jar; do
-    echo http://androidscreencast.googlecode.com/svn/trunk/AndroidScreencast/dist/$x
-done |xargs wget -N
-
-
-for x in *.jar; do export CLASSPATH=`pwd`/$x:$CLASSPATH ; done
-echo $CLASSPATH 
-java net.srcz.android.screencast.Main
+    set -e
+    if test -d ~/bin/Linux/ext/android-screen; then
+        cd ~/bin/Linux/ext/android-screen
+        true
+    else
+        mkdir -p ~/bin/Linux/ext/android-screen.2
+        cd ~/bin/Linux/ext/android-screen.2
+        for x in androidscreencast.jar androidscreencast.jnlp ddmlib.jar; do
+            echo http://androidscreencast.googlecode.com/svn/trunk/AndroidScreencast/dist/$x
+        done |xargs wget -N
+        cd ..
+        mv ~/bin/Linux/ext/android-screen.2 ~/bin/Linux/ext/android-screen
+        cd ~/bin/Linux/ext/android-screen
+    fi
+    for x in *.jar; do export CLASSPATH=`pwd`/$x:$CLASSPATH ; done
+    echo $CLASSPATH
+    java net.srcz.android.screencast.Main
 )
