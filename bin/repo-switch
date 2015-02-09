@@ -7,8 +7,9 @@ repo_init_url=
 repo_init_branch=
 repo_init_manifest=
 repo_url=
+repo_reference=
 
-TEMP=$(getopt -o esu:b:m:r:ipc --long repo-url: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o esu:b:m:r:ipc --long reference:,repo-url: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 interactive=0
 config_name=
@@ -24,6 +25,10 @@ while true; do
             ;;
         -m)
             repo_init_manifest=$2
+            shift 2
+            ;;
+        --reference)
+            repo_reference="--reference $2"
             shift 2
             ;;
         -r|--repo-url)
@@ -76,6 +81,7 @@ if test -z "$repodir"; then
         -m ${repo_init_manifest:-default.xml}\
         -b ${repo_init_branch:-master}\
         --repo-url=${repo_url:-https://gerrit.googlesource.com/git-repo}\
+        $(if test "$repo_reference"; then echo "$repo_reference"; fi) \
         "$@")
 
     (
@@ -209,7 +215,8 @@ for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
         cd $(lookup-file .repo/repo)
         git config remote.origin.url $repo_url
     )
-    repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@" $config_name
+    repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@" $config_name \
+         $(if test "$repo_reference"; then echo "$repo_reference"; fi)
 
     (
         cd $(lookup-file .repo/)

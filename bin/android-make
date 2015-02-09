@@ -36,7 +36,8 @@ config=
 keep=-k
 make_dir=
 targets=
-TEMP=$(getopt -o vd:kj:c: -n $(basename $0) -- "$@")
+PATH_PREPEND=
+TEMP=$(getopt -o vp:d:kj:c: -n $(basename $0) -- "$@")
 function die() {
     echo "$@"
     exit -1
@@ -51,6 +52,14 @@ while true; do
             ;;
         -c)
             config=$2
+            shift 2
+            ;;
+        -p)
+            if test "$PATH_PREPEND"; then
+                PATH_PREPEND="$PATH_PREPEND:$2"
+            else
+                PATH_PREPEND=$2
+            fi
             shift 2
             ;;
         -d)
@@ -202,6 +211,9 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
                 if test -e .buildenv.sh.x; then
                     set -x
                     . .buildenv.sh.x
+                fi
+                if test ${PATH_PREPEND}x != x; then
+                    PATH=$PATH_PREPEND:\$PATH
                 fi
                 . ./build/envsetup.sh
                 export PATH=$PWD/$OUT_DIR/host/linux-x86/bin/:\$PATH

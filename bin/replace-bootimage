@@ -29,16 +29,16 @@ function die() {
     echo Error: "$@"
     exit -1
 }
-
+boot_part=$(adb 'echo /dev/block/platform/*/by-name/boot')
 if test ! -e "$boot"; then
     if test "$boot" = adb; then
         my-adb -r echo hello
-        my-adb -S shell sh -c 'cat /dev/block/platform/msm_sdcc.1/by-name/boot > /sdcard/boot.img'
+        my-adb -S shell sh -c "cat $boot_part > /sdcard/boot.img"
         my-adb pull /sdcard/boot.img .
         boot=boot.img
     elif test "$boot" = adb.recovery; then
         my-adb -r echo hello
-        my-adb -S shell sh -c 'cat /dev/block/platform/msm_sdcc.1/by-name/recovery > /sdcard/boot.img'
+        my-adb -S shell sh -c "cat $boot_part > /sdcard/boot.img"
         my-adb pull /sdcard/boot.img .
         boot=boot.img
     else

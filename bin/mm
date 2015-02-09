@@ -4,6 +4,30 @@ function die() {
     exit -1
 }
 
+PATH_PREPEND=
+TEMP=$(getopt -o p: -n $(basename $0) -- "$@")
+
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p)
+            if test "$PATH_PREPEND"; then
+                PATH_PREPEND="$PATH_PREPEND:$2"
+            else
+                PATH_PREPEND=$2
+            fi
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
 time (
     set -e
     set -o pipefail
@@ -77,6 +101,9 @@ time (
                     . ~/.bashrc;
                     . build/envsetup.sh
                     . .buildenv.sh
+                    if test '${PATH_PREPEND}'x != x; then
+                        PATH='$PATH_PREPEND':$PATH
+                    fi
                     ONE_SHOT_MAKEFILE='$ONE_SHOT_MAKEFILE' make all_modules '"$(for x in "$@"; do printf %q\  "$x"; done)"'
                 "
             ' 2>&1
