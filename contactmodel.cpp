@@ -1,4 +1,3 @@
-#include "contactmodel.h"
 #include <QDebug>
 #include <QFont>
 #include <QBrush>
@@ -13,6 +12,9 @@
 #include <QByteArray>
 #include <QPixmap>
 #include <algorithm>
+#include "contactmodel.h"
+#include <QRegularExpression>
+
 
 static bool vCardLess(const VCard& v1, const VCard& v2)
 {
@@ -44,6 +46,7 @@ static bool vCardLess(const VCard& v1, const VCard& v2)
 
 ContactModel::ContactModel(QObject *parent) :
     FilteringModel(parent),
+    mIsWeixin(false),
     mDefaultAvatar("emojis/iphone-emoji/WRENCH.png")
 {
     int error = luaL_loadstring(L, "contacts = require('contacts')") || lua_pcall(L, 0, 0, 0);
@@ -81,7 +84,6 @@ ContactModel::ContactModel(QObject *parent) :
     }
 
     int n = luaL_len(L, -1);
-    qDebug() << "n is " << n;
     for (int i = 1; i <= n; i++) {
         VCard vcard;
         lua_rawgeti(L, -1, i);
@@ -140,14 +142,65 @@ ContactModel::ContactModel(QObject *parent) :
     initHistory();
 }
 
+static QString normalizedPhone(const QString& phone) {
+    if (phone.size() <= 11) {
+        return phone;
+    }
+
+    QRegularExpression re("[-+ ]");
+    QString res = phone;
+
+    res.replace(re, "");
+    if (res.size() > 11) {
+        res = res.right(11);
+    }
+    return res;
+}
+
 void ContactModel::filterSelectedItems(const QStringList& split)
 {
+
+    bool mFilterWeixin = false;
+    QMap <QString, bool> weixinPhoneMap;
+    if (mIsWeixin && QFile("weixin-phones.txt").exists()) {
+        mFilterWeixin = true;
+        QFile f("weixin-phones.txt");
+        if (!f.open(QFile::ReadOnly | QFile::Text)) {
+            mFilterWeixin = false;
+        } else {
+            QTextStream in(&f);
+            QString phones = in.readAll();
+            foreach (const QString& phone, phones.split("\n")) {
+                if (phone.isEmpty()) {
+                    continue;
+                }
+                weixinPhoneMap[phone] = 1;
+            }
+            f.close();
+        }
+    }
+
     foreach (const VCard& vcard, mVcards) {
         QStringList tels = vcard.mTels;
         QStringList mails = vcard.mEmails;
         int match = 1;
 
         QStringList namePinyin;
+
+        if (mFilterWeixin) {
+            QStringList tels2;
+            foreach(const QString&tel, tels) {
+                if (weixinPhoneMap.contains(normalizedPhone(tel))) {
+                    tels2 << normalizedPhone(tel);
+                }
+            }
+            tels = tels2;
+        }
+
+        if (tels.isEmpty()) {
+            match = 0;
+        }
+
         foreach(const QString& stem, split) {
 
             if (vcard.mName.indexOf(stem, 0, Qt::CaseInsensitive) >= 0) {

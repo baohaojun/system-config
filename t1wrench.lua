@@ -15,6 +15,9 @@ local adb_focused_window
 local t1_config, check_phone
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic, debugging
+local t1_find_weixin_contact
+local adb_start_service_and_wait_file_gone
+local adb_start_service_and_wait_file
 
 -- variables
 local where_is_dial_key
@@ -653,6 +656,39 @@ check_phone = function()
    end
 end
 
+adb_start_service_and_wait_file_gone = function(service_cmd, file)
+   adb_shell(
+      (
+      [[
+            am startservice --user 0 -n %s&
+            for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+               if test -e %s; then
+                  sleep .1 || busybox sleep .1;
+                  echo $x;
+               else
+                  exit;
+               fi;
+            done
+      ]]):format(file, service_cmd, file))
+end
+
+adb_start_service_and_wait_file = function(service_cmd, file)
+   adb_shell(
+      (
+      [[
+            rm %s;
+            am startservice --user 0 -n %s&
+            for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+               if test ! -e %s; then
+                  sleep .1 || busybox sleep .1;
+                  echo $x;
+               else
+                  exit;
+               fi;
+            done
+      ]]):format(file, service_cmd, file))
+end
+
 putclip = function(text)
    if not text and os.getenv("PUTCLIP_ANDROID_FILE") then
       local file = io.open(os.getenv("PUTCLIP_ANDROID_FILE"))
@@ -674,18 +710,7 @@ putclip = function(text)
    file:close()
    check_phone()
    system{the_true_adb, 'push', path, '/sdcard/putclip.txt'}
-   adb_shell(
-      [[
-               am startservice --user 0 -n com.bhj.setclip/.PutClipService&
-               for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
-                  if test -e /sdcard/putclip.txt; then
-                     sleep .1 || busybox sleep .1;
-                     echo $x;
-                  else
-                     exit;
-                 fi;
-              done
-      ]])
+   adb_start_service_and_wait_file_gone('com.bhj.setclip/.PutClipService', '/sdcard/putclip.txt')
 end
 
 t1_config = function()
@@ -753,6 +778,12 @@ t1_config = function()
             error("Install setclip.apk failed, output is " .. install_output)
          end
       end
+   end
+
+   local weixin_phone_file, _, errno = io.open("weixin-phones.txt", "rb")
+   if not vcf_file then
+      adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listcontacts 1", "/sdcard/listcontacts.txt")
+      system(the_true_adb .. " pull /sdcard/listcontacts.txt weixin-phones.txt")
    end
 
    sdk_version = adb_pipe("getprop ro.build.version.sdk")
@@ -1361,6 +1392,10 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
    adb_event"key DPAD_UP key DPAD_UP"
 end
 
+t1_find_weixin_contact = function(number)
+   adb_shell("am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getcontact 1 --es contact " .. number)
+end
+
 t1_call = function(number)
    adb_shell("am start -a android.intent.action.DIAL tel:" .. number)
    if not where_is_dial_key then
@@ -1423,6 +1458,7 @@ end
 M = {}
 M.putclip = putclip
 M.t1_post = t1_post
+M.t1_find_weixin_contact = t1_find_weixin_contact
 M.adb_shell = adb_shell
 M.adb_pipe = adb_pipe
 M.t1_picture = t1_picture

@@ -20,9 +20,14 @@ public:
     void filterSelectedItems(const QStringList& split);
     QString getHistoryName();
     void setMail(bool isMail) {mIsMail = isMail; setFilter("\t");};
+    void setWeixin(bool isWeixin) {
+        mIsWeixin = isWeixin;
+        setFilter("\t");
+    };
 
 private:
     bool mIsMail;
+    bool mIsWeixin;
     QPixmap mDefaultAvatar;
     QList<VCard> mVcards;
     QSettings mSettings;
