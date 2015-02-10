@@ -67,6 +67,50 @@ public class PutClipService extends Service {
                 TelephonyManager tMgr =(TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
                 String mPhoneNumber = tMgr.getLine1Number();
                 writeFile(mPhoneNumber);
+            } else if (intent.getIntExtra("listcontacts", 0) == 1) {
+                String data2 = intent.getStringExtra("data2");
+                String data3 = intent.getStringExtra("data3");
+
+                if (data2 == null) {
+                    data2 = "微信";
+                }
+                if (data3 == null) {
+                    data3 = "发送消息";
+                }
+
+                ContentResolver resolver = getContentResolver();
+                if (resolver == null) {
+                    return START_STICKY;
+                }
+
+                String[] projection = new String[] {
+                    Data.DATA1,
+                };
+                String selection = ContactsContract.Data.DATA2 + "=?" + " AND " +
+                    ContactsContract.Data.DATA3 + "=?";
+                String[] selectArgs = new String[] {
+                    data2, data3,
+                };
+
+                Cursor dc = resolver.query(ContactsContract.Data.CONTENT_URI,
+                                           projection,
+                                           selection,
+                                           selectArgs,
+                                           null);
+
+                try {
+                    File txt = new File(Environment.getExternalStorageDirectory(), "listcontacts.txt.1");
+                    FileWriter f = new FileWriter(txt);
+                    if (dc.moveToFirst()) {
+                        do {
+                            f.write(normalizedPhone(dc.getString(0)) + "\n");
+                        } while (dc.moveToNext());
+                    }
+                    f.close();
+                    txt.renameTo(new File(Environment.getExternalStorageDirectory(), "listcontacts.txt"));
+                } finally {
+                    dc.close();
+                }
             } else if (intent.getIntExtra("getcontact", 0) == 1) {
                 String contactNumber = intent.getStringExtra("contact");
                 if (contactNumber == null) {
@@ -86,7 +130,6 @@ public class PutClipService extends Service {
                     ContactsContract.Data.DATA3 + "=?" + " AND " +
                     ContactsContract.Data.DATA1 + " like ?";
 
-                Log.e("bhj", String.format("%s:%d: %s", "PutClipService.java", 100, selection));
                 Cursor dataCursor = resolver.query(ContactsContract.Data.CONTENT_URI,
                                                    new String[] {Data._ID, Data.DATA1, Data.DATA2, Data.DATA3},
                                                    selection,
@@ -95,12 +138,9 @@ public class PutClipService extends Service {
 
                 try {
                     if (dataCursor.moveToFirst()) {
-                        Log.e("bhj", String.format("%s:%d: id is %d, data1 is %s", "PutClipService.java", 98, dataCursor.getLong(0), dataCursor.getString(1)));
                         do {
                             String phone = dataCursor.getString(1);
-                            Log.e("bhj", String.format("%s:%d: phone is %s", "PutClipService.java", 101, normalizedPhone(phone)));
                             if (normalizedPhone(phone).equals(normalizedPhone(contactNumber))) {
-                                Log.e("bhj", String.format("%s:%d: they are equal", "PutClipService.java", 103));
                                 Intent mmIntent = new Intent();
                                 mmIntent.setClassName("com.tencent.mm", "com.tencent.mm.plugin.accountsync.ui.ContactsSyncUI");
                                 mmIntent.setType("vnd.android.cursor.item/vnd.com.tencent.mm.chatting.profile");
@@ -119,7 +159,6 @@ public class PutClipService extends Service {
                 char[] buffer = new char[1024 * 1024];
                 int n = f.read(buffer);
                 String str = new String(buffer, 0, n);
-                Log.e("bhj", String.format("%s:%d: str is %s", "PutClipService.java", 36, str));
                 ClipboardManager mClipboard;
                 mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                 mClipboard.setPrimaryClip(ClipData.newPlainText("Styled Text", str));
@@ -137,6 +176,10 @@ public class PutClipService extends Service {
     }
 
     private String normalizedPhone(String phone) {
-        return phone.replaceAll("[-+ ]", "");
+        String res = phone.replaceAll("[-+ ]", "");
+        if (res.length() >= 11) {
+            res = res.substring(res.length() - 11);
+        }
+        return res;
     }
 }
