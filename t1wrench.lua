@@ -669,7 +669,7 @@ adb_start_service_and_wait_file_gone = function(service_cmd, file)
                   exit;
                fi;
             done
-      ]]):format(file, service_cmd, file))
+      ]]):format(service_cmd, file))
 end
 
 adb_start_service_and_wait_file = function(service_cmd, file)

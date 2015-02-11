@@ -432,9 +432,12 @@ void T1WrenchMainWindow::initContactDialog(bool isMail)
 
         if (ui->tbWeixin->isChecked() && !isMail) {
             placeHolder = "微信联系人过滤";
+            mContactModel->setWeixin(true);
+        } else {
+            mContactModel->setWeixin(false);
         }
+
         mContactDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(mContactModel, placeHolder, this));
-        mContactModel->setWeixin(true);
     }
     mContactModel->setMail(isMail);
 }
