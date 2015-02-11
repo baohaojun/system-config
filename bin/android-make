@@ -56,7 +56,7 @@ while true; do
             ;;
         -p)
             if test "$PATH_PREPEND"; then
-                PATH_PREPEND="$PATH_PREPEND:$2"
+                PATH_PREPEND=$PATH_PREPEND:$(readlink -f $2)
             else
                 PATH_PREPEND=$2
             fi
@@ -154,116 +154,33 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
         echo 'about to lock at '$(date)
         flock 9
         echo 'lock success! at '$(date)
-        if test ! -e ~/.no-sudo; then
-            sudo umount ../.afb >/dev/null 2>&1 || true
-        fi
-        rm */out/ -rf || true
-        if test "$DO_REPO_UPDATE" = true; then
-            rm out/*/ -rf || true
-        fi
+
         result=''
-        export build_mount_p=$(readlink -f ../)/.afb
-        mkdir -p $build_mount_p
-        if test -e ~/.no-sudo; then
-            function sudo() {
-                while test "$1" -a "$1" != bash; do
-                    shift
-                done
-                "$@"
-            }
-            export -f sudo
-            export build_mount_p=$PWD
-            function mount() {
-                true
-            }
-            function su() {
-                while test "$1" -a "$1" != -c; do
-                    shift
-                done
-                bash "$@"
-            }
-            export -f su
-            export -f mount
-        else
-            test "$(find $build_mount_p -maxdepth 1 -type l -prune -o -print | wc -l)" = 1 || die "mount point $build_mount_p not clean"
+        if test ${PATH_PREPEND}x != x; then
+            PATH=$PATH_PREPEND:$PATH
         fi
-        if ! which schedtool >/dev/null 2>&1 ; then
-            function schedtool() {
-                while test "$1" != make; do
-                    shift;
-                done
-                "$@"
-            }
-            export -f schedtool
-        fi
-        time sudo env NO_PARALLEL_BUILD=$NO_PARALLEL_BUILD unshare -m -- bash -c "
-            set -ex
-            umount $build_mount_p >/dev/null 2>&1 || true
-            mount $(pwd) $build_mount_p -o bind;
-            cd $build_mount_p
-            umount $OUT_DIR >/dev/null 2>&1 ||true
-            mount $OUT_DIR_LONG $OUT_DIR -o bind
-            perl -npe 's!^\\\$\(error stopping\)!#\\\$(error stopping)!' -i build/core/main.mk
-            su $(whoami) -c '
-                HOME=$HOME
-                . ~/.bashrc;
-                . .buildenv.sh;
-                if test -e .buildenv.sh.x; then
-                    set -x
-                    . .buildenv.sh.x
-                fi
-                if test ${PATH_PREPEND}x != x; then
-                    PATH=$PATH_PREPEND:\$PATH
-                fi
-                . ./build/envsetup.sh
-                export PATH=$PWD/$OUT_DIR/host/linux-x86/bin/:\$PATH
+        export PATH=$PWD/$OUT_DIR/host/linux-x86/bin/:$PATH
+        export CLASSPATH=.
 
-                if test -d boot/uboot -a -d boot/obm; then
-                    (cd boot/uboot; git add .; git clean -xfd) || true
-                    (cd boot/obm;   git add .; git clean -xfd) || true
-                fi
+        perl -npe 's!^\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
 
-                if test $# != 0; then
-                    if test $# = 1 -a $1 = msm-kernel; then
-                        (
-                            cd build/target/board
-                            mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs $verbose
-                        )
-                    elif test $# = 1 -a $1 = lk; then
-                        (
-                            cd build/target/board
-                            mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs $verbose
-                        )
-                    else
-                        schedtool -B -n 1 -e ionice -n 1 make -j$jobs $keep $* $verbose
-                    fi
-                elif test -z \"$NO_PARALLEL_BUILD\" -a -z \"\$NO_PARALLEL_BUILD\"; then
-                    schedtool -B -n 1 -e ionice -n 1 make -j$jobs $keep $targets
-                else
-                    lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
-
-                    if test -e flashing/quilt/$(repo-tracking)/do-no-parallel-build; then
-                        bash flashing/quilt/$(repo-tracking)/do-no-parallel-build
-                    else
-                        bash flashing/quilt/do-no-parallel-build
-                    fi
-                fi
-            '
-        " && result=$result'all ok; ' && echo build is successful &&
-        (
-            if test ! -d flashing; then
-                exit 0
+        if test $# != 0; then
+            if test $# = 1 -a $1 = msm-kernel; then
+                (
+                    cd build/target/board
+                    mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs $verbose
+                )
+            elif test $# = 1 -a $1 = lk; then
+                (
+                    cd build/target/board
+                    mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs $verbose
+                )
+            else
+                schedtool -B -n 1 -e ionice -n 1 make -j$jobs $keep $* $verbose
             fi
-            cd flashing
-            ./make-links.sh
-            dest=$(android-env get_abs_build_var OUT_DIR)/flashing/
-            mkdir -p $dest
-            DO_SYMLINK=true ./copy-release.sh $dest
-        ) || true
-        if test -e .afb-do-repo-changes; then
-            echo -n 'after build, ccache stat is '
-            ./prebuilt/linux-x86/ccache/ccache -s
-        fi
+        else
+            schedtool -B -n 1 -e ionice -n 1 make -j$jobs $keep $targets
+        fi && result=$result'all ok; ' && echo build is successful || true
         echo
         echo "full build result is $result"
         echo

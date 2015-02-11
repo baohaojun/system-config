@@ -271,7 +271,6 @@ might be bad."
 ;;;###autoload
 (defun bhj-occur-make-errors ()
   (interactive)
-  ;;; xxxxxxxxxxxxxx Please note! do not use up case here!!! xxxxxxxxxxxxxxx ;;;
   (let ((bhj-occur-regexp (downcase "\\*\\*\\*.*stop\\|method does not override or implement\\|syntax error\\|invalid argument\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]elapsed \\|cannot find symbol\\|error [0-9]\\| : error \\|because of errors\\|[0-9] error\\b\\|error:\\|undefined reference to\\|permission denied")))
     (call-interactively 'bhj-occur)))
 

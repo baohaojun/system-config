@@ -1,0 +1,111 @@
+#+title: 安卓编译服务器、持续集成的设计与实现
+
+* 现有的问题
+
+1. 最为突出的问题，是安卓越来越庞大，编译时间越来越长。从安卓4.4升级到5.0之后，在咱们的编译服务器上（36核CPU、32G内存），编译时间直接从30分钟变成了1小时。在这种条件下，工程师的效率大打折扣。一旦开始编译，基本上电脑会变得奇慢，工程师不能再干其他事。
+
+   这是一个很古老的问题，在2000年 Joel Spolsky （Joel on Software网站作者、Stack Exchange创始人）就写过一篇文章 [[http://www.joelonsoftware.com/articles/fog0000000023.html][“Daily Builds Are Your Friend”]]，其中提到 “我们曾经在办公室里放了一个仰卧起坐板，每次需要等待编译的时候就去做做仰卧起坐。编了几个月的程之后我拥有了杀手一样的腹肌”。
+
+2. 我们的Build Server目前只做一天两次的Daily Build，其他时间都是空闲的，没有很好的利用起来。
+
+3. 我们一直没有实现持续集成。在安卓的发源地谷歌，每一个Patch在工程师Review前都会先被Build机器人编译，没问题的话才会在Gerrit页面添加注释并提示工程师进行Review。
+
+
+* 设计
+
+** 前提
+
+1. *不能影响CM现有的工作流程*
+
+** 大纲
+
+1. 系统会有一个daily的base build。
+
+   这个跟CM的Build同步。这样大家都很清楚这个新系统的Base是哪个，可以从CM发布的包里去取manifest.xml。
+
+2. 之后一整天的build，都会基于这个base，每个同事想提交一个新的build，都会基于这个base去做：
+
+   - （初始条件：所有的代码已回归到base）
+
+   - 打上同事提供的patch
+
+   - 开始build
+
+   - 如果成功，可以输出同事想要的文件，方便他测试、验证（一般情况下就是一个apk、boot.img等，特殊情况下可以提供整个system/data/root目录）
+
+   - 如果失败，需要提供log供分析
+
+   - 把所有的代码回归到base上，为下一个同事的build做准备
+
+3. 在上面说的是同事主动提交patch(review地址)进行build，其有一些额外的需求，比如提供结果文件。也可以把这个系统稍微修改一下，让它进行自动的review验证。
+
+4. 不同的产品、不同的线、不同的编译配置，需要有很多个base build，需要选择正确的base build。
+
+   - 为了性能的关系，同一个base build可以考虑有多份，这样可以两个同事的编译可以并行的进行。
+
+5. 需要确定review的git branch跟base build之间的关系。
+
+6. 会用ccache进行编译优化
+
+* 实现
+
+** 创建一个新的base build。
+
+- Android 还是 OEM？
+
+  repo init; repo sync 或者 git clone
+- 哪个产品？
+- 哪条线？还是说线已经包含了产品信息，所以就可以不分了。
+
+以上可以称为base build信息
+
+** 工程师提交一个review
+
+比如：http://172.16.0.9:8080/#/c/46545
+
+** 工程师提交一个build request，参数可以只指定review id。大部分情况下还需要加上要不要输出文件
+比如：
+
+remote-mm http://172.16.0.9:8080/#/c/46545
+
+** 根据review id，计算出base build信息。
+
+:+name: get-base-build.v1
+#+BEGIN_SRC sh
+  function get-base-build() {
+      review_id=$1
+      if [[ "$review_id" =~ http:// ]]; then
+          review_id=$(basename "$review_id")
+      fi
+
+      review_info=$(ssh smartisan gerrit query review_id)
+
+      branch=$(echo "$review_info" | grep "^\s+branch:" -P | pn 2)
+      project=$(echo "$review_info" | grep "^\s+project:" -P | pn 2)
+
+      # fix me: how to calculate the base build for this?
+      echo ~/buildfarm/sfo-rom
+  }
+#+END_SRC
+
+大概就是上面这样的，根据review地址计算出project和branch，然后就能得到是哪个base build。当然上面我最后作弊直接给了个地址。
+
+最后，也可以让用户自己指定用哪个base build。当然，前提是需要有一个函数可以列出都有哪些base build。
+
+:+name: list-base-builds
+#+BEGIN_SRC sh
+  function list-base-builds() {
+      cd ~/buildfarm/
+      for x in *; do
+          if test -d "$x"; then
+              echo "$x"
+          fi
+      done
+  }
+
+#+END_SRC
+
+
+#+BEGIN_SRC sh :tangle ~/bin/android-build-server-ci.sh :comments link :shebang "#!/bin/bash"
+echo hello world
+#+END_SRC

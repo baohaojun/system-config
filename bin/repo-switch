@@ -3,8 +3,8 @@ set -e
 
 repo_dir=$(lookup-file -e .repo)
 cd $(dirname $repo_dir)
-repo_init_url=
-repo_init_branch=
+repo_init_url=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git-remote-url)
+repo_init_branch=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge)
 repo_init_manifest=
 repo_url=
 repo_reference=
@@ -17,10 +17,12 @@ while true; do
     case "$1" in
         -u)
             repo_init_url=$2
+            echo "$2" > ~/.repo/.repo_manifest_url
             shift 2
             ;;
         -b)
             repo_init_branch=$2
+            echo "$2" > ~/.repo/.repo_branch
             shift 2
             ;;
         -m)
@@ -40,7 +42,12 @@ while true; do
             shift
             ;;
         -p)
-            cat $(lookup-file .repo/repo-switch) || true
+            if test -e "$(lookup-file -e .repo/repo-switch)"; then
+                cat $(lookup-file .repo/repo-switch) || true
+            else
+                echo repo init -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
+                     -m $(basename $(readlink .repo/manifest.xml)) --repo-url $(cd .repo/repo && git-remote-url)
+            fi
             exit 0
             ;;
         -e)
@@ -77,9 +84,9 @@ fi
 
 repodir=$(lookup-file -e .repo)
 if test -z "$repodir"; then
-    (set -x; repo init -p auto -u ${repo_init_url:-bibler:shgit/manifest}\
+    (set -x; repo init -p auto -u ${repo_init_url:-$(cat ~/.repo/.repo_manifest_url)}\
         -m ${repo_init_manifest:-default.xml}\
-        -b ${repo_init_branch:-master}\
+        -b ${repo_init_branch:-$(cat ~/.repo/.repo_branch)}\
         --repo-url=${repo_url:-https://gerrit.googlesource.com/git-repo}\
         $(if test "$repo_reference"; then echo "$repo_reference"; fi) \
         "$@")
@@ -96,7 +103,7 @@ repodir=$(lookup-file -e .repo)
 if test -e "$repodir"/repo-switch && grep '^export' -q "$repodir"/repo-switch; then
     . "$repodir"/repo-switch
 
-    old_repo_init_url=
+    old_repo_init_url=$(cd "$repodir"/manifests; git-remote-url)
     old_repo_init_branch=
     old_repo_init_manifest=
     old_repo_url=
@@ -140,7 +147,7 @@ if test -z "$repo_init_url"; then
         echo The repo init url to use:
         repo_init_url=$(select-output-line -- bash -c "echo $old_repo_init_url; cat ~/.repoconfig/repo_init_urls 2>/dev/null")
     else
-        repo_init_url=${old_repo_init_url:-bibler:shgit/manifest}
+        repo_init_url=${old_repo_init_url:-$(cat ~/.repo/.repo_manifest_url)}
     fi
 fi
 

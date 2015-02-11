@@ -1,0 +1,13 @@
+#!/bin/bash
+
+pcre=
+if test "$#" = 1 -a -e "$1"; then
+    pat=$(perl -ne 'print if m/defun bhj-occur-make-errors/..m/let.*bhj-occur-regexp/' ~/system-config/.emacs_d/lisp/bhj-defines.el|tail -n 1|perl -npe 's/.*(".*").*/$1/')
+else
+    pat=${1:-'"Error [0-9]+"'}
+    pcre=-P
+    echo pat is $pat
+    shift
+fi
+
+echo grep -i -H -n $pcre -e "$pat" "$@" |bash | grep -v 'Setting locale failed|find: `(src|phone/java|dummy)'\'': No such file or directory' -P

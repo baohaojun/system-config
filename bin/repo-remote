@@ -10,10 +10,18 @@ if test "$GERRIT_HOST"; then
     exit
 fi
 
+if test "$(git remote |wc -l)" = 1; then
+    git remote
+    exit
+fi
 if test "$REPO_INFO"; then
     $REPO_INFO remote
 elif lookup-file -e .repo/.. >/dev/null 2>&1; then
-    repo forall . -c 'echo $REPO_REMOTE' 2>/dev/null
+    if [[ $PWD =~ \.repo ]]; then
+        git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!'
+    else
+        repo forall . -c 'echo $REPO_REMOTE' 2>/dev/null
+    fi
 else
     git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!'
 fi
