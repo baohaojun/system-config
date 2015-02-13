@@ -60,3 +60,8 @@ void DialogGetEntry::selectedCurrentEntryNoHistory(const QModelIndex &index)
     on_filteringListView_doubleClicked(index);
     updateEntryHistory = true;
 }
+
+void DialogGetEntry::setHint(const QString& hint)
+{
+    ui->entryFilter->setPlaceholderText(hint);
+}
