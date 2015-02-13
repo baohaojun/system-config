@@ -10,14 +10,7 @@ if test -e $gitd/svn/.metadata; then
 else
     test $# == 0 -o -z "$1" && set -- $(repo-remote)
 
-    url=$(git config remote.$1.url | (
-                 if test "$BPE_ON_APSE"; then
-                     perl -npe 's,.*?:,bibler:,; s,:/git/android/,:shgit/,'
-                 else
-                     cat
-                 fi
-             )
-       )
+    url=$(git config remote.$1.url)
 
 fi
 echo "$url"

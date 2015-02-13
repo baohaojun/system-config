@@ -49,12 +49,14 @@
 
 * 实现
 
-** 创建一个新的base build。
+** 创建一个新的base build
 
 - Android 还是 OEM？
 
   repo init; repo sync 或者 git clone
+
 - 哪个产品？
+
 - 哪条线？还是说线已经包含了产品信息，所以就可以不分了。
 
 以上可以称为base build信息
@@ -67,6 +69,186 @@
 比如：
 
 remote-mm http://172.16.0.9:8080/#/c/46545
+
+#+name: remote-mm
+#+BEGIN_SRC sh
+  function remote-mm() {
+      ssh build build-request http://172.16.0.9:8080/#/c/47807/
+  }
+#+END_SRC
+
+#+name: build-request
+#+BEGIN_SRC sh
+  function build-request() {
+      ## start generated code
+      TEMP=$(getopt -o m:hd:c:t: --long "method:,help,dir:,copy:,to:"  -n $(basename $0) -- "$@")
+      method=mm
+      mm_dir=
+      copy=
+      to=
+      to_user=
+      to_host=
+      to_path=
+      to_share=
+      eval set -- "$TEMP"
+      while true; do
+          case "$1" in
+              -m|--method)
+                  method=$2
+                  shift 2
+                  ;;
+              -h|--help)
+                  cat <<EOF
+  Usage: build-request -m|--method [mm|dep|full] [-d|--dir MM_DIR] [-c|--copy FILE|DIR]... [-t|--to COPY_TARGET] REVIEWS...
+
+  You can use this command to submit a build request using a gerrit
+  review, specify what to build, and what to copy back into your PC using rsync.
+
+  -m|--method [mm|dep|full]
+      MM means use android mm build
+      DEP means build the whole dir, including dependencies
+      FULL means to do a full build (need ~8 minutes)
+
+  [-d|--dir MM_DIR] Specify where to do the build, if you are using mm
+      or partial build with dependencies resolved.
+
+  [-c|--copy FILE|DIR]...  Specify what files/dirs to copy back. It must
+      be like out/target/product/msm8974sfo_lte/XXX.
+
+      You can specify it multiple times to copy more than 1 files.
+
+  [-t|--to COPY_TARGET] Specify the share folder on your PC, it must be
+      like: USER%PASSWORD@HOST:SHARE, where USER is your local username,
+      PASSWORD is your samba share password, HOST is the IP address for
+      your working Linux PC, and SHARE is the samba share folder's path
+      on your Linux PC where you want the files to be copied.
+
+      Note thate your password must not contain these characters: @%: ,
+      because they will cause confusion.
+
+  REVIEWS are gerrit review urls or ids, such as http://172.16.0.9:8080/47807/ or 47807
+
+  EOF
+                  exit
+                  ;;
+              -d|--dir)
+                  mm_dir=$2
+                  shift 2
+                  ;;
+              -c|--copy)
+                  if test "$copy"; then
+                      copy=("${copy[@]}" "$2")
+                  else
+                      copy=("$2")
+                  fi
+                  shift 2
+                  ;;
+              -t|--to)
+                  to=$2
+                  if ! echo "$to" | grep -i -q -P '^[a-z]+(%.*?)?@\d+\.\d+\.\d+\.\d+:'; then
+                      die "$to is invalid, must match regeqp '^[a-z]+(%.*?)?@\d+\.\d+\.\d+\.\d+:' "
+                  fi
+                  to_user=${to%%%*}
+                  to_password=${to#*%}
+                  to_password=${to_password%@*}
+                  to_host=${to#*@}
+                  to_host=${to_host%%:*}
+                  to_path=${to#*:}
+                  to_share=${to_path%%/*}
+                  to_path=${to_path#*/}
+                  shift 2
+                  ;;
+              --)
+                  shift
+                  break
+                  ;;
+              ,*)
+                  die "internal error"
+                  ;;
+          esac
+      done
+      ## end generated code
+
+      num_reviews=$#
+
+      for review_id in "$@"; do
+          if [[ "$review_id" =~ http:// ]]; then
+              review_id=$(basename "$review_id")
+          fi
+
+          if ! echo "$review_id" | grep -q -P '^\d+$'; then
+              die "review_id $review_id is not a number."
+          fi
+
+          review_info=$(ssh smartisan gerrit query --current-patch-set $review_id)
+          branch=$(echo "$review_info" | grep "^\s+branch:" -P | pn 2)
+          project=$(echo "$review_info" | grep "^\s+project:" -P | pn 2)
+
+          cd ~/buildfarm/sfo-rom
+          path=$(my-rfa 'if test "$(git-remote-url|perl -npe s,.*//.*?/,,)" = '$project'; then pwd; fi')
+          if test ! -d "$path"; then
+              die "Can't decide the path for review id: $review_id"
+          fi
+
+          (
+              cd "$path"
+              rev=$(echo "$review_info" | grep "^\s+ref:" -P | pn 2)
+              git fetch $(repo-remote) $rev
+              git merge FETCH_HEAD || die "Can't merge the fetch head"
+          )
+      done
+
+      if test "$method" = mm; then
+          if test $num_reviews != 1; then
+              die "mm can be used only if there is one review patch"
+          fi
+
+          if test -d "$mm_dir"; then
+              (
+                  cd "$mm_dir"
+                  if ! is-a-subdir "$(readlink -f "$mm_dir")" ~/buildfarm/sfo-rom; then
+                      die "$mm_dir is not in Android dir"
+                  fi
+                  mm
+              )
+          elif test -e "$path"/Android.mk; then
+              (
+                  cd $path
+                  mm;
+              )
+          else
+              die "Can't find Android.mk in $path for mm build"
+          fi
+      elif test "$method" = dep; then
+          if test -d "$mm_dir"; then
+              (
+                  cd "$mm_dir"
+                  if ! is-a-subdir "$(readlink -f "$mm_dir")" ~/buildfarm/sfo-rom; then
+                      die "$mm_dir is not in Android dir"
+                  fi
+                  android-make -d .
+              )
+          else
+              (
+                  cd $path
+                  android-make -d .
+              )
+          fi
+      elif test "$method" = full; then
+              android-make
+      else
+          die "Can't build with method '$method'"
+      fi
+
+      for c in "${copy[@]}"; do
+          if ! is-a-subdir "$c" ~/buildfarm/sfo-rom/out; then
+              die "$c to copy is not in Android dir"
+          fi
+          smbclient "//$to_host/$to_share" -U "$to_user%$to_password" -c "tarmode; recurse; prompt; cd \"$to_path\"; $(x=$c; while test ${x}y != .y; do x=$(dirname $x); echo mkdir $x\;; done|reverse) cd $(dirname $c); lcd $(dirname $c); mput $(basename $c)"
+      done
+  }
+#+END_SRC
+
 
 ** 根据review id，计算出base build信息。
 
@@ -106,6 +288,88 @@ remote-mm http://172.16.0.9:8080/#/c/46545
 #+END_SRC
 
 
-#+BEGIN_SRC sh :tangle ~/bin/android-build-server-ci.sh :comments link :shebang "#!/bin/bash"
-echo hello world
+** 每天定时刷新base build
+
+#+name: refresh-base-builds
+#+BEGIN_SRC sh
+  function refresh-base-builds() {
+      cd ~/buildfarm/
+      for x in */.repo/; do
+          if test ! -d "$x"; then
+              continue;
+          fi
+          (
+              cd "$x"/manifests
+              git reset --hard
+              cd ../..
+              android-make
+              # fixme export the manifest.
+          )
+      done
+  }
+#+END_SRC
+
+** 最终的版本：
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/bin/abc :comments link :shebang "#!/bin/bash" :noweb yes
+  # The name abc stands for Android Build Cake. Android Build is a piece
+  # of Cake.
+
+  # All bash scripts should start with ~set -e~ to fail early and loudly.
+  set -e
+
+ <<die>>
+
+ <<remote-mm>>
+
+ <<build-request>>
+
+ <<get-base-build.v1>>
+
+ <<list-base-builds>>
+
+ <<refresh-base-builds>>
+
+ <<which-to-call>>
+#+END_SRC
+
+** 一些辅助的函数
+
+#+name: die
+#+BEGIN_SRC sh
+    function die() {
+        echo Error: "$@"
+        exit -1
+    }
+
+    function android-make() {
+        command android-make -j8 "$@"
+    }
+
+    function is-a-subdir() {
+        dir1=$(readlink -f "$1")
+        dir2=$(readlink -f "$2")
+        # test if dir1 is in a subdir of $dir2
+        dir2=$dir2/
+        if test -e "$dir1" -a -d "$dir2"; then
+            if test "$(echo "$dir1" | cut -b 1-${#dir2})" = "${dir2}"; then
+                return 0;
+            fi
+        fi
+        return 1
+    }
+#+END_SRC
+
+最后，决定该调用哪一个脚本：
+
+#+name: which-to-call
+#+BEGIN_SRC sh
+  if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
+      if grep -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
+          command=$1
+          shift
+          "$command" "$@"
+      fi
+  fi
 #+END_SRC

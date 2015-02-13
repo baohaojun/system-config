@@ -23,4 +23,3 @@ add Lock = Caps_Lock
 keycode 197 = F23
 keycode 202 = F24
 
-pointer = 1 2 3 5 4 7 6 8 9 10
