@@ -29,5 +29,3 @@ keycode 9 = Caps_Lock
 keycode 66 = Escape
 add Lock = Caps_Lock
 remove Lock = Escape
-
-pointer = 1 2 3 5 4 7 6 8 9 10

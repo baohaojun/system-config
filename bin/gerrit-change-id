@@ -1,2 +1,2 @@
 #!/bin/bash
-git log -1 ${1:HEAD} | grep Change-Id: | pn 2|tail -n 1
+git log -1 ${1:HEAD} | grep -i -P '^\s*Change-Id:' | pn 2|tail -n 1

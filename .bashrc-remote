@@ -23,7 +23,7 @@ if test -e ~/.bash-path -a -e ~/.kill-bt; then
     )
 fi
 
-function start-ssh-agent() {
+start_ssh_agent() {
     (
         set -e
         umask 077
@@ -37,7 +37,7 @@ function start-ssh-agent() {
 
 if test ! -e ~/.config/ssh-agent; then
     echo 1>&2 no ssh-agent found, restart it
-    start-ssh-agent
+    start_ssh_agent
 else
     . ~/.config/ssh-agent
 fi
@@ -47,7 +47,7 @@ val=$?
 if test $val = 2; then
     echo 1>&2 "can't connect to ssh-agent, restart it"
     rm ~/.config/ssh-agent
-    start-ssh-agent
+    start_ssh_agent
 fi
 
 if test $val != 0 -a -e ~/.ssh/id_rsa && tty >/dev/null 2>&1; then

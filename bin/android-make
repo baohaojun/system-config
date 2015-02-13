@@ -122,7 +122,7 @@ echo CCACHE_DIR is $CCACHE_DIR
 rm ~/.ccache || rm -rf ~/.ccache
 ln -s $CCACHE_DIR ~/.ccache
 . ~/bin/.android-set-outdir
-android-set-product
+android-set-product # this is for mm to use
     # re-lunch, so that the ANDROID_PRODUCT_OUT can inherit from the new OUT_DIR
 lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 
@@ -185,9 +185,10 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
         echo "full build result is $result"
         echo
     )
-) 9>.android-full-build.lock  2>&1 | tee build.log out/build.log
+) 9> $OUT_DIR/.android-full-build.lock  2>&1 | tee $OUT_DIR/build.log
 if test "$#" = 0; then
-    mv out/build.log out/full-build.log
+    mv $OUT_DIR/build.log $OUT_DIR/full-build.log
 fi
 perl -npe 's!^#\$\(error stopping\)!\$(error stopping)!' -i build/core/main.mk
 grep -Hn -e 'full build result is' build.log | grep -e "all ok" # make sure it exit with the right return value
+relative-link $OUT_DIR_LONG out

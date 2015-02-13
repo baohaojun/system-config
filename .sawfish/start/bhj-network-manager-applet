@@ -1,5 +1,5 @@
 #!/bin/bash
-sleep 15
+sleep 35
 if ! ps.pl nm-applet; then
     exec nm-applet
 fi

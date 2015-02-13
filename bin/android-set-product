@@ -7,8 +7,13 @@ fi
 ccache -M 100G
 
 . ~/bin/.android-set-outdir
-for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $OUT_DIR $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do xval=`eval echo \\$$x`; if test "$xval" != ""; then echo $x\?=`eval echo \\$$x`; fi; done >buildspec.mk
-echo "export ANDROID_BUILD_TOP := $PWD" >>buildspec.mk
+for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $OUT_DIR $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do xval=`eval echo \\$$x`; if test "$xval" != ""; then echo $x\?=`eval echo \\$$x`; fi; done >buildspec.mk.$$
+echo "export ANDROID_BUILD_TOP := $PWD" >>buildspec.mk.$$
+echo "export TARGET_PRODUCT" >>buildspec.mk.$$
+echo 'export KERNEL_HELPER_BHJ:=yes' >> buildspec.mk.$$
+
+mv buildspec.mk.$$ buildspec.mk
+
 
 for x in $(echo "
     ANDROID_HOST_OUT
@@ -17,22 +22,11 @@ for x in $(echo "
 "
 ); do
     printf "export %s=%s\n" $x "$(eval echo -n \$$x)"
-done | grep -v '=$' > .buildenv.sh
+done | grep -v '=$' > .buildenv.sh.$$
 
-cat <<EOF >> .buildenv.sh
+cat <<EOF >> .buildenv.sh.$$
 export PATH=$PATH
 export ARCH=arm
-if test "\$BUILD_UBOOT_OBM"; then
-export CROSS_COMPILE='ccache arm-eabi-'
-export SWDOWNLOADER=$ANDROID_BUILD_TOP/vendor/marvell/generic/software_downloader
-fi
 EOF
 
-echo "export TARGET_PRODUCT" >>buildspec.mk
-if test ! -e .repo/buildspec-x.mk; then
-    rm .repo/buildspec-x.mk -f
-    echo 'export KERNEL_HELPER_BHJ:=yes' > .repo/buildspec-x.mk
-fi
-if test -e .repo/buildspec-x.mk; then
-    cat .repo/buildspec-x.mk >> buildspec.mk
-fi
+mv .buildenv.sh.$$ $OUT_DIR/.buildenv.sh

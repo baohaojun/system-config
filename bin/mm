@@ -36,9 +36,9 @@ time (
     top_dir=$(readlink -f $top_dir/..)
 
     cd $top_dir/
-    perl -npe 's!^\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
     . build/envsetup.sh
     set_stuff_for_environment
+    OUT_DIR=${OUT%target/*}
     cd -
 
     cd "$(dirname $(lookup-file Android.mk))"
@@ -47,72 +47,29 @@ time (
 
     cd $top_dir
 
-    export build_mount_p=$(readlink -f ../)/.afb
-    mkdir -p $build_mount_p
-    if test -e ~/.no-sudo; then
-        function sudo() {
-            while test "$1" != bash; do
-                shift
-            done
-            "$@"
-        }
-        export -f sudo
-        export build_mount_p=$PWD
-        function mount() {
-            true
-        }
-        function su() {
-            while test "$1" != -c; do
-                shift
-            done
-            bash "$@"
-        }
-        export -f su
-        export -f mount
-    else
-        function sudo() {
-            if test "$KERNEL_CONFIG"; then
-                command sudo env KERNEL_CONFIG=$KERNEL_CONFIG PATH=$PATH "$@"
-            else
-                command sudo env PATH=$PATH "$@"
-            fi
-        }
+    perl -npe 's!^\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
 
-        export -f sudo
-    fi
-
-    if test ! -e ~/.no-sudo; then
-        if test "$(find $build_mount_p -maxdepth 1 -type l -prune -o -print | wc -l)" != 1 && yes-or-no-p -y "unmount $build_mount_p?"; then
-            unshare-work
-            sudo umount $build_mount_p || true
-        fi
-
-        test "$(find $build_mount_p -maxdepth 1 -type l -prune -o -print | wc -l)" = 1 || die "build_mount_p already mounted"
-    fi
-    echo "make: Entering directory \`$(pwd)'"
     (
         echo '# -*- mode: compilation -*-'
         echo "make: Entering directory \`$(lookup-file .repo/..)'"
-        time sudo unshare -m -- bash -c '
-                set -ex
-                mount $(pwd) '$build_mount_p' -o bind;
-                cd '$build_mount_p'
-                su '$(whoami)' -c "
-                    . ~/.bashrc;
-                    . build/envsetup.sh
-                    . .buildenv.sh
-                    if test '${PATH_PREPEND}'x != x; then
-                        PATH='$PATH_PREPEND':$PATH
-                    fi
-                    ONE_SHOT_MAKEFILE='$ONE_SHOT_MAKEFILE' make all_modules '"$(for x in "$@"; do printf %q\  "$x"; done)"'
-                "
-            ' 2>&1
-    )|tee ~/.logs/mm.log.x | perl -npe "s,$build_mount_p,$top_dir,g"|tee ~/.logs/mm.log|
-    grep --line-buffered -v '^Copy: .*/target/product/.*/system/media/audi'|
-    grep --line-buffered -v -e '/lang_pico/\|libinputcore-2.so\|libkpencore.so\|libqpicjni6.so\|/root/initlogo.rle\|/system/app/BaiduIme_v2.1.1.6.apk\|/system/app/android_10503_20111014.apk\|/system/app/cn.goapk.market_v2.1.4.apk\|/system/app/com.alensw.picfolder_v1.4.2.apk\|/system/etc/apns-conf.xml\|/system/etc/permissions/com.tmobile.software.themes.xml\|/system/etc/repository.txt'|
-    perl -ne 'print unless /unmappable character for encoding ascii/' |
-    perl -npe 's/(\.o\(.*?\.o\):)/$1\n/'
+        . $OUT_DIR/.buildenv.sh
+        if test ${PATH_PREPEND}x != x; then
+            PATH=$PATH_PREPEND:$PATH
+        fi
+        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make all_modules "$@" 2>&1
+    ) | tee ~/.logs/mm.log.$$
 
-    perl -npe 's!^#\$\(error stopping\)!\$(error stopping)!' -i build/core/main.mk
+    echo
+    echo xxxxxxxxxxxxxxxx THESE ARE THE UPDATED FILES: xxxxxxxxxxxxxxxx
+
+    cat ~/.logs/mm.log |
+        grep --line-buffered -v '^Copy: .*/target/product/.*/system/media/audi'|
+        grep --line-buffered -v -e '/lang_pico/\|libinputcore-2.so\|libkpencore.so\|libqpicjni6.so\|/root/initlogo.rle\|/system/app/BaiduIme_v2.1.1.6.apk\|/system/app/android_10503_20111014.apk\|/system/app/cn.goapk.market_v2.1.4.apk\|/system/app/com.alensw.picfolder_v1.4.2.apk\|/system/etc/apns-conf.xml\|/system/etc/permissions/com.tmobile.software.themes.xml\|/system/etc/repository.txt'|
+        perl -ne 'print unless /unmappable character for encoding ascii/' |
+        perl -npe 's/(\.o\(.*?\.o\):)/$1\n/'
+
     echo OK
+    cd $top_dir/
+    rm -f out
+    relative-link $(dirname $(readlink -f $OUT_DIR/host)) out
 )
