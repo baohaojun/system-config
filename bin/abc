@@ -57,15 +57,21 @@ function build-request() {
 Usage: build-request -m|--method [mm|dep|full] [-d|--dir MM_DIR] [-c|--copy FILE|DIR]... [-t|--to COPY_TARGET] REVIEWS...
 
 You can use this command to submit a build request using a gerrit
-review, specify what to build, and what to copy back into your PC using rsync.
+review, specify what to build, and what to copy back into your PC
+using share folder.
 
 -m|--method [mm|dep|full]
     MM means use android mm build
-    DEP means build the whole dir, including dependencies
-    FULL means to do a full build (need ~8 minutes)
+    DEP means build the whole dir, including DEPendencies
+    FULL means to do a full build (need 5~8 minutes)
+
+    Default is mm.
 
 [-d|--dir MM_DIR] Specify where to do the build, if you are using mm
     or partial build with dependencies resolved.
+
+    Default is the git project if there is an Android.mk in it's top
+    folder.
 
 [-c|--copy FILE|DIR]...  Specify what files/dirs to copy back. It must
     be like out/target/product/msm8974sfo_lte/XXX.
@@ -224,7 +230,7 @@ function refresh-base-builds() {
 }
 
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
-    if grep -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
+    if grep -q -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
         command=$1
         shift
         "$command" "$@"

@@ -53,6 +53,7 @@ if screen -list|grep $session_name; then
             done
         ) > /tmp/screen-exec.$$
 
+        find-or-exec konsole >/dev/null 2>&1 || true
         exec screen -X -S $session_name screen bash /tmp/screen-exec.$$
         (sleep 1 && rm /tmp/screen-exec.$$);
     fi

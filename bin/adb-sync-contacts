@@ -11,9 +11,9 @@ sleep 2
 adb-tap 372 1114
 sleep 1
 adb-tap 771 1168
-sleep 1
+sleep 5
 
-while true; do adb 'fuser /sdcard/smartisan/contact/00001.vcf && echo yes' | grep yes || break; sleep 1; done
+while true; do adb -r 'fuser /sdcard/smartisan/contact/00001.vcf && echo yes' | grep yes || break; sleep 1; done
 
 cd ~/.android
 adb pull /sdcard/smartisan/contact/00001.vcf contacts.vcf
