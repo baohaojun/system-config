@@ -85,7 +85,7 @@ read_vcf = function (vcf_path)
             end
 
             if (field:match("^EMAIL;?")) then
-               contact.EMAILS[#contact.EMAILS + 1] = (contact[field]):gsub("%-", "")
+               contact.EMAILS[#contact.EMAILS + 1] = (contact[field])
             end
          else
             contact[last_field] = contact[last_field] .. line
@@ -104,7 +104,7 @@ if arg ~= nil then
    base64 = require'base64'
    vcfs = read_vcf(arg1)
    for vcf in ipairs(vcfs) do
-      local tels = vcfs[vcf].TELS
+      local tels = vcfs[vcf].EMAILS
       for i in ipairs(tels) do
          print(tels[i])
       end

@@ -197,7 +197,7 @@ void ContactModel::filterSelectedItems(const QStringList& split)
             tels = tels2;
         }
 
-        if (tels.isEmpty()) {
+        if (tels.isEmpty() && ! mIsMail) {
             match = 0;
         }
 
