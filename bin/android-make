@@ -37,6 +37,9 @@ keep=-k
 make_dir=
 targets=
 PATH_PREPEND=
+if test -e .path-prepend; then
+    . .path-prepend
+fi
 TEMP=$(getopt -o vp:d:kj:c: -n $(basename $0) -- "$@")
 function die() {
     echo "$@"
@@ -56,10 +59,17 @@ while true; do
             ;;
         -p)
             if test "$PATH_PREPEND"; then
-                PATH_PREPEND=$PATH_PREPEND:$(readlink -f $2)
+                PATH_PREPEND=$(echo $PATH_PREPEND:$(readlink -f $2)|
+                                      tr : \\n|
+                                      uniq-even-non-ajacent|
+                                      rm-last-nl|
+                                      tr \\n :
+                            )
             else
                 PATH_PREPEND=$2
             fi
+
+            echo PATH_PREPEND=$PATH_PREPEND > .path-prepend
             shift 2
             ;;
         -d)
@@ -117,11 +127,14 @@ else
     echo using old config $config
     lunch $config
 fi
-export CCACHE_DIR=~/.ccache-$( (cat .repo/manifest.xml; echo $config) | md5sum | pn 1 | cut -b 1-6)
+
+. ~/bin/.android-set-outdir
+
+export CCACHE_DIR=$PWD/$OUT_DIR/.ccache
 echo CCACHE_DIR is $CCACHE_DIR
 rm ~/.ccache || rm -rf ~/.ccache
 ln -s $CCACHE_DIR ~/.ccache
-. ~/bin/.android-set-outdir
+
 android-set-product # this is for mm to use
     # re-lunch, so that the ANDROID_PRODUCT_OUT can inherit from the new OUT_DIR
 lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT

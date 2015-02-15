@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/system-config/doc/android-build-server-ci.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/doc/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
  # of Cake.
@@ -11,6 +11,10 @@
 function die() {
     echo Error: "$@"
     exit -1
+}
+
+function repo() {
+    ~/bin/repo "$@"
 }
 
 function android-make() {
@@ -28,6 +32,32 @@ function is-a-subdir() {
         fi
     fi
     return 1
+}
+
+function get-base-build() {
+    review_id=$1
+    if [[ "$review_id" =~ http:// ]]; then
+        review_id=$(basename "$review_id")
+    fi
+
+    review_info=$(ssh smartisan gerrit query review_id)
+
+    branch=$(echo "$review_info" | grep "^\s+branch:" -P | pn 2)
+    project=$(echo "$review_info" | grep "^\s+project:" -P | pn 2)
+
+    # fix me: how to calculate the base build for this?
+    echo ~/buildfarm/sfo-rom
+}
+
+function get-base-build-from-branch() {
+    local branch=$1
+    if test "$branch" = sfo-rom; then
+        echo ~/buildfarm/sfo-rom
+    elif test "$branch" = icesky-r1221; then
+        echo ~/buildfarm/icesky
+    else
+        die "Can't decide the base build for branch: '$branch'"
+    fi
 }
 
 function remote-mm() {
@@ -132,6 +162,8 @@ EOF
 
     num_reviews=$#
 
+    target_branch=
+
     for review_id in "$@"; do
         if [[ "$review_id" =~ http:// ]]; then
             review_id=$(basename "$review_id")
@@ -145,7 +177,18 @@ EOF
         branch=$(echo "$review_info" | grep "^\s+branch:" -P | pn 2)
         project=$(echo "$review_info" | grep "^\s+project:" -P | pn 2)
 
-        cd ~/buildfarm/sfo-rom
+        if test ! "$target_branch"; then
+            target_branch=$branch
+            if test ! "$branch"; then
+                die "Can't determine branch from then review"
+            fi
+        elif test "$target_branch" != "$branch"; then
+            die "Your reviews have more than 1 branches: $target_branch and $branch"
+        fi
+
+        base_build=$(get-base-build-from-branch $target_branch)
+
+        cd "$base_build"
         path=$(my-rfa 'if test "$(git-remote-url|perl -npe s,.*//.*?/,,)" = '$project'; then pwd; fi')
         if test ! -d "$path"; then
             die "Can't decide the path for review id: $review_id"
@@ -166,10 +209,10 @@ EOF
 
         if test -d "$mm_dir"; then
             (
-                cd "$mm_dir"
-                if ! is-a-subdir "$(readlink -f "$mm_dir")" ~/buildfarm/sfo-rom; then
+                if ! is-a-subdir "$(readlink -f "$mm_dir")" "$base_build"; then
                     die "$mm_dir is not in Android dir"
                 fi
+                cd "$mm_dir"
                 mm
             )
         elif test -e "$path"/Android.mk; then
@@ -184,7 +227,7 @@ EOF
         if test -d "$mm_dir"; then
             (
                 cd "$mm_dir"
-                if ! is-a-subdir "$(readlink -f "$mm_dir")" ~/buildfarm/sfo-rom; then
+                if ! is-a-subdir "$(readlink -f "$mm_dir")" "$base_build"; then
                     die "$mm_dir is not in Android dir"
                 fi
                 android-make -d .
@@ -202,15 +245,24 @@ EOF
     fi
 
     for c in "${copy[@]}"; do
-        if ! is-a-subdir "$c" ~/buildfarm/sfo-rom/out; then
+        if [[ "$c" =~ ^system/ ]]; then
+            c=$(echo out/target/product/*/system/)${c#system/}
+        fi
+        if ! is-a-subdir "$c" "$base_build"/out; then
             die "$c to copy is not in Android dir"
         fi
         smbclient "//$to_host/$to_share" -U "$to_user%$to_password" -c "tarmode; recurse; prompt; cd \"$to_path\"; $(x=$c; while test ${x}y != .y; do x=$(dirname $x); echo mkdir $x\;; done|reverse) cd $(dirname $c); lcd $(dirname $c); mput $(basename $c)"
     done
 }
 
-
-
+function list-base-builds() {
+    cd ~/buildfarm/
+    for x in *; do
+        if test -d "$x"; then
+            echo "$x"
+        fi
+    done
+}
 
 
 function refresh-base-builds() {
@@ -226,6 +278,23 @@ function refresh-base-builds() {
             android-make
             # fixme export the manifest.
         )
+    done
+}
+
+function cron-daily-build() {
+    for d in ~/buildfarm/*/; do
+        if test ! -d "$d"; then
+            continue;
+        fi
+        (
+            cd "$d"/.repo/manifests
+            git reset --hard
+        )
+        cd "$d"
+        repo sync -j8 -d -c
+        android-make
+        repo manifest -r -o .repo/manifest.xml.build
+        cat .repo/manifest.xml.build > .repo/manifest.xml
     done
 }
 

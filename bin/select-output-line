@@ -59,15 +59,28 @@ fi
 IFS=$'\n'
 dood=(
     $(
+        tmpfile=/tmp/$(basename $0).$$
         (
-            if test $ORDERED = true; then
-               cat $histfile.$$ 2>/dev/null || true
-            fi
             if test $# = 1; then
                 bash -c "$1"
             else
                 "$@"
+            fi > $tmpfile
+
+            if test $ORDERED = true; then
+                echo -n | perl -ne 'BEGIN{
+                              open($tmpfile, "<", "'$tmpfile'");
+                              while (<$tmpfile>) {
+                                  $lines{$_} = 1;
+                              }
+                          }
+
+                          print if $lines{$_};
+                      ' $histfile.$$
             fi
+
+            echo shit 1>&2
+            cat $tmpfile
         ) |
         if test $ORDERED != true -a $ORDERED != false; then
             uniq-and-dist-sort "$(cat $histfile.$$  2>/dev/null | head -n 1)"

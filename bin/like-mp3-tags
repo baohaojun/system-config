@@ -11,7 +11,10 @@ if file "$png" | grep 'jpeg image data' -i; then
 fi
 
 type=FRONT_COVER
-eyeD3 --remove-all "$mp3"
 cp "$mp3" "$mp3"-$$.mp3
+eyeD3 --remove-all "$mp3"-$$.mp3
 eyeD3 --set-encoding=utf8 -t "$title" -a "$singer" -A "$album" --add-image="$png":$type "$mp3"-$$.mp3
+my-adb push "$mp3"-$$.mp3 /sdcard/Music/"$(basename "$mp3")"
 mv "$mp3"-$$.mp3 "$mp3"
+# rm "$mp3"-$$.mp3 -f
+adb-scan-media /sdcard/Music/"$(basename "$mp3")"
