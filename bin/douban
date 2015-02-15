@@ -86,7 +86,7 @@ case "$1" in
                         postfix=--
                     fi
 
-                    if test -e "$(dirname "$song")"/.like; then
+                    if test -e "$(dirname "$song")"/../.like; then
                         postfix=$postfix'**'
                     elif test -e "$(dirname "$song")"/.unlike; then
                         postfix=$postfix'//'
@@ -114,32 +114,40 @@ case "$1" in
                     douban next
                     ;;
                 like)
-                    mkdir -p "$(dirname "$song")"
-                    perl -e 'if (-e "$ENV{song}.like" and -M "$ENV{song}.like" < 1 / 3600 / 24) { # like the artist
+                    (
+                        mkdir -p "$(dirname "$song")"
+                        set -x
+                        if echo $SHELLOPTS | grep -q xtrace; then
+                            export SHELLOPTS
+                        fi
+
+                        perl -e 'if (-e "$ENV{song}.like" and -M "$ENV{song}.like" < 2 / 3600 / 24) { # like the artist
                         $song = $ENV{song};
-                        ($dir = $song) =~ s!(.*/).*!$1!;
-                        system("touch", "$dir.like");
-                        system("rm", "-f", "$dir.unlike");
+                        ($dir = $song) =~ s!(.*)/.*!$1!;
+                        $dir =~ s!(.*)/.*!$1!;
+                        print "dir is $dir\n";
+                        system("touch", "$dir/.like");
+                        system("rm", "-f", "$dir/.unlike");
                     }'
-                    touch "$song".like
-                    if test -e "$song" -a -e "$icon"; then
-                        like-mp3-tags "$song"
-                        my-adb push "$song" /sdcard/Music/
-                        douban_action=info douban-misc
-                    fi
+                        touch "$song".like
+                        if test -e "$song" -a -e "$icon"; then
+                            like-mp3-tags "$song"
+                            douban_action=info douban-misc
+                        fi
+                    ) >> ~/.logs/douban-like2.log 2>&1
                     ;;
                 start-play-hook)
                     if test ! -e "$song" -o ! -e "$icon" ; then
                         mkdir -p "$(dirname "$song")"
                         wget "$picture_url" -O "$icon".$$ && mv "$icon".$$ "$icon"
-                        if wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"; then
-                            if test -e "$song".like || test -e "$(dirname "$song")"/.like -a ! -e "$song".unlike; then
-                                like-mp3-tags "$song"
-                                my-adb push "$song" /sdcard/Music/
-                                douban_action=info douban-misc
-                            fi
-                        fi&
+                        wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"
                     fi
+                    if test -e "$song".like || test -e "$(dirname "$song")"/../.like -a ! -e "$song".unlike; then
+                        like-mp3-tags "$song"
+                        douban_action=info douban-misc
+                    else
+                        my-adb rm /sdcard/Music/"$(basename "$song")"
+                    fi > ~/.logs/douban-like.log 2>&1
 
                     if test ! -e ~/.do-not-disturb; then
                         douban_action=info douban misc
@@ -250,7 +258,7 @@ case "$1" in
         douban info
         ;;
     rchan)
-        x=$(random 6) || true
+        x=$(random 5) || true
         ((x++))
         emacsclient -e "(douban-music-set-channel $x)"
         ;;
@@ -270,7 +278,7 @@ case "$1" in
         emacsclient -e '(douban-music-pause/resume)'
         ;;
     show)
-        emacsclient -e "(progn (setq douban-music-default-channel (1+ $(random 6)))
+        emacsclient -e "(progn (setq douban-music-default-channel (1+ $(random 5)))
                                (douban-music))"
         find-or-exec emacs
         ;;

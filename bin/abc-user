@@ -1,0 +1,20 @@
+#!/bin/bash
+who=${0##*abc-}
+export ABC_USER=$who
+
+if echo "$SSH_ORIGINAL_COMMAND" | grep -o -P -e '[^-a-z0-9:/_ ]+' -i; then
+   echo "The above characters are not allowed"
+   exit 1
+fi
+
+if test "$(echo "$SSH_ORIGINAL_COMMAND" | pn 1)" != abc; then
+   echo Android Build Cake: "$(echo "$SSH_ORIGINAL_COMMAND" | pn 1)": not found
+fi
+
+
+(
+    flock 9
+    echo $(now): $who: "$SSH_ORIGINAL_COMMAND" >> ~/.logs/.abc.log
+) 9> ~/.logs/.abc.lock
+
+bash -c "$SSH_ORIGINAL_COMMAND"

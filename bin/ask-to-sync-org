@@ -75,23 +75,21 @@ if ! is-tty-io; then
 fi
 
 set -e
-if need-sync; then
-    . ~/.config/ssh-agent
-    sync-mobile-org
-    mkdir -p ~/.cache/sync-mobile-org/
-    touch ~/.cache/sync-mobile-org/done
-    newver=$(
-        cd ~/src/github/projects/
-        git log --pretty=%H -1
-          )
-    newdiff=$(
-        cd ~/src/github/projects/
-        git diff HEAD
-           )
-    (
-        cd ~/today/MobileOrg
-        echo $newver > .last_version
-        echo -n "$newdiff" > .last_diff
-        git add .last_diff .last_version
-    )
-fi
+. ~/.config/ssh-agent
+sync-mobile-org
+mkdir -p ~/.cache/sync-mobile-org/
+touch ~/.cache/sync-mobile-org/done
+newver=$(
+    cd ~/src/github/projects/
+    git log --pretty=%H -1
+      )
+newdiff=$(
+    cd ~/src/github/projects/
+    git diff HEAD
+       )
+(
+    cd ~/today/MobileOrg
+    echo $newver > .last_version
+    echo -n "$newdiff" > .last_diff
+    git add .last_diff .last_version
+)
