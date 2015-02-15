@@ -102,15 +102,21 @@ remote-mm http://172.16.0.9:8080/#/c/46545
   Usage: build-request -m|--method [mm|dep|full] [-d|--dir MM_DIR] [-c|--copy FILE|DIR]... [-t|--to COPY_TARGET] REVIEWS...
 
   You can use this command to submit a build request using a gerrit
-  review, specify what to build, and what to copy back into your PC using rsync.
+  review, specify what to build, and what to copy back into your PC
+  using share folder.
 
   -m|--method [mm|dep|full]
       MM means use android mm build
-      DEP means build the whole dir, including dependencies
-      FULL means to do a full build (need ~8 minutes)
+      DEP means build the whole dir, including DEPendencies
+      FULL means to do a full build (need 5~8 minutes)
+
+      Default is mm.
 
   [-d|--dir MM_DIR] Specify where to do the build, if you are using mm
       or partial build with dependencies resolved.
+
+      Default is the git project if there is an Android.mk in it's top
+      folder.
 
   [-c|--copy FILE|DIR]...  Specify what files/dirs to copy back. It must
       be like out/target/product/msm8974sfo_lte/XXX.
@@ -162,7 +168,7 @@ remote-mm http://172.16.0.9:8080/#/c/46545
                   shift
                   break
                   ;;
-              ,*)
+              *)
                   die "internal error"
                   ;;
           esac
@@ -366,10 +372,28 @@ remote-mm http://172.16.0.9:8080/#/c/46545
 #+name: which-to-call
 #+BEGIN_SRC sh
   if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
-      if grep -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
+      if grep -q -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
           command=$1
           shift
           "$command" "$@"
       fi
   fi
 #+END_SRC
+
+* 功能检查
+
+最后，要列一个todo list，看看哪些功能已经实现了，哪些功能还没有实现
+
+** TODO 每天定时做full build
+   - State "TODO"       from ""           [2015-02-15 Sun 09:56]
+** TODO 做完full build之后，要把manifest.xml文件export出来，第二天就一直用这个做base
+   - State "TODO"       from ""           [2015-02-15 Sun 09:57]
+** TODO 做full build之前，要把manifest.xml文件恢复成服务器上的，确保能取到新代码
+   - State "TODO"       from ""           [2015-02-15 Sun 09:57]
+** TODO build失败的话，应该怎么做？可以细分一下
+** TODO 确保每个bsp同事都可以使用这个脚本
+** TODO 确保系统是安全的，不能让每个同事都有登录到服务器执行任意命令
+** TODO OEM的编译也应该纳入此脚本
+** TODO 根据branch自动分辨是哪个项目，是android还是oem
+   - State "TODO"       from ""           [2015-02-15 Sun 10:07]
+** TODO 每次有执行之后，都应该被记录，是谁执行的，执行了什么命令

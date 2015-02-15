@@ -86,6 +86,10 @@ if test "$#" != 0; then
             shift
             putclip $(github-pagep $(f "$@"))
             ;;
+        x)
+            myscr bash -c "git-push-rebase"
+            shift
+            ;;
         e)
             shift
             cd $blogdir
