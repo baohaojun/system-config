@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/doc/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/src/github/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
  # of Cake.
@@ -34,6 +34,43 @@ function is-a-subdir() {
     return 1
 }
 
+function clear_all_old_patches() {
+    local repo_dir=$(lookup-file -e .repo)
+    mkdir -p $repo_dir/patches
+    for x in $(
+                  cd $repo_dir/patches >/dev/null 2>&1;
+                  for x in *; do
+                      if test -f $x; then
+                          echo *
+                      fi
+                  done
+              ); do
+
+        (
+            cd $repo_dir/..
+            project=${x//%/\/}
+            cd $project
+            if test ! -d .git; then
+                die "not a project: $project"
+            fi
+
+            git reset --hard $(repo-remote-branch)
+            git clean -xfd
+        )
+    done
+}
+
+function mark_a_patch() {
+    local repo_dir=$(lookup-file -e .repo)
+    mkdir -p $repo_dir/patches
+    local project=$1
+    (
+        cd $repo_dir/patches
+        touch ${project//\//%}
+    )
+}
+
+
 function get-base-build() {
     review_id=$1
     if [[ "$review_id" =~ http:// ]]; then
@@ -66,15 +103,9 @@ function remote-mm() {
 
 function build-request() {
     ## start generated code
-    TEMP=$(getopt -o m:hd:c:t: --long "method:,help,dir:,copy:,to:"  -n $(basename $0) -- "$@")
+    TEMP=$(getopt -o m:hd: --long "method:,help,dir:"  -n $(basename $0) -- "$@")
     method=mm
     mm_dir=
-    copy=
-    to=
-    to_user=
-    to_host=
-    to_path=
-    to_share=
     eval set -- "$TEMP"
     while true; do
         case "$1" in
@@ -103,20 +134,6 @@ using share folder.
     Default is the git project if there is an Android.mk in it's top
     folder.
 
-[-c|--copy FILE|DIR]...  Specify what files/dirs to copy back. It must
-    be like out/target/product/msm8974sfo_lte/XXX.
-
-    You can specify it multiple times to copy more than 1 files.
-
-[-t|--to COPY_TARGET] Specify the share folder on your PC, it must be
-    like: USER%PASSWORD@HOST:SHARE, where USER is your local username,
-    PASSWORD is your samba share password, HOST is the IP address for
-    your working Linux PC, and SHARE is the samba share folder's path
-    on your Linux PC where you want the files to be copied.
-
-    Note thate your password must not contain these characters: @%: ,
-    because they will cause confusion.
-
 REVIEWS are gerrit review urls or ids, such as http://172.16.0.9:8080/47807/ or 47807
 
 EOF
@@ -124,29 +141,6 @@ EOF
                 ;;
             -d|--dir)
                 mm_dir=$2
-                shift 2
-                ;;
-            -c|--copy)
-                if test "$copy"; then
-                    copy=("${copy[@]}" "$2")
-                else
-                    copy=("$2")
-                fi
-                shift 2
-                ;;
-            -t|--to)
-                to=$2
-                if ! echo "$to" | grep -i -q -P '^[a-z]+(%.*?)?@\d+\.\d+\.\d+\.\d+:'; then
-                    die "$to is invalid, must match regeqp '^[a-z]+(%.*?)?@\d+\.\d+\.\d+\.\d+:' "
-                fi
-                to_user=${to%%%*}
-                to_password=${to#*%}
-                to_password=${to_password%@*}
-                to_host=${to#*@}
-                to_host=${to_host%%:*}
-                to_path=${to#*:}
-                to_share=${to_path%%/*}
-                to_path=${to_path#*/}
                 shift 2
                 ;;
             --)
@@ -182,11 +176,25 @@ EOF
             if test ! "$branch"; then
                 die "Can't determine branch from then review"
             fi
+
+            base_build=$(get-base-build-from-branch $target_branch)
+            echo decided our base_build to be $base_build, will lock now
+
+            exec 9> $base_build/.abc.lock
+            flock 9
+
+            (
+                cd $base_build
+                clear_all_old_patches
+            )
+
+
+
         elif test "$target_branch" != "$branch"; then
             die "Your reviews have more than 1 branches: $target_branch and $branch"
         fi
 
-        base_build=$(get-base-build-from-branch $target_branch)
+
 
         cd "$base_build"
         path=$(my-rfa 'if test "$(git-remote-url|perl -npe s,.*//.*?/,,)" = '$project'; then pwd; fi')
@@ -197,8 +205,10 @@ EOF
         (
             cd "$path"
             rev=$(echo "$review_info" | grep "^\s+ref:" -P | pn 2)
+            git reset --hard
             git fetch $(repo-remote) $rev
-            git merge FETCH_HEAD || die "Can't merge the fetch head"
+            git merge --no-edit FETCH_HEAD || die "Can't merge the fetch head"
+            mark_a_patch $(ap)
         )
     done
 
@@ -226,10 +236,10 @@ EOF
     elif test "$method" = dep; then
         if test -d "$mm_dir"; then
             (
-                cd "$mm_dir"
                 if ! is-a-subdir "$(readlink -f "$mm_dir")" "$base_build"; then
                     die "$mm_dir is not in Android dir"
                 fi
+                cd "$mm_dir"
                 android-make -d .
             )
         else
@@ -244,15 +254,7 @@ EOF
         die "Can't build with method '$method'"
     fi
 
-    for c in "${copy[@]}"; do
-        if [[ "$c" =~ ^system/ ]]; then
-            c=$(echo out/target/product/*/system/)${c#system/}
-        fi
-        if ! is-a-subdir "$c" "$base_build"/out; then
-            die "$c to copy is not in Android dir"
-        fi
-        smbclient "//$to_host/$to_share" -U "$to_user%$to_password" -c "tarmode; recurse; prompt; cd \"$to_path\"; $(x=$c; while test ${x}y != .y; do x=$(dirname $x); echo mkdir $x\;; done|reverse) cd $(dirname $c); lcd $(dirname $c); mput $(basename $c)"
-    done
+    rsync out/target/product/*/system* out/target/product/*/root /Share/abc/$(basename $base_build)
 }
 
 function list-base-builds() {

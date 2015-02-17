@@ -9,7 +9,8 @@ if test "$(uname)" = Linux; then
     find-or-exec rdesktop
 else
     set -x
-    cd /d/share2/RDL_Automation_v2.10.6.0614
+    # cd /d/share2/RDL_Automation_v2.10.6.0614
+    cd /d/RDL_8994_Automation_v3.10.1.0771/
     if ps.pl rdl.exe; then
         pycyg terminateModule.py rdl.exe;
     fi

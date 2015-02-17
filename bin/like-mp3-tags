@@ -1,4 +1,27 @@
 #!/bin/bash
+
+function mp3path() {
+    mp3=$1
+    album=$(dirname "$mp3")
+    singer=$(dirname "$album")
+
+    mp3=$(basename "$mp3")
+    album=$(basename "$album")
+    singer=$(basename "$singer")
+
+    echo -n "$singer/$album/$mp3"
+}
+
+function mp3dir() {
+    dirname "$(mp3path "$1")"
+}
+
+if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
+    true;
+else
+    return;
+fi
+
 set -e
 mp3=$(readlink -f "$1")
 album=$(basename "$(dirname "$mp3")")
@@ -10,11 +33,26 @@ if file "$png" | grep 'jpeg image data' -i; then
     png=${mp3/%.mp3/.jpg}
 fi
 
-type=FRONT_COVER
-cp "$mp3" "$mp3"-$$.mp3
-eyeD3 --remove-all "$mp3"-$$.mp3
-eyeD3 --set-encoding=utf8 -t "$title" -a "$singer" -A "$album" --add-image="$png":$type "$mp3"-$$.mp3
-my-adb push "$mp3"-$$.mp3 /sdcard/Music/"$(basename "$mp3")"
-mv "$mp3"-$$.mp3 "$mp3"
-# rm "$mp3"-$$.mp3 -f
-adb-scan-media /sdcard/Music/"$(basename "$mp3")"
+
+
+if my-adb "test -e /sdcard/Music/""$(basename "$mp3")"" && echo $$" | grep ^${$}$; then
+    my-adb rm /sdcard/Music/"$(basename "$mp3")"
+    adb-scan-media /sdcard/Music/"$(basename "$mp3")"
+fi
+
+if my-adb "test -e /sdcard/Music/""$(mp3path "$mp3")"" && echo $$" | grep ^${$}$; then
+    true
+else
+    type=FRONT_COVER
+    cp "$mp3" "$mp3"-$$.mp3
+    eyeD3 --remove-all "$mp3"-$$.mp3
+    eyeD3 --set-encoding=utf8 -t "$title" -a "$singer" -A "$album" --add-image="$png":$type "$mp3"-$$.mp3
+
+    my-adb mkdir -p /sdcard/Music/"$(mp3dir "$mp3")"
+
+    my-adb push "$mp3"-$$.mp3 /sdcard/Music/"$(mp3path "$mp3")".x
+    my-adb mv /sdcard/Music/"$(mp3path "$mp3")".x /sdcard/Music/"$(mp3path "$mp3")"
+    mv "$mp3"-$$.mp3 "$mp3"
+    # rm "$mp3"-$$.mp3 -f
+    adb-scan-media /sdcard/Music/"$(mp3path "$mp3")"
+fi

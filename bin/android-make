@@ -148,7 +148,7 @@ fi
 (
     set -e
     test -d "$ANDROID_PRODUCT_OUT"
-    cd "$ANDROID_PRODUCT_OUT"
+    cd "$ANDROID_PRODUCT_OUT" >/dev/null 2>&1
     test -d .repo && die "can not do it; .repo means we are at android top."
     rm ../system.img ../obj/PACKAGING/systemimage_intermediates/system.img -vf
     # rm kernel telephony uboot-obm -rf # see what will happen?
@@ -200,8 +200,8 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
     )
 ) 9> $OUT_DIR/.android-full-build.lock  2>&1 | tee $OUT_DIR/build.log
 if test "$#" = 0; then
-    mv $OUT_DIR/build.log $OUT_DIR/full-build.log
+    cp $OUT_DIR/build.log $OUT_DIR/full-build.log
 fi
 perl -npe 's!^#\$\(error stopping\)!\$(error stopping)!' -i build/core/main.mk
-grep -Hn -e 'full build result is' build.log | grep -e "all ok" # make sure it exit with the right return value
-relative-link $OUT_DIR_LONG out
+relative-link $OUT_DIR_LONG out || true
+grep -Hn -e 'full build result is' $OUT_DIR/build.log | grep -e "all ok" # make sure it exit with the right return value

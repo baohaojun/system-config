@@ -109,8 +109,16 @@ case "$1" in
                         system("touch", "$dir.unlike");
                         system("rm", "-f", "$dir.like");
                     }'
+
+                    . like-mp3-tags
+                    my-adb rm /sdcard/Music/"$(mp3path "$song")"
+
+                    if test -e "$song".like; then
+                        rm -f "$song".like;
+                        exit
+                    fi
                     touch "$song".unlike
-                    my-adb rm /sdcard/Music/"$(basename "$song")"
+
                     douban next
                     ;;
                 like)
@@ -129,6 +137,10 @@ case "$1" in
                         system("touch", "$dir/.like");
                         system("rm", "-f", "$dir/.unlike");
                     }'
+                        if test -e "$song".unlike; then
+                            rm -f "$song".unlike
+                            exit
+                        fi
                         touch "$song".like
                         if test -e "$song" -a -e "$icon"; then
                             like-mp3-tags "$song"
