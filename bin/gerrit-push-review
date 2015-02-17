@@ -19,10 +19,11 @@ if test "$head_branch" && yes-or-no-p -y "use $head_branch as the target branch 
     export REPO_REMOTE=$(git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!')
 fi
 
-TEMP=$(getopt -o nBb:r:Ra --long revision:,norebase,remote: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o dnBb:r:Ra --long draft,revision:,norebase,remote: -n $(basename $0) -- "$@")
 do_fetch=true
 do_rebase=true
 do_review=true
+where=refs/for
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -32,6 +33,10 @@ while true; do
             ;;
         --norebase)
             do_rebase=false;
+            shift
+            ;;
+        -d|--draft)
+            where=refs/drafts
             shift
             ;;
         -a)
@@ -124,12 +129,12 @@ fi
 
 (
     if tty >/dev/null 2>&1; then
-        echo git push $REMOTE "$rev":refs/for/`repo-branch`
+        echo git push $REMOTE "$rev":$where/`repo-branch`
         git push --no-thin --receive-pack="$(
             echo -n 'git receive-pack ';
             for x in "${reviewers[@]}"; do
                 echo -n "--reviewer=$x "
-            done)" $REMOTE "$rev":refs/for/`repo-branch` 2>&1 |
+            done)" $REMOTE "$rev":$where/`repo-branch` 2>&1 |
         grep -v 'x11 forwarding' -i |
         perl -npe '
     if (m,http://bear/gerrit/(\d+),) {

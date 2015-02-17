@@ -231,22 +231,9 @@ function adb() {
     if test $# = 2 -a "$1" = shell -a "$2" != restart; then # adb shell 'echo hello world'
         exec $myname shell sh -c "$2"
     fi
-    if test "$1" = fix-su -a "$#" = 1; then
-        if command adb sh -c 'su -c id' | grep -q "uid=0\b" -P; then
-            ro_sn=$ANDROID_SERIAL
-            if echo $ro_sn|grep : -q; then # 172.0.0.1:5555 tcp
-                set -x
-                ro_sn=$(adb-ntty getprop ro.serialno)
-                set +x
-            fi
-            rm ~/.config/adb-use-sh-as-su/yes/$ro_sn
-            touch ~/.config/adb-use-sh-as-su/no/$ro_sn
-        fi
-        exit
-    fi
 
     if test "$2" = su -a "$1" = shell; then
-        if the-true-adb shell su -c 'echo hello' 2>&1 | grep -q -P 'exec failed for echo hello|su: not found'; then
+        if the-true-adb shell su -c 'echo hello' 2>&1 | grep -q -P 'exec failed for echo hello|su: not found|su: can.t execute: Permission denied'; then
             shift 2
             echo using sh as su 1>&2
             set -- shell sh "$@"

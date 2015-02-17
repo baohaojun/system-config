@@ -14,7 +14,7 @@ applets=$(
     echo cd /system/xbin/
     echo 'busybox=$(busybox which busybox)'
     for x in $applets; do
-        echo ln -s \$busybox "$x"
+        echo ln -sf \$busybox "$x"
     done
 ) > /tmp/ln.sh.$$
 my-adb push /tmp/ln.sh.$$ /sdcard/ln.sh

@@ -14,6 +14,7 @@ fi
 export LC_ALL=C
 export LANG=C
 export retry=1
+unset -f sudo
 while ! sudo apt-get install "$@" -y $packages; do
     retry=$((retry + 1))
     if (( retry % 20 == 0)) && yes-or-no-p "I have tried 20 times, should we continue trying to install?"; then

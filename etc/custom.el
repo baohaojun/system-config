@@ -65,9 +65,9 @@
  '(imenu-space-replacement " ")
  '(install-elisp-repository-directory "~/system-config/.emacs_d/lisp/")
  '(ispell-program-name "aspell")
- '(jira-host "bible")
- '(jira-url "http://bible/jira/rpc/xmlrpc")
- '(jiralib-url "http://bible/jira")
+ '(jira-host "localhost.18888")
+ '(jira-url "http://localhost:18888/rpc/xmlrpc")
+ '(jiralib-url "http://localhost:18888/")
  '(keyboard-coding-system (quote cp936))
  '(linum-format " %7i ")
  '(lisp-mode-hook

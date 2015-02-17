@@ -4,7 +4,7 @@ apt-get()
     if test "$1" = source; then
         command apt-get "$@";
     else
-        sudo apt-get "$@"
+        command sudo apt-get "$@"
     fi
 }
 
