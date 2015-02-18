@@ -426,16 +426,28 @@ void T1WrenchMainWindow::on_tbThumbsUp_clicked()
 
 void T1WrenchMainWindow::initContactDialog(bool isMail)
 {
+    QString placeHolder = "联系人过滤";
     if (mContactDialog.isNull()) {
         mContactModel = new ContactModel(0);
-        mContactDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(mContactModel, "联系人过滤", this));
+        mContactDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(mContactModel, placeHolder, this));
     }
+
+    if (ui->tbWeixin->isChecked() && !isMail) {
+        placeHolder = "微信联系人过滤";
+        mContactModel->setWeixin(true);
+    } else {
+        mContactModel->setWeixin(false);
+    }
+
+    mContactDialog->setHint(placeHolder);
     mContactModel->setMail(isMail);
 }
 
 void T1WrenchMainWindow::on_tbMms_clicked()
 {
-
+    if (ui->tbWeixin->isChecked()) {
+        ui->tbWeixin->setChecked(false);
+    }
     initContactDialog();
     mMmsReceiverMap.clear();
     connect(mContactDialog.data(), SIGNAL(entrySelectedWithDisplayText(QString, QString)), this, SLOT(on_addMmsReceiver(QString, QString)));
@@ -470,6 +482,7 @@ void T1WrenchMainWindow::on_tbPhoneCall_clicked()
     initContactDialog();
     connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_Dial(QString)));
     afterUsingContactDialog();
+    ui->tbWeixin->setChecked(false);
 }
 
 void T1WrenchMainWindow::on_tbNotes_clicked()
@@ -493,6 +506,10 @@ void T1WrenchMainWindow::on_addMmsReceiver(const QString&contact, const QString&
 
 void T1WrenchMainWindow::on_Dial(const QString&contact)
 {
+    if (ui->tbWeixin->isChecked()) {
+        mLuaThread->addScript(QStringList() << "t1_find_weixin_contact" << contact);
+        return;
+    }
     mLuaThread->addScript(QStringList() << "t1_call" << contact);
 }
 

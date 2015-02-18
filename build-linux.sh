@@ -9,7 +9,7 @@ fi
 relative-link -f $build_dir/T1Wrench ~/system-config/bin/overide
 
 mkdir -p $build_dir
-rsync * $build_dir -av --exclude=release
+rsync -L * $build_dir -av --exclude=release --exclude=windows --exclude=macx
 rsync release/ $build_dir -av -L --exclude=adb_usb_driver_smartisan
 
 oldpwd=$PWD
@@ -24,10 +24,9 @@ for x in . download; do
         qtchooser -qt=5 -run-tool=qmake && make -j8 | perl -npe "s|$PWD|$oldpwd|g"
     )
 done
+relative-link -f $oldpwd/*.* .
 relative-link -f $oldpwd/release/* .
-relative-link -f $oldpwd/*.lua .
-relative-link -f $oldpwd/release/* $oldpwd/*.lua $build_dir
-relative-link -f $oldpwd/linux/binaries/* $build_dir
+relative-link -f $oldpwd/linux/binaries/* .
 (
     if test "$DOING_T1WRENCH_RELEASE"; then
         mkdir -p ~/src/github/T1Wrench-linux

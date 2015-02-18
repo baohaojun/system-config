@@ -15,6 +15,7 @@ class DialogGetEntry : public QDialog
 public:
     explicit DialogGetEntry(FilteringModel*, const QString&, QWidget *parent = 0);
     ~DialogGetEntry();
+    void setHint(const QString& hint);
 
 private slots:
     void on_entryFilter_textChanged();

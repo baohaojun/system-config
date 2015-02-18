@@ -13,38 +13,28 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="verticalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>49</y>
-     <width>381</width>
-     <height>331</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="FilteringListView" name="filteringListView">
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="FilteringEdit" name="entryFilter" native="true">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>377</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="placeholderText" stdset="0">
-    <string>联系人过滤</string>
-   </property>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="FilteringEdit" name="entryFilter">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>32</height>
+      </size>
+     </property>
+     <property name="placeholderText">
+      <string>联系人过滤</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="FilteringListView" name="filteringListView">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>
@@ -53,9 +43,9 @@
    <header>filteringedit.h</header>
   </customwidget>
   <customwidget>
-    <class>FilteringListView</class>
-    <extends>QListView</extends>
-    <header>filteringlistview.h</header>
+   <class>FilteringListView</class>
+   <extends>QListView</extends>
+   <header>filteringlistview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
