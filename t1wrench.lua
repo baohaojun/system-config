@@ -15,6 +15,7 @@ local adb_focused_window
 local t1_config, check_phone
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic, debugging
+local adb_weixin_lucky_money
 
 -- variables
 local where_is_dial_key
@@ -1362,6 +1363,29 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
    adb_event"key DPAD_UP key DPAD_UP"
 end
 
+adb_weixin_lucky_money = function ()
+   while true do
+      adb_shell("am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI")
+      local w = adb_focused_window()
+      if w ~= "com.tencent.mm/com.tencent.mm.ui.LauncherUI" then
+         adb_event("key back key back")
+      end
+      adb_event("adb-tap 106 178 adb-tap 173 1862 adb-tap 375 340")
+      adb_event("adb-tap 378 1572")
+      local w = adb_focused_window()
+      if w == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
+         adb_event("adb-tap 523 1263 sleep 1 key back")
+      else
+         adb_event("key back adb-tap 304 510 adb-tap 378 1572")
+         w = adb_focused_window()
+         if w == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
+            adb_event("adb-tap 523 1263 sleep 1 key back")
+         end
+      end
+   end
+end
+
+
 t1_call = function(number)
    adb_shell("am start -a android.intent.action.DIAL tel:" .. number)
    if not where_is_dial_key then
@@ -1448,6 +1472,7 @@ M.t1_run = t1_run
 M.t1_add_mms_receiver = t1_add_mms_receiver
 M.t1_adb_mail = t1_adb_mail
 M.t1_save_mail_heads = t1_save_mail_heads
+M.adb_weixin_lucky_money = adb_weixin_lucky_money
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
