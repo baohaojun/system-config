@@ -1,0 +1,3 @@
+while true do
+   pcall(adb_weixin_lucky_money())
+end
