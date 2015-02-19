@@ -16,6 +16,7 @@ local t1_config, check_phone
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic, debugging
 local adb_weixin_lucky_money
+local adb_weixin_lucky_money_output
 local t1_find_weixin_contact
 local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file
@@ -1393,6 +1394,44 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
    adb_event"key DPAD_UP key DPAD_UP"
 end
 
+adb_weixin_lucky_money_output = function(password)
+   adb_shell("am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI")
+   local w = adb_focused_window()
+   if w ~= "com.tencent.mm/com.tencent.mm.ui.LauncherUI" then
+      adb_event("key back key back")
+   end
+   adb_event("adb-tap 448 336 adb-tap 961 1835 adb-tap 899 1313 sleep 1")
+
+   system("sendtext-android $(random 50); adb-key tab; sendtext-android $(random+1 1).$(random+1 99); adb-key tab tab")
+
+   t1_post("二十连发，每周四Linux分享，一定要来哦🐉")
+   adb_event("adb-tap 993 1210 adb-tap 375 1396 sleep 3")
+
+   password:gsub(".", function(c)
+                    if c == '1' then
+                       adb_event("adb-tap 202 1288")
+                    elseif c == '2' then
+                       adb_event("adb-tap 528 1319")
+                    elseif c == '3' then
+                       adb_event("adb-tap 910 1240")
+                    elseif c == '4' then
+                       adb_event("adb-tap 228 1465")
+                    elseif c == '5' then
+                       adb_event("adb-tap 554 1495")
+                    elseif c == '6' then
+                       adb_event("adb-tap 944 1475")
+                    elseif c == '7' then
+                       adb_event("adb-tap 380 1376")
+                    elseif c == '8' then
+                       adb_event("adb-tap 512 1670")
+                    elseif c == '9' then
+                       adb_event("adb-tap 886 1637")
+                    elseif c == '0' then
+                       adb_event("adb-tap 546 1855")
+                    end
+   end)
+end
+
 adb_weixin_lucky_money = function ()
    while true do
       adb_shell("am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI")
@@ -1401,15 +1440,26 @@ adb_weixin_lucky_money = function ()
          adb_event("key back key back")
       end
       adb_event("adb-tap 106 178 adb-tap 173 1862 adb-tap 375 340")
-      adb_event("adb-tap 378 1572")
+      adb_event("adb-tap 703 1572 adb-tap 711 1209 adb-tap 711 1409")
       local w = adb_focused_window()
       if w == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
-         adb_event("adb-tap 523 1263 sleep 1 key back")
+         adb_event("adb-tap 523 1263 sleep 1")
+         if adb_focused_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
+            adb_event("key back")
+         else
+            adb_event("key back")
+         end
       else
-         adb_event("key back adb-tap 304 510 adb-tap 378 1572")
+         adb_event("key back adb-tap 304 510 adb-tap 703 1572 adb-tap 711 1209 adb-tap 711 1409")
          w = adb_focused_window()
          if w == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
-            adb_event("adb-tap 523 1263 sleep 1 key back")
+            adb_event("adb-tap 523 1263 sleep 1")
+
+            if adb_focused_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
+               adb_event("key back")
+            else
+               adb_event("key back")
+            end
          end
       end
    end
@@ -1508,6 +1558,7 @@ M.t1_add_mms_receiver = t1_add_mms_receiver
 M.t1_adb_mail = t1_adb_mail
 M.t1_save_mail_heads = t1_save_mail_heads
 M.adb_weixin_lucky_money = adb_weixin_lucky_money
+M.adb_weixin_lucky_money_output = adb_weixin_lucky_money_output
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
