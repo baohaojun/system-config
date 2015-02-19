@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[小扳手抢红包秘决]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html"/>
+    <updated>2015-53-19T09:02:53+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[怎样在命令行上测试小扳手]]></title>
     <link href="http://baohaojun.github.io/blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.html"/>
-    <updated>2015-28-30T15:01:03+08:00</updated>
+    <updated>2015-01-30T15:28:33+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/12/06/0-New-Blog-Style.html"/>
     <updated>2014-12-06T06:23:47+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/12/06/0-New-Blog-Style.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[小扳手2.0版使用手册]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html"/>
-    <updated>2014-12-01T23:19:26+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html</id>
   </entry>
 </feed>

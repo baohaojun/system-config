@@ -1,0 +1,55 @@
+#+title: 小扳手抢红包秘决
+# bhj-tags: tool
+已经发布了2.4版的小扳手，下载地址在： http://t.cn/Rwi1MdW
+
+没有专门的抢红包按钮，所以需要在命令行上进行操作（小扳手界面上操作一旦出错就会后台退出，导致必须手动点一下设置按钮才能继续）。
+
+以Linux为例，在Bash下运行：
+
+#+BEGIN_SRC sh
+while true; do lua t1wrench.lua adb_weixin_lucky_money; done
+#+END_SRC
+
+如果是Windows，那您需要下载一个Cygwin或者自己写cmd.exe的循环才可以（我也不会🌝）。
+
+我已经抢到了好几毛了🆗🆒。当然，有些群里面是在玩规则的，比好大家一边抢一边聊天，这时候你光抢不说话就会显得特别屌丝，尤其是有些规定了谁手气最壮就要发下一个红包，而你要不小心抢到最大的那份，那这个游戏就玩不下去了。轻遭鄙视，重则友尽，千万小心。
+
+那部分代码是这样的：
+
+#+BEGIN_SRC lua
+
+adb_weixin_lucky_money = function ()
+   while true do
+      adb_shell("am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI")
+      local w = adb_focused_window()
+      if w ~= "com.tencent.mm/com.tencent.mm.ui.LauncherUI" then
+         adb_event("key back key back")
+      end
+      adb_event("adb-tap 106 178 adb-tap 173 1862 adb-tap 375 340")
+      adb_event("adb-tap 378 1572")
+      local w = adb_focused_window()
+      if w == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
+         adb_event("adb-tap 523 1263 sleep 1 key back")
+      else
+         adb_event("key back adb-tap 304 510 adb-tap 378 1572")
+         w = adb_focused_window()
+         if w == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
+            adb_event("adb-tap 523 1263 sleep 1 key back")
+         end
+      end
+   end
+end
+
+#+END_SRC
+
+这里面的原理就是不停地打开微信主界面，然后进聊天页面，然后点最上面的一个聊天窗口，再点最下面的一条消息，如果是红包就接着点进去。如果不是红包的话，就会出来点第二个聊天窗口，再点最下面的一条消息。一旦有人发红包的话，一般都是在最上面，点进去就中了。
+
+所以如果你以前有置顶的聊天的话，这时候全都取消就对了。即使置顶的那个聊天是你想追的姑娘，你也要掂量掂量，是要红包还是要姑娘？
+
+有些群里有好几百人，你的网络慢的话，看得到，抢不着。
+
+说话的人多的话，红包一出来，下面的人一说话，你也点不中了。
+
+但这些都不重要，重要的是：
+
+祝玩得开心。
