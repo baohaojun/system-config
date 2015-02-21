@@ -862,8 +862,8 @@ get_a_note = function(text)
       [[
             adb-tap 934 155
             adb-tap 984 149
-            adb-tap 409 1256
-            adb-tap 906 207
+            adb-tap 429 1446
+            adb-tap 672 151
    ]])
    for i = 1, 10 do
       local window = adb_focused_window()
@@ -881,7 +881,7 @@ end
 
 adb_get_last_pic = function(which, remove)
    if which == 'notes' then
-      local dir = '/sdcard/smartisan/Notes'
+      local dir = '/sdcard/smartisan/notes'
       local ls_out1 = adb_pipe("busybox ls -t -1 " .. dir)
       ls_out1 = ls_out1:gsub("\n.*", "")
       ls_out1 = ls_out1:gsub("\x1b.-m", "")
