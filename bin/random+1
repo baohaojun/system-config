@@ -1,0 +1,3 @@
+#!/bin/bash
+x=$(random $1)
+echo $((x + ${2:-1}))
