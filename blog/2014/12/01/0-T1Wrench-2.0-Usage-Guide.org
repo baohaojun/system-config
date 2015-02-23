@@ -290,7 +290,7 @@
 
   [[../../../../images/confirm-export-contact.png][file:../../../../images/confirm-export-contact.png]]
 
-  然后把手机连上你的PC之后，在便携式设备里可以看到这个文件，把它拷贝到你的小扳手解压目录下，重命名为 =contacts.vcf= 就可以了。
+  然后把手机连上你的PC之后，在便携式设备里可以看到这个文件，把它拷贝到你的小扳手解压目录下，重命名为 =contacts.vcf= *并且重启小扳手* 就可以了。注意，最新版本的小扳手重启必须从系统托盘里退出再重启，直接关闭小扳手窗口然后重新双击小扳手程序图标，弹出来的还是原来的小扳手窗口，并没有重启过😅。
 
   [[../../../../images/exported.vcf-on-pc.png][file:../../../../images/exported.vcf-on-pc.png]]
 
