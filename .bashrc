@@ -73,6 +73,7 @@ export HISTFILESIZE=2000
 export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
 export USE_CCACHE=1
+export MONO_PATH=~/.mono/MimeKit.1.0.3.0/lib/net40
 
 alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
 alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
