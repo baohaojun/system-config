@@ -45,8 +45,7 @@
 (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
 (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point)
 
-(require-package 'auto-complete-clang)
-(require 'auto-complete-clang)
+(require 'ac-clang)
 (require-package 'keydef)
 (require-package 'lua-mode)
 (require-package 'mmm-mode)
@@ -132,7 +131,7 @@
 ;; Extra packages which don't require any configuration
 
 (require-package 'gnuplot)
-(require-package 'auto-complete-clang)
+(require-package 'ac-clang)
 (require-package 'ac-helm)
 (require-package 'lua-mode)
 (require-package 'htmlize)
