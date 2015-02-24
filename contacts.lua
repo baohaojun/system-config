@@ -104,7 +104,7 @@ if arg ~= nil then
    base64 = require'base64'
    vcfs = read_vcf(arg1)
    for vcf in ipairs(vcfs) do
-      local tels = vcfs[vcf].EMAILS
+      local tels = vcfs[vcf].TELS
       for i in ipairs(tels) do
          print(tels[i])
       end
