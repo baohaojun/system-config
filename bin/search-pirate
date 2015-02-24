@@ -6,7 +6,7 @@ url=$(
     #echo -n "http://thepiratebay.se/search/";
     echo -n "https://oldpiratebay.org/search.php?q="
     echo -n "$@" | perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g'
-    echo '&sort=-seeders&Torrent_sort=seeders.desc'
+    echo '&sort=-seeders'
 )
 echo "$url"|tee /dev/tty|putclip
 firefox "$url"&

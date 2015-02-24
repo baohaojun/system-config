@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+tdir=~/tmp/$(basename $PWD)-otc
+rsync . $tdir -av --exclude=.git/*
+cd $tdir
+if test -e Makefile; then
+    make -j8
+elif test -e configure; then
+    ./configure
+    make -j8
+elif test -e autogen.sh; then
+    ./autogen.sh
+    ./configure
+    make -j8
+elif test -e Makefile.am; then
+    autoreconf -i
+    ./configure
+    make -j8
+fi
+sudo make install
