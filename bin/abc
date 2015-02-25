@@ -98,7 +98,9 @@ function get-base-build-from-branch() {
 }
 
 function remote-mm() {
-    ssh build build-request http://172.16.0.9:8080/#/c/47807/
+    git commit -m 'test-build' --amend -a
+    gerrit-push-review -n -R
+    ssh -o RequestTTY=yes code3 abc build-request $(gerrit-review-url) -m dep "$@"
 }
 
 function build-request() {
@@ -121,10 +123,11 @@ You can use this command to submit a build request using a gerrit
 review, specify what to build, and what to copy back into your PC
 using share folder.
 
--m|--method [mm|dep|full]
+-m|--method [mm|dep|full|kernel]
     MM means use android mm build
     DEP means build the whole dir, including DEPendencies
     FULL means to do a full build (need 5~8 minutes)
+    KERNEL means to rebuild kernel and re-generate boot.img and the .ko files (wlan)
 
     Default is mm.
 
@@ -249,12 +252,16 @@ EOF
             )
         fi
     elif test "$method" = full; then
-            android-make
+        android-make
+    elif test "$method" = kernel; then
+        android-make msm-kernel &&
+            android-make bootimage-nodeps &&
+            (cd vendor/qcom/opensource/wlan/prima && mm)
     else
         die "Can't build with method '$method'"
     fi
 
-    rsync out/target/product/*/system* out/target/product/*/root /Share/abc/$(basename $base_build)
+    rsync out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root /Share/abc/$(basename $base_build) -av
 }
 
 function list-base-builds() {
@@ -294,9 +301,17 @@ function cron-daily-build() {
         )
         cd "$d"
         repo sync -j8 -d -c
-        android-make
-        repo manifest -r -o .repo/manifest.xml.build
-        cat .repo/manifest.xml.build > .repo/manifest.xml
+        (
+            android-make
+            repo manifest -r -o .repo/manifest.xml.build
+            cat .repo/manifest.xml.build > .repo/manifest.xml
+        ) || (
+            if test -e .repo/manifest.xml.build; then
+                cat .repo/manifest.xml.build > .repo/manifest.xml
+                repo sync -j8 -d -c
+                android-make
+            fi
+        )
     done
 }
 
