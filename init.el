@@ -45,7 +45,7 @@
 (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
 (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point)
 
-(require 'ac-clang)
+(require-package 'ac-clang)
 (require-package 'keydef)
 (require-package 'lua-mode)
 (require-package 'mmm-mode)
@@ -131,7 +131,29 @@
 ;; Extra packages which don't require any configuration
 
 (require-package 'gnuplot)
-(require-package 'ac-clang)
+
+(if (file-exists-p "~/.emacs_d/lisp/auto-complete-clang-async.el")
+    (progn
+      (require 'auto-complete-clang-async)
+
+      (defun ac-cc-mode-setup ()
+        (setq ac-clang-complete-executable "~/bin/Linux/clang-complete")
+        (setq ac-sources '(ac-source-clang-async))
+        (ac-clang-launch-completion-process)
+        )
+
+      (defun my-ac-config ()
+        (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+        (add-hook 'auto-complete-mode-hook 'ac-common-setup)
+        (global-auto-complete-mode t))
+
+      (my-ac-config))
+  (require-package 'auto-complete-clang)
+  (require 'auto-complete-clang)
+  (defun my-ac-cc-mode-setup ()
+    (setq ac-sources '(ac-source-clang)))
+  (add-hook 'c-mode-common-hook 'my-ac-cc-mode-setup))
+
 (require-package 'ac-helm)
 (require-package 'lua-mode)
 (require-package 'htmlize)
