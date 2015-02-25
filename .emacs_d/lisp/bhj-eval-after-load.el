@@ -157,13 +157,6 @@
           (lambda ()
             (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
 
-(defun my-ac-cc-mode-setup ()
-  (when (ac-clang:initialize)
-    (add-hook 'c-mode-common-hook '(lambda ()
-                                     (setq ac-sources '(ac-source-clang-async))
-                                     (ac-clang:activate-after-modify)))))
-
-(add-hook 'c-mode-common-hook 'my-ac-cc-mode-setup)
 (eval-after-load 'auto-complete
   '(progn
      (define-key ac-completing-map (kbd "C-n") 'ac-next)
