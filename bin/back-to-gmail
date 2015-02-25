@@ -43,5 +43,5 @@ for x in "$@"; do
     fi
 
     echo sending mail "back-to-gmail $x from $(from-mac)"
-    mailx -s "back-to-gmail $x from $(from-mac|perl -npe 's!.*from-mac/!!')" -a "$back" baohaojun@gmail.com </dev/null
+    mailx -s "back-to-gmail $(basename $x) from $(from-mac|perl -npe 's!.*from-mac/!!')" -a "$back" baohaojun@gmail.com </dev/null
 done

@@ -15,6 +15,10 @@ test $# = 0 && set -- $(git rev-parse HEAD)
 
             url=$(printf http://%s%s $host $id)
         fi
+        if test "$(basename $0)" = gerrit-review-url; then
+            echo $url
+            exit
+        fi
         echo $url | tee /dev/stderr | putclip
         firefox "$url"
         sleep 1;
