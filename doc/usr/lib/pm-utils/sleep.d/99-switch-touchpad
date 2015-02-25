@@ -13,6 +13,7 @@ case $1 in
                          set -x
                          sleep 1 && bash -x ~bhj/bin/switch-touchpad &
                          sleep 1 && re-xmodmap&
+                         sleep 1 && ps-killall pulseaudio&
             " >~bhj/.logs/99-switch-touchpad.log 2>&1
             echo done "$@"
             echo
