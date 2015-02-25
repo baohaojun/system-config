@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[小扳手2.5.0]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html"/>
+    <updated>2015-09-25T14:02:18+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[小扳手抢红包秘决]]></title>
     <link href="http://baohaojun.github.io/blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html"/>
     <updated>2015-02-19T09:54:10+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2014/12/10/0-system-config-usage-guide.html"/>
     <updated>2015-01-15T17:49:20+08:00</updated>
     <id>http://baohaojun.github.io/blog/2014/12/10/0-system-config-usage-guide.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[新的博客风格]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/12/06/0-New-Blog-Style.html"/>
-    <updated>2014-12-06T06:23:47+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/12/06/0-New-Blog-Style.html</id>
   </entry>
 </feed>

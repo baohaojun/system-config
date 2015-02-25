@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>小扳手抢红包秘决</title>
+<title>小扳手2.5.0</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -102,97 +102,29 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">小扳手抢红包秘决</h1>
+<h1 class="title">小扳手2.5.0</h1>
 <p>
-已经发布了2.4版的小扳手，下载地址在： <a href="http://t.cn/Rwi1MdW">http://t.cn/Rwi1MdW</a>
+下载地址：<a href="http://t.cn/Rwp2kaz">http://t.cn/Rwp2kaz</a>
 </p>
 
 <p>
-没有专门的抢红包按钮，所以需要在命令行上进行操作（小扳手界面上操作一旦出错就会后台退出，导致必须手动点一下设置按钮才能继续）。
+修正了 <a href="http://weibo.com/u/2272851472">@原来星空</a> 发现并报告的联系人同步后按下打电话按钮即崩溃的Bug，非常感谢！现在才发现自己连std::sort都不会用，写了个compare函数居然能出段错误😭。
 </p>
 
 <p>
-以Linux为例，在Bash下运行：
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-sh"><span class="org-keyword">while</span> true; <span class="org-keyword">do</span> lua t1wrench.lua adb_weixin_lucky_money; <span class="org-keyword">done</span>
-</pre>
-</div>
-
-<p>
-如果是Windows，那您需要下载一个Cygwin或者自己写cmd.exe的循环才可以（我也不会🌝）。
-</p>
-
-<p>
-我已经抢到了好几毛了🆗🆒。当然，有些群里面是在玩规则的，比好大家一边抢一边聊天，这时候你光抢不说话就会显得特别屌丝，尤其是有些规定了谁手气最壮就要发下一个红包，而你要不小心抢到最大的那份，那这个游戏就玩不下去了。轻遭鄙视，重则友尽，千万小心。
-</p>
-
-<p>
-那部分代码是这样的：
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-lua"><span class="org-function-name">adb_weixin_lucky_money</span> = <span class="org-keyword">function</span> ()
-   <span class="org-keyword">while</span> <span class="org-constant">true</span> <span class="org-keyword">do</span>
-      adb_shell(<span class="org-string">"am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI"</span>)
-      <span class="org-keyword">local</span> <span class="org-variable-name">w</span> = adb_focused_window()
-      <span class="org-keyword">if</span> w ~= <span class="org-string">"com.tencent.mm/com.tencent.mm.ui.LauncherUI"</span> <span class="org-keyword">then</span>
-         adb_event(<span class="org-string">"key back key back"</span>)
-      <span class="org-keyword">end</span>
-      adb_event(<span class="org-string">"adb-tap 106 178 adb-tap 173 1862 adb-tap 375 340"</span>)
-      adb_event(<span class="org-string">"adb-tap 378 1572"</span>)
-      <span class="org-keyword">local</span> <span class="org-variable-name">w</span> = adb_focused_window()
-      <span class="org-keyword">if</span> w == <span class="org-string">"com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI"</span> <span class="org-keyword">then</span>
-         adb_event(<span class="org-string">"adb-tap 523 1263 sleep 1 key back"</span>)
-      <span class="org-keyword">else</span>
-         adb_event(<span class="org-string">"key back adb-tap 304 510 adb-tap 378 1572"</span>)
-         w = adb_focused_window()
-         <span class="org-keyword">if</span> w == <span class="org-string">"com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI"</span> <span class="org-keyword">then</span>
-            adb_event(<span class="org-string">"adb-tap 523 1263 sleep 1 key back"</span>)
-         <span class="org-keyword">end</span>
-      <span class="org-keyword">end</span>
-   <span class="org-keyword">end</span>
-<span class="org-keyword">end</span>
-</pre>
-</div>
-
-<p>
-这里面的原理就是不停地打开微信主界面，然后进聊天页面，然后点最上面的一个聊天窗口，再点最下面的一条消息，如果是红包就接着点进去。如果不是红包的话，就会出来点第二个聊天窗口，再点最下面的一条消息。一旦有人发红包的话，一般都是在最上面，点进去就中了。
-</p>
-
-<p>
-所以如果你以前有置顶的聊天的话，这时候全都取消就对了。即使置顶的那个聊天是你想追的姑娘，你也要掂量掂量，是要红包还是要姑娘？
-</p>
-
-<p>
-有些群里有好几百人，你的网络慢的话，看得到，抢不着。
-</p>
-
-<p>
-说话的人多的话，红包一出来，下面的人一说话，你也点不中了。
-</p>
-
-<p>
-但这些都不重要，重要的是：
-</p>
-
-<p>
-祝玩得开心。
+另外针对1.4的smartisan os里对便签的更新，更新了便签相关的自动化脚本。
 </p>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="../../01/30/0-How-to-test-t1wrench-on-command-line.html"> <!-- prev-url -->
+      <a href="../19/0-Draw-Lucky-Money-With-T1Wrench.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        怎样在命令行上测试小扳手 <!-- prev-title -->
+        小扳手抢红包秘决 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
-      <a href="../25/0-T1Wrench-2.5.0-Release-Notes.html"> <!-- next-url -->
-        小扳手2.5.0 <!-- next-title -->
+      <a href="../../../readme.html"> <!-- next-url -->
+        ac-clang Manual <!-- next-title -->
         <i class="icon-chevron-right">》</i>
       </a>
     </li>
@@ -205,7 +137,7 @@ for the JavaScript code in this tag.
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -281,7 +213,8 @@ for the JavaScript code in this tag.
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='../../01/30/0-How-to-test-t1wrench-on-command-line.html'> 怎样在命令行上测试小扳手 </a></li>
+        <li><a href='../19/0-Draw-Lucky-Money-With-T1Wrench.html'> 小扳手抢红包秘决 </a></li>
+<li><a href='../../01/30/0-How-to-test-t1wrench-on-command-line.html'> 怎样在命令行上测试小扳手 </a></li>
 <li><a href='../../01/28/0-xdotool-is-fucking-with-dvp.html'> xdotool is fucking with dvp </a></li>
 <li><a href='../../01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html'> ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑 </a></li>
 <li><a href='../../01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html'> 配置postfix用sohu smtpcloud进行relay </a></li>
@@ -290,7 +223,6 @@ for the JavaScript code in this tag.
 <li><a href='../../01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html'> 从QtSingleApplication的API看Qt的设计 </a></li>
 <li><a href='../../../2014/12/10/0-system-config-usage-guide.html'> 我的system-config使用指南 </a></li>
 <li><a href='../../../2014/12/06/0-New-Blog-Style.html'> 新的博客风格 </a></li>
-<li><a href='../../../2014/12/01/0-T1Wrench-2.0-Usage-Guide.html'> 小扳手2.0版使用手册 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

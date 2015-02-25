@@ -1,0 +1,7 @@
+#+title: 小扳手2.5.0
+# bhj-tags: tool
+下载地址：http://t.cn/Rwp2kaz
+
+修正了 [[http://weibo.com/u/2272851472][@原来星空]] 发现并报告的联系人同步后按下打电话按钮即崩溃的Bug，非常感谢！现在才发现自己连std::sort都不会用，写了个compare函数居然能出段错误😭。
+
+另外针对1.4的smartisan os里对便签的更新，更新了便签相关的自动化脚本。
