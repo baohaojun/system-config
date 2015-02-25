@@ -14,7 +14,8 @@ struct VCard {
         mName(vcard.mName),
         mTels(vcard.mTels),
         mEmails(vcard.mEmails),
-        mAvatar(vcard.mAvatar)
+        mAvatar(vcard.mAvatar),
+        mPinyin(vcard.mPinyin)
     {};
 
     bool operator==(const VCard& other) const {

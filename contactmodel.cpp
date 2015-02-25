@@ -14,18 +14,11 @@
 #include <algorithm>
 #include "contactmodel.h"
 #include <QRegularExpression>
+#include <QtAlgorithms>
 
 
 static bool vCardLess(const VCard& v1, const VCard& v2)
 {
-    if (v1.mPinyin.isEmpty()) {
-        v1.mPinyin = getPinyinSpelling(v1.mName);
-    }
-
-    if (v2.mPinyin.isEmpty()) {
-        v2.mPinyin = getPinyinSpelling(v2.mName);
-    }
-
     QString v1Pinyin, v2Pinyin;
     if (! v1.mPinyin.isEmpty()) {
         v1Pinyin = v1.mPinyin[0];
@@ -38,8 +31,9 @@ static bool vCardLess(const VCard& v1, const VCard& v2)
     if (v1Pinyin < v2Pinyin)
         return true;
 
-    if (v1.mName < v2.mName)
-        return true;
+    if (v1Pinyin == v2Pinyin)
+        if (v1.mName < v2.mName)
+            return true;
 
     return false;
 }
@@ -137,6 +131,9 @@ ContactModel::ContactModel(QObject *parent) :
     }
 
     lua_settop(L, 0);
+    foreach(const VCard& vcard, mVcards) {
+        vcard.mPinyin = getPinyinSpelling(vcard.mName);
+    }
 
     std::sort(mVcards.begin(), mVcards.end(), vCardLess);
     initHistory();
