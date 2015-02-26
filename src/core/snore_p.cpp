@@ -90,7 +90,7 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         }
 
         m_notificationBackend = b;
-        m_settings->setValue("PrimaryBackend", backend);
+        m_settings->setValue(primaryBackendSettingsName(), backend);
         return true;
     }
     return false;
@@ -98,7 +98,7 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 
 bool SnoreCorePrivate::initPrimaryNotificationBackend()
 {
-    if (setBackendIfAvailible(m_settings->value("PrimaryBackend").toString())) {
+    if (setBackendIfAvailible(m_settings->value(primaryBackendSettingsName()).toString())) {
         return true;
     }
 #ifdef Q_OS_WIN
@@ -131,7 +131,7 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
 
 void SnoreCorePrivate::syncSettings()
 {
-    setBackendIfAvailible(m_settings->value("PrimaryBackend").toString());
+    setBackendIfAvailible(m_settings->value(primaryBackendSettingsName()).toString());
     for (auto pluginName : m_pluginNames[SnorePlugin::SECONDARY_BACKEND]) {
         SnorePlugin *plugin = m_plugins.value(pluginName);
         bool enable = m_plugins[pluginName]->value("Enabled").toBool();

@@ -118,6 +118,13 @@ public:
     const QString primaryNotificationBackend() const;
 
     /**
+     * Sets the primary notification backend.
+     * @param backend the name of the backend.
+     * @return whether the backend was set succesful.
+     */
+    bool setPrimaryNotificationBackend(const QString &backend);
+
+    /**
      * Tries to get an Notification by id.
      * @param id the id of the Notification
      * @return the Notification or an invalid Notification if the Notification was not found
@@ -153,6 +160,14 @@ public:
      * @return a hashmap containing the documentation of the settings keys.
      */
     const QHash<QString, QString> &settingsDescription() const;
+
+
+    /**
+     * Some settings can be uniqe to your application.
+     * @param appName the name of your application.
+     */
+    void setSettingsPrefix(const QString &appName);
+
 
 signals:
     /**

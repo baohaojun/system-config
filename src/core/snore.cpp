@@ -156,6 +156,12 @@ const QString SnoreCore::primaryNotificationBackend() const
     return d->m_notificationBackend->name();
 }
 
+bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
+{
+    Q_D(SnoreCore);
+    return d->setBackendIfAvailible(backend);
+}
+
 Notification SnoreCore::getActiveNotificationByID(uint id)
 {
     Q_D(SnoreCore);
@@ -208,3 +214,10 @@ const QHash<QString, QString> &SnoreCore::settingsDescription() const
     Q_D(const SnoreCore);
     return d->m_help;
 }
+
+void SnoreCore::setSettingsPrefix(const QString &prefix)
+{
+    Q_D(SnoreCore);
+    d->m_hints.setValue("app_specific_settings",prefix);
+}
+

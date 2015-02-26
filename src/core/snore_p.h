@@ -77,6 +77,10 @@ private slots:
     void slotAboutToQuit();
 
 private:
+    QString primaryBackendSettingsName(){
+        return QString("AppSpecificSettings/%1/PrimaryBackend").arg(m_hints.value("app_specific_settings","SnoreNotify").toString());
+    }
+
     SnoreCorePrivate();
     SnoreCore *q_ptr;
 
@@ -91,6 +95,8 @@ private:
 
     QSettings *m_settings;
     mutable QHash<QString, QString> m_help;
+
+    Hint m_hints;
 };
 }
 
