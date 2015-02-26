@@ -1,7 +1,13 @@
 project( SnoreNotify )
 cmake_minimum_required( VERSION 2.8.12 )
 
+include(FeatureSummary)
+
 find_package(ECM 1.7.0 REQUIRED NO_MODULE)
+set_package_properties(ECM      PROPERTIES
+                                DESCRIPTION "Extra modules and scripts for CMake."
+                                URL "https://projects.kde.org/projects/kdesupport/extra-cmake-modules"
+                                TYPE REQUIRED)
 
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
 
@@ -13,7 +19,6 @@ include(ECMAddAppIcon)
 include(ECMInstallIcons)
 
 include(GenerateExportHeader)
-include(FeatureSummary)
 
 
 
