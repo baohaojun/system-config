@@ -51,6 +51,10 @@ set_target_properties( libsnore PROPERTIES
                                 VERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}.${SNORE_VERSION_SUFFIX}"
                                 SOVERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}"
                                 EXPORT_NAME Libsnore)
+set_property( TARGET libsnore
+              APPEND
+              PROPERTY COMPILE_DEFINITIONS LIBSNORE_PLUGIN_PATH="${KDE_INSTALL_FULL_PLUGINDIR}/libsnore${SNORE_SUFFIX}" SNORE_SUFFIX="${SNORE_SUFFIX}"
+)
 target_link_libraries( libsnore PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network)
 
 add_library(Snore::Libsnore ALIAS libsnore)
