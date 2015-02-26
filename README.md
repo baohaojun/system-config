@@ -50,8 +50,8 @@ Using a plugin system it is possible to create notifications with many different
 Required dependencies:
 
 - [CMake](http://www.cmake.org/)
-- [Qt4 or Qt5](http://qt-project.org/)
 - [Extra CMake Modules](https://projects.kde.org/projects/kdesupport/extra-cmake-modules)
+- [Qt5](http://qt-project.org/)
 
 
 ## Third party libraries that we ship with our source ##
