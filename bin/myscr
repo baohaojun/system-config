@@ -7,6 +7,10 @@ if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then
     export SHELL=/bin/bash
 fi
 
+(
+    sawfish-client -e "(setenv \"DISPLAY\" \"$DISPLAY\")"&
+)
+
 if test $# = 0 || test $# = 1 -a "$1" = first; then
     if test ! "$SSH_AUTH_SOCK"; then
         (
