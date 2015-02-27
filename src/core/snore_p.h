@@ -61,8 +61,6 @@ public:
      */
     bool primaryBackendCanUpdateNotification() const;
 
-    void addSettingsDescription(const QString &key, const QString &help) const;
-
     bool initPrimaryNotificationBackend();
 
     void syncSettings();
@@ -94,7 +92,6 @@ private:
     Application m_defaultApp;
 
     QSettings *m_settings;
-    mutable QHash<QString, QString> m_help;
 
     Hint m_hints;
 };

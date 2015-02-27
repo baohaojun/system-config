@@ -165,11 +165,6 @@ bool SnoreCorePrivate::primaryBackendCanUpdateNotification() const
     return m_notificationBackend->canUpdateNotification();
 }
 
-void SnoreCorePrivate::addSettingsDescription(const QString &key, const QString &help) const
-{
-    m_help[key] = help;
-}
-
 void SnoreCorePrivate::slotNotificationClosed(Notification n)
 {
     Q_Q(SnoreCore);
@@ -181,7 +176,7 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
 
 void SnoreCorePrivate::slotAboutToQuit()
 {
-    foreach(PluginContainer * p, PluginContainer::pluginCache(SnorePlugin::ALL)) {
+    for(PluginContainer * p : PluginContainer::pluginCache(SnorePlugin::ALL)) {
         if (p->isLoaded()) {
             snoreDebug(SNORE_DEBUG) << "deinitialize" << p->name();
             p->load()->deinitialize();

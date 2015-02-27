@@ -55,7 +55,7 @@ public:
 
     QVariant value(const QString &key) const;
     void setValue(const QString &key, const QVariant &value);
-    void setDefaultValue(const QString &key, const QVariant &value, const QString &help);
+    void setDefaultValue(const QString &key, const QVariant &value);
 
     virtual PluginSettingsWidget *settingsWidget();
 

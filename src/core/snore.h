@@ -157,12 +157,6 @@ public:
     const QSettings *settings() const;
 
     /**
-     * @return a hashmap containing the documentation of the settings keys.
-     */
-    const QHash<QString, QString> &settingsDescription() const;
-
-
-    /**
      * Some settings can be uniqe to your application.
      * @param appName the name of your application.
      */

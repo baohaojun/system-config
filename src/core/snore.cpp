@@ -209,12 +209,6 @@ const QSettings *SnoreCore::settings() const
     return d->m_settings;
 }
 
-const QHash<QString, QString> &SnoreCore::settingsDescription() const
-{
-    Q_D(const SnoreCore);
-    return d->m_help;
-}
-
 void SnoreCore::setSettingsPrefix(const QString &prefix)
 {
     Q_D(SnoreCore);

@@ -138,7 +138,7 @@ void SnoreNotifier::setup()
 bool SnoreNotifier::initialize()
 {
     if (SnoreBackend::initialize()) {
-        setDefaultValue("Position", Qt::TopRightCorner, "The position for the notification.");
+        setDefaultValue("Position", Qt::TopRightCorner);
         return metaObject()->invokeMethod(this, "setup", Qt::QueuedConnection);
     }
     return false;
