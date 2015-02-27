@@ -28,12 +28,8 @@ skip: while (<$f>) {
   }
 
   if ($all_match) {
-    if ($first_line eq "1") {
-      $first_line = $line;
-    } else {
       push @removed_lines, $line;
       next;
-    }
   }
 
   print $ft $line;
@@ -42,10 +38,12 @@ skip: while (<$f>) {
 for (reverse @removed_lines) {
   print $_;
 }
+print "\n";
 
 close($ft);
 close($f);
-print "\n$first_line\n";
-if (system("yes-or-no-p 'Remove all the above lines except the last one?'") == 0) {
+if (@removed_lines > 1 && system("yes-or-no-p 'Remove all the above lines?'") == 0) {
   system("mv $file_tmp $file");
+} else {
+    system("rm $file_tmp");
 }

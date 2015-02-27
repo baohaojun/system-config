@@ -98,8 +98,11 @@ function get-base-build-from-branch() {
 }
 
 function remote-mm() {
-    git commit -m 'test-build' --amend -a
-    gerrit-push-review -n -R
+    if git st -s | grep .; then
+        git commit -m 'test-build' --amend -a >/dev/null 2>&1
+        gerrit-push-review -n -R
+    fi
+    (cd ~; psync code3 system-config) >/dev/null 2>&1
     ssh -o RequestTTY=yes code3 abc build-request $(gerrit-review-url) -m dep "$@"
 }
 
@@ -161,7 +164,10 @@ EOF
 
     target_branch=
 
+    declare -A review_patchset_map
+    local old_review_id
     for review_id in "$@"; do
+        old_review_id=$review_id
         if [[ "$review_id" =~ http:// ]]; then
             review_id=$(basename "$review_id")
         fi
@@ -173,6 +179,9 @@ EOF
         review_info=$(ssh smartisan gerrit query --current-patch-set $review_id)
         branch=$(echo "$review_info" | grep "^\s+branch:" -P | pn 2)
         project=$(echo "$review_info" | grep "^\s+project:" -P | pn 2)
+        patchset=$(echo "$review_info" | grep "^\s+ref:" -P | pn 2 | xargs basename)
+
+        review_patchset_map[$old_review_id]=$review_id,$patchset
 
         if test ! "$target_branch"; then
             target_branch=$branch
@@ -261,6 +270,13 @@ EOF
         die "Can't build with method '$method'"
     fi
 
+    for review_id in "$@"; do
+        (
+            set -x
+            gerrit-build-review "$review_id" 1
+        )
+    done
+
     rsync out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root /Share/abc/$(basename $base_build) -av
 }
 
@@ -291,6 +307,19 @@ function refresh-base-builds() {
 }
 
 function cron-daily-build() {
+
+    (
+        cd /data/mirror
+        for gitd in $(find . -type d -name '*.git' -print -prune|grep -v /.git); do
+            (
+                cd $gitd
+                for remote in $(git remote); do
+                    command git fetch $remote
+                done
+            )
+        done
+    )
+
     for d in ~/buildfarm/*/; do
         if test ! -d "$d"; then
             continue;
@@ -315,10 +344,52 @@ function cron-daily-build() {
     done
 }
 
+function gerrit-build-review() {
+    review_id=$1
+    review_patch=${review_patchset_map[$review_id]}
+
+
+    verified=${2:-1}
+    if test "$verified" = 1; then
+        message=$(
+            cat <<EOF
+Verified+1
+
+This is an automated message from the Android Build Cake.
+
+Everything merges and builds. Congratulations!
+EOF
+               )
+    else
+        message=$(
+            cat <<EOF
+Verified-1
+
+Build failed.
+
+This is an automated message from the Android Build Cake.
+
+Please check the build log with this abc command:
+
+    $(
+        for x in "${abc_command[@]}"; do
+            printf "%q " "$x"
+        done
+    )
+EOF
+               )
+    fi
+    ssh -i ~/.ssh/id_rsa_cmtest cmtest@code -p 29418 gerrit review "$review_patchset" --verified $verified -m "$(printf %q "$message")"
+}
+
+# some global variables
+declare -A review_patchset_map
+
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
     if grep -q -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
         command=$1
         shift
+        abc_command=("$command" "$@")
         "$command" "$@"
     fi
 fi

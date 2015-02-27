@@ -30,44 +30,48 @@ if test $# != 2; then
 fi
 
 src=$1
-dest=$2
+export dest=$2
 
 commit_in_src=$(git rev-list $src ^$dest 2>/dev/null | reverse)
-commit_in_dest=$(git rev-list ^$src $dest 2>/dev/null)
+num_commit_in_src=$(echo "$commit_in_src" | wc -l)
+commit_in_dest=$(git rev-list ^$src $dest 2>/dev/null | head -n $((num_commit_in_src * 2)))
 
-log_in_dest=$(
-    for y in $commit_in_dest; do
-        git log -1 $y
-    done
-)
+export destlog=/tmp/log_in_dest.$$
+git log $src..$dest > $destlog
+
+
+export srclog=/tmp/log_in_src.$$
+git log --format='%%commit%% %H %ae %ce : %s%n%B' $dest..$src > $srclog
 
 need_die=0
-for x in $commit_in_src; do
-    if ! git diff $x $x^ | grep -q .; then
-        echo "$PWD commit $x is empty"
-        continue
-    fi
 
-    cid=$(gerrit-change-id $x);
-    if test -z "$cid"; then
-        echo "$PWD commit $x has no change id ($(git log -1 --format='%ae %ce : %s' $x))";
-        if test "$verbose" != false; then
-            git log -1 $verbose $x
-        fi
-        need_die=1
-        continue
-    fi
+perl -e '
+     open($destlog, "<", $ENV{destlog});
+     while (<$destlog>) {
+         $destcid{$1} = 1 if m/^\s*Change-Id:\s+(.*)/i;
+     }
+     close($destlog);
 
-    if ! echo "$log_in_dest" | grep -q -e "Change-Id: $cid$"; then
-        echo "$PWD commit $x cid $cid not found in $dest ($(git log -1 --format='%ae %ce : %s' $x))"
-        if test "$verbose" != false; then
-            git log -1 $verbose $x
-        fi
-        need_die=1
-        continue
-    fi
-done
+     open($srclog, "<", $ENV{srclog});
+     while (<$srclog>) {
+         if (m/^%commit% (\S*) (.*)/) {
+             $current_commit=$1;
+             if ($no_cid) {
+                 printf "%s commit %s has no change id %s\n", $ENV{PWD}, $no_cid, $commit_info;
+             }
+             $no_cid = $current_commit;
+             $commit_info = $2;
+         }
+         if (m/^\s*Change-Id:\s+(.*)/i) {
+             $no_cid="";
+             if (not $destcid{$1}) {
+                 printf "%s commit %s cid %s not found in %s %s\n", $ENV{PWD}, $current_commit, $1, $ENV{dest}, $commit_info;
+             }
+         }
+     }
+' | reverse |grep . && need_die=1
+
+rm $destlog $srclog
 if test $need_die = 1; then
     exit -1
 fi
-true

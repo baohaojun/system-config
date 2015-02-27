@@ -86,7 +86,7 @@ function rbcd()
 
 function re()
 {
-    echo 'error: re should never be executed!'
+    true
 }
 
 function rex()
