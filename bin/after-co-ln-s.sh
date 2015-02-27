@@ -5,34 +5,34 @@ chmod og-rwx ~/.authinfo ~/.netrc
 
 export PATH=/opt/local/libexec/gnubin:~/system-config/bin/Linux:~/system-config/bin:$PATH
 
+can_sudo=true
 if test ! -e /etc/sudoers.d/$USER && ! yes-or-no-p "Do you have sudo power?"; then
     function sudo() {
         true
     }
     export -f sudo
+    can_sudo=false
 fi
 
-if test -d  /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && ask-if-not-bhj "Make your sudo command not ask for password?"; then
+if test $can_sudo = true -a -d /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && ask-if-not-bhj "Make your sudo command not ask for password?"; then
     sudo bash -c "echo $USER ALL=NOPASSWD: ALL > /etc/sudoers.d/$USER; chmod 440 /etc/sudoers.d/$USER"
 fi
 
-if ! which sudo >/dev/null 2>&1 ; then
+if ! which sudo >/dev/null 2>&1 ; then # for cygwin, where sudo is not available
     function sudo() {
         "$@"
     }
 fi
+
 if ! which git >/dev/null 2>&1 ; then
     sudo apt-get install -y git || /cygdrive/c/setup-x86_64.exe -q -n -d -A -P git
 fi
 
-
-mkdir -p ~/Downloads/forever ~/external/local
+mkdir -p ~/Downloads/forever ~/external/local ~/.logs
 
 for x in 15m hourly daily weekly; do
     mkdir -p ~/external/etc/cron.d/$x;
 done
-
-mkdir -p ~/.logs
 
 if which sudo && test $(uname)  = Linux -a ! -e ~/.logs/offline-is-unstable; then
     (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.logs/offline-is-unstable) || true
@@ -198,7 +198,7 @@ if test -e ~/.gitconfig.$USER; then
     ln -sf ~/.gitconfig.$USER ~/.gitconfig
 else
     cp ~/.gitconfig.bhj ~/.gitconfig || true
-    name=$(finger $USER | grep Name: | perl -npe 's/.*Name: //')
+    name=$(finger $USER 2>/dev/null | grep Name: | perl -npe 's/.*Name: //')
     if test "$name"; then
         git config --global user.name "$name"
     else
@@ -208,7 +208,7 @@ fi
 
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
-if ask-if-not-bhj "Do you want to use bhj's power button behavior (hibernate)?"; then
+if ask-if-not-bhj "Do you want to make power button to hibernate?"; then
     sudo cp ~/etc/systemd/logind.conf /etc/systemd/logind.conf
 fi
 
@@ -236,6 +236,10 @@ if test $(uname) = Linux; then
         sudo bash -c 'echo iface usb0 inet manual >> /etc/network/interfaces'
     fi
 
+    if ! grep -q -P -e 'iface\s+usb1\s+inet\s+manual' /etc/network/interfaces; then
+        sudo bash -c 'echo iface usb1 inet manual >> /etc/network/interfaces'
+    fi
+
     if grep managed=true /etc/NetworkManager/NetworkManager.conf; then
         sudo perl -npe 's/managed=true/managed=false/' -i /etc/NetworkManager/NetworkManager.conf;
     fi
@@ -254,7 +258,7 @@ if test ! -d ~/.config/about_me; then
     mkdir -p ~/.config/about_me;
 fi
 
-if uname | grep cygwin -i; then
+if uname | grep cygwin -i; then # the following are for linux only
     exit 0
 fi
 

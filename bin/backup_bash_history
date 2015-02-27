@@ -8,7 +8,7 @@ tmp=~/.bash_history.$$
 #{%perl%}
 BEGIN{
     $special_re = qr,~|>|&|'\''|"|\(|\[|;|\*|:|;,;
-    $re_re = qr/^rex?\s+.*?(?:;|$)\s*(?:true;\s*)*\s*/;
+    $re_re = qr/^(?:rex?\s+.*?(?:;|$))?\s*(?:true;\s*)*\s*/;
     $ign_words_re = qr/^(?:sudo\s+)?(?:rm|git rm|touch|wc|l|function|edit|lftp|wget|mv|mkdir|cp|du|ls|file|relative-link|mplayer|cd|scp|of|aof|bash -x|hi[lr])\s+/;
     $ign_at_end = qr/(?:\|\s*(?:wc(?:\s+-.)?|less|more)|(?:\s*>\s*\S+(?:\s+\Q2>&1\E)?)|\s)\s*$/;
 }

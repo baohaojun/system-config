@@ -77,7 +77,7 @@ for x in $diffs; do
             fi
             for y in $(grep -e "$1" $x |grep -v 'Merge commit.*into'| pn 3); do
                 export WORKING_REV=$y
-                git cherry-pick $y || start_recursive_shell "cherry failed: $y" || true
+                git cherry-pick --allow-empty $y || start_recursive_shell "cherry failed: $y" || true
             done
         fi
     )

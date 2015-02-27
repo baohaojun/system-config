@@ -79,7 +79,6 @@ dood=(
                       ' $histfile.$$
             fi
 
-            echo shit 1>&2
             cat $tmpfile
         ) |
         if test $ORDERED != true -a $ORDERED != false; then
