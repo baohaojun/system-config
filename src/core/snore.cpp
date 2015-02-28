@@ -197,16 +197,41 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
     return list;
 }
 
-QSettings *SnoreCore::settings()
-{
-    Q_D(SnoreCore);
-    return d->m_settings;
-}
-
-const QSettings *SnoreCore::settings() const
+QVariant SnoreCore::value(const QString &key) const
 {
     Q_D(const SnoreCore);
-    return d->m_settings;
+    QString nk = d->normalizeKey(key);
+    if(d->m_settings->contains(nk))
+    {
+        return d->m_settings->value(nk);
+    }
+    return d->m_settings->value(key);
+
+}
+
+void SnoreCore::setValue(const QString &key, const QVariant &value)
+{
+    Q_D(SnoreCore);
+    QString nk = key;
+    if(value.canConvert<Setting>() && value.value<Setting>().isSpecific())
+    {
+        nk = d->normalizeKey(nk);
+    }
+    d->m_settings->setValue(nk,value);
+}
+
+
+void SnoreCore::setDefaultValue(const QString &key, const QVariant &value)
+{
+    Q_D(SnoreCore);
+    QString nk = key;
+    if(value.canConvert<Setting>() && value.value<Setting>().isSpecific())
+    {
+        nk = d->normalizeKey(nk);
+    }
+    if (!d->m_settings->contains(nk)) {
+        d->m_settings->setValue(nk, value);
+    }
 }
 
 void SnoreCore::setSettingsPrefix(const QString &prefix)

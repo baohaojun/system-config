@@ -15,46 +15,46 @@
     You should have received a copy of the GNU Lesser General Public License
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef PLUGINSETTINGSWIDGET_H
-#define PLUGINSETTINGSWIDGET_H
+
+#ifndef SETTING_H
+#define SETTING_H
 
 #include "snore_exports.h"
 
-#include <QWidget>
-#include <QFormLayout>
-#include <QCheckBox>
+#include <QVariant>
 
-namespace Snore
-{
-class SnorePlugin;
+namespace Snore{
+    class Setting;
+}
 
-class SNORE_EXPORT PluginSettingsWidget : public QWidget
+SNORE_EXPORT QDataStream &operator<<(QDataStream &out, const Snore::Setting &myObj);
+SNORE_EXPORT QDataStream &operator>>(QDataStream &in, Snore::Setting &myObj);
+
+namespace Snore{
+
+class SNORE_EXPORT Setting
 {
-    Q_OBJECT
 public:
-    explicit PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *parent = nullptr);
-    ~PluginSettingsWidget();
+    Setting();
+    Setting(const QVariant &value, bool specific = false);
 
-    const QString name() const;
+   ~Setting();
 
-    void addRow(const QString &label, QWidget *widget);
+    bool isSpecific() const;
 
-    void loadSettings();
-    void saveSettings();
+    QVariant value() const;
 
-protected:
-    QVariant value(const QString &key) const;
-    void setValue(const QString &key, const QVariant &value);
+    operator QVariant();
 
-    virtual void load();
-    virtual void save();
+private:
+    QVariant m_value;
+    bool m_specific;
 
-private:    
-    SnorePlugin *m_snorePlugin;
-    QFormLayout *m_layout;
-    QCheckBox *m_enabled;
-
+    friend SNORE_EXPORT QDataStream &(::operator<<)(QDataStream &out, const Snore::Setting &myObj);
+    friend SNORE_EXPORT QDataStream &(::operator>>)(QDataStream &in, Snore::Setting &myObj);
 };
 }
 
-#endif // PLUGINSETTINGSWIDGET_H
+Q_DECLARE_METATYPE(Snore::Setting)
+
+#endif // SETTING_H

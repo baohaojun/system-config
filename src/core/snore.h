@@ -25,6 +25,7 @@
 #include "notification/notification.h"
 #include "plugins/plugins.h"
 #include "hint.h"
+#include "setting.h"
 
 #include <QSettings>
 #include <QStringList>
@@ -150,11 +151,11 @@ public:
      */
     QList<PluginSettingsWidget *> settingWidgets();
 
-    /**
-     * @return a pointer to the global settings
-     */
-    QSettings *settings();
-    const QSettings *settings() const;
+
+    QVariant value(const QString &key) const;
+    void setValue(const QString &key, const QVariant &value);
+    void setDefaultValue(const QString &key, const QVariant &value);
+
 
     /**
      * Some settings can be uniqe to your application.

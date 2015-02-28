@@ -48,11 +48,11 @@ SoundSettings::~SoundSettings()
 
 void SoundSettings::load()
 {
-    m_lineEdit->setText(m_snorePlugin->value("Sound").toString());
+    m_lineEdit->setText(value("Sound").toString());
 }
 
 void SoundSettings::save()
 {
-    m_snorePlugin->setValue("Sound", m_lineEdit->text());
+    setValue("Sound", m_lineEdit->text());
 }
 

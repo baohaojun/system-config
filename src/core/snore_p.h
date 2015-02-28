@@ -65,6 +65,11 @@ public:
 
     void syncSettings();
 
+    QString normalizeKey(const QString &key) const{
+        return QString("AppSpecificSettings/%1/%2").arg(m_hints.value("app_specific_settings","SnoreNotify").toString(),key);
+    }
+
+
 signals:
     void applicationRegistered(const Snore::Application &);
     void applicationDeregistered(const Snore::Application &);
@@ -75,9 +80,6 @@ private slots:
     void slotAboutToQuit();
 
 private:
-    QString primaryBackendSettingsName(){
-        return QString("AppSpecificSettings/%1/PrimaryBackend").arg(m_hints.value("app_specific_settings","SnoreNotify").toString());
-    }
 
     SnoreCorePrivate();
     SnoreCore *q_ptr;

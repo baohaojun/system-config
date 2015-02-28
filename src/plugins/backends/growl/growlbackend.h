@@ -47,6 +47,11 @@ public slots:
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotDeregisterApplication(const Snore::Application &application) override;
     void slotNotify(Snore::Notification notification) override;
+
+
+public:
+    Snore::PluginSettingsWidget *settingsWidget() override;
+
 };
 
 #endif // GROWL_BACKEND_H

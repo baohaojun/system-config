@@ -40,10 +40,10 @@ SnoreNotifierSettings::~SnoreNotifierSettings()
 
 void SnoreNotifierSettings::load()
 {
-    m_comboBox->setCurrentIndex(m_snorePlugin->value("Position").toInt());
+    m_comboBox->setCurrentIndex(value("Position").toInt());
 }
 
 void SnoreNotifierSettings::save()
 {
-    m_snorePlugin->setValue("Position", m_comboBox->currentIndex());
+    setValue("Position", m_comboBox->currentIndex());
 }

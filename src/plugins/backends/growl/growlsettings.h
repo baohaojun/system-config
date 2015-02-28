@@ -15,29 +15,27 @@
     You should have received a copy of the GNU Lesser General Public License
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "toastysettings.h"
+#ifndef GROWLSETTINGS_H
+#define GROWLSETTINGS_H
 
-#include "plugins/plugins.h"
+#include "plugins/pluginsettingswidget.h"
 
-#include <QLineEdit>
+class QLineEdit;
 
-ToastySettings::ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent) :
-    Snore::PluginSettingsWidget(plugin, parent),
-    m_lineEdit(new QLineEdit)
+
+class GrowlSettings : public Snore::PluginSettingsWidget
 {
-    addRow("Device ID:", m_lineEdit);
-}
+public:
+    explicit GrowlSettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
+    ~GrowlSettings();
 
-ToastySettings::~ToastySettings()
-{
-}
+protected:
+    void load() override;
+    void save() override;
 
-void ToastySettings::load()
-{
-    m_lineEdit->setText(value("DeviceID").toString());
-}
+private:
+    QLineEdit *m_host;
+    QLineEdit *m_password;
+};
 
-void ToastySettings::save()
-{
-    setValue("DeviceID", m_lineEdit->text());
-}
+#endif // GROWLSETTINGS_H

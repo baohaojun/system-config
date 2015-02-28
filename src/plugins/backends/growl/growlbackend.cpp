@@ -17,6 +17,7 @@
 */
 
 #include "growlbackend.h"
+#include "growlsettings.h"
 
 #include "core/snore.h"
 #include "core/snore_p.h"
@@ -30,6 +31,8 @@ GrowlBackend::GrowlBackend():
     m_id(0)
 {
     s_instance = this;
+    setDefaultValue("Host","localhost");
+    setDefaultValue("Password","");
 }
 
 GrowlBackend::~GrowlBackend()
@@ -63,7 +66,9 @@ void GrowlBackend::slotRegisterApplication(const Application &application)
         alerts.push_back(a.name().toUtf8().constData());
     }
 
-    Growl *growl = new Growl(GROWL_TCP, "", application.name().toUtf8().constData());
+    Growl *growl = new Growl(GROWL_TCP, value("Host").toString().toUtf8().constData(),
+                             value("Password").toString().toUtf8().constData(),
+                             application.name().toUtf8().constData());
     growl->Register(alerts, application.icon().localUrl().toUtf8().constData());
 
     m_applications.insert(application.name(), growl);
@@ -95,6 +100,11 @@ void GrowlBackend::slotNotify(Notification notification)
     growl->Notify(data);
 
     startTimeout(notification);
+}
+
+PluginSettingsWidget *GrowlBackend::settingsWidget()
+{
+    return new GrowlSettings(this);
 }
 
 void GrowlBackend::gntpCallback(growl_callback_data *data)
