@@ -167,6 +167,10 @@ cd_record()
         export PROMPT_RET=
     fi
     history -a
+    if test ! "$RECURSIVE_SHELL" -a "$ANDROID_SERIAL"; then
+        export RECURSIVE_SHELL=$ANDROID_SERIAL
+    fi
+
     if test "$BHJ_PWD" = "$PWD"; then
         return $ret
     fi

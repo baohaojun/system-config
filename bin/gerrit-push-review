@@ -92,7 +92,6 @@ if test $do_fetch = true; then
     echo git fetch done
 fi
 
-git fetch $(repo-remote) $(repo-branch)
 if test $do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD; then
     if true; then
         git rebase $(repo-remote-branch) ||

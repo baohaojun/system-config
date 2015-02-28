@@ -51,7 +51,10 @@ sub push_one_file($$)
     my ($file, $base) = @_;
     my $true_dest = "$dest/$base";
     if ($base eq "boot.img" and $root_boot_image) {
-        system("replace-bootimage", "-b", $file, "--", "-d");
+        my $file_w = "/tmp/boot.img.$ENV{USER}";
+        system("cp", $file, $file_w);
+        system("replace-bootimage", "-b", $file_w, "--", "-d");
+        $file = $file_w;
     }
     if (not $dest_is_dir) {
         $true_dest = $dest;

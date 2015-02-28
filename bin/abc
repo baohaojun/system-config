@@ -92,19 +92,45 @@ function get-base-build-from-branch() {
         echo ~/buildfarm/sfo-rom
     elif test "$branch" = icesky-r1221; then
         echo ~/buildfarm/icesky
+    elif test -e ~/buildfarm/."$branch"; then
+        readlink -f ~/buildfarm/."$branch"
     else
         die "Can't decide the base build for branch: '$branch'"
     fi
 }
 
 function remote-mm() {
+    if echo $SHELLOPTS | grep -q xtrace; then
+        export SHELLOPTS
+    fi
+
+    if test $(pwd) = ~/src/linux; then
+        psync -S -t ~/src/android/kernel/ localhost .
+        cd ~/src/android/kernel/
+        remote-mm "$@"
+        exit
+    fi
+
     if git st -s | grep .; then
-        git commit -m 'test-build' --amend -a >/dev/null 2>&1
-        gerrit-push-review -n -R
+        if gerrit query --current-patch-set $(gerrit-review-url |perl -npe 's!.*/!!') 2>/dev/null|grep 'status: DRAFT'; then
+            git commit --no-edit --amend -a >/dev/null 2>&1
+        else
+            git add .
+            git commit -m 'abc test build' -a
+        fi
+        gerrit-push-review -n -R -d
+    fi
+    if [[ "$(gerrit-review-url)" =~ //[^/]*$  ]]; then
+        gerrit-push-review -n -R -d
     fi
     (cd ~; psync code3 system-config) >/dev/null 2>&1
-    ssh -o RequestTTY=yes code3 abc build-request $(gerrit-review-url) -m dep "$@"
+    if echo $SHELLOPTS | grep -q xtrace; then
+        ssh -o RequestTTY=yes code3 abc -x build-request $(gerrit-review-url) -m dep "$@"
+    else
+        ssh -o RequestTTY=yes code3 abc build-request $(gerrit-review-url) -m dep "$@"
+    fi
 }
+
 
 function build-request() {
     ## start generated code
@@ -263,12 +289,28 @@ EOF
     elif test "$method" = full; then
         android-make
     elif test "$method" = kernel; then
+        (
+            cd kernel
+            if git diff $(repo-remote-branch) HEAD --name-status | grep \\.dtsi; then
+                echo should touch dts files
+                cd arch/arm/boot/dts
+                touch *
+            fi
+        )
         android-make msm-kernel &&
             android-make bootimage-nodeps &&
             (cd vendor/qcom/opensource/wlan/prima && mm)
     else
         die "Can't build with method '$method'"
-    fi
+    fi || {
+        for review_id in "$@"; do
+            (
+                set -x
+                gerrit-build-review "$review_id" -1
+            )
+        done
+        exit
+    }
 
     for review_id in "$@"; do
         (
@@ -329,7 +371,7 @@ function cron-daily-build() {
             git reset --hard
         )
         cd "$d"
-        repo sync -j8 -d -c
+        repo sync -j8 -d
         (
             android-make
             repo manifest -r -o .repo/manifest.xml.build
@@ -337,10 +379,11 @@ function cron-daily-build() {
         ) || (
             if test -e .repo/manifest.xml.build; then
                 cat .repo/manifest.xml.build > .repo/manifest.xml
-                repo sync -j8 -d -c
+                repo sync -j8 -d
                 android-make
             fi
         )
+        mkbeagrepidx || true
     done
 }
 
@@ -353,8 +396,6 @@ function gerrit-build-review() {
     if test "$verified" = 1; then
         message=$(
             cat <<EOF
-Verified+1
-
 This is an automated message from the Android Build Cake.
 
 Everything merges and builds. Congratulations!
@@ -363,8 +404,6 @@ EOF
     else
         message=$(
             cat <<EOF
-Verified-1
-
 Build failed.
 
 This is an automated message from the Android Build Cake.
@@ -379,18 +418,27 @@ Please check the build log with this abc command:
 EOF
                )
     fi
-    ssh -i ~/.ssh/id_rsa_cmtest cmtest@code -p 29418 gerrit review "$review_patchset" --verified $verified -m "$(printf %q "$message")"
+    set -x
+    ssh -i ~/.ssh/id_rsa_cmtest cmtest@code -p 29418 gerrit review "$review_patch" --verified $verified -m \'"${message//\'/\'\\\'\'}"\'
 }
 
 # some global variables
 declare -A review_patchset_map
 
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
+    if test "$1" = -x; then
+        set -x
+        shift
+    fi
+
     if grep -q -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
+
         command=$1
         shift
         abc_command=("$command" "$@")
         "$command" "$@"
+     else
+         die "$1: command not found"
     fi
 fi
 
