@@ -166,7 +166,7 @@ print $_ . "\n";
         fi
 
         if test $# = 2 -a "$1" = co -a "$2" = -B; then
-            git co -B "$(git-choose-branch)"
+            git co -B "$(git-choose-branch remotes/ )"
             exit
         fi
         if test $# = 3 -a "$1" = co -a "$2" = -B; then

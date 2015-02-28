@@ -24,4 +24,4 @@ done
 
 ## end generated code
 
-ORIGINAL_MATCHER="$@" select-output-line -p "$prompt" -o -m 5 -- 'git branch -a|perl -npe "s/^ *\\*//"'
+ORIGINAL_MATCHER="$@" select-output-line -p "$prompt" -o -m 5 -- 'git branch -a|grep -v -e "->"|perl -npe "s/^ *\\*//"'
