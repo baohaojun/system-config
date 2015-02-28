@@ -161,7 +161,7 @@
 (defvar grep-rgrep-history nil)
 
 
-(setq my-grep-command "beagrep -e pat") ;; should not put it into custom, the custom will be read every time and so the `(let ((grep-command ..' scheme will fail
+(setq my-grep-command "beagrep -s -e pat") ;; should not put it into custom, the custom will be read every time and so the `(let ((grep-command ..' scheme will fail
 
 
 (defvar grep-gtags-history nil)
