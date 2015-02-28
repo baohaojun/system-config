@@ -229,6 +229,7 @@
 (define-key bhj-grep-mode-map (kbd "M-s m") 'bhj-occur-merge-conflicts)
 (define-key bhj-grep-mode-map (kbd "M-s r") 'bhj-rgrep)
 (define-key bhj-grep-mode-map (kbd "M-g o") 'bhj-occur)
+(define-key bhj-grep-mode-map (kbd "M-g f") 'grep-func-call)
 (define-key bhj-grep-mode-map (kbd "M-.") 'grep-gtags)
 (define-key bhj-grep-mode-map (kbd "M-g n") 'next-error)
 (define-key bhj-grep-mode-map (kbd "M-g p") 'previous-error)

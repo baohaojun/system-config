@@ -41,7 +41,15 @@ if test $# != 0; then # should be make i386_defconfig
 else
     headers=$(find $(android-env get_abs_build_var PRODUCT_OUT)/obj/KERNEL_OBJ/ -name '*.h')
 fi
-echo "$headers"|perl -npe 'chomp; s!.*?kernel-build/!!; s![^/]*$!!; $_ .= "\n"'|sort -u | xargs mkdir -p
+echo "$headers"|perl -npe 'chomp; s!.*?(?:kernel-build|KERNEL_OBJ)/!!; s![^/]*$!!; $_ .= "\n"'|sort -u | xargs mkdir -p
 for x in $headers; do
-    cp $x $(echo $x | perl -npe 'chomp; s!.*?kernel-build/!!; s![^/]*$!!; $_ .= "\n"')
+    cp $x $(echo $x | perl -npe 'chomp; s!.*?(?:kernel-build|KERNEL_OBJ)/!!; s![^/]*$!!; $_ .= "\n"') || true
+    git co HEAD Documentation || true
 done
+
+if echo $SHELLOPTS | grep -q xtrace; then
+    export SHELLOPTS
+else
+    rm mark newer
+    git add .
+fi
