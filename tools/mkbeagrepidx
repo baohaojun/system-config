@@ -23,7 +23,7 @@ while test "$outDir" != "" -a ! -d "$outDir"/.beagrep; do
     outDir=${outDir%/*}
 done
 
-if test "$outDir" = "`readlink -f ~`"; then
+if test "$outDir" = ~; then
     outDir=""
 fi
 
@@ -163,21 +163,39 @@ function mkbeagrepidx() {
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "$BEAGREP_IGNORE_DIR_PATTERNS")
     elif test -e "$(lookup-file .beagrep-ignore 2>/dev/null)"; then
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "*/.git,$(cat $(lookup-file .beagrep-ignore))")
+    elif test -e "$(lookup-file .beagrep-ignore.sh)"; then
+        . .beagrep-ignore.sh
     else
-        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$PWD/out,*/.repo,*/.git")
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$(for x in */; do if test -d $x/.ccache; then echo -n $PWD/$x,; fi; done)$PWD/out,*/.repo,*/.git")
     fi
 
-    beagrep-build-index --recursive \
-        "${ADDITIONAL_OPTIONS[@]}" \
-        --enable-deletion \
-        --target "$(wlp "$outDir"/.beagrep/)" \
-        "$relativeSrcDir" 2>&1 \
-        |tee -a "$outDir"/.beagrep-build-log
+    function do_build() {
+        beagrep-build-index --recursive \
+                            "${ADDITIONAL_OPTIONS[@]}" \
+                            --enable-deletion \
+                            --target "$(wlp "$outDir"/.beagrep/)" \
+                            "$relativeSrcDir" 2>&1
+    }
 
-    cat "$outDir"/.beagrep-build-log |grep "No filter for" \
-        |sort -u > "$outDir"/.beagrep-build-log2
+    do_build | tee "$outDir"/.beagrep-build-log
 
-    mv "$outDir"/.beagrep-build-log2 "$outDir"/.beagrep-build-log
+    cat "$outDir"/.beagrep-build-log |
+        grep "No filter for" |
+        pn 5 | cut -b 6- |
+        xargs -d \\n bash -c '
+            rebuild=false
+            for x in "$@"; do
+                if grep . -I -q "$x"; then
+                    attr -s mime_type -V text/plain "$x" >/dev/null 2>&1
+                    touch "$x" >/dev/null 2>&1
+                    rebuild=true
+                fi
+            done
+            if test "$rebuild" = true; then
+                echo true
+            fi
+            '|grep . -q && (echo rebuild some text files; do_build)
+
 
 }
 
