@@ -35,7 +35,7 @@ SnorePlugin::SnorePlugin(const QString &name) :
     if (thread() != qApp->thread()) {
         moveToThread(qApp->thread());
     }
-    setDefaultValue("Enabled", false,LOCAL_SETTING);
+    setDefaultValue("Enabled", false, LOCAL_SETTING);
 }
 
 SnorePlugin::~SnorePlugin()
@@ -61,17 +61,17 @@ bool SnorePlugin::isInitialized() const
 
 QVariant SnorePlugin::value(const QString &key, SettingsType type) const
 {
-    return SnoreCore::instance().value(normaliseKey(key),type);
+    return SnoreCore::instance().value(normaliseKey(key), type);
 }
 
 void SnorePlugin::setValue(const QString &key, const QVariant &value, SettingsType type)
 {
-    SnoreCore::instance().setValue(normaliseKey(key), value,type);
+    SnoreCore::instance().setValue(normaliseKey(key), value, type);
 }
 
 void SnorePlugin::setDefaultValue(const QString &key, const QVariant &value, SettingsType type)
 {
-    SnoreCore::instance().setDefaultValue(normaliseKey(key),value,type);
+    SnoreCore::instance().setDefaultValue(normaliseKey(key), value, type);
 }
 
 Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()

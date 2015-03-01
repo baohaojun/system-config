@@ -69,7 +69,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN: {
-                    if (plugin->value("Enabled",LOCAL_SETTING).toBool()) {
+                    if (plugin->value("Enabled", LOCAL_SETTING).toBool()) {
                         if (!plugin->initialize()) {
                             snoreDebug(SNORE_WARNING) << "Failed to initialize" << plugin->name();
                             plugin->deinitialize();
@@ -197,20 +197,19 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
 QVariant SnoreCore::value(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);
-    return d->m_settings->value(d->normalizeKey(key,type));
+    return d->m_settings->value(d->normalizeKey(key, type));
 }
 
 void SnoreCore::setValue(const QString &key, const QVariant &value, SettingsType type)
 {
     Q_D(SnoreCore);
-    d->m_settings->setValue(d->normalizeKey(key,type),value);
+    d->m_settings->setValue(d->normalizeKey(key, type), value);
 }
-
 
 void SnoreCore::setDefaultValue(const QString &key, const QVariant &value, SettingsType type)
 {
     Q_D(SnoreCore);
-    QString nk = d->normalizeKey(key,type);
+    QString nk = d->normalizeKey(key, type);
     if (!d->m_settings->contains(nk)) {
         d->m_settings->setValue(nk, value);
     }

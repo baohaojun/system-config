@@ -36,7 +36,6 @@ public:
     bool deinitialize() override;
     Snore::PluginSettingsWidget *settingsWidget() override;
 
-
     static void gntpCallback(growl_callback_data *data);
 
 private:

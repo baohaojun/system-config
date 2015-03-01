@@ -22,12 +22,12 @@
 using namespace Snore;
 
 GrowlSettings::GrowlSettings(SnorePlugin *plugin, QWidget *parent):
-    PluginSettingsWidget(plugin,parent),
+    PluginSettingsWidget(plugin, parent),
     m_host(new QLineEdit),
     m_password(new QLineEdit)
 {
     m_password->setEchoMode(QLineEdit::Password);
-    addRow("Host:",m_host);
+    addRow("Host:", m_host);
     addRow("Password:", m_password);
 }
 
@@ -44,7 +44,7 @@ void GrowlSettings::load()
 
 void GrowlSettings::save()
 {
-    setValue("Host",m_host->text());
-    setValue("Password",m_password->text());
+    setValue("Host", m_host->text());
+    setValue("Password", m_password->text());
 }
 

@@ -100,8 +100,8 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 bool SnoreCorePrivate::initPrimaryNotificationBackend()
 {
     Q_Q(SnoreCore);
-    snoreDebug(SNORE_DEBUG)<<q->value("PrimaryBackend",LOCAL_SETTING).toString();
-    if (setBackendIfAvailible(q->value("PrimaryBackend",LOCAL_SETTING).toString())) {
+    snoreDebug(SNORE_DEBUG) << q->value("PrimaryBackend", LOCAL_SETTING).toString();
+    if (setBackendIfAvailible(q->value("PrimaryBackend", LOCAL_SETTING).toString())) {
         return true;
     }
 #ifdef Q_OS_WIN
@@ -138,13 +138,12 @@ void SnoreCorePrivate::syncSettings()
     QString oldBackend = q->primaryNotificationBackend();
     m_notificationBackend->deinitialize();
     m_notificationBackend = nullptr;
-    if(!setBackendIfAvailible(q->value("PrimaryBackend",LOCAL_SETTING).toString()))
-    {
-        snoreDebug(SNORE_WARNING) << "Failed to set new backend" << q->value("PrimaryBackend",LOCAL_SETTING).toString() << "restoring" << oldBackend;
+    if (!setBackendIfAvailible(q->value("PrimaryBackend", LOCAL_SETTING).toString())) {
+        snoreDebug(SNORE_WARNING) << "Failed to set new backend" << q->value("PrimaryBackend", LOCAL_SETTING).toString() << "restoring" << oldBackend;
         setBackendIfAvailible(oldBackend);
     }
 //TODO: cleanup
-    auto syncPluginStatus = [&](const QString &pluginName){
+    auto syncPluginStatus = [&](const QString & pluginName) {
         SnorePlugin *plugin = m_plugins.value(pluginName);
         bool enable = m_plugins[pluginName]->value("Enabled", LOCAL_SETTING).toBool();
         if (!plugin->isInitialized() && enable) {
@@ -198,7 +197,7 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
 
 void SnoreCorePrivate::slotAboutToQuit()
 {
-    for(PluginContainer * p : PluginContainer::pluginCache(SnorePlugin::ALL)) {
+    for (PluginContainer *p : PluginContainer::pluginCache(SnorePlugin::ALL)) {
         if (p->isLoaded()) {
             snoreDebug(SNORE_DEBUG) << "deinitialize" << p->name();
             p->load()->deinitialize();

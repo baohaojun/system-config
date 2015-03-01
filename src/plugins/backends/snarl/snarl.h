@@ -33,8 +33,6 @@ public:
     bool deinitialize() override;
     Snore::PluginSettingsWidget *settingsWidget() override;
 
-
-
 private:
     class SnarlWidget;
     SnarlBackend::SnarlWidget *m_eventLoop;

@@ -22,7 +22,7 @@
 using namespace Snore;
 
 SnarlSettings::SnarlSettings(SnorePlugin *plugin, QWidget *parent):
-    PluginSettingsWidget(plugin,parent),
+    PluginSettingsWidget(plugin, parent),
     m_password(new QLineEdit)
 {
     m_password->setEchoMode(QLineEdit::Password);
@@ -41,6 +41,6 @@ void SnarlSettings::load()
 
 void SnarlSettings::save()
 {
-    setValue("Password",m_password->text());
+    setValue("Password", m_password->text());
 }
 

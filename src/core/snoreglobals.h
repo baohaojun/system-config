@@ -19,9 +19,10 @@
 #ifndef SNOREGLOBALS
 #define SNOREGLOBALS
 
-namespace Snore{
+namespace Snore
+{
 
-enum SettingsType{
+enum SettingsType {
     GLOBAL_SETTING,
     LOCAL_SETTING
 };

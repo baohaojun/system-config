@@ -49,7 +49,7 @@ protected:
     virtual void load();
     virtual void save();
 
-private:    
+private:
     SnorePlugin *m_snorePlugin;
     QFormLayout *m_layout;
     QCheckBox *m_enabled;

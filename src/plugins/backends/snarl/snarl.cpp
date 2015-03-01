@@ -114,7 +114,7 @@ private:
 SnarlBackend::SnarlBackend():
     SnoreBackend("Snarl", true, false, true)
 {
-    setDefaultValue("Password",QString());
+    setDefaultValue("Password", QString());
 }
 
 SnarlBackend::~SnarlBackend()
@@ -164,10 +164,10 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
     QString appName = application.name().replace(" ", "_"); //app sig must not contain spaces
     QString password = value("Password").toString();
     LONG32 result = snarlInterface->Register(appName.toUtf8().constData(),
-                             application.name().toUtf8().constData(),
-                             application.icon().localUrl().toUtf8().constData(),
-                             password.isEmpty()?0:password.toUtf8().constData(),
-                             (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
+                    application.name().toUtf8().constData(),
+                    application.icon().localUrl().toUtf8().constData(),
+                    password.isEmpty() ? 0 : password.toUtf8().constData(),
+                    (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
     snoreDebug(SNORE_DEBUG) << result;
 
     foreach(const Alert & alert, application.alerts()) {

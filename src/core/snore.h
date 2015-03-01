@@ -150,11 +150,9 @@ public:
      */
     QList<PluginSettingsWidget *> settingWidgets();
 
-
     QVariant value(const QString &key, SettingsType type = GLOBAL_SETTING) const;
     void setValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
     void setDefaultValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
-
 
 signals:
     /**

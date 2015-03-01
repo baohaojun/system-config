@@ -48,7 +48,6 @@ public:
      */
     static QString tempPath();
 
-
 public:
     static SnoreCorePrivate *instance();
     ~SnoreCorePrivate();
@@ -66,20 +65,21 @@ public:
 
     bool initPrimaryNotificationBackend();
 
-    inline QString versionSchema() const {
+    inline QString versionSchema() const
+    {
         return "v1";
     }
 
     void syncSettings();
 
-    QString normalizeKey(const QString &key, SettingsType type) const{
-        if(type == LOCAL_SETTING) {
+    QString normalizeKey(const QString &key, SettingsType type) const
+    {
+        if (type == LOCAL_SETTING) {
             return QString("%1/LocalSettings/%2.%3/%4").arg(versionSchema(), qApp->organizationName(), qApp->applicationName(), key);
         } else {
             return QString("%1/%2").arg(versionSchema(), key);
         }
     }
-
 
 signals:
     void applicationRegistered(const Snore::Application &);

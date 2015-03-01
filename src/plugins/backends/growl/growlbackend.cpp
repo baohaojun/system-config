@@ -31,8 +31,8 @@ GrowlBackend::GrowlBackend():
     m_id(0)
 {
     s_instance = this;
-    setDefaultValue("Host","localhost");
-    setDefaultValue("Password","");
+    setDefaultValue("Host", "localhost");
+    setDefaultValue("Password", "");
 }
 
 GrowlBackend::~GrowlBackend()

@@ -22,7 +22,6 @@
 
 class QLineEdit;
 
-
 class GrowlSettings : public Snore::PluginSettingsWidget
 {
 public:
