@@ -32,8 +32,10 @@ class GrowlBackend: public Snore::SnoreBackend
 public:
     GrowlBackend();
     ~GrowlBackend();
-    virtual bool initialize() override;
-    virtual bool deinitialize() override;
+    bool initialize() override;
+    bool deinitialize() override;
+    Snore::PluginSettingsWidget *settingsWidget() override;
+
 
     static void gntpCallback(growl_callback_data *data);
 
@@ -47,10 +49,6 @@ public slots:
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotDeregisterApplication(const Snore::Application &application) override;
     void slotNotify(Snore::Notification notification) override;
-
-
-public:
-    Snore::PluginSettingsWidget *settingsWidget() override;
 
 };
 

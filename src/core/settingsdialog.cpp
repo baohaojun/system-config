@@ -79,6 +79,7 @@ void SettingsDialog::save()
     for (auto w : m_tabs) {
         w->saveSettings();
     }
+    SnoreCore::instance().setValue("PrimaryBackend", ui->primaryBackendComboBox->currentText(),LOCAL_SETTING);
     SnoreCorePrivate::instance()->syncSettings();
 }
 

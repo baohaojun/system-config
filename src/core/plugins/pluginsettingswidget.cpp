@@ -57,7 +57,7 @@ void PluginSettingsWidget::addRow(const QString &label, QWidget *widget)
 void PluginSettingsWidget::loadSettings()
 {
     if (m_snorePlugin->type() != SnorePlugin::BACKEND) {
-        m_enabled->setChecked(m_snorePlugin->value("Enabled").value<Setting>().value().toBool());
+        m_enabled->setChecked(m_snorePlugin->value("Enabled",LOCAL_SETTING).toBool());
     }
     load();
 }
@@ -65,7 +65,7 @@ void PluginSettingsWidget::loadSettings()
 void PluginSettingsWidget::saveSettings()
 {
     if (m_snorePlugin->type() != SnorePlugin::BACKEND) {
-        m_snorePlugin->setValue("Enabled", Setting(m_enabled->isChecked(),true));
+        m_snorePlugin->setValue("Enabled", m_enabled->isChecked(),LOCAL_SETTING);
     }
     save();
 }

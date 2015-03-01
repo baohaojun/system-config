@@ -29,8 +29,11 @@ class SnarlBackend: public Snore::SnoreBackend
 public:
     SnarlBackend();
     ~SnarlBackend();
-    virtual bool initialize();
-    virtual bool deinitialize();
+    bool initialize() override;
+    bool deinitialize() override;
+    Snore::PluginSettingsWidget *settingsWidget() override;
+
+
 
 private:
     class SnarlWidget;

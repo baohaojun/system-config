@@ -90,7 +90,7 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         }
 
         m_notificationBackend = b;
-        q->setValue("PrimaryBackend", Setting(backend,true));
+        q->setValue("PrimaryBackend", backend, LOCAL_SETTING);
         return true;
     }
     return false;
@@ -99,8 +99,8 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 bool SnoreCorePrivate::initPrimaryNotificationBackend()
 {
     Q_Q(SnoreCore);
-    snoreDebug(SNORE_DEBUG)<<q->value("PrimaryBackend").value<Setting>().value().toString();
-    if (setBackendIfAvailible(q->value("PrimaryBackend").value<Setting>().value().toString())) {
+    snoreDebug(SNORE_DEBUG)<<q->value("PrimaryBackend",LOCAL_SETTING).toString();
+    if (setBackendIfAvailible(q->value("PrimaryBackend",LOCAL_SETTING).toString())) {
         return true;
     }
 #ifdef Q_OS_WIN
@@ -137,8 +137,9 @@ void SnoreCorePrivate::syncSettings()
     QString oldBackend = q->primaryNotificationBackend();
     m_notificationBackend->deinitialize();
     m_notificationBackend = nullptr;
-    if(!setBackendIfAvailible(q->value("PrimaryBackend").value<Setting>().value().toString()))
+    if(!setBackendIfAvailible(q->value("PrimaryBackend",LOCAL_SETTING).toString()))
     {
+        snoreDebug(SNORE_WARNING) << "Failed to set new backend" << q->value("PrimaryBackend",LOCAL_SETTING).toString() << "restoring" << oldBackend;
         setBackendIfAvailible(oldBackend);
     }
 //TODO: cleanup
@@ -167,8 +168,6 @@ void SnoreCorePrivate::registerMetaTypes()
 {
     qRegisterMetaType<Notification>();
     qRegisterMetaType<Application>();
-    qRegisterMetaType<Setting>();
-    qRegisterMetaTypeStreamOperators<Setting>("Snore::Settings");
 }
 
 QString SnoreCorePrivate::tempPath()

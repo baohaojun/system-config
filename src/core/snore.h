@@ -20,12 +20,12 @@
 #define SNORESERVER_H
 
 #include "snore_exports.h"
+#include "snoreglobals.h"
 #include "log.h"
 #include "application.h"
 #include "notification/notification.h"
 #include "plugins/plugins.h"
 #include "hint.h"
-#include "setting.h"
 
 #include <QSettings>
 #include <QStringList>
@@ -60,7 +60,6 @@ class SNORE_EXPORT SnoreCore : public QObject
     Q_DECLARE_PRIVATE(SnoreCore)
     Q_OBJECT
 public:
-
     /**
      * Creates a Notification Manager SnoreCore
      */
@@ -152,9 +151,9 @@ public:
     QList<PluginSettingsWidget *> settingWidgets();
 
 
-    QVariant value(const QString &key) const;
-    void setValue(const QString &key, const QVariant &value);
-    void setDefaultValue(const QString &key, const QVariant &value);
+    QVariant value(const QString &key, SettingsType type = GLOBAL_SETTING) const;
+    void setValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
+    void setDefaultValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
 
 
     /**

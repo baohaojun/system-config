@@ -194,23 +194,23 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
     return list;
 }
 
-QVariant SnoreCore::value(const QString &key) const
+QVariant SnoreCore::value(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);
-    QString nk = d->specificKey(key);
-    if(d->m_settings->contains(nk))
+    QString nk = d->versionizeKey(key);
+    if(type == LOCAL_SETTING)
     {
-        return d->m_settings->value(nk);
+        nk = d->specificKey(key);
     }
-    return d->m_settings->value(d->versionizeKey(key));
+    return d->m_settings->value(nk);
 
 }
 
-void SnoreCore::setValue(const QString &key, const QVariant &value)
+void SnoreCore::setValue(const QString &key, const QVariant &value, SettingsType type)
 {
     Q_D(SnoreCore);
     QString nk = d->versionizeKey(key);
-    if(value.canConvert<Setting>() && value.value<Setting>().isSpecific())
+    if(type == LOCAL_SETTING)
     {
         nk = d->specificKey(key);
     }
@@ -218,11 +218,11 @@ void SnoreCore::setValue(const QString &key, const QVariant &value)
 }
 
 
-void SnoreCore::setDefaultValue(const QString &key, const QVariant &value)
+void SnoreCore::setDefaultValue(const QString &key, const QVariant &value, SettingsType type)
 {
     Q_D(SnoreCore);
     QString nk = d->versionizeKey(key);
-    if(value.canConvert<Setting>() && value.value<Setting>().isSpecific())
+    if(type == LOCAL_SETTING)
     {
         nk = d->specificKey(key);
     }

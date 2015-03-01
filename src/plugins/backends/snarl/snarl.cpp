@@ -17,6 +17,7 @@
 */
 
 #include "snarl.h"
+#include "snarlsettings.h"
 
 #include "core/snore.h"
 #include "core/snore_p.h"
@@ -113,7 +114,7 @@ private:
 SnarlBackend::SnarlBackend():
     SnoreBackend("Snarl", true, false, true)
 {
-
+    setDefaultValue("Password",QString());
 }
 
 SnarlBackend::~SnarlBackend()
@@ -147,6 +148,11 @@ bool SnarlBackend::deinitialize()
     return false;
 }
 
+PluginSettingsWidget *SnarlBackend::settingsWidget()
+{
+    return new SnarlSettings(this);
+}
+
 void SnarlBackend::slotRegisterApplication(const Application &application)
 {
 
@@ -156,10 +162,13 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
     m_applications.insert(application.name(), snarlInterface);
 
     QString appName = application.name().replace(" ", "_"); //app sig must not contain spaces
-    snarlInterface->Register(appName.toUtf8().constData(),
+    QString password = value("Password").toString();
+    LONG32 result = snarlInterface->Register(appName.toUtf8().constData(),
                              application.name().toUtf8().constData(),
                              application.icon().localUrl().toUtf8().constData(),
-                             0, (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
+                             password.isEmpty()?0:password.toUtf8().constData(),
+                             (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
+    snoreDebug(SNORE_DEBUG) << result;
 
     foreach(const Alert & alert, application.alerts()) {
         snarlInterface->AddClass(alert.name().toUtf8().constData(),

@@ -19,6 +19,7 @@
 #ifndef SNORE_PLUGINS_H
 #define SNORE_PLUGINS_H
 #include "snore_exports.h"
+#include "snoreglobals.h"
 #include "pluginsettingswidget.h"
 #include "../notification/notification.h"
 
@@ -26,7 +27,6 @@
 
 namespace Snore
 {
-class SnoreCore;
 
 class SNORE_EXPORT SnorePlugin : public QObject
 {
@@ -53,9 +53,9 @@ public:
     PluginTypes type() const;
     const QString typeName() const;
 
-    QVariant value(const QString &key) const;
-    void setValue(const QString &key, const QVariant &value);
-    void setDefaultValue(const QString &key, const QVariant &value);
+    QVariant value(const QString &key, SettingsType type = GLOBAL_SETTING) const;
+    void setValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
+    void setDefaultValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
 
     virtual PluginSettingsWidget *settingsWidget();
 

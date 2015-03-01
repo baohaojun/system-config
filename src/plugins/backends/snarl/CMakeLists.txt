@@ -6,6 +6,7 @@ if(WIN32)
     set( SNARL_SRC
         SnarlInterface.cpp
         snarl.cpp
+        snarlsettings.cpp
         )
     add_library(libsnore_backend_snarl MODULE ${SNARL_SRC} )
     target_link_libraries(libsnore_backend_snarl Snore::Libsnore )
