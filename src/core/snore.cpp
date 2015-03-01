@@ -200,7 +200,7 @@ QVariant SnoreCore::value(const QString &key, SettingsType type) const
     QString nk = d->versionizeKey(key);
     if(type == LOCAL_SETTING)
     {
-        nk = d->specificKey(key);
+        nk = d->normalizeKey(key);
     }
     return d->m_settings->value(nk);
 
@@ -212,7 +212,7 @@ void SnoreCore::setValue(const QString &key, const QVariant &value, SettingsType
     QString nk = d->versionizeKey(key);
     if(type == LOCAL_SETTING)
     {
-        nk = d->specificKey(key);
+        nk = d->normalizeKey(key);
     }
     d->m_settings->setValue(nk,value);
 }
@@ -224,16 +224,9 @@ void SnoreCore::setDefaultValue(const QString &key, const QVariant &value, Setti
     QString nk = d->versionizeKey(key);
     if(type == LOCAL_SETTING)
     {
-        nk = d->specificKey(key);
+        nk = d->normalizeKey(key);
     }
     if (!d->m_settings->contains(nk)) {
         d->m_settings->setValue(nk, value);
     }
 }
-
-void SnoreCore::setSettingsPrefix(const QString &prefix)
-{
-    Q_D(SnoreCore);
-    d->m_hints.setValue("app_specific_settings",prefix);
-}
-

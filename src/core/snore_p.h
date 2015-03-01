@@ -24,6 +24,7 @@
 #include "plugins/snorebackend.h"
 
 #include <QPointer>
+#include <QApplication>
 #include <QCryptographicHash>
 
 namespace Snore
@@ -76,8 +77,8 @@ public:
         return QString("%1/%2").arg(key, versionSchema());
     }
 
-    QString specificKey(const QString &key) const{
-        return versionizeKey(QString("AppSpecificSettings/%1/%2").arg(m_hints.value("app_specific_settings","SnoreNotify").toString(),key));
+    QString normalizeKey(const QString &key) const{
+        return versionizeKey(QString("LocalSettings/%1.%2/%3").arg(qApp->organizationName(), qApp->applicationName(), key));
     }
 
 
@@ -104,8 +105,6 @@ private:
     Application m_defaultApp;
 
     QSettings *m_settings;
-
-    Hint m_hints;
 };
 }
 

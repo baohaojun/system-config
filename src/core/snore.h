@@ -156,13 +156,6 @@ public:
     void setDefaultValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
 
 
-    /**
-     * Some settings can be uniqe to your application.
-     * @param appName the name of your application.
-     */
-    void setSettingsPrefix(const QString &appName);
-
-
 signals:
     /**
      * This signal is emitted when an action on the Notification was performed.
