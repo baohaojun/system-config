@@ -100,9 +100,6 @@ void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
     snoreDebug(SNORE_DEBUG) << "Broadcasting" << notification << "timeout:" << notification.timeout();
-    if (!notification.isUpdate()) {
-        d->syncSettings();
-    }
     if (d->m_notificationBackend != nullptr) {
         if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
             requestCloseNotification(notification.old(), Notification::REPLACED);
@@ -200,22 +197,22 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
 QVariant SnoreCore::value(const QString &key) const
 {
     Q_D(const SnoreCore);
-    QString nk = d->normalizeKey(key);
+    QString nk = d->specificKey(key);
     if(d->m_settings->contains(nk))
     {
         return d->m_settings->value(nk);
     }
-    return d->m_settings->value(key);
+    return d->m_settings->value(d->versionizeKey(key));
 
 }
 
 void SnoreCore::setValue(const QString &key, const QVariant &value)
 {
     Q_D(SnoreCore);
-    QString nk = key;
+    QString nk = d->versionizeKey(key);
     if(value.canConvert<Setting>() && value.value<Setting>().isSpecific())
     {
-        nk = d->normalizeKey(nk);
+        nk = d->specificKey(key);
     }
     d->m_settings->setValue(nk,value);
 }
@@ -224,10 +221,10 @@ void SnoreCore::setValue(const QString &key, const QVariant &value)
 void SnoreCore::setDefaultValue(const QString &key, const QVariant &value)
 {
     Q_D(SnoreCore);
-    QString nk = key;
+    QString nk = d->versionizeKey(key);
     if(value.canConvert<Setting>() && value.value<Setting>().isSpecific())
     {
-        nk = d->normalizeKey(nk);
+        nk = d->specificKey(key);
     }
     if (!d->m_settings->contains(nk)) {
         d->m_settings->setValue(nk, value);

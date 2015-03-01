@@ -20,6 +20,7 @@
 #define SNORECOREPRIVATE_H
 
 #include "snore.h"
+#include "version.h"
 #include "plugins/snorebackend.h"
 
 #include <QPointer>
@@ -46,6 +47,7 @@ public:
      */
     static QString tempPath();
 
+
 public:
     static SnoreCorePrivate *instance();
     ~SnoreCorePrivate();
@@ -63,10 +65,19 @@ public:
 
     bool initPrimaryNotificationBackend();
 
+    inline QString versionSchema() const {
+        return "1";
+    }
+
     void syncSettings();
 
-    QString normalizeKey(const QString &key) const{
-        return QString("AppSpecificSettings/%1/%2").arg(m_hints.value("app_specific_settings","SnoreNotify").toString(),key);
+
+    QString versionizeKey(const QString &key) const{
+        return QString("%1/%2").arg(key, versionSchema());
+    }
+
+    QString specificKey(const QString &key) const{
+        return versionizeKey(QString("AppSpecificSettings/%1/%2").arg(m_hints.value("app_specific_settings","SnoreNotify").toString(),key));
     }
 
 
@@ -80,7 +91,6 @@ private slots:
     void slotAboutToQuit();
 
 private:
-
     SnoreCorePrivate();
     SnoreCore *q_ptr;
 

@@ -133,8 +133,16 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
 
 void SnoreCorePrivate::syncSettings()
 {
-    setBackendIfAvailible(m_settings->value("PrimaryBackend").value<Setting>().value().toString());
-    for (auto pluginName : m_pluginNames[SnorePlugin::SECONDARY_BACKEND]) {
+    Q_Q(SnoreCore);
+    QString oldBackend = q->primaryNotificationBackend();
+    m_notificationBackend->deinitialize();
+    m_notificationBackend = nullptr;
+    if(!setBackendIfAvailible(q->value("PrimaryBackend").value<Setting>().value().toString()))
+    {
+        setBackendIfAvailible(oldBackend);
+    }
+//TODO: cleanup
+    auto syncPluginStatus = [&](const QString &pluginName){
         SnorePlugin *plugin = m_plugins.value(pluginName);
         bool enable = m_plugins[pluginName]->value("Enabled").toBool();
         if (!plugin->isInitialized() && enable) {
@@ -142,6 +150,16 @@ void SnoreCorePrivate::syncSettings()
         } else if (plugin->isInitialized() && !enable) {
             plugin->deinitialize();
         }
+    };
+
+    for (auto pluginName : m_pluginNames[SnorePlugin::SECONDARY_BACKEND]) {
+        syncPluginStatus(pluginName);
+    }
+    for (auto pluginName : m_pluginNames[SnorePlugin::FRONTEND]) {
+        syncPluginStatus(pluginName);
+    }
+    for (auto pluginName : m_pluginNames[SnorePlugin::PLUGIN]) {
+        syncPluginStatus(pluginName);
     }
 }
 

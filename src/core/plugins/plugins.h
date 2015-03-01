@@ -59,8 +59,11 @@ public:
 
     virtual PluginSettingsWidget *settingsWidget();
 
+protected:
+    virtual QString settingsVersion() const;
+
 private:
-    SnorePlugin() {}
+    SnorePlugin() = delete;
     QString normaliseKey(const QString &key) const;
 
     QString m_name;

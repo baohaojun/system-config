@@ -85,7 +85,7 @@ Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()
 
 QString SnorePlugin::normaliseKey(const QString &key) const
 {
-    return QString("%1/%2").arg(m_name, key);
+    return QString("%1/%2/%3").arg(m_name, settingsVersion(), key);
 }
 
 const QString &SnorePlugin::name() const
@@ -101,6 +101,11 @@ SnorePlugin::PluginTypes SnorePlugin::type() const
 const QString SnorePlugin::typeName() const
 {
     return PluginContainer::typeToString(m_type);
+}
+
+QString SnorePlugin::settingsVersion() const
+{
+    return "1";
 }
 
 bool SnorePlugin::deinitialize()

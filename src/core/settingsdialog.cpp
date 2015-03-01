@@ -41,7 +41,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         ui->tabWidget->addTab(widget, widget->name());
         m_tabs.append(widget);
     }
-    load();
 }
 
 SettingsDialog::~SettingsDialog()
@@ -77,10 +76,10 @@ void SettingsDialog::load()
 void SettingsDialog::save()
 {
     snoreDebug(SNORE_DEBUG) << "saving";
-    SnoreCorePrivate::instance()->setBackendIfAvailible(ui->primaryBackendComboBox->currentText());
     for (auto w : m_tabs) {
         w->saveSettings();
     }
+    SnoreCorePrivate::instance()->syncSettings();
 }
 
 void Snore::SettingsDialog::on_buttonBox_clicked(QAbstractButton *button)
@@ -98,4 +97,10 @@ void Snore::SettingsDialog::on_buttonBox_clicked(QAbstractButton *button)
     default:
         snoreDebug(SNORE_WARNING) << "unhandled role" << button->text();
     }
+}
+
+void SettingsDialog::show()
+{
+    load();
+    QDialog::show();
 }

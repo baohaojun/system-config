@@ -125,6 +125,7 @@ bool SnarlBackend::initialize()
 {
     SnarlInterface *snarlInterface = new SnarlInterface();
     if (!snarlInterface->IsSnarlRunning()) {
+        snoreDebug(SNORE_WARNING) << "Snarl is not running";
         delete snarlInterface;
         return false;
     }

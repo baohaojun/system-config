@@ -48,6 +48,8 @@ public:
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
 
+    void show();
+
 private slots:
     void on_pushButton_clicked();
     void load();
