@@ -67,18 +67,17 @@ public:
     bool initPrimaryNotificationBackend();
 
     inline QString versionSchema() const {
-        return "1";
+        return "v1";
     }
 
     void syncSettings();
 
-
-    QString versionizeKey(const QString &key) const{
-        return QString("%1/%2").arg(key, versionSchema());
-    }
-
-    QString normalizeKey(const QString &key) const{
-        return versionizeKey(QString("LocalSettings/%1.%2/%3").arg(qApp->organizationName(), qApp->applicationName(), key));
+    QString normalizeKey(const QString &key, SettingsType type) const{
+        if(type == LOCAL_SETTING) {
+            return QString("%1/LocalSettings/%2.%3/%4").arg(versionSchema(), qApp->organizationName(), qApp->applicationName(), key);
+        } else {
+            return QString("%1/%2").arg(versionSchema(), key);
+        }
     }
 
 

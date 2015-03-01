@@ -197,35 +197,20 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
 QVariant SnoreCore::value(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);
-    QString nk = d->versionizeKey(key);
-    if(type == LOCAL_SETTING)
-    {
-        nk = d->normalizeKey(key);
-    }
-    return d->m_settings->value(nk);
-
+    return d->m_settings->value(d->normalizeKey(key,type));
 }
 
 void SnoreCore::setValue(const QString &key, const QVariant &value, SettingsType type)
 {
     Q_D(SnoreCore);
-    QString nk = d->versionizeKey(key);
-    if(type == LOCAL_SETTING)
-    {
-        nk = d->normalizeKey(key);
-    }
-    d->m_settings->setValue(nk,value);
+    d->m_settings->setValue(d->normalizeKey(key,type),value);
 }
 
 
 void SnoreCore::setDefaultValue(const QString &key, const QVariant &value, SettingsType type)
 {
     Q_D(SnoreCore);
-    QString nk = d->versionizeKey(key);
-    if(type == LOCAL_SETTING)
-    {
-        nk = d->normalizeKey(key);
-    }
+    QString nk = d->normalizeKey(key,type);
     if (!d->m_settings->contains(nk)) {
         d->m_settings->setValue(nk, value);
     }

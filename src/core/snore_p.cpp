@@ -41,6 +41,7 @@ SnoreCorePrivate::SnoreCorePrivate():
 
     snoreDebug(SNORE_DEBUG) << "Temp dir is" << tempPath();
     snoreDebug(SNORE_DEBUG) << "Snore settings are located in" << m_settings->fileName();
+    snoreDebug(SNORE_DEBUG) << "Snore local settings are located in" << normalizeKey("Test", LOCAL_SETTING);
 
     m_defaultApp.addAlert(Alert("Default", Icon(":/root/snore.png")));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
