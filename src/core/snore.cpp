@@ -69,7 +69,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN: {
-                    if (plugin->value("Enabled").toBool()) {
+                    if (plugin->value("Enabled",LOCAL_SETTING).toBool()) {
                         if (!plugin->initialize()) {
                             snoreDebug(SNORE_WARNING) << "Failed to initialize" << plugin->name();
                             plugin->deinitialize();

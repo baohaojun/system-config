@@ -145,7 +145,7 @@ void SnoreCorePrivate::syncSettings()
 //TODO: cleanup
     auto syncPluginStatus = [&](const QString &pluginName){
         SnorePlugin *plugin = m_plugins.value(pluginName);
-        bool enable = m_plugins[pluginName]->value("Enabled").toBool();
+        bool enable = m_plugins[pluginName]->value("Enabled", LOCAL_SETTING).toBool();
         if (!plugin->isInitialized() && enable) {
             plugin->initialize();
         } else if (plugin->isInitialized() && !enable) {
