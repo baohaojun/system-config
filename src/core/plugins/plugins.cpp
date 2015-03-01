@@ -35,7 +35,7 @@ SnorePlugin::SnorePlugin(const QString &name) :
     if (thread() != qApp->thread()) {
         moveToThread(qApp->thread());
     }
-    setDefaultValue("Enabled", true,LOCAL_SETTING);
+    setDefaultValue("Enabled", false,LOCAL_SETTING);
 }
 
 SnorePlugin::~SnorePlugin()
