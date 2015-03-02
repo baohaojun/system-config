@@ -53,7 +53,8 @@ if ! uname -m | grep arm; then
     cat <<EOF > /etc/resolv.conf
 nameserver $(my-adb getprop net.dns1)
 EOF
-    apt-get install -y bash-completion ssh rsync
+    apt-get install -y bash-completion ssh rsync locales
+    dpkg-reconfigure locales
     ln -sf /android/* /
     bash
 "
