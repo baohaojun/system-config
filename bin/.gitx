@@ -165,6 +165,14 @@ print $_ . "\n";
             exit
         fi
 
+        if test "$#" = 1 -a "$1" = reset-files-to-rev; then
+            x=$(select-output-line 'git reflog | head -n 20' | pn 1)
+            git ls-tree --name-only HEAD | xargs -d \\n git rm -rf
+            git co "$x" -- .
+            git commit -m "$(git log --pretty="%B" "$x" -1)"
+            exit
+        fi
+
         if test $# = 2 -a "$1" = co -a "$2" = -B; then
             git co -B "$(git-choose-branch remotes/ )"
             exit

@@ -45,6 +45,7 @@ echo "$headers"|perl -npe 'chomp; s!.*?(?:kernel-build|KERNEL_OBJ)/!!; s![^/]*$!
 for x in $headers; do
     cp $x $(echo $x | perl -npe 'chomp; s!.*?(?:kernel-build|KERNEL_OBJ)/!!; s![^/]*$!!; $_ .= "\n"') || true
     git co HEAD Documentation || true
+    git co HEAD scripts/setlocalversion ||true
 done
 
 if echo $SHELLOPTS | grep -q xtrace; then
