@@ -123,11 +123,13 @@ function remote-mm() {
     if [[ "$(gerrit-review-url)" =~ //[^/]*$  ]]; then
         gerrit-push-review -n -R -d
     fi
-    (cd ~; psync code3 system-config) >/dev/null 2>&1
+    if test "$USER" = bhj; then
+        (cd ~; psync 172.16.2.25 system-config) >/dev/null 2>&1
+    fi
     if echo $SHELLOPTS | grep -q xtrace; then
-        ssh -o RequestTTY=yes code3 abc -x build-request $(gerrit-review-url) -m dep "$@"
+        ssh -o RequestTTY=yes 172.16.2.25 abc -x build-request $(gerrit-review-url) "$@"
     else
-        ssh -o RequestTTY=yes code3 abc build-request $(gerrit-review-url) -m dep "$@"
+        ssh -o RequestTTY=yes 172.16.2.25 abc build-request $(gerrit-review-url) "$@"
     fi
 }
 
@@ -349,6 +351,7 @@ function refresh-base-builds() {
 }
 
 function cron-daily-build() {
+    . ~/.config/ssh-agent
 
     (
         cd /data/mirror
