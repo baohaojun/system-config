@@ -270,8 +270,6 @@ public:
 private:
     QExplicitlySharedDataPointer<NotificationData> d;
 
-    static int m_defaultTimeout;
-
 };
 
 }

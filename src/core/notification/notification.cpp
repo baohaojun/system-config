@@ -25,7 +25,6 @@
 
 using namespace Snore;
 
-int Notification::m_defaultTimeout = 10;
 
 Notification::Notification() :
     d(NULL)
@@ -154,12 +153,12 @@ NotificationData *Notification::data()
 }
 int Notification::defaultTimeout()
 {
-    return m_defaultTimeout;
+    return SnoreCore::instance().value("Timeout", LOCAL_SETTING).toInt();
 }
 
 void Notification::setDefaultTimeout(int defaultTimeout)
 {
-    m_defaultTimeout = defaultTimeout;
+    SnoreCore::instance().setValue("Timeout", defaultTimeout, LOCAL_SETTING);
 }
 
 QDataStream &operator<< (QDataStream &stream, const Notification &noti)

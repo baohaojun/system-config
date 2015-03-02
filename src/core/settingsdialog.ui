@@ -39,13 +39,27 @@
          <property name="fieldGrowthPolicy">
           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
          </property>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="primaryBackendComboBox"/>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="primaryBackendLabel">
            <property name="text">
-            <string>Primary Backend:</string>
+            <string>Primary Backend</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="primaryBackendComboBox"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="timeoutLabel">
+           <property name="text">
+            <string>Timeout</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="timeoutSpinBox">
+           <property name="suffix">
+            <string>s</string>
            </property>
           </widget>
          </item>

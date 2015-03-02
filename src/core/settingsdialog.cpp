@@ -68,6 +68,7 @@ void SettingsDialog::load()
     QStringList list = SnoreCore::instance().pluginNames(SnorePlugin::BACKEND);
     ui->primaryBackendComboBox->addItems(list);
     ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(SnoreCore::instance().value("PrimaryBackend", LOCAL_SETTING).toString()));
+    ui->timeoutSpinBox->setValue(SnoreCore::instance().value("Timeout", LOCAL_SETTING).toInt());
     for (auto widget : m_tabs) {
         widget->loadSettings();
     }
@@ -80,6 +81,7 @@ void SettingsDialog::save()
         w->saveSettings();
     }
     SnoreCore::instance().setValue("PrimaryBackend", ui->primaryBackendComboBox->currentText(), LOCAL_SETTING);
+    SnoreCore::instance().setValue("Timeout", ui->timeoutSpinBox->value(), LOCAL_SETTING);
     SnoreCorePrivate::instance()->syncSettings();
 }
 
