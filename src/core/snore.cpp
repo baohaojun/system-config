@@ -191,6 +191,9 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
             list.append(widget);
         }
     }
+    qSort(list.begin(),list.end(),[](PluginSettingsWidget *a,PluginSettingsWidget *b){
+       return a->name() < b->name();
+    });
     return list;
 }
 

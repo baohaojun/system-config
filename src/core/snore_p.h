@@ -75,11 +75,16 @@ public:
     QString normalizeKey(const QString &key, SettingsType type) const
     {
         if (type == LOCAL_SETTING) {
-            return QString("%1/LocalSettings/%2.%3/%4").arg(versionSchema(), qApp->organizationName(), qApp->applicationName(), key);
+            return QString("%1/LocalSettings/%2/%3").arg(versionSchema(),m_localSettingsPrefix, key);
         } else {
             return QString("%1/%2").arg(versionSchema(), key);
         }
     }
+
+    //TODO: rename
+    QStringList knownClients();
+
+    void setLocalSttingsPrefix(const QString &prefix);
 
 signals:
     void applicationRegistered(const Snore::Application &);
@@ -102,6 +107,8 @@ private:
     QPointer<SnoreBackend> m_notificationBackend;
 
     Application m_defaultApp;
+
+    QString m_localSettingsPrefix = QString("%1.%2").arg(qApp->organizationName(), qApp->applicationName());
 
     QSettings *m_settings;
 };

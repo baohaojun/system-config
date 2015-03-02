@@ -28,7 +28,7 @@
 using namespace Snore;
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
-    QDialog(parent),
+    QWidget(parent),
     ui(new Ui::SettingsDialog),
     m_app(new Application("SnoreSettings", Icon(":/root/snore.png"))),
     m_alert(new Alert("Test", Icon(":/root/snore.png")))
@@ -67,7 +67,7 @@ void SettingsDialog::load()
     ui->primaryBackendComboBox->clear();
     QStringList list = SnoreCore::instance().pluginNames(SnorePlugin::BACKEND);
     ui->primaryBackendComboBox->addItems(list);
-    ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(SnoreCore::instance().primaryNotificationBackend()));
+    ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(SnoreCore::instance().value("PrimaryBackend", LOCAL_SETTING).toString()));
     for (auto widget : m_tabs) {
         widget->loadSettings();
     }
@@ -86,14 +86,11 @@ void SettingsDialog::save()
 void Snore::SettingsDialog::on_buttonBox_clicked(QAbstractButton *button)
 {
     switch (ui->buttonBox->buttonRole(button)) {
-    case QDialogButtonBox::AcceptRole:
     case QDialogButtonBox::ApplyRole:
         save();
         break;
     case QDialogButtonBox::ResetRole:
         load();
-        break;
-    case QDialogButtonBox::RejectRole:
         break;
     default:
         snoreDebug(SNORE_WARNING) << "unhandled role" << button->text();
@@ -103,5 +100,19 @@ void Snore::SettingsDialog::on_buttonBox_clicked(QAbstractButton *button)
 void SettingsDialog::show()
 {
     load();
-    QDialog::show();
+    QWidget::show();
 }
+
+void SettingsDialog::accept()
+{
+    hide();
+    save();
+    emit finished();
+}
+
+void SettingsDialog::reject()
+{
+    hide();
+    emit finished();
+}
+

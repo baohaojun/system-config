@@ -40,7 +40,7 @@ class SettingsDialog;
 
 namespace Snore
 {
-class SNORE_EXPORT SettingsDialog : public QDialog
+class SNORE_EXPORT SettingsDialog : public QWidget
 {
     Q_OBJECT
 
@@ -48,7 +48,14 @@ public:
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
 
+
+public slots:
     void show();
+    void accept();
+    void reject();
+
+signals:
+    void finished();
 
 private slots:
     void on_pushButton_clicked();

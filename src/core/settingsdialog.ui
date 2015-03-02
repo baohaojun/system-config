@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>SettingsDialog</class>
- <widget class="QDialog" name="SettingsDialog">
+ <widget class="QWidget" name="SettingsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -20,12 +20,18 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Page</string>
+       <string>General</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
