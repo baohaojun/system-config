@@ -12,22 +12,60 @@ if ! uname -m | grep arm; then
         (
             cd tmp
             sudo tar czfv debian.tgz debian
-            if ! my-adb "test -d /data/debian && echo yes$$" | grep -q yes$$; then
-                adb push debian.tgz /data/
-                adb 'cd /data;  tar zxvf debian.tgz'
-            fi
         )
     fi
 
+    if ! my-adb "test -d /data/debian && echo yes$$" | grep -q yes$$; then
+        adb push ~/tmp/debian.tgz /data/deb.tgz
+        adb 'cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz'
+    fi
 
-    my-adb push $0 /sdcard/$(basename $0)
+    my-adb -r push $0 /sdcard/$(basename $0)
     my-adb bash -x /sdcard/$(basename $0)
+
+    my-adb chroot /data/debian /bin/bash -c "
+    export LD_PRELOAD=
+    export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
+    export HOME=/root
+    set -x
+    set -e
+    if test ! -e /second-stage-done; then
+        /debootstrap/debootstrap --second-stage
+        touch /second-stage-done
+    fi
+    echo deb http://ftp.us.debian.org/debian testing main contrib non-free > /etc/apt/sources.list
+    if ! grep 192.168.15.33 /etc/hosts -q; then
+        echo 192.168.15.33 pc >> /etc/hosts
+    fi
+
+    addgroup $USER --gid 1000 || true
+    addgroup android_inet --gid 3003 || true
+    addgroup android_sdcard_rw --gid 1015 || true
+    adduser $USER --uid 1000 --gid 1000 || true
+    usermod $USER -a -G android_inet,android_sdcard_rw
+    cd
+    umask 0022
+    mkdir -p ~/.ssh
+    echo \"$(cat ~/.ssh/authorized_keys)\" | tee ~/.ssh/authorized_keys
+    mkdir -p ~$USER/.ssh
+    echo \"$(cat ~/.ssh/authorized_keys)\"| tee ~$USER/.ssh/authorized_keys
+    chown $USER\. ~$USER/.ssh -R
+    cat <<EOF > /etc/resolv.conf
+nameserver $(my-adb getprop net.dns1)
+EOF
+    apt-get install -y bash-completion ssh rsync
+    ln -sf /android/* /
+    bash
+"
+
     exit
 fi
 
 export LD_PRELOAD=
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 export HOME=/root
+
+mount -o remount /data # rm the nodev flag
 
 if [ ! -d /tmp ]; then
     mount -o rw,remount / && mkdir /tmp && chmod 1777 /tmp && mount -o ro,remount /
@@ -72,33 +110,3 @@ if test ! -e /data/debian/dev/null -o -e /data/debian/dev/.dev-not-mounted -o -f
        mount -o bind /$x /data/debian/android/$x
    done
 fi
-
-
-chroot /data/debian /bin/bash -c "
-    set -x
-    /debootstrap/debootstrap --second-stage
-    echo deb http://ftp.us.debian.org/debian testing main contrib non-free > /etc/apt/sources.list
-    if ! grep 192.168.15.33 /etc/hosts -q; then
-        echo 192.168.15.33 pc >> /etc/hosts
-    fi
-    touch /second-stage-done
-    addgroup $USER --gid 1000
-    addgroup android_inet --gid 3003
-    addgroup android_sdcard_rw --gid 1015
-    adduser $USER --uid 1000 --gid 1000
-    usermod $USER -a -G android_inet,android_sdcard_rw
-    cd
-    umask 0022
-    mkdir ~/.ssh
-    echo "$(cat ~/.ssh/authorized_keys)" | tee -a ~/.ssh/authorized_keys
-    mkdir ~$USER/.ssh
-    echo "$(cat ~/.ssh/authorized_keys)"| tee -a ~$USER/.ssh/authorized_keys
-    chown $USER\. ~$USER/.ssh -R
-    apt-get install git sudo bash-completion locales python3 ssh rsync
-    dpkg-reconfigure locales
-    echo '$USER ALL=NOPASSWD: ALL' > /etc/sudoers.d/$USER
-    chmod 440 /etc/sudoers.d/$USER
-    ln -s /android/* /
-    mv /usr/bin/sudo /usr/bin/sudo.bak
-    bash
-"
