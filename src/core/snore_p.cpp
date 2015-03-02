@@ -132,6 +132,12 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
     return false;
 }
 
+void SnoreCorePrivate::setDefaults()
+{
+    Q_Q(SnoreCore);
+    q->setDefaultValue("Timeout", 10, LOCAL_SETTING);
+}
+
 void SnoreCorePrivate::syncSettings()
 {
     Q_Q(SnoreCore);
@@ -177,6 +183,7 @@ QStringList SnoreCorePrivate::knownClients(){
 void SnoreCorePrivate::setLocalSttingsPrefix(const QString &prefix)
 {
     m_localSettingsPrefix = prefix;
+    setDefaults();
     syncSettings();
 }
 

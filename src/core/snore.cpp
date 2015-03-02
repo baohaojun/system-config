@@ -38,7 +38,7 @@ SnoreCore::SnoreCore()
     d_ptr = new SnoreCorePrivate();
     Q_D(SnoreCore);
     d->q_ptr = this;
-    setDefaultValue("Timeout", 10, LOCAL_SETTING);
+    d->setDefaults();
 }
 
 SnoreCore &SnoreCore::instance()

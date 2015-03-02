@@ -86,6 +86,8 @@ public:
 
     void setLocalSttingsPrefix(const QString &prefix);
 
+    void setDefaults();
+
 signals:
     void applicationRegistered(const Snore::Application &);
     void applicationDeregistered(const Snore::Application &);
@@ -108,7 +110,7 @@ private:
 
     Application m_defaultApp;
 
-    QString m_localSettingsPrefix = QString("%1.%2").arg(qApp->organizationName(), qApp->applicationName());
+    QString m_localSettingsPrefix = qApp->applicationName().isEmpty() ? "SnoreNotify" : qApp->applicationName();
 
     QSettings *m_settings;
 };

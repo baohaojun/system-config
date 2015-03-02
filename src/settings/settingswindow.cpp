@@ -19,7 +19,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     connect(ui->widget, &Snore::SettingsDialog::finished, qApp, &QApplication::quit);
 
     QStringList list = SnoreCorePrivate::instance()->knownClients();
-    list.removeAll(QString("%1.%2").arg(qApp->organizationName(), qApp->applicationName()));
+    list.removeAll(qApp->applicationName());
     ui->comboBox->addItems(list);
 }
 
