@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test ! "$ANDROID_SERIAL"; then
+    export ANDROID_SERIAL=$(select-output-line adb devices?|pn 1)
+fi
+
+adb -r id | grep 'uid=0\b'
+ssh-to-phone echo hello
+
+xml=rawprogram_unsparse.xml
+if test ! -e "$xml" -a -e "sparse_images/$xml"; then
+    xml=sparse_images/$xml
+else
+    die "can't find $xml"
+fi
+
+function update-partition() {
+    if test $(basename $file) = boot.img; then
+        adb-push -d $file /data
+    else
+        adb push $file /data
+    fi
+
+    my-adb "dd if=/data/$file of=\$(echo /dev/block/platform/*/by-name/$part) && echo yes$$" | grep yes$$
+}
+
+xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^ ' |grep -v '_\d+' -P|perl -npe 'END{print "done done\n"}'|
+    while read file part; do
+        if test $part = PrimaryGPT -o $part = BackupGPT; then
+            continue
+        fi
+        if test $part = done; then
+            break
+        fi
+        update-partition $file $part || exit 5
+    done
+
+
+export tmpPostfix=$$
+sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2
+
+mv ~/tmp/system-$tmpPostfix.img.2 ~/tmp/system-$tmpPostfix.img
+mkdir -p ~/tmp/system-$tmpPostfix/system
+cd ~/tmp/system-$tmpPostfix
+sudo umount system >/dev/null 2>&1 || true
+sudo umount SYSTEM >/dev/null 2>&1 || true
+sudo mount -o loop ../system-$tmpPostfix.img system
+
+cd system
+echo doing rsync in $(pwd)
+adb remount
+adb stop
+
+sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
+adb push media/app /system/media/app
+sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0'|perl -npe 's/^/chcon /' |tee ../system.chcon
+adb push ../system.chcon /data/
+adb 'cd /system; bash -x /data/system.chcon'

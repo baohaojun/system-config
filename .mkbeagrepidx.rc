@@ -1,2 +1,2 @@
 #!/bin/bash
-BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/po,*/.git,$PWD/development/ndk/platforms/android-*,$PWD/prebuilts/ndk,$PWD/external/kernel-headers,$PWD/bionic/libc/kernel/common/linux"
+BEAGREP_IGNORE_DIR_PATTERNS="$(for x in */; do if test -d $x/.ccache; then echo -n $PWD/${x%/},; fi; done)$PWD/out,*/.repo,*/po,*/.git,$PWD/development/ndk/platforms/android-*,$PWD/prebuilts/ndk,$PWD/external/kernel-headers,$PWD/bionic/libc/kernel/common/linux"
