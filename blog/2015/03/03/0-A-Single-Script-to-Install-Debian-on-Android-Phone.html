@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Computer tools</title>
+<title>一个在安卓手机上“一键”安装debian系统的脚本</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Haojun Bao" />
@@ -102,310 +102,122 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Computer tools</h1>
-<ul class="org-ul">
-<li>2015
-<ul class="org-ul">
-<li>2015-03
-<ul class="org-ul">
-<li>2015-03-03
-
+<h1 class="title">一个在安卓手机上“一键”安装debian系统的脚本</h1>
 <p>
-<a href="../../../blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html">一个在安卓手机上“一键”安装debian系统的脚本</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2015-02
-<ul class="org-ul">
-<li>2015-02-25
-
-<p>
-<a href="../../../blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html">小扳手2.5.0</a>
-</p>
-</li>
-
-<li>2015-02-19
-
-<p>
-<a href="../../../blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html">小扳手抢红包秘决</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2015-01
-<ul class="org-ul">
-<li>2015-01-30
-
-<p>
-<a href="../../../blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.html">怎样在命令行上测试小扳手</a>
-</p>
-</li>
-
-<li>2015-01-27
-
-<p>
-<a href="../../../blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html">配置postfix用sohu smtpcloud进行relay</a>
-</p>
-</li>
-
-<li>2015-01-26
-
-<p>
-<a href="../../../blog/2015/01/26/0-T1Wrench-2.3.0-Released.html">T1Wrench 2.3.0 Released</a>
-</p>
-</li>
-
-<li>2015-01-12
-
-<p>
-<a href="../../../blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html">怎样交换键盘Escape和Caps Lock键</a>
-</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2014
-<ul class="org-ul">
-<li>2014-12
-<ul class="org-ul">
-<li>2014-12-10
-
-<p>
-<a href="../../../blog/2014/12/10/0-system-config-usage-guide.html">我的system-config使用指南</a>
-</p>
-</li>
-
-<li>2014-12-01
-
-<p>
-<a href="../../../blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html">小扳手2.0版使用手册</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2014-11
-<ul class="org-ul">
-<li>2014-11-08
-
-<p>
-<a href="../../../blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.html">专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2014-10
-<ul class="org-ul">
-<li>2014-10-24
-
-<p>
-<a href="../../../blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html">不用鼠标在Linux命令行下启动Windows上的图形界面程序</a>
-</p>
-</li>
-
-<li>2014-10-23
-
-<p>
-<a href="../../../blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html">把邮件的星标移到我的todo list里</a>
-</p>
-</li>
-
-<li>2014-10-21
-
-<p>
-<a href="../../../blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html">反了反了！用Smartisan T1手机当Linux的语音输入法</a>
+先说点扫兴的：1. 手机必须有adb root权限；2. 安装后的debian只有命令行，没有手机上的图形界面。所以感到失望的朋友就不必往下看了，建议去网上查一下debian andorid，在debian官方的wiki里有一些项目貌似是支持图形界面的。
 </p>
 
 <p>
-<a href="../../../blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html">穷汉的安卓代码模板生成工具</a>
+脚本的位置在 <a href="https://github.com/baohaojun/system-config/raw/master/bin/adb-install-debian">adb-install-debian</a> 。像我所有的脚本一样，运行之前需确保已经配置了 <a href="../../../2014/12/10/0-system-config-usage-guide.html">我的system-config项目</a> 。
 </p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 原理</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+操作的原理在网上可以查到，这里简单描述一下。
+</p>
+
+<ol class="org-ol">
+<li>在debian PC上用 <code>sudo debootstrap --verbose --arch armel --foreign testing ~/tmp/debian</code> 来装一个arm版的debian系统.
 </li>
 
-<li>2014-10-09
+<li>把这个系统打包传到手机上，再解包。
+</li>
+
+<li>在手机上chroot进入这个debian目录，再完成剩下的配置。最主要的命令是 <code>/debootstrap/debootstrap --second-stage</code> ，只有完成这个命令之后，这个debian系统才算一个完整的debian，否则只是一个半成品。然后就可以用adduser加一个用户，用apt-get安装ssh/rsync等远程控制的程序。这里要注意的一点是一般的安卓手机/data分区都是nodev mount的，这样的话运行上面那条命令会出错退出。另外，su/sudo命令均不可用，因为/data分区一般都是nosuid mount的；但这应该不是问题，因为我们可以用root账号。
+</li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 用途</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+一个短小精干的debian系统，用途有很多。
+</p>
+
+<ol class="org-ol">
+<li>提供busybox、bash的编译。
 
 <p>
-<a href="../../../blog/2014/10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html">如何在Linux + Emacs下进行MFC编程（代码补齐）</a>
+在安卓手机上的开发，没有busybox和bash会很痛苦。CyanogenMod项目可能已经提供了busybox，但不知道有没有提供bash——自从我安装了arm版debian之后，我就用它编了静态版的busybox和bash，然后把它们用prebuilt的形式往安卓代码库里一放，非常方便。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-09
-<ul class="org-ul">
-<li>2014-09-05
 
 <p>
-<a href="../../../blog/2014/09/05/0-Emoji.html">Emoji</a>
+但后来我发现了更好的方法，那就是emdebian项目，也是debian官方的，它提供了在x86平台上针对arm平台的交叉编译链，所以busybox、bash、tar我都改用PC来编了，关键是性能够强劲，一眨眼就编完啊。
 </p>
 </li>
 
-<li>2014-09-01
+<li>提供增量备份、还原手机的方法
 
 <p>
-<a href="../../../blog/2014/09/01/0-config-adb-for-smartisan-t1.html">Config adb for smartisan t1</a>
+没错，在手机开发的过程中，用daily use的方法去测试公司的手机是非常重要的，英文里有个术语叫“eat your own dog food”，吃自己的狗粮。所以我一直坚持把自己所有的sim卡都插在公司提供的工程机上使用。给父母、爱人、亲戚打电话全部用工程机，不停地测试。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-08
-<ul class="org-ul">
-<li>2014-08-24
 
 <p>
-<a href="../../../blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html">Connecting Iphone Under Debian Linux</a>
+但这会带来一个问题，就是有时候有些测试版本有严重的bug，导致手机不可用，只能重新刷机。可这样的话所有的App、照片、设置、联系人、账号、聊天记录就全都丢掉了。
 </p>
-</li>
-
-<li>2014-08-05
 
 <p>
-<a href="../../../blog/2014/08/05/0-a-love-letter.html">一封情书</a>
+有了debian系统之后，我可以用rsync备份整个手机的/data分区，最关键的是，rsync备份是直正的增量备份，也就是说第一次备份完之后（一般有10几个G的数据），下一次再备份就只需要备份有改动的那些文件（一般几百兆左右），从而大大的节省时间。还原也一样，只要没有重新刷机，还原也可以增量还原。
 </p>
 </li>
-</ul>
-</li>
+</ol>
 
-<li>2014-07
-<ul class="org-ul">
-<li>2014-07-13
+
+<ol class="org-ol">
+<li>提供增量刷机的方案
 
 <p>
-<a href="../../../blog/2014/07/13/0-Smartisan-T1-Wrench.html">Smartisan T1 WrenchSmartisan T1小扳手使用指南</a>
+没错！这是我刚刚实现的一个功能。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-06
-<ul class="org-ul">
-<li>2014-06-23
 
 <p>
-<a href="../../../blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html">在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email/sms</a>
+刷机好像在安卓手机上是一件很简单的事情。的确是这样，但那都是对已经上市的手机，别人已经帮你做好了刷机工具的前提下。在手机开发的过程中，是不大可能有拿来就能用的刷机方案的。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-05
-<ul class="org-ul">
-<li>2014-05-20
 
 <p>
-<a href="../../../blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html">在Debian下为安卓做一个GNU tar程序</a>
+我们天天都需要刷机，因为内部版本天天都会更新。所以内部工具组的同事会在第一时间生产出一个刷机工具给大家用。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-01
-<ul class="org-ul">
-<li>2014-01-16
 
 <p>
-<a href="../../../blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html">用GreaseMonkey禁止Google搜索重定向绑架</a>
+但我不喜欢用这个刷机工具，因为在上面也提到了，每次刷完机，整个/data分区都没了，需要整个还原，这个还原可不是增量还原，而是10几20个G的完整还原，一般要耗时1小时以上&#x2026;
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2013
-<ul class="org-ul">
-<li>2013-10
-<ul class="org-ul">
-<li>2013-10-16
 
 <p>
-<a href="../../../blog/2013/10/16/0-Interactive-Git-Add.html">Interactive Git Add</a>
+另外一个不喜欢用它的原因是它是Windows版的，而我需要一个Linux下能刷机的方案，否则老是切换工作环境，也很烦很没效率的。
 </p>
-</li>
-
-<li>2013-10-01
 
 <p>
-<a href="../../../blog/2013/10/01/0-Inside-Ajoke.html">Inside Ajoke</a>
+但有了debian之后，我可以像备份还原我的/data分区一样去改动我的/system分区了，真的是太方便了。另外一些非文件系统的分区一般都很小，直接把img文件adb push上去之后用dd命令写下去就好了。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2013-05
-<ul class="org-ul">
-<li>2013-05-21
 
 <p>
-<a href="../../../blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html">Mysterious rsync/ssh/scp hang</a>
+注意，adb自身有一个sync命令，也是干这事儿的，但我觉得非常不好用。有了rsync，干嘛还要去搞adb sync&#x2026;
 </p>
 </li>
-
-<li>2013-05-08
-
-<p>
-<a href="../../../blog/2013/05/08/bbs-robot.html">站友福音：在水木bbs上用Emacs的键绑定</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2013-02
-<ul class="org-ul">
-<li>2013-02-12
-
-<p>
-<a href="../../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.html">html2mht.pl and dir2html.pl</a>
-</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2012
-<ul class="org-ul">
-<li>2012-10
-<ul class="org-ul">
-<li>2012-10-29
-
-<p>
-<a href="../../../blog/2012/10/29/why-symlink-my-config.html">我的配置环境：为什么用symlink而不是cp</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2012-05
-<ul class="org-ul">
-<li>2012-05-02
-
-<p>
-<a href="../../../blog/2012/05/02/pdf-for-kindle-touch.html">pdf-for-kindle-touch</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2012-02
-<ul class="org-ul">
-<li>2012-02-02
-
-<p>
-<a href="../../../blog/2012/02/02/how-to-do-long-twitter-cn.html">自己动手做长微博（推特），内嵌图片的</a>
-</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+</ol>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../../02/25/0-T1Wrench-2.5.0-Release-Notes.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        小扳手2.5.0 <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../../../readme.html"> <!-- next-url -->
+        ac-clang Manual <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
+</div>
+</div>
 </div>
 <!-- {%html-mode%} -->
 
@@ -413,7 +225,7 @@ for the JavaScript code in this tag.
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/meta/tags/tool.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -484,12 +296,21 @@ for the JavaScript code in this tag.
 
     <h2>Tags</h2>
     <ul>
-        
+                <li><a href="../../../../meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        
+        <li><a href='../../02/25/0-T1Wrench-2.5.0-Release-Notes.html'> 小扳手2.5.0 </a></li>
+<li><a href='../../02/19/0-Draw-Lucky-Money-With-T1Wrench.html'> 小扳手抢红包秘决 </a></li>
+<li><a href='../../01/30/0-How-to-test-t1wrench-on-command-line.html'> 怎样在命令行上测试小扳手 </a></li>
+<li><a href='../../01/28/0-xdotool-is-fucking-with-dvp.html'> xdotool is fucking with dvp </a></li>
+<li><a href='../../01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html'> ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑 </a></li>
+<li><a href='../../01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html'> 配置postfix用sohu smtpcloud进行relay </a></li>
+<li><a href='../../01/26/0-T1Wrench-2.3.0-Released.html'> T1Wrench 2.3.0 Released </a></li>
+<li><a href='../../01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html'> 怎样交换键盘Escape和Caps Lock键 </a></li>
+<li><a href='../../01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html'> 从QtSingleApplication的API看Qt的设计 </a></li>
+<li><a href='../../../2014/12/10/0-system-config-usage-guide.html'> 我的system-config使用指南 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

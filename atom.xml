@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[一个在安卓手机上“一键”安装debian系统的脚本]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html"/>
+    <updated>2015-33-03T12:03:36+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[小扳手2.5.0]]></title>
     <link href="http://baohaojun.github.io/blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html"/>
-    <updated>2015-09-25T14:02:18+08:00</updated>
+    <updated>2015-02-25T14:11:24+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html"/>
     <updated>2015-01-12T09:55:52+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[我的system-config使用指南]]></title>
-    <link href="http://baohaojun.github.io/blog/2014/12/10/0-system-config-usage-guide.html"/>
-    <updated>2015-01-15T17:49:20+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2014/12/10/0-system-config-usage-guide.html</id>
   </entry>
 </feed>
