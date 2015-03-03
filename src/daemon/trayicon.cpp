@@ -23,6 +23,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDialogButtonBox>
 #include <QMenu>
 #include <QSystemTrayIcon>
 #include <QTimer>
@@ -43,6 +44,31 @@ TrayIcon::TrayIcon():
 void TrayIcon::initConextMenu()
 {
     m_settings = new SettingsDialog();
+    QDialogButtonBox *box = new QDialogButtonBox(QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset, m_settings);
+    connect(box, QDialogButtonBox::clicked,[&,box](QAbstractButton *button){
+        switch (box->buttonRole(button)) {
+        case QDialogButtonBox::AcceptRole:
+            m_settings->accept();
+            qApp->quit();
+            break;
+        case QDialogButtonBox::ApplyRole:
+            m_settings->accept();
+            break;
+        case QDialogButtonBox::ResetRole:
+            m_settings->reset();
+            break;
+        case QDialogButtonBox::RejectRole:
+            qApp->quit();
+            break;
+        default:
+            snoreDebug(SNORE_WARNING) << "unhandled role" << button->text() << box->buttonRole(button);
+        }
+    });
+    m_settings->layout()->addWidget(box);
+
+
+//    connect(m_settings, &SettingsDialog::finished, m_settings, &SettingsDialog::hide);
+
     m_trayIcon->setVisible(true);
 
     m_trayMenu = new QMenu("SnoreNotify");

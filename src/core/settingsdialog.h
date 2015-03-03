@@ -50,19 +50,14 @@ public:
 
 
 public slots:
-    void show();
+    void setVisible(bool b) override;
     void accept();
-    void reject();
-
-signals:
-    void finished();
+    void reset();
 
 private slots:
     void on_pushButton_clicked();
     void load();
     void save();
-
-    void on_buttonBox_clicked(QAbstractButton *button);
 
 private:
     Ui::SettingsDialog *ui;

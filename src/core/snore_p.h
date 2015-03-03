@@ -86,7 +86,7 @@ public:
 
     void setLocalSttingsPrefix(const QString &prefix);
 
-    void setDefaults();
+    void init();
 
 signals:
     void applicationRegistered(const Snore::Application &);

@@ -28,13 +28,18 @@ using namespace Snore;
 
 SnoreNotifier::SnoreNotifier():
     SnoreBackend("Snore", true, true, true),
-    m_widgets(3)
+    m_widgets(3),
+    m_timer(new QTimer(this))
 {
+    setDefaultValue("Position", Qt::TopRightCorner);
+    m_timer->setInterval(500);
+    connect(m_timer, &QTimer::timeout, this, &SnoreNotifier::slotProcessQueue);
+
 }
 
 SnoreNotifier::~SnoreNotifier()
 {
-    foreach(NotifyWidget * w, m_widgets) {
+    for(auto w : m_widgets) {
         w->deleteLater();
     }
 }
@@ -121,25 +126,16 @@ void SnoreNotifier::slotProcessQueue()
     }
 }
 
-void SnoreNotifier::setup()
-{
-    for (int i = 0; i < m_widgets.size(); ++i) {
-        NotifyWidget *w = new NotifyWidget(i, this);
-        m_widgets[i] = w;
-        connect(w, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
-        connect(w, SIGNAL(invoked()), this, SLOT(slotInvoked()));
-    }
-
-    m_timer = new QTimer(this);
-    m_timer->setInterval(500);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(slotProcessQueue()));
-}
-
 bool SnoreNotifier::initialize()
 {
     if (SnoreBackend::initialize()) {
-        setDefaultValue("Position", Qt::TopRightCorner);
-        return metaObject()->invokeMethod(this, "setup", Qt::QueuedConnection);
+        for (int i = 0; i < m_widgets.size(); ++i) {
+            NotifyWidget *w = new NotifyWidget(i, this);
+            m_widgets[i] = w;
+            connect(w, &NotifyWidget::dismissed, this, &SnoreNotifier::slotDismissed);
+            connect(w, &NotifyWidget::invoked, this, &SnoreNotifier::slotInvoked);
+        }
+        return true;
     }
     return false;
 }
@@ -147,11 +143,9 @@ bool SnoreNotifier::initialize()
 bool SnoreNotifier::deinitialize()
 {
     if (SnoreBackend::deinitialize()) {
-        for (int i = 0; i < m_widgets.size(); ++i) {
-            m_widgets[i]->release();
-            m_widgets[i]->deleteLater();
+        for (auto w : m_widgets) {
+            w->deleteLater();
         }
-        m_timer->deleteLater();
         return true;
     }
     return false;

@@ -67,6 +67,7 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 
 NotifyWidget::~NotifyWidget()
 {
+    release();
 }
 
 void NotifyWidget::display(const Notification &notification)

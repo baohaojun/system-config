@@ -31,7 +31,6 @@
 using namespace Snore;
 
 SnoreCorePrivate::SnoreCorePrivate():
-    m_defaultApp("SnoreNotify", Icon(":/root/snore.png")),
     m_settings(new QSettings("Snorenotify", "libsnore", this))
 {
     snoreDebug(SNORE_INFO) << "Version:" << Version::version();
@@ -43,7 +42,6 @@ SnoreCorePrivate::SnoreCorePrivate():
     snoreDebug(SNORE_DEBUG) << "Snore settings are located in" << m_settings->fileName();
     snoreDebug(SNORE_DEBUG) << "Snore local settings are located in" << normalizeKey("Test", LOCAL_SETTING);
 
-    m_defaultApp.addAlert(Alert("Default", Icon(":/root/snore.png")));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
 }
 
@@ -132,10 +130,11 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
     return false;
 }
 
-void SnoreCorePrivate::setDefaults()
+void SnoreCorePrivate::init()
 {
     Q_Q(SnoreCore);
     q->setDefaultValue("Timeout", 10, LOCAL_SETTING);
+    q->setDefaultApplication(Application("SnoreNotify", Icon(":/root/snore.png")));
 }
 
 void SnoreCorePrivate::syncSettings()
@@ -183,7 +182,7 @@ QStringList SnoreCorePrivate::knownClients(){
 void SnoreCorePrivate::setLocalSttingsPrefix(const QString &prefix)
 {
     m_localSettingsPrefix = prefix;
-    setDefaults();
+    init();
     syncSettings();
 }
 

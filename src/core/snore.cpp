@@ -38,7 +38,7 @@ SnoreCore::SnoreCore()
     d_ptr = new SnoreCorePrivate();
     Q_D(SnoreCore);
     d->q_ptr = this;
-    d->setDefaults();
+    d->init();
 }
 
 SnoreCore &SnoreCore::instance()
@@ -179,6 +179,13 @@ bool SnoreCore::primaryBackendSupportsRichtext()
 {
     Q_D(SnoreCore);
     return d->m_notificationBackend->supportsRichtext();
+}
+
+void SnoreCore::setDefaultApplication(Application app)
+{
+    Q_D(SnoreCore);
+    app.addAlert(Alert("Default", Icon(":/root/snore.png")));
+    d->m_defaultApp = app;
 }
 
 QList<PluginSettingsWidget *> SnoreCore::settingWidgets()

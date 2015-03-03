@@ -70,6 +70,11 @@ void PluginSettingsWidget::saveSettings()
     save();
 }
 
+bool PluginSettingsWidget::isDirty()
+{
+    return m_dirty;
+}
+
 QVariant PluginSettingsWidget::value(const QString &key) const
 {
     return m_snorePlugin->value(key);
@@ -77,7 +82,10 @@ QVariant PluginSettingsWidget::value(const QString &key) const
 
 void PluginSettingsWidget::setValue(const QString &key, const QVariant &value)
 {
-    m_snorePlugin->setValue(key, value);
+    if (this->value(key) != value) {
+        m_snorePlugin->setValue(key, value);
+        m_dirty = true;
+    }
 }
 
 void PluginSettingsWidget::load()

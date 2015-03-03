@@ -77,44 +77,39 @@ void SettingsDialog::load()
 void SettingsDialog::save()
 {
     snoreDebug(SNORE_DEBUG) << "saving";
+    bool dirty = false;
     for (auto w : m_tabs) {
         w->saveSettings();
+        dirty |= w->isDirty();
     }
+    dirty |= SnoreCore::instance().value("PrimaryBackend", LOCAL_SETTING).toString() != ui->primaryBackendComboBox->currentText();
+    dirty |= SnoreCore::instance().value("Timeout", LOCAL_SETTING).toInt() != ui->timeoutSpinBox->value();
     SnoreCore::instance().setValue("PrimaryBackend", ui->primaryBackendComboBox->currentText(), LOCAL_SETTING);
     SnoreCore::instance().setValue("Timeout", ui->timeoutSpinBox->value(), LOCAL_SETTING);
-    SnoreCorePrivate::instance()->syncSettings();
-}
 
-void Snore::SettingsDialog::on_buttonBox_clicked(QAbstractButton *button)
-{
-    switch (ui->buttonBox->buttonRole(button)) {
-    case QDialogButtonBox::ApplyRole:
-        save();
-        break;
-    case QDialogButtonBox::ResetRole:
-        load();
-        break;
-    default:
-        snoreDebug(SNORE_WARNING) << "unhandled role" << button->text();
+    if (dirty) {
+        SnoreCorePrivate::instance()->syncSettings();
     }
 }
 
-void SettingsDialog::show()
+void SettingsDialog::setVisible(bool b)
 {
-    load();
-    QWidget::show();
+    if (b) {
+        load();
+    } else {
+        save();
+    }
+    QWidget::setVisible(b);
 }
 
 void SettingsDialog::accept()
 {
-    hide();
     save();
-    emit finished();
 }
 
-void SettingsDialog::reject()
+
+void SettingsDialog::reset()
 {
-    hide();
-    emit finished();
+    load();
 }
 

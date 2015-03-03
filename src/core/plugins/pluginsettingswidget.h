@@ -42,6 +42,8 @@ public:
     void loadSettings();
     void saveSettings();
 
+    bool isDirty();
+
 protected:
     QVariant value(const QString &key) const;
     void setValue(const QString &key, const QVariant &value);
@@ -53,6 +55,7 @@ private:
     SnorePlugin *m_snorePlugin;
     QFormLayout *m_layout;
     QCheckBox *m_enabled;
+    bool m_dirty = false;
 
 };
 }

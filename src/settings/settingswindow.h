@@ -7,6 +7,8 @@ namespace Ui {
 class SettingsWindow;
 }
 
+class QAbstractButton;
+
 class SettingsWindow : public QMainWindow
 {
     Q_OBJECT
@@ -16,6 +18,7 @@ public:
     ~SettingsWindow();
 
 private slots:
+    void on_buttonBox_clicked(QAbstractButton *button);
     void on_comboBox_currentIndexChanged(const QString &arg1);
 
 private:
