@@ -22,7 +22,7 @@
 
    在安卓手机上的开发，没有busybox和bash会很痛苦。CyanogenMod项目可能已经提供了busybox，但不知道有没有提供bash——自从我安装了arm版debian之后，我就用它编了静态版的busybox和bash，然后把它们用prebuilt的形式往安卓代码库里一放，非常方便。
 
-   但后来我发现了更好的方法，那就是emdebian项目，也是debian官方的，它提供了在x86平台上针对arm平台的交叉编译链，所以busybox、bash、tar我都改用PC来编了，关键是性能够强劲，一眨眼就编完啊。
+   但后来我发现了更好的方法，那就是emdebian项目，也是debian官方的，它提供了在x86平台上针对arm平台的交叉编译链，所以busybox、bash、tar我都改用PC来编了，关键是性能足够强劲，一眨眼就编完啊。
 
 2. 提供增量备份、还原手机的方法
 
