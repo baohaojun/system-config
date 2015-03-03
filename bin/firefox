@@ -117,7 +117,7 @@ if test $# = 1; then
 fi
 
 if test $# = 2 -a "$1" =  -remote && echo "$2" | perl -ne 'exit(1) unless (m/^openURL\(.*\)$/ && ! (m/^openURL\(.*,\s*new-tab\)$/))'; then
-    set -- -remote "${2/%)/,new-tab)}"
+    set -- -new-tab "$(echo "$2"|perl -npe 's/^openURL\(//; s/\)\$//;')"
 fi
 
 if test "$1" = -current-tab; then
