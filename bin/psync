@@ -5,7 +5,9 @@ if test $# = 0; then
     function do_x() {
         psync $x .
     }
-    for x in code3 rem build build2 pub; do
+    x=code3
+    do_x >/dev/null 2>&1
+    for x in rem build build2 pub; do
         (
             do_x
         )&
