@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/doc/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/src/github/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
    # of Cake.
@@ -186,6 +186,95 @@ function remote-mm() {
 }
 
 
+lock-base-build() {
+    exec 9> $base_build/.abc.lock
+    echo "Will now try to lock: " "$@"
+    flock 9
+    echo "Locked."
+}
+
+lock-file() {
+    exec 9> $1
+    shift
+    echo "Will now try to lock: " "$@"
+    flock 9
+    echo "Locked."
+}
+
+copy-output-files() {
+    set -x
+    echo "$@"
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopts -l t:target
+    ## end code-generator
+    ## start generated code
+    local target=
+    while getopts 't:' opt; do
+        case "$opt" in
+            t)    target=$OPTARG;;
+            *)    echo Usage Error;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    ## end generated code
+    target=/Share/abc/$(basename $base_build)/abc/$target
+
+    mkdir -p $target
+    rsync "$@" $target/ -av
+
+    (
+        cd $target/
+        find . -type d | perl -ne 'use File::Path qw(make_path); chomp; make_path("../$ENV{ABC_USER}/$_")'
+        find . -type f | perl -ne 'chomp; link $_, "../$ENV{ABC_USER}/$_"'
+        rsync . ../$ABC_USER -av
+    )
+}
+
+function repo-cherry-find-all() {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopts -l b:base f:from t:to
+    ## end code-generator
+    ## start generated code
+    local base=
+    local from=
+    local to=
+    while getopts 'b:f:t:' opt; do
+        case "$opt" in
+            b)    base=$OPTARG;;
+            f)    from=$OPTARG;;
+            t)    to=$OPTARG;;
+            *)    echo Usage Error;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    ## end generated code
+
+    if test ! -d ~/buildfarm/"$base"/bionic/.git; then
+        die "Invalid base build: $base"
+    fi
+
+    local base_build=~/buildfarm/"$base"
+    (
+        cd ~/buildfarm/"$base"
+        lock-base-build "sync the repos"
+        if yes-or-no-p "sync the repos?"; then
+            ~/bin/repo sync -n -j2
+        fi
+    )
+
+    (
+        cd ~/buildfarm/"$base"
+        mkdir -p out/diff
+        lock-file out/diff/repo-cherry-find-all.lock "will now lock for repo-cherry-find-all"
+        command repo-cherry-find-all -f $from -t $to
+        base_build=~/buildfarm/"$base"
+        copy-output-files -t repo-cherry-find-all out/diff
+    )
+}
+
+
 function build-request() {
     ## start generated code
     TEMP=$(getopt -o m:hd: --long "method:,help,dir:"  -n $(basename $0) -- "$@")
@@ -206,10 +295,11 @@ You can use this command to submit a build request using a gerrit
 review, specify what to build, and what to copy back into your PC
 using share folder.
 
--m|--method [mm|dep|full|kernel|bootimage]
+-m|--method [mm|dep|full|fullbase|kernel|bootimage]
     MM means use android mm build
     DEP means build the whole dir, including DEPendencies
-    FULL means to do a full build (need 5~8 minutes)
+    FULL means to do a full build (need 10~15 minutes)
+    FULLBASE means repo sync the base and do a full build
     KERNEL means to rebuild kernel and re-generate boot.img and the .ko files (wlan)
     BOOTIMAGE means to build the boot.img (kernel, ramdisk, etc)
 
@@ -279,6 +369,9 @@ EOF
             (
                 cd $base_build
                 clear_all_old_patches
+                if test "$method" = fullbase; then
+                    2nd repo sync -j4 -d
+                fi
             )
 
 
@@ -306,7 +399,7 @@ EOF
     done
 
     if test "$method" = mm; then
-        if test $num_reviews != 1; then
+        if test $num_reviews != 1 && test ! -d "$mm_dir"; then
             die "mm can be used only if there is one review patch"
         fi
 
@@ -341,7 +434,7 @@ EOF
                 android-make -d .
             )
         fi
-    elif test "$method" = full; then
+    elif test "$method" = full -o "$method" = fullbase; then
         android-make
     elif test "$method" = kernel; then
         (
@@ -534,7 +627,7 @@ function remote-abc() {
             psync
         )
     fi
-    ssh $ABC_REMOTE_HOST abc "${@//[^-a-z0-9:\/_ ]/ }"
+    ssh $ABC_REMOTE_HOST abc "${@//[^-.a-z0-9:\/_ ]/ }"
 }
 
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
