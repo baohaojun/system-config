@@ -56,7 +56,8 @@ SnoreCore::~SnoreCore()
 void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
 {
     Q_D(SnoreCore);
-    for (SnorePlugin::PluginTypes type : PluginContainer::types()) {
+    setValue("PluginTypes", QVariant::fromValue(types), LOCAL_SETTING);
+    for (SnorePlugin::PluginTypes type : SnorePlugin::types()) {
         if (type != SnorePlugin::ALL && types & type) {
             for (PluginContainer *info : PluginContainer::pluginCache(type).values()) {
                 SnorePlugin *plugin = info->load();
@@ -137,7 +138,7 @@ const QStringList SnoreCore::pluginNames(SnorePlugin::PluginTypes type) const
 {
     Q_D(const SnoreCore);
     QStringList out;
-    for (auto t : PluginContainer::types()) {
+    for (auto t : SnorePlugin::types()) {
         if (t & type) {
             out.append(d->m_pluginNames.value(t));
         }

@@ -100,7 +100,7 @@ SnorePlugin::PluginTypes SnorePlugin::type() const
 
 const QString SnorePlugin::typeName() const
 {
-    return PluginContainer::typeToString(m_type);
+    return SnorePlugin::typeToString(m_type);
 }
 
 QString SnorePlugin::settingsVersion() const
@@ -118,7 +118,30 @@ bool SnorePlugin::deinitialize()
     return false;
 }
 
-QDebug operator <<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
+SnorePlugin::PluginTypes SnorePlugin::typeFromString(const QString &t)
+{
+    return (SnorePlugin::PluginTypes)SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).keyToValue(t.toUpper().toLatin1());
+}
+
+QString SnorePlugin::typeToString(const SnorePlugin::PluginTypes t)
+{
+    return SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).valueToKey(t);
+}
+
+const QList<SnorePlugin::PluginTypes> &SnorePlugin::types()
+{
+    static QList<SnorePlugin::PluginTypes> t;
+    if (t.isEmpty()) {
+        QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
+        for (int i = 0; i < e.keyCount(); ++i) {
+            t << (SnorePlugin::PluginTypes) e.value(i);
+        }
+    }
+    return t;
+}
+
+
+QDebug operator<<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
 {
     QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
     debug.nospace() << "PluginTypes(";
@@ -134,10 +157,24 @@ QDebug operator <<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
             }
 
             debug.nospace() << e.valueToKey(key);
-
         }
     }
     debug << ')';
     return debug.space();
 
+}
+
+
+QDataStream &operator<<(QDataStream &out, const Snore::SnorePlugin::PluginTypes &type)
+{
+    out << static_cast<int>(type);
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, Snore::SnorePlugin::PluginTypes &type)
+{
+    int key;
+    in >> key;
+    type = static_cast<SnorePlugin::PluginTypes>(key);
+    return in;
 }

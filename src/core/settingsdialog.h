@@ -48,6 +48,9 @@ public:
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
 
+    //TODO: move to private header
+    void initTabs();
+
 
 public slots:
     void setVisible(bool b) override;

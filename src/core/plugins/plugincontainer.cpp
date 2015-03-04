@@ -84,28 +84,6 @@ bool PluginContainer::isLoaded() const
     return m_loader.isLoaded();
 }
 
-SnorePlugin::PluginTypes PluginContainer::typeFromString(const QString &t)
-{
-    return (SnorePlugin::PluginTypes)SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).keyToValue(t.toUpper().toLatin1());
-}
-
-QString PluginContainer::typeToString(const SnorePlugin::PluginTypes t)
-{
-    return SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).valueToKey(t);
-}
-
-const QList<SnorePlugin::PluginTypes> &PluginContainer::types()
-{
-    static QList<SnorePlugin::PluginTypes> t;
-    if (t.isEmpty()) {
-        QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
-        for (int i = 0; i < e.keyCount(); ++i) {
-            t << (SnorePlugin::PluginTypes) e.value(i);
-        }
-    }
-    return t;
-}
-
 void PluginContainer::updatePluginCache()
 {
     snoreDebug(SNORE_DEBUG) << "Updating plugin cache";
@@ -116,7 +94,7 @@ void PluginContainer::updatePluginCache()
         list.clear();
     }
 
-    foreach(const SnorePlugin::PluginTypes type, PluginContainer::types()) {
+    foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
         foreach(const QFileInfo & file, pluginDir().entryInfoList(
                     QStringList(pluginFileFilters(type)), QDir::Files)) {
             snoreDebug(SNORE_DEBUG) << "adding" << file.absoluteFilePath();
@@ -142,7 +120,7 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
     }
 
     QHash<QString, PluginContainer *> out;
-    for (auto t : types()) {
+    for (auto t : SnorePlugin::types()) {
         if (t & type) {
             out.unite(s_pluginCache.value(t));
         }

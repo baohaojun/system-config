@@ -193,6 +193,8 @@ void SnoreCorePrivate::registerMetaTypes()
 {
     qRegisterMetaType<Notification>();
     qRegisterMetaType<Application>();
+    qRegisterMetaType<SnorePlugin::PluginTypes>();
+    qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
 }
 
 QString SnoreCorePrivate::tempPath()

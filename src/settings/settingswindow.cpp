@@ -31,7 +31,8 @@ SettingsWindow::~SettingsWindow()
 void SettingsWindow::on_comboBox_currentIndexChanged(const QString &arg1)
 {
     SnoreCorePrivate::instance()->setLocalSttingsPrefix(arg1);
-    ui->widget->show();
+    ui->widget->initTabs();
+    ui->widget->setVisible(true);
 }
 
 void SettingsWindow::on_buttonBox_clicked(QAbstractButton *button)

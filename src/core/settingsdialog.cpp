@@ -32,13 +32,30 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+    initTabs();
+}
 
+SettingsDialog::~SettingsDialog()
+{
+    delete ui;
+}
+
+void SettingsDialog::initTabs()
+{
+    SnorePlugin::PluginTypes types = SnoreCore::instance().value("PluginTypes", LOCAL_SETTING).value<SnorePlugin::PluginTypes>();
+    if(types == SnorePlugin::NONE)
+    {
+        types = SnorePlugin::ALL;
+    }
     auto addWidgets = [&](QTabWidget *target, QWidget *container, SnorePlugin::PluginTypes type){
         bool enabled = false;
-        for (PluginSettingsWidget *widget : SnoreCore::instance().settingWidgets(type)) {
-            target->addTab(widget, widget->name());
-            m_tabs.append(widget);
-            enabled = true;
+        target->clear();
+        if (types & type) {
+            for (PluginSettingsWidget *widget : SnoreCore::instance().settingWidgets(type)) {
+                target->addTab(widget, widget->name());
+                m_tabs.append(widget);
+                enabled = true;
+            }
         }
         ui->tabWidget->setTabEnabled(ui->tabWidget->indexOf(container), enabled);
     };
@@ -46,11 +63,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     addWidgets(ui->tabWidget_secondary_backends, ui->tab_secondaryBackends, SnorePlugin::SECONDARY_BACKEND);
     addWidgets(ui->tabWidget_frontends, ui->tab_frontends,  SnorePlugin::FRONTEND);
     addWidgets(ui->tabWidget_plugins, ui->tab_plugins, SnorePlugin::PLUGIN);
-}
-
-SettingsDialog::~SettingsDialog()
-{
-    delete ui;
 }
 
 void Snore::SettingsDialog::on_pushButton_clicked()

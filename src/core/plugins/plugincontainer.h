@@ -45,10 +45,6 @@ public:
 
     bool isLoaded() const;
 
-    static SnorePlugin::PluginTypes typeFromString(const QString &t);
-    static QString typeToString(const SnorePlugin::PluginTypes t);
-    static const QList<SnorePlugin::PluginTypes> &types();
-
 private:
     static QHash<SnorePlugin::PluginTypes, PluginContaienrHash > s_pluginCache;
 
@@ -82,7 +78,7 @@ private:
     {
         QStringList out;
         foreach(const QString extention,  pluginExtentions()) {
-            out << QString("libsnore_%1_*.%2").arg(typeToString(type).toLower(), extention);
+            out << QString("libsnore_%1_*.%2").arg(SnorePlugin::typeToString(type).toLower(), extention);
         }
         return out;
     }
