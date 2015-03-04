@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-if ! uname -m | grep arm; then
+if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
     if test ! -d ~/tmp/debian; then
         mkdir -p ~/tmp/
         sudo debootstrap --verbose --arch armel --foreign testing ~/tmp/debian
@@ -20,8 +20,8 @@ if ! uname -m | grep arm; then
         adb 'cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz'
     fi
 
-    my-adb -r push $0 /sdcard/$(basename $0)
-    my-adb bash -x /sdcard/$(basename $0)
+    my-adb -r push $0 /sdcard/$(basename $0) # 把我自己push到手机上
+    my-adb bash -x /sdcard/$(basename $0) # 并执行这个 if ... fi 后面的内容
 
     my-adb chroot /data/debian /bin/bash -c "
     export LD_PRELOAD=
@@ -61,6 +61,8 @@ EOF
 
     exit
 fi
+
+# 这些是在手机上执行的内容
 
 export LD_PRELOAD=
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH

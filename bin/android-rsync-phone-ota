@@ -8,10 +8,10 @@ function die() {
 }
 
 if test ! "$ANDROID_SERIAL"; then
-    export ANDROID_SERIAL=$(select-output-line adb devices?|pn 1)
+    export ANDROID_SERIAL=$(select-output-line my-adb devices?|pn 1)
 fi
 
-adb -r id | grep 'uid=0\b'
+my-adb -r id | grep 'uid=0\b'
 ssh-to-phone echo hello
 
 xml=rawprogram_unsparse.xml
@@ -40,7 +40,7 @@ xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^
             break
         fi
         update-partition $file $part || exit 5
-    done
+    done&
 
 
 export tmpPostfix=$$
@@ -55,11 +55,11 @@ sudo mount -o loop ../system-$tmpPostfix.img system
 
 cd system
 echo doing rsync in $(pwd)
-adb remount
-adb stop
+my-adb remount
+my-adb stop
 
 sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
-adb push media/app /system/media/app
+my-adb push media/app /system/media/app
 sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0'|perl -npe 's/^/chcon /' |tee ../system.chcon
-adb push ../system.chcon /data/
-adb 'cd /system; bash -x /data/system.chcon'
+my-adb push ../system.chcon /data/
+my-adb 'cd /system; bash -x /data/system.chcon'

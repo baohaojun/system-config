@@ -61,7 +61,7 @@ if test "$#" != 0; then
             ;;
         v)
             shift
-            firefox $(github-pagep $(f "$@"))
+            firefox $(github-pagep $(f "$@" .org))
             ;;
         m) # match
             shift
@@ -69,18 +69,18 @@ if test "$#" != 0; then
             file=$(select-output-line -- bash -c "for blog in ${files[*]}; do echo -n \$blog\ ; grep -i -e '#.title:' \$blog|perl -npe 's/#.title:\s*//i'; done"|pn 1)
             link=$file
             blog=$file
-            putclip "[[$link][$(grep -i -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//i')]]"
+            putclip "[[$link][$(grep -i -e '#.title:' "${blog/%.html/.org}"|perl -npe 's/#.title:\s*//i')]]"
             ;;
         p|P)
             a1=$1
             shift
-            blog=$(f "$@")
+            blog=$(f "$@" .org)
             link=$blog
             if test $a1 = P; then
                 link=http://baohaojun.github.io/${blog#./}
                 link=${link%.org}.html
             fi
-            putclip "[[$link][$(grep -i -e '#.title:' "$blog"|perl -npe 's/#.title:\s*//i')]]"
+            putclip "[[$link][$(grep -i -e '#.title:' "${blog/%.html/.org}"|perl -npe 's/#.title:\s*//i')]]"
             ;;
         u)
             shift
