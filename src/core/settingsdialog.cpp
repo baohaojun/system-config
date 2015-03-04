@@ -57,7 +57,15 @@ void SettingsDialog::initTabs()
                 enabled = true;
             }
         }
-        ui->tabWidget->setTabEnabled(ui->tabWidget->indexOf(container), enabled);
+        if (enabled) {
+            if (ui->tabWidget->indexOf(container) == -1) {
+                ui->tabWidget->addTab(container,container->property("TAB_NAME").toString());
+            }
+        } else {
+            int index = ui->tabWidget->indexOf(container);
+            container->setProperty("TAB_NAME", ui->tabWidget->tabText(index));
+            ui->tabWidget->removeTab(index);
+        }
     };
     addWidgets(ui->tabWidget_backends, ui->tab_backends, SnorePlugin::BACKEND);
     addWidgets(ui->tabWidget_secondary_backends, ui->tab_secondaryBackends, SnorePlugin::SECONDARY_BACKEND);
