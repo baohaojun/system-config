@@ -103,9 +103,10 @@ if test "${#dirs[@]}" = 0; then
 else
     dirs=(
         $(
+            cd $(lookup-file -e .repo/..)
             for x in "${dirs[@]}"; do
                 if test -d "$x"; then
-                    repo forall "$x" -c 'echo $REPO_PATH'
+                    repo forall "$(ap "$x")" -c 'echo $REPO_PATH'
                 elif test -f "$x"; then
                     cat "$x" | pn 1 | sort -u
                 else

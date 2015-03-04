@@ -59,12 +59,19 @@ while (<$ctags_out>) {
     $imenu_line_map{$line} = "$line_point_map{$line} : $def_name : $str\n";
 }
 
+
+
 foreach my $line (
     sort
     {
-        ($class_map{$a} cmp $class_map{$b}) or
-            ($imenu_line_def_map{$a} cmp $imenu_line_def_map{$b})
+        if ($mode eq "OrgMode") {
+            $imenu_line_map{$a} <=> $imenu_line_map{$b}
+        } else {
+            ($class_map{$a} cmp $class_map{$b}) or
+                ($imenu_line_def_map{$a} <=> $imenu_line_def_map{$b})
+        }
     } keys %imenu_line_map) {
     print $imenu_line_map{$line}
 }
-# unlink glob("~/.imenu-ctags.$$");
+
+unlink glob("~/.imenu-ctags.$$");

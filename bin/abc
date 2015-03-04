@@ -3,10 +3,11 @@
 # [[file:~/src/github/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
- # of Cake.
+   # of Cake.
 
- # All bash scripts should start with ~set -e~ to fail early and loudly.
- set -e
+   # All bash scripts should start with ~set -e~ to fail early and loudly.
+set -e
+export ABC_REMOTE_HOST=bhj@172.16.2.25
 
 function die() {
     echo Error: "$@"
@@ -99,6 +100,19 @@ function get-base-build-from-branch() {
     fi
 }
 
+
+psync() {
+    command psync "$@" >/dev/null 2>&1
+}
+ssh() {
+    if test $USER = bhj -a -e ~/.ssh/id_rsa_nopass; then
+        unset SSH_AGENT_PID SSH_AUTH_SOCK
+        command ssh -i ~/.ssh/id_rsa_nopass "$@"
+    else
+        command ssh "$@"
+    fi
+}
+
 function remote-mm() {
     if echo $SHELLOPTS | grep -q xtrace; then
         export SHELLOPTS
@@ -124,12 +138,12 @@ function remote-mm() {
         gerrit-push-review -n -R -d
     fi
     if test "$USER" = bhj; then
-        (cd ~; psync 172.16.2.25 system-config) >/dev/null 2>&1
+        (cd ~; psync $ABC_REMOTE_HOST system-config) >/dev/null 2>&1
     fi
     if echo $SHELLOPTS | grep -q xtrace; then
-        ssh -o RequestTTY=yes 172.16.2.25 abc -x build-request $(gerrit-review-url) "$@"
+        ssh -o RequestTTY=yes $ABC_REMOTE_HOST abc -x build-request $(gerrit-review-url) "$@"
     else
-        ssh -o RequestTTY=yes 172.16.2.25 abc build-request $(gerrit-review-url) "$@"
+        ssh -o RequestTTY=yes $ABC_REMOTE_HOST abc build-request $(gerrit-review-url) "$@"
     fi
 }
 
@@ -325,6 +339,10 @@ EOF
 }
 
 function list-base-builds() {
+    if test ! "$SSH_CLIENT"; then
+        ssh $ABC_REMOTE_HOST abc list-base-builds
+        exit
+    fi
     cd ~/buildfarm/
     for x in *; do
         if test -d "$x"; then
@@ -333,6 +351,9 @@ function list-base-builds() {
     done
 }
 
+function lbb() {
+    list-base-builds
+}
 
 function refresh-base-builds() {
     cd ~/buildfarm/
@@ -425,8 +446,51 @@ EOF
     ssh -i ~/.ssh/id_rsa_cmtest cmtest@code -p 29418 gerrit review "$review_patch" --verified $verified -m \'"${message//\'/\'\\\'\'}"\'
 }
 
-# some global variables
-declare -A review_patchset_map
+function abc-files() {
+    ## start generated code
+    TEMP=$(getopt -o b: --long "base:"  -n $(basename $0) -- "$@")
+    local base=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+            -b|--base)
+                base=$2
+                shift 2
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error"
+                ;;
+        esac
+    done
+
+    ## end generated code
+
+    if test ! "$base"; then
+        base=sfo-rom
+    fi
+
+    if test ! -d ~/buildfarm/"$base"; then
+        die "no such base build: $base"
+    fi
+
+    cd -P ~/buildfarm/"$base"
+    beagrep-files "$@" | cut -b $((${#PWD} + 2))-
+}
+
+
+function remote-abc() {
+    if test "$USER" = bhj -a -e '/home/bhj/src/github/projects/abc.org'; then
+        (
+            cd
+            psync $ABC_REMOTE_HOST system-config
+        )
+    fi
+    ssh $ABC_REMOTE_HOST abc "${@//[^-a-z0-9:\/_ ]/ }"
+}
 
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
     if test "$1" = -x; then

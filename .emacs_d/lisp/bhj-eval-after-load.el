@@ -45,6 +45,7 @@
      (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
      (add-hook 'org-mode-hook (lambda ()
                                 (visual-line-mode 1)
+                                (setq imenu-create-index-function #'ajoke--create-index-function)
                                 (define-key org-mode-map [(control c) (v)] 'bhj-todo-from-mail-view-mail)
                                 (define-key org-mode-map [(control c) (s)] (lambda () (interactive) (shell-command-to-string "ask-to-sync-org >/dev/null 2>&1&")))
                                 (define-key org-agenda-mode-map [(control c) (s)] (lambda () (interactive) (shell-command-to-string "ask-to-sync-org >/dev/null 2>&1&")))

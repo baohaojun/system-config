@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if test $# = 0; then
+    cd ~/system-config/
+    for x in code3 rem build build2 pub; do
+        psync $x .&
+    done
+    exit
+fi >/dev/null 2>&1
+
 TEMP=$(getopt -o t:SrdcL --long target-dir:,git-st,reverse,delete,checksum -n $(basename $0) -- "$@")
 reverse=false
 symlink=
