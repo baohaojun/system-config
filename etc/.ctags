@@ -27,6 +27,13 @@
 --regex-antlr=/^([a-z][a-zA-Z0-9_]*)/\1/d,rule/
 --regex-antlr=/^([A-Z][a-zA-Z0-9_]*)/\1/d,token/
 
+--langdef=OrgMode
+--langdef=OrgMode:.org
+--regex-orgmode=/^([ \t]*function[ \t]+)([^ \t]+)/\2/f,function/
+--regex-orgmode=/^(\*+[ \t]+.*)/\1/s,struct/
+--regex-orgmode=/^[ \t]*#\+name:[ \t]+([^ \t]+)/\1/n,name/
+--regex-orgmode=/^[ \t]*<<([^<>]*)>>/\1/c,call/
+
 --langdef=Clojure
 --langmap=Clojure:.clj
 --regex-clojure=/\([ \t]*create-ns[ \t]+([-[:alnum:]*+!_:\/.?]+)/\1/n,namespace/
