@@ -61,7 +61,7 @@ time (
         if test ${PATH_PREPEND}x != x; then
             PATH=$PATH_PREPEND:$PATH
         fi
-        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs all_modules showcommands "$@" 2>&1
+        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs all_modules "$@" 2>&1
     ) | tee ~/.logs/mm.log.$$
 
     echo OK
