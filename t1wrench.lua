@@ -1489,8 +1489,7 @@ t1_find_weixin_contact = function(number)
    adb_shell("am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getcontact 1 --es contact " .. number)
 end
 
-t1_call = function(number)
-   adb_shell("am start -a android.intent.action.DIAL tel:" .. number)
+local press_dial_key = function()
    if not where_is_dial_key then
       where_is_dial_key = select_args{"拨号键在哪儿呢？", "中间", "左数第一个", "左数第二个"}
    end
@@ -1503,6 +1502,16 @@ t1_call = function(number)
       adb_event"adb-tap 420 1634"
    else
       where_is_dial_key = nil
+   end
+end
+
+t1_call = function(number)
+   adb_shell("am start -a android.intent.action.DIAL tel:" .. number)
+   adb_event("sleep .5")
+   press_dial_key()
+   adb_event("sleep 1")
+   if adb_top_window() == "com.android.contacts/com.android.contacts.activities.DialtactsActivity" then
+      press_dial_key()
    end
 end
 
