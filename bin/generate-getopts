@@ -1,5 +1,12 @@
 #!/usr/bin/perl
 use strict;
+
+use Getopt::Long;
+my $local;
+GetOptions(
+    "l!" => sub {$local = "local "; },
+    );
+
 my @args;
 for (@ARGV) {
     my $opt = substr($_, 0, 1);
@@ -19,7 +26,13 @@ for (@ARGV) {
 }
 
 for (@args) {
-    print $_->{name} . "=";
+    print $local, $_->{name};
+    if ($_->{name} =~ m/=/) {
+        $_->{name} =~ s/=.*//;
+    } else {
+        print "=";
+    }
+
     if (not $_->{need_arg}) {
         print "false";
     }

@@ -1,8 +1,6 @@
 #!/bin/bash
 if test -d ~/src/system-config/; then
-    for x in rem code3 build build2 pub; do
-        psync $x .
-    done&
+    psync
     psync -t ~/src/system-config/ localhost .
     cd ~/src/system-config/
     git add .

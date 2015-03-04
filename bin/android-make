@@ -130,7 +130,7 @@ fi
 
 . ~/bin/.android-set-outdir
 
-export CCACHE_DIR=$PWD/$OUT_DIR/.ccache
+export CCACHE_DIR=$PWD/$OUT_DIR/host/.ccache
 echo CCACHE_DIR is $CCACHE_DIR
 rm ~/.ccache || rm -rf ~/.ccache
 ln -s $CCACHE_DIR ~/.ccache

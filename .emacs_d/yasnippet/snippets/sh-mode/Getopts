@@ -3,7 +3,7 @@
 # key: Getopts
 # --
 ## start code-generator "^\\\\s *#\\\\s *"
-# generate-getopts ${1:ggnu p:phone}
+# generate-getopts -l ${1:ggnu p:phone}
 ## end code-generator
 ## start generated code
 
