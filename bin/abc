@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/src/github/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/doc/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
    # of Cake.
@@ -125,25 +125,63 @@ function remote-mm() {
         exit
     fi
 
-    if git st -s | grep .; then
-        if gerrit query --current-patch-set $(gerrit-review-url |perl -npe 's!.*/!!') 2>/dev/null|grep 'status: DRAFT'; then
-            git commit --no-edit --amend -a >/dev/null 2>&1
-        else
-            git add .
-            git commit -m 'abc test build' -a
-        fi
-        gerrit-push-review -n -R -d
+    declare -a repo_dirs
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopts -l d:dir m:make=mm a:add
+    ## end code-generator
+    ## start generated code
+    local dir=
+    local make=mm
+    local add=
+    while getopts 'd:m:a:' opt; do
+        case "$opt" in
+            d)    repo_dirs=("${repo_dirs[@]}" $OPTARG);;
+            m)    make=$OPTARG;;
+            a)    add=$OPTARG;;
+            *)    echo Usage Error;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    ## end generated code
+
+    if test ${#repo_dirs[@]} = 0; then
+        repo_dirs=($PWD)
     fi
-    if [[ "$(gerrit-review-url)" =~ //[^/]*$  ]]; then
-        gerrit-push-review -n -R -d
-    fi
+
+    get-all-urls() {
+        local x
+        for x in "${repo_dirs[@]}"; do
+            (
+                cd "$x"
+                (
+                    if git st -s | grep .; then
+                        if gerrit query --current-patch-set $(gerrit-review-url |perl -npe 's!.*/!!') 2>/dev/null|grep 'status: DRAFT'; then
+                            git commit --no-edit --amend -a >/dev/null 2>&1
+                        else
+                            git add .
+                            git commit -m 'abc test build' -a
+                        fi
+                        gerrit-push-review -n -R -d
+                    fi
+                    if [[ "$(gerrit-review-url)" =~ //[^/]*$  ]]; then
+                        gerrit-push-review -n -R -d
+                    fi
+                ) >/dev/null 2>&1
+            )
+            gerrit-review-url
+        done
+    }
+
     if test "$USER" = bhj; then
-        (cd ~; psync $ABC_REMOTE_HOST system-config) >/dev/null 2>&1
+        psync
     fi
     if echo $SHELLOPTS | grep -q xtrace; then
-        ssh -o RequestTTY=yes $ABC_REMOTE_HOST abc -x build-request $(gerrit-review-url) "$@"
+        ssh -o RequestTTY=yes $ABC_REMOTE_HOST abc -x build-request $(get-all-urls) -m $make $add
     else
-        ssh -o RequestTTY=yes $ABC_REMOTE_HOST abc build-request $(gerrit-review-url) "$@"
+        set -x
+        ssh -o RequestTTY=yes $ABC_REMOTE_HOST abc build-request $(get-all-urls) -m $make $add
     fi
 }
 
@@ -157,7 +195,7 @@ function build-request() {
     while true; do
         case "$1" in
             -m|--method)
-                method=$2
+                method=${2,,}
                 shift 2
                 ;;
             -h|--help)
@@ -168,11 +206,12 @@ You can use this command to submit a build request using a gerrit
 review, specify what to build, and what to copy back into your PC
 using share folder.
 
--m|--method [mm|dep|full|kernel]
+-m|--method [mm|dep|full|kernel|bootimage]
     MM means use android mm build
     DEP means build the whole dir, including DEPendencies
     FULL means to do a full build (need 5~8 minutes)
     KERNEL means to rebuild kernel and re-generate boot.img and the .ko files (wlan)
+    BOOTIMAGE means to build the boot.img (kernel, ramdisk, etc)
 
     Default is mm.
 
@@ -316,6 +355,8 @@ EOF
         android-make msm-kernel &&
             android-make bootimage-nodeps &&
             (cd vendor/qcom/opensource/wlan/prima && mm)
+    elif test "$method" = bootimage; then
+        android-make bootimage
     else
         die "Can't build with method '$method'"
     fi || {
@@ -335,7 +376,7 @@ EOF
         )
     done
 
-    rsync out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root /Share/abc/$(basename $base_build) -av
+    copy-output-files -t "$(basename $(readlink -f out))" out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root
 }
 
 function list-base-builds() {
@@ -376,15 +417,19 @@ function cron-daily-build() {
 
     (
         cd /data/mirror
-        for gitd in $(find . -type d -name '*.git' -print -prune|grep -v /.git); do
+
+        for x in $(ssh smartisan gerrit ls-projects); do
+            if test ! -d $x.git; then
+                git init --bare $x.git
+            fi
             (
-                cd $gitd
-                for remote in $(git remote); do
-                    command git fetch $remote
-                done
+                cd $x.git
+                remote=abc-$(echo $x|md5sum|cut -b 1-3)
+                git remote add $remote smartisan:$x || true
+                git fetch $remote
             )
         done
-    )
+    ) || true
 
     for d in ~/buildfarm/*/; do
         if test ! -d "$d"; then
@@ -486,7 +531,7 @@ function remote-abc() {
     if test "$USER" = bhj -a -e '/home/bhj/src/github/projects/abc.org'; then
         (
             cd
-            psync $ABC_REMOTE_HOST system-config
+            psync
         )
     fi
     ssh $ABC_REMOTE_HOST abc "${@//[^-a-z0-9:\/_ ]/ }"

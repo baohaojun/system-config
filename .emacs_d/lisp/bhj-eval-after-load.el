@@ -204,3 +204,9 @@
               (ajoke--create-index-function))
             (setq imenu-create-index-function #'ajoke--create-index-function))
           t)
+
+;; (defun bhj-fix-babel-tangle-output ()
+;;   (message (buffer-name))
+;;   )
+
+;; (add-hook 'org-babel-post-tangle-hook #'bhj-fix-babel-tangle-output)

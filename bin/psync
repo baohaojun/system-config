@@ -2,11 +2,16 @@
 
 if test $# = 0; then
     cd ~/system-config/
+    function do_x() {
+        psync $x .
+    }
     for x in code3 rem build build2 pub; do
-        psync $x .&
-    done
+        (
+            do_x
+        )&
+    done >/dev/null 2>&1
     exit
-fi >/dev/null 2>&1
+fi
 
 TEMP=$(getopt -o t:SrdcL --long target-dir:,git-st,reverse,delete,checksum -n $(basename $0) -- "$@")
 reverse=false

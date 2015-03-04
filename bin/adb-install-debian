@@ -54,11 +54,12 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
 nameserver $(my-adb getprop net.dns1)
 EOF
     apt-get install -y bash-completion ssh rsync locales
-    dpkg-reconfigure locales
     ln -sf /android/* /
+    touch /dev/.dev-not-mounted
     bash
 "
-
+    ssh-to-phone echo -n
+    ssh -o RequestTTY=yes root@phone dpkg-reconfigure locales
     exit
 fi
 

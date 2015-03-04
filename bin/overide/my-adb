@@ -106,7 +106,7 @@ function adb() {
         )
         if test ${#devices[@]} -gt 1; then
             if test ! -e ~/.config/adb-device || ! echo ${devices[@]} | grep -q $(cat ~/.config/adb-device); then
-                command adb -S
+                command my-adb -S
             fi
             export ANDROID_SERIAL=$(cat ~/.config/adb-device)
         else
@@ -128,7 +128,7 @@ function adb() {
         for x in $(seq 1 ${2:-60}); do
             sleep 1
             if test $(adb devices |grep -v 'List of devices attached'| grep $ANDROID_SERIAL. | wc -l) -gt 0; then
-                if test "$(command adb echo hello)" = hello; then
+                if test "$(command my-adb echo hello)" = hello; then
                     exit 0;
                 fi
             fi
@@ -171,12 +171,12 @@ function adb() {
     if test "$1" = remount; then
         if test "$#" = 1; then
             the-true-adb remount
-            command adb shell su -c 'mount -o rw,remount /system;
+            command my-adb shell su -c 'mount -o rw,remount /system;
                                      mount -o remount,rw /system /data/debian/android/system >/dev/null 2>&1
                                      mount | grep /system'
             exit
         elif test "$2" = /; then
-            command adb shell su -c 'mount -o rw,remount /; mount | grep rootfs'
+            command my-adb shell su -c 'mount -o rw,remount /; mount | grep rootfs'
             exit
         fi
     fi
@@ -195,7 +195,7 @@ function adb() {
         exit 0
     fi
     if test "$#" = 1 -a "$1" = romount; then
-        command adb shell su -c 'mount -o ro,remount /system; mount | grep /system'
+        command my-adb shell su -c 'mount -o ro,remount /system; mount | grep /system'
         exit
     fi
 
@@ -267,7 +267,7 @@ function adb() {
     elif test "$1" = getprop -a $# -gt 2; then
         shift
         for prop in "$@"; do
-            command adb "echo -n '$prop: '; getprop $prop" </dev/null
+            command my-adb "echo -n '$prop: '; getprop $prop" </dev/null
         done
         exit
     elif test $# -gt 1 -a "$1" = shell; then

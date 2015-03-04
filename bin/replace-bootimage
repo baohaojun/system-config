@@ -29,7 +29,7 @@ function die() {
     echo Error: "$@"
     exit -1
 }
-boot_part=$(adb 'echo /dev/block/platform/*/by-name/boot')
+boot_part=$(my-adb 'echo /dev/block/platform/*/by-name/boot')
 if test ! -e "$boot"; then
     if test "$boot" = adb; then
         my-adb -r echo hello

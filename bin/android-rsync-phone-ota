@@ -63,3 +63,8 @@ my-adb push media/app /system/media/app
 sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0'|perl -npe 's/^/chcon /' |tee ../system.chcon
 my-adb push ../system.chcon /data/
 my-adb 'cd /system; bash -x /data/system.chcon'
+cd ..
+umount system
+oldpwd=$PWD
+cd ..
+rm $oldpwd -rf

@@ -14,7 +14,7 @@ function die() {
     echo Error: "$@"
     exit -1
 }
-if ! adb -r id | grep 'uid=0(root)' -q; then
+if ! my-adb -r id | grep 'uid=0(root)' -q; then
     exit 1
 fi
 
