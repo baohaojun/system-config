@@ -29,18 +29,23 @@ using namespace Snore;
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::SettingsDialog),
-    m_app(new Application("SnoreSettings", Icon(":/root/snore.png"))),
-    m_alert(new Alert("Test", Icon(":/root/snore.png")))
+    ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
 
-    m_app->addAlert(*m_alert);
-
-    for (auto widget : SnoreCore::instance().settingWidgets()) {
-        ui->tabWidget->addTab(widget, widget->name());
-        m_tabs.append(widget);
-    }
+    auto addWidgets = [&](QTabWidget *target, QWidget *container, SnorePlugin::PluginTypes type){
+        bool enabled = false;
+        for (PluginSettingsWidget *widget : SnoreCore::instance().settingWidgets(type)) {
+            target->addTab(widget, widget->name());
+            m_tabs.append(widget);
+            enabled = true;
+        }
+        ui->tabWidget->setTabEnabled(ui->tabWidget->indexOf(container), enabled);
+    };
+    addWidgets(ui->tabWidget_backends, ui->tab_backends, SnorePlugin::BACKEND);
+    addWidgets(ui->tabWidget_secondary_backends, ui->tab_secondaryBackends, SnorePlugin::SECONDARY_BACKEND);
+    addWidgets(ui->tabWidget_frontends, ui->tab_frontends,  SnorePlugin::FRONTEND);
+    addWidgets(ui->tabWidget_plugins, ui->tab_plugins, SnorePlugin::PLUGIN);
 }
 
 SettingsDialog::~SettingsDialog()
@@ -50,10 +55,8 @@ SettingsDialog::~SettingsDialog()
 
 void Snore::SettingsDialog::on_pushButton_clicked()
 {
-    if (!SnoreCore::instance().aplications().contains(m_app->name())) {
-        SnoreCore::instance().registerApplication(*m_app);
-    }
-    Notification noti(*m_app, *m_alert, "Hello World",
+    Application app = SnoreCorePrivate::instance()->defaultApplication();
+    Notification noti(app, app.alerts()["Default"], "Hello World",
                       "<i>This is Snore</i><br>"
                       "<a href=\"https://github.com/TheOneRing/Snorenotify\">Project Website</a><br>",
                       Icon(":/root/snore.png"));
@@ -106,7 +109,6 @@ void SettingsDialog::accept()
 {
     save();
 }
-
 
 void SettingsDialog::reset()
 {

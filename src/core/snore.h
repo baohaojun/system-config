@@ -109,7 +109,7 @@ public:
      *
      * @return a list of plugins
      */
-    const QStringList pluginNames(SnorePlugin::PluginTypes type) const;
+    const QStringList pluginNames(SnorePlugin::PluginTypes type = SnorePlugin::ALL) const;
 
     /**
      *
@@ -154,7 +154,7 @@ public:
      *
      * @return A list of widgets a settings dialog.
      */
-    QList<PluginSettingsWidget *> settingWidgets();
+    QList<PluginSettingsWidget *> settingWidgets(SnorePlugin::PluginTypes type);
 
     QVariant value(const QString &key, SettingsType type = GLOBAL_SETTING) const;
     void setValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);

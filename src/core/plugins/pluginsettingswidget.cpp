@@ -31,7 +31,6 @@ PluginSettingsWidget::PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *pa
     m_enabled(new QCheckBox)
 {
     setLayout(m_layout);
-    addRow("Type:", new QLabel(snorePlugin->typeName()));
     if (m_snorePlugin->type() != SnorePlugin::BACKEND) {
         // backends are handled through a combo box.
         addRow("Enabled:", m_enabled);

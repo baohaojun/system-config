@@ -61,8 +61,6 @@ private slots:
 
 private:
     Ui::SettingsDialog *ui;
-    QScopedPointer<Application> m_app;
-    QScopedPointer<Alert> m_alert;
     QList<Snore::PluginSettingsWidget *> m_tabs;
 
 };

@@ -188,12 +188,13 @@ void SnoreCore::setDefaultApplication(Application app)
     d->m_defaultApp = app;
 }
 
-QList<PluginSettingsWidget *> SnoreCore::settingWidgets()
+QList<PluginSettingsWidget *> SnoreCore::settingWidgets(SnorePlugin::PluginTypes type)
 {
     Q_D(SnoreCore);
     QList<PluginSettingsWidget *> list;
-    for (auto p : d->m_plugins) {
+    for (auto name : d->m_pluginNames[type]) {
 //TODO: mem leak?
+        SnorePlugin *p = d->m_plugins[name];
         PluginSettingsWidget *widget = p->settingsWidget();
         if (widget) {
             list.append(widget);
