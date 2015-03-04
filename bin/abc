@@ -7,7 +7,10 @@
 
    # All bash scripts should start with ~set -e~ to fail early and loudly.
 set -e
-export ABC_REMOTE_HOST=bhj@172.16.2.25
+
+if test "$ABC_REMOTE_HOST" = ""; then
+    export ABC_REMOTE_HOST=bhj@172.16.2.25
+fi
 
 function die() {
     echo Error: "$@"
@@ -35,7 +38,8 @@ function is-a-subdir() {
     return 1
 }
 
-function clear_all_old_patches() {
+clear_all_old_patches() {
+    echo clear_all_old_patches
     local repo_dir=$(lookup-file -e .repo)
     mkdir -p $repo_dir/patches
     for x in $(
@@ -50,6 +54,7 @@ function clear_all_old_patches() {
         (
             cd $repo_dir/..
             project=${x//%/\/}
+            echo clearing old patches in $project
             cd $project
             if test ! -d .git; then
                 die "not a project: $project"
@@ -59,6 +64,7 @@ function clear_all_old_patches() {
             git clean -xfd
         )
     done
+    rm $repo_dir/patches -rf
 }
 
 function mark_a_patch() {
@@ -134,6 +140,7 @@ function remote-mm() {
     local dir=
     local make=mm
     local add=
+    local OPTIND=1
     while getopts 'd:m:a:' opt; do
         case "$opt" in
             d)    repo_dirs=("${repo_dirs[@]}" $OPTARG);;
@@ -209,6 +216,7 @@ copy-output-files() {
     ## end code-generator
     ## start generated code
     local target=
+    local OPTIND=1
     while getopts 't:' opt; do
         case "$opt" in
             t)    target=$OPTARG;;
@@ -239,6 +247,7 @@ function repo-cherry-find-all() {
     local base=
     local from=
     local to=
+    local OPTIND=1
     while getopts 'b:f:t:' opt; do
         case "$opt" in
             b)    base=$OPTARG;;

@@ -39,6 +39,7 @@ for (@args) {
     print "\n";
 }
 
+printf "$local" . "OPTIND=1\n";
 printf "while getopts '%s' opt; do\n", join ("", map {$_->{opt} . ($_->{need_arg} ? ':' : '')} @args);
 print 'case "$opt" in' . "\n";
 

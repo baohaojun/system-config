@@ -5,6 +5,11 @@ if test $# = 0; then
     function do_x() {
         psync $x .
     }
+    if test "$ABC_REMOTE_HOST"; then
+        x=$ABC_REMOTE_HOST
+        do_x
+        exit
+    fi
     x=code3
     do_x >/dev/null 2>&1
     for x in rem build build2 pub; do

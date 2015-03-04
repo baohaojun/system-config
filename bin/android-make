@@ -156,6 +156,11 @@ fi
 
 test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use android-make -c CONFIG, for e.g., aosp_x86-eng; exit; }
 
+do_nice="schedtool -B -n 1 -e ionice -n 1"
+if test "$DONT_DO_NICE" = true; then
+    do_nice=
+fi
+
 (
     time (
         set -e
@@ -181,18 +186,18 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use a
             if test $# = 1 -a $1 = msm-kernel; then
                 (
                     cd build/target/board
-                    mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs $verbose
+                    $do_nice mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs $verbose
                 )
             elif test $# = 1 -a $1 = lk; then
                 (
                     cd build/target/board
-                    mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs $verbose
+                    $do_nice mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs $verbose
                 )
             else
-                schedtool -B -n 1 -e ionice -n 1 make -j$jobs $keep $* $verbose
+                $do_nice make -j$jobs $keep $* $verbose
             fi
         else
-            schedtool -B -n 1 -e ionice -n 1 make -j$jobs $keep $targets
+            $do_nice make -j$jobs $keep $targets
         fi && result=$result'all ok; ' && echo build is successful || true
         echo
         echo "full build result is $result"

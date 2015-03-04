@@ -5,8 +5,8 @@ function die() {
 }
 
 PATH_PREPEND=
-TEMP=$(getopt -o p: -n $(basename $0) -- "$@")
-
+TEMP=$(getopt -o p:j: -n $(basename $0) -- "$@")
+jobs=-j8
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -16,6 +16,10 @@ while true; do
             else
                 PATH_PREPEND=$2
             fi
+            shift 2
+            ;;
+        -j)
+            jobs=-j$2
             shift 2
             ;;
         --)
@@ -57,7 +61,7 @@ time (
         if test ${PATH_PREPEND}x != x; then
             PATH=$PATH_PREPEND:$PATH
         fi
-        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make all_modules showcommands "$@" 2>&1
+        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs all_modules showcommands "$@" 2>&1
     ) | tee ~/.logs/mm.log.$$
 
     echo OK
