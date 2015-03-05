@@ -71,7 +71,7 @@ public:
      *
      * @param types the type of tha plugin
      */
-    void loadPlugins(SnorePlugin::PluginTypes types);
+    Q_INVOKABLE void loadPlugins(Snore::SnorePlugin::PluginTypes types);
 
     /**
      * Broadcast a notification.

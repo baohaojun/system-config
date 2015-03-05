@@ -41,7 +41,7 @@ GrowlBackend::~GrowlBackend()
 
 bool GrowlBackend::initialize()
 {
-    if (Growl::init((GROWL_CALLBACK)&GrowlBackend::gntpCallback) && Growl::isRunning(GROWL_TCP)) {
+    if (Growl::init((GROWL_CALLBACK)&GrowlBackend::gntpCallback) && Growl::isRunning(GROWL_TCP, value("Host").toString().toUtf8().constData())) {
         return SnoreBackend::initialize();
     }
     snoreDebug(SNORE_DEBUG) << "Growl is not running";

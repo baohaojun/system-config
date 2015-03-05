@@ -29,11 +29,15 @@
 #include <iostream>
 
 #include <QSettings>
+#include <QThread>
 
 using namespace Snore;
 
 SnoreCore::SnoreCore()
 {
+    if (QThread::currentThread() != qApp->thread() ) {
+        moveToThread(qApp->thread());
+    }
     SnoreCorePrivate::registerMetaTypes();
     d_ptr = new SnoreCorePrivate();
     Q_D(SnoreCore);
@@ -55,6 +59,11 @@ SnoreCore::~SnoreCore()
 
 void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
 {
+    if (QThread::currentThread() != thread() ) {
+        snoreDebug(SNORE_DEBUG) << "Delayed Plugin loading." << QThread::currentThread() << thread();
+        QMetaObject::invokeMethod(this, "loadPlugins", Qt::BlockingQueuedConnection, Q_ARG(Snore::SnorePlugin::PluginTypes, types));
+        return;
+    }
     Q_D(SnoreCore);
     setValue("PluginTypes", QVariant::fromValue(types), LOCAL_SETTING);
     for (SnorePlugin::PluginTypes type : SnorePlugin::types()) {
@@ -64,7 +73,6 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 if (!plugin) {
                     continue;
                 }
-
                 switch (info->type()) {
                 case SnorePlugin::BACKEND:
                     break;
