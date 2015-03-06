@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+. ~/.config/ssh-agent
+if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication agent'; then
+    start_ssh_agent() {
+        (
+            set -e
+            umask 077
+            ssh-agent > ~/.config/ssh-agent.$$
+            grep "^echo" -v ~/.config/ssh-agent.$$ > ~/.config/ssh-agent.$$.2
+            rm ~/.config/ssh-agent.$$
+            mv ~/.config/ssh-agent.$$.2 ~/.config/ssh-agent
+        )
+        . ~/.config/ssh-agent
+    }
+
+    if test ! -e ~/.config/ssh-agent; then
+        echo 1>&2 no ssh-agent found, restart it
+        start_ssh_agent
+    else
+        . ~/.config/ssh-agent
+    fi
+
+    val=0
+    ssh-add -l >/dev/null 2>&1 || val=$?
+    if test $val = 2; then
+        echo 1>&2 "can't connect to ssh-agent, restart it"
+        rm ~/.config/ssh-agent
+        start_ssh_agent
+    fi
+fi
+
+env=$(cat <<EOF
+(progn
+  (setenv "SSH_AUTH_SOCK" "$SSH_AUTH_SOCK")
+  (setenv "SSH_AGENT_PID" "$SSH_AGENT_PID"))
+EOF
+   )
+sawfish-client -e "$env"
+emacsclient -e "$env"
+for x in $(find ~/.ssh/ -name 'id_rsa*'|grep -v '\.pub'); do (do-ssh-add -- -k $x&); done

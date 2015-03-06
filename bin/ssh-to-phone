@@ -1,5 +1,39 @@
 #!/bin/bash -i
 
+if test $(basename $0) = start-rndis; then
+    init_rndis() {
+        write() {
+            echo $2 > $1
+        }
+
+
+        if ! echo "$(cat /sys/class/android_usb/android0/functions)" | grep rndis; then
+            exec > /data/1.txt 2>&1
+            set -x
+            echo shit > /data/1.txt
+            stop adbd
+            write /sys/class/android_usb/android0/enable 0
+            write /sys/class/android_usb/android0/idVendor 05C6
+            write /sys/class/android_usb/android0/idProduct 9024
+            write /sys/class/android_usb/android0/functions rndis,adb
+            write /sys/class/android_usb/android0/enable 1
+            start adbd
+        fi
+    }
+    if test "$(getprop persist.sys.usb.config)" != rndis,adb; then
+        init_rndis
+    fi
+    while ! netcfg|grep 'rndis0.*UP'; do
+        if ! netcfg|grep 'rndis0.*'; then
+            init_rndis
+            sleep 1
+        fi
+        netcfg rndis0 up
+    done;
+    ifconfig rndis0 192.168.15.244
+    exit
+fi
+
 # instead of scp in the name, we are going to use rsync
 if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
     my-adb -S
@@ -19,6 +53,7 @@ if ! my-adb -r id | grep 'uid=0(root)' -q; then
 fi
 
 my-adb push ~/system-config/doc/galaxy-nexus-root/data/start-debian2.sh /data/start-debian2.sh
+my-adb push $0 /data/start-rndis
 my-adb shell su -c "set -x; rm -r /data/start-debian.done; bash $xset /data/start-debian2.sh && touch /data/start-debian.done"
 if ! my-adb 'if test -e /data/start-debian.done; then echo start debian done; fi' | grep 'start debian done'; then
     if test $(basename $0) = net-for-phone; then
@@ -27,22 +62,12 @@ if ! my-adb 'if test -e /data/start-debian.done; then echo start debian done; fi
         die debian not started successfully
     fi
 fi
-if ! my-adb -w shell netcfg|grep -q 'rndis0.*129/'; then
-    my-adb shell su -c "
-        setsid setsid sh -c '
-            if test \"\$(getprop persist.sys.usb.config)\" != rndis,adb; then
-                setprop persist.sys.usb.config rndis,adb;
-            fi
-            while ! netcfg|grep 'rndis0.*UP'; do
-                if ! netcfg|grep 'rndis0.*'; then
-                    setprop persist.sys.usb.config rndis,adb;
-                    sleep 1
-                fi
-                netcfg rndis0 up
-            done;
-            ifconfig rndis0 192.168.15.244
-        '"
-    sleep 1
+
+if ! my-adb -w shell netcfg|grep -q 'rndis0.*192.168'; then
+    my-adb shell bash -c "setsid setsid nohup bash -x /data/start-rndis"
+    sleep 3
+else
+    echo "no need to start rndis"
 fi
 
 export USB0=eth1

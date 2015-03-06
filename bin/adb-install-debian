@@ -4,20 +4,22 @@ set -e
 if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
     if test ! -d ~/tmp/debian; then
         mkdir -p ~/tmp/
-        sudo debootstrap --verbose --arch armel --foreign testing ~/tmp/debian
+        sudo debootstrap --include=bash-completion,ssh,rsync,locales --verbose --arch armel --foreign testing ~/tmp/debian
+        sudo perl -npe 's!(^\s*in_target mount -t sysfs sysfs /sys[ \t]*)$!$& || true\n!' -i ~/tmp/debian/debootstrap/functions
+        sudo touch ~/tmp/debian/dev/.dev-not-mounted
     fi
 
     if test ! -e ~/tmp/debian.tgz; then
 
         (
-            cd tmp
-            sudo tar czfv debian.tgz debian
+            cd ~/tmp
+            sudo tar czfv debian.tgz debian --exclude-vcs
         )
     fi
 
     if ! my-adb "test -d /data/debian && echo yes$$" | grep -q yes$$; then
-        adb push ~/tmp/debian.tgz /data/deb.tgz
-        adb 'cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz'
+        my-adb push ~/tmp/debian.tgz /data/deb.tgz
+        my-adb 'cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz'
     fi
 
     my-adb -r push $0 /sdcard/$(basename $0) # 把我自己push到手机上
@@ -58,6 +60,8 @@ EOF
     touch /dev/.dev-not-mounted
     bash
 "
+    my-adb -r stop
+    my-adb shell sync
     ssh-to-phone echo -n
     ssh -o RequestTTY=yes root@phone dpkg-reconfigure locales
     exit

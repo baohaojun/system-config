@@ -12,20 +12,35 @@ if test "$ABC_REMOTE_HOST" = ""; then
     export ABC_REMOTE_HOST=bhj@172.16.2.25
 fi
 
-function die() {
-    echo Error: "$@"
+if test -e ~/src/github/projects/abc.org -a ~/src/github/projects/abc.org -nt ~/bin/abc; then
+    emacsclient -e '
+        (progn
+         (save-some-buffers t)
+         (find-file "~/src/github/projects/abc.org")
+         (org-babel-tangle))' && touch ~/bin/abc && exec $0 "$@"
+fi
+
+
+die() {
+    (
+        echo $(date): "($ABC_USER $SSH_ORIGINAL_COMMAND)" Error: "$@"
+        echo
+    ) |
+        (
+            flock ~/.logs/abc.err.lock tee -a ~/.logs/abc.err.txt
+        )
     exit -1
 }
 
-function repo() {
+repo() {
     ~/bin/repo "$@"
 }
 
-function android-make() {
+android-make() {
     command android-make -j8 "$@"
 }
 
-function is-a-subdir() {
+is-a-subdir() {
     dir1=$(readlink -f "$1")
     dir2=$(readlink -f "$2")
     # test if dir1 is in a subdir of $dir2
@@ -37,6 +52,81 @@ function is-a-subdir() {
     fi
     return 1
 }
+
+info() {
+    echo "$@" 1>&2
+}
+function killlock() { # can kill run-away abc tasks.
+    get-base-build "$@"
+
+    (
+        cd "$base_build"
+        dump1lock .abc.lock|
+            while read pid ppid etime command; do
+                if test "$ppid" = 1; then
+                    echo will now kill $pid: $command
+                    (
+                        set -x
+                        kill $pid
+                        sleep 1
+                        kill -9 $pid
+                        sleep 1
+                        ps $pid || true
+                    )
+
+                fi
+            done
+    )
+}
+
+get-base-build() {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopts -l b:base
+    ## end code-generator
+    ## start generated code
+    local base=
+    local OPTIND=1
+    while getopts 'b:' opt; do
+        case "$opt" in
+            b)    base=$OPTARG;;
+            *)    echo Usage Error;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    ## end generated code
+
+    base_build=~/buildfarm/$base
+    if test "$base" -a -d "$base_build"; then
+        true
+    else
+        die "Invalid base build: $base_build"
+    fi
+}
+
+dump1lock() {
+    if test $# != 1; then
+        die "dump1lock usage error"
+    fi
+    if fuser "$1" >/dev/null 2>&1; then
+        info "These processes are using $1"
+        (fuser "$1" |grep . || echo 1) | xargs ps -o pid,ppid,etime,command
+    fi
+}
+
+function dumpsys() { # dump the system state (e.g., who is locking the base build?)
+    get-base-build "$@"
+    (
+        cd "$base_build"
+
+        dump1lock .abc.lock
+        for x in ???/.android-full-build.lock; do
+            dump1lock $x
+        done
+        uptime
+    )
+}
+
 
 clear_all_old_patches() {
     echo clear_all_old_patches
@@ -67,7 +157,7 @@ clear_all_old_patches() {
     rm $repo_dir/patches -rf
 }
 
-function mark_a_patch() {
+mark_a_patch() {
     local repo_dir=$(lookup-file -e .repo)
     mkdir -p $repo_dir/patches
     local project=$1
@@ -78,29 +168,12 @@ function mark_a_patch() {
 }
 
 
-function get-base-build() {
-    review_id=$1
-    if [[ "$review_id" =~ http:// ]]; then
-        review_id=$(basename "$review_id")
-    fi
-
-    review_info=$(ssh smartisan gerrit query review_id)
-
-    branch=$(echo "$review_info" | grep "^\s+branch:" -P | pn 2)
-    project=$(echo "$review_info" | grep "^\s+project:" -P | pn 2)
-
-    # fix me: how to calculate the base build for this?
-    echo ~/buildfarm/sfo-rom
-}
-
-function get-base-build-from-branch() {
+get-base-build-from-branch() {
     local branch=$1
-    if test "$branch" = sfo-rom; then
-        echo ~/buildfarm/sfo-rom
-    elif test "$branch" = icesky-r1221; then
-        echo ~/buildfarm/icesky
-    elif test -e ~/buildfarm/."$branch"; then
+    if test -e ~/buildfarm/."$branch"; then
         readlink -f ~/buildfarm/."$branch"
+    elif test -d ~/buildfarm/"$branch"; then
+        echo ~/buildfarm/"$branch"
     else
         die "Can't decide the base build for branch: '$branch'"
     fi
@@ -108,6 +181,11 @@ function get-base-build-from-branch() {
 
 
 psync() {
+    if test "$testabc" = true; then
+        echo testing abc
+    else
+        return 0
+    fi
     command psync "$@" >/dev/null 2>&1
 }
 ssh() {
@@ -119,13 +197,14 @@ ssh() {
     fi
 }
 
-function remote-mm() {
+function remote-mm() { # submit a remote build request, preferably using 'mm'
     if echo $SHELLOPTS | grep -q xtrace; then
         export SHELLOPTS
     fi
 
     if test $(pwd) = ~/src/linux; then
-        psync -S -t ~/src/android/kernel/ localhost .
+        echo doing my linux hack
+        command psync -S -t ~/src/android/kernel/ localhost .
         cd ~/src/android/kernel/
         remote-mm "$@"
         exit
@@ -134,16 +213,18 @@ function remote-mm() {
     declare -a repo_dirs
 
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopts -l d:dir m:make=mm a:add
+    # generate-getopts -l xdebug d:dir m:make=mm a:add
     ## end code-generator
     ## start generated code
+    local debug=false
     local dir=
     local make=mm
     local add=
     local OPTIND=1
-    while getopts 'd:m:a:' opt; do
+    while getopts 'xd:m:a:' opt; do
         case "$opt" in
-            d)    repo_dirs=("${repo_dirs[@]}" $OPTARG);;
+            x)    debug=true;;
+            d)    dir=$OPTARG;;
             m)    make=$OPTARG;;
             a)    add=$OPTARG;;
             *)    echo Usage Error;;
@@ -184,12 +265,12 @@ function remote-mm() {
     if test "$USER" = bhj; then
         psync
     fi
-    if echo $SHELLOPTS | grep -q xtrace; then
-        ssh -o RequestTTY=yes $ABC_REMOTE_HOST abc -x build-request $(get-all-urls) -m $make $add
-    else
-        set -x
-        ssh -o RequestTTY=yes $ABC_REMOTE_HOST abc build-request $(get-all-urls) -m $make $add
+
+    local xdebug=
+    if test $debug = true || echo $SHELLOPTS | grep -q xtrace; then
+        xdebug=-x
     fi
+    ssh -o RequestTTY=yes $ABC_REMOTE_HOST abc $xdebug build-request $(get-all-urls) -m $make $add
 }
 
 
@@ -226,20 +307,23 @@ copy-output-files() {
     shift $(($OPTIND - 1))
 
     ## end generated code
-    target=/Share/abc/$(basename $base_build)/abc/$target
+    target=~/buildfarm/.abc-output/$(basename $base_build)/$target
 
     mkdir -p $target
-    rsync "$@" $target/ -av
+    rsync "$@" $target/ -av --delete
 
     (
         cd $target/
-        find . -type d | perl -ne 'use File::Path qw(make_path); chomp; make_path("../$ENV{ABC_USER}/$_")'
-        find . -type f | perl -ne 'chomp; link $_, "../$ENV{ABC_USER}/$_"'
-        rsync . ../$ABC_USER -av
+        export ABC_USER_OUTPUT=../by-user/$ABC_USER
+        find . -type d | perl -ne 'use File::Path qw(make_path); chomp; make_path("$ENV{ABC_USER_OUTPUT}/$_")'
+        find . -type f | perl -ne 'chomp; link $_, "$ENV{ABC_USER_OUTPUT}/$_"'
+        rsync . $ABC_USER_OUTPUT -av
     )
 }
 
-function repo-cherry-find-all() {
+function repo-cherry-find-all() { # find all patches that needs
+                                  # cherry-picking between 2 branches.
+
     ## start code-generator "^\\s *#\\s *"
     # generate-getopts -l b:base f:from t:to
     ## end code-generator
@@ -284,7 +368,7 @@ function repo-cherry-find-all() {
 }
 
 
-function build-request() {
+function build-request() { # submit a build request
     ## start generated code
     TEMP=$(getopt -o m:hd: --long "method:,help,dir:"  -n $(basename $0) -- "$@")
     method=mm
@@ -464,7 +548,6 @@ EOF
     fi || {
         for review_id in "$@"; do
             (
-                set -x
                 gerrit-build-review "$review_id" -1
             )
         done
@@ -474,14 +557,14 @@ EOF
     for review_id in "$@"; do
         (
             set -x
-            gerrit-build-review "$review_id" 1
+            gerrit-build-review "$review_id" +1
         )
     done
 
     copy-output-files -t "$(basename $(readlink -f out))" out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root
 }
 
-function list-base-builds() {
+function list-base-builds() { # list base builds
     if test ! "$SSH_CLIENT"; then
         ssh $ABC_REMOTE_HOST abc list-base-builds
         exit
@@ -494,31 +577,22 @@ function list-base-builds() {
     done
 }
 
-function lbb() {
+function lbb() { # alias for lbb
     list-base-builds
 }
 
-function refresh-base-builds() {
-    cd ~/buildfarm/
-    for x in */.repo/; do
-        if test ! -d "$x"; then
-            continue;
-        fi
-        (
-            cd "$x"/manifests
-            git reset --hard
-            cd ../..
-            android-make
-            # fixme export the manifest.
-        )
-    done
+abc-notify-maintainer() {
+    /usr/bin/mailx -r baohaojun@gmail.com "$@" baohaojun@smartisan.com   < /dev/null
 }
 
-function cron-daily-build() {
+function cron-daily-build() { # do a daily build using cron. do not submit this task!
     . ~/.config/ssh-agent
 
     (
         cd /data/mirror
+        if test ! -e .owned-by-abc; then
+            exit
+        fi
 
         for x in $(ssh smartisan gerrit ls-projects); do
             if test ! -d $x.git; then
@@ -533,38 +607,80 @@ function cron-daily-build() {
         done
     ) || true
 
-    for d in ~/buildfarm/*/; do
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopts -l b:base_builds
+    ## end code-generator
+    ## start generated code
+    local -a base_builds=()
+    local OPTIND=1
+    while getopts 'b:' opt; do
+        case "$opt" in
+            b)    base_builds=("${base_builds[@]}" "$OPTARG");;
+            *)    echo Usage Error;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    ## end generated code
+
+    if test ${#base_builds[@]} = 0; then
+        base_builds=(
+            $(
+                cd ~/buildfarm/
+                for x in *; do
+                    echo $x
+                done | sort
+            )
+        )
+    fi
+
+
+    for b in "${base_builds[@]}"; do
+        d=~/buildfarm/$b
+        local base_build=$d
         if test ! -d "$d"; then
+            continue;
+        fi
+
+        if test -L "$d"; then
             continue;
         fi
         (
             cd "$d"/.repo/manifests
             git reset --hard
         )
-        cd "$d"
-        repo sync -j8 -d
         (
-            android-make
-            repo manifest -r -o .repo/manifest.xml.build
-            cat .repo/manifest.xml.build > .repo/manifest.xml
-        ) || (
-            if test -e .repo/manifest.xml.build; then
-                cat .repo/manifest.xml.build > .repo/manifest.xml
+            cd "$d"
+            lock-base-build "Will do cron daily build now"
+            repo sync -j8 -d || (
+                my-rfa "git reset --hard; git clean -xfd"
                 repo sync -j8 -d
+            ) || abc-notify-maintainer -s "repo sync failed for $PWD"
+            (
                 android-make
-            fi
+                repo manifest -r -o .repo/manifest.xml.build
+                cat .repo/manifest.xml.build > .repo/manifest.xml
+            ) || (
+                if test -e .repo/manifest.xml.build; then
+                    (
+                        cat .repo/manifest.xml.build > .repo/manifest.xml
+                        repo sync -j8 -d
+                        android-make
+                    ) || abc-notify-maintainer -s "Full build failed again for $PWD" -a buildspec.mk
+                fi
+            ) || true
+            mkbeagrepidx || true
         )
-        mkbeagrepidx || true
     done
 }
 
-function gerrit-build-review() {
+gerrit-build-review() {
     review_id=$1
     review_patch=${review_patchset_map[$review_id]}
 
 
     verified=${2:-1}
-    if test "$verified" = 1; then
+    if test "$verified" = +1; then
         message=$(
             cat <<EOF
 This is an automated message from the Android Build Cake.
@@ -593,7 +709,9 @@ EOF
     ssh -i ~/.ssh/id_rsa_cmtest cmtest@code -p 29418 gerrit review "$review_patch" --verified $verified -m \'"${message//\'/\'\\\'\'}"\'
 }
 
-function abc-files() {
+function abc-files() { # use beagrep to find matching files, for e.g.,
+                       # abc-files "readlink" will list all files that
+                       # contains readlink.
     ## start generated code
     TEMP=$(getopt -o b: --long "base:"  -n $(basename $0) -- "$@")
     local base=
@@ -629,7 +747,82 @@ function abc-files() {
 }
 
 
-function remote-abc() {
+function create-slave() { # create a slave on another build, requires
+                          # admin privilege
+
+
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopts -l s:slave
+    ## end code-generator
+    ## start generated code
+    local slave=
+    local OPTIND=1
+    while getopts 's:' opt; do
+        case "$opt" in
+            s)    slave=$OPTARG;;
+            *)    echo Usage Error;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    ## end generated code
+
+    if test "$slave" = ""; then
+        die "slave not specified"
+    fi
+
+    cd ~
+    . ~/.config/ssh-agent
+    command psync $slave system-config
+    command psync $slave external
+    command psync $slave cpan
+    (
+        cd ~/src/github/
+        command psync $slave external-local
+        command psync $slave twittering-mode
+        command psync $slave weibo.emacs
+    )
+
+    rsync .ssh $slave: -av --exclude .ssh/known_hosts --exclude=.ssh/.git --delete
+    echo slave created.
+}
+
+
+function rm-non-build-files-kernel() {
+
+    if ! echo "$ABC_USER" | grep -q baohaojun; then
+        die "This function can only be run by admin,
+you can find a branch with git branch -a | grep non-build"
+    fi
+
+    get-base-build "$@"
+    cd $base_build/
+    lock-base-build "rm-non-build-files-kernel"
+    cd kernel
+    clear_all_old_patches
+    mark_a_patch $(ap)
+    . ~/.bash-path
+    bash -x rm-non-build-files-kernel
+    git add .
+    git commit -s -m 'with non build files removed'
+    git push $(repo-remote) HEAD:refs/sandbox/$(my-rfa '$(lookup-file .repo/repo_info.pl) upstream')-bhj-rm-non-build -f
+}
+
+function help() {
+
+    perl -ne 'print if m/^\s*function.*# / ... (m/^\s*$/ or not m/^\s*#/)' $0 |
+        perl -ne 'if (m/^\s*function|^\s*#/) {print} else {print "\n"}' |
+        grep -v '## start generated code'
+
+    echo; echo
+
+    if yes-or-no-p -y "Show the help manual page?"; then
+        xdg-open http://172.16.0.251/baohaojun/blog/2015/03/06/0-abc-usage-manual.html
+    fi
+}
+
+function remote-abc() { # run a remote abc command, such as abc-files
     if test "$USER" = bhj -a -e '/home/bhj/src/github/projects/abc.org'; then
         (
             cd
@@ -640,9 +833,31 @@ function remote-abc() {
 }
 
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
-    if test "$1" = -x; then
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopts xdebug ttestabc
+    ## end code-generator
+    ## start generated code
+    debug=false
+    testabc=false
+    OPTIND=1
+    while getopts 'xt' opt; do
+        case "$opt" in
+            x)    debug=true;;
+            t)    testabc=true;;
+            *)    echo Usage Error;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    ## end generated code
+
+    if test "$debug" = true; then
         set -x
-        shift
+    fi
+
+    if test $testabc = true; then
+        export ABC_REMOTE_HOST=abc
     fi
 
     if grep -q -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
@@ -652,7 +867,7 @@ if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / |
         abc_command=("$command" "$@")
         "$command" "$@"
      else
-         die "$1: command not found"
+         die "$1: abc command not found"
     fi
 fi
 

@@ -27,6 +27,7 @@ for x in "$@"; do
             -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"project"} = "' -v @name  -o '";' -n \
             -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"path"} = ("' -v @path  -o '" or "' -v @name -o '");' -n \
             -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"branch"} = ("' -v @revision  -o '" or $default_revision);' -n \
+            -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"upstream"} = ("' -v @upstream  -o '" or "' -v @revision -o '" or $default_revision);' -n \
             -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"remote"} = ("' -v @remote  -o '" or $default_remote);' -n \
             $x
     fi

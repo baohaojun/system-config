@@ -5,8 +5,9 @@ function die() {
 }
 
 PATH_PREPEND=
-TEMP=$(getopt -o p:j: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o vp:j: -n $(basename $0) -- "$@")
 jobs=-j8
+verbose=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -17,6 +18,10 @@ while true; do
                 PATH_PREPEND=$2
             fi
             shift 2
+            ;;
+        -v)
+            verbose=showcommands
+            shift 1
             ;;
         -j)
             jobs=-j$2
@@ -43,7 +48,7 @@ time (
     cd $top_dir/
     . build/envsetup.sh
     set_stuff_for_environment
-    OUT_DIR=${OUT%target/*}
+    BHJ_OUT_DIR=${OUT%target/*}
     cd $oldpwd
 
     cd "$(dirname $(lookup-file Android.mk))"
@@ -57,15 +62,18 @@ time (
     (
         echo '# -*- mode: compilation -*-'
         echo "make: Entering directory \`$(lookup-file .repo/..)'"
-        . $OUT_DIR/.buildenv.sh
+        . $BHJ_OUT_DIR/.buildenv.sh
+        if test -e .path-prepend; then
+            . .path-prepend
+        fi
         if test ${PATH_PREPEND}x != x; then
             PATH=$PATH_PREPEND:$PATH
         fi
-        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs all_modules "$@" 2>&1
+        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs $verbose all_modules "$@" 2>&1
     ) | tee ~/.logs/mm.log.$$
 
     echo OK
     cd $top_dir/
     rm -f out
-    relative-link $(dirname $(readlink -f $OUT_DIR/host)) out
+    relative-link $(dirname $(readlink -f $BHJ_OUT_DIR/host)) out
 )
