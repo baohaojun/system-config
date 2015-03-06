@@ -9,31 +9,35 @@ function amixer() {
 }
 
 if test "$(basename $0)" = sound-off; then
-    amixer -q sset Master mute
+    amixer -q sset Master,0 mute
     exit
 elif test "$(basename $0)" = sound-on; then
-    amixer -q sset Master unmute
+    amixer -q sset Master,0 unmute
     exit
 fi
 
-amixer -q sset Master unmute
+amixer -q sset Master,0 unmute
 if test "$#" = 1; then
-    amixer -q sset Master "${1%%%}"%
+    amixer -q sset Master,0 "${1%%%}"%
     exit
 fi
 while true; do
     volume=$(
         (
-            amixer|grep %
-            echo volume keys: a to add, s to sub
+            amixer|perl -ne 'print if m/^Simple mixer control .Master.,0/ ... m/^Simple/'|grep %
+            amixer|perl -ne 'print if m/^Simple mixer control .PCM.,0/ ... m/^Simple/'|grep %
+            echo
+            echo '  'volume keys: a to add, s to sub
         ) | perl -npe 'chomp; s/$/\\n/'
     )
 
     key=$(sawfish-client -e '(event-name (read-event "'"$volume"'"))')
     if test "$key" = '"+"' -o "$key" = '"KP_Add"' -o "$key" = '"XF86AudioRaiseVolume"'; then
-        amixer -q sset Master 1%+
+        amixer -q sset Master,0 1%+
+        amixer -q sset PCM,0 1%+
     elif test "$key" = '"-"' -o "$key" = '"KP_Subtract"' -o "$key" = '"XF86AudioLowerVolume"'; then
-        amixer -q sset Master 1%-
+        amixer -q sset Master,0 1%-
+        amixer -q sset PCM,0 1%-
     else
         vol=$(amixer | grep 'Playback.*%' | perl -ne 's/.*\[(\d+%)\].*/$1/; print; last');
         echo $vol > ~/.logs/audion-volume.%

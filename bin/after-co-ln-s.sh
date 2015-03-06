@@ -30,6 +30,10 @@ if test $can_sudo = true -a -d /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && a
     sudo bash -c "echo $USER ALL=NOPASSWD: ALL > /etc/sudoers.d/$USER; chmod 440 /etc/sudoers.d/$USER"
 fi
 
+if test $can_sudo = true -a $USER = bhj; then
+    sudo apt-get remove pulseaudio pulseaudio-module-x11 pulseaudio-utils || true
+fi
+
 if ! which sudo >/dev/null 2>&1 ; then # for cygwin, where sudo is not available
     function sudo() {
         "$@"
