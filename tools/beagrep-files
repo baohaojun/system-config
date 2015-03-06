@@ -51,14 +51,22 @@ if test "$FIND_FILE_ONLY"; then
 fi
 
 tokens="$tokens $additional_tokens"
-for x in "$beagrep_dir" $(cat "$beagrep_dir"/../.beagrep-brothers 2>/dev/null)
-do
-    beagrep-static-query \
-        --add-static-backend "$(wlp "$x")" \
-        --backend none --max-hits 100000 "$tokens" |
-    beagrep-unurl-and-filter.pl|grep -v '#' |
-    sort -u
-done
+
+if test -e "$beagrep_dir"/../.beagrep-abc; then
+    start_dir=${beagrep_dir#*for-code-reading/}
+    start_dir=${start_dir%.beagrep}
+    bash "$beagrep_dir"/../.beagrep-abc "$tokens"|rm-last-nl|perl -npe "s,^,$start_dir,"
+
+else
+    for x in "$beagrep_dir" $(cat "$beagrep_dir"/../.beagrep-brothers 2>/dev/null)
+    do
+        beagrep-static-query \
+            --add-static-backend "$(wlp "$x")" \
+            --backend none --max-hits 100000 "$tokens" |
+            beagrep-unurl-and-filter.pl|grep -v '#' |
+            sort -u
+    done
+fi
 
 if test ${0##*/} != beagrep-glob-files; then
     echo /dev/null
