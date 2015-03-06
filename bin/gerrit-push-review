@@ -127,9 +127,8 @@ if is-tty-io && test $do_review = true; then
 fi
 
 (
-    if tty >/dev/null 2>&1; then
-        echo git push $REMOTE "$rev":$where/`repo-branch`
-        git push --no-thin --receive-pack="$(
+    echo git push $REMOTE "$rev":$where/`repo-branch`
+    git push --no-thin --receive-pack="$(
             echo -n 'git receive-pack ';
             for x in "${reviewers[@]}"; do
                 echo -n "--reviewer=$x "
@@ -140,13 +139,10 @@ fi
         system("putclip", "git", "pull", $ENV{REMOTE},
                "refs/changes/" . substr($1, -2) . "/$1/1");
     }'
-        echo
-        echo '* git commit message:'
-        echo
-        git log -1 "$rev"
-    else
-        cat
-    fi
+    echo
+    echo '* git commit message:'
+    echo
+    git log -1 "$rev"
 ) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty ~/.logs/gerrit-review.log.$$
 
 set +x

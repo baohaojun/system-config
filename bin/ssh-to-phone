@@ -12,6 +12,7 @@ if test $(basename $0) = start-rndis; then
             set -x
             echo shit > /data/1.txt
             stop adbd
+            setprop service.adb.tcp.port 5555
             write /sys/class/android_usb/android0/enable 0
             write /sys/class/android_usb/android0/idVendor 05C6
             write /sys/class/android_usb/android0/idProduct 9024
@@ -65,7 +66,7 @@ fi
 
 if ! my-adb -w shell netcfg|grep -q 'rndis0.*192.168'; then
     my-adb shell bash -c "setsid setsid nohup bash -x /data/start-rndis"
-    sleep 3
+    sleep 5
 else
     echo "no need to start rndis"
 fi
