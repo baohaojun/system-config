@@ -33,6 +33,7 @@
 --regex-orgmode=/^(\*+[ \t]+.*)/\1/s,struct/
 --regex-orgmode=/^[ \t]*#\+name:[ \t]+([^ \t]+)/\1/n,name/
 --regex-orgmode=/^[ \t]*<<([^<>]*)>>/\1/c,call/
+--regex-orgmode=/^[ \t]*([^ \t()]+)\(\)[ \t]*\{/\1/f,function/
 
 --langdef=Clojure
 --langmap=Clojure:.clj
