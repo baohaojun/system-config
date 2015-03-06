@@ -9,7 +9,7 @@
 set -e
 
 if test "$ABC_REMOTE_HOST" = ""; then
-    export ABC_REMOTE_HOST=bhj@172.16.2.25
+    export ABC_REMOTE_HOST=abc
 fi
 
 if test -e ~/src/github/projects/abc.org -a ~/src/github/projects/abc.org -nt ~/bin/abc; then
@@ -240,6 +240,10 @@ function remote-mm() { # submit a remote build request, preferably using 'mm'
 
     get-all-urls() {
         local x
+        gerrit-push-review() {
+            command gerrit-push-review "$@"
+        }
+
         for x in "${repo_dirs[@]}"; do
             (
                 cd "$x"
@@ -857,7 +861,7 @@ if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / |
     fi
 
     if test $testabc = true; then
-        export ABC_REMOTE_HOST=abc
+        export ABC_REMOTE_HOST=bhj@172.16.2.25
     fi
 
     if grep -q -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then

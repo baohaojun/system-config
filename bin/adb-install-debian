@@ -48,9 +48,7 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
     cd
     umask 0022
     mkdir -p ~/.ssh
-    echo \"$(cat ~/.ssh/authorized_keys)\" | tee ~/.ssh/authorized_keys
     mkdir -p ~$USER/.ssh
-    echo \"$(cat ~/.ssh/authorized_keys)\"| tee ~$USER/.ssh/authorized_keys
     chown $USER\. ~$USER/.ssh -R
     cat <<EOF > /etc/resolv.conf
 nameserver $(my-adb getprop net.dns1)
@@ -62,7 +60,13 @@ EOF
 "
     my-adb -r stop
     my-adb shell sync
-    ssh-to-phone echo -n
+    my-adb push ~/.ssh/authorized_keys /data/debian/root/.ssh/
+    my-adb chmod 600 /data/debian/root/.ssh/authorized_keys
+
+    my-adb push ~/.ssh/authorized_keys /data/debian/home/bhj/.ssh/
+    my-adb chown -R 1000.1000 /data/debian/home/bhj/.ssh/
+    my-adb chmod 600 /data/debian/home/bhj/.ssh/authorized_keys
+    ssh-to-phone echo -n hello
     ssh -o RequestTTY=yes root@phone dpkg-reconfigure locales
     exit
 fi
