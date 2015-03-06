@@ -5,6 +5,18 @@ chmod og-rwx ~/.authinfo ~/.netrc
 
 export PATH=/opt/local/libexec/gnubin:~/system-config/bin/Linux:~/system-config/bin:$PATH
 
+if test ! -d ~/system-config/.git && test -d ~/system-config/; then
+    if yes-or-no-p "system-config not a git repo, git init?"; then
+        (
+            cd ~/system-config/
+            ln -sf ~/system-config/.gitconfig.bhj ~/.gitconfig
+            git init .
+            git add .
+            git commit -m 'xx'
+        )
+    fi
+fi
+
 can_sudo=true
 if test ! -e /etc/sudoers.d/$USER && ! yes-or-no-p "Do you have sudo power?"; then
     function sudo() {

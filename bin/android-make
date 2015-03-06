@@ -1,6 +1,15 @@
 #!/bin/bash
 
 cd $(lookup-file .repo/..)
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if ! test -d .repo -a -e build/envsetup.sh; then
+    die "Not an Android repo?"
+fi
+
 if test -e .buildenv.sh.x; then
     . .buildenv.sh.x
 fi
@@ -41,10 +50,6 @@ if test -e .path-prepend; then
     . .path-prepend
 fi
 TEMP=$(getopt -o vp:d:kj:c: -n $(basename $0) -- "$@")
-function die() {
-    echo "$@"
-    exit -1
-}
 
 eval set -- "$TEMP"
 while true; do

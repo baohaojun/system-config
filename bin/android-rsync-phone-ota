@@ -11,19 +11,34 @@ if test ! "$ANDROID_SERIAL"; then
     export ANDROID_SERIAL=$(select-output-line my-adb devices?|pn 1)
 fi
 
+
+xml=rawprogram_unsparse.xml
+if test ! -e "$xml"; then
+    if test -e "sparse_images/$xml"; then
+        xml=sparse_images/$xml
+    else
+        die "can't find $xml"
+    fi
+fi
+
 my-adb -r id | grep 'uid=0\b'
 ssh-to-phone echo hello
 
-xml=rawprogram_unsparse.xml
-if test ! -e "$xml" -a -e "sparse_images/$xml"; then
-    xml=sparse_images/$xml
-else
-    die "can't find $xml"
-fi
+function update-partition() {
+    size=$(stat -c %s $file)
+    echo $file $size
+    my-adb "dd if=\$(echo /dev/block/platform/*/by-name/$part) of=/data/$file.x"
+    my-adb pull /data/$file.x ~/tmp
+    bindiff.py ~/tmp/$file.x $file
+}
 
 function update-partition() {
     if test $(basename $file) = boot.img; then
-        adb-push -d $file /data
+        if test $(my-adb getprop ro.debuggable) = 0; then
+            adb-push -d $file /data
+        else
+            adb-push $file /data
+        fi
     else
         adb push $file /data
     fi
@@ -33,13 +48,13 @@ function update-partition() {
 
 xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^ ' |grep -v '_\d+' -P|perl -npe 'END{print "done done\n"}'|
     while read file part; do
-        if test $part = PrimaryGPT -o $part = BackupGPT; then
+        if test $part = PrimaryGPT -o $part = BackupGPT -o $part = udisk; then
             continue
         fi
         if test $part = done; then
             break
         fi
-        update-partition $file $part || exit 5
+        # update-partition $file $part || exit 5
     done&
 
 
@@ -59,12 +74,17 @@ my-adb remount
 my-adb stop
 
 sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
-my-adb push media/app /system/media/app
+if test -d media/app; then
+    my-adb push media/app /system/media/app
+fi
 sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0'|perl -npe 's/^/chcon /' |tee ../system.chcon
 my-adb push ../system.chcon /data/
 my-adb 'cd /system; bash -x /data/system.chcon'
 cd ..
-umount system
+sudo umount system
 oldpwd=$PWD
 cd ..
 rm $oldpwd -rf
+set -x
+wait
+echo ok

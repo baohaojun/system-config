@@ -2,6 +2,8 @@
 oldpwd=$PWD
 cd
 
+unset ANDROID_SERIAL
+
 echo shell is $SHELL > ~/.logs/myscr.log
 if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then
     export SHELL=/bin/bash
