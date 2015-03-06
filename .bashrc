@@ -71,7 +71,9 @@ export HISTIGNORE="bg:fg:exit"
 export HISTSIZE=2000
 export HISTFILESIZE=2000
 export DISPLAY=${DISPLAY:-:0} #if it is already set...
-export USER=`whoami`
+if test "$USER"x = x; then
+    export USER=`whoami`
+fi
 export USE_CCACHE=1
 export MONO_PATH=~/.mono/MimeKit.1.0.3.0/lib/net40
 

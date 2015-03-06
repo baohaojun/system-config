@@ -92,8 +92,9 @@ get-base-build() {
 
     ## end generated code
 
+    base=${base%%/*}
     base_build=~/buildfarm/$base
-    if test "$base" -a -d "$base_build"; then
+    if test "$base" -a "$base" != .. -a -d "$base_build"; then
         true
     else
         die "Invalid base build: $base_build"
@@ -371,11 +372,25 @@ function repo-cherry-find-all() { # find all patches that needs
 function test-cat() {
     cat
 }
+
+mm() {
+    echo doing mm in $PWD
+    command mm -j8 "$@"
+}
+android-make() {
+    echo doing android-make in $PWD: $@
+    command android-make -j8 "$@"
+}
+
+
 function build-request() { # submit a build request
     ## start generated code
-    TEMP=$(getopt -o m:hd: --long "method:,help,dir:"  -n $(basename $0) -- "$@")
+    TEMP=$(getopt -o b:m:hd:p: --long "base,method:,help,dir:,patch-dir:"  -n $(basename $0) -- "$@")
     method=mm
     mm_dir=
+    local base_build
+    local base
+    local patch_dir
     eval set -- "$TEMP"
     while true; do
         case "$1" in
@@ -383,13 +398,35 @@ function build-request() { # submit a build request
                 method=${2,,}
                 shift 2
                 ;;
+            -b|--base)
+                base=${2%%/*} # make sure there are no /
+                shift 2
+                ;;
+            -p|--patch-dir)
+                patch_dir=$2
+                shift 2
+                ;;
             -h|--help)
                 cat <<EOF
-Usage: build-request -m|--method [mm|dep|full] [-d|--dir MM_DIR] [-c|--copy FILE|DIR]... [-t|--to COPY_TARGET] REVIEWS...
+Usage: build-request -b|--base BASE-BUILD-NAME \
+       -m|--method [mm|dep|full] \
+       [-d|--dir MM_DIR] \
+       [-c|--copy FILE|DIR]... \
+       [-t|--to COPY_TARGET] \
+       [REVIEWS]... \
+       [-p|--patch PATCH_DIR]
 
 You can use this command to submit a build request using a gerrit
 review, specify what to build, and what to copy back into your PC
 using share folder.
+
+-b|--base BASE-BUILD-NAME
+
+    BASE-BUILD-NAME means the base build to use for building your
+    patch. You can use lbb to list the base builds available.
+
+    If not specified, you must specify one or more reviews, and the
+    base build will be calculated from the reviews.
 
 -m|--method [mm|dep|full|fullbase|kernel|bootimage]
     MM means use android mm build
@@ -407,7 +444,10 @@ using share folder.
     Default is the git project if there is an Android.mk in it's top
     folder.
 
-REVIEWS are gerrit review urls or ids, such as http://172.16.0.9:8080/47807/ or 47807
+REVIEWS are gerrit review urls or ids, such as
+http://172.16.0.9:8080/47807/ or 47807. All reviews must be for the
+same base build (with the same gerrit branch). If you are using patch
+files for build request, then no reviews are required.
 
 EOF
                 exit
@@ -433,6 +473,38 @@ EOF
 
     declare -A review_patchset_map
     local old_review_id
+
+    if test "$patch_dir" -a $# != 0; then
+        die "Can't build with both patches and reviews"
+    fi
+
+    if test "$patch_dir" -a "$base" -a "$base" != ..; then
+        base_build=~/buildfarm/"$base"
+        if test ! -d "$base_build"; then
+            die "Invalid base build: $base_build"
+        fi
+
+        if ! is-a-subdir $base_build ~/buildfarm/; then
+            die "Invalid base build: $base_build"
+        fi
+        cd $base_build
+        lock-base-build "for build request"
+
+        clear_all_old_patches
+
+        (
+            cd $patch_dir
+
+            if ! is-a-subdir "$(lookup-file -e .git/..)" $base_build; then
+                die "Invalid patch dir: $patch_dir"
+            fi
+            mark_a_patch $(ap $(lookup-file -e .git/..))
+            patch -p 1
+        )
+
+    fi
+
+
     for review_id in "$@"; do
         old_review_id=$review_id
         if [[ "$review_id" =~ http:// ]]; then
@@ -457,10 +529,8 @@ EOF
             fi
 
             base_build=$(get-base-build-from-branch $target_branch)
-            echo decided our base_build to be $base_build, will lock now
+            lock-base-build decided our base_build to be $base_build, will lock now
 
-            exec 9> $base_build/.abc.lock
-            flock 9
 
             (
                 cd $base_build
@@ -494,18 +564,13 @@ EOF
         )
     done
 
-    mm() {
-        echo doing mm in $PWD
-        command mm -j8 "$@"
-    }
-    android-make() {
-        echo doing android-make in $PWD: $@
-        command android-make -j8 "$@"
-    }
-
     if test "$method" = mm; then
         if test $num_reviews != 1 && test ! -d "$mm_dir"; then
-            die "mm can be used only if there is one review patch"
+            if test "$num_reviews" = 0 && test "$patch_dir"; then
+                true
+            else
+                die "mm can be used only if there is one review patch"
+            fi
         fi
 
         if test -d "$mm_dir"; then
@@ -869,7 +934,7 @@ if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / |
     fi
 
     if test $testabc = true; then
-        export ABC_REMOTE_HOST=bhj@172.16.2.25
+        export ABC_REMOTE_HOST=code3
     fi
 
     if grep -q -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
