@@ -36,10 +36,6 @@ repo() {
     ~/bin/repo "$@"
 }
 
-android-make() {
-    command android-make -j8 "$@"
-}
-
 is-a-subdir() {
     dir1=$(readlink -f "$1")
     dir2=$(readlink -f "$2")
@@ -186,7 +182,7 @@ psync() {
     else
         return 0
     fi
-    command psync "$@" >/dev/null 2>&1
+    command psync "$@" >/dev/null 2>&1 </dev/null
 }
 ssh() {
     if test $USER = bhj -a -e ~/.ssh/id_rsa_nopass; then
@@ -241,7 +237,7 @@ function remote-mm() { # submit a remote build request, preferably using 'mm'
     get-all-urls() {
         local x
         gerrit-push-review() {
-            command gerrit-push-review "$@"
+            command gerrit-push-review "$@" </dev/null
         }
 
         for x in "${repo_dirs[@]}"; do
@@ -372,6 +368,9 @@ function repo-cherry-find-all() { # find all patches that needs
 }
 
 
+function test-cat() {
+    cat
+}
 function build-request() { # submit a build request
     ## start generated code
     TEMP=$(getopt -o m:hd: --long "method:,help,dir:"  -n $(basename $0) -- "$@")
@@ -494,6 +493,15 @@ EOF
             mark_a_patch $(ap)
         )
     done
+
+    mm() {
+        echo doing mm in $PWD
+        command mm -j8 "$@"
+    }
+    android-make() {
+        echo doing android-make in $PWD: $@
+        command android-make -j8 "$@"
+    }
 
     if test "$method" = mm; then
         if test $num_reviews != 1 && test ! -d "$mm_dir"; then
@@ -830,7 +838,7 @@ function remote-abc() { # run a remote abc command, such as abc-files
     if test "$USER" = bhj -a -e '/home/bhj/src/github/projects/abc.org'; then
         (
             cd
-            psync
+            psync </dev/null
         )
     fi
     ssh $ABC_REMOTE_HOST abc "${@//[^-.a-z0-9:\/_ ]/ }"
@@ -865,7 +873,6 @@ if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / |
     fi
 
     if grep -q -P "^\s*function $1\s*\(" "$0" || test "$(basename $0)" = $1; then
-
         command=$1
         shift
         abc_command=("$command" "$@")
