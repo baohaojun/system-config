@@ -43,12 +43,6 @@ public:
 
     /**
      *
-     * @return the suffix ("pre", "alpha", "beta", "")
-     */
-    static const QString suffix();
-
-    /**
-     *
      * @return the git revision, can be empty in a release
      */
     static const QString revision();

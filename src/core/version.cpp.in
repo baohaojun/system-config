@@ -4,7 +4,7 @@ namespace Snore{
 
 const QString Version::version()
 {
-    return QLatin1String("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}${SNORE_VERSION_SUFFIX}");
+    return QLatin1String("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}");
 }
 
 const QString Version::major(){
@@ -17,11 +17,6 @@ const QString Version::minor(){
 
 const QString Version::patch(){
     return QLatin1String("${SNORE_VERSION_PATCH}");
-}
-
-
-const QString Version::suffix(){
-    return QLatin1String("${SNORE_VERSION_SUFFIX}");
 }
 
 const QString Version::revision(){

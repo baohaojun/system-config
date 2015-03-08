@@ -7,7 +7,6 @@ if(NOT SNORE_REVISION)
 endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/LibsnoreConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake" @ONLY)
 
 QT5_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 
@@ -72,11 +71,25 @@ $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 $<INSTALL_INTERFACE:include>
 $<INSTALL_INTERFACE:include/snore/core>)
 
-install(TARGETS libsnore EXPORT LibsnoreTarget ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(EXPORT LibsnoreTarget DESTINATION ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX} NAMESPACE Snore::)
+ecm_setup_version("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}" VARIABLE_PREFIX SOLID
+                        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}ConfigVersion.cmake"
+                        SOVERSION ${SNORE_VERSION_MAJOR})
+
+ecm_configure_package_config_file(  "${CMAKE_CURRENT_SOURCE_DIR}/LibsnoreConfig.cmake.in"
+                                    "${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake"
+                                    INSTALL_DESTINATION ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX}
+                              )
+
+install(TARGETS libsnore EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Target ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
+
+install(EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Target DESTINATION ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX} NAMESPACE Snore::)
 
 install(FILES ${SnoreNotify_HDR} DESTINATION ${KDE_INSTALL_INCLUDEDIR}/snore/core)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake DESTINATION ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX})
+install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}ConfigVersion.cmake
+        DESTINATION
+        ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX})
 

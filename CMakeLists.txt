@@ -17,7 +17,8 @@ include(KDECMakeSettings)
 
 include(ECMAddAppIcon)
 include(ECMInstallIcons)
-
+include(ECMSetupVersion)
+include(ECMPackageConfigHelpers)
 include(GenerateExportHeader)
 
 
@@ -30,7 +31,6 @@ option(WITH_SNORE_DAEMON "Build the Snore daemon, which redirects notifications"
 set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 5)
 set(SNORE_VERSION_PATCH 90)
-set(SNORE_VERSION_SUFFIX "")
 
 set(SNORE_SUFFIX "-qt5")
 set(SNORE_CamelCase_SUFFIX "Qt5")
