@@ -195,7 +195,7 @@ elif test $(basename $0) = adb-mail -o $(basename $0) = adb-gmail; then
 
 
     if test "$attachments"; then
-        adb mkdir -p /sdcard/adb-mail
+        my-adb mkdir -p /sdcard/adb-mail
         for a in "${attachments[@]}"; do
             if test $gmail = true; then
                 adb-tap 730 167
@@ -205,7 +205,7 @@ elif test $(basename $0) = adb-mail -o $(basename $0) = adb-gmail; then
             fi
             adb-tap 153 1455
             am=/sdcard/adb-mail/$(echo "$a"|perl -npe 's!/!_!g')
-            adb push "$a" "$am"
+            my-adb push "$a" "$am"
             putclip-android ../../../../../../"${am}"
             adb-key SCROLL_LOCK
             adb-tap 965 1061

@@ -112,9 +112,9 @@ rm push-done -f
     my-adb push ota.zip /sdcard/
     if test "$USER" = bhj -a -e ~/.android/adbkey.pub && ! my-adb cat /data/misc/adb/adb_keys | grep "$(cat ~/.android/adbkey.pub)"; then
         my-adb 'if test ! -d /data/misc/adb; then mkdir /data/misc/adb; chown system.shell /data/misc/adb; chmod 2750 /data/misc/adb; fi'
-        adb push ~/.android/adbkey.pub /data/misc/adb/adb_keys
+        my-adb push ~/.android/adbkey.pub /data/misc/adb/adb_keys
     fi
-    adb forward tcp:$FORWARD_PORT localreserved:scitd
+    my-adb forward tcp:$FORWARD_PORT localreserved:scitd
     my-adb bash -x stcmd-subcase.sh reboot-rom
     echo srem-helper reboot-rom | nc localhost $FORWARD_PORT
     touch push-done

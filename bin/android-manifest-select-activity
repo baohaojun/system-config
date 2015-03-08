@@ -5,4 +5,4 @@ android_manifest=$(lookup-file -e AndroidManifest.xml)
 package=$(xmlstarlet sel -t -m //manifest -v @package $android_manifest)
 # <activity android:name=".app.HelloWorld"
 # <manifest xmlns:android="http://schemas.android.com/apk/res/android
-adb start-activity $(select-output-line -o -m 5 -- xmlstarlet sel -N android="http://schemas.android.com/apk/res/android" -t -m //activity -o $package/ -v @android:name -n $android_manifest)
+my-adb start-activity $(select-output-line -o -m 5 -- xmlstarlet sel -N android="http://schemas.android.com/apk/res/android" -t -m //activity -o $package/ -v @android:name -n $android_manifest)
