@@ -1,5 +1,5 @@
 #!/bin/bash
-adb am start -n  com.baohaojun.apkhack/.TheRightApkActivity
+my-adb am start -n  com.baohaojun.apkhack/.TheRightApkActivity
 while true; do
     my-adb 'while test ! -e /sdcard/voice-ime.txt; do sleep .5; done; mv /sdcard/voice-ime.txt /sdcard/voice-ime.out;'
     if ! my-adb pull /sdcard/voice-ime.out /tmp/voice-ime.txt; then

@@ -14,14 +14,26 @@ fi
     ls -l /proc/$$/fd
 ) > /tmp/$(basename $0).log
 
+info() {
+    echo $(date): $$: "$@" >> ~/.logs/$(basename $0).log
+}
+
 function need-sync() {
+
+    if test "$NEED_SYNC" = true; then
+        info NEED_SYNC already checked, return true
+        return 0
+    fi
     if perl -e 'exit 0 if (not -e (glob "/tmp/sync-mobile-org.check.$ENV{USER}") or -M(glob "/tmp/sync-mobile-org.check.$ENV{USER}") > .25); exit 1'; then
         touch /tmp/sync-mobile-org.check.${USER}
+        info will check the org data
     else
+        info will not check the org data
         return 1
     fi
 
     if my-adb 'if test $(stat -c %s /sdcard/MobileOrg/mobileorg.org) != 0; then echo yes; fi' | grep -q yes; then
+        info there is data in sdcard mobileorg.org, should sync.
         return 0
     fi
     oldver=$(
@@ -41,9 +53,11 @@ function need-sync() {
         git diff HEAD
            )
     if test "$oldver" != "$newver" -o "$olddiff" != "$newdiff"; then
+        info data changed, should sync: $oldver, $newver
         return 0;
     fi
 
+    info nothing changed, should not sync.
     return 1
 }
 
@@ -52,24 +66,27 @@ if ! is-tty-io; then
 fi
 
 if test "$(my-adb getprop sys.usb.config)" = mtp,adb; then
+    info it is mtp, exit
     exit 0
 fi
 if ! need-sync; then
     exit 0
 fi
 
-lock=~/.logs/ask-to-sync-org.term.lock.$(adb devices? | pn 1)
+lock=~/.logs/$(basename $0).term.lock.$(my-adb devices? | pn 1)
+info lock is $lock
 touch $lock
 if ! is-tty-io; then
     fuser -k $lock || true
     (
         set -e
+        set
         flock -n 9
-        mkfifo ~/tmp/ask-to-sync-org.$$
-        find-or-exec konsole
-        myscr bash -c "bash -c '(trap \"exit 0\" SIGINT; ask-to-sync-org) || read -p \"ask-to-sync-org failed, press Enter to continue.. \"; echo done > ~/tmp/ask-to-sync-org.$$'" &
-        cat ~/tmp/ask-to-sync-org.$$
-        rm ~/tmp/ask-to-sync-org.$$
+        mkfifo ~/tmp/$(basename $0).$$
+        find-or-exec konsole || true
+        myscr bash -c "bash -x -c '(trap \"exit 0\" SIGINT; export NEED_SYNC=true; $(basename $0)) || read -p \"$(basename $0) failed, press Enter to continue.. \"; echo done > ~/tmp/$(basename $0).$$'" &
+        cat ~/tmp/$(basename $0).$$
+        rm ~/tmp/$(basename $0).$$
     ) 9> $lock
     exit 0
 fi

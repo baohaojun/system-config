@@ -40,7 +40,7 @@ function update-partition() {
             adb-push $file /data
         fi
     else
-        adb push $file /data
+        my-adb push $file /data
     fi
 
     my-adb "dd if=/data/$file of=\$(echo /dev/block/platform/*/by-name/$part) && echo yes$$" | grep yes$$

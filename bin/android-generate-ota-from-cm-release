@@ -70,7 +70,7 @@ cmReleaseDir=$(readlink -f "$cmReleaseDir")
     if test $fullSystem != true; then
         my-adb rm -f /sdcard/phone.md5
         (
-            adb forward tcp:$FORWARD_PORT localreserved:scitd
+            my-adb forward tcp:$FORWARD_PORT localreserved:scitd
             echo srem-helper get-system-md5s | nc localhost $FORWARD_PORT
         )&
         my-adb bash -x stcmd-subcase.sh get-system-md5s&
@@ -107,7 +107,7 @@ cmReleaseDir=$(readlink -f "$cmReleaseDir")
         cp $android_dir/vendor/smartisanhw/log-crawler/scripts/reboot-rom system/etc/stcmd-scripts/
         cp $android_dir/vendor/smartisanhw/log-crawler/scripts/get-system-md5s system/etc/stcmd-scripts/
         if test ! -e system/build.prop; then
-            adb pull /system/build.prop system/build.prop
+            my-adb pull /system/build.prop system/build.prop
         fi
     fi
     cp $mypath/gapps-system/* system/ -av
