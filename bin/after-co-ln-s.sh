@@ -305,7 +305,6 @@ mkdir -p ~/.cache # just in case the following command will create
 # .cache with root permission.
 
 if test "$USER" = bhj; then
-    update-host-ip phone 192.168.15.244
     update-host-ip home 128.199.228.174
 fi || true
 (

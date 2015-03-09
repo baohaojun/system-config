@@ -1,40 +1,5 @@
 #!/bin/bash -i
 
-if test $(basename $0) = start-rndis; then
-    init_rndis() {
-        write() {
-            echo $2 > $1
-        }
-
-
-        if ! echo "$(cat /sys/class/android_usb/android0/functions)" | grep rndis; then
-            exec > /data/1.txt 2>&1
-            set -x
-            echo shit > /data/1.txt
-            stop adbd
-            setprop service.adb.tcp.port 5555
-            write /sys/class/android_usb/android0/enable 0
-            write /sys/class/android_usb/android0/idVendor 05C6
-            write /sys/class/android_usb/android0/idProduct 9024
-            write /sys/class/android_usb/android0/functions rndis,adb
-            write /sys/class/android_usb/android0/enable 1
-            start adbd
-        fi
-    }
-    if test "$(getprop persist.sys.usb.config)" != rndis,adb; then
-        init_rndis
-    fi
-    while ! netcfg|grep 'rndis0.*UP'; do
-        if ! netcfg|grep 'rndis0.*'; then
-            init_rndis
-            sleep 1
-        fi
-        netcfg rndis0 up
-    done;
-    ifconfig rndis0 192.168.15.244
-    exit
-fi
-
 # instead of scp in the name, we are going to use rsync
 if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
     my-adb -S
@@ -54,7 +19,6 @@ if ! my-adb -r id | grep 'uid=0(root)' -q; then
 fi
 
 my-adb push ~/system-config/doc/galaxy-nexus-root/data/start-debian2.sh /data/start-debian2.sh
-my-adb push $0 /data/start-rndis
 my-adb shell su -c "set -x; rm -r /data/start-debian.done; bash $xset /data/start-debian2.sh && touch /data/start-debian.done"
 if ! my-adb 'if test -e /data/start-debian.done; then echo start debian done; fi' | grep 'start debian done'; then
     if test $(basename $0) = net-for-phone; then
@@ -64,40 +28,6 @@ if ! my-adb 'if test -e /data/start-debian.done; then echo start debian done; fi
     fi
 fi
 
-if ! my-adb -w shell netcfg|grep -q 'rndis0.*192.168'; then
-    my-adb shell bash -c "setsid setsid nohup bash -x /data/start-rndis"
-    sleep 5
-else
-    echo "no need to start rndis"
-fi
-
-export USB0=eth1
-if ! ifconfig $USB0 >/dev/null 2>&1 ; then
-    if ifconfig usb0 >/dev/null 2>&1 ; then
-        echo change it to usb0
-        USB0=usb0
-    else
-        USB0=eth1
-    fi
-fi
-if ifconfig $USB0 2>/dev/null | grep 'HWaddr 00:00:00:00:00:00'; then
-    sudo ifconfig $USB0 hw ether 001cfc9a94fb || true
-fi
-sudo ifconfig $USB0 up >/dev/null 2>&1 || true
-
-if ! ifconfig $USB0 | grep 192.168.15.33; then
-    sudo ifconfig $USB0 192.168.15.33
-fi
-my-adb -w echo
-if test $(basename $0) = net-for-phone; then
-    my-adb shell su -c "setprop net.dns1 $(cat /etc/resolv.conf | grep ^nameserver | pn 2 | head -n 1)"
-    my-adb shell su -c '/system/xbin/route del default'
-    my-adb shell su -c '/system/xbin/route add default gw 192.168.15.33'
-    for x in $(ifconfig | grep -P -e '^\S'| pn 1|grep -v -P -e '^(lo|'$USB0')$'); do
-        nat-vbox "$x" $USB0
-    done
-    exit 0
-fi
 WHERE=Movies
 TEMP=$(getopt -o w: --long where: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
@@ -119,6 +49,7 @@ done
 unset TEMP
 set -x
 if test $(basename $0) = ssh-to-phone; then
+    my-adb forward tcp:22222 tcp:22
     rsync /etc/resolv.conf root@phone:/etc/ >/dev/null 2>&1 &
     ssh phone -o ConnectTimeout=2 "$@"
     exit 0

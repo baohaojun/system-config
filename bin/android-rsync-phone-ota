@@ -22,7 +22,7 @@ if test ! -e "$xml"; then
 fi
 
 my-adb -r id | grep 'uid=0\b'
-ssh-to-phone echo hello
+ssh-to-phone echo hello$$ | grep hello$$
 
 function update-partition() {
     size=$(stat -c %s $file)
@@ -34,11 +34,7 @@ function update-partition() {
 
 function update-partition() {
     if test $(basename $file) = boot.img; then
-        if test $(my-adb getprop ro.debuggable) = 0; then
-            adb-push -d $file /data
-        else
-            adb-push $file /data
-        fi
+        adb-push -d $file /data
     else
         my-adb push $file /data
     fi
@@ -54,7 +50,8 @@ xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^
         if test $part = done; then
             break
         fi
-        # update-partition $file $part || exit 5
+        echo doing $file to $part
+        update-partition $file $part || exit 5
     done&
 
 

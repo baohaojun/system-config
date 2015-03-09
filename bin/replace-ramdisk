@@ -5,12 +5,17 @@ mydir=$(dirname $(readlink -f $0))
 ramdisk=
 debuggable=
 userdebug=
-TEMP=$(getopt -o Ddur: --long ramdisk: -n $(basename $0) -- "$@")
+do_busybox=
+TEMP=$(getopt -o bDdur: --long ramdisk: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -D)
             debuggable=false
+            shift
+            ;;
+        -b)
+            do_busybox=true
             shift
             ;;
         -u)
@@ -71,16 +76,38 @@ if test "$debuggable" = true; then
     if test "$USER" = bhj; then
         perl -npe 's/ro.debuggable=1/ro.debuggable=0/' -i $tdir/default.prop
     fi
-    if test -e ~/src/github/private-config/etc/adbd; then
-        cp ~/src/github/private-config/etc/adbd $tdir/sbin/adbd
-    elif test -e $mydir/root-adbd; then
-        cp $mydir/root-adbd $tdir/sbin/adbd
+
+    if [[ "$BOOT_IMAGE_PATH" =~ -eng|-userdebug|icesky ]] || test -e $tdir/selinux_version; then
+        echo no need to replace the adbd
+    else
+        echo $BOOT_IMAGE_PATH need to replace adbd
+        if test -e ~/src/github/private-config/etc/adbd; then
+            cp ~/src/github/private-config/etc/adbd $tdir/sbin/adbd
+        elif test -e $mydir/root-adbd; then
+            cp $mydir/root-adbd $tdir/sbin/adbd
+        fi
     fi
     perl -npe 's/ro.debuggable/ro.DEBUGGABLE/' -i $tdir/sbin/adbd
+    if test -e $tdir/fstab.qcom; then
+        perl -npe 's/\bwait,verify\b/wait/' -i $tdir/fstab.qcom
+    fi
 fi
 
 if test "$userdebug" = true; then
     perl -npe 's/ro.debuggable=0/ro.debuggable=1/' -i $tdir/default.prop
+fi
+
+if test "$do_busybox" = true; then
+    echo doing busybox
+    perl -ne 'print; if (m,export\s+PATH\s+/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin,) {
+                 print "export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin:/systex/sbin:/systex/bin:/systex/xbin\n";
+                 print "chmod 0775 /systex/bin/busybox\n";
+             }' -i $tdir/init.environ.rc
+
+    cp ~/etc/android/systex $tdir/. -av
+    mv $tdir/systex/bin/busybox $tdir/sbin
+    ln -s /sbin/busybox $tdir/systex/bin/busybox
+    perl -npe 's,/system/bin/sh,/systex/bin/sh,g' -i $tdir/sbin/adbd
 fi
 
 for x in "$@"; do

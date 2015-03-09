@@ -53,10 +53,10 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
     cat <<EOF > /etc/resolv.conf
 nameserver $(my-adb getprop net.dns1)
 EOF
-    apt-get install -y bash-completion ssh rsync locales
     ln -sf /android/* /
-    touch /dev/.dev-not-mounted
-    bash
+    echo en_US.UTF-8 UTF-8 > /etc/locale.gen
+    locale-gen
+    echo LANG=en_US.UTF-8 > /etc/default/locale
 "
     my-adb -r stop
     my-adb shell sync
@@ -66,8 +66,7 @@ EOF
     my-adb push ~/.ssh/authorized_keys /data/debian/home/bhj/.ssh/
     my-adb chown -R 1000.1000 /data/debian/home/bhj/.ssh/
     my-adb chmod 600 /data/debian/home/bhj/.ssh/authorized_keys
-    ssh-to-phone echo -n hello
-    ssh -o RequestTTY=yes root@phone dpkg-reconfigure locales
+    my-adb forward tcp:22222 tcp:22
     exit
 fi
 
@@ -110,7 +109,7 @@ if [ -d /data/debian/sys/kernel/debug ] && [ ! -d /data/debian/sys/kernel/debug/
     mount -o bind /sys/kernel/debug/ /data/debian/sys/kernel/debug
 fi
 
-if test ! -e /data/debian/dev/null -o -e /data/debian/dev/.dev-not-mounted -o -f /data/debian/dev/null; then
+if test ! -e /data/debian/dev/null || test -e /data/debian/dev/.dev-not-mounted -o -f /data/debian/dev/null; then
    mount -o bind /dev /data/debian/dev
    mount -o bind /dev/pts /data/debian/dev/pts
    mount -o bind /dev/shm /data/debian/dev/shm

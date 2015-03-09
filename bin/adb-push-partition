@@ -3,4 +3,4 @@ set -x
 if test $# = 1; then
     set -- "$1" "$(basename "$1"|perl -npe 's/pt-//')"
 fi
-my-adb push $1 /data/; my-adb shell dd if=/data/$1 of=/dev/block/platform/msm_sdcc.1/by-name/$2
+my-adb -r push $1 /data/; my-adb shell "dd if=/data/$1 of=\$(echo /dev/block/platform/*/by-name/$2)"
