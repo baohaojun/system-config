@@ -4,6 +4,7 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 
+mydir=$(dirname $(readlink -f $0))
 boot=
 TEMP=$(getopt -o b: --long boot: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
@@ -33,13 +34,13 @@ boot_part=$(my-adb 'echo /dev/block/platform/*/by-name/boot')
 if test ! -e "$boot"; then
     if test "$boot" = adb; then
         my-adb -r echo hello
-        my-adb -S shell sh -c "cat $boot_part > /sdcard/boot.img"
-        my-adb pull /sdcard/boot.img .
+        my-adb -S shell sh -c "cat $boot_part > /data/boot.img"
+        my-adb pull /data/boot.img .
         boot=boot.img
     elif test "$boot" = adb.recovery; then
         my-adb -r echo hello
-        my-adb -S shell sh -c "cat $boot_part > /sdcard/boot.img"
-        my-adb pull /sdcard/boot.img .
+        my-adb -S shell sh -c "cat $boot_part > /data/boot.img"
+        my-adb pull /data/boot.img .
         boot=boot.img
     else
         die "boot image $boot not found"
@@ -60,6 +61,17 @@ replace-ramdisk -r $tmpd/ramdisk.img "$@"
 (
     cd $tmpd
     bash -e mkbootimg.sh
+    bboot=$(basename "$boot")
+
+    if my-adb -r 'test -e /selinux_version && echo yes'$$ | grep yes$$; then
+        set -x
+        if test -e ~/etc/android/verity_private_dev_key; then
+            verity_key=~/etc/android/verity_private_dev_key
+        else
+            verity_key=${mydir}/verity_private_dev_key
+        fi
+        PATH=/usr/bin:$PATH ~/src/github/android5-host/linux-x86/bin/boot_signer /boot $bboot $verity_key $bboot
+    fi
     cp $(basename "$boot") "$boot"
 )
 if echo $SHELLOPTS | grep -q xtrace; then

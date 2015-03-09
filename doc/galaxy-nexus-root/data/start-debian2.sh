@@ -34,7 +34,7 @@ if [ -d /data/debian/sys/kernel/debug ] && [ ! -d /data/debian/sys/kernel/debug/
     mount -o bind /sys/kernel/debug/ /data/debian/sys/kernel/debug
 fi
 
-if test ! -e /data/debian/dev/null -o -e /data/debian/dev/.dev-not-mounted -o -f /data/debian/dev/null; then
+if test ! -e /data/debian/dev/null || test -e /data/debian/dev/.dev-not-mounted -o -f /data/debian/dev/null; then
    mount -o bind /dev /data/debian/dev
    mount -o bind /dev/pts /data/debian/dev/pts
    mount -o bind /dev/shm /data/debian/dev/shm

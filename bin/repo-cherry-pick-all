@@ -56,6 +56,9 @@ for x in $diffs; do
     dir=$(echo $x|perl -npe 's!.*/!!; s/.log$//; s!%!/!g')
     (
         cd $dir
+        git reset --hard
+        command git clean -xfd
+        git fetch $(repo-remote)
         echo doing $dir
         if test $shell = true; then
             start_recursive_shell 'shell for cherry'
@@ -79,6 +82,7 @@ for x in $diffs; do
                 export WORKING_REV=$y
                 git cherry-pick --allow-empty $y || start_recursive_shell "cherry failed: $y" || true
             done
+            start_recursive_shell 'gerrit review'
         fi
     )
 done

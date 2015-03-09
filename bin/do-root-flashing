@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test ! -e rawprogram_unsparse.xml && test ! -e sparse_images/rawprogram_unsparse.xml; then
+    die "can't find the rawprogram_unsparse.xml"
+fi
+
+xml=rawprogram_unsparse.xml
+if test ! -e rawprogram_unsparse.xml; then
+    xml=sparse_images/rawprogram_unsparse.xml
+fi
+
+if test ! -e boot.img; then
+    die "Can't find boot.img"
+fi
+
+workingdir=/home/bhj/smb/share.smartisan.cn/share/baohaojun/root-flash
+
+rm -rf $workingdir/$(basename $PWD) -rf
+mkdir -p $workingdir/
+smb-pull $PWD $workingdir/
+
+cd $workingdir/$(basename $PWD)
+
+perl -ne 'print unless m/system_/' -i $xml
+perl -ne 'print unless m/userdata_/' -i $xml
+
+replace-bootimage -b boot.img -- -d
+do-flashing

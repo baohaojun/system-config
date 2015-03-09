@@ -48,6 +48,8 @@ targets=
 PATH_PREPEND=
 if test -e .path-prepend; then
     . .path-prepend
+elif grep -q 'required_version := "1.7.x"' build/core/main.mk; then
+    PATH_PREPEND=/usr/lib/jvm/java-7-openjdk-amd64/bin
 fi
 TEMP=$(getopt -o vp:d:kj:c: -n $(basename $0) -- "$@")
 
@@ -135,7 +137,7 @@ fi
 
 . ~/bin/.android-set-outdir
 
-export CCACHE_DIR=$PWD/$OUT_DIR/host/.ccache
+export CCACHE_DIR=$(dirname $(readlink -f $PWD/$OUT_DIR/host))/.ccache
 echo CCACHE_DIR is $CCACHE_DIR
 rm ~/.ccache || rm -rf ~/.ccache
 ln -s $CCACHE_DIR ~/.ccache

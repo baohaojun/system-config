@@ -36,12 +36,9 @@ my $qdest = shell_quote($dest);
 
 my $dest_is_dir = qx(my-adb shell 'test -d $qdest && echo -n yes');
 
-my $host;
 my $dir;
-if ($dest =~ m/:/) {
-    $dest = $POSTMATCH;
-    $host = $PREMATCH;
-    system("ssh", $host, "bash", "-c", $mount_cmd);
+if ($dest =~ m,^/data\b,) {
+    ;
 } else {
     system($mount_cmd);
 }
@@ -51,6 +48,8 @@ sub push_one_file($$)
     my ($file, $base) = @_;
     my $true_dest = "$dest/$base";
     if ($base eq "boot.img" and $root_boot_image) {
+        my $file_q = shell_quote($file);
+        chomp($ENV{BOOT_IMAGE_PATH} = qx(readlink -f $file_q));
         my $file_w = "/tmp/boot.img.$ENV{USER}";
         system("cp", $file, $file_w);
         system("replace-bootimage", "-b", $file_w, "--", "-d");
@@ -86,54 +85,40 @@ for (@ARGV) {
         chomp($file=qx/lookup-file $_/);
     }
 
-    if ($host) {
-        $file = shell_quote($file);
-        chomp($dir = qx/dirname $file/);
-        chomp($dir = qx/readlink -f $dir/);
-        $file =~ s!.*/!!;
-        $file = "$dir/$file";
-        $file = shell_quote($file);
-        $dir = $file;
-        $dir =~ s!(.*)/.*!$1!;
-        system("ssh", $host, "mkdir", "-p", $dir);
-
-        system("rsync", "-rvL", $file, "$host:$dir");
-        system("ssh", $host, "adb", "push", "$file", "$dest");
-    } else {
-        if (-d $file) {
-            $file =~ s!/*$!!;
-            (my $base = $file) =~ s!.*/!!;
-            push_one_file($file, $base);
-        } elsif (-e $file) {
-            (my $base = $file) =~ s!.*/!!;
-            $_ = $file;
-            push_one_file($_, $base);
-        } elsif ($file =~ m!^/scp:|^[^/]+:!) {
-            print "getting it with scp\n";
-            mkdir "/tmp/adb-push.$$";
-            my $port = "";
-            if ($file =~ m!^/scp:([^@]+\@[^#]+)(?:#(\d+))?:(.*)!) {
-                if ($2 ne "") {
-                    $port = "-P $2";
-                }
-                $file = "$1:$3";
+    if (-d $file) {
+        $file =~ s!/*$!!;
+        (my $base = $file) =~ s!.*/!!;
+        push_one_file($file, $base);
+    } elsif (-e $file) {
+        (my $base = $file) =~ s!.*/!!;
+        $_ = $file;
+        push_one_file($_, $base);
+    } elsif ($file =~ m!^/scp:|^[^/]+:!) {
+        print "getting it with scp\n";
+        mkdir "/tmp/adb-push.$$";
+        my $port = "";
+        if ($file =~ m!^/scp:([^@]+\@[^#]+)(?:#(\d+))?:(.*)!) {
+            if ($2 ne "") {
+                $port = "-p $2";
             }
-            if (system("scp $port -r $file /tmp/adb-push.$$/") != 0 and system("yes-or-no-p -y 'Failed to scp $file, continue?'") !=0) {
-                die "Failed to scp $file";
-            }
-            $file =~ s!/*$!!;
-            (my $base = $file) =~ s!.*/!!;
-            my @files = glob("/tmp/adb-push.$$/$base");
-            debug "files are @files";
-            for (@files) {
-                ($base = $_) =~ s!.*/!!;
-                push_one_file($_, $base);
-            }
-            system("rm -rfv /tmp/adb-push.$$");
-        } else {
-            print "Warning: $file not found\n";
+            $file = "$1:$3";
         }
+        if (system("scp $port -r $file /tmp/adb-push.$$/") != 0 and system("yes-or-no-p -y 'failed to scp $file, continue?'") !=0) {
+            die "failed to scp $file";
+        }
+        $file =~ s!/*$!!;
+        (my $base = $file) =~ s!.*/!!;
+        my @files = glob("/tmp/adb-push.$$/$base");
+        debug "files are @files";
+        for (@files) {
+            ($base = $_) =~ s!.*/!!;
+            push_one_file($_, $base);
+        }
+        system("rm -rfv /tmp/adb-push.$$");
+    } else {
+        print "warning: $file not found\n";
     }
+
     if ($secure) {
         my $base_file = $file;
         $base_file =~ s!.*/!!;
@@ -155,8 +140,7 @@ for (@ARGV) {
 }
 
 $mount_cmd = "echo my-adb shell mount -o remount,ro /system; exec >/dev/null 2>&1; my-adb shell sync; my-adb shell mount -o remount,ro /system";
-if ($host) {
-    system("ssh", $host, "bash", "-c", $mount_cmd);
+if ($dest =~ m,^/data\b,) {
 } else {
     system($mount_cmd);
 }

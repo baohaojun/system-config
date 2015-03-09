@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/src/github/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/doc/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
    # of Cake.
@@ -186,6 +186,14 @@ psync() {
     command psync "$@" >/dev/null 2>&1 </dev/null
 }
 ssh() {
+
+    (
+        if test "$1" = code3; then
+            shift
+            set -- abc@172.16.2.25 "$@"
+        fi
+        echo ssh "$@" >> ~/.logs/abc-ssh.txt
+    )
     if test $USER = bhj -a -e ~/.ssh/id_rsa_nopass; then
         unset SSH_AGENT_PID SSH_AUTH_SOCK
         command ssh -i ~/.ssh/id_rsa_nopass "$@"
@@ -375,11 +383,20 @@ function test-cat() {
 
 mm() {
     echo doing mm in $PWD
-    command mm -j8 "$@"
+
+    local extra=
+    if test "$xdebug"; then
+        extra=-v
+    fi
+    command mm $extra -j8 "$@"
 }
 android-make() {
     echo doing android-make in $PWD: $@
-    command android-make -j8 "$@"
+    local extra=
+    if test "$xdebug"; then
+        extra=-v
+    fi
+    command android-make $extra -j8 "$@"
 }
 
 
@@ -660,6 +677,7 @@ function lbb() { # alias for lbb
 
 abc-notify-maintainer() {
     /usr/bin/mailx -r baohaojun@gmail.com "$@" baohaojun@smartisan.com   < /dev/null
+    return 1
 }
 
 function cron-daily-build() { # do a daily build using cron. do not submit this task!
@@ -732,21 +750,36 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
             repo sync -j8 -d || (
                 my-rfa "git reset --hard; git clean -xfd"
                 repo sync -j8 -d
-            ) || abc-notify-maintainer -s "repo sync failed for $PWD"
-            (
-                android-make
-                repo manifest -r -o .repo/manifest.xml.build
-                cat .repo/manifest.xml.build > .repo/manifest.xml
-            ) || (
-                if test -e .repo/manifest.xml.build; then
-                    (
-                        cat .repo/manifest.xml.build > .repo/manifest.xml
-                        repo sync -j8 -d
-                        android-make
-                    ) || abc-notify-maintainer -s "Full build failed again for $PWD" -a buildspec.mk
+            ) || abc-notify-maintainer -s "repo sync failed for $PWD" || continue
+
+            repo manifest -r -o .repo/manifest.xml.sync
+            if test -e .repo/manifest.xml.build && diff -q .repo/manifest.xml.build .repo/manifest.xml.sync; then
+                info "The repo of $PWD don't need update"
+                exit 0
+            fi
+
+            for config in .repo/out-*-{eng,user,userdebug}; do
+                if test ! -d "$config"; then
+                    continue
                 fi
-            ) || true
-            mkbeagrepidx || true
+                config=${config#.repo/out-}
+                (
+                    android-make
+                    cp .repo/manifest.xml.sync .repo/manifest.xml.build
+                    cat .repo/manifest.xml.build > .repo/manifest.xml
+                ) || (
+                    if test -e .repo/manifest.xml.build; then
+                        (
+                            cat .repo/manifest.xml.build > .repo/manifest.xml
+                            repo sync -j8 -d
+                            android-make
+                        ) || abc-notify-maintainer -s "Full build failed again for $PWD: $config" -a buildspec.mk
+                    fi
+                ) || true
+            done
+            (
+                nice for-code-reading -i -v&
+            ) 9>/dev/null
         )
     done
 }
@@ -930,7 +963,10 @@ if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / |
     ## end generated code
 
     if test "$debug" = true; then
+        export xdebug=true
         set -x
+    else
+        unset xdebug
     fi
 
     if test $testabc = true; then
