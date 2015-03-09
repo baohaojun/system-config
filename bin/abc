@@ -50,7 +50,14 @@ is-a-subdir() {
 }
 
 info() {
-    echo "$@" 1>&2
+    if test $# = 0; then
+        cat
+    else
+        echo "$@"
+    fi |
+        (
+            flock ~/.logs/abc.info.lock tee -a ~/.logs/abc.info.txt
+        ) 1>&2
 }
 function killlock() { # can kill run-away abc tasks.
     get-base-build "$@"
@@ -106,7 +113,7 @@ dump1lock() {
         die "dump1lock usage error"
     fi
     if fuser "$1" >/dev/null 2>&1; then
-        info "These processes are using $1"
+        echo "These processes are using $1"
         (fuser "$1" |grep . || echo 1) | xargs ps -o pid,ppid,etime,command
     fi
 }
@@ -756,6 +763,9 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
             if test -e .repo/manifest.xml.build && diff -q .repo/manifest.xml.build .repo/manifest.xml.sync; then
                 info "The repo of $PWD don't need update"
                 exit 0
+            elif test -e .repo/manifest.xml.build; then
+                info Will need to update the build in $PWD:
+                diff .repo/manifest.xml.build .repo/manifest.xml.sync | info
             fi
 
             for config in .repo/out-*-{eng,user,userdebug}; do
@@ -764,7 +774,7 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                 fi
                 config=${config#.repo/out-}
                 (
-                    android-make
+                    android-make -c $config
                     cp .repo/manifest.xml.sync .repo/manifest.xml.build
                     cat .repo/manifest.xml.build > .repo/manifest.xml
                 ) || (
@@ -772,7 +782,7 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                         (
                             cat .repo/manifest.xml.build > .repo/manifest.xml
                             repo sync -j8 -d
-                            android-make
+                            android-make -c $config
                         ) || abc-notify-maintainer -s "Full build failed again for $PWD: $config" -a buildspec.mk
                     fi
                 ) || true
