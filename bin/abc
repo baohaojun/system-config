@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/doc/projects/abc.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/doc/projects/ABC.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
    # of Cake.
@@ -12,11 +12,11 @@ if test "$ABC_REMOTE_HOST" = ""; then
     export ABC_REMOTE_HOST=abc
 fi
 
-if test -e ~/src/github/projects/abc.org -a ~/src/github/projects/abc.org -nt ~/bin/abc; then
+if test -e ~/src/github/projects/ABC.org -a ~/src/github/projects/ABC.org -nt ~/bin/abc; then
     emacsclient -e '
         (progn
          (save-some-buffers t)
-         (find-file "~/src/github/projects/abc.org")
+         (find-file "~/src/github/projects/ABC.org")
          (org-babel-tangle))' && touch ~/bin/abc && exec $0 "$@"
 fi
 
@@ -51,7 +51,7 @@ is-a-subdir() {
 
 info() {
     if test $# = 0; then
-        cat
+        perl -npe 's/^/    /'
     else
         echo "$@"
     fi |
@@ -114,7 +114,19 @@ dump1lock() {
     fi
     if fuser "$1" >/dev/null 2>&1; then
         echo "These processes are using $1"
-        (fuser "$1" |grep . || echo 1) | xargs ps -o pid,ppid,etime,command
+        (fuser "$1" |grep . || echo 1) |
+            xargs ps -o pid,ppid,etime,command |
+            cut -b 1-80 |
+            perl -a -ne '
+                if (1..1) {
+                    print;
+                    next;
+                }
+                chomp;
+                printf "%-85s", $_;
+                system("cat /proc/$F[0]/environ|tr \\\\0 \\\\n|grep ABC_USER|perl -npe \"s/.*=//\"")
+            '
+
     fi
 }
 
@@ -333,26 +345,30 @@ copy-output-files() {
         export ABC_USER_OUTPUT=../by-user/$ABC_USER
         find . -type d | perl -ne 'use File::Path qw(make_path); chomp; make_path("$ENV{ABC_USER_OUTPUT}/$_")'
         find . -type f | perl -ne 'chomp; link $_, "$ENV{ABC_USER_OUTPUT}/$_"'
-        rsync . $ABC_USER_OUTPUT -av
+        rsync . $ABC_USER_OUTPUT -av --delete
+        echo "Please get your files at: $(readlink -f $ABC_USER_OUTPUT | perl -npe 's,^/Share,smb://172.16.2.25,')"
     )
+
 }
 
 function repo-cherry-find-all() { # find all patches that needs
                                   # cherry-picking between 2 branches.
 
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopts -l b:base f:from t:to
+    # generate-getopts -l b:base f:from t:to ssync
     ## end code-generator
     ## start generated code
     local base=
     local from=
     local to=
+    local sync=false
     local OPTIND=1
-    while getopts 'b:f:t:' opt; do
+    while getopts 'b:f:t:s' opt; do
         case "$opt" in
             b)    base=$OPTARG;;
             f)    from=$OPTARG;;
             t)    to=$OPTARG;;
+            s)    sync=true;;
             *)    echo Usage Error;;
         esac
     done
@@ -368,8 +384,9 @@ function repo-cherry-find-all() { # find all patches that needs
     (
         cd ~/buildfarm/"$base"
         lock-base-build "sync the repos"
-        if yes-or-no-p "sync the repos?"; then
-            ~/bin/repo sync -n -j2
+
+        if test "$sync" = true; then
+            my-rfa 'git fetch $(repo-remote)'
         fi
     )
 
@@ -523,7 +540,21 @@ EOF
                 die "Invalid patch dir: $patch_dir"
             fi
             mark_a_patch $(ap $(lookup-file -e .git/..))
-            patch -p 1
+
+            (
+                patch_dir=$(ap)
+                cd $(lookup-file .repo)
+                git init abc-patches || true
+                cd abc-patches
+                mkdir -p $ABC_USER/$patch_dir
+                tee $ABC_USER/$patch_dir/patch /tmp/abc-patch.$$
+                git add .
+                git commit -m 'submit patch for build' --allow-empty
+            )
+
+            (
+                cat /tmp/abc-patch.$$; rm -f /tmp/abc-patch.$$
+            ) | patch -p 1
         )
 
     fi
@@ -662,7 +693,12 @@ EOF
         )
     done
 
-    copy-output-files -t "$(basename $(readlink -f out))" out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root
+    local extra=
+    if test -e .repo/manifest.xml.base; then
+        extra=.repo/manifest.xml.base
+    fi
+
+    copy-output-files -t "$(basename $(readlink -f out))" out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root $extra
 }
 
 function list-base-builds() { # list base builds
@@ -683,6 +719,7 @@ function lbb() { # alias for lbb
 }
 
 abc-notify-maintainer() {
+    info Will now send email to maintainer: "$@"
     /usr/bin/mailx -r baohaojun@gmail.com "$@" baohaojun@smartisan.com   < /dev/null
     return 1
 }
@@ -760,12 +797,12 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
             ) || abc-notify-maintainer -s "repo sync failed for $PWD" || continue
 
             repo manifest -r -o .repo/manifest.xml.sync
-            if test -e .repo/manifest.xml.build && diff -q .repo/manifest.xml.build .repo/manifest.xml.sync; then
+            if test -e .repo/manifest.xml.base && diff -q .repo/manifest.xml.base .repo/manifest.xml.sync; then
                 info "The repo of $PWD don't need update"
                 exit 0
-            elif test -e .repo/manifest.xml.build; then
+            elif test -e .repo/manifest.xml.base; then
                 info Will need to update the build in $PWD:
-                diff .repo/manifest.xml.build .repo/manifest.xml.sync | info
+                diff .repo/manifest.xml.base .repo/manifest.xml.sync | info
             fi
 
             for config in .repo/out-*-{eng,user,userdebug}; do
@@ -775,12 +812,14 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                 config=${config#.repo/out-}
                 (
                     android-make -c $config
-                    cp .repo/manifest.xml.sync .repo/manifest.xml.build
-                    cat .repo/manifest.xml.build > .repo/manifest.xml
+                    info new build is ok, will update the build manifest.
+                    cp .repo/manifest.xml.sync .repo/manifest.xml.base
+                    cat .repo/manifest.xml.base > .repo/manifest.xml
                 ) || (
-                    if test -e .repo/manifest.xml.build; then
+                    if test -e .repo/manifest.xml.base; then
                         (
-                            cat .repo/manifest.xml.build > .repo/manifest.xml
+                            info need to try old build
+                            cat .repo/manifest.xml.base > .repo/manifest.xml
                             repo sync -j8 -d
                             android-make -c $config
                         ) || abc-notify-maintainer -s "Full build failed again for $PWD: $config" -a buildspec.mk
@@ -943,7 +982,7 @@ function help() {
 }
 
 function remote-abc() { # run a remote abc command, such as abc-files
-    if test "$USER" = bhj -a -e '/home/bhj/src/github/projects/abc.org'; then
+    if test "$USER" = bhj -a -e '/home/bhj/src/github/projects/ABC.org'; then
         (
             cd
             psync </dev/null

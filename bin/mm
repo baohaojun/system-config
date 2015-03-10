@@ -37,6 +37,8 @@ while true; do
     esac
 done
 
+unset CLASSPATH
+
 time (
     set -e
     set -o pipefail
