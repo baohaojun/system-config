@@ -6,6 +6,27 @@ function die() {
     exit -1
 }
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopts llocal_index qquote xxdebug
+## end code-generator
+## start generated code
+local_index=false
+quote=false
+xdebug=false
+OPTIND=1
+while getopts 'lqx' opt; do
+    case "$opt" in
+        l)    local_index=true;;
+        q)    quote=true;;
+        x)    xdebug=true;;
+        *)    echo Usage Error;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+
 start_dir=~/.cache/for-code-reading/"$(readlink -f "$PWD")"
 # echo Starting at $start_dir 1>&2
 while test ! -d "$start_dir"/.beagrep -a "$start_dir" != / -a "$start_dir"
@@ -52,7 +73,11 @@ fi
 
 tokens="$tokens $additional_tokens"
 
-if test -e "$beagrep_dir"/../.beagrep-abc; then
+if test "$quote" = true; then
+    tokens=$(echo $tokens | perl -npe 's/^\s*/"/; s/\s*$/"/')
+fi
+
+if test -e "$beagrep_dir"/../.beagrep-abc && test "$local_index" != true; then
     start_dir=${beagrep_dir#*for-code-reading/}
     start_dir=${start_dir%.beagrep}
     bash "$beagrep_dir"/../.beagrep-abc "$tokens"|rm-last-nl|perl -npe "s,^,$start_dir,"
