@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+(
+    mkdir -p .git
+    cd .git
+    relative-link -f $(lookup-file -e .repo)/projects/$(ap|perl -npe 's,/.git,.git,')/* .
+    rm -f HEAD index ORIG_HEAD FETCH_HEAD HEAD.2
+    head=$PWD/HEAD
+    cd -P objects
+    cd ..
+    rev=$(git branch -a|grep -e '->'|pn 3)
+    if test "$rev"; then
+        git log -1 --pretty=%H $rev > $head
+    fi
+)
+git add .

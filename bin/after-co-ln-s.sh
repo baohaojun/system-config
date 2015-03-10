@@ -31,7 +31,7 @@ if test $can_sudo = true -a -d /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && a
 fi
 
 if test $can_sudo = true -a $USER = bhj; then
-    sudo apt-get remove pulseaudio pulseaudio-module-x11 pulseaudio-utils || true
+    sudo apt-get remove -y pulseaudio pulseaudio-module-x11 pulseaudio-utils || true
 fi
 
 if ! which sudo >/dev/null 2>&1 ; then # for cygwin, where sudo is not available

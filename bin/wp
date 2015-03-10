@@ -148,6 +148,9 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     export FILE=${1:-$(readlink -f .)}
     export FILE=$(lookup-file "$FILE")
+    if [[ "$FILE" =~ ^smb:// ]]; then
+        export FILE=${FILE/smb:\/\//${HOME}/smb/}
+    fi
 
     out=$($(basename -- $0) "$@")
     echo "$out"

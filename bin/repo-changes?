@@ -48,6 +48,7 @@ set -- $(
 
 my-rfa -j 4 -p "$path_pattern" "$@" -- '
 #{%sh%}
+(
 if test "$DEBUG" = true; then
     set -x
     function git()
@@ -138,6 +139,7 @@ if test "$DO_GIT_ST_ONLY" != true -a "$head_rev" != "$rev"; then
 
     fi
 fi
+) || echo "$PWD git failed"
 
 #{%/sh%}
 ' 2>&1 10>~/.logs/repo-changes.lock | (
