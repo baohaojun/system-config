@@ -11,6 +11,7 @@
    ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
+ '(bbyac-max-chars 80)
  '(before-save-hook
    (quote
     (confirm-risky-remote-edit cleanup-buffer-safe fix-latex-cjk ajoke-get-imports-if-java-mode)))
@@ -134,6 +135,9 @@
      ("\\.mm\\'" . default)
      ("\\.x?html?\\'" . default)
      ("\\.pdf\\'" . "of %s"))))
+ '(org-jira-default-jql
+   "(reporter = currentUser() or assignee = currentUser()) and resolution = unresolved
+   ORDER BY priority DESC, created ASC")
  '(org-mobile-directory "~/today/MobileOrg")
  '(org-mobile-inbox-for-pull "~/doc/projects/from-mobile.org")
  '(org-modules
