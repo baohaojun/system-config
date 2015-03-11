@@ -78,8 +78,8 @@ void Snore::SettingsDialog::on_pushButton_clicked()
     Application app = SnoreCorePrivate::instance()->defaultApplication();
     Notification noti(app, app.alerts()["Default"], "Hello World",
                       "<i>This is Snore</i><br>"
-                      "<a href=\"https://github.com/TheOneRing/Snorenotify\">Project Website</a><br>",
-                      Icon(":/root/snore.png"));
+                      "<a href=\"https://github.com/Snorenotify/Snorenotify\">Project Website</a><br>",
+                      app.icon());
     noti.addAction(Action(1, "Test Action"));
     SnoreCore::instance().broadcastNotification(noti);
 }
