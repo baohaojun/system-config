@@ -409,7 +409,7 @@ EXTRACTER, MATCHER and BUFFER-FILTER."
     (when (and the-regexp
                (setq matches (bbyac--get-matches the-regexp matcher buffer-filter)))
       (if (or (minibufferp)
-           (cl-notany #'bbyac--string-multiline-p matches))
+              (cl-notany #'bbyac--string-multiline-p matches))
           (progn
             (setq match (bbyac--display-matches matches))
             (when (and bbyac--start bbyac--end)
@@ -417,6 +417,7 @@ EXTRACTER, MATCHER and BUFFER-FILTER."
             (insert match))
         (when (and bbyac--start bbyac--end)
           (delete-region bbyac--start bbyac--end))
+        (deactivate-mark)
         (let ((kill-ring matches)
               (kill-ring-yank-pointer matches))
           (browse-kill-ring))))))
@@ -475,28 +476,31 @@ This function is copy and modified from
 that function.  MAX-LINE-NUM is the max number of lines."
   (let* ((max-lines (bbyac--max-minibuffer-lines))
          (max-lines-1 (- max-lines 2))
-         (max-lines-2 (1- max-lines-1)))
-    (cond
-     ((< max-line-num max-lines)
-      (ecomplete-highlight-match-line matches line))
-     (t
-      (let* ((min-disp (* max-lines-1 (/ line max-lines-1)))
-             (max-disp (min max-line-num (+ (* max-lines-1 (/ line max-lines-1)) max-lines-2)))
-             (line (% line max-lines-1))
-             (matches
-              (with-temp-buffer
-                (insert matches)
-                (goto-line (1+ min-disp))
-                (beginning-of-line)
-                (concat
-                 (buffer-substring-no-properties
-                  (point)
-                  (progn
-                    (goto-line (1+ max-disp))
-                    (end-of-line)
-                    (point)))
-                 (format "\nmin: %d, max: %d, total: %d" min-disp max-disp max-line-num)))))
-        (ecomplete-highlight-match-line matches line))))))
+         (max-lines-2 (1- max-lines-1))
+         (res
+          (cond
+           ((< max-line-num max-lines)
+            (ecomplete-highlight-match-line matches line))
+           (t
+            (let* ((min-disp (* max-lines-1 (/ line max-lines-1)))
+                   (max-disp (min max-line-num (+ (* max-lines-1 (/ line max-lines-1)) max-lines-2)))
+                   (line (% line max-lines-1))
+                   (matches
+                    (with-temp-buffer
+                      (insert matches)
+                      (goto-line (1+ min-disp))
+                      (beginning-of-line)
+                      (concat
+                       (buffer-substring-no-properties
+                        (point)
+                        (progn
+                          (goto-line (1+ max-disp))
+                          (end-of-line)
+                          (point)))
+                       (format "\nmin: %d, max: %d, total: %d" min-disp max-disp max-line-num)))))
+              (ecomplete-highlight-match-line matches line))))))
+    (add-face-text-property 0 (length res) '(:height .8) t res)
+    res))
 
 (defun bbyac--display-matches (strlist)
   "Display STRLIST for the user to choose from its elements.
