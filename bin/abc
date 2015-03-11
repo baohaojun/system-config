@@ -211,8 +211,14 @@ ssh() {
             shift
             set -- abc@172.16.2.25 "$@"
         fi
-        echo ssh "$@" >> ~/.logs/abc-ssh.txt
+        if test $dryrun = true; then
+            echo ssh "$@" | tee /dev/stderr | putclip
+        fi
     )
+
+    if test $dryrun = true; then
+        exit
+    fi
     if test $USER = bhj -a -e ~/.ssh/id_rsa_nopass; then
         unset SSH_AGENT_PID SSH_AUTH_SOCK
         command ssh -i ~/.ssh/id_rsa_nopass "$@"
@@ -342,7 +348,7 @@ copy-output-files() {
 
     (
         cd $target/
-        export ABC_USER_OUTPUT=../by-user/$ABC_USER
+        export ABC_USER_OUTPUT=../by-user/$ABC_USER/$(basename $target)
         find . -type d | perl -ne 'use File::Path qw(make_path); chomp; make_path("$ENV{ABC_USER_OUTPUT}/$_")'
         find . -type f | perl -ne 'chomp; link $_, "$ENV{ABC_USER_OUTPUT}/$_"'
         rsync . $ABC_USER_OUTPUT -av --delete
@@ -386,7 +392,7 @@ function repo-cherry-find-all() { # find all patches that needs
         lock-base-build "sync the repos"
 
         if test "$sync" = true; then
-            my-rfa 'git fetch $(repo-remote)'
+            my-rfa 'pwd; git fetch $(repo-remote)'
         fi
     )
 
@@ -994,16 +1000,18 @@ function remote-abc() { # run a remote abc command, such as abc-files
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
 
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopts xdebug ttestabc
+    # generate-getopts xdebug ttestabc ddryrun
     ## end code-generator
     ## start generated code
     debug=false
     testabc=false
+    dryrun=false
     OPTIND=1
-    while getopts 'xt' opt; do
+    while getopts 'xtd' opt; do
         case "$opt" in
             x)    debug=true;;
             t)    testabc=true;;
+            d)    dryrun=true;;
             *)    echo Usage Error;;
         esac
     done

@@ -69,19 +69,20 @@ cd system
 echo doing rsync in $(pwd)
 my-adb remount
 my-adb stop
-
-sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
-if test -d media/app; then
-    my-adb push media/app /system/media/app
+if my-adb "test -e /system/framework/com.google.android.maps.jar && echo -n yes && echo $$" | grep yes$$ -q; then
+    for x in $(find ~/src/github/private-config/bin/gapps-system/ -type f); do
+        dest=${x#*/gapps-system/}
+        sudo cp $x $dest
+    done
 fi
-sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0'|perl -npe 's/^/chcon /' |tee ../system.chcon
+sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
+sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /' |tee ../system.chcon
 my-adb push ../system.chcon /data/
 my-adb 'cd /system; bash -x /data/system.chcon'
 cd ..
 sudo umount system
-oldpwd=$PWD
 cd ..
-rm $oldpwd -rf
+sudo rm -rf ~/tmp/system-$tmpPostfix.img ~/tmp/system-$tmpPostfix
 set -x
 wait
 echo ok

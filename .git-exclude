@@ -12,3 +12,4 @@ modules.order
 .commit-msg-bhj
 *.class
 *.pyc
+*.elc
