@@ -261,12 +261,6 @@ public:
      */
     static int defaultTimeout();
 
-    /**
-     * Sets the default timeout.
-     * @param defaultTimeout
-     */
-    static void setDefaultTimeout(int defaultTimeout);
-
 private:
     QExplicitlySharedDataPointer<NotificationData> d;
 

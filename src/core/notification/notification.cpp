@@ -156,11 +156,6 @@ int Notification::defaultTimeout()
     return SnoreCore::instance().value("Timeout", LOCAL_SETTING).toInt();
 }
 
-void Notification::setDefaultTimeout(int defaultTimeout)
-{
-    SnoreCore::instance().setValue("Timeout", defaultTimeout, LOCAL_SETTING);
-}
-
 QDataStream &operator<< (QDataStream &stream, const Notification &noti)
 {
     stream << "Title: " << noti.title() << " Text: " << noti.text() << " ID: " << noti.id() ;
