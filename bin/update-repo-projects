@@ -8,6 +8,18 @@ if test -e ~/.config/no-$(basename $0); then
     exit
 fi
 
+if test -e ~/src/android-mirror; then
+    (
+        cd ~/src/android-mirror
+        for x in $(find . -type d -name '*.git' -print -prune|grep -v /.git); do
+            (
+                cd $x
+                git fetch $(repo-remote)
+            )
+        done
+    )
+fi || true
+
 if test -e ~/src/android/kernel/; then
     (
         set +e

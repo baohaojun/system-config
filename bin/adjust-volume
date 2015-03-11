@@ -13,10 +13,12 @@ if test "$(basename $0)" = sound-off; then
     exit
 elif test "$(basename $0)" = sound-on; then
     amixer -q sset Master,0 unmute
+    amixer -q sset 'Headphone',0 unmute
+    amixer -q sset 'Speaker',0 unmute
     exit
 fi
 
-amixer -q sset Master,0 unmute
+sound-on
 if test "$#" = 1; then
     amixer -q sset Master,0 "${1%%%}"%
     exit
