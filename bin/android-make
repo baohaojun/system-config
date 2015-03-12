@@ -134,6 +134,7 @@ fi
 
 . ~/bin/.android-set-outdir
 
+touch $OUT_DIR/Android.mk # to make findleaves.py skip this folder.
 export CCACHE_DIR=$(dirname $(readlink -f $PWD/$OUT_DIR/host))/.ccache
 echo CCACHE_DIR is $CCACHE_DIR
 rm ~/.ccache || rm -rf ~/.ccache
@@ -149,14 +150,6 @@ export TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT
 if test "$DEBUG" = true; then
     set -x;
 fi
-(
-    set -e
-    test -d "$ANDROID_PRODUCT_OUT"
-    cd "$ANDROID_PRODUCT_OUT" >/dev/null 2>&1
-    test -d .repo && die "can not do it; .repo means we are at android top."
-    rm ../system.img ../obj/PACKAGING/systemimage_intermediates/system.img -vf
-    # rm kernel telephony uboot-obm -rf # see what will happen?
-) || true
 
 test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use android-make -c CONFIG, for e.g., aosp_x86-eng; exit; }
 
