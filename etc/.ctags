@@ -49,3 +49,7 @@
 --regex-clojure=/\([ \t]*defstruct[ \t]+([-[:alnum:]*+!_:\/.?]+)/\1/s,struct/
 --regex-clojure=/\([ \t]*intern[ \t]+([-[:alnum:]*+!_:\/.?]+)/\1/v,intern/
 --regex-clojure=/\([ \t]*ns[ \t]+([-[:alnum:]*+!_:\/.?]+)/\1/n,namespace/
+
+--langdef=rep
+--langmap=rep:.jl
+--regex-rep=/^([ \t]*\(def[^ \t]*[ \t]+\(?([^ \t]+))/\2/d,definition/
