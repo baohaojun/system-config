@@ -25,8 +25,8 @@ function die() {
     exit -1
 }
 
-if test "$#" != 2; then
-    die "Usage: $(basename $0) [-i icon] headline content"
+if test "$#" != 1 -a $# != 2; then
+    die "Usage: $(basename $0) [-i icon] headline [content]"
 fi
 
 tmp_head=/tmp/$(basename $0).$$.head
@@ -44,6 +44,12 @@ read_head=$(cat <<EOF
     str))
 EOF
 )
+
+if test $# = 1; then
+    sawfish-client -e "(bhj-draw-notification t nil $read_head)"
+    rm $tmp_head
+    exit
+fi
 
 tmp_content=/tmp/$(basename $0).$$.content
 
@@ -83,7 +89,6 @@ fi
 
 
 (
-    flock 9
     sawfish-client -e "
 (progn
   (bind-keys window-keymap \"Button1-Click\" '(system \"sawfish-clean-screen&\"))
@@ -93,10 +98,7 @@ fi
     rm -f "$tmp_icon" "$tmp_content" "$tmp_head"
 
     (
-        (
-            flock 9
-            sleep 15
-        ) 9>~/.logs/$(basename $0).lock2 &&
-            sawfish-clean-screen
+        sleep 15
+        draw-notification-with-sawfish "$1"
     )&
-) 9>~/.logs/$(basename $0).lock
+)&

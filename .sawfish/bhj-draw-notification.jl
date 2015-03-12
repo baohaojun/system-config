@@ -4,6 +4,7 @@
     (export bhj-draw-notification)
 
     (open rep
+          rep.data.tables
           rep.system
           rep.regexp
           rep.data.records
@@ -23,8 +24,18 @@
 
   (defconst icon-size 96)
 
+  (define-record-type :notification
+    (new-notif title text icon window y)
+    notif?
+    (title notif-title notif-set-title!)
+    (icon notif-icon notif-set-icon!)
+    (text notif-text notif-set-text!)
+    (window notif-window notif-set-window!)
+    (y notif-y notif-set-y!))
+
+  (define notification-table (make-table string-hash string=))
+
   ;; window currently displayed, or nil
-  (define info-window nil)
   (define Kill-image (make-image "~/.sawfish/Kill.png"))
 
 ;;; utilities
@@ -37,14 +48,22 @@
   ;; Calculates where to put an info window associated with W with size
   ;; DIMS
   (define (get-window-pos w dims)
-    (let ((head (current-head w)))
+    (let ((head (current-head w))
+          (current-mapped-notif-height 0))
+      (table-walk (lambda (title a-notif)
+                    (setq current-mapped-notif-height
+                          (+ current-mapped-notif-height
+                             (x-drawable-height (notif-window a-notif)))))
+                  notification-table)
       (if head
           (cons (+ (quotient (- (car (head-dimensions head)) (car dims)) 1)
                    (car (head-offset head)))
                 (+ (quotient (- (cdr (head-dimensions head)) (cdr dims)) 1)
-                   (cdr (head-offset head))))
+                   (cdr (head-offset head))
+                   (- current-mapped-notif-height)))
         (cons (quotient (- (screen-width) (car dims)) 1)
-              (quotient (- (screen-height) (cdr dims)) 1)))))
+              (- (quotient (- (screen-height) (cdr dims)) 1)
+                 current-mapped-notif-height)))))
 
 ;;; entry point
 
@@ -53,17 +72,45 @@
   ;;  * At right, the window's title and (maybe) its class.
 
   (define line-height (+ (font-height default-font) 4))
+
+  (define (bhj-close-notification title)
+    (if title
+        (let* ((notif (table-ref notification-table title))
+               (window (and notif (notif-window notif)))
+               (height-of-window 0)
+               (y-of-window 0))
+          (when window
+            (setq height-of-window (x-drawable-height window)
+                  y-of-window (notif-y notif))
+            (x-destroy-window window)
+            (table-unset notification-table title)
+            (table-walk (lambda (title a-notif)
+                          (format t "y-of-window is %d, current y is %d" y-of-window (notif-y a-notif))
+                          (when (> y-of-window (notif-y a-notif))
+                            (let ((new-y (+ (notif-y a-notif) height-of-window)))
+                              (x-configure-window (notif-window a-notif)
+                                                  `((y . ,new-y)))
+                              (notif-set-y! a-notif new-y))))
+                        notification-table)))
+      (let ((titles))
+        (table-walk (lambda (title a-notif)
+                      (setq titles (cons title titles)))
+                    notification-table)
+        (format t "titles are %s" titles)
+        (while titles
+          (bhj-close-notification (or (car titles) "t"))
+          (setq titles (cdr titles))))))
+
   (define (bhj-draw-notification #!optional close icon text-head text-content)
     "Shows the icon, the head, and the content"
-
-    ;; if there's an old window, destroy it
-    (when info-window
-      (x-destroy-window info-window)
-      (setq info-window nil))
-
-    (unless close
+    (if close
+        (bhj-close-notification text-head)
+      (when (table-bound-p notification-table text-head)
+        (bhj-close-notification text-head))
       (let* ((2x-margin (* 2 x-margin))
              (2y-margin (* 2 y-margin))
+             info-window
+             win-xy
              (win-size (cons (+ (* 3 x-margin)
                                 icon-size
                                 (max (text-width text-head default-font)
@@ -72,7 +119,7 @@
                                                     (string-split "\n" text-content)))))
                              (+ (* 3 y-margin)
                                 (max icon-size (* (1+ (length (string-split "\n" text-content)))
-                                    line-height))))))
+                                                  line-height))))))
 
         (define (event-handler type xw)
           ;; XW is the handle of the X drawable to draw in
@@ -114,8 +161,11 @@
 
         ;; create new window
         (setq info-window (x-create-window
-                           (get-window-pos (car (managed-windows)) win-size) win-size 1
+                           (setq win-xy (get-window-pos (car (managed-windows)) win-size))
+                           win-size
+                           1
                            `((background . ,(get-color "white"))
                              (border-color . ,(get-color "black")))
                            event-handler))
-        (x-map-window info-window)))))
+        (x-map-window info-window)
+        (table-set notification-table text-head (new-notif text-head text-content icon info-window (cdr win-xy)))))))
