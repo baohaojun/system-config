@@ -57,10 +57,11 @@ plugin-example|Example of function layer plugin parser:\
 :langmap=jar\:.jar.dll.exe:\
 :langmap=java\:.aidl.java:\
 :langmap=Clojure\:.clj:\
+:langmap=rep\:.jl:\
 :langmap=javaprop\:(ExternalMessages.properties):\
 :langmap=javascript\:.js:\
 :langmap=kconfig\:(Kconfig*):\
-:langmap=lisp\:(.emacs).el.jl.l.lisp:\
+:langmap=lisp\:(.emacs).el.l.lisp:\
 :langmap=lua\:.lua:\
 :langmap=make\:(*.am)(Kbuild*)([mM]akefile*).make.mk:\
 :langmap=pascal\:.p.pas:\
@@ -77,6 +78,7 @@ plugin-example|Example of function layer plugin parser:\
         :gtags_parser=asm\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=java\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=Clojure\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=rep\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=OrgMode\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=jar\:@prefix@/lib/gtags/gtags-antlr-java.la:\
         :gtags_parser=antlr\:@prefix@/lib/gtags/exuberant-ctags.la:\
