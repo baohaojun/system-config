@@ -35,6 +35,8 @@
 (require-package 'browse-kill-ring)
 (require-package 'bbdb)
 (require-package 'helm)
+(require-package 'dts-mode)
+(add-hook 'dts-mode-hook (lambda ()  (setq indent-tabs-mode t)))
 (require-package 'csharp-mode)
 (require 'helm-config)
 (helm-mode 1)
