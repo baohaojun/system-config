@@ -1,17 +1,3 @@
 #!/bin/bash
 
-git-remote-url $(repo-remote) | perl -npe '
-#{%perl%}
-s,^ssh://shgit.marvell.com/git/,shgit.marvell.com:/git/,;
-s,(shgit.marvell.com):/git/,$1/r/:,;
-%rewrites = (
-    "android/vendor/marvell/ose/ttc_telephony" => "ose/linux/ttc_telephony",
-    "android/vendor/marvell/ose/wtptp_pxa910" => "ose/linux/wtptp_pxa910",
-    "^bibler:" => "bible/gerrit:",
-);
-foreach $key (keys %rewrites) {
-    s,$key,$rewrites{$key},e;
-}
-#{%/perl%}
-
-' | perl -npe 's!^ssh://!!; s,29418/,8080/r/,; s!http://android!https://android!'
+git-remote-url $(repo-remote)

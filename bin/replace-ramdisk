@@ -52,7 +52,7 @@ if test ! -e "$ramdisk"; then
 fi
 echo ramdisk image is $ramdisk
 
-tdir=/tmp/$(basename $0).$$
+tdir=${REPLACE_RAMDISK_TMPDIR:-/tmp/$(basename $0).$$}
 rm -rf $tdir
 mkdir -p $tdir
 (

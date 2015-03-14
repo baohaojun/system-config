@@ -185,7 +185,8 @@ fi
             if test $# = 1 -a $1 = msm-kernel; then
                 (
                     cd build/target/board
-                    $do_nice mm $(android-env get_build_var PRODUCT_OUT)/kernel -j$jobs $verbose
+                    PRODUCT_OUTX=$(android-env get_build_var PRODUCT_OUT)
+                    $do_nice mm $PRODUCT_OUTX/kernel $PRODUCT_OUTX/dt.img -j$jobs $verbose
                 )
             elif test $# = 1 -a $1 = lk; then
                 (
