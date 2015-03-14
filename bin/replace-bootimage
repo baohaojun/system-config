@@ -6,12 +6,17 @@ fi
 
 mydir=$(dirname $(readlink -f $0))
 boot=
-TEMP=$(getopt -o b: --long boot: -n $(basename $0) -- "$@")
+output=
+TEMP=$(getopt -o b:o: --long boot:,output: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -b|--boot)
             boot=$2
+            shift 2
+            ;;
+        -o|--output)
+            output=$2
             shift 2
             ;;
         --)
@@ -30,18 +35,26 @@ function die() {
     echo Error: "$@"
     exit -1
 }
-boot_part=$(my-adb 'echo /dev/block/platform/*/by-name/boot')
+
+if test -z "$output"; then
+    output=$boot
+fi
+
 if test ! -e "$boot"; then
+    if test "$output" = "$boot"; then
+        output=./boot.img
+    fi
+    boot_part=$(my-adb 'echo /dev/block/platform/*/by-name/boot')
     if test "$boot" = adb; then
         my-adb -r echo hello
         my-adb -S shell sh -c "cat $boot_part > /data/boot.img"
-        my-adb pull /data/boot.img .
-        boot=boot.img
+        my-adb pull /data/boot.img $output
+        boot=$output
     elif test "$boot" = adb.recovery; then
         my-adb -r echo hello
         my-adb -S shell sh -c "cat $boot_part > /data/boot.img"
-        my-adb pull /data/boot.img .
-        boot=boot.img
+        my-adb pull /data/boot.img $output
+        boot=$output
     else
         die "boot image $boot not found"
     fi
@@ -49,6 +62,7 @@ fi
 echo boot image is $boot
 
 boot=$(readlink -f $boot)
+output=$(readlink -m $output)
 tmpd=/tmp/$(basename $0).$$
 rm -rf $tmpd
 mkdir $tmpd
@@ -57,22 +71,19 @@ mkdir $tmpd
     cp "$boot" $(basename "$boot")
     unbootimg $(basename "$boot")
 )
-replace-ramdisk -r $tmpd/ramdisk.img "$@"
+
+if test $# = 0; then
+    ew $tmpd/mkbootimg.sh
+else
+    export REPLACE_RAMDISK_TMPDIR=$tmpd.ram
+    replace-ramdisk -r $tmpd/ramdisk.img "$@"
+fi
 (
     cd $tmpd
     bash -e mkbootimg.sh
     bboot=$(basename "$boot")
 
-    if my-adb -r 'test -e /selinux_version && echo yes'$$ | grep yes$$; then
-        set -x
-        if test -e ~/etc/android/verity_private_dev_key; then
-            verity_key=~/etc/android/verity_private_dev_key
-        else
-            verity_key=${mydir}/verity_private_dev_key
-        fi
-        PATH=/usr/bin:$PATH ~/src/github/android5-host/linux-x86/bin/boot_signer /boot $bboot $verity_key $bboot
-    fi
-    cp $(basename "$boot") "$boot"
+    cp $(basename "$boot") "$output"
 )
 if echo $SHELLOPTS | grep -q xtrace; then
     true

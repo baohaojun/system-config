@@ -187,7 +187,7 @@ cd_record()
 start_recursive_shell()
 {
     (
-        export RECURSIVE_SHELL='[01;32mRecursive[01;31m:[01;32m'"$@"'[01;34m '
+        export RECURSIVE_SHELL='[01;32mRecursive[01;31m:[01;32m'"$@"'[0m '
         bash
     )
 }

@@ -7,8 +7,10 @@ function die() {
 }
 
 if test $# = 1; then
-    set -- "$1" HEAD
+    set -- $1 HEAD
 fi
+
+set -- $(git rev-parse $1) $(git rev-parse $2)
 
 if test $# != 2; then
     die "Usage: $(basename $0) START_REV END_REV(default to HEAD)"
@@ -16,9 +18,7 @@ fi
 
 export list=$(git rev-list $1..$2|reverse)
 
-if test $2 = HEAD; then
-    git reset --hard $1
-fi
+git reset --hard $1
 if test $(basename $0) = git-rework-change; then
     start_recursive_shell "Rework commit $1" || true
     git cherry-pick $1..$2
@@ -27,6 +27,7 @@ fi
 
 for x in $list; do
     export WORKING_REV=$x
+    git commit --amend
     git cherry-pick $x || start_recursive_shell "cherry-pick $x failed" || true
-    start_recursive_shell "Rewrite $x" || true
 done
+git commit --amend

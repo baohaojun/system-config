@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test $(basename $0) = repo-remote-path; then
+    repo-remote-url "$@" | perl -npe 's,.*//.*?/,,'
+    exit
+fi
+
 if test "$GERRIT_HOST"; then
     git remote -v |pn 2 | grep -e "$GERRIT_HOST" |uniq-even-non-ajacent | head -n 1
 elif test $# = 1; then
