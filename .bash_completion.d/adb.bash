@@ -319,7 +319,7 @@ _adb_util_list_files() {
     fi
 
     toks=( ${toks[@]-} $(
-        command adb-quote ${args[@]} shell sh -c "ls -dF ${file}* 2>/dev/null" 2> /dev/null | tr -d '\r' | {
+        command adb-quote ${args[@]} shell sh -c "find ${file%/*}/ -maxdepth 1 -iname ${file##*/}\* -print0|xargs -0 ls -dF 2>/dev/null" 2> /dev/null | tr -d '\r' | {
             while read -r tmp; do
                 filetype=${tmp%% *}
                 filename=${tmp:${#filetype}+1}
