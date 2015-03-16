@@ -147,22 +147,22 @@ In addition, extracters can also set the variables
             bbyac--start (or (save-excursion
                                (search-backward-regexp "\\_<" (line-beginning-position) t))
                              bbyac--end))))
-  (if (and (not (eq bbyac--start nil))
-           (not (eq bbyac--end nil)))
-      (progn
-        (setq bbyac--the-bit (buffer-substring-no-properties bbyac--start bbyac--end)
-              bbyac--contains-upcase (bbyac--contains-upcase-p bbyac--the-bit))
-        (unless (string= "" bbyac--the-bit)
-          (let ((symbol-chars "\\(?:\\sw\\|\\s_\\)*?"))
-            (concat
-             "\\_<"
-             symbol-chars
-             (mapconcat
-              #'bbyac--regexp-quote
-              (string-to-list bbyac--the-bit)
-              symbol-chars)
-             symbol-chars
-             "\\_>"))))))
+  (if (or (eq bbyac--start nil)
+          (eq bbyac--end nil))
+      (error "No BIT is found, thus can not BANG.")
+    (setq bbyac--the-bit (buffer-substring-no-properties bbyac--start bbyac--end)
+          bbyac--contains-upcase (bbyac--contains-upcase-p bbyac--the-bit))
+    (unless (string= "" bbyac--the-bit)
+      (let ((symbol-chars "\\(?:\\sw\\|\\s_\\)*?"))
+        (concat
+         "\\_<"
+         symbol-chars
+         (mapconcat
+          #'bbyac--regexp-quote
+          (string-to-list bbyac--the-bit)
+          symbol-chars)
+         symbol-chars
+         "\\_>")))))
 
 (defun bbyac--line-bbyac-extracter ()
   "Extract a bit for line-completing.
@@ -192,29 +192,26 @@ See also `bbyac--symbol-bbyac-extracter'."
           (backward-char))
         (setq bbyac--start (point)
               bbyac--end cp))))
-  (if (and (not (eq bbyac--start nil))
-           (not (eq bbyac--end nil)))
-      (progn
-        (setq bbyac--the-bit (buffer-substring-no-properties bbyac--start bbyac--end)
-              bbyac--contains-upcase (bbyac--contains-upcase-p bbyac--the-bit))
-        (when bbyac--the-bit
-          (let ((the-regexp
-                 (mapconcat
-                  #'bbyac--regexp-quote
-                  (string-to-list bbyac--the-bit)
-                  ".*?")))
-            ;; performance consideration: if syntax of bit's first char
-            ;; is word, then it must match word boundary
-            (when (string-match-p "^\\w" bbyac--the-bit)
-              (setq the-regexp (concat "\\b" the-regexp)))
-            ;; if bit's last char is word syntax, should extend the
-            ;; completion to word boundaries
-            (when (string-match-p "\\w$" bbyac--the-bit)
-              (setq the-regexp (concat the-regexp "\\w*?\\b")))
-            ;; extend the regexp rewrite: use Ctrl-e to mean $ and Ctrl-a to mean ^
-            (setq the-regexp (replace-regexp-in-string "^E$" "$" the-regexp)
-                  the-regexp (replace-regexp-in-string "^^A" "^" the-regexp))
-            the-regexp)))))
+  (if (or (eq bbyac--start nil)
+          (eq bbyac--end nil))
+      (error "No BIT is found, thus can not BANG.")
+    (setq bbyac--the-bit (buffer-substring-no-properties bbyac--start bbyac--end)
+          bbyac--contains-upcase (bbyac--contains-upcase-p bbyac--the-bit))
+    (when bbyac--the-bit
+      (let ((the-regexp
+             (mapconcat
+              #'bbyac--regexp-quote
+              (string-to-list bbyac--the-bit)
+              ".*?")))
+        ;; performance consideration: if syntax of bit's first char
+        ;; is word, then it must match word boundary
+        (when (string-match-p "^\\w" bbyac--the-bit)
+          (setq the-regexp (concat "\\b" the-regexp)))
+        ;; if bit's last char is word syntax, should extend the
+        ;; completion to word boundaries
+        (when (string-match-p "\\w$" bbyac--the-bit)
+          (setq the-regexp (concat the-regexp "\\w*?\\b")))
+        the-regexp))))
 
 (defmacro bbyac--make-matcher (matcher-name matcher-doc extract-match move-along)
   "Make a new matcher function named as MATCHER-NAME.
