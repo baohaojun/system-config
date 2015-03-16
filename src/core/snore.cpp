@@ -193,7 +193,6 @@ bool SnoreCore::primaryBackendSupportsRichtext()
 void SnoreCore::setDefaultApplication(Application app)
 {
     Q_D(SnoreCore);
-    app.addAlert(Alert("Default", Icon(":/root/snore.png")));
     d->m_defaultApp = app;
 }
 

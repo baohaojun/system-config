@@ -76,7 +76,7 @@ void SettingsDialog::initTabs()
 void Snore::SettingsDialog::on_pushButton_clicked()
 {
     Application app = SnoreCorePrivate::instance()->defaultApplication();
-    Notification noti(app, app.alerts()["Default"], "Hello World",
+    Notification noti(app, app.defaultAlert(), "Hello World",
                       "<i>This is Snore</i><br>"
                       "<a href=\"https://github.com/Snorenotify/Snorenotify\">Project Website</a><br>",
                       app.icon());

@@ -40,8 +40,6 @@ private:
     class QSystemTrayIcon *m_trayIcon;
     class QMenu *m_trayMenu;
     QActionGroup *m_backendActions;
-    Snore::Application m_app;
-    Snore::Alert m_alert;
     Snore::SettingsDialog *m_settings;
 
     QHash<QTimer *, Snore::Notification> m_notifications;

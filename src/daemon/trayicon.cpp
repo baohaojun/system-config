@@ -33,12 +33,9 @@
 using namespace Snore;
 
 TrayIcon::TrayIcon():
-    m_trayIcon(new QSystemTrayIcon(QIcon(":/root/snore.png"))),
-    m_app("SnoreNotify Test", Icon(":/root/snore.png")),
-    m_alert("Default", Icon(":/root/snore.png"))
+    m_trayIcon(new QSystemTrayIcon(QIcon(":/root/snore.png")))
 {
-    m_app.addAlert(m_alert);
-    m_app.hints().setValue("tray-icon", m_trayIcon);
+    SnoreCorePrivate::instance()->defaultApplication().hints().setValue("tray-icon", m_trayIcon);
 }
 
 void TrayIcon::initConextMenu()
@@ -49,7 +46,7 @@ void TrayIcon::initConextMenu()
         switch (box->buttonRole(button)) {
         case QDialogButtonBox::AcceptRole:
             m_settings->accept();
-            qApp->quit();
+            m_settings->setVisible(false);
             break;
         case QDialogButtonBox::ApplyRole:
             m_settings->accept();
@@ -58,7 +55,7 @@ void TrayIcon::initConextMenu()
             m_settings->reset();
             break;
         case QDialogButtonBox::RejectRole:
-            qApp->quit();
+            m_settings->setVisible(false);
             break;
         default:
             snoreDebug(SNORE_WARNING) << "unhandled role" << button->text() << box->buttonRole(button);
@@ -99,18 +96,15 @@ QSystemTrayIcon *TrayIcon::trayIcon()
 
 void TrayIcon::slotTestNotification()
 {
-
-    if (!SnoreCore::instance().aplications().contains(m_app.name())) {
-        SnoreCore::instance().registerApplication(m_app);
-    }
-    Notification noti(m_app, m_alert, "Hello World",
+    Application app = SnoreCorePrivate::instance()->defaultApplication();
+    Notification noti(app, app.defaultAlert(), "Hello World",
                       "<i>This is Snore</i><br>"
                       "<a href=\"https://github.com/TheOneRing/Snorenotify\">Project Website</a><br>"
                       "1<br>"
                       "2<br>"
                       "3<br>"
                       "4<br>"
-                      "5<br>", Icon(":/root/snore.png"));
+                      "5<br>", app.icon());
     noti.addAction(Action(1, "Test Action"));
     SnoreCore::instance().broadcastNotification(noti);
 

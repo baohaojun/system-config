@@ -50,7 +50,7 @@ SnoreCorePrivate::~SnoreCorePrivate()
 
 }
 
-const Application SnoreCorePrivate::defaultApplication() const
+Application SnoreCorePrivate::defaultApplication()
 {
     if (!SnoreCore::instance().aplications().contains(m_defaultApp.name())) {
         SnoreCore::instance().registerApplication(m_defaultApp);

@@ -51,7 +51,7 @@ public:
 public:
     static SnoreCorePrivate *instance();
     ~SnoreCorePrivate();
-    const Application defaultApplication() const;
+    Application defaultApplication();
 
     void notificationActionInvoked(Notification notification) const;
 

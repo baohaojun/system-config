@@ -82,13 +82,20 @@ public:
     const Icon &icon() const;
 
     /**
-     * Returns a QHash with the Alers registered with this Application
+     *
+     * @return a QHash with the Alers registered with this Application.
      */
     const QHash<QString, Alert> &alerts() const;
 
     /**
      *
-     * @return whether the Application is valid
+     * @return the default alert for notifications.
+     */
+    const Alert defaultAlert() const;
+
+    /**
+     *
+     * @return whether the Application is valid.
      */
     bool isValid() const;
 
