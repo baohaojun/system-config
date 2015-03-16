@@ -18,11 +18,11 @@
 
 #ifndef NOTIFICATION_H
 #define NOTIFICATION_H
-#include "snore_exports.h"
+#include "libsnore/snore_exports.h"
 #include "icon.h"
 #include "notificationaction.h"
-#include "../hint.h"
-#include "../application.h"
+#include "libsnore/hint.h"
+#include "libsnore/application.h"
 
 #include <QDebug>
 

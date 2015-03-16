@@ -17,7 +17,7 @@
 */
 
 #include "snarlnetwork.h"
-#include "core/snore.h"
+#include "libsnore/snore.h"
 
 #include <QTcpServer>
 #include <QTcpSocket>

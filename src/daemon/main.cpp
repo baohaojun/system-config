@@ -1,7 +1,7 @@
 
 #include "snorenotify.h"
-#include "core/log.h"
-#include "core/version.h"
+#include "libsnore/log.h"
+#include "libsnore/version.h"
 
 #include <QApplication>
 

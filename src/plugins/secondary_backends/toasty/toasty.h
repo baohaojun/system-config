@@ -18,7 +18,7 @@
 #ifndef TOASTY_H
 #define TOASTY_H
 
-#include "core/plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
 
 #include <QNetworkAccessManager>
 

@@ -19,8 +19,8 @@
 #include "growlbackend.h"
 #include "growlsettings.h"
 
-#include "core/snore.h"
-#include "core/snore_p.h"
+#include "libsnore/snore.h"
+#include "libsnore/snore_p.h"
 
 using namespace Snore;
 

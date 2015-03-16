@@ -20,7 +20,7 @@
 #define NOTIFYWIDGET_H
 
 #include <QSharedMemory>
-#include "core/notification/notification.h"
+#include "libsnore/notification/notification.h"
 
 #include <QtQuick/QtQuick>
 

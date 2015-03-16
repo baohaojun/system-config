@@ -19,8 +19,8 @@
 #include "snorenotifier.h"
 #include "notifywidget.h"
 #include "snorenotifiersettings.h"
-#include "core/notification/notification_p.h"
-#include "core/snore_p.h"
+#include "libsnore/notification/notification_p.h"
+#include "libsnore/snore_p.h"
 
 #include <QThread>
 

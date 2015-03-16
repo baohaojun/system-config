@@ -18,7 +18,7 @@
 #ifndef PLUGINSETTINGSWIDGET_H
 #define PLUGINSETTINGSWIDGET_H
 
-#include "snore_exports.h"
+#include "libsnore/snore_exports.h"
 
 #include <QWidget>
 #include <QFormLayout>

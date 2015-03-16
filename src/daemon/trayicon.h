@@ -20,7 +20,7 @@
 #define TRAYICON_H
 
 #include <QAction>
-#include "core/snore.h"
+#include "libsnore/snore.h"
 
 namespace Snore
 {

@@ -18,10 +18,10 @@
 
 #ifndef SNORE_BACKEND_H
 #define SNORE_BACKEND_H
-#include "snore_exports.h"
-#include "plugins.h"
-#include "../notification/notification.h"
-#include "../snore.h"
+#include "libsnore/snore_exports.h"
+#include "libsnore/plugins/plugins.h"
+#include "libsnore/notification/notification.h"
+#include "libsnore/snore.h"
 
 namespace Snore
 {

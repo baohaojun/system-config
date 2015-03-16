@@ -19,7 +19,7 @@
 #ifndef SNORENOTIFIER_H
 #define SNORENOTIFIER_H
 
-#include "core/plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
 
 #include "notifywidget.h"
 

@@ -1,6 +1,6 @@
 #include "trayiconnotifer.h"
-#include "core/snore.h"
-#include "core/snore_p.h"
+#include "libsnore/snore.h"
+#include "libsnore/snore_p.h"
 
 #include <QSystemTrayIcon>
 using namespace Snore;

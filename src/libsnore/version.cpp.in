@@ -1,0 +1,30 @@
+#include "version.h"
+
+namespace Snore{
+
+const QString Version::version()
+{
+    return QLatin1String("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}");
+}
+
+const QString Version::major(){
+    return QLatin1String("${SNORE_VERSION_MAJOR}");
+}
+
+const QString Version::minor(){
+    return QLatin1String("${SNORE_VERSION_MINOR}");
+}
+
+const QString Version::patch(){
+    return QLatin1String("${SNORE_VERSION_PATCH}");
+}
+
+const QString Version::revision(){
+    return QLatin1String("${SNORE_REVISION}");
+}
+
+const QString Version::buildTime(){
+    return QLatin1String(__TIMESTAMP__);
+}
+
+}

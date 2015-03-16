@@ -1,6 +1,6 @@
 
-#include "core/snore.h"
-#include "core/version.h"
+#include "libsnore/snore.h"
+#include "libsnore/version.h"
 #include "settingswindow.h"
 
 #include <QApplication>

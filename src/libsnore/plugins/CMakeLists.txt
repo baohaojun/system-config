@@ -13,4 +13,4 @@ set(SnoreNotify_HDR
         pluginsettingswidget.h)
 
 
-install(FILES ${SnoreNotify_HDR} DESTINATION ${KDE_INSTALL_INCLUDEDIR}/snore/core/plugins)
+install(FILES ${SnoreNotify_HDR} DESTINATION ${LIBSNORE_INCLUDE_DIR}/plugins)

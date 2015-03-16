@@ -19,9 +19,9 @@
 #include "parser.h"
 #include "snarlnetwork.h"
 
-#include "core/snore.h"
-#include "core/notification/notification.h"
-#include "core/notification/notification_p.h"
+#include "libsnore/snore.h"
+#include "libsnore/notification/notification.h"
+#include "libsnore/notification/notification_p.h"
 
 #include <QObject>
 #include <QTcpSocket>

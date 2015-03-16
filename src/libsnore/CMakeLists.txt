@@ -6,6 +6,8 @@ if(NOT SNORE_REVISION)
     set(SNORE_REVISION "")
 endif()
 
+set(LIBSNORE_INCLUDE_DIR ${KDE_INSTALL_INCLUDEDIR}/libsnore)
+
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 
 QT5_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
@@ -64,12 +66,9 @@ generate_export_header(libsnore
   EXPORT_MACRO_NAME SNORE_EXPORT
 )
 
-#TODO: drop /core/
 target_include_directories(libsnore PUBLIC
-$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-$<INSTALL_INTERFACE:include>
-$<INSTALL_INTERFACE:include/snore/core>)
+$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/>
+$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/src>)
 
 
 ecm_setup_version("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}" VARIABLE_PREFIX SOLID
@@ -85,7 +84,7 @@ install(TARGETS libsnore EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Target ${KDE_IN
 
 install(EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Target DESTINATION ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX} NAMESPACE Snore::)
 
-install(FILES ${SnoreNotify_HDR} DESTINATION ${KDE_INSTALL_INCLUDEDIR}/snore/core)
+install(FILES ${SnoreNotify_HDR} DESTINATION ${LIBSNORE_INCLUDE_DIR})
 
 install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake

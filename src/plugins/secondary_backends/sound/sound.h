@@ -18,7 +18,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
 
 class Sound : public Snore::SnoreSecondaryBackend
 {

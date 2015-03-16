@@ -1,7 +1,7 @@
 #ifndef TRAYICONNOTIFER_H
 #define TRAYICONNOTIFER_H
 
-#include "core/plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
 
 namespace Snore
 {

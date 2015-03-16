@@ -20,9 +20,9 @@
 #include "notificationsadaptor.h"
 
 #include "plugins/backends/freedesktop/fredesktopnotification.h"
-#include "core/snore.h"
-#include "core/version.h"
-#include "core/notification/notification_p.h"
+#include "libsnore/snore.h"
+#include "libsnore/version.h"
+#include "libsnore/notification/notification_p.h"
 
 #include <QImage>
 #include <QIcon>

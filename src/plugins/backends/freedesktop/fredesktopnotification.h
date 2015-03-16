@@ -19,7 +19,7 @@
 #ifndef FreedesktopNotification_H
 #define FreedesktopNotification_H
 
-#include "core/notification/notification.h"
+#include "libsnore/notification/notification.h"
 
 #include <QMetaType>
 #include <QDBusArgument>

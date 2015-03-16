@@ -18,10 +18,10 @@
 
 #ifndef SNORE_PLUGINS_H
 #define SNORE_PLUGINS_H
-#include "snore_exports.h"
-#include "snoreglobals.h"
+#include "libsnore/snore_exports.h"
+#include "libsnore/snoreglobals.h"
+#include "libsnore/notification/notification.h"
 #include "pluginsettingswidget.h"
-#include "../notification/notification.h"
 
 #include <QHash>
 

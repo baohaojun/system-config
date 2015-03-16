@@ -1,7 +1,7 @@
 #ifndef TOASTER_H
 #define TOASTER_H
 
-#include "core/plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
 #include <QProcess>
 
 class SnoreToast : public Snore::SnoreBackend

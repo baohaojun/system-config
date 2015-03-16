@@ -18,8 +18,8 @@
 
 #ifndef FREEDESKTOPNOTIFICATION_FRONTEND_H
 #define FREEDESKTOPNOTIFICATION_FRONTEND_H
-#include "core/plugins/snorefrontend.h"
-#include "core/application.h"
+#include "libsnore/plugins/snorefrontend.h"
+#include "libsnore/application.h"
 
 class NotificationsAdaptor;
 

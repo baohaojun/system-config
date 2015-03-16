@@ -18,7 +18,7 @@
 
 #ifndef GROWL_BACKEND_H
 #define GROWL_BACKEND_H
-#include "core/plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
 
 #include "growl.hpp"
 #include <string>

@@ -22,7 +22,6 @@ include(ECMPackageConfigHelpers)
 include(GenerateExportHeader)
 
 
-
 #######################################################################
 option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DAEMON=ON" OFF)
 option(WITH_SNORE_DAEMON "Build the Snore daemon, which redirects notifications" OFF)
@@ -30,7 +29,7 @@ option(WITH_SNORE_DAEMON "Build the Snore daemon, which redirects notifications"
 
 set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 5)
-set(SNORE_VERSION_PATCH 90)
+set(SNORE_VERSION_PATCH 91)
 
 set(SNORE_SUFFIX "-qt5")
 set(SNORE_CamelCase_SUFFIX "Qt5")

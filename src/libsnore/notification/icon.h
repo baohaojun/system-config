@@ -18,7 +18,7 @@
 
 #ifndef NOTIFICATION_ICON_H
 #define NOTIFICATION_ICON_H
-#include "snore_exports.h"
+#include "libsnore/snore_exports.h"
 
 #include <QSharedData>
 #include <QDebug>

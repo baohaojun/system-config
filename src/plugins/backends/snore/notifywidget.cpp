@@ -18,7 +18,7 @@
 
 #include "notifywidget.h"
 #include "snorenotifier.h"
-#include "core/log.h"
+#include "libsnore/log.h"
 
 using namespace Snore;
 

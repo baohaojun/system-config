@@ -13,4 +13,4 @@ set(SnoreNotify_HDR
         icon.h
         )
 
-install(FILES ${SnoreNotify_HDR} DESTINATION ${KDE_INSTALL_INCLUDEDIR}/snore/core/notification)
+install(FILES ${SnoreNotify_HDR} DESTINATION ${LIBSNORE_INCLUDE_DIR}/notification)

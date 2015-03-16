@@ -18,8 +18,8 @@
 
 #ifndef SNARLNETWORK_H
 #define SNARLNETWORK_H
-#include "core/plugins/snorefrontend.h"
-#include "core/log.h"
+#include "libsnore/plugins/snorefrontend.h"
+#include "libsnore/log.h"
 #include "parser.h"
 
 #include <QTcpSocket>

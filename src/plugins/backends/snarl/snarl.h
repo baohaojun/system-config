@@ -18,7 +18,7 @@
 
 #ifndef SNARL_BACKEND_H
 #define SNARL_BACKEND_H
-#include "core/plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
 #include "SnarlInterface.h"
 
 class SnarlBackend: public Snore::SnoreBackend

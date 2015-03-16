@@ -17,9 +17,9 @@
 */
 
 #include "trayicon.h"
-#include "core/settingsdialog.h"
-#include "core/snore.h"
-#include "core/snore_p.h"
+#include "libsnore/settingsdialog.h"
+#include "libsnore/snore.h"
+#include "libsnore/snore_p.h"
 
 #include <QAction>
 #include <QApplication>
@@ -28,7 +28,7 @@
 #include <QSystemTrayIcon>
 #include <QTimer>
 
-#include "core/version.h"
+#include "libsnore/version.h"
 
 using namespace Snore;
 

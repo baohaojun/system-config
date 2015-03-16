@@ -18,7 +18,7 @@
 
 #include "snorenotify.h"
 #include "trayicon.h"
-#include "core/snore.h"
+#include "libsnore/snore.h"
 
 #include <iostream>
 #include <stdlib.h>

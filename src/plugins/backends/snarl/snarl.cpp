@@ -19,11 +19,11 @@
 #include "snarl.h"
 #include "snarlsettings.h"
 
-#include "core/snore.h"
-#include "core/snore_p.h"
-#include "core/plugins/plugins.h"
-#include "core/plugins/snorebackend.h"
-#include "core/notification/notification_p.h"
+#include "libsnore/snore.h"
+#include "libsnore/snore_p.h"
+#include "libsnore/plugins/plugins.h"
+#include "libsnore/plugins/snorebackend.h"
+#include "libsnore/notification/notification_p.h"
 
 #include <QWidget>
 
