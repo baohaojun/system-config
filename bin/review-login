@@ -1,13 +1,22 @@
 #!/bin/bash
+firefox_there=false
 if sawfish-window-exists Firefox; then
+    firefox_there=true
     sawfish-browser-input C-M-a
-    s=5
-else
-    s=15
 fi
 
 firefox -current-tab "http://172.16.0.9:8080/login/q/status:open,n,z"&
-sleep $s
+
+for x in $(seq 1 25); do
+    sleep 1
+    if test "$(sawfish-top-window)" = Firefox; then
+        break;
+    fi
+done
+
+if test "$firefox_there" = false; then
+    sleep 2
+fi
 
 if echo $SHELLOPTS | grep -q xtrace; then
     function sleep() {

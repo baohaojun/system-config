@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+
+# When called, we must be at the top of the beagrep indexed source folder.
+
+source_dir=$(readlink -f .)
+db_dir=~/.cache/for-code-reading/$source_dir
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts e:entry iignore_case
+## end code-generator
+## start generated code
+entry=
+ignore_case=false
+OPTIND=1
+while getopts 'e:i' opt; do
+    case "$opt" in
+        e)    entry=$OPTARG;;
+        i)    ignore_case=true;;
+        *)    echo Usage Error;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+
+if test ! "$entry"; then
+    die "Usage: beatags -e ENTRY [-i]"
+fi
+
+beagrep-files -t -s "$entry" | grep -v '[ \t]' |
+    while read file; do
+        if test ! -f "$file"; then
+            continue
+        fi
+        tagFile=$db_dir/$file.tag
+
+        if test "$tagFile" -ot $file; then
+            mkdir -p $(dirname "$tagFile")
+            ctags-exuberant --langmap=$(lang-map-for-ctags) -xu "$file" > "$tagFile".$$
+            mv "$tagFile".$$ "$tagFile"
+        fi
+        echo "$tagFile"
+    done | xargs cat /dev/null |
+    grep $(if test $ignore_case = true; then echo -i; fi) -P -e "^$entry\\s+"

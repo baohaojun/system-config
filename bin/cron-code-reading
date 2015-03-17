@@ -4,12 +4,12 @@ exec >/dev/null
 export PATH=/usr/local/bin:$PATH
 function do_it() {
     if test -f .for-code-reading -a ! -L .for-code-reading; then
-	mkbeagrepidx 
-	bash -x mkgtags -i -v > .for-code-reading 2>&1
-	touch .for-code-reading
+        SOURCECODETAGSMODE=true mkbeagrepidx&
+        mkbeagrepidx
+        echo -n > .for-code-reading
     fi
 }
 
-for x in `locate .for-code-reading`; do 
+for x in `locate .for-code-reading`; do
     cd `dirname $x` && do_it;
 done

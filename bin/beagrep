@@ -115,15 +115,18 @@ my @beagrep_files = split(/\n/, $beagrep_files);
 
 if ($short_format) {
     my $pwd_save = $pwd;
-    my $db_dir = glob("~/.cache/for-code-reading") . "/$pwd";
+    my $cache_dir = glob("~/.cache/for-code-reading");
+    my $db_dir = "$cache_dir/$pwd";
     while (! -d "$db_dir/.beagrep") {
         debug "no beagrep db at $db_dir";
         $pwd =~ s!(.*)/.*!$1!;
         if (not $pwd or $pwd eq "/") {
             die "Can not find beagrep data for $pwd_save";
         }
-        $db_dir = glob("~/.cache/for-code-reading") . "/$pwd";
+        $db_dir = "$cache_dir/$pwd";
+        debug "change db to $db_dir";
     }
+    debug "found beagrep db at $db_dir";
     chdir $pwd;
     chomp($pwd = qx/readlink -f "`pwd`"/);
     my $start = length($pwd) + 1;
