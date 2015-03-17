@@ -28,10 +28,49 @@ using System;
 using System.IO;
 
 using Beagrep.Daemon;
+using Beagrep.Util;
+using System.Text.RegularExpressions;
 
 namespace Beagrep.Filters {
 
         public class FilterText : Beagrep.Daemon.Filter {
+
+                static bool sourceCodeTagsMode = false;
+                static SafeProcess ctagsPc;
+                static StreamReader ctagsOutput;
+                static StreamWriter ctagsInput;
+
+                static string getLangMap() {
+                        SafeProcess langmapPc = new SafeProcess();
+                        string[] args = new string[1];
+                        args[0] = "lang-map-for-ctags";
+                        langmapPc.Arguments = args;
+                        langmapPc.Start();
+                        return new StreamReader(langmapPc.StandardOutput).ReadToEnd();
+                }
+
+                static FilterText() {
+                        if (Environment.GetEnvironmentVariable("SOURCECODETAGSMODE") == "true") {
+                                sourceCodeTagsMode = true;
+                                ctagsPc = new SafeProcess ();
+
+                                string[] args = new string[7];
+
+                                args[0] = "ctags-ajoke";
+                                args[1] = "--langmap=" + getLangMap();
+                                args[2] = "-xu";
+                                args[3] = "--filter";
+                                args[4] = "--filter-terminator=###terminator###\n";
+                                args[5] = "--extra=+q";
+                                args[6] = "--c-kinds=+p";
+                                ctagsPc.Arguments = args;
+                                ctagsPc.RedirectStandardOutput = true;
+                                ctagsPc.RedirectStandardInput = true;
+                                ctagsPc.Start();
+                                ctagsInput = new StreamWriter(ctagsPc.StandardInput);
+                                ctagsOutput = new StreamReader(ctagsPc.StandardOutput);
+                        }
+                }
 
                 public FilterText ()
                 {
@@ -98,22 +137,54 @@ namespace Beagrep.Filters {
                         }
 
                         buf = new char [BUFSIZE];
+                        if (sourceCodeTagsMode) {
+
+                                if (file.FullName.Contains(" ")) {
+                                        Beagrep.Util.Logger.Log.Debug ("{0} is not source code since path contains space!", file.FullName);
+                                        Error();
+                                        return;
+                                }
+                                ctagsInput.Write(file.FullName + "\n");
+                                ctagsInput.Flush();
+                                filepath = file.FullName;
+                        }
                 }
 
                 const int BUFSIZE = 2048;
                 char[] buf;
+                string filepath;
                 override protected void DoPull ()
                 {
                         bool pull = false;
-                        do {
-                                int read = TextReader.Read (buf, 0, BUFSIZE);
-                                if (read == 0) {
-                                        Finished ();
-                                        break;
-                                } else {
-                                        pull = AppendChars (buf, 0, read);
-                                }
-                        } while (pull);
+                        if (sourceCodeTagsMode) {
+                                Regex rx = new Regex("^(.+?\\s)\\s*\\S+\\s+\\d+\\s+(\\S+)");
+                                do {
+                                        string s = ctagsOutput.ReadLine();
+                                        if (s == "###terminator###") {
+                                                Finished ();
+                                                break;
+                                        } else {
+                                                MatchCollection matches = rx.Matches(s);
+                                                foreach (Match match in matches) {
+                                                        GroupCollection groups = match.Groups;
+                                                        if (groups[2].Value != filepath) {
+                                                                Beagrep.Util.Logger.Log.Debug ("{0} is messed up with {1}!", filepath, groups[2].Value);
+                                                        }
+                                                        pull = AppendChars(groups[1].Value.ToCharArray(), 0, groups[1].Length);
+                                                }
+                                        }
+                                } while (pull);
+                        } else {
+                                do {
+                                        int read = TextReader.Read (buf, 0, BUFSIZE);
+                                        if (read == 0) {
+                                                Finished ();
+                                                break;
+                                        } else {
+                                                pull = AppendChars (buf, 0, read);
+                                        }
+                                } while (pull);
+                        }
                 }
         }
 }
