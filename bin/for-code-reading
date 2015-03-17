@@ -169,20 +169,26 @@ function mkbeagrepidx() {
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "$(for x in */; do if test -d $x/.ccache; then echo -n $PWD/$x,; fi; done)$PWD/out,*/.repo,*/.git")
     fi
 
+    subdir=.beagrep
+    if test "$SOURCECODETAGSMODE" = true; then
+        subdir=.beatags;
+    fi
     function do_build() {
+
         beagrep-build-index --recursive \
                             "${ADDITIONAL_OPTIONS[@]}" \
                             --enable-deletion \
-                            --target "$(wlp "$outDir"/.beagrep/)" \
+                            --target "$(wlp "$outDir"/$subdir/)" \
                             "$relativeSrcDir" 2>&1
     }
 
-    do_build | tee "$outDir"/.beagrep-build-log
+    do_build | tee "$outDir"/$subdir-build-log
 
-    cat "$outDir"/.beagrep-build-log |
-        grep "No filter for" |
-        pn 5 | cut -b 6- |
-        xargs -d \\n bash -c '
+    if test "$SOURCECODETAGSMODE" != true; then
+        cat "$outDir"/$subdir-build-log |
+            grep "No filter for" |
+            pn 5 | cut -b 6- |
+            xargs -d \\n bash -c '
             rebuild=false
             for x in "$@"; do
                 if grep . -I -q "$x"; then
@@ -195,13 +201,13 @@ function mkbeagrepidx() {
                 echo true
             fi
             '|grep . -q && (echo rebuild some text files; do_build)
-
-
+    fi
 }
 
 function for-code-reading() {
     mkbeagrepidx&
-    mkgtags "$@" #must not put background, the tty(1) depends on this
+    SOURCECODETAGSMODE=true mkbeagrepidx&
+    # mkgtags "$@" #must not put background, the tty(1) depends on this
 }
 
 `basename $0` "$@"
