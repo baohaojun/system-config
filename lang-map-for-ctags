@@ -2,13 +2,21 @@
 
 use strict;
 
+if (not @ARGV) {
+    if (-e ".globalrc") {
+        @ARGV = (".globalrc");
+    } else {
+        @ARGV = (glob("~/.globalrc"));
+    }
+}
+
 my $seen_plugin;
 while (<>) {
     if (/plugin-example\|/) {
-	$seen_plugin = 1
+        $seen_plugin = 1
     }
     if ($seen_plugin and m/:langmap=(.*?)\\?:(.*):\\?$/) {
-	print "$1:$2,";
-    } 
+        print "$1:$2,";
+    }
 }
 #/usr/bin/ctags-exuberant --langmap=$(lang-map-for-ctags ~/.globalrc) -xu --filter --filter-terminator='###terminator###'  --format=1
