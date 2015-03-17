@@ -19,7 +19,7 @@ function mp3dir() {
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
     true;
 else
-    return;
+    return 0;
 fi
 
 set -e

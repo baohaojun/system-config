@@ -9,7 +9,7 @@ use IPC::Open2;
 
 
 my $debug;
-open($debug, ">", glob("~/.logs/grep-beatags.log")) or
+open($debug, ">", glob("~/.logs/grep-gtags.log")) or
     open($debug, ">",  "/dev/null") or
     die "Can not open debug file even on /dev/null";
 
@@ -65,7 +65,7 @@ if ($lookup_needle =~ m/^\w+\.\.\*/ or $member_lookup and $lookup_needle =~ m/\.
 # so that when I search for String.* it will allow me to select java.lang.String..*
     (my $id = $lookup_needle) =~ s/(\..*)//;
     my $replaced = $1;
-    chomp (my $qid=qx(select-output-line "grep-beatags -e $id -T resource" | pn 3));
+    chomp (my $qid=qx(select-output-line "grep-gtags -e $id -T resource" | pn 3));
     $qid =~ s/<|>//g;
     $lookup_needle = "$qid$replaced";
     debug "lookup_needle changed to $lookup_needle";
@@ -124,7 +124,7 @@ debug "start_file: $start_file";
 our $approx_dir = "ENV{HOME}/.cache/for-code-reading$ENV{GTAGS_START_FILE}";
 
 
-while ( not -d "$db_dir/.beatags" and not "$db_dir" eq "/") {
+while ( not -f "$db_dir/GTAGS" and not "$db_dir" eq "/") {
     chomp($db_dir = `dirname "$db_dir"`);
 }
 
@@ -162,12 +162,13 @@ sub is_binary($)
     }
 }
 
-sub parse_xref($)
+sub parse_xref($$)
 {
-    my ($grep) = @_;
+    my ($grep, $updating) = @_;
 
     our %matches;
     our %matches_path_line;
+    our %updated_paths;
 
     my $path_inv;
     if (-e ".grep-gtags-path-inv") {
@@ -187,8 +188,13 @@ read_line:
             next;
         }
 
-        m/(.*?)\s+(\S+)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
-        my ($def, $type, $line, $path, $str) = ($1, $2, $3, $4, $5);
+        m/(.*?)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
+        my ($def, $line, $path, $str) = ($1, $2, $3, $4);
+        my $type = "definition";
+        if ($str =~ m/^(\S+):\t/) {
+            $type = $1;
+            debug "type is $type";
+        }
         if (not -e "$path") {
             debug "ignore $path: not exist\n";
             next;
@@ -198,7 +204,7 @@ read_line:
             next;
         }
 
-        if ($path_matcher and $path !~ m/$path_matcher/) {
+        if (not $updating and $path_matcher and $path !~ m/$path_matcher/) {
             debug "ignore $path because of path matcher miss";
             $filter_worked++;
             next;
@@ -269,6 +275,9 @@ read_line:
               + abs(adistr($x, $lookup_needle)) / 2
               + ($x =~ m/\.xml$|\.jar$/ ? 1 : 0)
             );
+
+        $updated_paths{$path} = 1;
+
     }
 }
 
@@ -289,15 +298,20 @@ sub do_cscope($$$) {
 
     chdir ($code_dir) or die "Can not change to $code_dir";
 
+    $ENV{GTAGSDBPATH} = $db_dir;
+    $ENV{GTAGSROOT} = $code_dir;
+    $ENV{GTAGSLIBPATH} = "";
+
     my $grep;
     if ($imenu_mode) {
         open($grep, "-|", "cat /dev/null");
     } else {
-        open($grep, "-|", "beatags -e $lookup_needle_quote $ignore_case");
+        open($grep, "-|", "global -x $lookup_needle_quote $ignore_case");
     }
     our %matches = ();
+    our %updated_paths = ();
 
-    parse_xref($grep);
+    parse_xref($grep, 0);
     close($grep);
 
     if (not %matches and $filter_worked) {
@@ -313,10 +327,55 @@ sub do_cscope($$$) {
 
     our $approx_dir;
 
+    my @updated_paths = keys %updated_paths;
+
     if (substr($start_file, 0, length($code_dir)) eq $code_dir) {
         $start_file = substr($start_file, 1 + length($code_dir));
     } else {
         debug "$start_file not changed";
+    }
+
+    if (not $imenu_mode) {
+
+
+        my $child_pid = open2(my $child_out, my $child_in, "gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
+        or die "Can not query update on gtags";
+
+        if (fork() == 0) {
+            for (@updated_paths) {
+                print $child_in "$_\n";
+            }
+            close($child_in);
+            exit 0;
+        }
+
+        close $child_in;
+        @updated_paths = map {chomp; s,^\./,,; $_} <$child_out>;
+
+        close $child_out;
+        waitpid($child_pid, 0);
+    }
+
+    if ($start_file and -f $start_file_abs and not $updated_paths{$start_file}) {
+        push @updated_paths, $start_file unless $start_file =~ m/\.jar$|\.dll$/i;
+        debug "pushed start file '$start_file' into updated_paths";
+    } else {
+        debug "no need to push $start_file into updated_paths"
+    }
+    if (@updated_paths) {
+        debug "These files need update: @updated_paths\n";
+        foreach my $path(@updated_paths) {
+            foreach my $match (keys %matches) {
+                if ($matches{$match}{path} eq $path) {
+                    delete $matches{$match};
+                }
+            }
+        }
+
+        my @ignore_case = $ignore_case ? ("-i") : ();
+        open($grep, "-|", "global-ctags", @ignore_case, $lookup_needle, @updated_paths) or
+            die "can not open pipe for global-ctags";
+        parse_xref($grep, 1);
     }
 
     if (%matches and not $silent and not $use_full_path) {
@@ -368,6 +427,8 @@ exit 1 if $do_dir or -e "$db_dir/.no-fallback";
 
 $start_file = "";
 $ENV{GTAGS_START_FILE} = "";
+our @updated_paths = ();
+our %updated_paths = ();
 my @gtags_fallback_dir =
     (
      @java_fallback_dir ? @java_fallback_dir :
