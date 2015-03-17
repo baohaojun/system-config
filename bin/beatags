@@ -35,7 +35,7 @@ if test ! "$entry"; then
     die "Usage: beatags -e ENTRY [-i]"
 fi
 
-beagrep-files -t -s "$entry" | grep -v '[ \t]' |
+beagrep-files -t -s "$entry" | grep -v -P -e '[ \t]' |
     while read file; do
         if test ! -f "$file"; then
             continue
