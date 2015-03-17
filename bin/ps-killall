@@ -8,8 +8,14 @@ fi
 
 match=${1:-xxxxxyyy}
 shift
+if echo $SHELLOPTS | grep -q xtrace; then
+    setx=-x
+else
+    setx=
+fi
+
 ps.pl $match | grep -v $(basename $0) | tee /dev/stderr | pn 1  |
-    xargs bash -c '
+    xargs bash $setx -c '
                       for x in $@; do
                           if is-ppid $x $$; then
                               echo $x is in loop of ppid
