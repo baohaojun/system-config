@@ -3,9 +3,9 @@
 # [[file:~/doc/projects/ABC.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
-   # of Cake.
+# of Cake.
 
-   # All bash scripts should start with ~set -e~ to fail early and loudly.
+# All bash scripts should start with ~set -e~ to fail early and loudly.
 set -e
 
 if test "$ABC_REMOTE_HOST" = ""; then
@@ -53,7 +53,7 @@ info() {
     if test $# = 0; then
         perl -npe 's/^/    /'
     else
-        echo "$@"
+        echo $(date): "$@"
     fi |
         (
             flock ~/.logs/abc.info.lock tee -a ~/.logs/abc.info.txt
@@ -475,13 +475,15 @@ using share folder.
     If not specified, you must specify one or more reviews, and the
     base build will be calculated from the reviews.
 
--m|--method [mm|dep|full|fullbase|kernel|bootimage]
+-m|--method [mm|dep|full|fullbase|kernel|lk|bootimage]
     MM means use android mm build
     DEP means build the whole dir, including DEPendencies
     FULL means to do a full build (need 10~15 minutes)
     FULLBASE means repo sync the base and do a full build
-    KERNEL means to rebuild kernel and re-generate boot.img and the .ko files (wlan)
+    KERNEL means to rebuild kernel and re-generate boot.img
+    MODULES means to do the KERNEL and the wlan.ko
     BOOTIMAGE means to build the boot.img (kernel, ramdisk, etc)
+    LK means to build the little kernel boot loader
 
     Default is mm.
 
@@ -667,10 +669,12 @@ EOF
         fi
     elif test "$method" = full -o "$method" = fullbase; then
         android-make
-    elif test "$method" = kernel; then
+    elif test "$method" = lk; then
+        android-make lk
+    elif test "$method" = kernel -o "$method" = modules; then
         (
             cd kernel
-            if git diff $(repo-remote-branch) HEAD --name-status | grep \\.dtsi; then
+            if git diff $(repo-remote-branch) --name-status | grep \\.dtsi; then
                 echo should touch dts files
                 cd arch/arm/boot/dts
                 touch *
@@ -678,7 +682,9 @@ EOF
         )
         android-make msm-kernel &&
             android-make bootimage-nodeps &&
-            (cd vendor/qcom/opensource/wlan/prima && mm)
+            if test "$method" = modules; then
+                (cd vendor/qcom/opensource/wlan/prima && mm)
+            fi
     elif test "$method" = bootimage; then
         android-make bootimage
     else
@@ -704,7 +710,7 @@ EOF
         extra=.repo/manifest.xml.base
     fi
 
-    copy-output-files -t "$(basename $(readlink -f out))" out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root $extra
+    copy-output-files -t "$(basename $(readlink -f out))" out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root out/target/product/*/emmc_appsboot.mbn $extra
 }
 
 function list-base-builds() { # list base builds
@@ -738,6 +744,9 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
         if test ! -e .owned-by-abc; then
             exit
         fi
+        if is-tty-io; then
+            exit
+        fi
 
         for x in $(ssh smartisan gerrit ls-projects); do
             if test ! -d $x.git; then
@@ -748,7 +757,7 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                 remote=abc-$(echo $x|md5sum|cut -b 1-3)
                 git remote add $remote smartisan:$x || true
                 git fetch $remote
-            )
+            ) || true
         done
     ) || true
 
@@ -797,30 +806,38 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
         (
             cd "$d"
             lock-base-build "Will do cron daily build now"
-            repo sync -j8 -d || (
-                my-rfa "git reset --hard; git clean -xfd"
-                repo sync -j8 -d
-            ) || abc-notify-maintainer -s "repo sync failed for $PWD" || continue
 
-            repo manifest -r -o .repo/manifest.xml.sync
-            if test -e .repo/manifest.xml.base && diff -q .repo/manifest.xml.base .repo/manifest.xml.sync; then
-                info "The repo of $PWD don't need update"
-                exit 0
-            elif test -e .repo/manifest.xml.base; then
-                info Will need to update the build in $PWD:
-                diff .repo/manifest.xml.base .repo/manifest.xml.sync | info
+            if ! is-tty-io; then
+                repo sync -j8 -d || (
+                    my-rfa "git reset --hard; git clean -xfd"
+                    repo sync -j8 -d
+                ) || abc-notify-maintainer -s "repo sync failed for $PWD" || continue
+
+                repo manifest -r -o .repo/manifest.xml.sync
+                if test -e .repo/manifest.xml.base && diff -q .repo/manifest.xml.base .repo/manifest.xml.sync; then
+                    info "The repo of $PWD don't need update"
+                    exit 0
+                elif test -e .repo/manifest.xml.base; then
+                    info Will need to update the build in $PWD:
+                    diff .repo/manifest.xml.base .repo/manifest.xml.sync | info
+                fi
             fi
 
-            for config in .repo/out-*-{eng,user,userdebug}; do
+            for config in .repo/out-*-{user,userdebug,eng}; do
                 if test ! -d "$config"; then
                     continue
                 fi
                 config=${config#.repo/out-}
                 (
+                    info will build $config at $base_build
                     android-make -c $config
-                    info new build is ok, will update the build manifest.
-                    cp .repo/manifest.xml.sync .repo/manifest.xml.base
-                    cat .repo/manifest.xml.base > .repo/manifest.xml
+                    ret=$?
+                    if test $ret = 0; then
+                        info new build is ok, will update the build manifest.
+                        cp .repo/manifest.xml.sync .repo/manifest.xml.base
+                        cat .repo/manifest.xml.base > .repo/manifest.xml
+                    fi
+                    exit $ret
                 ) || (
                     if test -e .repo/manifest.xml.base; then
                         (
@@ -829,11 +846,16 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                             repo sync -j8 -d
                             android-make -c $config
                         ) || abc-notify-maintainer -s "Full build failed again for $PWD: $config" -a buildspec.mk
+                    else
+                        abc-notify-maintainer -s "Full build failed and no base xml found for $PWD: $config" -a buildspec.mk
                     fi
                 ) || true
             done
             (
-                nice for-code-reading -i -v&
+                if ! is-tty-io; then
+                    mkbeagrepidx
+                    SOURCECODETAGSMODE=true mkbeagrepidx
+                fi
             ) 9>/dev/null
         )
     done

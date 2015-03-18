@@ -190,8 +190,14 @@ fi
                 )
             elif test $# = 1 -a $1 = lk; then
                 (
-                    cd build/target/board
-                    $do_nice mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs $verbose
+                    (
+                        cd build/target/board
+                        $do_nice mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs $verbose
+                    )
+                    (
+                        cd vendor/qcom/proprietary/common/scripts
+                        $do_nice mm gensecimage_target -j$jobs $verbose
+                    )
                 )
             else
                 $do_nice make -j$jobs $keep $* $verbose
