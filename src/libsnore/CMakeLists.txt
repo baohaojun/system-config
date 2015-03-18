@@ -66,9 +66,9 @@ generate_export_header(libsnore
   EXPORT_MACRO_NAME SNORE_EXPORT
 )
 
-target_include_directories(libsnore PUBLIC
-$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/>
-$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/src>)
+target_include_directories( libsnore PUBLIC
+                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+                            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/src>)
 
 
 ecm_setup_version("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}" VARIABLE_PREFIX SOLID
