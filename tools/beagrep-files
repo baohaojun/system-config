@@ -93,7 +93,13 @@ if test -e "$beagrep_dir"/../.beagrep-abc && test "$local_index" != true; then
     else
         tags=
     fi
-    bash "$beagrep_dir"/../.beagrep-abc $tags "$tokens"|rm-last-nl|perl -npe "s,^,$source_dir,"
+
+    if test $quote = true; then
+        quote=-q
+    else
+        quote=
+    fi
+    bash "$beagrep_dir"/../.beagrep-abc $tags $quote "$tokens"|rm-last-nl|perl -npe "s,^,$source_dir,"
 
 else
     for x in "$beagrep_dir" $(cat "$beagrep_dir"/../.beagrep-brothers 2>/dev/null)
