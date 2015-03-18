@@ -26,6 +26,7 @@ set -x
 . ~/.renew-xauth
 . ~/.bash-path
 xscreensaver-command -lock&
+notify-real-home&
 EOF
             )
 
