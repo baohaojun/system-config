@@ -1,6 +1,10 @@
 #!/bin/bash
 
 set -e
+if echo $SHELLOPTS | grep -q xtrace; then
+    export SHELLOPTS
+fi
+
 function die() {
     echo Error: "$@"
     exit -1
@@ -21,9 +25,14 @@ fi
 
 workingdir=/home/bhj/smb/share.smartisan.cn/share/baohaojun/root-flash
 
-rm -rf $workingdir/$(basename $PWD) -rf
-mkdir -p $workingdir/
-smb-pull $PWD $workingdir/
+rm -rf $workingdir/$(basename $PWD) -rf ~/tmp/root-flash
+mkdir -p $workingdir/ ~/tmp/root-flash
+smb-pull $PWD ~/tmp/root-flash
+(
+    cd ~/tmp/root-flash
+    find . -name 'system_*.img' -o -name 'userdata_*.img'|xargs rm
+    smb-push .
+)
 
 cd $workingdir/$(basename $PWD)
 
