@@ -82,9 +82,9 @@ if test "$debuggable" = true; then
     else
         echo $BOOT_IMAGE_PATH need to replace adbd
         if test -e ~/src/github/private-config/etc/adbd; then
-            cp ~/src/github/private-config/etc/adbd $tdir/sbin/adbd
+            cp ~/src/github/private-config/etc/adbd $tdir/sbin/adbd -av
         elif test -e $mydir/root-adbd; then
-            cp $mydir/root-adbd $tdir/sbin/adbd
+            cp $mydir/root-adbd $tdir/sbin/adbd -av
         fi
     fi
     perl -npe 's/ro.debuggable/ro.DEBUGGABLE/' -i $tdir/sbin/adbd

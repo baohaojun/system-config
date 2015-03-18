@@ -78,4 +78,5 @@ time (
     cd $top_dir/
     rm -f out
     relative-link $(dirname $(readlink -f $BHJ_OUT_DIR/host)) out
+    mv ~/.logs/mm.log.$$ $BHJ_OUT_DIR/build.log
 )

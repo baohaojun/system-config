@@ -1,0 +1,5 @@
+#!/bin/bash
+
+slab=$(my-adb cat /proc/meminfo|grep SUnreclaim|pn 2)
+mkdir -p ~/.logs/slabinfo/
+echo "$slab" > ~/.logs/slabinfo/slab.$(now).txt
