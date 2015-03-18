@@ -1,8 +1,8 @@
 
-#include <snore.h>
-#include <notification/notification.h>
-#include <log.h>
-#include <version.h>
+#include <libsnore/snore.h>
+#include <libsnore/notification/notification.h>
+#include <libsnore/log.h>
+#include <libsnore/version.h>
 
 #include <QApplication>
 #include <QCommandLineParser>
