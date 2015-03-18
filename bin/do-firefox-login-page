@@ -12,7 +12,9 @@ sleep .5
 sawfish-browser-input TAB DEL C-v
 putclip $(get-authinfo $host $user)
 sleep .5
-sawfish-browser-input ESC TAB DEL
+sawfish-browser-input ESC TAB
+sleep .5
+sawfish-browser-input Home S-End DEL
 sleep .5
 sawfish-browser-input C-v
 putclip ""

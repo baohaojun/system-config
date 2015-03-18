@@ -49,6 +49,11 @@ beagrep-files -t $quote -s "$entry" | grep -v -P -e '[ \t]' |
         if test "$tagFile" -ot $file; then
             mkdir -p $(dirname "$tagFile")
             ctags-exuberant --langmap=$(lang-map-for-ctags) -xu "$file" > "$tagFile".$$
+            if test "${file##*.}" = xml -o "${file##*.}" = png; then
+                name=${file##*/}
+                name=${name%.*}
+                echo "$name id 1 $file ***" >> "$tagFile".$$
+            fi
             mv "$tagFile".$$ "$tagFile"
         fi
         echo "$tagFile"

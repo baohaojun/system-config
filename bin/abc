@@ -823,7 +823,17 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                 fi
             fi
 
-            for config in .repo/out-*-{user,userdebug,eng}; do
+            for config in $(
+                               for x in .repo/out-*-{eng,userdebug}; do
+                                   if test "${x##*-}" = userdebug; then
+                                       if test -d "$x"; then
+                                           mkdir -p "${x%-*}"-user
+                                       fi
+                                       echo "${x%-*}"-user
+                                   fi
+                                   echo $x
+                               done | uniq-even-non-ajacent
+                           ); do
                 if test ! -d "$config"; then
                     continue
                 fi

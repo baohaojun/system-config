@@ -195,8 +195,10 @@ fi
                         $do_nice mm $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs $verbose
                     )
                     (
-                        cd vendor/qcom/proprietary/common/scripts
-                        $do_nice mm gensecimage_target -j$jobs $verbose
+                        if test -d vendor/qcom/proprietary/common/scripts; then
+                            cd vendor/qcom/proprietary/common/scripts
+                            $do_nice mm gensecimage_target -j$jobs $verbose
+                        fi
                     )
                 )
             else
