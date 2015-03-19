@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/doc/projects/ABC.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/src/github/projects/ABC.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
 # of Cake.
@@ -537,6 +537,7 @@ EOF
             die "Invalid base build: $base_build"
         fi
         cd $base_build
+        tee /tmp/abc-patch.$$
         lock-base-build "for build request"
 
         clear_all_old_patches
@@ -555,7 +556,7 @@ EOF
                 git init abc-patches || true
                 cd abc-patches
                 mkdir -p $ABC_USER/$patch_dir
-                tee $ABC_USER/$patch_dir/patch /tmp/abc-patch.$$
+                cp /tmp/abc-patch.$$ $ABC_USER/$patch_dir/patch
                 git add .
                 git commit -m 'submit patch for build' --allow-empty
             )
@@ -826,15 +827,23 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
             for config in $(
                                for x in .repo/out-*-{eng,userdebug}; do
                                    if test "${x##*-}" = userdebug; then
+                                       local user_later=false
                                        if test -d "$x"; then
                                            mkdir -p "${x%-*}"-user
                                        fi
-                                       echo "${x%-*}"-user
+                                       if [[ $(basename $base_build) =~ mol ]]; then
+                                           user_later=true
+                                       else
+                                           echo "${x%-*}"-user
+                                       fi
                                    fi
                                    echo $x
+                                   if test $user_later = true; then
+                                       echo "${x%-*}"-user
+                                   fi
                                done | uniq-even-non-ajacent
                            ); do
-                if test ! -d "$config"; then
+                if test ! -d "$config" -o -e "$config/no-cron-build"; then
                     continue
                 fi
                 config=${config#.repo/out-}
@@ -1032,18 +1041,20 @@ function remote-abc() { # run a remote abc command, such as abc-files
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
 
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopts xdebug ttestabc ddryrun
+    # generate-getopts xdebug ttestabc ddryrun XDEBUG
     ## end code-generator
     ## start generated code
     debug=false
     testabc=false
     dryrun=false
+    DEBUG=false
     OPTIND=1
-    while getopts 'xtd' opt; do
+    while getopts 'xtdX' opt; do
         case "$opt" in
             x)    debug=true;;
             t)    testabc=true;;
             d)    dryrun=true;;
+            X)    DEBUG=true;;
             *)    echo Usage Error;;
         esac
     done
@@ -1054,6 +1065,12 @@ if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / |
     if test "$debug" = true; then
         export xdebug=true
         set -x
+    elif test "$DEBUG" = true; then
+        export xdebug=true
+        set -x
+        if echo $SHELLOPTS | grep -q xtrace; then
+            export SHELLOPTS
+        fi
     else
         unset xdebug
     fi

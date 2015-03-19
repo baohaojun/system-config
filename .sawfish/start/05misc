@@ -12,16 +12,6 @@ while true; do
     python3 ~/gcode/scim-cs/ime-py/ime-server.py
     sleep 2
 done&
-if test -f ~/.offlineimaprc; then
-    (
-        flock -n 5 || { echo "lock failed for Imap4Monitor.py, exit"; exit; }
-        while true;
-        do
-            python ~/bin/windows/Imap4Monitor/Imap4Monitor.py;
-            sleep 2;
-        done
-    ) 5< ~/bin/windows/Imap4Monitor/Imap4Monitor.py &
-fi
 
 # while true; do
 #     (
