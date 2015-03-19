@@ -1,6 +1,11 @@
 #!/bin/bash
 set -ex
 
+if ! is-tty-io && test -z "$http_proxy"; then
+    start-http-proxy $0
+    exit
+fi
+
 function wget() {
     command wget -4 -t 2 "$@"
 }
@@ -42,21 +47,19 @@ done&
     done
 )&
 
+wget -N -r http://dl-ssl.google.com/android/repository/addons_list-2.xml
 
-for x in http://android-sdk-addons.motodevupdate.com/addons.xml \
-    http://developer.lgmobile.com/sdk/android/repository.xml \
-    http://developer.sonyericsson.com/edk/android/repository.xml \
-    http://dl.htcdev.com/sdk/addon.xml \
-    http://innovator.samsungmobile.com/android/repository/repository.xml \
-    http://dl-ssl.google.com/android/repository/addon.xml \
-    http://dl-ssl.google.com/android/repository/sys-img/x86/sys-img.xml \
-    http://dl-ssl.google.com/android/repository/sys-img.xml \
-    http://dl-ssl.google.com/android/repository/sys-img/android/sys-img.xml \
-    http://dl-ssl.google.com/android/repository/sys-img/android-wear/sys-img.xml \
-    http://dl-ssl.google.com/android/repository/sys-img/android-tv/sys-img.xml \
-    http://dl-ssl.google.com/android/repository/sys-img/google_apis/sys-img.xml \
-    http://software.intel.com/sites/landingpage/android/addon.xml \
-    http://www.echobykyocera.com/download/echo_repository.xml; do
+for x in $(
+              xmlstarlet sel -N sdk="http://schemas.android.com/sdk/android/addons-list/2" -t -v //sdk:url ./dl-ssl.google.com/android/repository/addons_list-2.xml |
+                  while read path; do
+                      if [[ $path =~ https?:// ]]; then
+                          echo $path
+                      else
+                          echo http://dl-ssl.google.com/android/repository/$path
+                      fi
+                  done
+          )
+do
     wget -N -r $x || true
 done
 
@@ -101,6 +104,8 @@ for x in $(find *.google.com -name '*.xml'); do
         }
     }
     chomp;
+    debug "got a line: $_";
+    s,https?://'$xhost'/,,;
     ($file, $cs) = split /:/;
     $non_version = qx(extract-nonversion $file);
     $version = qx(extract-version $file);
@@ -119,6 +124,8 @@ for x in $(find *.google.com -name '*.xml'); do
             file => $file,
             cs => $cs,
         }
+    } else {
+        debug "$non_version version $version is old than $cur_ver, not selected"
     }
 
     END {
@@ -126,8 +133,8 @@ for x in $(find *.google.com -name '*.xml'); do
             print "$hash{$_}{file}:$hash{$_}{cs}\n";
         }
     }
-' | grep -v '^:$' | sort -u | perl -npe 's!(.*):(.*)!test `shasum </dev/null \$(basename $1)|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; if [[ $1 =~ :// ]]; then wget -N $1; else wget -N http://'$xhost'/\$(basename $1); fi)!g'|grep -i -e "$vpattern" -v|bash -x
-done
+' | grep -v '^:$' | sort -u | perl -npe 's,(.*):(.*),if test ! -e \$(basename $1).shasum; then if test `shasum </dev/null \$(basename $1)|awk "{print \\\\\$1}"`x = $2x; then echo $1 already exist; touch \$(basename $1).shasum; else (echo download $1; if [[ $1 =~ :// ]]; then wget -N $1; else wget -N http://'$xhost'/\$(basename $1); fi); fi; fi,g'|grep -i -e "${vpattern:-shit}" -v || true
+done |sort -R|xargs -d \\n -P 3 -n 1 bash -c 'for x in "$@"; do bash -x -c "$x"; done' true
 
 mkdir -p ../temp
 

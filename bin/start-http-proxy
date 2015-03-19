@@ -8,14 +8,13 @@ fi
 export http_proxy=localhost:$port
 export https_proxy=localhost:$port
 
-if yes-or-no-p "restart tinyproxy?"; then
+if ! is-tty-io || yes-or-no-p "restart tinyproxy?"; then
     sudo ps-killall tinyproxy
     sudo tsocks tinyproxy
     sleep 1
 fi
 
 if test "$#" != 0; then
-
    "$@"
 else
     start_recursive_shell proxy=set
