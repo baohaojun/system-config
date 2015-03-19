@@ -16,6 +16,10 @@
 (bind-keys global-keymap "F2" '(synthesize-multiple-events "ESC" "g" "r" "RET"))
 (bind-keys global-keymap "F3" '(synthesize-multiple-events "ESC" "." "RET"))
 (bind-keys global-keymap "F4" '(synthesize-multiple-events "ESC" "g" "m"))
+(bind-keys global-keymap "F6" '(synthesize-multiple-events "ESC" "g" "f" "RET"))
+(bind-keys global-keymap "F7" '(synthesize-multiple-events "ESC" "g" "r" "RET"))
+(bind-keys global-keymap "F8" '(synthesize-multiple-events "ESC" "." "RET"))
+(bind-keys global-keymap "F9" '(synthesize-multiple-events "ESC" "g" "m"))
 (bind-keys global-keymap "F23" '(synthesize-multiple-events "ESC" "C-u"))
 (bind-keys global-keymap "F24" '(synthesize-multiple-events "ESC" "C-d"))
 (bind-keys global-keymap "XF86Back" '(synthesize-multiple-events "ESC" "C-b"))
@@ -34,7 +38,7 @@
 (bind-keys global-keymap "F5"
            '(progn
               (read-event
- "
+               "
                 ^
 
 

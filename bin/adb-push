@@ -18,6 +18,7 @@ GetOptions(
     );
 
 my $mount_cmd = "my-adb remount";
+map {s,/*$,,} @ARGV;
 if (@ARGV == 0) {
     @ARGV = (qx(getclip));
 }
