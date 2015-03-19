@@ -10,9 +10,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.OrgData.OrgNode;
 import com.matburt.mobileorg.OrgData.OrgProviderUtils;
+import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.util.OrgUtils;
 
 public class HeadingFragment extends SherlockFragment {
@@ -95,7 +95,7 @@ public class HeadingFragment extends SherlockFragment {
 		titleView.setSelection(title.length());
 		
 		OrgUtils.setupSpinnerWithEmpty(todoStateView, OrgProviderUtils.getTodos(resolver),
-				todo);
+				"TODO");
 		OrgUtils.setupSpinnerWithEmpty(priorityView, OrgProviderUtils.getPriorities(resolver),
 				priority);
 	}
