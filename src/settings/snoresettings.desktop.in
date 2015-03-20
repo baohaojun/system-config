@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Version=@SNORE_VERSION_MAJOR@.@SNORE_VERSION_MINOR@.@SNORE_VERSION_PATCH@
-Name=SnoreNotify
-Comment=A daemon redirecting desktop notifications to one or multiple additional backends.
+Name=SnoreSettings
+Comment=Settings client for applications using libsnore.
 Icon=snore
-Exec=snorenotify
+Exec=snoresettings
 Categories=Qt;System;
