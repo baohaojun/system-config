@@ -1,10 +1,10 @@
 #include "freedesktopnotification_backend.h"
 
-#include "core/notification/notification.h"
-#include "core/notification/notification_p.h"
-#include "core/snore_p.h"
+#include "libsnore/notification/notification.h"
+#include "libsnore/notification/notification_p.h"
+#include "libsnore/snore_p.h"
 #include "fredesktopnotification.h"
-#include "core/snore.h"
+#include "libsnore/snore.h"
 
 using namespace Snore;
 

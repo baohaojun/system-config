@@ -42,7 +42,7 @@ void TrayIcon::initConextMenu()
 {
     m_settings = new SettingsDialog();
     QDialogButtonBox *box = new QDialogButtonBox(QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset, m_settings);
-    connect(box, QDialogButtonBox::clicked,[&,box](QAbstractButton *button){
+    connect(box, &QDialogButtonBox::clicked,[&,box](QAbstractButton *button){
         switch (box->buttonRole(button)) {
         case QDialogButtonBox::AcceptRole:
             m_settings->accept();

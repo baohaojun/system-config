@@ -1,6 +1,6 @@
 #ifndef FREEDESKTOPNOTIFICATION_H
 #define FREEDESKTOPNOTIFICATION_H
-#include "core/plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
 #include "notificationinterface.h"
 
 class  FreedesktopBackend: public Snore::SnoreBackend
