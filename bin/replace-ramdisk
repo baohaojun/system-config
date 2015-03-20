@@ -3,10 +3,11 @@ set -e
 
 mydir=$(dirname $(readlink -f $0))
 ramdisk=
+root_folder=
 debuggable=
 userdebug=
 do_busybox=
-TEMP=$(getopt -o bDdur: --long ramdisk: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o R:bDdur: --long ramdisk: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -25,6 +26,10 @@ while true; do
         -d)
             debuggable=true
             shift
+            ;;
+        -R)
+            root_folder=$2
+            shift 2
             ;;
         -r|--ramdisk)
             ramdisk=$2
@@ -123,6 +128,10 @@ for x in "$@"; do
         ew $target
     fi
 done
+
+if test "$root_folder"; then
+    rsync "$root_folder"/* $tdir -av
+fi
 
 echo tdir is $tdir
 dir2ramdisk $tdir > $ramdisk.2

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if test -e ~/.ssh/id_rsa_nopass; then
+    ssh() { unset SSH_AGENT_PID SSH_AUTH_SOCK ; command ssh -i ~/.ssh/id_rsa_nopass "$@"; }
+fi
+. $(lookup-file build/envsetup.sh)
+abc mm

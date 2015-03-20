@@ -84,8 +84,6 @@
 
 (global-set-key (kbd "M-g i") 'imenu)
 
-(global-set-key (kbd "M-g I") 'grep-imenu)
-
 (global-set-key (kbd "M-g m") 'man)
 
 (global-set-key [(meta shift ?d)] 'insert-today)

@@ -1,0 +1,65 @@
+#!/usr/bin/perl
+use strict;
+use File::Path qw(make_path);
+use IPC::Open2;
+my $read;
+my $write;
+my $db_dir = $ENV{db_dir};
+die "no db_dir defined" unless -d "$db_dir";
+my $ctags;
+my $n_tags = 0;
+
+open(my $log, ">", "$ENV{HOME}/.logs/beatags-timestamp.log") or die "can't open log file: ~/.logs/beatags-timestamp.log";
+sub debug(@) {
+    print $log "@_\n";
+}
+
+while (<>) {
+    chomp(my $file = $_);
+    next unless -f $file;
+
+    my $tagFile = "$db_dir/$file.tag";
+    if ((stat($file))[9] < (stat($tagFile))[9]) {
+        print "$tagFile\n";
+        next;
+    }
+    if (not $ctags) {
+        $ctags = open2($read, $write, "ctags-ajoke",
+                       "--langmap=" . qx(lang-map-for-ctags),
+                       "-xu",
+                       "--filter",
+                       "--filter-terminator=###terminator###\n",
+                       "--extra=+q",
+                       "--c-kinds=+p");
+    }
+
+    (my $tagDir = $tagFile) =~ s,(.*)/.*,$1,;
+    make_path($tagDir);
+
+    debug "[$n_tags] $file";
+    $n_tags++;
+
+    open(my $tag, ">", "$tagFile.$$") or die "Can't open $tagFile";
+    print $write "$file\n";
+    $write->flush();
+    (my $ext = $file) =~ s/\.*.//;
+
+    if ($ext eq "xml" or $ext eq "png") {
+        (my $name = $file) =~ s,.*/,,;
+        $name =~ s/(.*)\..*/$1/;
+        print $tag "$name id 1 $file\n";
+    }
+    while (<$read>) {
+        if (m/###terminator###/) {
+            close $tag;
+            rename "$tagFile.$$", "$tagFile";
+            print "$tagFile\n";
+            last;
+        }
+        print $tag $_;
+    }
+}
+if ($ctags) {
+    close($write);
+    wait;
+}

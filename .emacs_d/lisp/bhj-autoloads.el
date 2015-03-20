@@ -856,10 +856,6 @@ Pop back to where ajoke was last invoked.
 
 \(fn)" t nil)
 
-(autoload 'grep-imenu "bhj-grep" "\
-
-
-\(fn)" t nil)
 
 (autoload 'grep-gtags "bhj-grep" "\
 

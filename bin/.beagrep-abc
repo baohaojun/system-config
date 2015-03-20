@@ -3,4 +3,4 @@ export ABC_REMOTE_HOST=build
 unset SSH_AUTH_SOCK
 unset SSH_AGENT_PID
 
-ssh -i ~/.ssh/id_rsa_nopass abc abc abc-files -b $(cd ~/src/android/system/core/; repo-branch) "$@"
+ssh -i ~/.ssh/id_rsa_nopass abc abc abc-files -b $(cd ~/src/android/system/core/; repo-branch) -- "${@//\"/}"

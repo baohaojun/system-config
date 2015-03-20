@@ -319,10 +319,13 @@ _adb_util_list_files() {
     fi
 
     toks=( ${toks[@]-} $(
-        command adb-quote ${args[@]} shell sh -c "find ${file%/*}/ -maxdepth 1 -iname ${file##*/}\* -print0|xargs -0 ls -dF 2>/dev/null" 2> /dev/null | tr -d '\r' | {
+        command adb-quote ${args[@]} shell sh -c "find ${file%/*}/ -maxdepth 1 -iname ${file##*/}\* -print0|xargs -0 ls -dF ${file}* 2>/dev/null" 2> /dev/null | tr -d '\r' | {
             while read -r tmp; do
                 filetype=${tmp%% *}
                 filename=${tmp:${#filetype}+1}
+                if test "${filename%/}" = "${file%/*}"; then
+                    continue
+                fi
                 if [[ ${filetype:${#filetype}-1:1} == d ]]; then
                     printf '%s/\n' "$filename"
                 else
@@ -336,7 +339,7 @@ _adb_util_list_files() {
     if [[ $(type -t compopt) = "builtin" ]]; then
         compopt -o nospace
     fi
-
+    echo "toks are ${toks[@]}" > ~/.logs/comp.log
     COMPREPLY=( ${COMPREPLY[@]:-} "${toks[@]}" )
 }
 

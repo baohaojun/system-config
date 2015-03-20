@@ -10,19 +10,25 @@ function die() {
 # When called, we must be at the top of the beagrep indexed source folder.
 
 source_dir=$(readlink -f .)
-db_dir=~/.cache/for-code-reading/$source_dir
+export db_dir=~/.cache/for-code-reading/$source_dir
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts e:entry iignore_case
+# generate-getopts e:entry iignore_case p:path_pat w:working_file t:type
 ## end code-generator
 ## start generated code
 entry=
 ignore_case=false
+path_pat=
+working_file=
+type=
 OPTIND=1
-while getopts 'e:i' opt; do
+while getopts 'e:ip:w:t:' opt; do
     case "$opt" in
         e)    entry=$OPTARG;;
         i)    ignore_case=true;;
+        p)    path_pat=$OPTARG;;
+        w)    working_file=$OPTARG;;
+        t)    type=$OPTARG;;
         *)    echo Usage Error;;
     esac
 done
@@ -39,23 +45,22 @@ quote=-q
 if [[ "$entry" =~ \* ]]; then
     quote=
 fi
-beagrep-files -t $quote -s "$entry" | grep -v -P -e '[ \t]' |
-    while read file; do
-        if test ! -f "$file"; then
-            continue
-        fi
-        tagFile=$db_dir/$file.tag
 
-        if test "$tagFile" -ot $file; then
-            mkdir -p $(dirname "$tagFile")
-            ctags-exuberant --langmap=$(lang-map-for-ctags) -xu "$file" > "$tagFile".$$
-            if test "${file##*.}" = xml -o "${file##*.}" = png; then
-                name=${file##*/}
-                name=${name%.*}
-                echo "$name id 1 $file ***" >> "$tagFile".$$
-            fi
-            mv "$tagFile".$$ "$tagFile"
-        fi
-        echo "$tagFile"
-    done | xargs cat /dev/null |
-    grep $(if test $ignore_case = true; then echo -i; fi) -P -e "^$entry\\s+"
+if test -e "$working_file"; then
+    echo "$working_file"
+else
+    beagrep-files -t $quote -s "$entry"
+fi| grep -v -P -e '[ \t]' |
+    if test "$path_pat"; then
+        grep -P -e "$path_pat";
+    else
+        cat
+    fi|
+    beatags-timestamp |
+    xargs cat /dev/null |
+    grep $(if test $ignore_case = true; then echo -i; fi) -P -e "^\\S*?\\b$entry\\s+" |
+    if test "$type"; then
+        grep -P -e "^\S+\s+($type)\s+\d+"
+    else
+        cat
+    fi
