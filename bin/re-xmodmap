@@ -9,6 +9,7 @@ sudo su - bhj -c bash -c "
        set -x
        (
            flock -n 9 || exit
+           do-natural-scrolling&
            e4000_found=false
            for x in $(seq 1 180 | tr '\n' ' '); do
                if ! ls /dev/input/by-id/*4000-if01*; then

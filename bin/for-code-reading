@@ -122,12 +122,6 @@ function mkgtags() {
         )
     fi
     mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
-
-    (
-        flock 9
-        GTAGSROOT=$PWD GTAGSDBPATH=$outDir global -x '.*' | awk '{print $1" "$4}' | sort -u > "$outDir"/GTAGS.dump
-    ) 9<"$outDir"/GTAGS >/dev/null 2>&1 &
-
 }
 
 function mkgtags-filter() {
@@ -207,6 +201,9 @@ function mkbeagrepidx() {
 function for-code-reading() {
     mkbeagrepidx&
     SOURCECODETAGSMODE=true mkbeagrepidx&
+    if is-tty-io; then
+        wait
+    fi
     # mkgtags "$@" #must not put background, the tty(1) depends on this
 }
 

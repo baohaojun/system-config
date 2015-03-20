@@ -105,13 +105,6 @@
     (call-interactively 'grep)))
 
 ;;;###autoload
-(defun grep-imenu ()
-  (interactive)
-  (let ((grep-gtags-history grep-imenu-history)
-        (grep-buffer-name "*grep-imenu*"))
-    (grep-gtags 'grep-imenu-history "grep-imenu -i -e pat")))
-
-;;;###autoload
 (defun grep-gtags (&optional history-var def-grep-command)
   (interactive)
   (let ((grep-history grep-gtags-history)

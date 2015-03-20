@@ -79,11 +79,6 @@ if ($wild_card) {
     $lookup_needle = ".*";
 }
 
-my $imenu_mode = 0;
-if ($0 =~ m,grep-imenu$,) {
-    $imenu_mode = 1;
-}
-
 if ($ignore_case) {
     $ignore_case = "-i";
 }
@@ -96,9 +91,6 @@ if ($do_component) {
 }
 
 $lookup_needle =~ s/\+.*//;
-if ($imenu_mode and not $lookup_needle) {
-    $lookup_needle = ".*";
-}
 
 my $start_dir = $ENV{PWD};
 chomp($start_dir = qx/readlink -f "$start_dir"/);
@@ -290,11 +282,7 @@ sub do_cscope($$$) {
     chdir ($code_dir) or die "Can not change to $code_dir";
 
     my $grep;
-    if ($imenu_mode) {
-        open($grep, "-|", "cat /dev/null");
-    } else {
-        open($grep, "-|", "beatags -e $lookup_needle_quote $ignore_case");
-    }
+    open($grep, "-|", "beatags -e $lookup_needle_quote $ignore_case");
     our %matches = ();
 
     parse_xref($grep);
@@ -349,7 +337,7 @@ sub do_cscope($$$) {
         $str =~ s,:\t,: <$def> : ,;
         print "$use_full_path$file:$line: $str\n";
         $got_results = 1;
-        if (keys %matches < 5 and not $imenu_mode and not $silent and not is_binary($file)) { # this will be nice!
+        if (keys %matches < 5 and not $silent and not is_binary($file)) { # this will be nice!
             system("ctags-show-definition $code_dir/$file $line $lookup_needle");
         }
     }

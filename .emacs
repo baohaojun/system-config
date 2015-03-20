@@ -165,7 +165,6 @@
 
 
 (defvar grep-gtags-history nil)
-(defvar grep-imenu-history nil)
 (defvar bhj-occur-regexp nil)
 
 (put 'scroll-left 'disabled nil)

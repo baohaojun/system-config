@@ -47,12 +47,12 @@ if test ! -e "$boot"; then
     boot_part=$(my-adb 'echo /dev/block/platform/*/by-name/boot')
     if test "$boot" = adb; then
         my-adb -r echo hello
-        my-adb -S shell sh -c "cat $boot_part > /data/boot.img"
+        my-adb shell sh -c "cat $boot_part > /data/boot.img"
         my-adb pull /data/boot.img $output
         boot=$output
     elif test "$boot" = adb.recovery; then
         my-adb -r echo hello
-        my-adb -S shell sh -c "cat $boot_part > /data/boot.img"
+        my-adb shell sh -c "cat $boot_part > /data/boot.img"
         my-adb pull /data/boot.img $output
         boot=$output
     else

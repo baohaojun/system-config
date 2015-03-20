@@ -4,9 +4,13 @@ exec >/dev/null
 export PATH=/usr/local/bin:$PATH
 function do_it() {
     if test -f .for-code-reading -a ! -L .for-code-reading; then
-        SOURCECODETAGSMODE=true mkbeagrepidx&
-        mkbeagrepidx
-        echo -n > .for-code-reading
+        (
+            if [[ $PWD =~ /.cache/for-code-reading/ ]]; then
+                cd "${PWD#*/.cache/for-code-reading}";
+            fi
+            SOURCECODETAGSMODE=true mkbeagrepidx&
+            mkbeagrepidx
+        ) | tee .for-code-reading
     fi
 }
 
