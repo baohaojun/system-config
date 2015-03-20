@@ -6,6 +6,14 @@ function die() {
     exit -1
 }
 
+md5sum=$(
+    for x in "$@"; do
+        echo "$x"
+    done | md5sum | pn 1
+      )
+md5dir=.cache/${md5sum:0:1}/${md5sum:1:1}
+md5file=$md5dir/${md5sum:2}
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopts llocal_index qquote xxdebug ttags sshort
 ## end code-generator
@@ -99,17 +107,22 @@ if test -e "$beagrep_dir"/../.beagrep-abc && test "$local_index" != true; then
     else
         quote=
     fi
-    bash "$beagrep_dir"/../.beagrep-abc $tags $quote "$tokens"|rm-last-nl|perl -npe "s,^,$source_dir,"
+    bash "$beagrep_dir"/../.beagrep-abc $tags $quote "$tokens"|rm-last-nl|if test $short = true; then cat; else perl -npe "s,^,$source_dir/,"; fi
 
 else
-    for x in "$beagrep_dir" $(cat "$beagrep_dir"/../.beagrep-brothers 2>/dev/null)
-    do
+    if test "$beagrep_dir/../$md5file" -nt "$beagrep_dir"/FileAttributesStore.db; then
+        cat "$beagrep_dir/../$md5file"
+    else
         beagrep-static-query \
-            --add-static-backend "$(wlp "$x")" \
+            --add-static-backend "$(wlp "$beagrep_dir")" \
             --backend none --max-hits 100000 "$tokens" |
             beagrep-unurl-and-filter.pl|grep -v '#' |
-            sort -u
-    done
+            sort -u | (
+                mkdir -p "$beagrep_dir/../$md5dir";
+                tee "$beagrep_dir/../$md5file.$$";
+                mv "$beagrep_dir/../$md5file.$$" "$beagrep_dir/../$md5file"
+            )
+    fi
 fi | if test "$short" = true; then
          perl -npe "s,^$source_dir/,,"
      else
