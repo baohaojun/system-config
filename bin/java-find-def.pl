@@ -19,8 +19,8 @@ GetOptions(
 
 die "Usage: $0 -e LOOKUP_QCLASS" unless $lookup_qclass;
 
-debug "grep-gtags -e $lookup_qclass -t 'class|interface|method|field' -s -p '\\.java|\\.aidl|\\.jar|\\.cs|\\.dll'";
-open(my $pipe, "-|", "grep-gtags -e $lookup_qclass -t 'class|interface|method|field' -s -p '\\.java|\\.aidl|\\.jar|\\.cs|\\.dll'")
+debug "beatags -e $lookup_qclass -t 'class|interface|method|field' -p '\\.java|\\.aidl|\\.jar|\\.cs|\\.dll'";
+open(my $pipe, "-|", "beatags -e $lookup_qclass -t 'class|interface|method|field' -p '\\.java|\\.aidl|\\.jar|\\.cs|\\.dll'")
     or die "can not open global-ctags";
 
 
@@ -28,12 +28,12 @@ my $backup_for_nfound;
 my $backup_for_nfound_v;
 while (<$pipe>) {
     debug "got $_";
-    m/^(.*?):.*?<(.*?)>/ or next;
-    my ($file, $tag) = ($1, $2);
+    m/^(\S+)\s+(\S+)\s+(\d+)\s+(\S+)/ or next;
+    my ($tag, $type, $line, $file) = ($1, $2, $3, $4);
+    debug "Got $tag: $file";
     if ("$tag" eq $lookup_qclass) {
         if ($verbose) {
-            m/^(.*?):(\d+): (\S+): </ and
-                print "$3 $tag at $1 line $2.\n";
+            print "$type $tag at $file line $line.\n";
         } else {
             print "$file\n";
         }

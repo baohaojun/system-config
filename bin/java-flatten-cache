@@ -23,7 +23,7 @@ if test ! -e $cache -o $cache -ot $file -o ! -e $def -o $def -ot $file; then
     mv $cache.bak.$$ $cache
     (
         cd $HOME/.cache/code-reading-flatten$PWD
-        grep-imenu -e '.*' -f $file -s
+        ctags-ajoke --extra=+q --langmap=$(lang-map-for-ctags) -xu $file
     ) > $def.bak.$$
     mv $def.bak.$$ $def
 fi

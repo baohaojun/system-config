@@ -10,7 +10,7 @@ for x in $0 "$@"; do
     printf %q\ "$x"
 done >> ~/.logs/$(basename $0).log
 
-type='.*?'
+type='\S+'
 proto=false
 TEMP=$(getopt -o pt: --long prototype,type: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
@@ -51,9 +51,9 @@ for class in "$@"; do
         tag_cache=$(java-tags-cache $file)
         echo tag_cache is $tag_cache >> ~/.logs/$(basename $0).log
         if test $proto = true; then
-            perl -ne "print \"\$1\n\" if m/$type: <$qclass.[^.>]*> : (.*)/" $tag_cache /dev/null
+            perl -ne "print \"\$1\n\" if m/^$qclass\.\S+\s+$type\s+\d+\s+\S+\s+(.*)/" $tag_cache /dev/null
         else
-            perl -ne "print \"\$1\n\" if m/$type: <$qclass.([^.>]*)>/" $tag_cache /dev/null
+            perl -ne "print \"\$1\n\" if m/^$qclass\.(\S+)\s+$type\s+/" $tag_cache /dev/null
         fi
     done
 done | sort -u

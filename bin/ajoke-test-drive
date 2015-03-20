@@ -108,7 +108,7 @@ build it now (will need sudo for installing)?"; then
         die "jre rt.jar not found"
     fi
 
-    if test -e ~/.cache/for-code-reading/$java_dir/GTAGS; then
+    if test -e ~/.cache/for-code-reading/$java_dir/.beatags; then
         echo "Good, you have done mkgtags for java"
         for rc in $AJOKE_DIR/etc/bash.d/*; do
             if test -f $rc; then

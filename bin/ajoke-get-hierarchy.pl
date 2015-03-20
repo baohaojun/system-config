@@ -118,7 +118,7 @@ sub import_it($)
 }
 map {$_ and not $keywords{$_} and import_it($_)} split(/\s|;/, $imports);
 my $tags = qx(cat $tags_cache /dev/null);
-while ($tags =~ m/(?:class|interface): <(.*?)>/g) {
+while ($tags =~ m/^(\S+)\s+(?:class|interface)/g) {
     map_it($1);
 }
 
@@ -142,7 +142,7 @@ while ($supers =~ m/($qualified_re)/g) {
         $q_super = $simple_qualified_map{$out_class} . substr($class, length($out_class));
     } elsif (-e "$working_file_dir/$out_class.java" or -e "$working_file_dir/$out_class.aidl") {
         $q_super = "$package.$out_class" . substr($class, length($out_class));
-    } elsif (system("global -x java.lang.$out_class >/dev/null 2>&1") == 0) { # must use -x! 'cause it's my hacked tagsearch
+    } elsif (system("beatags -e java.lang.$out_class |grep -q java.lang.$out_class >/dev/null 2>&1") == 0) { # must use -x! 'cause it's my hacked tagsearch
         $q_super = "java.lang.$out_class" . substr($class, length($out_class));
     } else {
         if ($class =~ m/^[a-z].*\./) { # is a packaged class already
@@ -228,6 +228,7 @@ if ($ENV{EMACS} eq 't') {
 }
 
 for (keys %done_classes) {
+    debug "done class: $_";
     $qclass_defs{$_} = DelayedQx->new("java-find-def.pl -e $_ -v");
     if ($method) {
         $method_prototypes{$_.$method} = DelayedQx->new("java-query-qmethod $_.$method|sort -u");

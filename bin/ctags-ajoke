@@ -96,10 +96,6 @@ while (<STDIN>) {
                     if ($last_line and $old_type ne 'package') {
                         my $last_out = "$package.$last_line";
                         print $last_out;
-                        my $last_tag_out = "$package.$old_tag";
-                        $last_tag_out =~ s/\./-/g;
-                        $last_out =~ s/^\S+/$last_tag_out/;
-                        print $last_out;
                     }
                 }
                 if ($_ eq $terminator) {
@@ -110,10 +106,6 @@ while (<STDIN>) {
 
                 if ($tag =~ m/\./) {
                     my $last_out = "$package.$_";
-                    print $last_out;
-                    my $last_tag_out = "$package.$tag";
-                    $last_tag_out =~ s/\./-/g;
-                    $last_out =~ s/^\S+/$last_tag_out/;
                     print $last_out;
                 }
             }

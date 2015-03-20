@@ -6,7 +6,7 @@ start=$(readlink -f "$start")
 db_dir=$HOME/.cache/for-code-reading$start
 
 while test "$db_dir" != /; do
-    if test -e "$db_dir"/GTAGS; then
+    if test -e "$db_dir"/.beatags; then
         echo ${db_dir#$HOME/.cache/for-code-reading}
         exit 0
     fi

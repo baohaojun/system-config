@@ -12,4 +12,4 @@ fi
 file=$(java-find-def.pl -e $1)
 
 tags=$(java-tags-cache $file);
-perl -ne 'print "$1\n" if m/(?:class|interface): <(.*?)>/' $tags;
+perl -ne 'print "$1\n" if m/^(\S+)\s+(?:class|interface)/' $tags;

@@ -158,9 +158,8 @@ sub get_default_packages($)
 {
     my $package = $_[0];
     return unless $package;
-    $package =~ s/\./-/g;
-    $package = shell_quote("^$package-[^-]*\$");
-    open(my $pipe, "-|", "global -x $package | pn 1 | perl -npe 's/-/./g'")
+    $package = shell_quote("^$package\..*");
+    open(my $pipe, "-|", "beatags -e $package -t 'class|interface' | pn 1")
         or die "can not open grep-gtags";
 
     while (<$pipe>) {
@@ -216,15 +215,15 @@ sub find_import_for($)
         return 0 if exists $import_quoted_map{$def};
         $import_quoted_map{$def} = 1;
     }
-    debug "grep-gtags -e $def -t 'class|interface|enum(?!-constant)' -s -p '\\.java|\\.aidl|\\.jar'";
-    open(my $pipe, "-|", "grep-gtags -e $def -t 'class|interface|enum(?!-constant)' -s -p '\\.java|\\.aidl|\\.jar'")
+    debug "beatags -e $def -t 'class|interface|enum(?!-constant)' -p '\\.java|\\.aidl|\\.jar'";
+    open(my $pipe, "-|", "beatags -e $def -t 'class|interface|enum(?!-constant)' -p '\\.java|\\.aidl|\\.jar'")
         or die "can not open grep-gtags";
 
     my @imports;
     while (<$pipe>) {
-        m/^(.*?):.*?<(.*?)>/ or next;
+        m/^(.*?)\s+\S+\s+\d+\s+(\S+)/ or next;
 
-        my ($file, $tag) = ($1, $2);
+        my ($tag, $file) = ($1, $2);
         push @imports, "$tag";
     }
 

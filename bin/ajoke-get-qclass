@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+# Given File, print java.io.File
+
 use strict;
 die "Error: Usage $0 class" unless @ARGV;
 open(my $debug, ">", glob("~/.logs/ajoke-get-qclass.log"))
@@ -16,6 +18,7 @@ GetOptions(
     "t=s" => \$type,
     );
 
+$type = qr($type);
 
 my %files_package;
 for (@ARGV) {
@@ -28,21 +31,29 @@ for (@ARGV) {
 
     if ($ENV{GTAGS_START_FILE}) {
         my $file = $ENV{GTAGS_START_FILE};
-        debug "grep-imenu -e $class -t '$type' -s -p '\.java|\.aidl|\.jar|\.cs|\.dll' -f $file";
-        $output = qx(grep-imenu -e $class -t '$type' -s -p "\.java|\.aidl|\.jar|\.cs|\.dll" -f $file);
+        debug "beatags -e $class -p '\.java|\.aidl|\.jar|\.cs|\.dll' -f $file";
+        $output = qx(beatags -e $class -p '\.java|\.aidl|\.jar|\.cs|\.dll' -f $file);
         debug "output is $output from $file";
     } else {
-        $output = qx(grep-gtags -e $class -t '$type' -s -p "\.java|\.aidl|\.jar|\.cs|\.dll");
+        $output = qx(beatags -e $class -p "\.java|\.aidl|\.jar|\.cs|\.dll");
         debug "output is $output from gtags";
     }
 
-    while ($output =~ m/^(.*?):.*?: <(.*?)>/mg) {
-        my ($file, $tag) = ($1, $2);
+    while ($output =~ m/^(\S+)\s+(\S+)\s+(\d+)\s+(\S+)/mg) {
+        my ($tag, $type_p, $file) = ($1, $2, $4);
+        if ($type_p !~ m/$type/) {
+            next;
+        }
         if ($tag eq $qclass and $qclass =~ /\./) {
             print $tag;
             debug "already a qclass: $tag";
             exit;
         }
-        print "$tag\n" if "$tag" =~ m/$qclass/;
+        our %tag_printed;
+        unless ($tag_printed{$tag}){
+            print "$tag\n" if "$tag" =~ m/$qclass/;
+            $tag_printed{$tag} = 1;
+        }
+
     }
 }
