@@ -1,0 +1,36 @@
+#!/bin/bash
+start_ssh_agent() {
+    (
+        set -e
+        umask 077
+        ssh-agent > ~/.config/ssh-agent.$$
+        grep "^echo" -v ~/.config/ssh-agent.$$ > ~/.config/ssh-agent.$$.2
+        rm ~/.config/ssh-agent.$$
+        mv ~/.config/ssh-agent.$$.2 ~/.config/ssh-agent
+    )
+    . ~/.config/ssh-agent
+}
+
+if test ! -e ~/.config/ssh-agent; then
+    echo 1>&2 no ssh-agent found, restart it
+    start_ssh_agent
+else
+    . ~/.config/ssh-agent
+fi
+
+ssh-add -l >/dev/null 2>&1
+val=$?
+if test $val = 2; then
+    echo 1>&2 "can't connect to ssh-agent, restart it"
+    rm ~/.config/ssh-agent
+    start_ssh_agent
+fi
+
+if test $val != 0 -a -e ~/.ssh/id_rsa && tty >/dev/null 2>&1; then
+    echo "Need add the rsa"
+    if test "$SSH_CLIENT"; then
+        ssh-add ~/.ssh/id_rsa
+    else
+        do-ssh-add
+    fi
+fi
