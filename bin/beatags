@@ -9,8 +9,22 @@ function die() {
 
 # When called, we must be at the top of the beagrep indexed source folder.
 
-source_dir=$(readlink -f .)
+export source_dir=$(readlink -f .)
 export db_dir=~/.cache/for-code-reading/$source_dir
+
+md5sum=$(
+    for x in "$@"; do
+        echo "$x"
+    done | md5sum | pn 1
+      )
+md5dir=$db_dir/.beatags-cache/${md5sum:0:1}/${md5sum:1:1}
+md5file=$md5dir/${md5sum:2}
+
+if test -e "$md5file" -a -z "$UPDATE_TAG_CACHE"; then
+    cat "$md5file";
+    UPDATE_TAG_CACHE=true beatags "$@" >/dev/null 2>&1 &
+    exit
+fi
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopts e:entry iignore_case p:path_pat w:working_file t:type
@@ -52,15 +66,38 @@ else
     beagrep-files -t $quote -s "$entry"
 fi| grep -v -P -e '[ \t]' |
     if test "$path_pat"; then
-        grep -P -e "$path_pat";
+        grep -P -e "$path_pat" -i
     else
         cat
     fi|
     beatags-timestamp |
-    xargs cat /dev/null |
+    perl -ne '
+        BEGIN{
+            $source_dir = $ENV{source_dir};
+            $source_dir_len = length($source_dir);
+        }
+        chomp;
+        open($tag, "<", $_) or next;
+        $file = $_;
+        $file =~ s,.*/.cache/for-code-reading/*,/,;
+        $file =~ s,.tag$,,;
+        if (substr($file, 0, $source_dir_len + 1) eq "$source_dir/") {
+            $file = substr($file, $source_dir_len + 1);
+        }
+
+        while (<$tag>) {
+            s/📁/$file/;
+            print;
+        }
+        close $tag;
+    '|
     grep $(if test $ignore_case = true; then echo -i; fi) -P -e "^\\S*?\\b$entry\\s+" |
     if test "$type"; then
         grep -P -e "^\S+\s+($type)\s+\d+"
     else
         cat
-    fi
+    fi | (
+        mkdir -p $md5dir
+        tee $md5file.$$
+        mv $md5file.$$ $md5file
+    )
