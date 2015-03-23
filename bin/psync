@@ -12,7 +12,7 @@ if test $# = 0; then
     fi
     x=code3
     do_x >/dev/null 2>&1
-    for x in rem build build2 pub; do
+    for x in rem build2 pub; do
         (
             do_x
         )&
