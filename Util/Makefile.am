@@ -64,7 +64,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/StringFu.cs           	\
 	$(srcdir)/StringMatcher.cs		\
 	$(srcdir)/SystemInformation.cs		\
-	$(srcdir)/SystemPriorities.cs		\
 	$(srcdir)/TeeTextWriter.cs		\
 	$(srcdir)/ThreadPond.cs			\
 	$(srcdir)/Timeline.cs			\

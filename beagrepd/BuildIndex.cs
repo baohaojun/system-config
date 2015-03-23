@@ -355,11 +355,6 @@ namespace Beagrep.Daemon
 
                         Log.Always ("Starting beagrep-build-index (pid {0}) at {1}", Process.GetCurrentProcess ().Id, DateTime.Now);
 
-                        // Set system priorities so we don't slow down the system
-                        SystemPriorities.ReduceIoPriority ();
-                        SystemPriorities.SetSchedulerPolicyBatch ();
-                        SystemPriorities.Renice (19);
-
                         driver = new LuceneIndexingDriver (arg_output, MINOR_VERSION, false);
                         driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
                         if (driver.TextCache != null)
