@@ -167,9 +167,6 @@ namespace Beagrep.Filters {
                                                 MatchCollection matches = rx.Matches(s);
                                                 foreach (Match match in matches) {
                                                         GroupCollection groups = match.Groups;
-                                                        if (groups[2].Value != filepath) {
-                                                                Beagrep.Util.Logger.Log.Debug ("{0} is messed up with {1}!", filepath, groups[2].Value);
-                                                        }
                                                         pull = AppendChars(groups[1].Value.ToCharArray(), 0, groups[1].Length);
                                                 }
                                         }
