@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 
 use strict;
+use File::Path qw(make_path);
+use String::ShellQuote;
 
 open(my $debug, ">>", glob("~/.logs/ctags-exuberant.log"))
     or die "Can not open debug log file ~/.logs/ctags-exuberant.log";
@@ -69,9 +71,62 @@ use IPC::Open2;
 
 $|++;
 my $ctags_pid = open2(my $read, my $write, "ctags-exuberant", @ARGV);
+sub check_tag_cached($$) {
+    my ($tag, $source) = @_;
+
+    if (-e $tag and -e $source and (stat($tag))[9] > (stat($source))[9]) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+sub output_tag_cache($) {
+    my ($tag) = @_;
+    open(my $cache, "<", $tag) or die "Can't open $tag";
+    while (<$cache>) {
+        print;
+    }
+    close($cache);
+}
+
+sub print_with_caching($$) {
+    my ($cache, $line) = @_;
+    $line =~ s/^((.*?)\s+\S+\s+\d+\s+)(\S+)/$1📁/;
+    print $line;
+    print $cache $line;
+}
+
+sub close_cache_and_rename($$$) {
+    my ($cache, $old, $new) = @_;
+    close($cache);
+    rename($old, $new);
+}
+
 while (<STDIN>) {
-    print $write "$_";
+
     chomp(my $source = $_);
+
+    my $abs_source = $source;
+    $abs_source = shell_quote($abs_source);
+    chomp($abs_source = qx(readlink -f $abs_source));
+
+    my $cache_f = "$ENV{HOME}/.cache/for-code-reading/$abs_source";
+
+    if (check_tag_cached("$cache_f.tag", $source)) {
+        output_tag_cache("$cache_f.tag");
+        print $terminator;
+        next;
+    }
+
+    (my $cache_d = $cache_f) =~ s,(.*)/.*,$1,;
+    make_path($cache_d);
+    open(my $cache, ">", "$cache_f.tag.$$") or die "Can't open $cache_f.tag.$$";
+
+
+
+    print $write "$_";
+
     $write->flush();
     if ($custom_parser) {
         system($custom_parser, $source);
@@ -88,34 +143,38 @@ while (<STDIN>) {
             ($tag, $type, $line_num, $file) = m/^\s*(\S+)\s+(.*?)\s+(\d+)\s+(\S+)/;
             if ($type eq 'package') {
                 $package = $tag;
-                print;
+                print_with_caching($cache, $_);
             } else {
                 my $tag_no_dot = $tag;
                 $tag_no_dot =~ s/.*\.//;
                 if (($tag_no_dot ne $old_tag or $line_num != $old_line_num) and $old_tag !~ m/\./) {
                     if ($last_line and $old_type ne 'package') {
                         my $last_out = "$package.$last_line";
-                        print $last_out;
+                        print_with_caching($cache, $last_out);
                     }
                 }
                 if ($_ eq $terminator) {
                     print;
+                    close_cache_and_rename($cache, "$cache_f.tag.$$", "$cache_f.tag");
                     $seen_terminator = 1;
                     last;
                 }
 
                 if ($tag =~ m/\./) {
                     my $last_out = "$package.$_";
-                    print $last_out;
+                    print_with_caching($cache, $last_out);
                 }
             }
             ($old_tag, $old_type, $old_line_num, $old_file) = ($tag, $type, $line_num, $file);
             $last_line = $_;
         } else {
-            print;
             if ($_ eq $terminator) {
+                print;
+                close_cache_and_rename($cache, "$cache_f.tag.$$", "$cache_f.tag");
                 $seen_terminator = 1;
                 last;
+            } else {
+                print_with_caching($cache, $_);
             }
         }
     }
@@ -124,6 +183,7 @@ while (<STDIN>) {
         print $terminator;
         close $read;
         close $write;
+        close_cache_and_rename($cache, "$cache_f.tag.$$", "$cache_f.tag");
         wait;
         $ctags_pid = open2($read, $write, "ctags-exuberant", @ARGV)
             or die "Can not open ctags-exuberant pipe";
