@@ -27,20 +27,22 @@ if test -e "$md5file" -a -z "$UPDATE_TAG_CACHE"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts e:entry iignore_case p:path_pat w:working_file t:type
+# generate-getopts e:entry iignore_case p:path_pat v:path_reverse w:working_file t:type
 ## end code-generator
 ## start generated code
 entry=
 ignore_case=false
 path_pat=
+path_reverse=
 working_file=
 type=
 OPTIND=1
-while getopts 'e:ip:w:t:' opt; do
+while getopts 'e:ip:v:w:t:' opt; do
     case "$opt" in
         e)    entry=$OPTARG;;
         i)    ignore_case=true;;
         p)    path_pat=$OPTARG;;
+        v)    path_reverse=$OPTARG;;
         w)    working_file=$OPTARG;;
         t)    type=$OPTARG;;
         *)    echo Usage Error;;
@@ -69,6 +71,13 @@ fi| grep -v -P -e '[ \t]' |
         grep -P -e "$path_pat" -i
     else
         cat
+    fi|
+    if test "$path_reverse"; then
+        grep -v -P -e "$path_pat" -i
+    elif test -e "$db_dir/.beatags-v"; then
+        bash "$db_dir/.beatags-v"
+    else
+        grep -v dalvik/dx/tests/089-dex-define-object
     fi|
     beatags-timestamp |
     perl -ne '
