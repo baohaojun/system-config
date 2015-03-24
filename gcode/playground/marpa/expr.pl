@@ -42,16 +42,18 @@ while ($line) {
         $recce->read( 'LPAREN', '(' );
     } elsif ($line =~ s/^\s*\)//) {
         $recce->read( 'RPAREN', ')' );
-    } elsif ($line =~ s/^\s*([0-9]+)//) {
-        $recce->read( 'Number', $1 );
     } elsif ($line =~ s/^\s*0x([0-9a-f]+)//i) {
         $recce->read( 'Number', hex $1 );
+    } elsif ($line =~ s/^\s*([0-9]+)//) {
+        $recce->read( 'Number', $1 );
     } elsif ($line =~ s,^\s*([-+*/]),,i) {
         $recce->read( $1 );
     } elsif ($line =~ s,^\s*([gmk]),,i) {
         $recce->read( 'Gmk', lc $1 );
     } elsif ($line =~ s,^\s*$,,) {
         last;
+    } else {
+        die "Failed for line: $line";
     }
 }
 
