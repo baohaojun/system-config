@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/src/github/projects/ABC.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/doc/projects/ABC.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
 # of Cake.
@@ -11,6 +11,8 @@ set -e
 if test "$ABC_REMOTE_HOST" = ""; then
     export ABC_REMOTE_HOST=abc
 fi
+
+export USE_CCACHE=1
 
 if test -e ~/src/github/projects/ABC.org -a ~/src/github/projects/ABC.org -nt ~/bin/abc; then
     emacsclient -e '
@@ -858,7 +860,7 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                     fi
                     exit $ret
                 ) || (
-                    if test -e .repo/manifest.xml.base; then
+                    if test -e .repo/manifest.xml.base && ! diff -q .repo/manifest.xml .repo/manifest.xml.base; then
                         (
                             info need to try old build
                             cat .repo/manifest.xml.base > .repo/manifest.xml
@@ -866,14 +868,15 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                             android-make -c $config
                         ) || abc-notify-maintainer -s "Full build failed again for $PWD: $config" -a buildspec.mk
                     else
-                        abc-notify-maintainer -s "Full build failed and no base xml found for $PWD: $config" -a buildspec.mk
+                        abc-notify-maintainer -s "Full build failed and no old base xml found for $PWD: $config" -a buildspec.mk
                     fi
                 ) || true
             done
             (
                 if ! is-tty-io; then
-                    mkbeagrepidx
+                    mkbeagrepidx&
                     SOURCECODETAGSMODE=true mkbeagrepidx
+                    wait
                 fi
             ) 9>/dev/null
         )

@@ -71,6 +71,7 @@ sub push_one_file($$)
         system("my-adb 'set -x; rm $odex'");
     }
 
+    print "adb push $file $true_dest\n";
     if (system("adb", "push", $file, "$true_dest")) {
         debug "push failed, try to use sdcard";
         system("adb", "mkdir", "-p", "/sdcard/adb-push");
