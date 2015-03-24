@@ -78,12 +78,12 @@ disp "HEAD is now at `echo $log | cut -c 1-7`... `echo "$log" | cut -c 41-`"
 #		a) push the patch onto the stack
 #
 IFS=":"
-cat "$rebase_dir/status" | while read hash name; do
+cat "$rebase_dir/status" | while read name; do
 	disp ""
 	IFS=" "
 	cat "$GUILT_DIR/$branch/$name" | git patch-id |
 		while read patchid commitid ; do
-			disp "Applying '$name'"
+			disp "Applying '$name' with '$patchid' and '$commitid'"
 			if [ -f "$rebase_dir/$patchid" ]; then
 				realcommit=`head_n 1 "$rebase_dir/$patchid"`
 				disp "Matches upstream commit $realcommit"
@@ -91,7 +91,7 @@ cat "$rebase_dir/status" | while read hash name; do
 				disp "Patch removed from series."
 			else
 				# FIXME: use a guilt function instead
-				guilt-push > /dev/null
+				guilt push > /dev/null
 				disp "Patch applied."
 			fi
 		done
