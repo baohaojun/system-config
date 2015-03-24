@@ -1,0 +1,30 @@
+guilt-export(1)
+===============
+
+NAME
+----
+guilt-export - Export a patch series (to be used by quilt)
+
+SYNOPSIS
+--------
+include::usage-guilt-export.txt[]
+
+DESCRIPTION
+-----------
+Export a guilt series to be used by quilt.
+
+OPTIONS
+-------
+<target_dir>::
+        Name of the directory to export the patch series to.
+        (defaults to patches).
+
+Author
+------
+Written by Pierre Habouzit <madcoder@debian.org>
+
+Documentation
+-------------
+Documentation by Pierre Habouzit <madcoder@debian.org>
+
+include::footer.txt[]

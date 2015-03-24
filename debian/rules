@@ -1,0 +1,51 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+build: build-stamp
+
+build-stamp:
+	dh_testdir
+
+	$(MAKE)
+	
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+
+	[ ! -f Makefile ] || $(MAKE) clean
+	
+	dh_clean build-stamp
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_install
+	dh_installdirs
+
+	$(MAKE) DESTDIR=$(CURDIR)/debian/guilt install install-doc
+
+# Build architecture-independent files here.
+binary-indep: install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs
+	dh_installexamples
+	dh_installman
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+# Build architecture-dependent files here.
+binary-arch: install
+
+binary: binary-indep binary-arch
+
+.PHONY: build clean binary-indep binary-arch binary install

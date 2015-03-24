@@ -1,0 +1,38 @@
+guilt-repair(1)
+===============
+
+NAME
+----
+guilt-repair - Repair the repository state
+
+SYNOPSIS
+--------
+include::usage-guilt-repair.txt[]
+
+DESCRIPTION
+-----------
+Perform various repository repairs. You must specify one mode of repair:
+
+--full::
+	Tries to repair everything possible. Additionally, it resets the
+	repository state by reseting the HEAD to what's believed to be the
+	proper commit, and reseting the applied stack. The end result should
+	be a repository with no patches applied.
+
+	WARNING: Running this command may result in commits and working
+	directory changes being lost. You may want to create a new reference
+	(e.g., branch, or reflog) to the original HEAD before using
+	guilt-repair.
+
+--status::
+	Upgrade the status file from old format to new.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

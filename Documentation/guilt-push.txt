@@ -1,0 +1,37 @@
+guilt-push(1)
+=============
+
+NAME
+----
+guilt-push - Push patches onto the tree
+
+SYNOPSIS
+--------
+include::usage-guilt-push.txt[]
+
+OPTIONS
+-------
+-f::
+	Force the push if the patch doesn't apply cleanly
+
+--all::
+-a::
+	Push all patches on the tree
+
+-n <num>::
+	Push specified number of patches
+
+<patchname>::
+	Push all patches up to and including this patch on the tree
+
+If no patchname is given, push the next patch in the series onto the tree.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Brandon Philips <brandon@ifup.org>
+
+include::footer.txt[]

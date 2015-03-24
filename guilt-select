@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# Copyright (c) Eric Lesh, 2007
+#
+
+USAGE="[ -n | --none | -s | --series | [--pop|--reapply] <guards...> ]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+select_guards()
+{
+	for x in "$@"; do
+		if [ $(printf %s "$x" | grep -e "^[+-]") ]; then
+			die "'$x' cannot begin with + or -."
+		fi
+	done
+	echo "$@" | sed -e 's/ /\n/g' | sort | uniq > "$guards_file"
+}
+
+_main() {
+
+if [ $# -eq 0 ]; then
+	if [ -s "$guards_file" ]; then
+		cat "$guards_file"
+	else
+		echo >&2 "No guards applied"
+	fi
+	exit 0
+fi
+
+case $1 in
+	-n|--none)
+		rm -f "$guards_file"
+		;;
+	--pop)
+		guilt-pop -a
+		shift
+		select_guards "$@"
+		;;
+	--reapply)
+		top=`get_top`
+		guilt-pop -a
+		shift
+		select_guards "$@"
+		guilt-push "$top"
+		;;
+	-s|--series)
+		(get_full_series | while read patch; do
+			get_guards "$patch"
+		done) | sed -e 's/ /\n/g' | sort | uniq
+		;;
+	*)
+		select_guards "$@"
+		;;
+esac
+
+}

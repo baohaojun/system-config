@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="<file>..."
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+if [ $# -lt 1 ]; then
+	usage
+fi
+
+exec git add -- "$@"
+
+}

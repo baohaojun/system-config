@@ -1,0 +1,24 @@
+guilt-applied(1)
+================
+
+NAME
+----
+guilt-applied - List applied patches
+
+SYNOPSIS
+--------
+include::usage-guilt-applied.txt[]
+
+DESCRIPTION
+-----------
+Prints a list of all applied patches.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Brandon Philips <brandon@ifup.org>
+
+include::footer.txt[]

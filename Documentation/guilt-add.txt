@@ -1,0 +1,37 @@
+guilt-add(1)
+============
+
+NAME
+----
+guilt-add - Add a file to git and guilt
+
+SYNOPSIS
+--------
+include::usage-guilt-add.txt[]
+
+DESCRIPTION
+-----------
+Adds the files specified to git using git-add making it available to guilt.
+
+OPTIONS
+-------
+<files>::
+	Files to add
+
+EXAMPLES
+--------
+
+Create and add a new file example.c
+
+	$ touch example.c
+	$ guilt-add example.c
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Brandon Philips <brandon@ifup.org>
+
+include::footer.txt[]

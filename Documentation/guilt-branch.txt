@@ -1,0 +1,32 @@
+guilt-branch(1)
+===============
+
+NAME
+----
+guilt-branch - Branch the entire patch series
+
+SYNOPSIS
+--------
+include::usage-guilt-branch.txt[]
+
+DESCRIPTION
+-----------
+Create a copy of the entire branch patch directory (.git/patches/<branch>)
+to (.git/patches/<new_name>), create a new git branch <new_name> and check
+it out.
+
+OPTIONS
+-------
+<new_name>::
+	The name of the new branch to create. If not specified, the current
+	branch name is appended with the current year, month and day.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

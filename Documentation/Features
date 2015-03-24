@@ -1,0 +1,14 @@
+Patches directory
+=================
+
+The patches directory is identical to that of Mercurial's mq. Each patch is
+stored as plain-text file, with a git-diff generated diff. By default, the
+diff does not use git's rename/copy detected patches, however specifying
+--git to guilt-refresh forces git-diff to use as many of git diff's features
+as possible.
+
+
+Command set
+===========
+
+The commands mimic a mix of quilt and mq commands.

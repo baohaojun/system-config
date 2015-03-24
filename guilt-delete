@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="[-f] <patchname>"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+case $# in
+	1)
+		# just patchname
+		force=
+		;;
+	2)
+		# -f patchname
+		if [ "$1" != "-f" ]; then
+			usage
+		fi
+
+		force=t
+		shift
+		;;
+	*)
+		usage
+		;;
+esac
+
+patch="$1"
+
+if [ -z "$patch" ]; then
+	die "You must specify a patch to delete"
+fi
+
+if [ ! -f "$GUILT_DIR/$branch/$patch" ]; then
+	die "Patch $patch does not exist."
+fi
+
+p=`grep -e "^$patch$" < "$applied"`
+if [ ! -z "$p" ] ; then
+	die "Cannot delete an applied patch"
+fi
+
+series_remove_patch "$patch"
+
+guilt_hook "delete" "$patch"
+
+[ ! -z "$force" ] && rm -f $GUILT_DIR/$branch/$patch
+
+exit 0
+
+}

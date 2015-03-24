@@ -1,0 +1,38 @@
+guilt-delete(1)
+===============
+
+NAME
+----
+guilt-delete - Delete a patch
+
+SYNOPSIS
+--------
+include::usage-guilt-delete.txt[]
+
+DESCRIPTION
+-----------
+Delete an unapplied patch from the series.
+
+OPTIONS
+-------
+-f::
+	Remove the patch from the series and disk
+
+<patchname>::
+	Name of the patch to delete.
+
+EXAMPLES
+--------
+Delete a patch called 'foobar':
+
+	$ guilt-delete foobar
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Brandon Philips <brandon@ifup.org>
+
+include::footer.txt[]

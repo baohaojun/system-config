@@ -1,0 +1,187 @@
+% setup_repo
+% guilt new subdir
+% mkdir blah
+% touch blah/sub
+% guilt add blah/sub
+% guilt refresh
+Patch subdir refreshed
+% guilt push -a
+Applying patch..modify
+Patch applied.
+Applying patch..add
+Patch applied.
+Applying patch..remove
+Patch applied.
+Applying patch..mode
+Patch applied.
+% guilt files
+def
+% guilt files -v
+  def
+% guilt files -l
+mode def
+% guilt files -v -l
+[mode] def
+% guilt files -a
+blah/sub
+def
+abd
+abd
+def
+% guilt files -l -a
+subdir blah/sub
+modify def
+add abd
+remove abd
+mode def
+% guilt files -v -a
+subdir
++ blah/sub
+modify
+  def
+add
++ abd
+remove
+- abd
+mode
+  def
+% guilt files -v -l -a
+[subdir] blah/sub
+[modify] def
+[add] abd
+[remove] abd
+[mode] def
+% dd if=/dev/zero of=file.bin bs=1 count=1024
+1024+0 records in
+1024+0 records out
+1024 bytes (1.0 kB) copied
+% guilt files
+def
+% guilt files -v
+  def
+% guilt files -l
+mode def
+% guilt files -v -l
+[mode] def
+% guilt files -a
+blah/sub
+def
+abd
+abd
+def
+% guilt files -l -a
+subdir blah/sub
+modify def
+add abd
+remove abd
+mode def
+% guilt files -v -a
+subdir
++ blah/sub
+modify
+  def
+add
++ abd
+remove
+- abd
+mode
+  def
+% guilt files -v -l -a
+[subdir] blah/sub
+[modify] def
+[add] abd
+[remove] abd
+[mode] def
+% git add file.bin
+% guilt files
+def
+file.bin
+% guilt files -v
+  def
++ file.bin
+% guilt files -l
+mode def
+mode file.bin
+% guilt files -v -l
+[mode] def
+[mode] file.bin
+% guilt files -a
+blah/sub
+def
+abd
+abd
+def
+file.bin
+% guilt files -l -a
+subdir blah/sub
+modify def
+add abd
+remove abd
+mode def
+mode file.bin
+% guilt files -v -a
+subdir
++ blah/sub
+modify
+  def
+add
++ abd
+remove
+- abd
+mode
+  def
++ file.bin
+% guilt files -v -l -a
+[subdir] blah/sub
+[modify] def
+[add] abd
+[remove] abd
+[mode] def
+[mode] file.bin
+% git rm def
+rm 'def'
+% guilt files
+def
+file.bin
+% guilt files -v
+- def
++ file.bin
+% guilt files -l
+mode def
+mode file.bin
+% guilt files -v -l
+[mode] def
+[mode] file.bin
+% guilt files -a
+blah/sub
+def
+abd
+abd
+def
+file.bin
+% guilt files -l -a
+subdir blah/sub
+modify def
+add abd
+remove abd
+mode def
+mode file.bin
+% guilt files -v -a
+subdir
++ blah/sub
+modify
+  def
+add
++ abd
+remove
+- abd
+mode
+- def
++ file.bin
+% guilt files -v -l -a
+[subdir] blah/sub
+[modify] def
+[add] abd
+[remove] abd
+[mode] def
+[mode] file.bin

@@ -1,0 +1,13 @@
+# Description: Install docs to /usr/share/man instead of /usr/man.
+
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -12,7 +12,7 @@
+ prefix?=$(PREFIX)
+ bindir?=$(prefix)/bin
+ htmldir?=$(prefix)/html
+-mandir?=$(prefix)/man
++mandir?=$(prefix)/share/man
+ man1dir=$(mandir)/man1
+ man7dir=$(mandir)/man7
+ # DESTDIR=

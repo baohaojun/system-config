@@ -1,0 +1,31 @@
+guilt-header(1)
+===============
+
+NAME
+----
+guilt-header - Print a patch header
+
+SYNOPSIS
+--------
+include::usage-guilt-header.txt[]
+
+DESCRIPTION
+-----------
+Prints either the topmost patch's header or the header of a specified patch.
+
+-e::
+	Open the header in an editor, instead of printing it.
+-E::
+	Open the raw patch in an editor, instead of printing it.
+<patchname>::
+	Name of the patch.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Brandon Philips <brandon@ifup.org>
+
+include::footer.txt[]

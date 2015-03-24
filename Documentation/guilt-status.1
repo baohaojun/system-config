@@ -1,0 +1,116 @@
+'\" t
+.\"     Title: guilt-status
+.\"    Author: [see the "Author" section]
+.\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
+.\"      Date: 07/17/2011
+.\"    Manual: Guilt Manual
+.\"    Source: Guilt v0.35
+.\"  Language: English
+.\"
+.TH "GUILT\-STATUS" "1" "07/17/2011" "Guilt v0\&.35" "Guilt Manual"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+guilt-status \- Print the status of files since the last refresh
+.SH "SYNOPSIS"
+\fIguilt\-status\fR [\-a|\-A] [\-c|\-C] [\-d|\-D] [\-m|\-M] [\-r|\-R] [\-t|\-T] [\-u|\-U] [\-x|\-X] [\-n]
+.SH "DESCRIPTION"
+Each file is printed with a prefix that describes it\(cqs status\&.
+
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+A   added
+C   copied
+D   deleted
+M   modified
+R   renamed
+T   type change (e\&.g\&., mode)
+U   unmerged
+?   untracked
+.fi
+.if n \{\
+.RE
+.\}
+.SH "OPTIONS"
+.PP
+\-n
+.RS 4
+Hide status prefix in the output
+.RE
+.PP
+\-a, \-A
+.RS 4
+Display only added files
+.RE
+.PP
+\-c, \-C
+.RS 4
+Display only copied files
+.RE
+.PP
+\-d, \-D
+.RS 4
+Display only deleted files
+.RE
+.PP
+\-m, \-M
+.RS 4
+Display only modified files
+.RE
+.PP
+\-r, \-R
+.RS 4
+Display only renamed files
+.RE
+.PP
+\-t, \-T
+.RS 4
+Display only files with a status change (e\&.g\&., mode)
+.RE
+.PP
+\-u, \-U
+.RS 4
+Display only unmerged files
+.RE
+.PP
+\-x, \-X
+.RS 4
+Display only unknown files
+.RE
+.SH "AUTHOR"
+Written by Josef "Jeff" Sipek <\m[blue]\fBjeffpc@josefsipek\&.net\fR\m[]\&\s-2\u[1]\d\s+2>
+.SH "DOCUMENTATION"
+Documentation by Brandon Philips <\m[blue]\fBbrandon@ifup\&.org\fR\m[]\&\s-2\u[2]\d\s+2>
+.SH "GUILT"
+Part of the \fBguilt\fR(7) suite (Generated for Guilt v0\&.35)
+.SH "NOTES"
+.IP " 1." 4
+jeffpc@josefsipek.net
+.RS 4
+\%mailto:jeffpc@josefsipek.net
+.RE
+.IP " 2." 4
+brandon@ifup.org
+.RS 4
+\%mailto:brandon@ifup.org
+.RE

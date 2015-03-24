@@ -1,0 +1,51 @@
+% setup_repo
+% guilt header
+No patches applied.
+% guilt push -a
+Applying patch..modify
+Patch applied.
+Applying patch..add
+Patch applied.
+Applying patch..remove
+Patch applied.
+Applying patch..mode
+Patch applied.
+% guilt new -s -m blah blah blah patch-with-some-desc
+% guilt pop
+Now at mode.
+% guilt push
+Applying patch..patch-with-some-desc
+Patch applied.
+% list_files
+d .git/patches
+d .git/patches/master
+d .git/refs/patches
+d .git/refs/patches/master
+f 0e237aa56ddba6f87bf0e9b5748373da4e6983c3  .git/patches/master/status
+f 22930c6d1f1938f298a4fca51c57e4b47171db21  .git/patches/master/mode
+f 413390f3906f16f30b054a4fb86c1e014b964504  .git/patches/master/remove
+f 9c18cc7abe6b87f18503714a80a677b4094eb457  .git/patches/master/add
+f bc9ab2e0f5db99d483961e956e814d963f0309f8  .git/patches/master/modify
+f c87bb44fd4f1c10033b13562be50006f57c98eab  .git/patches/master/series
+f e4a20695c36bc826bad047d69ff3315df7062bf4  .git/patches/master/patch-with-some-desc
+r 183edd7ba80324ae143496192d73dea328942ddb  .git/refs/patches/master/patch-with-some-desc
+r 33633e7a1aa31972f125878baf7807be57b1672d  .git/refs/patches/master/modify
+r 37d588cc39848368810e88332bd03b083f2ce3ac  .git/refs/patches/master/add
+r ccd56089d1b5305a9d35617cb7f6f4b06ffa68ba  .git/refs/patches/master/mode
+r ffb7faa126a6d91bcdd44a494f76b96dd860b8b9  .git/refs/patches/master/remove
+% guilt header
+blah blah blah
+
+Signed-off-by: Commiter Name <commiter@email>
+
+% guilt header modify
+% guilt header add
+% guilt header remove
+% guilt header mode
+% guilt header patch-with-some-desc
+blah blah blah
+
+Signed-off-by: Commiter Name <commiter@email>
+
+% guilt header non-existant
+Patch non-existant is not in the series

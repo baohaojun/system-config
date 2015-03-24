@@ -1,0 +1,35 @@
+guilt-files(1)
+==============
+
+NAME
+----
+guilt-files - Print the list of files that the topmost patch changes
+
+SYNOPSIS
+--------
+include::usage-guilt-files.txt[]
+
+DESCRIPTION
+-----------
+Print the list of files that the topmost patch changes.
+
+OPTIONS
+-------
+-v::
+	Verbose output
+
+-a::
+	List all files in all applied patches
+
+-l::
+	Add patch name to the output
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

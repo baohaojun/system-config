@@ -1,0 +1,118 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="[-a|-A] [-c|-C] [-d|-D] [-m|-M] [-r|-R] [-t|-T] [-u|-U] [-x|-X] [-n]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+print_status()
+{
+	if [ -z "$no_prefix" ] ; then
+		Apfx="A "
+		Cpfx="C "
+		Dpfx="D "
+		Mpfx="M "
+		Rpfx="R "
+		Tpfx="T "
+		Upfx="U "
+		Xpfx="? "
+	fi
+
+	while read status name newname
+	do
+		case "$status" in
+			A*) disp "$Apfx$name";;
+			C*) disp "$Cpfx$name -> $newname";;
+			D*) disp "$Dpfx$name";;
+			M ) disp "$Mpfx$name";;
+			R*) disp "$Rpfx$name -> $newname";;
+			T ) disp "$Tpfx$name";;
+			U ) disp "$Upfx$name";;
+			? ) disp "$Xpfx$name";;
+		esac
+	done
+}
+
+_main() {
+
+untracked=""
+DIFF_FILTER=""
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-a|-A)
+			DIFF_FILTER="A$DIFF_FILTER"
+			;;
+		-c|-C)
+			DIFF_FILTER="C$DIFF_FILTER"
+			;;
+		-d|-D)
+			DIFF_FILTER="D$DIFF_FILTER"
+			;;
+		-m|-M)
+			DIFF_FILTER="M$DIFF_FILTER"
+			;;
+		-r|-R)
+			DIFF_FILTER="R$DIFF_FILTER"
+			;;
+		-t|-T)
+			DIFF_FILTER="T$DIFF_FILTER"
+			;;
+		-u|-U)
+			DIFF_FILTER="U$DIFF_FILTER"
+			;;
+		-x|-X)
+			untracked="t"
+			DIFF_FILTER="X$DIFF_FILTER"
+			;;
+		-n)
+			no_prefix="t"
+			;;
+		*)
+			usage
+			;;
+	esac
+	shift
+done
+
+# default status displays all
+if [ -z "$DIFF_FILTER" ]; then
+	untracked="t"
+	DIFF_FILTER="ACDMRT"
+fi
+
+git rev-parse --verify HEAD >/dev/null 2>&1 || IS_INITIAL=t
+
+(
+	cd_to_toplevel
+	# untracked; FIXME: there's got to be a better way
+	if [ ! -z "$untracked" ]; then
+		if [ -f "$GIT_DIR/info/exclude" ]; then
+			git ls-files -z --others \
+			--exclude-from="$GIT_DIR/info/exclude" \
+			--exclude-per-directory=.gitignore
+		else
+			git ls-files -z --others --exclude-per-directory=.gitignore
+		fi | xargs -0 -L 1 echo | while read n; do
+			[ -z "$n" ] && continue
+			echo "$n" | sed -e "s/^/?\t/"
+		done
+	fi
+
+	# added
+	if [ -z "$IS_INITIAL" ]; then
+		# non-initial commit
+		git diff-index -M --name-status --diff-filter=$DIFF_FILTER HEAD
+	else
+		# initial commit
+		git ls-files | sed -e "s/^/A\t/"
+	fi | sed -e '
+		s/\\/\\\\/g
+		s/ /\\ /g
+	'
+) | print_status
+
+}

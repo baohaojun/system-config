@@ -1,0 +1,50 @@
+guilt-select(1)
+===============
+
+NAME
+----
+guilt-select - Select guards to apply when pushing patches
+
+SYNOPSIS
+--------
+include::usage-guilt-select.txt[]
+
+DESCRIPTION
+-----------
+Select guards to apply when pushing patches.
+
+Guards are selected without the + or - prefix.  Patches are applied in
+the following way:
+
+* An unguarded patch is always applied.
+
+* A patch with a positive guard is applied *only* if the guard is
+selected with guilt-select.
+
+* A patch with a negative guard is applied *unless* the guard is
+selected with guilt-select.
+
+OPTIONS
+-------
+-n|--none::
+        Remove all selected guards
+
+--pop::
+        Pop back to the first guarded patch
+
+--reapply::
+        Pop back to first guarded patch, select a new guard, and
+        push
+
+-s|--series::
+        List all guards listed in the series file
+
+Author
+------
+Written by Eric Lesh <eclesh@ucla.edu>
+
+Documentation
+-------------
+Documentation by Eric Lesh <eclesh@ucla.edu>
+
+include::footer.txt[]

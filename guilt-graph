@@ -1,0 +1,80 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2007-2011
+#
+
+USAGE="[<patchname>]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+if [ $# -gt 1 ]; then
+	usage
+fi
+
+patchname="$1"
+
+bottom=`git rev-parse refs/patches/$branch/$(head_n 1 < "$applied")`
+base=`git rev-parse $bottom^`
+
+if [ -z "$patchname" ]; then
+	top=`git rev-parse HEAD`
+else
+	top=`grep "^$patchname$" "$applied"`
+	if [ -z "$top" ]; then
+		die "Cannot find patch '$patchname'. Is it applied?"
+	fi
+fi
+
+getfiles()
+{
+	git diff-tree -r "$1^" "$1" | tr '\t' ' ' | cut -d' ' -f6
+}
+
+cache="$GUILT_DIR/$branch/.graphcache.$$"
+mkdir "$cache"
+trap "rm -rf \"$cache\"" 0
+
+disp "digraph G {"
+
+current="$top"
+
+while [ "$current" != "$base" ]; do
+	pname=`git show-ref | sed -n -e "
+/^$current refs\/patches\/$branch/ {
+	s,^$current refs/patches/$branch/,,
+	p
+	q
+}"`
+	[ -z "$pname" ] && pname="?"
+
+	disp "# checking rev $current"
+	disp "	\"$current\" [label=\"$pname\"]"
+
+	# new "hash table"
+	rm -f "$cache/dep"
+	touch "$cache/dep"
+
+	getfiles $current | while read f; do
+		# hash the filename
+		fh=`echo "$f" | sha1 | cut -d' ' -f1`
+		if [ -e "$cache/$fh" ]; then
+			# ok, something already touched this file before us
+			cat "$cache/$fh" >> "$cache/dep"
+		fi
+		echo "$current" > "$cache/$fh"
+	done
+
+	sort -u "$cache/dep" | while read h; do
+		disp "	\"$h\" -> \"$current\"; // ?"
+	done
+
+	current=`git rev-parse $current^`
+done
+
+disp "}"
+
+}

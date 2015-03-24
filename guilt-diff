@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+# Copyright (C) Josef 'Jeff' Sipek, 2007-2011
+#
+
+USAGE="[-z] [<path>...]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+while [ $# -ne 0 ]; do
+	case "$1" in
+	-z)
+		working_tree=t ;;
+	-* | --*)
+		usage ;;
+
+	*)
+		break ;;
+	esac
+	shift
+done
+
+PREV=HEAD^
+[ -z "`get_top`" ] && PREV=
+[ ! -z "$working_tree" ] && PREV=
+
+git diff --binary $PREV -- "$@"
+
+}

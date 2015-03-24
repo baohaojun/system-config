@@ -1,0 +1,31 @@
+guilt-prev(1)
+=============
+
+NAME
+----
+guilt-prev - Output name of second topmost applied patch
+
+SYNOPSIS
+--------
+include::usage-guilt-prev.txt[]
+
+DESCRIPTION
+-----------
+Output name of second topmost applied patch. If linkguilt:guilt-pop[1] is used, this
+patch will become the topmost patch.
+
+OPTIONS
+-------
+-p::
+--path::
+	Output full path instead of just patch name.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

@@ -1,0 +1,7 @@
+The following software is needed to run guilt:
+
+awk
+sed
+sh
+coreutils
+git

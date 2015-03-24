@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2007-2011
+#
+
+USAGE="[-P <patch> ] <patch_file>"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+case "$1" in
+	-P)
+		newname="$2"
+		oldname="$3"
+		;;
+	*)
+		newname=`basename "$1"`
+		oldname="$1"
+		;;
+esac
+
+if [ $# -lt 1 ] || [ $# -gt 3 ] || [ -z "$newname" ] || [ -z "$oldname" ]; then
+	usage
+fi
+
+# make sure that there are no unapplied changes
+if ! must_commit_first; then
+	die "Uncommited changes detected. Refresh first."
+fi
+
+if [ ! -e "$oldname" ]; then
+	die "Specified file does not exist."
+fi
+
+if [ -e "$GUILT_DIR/$branch/$newname" ]; then
+	die "Already tracking a patch under that name."
+fi
+
+if ! valid_patchname "$newname"; then
+	die "The specified patch name contains invalid characters (:)."
+fi
+
+# create any directories as needed
+mkdir_dir=`dirname "$GUILT_DIR/$branch/$newname"`
+[ "$mkdir_dir" != "$GUILT_DIR/$branch" ] && mkdir -p "$mkdir_dir"
+
+cp "$oldname" "$GUILT_DIR/$branch/$newname"
+
+# insert the patch into the series file
+series_insert_patch "$newname"
+
+}

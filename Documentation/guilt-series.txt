@@ -1,0 +1,37 @@
+guilt-series(1)
+===============
+
+NAME
+----
+guilt-series - Print the stack of patches
+
+SYNOPSIS
+--------
+include::usage-guilt-series.txt[]
+
+DESCRIPTION
+-----------
+Print the stack of patches on this branch.
+
+OPTIONS
+-------
+-e::
+	Edit the series file.
+
+-g::
+	Instead of outputting the series, start gitk and display the applied
+	patches. Ignores the verbose flag.
+
+-v::
+	Verbose output; adds an = next to the top most applied patch, and a
+	+ to all other applied patches
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

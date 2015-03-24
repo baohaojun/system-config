@@ -1,0 +1,52 @@
+# usage: touch_date <unix ts> <file>
+touch_date()
+{
+	touch -d @$1 "$2"
+}
+
+# usage: last_modified <file>
+last_modified()
+{
+	stat -c "%Y" "$1"
+}
+
+# usage: format_last_modified <file>
+format_last_modified()
+{
+	# must strip nano-second part otherwise git gets very
+	# confused, and makes up strange timestamps from the past
+	# (chances are it decides to interpret it as a unix
+	# timestamp).
+	stat -c "%y" "$1" | sed -e '
+s/^\([0-9]\{4\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\) \([0-9]\{2\}\):\([0-9]\{2\}\):\([0-9]\{2\}\)\.[0-9]* \(.*\)$/\1-\2-\3 \4:\5:\6 \7/'
+}
+
+# usage: head_n [count]
+head_n()
+{
+	head -n "$1"
+}
+
+# usage: sha1 [file]
+sha1()
+{
+	sha1sum "$1"
+}
+
+# usage: cp_a <src> <dst>
+cp_a()
+{
+	cp -a "$1" "$2"
+}
+
+# usage: _tac
+_tac()
+{
+	tac
+}
+
+_seq()
+{
+	seq "$@"
+	return $?
+}

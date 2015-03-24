@@ -1,0 +1,142 @@
+Since guilt is heavily based on Mercurial queues (mq), some of the following
+is shamelessly stolen from the mq page [1].
+
+Introduction:
+=============
+
+Andrew Morton originally developed a set of scripts for maintaining kernel
+patches outside of any SCM tool. Others extended these into a suite called
+quilt [2]. The basic idea behind quilt is to maintain patches instead of
+maintaining source files. Patches can be added, removed or reordered, and
+they can be refreshed as you fix bugs or update to a new base revision.
+quilt is very powerful, but it is not integrated with the underlying SCM
+tools. This makes it difficult to visualize your changes.
+
+Guilt allows one to use quilt functionality on top of a Git repository.
+Changes are maintained as patches which are committed into Git.  Commits can
+be removed or reordered, and the underlying patch can be refreshed based on
+changes made in the working directory. The patch directory can also be
+placed under revision control, so you can have a separate history of changes
+made to your patches.
+
+
+Patches Directory:
+==================
+
+In Guilt, all the patches are stored in .git/patches/$branch/, where $branch
+is the name of the branch being worked on. This means that one can have a
+independent series of patches for each branch present in the repository.
+Each of these per-branch directories contains 2 special files:
+
+series: This file contains a list of all the patch filenames relative to the
+per-branch patch directory. Empty and commented out lines are ignored.
+
+status: This file contains the state of the stack. What patches are applied.
+
+
+Diving in:
+==========
+
+This section is mostly for those savvy enough to just dive in, and not read
+documentation ;) A more detailed description of what is going on is below.
+
+$ cd some_git_repo
+
+# initialize the patch directory
+$ guilt-init
+
+# create a new patch called 'patch1'
+$ guilt-new patch1
+
+# edit somefile
+$ vim somefile
+
+# refresh patch1 with the changes we just made
+$ guilt-refresh
+
+# If we look at .git/patches/$branch/patch1, we see a diff with the changes
+# we just made
+
+# create a new patch called 'patch2'
+$ guilt-new patch2
+
+# edit somefile again
+$ vim somefile
+
+# refresh patch2
+$ guilt-refresh
+
+# list all applied patches
+$ guilt-applied
+
+# list all applied and unapplied patches
+$ guilt-series
+
+# pop the top most applied patch
+$ guilt-pop
+
+# push the next patch on top of the currently applied patches
+$ guilt-push
+
+# pop all patches
+$ guilt-pop -a
+
+# push all patches
+$ guilt-push -a
+
+
+Why use Guilt?
+==============
+
+The quilt pdf [3] paper seems to be a good starting point for why use a
+quilt-like system. As to why use Guilt over other quilt-like git porceilans,
+that's mostly up to:
+
+1) User's taste
+2) Format of the patches directory
+
+
+Working with Guilt:
+===================
+
+First, get a repository to work on. Here's one that we'll use as an example:
+$ git-clone git://git.kernel.org/pub/scm/linux/kernel/jsipek/guilt-hello.git
+
+Now, it is time to initialize the patches directory using guilt's init
+command:
+$ cd hello
+$ guilt-init
+
+Create a new patch called "new_hello_string"
+$ guilt-new new_hello_string
+
+This creates a new empty file .git/patches/master/new_hello_string.
+
+Now, it is time to change hello.c. Suppose we change the string being
+outputed to "Howdy!\n".
+
+Currently, the changes live in the working copy only. Running refresh
+refreshes the (currently empty) patch:
+$ guilt-refresh
+
+If we look at the patch file again, we'll see that it now contains a patch
+that changes the hello string.
+
+Let's create a second patch called "say_name"
+$ guilt-new say_name
+
+...and edit hello.c to output the programs name by adding:
+
+printf("My name is '%s'\n", argv[0]);
+
+And of course, we refresh the patch:
+$ guilt-refresh
+
+As you might have expected, this updates the second patch file with the
+appropriate diff.
+
+References
+==========
+[1] http://www.selenic.com/mercurial/wiki/index.cgi/MqExtension
+[2] http://savannah.nongnu.org/projects/quilt
+[3] http://www.suse.de/~agruen/quilt.pdf

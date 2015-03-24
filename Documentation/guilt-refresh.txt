@@ -1,0 +1,40 @@
+guilt-refresh(1)
+================
+
+NAME
+----
+guilt-refresh - Refresh topmost applied patch
+
+SYNOPSIS
+--------
+include::usage-guilt-refresh.txt[]
+
+DESCRIPTION
+-----------
+Refresh topmost applied patch with changes in the working copy.
+
+OPTIONS
+-------
+--git::
+	Generate a patch which uses all the features offered by the git diff
+	format (e.g., rename and copy detection).
+
+--diffstat::
+Include a diffstat output in the patch file. Useful for cases where
+patches will be submitted with other tools.
++
+If the command line option is omitted, the corresponding git-config
+option "guilt.diffstat" will be queried. So this would enable diffstat
+output by default:
+
+	git config --global guilt.diffstat true
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

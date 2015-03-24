@@ -1,0 +1,13 @@
+#
+# Documentation/ ignore file
+#
+
+# Generated usage strings
+usage-*.txt
+
+# Generated list of commands & version string
+cmds.txt
+version.txt
+
+# Generated file dependency list
+doc.dep

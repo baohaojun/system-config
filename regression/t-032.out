@@ -1,0 +1,18 @@
+% setup_repo
+% touch foo foo:baz
+% guilt import -P foo:bar foo
+The specified patch name contains invalid characters (:).
+% guilt import -P foo:bar foo2
+Specified file does not exist.
+% guilt import -P foo foo2
+Specified file does not exist.
+% guilt import -P foo3 foo
+% guilt import -P foo3 foo
+Already tracking a patch under that name.
+% guilt import -P foo2 foo
+% guilt import foo
+% guilt import foo
+Already tracking a patch under that name.
+% guilt import -P foo,bar foo
+% guilt import foo:baz
+The specified patch name contains invalid characters (:).

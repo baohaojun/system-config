@@ -1,0 +1,112 @@
+'\" t
+.\"     Title: guilt-new
+.\"    Author: [see the "Author" section]
+.\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
+.\"      Date: 07/17/2011
+.\"    Manual: Guilt Manual
+.\"    Source: Guilt v0.35
+.\"  Language: English
+.\"
+.TH "GUILT\-NEW" "1" "07/17/2011" "Guilt v0\&.35" "Guilt Manual"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+guilt-new \- Create a new patch
+.SH "SYNOPSIS"
+\fIguilt\-new\fR [\-f] [\-s] [\-e|\-m message] <patchname>
+.SH "DESCRIPTION"
+Create a new patch and push it on top of the stack\&. An optional patch description can be supplied either interactively on via the command line\&.
+.SH "OPTIONS"
+.PP
+\-f
+.RS 4
+Force patch creation if there are unrefreshed changes\&. These changes will get automatically imported into the new patch\&.
+.RE
+.PP
+\-s
+.RS 4
+Add a Signed\-off\-by with your committer identifier string to the patch message\&.
+.RE
+.PP
+\-e
+.RS 4
+Edit the patch message interactively\&. This option can be combined with \-s to easily sign off on the patch\&.
+.RE
+.PP
+\-m <message>
+.RS 4
+The "<message>" string will used as the commit message\&. This option can be combined with \-s to easily sign off on the patch\&.
+.RE
+.PP
+<patchname>
+.RS 4
+Name of the patch to create\&. This must be a legal relative pathname string\&. For example, "foo", "foo/bar", and "foo/bar/foobar" are all valid\&.
+.RE
+.SH "EXAMPLES"
+Create a new patch called \fIfoobar\fR:
+
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ guilt\-new foobar
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Create a patch called \fIfoo\fR and supply a patch description interactively:
+
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ guilt\-new \-e foo
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Create a patch called \fIbar\fR with a provided patch description and sign off on the patch:
+
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ guilt\-new \-s \-m patch\-fu bar
+.fi
+.if n \{\
+.RE
+.\}
+.SH "AUTHOR"
+Written by Josef "Jeff" Sipek <\m[blue]\fBjeffpc@josefsipek\&.net\fR\m[]\&\s-2\u[1]\d\s+2>
+.SH "DOCUMENTATION"
+Documentation by Josef "Jeff" Sipek <\m[blue]\fBjeffpc@josefsipek\&.net\fR\m[]\&\s-2\u[1]\d\s+2>
+.SH "GUILT"
+Part of the \fBguilt\fR(7) suite (Generated for Guilt v0\&.35)
+.SH "NOTES"
+.IP " 1." 4
+jeffpc@josefsipek.net
+.RS 4
+\%mailto:jeffpc@josefsipek.net
+.RE

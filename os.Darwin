@@ -1,0 +1,65 @@
+# usage: touch_date <unix ts> <file>
+touch_date()
+{
+	touch -t `date -r $1 +%Y%m%d%H%M.%S` "$2"
+}
+
+# usage: last_modified <file>
+last_modified()
+{
+	stat -f "%m" "$1"
+}
+
+# usage: format_last_modified <file>
+format_last_modified()
+{
+	stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S %z" "$1"
+}
+
+# usage: head_n [count]
+head_n()
+{
+	if [ "$1" -gt 0 ]; then
+		head -n "$1"
+	fi
+}
+
+# usage: sha1 [file]
+sha1()
+{
+	openssl dgst -sha1 "$1" | sed "s,SHA1.\(.*\).= \(.*\),\2  \1,"
+}
+
+# usage: cp_a <src> <dst>
+cp_a()
+{
+	cp -pR "$1" "$2"
+}
+
+# usage: _tac
+_tac()
+{
+	sed -e '1!G;h;$!d'
+}
+
+_seq()
+{
+	(
+		if [ $# -eq 1 ]
+		then
+			/usr/bin/jot $1
+		elif [ $# -eq 2 ]
+		then
+			n1=$((${2} - ${1} + 1))
+			n2=$1
+			/usr/bin/jot $n1 $n2
+		elif [ $# -eq 3 ]
+		then
+			num1=$1
+			incr=$2
+			num2=$3
+			/usr/bin/awk -v n1=$num1 -v n2=$num2 -v add=$incr 'BEGIN{ for(i=n1; i<=n2; i+=add) print i;}' | /usr/bin/sed -E '/e/s/^.+e.+$/0/'
+		fi
+	)
+	return 0
+}

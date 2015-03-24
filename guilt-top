@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="[-p|--path]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+while [ $# -ne 0 ]; do
+	case "$1" in
+	-p|--path)
+		path="$GUILT_DIR/$branch/" ;;
+	*)
+		usage ;;
+	esac
+	shift
+done
+
+p=`get_top`
+
+if [ -n "$p" ]; then
+	disp "$path$p"
+fi
+
+}

@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2008-2011
+#
+
+USAGE="-n <num> | -a | --all"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+case "$1" in
+	-a|--all)
+		[ $# -gt 1 ] && usage
+		pat_commit="1,\$p"
+		pat_keep=""
+		;;
+	-n)
+		[ $# -gt 2 ] && usage
+		[ "$2" -lt 0 ] && die "Must specify a number of patches to commit"
+		[ "$2" -eq 0 ] && exit 0
+
+		pat_commit="1,$2p"
+		pat_keep="`expr "$2" + 1`,\$p"
+		;;
+	*)
+		usage
+		;;
+esac
+
+# if nothing's applied, exit
+[ `wc -l < "$applied"` -eq 0 ] && exit 0
+
+# remove patch refs for what's being committed, and update series
+sed -n -e "${pat_commit}" "$applied" | while read pname; do
+	series_remove_patch "$pname"
+	echo "$pname" | remove_patch_refs
+done
+
+# update $applied to include only the patches we're keeping
+sed -n -e "${pat_keep}" "$applied" > "$applied.tmp"
+mv "$applied.tmp" "$applied"
+
+}

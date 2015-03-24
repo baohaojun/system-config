@@ -1,0 +1,134 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="[ -f ] [-a | --all | -n <num> | <patchname>]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+abort_flag="abort"
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-f)
+			abort_flag=""
+			;;
+		-a|--all)
+			all=t
+			;;
+		-n)
+			num=t
+			;;
+		*)
+			break
+			;;
+	esac
+	shift
+done
+
+
+if [ $# -gt 1 ]; then
+	usage
+fi
+
+# "guilt-push" or "guilt-push foo"
+if [ -z "$all" ] && [ $# -gt 1 ]; then
+	usage
+fi
+
+# "guilt-push -n foo"
+if [ ! -z "$num" ]; then
+	if [ $# -gt 1 ] || [ $# -eq 0 ]; then
+		usage
+	fi
+fi
+
+# "guilt-push -a"
+if [ ! -z "$all" ] && [ $# -gt 0 ]; then
+	usage
+fi
+
+patch="$1"
+[ ! -z "$all" ] && patch="-a"
+
+if [ "$patch" = "-a" ]; then
+	# we are supposed to push all patches, get the last one out of
+	# series
+
+	eidx=`get_series | wc -l`
+	if [ $eidx -eq 0 ]; then
+		die "There are no patches to push."
+	fi
+elif [ ! -z "$num" ]; then
+	# we are supposed to pop a set number of patches
+
+	[ "$patch" -lt 0 ] && die "Invalid number of patches to push."
+
+	eidx=`get_series | wc -l`
+
+	# calculate end index from current
+	tidx=`wc -l < $applied`
+	tidx=`expr $tidx + $patch`
+
+	# clamp to minimum
+	[ $tidx -lt $eidx ] && eidx=$tidx
+
+elif [ -z "$patch" ]; then
+	# we are supposed to push only the next patch onto the stack
+
+	eidx=`wc -l < $applied`
+	eidx=`expr $eidx + 1`
+else
+	# we're supposed to push only up to a patch, make sure the patch is
+	# in the series
+
+	eidx=`get_series | grep -ne "^$patch\$" | cut -d: -f1`
+	if [ -z "$eidx" ]; then
+		die "Patch $patch is not in the series or is guarded."
+	fi
+fi
+
+# make sure that there are no unapplied changes
+if ! must_commit_first; then
+	die "Uncommited changes detected. Refresh first."
+fi
+
+# now, find the starting patch
+sidx=`wc -l < $applied`
+sidx=`expr $sidx + 1`
+
+# do we actually have to push anything?
+if [ "$sidx" -gt "$eidx" ]; then
+	if [ "$sidx" -le "`get_series | wc -l`" ]; then
+		disp "Patch is already applied."
+	else
+		disp "File series fully applied, ends at patch `get_series | tail -n 1`"
+	fi
+	exit 0
+fi
+
+get_series | sed -n -e "${sidx},${eidx}p" | while read p
+do
+	disp "Applying patch..$p"
+	if [ ! -f "$GUILT_DIR/$branch/$p" ]; then
+		die "Patch $p does not exist. Aborting."
+	fi
+
+	push_patch "$p" $abort_flag
+
+	# bail if necessary
+	if [ $? -eq 0 ]; then
+		disp "Patch applied."
+	elif [ -z "$abort_flag" ]; then
+		die "Patch applied with rejects. Fix it up, and refresh."
+	else
+		die "To force apply this patch, use 'guilt push -f'"
+	fi
+done
+
+}

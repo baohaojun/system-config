@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="[-c]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+case $# in
+	0)
+		# just output the regular series-style applied list
+		cat $applied
+	;;
+
+	1)
+		if [ "$1" != "-c" ]; then
+			usage
+		fi
+
+		cat $applied | while read pname; do
+			git show-ref refs/patches/$branch/$pname | sed -e "s,refs/patches/$branch/,,"
+		done
+	;;
+	
+	*)
+		usage
+		;;
+esac
+
+}

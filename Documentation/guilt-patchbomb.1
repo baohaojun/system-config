@@ -1,0 +1,93 @@
+'\" t
+.\"     Title: guilt-patchbomb
+.\"    Author: [see the "Author" section]
+.\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
+.\"      Date: 07/17/2011
+.\"    Manual: Guilt Manual
+.\"    Source: Guilt v0.35
+.\"  Language: English
+.\"
+.TH "GUILT\-PATCHBOMB" "1" "07/17/2011" "Guilt v0\&.35" "Guilt Manual"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+guilt-patchbomb \- Email a series of commits interactively
+.SH "SYNOPSIS"
+\fIguilt\-patchbomb\fR [\-n] [\-s] [\-\-in\-reply\-to <msgid>] [\-\-git] [\-\-subject\-prefix <prefix>] [<hash> | <since>\&.\&.[<until>] | \&.\&.<until>]
+.SH "DESCRIPTION"
+Send a series of commits via email asking for To, CC and other information interactively\&.
+.SH "OPTIONS"
+.PP
+\-n
+.RS 4
+Don\(cqt send
+.RE
+.PP
+\-s
+.RS 4
+Don\(cqt add additional repository committer sign\-offs to the patch\&. This allows the sign\-off chain to be fully expressed in the commit messages and not changed by the act of sending a patchbomb\&.
+.RE
+.PP
+\-\-in\-reply\-to <msgid>
+.RS 4
+Set the In\-reply\-to header to the specified message id\&. This allows the patches to be sent as replies to an arbitrary message\&.
+.RE
+.PP
+\-\-git
+.RS 4
+Generate a patch which uses all the features offered by the git diff format (e\&.g\&., rename and copy detection)\&.
+.RE
+.PP
+\-\-subject\-prefix <prefix>
+.RS 4
+Rather than using the standard [PATCH] prefix in the subject line, use [<prefix>] instead\&.
+.RE
+.PP
+<hash>
+.RS 4
+Only the specified revision\&.
+.RE
+.PP
+<since>\&.\&.[<until>]
+.RS 4
+Revisions starting from \fI<since>\fR until \fI<until>\fR\&. The \fI<since>\fR revision it self is NOT included, while \fI<until>\fR is\&. If \fI<until>\fR is not specified, it is assumed to be HEAD\&.
+.RE
+.PP
+\&.\&.<until>
+.RS 4
+All revisions until the \fI<until>\fR revision (inclusive)\&.
+.RE
+.SH "AUTHOR"
+Written by Josef "Jeff" Sipek <\m[blue]\fBjeffpc@josefsipek\&.net\fR\m[]\&\s-2\u[1]\d\s+2>
+.SH "DOCUMENTATION"
+Documentation by Brandon Philips <\m[blue]\fBbrandon@ifup\&.org\fR\m[]\&\s-2\u[2]\d\s+2>
+.SH "GUILT"
+Part of the \fBguilt\fR(7) suite (Generated for Guilt v0\&.35)
+.SH "NOTES"
+.IP " 1." 4
+jeffpc@josefsipek.net
+.RS 4
+\%mailto:jeffpc@josefsipek.net
+.RE
+.IP " 2." 4
+brandon@ifup.org
+.RS 4
+\%mailto:brandon@ifup.org
+.RE

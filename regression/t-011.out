@@ -1,0 +1,53 @@
+% setup_git_repo
+% guilt add
+Patches directory doesn't exist, try guilt init
+% guilt applied
+Patches directory doesn't exist, try guilt init
+% guilt branch
+Patches directory doesn't exist, try guilt init
+% guilt commit
+Patches directory doesn't exist, try guilt init
+% guilt delete
+Patches directory doesn't exist, try guilt init
+% guilt diff
+Patches directory doesn't exist, try guilt init
+% guilt export
+Patches directory doesn't exist, try guilt init
+% guilt files
+Patches directory doesn't exist, try guilt init
+% guilt fold
+Patches directory doesn't exist, try guilt init
+% guilt fork
+Patches directory doesn't exist, try guilt init
+% guilt graph
+Patches directory doesn't exist, try guilt init
+% guilt header
+Patches directory doesn't exist, try guilt init
+% guilt import
+Patches directory doesn't exist, try guilt init
+% guilt import-commit
+Patches directory doesn't exist, try guilt init
+% guilt new
+Patches directory doesn't exist, try guilt init
+% guilt next
+Patches directory doesn't exist, try guilt init
+% guilt pop
+Patches directory doesn't exist, try guilt init
+% guilt prev
+Patches directory doesn't exist, try guilt init
+% guilt push
+Patches directory doesn't exist, try guilt init
+% guilt rebase
+Patches directory doesn't exist, try guilt init
+% guilt refresh
+Patches directory doesn't exist, try guilt init
+% guilt rm
+Patches directory doesn't exist, try guilt init
+% guilt series
+Patches directory doesn't exist, try guilt init
+% guilt status
+Patches directory doesn't exist, try guilt init
+% guilt top
+Patches directory doesn't exist, try guilt init
+% guilt unapplied
+Patches directory doesn't exist, try guilt init

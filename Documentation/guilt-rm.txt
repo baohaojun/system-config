@@ -1,0 +1,29 @@
+guilt-rm(1)
+===========
+
+NAME
+----
+guilt-rm - Remove a file from the git tree and guilt
+
+SYNOPSIS
+--------
+include::usage-guilt-rm.txt[]
+
+DESCRIPTION
+-----------
+Removes the files specified from git using git-rm
+
+OPTIONS
+-------
+<files>::
+	Files to add
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Brandon Philips <brandon@ifup.org>
+
+include::footer.txt[]

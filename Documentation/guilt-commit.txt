@@ -1,0 +1,32 @@
+guilt-commit(1)
+===============
+
+NAME
+----
+guilt-commit - Commit specified number of patches
+
+SYNOPSIS
+--------
+include::usage-guilt-commit.txt[]
+
+Turn specified number of bottom most patches into Git commits. This removes
+the the patches from the series, and status file.
+
+OPTIONS
+-------
+--all::
+-a::
+	Commit all applied patches
+
+-n <num>::
+	Commit <num> bottom most patches
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

@@ -1,0 +1,28 @@
+guilt-import-commit(1)
+======================
+
+NAME
+----
+guilt-import-commit - Import one or more commits as patches
+
+SYNOPSIS
+--------
+include::usage-guilt-import-commit.txt[]
+
+DESCRIPTION
+-----------
+Import one or more commits as individual patches.
+
+OPTIONS
+-------
+include::hash-range.txt[]
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

@@ -1,0 +1,101 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="[-f] [-s] [-e|-m message] <patchname>"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+if [ $# -lt 1 ] || [ $# -gt 4 ]; then
+	usage
+fi
+
+while [ $# -gt 0 ] ; do
+	case "$1" in
+		-f)
+			force=t
+			;;
+		-s)
+			signoff=t
+			;;
+		-e)
+			edit=t
+
+			if [ ! -z "$msg" ]; then
+				usage
+			fi
+			;;
+		-m)
+			msg="$2"
+			shift
+
+			if [ ! -z "$edit" ]; then
+				usage
+			fi
+			;;
+		*)
+			if [ ! -z "$patch" ]; then
+				usage
+			fi
+			patch="$1"
+			;;
+	esac
+	shift
+done
+
+if [ -z "$patch" ]; then
+	die "You must specify a patch name"
+fi
+
+if [ -f "$GUILT_DIR/$branch/$patch" ]; then
+	die "patch '$patch' already exist"
+fi
+
+iidx=`wc -l < "$applied"`
+
+# make sure that there are no unapplied changes
+if [ -z "$force" ] && ! must_commit_first; then
+	die "Uncommited changes detected. Refresh first."
+fi
+
+if ! valid_patchname "$patch"; then
+	disp "Patchname is invalid." >&2
+	die "it cannot begin with '/', './' or '../', or contain /./, /../, or whitespace"
+fi
+
+# create any directories as needed
+mkdir_dir=`dirname "$GUILT_DIR/$branch/$patch"`
+[ "$mkdir_dir" != "$GUILT_DIR/$branch" ] && mkdir -p "$mkdir_dir"
+
+# create the file with the right contents
+(
+# did we get a message with -m ?
+[ ! -z "$msg" ] && printf "$msg\n\n"
+
+# add a sign-off-by (-s)
+[ "$signoff" = "t" ] && printf "Signed-off-by: `git var GIT_COMMITTER_IDENT | sed -e 's/>.*/>/'`\n\n"
+) >> "$GUILT_DIR/$branch/$patch"
+
+# edit -e ?
+[ "$edit" = "t" ] && git_editor "$GUILT_DIR/$branch/$patch"
+
+if [ ! -z "$force" ]; then
+	(
+		cd_to_toplevel
+		git diff --binary HEAD >> "$GUILT_DIR/$branch/$patch"
+	)
+fi
+
+# insert the patch name into the series file
+series_insert_patch "$patch"
+
+# apply the patch
+echo "$patch" >> $applied
+commit "$patch" HEAD
+
+}

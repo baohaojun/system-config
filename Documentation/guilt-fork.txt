@@ -1,0 +1,30 @@
+guilt-fork(1)
+=============
+
+NAME
+----
+guilt-fork - Fork the topmost applied patch
+
+SYNOPSIS
+--------
+include::usage-guilt-fork.txt[]
+
+DESCRIPTION
+-----------
+Create a copy of the top most patch, and replace the entry in the series
+file to use this new patch file.
+
+OPTIONS
+-------
+<new_name>::
+	The name of the new patch to create.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

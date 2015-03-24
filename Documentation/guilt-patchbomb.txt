@@ -1,0 +1,49 @@
+guilt-patchbomb(1)
+==================
+
+NAME
+----
+guilt-patchbomb - Email a series of commits interactively
+
+SYNOPSIS
+--------
+include::usage-guilt-patchbomb.txt[]
+
+DESCRIPTION
+-----------
+Send a series of commits via email asking for To, CC and other information
+interactively.
+
+OPTIONS
+-------
+-n::
+	Don't send
+
+-s::
+	Don't add additional repository committer sign-offs to the patch.
+	This allows the sign-off chain to be fully expressed in the commit
+	messages and not changed by the act of sending a patchbomb.
+
+--in-reply-to <msgid>::
+	Set the In-reply-to header to the specified message id. This allows
+	the patches to be sent as replies to an arbitrary message.
+
+--git::
+	Generate a patch which uses all the features offered by the git diff
+	format (e.g., rename and copy detection).
+
+--subject-prefix <prefix>::
+	Rather than using the standard [PATCH] prefix in the subject line,
+	use [<prefix>] instead.
+
+include::hash-range.txt[]
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Brandon Philips <brandon@ifup.org>
+
+include::footer.txt[]

@@ -1,0 +1,70 @@
+guilt-status(1)
+===============
+
+NAME
+----
+guilt-status - Print the status of files since the last refresh
+
+SYNOPSIS
+--------
+include::usage-guilt-status.txt[]
+
+DESCRIPTION
+-----------
+Each file is printed with a prefix that describes it's status.
+
+ A   added
+ C   copied
+ D   deleted
+ M   modified
+ R   renamed
+ T   type change (e.g., mode)
+ U   unmerged
+ ?   untracked
+
+OPTIONS
+-------
+-n::
+	Hide status prefix in the output
+
+-a::
+-A::
+	Display only added files
+
+-c::
+-C::
+	Display only copied files
+
+-d::
+-D::
+	Display only deleted files
+
+-m::
+-M::
+	Display only modified files
+
+-r::
+-R::
+	Display only renamed files
+
+-t::
+-T::
+	Display only files with a status change (e.g., mode)
+
+-u::
+-U::
+	Display only unmerged files
+
+-x::
+-X::
+	Display only unknown files
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Brandon Philips <brandon@ifup.org>
+
+include::footer.txt[]

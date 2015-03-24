@@ -1,0 +1,10 @@
+<hash>::
+	Only the specified revision.
+
+<since>..[<until>]::
+	Revisions starting from '<since>' until '<until>'. The '<since>'
+	revision it self is NOT included, while '<until>' is. If '<until>'
+	is not specified, it is assumed to be HEAD.
+
+ ..<until>::
+	All revisions until the '<until>' revision (inclusive).

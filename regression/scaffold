@@ -1,0 +1,131 @@
+if [ -z "$REG_DIR" ]; then
+	echo "ERROR: You cannot run tests by hand" >&2
+	exit 2
+fi
+
+set -e
+
+export PATH=$PWD/..:$PATH
+
+export TZ="UTC"
+export TOUCH_DATE="200701010000.00"
+export GIT_AUTHOR_DATE="2007-01-01 00:00:00 UTC"
+export GIT_COMMITTER_DATE="2007-01-01 00:00:00 UTC"
+export GIT_AUTHOR_NAME="Author Name"
+export GIT_AUTHOR_EMAIL="author@email"
+export GIT_COMMITTER_NAME="Commiter Name"
+export GIT_COMMITTER_EMAIL="commiter@email"
+
+# usage: die <msg>
+function die
+{
+	echo "Error: $@" >&2
+	exit 1
+}
+
+UNAME_S=`uname -s`
+
+if [ -r "$REG_DIR/../os.$UNAME_S" ]; then
+	. "$REG_DIR/../os.$UNAME_S"
+else
+	die "Unsupported operating system: $UNAME_S"
+fi
+
+function replace_path
+{
+	sed -e "s,$PWD,PATH,g" \
+	    -e "s,$REG_DIR/\.\./,,g" \
+	    -e "s,^Usage: guilt-,Usage: guilt ,g" \
+	    -e "s,\.\.\. initial, initial,g" \
+	    -e "s,^Already on\( branch\)\? [\"']\([^\"']*\)[\"']$,Already on \"\2\",g" \
+	    -e "s,^Switched to branch [\"']\([^\"']*\)[\"'],Switched to branch \"\1\",g"
+}
+
+function filter_dd
+{
+	sed -e 's:^\([0-9]*\) bytes (\([0-9]*\.[0-9]* .B\)) copied.*$:\1 bytes (\2) copied:'
+}
+
+# usage: cmd <cmd>..
+function cmd
+{
+	echo "% $@"
+	"$@" 2>&1 | replace_path && return 0
+	return 1
+}
+
+# usage: shouldfail <cmd>..
+function shouldfail
+{
+	echo "% $@"
+	(
+		"$@" 2>&1 || return 0
+		return 1
+	) | replace_path
+	return $?
+}
+
+# usage: list_files
+function list_files
+{
+	(
+		find .git/refs/patches -type f -exec dump_ref {} \; 2> /dev/null || true
+		find .git/refs/patches -type d -exec dump_reg {} \; 2> /dev/null || true
+		find .git/patches -exec dump_reg {} \;
+	) | sort
+}
+
+function setup_git_repo
+{
+	# set up the repo so we have something interesting to run guilt on
+	echo "abc" > def
+	git add def
+	git commit -s -m "initial" 2> /dev/null > /dev/null
+	# the commit should be d4850419ccc1146c7169f500725ce504b9774ed0
+}
+
+function setup_guilt_repo
+{
+	mkdir -p .git/patches/master
+
+	# patch to modify a file
+	cp "$REG_DIR/data/modify.patch" .git/patches/master/modify
+
+	# patch to add a new file
+	cp "$REG_DIR/data/add.patch" .git/patches/master/add
+
+	# patch to remove an existing file
+	cp "$REG_DIR/data/remove.patch" .git/patches/master/remove
+
+	# patch to change a mode
+	cp "$REG_DIR/data/mode.patch" .git/patches/master/mode
+
+	# the series file of all the things
+	cp "$REG_DIR/data/series" .git/patches/master/series
+
+	# the status file
+	touch .git/patches/master/status
+
+	# the status file
+	touch .git/patches/master/status
+
+	touch -a -m -t "$TOUCH_DATE" .git/patches/master/modify
+	touch -a -m -t "$TOUCH_DATE" .git/patches/master/add
+	touch -a -m -t "$TOUCH_DATE" .git/patches/master/remove
+	touch -a -m -t "$TOUCH_DATE" .git/patches/master/mode
+}
+
+function reset_git_repo
+{
+	git checkout master
+
+	git reset --hard d4850419ccc1146c7169f500725ce504b9774ed0
+
+	rm -rf .git/patches/
+}
+
+function setup_repo
+{
+	setup_git_repo
+	setup_guilt_repo
+}

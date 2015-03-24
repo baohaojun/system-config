@@ -1,0 +1,133 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2008-2011
+#
+
+DO_NOT_CHECK_STATUS_FILE_FORMAT=1
+
+USAGE="--full | --status"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+safety_abort()
+{
+	die "Please read the man page first. (you need to specify repair mode to proceed)."
+}
+
+#
+# Check whether status file needs fixing/upgrading. If not, just return,
+# otherwise proceed to rewrite the status file and set up proper refs
+#
+repair_status()
+{
+	_disp "Checking status file format..."
+	if ! grep "^[0-9a-f]\{40\}:" "$applied" > /dev/null ; then
+		disp "ok; no upgrade necessary."
+		return 0
+	fi
+	disp "old; about to upgrade."
+
+	# we got an old format status file
+
+	printf "" > "$applied.new"
+
+	cat "$applied" | while read line ; do
+		hash=`echo "$line" | cut -d: -f1`
+		pname=`echo "$line" | cut -d: -f2-`
+
+		npname=`echo "$pname" | sed -e 's/ /-/g'`
+		[ "$pname" != "$npname" -a -e "$npname" ] && die "Patch name collision"
+
+		git update-ref "refs/patches/$branch/$npname" "$hash"
+		echo "$npname" >> "$applied.new"
+
+		if [ "$pname" != "$npname" ]; then
+			series_rename_patch "$pname" "$npname"
+
+			mv "$GUILT_DIR/$branch/$pname" "$GUILT_DIR/$branch/$npname"
+		fi
+	done
+
+	# replace the status file
+	mv "$applied" "$applied~"
+	mv "$applied.new" "$applied"
+
+	disp "Upgrade complete."
+
+	return 0
+}
+
+#
+# Pop all patches - forcefully.
+#
+repair_pushed()
+{
+	if [ -s "$applied" ]; then
+		# there were some patches applied
+		newrev=`git rev-parse refs/patches/$branch/$(head_n 1 < "$applied")^`
+	else
+		# no patches were applied, but let's do all the work anyway
+		newrev="$oldrev"
+	fi
+
+	disp "Current  HEAD commit $oldrev"
+	disp "New      HEAD commit $newrev"
+
+	disp "About to forcefully pop all patches..."
+	_disp "Are you sure you want to proceed? [y/N] "
+	read n
+	if [ "$n" != "y" ] && [ "$n" != "Y" ]; then
+		die "Aborting..."
+	fi
+
+	# blow away any commits
+	git reset --hard "$newrev" > /dev/null
+
+	# blow away the applied stack
+	remove_patch_refs < "$applied"
+	printf "" > "$applied"
+
+	disp "Patches should be popped."
+	return 0
+}
+
+_main() {
+
+[ $# -ne 1 ] && safety_abort
+
+case "$1" in
+	--full)
+		repair="full"
+		;;
+	--status)
+		repair="status"
+		;;
+	--autotag)
+		echo "Autotagging is no longer supported" >&2
+		;;
+	*)
+		usage
+		;;
+esac
+
+oldrev=`git show-ref -s "refs/heads/$branch"`
+
+case "$repair" in
+	full)
+		repair_status
+		repair_pushed
+		;;
+	status)
+		repair_status
+		;;
+	*)
+		die "Internal error"
+		;;
+esac
+
+disp "Repair complete."
+exit 0
+
+}

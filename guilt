@@ -1,0 +1,879 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+GUILT_VERSION="0.35"
+GUILT_NAME="Gloria"
+
+# If the first argument is one of the below, display the man page instead of
+# the rather silly and mostly useless usage string
+case $1 in
+	-h|--h|--he|--hel|--help)
+	shift
+	exec "guilt help" "`basename $0`"
+	exit
+	;;
+	-V|--ver|--versi|--versio|--version)
+	echo "Guilt version $GUILT_VERSION"
+	exit
+	;;
+esac
+
+# we change directories ourselves
+SUBDIRECTORY_OK=1
+
+. "$(git --exec-path)/git-sh-setup"
+
+#
+# Git version check
+#
+gitver=`git --version | cut -d' ' -f3 | sed -e 's/^debian\.//'`
+case "$gitver" in
+	1.5.*)	;; # git config
+	1.6.*)	;; # git config
+	1.7.*)	;; # git config
+	*)	die "Unsupported version of git ($gitver)" ;;
+esac
+
+#
+# Shell library
+#
+usage()
+{
+	echo "Usage: guilt $CMDNAME $USAGE" >&2
+	exit 1
+}
+
+# echo -n is a bashism, use printf instead
+_disp()
+{
+	printf "%b" "$*"
+}
+
+# echo -e is a bashism, use printf instead
+disp()
+{
+	printf "%b\n" "$*"
+}
+
+noerr()
+{
+	"$@" 2>/dev/null
+}
+
+silent()
+{
+	"$@" >/dev/null 2>/dev/null
+}
+
+########
+
+guilt_commands()
+{
+	find "`dirname $0`/../lib/guilt" -maxdepth 1 -name "guilt-*" -type f -perm +111 2> /dev/null | sed -e "s/.*\\/`basename $0`-//"
+	find "`dirname $0`" -maxdepth 1 -name "guilt-*" -type f -perm +111 | sed -e "s/.*\\/`basename $0`-//"
+}
+
+# by default, we shouldn't fail
+cmd=
+
+if [ $# -ne 0 ]; then
+	# take first arg, and try to execute it
+
+	arg="$1"
+	dir=`dirname $0`
+	libdir="`dirname $0`/../lib/guilt"
+
+	if [ -x "$dir/guilt-$arg" ]; then
+		cmd="$dir/guilt-$arg"
+		CMDNAME=$arg
+	elif [ -x "$libdir/guilt-$arg" ]; then
+		cmd="$libdir/guilt-$arg"
+		CMDNAME=$arg
+	else
+		# might be a short handed
+		for command in $(guilt_commands); do
+			case $command in
+			$arg*)
+				if [ -x "$dir/guilt-$command" ]; then
+					cmd="$dir/guilt-$command"
+					CMDNAME=$command
+				elif [ -x "$libdir/guilt-$command" ]; then
+					cmd="$libdir/guilt-$command"
+					CMDNAME=$command
+				fi
+				;;
+			esac
+		done
+	fi
+	if [ -z "$cmd" ]; then
+		disp "Command $arg not found" >&2
+		disp "" >&2
+		exit 1
+	fi
+
+	shift
+else
+	# no args passed or invalid command entered, just output help summary
+
+	disp "Guilt v$GUILT_VERSION"
+	disp ""
+	disp "Pick a command:"
+	guilt_commands | sort | column | column -t | sed -e 's/^/	/'
+
+	disp ""
+	disp "Example:"
+	disp "\tguilt push"
+
+	# now, let's exit
+	exit 1
+fi
+
+########
+
+#
+# Library goodies
+#
+
+# usage: valid_patchname <patchname>
+valid_patchname()
+{
+	case "$1" in
+		/*|./*|../*|*/./*|*/../*|*/.|*/..|*/|*\ *|*\	*)
+			return 1;;
+		*:*)
+			return 1;;
+		*)
+			return 0;;
+	esac
+}
+
+get_branch()
+{
+	silent git symbolic-ref HEAD || \
+		die "Working on a detached HEAD is unsupported."
+
+	git symbolic-ref HEAD | sed -e 's,^refs/heads/,,'
+}
+
+verify_branch()
+{
+	[ ! -d "$GIT_DIR/patches" ] &&
+		die "Patches directory doesn't exist, try guilt init"
+	[ ! -d "$GIT_DIR/patches/$branch" ] &&
+		die "Branch $branch is not initialized, try guilt init"
+	[ ! -f "$GIT_DIR/patches/$branch/series" ] &&
+		die "Branch $branch does not have a series file"
+	[ ! -f "$GIT_DIR/patches/$branch/status" ] &&
+		die "Branch $branch does not have a status file"
+	[ -f "$GIT_DIR/patches/$branch/applied" ] &&
+		die "Warning: Branch $branch has 'applied' file - guilt is not compatible with stgit"
+}
+
+get_top()
+{
+	tail -n 1 "$GUILT_DIR/$branch/status"
+}
+
+get_prev()
+{
+	if [ `wc -l < "$GUILT_DIR/$branch/status"` -gt 1 ]; then
+		tail -n 2 "$GUILT_DIR/$branch/status" | head_n 1
+	fi
+}
+
+get_full_series()
+{
+	# ignore all lines matching:
+	#	- empty lines
+	#	- whitespace only
+	#	- optional whitespace followed by '#' followed by more
+	#	  optional whitespace
+	# also remove comments from end of lines
+	sed -n -e "/^[[:space:]]*\(#.*\)*\$/ ! {
+		s/[[:space:]]*#.*\$//
+
+		p
+		}
+		" $series
+}
+
+get_series()
+{
+	get_full_series | while read p; do
+		check_guards "$p" && echo "$p"
+	done
+}
+
+# usage: check_guards <patch>
+# Returns 0 if the patch should be pushed
+check_guards()
+{
+	get_guards "$1" | while read guard; do
+		g=`echo $guard | sed "s/^[+-]//"`
+		case "$guard" in
+			+*)
+				# Push +guard *only if* guard selected
+				silent grep -F "$g" "$guards_file" || return 1
+				;;
+			-*)
+				# Push -guard *unless* guard selected
+				silent grep -F "$g" "$guards_file" && return 1
+				true
+				;;
+		esac
+	done
+
+	# propagate return from subshell
+	return $?
+}
+
+# usage: get_guards <patch>
+get_guards()
+{
+	awk -v pname="$1" '
+($1 == pname) {
+	guards = "";
+
+	for(i=2; i<=NF; i++) {
+		sub(/#[^+-]*/, "", $i);
+		if (length($i)) {
+			if (length(guards))
+				guards = guards " " $i;
+			else
+				guards = $i;
+		}
+	}
+
+	print guards;
+}' < "$series"
+}
+
+# usage: set_guards <patch> <guards...>
+set_guards()
+{
+	(
+		p="$1"
+		shift
+		for x in "$@"; do
+			case "$x" in
+				[+-]*)
+					awk -v pname="$p" -v newguard="$x" '{
+if ($1 == pname)
+	print $0 " #" newguard;
+else
+	print $0;
+}' < "$series" > "$series.tmp"
+					mv "$series.tmp" "$series"
+					;;
+				*)
+					echo "'$x' is not a valid guard name" >&2
+					;;
+			esac
+		done
+	)
+}
+
+# usage: unset_guards <patch> <guards...>
+unset_guards()
+{
+	(
+		p="$1"
+		shift
+		for x in "$@"; do
+			awk -v pname="$p" -v oldguard="$x" '{
+if ($1 == pname) {
+	guards = "";
+
+	for(i=2; i<=NF; i++) {
+		if ($i == "#" oldguard)
+			continue;
+
+		if (length(guards))
+			guards = guards " " $i;
+		else
+			guards = $i;
+	}
+
+	if (length(guards))
+		print $1 " " guards;
+	else
+		print $1;
+} else
+	print $0;
+}' < "$series" > "$series.tmp"
+			mv "$series.tmp" "$series"
+		done
+	)
+}
+
+# usage: do_make_header <hash>
+do_make_header()
+{
+	# we should try to work with commit objects only
+	if [ `git cat-file -t "$1"` != "commit" ]; then
+		disp "Hash $1 is not a commit object" >&2
+		disp "Aborting..." >&2
+		exit 2
+	fi
+
+	git cat-file -p "$1" | awk '
+		BEGIN{headers=1; firstline=1}
+		/^author / && headers {
+			sub(/^author +/, "");
+			sub(/ [0-9]* [+-]*[0-9][0-9]*$/, "");
+			author=$0
+		}
+		!headers {
+			print
+			if (firstline) {
+				firstline = 0;
+				print "\nFrom: " author;
+			}
+		}
+		/^$/ && headers { headers = 0 }
+	'
+}
+
+# usage: do_get_patch patchfile
+do_get_patch()
+{
+	cat "$1" | awk '
+BEGIN{}
+/^(diff |---$|--- )/,/END{}/
+'
+}
+
+# usage: do_get_header patchfile
+do_get_header()
+{
+	# The complexity arises from the fact that we want to ignore all
+	# but the Subject line of the header, and any empty lines after it,
+	# if these exist, and inject only the Subject line as the first
+	# line of the commit message.
+
+	# 1st line prints first encountered Subject line plus empty line.
+	# 2nd line skips standard email/git patch header lines.
+	# 3rd line skips tip's additional header lines.
+	# 4th line skips any empty lines thereafter.
+	# 5th line turns off empty line skip upon seeing a non-empty line.
+	# 6th line terminates execution when we encounter the diff
+	cat "$1" | awk '
+BEGIN{body=0; subj=0}
+/^Subject:/ && (body == 0 && subj == 0){subj=1; print substr($0, 10) "\n"; next}
+/^(Subject:|From:|Author:|Date:|commit)/ && (body == 0){next}
+/^(Commit-ID:|Gitweb:|AuthorDate:|Committer:CommitDate:)/ && (body == 0){next}
+/^[ \t\f\n\r\v]*$/ && (body==0){next}
+/^.*$/ && (body==0){body=1}
+/^(diff |---$|--- )/{exit}
+{print $0}
+END{}
+'
+}
+
+# usage: do_get_full_header patchfile
+do_get_full_header()
+{
+	# 2nd line checks for the begining of a patch
+	# 3rd line outputs the line if it didn't get pruned by the above rules
+	cat "$1" | awk '
+BEGIN{}
+/^(diff |---$|--- )/{exit}
+{print $0}
+END{}
+'
+}
+
+# usage: assert_head_check
+assert_head_check()
+{
+	if ! head_check refs/patches/$branch/`get_top`; then
+		die "aborting..."
+	fi
+}
+
+# usage: head_check <expected hash>
+head_check()
+{
+	# make sure we're not doing funky things to commits that don't
+	# belong to us
+
+	case "$1" in
+		'')
+			# the expected hash is empty
+			return 0 ;;
+		refs/patches/$branch/)
+			# the expected hash is an invalid rev
+			return 0 ;;
+	esac
+
+	if [ "`git rev-parse refs/heads/$branch`" != "`git rev-parse $1`" ]; then
+		disp "Expected HEAD commit $1" >&2
+		disp "                 got `git rev-parse refs/heads/$branch`" >&2
+		return 1
+	fi
+	return 0
+}
+
+# usage: series_insert_patch <patchname>
+series_insert_patch()
+{
+	awk -v top="`get_top`" -v new="$1" \
+		'BEGIN{if (top == "") print new;}
+		{
+			print $0;
+			if (top != "" && top == $0) print new;
+		}' "$series" > "$series.tmp"
+	mv "$series.tmp" "$series"
+}
+
+# usage: series_remove_patch <patchname>
+series_remove_patch()
+{
+	grep -v "^$1\([[:space:]].*\)\?$" < "$series" > "$series.tmp"
+	mv "$series.tmp" "$series"
+}
+
+# usage: series_rename_patch <oldname> <newname>
+series_rename_patch()
+{
+	# Rename the patch, but preserve comments on the line
+	awk -v old="$1" -v new="$2" '
+{
+	if (index($0, old) == 1)
+		print new substr($0, length(old) + 1);
+	else
+		print $0;
+}' "$series" > "$series.tmp"
+
+	mv "$series.tmp" "$series"
+}
+
+# usage: series_rename_patch <oldpatchname> <newpatchname>
+ref_rename_patch()
+{
+	git update-ref "refs/patches/$branch/$2" `git rev-parse "refs/patches/$branch/$1"`
+	remove_ref "refs/patches/$branch/$1"
+}
+
+# Beware! This is one of the few (only?) places where we modify the applied
+# file directly
+#
+# usage: applied_rename_patch <oldname> <newname>
+applied_rename_patch()
+{
+	awk -v old="$1" -v new="$2" \
+			'BEGIN{FS=":"}
+			{ if ($0 == old)
+				print new;
+			else
+				print;
+			}' "$applied" > "$applied.tmp"
+
+	mv "$applied.tmp" "$applied"
+}
+
+# usage: remove_patch_refs
+# reads patch names from stdin
+remove_patch_refs()
+{
+	while read pname; do
+		remove_ref "refs/patches/$branch/$pname"
+	done
+}
+
+# usage: pop_many_patches <commitish> <number of patches>
+pop_many_patches()
+{
+	assert_head_check
+
+	(
+		cd_to_toplevel
+
+		# remove the patches refs
+		tail -n $2 < "$applied" | remove_patch_refs
+
+		git reset --hard "$1" > /dev/null
+
+		n=`wc -l < "$applied"`
+		n=`expr $n - $2`
+		head_n "$n" < "$applied" > "$applied.tmp"
+		mv "$applied.tmp" "$applied"
+	)
+}
+
+# usage: pop_all_patches
+pop_all_patches()
+{
+	pop_many_patches \
+		`git rev-parse refs/patches/$branch/$(head_n 1 "$applied")^` \
+		`wc -l < "$applied"`
+}
+
+# usage: remove_ref <refname>
+remove_ref()
+{
+	(
+		# does the ref exist?
+		r=`git show-ref --verify -s "$1" 2> /dev/null`
+		[ $? -ne 0 ] && exit 0
+
+		# remove it
+		git update-ref -d "$1" "$r"
+	)
+}
+
+# usage: commit patchname parent
+commit()
+{
+	(
+		TMP_MSG=`get_tmp_file msg`
+
+		p="$GUILT_DIR/$branch/$1"
+		pname="$1"
+		cd_to_toplevel
+
+		git diff-files --name-only | (while read n; do git update-index "$n" ; done)
+
+		# grab a commit message out of the patch
+		do_get_header "$p" > "$TMP_MSG"
+
+		# make a default commit message if patch doesn't contain one
+		[ ! -s "$TMP_MSG" ] && echo "patch $pname" > "$TMP_MSG"
+
+		# extract author and date lines from the patch header, and set
+		# GIT_AUTHOR_{NAME,EMAIL,DATE}
+		# prefering Author/AuthorDate lines if available.
+		author_str=`sed -n -e '/^Author:/ { s/^Author: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+		if [ -z "$author_str" ]; then
+			author_str=`sed -n -e '/^From:/ { s/^From: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+		fi
+
+		if [ ! -z "$author_str" ]; then
+			GIT_AUTHOR_NAME=`echo $author_str | sed -e 's/ *<.*$//'`
+			export GIT_AUTHOR_NAME="${GIT_AUTHOR_NAME:-" "}"
+                        export GIT_AUTHOR_EMAIL="`echo $author_str | sed -e 's/[^<]*//'`"
+
+			author_date_str=`sed -n -e '/^AuthorDate:/ { s/^AuthorDate: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+			if [ -z "$author_date_str" ]; then
+				author_date_str=`sed -n -e '/^Date:/ { s/^Date: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+			fi
+			if [ ! -z "$author_date_str" ]; then
+				export GIT_AUTHOR_DATE=`echo $author_date_str`
+			fi
+		fi
+
+		# `git log -1 --pretty=%ct` doesn't work on Git 1.5.x
+		ct=`git cat-file commit HEAD | awk '/^committer /{ print $(NF-1); exit; }'`
+		if [ $ct -gt `last_modified "$p"` ]; then
+			ct=`expr $ct + 60`
+			if [ $ct -gt `date +%s` ]; then
+				touch "$p"
+			else
+				touch_date $ct "$p"
+			fi
+		fi
+
+		export GIT_COMMITTER_DATE="`format_last_modified "$p"`"
+
+		# export GIT_AUTHOR_DATE only if a Date line was unavailable
+		if [ -z "$author_date_str" ]; then
+			export GIT_AUTHOR_DATE="$GIT_COMMITTER_DATE"
+		fi
+
+		# commit
+		treeish=`git write-tree`
+		commitish=`git commit-tree $treeish -p $2 < "$TMP_MSG"`
+		git update-ref HEAD $commitish
+
+		# mark patch as applied
+		git update-ref "refs/patches/$branch/$pname" HEAD
+
+		rm -f "$TMP_MSG"
+	)
+}
+
+# usage: push_patch patchname [bail_action]
+push_patch()
+{
+	__push_patch_bail=0
+
+	(
+		TMP_LOG=`get_tmp_file log`
+
+		p="$GUILT_DIR/$branch/$1"
+		pname="$1"
+		bail_action="$2"
+		reject="--reject"
+
+		assert_head_check
+		cd_to_toplevel
+
+		# apply the patch if and only if there is something to apply
+		if [ `git apply --numstat "$p" | wc -l` -gt 0 ]; then
+			if [ "$bail_action" = abort ]; then
+				reject=""
+			fi
+			git apply -C$guilt_push_diff_context --index \
+				$reject "$p" > /dev/null 2> "$TMP_LOG"
+			__push_patch_bail=$?
+
+			if [ $__push_patch_bail -ne 0 ]; then
+				cat "$TMP_LOG" >&2
+				if [ "$bail_action" = "abort" ]; then
+					rm -f "$TMP_LOG" "$TMP_MSG"
+					return $__push_patch_bail
+				fi
+			fi
+		fi
+
+		commit "$pname" HEAD
+
+		echo "$pname" >> $applied
+
+		rm -f "$TMP_LOG"
+	)
+
+	# sub-shell funky-ness
+	__push_patch_bail=$?
+
+	return $__push_patch_bail
+}
+
+# usage: must_commit_first
+must_commit_first()
+{
+	git update-index --refresh --unmerged -q > /dev/null
+	[ `git diff-files | wc -l` -eq 0 ] || return $?
+	[ `git diff-index HEAD | wc -l` -eq 0 ]
+	return $?
+}
+
+# usage: fold_patch patchname
+fold_patch()
+{
+	set -- "$1" "`get_top`"
+
+	assert_head_check
+
+	push_patch "$1"
+
+	# merge the patch headers
+	(
+		pcur="$GUILT_DIR/$branch/$2"
+		pnext="$GUILT_DIR/$branch/$1"
+		TMP_CUR=`get_tmp_file diff-cur`
+		TMP_NEXT=`get_tmp_file diff-next`
+		TMP_DIFF=`get_tmp_file diff`
+		do_get_full_header "$pcur" > "$TMP_CUR"
+		do_get_full_header "$pnext" > "$TMP_NEXT"
+		do_get_patch "$pcur" > "$TMP_DIFF"
+
+		case "`stat -c %s \"$TMP_CUR\"`,`stat -c %s \"$TMP_NEXT\"`" in
+			*,0)
+				# since the new patch header is empty, we
+				# don't have to do anything
+				;;
+			0,*)
+				# current is empty; new is not
+				mv "$pcur" "$pcur~"
+				cat "$TMP_NEXT" > "$pcur"
+				cat "$TMP_DIFF" >> "$pcur"
+				;;
+			*,*)
+				mv "$pcur" "$pcur~"
+				cat "$TMP_CUR" > "$pcur"
+				echo >> "$pcur"
+				echo "Header from folded patch '$1':" >> "$pcur"
+				echo >> "$pcur"
+				cat "$TMP_NEXT" >> "$pcur"
+				cat "$TMP_DIFF" >> "$pcur"
+				;;
+		esac
+
+		rm -f "$TMP_CUR" "$TMP_NEXT" "$TMP_DIFF"
+	)
+
+	__refresh_patch "$2" HEAD^^ 2 "" ""
+
+	series_remove_patch "$1"
+}
+
+# usage: refresh_patch patchname gengitdiff incldiffstat
+refresh_patch()
+{
+	__refresh_patch "$1" HEAD^ 1 "$2" "$3"
+}
+
+# usage: __refresh_patch patchname commitish number_of_commits gengitdiff
+#			 incldiffstat
+__refresh_patch()
+{
+	assert_head_check
+
+	(
+		TMP_DIFF=`get_tmp_file diff`
+
+		cd_to_toplevel
+		p="$GUILT_DIR/$branch/$1"
+		pname="$1"
+
+		# get the patch header
+		do_get_full_header "$p" > "$TMP_DIFF"
+
+		[ ! -z "$4" ] && diffopts="-C -M --find-copies-harder"
+		
+		if [ -n "$5" -o $diffstat = "true" ]; then
+			(
+				echo "---"
+				git diff --stat $diffopts "$2"
+				echo ""
+			) >> "$TMP_DIFF"
+		fi
+
+		# get the new patch
+		git diff --binary $diffopts "$2" >> "$TMP_DIFF"
+
+		# move the new patch in
+		mv "$p" "$p~"
+		mv "$TMP_DIFF" $p
+
+		# commit
+		commit "$pname" "HEAD~$3"
+
+		# drop folded patches
+		N=`expr "$3" - 1`
+
+		# remove the patches refs
+		tail -n $N < "$applied" | remove_patch_refs
+
+		n=`wc -l < "$applied"`
+		n=`expr $n - $N`
+		head_n "$n" < "$applied" > "$applied.tmp"
+		mv "$applied.tmp" "$applied"
+	)
+}
+
+# usage: munge_hash_range <hash range>
+#
+# this means:
+#	<hash>			- one commit
+#	<hash>..		- hash until head (excludes hash, includes head)
+#	..<hash>		- until hash (includes hash)
+#	<hash1>..<hash2>	- from hash to hash (inclusive)
+#
+# The output of this function is suitable to be passed to "git rev-list"
+munge_hash_range()
+{
+	case "$1" in
+		*..*..*|*\ *)
+			# double .. or space is illegal
+			return 1;;
+		..*)
+			# e.g., "..v0.10"
+			echo ${1#..};;
+		*..)
+			# e.g., "v0.19.."
+			echo ${1%..}..HEAD;;
+		*..*)
+			# e.g., "v0.19-rc1..v0.19"
+			echo ${1%%..*}..${1#*..};;
+		?*)
+			# e.g., "v0.19"
+			echo $1^..$1;;
+		*)  # empty
+			return 1;;
+	esac
+	return 0
+}
+
+# usage: get_tmp_file <prefix> [<opts>]
+#
+# Get a unique filename and create the file in a non-racy way
+get_tmp_file()
+{
+	while true; do
+		mktemp $2 "/tmp/guilt.$1.XXXXXXXXXXXXXXX" && break
+	done
+}
+
+# usage: guilt_hook <hook name> <args....>
+guilt_hook()
+{
+	__hookname="$1"
+	[ ! -x "$GIT_DIR/hooks/guilt/$__hookname" ] && return 0
+
+	shift
+
+	"$GIT_DIR/hooks/guilt/$__hookname" "$@"
+	return $?
+}
+
+#
+# source the command
+#
+. "$cmd"
+
+#
+# Some constants
+#
+
+# used for: git apply -C <val>
+guilt_push_diff_context=1
+
+# default diffstat value: true or false
+DIFFSTAT_DEFAULT="false"
+
+#
+# Parse any part of .git/config that belongs to us
+#
+
+# generate diffstat?
+diffstat=`git config --bool guilt.diffstat`
+[ -z "$diffstat" ] && diffstat=$DIFFSTAT_DEFAULT
+
+#
+# The following gets run every time this file is source'd
+#
+
+GUILT_DIR="$GIT_DIR/patches"
+
+branch=`get_branch`
+
+# most of the time we want to verify that the repo's branch has been
+# initialized, but every once in a blue moon (e.g., we want to run guilt init),
+# we must avoid the checks
+if [ -z "$DO_NOT_CHECK_BRANCH_EXISTENCE" ]; then
+	verify_branch
+
+	# do not check the status file format (guilt repair needs this,
+	# otherwise nothing can do what's necessary to bring the repo into a
+	# useable state)
+	if [ -z "$DO_NOT_CHECK_STATUS_FILE_FORMAT" ]; then
+		[ -s "$GIT_DIR/patches/$branch/status" ] &&
+			grep "^[0-9a-f]\{40\}:" "$GIT_DIR/patches/$branch/status" > /dev/null &&
+			die "Status file appears to use old format, try guilt repair --status"
+	fi
+fi
+
+# very useful files
+series="$GUILT_DIR/$branch/series"
+applied="$GUILT_DIR/$branch/status"
+guards_file="$GUILT_DIR/$branch/guards"
+
+# determine a pager to use for anything interactive (fall back to more)
+pager="more"
+[ ! -z "$PAGER" ] && pager="$PAGER"
+
+UNAME_S=`uname -s`
+
+if [ -r "`dirname $0`/os.$UNAME_S" ]; then
+	. "`dirname $0`/os.$UNAME_S"
+elif [ -r "`dirname $0`/../lib/guilt/os.$UNAME_S" ]; then
+	. "`dirname $0`/../lib/guilt/os.$UNAME_S"
+else
+	die "Unsupported operating system: $UNAME_S"
+fi
+
+_main "$@"

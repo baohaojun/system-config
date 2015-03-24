@@ -1,0 +1,88 @@
+#!/bin/bash
+
+export REG_DIR="$PWD"
+export PATH="$PWD/bin:$PATH"
+export LC_ALL=C
+
+source scaffold
+
+# usage: empty_repo
+function empty_repo
+{
+	rm -rf $REPODIR
+	mkdir $REPODIR
+	cd $REPODIR > /dev/null
+	git init 2> /dev/null > /dev/null
+	cd - > /dev/null
+}
+
+function test_failed
+{
+	cat >&2 <<DONE
+Test failed!
+
+Test:		$TESTNAME
+Repo dir:	$REPODIR
+Log file:	$LOGFILE
+DONE
+	exit 1
+}
+
+# usage: check_test <test number>
+function check_test
+{
+	if [ ! -x "t-$1.sh" ]; then
+		echo "Test $1 does not exist or is not runnable" >&2
+		return 1
+	fi
+
+	return 0
+}
+
+# usage: run_test <test number>
+function run_test
+{
+	export REPODIR="/tmp/guilt.reg.$RANDOM"
+	export LOGFILE="/tmp/guilt.log.$RANDOM"
+	export TESTNAME="$1"
+
+	echo -n "$1: "
+
+	empty_repo
+
+	# run the test
+	cd $REPODIR > /dev/null
+	"$REG_DIR/t-$1.sh" 2>&1 > "$LOGFILE"
+	ERR=$?
+	cd - > /dev/null
+
+	[ $? -ne 0 ] && test_failed
+	diff -u "t-$1.out" "$LOGFILE" || test_failed
+
+	echo "done."
+
+	rm -rf $REPODIR $LOGFILE
+}
+
+case "$1" in
+	-h|--help)
+		echo "Usage: $0 [<testnum> [<testnum [<testnum [...]]]]"
+		exit 0
+		;;
+esac
+
+if [ $# -eq 0 ]; then
+	for t in t-*.sh ; do
+		run_test `echo "$t" | sed -e 's/^t-//' -e 's/\.sh$//'`
+	done
+else
+	for t in "$@" ; do
+		check_test "$t"
+	done
+
+	for t in "$@" ; do
+		run_test "$t"
+	done
+fi
+
+echo "All tests completed."

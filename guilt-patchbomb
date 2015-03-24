@@ -1,0 +1,120 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2007-2011
+#
+
+DO_NOT_CHECK_BRANCH_EXISTENCE=1
+
+USAGE="[-n] [-s] [--in-reply-to <msgid>] [--git] [--subject-prefix <prefix>] [<hash> | <since>..[<until>] | ..<until>]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+TMP_FILE=`get_tmp_file file`
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-n)
+			do_not_send=t
+			;;
+		-s)
+			no_sign_off=t
+			;;
+		--subject-prefix)
+			subject_prefix="$2"
+			shift
+			;;
+		--in-reply-to)
+			reply_to="$2"
+			shift
+			;;
+		--git)
+			gitdiff=t
+			;;
+		*)
+			break
+			;;
+	esac
+	shift
+done
+
+r=`munge_hash_range "$1"`
+if [ $? -ne 0 ]; then
+	usage
+fi
+
+# display the list of commits to be sent as patches
+git log --pretty=oneline "$r" | cut -c 1-8,41- | $pager
+
+_disp "Are these what you want to send? [Y/n] "
+read n
+if [ "$n" = "n" ] || [ "$n" = "N" ]; then
+	die "Aborting..."
+fi
+
+dir=`get_tmp_file patchbomb -d`
+disp "Using '$dir' as temporary directory"
+
+# more than one patch?
+if [ `git rev-list "$r" | wc -l` -gt 1 ]; then
+	format_opts="-n" # include "n/m" in the subject
+	send_opts="--no-chain-reply-to --compose" # compose
+fi
+
+[ ! -z "$gitdiff" ] && format_opts="$format_opts -C -M --find-copies-harder"
+[ -z "$no_sign_off" ] && format_opts="$format_opts -s"
+
+if [ -z "$subject_prefix" ]; then
+	git format-patch $format_opts -o $dir "$r"
+else
+	git format-patch $format_opts --subject-prefix="$subject_prefix" -o $dir "$r"
+fi
+
+# get the to/cc addresses
+_disp "Enter all the To: email addresses (separated by space): "
+read rawto
+_disp "Enter all the Cc: email addresses (separated by space): "
+read rawcc
+
+# convert list of email addresses to command line options
+to_opts=""
+for rt in $rawto; do
+	to_opts="$to_opts --to $rt"
+done
+for rc in $rawcc; do
+	to_opts="$to_opts --cc $rc"
+done
+
+opts="$send_opts $to_opts"
+
+# last possible point to abort!
+_disp "Proceed with patchbomb (this is the last chance to abort)? [y/N] "
+read n
+if [ "$n" != "y" ] && [ "$n" != "Y" ]; then
+	die "Aborting..."
+fi
+
+# ...and off they go.
+cmd="git send-email"
+if [ ! -z "$do_not_send" ]; then
+	disp "-n passed: not sending, command that would be executed:" >&2
+	cmd="echo git send-email"
+fi
+
+if [ -z "$reply_to" ]; then
+	$cmd $opts $dir
+else
+	$cmd --in-reply-to "$reply_to" $opts $dir
+fi
+
+# cleanup?
+_disp "Delete temporary directory? [Y/n] "
+read n
+
+[ "$n" = "n" ] || [ "$n" = "N" ] && exit 0
+rm -rf $dir
+
+}

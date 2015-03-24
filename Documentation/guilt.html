@@ -1,0 +1,957 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.4" />
+<title>guilt(7)</title>
+<style type="text/css">
+/* Sans-serif font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+div#toctitle,
+span#author, span#revnumber, span#revdate, span#revremark,
+div#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+/* Serif font. */
+div.sectionbody {
+  font-family: Georgia,"Times New Roman",Times,serif;
+}
+
+/* Monospace font. */
+tt {
+  font-size: inherit;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  font-size: inherit;
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revnumber, span#revdate, span#revremark {
+}
+
+div#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #777777;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toc {
+  margin-bottom: 2.5em;
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+/* Overrides for manpage documents */
+h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+h2 {
+  border-style: none;
+}
+div.sectionbody {
+  margin-left: 5%;
+}
+
+@media print {
+  div#toc { display: none; }
+}
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+window.onload = function(){asciidoc.footnotes();}
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([2-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  var cont = document.getElementById("content");
+  var noteholder = document.getElementById("footnotes");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      // Use [\s\S] in place of . so multi-line matches work.
+      // Because JavaScript has no s (dotall) regex flag.
+      note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      spans[i].innerHTML =
+        "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+        "' title='View footnote' class='footnote'>" + n + "</a>]";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+}
+
+}
+/*]]>*/
+</script>
+</head>
+<body class="manpage">
+<div id="header">
+<h1>
+guilt(7) Manual Page
+</h1>
+<h2>NAME</h2>
+<div class="sectionbody">
+<p>guilt -
+   quilt on top of git
+</p>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_synopsis">SYNOPSIS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><em>guilt</em> COMMAND [ARGS]</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_description">DESCRIPTION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Andrew Morton originally developed a set of scripts for maintaining kernel
+patches outside of any SCM tool. Others extended these into a suite called
+quilt. The basic idea behind quilt is to maintain patches instead of
+maintaining source files. Patches can be added, removed or reordered, and
+they can be refreshed as you fix bugs or update to a new base revision.
+quilt is very powerful, but it is not integrated with the underlying SCM
+tools. This makes it difficult to visualize your changes.</p></div>
+<div class="paragraph"><p>Guilt allows one to use quilt functionality on top of a Git repository.
+Changes are maintained as patches which are committed into Git.  Commits can
+be removed or reordered, and the underlying patch can be refreshed based on
+changes made in the working directory. The patch directory can also be
+placed under revision control, so you can have a separate history of changes
+made to your patches.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_patches_directory">PATCHES DIRECTORY</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>In Guilt, all the patches are stored in .git/patches/$branch/, where $branch
+is the name of the branch being worked on. This means that one can have a
+independent series of patches for each branch present in the repository.
+Each of these per-branch directories contains 3 special files:</p></div>
+<div class="paragraph"><p>guards: This file contains any guards that should be applied to the
+series when pushing. It is only present when guards are selected.</p></div>
+<div class="paragraph"><p>series: This file contains a list of all the patch filenames relative to the
+per-branch patch directory. Empty and commented out lines are ignored.</p></div>
+<div class="paragraph"><p>status: This file contains the state of the stack. What patches are applied.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_hooks">HOOKS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Any guilt operation may execute zero or more hook scripts which can be used
+to run any housekeeping commands or even abort the execution of the command.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_hooks_directory">HOOKS DIRECTORY</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Guilt follows the same basic design of hooks in Git itself. All Guilt hooks
+are executable files (generally shell scripts, but they can be anything the
+operating system can execute) in .git/hooks/guilt/.</p></div>
+<div class="paragraph"><p>The following hooks are supported:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+delete &lt;patch name&gt;
+</dt>
+<dd>
+<p>
+        Executed when a patch is deleted from the patch series via
+        <a href="guilt-delete.html">guilt-delete(1)</a>.
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_guilt_commands">GUILT COMMANDS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>All commands can be called with or without a dash. e.g. <em>guilt add</em> or
+<em>guilt-add</em></p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<a href="guilt-add.html">guilt-add(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-add - Add a file to git and guilt.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-applied.html">guilt-applied(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-applied - List applied patches.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-branch.html">guilt-branch(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-branch - Branch the entire patch series.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-commit.html">guilt-commit(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-commit - Commit specified number of patches.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-delete.html">guilt-delete(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-delete - Delete a patch.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-diff.html">guilt-diff(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-diff - Outputs various diffs.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-export.html">guilt-export(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-export - Export a patch series (to be used by quilt).
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-files.html">guilt-files(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-files - Print the list of files that the topmost patch changes.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-fold.html">guilt-fold(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-fold - Fold a specified patch into the topmost applied patch.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-fork.html">guilt-fork(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-fork - Fork the topmost applied patch.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-graph.html">guilt-graph(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-graph - Create a patch dependency graph.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-guard.html">guilt-guard(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-guard - Assign guards to patches.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-header.html">guilt-header(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-header - Print a patch header.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-help.html">guilt-help(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-help - open man page of a guilt command.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-import-commit.html">guilt-import-commit(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-import-commit - Import one or more commits as patches.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-import.html">guilt-import(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-import - Import specified patch file.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-init.html">guilt-init(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-init - Initialize guilt for use in a git repository.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-new.html">guilt-new(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-new - Create a new patch.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-next.html">guilt-next(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-next - Output the name of next patch to be pushed.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-patchbomb.html">guilt-patchbomb(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-patchbomb - Email a series of commits interactively.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-pop.html">guilt-pop(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-pop - Pop patches from the tree.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-prev.html">guilt-prev(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-prev - Output name of second topmost applied patch.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-push.html">guilt-push(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-push - Push patches onto the tree.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-rebase.html">guilt-rebase(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-rebase - Rebase pushed patches.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-refresh.html">guilt-refresh(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-refresh - Refresh topmost applied patch.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-repair.html">guilt-repair(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-repair - Repair the repository state.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-rm.html">guilt-rm(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-rm - Remove a file from the git tree and guilt.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-select.html">guilt-select(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-select - Select guards to apply when pushing patches.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-series.html">guilt-series(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-series - Print the stack of patches.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-status.html">guilt-status(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-status - Print the status of files since the last refresh.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-top.html">guilt-top(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-top - Output name of topmost applied patch.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="guilt-unapplied.html">guilt-unapplied(1)</a>
+</dt>
+<dd>
+<p>
+        guilt-unapplied - List all unapplied patches.
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author">Author</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Written by Josef "Jeff" Sipek &lt;<a href="mailto:jeffpc@josefsipek.net">jeffpc@josefsipek.net</a>&gt;</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_documentation">Documentation</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Documentation by Brandon Philips &lt;<a href="mailto:brandon@ifup.org">brandon@ifup.org</a>&gt; and Josef "Jeff" Sipek
+&lt;<a href="mailto:jeffpc@josefsipek.net">jeffpc@josefsipek.net</a>&gt;</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_guilt">GUILT</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Part of the <a href="guilt.html">guilt(7)</a> suite
+(Generated for Guilt v0.35)</p></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2010-09-18 16:36:15 EDT
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+guilt-unapplied(1)
+==================
+
+NAME
+----
+guilt-unapplied - List all unapplied patches
+
+SYNOPSIS
+--------
+include::usage-guilt-unapplied.txt[]
+
+DESCRIPTION
+-----------
+List all unapplied patches.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

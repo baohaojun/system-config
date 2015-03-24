@@ -1,0 +1,34 @@
+guilt-diff(1)
+=============
+
+NAME
+----
+guilt-diff - Outputs various diffs
+
+SYNOPSIS
+--------
+include::usage-guilt-diff.txt[]
+
+DESCRIPTION
+-----------
+Outputs top-most applied diff and any additional changes in the working
+directory to standard output.
+
+OPTIONS
+-------
+-z::
+	Output a interdiff against the top-most applied patch. This should
+	produce the same diff as "+guilt-new -f foo+".
+
+<path>...::
+	Restrict diff output to a given set of files.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

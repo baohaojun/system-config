@@ -1,0 +1,64 @@
+guilt-new(1)
+============
+
+NAME
+----
+guilt-new - Create a new patch
+
+SYNOPSIS
+--------
+include::usage-guilt-new.txt[]
+
+DESCRIPTION
+-----------
+Create a new patch and push it on top of the stack. An optional patch
+description can be supplied either interactively on via the command line.
+
+OPTIONS
+-------
+-f::
+	Force patch creation if there are unrefreshed changes. These changes
+	will get automatically imported into the new patch.
+
+-s::
+	Add a Signed-off-by with your committer identifier string to the
+	patch message.
+
+-e::
+	Edit the patch message interactively. This option can be combined
+	with -s to easily sign off on the patch.
+
+-m <message>::
+	The "<message>" string will used as the commit message. This option
+	can be combined with -s to easily sign off on the patch.
+
+<patchname>::
+	Name of the patch to create. This must be a legal relative pathname
+	string. For example, "foo", "foo/bar", and "foo/bar/foobar" are all
+	valid.
+
+EXAMPLES
+--------
+
+Create a new patch called 'foobar':
+
+	$ guilt-new foobar
+
+Create a patch called 'foo' and supply a patch description interactively:
+
+	$ guilt-new -e foo
+
+Create a patch called 'bar' with a provided patch description and sign off
+on the patch:
+
+	$ guilt-new -s -m patch-fu bar
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

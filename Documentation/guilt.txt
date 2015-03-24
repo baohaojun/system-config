@@ -1,0 +1,69 @@
+guilt(7)
+========
+
+NAME
+----
+guilt - quilt on top of git
+
+SYNOPSIS
+--------
+'guilt' COMMAND [ARGS]
+
+DESCRIPTION
+-----------
+
+Andrew Morton originally developed a set of scripts for maintaining kernel
+patches outside of any SCM tool. Others extended these into a suite called
+quilt. The basic idea behind quilt is to maintain patches instead of
+maintaining source files. Patches can be added, removed or reordered, and
+they can be refreshed as you fix bugs or update to a new base revision.
+quilt is very powerful, but it is not integrated with the underlying SCM
+tools. This makes it difficult to visualize your changes.
+
+Guilt allows one to use quilt functionality on top of a Git repository.
+Changes are maintained as patches which are committed into Git.  Commits can
+be removed or reordered, and the underlying patch can be refreshed based on
+changes made in the working directory. The patch directory can also be
+placed under revision control, so you can have a separate history of changes
+made to your patches.
+
+PATCHES DIRECTORY
+-----------------
+
+In Guilt, all the patches are stored in .git/patches/$branch/, where $branch
+is the name of the branch being worked on. This means that one can have a
+independent series of patches for each branch present in the repository.
+Each of these per-branch directories contains 3 special files:
+
+guards: This file contains any guards that should be applied to the
+series when pushing. It is only present when guards are selected.
+
+series: This file contains a list of all the patch filenames relative to the
+per-branch patch directory. Empty and commented out lines are ignored.
+
+status: This file contains the state of the stack. What patches are applied.
+
+HOOKS
+-----
+Any guilt operation may execute zero or more hook scripts which can be used
+to run any housekeeping commands or even abort the execution of the command.
+
+include::hooks.txt[]
+
+GUILT COMMANDS
+--------------
+All commands can be called with or without a dash. e.g. 'guilt add' or
+'guilt-add'
+
+include::cmds.txt[]
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+--------------
+Documentation by Brandon Philips <brandon@ifup.org> and Josef "Jeff" Sipek
+<jeffpc@josefsipek.net>
+
+include::footer.txt[]

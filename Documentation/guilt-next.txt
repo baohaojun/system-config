@@ -1,0 +1,31 @@
+guilt-next(1)
+=============
+
+NAME
+----
+guilt-next - Output the name of next patch to be pushed
+
+SYNOPSIS
+--------
+include::usage-guilt-next.txt[]
+
+DESCRIPTION
+-----------
+Output the name of next patch to be pushed. If linkguilt:guilt-push[1] is
+issued, this patch would be the topmost patch.
+
+OPTIONS
+-------
+-p::
+--path::
+	Output full path instead of just patch name.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

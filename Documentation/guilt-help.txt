@@ -1,0 +1,35 @@
+guilt-help(1)
+============
+
+NAME
+----
+guilt-help - open man page of a guilt command
+
+SYNOPSIS
+--------
+include::usage-guilt-help.txt[]
+
+DESCRIPTION
+-----------
+Open up the man page for a guilt command.
+
+EXAMPLES
+--------
+
+Open the guilt-status man page 
+
+	$ guilt-help status
+
+Open the guilt man page 
+
+	$ guilt-help
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Brandon Philips <brandon@ifup.org>
+
+include::footer.txt[]

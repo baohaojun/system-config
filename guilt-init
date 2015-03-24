@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+DO_NOT_CHECK_BRANCH_EXISTENCE=1
+
+USAGE=""
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+while case $# in 0) break ;; esac; do
+	case $1 in
+		-a|-n)
+			echo "Autotagging is no longer supported" >&2
+			;;
+		*)
+			usage
+			;;
+	esac
+	shift
+done
+
+if [ -d "$GUILT_DIR/$branch" ]; then
+	die "Branch $branch appears to be already initialized (GIT_DIR=$GIT_DIR)"
+fi
+
+[ ! -d "$GUILT_DIR" ] && mkdir "$GUILT_DIR"
+mkdir -p "$GUILT_DIR/$branch"
+touch "$GUILT_DIR/$branch/series"
+touch "$GUILT_DIR/$branch/status"
+
+mkdir -p "$GIT_DIR/hooks/guilt"
+cat > "$GIT_DIR/hooks/guilt/delete" <<EOF
+#!/bin/sh
+# Usage: <script> <patch being removed>
+
+echo "Removing patch '\$1'..."
+EOF
+
+}

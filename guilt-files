@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+# Copyright (C) 2007 Yasushi SHOJI <yashi@atmark-techno.com>
+#
+
+USAGE="[-v] [-a] [-l]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+opt_verbose=
+opt_all=
+opt_labels=
+
+while case "$#" in 0) break ;; esac
+do
+	case "$1" in
+	-v)
+		opt_verbose=t ;;
+	-a)
+		opt_all=t ;;
+	-l)
+		opt_labels=t ;;
+	*)
+		usage ;;
+	esac
+	shift
+done
+
+top_patch=`get_top`
+
+IFS=:
+if [ -n "$opt_all" ]; then
+	cat $applied
+else
+	tail -n 1 $applied
+fi | while read patch; do
+	obj=`git rev-parse refs/patches/$branch/$patch`
+
+	# shamelessly taken from Quilt(quilt/quilt/files)
+	if [ -n "$opt_all" ] && [ -n "$opt_verbose" ] && [ -z "$opt_labels" ]; then
+		disp "$patch"
+	fi
+	if [ -n "$opt_verbose" ] && [ -z "$opt_labels" ]; then
+		use_status=yes
+	fi
+
+	IFS=' '
+	(
+		if [ "$top_patch" != "$patch" ]; then
+			git diff-tree -r $obj^ $obj
+		else
+			git diff-index HEAD^
+		fi
+	) | tr '\t' ' '|
+	while read omode nmode osha1 nsha1 st file; do
+		if [ -n "$opt_labels" ]; then
+			if [ -n "$opt_verbose" ]; then
+				_disp "[$patch] "
+			else
+				_disp "$patch "
+			fi
+		fi
+
+		if [ -z "$use_status" ]; then
+			disp "$file"
+		else
+			case $st in
+				A)
+					status="+" ;;
+				D)
+					status="-" ;;
+				*)
+					status=" " ;;
+			esac
+
+			disp "$status $file"
+		fi
+	done
+	IFS=:
+done
+
+}

@@ -1,0 +1,104 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="[-f] [-a | --all | -n <num> | <patchname>]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-f)
+			force=t
+			;;
+		-a|--all)
+			all=t
+			;;
+		-n)
+			num=t
+			;;
+		*)
+			break
+			;;
+	esac
+	shift
+done
+
+# "guilt-pop" or "guilt-pop foo" or "guilt-pop -n foo"
+if [ -z "$all" ] && [ $# -gt 1 ]; then
+	usage
+fi
+
+# "guilt-pop -n foo"
+if [ ! -z "$num" ]; then
+	if [ $# -gt 1 ] || [ $# -eq 0 ]; then
+		usage
+	fi
+fi
+
+# "guilt-pop -a"
+if [ ! -z "$all" ] && [ $# -gt 0 ]; then
+	usage
+fi
+
+patch="$1"
+[ ! -z "$all" ] && patch="-a"
+
+if [ ! -s "$applied" ]; then
+	disp "No patches applied."
+	exit 0
+elif [ "$patch" = "-a" ]; then
+	# we are supposed to pop all patches
+
+	sidx=`wc -l < $applied`
+	eidx=0
+elif [ ! -z "$num" ]; then
+	# we are supposed to pop a set number of patches
+
+	[ "$patch" -lt 0 ] && die "Invalid number of patches to pop."
+
+	sidx=`wc -l < $applied`
+	eidx=`expr $sidx - $patch`
+
+	# catch underflow
+	[ $eidx -lt 0 ] && eidx=0
+	[ $eidx -eq $sidx ] && die "No patches requested to be removed."
+elif [ -z "$patch" ]; then
+	# we are supposed to pop only the current patch on the stack
+
+	sidx=`wc -l < $applied`
+	eidx=`expr $sidx - 1`
+else
+	# we're supposed to pop only up to a patch, make sure the patch is
+	# in the series
+
+	eidx=`cat $applied | grep -ne "^$patch$" | cut -d: -f 1`
+	if [ -z "$eidx" ]; then
+		die "Patch $patch is not in the series/is not applied"
+	fi
+
+	eidx=`expr $eidx - 1`
+	sidx=`wc -l < $applied`
+fi
+
+# make sure that there are no unapplied changes
+# if we are forcing the pop, reset first
+if [ ! -z "$force" ]; then
+	git reset --hard
+elif ! must_commit_first; then
+	die "Uncommited changes detected. Refresh first."
+fi
+
+l=`awk "BEGIN{n=0}(n==$eidx){print \\$0; exit}{n=n+1}END{}" < $applied`
+
+pop_many_patches `git rev-parse refs/patches/$branch/$l^` `expr $sidx - $eidx`
+
+p=`get_top`
+[ ! -z "$p" ] && disp "Now at $p." || disp "All patches popped."
+
+}

@@ -1,0 +1,163 @@
+guilt (0.35-1) unstable; urgency=low
+
+  * New upstream release. 
+  * Bump Standards-Version to 3.9.2; no changes required.
+  * Update copyright.
+  * Switch to dpkg-source 3.0 (quilt) format.
+  * Refresh patches.
+
+ -- Iulian Udrea <iulian@linux.com>  Fri, 05 Aug 2011 22:31:35 +0100
+
+guilt (0.34-2) unstable; urgency=low
+
+  * Upload to unstable.
+
+ -- Iulian Udrea <iulian@linux.com>  Sun, 06 Feb 2011 15:51:36 +0000
+
+guilt (0.34-1) experimental; urgency=low
+
+  * New upstream release.
+    + patchbomb: add some patch formatting options to the CLI (upstream commit
+    f833954a61ff01e09e0c)
+    + Make sure the commit time is increasing (upstream commit
+    429c3a5303616ec3229f)
+  * debian/{control,copyright}: change my email address.
+
+ -- Iulian Udrea <iulian@linux.com>  Thu, 23 Sep 2010 11:07:52 +0100
+
+guilt (0.33-2) unstable; urgency=low
+
+  * Bump Standards-Version to 3.9.1 (no changes required).
+  * Add depends on git (<< 1:1.8).  Thanks Jonathan for the patch.  Closes:
+    #589708
+
+ -- Iulian Udrea <iulian@ubuntu.com>  Sun, 01 Aug 2010 15:32:06 +0100
+
+guilt (0.33-1) unstable; urgency=low
+
+  * New upstream release.
+    + Add support for git version 1.7.x.y.  Closes: #576937
+
+ -- Iulian Udrea <iulian@ubuntu.com>  Mon, 19 Apr 2010 11:09:06 +0100
+
+guilt (0.32.2-2) unstable; urgency=low
+
+  * debian/control:
+    - Add Dm-Upload-Allowed: yes.
+    - Bump Standards-Version to 3.8.4 (no changes required).
+
+ -- Iulian Udrea <iulian@ubuntu.com>  Fri, 05 Mar 2010 19:51:53 +0000
+
+guilt (0.32.2-1) unstable; urgency=low
+
+  * New upstream release.
+    + guilt-import-commit doesn't support binary files (Closes: #563962)
+  * debian/control:
+    - bump Standards-Version to 3.8.3 (no changes required)
+    - add ${misc:Depends}
+  * Add README.source.
+
+ -- Iulian Udrea <iulian@ubuntu.com>  Fri, 15 Jan 2010 14:05:11 +0000
+
+guilt (0.32.1-1) unstable; urgency=low
+
+  * New upstream release.
+    - allow guilt to handle binary files
+    - regression: fix output mismatch with git 1.6.2
+    - select/guard: fix bashism (Closes: #530094)
+  * debian/control:
+    - bump Standards-Version to 3.8.1 (no changes required)
+
+ -- Iulian Udrea <iulian@ubuntu.com>  Sat, 30 May 2009 08:02:41 +0100
+
+guilt (0.32-1) unstable; urgency=low
+
+  * New maintainer (Closes: #519020).
+  * New upstream release.
+    - drop bashisms patch as it's fixed upstream, commit 2ab56864 
+    (Closes: #464983)
+    - make guilt work even after git-sh-setup is moved out of the 
+    user's path; upstream commit 7a6e2a53 (Closes: #501952)
+    - docs: handle `git describe` failing; upstream commit e730f590 
+    (Closes: #474628)
+    - guilt-fold: merge headers of the 2 patches; upstream commit 10278340
+    (Closes: #489884)
+  * debian/control:
+    - bump debhelper version to 7
+    - bump Standards-Version to 3.8.0
+      + add Homepage field
+    - add Vcs-* fields
+    - improve Description
+    - package is architecture-independent
+  * Completely rewritten the debian/rules file.
+  * Switch to new debian/copyright format
+    (http://wiki.debian.org/Proposals/CopyrightFormat).
+  * Remove debian/dirs. Those directories are already created on every system.
+  * Remove commented lines from debian/watch file.
+  * Split debian/patches/makefile.patch into two patches: Makefile.patch and
+    DocMakefile.patch.
+
+ -- Iulian Udrea <iulian@ubuntu.com>  Tue, 10 Mar 2009 20:10:30 +0000
+
+guilt (0.30-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix bashism in guilt-patchbomb 
+    (added debian/patches/bashisms) (Closes: #489606)
+
+ -- Matthew Johnson <mjj29@debian.org>  Sun, 24 Aug 2008 11:34:50 +0000
+
+guilt (0.30-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Brandon Philips <brandon@ifup.org>  Tue, 27 May 2008 07:49:27 -0700
+
+guilt (0.28-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Brandon Philips <philips@ifup.org>  Mon, 19 Nov 2007 15:44:02 -0800
+
+guilt (0.27-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Brandon Philips <brandon@ifup.org>  Wed, 01 Aug 2007 13:19:31 -0700
+
+guilt (0.26-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Brandon Philips <brandon@ifup.org>  Tue, 24 Jul 2007 08:32:44 -0700
+
+guilt (0.25-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Brandon Philips <brandon@ifup.org>  Tue, 15 May 2007 18:35:14 -0700
+
+guilt (0.24-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Brandon Philips <brandon@ifup.org>  Mon, 23 Apr 2007 10:55:39 -0700
+
+guilt (0.23-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Brandon Philips <brandon@ifup.org>  Tue, 20 Mar 2007 23:43:28 -0700
+
+guilt (0.22-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Brandon Philips <brandon@ifup.org>  Tue, 20 Mar 2007 00:53:31 -0700
+
+guilt (0.20-1) unstable; urgency=low
+
+  * Initial release (Closes: #412650)
+
+ -- Brandon Philips <brandon@ifup.org>  Mon, 26 Feb 2007 21:59:56 -0800
+

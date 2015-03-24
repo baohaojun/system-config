@@ -1,0 +1,33 @@
+guilt-import(1)
+===============
+
+NAME
+----
+guilt-import - Import specified patch file
+
+SYNOPSIS
+--------
+include::usage-guilt-import.txt[]
+
+DESCRIPTION
+-----------
+Import a specified patch file into the series, placing it after the
+current topmost patch.
+
+OPTIONS
+-------
+-P <patch>::
+	Name of the patch within Guilt.
+
+<patch_file>::
+	Name of the file to be imported into the series.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

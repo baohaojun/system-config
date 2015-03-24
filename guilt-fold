@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="[-k] <patchname>"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+if [ "$1" = "-k" ]; then
+	keep=t
+	shift
+fi
+
+if [ $# -ne 1 ]; then
+	usage
+fi
+
+patch="$1"
+if [ -z "$patch" ]; then
+	die "No patch name supplied."
+fi
+
+# make sure it is a file
+if [ ! -f "$GUILT_DIR/$branch/$patch" ]; then
+	die "Patch $patch does not exist."
+fi
+
+# make sure that there are no unapplied changes
+if ! must_commit_first; then
+	die "Uncommited changes detected. Refresh first."
+fi
+
+# make sure it is not applied
+pline=`cat $applied | grep -e "^$patch$"`
+if [ ! -z "$pline" ]; then
+	die "Patch is applied. Pop the patch first."
+fi
+
+fold_patch "$patch"
+
+# back it up just in case :)
+[ -z "$keep" ] && mv "$GUILT_DIR/$branch/$patch" "$GUILT_DIR/$branch/$patch~"
+
+}

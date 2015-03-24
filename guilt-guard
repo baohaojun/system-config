@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+# Copyright (c) Eric Lesh, 2007
+#
+
+USAGE="[-l | --list | -n | --none | [<patchname>] [(+|-)<guard>...]]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+print_guards()
+{
+	guards=`get_guards "$1"`
+	echo "$1: $guards"
+}
+
+_main() {
+
+if [ "$1" = "-l" -o "$1" = "--list" ]; then
+	get_full_series | while read patch; do
+		print_guards "$patch"
+	done
+	exit 0
+elif [ "$1" = "-n" -o "$1" = "--none" ]; then
+	patch="$2"
+	if [ -z "$patch" ]; then
+		patch=`get_top`
+	fi
+	unset_guards "$patch" `get_guards "$patch"`
+	exit 0
+fi
+
+case $# in
+	0)
+		if [ ! -s "$applied" ]; then
+			die "No patches applied."
+		fi
+		print_guards `get_top`
+		;;
+	1)
+		if [ -z $(printf %s "$1" | grep -e '^[+-]') ]; then
+			if [ -z $(get_full_series | grep -e "^$1\$") ]; then
+				die "Patch $1 does not exist."
+			else
+				print_guards "$1"
+			fi
+		else
+			patch=`get_top`
+			if [ -z "$patch" ]; then
+				die "You must specify a patch."
+			fi
+			unset_guards "$patch" `get_guards "$patch"`
+			set_guards "$patch" "$1"
+		fi
+		;;
+	*)
+		if [ -z $(printf %s "$1" | grep -e '^[+-]') ]; then
+			if [ -z $(get_full_series | grep -e "^$1\$") ]; then
+				die "Patch $1 does not exist."
+			else
+				patch="$1"
+			fi
+			shift
+		else
+			patch=`get_top`
+			if [ -z "$patch" ]; then
+				die "You must specify a patch."
+			fi
+		fi
+		unset_guards "$patch" `get_guards "$patch"`
+		set_guards "$patch" "$@"
+		;;
+esac
+
+}

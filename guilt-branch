@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2007-2011
+#
+
+USAGE="[<new_name>]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+if [ $# -gt 1 ]; then
+	usage
+fi
+
+_main() {
+
+# make sure that there are no unapplied changes
+if ! must_commit_first; then
+	die "Uncommited changes detected. Refresh first."
+fi
+
+if [ $# -eq 0 ]; then
+	newbranch="$branch-`date +%Y-%m-%d`"
+else
+	newbranch="$1"
+fi
+
+if [ -e "$GUILT_DIR/$newbranch" ]; then
+	die "Patch directory for branch \"$newbranch\" already exists."
+fi
+
+cat "$applied" | while read n; do
+	git update-ref "refs/patches/$newbranch/$n" \
+		`git rev-parse "refs/patches/$branch/$n"` ""
+done
+
+git branch "$newbranch"
+git checkout "$newbranch"
+
+mkdir -p "$GUILT_DIR/`dirname $newbranch`"
+
+# copy the patch dir
+cp_a "$GUILT_DIR/$branch" "$GUILT_DIR/$newbranch"
+
+# copy the refs
+
+}

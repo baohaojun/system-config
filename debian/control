@@ -1,0 +1,25 @@
+Source: guilt
+Section: devel
+Priority: optional
+Maintainer: Iulian Udrea <iulian@linux.com>
+DM-Upload-Allowed: yes
+Build-Depends: debhelper (>= 7)
+Build-Depends-Indep: asciidoc (>> 7.0.2-3), xmlto, libexpat1-dev
+Standards-Version: 3.9.2
+Homepage: http://www.kernel.org/pub/linux/kernel/people/jsipek/guilt/
+Vcs-Browser: http://git.debian.org/?p=collab-maint/guilt.git
+Vcs-Git: git://git.debian.org/git/collab-maint/guilt.git
+
+Package: guilt
+Architecture: all
+Depends: ${misc:Depends}, git-core (>= 1.4) | git (>= 1:1.7),
+ git-core (<= 1:1.7.0.4-1) | git (<< 1:1.8)
+Description: quilt for git; similar to Mercurial queues
+ Guilt (Git Quilt) is a series of bash scripts which add a Mercurial
+ queues-like functionality and interface to git.  The one distinguishing
+ feature from other quilt-like porcelains, is the format of the patches
+ directory. 
+ .
+ All the information is stored as plain text - a series file and the 
+ patches (one per file). This easily lends itself to versioning the patches
+ using any number of SCMs.

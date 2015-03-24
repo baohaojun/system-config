@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# Copyright (c) Pierre Habouzit, 2007
+#
+
+USAGE="[<target_dir>]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+if [ $# -gt 1 ]; then
+	usage
+fi
+target_dir=${1:-"patches"}
+
+if [ -e "$target_dir" ]; then
+	die "Specified directory already exists"
+fi
+
+trap "rm -rf \"$target_dir\"" 0
+mkdir -p "$target_dir"
+
+get_full_series | tee "$target_dir/series" | while read p; do
+	silent mkdir -p "`dirname $target_dir/$p`" || true
+	cp "$GUILT_DIR/$branch/$p" "$target_dir/$p"
+done
+
+trap - 0
+disp "Series exported to \"$target_dir\" sucessfully."
+
+}

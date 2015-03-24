@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# Copyright (c) 2007 Nur Hussein <hussein@cs.usm.my>
+#
+
+if [ $# -lt 2 ]; then
+	echo "Usage: $0 <prefix> <file1> <file2> ..." >&2
+	exit 1
+fi
+
+PRE=$1
+
+shift
+
+(cd $PRE; rm "$@")

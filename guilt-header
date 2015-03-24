@@ -1,0 +1,78 @@
+#!/bin/sh
+#
+# Copyright (c) Josef "Jeff" Sipek, 2006-2011
+#
+
+USAGE="[-eE] [<patchname>]"
+if [ -z "$GUILT_VERSION" ]; then
+	echo "Invoking `basename $0` directly is no longer supported." >&2
+	exit 1
+fi
+
+_main() {
+
+case $# in
+	0)
+		patch=`get_top`
+		;;
+	1)
+		if [ "$1" = "-e" ]; then
+			edit=t
+			patch=`get_top`
+		elif [ "$1" = "-E" ]; then
+		    	edit=t
+		    	full=t
+			patch=`get_top`
+		else
+			patch="$1"
+		fi
+		;;
+	2)
+		if [ "$1" = "-e" ]; then
+		    edit=t
+		    patch="$2"
+		elif [ "$1" = "-E" ]; then
+		    edit=t
+		    full=t
+		    patch="$2"
+ 		else
+		    usage
+		fi
+		;;
+esac
+
+# are there any patches applied?
+[ -z "$patch" ] && die "No patches applied."
+
+# check that patch exists in the series
+ret=`get_full_series | grep -e "^$patch\$" | wc -l`
+if [ $ret -eq 0 ]; then
+	die "Patch $patch is not in the series"
+fi
+
+# FIXME: warn if we're editing an applied patch
+
+TMP_MSG=`get_tmp_file msg`
+TMP_DIFF=`get_tmp_file diff`
+
+if [ -z "$edit" ]; then
+	do_get_header "$GUILT_DIR/$branch/$patch"
+else
+    	if [ -n "$full" ]; then
+	    git_editor "$GUILT_DIR/$branch/$patch"
+	    exit $?
+	fi
+	do_get_full_header "$GUILT_DIR/$branch/$patch" > "$TMP_MSG"
+	do_get_patch "$GUILT_DIR/$branch/$patch" > "$TMP_DIFF"
+	git_editor "$TMP_MSG"
+	mv "$GUILT_DIR/$branch/$patch" "$GUILT_DIR/$branch/$patch~"
+
+	(
+		cat "$TMP_MSG"
+		cat "$TMP_DIFF"
+	) > "$GUILT_DIR/$branch/$patch"
+fi
+
+rm -f "$TMP_MSG" "$TMP_DIFF"
+
+}

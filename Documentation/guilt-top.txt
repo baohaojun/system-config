@@ -1,0 +1,26 @@
+guilt-top(1)
+============
+
+NAME
+----
+guilt-top - Output name of topmost applied patch
+
+SYNOPSIS
+--------
+include::usage-guilt-top.txt[]
+
+OPTIONS
+-------
+-p::
+--path::
+	Output full path instead of just patch name.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]

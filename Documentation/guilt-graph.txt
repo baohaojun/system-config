@@ -1,0 +1,31 @@
+guilt-graph(1)
+==============
+
+NAME
+----
+guilt-graph - Create a patch dependency graph
+
+SYNOPSIS
+--------
+include::usage-guilt-graph.txt[]
+
+DESCRIPTION
+-----------
+Create a dot(1) directed graph showing the dependencies between applied
+patches.
+
+OPTIONS
+-------
+<patchname>::
+	Instead of starting with the topmost applied patch, start with
+	<patchname>.
+
+Author
+------
+Written by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+Documentation
+-------------
+Documentation by Josef "Jeff" Sipek <jeffpc@josefsipek.net>
+
+include::footer.txt[]
