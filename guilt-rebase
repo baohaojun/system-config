@@ -13,15 +13,6 @@ fi
 
 _main() {
 
-disp "Beware, rebase is currently EXPERIMENTAL."
-disp "In other words, it might eat your patches."
-_disp "Do you wish to proceed? [y/N] "
-read n
-if [ "$n" != "y" -a "$n" != "Y" ]; then
-	disp "Aborted."
-	exit 0
-fi
-
 case "$#" in
 	1) 
 		upstream=`git rev-parse --verify "$1"` &&
