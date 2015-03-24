@@ -1,59 +1,59 @@
 #!/bin/bash
 function _guilt_series()
 {
-    local IFS=$'\t\n' 
+    local IFS=$'\t\n'
     COMPREPLY=(
-	$(skeleton_compgen_word.pl \
-	    -m 1000 \
-	    -d '\n' -- \
-	    "$(guilt series)" \
-	    "$cur"
-	)
+        $(skeleton_compgen_word.pl \
+            -m 1000 \
+            -d '\n' -- \
+            "$(guilt series)" \
+            "$cur"
+        )
     )
 }
 
 function _guilt()
 {
     local cur prev opts cmds type types c subcommand
-    local IFS=$'\t\n' 
+    local IFS=$'\t\n'
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     opts="--help --silent --verbose"
     cmds=$(
-	find 2>/dev/null ~/gcode/guilt/ /usr/lib/guilt/ -maxdepth 1 \( -type f -o -type l \) -name 'guilt-*' |
-	xargs bash -c 'for x in "$@"; do basename $x | sed -e "s/^guilt-//"; done' true | 
-	sort -u
-	find ~/bin/ -maxdepth 1 -type f -name 'gq-*' | xargs bash -c 'for x in "$@"; do basename $x | sed -e "s/^gq-//"; done' true
+        find 2>/dev/null ~/gcode/guilt/ /usr/lib/guilt/ -maxdepth 1 \( -type f -o -type l \) -name 'guilt-*' |
+        xargs bash -c 'for x in "$@"; do basename $x | sed -e "s/^guilt-//"; done' true |
+        sort -u
+        find ~/bin/ -maxdepth 1 -type f -name 'gq-*' | xargs bash -c 'for x in "$@"; do basename $x | sed -e "s/^gq-//"; done' true
     )
     subcommand=""
 
   # Look for the subcommand.
     c=1
     while [ $c -lt $COMP_CWORD ]; do
-	word="${COMP_WORDS[c]}"
-	for cmd in $cmds; do
-	    if [ "$cmd" = "$word" ]; then
-		subcommand="$word"
-	    fi
-	done
-	c=$((++c))
+        word="${COMP_WORDS[c]}"
+        for cmd in $cmds; do
+            if [ "$cmd" = "$word" ]; then
+                subcommand="$word"
+            fi
+        done
+        c=$((++c))
     done
 
     if test -z "$subcommand"; then
-	subcommand=help
+        subcommand=help
     fi
     case "$subcommand" in
-	'help')
-	    COMPREPLY=( $(compgen -W "${cmds}" -- ${cur}) )
-	    return 0
-	    ;;
-	push|pop|edit|delete)
-	    _guilt_series
-	    return 0
-	    ;;	    
+        'help')
+            COMPREPLY=( $(compgen -W "${cmds}" -- ${cur}) )
+            return 0
+            ;;
+        push|pop|edit|delete|fold)
+            _guilt_series
+            return 0
+            ;;
     esac
-    
+
 
 return 0
 }

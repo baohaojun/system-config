@@ -45,6 +45,10 @@ if test ! -e emacs.d/.git; then
     relative-link emacs.d/site-lisp ~/.emacs.d/
 fi
 
+if test ! -e guilt/.git; then
+    git clone http://github.com/baohaojun/guilt
+fi
+
 cd ~/src/github
 cat <<EOF > ~/.config/emacs.gen.el
 (setq load-path
