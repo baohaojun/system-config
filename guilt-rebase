@@ -74,7 +74,7 @@ cat "$rebase_dir/status" | while read name; do
 	IFS=" "
 	cat "$GUILT_DIR/$branch/$name" | git patch-id |
 		while read patchid commitid ; do
-			disp "Applying '$name' with '$patchid' and '$commitid'"
+			disp "Applying '$name' with patchid: '$patchid'"
 			if [ -f "$rebase_dir/$patchid" ]; then
 				realcommit=`head_n 1 "$rebase_dir/$patchid"`
 				disp "Matches upstream commit $realcommit"
