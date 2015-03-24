@@ -326,4 +326,5 @@ if which emacs >/dev/null 2>&1 && test ! -e ~/.config/emacs-config-done; then
 fi || true
 
 check-perl-module String::ShellQuote libstring-shellquote-perl
+check-perl-module Marpa::R2           libmarpa-r2-perl
 echo Simple config OK.
