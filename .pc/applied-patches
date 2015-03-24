@@ -1,2 +1,4 @@
 DocMakefile.patch
 Makefile.patch
+drop-dependency-check.patch
+fix-guilt-help-man-page-path.patch

@@ -1,19 +1,18 @@
 Source: guilt
 Section: devel
 Priority: optional
-Maintainer: Iulian Udrea <iulian@linux.com>
+Maintainer: Iulian Udrea <iulian.udrea@gmail.com>
 DM-Upload-Allowed: yes
 Build-Depends: debhelper (>= 7)
 Build-Depends-Indep: asciidoc (>> 7.0.2-3), xmlto, libexpat1-dev
 Standards-Version: 3.9.2
-Homepage: http://www.kernel.org/pub/linux/kernel/people/jsipek/guilt/
+Homepage: http://repo.or.cz/w/guilt.git
 Vcs-Browser: http://git.debian.org/?p=collab-maint/guilt.git
 Vcs-Git: git://git.debian.org/git/collab-maint/guilt.git
 
 Package: guilt
 Architecture: all
-Depends: ${misc:Depends}, git-core (>= 1.4) | git (>= 1:1.7),
- git-core (<= 1:1.7.0.4-1) | git (<< 1:1.8)
+Depends: ${misc:Depends}, git (>= 1:1.7) | git-core (>= 1.4)
 Description: quilt for git; similar to Mercurial queues
  Guilt (Git Quilt) is a series of bash scripts which add a Mercurial
  queues-like functionality and interface to git.  The one distinguishing

@@ -1,3 +1,23 @@
+guilt (0.35-1.2) unstable; urgency=low
+
+  * Non-maintainer upload with maintainer's permission.
+  * Fix unneeded conflict against git >= 1.8 by dropping the (for Debian)
+    unneeded in-program git version check as suggested by Jonathan Nieder
+    in #589708 (Closes: #692884)
+  * Reorder alternative dependencies: prefer git over transitional package
+    git-core.
+  * Set Homepage header to http://repo.or.cz/w/guilt.git (Closes: #692883)
+  * Fix man-page path for "guilt help" (Closes: #712620; LP #1191821)
+
+ -- Axel Beckert <abe@debian.org>  Tue, 18 Jun 2013 01:21:57 +0200
+
+guilt (0.35-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Update maintainer email address (Closes: #698259)
+
+ -- Jonathan Wiltshire <jmw@debian.org>  Sun, 20 Jan 2013 18:32:26 +0000
+
 guilt (0.35-1) unstable; urgency=low
 
   * New upstream release. 
