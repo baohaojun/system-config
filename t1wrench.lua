@@ -930,6 +930,8 @@ t1_post = function(text) -- use weixin
    elseif window == "com.google.android.gm/com.google.android.gm.ComposeActivityGmail" then
       adb_event("key scroll_lock adb-tap 870 173")
       return
+   elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQLSActivity" then
+      adb_event("adb-tap 297 884 key scroll_lock adb-tap 923 909")
    elseif window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI" or window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI" then
       weixin_text_share(window, text)
       return
