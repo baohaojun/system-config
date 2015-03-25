@@ -167,8 +167,12 @@ cd_record()
         export PROMPT_RET=
     fi
     history -a
-    if test ! "$RECURSIVE_SHELL" && test "$ANDROID_SERIAL"; then
-        export RECURSIVE_SHELL=$ANDROID_SERIAL
+    if test "$ANDROID_SERIAL" && ! echo "$RECURSIVE_SHELL" | grep -q -e "adb-$ANDROID_SERIAL\."; then
+        if test "$RECURSIVE_SHELL"; then
+            export RECURSIVE_SHELL="$RECURSIVE_SHELL: ""adb-$ANDROID_SERIAL\."
+        else
+            export RECURSIVE_SHELL="adb-$ANDROID_SERIAL."
+        fi
     fi
 
     if test "$BHJ_PWD" = "$PWD"; then

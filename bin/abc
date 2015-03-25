@@ -58,7 +58,11 @@ info() {
         echo $(date): "$@"
     fi |
         (
-            flock ~/.logs/abc.info.lock tee -a ~/.logs/abc.info.txt
+            flock ~/.logs/abc.info.lock tee -a ~/.logs/abc.info.txt ~/.logs/abc.info.txt.$$ >/dev/null 2>&1
+            (
+                rm -f ~/.logs/abc.info.txt.$$
+                cat
+            ) < ~/.logs/abc.info.txt.$$
         ) 1>&2
 }
 function killlock() { # can kill run-away abc tasks.
@@ -118,14 +122,14 @@ dump1lock() {
         echo "These processes are using $1"
         (fuser "$1" |grep . || echo 1) |
             xargs ps -o pid,ppid,etime,command |
-            cut -b 1-80 |
+            cut -b 1-120 |
             perl -a -ne '
                 if (1..1) {
                     print;
                     next;
                 }
                 chomp;
-                printf "%-85s", $_;
+                printf "%-125s", $_;
                 system("cat /proc/$F[0]/environ|tr \\\\0 \\\\n|grep ABC_USER|perl -npe \"s/.*=//\"")
             '
 
@@ -743,6 +747,12 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
     . ~/.config/ssh-agent
 
     (
+        local x
+        for x in "$@"; do
+            if test "$x" = -b; then
+                exit # don't if we are testing with a base build.
+            fi
+        done
         cd /data/mirror
         if test ! -e .owned-by-abc; then
             exit
@@ -812,9 +822,10 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
 
             if ! is-tty-io; then
                 repo sync -j8 -d || (
-                    my-rfa "git reset --hard; git clean -xfd"
-                    repo sync -j8 -d
-                ) || abc-notify-maintainer -s "repo sync failed for $PWD" || continue
+                    info "repo sync failed with $?"
+                    my-rfa "git reset --hard; git clean -xfd" &&
+                        repo sync -j8 -d
+                ) || abc-notify-maintainer -s "repo sync failed for $PWD: $?" || continue
 
                 repo manifest -r -o .repo/manifest.xml.sync
                 if test -e .repo/manifest.xml.base && diff -q .repo/manifest.xml.base .repo/manifest.xml.sync; then
@@ -1015,7 +1026,7 @@ you can find a branch with git branch -a | grep non-build"
     bash -x rm-non-build-files-kernel
     git add .
     git commit -s -m 'with non build files removed'
-    git push $(repo-remote) HEAD:refs/sandbox/$(my-rfa '$(lookup-file .repo/repo_info.pl) upstream')-bhj-rm-non-build -f
+    git push $(repo-remote) HEAD:refs/heads/sandbox/$(my-rfa '$(lookup-file .repo/repo_info.pl) upstream')-bhj-rm-non-build -f
 }
 
 function help() {

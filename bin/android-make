@@ -10,14 +10,6 @@ if ! test -d .repo -a -e build/envsetup.sh; then
     die "Not an Android repo?"
 fi
 
-if test -e .buildenv.sh.x; then
-    . .buildenv.sh.x
-fi
-
-if test -e .repo/AndroidKernel.mk; then
-    cp .repo/AndroidKernel.mk kernel/
-fi
-build_env=`lookup-file build/envsetup.sh`
 top_dir=$(pwd)
 
 set -e
@@ -41,11 +33,8 @@ config=
 keep=-k
 make_dir=
 targets=
-PATH_PREPEND=
-if test -e .path-prepend; then
-    . .path-prepend
-elif grep -q 'required_version := "1.7.x"' build/core/main.mk; then
-    PATH_PREPEND=/usr/lib/jvm/java-7-openjdk-amd64/bin
+if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
+    PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
 fi
 TEMP=$(getopt -o vp:d:kj:c: -n $(basename $0) -- "$@")
 
@@ -61,18 +50,7 @@ while true; do
             shift 2
             ;;
         -p)
-            if test "$PATH_PREPEND"; then
-                PATH_PREPEND=$(echo $PATH_PREPEND:$(readlink -f $2)|
-                                      tr : \\n|
-                                      uniq-even-non-ajacent|
-                                      rm-last-nl|
-                                      tr \\n :
-                            )
-            else
-                PATH_PREPEND=$2
-            fi
-
-            echo PATH_PREPEND=$PATH_PREPEND > .path-prepend
+            PATH=$(readlink -f $2):$PATH
             shift 2
             ;;
         -d)
@@ -158,6 +136,7 @@ if test "$DONT_DO_NICE" = true; then
     do_nice=
 fi
 
+exec 9> $OUT_DIR/.android-full-build.lock
 (
     time (
         set -e
@@ -171,13 +150,8 @@ fi
         echo 'lock success! at '$(date)
 
         result=''
-        if test ${PATH_PREPEND}x != x; then
-            PATH=$PATH_PREPEND:$PATH
-        fi
         export PATH=$PWD/$OUT_DIR/host/linux-x86/bin/:$PATH
-        export CLASSPATH=.
-
-        echo CLASSPATH is $CLASSPATH
+        echo CLASSPATH is \'$CLASSPATH\'
 
         perl -npe 's!^\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
 
@@ -211,10 +185,15 @@ fi
         echo "full build result is $result"
         echo
     )
-) 9> $OUT_DIR/.android-full-build.lock  2>&1 | tee $OUT_DIR/build.log
-if test "$#" = 0; then
-    cp $OUT_DIR/build.log $OUT_DIR/full-build.log
+) 2>&1 | tee $OUT_DIR_LONG/build.log
+if test $# = 0; then
+    cp $OUT_DIR_LONG/build.log $OUT_DIR_LONG/full-build.log
 fi
+relative-link -f $OUT_DIR_LONG/full-build.log $OUT_DIR_LONG/build.log $OUT_DIR/ || true
 perl -npe 's!^#\$\(error stopping\)!\$(error stopping)!' -i build/core/main.mk
 relative-link $OUT_DIR_LONG out || true
-grep -Hn -e 'full build result is' $OUT_DIR/build.log | grep -e "all ok" # make sure it exit with the right return value
+if grep -Hn -e 'full build result is' $OUT_DIR_LONG/build.log | grep -e "all ok"; then
+    exit 0
+else
+    cp $OUT_DIR_LONG/build.log $OUT_DIR_LONG/full-build.log.fail
+fi
