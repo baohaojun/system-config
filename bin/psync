@@ -89,7 +89,7 @@ if test "$git_st"; then
 fi
 if test "$git_st"; then
     . .gitx
-    (git st -S | grep . ||getclip) | cut -b 4-
+    (git st -S | grep . ||getclip) | cut -b 4-|perl -npe 's/.* -> /\n/'
 fi |
 if test "$reverse" = true; then
     for x in "$@"; do
