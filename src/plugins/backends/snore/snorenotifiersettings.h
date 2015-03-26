@@ -29,7 +29,6 @@ class QComboBox;
 class SnoreNotifierSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
-
 public:
     explicit SnoreNotifierSettings(Snore::SnorePlugin *snore, QWidget *parent = nullptr);
     ~SnoreNotifierSettings();

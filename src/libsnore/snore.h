@@ -177,7 +177,7 @@ signals:
     void notificationClosed(Snore::Notification);
 
 private:
-    SnoreCore();
+    SnoreCore(QObject *parent);
     SnoreCorePrivate *d_ptr;
 
 };

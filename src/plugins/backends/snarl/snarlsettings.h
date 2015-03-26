@@ -24,6 +24,7 @@ class QLineEdit;
 
 class SnarlSettings : public Snore::PluginSettingsWidget
 {
+    Q_OBJECT
 public:
     explicit SnarlSettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
     ~SnarlSettings();

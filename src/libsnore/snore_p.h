@@ -48,6 +48,8 @@ public:
      */
     static QString tempPath();
 
+    static void loadTranslator();
+
 public:
     static SnoreCorePrivate *instance();
     ~SnoreCorePrivate();

@@ -26,7 +26,7 @@ SnarlSettings::SnarlSettings(SnorePlugin *plugin, QWidget *parent):
     m_password(new QLineEdit)
 {
     m_password->setEchoMode(QLineEdit::Password);
-    addRow("Password:", m_password);
+    addRow(tr("Password:"), m_password);
 }
 
 SnarlSettings::~SnarlSettings()

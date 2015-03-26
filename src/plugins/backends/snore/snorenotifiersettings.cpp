@@ -27,11 +27,11 @@ SnoreNotifierSettings::SnoreNotifierSettings(SnorePlugin *snore, QWidget *parent
     m_comboBox(new QComboBox)
 {
 
-    m_comboBox->addItem("TopLeftCorner", Qt::TopLeftCorner);
-    m_comboBox->addItem("TopRightCorner", Qt::TopRightCorner);
-    m_comboBox->addItem("BottomLeftCorner", Qt::BottomLeftCorner);
-    m_comboBox->addItem("BottomRightCorner", Qt::BottomRightCorner);
-    addRow("Position:", m_comboBox);
+    m_comboBox->addItem(tr("TopLeftCorner"), Qt::TopLeftCorner);
+    m_comboBox->addItem(tr("TopRightCorner"), Qt::TopRightCorner);
+    m_comboBox->addItem(tr("BottomLeftCorner"), Qt::BottomLeftCorner);
+    m_comboBox->addItem(tr("BottomRightCorner"), Qt::BottomRightCorner);
+    addRow(tr("Position:"), m_comboBox);
 }
 
 SnoreNotifierSettings::~SnoreNotifierSettings()

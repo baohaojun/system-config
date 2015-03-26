@@ -33,12 +33,12 @@
 
 using namespace Snore;
 
-SnoreCore::SnoreCore()
+SnoreCore::SnoreCore(QObject *parent):
+    QObject(parent)
 {
-    if (QThread::currentThread() != qApp->thread() ) {
-        moveToThread(qApp->thread());
+    if (QThread::currentThread() != parent->thread() ) {
+        moveToThread(parent->thread());
     }
-    SnoreCorePrivate::registerMetaTypes();
     d_ptr = new SnoreCorePrivate();
     Q_D(SnoreCore);
     d->q_ptr = this;
@@ -47,8 +47,13 @@ SnoreCore::SnoreCore()
 
 SnoreCore &SnoreCore::instance()
 {
-    static SnoreCore instance;
-    return instance;
+    static SnoreCore *instance = nullptr;
+    if(!instance) {
+        SnoreCorePrivate::loadTranslator();
+        SnoreCorePrivate::registerMetaTypes();
+        instance = new SnoreCore(qApp);
+    }
+    return *instance;
 }
 
 SnoreCore::~SnoreCore()

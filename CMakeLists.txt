@@ -15,12 +15,12 @@ include(KDEInstallDirs)
 include(KDECompilerSettings)
 include(KDECMakeSettings)
 
-include(ECMAddAppIcon)
-include(ECMInstallIcons)
-include(ECMSetupVersion)
-include(ECMPackageConfigHelpers)
 include(GenerateExportHeader)
 
+include(ECMAddAppIcon)
+include(ECMInstallIcons)
+include(ECMPackageConfigHelpers)
+include(ECMSetupVersion)
 
 #######################################################################
 option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DAEMON=ON" OFF)
@@ -36,9 +36,10 @@ set(SNORE_CamelCase_SUFFIX "Qt5")
 
 
 find_package(Qt5Core REQUIRED)
-find_package(Qt5Widgets REQUIRED)
+find_package(Qt5LinguistTools REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Quick REQUIRED)
+find_package(Qt5Widgets REQUIRED)
 
 
 find_package(Doxygen QUIET)
@@ -66,8 +67,9 @@ message(STATUS "Installing plugins to ${LIBSNORE_PLUGIN_PATH}")
 
 
 add_subdirectory(data)
-add_subdirectory(share)
+add_subdirectory(lang)
 add_subdirectory(src)
+add_subdirectory(share)
 
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)

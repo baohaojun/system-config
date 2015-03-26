@@ -25,7 +25,6 @@ class QLineEdit;
 class ToastySettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
-
 public:
     explicit ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
     ~ToastySettings();

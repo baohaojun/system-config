@@ -27,6 +27,7 @@
 
 #include <QApplication>
 #include <QTemporaryDir>
+#include <QTranslator>
 
 using namespace Snore;
 
@@ -218,6 +219,7 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
     Q_Q(SnoreCore);
     emit q->notificationClosed(n);
     if (n.data()->source()) {
+        //TODO: drop source and use signal aswell
         n.data()->source()->notificationClosed(n);
     }
 }
@@ -232,3 +234,33 @@ void SnoreCorePrivate::slotAboutToQuit()
     }
 }
 
+void SnoreCorePrivate::loadTranslator(){
+    auto installTranslator = [](const QString &locale)
+    {
+        snoreDebug(SNORE_DEBUG) << locale;
+        if(locale != "C") {
+            QTranslator* translator = new QTranslator( qApp->instance() );
+            if ( translator->load(locale, ":/lang/libsnore/") )
+            {
+                snoreDebug(SNORE_INFO) << "Using system locale:" << locale;
+                snoreDebug(SNORE_INFO) << qApp->installTranslator( translator );
+            }
+            else
+            {
+                translator->deleteLater();
+                QString fileName = QString(":/lang/libsnore/%1.qm").arg(locale);
+                snoreDebug(SNORE_WARNING)<< "Failed to load translations for:" << locale << fileName << QFile::exists(fileName) ;
+                return false;
+            }
+        }
+        return true;
+    };
+
+    installTranslator("en");
+    QLocale locale = QLocale::system();
+    if (locale.name() != "en") {
+        if (!installTranslator(locale.name())) {
+            installTranslator(locale.bcp47Name());
+        }
+    }
+}

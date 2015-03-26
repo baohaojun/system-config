@@ -27,8 +27,8 @@ GrowlSettings::GrowlSettings(SnorePlugin *plugin, QWidget *parent):
     m_password(new QLineEdit)
 {
     m_password->setEchoMode(QLineEdit::Password);
-    addRow("Host:", m_host);
-    addRow("Password:", m_password);
+    addRow(tr("Host:"), m_host);
+    addRow(tr("Password:"), m_password);
 }
 
 GrowlSettings::~GrowlSettings()

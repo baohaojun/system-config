@@ -25,7 +25,7 @@ ToastySettings::ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent) :
     Snore::PluginSettingsWidget(plugin, parent),
     m_lineEdit(new QLineEdit)
 {
-    addRow("Device ID:", m_lineEdit);
+    addRow(tr("Device ID:"), m_lineEdit);
 }
 
 ToastySettings::~ToastySettings()
