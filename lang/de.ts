@@ -64,7 +64,7 @@
     <message>
         <location filename="../src/libsnore/settingsdialog.ui" line="115"/>
         <source>Display Test Notification</source>
-        <translation>Zeige test Mitteilung an</translation>
+        <translation>Zeige eine Testitteilung an</translation>
     </message>
 </context>
 <context>
@@ -86,6 +86,37 @@
         <location filename="../src/plugins/backends/snarl/snarlsettings.cpp" line="29"/>
         <source>Password:</source>
         <translation>Passwort:</translation>
+    </message>
+</context>
+<context>
+    <name>Snore::PluginSettingsWidget</name>
+    <message>
+        <location filename="../src/libsnore/plugins/pluginsettingswidget.cpp" line="36"/>
+        <source>Enabled:</source>
+        <translation>Aktiv:</translation>
+    </message>
+</context>
+<context>
+    <name>Snore::SettingsDialog</name>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="79"/>
+        <source>Hello World</source>
+        <translation>Hallo Welt</translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="81"/>
+        <source>This is Snore</source>
+        <translation>Dies ist Snore</translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="81"/>
+        <source>Project Website</source>
+        <translation>Projekt Webseite</translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="83"/>
+        <source>Test Action</source>
+        <translation>Test Aktion</translation>
     </message>
 </context>
 <context>
@@ -120,13 +151,13 @@
     <name>SoundSettings</name>
     <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="31"/>
-        <source>Sound File:</source>
-        <translation type="unfinished"></translation>
+        <source>Audio file:</source>
+        <translation>Audio Datei:</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="32"/>
-        <source>Select a sound File</source>
-        <translation type="unfinished"></translation>
+        <source>Select a audio file</source>
+        <translation>Wähle eine Audio Datei</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="35"/>

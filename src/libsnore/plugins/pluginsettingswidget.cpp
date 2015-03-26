@@ -33,7 +33,7 @@ PluginSettingsWidget::PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *pa
     setLayout(m_layout);
     if (m_snorePlugin->type() != SnorePlugin::BACKEND) {
         // backends are handled through a combo box.
-        addRow("Enabled:", m_enabled);
+        addRow(tr("Enabled:"), m_enabled);
     }
 
 }

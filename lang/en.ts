@@ -89,6 +89,37 @@
     </message>
 </context>
 <context>
+    <name>Snore::PluginSettingsWidget</name>
+    <message>
+        <location filename="../src/libsnore/plugins/pluginsettingswidget.cpp" line="36"/>
+        <source>Enabled:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Snore::SettingsDialog</name>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="79"/>
+        <source>Hello World</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="81"/>
+        <source>This is Snore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="81"/>
+        <source>Project Website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="83"/>
+        <source>Test Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SnoreNotifierSettings</name>
     <message>
         <location filename="../src/plugins/backends/snore/snorenotifiersettings.cpp" line="30"/>
@@ -120,12 +151,12 @@
     <name>SoundSettings</name>
     <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="31"/>
-        <source>Sound File:</source>
+        <source>Audio file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="32"/>
-        <source>Select a sound File</source>
+        <source>Select a audio file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
