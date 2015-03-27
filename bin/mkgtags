@@ -199,8 +199,9 @@ function mkbeagrepidx() {
 }
 
 function for-code-reading() {
-    mkbeagrepidx&
-    SOURCECODETAGSMODE=true mkbeagrepidx&
+    time mkbeagrepidx&
+    export SOURCECODETAGSMODE=true
+    time mkbeagrepidx&
     if is-tty-io; then
         wait
     fi

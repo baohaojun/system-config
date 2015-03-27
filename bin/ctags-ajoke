@@ -129,7 +129,11 @@ while (<STDIN>) {
 
     $write->flush();
     if ($custom_parser) {
-        system($custom_parser, $source);
+        open(my $custom_output, "-|", $custom_parser, $source) or die "Can't open pipe for $custom_parser";
+        while (<$custom_output>) {
+            print_with_caching($cache, $_);
+        }
+        close $custom_output;
     }
     my $is_java;
     if ($_ =~ m/\.java|\.aidl/) {

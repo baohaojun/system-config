@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 . relative-path
 
@@ -125,6 +126,11 @@ n_targets=$#
 
 target_dir=${args[$#-1]}
 
+if test $# = 2 -a -L "$target_dir" -a "$(readlink -f "$target_dir")" = "$(readlink -f "$1")"; then
+    echo "$target_dir already linked to $1"
+    exit 0
+fi
+
 if (($# > 2)) && test ! -d "$target_dir"; then
     die "ln: target_dir \`$target_dir' is not a directory"
 fi
@@ -149,6 +155,7 @@ target_dir=$(formal-path "$target_dir")
 echo -n > ~/.failed-rln
 
 target_file_save=$target_file
+ret=0
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
     if test -z "$target_file_save"; then
@@ -158,7 +165,8 @@ for x in $(seq 1 $n_targets); do
         if test $ln_force = true; then
             echo "FORCE ->" "$target_dir"/"$target_file"
         else
-            echo "$target_dir"/"$target_file" already exist\!
+            echo "$target_dir"/"$target_file" 'already exist!'
+            ret=1
             continue
         fi
     fi
@@ -171,5 +179,8 @@ for x in $(seq 1 $n_targets); do
     # else
     #   echo 1>&2 "$old_target_dir"/"$target_file" =\> "$relative_source"
     # fi
-    ln -s -- "$relative_source" "$target_dir"/"$target_file" || printf "ln -sf -- %q %q\n" "$relative_source" "$target_dir"/"$target_file" >> ~/.failed-rln
+    if ! ln -s -- "$relative_source" "$target_dir"/"$target_file"; then
+        die "error linking '$relative_source' '$target_dir'/'$target_file'"
+    fi
 done
+exit $ret
