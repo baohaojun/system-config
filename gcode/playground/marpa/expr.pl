@@ -36,6 +36,12 @@ $grammar->precompute();
 my $recce = Marpa::R2::Recognizer->new( { grammar => $grammar } );
 
 my $line = join(" ", @ARGV);
+unless (@ARGV) {
+    chomp($line = <>);
+    if ($line =~ m/[a-f]/i and $line !~ m/^0x/i) {
+        $line = "0x$line";
+    }
+}
 
 while ($line) {
     if ($line =~ s/^\s*\(//) {

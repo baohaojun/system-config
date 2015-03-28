@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: qq
+# key: qq
+# --
+>/dev/null 2>&1$0

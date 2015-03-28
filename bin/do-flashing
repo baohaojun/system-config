@@ -4,13 +4,22 @@ if test "$(uname)" = Linux; then
         cd ~/bin
         psync pub do-flashing
     )
-    set -- $(printf %q "$(swp|perl -npe 's/share.smartisan.cn/172.16.2.16/')")
+    set -- $(printf %q "$(
+        if [[ $PWD =~ $HOME/tmp/root-flash ]]; then
+            relative-path . ~/tmp/root-flash/|perl -npe 's,/,\\,g; s,^,\\\\baohaojun\\tmp\\,'
+        else
+            swp
+        fi|perl -npe 's/share.smartisan.cn/172.16.2.16/')")
     ssh-exp pub "do-flashing $@";
     find-or-exec rdesktop
 else
     set -x
-    # cd /d/share2/RDL_Automation_v2.10.6.0614
-    cd /d/RDL_8994_Automation_v3.10.1.0771/
+    if echo "$@" | grep sfo; then
+        cd /d/share2/RDL_Automation_v2.10.6.0614
+    else
+        cd /d/RDL_8994_Automation_v3.10.1.0771/
+    fi
+
     if ps.pl rdl.exe; then
         pycyg terminateModule.py rdl.exe;
     fi

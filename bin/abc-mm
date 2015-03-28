@@ -3,6 +3,12 @@
 if test -e ~/.ssh/id_rsa_nopass; then
     ssh() { unset SSH_AGENT_PID SSH_AUTH_SOCK ; command ssh -i ~/.ssh/id_rsa_nopass "$@"; }
 fi
+
+if test $PWD = ~/src/linux; then
+    git diff HEAD | time abc -t remote-abc -x build-request -m kernel -p kernel -b icesky-rom "$@"
+    exit
+fi
+
 . $(lookup-file build/envsetup.sh)
 if test $# = 0; then
     abc mm

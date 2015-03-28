@@ -1,0 +1,6 @@
+#!/bin/bash
+if test -z "$ANDROID_SERIAL"; then
+    export ANDROID_SERIAL=$(select-output-line my-adb devices?|pn 1)
+fi
+echo export ANDROID_SERIAL=$ANDROID_SERIAL > ~/.reset-env.$$
+mv ~/.reset-env.$$ ~/.reset-env

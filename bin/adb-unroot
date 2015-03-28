@@ -1,3 +1,6 @@
 #!/bin/bash
 my-adb setprop service.adb.root 0
 my-adb nohup bash -c 'stop adbd; start adbd'
+sleep 1
+my-adb -W
+my-adb id

@@ -23,15 +23,15 @@ if test ! -e boot.img; then
     die "Can't find boot.img"
 fi
 
-workingdir=/home/bhj/smb/share.smartisan.cn/share/baohaojun/root-flash
+workingdir=/home/bhj/smb/baohaojun/tmp/root-flash
 
-rm -rf $workingdir/$(basename $PWD) -rf ~/tmp/root-flash
+rm -rf $workingdir/$(basename $PWD) ~/tmp/root-flash
 mkdir -p $workingdir/ ~/tmp/root-flash
 smb-pull $PWD ~/tmp/root-flash
 (
     cd ~/tmp/root-flash
     find . -name 'system_*.img' -o -name 'userdata_*.img'|xargs rm
-    smb-push .
+    # smb-push .
 )
 
 cd $workingdir/$(basename $PWD)

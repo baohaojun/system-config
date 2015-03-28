@@ -16,6 +16,8 @@ done
 
 if test "$firefox_there" = false; then
     sleep 2
+else
+    sleep 1
 fi
 
 if echo $SHELLOPTS | grep -q xtrace; then

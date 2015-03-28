@@ -191,7 +191,7 @@ _jira_complete_these_words()
 _jira_file_list()
 {
     local IFS=$'\t\n'
-    COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(cd "$1"; 'ls'; cat ~/.bbdb|perl -npe 's/.*?\"([^\"]*)@[^\"]*\".*/$1/')" "$cur") )
+    COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(cd "$1" && 'ls'; cat ~/.bbdb|perl -npe 's/.*?\"([^\"]*)@[^\"]*\".*/$1/')" "$cur") )
 }
 
 _jira_actions()

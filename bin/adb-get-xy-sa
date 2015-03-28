@@ -5,7 +5,7 @@ if test "$1"; then
     export TAP=$1
 fi
 
-(sleep 5 && my-adb root-mode off) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
+(sleep 5) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
 expect -c 'spawn adb shell; expect "#"; send "getevent -l\n"; interact {
         -reset \032 {exec kill -STOP [pid]}
         -reset \003 {exec kill -TERM [pid]}
