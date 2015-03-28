@@ -29,6 +29,10 @@ while true; do
             ;;
         -R)
             root_folder=$2
+            if [[ $root_folder =~ ^smb:// ]]; then
+                root_folder=~/smb/${root_folder#smb://}
+                echo root_folder is $root_folder
+            fi
             shift 2
             ;;
         -r|--ramdisk)

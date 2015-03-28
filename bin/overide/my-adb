@@ -44,20 +44,6 @@ function exec_the_adb() {
 function run_the_adb() {
     shell=shell
 
-    if test -e ~/.config/adb-root; then
-        if test "$the_adb" = adb-expect; then
-            set -- shell "$@"
-            shell=
-        fi
-        if test "$1" = shell -a "$2" != su -a "$quote_the_args" != false; then
-            shift
-            local arg=$(for x in "$@"; do printf "%q " "$x"; done)
-            set -- $shell su -c "$arg"
-        elif test "$the_adb" = adb-expect; then
-            shift
-        fi
-    fi
-
     if test "$quote_the_args" = true; then
         args=()
         (
@@ -78,6 +64,21 @@ function run_the_adb() {
 
         $DO_ADB_EXEC $the_adb "$@"
     fi
+}
+
+function loop-wait-device() {
+    echo -n loop-wait-for-device > /dev/tty || true
+    for x in $(seq 1 ${1:-60}); do
+        if test $($the_adb devices | grep -v 'List of devices attached' | grep $ANDROID_SERIAL. | wc -l) -gt 0; then
+            if test "$(command my-adb "echo -n hello; echo $$")" = hello$$; then
+                return 0;
+            fi
+        fi
+        sleep 1
+        echo -n .
+    done
+    echo loop-wait-for-device failed > /dev/tty
+    return 1
 }
 
 function adb() {
@@ -125,39 +126,32 @@ function adb() {
 
     if test "$1" = -W; then
         # wait for device using a loop
-        for x in $(seq 1 ${2:-60}); do
-            sleep 1
-            if test $(adb devices |grep -v 'List of devices attached'| grep $ANDROID_SERIAL. | wc -l) -gt 0; then
-                if test "$(command my-adb echo hello)" = hello; then
-                    exit 0;
-                fi
-            fi
-        done
-        exit 1
+        loop-wait-device
+        exit
     fi
 
-    if test "$1" = -r && ! adb devices?|grep -v :; then
-        shift;
-    fi
     if test "$1" = -r; then
-        if test -e ~/.config/adb-root; then
-            shift
-            exec adb "$@"
-        fi
-
-        echo -n 'wait-for-device ' 1>/dev/tty
-        $the_adb wait-for-device
-
-        if ! adb shell id | grep uid=0 -q && $the_adb root 2>&1 | grep 'restarting adbd as root'; then
-            while true; do
-                echo -n '.' 1>/dev/tty
-                $the_adb wait-for-device
-                if adb shell id | grep uid=0 -q; then
-                    echo "root is here" 1>/dev/tty
-                    break
+        loop-wait-device
+        (
+            set -x
+            if ! $the_adb shell id | grep uid=0 -q; then
+                if $the_adb root 2>&1 | grep 'restarting adbd as root'; then
+                    sleep 2
+                else
+                    sleep 2
                 fi
-            done
-        fi
+                echo
+                loop-wait-device
+                while true; do
+                    echo -n '.' 1>/dev/tty
+                    $the_adb wait-for-device
+                    if $the_adb shell id | grep uid=0 -q; then
+                        echo "root is here" 1>/dev/tty
+                        break
+                    fi
+                done
+            fi
+        )
         shift
     fi
     if test "$1" = mount; then
@@ -201,19 +195,6 @@ function adb() {
 
     if test $# = 1 -a "$1" = disconnect; then
         exec the-true-adb disconnect;
-    fi
-
-    if test "$1" = root-mode; then
-        set -x
-        if test -e ~/.config/adb-root && yes-or-no-p -y "stop root mode?"; then
-            set -- root-mode off
-        fi
-        if test "$2" = on || test $# = 1; then
-            touch ~/.config/adb-root
-        else
-            rm ~/.config/adb-root
-        fi
-        exit
     fi
 
     if test $# = 1 -a "$1" = reconnect && grep : -q ~/.config/adb-device; then
@@ -283,8 +264,6 @@ function adb() {
             shift
             the_adb=adb-expect exec_the_adb "$@"
         fi
-    elif test $# = 1 -a "$1" = shell -a -e ~/.config/adb-root && is-tty-io; then
-        the_adb=adb-expect exec_the_adb sh
     else
 
         adb_commands=(backup bugreport emu forward get-devpath

@@ -1,14 +1,16 @@
 #!/bin/bash
 set -x
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts rroot
+# generate-getopts rroot eedit
 ## end code-generator
 ## start generated code
 root=false
+edit=false
 OPTIND=1
-while getopts 'r' opt; do
+while getopts 're' opt; do
     case "$opt" in
         r)    root=true;;
+        e)    edit=true;;
         *)    echo Usage Error;;
     esac
 done
@@ -25,4 +27,12 @@ if test "$root" = true; then
 else
     root=
 fi
-adb-push $root $1 /data/; my-adb shell "dd if=/data/$(basename $1) of=\$(echo /dev/block/platform/*/by-name/$2)"
+
+if test "$edit" = true; then
+    edit=-e
+else
+    edit=
+fi
+
+adb-push $edit $root $1 /data/; my-adb shell "dd if=/data/$(basename $1) of=\$(echo /dev/block/platform/*/by-name/$2)"
+my-adb shell sync

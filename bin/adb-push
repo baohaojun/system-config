@@ -6,6 +6,7 @@ use strict;
 my $secure;
 my $executable;
 my $root_boot_image;
+my $edit_boot_image;
 
 sub debug(@) {
     print STDERR "@_\n";
@@ -15,6 +16,7 @@ GetOptions(
     "s!" => \$secure,
     "d!" => \$root_boot_image,
     "x!" => \$executable,
+    "e!" => \$edit_boot_image,
     );
 
 my $mount_cmd = "my-adb remount";
@@ -53,12 +55,17 @@ sub push_one_file($$)
 {
     my ($file, $base) = @_;
     my $true_dest = "$dest/$base";
-    if ($base eq "boot.img" and $root_boot_image) {
+    if ($base eq "boot.img" and ($root_boot_image or $edit_boot_image)) {
         my $file_q = shell_quote($file);
         chomp($ENV{BOOT_IMAGE_PATH} = qx(readlink -f $file_q));
         my $file_w = "/tmp/boot.img.$ENV{USER}";
         system("cp", $file, $file_w);
         system("replace-bootimage", "-b", $file_w, "--", "-d");
+
+        if ($edit_boot_image) {
+            system("replace-bootimage", "-b", $file_w);
+        }
+
         $file = $file_w;
     }
     if (not $dest_is_dir) {

@@ -15,15 +15,19 @@ export android_dir=${android_dir:-~/src/android}
     flock 9
     cd $android_dir
     if test ! -e out/host/linux-x86/framework/signapk.jar -o ! -e out/host/linux-x86/bin/imgdiff  -o ! -e out/host/linux-x86/bin/fs_config; then
-        . build/envsetup.sh
-        lunch msm8974sfo_lte-user
         if test -x ~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin/make; then
-            export PATH=~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin:$PATH
+            export PATH=$PATH:~/external/bin/Linux/ext/ndk/prebuilt/linux-x86/bin
         fi
         if test -x ~/external/bin/Linux/ext/jdk/bin/java; then
             export PATH=~/external/bin/Linux/ext/jdk/bin:$PATH
         fi
-        make -j8 signapk imgdiff fs_config;
+        if which android-make >/dev/null 2>&1; then
+            android-make -c msm8974sfo_lte-user -j8 signapk imgdiff fs_config;
+        else
+            . build/envsetup.sh
+            lunch msm8974sfo_lte-user
+            make -j8 signapk imgdiff fs_config;
+        fi
     fi
 ) 9> /tmp/$(basename $0).build.lock
 

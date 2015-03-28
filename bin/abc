@@ -330,7 +330,6 @@ lock-file() {
 }
 
 copy-output-files() {
-    set -x
     echo "$@"
     ## start code-generator "^\\s *#\\s *"
     # generate-getopts -l t:target
@@ -353,12 +352,21 @@ copy-output-files() {
     rsync "$@" $target/ -av --delete
 
     (
+
+        if test -z "$ABC_USER"; then
+            info "no ABC_USER is set, should exit"
+            exit
+        fi
         cd $target/
         export ABC_USER_OUTPUT=../by-user/$ABC_USER/$(basename $target)
         find . -type d | perl -ne 'use File::Path qw(make_path); chomp; make_path("$ENV{ABC_USER_OUTPUT}/$_")'
         find . -type f | perl -ne 'chomp; link $_, "$ENV{ABC_USER_OUTPUT}/$_"'
         rsync . $ABC_USER_OUTPUT -av --delete
-        echo "Please get your files at: $(readlink -f $ABC_USER_OUTPUT | perl -npe 's,^/Share,smb://172.16.2.25,')"
+        smb_folder=$(readlink -f $ABC_USER_OUTPUT | perl -npe 's,^/Share,smb://172.16.2.25,')
+        echo "Please get your files at: $smb_folder"
+        if [[ "$ABC_USER" =~ baohaojun@.* ]]; then
+            echo 'for x in $(getclip); do (set -x; adb-push '$smb_folder'/$x); done'
+        fi
     )
 
 }
@@ -435,6 +443,16 @@ android-make() {
     command android-make $extra -j8 "$@"
 }
 
+copy-compile-output-files() {
+    copy-output-files -t "$(basename $(readlink -f out))" \
+                      out/target/product/*/system* \
+                      out/target/product/*/boot* \
+                      out/target/product/*/root \
+                      out/target/product/*/emmc_appsboot.mbn \
+                      $extra |
+        grep -v '/$'
+
+}
 
 function build-request() { # submit a build request
     ## start generated code
@@ -688,7 +706,6 @@ EOF
             fi
         )
         android-make msm-kernel &&
-            android-make bootimage-nodeps &&
             if test "$method" = modules; then
                 (cd vendor/qcom/opensource/wlan/prima && mm)
             fi
@@ -717,7 +734,7 @@ EOF
         extra=.repo/manifest.xml.base
     fi
 
-    copy-output-files -t "$(basename $(readlink -f out))" out/target/product/*/system* out/target/product/*/boot* out/target/product/*/root out/target/product/*/emmc_appsboot.mbn $extra
+    copy-compile-output-files
 }
 
 function list-base-builds() { # list base builds
@@ -868,6 +885,7 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                         info new build is ok, will update the build manifest.
                         cp .repo/manifest.xml.sync .repo/manifest.xml.base
                         cat .repo/manifest.xml.base > .repo/manifest.xml
+                        copy-compile-output-files
                     fi
                     exit $ret
                 ) || (
@@ -877,6 +895,11 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                             cat .repo/manifest.xml.base > .repo/manifest.xml
                             repo sync -j8 -d
                             android-make -c $config
+                            ret=$?
+                            if test $ret = 0; then
+                                copy-compile-output-files
+                            fi
+                            exit $ret
                         ) || abc-notify-maintainer -s "Full build failed again for $PWD: $config" -a buildspec.mk
                     else
                         abc-notify-maintainer -s "Full build failed and no old base xml found for $PWD: $config" -a buildspec.mk

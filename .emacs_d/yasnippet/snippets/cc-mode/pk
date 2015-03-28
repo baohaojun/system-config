@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: pk
+# key: pk
+# --
+printk(KERN_WARNING "%s:%d (%s)$1\n", __FILE__, __LINE__, __FUNCTION__$2);$0

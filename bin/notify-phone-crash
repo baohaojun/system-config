@@ -50,9 +50,6 @@ if test $(basename $0) = adb-fix-gms; then
         if test $(my-adb getprop ro.debuggable) = 0 -a "$(my-adb getprop ro.DEBUGGABLE)" != 1; then
             exit
         fi
-        if test -e ~/.configs/adb-root; then
-            exit
-        fi
         if ! my-adb id | grep -P -e 'uid=0\b'; then
             my-adb root
             exit
