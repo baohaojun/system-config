@@ -1,3 +1,9 @@
 #!/bin/bash
+
+my-adb forward tcp:${FORWARD_PORT:-54321} localreserved:scitd
+my-adb bash -x stcmd-subcase.sh reboot-rom
+echo srem-helper reboot-rom | nc localhost ${FORWARD_PORT:-54321}
+
+sleep 3
 my-adb "rm -f /data/phone.md5; mkdir -p /cache/recovery/; echo -n --update_package=$(echo "${1:-/sdcard/ota.zip}"|perl -npe 's!.*sdcard/!/data/media/0/!') > /cache/recovery/command";
 my-adb reboot recovery

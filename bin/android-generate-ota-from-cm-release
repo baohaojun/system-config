@@ -31,10 +31,10 @@ export android_dir=${android_dir:-~/src/android}
     fi
 ) 9> /tmp/$(basename $0).build.lock
 
-
+rootOnly=false
 mypath=$(dirname $(readlink -f "$0"))
 ## start generated code
-TEMP=$(getopt -o fd:t: --long "fullSystem,cmReleaseDir:tmpPostfix"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o rfd:t: --long "rootOnly,fullSystem,cmReleaseDir:tmpPostfix"  -n $(basename $0) -- "$@")
 cmReleaseDir=.
 fullSystem=${FULL_SYSTEM_OTA:-false}
 export tmpPostfix=$$
@@ -44,6 +44,10 @@ while true; do
         -d|--cmReleaseDir)
             cmReleaseDir=$2
             shift 2
+            ;;
+        -r|--rootOnly)
+            rootOnly=true
+            shift
             ;;
         -t|--tmpPostfix)
             tmpPostfix=$2
@@ -71,7 +75,7 @@ cmReleaseDir=$(readlink -f "$cmReleaseDir")
 
 (
     # my-adb 'cd /; set -ex; rm -f /data/phone.md5; find ./system/ -type f | xargs md5sum > /data/system-files.md5.$$ && mv /data/system-files.md5.$$ /data/phone.md5; echo yes'.$$ | grep yes.$$&
-    if test $fullSystem != true; then
+    if test $fullSystem != true -a $rootOnly != true; then
         my-adb rm -f /sdcard/phone.md5
         (
             my-adb forward tcp:$FORWARD_PORT localreserved:scitd
@@ -120,7 +124,7 @@ cmReleaseDir=$(readlink -f "$cmReleaseDir")
 
     find ./system -type f |grep -v system/build.prop | xargs md5sum > cm.md5
 
-    if test $fullSystem != true; then
+    if test $fullSystem != true -a $rootOnly != true; then
         for x in $(seq 1 20); do
             if my-adb pull /sdcard/phone.md5; then
                 break
@@ -131,8 +135,15 @@ cmReleaseDir=$(readlink -f "$cmReleaseDir")
         if test ! -e phone.md5; then
             echo -n > phone.md5
         fi
-    else
+    elif test $fullSystem = true; then
         echo -n > phone.md5
+    else
+        grep -P -e "system/app|system/media|system/priv-app" cm.md5 |
+            grep -P -v -e "$(
+                         cd $mypath/gapps-system/;
+                         find . -type f | perl -npe 's,.*/,,' | tr \\n \|
+                         echo -n build.prop
+                     )" > phone.md5
     fi
 
     perl -e 'open($phone, "<", "phone.md5");

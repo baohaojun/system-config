@@ -64,7 +64,7 @@ EOF
     my-adb chmod 600 /data/debian/root/.ssh/authorized_keys
 
     my-adb push ~/.ssh/authorized_keys /data/debian/home/bhj/.ssh/
-    my-adb chown -R 1000.1000 /data/debian/home/bhj/.ssh/
+    my-adb busybox chown -R 1000.1000 /data/debian/home/bhj/.ssh/
     my-adb chmod 600 /data/debian/home/bhj/.ssh/authorized_keys
     my-adb forward tcp:22222 tcp:22
     exit
