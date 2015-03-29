@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Computer tools</title>
+<title>开始用beagrep查代码定义</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -102,317 +102,78 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">Computer tools</h1>
-<ul class="org-ul">
-<li>2015
-<ul class="org-ul">
-<li>2015-03
-<ul class="org-ul">
-<li>2015-03-29
-
+<h1 class="title">开始用beagrep查代码定义</h1>
 <p>
-<a href="../../../blog/2015/03/29/0-Start-Using-Beagrep-for-Code-Definition-Lookup.html">开始用beagrep查代码定义</a>
-</p>
-</li>
-
-<li>2015-03-03
-
-<p>
-<a href="../../../blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html">一个在安卓手机上“一键”安装debian系统的脚本</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2015-02
-<ul class="org-ul">
-<li>2015-02-25
-
-<p>
-<a href="../../../blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html">小扳手2.5.0</a>
-</p>
-</li>
-
-<li>2015-02-19
-
-<p>
-<a href="../../../blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html">小扳手抢红包秘决</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2015-01
-<ul class="org-ul">
-<li>2015-01-30
-
-<p>
-<a href="../../../blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.html">怎样在命令行上测试小扳手</a>
-</p>
-</li>
-
-<li>2015-01-27
-
-<p>
-<a href="../../../blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html">配置postfix用sohu smtpcloud进行relay</a>
-</p>
-</li>
-
-<li>2015-01-26
-
-<p>
-<a href="../../../blog/2015/01/26/0-T1Wrench-2.3.0-Released.html">T1Wrench 2.3.0 Released</a>
-</p>
-</li>
-
-<li>2015-01-12
-
-<p>
-<a href="../../../blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html">怎样交换键盘Escape和Caps Lock键</a>
-</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2014
-<ul class="org-ul">
-<li>2014-12
-<ul class="org-ul">
-<li>2014-12-10
-
-<p>
-<a href="../../../blog/2014/12/10/0-system-config-usage-guide.html">我的system-config使用指南</a>
-</p>
-</li>
-
-<li>2014-12-01
-
-<p>
-<a href="../../../blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html">小扳手2.0版使用手册</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2014-11
-<ul class="org-ul">
-<li>2014-11-08
-
-<p>
-<a href="../../../blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.html">专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2014-10
-<ul class="org-ul">
-<li>2014-10-24
-
-<p>
-<a href="../../../blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.html">不用鼠标在Linux命令行下启动Windows上的图形界面程序</a>
-</p>
-</li>
-
-<li>2014-10-23
-
-<p>
-<a href="../../../blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.html">把邮件的星标移到我的todo list里</a>
-</p>
-</li>
-
-<li>2014-10-21
-
-<p>
-<a href="../../../blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.html">反了反了！用Smartisan T1手机当Linux的语音输入法</a>
+之前我一直是在用GNU Global + Ctags-exuberant来查代码的定义，后来发现Global有两个缺点让我不能忍，所以最近一咬牙切换到了用我最喜欢的beagrep来查代码定义，居然也挺爽的。
 </p>
 
 <p>
-<a href="../../../blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.html">穷汉的安卓代码模板生成工具</a>
+Global哪两个地方让我不爽呢？
 </p>
-</li>
 
-<li>2014-10-09
+<ol class="org-ol">
+<li>基本不能正则表达式查询定义。
 
 <p>
-<a href="../../../blog/2014/10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.html">如何在Linux + Emacs下进行MFC编程（代码补齐）</a>
+比如在读Kernel代码的时候，你想查所有slub_.*的定义，会变得非常慢，因为Global的实现原理是这样的，一旦发现你想用正则表达式查询，就会把每个tag都用这个正则表达式匹配一遍，其算法从LogN变成了线性的N，一旦代码库变得像Android这么庞大的时候，查找就会变得相当慢了。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-09
-<ul class="org-ul">
-<li>2014-09-05
 
 <p>
-<a href="../../../blog/2014/09/05/0-Emoji.html">Emoji</a>
+这里还包括基本不能用不区分大小写的查询模式，因为这个也是用线性的算法实现的。
 </p>
 </li>
 
-<li>2014-09-01
+<li>代码发生较大改动后重建索引会变得相当慢，甚至可能segfault。不知道最新的版本里修正了这个bug了没有，我用的好像是5.9.3，最新的已经6.4了。
 
 <p>
-<a href="../../../blog/2014/09/01/0-config-adb-for-smartisan-t1.html">Config adb for smartisan t1</a>
+这个问题在我的Android版本发生升级、切换的时候尤为严重，比如从4.4升到5.0，或者从5.0又切换回到4.4，然后重新一建索引，基本上就进入死循环➡崩溃的节奏了，如果Global不崩溃，那就我崩溃😅。
 </p>
 </li>
-</ul>
-</li>
-
-<li>2014-08
-<ul class="org-ul">
-<li>2014-08-24
+</ol>
 
 <p>
-<a href="../../../blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.html">Connecting Iphone Under Debian Linux</a>
+所以我现在换到了用beagrep查定义。以前我是用beagrep查全文搜索，这个需要建一个全文的索引；现在只想查定义，所以拿到一个源代码文件，我需要把里面所有的定义抽出来——这个用ctags-exuberant就可以实现了——然后把这些定义当成此源代码文件的文本，对它建立索引，以后我想查readlink的定义，我就先用beagrep查询一下“哪些源代码文件包含readlink的定义？”，然后在结果文件里挨个地再用ctags-exuberant精确地查出readlink定义的行号。
 </p>
-</li>
-
-<li>2014-08-05
 
 <p>
-<a href="../../../blog/2014/08/05/0-a-love-letter.html">一封情书</a>
+一开始是想只建一个索引数据库，然后同时处理全文搜索和定义搜索的两个需求，后来发现这样做太复杂了，有点得不偿失。所以最后采取的方案很简单粗暴，建两个索引数据库！第一个就是老的beagrep数据库，第二个则是新的叫beatags的数据库。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-07
-<ul class="org-ul">
-<li>2014-07-13
 
 <p>
-<a href="../../../blog/2014/07/13/0-Smartisan-T1-Wrench.html">Smartisan T1 WrenchSmartisan T1小扳手使用指南</a>
+由此带来的一些好处包括上面说的那些Global的缺点，现在都可以解决了。比如正则表达式查询，因为Tokenizer的关系， <code>slub_.*</code> 这样的查询，对beagrep来说都不是事儿了。另外即使不用Tokenizer的帮助，beagrep本身其实是支持“不完整单词”（partial words）查询的，但现在还没有用上。至于大小写不区分的支持，beagrep本来就没有大小写的概念（作为一个搜索引擎，本来就要把大小写的差异给抹除的）。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-06
-<ul class="org-ul">
-<li>2014-06-23
 
 <p>
-<a href="../../../blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.html">在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email/sms</a>
+当然也有一些缺点，就是在查一些常用单词，比如File、String的定义的时候，速度会比Global慢很多，这是因为当前的分词实现里，read_a_file，this_is_a_string类似这样的定义，都会在查File或String的时候作为潜在的匹配文件出现，然后需要用ctags+grep精确查行号的时候把它们过滤掉。但这个可以用很多优化的方案去解决。其一是大规模地用cache，比如现在我即使是在用beagrep查全文搜索readlink的时候，会把所有含readlink的文件给cache住，下回再查的时候就直接cat这个cache。另外搜索readlink定义的时候，我会直接把所有readlink的tag也给cache住，下回再查的时候直接cat它。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-05
-<ul class="org-ul">
-<li>2014-05-20
 
 <p>
-<a href="../../../blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.html">在Debian下为安卓做一个GNU tar程序</a>
+接下来还要再做一个优化，就是修改beatags的分词规则，slub_cache、read_a_file，this_is_a_string这样的定义，应该被认为是一个Token，而不是依下划线把它们分开。这样就不会影响查File、String等定义时的性能了。
 </p>
-</li>
-</ul>
-</li>
-
-<li>2014-01
-<ul class="org-ul">
-<li>2014-01-16
 
 <p>
-<a href="../../../blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.html">用GreaseMonkey禁止Google搜索重定向绑架</a>
+最后带来一个影响，就是我的Ajoke项目，它是重度依赖于之前的Global的。经过我的努力，现在Ajoke还可以用，但是以前.jar文件也可以用gtags来建索引，从而为Ajoke使用，现在就不行了😁。上面说的许多cache的优化，就是为了让Ajoke能赶上之前的“慢”的程度而做的，结果加上cache之后，发现一不小心Ajoke的性能变得好多了🈶🈚🈶！
 </p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2013
-<ul class="org-ul">
-<li>2013-10
-<ul class="org-ul">
-<li>2013-10-16
 
 <p>
-<a href="../../../blog/2013/10/16/0-Interactive-Git-Add.html">Interactive Git Add</a>
+整个代码也清晰了很多，值得我喝一杯🍹。
 </p>
-</li>
-
-<li>2013-10-01
-
-<p>
-<a href="../../../blog/2013/10/01/0-Inside-Ajoke.html">Inside Ajoke</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2013-05
-<ul class="org-ul">
-<li>2013-05-21
-
-<p>
-<a href="../../../blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.html">Mysterious rsync/ssh/scp hang</a>
-</p>
-</li>
-
-<li>2013-05-08
-
-<p>
-<a href="../../../blog/2013/05/08/bbs-robot.html">站友福音：在水木bbs上用Emacs的键绑定</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2013-02
-<ul class="org-ul">
-<li>2013-02-12
-
-<p>
-<a href="../../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.html">html2mht.pl and dir2html.pl</a>
-</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-
-<li>2012
-<ul class="org-ul">
-<li>2012-10
-<ul class="org-ul">
-<li>2012-10-29
-
-<p>
-<a href="../../../blog/2012/10/29/why-symlink-my-config.html">我的配置环境：为什么用symlink而不是cp</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2012-05
-<ul class="org-ul">
-<li>2012-05-02
-
-<p>
-<a href="../../../blog/2012/05/02/pdf-for-kindle-touch.html">pdf-for-kindle-touch</a>
-</p>
-</li>
-</ul>
-</li>
-
-<li>2012-02
-<ul class="org-ul">
-<li>2012-02-02
-
-<p>
-<a href="../../../blog/2012/02/02/how-to-do-long-twitter-cn.html">自己动手做长微博（推特），内嵌图片的</a>
-</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        一个在安卓手机上“一键”安装debian系统的脚本 <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../../../readme.html"> <!-- next-url -->
+        ac-clang Manual <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
 <!-- {%html-mode%} -->
 
@@ -420,7 +181,7 @@ for the JavaScript code in this tag.
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/meta/tags/tool.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2015/03/29/0-Start-Using-Beagrep-for-Code-Definition-Lookup.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -491,12 +252,21 @@ for the JavaScript code in this tag.
 
     <h2>Tags</h2>
     <ul>
-        
+                <li><a href="../../../../meta/tags/tool.html" title="Computer tools">tool</a></li>
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        
+        <li><a href='../03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html'> 一个在安卓手机上“一键”安装debian系统的脚本 </a></li>
+<li><a href='../../02/25/0-T1Wrench-2.5.0-Release-Notes.html'> 小扳手2.5.0 </a></li>
+<li><a href='../../02/19/0-Draw-Lucky-Money-With-T1Wrench.html'> 小扳手抢红包秘决 </a></li>
+<li><a href='../../01/30/0-How-to-test-t1wrench-on-command-line.html'> 怎样在命令行上测试小扳手 </a></li>
+<li><a href='../../01/28/0-xdotool-is-fucking-with-dvp.html'> xdotool is fucking with dvp </a></li>
+<li><a href='../../01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html'> ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑 </a></li>
+<li><a href='../../01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html'> 配置postfix用sohu smtpcloud进行relay </a></li>
+<li><a href='../../01/26/0-T1Wrench-2.3.0-Released.html'> T1Wrench 2.3.0 Released </a></li>
+<li><a href='../../01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html'> 怎样交换键盘Escape和Caps Lock键 </a></li>
+<li><a href='../../01/09/0-From-QtSingleApplication-To-Design-Of-Qt.html'> 从QtSingleApplication的API看Qt的设计 </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>
