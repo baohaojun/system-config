@@ -8,130 +8,17 @@ if test -e ~/.config/no-$(basename $0); then
     exit
 fi
 
-if test -e ~/src/android-mirror; then
-    (
-        cd ~/src/android-mirror
-        for x in $(find . -type d -name '*.git' -print -prune|grep -v /.git); do
-            (
-                cd $x
-                git fetch $(repo-remote)
-            )
-        done
-    )
-fi || true
-
-if test -e ~/src/android/kernel/; then
-    (
-        set +e
-        cd ~/src/android/kernel/
-        repo sync -d .
-        rm-non-build-files-kernel arch/arm/configs/msm8974sfo_defconfig
-        rm -f newer mark
-        git add .
-        git co HEAD Documentation
-        git commit -m "rm-non-build-kernel $(today)"
-        command git co -B rm-non-build-kernel
-        repo sync -d .
-    ) || true
-fi
-
 export PATH=$(echo $PATH|tr ':' '\n'| perl -ne 'next if m/overide/; chomp; $path .= ":$_"; END{print substr($path, 1)}')
 
-if test "$RUNNING_IN_CRON" = true; then
-    export DO_REPO_UPDATE=true
-    (
-        set -e
-        cd ~/src/android
-        sync_failed=0
-        if test -e .do-update -a ! -e .do-not-update; then
-            repo-sync -n -j4
-        else
-            ~/bin/repo -n -j4 -c
-        fi || sync_failed=1
-        repo-changes\?
-        if test "$sync_failed" = 1; then
-            exit 1
-        fi
-    )
-    set -- `locate -b -r '^\.repo$'|grep src | grep -v ics-autobuild`
-    echo will update: "$@"
-else
-    set -- .
-    echo will only update current dir: $PWD
-fi
+(
+    set -e
+    cd ~/src/android
+    ~/bin/repo -d -j4
+    repo-changes\?
+)
 
-
-
-for x in $(for y in ~/src/android "$@"; do readlink -f $y; done|uniq-even-non-ajacent); do
-    cd $x || continue
-    cd `lookup-file .repo/..` || continue
-
-    (
-        set -e
-        flock 9
-        test -d .repo
-
-        if test -e .do-not-update; then
-            exit 0;
-        fi
-
-        if test ! -e .do-update; then
-            exit 0
-        fi
-        test -e Makefile || exit
-        repo-sync -n -j4
-        mkdir -p out || mkdir -p $(readlink -m out)
-
-        android-daily-changes
-        mv out/changes.log out/changes.log-backup-`today` || true
-        repo-changes\? 2>&1|tee out/changes.log
-        for x in `cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1`; do
-            if test ! -d $x; then
-                touch ~/etc/generate-repo-info.mk;
-                repo sync "$x" || true
-                continue
-            fi
-
-            repo forall $x -c '
-#{%sh%}
-set -x
-if test -n "$(git symbolic-ref HEAD)" -a -d .git/patches/$(basename $(git symbolic-ref HEAD))/ &&
-    ! git-is-ancestor $(repo-remote)/$(repo-branch) HEAD; then
-    gq push -a
-    gq rebase $(repo-remote)/$(repo-branch)
-else
-    git rebase $(repo-remote)/$(repo-branch) ||
-    if ! repo-changes\? | grep -q .; then
-        git reset --hard
-        git rebase $(repo-remote)/$(repo-branch)
-    fi
-fi
-#{%/sh%}
-' || true
-        done 2>&1|tee out/merge.log
-        repo-changes\? || true
-
-        {
-            repo-changes\? $(cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1) | grep . > out/changes.log.new &&
-            {
-                echo some repos still has changes:;
-                cat out/changes.log.new
-            }
-        } ||
-        echo repo is up to date.
-
-        flock -u 9
-        rm .repo/out-*/ -rf || true
-        if test $(wc -w .do-update|pn 1) != 0; then
-            for x in $(cat .do-update); do
-                android-make -c $x || true
-            done
-        else
-            android-make
-        fi
-        bhj-short-notify $(basename $0) "$(pwd): build completed"
-    ) 9>.android-full-build.lock
-done
+set -- `locate -b -r '^\.repo$'|grep src | grep -v ics-autobuild`
+echo will update: "$@"
 
 if test "$RUNNING_IN_CRON" = true; then
     cron-code-reading

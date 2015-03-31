@@ -68,14 +68,17 @@ function run_the_adb() {
 
 function loop-wait-device() {
     echo -n loop-wait-for-device > /dev/tty || true
-    for x in $(seq 1 ${1:-60}); do
+    for x in $(seq 1 ${1:-6000}); do
         if test $($the_adb devices | grep -v 'List of devices attached' | grep $ANDROID_SERIAL. | wc -l) -gt 0; then
             if test "$(command my-adb "echo -n hello; echo $$")" = hello$$; then
                 return 0;
             fi
         fi
         sleep 1
-        echo -n .
+        echo -n . > /dev/tty
+        if (( x % 60 == 0)); then
+            echo $((x / 60 )) > /dev/tty
+        fi
     done
     echo loop-wait-for-device failed > /dev/tty
     return 1
