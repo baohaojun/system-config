@@ -19,9 +19,8 @@ if test -e ~/src/github/projects/ABC.org -a ~/src/github/projects/ABC.org -nt ~/
         (progn
          (save-some-buffers t)
          (find-file "~/src/github/projects/ABC.org")
-         (org-babel-tangle))' && touch ~/bin/abc && exec $0 "$@"
+         (org-babel-tangle))' 1>&2 && touch ~/bin/abc && exec $0 "$@"
 fi
-
 
 die() {
     (
@@ -204,7 +203,7 @@ get-base-build-from-branch() {
 
 psync() {
     if test "$testabc" = true; then
-        echo testing abc
+        echo testing abc 1>&2
     else
         return 0
     fi
@@ -754,6 +753,12 @@ function lbb() { # alias for lbb
     list-base-builds
 }
 
+function cat-base-build-manifest.xml() {
+    get-base-build "$@"
+    cd $base_build/.repo
+    cat manifest.xml
+}
+
 abc-notify-maintainer() {
     info Will now send email to maintainer: "$@"
     /usr/bin/mailx -r baohaojun@gmail.com "$@" baohaojun@smartisan.com   < /dev/null
@@ -845,6 +850,7 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                 ) || abc-notify-maintainer -s "repo sync failed for $PWD: $?" || continue
 
                 repo manifest -r -o .repo/manifest.xml.sync
+                cat .repo/manifest.xml.sync > .repo/manifest.xml
                 if test -e .repo/manifest.xml.base && diff -q .repo/manifest.xml.base .repo/manifest.xml.sync; then
                     info "The repo of $PWD don't need update"
                     exit 0

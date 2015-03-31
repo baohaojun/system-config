@@ -12,6 +12,18 @@ function die() {
 export source_dir=$(readlink -f .)
 export db_dir=~/.cache/for-code-reading/$source_dir
 
+for x in $db_dir/.java-fallback.*; do
+    if test -d "$x"; then
+        (
+            cd -P "$x"
+            db_dir=$PWD
+            source_dir=${db_dir#*/.cache/for-code-reading}
+            cd $source_dir
+            beatags "$@" | perl -npe 's,(.*?\s+\S+\s+\d+\s+)(\S+),$1'"$source_dir"'/$2,'
+        )
+    fi
+done
+
 md5sum=$(
     for x in "$@"; do
         echo "$x"
