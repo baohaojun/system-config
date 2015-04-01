@@ -23,6 +23,7 @@ LUCENE_2_1_CSFILES =						\
 	$(lucenedir)/Analysis/StopFilter.cs			\
 	$(lucenedir)/Analysis/StopAnalyzer.cs			\
 	$(lucenedir)/Analysis/Standard/StandardTokenizer.cs	\
+	$(lucenedir)/Analysis/Standard/TagsTokenizer.cs	\
 	$(lucenedir)/Analysis/Standard/StandardAnalyzer.cs	\
 	$(lucenedir)/Analysis/Standard/StandardFilter.cs	\
 	$(lucenedir)/Analysis/Standard/StandardTokenizerImpl.cs	\
@@ -206,4 +207,3 @@ LUCENE_2_1_CSFILES =						\
 IGNORED_LUCENE_CSFILES =			\
         $(lucenedir)/Search/RemoteSearchable.cs	\
 	$(lucenedir)/AssemblyInfo.cs
-

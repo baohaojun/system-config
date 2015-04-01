@@ -10,7 +10,12 @@ $tokens = join(" ", @tokens);
 use String::ShellQuote;
 $tokens = shell_quote($tokens);
 
-$tokens = qx/beagrep-break-words $tokens/;
+if ($ENV{SOURCECODETAGSMODE} eq "true") {
+    $tokens = join " ", split("\\.\\*", $tokens);
+} else {
+    $tokens = qx/beagrep-break-words $tokens/;
+}
+
 
 $tokens =~ s/\r|\n/ /g;
 #$tokens =~ s/\b/*/g;
@@ -18,4 +23,4 @@ print "$tokens\n";
 
 
 
-# appended_comma = True 
+# appended_comma = True

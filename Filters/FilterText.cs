@@ -157,7 +157,7 @@ namespace Beagrep.Filters {
                 {
                         bool pull = false;
                         if (sourceCodeTagsMode) {
-                                Regex rx = new Regex("^(.+?\\s)\\s*\\S+\\s+\\d+\\s+(\\S+)");
+                                Regex rx = new Regex("^(.+?)\\s+\\S+\\s+\\d+\\s+(\\S+)");
                                 do {
                                         string s = ctagsOutput.ReadLine();
                                         if (s == "###terminator###") {
@@ -167,7 +167,8 @@ namespace Beagrep.Filters {
                                                 MatchCollection matches = rx.Matches(s);
                                                 foreach (Match match in matches) {
                                                         GroupCollection groups = match.Groups;
-                                                        pull = AppendChars(groups[1].Value.ToCharArray(), 0, groups[1].Length);
+                                                        string value = groups[1].Value + "\n";
+                                                        pull = AppendChars(value.ToCharArray(), 0, value.Length);
                                                 }
                                         }
                                 } while (pull);

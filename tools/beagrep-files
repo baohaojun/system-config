@@ -59,6 +59,7 @@ source_dir=${start_dir#*for-code-reading/}
 beagrep_dir=$start_dir/.beagrep
 if test "$tags" = true; then
     beagrep_dir=$start_dir/.beatags
+    export SOURCECODETAGSMODE=true
 fi
 
 # echo Beagrep index found at "$beagrep_dir" 1>&2
