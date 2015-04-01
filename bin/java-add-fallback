@@ -1,5 +1,9 @@
 #!/bin/bash
 
+me=$(basename $0)
+
+fallback=${me/-add-/-}
+
 if test -e ~/etc/bash.d/cd_beagrep; then
     . ~/etc/bash.d/cd_beagrep
 elif test "$AJOKE_DIR"; then
@@ -37,22 +41,22 @@ that_db_dir=$(cd -P "$1"; cd_beagrep; pwd)
 if test $at_head = true; then
     for x in $(seq 100 -1 0); do
         ((y = x + 1)) || true
-        if test -e $this_db_dir/.java-fallback.$x; then
-            if test $(readlink -f $this_db_dir/.java-fallback.$x) = $(readlink -f $that_db_dir); then
-                rm $this_db_dir/.java-fallback.$x
+        if test -e $this_db_dir/.$fallback.$x; then
+            if test $(readlink -f $this_db_dir/.$fallback.$x) = $(readlink -f $that_db_dir); then
+                rm $this_db_dir/.$fallback.$x
             else
-                mv $this_db_dir/.java-fallback.$x $this_db_dir/.java-fallback.$y
+                mv $this_db_dir/.$fallback.$x $this_db_dir/.$fallback.$y
             fi
         fi
     done
 fi
 for x in $(seq 0 100); do
-    if test ! -e $this_db_dir/.java-fallback.$x; then
+    if test ! -e $this_db_dir/.$fallback.$x; then
         break
     fi
-    if test "$(readlink -f $this_db_dir/.java-fallback.$x)" = $that_db_dir; then
+    if test "$(readlink -f $this_db_dir/.$fallback.$x)" = $that_db_dir; then
         die "$1 already a fallback at $x"
     fi
 done
 
-relative-link $that_db_dir $this_db_dir/.java-fallback.$x
+relative-link $that_db_dir $this_db_dir/.$fallback.$x
