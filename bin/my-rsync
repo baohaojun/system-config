@@ -36,5 +36,10 @@ function rsync() {
 }
 
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which -- "$0" 2>/dev/null)" )"; then
+    if [[ $1 =~ ^smb:// ]]; then
+        x=~/smb/${1#smb://}
+        shift
+        set -- "$x" "$@"
+    fi
     rsync "$@"
 fi

@@ -6,7 +6,7 @@ fi
 
 (
     cd ~/src/android
-    ~/bin/repo sync -d -j4 -f
+    ~/bin/repo sync -j4 -f
     repo-changes\?
 )
 

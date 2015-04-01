@@ -8,3 +8,4 @@ if yes-or-no-p -y "Push for review and submit?"; then
     gerrit-push-review -R
     gerrit-do-review
 fi
+git co cherry-from-this@{0}
