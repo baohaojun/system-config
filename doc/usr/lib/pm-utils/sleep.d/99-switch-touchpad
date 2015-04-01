@@ -26,6 +26,7 @@ set -x
 . ~/.renew-xauth
 . ~/.bash-path
 xscreensaver-command -lock&
+. ~/.config/ssh-agent
 notify-real-home&
 EOF
             )
