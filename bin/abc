@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/doc/projects/ABC.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/src/github/projects/ABC.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 # The name abc stands for Android Build Cake. Android Build is a piece
 # of Cake.
@@ -364,7 +364,7 @@ copy-output-files() {
         smb_folder=$(readlink -f $ABC_USER_OUTPUT | perl -npe 's,^/Share,smb://172.16.2.25,')
         echo "Please get your files at: $smb_folder"
         if [[ "$ABC_USER" =~ baohaojun@.* ]]; then
-            echo 'for x in $(getclip); do (set -x; adb-push '$smb_folder'/$x); done'
+            echo 'yes-or-no-p -y Continue && for x in $(getclip); do (set -x; adb-push '$smb_folder'/$x); done'
         fi
     )
 
@@ -560,7 +560,7 @@ EOF
             die "Invalid base build: $base_build"
         fi
         cd $base_build
-        tee /tmp/abc-patch.$$
+        tee /tmp/abc-patch.$$ | perl -ne 'print unless m/^GIT binary patch/ .. m/^$/'
         lock-base-build "for build request"
 
         clear_all_old_patches
@@ -586,7 +586,7 @@ EOF
 
             (
                 cat /tmp/abc-patch.$$; rm -f /tmp/abc-patch.$$
-            ) | patch -p 1
+            ) | git apply
         )
 
     fi
@@ -757,6 +757,40 @@ function cat-base-build-manifest.xml() {
     get-base-build "$@"
     cd $base_build/.repo
     cat manifest.xml
+}
+
+function repo-revision() {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopts -l b:base_build p:repo_path
+    ## end code-generator
+    ## start generated code
+    local base_build=
+    local repo_path=
+    local OPTIND=1
+    while getopts 'b:p:' opt; do
+        case "$opt" in
+            b)    base_build=$OPTARG;;
+            p)    repo_path=$OPTARG;;
+            *)    echo Usage Error;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    ## end generated code
+
+    base_build=${base_build#*/}
+    base_build=~/buildfarm/$base_build
+    if test -d "$base_build" && is-a-subdir "$base_build" ~/buildfarm/; then
+        cd "$base_build"
+        if test -d "$repo_path" && is-a-subdir "$base_build"/"$repo_path" "$base_build"; then
+            cd "$base_build"/"$repo_path"
+            repo forall . -c 'echo $REPO_LREV'
+        else
+            die "Invalid repo dir: $repo_path"
+        fi
+    else
+        die "Invalid base build: $base_build"
+    fi
 }
 
 abc-notify-maintainer() {

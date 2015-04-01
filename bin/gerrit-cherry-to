@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+git co -B cherry-from-this HEAD
+repo-cherry-find-all -f cherry-from-this -F -t $(git-choose-branch -p to) -T
+repo-cherry-pick-all baohaojun
+if yes-or-no-p -y "Push for review and submit?"; then
+    gerrit-push-review -R
+    gerrit-do-review
+fi

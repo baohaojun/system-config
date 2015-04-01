@@ -1,5 +1,4 @@
 #!/bin/bash
-exec >/dev/null
 . ~/.bashrc
 export PATH=/usr/local/bin:$PATH
 function do_it() {
@@ -8,9 +7,9 @@ function do_it() {
             if [[ $PWD =~ /.cache/for-code-reading/ ]]; then
                 cd "${PWD#*/.cache/for-code-reading}";
             fi
-            SOURCECODETAGSMODE=true mkbeagrepidx&
-            mkbeagrepidx
-        ) | tee .for-code-reading
+            time SOURCECODETAGSMODE=true mkbeagrepidx&
+            time mkbeagrepidx
+        ) 2>&1 | tee .for-code-reading
     fi
 }
 

@@ -79,8 +79,7 @@ function ew() {
     fi
 }
 
-tdir=$tdir/$(basename $ramdisk)-tmp
-if test "$debuggable" = true; then
+function fix-adbd-and-debug() {
     echo ro.DEBUGGABLE=1 >> $tdir/default.prop
     if test "$USER" = bhj; then
         perl -npe 's/ro.debuggable=1/ro.debuggable=0/' -i $tdir/default.prop
@@ -100,6 +99,12 @@ if test "$debuggable" = true; then
     if test -e $tdir/fstab.qcom; then
         perl -npe 's/\bwait,verify\b/wait/' -i $tdir/fstab.qcom
     fi
+
+}
+
+tdir=$tdir/$(basename $ramdisk)-tmp
+if test "$debuggable" = true; then
+    fix-adbd-and-debug
 fi
 
 if test "$userdebug" = true; then
@@ -135,6 +140,7 @@ done
 
 if test "$root_folder"; then
     rsync "$root_folder"/* $tdir -av
+    fix-adbd-and-debug
 fi
 
 echo tdir is $tdir

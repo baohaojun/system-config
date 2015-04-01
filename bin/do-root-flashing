@@ -26,18 +26,15 @@ fi
 workingdir=/home/bhj/smb/baohaojun/tmp/root-flash
 
 rm -rf $workingdir/$(basename $PWD) ~/tmp/root-flash
-mkdir -p $workingdir/ ~/tmp/root-flash
+mkdir -p $workingdir/ ~/tmp/root-flash || true
 smb-pull $PWD ~/tmp/root-flash
 (
     cd ~/tmp/root-flash
     find . -name 'system_*.img' -o -name 'userdata_*.img'|xargs rm
     # smb-push .
+    perl -ne 'print unless m/system_/' -i $xml
+    perl -ne 'print unless m/userdata_/' -i $xml
+
+    replace-bootimage -b boot.img -- -d
+    do-flashing
 )
-
-cd $workingdir/$(basename $PWD)
-
-perl -ne 'print unless m/system_/' -i $xml
-perl -ne 'print unless m/userdata_/' -i $xml
-
-replace-bootimage -b boot.img -- -d
-do-flashing

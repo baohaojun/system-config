@@ -82,7 +82,6 @@ for x in $diffs; do
                 export WORKING_REV=$y
                 git cherry-pick --allow-empty $y || start_recursive_shell "cherry failed: $y" || true
             done
-            start_recursive_shell 'gerrit review'
         fi
     )
 done

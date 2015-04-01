@@ -42,7 +42,7 @@ fi
 
 if test ! -e "$boot"; then
     if test "$output" = "$boot"; then
-        output=./boot.img
+        output=~/tmp/boot.img
     fi
     boot_part=$(my-adb 'echo /dev/block/platform/*/by-name/boot')
     if test "$boot" = adb; then
