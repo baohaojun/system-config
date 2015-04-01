@@ -2,4 +2,8 @@
 
 . ~/.bashrc
 cd_beagrep
-beagrep-dump-index --indexdir=`pwd`/.beagrep --term-frequencies
+idxdir=.beagrep
+if test "$SOURCECODETAGSMODE" = true; then
+    idxdir=.beatags
+fi
+beagrep-dump-index --indexdir=`pwd`/$idxdir --term-frequencies
