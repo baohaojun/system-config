@@ -21,6 +21,9 @@ my $file_tag = "";
 my $grep_use_perl_regexp;
 my $replace_with;
 
+my @saved_args = @ARGV;
+my @fallback_dirs;
+
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
@@ -127,6 +130,10 @@ if ($short_format) {
         debug "change db to $db_dir";
     }
     debug "found beagrep db at $db_dir";
+    @fallback_dirs = glob("$db_dir/.beagrep-fallback.*");
+    if (@fallback_dirs) {
+        print "We have found fall back dirs: @fallback_dirs\n";
+    }
     chdir $pwd;
     chomp($pwd = qx/readlink -f "`pwd`"/);
     my $start = length($pwd) + 1;
@@ -176,5 +183,17 @@ if ($find_file_only || 1) {
         for (@beagrep_files) {
             print "$_:$file_default_line: [01;31m****************![0m\n" if $path_match_set{$_};
         }
+    }
+}
+
+if (@fallback_dirs and not $ENV{DOING_BEAGREP_FALLBACK}) {
+    $ENV{DOING_BEAGREP_FALLBACK} = 1;
+    for (@fallback_dirs) {
+        chomp($_ = qx(readlink -f $_));
+        $_ =~ s,/.*\.cache/for-code-reading,,;
+        print("Going to work in $_\n");
+        chdir $_ or die "Can't chdir to $_";
+        $ENV{PWD} = $_;
+        system("beagrep", @saved_args, "-d", "$_");
     }
 }
