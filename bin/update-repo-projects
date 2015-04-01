@@ -4,21 +4,11 @@ if test -e ~/.config/ssh-agent; then
     . ~/.config/ssh-agent;
 fi
 
-if test -e ~/.config/no-$(basename $0); then
-    exit
-fi
-
-export PATH=$(echo $PATH|tr ':' '\n'| perl -ne 'next if m/overide/; chomp; $path .= ":$_"; END{print substr($path, 1)}')
-
 (
-    set -e
     cd ~/src/android
-    ~/bin/repo -d -j4
+    ~/bin/repo sync -d -j4 -f
     repo-changes\?
 )
-
-set -- `locate -b -r '^\.repo$'|grep src | grep -v ics-autobuild`
-echo will update: "$@"
 
 if test "$RUNNING_IN_CRON" = true; then
     cron-code-reading

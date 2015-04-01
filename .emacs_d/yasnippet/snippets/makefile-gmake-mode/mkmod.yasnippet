@@ -4,8 +4,8 @@
 # --
 
 include \$(CLEAR_VARS)
-LOCAL_SRC_FILES:= ${module}.c
-LOCAL_MODULE := ${module}
+LOCAL_SRC_FILES:= ${1:module}.c
+LOCAL_MODULE := $1
 LOCAL_MODULE_PATH := \$(TARGET_OUT_EXECUTABLES)
 LOCAL_MODULE_TAGS := optional
 include \$(BUILD_EXECUTABLE)

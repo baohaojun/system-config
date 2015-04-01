@@ -34,7 +34,11 @@ md5file=$md5dir/${md5sum:2}
 
 if test -e "$md5file" -a -z "$UPDATE_TAG_CACHE"; then
     cat "$md5file";
-    UPDATE_TAG_CACHE=true beatags "$@" >/dev/null 2>&1 &
+    (
+        set -x
+        trap '' SIGHUP
+        UPDATE_TAG_CACHE=true bash -x beatags "$@"
+    ) > ~/.logs/update-beatags.log 2>&1 &
     exit
 fi
 

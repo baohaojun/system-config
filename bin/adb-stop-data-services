@@ -1,6 +1,6 @@
 #!/bin/bash
 my-adb -r stop
-for x in keystore ril-daemon cnd gsiff_daemon quipc_igsn quipc_main sensors ; do
+for x in keystore ril-daemon cnd gsiff_daemon quipc_igsn quipc_main sensors sdcard ipacm; do
     my-adb stop $x
 done
 
