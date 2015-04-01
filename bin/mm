@@ -56,6 +56,7 @@ time (
     cd "$(dirname $(lookup-file Android.mk))"
     ONE_SHOT_MAKEFILE=$(readlink -f $PWD/Android.mk)
     export ONE_SHOT_MAKEFILE=${ONE_SHOT_MAKEFILE:1+${#top_dir}}
+    project=$(ap)
 
     cd $top_dir
 
@@ -71,7 +72,7 @@ time (
         if test ${PATH_PREPEND}x != x; then
             PATH=$PATH_PREPEND:$PATH
         fi
-        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs $verbose all_modules "$@" 2>&1
+        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs $verbose all_modules $(if test "$project" = device/qcom/sepolicy; then echo bootimage; fi) "$@" 2>&1
         echo mm build is ok
     ) | tee ~/.logs/mm.log.$$
 

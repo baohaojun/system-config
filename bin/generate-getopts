@@ -53,7 +53,7 @@ for (@args) {
 }
 
 print <<'EOF';
-    *)    echo Usage Error;;
+    *)    echo Usage Error; exit 2;;
     esac
 done
 shift $(($OPTIND - 1))
