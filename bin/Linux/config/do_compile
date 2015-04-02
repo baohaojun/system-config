@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
 function compile_beagrep() {
     cd ~/gcode/beagrep
     git clean -xfd
@@ -21,6 +26,39 @@ function compile_beagrep() {
     fi
     make
     sudo make install
+}
+
+function compile_local_beagrep() {
+    (
+        cd ~/external/
+        if test -e "external-local"; then
+            rmdir local || true
+            mv  external-local local
+        fi
+        cd local
+        command rsync code3:external/local/ . -av
+        git add .
+        if git st -s | grep . -q; then
+            die "code3 local not clean";
+        fi
+    )
+    cd ~/gcode/beagrep
+    if git st -s | grep . -q; then
+        die "git not clean"
+    fi
+    git clean -xfd
+    . .gitx
+
+    git co -B origin/sans-glib
+    git merge master
+    psync -d code3 .
+    ssh code3 "cd $PWD; autoreconf -i && ./configure --prefix=$(echo ~/external/local) && make -j200 && make install"
+    (
+        cd ~/external/local
+        command rsync code3:external/local/ . -av
+        cd ..
+        mv local external-local
+    )
 }
 
 

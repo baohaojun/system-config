@@ -85,3 +85,4 @@ while test "$1"; do
         adb-tap 69 1859
     )
 done
+adb-key TAB
