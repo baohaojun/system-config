@@ -3,9 +3,15 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 
+postfix=$(basename $0 | perl -npe 's/my-dict//;')
 
-if test $# = 0 -a $(basename $0 | perl -npe 's/my-dict//;' | cut -b 1) = -; then
-        set -- "$(xclip -o)"
+if test $# = 0 -a "${postfix:0:1}" = -; then
+    set -- "$(xclip -o|perl -npe 's/^\s+|\s+$//')"
+    if test "$postfix" = "-usage"; then
+        set -- "?$1?"
+    elif test "$postfix" = "-matching"; then
+        set -- "/$1/"
+    fi
 elif test $# = 0; then
     input=$(ask-for-input-with-sawfish -p "md> ")
     echo input is "$input" >> ~/.logs/my-dict.log
