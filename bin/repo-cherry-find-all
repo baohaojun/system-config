@@ -10,9 +10,19 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 
-if test $# = 0; then
-    set -- -f $(if test -d bionic; then cd bionic; fi; git-choose-branch -p from|perl -npe 's!remotes/.*?/!!') -t \
-        $(if test -d bionic; then cd bionic; fi; git-choose-branch -p to|perl -npe 's!remotes/.*?/!!')
+if test $# = 0 || test "$#" = 2 -a "$1" = -F -a "$2" = -T; then
+    if test "$#" = 0; then
+        function remove-remotes() {
+            perl -npe 's!remotes/.*?/!!'
+        }
+    else
+        function remove-remotes() {
+            perl -npe 's!remotes/!!'
+        }
+    fi
+
+    set -- -f $(if test -d bionic; then cd bionic; fi; git-choose-branch -p from|remove-remotes) -t \
+        $(if test -d bionic; then cd bionic; fi; git-choose-branch -p to|remove-remotes) "$@"
 fi
 
 
