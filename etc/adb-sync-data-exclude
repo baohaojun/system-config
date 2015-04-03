@@ -32,3 +32,6 @@ data/media/0/tieba/
 data/app-lib
 data/media/0/smartisan/update
 data/data/com.smartisan.rem/.rem.log
+data/powerlog
+data/*.bin
+data/*.mbn

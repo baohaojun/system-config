@@ -1,0 +1,6 @@
+#!/bin/bash
+mkdir -p ~/tmp/logcat/$ANDROID_SERIAL
+cd ~/tmp/logcat/$ANDROID_SERIAL
+adb logcat -v threadtime -b events >> events.logcat&
+adb logcat -v threadtime -b radio >> radio.logcat&
+adb logcat -v threadtime |tee -a system.logcat
