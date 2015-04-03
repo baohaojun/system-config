@@ -56,6 +56,10 @@ for x in $diffs; do
     dir=$(echo $x|perl -npe 's!.*/!!; s/.log$//; s!%!/!g')
     (
         cd $dir
+        if test "$(basename $0)" = repo-cherry-push-all; then
+            start_recursive_shell repo-cherry-push-all;
+            exit
+        fi
         git reset --hard
         command git clean -xfd
         git fetch $(repo-remote)
