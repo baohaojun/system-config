@@ -230,6 +230,10 @@ function adb() {
         return 0;
     fi
 
+    if test "$1" = logcat; then
+        my-adb -W || true
+    fi
+
     if test "$1" = logcat -a "$2" = -c; then
         the-true-adb logcat -c
         exec the-true-adb logcat

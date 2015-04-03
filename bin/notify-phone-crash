@@ -81,11 +81,17 @@ if test $(basename $0) = adb-fix-gms; then
             my-adb romount
         fi
 
-        if test "$(my-adb 'test -e /system/priv-app/GmsCore.apk && echo yes')" = yes; then
+        if test "$(my-adb 'test -e /system/priv-app/GmsCore.apk -o -d /system/priv-app/GmsCore && echo yes')" = yes; then
             true
         else
             my-adb stop
-            adb-push ~/today/forever/gapps-system/* /system/
+
+            if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
+                # it's lp
+                adb-push ~/today/forever/gapps-lp/* /system/
+            else
+                adb-push ~/today/forever/gapps-system/* /system/
+            fi
         fi
 
 
