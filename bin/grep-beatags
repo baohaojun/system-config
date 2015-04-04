@@ -71,10 +71,6 @@ if ($lookup_needle =~ m/^\w+\.\.\*/ or $member_lookup and $lookup_needle =~ m/\.
     debug "lookup_needle changed to $lookup_needle";
 }
 
-if ($lookup_needle =~ m/^\w.*\.\*/) {
-    $lookup_needle = "^$lookup_needle";
-}
-
 if ($wild_card) {
     $lookup_needle = ".*";
 }
