@@ -33,7 +33,6 @@ my $ignore_case = "";
 my $type_re;
 my $saved_type_re;
 my $reverse_type_re;
-my $fall_back = 0; # fall back only if 1, both if 0, no fall back if -1
 my $do_dir;
 my $silent;
 my $do_component;
@@ -55,7 +54,6 @@ GetOptions(
     "p=s" => sub {$path_matcher = qr($_[1])i},
     "v=s" => sub {$path_matcher_inv = qr($_[1])i},
     "i!"  => \$ignore_case,
-    "b=i"  => \$fall_back,
     "t=s" => sub {$type_re = qr($_[1])i},
     "T=s" => sub {$type_re = qr($_[1])i; $reverse_type_re = 1},
     );
@@ -264,10 +262,6 @@ my $use_full_path = "";
 sub do_cscope($$$) {
     $filter_worked = 0;
     debug "do_cscope @_";
-    if ($fall_back == 1) {
-        $fall_back = 0;
-        return 0;
-    }
     my ($db_dir, $lookup_needle, $lookup_restrict_regexp) = @_;
     my $lookup_needle_quote = shell_quote($lookup_needle);
     my $db_dir_quoted = shell_quote($db_dir);
@@ -361,7 +355,7 @@ my @gtags_fallback_dir =
 
 @gtags_fallback_dir = map {chomp($_ = qx(readlink -f $_)); $_} (@gtags_fallback_dir);
 
-if (@gtags_fallback_dir and $fall_back != -1) {
+if (@gtags_fallback_dir) {
     debug "fallback: @gtags_fallback_dir";
 } else {
     print "No matches and no fallback dirs, will exit now\n" unless $silent;
