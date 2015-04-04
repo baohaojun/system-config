@@ -19,10 +19,31 @@
 using namespace Snore;
 using namespace std;
 
-void bringToFront(QString pid, Notification noti)
+
+void bringWindowToFront( WId _wid) {
+    snoreDebug( SNORE_DEBUG ) << _wid;
+#ifdef Q_OS_WIN
+    HWND wid = (HWND)_wid;
+    HWND hwndActiveWin = GetForegroundWindow();
+    int idActive = GetWindowThreadProcessId( hwndActiveWin, NULL );
+
+    if ( AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) )
+    {
+        SetForegroundWindow( wid );
+        SetFocus( wid );
+        FlashWindow( wid, TRUE );
+        AttachThreadInput( GetCurrentThreadId(), idActive, FALSE );
+    } else {
+        // try it anyhow
+        SetForegroundWindow( wid );
+        SetFocus( wid );
+        FlashWindow( wid, TRUE );
+    }
+#endif
+}
+void bringToFront(QString pid)
 {
-    Q_UNUSED(pid)
-    Q_UNUSED(noti)
+    snoreDebug( SNORE_DEBUG ) << pid;
 #ifdef Q_OS_WIN
     auto findWindowForPid = [](ulong pid)
     {
@@ -46,21 +67,7 @@ void bringToFront(QString pid, Notification noti)
 
     HWND wid = findWindowForPid(pid.toInt());
     if(wid) {
-        HWND hwndActiveWin = GetForegroundWindow();
-        int idActive = GetWindowThreadProcessId( hwndActiveWin, NULL );
-
-        if ( AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) )
-        {
-            SetForegroundWindow( wid );
-            SetFocus( wid );
-            FlashWindow( wid, TRUE );
-            AttachThreadInput( GetCurrentThreadId(), idActive, FALSE );
-        } else {
-            // try it anyhow
-            SetForegroundWindow( wid );
-            SetFocus( wid );
-            FlashWindow( wid, TRUE );
-        }
+        bringWindowToFront((WId)wid);
     }
 #endif
 }
@@ -95,12 +102,16 @@ int main(int argc, char *argv[])
     QCommandLineOption silent(QStringList() << "silent", "Don't print to stdout.");
     parser.addOption(silent);
 
-    QCommandLineOption _bringToFront(QStringList() << "bring-to-front", "Bring process with pid to front if notification is clicked.", "pid");
-    parser.addOption(_bringToFront);
+    QCommandLineOption _bringProcessToFront(QStringList() << "bring-process-to-front", "Bring process with pid to front if notification is clicked.", "pid");
+    parser.addOption(_bringProcessToFront);
+
+    QCommandLineOption _bringWindowToFront(QStringList() << "bring-window-to-front", "Bring window with wid to front if notification is clicked.", "wid");
+    parser.addOption(_bringWindowToFront);
 
 
 
     parser.process(app);
+    snoreDebug( SNORE_DEBUG ) << app.arguments();
     if (parser.isSet(title) && parser.isSet(message)) {
         SnoreCore &core = SnoreCore::instance();
 
@@ -114,6 +125,10 @@ int main(int argc, char *argv[])
         core.registerApplication(application);
 
         Notification n(application, alert, parser.value(title), parser.value(message), icon);
+        if(parser.isSet(_bringProcessToFront) || parser.isSet(_bringWindowToFront))
+        {
+            n.addAction(Action(1, "Bring to Front"));
+        }
 
         core.broadcastNotification(n);
         int returnCode = -1;
@@ -124,8 +139,12 @@ int main(int argc, char *argv[])
                 QDebug(&reason) << noti.closeReason();
                 cout << qPrintable(reason) << endl;
             }
-            if(noti.closeReason() == Notification::CLOSED  && parser.isSet(_bringToFront)) {
-                bringToFront(parser.value(_bringToFront), noti);
+            if(noti.closeReason() == Notification::CLOSED) {
+                if(parser.isSet(_bringProcessToFront)) {
+                    bringToFront(parser.value(_bringProcessToFront));
+                } else if(parser.isSet(_bringWindowToFront)) {
+                    bringWindowToFront((WId)parser.value(_bringWindowToFront).toULongLong());
+                }
             }
             returnCode = noti.closeReason();
         });
