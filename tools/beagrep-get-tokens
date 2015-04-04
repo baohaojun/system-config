@@ -7,12 +7,12 @@ for (@ARGV) {
 
 $tokens = join(" ", @tokens);
 
-use String::ShellQuote;
-$tokens = shell_quote($tokens);
-
 if ($ENV{SOURCECODETAGSMODE} eq "true") {
-    $tokens = join " ", split("\\.\\*", $tokens);
+    $tokens =~ s/\.\*/*/g;
 } else {
+    use String::ShellQuote;
+    $tokens = shell_quote($tokens);
+
     $tokens = qx/beagrep-break-words $tokens/;
 }
 
