@@ -85,7 +85,7 @@ fi
 if test -e "$working_file"; then
     echo "$working_file"
 else
-    beagrep-files -t $quote -s "$entry"
+    beagrep-files -t $quote -s -- "$entry"
 fi| grep -v -P -e '[ \t]' |
     if test "$path_pat"; then
         grep -P -e "$path_pat" -i

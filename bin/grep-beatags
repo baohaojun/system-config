@@ -59,15 +59,6 @@ GetOptions(
     );
 
 $saved_type_re = $type_re;
-if ($lookup_needle =~ m/^\w+\.\.\*/ or $member_lookup and $lookup_needle =~ m/\./) {
-# so that when I search for String.* it will allow me to select java.lang.String..*
-    (my $id = $lookup_needle) =~ s/(\..*)//;
-    my $replaced = $1;
-    chomp (my $qid=qx(select-output-line "grep-beatags -e $id -T resource" | pn 3));
-    $qid =~ s/<|>//g;
-    $lookup_needle = "$qid$replaced";
-    debug "lookup_needle changed to $lookup_needle";
-}
 
 if ($wild_card) {
     $lookup_needle = ".*";
