@@ -113,7 +113,7 @@ debug "pat is: $pat.\n";
 #   . substr(qx/beagrep-get-tokens $pat/, 0, -1)
 #   . "[0m'\n";
 
-my $beagrep_files = $use_tokens ? qx/beagrep-files $use_tokens/ : qx/beagrep-files $pat $additional_tokens/;
+my $beagrep_files = $use_tokens ? qx/beagrep-files -- $use_tokens/ : qx/beagrep-files -- $pat $additional_tokens/;
 my @beagrep_files = split(/\n/, $beagrep_files);
 
 if ($short_format) {
