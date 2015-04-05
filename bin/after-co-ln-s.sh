@@ -327,4 +327,10 @@ fi || true
 
 check-perl-module String::ShellQuote libstring-shellquote-perl
 check-perl-module Marpa::R2           libmarpa-r2-perl
+(
+    cd ~/system-config/
+    for x in .*.bhj; do
+        relative-link $x ../${x%.bhj} || true
+    done
+) >/dev/null 2>&1 &
 echo Simple config OK.
