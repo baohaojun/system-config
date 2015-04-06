@@ -101,7 +101,7 @@ void SnoreNotifier::slotInvoked()
     NotifyWidget *widget = qobject_cast<NotifyWidget *>(sender());
     Notification notification = widget->notification();
     SnoreCorePrivate::instance()->notificationActionInvoked(notification);
-    closeNotification(notification, Notification::CLOSED);
+    closeNotification(notification, Notification::ACTIVATED);
     slotCloseNotification(notification);
 }
 

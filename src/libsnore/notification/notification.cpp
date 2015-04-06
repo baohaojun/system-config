@@ -171,7 +171,7 @@ QDebug operator <<(QDebug debug, const Snore::Notification::CloseReasons &flags)
         debugPrintEnum(Notification::NONE);
         debugPrintEnum(Notification::TIMED_OUT);
         debugPrintEnum(Notification::DISMISSED);
-        debugPrintEnum(Notification::CLOSED);
+        debugPrintEnum(Notification::ACTIVATED);
         debugPrintEnum(Notification::REPLACED);
     default:
         debug << QByteArray::number(flags, 16) << ")";

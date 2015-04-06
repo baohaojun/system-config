@@ -122,7 +122,7 @@ void GrowlBackend::gntpCallback(growl_callback_data *data)
         } else if (reason == "CLOSED") {
             r = Notification::DISMISSED;
         } else if (reason == "CLICK") {
-            r = Notification::CLOSED;
+            r = Notification::ACTIVATED;
             SnoreCorePrivate::instance()->notificationActionInvoked(n);
         }
         s_instance->closeNotification(n, r);

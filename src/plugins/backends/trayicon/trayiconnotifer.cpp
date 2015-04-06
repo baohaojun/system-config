@@ -93,7 +93,7 @@ void TrayIconNotifer::actionInvoked()
     QSystemTrayIcon *icon = trayIcon(n.application());
     if (icon && n.isValid()) {
         SnoreCorePrivate::instance()->notificationActionInvoked(n);
-        closeNotification(n, Notification::CLOSED);
+        closeNotification(n, Notification::ACTIVATED);
         m_currentlyDisplaying = false;
         displayNotification(icon);
     }

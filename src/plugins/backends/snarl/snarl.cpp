@@ -67,10 +67,10 @@ public:
             Notification::CloseReasons reason = Notification::NONE;
             switch (action) {
             case SnarlEnums::CallbackInvoked:
-                reason = Notification::CLOSED;
+                reason = Notification::ACTIVATED;
                 break;
             case SnarlEnums::NotifyAction:
-                reason = Notification::CLOSED;
+                reason = Notification::ACTIVATED;
                 if (notification.isValid()) {
                     notification.data()->setActionInvoked(data);
                     SnoreCorePrivate::instance()->notificationActionInvoked(notification);

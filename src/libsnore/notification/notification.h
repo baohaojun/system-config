@@ -62,8 +62,13 @@ public:
         DISMISSED = 2,
 
         /**
-         * The Notification was closed after an action was invoked.
+         * The Notification was activated, an action was invoked.
          * @see actionInvoked()
+         */
+        ACTIVATED = 3,
+
+        /**
+         * @deprecated same as ACTIVATED
          */
         CLOSED = 3,
 

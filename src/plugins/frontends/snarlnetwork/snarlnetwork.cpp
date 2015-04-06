@@ -74,7 +74,7 @@ void SnarlNetworkFrontend::notificationClosed(Snore::Notification notification)
     case Notification::TIMED_OUT:
         callback(notification, "SNP/1.1/303/Notification timed out/");
         break;
-    case Notification::CLOSED:
+    case Notification::ACTIVATED:
         callback(notification, "SNP/1.1/307/Notification closed/");
         break;
     case Notification::DISMISSED:
