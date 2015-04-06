@@ -325,6 +325,10 @@ if which emacs >/dev/null 2>&1 && test ! -e ~/.config/emacs-config-done; then
     ~/system-config/bin/Linux/emacs-install-packages
 fi || true
 
+if test "$USER" = bhj && test ! -d ~/src/github/git-upload-patches; then
+    git clone home:repos/git-upload-patches.git ~/src/github/git-upload-patches
+fi
+
 check-perl-module String::ShellQuote libstring-shellquote-perl
 check-perl-module Marpa::R2           libmarpa-r2-perl
 (

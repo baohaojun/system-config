@@ -99,7 +99,7 @@ function git()
             test "$(readlink -f .)" = "$(readlink -f ~/system-config/)"
         then
             cd ~/system-config/;
-            if test "$1" = st; then
+            if test "$1" = st -a "$2" != -S; then
                 for x in ~/src/github/*; do
                     if test -d $x -a ! -L $x -a -e $x/.git; then
                         (
