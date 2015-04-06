@@ -44,7 +44,7 @@ Using a plugin system it is possible to create notifications with many different
 - [Tomahawk](http://www.tomahawk-player.org/)
 
 ## API Doc ##
-[A documentation of the API can be found here](http://winkde.org/~pvonreth/other/snore/doc/html/index.html)
+[A documentation of the API can be found here](http://winkde.org/~pvonreth/other/snore/latest/doc/html/index.html)
 
 ## Dependencies ##
 Required dependencies:
