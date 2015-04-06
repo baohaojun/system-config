@@ -64,7 +64,7 @@
     <message>
         <location filename="../src/libsnore/settingsdialog.ui" line="115"/>
         <source>Display Test Notification</source>
-        <translation>Zeige eine Testitteilung an</translation>
+        <translation>Zeige eine Testmitteilung an</translation>
     </message>
 </context>
 <context>
