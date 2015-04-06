@@ -36,7 +36,7 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 #ifdef Q_OS_MAC
              | Qt::SubWindow
 #else
-             | Qt::ToolTip
+             | Qt::Tool
 #endif
             );
 
