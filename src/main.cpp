@@ -19,44 +19,44 @@
 using namespace Snore;
 using namespace std;
 
-
-void bringWindowToFront( WId _wid) {
-    snoreDebug( SNORE_DEBUG ) << _wid;
+void bringWindowToFront(WId _wid)
+{
+    snoreDebug(SNORE_DEBUG) << _wid;
 #ifdef Q_OS_WIN
     HWND wid = (HWND)_wid;
     HWND hwndActiveWin = GetForegroundWindow();
-    int idActive = GetWindowThreadProcessId( hwndActiveWin, NULL );
+    int idActive = GetWindowThreadProcessId(hwndActiveWin, NULL);
 
-    if ( AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) )
-    {
-        SetForegroundWindow( wid );
-        SetFocus( wid );
-        FlashWindow( wid, TRUE );
-        AttachThreadInput( GetCurrentThreadId(), idActive, FALSE );
+    if (AttachThreadInput(GetCurrentThreadId(), idActive, TRUE)) {
+        SetForegroundWindow(wid);
+        SetFocus(wid);
+        FlashWindow(wid, TRUE);
+        AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
     } else {
         // try it anyhow
-        SetForegroundWindow( wid );
-        SetFocus( wid );
-        FlashWindow( wid, TRUE );
+        SetForegroundWindow(wid);
+        SetFocus(wid);
+        FlashWindow(wid, TRUE);
     }
 #endif
 }
 void bringToFront(QString pid)
 {
-    snoreDebug( SNORE_DEBUG ) << pid;
+    snoreDebug(SNORE_DEBUG) << pid;
 #ifdef Q_OS_WIN
-    auto findWindowForPid = [](ulong pid)
-    {
+    auto findWindowForPid = [](ulong pid) {
         // based on http://stackoverflow.com/a/21767578
         pair<ulong, HWND> data = make_pair(pid, (HWND)0);
-        ::EnumWindows([](HWND handle, LPARAM lParam) -> BOOL{
-            auto isMainWindow = [](HWND handle){
+        ::EnumWindows([](HWND handle, LPARAM lParam) -> BOOL {
+            auto isMainWindow = [](HWND handle)
+            {
                 return ::GetWindow(handle, GW_OWNER) == (HWND)0 && IsWindowVisible(handle);
             };
-            pair<ulong, HWND>& data = *(pair<ulong, HWND>*)lParam;
+            pair<ulong, HWND> &data = *(pair<ulong, HWND> *)lParam;
             ulong process_id = 0;
             ::GetWindowThreadProcessId(handle, &process_id);
-            if (data.first != process_id || !isMainWindow(handle)) {
+            if (data.first != process_id || !isMainWindow(handle))
+            {
                 return TRUE;
             }
             data.second = handle;
@@ -66,7 +66,7 @@ void bringToFront(QString pid)
     };
 
     HWND wid = findWindowForPid(pid.toInt());
-    if(wid) {
+    if (wid) {
         bringWindowToFront((WId)wid);
     }
 #endif
@@ -108,10 +108,8 @@ int main(int argc, char *argv[])
     QCommandLineOption _bringWindowToFront(QStringList() << "bring-window-to-front", "Bring window with wid to front if notification is clicked.", "wid");
     parser.addOption(_bringWindowToFront);
 
-
-
     parser.process(app);
-    snoreDebug( SNORE_DEBUG ) << app.arguments();
+    snoreDebug(SNORE_DEBUG) << app.arguments();
     if (parser.isSet(title) && parser.isSet(message)) {
         SnoreCore &core = SnoreCore::instance();
 
@@ -125,8 +123,7 @@ int main(int argc, char *argv[])
         core.registerApplication(application);
 
         Notification n(application, alert, parser.value(title), parser.value(message), icon);
-        if(parser.isSet(_bringProcessToFront) || parser.isSet(_bringWindowToFront))
-        {
+        if (parser.isSet(_bringProcessToFront) || parser.isSet(_bringWindowToFront)) {
             n.addAction(Action(1, "Bring to Front"));
         }
 
@@ -139,10 +136,10 @@ int main(int argc, char *argv[])
                 QDebug(&reason) << noti.closeReason();
                 cout << qPrintable(reason) << endl;
             }
-            if(noti.closeReason() == Notification::CLOSED) {
-                if(parser.isSet(_bringProcessToFront)) {
+            if (noti.closeReason() == Notification::CLOSED) {
+                if (parser.isSet(_bringProcessToFront)) {
                     bringToFront(parser.value(_bringProcessToFront));
-                } else if(parser.isSet(_bringWindowToFront)) {
+                } else if (parser.isSet(_bringWindowToFront)) {
                     bringWindowToFront((WId)parser.value(_bringWindowToFront).toULongLong());
                 }
             }
