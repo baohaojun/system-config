@@ -47,7 +47,6 @@ public:
     static QString typeToString(const PluginTypes t);
     static const QList<PluginTypes> &types();
 
-
     SnorePlugin(const QString &name);
     virtual ~SnorePlugin();
     virtual bool initialize();
@@ -89,6 +88,5 @@ SNORE_EXPORT QDebug operator<<(QDebug, const Snore::SnorePlugin::PluginTypes &);
 
 SNORE_EXPORT QDataStream &operator<<(QDataStream &out, const Snore::SnorePlugin::PluginTypes &type);
 SNORE_EXPORT QDataStream &operator>>(QDataStream &in, Snore::SnorePlugin::PluginTypes &type);
-
 
 #endif//SNORE_PLUGINS_H

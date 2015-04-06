@@ -51,7 +51,6 @@ public:
     //TODO: move to private header
     void initTabs();
 
-
 public slots:
     void setVisible(bool b) override;
     void accept();

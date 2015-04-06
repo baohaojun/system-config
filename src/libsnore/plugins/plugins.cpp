@@ -140,7 +140,6 @@ const QList<SnorePlugin::PluginTypes> &SnorePlugin::types()
     return t;
 }
 
-
 QDebug operator<<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
 {
     QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
@@ -163,7 +162,6 @@ QDebug operator<<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
     return debug.space();
 
 }
-
 
 QDataStream &operator<<(QDataStream &out, const Snore::SnorePlugin::PluginTypes &type)
 {

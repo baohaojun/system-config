@@ -43,11 +43,10 @@ SettingsDialog::~SettingsDialog()
 void SettingsDialog::initTabs()
 {
     SnorePlugin::PluginTypes types = SnoreCore::instance().value("PluginTypes", LOCAL_SETTING).value<SnorePlugin::PluginTypes>();
-    if(types == SnorePlugin::NONE)
-    {
+    if (types == SnorePlugin::NONE) {
         types = SnorePlugin::ALL;
     }
-    auto addWidgets = [&](QTabWidget *target, QWidget *container, SnorePlugin::PluginTypes type){
+    auto addWidgets = [&](QTabWidget * target, QWidget * container, SnorePlugin::PluginTypes type) {
         bool enabled = false;
         target->clear();
         if (types & type) {
@@ -59,7 +58,7 @@ void SettingsDialog::initTabs()
         }
         if (enabled) {
             if (ui->tabWidget->indexOf(container) == -1) {
-                ui->tabWidget->addTab(container,container->property("TAB_NAME").toString());
+                ui->tabWidget->addTab(container, container->property("TAB_NAME").toString());
             }
         } else {
             int index = ui->tabWidget->indexOf(container);
@@ -76,9 +75,9 @@ void SettingsDialog::initTabs()
 void Snore::SettingsDialog::on_pushButton_clicked()
 {
     Application app = SnoreCorePrivate::instance()->defaultApplication();
-    Notification noti(app, app.defaultAlert(),tr("Hello World"),
+    Notification noti(app, app.defaultAlert(), tr("Hello World"),
                       QString("<i>%1</i><br>"
-                      "<a href=\"https://github.com/Snorenotify/Snorenotify\">%2</a><br>").arg(tr("This is Snore"), tr("Project Website") ),
+                              "<a href=\"https://github.com/Snorenotify/Snorenotify\">%2</a><br>").arg(tr("This is Snore"), tr("Project Website")),
                       app.icon());
     noti.addAction(Action(1, tr("Test Action")));
     SnoreCore::instance().broadcastNotification(noti);

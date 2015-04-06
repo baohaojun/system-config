@@ -173,7 +173,8 @@ void SnoreCorePrivate::syncSettings()
     }
 }
 
-QStringList SnoreCorePrivate::knownClients(){
+QStringList SnoreCorePrivate::knownClients()
+{
     QStringList out;
     m_settings->beginGroup(versionSchema());
     m_settings->beginGroup("LocalSettings");
@@ -234,22 +235,19 @@ void SnoreCorePrivate::slotAboutToQuit()
     }
 }
 
-void SnoreCorePrivate::loadTranslator(){
-    auto installTranslator = [](const QString &locale)
-    {
+void SnoreCorePrivate::loadTranslator()
+{
+    auto installTranslator = [](const QString & locale) {
         snoreDebug(SNORE_DEBUG) << locale;
-        if(locale != "C") {
-            QTranslator* translator = new QTranslator( qApp->instance() );
-            if ( translator->load(locale, ":/lang/libsnore/") )
-            {
+        if (locale != "C") {
+            QTranslator *translator = new QTranslator(qApp->instance());
+            if (translator->load(locale, ":/lang/libsnore/")) {
                 snoreDebug(SNORE_INFO) << "Using system locale:" << locale;
-                snoreDebug(SNORE_INFO) << qApp->installTranslator( translator );
-            }
-            else
-            {
+                snoreDebug(SNORE_INFO) << qApp->installTranslator(translator);
+            } else {
                 translator->deleteLater();
                 QString fileName = QString(":/lang/libsnore/%1.qm").arg(locale);
-                snoreDebug(SNORE_WARNING)<< "Failed to load translations for:" << locale << fileName << QFile::exists(fileName) ;
+                snoreDebug(SNORE_WARNING) << "Failed to load translations for:" << locale << fileName << QFile::exists(fileName) ;
                 return false;
             }
         }

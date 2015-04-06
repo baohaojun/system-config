@@ -87,7 +87,7 @@ bool PluginContainer::isLoaded() const
 void PluginContainer::updatePluginCache()
 {
     snoreDebug(SNORE_DEBUG) << "Updating plugin cache";
-    for(auto list : s_pluginCache) {
+    for (auto list : s_pluginCache) {
         foreach(PluginContainer * p, list.values()) {
             delete p;
         }

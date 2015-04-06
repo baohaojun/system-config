@@ -36,7 +36,7 @@ using namespace Snore;
 SnoreCore::SnoreCore(QObject *parent):
     QObject(parent)
 {
-    if (QThread::currentThread() != parent->thread() ) {
+    if (QThread::currentThread() != parent->thread()) {
         moveToThread(parent->thread());
     }
     d_ptr = new SnoreCorePrivate();
@@ -48,7 +48,7 @@ SnoreCore::SnoreCore(QObject *parent):
 SnoreCore &SnoreCore::instance()
 {
     static SnoreCore *instance = nullptr;
-    if(!instance) {
+    if (!instance) {
         SnoreCorePrivate::loadTranslator();
         SnoreCorePrivate::registerMetaTypes();
         instance = new SnoreCore(qApp);
@@ -64,7 +64,7 @@ SnoreCore::~SnoreCore()
 
 void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
 {
-    if (QThread::currentThread() != thread() ) {
+    if (QThread::currentThread() != thread()) {
         snoreDebug(SNORE_DEBUG) << "Delayed Plugin loading." << QThread::currentThread() << thread();
         QMetaObject::invokeMethod(this, "loadPlugins", Qt::BlockingQueuedConnection, Q_ARG(Snore::SnorePlugin::PluginTypes, types));
         return;
@@ -213,8 +213,8 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets(SnorePlugin::PluginTypes
             list.append(widget);
         }
     }
-    qSort(list.begin(),list.end(),[](PluginSettingsWidget *a,PluginSettingsWidget *b){
-       return a->name() < b->name();
+    qSort(list.begin(), list.end(), [](PluginSettingsWidget * a, PluginSettingsWidget * b) {
+        return a->name() < b->name();
     });
     return list;
 }

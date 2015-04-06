@@ -39,7 +39,7 @@ SnoreNotifier::SnoreNotifier():
 
 SnoreNotifier::~SnoreNotifier()
 {
-    for(auto w : m_widgets) {
+    for (auto w : m_widgets) {
         w->deleteLater();
     }
 }

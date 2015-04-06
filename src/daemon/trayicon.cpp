@@ -41,8 +41,8 @@ TrayIcon::TrayIcon():
 void TrayIcon::initConextMenu()
 {
     m_settings = new SettingsDialog();
-    QDialogButtonBox *box = new QDialogButtonBox(QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset, m_settings);
-    connect(box, &QDialogButtonBox::clicked,[&,box](QAbstractButton *button){
+    QDialogButtonBox *box = new QDialogButtonBox(QDialogButtonBox::Apply | QDialogButtonBox::Cancel | QDialogButtonBox::Ok | QDialogButtonBox::Reset, m_settings);
+    connect(box, &QDialogButtonBox::clicked, [ &, box](QAbstractButton * button) {
         switch (box->buttonRole(button)) {
         case QDialogButtonBox::AcceptRole:
             m_settings->accept();
@@ -62,7 +62,6 @@ void TrayIcon::initConextMenu()
         }
     });
     m_settings->layout()->addWidget(box);
-
 
 //    connect(m_settings, &SettingsDialog::finished, m_settings, &SettingsDialog::hide);
 

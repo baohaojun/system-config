@@ -25,7 +25,6 @@
 
 using namespace Snore;
 
-
 Notification::Notification() :
     d(NULL)
 {

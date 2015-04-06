@@ -49,7 +49,7 @@ private slots:
 private:
 
     QList<Snore::Notification> m_queue;
-    QVector<NotifyWidget*> m_widgets;
+    QVector<NotifyWidget *> m_widgets;
     QTimer *m_timer;
 
 };

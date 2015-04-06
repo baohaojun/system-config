@@ -77,7 +77,7 @@ public:
     QString normalizeKey(const QString &key, SettingsType type) const
     {
         if (type == LOCAL_SETTING) {
-            return QString("%1/LocalSettings/%2/%3").arg(versionSchema(),m_localSettingsPrefix, key);
+            return QString("%1/LocalSettings/%2/%3").arg(versionSchema(), m_localSettingsPrefix, key);
         } else {
             return QString("%1/%2").arg(versionSchema(), key);
         }
