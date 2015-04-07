@@ -327,7 +327,14 @@ fi || true
 
 if test "$USER" = bhj && test ! -d ~/src/github/git-upload-patches; then
     git clone home:repos/git-upload-patches.git ~/src/github/git-upload-patches
-fi
+fi&
+
+if test -d ~/src/github/semi-offline.wikipedia; then
+    (
+        cd ~/src/github/semi-offline.wikipedia
+        git config remote.origin.url home:repos/semi-offline.wikipedia
+    )
+fi&
 
 check-perl-module String::ShellQuote libstring-shellquote-perl
 check-perl-module Marpa::R2           libmarpa-r2-perl
