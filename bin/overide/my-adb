@@ -103,6 +103,10 @@ function adb() {
             exit
         fi
         export ANDROID_SERIAL=$(cat ~/.config/adb-device)
+    elif test "$1" = -s -a $# = 1; then
+        unset ANDROID_SERIAL
+        export-android-serial
+        exit
     elif test "$1" != devices -a -z "$ANDROID_SERIAL"; then
         setsid $the_adb start-server >/dev/null 2>&1 ;
         devices=(
