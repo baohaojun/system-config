@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
 cd ~/src/github/git-upload-patches
-git rm -rf $(from-mac-minus-refs-heads)
+git rm -rf $(from-mac-minus-refs-heads) || true
 cd ~/system-config/
 ~/bin/git-upload-patches
