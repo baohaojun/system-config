@@ -11,9 +11,18 @@ my-adb 'cd /data;
         done
         cd /data/misc/;
         for x in *; do
-            if test $x = adb; then
+            if test $x = adb -o $x = wifi; then
                 continue;
             else
                 rm -r $x;
             fi;
-        done'
+        done
+        cd /data/misc/wifi
+        for x in *; do
+            if test "$x" = wpa_supplicant.conf; then
+                continue
+            else
+                rm -r $x
+            fi
+        done
+'
