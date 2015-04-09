@@ -222,7 +222,7 @@ function adb() {
     fi
 
     if test "$2" = su -a "$1" = shell; then
-        if the-true-adb shell su -c 'echo hello' 2>&1 | grep -q -P 'exec failed for echo hello|su: not found|su: can.t execute: Permission denied'; then
+        if the-true-adb shell su -c 'echo hello' 2>&1 | grep -q -P 'su: unknown user root|exec failed for echo hello|su: not found|su: can.t execute: Permission denied'; then
             shift 2
             echo using sh as su 1>&2
             set -- shell sh "$@"

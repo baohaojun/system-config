@@ -3,7 +3,13 @@
 if my-adb shell 'which busybox && echo yes' |grep -q yes; then
     true
 else
-    adb-push ~/system-config/doc/galaxy-nexus-root/system/xbin/busybox /system/xbin
+    busybox_file=~/src/android/vendor/smartisanhw/log-crawler/busybox
+    if test ! -e $busybox_file; then
+        busybox_file=~/system-config/doc/galaxy-nexus-root/system/xbin/busybox
+    else
+        adb-push ~/src/android/vendor/smartisanhw/log-crawler/bash /system/bin/bash
+    fi
+    adb-push $busybox_file /system/xbin
 fi
 
 applets=$(
@@ -14,13 +20,12 @@ applets=$(
     echo cd /system/xbin/
     echo 'busybox=$(busybox which busybox)'
     for x in $applets; do
-        echo ln -sf \$busybox "$x"
+        echo busybox ln -sf \$busybox "$x"
     done
 ) > /tmp/ln.sh.$$
 my-adb push /tmp/ln.sh.$$ /sdcard/ln.sh
 my-adb remount
-my-adb shell mount -o rw,remount /system
 my-adb shell sh -x /sdcard/ln.sh
-my-adb shell mount -o ro,remount /system
+my-adb romount
 
 

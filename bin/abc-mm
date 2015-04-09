@@ -9,7 +9,7 @@ if test $PWD = ~/src/linux; then
     exit
 fi
 
-. $(lookup-file build/envsetup.sh)
+. $(lookup-file build/envsetup.sh) >/dev/null 2>&1
 
 repo-cherry-find-all() {
     command abc -t remote-abc repo-cherry-find-all \

@@ -19,21 +19,26 @@ fi
 
 action='--submit --verified +1 --code-review +2'
 
-TEMP=$(getopt -o a --long abort -n $(basename $0) -- "$@")
+do_update=true
+TEMP=$(getopt -o aU --long abort -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -U)
+            do_update=false;
+            shift
+            ;;
         -a|--abort)
-        action=--abandon
-        shift
-        ;;
+            action=--abandon
+            shift
+            ;;
         --)
-        shift
-        break
-        ;;
+            shift
+            break
+            ;;
         *)
-        die "internal error"
-        ;;
+            die "internal error"
+            ;;
     esac
 done
 
@@ -52,9 +57,11 @@ if test "${rev:0:4}" = http; then
     exit
 fi
 
-git fetch $(repo-remote) $(repo-branch)
-if ! git-is-ancestor FETCH_HEAD $rev; then
-    die "Not fast-forward push is not allowed"
+if test $do_update = true; then
+    git fetch $(repo-remote) $(repo-branch)
+    if ! git-is-ancestor FETCH_HEAD $rev; then
+        die "Not fast-forward push is not allowed"
+    fi
 fi
 
 rev_list=$(git rev-list $rev ^$(repo-remote-branch))
@@ -76,5 +83,7 @@ if test -z "$GERRIT_HOST"; then
     )
 fi
 
-git fetch $(repo-remote) $(repo-branch)
+if test $do_update = true; then
+    git fetch $(repo-remote) $(repo-branch)
+fi
 echo OK.

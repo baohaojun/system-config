@@ -88,10 +88,15 @@ if test "${#dirs[@]}" = 0; then
                 fi
 
                 if test $redo_path = true; then
-                    repo forall -c 'echo $REPO_PATH' 2>&1 | perl -npe 's/^skipping //; s!/$!!' > .repo/repo-paths.$$
-                    if grep ' ' .repo/repo-paths.$$; then
-                         xmlstarlet sel -t -m //project -v @path -n .repo/manifest.xml > .repo/repo-paths.$$
-                    fi
+                    if test -d bionic; then
+                        xmlstarlet sel -t -m //project -v @path -n .repo/manifest.xml
+                    else
+                        xmlstarlet sel -t -m //project -v @name -o '.git' -n .repo/manifest.xml
+                    fi | while read dir; do
+                        if test -d "$dir"; then
+                            echo $dir
+                        fi
+                    done > .repo/repo-paths.$$
                     mv .repo/repo-paths.$$ .repo/repo-paths
                 fi
                 cat .repo/repo-paths | sort -u

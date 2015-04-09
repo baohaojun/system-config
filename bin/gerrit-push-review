@@ -88,9 +88,9 @@ fi
 if test $do_fetch = true; then
     echo git fetching remote: $(repo-remote), branch: $(repo-branch)
     if test -z "$(lookup-file -e .repo)"; then
-        git fetch -v $(repo-remote) $(repo-branch)
+        git fetch -n -v $(repo-remote) $(repo-branch)
     else
-        2nd repo sync -c -n . || git fetch origin
+        repo sync -c -n . || git fetch -n origin
     fi
     echo git fetch done
 fi

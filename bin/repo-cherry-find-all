@@ -25,14 +25,23 @@ if test $# = 0 || test "$#" = 2 -a "$1" = -F -a "$2" = -T; then
         $(if test -d bionic; then cd bionic; fi; git-choose-branch -p to|remove-remotes) "$@"
 fi
 
-
 local_from=false
 local_to=false
-TEMP=$(getopt -o TFf:t:r: --long from:to:remote: -n $(basename $0) -- "$@")
+from_manifest_xml=
+to_manifest_xml=
+TEMP=$(getopt -o TFf:t:r: --long xf:,xt:,from:,to:,remote: -n $(basename $0) -- "$@")
 remote=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        --xf)
+            from_manifest_xml=$2
+            shift 2
+            ;;
+        --xt)
+            to_manifest_xml=$2
+            shift 2
+            ;;
         -f|--from)
             from=$2
             shift 2
@@ -63,29 +72,123 @@ while true; do
     esac
 done
 
-if test -z "$from" -o -z "$to"; then
-    if test -e .git; then
-        export from=$(git-choose-branch -p from)
-        export to=$(git-choose-branch -p to)
-        local_from=true
-        local_to=true
-    else
-        die "Error: Usage $(basename $0) -f FROM -t TO"
+if test -z "$from_manifest_xml" -a -z "$to_manifest_xml"; then
+    if test -z "$from" -o -z "$to"; then
+        if test -e .git; then
+            export from=$(git-choose-branch -p from)
+            export to=$(git-choose-branch -p to)
+            local_from=true
+            local_to=true
+        else
+            die "Error: Usage $(basename $0) -f FROM -t TO"
+        fi
     fi
-fi
 
-if test $local_from = false -a "$remote"; then
-    from=$remote/$from
-fi
+    if test $local_from = false -a "$remote"; then
+        from=$remote/$from
+    fi
 
-if test $local_to = false -a "$remote"; then
-    to=$remote/$to
+    if test $local_to = false -a "$remote"; then
+        to=$remote/$to
+    fi
+    export from
+    export to
+    export remote
+    export local_from
+    export local_to
+else
+
+    if test -z "$to_manifest_xml"; then
+        to_manifest_xml=$(basename $(readlink -f $(lookup-file -e .repo/manifest.xml)))
+    elif test -z "$from_manifest_xml"; then
+        from_manifest_xml=$(basename $(readlink -f $(lookup-file -e .repo/manifest.xml)))
+    fi
+
+    if test "$local_from" = true -o "$local_to" = true -o "$from" -o "$to" -o "$remote"; then
+        die "when using xml, these variables must not be set"
+    fi
+
+    to_manifest_xml=$(lookup-file -e .repo/manifests/$(basename $to_manifest_xml))
+    from_manifest_xml=$(lookup-file -e .repo/manifests/$(basename $from_manifest_xml))
+
+    export to_manifest_xml from_manifest_xml
+    if test "$to_manifest_xml" = "$from_manifest_xml"; then
+        die "Can't cherry from the same xml"
+    fi
+    declare -A to_path_map from_path_map
+
+    (
+        xmlstarlet sel -t -m //default -v @remote -o ' ' -v @revision -n $to_manifest_xml
+        xmlstarlet sel -t -m //project -v @name -o ':' -v @path -o ':' -v @remote -o ':' -v @revision -n $to_manifest_xml
+    ) | (
+        read default_remote default_revision
+        declare -A to_path_remote_map to_path_revision_map
+        while read line; do
+            path=${line#*:}
+            remote=${path#*:}
+            revision=${remote#*:}
+            path=${path%%:*}
+            remote=${remote%%:*}
+            name=${line%%:*}
+
+            if test -z "$revision"; then
+                revision=$default_revision
+            fi
+
+            if test -z "$remote"; then
+                remote=$default_remote
+            fi
+
+            if test -z "$path"; then
+                path=$name
+            fi
+            if test ! -d "$path"; then
+                continue
+            fi
+            path=$(cd $path; pwd -P)
+            to_path_revision_map[$path]=$revision
+            to_path_remote_map[$path]=$remote
+        done
+        export to_path_remote_map to_path_revision_map
+        export -p |grep -P -e 'declare -Ax (to_path_revision_map|to_path_remote_map)' > $to_manifest_xml.env
+    )
+
+    (
+        xmlstarlet sel -t -m //default -v @remote -o ' ' -v @revision -n $from_manifest_xml
+        xmlstarlet sel -t -m //project -v @name -o ':' -v @path -o ':' -v @remote -o ':' -v @revision -n $from_manifest_xml
+    ) | (
+        read default_remote default_revision
+        declare -A from_path_remote_map from_path_revision_map
+        while read line; do
+            path=${line#*:}
+            remote=${path#*:}
+            revision=${remote#*:}
+            path=${path%%:*}
+            remote=${remote%%:*}
+            name=${line%%:*}
+
+            if test -z "$revision"; then
+                revision=$default_revision
+            fi
+
+            if test -z "$remote"; then
+                remote=$default_remote
+            fi
+
+            if test -z "$path"; then
+                path=$name
+            fi
+            if test ! -d "$path"; then
+                continue
+            fi
+            path=$(cd $path; pwd -P)
+            from_path_revision_map[$path]=$revision
+            from_path_remote_map[$path]=$remote
+        done
+        export from_path_remote_map from_path_revision_map
+        export -p |grep -P -e 'declare -Ax (from_path_revision_map|from_path_remote_map)' > $from_manifest_xml.env
+    )
 fi
-export from
-export to
-export remote
-export local_from
-export local_to
 
 my-rfa '
     if test "$DEBUG" = true; then
@@ -94,11 +197,19 @@ my-rfa '
     TOP=$ANDROID_TOP;
     log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
     mkdir -p $(dirname $log);
-    if test ! "$remote" -a $local_from = false ; then
-        from=$(repo-remote)/$from
-    fi
-    if test ! "$remote" -a $local_to = false ; then
-        to=$(repo-remote)/$to
+    if test -z "$to_manifest_xml"; then
+        if test ! "$remote" -a $local_from = false ; then
+            from=$(repo-remote)/$from
+        fi
+        if test ! "$remote" -a $local_to = false ; then
+            to=$(repo-remote)/$to
+        fi
+    else
+        . $to_manifest_xml.env
+        . $from_manifest_xml.env
+        pwd=$(pwd -P)
+        from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
+        to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
     fi
     git-change-id-ffable $from $to > $log 2>/dev/null;
     if test $(stat -c %s $log) = 0; then
