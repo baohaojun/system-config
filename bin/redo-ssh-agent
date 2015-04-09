@@ -1,6 +1,24 @@
 #!/bin/bash
-set -e
-. ~/.config/ssh-agent
+function export-ssh-agent-to-emacs-and-sawfish() {
+    env=$(cat <<EOF
+(progn
+  (setenv "SSH_AUTH_SOCK" "$SSH_AUTH_SOCK")
+  (setenv "SSH_AGENT_PID" "$SSH_AGENT_PID"))
+EOF
+       )
+    sawfish-client -e "$env"
+    emacsclient -e "$env"
+}
+
+if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
+    set -e
+else
+    return 0
+fi
+
+if test -e ~/.config/ssh-agent; then
+    . ~/.config/ssh-agent
+fi
 if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication agent'; then
     start_ssh_agent() {
         (
@@ -30,12 +48,5 @@ if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication
     fi
 fi
 
-env=$(cat <<EOF
-(progn
-  (setenv "SSH_AUTH_SOCK" "$SSH_AUTH_SOCK")
-  (setenv "SSH_AGENT_PID" "$SSH_AGENT_PID"))
-EOF
-   )
-sawfish-client -e "$env"
-emacsclient -e "$env"
-for x in $(find ~/.ssh/ -name 'id_rsa*'|grep -v '\.pub'); do (do-ssh-add -- -k $x&); done
+for x in $(find ~/.ssh/ -name 'id_rsa*'|grep -v '\.pub'); do (do-ssh-add -- -k $x&); done || true
+export-ssh-agent-to-emacs-and-sawfish
