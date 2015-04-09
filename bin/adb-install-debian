@@ -44,11 +44,14 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
     addgroup android_inet --gid 3003 || true
     addgroup android_sdcard_rw --gid 1015 || true
     adduser $USER --uid 1000 --gid 1000 || true
+    adduser media_rw --uid 1023 --gid 1023 || true
+
     usermod $USER -a -G android_inet,android_sdcard_rw
     cd
     umask 0022
     mkdir -p ~/.ssh
     mkdir -p ~$USER/.ssh
+    mkdir -p ~media_rw/.ssh
     chown $USER\. ~$USER/.ssh -R
     cat <<EOF > /etc/resolv.conf
 nameserver $(my-adb getprop net.dns1)
@@ -63,9 +66,14 @@ EOF
     my-adb push ~/.ssh/authorized_keys /data/debian/root/.ssh/
     my-adb chmod 600 /data/debian/root/.ssh/authorized_keys
 
-    my-adb push ~/.ssh/authorized_keys /data/debian/home/bhj/.ssh/
-    my-adb busybox chown -R 1000.1000 /data/debian/home/bhj/.ssh/
-    my-adb chmod 600 /data/debian/home/bhj/.ssh/authorized_keys
+    my-adb push ~/.ssh/authorized_keys /data/debian/home/$USER/.ssh/
+    my-adb busybox chown -R 1000.1000 /data/debian/home/$USER/.ssh/
+    my-adb chmod 600 /data/debian/home/$USER/.ssh/authorized_keys
+
+    my-adb push ~/.ssh/authorized_keys /data/debian/home/media_rw/.ssh/
+    my-adb busybox chown -R 1023.1023 /data/debian/home/media_rw/.ssh/
+    my-adb chmod 600 /data/debian/home/media_rw/.ssh/authorized_keys
+
     my-adb forward tcp:22222 tcp:22
     exit
 fi

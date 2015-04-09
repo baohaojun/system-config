@@ -1,3 +1,5 @@
+;; -*- mode: sawfish -*-
+
 (require 'sawfish.wm.util.keymap)
 (require 'sawfish.wm.state.maximize)
 
@@ -299,7 +301,7 @@
                   (message (format nil "hello class is %s" (symbol-name class)))
                   (setq window-mapped-to (get-window-map to class))
                   (do-bind-keys-nil-unbind global-keymap from to window-mapped-to class))
-             (unbind-keys global-keymap from))))
+              (unbind-keys global-keymap from))))
         global-remap-alist)
   (unbind-keys global-keymap "C-x")
   (unbind-keys global-keymap "ESC"))
@@ -398,6 +400,7 @@
     (setq result (concat result main-key))))
 
 (defun synthesize-event-gnome? (event window)
+  ;(message (format nil "key is %s, window is %s" event (bhj-window-class window)))
   (if bhj-is-gnome?
       (progn
         (system
@@ -416,6 +419,7 @@
   (message (apply format nil fmt args)))
 
 (defun super-key-binding (key)
+  ;(message (format nil "calling %s for %s" key (bhj-window-class (input-focus)) ))
   (let* ((fw (input-focus))
          (class (window-class fw))
          (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))
@@ -634,6 +638,7 @@
 (bind-keys global-keymap "XF86Mail" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
 (bind-keys global-keymap "XF86HomePage" '(system "qtcreator-edit-with-emacs&"))
 (bind-keys s-h-keymap "k" '(system "sawfish-help-key&"))
+(bind-keys s-h-keymap "Super-k" '(system "sawfish-help-key-ask-map&"))
 (bind-keys global-keymap "Super-ESC" '(system "sawfish-clean-screen&"))
 (bind-keys global-keymap "Print" print-keymap)
 (bind-keys print-keymap "Print" '(system "screenshot full&"))
@@ -648,3 +653,4 @@
 (bind-keys s-h-keymap "a" '(system "find-or-exec Okular&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
 (bind-keys global-keymap "Super-Control-F1" '(system "sawfish-force-maximize&"))
+(bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))
