@@ -1,13 +1,14 @@
 #!/bin/bash
-map=${1:-global-keymap}
+if test $(basename $0) = sawfish-help-key-ask-map; then
+    map=$(EMACS=t select-args -o global-keymap window-keymap s-h-keymap)
+else
+    map=${1:-global-keymap}
+fi
+
 cmd=$(cat <<EOF
     (let ((event (read-event "Press the key you want help..."))
           (map $map))
-      (cond
-        ((string-equal (event-name event) "C-x")
-          (setq event (read-event "C-x...") map c-x-map))
-        ((string-equal (event-name event) "ESC")
-          (setq event (read-event "ESC...") map esc-map)))
+      (system (format nil "putclip '%s'&" (event-name event)))
       (read-event
           (format nil "binding %s for %s (raw %s)\n\nPress any key to dismiss.."
                   (let ((global-keymap map)) (lookup-event-binding event))

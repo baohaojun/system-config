@@ -7,6 +7,6 @@ set -x
         xmodmap ~/system-config/etc/hardware-mach/.Xmodmap-undo
     else
         setxkbmap -layout us -variant dvp
-        xmodmap ~/system-config/etc/hardware-mach/.Xmodmap
+        re-xmodmap 2>&1|tee
     fi
 ) 9> ~/.logs/$(basename $0).lock

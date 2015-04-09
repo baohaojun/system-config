@@ -10,8 +10,17 @@ if test $PWD = ~/src/linux; then
 fi
 
 . $(lookup-file build/envsetup.sh)
+
+repo-cherry-find-all() {
+    command abc -t remote-abc repo-cherry-find-all \
+            -f $(cd $(lookup-file bionic); git-choose-branch -p from remotes | perl -npe 's,.*?remotes/.*?/,,') \
+            -t $(cd $(lookup-file bionic); git-choose-branch -p to remotes | perl -npe 's,.*?remotes/.*?/,,') -b $(abc-base-build)
+}
+
 if test $# = 0; then
     abc mm
+elif test "$(type -t "$1")" = function; then
+    "$@"
 else
     abc "$@"
 fi

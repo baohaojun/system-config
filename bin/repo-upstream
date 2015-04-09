@@ -1,0 +1,5 @@
+#!/bin/bash
+
+repo_info=$(readlink -f $(lookup-file -e ".repo/repo_info.pl"))
+cd -P .
+$repo_info upstream

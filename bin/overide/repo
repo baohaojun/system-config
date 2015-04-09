@@ -1,0 +1,6 @@
+#!/bin/bash
+if test "$1" = sync; then
+    set -- "$@" --no-tags
+fi
+
+exec ~/bin/repo "$@"

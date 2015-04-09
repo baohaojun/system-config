@@ -33,10 +33,6 @@ die() {
     exit -1
 }
 
-repo() {
-    ~/bin/repo "$@"
-}
-
 is-a-subdir() {
     dir1=$(readlink -f "$1")
     dir2=$(readlink -f "$2")
@@ -469,7 +465,7 @@ function build-request() { # submit a build request
                 shift 2
                 ;;
             -b|--base)
-                base=${2%%/*} # make sure there are no /
+                base=$2
                 shift 2
                 ;;
             -p|--patch-dir)
@@ -551,12 +547,12 @@ EOF
     fi
 
     if test "$patch_dir" -a "$base" -a "$base" != ..; then
-        base_build=~/buildfarm/"$base"
+        base_build=$(readlink -f ~/buildfarm/"$base")
         if test ! -d "$base_build"; then
             die "Invalid base build: $base_build"
         fi
 
-        if ! is-a-subdir $base_build ~/buildfarm/; then
+        if ! is-a-subdir "$base_build" ~/buildfarm/; then
             die "Invalid base build: $base_build"
         fi
         cd $base_build
@@ -584,9 +580,14 @@ EOF
                 git commit -m 'submit patch for build' --allow-empty
             )
 
-            (
-                cat /tmp/abc-patch.$$; rm -f /tmp/abc-patch.$$
-            ) | git apply
+            if test "$(stat -c %s /tmp/abc-patch.$$)" = 0; then
+                rm /tmp/abc-patch.$$
+                find . -type f -print0 |xargs -0 touch
+            else
+                (
+                    cat /tmp/abc-patch.$$; rm -f /tmp/abc-patch.$$
+                ) | git apply
+            fi
         )
 
     fi
@@ -623,7 +624,7 @@ EOF
                 cd $base_build
                 clear_all_old_patches
                 if test "$method" = fullbase; then
-                    2nd repo sync -j4 -d
+                    repo sync -j4 -d --no-tags
                 fi
             )
 
@@ -778,8 +779,7 @@ function repo-revision() {
 
     ## end generated code
 
-    base_build=${base_build#*/}
-    base_build=~/buildfarm/$base_build
+    base_build=$(readlink -f ~/buildfarm/"$base_build")
     if test -d "$base_build" && is-a-subdir "$base_build" ~/buildfarm/; then
         cd "$base_build"
         if test -d "$repo_path" && is-a-subdir "$base_build"/"$repo_path" "$base_build"; then
@@ -825,7 +825,7 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                 cd $x.git
                 remote=abc-$(echo $x|md5sum|cut -b 1-3)
                 git remote add $remote smartisan:$x || true
-                git fetch $remote
+                git fetch $remote refs/heads/*:refs/heads/*
             ) || true
         done
     ) || true
@@ -877,10 +877,10 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
             lock-base-build "Will do cron daily build now"
 
             if ! is-tty-io; then
-                repo sync -j8 -d || (
+                repo sync -j8 -d --no-tags || (
                     info "repo sync failed with $?"
                     my-rfa "git reset --hard; git clean -xfd" &&
-                        repo sync -j8 -d
+                        repo sync -j8 -d --no-tags
                 ) || abc-notify-maintainer -s "repo sync failed for $PWD: $?" || continue
 
                 repo manifest -r -o .repo/manifest.xml.sync
@@ -933,7 +933,7 @@ function cron-daily-build() { # do a daily build using cron. do not submit this 
                         (
                             info need to try old build
                             cat .repo/manifest.xml.base > .repo/manifest.xml
-                            repo sync -j8 -d
+                            repo sync -j8 -d --no-tags
                             android-make -c $config
                             ret=$?
                             if test $ret = 0; then
@@ -1009,8 +1009,7 @@ function abc-beagrep() {
     
     ## end generated code
     
-    base_build=${base_build#*/}
-    base_build=~/buildfarm/$base_build
+    base_build=$(readlink -f ~/buildfarm/"$base_build")
     if test ! -d "$base_build" || ! is-a-subdir "$base_build" ~/buildfarm/; then
         die "Invalid repo dir: $repo_path"
     fi

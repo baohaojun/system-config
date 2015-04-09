@@ -22,3 +22,11 @@ emacsclient -e '(progn
                    (setenv "XIM" "'$XIM'"))'
 
 sawfish-re-maximize
+
+export ANDROID_SERIAL=$(
+    if test -e ~/.config/my-adb-serial; then
+        cat ~/.config/my-adb-serial
+    else
+        echo a2024058
+    fi);
+for x in sawfish-client emacsclient; do $x -e '(setenv "ANDROID_SERIAL" "'$ANDROID_SERIAL'")'; done
