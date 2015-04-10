@@ -17,11 +17,13 @@ export retry=1
 unset -f sudo
 while ! sudo apt-get install "$@" -y $packages; do
     retry=$((retry + 1))
-    if (( retry % 20 == 0)) && yes-or-no-p "I have tried 20 times, should we continue trying to install?"; then
-        true
-    else
-        echo "Failed: package installation not complete. Please ask for help."
-        exit 1
+    if (( retry % 20 == 0)); then
+        if yes-or-no-p "I have tried 20 times, should we continue trying to install?"; then
+            true
+        else
+            echo "Failed: package installation not complete. Please ask for help."
+            exit 1
+        fi
     fi
     packages=$(arg1-arg2 "$packages" "$(sudo apt-get install "$@" -y $packages 2>&1)");
     echo installing: $packages

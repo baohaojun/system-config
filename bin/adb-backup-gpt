@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-dev=$(my-adb devices? | pn 1)
+dev=${ANDROID_SERIAL:-$(my-adb devices? | pn 1)}
 mkdir -p ~/today/forever/gpt-$dev
 cd ~/today/forever/gpt-$dev
 my-adb "dd if=/dev/block/mmcblk0 of=/data/gpt bs=$(pretty 17K|pn 2) count=1 && echo shit" | grep shit

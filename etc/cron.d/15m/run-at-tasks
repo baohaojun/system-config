@@ -12,7 +12,18 @@ if test $# = 2; then
 fi
 for x in ~/system-config/etc/at/$h:$m ~/external/etc/at/$h:$m; do
     if test -e "$x"; then
-        mkdir -p ~/.logs/at-tasks
-        bash $x > ~/.logs/at-tasks/$(echo $x|perl -npe 's,/,.,g') 2>&1
+        logdir=external
+        if [[ $x =~ system-config ]]; then
+            logdir=system-config
+        fi
+        logdir=~/.logs/at-tasks/$logdir
+        mkdir -p $logdir
+
+        (
+            echo
+            echo '****************************************************************'
+            echo "running $x at $(date)"
+            bash $x
+        )>> $logdir/$(basename $x) 2>&1
     fi
 done

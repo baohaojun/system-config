@@ -31,22 +31,26 @@ emacs --batch --eval "$emacs_code"
 mkdir -p ~/src/github
 cd ~/src/github
 
-if test ! -e twittering-mode/.git; then
-    git clone http://github.com/baohaojun/twittering-mode
-fi
+if test $(readlink -f ~/src) = $(readlink -f ~/system-config/src); then
+    true
+else
+    if test ! -e twittering-mode/.git; then
+        git clone http://github.com/baohaojun/twittering-mode
+    fi
 
-if test ! -e weibo.emacs/.git; then
-    git clone http://github.com/baohaojun/weibo.emacs
-fi
+    if test ! -e weibo.emacs/.git; then
+        git clone http://github.com/baohaojun/weibo.emacs
+    fi
 
-if test ! -e emacs.d/.git; then
-    git clone http://github.com/baohaojun/emacs.d
-    mkdir -p ~/.emacs.d/
-    relative-link emacs.d/site-lisp ~/.emacs.d/
-fi
+    if test ! -e emacs.d/.git; then
+        git clone http://github.com/baohaojun/emacs.d
+        mkdir -p ~/.emacs.d/
+        relative-link emacs.d/site-lisp ~/.emacs.d/
+    fi
 
-if test ! -e guilt/.git; then
-    git clone http://github.com/baohaojun/guilt
+    if test ! -e guilt/.git; then
+        git clone http://github.com/baohaojun/guilt
+    fi
 fi
 
 cd ~/src/github
