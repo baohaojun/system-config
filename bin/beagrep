@@ -116,27 +116,32 @@ debug "pat is: $pat.\n";
 my $beagrep_files = $use_tokens ? qx/beagrep-files -- $use_tokens/ : qx/beagrep-files -- $pat $additional_tokens/;
 my @beagrep_files = split(/\n/, $beagrep_files);
 
+
+my $pwd_save = $pwd;
+my $cache_dir = glob("~/.cache/for-code-reading");
+my $db_dir = "$cache_dir/$pwd";
+while (! -d "$db_dir/.beagrep") {
+    debug "no beagrep db at $db_dir";
+    $pwd =~ s!(.*)/.*!$1!;
+    if (not $pwd or $pwd eq "/") {
+        die "Can not find beagrep data for $pwd_save";
+    }
+    $db_dir = "$cache_dir/$pwd";
+    debug "change db to $db_dir";
+}
+debug "found beagrep db at $db_dir";
+
+@fallback_dirs = glob("$db_dir/.beagrep-fallback.*");
+if (@fallback_dirs) {
+    debug "We have found fall back dirs: @fallback_dirs\n";
+} else {
+    debug "We have no fallbacks at $db_dir/.beagrep-fallback.*"
+}
+
+chdir $pwd;
+chomp($pwd = qx/pwd -P/);
+my $start = length($pwd) + 1;
 if ($short_format) {
-    my $pwd_save = $pwd;
-    my $cache_dir = glob("~/.cache/for-code-reading");
-    my $db_dir = "$cache_dir/$pwd";
-    while (! -d "$db_dir/.beagrep") {
-        debug "no beagrep db at $db_dir";
-        $pwd =~ s!(.*)/.*!$1!;
-        if (not $pwd or $pwd eq "/") {
-            die "Can not find beagrep data for $pwd_save";
-        }
-        $db_dir = "$cache_dir/$pwd";
-        debug "change db to $db_dir";
-    }
-    debug "found beagrep db at $db_dir";
-    @fallback_dirs = glob("$db_dir/.beagrep-fallback.*");
-    if (@fallback_dirs) {
-        print "We have found fall back dirs: @fallback_dirs\n";
-    }
-    chdir $pwd;
-    chomp($pwd = qx/readlink -f "`pwd`"/);
-    my $start = length($pwd) + 1;
     map {$_ = substr($_, $start)} @beagrep_files;
     printf "Using short format, Entering directory \`%s'\n", $pwd;
 }
