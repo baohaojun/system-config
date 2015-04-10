@@ -21,6 +21,25 @@ my ($old_tag, $old_type, $old_line_num, $old_file);
 my ($tag, $type, $line_num, $file);
 my $custom_parser = qx(lookup-file -e ctags-custom);
 
+my %dir_custom_parser_map;
+my %checked_dir_custom_parser;
+
+sub check_dir_custom_parser($) {
+    my $dir = $_[0];
+    if (not $checked_dir_custom_parser{$dir}) {
+        $checked_dir_custom_parser{$dir} = 1;
+        if (not $dir) {
+            $dir_custom_parser_map{$dir} = $custom_parser;
+        } elsif (-x "$dir/ctags-custom") {
+            $dir_custom_parser_map{$dir} = "$dir/ctags-custom";
+        } else {
+            (my $parent_dir = $dir) =~ s,(.*)/.*,$1,;
+            $dir_custom_parser_map{$dir} = check_dir_custom_parser($parent_dir);
+        }
+    }
+    return $dir_custom_parser_map{$dir};
+}
+
 if (not grep {$_ eq "--filter"} @ARGV) {
     use IPC::Open2;
     $|++;
@@ -106,7 +125,11 @@ sub close_cache_and_rename($$$) {
 while (<STDIN>) {
 
     chomp(my $source = $_);
-
+    (my $dir = $source) =~ s,(.*)/.*,$1,;
+    unless ($checked_dir_custom_parser{$dir}) {
+        check_dir_custom_parser($dir);
+    }
+    my $custom_parser = $dir_custom_parser_map{$dir};
     my $abs_source = $source;
     $abs_source = shell_quote($abs_source);
     chomp($abs_source = qx(readlink -f $abs_source));
@@ -129,6 +152,7 @@ while (<STDIN>) {
 
     $write->flush();
     if ($custom_parser) {
+        debug "using custom_parser $custom_parser for $source";
         open(my $custom_output, "-|", $custom_parser, $source) or die "Can't open pipe for $custom_parser";
         while (<$custom_output>) {
             print_with_caching($cache, $_);
