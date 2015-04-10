@@ -104,7 +104,7 @@
 (require 'init-javascript)
 (require 'init-php)
 (require 'init-org)
-(require-package 'org-mime)
+(load "org-mime-autoloads")
 (require 'init-nxml)
 (require 'init-html)
 (require 'init-css)
