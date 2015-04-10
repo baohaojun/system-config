@@ -19,6 +19,7 @@
 #include "soundsettings.h"
 
 #include <QtMultimedia/QMediaPlayer>
+#include <QTimer>
 
 using namespace Snore;
 
@@ -26,7 +27,8 @@ Sound::Sound():
     SnoreSecondaryBackend("Sound", false),
     m_player(new QMediaPlayer(this))
 {
-    m_player->setVolume(50);
+    setDefaultValue("Volume",50);
+    m_player->setVolume(value("Volume").toInt());
 //    connect(m_player,QMediaPlayer::positionChanged,[](qint64 pos){
 //        snoreDebug(SNORE_DEBUG) << "Player: " << pos;
 //    });
@@ -60,6 +62,12 @@ void Sound::slotNotify(Snore::Notification notification)
         m_player->setMedia(QUrl::fromLocalFile(sound));
         snoreDebug(SNORE_DEBUG) << "SoundFile:" << m_player->media().canonicalUrl();
         m_player->play();
+        QTimer *timeout = new QTimer(this);
+        timeout->setSingleShot(true);
+        timeout->setInterval(notification.timeout() * 1000);
+        connect(timeout, &QTimer::timeout, [&m_player,timeout]{
+           m_player->stop();
+           timeout->deleteLater();
+        });
     }
 }
-

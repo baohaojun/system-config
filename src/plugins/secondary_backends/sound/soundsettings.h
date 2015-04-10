@@ -5,6 +5,7 @@
 #include "plugins/pluginsettingswidget.h"
 
 class QLineEdit;
+class QSpinBox;
 class SoundSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
@@ -17,7 +18,8 @@ public:
     void save() override;
 
 private:
-    QLineEdit *m_lineEdit;
+    QLineEdit *m_lineEditFileName;
+    QSpinBox *m_spinBoxVolume;
 
 };
 

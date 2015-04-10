@@ -20,23 +20,26 @@
 
 #include <QFileDialog>
 #include <QLineEdit>
+#include <QSpinBox>
 #include <QPushButton>
 
 using namespace Snore;
 
 SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
     PluginSettingsWidget(snorePlugin, parent),
-    m_lineEdit(new QLineEdit)
+    m_lineEditFileName(new QLineEdit),
+    m_spinBoxVolume(new QSpinBox)
 {
-    addRow(tr("Audio file:"), m_lineEdit);
+    addRow(tr("Volume:"), m_spinBoxVolume);
+    addRow(tr("Audio file:"), m_lineEditFileName);
     QPushButton *button = new QPushButton(tr("Select a audio file"));
     connect(button, &QPushButton::clicked, [this]() {
         QFileDialog dialog;
         dialog.setNameFilter(tr("All Audio files").append("(*.mp3 *.wav *.ogg)"));
         dialog.setFileMode(QFileDialog::ExistingFile);
-        dialog.setDirectory(m_lineEdit->text());
+        dialog.setDirectory(m_lineEditFileName->text());
         if (dialog.exec()) {
-            m_lineEdit->setText(dialog.selectedFiles().first());
+            m_lineEditFileName->setText(dialog.selectedFiles().first());
         }
     });
     addRow("", button);
@@ -48,11 +51,13 @@ SoundSettings::~SoundSettings()
 
 void SoundSettings::load()
 {
-    m_lineEdit->setText(value("Sound").toString());
+    m_lineEditFileName->setText(value("Sound").toString());
+    m_spinBoxVolume->setValue(value("Volume").toInt());
 }
 
 void SoundSettings::save()
 {
-    setValue("Sound", m_lineEdit->text());
+    setValue("Sound", m_lineEditFileName->text());
+    setValue("Volume", m_spinBoxVolume->value());
 }
 
