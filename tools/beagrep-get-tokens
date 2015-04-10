@@ -19,6 +19,9 @@ if ($ENV{SOURCECODETAGSMODE} eq "true") {
 
 $tokens =~ s/\r|\n/ /g;
 #$tokens =~ s/\b/*/g;
+if (@tokens == 1 and $tokens[0] !~ m/\s|\*/) {
+    $tokens = "\"$tokens\"";
+}
 print "$tokens\n";
 
 
