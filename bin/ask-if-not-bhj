@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if test -z "$USER"; then
+    USER=$(whoami)
+fi
+
 if test "$USER" = bhj; then
    true;
    exit

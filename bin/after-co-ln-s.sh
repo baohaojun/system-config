@@ -210,15 +210,21 @@ symlink-map-files ~/system-config/etc/subdir-symlinks ~
 mkdir -p ~/.local/share/applications
 symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
 
-if test -e ~/.gitconfig.$USER; then
+if test -e ~/.gitconfig.$USER && test "$(readlink -f ~/.gitconfig.$USER)" != "$(readlink -f ~/.gitconfig)"; then
     ln -sf ~/.gitconfig.$USER ~/.gitconfig
-else
+elif test ! -e ~/.gitconfig.$USER; then
     cp ~/.gitconfig.bhj ~/.gitconfig || true
     name=$(finger $USER 2>/dev/null | grep Name: | perl -npe 's/.*Name: //')
     if test "$name"; then
         git config --global user.name "$name"
     else
         git config --global user.name "$USER"
+    fi
+    read -p "What is your email address (nobody@example.com)? " email
+    git config --global user.email "${email:-nobody@example.com}"
+    ln -sf ~/.gitconfig ~/.gitconfig.$USER
+    if test "$(compare-version "$(git version | pn 3)" 2)" = '<'; then
+        git config --unset --global push.default
     fi
 fi
 
