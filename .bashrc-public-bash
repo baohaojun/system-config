@@ -172,6 +172,7 @@ cd_record()
         rm -f ~/.reset-env
     fi
     if test "$ANDROID_SERIAL" && ! echo "$RECURSIVE_SHELL" | grep -q -e "adb-$ANDROID_SERIAL\."; then
+        RECURSIVE_SHELL=$(echo "$RECURSIVE_SHELL" | perl -npe 's/adb-\S+\s*//g;')
         if test "$RECURSIVE_SHELL"; then
             export RECURSIVE_SHELL="$RECURSIVE_SHELL: ""adb-$ANDROID_SERIAL."
         else

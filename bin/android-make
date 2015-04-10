@@ -196,4 +196,5 @@ if grep -Hn -e 'full build result is' $OUT_DIR_LONG/build.log | grep -e "all ok"
     exit 0
 else
     cp $OUT_DIR_LONG/build.log $OUT_DIR_LONG/full-build.log.fail
+    exit 1
 fi
