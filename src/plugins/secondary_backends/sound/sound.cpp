@@ -65,7 +65,7 @@ void Sound::slotNotify(Snore::Notification notification)
         QTimer *timeout = new QTimer(this);
         timeout->setSingleShot(true);
         timeout->setInterval(notification.timeout() * 1000);
-        connect(timeout, &QTimer::timeout, [&m_player,timeout]{
+        connect(timeout, &QTimer::timeout, [&,timeout]{
            m_player->stop();
            timeout->deleteLater();
         });
