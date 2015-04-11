@@ -1,30 +1,63 @@
 #!/bin/bash
 
+saved_args=("$@")
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  ttcp_only uudp_only UUnix_only
+## end code-generator
+## start generated code
+tcp_only=false
+udp_only=false
+Unix_only=false
+OPTIND=1
+while getopts 'tuU' opt; do
+    case "$opt" in
+        t)    tcp_only=true;;
+        u)    udp_only=true;;
+        U)    Unix_only=true;;
+        *)    echo Usage Error; exit 2;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+if test $tcp_only = false -a $udp_only = false -a $Unix_only = false; then
+    tcp_only=true
+    udp_only=true
+    Unix_only=true
+fi
+
+opt_args=$(
+    for i in $(seq 0 $(($OPTIND - 2))); do
+        echo ${saved_args[$i]}
+    done
+        )
+
+
 if test ! -d "/proc/$1"; then
     for x in $(ps.pl "$@" | perl -ne 'print unless m/'$(basename $0)'/' | pn 1); do
         ps $x
-        show-sockets-pid $x;
+        show-sockets-pid $opt_args $x;
     done
     exit
 fi
-for x in $(sudo ls -l /proc/$1/fd|grep socket:|perl -npe 's/.*\[|\].*//g'); do
-    sudo bash -c "ls -l /proc/$1/fd/* 2>/dev/null"|grep socket.*$x
-    if cat /proc/net/tcp |grep "\b$x\b" |perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg'|grep .; then
+for sock_x in $(sudo ls -l /proc/$1/fd|grep socket:|perl -npe 's/.*\[|\].*//g'); do
+    sudo bash -c "ls -l /proc/$1/fd/* 2>/dev/null"|grep socket.*$sock_x
+    if test $tcp_only = true && cat /proc/net/tcp |grep "\b$sock_x\b" |perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg'|grep .; then
         echo ^^^^ TCP: ^^^^
         echo
         continue
     fi
 
-    if cat /proc/net/udp |grep "\b$x\b" |perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg' | grep .; then
+    if test $udp_only = true && cat /proc/net/udp |grep "\b$sock_x\b" |perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg' | grep .; then
         echo ^^^^ UDP: ^^^^
         echo
         continue
     fi
-    if cat /proc/net/unix|tr -d \\0|grep "\b$x\b"; then
+    if test $Unix_only = true &&  cat /proc/net/unix|tr -d \\0|grep "\b$sock_x\b"; then
         echo ^^^^ UNIX: ^^^^
         echo
         continue
     fi
 done
-
-
