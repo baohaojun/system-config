@@ -47,17 +47,17 @@ void Toasty::slotNotify(Notification notification)
     QHttpMultiPart *mp = new QHttpMultiPart(QHttpMultiPart::FormDataType);
     QHttpPart title;
     title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
-    title.setBody(Snore::toPlainText(notification.title()).toLatin1().constData());
+    title.setBody(Snore::toPlainText(notification.title()).toUtf8().constData());
     mp->append(title);
 
     QHttpPart text;
     text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text\""));
-    text.setBody(Snore::toPlainText(notification.text()).toLatin1().constData());
+    text.setBody(Snore::toPlainText(notification.text()).toUtf8().constData());
     mp->append(text);
 
     QHttpPart app;
     app.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"sender\""));
-    app.setBody(notification.application().name().toLatin1().constData());
+    app.setBody(notification.application().name().toUtf8().constData());
     mp->append(app);
 
     QHttpPart icon;
