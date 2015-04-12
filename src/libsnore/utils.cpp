@@ -37,12 +37,10 @@ void Utils::bringWindowToFront(qlonglong _wid)
 
     if (AttachThreadInput(GetCurrentThreadId(), idActive, TRUE)) {
         SetForegroundWindow(wid);
-        SetFocus(wid);
         AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
     } else {
         // try it anyhow
         SetForegroundWindow(wid);
-        SetFocus(wid);
     }
 #endif
 }
