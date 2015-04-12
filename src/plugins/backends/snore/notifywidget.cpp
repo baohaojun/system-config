@@ -19,6 +19,7 @@
 #include "notifywidget.h"
 #include "snorenotifier.h"
 #include "libsnore/log.h"
+#include "libsnore/utils.h"
 
 using namespace Snore;
 
@@ -30,6 +31,7 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
     m_ready(true)
 {
     rootContext()->setContextProperty("window", this);
+    rootContext()->setContextProperty("utils", new Utils(this));
     m_qmlNotification = rootObject();
 
     setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
@@ -147,6 +149,11 @@ int NotifyWidget::id()
 Qt::Corner NotifyWidget::corner()
 {
     return static_cast<Qt::Corner>(m_parent->value("Position").toInt());
+}
+
+qlonglong NotifyWidget::wid()
+{
+    return this->winId();
 }
 
 void NotifyWidget::slotDismissed()

@@ -28,6 +28,7 @@ list(APPEND SnoreNotify_SRCS
         hint.cpp
         log.cpp
         settingsdialog.cpp
+        utils.cpp
         ${UI}
         ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
         ${SNORENOTIFY_RCS}
@@ -42,6 +43,7 @@ list(APPEND SnoreNotify_HDR
         log.h
         settingsdialog.h
         snoreglobals.h
+        utils.h
         ${CMAKE_CURRENT_BINARY_DIR}/snore_exports.h
         version.h
         )

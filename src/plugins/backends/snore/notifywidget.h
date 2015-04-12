@@ -44,6 +44,7 @@ class NotifyWidget : public QQuickView
 public:
     Q_PROPERTY(int id READ id)
     Q_PROPERTY(Qt::Corner corner READ corner)
+    Q_PROPERTY(qlonglong wid READ wid)
     explicit NotifyWidget(int pos, const SnoreNotifier *parent);
     ~NotifyWidget();
 
@@ -56,6 +57,7 @@ public:
 
     int id();
     Qt::Corner corner();
+    qlonglong wid();
 
 signals:
     void invoked();
