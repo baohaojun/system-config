@@ -29,8 +29,6 @@
 
 #include <QSettings>
 #include <QStringList>
-#include <QTextDocument>
-#include <QTextDocumentFragment>
 
 /**
  * Snore is a platform independent Qt notification framework.
@@ -181,21 +179,6 @@ private:
     SnoreCorePrivate *d_ptr;
 
 };
-
-/**
- *
- * @param string A string to decode of if needed.
- * @return if the string was rhichtext or html encoded a decoded string, else the original string.
- */
-
-static inline QString toPlainText(const QString &string)
-{
-    if (Qt::mightBeRichText(string)) {
-        return QTextDocumentFragment::fromHtml(string).toPlainText();
-    } else {
-        return string;
-    }
-}
 
 }
 

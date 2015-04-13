@@ -17,6 +17,7 @@
 */
 #include "toasty.h"
 #include "toastysettings.h"
+#include "libsnore/utils.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -45,14 +46,15 @@ void Toasty::slotNotify(Notification notification)
     }
     QNetworkRequest request(QString("http://api.supertoasty.com/notify/%1").arg(key));
     QHttpMultiPart *mp = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+
     QHttpPart title;
     title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
-    title.setBody(Snore::toPlainText(notification.title()).toUtf8().constData());
+    title.setBody(Utils::toPlainText(notification.title()).toUtf8().constData());
     mp->append(title);
 
     QHttpPart text;
     text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text\""));
-    text.setBody(Snore::toPlainText(notification.text()).toUtf8().constData());
+    text.setBody(Utils::toPlainText(notification.text()).toUtf8().constData());
     mp->append(text);
 
     QHttpPart app;
@@ -89,5 +91,5 @@ void Toasty::slotNotify(Notification notification)
 
 PluginSettingsWidget *Toasty::settingsWidget()
 {
-    return new ToastySettings(this);
+    return new NotifyMyAndroidSettings(this);
 }

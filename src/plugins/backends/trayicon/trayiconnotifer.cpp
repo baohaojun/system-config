@@ -1,6 +1,7 @@
 #include "trayiconnotifer.h"
 #include "libsnore/snore.h"
 #include "libsnore/snore_p.h"
+#include "libsnore/utils.h"
 
 #include <QSystemTrayIcon>
 using namespace Snore;
@@ -83,7 +84,7 @@ void TrayIconNotifer::displayNotification(QSystemTrayIcon *icon)
     m_currentlyDisplaying = true;
     Notification notification =  m_notificationQue.takeFirst();
     m_displayed = notification.id();
-    icon->showMessage(Snore::toPlainText(notification.title()), Snore::toPlainText(notification.text()), QSystemTrayIcon::NoIcon, notification.timeout() * 1000);
+    icon->showMessage(Utils::toPlainText(notification.title()), Utils::toPlainText(notification.text()), QSystemTrayIcon::NoIcon, notification.timeout() * 1000);
     startTimeout(notification);
 }
 

@@ -21,6 +21,9 @@
 #include "snore_exports.h"
 
 #include <QApplication>
+#include <QCryptographicHash>
+#include <QTextDocument>
+#include <QTextDocumentFragment>
 
 namespace Snore {
 class SNORE_EXPORT  Utils : public QObject {
@@ -29,8 +32,49 @@ public:
     Utils(QObject *parent = nullptr);
     ~Utils();
 
+    /**
+     * Raise a window to the front.
+     * @param wid the Id of the window to raise.
+     * @param focus whether the window should request focus.
+     */
     //TODO: make Wid usable with the meta system and change signature.
     Q_INVOKABLE static void bringWindowToFront(qlonglong wid, bool focus);
+
+    /**
+     *
+     * @param string A string to decode if needed.
+     * @return if the string was rhichtext or html encoded a decoded string, else the original string.
+     */
+    static inline QString toPlainText(const QString &string)
+    {
+        if (Qt::mightBeRichText(string)) {
+            return QTextDocumentFragment::fromHtml(string).toPlainText();
+        } else {
+            return string;
+        }
+    }
+
+    /**
+     *
+     * @param string A string to encode if needed.
+     * @return if the string was rhichtext html encode string is returnd otherwise the original string.
+     */
+    static inline QString toHtml(const QString &string)
+    {
+        if (Qt::mightBeRichText(string)) {
+            return QTextDocumentFragment::fromHtml(string).toHtml("UTF-8");
+        } else {
+            return string;
+        }
+    }
+
+    /**
+     * Computes a md5 hash of the provided data.
+     */
+    static inline QString computeMD5Hash(const QByteArray &data)
+    {
+        return QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex();
+    }
 
 };
 

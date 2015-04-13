@@ -21,6 +21,7 @@
 
 #include "libsnore/snore.h"
 #include "libsnore/snore_p.h"
+#include "libsnore/utils.h"
 #include "libsnore/plugins/plugins.h"
 #include "libsnore/plugins/snorebackend.h"
 #include "libsnore/notification/notification_p.h"
@@ -216,8 +217,8 @@ void SnarlBackend::slotNotify(Notification notification)
 
     if (!notification.isUpdate()) {
         id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
-                                    Snore::toPlainText(notification.title()).toUtf8().constData(),
-                                    Snore::toPlainText(notification.text()).toUtf8().constData(),
+                                    Utils::toPlainText(notification.title()).toUtf8().constData(),
+                                    Utils::toPlainText(notification.text()).toUtf8().constData(),
                                     notification.timeout(),
                                     notification.icon().isLocalFile() ? notification.icon().localUrl().toUtf8().constData() : 0,
                                     !notification.icon().isLocalFile() ? Icon::dataFromImage(notification.icon().image()).toBase64().constData() : 0,
@@ -233,8 +234,8 @@ void SnarlBackend::slotNotify(Notification notification)
         id = notification.old().hints().privateValue(this, "id").toUInt();
         snarlInterface->Update(id,
                                notification.alert().name().toUtf8().constData(),
-                               Snore::toPlainText(notification.title()).toUtf8().constData(),
-                               Snore::toPlainText(notification.text()).toUtf8().constData(),
+                               Utils::toPlainText(notification.title()).toUtf8().constData(),
+                               Utils::toPlainText(notification.text()).toUtf8().constData(),
                                notification.timeout(),
                                notification.icon().isLocalFile() ? notification.icon().localUrl().toUtf8().constData() : 0,
                                !notification.icon().isLocalFile() ? Icon::dataFromImage(notification.icon().image()).toBase64().constData() : 0,

@@ -25,7 +25,6 @@
 
 #include <QPointer>
 #include <QApplication>
-#include <QCryptographicHash>
 
 namespace Snore
 {
@@ -35,11 +34,6 @@ class SNORE_EXPORT SnoreCorePrivate : public QObject
     Q_OBJECT
 
 public:
-    static inline QString computeHash(const QByteArray &data)
-    {
-        return QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex();
-    }
-
     static void registerMetaTypes();
 
     /**

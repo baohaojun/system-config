@@ -18,6 +18,7 @@
 
 #include "icon_p.h"
 #include "../snore_p.h"
+#include "../utils.h"
 
 #include <QApplication>
 #include <QFile>
@@ -30,7 +31,7 @@ QSet<QString> IconData::s_localImageCache;
 
 IconData::IconData(const QString &url):
     m_url(url),
-    m_hash(SnoreCorePrivate::computeHash(m_url.toLatin1())),
+    m_hash(Utils::computeMD5Hash(m_url.toLatin1())),
     m_localUrl(createLocalFileName(m_hash)),
     m_isLocalFile(false),
     m_isResource(m_url.startsWith(":/") || m_url.startsWith("qrc:/"))
@@ -80,7 +81,7 @@ IconData::IconData(const QString &url):
 
 IconData::IconData(const QImage &img):
     m_img(img),
-    m_hash(SnoreCorePrivate::computeHash(Icon::dataFromImage(img))),
+    m_hash(Utils::computeMD5Hash(Icon::dataFromImage(img))),
     m_localUrl(createLocalFileName(m_hash)),
     m_isLocalFile(false),
     m_isResource(false),

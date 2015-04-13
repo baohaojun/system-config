@@ -21,6 +21,7 @@
 
 #include "libsnore/snore.h"
 #include "libsnore/snore_p.h"
+#include "libsnore/utils.h"
 
 using namespace Snore;
 
@@ -87,11 +88,11 @@ void GrowlBackend::slotNotify(Notification notification)
 {
     Growl *growl = m_applications.value(notification.application().name());
     QString alert = notification.alert().name();
-    snoreDebug(SNORE_DEBUG) << "Notify Growl:" << notification.application() << alert << Snore::toPlainText(notification.title());
+    snoreDebug(SNORE_DEBUG) << "Notify Growl:" << notification.application() << alert << Utils::toPlainText(notification.title());
 
     GrowlNotificationData data(alert.toUtf8().constData(), notification.id(),
-                               Snore::toPlainText(notification.title()).toUtf8().constData(),
-                               Snore::toPlainText(notification.text()).toUtf8().constData());
+                               Utils::toPlainText(notification.title()).toUtf8().constData(),
+                               Utils::toPlainText(notification.text()).toUtf8().constData());
 
     if (notification.icon().isValid()) {
         data.setIcon(notification.icon().localUrl().toUtf8().constData());

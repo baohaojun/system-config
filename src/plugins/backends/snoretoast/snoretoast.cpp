@@ -1,6 +1,8 @@
 #include "snoretoast.h"
 #include "libsnore/snore.h"
 #include "libsnore/snore_p.h"
+#include "libsnore/utils.h"
+
 #include "libsnore/plugins/plugins.h"
 #include "libsnore/plugins/snorebackend.h"
 
@@ -41,9 +43,9 @@ void SnoreToast::slotNotify(Notification notification)
 
     QStringList arguements;
     arguements << "-t"
-               << Snore::toPlainText(notification.title())
+               << Utils::toPlainText(notification.title())
                << "-m"
-               << Snore::toPlainText(notification.text());
+               << Utils::toPlainText(notification.text());
     if (notification.icon().isValid()) {
         arguements << "-p"
                    << QDir::toNativeSeparators(notification.icon().localUrl());
