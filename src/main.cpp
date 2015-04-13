@@ -3,6 +3,7 @@
 #include <libsnore/notification/notification.h>
 #include <libsnore/log.h>
 #include <libsnore/version.h>
+#include <libsnore/utils.h>
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -19,27 +20,7 @@
 using namespace Snore;
 using namespace std;
 
-void bringWindowToFront(WId _wid)
-{
-    snoreDebug(SNORE_DEBUG) << _wid;
-#ifdef Q_OS_WIN
-    HWND wid = (HWND)_wid;
-    HWND hwndActiveWin = GetForegroundWindow();
-    int idActive = GetWindowThreadProcessId(hwndActiveWin, NULL);
 
-    if (AttachThreadInput(GetCurrentThreadId(), idActive, TRUE)) {
-        SetForegroundWindow(wid);
-        SetFocus(wid);
-        FlashWindow(wid, TRUE);
-        AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
-    } else {
-        // try it anyhow
-        SetForegroundWindow(wid);
-        SetFocus(wid);
-        FlashWindow(wid, TRUE);
-    }
-#endif
-}
 void bringToFront(QString pid)
 {
     snoreDebug(SNORE_DEBUG) << pid;
@@ -67,7 +48,7 @@ void bringToFront(QString pid)
 
     HWND wid = findWindowForPid(pid.toInt());
     if (wid) {
-        bringWindowToFront((WId)wid);
+        Utils::bringWindowToFront((WId)wid, true);
     }
 #endif
 }
@@ -140,7 +121,7 @@ int main(int argc, char *argv[])
                 if (parser.isSet(_bringProcessToFront)) {
                     bringToFront(parser.value(_bringProcessToFront));
                 } else if (parser.isSet(_bringWindowToFront)) {
-                    bringWindowToFront((WId)parser.value(_bringWindowToFront).toULongLong());
+                    Utils::bringWindowToFront((WId)parser.value(_bringWindowToFront).toULongLong(),true);
                 }
             }
             returnCode = noti.closeReason();
