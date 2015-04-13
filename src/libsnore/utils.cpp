@@ -27,20 +27,19 @@
 
 using namespace Snore;
 
-void Utils::bringWindowToFront(qlonglong _wid)
+void Utils::bringWindowToFront(qlonglong _wid, bool focus)
 {
     snoreDebug(SNORE_DEBUG) << _wid;
 #ifdef Q_OS_WIN
     HWND wid = (HWND)_wid;
-    HWND hwndActiveWin = GetForegroundWindow();
-    int idActive = GetWindowThreadProcessId(hwndActiveWin, NULL);
-
-    if (AttachThreadInput(GetCurrentThreadId(), idActive, TRUE)) {
-        SetForegroundWindow(wid);
+    int idActive = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
+    bool attetched = AttachThreadInput(GetCurrentThreadId(), idActive, TRUE);
+    SetForegroundWindow(wid);
+    if (focus) {
+        SetFocus(wid);
+    }
+    if (attetched) {
         AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
-    } else {
-        // try it anyhow
-        SetForegroundWindow(wid);
     }
 #endif
 }
