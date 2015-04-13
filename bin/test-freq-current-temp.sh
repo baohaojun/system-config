@@ -40,7 +40,8 @@ else
 
     adb-tty su -c '
     freq='$max_freq'
-    for x in $(seq 0 3); do
+    cpunum=$(grep "processor" /proc/cpuinfo|wc -l)
+    for x in $(seq 0 $cpunum); do
         echo 1 > /sys/devices/system/cpu/cpu$x/online;
         if test $freq != no-change; then
             echo $freq > /sys/devices/system/cpu/cpu$x/cpufreq/scaling_'$which'_freq;
@@ -54,7 +55,7 @@ else
             cat $x/type;
             cat $x/temp;
         done | busybox tee /sdcard/current/$freq/temp-$n.txt;
-        (for x in $(seq 0 3); do
+        (for x in $(seq 0 $cpunum); do
             if test -e /sys/devices/system/cpu/cpu$x/cpufreq/scaling_cur_freq; then
                 echo -n "$x ";
                 cat /sys/devices/system/cpu/cpu$x/cpufreq/scaling_cur_freq
