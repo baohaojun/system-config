@@ -208,4 +208,9 @@ function for-code-reading() {
     # mkgtags "$@" #must not put background, the tty(1) depends on this
 }
 
+function mkbeatagsidx() {
+    export SOURCECODETAGSMODE=true;
+    time mkbeagrepidx
+}
+
 `basename $0` "$@"

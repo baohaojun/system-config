@@ -150,6 +150,9 @@ while (<STDIN>) {
 
     print $write "$_";
 
+    (my $file_tag = $source) =~ s,.*/,,;
+    print_with_caching($cache, "$file_tag  file  1 $source **\n");
+
     $write->flush();
     if ($custom_parser) {
         debug "using custom_parser $custom_parser for $source";
