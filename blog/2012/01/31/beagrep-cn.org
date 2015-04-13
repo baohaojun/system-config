@@ -31,11 +31,10 @@ readlink函数，只需要0.23秒！
 debian testing (wheezy)的，如果你的Linux发行版恰好是这几个中的一个，那
 你可以在 [[https://github.com/baohaojun/beagrep/downloads][这里]] 直接选一个.deb包下载安装，以ubuntu 12.04 (precise)为例：
 
-#+begin_example
+#+BEGIN_SRC sh
 dpkg -i beagrep_0.4.0-1_amd64-ubuntu-precise.deb # 会出错，因为一些依赖的.deb包没装上
 apt-get -f install # 装上依赖的.deb包，修正上面的错误
-#+end_example
-
+#+END_SRC
 *更新（2014-05-03）* 目前编译出来的.deb包在ubuntu 12.04上测试发现运行会
  抛异常，建议用下面自己编译安装的方法。
 
@@ -43,7 +42,7 @@ apt-get -f install # 装上依赖的.deb包，修正上面的错误
 
 如果你需要自己编译，以ubuntu precise为例：
 
-#+begin_example
+#+BEGIN_SRC sh
 git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
 # you can also run "git branch -a" to see other versions of ubuntu supported
 
@@ -56,8 +55,7 @@ apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Sta
 
 # do the build
 (set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
-#+end_example
-
+#+END_SRC
 *** 自己编译deb包
 
 这一节见英文版
@@ -68,34 +66,30 @@ apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Sta
 目录下。
 
 *** 下载代码
-#+begin_example
+#+BEGIN_SRC sh
 git clone git://github.com/baohaojun/beagrep.git -b for-windows
-#+end_example
-
+#+END_SRC
 *** 编译安装
 
-#+begin_example
+#+BEGIN_SRC sh
 cd beagrep
 bash build-win.sh
-#+end_example
-
+#+END_SRC
 * 使用
 
 ** 快速smoke test
-#+begin_example
+#+BEGIN_SRC sh
 cd /tmp; mkdir $$; cd $$; echo main > 1.txt; mkbeagrepidx; beagrep -e 'main' --grep '--color=auto'; true; cd ..; rm $$ -rf
-#+end_example
-
+#+END_SRC
 如果beagrep安装配置没有问题的话，在上面的命令输出的最后，你可以看到类似于 ~/.cache/11468/1.txt:1:main~ 。
 ** 创建索引
 
 到想阅读的源代码目录下，以android为例
 
-#+begin_example
+#+BEGIN_SRC sh
 cd ~/src/android
 mkbeagrepidx
-#+end_example
-
+#+END_SRC
 这一步第一次花费的时间较长，在Linux下android代码索引大概需要半个小时
 （跟以前单独用一次grep的时间差不多）。我建议可以用crontab定时在半夜做这
 个工作。
@@ -135,9 +129,9 @@ priority:
 
 - Overide it in =~/.mkbeagrepidx.rc=, setting the ~BEAGREP_IGNORE_DIR_PATTERNS~ environment variable:
 
-  #+begin_example
+  #+BEGIN_SRC sh
   export BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/.git"
-  #+end_example
+  #+END_SRC
 
 - Overide it in the .mkbeagrepidx.rc in the current working directory, same as the above.
 
@@ -151,11 +145,10 @@ priority:
 ** 用beagrep搜索
 
 在想阅读的代码目录下：
-#+begin_example
+#+BEGIN_SRC sh
 cd ~/src/android
 beagrep -e "readlink"
-#+end_example
-
+#+END_SRC
 *** man page for beagrep
 
 Here's a list of all arguments that beagrep takes:

@@ -50,6 +50,7 @@ outdated).
 To compile beagrep by yourself, using Ubuntu precise as an example:
 
 #+begin_src sh
+
 git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
 # you can also run "git branch -a" to see other versions of debian/ubuntu supported
 
@@ -120,12 +121,12 @@ Here's how I do it:
 
 3. Untar it and build the .deb package:
 
-   #+BEGIN_EXAMPLE
+   #+BEGIN_SRC sh
    cd ~/tmp
    tar zxfv beagrep_0.4.0.orig.tar.gz
    cd beagrep
    dpkg-buildpackage
-   #+END_EXAMPLE
+   #+END_SRC
 
    The .deb file is generated in the =~/tmp= directory.
 

@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
-<link rel="stylesheet" href="/css/org.css" type="text/css" />
+ <link rel="stylesheet" href="/css/org.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -139,6 +139,7 @@ readlink函数，只需要0.23秒！
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> 安装</h2>
 <div class="outline-text-2" id="text-2">
@@ -154,17 +155,19 @@ debian testing (wheezy)的，如果你的Linux发行版恰好是这几个中的�
 你可以在 <a href="https://github.com/baohaojun/beagrep/downloads">这里</a> 直接选一个.deb包下载安装，以ubuntu 12.04 (precise)为例：
 </p>
 
-<pre class="example">
-dpkg -i beagrep_0.4.0-1_amd64-ubuntu-precise.deb # 会出错，因为一些依赖的.deb包没装上
-apt-get -f install # 装上依赖的.deb包，修正上面的错误
-</pre>
+<div class="org-src-container">
 
+<pre class="src src-sh">dpkg -i beagrep_0.4.0-1_amd64-ubuntu-precise.deb <span class="org-comment-delimiter"># </span><span class="org-comment">&#20250;&#20986;&#38169;&#65292;&#22240;&#20026;&#19968;&#20123;&#20381;&#36182;&#30340;.deb&#21253;&#27809;&#35013;&#19978;</span>
+apt-get -f install <span class="org-comment-delimiter"># </span><span class="org-comment">&#35013;&#19978;&#20381;&#36182;&#30340;.deb&#21253;&#65292;&#20462;&#27491;&#19978;&#38754;&#30340;&#38169;&#35823;</span>
+</pre>
+</div>
 <p>
 <b>更新（2014-05-03）</b> 目前编译出来的.deb包在ubuntu 12.04上测试发现运行会
  抛异常，建议用下面自己编译安装的方法。
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-1-2" class="outline-4">
 <h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> 编译安装</h4>
 <div class="outline-text-4" id="text-2-1-2">
@@ -172,20 +175,22 @@ apt-get -f install # 装上依赖的.deb包，修正上面的错误
 如果你需要自己编译，以ubuntu precise为例：
 </p>
 
-<pre class="example">
-git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
-# you can also run "git branch -a" to see other versions of ubuntu supported
+<div class="org-src-container">
 
-# Install build dependencies. You can open debian/control and check
-# the build dependencies and install all of them. The following
-# command will try to install them automatically, but if it fails then
-# you need figure out which packages to install manually. Good luck!
-# Or you can contact me for help.
-apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
+<pre class="src src-sh">git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
+<span class="org-comment-delimiter"># </span><span class="org-comment">you can also run "git branch -a" to see other versions of ubuntu supported</span>
 
-# do the build
-(set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
+<span class="org-comment-delimiter"># </span><span class="org-comment">Install build dependencies. You can open debian/control and check</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">the build dependencies and install all of them. The following</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">command will try to install them automatically, but if it fails then</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">you need figure out which packages to install manually. Good luck!</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">Or you can contact me for help.</span>
+apt-get instll $(cat debian/control | perl -ne <span class="org-string">'print if m/Build-Depends/..m/Standards-Version/'</span>|grep -v -e Build-Depends:<span class="org-string">\\\|</span>Standards-Version|perl -npe <span class="org-string">'s/,/ /g'</span>)
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">do the build</span>
+(<span class="org-builtin">set</span> -e; autoreconf -i; ./configure; make -j4; sudo make install; <span class="org-builtin">echo</span> OK)
 </pre>
+</div>
 </div>
 </div>
 <div id="outline-container-sec-2-1-3" class="outline-4">
@@ -197,7 +202,6 @@ apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Sta
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2"><span class="section-number-3">2.2</span> Windows下安装</h3>
 <div class="outline-text-3" id="text-2-2">
@@ -210,21 +214,26 @@ apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Sta
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2-2" class="outline-4">
 <h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> 下载代码</h4>
 <div class="outline-text-4" id="text-2-2-2">
-<pre class="example">
-git clone git://github.com/baohaojun/beagrep.git -b for-windows
+<div class="org-src-container">
+
+<pre class="src src-sh">git clone git://github.com/baohaojun/beagrep.git -b for-windows
 </pre>
+</div>
 </div>
 </div>
 <div id="outline-container-sec-2-2-3" class="outline-4">
 <h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> 编译安装</h4>
 <div class="outline-text-4" id="text-2-2-3">
-<pre class="example">
-cd beagrep
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-builtin">cd</span> beagrep
 bash build-win.sh
 </pre>
+</div>
 </div>
 </div>
 </div>
@@ -235,16 +244,16 @@ bash build-win.sh
 </div><div id="outline-container-sec-3-1" class="outline-3">
 <h3 id="sec-3-1"><span class="section-number-3">3.1</span> 快速smoke test</h3>
 <div class="outline-text-3" id="text-3-1">
-<pre class="example">
-cd /tmp; mkdir $$; cd $$; echo main &gt; 1.txt; mkbeagrepidx; beagrep -e 'main' --grep '--color=auto'; true; cd ..; rm $$ -rf
-</pre>
+<div class="org-src-container">
 
+<pre class="src src-sh"><span class="org-builtin">cd</span> /tmp; mkdir $<span class="org-variable-name">$</span>; <span class="org-builtin">cd</span> $<span class="org-variable-name">$</span>; <span class="org-builtin">echo</span> main &gt; 1.txt; mkbeagrepidx; beagrep -e <span class="org-string">'main'</span> --grep <span class="org-string">'--color=auto'</span>; true; <span class="org-builtin">cd</span> ..; rm $<span class="org-variable-name">$</span> -rf
+</pre>
+</div>
 <p>
 如果beagrep安装配置没有问题的话，在上面的命令输出的最后，你可以看到类似于 <code>/.cache/11468/1.txt:1:main</code> 。
 </p>
 </div>
 </div>
-
 <div id="outline-container-sec-3-2" class="outline-3">
 <h3 id="sec-3-2"><span class="section-number-3">3.2</span> 创建索引</h3>
 <div class="outline-text-3" id="text-3-2">
@@ -252,11 +261,12 @@ cd /tmp; mkdir $$; cd $$; echo main &gt; 1.txt; mkbeagrepidx; beagrep -e 'main' 
 到想阅读的源代码目录下，以android为例
 </p>
 
-<pre class="example">
-cd ~/src/android
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-builtin">cd</span> ~/src/android
 mkbeagrepidx
 </pre>
-
+</div>
 <p>
 这一步第一次花费的时间较长，在Linux下android代码索引大概需要半个小时
 （跟以前单独用一次grep的时间差不多）。我建议可以用crontab定时在半夜做这
@@ -276,6 +286,7 @@ index。
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-3-3" class="outline-3">
 <h3 id="sec-3-3"><span class="section-number-3">3.3</span> man page for mkbeagrepidx</h3>
 <div class="outline-text-3" id="text-3-3">
@@ -319,9 +330,11 @@ will be used.
 
 <li>Overide it in <code>~/.mkbeagrepidx.rc</code>, setting the <code>BEAGREP_IGNORE_DIR_PATTERNS</code> environment variable:
 
-<pre class="example">
-export BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/.git"
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-builtin">export</span> <span class="org-variable-name">BEAGREP_IGNORE_DIR_PATTERNS</span>=<span class="org-string">"$PWD/out,*/.repo,*/.git"</span>
 </pre>
+</div>
 </li>
 
 <li>Overide it in the .mkbeagrepidx.rc in the current working directory, same as the above.
@@ -337,18 +350,20 @@ mkbeagrepidx --deny-directory-pattern "$PWD/out,*/.repo,*/.git,*/.svn"
 </div>
 </div>
 
+
 <div id="outline-container-sec-3-4" class="outline-3">
 <h3 id="sec-3-4"><span class="section-number-3">3.4</span> 用beagrep搜索</h3>
 <div class="outline-text-3" id="text-3-4">
 <p>
 在想阅读的代码目录下：
 </p>
-<pre class="example">
-cd ~/src/android
-beagrep -e "readlink"
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-builtin">cd</span> ~/src/android
+beagrep -e <span class="org-string">"readlink"</span>
 </pre>
 </div>
-
+</div>
 <div id="outline-container-sec-3-4-1" class="outline-4">
 <h4 id="sec-3-4-1"><span class="section-number-4">3.4.1</span> man page for beagrep</h4>
 <div class="outline-text-4" id="text-3-4-1">
@@ -424,6 +439,7 @@ not show that file as a match.
 </div>
 </div>
 </div>
+
 
 <div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4"><span class="section-number-2">4</span> 原理</h2>
@@ -515,6 +531,7 @@ JsonToValue("\"hello world\"",
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-4-2" class="outline-3">
 <h3 id="sec-4-2"><span class="section-number-3">4.2</span> grep 关键字，通常是有趣的</h3>
 <div class="outline-text-3" id="text-4-2">
