@@ -30,7 +30,7 @@ public:
     ~Utils();
 
     //TODO: make Wid usable with the meta system and change signature.
-    Q_INVOKABLE void bringWindowToFront(qlonglong wid, bool focus);
+    Q_INVOKABLE static void bringWindowToFront(qlonglong wid, bool focus);
 
 };
 
