@@ -99,8 +99,8 @@ function mkcscope_files() {
             tee "$outDir"/cscope.files
     else
         cat # see comment above
-    fi | if test -e ~/etc/gtags-filter.rc; then
-        bash ~/etc/gtags-filter.rc
+    fi | if test -e ~/system-config/etc/gtags-filter.rc; then
+        bash ~/system-config/etc/gtags-filter.rc
     else
         cat
     fi
