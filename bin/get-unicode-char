@@ -4,8 +4,8 @@ use Encode;
 my @patARGV = sort {length($b) <=> length($a)} @ARGV;
 
 @ARGV = ();
-if (-e glob("~/.logs/ime-unicode.txt")) {
-    @ARGV = (glob("~/.logs/ime-unicode.txt"));
+if (-e glob("~/.cache/system-config/logs/ime-unicode.txt")) {
+    @ARGV = (glob("~/.cache/system-config/logs/ime-unicode.txt"));
 }
 @ARGV = (@ARGV, glob("~/.emacs_d/UnicodeData.txt"));
 

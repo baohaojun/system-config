@@ -125,7 +125,7 @@
      "-d"
      "\\n"
      "-f"
-     "~/.bash_history.bak"
+     "~/.cache/system-config/.bash_history.bak"
      "--"
      (string-split "\\s+" str))
     (setq lines (string-split "\n" (get-output-stream-string output-stream)))

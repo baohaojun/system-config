@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ~/.bashrc
+. ~/system-config/.bashrc
 set -e
 
 function die() {

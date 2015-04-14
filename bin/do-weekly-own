@@ -56,7 +56,7 @@ EOF
 
 edit-wait $bhj_page
 
-log=~/.logs/do-weekly.log
+log=~/.cache/system-config/logs/do-weekly.log
 congfu --space '~hjbao' -- -a storePage --title $bhj_page --file $bhj_page --parent $tool_page --encoding UTF-8 2>&1|tee $log
 
 id=$(cat $log|grep 'Page has id:'|perl -npe 's/.*Page has id: //')

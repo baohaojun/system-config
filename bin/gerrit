@@ -28,10 +28,10 @@ if test -z "$host"; then
     host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
 fi
 if test -z "$host"; then
-    host=$(cat ~/.cache/last-gerrit-host 2>/dev/null)
+    host=$(cat ~/.cache/system-config/last-gerrit-host 2>/dev/null)
     host=${host:-bibler}
 else
-    echo $host > ~/.cache/last-gerrit-host
+    echo $host > ~/.cache/system-config/last-gerrit-host
 fi
 
 if test "$1" = clone; then

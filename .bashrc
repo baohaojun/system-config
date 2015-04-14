@@ -4,15 +4,15 @@ uname=$(uname)
 if test "$uname" = CYGWIN_NT-5.1 -o "$uname" = CYGWIN_NT-6.1
 then
     if test ! "$EMACS"; then
-        . ~/.bashrc-windows
+        . ~/system-config/.bashrc-windows
     fi
 else
-    . ~/.bashrc-linux
+    . ~/system-config/.bashrc-linux
 fi
 
-if test -e ~/.bash-path; then
+if test -e ~/.config/system-config/.bashrc-path; then
     if test -z "$RECURSIVE_SHELL"; then
-        . ~/.bash-path
+        . ~/.config/system-config/.bashrc-path
     fi
 else
     if test -x /opt/local/libexec/gnubin/readlink; then
@@ -34,10 +34,10 @@ else
         )
     fi
     export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent|rm-last-nl|tr '\n' ':')
-    printf 'export PATH=%q\n' "$PATH" > ~/.bash-path
+    printf 'export PATH=%q\n' "$PATH" > ~/.config/system-config/.bashrc-path
 
 if ask-if-not-bhj "Install cpan into your \$HOME/perl5?"; then
-    cat <<'EOF' >> ~/.bash-path
+    cat <<'EOF' >> ~/.config/system-config/.bashrc-path
     export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
     export PERL_MB_OPT="--install_base $HOME/perl5";
     export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
@@ -45,16 +45,16 @@ if ask-if-not-bhj "Install cpan into your \$HOME/perl5?"; then
     export PATH="$HOME/perl5/bin:$PATH";
 EOF
 fi
-    . ~/.bash-path
+    . ~/.config/system-config/.bashrc-path
 fi
 
 if test ! "$EMACS"; then
-    . ~/.bashrc-public
+    . ~/system-config/.bashrc-public
 fi
 if test "$TERM" = dumb; then
-    . ~/.bashrc-in-emacs
+    . ~/system-config/.bashrc-in-emacs
 else
-    . ~/.bashrc-no-emacs
+    . ~/system-config/.bashrc-no-emacs
 fi
 DEBEMAIL="baohaojun@gmail.com"
 DEBFULLNAME="Bao Haojun"
@@ -85,7 +85,7 @@ alias ll='ls -l --show-control-chars'                              # long list
 alias la='ls -A --show-control-chars'                              # all but . and ..
 alias l='ls -CFl --show-control-chars --block-size=1'                              #
 case $- in
-    *i*) . ~/.bashrc-interactive;;
+    *i*) . ~/system-config/.bashrc-interactive;;
 esac
 
 if test -x ~/external/firefox/firefox; then

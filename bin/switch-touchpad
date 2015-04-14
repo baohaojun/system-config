@@ -10,8 +10,8 @@ finger_high=80
 if test $(get-about-me mach) = vostro; then
     finger_high=15
 fi
-if test -e ~/.config/about_me/touchpad-finger-high; then
-    finger_high=$(cat ~/.config/about_me/touchpad-finger-high)
+if test -e ~/.config/system-config/about_me/touchpad-finger-high; then
+    finger_high=$(cat ~/.config/system-config/about_me/touchpad-finger-high)
 fi
 synclient FingerHigh=$finger_high
 synclient TouchpadOff=0

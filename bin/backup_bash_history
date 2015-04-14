@@ -1,8 +1,8 @@
 #!/bin/bash
-tmp=~/.bash_history.$$
+tmp=~/.cache/system-config/.bash_history.$$
 (
     (
-        reverse ~/.bash_history; cat ~/.bash_history.bak
+        reverse ~/.bash_history; cat ~/.cache/system-config/.bash_history.bak
     ) |
     perl -ne '
 #{%perl%}
@@ -24,4 +24,4 @@ print if (length($_) < 1024 and (not m/$ign_words_re/ or 1..2000 or m/^true;/))
 #{%/perl%}
 ' |
     uniq-even-non-ajacent -pre 'true;' | head -n 20000 > $tmp ) 2>/dev/null
-mv $tmp ~/.bash_history.bak
+mv $tmp ~/.cache/system-config/.bash_history.bak

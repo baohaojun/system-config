@@ -101,8 +101,8 @@ alias vcenv6='. ~/bin/windows/vcenv6.sh'
 alias wdkenv='. ~/bin/windows/wdkenv.sh'
 alias repo='PATH=/bin:$PATH repo'
 
-if test -e ~/.bash-path; then
-    . ~/.bash-path
+if test -e ~/.config/system-config/.bashrc-path; then
+    . ~/.config/system-config/.bashrc-path
     SetPath
     unset SetPath
 fi

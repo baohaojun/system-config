@@ -331,17 +331,17 @@ might be bad."
 ;;;###autoload
 (defun bhj-set-smtp-cred-to-company-mail ()
   (setq smtpmail-auth-credentials ; fixme
-        `((,(shell-command-to-string "cat ~/.config/about_me/smtp")
-           ,(string-to-int (shell-command-to-string "cat ~/.config/about_me/smtp-port"))
-           ,(shell-command-to-string "cat ~/.config/about_me/mail")
+        `((,(shell-command-to-string "cat ~/.config/system-config/about_me/smtp")
+           ,(string-to-int (shell-command-to-string "cat ~/.config/system-config/about_me/smtp-port"))
+           ,(shell-command-to-string "cat ~/.config/system-config/about_me/mail")
            nil))
 
         message-send-mail-function 'smtpmail-send-it
-        user-mail-address (shell-command-to-string "cat ~/.config/about_me/mail")
-        smtpmail-stream-type (intern (shell-command-to-string "cat ~/.config/about_me/conn-type"))
-        smtpmail-default-smtp-server (shell-command-to-string "cat ~/.config/about_me/smtp")
-        smtpmail-smtp-server (shell-command-to-string "cat ~/.config/about_me/smtp")
-        smtpmail-smtp-service (string-to-int (shell-command-to-string "cat ~/.config/about_me/smtp-port"))))
+        user-mail-address (shell-command-to-string "cat ~/.config/system-config/about_me/mail")
+        smtpmail-stream-type (intern (shell-command-to-string "cat ~/.config/system-config/about_me/conn-type"))
+        smtpmail-default-smtp-server (shell-command-to-string "cat ~/.config/system-config/about_me/smtp")
+        smtpmail-smtp-server (shell-command-to-string "cat ~/.config/system-config/about_me/smtp")
+        smtpmail-smtp-service (string-to-int (shell-command-to-string "cat ~/.config/system-config/about_me/smtp-port"))))
 
 ;;;###autoload
 (defun bhj-set-reply ()
@@ -382,7 +382,7 @@ might be bad."
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "\"Bao Haojun\" <" (shell-command-to-string "cat ~/.config/about_me/mail") ">")))
+          (insert "\"Bao Haojun\" <" (shell-command-to-string "cat ~/.config/system-config/about_me/mail") ">")))
 
       (save-excursion
         (message-goto-from)
@@ -390,7 +390,7 @@ might be bad."
         (when (save-excursion
                 (search-forward-regexp "@ask.com" (line-end-position) t))
           (kill-line)
-          (insert (completing-read "use account? " `(,(shell-command-to-string "cat ~/.config/about_me/mail") "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
+          (insert (completing-read "use account? " `(,(shell-command-to-string "cat ~/.config/system-config/about_me/mail") "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
         (message-goto-from)
         (message-beginning-of-line)
         (cond ((save-excursion
@@ -401,8 +401,8 @@ might be bad."
                   (line-end-position) t))
                (kill-line)
                (insert (format "%s <%s>"
-                               (shell-command-to-string "cat ~/.config/about_me/FullName")
-                               (shell-command-to-string "cat ~/.config/about_me/mail")))
+                               (shell-command-to-string "cat ~/.config/system-config/about_me/FullName")
+                               (shell-command-to-string "cat ~/.config/system-config/about_me/mail")))
                (bhj-set-smtp-cred-to-company-mail))
 
               ((save-excursion (search-forward-regexp "@gmail.com" (line-end-position) t))
@@ -925,7 +925,7 @@ might be bad."
   (interactive)
   (ajoke--setup-env)
   (let ((default-directory (expand-file-name "~")))
-    (shell-command-to-string (format "bhj-help-it %s %s >~/.logs/bhj-help-it.log 2>&1&" major-mode (shell-quote-argument (bhj-current-word))))))
+    (shell-command-to-string (format "bhj-help-it %s %s >~/.cache/system-config/logs/bhj-help-it.log 2>&1&" major-mode (shell-quote-argument (bhj-current-word))))))
 
 (defcustom bhj-help-qt-prog "bhj-help-qt"
   "The program to run when user want MSDN like help.")
@@ -941,7 +941,7 @@ might be bad."
   "open help for the current word for qt"
   (interactive)
   (ajoke--setup-env)
-  (shell-command-to-string (format "%s %s >~/.logs/bhj-help-qt.log 2>&1&" bhj-help-qt-prog (shell-quote-argument (bhj-current-word)))))
+  (shell-command-to-string (format "%s %s >~/.cache/system-config/logs/bhj-help-qt.log 2>&1&" bhj-help-qt-prog (shell-quote-argument (bhj-current-word)))))
 
 ;;;###autoload
 (defun bhj-view-mail-external ()

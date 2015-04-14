@@ -10,7 +10,7 @@ function die() {
 # When called, we must be at the top of the beagrep indexed source folder.
 
 export source_dir=$(readlink -f .)
-export db_dir=~/.cache/for-code-reading/$source_dir
+export db_dir=~/.cache/system-config/for-code-reading/$source_dir
 
 for x in $db_dir/.java-fallback.*; do
     if test "$DOING_FALLBACKS" = true; then
@@ -42,7 +42,7 @@ if test -e "$md5file" -a -z "$UPDATE_TAG_CACHE"; then
         set -x
         trap '' SIGHUP
         UPDATE_TAG_CACHE=true bash -x beatags "$@"
-    ) > ~/.logs/update-beatags.log 2>&1 &
+    ) > ~/.cache/system-config/logs/update-beatags.log 2>&1 &
     exit
 fi
 

@@ -564,7 +564,7 @@ beginning of current defun."
     (let* ((try-start (save-excursion (ajoke--goto-start-of-try) (point)))
            (try-end (save-excursion (ajoke--goto-start-of-try) (forward-list) (point)))
            (exceptions (shell-command-to-string
-                        (format "echo %s | ajoke-get-exceptions 2>~/.logs/ajoke-get-exceptions.log"
+                        (format "echo %s | ajoke-get-exceptions 2>~/.cache/system-config/logs/ajoke-get-exceptions.log"
                                 (shell-quote-argument (buffer-substring-no-properties try-start try-end)))))
            (exceptions (split-string exceptions "\n"))
            (exceptions (cons "done" exceptions))

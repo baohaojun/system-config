@@ -58,7 +58,7 @@ regedit /s ime-noctrlshift-noaltshift.reg
 regedit /s console-color.reg
 
 #setup environment?
-. ~/.bashrc-windows
+. ~/system-config/.bashrc-windows
 
 echo path "$(IFS=$'\n'; for x in  $(echo $PATH|tr ':' '\n'); do test -d "$x" && cygpath -asm "$x"; done|tr '\n' ';')" > /c/.bashloc.bat
 

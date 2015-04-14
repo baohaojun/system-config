@@ -1,4 +1,5 @@
 #!/bin/bash
+# this script is for developping lww, use a different HOME for testing!
 export OLDHOME=$HOME
 export HOME=$1
 shift

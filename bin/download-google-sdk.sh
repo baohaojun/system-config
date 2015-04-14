@@ -65,14 +65,14 @@ done
 
 re_ok=false
 first_good_sdk=8
-if test -e ~/.logs/first-good-sdk-xml.n; then
-    first_good_sdk=$(cat ~/.logs/first-good-sdk-xml.n)
+if test -e ~/.cache/system-config/logs/first-good-sdk-xml.n; then
+    first_good_sdk=$(cat ~/.cache/system-config/logs/first-good-sdk-xml.n)
 fi
 fail_times=0
 for x in $(seq $first_good_sdk 1000); do
     if wget -N -r http://dl-ssl.google.com/android/repository/repository-$x.xml; then
         if test $re_ok = false; then
-            echo $x > ~/.logs/first-good-sdk-xml.n
+            echo $x > ~/.cache/system-config/logs/first-good-sdk-xml.n
         fi
         re_ok=true;
     else

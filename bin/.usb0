@@ -1,6 +1,6 @@
 #!/bin/bash
-if test -e ~/.config/about_me/usb0; then
-   . ~/.config/about_me/usb0
+if test -e ~/.config/system-config/about_me/usb0; then
+   . ~/.config/system-config/about_me/usb0
 else
    export USB0=usb0
 fi

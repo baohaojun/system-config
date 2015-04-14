@@ -24,14 +24,14 @@ function ask-for-settings() {
         esac
     done
 
-    if test ! -e ~/.config/about_me/$file; then
+    if test ! -e ~/.config/system-config/about_me/$file; then
         if test ${#selections[@]} != 0; then
             REPLY=$(select-args -p "What is your $what? " -- "${selections[@]}")
         else
             read -e -p "What is your $what? "
         fi
         if test "$REPLY"; then
-            echo -n $REPLY > ~/.config/about_me/$file
+            echo -n $REPLY > ~/.config/system-config/about_me/$file
             "$@"
         fi
     fi
@@ -41,9 +41,9 @@ function ask-for-confirmation() {
     file=$1
     what=$2
     shift 2
-    if test ! -e ~/.config/about_me/$file; then
+    if test ! -e ~/.config/system-config/about_me/$file; then
         if yes-or-no-p "You have made sure $what? "; then
-            touch ~/.config/about_me/$file
+            touch ~/.config/system-config/about_me/$file
         fi
     fi
 }

@@ -50,8 +50,8 @@ for x in 15m hourly daily weekly; do
     mkdir -p ~/external/etc/cron.d/$x;
 done
 
-if which sudo && test $(uname)  = Linux -a ! -e ~/.logs/offline-is-unstable; then
-    (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.logs/offline-is-unstable) || true
+if which sudo && test $(uname)  = Linux -a ! -e ~/.cache/system-config/logs/offline-is-unstable; then
+    (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.cache/system-config/logs/offline-is-unstable) || true
 fi
 
 touch ~/.where.bak
@@ -61,7 +61,7 @@ cd ~/system-config/
 
 uname=$(uname|perl -npe 's/_.*//')
 mkdir -p ~/external/bin/$uname/ext
-mkdir -p ~/.cache/notification-manager
+mkdir -p ~/.cache/system-config/notification-manager
 mkdir -p ~/external/etc/at
 echo ~/external/etc/at >> ~/.where
 
@@ -276,8 +276,8 @@ if test -e ~/src/github/private-config/.bbdb; then
     ln -s ~/src/github/private-config/.bbdb ~/ -f
 fi
 
-if test ! -d ~/.config/about_me; then
-    mkdir -p ~/.config/about_me;
+if test ! -d ~/.config/system-config/about_me; then
+    mkdir -p ~/.config/system-config/about_me;
 fi
 
 if uname | grep cygwin -i; then # the following are for linux only
@@ -286,7 +286,7 @@ fi
 
 set-use-my-own-firefox
 
-if test ! -d ~/.config/about_me && yes-or-no-p "You want to configure your about_me?"; then
+if test ! -d ~/.config/system-config/about_me && yes-or-no-p "You want to configure your about_me?"; then
     after-co-settings.sh
 fi
 if test -x ~/src/github/private-config/after-co.sh; then
@@ -326,8 +326,8 @@ fi || true
     )
 ) >/dev/null 2>&1 || true
 
-if which emacs >/dev/null 2>&1 && test ! -e ~/.config/emacs-config-done; then
-    touch ~/.config/emacs-config-done
+if which emacs >/dev/null 2>&1 && test ! -e ~/.config/system-config/emacs-config-done; then
+    touch ~/.config/system-config/emacs-config-done
     ~/system-config/bin/Linux/emacs-install-packages
 fi || true
 

@@ -93,4 +93,4 @@ for system_arch in $system_archs; do
         cp $basepath/base.cow2 $basepath/base.error -av
         echo done
     "
-done 2>&1 | grep --line-buffered -i -v 'create hard link.*invalid cross-device link' | time tee ~/.logs/$(basename $0).log
+done 2>&1 | grep --line-buffered -i -v 'create hard link.*invalid cross-device link' | time tee ~/.cache/system-config/logs/$(basename $0).log

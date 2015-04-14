@@ -1,35 +1,35 @@
 #!/bin/bash
 
 set -e
-rm -f ~/.cache/kernel-build.ok
+rm -f ~/.cache/system-config/kernel-build.ok
 git ls-tree -r HEAD --name-only |tee mark| xargs touch
 touch mark
 echo 'echo -00122-g512f9aa; exit 0' > ./scripts/setlocalversion
 
 if test $# != 0; then # should be make i386_defconfig
-    rm ~/.cache/kernel-build -rf
-    mkdir -p ~/.cache/kernel-build/usr
+    rm ~/.cache/system-config/kernel-build -rf
+    mkdir -p ~/.cache/system-config/kernel-build/usr
     export CROSS_COMPILE=${CROSS_COMPILE:-ccache }
     if echo $1 | grep arch/arm; then
         export PATH=$(lookup-file prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin):$PATH
         export ARCH=arm
         export CROSS_COMPILE="$CROSS_COMPILE arm-eabi-"
     fi
-    make $(basename $1) O=~/.cache/kernel-build -j8
-    make O=~/.cache/kernel-build -j8
-    make O=~/.cache/kernel-build -j8 modules
-    make O=~/.cache/kernel-build -j8 headers_install
-    make O=~/.cache/kernel-build -j8 INSTALL_MOD_PATH=~/.cache/kernel-build/usr INSTALL_MOD_STRIP=1 modules_install
-    touch ~/.cache/kernel-build.ok
+    make $(basename $1) O=~/.cache/system-config/kernel-build -j8
+    make O=~/.cache/system-config/kernel-build -j8
+    make O=~/.cache/system-config/kernel-build -j8 modules
+    make O=~/.cache/system-config/kernel-build -j8 headers_install
+    make O=~/.cache/system-config/kernel-build -j8 INSTALL_MOD_PATH=~/.cache/system-config/kernel-build/usr INSTALL_MOD_STRIP=1 modules_install
+    touch ~/.cache/system-config/kernel-build.ok
 else
     (
         cd $(lookup-file .repo/..)
         android-make msm-kernel
-        touch ~/.cache/kernel-build.ok
+        touch ~/.cache/system-config/kernel-build.ok
     )
 fi | tee ~/tmp/1.txt
 
-if test ! -e ~/.cache/kernel-build.ok; then
+if test ! -e ~/.cache/system-config/kernel-build.ok; then
     die "build kernel failed, please check ~/tmp/1.txt"
 fi
 
@@ -37,7 +37,7 @@ find . -type f -anewer mark -print | perl -npe 's!^\./!!' > newer
 file-arg1-arg2 mark newer | pn 1 | xargs git rm -f
 
 if test $# != 0; then # should be make i386_defconfig
-    headers=$(find ~/.cache/kernel-build/ -name '*.h')
+    headers=$(find ~/.cache/system-config/kernel-build/ -name '*.h')
 else
     headers=$(find $(android-env get_abs_build_var PRODUCT_OUT)/obj/KERNEL_OBJ/ -name '*.h')
 fi

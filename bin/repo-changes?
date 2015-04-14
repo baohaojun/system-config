@@ -142,7 +142,7 @@ fi
 ) || echo "$PWD git failed"
 
 #{%/sh%}
-' 2>&1 10>~/.logs/repo-changes.lock | (
+' 2>&1 10>~/.cache/system-config/logs/repo-changes.lock | (
     cd $(lookup-file .repo/..);
     mkdir -p $(readlink -m out)
     log=./out/repo-changes.log"$(echo -n $*)"

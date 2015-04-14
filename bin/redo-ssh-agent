@@ -16,34 +16,34 @@ else
     return 0
 fi
 
-if test -e ~/.config/ssh-agent; then
-    . ~/.config/ssh-agent
+if test -e ~/.config/system-config/ssh-agent; then
+    . ~/.config/system-config/ssh-agent
 fi
 if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication agent'; then
     start_ssh_agent() {
         (
             set -e
             umask 077
-            ssh-agent > ~/.config/ssh-agent.$$
-            grep "^echo" -v ~/.config/ssh-agent.$$ > ~/.config/ssh-agent.$$.2
-            rm ~/.config/ssh-agent.$$
-            mv ~/.config/ssh-agent.$$.2 ~/.config/ssh-agent
+            ssh-agent > ~/.config/system-config/ssh-agent.$$
+            grep "^echo" -v ~/.config/system-config/ssh-agent.$$ > ~/.config/system-config/ssh-agent.$$.2
+            rm ~/.config/system-config/ssh-agent.$$
+            mv ~/.config/system-config/ssh-agent.$$.2 ~/.config/system-config/ssh-agent
         )
-        . ~/.config/ssh-agent
+        . ~/.config/system-config/ssh-agent
     }
 
-    if test ! -e ~/.config/ssh-agent; then
+    if test ! -e ~/.config/system-config/ssh-agent; then
         echo 1>&2 no ssh-agent found, restart it
         start_ssh_agent
     else
-        . ~/.config/ssh-agent
+        . ~/.config/system-config/ssh-agent
     fi
 
     val=0
     ssh-add -l >/dev/null 2>&1 || val=$?
     if test $val = 2; then
         echo 1>&2 "can't connect to ssh-agent, restart it"
-        rm ~/.config/ssh-agent
+        rm ~/.config/system-config/ssh-agent
         start_ssh_agent
     fi
 fi

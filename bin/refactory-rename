@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
 prepend=
 postpend=
 export ASK_REPLACER=true

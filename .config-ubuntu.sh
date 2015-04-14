@@ -31,7 +31,7 @@ tar zxfv ./google/android-sdk_r06-linux_86.tgz
 mkdir -p ~/external/bin/Linux/ext/android-sdk-linux_86/temp
 cd ~/external/bin/Linux/ext/android-sdk-linux_86/temp
 ln ../../google/* . 
-. ~/.bashrc
+. ~/system-config/.bashrc
 ~/external/bin/Linux/ext/android-sdk-linux_86/tools/android&
 ~/bin/Linux/after-check-out.sh
 

@@ -109,7 +109,7 @@ function hir() {
     if test $# = 0; then
         history -r
         backup_bash_history
-        echo "~/.bash_history.bak has $(wc -l ~/.bash_history.bak|pn 1) lines"
+        echo "~/.cache/system-config/.bash_history.bak has $(wc -l ~/.cache/system-config/.bash_history.bak|pn 1) lines"
         cat ~/.where.bak >> ~/.where
     else
         command hil "$@"

@@ -16,7 +16,7 @@ for x in ~/system-config/etc/at/$h:$m ~/external/etc/at/$h:$m; do
         if [[ $x =~ system-config ]]; then
             logdir=system-config
         fi
-        logdir=~/.logs/at-tasks/$logdir
+        logdir=~/.cache/system-config/logs/at-tasks/$logdir
         mkdir -p $logdir
 
         (

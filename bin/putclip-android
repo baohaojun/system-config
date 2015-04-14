@@ -1,6 +1,6 @@
 #!/bin/bash
-if test "$(my-adb devices?|wc -l)" -gt 1 -a -e ~/.config/bhj/weixin-adb-serial; then
-    export ANDROID_SERIAL=$(cat ~/.config/bhj/weixin-adb-serial)
+if test "$(my-adb devices?|wc -l)" -gt 1 -a -e ~/.config/system-config/bhj/weixin-adb-serial; then
+    export ANDROID_SERIAL=$(cat ~/.config/system-config/bhj/weixin-adb-serial)
 fi
 
 function die() {
@@ -13,21 +13,21 @@ if test $(basename $0) = putclip-android; then
         if test $# != 0; then
             die "PUTCLIP_ANDROID_FILE set but arg number is $# not 0"
         fi
-        cat "$PUTCLIP_ANDROID_FILE" |emoji-to-unicode.pl > ~/.logs/$(basename $0).txt
+        cat "$PUTCLIP_ANDROID_FILE" |emoji-to-unicode.pl > ~/.cache/system-config/logs/$(basename $0).txt
     else
         if test "$#" = 0; then
             set -- "$(ask-for-input-with-emacs)"
         fi
         set -- "$(echo "$@")"
-        echo -n "$@" |emoji-to-unicode.pl > ~/.logs/$(basename $0).txt
+        echo -n "$@" |emoji-to-unicode.pl > ~/.cache/system-config/logs/$(basename $0).txt
     fi
-    my-adb push ~/.logs/$(basename $0).txt /sdcard/putclip.txt&
+    my-adb push ~/.cache/system-config/logs/$(basename $0).txt /sdcard/putclip.txt&
     if test "$NO_WEIXIN_EMOJI"; then
-        cp ~/.logs/$(basename $0).txt ~/.logs/$(basename $0).txt.wx
+        cp ~/.cache/system-config/logs/$(basename $0).txt ~/.cache/system-config/logs/$(basename $0).txt.wx
     else
-        unicode-to-wx.pl ~/.logs/$(basename $0).txt > ~/.logs/$(basename $0).txt.wx
+        unicode-to-wx.pl ~/.cache/system-config/logs/$(basename $0).txt > ~/.cache/system-config/logs/$(basename $0).txt.wx
     fi
-    my-adb push ~/.logs/$(basename $0).txt.wx /sdcard/putclip-wx.txt
+    my-adb push ~/.cache/system-config/logs/$(basename $0).txt.wx /sdcard/putclip-wx.txt
     my-adb "
          am startservice --user 0 -n com.bhj.setclip/.PutClipService&
          for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do

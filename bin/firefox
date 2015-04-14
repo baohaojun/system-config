@@ -3,7 +3,7 @@
 if echo $SHELLOPTS | grep -P -e  '\bxtrace\b'; then
     true
 else
-    exec 2>>~/.logs/firefox.log
+    exec 2>>~/.cache/system-config/logs/firefox.log
 fi
 if test "$DISPLAY" = :0.0; then
     . ~/.renew-xauth
@@ -52,7 +52,7 @@ function pop-url() {
 export -f push-url pop-url
 
 if test "$1" = -new-tab; then
-    push-url ~/.logs/firefox-tab-ring "$(get-firefox-tab-url)"
+    push-url ~/.cache/system-config/logs/firefox-tab-ring "$(get-firefox-tab-url)"
 fi
 
 function do_it() {
@@ -93,20 +93,20 @@ function do_it() {
                echo -n > $ring1
                rm -f /tmp/firefox-tab-list-failed.$$ /tmp/firefox-tab-list.$$
            ' true
-    ) 9<~/.bashrc
+    ) 9<~/system-config/.bashrc
 }
 
 if test "$1" = pop; then
-    FF_POP=true do_it ~/.logs/firefox-tab-ring ~/.logs/firefox-tab-ring.pop
+    FF_POP=true do_it ~/.cache/system-config/logs/firefox-tab-ring ~/.cache/system-config/logs/firefox-tab-ring.pop
     exit
 fi
 
 if test "$1" = push; then
     if test $# -gt 1; then
         shift
-        push-url ~/.logs/firefox-tab-ring "$@"
+        push-url ~/.cache/system-config/logs/firefox-tab-ring "$@"
     else
-        do_it ~/.logs/firefox-tab-ring.pop ~/.logs/firefox-tab-ring
+        do_it ~/.cache/system-config/logs/firefox-tab-ring.pop ~/.cache/system-config/logs/firefox-tab-ring
     fi
     exit
 

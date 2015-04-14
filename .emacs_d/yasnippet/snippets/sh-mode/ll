@@ -2,4 +2,4 @@
 # name: ll
 # key: ll
 # --
-> ~/.logs/\$(basename \$0).log 2>&1
+> ~/.cache/system-config/logs/\$(basename \$0).log 2>&1

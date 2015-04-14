@@ -3,14 +3,14 @@
 
 last_txt=$(ls ~/src/android/prebuilts/sdk/api/*.txt | sort -n | tail -n 1)
 
-cache=~/.cache/$(basename $0)/$(basename $last_txt|perl -npe 's/\.txt$/.java/')
+cache=~/.cache/system-config/$(basename $0)/$(basename $last_txt|perl -npe 's/\.txt$/.java/')
 
 if test -e $cache -a $cache -nt $last_txt; then
     cd $(dirname $cache)
 
 else
     rm -rf $(dirname $cache)
-    rm -rf ~/.cache/for-code-reading/$(dirname $cache)
+    rm -rf ~/.cache/system-config/for-code-reading/$(dirname $cache)
     mkdir -p $(dirname $cache)
     perl -npe 's/^package android \{/package android;/; s/^(\s+)(?:ctor|field)/$1/' $last_txt > $cache
     cd $(dirname $cache)

@@ -2,7 +2,7 @@
 # key: logdef
 # name: logdef
 # --
-echo -n > ~/.logs/\$(basename \$0).log
+echo -n > ~/.cache/system-config/logs/\$(basename \$0).log
 function debug() {
-    echo "\$@" >> ~/.logs/\$(basename \$0).log
+    echo "\$@" >> ~/.cache/system-config/logs/\$(basename \$0).log
 }

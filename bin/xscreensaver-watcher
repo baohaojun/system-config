@@ -7,7 +7,7 @@ while (<IN>) {
         if (!$blanked) {
             printf "blanked at %s", `date`;
             system "xset dpms 10 120 180";
-            unless (-e glob("~/.logs/screensaver-no-sound-off")) {
+            unless (-e glob("~/.cache/system-config/logs/screensaver-no-sound-off")) {
                 system("sound-off");
                 system("screen-lock-on&");
             }

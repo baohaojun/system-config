@@ -20,7 +20,7 @@ fi
                 if test $home = home; then
                     echo -D 7070
                 fi
-                ) -R :$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3)):localhost:22 $(if test ~/.config/call-home-user; then cat ~/.config/call-home-user; fi)$home -p 22
+                ) -R :$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3)):localhost:22 $(if test ~/.config/system-config/call-home-user; then cat ~/.config/system-config/call-home-user; fi)$home -p 22
             if test $? = 137; then
                 continue
             fi
@@ -35,7 +35,7 @@ fi
             sleep $x
             done&
     done
-) 9>~/.logs/$(basename $0).lock  2>&1 &
+) 9>~/.cache/system-config/logs/$(basename $0).lock  2>&1 &
 
 exit
 (
@@ -51,4 +51,4 @@ exit
         sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
         sudo route add $(host github.com|grep 'has address'|head -n 1|pn 4) gw 10.21.130.1
     fi || true
-) 9>~/.logs/$(basename $0).lock-vpn 2>&1 &
+) 9>~/.cache/system-config/logs/$(basename $0).lock-vpn 2>&1 &

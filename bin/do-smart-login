@@ -5,7 +5,7 @@ for x in $(seq 1 1); do
 done
 
 exit
-appcode=$(cat ~/.config/smart-appcode)
+appcode=$(cat ~/.config/system-config/smart-appcode)
 pass=${1:-$(get-authinfo smtp.alibaba-inc.com haojun.bhj@alibaba-inc.com|urlify)}
 code=$(wget "https://login.alibaba-inc.com/authorize/login.do?appcode=$appcode&name=haojun.bhj&password=$pass&authtype=user" -O - 2>/dev/null )
 

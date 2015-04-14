@@ -75,7 +75,7 @@ cpan String::ShellQuote
 ~/system-config/bin/after-co-ln-s.sh
 
 cygserver-config
-. ~/.bashrc-windows
+. ~/system-config/.bashrc-windows
 export HOME=/q
 cd ~/bin/windows/Imap4Monitor/
 function report_error()

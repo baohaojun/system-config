@@ -4,7 +4,7 @@ prefix=~/.gtags-fallback-dir
 
 x=0;
 while true; do
-    if test -d $prefix.$x && test "$(readlink -f $prefix.$x)" = ~/.cache/for-code-reading$PWD; then
+    if test -d $prefix.$x && test "$(readlink -f $prefix.$x)" = ~/.cache/system-config/for-code-reading$PWD; then
         echo "you have already put $PWD into fallback"
         exit
     fi
@@ -14,6 +14,6 @@ while true; do
         continue
     fi
 
-    relative-link ~/.cache/for-code-reading$PWD $prefix.$x
+    relative-link ~/.cache/system-config/for-code-reading$PWD $prefix.$x
     exit
 done

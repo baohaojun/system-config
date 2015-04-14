@@ -1,13 +1,13 @@
 #!/bin/bash
 
-. ~/.bashrc
-. ~/.config/ssh-agent || true
+. ~/system-config/.bashrc
+. ~/.config/system-config/ssh-agent || true
 run_dir=$(basename $1)
 
 export USER=$(whoami) #in cron daemon, this env variable is not set by default.
 export RUNNING_IN_CRON=true
 
-logdir=~/.logs/cron-log/$run_dir
+logdir=~/.cache/system-config/logs/cron-log/$run_dir
 mkdir -p $logdir
 
 exec > $logdir/bhj-cron-runner 2>&1

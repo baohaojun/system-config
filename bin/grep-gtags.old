@@ -9,7 +9,7 @@ use IPC::Open2;
 
 
 my $debug;
-open($debug, ">", glob("~/.logs/grep-gtags.log")) or
+open($debug, ">", glob("~/.cache/system-config/logs/grep-gtags.log")) or
     open($debug, ">",  "/dev/null") or
     die "Can not open debug file even on /dev/null";
 

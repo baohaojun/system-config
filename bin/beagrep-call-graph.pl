@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 
 use strict;
-my $gtags = glob("~/.cache/for-code-reading/$ENV{PWD}/GTAGS");
+my $gtags = glob("~/.cache/system-config/for-code-reading/$ENV{PWD}/GTAGS");
 -e $gtags or die "gtags file not found";
 
-my $gpath = glob("~/.cache/for-code-reading/$ENV{PWD}/GPATH");
+my $gpath = glob("~/.cache/system-config/for-code-reading/$ENV{PWD}/GPATH");
 -e $gpath or die "gpath file not found";
 
 open(my $gpath_dump, "-|", "gtags", "--dump", $gpath)

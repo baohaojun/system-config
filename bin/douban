@@ -65,7 +65,7 @@ case "$1" in
                         echo album: $album
                         echo title: $title
                         echo artist: $artist
-                    ) > ~/.logs/douban.print
+                    ) > ~/.cache/system-config/logs/douban.print
                     ;;
                 bagua)
                     search-baidu "$artist" "$title" site:baike.baidu.com
@@ -92,7 +92,7 @@ case "$1" in
                         postfix=$postfix'//'
                     fi
 
-                    bhj-notify -i "$icon" DoubanMusic.el$(if test -e ~/.logs/douban-should-loop; then echo -n -loop; fi) \
+                    bhj-notify -i "$icon" DoubanMusic.el$(if test -e ~/.cache/system-config/logs/douban-should-loop; then echo -n -loop; fi) \
                         "$(
                                 echo channel: $channel
                                 echo
@@ -146,7 +146,7 @@ case "$1" in
                             like-mp3-tags "$song"
                             douban_action=info douban-misc
                         fi
-                    ) >> ~/.logs/douban-like2.log 2>&1
+                    ) >> ~/.cache/system-config/logs/douban-like2.log 2>&1
                     ;;
                 start-play-hook)
                     if test ! -e "$song" -o ! -e "$icon" ; then
@@ -159,14 +159,14 @@ case "$1" in
                         douban_action=info douban-misc
                     else
                         my-adb rm /sdcard/Music/"$(basename "$song")"
-                    fi > ~/.logs/douban-like.log 2>&1
+                    fi > ~/.cache/system-config/logs/douban-like.log 2>&1
 
                     if test ! -e ~/.do-not-disturb; then
                         douban_action=info douban misc
                     fi
                     ;;
             esac
-        ) >>~/.logs/douban-misc.log 2>&1 &
+        ) >>~/.cache/system-config/logs/douban-misc.log 2>&1 &
         ;;
     ba) # bagua
         shift;
@@ -181,7 +181,7 @@ case "$1" in
     print)
         shift
         douban_action=print douban-misc >/dev/null 2>&1
-        cat ~/.logs/douban.print
+        cat ~/.cache/system-config/logs/douban.print
         ;;
     start-play-hook)
         douban_action=start-play-hook douban-misc
@@ -211,11 +211,11 @@ case "$1" in
             echo -n yes
             exit
         }
-        if test -e ~/.logs/douban-should-play; then
-            rm ~/.logs/douban-should-play
+        if test -e ~/.cache/system-config/logs/douban-should-play; then
+            rm ~/.cache/system-config/logs/douban-should-play
             yes
         fi
-        if test -e ~/.logs/douban-should-loop; then
+        if test -e ~/.cache/system-config/logs/douban-should-loop; then
             yes
         fi
         if test ! -e "$1"; then
@@ -239,7 +239,7 @@ case "$1" in
         fi
         ;;
     replay)
-        touch ~/.logs/douban-should-play
+        touch ~/.cache/system-config/logs/douban-should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
@@ -248,25 +248,25 @@ case "$1" in
                           (douban-music-play-next-refresh))'
         ;;
     next)
-        touch ~/.logs/douban-should-play
+        touch ~/.cache/system-config/logs/douban-should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
         emacsclient -e '(douban-music-play-next-refresh)'
         ;;
     prev)
-        touch ~/.logs/douban-should-play
+        touch ~/.cache/system-config/logs/douban-should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
         emacsclient -e '(douban-music-play-previous)'
         ;;
     loop)
-        touch ~/.logs/douban-should-loop
+        touch ~/.cache/system-config/logs/douban-should-loop
         douban info
         ;;
     nloop)
-        rm -f ~/.logs/douban-should-loop
+        rm -f ~/.cache/system-config/logs/douban-should-loop
         douban info
         ;;
     rchan)

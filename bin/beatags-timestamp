@@ -9,7 +9,7 @@ die "no db_dir defined" unless -d "$db_dir";
 my $ctags;
 my $n_tags = 0;
 
-open(my $log, ">", "$ENV{HOME}/.logs/beatags-timestamp.log") or die "can't open log file: ~/.logs/beatags-timestamp.log";
+open(my $log, ">", "$ENV{HOME}/.logs/beatags-timestamp.log") or die "can't open log file: ~/.cache/system-config/logs/beatags-timestamp.log";
 sub debug(@) {
     print $log "@_\n";
 }

@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
-. ~/.bashrc-windows
+. ~/system-config/.bashrc-windows
 
 of "$@"

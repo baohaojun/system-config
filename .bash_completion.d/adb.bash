@@ -339,7 +339,7 @@ _adb_util_list_files() {
     if [[ $(type -t compopt) = "builtin" ]]; then
         compopt -o nospace
     fi
-    echo "toks are ${toks[@]}" > ~/.logs/comp.log
+    echo "toks are ${toks[@]}" > ~/.cache/system-config/logs/comp.log
     COMPREPLY=( ${COMPREPLY[@]:-} "${toks[@]}" )
 }
 

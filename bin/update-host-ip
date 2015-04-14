@@ -5,4 +5,4 @@ mkdir -p ~/.logs
 (
     flock 9
     sudo env PATH=$PATH update-host-ip.pl "$@"
-) 9> ~/.logs/$(basename $0).lock
+) 9> ~/.cache/system-config/logs/$(basename $0).lock

@@ -67,14 +67,14 @@ function do_install() {
         . .install-hook
     fi
     install_type=${1:-installd}
-    ant "$install_type" 2>&1 | tee ~/.logs/ant-install.log
-    if grep '\Q[exec] Failure\E' -P ~/.logs/ant-install.log; then
+    ant "$install_type" 2>&1 | tee ~/.cache/system-config/logs/ant-install.log
+    if grep '\Q[exec] Failure\E' -P ~/.cache/system-config/logs/ant-install.log; then
         my-adb uninstall $(ant-get-package)
-        ant "$install_type" 2>&1 | tee ~/.logs/ant-install.log
+        ant "$install_type" 2>&1 | tee ~/.cache/system-config/logs/ant-install.log
     fi
 
     if test $run = true; then
-        android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
+        android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.cache/system-config/logs/ant-install.log)"
     fi
 }
 
@@ -85,7 +85,7 @@ if test "$1" = release; then
     fi
     do_install installr
 elif test "$1" = start; then
-    android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.logs/ant-install.log)"
+    android-start-apk "$(perl -ne 'print $1 if m/Installing (.*?.apk) onto/' ~/.cache/system-config/logs/ant-install.log)"
 else
     ant-expect-keystore debug
     my-adb -w shell echo

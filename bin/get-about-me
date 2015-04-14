@@ -5,16 +5,16 @@ function die() {
 }
 
 if test $(basename $0) = get-about-me; then
-    if test -e ~/.config/about_me/$1; then
-        cat ~/.config/about_me/$1
+    if test -e ~/.config/system-config/about_me/$1; then
+        cat ~/.config/system-config/about_me/$1
     else
         echo unknown
     fi
 elif test $(basename $0) = rm-about-me; then
-    rm ~/.config/about_me/$1
+    rm ~/.config/system-config/about_me/$1
 else
     if test "$2" = ""; then
         die "usage $(basename $0) setting value"
     fi
-    echo -n "$2" > ~/.config/about_me/$1
+    echo -n "$2" > ~/.config/system-config/about_me/$1
 fi

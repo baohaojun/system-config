@@ -10,7 +10,7 @@ for x in $(seq 1 5); do
     )
 
     if test "$out" = shit; then
-        echo out not ready >> ~/.logs/$(basename $0).log
+        echo out not ready >> ~/.cache/system-config/logs/$(basename $0).log
         for y in $(seq 1 5); do
             sleep .03
             out=$(
@@ -18,7 +18,7 @@ for x in $(seq 1 5); do
                 xclip -o
             )
             if test "$out" != shit; then
-                echo out became "'$out'" at $x/$y >> ~/.logs/$(basename $0).log
+                echo out became "'$out'" at $x/$y >> ~/.cache/system-config/logs/$(basename $0).log
                 echo -n ${out%/}
                 exit 0
             fi

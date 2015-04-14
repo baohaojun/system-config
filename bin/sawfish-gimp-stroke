@@ -34,4 +34,4 @@ function debug() {
     debug
     sawfish-send-focused-window-event "M-s"
     # sawfish-send-focused-window-event "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"
-) 9> ~/.logs/$(basename $0).locks
+) 9> ~/.cache/system-config/logs/$(basename $0).locks

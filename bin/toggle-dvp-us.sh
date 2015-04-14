@@ -9,4 +9,4 @@ set -x
         setxkbmap -layout us -variant dvp
         re-xmodmap 2>&1|tee
     fi
-) 9> ~/.logs/$(basename $0).lock
+) 9> ~/.cache/system-config/logs/$(basename $0).lock

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if test $(basename $0) = query-button-state; then
-    if test ! -e ~/.config/pointer-dev-ids; then
+    if test ! -e ~/.config/system-config/pointer-dev-ids; then
         xinput list |
         grep pointer |
         grep -v XTEST |
@@ -9,14 +9,14 @@ if test $(basename $0) = query-button-state; then
         grep -v 'Keyboard 4000'|
         grep -o -e 'id=\d+' -P |
         cut -b 4- |
-        sort -u > ~/.config/pointer-dev-ids
+        sort -u > ~/.config/system-config/pointer-dev-ids
     fi
 
-    for x in $(cat ~/.config/pointer-dev-ids); do
+    for x in $(cat ~/.config/system-config/pointer-dev-ids); do
         xinput query-state $x
     done | grep -P "\[$1\].*down"
 else
-    if test ! -e ~/.config/keyboard-dev-ids; then
+    if test ! -e ~/.config/system-config/keyboard-dev-ids; then
         xinput list |
         grep keyboard |
         grep -v XTEST |
@@ -24,9 +24,9 @@ else
         grep -v 'Video Bus|Button' -P |
         grep -o -e 'id=\d+' -P |
         cut -b 4- |
-        sort -u > ~/.config/keyboard-dev-ids
+        sort -u > ~/.config/system-config/keyboard-dev-ids
     fi
-    for x in $(cat ~/.config/keyboard-dev-ids); do
+    for x in $(cat ~/.config/system-config/keyboard-dev-ids); do
         xinput query-state $x
     done | grep "down"
 fi

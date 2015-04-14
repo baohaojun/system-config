@@ -1,6 +1,6 @@
 #!/bin/bash
-if test -e ~/.config/rdesktop-grabbing-keys -o "$1" = off; then
-    rm ~/.config/rdesktop-grabbing-keys;
+if test -e ~/.config/system-config/rdesktop-grabbing-keys -o "$1" = off; then
+    rm ~/.config/system-config/rdesktop-grabbing-keys;
     sawfish_cmd=$(cat <<EOF
 (progn
   (bind-keys global-keymap "Super-h" s-h-keymap)
@@ -12,7 +12,7 @@ EOF
         sawfish-show-message "Super-h is back to life"
     fi
 else
-    touch ~/.config/rdesktop-grabbing-keys;
+    touch ~/.config/system-config/rdesktop-grabbing-keys;
     sawfish_cmd=$(cat <<EOF
 (progn
   (unbind-keys global-keymap "Super-h")

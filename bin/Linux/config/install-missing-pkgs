@@ -17,10 +17,10 @@ if (m/^Package\s+(\S+):/) {
     print "$pkg\n";
 }')" | sort -u)
 
-echo "missing_packages are $missing_packages" >> ~/.logs/$(basename $0).log
+echo "missing_packages are $missing_packages" >> ~/.cache/system-config/logs/$(basename $0).log
 
 if test "$(echo "$missing_packages" | wc -l)" -gt 50; then
-    if yes-or-no-p -y  "There are too many missing packages, check ~/.logs/$(basename $0).log. Stop?"; then
+    if yes-or-no-p -y  "There are too many missing packages, check ~/.cache/system-config/logs/$(basename $0).log. Stop?"; then
         exit 1
     else
         true

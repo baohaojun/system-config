@@ -24,9 +24,9 @@ case $1 in
             cmd=$(cat <<'EOF'
 set -x
 . ~/.renew-xauth
-. ~/.bash-path
+. ~/.config/system-config/.bashrc-path
 xscreensaver-command -lock&
-. ~/.config/ssh-agent
+. ~/.config/system-config/ssh-agent
 notify-real-home&
 EOF
             )

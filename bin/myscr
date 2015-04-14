@@ -4,7 +4,7 @@ cd
 
 unset ANDROID_SERIAL
 
-echo shell is $SHELL > ~/.logs/myscr.log
+echo shell is $SHELL > ~/.cache/system-config/logs/myscr.log
 if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then
     export SHELL=/bin/bash
 fi
@@ -14,7 +14,7 @@ fi
 )
 
 if test $# = 0 || test $# = 1 -a "$1" = first; then
-    . ~/.bashrc-ssh-agent
+    . ~/system-config/.bashrc-ssh-agent
 fi
 
 if test -x /opt/local/bin/bash; then

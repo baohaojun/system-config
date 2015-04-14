@@ -32,7 +32,7 @@ function parallel-xargs() {
     else
         for x in "$@"; do printf '%q ' "$x"; done
     fi
-)" true | tee ~/.logs/my-rfa.log
+)" true | tee ~/.cache/system-config/logs/my-rfa.log
 }
 
 eval set -- "$TEMP"
@@ -137,7 +137,7 @@ function die() {
 }
 
 export -f die
-mkdir -p ~/.logs/my-rfa-locks
+mkdir -p ~/.cache/system-config/logs/my-rfa-locks
 
 export cmds=("$@")
 for x in "${dirs[@]}"; do

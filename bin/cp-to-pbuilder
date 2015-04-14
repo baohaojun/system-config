@@ -7,7 +7,7 @@ function die() {
     exit -1
 }
 
-if test $(ps.pl pbuild.$1 2>/dev/null|tee ~/.logs/$(basename $0).log|grep -v -e "sudo\|$(basename $0)"|tee /dev/stderr|wc -l) != 1; then
+if test $(ps.pl pbuild.$1 2>/dev/null|tee ~/.cache/system-config/logs/$(basename $0).log|grep -v -e "sudo\|$(basename $0)"|tee /dev/stderr|wc -l) != 1; then
     die "Not exactly 1 pbuilder process found for $1"
 fi
 

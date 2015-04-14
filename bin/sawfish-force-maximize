@@ -13,4 +13,4 @@ lvds=$(echo "$xrandr_out" | grep '^LVDS' | pn 1)
     else
         xrandr --output $lvds --auto
     fi
-) 9> /tmp/$(basename $0).$UID.lock 2> ~/.logs/$(basename $0)
+) 9> /tmp/$(basename $0).$UID.lock 2> ~/.cache/system-config/logs/$(basename $0)

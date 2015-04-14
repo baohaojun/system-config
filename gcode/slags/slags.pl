@@ -3,7 +3,7 @@
 use strict;
 
 my $dir = $ENV{PWD};
-my $db_dir = glob("~/.cache/for-code-reading" . $dir);
+my $db_dir = glob("~/.cache/system-config/for-code-reading" . $dir);
 my $db_slags = $db_dir . "/SLAGS";
 my $db_paths = $db_dir . "/SPATHS";
 
@@ -12,7 +12,7 @@ sub debug(@) {
 }
 
 unless (-e $db_slags) {
-    system("mkdir", "-p", glob("~/.cache/for-code-reading" . $dir));
+    system("mkdir", "-p", glob("~/.cache/system-config/for-code-reading" . $dir));
 
     system("sqlite3", $db_slags, 
 	   "create table methods(name, class, prototype, path_key INTEGER);"

@@ -91,7 +91,7 @@ function re()
 
 function rex()
 {
-    command rex "$@" ~/.bash_history.bak
+    command rex "$@" ~/.cache/system-config/.bash_history.bak
 }
 
 function rcd() {
@@ -111,6 +111,6 @@ function cds() {
 . ~/bin/my-rsync
 . ~/bin/.gitx
 
-if test -e ~/.bashrc-interactive-$USER; then
-    . ~/.bashrc-interactive-$USER
+if test -e ~/system-config/.bashrc-interactive-$USER; then
+    . ~/system-config/.bashrc-interactive-$USER
 fi

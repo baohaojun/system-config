@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -e
-if test "$(readlink -f /proc/$$/fd/2)" != ~/.logs/$(basename $0).log; then
-    exec 2>~/.logs/$(basename $0).log
+if test "$(readlink -f /proc/$$/fd/2)" != ~/.cache/system-config/logs/$(basename $0).log; then
+    exec 2>~/.cache/system-config/logs/$(basename $0).log
 fi
 set -x
 
@@ -12,7 +12,7 @@ export LC_ALL=C
 
 function get-includes-for-compilation()
 {
-    tee ~/.logs/$(basename $0).input | perl -ne '
+    tee ~/.cache/system-config/logs/$(basename $0).input | perl -ne '
     if (m/error: .(.*?). was not declared in this scope/) {
         print "$1\n";
     }

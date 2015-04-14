@@ -3,7 +3,7 @@ time=$1
 
 shift
 (
-    echo . ~/.bash-path
+    echo . ~/.config/system-config/.bashrc-path
     echo . ~/.renew-xauth
     for x in "$@"; do
         printf "%q " "$x"

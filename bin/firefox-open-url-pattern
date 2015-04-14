@@ -35,20 +35,20 @@ new_tab=-new-tab
 
 if test ! "$WHICH_TAB"; then
     md5=$(echo "$exact$pattern" | md5sum | pn 1)
-    mkdir -p ~/.config/firefox-pattern/
+    mkdir -p ~/.config/system-config/firefox-pattern/
     (
         flock 9
-        if test ! -e ~/.config/firefox-pattern/$md5; then
+        if test ! -e ~/.config/system-config/firefox-pattern/$md5; then
             tab=2
-            if test -e ~/.config/firefox-pattern/last-tab; then
-                tab=$(cat ~/.config/firefox-pattern/last-tab|pn 1)
+            if test -e ~/.config/system-config/firefox-pattern/last-tab; then
+                tab=$(cat ~/.config/system-config/firefox-pattern/last-tab|pn 1)
                 ((tab++)) || true
             fi
-            echo $tab "$exact$pattern" > ~/.config/firefox-pattern/last-tab
-            echo $tab > ~/.config/firefox-pattern/$md5
+            echo $tab "$exact$pattern" > ~/.config/system-config/firefox-pattern/last-tab
+            echo $tab > ~/.config/system-config/firefox-pattern/$md5
         fi
-    ) 9> ~/.config/firefox-pattern/.lock
-    WHICH_TAB=$(cat ~/.config/firefox-pattern/$md5)
+    ) 9> ~/.config/system-config/firefox-pattern/.lock
+    WHICH_TAB=$(cat ~/.config/system-config/firefox-pattern/$md5)
 fi
 WHICH_TAB=$(( (WHICH_TAB - 1) % 9 + 1))
 

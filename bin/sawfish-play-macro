@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat ~/.cache/sawfish-macro |
+cat ~/.cache/system-config/sawfish-macro |
     while read key; do
         sawfish-client -e "(synthesize-event $key (input-focus))" >/dev/null 2>&1
     done

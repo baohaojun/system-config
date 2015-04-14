@@ -16,8 +16,8 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
             prefix=""
             arg_handler=echo
         else
-            if test -e ~/.config/ssh-agent; then
-                . ~/.config/ssh-agent
+            if test -e ~/.config/system-config/ssh-agent; then
+                . ~/.config/system-config/ssh-agent
             fi
             ssh ${REMOTEUSER:-$USER}@$REMOTEIP remote-putclip $(whoami)@$LOCALIP:$FILE
             exit 0
@@ -30,7 +30,7 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
 (View-quit))"
         $prefix rm $FILE
         xclip -o -selection clipboard|xclip -i
-    ) >~/.logs/putclip.log 2>&1&
+    ) >~/.cache/system-config/logs/putclip.log 2>&1&
 else
     rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
     xclip -o -selection clipboard|xclip -i >/dev/null 2>&1

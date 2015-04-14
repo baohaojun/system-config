@@ -10,8 +10,8 @@ import fcntl
 def handler(signum, frame):
     pass
 
-os.system("touch ~/.cache/notification-manager.pid")
-pidf = open(os.path.expanduser("~/.cache/notification-manager.pid"), "r+")
+os.system("touch ~/.cache/system-config/notification-manager.pid")
+pidf = open(os.path.expanduser("~/.cache/system-config/notification-manager.pid"), "r+")
 try:
     fcntl.flock(pidf, fcntl.LOCK_EX|fcntl.LOCK_NB)
 except:
@@ -25,7 +25,7 @@ except:
         icon = sys.argv[1]
         sys.argv=sys.argv[1:]
 
-    file_ = open(os.path.join(os.path.expanduser("~/.cache/notification-manager"),
+    file_ = open(os.path.join(os.path.expanduser("~/.cache/system-config/notification-manager"),
                          sys.argv[1]),
                  "w")
 
@@ -51,7 +51,7 @@ seq = 0
 while True:
     seq = seq + 1
     signal.pause()
-    for tup in os.walk(os.path.expanduser("~/.cache/notification-manager")):
+    for tup in os.walk(os.path.expanduser("~/.cache/system-config/notification-manager")):
         for file_ in tup[2]:
             print "hello", file_
             content = open(os.path.join(tup[0], file_)).read()

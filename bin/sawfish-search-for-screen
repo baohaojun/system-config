@@ -4,17 +4,17 @@ if test "$DEBUG"; then
 fi
 
 md5=$(echo "$1" | md5sum |pn 1)
-mkdir -p ~/.cache/$(basename $0)
+mkdir -p ~/.cache/system-config/$(basename $0)
 start=0
-if test -e ~/.cache/$(basename $0)/$md5; then
-    start=$(cat ~/.cache/$(basename $0)/$md5)
+if test -e ~/.cache/system-config/$(basename $0)/$md5; then
+    start=$(cat ~/.cache/system-config/$(basename $0)/$md5)
     ((start %= 10))
 fi
 
 sawfish-send-focused-window-event C-a $start
 for x in $(seq 1 10); do
     if sawfish-get-screen-shot | grep -P -q -e "$1"; then
-        echo $start > ~/.cache/$(basename $0)/$md5
+        echo $start > ~/.cache/system-config/$(basename $0)/$md5
         break
     else
         sawfish-send-focused-window-event C-a SPC

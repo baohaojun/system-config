@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ~/.bashrc
+. ~/system-config/.bashrc
 lcd ../kernel; 
 set -x
 android_dir=`readlink -f ..`;

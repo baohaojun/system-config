@@ -1,8 +1,8 @@
 #!/bin/bash
 x=$(select-output-line '
     (
-        if test -e ~/.logs/last-search; then
-            cat ~/.logs/last-search;
+        if test -e ~/.cache/system-config/logs/last-search; then
+            cat ~/.cache/system-config/logs/last-search;
         fi;
         cd ~/bin;
         for x in search-* gerrit-browser-review; do
@@ -14,9 +14,9 @@ x=$(select-output-line '
 if test -x ~/bin/"$x"; then
    (
        echo $x
-       cat ~/.logs/last-search
-   ) > ~/.logs/last-search.$$
-   mv ~/.logs/last-search.$$ ~/.logs/last-search
+       cat ~/.cache/system-config/logs/last-search
+   ) > ~/.cache/system-config/logs/last-search.$$
+   mv ~/.cache/system-config/logs/last-search.$$ ~/.cache/system-config/logs/last-search
 fi&
 
 if test ! -x ~/bin/"$x" -a "${x:0:2}" = "s "; then

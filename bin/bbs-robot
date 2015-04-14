@@ -4,9 +4,9 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export DEBUG=true
 fi
 
-exec 9> ~/.logs/bbs-robot.lock
+exec 9> ~/.cache/system-config/logs/bbs-robot.lock
 if flock -n 9; then
-    exec bbs-robot.exp "$@" 2> ~/.logs/bbs-robot.log
+    exec bbs-robot.exp "$@" 2> ~/.cache/system-config/logs/bbs-robot.log
 fi
 
 exec 9> /dev/null

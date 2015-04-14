@@ -75,11 +75,11 @@ time (
 
         ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs $verbose all_modules $(if test "$project" = device/qcom/sepolicy; then echo bootimage; fi) "$@" 2>&1
         echo mm build is ok
-    ) | tee ~/.logs/mm.log.$$
+    ) | tee ~/.cache/system-config/logs/mm.log.$$
 
     cd $top_dir/
     rm -f out
     relative-link $(dirname $(readlink -f $BHJ_OUT_DIR/host)) out
-    mv ~/.logs/mm.log.$$ $BHJ_OUT_DIR/mm.log
+    mv ~/.cache/system-config/logs/mm.log.$$ $BHJ_OUT_DIR/mm.log
     grep 'mm build is ok' $BHJ_OUT_DIR/mm.log
 )

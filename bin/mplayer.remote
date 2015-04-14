@@ -1,12 +1,12 @@
 #!/bin/bash
-echo mplayer.remote "$@" >> ~/.logs/rsync-mplayer.log 2>&1
+echo mplayer.remote "$@" >> ~/.cache/system-config/logs/rsync-mplayer.log 2>&1
 if test "$PULSE_SERVER"; then
     for x in "$@"; do
         if readlink -f "$x" | grep Music/like; then
             x=$(readlink -f "$x")
             x=${x%.mp3}
             ssh $PULSE_SERVER mkdir -p "$(printf %q "$(dirname "$x")")"/
-            rsync "$x".* $PULSE_SERVER:"$(printf %q "$(dirname "$x")")"/ -av >> ~/.logs/rsync-mplayer.log 2>&1
+            rsync "$x".* $PULSE_SERVER:"$(printf %q "$(dirname "$x")")"/ -av >> ~/.cache/system-config/logs/rsync-mplayer.log 2>&1
         fi
     done
 

@@ -13,11 +13,11 @@ done
 
 for x in "$@"; do
     printf '%q ' "$x"
-done > ~/.logs/vc2013env.sh.$$
-cat <<EOF > ~/.logs/vc2013env.bat
+done > ~/.cache/system-config/logs/vc2013env.sh.$$
+cat <<EOF > ~/.cache/system-config/logs/vc2013env.bat
 call "$(cygpath -alw "$vc")"
-bash ~/.logs/vc2013env.sh.$$
+bash ~/.cache/system-config/logs/vc2013env.sh.$$
 EOF
 
-cmd.exe /c "$(cygpath -alw ~/.logs/vc2013env.bat)"
-rm ~/.logs/vc2013env.sh.$$
+cmd.exe /c "$(cygpath -alw ~/.cache/system-config/logs/vc2013env.bat)"
+rm ~/.cache/system-config/logs/vc2013env.sh.$$

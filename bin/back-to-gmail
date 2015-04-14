@@ -13,12 +13,12 @@ fi
 for x in "$@"; do
 
     if test -d "$x"; then
-        back=~/.logs/back-to-gmail/$(dirname "$x")/$(basename "$x").tgz.gpg
+        back=~/.cache/system-config/logs/back-to-gmail/$(dirname "$x")/$(basename "$x").tgz.gpg
         if test -e "$back" && ! find "$x" -type f -newer "$back" | grep .; then
             continue
         fi
     else
-        back=~/.logs/back-to-gmail/"$x".gpg
+        back=~/.cache/system-config/logs/back-to-gmail/"$x".gpg
         if test -e "$back" -a "$back" -nt "$x"; then
             continue
         fi
@@ -30,7 +30,7 @@ for x in "$@"; do
 
     new_x=$(dirname "$back")/"$(basename "$x")"
     if test -d "$x"; then
-        attachment=~/.logs/back-to-gmail-"$(echo "$x"|perl -npe 's,/,-,g')".tgz
+        attachment=~/.cache/system-config/logs/back-to-gmail-"$(echo "$x"|perl -npe 's,/,-,g')".tgz
         tar czfv "$attachment" "$x"
         x=$attachment
     fi

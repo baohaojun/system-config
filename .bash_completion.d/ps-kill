@@ -7,7 +7,7 @@ _ps_list()
 	    skeleton_compgen_word.pl -d '\n' -- \
 		"$(
                     ps.pl 2>/dev/null "$cur" |
-                    tee ~/.logs/ps.pl.out | 
+                    tee ~/.cache/system-config/logs/ps.pl.out | 
                     perl -ne '
                         s,\\,/,g;
                         s/^\s*//;

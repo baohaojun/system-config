@@ -200,9 +200,9 @@ time (
             (
                 set -x
                 set -e
-                cp ./software_downloader/Utilities/TimBuilder/TimBuilder ~/.cache/
-                chmod +x ~/.cache/TimBuilder
-                ~/.cache/TimBuilder -r "$(absp $BLF)"
+                cp ./software_downloader/Utilities/TimBuilder/TimBuilder ~/.cache/system-config/
+                chmod +x ~/.cache/system-config/TimBuilder
+                ~/.cache/system-config/TimBuilder -r "$(absp $BLF)"
                 echo 'ok!'
             ) || wine ./software_downloader/Utilities/TimBuilder/TimBuilder.exe -r "$(command wp $BLF)"
         fi

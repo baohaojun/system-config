@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ~/.bashrc
+. ~/system-config/.bashrc
 cd_beagrep
 idxdir=.beagrep
 if test "$SOURCECODETAGSMODE" = true; then

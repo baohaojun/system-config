@@ -4,12 +4,12 @@ export CLASSPATH=/usr/share/java/stringtemplate.jar:/usr/share/java/antlr3.jar:/
 
 alias minicom='minicom -w -D /dev/ttyUSB*'
 if [ -n "$BASH_VERSION" -a "$BASH" = /bin/bash ]; then
-    . ~/.bashrc-linux-bash
+    . ~/system-config/.bashrc-linux-bash
 fi
 
-. ~/.bashrc-aliases
-if test -e ~/.bashrc-linux-$USER; then
-    . ~/.bashrc-linux-$USER
+. ~/system-config/.bashrc-aliases
+if test -e ~/system-config/.bashrc-linux-$USER; then
+    . ~/system-config/.bashrc-linux-$USER
 fi
 
 # % cpan

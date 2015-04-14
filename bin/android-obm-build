@@ -11,4 +11,4 @@
     . ../.buildenv.sh;
     cd obm
     ./make_GUI_release.sh 
-) 2>&1 | tee ~/.logs/$(basename $0).txt 
+) 2>&1 | tee ~/.cache/system-config/logs/$(basename $0).txt 

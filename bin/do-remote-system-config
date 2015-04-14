@@ -29,7 +29,7 @@ fi
 
 ssh-exp $host "bash -c 'echo bhj ALL=NOPASSWD: ALL | sudo tee /etc/sudoers.d/bhj; sudo chmod 440 /etc/sudoers.d/bhj'"
 ssh-exp $host "sudo mkdir -p ~root/.ssh/; cat ~/.ssh/authorized_keys | sudo tee -a ~root/.ssh/authorized_keys"
-ssh-exp $host "mkdir -p ~/.config; touch ~/.config/no-texlive"
+ssh-exp $host "mkdir -p ~/.config; touch ~/.config/system-config/no-texlive"
 
 if test "$NO_SYSTEM_CONFIG" = true; then
     true

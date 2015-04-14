@@ -1,5 +1,5 @@
 #!/bin/bash
-. ~/.bash-path
+. ~/.config/system-config/.bashrc-path
 EMACS=emacs
 if type emacs-snapshot-gtk; then
     EMACS=emacs-snapshot-gtk
@@ -24,8 +24,8 @@ emacsclient -e '(progn
 sawfish-re-maximize
 
 export ANDROID_SERIAL=$(
-    if test -e ~/.config/my-adb-serial; then
-        cat ~/.config/my-adb-serial
+    if test -e ~/.config/system-config/my-adb-serial; then
+        cat ~/.config/system-config/my-adb-serial
     else
         echo a2024058
     fi);

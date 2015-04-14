@@ -10,7 +10,7 @@ if test "$remainder_2" != 0; then
    die "Usage: $(basename $0) [OFFSET IMAGE_NAME_OR_TAG]..."
 fi
 
-tmp_file=~/.cache/concated-$(echo "$@" | perl -npe 's,(/|\s)+,-,g')
+tmp_file=~/.cache/system-config/concated-$(echo "$@" | perl -npe 's,(/|\s)+,-,g')
 mkdir ~/tmp -p
 
 echo -n > $tmp_file

@@ -13,7 +13,7 @@ fi
 
 cd /tmp
 
-flag=~/.config/no-ww
+flag=~/.config/system-config/no-ww
 
 function start-ww() {
     mkdir -p ~/.logs
@@ -36,7 +36,7 @@ function start-ww() {
             fi
             sleep 5
         done&
-    ) 9> ~/.logs/ww.lock
+    ) 9> ~/.cache/system-config/logs/ww.lock
 }
 
 if test -d "$1"; then

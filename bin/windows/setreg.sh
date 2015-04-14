@@ -13,7 +13,7 @@ EOF
 regedit /s 'c:\vc.reg'
 
 regSetVal -s set '\HKEY_CLASSES_ROOT\.sh\' 'sh_auto_file'
-regSetVal -s set '\HKEY_CLASSES_ROOT\sh_auto_file\shell\open\command\' "$(qq_cmdout cygpath -alw "$BASH"; echo -n ' --rcfile ~/.bashrc-windows -i "%1" %*')"
+regSetVal -s set '\HKEY_CLASSES_ROOT\sh_auto_file\shell\open\command\' "$(qq_cmdout cygpath -alw "$BASH"; echo -n ' --rcfile ~/system-config/.bashrc-windows -i "%1" %*')"
 regSetVal -s set '\HKEY_CLASSES_ROOT\*\shell\emacsedit\command\' "$q"'\external\bin\CYGWIN\emacsedit.exe -n "%1"'
 regSetVal -s set '\HKEY_CLASSES_ROOT\*\shell\bashHere\command\' "$q"'\external\bin\CYGWIN\runHere bash "%1"'
 regSetVal -s set '\HKEY_CLASSES_ROOT\*\shell\Locate It\command\' "$q"'\external\bin\CYGWIN\LocateIt "%1"'

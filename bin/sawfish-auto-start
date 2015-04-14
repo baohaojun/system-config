@@ -2,7 +2,7 @@
 
 exec > ~/.xsession-errors 2>&1
 
-. ~/.bash-path
+. ~/.config/system-config/.bashrc-path
 
 for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; do
     export $x
@@ -20,17 +20,17 @@ EOF
 
 (
     umask 0077
-    cat <<EOF > ~/.config/bhj-auth.rc.$$
+    cat <<EOF > ~/.config/system-config/bhj-auth.rc.$$
 export GNOME_KEYRING_CONTROL=$GNOME_KEYRING_CONTROL
 export GNOME_KEYRING_PID=$GNOME_KEYRING_PID
 export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
 export GPG_AGENT_INFO=$GPG_AGENT_INFO
 EOF
-    mv ~/.config/bhj-auth.rc.$$ ~/.config/bhj-auth.rc
-    cat <<EOF > ~/.config/ssh-agent.$$
+    mv ~/.config/system-config/bhj-auth.rc.$$ ~/.config/system-config/bhj-auth.rc
+    cat <<EOF > ~/.config/system-config/ssh-agent.$$
 export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
 EOF
-    mv ~/.config/ssh-agent.$$ ~/.config/ssh-agent # this is also set by myscr
+    mv ~/.config/system-config/ssh-agent.$$ ~/.config/system-config/ssh-agent # this is also set by myscr
 )
 sawfish-client -e "$env"
 

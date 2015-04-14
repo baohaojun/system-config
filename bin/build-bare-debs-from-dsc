@@ -2,7 +2,7 @@
 
 set -e
 
-cd ~/.cache/beagrep-debs/
+cd ~/.cache/system-config/beagrep-debs/
 
 if test $# = 0; then
    set -- .
@@ -15,7 +15,7 @@ for x in */*.dsc; do
     basepath=${basepath%-$arch}
     echo building $basepath-$arch
     basepath=~/external/cowbuilder/$basepath-$arch/bare/base.cow
-    builddir=~/.cache/cowbuild
+    builddir=~/.cache/system-config/cowbuild
 
     sudo unshare -m -- bash -c "
         mkdir -p $builddir
@@ -25,4 +25,4 @@ for x in */*.dsc; do
         echo done
         sudo cowbuilder --build --basepath $builddir/base.cow --buildplace=$builddir $x || true
     "
-done 2>&1 | grep --line-buffered -i -v 'create hard link.*invalid cross-device link' | bash -c "time tee  ~/.logs/$(basename $0).log"
+done 2>&1 | grep --line-buffered -i -v 'create hard link.*invalid cross-device link' | bash -c "time tee  ~/.cache/system-config/logs/$(basename $0).log"

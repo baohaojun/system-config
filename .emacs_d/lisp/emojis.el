@@ -1125,7 +1125,7 @@
              (with-temp-buffer
                (let ((emoji-names-frecency (subseq emoji-names 0 20)))
                  (recentf-dump-variable 'emoji-names-frecency))
-               (write-file "~/.config/emacs-local-custom.el"))
+               (write-file "~/.config/system-config/emacs-local-custom.el"))
              (insert emoji))
          (setq key (substring key (length "Enter your emoji: ")))
          (let  ((emoji-names-copy (copy-sequence emoji-names))

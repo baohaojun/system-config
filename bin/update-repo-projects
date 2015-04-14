@@ -1,7 +1,7 @@
 #!/bin/bash
-. ~/.bashrc
-if test -e ~/.config/ssh-agent; then
-    . ~/.config/ssh-agent;
+. ~/system-config/.bashrc
+if test -e ~/.config/system-config/ssh-agent; then
+    . ~/.config/system-config/ssh-agent;
 fi
 
 set -e

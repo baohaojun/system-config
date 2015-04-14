@@ -1,7 +1,7 @@
 #!/bin/bash -i
 
 # instead of scp in the name, we are going to use rsync
-if test ! -e ~/.config/adb-device || test "$(cat ~/.config/adb-device)" = emulator-5554; then
+if test ! -e ~/.config/system-config/adb-device || test "$(cat ~/.config/system-config/adb-device)" = emulator-5554; then
     my-adb -S
 fi
 if echo $SHELLOPTS | grep -q xtrace; then

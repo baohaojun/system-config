@@ -3,10 +3,10 @@
 use strict;
 use Getopt::Long;
 
-unlink glob("~/.logs/skeleton_comp.log");
+unlink glob("~/.cache/system-config/logs/skeleton_comp.log");
 
 sub debug(@) {
-    open(my $log_, ">>", glob("~/.logs/skeleton_comp.log")) or die "Error open log file";
+    open(my $log_, ">>", glob("~/.cache/system-config/logs/skeleton_comp.log")) or die "Error open log file";
     local $" = "' '";
     print $log_ "@_\n";
     close $log_;

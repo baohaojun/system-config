@@ -6,7 +6,7 @@ if id | grep -q '^uid=0\b' -P; then
 fi
 if ! is-tty-io; then
     set -x
-    exec > ~/.logs/$(basename $0).log 2>&1
+    exec > ~/.cache/system-config/logs/$(basename $0).log 2>&1
 fi
 
 if test "$1" = no; then
@@ -32,7 +32,7 @@ if test -e ~/.no-adb-fix-gms -a $(basename $0) = adb-fix-gms; then
         exit
     fi
 fi
-. ~/.bashrc
+. ~/system-config/.bashrc
 (
     id
     ls -l /proc/$$/fd
@@ -46,7 +46,7 @@ if test $(basename $0) = adb-fix-gms; then
         else
             set -x
             if ! is-tty-io; then
-                exec > ~/.logs/adb-fix-gms.log 2>&1
+                exec > ~/.cache/system-config/logs/adb-fix-gms.log 2>&1
             fi
         fi
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 host=$1
-protocol=$(cat ~/.config/remote-protocol.$host 2>/dev/null)
+protocol=$(cat ~/.config/system-config/remote-protocol.$host 2>/dev/null)
 if test -z "$protocol"; then
     read -e -p "What protocol do you want to use for $host (scp)? " protocol
     mkdir -p ~/.config
     test -z "$protocol" && protocol=scp
-    echo -n "$protocol" > ~/.config/remote-protocol.$host
+    echo -n "$protocol" > ~/.config/system-config/remote-protocol.$host
 fi
 echo -n $protocol

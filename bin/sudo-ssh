@@ -1,4 +1,4 @@
 #!/bin/bash
-touch ~/.config/sudo-ssh
-. ~/.bashrc-linux-bash
+touch ~/.config/system-config/sudo-ssh
+. ~/system-config/.bashrc-linux-bash
 sudo "$@"

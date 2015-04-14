@@ -12,8 +12,8 @@ chomp(my $lang = qx(lang_for_file $file));
 open(my $ctags_pipe, "-|", "ctags-ajoke --c-kinds=+p --language-force=$lang -xu $file")
     or die "Error: can not open ctags pipe";
 
-open(my $debug, ">", glob("~/.logs/ctags-show-definition.log")) or
-    die "Error: can not open ~/.logs/ctags-show-definition.log, please run 'mkdir ~/.logs'";
+open(my $debug, ">", glob("~/.cache/system-config/logs/ctags-show-definition.log")) or
+    die "Error: can not open ~/.cache/system-config/logs/ctags-show-definition.log";
 
 sub debug(@) {
     print $debug "@_\n";

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -e
-mkdir -p ~/.cache/ali-photos
-cd ~/.cache/ali-photos
+mkdir -p ~/.cache/system-config/ali-photos
+cd ~/.cache/system-config/ali-photos
 if test ! -e "$1.jpg"; then
     wget https://work.alibaba-inc.com/photo/$1.jpg -O $1.jpg.$$
     mv $1.jpg.$$ $1.jpg

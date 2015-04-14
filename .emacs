@@ -41,8 +41,8 @@
               (expand-file-name "~/src/github/org-mode/contrib/lisp"))
              load-path))
 
-(when (file-exists-p (expand-file-name "~/.config/emacs.gen.el"))
-  (load (expand-file-name "~/.config/emacs.gen.el")))
+(when (file-exists-p (expand-file-name "~/.config/system-config/emacs.gen.el"))
+  (load (expand-file-name "~/.config/system-config/emacs.gen.el")))
 
 (when (and
        (> emacs-major-version 23)

@@ -1,5 +1,5 @@
 #!/bin/bash
-. ~/.bashrc
+. ~/system-config/.bashrc
 export PATH=/usr/local/bin:$PATH
 function do_it() {
     if test -f .for-code-reading -a ! -L .for-code-reading; then

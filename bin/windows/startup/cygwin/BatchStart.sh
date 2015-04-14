@@ -31,8 +31,8 @@ function loop-start-in-dir() {
     done&
 }
 
-if test ! -e ~/.config/about_me/links-done; then
-    touch ~/.config/about_me/links-done
+if test ! -e ~/.config/system-config/about_me/links-done; then
+    touch ~/.config/system-config/about_me/links-done
     fix-links.sh&
 fi
 

@@ -16,7 +16,7 @@
                        )
   (setq chinese-fonts-scale (or chinese-fonts-scale 1.2))
   (save-excursion
-    (with-current-buffer (find-file-noselect "~/.config/emacs-font-size")
+    (with-current-buffer (find-file-noselect "~/.config/system-config/emacs-font-size")
       (delete-region (point-min) (point-max))
       (insert (format "%s" english-font-size))
       (save-buffer)
@@ -60,9 +60,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (qiang-set-font
  bhj-english-fonts
- (if (file-exists-p "~/.config/emacs-font-size")
+ (if (file-exists-p "~/.config/system-config/emacs-font-size")
      (save-excursion
-       (find-file "~/.config/emacs-font-size")
+       (find-file "~/.config/system-config/emacs-font-size")
        (goto-char (point-min))
        (let ((monaco-font-size (read (current-buffer))))
          (kill-buffer (current-buffer))

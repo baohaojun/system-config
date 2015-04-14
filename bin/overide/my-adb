@@ -88,7 +88,7 @@ function adb() {
     if test "$1" = -S; then
         echo "$(select-output-line -- '(
             devices=$(adb devices 2>&1 | perl -ne "print unless 1..1"|pn 1);
-            old_dev=$(cat ~/.config/adb-device 2>/dev/null);
+            old_dev=$(cat ~/.config/system-config/adb-device 2>/dev/null);
             (
                 for x in $devices; do
                     if test "$x" = "$old_dev"; then
@@ -96,13 +96,13 @@ function adb() {
                     fi
                 done
                 echo "$devices"
-            ) | uniq-even-non-ajacent)')" > ~/.config/adb-device.$$
-        mv ~/.config/adb-device.$$ ~/.config/adb-device
+            ) | uniq-even-non-ajacent)')" > ~/.config/system-config/adb-device.$$
+        mv ~/.config/system-config/adb-device.$$ ~/.config/system-config/adb-device
         shift
         if test "$#" = 0; then
             exit
         fi
-        export ANDROID_SERIAL=$(cat ~/.config/adb-device)
+        export ANDROID_SERIAL=$(cat ~/.config/system-config/adb-device)
     elif test "$1" = -s -a $# = 1; then
         unset ANDROID_SERIAL
         export-android-serial
@@ -113,10 +113,10 @@ function adb() {
             $($the_adb devices | perl -ne 'print unless 1..1' | pn 1)
         )
         if test ${#devices[@]} -gt 1; then
-            if test ! -e ~/.config/adb-device || ! echo ${devices[@]} | grep -q $(cat ~/.config/adb-device); then
+            if test ! -e ~/.config/system-config/adb-device || ! echo ${devices[@]} | grep -q $(cat ~/.config/system-config/adb-device); then
                 command my-adb -S
             fi
-            export ANDROID_SERIAL=$(cat ~/.config/adb-device)
+            export ANDROID_SERIAL=$(cat ~/.config/system-config/adb-device)
         else
             export ANDROID_SERIAL=$devices
         fi
@@ -205,8 +205,8 @@ function adb() {
         exec the-true-adb disconnect;
     fi
 
-    if test $# = 1 -a "$1" = reconnect && grep : -q ~/.config/adb-device; then
-        exec the-true-adb connect $(cat ~/.config/adb-device)
+    if test $# = 1 -a "$1" = reconnect && grep : -q ~/.config/system-config/adb-device; then
+        exec the-true-adb connect $(cat ~/.config/system-config/adb-device)
     fi
 
     if test $# = 2 -a "$1" = e; then

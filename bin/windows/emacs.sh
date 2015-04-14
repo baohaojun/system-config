@@ -1,7 +1,7 @@
 #!/bin/bash --login
 rm ~/.ido.last
 
-. ~/.bashrc-windows
+. ~/system-config/.bashrc-windows
 export USER=`whoami`
 unset TERM
 unset WINDOW

@@ -1,6 +1,6 @@
 #!/bin/bash
-if test -e ~/.config/bhj/weixin-adb-serial; then
-    export ANDROID_SERIAL=$(cat ~/.config/bhj/weixin-adb-serial)
+if test -e ~/.config/system-config/bhj/weixin-adb-serial; then
+    export ANDROID_SERIAL=$(cat ~/.config/system-config/bhj/weixin-adb-serial)
 fi
 if echo $SHELLOPTS | grep -q xtrace; then
     function debug() {

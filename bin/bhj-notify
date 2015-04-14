@@ -42,7 +42,7 @@ print HTML::Entities::encode_numeric($_) . "\n"
 fi
 
 if ! ps.pl notification-manager >/dev/null 2>&1; then
-    setsid notification-manager > ~/.logs/notification-manager.log 2>&1&
+    setsid notification-manager > ~/.cache/system-config/logs/notification-manager.log 2>&1&
     sleep 1
 fi
 if test "$icon"; then

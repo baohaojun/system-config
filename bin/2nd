@@ -18,7 +18,7 @@ done
 
 shift
 
-echo prog1 is $prog1 prog2 is $prog2, "$@" >> ~/.logs/$(basename $0).log
+echo prog1 is $prog1 prog2 is $prog2, "$@" >> ~/.cache/system-config/logs/$(basename $0).log
 
 if test "$prog2"; then
    exec "$prog2" "$@"

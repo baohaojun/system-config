@@ -5,7 +5,7 @@ if test $# != 0; then
     exit
 fi
 
-beagrep_dbdir=$(lookup-file-starting-with .beagrep ~/.cache/for-code-reading/$PWD)
+beagrep_dbdir=$(lookup-file-starting-with .beagrep ~/.cache/system-config/for-code-reading/$PWD)
 export FILELIST=$(dirname "$beagrep_dbdir")/files.list
 
 

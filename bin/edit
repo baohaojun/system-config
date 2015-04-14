@@ -2,7 +2,7 @@
 use String::ShellQuote;
 use strict;
 
-open (my $log_, ">", glob("~/.logs/edit.log")) or die "Can not open log file";
+open (my $log_, ">", glob("~/.cache/system-config/logs/edit.log")) or die "Can not open log file";
 print $log_ "@ARGV\n";
 
 sub debug(@) {

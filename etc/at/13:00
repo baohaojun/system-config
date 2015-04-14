@@ -6,7 +6,7 @@ if dayofweek | grep -e "Sat|Sun"; then
 fi
 . ~/.renew-xauth
 
-if curl --request POST -c ~/.logs/cookie.txt.$(basename $0) -d name='haojun.bhj' \
+if curl --request POST -c ~/.cache/system-config/logs/cookie.txt.$(basename $0) -d name='haojun.bhj' \
     --data-urlencode pass=$(get-authinfo imap.alibaba-inc.com) \
     -d remember_me=1 \
     -d _op=%E7%99%BB%E5%BD%95 \

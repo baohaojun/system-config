@@ -1,5 +1,5 @@
 #!/bin/bash
 n_issues=$(jira --action getIssueList --filter my-open|head -n 1|perl -npe 's/\.//g')
 if test "$n_issues" -a "$n_issues" != "0 issues"; then
-    mailx $(cat ~/.config/about_me/mail) -s "You have $n_issues open in jira, please take care of them!" < /dev/null
+    mailx $(cat ~/.config/system-config/about_me/mail) -s "You have $n_issues open in jira, please take care of them!" < /dev/null
 fi

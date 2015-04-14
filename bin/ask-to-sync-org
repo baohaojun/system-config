@@ -8,14 +8,14 @@ if id | grep -q '^uid=0\b' -P; then
     su - bhj -c "~bhj/bin/ask-to-sync-org&"
     exit 0
 fi
-. ~/.bashrc
+. ~/system-config/.bashrc
 (
     id
     ls -l /proc/$$/fd
 ) > /tmp/$(basename $0).log
 
 info() {
-    echo $(date): $$: "$@" >> ~/.logs/$(basename $0).log
+    echo $(date): $$: "$@" >> ~/.cache/system-config/logs/$(basename $0).log
 }
 
 function need-sync() {
@@ -73,7 +73,7 @@ if ! need-sync; then
     exit 0
 fi
 
-lock=~/.logs/$(basename $0).term.lock.$(my-adb devices? | pn 1)
+lock=~/.cache/system-config/logs/$(basename $0).term.lock.$(my-adb devices? | pn 1)
 info lock is $lock
 touch $lock
 if ! is-tty-io; then
@@ -92,10 +92,10 @@ if ! is-tty-io; then
 fi
 
 set -e
-. ~/.config/ssh-agent
+. ~/.config/system-config/ssh-agent
 sync-mobile-org
-mkdir -p ~/.cache/sync-mobile-org/
-touch ~/.cache/sync-mobile-org/done
+mkdir -p ~/.cache/system-config/sync-mobile-org/
+touch ~/.cache/system-config/sync-mobile-org/done
 newver=$(
     cd ~/src/github/projects/
     git log --pretty=%H -1

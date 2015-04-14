@@ -7,7 +7,7 @@ if [ $? = 0 ]; then
     cmd=$(cat <<'EOF'
 set -x
 . ~/.renew-xauth
-. ~/.bash-path
+. ~/.config/system-config/.bashrc-path
 xscreensaver-command -lock&
 EOF
     )

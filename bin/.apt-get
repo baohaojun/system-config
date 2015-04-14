@@ -3,11 +3,11 @@ function apt-get() {
     (
         set -ex
         if test "$DEBMIRROR"; then
-            echo export DEBMIRROR=$DEBMIRROR > ~/.logs/.apt-get.rc
+            echo export DEBMIRROR=$DEBMIRROR > ~/.cache/system-config/logs/.apt-get.rc
         fi
 
-        if test -e ~/.logs/.apt-get.rc; then
-            . ~/.logs/.apt-get.rc
+        if test -e ~/.cache/system-config/logs/.apt-get.rc; then
+            . ~/.cache/system-config/logs/.apt-get.rc
         fi
         yes-or-no-p -n "run the hacked version of apt-get?"
         sudo ifconfig $(ifconfig|grep HWaddr|pn 1|head -n 1):0 $(ip-or-name r66) ;

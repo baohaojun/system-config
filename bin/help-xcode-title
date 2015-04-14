@@ -24,7 +24,7 @@ while true; do
     esac
 done
 
-outdir=~/.logs/$(basename $0).out/
+outdir=~/.cache/system-config/logs/$(basename $0).out/
 mkdir -p $outdir
 outfile=$outdir/$1.html
 if test $redo = false -a -e "$outfile"; then

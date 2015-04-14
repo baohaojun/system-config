@@ -119,7 +119,7 @@ fi
 
 if test $(basename $0) = gnus-mailx; then
 cat <<EOF > /tmp/mail.txt.$$
-From: $(cat ~/.config/about_me/FullName) <$(cat ~/.config/about_me/mail)>
+From: $(cat ~/.config/system-config/about_me/FullName) <$(cat ~/.config/system-config/about_me/mail)>
 $(
 ## start code-generator "^\\s *#"
 # for x in cc bcc subject to; do

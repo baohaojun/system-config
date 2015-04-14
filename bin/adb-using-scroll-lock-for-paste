@@ -1,5 +1,5 @@
 #!/bin/bash
-if test -e ~/.config/adb-scroll-lock-is-paste; then
+if test -e ~/.config/system-config/adb-scroll-lock-is-paste; then
     adb-key SCROLL_LOCK
 else
     adb-tap "$@"

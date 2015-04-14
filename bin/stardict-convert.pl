@@ -361,15 +361,15 @@ sub dict_matching() {
   my $filter;
   my $filter_save;
   my $saved_pattern;
-  if (-e glob("~/.logs/dict_matching.txt")) {
-    open($filter, "<", glob("~/.logs/dict_matching.txt")) or die "can not open dict_matching.txt";
+  if (-e glob("~/.cache/system-config/logs/dict_matching.txt")) {
+    open($filter, "<", glob("~/.cache/system-config/logs/dict_matching.txt")) or die "can not open dict_matching.txt";
     chomp($saved_pattern = <$filter>);
   }
 
   unless($pattern eq $saved_pattern) {
     close($filter) if $filter;
     open($filter, "-|", "grep", "-i", "-P", "$pattern", "words.list") or die "can not open filter";
-    open($filter_save, ">", glob("~/.logs/dict_matching.txt")) or die "can not open dict_matching.txt";
+    open($filter_save, ">", glob("~/.cache/system-config/logs/dict_matching.txt")) or die "can not open dict_matching.txt";
     print $filter_save "$pattern\n";
   }
 

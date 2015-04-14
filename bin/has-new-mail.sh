@@ -34,7 +34,7 @@ function got-mail() {
 
 (
 
-    result=~/.logs/mail-check-result
+    result=~/.cache/system-config/logs/mail-check-result
     need_recheck=false
 
 

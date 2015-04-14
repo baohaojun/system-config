@@ -14,13 +14,13 @@ if test "$TERM" = dumb; then
     export PS1='\$'
 fi
 
-if test -e ~/.bash-path -a -e ~/.kill-bt; then
+if test -e ~/.config/system-config/.bashrc-path -a -e ~/.kill-bt; then
     (
-        . ~/.bash-path
+        . ~/.config/system-config/.bashrc-path
         if ps.pl transmission-cli >/dev/null 2>&1 && yes-or-no-p "Kill transmission-cli?"; then
             ps-killall transmission-cli
         fi
     )
 fi
 
-. ~/.bashrc-ssh-agent
+. ~/system-config/.bashrc-ssh-agent

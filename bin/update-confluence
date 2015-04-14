@@ -20,7 +20,7 @@ for x in "${args[@]}"; do
         cat ~/doc/confluence-tail;
     ) > "$x".$$
 
-    log=~/.logs/$(basename $0).log
+    log=~/.cache/system-config/logs/$(basename $0).log
     congfu -- -a storePage --title "${x%%.org}" --encoding UTF-8 --file "$x".$$ > $log 2>&1|| die "Error: see above"
 
     cat $log|

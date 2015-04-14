@@ -2,7 +2,7 @@
 
 use Getopt::Long;
 system("backup_bash_history");
-open($file, "<", glob("~/.bash_history.bak"));
+open($file, "<", glob("~/.cache/system-config/.bash_history.bak"));
 %hist_words;
 @hist_words;
 

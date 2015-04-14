@@ -1,14 +1,14 @@
 #!/bin/bash
 function org_export_generate_tags() {
     the_ORG_FILE_NAME=$1
-    echo "arg1 is $the_ORG_FILE_NAME" > ~/.logs/relative_url.log
+    echo "arg1 is $the_ORG_FILE_NAME" > ~/.cache/system-config/logs/relative_url.log
     for tag in $(grep '# bhj-tags:' $the_ORG_FILE_NAME|perl -npe 's/.*?://'); do
         desc=$START_DIR/meta/tags/$tag.desc
         (
             cd $START_DIR
         cat <<EOF
         <li><a href="$(
-                relative_url meta/tags/$tag.html $the_ORG_FILE_NAME 2>>~/.logs/relative_url.log
+                relative_url meta/tags/$tag.html $the_ORG_FILE_NAME 2>>~/.cache/system-config/logs/relative_url.log
             )" title="$(
                 cat $START_DIR/meta/tags/$tag.desc
             )">$tag</a></li>

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ~/.bashrc
+. ~/system-config/.bashrc
 touch ~/.where ~/.where.lock
 
 . ~/bin/Linux/download-external.sh

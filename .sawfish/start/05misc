@@ -3,7 +3,7 @@ echo sawfish starting sub programs
 touch /tmp/bhj-notify-not-working
 
 if test -e ~/.fonts/symbol.ttf; then
-    mv ~/.fonts/symbol.ttf ~/.cache/symbol.ttf.$$
+    mv ~/.fonts/symbol.ttf ~/.cache/system-config/symbol.ttf.$$
 fi
 
 rm ~/.fonts/monaco-windows.ttf -f

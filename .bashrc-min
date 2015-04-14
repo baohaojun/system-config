@@ -18,7 +18,7 @@ export HISTSIZE=2000
 export HISTFILESIZE=2000
 
 export VC_BUILD_CONFIG=release
-. ~/.bashrc-public
+. ~/system-config/.bashrc-public
 alias of=cygstart
 alias ps='ps aux -W'
 alias dict='dict -v 2>/dev/null'

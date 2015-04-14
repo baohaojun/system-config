@@ -1,5 +1,5 @@
-0-59/15 *  * * * . ~/.bash-path; ~/bin/bhj-cron-runner 15m 15m
-0       2  * * * . ~/.bash-path; ~/bin/bhj-cron-runner daily 10h
-0       *  * * * . ~/.bash-path; ~/bin/bhj-cron-runner hourly 1h
-0       3 * * 4 . ~/.bash-path; ~/bin/bhj-cron-runner weekly 10h
-0       20 * * 5 . ~/.bash-path; ~/bin/bhj-cron-runner friday 10h
+0-59/15 *  * * * . ~/.config/system-config/.bashrc-path; ~/bin/bhj-cron-runner 15m 15m
+0       2  * * * . ~/.config/system-config/.bashrc-path; ~/bin/bhj-cron-runner daily 10h
+0       *  * * * . ~/.config/system-config/.bashrc-path; ~/bin/bhj-cron-runner hourly 1h
+0       3 * * 4 . ~/.config/system-config/.bashrc-path; ~/bin/bhj-cron-runner weekly 10h
+0       20 * * 5 . ~/.config/system-config/.bashrc-path; ~/bin/bhj-cron-runner friday 10h

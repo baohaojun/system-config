@@ -1,5 +1,5 @@
 #!/bin/bash
-. ~/.bashrc
+. ~/system-config/.bashrc
 
 build_env=`lookup-file build/envsetup.sh`
 top_dir=`dirname $build_env`

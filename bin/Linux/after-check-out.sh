@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ~/system-config/bin/after-co-ln-s.sh
-. ~/.bashrc
+. ~/system-config/.bashrc
 touch ~/.where ~/.where.lock
 
 if test $(whoami) = bhj; then

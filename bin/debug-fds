@@ -1,14 +1,14 @@
 #!/bin/bash
-ls -l /proc/$$/fd > ~/.logs/debug-fds 2>&1
+ls -l /proc/$$/fd > ~/.cache/system-config/logs/debug-fds 2>&1
 
 if (echo shit); then
-    echo stdout is ok >> ~/.logs/debug-fds 2>&1
+    echo stdout is ok >> ~/.cache/system-config/logs/debug-fds 2>&1
 else
-    echo stdout is not ok $? >> ~/.logs/debug-fds 2>&1
+    echo stdout is not ok $? >> ~/.cache/system-config/logs/debug-fds 2>&1
 fi
 
 if echo shit 1>&2; then
-    echo stderr is ok >> ~/.logs/debug-fds 2>&1
+    echo stderr is ok >> ~/.cache/system-config/logs/debug-fds 2>&1
 else
-    echo stderr is not ok $? >> ~/.logs/debug-fds 2>&1
+    echo stderr is not ok $? >> ~/.cache/system-config/logs/debug-fds 2>&1
 fi

@@ -54,7 +54,7 @@ else
 fi
 
 cd ~/src/github
-cat <<EOF > ~/.config/emacs.gen.el
+cat <<EOF > ~/.config/system-config/emacs.gen.el
 (setq load-path
       (nconc (list
 $(

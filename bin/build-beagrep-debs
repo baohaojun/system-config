@@ -24,9 +24,9 @@ if test $(basename $0) = build-beagrep-debs; then
                     pkg=~/external/cowbuilder/${branch#for-}-$arch/bare/base.tgz
                 fi
                 if test -e $pkg; then
-                    rm -rf ~/.cache/beagrep-debs/$branch-$arch
-                    mkdir -p ~/.cache/beagrep-debs/$branch-$arch
-                    mkdir ~/.cache/build -p
+                    rm -rf ~/.cache/system-config/beagrep-debs/$branch-$arch
+                    mkdir -p ~/.cache/system-config/beagrep-debs/$branch-$arch
+                    mkdir ~/.cache/system-config/build -p
                     builddir=/tmp/build-cow.$$
                     mkdir -p $builddir
                     time sudo unshare -m -- bash -c "
@@ -52,7 +52,7 @@ if test $(basename $0) = build-beagrep-debs; then
                 fi
             )
         done
-    done 2>&1 | grep --line-buffered -i -v 'create hard link.*invalid cross-device link' | bash -c "time tee  ~/.logs/$(basename $0).log"
+    done 2>&1 | grep --line-buffered -i -v 'create hard link.*invalid cross-device link' | bash -c "time tee  ~/.cache/system-config/logs/$(basename $0).log"
     exit
 fi
 

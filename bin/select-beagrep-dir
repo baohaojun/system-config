@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ~/.cache/for-code-reading
+cd ~/.cache/system-config/for-code-reading
 d=$(select-output-line "find . -type d -name .beagrep | grep -P -e '$1' | xargs ls -dt")
 touch "$d"
 echo -n "${d:1:-9}" # d=./XXX/.beagrep

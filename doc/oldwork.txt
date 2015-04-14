@@ -3269,7 +3269,7 @@ adb pull /data/data/com.android.providers.contacts/databases/contacts2.db .
 $export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/
 repo forall -c "git checkout -b bhj-nv.11 tegra-9.12.11"
 
-mkdir -p ~/.cache/`pwd`/.beagrep; beagrep-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target ~/.cache/`pwd`/.beagrep/ .; ln ~/.my-beagrep-filter-android .beagrep-filter -sf; ln -sf ~/.cache/`pwd`/.beagrep ./
+mkdir -p ~/.cache/system-config/`pwd`/.beagrep; beagrep-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target ~/.cache/system-config/`pwd`/.beagrep/ .; ln ~/.my-beagrep-filter-android .beagrep-filter -sf; ln -sf ~/.cache/system-config/`pwd`/.beagrep ./
 
 
 值得一提的是我找到这个问题的方法。一开始我发现 emacs 每天总是会卡住3，4回，出现的频率很低，很难通过依次禁止 .emacs 中的内容来排查，于是我就到 emacs 的官方邮件列表上去提问，有人告诉了我一个好方法：
@@ -3433,7 +3433,7 @@ composite curtain_left.png xx.png xx.png
 composite -geometry +880+0 curtain_right.png xx.png xx.png 
 git status -s|awk '{print $2}'|xargs bash -c 'for x in "$@"; do emacsclient $x; done' xx
 
-(. ~/.bashrc; lcd out/target; rm -f product/eeepc/obj/PACKAGING/systemimage_unopt_intermediates/system.img; rm -f product/eeepc/system.img; rm -f product/eeepc/eeepc.iso; lcd bootable/newinstaller/;  touch ./boot/isolinux/*; mm iso_img)
+(. ~/system-config/.bashrc; lcd out/target; rm -f product/eeepc/obj/PACKAGING/systemimage_unopt_intermediates/system.img; rm -f product/eeepc/system.img; rm -f product/eeepc/eeepc.iso; lcd bootable/newinstaller/;  touch ./boot/isolinux/*; mm iso_img)
 
 chrome:
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xfbef0d696de1c72ba5a835fe5a9bf3bb4e5e17b5

@@ -1,5 +1,5 @@
 #!/bin/bash
 
-grep 'has been modified:' $1 | perl -npe 's/.*?has been modified://; s/\s+/\n/g;' > ~/.logs/$(basename $0).1
-grep 'previous value:' $1 | perl -npe 's/.*?previous value://; s/\s+/\n/g;' > ~/.logs/$(basename $0).2
-file-arg1-arg2 ~/.logs/$(basename $0).1 ~/.logs/$(basename $0).2
+grep 'has been modified:' $1 | perl -npe 's/.*?has been modified://; s/\s+/\n/g;' > ~/.cache/system-config/logs/$(basename $0).1
+grep 'previous value:' $1 | perl -npe 's/.*?previous value://; s/\s+/\n/g;' > ~/.cache/system-config/logs/$(basename $0).2
+file-arg1-arg2 ~/.cache/system-config/logs/$(basename $0).1 ~/.cache/system-config/logs/$(basename $0).2

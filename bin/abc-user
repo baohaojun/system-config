@@ -16,13 +16,13 @@ fi
 
 (
     flock 9
-    echo $(now): $who: "$SSH_ORIGINAL_COMMAND" >> ~/.logs/abc.log
-) 9> ~/.logs/.abc.lock
+    echo $(now): $who: "$SSH_ORIGINAL_COMMAND" >> ~/.cache/system-config/logs/abc.log
+) 9> ~/.cache/system-config/logs/.abc.lock
 
-time (bash -c "$SSH_ORIGINAL_COMMAND" 2>&1) 2>~/.logs/abc.time.$$ || true
+time (bash -c "$SSH_ORIGINAL_COMMAND" 2>&1) 2>~/.cache/system-config/logs/abc.time.$$ || true
 
 (
     flock 9
-    echo $(now): $who: "$SSH_ORIGINAL_COMMAND: $(grep real ~/.logs/abc.time.$$)" >> ~/.logs/abc.log
-    rm ~/.logs/abc.time.$$
-) 9> ~/.logs/.abc.lock
+    echo $(now): $who: "$SSH_ORIGINAL_COMMAND: $(grep real ~/.cache/system-config/logs/abc.time.$$)" >> ~/.cache/system-config/logs/abc.log
+    rm ~/.cache/system-config/logs/abc.time.$$
+) 9> ~/.cache/system-config/logs/.abc.lock

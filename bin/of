@@ -3,7 +3,7 @@
 if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 else
-    exec > ~/.logs/of.log 2>&1
+    exec > ~/.cache/system-config/logs/of.log 2>&1
 fi
 
 set -x

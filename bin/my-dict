@@ -14,7 +14,7 @@ if test $# = 0 -a "${postfix:0:1}" = -; then
     fi
 elif test $# = 0; then
     input=$(ask-for-input-with-sawfish -p "md> ")
-    echo input is "$input" >> ~/.logs/my-dict.log
+    echo input is "$input" >> ~/.cache/system-config/logs/my-dict.log
     if test "$input" = ''; then
         set -- "$(xclip -o)"
     else
@@ -22,7 +22,7 @@ elif test $# = 0; then
     fi
 fi
 
-if test $(basename $0) = my-dict-maybe -a -e ~/.config/$USER/using-touchpad; then
+if test $(basename $0) = my-dict-maybe -a -e ~/.config/system-config/$USER/using-touchpad; then
     exit 0;
 fi
 

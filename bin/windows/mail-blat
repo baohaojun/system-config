@@ -80,7 +80,7 @@ test -z "${body[0]}" && body=("=")
 
 (type blat.exe || of http://sourceforge.net/projects/blat/files/) >/dev/null 2>&1
 (
-    printf "blat.exe - -charset gbk -f $(cat ~/.config/about_me/mail) -u $(cat ~/.config/about_me/mail) -server localhost -port 2025 -pw %q " "$(get-authinfo $(cat ~/.config/about_me/smtp) $(cat ~/.config/about_me/mail))";
+    printf "blat.exe - -charset gbk -f $(cat ~/.config/system-config/about_me/mail) -u $(cat ~/.config/system-config/about_me/mail) -server localhost -port 2025 -pw %q " "$(get-authinfo $(cat ~/.config/system-config/about_me/smtp) $(cat ~/.config/system-config/about_me/mail))";
     for y in attach to cc bcc subject body; do
         eval '
         if test ${#'$y'[@]} != 0; then

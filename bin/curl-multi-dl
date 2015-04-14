@@ -31,12 +31,12 @@ size=$(pretty $size | pn 2)
         e=$((size * x - 1))
         curl $1 -L -r $s-$e -o $(basename $1).$x&
     done
-) 9>~/.logs/$(basename $0).lock.$$
+) 9>~/.cache/system-config/logs/$(basename $0).lock.$$
 
 (
     while true; do
         echo
-        if fuser ~/.logs/$(basename $0).lock.$$; then
+        if fuser ~/.cache/system-config/logs/$(basename $0).lock.$$; then
             sleep 1
         else
             break
@@ -48,4 +48,4 @@ size=$(pretty $size | pn 2)
     done > $(basename $1)
 )
 
-rm ~/.logs/$(basename $0).lock.$$
+rm ~/.cache/system-config/logs/$(basename $0).lock.$$

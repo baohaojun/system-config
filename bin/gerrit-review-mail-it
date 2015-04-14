@@ -36,7 +36,7 @@ if test "$1" = build-failed; then
 
     title=$(echo Automatic hourly build failed $(now) - "$@")
 
-    tmpd=~/.cache/$(basename $0).$$.dir
+    tmpd=~/.cache/system-config/$(basename $0).$$.dir
     mkdir -p $tmpd
     cd $tmpd
     tar zxfv $tmpf
@@ -55,7 +55,7 @@ if test "$1" = build-failed; then
         perl -npe 's/.*<//; s/>.*//;' |
         grep '@marvell.com' |
         sort -u;
-        cat ~/.config/about_me/mail
+        cat ~/.config/system-config/about_me/mail
         if test -e ~/.mail-build-errors; then
             cat ~/.mail-build-errors
         fi
@@ -76,7 +76,7 @@ if test "$1" = build-failed; then
 
     set -e
     cp $tmpf commit-messages.tgz
-    cat <<EOF |tee /dev/stderr | mailx -s "$title" $(cat ~/.config/about_me/mail) $recipients -a commit-messages.tgz -a build.log
+    cat <<EOF |tee /dev/stderr | mailx -s "$title" $(cat ~/.config/system-config/about_me/mail) $recipients -a commit-messages.tgz -a build.log
 Hi, all
 $in_mail_recipients
 You are receiving this email because the automatic hourly build has

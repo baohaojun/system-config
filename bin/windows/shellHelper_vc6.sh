@@ -1,5 +1,5 @@
 #!/bin/bash 
-. ~/.bashrc-windows
+. ~/system-config/.bashrc-windows
 set -e
 (echo -n \>; for x in "$@"; do 
     echo -n \`"$x"\'\ 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for x in ~/.config/do-git-fetch/*; do
+for x in ~/.config/system-config/do-git-fetch/*; do
     if test -d $x; then
         (
             cd $x

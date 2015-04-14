@@ -45,8 +45,8 @@ if test $ORDERED != false; then
     if test $ORDERED != true; then
         md5=$ORDERED
     fi
-    cmdfile=~/.cache/bhj/select-output-line/$md5.cmd
-    histfile=~/.cache/bhj/select-output-line/$md5.hist
+    cmdfile=~/.cache/system-config/bhj/select-output-line/$md5.cmd
+    histfile=~/.cache/system-config/bhj/select-output-line/$md5.hist
     (
         mv $histfile $histfile.$$ &&
             cp $histfile.$$ $histfile.$$.2 &&

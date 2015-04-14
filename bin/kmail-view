@@ -4,7 +4,7 @@ prog=$(basename $0)
 if test $# = 1; then
     if test ! -e "$1"; then
         bhj-notify "$prog" "$1 not exist!"
-        echo "$1" >> ~/.logs/$prog.log
+        echo "$1" >> ~/.cache/system-config/logs/$prog.log
         x=$(echo "$1" | perl -npe 's/:.*//')
         x=$(echo "$x"*)
         set -- "$x"
@@ -16,4 +16,4 @@ if test $prog = kmail-view; then
 else
     search-aliman $(maildir-extract-head "$1" | perl -ne 'print $1 if m/^From: (.*?)</') >/dev/null 2>&1 &
 fi
-maildir-maildump < "$@" > ~/.logs/maildump.out 2> ~/.logs/maildump.err&
+maildir-maildump < "$@" > ~/.cache/system-config/logs/maildump.out 2> ~/.cache/system-config/logs/maildump.err&

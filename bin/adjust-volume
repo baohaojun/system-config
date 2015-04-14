@@ -42,7 +42,7 @@ while true; do
         amixer -q sset PCM,0 1%-
     else
         vol=$(amixer | grep 'Playback.*%' | perl -ne 's/.*\[(\d+%)\].*/$1/; print; last');
-        echo $vol > ~/.logs/audion-volume.%
+        echo $vol > ~/.cache/system-config/logs/audion-volume.%
         break
     fi
 done

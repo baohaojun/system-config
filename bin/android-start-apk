@@ -18,17 +18,17 @@ fi
 
 file=$(readlink -f "$1")
 
-rm ~/.cache/$(basename $1).unpack -rf
+rm ~/.cache/system-config/$(basename $1).unpack -rf
 
-if test ! -d ~/.cache/$(basename $1).unpack; then
-    mkdir -p ~/.cache/$(basename $1).unpack
-    cd ~/.cache/$(basename $1).unpack
+if test ! -d ~/.cache/system-config/$(basename $1).unpack; then
+    mkdir -p ~/.cache/system-config/$(basename $1).unpack
+    cd ~/.cache/system-config/$(basename $1).unpack
     unzip "$file"
 fi
 
 
 
-cd ~/.cache/$(basename $1).unpack
+cd ~/.cache/system-config/$(basename $1).unpack
 if test ! -e .AndroidManifest.xml-is-good; then
     axml2xml.pl AndroidManifest.xml > .AndroidManifest.xml.bak
     rm ./* -rf

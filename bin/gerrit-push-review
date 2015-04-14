@@ -146,7 +146,7 @@ fi
     echo '* git commit message:'
     echo
     git log -1 "$rev"
-) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty ~/.logs/gerrit-review.log.$$
+) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty ~/.cache/system-config/logs/gerrit-review.log.$$
 
 set +x
 echo push ok.
@@ -161,4 +161,4 @@ echo push ok.
     fi
 )
 
-mv ~/.logs/gerrit-review.log.$$ ~/.logs/gerrit-review.log
+mv ~/.cache/system-config/logs/gerrit-review.log.$$ ~/.cache/system-config/logs/gerrit-review.log

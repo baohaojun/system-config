@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if test -e ~/.config/debugging; then
+if test -e ~/.config/system-config/debugging; then
     set -x
 fi
 TEMP=$(getopt -o w:h:o: --long width:height:output: -n $(basename $0) -- "$@")

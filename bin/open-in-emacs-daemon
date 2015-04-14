@@ -1,13 +1,13 @@
 #!/bin/bash
 
-if test ! -e ~/.cache/open-in-emacs; then
-    mkfifo ~/.cache/open-in-emacs;
+if test ! -e ~/.cache/system-config/open-in-emacs; then
+    mkfifo ~/.cache/system-config/open-in-emacs;
 fi
-mkdir -p ~/.cache/open-in-emacs.d
+mkdir -p ~/.cache/system-config/open-in-emacs.d
 while true; do
     bash -c '
-        cat ~/.cache/open-in-emacs > ~/.cache/open-in-emacs.d/open.$$.txt
-        e ~/.cache/open-in-emacs.d/open.$$.txt
+        cat ~/.cache/system-config/open-in-emacs > ~/.cache/system-config/open-in-emacs.d/open.$$.txt
+        e ~/.cache/system-config/open-in-emacs.d/open.$$.txt
     '
     sleep 1
 done
