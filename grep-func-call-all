@@ -16,9 +16,9 @@ path_matcher=()
 path_matcher_inv=()
 lang_c=
 
-echo -n > ~/.logs/$(basename $0).log
+echo -n > ~/.cache/system-config/logs/$(basename $0).log
 function debug() {
-    echo "$@" >> ~/.logs/$(basename $0).log
+    echo "$@" >> ~/.cache/system-config/logs/$(basename $0).log
 }
 
 TEMP=$(getopt -o ce:p:r:v:sima --long "nc,add:" -n $(basename $0) -- "$@")
