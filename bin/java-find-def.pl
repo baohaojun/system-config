@@ -2,8 +2,8 @@
 
 use strict;
 
-open(my $debug, ">", glob("~/.logs/java-find-def.log"))
-    or die "Can not open debug log file ~/.logs/java-find-def.log";
+open(my $debug, ">", glob("~/.cache/system-config/logs/java-find-def.log"))
+    or die "Can not open debug log file ~/.cache/system-config/logs/java-find-def.log";
 sub debug(@) {
     print $debug "@_\n";
 }

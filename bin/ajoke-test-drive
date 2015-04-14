@@ -108,7 +108,7 @@ build it now (will need sudo for installing)?"; then
         die "jre rt.jar not found"
     fi
 
-    if test -e ~/.cache/for-code-reading/$java_dir/.beatags; then
+    if test -e ~/.cache/system-config/for-code-reading/$java_dir/.beatags; then
         echo "Good, you have done mkgtags for java"
         for rc in $AJOKE_DIR/etc/bash.d/*; do
             if test -f $rc; then
@@ -138,7 +138,7 @@ build it now (will need sudo for installing)?"; then
         if yes-or-no-p -y "Do you want have a test drive in Emacs?"; then
             (
                 set -e
-                dir=~/.cache/test-ajoke
+                dir=~/.cache/system-config/test-ajoke
                 mkdir -p $dir
                 cd $dir
                 cat <<EOF > Test.java

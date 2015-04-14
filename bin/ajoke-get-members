@@ -8,7 +8,7 @@ function die() {
 
 for x in $0 "$@"; do
     printf %q\ "$x"
-done >> ~/.logs/$(basename $0).log
+done >> ~/.cache/system-config/logs/$(basename $0).log
 
 type='\S+'
 proto=false
@@ -38,7 +38,7 @@ done
 for class in "$@"; do
     export GTAGS_START_FILE=
     qclasses=$(ajoke-get-qclass $class)
-    echo qclasses is $qclasses >> ~/.logs/$(basename $0).log
+    echo qclasses is $qclasses >> ~/.cache/system-config/logs/$(basename $0).log
 
     for qclass in $qclasses; do
 
@@ -49,7 +49,7 @@ for class in "$@"; do
         fi
 
         tag_cache=$(java-tags-cache $file)
-        echo tag_cache is $tag_cache >> ~/.logs/$(basename $0).log
+        echo tag_cache is $tag_cache >> ~/.cache/system-config/logs/$(basename $0).log
         if test $proto = true; then
             perl -ne "print \"\$1\n\" if m/^$qclass\.\S+\s+$type\s+\d+\s+\S+\s+(.*)/" $tag_cache /dev/null
         else

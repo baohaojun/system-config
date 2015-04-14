@@ -8,7 +8,7 @@ GetOptions(
     "i!" => \$ignore_case,
     );
 
-open(my $_log, ">", glob("~/.logs/global-ctags.log"))
+open(my $_log, ">", glob("~/.cache/system-config/logs/global-ctags.log"))
     or die "Can not open log";
 
 sub debug(@) {

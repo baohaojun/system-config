@@ -40,8 +40,8 @@ $logfile =~ s!.*/!!;
 if ($ENV{DEBUG} eq 'true') {
     $debug = *STDERR;
 } else {
-    open($debug, ">", glob("~/.logs/$logfile.log"))
-        or die "Can not open debug log file ~/.logs/$logfile.log";
+    open($debug, ">", glob("~/.cache/system-config/logs/$logfile.log"))
+        or die "Can not open debug log file ~/.cache/system-config/logs/$logfile.log";
 }
 
 our $code_dir = $ENV{PWD};

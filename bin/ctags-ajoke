@@ -4,8 +4,8 @@ use strict;
 use File::Path qw(make_path);
 use String::ShellQuote;
 
-open(my $debug, ">>", glob("~/.logs/ctags-exuberant.log"))
-    or die "Can not open debug log file ~/.logs/ctags-exuberant.log";
+open(my $debug, ">>", glob("~/.cache/system-config/logs/ctags-exuberant.log"))
+    or die "Can not open debug log file ~/.cache/system-config/logs/ctags-exuberant.log";
 sub debug(@) {
     print $debug "@_\n";
 }

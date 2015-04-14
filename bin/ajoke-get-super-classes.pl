@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
-open(my $debug, ">", glob("~/.logs/ajoke-get-super-classes.log"))
-    or die "Can not open debug log file ~/.logs/ajoke-get-super-classes.log";
+open(my $debug, ">", glob("~/.cache/system-config/logs/ajoke-get-super-classes.log"))
+    or die "Can not open debug log file ~/.cache/system-config/logs/ajoke-get-super-classes.log";
 sub debug(@) {
     print $debug "@_\n";
 }

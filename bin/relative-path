@@ -18,7 +18,7 @@ function calc_relative() {
     if echo $SHELLOPTS | grep -q xtrace; then
         true
     else
-        exec 2>~/.logs/relative-path.log
+        exec 2>~/.cache/system-config/logs/relative-path.log
     fi
 
     perl -e '

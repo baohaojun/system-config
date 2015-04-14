@@ -20,7 +20,7 @@ fi
 mkdir -p ~/bin/$(uname)/ext/debug
 /bin/cat <<EOF > ~/bin/$(uname)/ext/debug/$1
 #!/bin/bash
-mkdir -p ~/.logs/start-debug.log/
+mkdir -p ~/.cache/system-config/logs/start-debug.log/
 
 (
     printf "cd %q;" "\$(pwd)"
@@ -33,18 +33,18 @@ mkdir -p ~/.logs/start-debug.log/
     set
     echo
     echo
-) >> ~/.logs/start-debug.log/$1
-$cmd "\$@" > ~/.logs/start-debug.log/$1.\$\$.out 2> ~/.logs/start-debug.log/$1.\$\$.err
+) >> ~/.cache/system-config/logs/start-debug.log/$1
+$cmd "\$@" > ~/.cache/system-config/logs/start-debug.log/$1.\$\$.out 2> ~/.cache/system-config/logs/start-debug.log/$1.\$\$.err
 res=\$?
-/bin/cat ~/.logs/start-debug.log/$1.\$\$.out
-/bin/cat ~/.logs/start-debug.log/$1.\$\$.err 1>&2
+/bin/cat ~/.cache/system-config/logs/start-debug.log/$1.\$\$.out
+/bin/cat ~/.cache/system-config/logs/start-debug.log/$1.\$\$.err 1>&2
 
 (
-    echo out; /bin/cat ~/.logs/start-debug.log/$1.\$\$.out;
-    echo err:; /bin/cat ~/.logs/start-debug.log/$1.\$\$.err
+    echo out; /bin/cat ~/.cache/system-config/logs/start-debug.log/$1.\$\$.out;
+    echo err:; /bin/cat ~/.cache/system-config/logs/start-debug.log/$1.\$\$.err
     echo tree:; ps.tree \$\$
-) >>  ~/.logs/start-debug.log/$1
-cd ~/.logs/start-debug.log/
+) >>  ~/.cache/system-config/logs/start-debug.log/$1
+cd ~/.cache/system-config/logs/start-debug.log/
 /bin/rm $1.\$\$.out $1.\$\$.err
 exit \$res
 EOF

@@ -2,7 +2,7 @@
 
 set -e
 jar=$(readlink -f $1)
-td=~/.cache/for-code-reading/$jar
+td=~/.cache/system-config/for-code-reading/$jar
 mkdir -p $td
 cd $td
 unzip $jar
