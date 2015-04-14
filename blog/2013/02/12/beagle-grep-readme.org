@@ -84,7 +84,7 @@ repexp, do the following:
     3. Use beagrep in any directory in the source tree:
 
        #+BEGIN_EXAMPLE
-       ~/bin/beagrep -e "ENGLISH_STOP_WORDS" 
+       ~/system-config/bin/beagrep -e "ENGLISH_STOP_WORDS" 
        #+END_EXAMPLE
 
        The output is like the following:

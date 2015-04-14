@@ -5,7 +5,7 @@ if test $# != 1; then
     die "Error: Usage $(basename $0) tag-name"
 fi
 
-cd ~/doc/baohaojun/
+cd ~/system-config/doc/baohaojun/
 if test -e meta/tags/$1.org; then
     echo $1 already exists
     exit 0

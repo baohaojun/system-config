@@ -208,7 +208,7 @@ a lot but not enough) into how other people can use my setup. On
 github some Emacs gurus have published a complete [[https://github.com/purcell/emacs.d][emacs.d]] which is
 well organized. My setup is one step further, I not only want to mess
 with your =.emacs= and your =emacs.d=, but also your =.bashrc= and
-=~/bin=, sigh...
+=~/system-config/bin=, sigh...
 
 But, in case you are not daunted by my mess, here's how to use my setup:
 

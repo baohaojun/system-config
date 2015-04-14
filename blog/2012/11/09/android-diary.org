@@ -340,7 +340,7 @@ cat /data/debugfs/gpio
 
 所以在原理图上，你会看到一个管脚的序号、主功能名，而在pinmux文件中（我们的NV项目没有出pinmux表，我们可以基于另外一个项目的pinmux表，在vendor/nvidia/theatre-doc/pinmux/下），我们可以看到这个管脚的次功能名和gpio名。这个比查trm文档方便一些，但是还是比较麻烦，所以（谢谢佟波的建议）我提供一个脚本[[http://github.com/baohaojun/system-config/raw/master/bin/Linux/nvpinmux][nvpinmux]]，可以方便地查看一个管脚的管脚名、pinmux功能名、gpio名。
 
-这个脚本需要你把[[http://github.com/baohaojun/system-config/raw/master/doc/pinmux.csv][这个文件]]放到你的~/doc目录下。
+这个脚本需要你把[[http://github.com/baohaojun/system-config/raw/master/doc/pinmux.csv][这个文件]]放到你的~/system-config/doc目录下。
 
 使用方法：
 #+begin_src none

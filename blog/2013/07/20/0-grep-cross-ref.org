@@ -55,7 +55,7 @@ But good enough (at least for me:-)
 
    #+BEGIN_SRC sh
    cp .globalrc ~
-   cp $(find . -maxdepth 1 -type f -executable) ~/bin # or some other dir in your PATH
+   cp $(find . -maxdepth 1 -type f -executable) ~/system-config/bin # or some other dir in your PATH
    #+END_SRC
 
 4. =mkdir ~/.logs=
