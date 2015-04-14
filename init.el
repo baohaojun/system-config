@@ -139,7 +139,7 @@
       (require 'auto-complete-clang-async)
 
       (defun ac-cc-mode-setup ()
-        (setq ac-clang-complete-executable "~/bin/Linux/clang-complete")
+        (setq ac-clang-complete-executable "~/system-config/bin/Linux/clang-complete")
         (setq ac-sources '(ac-source-clang-async))
         (ac-clang-launch-completion-process)
         )
