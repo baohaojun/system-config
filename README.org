@@ -60,12 +60,12 @@ type =./ajoke/bin/ajoke-test-drive= to have a taste of it.
 
 If you are not using Debian alike systems, then please follow these
 steps, supposing ajoke is checked out in =$AJOKE_DIR= (in my case, it
-is =~/gcode/ajoke=, yours may vary):
+is =~/system-config/gcode/ajoke=, yours may vary):
 
 *** Put ajoke scripts into you PATH and Perl PATH:
 
    #+BEGIN_SRC sh
-   export AJOKE_DIR=~/gcode/ajoke #PLEASE MODIFY THIS TO SUIT YOUR CASE
+   export AJOKE_DIR=~/system-config/gcode/ajoke #PLEASE MODIFY THIS TO SUIT YOUR CASE
    export export PATH=$AJOKE_DIR/bin:$PATH
    export PERL5LIB="$AJOKE_DIR/etc/perl:$PERL5LIB";
    #+END_SRC
