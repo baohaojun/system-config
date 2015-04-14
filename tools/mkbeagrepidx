@@ -16,7 +16,7 @@ if test $PWD = ~; then
     fi
 
 fi
-outDir=~/.cache/for-code-reading/"`pwd`"
+outDir=~/.cache/system-config/for-code-reading/"`pwd`"
 srcDir=`pwd`
 export relativeSrcDir=.
 while test "$outDir" != "" -a ! -d "$outDir"/.beagrep; do
@@ -27,9 +27,9 @@ if test "$outDir" = ~; then
     outDir=""
 fi
 
-if test -r "$outDir" -a "$outDir" != ~/.cache/for-code-reading/"`pwd`";
+if test -r "$outDir" -a "$outDir" != ~/.cache/system-config/for-code-reading/"`pwd`";
 then
-    higherSrcDir=${outDir#~/.cache/for-code-reading/}
+    higherSrcDir=${outDir#~/.cache/system-config/for-code-reading/}
 
     if type yes-or-no-p >/dev/null 2>&1; then
         if yes-or-no-p -y "Do you want update code reading for $higherSrcDir?"; then
@@ -44,7 +44,7 @@ then
     fi
 
     if test "$ans" = n -o "$ans" = N; then
-        outDir=~/.cache/for-code-reading/"`pwd`"
+        outDir=~/.cache/system-config/for-code-reading/"`pwd`"
     else
         export relativeSrcDir=${srcDir/#$higherSrcDir/.}
         cd $higherSrcDir
@@ -53,7 +53,7 @@ then
         fi
     fi
 else
-    outDir=~/.cache/for-code-reading/"`pwd`"
+    outDir=~/.cache/system-config/for-code-reading/"`pwd`"
 fi
 
 function mkcscope_files() {

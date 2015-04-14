@@ -39,7 +39,7 @@ shift $(($OPTIND - 1))
 ## end generated code
 
 
-start_dir=~/.cache/for-code-reading/"$(readlink -f "$PWD")"
+start_dir=~/.cache/system-config/for-code-reading/"$(readlink -f "$PWD")"
 # echo Starting at $start_dir 1>&2
 while test ! -d "$start_dir"/.beagrep -a "$start_dir" != / -a "$start_dir"
 do
@@ -87,7 +87,7 @@ fi
 if test "$FIND_FILE_ONLY"; then
     tokens=$(echo -n " $tokens" | perl -npe 's/\s+/ filename:/g; s/(^ *| filename:$)//g')
     mkdir -p ~/.logs
-    echo $tokens > ~/.logs/$(basename $0).log
+    echo $tokens > ~/.cache/system-config/logs/$(basename $0).log
 fi
 
 tokens="$tokens $additional_tokens"

@@ -28,7 +28,7 @@ open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
 mkdir glob("~/.logs");
-open(my $debuglog, ">", glob("~/.logs/beagrep.log")) or die "Error openning log";
+open(my $debuglog, ">", glob("~/.cache/system-config/logs/beagrep.log")) or die "Error openning log";
 
 sub debug(@) {
     print $debuglog "@_\n";
@@ -118,7 +118,7 @@ my @beagrep_files = split(/\n/, $beagrep_files);
 
 
 my $pwd_save = $pwd;
-my $cache_dir = glob("~/.cache/for-code-reading");
+my $cache_dir = glob("~/.cache/system-config/for-code-reading");
 my $db_dir = "$cache_dir/$pwd";
 while (! -d "$db_dir/.beagrep") {
     debug "no beagrep db at $db_dir";
