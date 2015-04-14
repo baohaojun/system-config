@@ -6,6 +6,6 @@ netsh interface ip set address name=eth0 source=static addr=192.168.1.3 mask=255
 netsh interface ip set dns name=eth0 source=static addr=192.168.33.1 register=primary
 # netsh interface ip set dns name=eth0 source=static addr=10.32.255.10 register=primary
 netsh interface ip add dns name=eth0 addr=202.106.196.115 index=2
-#cygstart ~/bin/ieProxyDisable.reg
-cd ~/doc
+#cygstart ~/system-config/bin/ieProxyDisable.reg
+cd ~/system-config/doc
 regedit /s MsnBlogProxyDisable.reg

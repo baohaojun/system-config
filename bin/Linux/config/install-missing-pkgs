@@ -5,7 +5,7 @@ fi
 export LANG=C
 export LC_ALL=C
 
-packages_dir=${PACKAGES_DIR:-~/bin/Linux/config/pkgs/}
+packages_dir=${PACKAGES_DIR:-~/system-config/bin/Linux/config/pkgs/}
 packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,')
 err_packages=""
 

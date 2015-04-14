@@ -346,6 +346,6 @@
 ;;----------------------------------------------------------------------------
 ;; Variables configured via the interactive 'customize' interface
 ;;----------------------------------------------------------------------------
-(setq custom-file (expand-file-name "custom.el" "~/etc/"))
+(setq custom-file (expand-file-name "custom.el" "~/system-config/etc/"))
 (when (file-exists-p custom-file)
   (load custom-file))

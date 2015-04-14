@@ -24,8 +24,8 @@ git checkout -- .
 ./bin/after-co-ln-s.sh
 sudo apt-get install -y lftp
 mkdir -p ~/external
-ln -sf ~/external ~/bin/Linux/ext
-cd ~/bin/Linux/ext
+ln -sf ~/external ~/system-config/bin/Linux/ext
+cd ~/system-config/bin/Linux/ext
 lftp -c "mirror -c http://192.168.0.46/google"
 tar zxfv ./google/android-sdk_r06-linux_86.tgz
 mkdir -p ~/external/bin/Linux/ext/android-sdk-linux_86/temp
@@ -33,6 +33,6 @@ cd ~/external/bin/Linux/ext/android-sdk-linux_86/temp
 ln ../../google/* . 
 . ~/system-config/.bashrc
 ~/external/bin/Linux/ext/android-sdk-linux_86/tools/android&
-~/bin/Linux/after-check-out.sh
+~/system-config/bin/Linux/after-check-out.sh
 
 echo 'OK, your configuration has completed!'

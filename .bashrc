@@ -18,7 +18,7 @@ else
     if test -x /opt/local/libexec/gnubin/readlink; then
         export PATH=/opt/local/libexec/gnubin:$PATH
     fi
-    if test -d ~/etc/path/$(uname)-$(uname -m); then
+    if test -d ~/system-config/etc/path/$(uname)-$(uname -m); then
         rm -rf ~/external/etc/overide/
         export PATH=$(
             builtin cd ~/system-config/etc/path/$(uname)-$(uname -m) ||
@@ -77,7 +77,7 @@ fi
 export USE_CCACHE=1
 export MONO_PATH=~/.mono/MimeKit.1.0.3.0/lib/net40
 
-alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
+alias svngdiff='svn diff --diff-cmd ~/system-config/bin/svntkdiff'
 alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
 alias dir='ls --color=auto --format=vertical --show-control-chars'
 alias vdir='ls --color=auto --format=long --show-control-chars'

@@ -8,7 +8,7 @@ function SetPath()
 {
     #set up CLASSPATH
     unset CLASSPATH
-    for x in ~/bin/classpath/*.jar; do
+    for x in ~/system-config/bin/classpath/*.jar; do
         if test -f "$x"; then
             CLASSPATH="$CLASSPATH":"$x"
         fi
@@ -97,8 +97,8 @@ alias ps='ps aux -W'
 alias locate=llocate
 alias pdfnup='cygexec pdfnup'
 alias virus='clamscan --database="d:\profiles\All Users\.clamwin\db" --recursive'
-alias vcenv6='. ~/bin/windows/vcenv6.sh'
-alias wdkenv='. ~/bin/windows/wdkenv.sh'
+alias vcenv6='. ~/system-config/bin/windows/vcenv6.sh'
+alias wdkenv='. ~/system-config/bin/windows/wdkenv.sh'
 alias repo='PATH=/bin:$PATH repo'
 
 if test -e ~/.config/system-config/.bashrc-path; then
@@ -116,7 +116,7 @@ function complete_skeleton_words() {
     cmd="${COMP_WORDS[0]}"
     COMPREPLY=( $(skeleton_compgen_word.pl \
                 -d '\n' -- \
-                "$(cat ~/doc/.bash_completion_words.$(basename "$cmd"))" \
+                "$(cat ~/system-config/doc/.bash_completion_words.$(basename "$cmd"))" \
                 "$cur")
     )
 }

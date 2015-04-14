@@ -18,7 +18,7 @@ sudo usermod -a -G fuse $USER
 
 sudo perl -npe 's/ main$/ main contrib non-free/' -i /etc/apt/sources.list
 
-. ~/bin/Linux/download-external.sh
+. ~/system-config/bin/Linux/download-external.sh
 download_external >/dev/null 2>&1 &
 
 set -e
@@ -36,7 +36,7 @@ if test ! -d /usr/local/share/info; then
     sudo mkdir -p /usr/local/share/info
 fi
 
-sudo ln -s ~/doc/bash.info.gz /usr/local/share/info/ -f
+sudo ln -s ~/system-config/doc/bash.info.gz /usr/local/share/info/ -f
 
 (
     cd /usr/local/share/info/

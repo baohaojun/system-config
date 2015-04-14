@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~/bin/windows/startup
+cd ~/system-config/bin/windows/startup
 rm *.stackdump */*.stackdump -f
 
 function Usage()

@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 
 	fprintf(stderr, "Bash is found at `%s'\n", bash_path);
 	
-	char shellHerlperSh[]= "~/bin/windows/shellHelper_vc6.sh";
+	char shellHerlperSh[]= "~/system-config/bin/windows/shellHelper_vc6.sh";
 
 	int new_cmd_len = strlen(bash_path) + sizeof(shellHerlperSh) + 20; 
     fprintf(stderr, "command line is %s\n", GetCommandLine());

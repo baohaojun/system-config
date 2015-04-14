@@ -6,10 +6,10 @@ for x in ~/.mozilla/firefox/*/ ~/Library/"Application Support"/Firefox/{Profiles
     mkdir -p "$dir"
     case $(uname) in
         CYGWIN*)
-            cp ~/gcode/Firemacs/* "$dir" -av
+            cp ~/system-config/gcode/Firemacs/* "$dir" -av
             ;;
         *)
-            ln -sf ~/gcode/Firemacs/* "$dir"
+            ln -sf ~/system-config/gcode/Firemacs/* "$dir"
             ;;
     esac
 done

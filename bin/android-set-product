@@ -6,7 +6,7 @@ if test $# != 0; then
 fi
 ccache -M 100G
 
-. ~/bin/.android-set-outdir
+. ~/system-config/bin/.android-set-outdir
 for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $OUT_DIR $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do xval=`eval echo \\$$x`; if test "$xval" != ""; then echo $x\?=`eval echo \\$$x`; fi; done >buildspec.mk.$$
 echo "export ANDROID_BUILD_TOP := $PWD" >>buildspec.mk.$$
 echo "export TARGET_PRODUCT" >>buildspec.mk.$$

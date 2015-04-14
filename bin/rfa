@@ -2,7 +2,7 @@
 
 export REPO_INFO=$(
     cd $(lookup-file .repo/..)
-    (cd .repo; make -f ~/etc/generate-repo-info.mk) >/dev/null 2>&1 
+    (cd .repo; make -f ~/system-config/etc/generate-repo-info.mk) >/dev/null 2>&1 
     readlink -m .repo/repo_info.pl
 )
 

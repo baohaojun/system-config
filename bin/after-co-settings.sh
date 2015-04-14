@@ -56,7 +56,7 @@ ask-for-settings smtp "email smtp server address"
 ask-for-settings smtp-port "email smtp server port"
 ask-for-settings conn-type "connection type" -s nil -s ssl -s starttls
 ask-for-settings FullName FullName
-ask-for-settings mach "Machine type" $(for x in ~/etc/hardware-mach/*; do echo -s $(basename $x); done)
+ask-for-settings mach "Machine type" $(for x in ~/system-config/etc/hardware-mach/*; do echo -s $(basename $x); done)
 
 if test "$USER" = bhj; then
     ask-for-confirmation gnome-keyring "set default login session using seahorse"

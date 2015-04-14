@@ -7,7 +7,7 @@ function die() {
 }
 
 function compile_beagrep() {
-    cd ~/gcode/beagrep
+    cd ~/system-config/gcode/beagrep
     git clean -xfd
 
     if test -e /usr/lib/pkgconfig/gmime-sharp-2.6.pc/gmime-sharp-2.6.pc; then
@@ -42,7 +42,7 @@ function compile_local_beagrep() {
             die "code3 local not clean";
         fi
     )
-    cd ~/gcode/beagrep
+    cd ~/system-config/gcode/beagrep
     if git st -s | grep . -q; then
         die "git not clean"
     fi
@@ -63,13 +63,13 @@ function compile_local_beagrep() {
 
 
 function compile_uncomment_java() {
-    cd ~/gcode/UncommentJava/
+    cd ~/system-config/gcode/UncommentJava/
     make
     git clean -xfd
 }
 
 function compile_fcitx() {
-    cd ~/gcode/fcitx/
+    cd ~/system-config/gcode/fcitx/
     ./bootstrap
     ./configure
     make
@@ -78,7 +78,7 @@ function compile_fcitx() {
 }
 
 function compile_ibus_sdim() {
-    cd ~/gcode/ibus-sdim/
+    cd ~/system-config/gcode/ibus-sdim/
     ./autogen.sh
     make
     sudo make DESTDIR=/ install
@@ -86,7 +86,7 @@ function compile_ibus_sdim() {
 }
 
 function compile_gtags() {
-    cd ~/gcode/global/
+    cd ~/system-config/gcode/global/
     git clean -xfd
     sh reconf.sh
     ./configure
@@ -95,7 +95,7 @@ function compile_gtags() {
 }
 
 function compile_ctags() {
-    cd ~/gcode/ctags-exuberant
+    cd ~/system-config/gcode/ctags-exuberant
     git clean -xfd
     autoreconf -i
     ./configure

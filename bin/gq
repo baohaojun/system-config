@@ -18,7 +18,7 @@ export -f die
 
 . "$(git --exec-path)/git-sh-setup"
 export GIT_DIR
-if test -x ~/bin/gq-"$cmd"; then
+if test -x ~/system-config/bin/gq-"$cmd"; then
     $bashx $(wlp $(which gq-"$cmd")) "$@"; 
 else
     $bashx $(wlp $(which guilt)) "$cmd" "$@"

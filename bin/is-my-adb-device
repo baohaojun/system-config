@@ -5,7 +5,7 @@ else
     sleep 1
 fi
 for x in $(my-adb devices | grep 'device$' | pn 1); do
-    if test -e ~/etc/adb/my-devices/"$x"; then
+    if test -e ~/system-config/etc/adb/my-devices/"$x"; then
         exit 0
     fi
 done

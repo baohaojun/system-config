@@ -76,9 +76,9 @@ function die() {
 }
 for x in "$@"; do
     (
-        bash ~/doc/confluence-head "${x%%.org}"
+        bash ~/system-config/doc/confluence-head "${x%%.org}"
         cat -- "$x"
-        cat ~/doc/confluence-tail;
+        cat ~/system-config/doc/confluence-tail;
     ) > "$x".$$
     congfu "${CONGFU_ARGS[@]}" -- -a storePage --title "${x%%.org}" --encoding UTF-8 --file "$x".$$ || die "Error: see above"
     congfu "${CONGFU_ARGS[@]}" -- -a removeAttachment  --title "${x%%.org}" --name "${x/%.org/.mht}"

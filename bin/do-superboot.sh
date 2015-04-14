@@ -9,8 +9,8 @@ unpackbootimg -i boot.img
 mkdir ramdisk
 cd ramdisk
 cat ../boot.img-ramdisk.gz |gunzip |cpio -i 
-cp ~/doc/superboot.sh .
-cp ~/doc/superboot/ . -av
+cp ~/system-config/doc/superboot.sh .
+cp ~/system-config/doc/superboot/ . -av
 cat <<EOF > init.rc
 service superuser /system/bin/sh /superboot.sh
         user root

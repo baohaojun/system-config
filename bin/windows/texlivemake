@@ -1,5 +1,5 @@
 #!/bin/bash
-export PATH=~/bin:/h/bin/win32:/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:/c/TeXLive2007/bin/win32:/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:/c/latex2html/bin:"$PATH"
+export PATH=~/system-config/bin:/h/bin/win32:/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:/c/TeXLive2007/bin/win32:/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:/c/latex2html/bin:"$PATH"
 
 export GS_LIB='C:\gs\gs8.54\lib;C:\gs\fonts'
 export PERL5LIB='h:\perltl\lib;h:\perltl\lib\File\Spec;h:\perltl\site\lib'

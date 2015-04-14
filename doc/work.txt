@@ -822,7 +822,7 @@ Python:
         empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
 
 (cd .repo/.. &&  ln -sf /usr/local/jdk/bin/javadoc ./ && export PATH=`pwd`:$PATH && time make pdk pdk_docs)
-~/bin/Linux/ext/google_appengine/dev_appserver.py --port=8888 --address 0.0.0.0 ~/src/theatre-p2/out/target/common/docs
+~/system-config/bin/Linux/ext/google_appengine/dev_appserver.py --port=8888 --address 0.0.0.0 ~/src/theatre-p2/out/target/common/docs
 (cd .repo/.. && time make iso_img -l8 -j8 -k)
 
 
@@ -1043,8 +1043,8 @@ for (@F) {
 sudo route add 192.168.56.88 gw r137
 
 (
-mkdir -p ~/bin/Linux/ext/android-screen
-cd ~/bin/Linux/ext/android-screen
+mkdir -p ~/system-config/bin/Linux/ext/android-screen
+cd ~/system-config/bin/Linux/ext/android-screen
 lftp -c 'mirror http://androidscreencast.googlecode.com/svn/trunk/AndroidScreencast/dist/ . '
 for x in *.jar; do export CLASSPATH=`pwd`/$x:$CLASSPATH ; done
 echo $CLASSPATH 

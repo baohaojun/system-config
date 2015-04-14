@@ -6,8 +6,8 @@ netsh interface ip set address name=eth0 source=static addr=192.168.1.3 mask=255
 netsh interface ip set address name=eth0 source=dhcp
 netsh interface ip set dns name=eth0 source=dhcp
 ipconfig /renew
-#cygstart ~/bin/ieProxyEnable.reg
-cd ~/doc
+#cygstart ~/system-config/bin/ieProxyEnable.reg
+cd ~/system-config/doc
 regedit /s MsnBlogProxyEnable.reg
 net stop 'vmware nat service'
 net start 'vmware nat service'

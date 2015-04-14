@@ -7,6 +7,6 @@ if test $# != 1; then
 fi
 
 idx=${1/%.xml.bz2/.idx}
-~/gcode/offline.wikipedia/mparser.py $1 > $idx.2
+~/system-config/gcode/offline.wikipedia/mparser.py $1 > $idx.2
 export LC_ALL=C && sort -k 10 ${idx}.2 > $idx
 rm $idx.2

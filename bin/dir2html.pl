@@ -23,7 +23,7 @@ sub debug(@) {
   print STDERR "@_\n";
 }
 
-my $header = qx(cat ~/etc/dir2html.header);
+my $header = qx(cat ~/system-config/etc/dir2html.header);
 
 my $dir_url = shell_quote($dir);
 chomp (my $up_url = $file_url_prefix . qx(wlp $dir_url/..));

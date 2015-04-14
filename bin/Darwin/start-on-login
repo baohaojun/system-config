@@ -1,4 +1,4 @@
 #!/bin/bash
 
 . ~/system-config/.bashrc
-run-parts ~/etc/$(uname)/start-on-login >> ~/.xsession-errors
+run-parts ~/system-config/etc/$(uname)/start-on-login >> ~/.xsession-errors

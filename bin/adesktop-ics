@@ -1,7 +1,7 @@
 #! /bin/bash
 (
-    mkdir -p ~/bin/Linux/ext/android-screen-ics
-    cd ~/bin/Linux/ext/android-screen-ics
+    mkdir -p ~/system-config/bin/Linux/ext/android-screen-ics
+    cd ~/system-config/bin/Linux/ext/android-screen-ics
     for x in android-screencast.jar ddmlib-3.1.0.jar; do
         if test ! -e $x; then
 	    echo http://alexfdz-screencast-honeycomb.googlecode.com/git/android-screencast-dist/lib/$x

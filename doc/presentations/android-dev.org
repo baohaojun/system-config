@@ -279,7 +279,7 @@ repo_url=$(
     echo -n https://github.com/baohaojun
     echo -n system-config/raw/master/bin/repo
 )
-wget $repo_url -o ~/bin/repo
+wget $repo_url -o ~/system-config/bin/repo
 
 mani_url=$(
     echo -n https://android.googlesource.com/
@@ -292,7 +292,7 @@ repo sync
    #+caption: OpenGL画图
    #+label: opengl-img
    #+ATTR_LATEX: :width .5\linewidth
-   [[~/doc/presentations/opengl.png]]
+   [[~/system-config/doc/presentations/opengl.png]]
 
 ** 多读，多写！
 *** 写出有趣的软件，发布到Google Play上

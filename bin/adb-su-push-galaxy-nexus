@@ -5,7 +5,7 @@ if test $(my-adb devices|grep .|wc -l) = 2 && my-adb devices|grep -q : && yes-or
 elif my-adb devices|grep -q : && yes-or-no-p -y "disconnect wifi adb?"; then
     my-adb disconnect # make sure not use wifi
 fi
-cd ~/doc/galaxy-nexus-root/
+cd ~/system-config/doc/galaxy-nexus-root/
 TEMP=$(getopt -o ld: --long links,debian: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 do_links=false

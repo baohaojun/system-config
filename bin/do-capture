@@ -4,10 +4,10 @@ if test $(basename $0) = do-capture-darwin; then
     export EMACS=t
 fi
 
-file=$(select-output-line -o -- bash -c 'cd ~/doc/projects; ls -t *.org; echo daily; echo agenda')
+file=$(select-output-line -o -- bash -c 'cd ~/system-config/doc/projects; ls -t *.org; echo daily; echo agenda')
 
-if test -e ~/doc/projects/$file; then
-   e ~/doc/projects/$file;
+if test -e ~/system-config/doc/projects/$file; then
+   e ~/system-config/doc/projects/$file;
 elif test "$file" = agenda; then
     emacsclient -d -e '(org-todo-list)'
 elif test "$file" = daily; then

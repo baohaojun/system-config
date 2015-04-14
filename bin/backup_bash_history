@@ -1,4 +1,5 @@
 #!/bin/bash
+umask 0077
 tmp=~/.cache/system-config/.bash_history.$$
 (
     (

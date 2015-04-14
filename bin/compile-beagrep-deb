@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~/gcode
+cd ~/system-config/gcode
 tar czfv ~/.cache/system-config/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
 cd ~/tmp
 tar zxfv beagrep_0.4.0.orig.tar.gz

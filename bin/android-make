@@ -116,7 +116,7 @@ else
     lunch $config
 fi
 
-. ~/bin/.android-set-outdir
+. ~/system-config/bin/.android-set-outdir
 
 touch $OUT_DIR/Android.mk || true # to make findleaves.py skip this folder.
 export CCACHE_DIR=$(dirname $(readlink -f $PWD/$OUT_DIR/host))/.ccache

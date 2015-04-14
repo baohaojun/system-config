@@ -13,7 +13,7 @@ alias mkgtags='mkgtags -i -v'
 alias bcd=cd_beagrep
 alias mail=mailx
 
-for x in ~/etc/bash.d/*; do
+for x in ~/system-config/etc/bash.d/*; do
     if test -f $x; then
         . $x
     fi

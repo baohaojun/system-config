@@ -54,7 +54,7 @@
         (define-key map [(meta n)] 'next-error-no-select)
         map))
 
-(setq org-agenda-files `("~/doc/projects"))
+(setq org-agenda-files `("~/system-config/doc/projects"))
 
 (setq org-log-done 'note)
 
@@ -111,7 +111,7 @@
                      type=\"text/css\"/>")
 
         ("org"
-         :base-directory "~/doc/projects"
+         :base-directory "~/system-config/doc/projects"
          :publishing-directory "~/public_html"
          :section-numbers nil
          :table-of-contents nil)))
@@ -120,7 +120,7 @@
 
 (setq org-src-fontify-natively t)
 
-(setq org-plantuml-jar-path "~/bin/plantuml.jar")
+(setq org-plantuml-jar-path "~/system-config/bin/plantuml.jar")
 
 (setq org-babel-results-keyword "results")
 

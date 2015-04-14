@@ -93,7 +93,7 @@
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
  '(org-clock-x11idle-program-name "xprintidle")
- '(org-directory "~/doc/projects")
+ '(org-directory "~/system-config/doc/projects")
  '(org-export-html-coding-system (quote utf-8))
  '(org-export-html-postamble (lambda nil (buffer-file-name)))
  '(org-export-html-style-extra
@@ -139,7 +139,7 @@
    "(reporter = currentUser() or assignee = currentUser()) and resolution = unresolved
    ORDER BY priority DESC, created ASC")
  '(org-mobile-directory "~/today/MobileOrg")
- '(org-mobile-inbox-for-pull "~/doc/projects/from-mobile.org")
+ '(org-mobile-inbox-for-pull "~/system-config/doc/projects/from-mobile.org")
  '(org-modules
    (quote
     (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))

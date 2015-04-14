@@ -3,14 +3,14 @@
 . ~/system-config/.bashrc
 touch ~/.where ~/.where.lock
 
-. ~/bin/Linux/download-external.sh
+. ~/system-config/bin/Linux/download-external.sh
 cpan String::Approx
 cpan String::ShellQuote
 
 download_external >/dev/null 2>&1 &
 
 set -e
-export PATH=~/bin/Linux/config:$PATH
+export PATH=~/system-config/bin/Linux/config:$PATH
 
 #update the system
 
@@ -22,7 +22,7 @@ if test ! -d /usr/local/share/info; then
 fi
 
 if test ! -e /usr/share/info/bash.info.gz; then
-    sudo ln -s ~/doc/bash.info.gz /usr/local/share/info/ -f
+    sudo ln -s ~/system-config/doc/bash.info.gz /usr/local/share/info/ -f
     (
         cd /usr/local/share/info/
         sudo ginstall-info bash.info.gz /usr/local/share/info/dir

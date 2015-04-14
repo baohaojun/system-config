@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-blogdir=~/doc/baohaojun
+blogdir=~/system-config/doc/baohaojun
 do_blog=$(lookup-file -e .do-blog) || true
 if test -e "$do_blog"; then
     blogdir=$(dirname $do_blog)
@@ -115,7 +115,7 @@ test "$tags" || {
         echo "$tags" | while read tag desc; do
             tag=${tag%:}
             (
-                cd ~/doc/baohaojun/meta/tags;
+                cd ~/system-config/doc/baohaojun/meta/tags;
                 if test ! -e $tag.desc; then
                     echo "$desc" > $tag.desc
                 fi
@@ -124,7 +124,7 @@ test "$tags" || {
     else
         for tag in $tags; do
             (
-                cd ~/doc/baohaojun/;
+                cd ~/system-config/doc/baohaojun/;
                 if test ! -e meta/tags/$tag.desc; then
                     find-or-exec konsole
                     ./add-a-tag $tag

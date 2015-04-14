@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd ~/doc/baohaojun/;
+cd ~/system-config/doc/baohaojun/;
 
 e $(f wasted.org)

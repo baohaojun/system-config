@@ -1,7 +1,7 @@
 #!/bin/bash
 x=$(select-output-line -o '
     (
-        cd ~/bin;
+        cd ~/system-config/bin;
         for x in $(ls -l |grep emacs-weixin.sh | pn 9) t1-putclip; do
             echo $x;
         done|sort -u

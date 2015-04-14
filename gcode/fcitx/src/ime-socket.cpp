@@ -33,7 +33,7 @@ string sock_error()
 #define ignore 1+
 static void start_ime_server()
 {
-	ignore system("python3 ~/gcode/scim-cs/ime-py/ime-server.py >/dev/null 2>&1 &");
+	ignore system("python3 ~/system-config/gcode/scim-cs/ime-py/ime-server.py >/dev/null 2>&1 &");
 }
 
 void ime_write_line(const string& line)

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#~/bin/windows/NetworkTest.exe& #this is ssh2Emacs
-cd ~/doc
+#~/system-config/bin/windows/NetworkTest.exe& #this is ssh2Emacs
+cd ~/system-config/doc
 regedit /s ime-noctrlshift-noaltshift.reg
 
 net start sshd&
 net start cron&
-$(echo /c/Python3?/python | pn 1) "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
+$(echo /c/Python3?/python | pn 1) "$(cygpath -alw ~/system-config/gcode/scim-cs/ime-py/ime-server.py)"&
 
 (
     if test ! -e /c/Python3; then
@@ -37,7 +37,7 @@ if test ! -e ~/.config/system-config/about_me/links-done; then
 fi
 
 (
-    cd ~/doc
+    cd ~/system-config/doc
     regedit /s no-control-period.reg
     regedit /s no-shift-space-toggle.reg
 )&
@@ -45,6 +45,6 @@ fi
 bash emacs-nt&
 bcdedit.exe /set "{current}" nx AlwaysOff&
 wmic OS Get DataExecutionPrevention_SupportPolicy&
-loop-start-in-dir ~/doc ahk sawfish.ahk
+loop-start-in-dir ~/system-config/doc ahk sawfish.ahk
 close-window '\\osk.exe'
-~/bin/windows/redirect.sh&
+~/system-config/bin/windows/redirect.sh&

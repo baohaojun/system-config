@@ -46,7 +46,7 @@ mkdir -p $builddir
 id=$(id)
 
 prog=cowbuilder-bhj-shell
-if test "$1" -a -e ~/bin/"$1"; then
+if test "$1" -a -e ~/system-config/bin/"$1"; then
     prog=$1
     if test $prog = cowbuilder-bhj-build-wangwang; then
         (

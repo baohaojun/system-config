@@ -1,5 +1,5 @@
 #!/bin/bash
-test -L ~/gcode/offline.wikipedia/$1.py || set -- en "$@"
+test -L ~/system-config/gcode/offline.wikipedia/$1.py || set -- en "$@"
 lang=$1
 shift
 host=localhost:34567

@@ -1,7 +1,7 @@
 [general]
 accounts = Marvell, Gmail
 maxsyncaccounts = 2
-pythonfile = ~/bin/get-credentials.py
+pythonfile = ~/system-config/bin/get-credentials.py
 ui = Noninteractive.Basic
 
 
@@ -9,8 +9,8 @@ ui = Noninteractive.Basic
 localrepository = Local-Mrvl
 remoterepository = Remote-Mrvl
 maildir-windows-compatible = yes
-presynchook = ~/bin/sync_nnmaildir -g
-postsynchook = ~/bin/sync_nnmaildir -m
+presynchook = ~/system-config/bin/sync_nnmaildir -g
+postsynchook = ~/system-config/bin/sync_nnmaildir -m
 
 [Repository Remote-Mrvl]
 type = IMAP
@@ -31,8 +31,8 @@ localrepository = Local-Gmail
 remoterepository = Remote-Gmail
 maildir-windows-compatible = yes
 maxsize = 500000
-presynchook = ~/bin/sync_nnmaildir -g
-postsynchook = ~/bin/sync_nnmaildir -m
+presynchook = ~/system-config/bin/sync_nnmaildir -g
+postsynchook = ~/system-config/bin/sync_nnmaildir -m
 
 [Repository Local-Gmail]
 type = Maildir

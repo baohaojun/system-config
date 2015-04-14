@@ -1,5 +1,5 @@
 #!/bin/bash
 tmp=~/.cache/system-config/imenu-ctags.input.$$
 cat > $tmp
-~/bin/imenu-ctags "$@" $tmp < $tmp
+~/system-config/bin/imenu-ctags "$@" $tmp < $tmp
 mv $tmp ~/.cache/system-config/imenu-ctags.input

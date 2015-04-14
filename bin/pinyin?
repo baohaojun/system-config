@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use Encode;
-open(my $tbl, "<", glob("~/etc/uc-to-py.tbl")) or die "can't open pinyin table";
+open(my $tbl, "<", glob("~/system-config/etc/uc-to-py.tbl")) or die "can't open pinyin table";
 
 my %pinyin_map;
 while (<$tbl>) {

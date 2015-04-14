@@ -30,7 +30,7 @@ h2. 配置
 h3. 最后的配置
 
 {code:sh}
-~/bin/Linux/after-check-out.sh
+~/system-config/bin/Linux/after-check-out.sh
 {code}
 
 这一步会做很多事情：

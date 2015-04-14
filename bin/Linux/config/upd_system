@@ -40,7 +40,7 @@ fi
 
 sudo bash -c '(echo amd64; echo i386) > /var/lib/dpkg/arch'
 if is-debian; then
-    sudo cp ~/etc/apt/apt.conf.d/99testing /etc/apt/apt.conf.d/
+    sudo cp ~/system-config/etc/apt/apt.conf.d/99testing /etc/apt/apt.conf.d/
 fi
 
 if test "$NO_APT_UPDATE" != true; then
@@ -48,7 +48,7 @@ if test "$NO_APT_UPDATE" != true; then
 fi
 sudo apt-get dist-upgrade -y
 
-~/bin/Linux/config/install-pkgs
+~/system-config/bin/Linux/config/install-pkgs
 if ! ls /var/cache/command-not-found/*.db; then
     sudo update-command-not-found
 fi
@@ -57,11 +57,11 @@ sudo apt-get build-dep -y sawfish librep rep-gtk ibus-table
 #我们用的桌面系统是gnome，但是窗口管理器要换一个，gnome自带的是metacity，我们要用sawfish
 gconftool-2 -s /desktop/gnome/applications/window_manager/default --type string /usr/bin/sawfish
 #gconftool-2 -s /desktop/gnome/session/required_components/panel --type string gnome-panel-zh
-#sudo cp ~/doc/gnome-panel-zh.desktop /usr/share/applications/
+#sudo cp ~/system-config/doc/gnome-panel-zh.desktop /usr/share/applications/
 
 #我们要用的字体
 mkdir -p ~/.fonts
-cp ~/doc/monaco-linux.ttf ~/.fonts
+cp ~/system-config/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
 
 if ask-if-not-bhj "Install texlive?" && test ! -e ~/.config/system-config/no-texlive; then

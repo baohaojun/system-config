@@ -12,7 +12,7 @@ BIN_WINDOWS=$(dirname "$THIS")
 #strlen("/bin/windows") is 12
 if test "${BIN_WINDOWS:0-12}" != "/bin/windows"
 then
-    echo 'startup.sh is not in ~/bin/windows!'
+    echo 'startup.sh is not in ~/system-config/bin/windows!'
     #pause and exit, it's all blowed up!
     cat
     exit
@@ -53,7 +53,7 @@ export HOME=/q
 
 
 #so that C-SPC will not toggle IME, because it's used by emacs set-mark-command
-cd ~/doc
+cd ~/system-config/doc
 regedit /s ime-noctrlshift-noaltshift.reg
 regedit /s console-color.reg
 
@@ -66,8 +66,8 @@ echo path "$(IFS=$'\n'; for x in  $(echo $PATH|tr ':' '\n'); do test -d "$x" && 
 #so that shellHelper_vc6.exe can find where bash is
 cygpath -alwm `which bash` > /cygdrive/c/.bash-loc
 
-#start everything in ~/bin/windows/startup/*/
-~/bin/windows/substartup.sh ALL
+#start everything in ~/system-config/bin/windows/startup/*/
+~/system-config/bin/windows/substartup.sh ALL
 
 #make sure the next time login will run this script again
 cd "$(cygpath -au "$HOMEDRIVE$HOMEPATH")"

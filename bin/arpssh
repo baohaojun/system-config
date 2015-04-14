@@ -36,7 +36,7 @@ done
 if test $(basename $0) = update-arp; then
     for host_name in "$@"; do
 
-        arp=$(perl -a -ne  'if ($F[0] eq '"$host_name"') {print $F[1]}' ~/etc/arp-hosts)
+        arp=$(perl -a -ne  'if ($F[0] eq '"$host_name"') {print $F[1]}' ~/system-config/etc/arp-hosts)
         if test -z "$arp"; then
             die "can not find arp entry for $host_name"
         fi

@@ -26,7 +26,7 @@ FILE=/tmp/screen-exchange
         }
         print
     }' -i "$FILE"
-/bin/perl -i ~/bin/screen-exchange-format.pl "$FILE"
+/bin/perl -i ~/system-config/bin/screen-exchange-format.pl "$FILE"
 cd /tmp
 findexec.exe -F 1 -p emacs
 efindfile.sh "$FILE"

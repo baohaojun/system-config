@@ -11,7 +11,7 @@ if test $PWD = $HOME; then
 fi
 
 if test "$PWD" = ~/system-config; then
-    for x in ~/etc/duplicate-files/*; do
+    for x in ~/system-config/etc/duplicate-files/*; do
         if test -L $x; then
             continue
         fi

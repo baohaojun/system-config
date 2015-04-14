@@ -1,5 +1,5 @@
 #!/bin/bash
-ew ~/gcode/java-test/Test.java
-cd ~/gcode/java-test/
+ew ~/system-config/gcode/java-test/Test.java
+cd ~/system-config/gcode/java-test/
 javac Test.java
 java Test

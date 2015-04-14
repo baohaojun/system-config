@@ -19,7 +19,7 @@ function die() {
     exit -1
 }
 
-for dir in ~/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; do
+for dir in ~/system-config/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; do
     if test ! -d $dir; then
         continue
     fi

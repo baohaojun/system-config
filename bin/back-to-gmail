@@ -1,11 +1,11 @@
 #!/bin/bash
 
 if test $# = 0; then
-    set -- $(for x in $(find ~/etc/back-to-gmail/ -type l); do readlink -f $x || true; done)
+    set -- $(for x in $(find ~/system-config/etc/back-to-gmail/ -type l); do readlink -f $x || true; done)
 else
     for x in "$@"; do
-        if yes-or-no-p "Put $x into ~/etc/back-to-gmail/ so that it will be tracked? "; then
-            relative-link "$x" ~/etc/back-to-gmail/ -f
+        if yes-or-no-p "Put $x into ~/system-config/etc/back-to-gmail/ so that it will be tracked? "; then
+            relative-link "$x" ~/system-config/etc/back-to-gmail/ -f
         fi
     done
 fi

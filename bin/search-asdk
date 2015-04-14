@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-cd ~/bin/Linux/ext/android-sdk-linux/docs
+cd ~/system-config/bin/Linux/ext/android-sdk-linux/docs
 
 echo "beagrep -e '$1.*</h\d>' -t '$1' --grep '-P -l' -s -i < /dev/null|grep -v 'Using short'"
 firefox-open-url-pattern "android-sdk" \

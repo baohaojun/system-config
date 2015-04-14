@@ -179,8 +179,8 @@
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
    ("Super-x" "xcalc" "xcalc")
-   ("XF86Switch_VT_12" "konsole" "konsole -e ~/bin/myscr")
-   ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")))
+   ("XF86Switch_VT_12" "konsole" "konsole -e ~/system-config/bin/myscr")
+   ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/system-config/bin/myscr")))
 
 (bind-keys global-keymap "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
 (bind-keys global-keymap "XF86Search" '(system "find-or-exec Search beagle-search&"))
@@ -449,7 +449,7 @@
 (bind-keys global-keymap "Super-RET" (lambda () (synthesize-event "Menu" (input-focus))))
 (bind-keys global-keymap "Super-BS" (lambda () (synthesize-event "Prior" (input-focus))))
 (bind-keys global-keymap "Super-SPC" (lambda () (synthesize-event "Next" (input-focus))))
-(bind-keys global-keymap "Super-Control-o"  '(system "emacsclient -n ~/doc/notes.org&"))
+(bind-keys global-keymap "Super-Control-o"  '(system "emacsclient -n ~/system-config/doc/notes.org&"))
 
 
 (bind-keys s-h-keymap "Super-d"
@@ -566,7 +566,7 @@
 
 (add-hook 'focus-in-hook ime-toggle)
 
-(system "~/bin/sawfish-auto-start&")
+(system "~/system-config/bin/sawfish-auto-start&")
 (setq esc-x-keymap (make-keymap))
 (bind-keys esc-map "x" esc-x-keymap)
 

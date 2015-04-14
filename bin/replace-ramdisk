@@ -118,7 +118,7 @@ if test "$do_busybox" = true; then
                  print "chmod 0775 /systex/bin/busybox\n";
              }' -i $tdir/init.environ.rc
 
-    cp ~/etc/android/systex $tdir/. -av
+    cp ~/system-config/etc/android/systex $tdir/. -av
     mv $tdir/systex/bin/busybox $tdir/sbin
     ln -s /sbin/busybox $tdir/systex/bin/busybox
     perl -npe 's,/system/bin/sh,/systex/bin/sh,g' -i $tdir/sbin/adbd

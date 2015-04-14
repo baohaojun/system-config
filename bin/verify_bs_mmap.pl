@@ -2,7 +2,7 @@
 
 use strict;
 use Getopt::Long;
-use lib glob("~/bin");
+use lib glob("~/system-config/bin");
 use pretty;
 
 sub debug(@) {

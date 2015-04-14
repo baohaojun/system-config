@@ -9,13 +9,13 @@ fi
 rm ~/.fonts/monaco-windows.ttf -f
 sudo modprobe -r pcspkr
 while true; do
-    python3 ~/gcode/scim-cs/ime-py/ime-server.py
+    python3 ~/system-config/gcode/scim-cs/ime-py/ime-server.py
     sleep 2
 done&
 
 # while true; do
 #     (
-#       cd ~/gcode/gmail-notify-1.6.1.1;
+#       cd ~/system-config/gcode/gmail-notify-1.6.1.1;
 #       GA_LABEL=/BigOne  ./notifier.py;
 #       sleep 5;
 #     )

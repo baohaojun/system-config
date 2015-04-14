@@ -1,9 +1,9 @@
 #!/bin/bash
 if test "$1" = sync; then
     set -- "$@" --no-tags
-    time ~/bin/repo "$@"
+    time ~/system-config/bin/repo "$@"
     my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'
     exit
 else
-    exec ~/bin/repo "$@"
+    exec ~/system-config/bin/repo "$@"
 fi

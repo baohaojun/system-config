@@ -108,8 +108,8 @@ function cds() {
     fi
 }
 
-. ~/bin/my-rsync
-. ~/bin/.gitx
+. ~/system-config/bin/my-rsync
+. ~/system-config/bin/.gitx
 
 if test -e ~/system-config/.bashrc-interactive-$USER; then
     . ~/system-config/.bashrc-interactive-$USER

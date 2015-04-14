@@ -35,12 +35,12 @@ while true; do
     esac
 done
 
-. ~/bin/.gitx
+. ~/system-config/bin/.gitx
 
 (
     flock 9
     d2u ~/.netrc
-) 9< ~/bin/.gitx
+) 9< ~/system-config/bin/.gitx
 
 if lookup-file -e .repo/manifest.xml; then
     git-interactive-add

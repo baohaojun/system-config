@@ -19,10 +19,10 @@ function sudoedit()
     USER=root $EDITOR "$file"
 }
 
-export EDITOR=~/bin/edit
+export EDITOR=~/system-config/bin/edit
 
 if test $(basename $0) = sudoedit-wait; then
-    export EDITOR=~/bin/edit-wait
+    export EDITOR=~/system-config/bin/edit-wait
 fi
 
 sudoedit "$@"

@@ -174,8 +174,8 @@ sub parse_xref($$)
     if (-e ".grep-gtags-path-inv") {
         $path_inv = qx(cat .grep-gtags-path-inv);
         $path_inv = qr($path_inv)x;
-    } elsif (-e glob("~/etc/.grep-gtags-path-inv")) {
-        $path_inv = qx(cat ~/etc/.grep-gtags-path-inv);
+    } elsif (-e glob("~/system-config/etc/.grep-gtags-path-inv")) {
+        $path_inv = qx(cat ~/system-config/etc/.grep-gtags-path-inv);
         $path_inv = qr($path_inv)x;
     }
 

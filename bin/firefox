@@ -17,7 +17,7 @@ export -f debug
 if test -e ~/external/the-firefox; then
     the_firefox=$(readlink -f ~/external/the-firefox)
 else
-    the_firefox=$(readlink -f ~/bin/the-firefox)
+    the_firefox=$(readlink -f ~/system-config/bin/the-firefox)
 fi
 
 is_firefox=0

@@ -20,7 +20,7 @@ do
         fi
     }"
 done
-. ~/bin/wp
+. ~/system-config/bin/wp
 
 function renew-xauth() { # so that in the saved gnu screen session, I can reset the xauth
     if test -z "$SSH_CLIENT"; then

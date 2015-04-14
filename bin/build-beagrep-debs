@@ -2,7 +2,7 @@
 
 if test $(basename $0) = build-beagrep-debs; then
     yes-or-no-p -y "Please use 'sudo ps-killall strace' if it seems stuck" || true
-    cd ~/gcode/beagrep
+    cd ~/system-config/gcode/beagrep
     for branch in $(git branch -a |grep -v remotes|sed 's/^\*/ /'|grep for); do
         for arch in i386 amd64; do
             (

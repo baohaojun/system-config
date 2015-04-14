@@ -48,9 +48,9 @@ mach-bhj -r fedora-development-i386-core || true
 set -o pipefail
 (
     set -e
-    WHICH_COW='precise i386' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
+    WHICH_COW='precise i386' ~/system-config/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
     rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)-$WW_VERSION/
-    WHICH_COW='precise amd64' ~/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
+    WHICH_COW='precise amd64' ~/system-config/bin/cowbuilder-bhj cowbuilder-bhj-build-wangwang --save-after-exec
     rsync *.deb bhj-win7:/var/www/linux-wangwang/$(today)-$WW_VERSION/
 
     rsync ~/.cache/system-config/$me.log.$$ bhj-win7:/var/www/linux-wangwang/$(today)-$WW_VERSION/git-svn.log

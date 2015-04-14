@@ -68,7 +68,7 @@ while ! emacsclient -e '(save-some-buffers)'; do
 done
 
 find-or-exec konsole
-cd ~/doc/projects
+cd ~/system-config/doc/projects
 
 if git-dirty; then
     git-interactive-add
@@ -139,13 +139,13 @@ function check_git_dir() {
     fi
 }
 
-check_git_dir ~/doc/projects "Add all changes from mobile to Emacs"
+check_git_dir ~/system-config/doc/projects "Add all changes from mobile to Emacs"
 emacsclient -e '(org-mobile-push)'
 
-if (cd ~/doc/projects && git diff HEAD . | grep -v -e '^\+\s+:(properties|id|end):' -i -P | grep '^(-|\+) ' -P ); then
-    check_git_dir ~/doc/projects "Add all changes after org-mobile-push?"
+if (cd ~/system-config/doc/projects && git diff HEAD . | grep -v -e '^\+\s+:(properties|id|end):' -i -P | grep '^(-|\+) ' -P ); then
+    check_git_dir ~/system-config/doc/projects "Add all changes after org-mobile-push?"
 else
-    (cd ~/doc/projects && git add .)
+    (cd ~/system-config/doc/projects && git add .)
 fi
 
 cd ~/today/MobileOrg

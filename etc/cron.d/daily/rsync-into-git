@@ -9,7 +9,7 @@ fi
 if test "$#" = 0; then
     set -- ''
 fi
-for x in ~/etc/rsync-into-git/*$1*.src; do
+for x in ~/system-config/etc/rsync-into-git/*$1*.src; do
     if test ! -e $x; then
         exit 0
     fi

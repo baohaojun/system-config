@@ -2,7 +2,7 @@
 
 use POSIX;
 
-@ps_args_all = split /\r*\n/, `cat ~/doc/.bash_completion_words.ps.pl`;
+@ps_args_all = split /\r*\n/, `cat ~/system-config/doc/.bash_completion_words.ps.pl`;
 
 for (@ps_args_all) {
   $ps_args_all{$_} = 1;

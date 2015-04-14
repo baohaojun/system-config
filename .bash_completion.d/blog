@@ -13,7 +13,7 @@ function _blog()
 	-T)
 	    COMPREPLY=( $(skeleton_compgen_word.pl \
 		-d '\n' -- \
-		"$(cd ~/doc/baohaojun/meta/tags; ls *.desc|perl -npe 's/\.desc$//')" \
+		"$(cd ~/system-config/doc/baohaojun/meta/tags; ls *.desc|perl -npe 's/\.desc$//')" \
 		"$cur")
 	    )
 	    return 0

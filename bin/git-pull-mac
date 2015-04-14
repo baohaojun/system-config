@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-. ~/bin/.gitx
+. ~/system-config/bin/.gitx
 
 test $PWD = ~ && cd ~/system-config/
 cd "$(dirname "$(lookup-file .git)")"
@@ -42,5 +42,5 @@ fi
 git submodule foreach 'bash -c "git-pull-mac&"' | grep .
 git submodule foreach 'git config user.email baohaojun@gmail.com'
 git config user.email baohaojun@gmail.com
-~/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
+~/system-config/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
 touch ~/system-config/.for-code-reading

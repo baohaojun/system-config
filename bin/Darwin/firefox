@@ -5,6 +5,6 @@ if test "$1" = -current-tab; then
 elif test "$1" = -remote; then
     exit -1
 else
-    osascript ~/etc/macosx/osascripts/firefox-new-tab
+    osascript ~/system-config/etc/macosx/osascripts/firefox-new-tab
 fi
 open -a /Applications/Firefox.app "$@"

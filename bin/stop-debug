@@ -8,7 +8,7 @@ function die() {
 }
 
 if test $# = 0; then
-    for x in ~/bin/$(uname)/ext/debug/*; do
+    for x in ~/system-config/bin/$(uname)/ext/debug/*; do
         if test -e "$x"; then
             stop-debug $(basename $x)
         fi
@@ -17,13 +17,13 @@ if test $# = 0; then
     exit
 fi
 
-if test "$(which $1)" != $(readlink -f ~/bin/$(uname)/ext/debug/$(basename $1)); then
-   die "stop debug can only act on commands under ~/bin/$(uname)/ext/debug/"
+if test "$(which $1)" != $(readlink -f ~/system-config/bin/$(uname)/ext/debug/$(basename $1)); then
+   die "stop debug can only act on commands under ~/system-config/bin/$(uname)/ext/debug/"
 fi
 
-if ! grep -q 'start-debug' ~/bin/$(uname)/ext/debug/$(basename $1); then
+if ! grep -q 'start-debug' ~/system-config/bin/$(uname)/ext/debug/$(basename $1); then
     die "stop debug can only act on commands created by start-debug"
 fi
 
-/bin/rm ~/bin/$(uname)/ext/debug/$(basename $1)
+/bin/rm ~/system-config/bin/$(uname)/ext/debug/$(basename $1)
 /bin/rm ~/.cache/system-config/logs/start-debug.log/$(basename $1) -rf

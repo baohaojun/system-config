@@ -1,6 +1,6 @@
 #!/bin/bash
 if test "$1" = e; then
-    ew ~/etc/udev/rules.d/90-bhj-personal.rules
+    ew ~/system-config/etc/udev/rules.d/90-bhj-personal.rules
 else
     usb=$(select-output-line lsusb)
     vid=$(echo $usb|pn 6)
@@ -16,11 +16,11 @@ else
     if grep "$vid.*bhj" /etc/udev/rules.d/90-bhj-personal.rules; then
         echo "$vid already in /etc/udev/rules.d/90-bhj-personal.rules";
     else
-        cat <<EOF >> ~/etc/udev/rules.d/90-bhj-personal.rules
+        cat <<EOF >> ~/system-config/etc/udev/rules.d/90-bhj-personal.rules
 SUBSYSTEM=="usb", ATTR{idVendor}=="$vid", OWNER="bhj"
 EOF
     fi
 
 fi
-sudo cp ~/etc/udev/rules.d/90-bhj-personal.rules /etc/udev/rules.d/90-bhj-personal.rules
+sudo cp ~/system-config/etc/udev/rules.d/90-bhj-personal.rules /etc/udev/rules.d/90-bhj-personal.rules
 sudo /etc/init.d/udev restart

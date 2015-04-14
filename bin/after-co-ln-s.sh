@@ -231,7 +231,7 @@ fi
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
 if ask-if-not-bhj "Do you want to make power button to hibernate?"; then
-    sudo cp ~/etc/systemd/logind.conf /etc/systemd/logind.conf
+    sudo cp ~/system-config/etc/systemd/logind.conf /etc/systemd/logind.conf
 fi
 
 if ask-if-not-bhj "Do you want to use bhj's git-exclude file?"; then
@@ -240,8 +240,8 @@ fi
 
 if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; then
     mach=$(get-about-me mach)
-    if test -d ~/etc/hardware-mach/$mach; then
-        relative-link -f ~/etc/hardware-mach/$mach/.Xmodmap ~/.Xmodmap
+    if test -d ~/system-config/etc/hardware-mach/$mach; then
+        relative-link -f ~/system-config/etc/hardware-mach/$mach/.Xmodmap ~/.Xmodmap
     fi
 fi
 
@@ -249,9 +249,9 @@ if test -L /etc/rc.local || yes-or-no-p "Replace /etc/rc.local with system-confi
     if ! test -L /etc/rc.local; then
         sudo cp /etc/rc.local /etc/rc.local.bak
     fi
-    sudo ln -sf ~/etc/rc.local /etc >/dev/null 2>&1 || true # no sudo on win32
+    sudo ln -sf ~/system-config/etc/rc.local /etc >/dev/null 2>&1 || true # no sudo on win32
 fi
-mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
+mkdir -p ~/system-config/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
 if test -L ~/.git; then rm -f ~/.git; fi
 if test $(uname) = Linux; then
     if ! grep -q -P -e 'iface\s+usb0\s+inet\s+manual' /etc/network/interfaces; then
@@ -294,13 +294,13 @@ if test -x ~/src/github/private-config/after-co.sh; then
 fi
 
 if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service; then
-    sudo cp ~/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
+    sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
     sudo chmod a+X /etc/systemd/system/rc-local.service
     sudo systemctl --system daemon-reload
     sudo systemctl enable rc-local.service
     sudo systemctl start rc-local.service
 else
-    sudo cp ~/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
+    sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
 fi
 
 

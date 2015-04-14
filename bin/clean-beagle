@@ -2,4 +2,4 @@
 ps-killall beagled
 rm ~/.beagle -rf
 mkdir -p ~/.beagle/config/
-relative-link ~/etc/.beagle/config/FilesQueryable.xml ~/.beagle/config/
+relative-link ~/system-config/etc/.beagle/config/FilesQueryable.xml ~/.beagle/config/

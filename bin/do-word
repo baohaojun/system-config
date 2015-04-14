@@ -2,8 +2,8 @@
 
 (
     echo "$@"
-    if test -e ~/doc/words; then
-        cat ~/doc/words
+    if test -e ~/system-config/doc/words; then
+        cat ~/system-config/doc/words
     fi
-) | uniq-even-non-ajacent > ~/doc/words.2
-mv ~/doc/words.2 ~/doc/words
+) | uniq-even-non-ajacent > ~/system-config/doc/words.2
+mv ~/system-config/doc/words.2 ~/system-config/doc/words

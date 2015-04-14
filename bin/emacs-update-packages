@@ -3,7 +3,7 @@
 cd ~/.emacs.d/elpa
 if test ! -d .git; then
     git init
-    cp ~/etc/elpa.gitignore .gitignore
+    cp ~/system-config/etc/elpa.gitignore .gitignore
 fi
 git add .
 git commit -m "$(now)" || true

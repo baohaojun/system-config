@@ -55,7 +55,7 @@ end
 g_template = Shellwords.escape(g_template)
 puts "g_template is #{g_template}"
 
-xml = `select-output-line -i #{g_template} -- find ~/gcode/android-templates -name 'template.xml'`
+xml = `select-output-line -i #{g_template} -- find ~/system-config/gcode/android-templates -name 'template.xml'`
 puts "xml is #{xml}"
 
 config = XmlSimple.xml_in(xml)

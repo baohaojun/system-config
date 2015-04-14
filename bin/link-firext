@@ -11,7 +11,7 @@ if test $# != 1; then
 fi
 
 ext_name=$1
-ext_dir=~/gcode/firefox-extensions/$1
+ext_dir=~/system-config/gcode/firefox-extensions/$1
 if test ! -d $ext_dir; then
     die "$ext_dir not a directory"
 fi

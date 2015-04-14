@@ -15,9 +15,9 @@ fi
 for x in "${args[@]}"; do
     org-to-mht "$x"
     (
-        bash ~/doc/confluence-head "$x"
+        bash ~/system-config/doc/confluence-head "$x"
         cat -- "$x"
-        cat ~/doc/confluence-tail;
+        cat ~/system-config/doc/confluence-tail;
     ) > "$x".$$
 
     log=~/.cache/system-config/logs/$(basename $0).log

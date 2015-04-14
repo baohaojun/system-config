@@ -1,12 +1,12 @@
 #!/bin/bash
 
-mkdir -p ~/doc/daily
-cd ~/doc/daily
+mkdir -p ~/system-config/doc/daily
+cd ~/system-config/doc/daily
 day=$(today +%Y-%m-%d:%a "$@")
 find-or-exec emacs
 emacsclient -e '
   (progn
-    (find-file "~/doc/daily.org")
+    (find-file "~/system-config/doc/daily.org")
     (goto-char (point-min))
     (if (search-forward-regexp "^\\* '${day}'" nil t)
         (progn

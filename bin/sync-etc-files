@@ -1,8 +1,8 @@
 #!/bin/bash
 
-sudo cp ~/etc/udev/rules.d/90-bhj-personal.rules /etc/udev/rules.d/90-bhj-personal.rules
-sudo cp ~/etc/lib/udev/keymaps/microsoft-ergonomic-keyboard /lib/udev/keymaps/microsoft-ergonomic-keyboard || true
-sudo cp ~/doc/usr/lib/pm-utils/sleep.d/99-switch-touchpad /lib/systemd/system-sleep/zz-switch-touchpad
-sudo cp ~/etc/tsocks.conf /etc/tsocks.conf
-cat ~/etc/news/leafnode/config | sudo tee /etc/news/leafnode/config >/dev/null 2>&1 || true
+sudo cp ~/system-config/etc/udev/rules.d/90-bhj-personal.rules /etc/udev/rules.d/90-bhj-personal.rules
+sudo cp ~/system-config/etc/lib/udev/keymaps/microsoft-ergonomic-keyboard /lib/udev/keymaps/microsoft-ergonomic-keyboard || true
+sudo cp ~/system-config/doc/usr/lib/pm-utils/sleep.d/99-switch-touchpad /lib/systemd/system-sleep/zz-switch-touchpad
+sudo cp ~/system-config/etc/tsocks.conf /etc/tsocks.conf
+cat ~/system-config/etc/news/leafnode/config | sudo tee /etc/news/leafnode/config >/dev/null 2>&1 || true
 sudo /etc/init.d/udev restart

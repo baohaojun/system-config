@@ -32,7 +32,7 @@ KeyToGrab(N),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py alchemy.exe test.exe.lnk)
 KeyToGrab(C),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py "")
 KeyToGrab(V),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py devenv.exe vc8)
-KeyToGrab(K),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(bash -c "edit ~/doc/work.txt")
+KeyToGrab(K),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(bash -c "edit ~/system-config/doc/work.txt")
 
 KeyToGrab(Up),        WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe top)
 KeyToGrab(Down),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe bot)

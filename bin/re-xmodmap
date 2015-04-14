@@ -34,7 +34,7 @@ sudo su - bhj -c bash -c "
            done
            xmodmap -e 'keycode 197 = F23'
            xmodmap -e 'keycode 202 = F24'
-           ~/bin/do-keymap
+           ~/system-config/bin/do-keymap
        )&
        date
    )  > ~/.cache/system-config/logs/re-xmodmap.log 2>&1 9> ~/.cache/system-config/logs/re-xmodmap.lock &

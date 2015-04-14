@@ -132,4 +132,4 @@ while (<>) {
 }
 
 system("rm -rf $td");
-# java -cp ~/bin/Linux/ext/`uname -m`/gtagsAntlrJavaParser.jar:$CLASSPATH gtagsAntlrJavaParser
+# java -cp ~/system-config/bin/Linux/ext/`uname -m`/gtagsAntlrJavaParser.jar:$CLASSPATH gtagsAntlrJavaParser

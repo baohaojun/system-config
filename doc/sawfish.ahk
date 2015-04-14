@@ -18,7 +18,7 @@
 ;           %key_win_progs = (
 ;                                n => ["Mozilla Firefox", "firefox"],
 ;                                m => ["emacs\@", "bash -c emacs"],
-;                                t => [q(ahk_class mintty), "bash -c ~/bin/windows/start-putty.sh"],
+;                                t => [q(ahk_class mintty), "bash -c ~/system-config/bin/windows/start-putty.sh"],
 ;                                r => ["RunBhjRun", "runbhjrun"],
 ;                                c => ["no such window", "c:/python2/pythonw.exe c:/find_exec.py \"\""],
 ;                            );
@@ -112,7 +112,7 @@
     IfWinExist, ahk_class mintty
       WinActivate
     else
-      Run bash -c ~/bin/windows/start-putty.sh
+      Run bash -c ~/system-config/bin/windows/start-putty.sh
   }
   else
   {

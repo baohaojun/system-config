@@ -128,7 +128,7 @@ test -d .repo
 
 export ANDROID_TOP=$(pwd)
 
-(cd .repo; make -f ~/etc/generate-repo-info.mk) >/dev/null 2>&1
+(cd .repo; make -f ~/system-config/etc/generate-repo-info.mk) >/dev/null 2>&1
 export REPO_INFO=$(pwd)/.repo/repo_info.pl
 
 function die() {

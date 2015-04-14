@@ -39,7 +39,7 @@ cd /cygdrive/c/
 (
     mkdir -p etc/ywb/
     cd etc/ywb/
-    cp ~/etc/ywb-disable.rc disable.rc
+    cp ~/system-config/etc/ywb-disable.rc disable.rc
 )
 
 if test ! -e setup-x86_64.exe; then
@@ -77,43 +77,43 @@ cpan String::ShellQuote
 cygserver-config
 . ~/system-config/.bashrc-windows
 export HOME=/q
-cd ~/bin/windows/Imap4Monitor/
+cd ~/system-config/bin/windows/Imap4Monitor/
 function report_error()
 {
     echo "$@"
     echo "Sleeping 5 seconds to continue..."
     sleep 5
 }
-~/bin/windows/mkpyqt.py || report_error 'Error: you have not installed python2.5 and pyqt into "C:\python25"!'
+~/system-config/bin/windows/mkpyqt.py || report_error 'Error: you have not installed python2.5 and pyqt into "C:\python25"!'
 
 function mkdir () #so that mkdir won't fail if it is already there.
 {
     command mkdir -p "$@"
 }
 
-cd ~/bin/windows/
-mkdir  ~/bin/windows/lnks
+cd ~/system-config/bin/windows/
+mkdir  ~/system-config/bin/windows/lnks
 for x in {c..z}; do test -e /$x || (rm -f /$x; ln -s /cygdrive/$x /); done
 DOWN=${DOWN:-yes} ./download-external.sh
 find . -type l -exec relink.sh '{}' \;
 
 
-cd ~/bin/windows
+cd ~/system-config/bin/windows
 cpan String::ShellQuote
 cpan String::Approx
 
 ln -sf ~/'Application Data/Microsoft/Internet Explorer/Quick Launch' ~/SendTo/ || report_error "Error: you are not doing it from $HOMEPATH"
 mkdir -p ~/.fonts
-cp ~/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windows/fonts/cour.ttf ~/.fonts || true
+cp ~/system-config/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windows/fonts/cour.ttf ~/.fonts || true
 fc-cache || true
-cd ~/doc
+cd ~/system-config/doc
 regedit /s no-shift-space-toggle.reg
 regedit /s fix-windows-share-alias.reg
 regedit /s no-control-period.reg
 regedit /s keymap-win.reg
 
 mkdir /c/etc/ywb/ -p
-(cd ~/etc/ywb/exclude >/dev/null 2>&1; ls -1) > /c/etc/ywb/disable.rc
+(cd ~/system-config/etc/ywb/exclude >/dev/null 2>&1; ls -1) > /c/etc/ywb/disable.rc
 rm -f ~/user ~/.mozilla ~/Desktop ~/.localw
 
 ln -s "$(cygpath -u "$USERPROFILE")" ~/user

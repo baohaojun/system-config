@@ -13,7 +13,7 @@ function mkdir() {
 function get-python() {
     mkdir ~/external/python
     cd ~/external/python
-    for x in  ~/etc/python-win/vers/*;
+    for x in  ~/system-config/etc/python-win/vers/*;
     do
         x=$(basename $x)
         eval "wget -N http://python.org/ftp/python/$x/python-$x.msi&"
@@ -21,7 +21,7 @@ function get-python() {
     wget -N http://sourceforge.net/projects/pywin32/files/pywin32/Build216/pywin32-216.win32-py2.7.exe&
     wait
 
-    for x in  ~/etc/python-win/vers/*;
+    for x in  ~/system-config/etc/python-win/vers/*;
     do
         x=$(basename $x)
         chmod +x python-$x.msi
@@ -68,9 +68,9 @@ function download-all()
             fi
         done
         wait
-        cygstart ~/bin/windows/kbddvp.exe
+        cygstart ~/system-config/bin/windows/kbddvp.exe
 
-        cd ~/bin/windows/ext
+        cd ~/system-config/bin/windows/ext
         for x in ~/external/download-all/*.zip; do
             if [[ -f "$x" ]]; then
                 /bin/unzip -o "$x";
@@ -178,7 +178,7 @@ function emacs-site-lisps()
         chmod +x emacs-nt/bin/*
         cd emacs-nt/lisp/gnus
         rm nnmaildir.elc
-        patch -p2 < ~/doc/nnmaildir.patch
+        patch -p2 < ~/system-config/doc/nnmaildir.patch
         (get-bbdb)
     )&
 
@@ -205,13 +205,13 @@ function emacs-site-lisps()
         done
     )
 
-    rm  ~/bin/windows/ext/offlineimap -f
+    rm  ~/system-config/bin/windows/ext/offlineimap -f
     ln -sf $(readlink -f *offlineimap*/offlineimap.py) ~/system-config/bin/windows/ext/offlineimap
     (
         builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant
     )&
     (
-        builtin cd ~/gcode/global && sh reconf.sh && ./configure && make -j8 install && git clean -xfd
+        builtin cd ~/system-config/gcode/global && sh reconf.sh && ./configure && make -j8 install && git clean -xfd
     )&
     (
         set -e;
@@ -283,7 +283,7 @@ function setup-vc6-env() {
         fi
     done
     for x in ~/vc6/path/*; do export PATHVC=$PATHVC:`readlink -m "$x"`; done
-    export PATH=~/bin/:$PATHVC:$PATH
+    export PATH=~/system-config/bin/:$PATHVC:$PATH
     export INCLUDE=`for x in ~/vc6/inc/*; do readlink -f "$x"; done|u2dpath`
     export LIB=`for x in ~/vc6/lib/*; do readlink -f "$x"; done|u2dpath`
     export TEMP=/tmp
