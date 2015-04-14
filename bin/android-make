@@ -14,7 +14,9 @@ top_dir=$(pwd)
 
 set -e
 
-rm out -rf # in case it's a dangling symlink.
+if test -L out; then
+    rm out -rf # in case it's a dangling symlink.
+fi
 if test "$hourly_build_debug" = true; then
     if test -e .patch_applied; then
         echo "Error: pateches applied"
@@ -35,6 +37,10 @@ make_dir=
 targets=
 if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
     PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
+    echo using java 1.7
+else
+    echo using java 1.6
+
 fi
 TEMP=$(getopt -o vp:d:kj:c: -n $(basename $0) -- "$@")
 
@@ -112,7 +118,7 @@ fi
 
 . ~/bin/.android-set-outdir
 
-touch $OUT_DIR/Android.mk # to make findleaves.py skip this folder.
+touch $OUT_DIR/Android.mk || true # to make findleaves.py skip this folder.
 export CCACHE_DIR=$(dirname $(readlink -f $PWD/$OUT_DIR/host))/.ccache
 echo CCACHE_DIR is $CCACHE_DIR
 rm ~/.ccache || rm -rf ~/.ccache
@@ -154,6 +160,14 @@ exec 9> $OUT_DIR/.android-full-build.lock
         echo CLASSPATH is \'$CLASSPATH\'
 
         perl -npe 's!^\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
+        if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
+            PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
+            echo using java 1.7
+        else
+            echo using java 1.6
+
+        fi
+
 
         if test $# != 0; then
             if test $# = 1 -a $1 = msm-kernel; then

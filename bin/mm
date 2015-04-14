@@ -66,12 +66,13 @@ time (
         echo '# -*- mode: compilation -*-'
         echo "make: Entering directory \`$(lookup-file .repo/..)'"
         . $BHJ_OUT_DIR/.buildenv.sh
-        if test -e .path-prepend; then
-            . .path-prepend
+        if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
+            PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
+            echo using java 1.7
+        else
+            echo using java 1.6
         fi
-        if test ${PATH_PREPEND}x != x; then
-            PATH=$PATH_PREPEND:$PATH
-        fi
+
         ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs $verbose all_modules $(if test "$project" = device/qcom/sepolicy; then echo bootimage; fi) "$@" 2>&1
         echo mm build is ok
     ) | tee ~/.logs/mm.log.$$

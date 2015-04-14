@@ -14,7 +14,9 @@ fi
 
 xml=rawprogram_unsparse.xml
 if test ! -e "$xml"; then
-    if test -e "sparse_images/$xml"; then
+    if test -e rawprogram0_unsparse.xml; then
+        xml=rawprogram0_unsparse.xml
+    elif test -e "sparse_images/$xml"; then
         xml=sparse_images/$xml
     else
         die "can't find $xml"
@@ -56,7 +58,7 @@ xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^
 
 
 export tmpPostfix=$$
-sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2
+sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 $xml
 
 mv ~/tmp/system-$tmpPostfix.img.2 ~/tmp/system-$tmpPostfix.img
 mkdir -p ~/tmp/system-$tmpPostfix/system
