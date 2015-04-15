@@ -81,10 +81,10 @@ my $start_dir = $ENV{PWD};
 chomp($start_dir = qx/readlink -f "$start_dir"/);
 debug "started grep in $start_dir\n";
 
-my $db_dir = "$ENV{HOME}/.cache/for-code-reading$start_dir";
+my $db_dir = "$ENV{HOME}/.cache/system-config/for-code-reading$start_dir";
 if ($do_dir) {
     chomp($do_dir = qx(readlink -f '$do_dir'));
-    $db_dir = "$ENV{HOME}/.cache/for-code-reading$do_dir";
+    $db_dir = "$ENV{HOME}/.cache/system-config/for-code-reading$do_dir";
 }
 
 $start_file = $working_file || shell_quote($ENV{GTAGS_START_FILE} || ".");
@@ -98,7 +98,7 @@ if ($only_start_file and not $path_matcher) {
 }
 
 debug "start_file: $start_file";
-our $approx_dir = "ENV{HOME}/.cache/for-code-reading$ENV{GTAGS_START_FILE}";
+our $approx_dir = "ENV{HOME}/.cache/system-config/for-code-reading$ENV{GTAGS_START_FILE}";
 
 
 while ( not -d "$db_dir/.beatags" and not "$db_dir" eq "/") {
@@ -257,7 +257,7 @@ sub do_cscope($$$) {
     my $lookup_needle_quote = shell_quote($lookup_needle);
     my $db_dir_quoted = shell_quote($db_dir);
     my $got_results = 0;
-    my $code_dir = substr($db_dir, length("$ENV{HOME}/.cache/for-code-reading"));
+    my $code_dir = substr($db_dir, length("$ENV{HOME}/.cache/system-config/for-code-reading"));
     $code_dir =~ s,/+,/,g;
 
     chdir ($code_dir) or die "Can not change to $code_dir";
@@ -357,7 +357,7 @@ if (@gtags_fallback_dir) {
 for (@gtags_fallback_dir) {
   my $dir = $_;
   my $code_dir = $dir;
-  $code_dir =~ s,.*?.cache/for-code-reading,,;
+  $code_dir =~ s,.*?.cache/system-config/for-code-reading,,;
   if (@java_fallback_dir) {
       $use_full_path = "$code_dir/";
   }

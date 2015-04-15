@@ -4,8 +4,8 @@ export PATH=/usr/local/bin:$PATH
 function do_it() {
     if test -f .for-code-reading -a ! -L .for-code-reading; then
         (
-            if [[ $PWD =~ /.cache/for-code-reading/ ]]; then
-                cd "${PWD#*/.cache/for-code-reading}";
+            if [[ $PWD =~ /.cache/system-config/for-code-reading/ ]]; then
+                cd "${PWD#*/.cache/system-config/for-code-reading}";
             fi
             time SOURCECODETAGSMODE=true mkbeagrepidx&
             time mkbeagrepidx

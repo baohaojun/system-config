@@ -24,8 +24,8 @@ beagle-grep.sh -e "readlink"
 pat is: readlink.
 /home/bhj/bin/Linux/ext/x86_64/beagle-break.exe
 beagle query argument `readlink '
-Starting at /home/bhj/.cache/for-code-reading//home/bhj/src/rayzerlink-ventana
-Beagle index found at /home/bhj/.cache/for-code-reading//home/bhj/src/rayzerlink-ventana/.beagle
+Starting at /home/bhj/.cache/system-config/for-code-reading//home/bhj/src/rayzerlink-ventana
+Beagle index found at /home/bhj/.cache/system-config/for-code-reading//home/bhj/src/rayzerlink-ventana/.beagle
 /home/bhj/src/rayzerlink-ventana/bionic/libc/arch-arm/syscalls.mk:98:syscall_src += arch-arm/syscalls/readlink.S
 /home/bhj/src/rayzerlink-ventana/bionic/libc/arch-arm/syscalls/readlink.S:5:    .type readlink, #function
 /home/bhj/src/rayzerlink-ventana/bionic/libc/arch-arm/syscalls/readlink.S:6:    .globl readlink
@@ -727,8 +727,8 @@ beagle-grep.sh -e "progress_medium_white"
 pat is: progress_medium_white.
 /home/bhj/bin/Linux/ext/x86_64/beagle-break.exe
 beagle query argument `progress medium white '
-Starting at /home/bhj/.cache/for-code-reading//home/bhj/src/rayzerlink-ventana
-Beagle index found at /home/bhj/.cache/for-code-reading//home/bhj/src/rayzerlink-ventana/.beagle
+Starting at /home/bhj/.cache/system-config/for-code-reading//home/bhj/src/rayzerlink-ventana
+Beagle index found at /home/bhj/.cache/system-config/for-code-reading//home/bhj/src/rayzerlink-ventana/.beagle
 /home/bhj/src/rayzerlink-ventana/frameworks/base/core/res/res/values/styles.xml:279:        <item name="android:indeterminateDrawable">@android:drawable/progress_medium_white</item>
 /home/bhj/src/rayzerlink-ventana/frameworks/base/core/res/res/drawable/progress_medium_white.xml:1: ****************!
 

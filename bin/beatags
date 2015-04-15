@@ -20,7 +20,7 @@ for x in $db_dir/.java-fallback.*; do
         (
             cd -P "$x"
             db_dir=$PWD
-            source_dir=${db_dir#*/.cache/for-code-reading}
+            source_dir=${db_dir#*/.cache/system-config/for-code-reading}
             cd $source_dir >/dev/null 2>&1
             export DOING_FALLBACKS=true
             beatags "$@" | perl -npe 's,(.*?\s+\S+\s+\d+\s+)(\S+),$1'"$source_dir"'/$2,'
@@ -108,7 +108,7 @@ fi| grep -v -P -e '[ \t]' |
         chomp;
         open($tag, "<", $_) or next;
         $file = $_;
-        $file =~ s,.*/.cache/for-code-reading/*,/,;
+        $file =~ s,.*/.cache/system-config/for-code-reading/*,/,;
         $file =~ s,.tag$,,;
         if (substr($file, 0, $source_dir_len + 1) eq "$source_dir/") {
             $file = substr($file, $source_dir_len + 1);

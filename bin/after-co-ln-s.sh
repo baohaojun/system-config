@@ -44,7 +44,7 @@ if ! which git >/dev/null 2>&1 ; then
     sudo apt-get install -y git || /cygdrive/c/setup-x86_64.exe -q -n -d -A -P git
 fi
 
-mkdir -p ~/Downloads/forever ~/external/local ~/.logs
+mkdir -p ~/Downloads/forever ~/external/local ~/.cache/system-config/logs
 
 for x in 15m hourly daily weekly; do
     mkdir -p ~/external/etc/cron.d/$x;
@@ -238,7 +238,9 @@ for x in $(find ~/system-config/.sc-symlinks/ -type l); do
         continue
     fi
     if test ! -e ~/"$base" || ask-if-not-bhj "Use system-config's version of ~/$base?"; then
-        mv ~/"$base" ~/"$base".$(now)
+        if test -e ~/"$base"; then
+            mv ~/"$base" ~/"$base".$(now)
+        fi
         ln -s "$x" ~/"$base"
     fi
 done
@@ -249,10 +251,12 @@ if test "$USER" = bhj; then
     symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
 fi
 
-if test -e ~/.gitconfig.$USER && test "$(readlink -f ~/.gitconfig.$USER)" != "$(readlink -f ~/.gitconfig)"; then
-    ln -sf ~/.gitconfig.$USER ~/.gitconfig
-elif test ! -e ~/.gitconfig.$USER; then
-    cp ~/.gitconfig.bhj ~/.gitconfig || true
+if test -e ~/system-config/.gitconfig.$USER &&
+        test "$(readlink -f ~/system-config/.gitconfig.$USER)" != "$(readlink -f ~/.gitconfig)"; then
+    ln -sf ~/system-config/.gitconfig.$USER ~/.gitconfig
+elif test ! -e ~/system-config/.gitconfig.$USER &&
+        test ! -e ~/.gitconfig; then
+    cp ~/system-config/.gitconfig.bhj ~/.gitconfig || true
     name=$(finger $USER 2>/dev/null | grep Name: | perl -npe 's/.*Name: //')
     if test "$name"; then
         git config --global user.name "$name"

@@ -6,7 +6,7 @@
 
 [core]
 	pager =
-	excludesfile = ~/.git-exclude
+	excludesfile = ~/system-config/.git-exclude
 [alias]
 	st = status
 	co = checkout
