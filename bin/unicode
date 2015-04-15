@@ -17,5 +17,5 @@ if (length($chr) != 1) {
     }
 } else {
     printf("chr %s is decimal %d, hex %x: ", encode_utf8($chr), ord($chr), ord($chr));
-    system(sprintf("grep '^%x;' -i ~/.emacs_d/UnicodeData.txt", ord($chr)));
+    system(sprintf("grep '^%x;' -i ~/system-config/.emacs_d/UnicodeData.txt", ord($chr)));
 }

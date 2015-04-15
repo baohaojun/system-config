@@ -3464,7 +3464,7 @@ cat .repo/manifest.xml |grep name='".*"' -o|perl -npe 's,(.*),export $1; bash -c
 
 cat .repo/manifest.xml |grep name='".*"' -o|perl -npe 's,(.*),export $1; bash -c "(mkdir -p \$name.git && (cd \$name.git; git clone --mirror git://nv-tegra.nvidia.com/\$name . || git fetch git://nv-tegra.nvidia.com/\$name froyo-tegra && git branch froyo-tegra FETCH_HEAD)&)",'|sh
 
-(add-to-list 'load-path "~/.emacs_d/weblogger")
+(add-to-list 'load-path "~/system-config/.emacs_d/weblogger")
 (require 'weblogger)
 (setq weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog"))))
 

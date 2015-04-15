@@ -205,10 +205,49 @@ function symlink-map() {
 
 }
 
-symlink-map ~/system-config ~
-symlink-map-files ~/system-config/etc/subdir-symlinks ~
-mkdir -p ~/.local/share/applications
-symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
+if grep -q "# hooked up for system-config" ~/.bashrc || test "$(readlink -f ~/.bashrc)" = "$(readlink -f ~/system-config/.bashrc)"; then
+    true
+else
+    cat <<EOF >> ~/.profile
+if test -e ~/system-config/.profile; then
+   . ~/system-config/.profile
+   # hooked up for system-config
+fi
+EOF
+
+    cat <<EOF >> ~/.emacs
+(when (file-exists-p "~/system-config/.emacs")
+  (load "~/system-config/.emacs"))
+EOF
+
+    cat <<EOF >> ~/.bashrc
+if test -e ~/system-config/.bashrc; then
+    . ~/system-config/.bashrc
+    # hooked up for system-config
+fi
+EOF
+fi
+
+for x in $(find ~/system-config/.sc-symlinks/ -type l); do
+    if test ! -e "$x"; then
+        continue
+    fi
+    base=$(basename "$x");
+    if test "$(readlink -f ~/"$base")" = "$(readlink -f "$x")"; then
+        echo already linked system-config\'s version of  ~/"$base"
+        continue
+    fi
+    if test ! -e ~/"$base" || ask-if-not-bhj "Use system-config's version of ~/$base?"; then
+        mv ~/"$base" ~/"$base".$(now)
+        ln -s "$x" ~/"$base"
+    fi
+done
+
+if test "$USER" = bhj; then
+    symlink-map-files ~/system-config/etc/subdir-symlinks ~
+    mkdir -p ~/.local/share/applications
+    symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
+fi
 
 if test -e ~/.gitconfig.$USER && test "$(readlink -f ~/.gitconfig.$USER)" != "$(readlink -f ~/.gitconfig)"; then
     ln -sf ~/.gitconfig.$USER ~/.gitconfig

@@ -8,7 +8,7 @@ if test "$EMACS" != t; then
     fi
 fi
 
-for x in ~/.bash_completion.d/*; do
+for x in ~/system-config/.bash_completion.d/*; do
     . "$x"
 done
 

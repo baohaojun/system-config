@@ -1,3 +1,7 @@
+if [ -e /etc/bash.bashrc ] ; then
+  source /etc/bash.bashrc
+fi
+
 export PATH=/bin:"$PATH"
 
 uname=$(uname)

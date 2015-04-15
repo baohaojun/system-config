@@ -1,8 +1,8 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
 ;;; Code:
-(when (file-exists-p (format "~/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type)))
-  (load (format "~/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type))))
+(when (file-exists-p (format "~/system-config/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type)))
+  (load (format "~/system-config/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type))))
 
 (defconst *is-a-mac* (eq system-type 'darwin))
 (defconst *is-a-win* (eq system-type 'windows-nt))

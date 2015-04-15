@@ -84,7 +84,7 @@ if test "$icon" -a -r "$icon"; then
 EOF
     )
 else
-    read_icon='"~/.sawfish/Kill.png"'
+    read_icon='"~/system-config/.sawfish/Kill.png"'
 fi
 
 

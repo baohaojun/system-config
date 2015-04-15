@@ -7,7 +7,7 @@ my @patARGV = sort {length($b) <=> length($a)} @ARGV;
 if (-e glob("~/.cache/system-config/logs/ime-unicode.txt")) {
     @ARGV = (glob("~/.cache/system-config/logs/ime-unicode.txt"));
 }
-@ARGV = (@ARGV, glob("~/.emacs_d/UnicodeData.txt"));
+@ARGV = (@ARGV, glob("~/system-config/.emacs_d/UnicodeData.txt"));
 
 my @lines;
 my @argv_re;

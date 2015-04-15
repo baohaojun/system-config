@@ -25,7 +25,7 @@
 
   ;; window currently displayed, or nil
   (define info-window nil)
-  (define Kill-image (make-image "~/.sawfish/Kill.png"))
+  (define Kill-image (make-image "~/system-config/.sawfish/Kill.png"))
 
 ;;; utilities
 

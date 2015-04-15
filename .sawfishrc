@@ -3,8 +3,8 @@
 (require 'sawfish.wm.util.keymap)
 (require 'sawfish.wm.state.maximize)
 
-(load-file "~/.sawfish/bhj-draw-wininfo.jl")
-(load-file "~/.sawfish/bhj-draw-notification.jl")
+(load-file "~/system-config/.sawfish/bhj-draw-wininfo.jl")
+(load-file "~/system-config/.sawfish/bhj-draw-notification.jl")
 (require 'bhj-draw-notification)
 (require 'Run-application)
 (require 'bhj-draw-wininfo)
@@ -66,7 +66,7 @@
 
 (bind-keys global-keymap "Super-h" s-h-keymap)
 
-(load-file "~/.sawfish/iswitch-window.jl")
+(load-file "~/system-config/.sawfish/iswitch-window.jl")
 (bind-keys global-keymap "Super-s" 'iswitch-window)
 
 (defun bhj-global-cycle-class (window)
@@ -598,7 +598,7 @@
   (when w
     (window-put w 'code-reading t))
   (system "switch-scroll-led on&")
-  (load-file "~/.sawfish/lisp/easy-emacs-code-reading.jl"))
+  (load-file "~/system-config/.sawfish/lisp/easy-emacs-code-reading.jl"))
 
 (defun unload-keys-in-file (file)
   (let* ((file (open-file file 'read))
@@ -613,17 +613,17 @@
 (defun emacs-code-reading-off (&optional w)
   (when w
     (window-put w 'code-reading nil))
-  (unload-keys-in-file "~/.sawfish/lisp/easy-emacs-code-reading.jl")
+  (unload-keys-in-file "~/system-config/.sawfish/lisp/easy-emacs-code-reading.jl")
   (bind-keys global-keymap "F23" '(system "xdotool click 4&"))
   (bind-keys global-keymap "F24" '(system "xdotool click 5&"))
   (bind-keys global-keymap "XF86Back" '(system "xdotool click 1&"))
   (system "switch-scroll-led off&"))
 
 (defun keypad-number-on ()
-  (unload-keys-in-file "~/.sawfish/lisp/keypad.jl"))
+  (unload-keys-in-file "~/system-config/.sawfish/lisp/keypad.jl"))
 
 (defun keypad-number-off ()
-  (load-file "~/.sawfish/lisp/keypad.jl"))
+  (load-file "~/system-config/.sawfish/lisp/keypad.jl"))
 
 (bind-keys global-keymap "KP_Enter" '(system "toggle-number-lock&"))
 

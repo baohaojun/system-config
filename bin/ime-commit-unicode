@@ -4,5 +4,5 @@ use strict;
 use String::ShellQuote;
 my $ord = sprintf("%X", ord(decode_utf8($ARGV[0])));
 $ord = shell_quote($ord);
-system("(grep '$ord;' ~/.emacs_d/UnicodeData.txt | head -n 1; cat ~/.cache/system-config/logs/ime-unicode.txt) | uniq-even-non-ajacent > ~/.cache/system-config/logs/ime-unicode.$$");
+system("(grep '$ord;' ~/system-config/.emacs_d/UnicodeData.txt | head -n 1; cat ~/.cache/system-config/logs/ime-unicode.txt) | uniq-even-non-ajacent > ~/.cache/system-config/logs/ime-unicode.$$");
 rename(glob("~/.cache/system-config/logs/ime-unicode.$$"), glob("~/.cache/system-config/logs/ime-unicode.txt"));

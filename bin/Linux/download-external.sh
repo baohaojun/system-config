@@ -8,7 +8,7 @@ mkdir -p ~/external/bin/Linux/ext/`uname -m` \
 
 function download_lisp() {
     mkdir -p ~/external/.emacs_d/lisp/ext/
-    builtin cd ~/.emacs_d/lisp/ext/
+    builtin cd ~/system-config/.emacs_d/lisp/ext/
 }
 
 function download_books() {

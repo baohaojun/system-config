@@ -36,7 +36,7 @@
   (define notification-table (make-table string-hash string=))
 
   ;; window currently displayed, or nil
-  (define Kill-image (make-image "~/.sawfish/Kill.png"))
+  (define Kill-image (make-image "~/system-config/.sawfish/Kill.png"))
 
 ;;; utilities
 

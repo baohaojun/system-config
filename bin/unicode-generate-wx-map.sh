@@ -4,7 +4,7 @@ perl -ne '
     our $unicode;
     if (m/^\d+c\d+/) {
         print "\"; #  ";
-        system("grep", "$unicode", glob("~/.emacs_d/UnicodeData.txt"));
+        system("grep", "$unicode", glob("~/system-config/.emacs_d/UnicodeData.txt"));
     };
     use Encode;
     if (m/^< (\d+),/) {
