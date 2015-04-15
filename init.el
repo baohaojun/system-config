@@ -134,7 +134,7 @@
 
 (require-package 'gnuplot)
 
-(if (file-exists-p "~/.emacs_d/lisp/auto-complete-clang-async.el")
+(if (file-exists-p "~/system-config/.emacs_d/lisp/auto-complete-clang-async.el")
     (progn
       (require 'auto-complete-clang-async)
 
