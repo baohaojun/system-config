@@ -92,7 +92,7 @@ Windows上的话，用AutoHotKey可以很容易地做到这点。可是每按一
 
 比如我媳妇儿刚给我买的Macbook Air，上面Insert键需要用Fn + Delete来按，
 我在Terminal下粘贴习惯用Shift-Insert，这下必须按3个键了：
-Shift-Fn-Delete。我在我的 =~/.sawfishrc= 里加这么一条就可以继续只按两个
+Shift-Fn-Delete。我在我的 =~/system-config/.sawfishrc= 里加这么一条就可以继续只按两个
 键（Win + 回车）来粘贴：
 
 #+BEGIN_SRC sawfish

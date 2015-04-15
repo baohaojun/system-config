@@ -12,9 +12,9 @@ Bash自带的更方便！
 
 做法是这样，我写了一个空Bash函数，名为re，Re-Exec（再次执行）的意思，它
 自己什么也不干，（除了把参数全丢掉——它的定义是 =re () { true; }= ），但
-我为它写了Bash补齐命令才是窍门:-)
+我为它写了Bash补齐命令才是窍门😊
 
-#+NAME: ~/.bash_completion.d/re
+#+NAME: ~/system-config/.bash_completion.d/re
 #+BEGIN_SRC sh
 #!/bin/bash
 
