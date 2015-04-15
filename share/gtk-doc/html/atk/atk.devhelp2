@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
+<book xmlns="http://www.devhelp.net/book" title="ATK - Accessibility Toolkit" link="index.html" author="" name="atk" version="2" language="c">
+  <chapters>
+    <sub name="ATK Library" link="atk.html">
+      <sub name="AtkAction" link="AtkAction.html"/>
+      <sub name="AtkComponent" link="AtkComponent.html"/>
+      <sub name="AtkDocument" link="AtkDocument.html"/>
+      <sub name="AtkEditableText" link="AtkEditableText.html"/>
+      <sub name="AtkGObjectAccessible" link="AtkGObjectAccessible.html"/>
+      <sub name="AtkHyperlink" link="AtkHyperlink.html"/>
+      <sub name="AtkHyperlinkImpl" link="atk-AtkHyperlinkImpl.html"/>
+      <sub name="AtkHypertext" link="AtkHypertext.html"/>
+      <sub name="AtkImage" link="AtkImage.html"/>
+      <sub name="AtkNoOpObject" link="AtkNoOpObject.html"/>
+      <sub name="AtkNoOpObjectFactory" link="AtkNoOpObjectFactory.html"/>
+      <sub name="AtkObject" link="AtkObject.html"/>
+      <sub name="AtkObjectFactory" link="AtkObjectFactory.html"/>
+      <sub name="AtkPlug" link="atk-AtkPlug.html"/>
+      <sub name="AtkRegistry" link="AtkRegistry.html"/>
+      <sub name="AtkRelation" link="AtkRelation.html"/>
+      <sub name="AtkRelationSet" link="AtkRelationSet.html"/>
+      <sub name="AtkSelection" link="AtkSelection.html"/>
+      <sub name="AtkSocket" link="atk-AtkSocket.html"/>
+      <sub name="AtkState" link="atk-AtkState.html"/>
+      <sub name="AtkStateSet" link="AtkStateSet.html"/>
+      <sub name="AtkStreamableContent" link="AtkStreamableContent.html"/>
+      <sub name="AtkTable" link="AtkTable.html"/>
+      <sub name="AtkText" link="AtkText.html"/>
+      <sub name="AtkUtil" link="AtkUtil.html"/>
+      <sub name="AtkValue" link="AtkValue.html"/>
+    </sub>
+    <sub name="Index of all symbols" link="api-index-full.html"/>
+    <sub name="Index of deprecated symbols" link="api-index-deprecated.html"/>
+    <sub name="Index of new symbols in 1.3" link="api-index-1-3.html"/>
+    <sub name="Index of new symbols in 1.4" link="api-index-1-4.html"/>
+    <sub name="Index of new symbols in 1.6" link="api-index-1-6.html"/>
+    <sub name="Index of new symbols in 1.12" link="api-index-1-12.html"/>
+    <sub name="Index of new symbols in 1.13" link="api-index-1-13.html"/>
+    <sub name="Index of new symbols in 1.18" link="api-index-1-18.html"/>
+    <sub name="Index of new symbols in 1.20" link="api-index-1-20.html"/>
+    <sub name="Index of new symbols in 1.22" link="api-index-1-22.html"/>
+    <sub name="Index of new symbols in 1.24" link="api-index-1-24.html"/>
+    <sub name="Index of new symbols in 1.26" link="api-index-1-26.html"/>
+    <sub name="Index of new symbols in 1.28" link="api-index-1-28.html"/>
+    <sub name="Index of new symbols in 1.30" link="api-index-1-30.html"/>
+    <sub name="Index of new symbols in 1.32" link="api-index-1-32.html"/>
+  </chapters>
+  <functions>
+    <keyword type="struct" name="AtkAction" link="AtkAction.html#AtkAction-struct"/>
+    <keyword type="function" name="atk_action_do_action ()" link="AtkAction.html#atk-action-do-action"/>
+    <keyword type="function" name="atk_action_get_n_actions ()" link="AtkAction.html#atk-action-get-n-actions"/>
+    <keyword type="function" name="atk_action_get_description ()" link="AtkAction.html#atk-action-get-description"/>
+    <keyword type="function" name="atk_action_get_name ()" link="AtkAction.html#atk-action-get-name"/>
+    <keyword type="function" name="atk_action_get_localized_name ()" link="AtkAction.html#atk-action-get-localized-name"/>
+    <keyword type="function" name="atk_action_get_keybinding ()" link="AtkAction.html#atk-action-get-keybinding"/>
+    <keyword type="function" name="atk_action_set_description ()" link="AtkAction.html#atk-action-set-description"/>
+    <keyword type="struct" name="AtkComponent" link="AtkComponent.html#AtkComponent-struct"/>
+    <keyword type="function" name="atk_component_add_focus_handler ()" link="AtkComponent.html#atk-component-add-focus-handler"/>
+    <keyword type="function" name="atk_component_contains ()" link="AtkComponent.html#atk-component-contains"/>
+    <keyword type="function" name="atk_component_get_extents ()" link="AtkComponent.html#atk-component-get-extents"/>
+    <keyword type="function" name="atk_component_get_layer ()" link="AtkComponent.html#atk-component-get-layer"/>
+    <keyword type="function" name="atk_component_get_mdi_zorder ()" link="AtkComponent.html#atk-component-get-mdi-zorder"/>
+    <keyword type="function" name="atk_component_get_position ()" link="AtkComponent.html#atk-component-get-position"/>
+    <keyword type="function" name="atk_component_get_size ()" link="AtkComponent.html#atk-component-get-size"/>
+    <keyword type="function" name="atk_component_grab_focus ()" link="AtkComponent.html#atk-component-grab-focus"/>
+    <keyword type="function" name="atk_component_ref_accessible_at_point ()" link="AtkComponent.html#atk-component-ref-accessible-at-point"/>
+    <keyword type="function" name="atk_component_remove_focus_handler ()" link="AtkComponent.html#atk-component-remove-focus-handler"/>
+    <keyword type="function" name="atk_component_set_extents ()" link="AtkComponent.html#atk-component-set-extents"/>
+    <keyword type="function" name="atk_component_set_position ()" link="AtkComponent.html#atk-component-set-position"/>
+    <keyword type="function" name="atk_component_set_size ()" link="AtkComponent.html#atk-component-set-size"/>
+    <keyword type="function" name="atk_component_get_alpha ()" link="AtkComponent.html#atk-component-get-alpha" since="1.12"/>
+    <keyword type="signal" name="The &quot;bounds-changed&quot; signal" link="AtkComponent.html#AtkComponent-bounds-changed"/>
+    <keyword type="struct" name="AtkDocument" link="AtkDocument.html#AtkDocument-struct"/>
+    <keyword type="function" name="atk_document_get_document_type ()" link="AtkDocument.html#atk-document-get-document-type"/>
+    <keyword type="function" name="atk_document_get_document ()" link="AtkDocument.html#atk-document-get-document"/>
+    <keyword type="function" name="atk_document_get_attribute_value ()" link="AtkDocument.html#atk-document-get-attribute-value" since="1.12"/>
+    <keyword type="function" name="atk_document_set_attribute_value ()" link="AtkDocument.html#atk-document-set-attribute-value" since="1.12"/>
+    <keyword type="function" name="atk_document_get_attributes ()" link="AtkDocument.html#atk-document-get-attributes" since="1.12"/>
+    <keyword type="function" name="atk_document_get_locale ()" link="AtkDocument.html#atk-document-get-locale"/>
+    <keyword type="signal" name="The &quot;load-complete&quot; signal" link="AtkDocument.html#AtkDocument-load-complete"/>
+    <keyword type="signal" name="The &quot;load-stopped&quot; signal" link="AtkDocument.html#AtkDocument-load-stopped"/>
+    <keyword type="signal" name="The &quot;reload&quot; signal" link="AtkDocument.html#AtkDocument-reload"/>
+    <keyword type="struct" name="AtkEditableText" link="AtkEditableText.html#AtkEditableText-struct"/>
+    <keyword type="function" name="atk_editable_text_set_run_attributes ()" link="AtkEditableText.html#atk-editable-text-set-run-attributes"/>
+    <keyword type="function" name="atk_editable_text_set_text_contents ()" link="AtkEditableText.html#atk-editable-text-set-text-contents"/>
+    <keyword type="function" name="atk_editable_text_insert_text ()" link="AtkEditableText.html#atk-editable-text-insert-text"/>
+    <keyword type="function" name="atk_editable_text_copy_text ()" link="AtkEditableText.html#atk-editable-text-copy-text"/>
+    <keyword type="function" name="atk_editable_text_cut_text ()" link="AtkEditableText.html#atk-editable-text-cut-text"/>
+    <keyword type="function" name="atk_editable_text_delete_text ()" link="AtkEditableText.html#atk-editable-text-delete-text"/>
+    <keyword type="function" name="atk_editable_text_paste_text ()" link="AtkEditableText.html#atk-editable-text-paste-text"/>
+    <keyword type="struct" name="struct AtkGObjectAccessible" link="AtkGObjectAccessible.html#AtkGObjectAccessible-struct"/>
+    <keyword type="function" name="atk_gobject_accessible_for_object ()" link="AtkGObjectAccessible.html#atk-gobject-accessible-for-object"/>
+    <keyword type="function" name="atk_gobject_accessible_get_object ()" link="AtkGObjectAccessible.html#atk-gobject-accessible-get-object"/>
+    <keyword type="struct" name="struct AtkHyperlink" link="AtkHyperlink.html#AtkHyperlink-struct"/>
+    <keyword type="enum" name="enum AtkHyperlinkStateFlags" link="AtkHyperlink.html#AtkHyperlinkStateFlags"/>
+    <keyword type="function" name="atk_hyperlink_get_uri ()" link="AtkHyperlink.html#atk-hyperlink-get-uri"/>
+    <keyword type="function" name="atk_hyperlink_get_object ()" link="AtkHyperlink.html#atk-hyperlink-get-object"/>
+    <keyword type="function" name="atk_hyperlink_get_end_index ()" link="AtkHyperlink.html#atk-hyperlink-get-end-index"/>
+    <keyword type="function" name="atk_hyperlink_get_start_index ()" link="AtkHyperlink.html#atk-hyperlink-get-start-index"/>
+    <keyword type="function" name="atk_hyperlink_is_valid ()" link="AtkHyperlink.html#atk-hyperlink-is-valid"/>
+    <keyword type="function" name="atk_hyperlink_is_inline ()" link="AtkHyperlink.html#atk-hyperlink-is-inline"/>
+    <keyword type="function" name="atk_hyperlink_get_n_anchors ()" link="AtkHyperlink.html#atk-hyperlink-get-n-anchors"/>
+    <keyword type="function" name="atk_hyperlink_is_selected_link ()" link="AtkHyperlink.html#atk-hyperlink-is-selected-link" deprecated="Please use ATK_STATE_SELECTED to indicate when a hyperlink within a Hypertext container is selected." since="1.4"/>
+    <keyword type="property" name="The &quot;end-index&quot; property" link="AtkHyperlink.html#AtkHyperlink--end-index"/>
+    <keyword type="property" name="The &quot;number-of-anchors&quot; property" link="AtkHyperlink.html#AtkHyperlink--number-of-anchors"/>
+    <keyword type="property" name="The &quot;selected-link&quot; property" link="AtkHyperlink.html#AtkHyperlink--selected-link"/>
+    <keyword type="property" name="The &quot;start-index&quot; property" link="AtkHyperlink.html#AtkHyperlink--start-index"/>
+    <keyword type="signal" name="The &quot;link-activated&quot; signal" link="AtkHyperlink.html#AtkHyperlink-link-activated"/>
+    <keyword type="struct" name="AtkHyperlinkImpl" link="atk-AtkHyperlinkImpl.html#AtkHyperlinkImpl"/>
+    <keyword type="function" name="atk_hyperlink_impl_get_hyperlink ()" link="atk-AtkHyperlinkImpl.html#atk-hyperlink-impl-get-hyperlink" since="1.12"/>
+    <keyword type="struct" name="AtkHypertext" link="AtkHypertext.html#AtkHypertext-struct"/>
+    <keyword type="function" name="atk_hypertext_get_link ()" link="AtkHypertext.html#atk-hypertext-get-link"/>
+    <keyword type="function" name="atk_hypertext_get_n_links ()" link="AtkHypertext.html#atk-hypertext-get-n-links"/>
+    <keyword type="function" name="atk_hypertext_get_link_index ()" link="AtkHypertext.html#atk-hypertext-get-link-index"/>
+    <keyword type="signal" name="The &quot;link-selected&quot; signal" link="AtkHypertext.html#AtkHypertext-link-selected"/>
+    <keyword type="struct" name="AtkImage" link="AtkImage.html#AtkImage-struct"/>
+    <keyword type="function" name="atk_image_get_image_position ()" link="AtkImage.html#atk-image-get-image-position"/>
+    <keyword type="function" name="atk_image_get_image_description ()" link="AtkImage.html#atk-image-get-image-description"/>
+    <keyword type="function" name="atk_image_set_image_description ()" link="AtkImage.html#atk-image-set-image-description"/>
+    <keyword type="function" name="atk_image_get_image_size ()" link="AtkImage.html#atk-image-get-image-size"/>
+    <keyword type="function" name="atk_image_get_image_locale ()" link="AtkImage.html#atk-image-get-image-locale"/>
+    <keyword type="struct" name="struct AtkNoOpObject" link="AtkNoOpObject.html#AtkNoOpObject-struct"/>
+    <keyword type="function" name="atk_no_op_object_new ()" link="AtkNoOpObject.html#atk-no-op-object-new"/>
+    <keyword type="struct" name="struct AtkNoOpObjectFactory" link="AtkNoOpObjectFactory.html#AtkNoOpObjectFactory-struct"/>
+    <keyword type="function" name="atk_no_op_object_factory_new ()" link="AtkNoOpObjectFactory.html#atk-no-op-object-factory-new"/>
+    <keyword type="struct" name="struct AtkObject" link="AtkObject.html#AtkObject-struct"/>
+    <keyword type="enum" name="enum AtkRole" link="AtkObject.html#AtkRole"/>
+    <keyword type="function" name="atk_role_register ()" link="AtkObject.html#atk-role-register"/>
+    <keyword type="enum" name="enum AtkLayer" link="AtkObject.html#AtkLayer"/>
+    <keyword type="struct" name="AtkImplementor" link="AtkObject.html#AtkImplementor"/>
+    <keyword type="struct" name="AtkPropertyValues" link="AtkObject.html#AtkPropertyValues"/>
+    <keyword type="function" name="AtkFunction ()" link="AtkObject.html#AtkFunction"/>
+    <keyword type="function" name="AtkPropertyChangeHandler ()" link="AtkObject.html#AtkPropertyChangeHandler"/>
+    <keyword type="function" name="atk_implementor_ref_accessible ()" link="AtkObject.html#atk-implementor-ref-accessible"/>
+    <keyword type="function" name="atk_object_get_name ()" link="AtkObject.html#atk-object-get-name"/>
+    <keyword type="function" name="atk_object_get_description ()" link="AtkObject.html#atk-object-get-description"/>
+    <keyword type="function" name="atk_object_get_parent ()" link="AtkObject.html#atk-object-get-parent"/>
+    <keyword type="function" name="atk_object_get_n_accessible_children ()" link="AtkObject.html#atk-object-get-n-accessible-children"/>
+    <keyword type="function" name="atk_object_ref_accessible_child ()" link="AtkObject.html#atk-object-ref-accessible-child"/>
+    <keyword type="function" name="atk_object_ref_relation_set ()" link="AtkObject.html#atk-object-ref-relation-set"/>
+    <keyword type="function" name="atk_object_get_layer ()" link="AtkObject.html#atk-object-get-layer" deprecated="Use atk_component_get_layer instead."/>
+    <keyword type="function" name="atk_object_get_mdi_zorder ()" link="AtkObject.html#atk-object-get-mdi-zorder" deprecated="Use atk_component_get_mdi_zorder instead."/>
+    <keyword type="function" name="atk_object_get_role ()" link="AtkObject.html#atk-object-get-role"/>
+    <keyword type="function" name="atk_object_ref_state_set ()" link="AtkObject.html#atk-object-ref-state-set"/>
+    <keyword type="function" name="atk_object_get_index_in_parent ()" link="AtkObject.html#atk-object-get-index-in-parent"/>
+    <keyword type="function" name="atk_object_set_name ()" link="AtkObject.html#atk-object-set-name"/>
+    <keyword type="function" name="atk_object_set_description ()" link="AtkObject.html#atk-object-set-description"/>
+    <keyword type="function" name="atk_object_set_parent ()" link="AtkObject.html#atk-object-set-parent"/>
+    <keyword type="function" name="atk_object_set_role ()" link="AtkObject.html#atk-object-set-role"/>
+    <keyword type="function" name="atk_object_connect_property_change_handler ()" link="AtkObject.html#atk-object-connect-property-change-handler"/>
+    <keyword type="function" name="atk_object_remove_property_change_handler ()" link="AtkObject.html#atk-object-remove-property-change-handler"/>
+    <keyword type="function" name="atk_object_notify_state_change ()" link="AtkObject.html#atk-object-notify-state-change"/>
+    <keyword type="function" name="atk_object_initialize ()" link="AtkObject.html#atk-object-initialize"/>
+    <keyword type="function" name="atk_object_add_relationship ()" link="AtkObject.html#atk-object-add-relationship"/>
+    <keyword type="function" name="atk_object_remove_relationship ()" link="AtkObject.html#atk-object-remove-relationship"/>
+    <keyword type="function" name="atk_object_get_attributes ()" link="AtkObject.html#atk-object-get-attributes" since="1.12"/>
+    <keyword type="function" name="atk_role_get_name ()" link="AtkObject.html#atk-role-get-name"/>
+    <keyword type="function" name="atk_role_get_localized_name ()" link="AtkObject.html#atk-role-get-localized-name"/>
+    <keyword type="function" name="atk_role_for_name ()" link="AtkObject.html#atk-role-for-name"/>
+    <keyword type="property" name="The &quot;accessible-component-layer&quot; property" link="AtkObject.html#AtkObject--accessible-component-layer"/>
+    <keyword type="property" name="The &quot;accessible-component-mdi-zorder&quot; property" link="AtkObject.html#AtkObject--accessible-component-mdi-zorder"/>
+    <keyword type="property" name="The &quot;accessible-description&quot; property" link="AtkObject.html#AtkObject--accessible-description"/>
+    <keyword type="property" name="The &quot;accessible-hypertext-nlinks&quot; property" link="AtkObject.html#AtkObject--accessible-hypertext-nlinks"/>
+    <keyword type="property" name="The &quot;accessible-name&quot; property" link="AtkObject.html#AtkObject--accessible-name"/>
+    <keyword type="property" name="The &quot;accessible-parent&quot; property" link="AtkObject.html#AtkObject--accessible-parent"/>
+    <keyword type="property" name="The &quot;accessible-role&quot; property" link="AtkObject.html#AtkObject--accessible-role"/>
+    <keyword type="property" name="The &quot;accessible-table-caption&quot; property" link="AtkObject.html#AtkObject--accessible-table-caption"/>
+    <keyword type="property" name="The &quot;accessible-table-caption-object&quot; property" link="AtkObject.html#AtkObject--accessible-table-caption-object"/>
+    <keyword type="property" name="The &quot;accessible-table-column-description&quot; property" link="AtkObject.html#AtkObject--accessible-table-column-description"/>
+    <keyword type="property" name="The &quot;accessible-table-column-header&quot; property" link="AtkObject.html#AtkObject--accessible-table-column-header"/>
+    <keyword type="property" name="The &quot;accessible-table-row-description&quot; property" link="AtkObject.html#AtkObject--accessible-table-row-description"/>
+    <keyword type="property" name="The &quot;accessible-table-row-header&quot; property" link="AtkObject.html#AtkObject--accessible-table-row-header"/>
+    <keyword type="property" name="The &quot;accessible-table-summary&quot; property" link="AtkObject.html#AtkObject--accessible-table-summary"/>
+    <keyword type="property" name="The &quot;accessible-value&quot; property" link="AtkObject.html#AtkObject--accessible-value"/>
+    <keyword type="signal" name="The &quot;active-descendant-changed&quot; signal" link="AtkObject.html#AtkObject-active-descendant-changed"/>
+    <keyword type="signal" name="The &quot;children-changed&quot; signal" link="AtkObject.html#AtkObject-children-changed"/>
+    <keyword type="signal" name="The &quot;focus-event&quot; signal" link="AtkObject.html#AtkObject-focus-event"/>
+    <keyword type="signal" name="The &quot;property-change&quot; signal" link="AtkObject.html#AtkObject-property-change"/>
+    <keyword type="signal" name="The &quot;state-change&quot; signal" link="AtkObject.html#AtkObject-state-change"/>
+    <keyword type="signal" name="The &quot;visible-data-changed&quot; signal" link="AtkObject.html#AtkObject-visible-data-changed"/>
+    <keyword type="struct" name="struct AtkObjectFactory" link="AtkObjectFactory.html#AtkObjectFactory-struct"/>
+    <keyword type="function" name="atk_object_factory_create_accessible ()" link="AtkObjectFactory.html#atk-object-factory-create-accessible"/>
+    <keyword type="function" name="atk_object_factory_get_accessible_type ()" link="AtkObjectFactory.html#atk-object-factory-get-accessible-type"/>
+    <keyword type="function" name="atk_object_factory_invalidate ()" link="AtkObjectFactory.html#atk-object-factory-invalidate"/>
+    <keyword type="struct" name="struct AtkPlug" link="atk-AtkPlug.html#AtkPlug"/>
+    <keyword type="function" name="atk_plug_new ()" link="atk-AtkPlug.html#atk-plug-new"/>
+    <keyword type="function" name="atk_plug_get_id ()" link="atk-AtkPlug.html#atk-plug-get-id"/>
+    <keyword type="struct" name="AtkRegistry" link="AtkRegistry.html#AtkRegistry-struct"/>
+    <keyword type="function" name="atk_registry_set_factory_type ()" link="AtkRegistry.html#atk-registry-set-factory-type"/>
+    <keyword type="function" name="atk_registry_get_factory_type ()" link="AtkRegistry.html#atk-registry-get-factory-type"/>
+    <keyword type="function" name="atk_registry_get_factory ()" link="AtkRegistry.html#atk-registry-get-factory"/>
+    <keyword type="function" name="atk_get_default_registry ()" link="AtkRegistry.html#atk-get-default-registry"/>
+    <keyword type="struct" name="struct AtkRelation" link="AtkRelation.html#AtkRelation-struct"/>
+    <keyword type="enum" name="enum AtkRelationType" link="AtkRelation.html#AtkRelationType"/>
+    <keyword type="function" name="atk_relation_type_register ()" link="AtkRelation.html#atk-relation-type-register"/>
+    <keyword type="function" name="atk_relation_type_get_name ()" link="AtkRelation.html#atk-relation-type-get-name"/>
+    <keyword type="function" name="atk_relation_type_for_name ()" link="AtkRelation.html#atk-relation-type-for-name"/>
+    <keyword type="function" name="atk_relation_new ()" link="AtkRelation.html#atk-relation-new"/>
+    <keyword type="function" name="atk_relation_get_relation_type ()" link="AtkRelation.html#atk-relation-get-relation-type"/>
+    <keyword type="function" name="atk_relation_get_target ()" link="AtkRelation.html#atk-relation-get-target"/>
+    <keyword type="function" name="atk_relation_add_target ()" link="AtkRelation.html#atk-relation-add-target" since="1.9"/>
+    <keyword type="function" name="atk_relation_remove_target ()" link="AtkRelation.html#atk-relation-remove-target"/>
+    <keyword type="property" name="The &quot;relation-type&quot; property" link="AtkRelation.html#AtkRelation--relation-type"/>
+    <keyword type="property" name="The &quot;target&quot; property" link="AtkRelation.html#AtkRelation--target"/>
+    <keyword type="struct" name="AtkRelationSet" link="AtkRelationSet.html#AtkRelationSet-struct"/>
+    <keyword type="function" name="atk_relation_set_new ()" link="AtkRelationSet.html#atk-relation-set-new"/>
+    <keyword type="function" name="atk_relation_set_contains ()" link="AtkRelationSet.html#atk-relation-set-contains"/>
+    <keyword type="function" name="atk_relation_set_remove ()" link="AtkRelationSet.html#atk-relation-set-remove"/>
+    <keyword type="function" name="atk_relation_set_add ()" link="AtkRelationSet.html#atk-relation-set-add"/>
+    <keyword type="function" name="atk_relation_set_get_n_relations ()" link="AtkRelationSet.html#atk-relation-set-get-n-relations"/>
+    <keyword type="function" name="atk_relation_set_get_relation ()" link="AtkRelationSet.html#atk-relation-set-get-relation"/>
+    <keyword type="function" name="atk_relation_set_get_relation_by_type ()" link="AtkRelationSet.html#atk-relation-set-get-relation-by-type"/>
+    <keyword type="function" name="atk_relation_set_add_relation_by_type ()" link="AtkRelationSet.html#atk-relation-set-add-relation-by-type" since="1.9"/>
+    <keyword type="struct" name="AtkSelection" link="AtkSelection.html#AtkSelection-struct"/>
+    <keyword type="function" name="atk_selection_add_selection ()" link="AtkSelection.html#atk-selection-add-selection"/>
+    <keyword type="function" name="atk_selection_clear_selection ()" link="AtkSelection.html#atk-selection-clear-selection"/>
+    <keyword type="function" name="atk_selection_ref_selection ()" link="AtkSelection.html#atk-selection-ref-selection"/>
+    <keyword type="function" name="atk_selection_get_selection_count ()" link="AtkSelection.html#atk-selection-get-selection-count"/>
+    <keyword type="function" name="atk_selection_is_child_selected ()" link="AtkSelection.html#atk-selection-is-child-selected"/>
+    <keyword type="function" name="atk_selection_remove_selection ()" link="AtkSelection.html#atk-selection-remove-selection"/>
+    <keyword type="function" name="atk_selection_select_all_selection ()" link="AtkSelection.html#atk-selection-select-all-selection"/>
+    <keyword type="signal" name="The &quot;selection-changed&quot; signal" link="AtkSelection.html#AtkSelection-selection-changed"/>
+    <keyword type="struct" name="struct AtkSocket" link="atk-AtkSocket.html#AtkSocket"/>
+    <keyword type="function" name="atk_socket_new ()" link="atk-AtkSocket.html#atk-socket-new"/>
+    <keyword type="function" name="atk_socket_embed ()" link="atk-AtkSocket.html#atk-socket-embed" since="1.30"/>
+    <keyword type="function" name="atk_socket_is_occupied ()" link="atk-AtkSocket.html#atk-socket-is-occupied" since="1.30"/>
+    <keyword type="enum" name="enum AtkStateType" link="atk-AtkState.html#AtkStateType"/>
+    <keyword type="typedef" name="AtkState" link="atk-AtkState.html#AtkState"/>
+    <keyword type="function" name="atk_state_type_register ()" link="atk-AtkState.html#atk-state-type-register"/>
+    <keyword type="function" name="atk_state_type_get_name ()" link="atk-AtkState.html#atk-state-type-get-name"/>
+    <keyword type="function" name="atk_state_type_for_name ()" link="atk-AtkState.html#atk-state-type-for-name"/>
+    <keyword type="struct" name="AtkStateSet" link="AtkStateSet.html#AtkStateSet-struct"/>
+    <keyword type="function" name="atk_state_set_new ()" link="AtkStateSet.html#atk-state-set-new"/>
+    <keyword type="function" name="atk_state_set_is_empty ()" link="AtkStateSet.html#atk-state-set-is-empty"/>
+    <keyword type="function" name="atk_state_set_add_state ()" link="AtkStateSet.html#atk-state-set-add-state"/>
+    <keyword type="function" name="atk_state_set_add_states ()" link="AtkStateSet.html#atk-state-set-add-states"/>
+    <keyword type="function" name="atk_state_set_clear_states ()" link="AtkStateSet.html#atk-state-set-clear-states"/>
+    <keyword type="function" name="atk_state_set_contains_state ()" link="AtkStateSet.html#atk-state-set-contains-state"/>
+    <keyword type="function" name="atk_state_set_contains_states ()" link="AtkStateSet.html#atk-state-set-contains-states"/>
+    <keyword type="function" name="atk_state_set_remove_state ()" link="AtkStateSet.html#atk-state-set-remove-state"/>
+    <keyword type="function" name="atk_state_set_and_sets ()" link="AtkStateSet.html#atk-state-set-and-sets"/>
+    <keyword type="function" name="atk_state_set_or_sets ()" link="AtkStateSet.html#atk-state-set-or-sets"/>
+    <keyword type="function" name="atk_state_set_xor_sets ()" link="AtkStateSet.html#atk-state-set-xor-sets"/>
+    <keyword type="struct" name="AtkStreamableContent" link="AtkStreamableContent.html#AtkStreamableContent-struct"/>
+    <keyword type="function" name="atk_streamable_content_get_n_mime_types ()" link="AtkStreamableContent.html#atk-streamable-content-get-n-mime-types"/>
+    <keyword type="function" name="atk_streamable_content_get_mime_type ()" link="AtkStreamableContent.html#atk-streamable-content-get-mime-type"/>
+    <keyword type="function" name="atk_streamable_content_get_stream ()" link="AtkStreamableContent.html#atk-streamable-content-get-stream"/>
+    <keyword type="function" name="atk_streamable_content_get_uri ()" link="AtkStreamableContent.html#atk-streamable-content-get-uri" since="1.12"/>
+    <keyword type="struct" name="AtkTable" link="AtkTable.html#AtkTable-struct"/>
+    <keyword type="function" name="atk_table_ref_at ()" link="AtkTable.html#atk-table-ref-at"/>
+    <keyword type="function" name="atk_table_get_index_at ()" link="AtkTable.html#atk-table-get-index-at"/>
+    <keyword type="function" name="atk_table_get_column_at_index ()" link="AtkTable.html#atk-table-get-column-at-index"/>
+    <keyword type="function" name="atk_table_get_row_at_index ()" link="AtkTable.html#atk-table-get-row-at-index"/>
+    <keyword type="function" name="atk_table_get_n_columns ()" link="AtkTable.html#atk-table-get-n-columns"/>
+    <keyword type="function" name="atk_table_get_n_rows ()" link="AtkTable.html#atk-table-get-n-rows"/>
+    <keyword type="function" name="atk_table_get_column_extent_at ()" link="AtkTable.html#atk-table-get-column-extent-at"/>
+    <keyword type="function" name="atk_table_get_row_extent_at ()" link="AtkTable.html#atk-table-get-row-extent-at"/>
+    <keyword type="function" name="atk_table_get_caption ()" link="AtkTable.html#atk-table-get-caption"/>
+    <keyword type="function" name="atk_table_get_column_description ()" link="AtkTable.html#atk-table-get-column-description"/>
+    <keyword type="function" name="atk_table_get_row_description ()" link="AtkTable.html#atk-table-get-row-description"/>
+    <keyword type="function" name="atk_table_get_column_header ()" link="AtkTable.html#atk-table-get-column-header"/>
+    <keyword type="function" name="atk_table_get_row_header ()" link="AtkTable.html#atk-table-get-row-header"/>
+    <keyword type="function" name="atk_table_get_summary ()" link="AtkTable.html#atk-table-get-summary"/>
+    <keyword type="function" name="atk_table_set_caption ()" link="AtkTable.html#atk-table-set-caption"/>
+    <keyword type="function" name="atk_table_set_row_description ()" link="AtkTable.html#atk-table-set-row-description"/>
+    <keyword type="function" name="atk_table_set_column_description ()" link="AtkTable.html#atk-table-set-column-description"/>
+    <keyword type="function" name="atk_table_set_row_header ()" link="AtkTable.html#atk-table-set-row-header"/>
+    <keyword type="function" name="atk_table_set_column_header ()" link="AtkTable.html#atk-table-set-column-header"/>
+    <keyword type="function" name="atk_table_set_summary ()" link="AtkTable.html#atk-table-set-summary"/>
+    <keyword type="function" name="atk_table_get_selected_columns ()" link="AtkTable.html#atk-table-get-selected-columns"/>
+    <keyword type="function" name="atk_table_get_selected_rows ()" link="AtkTable.html#atk-table-get-selected-rows"/>
+    <keyword type="function" name="atk_table_is_column_selected ()" link="AtkTable.html#atk-table-is-column-selected"/>
+    <keyword type="function" name="atk_table_is_row_selected ()" link="AtkTable.html#atk-table-is-row-selected"/>
+    <keyword type="function" name="atk_table_is_selected ()" link="AtkTable.html#atk-table-is-selected"/>
+    <keyword type="function" name="atk_table_add_column_selection ()" link="AtkTable.html#atk-table-add-column-selection"/>
+    <keyword type="function" name="atk_table_add_row_selection ()" link="AtkTable.html#atk-table-add-row-selection"/>
+    <keyword type="function" name="atk_table_remove_column_selection ()" link="AtkTable.html#atk-table-remove-column-selection"/>
+    <keyword type="function" name="atk_table_remove_row_selection ()" link="AtkTable.html#atk-table-remove-row-selection"/>
+    <keyword type="signal" name="The &quot;column-deleted&quot; signal" link="AtkTable.html#AtkTable-column-deleted"/>
+    <keyword type="signal" name="The &quot;column-inserted&quot; signal" link="AtkTable.html#AtkTable-column-inserted"/>
+    <keyword type="signal" name="The &quot;column-reordered&quot; signal" link="AtkTable.html#AtkTable-column-reordered"/>
+    <keyword type="signal" name="The &quot;model-changed&quot; signal" link="AtkTable.html#AtkTable-model-changed"/>
+    <keyword type="signal" name="The &quot;row-deleted&quot; signal" link="AtkTable.html#AtkTable-row-deleted"/>
+    <keyword type="signal" name="The &quot;row-inserted&quot; signal" link="AtkTable.html#AtkTable-row-inserted"/>
+    <keyword type="signal" name="The &quot;row-reordered&quot; signal" link="AtkTable.html#AtkTable-row-reordered"/>
+    <keyword type="struct" name="AtkText" link="AtkText.html#AtkText-struct"/>
+    <keyword type="enum" name="enum AtkTextBoundary" link="AtkText.html#AtkTextBoundary"/>
+    <keyword type="enum" name="enum AtkTextClipType" link="AtkText.html#AtkTextClipType"/>
+    <keyword type="struct" name="struct AtkTextRange" link="AtkText.html#AtkTextRange"/>
+    <keyword type="struct" name="struct AtkTextRectangle" link="AtkText.html#AtkTextRectangle"/>
+    <keyword type="struct" name="struct AtkAttribute" link="AtkText.html#AtkAttribute"/>
+    <keyword type="typedef" name="AtkAttributeSet" link="AtkText.html#AtkAttributeSet"/>
+    <keyword type="enum" name="enum AtkTextAttribute" link="AtkText.html#AtkTextAttribute"/>
+    <keyword type="function" name="atk_text_get_text ()" link="AtkText.html#atk-text-get-text"/>
+    <keyword type="function" name="atk_text_get_character_at_offset ()" link="AtkText.html#atk-text-get-character-at-offset"/>
+    <keyword type="function" name="atk_text_get_text_after_offset ()" link="AtkText.html#atk-text-get-text-after-offset"/>
+    <keyword type="function" name="atk_text_get_text_at_offset ()" link="AtkText.html#atk-text-get-text-at-offset"/>
+    <keyword type="function" name="atk_text_get_text_before_offset ()" link="AtkText.html#atk-text-get-text-before-offset"/>
+    <keyword type="function" name="atk_text_get_caret_offset ()" link="AtkText.html#atk-text-get-caret-offset"/>
+    <keyword type="function" name="atk_text_get_character_extents ()" link="AtkText.html#atk-text-get-character-extents"/>
+    <keyword type="function" name="atk_text_get_run_attributes ()" link="AtkText.html#atk-text-get-run-attributes"/>
+    <keyword type="function" name="atk_text_get_default_attributes ()" link="AtkText.html#atk-text-get-default-attributes"/>
+    <keyword type="function" name="atk_text_get_character_count ()" link="AtkText.html#atk-text-get-character-count"/>
+    <keyword type="function" name="atk_text_get_offset_at_point ()" link="AtkText.html#atk-text-get-offset-at-point"/>
+    <keyword type="function" name="atk_text_get_bounded_ranges ()" link="AtkText.html#atk-text-get-bounded-ranges" since="1.3"/>
+    <keyword type="function" name="atk_text_get_range_extents ()" link="AtkText.html#atk-text-get-range-extents" since="1.3"/>
+    <keyword type="function" name="atk_text_free_ranges ()" link="AtkText.html#atk-text-free-ranges" since="1.3"/>
+    <keyword type="function" name="atk_text_get_n_selections ()" link="AtkText.html#atk-text-get-n-selections"/>
+    <keyword type="function" name="atk_text_get_selection ()" link="AtkText.html#atk-text-get-selection"/>
+    <keyword type="function" name="atk_text_add_selection ()" link="AtkText.html#atk-text-add-selection"/>
+    <keyword type="function" name="atk_text_remove_selection ()" link="AtkText.html#atk-text-remove-selection"/>
+    <keyword type="function" name="atk_text_set_selection ()" link="AtkText.html#atk-text-set-selection"/>
+    <keyword type="function" name="atk_text_set_caret_offset ()" link="AtkText.html#atk-text-set-caret-offset"/>
+    <keyword type="function" name="atk_attribute_set_free ()" link="AtkText.html#atk-attribute-set-free"/>
+    <keyword type="function" name="atk_text_attribute_register ()" link="AtkText.html#atk-text-attribute-register"/>
+    <keyword type="function" name="atk_text_attribute_get_name ()" link="AtkText.html#atk-text-attribute-get-name"/>
+    <keyword type="function" name="atk_text_attribute_for_name ()" link="AtkText.html#atk-text-attribute-for-name"/>
+    <keyword type="function" name="atk_text_attribute_get_value ()" link="AtkText.html#atk-text-attribute-get-value"/>
+    <keyword type="signal" name="The &quot;text-attributes-changed&quot; signal" link="AtkText.html#AtkText-text-attributes-changed"/>
+    <keyword type="signal" name="The &quot;text-caret-moved&quot; signal" link="AtkText.html#AtkText-text-caret-moved"/>
+    <keyword type="signal" name="The &quot;text-changed&quot; signal" link="AtkText.html#AtkText-text-changed"/>
+    <keyword type="signal" name="The &quot;text-insert&quot; signal" link="AtkText.html#AtkText-text-insert"/>
+    <keyword type="signal" name="The &quot;text-remove&quot; signal" link="AtkText.html#AtkText-text-remove"/>
+    <keyword type="signal" name="The &quot;text-selection-changed&quot; signal" link="AtkText.html#AtkText-text-selection-changed"/>
+    <keyword type="signal" name="The &quot;text-update&quot; signal" link="AtkText.html#AtkText-text-update"/>
+    <keyword type="struct" name="struct AtkUtil" link="AtkUtil.html#AtkUtil-struct"/>
+    <keyword type="enum" name="enum AtkCoordType" link="AtkUtil.html#AtkCoordType"/>
+    <keyword type="function" name="atk_add_focus_tracker ()" link="AtkUtil.html#atk-add-focus-tracker"/>
+    <keyword type="function" name="atk_remove_focus_tracker ()" link="AtkUtil.html#atk-remove-focus-tracker"/>
+    <keyword type="function" name="atk_focus_tracker_init ()" link="AtkUtil.html#atk-focus-tracker-init"/>
+    <keyword type="function" name="atk_focus_tracker_notify ()" link="AtkUtil.html#atk-focus-tracker-notify"/>
+    <keyword type="function" name="AtkEventListener ()" link="AtkUtil.html#AtkEventListener"/>
+    <keyword type="function" name="AtkEventListenerInit ()" link="AtkUtil.html#AtkEventListenerInit"/>
+    <keyword type="function" name="atk_add_global_event_listener ()" link="AtkUtil.html#atk-add-global-event-listener"/>
+    <keyword type="function" name="atk_remove_global_event_listener ()" link="AtkUtil.html#atk-remove-global-event-listener"/>
+    <keyword type="struct" name="struct AtkKeyEventStruct" link="AtkUtil.html#AtkKeyEventStruct"/>
+    <keyword type="enum" name="enum AtkKeyEventType" link="AtkUtil.html#AtkKeyEventType"/>
+    <keyword type="function" name="AtkKeySnoopFunc ()" link="AtkUtil.html#AtkKeySnoopFunc"/>
+    <keyword type="function" name="atk_add_key_event_listener ()" link="AtkUtil.html#atk-add-key-event-listener"/>
+    <keyword type="function" name="atk_remove_key_event_listener ()" link="AtkUtil.html#atk-remove-key-event-listener"/>
+    <keyword type="function" name="atk_get_root ()" link="AtkUtil.html#atk-get-root"/>
+    <keyword type="function" name="atk_get_focus_object ()" link="AtkUtil.html#atk-get-focus-object" since="1.6"/>
+    <keyword type="function" name="atk_get_toolkit_name ()" link="AtkUtil.html#atk-get-toolkit-name"/>
+    <keyword type="function" name="atk_get_toolkit_version ()" link="AtkUtil.html#atk-get-toolkit-version"/>
+    <keyword type="function" name="atk_get_version ()" link="AtkUtil.html#atk-get-version" since="1.20"/>
+    <keyword type="macro" name="ATK_DEFINE_TYPE()" link="AtkUtil.html#ATK-DEFINE-TYPE:CAPS" since="1.22"/>
+    <keyword type="macro" name="ATK_DEFINE_TYPE_EXTENDED()" link="AtkUtil.html#ATK-DEFINE-TYPE-EXTENDED:CAPS" since="1.22"/>
+    <keyword type="macro" name="ATK_DEFINE_TYPE_WITH_CODE()" link="AtkUtil.html#ATK-DEFINE-TYPE-WITH-CODE:CAPS" since="1.22"/>
+    <keyword type="macro" name="ATK_DEFINE_ABSTRACT_TYPE()" link="AtkUtil.html#ATK-DEFINE-ABSTRACT-TYPE:CAPS" since="1.22"/>
+    <keyword type="macro" name="ATK_DEFINE_ABSTRACT_TYPE_WITH_CODE()" link="AtkUtil.html#ATK-DEFINE-ABSTRACT-TYPE-WITH-CODE:CAPS" since="1.22"/>
+    <keyword type="struct" name="AtkValue" link="AtkValue.html#AtkValue-struct"/>
+    <keyword type="function" name="atk_value_get_current_value ()" link="AtkValue.html#atk-value-get-current-value"/>
+    <keyword type="function" name="atk_value_get_maximum_value ()" link="AtkValue.html#atk-value-get-maximum-value"/>
+    <keyword type="function" name="atk_value_get_minimum_value ()" link="AtkValue.html#atk-value-get-minimum-value"/>
+    <keyword type="function" name="atk_value_set_current_value ()" link="AtkValue.html#atk-value-set-current-value"/>
+    <keyword type="function" name="atk_value_get_minimum_increment ()" link="AtkValue.html#atk-value-get-minimum-increment" since="1.12"/>
+    <keyword type="constant" name="ATK_HYPERLINK_IS_INLINE" link="AtkHyperlink.html#ATK-HYPERLINK-IS-INLINE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_INVALID" link="AtkObject.html#ATK-ROLE-INVALID:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_ACCEL_LABEL" link="AtkObject.html#ATK-ROLE-ACCEL-LABEL:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_ALERT" link="AtkObject.html#ATK-ROLE-ALERT:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_ANIMATION" link="AtkObject.html#ATK-ROLE-ANIMATION:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_ARROW" link="AtkObject.html#ATK-ROLE-ARROW:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_CALENDAR" link="AtkObject.html#ATK-ROLE-CALENDAR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_CANVAS" link="AtkObject.html#ATK-ROLE-CANVAS:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_CHECK_BOX" link="AtkObject.html#ATK-ROLE-CHECK-BOX:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_CHECK_MENU_ITEM" link="AtkObject.html#ATK-ROLE-CHECK-MENU-ITEM:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_COLOR_CHOOSER" link="AtkObject.html#ATK-ROLE-COLOR-CHOOSER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_COLUMN_HEADER" link="AtkObject.html#ATK-ROLE-COLUMN-HEADER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_COMBO_BOX" link="AtkObject.html#ATK-ROLE-COMBO-BOX:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DATE_EDITOR" link="AtkObject.html#ATK-ROLE-DATE-EDITOR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DESKTOP_ICON" link="AtkObject.html#ATK-ROLE-DESKTOP-ICON:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DESKTOP_FRAME" link="AtkObject.html#ATK-ROLE-DESKTOP-FRAME:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DIAL" link="AtkObject.html#ATK-ROLE-DIAL:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DIALOG" link="AtkObject.html#ATK-ROLE-DIALOG:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DIRECTORY_PANE" link="AtkObject.html#ATK-ROLE-DIRECTORY-PANE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DRAWING_AREA" link="AtkObject.html#ATK-ROLE-DRAWING-AREA:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_FILE_CHOOSER" link="AtkObject.html#ATK-ROLE-FILE-CHOOSER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_FILLER" link="AtkObject.html#ATK-ROLE-FILLER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_FONT_CHOOSER" link="AtkObject.html#ATK-ROLE-FONT-CHOOSER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_FRAME" link="AtkObject.html#ATK-ROLE-FRAME:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_GLASS_PANE" link="AtkObject.html#ATK-ROLE-GLASS-PANE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_HTML_CONTAINER" link="AtkObject.html#ATK-ROLE-HTML-CONTAINER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_ICON" link="AtkObject.html#ATK-ROLE-ICON:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_IMAGE" link="AtkObject.html#ATK-ROLE-IMAGE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_INTERNAL_FRAME" link="AtkObject.html#ATK-ROLE-INTERNAL-FRAME:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_LABEL" link="AtkObject.html#ATK-ROLE-LABEL:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_LAYERED_PANE" link="AtkObject.html#ATK-ROLE-LAYERED-PANE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_LIST" link="AtkObject.html#ATK-ROLE-LIST:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_LIST_ITEM" link="AtkObject.html#ATK-ROLE-LIST-ITEM:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_MENU" link="AtkObject.html#ATK-ROLE-MENU:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_MENU_BAR" link="AtkObject.html#ATK-ROLE-MENU-BAR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_MENU_ITEM" link="AtkObject.html#ATK-ROLE-MENU-ITEM:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_OPTION_PANE" link="AtkObject.html#ATK-ROLE-OPTION-PANE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_PAGE_TAB" link="AtkObject.html#ATK-ROLE-PAGE-TAB:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_PAGE_TAB_LIST" link="AtkObject.html#ATK-ROLE-PAGE-TAB-LIST:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_PANEL" link="AtkObject.html#ATK-ROLE-PANEL:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_PASSWORD_TEXT" link="AtkObject.html#ATK-ROLE-PASSWORD-TEXT:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_POPUP_MENU" link="AtkObject.html#ATK-ROLE-POPUP-MENU:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_PROGRESS_BAR" link="AtkObject.html#ATK-ROLE-PROGRESS-BAR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_PUSH_BUTTON" link="AtkObject.html#ATK-ROLE-PUSH-BUTTON:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_RADIO_BUTTON" link="AtkObject.html#ATK-ROLE-RADIO-BUTTON:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_RADIO_MENU_ITEM" link="AtkObject.html#ATK-ROLE-RADIO-MENU-ITEM:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_ROOT_PANE" link="AtkObject.html#ATK-ROLE-ROOT-PANE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_ROW_HEADER" link="AtkObject.html#ATK-ROLE-ROW-HEADER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_SCROLL_BAR" link="AtkObject.html#ATK-ROLE-SCROLL-BAR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_SCROLL_PANE" link="AtkObject.html#ATK-ROLE-SCROLL-PANE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_SEPARATOR" link="AtkObject.html#ATK-ROLE-SEPARATOR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_SLIDER" link="AtkObject.html#ATK-ROLE-SLIDER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_SPLIT_PANE" link="AtkObject.html#ATK-ROLE-SPLIT-PANE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_SPIN_BUTTON" link="AtkObject.html#ATK-ROLE-SPIN-BUTTON:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_STATUSBAR" link="AtkObject.html#ATK-ROLE-STATUSBAR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TABLE" link="AtkObject.html#ATK-ROLE-TABLE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TABLE_CELL" link="AtkObject.html#ATK-ROLE-TABLE-CELL:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TABLE_COLUMN_HEADER" link="AtkObject.html#ATK-ROLE-TABLE-COLUMN-HEADER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TABLE_ROW_HEADER" link="AtkObject.html#ATK-ROLE-TABLE-ROW-HEADER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TEAR_OFF_MENU_ITEM" link="AtkObject.html#ATK-ROLE-TEAR-OFF-MENU-ITEM:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TERMINAL" link="AtkObject.html#ATK-ROLE-TERMINAL:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TEXT" link="AtkObject.html#ATK-ROLE-TEXT:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TOGGLE_BUTTON" link="AtkObject.html#ATK-ROLE-TOGGLE-BUTTON:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TOOL_BAR" link="AtkObject.html#ATK-ROLE-TOOL-BAR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TOOL_TIP" link="AtkObject.html#ATK-ROLE-TOOL-TIP:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TREE" link="AtkObject.html#ATK-ROLE-TREE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TREE_TABLE" link="AtkObject.html#ATK-ROLE-TREE-TABLE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_UNKNOWN" link="AtkObject.html#ATK-ROLE-UNKNOWN:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_VIEWPORT" link="AtkObject.html#ATK-ROLE-VIEWPORT:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_WINDOW" link="AtkObject.html#ATK-ROLE-WINDOW:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_HEADER" link="AtkObject.html#ATK-ROLE-HEADER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_FOOTER" link="AtkObject.html#ATK-ROLE-FOOTER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_PARAGRAPH" link="AtkObject.html#ATK-ROLE-PARAGRAPH:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_RULER" link="AtkObject.html#ATK-ROLE-RULER:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_APPLICATION" link="AtkObject.html#ATK-ROLE-APPLICATION:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_AUTOCOMPLETE" link="AtkObject.html#ATK-ROLE-AUTOCOMPLETE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_EDITBAR" link="AtkObject.html#ATK-ROLE-EDITBAR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_EMBEDDED" link="AtkObject.html#ATK-ROLE-EMBEDDED:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_ENTRY" link="AtkObject.html#ATK-ROLE-ENTRY:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_CHART" link="AtkObject.html#ATK-ROLE-CHART:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_CAPTION" link="AtkObject.html#ATK-ROLE-CAPTION:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DOCUMENT_FRAME" link="AtkObject.html#ATK-ROLE-DOCUMENT-FRAME:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_HEADING" link="AtkObject.html#ATK-ROLE-HEADING:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_PAGE" link="AtkObject.html#ATK-ROLE-PAGE:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_SECTION" link="AtkObject.html#ATK-ROLE-SECTION:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_REDUNDANT_OBJECT" link="AtkObject.html#ATK-ROLE-REDUNDANT-OBJECT:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_FORM" link="AtkObject.html#ATK-ROLE-FORM:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_LINK" link="AtkObject.html#ATK-ROLE-LINK:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_INPUT_METHOD_WINDOW" link="AtkObject.html#ATK-ROLE-INPUT-METHOD-WINDOW:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TABLE_ROW" link="AtkObject.html#ATK-ROLE-TABLE-ROW:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_TREE_ITEM" link="AtkObject.html#ATK-ROLE-TREE-ITEM:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DOCUMENT_SPREADSHEET" link="AtkObject.html#ATK-ROLE-DOCUMENT-SPREADSHEET:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DOCUMENT_PRESENTATION" link="AtkObject.html#ATK-ROLE-DOCUMENT-PRESENTATION:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DOCUMENT_TEXT" link="AtkObject.html#ATK-ROLE-DOCUMENT-TEXT:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DOCUMENT_WEB" link="AtkObject.html#ATK-ROLE-DOCUMENT-WEB:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_DOCUMENT_EMAIL" link="AtkObject.html#ATK-ROLE-DOCUMENT-EMAIL:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_COMMENT" link="AtkObject.html#ATK-ROLE-COMMENT:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_LIST_BOX" link="AtkObject.html#ATK-ROLE-LIST-BOX:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_GROUPING" link="AtkObject.html#ATK-ROLE-GROUPING:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_IMAGE_MAP" link="AtkObject.html#ATK-ROLE-IMAGE-MAP:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_NOTIFICATION" link="AtkObject.html#ATK-ROLE-NOTIFICATION:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_INFO_BAR" link="AtkObject.html#ATK-ROLE-INFO-BAR:CAPS"/>
+    <keyword type="constant" name="ATK_ROLE_LAST_DEFINED" link="AtkObject.html#ATK-ROLE-LAST-DEFINED:CAPS"/>
+    <keyword type="constant" name="ATK_LAYER_INVALID" link="AtkObject.html#ATK-LAYER-INVALID:CAPS"/>
+    <keyword type="constant" name="ATK_LAYER_BACKGROUND" link="AtkObject.html#ATK-LAYER-BACKGROUND:CAPS"/>
+    <keyword type="constant" name="ATK_LAYER_CANVAS" link="AtkObject.html#ATK-LAYER-CANVAS:CAPS"/>
+    <keyword type="constant" name="ATK_LAYER_WIDGET" link="AtkObject.html#ATK-LAYER-WIDGET:CAPS"/>
+    <keyword type="constant" name="ATK_LAYER_MDI" link="AtkObject.html#ATK-LAYER-MDI:CAPS"/>
+    <keyword type="constant" name="ATK_LAYER_POPUP" link="AtkObject.html#ATK-LAYER-POPUP:CAPS"/>
+    <keyword type="constant" name="ATK_LAYER_OVERLAY" link="AtkObject.html#ATK-LAYER-OVERLAY:CAPS"/>
+    <keyword type="constant" name="ATK_LAYER_WINDOW" link="AtkObject.html#ATK-LAYER-WINDOW:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_NULL" link="AtkRelation.html#ATK-RELATION-NULL:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_CONTROLLED_BY" link="AtkRelation.html#ATK-RELATION-CONTROLLED-BY:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_CONTROLLER_FOR" link="AtkRelation.html#ATK-RELATION-CONTROLLER-FOR:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_LABEL_FOR" link="AtkRelation.html#ATK-RELATION-LABEL-FOR:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_LABELLED_BY" link="AtkRelation.html#ATK-RELATION-LABELLED-BY:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_MEMBER_OF" link="AtkRelation.html#ATK-RELATION-MEMBER-OF:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_NODE_CHILD_OF" link="AtkRelation.html#ATK-RELATION-NODE-CHILD-OF:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_FLOWS_TO" link="AtkRelation.html#ATK-RELATION-FLOWS-TO:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_FLOWS_FROM" link="AtkRelation.html#ATK-RELATION-FLOWS-FROM:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_SUBWINDOW_OF" link="AtkRelation.html#ATK-RELATION-SUBWINDOW-OF:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_EMBEDS" link="AtkRelation.html#ATK-RELATION-EMBEDS:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_EMBEDDED_BY" link="AtkRelation.html#ATK-RELATION-EMBEDDED-BY:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_POPUP_FOR" link="AtkRelation.html#ATK-RELATION-POPUP-FOR:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_PARENT_WINDOW_OF" link="AtkRelation.html#ATK-RELATION-PARENT-WINDOW-OF:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_DESCRIBED_BY" link="AtkRelation.html#ATK-RELATION-DESCRIBED-BY:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_DESCRIPTION_FOR" link="AtkRelation.html#ATK-RELATION-DESCRIPTION-FOR:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_NODE_PARENT_OF" link="AtkRelation.html#ATK-RELATION-NODE-PARENT-OF:CAPS"/>
+    <keyword type="constant" name="ATK_RELATION_LAST_DEFINED" link="AtkRelation.html#ATK-RELATION-LAST-DEFINED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_INVALID" link="atk-AtkState.html#ATK-STATE-INVALID:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_ACTIVE" link="atk-AtkState.html#ATK-STATE-ACTIVE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_ARMED" link="atk-AtkState.html#ATK-STATE-ARMED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_BUSY" link="atk-AtkState.html#ATK-STATE-BUSY:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_CHECKED" link="atk-AtkState.html#ATK-STATE-CHECKED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_DEFUNCT" link="atk-AtkState.html#ATK-STATE-DEFUNCT:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_EDITABLE" link="atk-AtkState.html#ATK-STATE-EDITABLE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_ENABLED" link="atk-AtkState.html#ATK-STATE-ENABLED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_EXPANDABLE" link="atk-AtkState.html#ATK-STATE-EXPANDABLE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_EXPANDED" link="atk-AtkState.html#ATK-STATE-EXPANDED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_FOCUSABLE" link="atk-AtkState.html#ATK-STATE-FOCUSABLE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_FOCUSED" link="atk-AtkState.html#ATK-STATE-FOCUSED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_HORIZONTAL" link="atk-AtkState.html#ATK-STATE-HORIZONTAL:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_ICONIFIED" link="atk-AtkState.html#ATK-STATE-ICONIFIED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_MODAL" link="atk-AtkState.html#ATK-STATE-MODAL:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_MULTI_LINE" link="atk-AtkState.html#ATK-STATE-MULTI-LINE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_MULTISELECTABLE" link="atk-AtkState.html#ATK-STATE-MULTISELECTABLE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_OPAQUE" link="atk-AtkState.html#ATK-STATE-OPAQUE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_PRESSED" link="atk-AtkState.html#ATK-STATE-PRESSED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_RESIZABLE" link="atk-AtkState.html#ATK-STATE-RESIZABLE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_SELECTABLE" link="atk-AtkState.html#ATK-STATE-SELECTABLE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_SELECTED" link="atk-AtkState.html#ATK-STATE-SELECTED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_SENSITIVE" link="atk-AtkState.html#ATK-STATE-SENSITIVE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_SHOWING" link="atk-AtkState.html#ATK-STATE-SHOWING:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_SINGLE_LINE" link="atk-AtkState.html#ATK-STATE-SINGLE-LINE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_STALE" link="atk-AtkState.html#ATK-STATE-STALE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_TRANSIENT" link="atk-AtkState.html#ATK-STATE-TRANSIENT:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_VERTICAL" link="atk-AtkState.html#ATK-STATE-VERTICAL:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_VISIBLE" link="atk-AtkState.html#ATK-STATE-VISIBLE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_MANAGES_DESCENDANTS" link="atk-AtkState.html#ATK-STATE-MANAGES-DESCENDANTS:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_INDETERMINATE" link="atk-AtkState.html#ATK-STATE-INDETERMINATE:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_TRUNCATED" link="atk-AtkState.html#ATK-STATE-TRUNCATED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_REQUIRED" link="atk-AtkState.html#ATK-STATE-REQUIRED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_INVALID_ENTRY" link="atk-AtkState.html#ATK-STATE-INVALID-ENTRY:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_SUPPORTS_AUTOCOMPLETION" link="atk-AtkState.html#ATK-STATE-SUPPORTS-AUTOCOMPLETION:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_SELECTABLE_TEXT" link="atk-AtkState.html#ATK-STATE-SELECTABLE-TEXT:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_DEFAULT" link="atk-AtkState.html#ATK-STATE-DEFAULT:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_ANIMATED" link="atk-AtkState.html#ATK-STATE-ANIMATED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_VISITED" link="atk-AtkState.html#ATK-STATE-VISITED:CAPS"/>
+    <keyword type="constant" name="ATK_STATE_LAST_DEFINED" link="atk-AtkState.html#ATK-STATE-LAST-DEFINED:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_BOUNDARY_CHAR" link="AtkText.html#ATK-TEXT-BOUNDARY-CHAR:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_BOUNDARY_WORD_START" link="AtkText.html#ATK-TEXT-BOUNDARY-WORD-START:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_BOUNDARY_WORD_END" link="AtkText.html#ATK-TEXT-BOUNDARY-WORD-END:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_BOUNDARY_SENTENCE_START" link="AtkText.html#ATK-TEXT-BOUNDARY-SENTENCE-START:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_BOUNDARY_SENTENCE_END" link="AtkText.html#ATK-TEXT-BOUNDARY-SENTENCE-END:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_BOUNDARY_LINE_START" link="AtkText.html#ATK-TEXT-BOUNDARY-LINE-START:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_BOUNDARY_LINE_END" link="AtkText.html#ATK-TEXT-BOUNDARY-LINE-END:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_CLIP_NONE" link="AtkText.html#ATK-TEXT-CLIP-NONE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_CLIP_MIN" link="AtkText.html#ATK-TEXT-CLIP-MIN:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_CLIP_MAX" link="AtkText.html#ATK-TEXT-CLIP-MAX:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_CLIP_BOTH" link="AtkText.html#ATK-TEXT-CLIP-BOTH:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_INVALID" link="AtkText.html#ATK-TEXT-ATTR-INVALID:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_LEFT_MARGIN" link="AtkText.html#ATK-TEXT-ATTR-LEFT-MARGIN:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_RIGHT_MARGIN" link="AtkText.html#ATK-TEXT-ATTR-RIGHT-MARGIN:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_INDENT" link="AtkText.html#ATK-TEXT-ATTR-INDENT:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_INVISIBLE" link="AtkText.html#ATK-TEXT-ATTR-INVISIBLE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_EDITABLE" link="AtkText.html#ATK-TEXT-ATTR-EDITABLE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_PIXELS_ABOVE_LINES" link="AtkText.html#ATK-TEXT-ATTR-PIXELS-ABOVE-LINES:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_PIXELS_BELOW_LINES" link="AtkText.html#ATK-TEXT-ATTR-PIXELS-BELOW-LINES:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_PIXELS_INSIDE_WRAP" link="AtkText.html#ATK-TEXT-ATTR-PIXELS-INSIDE-WRAP:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_BG_FULL_HEIGHT" link="AtkText.html#ATK-TEXT-ATTR-BG-FULL-HEIGHT:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_RISE" link="AtkText.html#ATK-TEXT-ATTR-RISE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_UNDERLINE" link="AtkText.html#ATK-TEXT-ATTR-UNDERLINE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_STRIKETHROUGH" link="AtkText.html#ATK-TEXT-ATTR-STRIKETHROUGH:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_SIZE" link="AtkText.html#ATK-TEXT-ATTR-SIZE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_SCALE" link="AtkText.html#ATK-TEXT-ATTR-SCALE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_WEIGHT" link="AtkText.html#ATK-TEXT-ATTR-WEIGHT:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_LANGUAGE" link="AtkText.html#ATK-TEXT-ATTR-LANGUAGE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_FAMILY_NAME" link="AtkText.html#ATK-TEXT-ATTR-FAMILY-NAME:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_BG_COLOR" link="AtkText.html#ATK-TEXT-ATTR-BG-COLOR:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_FG_COLOR" link="AtkText.html#ATK-TEXT-ATTR-FG-COLOR:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_BG_STIPPLE" link="AtkText.html#ATK-TEXT-ATTR-BG-STIPPLE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_FG_STIPPLE" link="AtkText.html#ATK-TEXT-ATTR-FG-STIPPLE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_WRAP_MODE" link="AtkText.html#ATK-TEXT-ATTR-WRAP-MODE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_DIRECTION" link="AtkText.html#ATK-TEXT-ATTR-DIRECTION:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_JUSTIFICATION" link="AtkText.html#ATK-TEXT-ATTR-JUSTIFICATION:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_STRETCH" link="AtkText.html#ATK-TEXT-ATTR-STRETCH:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_VARIANT" link="AtkText.html#ATK-TEXT-ATTR-VARIANT:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_STYLE" link="AtkText.html#ATK-TEXT-ATTR-STYLE:CAPS"/>
+    <keyword type="constant" name="ATK_TEXT_ATTR_LAST_DEFINED" link="AtkText.html#ATK-TEXT-ATTR-LAST-DEFINED:CAPS"/>
+    <keyword type="constant" name="ATK_XY_SCREEN" link="AtkUtil.html#ATK-XY-SCREEN:CAPS"/>
+    <keyword type="constant" name="ATK_XY_WINDOW" link="AtkUtil.html#ATK-XY-WINDOW:CAPS"/>
+    <keyword type="constant" name="ATK_KEY_EVENT_PRESS" link="AtkUtil.html#ATK-KEY-EVENT-PRESS:CAPS"/>
+    <keyword type="constant" name="ATK_KEY_EVENT_RELEASE" link="AtkUtil.html#ATK-KEY-EVENT-RELEASE:CAPS"/>
+    <keyword type="constant" name="ATK_KEY_EVENT_LAST_DEFINED" link="AtkUtil.html#ATK-KEY-EVENT-LAST-DEFINED:CAPS"/>
+  </functions>
+</book>

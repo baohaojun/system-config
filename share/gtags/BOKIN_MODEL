@@ -1,0 +1,99 @@
+
+** The BOKIN Model Definition **
+
+     Version 1.0, December 17, 2005
+     Copyright (c) 2005 Tama Communications Corporation
+
+     Everyone is permitted to copy and distribute verbatim copies
+     of this document, but changing it is not allowed.
+
+
+Introduction
+
+BOKIN Model is a business model to obtain proceeds by widely
+collecting donations while developing and distributing free software.
+This model is constructed not to take away consumer's freedom of
+software.
+The business which comply with the following criteria can be called a
+business based on BOKIN Model.
+
+Criteria
+
+   1. CORPORATION
+      The person who start a business based on BOKIN Model must be a
+      business corporation registered in the home country. (Herein
+      after called the corporation)
+
+   2. FREE SOFTWARE
+      The corporation develops free software. (Herein after called the
+      BOKINware)
+
+   3. LICENSE
+      The corporation distributes the BOKINware under GNU GPL (GNU
+      General Public License) and GNU FDL (GNU Free Documentation
+      License). Exceptionally, external packages which the BOKINware
+      uses, small supporting files, short manuals and rough
+      documentation can use simple all-permissive license, compatible
+      with GNU GPL.
+
+   4. COPYRIGHT MANAGEMENT
+      The corporation manages copyright on the BOKINware for consumers
+      to keep on using it at ease.
+          o Every file in the BOKINware should have a legally valid
+            copyright notice and a license notice.
+          o To include program which is assigned from another
+            developer, the corporation receives a disclaimer paper or
+            assignment paper signed by the author.
+          o To include program which is not assigned, the corporation
+            confirms its license is GNU GPL or compatible with GNU
+            GPL, lists the files and authors in a file named AUTHORS,
+            and lists the license in a file named LICENSE. The
+            BOKINware should contain these two files.
+
+   5. MAILING LIST
+      The corporation maintains mailing lists for consumers to
+      cooperate one another.
+      The list members, including the corporation, don't owe any duty.
+      The mailing lists should include the following two at least.
+          o Bug mailing list
+            This list distributes, to the active maintainers of the
+            BOKINware, bug reports and fixes for, and suggestions for
+            improvements in the BOKINware. This list is also for user
+            discussion.
+          o Help mailing list
+            This list is the place for authors, users and installers
+            of the BOKINware to ask for help.
+      The mailing lists can be replaced with a similar communication
+      tool.
+      The corporation can decide the operation policy of the list, but
+      must not obstruct the list members to cooperate one another.
+
+   6. COLLECTING DONATIONS
+      The corporation collects donations widely as its proceeds.
+      The corporation must not offer the donor an individual supply of
+      profit.
+
+   7. DONOR LIST
+      The corporation open the donor list to the public.
+      The donor list includes the following information.
+          o Date of donation (The date when the corporation received
+            the donation)
+          o Amount of donation (Amount which the corporation received)
+          o Donor's name
+          o Donor's nationality
+      When donor's name and nationality are unknown or the donor
+      prefers to remain anonymous, they are treated as anonymous.
+      The BOKINware should contain the donor list as a file named
+      DONORS. It is preferable that the list is open to the public
+      even on the Internet.
+
+   8. BOKIN MODEL DEFINITION
+      The BOKINware should contain the present definition as a file
+      named BOKIN_MODEL.
+
+Renewal
+
+The author may publish revised and/or new versions of the BOKIN Model
+Definition from time to time. Such new versions will be similar in
+spirit to the present version, but may differ in detail to address new
+problems or concerns.

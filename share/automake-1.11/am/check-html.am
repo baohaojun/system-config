@@ -1,0 +1,61 @@
+## automake - create Makefile.in from Makefile.am
+## Copyright (C) 2001, 2003, 2006, 2007, 2008, 2009, 2010, 2011, 2012
+## Free Software Foundation, Inc.
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2, or (at your option)
+## any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+## Makefile.am fragment to produce HTML output from RST-formatted
+## log files produced by the parallel-tests output.
+## This fragment was part of the automake core in the 1.11.x release
+## series, but is to be moved out in the 1.12 release.
+
+TEST_SUITE_HTML = $(TEST_SUITE_LOG:.log=.html)
+
+mostlyclean-am: am--mostlyclean-test-html
+.PHONY: am--mostlyclean-test-html
+am--mostlyclean-test-html:
+## Expand $(TEST_LOGS) only once, to avoid exceeding line length limits.
+	list='$(TEST_LOGS:.log=.html)'; test -z "$$list" || rm -f $$list
+	rm -f $(TEST_SUITE_HTML)
+
+.log.html:
+	@list='$(RST2HTML) $$RST2HTML rst2html rst2html.py';		\
+	for r2h in $$list; do						\
+	  if ($$r2h --version) >/dev/null 2>&1; then			\
+	    R2H=$$r2h;							\
+	  fi;								\
+	done;								\
+	if test -z "$$R2H"; then					\
+	  echo >&2 "cannot find rst2html, cannot create $@";		\
+	  exit 2;							\
+	fi;								\
+	$$R2H $< >$@.tmp
+	@mv $@.tmp $@
+
+# Be sure to run check first, and then to convert the result.
+# Beware of concurrent executions.  Run "check" not "check-TESTS", as
+# check-SCRIPTS and other dependencies are rebuilt by the former only.
+# And expect check to fail.
+check-html recheck-html:
+	@target=`echo $@ | sed 's/-html$$//'`; \
+	rv=0; $(MAKE) $(AM_MAKEFLAGS) $$target || rv=$$?; \
+## The nullification of $(TEST_LOGS) is required to ensure that
+## "make recheck-html" do not try to uselessly re-run tests.
+	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_HTML) TEST_LOGS= || exit 4; \
+	exit $$rv
+
+AM_RECURSIVE_TARGETS += check-html recheck-html
+
+.PHONY: check-html recheck-html
+.MAKE: check-html recheck-html
