@@ -31,8 +31,18 @@ emacs --batch --eval "$emacs_code"
 mkdir -p ~/src/github
 cd ~/src/github
 
+if test -d ~/system-config/.emacs_d/elpa && test ! -d ~/.emacs.d/elpa; then
+    cp -av ~/system-config/.emacs_d/elpa ~/.emacs.d/
+    (
+        cd ~/.emacs.d/elpa
+        git init .
+        git add .
+        git commit -m 'init elpa'
+    )
+fi || true
+
 if test -d ~/system-config/src/github/twittering-mode; then
-    for x in ~/system-config/src/github; do
+    for x in ~/system-config/src/github/*; do
         ln -s $x ~/system-config/src/github ~/src/github >/dev/null 2>&1 || true
     done
     ln -s ~/src/github/emacs.d/site-lisp ~/.emacs.d/ || true
