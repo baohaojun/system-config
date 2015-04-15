@@ -12,6 +12,10 @@ if test -d ~/src/system-config/; then
             )
         done
     )
+    (
+        cd ~/.emacs.d/elpa/
+        psync -d -t src/system-config/.emacs_d/elpa localhost .
+    )
     cd ~/src/system-config/
     git add .
     git commit -m "auto commit from system-config:$(cd ~/system-config; git log --pretty=%H -1)"
