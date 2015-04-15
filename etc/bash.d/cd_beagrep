@@ -7,7 +7,7 @@ cd_beagrep()
         return
     fi
 
-    if [[ "$PWD" =~ .cache/for-code-reading ]]; then
+    if [[ "$PWD" =~ .cache/system-config/for-code-reading ]]; then
         builtin cd "${PWD#*for-code-reading}"
         return
     fi

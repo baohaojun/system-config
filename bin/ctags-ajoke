@@ -134,7 +134,7 @@ while (<STDIN>) {
     $abs_source = shell_quote($abs_source);
     chomp($abs_source = qx(readlink -f $abs_source));
 
-    my $cache_f = "$ENV{HOME}/.cache/for-code-reading/$abs_source";
+    my $cache_f = "$ENV{HOME}/.cache/system-config/for-code-reading/$abs_source";
 
     if (check_tag_cached("$cache_f.tag", $source)) {
         output_tag_cache("$cache_f.tag");
