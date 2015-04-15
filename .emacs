@@ -56,6 +56,10 @@
                load-path))
   (load "~/src/github/emacs.d/init.el"))
 
+(keydef "C-S-g" (let ((grep-buffers-buffer-name "*grep-buffers*")) (grep-buffers)))
+(keydef "C-M-j" 'bhj-jdk-help)
+(keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
+
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
   ;;press F2 to get MSDN help
   (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word)))))
@@ -129,12 +133,6 @@
 (standard-display-ascii ?\227 "\-")
 (standard-display-ascii ?\225 "\*")
 
-(keydef "C-S-g" (let ((grep-buffers-buffer-name "*grep-buffers*")) (grep-buffers)))
-
-
-
-
-
 ;; old time motorola usage
 ;; (defcustom bhj-clt-branch "dbg_zch68_a22242_ringtone-hx11i"
 ;;   "the cleartool branch to use for mkbranch")
@@ -188,11 +186,6 @@
 
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
-
-
-
-(keydef "C-M-j" 'bhj-jdk-help)
-(keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
 
 
 ;; Command to point VS.NET at our current file & line

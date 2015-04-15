@@ -31,10 +31,11 @@ emacs --batch --eval "$emacs_code"
 mkdir -p ~/src/github
 cd ~/src/github
 
-if test -d ~/system-config/src/github/twittering-mode/.git; then
+if test -d ~/system-config/src/github/twittering-mode; then
     for x in ~/system-config/src/github; do
-        ln -s $x ~/system-config/src/github ~/src/github >/dev/null 2>&1
+        ln -s $x ~/system-config/src/github ~/src/github >/dev/null 2>&1 || true
     done
+    ln -s ~/src/github/emacs.d/site-lisp ~/.emacs.d/ || true
 else
     if test ! -e twittering-mode/.git; then
         git clone http://github.com/baohaojun/twittering-mode
