@@ -195,7 +195,7 @@ if (@fallback_dirs and not $ENV{DOING_BEAGREP_FALLBACK}) {
     $ENV{DOING_BEAGREP_FALLBACK} = 1;
     for (@fallback_dirs) {
         chomp($_ = qx(readlink -f $_));
-        $_ =~ s,/.*\.cache/for-code-reading,,;
+        $_ =~ s,/.*\.cache/system-config/for-code-reading,,;
         print("Going to work in $_\n");
         chdir $_ or die "Can't chdir to $_";
         $ENV{PWD} = $_;
