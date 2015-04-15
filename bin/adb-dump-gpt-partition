@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+my-adb -r dd if=/dev/block/mmcblk0 of=/data/gpt bs=1024 count=1024
+my-adb pull /data/gpt ~/tmp/gpt
+cat ~/tmp/gpt | gpt-part-parser.pl
