@@ -4,4 +4,7 @@
 # --
 if test "\$(readlink -f "\$BASH_SOURCE")" = "\$(readlink -f "\$(echo "\$0" | grep / || which "\$0" 2>/dev/null)" )"; then
     ${1:"\$(basename \$0)" "$@"}
+else
+    # we are being sourced.
+    return 0
 fi

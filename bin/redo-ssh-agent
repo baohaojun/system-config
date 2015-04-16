@@ -13,6 +13,7 @@ EOF
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
     set -e
 else
+    # we are being sourced.
     return 0
 fi
 
