@@ -41,13 +41,16 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
     fi
 
     addgroup $USER --gid 1000 || true
-    addgroup media_rw --gid 1023 || true
+    addgroup --gid 1023 media_rw || true
+    addgroup --gid 1015 android_sdcard_rw || true
+    addgroup --gid 3003 android_inet || true
+
     addgroup android_inet --gid 3003 || true
     addgroup android_sdcard_rw --gid 1015 || true
-    adduser --disabled-password $USER --uid 1000 --gid 1000 || true
-    adduser --disabled-password media_rw --uid 1023 --gid 1023 || true
+    adduser --gecos '' --disabled-password $USER --uid 1000 --gid 1000 || true
+    adduser --gecos '' --disabled-password media_rw --uid 1023 --gid 1023 || true
 
-    usermod $USER -a -G android_inet,android_sdcard_rw || true
+    usermod $USER -a -G android_inet,android_sdcard_rw,media_rw || true
     cd
     umask 0022
     mkdir -p ~/.ssh

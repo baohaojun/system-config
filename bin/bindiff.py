@@ -25,8 +25,10 @@ while True:
     contentFile2 = file2.read(blockSize)
 
     if not all((len(contentFile1), len(contentFile2))):
-        print '%s has %d remaining' % (args[0], len(contentFile1))
-        print '%s has %d remaining' % (args[1], len(contentFile2))
+        if len(contentFile1):
+            print '%s has %d (or more) remaining' % (args[0], len(contentFile1))
+        if len(contentFile2):
+            print '%s has %d (or more) remaining' % (args[1], len(contentFile2))
         break
 
     if contentFile1 != contentFile2:

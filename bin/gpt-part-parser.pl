@@ -161,11 +161,13 @@ for (1..$number_of_partition_entries) {
 
     if ($name eq $partition_name_to_modify) {
         ($guid_part = $new_partition_uuid) =~ s/-//g;
+        $guid_part =~ m/(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})(.*)/;
+        $guid_part = "$4$3$2$1$6$5$8$7$9";
     }
     $modified_entries .= pack("H32H32H16H16H16S36", $guid_part, $guid_type, $lba1, $lba2, $attr, @name_arr);
 
-    $guid_part =~ m/(.{8})(.{4})(.{4})(.{4})(.*)/;
-    print "$name : $1-$2-$3-$4-$5\n";
+    $guid_part =~ m/(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})(.*)/;
+    print "$name : $4$3$2$1-$6$5-$8$7-$9\n";
 
     $guid_type =~ m/(.{8})(.{4})(.{4})(.{4})(.*)/;
     print "$name : $1-$2-$3-$4-$5\n";

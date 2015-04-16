@@ -1,0 +1,2 @@
+#!/bin/bash
+git tag|grep '[A-Z]'|xargs git tag -d > /dev/null

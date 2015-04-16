@@ -24,6 +24,10 @@ if test ! -e "$xml"; then
 fi
 
 my-adb -r id | grep 'uid=0\b'
+
+if ! my-adb 'test -d /data/debian/ && echo -n hello && echo '$$ | grep hello$$ -q; then
+    die "Debian not found on this phone, can't use rsync"
+fi
 ssh-to-phone echo hello$$ | grep hello$$
 
 function update-partition() {

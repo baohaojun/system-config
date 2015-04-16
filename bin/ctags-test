@@ -1,0 +1,5 @@
+#!/bin/bash
+
+find . -name '*.sh' |
+ctags-ajoke --langmap=$(lang-map-for-ctags ~/.globalrc) -xu --filter --filter-terminator='###terminator###
+'
