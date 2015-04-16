@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+if id | grep 'uid=0\b' -P; then
+    umount -l ~/smb;
+    screen_pid=$(ps.pl SCREEN.first|grep SCREEN|pn 1)
+    ps -eo user,pid | grep "^${OLDUSER:-bhj}\s+" -P | pn 2 |
+        while read pid; do
+            if test "$pid" = "$screen_pid"; then
+                continue
+            fi
+            if is-ppid "$screen_pid" "$pid"; then
+                continue
+            fi
+            kill -9 "$pid"
+        done
+else
+    sudo setsid env PATH=$PATH OLDUSER=$USER bash -c $0&
+fi

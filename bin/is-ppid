@@ -2,10 +2,10 @@
 child=${2:-$$}
 parent=$1
 
-while test $child != 1 -a $child != 0; do
-    if test $child = $parent; then
+while test "$child" -a "$child" != 1 -a "$child" != 0; do
+    if test "$child" = "$parent"; then
         exit 0
     fi
-    child=$(ps h -o ppid $child)
+    child=$(ps h -o ppid "$child"|perl -npe 's/\s+//')
 done
 exit 1
