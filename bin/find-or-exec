@@ -1,7 +1,9 @@
 #!/bin/bash
 
 if echo $SHELLOPTS | grep -q xtrace; then
-    true
+    if ! is-tty-io; then
+        exec > ~/.cache/system-config/logs/find-or-exec.log 2>&1
+    fi
 else
     exec >/dev/null 2>&1
 fi
@@ -18,10 +20,18 @@ if test $# = 0; then
 fi
 
 if test "$1" = konsole; then
-    shift;
-    set -- "konsole|xfce4-terminal" "$@"
+    sawfish_exp=$(printf '(find-window-or-exec %s "%s")' \
+                         '(lambda (w) (and
+                                        (string-match "konsole|xfce4-terminal" (bhj-window-class w) 0 t)
+                                        (not (string= "emacs" (window-name w)))))' \
+                         "${2:-true}"
+               )
+elif test "$1" = emacs -a -x ~/external/local/bin/emacs; then
+    sawfish_exp=$(printf '(find-window-or-exec (lambda (w) (string= (window-name w) "emacs")))')
+else
+    sawfish_exp=$(printf '(find-window-or-exec "%s" "%s")' "$1" "${2:-true}")
 fi
 
-sawfish_exp=$(printf '(find-window-or-exec "%s" "%s")' "$1" "${2:-true}")
+
 
 sawfish-client -e "$sawfish_exp"
