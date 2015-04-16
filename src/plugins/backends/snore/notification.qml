@@ -45,7 +45,7 @@ Rectangle {
 
             animation.start()
             window.visible = true
-            utils.bringWindowToFront(window.wid, false)
+            utils.raiseWindowToFront(window.wid)
         }
     }
 

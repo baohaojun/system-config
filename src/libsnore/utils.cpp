@@ -27,23 +27,6 @@
 
 using namespace Snore;
 
-void Utils::bringWindowToFront(qlonglong _wid, bool focus)
-{
-    snoreDebug(SNORE_DEBUG) << _wid;
-#ifdef Q_OS_WIN
-    HWND wid = (HWND)_wid;
-    int idActive = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
-    bool attetched = AttachThreadInput(GetCurrentThreadId(), idActive, TRUE);
-    SetForegroundWindow(wid);
-    if (focus) {
-        SetFocus(wid);
-    }
-    if (attetched) {
-        AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
-    }
-#endif
-}
-
 Utils::Utils(QObject *parent):
     QObject(parent)
 {
@@ -55,4 +38,42 @@ Utils::~Utils()
 
 }
 
+void Utils::bringWindowToFront(qlonglong _wid, bool focus)
+{
+    snoreDebug(SNORE_DEBUG) << _wid;
+#ifdef Q_OS_WIN
+    HWND wid = (HWND)_wid;
+    int active = attatchToActiveProcess();
+    SetForegroundWindow(wid);
+    if (focus) {
+        SetFocus(wid);
+    }
+    detatchActiveProcess(active);
+#endif
+}
 
+void Utils::raiseWindowToFront(qlonglong wid)
+{
+    snoreDebug(SNORE_DEBUG) << wid;
+#ifdef Q_OS_WIN
+    int active = attatchToActiveProcess();
+    SetWindowPos((HWND)wid, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
+    detatchActiveProcess(active);
+#endif
+}
+
+#ifdef Q_OS_WIN
+int Utils::attatchToActiveProcess()
+{
+    int idActive = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
+    return AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) ? idActive : -1;
+}
+
+void Utils::detatchActiveProcess(int idActive)
+{
+    if (idActive!= -1) {
+        AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
+    }
+}
+
+#endif

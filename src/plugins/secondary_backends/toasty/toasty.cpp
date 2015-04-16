@@ -91,5 +91,5 @@ void Toasty::slotNotify(Notification notification)
 
 PluginSettingsWidget *Toasty::settingsWidget()
 {
-    return new NotifyMyAndroidSettings(this);
+    return new ToastySettings(this);
 }
