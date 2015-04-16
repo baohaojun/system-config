@@ -22,29 +22,6 @@
 
 ;; Flycheck specifics
 
-(when (and (maybe-require-package 'flycheck-haskell)
-           (require-package 'flycheck-hdevtools))
-  (after-load 'flycheck
-    (add-hook 'haskell-mode-hook #'flycheck-haskell-setup)
-
-    (defun sanityinc/flycheck-haskell-reconfigure ()
-      "Reconfigure flycheck haskell settings, e.g. after changing cabal file."
-      (interactive)
-      (unless (eq major-mode 'haskell-mode)
-        (error "Expected to be in haskell-mode"))
-      (flycheck-haskell-clear-config-cache)
-      (flycheck-haskell-configure)
-      (flycheck-mode -1)
-      (flycheck-mode))
-
-    (defadvice haskell-mode-stylish-buffer (around skip-if-flycheck-errors activate)
-      "Don't run stylish-buffer if the buffer appears to have a syntax error.
-This isn't a hard guarantee, since flycheck might sometimes not run until the file has
-been saved."
-      (unless (flycheck-has-current-errors-p 'error)
-        ad-do-it))
-
-    (require 'flycheck-hdevtools)))
 
 
 ;; Docs
