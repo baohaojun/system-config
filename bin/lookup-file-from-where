@@ -42,6 +42,6 @@ sub lookup_up_file_1dir($) {
     }
 }
 
-open my $where, "<", glob("~/.where") or die "can not open ~/.where";
+open my $where, "<", glob("~/.cache/system-config/.where") or die "can not open ~/.cache/system-config/.where";
 my @dirs = (<$where>);
 map {chomp; lookup_up_file_1dir($_)} @dirs;

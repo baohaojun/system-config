@@ -110,7 +110,7 @@ function hir() {
         history -r
         backup_bash_history
         echo "~/.cache/system-config/.bash_history.bak has $(wc -l ~/.cache/system-config/.bash_history.bak|pn 1) lines"
-        cat ~/.where.bak >> ~/.where
+        cat ~/.cache/system-config/.where.bak >> ~/.cache/system-config/.where
     else
         command hil "$@"
     fi
@@ -170,6 +170,11 @@ cd_record()
     if test -e ~/.reset-env; then
         . ~/.reset-env
         rm -f ~/.reset-env
+    fi
+
+    if test ~/.config/system-config/ssh-agent -nt /proc/$$/cmdline; then
+        . ~/.config/system-config/ssh-agent
+        touch /proc/$$/cmdline >/dev/null 2>&1
     fi
     if test "$ANDROID_SERIAL" && ! echo "$RECURSIVE_SHELL" | grep -q -e "adb-$ANDROID_SERIAL\."; then
         RECURSIVE_SHELL=$(echo "$RECURSIVE_SHELL" | perl -npe 's/adb-\S+\s*//g;')

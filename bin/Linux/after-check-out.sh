@@ -2,7 +2,7 @@
 
 ~/system-config/bin/after-co-ln-s.sh
 . ~/system-config/.bashrc
-touch ~/.where ~/.where.lock
+touch ~/.cache/system-config/.where ~/.cache/system-config/.where.lock
 
 if test $(whoami) = bhj; then
     sudo perl -npe 's/^XKBVARIANT=.*/XKBVARIANT="dvp"/;' -i /etc/default/keyboard

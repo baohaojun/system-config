@@ -3,11 +3,11 @@
 #purpose:
 
 #o take a note of every dir that I have been to.
-#o `cd ori xx' should list the dirs that match these tokens, 
+#o `cd ori xx' should list the dirs that match these tokens,
 #o better yet, it should allow me to choose which one and the change into it.
-#o The dir history should be in the order that's last visited. 
+#o The dir history should be in the order that's last visited.
 
-#cd ori ext 
+#cd ori ext
 
 import os
 from OrderedSet import *
@@ -17,22 +17,22 @@ def where_pushd():
     pwd = os.environ['PWD']
     if '/.cache/system-config/for-code-reading' in pwd or '/smb' in pwd or '//' in pwd:
         return
-    dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');
+    dir_history = open(os.environ['HOME'] + '/.cache/system-config/.where').read().split('\n');
     dir_history[:0] = [pwd]
     dir_history = OrderedSet(dir_history);
-    
+
     for x in OrderedSet(dir_history):
         if not (os.path.exists(x) and os.path.isdir(x)):
             dir_history.discard(x)
 
     dir_history.add('')
-    fil_ = open(os.environ['HOME'] + ('/.where.%d' % os.getpid()), 'w')
+    fil_ = open(os.environ['HOME'] + ('/.cache/system-config/.where.%d' % os.getpid()), 'w')
     fil_.write('\n'.join(dir_history))
     fil_.close();
-    os.system("mv ~/.where.%d ~/.where" % os.getpid());
+    os.system("mv ~/.cache/system-config/.where.%d ~/.cache/system-config/.where" % os.getpid());
 
 def where_ask(argv):
-    dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');
+    dir_history = open(os.environ['HOME'] + '/.cache/system-config/.where').read().split('\n');
     for dir in dir_history:
         if all([x.lower() in dir.lower() for x in argv]):
             if any([x.lower() in dir.split('/')[-1].lower() for x in argv]):

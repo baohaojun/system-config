@@ -1,5 +1,5 @@
 #!/bin/bash
-cat ~/.where ~/.where.bak|sort -u > ~/.where.bak2
-mv ~/.where.bak2 ~/.where.bak
+cat ~/.cache/system-config/.where ~/.cache/system-config/.where.bak|sort -u > ~/.cache/system-config/.where.bak2
+mv ~/.cache/system-config/.where.bak2 ~/.cache/system-config/.where.bak
 
 backup_bash_history

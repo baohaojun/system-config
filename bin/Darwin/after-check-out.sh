@@ -1,7 +1,7 @@
 #!/bin/bash
 
 . ~/system-config/.bashrc
-touch ~/.where ~/.where.lock
+touch ~/.cache/system-config/.where ~/.cache/system-config/.where.lock
 
 . ~/system-config/bin/Linux/download-external.sh
 cpan String::Approx

@@ -54,7 +54,7 @@ if which sudo && test $(uname)  = Linux -a ! -e ~/.cache/system-config/logs/offl
     (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.cache/system-config/logs/offline-is-unstable) || true
 fi
 
-touch ~/.where.bak
+touch ~/.cache/system-config/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
 mkdir -p ~/tmp
 cd ~/system-config/
@@ -63,7 +63,7 @@ uname=$(uname|perl -npe 's/_.*//')
 mkdir -p ~/external/bin/$uname/ext
 mkdir -p ~/.cache/system-config/notification-manager
 mkdir -p ~/external/etc/at
-echo ~/external/etc/at >> ~/.where
+echo ~/external/etc/at >> ~/.cache/system-config/.where
 
 function die() {
     echo "$@"
