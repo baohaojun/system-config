@@ -172,9 +172,13 @@ exec 9> $OUT_DIR/.android-full-build.lock
         if test $# != 0; then
             if test $# = 1 -a $1 = msm-kernel; then
                 (
-                    cd build/target/board
                     PRODUCT_OUTX=$(android-env get_build_var PRODUCT_OUT)
-                    $do_nice mm $PRODUCT_OUTX/kernel $PRODUCT_OUTX/dt.img bootimage-nodeps -j$jobs $verbose
+                    cat <<EOF > $OUT_DIR/Android.mk
+bootimage-nodeps: ${PRODUCT_OUTX}/kernel ${PRODUCT_OUTX}/dt.img
+include build/target/board/Android.mk
+EOF
+                    cd $OUT_DIR
+                    $do_nice mm bootimage-nodeps -j$jobs $verbose
                 )
             elif test $# = 1 -a $1 = lk; then
                 (
