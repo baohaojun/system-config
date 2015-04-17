@@ -278,7 +278,7 @@ if ask-if-not-bhj "Do you want to make power button to hibernate?"; then
 fi
 
 if ask-if-not-bhj "Do you want to use bhj's git-exclude file?"; then
-    git config --global core.excludesfile '~/.git-exclude'
+    git config --global core.excludesfile '~/system-config/.git-exclude'
 fi
 
 if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; then
