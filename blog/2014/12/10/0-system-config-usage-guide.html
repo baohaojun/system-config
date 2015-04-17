@@ -6,7 +6,7 @@
 <title>我的system-config使用指南</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
-<meta  name="author" content="Haojun Bao" />
+<meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="stylesheet" href="/css/org.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
@@ -260,10 +260,10 @@ system-config的配置很简单，你只需要下载 <a href="https://github.com
 </p>
 
 <ol class="org-ol">
-<li><code>cd DIR</code> 会把 <code>DIR</code> 记到你的 <code>~/.where</code> 文件里，按最近使用的在最前的方式排序。
+<li><code>cd DIR</code> 会把 <code>DIR</code> 记到你的 <code>~/.cache/system-config/.where</code> 文件里，按最近使用的在最前的方式排序。
 </li>
 
-<li><code>cd foo bar</code> 会从你的 <code>~/.where</code> 文件里过滤出符合条件的目录，如果只有一个，直接跳转过去，如果不只一个，会有一个简单有效的选择方法让你选（因为之前的排序方式是最近使用排最前，所以大多数情况下你直接回车就行，因为第一条往往就是你想要的那条）。
+<li><code>cd foo bar</code> 会从你的 <code>~/.cache/system-config/.where</code> 文件里过滤出符合条件的目录，如果只有一个，直接跳转过去，如果不只一个，会有一个简单有效的选择方法让你选（因为之前的排序方式是最近使用排最前，所以大多数情况下你直接回车就行，因为第一条往往就是你想要的那条）。
 
 <p>
 比如我在终端里打 <code>cd fra base</code> ，在我的系统上会让我选哪个目录：

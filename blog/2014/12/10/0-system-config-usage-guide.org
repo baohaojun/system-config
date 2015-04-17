@@ -77,9 +77,9 @@ git clone --recursive https://github.com/baohaojun/system-config ~/system-config
 
 但我的cd命令会默默地帮你做很多事（这个跟上面提到的那个 https://github.com/rupa/z 项目非常类似）：
 
-1. =cd DIR= 会把 =DIR= 记到你的 =~/.where= 文件里，按最近使用的在最前的方式排序。
+1. =cd DIR= 会把 =DIR= 记到你的 =~/.cache/system-config/.where= 文件里，按最近使用的在最前的方式排序。
 
-2. =cd foo bar= 会从你的 =~/.where= 文件里过滤出符合条件的目录，如果只有一个，直接跳转过去，如果不只一个，会有一个简单有效的选择方法让你选（因为之前的排序方式是最近使用排最前，所以大多数情况下你直接回车就行，因为第一条往往就是你想要的那条）。
+2. =cd foo bar= 会从你的 =~/.cache/system-config/.where= 文件里过滤出符合条件的目录，如果只有一个，直接跳转过去，如果不只一个，会有一个简单有效的选择方法让你选（因为之前的排序方式是最近使用排最前，所以大多数情况下你直接回车就行，因为第一条往往就是你想要的那条）。
 
    比如我在终端里打 =cd fra base= ，在我的系统上会让我选哪个目录：
 
