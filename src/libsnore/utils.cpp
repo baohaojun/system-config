@@ -40,7 +40,6 @@ Utils::~Utils()
 
 void Utils::bringWindowToFront(qlonglong _wid, bool focus)
 {
-    snoreDebug(SNORE_DEBUG) << _wid;
 #ifdef Q_OS_WIN
     HWND wid = (HWND)_wid;
     int active = attatchToActiveProcess();
@@ -49,16 +48,21 @@ void Utils::bringWindowToFront(qlonglong _wid, bool focus)
         SetFocus(wid);
     }
     detatchActiveProcess(active);
+#else
+    Q_UNUSED(_wid);
+    Q_UNUSED(focus);
 #endif
 }
 
 void Utils::raiseWindowToFront(qlonglong wid)
 {
-    snoreDebug(SNORE_DEBUG) << wid;
+    // Looks like qt is handling it on linux.
 #ifdef Q_OS_WIN
     int active = attatchToActiveProcess();
     SetWindowPos((HWND)wid, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
     detatchActiveProcess(active);
+#else
+    Q_UNUSED(wid);
 #endif
 }
 
