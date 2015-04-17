@@ -2,9 +2,11 @@
 
 #include "libsnore/notification/notification.h"
 #include "libsnore/notification/notification_p.h"
-#include "libsnore/snore_p.h"
-#include "fredesktopnotification.h"
 #include "libsnore/snore.h"
+#include "libsnore/snore_p.h"
+#include "libsnore/utils.h"
+
+#include "fredesktopnotification.h"
 
 using namespace Snore;
 
@@ -70,8 +72,8 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     QString title = QString("%1 - %2").arg(noti.application().name(), noti.title());
     QString body(noti.text());
     if (!supportsRichtext()) {
-        title = Snore::toPlainText(title);
-        body = Snore::toPlainText(body);
+        title = Utils::toPlainText(title);
+        body = Utils::toPlainText(body);
     }
     QDBusPendingReply<uint>  id = m_interface->Notify(noti.application().name(), updateId, "", title,
                                   body, actions, hints, noti.isSticky() ? -1 : noti.timeout() * 1000);
