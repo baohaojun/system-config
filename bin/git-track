@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-. ~/.bash_profile
+. ~/system-config/.bashrc
 test $# == 0 && set -- `tbranch`
 
 die()

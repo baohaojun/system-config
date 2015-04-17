@@ -21,7 +21,7 @@ if test -x /opt/local/bin/bash; then
     export SHELL=/opt/local/bin/bash;
 fi
 
-source ~/.bash_profile
+. ~/system-config/.profile
 #. /etc/bash_completion
 if test "$1" != first; then
     set -- first "$@"
