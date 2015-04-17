@@ -15,6 +15,14 @@
     </message>
 </context>
 <context>
+    <name>NotifyMyAndroidSettings</name>
+    <message>
+        <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="28"/>
+        <source>Api Key:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <location filename="../src/libsnore/settingsdialog.ui" line="14"/>
@@ -99,22 +107,22 @@
 <context>
     <name>Snore::SettingsDialog</name>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="79"/>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="78"/>
         <source>Hello World</source>
         <translation>Hallo Welt</translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="81"/>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="80"/>
         <source>This is Snore</source>
         <translation>Dies ist Snore</translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="81"/>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="80"/>
         <source>Project Website</source>
         <translation>Projekt Webseite</translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="83"/>
+        <location filename="../src/libsnore/settingsdialog.cpp" line="82"/>
         <source>Test Action</source>
         <translation>Test Aktion</translation>
     </message>
@@ -150,17 +158,22 @@
 <context>
     <name>SoundSettings</name>
     <message>
-        <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="31"/>
+        <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="34"/>
+        <source>Volume:</source>
+        <translation>Lautstärke:</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="36"/>
         <source>Audio file:</source>
         <translation>Audio Datei:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="32"/>
+        <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="37"/>
         <source>Select a audio file</source>
         <translation>Wähle eine Audio Datei</translation>
     </message>
     <message>
-        <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="35"/>
+        <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="40"/>
         <source>All Audio files</source>
         <translation>Alle Audio Dateien</translation>
     </message>
