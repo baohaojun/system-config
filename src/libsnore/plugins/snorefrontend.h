@@ -33,8 +33,13 @@ class SNORE_EXPORT SnoreFrontend: public SnorePlugin
 public:
     SnoreFrontend(const QString &name);
     virtual ~SnoreFrontend();
-    virtual void actionInvoked(Snore::Notification notification) = 0;
-    virtual void notificationClosed(Snore::Notification notification) = 0;
+
+    virtual bool initialize() override;
+    virtual bool deinitialize() override;
+
+public slots:
+    virtual void slotActionInvoked(Snore::Notification notification) = 0;
+    virtual void slotNotificationClosed(Snore::Notification notification) = 0;
 };
 
 }

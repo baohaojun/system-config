@@ -40,8 +40,9 @@ public:
     virtual bool initialize() override;
     virtual bool deinitialize() override;
 
-    void actionInvoked(Snore::Notification notification) override;
-    void notificationClosed(Snore::Notification notification) override;
+public slots:
+    void slotActionInvoked(Snore::Notification notification) override;
+    void slotNotificationClosed(Snore::Notification notification) override;
 
 private slots:
     void handleConnection();

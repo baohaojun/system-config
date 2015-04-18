@@ -41,9 +41,6 @@ public:
 
     ~NotificationData();
 
-    void setSource(class SnoreFrontend *source);
-    class SnoreFrontend *source() const;
-
     void setActionInvoked(const Action &action);
     void setActionInvoked(const int &actionID);
 
@@ -57,7 +54,6 @@ private:
     uint m_id;
     uint m_updateID;
     int m_timeout;
-    SnoreFrontend *m_source;
     Application m_application;
     Alert m_alert;
     QString m_title;

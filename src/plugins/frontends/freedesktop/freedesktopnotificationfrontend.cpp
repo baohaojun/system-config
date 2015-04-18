@@ -68,14 +68,14 @@ bool FreedesktopFrontend::deinitialize()
     return false;
 }
 
-void FreedesktopFrontend::actionInvoked(Notification notification)
+void FreedesktopFrontend::slotActionInvoked(Notification notification)
 {
     if (notification.actionInvoked().isValid()) {
         emit ActionInvoked(notification.id(), QString::number(notification.actionInvoked().id()));
     }
 }
 
-void FreedesktopFrontend::notificationClosed(Notification notification)
+void FreedesktopFrontend::slotNotificationClosed(Notification notification)
 {
     emit NotificationClosed(notification.id(), notification.closeReason());
 }
@@ -124,7 +124,6 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     } else {
         noti = Notification(app, *app.alerts().begin(), summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
     }
-    noti.data()->setSource(this);
     for (int i = 0; i < actions.length(); i += 2) {
         noti.addAction(Action(actions.at(i).toInt(), actions.at(i + 1)));
     }

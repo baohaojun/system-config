@@ -49,7 +49,7 @@ public:
     ~SnoreCorePrivate();
     Application defaultApplication();
 
-    void notificationActionInvoked(Notification notification) const;
+    void notificationActionInvoked(Notification notification);
 
     bool setBackendIfAvailible(const QString &backend);
 

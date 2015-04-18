@@ -62,13 +62,13 @@ bool SnarlNetworkFrontend::deinitialize()
     return false;
 }
 
-void SnarlNetworkFrontend::actionInvoked(Snore::Notification notification)
+void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)
 {
     snoreDebug(SNORE_DEBUG) << notification.closeReason();
     callback(notification, "SNP/1.1/304/Notification acknowledged/");
 }
 
-void SnarlNetworkFrontend::notificationClosed(Snore::Notification notification)
+void SnarlNetworkFrontend::slotNotificationClosed(Snore::Notification notification)
 {
     switch (notification.closeReason()) {
     case Notification::TIMED_OUT:

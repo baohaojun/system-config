@@ -33,7 +33,6 @@ NotificationData::NotificationData(const Snore::Application &application, const 
                                    int timeout, Notification::Prioritys priority):
     m_id(m_idCount++),
     m_timeout(timeout),
-    m_source(NULL),
     m_application(application),
     m_alert(alert),
     m_title(title),
@@ -49,7 +48,6 @@ NotificationData::NotificationData(const Snore::Application &application, const 
 Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
     m_id(m_idCount++),
     m_timeout(timeout),
-    m_source(NULL),
     m_application(old.application()),
     m_alert(old.alert()),
     m_title(title),
@@ -77,16 +75,6 @@ void NotificationData::setActionInvoked(const Snore::Action &action)
 void NotificationData::setActionInvoked(const int &id)
 {
     m_actionInvoked = m_actions[id];
-}
-
-void NotificationData::setSource(SnoreFrontend *source)
-{
-    m_source = source;
-}
-
-SnoreFrontend *NotificationData::source() const
-{
-    return m_source;
 }
 
 void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)

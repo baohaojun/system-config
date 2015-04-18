@@ -34,9 +34,6 @@ public:
     virtual bool initialize() override;
     virtual bool deinitialize() override;
 
-    void actionInvoked(Snore::Notification notification) override;
-    void notificationClosed(Snore::Notification notification) override;
-
     uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
     void CloseNotification(uint id);
 
@@ -46,6 +43,10 @@ public:
 signals:
     void NotificationClosed(uint id, uint reason);
     void ActionInvoked(uint id, const QString &actionKey);
+
+public slots:
+    void slotActionInvoked(Snore::Notification notification) override;
+    void slotNotificationClosed(Snore::Notification notification) override;
 
 private:
     Snore::Alert m_alert;

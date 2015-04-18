@@ -189,6 +189,7 @@ bool SnoreBackend::deinitialize()
 void SnoreBackend::startTimeout(Notification &notification)
 {
     if (thread() != QThread::currentThread()) {
+        snoreDebug(SNORE_WARNING) << "Plugin timeout in wrong thread.";
         metaObject()->invokeMethod(this, "startTimeout", Qt::QueuedConnection, Q_ARG(Notification, notification));
         return;
     }

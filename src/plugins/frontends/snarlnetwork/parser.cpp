@@ -116,7 +116,6 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
             break;
         }
         sNotification = Notification(app, alert, title, text, icon, timeout);
-        sNotification.data()->setSource(snarl);
         sNotification.hints().setPrivateValue(snarl, "clientSocket", client);
         break;
     }

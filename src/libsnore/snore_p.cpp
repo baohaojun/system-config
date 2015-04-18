@@ -59,13 +59,10 @@ Application SnoreCorePrivate::defaultApplication()
     return m_defaultApp;
 }
 
-void SnoreCorePrivate::notificationActionInvoked(Notification notification) const
+void SnoreCorePrivate::notificationActionInvoked(Notification notification)
 {
-    Q_Q(const SnoreCore);
-    emit const_cast<SnoreCore *>(q)->actionInvoked(notification);
-    if (notification.data()->source()) {
-        notification.data()->source()->actionInvoked(notification);
-    }
+    Q_Q(SnoreCore);
+    emit q->actionInvoked(notification);
 }
 
 bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
@@ -219,10 +216,6 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
 {
     Q_Q(SnoreCore);
     emit q->notificationClosed(n);
-    if (n.data()->source()) {
-        //TODO: drop source and use signal aswell
-        n.data()->source()->notificationClosed(n);
-    }
 }
 
 void SnoreCorePrivate::slotAboutToQuit()
