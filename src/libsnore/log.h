@@ -33,17 +33,17 @@ enum SnoreDebugLevels {
     /**
      * The most important messages, will be diplayed if the debug level >= 1
      */
-    SNORE_WARNING = 1,
+    SNORE_WARNING = 0,
 
     /**
      * Information messages, will be diplayed if the debug level >= 2
      */
-    SNORE_INFO = 2,
+    SNORE_INFO = 1,
 
     /**
      * Debug messages will be diplayed if the debug level >= 3
      */
-    SNORE_DEBUG = 3
+    SNORE_DEBUG = 2
 
 };
 
@@ -53,7 +53,7 @@ enum SnoreDebugLevels {
  */
 
 #if !defined(QT_NO_DEBUG_OUTPUT)
-#define snoreDebug(X) Snore::SnoreLog( X ) << Q_FUNC_INFO
+#define snoreDebug(X) Snore::SnoreLog( X ) << #X << Q_FUNC_INFO
 #else
 #define snoreDebug(X) QNoDebug()
 #endif
