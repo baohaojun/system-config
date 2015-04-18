@@ -37,6 +37,10 @@ Using a plugin system it is possible to create notifications with many different
 
 [![System Tray Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/tray_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/tray.png)
 
+## Supported secondary Backends ##
+
+- [Windows Phone - Supertoasty](http://supertoasty.com/)
+- [Android - Notify my Android](https://www.notifymyandroid.com/) 
 
 
 ## Projects using Snore ##
