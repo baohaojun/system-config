@@ -23,55 +23,34 @@
 #include <QApplication>
 #include <QTextStream>
 
+#include <memory>
+
 using namespace Snore;
 
-class Loger
-{
-public:
-    static int s_debugLevel;
+static int debugLevel = 0;
+static std::unique_ptr<QTextStream> logFile = std::unique_ptr<QTextStream>();
+static std::unique_ptr<QFile> file = std::unique_ptr<QFile>();
 
-    static inline int debugLvl()
-    {
-        if (s_debugLevel == -1) {
-            s_debugLevel = qgetenv("LIBSNORE_DEBUG_LVL").toInt();
+static void init(){
+    debugLevel = qgetenv("LIBSNORE_DEBUG_LVL").toInt();
+    if (qgetenv("LIBSNORE_LOG_TO_FILE").toInt() == 1) {
+
+        QString name = QString("%1/libsnore/%2-log.txt").arg(QDir::tempPath(), qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName());
+        if (!qgetenv("LIBSNORE_LOGFILE").isNull()) {
+            name = QString(qgetenv("LIBSNORE_LOGFILE"));
+        } else {
+            QDir::temp().mkpath("libsnore");
         }
-        return s_debugLevel;
-    }
+        std::cout << "Started logging to " << name.toLocal8Bit().constData() << std::endl;
 
-    static inline bool isLogToFileEnabled()
-    {
-        static int s_logToFile = -1;
-        if (s_logToFile == -1) {
-            s_logToFile = qgetenv("LIBSNORE_LOG_TO_FILE").toInt();
+        file = std::unique_ptr<QFile>(new QFile(name));
+        if (!file->open(QFile::WriteOnly)) {
+            qFatal("Failed to open log file %s", qPrintable(name));
         }
-        return s_logToFile == 1;
+        logFile = std::unique_ptr<QTextStream>(new QTextStream(file.get()));
     }
-
-    static inline QTextStream &logFile()
-    {
-        static QTextStream *s_out = nullptr;
-        static QFile *s_file = nullptr;
-        if (!s_out) {
-            QString name = QString("%1/libsnore/%2-log.txt").arg(QDir::tempPath(), qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName());
-            if (!qgetenv("LIBSNORE_LOGFILE").isNull()) {
-                name = QString(qgetenv("LIBSNORE_LOGFILE"));
-            } else {
-                QDir::temp().mkpath("libsnore");
-            }
-            std::cout << "Started logging to " << name.toLocal8Bit().constData() << std::endl;
-
-            s_file = new QFile(name);
-            if (!s_file->open(QFile::WriteOnly)) {
-                qFatal("Failed to open log file %s", qPrintable(name));
-            }
-            s_out = new QTextStream(s_file);
-        }
-        return *s_out;
-    }
-
-};
-
-int Loger::s_debugLevel = -1;
+}
+Q_COREAPP_STARTUP_FUNCTION(init)
 
 SnoreLog::SnoreLog(SnoreDebugLevels lvl):
     QDebug(&m_msg),
@@ -81,18 +60,18 @@ SnoreLog::SnoreLog(SnoreDebugLevels lvl):
 
 SnoreLog::~SnoreLog()
 {
-    if (Loger::isLogToFileEnabled()) {
-        Loger::logFile() << m_msg << "\n";
-        Loger::logFile().flush();
+    if (logFile) {
+        *logFile << m_msg << "\n";
+        logFile->flush();
     }
     if (m_lvl == SNORE_WARNING) {
         std::cerr << m_msg.toLocal8Bit().constData() << std::endl;
-    } else  if (Loger::debugLvl() >= m_lvl) {
+    } else  if (debugLevel >= m_lvl) {
         std::cout << m_msg.toLocal8Bit().constData() << std::endl;
     }
 }
 
 void SnoreLog::setDebugLvl(int i)
 {
-    Loger::s_debugLevel = i;
+    debugLevel = i;
 }
