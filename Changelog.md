@@ -1,3 +1,14 @@
+# Changes since 0.5.2 #
+- Added support for settings.
+- New secondary backend [Toast](http://supertoasty.com/)
+- New secondary backend [Notify my Android](https://www.notifymyandroid.com/)
+- New secondary backend Sound playback.
+- Improved implementation of build in Snore backend.
+- Dropped Qt4
+- Use c++11
+- Api changes
+
+
 # Changes since 0.5.1 #
 - Updated the shiped version of SnoreToast
 	- SnoreToast reported succes even if notifications failed because they where disabled by the system. This lead to a crash in snorenotify.
