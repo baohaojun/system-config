@@ -85,7 +85,9 @@ SnoreLog::~SnoreLog()
         Loger::logFile() << m_msg << "\n";
         Loger::logFile().flush();
     }
-    if (Loger::debugLvl() >= m_lvl) {
+    if (m_lvl == SNORE_WARNING) {
+        std::cerr << m_msg.toLocal8Bit().constData() << std::endl;
+    } else  if (Loger::debugLvl() >= m_lvl) {
         std::cout << m_msg.toLocal8Bit().constData() << std::endl;
     }
 }
