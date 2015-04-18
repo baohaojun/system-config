@@ -59,7 +59,7 @@ void Utils::raiseWindowToFront(qlonglong wid)
     // Looks like qt is handling it on linux.
 #ifdef Q_OS_WIN
     int active = attatchToActiveProcess();
-    SetWindowPos((HWND)wid, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
+    SetWindowPos((HWND)wid, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     detatchActiveProcess(active);
 #else
     Q_UNUSED(wid);
@@ -75,7 +75,7 @@ int Utils::attatchToActiveProcess()
 
 void Utils::detatchActiveProcess(int idActive)
 {
-    if (idActive!= -1) {
+    if (idActive != -1) {
         AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
     }
 }

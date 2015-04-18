@@ -32,9 +32,9 @@ using namespace Snore;
 SnorePlugin::SnorePlugin(const QString &name) :
     m_name(name)
 {
-    Q_ASSERT_X(thread() != qApp->thread(),Q_FUNC_INFO,"Plugin initialized in wrong thread");
+    Q_ASSERT_X(thread() != qApp->thread(), Q_FUNC_INFO, "Plugin initialized in wrong thread");
     if (thread() != qApp->thread()) {
-       snoreDebug(SNORE_WARNING) << "Plugin initialized in wrong thread.";
+        snoreDebug(SNORE_WARNING) << "Plugin initialized in wrong thread.";
     }
     setDefaultValue("Enabled", false, LOCAL_SETTING);
 }

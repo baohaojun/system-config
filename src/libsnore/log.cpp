@@ -31,7 +31,8 @@ static int debugLevel = 0;
 static std::unique_ptr<QTextStream> logFile = std::unique_ptr<QTextStream>();
 static std::unique_ptr<QFile> file = std::unique_ptr<QFile>();
 
-static void init(){
+static void init()
+{
     debugLevel = qgetenv("LIBSNORE_DEBUG_LVL").toInt();
     if (qgetenv("LIBSNORE_LOG_TO_FILE").toInt() == 1) {
 

@@ -112,5 +112,4 @@ private:
 };
 }
 
-
 #endif // SNORECOREPRIVATE_H

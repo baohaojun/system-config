@@ -30,7 +30,7 @@ SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
     m_lineEditFileName(new QLineEdit),
     m_spinBoxVolume(new QSpinBox)
 {
-    m_spinBoxVolume->setRange(0,100);
+    m_spinBoxVolume->setRange(0, 100);
     addRow(tr("Volume:"), m_spinBoxVolume);
 
     addRow(tr("Audio file:"), m_lineEditFileName);

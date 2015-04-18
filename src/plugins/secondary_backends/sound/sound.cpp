@@ -27,7 +27,7 @@ Sound::Sound():
     SnoreSecondaryBackend("Sound", false),
     m_player(new QMediaPlayer(this))
 {
-    setDefaultValue("Volume",50);
+    setDefaultValue("Volume", 50);
     m_player->setVolume(value("Volume").toInt());
 //    connect(m_player,QMediaPlayer::positionChanged,[](qint64 pos){
 //        snoreDebug(SNORE_DEBUG) << "Player: " << pos;
@@ -65,9 +65,9 @@ void Sound::slotNotify(Snore::Notification notification)
         QTimer *timeout = new QTimer(this);
         timeout->setSingleShot(true);
         timeout->setInterval(notification.timeout() * 1000);
-        connect(timeout, &QTimer::timeout, [this,timeout]{
-           m_player->stop();
-           timeout->deleteLater();
+        connect(timeout, &QTimer::timeout, [this, timeout] {
+            m_player->stop();
+            timeout->deleteLater();
         });
     }
 }

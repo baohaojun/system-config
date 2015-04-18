@@ -25,8 +25,10 @@
 #include <QTextDocument>
 #include <QTextDocumentFragment>
 
-namespace Snore {
-class SNORE_EXPORT  Utils : public QObject {
+namespace Snore
+{
+class SNORE_EXPORT  Utils : public QObject
+{
     Q_OBJECT
 public:
     Utils(QObject *parent = nullptr);
@@ -83,8 +85,8 @@ public:
 
 private:
 #ifdef Q_OS_WIN
-static int attatchToActiveProcess();
-static void detatchActiveProcess(int idActive);
+    static int attatchToActiveProcess();
+    static void detatchActiveProcess(int idActive);
 #endif
 
 };

@@ -49,12 +49,12 @@ void NotifyMyAndroid::slotNotify(Notification notification)
 
     // TODO: use toHTML?
     QString data(QString("apikey=%1&application=%2&event=%3&description=%4&content-type=text/html")
-            .arg(key,
-                 notification.application().name(),
-                 Utils::toPlainText(notification.title()),
-                 Utils::toPlainText(notification.text())));
+                 .arg(key,
+                      notification.application().name(),
+                      Utils::toPlainText(notification.title()),
+                      Utils::toPlainText(notification.text())));
 
-    QNetworkReply *reply =  m_manager.post(request,data.toUtf8().constData());
+    QNetworkReply *reply =  m_manager.post(request, data.toUtf8().constData());
     connect(reply, &QNetworkReply::finished, [reply]() {
         snoreDebug(SNORE_DEBUG) << reply->error();
         snoreDebug(SNORE_DEBUG) << reply->readAll();
