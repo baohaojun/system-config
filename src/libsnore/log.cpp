@@ -49,8 +49,8 @@ public:
 
     static inline QTextStream &logFile()
     {
-        static QTextStream *s_out = NULL;
-        static QFile *s_file = NULL;
+        static QTextStream *s_out = nullptr;
+        static QFile *s_file = nullptr;
         if (!s_out) {
             QString name = QString("%1/libsnore/%2-log.txt").arg(QDir::tempPath(), qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName());
             if (!qgetenv("LIBSNORE_LOGFILE").isNull()) {
@@ -58,7 +58,7 @@ public:
             } else {
                 QDir::temp().mkpath("libsnore");
             }
-            std::cout << "Started logging to " << name.toUtf8().constData() << std::endl;
+            std::cout << "Started logging to " << name.toLocal8Bit().constData() << std::endl;
 
             s_file = new QFile(name);
             if (!s_file->open(QFile::WriteOnly)) {
@@ -86,7 +86,7 @@ SnoreLog::~SnoreLog()
         Loger::logFile().flush();
     }
     if (Loger::debugLvl() >= m_lvl) {
-        std::cout << m_msg.toLatin1().constData() << std::endl;
+        std::cout << m_msg.toLocal8Bit().constData() << std::endl;
     }
 }
 
