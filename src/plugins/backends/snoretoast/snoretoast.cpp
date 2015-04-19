@@ -104,11 +104,11 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
     QProcess *p = qobject_cast<QProcess *>(sender());
     snoreDebug(SNORE_DEBUG) << p->readAll();
     snoreDebug(SNORE_DEBUG) << "Exit code:" << code;
-    if (p->property("SNORE_NOTIFICATION_ID").isNull()) {
+    if (p->property("SNORE_NOTIFICATION").isNull()) {
         return;
     }
 
-    Notification n = getActiveNotificationByID(p->property("SNORE_NOTIFICATION_ID").toUInt());
+    Notification n = p->property("SNORE_NOTIFICATION").value<Notification>();
     Notification::CloseReasons reason = Notification::NONE;
 
     switch (code) {

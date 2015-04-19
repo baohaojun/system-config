@@ -45,7 +45,7 @@ public slots:
     void slotCloseNotification(Snore::Notification notification);
 
 private:
-    QHash<LONG32, uint> m_idMap;
+    QHash<LONG32, Snore::Notification> m_idMap;
 
 };
 

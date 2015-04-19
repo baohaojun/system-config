@@ -8,7 +8,6 @@ using namespace Snore;
 
 TrayIconNotifer::TrayIconNotifer() :
     SnoreBackend("System Tray Icon", true, false),
-    m_displayed(-1),
     m_currentlyDisplaying(false)
 {
 
@@ -83,14 +82,14 @@ void TrayIconNotifer::displayNotification(QSystemTrayIcon *icon)
     }
     m_currentlyDisplaying = true;
     Notification notification =  m_notificationQue.takeFirst();
-    m_displayed = notification.id();
+    m_displayed = notification;
     icon->showMessage(Utils::toPlainText(notification.title()), Utils::toPlainText(notification.text()), QSystemTrayIcon::NoIcon, notification.timeout() * 1000);
     startTimeout(notification);
 }
 
 void TrayIconNotifer::actionInvoked()
 {
-    Notification n = getActiveNotificationByID(m_displayed);
+    Notification n = m_displayed;
     QSystemTrayIcon *icon = trayIcon(n.application());
     if (icon && n.isValid()) {
         SnoreCorePrivate::instance()->notificationActionInvoked(n);

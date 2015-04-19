@@ -82,13 +82,28 @@ void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
     m_closeReason = r;
 }
 
-QTimer *NotificationData::timeoutTimer()
+void NotificationData::addActiveIn(const QObject *o)
 {
-    if (m_timeoutTimer.isNull()) {
-        m_timeoutTimer.reset(new QTimer());
-        m_timeoutTimer->setSingleShot(true);
-        m_timeoutTimer->setProperty("notificationID", m_id);
+    m_activeIn.insert(o);
+}
+
+bool NotificationData::isActiveIn(const QObject *o) const
+{
+    return m_activeIn.contains(o);
+}
+
+void NotificationData::removeActiveIn(const QObject *o)
+{
+    m_activeIn.remove(o);
+}
+
+void NotificationData::setTimeoutTimer(QTimer *timer)
+{
+    if(m_timeoutTimer)
+    {
+        m_timeoutTimer->stop();
+        m_timeoutTimer->deleteLater();
     }
-    return m_timeoutTimer.data();
+    m_timeoutTimer.reset(timer);
 }
 

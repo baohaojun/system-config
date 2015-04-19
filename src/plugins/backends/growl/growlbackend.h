@@ -36,18 +36,17 @@ public:
     bool deinitialize() override;
     Snore::PluginSettingsWidget *settingsWidget() override;
 
-    static void gntpCallback(growl_callback_data *data);
-
 private:
     //a static instance for the static callback methode
     static GrowlBackend *s_instance;
-    uint m_id;
+    QHash<uint, Snore::Notification> m_notifications;
     QHash<QString, Growl *> m_applications;
 
 public slots:
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotDeregisterApplication(const Snore::Application &application) override;
     void slotNotify(Snore::Notification notification) override;
+    void slotCloseNotification(Snore::Notification notification) override;
 
 };
 

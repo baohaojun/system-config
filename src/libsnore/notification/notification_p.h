@@ -46,7 +46,11 @@ public:
 
     void setCloseReason(Notification::CloseReasons r);
 
-    QTimer *timeoutTimer();
+    void addActiveIn(const QObject* o);
+    bool isActiveIn(const QObject* o) const;
+    void removeActiveIn(const QObject* o);
+
+    void setTimeoutTimer(QTimer *timer);
 
 private:
     Q_DISABLE_COPY(NotificationData)
@@ -66,6 +70,8 @@ private:
     Hint m_hints;
     Notification m_toReplace;
     QScopedPointer<QTimer> m_timeoutTimer;
+    QSet<const QObject*> m_activeIn;
+
 
     static uint notificationCount;
     static uint m_idCount;

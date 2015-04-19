@@ -73,6 +73,8 @@ private:
     QString m_name;
     bool m_initialized = false;
     PluginTypes m_type = NONE;
+
+    friend class Notification;
     friend class PluginContainer;
 
 };

@@ -62,7 +62,7 @@ public:
 
             Notification notification;
             if (msg->lParam != 0) {
-                notification =  SnoreCore::instance().getActiveNotificationByID(m_snarl->m_idMap.value(msg->lParam));
+                notification =  m_snarl->m_idMap.value(msg->lParam);
             }
 
             Notification::CloseReasons reason = Notification::NONE;
@@ -143,6 +143,7 @@ bool SnarlBackend::deinitialize()
         if (m_eventLoop) {
             m_eventLoop->deleteLater();
             m_eventLoop = NULL;
+            m_idMap.clear();
         }
         return true;
     }
@@ -227,7 +228,7 @@ void SnarlBackend::slotNotify(Notification notification)
         foreach(const Action & a, notification.actions()) {
             snarlInterface->AddAction(id, a.name().toUtf8().constData(), QString("@").append(QString::number(a.id())).toUtf8().constData());
         }
-        m_idMap[id] = notification.id();
+        m_idMap[id] = notification;
         notification.hints().setPrivateValue(this, "id", id);
     } else {
         //update message

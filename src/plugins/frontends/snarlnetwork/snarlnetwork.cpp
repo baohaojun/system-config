@@ -18,6 +18,7 @@
 
 #include "snarlnetwork.h"
 #include "libsnore/snore.h"
+#include "libsnore/notification/notification_p.h"
 
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -64,22 +65,28 @@ bool SnarlNetworkFrontend::deinitialize()
 
 void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)
 {
-    snoreDebug(SNORE_DEBUG) << notification.closeReason();
-    callback(notification, "SNP/1.1/304/Notification acknowledged/");
+
+    if(notification.data()->isActiveIn(this)) {
+        snoreDebug(SNORE_DEBUG) << notification.closeReason();
+        callback(notification, "SNP/1.1/304/Notification acknowledged/");
+    }
 }
 
 void SnarlNetworkFrontend::slotNotificationClosed(Snore::Notification notification)
 {
-    switch (notification.closeReason()) {
-    case Notification::TIMED_OUT:
-        callback(notification, "SNP/1.1/303/Notification timed out/");
-        break;
-    case Notification::ACTIVATED:
-        callback(notification, "SNP/1.1/307/Notification closed/");
-        break;
-    case Notification::DISMISSED:
-        callback(notification, "SNP/1.1/302/Notification cancelled/");
-        break;
+
+    if(notification.data()->isActiveIn(this)) {
+        switch (notification.closeReason()) {
+        case Notification::TIMED_OUT:
+            callback(notification, "SNP/1.1/303/Notification timed out/");
+            break;
+        case Notification::ACTIVATED:
+            callback(notification, "SNP/1.1/307/Notification closed/");
+            break;
+        case Notification::DISMISSED:
+            callback(notification, "SNP/1.1/302/Notification cancelled/");
+            break;
+        }
     }
 }
 
@@ -103,6 +110,7 @@ void SnarlNetworkFrontend::handleMessages()
         Notification noti;
         parser->parse(noti, s, client);
         if (noti.isValid()) {
+            noti.data()->addActiveIn(this);
             SnoreCore::instance().broadcastNotification(noti);
             write(client, QString("%1/%2\r\n").arg(out, QString::number(noti.id())));
         } else {

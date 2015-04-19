@@ -19,6 +19,7 @@
 #include "snore.h"
 #include "snore_p.h"
 #include "notification/notification.h"
+#include "notification/notification_p.h"
 #include "plugins/plugincontainer.h"
 #include "plugins/plugins.h"
 #include "plugins/snorebackend.h"
@@ -119,7 +120,7 @@ void SnoreCore::broadcastNotification(Notification notification)
         if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
             requestCloseNotification(notification.old(), Notification::REPLACED);
         }
-        d->m_notificationBackend->addActiveNotification(notification);
+        notification.data()->addActiveIn(d->m_notificationBackend);
     }
     emit d->notify(notification);
 }
@@ -172,15 +173,6 @@ bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
 {
     Q_D(SnoreCore);
     return d->setBackendIfAvailible(backend);
-}
-
-Notification SnoreCore::getActiveNotificationByID(uint id)
-{
-    Q_D(SnoreCore);
-    if (!d->m_notificationBackend->isInitialized()) {
-        qFatal("Notification backend %s isn't initialized will snore will exit now", d->m_notificationBackend->name().toLatin1().constData());
-    }
-    return d->m_notificationBackend->getActiveNotificationByID(id);
 }
 
 void SnoreCore::requestCloseNotification(Notification n, Notification::CloseReasons r)

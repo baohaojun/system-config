@@ -23,15 +23,15 @@
 #include "libsnore/snore_p.h"
 #include "libsnore/utils.h"
 
+#include <functional>
+
 using namespace Snore;
 
-GrowlBackend *GrowlBackend::s_instance = NULL;
+GrowlBackend *GrowlBackend::s_instance = nullptr;
 
 GrowlBackend::GrowlBackend():
-    SnoreBackend("Growl", false, false),
-    m_id(0)
+    SnoreBackend("Growl", false, false)
 {
-    s_instance = this;
     setDefaultValue("Host", "localhost");
     setDefaultValue("Password", "");
 }
@@ -42,7 +42,27 @@ GrowlBackend::~GrowlBackend()
 
 bool GrowlBackend::initialize()
 {
-    if (Growl::init((GROWL_CALLBACK)&GrowlBackend::gntpCallback) && Growl::isRunning(GROWL_TCP, value("Host").toString().toUtf8().constData())) {
+    s_instance = this;
+    auto func = [](growl_callback_data *data)->void{
+        snoreDebug(SNORE_DEBUG) << data->id << QString(data->reason) << QString(data->data);
+        Notification n = s_instance->m_notifications[data->id];
+        if (!n.isValid()) {
+            return;
+        }
+        Notification::CloseReasons r = Notification::NONE;
+        std::string reason(data->reason);
+        if (reason == "TIMEDOUT") {
+            r = Notification::TIMED_OUT;
+        } else if (reason == "CLOSED") {
+            r = Notification::DISMISSED;
+        } else if (reason == "CLICK") {
+            r = Notification::ACTIVATED;
+            SnoreCorePrivate::instance()->notificationActionInvoked(n);
+        }
+        s_instance->closeNotification(n, r);
+    };
+    if (Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data*)>(func))
+            && Growl::isRunning(GROWL_TCP, value("Host").toString().toUtf8().constData())) {
         return SnoreBackend::initialize();
     }
     snoreDebug(SNORE_DEBUG) << "Growl is not running";
@@ -52,9 +72,9 @@ bool GrowlBackend::initialize()
 bool GrowlBackend::deinitialize()
 {
     if (!Growl::shutdown()) {
+        m_notifications.clear();
         return false;
     }
-    s_instance = NULL;
     return SnoreBackend::deinitialize();
 }
 
@@ -78,7 +98,7 @@ void GrowlBackend::slotRegisterApplication(const Application &application)
 void GrowlBackend::slotDeregisterApplication(const Application &application)
 {
     Growl *growl = m_applications.take(application.name());
-    if (growl == NULL) {
+    if (growl == nullptr) {
         return;
     }
     delete growl;
@@ -99,34 +119,18 @@ void GrowlBackend::slotNotify(Notification notification)
     }
     data.setCallbackData("1");
     growl->Notify(data);
+    m_notifications[notification.id()] = notification;
 
     startTimeout(notification);
+}
+
+void GrowlBackend::slotCloseNotification(Notification notification)
+{
+    m_notifications.remove(notification.id());
 }
 
 PluginSettingsWidget *GrowlBackend::settingsWidget()
 {
     return new GrowlSettings(this);
-}
-
-void GrowlBackend::gntpCallback(growl_callback_data *data)
-{
-    if (s_instance) {
-        snoreDebug(SNORE_DEBUG) << data->id << QString(data->reason) << QString(data->data);
-        Notification n = SnoreCore::instance().getActiveNotificationByID(data->id);
-        if (!n.isValid()) {
-            return;
-        }
-        Notification::CloseReasons r = Notification::NONE;
-        std::string reason(data->reason);
-        if (reason == "TIMEDOUT") {
-            r = Notification::TIMED_OUT;
-        } else if (reason == "CLOSED") {
-            r = Notification::DISMISSED;
-        } else if (reason == "CLICK") {
-            r = Notification::ACTIVATED;
-            SnoreCorePrivate::instance()->notificationActionInvoked(n);
-        }
-        s_instance->closeNotification(n, r);
-    }
 }
 

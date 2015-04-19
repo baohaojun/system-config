@@ -123,14 +123,6 @@ public:
     bool setPrimaryNotificationBackend(const QString &backend);
 
     /**
-     * Tries to get an Notification by id.
-     * @param id the id of the Notification
-     * @return the Notification or an invalid Notification if the Notification was not found
-     * @see Notification::isValid
-     */
-    Notification getActiveNotificationByID(uint id);
-
-    /**
      * Try to close a Notification if the backend supports the action.
      * @see SnoreBackend::canCloseNotification
      */

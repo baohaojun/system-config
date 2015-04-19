@@ -27,7 +27,7 @@ public slots:
 private:
     QSystemTrayIcon *trayIcon(const Snore::Application &app);
     QList<Snore::Notification > m_notificationQue;
-    uint m_displayed;
+    Snore::Notification m_displayed;
     bool m_currentlyDisplaying;
 
 private slots:
