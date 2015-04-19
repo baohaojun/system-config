@@ -150,6 +150,7 @@ public:
     void setValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
     void setDefaultValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
 
+    Notification activeNotificationById(uint id) const;
 signals:
     /**
      * This signal is emitted when an action on the Notification was performed.

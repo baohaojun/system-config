@@ -147,25 +147,24 @@ bool Notification::isValid() const
 }
 
 
-void Notification::addActiveIn(SnorePlugin *o)
+void Notification::addActiveIn(const QObject *o)
 {
     d->m_activeIn.insert(o);
-    o->m_activeNotifications[id()] = *this;
+    SnoreCorePrivate::instance()->m_activeNotifications[id()] = *this;
 }
 
-bool Notification::isActiveIn(const SnorePlugin *o) const
+bool Notification::isActiveIn(const QObject *o) const
 {
     return d->m_activeIn.contains(o);
 }
 
-bool Notification::removeActiveIn(SnorePlugin *o)
+bool Notification::removeActiveIn(const QObject *o)
 {
     bool out = d->m_activeIn.remove(o);
-    if (out) {
-        o->m_activeNotifications.remove(id());
-        return true;
+    if (d->m_activeIn.isEmpty()) {
+        SnoreCorePrivate::instance()->m_activeNotifications.remove(id());
     }
-    return false;
+    return out;
 }
 
 NotificationData *Notification::data()

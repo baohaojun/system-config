@@ -60,11 +60,6 @@ bool SnorePlugin::isInitialized() const
     return m_initialized;
 }
 
-Notification SnorePlugin::activeNotificationById(uint id)
-{
-    return m_activeNotifications.value(id);
-}
-
 QVariant SnorePlugin::value(const QString &key, SettingsType type) const
 {
     return SnoreCore::instance().value(normaliseKey(key), type);
@@ -119,7 +114,6 @@ bool SnorePlugin::deinitialize()
     if (m_initialized) {
         snoreDebug(SNORE_DEBUG) << "Deinitialize" << m_name << this;
         m_initialized = false;
-        m_activeNotifications.clear();
         return true;
     }
     return false;

@@ -109,6 +109,9 @@ private:
     QString m_localSettingsPrefix = qApp->applicationName().isEmpty() ? "SnoreNotify" : qApp->applicationName();
 
     QSettings *m_settings;
+
+    QHash<uint,Snore::Notification> m_activeNotifications;
+    friend class Snore::Notification;
 };
 }
 

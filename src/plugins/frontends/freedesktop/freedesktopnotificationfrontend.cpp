@@ -124,7 +124,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     }
 
     Notification noti;
-    Notification toReplace = activeNotificationById(replaces_id);
+    Notification toReplace = SnoreCore::instance().activeNotificationById(replaces_id);
     if (replaces_id != 0 && toReplace.isValid()) {
         noti = Notification(toReplace, summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
     } else {
@@ -141,7 +141,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
 
 void FreedesktopFrontend::CloseNotification(uint id)
 {
-    Notification noti = activeNotificationById(id);
+    Notification noti = SnoreCore::instance().activeNotificationById(id);
     if (noti.isValid()) {
         SnoreCore::instance().requestCloseNotification(noti, Notification::TIMED_OUT);
     }

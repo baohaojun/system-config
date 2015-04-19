@@ -266,9 +266,10 @@ public:
      */
     static int defaultTimeout();
 
-    void addActiveIn(SnorePlugin *o);
-    bool isActiveIn(const Snore::SnorePlugin *o) const;
-    bool removeActiveIn(SnorePlugin *o);
+    void addActiveIn(const QObject *o);
+    bool isActiveIn(const QObject *o) const;
+    bool removeActiveIn(const QObject* o);
+
 private:
     QExplicitlySharedDataPointer<NotificationData> d;
 
