@@ -37,7 +37,8 @@ bool FreedesktopBackend::deinitialize()
         disconnect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
         disconnect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
         m_interface->deleteLater();
-        m_interface = NULL;
+        m_interface = nullptr;
+        m_dbusIdMap.clear();
         return true;
     }
     return false;
@@ -80,14 +81,14 @@ void  FreedesktopBackend::slotNotify(Notification noti)
 
     id.waitForFinished();
     noti.hints().setPrivateValue(this, "id", id.value());
-    m_dbusIdMap[id.value()] = noti.id();
+    m_dbusIdMap[id.value()] = noti;
 
     snoreDebug(SNORE_DEBUG) << noti.id() << "|" << id.value();
 }
 void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID)
 {
     snoreDebug(SNORE_DEBUG) << id << m_dbusIdMap[id];
-    Notification noti = getActiveNotificationByID(m_dbusIdMap[id]);
+    Notification noti = m_dbusIdMap[id];
     if (!noti.isValid()) {
         return;
     }
@@ -135,7 +136,7 @@ void FreedesktopBackend::slotNotificationClosed(const uint &id, const uint &reas
     if (id == 0) {
         return;
     }
-    Notification noti =  getActiveNotificationByID(m_dbusIdMap.take(id));
+    Notification noti =  m_dbusIdMap.take(id);
     if (noti.isValid()) {
         closeNotification(noti, closeReason);
     }

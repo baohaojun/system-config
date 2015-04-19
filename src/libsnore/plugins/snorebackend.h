@@ -38,8 +38,6 @@ public:
 
     void requestCloseNotification(Snore::Notification notification, Notification::CloseReasons reason);
 
-    Snore::Notification getActiveNotificationByID(uint id);
-
     bool canCloseNotification() const;
     bool canUpdateNotification() const;
     bool supportsRichtext() const;

@@ -20,6 +20,7 @@
 #include "notification/icon.h"
 #include "../hint.h"
 #include "../log.h"
+#include "../plugins/plugins.h"
 
 #include <QSharedData>
 
@@ -80,21 +81,6 @@ void NotificationData::setActionInvoked(const int &id)
 void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
 {
     m_closeReason = r;
-}
-
-void NotificationData::addActiveIn(const QObject *o)
-{
-    m_activeIn.insert(o);
-}
-
-bool NotificationData::isActiveIn(const QObject *o) const
-{
-    return m_activeIn.contains(o);
-}
-
-void NotificationData::removeActiveIn(const QObject *o)
-{
-    m_activeIn.remove(o);
 }
 
 void NotificationData::setTimeoutTimer(QTimer *timer)

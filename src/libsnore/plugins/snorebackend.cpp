@@ -75,11 +75,11 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
     if (!n.isValid()) {
         return;
     }
-    if (n.data()->isActiveIn(this)) {
-        n.data()->removeActiveIn(this);
+    if (n.isActiveIn(this)) {
+        n.removeActiveIn(this);
     }
-    if (n.isUpdate() && n.old().data()->isActiveIn(this)) {
-        n.old().data()->removeActiveIn(this);
+    if (n.isUpdate() && n.old().isActiveIn(this)) {
+        n.old().removeActiveIn(this);
     }
     n.data()->setCloseReason(reason);
     snoreDebug(SNORE_DEBUG) << n;

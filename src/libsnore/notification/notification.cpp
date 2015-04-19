@@ -146,10 +146,33 @@ bool Notification::isValid() const
     return d;
 }
 
+
+void Notification::addActiveIn(SnorePlugin *o)
+{
+    d->m_activeIn.insert(o);
+    o->m_activeNotifications[id()] = *this;
+}
+
+bool Notification::isActiveIn(const SnorePlugin *o) const
+{
+    return d->m_activeIn.contains(o);
+}
+
+bool Notification::removeActiveIn(SnorePlugin *o)
+{
+    bool out = d->m_activeIn.remove(o);
+    if (out) {
+        o->m_activeNotifications.remove(id());
+        return true;
+    }
+    return false;
+}
+
 NotificationData *Notification::data()
 {
     return d.data();
 }
+
 int Notification::defaultTimeout()
 {
     return SnoreCore::instance().value("Timeout", LOCAL_SETTING).toInt();

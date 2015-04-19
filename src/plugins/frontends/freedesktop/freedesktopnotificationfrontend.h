@@ -52,8 +52,6 @@ private:
     Snore::Alert m_alert;
     Snore::Icon m_icon;
     NotificationsAdaptor *m_adaptor;
-    QHash<uint,Snore::Notification> m_activeNotifications;
-
 };
 
 #endif//FREEDESKTOPNOTIFICATION_FRONTEND_H

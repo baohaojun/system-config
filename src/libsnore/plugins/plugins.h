@@ -53,6 +53,8 @@ public:
     virtual bool deinitialize();
     bool isInitialized() const;
 
+    Snore::Notification activeNotificationById(uint id);
+
     const QString &name() const;
     PluginTypes type() const;
     const QString typeName() const;
@@ -62,6 +64,7 @@ public:
     void setDefaultValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
 
     virtual PluginSettingsWidget *settingsWidget();
+
 
 protected:
     virtual QString settingsVersion() const;
@@ -73,6 +76,8 @@ private:
     QString m_name;
     bool m_initialized = false;
     PluginTypes m_type = NONE;
+
+    QHash<uint,Snore::Notification> m_activeNotifications;
 
     friend class Notification;
     friend class PluginContainer;

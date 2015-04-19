@@ -30,7 +30,7 @@ namespace Snore
 {
 
 class NotificationData;
-
+class SnorePlugin;
 /**
  *  Notification contains all relevant data to notify the user.
  *  Notification uses a shared datamodel, it's content is never copied and automatically released.
@@ -266,6 +266,9 @@ public:
      */
     static int defaultTimeout();
 
+    void addActiveIn(SnorePlugin *o);
+    bool isActiveIn(const Snore::SnorePlugin *o) const;
+    bool removeActiveIn(SnorePlugin *o);
 private:
     QExplicitlySharedDataPointer<NotificationData> d;
 

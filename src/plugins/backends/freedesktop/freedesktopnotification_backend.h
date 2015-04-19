@@ -22,7 +22,7 @@ public slots:
 
 private:
     org::freedesktop::Notifications *m_interface;
-    QHash<uint, uint> m_dbusIdMap;
+    QHash<uint, Snore::Notification> m_dbusIdMap;
 
 };
 

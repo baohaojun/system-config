@@ -39,7 +39,6 @@ public:
 private:
     //a static instance for the static callback methode
     static GrowlBackend *s_instance;
-    QHash<uint, Snore::Notification> m_notifications;
     QHash<QString, Growl *> m_applications;
 
 public slots:

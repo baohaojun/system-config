@@ -71,7 +71,7 @@ bool FreedesktopFrontend::deinitialize()
 void FreedesktopFrontend::slotActionInvoked(Notification notification)
 {
 
-    if(notification.data()->isActiveIn(this)) {
+    if(notification.isActiveIn(this)) {
         if (notification.actionInvoked().isValid()) {
             emit ActionInvoked(notification.id(), QString::number(notification.actionInvoked().id()));
         }
@@ -80,7 +80,7 @@ void FreedesktopFrontend::slotActionInvoked(Notification notification)
 
 void FreedesktopFrontend::slotNotificationClosed(Notification notification)
 {
-    if(notification.data()->isActiveIn(this)) {
+    if(notification.removeActiveIn(this)) {
         emit NotificationClosed(notification.id(), notification.closeReason());
     }
 }
@@ -124,8 +124,9 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     }
 
     Notification noti;
-    if (replaces_id != 0 && m_activeNotifications.contains(replaces_id)) {
-        noti = Notification(m_activeNotifications[replaces_id], summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
+    Notification toReplace = activeNotificationById(replaces_id);
+    if (replaces_id != 0 && toReplace.isValid()) {
+        noti = Notification(toReplace, summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
     } else {
         noti = Notification(app, *app.alerts().begin(), summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
     }
@@ -133,14 +134,14 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         noti.addAction(Action(actions.at(i).toInt(), actions.at(i + 1)));
     }
 
-    noti.data()->addActiveIn(this);
+    noti.addActiveIn(this);
     SnoreCore::instance().broadcastNotification(noti);
     return noti.id();
 }
 
 void FreedesktopFrontend::CloseNotification(uint id)
 {
-    Notification noti = m_activeNotifications.take(id);
+    Notification noti = activeNotificationById(id);
     if (noti.isValid()) {
         SnoreCore::instance().requestCloseNotification(noti, Notification::TIMED_OUT);
     }

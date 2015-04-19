@@ -28,6 +28,7 @@
 
 namespace Snore
 {
+class SnorePlugin;
 
 class SNORE_EXPORT NotificationData : public QSharedData
 {
@@ -45,10 +46,6 @@ public:
     void setActionInvoked(const int &actionID);
 
     void setCloseReason(Notification::CloseReasons r);
-
-    void addActiveIn(const QObject* o);
-    bool isActiveIn(const QObject* o) const;
-    void removeActiveIn(const QObject* o);
 
     void setTimeoutTimer(QTimer *timer);
 

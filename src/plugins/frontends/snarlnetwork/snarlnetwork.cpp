@@ -66,7 +66,7 @@ bool SnarlNetworkFrontend::deinitialize()
 void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)
 {
 
-    if(notification.data()->isActiveIn(this)) {
+    if(notification.isActiveIn(this)) {
         snoreDebug(SNORE_DEBUG) << notification.closeReason();
         callback(notification, "SNP/1.1/304/Notification acknowledged/");
     }
@@ -75,7 +75,7 @@ void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)
 void SnarlNetworkFrontend::slotNotificationClosed(Snore::Notification notification)
 {
 
-    if(notification.data()->isActiveIn(this)) {
+    if(notification.removeActiveIn(this)) {
         switch (notification.closeReason()) {
         case Notification::TIMED_OUT:
             callback(notification, "SNP/1.1/303/Notification timed out/");
@@ -110,7 +110,7 @@ void SnarlNetworkFrontend::handleMessages()
         Notification noti;
         parser->parse(noti, s, client);
         if (noti.isValid()) {
-            noti.data()->addActiveIn(this);
+            noti.addActiveIn(this);
             SnoreCore::instance().broadcastNotification(noti);
             write(client, QString("%1/%2\r\n").arg(out, QString::number(noti.id())));
         } else {

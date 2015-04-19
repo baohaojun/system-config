@@ -45,7 +45,7 @@ bool GrowlBackend::initialize()
     s_instance = this;
     auto func = [](growl_callback_data *data)->void{
         snoreDebug(SNORE_DEBUG) << data->id << QString(data->reason) << QString(data->data);
-        Notification n = s_instance->m_notifications[data->id];
+        Notification n = s_instance->activeNotificationById(data->id);
         if (!n.isValid()) {
             return;
         }
@@ -72,7 +72,6 @@ bool GrowlBackend::initialize()
 bool GrowlBackend::deinitialize()
 {
     if (!Growl::shutdown()) {
-        m_notifications.clear();
         return false;
     }
     return SnoreBackend::deinitialize();
@@ -106,6 +105,7 @@ void GrowlBackend::slotDeregisterApplication(const Application &application)
 
 void GrowlBackend::slotNotify(Notification notification)
 {
+    notification.addActiveIn(this);
     Growl *growl = m_applications.value(notification.application().name());
     QString alert = notification.alert().name();
     snoreDebug(SNORE_DEBUG) << "Notify Growl:" << notification.application() << alert << Utils::toPlainText(notification.title());
@@ -119,14 +119,13 @@ void GrowlBackend::slotNotify(Notification notification)
     }
     data.setCallbackData("1");
     growl->Notify(data);
-    m_notifications[notification.id()] = notification;
 
     startTimeout(notification);
 }
 
 void GrowlBackend::slotCloseNotification(Notification notification)
 {
-    m_notifications.remove(notification.id());
+    notification.removeActiveIn(this);
 }
 
 PluginSettingsWidget *GrowlBackend::settingsWidget()
