@@ -194,7 +194,7 @@ void SnoreBackend::startTimeout(Notification &notification)
     //dont use a capture for notification, as it can leak
     uint id = notification.id();
     connect(timer, &QTimer::timeout, [id](){
-        Notification notification = SnoreCore::instance().activeNotificationById(id);
+        Notification notification = SnoreCore::instance().getActiveNotificationByID(id);
         if(notification.isValid()){
             snoreDebug(SNORE_DEBUG) << notification;
             SnoreCore::instance().requestCloseNotification(notification, Notification::TIMED_OUT);

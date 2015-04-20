@@ -233,7 +233,7 @@ void SnoreCore::setDefaultValue(const QString &key, const QVariant &value, Setti
 }
 
 
-Notification SnoreCore::activeNotificationById(uint id) const
+Notification SnoreCore::getActiveNotificationByID(uint id) const
 {
     Q_D(const SnoreCore);
     return d->m_activeNotifications.value(id);

@@ -45,7 +45,7 @@ bool GrowlBackend::initialize()
     s_instance = this;
     auto func = [](growl_callback_data *data)->void{
         snoreDebug(SNORE_DEBUG) << data->id << QString(data->reason) << QString(data->data);
-        Notification n = Snore::SnoreCore::instance().activeNotificationById(data->id);
+        Notification n = Snore::SnoreCore::instance().getActiveNotificationByID(data->id);
         if (!n.isValid()) {
             return;
         }
