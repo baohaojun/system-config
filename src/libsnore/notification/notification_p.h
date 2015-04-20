@@ -75,6 +75,7 @@ private:
 
 };
 
+
 }
 
 #endif // NOTIFICATIONDATA_H

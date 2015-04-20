@@ -192,10 +192,8 @@ void SnoreBackend::startTimeout(Notification &notification)
     }
     timer->setInterval(notification.timeout() * 1000);
     connect(timer, &QTimer::timeout, [notification](){
-        if (notification.isValid()) {
-            snoreDebug(SNORE_DEBUG) << notification;
-            SnoreCore::instance().requestCloseNotification(notification, Notification::TIMED_OUT);
-        }
+        snoreDebug(SNORE_DEBUG) << notification;
+        SnoreCore::instance().requestCloseNotification(notification, Notification::TIMED_OUT);
     });
     timer->start();
 }

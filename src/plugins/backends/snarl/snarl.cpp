@@ -30,7 +30,7 @@
 
 #include <iostream>
 
-#define SNORENOTIFIER_MESSAGE_ID  WM_USER + 238
+#define SNORENOTIFIER_MESSAGE_ID WM_USER + 238
 
 using namespace Snore;
 using namespace Snarl::V42;
@@ -255,6 +255,6 @@ void SnarlBackend::slotCloseNotification(Notification notification)
         return;
     }
     ULONG32 id = notification.hints().privateValue(this, "id").toUInt();
-    m_idMap.take(id);
+    m_idMap.remove(id);
     m_applications.value(notification.application().name())->Hide(id);
 }

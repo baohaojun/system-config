@@ -164,6 +164,12 @@ QDebug operator<<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
 
 }
 
+QDebug operator<<(QDebug debug, const Snore::SnorePlugin *p){
+    debug.nospace() << p->metaObject()->className() << "(" << (void*)p  << ", " << p->name() << ")";
+    return debug.space();
+}
+
+
 QDataStream &operator<<(QDataStream &out, const Snore::SnorePlugin::PluginTypes &type)
 {
     out << static_cast<int>(type);

@@ -62,7 +62,7 @@ void SnoreToast::slotNotify(Notification notification)
     snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
     p->start("SnoreToast", arguements);
 
-    p->setProperty("SNORE_NOTIFICATION_ID", notification.id());
+    p->setProperty("SNORE_NOTIFICATION", QVariant::fromValue(notification));
 }
 
 void SnoreToast::slotRegisterApplication(const Application &application)
@@ -104,9 +104,6 @@ void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
     QProcess *p = qobject_cast<QProcess *>(sender());
     snoreDebug(SNORE_DEBUG) << p->readAll();
     snoreDebug(SNORE_DEBUG) << "Exit code:" << code;
-    if (p->property("SNORE_NOTIFICATION").isNull()) {
-        return;
-    }
 
     Notification n = p->property("SNORE_NOTIFICATION").value<Notification>();
     Notification::CloseReasons reason = Notification::NONE;

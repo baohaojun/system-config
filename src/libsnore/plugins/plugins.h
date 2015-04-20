@@ -87,6 +87,7 @@ Q_DECLARE_INTERFACE(Snore::SnorePlugin,
                     "org.Snore.SnorePlugin/1.0")
 
 SNORE_EXPORT QDebug operator<<(QDebug, const Snore::SnorePlugin::PluginTypes &);
+SNORE_EXPORT QDebug operator<<(QDebug, const Snore::SnorePlugin *);
 
 SNORE_EXPORT QDataStream &operator<<(QDataStream &out, const Snore::SnorePlugin::PluginTypes &type);
 SNORE_EXPORT QDataStream &operator>>(QDataStream &in, Snore::SnorePlugin::PluginTypes &type);
