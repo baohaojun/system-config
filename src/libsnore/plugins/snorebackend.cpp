@@ -191,9 +191,14 @@ void SnoreBackend::startTimeout(Notification &notification)
         notification.old().data()->setTimeoutTimer(nullptr);
     }
     timer->setInterval(notification.timeout() * 1000);
-    connect(timer, &QTimer::timeout, [notification](){
-        snoreDebug(SNORE_DEBUG) << notification;
-        SnoreCore::instance().requestCloseNotification(notification, Notification::TIMED_OUT);
+    //dont use a capture for notification, as it can leak
+    uint id = notification.id();
+    connect(timer, &QTimer::timeout, [id](){
+        Notification notification = SnoreCore::instance().activeNotificationById(id);
+        if(notification.isValid()){
+            snoreDebug(SNORE_DEBUG) << notification;
+            SnoreCore::instance().requestCloseNotification(notification, Notification::TIMED_OUT);
+        }
     });
     timer->start();
 }

@@ -23,10 +23,11 @@
 #include "plugins/plugincontainer.h"
 #include <Qt>
 
+
 using namespace Snore;
 
 Notification::Notification() :
-    d(NULL)
+    d(nullptr)
 {
 }
 
@@ -54,6 +55,7 @@ Notification &Notification::operator=(const Notification &other)
 
 Notification::~Notification()
 {
+
 }
 
 uint Notification::id() const
@@ -151,8 +153,8 @@ void Notification::addActiveIn(const QObject *o)
 {
     d->m_activeIn.insert(o);
     SnoreCorePrivate::instance()->m_activeNotifications[id()] = *this;
-    snoreDebug(SNORE_DEBUG) << d->m_activeIn.size() << o << qobject_cast<SnorePlugin*>(o);
-    snoreDebug(SNORE_DEBUG) << SnoreCorePrivate::instance()->m_activeNotifications.size();
+    snoreDebug(SNORE_INFO) << d->m_activeIn.size() << o << qobject_cast<SnorePlugin*>(o);
+    snoreDebug(SNORE_INFO) << SnoreCorePrivate::instance()->m_activeNotifications.size();
 }
 
 bool Notification::isActiveIn(const QObject *o) const
@@ -163,10 +165,10 @@ bool Notification::isActiveIn(const QObject *o) const
 bool Notification::removeActiveIn(const QObject *o)
 {
     bool out = d->m_activeIn.remove(o);
-    snoreDebug(SNORE_DEBUG) << d->m_activeIn.size() << o << qobject_cast<SnorePlugin*>(o);
+    snoreDebug(SNORE_INFO) << d->m_activeIn.size() << o << qobject_cast<SnorePlugin*>(o);
     if (d->m_activeIn.isEmpty()) {
         SnoreCorePrivate::instance()->m_activeNotifications.remove(id());
-        snoreDebug(SNORE_DEBUG) << SnoreCorePrivate::instance()->m_activeNotifications.size();
+        snoreDebug(SNORE_INFO) << SnoreCorePrivate::instance()->m_activeNotifications.size();
     }
     return out;
 }

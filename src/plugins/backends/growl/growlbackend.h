@@ -45,7 +45,6 @@ public slots:
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotDeregisterApplication(const Snore::Application &application) override;
     void slotNotify(Snore::Notification notification) override;
-    void slotCloseNotification(Snore::Notification notification) override;
 
 };
 

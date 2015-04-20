@@ -105,7 +105,6 @@ void GrowlBackend::slotDeregisterApplication(const Application &application)
 
 void GrowlBackend::slotNotify(Notification notification)
 {
-    notification.addActiveIn(this);
     Growl *growl = m_applications.value(notification.application().name());
     QString alert = notification.alert().name();
     snoreDebug(SNORE_DEBUG) << "Notify Growl:" << notification.application() << alert << Utils::toPlainText(notification.title());
@@ -121,11 +120,6 @@ void GrowlBackend::slotNotify(Notification notification)
     growl->Notify(data);
 
     startTimeout(notification);
-}
-
-void GrowlBackend::slotCloseNotification(Notification notification)
-{
-    notification.removeActiveIn(this);
 }
 
 PluginSettingsWidget *GrowlBackend::settingsWidget()
