@@ -15,7 +15,7 @@ function sudoedit()
         fi
     fi
 
-    local file=$( readlink -f "$1" )
+    local file=$( readlink -m "$1" )
     USER=root $EDITOR "$file"
 }
 

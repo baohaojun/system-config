@@ -1469,7 +1469,8 @@ to the value of `temporary-file-directory'."
 
 
 (defun bhj-select-text (text)
-  (let* ((process-connection-type nil)
+  (let* ((default-directory "/")
+         (process-connection-type nil)
          (proc (start-file-process "emacs-clip-cut" nil "emacs-clip-cut")))
     (when proc
       (process-send-string proc text)
@@ -1477,7 +1478,8 @@ to the value of `temporary-file-directory'."
     (setq bhj-last-selected-text text)))
 
 (defun bhj-select-value ()
-  (let ((text (shell-command-to-string "emacs-clip-paste")))
+  (let* ((default-directory "/")
+         (text (shell-command-to-string "emacs-clip-paste")))
     (if (string= text bhj-last-selected-text)
         nil
       text)))
