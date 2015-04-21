@@ -2,40 +2,47 @@
 # use evtest to see key code for keymap
 set -x
 
-sudo su - bhj -c bash -c "
-   . ~/.renew-xauth
-   (
-       rm ~/.config/system-config/keyboard-dev-ids
-       set -x
-       (
-           flock -n 9 || exit
-           do-natural-scrolling&
-           e4000_found=false
-           for x in $(seq 1 180 | tr '\n' ' '); do
-               if ! ls /dev/input/by-id/*4000-if01*; then
-                   sleep .1
-               else
-                   echo Microsoft Ergonomic keyboard found when x is \$x
-                   e4000_found=true
-                   break
-               fi
-           done
-           if test \$e4000_found = false; then
-               xmodmap ~/.Xmodmap
-               exit
-           fi
-           for x in $(seq 1 20 | tr '\n' ' '); do
-               if xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap; then
-                   # X Error of failed request:  BadValue (integer parameter out of range for operation)
-                   break
-               else
-                   sleep .1
-               fi
-           done
-           xmodmap -e 'keycode 197 = F23'
-           xmodmap -e 'keycode 202 = F24'
-           ~/system-config/bin/do-keymap
-       )&
-       date
-   )  > ~/.cache/system-config/logs/re-xmodmap.log 2>&1 9> ~/.cache/system-config/logs/re-xmodmap.lock &
-"&
+if id | grep 'uid=0\b'; then
+    exec > ~bhj/.cache/system-config/logs/re-xmodmap.su.log 2>&1
+    su - bhj -c bash -c "SLEEP1=180 SLEEP2=20 $0&"&
+    exit
+fi
+
+sleep1=${SLEEP1:-2}
+sleep2=${SLEEP2:-2}
+
+. ~/.renew-xauth
+(
+    rm ~/.config/system-config/keyboard-dev-ids
+    set -x
+    (
+        flock -n 9 || exit
+        do-natural-scrolling&
+        e4000_found=false
+        for x in $(seq 1 $sleep1); do
+            if ! ls /dev/input/by-id/*4000-if01*; then
+                sleep .1
+            else
+                echo Microsoft Ergonomic keyboard found when x is \$x
+                e4000_found=true
+                break
+            fi
+        done
+        if test $e4000_found = false; then
+            xmodmap ~/.Xmodmap
+            exit
+        fi
+        for x in $(seq 1 $sleep2); do
+            if xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap; then
+                # X Error of failed request:  BadValue (integer parameter out of range for operation)
+                break
+            else
+                sleep .1
+            fi
+        done
+        xmodmap -e 'keycode 197 = F23'
+        xmodmap -e 'keycode 202 = F24'
+        ~/system-config/bin/do-keymap
+    )&
+    date
+)  > ~/.cache/system-config/logs/re-xmodmap.log 2>&1 9> ~/.cache/system-config/logs/re-xmodmap.lock &

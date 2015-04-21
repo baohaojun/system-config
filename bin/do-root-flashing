@@ -23,30 +23,35 @@ if test ! -e boot.img; then
     die "Can't find boot.img"
 fi
 
-workingdir=/home/bhj/smb/baohaojun/tmp/root-flash
+if pwd -P | grep ~/tmp/root-flash/; then
+    outdir=$PWD
+else
+    workingdir=/home/bhj/smb/baohaojun/tmp/root-flash
 
-rm -rf $workingdir/$(basename $PWD) ~/tmp/root-flash
-mkdir -p $workingdir/ ~/tmp/root-flash || true
+    rm -rf $workingdir/$(basename $PWD) ~/tmp/root-flash
+    mkdir -p $workingdir/ ~/tmp/root-flash || true
 
-sup_path=$(sup)
-smb_host=$(echo "$sup_path" | perl -npe 's,smb://(.*?)/.*,$1,')
-smb_share=$(echo "$sup_path" | perl -npe 's,smb:(//.*?/.*?)/.*,$1,')
-smb_path=${sup_path:${#smb_share}+5}
+    sup_path=$(sup)
+    smb_host=$(echo "$sup_path" | perl -npe 's,smb://(.*?)/.*,$1,')
+    smb_share=$(echo "$sup_path" | perl -npe 's,smb:(//.*?/.*?)/.*,$1,')
+    smb_path=${sup_path:${#smb_share}+5}
 
-user_pass=$(
-    if grep -q -P "^auth\s+$smb_host\s+" ~/.smb/smbnetfs.conf; then
-        grep -P "^auth\s+$smb_host\s+" ~/.smb/smbnetfs.conf;
-    else
-        grep -P "^auth\s+\S+\s+\S+\s*$" ~/.smb/smbnetfs.conf;
-    fi | perl -ne 'if (m/\s+(\S+)\s+(\S+)\s*$/) {print "$1%$2"}')
+    user_pass=$(
+        if grep -q -P "^auth\s+$smb_host\s+" ~/.smb/smbnetfs.conf; then
+            grep -P "^auth\s+$smb_host\s+" ~/.smb/smbnetfs.conf;
+        else
+            grep -P "^auth\s+\S+\s+\S+\s*$" ~/.smb/smbnetfs.conf;
+        fi | perl -ne 'if (m/\s+(\S+)\s+(\S+)\s*$/) {print "$1%$2"}')
 
-find . -type f|grep -v -P '(^|/)(userdata_|system_)\d+.img$' > ~/tmp/root-flash/files.list
+    find . -type f|grep -v -P '(^|/)(userdata_|system_)\d+.img$' > ~/tmp/root-flash/files.list
 
-outdir=~/tmp/root-flash/$(basename $PWD)
-rm -rf $outdir
-mkdir -p $outdir
+    outdir=~/tmp/root-flash/$(basename $PWD)
+    rm -rf $outdir
+    mkdir -p $outdir
 
-smbclient -U "$user_pass" $smb_share -D $smb_path -TFc - ~/tmp/root-flash/files.list | tar xv -C $outdir
+    smbclient -U "$user_pass" $smb_share -D $smb_path -TFc - ~/tmp/root-flash/files.list | tar xv -C $outdir
+fi
+
 (
     cd $outdir
     fix-deep-dirs

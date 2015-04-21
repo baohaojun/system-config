@@ -1,0 +1,7 @@
+#!/bin/bash
+target_dir=$1
+shift
+for x in "$@"; do
+    mkdir -p "$target_dir/$(dirname "$x")"
+    cp "$x" "$target_dir/$(dirname "$x")" -av
+done
