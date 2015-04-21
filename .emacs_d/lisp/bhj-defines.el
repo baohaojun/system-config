@@ -1463,4 +1463,26 @@ to the value of `temporary-file-directory'."
          (org-export-as fmt))
       (delete-file tmp-file))))
 (load "emacs-25.el")
+
+(defvar bhj-last-selected-text nil
+  "The value of the text selection.")
+
+
+(defun bhj-select-text (text)
+  (let* ((process-connection-type nil)
+         (proc (start-file-process "emacs-clip-cut" nil "emacs-clip-cut")))
+    (when proc
+      (process-send-string proc text)
+      (process-send-eof proc))
+    (setq bhj-last-selected-text text)))
+
+(defun bhj-select-value ()
+  (let ((text (shell-command-to-string "emacs-clip-paste")))
+    (if (string= text bhj-last-selected-text)
+        nil
+      text)))
+
+(setq interprogram-cut-function 'bhj-select-text
+      interprogram-paste-function 'bhj-select-value)
+
 (provide 'bhj-defines)

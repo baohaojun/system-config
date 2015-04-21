@@ -1,0 +1,12 @@
+#!/bin/bash
+exec > ~/.cache/system-config/logs/emacs-clip-cut.log 2>&1
+set -x
+set -e
+cat > /tmp/emacs-clip-cut.$$
+
+(
+    cat /tmp/emacs-clip-cut.$$ | setsid xclip -i
+    cat /tmp/emacs-clip-cut.$$ | setsid xclip -i -selection clipboard
+
+    rm /tmp/emacs-clip-cut.$$
+)&
