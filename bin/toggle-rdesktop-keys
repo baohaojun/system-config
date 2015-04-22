@@ -1,6 +1,6 @@
 #!/bin/bash
 if test -e ~/.config/system-config/rdesktop-grabbing-keys -o "$1" = off; then
-    rm ~/.config/system-config/rdesktop-grabbing-keys;
+    rm ~/.config/system-config/rdesktop-grabbing-keys -f;
     sawfish_cmd=$(cat <<EOF
 (progn
   (bind-keys global-keymap "Super-h" s-h-keymap)
@@ -22,4 +22,4 @@ EOF
     sawfish-show-message "Super-h is eaten by rdesktop"
 fi
 
-sawfish-client -e "$sawfish_cmd"
+sawfish-client -e "$sawfish_cmd" >/dev/null 2>&1

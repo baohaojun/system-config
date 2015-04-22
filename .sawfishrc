@@ -222,9 +222,12 @@
     (unbind-keys keymap key)))
 
 (setq emacs-style-window-class-re "rdesktop|t1wrench|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
+(defvar global-remap-alist nil
+  "Window specific remap list")
 
 (setq global-remap-alist
       '(("C-a" . '((t "Home")))
+        ("C-z" . '((Xfce4-terminal "C-z" "z")))
         ("C-g" . '((Firefox "C-g") (t "ESC")))
         ("Next" . '((Firefox "C-v") (qpdfview "SPC")))
         ("Prior" . '((Firefox "ESC" "v") (qpdfview "BS")))
@@ -310,10 +313,6 @@
   (unbind-keys global-keymap "C-x")
   (unbind-keys global-keymap "ESC"))
 
-;; (let ((esc-map (make-keymap)))
-;;   (bind-keys global-keymap "ESC" esc-map)
-;;   (bind-keys esc-map "b" (lambda () (synthesize-event "C-Left" (input-focus)))))
-
 (setq no-tap-drag-window-class-re "acroread")
 (progn
   (add-hook 'focus-in-hook
@@ -336,9 +335,9 @@
 
 ;; to clear it: (setq visibility-notify-hook nil)
 
-(bind-keys s-h-keymap "Super-h" (lambda () (synthesize-event "Super-h" (input-focus))))
+(bind-keys s-h-keymap "Super-h"  '(synthesize-event "Super-h" (input-focus)))
 (bind-keys s-h-keymap "Super-s" 'iswitch-window)
-(bind-keys s-h-keymap "Super-f" (lambda () (maximize-window-fullscreen-toggle (input-focus))))
+(bind-keys s-h-keymap "Super-f" '(maximize-window-fullscreen-toggle (input-focus)))
 (unbind-keys global-keymap "Super-f")
 
 (bind-keys window-keymap "Button1-Click" 'raise-and-pass-through-click)
@@ -450,9 +449,9 @@
 
 (bind-keys global-keymap "Super-Insert"  '(system "send-key&"))
 (bind-keys global-keymap "Super-S-RET"  '(system "send-key&"))
-(bind-keys global-keymap "Super-RET" (lambda () (synthesize-event "Menu" (input-focus))))
-(bind-keys global-keymap "Super-BS" (lambda () (synthesize-event "Prior" (input-focus))))
-(bind-keys global-keymap "Super-SPC" (lambda () (synthesize-event "Next" (input-focus))))
+(bind-keys global-keymap "Super-RET" '(synthesize-event "Menu" (input-focus)))
+(bind-keys global-keymap "Super-BS" '(synthesize-event "Prior" (input-focus)))
+(bind-keys global-keymap "Super-SPC" '(synthesize-event "Next" (input-focus)))
 (bind-keys global-keymap "Super-Control-o"  '(system "emacsclient -n ~/system-config/doc/notes.org&"))
 
 
@@ -531,8 +530,8 @@
 (defun scroll-lock-on (&optional w)
   (when w
     (window-put w 'scroll-lock t))
-  (bind-keys global-keymap "SPC" (lambda () (synthesize-event "Next" (input-focus))))
-  (bind-keys global-keymap "BS" (lambda () (synthesize-event "Prior" (input-focus))))
+  (bind-keys global-keymap "SPC" '(synthesize-event "Next" (input-focus)))
+  (bind-keys global-keymap "BS" '(synthesize-event "Prior" (input-focus)))
   (system "switch-caps-led on&"))
 
 (defun scroll-lock-toggle ()

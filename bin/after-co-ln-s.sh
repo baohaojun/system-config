@@ -12,7 +12,7 @@ if test ! -d ~/system-config/.git && test -d ~/system-config/; then
             ln -sf ~/system-config/.gitconfig.bhj ~/.gitconfig
             git init .
             git add .
-            git commit -m 'xx'
+            git commit -m 'init version of system-config'
         )
     fi
 fi
@@ -26,7 +26,15 @@ if test ! -e /etc/sudoers.d/$USER && ! yes-or-no-p "Do you have sudo power?"; th
     can_sudo=false
 fi
 
-if test $can_sudo = true -a -d /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && ask-if-not-bhj "Make your sudo command not ask for password?"; then
+function can-sudo-and-yes-or-no-p() {
+    test "$can_sudo" = true && yes-or-no-p "$@"
+}
+
+function can-sudo-and-ask-if-not-bhj() {
+    test "$can_sudo" = true && ask-if-not-bhj "$@"
+}
+
+if test -d /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && can-sudo-and-ask-if-not-bhj "Make your sudo command not ask for password?"; then
     sudo bash -c "echo $USER ALL=NOPASSWD: ALL > /etc/sudoers.d/$USER; chmod 440 /etc/sudoers.d/$USER"
 fi
 
@@ -273,7 +281,7 @@ fi
 
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
-if ask-if-not-bhj "Do you want to make power button to hibernate?"; then
+if can-sudo-and-ask-if-not-bhj "Do you want to make power button to hibernate?"; then
     sudo cp ~/system-config/etc/systemd/logind.conf /etc/systemd/logind.conf
 fi
 
@@ -288,7 +296,7 @@ if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; the
     fi
 fi
 
-if test -L /etc/rc.local || yes-or-no-p "Replace /etc/rc.local with system-config's version?"; then
+if test -L /etc/rc.local || can-sudo-and-yes-or-no-p "Replace /etc/rc.local with system-config's version?"; then
     if ! test -L /etc/rc.local; then
         sudo cp /etc/rc.local /etc/rc.local.bak
     fi

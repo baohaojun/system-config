@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+cd common-git
+git reset --hard
+
+for x in *; do
+    rm ../$x -rf;
+done
+cp * .. -av
+
+cd ..
+find . -type f |xargs touch
+touch ~/tmp/mark.$$
+cd common/build
+python update_common_info.py
+cd ../..
+
+find . -anewer ~/tmp/mark.$$ -type f > ~/tmp/newer.$$
+mkdir -p oem-release
+git init oem-release
+
+cat ~/tmp/newer.$$ |grep -P -v '/bin/asic/sparse_images/|/bin/asic/pil_split_bins/|\.pyc$'|xargs cp-with-dir-struct oem-release
+cd oem-release
+git add .
+git commit -m 'init version of oem-release'

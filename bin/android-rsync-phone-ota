@@ -30,6 +30,7 @@ if ! my-adb 'test -d /data/debian/ && echo -n hello && echo '$$ | grep hello$$ -
 fi
 ssh-to-phone echo hello$$ | grep hello$$
 
+# this is for debugging
 function update-partition() {
     size=$(stat -c %s $file)
     echo $file $size
@@ -62,7 +63,7 @@ xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^
 
 
 export tmpPostfix=$$
-sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 $xml
+sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 $(readlink -f $xml)
 
 mv ~/tmp/system-$tmpPostfix.img.2 ~/tmp/system-$tmpPostfix.img
 mkdir -p ~/tmp/system-$tmpPostfix/system

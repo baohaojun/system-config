@@ -88,15 +88,15 @@ if test "${#dirs[@]}" = 0; then
                 fi
 
                 if test $redo_path = true; then
-                    if test -d bionic; then
-                        xmlstarlet sel -t -m //project -v @path -n .repo/manifest.xml
+                    if test ! -d manifest.git ; then
+                        xmlstarlet sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
                     else
-                        xmlstarlet sel -t -m //project -v @name -o '.git' -n .repo/manifest.xml
-                    fi | while read dir; do
-                        if test -d "$dir"; then
-                            echo $dir
-                        fi
-                    done > .repo/repo-paths.$$
+                        xmlstarlet sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
+                    fi | while read dir name; do
+                             if test -d "$dir"; then
+                                 echo $dir
+                             fi
+                         done > .repo/repo-paths.$$
                     mv .repo/repo-paths.$$ .repo/repo-paths
                 fi
                 cat .repo/repo-paths | sort -u

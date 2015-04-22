@@ -4,7 +4,14 @@ set -e
 if test $PWD = $HOME; then
     cd system-config
 fi
-gitd=$(lookup-file -e .git)
+gitd=$(lookup-file -e .git) || true
+if test -z "$gitd"; then
+    if [[ $PWD =~ .*\.git ]]; then
+        gitd=$PWD
+    else
+        die "can't find .git"
+    fi
+fi
 if test -e $gitd/svn/.metadata; then
     url=$(git svn info | grep "^URL:" | pn 2 | head -n 1)
 else
