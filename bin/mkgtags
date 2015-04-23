@@ -7,6 +7,12 @@ export TMPDIR=~/.cache
 mkdir -p $TMPDIR
 mkdir -p ~/.logs
 
+if [[ $PWD =~ /for-code-reading/ ]] && test -d .beagrep; then
+    echo should do code reading for ${PWD#*for-code-reading}
+    touch .for-code-reading
+    exit
+fi
+
 cd -P .
 if test $PWD = ~; then
     if yes-or-no-p -y "Should not do for-code-reading in your HOME; are you sure?"; then
