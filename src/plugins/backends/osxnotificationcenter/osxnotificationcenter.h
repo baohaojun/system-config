@@ -1,6 +1,6 @@
 /*
     SnoreNotify is a Notification Framework based on Qt
-    Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
+    Copyright (C) 2013-2015  Patrick von Reth <vonreth@kde.org>
 
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
 #ifndef OSXNOTIFICATIONCENTER_H
 #define OSXNOTIFICATIONCENTER_H
 
-#include "core/plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
 
 class OSXNotificationCenter : public Snore::SnoreBackend
 {

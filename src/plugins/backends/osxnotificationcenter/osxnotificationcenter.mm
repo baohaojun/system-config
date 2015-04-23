@@ -1,5 +1,6 @@
 #include "osxnotificationcenter.h"
-#include "core/plugins/snorebackend.h"
+#include "libsnore/plugins/snorebackend.h"
+#include "libsnore/utils.h"
 
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
@@ -36,8 +37,8 @@ bool OSXNotificationCenter::initialize(SnoreCore *snore)
 void OSXNotificationCenter::slotNotify(Snore::Notification notification)
 {
     NSUserNotification *osx_notification = [[NSUserNotification alloc] init];
-    osx_notification.title = NSStringFromQString(Snore::toPlainText(notification.title()));
-    osx_notification.informativeText = NSStringFromQString(Snore::toPlainText(notification.text()));
+    osx_notification.title = NSStringFromQString(Utils::toPlainText(notification.title()));
+    osx_notification.informativeText = NSStringFromQString(Utils::toPlainText(notification.text()));
 
     [notification_center deliverNotification: osx_notification];
 
