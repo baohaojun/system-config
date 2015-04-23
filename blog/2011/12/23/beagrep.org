@@ -375,7 +375,7 @@ pat is: 'JsonToValue("\\"hello world\\"",'.
 beagrep query argument `JsonToValue hello world '
 Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
 /home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc:168:  root.reset(JSONReader().JsonToValue("\"hello world\"", false, false));
-Unmatched ( in regex; marked by <-- HERE in m/JsonToValue( <-- HERE ""hello world"",/ at /home/bhj/bin/beagrep line 98.
+Unmatched ( in regex; marked by <-- HERE in m/JsonToValue( <-- HERE ""hello world"",/ at /home/bhj/system-config/bin/beagrep line 98.
 #+END_EXAMPLE
 
 To summarize, complete words are what search engines are good for, and

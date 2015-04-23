@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
-<link rel="stylesheet" href="/css/org.css" type="text/css" />
+ <link rel="stylesheet" href="/css/org.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -202,7 +202,7 @@ lrwxrwxrwx 1 bhj bhj      15 Jun 20 11:55 cell-mail -&gt; adb-send-weixin*
 lrwxrwxrwx 1 bhj bhj       6 Jun 17 11:16 google+ -&gt; weixin*
 lrwxrwxrwx 1 bhj bhj      15 Jun 10 11:27 qq -&gt; adb-send-weixin*
 lrwxrwxrwx 1 bhj bhj       6 Jun 23 16:47 t1-sms -&gt; weixin*
-lrwxrwxrwx 1 bhj bhj      15 Jun 20 10:36 weibo -&gt; adb-send-weixin*
+lrwxrwxrwx 1 bhj bhj      15 Jun 20 1😇6 weibo -&gt; adb-send-weixin*
 lrwxrwxrwx 1 bhj bhj      15 Jun  7 12:04 weixin -&gt; adb-send-weixin*
 </pre>
 
@@ -281,7 +281,7 @@ emacsclient把正在进行weixin编辑的Emacs buffer调到前面来。
 在后台(bash的&amp;符号)执行手机上的操作（放剪贴板、各种长按短按），这些后
 台操作我是肯定不希望它们有重合的，否则就会乱套。这样呢，我可以马上进行
 下一条微信的编辑，然后是再下一条，不需要等手机把上一条微信发出去先，如
-果weixin聊天也能有flow的状态的话，这样就能保证我的flow状态不会被打断了:-)
+果weixin聊天也能有flow的状态的话，这样就能保证我的flow状态不会被打断了😊
 </p>
 </div>
 </div>
@@ -340,28 +340,28 @@ $bash -x find-or-exec emacs
 
 <div class="org-src-container">
 
-<pre class="src src-sawfish">(<span class="org-keyword">defun</span> <span class="org-function-name">find-window-or-exec</span> (wclass-or-lambda #!optional wcommand)
-  (<span class="org-keyword">if</span> (eq (<span class="org-keyword">catch</span> '<span class="org-constant">wFound</span>
-            (mapc (<span class="org-keyword">lambda</span> (window)
-                    (<span class="org-keyword">when</span> (<span class="org-keyword">if</span> (stringp wclass-or-lambda)
-                              (string-match wclass-or-lambda (bhj-window-class window) 0 t)
-                            (<span class="org-keyword">when</span> functionp wclass-or-lambda
-                                  (write (stderr-file) <span class="org-string">"hello world\n"</span>)
-                                  (wclass-or-lambda window)))
+<pre class="src src-sawfish"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">find-window-or-exec</span> <span class="org-rainbow-delimiters-depth-2">(</span>wclass-or-lambda #!optional wcommand<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-3">(</span>eq <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">catch</span> <span class="org-highlight-quoted-quote">'</span><span class="org-constant">wFound</span>
+            <span class="org-rainbow-delimiters-depth-5">(</span>mapc <span class="org-rainbow-delimiters-depth-6">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-7">(</span>window<span class="org-rainbow-delimiters-depth-7">)</span>
+                    <span class="org-rainbow-delimiters-depth-7">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-8">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-9">(</span>stringp wclass-or-lambda<span class="org-rainbow-delimiters-depth-9">)</span>
+                              <span class="org-rainbow-delimiters-depth-9">(</span>string-match wclass-or-lambda <span class="org-rainbow-delimiters-depth-1">(</span>bhj-window-class window<span class="org-rainbow-delimiters-depth-1">)</span> 0 t<span class="org-rainbow-delimiters-depth-9">)</span>
+                            <span class="org-rainbow-delimiters-depth-9">(</span><span class="org-keyword">when</span> functionp wclass-or-lambda
+                                  <span class="org-rainbow-delimiters-depth-1">(</span>write <span class="org-rainbow-delimiters-depth-2">(</span>stderr-file<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-string">"hello world\n"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                                  <span class="org-rainbow-delimiters-depth-1">(</span>wclass-or-lambda window<span class="org-rainbow-delimiters-depth-1">)</span><span class="org-rainbow-delimiters-depth-9">)</span><span class="org-rainbow-delimiters-depth-8">)</span>
 
-                      (bhj-activate-window window)
-                      (<span class="org-keyword">throw</span> '<span class="org-constant">wFound</span> 'wFound)))
-                  (stacking-order)))
-          'wFound)
+                      <span class="org-rainbow-delimiters-depth-8">(</span>bhj-activate-window window<span class="org-rainbow-delimiters-depth-8">)</span>
+                      <span class="org-rainbow-delimiters-depth-8">(</span><span class="org-keyword">throw</span> <span class="org-highlight-quoted-quote">'</span><span class="org-constant">wFound</span> <span class="org-highlight-quoted-quote">'</span><span class="org-highlight-quoted-symbol">wFound</span><span class="org-rainbow-delimiters-depth-8">)</span><span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span>
+                  <span class="org-rainbow-delimiters-depth-6">(</span>stacking-order<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+          <span class="org-highlight-quoted-quote">'</span><span class="org-highlight-quoted-symbol">wFound</span><span class="org-rainbow-delimiters-depth-3">)</span>
       t
-    (<span class="org-keyword">if</span> wcommand
-        (system (concat wcommand <span class="org-string">"&amp;"</span>)))
-    nil))
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">if</span> wcommand
+        <span class="org-rainbow-delimiters-depth-4">(</span>system <span class="org-rainbow-delimiters-depth-5">(</span>concat wcommand <span class="org-string">"&amp;"</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    nil<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
 </pre>
 </div>
 
 <p>
-这个就不展开了，再展开就要栈溢出了:-)
+这个就不展开了，再展开就要栈溢出了😊
 </p>
 
 <p>
@@ -510,11 +510,11 @@ adb shell，然后把所有的参数（在这里是bash）发过去，所以最�
 </p>
 
 <pre class="example">
-{ bhj@bhj-laptop /home/bhj/bin Ret: 130 @ 21:51:38 }
+{ bhj@bhj-laptop /home/bhj/system-config/bin Ret: 130 @ 21:51:38 }
 $the-true-adb shell echo "hello    world"
 hello    world
 
-{ bhj@bhj-laptop /home/bhj/bin }
+{ bhj@bhj-laptop /home/bhj/system-config/bin }
 $echo "hello    world"
 hello    world
 </pre>
@@ -526,11 +526,11 @@ hello    world
 </p>
 
 <pre class="example">
-{ bhj@bhj-laptop /home/bhj/bin Ret: 130 @ 21:54:59 }
+{ bhj@bhj-laptop /home/bhj/system-config/bin Ret: 130 @ 21:54:59 }
 $(echo 'hello   "   world')
 hello   "   world
 
-{ bhj@bhj-laptop /home/bhj/bin }
+{ bhj@bhj-laptop /home/bhj/system-config/bin }
 $the-true-adb shell echo 'hello   "   world'
 /system/bin/sh: no closing quote
 </pre>
@@ -540,7 +540,7 @@ $the-true-adb shell echo 'hello   "   world'
 </p>
 
 <pre class="example">
-{ bhj@bhj-laptop /home/bhj/bin Ret: 130 @ 21:55:55 }
+{ bhj@bhj-laptop /home/bhj/system-config/bin Ret: 130 @ 21:55:55 }
 $strace -e write -f the-true-adb shell echo 'hello   "   world'
 [ Process PID=7340 runs in 32 bit mode. ]
 write(3, "000c", 4)                     = 4
@@ -574,7 +574,7 @@ strcat(buf, *argv++);
 </div>
 
 <p>
-能不能把引号弄对是bash脚本编程功底的一种体现:-) 如之前所述，如果我是在
+能不能把引号弄对是bash脚本编程功底的一种体现😊 如之前所述，如果我是在
 用adb-expect打开一个终端给每个非交互式的 <code>adb shell echo hello</code> 调用的
 话，那引号不是一个问题：
 </p>
@@ -724,8 +724,8 @@ java程序会打开adb push上来的weixin内容文件(/sdcard/putclip.txt），
 <div class="outline-text-2" id="text-3">
 <div class="org-src-container">
 
-<pre class="src src-sawfish">(bind-keys s-h-keymap <span class="org-string">"w"</span>  '(system <span class="org-string">"weixin&amp;"</span>))
-(bind-keys global-keymap <span class="org-string">"XF86Mail"</span> '(synthesize-multiple-events <span class="org-string">"C-x"</span> <span class="org-string">"C-s"</span> <span class="org-string">"C-x"</span> <span class="org-string">"#"</span>))
+<pre class="src src-sawfish"><span class="org-rainbow-delimiters-depth-1">(</span>bind-keys s-h-keymap <span class="org-string">"w"</span>  <span class="org-highlight-quoted-quote">'</span><span class="org-rainbow-delimiters-depth-2">(</span>system <span class="org-string">"weixin&amp;"</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>bind-keys global-keymap <span class="org-string">"XF86Mail"</span> <span class="org-highlight-quoted-quote">'</span><span class="org-rainbow-delimiters-depth-2">(</span>synthesize-multiple-events <span class="org-string">"C-x"</span> <span class="org-string">"C-s"</span> <span class="org-string">"C-x"</span> <span class="org-string">"#"</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
 </pre>
 </div>
 
@@ -744,7 +744,7 @@ java程序会打开adb push上来的weixin内容文件(/sdcard/putclip.txt），
 </p>
 
 <p>
-我记错了，这些脚本是不需要root权限的。Anyway, adb root-mode:-)
+我记错了，这些脚本是不需要root权限的。Anyway, adb root-mode😊
 </p>
 
 <p>

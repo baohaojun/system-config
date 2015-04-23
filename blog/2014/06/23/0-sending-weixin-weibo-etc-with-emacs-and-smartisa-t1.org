@@ -79,7 +79,7 @@ lrwxrwxrwx 1 bhj bhj      15 Jun 20 11:55 cell-mail -> adb-send-weixin*
 lrwxrwxrwx 1 bhj bhj       6 Jun 17 11:16 google+ -> weixin*
 lrwxrwxrwx 1 bhj bhj      15 Jun 10 11:27 qq -> adb-send-weixin*
 lrwxrwxrwx 1 bhj bhj       6 Jun 23 16:47 t1-sms -> weixin*
-lrwxrwxrwx 1 bhj bhj      15 Jun 20 10:36 weibo -> adb-send-weixin*
+lrwxrwxrwx 1 bhj bhj      15 Jun 20 1😇6 weibo -> adb-send-weixin*
 lrwxrwxrwx 1 bhj bhj      15 Jun  7 12:04 weixin -> adb-send-weixin*
 #+END_EXAMPLE
 
@@ -141,7 +141,7 @@ emacsclient把正在进行weixin编辑的Emacs buffer调到前面来。
 在后台(bash的&符号)执行手机上的操作（放剪贴板、各种长按短按），这些后
 台操作我是肯定不希望它们有重合的，否则就会乱套。这样呢，我可以马上进行
 下一条微信的编辑，然后是再下一条，不需要等手机把上一条微信发出去先，如
-果weixin聊天也能有flow的状态的话，这样就能保证我的flow状态不会被打断了:-)
+果weixin聊天也能有flow的状态的话，这样就能保证我的flow状态不会被打断了😊
 
 ** find-or-exec
 
@@ -206,7 +206,7 @@ $bash -x find-or-exec emacs
     nil))
 #+END_SRC
 
-这个就不展开了，再展开就要栈溢出了:-)
+这个就不展开了，再展开就要栈溢出了😊
 
 但是find-or-exec的确是一个我很常用的方便我在Emacs/Terminal之间切换的程
 序。设想我在Terminal底下执行一段bash脚本，里面用到了emacs，它能直接帮
@@ -317,11 +317,11 @@ adb shell，然后把所有的参数（在这里是bash）发过去，所以最�
 带有空格，就会在它的两头各加上一个双引号。所以：
 
 #+BEGIN_EXAMPLE
-{ bhj@bhj-laptop /home/bhj/bin Ret: 130 @ 21:51:38 }
+{ bhj@bhj-laptop /home/bhj/system-config/bin Ret: 130 @ 21:51:38 }
 $the-true-adb shell echo "hello    world"
 hello    world
 
-{ bhj@bhj-laptop /home/bhj/bin }
+{ bhj@bhj-laptop /home/bhj/system-config/bin }
 $echo "hello    world"
 hello    world
 #+END_EXAMPLE
@@ -331,11 +331,11 @@ hello    world
 么？）。可是在bash里你还可以 =(echo 'hello   "   world')= ，可是在adb下就会出错：
 
 #+BEGIN_EXAMPLE
-{ bhj@bhj-laptop /home/bhj/bin Ret: 130 @ 21:54:59 }
+{ bhj@bhj-laptop /home/bhj/system-config/bin Ret: 130 @ 21:54:59 }
 $(echo 'hello   "   world')
 hello   "   world
 
-{ bhj@bhj-laptop /home/bhj/bin }
+{ bhj@bhj-laptop /home/bhj/system-config/bin }
 $the-true-adb shell echo 'hello   "   world'
 /system/bin/sh: no closing quote
 #+END_EXAMPLE
@@ -343,7 +343,7 @@ $the-true-adb shell echo 'hello   "   world'
 如果你用strace去看怎么回事儿的话，你会发现adb送给手机执行的命令是这样的：
 
 #+BEGIN_EXAMPLE
-{ bhj@bhj-laptop /home/bhj/bin Ret: 130 @ 21:55:55 }
+{ bhj@bhj-laptop /home/bhj/system-config/bin Ret: 130 @ 21:55:55 }
 $strace -e write -f the-true-adb shell echo 'hello   "   world'
 [ Process PID=7340 runs in 32 bit mode. ]
 write(3, "000c", 4)                     = 4
@@ -370,7 +370,7 @@ write(1, "/system/bin/sh: no closing quote"..., 34/system/bin/sh: no closing quo
                 strcat(buf, "\"");
 #+END_SRC
 
-能不能把引号弄对是bash脚本编程功底的一种体现:-) 如之前所述，如果我是在
+能不能把引号弄对是bash脚本编程功底的一种体现😊 如之前所述，如果我是在
 用adb-expect打开一个终端给每个非交互式的 =adb shell echo hello= 调用的
 话，那引号不是一个问题：
 
@@ -499,7 +499,7 @@ fi
 
 +另外，这些脚本都只能在adb root过后使用吧好像？主要是adb input命令必须有root权限？这个不确定，但即使我用的是user版本的手机，不能adb root，我的adb包装也有一个adb root-mode命令，进入之后每个adb shell COMMAND都会被重新解释成 adb shell su -c 'quoted COMMAND'，相当地绕呢，我自己都快被绕晕了。+
 
-我记错了，这些脚本是不需要root权限的。Anyway, adb root-mode:-)
+我记错了，这些脚本是不需要root权限的。Anyway, adb root-mode😊
 
 我的微博账号是 baohaojun，欢迎粉我。微信号是beagrep，欢迎加我。我聊天
 打字速度很快的。

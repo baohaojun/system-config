@@ -10,7 +10,7 @@ https://github.com/baohaojun/system-config~ 和额外的几条脚本，把我的
 
 整个项目必须checkout到你的 ~$HOME/system-config~ 下。你可能会觉得奇
 怪，.bashrc/.emacs等文件不是应该放在 ~$HOME/~ 下吗，为什么要放到一个叫
-system-config的子目录下呢？别急，听我慢慢道来:-)
+system-config的子目录下呢？别急，听我慢慢道来😊
 
 这其实是两个问题：
 
@@ -23,14 +23,14 @@ system-config的子目录下呢？别急，听我慢慢道来:-)
 - 为什么叫system-config？这只是个巧合而已，最开始的时候我正在公司的
   windows机器上用cygwin，所以其配置文件就叫system-config了。本来计划在
   linux底下搞个linux-config的，但后来发现完全没必要，它们可以用设计模式
-  中factory的模式共用大部分代码，见[[./fun-design-pattern.org][在shell脚本里的抽象工厂模式]]:-)
+  中factory的模式共用大部分代码，见[[./fun-design-pattern.org][在shell脚本里的抽象工厂模式]]😊
 
 最后，“额外的几条脚本”是指何意？把代码checkout到~$HOME/system-config/~
 下之后，只要再跑 +两条+ *一条* 命令就搞定了，所以总共就这两条命令（跑
 的过程中如果出现错误的话可以考虑自己修正一下bug，非常涨经验值的！最后
 你可以把修正的结果告诉我，比如给我发个pull request，我会很感动、感谢、
 感激。当然，也可以直接报个bug，请我帮你修正，但我可能会太忙，不能及时
-搭理你。当然，如果你请我喝过咖啡的话，那就又不一样了:-)）：
+搭理你。当然，如果你请我喝过咖啡的话，那就又不一样了😊）：
 
 #+begin_src sh
 git clone --recursive https://github.com/baohaojun/system-config
@@ -44,7 +44,7 @@ git clone --recursive https://github.com/baohaojun/system-config
 其中.deb包的安装有点意思，可以跟大家说说：
 
 - 用文件系统作数据库。我每次发现自己希望默认该装什么包，我就以该包的名
-  字在某配置目录（ ~/home/bhj/bin/Linux/config/pkgs/~ ）下生成一个文件。
+  字在某配置目录（ ~/home/bhj/system-config/bin/Linux/config/pkgs/~ ）下生成一个文件。
   参见ESR的[[http://www.catb.org/esr/writings/taoup/][The Art of Unix Programming]]。
 
   我会把所有文件都作为参数传给 ~apt-get intstall~ 。
@@ -54,4 +54,4 @@ git clone --recursive https://github.com/baohaojun/system-config
   stdout/stderr结果记下来，parse一下，再把出错的包从它的参数列里拿掉再
   来一遍（实际上是一个while循环）就好了。
 
-最后，欢迎大家试用我的配置系统，并多提改进意见:-)
+最后，欢迎大家试用我的配置系统，并多提改进意见😊
