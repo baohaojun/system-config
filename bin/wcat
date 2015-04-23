@@ -1,5 +1,5 @@
 #!/bin/bash
 
-#http://github.com/baohaojun/system-config/raw/master/home/bhj/bin/Linux/cm-gdbclient
+#http://github.com/baohaojun/system-config/raw/master/home/bhj/system-config/bin/Linux/cm-gdbclient
 
 wget -o /dev/null -O - "$@"

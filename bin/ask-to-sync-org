@@ -5,7 +5,7 @@ if echo $SHELLOPTS | grep -q xtrace; then
 fi
 
 if id | grep -q '^uid=0\b' -P; then
-    su - bhj -c "~bhj/bin/ask-to-sync-org&"
+    su - bhj -c "~bhj/system-config/bin/ask-to-sync-org&"
     exit 0
 fi
 . ~/system-config/.bashrc

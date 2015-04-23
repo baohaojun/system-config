@@ -811,7 +811,7 @@ xmlstarlet sel -t -m //project -v @path -n default.xml
 
 3. for x in ~/Downloads/GeoTrust* ; do  acroread -installCertificate -PEM  $x; done
 
-wine /home/bhj/bin/Linux/ext/QQ/Bin/QQ.exe >/dev/null 2>&1 &
+wine /home/bhj/system-config/bin/Linux/ext/QQ/Bin/QQ.exe >/dev/null 2>&1 &
 (cd .repo/.. && cd rayzerlink-tools/proc_i2c/ && ../run.sh && adb shell insmod /data/proc_i2c.ko && adb shell /data/wi2cb.sh 0x0 0x5c 0x37 3)
 mount -w -o remount /dev/block/mmcblk3p1 /system
 

@@ -1169,7 +1169,7 @@ criteria can be provided via the optional match-string argument "
            (buffer-substring-no-properties
             (point)
             (1- (line-end-position))))
-          (doc-prefix "file:///home/bhj/bin/Linux/ext/android-sdk-linux_86/docs/reference")
+          (doc-prefix "file:///home/bhj/system-config/bin/Linux/ext/android-sdk-linux_86/docs/reference")
           (html-name (replace-regexp-in-string
                       ".java$" ".html"
                       (replace-regexp-in-string

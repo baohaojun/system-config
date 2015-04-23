@@ -22,7 +22,7 @@ Grep started at Sat Dec 18 11:37:06
 
 beagle-grep.sh -e "readlink" 
 pat is: readlink.
-/home/bhj/bin/Linux/ext/x86_64/beagle-break.exe
+/home/bhj/system-config/bin/Linux/ext/x86_64/beagle-break.exe
 beagle query argument `readlink '
 Starting at /home/bhj/.cache/system-config/for-code-reading//home/bhj/src/rayzerlink-ventana
 Beagle index found at /home/bhj/.cache/system-config/for-code-reading//home/bhj/src/rayzerlink-ventana/.beagle
@@ -725,7 +725,7 @@ Grep started at Sat Dec 18 13:47:11
 
 beagle-grep.sh -e "progress_medium_white"
 pat is: progress_medium_white.
-/home/bhj/bin/Linux/ext/x86_64/beagle-break.exe
+/home/bhj/system-config/bin/Linux/ext/x86_64/beagle-break.exe
 beagle query argument `progress medium white '
 Starting at /home/bhj/.cache/system-config/for-code-reading//home/bhj/src/rayzerlink-ventana
 Beagle index found at /home/bhj/.cache/system-config/for-code-reading//home/bhj/src/rayzerlink-ventana/.beagle

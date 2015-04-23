@@ -7,7 +7,7 @@
 
 var re = new RegExp("^http://developer.android.com/");
 var y = document.URL;
-y = y.replace(re, "file:///home/bhj/bin/Linux/ext/android-sdk-linux_86/docs/");
+y = y.replace(re, "file:///home/bhj/system-config/bin/Linux/ext/android-sdk-linux_86/docs/");
 alert(y);
 location.replace(y);
 

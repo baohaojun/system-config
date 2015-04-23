@@ -18,7 +18,7 @@ export PACKAGES_DIR=$workdir
 
 cd ~/external/installed-pkgs/
 
-sites=localhost:9999/debian\ localhost:9999/ubuntu
+sites=mirrors.aliyun.com/debian\ mirrors.aliyun.com/ubuntu
 releases=${RELEASES:-testing\ unstable}
 dists=${DISTS:-main\ contrib\ non-free\ universe\ multiverse\ restricted}
 archs=${ARCHS:-armel i386 amd64}
@@ -28,36 +28,36 @@ for site in $sites; do
         rm $release.pkgs -f
 
         if echo $site | grep ubuntu && test $release = testing -o $release = unstable; then
-            echo continue for $site $release
+            echo continue for $site $release 1>&2
             continue
         fi
         if echo $site | grep debian && test $release != testing -a $release != unstable; then
-            echo continue for $site $release
+            echo continue for $site $release 1>&2
             continue
         fi
 
         for dist in $dists; do
 
             if echo $site | grep ubuntu && test $dist = contrib -o $dist = non-free; then
-                echo continue for $site, dist: $dist
+                echo continue for $site, dist: $dist 1>&2
                 continue
             fi
 
             if echo $site | grep debian && test $dist != main -a $dist != contrib -a $dist != non-free; then
-                echo continue for $site, dist: $dist
+                echo continue for $site, dist: $dist 1>&2
                 continue
             fi
             echo http://$site/dists/$release/$dist/source/Sources.gz
             for arch in $archs; do
                 if echo $site | grep ubuntu && test $arch = armel; then
-                    echo continue for $site, arch: $arch
+                    echo continue for $site, arch: $arch 1>&2
                     continue
                 fi
                 echo http://$site/dists/$release/$dist/binary-$arch/Packages.gz
             done
         done
     done
-done | mf-download.pl -n ${THREADS:-2}
+done | tee download-installed-debs.log | mf-download.pl -n ${THREADS:-2}
 
 pkgnames=$(cd $workdir; echo *)
 
@@ -66,14 +66,15 @@ for site in $sites; do
     export SITE=$site;
     for release in $releases; do
         for dist in $dists; do
-            zcat $site/dists/$release/$dist/source/Sources.gz | get-deb-src-path-size $pkgnames >> $release.pkgs
+            zcat $site/dists/$release/$dist/source/Sources.gz | get-deb-src-path-size $pkgnames |tee -a $release.pkgs
             for arch in $archs; do
-                zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $pkgnames >> $release.pkgs
+                zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $pkgnames |tee -a $release.pkgs
             done
         done
     done
 done
 
+exit
 (
     for release in $releases; do
         cat $release.pkgs;

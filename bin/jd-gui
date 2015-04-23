@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cd /home/bhj/bin/Linux/ext
+cd /home/bhj/system-config/bin/Linux/ext
 wget -N http://java.decompiler.free.fr/jd-gui/downloads/jd-gui-0.3.3.windows.zip
 unzip -o jd-gui-0.3.3.windows.zip
 wget -N http://dex2jar.googlecode.com/files/dex2jar-0.0.7.11-SNAPSHOT.zip
@@ -10,4 +10,4 @@ unzip -o dex2jar-0.0.7.11-SNAPSHOT.zip
 chmod +x dex2jar-*/*
 cp dex2jar-*/* . -av
 cd - 
-wine /home/bhj/bin/Linux/ext/jd-gui.exe "$@"
+wine /home/bhj/system-config/bin/Linux/ext/jd-gui.exe "$@"

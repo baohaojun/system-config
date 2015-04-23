@@ -47,5 +47,5 @@ else
     echo Usage: $0 symbol_dir exec_file '[source_dir]' '[core_file]'
     exit
 fi
-exec /home/bhj/bin/Linux/ext/arm-eabi-gdb $annotate -x "$OUT_ROOT/gdbclient.cmds" $CORE $exec_file
+exec /home/bhj/system-config/bin/Linux/ext/arm-eabi-gdb $annotate -x "$OUT_ROOT/gdbclient.cmds" $CORE $exec_file
 

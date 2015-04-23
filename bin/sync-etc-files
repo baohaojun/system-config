@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo cp ~/system-config/etc/udev/rules.d/90-bhj-personal.rules /etc/udev/rules.d/90-bhj-personal.rules
+perl -npe "s,/home/bhj,${HOME},g; s,bhj,${USER},g" ~/system-config/etc/udev/rules.d/90-bhj-personal.rules | sudo tee /etc/udev/rules.d/90-$USER-personal.rules
 sudo cp ~/system-config/etc/lib/udev/keymaps/microsoft-ergonomic-keyboard /lib/udev/keymaps/microsoft-ergonomic-keyboard || true
 sudo cp ~/system-config/doc/usr/lib/pm-utils/sleep.d/99-switch-touchpad /lib/systemd/system-sleep/zz-switch-touchpad
 sudo cp ~/system-config/etc/tsocks.conf /etc/tsocks.conf
