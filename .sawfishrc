@@ -228,6 +228,7 @@
 (setq global-remap-alist
       '(("C-a" . '((t "Home")))
         ("C-z" . '((Xfce4-terminal "C-z" "z")))
+        ("Super-SPC" . '((Xfce4-terminal "C-z") (t "Next")))
         ("C-g" . '((Firefox "C-g") (t "ESC")))
         ("Next" . '((Firefox "C-v") (qpdfview "SPC")))
         ("Prior" . '((Firefox "ESC" "v") (qpdfview "BS")))
@@ -451,7 +452,6 @@
 (bind-keys global-keymap "Super-S-RET"  '(system "send-key&"))
 (bind-keys global-keymap "Super-RET" '(synthesize-event "Menu" (input-focus)))
 (bind-keys global-keymap "Super-BS" '(synthesize-event "Prior" (input-focus)))
-(bind-keys global-keymap "Super-SPC" '(synthesize-event "Next" (input-focus)))
 (bind-keys global-keymap "Super-Control-o"  '(system "emacsclient -n ~/system-config/doc/notes.org&"))
 
 

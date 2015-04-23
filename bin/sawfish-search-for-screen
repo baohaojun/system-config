@@ -11,13 +11,13 @@ if test -e ~/.cache/system-config/$(basename $0)/$md5; then
     ((start %= 10))
 fi
 
-sawfish-send-focused-window-event C-a $start
+sawfish-send-focused-window-event C-z $start
 for x in $(seq 1 10); do
     if sawfish-get-screen-shot | grep -P -q -e "$1"; then
         echo $start > ~/.cache/system-config/$(basename $0)/$md5
         break
     else
-        sawfish-send-focused-window-event C-a SPC
+        sawfish-send-focused-window-event C-z SPC
         ((start = (start + 1) % 10))
     fi
     cp /tmp/screen-exchange /tmp/screen-exchange.$x
