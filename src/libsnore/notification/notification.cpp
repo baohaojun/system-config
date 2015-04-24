@@ -155,6 +155,7 @@ void Notification::addActiveIn(const QObject *o)
     Q_ASSERT_X(contains,Q_FUNC_INFO,"already active");
     if(contains) {
         snoreDebug(SNORE_WARNING) << o << "already active in" << id();
+        return;
     }
     d->m_activeIn.insert(o);
     SnoreCorePrivate::instance()->m_activeNotifications[id()] = *this;
