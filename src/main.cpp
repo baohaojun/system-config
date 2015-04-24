@@ -28,7 +28,7 @@ void bringToFront(QString pid)
     auto findWindowForPid = [](ulong pid) {
         // based on http://stackoverflow.com/a/21767578
         pair<ulong, HWND> data = make_pair(pid, (HWND)0);
-        ::EnumWindows([](HWND handle, LPARAM lParam) -> BOOL {
+        ::EnumWindows((WNDENUMPROC)static_cast<BOOL(*)(HWND,LPARAM)>([](HWND handle, LPARAM lParam) -> BOOL {
             auto isMainWindow = [](HWND handle)
             {
                 return ::GetWindow(handle, GW_OWNER) == (HWND)0 && IsWindowVisible(handle);
@@ -42,7 +42,7 @@ void bringToFront(QString pid)
             }
             data.second = handle;
             return FALSE;
-        }, (LPARAM)&data);
+        }), (LPARAM)&data);
         return data.second;
     };
 
