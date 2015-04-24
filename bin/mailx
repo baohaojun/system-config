@@ -204,7 +204,7 @@ elif test $(basename $0) = adb-mail -o $(basename $0) = adb-gmail; then
                 adb-tap 993 883
             fi
             adb-tap 153 1455
-            am=/sdcard/adb-mail/$(echo "$a"|perl -npe 's!/!_!g')
+            am=/sdcard/adb-mail/$(basename "$a")
             my-adb push "$a" "$am"
             putclip-android ../../../../../../"${am}"
             adb-key SCROLL_LOCK

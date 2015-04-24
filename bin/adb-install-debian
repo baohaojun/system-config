@@ -17,6 +17,9 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
         )
     fi
 
+    if ! my-adb "which busybox && which bash && echo -n yes && echo $$" | grep yes$$; then
+        adb-fix-busybox
+    fi
     if ! my-adb "test -d /data/debian && echo yes$$" | grep -q yes$$; then
         my-adb -r push ~/tmp/debian.tgz /data/deb.tgz
         my-adb 'cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz'
