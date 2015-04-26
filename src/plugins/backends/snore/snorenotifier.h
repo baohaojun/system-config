@@ -41,11 +41,6 @@ public slots:
     virtual void slotNotify(Snore::Notification notification) override;
     virtual void slotCloseNotification(Snore::Notification notification) override;
 
-private slots:
-    void slotDismissed();
-    void slotInvoked();
-    void slotProcessQueue();
-
 private:
 
     QList<Snore::Notification> m_queue;

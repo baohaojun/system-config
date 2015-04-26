@@ -43,7 +43,6 @@ public:
     ~NotificationData();
 
     void setActionInvoked(const Action &action);
-    void setActionInvoked(const int &actionID);
 
     void setCloseReason(Notification::CloseReasons r);
 

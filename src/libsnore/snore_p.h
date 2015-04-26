@@ -49,8 +49,6 @@ public:
     ~SnoreCorePrivate();
     Application defaultApplication();
 
-    void notificationActionInvoked(Notification notification);
-
     bool setBackendIfAvailible(const QString &backend);
 
     /**
@@ -84,10 +82,18 @@ public:
 
     void init();
 
+private slots:
+    //TODO: find a better solutinon for the slots in this section
+    friend class Snore::SnoreBackend;
+    void slotNotificationActionInvoked(Notification notification);
+    void slotNotificationDisplayed(Notification notification);
+
+
 signals:
     void applicationRegistered(const Snore::Application &);
     void applicationDeregistered(const Snore::Application &);
     void notify(Snore::Notification noti);
+    void notificationDisplayed(Snore::Notification notification);
 
 private slots:
     void slotNotificationClosed(Snore::Notification);
@@ -112,6 +118,7 @@ private:
 
     QHash<uint,Snore::Notification> m_activeNotifications;
     friend class Snore::Notification;
+
 };
 }
 

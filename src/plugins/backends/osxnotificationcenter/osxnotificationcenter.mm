@@ -39,6 +39,7 @@ void OSXNotificationCenter::slotNotify(Snore::Notification notification)
     NSUserNotification *osx_notification = [[NSUserNotification alloc] init];
     osx_notification.title = NSStringFromQString(Utils::toPlainText(notification.title()));
     osx_notification.informativeText = NSStringFromQString(Utils::toPlainText(notification.text()));
+    slotNotificationDisplayed(notification);
 
     [notification_center deliverNotification: osx_notification];
 

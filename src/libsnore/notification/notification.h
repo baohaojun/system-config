@@ -266,6 +266,8 @@ public:
      */
     static int defaultTimeout();
 
+
+    //TODO: find a better name.
     void addActiveIn(const QObject *o);
     bool isActiveIn(const QObject *o) const;
     bool removeActiveIn(const QObject* o);

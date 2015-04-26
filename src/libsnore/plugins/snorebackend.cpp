@@ -75,9 +75,7 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
     if (!n.isValid()) {
         return;
     }
-    if (n.isActiveIn(this)) {
-        n.removeActiveIn(this);
-    }
+    n.removeActiveIn(this);
     if (n.isUpdate() && n.old().isActiveIn(this)) {
         n.old().removeActiveIn(this);
     }
@@ -172,13 +170,11 @@ bool SnoreBackend::deinitialize()
     return false;
 }
 
-void SnoreBackend::startTimeout(Notification &notification)
+void SnoreBackend::slotNotificationDisplayed(Notification notification)
 {
-    if (thread() != QThread::currentThread()) {
-        snoreDebug(SNORE_WARNING) << "Plugin timeout in wrong thread.";
-        metaObject()->invokeMethod(this, "startTimeout", Qt::QueuedConnection, Q_ARG(Notification, notification));
-        return;
-    }
+    notification.addActiveIn(this);
+    SnoreCorePrivate::instance()->slotNotificationDisplayed(notification);
+
     if (notification.isSticky()) {
         return;
     }
@@ -201,5 +197,11 @@ void SnoreBackend::startTimeout(Notification &notification)
         }
     });
     timer->start();
+}
+
+void SnoreBackend::slotNotificationActionInvoked(Notification notification, const Action &action)
+{
+    notification.data()->setActionInvoked(action);
+    SnoreCorePrivate::instance()->slotNotificationActionInvoked(notification);
 }
 

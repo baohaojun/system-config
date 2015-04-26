@@ -59,10 +59,15 @@ Application SnoreCorePrivate::defaultApplication()
     return m_defaultApp;
 }
 
-void SnoreCorePrivate::notificationActionInvoked(Notification notification)
+void SnoreCorePrivate::slotNotificationActionInvoked(Notification notification)
 {
     Q_Q(SnoreCore);
     emit q->actionInvoked(notification);
+}
+
+void SnoreCorePrivate::slotNotificationDisplayed(Notification notification)
+{
+    emit notificationDisplayed(notification);
 }
 
 bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)

@@ -52,7 +52,8 @@ public slots:
     virtual void slotCloseNotification(Snore::Notification notification);
 
 protected slots:
-    void startTimeout(Notification &notification);
+    void slotNotificationDisplayed(Notification notification);
+    void slotNotificationActionInvoked(Notification notification, const Action& action = Action());
 
 protected:
     void closeNotification(Snore::Notification, Snore::Notification::CloseReasons);

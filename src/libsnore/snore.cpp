@@ -120,7 +120,6 @@ void SnoreCore::broadcastNotification(Notification notification)
         if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
             requestCloseNotification(notification.old(), Notification::REPLACED);
         }
-        notification.addActiveIn(d->m_notificationBackend);
     }
     emit d->notify(notification);
 }

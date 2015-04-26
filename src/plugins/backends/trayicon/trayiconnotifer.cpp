@@ -84,7 +84,7 @@ void TrayIconNotifer::displayNotification(QSystemTrayIcon *icon)
     Notification notification =  m_notificationQue.takeFirst();
     m_displayed = notification;
     icon->showMessage(Utils::toPlainText(notification.title()), Utils::toPlainText(notification.text()), QSystemTrayIcon::NoIcon, notification.timeout() * 1000);
-    startTimeout(notification);
+    slotNotificationDisplayed(notification);
 }
 
 void TrayIconNotifer::actionInvoked()
@@ -92,7 +92,7 @@ void TrayIconNotifer::actionInvoked()
     Notification n = m_displayed;
     QSystemTrayIcon *icon = trayIcon(n.application());
     if (icon && n.isValid()) {
-        SnoreCorePrivate::instance()->notificationActionInvoked(n);
+        slotNotificationActionInvoked(n);
         closeNotification(n, Notification::ACTIVATED);
         m_currentlyDisplaying = false;
         displayNotification(icon);

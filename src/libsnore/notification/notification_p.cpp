@@ -73,11 +73,6 @@ void NotificationData::setActionInvoked(const Snore::Action &action)
     m_actionInvoked = action;
 }
 
-void NotificationData::setActionInvoked(const int &id)
-{
-    m_actionInvoked = m_actions[id];
-}
-
 void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
 {
     m_closeReason = r;

@@ -57,7 +57,7 @@ bool GrowlBackend::initialize()
             r = Notification::DISMISSED;
         } else if (reason == "CLICK") {
             r = Notification::ACTIVATED;
-            SnoreCorePrivate::instance()->notificationActionInvoked(n);
+            s_instance->slotNotificationActionInvoked(n);
         }
         s_instance->closeNotification(n, r);
     };
@@ -119,7 +119,7 @@ void GrowlBackend::slotNotify(Notification notification)
     data.setCallbackData("1");
     growl->Notify(data);
 
-    startTimeout(notification);
+    slotNotificationDisplayed(notification);
 }
 
 PluginSettingsWidget *GrowlBackend::settingsWidget()

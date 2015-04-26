@@ -73,8 +73,7 @@ public:
             case SnarlEnums::NotifyAction:
                 reason = Notification::ACTIVATED;
                 if (notification.isValid()) {
-                    notification.data()->setActionInvoked(data);
-                    SnoreCorePrivate::instance()->notificationActionInvoked(notification);
+                    m_snarl->slotNotificationActionInvoked(notification, notification.actions().value(data));
                 }
                 break;
             case SnarlEnums::CallbackClosed:
@@ -244,7 +243,7 @@ void SnarlBackend::slotNotify(Notification notification)
     }
 
     notification.hints().setPrivateValue(this, "id", id);
-    startTimeout(notification);//if dnd or away snarl does not timeout atomatically
+    slotNotificationDisplayed(notification);//if dnd or away snarl does not timeout atomatically
 
 }
 
