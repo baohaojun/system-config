@@ -82,9 +82,11 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     id.waitForFinished();
     noti.hints().setPrivateValue(this, "id", id.value());
     m_dbusIdMap[id.value()] = noti;
+    slotNotificationDisplayed(noti);
 
     snoreDebug(SNORE_DEBUG) << noti.id() << "|" << id.value();
 }
+
 void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID)
 {
     snoreDebug(SNORE_DEBUG) << id << m_dbusIdMap[id];
@@ -92,8 +94,7 @@ void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &action
     if (!noti.isValid()) {
         return;
     }
-    noti.data()->setActionInvoked(actionID.toInt());
-    SnoreCorePrivate::instance()->notificationActionInvoked(noti);
+    slotNotificationActionInvoked(noti, noti.actions().value(actionID.toInt()));;
 }
 
 void FreedesktopBackend::slotCloseNotification(Notification notification)
