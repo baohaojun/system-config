@@ -76,7 +76,7 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
         return;
     }
     n.removeActiveIn(this);
-    if (n.isUpdate() && n.old().isActiveIn(this)) {
+    if (n.isUpdate()) {
         n.old().removeActiveIn(this);
     }
     n.data()->setCloseReason(reason);
@@ -111,14 +111,16 @@ bool SnoreSecondaryBackend::initialize()
     if (!SnorePlugin::initialize()) {
         return false;
     }
-    connect(SnoreCorePrivate::instance(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)), Qt::QueuedConnection);
+    connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notify, this, &SnoreSecondaryBackend::slotNotify, Qt::QueuedConnection);
+    connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notificationDisplayed, this, &SnoreSecondaryBackend::slotNotificationDisplayed, Qt::QueuedConnection);
     return true;
 }
 
 bool SnoreSecondaryBackend::deinitialize()
 {
     if (SnorePlugin::deinitialize()) {
-        disconnect(SnoreCorePrivate::instance(), SIGNAL(notify(Snore::Notification)), this, SLOT(slotNotify(Snore::Notification)));
+        disconnect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notify, this, &SnoreSecondaryBackend::slotNotify);
+        disconnect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notificationDisplayed, this, &SnoreSecondaryBackend::slotNotificationDisplayed);
         return true;
     }
     return false;
@@ -127,6 +129,16 @@ bool SnoreSecondaryBackend::deinitialize()
 bool SnoreSecondaryBackend::supportsRichtext()
 {
     return m_supportsRichtext;
+}
+
+void SnoreSecondaryBackend::slotNotify(Notification)
+{
+
+}
+
+void SnoreSecondaryBackend::slotNotificationDisplayed(Notification)
+{
+
 }
 
 bool SnoreBackend::canCloseNotification() const

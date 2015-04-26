@@ -87,7 +87,8 @@ public:
     bool supportsRichtext();
 
 public slots:
-    virtual void slotNotify(Snore::Notification notification) = 0;
+    virtual void slotNotify(Snore::Notification notification);
+    virtual void slotNotificationDisplayed(Snore::Notification notification);
 
 protected:
     bool m_supportsRichtext;

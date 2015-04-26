@@ -32,7 +32,7 @@ public:
     Snore::PluginSettingsWidget *settingsWidget() override;
 
 public slots:
-    void slotNotify(Snore::Notification notification) override;
+    void slotNotificationDisplayed(Snore::Notification notification) override;
 private:
     class QMediaPlayer *m_player;
 };

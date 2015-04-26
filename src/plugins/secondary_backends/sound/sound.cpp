@@ -47,7 +47,7 @@ PluginSettingsWidget *Sound::settingsWidget()
     return new SoundSettings(this);
 }
 
-void Sound::slotNotify(Snore::Notification notification)
+void Sound::slotNotificationDisplayed(Snore::Notification notification)
 {
     if (notification.hints().value("silent", false).toBool()) {
         return;
