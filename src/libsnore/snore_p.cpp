@@ -240,12 +240,12 @@ void SnoreCorePrivate::loadTranslator()
         if (locale != "C") {
             QTranslator *translator = new QTranslator(qApp->instance());
             if (translator->load(locale, ":/lang/libsnore/")) {
-                snoreDebug(SNORE_INFO) << "Using system locale:" << locale;
-                snoreDebug(SNORE_INFO) << qApp->installTranslator(translator);
+                snoreDebug(SNORE_DEBUG) << "Using system locale:" << locale;
+                snoreDebug(SNORE_DEBUG) << qApp->installTranslator(translator);
             } else {
                 translator->deleteLater();
                 QString fileName = QString(":/lang/libsnore/%1.qm").arg(locale);
-                snoreDebug(SNORE_WARNING) << "Failed to load translations for:" << locale << fileName << QFile::exists(fileName) ;
+                snoreDebug(SNORE_DEBUG) << "Failed to load translations for:" << locale << fileName << QFile::exists(fileName) ;
                 return false;
             }
         }
