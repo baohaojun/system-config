@@ -3,7 +3,7 @@
 . ~/system-config/.bashrc-public
 #search for AndroidManifest.xml
 function apkgname() {
-    
+
     export MANIFEST=`lookup-file AndroidManifest.xml`
     export package=$(xmlstarlet el -v $MANIFEST|grep '@package='|perl -npe "s#.*\@package=.(.*?)'.*#\$1#;")
     echo package is $package
@@ -13,7 +13,7 @@ function apk_main_activity() {
     apkgname "$@"
     export main_activity=$(xmlstarlet sel -N \
         android="http://schemas.android.com/apk/res/android" \
-        -B -t -m '//activity' -c . -n $MANIFEST | 
+        -B -t -m '//activity' -c . -n $MANIFEST |
         grep 'category.LAUNCHER\|category.HOME' |
         xmlstarlet el -v |
         grep -v activity/intent-filter |
@@ -25,6 +25,17 @@ function apk_main_activity() {
     echo main_activity is $main_activity
 }
 
+function apk-uninstall() {
+    set -e
+    apk=$(readlink -f "$1")
+    dir=/tmp/apk-unzip.$$
+    mkdir $dir
+    cd $dir
+    unzip $apk
+    axml2xml.pl AndroidManifest.xml > x.xml
+    mv x.xml AndroidManifest.xml
+    anduninst
+}
 
 function anduninst() {
     apkgname "$@"
