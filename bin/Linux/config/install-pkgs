@@ -17,7 +17,7 @@ if test $# != 0; then
     packages=(echo "$@")
 else
     packages_dir=${PACKAGES_DIR:-~/system-config/bin/Linux/config/pkgs/}
-    packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,')
+    packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,'|grep -v '/\.' -P)
     if test -d "$packages_dir/$USER"; then
         packages="$packages $(find "$packages_dir/$USER" -maxdepth 1 -type f|perl -npe 's,.*/,,')"
     fi
