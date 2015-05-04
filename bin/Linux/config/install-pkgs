@@ -9,7 +9,7 @@ if grep '^deb htt' /etc/apt/sources.list; then
 fi
 
 if test $# = 1 -a -d "$1"; then
-    PACKAGES_DIR=$(readlink -f "$1")
+    export PACKAGES_DIR=$(readlink -f "$1")
     set --
 fi
 
