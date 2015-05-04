@@ -13,3 +13,4 @@ strace
 xmlstarlet
 zlib1g-dev
 zip
+libxml2:i386

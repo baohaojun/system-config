@@ -38,7 +38,7 @@ if is-debian; then
     fi
 fi
 
-sudo bash -c '(echo amd64; echo i386) > /var/lib/dpkg/arch'
+sudo dpkg --add-architecture i386
 if is-debian; then
     sudo cp ~/system-config/etc/apt/apt.conf.d/99testing /etc/apt/apt.conf.d/
 fi

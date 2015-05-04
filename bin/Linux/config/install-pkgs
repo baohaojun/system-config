@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+
+if grep '^deb htt' /etc/apt/sources.list; then
+    sudo dpkg --add-architecture i386
+    sudo perl -npe 's/^deb\s+\b/deb [arch=amd64,i386] /' -i /etc/apt/sources.list
+    sudo apt-get update
+fi
+
 if test $# != 0; then
     if test $# = 1 -a -d "$1"; then
         set -- $(cd "$1"; echo *)
