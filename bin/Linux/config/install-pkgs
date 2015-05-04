@@ -2,6 +2,9 @@
 set -e
 
 if test $# != 0; then
+    if test $# = 1 -a -d "$1"; then
+        set -- $(cd "$1"; echo *)
+    fi
     packages=(echo "$@")
 else
     packages_dir=${PACKAGES_DIR:-~/system-config/bin/Linux/config/pkgs/}

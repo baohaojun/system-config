@@ -46,6 +46,8 @@ if ! which sudo >/dev/null 2>&1 ; then # for cygwin, where sudo is not available
     function sudo() {
         "$@"
     }
+    export -f sudo
+    can_sudo=false
 fi
 
 if ! which git >/dev/null 2>&1 ; then
@@ -58,7 +60,7 @@ for x in 15m hourly daily weekly; do
     mkdir -p ~/external/etc/cron.d/$x;
 done
 
-if which sudo && test $(uname)  = Linux -a ! -e ~/.cache/system-config/logs/offline-is-unstable; then
+if test $can_sudo = true && test $(uname)  = Linux -a ! -e ~/.cache/system-config/logs/offline-is-unstable; then
     (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.cache/system-config/logs/offline-is-unstable) || true
 fi
 

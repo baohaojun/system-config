@@ -1,0 +1,15 @@
+build-essential
+ccache
+command-not-found
+expect
+lib32stdc++6
+lib32z1
+libc6-dev-i386
+libc6-i386
+libstring-shellquote-perl
+openjdk-7-jdk
+schedtool
+strace
+xmlstarlet
+zlib1g-dev
+zip
