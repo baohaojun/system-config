@@ -42,8 +42,9 @@ if test -d ~/system-config/.emacs_d/elpa && test ! -d ~/.emacs.d/elpa; then
 fi || true
 
 if test -d ~/system-config/src/github/twittering-mode; then
+    mkdir -p ~/src/github
     for x in ~/system-config/src/github/*; do
-        ln -s $x ~/system-config/src/github ~/src/github >/dev/null 2>&1 || true
+        ln -s $x ~/src/github >/dev/null 2>&1 || true
     done
     ln -s ~/src/github/emacs.d/site-lisp ~/.emacs.d/ || true
 else
