@@ -14,3 +14,5 @@ xmlstarlet
 zlib1g-dev
 zip
 libxml2:i386
+genisoimage
+gperf
