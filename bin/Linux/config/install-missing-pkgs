@@ -6,7 +6,7 @@ export LANG=C
 export LC_ALL=C
 
 packages_dir=${PACKAGES_DIR:-~/system-config/bin/Linux/config/pkgs/}
-packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,')
+packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,'|grep -v -P '^\.')
 err_packages=""
 
 
@@ -18,6 +18,11 @@ if (m/^Package\s+(\S+):/) {
 }')" | sort -u)
 
 echo "missing_packages are $missing_packages" >> ~/.cache/system-config/logs/$(basename $0).log
+
+if test x$missing_packages = x; then
+    echo there are no missing packages
+    exit 0
+fi
 
 if test "$(echo "$missing_packages" | wc -l)" -gt 50; then
     if yes-or-no-p -y  "There are too many missing packages, check ~/.cache/system-config/logs/$(basename $0).log. Stop?"; then
