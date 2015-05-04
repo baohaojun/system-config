@@ -17,7 +17,7 @@ if test ! -d ~/system-config/.git && test -d ~/system-config/; then
     fi
 fi
 
-can_sudo=true
+export can_sudo=true
 if test ! -e /etc/sudoers.d/$USER && ! yes-or-no-p "Do you have sudo power?"; then
     function sudo() {
         true
@@ -384,7 +384,7 @@ fi || true
 
 if test "$USER" = bhj && test ! -d ~/src/github/git-upload-patches; then
     git clone home:repos/git-upload-patches.git ~/src/github/git-upload-patches
-fi&
+fi >/dev/null 2>&1&
 
 if test -d ~/src/github/semi-offline.wikipedia; then
     (
@@ -393,8 +393,10 @@ if test -d ~/src/github/semi-offline.wikipedia; then
     )
 fi&
 
-check-perl-module String::ShellQuote libstring-shellquote-perl
-check-perl-module Marpa::R2           libmarpa-r2-perl
+if test $can_sudo = true; then
+    check-perl-module String::ShellQuote libstring-shellquote-perl
+    check-perl-module Marpa::R2           libmarpa-r2-perl
+fi
 (
     cd ~/system-config/
     for x in .*.bhj; do
