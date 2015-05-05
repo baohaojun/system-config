@@ -315,7 +315,7 @@ if test $(uname) = Linux; then
         sudo bash -c 'echo iface usb1 inet manual >> /etc/network/interfaces'
     fi
 
-    if grep managed=true /etc/NetworkManager/NetworkManager.conf; then
+    if test $can_sudo = true && grep managed=true /etc/NetworkManager/NetworkManager.conf; then
         sudo perl -npe 's/managed=true/managed=false/' -i /etc/NetworkManager/NetworkManager.conf;
     fi
 fi
