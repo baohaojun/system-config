@@ -1,0 +1,8 @@
+#!/bin/bash
+if test $# = 0; then
+    input=$(getclip)
+else
+    input=$(echo "$@")
+fi
+
+xdotool-when-keyboard-clear type "$input"

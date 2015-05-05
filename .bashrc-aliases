@@ -5,5 +5,10 @@ alias quilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
 alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
 alias aptitude='sudo aptitude'
 alias umount='sudo umount'
-alias mount='sudo mount'
-
+mount() {
+    if test $# = 0; then
+        command mount
+    else
+        sudo mount "$@"
+    fi
+}
