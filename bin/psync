@@ -12,7 +12,14 @@ if test $# = 0; then
     fi
     x=code3
     do_x >/dev/null 2>&1
-    for x in rem build build2 pub; do
+    remotes=$(
+        if test -e ~/.config/system-config/psync-remotes; then
+            cat ~/.config/system-config/psync-remotes;
+        else
+            echo rem build build2 pub;
+        fi
+           )
+    for x in $remotes; do
         (
             do_x
         )&
