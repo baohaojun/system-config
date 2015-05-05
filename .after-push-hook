@@ -2,7 +2,7 @@
 if test -d ~/src/system-config/; then
     cd ~/system-config
     psync
-    psync -d -t ~/src/system-config/ localhost . -- --exclude .emacs_d/elpa
+    psync -d -t ~/src/system-config/ localhost . -- --exclude .emacs_d/elpa --exclude src/&
     mkdir -p ~/src/system-config/src/github
     (
         cd ~/src/github/
@@ -12,11 +12,12 @@ if test -d ~/src/system-config/; then
                 psync -d -t ~/src/system-config/src/github/$x/ localhost .
             )
         done
-    )
+    )&
     (
         cd ~/.emacs.d/elpa/
         psync -d -t src/system-config/.emacs_d/elpa localhost .
-    )
+    )&
+    wait
     cd ~/src/system-config/
     git add .
     git commit -m "auto commit from system-config:$(cd ~/system-config; git log --pretty=%H -1)"
