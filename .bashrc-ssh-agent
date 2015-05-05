@@ -30,7 +30,11 @@ fi
 if test $val != 0 -a -e ~/.ssh/id_rsa && tty >/dev/null 2>&1; then
     echo "Need add the rsa"
     if test "$SSH_CLIENT"; then
-        ssh-add ~/.ssh/id_rsa
+        if test -e ~/.ssh/add-id_rsas; then
+            bash ~/.ssh/add-id_rsas;
+        else
+            ssh-add ~/.ssh/id_rsa
+        fi
     else
         do-ssh-add
     fi
