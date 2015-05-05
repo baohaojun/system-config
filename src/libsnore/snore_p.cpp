@@ -175,17 +175,6 @@ void SnoreCorePrivate::syncSettings()
     }
 }
 
-QStringList SnoreCorePrivate::knownClients()
-{
-    QStringList out;
-    m_settings->beginGroup(versionSchema());
-    m_settings->beginGroup("LocalSettings");
-    out = m_settings->childGroups();
-    m_settings->endGroup();
-    m_settings->endGroup();
-    return out;
-}
-
 void SnoreCorePrivate::setLocalSttingsPrefix(const QString &prefix)
 {
     m_localSettingsPrefix = prefix;

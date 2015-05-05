@@ -33,7 +33,7 @@ SnoreNotifier::SnoreNotifier():
 {
     setDefaultValue("Position", Qt::TopRightCorner);
     m_timer->setInterval(500);
-    connect(m_timer, &QTimer::timeout, [this](){
+    connect(m_timer, &QTimer::timeout, [this]() {
         if (m_queue.isEmpty()) {
             snoreDebug(SNORE_DEBUG) << "queue is empty";
             m_timer->stop();
@@ -64,7 +64,7 @@ SnoreNotifier::~SnoreNotifier()
 
 void SnoreNotifier::slotNotify(Snore::Notification notification)
 {
-    auto display = [this](NotifyWidget *w, Snore::Notification notification){
+    auto display = [this](NotifyWidget * w, Snore::Notification notification) {
         w->display(notification);
         notification.hints().setPrivateValue(this, "id", w->id());
         slotNotificationDisplayed(notification);
@@ -90,8 +90,8 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         if (m_queue.isEmpty()) {
             foreach(NotifyWidget * w, m_widgets) {
                 if (w->acquire()) {
-                   display(w, notification);
-                   return;
+                    display(w, notification);
+                    return;
                 }
             }
         }
@@ -113,13 +113,13 @@ bool SnoreNotifier::initialize()
         for (int i = 0; i < m_widgets.size(); ++i) {
             NotifyWidget *w = new NotifyWidget(i, this);
             m_widgets[i] = w;
-            connect(w, &NotifyWidget::dismissed,[this, w](){
+            connect(w, &NotifyWidget::dismissed, [this, w]() {
                 Notification notification = w->notification();
                 closeNotification(notification, Notification::DISMISSED);
                 slotCloseNotification(notification);
             });
 
-            connect(w, &NotifyWidget::invoked, [this, w](){
+            connect(w, &NotifyWidget::invoked, [this, w]() {
                 Notification notification = w->notification();
                 slotNotificationActionInvoked(notification);
                 closeNotification(notification, Notification::ACTIVATED);

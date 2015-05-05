@@ -2,6 +2,7 @@
 #define SETTINGSWINDOW_H
 
 #include <QMainWindow>
+#include <QSettings>
 
 namespace Ui
 {
@@ -17,6 +18,10 @@ class SettingsWindow : public QMainWindow
 public:
     explicit SettingsWindow(QWidget *parent = 0);
     ~SettingsWindow();
+
+    static QStringList knownApps();
+
+    static QSettings &settings();
 
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);

@@ -1,4 +1,5 @@
 if(WITH_FRONTENDS)
     add_subdirectory(freedesktop)
     add_subdirectory(snarlnetwork)
+    add_subdirectory(snp3)
 endif()

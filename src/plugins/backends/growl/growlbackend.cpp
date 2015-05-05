@@ -43,25 +43,29 @@ GrowlBackend::~GrowlBackend()
 bool GrowlBackend::initialize()
 {
     s_instance = this;
-    auto func = [](growl_callback_data *data)->void{
+    auto func = [](growl_callback_data * data)->void {
         snoreDebug(SNORE_DEBUG) << data->id << QString(data->reason) << QString(data->data);
         Notification n = Snore::SnoreCore::instance().getActiveNotificationByID(data->id);
-        if (!n.isValid()) {
+        if (!n.isValid())
+        {
             return;
         }
         Notification::CloseReasons r = Notification::NONE;
         std::string reason(data->reason);
-        if (reason == "TIMEDOUT") {
+        if (reason == "TIMEDOUT")
+        {
             r = Notification::TIMED_OUT;
-        } else if (reason == "CLOSED") {
+        } else if (reason == "CLOSED")
+        {
             r = Notification::DISMISSED;
-        } else if (reason == "CLICK") {
+        } else if (reason == "CLICK")
+        {
             r = Notification::ACTIVATED;
             s_instance->slotNotificationActionInvoked(n);
         }
         s_instance->closeNotification(n, r);
     };
-    if (Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data*)>(func))
+    if (Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data *)>(func))
             && Growl::isRunning(GROWL_TCP, value("Host").toString().toUtf8().constData())) {
         return SnoreBackend::initialize();
     }

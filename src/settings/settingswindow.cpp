@@ -4,6 +4,7 @@
 #include "snore.h"
 #include "snore_p.h"
 #include "settingsdialog.h"
+#include "utils.h"
 
 #include <QApplication>
 #include <QComboBox>
@@ -18,7 +19,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->widget->show();
 
-    QStringList list = SnoreCorePrivate::instance()->knownClients();
+    QStringList list = knownApps();
     list.removeAll(qApp->applicationName());
     ui->comboBox->addItems(list);
 }
@@ -26,6 +27,20 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 SettingsWindow::~SettingsWindow()
 {
     delete ui;
+}
+
+QStringList SettingsWindow::knownApps()
+{
+    return Utils::allSettingsKeysWithPrefix(QString("%1/%2").arg(Utils::settingsVersionSchema(), "LocalSettings"), settings(),
+    [](QSettings & settings) {
+        return settings.childGroups();
+    });
+}
+
+QSettings &SettingsWindow::settings()
+{
+    static QSettings settings("Snorenotify", "libsnore");
+    return settings;
 }
 
 void SettingsWindow::on_comboBox_currentIndexChanged(const QString &arg1)

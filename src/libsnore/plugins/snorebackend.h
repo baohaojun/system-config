@@ -53,7 +53,7 @@ public slots:
 
 protected slots:
     void slotNotificationDisplayed(Notification notification);
-    void slotNotificationActionInvoked(Notification notification, const Action& action = Action());
+    void slotNotificationActionInvoked(Notification notification, const Action &action = Action());
 
 protected:
     void closeNotification(Snore::Notification, Snore::Notification::CloseReasons);

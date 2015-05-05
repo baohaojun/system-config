@@ -63,7 +63,6 @@ public:
 
     virtual PluginSettingsWidget *settingsWidget();
 
-
 protected:
     virtual QString settingsVersion() const;
 

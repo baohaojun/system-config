@@ -66,14 +66,12 @@ private:
     Hint m_hints;
     Notification m_toReplace;
     QScopedPointer<QTimer> m_timeoutTimer;
-    QSet<const QObject*> m_activeIn;
-
+    QSet<const QObject *> m_activeIn;
 
     static uint notificationCount;
     static uint m_idCount;
 
 };
-
 
 }
 

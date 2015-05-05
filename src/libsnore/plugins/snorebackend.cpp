@@ -201,9 +201,9 @@ void SnoreBackend::slotNotificationDisplayed(Notification notification)
     timer->setInterval(notification.timeout() * 1000);
     //dont use a capture for notification, as it can leak
     uint id = notification.id();
-    connect(timer, &QTimer::timeout, [id](){
+    connect(timer, &QTimer::timeout, [id]() {
         Notification notification = SnoreCore::instance().getActiveNotificationByID(id);
-        if(notification.isValid()){
+        if (notification.isValid()) {
             snoreDebug(SNORE_DEBUG) << notification;
             SnoreCore::instance().requestCloseNotification(notification, Notification::TIMED_OUT);
         }

@@ -19,9 +19,11 @@
 #define UTILS_H
 
 #include "snore_exports.h"
+#include "snoreglobals.h"
 
 #include <QApplication>
 #include <QCryptographicHash>
+#include <QSettings>
 #include <QTextDocument>
 #include <QTextDocumentFragment>
 
@@ -81,6 +83,37 @@ public:
     static inline QString computeMD5Hash(const QByteArray &data)
     {
         return QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex();
+    }
+
+    static inline QString settingsVersionSchema()
+    {
+        return "v1";
+    }
+
+    static inline QString normalizeSettingsKey(const QString &key, SettingsType type, const QString &application)
+    {
+        if (type == LOCAL_SETTING) {
+            return QString("%1/LocalSettings/%2/%3").arg(settingsVersionSchema(), application, key);
+        } else {
+            return QString("%1/GlobalSettings/%2").arg(settingsVersionSchema(), key);
+        }
+    }
+
+    template<typename Func>
+    static QStringList allSettingsKeysWithPrefix(const QString &prefix, QSettings &settings, Func fun)
+    {
+        QStringList groups = prefix.split("/");
+        QStringList out;
+
+        for (const QString group : groups) {
+            settings.beginGroup(group);
+        }
+        out = fun(settings);
+
+        for (int i = 0; i < groups.size(); ++i) {
+            settings.endGroup();
+        }
+        return out;
     }
 
 private:

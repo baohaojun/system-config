@@ -71,7 +71,7 @@ bool FreedesktopFrontend::deinitialize()
 void FreedesktopFrontend::slotActionInvoked(Notification notification)
 {
 
-    if(notification.isActiveIn(this)) {
+    if (notification.isActiveIn(this)) {
         if (notification.actionInvoked().isValid()) {
             emit ActionInvoked(notification.id(), QString::number(notification.actionInvoked().id()));
         }
@@ -80,7 +80,7 @@ void FreedesktopFrontend::slotActionInvoked(Notification notification)
 
 void FreedesktopFrontend::slotNotificationClosed(Notification notification)
 {
-    if(notification.removeActiveIn(this)) {
+    if (notification.removeActiveIn(this)) {
         emit NotificationClosed(notification.id(), notification.closeReason());
     }
 }
@@ -150,12 +150,12 @@ void FreedesktopFrontend::CloseNotification(uint id)
 QStringList FreedesktopFrontend::GetCapabilities()
 {
     return QStringList()
-            << "body"
-            << "urgency"
-               //            << "body-hyperlinks"
-            << "body-markup"
-            << "icon-static"
-            << "actions";
+           << "body"
+           << "urgency"
+           //            << "body-hyperlinks"
+           << "body-markup"
+           << "icon-static"
+           << "actions";
 }
 
 QString FreedesktopFrontend::GetServerInformation(QString &vendor, QString &version, QString &specVersion)

@@ -80,8 +80,7 @@ void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
 
 void NotificationData::setTimeoutTimer(QTimer *timer)
 {
-    if(m_timeoutTimer)
-    {
+    if (m_timeoutTimer) {
         m_timeoutTimer->stop();
         m_timeoutTimer->deleteLater();
     }

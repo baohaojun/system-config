@@ -22,6 +22,7 @@
 #include "snore.h"
 #include "version.h"
 #include "plugins/snorebackend.h"
+#include "utils.h"
 
 #include <QPointer>
 #include <QApplication>
@@ -59,24 +60,12 @@ public:
 
     bool initPrimaryNotificationBackend();
 
-    inline QString versionSchema() const
-    {
-        return "v1";
-    }
-
     void syncSettings();
 
     QString normalizeKey(const QString &key, SettingsType type) const
     {
-        if (type == LOCAL_SETTING) {
-            return QString("%1/LocalSettings/%2/%3").arg(versionSchema(), m_localSettingsPrefix, key);
-        } else {
-            return QString("%1/%2").arg(versionSchema(), key);
-        }
+        return Snore::Utils::normalizeSettingsKey(key, type, m_localSettingsPrefix);
     }
-
-    //TODO: rename
-    QStringList knownClients();
 
     void setLocalSttingsPrefix(const QString &prefix);
 
@@ -87,7 +76,6 @@ private slots:
     friend class Snore::SnoreBackend;
     void slotNotificationActionInvoked(Notification notification);
     void slotNotificationDisplayed(Notification notification);
-
 
 signals:
     void applicationRegistered(const Snore::Application &);
@@ -116,7 +104,7 @@ private:
 
     QSettings *m_settings;
 
-    QHash<uint,Snore::Notification> m_activeNotifications;
+    QHash<uint, Snore::Notification> m_activeNotifications;
     friend class Snore::Notification;
 
 };
