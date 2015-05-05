@@ -86,7 +86,7 @@ fi
 
 if test "$FIND_FILE_ONLY"; then
     tokens=$(echo -n " $tokens" | perl -npe 's/\s+/ filename:/g; s/(^ *| filename:$)//g')
-    mkdir -p ~/.logs
+    mkdir -p ~/.cache/system-config/logs
     echo $tokens > ~/.cache/system-config/logs/$(basename $0).log
 fi
 

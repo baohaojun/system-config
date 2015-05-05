@@ -27,7 +27,7 @@ my @fallback_dirs;
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
-mkdir glob("~/.logs");
+mkdir glob("~/.cache/system-config/logs");
 open(my $debuglog, ">", glob("~/.cache/system-config/logs/beagrep.log")) or die "Error openning log";
 
 sub debug(@) {
