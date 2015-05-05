@@ -207,7 +207,6 @@ EOF
 if test $# = 0; then
     cp $OUT_DIR_LONG/build.log $OUT_DIR_LONG/full-build.log
 fi
-relative-link -f $OUT_DIR_LONG/full-build.log $OUT_DIR_LONG/build.log $OUT_DIR/ || true
 perl -npe 's!^#\$\(error stopping\)!\$(error stopping)!' -i build/core/main.mk
 relative-link $OUT_DIR_LONG out || true
 if grep -Hn -e 'full build result is' $OUT_DIR_LONG/build.log | grep -e "all ok"; then

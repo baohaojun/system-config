@@ -55,6 +55,6 @@ function check-perl-module() {
 check-program expect
 check-program xmlstarlet
 check-perl-module String::ShellQuote libstring-shellquote-perl
-mkdir -p ~/tmp ~/.logs
+mkdir -p ~/tmp ~/.cache/system-config/logs
 
 "$@"

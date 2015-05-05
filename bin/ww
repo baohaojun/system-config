@@ -16,7 +16,7 @@ cd /tmp
 flag=~/.config/system-config/no-ww
 
 function start-ww() {
-    mkdir -p ~/.logs
+    mkdir -p ~/.cache/system-config/logs
     mkdir -p ~/.config
     if test ~ != $OLDHOME; then
         ln -s $OLDHOME/.config/ibus ~/.config/ -f

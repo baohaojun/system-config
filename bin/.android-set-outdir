@@ -9,4 +9,6 @@ else
     mkdir -p $OUT_DIR
     relative-link -f $OUT_DIR_LONG/host $OUT_DIR_LONG/target $OUT_DIR
     rm -f out || rm -rf out || true
+    relative-link $OUT_DIR_LONG out || true
+    export OUT_DIR=out
 fi

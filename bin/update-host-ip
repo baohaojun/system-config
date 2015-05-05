@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-mkdir -p ~/.logs
+mkdir -p ~/.cache/system-config/logs
 (
     flock 9
     sudo env PATH=$PATH update-host-ip.pl "$@"

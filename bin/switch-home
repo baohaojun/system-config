@@ -3,7 +3,7 @@
 export OLDHOME=$HOME
 export HOME=$1
 shift
-mkdir -p ~/.logs
+mkdir -p ~/.cache/system-config/logs
 mkdir -p ~/.config
 
 if test ~ != $OLDHOME; then

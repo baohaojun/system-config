@@ -1,3 +1,13 @@
+#!/bin/bash
+
+
+me=$(readlink -f $0)
+mydir=$(dirname $me)
+cd $mydir
+
+for x in $(
+              cat <<EOF
+
 build-essential
 ccache
 command-not-found
@@ -20,3 +30,17 @@ bison
 xorriso
 flex
 python-mysqldb
+htop
+libstring-approx-perl
+libtext-glob-perl
+
+EOF
+          ); do
+    test -e $x || touch $x
+done
+echo ok
+
+# Local Variables: #
+# after-save-hook: (lambda () (shell-command-to-string "bash ~/system-config/bin/Linux/config/android-build/.list")) #
+# eval: (mmm-mode 1) #
+# End: #
