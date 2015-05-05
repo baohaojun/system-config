@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir -p ~/.logs
+mkdir -p ~/.cache/system-config/logs
 if test "$#" = 1; then
     set -- "$1" .
 fi

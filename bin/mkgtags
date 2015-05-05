@@ -5,7 +5,11 @@
 # sort may fail
 export TMPDIR=~/.cache
 mkdir -p $TMPDIR
-mkdir -p ~/.logs
+mkdir -p ~/.cache/system-config/logs
+
+if test -x ~/external/local/bin/beagrep; then
+    export LD_LIBRARY_PATH=~/external/local/lib
+fi
 
 if [[ $PWD =~ /for-code-reading/ ]] && test -d .beagrep; then
     echo should do code reading for ${PWD#*for-code-reading}
