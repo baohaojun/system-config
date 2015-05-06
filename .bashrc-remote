@@ -1,8 +1,15 @@
 #!/bin/bash
-export LOCALIP=`echo $SSH_CONNECTION|awk '{print $3}'|sed -e 's/.*://'`
-export LOCALPORT=`echo $SSH_CONNECTION|awk '{print $4}'`
+if test -z "$LOCALIP"; then
+    export LOCALIP=`echo $SSH_CONNECTION|awk '{print $3}'|sed -e 's/.*://'`
+fi
+
+if test -z "$LOCALPORT"; then
+    export LOCALPORT=`echo $SSH_CONNECTION|awk '{print $4}'`
+fi
 export WHOAMI=`whoami`
-export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
+if test -z "$REMOTEIP"; then
+    export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
+fi
 if test "$DISPLAY"; then
     echo export REMOTEIP=$REMOTEIP > ~/.remoteip
 fi

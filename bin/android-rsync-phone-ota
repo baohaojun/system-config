@@ -51,7 +51,14 @@ function update-partition() {
 
 xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^ ' |grep -v '_\d+' -P|perl -npe 'END{print "done done\n"}'|
     while read file part; do
-        if test $part = PrimaryGPT -o $part = BackupGPT -o $part = udisk -o $part = alterable; then
+        do_continue=false;
+        for part_comp in PrimaryGPT BackupGPT udisk alterable modemst1 modemst2 persist fsg; do
+            if test $part = $part_comp; then
+                do_continue=true
+                break
+            fi
+        done
+        if test $do_continue = true; then
             continue
         fi
         if test $part = done; then
