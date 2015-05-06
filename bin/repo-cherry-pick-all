@@ -63,7 +63,7 @@ for x in $diffs; do
         cd $dir || exit 0
         if test "$(basename $0)" = repo-cherry-push-all; then
             start_recursive_shell repo-cherry-push-all;
-            exit
+            exit 0
         fi
         git reset --hard
         command git clean -xfd

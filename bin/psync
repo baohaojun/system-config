@@ -1,10 +1,17 @@
 #!/bin/bash
 
-if test $# = 0; then
+if test $# = 0 -o $# = 1; then
     cd ~/system-config/
     function do_x() {
-        psync $x .
+        psync "$x" .
     }
+
+    if test $# = 1; then
+        x=$1
+        do_x
+        exit
+    fi
+
     if test "$ABC_REMOTE_HOST"; then
         x=$ABC_REMOTE_HOST
         do_x
