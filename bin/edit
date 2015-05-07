@@ -62,6 +62,9 @@ sub get_emacs_file_name($) {
       $myip = qx(ip-hosts $myip);
     }
 
+    if ($myport eq "def") {
+        return "/$protocol:$myname\@$myip:$file";
+    }
     return "/$protocol:$myname\@$myip#$myport:$file";
   } else {
     return $file;

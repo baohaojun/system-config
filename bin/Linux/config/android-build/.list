@@ -33,6 +33,7 @@ python-mysqldb
 htop
 libstring-approx-perl
 libtext-glob-perl
+libdatetime-perl
 
 EOF
           ); do
