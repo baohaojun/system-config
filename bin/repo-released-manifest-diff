@@ -1,0 +1,85 @@
+#!/bin/bash
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+sep() {
+    echo
+    echo "****************************************************************"
+    echo
+}
+
+check-rev-and-path() {
+    if ! [[ $revision =~ ^[0-9a-f]{40}$ ]]; then
+        die "invalid revision $revision for $name"
+    fi
+
+    if test -z "$path"; then
+        if test -z "$name"; then
+            die "both name and path not set for mystic project"
+        fi
+        path=$name
+    fi
+}
+
+if test $# != 2; then
+    die "usage: $0 from_xml to_xml"
+fi
+
+f_xml=$1
+t_xml=$2
+
+f_projects=$(xmlstarlet sel -t -m //project -v @name -n $f_xml)
+t_projects=$(xmlstarlet sel -t -m //project -v @name -n $t_xml)
+
+echo "These projects are deleted:"
+arg1-arg2 "$f_projects" "$t_projects" | indent-clipboard -
+
+sep
+
+echo "These projects are added:"
+arg1-arg2 "$t_projects" "$f_projects" | indent-clipboard -
+
+sep
+
+(
+    xmlstarlet sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $f_xml | grep .
+) | (
+    declare -A from_path_revision_map
+    while read name revision path; do
+        check-rev-and-path
+        from_path_revision_map[$path]=$revision
+    done
+    export from_path_revision_map
+    export -p |grep -P -e 'declare -Ax (from_path_revision_map)' > /tmp/f.env.$$
+)
+
+(
+    xmlstarlet sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $t_xml | grep .
+) |
+    (
+        . /tmp/f.env.$$
+        while read name revision path; do
+            check-rev-and-path
+            f_rev=${from_path_revision_map[$path]}
+            if test "$f_rev" != "$revision"; then
+                echo "$path: old: $_rev, new: $revision"
+                echo
+                if test -z "$f_rev"; then
+                    echo "old revision is blank, will not show git log"
+                elif test ! -d "$path"; then
+                    echo "$path not exist, will not show git log"
+                else
+                    echo "git log -10 $f_rev..$revision"
+                    echo
+                    (
+                        cd $path
+                        git log -10 $f_rev..$revision | indent-clipboard -
+                    )
+                fi | indent-clipboard -
+                sep
+            fi
+        done
+    )

@@ -1,9 +1,18 @@
 #!/bin/bash
-getclip > ~/.cache/system-config/logs/$(basename $0).$$
+if test "$1" = -; then
+    cat
+else
+    getclip
+fi > ~/.cache/system-config/logs/$(basename $0).$$
 if test $(basename $0) = indent-clipboard; then
     perl -npe 's/^/    /' -i ~/.cache/system-config/logs/$(basename $0).$$
 else
     perl -npe 's/^    //' -i ~/.cache/system-config/logs/$(basename $0).$$
 fi
-cat ~/.cache/system-config/logs/$(basename $0).$$|putclip
+cat ~/.cache/system-config/logs/$(basename $0).$$|
+    if test "$1" = -; then
+        cat
+    else
+        putclip
+    fi
 rm ~/.cache/system-config/logs/$(basename $0).$$
