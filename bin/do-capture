@@ -12,4 +12,18 @@ elif test "$file" = agenda; then
     emacsclient -d -e '(org-todo-list)'
 elif test "$file" = daily; then
     do-daily
+elif [[ "$file" =~ " " ]]; then
+    set -- $file
+    shift
+    (
+        cd ~/system-config/doc/projects
+        file=$(f "$@")
+        file=$(readlink -f "$file")
+        emacsclient -e "(progn
+                           (find-file \"$file\")
+                           (org-agenda-remove-restriction-lock)
+                           (org-agenda-set-restriction-lock 'file)
+                           (org-todo-list))"
+    )
+
 fi

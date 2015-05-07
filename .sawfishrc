@@ -228,7 +228,8 @@
 (setq global-remap-alist
       '(("C-a" . '((t "Home")))
         ("C-z" . '((Xfce4-terminal "C-z" "z")))
-        ("S-SPC" . '((Xfce4-terminal "C-z")))
+        ("Super-z" . '((Xfce4-terminal "C-z" "z") (t "C-z")))
+        ("Super-SPC" . '((Xfce4-terminal "C-z") (t "next")))
         ("C-g" . '((Firefox "C-g") (t "ESC")))
         ("Next" . '((Firefox "C-v") (qpdfview "SPC")))
         ("Prior" . '((Firefox "ESC" "v") (qpdfview "BS")))
