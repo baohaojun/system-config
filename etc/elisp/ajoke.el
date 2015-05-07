@@ -41,6 +41,7 @@
 (defcustom ajoke--emacs-ctags-alist
   '(("emacs-lisp" . "lisp")
     ("sawfish" . "lisp")
+    ("org" . "OrgMode")
     ("js" . "javascript")
     ("c" . "c++")
     ("objc" . "ObjectiveC")
