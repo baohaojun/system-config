@@ -121,7 +121,7 @@
     (apply #'call-process
      process
      "/dev/null"
-     (concat (getenv "HOME") "/bin/skeleton_compgen_word.pl")
+     (concat (getenv "HOME") "/system-config/bin/skeleton_compgen_word.pl")
      "-d"
      "\\n"
      "-f"
