@@ -29,7 +29,13 @@ if test -z "$host"; then
 fi
 if test -z "$host"; then
     host=$(cat ~/.cache/system-config/last-gerrit-host 2>/dev/null)
-    host=${host:-bibler}
+    if test -d ~/src/android/bionic/; then
+        host=$(
+            cd ~/src/android/bionic
+            xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,'
+            )
+    fi
+    host=${host:-smartisan}
 else
     echo $host > ~/.cache/system-config/last-gerrit-host
 fi
