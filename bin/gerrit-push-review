@@ -79,21 +79,26 @@ done
 
 if test -z "$REPO_BRANCH"; then
     head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
+    merge_head=
     if test "$head_branch"; then
         merge_head=$(git config branch.$head_branch.merge)
         if test "$merge_head" -a "$merge_head" != $head_branch -a "$merge_head" != refs/heads/$head_branch; then
+            export REPO_REMOTE=$(git config branch.$head_branch.remote)
             head_branch=$merge_head
+
         fi
     fi
     if test "$head_branch" && yes-or-no-p -y "use $head_branch as the target branch for review?"; then
         export REPO_BRANCH=$head_branch
-        export REPO_REMOTE=$(git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!')
+        if test -z "$REPO_REMOTE" -a -z "$merge_head"; then
+            export REPO_REMOTE=$(git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!')
+        fi
     fi
 fi
 
 if test $do_fetch = true; then
     echo git fetching remote: $(repo-remote), branch: $(repo-branch)
-    if test -z "$(lookup-file -e .repo)"; then
+    if test -z "$(lookup-file -e .repo)" || [[ $PWD =~ /\.repo/manifests ]]; then
         git fetch -n -v $(repo-remote) $(repo-branch)
     else
         repo sync -c -n . || git fetch -n origin
