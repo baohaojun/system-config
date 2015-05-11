@@ -273,7 +273,11 @@ elif test ! -e ~/system-config/.gitconfig.$USER &&
     else
         git config --global user.name "$USER"
     fi
-    read -p "What is your email address (nobody@example.com)? " email
+    if read -p "What is your email address (nobody@example.com)? " email; then
+        true
+    else
+        true
+    fi
     git config --global user.email "${email:-nobody@example.com}"
     ln -sf ~/.gitconfig ~/.gitconfig.$USER
     if test "$(compare-version "$(git version | pn 3)" 2)" = '<'; then

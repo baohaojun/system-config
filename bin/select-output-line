@@ -5,10 +5,14 @@ export SELECT_PROMPT="Please enter your selection: "
 ORDERED=false
 max=-1
 if test "${1:0:1}" = -; then
-    TEMP=$(getopt -o m:O:op:i: --long order-name:prompt:init: -n $(basename $0) -- "$@")
+    TEMP=$(getopt -o m:O:op:i: --long order-name:,prompt:,init:,dist-sort: -n $(basename $0) -- "$@")
     eval set -- "$TEMP"
     while true; do
         case "$1" in
+            --dist-sort)
+                SELECT_DIST_WORD=$2
+                shift 2
+                ;;
             -O|--order-name)
                 ORDERED=$2
                 shift 2

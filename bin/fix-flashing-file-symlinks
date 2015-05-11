@@ -1,0 +1,21 @@
+#!/bin/bash
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if ! git-is-clean .; then
+    die "git is not clean"
+fi
+
+for sym in $(file * | grep broken | pn 1|tr -d :); do
+    file=$(readlink $sym)
+    dir=$(dirname $file)
+    while test "$dir" -a ! -d "$dir"; do
+        dir=$(dirname "$dir")
+    done
+    file=$(select-output-line --dist-sort $file -- find $dir -name "$(basename $file)")
+    if test -e "$file"; then
+        ln -sf $file $sym
+    fi
+done
