@@ -118,7 +118,9 @@ fi
 
 . ~/system-config/bin/.android-set-outdir
 
-touch $OUT_DIR/Android.mk || true # to make findleaves.py skip this folder.
+if test "$OUT_DIR" != out; then
+    touch $OUT_DIR/Android.mk $OUT_DIR/CleanSpec.mk || true # to make findleaves.py skip this folder.
+fi
 export CCACHE_DIR=$PWD/.repo/.ccache
 echo CCACHE_DIR is $CCACHE_DIR
 rm ~/.ccache || rm -rf ~/.ccache

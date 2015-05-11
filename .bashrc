@@ -98,3 +98,4 @@ fi
 if test -e ~/.bashrc-cust; then
     . ~/.bashrc-cust;
 fi
+export SYSTEM_CONFIG_INITED=true

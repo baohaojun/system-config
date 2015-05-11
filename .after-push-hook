@@ -6,7 +6,7 @@ if test -d ~/src/system-config/; then
     mkdir -p ~/src/system-config/src/github
     (
         cd ~/src/github/
-        for x in emacs.d DoubanMusic weibo.emacs twittering-mode guilt; do
+        for x in emacs.d DoubanMusic weibo.emacs twittering-mode guilt smartcm; do
             (
                 cd $x
                 psync -d -t ~/src/system-config/src/github/$x/ localhost .

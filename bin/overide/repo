@@ -1,4 +1,7 @@
 #!/bin/bash
+if test "$SYSTEM_CONFIG_INITED" != true; then
+    . ~/system-config/.bashrc
+fi
 if test "$1" = sync; then
     set -- "$@" --no-tags
     time ~/system-config/bin/repo "$@"
