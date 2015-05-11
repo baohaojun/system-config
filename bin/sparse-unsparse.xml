@@ -1,5 +1,9 @@
 #!/bin/bash
 set -e
+if test $# = 0; then
+    set -- -p system -o ~/tmp/system.img.$$
+    echo "$@"
+fi
 TEMP=$(getopt -o p:o: --long part:output: -n $(basename $0) -- "$@")
 part=system
 out=
