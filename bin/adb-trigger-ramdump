@@ -1,4 +1,0 @@
-#!/bin/bash
-bs=4096
-my-adb "set -x; dd if=/dev/zero | tr \\\\0 \\\\132 | dd  of=\$(echo /dev/block/platform/*/by-name/factory) seek=$(pretty 30M/$bs|pn 2) bs=$bs count=$(pretty 2M/$bs|pn 2)"
-my-adb "sync; "

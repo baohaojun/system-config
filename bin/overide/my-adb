@@ -67,6 +67,9 @@ function run_the_adb() {
 }
 
 function loop-wait-device() {
+    if test -z "$ANDROID_SERIAL"; then
+        unset ANDROID_SERIAL
+    fi
     echo -n loop-wait-for-device > /dev/tty || true
     for x in $(seq 1 ${1:-6000}); do
         if test $($the_adb devices | grep -v 'List of devices attached' | grep $ANDROID_SERIAL. | wc -l) -gt 0; then

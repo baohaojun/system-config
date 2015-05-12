@@ -1,0 +1,31 @@
+#!/bin/bash
+if test $# -gt 0; then
+    host=$1
+    search=$1
+    if test -e ~/src/github/private-config/.ssssh/search-$host; then
+        search=$(cat ~/src/github/private-config/.ssssh/search-$host)
+    fi
+    shift 1
+fi
+
+if test $# -gt 0; then
+    search=$1
+    shift 1
+fi
+
+if test -z "$host"; then
+    host=$(select-output-line -o 'for x in ~/src/github/private-config/.ssssh/search-*; do echo ${x##*/search-}; done')
+    search=$(cat ~/src/github/private-config/.ssssh/search-$host)
+    if test "$host" = localhost; then
+        search=$USER@$HOSTNAME
+    fi
+fi
+
+find-or-exec konsole
+if sawfish-search-for-screen "$search"; then
+    true
+elif test "$host" = localhost; then
+    myscr bash
+else
+    myscr ssh -o RequestTTY=true $host 'export REMOTEUSER=bhj; umask 0002; exec bash'
+fi

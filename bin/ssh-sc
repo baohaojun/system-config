@@ -1,0 +1,2 @@
+#!/bin/bash
+ssh -o RequestTTY=true "$1" 'export REMOTEUSER=bhj; umask 0002; exec bash'

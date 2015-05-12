@@ -4,8 +4,7 @@ if test "$SYSTEM_CONFIG_INITED" != true; then
 fi
 if test "$1" = sync; then
     set -- "$@" --no-tags
-    time ~/system-config/bin/repo "$@"
-    my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'
+    time ~/system-config/bin/repo "$@" && my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'
     exit
 else
     exec ~/system-config/bin/repo "$@"

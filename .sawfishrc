@@ -96,15 +96,13 @@
 (bind-keys global-keymap "Super-S-Right"  '(system "douban forth&"))
 (bind-keys global-keymap "Super-S-Left"  '(system "douban back&"))
 (bind-keys global-keymap "XF86AudioNext"  '(system "douban next&"))
-(bind-keys global-keymap "XF86Launch9"  '(system "douban next&"))
 (bind-keys s-h-keymap "p"  '(system "emacs-get-android-clipboard&"))
 (bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
 (bind-keys global-keymap "XF86AudioPrev"  '(system "douban prev&"))
-(bind-keys global-keymap "XF86Launch8"  '(system "douban prev&"))
 (bind-keys global-keymap "Super-XF86AudioPlay"  '(system "douban info&"))
 (bind-keys global-keymap "XF86AudioPlay"  '(system "douban pause&"))
-(bind-keys global-keymap "XF86Launch7"  '(system "douban info&"))
 (bind-keys global-keymap "XF86Launch5" '(system "do-capture&"))
+(bind-keys global-keymap "XF86Launch9" '(system "sssh&"))
 (bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac

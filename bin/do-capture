@@ -19,6 +19,7 @@ elif [[ "$file" =~ " " ]]; then
         cd ~/system-config/doc/projects
         file=$(f "$@")
         file=$(readlink -f "$file")
+        find-or-exec emacs
         emacsclient -e "(progn
                            (find-file \"$file\")
                            (org-agenda-remove-restriction-lock)
