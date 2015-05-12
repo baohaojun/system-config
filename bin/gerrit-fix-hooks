@@ -1,3 +1,12 @@
 #!/bin/bash
+set -e
 cd $(lookup-file .git/hooks)
-relative-link ~/src/android/build/.git/hooks/commit-msg
+if test -e ~/src/android/.repo/repo/hooks/commit-msg; then
+    cp ~/src/android/.repo/repo/hooks/commit-msg .
+else
+    (
+        git clone smartisan:/googlesource/git-repo /tmp/repo.$$
+        cp /tmp/repo.$$/hooks/commit-msg .
+        rm -rf /tmp/repo.$$
+    )
+fi

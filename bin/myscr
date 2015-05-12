@@ -33,7 +33,7 @@ if screen -list|grep $session_name; then
     shift;
     if test $# != 0; then
         if test "$1" != screen; then
-            set -- screen "$@"
+            set -- "$@"
         fi
         (
             if echo $SHELLOPTS | grep -q xtrace; then
@@ -46,8 +46,8 @@ if screen -list|grep $session_name; then
         ) > /tmp/screen-exec.$$
 
         find-or-exec konsole >/dev/null 2>&1 || true
-        exec screen -X -S $session_name screen bash /tmp/screen-exec.$$
-        (sleep 1 && rm /tmp/screen-exec.$$);
+        screen -X -S $session_name screen bash /tmp/screen-exec.$$
+        (sleep 5 && rm /tmp/screen-exec.$$);
     fi
     exec screen -h 100000 -x -r $session_name -t $session_name -s $SHELL
 else

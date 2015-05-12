@@ -3,22 +3,49 @@ if test "$DEBUG"; then
     set -x
 fi
 
+max=20
 md5=$(echo "$1" | md5sum |pn 1)
 mkdir -p ~/.cache/system-config/$(basename $0)
+echo "$1" > ~/.cache/system-config/$(basename $0)/$md5.txt
 start=0
 if test -e ~/.cache/system-config/$(basename $0)/$md5; then
     start=$(cat ~/.cache/system-config/$(basename $0)/$md5)
-    ((start %= 10))
+    ((start %= max))
 fi
 
-sawfish-send-focused-window-event C-z $start
-for x in $(seq 1 10); do
+delay() {
+    sleep .1
+}
+
+if test $start -lt 10; then
+    sawfish-send-focused-window-event C-z $start
+else
+    sawfish-send-focused-window-event C-z '"' 9
+    for x in $(seq 10 $start); do
+        delay
+        sawfish-send-focused-window-event C-n
+    done
+    delay
+    sawfish-send-focused-window-event RET
+fi
+
+for x in $(seq 1 $max); do
     if sawfish-get-screen-shot | grep -P -q -e "$1"; then
-        echo $start > ~/.cache/system-config/$(basename $0)/$md5
+        if test $x = 1; then
+            exit 0
+        fi
+
+        if test $start != 0; then
+            start=1
+        fi
+        echo $((x - 1 - start)) > ~/.cache/system-config/$(basename $0)/$md5
         exit 0
     else
+        if test $x = 1 -a $start != 0; then
+            sawfish-send-focused-window-event C-z 0
+            continue
+        fi
         sawfish-send-focused-window-event C-z SPC
-        ((start = (start + 1) % 10))
     fi
     cp /tmp/screen-exchange /tmp/screen-exchange.$x
 done
