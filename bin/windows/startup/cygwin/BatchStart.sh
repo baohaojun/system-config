@@ -20,6 +20,8 @@ $(echo /c/Python3?/python | pn 1) "$(cygpath -alw ~/system-config/gcode/scim-cs/
 
 rm ~/.no-loop
 
+mintty -e myscr&
+
 function loop-start-in-dir() {
     local dir=$1
     shift
