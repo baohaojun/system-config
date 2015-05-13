@@ -1,6 +1,10 @@
 #!/bin/bash
 
+if test "$$SYSTEM_CONFIG_INITED" != true; then
+    . ~/system-config/.bashrc
+fi
 set -e
+
 who=${0##*abc-}
 export ABC_USER=$who
 

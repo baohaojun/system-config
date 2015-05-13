@@ -8,18 +8,19 @@
 # for ssh logins, install and configure the libpam-umask package.
 
 # if running bash
-    # include .bashrc if it exists
-if [ -f "$HOME/.bashrc" ]; then
-    . "$HOME/.bashrc"
+# include .bashrc if it exists
+if [ -n "$BASH_VERSION" ]; then
+    if [ -f "$HOME/.bashrc" ]; then
+        . "$HOME/.bashrc"
+    fi
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+if test "$SYSTEM_CONFIG_INITED" != true -a -e ~/.config/system-config/.bashrc-path; then
+    . ~/.config/system-config/.bashrc-path
 fi
 
 export TZ="Asia/Shanghai"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export LANGUAGE=en_US:
+export LANGUAGE=en_US:en
 export BROWSER=firefox
