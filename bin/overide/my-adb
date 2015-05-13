@@ -73,7 +73,7 @@ function loop-wait-device() {
     echo -n loop-wait-for-device > /dev/tty || true
     for x in $(seq 1 ${1:-6000}); do
         if test $($the_adb devices | grep -v 'List of devices attached' | grep $ANDROID_SERIAL. | wc -l) -gt 0; then
-            if test "$(command my-adb "echo -n hello; echo $$")" = hello$$; then
+            if echo "$(command my-adb "echo -n hello; echo $$")" | grep -q  hello$$; then
                 return 0;
             fi
         fi
@@ -129,7 +129,7 @@ function adb() {
         echo -n 'wait-for-device ' 1>&2
         (
             unset ANDROID_SERIAL
-            $the_adb -W
+            my-adb -W
         )
         shift
     fi

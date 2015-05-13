@@ -102,7 +102,7 @@
 (bind-keys global-keymap "Super-XF86AudioPlay"  '(system "douban info&"))
 (bind-keys global-keymap "XF86AudioPlay"  '(system "douban pause&"))
 (bind-keys global-keymap "XF86Launch5" '(system "do-capture&"))
-(bind-keys global-keymap "XF86Launch9" '(system "sssh&"))
+(bind-keys global-keymap "XF86Launch9" '(system "ssssh&"))
 (bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac

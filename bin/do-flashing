@@ -26,5 +26,5 @@ else
     set -- "$(printf %q "$1")"
     perl -npe '$p = q('$1'); s/^!set refpath .*/!set refpath $p\\/' application > application.bak
     mv application.bak application
-    myscr first bash -c "./RDL.exe; read -p hello"
+    myscr first screen bash -c "./RDL.exe; read -p hello"
 fi

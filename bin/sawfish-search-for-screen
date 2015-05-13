@@ -13,6 +13,11 @@ if test -e ~/.cache/system-config/$(basename $0)/$md5; then
     ((start %= max))
 fi
 
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
 delay() {
     sleep .1
 }
@@ -29,6 +34,13 @@ else
     sawfish-send-focused-window-event RET
 fi
 
+if test $start = 0; then
+    last_is_0=true
+else
+    last_is_0=false
+fi
+
+rm -f /tmp/screen-exchange.start
 for x in $(seq 1 $max); do
     if sawfish-get-screen-shot | grep -P -q -e "$1"; then
         if test $x = 1; then
@@ -43,10 +55,19 @@ for x in $(seq 1 $max); do
     else
         if test $x = 1 -a $start != 0; then
             sawfish-send-focused-window-event C-z 0
+            last_is_0=true
             continue
         fi
         sawfish-send-focused-window-event C-z SPC
     fi
     cp /tmp/screen-exchange /tmp/screen-exchange.$x
+    if test $last_is_0 = true; then
+        last_is_0=false
+        cp /tmp/screen-exchange.$x /tmp/screen-exchange.start
+    else
+        if diff -q /tmp/screen-exchange.$x /tmp/screen-exchange.start; then
+            die "we have turned around"
+        fi
+    fi
 done
 exit 1
