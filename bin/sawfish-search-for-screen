@@ -54,6 +54,14 @@ for x in $(seq 1 $max); do
         exit 0
     else
         if test $x = 1 -a $start != 0; then
+            sawfish-send-focused-window-event C-z '"' Home
+            for y in $(seq 1 $start); do
+                sawfish-send-focused-window-event "C-n"
+            done
+            sawfish-send-focused-window-event RET
+            if sawfish-get-screen-shot | grep -P -q -e "$1"; then
+                exit 0
+            fi
             sawfish-send-focused-window-event C-z 0
             last_is_0=true
             continue

@@ -22,7 +22,7 @@ if test -z "$host"; then
 fi
 
 find-or-exec konsole
-if sawfish-search-for-screen "$search"; then
+if test "$search" && sawfish-search-for-screen "$search"; then
     true
 elif test "$host" = localhost; then
     myscr bash

@@ -78,8 +78,6 @@ time (
     ) | tee ~/.cache/system-config/logs/mm.log.$$
 
     cd $top_dir/
-    rm -f out
-    relative-link $(dirname $(readlink -f $BHJ_OUT_DIR/host)) out
     mv ~/.cache/system-config/logs/mm.log.$$ $BHJ_OUT_DIR/mm.log
     grep 'mm build is ok' $BHJ_OUT_DIR/mm.log
 )

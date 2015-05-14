@@ -409,4 +409,9 @@ fi
         relative-link $x ../${x%.bhj} || true
     done
 ) >/dev/null 2>&1 &
+
+if test ! -e ~/.cache/system-config/android-build-install-done &&
+        yes-or-no-p -y "Do you want to install the debian/ubuntu packages for android build (requires sudo)?"; then
+    install-pkgs android-build && touch ~/.cache/system-config/android-build-install-done
+fi
 echo Simple config OK.

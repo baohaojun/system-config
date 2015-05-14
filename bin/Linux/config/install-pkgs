@@ -6,14 +6,19 @@ if echo $SHELLOPTS | grep -q xtrace; then
 fi
 
 if grep '^deb htt' /etc/apt/sources.list; then
-    sudo dpkg --add-architecture i386
+    sudo dpkg --add-architecture i386 || true
     sudo perl -npe 's/^deb\s+\b/deb [arch=amd64,i386] /' -i /etc/apt/sources.list
     sudo apt-get update
 fi
 
-if test $# = 1 -a -d "$1"; then
-    export PACKAGES_DIR=$(readlink -f "$1")
-    set --
+if test $# = 1; then
+    if test ! -d "$1" && test -d ~/system-config/bin/Linux/config/"$1"; then
+        set -- ~/system-config/bin/Linux/config/$1
+    fi
+    if test -d "$1"; then
+        export PACKAGES_DIR=$(readlink -f "$1")
+        set --
+    fi
 fi
 
 if test $# != 0; then

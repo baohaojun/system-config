@@ -15,9 +15,12 @@ if test "$(uname)" = Linux; then
 else
     set -x
     if echo "$@" | grep sfo; then
-        cd /d/share2/RDL_Automation_v2.10.6.0614
+        cd /d/RDL_8974
     else
-        cd /d/RDL_8994_Automation_v3.10.1.0771/
+        cd /d/RDL_8994/
+    fi
+    if test ! -e adb.exe; then
+        cd ./*/
     fi
 
     if ps.pl rdl.exe; then
@@ -26,5 +29,5 @@ else
     set -- "$(printf %q "$1")"
     perl -npe '$p = q('$1'); s/^!set refpath .*/!set refpath $p\\/' application > application.bak
     mv application.bak application
-    myscr first screen bash -c "./RDL.exe; read -p hello"
+    myscr first screen bash -c "if test -e MultiFlasher.exe; then ./MultiFlasher.exe; else ./RDL.exe; fi; read -p hello"
 fi
