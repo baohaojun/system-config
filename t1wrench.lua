@@ -406,7 +406,7 @@ local function weibo_text_share(window)
 end
 
 local function t1_share_to_weibo(text)
-   adb_shell{"am", "start", "-n", "com.sina.weibo/com.sina.weibo.EditActivity"}
+   adb_shell{"am", "start", "-n", "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"}
    if text then putclip(text) else sleep(1) end
    t1_post()
 end
@@ -913,7 +913,11 @@ t1_post = function(text) -- use weixin
       end
    end
    if window then print("window is " .. window) end
-   if window == "com.sina.weibo/com.sina.weibo.EditActivity" or window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" or window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity" then
+   if window == "com.sina.weibo/com.sina.weibo.EditActivity"
+      or window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity"
+      or window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity"
+      or window == "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
+   then
       weibo_text_share(window)
       return
    elseif window == "com.google.android.gm/com.google.android.gm.ConversationListActivityGmail" then
@@ -1112,7 +1116,7 @@ picture_to_weibo_share = function(pics, ...)
       local target = pics[i]
 
       if i == 1 then
-         adb_shell("am start -n com.sina.weibo/com.sina.weibo.EditActivity")
+         adb_shell("am start -n com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity")
          adb_event("sleep .5")
          local input_method, ime_height = adb_get_input_window_dump()
          if ime_height ~= 0 then
