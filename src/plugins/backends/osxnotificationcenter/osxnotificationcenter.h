@@ -30,10 +30,10 @@ class OSXNotificationCenter : public Snore::SnoreBackend
 public:
     OSXNotificationCenter();
     ~OSXNotificationCenter();
-    virtual bool initialize(Snore::SnoreCore *snore);
+    virtual bool initialize() override;
 
 public slots:
-    virtual void slotNotify(Snore::Notification notification);
+    virtual void slotNotify(Snore::Notification notification) override;
 };
 
 #endif // OSXNOTIFICATIONCENTER_H

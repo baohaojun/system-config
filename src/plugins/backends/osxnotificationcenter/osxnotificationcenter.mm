@@ -27,11 +27,11 @@ OSXNotificationCenter::~OSXNotificationCenter()
 {
 }
 
-bool OSXNotificationCenter::initialize(SnoreCore *snore)
+bool OSXNotificationCenter::initialize()
 {
     notification_center = [NSUserNotificationCenter defaultUserNotificationCenter];
 
-    return SnoreBackend::initialize(snore);
+    return SnoreBackend::initialize();
 }
 
 void OSXNotificationCenter::slotNotify(Snore::Notification notification)
