@@ -173,3 +173,7 @@ echo push ok.
 )
 
 mv ~/.cache/system-config/logs/gerrit-review.log.$$ ~/.cache/system-config/logs/gerrit-review.log
+
+if yes-or-no-p -n "Do review now?"; then
+    gerrit-do-review
+fi

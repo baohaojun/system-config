@@ -41,7 +41,7 @@ while true; do
 done
 
 if test -d .repo; then
-    diffs=$(rgrep -l -e "$1" out/diff | sort)
+    diffs=$(rgrep -l -P -e "$1" out/diff | sort)
 else
     diffs=$(lookup-file -e out/diff/$(ap . | perl -npe 's!/!%!g').log)
     if test ! -e "$diffs"; then
@@ -89,7 +89,7 @@ for x in $diffs; do
                     echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
                     ) || true
             fi
-            for y in $(grep -e "$1" $x |grep -v 'Merge commit.*into'| pn 3); do
+            for y in $(grep -P -e "$1" $x |grep -v 'Merge commit.*into'| pn 3); do
                 export WORKING_REV=$y
                 ret=0
                 git cherry-pick --allow-empty $y || start_recursive_shell "cherry failed: $y" || ret=$?

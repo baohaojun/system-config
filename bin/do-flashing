@@ -26,6 +26,9 @@ else
     if ps.pl rdl.exe; then
         pycyg terminateModule.py rdl.exe;
     fi
+    if ps.pl multiflasher.exe; then
+        pycyg terminateModule.py multiflasher.exe
+    fi
     set -- "$(printf %q "$1")"
     perl -npe '$p = q('$1'); s/^!set refpath .*/!set refpath $p\\/' application > application.bak
     mv application.bak application

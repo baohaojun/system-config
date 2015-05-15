@@ -4,7 +4,12 @@
 if id | grep 'uid=0\b' -P; then
     umount -l ~/smb;
     screen_pid=$(ps.pl SCREEN.first|grep SCREEN|pn 1)
-    ps -eo user,pid | grep "^${OLDUSER:-bhj}\s+" -P | pn 2 |
+    uid=$(id ${OLDUSER:-bhj} | perl -npe 's,^uid=(\d+).*,$1,')
+    if ! [[ $uid =~ ^[0-9]+$ ]]; then
+        echo "Can't determine your uid: $uid"
+        exit 1
+    fi
+    ps -eo uid,pid | grep "^\s*$uid\s+" -P | pn 2 |
         while read pid; do
             if test "$pid" = "$screen_pid"; then
                 continue

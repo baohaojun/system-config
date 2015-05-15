@@ -21,8 +21,10 @@ if test $# = 0 || test "$#" = 2 -a "$1" = -F -a "$2" = -T; then
         }
     fi
 
-    set -- -f $(if test -d bionic; then cd bionic; fi; git-choose-branch -p from|remove-remotes) -t \
-        $(if test -d bionic; then cd bionic; fi; git-choose-branch -p to|remove-remotes) "$@"
+    set -- \
+        --xf $(select-output-line -p "From which xml" -o 'cd .repo/manifests; for x in *.xml; do echo $x; done') \
+        --xt $(select-output-line -p "To which xml" -o 'cd .repo/manifests; for x in *.xml; do echo $x; done')
+    yes-or-no-p -y "You want run with $@?"
 fi
 
 local_from=false
