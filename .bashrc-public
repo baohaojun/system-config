@@ -73,11 +73,11 @@ scd()
             basedir=$(common-path "$PWD" "$dir")
             stem="${dir:${#basedir}+1}"
 
-            dir1=$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')
+            dir1=$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1 . "'$stem'/",e')
             if test -e  "$dir1"; then
                 cd "$dir1" && break
             else
-                cd "$(pwd | perl -npe 's,('$basedir'/),$1'$stem'/,')" && break
+                cd "$(pwd | perl -npe 's,('$basedir'/),$1 . "'$stem'/",e')" && break
             fi
         done
     else
@@ -94,7 +94,7 @@ scd()
         basedir=$(dirname "$dir")
         stem=$(basename "$dir")
 
-        cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"
+        cd "$(pwd | perl -npe '$x=""; s,('$basedir'/)(.*?)(/|$),$1 . "'$stem'/",e')"
     fi
 }
 export EMAIL=baohaojun@gmail.com
