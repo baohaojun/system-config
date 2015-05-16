@@ -222,6 +222,7 @@ if git status -s | grep . ; then
 EOF
         ) > /tmp/$(basename $0).$$
         get-stdin /tmp/$(basename $0).$$
+        rm /tmp/$(basename $0).$$
     )" ||true # " to fix the font-lock...
 fi
 

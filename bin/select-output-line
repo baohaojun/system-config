@@ -84,6 +84,7 @@ dood=(
             fi
 
             cat $tmpfile
+            rm $tmpfile
         ) |
         if test $ORDERED != true -a $ORDERED != false; then
             uniq-and-dist-sort "$(cat $histfile.$$  2>/dev/null | head -n 1)"

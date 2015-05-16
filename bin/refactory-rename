@@ -169,3 +169,4 @@ function rename-files() {
 
 rename-files . "$@"
 git-interactive-add
+rm $tmpf.tmp $tmpf.hash $tmpf

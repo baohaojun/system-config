@@ -14,7 +14,9 @@ case $1 in
                          sleep 1 && bash -x ~bhj/system-config/bin/switch-touchpad &
                          sleep 1 && re-xmodmap&
                          sleep 1 && sudo ps-killall pulseaudio&
-            " >~bhj/.logs/99-switch-touchpad.log 2>&1
+                         . ~/.config/system-config/ssh-agent
+                         notify-real-home&
+            " >~bhj/.logs/bhj-hibernate-hook.sh.log 2>&1
             echo done "$@"
             echo
         ) > ~bhj/.logs/$(basename $0).log 2>&1
@@ -26,8 +28,6 @@ set -x
 . ~/.renew-xauth
 . ~/.config/system-config/.bashrc-path
 xscreensaver-command -lock&
-. ~/.config/system-config/ssh-agent
-notify-real-home&
 EOF
             )
 
