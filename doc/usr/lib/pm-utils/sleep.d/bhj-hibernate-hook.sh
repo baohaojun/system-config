@@ -15,7 +15,7 @@ case $1 in
                          sleep 1 && re-xmodmap&
                          sleep 1 && sudo ps-killall pulseaudio&
                          . ~/.config/system-config/ssh-agent
-                         notify-real-home&
+                         sleep 30 && notify-real-home&
             " >~bhj/.logs/bhj-hibernate-hook.sh.log 2>&1
             echo done "$@"
             echo
