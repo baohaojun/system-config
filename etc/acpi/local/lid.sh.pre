@@ -1,6 +1,6 @@
 #!/bin/bash
 
-exec >~bhj/.logs/lid.sh.log 2>&1
+exec >~bhj/.cache/system-config/logs/lid.sh.log 2>&1
 
 grep -q closed /proc/acpi/button/lid/*/state
 if [ $? = 0 ]; then

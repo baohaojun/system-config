@@ -16,10 +16,10 @@ case $1 in
                          sleep 1 && sudo ps-killall pulseaudio&
                          . ~/.config/system-config/ssh-agent
                          sleep 30 && notify-real-home&
-            " >~bhj/.logs/bhj-hibernate-hook.sh.log 2>&1
+            " >~bhj/.cache/system-config/logs/bhj-hibernate-hook.sh.log 2>&1
             echo done "$@"
             echo
-        ) > ~bhj/.logs/$(basename $0).log 2>&1
+        ) > ~bhj/.cache/system-config/logs/$(basename $0).log 2>&1
         ;;
     pre)
         (
@@ -32,7 +32,7 @@ EOF
             )
 
             su - bhj -c "$cmd"
-        ) > ~bhj/.logs/$(basename $0).log2 2>&1
+        ) > ~bhj/.cache/system-config/logs/$(basename $0).log2 2>&1
         ;;
     *)  echo "ERROR: called incorrectly."
         ;;

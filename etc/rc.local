@@ -12,8 +12,8 @@
 # By default this script does nothing.
 set +e
 set -x
-if test -d ~bhj/.logs; then
-    exec > ~bhj/.logs/rc.local.log 2>&1
+if test -d ~bhj/.cache/system-config/logs; then
+    exec > ~bhj/.cache/system-config/logs 2>&1
 else
     exec > /tmp/rc.local.log 2>&1
 fi
