@@ -107,9 +107,9 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                 }
                 emacs-cell-phone $(basename $0)
             )
-        ) 10> ~/.logs/$(basename $0).lock-send &
+        ) 10> ~/.cache/system-config/logs/$(basename $0).lock-send &
         if test $# != 0; then
             exit
         fi
     done
-) 9> ~/.logs/$(basename $0).lock
+) 9> ~/.cache/system-config/logs/$(basename $0).lock
