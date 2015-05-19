@@ -146,12 +146,18 @@ void SnoreCorePrivate::init()
 void SnoreCorePrivate::syncSettings()
 {
     Q_Q(SnoreCore);
-    QString oldBackend = q->primaryNotificationBackend();
-    m_notificationBackend->deinitialize();
-    m_notificationBackend = nullptr;
-    if (!setBackendIfAvailible(q->value("PrimaryBackend", LOCAL_SETTING).toString())) {
-        snoreDebug(SNORE_WARNING) << "Failed to set new backend" << q->value("PrimaryBackend", LOCAL_SETTING).toString() << "restoring" << oldBackend;
-        setBackendIfAvailible(oldBackend);
+    QString newBackend = q->value("PrimaryBackend", LOCAL_SETTING);
+    if (newBackend) {
+        QString oldBackend;
+        if (m_notificationBackend) {
+            oldBackend = m_notificationBackend->name();
+            m_notificationBackend->deinitialize();
+            m_notificationBackend = nullptr;
+        }
+        if (!setBackendIfAvailible(newBackend)) {
+            snoreDebug(SNORE_WARNING) << "Failed to set new backend" << q->value("PrimaryBackend", LOCAL_SETTING).toString() << "restoring" << oldBackend;
+            setBackendIfAvailible(oldBackend);
+        }
     }
 //TODO: cleanup
     auto syncPluginStatus = [&](const QString & pluginName) {
