@@ -86,10 +86,9 @@ void Snore::SettingsDialog::on_pushButton_clicked()
 void SettingsDialog::load()
 {
     snoreDebug(SNORE_DEBUG) << "loading";
-
-    ui->primaryBackendComboBox->clear();
-    QStringList list = SnoreCore::instance().pluginNames(SnorePlugin::BACKEND);
-    if (!list.empty()) {
+    if (SnoreCore::instance().value("PluginTypes", LOCAL_SETTING).value<SnorePlugin::PluginTypes>() & SnorePlugin::BACKEND) {
+        ui->primaryBackendComboBox->clear();
+        QStringList list = SnoreCore::instance().pluginNames(SnorePlugin::BACKEND);
         ui->primaryBackendComboBox->setVisible(true);
         ui->primaryBackendLabel->setVisible(true);
         ui->primaryBackendComboBox->addItems(list);
