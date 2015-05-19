@@ -177,7 +177,9 @@ bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
 void SnoreCore::requestCloseNotification(Notification n, Notification::CloseReasons r)
 {
     Q_D(SnoreCore);
-    d->m_notificationBackend->requestCloseNotification(n, r);
+    if (d->m_notificationBackend) {
+        d->m_notificationBackend->requestCloseNotification(n, r);
+    }
 }
 
 bool SnoreCore::primaryBackendSupportsRichtext()
