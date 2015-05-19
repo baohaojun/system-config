@@ -86,10 +86,18 @@ void Snore::SettingsDialog::on_pushButton_clicked()
 void SettingsDialog::load()
 {
     snoreDebug(SNORE_DEBUG) << "loading";
+
     ui->primaryBackendComboBox->clear();
     QStringList list = SnoreCore::instance().pluginNames(SnorePlugin::BACKEND);
-    ui->primaryBackendComboBox->addItems(list);
-    ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(SnoreCore::instance().value("PrimaryBackend", LOCAL_SETTING).toString()));
+    if (!list.empty()) {
+        ui->primaryBackendComboBox->setVisible(true);
+        ui->primaryBackendLabel->setVisible(true);
+        ui->primaryBackendComboBox->addItems(list);
+        ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(SnoreCore::instance().value("PrimaryBackend", LOCAL_SETTING).toString()));
+    } else {
+        ui->primaryBackendComboBox->setVisible(false);
+        ui->primaryBackendLabel->setVisible(false);
+    }
     ui->timeoutSpinBox->setValue(SnoreCore::instance().value("Timeout", LOCAL_SETTING).toInt());
     for (auto widget : m_tabs) {
         widget->loadSettings();
