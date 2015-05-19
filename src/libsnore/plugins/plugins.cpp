@@ -129,7 +129,7 @@ QString SnorePlugin::typeToString(const SnorePlugin::PluginTypes t)
     return SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).valueToKey(t);
 }
 
-const QList<SnorePlugin::PluginTypes> &SnorePlugin::types()
+QList<SnorePlugin::PluginTypes> SnorePlugin::types()
 {
     static QList<SnorePlugin::PluginTypes> t;
     if (t.isEmpty()) {

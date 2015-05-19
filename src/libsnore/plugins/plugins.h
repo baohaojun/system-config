@@ -45,7 +45,7 @@ public:
 
     static PluginTypes typeFromString(const QString &t);
     static QString typeToString(const PluginTypes t);
-    static const QList<PluginTypes> &types();
+    static QList<PluginTypes> types();
 
     SnorePlugin(const QString &name);
     virtual ~SnorePlugin();
