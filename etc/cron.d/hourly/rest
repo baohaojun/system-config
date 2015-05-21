@@ -1,3 +1,3 @@
 #!/bin/bash
 
-bhj-short-notify 'Rest!' "You need to take a short rest for your eye and body!"
+sleep 1800 && bhj-short-notify 'Rest!' "You need to take a short rest for your eye and body!"

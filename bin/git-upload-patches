@@ -27,5 +27,7 @@ git submodule foreach 'DOING_SUBMODULE=true git-upload-patches'
 if test -z "$DOING_SUBMODULE"; then
     cd ~/src/github/git-upload-patches/
     git add .
-    git commit -m "auto commit $(now)" -s && git push
+    if git st -s |grep .; then
+        git commit -m "auto commit $(now)" -s && git push
+    fi
 fi

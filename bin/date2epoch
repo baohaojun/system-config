@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+use DateTime;
+use DateTime::TimeZone;
+$date = join("", @ARGV);
+$date =~ s/[^\d]//g;
+
+$date =~ m/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/ or die "Invalid date format";
+
+($year, $month, $day, $hour, $minute, $second) = ($1, $2, $3, $4, $5, $6);
+$d = DateTime->new(year => $year, month => $month, day => $day, hour => $hour, minute => $minute, second=>$second, time_zone => "Asia/Shanghai");
+print $d->epoch();

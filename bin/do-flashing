@@ -10,7 +10,7 @@ if test "$(uname)" = Linux; then
         else
             swp
         fi|perl -npe 's/share.smartisan.cn/172.16.2.16/')")
-    ssh-exp pub "do-flashing $@";
+    ssh pub "do-flashing $@";
     find-or-exec rdesktop
 else
     set -x

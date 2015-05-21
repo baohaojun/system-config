@@ -26,7 +26,7 @@ for dir in ~/system-config/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; d
     cd $dir
 
     for x in ./*; do
-        if test "$x" != "${x%.stackdump}" -o -d "$x"; then
+        if test "$x" != "${x%.stackdump}" -o -d "$x" || [[ $x =~ \# ]]; then
             continue
         fi
         chmod +x $x || true

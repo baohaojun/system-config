@@ -1,0 +1,16 @@
+#!/bin/bash
+my-adb '
+    set -x;
+    cd /data/;
+    setsid setsid busybox nohup bash -x -c "
+        for x in \$(seq 1 5); do
+            if test $(cat /sys/class/power_supply/usb/online) = 1; then
+                sleep 1;
+                date;
+            else
+                break;
+            fi;
+        done;
+        reboot -p
+    "
+'

@@ -9,7 +9,9 @@ file=$(select-output-line -o -- bash -c 'cd ~/system-config/doc/projects; ls -t 
 if test -e ~/system-config/doc/projects/$file; then
    e ~/system-config/doc/projects/$file;
 elif test "$file" = agenda; then
-    emacsclient -d -e '(org-todo-list)'
+    emacsclient -d -e '(progn
+        (org-agenda-remove-restriction-lock)
+        (org-todo-list))'
 elif test "$file" = daily; then
     do-daily
 elif [[ "$file" =~ " " ]]; then
@@ -20,7 +22,7 @@ elif [[ "$file" =~ " " ]]; then
         file=$(f "$@")
         file=$(readlink -f "$file")
         find-or-exec emacs
-        emacsclient -e "(progn
+        emacsclient -d -e "(progn
                            (find-file \"$file\")
                            (org-agenda-remove-restriction-lock)
                            (org-agenda-set-restriction-lock 'file)

@@ -11,6 +11,22 @@ if test ! "$ANDROID_SERIAL"; then
     export ANDROID_SERIAL=$(select-output-line my-adb devices?|pn 1)
 fi
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  Sno_system
+## end code-generator
+## start generated code
+no_system=false
+OPTIND=1
+while getopts 'S' opt; do
+    case "$opt" in
+        S)    no_system=true;;
+        *)    echo Usage Error; exit 2;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
 
 xml=rawprogram_unsparse.xml
 if test ! -e "$xml"; then
@@ -25,10 +41,12 @@ fi
 
 my-adb -r id | grep 'uid=0\b'
 
-if ! my-adb 'test -d /data/debian/ && echo -n hello && echo '$$ | grep hello$$ -q; then
-    die "Debian not found on this phone, can't use rsync"
+if test $no_system = false; then
+    if ! my-adb 'test -d /data/debian/ && echo -n hello && echo '$$ | grep hello$$ -q; then
+        die "Debian not found on this phone, can't use rsync"
+    fi
+    ssh-to-phone echo hello$$ | grep hello$$
 fi
-ssh-to-phone echo hello$$ | grep hello$$
 
 # this is for debugging
 function update-partition() {
@@ -49,25 +67,33 @@ function update-partition() {
     my-adb "dd if=/data/$file of=\$(echo /dev/block/platform/*/by-name/$part) && echo yes$$" | grep yes$$
 }
 
-xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^ ' |grep -v '_\d+' -P|perl -npe 'END{print "done done\n"}'|
-    while read file part; do
-        do_continue=false;
-        for part_comp in PrimaryGPT BackupGPT udisk alterable modemst1 modemst2 persist fsg; do
-            if test $part = $part_comp; then
-                do_continue=true
+function update-non-system-partitions() {
+    xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^ ' |grep -v '_\d+' -P|perl -npe 'END{print "done done\n"}'|
+        while read file part; do
+            do_continue=false;
+            for part_comp in PrimaryGPT BackupGPT udisk alterable modemst1 modemst2 persist fsg; do
+                if test $part = $part_comp; then
+                    do_continue=true
+                    break
+                fi
+            done
+            if test $do_continue = true; then
+                continue
+            fi
+            if test $part = done; then
                 break
             fi
+            echo doing $file to $part
+            update-partition $file $part || exit 5
         done
-        if test $do_continue = true; then
-            continue
-        fi
-        if test $part = done; then
-            break
-        fi
-        echo doing $file to $part
-        update-partition $file $part || exit 5
-    done&
+}
 
+if test $no_system = false; then
+    update-non-system-partitions&
+else
+    update-non-system-partitions
+    exit
+fi
 
 export tmpPostfix=$$
 sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 $(readlink -f $xml)

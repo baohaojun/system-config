@@ -28,7 +28,7 @@ elif test "$host" = localhost; then
     myscr bash
 else
     if test ! -e ~/.config/system-config/is-realhome; then
-        myscr ssh -o RequestTTY=true $host 'export REMOTEUSER=bhj; umask 0002; exec bash'
+        myscr ssh -X -o RequestTTY=true $host 'export REMOTEUSER=bhj; umask 0002; exec bash'
     else
         myscr ssh-work $host
     fi
