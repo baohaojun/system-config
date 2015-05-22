@@ -10,6 +10,6 @@ if test "$2"; then
 fi
 
 tar czfv "${target}.tgz" "$source"
-lftp -c "connect ftp://foxconn:Bg1upNVztqgSo@172.16.16.220/; put ${target}.tgz"
+lftp -c "connect ftp://foxconn:Bg1upNVztqgSo@172.16.16.220/; put '${target}'.tgz"
 rm "$source" -rf
 rm ${target}.tgz -f
