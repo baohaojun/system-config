@@ -1,0 +1,4 @@
+#!/bin/bash
+for x in "$@"; do
+    echo -n \"$(up "$x")\"\ ;
+done|tee /dev/tty|putclip

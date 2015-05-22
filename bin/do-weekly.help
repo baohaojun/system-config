@@ -3,6 +3,7 @@
 #usage: do-weekly.help rule_of_matching file_to_save
 cat <<EOF
 (progn
+  (org-agenda-remove-restriction-lock)
   (org-tags-view nil "$1")
   (write-region (save-excursion (beginning-of-buffer) (line-beginning-position 3)) (point-max) "$2"))
 EOF
