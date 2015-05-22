@@ -6,7 +6,12 @@ if test "$1" = sync; then
 
     if test "$JENKINS_SERVER_COOKIE"; then
         my-rfa "git clean -xfd; git reset --hard" || true
+        if test -e .repo/do-not-sync; then
+            exit admin set this as not sync, for testing?
+            exit 0
+        fi
     fi
+
     set -- "$@" --no-tags
     time ~/system-config/bin/repo "$@" && my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'
     exit
