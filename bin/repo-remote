@@ -18,7 +18,12 @@ if test "$REPO_INFO"; then
     $REPO_INFO remote
 elif lookup-file -e .repo/.. >/dev/null 2>&1; then
     if [[ $PWD =~ \.repo ]]; then
-        git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!'
+        head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
+        if test "$head_branch"; then
+            git config branch.$head_branch.remote
+        else
+            git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!'
+        fi
     else
         repo forall . -c 'echo $REPO_REMOTE' 2>/dev/null
     fi

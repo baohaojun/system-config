@@ -381,6 +381,11 @@ fi || true
         cd ~/src/github/emacs.d
         git remote add up https://github.com/purcell/emacs.d
     )
+
+    (
+        cd ~/src/github/autoproxy
+        git remote add up https://github.com/agunchan/autoproxy
+    )
 ) >/dev/null 2>&1 || true
 
 if which emacs >/dev/null 2>&1 && test ! -e ~/.config/system-config/emacs-config-done; then
