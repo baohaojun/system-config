@@ -1,0 +1,54 @@
+| IPA            | AHD             | Examples        |
+| tʃ             | ᴄʜ              | church          |
+| hw             | (h)w            | which           |
+| dʒ             | j               | judge           |
+| x              | ᴋʜ              | loch (Scottish) |
+|                |                 | Buch (German)   |
+| ɡ9             | g               | game            |
+| ŋ              | ɴɢ              |                 |
+| (ng-g, nk)     | thing           |                 |
+| ʃ              | ꜱʜ              | ship            |
+| θ              | ᴛʜ              | thin            |
+| ð              | ᴛʜ (<u> or <i>) | this            |
+| j              | y               | yes             |
+| ʒ              | ᴢʜ              | vision          |
+|                |                 |                 |
+| æ              | ă               | cat             |
+| eɪ             | ā               | day             |
+| ɛər            | âr              | hair            |
+| ɑː             | ä               | father          |
+| ɑr             | är              | arm             |
+| ɛ              | ĕ               | let             |
+| iː             | ē               | see             |
+| ɪər            | îr              | here            |
+| ɪ              | ĭ               | pit             |
+| aɪ             | ī               | by              |
+| ɒ              | ŏ               | pot             |
+| oʊ             | ō               | no              |
+| ɔː             | ô               | caught          |
+| ɔr             | ôr              | north           |
+| ɔər            |                 | force           |
+| ɔɪ             | oi              | noise           |
+| ʊ              | o͝o              | took            |
+| ʊər            | o͝or             | tour            |
+| uː             | o͞o              | soon            |
+| aʊ             | ou              | out             |
+| ʌ              | ŭ               | cut             |
+| ɜr, ɝː         | ûr              | word            |
+| ə              | ə               | about           |
+| ɨ              | ə               | rabbit          |
+| ər             | ər              | butter          |
+| juː            | yo͞o             | view            |
+| a              |                 | ami (French)    |
+| øː, œ          | œ               | feu (French)    |
+| schön (German) |                 |                 |
+| yː, ʏ          | ü               | tu (French)     |
+| über (German)  |                 |                 |
+| ɔ̃              | ôɴ              | bon (French)3   |
+| Stress         |                 |                 |
+| IPA1           | AHD             | Examples        |
+| ˈa             | aʹ              | primary stress  |
+| ˌa             | aʹ              |                 |
+| 5              |                 |                 |
+|                |                 |                 |
+| a              |                 |                 |

@@ -58,6 +58,7 @@ fi
     # smb-push .
     perl -ne 'print unless m/system_/' -i $xml
     perl -ne 'print unless m/userdata_/' -i $xml
+    perl -ne 'print unless m/alterable.bin/' -i $xml
 
     replace-bootimage -b boot.img -- -d
     do-flashing

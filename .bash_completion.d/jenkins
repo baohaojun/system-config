@@ -1,0 +1,28 @@
+#!/bin/bash
+_jenkins_cli() {
+    local commands=(
+        build cancel-quiet-down clear-queue connect-node console
+        copy-job create-job create-node delete-builds delete-job delete-node
+        disable-job disconnect-node enable-job get-job get-node groovy
+        groovysh help install-plugin install-tool keep-build list-changes
+        list-jobs list-plugins login logout mail offline-node online-node
+        quiet-down reload-configuration restart safe-restart safe-shutdown
+        session-id set-build-description set-build-display-name
+        set-build-parameter set-build-result shutdown update-job update-node
+        version wait-node-offline wait-node-online who-am-i
+    )
+
+    local cur prev
+    local IFS=$'\n'
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    COMPREPLY=(
+        $(skeleton_compgen_word.pl "${commands[*]}" "$cur")
+    )
+    return 0
+
+}
+
+complete -o default -o filenames -F _jenkins_cli jenkins-cli jc
