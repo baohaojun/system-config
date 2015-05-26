@@ -3,8 +3,7 @@ if test "$SYSTEM_CONFIG_INITED" != true; then
     . ~/system-config/.bashrc
 fi
 if test "$1" = sync; then
-
-    if test "$JENKINS_SERVER_COOKIE"; then
+    if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
         my-rfa "git clean -xfd; git reset --hard" || true
         if test -e .repo/do-not-sync; then
             exit admin set this as not sync, for testing?

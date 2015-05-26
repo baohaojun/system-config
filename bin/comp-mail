@@ -1,8 +1,9 @@
 #!/bin/bash
 
-TEMP=$(getopt -o u:p: --long user:pass: -n $(basename $0) -- "$@")
-user=$(get-about-me mail)
-pass=$(get-authinfo $(get-about-me smtp))
+TEMP=$(getopt -o u:p:d --long user:pass: -n $(basename $0) -- "$@")
+user=$(get-about-me ldap-user)
+decode=false
+pass=$(get-authinfo -h 127.0.0.1 -u $(get-about-me ldap-user))
 
 eval set -- "$TEMP"
 while true; do
@@ -14,6 +15,10 @@ while true; do
         -p|--pass)
             pass=$2
             shift 2
+            ;;
+        -d)
+            decode=true
+            shift
             ;;
         --)
             shift
@@ -110,4 +115,9 @@ ldapsearch -LLL -b "$(get-about-me ldap-dc)" \
     -P 3 \
     -H "$(get-about-me ldap-url)" \
     -D "$user" \
-    -w "$pass" "$query"
+    -w "$pass" "$query" |
+    if test $decode = true; then
+        decode-ldap-output
+    else
+        cat
+    fi

@@ -1,0 +1,67 @@
+#!/usr/bin/perl
+
+# dn:: Q0495YyF5piK5YabLE9VPWNodWl6aSxEQz1zbWFydGlzYW4sREM9Y24=
+# objectClass: top
+# objectClass: person
+# objectClass: organizationalPerson
+# objectClass: user
+# cn:: 5YyF5piK5Yab
+# sn:: 5YyF
+# givenName:: 5piK5Yab
+# distinguishedName:: Q0495YyF5piK5YabLE9VPWNodWl6aSxEQz1zbWFydGlzYW4sREM9Y24=
+# instanceType: 4
+# whenCreated: 20140314113444.0Z
+# whenChanged: 20150525011731.0Z
+# displayName:: 5YyF5piK5Yab
+# uSNCreated: 135736
+# memberOf:: Q0496aG555uu566h55CG5LiO5pSv5oyB6YOoLE9VPWNodWl6aSxEQz1zbWFydGlzYW4
+#  sREM9Y24=
+# uSNChanged: 1292101
+# name:: 5YyF5piK5Yab
+# objectGUID:: KTMMRsLMdEeLiTzmVfbUzw==
+# userAccountControl: 512
+# primaryGroupID: 513
+# objectSid:: AQUAAAAAAAUVAAAAekv2Tmpfn96esPY2wQgAAA==
+# sAMAccountName: baohaojun
+# sAMAccountType: 805306368
+# userPrincipalName: baohaojun@smartisan.cn
+# objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=smartisan,DC=cn
+# dSCorePropagationData: 16010101000000.0Z
+# lastLogonTimestamp: 130769902512456173
+# mail: baohaojun@smartisan.cn
+
+use strict;
+
+my %to_decode = (
+    dn => 1,
+    cn => 1,
+    sn => 1,
+    givenName => 1,
+    distinguishedName => 1,
+    displayName => 1,
+    memberOf => 1,
+    name => 1,
+    member => 1,
+    );
+
+my $last_line;
+
+use Convert::BaseN;
+# by name
+my $cb = Convert::BaseN->new('base64');
+
+while (<>) {
+    chomp;
+    if (m/^\s+/) {
+        s/^\s+//;
+        $last_line .= $_;
+    } else {
+        $last_line =~ m/^(\w+)(:*\s*)(\S*)/;
+        if ($to_decode{$1}) {
+            print "$1$2" . $cb->decode($3) . "\n";
+        } else {
+            print "$last_line\n" if $last_line;
+        }
+        $last_line = $_;
+    }
+}
