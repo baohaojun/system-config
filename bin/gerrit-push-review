@@ -14,14 +14,19 @@ function die() {
 rev=HEAD
 
 head_branch=
-TEMP=$(getopt -o dnBb:r:Ra --long draft,revision:,norebase,remote: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o dnBb:r:Rac --long draft,revision:,norebase,remote: -n $(basename $0) -- "$@")
 do_fetch=true
+do_commit=-n
 do_rebase=true
 do_review=true
 where=refs/for
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -c)
+            do_commit=-y
+            shift
+            ;;
         --remote)
             export REPO_REMOTE=$2
             shift 2
@@ -174,6 +179,6 @@ echo push ok.
 
 mv ~/.cache/system-config/logs/gerrit-review.log.$$ ~/.cache/system-config/logs/gerrit-review.log
 
-if yes-or-no-p -n "Do review now?"; then
+if yes-or-no-p $do_commit "Do review now?"; then
     gerrit-do-review
 fi

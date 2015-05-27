@@ -2,15 +2,23 @@
 if test "$SYSTEM_CONFIG_INITED" != true; then
     . ~/system-config/.bashrc
 fi
-if test "$1" = sync; then
-    if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
+if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
+    if test "$1" = sync; then
         my-rfa "git clean -xfd; git reset --hard" || true
         if test -e .repo/do-not-sync; then
-            exit admin set this as not sync, for testing?
+            echo admin set this as not sync, for testing?
             exit 0
+        elif test "$1" = init -a -d .repo/manifests/.git; then
+            (
+                cd .repo/manifests
+                git reset --hard
+                git clean -xfd
+            )
         fi
     fi
+fi
 
+if test "$1" = sync; then
     set -- "$@" --no-tags
     time ~/system-config/bin/repo "$@" && my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'
     exit

@@ -9,6 +9,9 @@ fi
 
 cd -P .
 # cd $(dirname $(lookup-file -e .git))
+if test -x .before-gia-hook; then
+    ./.before-gia-hook
+fi
 
 function die() {
     echo Error: "$@"

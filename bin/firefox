@@ -16,8 +16,12 @@ export -f debug
 
 if test -e ~/external/the-firefox; then
     the_firefox=$(readlink -f ~/external/the-firefox)
-else
+elif test -e ~/system-config/bin/the-firefox; then
     the_firefox=$(readlink -f ~/system-config/bin/the-firefox)
+elif test -x /usr/bin/firefox; then
+    the_firefox=/usr/bin/firefox
+else
+    bhj-notify "Error" "Firefox not found, please install it first!"
 fi
 
 is_firefox=0

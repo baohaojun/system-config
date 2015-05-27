@@ -3,11 +3,18 @@ my-adb -r stop
 
 my-adb 'cd /data;
         for x in *; do
-            if test $x = media -o $x = debian -o $x = misc; then
+            if test $x = media -o $x = debian -o $x = misc -o $x = property; then
                 continue;
             else
                 rm -r $x;
             fi;
+        done
+        cd /data/property;
+        for x in *; do
+            if test $x = persist.sys.usb.config; then
+                continue
+            fi
+            rm -r $x
         done
         cd /data/misc/;
         for x in *; do
