@@ -1,2 +1,6 @@
 #!/bin/bash
-exec ssh -o PreferredAuthentications=password "$@"
+if test $(basename $0) = ssh-passwd; then
+    exec ssh -o PreferredAuthentications=password "$@"
+elif test $(basename $0) = ssh-tty; then
+    exec ssh -o requesttty=true "$@"
+fi

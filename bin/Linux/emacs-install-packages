@@ -32,6 +32,7 @@ mkdir -p ~/src/github
 cd ~/src/github
 
 if test -d ~/system-config/.emacs_d/elpa && test ! -d ~/.emacs.d/elpa; then
+    mkdir -p ~/.emacs.d/
     cp -av ~/system-config/.emacs_d/elpa ~/.emacs.d/
     (
         cd ~/.emacs.d/elpa
