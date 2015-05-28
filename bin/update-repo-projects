@@ -19,7 +19,3 @@ set -e
     repo sync -j4 -f
     repo-changes\?
 )
-
-if test "$RUNNING_IN_CRON" = true; then
-    cron-code-reading
-fi

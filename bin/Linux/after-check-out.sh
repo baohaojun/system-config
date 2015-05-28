@@ -6,6 +6,13 @@ touch ~/.cache/system-config/.where ~/.cache/system-config/.where.lock
 
 if test $(whoami) = bhj; then
     sudo perl -npe 's/^XKBVARIANT=.*/XKBVARIANT="dvp"/;' -i /etc/default/keyboard
+    cat <<EOF | sudo tee /etc/locale.gen
+zh_CN.GBK GBK
+zh_CN.UTF-8 UTF-8
+en_US.UTF-8 UTF-8
+EOF
+    sudo locale-gen
+    echo LANG=en_US.UTF-8 |sudo tee /etc/default/locale
 fi
 sudo touch /etc/console-setup/* || true
 sudo touch /etc/default/* || true # setupcon may fail when the timestamp of

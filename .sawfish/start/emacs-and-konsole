@@ -10,7 +10,7 @@ while ! emacsclient -e '(message "hello")' | grep -q '"hello"'; do
     sleep 1
 done
 
-if xrandr | grep 'HDMI. connected'; then
+if xrandr | grep -P 'HDMI. connected|^DP1 connected'; then
     switch-to-hdmi
     switch-to-hdmi-and-laptop
 fi

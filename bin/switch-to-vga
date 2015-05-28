@@ -24,10 +24,17 @@ done
 ## end generated code
 
 
-xrandr_out=$(xrandr)
+xrandr_out=$(xrandr | grep -v ' disconnected ')
 lvds=$(echo "$xrandr_out" | grep '^LVDS' | pn 1)
+if test -z "$lvds"; then
+    lvds=$(echo "$xrandr_out" | grep '^eDP1' | pn 1)
+fi
+
 vga=$(echo "$xrandr_out" | grep '^VGA' | pn 1)
 hdmi=$(echo "$xrandr_out" | grep '^HDMI' | pn 1)
+if test -z "$hdmi"; then
+    hdmi=$(echo "$xrandr_out" | grep '^DP1' | pn 1)
+fi
 if echo "$xrandr_out" | grep '^VGA\S* disconnected' -P; then
     vga=$hdmi
 fi

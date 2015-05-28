@@ -7,8 +7,7 @@ function do_it() {
             if [[ $PWD =~ /.cache/system-config/for-code-reading/ ]]; then
                 cd "${PWD#*/.cache/system-config/for-code-reading}";
             fi
-            time SOURCECODETAGSMODE=true mkbeagrepidx&
-            time mkbeagrepidx
+            nice for-code-reading
         ) 2>&1 | tee .for-code-reading
     fi
 }

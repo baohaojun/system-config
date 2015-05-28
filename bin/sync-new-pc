@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Usage: $(basename $0) new-pc-name"
+fi
+new=$1
+
+cd ~
+rsync system-config $new: -av --delete
+sudo rsync ~/Downloads/ root@$new:~bhj/Downloads/ -av --delete
+# rsync src/github/* $new:src/github/ -av --delete
+# rsync Mail Maildir $new: -av --delete
+sudo rsync /usr/local $new:/usr -av --delete
+find . -maxdepth 1 -type d -name '.*'|
+    grep '\./' |
+    xargs -d \\n bash -c 'rsync -avz --delete --exclude "*/*code-reading*/" "$@" '$new': '  true
+
+find . -maxdepth 1 -type f | xargs -d \\n bash -c 'rsync -avz --delete --exclude "*/*code-reading*/" "$@" '$new': '  true

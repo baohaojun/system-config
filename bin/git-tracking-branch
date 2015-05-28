@@ -9,4 +9,4 @@ if test "$head_branch"; then
         head_branch=$merge_head
     fi
 fi
-echo ${head_branch:-no-such-branch}
+echo ${head_branch:-$(repo-branch)}
