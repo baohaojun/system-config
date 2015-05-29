@@ -1,7 +1,6 @@
 #!/bin/bash
 if test -d ~/src/system-config/; then
     cd ~/system-config
-    psync
     psync -d -t ~/src/system-config/ localhost . -- --exclude .emacs_d/elpa --exclude src/&
     mkdir -p ~/src/system-config/src/github
     (

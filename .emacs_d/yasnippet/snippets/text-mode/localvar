@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# key: localvar
+# name: localvar
+# --
+# Local Variables: #
+# $1: $2 #
+# after-save-hook: (lambda () (shell-command-to-string "assync -h build5")) #
+# eval: (mmm-mode 1) #
+# End: #
+$0

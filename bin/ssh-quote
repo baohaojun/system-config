@@ -1,0 +1,27 @@
+#!/bin/bash
+
+declare -a ssh_args
+
+while test "$#" != 0; do
+    x=$1
+    if test "$x" = --; then
+        shift;
+        break;
+    fi
+    ssh_args=("${ssh_args[@]}" "$x")
+    shift;
+done
+
+declare -a cmd_args
+
+while test "$#" != 0; do
+    x=$1
+    cmd_args=("${cmd_args[@]}" "$(printf %q "$x")")
+    shift
+done
+
+if test ${#cmd_args[@]} = 1; then
+    cmd_args=(bash -c "${cmd_args[@]}")
+fi
+
+ssh "${ssh_args[@]}" "${cmd_args[@]}"

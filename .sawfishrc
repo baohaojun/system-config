@@ -2,6 +2,7 @@
 
 (require 'sawfish.wm.util.keymap)
 (require 'sawfish.wm.state.maximize)
+(require 'rep.data.ring)
 
 (load-file "~/system-config/.sawfish/bhj-draw-wininfo.jl")
 (load-file "~/system-config/.sawfish/bhj-draw-notification.jl")
@@ -174,7 +175,7 @@
    ("v"                "adjust-volume" "adjust-volume")
    ("C-,"              "hello world no such thing" "firefox pop")
    ("C-."              "hello world no such thing" "firefox push")
-   ("Super-n"          "firefox|chromium|google-chrome" "firefox")
+   ("Super-n"          "iceweasel|firefox|chromium|google-chrome" "firefox")
    ("Super-t"          (lambda (w) (and
                                (string-match "konsole|xfce4-terminal" (bhj-window-class w) 0 t)
                                (not (string= "emacs" (window-name w))))) "konsole.bhj")
@@ -229,19 +230,19 @@
         ("C-z" . '((Xfce4-terminal "C-z" "z")))
         ("Super-z" . '((Xfce4-terminal "C-z" "z") (t "C-z")))
         ("Super-SPC" . '((Xfce4-terminal "C-z") (t "next")))
-        ("C-g" . '((Firefox "C-g") (t "ESC")))
-        ("Next" . '((Firefox "C-v") (qpdfview "SPC")))
-        ("Prior" . '((Firefox "ESC" "v") (qpdfview "BS")))
+        ("C-g" . '((Firefox "C-g") (Iceweasel "C-g") (t "ESC")))
+        ("Next" . '((Firefox "C-v") (Iceweasel "C-v") (qpdfview "SPC")))
+        ("Prior" . '((Firefox "ESC" "v") (Iceweasel "ESC" "v") (qpdfview "BS")))
         ("C-d" . '((t "DEL")))
         ("C-e" . '((t "End")))
-        ("C-b" . '((Firefox "C-b") (t "Left")))
-        ("C-y" . '((Firefox "C-y") (t "C-v")))
-        ("C-f" . '((Firefox "C-f") (t "Right")))
+        ("C-b" . '((Firefox "C-b") (Iceweasel "C-b") (t "Left")))
+        ("C-y" . '((Firefox "C-y") (Iceweasel "C-y") (t "C-v")))
+        ("C-f" . '((Firefox "C-f") (Iceweasel "C-f") (t "Right")))
         ("M-b" . '((t "C-Left"))) ; this is for Escape only, not Alt
         ("M-f" . '((t "C-Right")))
         ("M-B" . '((t "C-S-Left")))
         ("M-F" . '((t "C-S-Right")))
-        ("C-s" . '((Firefox "C-s") (Okular "F3") (t "C-g")))
+        ("C-s" . '((Firefox "C-s") (Iceweasel "C-s") (Okular "F3") (t "C-g")))
         ("C-v" . '((qpdfview "SPC") (t "Next")))
         ("SPC" . '((Fbreader "Next")))
         ("BS" . '((Fbreader "Prior")))
@@ -251,7 +252,7 @@
         ("M-d" . '((t "C-S-Right" "DEL")))
         ("M->" . '((qpdfview "End")
                    (t "C-End")))
-        ("C-r" . '((Firefox "C-r") (Okular "S-F3") (t "C-S-g")))
+        ("C-r" . '((Firefox "C-r") (Iceweasel "C-r") (Okular "S-F3") (t "C-S-g")))
         ("C-k" . '((t "S-End" "Del")))
         ("M-BS" . '((t "C-BS")))
         ("C-p" . '((t "Up")))
@@ -259,9 +260,9 @@
         ("M-Left" . '((qpdfview "C-RET")
                       (t nil)))
         ("M-Right" . '((qpdfview "C-S-RET")))
-        ("C-x" . '((Firefox "C-x") (t do-c-x-map)))
+        ("C-x" . '((Firefox "C-x") (Iceweasel "C-x") (t do-c-x-map)))
         ("Super-&" . '((T1Wrench "Meta-&")))
-        ("Super-*" . '((T1Wrench "Meta-*") (Firefox "Meta-*")))))
+        ("Super-*" . '((T1Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
 
 (bind-keys global-keymap "Super-XF86Favorites" '(system "sawfish-gimp-stroke&"))
 
@@ -363,7 +364,7 @@
                 (Xfce4-terminal . "C-S-v")
                 (QtCreator . ("M-e" "p"))
                 (t . "S-Insert")))
-        ("n" . ((Firefox . "Down")))
+        ("n" . ((Firefox . "Down") (Iceweasel . "Down")))
         ("y" . ((Dia . "S-C-z")
                 (Qtcreator . "S-C-z")))
         ("c" . ((Emacs . "M-w")
@@ -372,12 +373,12 @@
                 (Xfce4-terminal . "C-S-c")
                 (Gnome-terminal . "C-S-c")
                 (t . "C-c")))
-        ("w" . ((Firefox . ("C-x" "C-w"))))
-        ("l" . ((Firefox . ("C-x" "C-l"))))
-        ("r" . ((Firefox . ("C-x" "C-r"))))
-        ("s" . ((Firefox . ("C-x" "C-s"))
+        ("w" . ((Firefox . ("C-x" "C-w")) (Iceweasel . ("C-x" "C-w"))))
+        ("l" . ((Firefox . ("C-x" "C-l")) (Iceweasel . ("C-x" "C-l"))))
+        ("r" . ((Firefox . ("C-x" "C-r")) (Iceweasel . ("C-x" "C-r"))))
+        ("s" . ((Firefox . ("C-x" "C-s")) (Iceweasel . ("C-x" "C-s"))
                 (Qtcreator . "C-S-s")))
-        ("d" . ((Firefox . ("C-x" "C-d"))))))
+        ("d" . ((Firefox . ("C-x" "C-d")) (Iceweasel . ("C-x" "C-d"))))))
 
 
 (setq gnome-windows-re "gnome-terminal|nautilus|evince|eog|gedit")
@@ -467,7 +468,7 @@
 (require 'sawfish.wm.commands.x-cycle)
 
 (setq im-class "QQ.exe|kopete|Pidgin" ;; im = instant messanger
-      br-class "Navigator|firefox|epiphany-browser|chromium|Download|Google-chrome" ;; br = browser
+      br-class "iceweasel|Navigator|firefox|epiphany-browser|chromium|Download|Google-chrome" ;; br = browser
       dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|AcroRd32.exe|acroread|evince|Gnumeric|mupdf" ;; dc = doc
       mg-class "meld|gimp|gitk|tkdiff|rdesktop" ;; mg = meld/gimp
       fm-class "nautilus|file-roller" ;; fm = file manager

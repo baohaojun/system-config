@@ -44,7 +44,10 @@ sawfish_script=$(cat <<EOF
 (let* ((prompt-completion-fun (lambda ()))
        (prompt-window-position
         (cons 200 200))
-      $(if test $secret = 1; then echo '(prompt-display-fun (lambda (s) (make-string (length s) ?*)))'; fi))
+      $(if test $secret = 1; then
+          echo '(prompt-display-fun (lambda (s) (make-string (length s) ?*)))';
+          echo '(prompt-history (make-ring 16))';
+      fi))
    (prompt $read_file nil))
 EOF
 )

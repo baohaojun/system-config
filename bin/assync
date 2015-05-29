@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# android source sync
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  h:host
+## end code-generator
+## start generated code
+host=
+OPTIND=1
+while getopts 'h:' opt; do
+    case "$opt" in
+        h)    host=$OPTARG;;
+        *)    echo Usage Error; exit 2;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+if test -z "$host"; then
+    host=build5
+fi
+
+manifest_name=$(basename "$(readlink -f "$(lookup-file .repo/manifest.xml)")")
+manifest_name=${manifest_name%.xml}
+
+remote_repo=$(
+    ssh-quote $host -- manifest_name=$manifest_name bash -c '
+        . ~/system-config/.bashrc
+        for work_root in ~/jenkins/workspace; do
+            for d in $work_root/*/; do
+                if test ! -d "$d"; then
+                    break
+                fi
+                (
+                    cd "$d"
+                    if test "$(basename "$(readlink -f "$(lookup-file .repo/manifest.xml)")")" = $manifest_name.xml; then
+                        pwd
+                        exit
+                    fi
+                )
+            done
+        done
+    '
+           )
+
+if test -z "$remote_repo"; then
+    die "Can't find $manifest_name.xml on $host"
+fi
+
+psync -t $remote_repo/$(ap) $host .

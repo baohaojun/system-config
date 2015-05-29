@@ -9,10 +9,12 @@ use Getopt::Long;
 my $host;
 my $user;
 my $port;
+my $Prompt = "Password: ";
 GetOptions(
     "h=s" => \$host,
     "u=s" => \$user,
     "p=s" => \$port,
+    "P=s" => \$Prompt,
     );
 
 if (not $host and @ARGV) {
@@ -47,5 +49,7 @@ while (<$auth>) {
 }
 
 if (not $got_pass and $user ne '?') {
-  system("bash </dev/tty 2>/dev/tty -c 'read -s -p \"Password: \" pass; echo \$pass'");
+    use String::ShellQuote;
+    $Prompt = shell_quote($Prompt);
+  system("ask-for-input -s -p $Prompt");
 }

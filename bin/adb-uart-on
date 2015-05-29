@@ -1,2 +1,2 @@
 #!/bin/bash
-my-adb -r shell 'echo -n x | tr x \\1 |dd of=$(echo /dev/block/platform/*/by-name/alterable) bs=1 count=1 seek=4'
+my-adb -r shell 'echo -n x | tr x \\1 |dd of=$(echo /dev/block/platform/*/by-name/alterable) bs=1 count=1 seek=3; sync'
