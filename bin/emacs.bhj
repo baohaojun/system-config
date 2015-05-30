@@ -30,5 +30,3 @@ export ANDROID_SERIAL=$(
         echo a2024058
     fi);
 for x in sawfish-client emacsclient; do $x -e '(setenv "ANDROID_SERIAL" "'$ANDROID_SERIAL'")'; done
-. redo-ssh-agent
-export-ssh-agent-to-emacs-and-sawfish
