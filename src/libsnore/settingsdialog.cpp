@@ -89,10 +89,10 @@ void SettingsDialog::load()
     if (SnoreCore::instance().value("PluginTypes", LOCAL_SETTING).value<SnorePlugin::PluginTypes>() & SnorePlugin::BACKEND) {
         ui->primaryBackendComboBox->clear();
         QStringList list = SnoreCore::instance().pluginNames(SnorePlugin::BACKEND);
-        ui->primaryBackendComboBox->setVisible(true);
-        ui->primaryBackendLabel->setVisible(true);
         ui->primaryBackendComboBox->addItems(list);
         ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(SnoreCore::instance().value("PrimaryBackend", LOCAL_SETTING).toString()));
+        ui->primaryBackendComboBox->setVisible(true);
+        ui->primaryBackendLabel->setVisible(true);
     } else {
         ui->primaryBackendComboBox->setVisible(false);
         ui->primaryBackendLabel->setVisible(false);
