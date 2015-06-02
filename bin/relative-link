@@ -127,7 +127,7 @@ n_targets=$#
 target_dir=${args[$#-1]}
 
 if test $# = 2 -a -L "$target_dir" -a "$(readlink -f "$target_dir")" = "$(readlink -f "$1")"; then
-    echo "$target_dir already linked to $1"
+    echo "$target_dir already linked to $1" 1>&2
     exit 0
 fi
 
