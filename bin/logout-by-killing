@@ -2,7 +2,6 @@
 
 
 if id | grep 'uid=0\b' -P; then
-    umount -l ~/smb;
     screen_pid=$(ps.pl SCREEN.first|grep SCREEN|pn 1)
     uid=$(id ${OLDUSER:-bhj} | perl -npe 's,^uid=(\d+).*,$1,')
     if ! [[ $uid =~ ^[0-9]+$ ]]; then
@@ -20,5 +19,6 @@ if id | grep 'uid=0\b' -P; then
             kill -9 "$pid"
         done
 else
+    sudo umount -l ~/smb;
     sudo setsid env PATH=$PATH OLDUSER=$USER bash -c $0&
 fi

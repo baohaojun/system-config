@@ -67,6 +67,17 @@ function update-partition() {
     my-adb "dd if=/data/$file of=\$(echo /dev/block/platform/*/by-name/$part) && echo yes$$" | grep yes$$
 }
 
+if test $(basename $0) = android-rsync-phone-diff; then
+    function update-partition() {
+        md5sum=$(md5sum $file | pn 1)
+        size=$(stat -c %s $file)
+        remote_md5sum=$(my-adb "dd if=\$(echo /dev/block/platform/*/by-name/$part) bs=$size count=1 2>/dev/null | md5sum" | pn 1)
+        if test "$md5sum" != $remote_md5sum; then
+            die "Not the same md5 for $file on $part: $remote_md5sum"
+        fi
+    }
+fi
+
 function update-non-system-partitions() {
     xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^ ' |grep -v '_\d+' -P|perl -npe 'END{print "done done\n"}'|
         while read file part; do
@@ -88,7 +99,9 @@ function update-non-system-partitions() {
         done
 }
 
-if test $no_system = false; then
+if test $(basename $0) = android-rsync-phone-diff; then
+    update-non-system-partitions
+elif test $no_system = false; then
     update-non-system-partitions&
 else
     update-non-system-partitions
@@ -104,6 +117,14 @@ cd ~/tmp/system-$tmpPostfix
 sudo umount system >/dev/null 2>&1 || true
 sudo umount SYSTEM >/dev/null 2>&1 || true
 sudo mount -o loop ../system-$tmpPostfix.img system
+
+if test $(basename $0) = android-rsync-phone-diff; then
+    sudo find system -type f | xargs sudo md5sum | sort > local.txt
+    my-adb 'cd /; find system -type f | xargs md5sum | sort > data/adb.txt'
+    adb pull /data/adb.txt
+    diff adb.txt local.txt || true
+    exit
+fi
 
 cd system
 echo doing rsync in $(pwd)

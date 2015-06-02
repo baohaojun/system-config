@@ -19,8 +19,11 @@ else
     . ~/.config/system-config/ssh-agent
 fi
 
-ssh-add -l >/dev/null 2>&1
-val=$?
+if ssh-add -l >/dev/null 2>&1; then
+    val=$?
+else
+    val=$?
+fi
 if test $val = 2; then
     echo 1>&2 "can't connect to ssh-agent, restart it"
     rm ~/.config/system-config/ssh-agent

@@ -1,6 +1,6 @@
 #!/bin/bash
 firefox_there=false
-if sawfish-window-exists Firefox; then
+if sawfish-window-exists 'Firefox|Iceweasel'; then
     firefox_there=true
     sawfish-browser-input C-M-a
 fi
@@ -9,13 +9,15 @@ firefox -current-tab "http://172.16.0.9:8080/login/q/status:open,n,z"&
 
 for x in $(seq 1 25); do
     sleep 1
-    if test "$(sawfish-top-window)" = Firefox; then
+    top_window=$(sawfish-top-window)
+
+    if test "$top_window" = Firefox -o "$top_window" = Iceweasel; then
         break;
     fi
 done
 
 if test "$firefox_there" = false; then
-    sleep 2
+    sleep 3
 else
     sleep 1
 fi

@@ -39,8 +39,7 @@ import gnomekeyring
 passwd = '$(get-authinfo localhost $USER 22)'
 gnomekeyring.unlock_sync(None, passwd)"
 
-for x in $(find ~/.ssh/ -name 'id_rsa*'|grep -v '\.pub'); do (do-ssh-add -- -k $x&); done
-redo-ssh-agent&
+do-ssh-add-all
 
 run-dir-once ~/external/etc/sawfish/start&
 run-dir-once ~/system-config/.sawfish/start&

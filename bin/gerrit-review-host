@@ -1,0 +1,15 @@
+#!/bin/bash
+
+declare -A host_map
+
+host_map[smartisan]="http://172.16.0.9:8080/"
+
+if test -z "$1"; then
+    die "Usage: gerrit-review-host gerrit-host"
+fi
+
+if test "${host_map[$1]}"; then
+    echo "${host_map[$1]}"
+else
+    echo $1
+fi

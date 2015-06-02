@@ -21,7 +21,7 @@ if test "$GERRIT_HOST"; then
 fi
 
 if test -z "$host"; then
-    host=$(repo-review-host)
+    host=$(repo-host)
 fi
 
 if test -z "$host"; then

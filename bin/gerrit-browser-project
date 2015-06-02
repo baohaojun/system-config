@@ -19,7 +19,7 @@ while true; do
     esac
 done
 
-host=$(repo-review-host)
+host=$(repo-host)
 
 project=$(basename $(repo-project))
 

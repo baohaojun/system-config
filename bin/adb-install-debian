@@ -2,17 +2,18 @@
 
 set -e
 if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
-    if test ! -d ~/tmp/debian; then
-        mkdir -p ~/tmp/
-        sudo debootstrap --include=bash-completion,ssh,rsync,locales --verbose --arch armel --foreign testing ~/tmp/debian
-        sudo perl -npe 's!(^\s*in_target mount -t sysfs sysfs /sys[ \t]*)$!$& || true\n!' -i ~/tmp/debian/debootstrap/functions
-        sudo touch ~/tmp/debian/dev/.dev-not-mounted
+    if test ! -d ~/external/debian; then
+        mkdir -p ~/external/
+        sudo debootstrap --include=bash-completion,ssh,rsync,locales --verbose --arch armel --foreign testing ~/external/debian.$$
+        mv ~/external/debian.$$ ~/external/debian
+        sudo perl -npe 's!(^\s*in_target mount -t sysfs sysfs /sys[ \t]*)$!$& || true\n!' -i ~/external/debian/debootstrap/functions
+        sudo touch ~/external/debian/dev/.dev-not-mounted
     fi
 
-    if test ! -e ~/tmp/debian.tgz; then
+    if test ! -e ~/external/debian.tgz; then
 
         (
-            cd ~/tmp
+            cd ~/external
             sudo tar czfv debian.tgz debian --exclude-vcs
         )
     fi
@@ -21,7 +22,7 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
         adb-fix-busybox
     fi
     if ! my-adb "test -d /data/debian && echo yes$$" | grep -q yes$$; then
-        my-adb -r push ~/tmp/debian.tgz /data/deb.tgz
+        my-adb -r push ~/external/debian.tgz /data/deb.tgz
         my-adb 'cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz'
     fi
 

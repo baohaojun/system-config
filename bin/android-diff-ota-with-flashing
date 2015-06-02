@@ -1,0 +1,53 @@
+#!/bin/bash
+set -e
+if test $# != 2; then
+    die "Error: Usage $(basename $0) OTA.ZIP FLASHING_DIR"
+fi
+
+echo unzip $1
+unzip "$1" -d ~/tmp/ota.$$ >/dev/null 2>&1
+
+(
+    cd "$2"
+    echo unsparse
+    sparse-unsparse.xml -p system -o ~/tmp/system.img.$$
+) >/dev/null 2>&1
+
+mkdir ~/tmp/system.$$
+sudo mount ~/tmp/system.img.$$ ~/tmp/system.$$ -o loop
+
+(
+    if test ! -d ~/tmp/ota.$$/firmware-update && test -d ~/tmp/ota.$$/RADIO; then
+        mv ~/tmp/ota.$$/RADIO ~/tmp/ota.$$/firmware-update
+        rm ~/tmp/ota.$$/firmware-update/filesmap -f
+        mv ~/tmp/ota.$$/SYSTEM ~/tmp/ota.$$/system
+    fi
+    cd ~/tmp/ota.$$/firmware-update
+    mv splash.bin splash.img || true
+)
+otad=~/tmp/ota.$$
+flad=~/tmp/system.$$
+
+for x in $otad/firmware-update/*; do
+    y=${x##*/}
+    if ! diff $x $2/$y; then
+        die $y is not the same for ota and flash || true
+    fi
+done
+
+(
+    cd $flad
+    sudo find . -type l|xargs sudo rm
+)
+echo otad=~/tmp/ota.$$\; flad=~/tmp/system.$$
+diff_out=$(sudo diff -r $otad/system $flad || true)
+if test "$(echo $diff_out | grep -v "^Only ")"; then
+    echo "$diff_out" | grep -v "^Only "
+    die "Some files differ, see above"
+fi
+echo diffing system
+echo "$diff_out"|while read only in d n; do d=${d%:}; if test -L $d/$n; then continue; else sudo find $d/$n -type f; fi;done
+if yes-or-no-p -y "remove tmp files?"; then
+    sudo umount $flad
+    rm $flad $otad -rf
+fi

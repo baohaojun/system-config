@@ -8,13 +8,14 @@ if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
         if test -e .repo/do-not-sync; then
             echo admin set this as not sync, for testing?
             exit 0
-        elif test "$1" = init -a -d .repo/manifests/.git; then
+        fi
+    elif test "$1" = init -a -d .repo/manifests/.git; then
             (
                 cd .repo/manifests
                 git reset --hard
                 git clean -xfd
+                find . -type f -name '*.xml'|xargs touch /dev/null
             )
-        fi
     fi
 fi
 
