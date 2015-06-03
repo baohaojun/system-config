@@ -1,6 +1,6 @@
 #!/bin/bash
 
-test $# = 0 && set -- $(git rev-parse HEAD)
+test $# = 0 && set -- $(git log -1 HEAD|grep 'change-id:' -i |pn 2)
 
 (
     for x in "$@"; do
@@ -8,12 +8,12 @@ test $# = 0 && set -- $(git rev-parse HEAD)
         url=$(echo "$query_out" | grep -P "^\s*url:" | pn 2 | head -n 1)
         if test -z "$url"; then
             id=$(echo "$query_out" | grep -P "^\s*number:" | pn 2 | head -n 1)
-            host=$( repo-host 2>/dev/null )
+            host=$(gerrit-review-host $( repo-host 2>/dev/null ))
             if test -z "$host"; then
                 host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
             fi
 
-            url=$(printf http://%s%s $host $id)
+            url=$(printf %s/%s $host $id)
         fi
         if test "$(basename $0)" = gerrit-review-url; then
             echo $url

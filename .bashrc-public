@@ -4,6 +4,9 @@ export EDITOR=edit-wait
 if test -z "$SSH_CLIENT"; then
     HOSTNAME=$(hostname | perl -npe 's/\..*//')
     export PS1='\n[01;34m{ [01;31m'$USER'[01;34m@[01;33m'$HOSTNAME'[01;34m [01;32m'\$PWD'[01;34m '\$PROMPT_RET\$RECURSIVE_SHELL'[01;34m}[0m\n\$'
+    if test -e ~/.config/system-config/ssh-agent; then
+        . ~/.config/system-config/ssh-agent
+    fi
 else
     . ~/system-config/.bashrc-remote
 fi
@@ -97,4 +100,6 @@ scd()
         cd "$(pwd | perl -npe '$x=""; s,('$basedir'/)(.*?)(/|$),$1 . "'$stem'/",e')"
     fi
 }
-export EMAIL=baohaojun@gmail.com
+if test "$USER" = bhj; then
+    export EMAIL=baohaojun@gmail.com
+fi

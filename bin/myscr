@@ -14,7 +14,7 @@ fi
 ) >/dev/null 2>&1
 
 if test $# = 0 || test $# = 1 -a "$1" = first; then
-    . ~/system-config/.bashrc-ssh-agent
+. ~/system-config/.bashrc-ssh-agent
 fi
 
 if test -x /opt/local/bin/bash; then
@@ -36,6 +36,7 @@ if screen -list|grep $session_name; then
             if echo $SHELLOPTS | grep -q xtrace; then
                 echo 'set -x;'
             fi
+            echo . ~/.config/system-config/ssh-agent
             printf "cd %q;" "$oldpwd"
             for x in "$@"; do
                 printf "%q " "$x"

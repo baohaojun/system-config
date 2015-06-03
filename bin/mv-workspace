@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+mv workspace w.1
+mkdir /Chroot/jenkins/$(basename $PWD)/ -p
+mv w.1 /Chroot/jenkins/$(basename $PWD)/workspace
+ln -s /Chroot/jenkins/$(basename $PWD)/workspace

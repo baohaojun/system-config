@@ -16,7 +16,7 @@ fi
             fi
             sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
             ssh_start_time=$(date +%s)
-            remote_bind_port=$(get-about-me remote-bind-port-$home)
+            remote_bind_port=$(get-about-me remote-bind-port)
             if test "$remote_bind_port" = unknown; then
                 remote_bind_port=$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3))
             fi

@@ -107,8 +107,8 @@ if test "$git_st"; then
 fi |
 if test "$reverse" = true; then
     for x in "$@"; do
-        my-rsync $git_st $symlink $checksum -av $host:$target_dir/$x $(dirname $x) --exclude .git --exclude .gitmodules --exclude "*#*" --exclude ".#*" $local_exclude |grep -v '/$' -P
+        my-rsync $git_st $symlink $checksum -av $host:$target_dir/$x $(dirname $x) --exclude .repo --exclude .git --exclude .gitmodules --exclude "*#*" --exclude ".#*" $local_exclude |grep -v '/$' -P
     done
 else
-    my-rsync $git_st $symlink $checksum -av "$@" $host:$target_dir --exclude .git --exclude "*#*" --exclude ".#*" $delete $local_exclude |grep -v '/$' -P
+    my-rsync $git_st $symlink $checksum -av "$@" $host:$target_dir --exclude .git --exclude .repo --exclude "*#*" --exclude ".#*" $delete $local_exclude |grep -v '/$' -P
 fi

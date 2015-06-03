@@ -405,11 +405,11 @@
     (setq result (concat result main-key))))
 
 (defun synthesize-event-gnome? (event window)
-  ;(message (format nil "key is %s, window is %s" event (bhj-window-class window)))
+  ;;(message (format nil "key is %s, window is %s" event (bhj-window-class window)))
   (if bhj-is-gnome?
       (progn
         (system
-         (concat "xdotool-when-keyboard-clear key "
+         (format nil "xdotool-when-keyboard-clear key %s&"
                  (rewrite-event-for-xdotool event))))
     (synthesize-event event window)))
 
