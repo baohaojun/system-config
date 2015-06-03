@@ -1,5 +1,4 @@
 #!/bin/bash
-export EDITOR=edit-wait
 
 if test -z "$SSH_CLIENT"; then
     HOSTNAME=$(hostname | perl -npe 's/\..*//')
