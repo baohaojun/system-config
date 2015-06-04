@@ -252,7 +252,8 @@ if git-is-ancestor HEAD $origin/$branch; then
     exit
 fi
 
-git pull --rebase
+git fetch $origin -v
+git rebase $origin/$branch
 git push $origin HEAD:refs/heads/$branch || die "you need to merge it!"
 if test -e .after-push-hook; then
     bash .after-push-hook
