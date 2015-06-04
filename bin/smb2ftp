@@ -1,15 +1,34 @@
 #!/bin/bash
 set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  n:name d:dir
+## end code-generator
+## start generated code
+name=
+dir=
+OPTIND=1
+while getopts 'n:d:' opt; do
+    case "$opt" in
+        n)    name=$OPTARG;;
+        d)    dir=$OPTARG;;
+        *)    echo Usage Error; exit 2;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
 set -- "$(readlink -f "${1:-.}")"
-smb-pull "$1" ~/today/
-target=$(basename "$1")
-source=$target
-cd ~/today/
-if test "$2"; then
-    target=$(basename "$2")
+smb-pull "$1" ~/today/ || cp "$1" ~/today/ -av
+if test -z "$name"; then
+    name=$(basename "$1")
 fi
 
-tar czfv "${target}.tgz" "$source"
-lftp -c "connect ftp://foxconn:Bg1upNVztqgSo@172.16.16.220/; put '${target}'.tgz"
+source=$(basename "$1")
+cd ~/today/
+
+tar czfv "${name}.tgz" "$source"
+lftp -c "connect ftp://foxconn:Bg1upNVztqgSo@172.16.16.220/; $(if test "$dir"; then echo "mkdir -p $dir; cd $dir;"; fi) put '${name}'.tgz"
 rm "$source" -rf
-rm ${target}.tgz -f
+rm ${name}.tgz -f

@@ -18,7 +18,10 @@ if test ! -d ~/system-config/.git && test -d ~/system-config/; then
 fi
 
 export can_sudo=true
-if test ! -e /etc/sudoers.d/$USER && ! yes-or-no-p "Do you have sudo power?"; then
+if test -e /etc/sudoers.d/$USER -a "$USER" = bhj; then
+    # can do sudo, but only if it's bhj
+    true
+elif ! yes-or-no-p "Do you have sudo power?"; then
     function sudo() {
         true
     }

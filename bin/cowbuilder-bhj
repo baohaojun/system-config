@@ -7,26 +7,37 @@ if test $(basename $0) != cowbuilder-bhj; then
     user=$(echo "$@"|perl -npe 's/.*?\((.*?)\).*/$1/')
     uid=$(echo "$@"|perl -npe 's/.*?=(\d+).*/$1/')
     echo $user $uid
-    apt-get install -y sudo bash-completion software-properties-common
+    apt-get install -y sudo bash-completion software-properties-common git
     locale-gen en_US.UTF-8
     export LC_ALL=en_US.UTF-8
-    apt-get build-dep -y global
 
-    apt-get install -y sudo bash-completion autoconf automake \
-        bison exuberant-ctags flex \
-        gperf libltdl-dev libtool netbase \
-        openjdk-6-jdk strace tasksel git python python3 \
-        libstring-approx-perl libstring-shellquote-perl \
-        libtext-glob-perl liburi-encode-perl
+    if test $prog != cowbuilder-bhj-shell; then
+        apt-get build-dep -y global
 
-    apt-get install -y libssl-dev uuid-dev libnotify-dev libqtwebkit-dev libxext-dev gdb git-svn rsync libqjson-dev
+        apt-get install -y sudo bash-completion autoconf automake \
+                bison exuberant-ctags flex \
+                gperf libltdl-dev libtool netbase \
+                openjdk-6-jdk strace tasksel git python python3 \
+                libstring-approx-perl libstring-shellquote-perl \
+                libtext-glob-perl liburi-encode-perl
 
+        apt-get install -y libssl-dev uuid-dev libnotify-dev libqtwebkit-dev libxext-dev gdb git-svn rsync libqjson-dev
+
+    fi
     echo "$user ALL=NOPASSWD: ALL" > /etc/sudoers.d/$user
+    echo "$user-chroot ALL=NOPASSWD: ALL" > /etc/sudoers.d/$user-chroot
     chmod 440 /etc/sudoers.d/$user
+    chmod 440 /etc/sudoers.d/$user-chroot
     useradd $user -u $uid -s /bin/bash
+    useradd $user-chroot -u $((uid + 1)) -s /bin/bash
     chown $user\: /home/$user
+    mkdir /home/$user-chroot
+    cp /home/$user/src/github/cm-home/.ssh /home/$user-chroot -av
+    cp /home/$user/system-config /home/$user-chroot -av
+    chown $user-chroot\: /home/$user-chroot -R
+
     if test $prog = cowbuilder-bhj-shell; then
-        bash
+        su - $user-chroot
     elif test $prog = cowbuilder-bhj-build-wangwang; then
         cd /home/bhj/src/github/lww
         su - bhj -c './system-config/bin/after-co-ln-s.sh'
@@ -69,5 +80,5 @@ time sudo unshare -m -- bash -c "
                        $(readlink -f $HOME/src)
                        $(readlink -f $HOME/.cache)
                        $(readlink -f $HOME/.cache/beagrep-debs)
-                     \" -- ${HOME}/bin/$prog $prog \"$id\"
+                     \" -- ${HOME}/system-config/bin/$prog $prog \"$id\"
 "
