@@ -2,6 +2,14 @@
 bs=4096
 my-adb -r "
     set -x;
+    if test \! -e /data/s.wap; then
+        dd if=/dev/zero |
+            tr \\\\0 \\\\132 |
+            dd of=\$(echo /dev/block/platform/*/by-name/factory) seek=$(pretty 20M/$bs|pn 2) bs=$bs count=1;
+    fi
+    if test -e /data/s.wap.reset; then
+        echo -n REST | dd of=\$(echo /dev/block/platform/*/by-name/factory) seek=$(pretty 20M/$bs|pn 2) bs=$bs count=1;
+    fi
     dd if=/dev/zero |
         tr \\\\0 \\\\132 |
         dd of=\$(echo /dev/block/platform/*/by-name/factory) seek=$(pretty 30M/$bs|pn 2) bs=$bs count=$(pretty 2M/$bs|pn 2);
