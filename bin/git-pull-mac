@@ -13,7 +13,9 @@ else
     git pull
     exit
 fi
-git fetch $origin -v
+if ! git fetch $origin -v; then
+    die "failed to fetch $origin: $PWD"
+fi
 for x in remotes/$(git-remote-branch); do
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
