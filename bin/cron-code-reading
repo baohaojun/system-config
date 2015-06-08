@@ -3,15 +3,25 @@
 export PATH=/usr/local/bin:$PATH
 function do_it() {
     if test -f .for-code-reading -a ! -L .for-code-reading; then
+        code_dir=$PWD
+        logfile=$PWD/.for-code-reading
+        if [[ $PWD =~ /.cache/system-config/for-code-reading/ ]]; then
+            code_dir=${PWD#*/.cache/system-config/for-code-reading}
+        else
+            rm .for-code-reading
+            logfile=~/.cache/system-config/for-code-reading$(readlink -f $PWD)/.for-code-reading
+            mkdir -p $(dirname "$logfile")
+        fi
+
         (
-            if [[ $PWD =~ /.cache/system-config/for-code-reading/ ]]; then
-                cd "${PWD#*/.cache/system-config/for-code-reading}";
-            fi
+            cd $code_dir
             nice for-code-reading
-        ) 2>&1 | tee .for-code-reading
+        ) 2>&1 | tee $logfile
     fi
 }
 
 for x in `locate .for-code-reading`; do
-    cd `dirname $x` && do_it;
+    (
+        cd `dirname $x` && do_it;
+    )
 done

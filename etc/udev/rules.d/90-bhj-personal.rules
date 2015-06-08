@@ -1,5 +1,6 @@
 SUBSYSTEM=="usb", ATTR{idVendor}=="1949", RUN+="/home/bhj/system-config/bin/ask-to-sync-org"
 SUBSYSTEM=="usb", ATTR{idVendor}=="05c6", ATTR{idProduct}=="9006",RUN+="/home/bhj/system-config/bin/notify-phone-crash"
+SUBSYSTEM=="usb", ATTR{idVendor}=="05c6", ATTR{idProduct}=="900e",RUN+="/home/bhj/system-config/bin/notify-phone-crash"
 SUBSYSTEM=="usb", ATTR{idVendor}=="05c6", OWNER="bhj"
 SUBSYSTEM=="usb", ATTR{idVendor}=="29a9", OWNER="bhj"
 SUBSYSTEM=="usb", ATTR{serial}=="a2024058", RUN+="/home/bhj/system-config/bin/adb-fix-gms", OWNER="bhj"

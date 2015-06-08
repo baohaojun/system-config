@@ -17,6 +17,144 @@ repo-cherry-find-all() {
             -t $(cd $(lookup-file bionic); git-choose-branch -p to remotes | perl -npe 's,.*?remotes/.*?/,,') -b $(abc-base-build)
 }
 
+function abc() {
+    (
+        case "$1" in
+            help)
+                abc-help
+                ;;
+            mm)
+                shift;
+                abc-mm "$@"
+                ;;
+            grep)
+                shift
+                abc-grep "$@"
+                ;;
+        esac
+    )
+}
+
+abc-help() {
+    cat <<EOF
+
+Run commands with Android Build Center. The following commands are
+supported:
+
+    abc mm: run mm command to build the modules in the current
+        directory in Android Build Center.
+
+    abc grep: run grep with the help of Android Build Center. For e.g.,
+        adb grep -e "readlink"
+EOF
+}
+
+abc-mm() {
+
+    if git status -s|grep '??'; then
+        git status -s | awk '{print $2}' | xargs -d \\n git add
+    fi
+
+    base_build=$(abc-base-build)
+    repo_path=$(abc-repo-path)
+
+    local method=mm
+    if test "$repo_path" = kernel; then
+        method=kernel
+    elif test "$repo_path" = bootable/bootloader/lk; then
+        method=lk
+    fi
+
+    remote_rev=$(abc-repo-revision)
+    if test -z "$remote_rev"; then
+        echo "Something went wrong with abc remote revision"
+        return 1
+    fi
+    if ! git log "$remote_rev" -1 >/dev/null 2>&1; then
+        echo "Seems abc base revision $remote_rev not found in your local repo, maybe run 'repo sync -n .'?"
+        return 1
+    fi
+
+    git diff --binary $(abc-repo-revision) | ssh $abc_host abc $xdebug build-request -m $method -d $(abc-repo-pwd) -b "$base_build" -p $repo_path "$@"
+}
+
+abc-repo-revision() {
+    ssh $abc_host abc repo-revision -b "${base_build:-$(abc-base-build)}" -p "${repo_path:-$(abc-repo-path)}"
+}
+
+abc-base-build() {
+    (
+        croot
+        readlink -f ./.repo/manifest.xml|perl -npe 's,.*/,,; s,\.xml$,,'
+    )
+}
+
+abc-grep() {
+    (
+        croot
+        ## start code-generator "^\\s *#\\s *"
+        # generate-getopts -l e:entry
+        ## end code-generator
+        ## start generated code
+        local entry=
+        local OPTIND=1
+        while getopts 'e:' opt; do
+            case "$opt" in
+                e)    entry=$OPTARG;;
+                *)    echo Usage Error;;
+            esac
+        done
+        shift $(($OPTIND - 1))
+
+        ## end generated code
+
+        ssh $abc_host abc abc-files -b "$(abc-base-build)" "$entry"|xargs grep -H -n -e "$entry" "$@" /dev/null
+    )
+}
+
+abc-repo-branch() {
+    repo forall . -c 'echo $REPO_RREV'
+    # fixme
+}
+
+abc-repo-path() {
+    repo forall . -c 'echo $REPO_PATH'
+}
+
+abc-repo-pwd() {
+    pwd=$(PWD= /bin/pwd)
+    top=$(gettop)
+    echo ${pwd:${#top}+1}
+}
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  h:abc_host xxdebug
+## end code-generator
+## start generated code
+abc_host=
+xdebug=false
+OPTIND=1
+while getopts 'h:x' opt; do
+    case "$opt" in
+        h)    abc_host=$OPTARG;;
+        x)    xdebug=true;;
+        *)    echo Usage Error; exit 2;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+if test -z "$abc_host"; then
+    abc_host=abc@172.16.2.25
+fi
+
+if test $xdebug = true; then
+    xdebug=-x
+else
+    xdebug=
+fi
+
 if test $# = 0; then
     abc mm
 elif test "$(type -t "$1")" = function; then

@@ -40,7 +40,11 @@ if test "$FETCH_ONLY" = true; then
     exit 0
 fi
 git submodule foreach 'bash -c "git-pull-mac&"' | grep .
-git submodule foreach 'git config user.email baohaojun@gmail.com'
-git config user.email baohaojun@gmail.com
+if git config --global user.email| grep -q baohaojun; then
+    git submodule foreach 'git config user.email baohaojun@gmail.com'
+    git config user.email baohaojun@gmail.com
+fi
 ~/system-config/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
-touch ~/system-config/.for-code-reading
+mkdir -p ~/.cache/system-config/for-code-reading/$HOME/system-config
+touch ~/.cache/system-config/for-code-reading/$HOME/system-config/.for-code-reading
+rm -f ~/system-config/.for-code-reading
