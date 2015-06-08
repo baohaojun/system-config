@@ -4,10 +4,11 @@ test $# = 0 && set -- "$(getclip)"
 #https://oldpiratebay.org/search.php?q=ohashi+miku&Torrent_sort=seeders.desc
 # http://techsouth.org/usearch/home/?field=seeders&sorder=desc
 url=$(
-    #echo -n "http://thepiratebay.se/search/";
-    echo -n "http://techsouth.org/usearch/"
+    echo -n "http://thepiratebay.se/search/";
+    # echo -n "http://techsouth.org/usearch/"
     echo -n "$@" | perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g'
-    echo '/?field=seeders&sorder=desc'
+    echo '/0/7/0'
+    #echo '/?field=seeders&sorder=desc'
 )
 echo "$url"|tee /dev/tty|putclip
 firefox "$url"&
