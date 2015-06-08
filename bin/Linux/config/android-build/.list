@@ -31,6 +31,7 @@ xorriso
 flex
 python-mysqldb
 htop
+mysql-client
 libstring-approx-perl
 libtext-glob-perl
 libdatetime-perl
