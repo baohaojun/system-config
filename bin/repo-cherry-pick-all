@@ -95,6 +95,9 @@ for x in $diffs; do
                 git cherry-pick --allow-empty $y || start_recursive_shell "cherry failed: $y" || ret=$?
                 if test $ret = 5; then
                     exit
+                elif test $ret = 4; then
+                    echo cherry-failed: $WORKING_REV in $(ap) |tee -a ~/tmp/repo-cherry-pick-all.txt
+                    break
                 fi
             done
         fi

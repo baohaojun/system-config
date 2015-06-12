@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+if test $# != 3; then
+    die "Error: Usage $(basename $0) vid pid mi"
+fi
+
+rsync /run/user/1000/gvfs/smb-share:server=share.smartisan.cn\,share=share/baohaojun/drivers/adb_usb_driver_smartisan ~/src -av --delete
+cd ~/src/adb_usb_driver_smartisan/;
+git init
+git add .
+
+export vid=$1
+export pid=$2
+export mi=$3
+perl -npe '
+
+$single_format = q(%SingleAdbInterface%        = USB_Install, USB\VID_%s&PID_%s);
+$mi_format = q(%CompositeAdbInterface%     = USB_Install, USB\VID_%s&PID_%s&MI_%s);
+
+printf("$single_format\n", $ENV{vid}, $ENV{pid}) if m,%SingleAdbInterface.*PID_701A,;
+printf("$mi_format\n", $ENV{vid}, $ENV{pid}, $ENV{mi}) if m,%CompositeAdbInterface.*PID_701A&MI_01,;
+' -i ~/src/adb_usb_driver_smartisan/android_winusb.inf
+
+rsync ~/src/adb_usb_driver_smartisan/ pub:/d/ -av

@@ -2,6 +2,7 @@
 *o.cmd
 *.ko
 *.o
+!qc_version.o
 *.mod.c
 \#*
 .\#*

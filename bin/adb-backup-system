@@ -28,13 +28,13 @@ ssh-to-phone echo shit
 mkdir -p ${dataDir:-~/today/forever/data-f9e6c95}
 if test $(basename $0) = adb-backup-system; then
     cd ~/today/forever/system-f9e6c95
-    sudo rsync root@phone:/android/system  . -avz --exclude-from /home/bhj/etc/adb-sync-data-exclude --delete --delete-excluded
+    sudo rsync root@phone:/android/system  . -avz --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --delete-excluded
 elif test $(basename $0) = adb-backup-data; then
     cd ${dataDir:-~/today/forever/data-f9e6c95}
-    sudo rsync root@phone:/android/data  . -avz --exclude-from /home/bhj/etc/adb-sync-data-exclude --delete --delete-excluded
+    sudo rsync root@phone:/android/data  . -avz --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --delete-excluded
 elif test $(basename $0) = adb-backup-data-no-sdcard; then
     cd ${dataDir:-~/today/forever/data-f9e6c95}
-    sudo rsync root@phone:/android/data  . -avz --exclude-from /home/bhj/etc/adb-sync-data-exclude --delete --exclude data/media
+    sudo rsync root@phone:/android/data  . -avz --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --exclude data/media --exclude data/debian
 elif test $(basename $0) = adb-restore-data; then
     cd ${dataDir:-~/today/forever/data-f9e6c95}
      adb-fix-gms
@@ -42,7 +42,7 @@ elif test $(basename $0) = adb-restore-data; then
 elif test $(basename $0) = adb-restore-data-no-sdcard; then
     cd ${dataDir:-~/today/forever/data-f9e6c95}/
     adb-fix-gms
-    sudo rsync data root@phone:/android/ -av "$@" --delete --exclude='data/media/*'
+    sudo rsync data root@phone:/android/ -av "$@" --delete --exclude='data/media/*' --exclude=data/debian
 elif test $(basename $0) = adb-restore-system; then
     cd ~/today/forever/system-f9e6c95
     sudo rsync system root@phone:/android/ -av "$@"

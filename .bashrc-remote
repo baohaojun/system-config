@@ -6,7 +6,7 @@ fi
 if test -z "$LOCALPORT"; then
     export LOCALPORT=`echo $SSH_CONNECTION|awk '{print $4}'`
 fi
-export WHOAMI=`whoami`
+export WHOAMI=${USER:-`whoami`}
 if test -z "$REMOTEIP"; then
     export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
 fi

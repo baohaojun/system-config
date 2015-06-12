@@ -131,10 +131,19 @@ echo doing rsync in $(pwd)
 my-adb remount
 my-adb stop
 if my-adb "test -e /system/framework/com.google.android.maps.jar && echo -n yes && echo $$" | grep yes$$ -q; then
-    for x in $(find ~/src/github/private-config/bin/gapps-system/ -type f); do
-        dest=${x#*/gapps-system/}
-        sudo cp $x $dest
-    done
+    if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
+        # it's lp
+        for x in $(find ~/today/forever/gapps-lp/system/ -type f); do
+            dest=${x#*/gapps-lp/system/}
+            sudo mkdir -p $(dirname $dest)
+            sudo cp $x $dest
+        done
+    else
+        for x in $(find ~/src/github/private-config/bin/gapps-system/ -type f); do
+            dest=${x#*/gapps-system/}
+            sudo cp $x $dest
+        done
+    fi
 fi
 sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
 sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /' |tee ../system.chcon

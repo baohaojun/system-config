@@ -1,0 +1,8 @@
+#!/bin/bash
+adb-tap 902 435
+adb-tap 262 549
+sendtext-android $(get-my-ip eth0)
+adb-tap 769 831
+adb-tap 293 721
+sendtext-android 8888
+adb-tap 758 859

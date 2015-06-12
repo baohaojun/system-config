@@ -1,0 +1,11 @@
+#!/bin/bash
+if test $# != 1; then
+    die "Error: Usage $(basename $0) prompt"
+fi
+
+read -p "Are you sure? Please confirm by typing the string [$1]: "
+if test "$REPLY" = "$1"; then
+    exit 0
+else
+    exit 1
+fi

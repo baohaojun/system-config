@@ -93,7 +93,7 @@ if test $(basename $0) = adb-fix-gms; then
 
             if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
                 # it's lp
-                adb-push ~/today/forever/gapps-lp/* /system/
+                adb-push ~/today/forever/gapps-lp/system/* /system/
             else
                 adb-push ~/today/forever/gapps-system/* /system/
             fi

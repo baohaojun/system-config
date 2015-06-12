@@ -1,0 +1,23 @@
+#!/bin/bash
+
+attachments=("$@")
+
+
+if test "$attachments"; then
+    my-adb mkdir -p /sdcard/adb-mail
+    for a in "${attachments[@]}"; do
+        adb-tap 984 828 # attachment icon
+        adb-tap 198 1467 # 文件管理器
+        am=/sdcard/adb-mail/$(basename "$a")
+        my-adb push "$a" "$am"
+        putclip-android ../../../../../../"${am}"
+        adb-key SCROLL_LOCK
+        if adb-get-ime | grep -q com.cootek.smartinputv5.smartisan; then
+            adb-tap 963 942
+        else
+            adb-tap 965 1061
+        fi
+        sleep 1
+    done
+    adb-tap 108 974
+fi

@@ -1,9 +1,18 @@
 #!/bin/bash
+set -e
 my-adb -r stop
+
+if test -z "$ANDROID_SERIAL"; then
+    die "Can't do it without ANDROID_SERIAL set"
+fi
+
+if test "$ANDROID_SERIAL" = a2024058; then
+    die "Must not run it on a2024058"
+fi
 
 my-adb 'cd /data;
         for x in *; do
-            if test $x = media -o $x = debian -o $x = misc -o $x = property; then
+            if test $x = media -o $x = app -o $x = debian -o $x = misc -o $x = property; then
                 continue;
             else
                 rm -r $x;

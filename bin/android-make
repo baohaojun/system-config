@@ -34,7 +34,6 @@ verbose=
 config=
 keep=-k
 make_dir=
-targets=
 if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
     PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
     echo using java 1.7
@@ -62,13 +61,6 @@ while true; do
         -d)
             cd -
             make_dir=$(readlink -f $2)
-            targets=$(
-                cd $make_dir;
-                find . -maxdepth 3 -name Android.mk |
-                    xargs grep '^\s*(LOCAL_MODULE|LOCAL_PACKAGE_NAME)\b.*=' -P |
-                    perl -npe 's/.*=//' | tr \\n ' '
-                   )
-
             cd -
             shift 2
             ;;
@@ -200,7 +192,13 @@ EOF
                 $do_nice make -j$jobs $keep $* $verbose
             fi
         else
-            $do_nice make -j$jobs $keep $targets
+            echo PATH is $PATH
+            if test "$make_dir"; then
+                mmma "$make_dir"
+            else
+                $do_nice make -j$jobs $keep
+            fi
+
         fi && result=$result'all ok; ' && echo build is successful || true
         echo
         echo "full build result is $result"

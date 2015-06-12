@@ -42,12 +42,8 @@ while true; do
             shift
             ;;
         -p)
-            if test -e "$(lookup-file -e .repo/repo-switch)"; then
-                cat $(lookup-file .repo/repo-switch) || true
-            else
-                echo repo init -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
-                     -m $(basename $(readlink .repo/manifest.xml)) --repo-url $(cd .repo/repo && git-remote-url)
-            fi
+            echo repo init -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
+                 -m $(readlink -f .repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,') --repo-url $(cd .repo/repo && git-remote-url)
             exit 0
             ;;
         -e)

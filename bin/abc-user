@@ -8,13 +8,17 @@ set -e
 who=${0##*abc-}
 export ABC_USER=$who
 
+function die() {
+    echo Error: "$@" 1>&2
+    exit -1
+}
+
 if echo "$SSH_ORIGINAL_COMMAND" | grep -o -P -e '[^-a-z0-9:./_ ]+' -i; then
-   echo "The above characters are not allowed"
-   exit 1
+    die "The above characters are not allowed"
 fi
 
 if test "$(echo "$SSH_ORIGINAL_COMMAND" | pn 1)" != abc; then
-   echo Android Build Cake: "$(echo "$SSH_ORIGINAL_COMMAND" | pn 1)": not found
+    die Android Build Cake: "$(echo "$SSH_ORIGINAL_COMMAND" | pn 1)": command not found.
 fi
 
 

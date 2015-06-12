@@ -3,7 +3,7 @@
 # name: diedef
 # --
 function die() {
-    echo Error: "\$@"
+    echo Error: "\$@" 1>&2
     exit -1
 }
 $0

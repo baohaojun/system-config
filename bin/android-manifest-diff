@@ -4,55 +4,90 @@ use strict;
 my $f1 = shift @ARGV;
 my $f2 = shift @ARGV;
 
-my %f1;
-my %f2;
+my %path_project_map1;
+my %path_project_map2;
 
-open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@path -n $f1") or die "Error opening $f1\n";
+my %path_revision_map1;
+my %path_revision_map2;
+
+my $def_revision1;
+my $def_revision2;
+
+open(my $RevF1, "-|", "xmlstarlet sel -t -m //default -v \@revision -n $f1") or die "Error opening $f1\n";
+while (<$RevF1>) {
+    chomp;
+    $def_revision1 = $_ if $_;
+}
+
+open(my $RevF2, "-|", "xmlstarlet sel -t -m //default -v \@revision -n $f2") or die "Error opening $f2\n";
+while (<$RevF2>) {
+    chomp;
+    $def_revision2 = $_ if $_;
+}
+
+open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -o '=' -v \@revision -n $f1") or die "Error opening $f1\n";
 
 while (<$F1>) {
-    next unless m/^(.*?)\s*=\s*(.*)\s*$/;
-    $f1{$1} = $2;
+    next unless m/^(.*?)\s*=\s*(.*)\s*=\s*(\S*)$/;
+    my ($path, $project, $revision) = ($1, $2, $3);
+    if (not $path) {
+        $path = $project;
+    } elsif (not $project) {
+        $project = $path;
+    }
+
+    $path_project_map1{$path} = $project;
+    $path_revision_map1{$path} = $revision || $def_revision1;
 }
 close $F1;
 
-open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@path -n $f2") or die "Error opening $f2\n";
+open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -o '=' -v \@revision -n $f2") or die "Error opening $f2\n";
 while (<$F2>) {
-    next unless m/^(.*?)\s*=\s*(.*)\s*$/;
-    $f2{$1} = $2;
+    next unless m/^(.*?)\s*=\s*(.*)\s*=\s*(.*)$/;
+
+    my ($path, $project, $revision) = ($1, $2, $3);
+    if (not $path) {
+        $path = $project;
+    } elsif (not $project) {
+        $project = $path;
+    }
+
+    $path_project_map2{$path} = $project;
+    $path_revision_map2{$path} = $revision || $def_revision2;
 }
 close $F2;
 
-for my $x1 (keys %f1) {
-    if ($f1{$x1} eq $f2{$x1}) {
-        delete $f2{$x1};
+
+for my $path (sort keys %path_project_map1) {
+
+    if ($path_project_map1{$path} eq $path_project_map2{$path}) {
+        delete $path_project_map2{$path};
         next;
     }
-    if (exists($f2{$x1})) {
-        chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
-        chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f2));
-        if ($rev1) {
-            $rev1 = "revision=\"$rev1\"";
-        }
 
-        if ($rev2) {
-            $rev2 = "revision=\"$rev2\"";
-        }
-        printf('1: <project path="%s" name="%s"%s/> <=> 2: <project path="%s" name="%s"%s/>' . "\n", $x1, $f1{$x1}, $rev1, $x1, $f2{$x1}, $rev2);
-    } else {
-        chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
-        if ($rev1) {
-            $rev1 = " revision=\"$rev1\"";
-        }
-        printf('1: <project path="%s" name="%s"%s />' . "\n", $x1, $f1{$x1}, $rev1);
+    my $rev1 = $path_revision_map1{$path};
+    my $rev2 = $path_revision_map2{$path};
+
+    if ($rev1) {
+        $rev1 = " revision=\"$rev1\"";
     }
-    delete $f2{$x1};
+
+    if ($rev2) {
+        $rev2 = " revision=\"$rev2\"";
+    }
+    if (exists($path_project_map2{$path})) {
+        printf('1: <project path="%s" name="%s"%s/> <=> 2: <project path="%s" name="%s"%s/>' . "\n", $path, $path_project_map1{$path}, $rev1, $path, $path_project_map2{$path}, $rev2);
+    } else {
+        printf('1: <project path="%s" name="%s"%s />' . "\n", $path, $path_project_map1{$path}, $rev1);
+    }
+    delete $path_project_map2{$path};
 }
 
-for my $x2 (keys %f2) {
-    chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x2'" -v \@revision $f2));
+for my $path (sort keys %path_project_map2) {
+    my $rev2 = $path_project_map2{$path};
     if ($rev2) {
-        $rev2 = "revision=\"$rev2\"";
+        $rev2 = " revision=\"$rev2\"";
     }
 
-    printf('2: <project path="%s" name="%s"%s />' . "\n", $x2, $f2{$x2}, $rev2);
+    printf('2: <project path="%s" name="%s"%s />' . "\n", $path, $path_project_map2{$path}, $rev2);
 }

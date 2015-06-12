@@ -1,7 +1,6 @@
 data/anr
 data/core
 data/dalvik-cache
-data/debian/android
 data/log-crawler
 data/logs
 data/media/0/diag_logs
@@ -12,7 +11,6 @@ data/media/0/smar?isan
 data/media/0/current
 data/system/dropbox
 data/tombstones
-data/debian/var/cache/apt/archives/*.deb
 mnt/sdcard
 data/debian.tgz
 data/media/0/DCIM/.thumbnails
@@ -36,3 +34,4 @@ data/powerlog
 data/*.bin
 data/*.mbn
 data/data/com.smartisan.rem/.rem.log
+data/debian

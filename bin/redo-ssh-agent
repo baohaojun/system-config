@@ -17,9 +17,7 @@ else
     return 0
 fi
 
-if test -e ~/.config/system-config/ssh-agent; then
-    . ~/.config/system-config/ssh-agent
-fi
+. ~/system-config/bin/set-ssh-agent
 if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication agent'; then
     start_ssh_agent() {
         (

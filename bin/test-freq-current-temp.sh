@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cpu_number=$(my-adb cat /proc/cpuinfo|grep '^processor'|wc -l)
 if test $(basename $0) = test-freq-current-temp.sh; then
     my-adb remount
     my-adb mv /etc/thermal-engine-8974.conf /etc/thermal-engine-8974.conf.bak
@@ -8,7 +9,7 @@ if test $(basename $0) = test-freq-current-temp.sh; then
     my-adb shell su -c 'stop;
                      for freq in $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies); do
                          minfreq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies|awk "{print \$1}")
-                         for x in $(seq 0 3); do
+                         for x in $(seq 0 '$cpu_number'); do
                              echo 1 > /sys/devices/system/cpu/cpu$x/online;
                              echo $freq > /sys/devices/system/cpu/cpu$x/cpufreq/scaling_max_freq;
                              echo $minfreq > /sys/devices/system/cpu/cpu$x/cpufreq/scaling_min_freq;

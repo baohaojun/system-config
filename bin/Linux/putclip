@@ -16,10 +16,13 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
             prefix=""
             arg_handler=echo
         else
-            if test -e ~/.config/system-config/ssh-agent; then
-                . ~/.config/system-config/ssh-agent
+            . ~/system-config/bin/set-ssh-agent
+            portarg="#$LOCALPORT"
+            if test "$LOCALPORT" = def; then
+                portarg=
             fi
-            ssh ${REMOTEUSER:-$USER}@$REMOTEIP remote-putclip $(whoami)@$LOCALIP:$FILE
+
+            ssh ${REMOTEUSER:-$USER}@$REMOTEIP remote-putclip $(whoami)@$LOCALIP$portarg:$FILE
             exit 0
         fi
 

@@ -1,22 +1,29 @@
 #!/bin/bash
+
+if test -z "$LOCALPORT" -o "$LOCALPORT" = 22; then
+    agent_file=~/.config/system-config/ssh-agent
+else
+    agent_file=~/.config/system-config/ssh-agent-$LOCALPORT
+fi
+
 start_ssh_agent() {
     (
         set -e
         umask 077
         mkdir -p ~/.config/system-config/
-        ssh-agent > ~/.config/system-config/ssh-agent.$$
-        grep "^echo" -v ~/.config/system-config/ssh-agent.$$ > ~/.config/system-config/ssh-agent.$$.2
-        rm ~/.config/system-config/ssh-agent.$$
-        mv ~/.config/system-config/ssh-agent.$$.2 ~/.config/system-config/ssh-agent
+        ssh-agent > $agent_file.$$
+        grep "^echo" -v $agent_file.$$ > $agent_file.$$.2
+        rm $agent_file.$$
+        mv $agent_file.$$.2 $agent_file
     )
-    . ~/.config/system-config/ssh-agent
+    . $agent_file
 }
 
-if test ! -e ~/.config/system-config/ssh-agent; then
+if test ! -e $agent_file; then
     echo 1>&2 no ssh-agent found, restart it
     start_ssh_agent
 else
-    . ~/.config/system-config/ssh-agent
+    . $agent_file
 fi
 
 if ssh-add -l >/dev/null 2>&1; then
@@ -26,7 +33,7 @@ else
 fi
 if test $val = 2; then
     echo 1>&2 "can't connect to ssh-agent, restart it"
-    rm ~/.config/system-config/ssh-agent
+    rm $agent_file
     start_ssh_agent
 fi
 

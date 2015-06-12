@@ -31,11 +31,16 @@ local_from=false
 local_to=false
 from_manifest_xml=
 to_manifest_xml=
-TEMP=$(getopt -o TFf:t:r: --long xf:,xt:,from:,to:,remote: -n $(basename $0) -- "$@")
+jobs=5
+TEMP=$(getopt -o j:TFf:t:r: --long xf:,xt:,from:,to:,remote: -n $(basename $0) -- "$@")
 remote=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -j)
+            jobs=$2
+            shift 2
+            ;;
         --xf)
             from_manifest_xml=$2
             shift 2
@@ -110,8 +115,21 @@ else
         die "when using xml, these variables must not be set"
     fi
 
-    to_manifest_xml=$(lookup-file -e .repo/manifests/$(basename $to_manifest_xml))
-    from_manifest_xml=$(lookup-file -e .repo/manifests/$(basename $from_manifest_xml))
+    if test -e $to_manifest_xml; then
+        true
+    elif test -e .repo/manifests/$to_manifest_xml; then
+        to_manifest_xml=$(readlink -f .repo/manifests/$to_manifest_xml)
+    else
+        to_manifest_xml=$(lookup-file -e .repo/manifests/$(basename $to_manifest_xml))
+    fi
+
+    if test -e $from_manifest_xml; then
+        true
+    elif test -e .repo/manifests/$from_manifest_xml; then
+        from_manifest_xml=$(readlink -f .repo/manifests/$from_manifest_xml)
+    else
+        from_manifest_xml=$(lookup-file -e .repo/manifests/$(basename $from_manifest_xml))
+    fi
 
     export to_manifest_xml from_manifest_xml
     if test "$to_manifest_xml" = "$from_manifest_xml"; then
@@ -192,7 +210,7 @@ else
     )
 fi
 
-my-rfa '
+my-rfa -j $jobs '
     if test "$DEBUG" = true; then
         set -x
     fi
@@ -210,10 +228,23 @@ my-rfa '
         . $to_manifest_xml.env
         . $from_manifest_xml.env
         pwd=$(pwd -P)
-        from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
-        to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
+        if [[ ${from_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+            from=${from_path_revision_map[$pwd]}
+        else
+            from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
+        fi
+        if [[ ${to_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+            to=${to_path_revision_map[$pwd]}
+        else
+            to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
+        fi
     fi
-    git-change-id-ffable $from $to > $log 2>/dev/null;
+
+    if test "$from" = / -o "$to" = /; then
+        exit
+    fi
+    echo git-change-id-ffable $from $to in $PWD
+    git-change-id-ffable $from $to > $log
     if test $(stat -c %s $log) = 0; then
         rm $log;
     fi;
