@@ -71,6 +71,16 @@ EOF
 "
     my-adb -r stop
     my-adb shell sync
+    if test ! -e ~/.ssh/authorized_keys; then
+        if test ! -e ~/.ssh/id_rsa.pub; then
+            if yes-or-no-p -y "You don't have authorized_keys and id_rsa.pub, create one now?"; then
+                mkdir -p ~/.ssh
+                ssh-keygen -C "$USER" -f ~/.ssh/id_rsa
+            fi
+        fi
+        cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+    fi
+
     my-adb push ~/.ssh/authorized_keys /data/debian/root/.ssh/
     my-adb chmod 600 /data/debian/root/.ssh/authorized_keys
 

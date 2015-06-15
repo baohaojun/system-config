@@ -194,7 +194,7 @@ EOF
         else
             echo PATH is $PATH
             if test "$make_dir"; then
-                mmma "$make_dir"
+                mmma "$(relative-path "$make_dir" .)" -j$jobs
             else
                 $do_nice make -j$jobs $keep
             fi

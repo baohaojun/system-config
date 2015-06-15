@@ -1,0 +1,28 @@
+#!/bin/bash
+timeout=$1
+shift
+
+set -e
+
+if ! [[ $timeout =~ ^[0-9]+$ ]]; then
+    die "Usage: exec-time-out SECONDS COMMAND ARGS..."
+fi
+
+exec 9> /tmp/exec-time-out.$$
+
+flock 9
+
+"$@"&
+
+exec 9>/dev/null
+exec 9> /tmp/exec-time-out.$$
+
+if flock -w $timeout 9; then
+    rm /tmp/exec-time-out.$$
+    exit 0
+else
+    exec 9>/dev/null
+    fuser -k /tmp/exec-time-out.$$
+    rm /tmp/exec-time-out.$$
+    exit 1
+fi

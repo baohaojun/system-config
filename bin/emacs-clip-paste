@@ -1,2 +1,2 @@
 #!/bin/bash
-xclip -o -selection clipboard
+exec-time-out 3 xclip -o -selection clipboard
