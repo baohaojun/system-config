@@ -1,6 +1,13 @@
 #!/usr/bin/env perl
 
 use strict;
+
+use Getopt::Long;
+my $diff_rev;
+GetOptions(
+    "r!" => \$diff_rev,
+    );
+
 my $f1 = shift @ARGV;
 my $f2 = shift @ARGV;
 
@@ -61,8 +68,10 @@ close $F2;
 for my $path (sort keys %path_project_map1) {
 
     if ($path_project_map1{$path} eq $path_project_map2{$path}) {
-        delete $path_project_map2{$path};
-        next;
+        if (not $diff_rev) {
+            delete $path_project_map2{$path};
+            next;
+        }
     }
 
     my $rev1 = $path_revision_map1{$path};
@@ -75,7 +84,13 @@ for my $path (sort keys %path_project_map1) {
     if ($rev2) {
         $rev2 = " revision=\"$rev2\"";
     }
+
     if (exists($path_project_map2{$path})) {
+        if ($path_project_map1{$path} eq $path_project_map2{$path} and
+            $rev1 == $rev2) {
+            delete $path_project_map2{$path};
+            next;
+        }
         printf('1: <project path="%s" name="%s"%s/> <=> 2: <project path="%s" name="%s"%s/>' . "\n", $path, $path_project_map1{$path}, $rev1, $path, $path_project_map2{$path}, $rev2);
     } else {
         printf('1: <project path="%s" name="%s"%s />' . "\n", $path, $path_project_map1{$path}, $rev1);
