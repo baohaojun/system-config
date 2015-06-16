@@ -35,7 +35,7 @@ mysql-client
 libstring-approx-perl
 libtext-glob-perl
 libdatetime-perl
-
+python3
 EOF
           ); do
     test -e $x || touch $x
