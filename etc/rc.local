@@ -13,7 +13,7 @@
 set +e
 set -x
 if test -d ~bhj/.cache/system-config/logs; then
-    exec > ~bhj/.cache/system-config/logs 2>&1
+    exec > ~bhj/.cache/system-config/logs/rc.local.log 2>&1
 else
     exec > /tmp/rc.local.log 2>&1
 fi
