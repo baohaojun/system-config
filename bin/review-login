@@ -5,7 +5,7 @@ if sawfish-window-exists 'Firefox|Iceweasel'; then
     sawfish-browser-input C-M-a
 fi
 
-firefox -current-tab "http://172.16.0.9:8080/login/q/status:open,n,z"&
+firefox -current-tab "http://172.16.0.9:8080/#/dashboard/self"&
 
 for x in $(seq 1 25); do
     sleep 1

@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: localvar
+# key: localvar
+# --
+# Local Variables: #
+# :  #
+# eval: (mmm-mode 1) #
+# End: #

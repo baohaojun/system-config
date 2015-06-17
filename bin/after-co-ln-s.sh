@@ -17,6 +17,10 @@ if test ! -d ~/system-config/.git && test -d ~/system-config/; then
     fi
 fi
 
+if test "$USER" != bhj -a "$1" != -i; then
+    exec < /dev/null
+fi
+
 export can_sudo=true
 if test -e /etc/sudoers.d/$USER -a "$USER" = bhj; then
     # can do sudo, but only if it's bhj
