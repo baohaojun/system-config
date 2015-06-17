@@ -89,7 +89,7 @@ for x in $diffs; do
                     echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
                     ) || true
             fi
-            for y in $(grep -P -e "$1" $x |grep -v 'Merge commit.*into'| pn 3); do
+            for y in $(grep -P -e "$1" $x |grep -v 'Merge commit.*into'| pn 3|uniq-even-non-ajacent); do
                 export WORKING_REV=$y
                 ret=0
                 git cherry-pick --allow-empty $y || start_recursive_shell "cherry failed: $y" || ret=$?

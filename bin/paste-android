@@ -1,0 +1,3 @@
+#!/bin/bash
+putclip-android "$@"
+adb-key SCROLL_LOCK

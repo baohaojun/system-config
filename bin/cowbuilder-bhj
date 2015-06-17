@@ -38,6 +38,7 @@ if test $(basename $0) != cowbuilder-bhj; then
 
     if test $prog = cowbuilder-bhj-shell; then
         su - $user-chroot
+        bash
     elif test $prog = cowbuilder-bhj-build-wangwang; then
         cd /home/bhj/src/github/lww
         su - bhj -c './system-config/bin/after-co-ln-s.sh'
