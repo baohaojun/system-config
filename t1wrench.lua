@@ -913,10 +913,8 @@ t1_post = function(text) -- use weixin
       end
    end
    if window then print("window is " .. window) end
-   if window == "com.sina.weibo/com.sina.weibo.EditActivity"
-      or window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity"
-      or window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity"
-      or window == "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
+   if window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity"
+      or window:match("^com.sina.weibo/")
    then
       weibo_text_share(window)
       return

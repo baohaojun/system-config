@@ -9,8 +9,8 @@ fi
 relative-link -f $build_dir/T1Wrench ~/system-config/bin/overide
 
 mkdir -p $build_dir
-rsync -L * $build_dir -av --exclude=release --exclude=windows --exclude=macx
-rsync release/ $build_dir -av -L --exclude=adb_usb_driver_smartisan
+rsync -L * $build_dir -av --exclude=release --exclude=windows --exclude=macx --exclude=emojis
+rsync release/ $build_dir -av -L --exclude=adb_usb_driver_smartisan --exclude=emojis
 
 oldpwd=$PWD
 cd $build_dir
