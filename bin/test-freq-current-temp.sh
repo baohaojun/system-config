@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cpu_number=$(my-adb cat /proc/cpuinfo|grep '^processor'|wc -l)
+cpu_number=$(my-adb -r cat /proc/cpuinfo|grep '^processor'|wc -l)
 if test $(basename $0) = test-freq-current-temp.sh; then
     my-adb remount
     my-adb mv /etc/thermal-engine-8974.conf /etc/thermal-engine-8974.conf.bak
