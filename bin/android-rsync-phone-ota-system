@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) system_dir"
+fi
+
+cd "$1"
+if test ! -e ./xbin/bash; then
+    die "Cant find ./xbin/bash"
+fi
+
+ssh-to-phone echo hello
+
+sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
+sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /' |tee ../system.chcon
+my-adb push ../system.chcon /data/
+my-adb 'cd /system; bash -x /data/system.chcon'

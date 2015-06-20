@@ -41,7 +41,7 @@ git log $src..$dest > $destlog
 
 
 export srclog=/tmp/log_in_src.$$
-git log --format='%%commit%% %H %ae %ce : %s%n%B' $dest..$src > $srclog
+git log --format="%%commit%% %H %ae(%ai) %ce(%ci) : %s%n%B" $dest..$src > $srclog
 
 need_die=0
 
@@ -57,7 +57,7 @@ perl -e '
          if (m/^%commit% (\S*) (.*)/) {
              $current_commit=$1;
              if ($no_cid) {
-                 printf "%s commit %s has no change id %s\n", $ENV{PWD}, $no_cid, $commit_info;
+                 printf "%s commit %s has no change id %s %s\n", $ENV{PWD}, $no_cid, $ENV{dest}, $commit_info;
              }
              $no_cid = $current_commit;
              $commit_info = $2;

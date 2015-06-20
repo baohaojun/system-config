@@ -1,5 +1,5 @@
 #!/bin/bash
 
-project=$(repo-project)
+project=$(repo-remote-url | perl -npe 's,.*//.*?/,,')
 host=$(gerrit-review-host "$(repo-host)")
 firefox "$(printf "%s/#/admin/projects/%s" $host $project|perl -npe s,/+,/,g)"

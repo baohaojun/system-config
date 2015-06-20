@@ -82,7 +82,13 @@ for x in $diffs; do
         fi
         if test -z "$target_branch"; then
             echo target branch is not found in $x'!'
-            start_recursive_shell "No target branch"
+            start_recursive_shell "No target branch" || ret=$?
+            if test "$ret" = 5; then
+                exit
+            elif test $ret = 4; then
+                echo skipping $(ap)
+                break
+            fi
         else
             if test $do_here = false; then
                 git co $target_branch -B $(

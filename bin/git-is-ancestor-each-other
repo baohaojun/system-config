@@ -6,7 +6,7 @@ function die() {
 }
 test $# != 2 && die "Usage: $(basename $0) obj1 obj2"
 
-test "$(git merge-base "$1" "$2")" = "$(git show -s --format=%H "$1")" && { echo yes; exit 0; }
+test "$(git merge-base "$1" "$2")" = "$(git show -s --format=%H "$1")" &&
 test "$(git merge-base "$1" "$2")" = "$(git show -s --format=%H "$2")" && { echo yes; exit 0; }
 echo no
 exit -1

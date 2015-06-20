@@ -64,7 +64,7 @@ function update-partition() {
         my-adb push $file /data
     fi
 
-    my-adb "dd if=/data/$file of=\$(echo /dev/block/platform/*/by-name/$part) && echo yes$$" | grep yes$$
+    my-adb "dd if=/data/$file of=\$(echo /dev/block/platform/*/by-name/$part) && rm /data/$file && echo yes$$" | grep yes$$
 }
 
 if test $(basename $0) = android-rsync-phone-diff; then
@@ -73,6 +73,9 @@ if test $(basename $0) = android-rsync-phone-diff; then
         size=$(stat -c %s $file)
         remote_md5sum=$(my-adb "dd if=\$(echo /dev/block/platform/*/by-name/$part) bs=$size count=1 2>/dev/null | md5sum" | pn 1)
         if test "$md5sum" != $remote_md5sum; then
+            if test "$part" = boot && yes-or-no-p </dev/tty "continue for boot.img?"; then
+                return 0
+            fi
             die "Not the same md5 for $file on $part: $remote_md5sum"
         fi
     }

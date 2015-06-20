@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+if test ! -d out/diff; then
+    die "can't find out/diff"
+fi
+
+my-rfa $(
+    for x in out/diff/*.log; do
+        if test ! -e "$x"; then
+            continue
+        fi
+        echo -d $(basename $x|perl -npe 's/.log$//; s,%,/,g')
+    done
+    ) "$@"

@@ -27,6 +27,11 @@ function need-sync() {
     if perl -e 'exit 0 if (not -e (glob "/tmp/sync-mobile-org.check.$ENV{USER}") or -M(glob "/tmp/sync-mobile-org.check.$ENV{USER}") > .25); exit 1'; then
         touch /tmp/sync-mobile-org.check.${USER}
         info will check the org data
+        if EMACS=t yes-or-no-p "Should check mobileorg data?"; then
+            true
+        else
+            return 1
+        fi
     else
         info will not check the org data
         return 1

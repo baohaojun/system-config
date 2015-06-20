@@ -111,7 +111,11 @@ else
             cd $(lookup-file -e .repo/..)
             for x in "${dirs[@]}"; do
                 if test -d "$x"; then
-                    repo forall "$(ap "$x")" -c 'echo $REPO_PATH'
+                    if test -d "$x"/.git; then
+                        echo "$x"
+                    else
+                        repo forall "$(ap "$x")" -c 'echo $REPO_PATH'
+                    fi
                 elif test -f "$x"; then
                     cat "$x" | pn 1 | sort -u
                 else
