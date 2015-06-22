@@ -196,6 +196,7 @@ QString SnoreCorePrivate::tempPath()
     return dir.path();
 }
 
+// TODO: this is somehow horrible code
 SnoreCorePrivate *SnoreCorePrivate::instance()
 {
     return SnoreCore::instance().d_ptr;

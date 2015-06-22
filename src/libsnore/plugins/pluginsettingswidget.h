@@ -19,6 +19,7 @@
 #define PLUGINSETTINGSWIDGET_H
 
 #include "libsnore/snore_exports.h"
+#include "libsnore/snoreglobals.h"
 
 #include <QWidget>
 #include <QFormLayout>
@@ -45,8 +46,8 @@ public:
     bool isDirty();
 
 protected:
-    QVariant value(const QString &key) const;
-    void setValue(const QString &key, const QVariant &value);
+    QVariant value(const QString &key, Snore::SettingsType type = Snore::GLOBAL_SETTING) const;
+    void setValue(const QString &key, const QVariant &value, Snore::SettingsType type = Snore::GLOBAL_SETTING);
 
     virtual void load();
     virtual void save();

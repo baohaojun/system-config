@@ -74,15 +74,15 @@ bool PluginSettingsWidget::isDirty()
     return m_dirty;
 }
 
-QVariant PluginSettingsWidget::value(const QString &key) const
+QVariant PluginSettingsWidget::value(const QString &key, SettingsType type) const
 {
-    return m_snorePlugin->value(key);
+    return m_snorePlugin->value(key, type);
 }
 
-void PluginSettingsWidget::setValue(const QString &key, const QVariant &value)
+void PluginSettingsWidget::setValue(const QString &key, const QVariant &value, SettingsType type)
 {
     if (this->value(key) != value) {
-        m_snorePlugin->setValue(key, value);
+        m_snorePlugin->setValue(key, value, type);
         m_dirty = true;
     }
 }
