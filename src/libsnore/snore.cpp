@@ -72,6 +72,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
     }
     Q_D(SnoreCore);
     setValue("PluginTypes", QVariant::fromValue(types), LOCAL_SETTING);
+    snoreDebug(SNORE_DEBUG) << "Loading plugin types:" << types;
     for (SnorePlugin::PluginTypes type : SnorePlugin::types()) {
         if (type != SnorePlugin::ALL && types & type) {
             for (PluginContainer *info : PluginContainer::pluginCache(type).values()) {

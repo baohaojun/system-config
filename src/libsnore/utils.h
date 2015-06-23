@@ -24,8 +24,6 @@
 #include <QApplication>
 #include <QCryptographicHash>
 #include <QSettings>
-#include <QTextDocument>
-#include <QTextDocumentFragment>
 
 namespace Snore
 {
@@ -33,6 +31,19 @@ class SNORE_EXPORT  Utils : public QObject
 {
     Q_OBJECT
 public:
+    enum MARKUP_FLAG{
+        NO_MARKUP   = 0,
+        HREF        = 1 << 0,
+        BREAK       = 1 << 1,
+        BOLD        = 1 << 2,
+        ITALIC      = 1 << 3,
+        UNDERLINE   = 1 << 4,
+        FONT        = 1 << 5,
+        ALL_MARKUP  = ~0
+    };
+
+    Q_DECLARE_FLAGS(MARKUP_FLAGS,MARKUP_FLAG)
+
     Utils(QObject *parent = nullptr);
     ~Utils();
 
@@ -51,31 +62,10 @@ public:
 
     /**
      *
-     * @param string A string to decode if needed.
-     * @return if the string was rhichtext or html encoded a decoded string, else the original string.
-     */
-    static inline QString toPlainText(const QString &string)
-    {
-        if (Qt::mightBeRichText(string)) {
-            return QTextDocumentFragment::fromHtml(string).toPlainText();
-        } else {
-            return string;
-        }
-    }
-
-    /**
-     *
      * @param string A string to encode if needed.
      * @return if the string was rhichtext html encode string is returnd otherwise the original string.
      */
-    static inline QString toHtml(const QString &string)
-    {
-        if (Qt::mightBeRichText(string)) {
-            return QTextDocumentFragment::fromHtml(string).toHtml("UTF-8");
-        } else {
-            return string;
-        }
-    }
+    static QString normaliseMarkup(QString string, MARKUP_FLAGS tags);
 
     /**
      * Computes a md5 hash of the provided data.
@@ -125,5 +115,6 @@ private:
 };
 
 }
+Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Utils::MARKUP_FLAGS)
 
 #endif // UTILS_H

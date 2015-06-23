@@ -92,14 +92,14 @@ const Application &Notification::application() const
     return d->m_application;
 }
 
-QString Notification::title() const
+QString Notification::title(Utils::MARKUP_FLAGS flags) const
 {
-    return d->m_title;
+    return Utils::normaliseMarkup(d->m_title, flags);
 }
 
-QString Notification::text() const
+QString Notification::text(Utils::MARKUP_FLAGS flags) const
 {
-    return d->m_text;
+    return Utils::normaliseMarkup(d->m_text, flags);
 }
 
 const Alert &Notification::alert() const

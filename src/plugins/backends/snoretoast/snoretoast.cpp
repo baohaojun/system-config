@@ -43,9 +43,9 @@ void SnoreToast::slotNotify(Notification notification)
 
     QStringList arguements;
     arguements << "-t"
-               << Utils::toPlainText(notification.title())
+               << notification.title()
                << "-m"
-               << Utils::toPlainText(notification.text());
+               << notification.text();
     if (notification.icon().isValid()) {
         arguements << "-p"
                    << QDir::toNativeSeparators(notification.icon().localUrl());

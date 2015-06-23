@@ -23,6 +23,7 @@
 #include "notificationaction.h"
 #include "libsnore/hint.h"
 #include "libsnore/application.h"
+#include "libsnore/utils.h"
 
 #include <QDebug>
 
@@ -45,7 +46,7 @@ public:
     /**
      * The reason why the Notification was closed.
      */
-    enum CloseReason {
+    enum CloseReasons {
         /**
          * The default value, the notification was not closed.
          */
@@ -79,14 +80,13 @@ public:
          */
         REPLACED = 4
     };
-    Q_DECLARE_FLAGS(CloseReasons, CloseReason)
     Q_ENUMS(CloseReasons)
 
     /**
      * The Priority for the Notification.
      * Some notification systems support this flag to filter notifications or indicate different prioritys by color.
      */
-    enum Priority {
+    enum Prioritys {
         /**
          * Indicates a low priority.
          */
@@ -102,7 +102,6 @@ public:
          */
         HIGH = +1
     };
-    Q_DECLARE_FLAGS(Prioritys, Priority)
 
     Notification();
     /**
@@ -170,13 +169,13 @@ public:
      *
      * @return the title
      */
-    QString title() const;
+    QString title(Utils::MARKUP_FLAGS flags = Utils::NO_MARKUP) const;
 
     /**
      *
      * @return the text body
      */
-    QString text() const;
+    QString text(Utils::MARKUP_FLAGS flags = Utils::NO_MARKUP) const;
 
     /**
      *
@@ -278,10 +277,6 @@ private:
 
 }
 Q_DECLARE_METATYPE(Snore::Notification)
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Notification::CloseReasons)
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Notification::Prioritys)
 
 QDataStream &operator<< (QDataStream &stream, const Snore::Notification &noti);
 

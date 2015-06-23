@@ -51,9 +51,11 @@ void NotifyMyAndroid::slotNotify(Notification notification)
     QString data(QString("apikey=%1&application=%2&event=%3&description=%4&priority=%5&content-type=text/html")
                  .arg(key,
                       notification.application().name(),
-                      Utils::toPlainText(notification.title()),
-                      Utils::toPlainText(notification.text()),
+                      notification.title(),
+                      notification.text(Utils::HREF | Utils::BOLD | Utils::BREAK |
+                                        Utils::UNDERLINE | Utils::FONT | Utils::ITALIC),
                       QString::number(notification.priority())));
+
 
     QNetworkReply *reply =  m_manager.post(request, data.toUtf8().constData());
     connect(reply, &QNetworkReply::finished, [reply]() {

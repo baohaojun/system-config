@@ -111,11 +111,11 @@ void GrowlBackend::slotNotify(Notification notification)
 {
     Growl *growl = m_applications.value(notification.application().name());
     QString alert = notification.alert().name();
-    snoreDebug(SNORE_DEBUG) << "Notify Growl:" << notification.application() << alert << Utils::toPlainText(notification.title());
+    snoreDebug(SNORE_DEBUG) << "Notify Growl:" << notification.application() << alert << notification.title();
 
     GrowlNotificationData data(alert.toUtf8().constData(), notification.id(),
-                               Utils::toPlainText(notification.title()).toUtf8().constData(),
-                               Utils::toPlainText(notification.text()).toUtf8().constData());
+                               notification.title().toUtf8().constData(),
+                               notification.text().toUtf8().constData());
 
     if (notification.icon().isValid()) {
         data.setIcon(notification.icon().localUrl().toUtf8().constData());

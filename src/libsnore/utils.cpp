@@ -25,6 +25,9 @@
 #include <winuser.h>
 #endif
 
+#include <QRegExp>
+#include <QMutex>
+
 using namespace Snore;
 
 Utils::Utils(QObject *parent):
@@ -64,6 +67,40 @@ void Utils::raiseWindowToFront(qlonglong wid)
 #else
     Q_UNUSED(wid);
 #endif
+}
+
+
+#define HTML_REPLACE(STRING, PATTERN){\
+    static QRegExp regexp(QLatin1String(PATTERN));\
+    STRING = STRING.replace(regexp, QStringLiteral("\\1"));\
+    }\
+
+
+QString Utils::normaliseMarkup(QString string, MARKUP_FLAGS tags)
+{
+    static QMutex mutex;
+    QMutexLocker lock(&mutex);
+
+    if (~tags & Utils::BREAK) {
+        static QRegExp br("<br>");
+        string = string.replace(br, "\n");
+    }
+    if (~tags & Utils::HREF) {
+        HTML_REPLACE(string, "<a href=.*>([^<]*)</a>");
+    }
+    if (~tags & Utils::ITALIC) {
+        HTML_REPLACE(string, "<i>([^<]*)</i>");
+    }
+    if (~tags & Utils::BOLD) {
+        HTML_REPLACE(string, "<b>([^<]*)</b>");
+    }
+    if (~tags & Utils::UNDERLINE) {
+        HTML_REPLACE(string, "<u>([^<]*)</u>");
+    }
+    if (~tags & Utils::FONT) {
+        HTML_REPLACE(string, "<font.*>([^<]*)</font>");
+    }
+    return string;
 }
 
 #ifdef Q_OS_WIN

@@ -83,7 +83,7 @@ void TrayIconNotifer::displayNotification(QSystemTrayIcon *icon)
     m_currentlyDisplaying = true;
     Notification notification =  m_notificationQue.takeFirst();
     m_displayed = notification;
-    icon->showMessage(Utils::toPlainText(notification.title()), Utils::toPlainText(notification.text()), QSystemTrayIcon::NoIcon, notification.timeout() * 1000);
+    icon->showMessage(notification.title(), notification.text(), QSystemTrayIcon::NoIcon, notification.timeout() * 1000);
     slotNotificationDisplayed(notification);
 }
 

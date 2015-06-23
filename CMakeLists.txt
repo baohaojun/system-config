@@ -71,6 +71,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 add_subdirectory(data)
 add_subdirectory(lang)
 add_subdirectory(src)
+add_subdirectory(autotest)
 add_subdirectory(share)
 
 

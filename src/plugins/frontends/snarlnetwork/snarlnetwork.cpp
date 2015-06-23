@@ -86,6 +86,8 @@ void SnarlNetworkFrontend::slotNotificationClosed(Snore::Notification notificati
         case Notification::DISMISSED:
             callback(notification, "SNP/1.1/302/Notification cancelled/");
             break;
+        default:
+            snoreDebug(SNORE_WARNING) << "Unhandled close reason" << notification.closeReason();
         }
     }
 }

@@ -49,12 +49,12 @@ void Toasty::slotNotify(Notification notification)
 
     QHttpPart title;
     title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
-    title.setBody(Utils::toPlainText(notification.title()).toUtf8().constData());
+    title.setBody(notification.title().toUtf8().constData());
     mp->append(title);
 
     QHttpPart text;
     text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text\""));
-    text.setBody(Utils::toPlainText(notification.text()).toUtf8().constData());
+    text.setBody(notification.text().toUtf8().constData());
     mp->append(text);
 
     QHttpPart app;

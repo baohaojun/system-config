@@ -52,14 +52,14 @@ void Pushover::slotNotify(Notification notification)
 
     QHttpPart title;
     title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
-    title.setBody(Utils::toPlainText(notification.title()).toUtf8().constData());
+    title.setBody(notification.title().toUtf8().constData());
     mp->append(title);
 
     QHttpPart text;
     text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"message\""));
-    text.setBody(Utils::toPlainText(notification.text()).toUtf8().constData());
+    text.setBody(notification.text(Utils::HREF | Utils::BOLD | Utils::UNDERLINE | Utils::FONT | Utils::ITALIC)
+                 .toUtf8().constData());
     mp->append(text);
-
 
     QHttpPart priority;
     priority.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"priority\""));
@@ -92,6 +92,10 @@ void Pushover::slotNotify(Notification notification)
     user.setBody(key.toUtf8().constData());
     mp->append(user);
 
+    QHttpPart html;
+    html.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"html\""));
+    html.setBody("1");
+    mp->append(html);
 
     QNetworkReply *reply =  m_manager.post(request, mp);
     mp->setParent(reply);
