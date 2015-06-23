@@ -140,6 +140,7 @@ void SnoreCorePrivate::init()
 {
     Q_Q(SnoreCore);
     q->setDefaultValue("Timeout", 10, LOCAL_SETTING);
+    q->setDefaultValue("Silent", false, LOCAL_SETTING);
     q->setDefaultApplication(Application("SnoreNotify", Icon(":/root/snore.png")));
 }
 

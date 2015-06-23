@@ -19,8 +19,9 @@
 #include "notification/notification_p.h"
 #include "notification/icon.h"
 #include "../hint.h"
-#include "../log.h"
-#include "../plugins/plugins.h"
+#include "libsnore/log.h"
+#include "libsnore/plugins/plugins.h"
+#include "libsnore/snore.h"
 
 #include <QSharedData>
 
@@ -91,6 +92,6 @@ void NotificationData::setTimeoutTimer(QTimer *timer)
 
 void NotificationData::initHints()
 {
-    m_hints.setValue("silent", QVariant::fromValue(false));
+    m_hints.setValue("silent", SnoreCore::instance().value("Silent", LOCAL_SETTING));
 }
 
