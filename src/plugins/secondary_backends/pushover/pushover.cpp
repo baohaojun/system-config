@@ -28,7 +28,7 @@
 using namespace Snore;
 
 Pushover::Pushover():
-    SnoreSecondaryBackend("Pushover", false)
+    SnoreSecondaryBackend("Pushover")
 {
     setDefaultValue("UserKey", "");
     setDefaultValue("Sound", "pushover", LOCAL_SETTING);

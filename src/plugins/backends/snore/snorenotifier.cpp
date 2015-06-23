@@ -27,7 +27,7 @@
 using namespace Snore;
 
 SnoreNotifier::SnoreNotifier():
-    SnoreBackend("Snore", true, true, true),
+    SnoreBackend("Snore", true, true),
     m_widgets(3),
     m_timer(new QTimer(this))
 {

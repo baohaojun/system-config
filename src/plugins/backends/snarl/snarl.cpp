@@ -112,7 +112,7 @@ private:
 };
 
 SnarlBackend::SnarlBackend():
-    SnoreBackend("Snarl", true, false, true)
+    SnoreBackend("Snarl", true, true)
 {
     setDefaultValue("Password", QString());
 }

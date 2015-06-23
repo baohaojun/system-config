@@ -129,12 +129,6 @@ public:
     void requestCloseNotification(Notification, Notification::CloseReasons);
 
     /**
-     *
-     * @return whether the backend supports rhichtext encoding.
-     */
-    bool primaryBackendSupportsRichtext();
-
-    /**
      * Sets the default application used for internal notifications.
      * @param app The default application.
      */

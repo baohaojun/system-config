@@ -27,7 +27,7 @@
 using namespace Snore;
 
 NotifyMyAndroid::NotifyMyAndroid():
-    SnoreSecondaryBackend("NotifyMyAndroid", false)
+    SnoreSecondaryBackend("NotifyMyAndroid")
 {
     setDefaultValue("ApiKey", "");
 }

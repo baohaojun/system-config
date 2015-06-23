@@ -28,7 +28,7 @@
 using namespace Snore;
 
 Toasty::Toasty():
-    SnoreSecondaryBackend("Toasty", false)
+    SnoreSecondaryBackend("Toasty")
 {
     setDefaultValue("DeviceID", "");
 }

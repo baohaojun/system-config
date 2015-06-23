@@ -183,12 +183,6 @@ void SnoreCore::requestCloseNotification(Notification n, Notification::CloseReas
     }
 }
 
-bool SnoreCore::primaryBackendSupportsRichtext()
-{
-    Q_D(SnoreCore);
-    return d->m_notificationBackend->supportsRichtext();
-}
-
 void SnoreCore::setDefaultApplication(Application app)
 {
     Q_D(SnoreCore);

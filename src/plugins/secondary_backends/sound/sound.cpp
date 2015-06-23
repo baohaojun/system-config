@@ -24,7 +24,7 @@
 using namespace Snore;
 
 Sound::Sound():
-    SnoreSecondaryBackend("Sound", false),
+    SnoreSecondaryBackend("Sound"),
     m_player(new QMediaPlayer(this))
 {
     setDefaultValue("Volume", 50);
