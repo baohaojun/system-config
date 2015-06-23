@@ -56,7 +56,7 @@ void SnoreToast::slotNotify(Notification notification)
                << "-id"
                << QString::number(notification.id());
     //TODO: could clash with sound backend
-    if (notification.hints().value("silent", true).toBool() || notification.hints().value("sound").isValid()) {
+    if (notification.hints().value("silent").toBool() || notification.hints().value("sound").isValid()) {
         arguements << "-silent";
     }
     snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;

@@ -25,6 +25,7 @@ ApplicationData::ApplicationData(const QString &name, const Icon &icon):
     m_icon(icon)
 {
     Q_ASSERT_X(!name.isEmpty(), Q_FUNC_INFO, "invalid name detected");
+    m_hint.setValue("pushover-token", "aFB1TPCyZkkr7mubCGEKy5vJEWak9t");
 }
 
 ApplicationData::~ApplicationData()

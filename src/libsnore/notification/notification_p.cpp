@@ -44,6 +44,7 @@ NotificationData::NotificationData(const Snore::Application &application, const 
 {
     notificationCount++;
     snoreDebug(SNORE_INFO) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    initHints();
 }
 
 Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
@@ -59,6 +60,7 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
     m_toReplace(old)
 {
     notificationCount++;
+    initHints();
     snoreDebug(SNORE_INFO) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
 }
 
@@ -85,5 +87,10 @@ void NotificationData::setTimeoutTimer(QTimer *timer)
         m_timeoutTimer->deleteLater();
     }
     m_timeoutTimer.reset(timer);
+}
+
+void NotificationData::initHints()
+{
+    m_hints.setValue("silent", QVariant::fromValue(false));
 }
 

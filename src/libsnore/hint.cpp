@@ -36,14 +36,9 @@ void Hint::setValue(const QString &key, QObject *value)
     connect(value, SIGNAL(destroyed()), this, SLOT(slotValueDestroyed()), Qt::DirectConnection);
 }
 
-QVariant Hint::value(const QString &k, const QVariant &defaultValue) const
+QVariant Hint::value(const QString &k) const
 {
-    QString key(k.toLower());
-    if (m_data.contains(key)) {
-        return m_data.value(key);
-    } else {
-        return defaultValue;
-    }
+    return m_data.value(k.toLower());
 }
 
 bool Hint::contains(const QString &key) const

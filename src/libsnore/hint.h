@@ -63,7 +63,7 @@ public:
      * @param key the key
      * @param defaultValue the fallback value
      */
-    QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
+    QVariant value(const QString &key) const;
 
     /**
      *

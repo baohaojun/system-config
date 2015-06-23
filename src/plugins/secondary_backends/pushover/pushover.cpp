@@ -68,7 +68,7 @@ void Pushover::slotNotify(Notification notification)
 
     QHttpPart sound;
     sound.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"sound\""));
-    if (notification.hints().value("silent", false).toBool()) {
+    if (notification.hints().value("silent").toBool()) {
         sound.setBody("none");
     } else {
         sound.setBody(value("Sound", LOCAL_SETTING).toString().toUtf8().constData());
@@ -84,7 +84,7 @@ void Pushover::slotNotify(Notification notification)
 
     QHttpPart token;
     token.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
-    token.setBody(notification.application().constHints().value("pushover-token","aFB1TPCyZkkr7mubCGEKy5vJEWak9t").toString().toUtf8().constData());
+    token.setBody(notification.application().constHints().value("pushover-token").toString().toUtf8().constData());
     mp->append(token);
 
     QHttpPart user;

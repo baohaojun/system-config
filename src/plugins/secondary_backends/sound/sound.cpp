@@ -49,7 +49,7 @@ PluginSettingsWidget *Sound::settingsWidget()
 
 void Sound::slotNotificationDisplayed(Snore::Notification notification)
 {
-    if (notification.hints().value("silent", false).toBool()) {
+    if (notification.hints().value("silent").toBool()) {
         return;
     }
 
