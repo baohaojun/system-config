@@ -87,8 +87,8 @@ void NotifyWidget::display(const Notification &notification)
     QRgb gray = qGray(qGray(color.rgb()) - qGray(QColor(Qt::white).rgb()));
     QColor textColor = QColor(gray, gray, gray);
     QMetaObject::invokeMethod(m_qmlNotification, "update", Qt::QueuedConnection,
-                              Q_ARG(QVariant, notification.title()),
-                              Q_ARG(QVariant, notification.text()),
+                              Q_ARG(QVariant, notification.title(Utils::ALL_MARKUP)),
+                              Q_ARG(QVariant, notification.text(Utils::ALL_MARKUP)),
                               Q_ARG(QVariant, QUrl::fromLocalFile(notification.icon().localUrl())),
                               Q_ARG(QVariant, QUrl::fromLocalFile(notification.application().icon().localUrl())),
                               Q_ARG(QVariant, color),

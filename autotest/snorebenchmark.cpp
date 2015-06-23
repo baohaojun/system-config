@@ -28,6 +28,7 @@ public:
                  "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a><br>");
 private slots:
 void benchmarkUtilsToHtml();
+void benchmarkUtilsToHtmlAllMarkup();
 void benchmarkUtilsToPlain();
 
 private:
@@ -62,6 +63,15 @@ void SnoreBenchmark::benchmarkUtilsToHtml(){
                                     Utils::UNDERLINE | Utils::FONT | Utils::ITALIC), htmlTestString);
     QBENCHMARK{
         Utils::normaliseMarkup(htmlTestString, Utils::NO_MARKUP);
+    }
+}
+
+void SnoreBenchmark::benchmarkUtilsToHtmlAllMarkup()
+{
+    QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::ALL_MARKUP), htmlTestString);
+
+    QBENCHMARK{
+        Utils::normaliseMarkup(htmlTestString, Utils::ALL_MARKUP);
     }
 }
 
