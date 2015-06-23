@@ -18,6 +18,9 @@ public:
     TrayIconNotifer();
     virtual ~TrayIconNotifer() override;
     virtual bool deinitialize() override;
+
+    virtual bool canCloseNotification() const override;
+
 public slots:
     void slotNotify(Snore::Notification notification);
     void slotCloseNotification(Snore::Notification notification);

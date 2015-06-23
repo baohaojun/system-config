@@ -15,7 +15,7 @@
 using namespace Snore;
 
 SnoreToast::SnoreToast():
-    SnoreBackend("Windows 8", true, false)
+    SnoreBackend("Windows 8")
 {
 }
 
@@ -31,6 +31,11 @@ bool SnoreToast::initialize()
         return false;
     }
     return SnoreBackend::initialize();
+}
+
+bool SnoreToast::canCloseNotification() const
+{
+    return true;
 }
 
 void SnoreToast::slotNotify(Notification notification)

@@ -29,10 +29,8 @@
 
 using namespace Snore;
 
-SnoreBackend::SnoreBackend(const QString &name , bool canCloseNotification, bool canUpdateNotifications) :
-    SnorePlugin(name),
-    m_canCloseNotification(canCloseNotification),
-    m_canUpdateNotification(canUpdateNotifications)
+SnoreBackend::SnoreBackend(const QString &name) :
+    SnorePlugin(name)
 {
 
 }
@@ -147,12 +145,12 @@ void SnoreSecondaryBackend::slotNotificationDisplayed(Notification)
 
 bool SnoreBackend::canCloseNotification() const
 {
-    return m_canCloseNotification;
+    return false;
 }
 
 bool SnoreBackend::canUpdateNotification() const
 {
-    return m_canUpdateNotification;
+    return false;
 }
 
 void SnoreBackend::slotRegisterApplication(const Application &application)

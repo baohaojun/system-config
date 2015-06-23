@@ -31,15 +31,15 @@ class SNORE_EXPORT SnoreBackend : public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
 public:
-    SnoreBackend(const  QString &name, bool canCloseNotification, bool canUpdateNotifications = false);
+    SnoreBackend(const  QString &name);
     virtual ~SnoreBackend();
     virtual bool initialize() override;
     virtual bool deinitialize() override;
 
     void requestCloseNotification(Snore::Notification notification, Notification::CloseReasons reason);
 
-    bool canCloseNotification() const;
-    bool canUpdateNotification() const;
+    virtual bool canCloseNotification() const;
+    virtual bool canUpdateNotification() const;
 
 signals:
     void notificationClosed(Snore::Notification);
@@ -57,9 +57,6 @@ protected slots:
 protected:
     void closeNotification(Snore::Notification, Snore::Notification::CloseReasons);
 
-private:
-    bool m_canCloseNotification;
-    bool m_canUpdateNotification;
 
 };
 

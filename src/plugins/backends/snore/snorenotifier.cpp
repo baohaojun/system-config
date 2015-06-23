@@ -27,7 +27,7 @@
 using namespace Snore;
 
 SnoreNotifier::SnoreNotifier():
-    SnoreBackend("Snore", true, true),
+    SnoreBackend("Snore"),
     m_widgets(3),
     m_timer(new QTimer(this))
 {
@@ -140,6 +140,16 @@ bool SnoreNotifier::deinitialize()
         return true;
     }
     return false;
+}
+
+bool SnoreNotifier::canCloseNotification() const
+{
+    return true;
+}
+
+bool SnoreNotifier::canUpdateNotification() const
+{
+    return true;
 }
 
 PluginSettingsWidget *SnoreNotifier::settingsWidget()

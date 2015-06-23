@@ -30,7 +30,7 @@ using namespace Snore;
 GrowlBackend *GrowlBackend::s_instance = nullptr;
 
 GrowlBackend::GrowlBackend():
-    SnoreBackend("Growl", false, false)
+    SnoreBackend("Growl")
 {
     setDefaultValue("Host", "localhost");
     setDefaultValue("Password", "");

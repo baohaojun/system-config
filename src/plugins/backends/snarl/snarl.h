@@ -33,6 +33,9 @@ public:
     bool deinitialize() override;
     Snore::PluginSettingsWidget *settingsWidget() override;
 
+    virtual bool canCloseNotification() const override;
+    virtual bool canUpdateNotification() const override;
+
 private:
     class SnarlWidget;
     SnarlBackend::SnarlWidget *m_eventLoop;

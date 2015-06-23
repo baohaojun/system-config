@@ -14,6 +14,8 @@ public:
     ~SnoreToast();
     virtual bool initialize() override;
 
+    virtual bool canCloseNotification() const override;
+
 public slots:
     void slotNotify(Snore::Notification notification) override;
     void slotRegisterApplication(const Snore::Application &application) override;

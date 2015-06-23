@@ -112,7 +112,7 @@ private:
 };
 
 SnarlBackend::SnarlBackend():
-    SnoreBackend("Snarl", true, true)
+    SnoreBackend("Snarl")
 {
     setDefaultValue("Password", QString());
 }
@@ -152,6 +152,16 @@ bool SnarlBackend::deinitialize()
 PluginSettingsWidget *SnarlBackend::settingsWidget()
 {
     return new SnarlSettings(this);
+}
+
+bool SnarlBackend::canCloseNotification() const
+{
+    return true;
+}
+
+bool SnarlBackend::canUpdateNotification() const
+{
+    return true;
 }
 
 void SnarlBackend::slotRegisterApplication(const Application &application)

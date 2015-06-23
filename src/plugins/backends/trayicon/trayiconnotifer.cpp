@@ -7,7 +7,7 @@
 using namespace Snore;
 
 TrayIconNotifer::TrayIconNotifer() :
-    SnoreBackend("System Tray Icon", true, false),
+    SnoreBackend("System Tray Icon"),
     m_currentlyDisplaying(false)
 {
 
@@ -25,6 +25,11 @@ bool TrayIconNotifer::deinitialize()
         return true;
     }
     return false;
+}
+
+bool TrayIconNotifer::canCloseNotification() const
+{
+    return true;
 }
 
 void TrayIconNotifer::slotNotify(Notification notification)
