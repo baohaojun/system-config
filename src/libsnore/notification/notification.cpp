@@ -150,7 +150,7 @@ bool Notification::isValid() const
 void Notification::addActiveIn(const QObject *o)
 {
     bool contains = d->m_activeIn.contains(o);
-    Q_ASSERT_X(contains, Q_FUNC_INFO, "already active");
+    Q_ASSERT_X(!contains, Q_FUNC_INFO, "already active");
     if (contains) {
         snoreDebug(SNORE_WARNING) << o << "already active in" << id();
         return;
