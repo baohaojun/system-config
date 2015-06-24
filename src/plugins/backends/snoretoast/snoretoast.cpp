@@ -137,7 +137,10 @@ void SnoreToast::slotPrintExitStatus(int, QProcess::ExitStatus)
 QString SnoreToast::appId(const Application &application)
 {
 
-    QString appID = application.constHints().value("windows_app_id").toString();
+    QString appID = application.constHints().value("windows-app-id").toString();
+    if (appID.isEmpty()) {
+        appID = application.constHints().value("windows_app_id").toString();
+    }
     if (appID.isEmpty()) {
         appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName()).remove(" ");
     }
