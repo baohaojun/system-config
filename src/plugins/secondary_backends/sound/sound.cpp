@@ -24,11 +24,8 @@
 using namespace Snore;
 
 Sound::Sound():
-    SnoreSecondaryBackend("Sound"),
     m_player(new QMediaPlayer(this))
 {
-    setDefaultValue("Volume", 50);
-    m_player->setVolume(value("Volume").toInt());
 //    connect(m_player,QMediaPlayer::positionChanged,[](qint64 pos){
 //        snoreDebug(SNORE_DEBUG) << "Player: " << pos;
 //    });
@@ -37,9 +34,12 @@ Sound::Sound():
     });
 }
 
-Sound::~Sound()
+bool Sound::initialize()
 {
+    setDefaultValue("Volume", 50);
+    m_player->setVolume(value("Volume").toInt());
 
+    return SnoreSecondaryBackend::initialize();
 }
 
 PluginSettingsWidget *Sound::settingsWidget()

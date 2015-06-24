@@ -111,19 +111,10 @@ private:
 
 };
 
-SnarlBackend::SnarlBackend():
-    SnoreBackend("Snarl")
-{
-    setDefaultValue("Password", QString());
-}
-
-SnarlBackend::~SnarlBackend()
-{
-
-}
-
 bool SnarlBackend::initialize()
 {
+    setDefaultValue("Password", QString());
+
     SnarlInterface *snarlInterface = new SnarlInterface();
     if (!snarlInterface->IsSnarlRunning()) {
         snoreDebug(SNORE_WARNING) << "Snarl is not running";

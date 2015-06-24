@@ -21,12 +21,6 @@
 
 using namespace Snore;
 
-SnoreFrontend::SnoreFrontend(const QString &name) :
-    SnorePlugin(name)
-{
-
-}
-
 SnoreFrontend::~SnoreFrontend()
 {
     snoreDebug(SNORE_DEBUG) << "Deleting" << name();

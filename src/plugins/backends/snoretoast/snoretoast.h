@@ -10,8 +10,8 @@ class SnoreToast : public Snore::SnoreBackend
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "plugin.json")
 public:
-    SnoreToast();
-    ~SnoreToast();
+    SnoreToast() = default;
+    ~SnoreToast() = default;
     virtual bool initialize() override;
 
     virtual bool canCloseNotification() const override;

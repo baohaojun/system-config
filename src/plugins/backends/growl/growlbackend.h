@@ -30,8 +30,8 @@ class GrowlBackend: public Snore::SnoreBackend
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "plugin.json")
 
 public:
-    GrowlBackend();
-    ~GrowlBackend();
+    GrowlBackend() = default;
+    ~GrowlBackend() = default;
     bool initialize() override;
     bool deinitialize() override;
     Snore::PluginSettingsWidget *settingsWidget() override;

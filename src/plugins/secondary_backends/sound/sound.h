@@ -20,6 +20,8 @@
 
 #include "libsnore/plugins/snorebackend.h"
 
+class QMediaPlayer;
+
 class Sound : public Snore::SnoreSecondaryBackend
 {
     Q_OBJECT
@@ -27,14 +29,16 @@ class Sound : public Snore::SnoreSecondaryBackend
     Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "plugin.json")
 public:
     Sound();
-    ~Sound();
+    ~Sound() = default;
+
+    virtual bool initialize() override;
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 
 public slots:
     void slotNotificationDisplayed(Snore::Notification notification) override;
 private:
-    class QMediaPlayer *m_player;
+    QMediaPlayer *m_player;
 };
 
 #endif // SOUND_H

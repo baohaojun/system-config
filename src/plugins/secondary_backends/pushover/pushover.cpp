@@ -27,19 +27,6 @@
 
 using namespace Snore;
 
-Pushover::Pushover():
-    SnoreSecondaryBackend("Pushover")
-{
-    setDefaultValue("UserKey", "");
-    setDefaultValue("Sound", "pushover", LOCAL_SETTING);
-    setDefaultValue("Devices", "", LOCAL_SETTING);
-}
-
-Pushover::~Pushover()
-{
-
-}
-
 void Pushover::slotNotify(Notification notification)
 {
     QString key = value("ApiKey").toString();
@@ -107,6 +94,14 @@ void Pushover::slotNotify(Notification notification)
         reply->deleteLater();
     });
 
+}
+
+bool Pushover::initialize()
+{
+    setDefaultValue("UserKey", "");
+    setDefaultValue("Sound", "pushover", LOCAL_SETTING);
+    setDefaultValue("Devices", "", LOCAL_SETTING);
+    return SnoreSecondaryBackend::initialize();
 }
 
 PluginSettingsWidget *Pushover::settingsWidget()

@@ -29,28 +29,27 @@
 
 using namespace Snore;
 
-SnorePlugin::SnorePlugin(const QString &name) :
-    m_name(name)
+SnorePlugin::SnorePlugin()
 {
     Q_ASSERT_X(thread() == qApp->thread(), Q_FUNC_INFO, "Plugin initialized in wrong thread");
     if (thread() != qApp->thread()) {
         snoreDebug(SNORE_WARNING) << "Plugin initialized in wrong thread.";
     }
-    setDefaultValue("Enabled", false, LOCAL_SETTING);
 }
 
 SnorePlugin::~SnorePlugin()
 {
-    snoreDebug(SNORE_DEBUG) << m_name << this << "deleted";
+    snoreDebug(SNORE_DEBUG) << name() << this << "deleted";
 }
 
 bool SnorePlugin::initialize()
 {
+    setDefaultValue("Enabled", false, LOCAL_SETTING);
     if (m_initialized) {
         qFatal("Something went wrong, plugin %s is already initialized", this->name().toLatin1().constData());
         return false;
     }
-    snoreDebug(SNORE_DEBUG) << "Initialize" << m_name << this;
+    snoreDebug(SNORE_DEBUG) << "Initialize" << name() << this;
     m_initialized = true;
     return true;
 }
@@ -86,22 +85,24 @@ Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()
 
 QString SnorePlugin::normaliseKey(const QString &key) const
 {
-    return QString("%1/%2.%3").arg(m_name, key, settingsVersion());
+    return QString("%1/%2.%3").arg(name(), key, settingsVersion());
 }
 
 const QString &SnorePlugin::name() const
 {
-    return m_name;
+    Q_ASSERT_X(m_container, Q_FUNC_INFO, "Plugin container not set.");
+    return m_container->name();
 }
 
 SnorePlugin::PluginTypes SnorePlugin::type() const
 {
-    return m_type;
+    Q_ASSERT_X(m_container, Q_FUNC_INFO, "Plugin container not set.");
+    return m_container->type();
 }
 
 const QString SnorePlugin::typeName() const
 {
-    return SnorePlugin::typeToString(m_type);
+    return SnorePlugin::typeToString(type());
 }
 
 QString SnorePlugin::settingsVersion() const
@@ -112,7 +113,7 @@ QString SnorePlugin::settingsVersion() const
 bool SnorePlugin::deinitialize()
 {
     if (m_initialized) {
-        snoreDebug(SNORE_DEBUG) << "Deinitialize" << m_name << this;
+        snoreDebug(SNORE_DEBUG) << "Deinitialize" << name() << this;
         m_initialized = false;
         return true;
     }

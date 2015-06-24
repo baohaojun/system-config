@@ -29,19 +29,12 @@ using namespace Snore;
 
 GrowlBackend *GrowlBackend::s_instance = nullptr;
 
-GrowlBackend::GrowlBackend():
-    SnoreBackend("Growl")
-{
-    setDefaultValue("Host", "localhost");
-    setDefaultValue("Password", "");
-}
-
-GrowlBackend::~GrowlBackend()
-{
-}
 
 bool GrowlBackend::initialize()
 {
+    setDefaultValue("Host", "localhost");
+    setDefaultValue("Password", "");
+
     s_instance = this;
     auto func = [](growl_callback_data * data)->void {
         snoreDebug(SNORE_DEBUG) << data->id << QString(data->reason) << QString(data->data);

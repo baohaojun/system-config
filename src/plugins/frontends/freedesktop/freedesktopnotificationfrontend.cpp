@@ -29,16 +29,6 @@
 
 using namespace Snore;
 
-FreedesktopFrontend::FreedesktopFrontend():
-    SnoreFrontend("Freedesktop")
-{
-
-}
-
-FreedesktopFrontend::~FreedesktopFrontend()
-{
-}
-
 bool FreedesktopFrontend::initialize()
 {
     m_adaptor = new  NotificationsAdaptor(this);

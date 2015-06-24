@@ -14,16 +14,6 @@
 
 using namespace Snore;
 
-SnoreToast::SnoreToast():
-    SnoreBackend("Windows 8")
-{
-}
-
-SnoreToast::~SnoreToast()
-{
-
-}
-
 bool SnoreToast::initialize()
 {
     if (QSysInfo::windowsVersion() < QSysInfo::WV_WINDOWS8) {

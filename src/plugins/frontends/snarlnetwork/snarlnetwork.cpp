@@ -26,16 +26,6 @@
 #include <iostream>
 using namespace Snore;
 
-SnarlNetworkFrontend::SnarlNetworkFrontend():
-    SnoreFrontend("SnarlNetwork")
-{
-
-}
-
-SnarlNetworkFrontend::~SnarlNetworkFrontend()
-{
-}
-
 bool SnarlNetworkFrontend::initialize()
 {
     parser = new Parser(this);

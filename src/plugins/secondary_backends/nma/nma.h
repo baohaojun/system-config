@@ -28,8 +28,10 @@ class NotifyMyAndroid : public Snore::SnoreSecondaryBackend
     Q_INTERFACES(Snore::SnoreSecondaryBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "plugin.json")
 public:
-    NotifyMyAndroid();
-    ~NotifyMyAndroid();
+    NotifyMyAndroid() = default;
+    ~NotifyMyAndroid() = default;
+
+    virtual bool initialize() override;
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 

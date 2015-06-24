@@ -26,17 +26,6 @@
 
 using namespace Snore;
 
-NotifyMyAndroid::NotifyMyAndroid():
-    SnoreSecondaryBackend("NotifyMyAndroid")
-{
-    setDefaultValue("ApiKey", "");
-}
-
-NotifyMyAndroid::~NotifyMyAndroid()
-{
-
-}
-
 void NotifyMyAndroid::slotNotify(Notification notification)
 {
     QString key = value("ApiKey").toString();
@@ -65,6 +54,12 @@ void NotifyMyAndroid::slotNotify(Notification notification)
         reply->deleteLater();
     });
 
+}
+
+bool NotifyMyAndroid::initialize()
+{
+    setDefaultValue("ApiKey", "");
+    return SnoreSecondaryBackend::initialize();
 }
 
 PluginSettingsWidget *NotifyMyAndroid::settingsWidget()

@@ -27,17 +27,6 @@
 
 using namespace Snore;
 
-Toasty::Toasty():
-    SnoreSecondaryBackend("Toasty")
-{
-    setDefaultValue("DeviceID", "");
-}
-
-Toasty::~Toasty()
-{
-
-}
-
 void Toasty::slotNotify(Notification notification)
 {
     QString key = value("DeviceID").toString();
@@ -87,6 +76,12 @@ void Toasty::slotNotify(Notification notification)
         reply->deleteLater();
     });
 
+}
+
+bool Toasty::initialize()
+{
+    setDefaultValue("DeviceID", "");
+    return SnoreSecondaryBackend::initialize();
 }
 
 PluginSettingsWidget *Toasty::settingsWidget()

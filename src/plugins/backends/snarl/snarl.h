@@ -27,8 +27,8 @@ class SnarlBackend: public Snore::SnoreBackend
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "plugin.json")
 public:
-    SnarlBackend();
-    ~SnarlBackend();
+    SnarlBackend() = default;
+    ~SnarlBackend() = default;
     bool initialize() override;
     bool deinitialize() override;
     Snore::PluginSettingsWidget *settingsWidget() override;

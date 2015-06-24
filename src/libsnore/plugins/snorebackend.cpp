@@ -29,12 +29,6 @@
 
 using namespace Snore;
 
-SnoreBackend::SnoreBackend(const QString &name) :
-    SnorePlugin(name)
-{
-
-}
-
 SnoreBackend::~SnoreBackend()
 {
     snoreDebug(SNORE_DEBUG) << "Deleting" << name();
@@ -100,12 +94,6 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
 void SnoreBackend::slotCloseNotification(Notification notification)
 {
     Q_UNUSED(notification)
-}
-
-SnoreSecondaryBackend::SnoreSecondaryBackend(const QString &name):
-    SnorePlugin(name)
-{
-
 }
 
 SnoreSecondaryBackend::~SnoreSecondaryBackend()

@@ -31,7 +31,7 @@ class SNORE_EXPORT SnoreBackend : public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
 public:
-    SnoreBackend(const  QString &name);
+    SnoreBackend() = default;
     virtual ~SnoreBackend();
     virtual bool initialize() override;
     virtual bool deinitialize() override;
@@ -73,7 +73,7 @@ class SNORE_EXPORT SnoreSecondaryBackend : public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin Snore::SnorePlugin)
 public:
-    SnoreSecondaryBackend(const  QString &name);
+    SnoreSecondaryBackend() = default;
     virtual ~SnoreSecondaryBackend();
     virtual bool initialize();
     virtual bool deinitialize();

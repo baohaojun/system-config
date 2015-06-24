@@ -54,8 +54,7 @@ SnorePlugin *PluginContainer::load()
         return nullptr;
     }
     SnorePlugin *plugin = qobject_cast<SnorePlugin *> (m_loader.instance());
-    Q_ASSERT_X(m_pluginName == plugin->name(), Q_FUNC_INFO, "The plugin name is different to the one in the meta data.");
-    plugin->m_type = type();
+    plugin->m_container = this;
     return plugin;
 }
 

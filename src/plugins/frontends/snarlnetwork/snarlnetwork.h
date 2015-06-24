@@ -35,8 +35,8 @@ public:
     static const int port = 9887;
 
 public:
-    SnarlNetworkFrontend();
-    ~SnarlNetworkFrontend();
+    SnarlNetworkFrontend() = default;
+    ~SnarlNetworkFrontend() = default;
     virtual bool initialize() override;
     virtual bool deinitialize() override;
 

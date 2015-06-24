@@ -6,17 +6,6 @@
 #include <QSystemTrayIcon>
 using namespace Snore;
 
-TrayIconNotifer::TrayIconNotifer() :
-    SnoreBackend("System Tray Icon"),
-    m_currentlyDisplaying(false)
-{
-
-}
-
-TrayIconNotifer::~TrayIconNotifer()
-{
-
-}
 
 bool TrayIconNotifer::deinitialize()
 {

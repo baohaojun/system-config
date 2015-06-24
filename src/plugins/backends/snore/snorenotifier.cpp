@@ -27,18 +27,16 @@
 using namespace Snore;
 
 SnoreNotifier::SnoreNotifier():
-    SnoreBackend("Snore"),
     m_widgets(3),
     m_timer(new QTimer(this))
 {
-    setDefaultValue("Position", Qt::TopRightCorner);
     m_timer->setInterval(500);
     connect(m_timer, &QTimer::timeout, [this]() {
         if (m_queue.isEmpty()) {
             snoreDebug(SNORE_DEBUG) << "queue is empty";
             m_timer->stop();
         } else {
-            foreach(NotifyWidget * w, m_widgets) {
+            for(NotifyWidget * w : m_widgets) {
                 if (w->acquire()) {
                     Notification notification = m_queue.takeFirst();
                     w->display(notification);
@@ -88,7 +86,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         }
     } else {
         if (m_queue.isEmpty()) {
-            foreach(NotifyWidget * w, m_widgets) {
+            for(NotifyWidget * w : m_widgets) {
                 if (w->acquire()) {
                     display(w, notification);
                     return;
@@ -109,6 +107,8 @@ void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
 
 bool SnoreNotifier::initialize()
 {
+    setDefaultValue("Position", Qt::TopRightCorner);
+
     if (SnoreBackend::initialize()) {
         for (int i = 0; i < m_widgets.size(); ++i) {
             NotifyWidget *w = new NotifyWidget(i, this);

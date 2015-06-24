@@ -28,6 +28,8 @@
 namespace Snore
 {
 
+class PluginContainer;
+
 class SNORE_EXPORT SnorePlugin : public QObject
 {
     Q_OBJECT
@@ -48,7 +50,7 @@ public:
     static QString typeToString(const PluginTypes t);
     static QList<PluginTypes> types();
 
-    SnorePlugin(const QString &name);
+    SnorePlugin();
     virtual ~SnorePlugin();
     virtual bool initialize();
     virtual bool deinitialize();
@@ -68,12 +70,10 @@ protected:
     virtual QString settingsVersion() const;
 
 private:
-    SnorePlugin() = delete;
     QString normaliseKey(const QString &key) const;
 
-    QString m_name;
     bool m_initialized = false;
-    PluginTypes m_type = NONE;
+    PluginContainer *m_container = nullptr;
 
     friend class PluginContainer;
 

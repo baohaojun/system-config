@@ -31,7 +31,7 @@ class SNORE_EXPORT SnoreFrontend: public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
 public:
-    SnoreFrontend(const QString &name);
+    SnoreFrontend() = default;
     virtual ~SnoreFrontend();
 
     virtual bool initialize() override;

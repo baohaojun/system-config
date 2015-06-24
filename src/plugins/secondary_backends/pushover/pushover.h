@@ -28,8 +28,10 @@ class Pushover : public Snore::SnoreSecondaryBackend
     Q_INTERFACES(Snore::SnoreSecondaryBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "plugin.json")
 public:
-    Pushover();
-    ~Pushover();
+    Pushover() = default;
+    ~Pushover() = default;
+
+    bool initialize() override;
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 

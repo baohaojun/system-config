@@ -35,8 +35,8 @@ public:
     bool initialize() override;
     bool deinitialize() override;
 
-    virtual bool canCloseNotification() const override;
-    virtual bool canUpdateNotification() const override;
+    bool canCloseNotification() const override;
+    bool canUpdateNotification() const override;
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 
