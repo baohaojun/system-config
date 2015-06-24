@@ -210,7 +210,11 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets(SnorePlugin::PluginTypes
 QVariant SnoreCore::value(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);
-    return d->m_settings->value(d->normalizeKey(key, type));
+    QString nk = d->normalizeKey(key, type);
+    if(key == LOCAL_SETTING && !d->m_settings->contains(nk)){
+        nk = d->normalizeKey(QString("%1-SnoreDefault").arg(key),type);
+    }
+    return d->m_settings->value(nk);
 }
 
 void SnoreCore::setValue(const QString &key, const QVariant &value, SettingsType type)

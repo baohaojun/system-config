@@ -71,6 +71,11 @@ public:
 
     void init();
 
+    /**
+     * Set a default value wich can be overritten by a client application call to SnoreCore::setDefaultValue()
+     */
+    void setDefaultValueIntern(const QString &key, const QVariant &value);
+
 private slots:
     //TODO: find a better solutinon for the slots in this section
     friend class Snore::SnoreBackend;
