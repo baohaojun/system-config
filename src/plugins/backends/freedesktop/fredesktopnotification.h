@@ -27,7 +27,7 @@
 class FreedesktopImageHint
 {
 public:
-    FreedesktopImageHint();
+    FreedesktopImageHint() = default;
     FreedesktopImageHint(const QImage &img);
     QImage toQImage()const;
 

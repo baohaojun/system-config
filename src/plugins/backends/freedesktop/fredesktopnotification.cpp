@@ -23,10 +23,6 @@
 
 int FreedesktopImageHint::imageHintID = qDBusRegisterMetaType<FreedesktopImageHint>();
 
-FreedesktopImageHint::FreedesktopImageHint()
-{
-
-}
 
 FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
 {

@@ -10,11 +10,6 @@
 
 using namespace Snore;
 
-FreedesktopBackend::FreedesktopBackend() :
-    SnoreBackend("Freedesktop Notification", true, true, true)
-{
-}
-
 bool FreedesktopBackend::initialize()
 {
 
@@ -24,7 +19,7 @@ bool FreedesktopBackend::initialize()
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
     reply.waitForFinished();
     QStringList caps  = reply.value();
-    setSupportsRichtext(caps.contains("body-markup"));
+    m_supportsRichtext = caps.contains("body-markup");
     connect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
     connect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
 
@@ -42,6 +37,16 @@ bool FreedesktopBackend::deinitialize()
         return true;
     }
     return false;
+}
+
+bool FreedesktopBackend::canCloseNotification() const
+{
+    return true;
+}
+
+bool FreedesktopBackend::canUpdateNotification() const
+{
+    return true;
 }
 
 void  FreedesktopBackend::slotNotify(Notification noti)
@@ -70,12 +75,8 @@ void  FreedesktopBackend::slotNotify(Notification noti)
         m_dbusIdMap.take(updateId);
     }
 
-    QString title = QString("%1 - %2").arg(noti.application().name(), noti.title());
-    QString body(noti.text());
-    if (!supportsRichtext()) {
-        title = Utils::toPlainText(title);
-        body = Utils::toPlainText(body);
-    }
+    QString title = QString("%1 - %2").arg(noti.application().name(), noti.title(m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP));
+    QString body(noti.text(m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP));
     QDBusPendingReply<uint>  id = m_interface->Notify(noti.application().name(), updateId, "", title,
                                   body, actions, hints, noti.isSticky() ? -1 : noti.timeout() * 1000);
 

@@ -9,9 +9,13 @@ class  FreedesktopBackend: public Snore::SnoreBackend
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "plugin.json")
 public:
-    FreedesktopBackend();
-    virtual bool initialize() override;
-    virtual bool deinitialize() override;
+    FreedesktopBackend() = default;
+    ~FreedesktopBackend() = default;
+    bool initialize() override;
+    bool deinitialize() override;
+
+    bool canCloseNotification() const override;
+    bool canUpdateNotification() const override;
 
 public slots:
     void slotNotify(Snore::Notification notification) override;
@@ -23,6 +27,7 @@ public slots:
 private:
     org::freedesktop::Notifications *m_interface;
     QHash<uint, Snore::Notification> m_dbusIdMap;
+    bool m_supportsRichtext;
 
 };
 
