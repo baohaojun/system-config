@@ -19,13 +19,6 @@ namespace {
     }
 }
 
-OSXNotificationCenter::OSXNotificationCenter() : SnoreBackend("OSX Notification Center", false, false, false)
-{
-}
-
-OSXNotificationCenter::~OSXNotificationCenter()
-{
-}
 
 bool OSXNotificationCenter::initialize()
 {
