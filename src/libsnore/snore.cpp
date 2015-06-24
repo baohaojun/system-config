@@ -211,7 +211,7 @@ QVariant SnoreCore::value(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);
     QString nk = d->normalizeKey(key, type);
-    if(key == LOCAL_SETTING && !d->m_settings->contains(nk)){
+    if(type == LOCAL_SETTING && !d->m_settings->contains(nk)){
         nk = d->normalizeKey(QString("%1-SnoreDefault").arg(key),type);
     }
     return d->m_settings->value(nk);
