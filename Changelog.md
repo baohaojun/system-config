@@ -1,4 +1,4 @@
-# Changes since 0.5.2 #
+# Changes since 0.5.3 #
 - Added support for settings.
 - New secondary backend [Toast](http://supertoasty.com/)
 - New secondary backend [Notify my Android](https://www.notifymyandroid.com/)
@@ -9,6 +9,8 @@
 - Use c++11
 - Lots of important Api changes
 
+# Changes since 0.5.2 #
+- Updated SnoreToast
 
 # Changes since 0.5.1 #
 - Updated the shiped version of SnoreToast
