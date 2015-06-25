@@ -29,7 +29,7 @@ using namespace Snore;
 
 void Pushover::slotNotify(Notification notification)
 {
-    QString key = value("ApiKey").toString();
+    QString key = value("UserKey").toString();
     if (key.isEmpty()) {
         return;
     }
