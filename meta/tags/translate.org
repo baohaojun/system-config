@@ -3,9 +3,9 @@
   - 2013-05
    * 2013-05-22
 
-     [[../../../blog/2013/05/22/TourDeBabel.org][通天塔导游]]
+     [[../../blog/2013/05/22/TourDeBabel.org][通天塔导游]]
 
    * 2013-05-15
 
-     [[../../../blog/2013/05/15/0-Inside-Google-and-Amazon.org][在Google和亚马逊（译）]]
+     [[../../blog/2013/05/15/0-Inside-Google-and-Amazon.org][在Google和亚马逊（译）]]
 

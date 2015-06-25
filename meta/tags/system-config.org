@@ -3,17 +3,17 @@
   - 2013-07
    * 2013-07-16
 
-     [[../../../blog/2013/07/16/0-find-scroll-lock.org][找回失去的Scroll Lock——系统View Mode]]
+     [[../../blog/2013/07/16/0-find-scroll-lock.org][找回失去的Scroll Lock——系统View Mode]]
 
    * 2013-07-11
 
-     [[../../../blog/2013/07/11/0-firefox-search-for-tab.org][Firefox: Better Tab Reuse for IDE Help Integration]]
+     [[../../blog/2013/07/11/0-firefox-search-for-tab.org][Firefox: Better Tab Reuse for IDE Help Integration]]
 
    * 2013-07-09
 
-     [[../../../blog/2013/07/09/0-sawfish-keyboard-macro.org][Simple scripts to record/play keyboard macro (sawfish)]]
+     [[../../blog/2013/07/09/0-sawfish-keyboard-macro.org][Simple scripts to record/play keyboard macro (sawfish)]]
 
    * 2013-07-05
 
-     [[../../../blog/2013/07/05/0-firefox-smart-new-tab.org][Firefox: -new-tab or no -new-tab]]
+     [[../../blog/2013/07/05/0-firefox-smart-new-tab.org][Firefox: -new-tab or no -new-tab]]
 

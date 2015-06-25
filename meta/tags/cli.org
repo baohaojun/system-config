@@ -3,10 +3,10 @@
   - 2013-03
    * 2013-03-17
 
-     [[../../../blog/2013/03/17/cli+gui.org][当纯文本命令行碰到图形界面]]
+     [[../../blog/2013/03/17/cli+gui.org][当纯文本命令行碰到图形界面]]
 
   - 2013-02
    * 2013-02-12
 
-     [[../../../blog/2013/02/12/combining-cli-and-gui.org][Using CLI and GUI Together Seemlessly]]
+     [[../../blog/2013/02/12/combining-cli-and-gui.org][Using CLI and GUI Together Seemlessly]]
 

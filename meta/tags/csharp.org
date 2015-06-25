@@ -3,5 +3,5 @@
   - 2013-03
    * 2013-03-31
 
-     [[../../../blog/2013/03/31/when-java-meet-csharp.org][当Java遇到C#]]
+     [[../../blog/2013/03/31/when-java-meet-csharp.org][当Java遇到C#]]
 

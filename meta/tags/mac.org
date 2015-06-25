@@ -3,10 +3,10 @@
   - 2013-04
    * 2013-04-12
 
-     [[../../../blog/2013/04/12/hardened-bhj-style-macros.org][翅膀硬了]]
+     [[../../blog/2013/04/12/hardened-bhj-style-macros.org][翅膀硬了]]
 
   - 2013-03
    * 2013-03-14
 
-     [[../../../blog/2013/03/14/dvp-keyboard-mac.org][在Mac系统下使用dvp (Dvorak Programmer)]]
+     [[../../blog/2013/03/14/dvp-keyboard-mac.org][在Mac系统下使用dvp (Dvorak Programmer)]]
 

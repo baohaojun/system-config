@@ -3,68 +3,68 @@
   - 2014-08
    * 2014-08-20
 
-     [[../../../blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.org][Emacs Computing Grep Regexp More intelligently]]
+     [[../../blog/2014/08/20/1-Emacs-Computing-Grep-Regexp-More-intelligently.org][Emacs Computing Grep Regexp More intelligently]]
 
-     [[../../../blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.org][Using Emacs as a better Source Insight]]
+     [[../../blog/2014/08/20/0-Using-Emacs-as-a-better-source-insight.org][Using Emacs as a better Source Insight]]
 
  * 2013
   - 2013-06
    * 2013-06-18
 
-     [[../../../blog/2013/06/18/0-auto-includes.org][苹果对头文件开刀了？我也来！]]
+     [[../../blog/2013/06/18/0-auto-includes.org][苹果对头文件开刀了？我也来！]]
 
   - 2013-05
    * 2013-05-12
 
-     [[../../../blog/2013/05/12/0-douban.el-integration.org][douban.el与bhj-notify的集成]]
+     [[../../blog/2013/05/12/0-douban.el-integration.org][douban.el与bhj-notify的集成]]
 
    * 2013-05-09
 
-     [[../../../blog/2013/05/09/0-emacs-font-global-scaling.org][全局放大Emacs字体]]
+     [[../../blog/2013/05/09/0-emacs-font-global-scaling.org][全局放大Emacs字体]]
 
   - 2013-04
    * 2013-04-13
 
-     [[../../../blog/2013/04/13/skeleton-complete.org][skeleton-complete]]
+     [[../../blog/2013/04/13/skeleton-complete.org][skeleton-complete]]
 
   - 2013-01
    * 2013-01-09
 
-     [[../../../blog/2013/01/09/coding-android-java-in-emacs-en.org][Doing Android Java Programming in Emacs]]
+     [[../../blog/2013/01/09/coding-android-java-in-emacs-en.org][Doing Android Java Programming in Emacs]]
 
  * 2012
   - 2012-12
    * 2012-12-27
 
-     [[../../../blog/2012/12/27/stem-completion.org][提干式id补齐和re补齐]]
+     [[../../blog/2012/12/27/stem-completion.org][提干式id补齐和re补齐]]
 
-     [[../../../blog/2012/12/27/coding-android-java-in-emacs.org][在Emacs下用java编程（Android相关）]]
+     [[../../blog/2012/12/27/coding-android-java-in-emacs.org][在Emacs下用java编程（Android相关）]]
 
    * 2012-12-19
 
-     [[../../../blog/2012/12/19/perfect-emacs-chinese-font.org][狠狠地折腾了一把Emacs中文字体]]
+     [[../../blog/2012/12/19/perfect-emacs-chinese-font.org][狠狠地折腾了一把Emacs中文字体]]
 
   - 2012-11
    * 2012-11-14
 
-     [[../../../blog/2012/11/14/gdb-android.org][How to use gdb (in Emacs) for android]]
+     [[../../blog/2012/11/14/gdb-android.org][How to use gdb (in Emacs) for android]]
 
   - 2012-10
    * 2012-10-30
 
-     [[../../../blog/2012/10/30/writing-source-code-cn.org][Emacs和它的朋友们--编写代码篇]]
+     [[../../blog/2012/10/30/writing-source-code-cn.org][Emacs和它的朋友们--编写代码篇]]
 
    * 2012-10-23
 
-     [[../../../blog/2012/10/23/makefile-printval.org][Emacs and interactive makefiles]]
+     [[../../blog/2012/10/23/makefile-printval.org][Emacs and interactive makefiles]]
 
    * 2012-10-11
 
-     [[../../../blog/2012/10/11/reading-source-code-cn.org][Emacs和它的朋友们——阅读源代码篇]]
+     [[../../blog/2012/10/11/reading-source-code-cn.org][Emacs和它的朋友们——阅读源代码篇]]
 
  * 2011
   - 2011-12
    * 2011-12-28
 
-     [[../../../blog/2011/12/28/org-jira.org][org-jira]]
+     [[../../blog/2011/12/28/org-jira.org][org-jira]]
 

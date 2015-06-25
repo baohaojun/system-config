@@ -3,147 +3,147 @@
   - 2015-03
    * 2015-03-29
 
-     [[../../../blog/2015/03/29/0-Start-Using-Beagrep-for-Code-Definition-Lookup.org][开始用beagrep查代码定义]]
+     [[../../blog/2015/03/29/0-Start-Using-Beagrep-for-Code-Definition-Lookup.org][开始用beagrep查代码定义]]
 
    * 2015-03-03
 
-     [[../../../blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.org][一个在安卓手机上“一键”安装debian系统的脚本]]
+     [[../../blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.org][一个在安卓手机上“一键”安装debian系统的脚本]]
 
   - 2015-02
    * 2015-02-25
 
-     [[../../../blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.org][小扳手2.5.0]]
+     [[../../blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.org][小扳手2.5.0]]
 
    * 2015-02-19
 
-     [[../../../blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.org][小扳手抢红包秘决]]
+     [[../../blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.org][小扳手抢红包秘决]]
 
   - 2015-01
    * 2015-01-30
 
-     [[../../../blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.org][怎样在命令行上测试小扳手]]
+     [[../../blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.org][怎样在命令行上测试小扳手]]
 
    * 2015-01-27
 
-     [[../../../blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.org][配置postfix用sohu smtpcloud进行relay]]
+     [[../../blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.org][配置postfix用sohu smtpcloud进行relay]]
 
    * 2015-01-26
 
-     [[../../../blog/2015/01/26/0-T1Wrench-2.3.0-Released.org][T1Wrench 2.3.0 Released]]
+     [[../../blog/2015/01/26/0-T1Wrench-2.3.0-Released.org][T1Wrench 2.3.0 Released]]
 
    * 2015-01-12
 
-     [[../../../blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.org][怎样交换键盘Escape和Caps Lock键]]
+     [[../../blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.org][怎样交换键盘Escape和Caps Lock键]]
 
  * 2014
   - 2014-12
    * 2014-12-10
 
-     [[../../../blog/2014/12/10/0-system-config-usage-guide.org][我的system-config使用指南]]
+     [[../../blog/2014/12/10/0-system-config-usage-guide.org][我的system-config使用指南]]
 
    * 2014-12-01
 
-     [[../../../blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.org][小扳手2.0版使用手册]]
+     [[../../blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.org][小扳手2.0版使用手册]]
 
   - 2014-11
    * 2014-11-08
 
-     [[../../../blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.org][专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明]]
+     [[../../blog/2014/11/08/0-Smartisan-T1-Wrench-1.1-Usage-Manual.org][专为Smartisan T1而生的小扳手T1Wrench 1.1版使用说明]]
 
   - 2014-10
    * 2014-10-24
 
-     [[../../../blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.org][不用鼠标在Linux命令行下启动Windows上的图形界面程序]]
+     [[../../blog/2014/10/24/0-Start-Windows-Gui-Progrom-from-Linux-Command-Line-Without-Using-the-Mouse.org][不用鼠标在Linux命令行下启动Windows上的图形界面程序]]
 
    * 2014-10-23
 
-     [[../../../blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.org][把邮件的星标移到我的todo list里]]
+     [[../../blog/2014/10/23/0-Moving-Starred-Emails-Into-My-Todo-List.org][把邮件的星标移到我的todo list里]]
 
    * 2014-10-21
 
-     [[../../../blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.org][反了反了！用Smartisan T1手机当Linux的语音输入法]]
+     [[../../blog/2014/10/21/1-Use-Smartisan-T1-for-Linux-Voice-Input-Method.org][反了反了！用Smartisan T1手机当Linux的语音输入法]]
 
-     [[../../../blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.org][穷汉的安卓代码模板生成工具]]
+     [[../../blog/2014/10/21/0-Android-Code-Template-Generator-For-a-Poor-Man.org][穷汉的安卓代码模板生成工具]]
 
    * 2014-10-09
 
-     [[../../../blog/2014/10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.org][如何在Linux + Emacs下进行MFC编程（代码补齐）]]
+     [[../../blog/2014/10/09/0-How-to-do-MFC-programming-in-Linux-using-Emacs-as-editer.org][如何在Linux + Emacs下进行MFC编程（代码补齐）]]
 
   - 2014-09
    * 2014-09-05
 
-     [[../../../blog/2014/09/05/0-Emoji.org][Emoji]]
+     [[../../blog/2014/09/05/0-Emoji.org][Emoji]]
 
    * 2014-09-01
 
-     [[../../../blog/2014/09/01/0-config-adb-for-smartisan-t1.org][Config adb for smartisan t1]]
+     [[../../blog/2014/09/01/0-config-adb-for-smartisan-t1.org][Config adb for smartisan t1]]
 
   - 2014-08
    * 2014-08-24
 
-     [[../../../blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.org][Connecting Iphone Under Debian Linux]]
+     [[../../blog/2014/08/24/0-Connecting-Iphone-Under-Debian-Linux.org][Connecting Iphone Under Debian Linux]]
 
    * 2014-08-05
 
-     [[../../../blog/2014/08/05/0-a-love-letter.org][一封情书]]
+     [[../../blog/2014/08/05/0-a-love-letter.org][一封情书]]
 
   - 2014-07
    * 2014-07-13
 
-     [[../../../blog/2014/07/13/0-Smartisan-T1-Wrench.org][Smartisan T1 WrenchSmartisan T1小扳手使用指南]]
+     [[../../blog/2014/07/13/0-Smartisan-T1-Wrench.org][Smartisan T1 WrenchSmartisan T1小扳手使用指南]]
 
   - 2014-06
    * 2014-06-23
 
-     [[../../../blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.org][在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email/sms]]
+     [[../../blog/2014/06/23/0-sending-weixin-weibo-etc-with-emacs-and-smartisa-t1.org][在Linux下用Emacs+Smartisan T1手机发weixin/weibo/qq/email/sms]]
 
   - 2014-05
    * 2014-05-20
 
-     [[../../../blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.org][在Debian下为安卓做一个GNU tar程序]]
+     [[../../blog/2014/05/20/0-build-tar-for-android-under-x86-64-debian.org][在Debian下为安卓做一个GNU tar程序]]
 
   - 2014-01
    * 2014-01-16
 
-     [[../../../blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.org][用GreaseMonkey禁止Google搜索重定向绑架]]
+     [[../../blog/2014/01/16/0-Use-GreaseMonkey-to-disable-google-redirect.org][用GreaseMonkey禁止Google搜索重定向绑架]]
 
  * 2013
   - 2013-10
    * 2013-10-16
 
-     [[../../../blog/2013/10/16/0-Interactive-Git-Add.org][Interactive Git Add]]
+     [[../../blog/2013/10/16/0-Interactive-Git-Add.org][Interactive Git Add]]
 
    * 2013-10-01
 
-     [[../../../blog/2013/10/01/0-Inside-Ajoke.org][Inside Ajoke]]
+     [[../../blog/2013/10/01/0-Inside-Ajoke.org][Inside Ajoke]]
 
   - 2013-05
    * 2013-05-21
 
-     [[../../../blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.org][Mysterious rsync/ssh/scp hang]]
+     [[../../blog/2013/05/21/0-Mysterious-rsync,ssh,scp-hang-.org][Mysterious rsync/ssh/scp hang]]
 
    * 2013-05-08
 
-     [[../../../blog/2013/05/08/bbs-robot.org][站友福音：在水木bbs上用Emacs的键绑定]]
+     [[../../blog/2013/05/08/bbs-robot.org][站友福音：在水木bbs上用Emacs的键绑定]]
 
   - 2013-02
    * 2013-02-12
 
-     [[../../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.org][html2mht.pl and dir2html.pl]]
+     [[../../blog/2013/02/12/html2mht.pl-and-dir2html.pl-.org][html2mht.pl and dir2html.pl]]
 
  * 2012
   - 2012-10
    * 2012-10-29
 
-     [[../../../blog/2012/10/29/why-symlink-my-config.org][我的配置环境：为什么用symlink而不是cp]]
+     [[../../blog/2012/10/29/why-symlink-my-config.org][我的配置环境：为什么用symlink而不是cp]]
 
   - 2012-05
    * 2012-05-02
 
-     [[../../../blog/2012/05/02/pdf-for-kindle-touch.org][pdf-for-kindle-touch]]
+     [[../../blog/2012/05/02/pdf-for-kindle-touch.org][pdf-for-kindle-touch]]
 
   - 2012-02
    * 2012-02-02
 
-     [[../../../blog/2012/02/02/how-to-do-long-twitter-cn.org][自己动手做长微博（推特），内嵌图片的]]
+     [[../../blog/2012/02/02/how-to-do-long-twitter-cn.org][自己动手做长微博（推特），内嵌图片的]]
 

@@ -3,5 +3,5 @@
   - 2013-02
    * 2013-02-12
 
-     [[../../../blog/2013/02/12/blf-to-human.org][blf-to-human]]
+     [[../../blog/2013/02/12/blf-to-human.org][blf-to-human]]
 

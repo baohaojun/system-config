@@ -3,5 +3,5 @@
   - 2013-02
    * 2013-02-12
 
-     [[../../../blog/2013/02/12/wasted.org][wasted]]
+     [[../../blog/2013/02/12/wasted.org][wasted]]
 

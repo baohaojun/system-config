@@ -3,21 +3,21 @@
   - 2013-10
    * 2013-10-05
 
-     [[../../../blog/2013/10/05/0-My-Own-Win32-Input-Method.org][自己写了一个输入法, Windows下的五笔]]
+     [[../../blog/2013/10/05/0-My-Own-Win32-Input-Method.org][自己写了一个输入法, Windows下的五笔]]
 
    * 2013-10-04
 
-     [[../../../blog/2013/10/04/0-Win32-IME-Programming.org][我的Win32输入法编程心得]]
+     [[../../blog/2013/10/04/0-Win32-IME-Programming.org][我的Win32输入法编程心得]]
 
   - 2013-03
    * 2013-03-14
 
-     [[../../../blog/2013/03/14/dvp-keyboard-mac.org][在Mac系统下使用dvp (Dvorak Programmer)]]
+     [[../../blog/2013/03/14/dvp-keyboard-mac.org][在Mac系统下使用dvp (Dvorak Programmer)]]
 
   - 2013-02
    * 2013-02-12
 
-     [[../../../blog/2013/02/12/my-programmer-dvorak.org][Switched to USA Pragrammer Dvorak Keyboard]]
+     [[../../blog/2013/02/12/my-programmer-dvorak.org][Switched to USA Pragrammer Dvorak Keyboard]]
 
-     [[../../../blog/2013/02/12/dvp-win32.org][Using dvp under Win32]]
+     [[../../blog/2013/02/12/dvp-win32.org][Using dvp under Win32]]
 

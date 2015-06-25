@@ -3,29 +3,29 @@
   - 2013-12
    * 2013-12-11
 
-     [[../../../blog/2013/12/11/0-ssh-remote-command-and-bash--c-string.org][ssh执行远程命令和bash -c string的用法]]
+     [[../../blog/2013/12/11/0-ssh-remote-command-and-bash--c-string.org][ssh执行远程命令和bash -c string的用法]]
 
   - 2013-05
    * 2013-05-31
 
-     [[../../../blog/2013/05/31/0-intelligent-completion.org][智能补齐]]
+     [[../../blog/2013/05/31/0-intelligent-completion.org][智能补齐]]
 
    * 2013-05-30
 
-     [[../../../blog/2013/05/30/0-intelligent-cd.org][智能cd]]
+     [[../../blog/2013/05/30/0-intelligent-cd.org][智能cd]]
 
    * 2013-05-29
 
-     [[../../../blog/2013/05/29/0-parallel-bash.org][用bash脚本并发执行程序]]
+     [[../../blog/2013/05/29/0-parallel-bash.org][用bash脚本并发执行程序]]
 
   - 2013-02
    * 2013-02-12
 
-     [[../../../blog/2013/02/12/bash-complete-filenames.org][bash-complete-filenames]]
+     [[../../blog/2013/02/12/bash-complete-filenames.org][bash-complete-filenames]]
 
  * 2012
   - 2012-10
    * 2012-10-22
 
-     [[../../../blog/2012/10/22/fun-design-pattern.org][在shell脚本里使用Abstract Factory的设计模式]]
+     [[../../blog/2012/10/22/fun-design-pattern.org][在shell脚本里使用Abstract Factory的设计模式]]
 

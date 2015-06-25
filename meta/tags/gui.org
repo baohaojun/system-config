@@ -3,16 +3,16 @@
   - 2013-03
    * 2013-03-17
 
-     [[../../../blog/2013/03/17/cli+gui.org][当纯文本命令行碰到图形界面]]
+     [[../../blog/2013/03/17/cli+gui.org][当纯文本命令行碰到图形界面]]
 
   - 2013-02
    * 2013-02-12
 
-     [[../../../blog/2013/02/12/combining-cli-and-gui.org][Using CLI and GUI Together Seemlessly]]
+     [[../../blog/2013/02/12/combining-cli-and-gui.org][Using CLI and GUI Together Seemlessly]]
 
  * 2012
   - 2012-12
    * 2012-12-19
 
-     [[../../../blog/2012/12/19/perfect-emacs-chinese-font.org][狠狠地折腾了一把Emacs中文字体]]
+     [[../../blog/2012/12/19/perfect-emacs-chinese-font.org][狠狠地折腾了一把Emacs中文字体]]
 

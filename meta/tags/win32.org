@@ -3,5 +3,5 @@
   - 2013-02
    * 2013-02-12
 
-     [[../../../blog/2013/02/12/dvp-win32.org][Using dvp under Win32]]
+     [[../../blog/2013/02/12/dvp-win32.org][Using dvp under Win32]]
 

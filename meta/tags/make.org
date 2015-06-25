@@ -3,10 +3,10 @@
   - 2012-10
    * 2012-10-23
 
-     [[../../../blog/2012/10/23/makefile-printval.org][Emacs and interactive makefiles]]
+     [[../../blog/2012/10/23/makefile-printval.org][Emacs and interactive makefiles]]
 
   - 2012-09
    * 2012-09-17
 
-     [[../../../blog/2012/09/17/Android-Product-Makefiles.org][Android-Product-Makefiles]]
+     [[../../blog/2012/09/17/Android-Product-Makefiles.org][Android-Product-Makefiles]]
 

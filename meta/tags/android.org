@@ -3,39 +3,39 @@
   - 2013-03
    * 2013-03-11
 
-     [[../../../blog/2013/03/11/crossdict-gcide-help.org][Installing Dictionary Data Separately]]
+     [[../../blog/2013/03/11/crossdict-gcide-help.org][Installing Dictionary Data Separately]]
 
    * 2013-03-08
 
-     [[../../../blog/2013/03/08/crossdict-readme-cn.org][CrossDict: 交叉索引字典]]
+     [[../../blog/2013/03/08/crossdict-readme-cn.org][CrossDict: 交叉索引字典]]
 
   - 2013-01
    * 2013-01-09
 
-     [[../../../blog/2013/01/09/coding-android-java-in-emacs-en.org][Doing Android Java Programming in Emacs]]
+     [[../../blog/2013/01/09/coding-android-java-in-emacs-en.org][Doing Android Java Programming in Emacs]]
 
  * 2012
   - 2012-12
    * 2012-12-27
 
-     [[../../../blog/2012/12/27/coding-android-java-in-emacs.org][在Emacs下用java编程（Android相关）]]
+     [[../../blog/2012/12/27/coding-android-java-in-emacs.org][在Emacs下用java编程（Android相关）]]
 
   - 2012-11
    * 2012-11-14
 
-     [[../../../blog/2012/11/14/gdb-android.org][How to use gdb (in Emacs) for android]]
+     [[../../blog/2012/11/14/gdb-android.org][How to use gdb (in Emacs) for android]]
 
    * 2012-11-09
 
-     [[../../../blog/2012/11/09/android-diary.org][android-diary]]
+     [[../../blog/2012/11/09/android-diary.org][android-diary]]
 
   - 2012-10
    * 2012-10-26
 
-     [[../../../blog/2012/10/26/android-binder.org][android的binder机制]]
+     [[../../blog/2012/10/26/android-binder.org][android的binder机制]]
 
   - 2012-09
    * 2012-09-17
 
-     [[../../../blog/2012/09/17/Android-Product-Makefiles.org][Android-Product-Makefiles]]
+     [[../../blog/2012/09/17/Android-Product-Makefiles.org][Android-Product-Makefiles]]
 

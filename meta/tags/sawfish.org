@@ -3,5 +3,5 @@
   - 2012-02
    * 2012-02-26
 
-     [[../../../blog/2012/02/26/extracting-ahd-cn.org][extracting-ahd-cn]]
+     [[../../blog/2012/02/26/extracting-ahd-cn.org][extracting-ahd-cn]]
 

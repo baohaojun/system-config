@@ -3,30 +3,30 @@
   - 2015-01
    * 2015-01-28
 
-     [[../../../blog/2015/01/28/0-xdotool-is-fucking-with-dvp.org][xdotool is fucking with dvp]]
+     [[../../blog/2015/01/28/0-xdotool-is-fucking-with-dvp.org][xdotool is fucking with dvp]]
 
    * 2015-01-27
 
-     [[../../../blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.org][ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑]]
+     [[../../blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.org][ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑]]
 
  * 2014
   - 2014-11
    * 2014-11-23
 
-     [[../../../blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.org][更新Kernel以解决opengl程序在休眠后无法运行的问题]]
+     [[../../blog/2014/11/23/0-update-kernel-to-fix-opengl-crash-problem-after-hibernate-thaw.org][更新Kernel以解决opengl程序在休眠后无法运行的问题]]
 
   - 2014-10
    * 2014-10-22
 
-     [[../../../blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.org][A Bug in Android MobileOrg Sync]]
+     [[../../blog/2014/10/22/0-A-Bug-in-Android-MobileOrg-Sync.org][A Bug in Android MobileOrg Sync]]
 
   - 2014-09
    * 2014-09-26
 
-     [[../../../blog/2014/09/26/0-WYPIWYG.org][WYPIWYG (What you print is what you get）]]
+     [[../../blog/2014/09/26/0-WYPIWYG.org][WYPIWYG (What you print is what you get）]]
 
   - 2014-01
    * 2014-01-28
 
-     [[../../../blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.org][Firefor urlbar dropdown list not showing anymore]]
+     [[../../blog/2014/01/28/0-Firefor-urlbar-dropdown-list-not-showing-anymore.org][Firefor urlbar dropdown list not showing anymore]]
 

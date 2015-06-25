@@ -79,7 +79,7 @@ sub fix_link($)
         chomp($org_file = qx(select-args $org_file));
     }
 
-    if (not -e $org_file) {
+    if (not -e $org_file and $link !~ m/^\s.*\s$/) {
         if (system("yes-or-no-p", "-y", "$link does not exist or matched with too many files, continue?") != 0) {
             die "$link matched with multiple files or no files at all";
         }

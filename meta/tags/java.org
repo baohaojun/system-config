@@ -3,11 +3,11 @@
   - 2013-03
    * 2013-03-31
 
-     [[../../../blog/2013/03/31/when-java-meet-csharp.org][当Java遇到C#]]
+     [[../../blog/2013/03/31/when-java-meet-csharp.org][当Java遇到C#]]
 
  * 2012
   - 2012-12
    * 2012-12-27
 
-     [[../../../blog/2012/12/27/coding-android-java-in-emacs.org][在Emacs下用java编程（Android相关）]]
+     [[../../blog/2012/12/27/coding-android-java-in-emacs.org][在Emacs下用java编程（Android相关）]]
 

@@ -3,5 +3,5 @@
   - 2012-10
    * 2012-10-31
 
-     [[../../../blog/2012/10/31/ctags-android-xml.org][用ctags索引Android资源定义的.xml和.png文件]]
+     [[../../blog/2012/10/31/ctags-android-xml.org][用ctags索引Android资源定义的.xml和.png文件]]
 

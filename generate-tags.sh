@@ -56,7 +56,7 @@ for tagd in meta/tags/*/; do
                 echo "   * $year-$month-$day"
                 echo
             fi
-            echo "     [[$(relative-path $name $tagd)][$(perl -ne 'if (m/#\+title: (.*)/i) {print $1}' $name)]]"
+            echo "     [[$(relative-path $name $tagd/..)][$(perl -ne 'if (m/#\+title: (.*)/i) {print $1}' $name)]]"
             echo
 
             old_year=$year

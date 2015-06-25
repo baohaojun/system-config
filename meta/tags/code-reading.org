@@ -3,40 +3,40 @@
   - 2014-08
    * 2014-08-11
 
-     [[../../../blog/2014/08/11/0-Linux-network-code-reading.org][Linux network code reading (TODO)]]
+     [[../../blog/2014/08/11/0-Linux-network-code-reading.org][Linux network code reading (TODO)]]
 
   - 2014-06
    * 2014-06-04
 
-     [[../../../blog/2014/06/04/0-binder.org][binder]]
+     [[../../blog/2014/06/04/0-binder.org][binder]]
 
  * 2013
   - 2013-07
    * 2013-07-20
 
-     [[../../../blog/2013/07/20/0-grep-cross-ref.org][Grepping Cross References]]
+     [[../../blog/2013/07/20/0-grep-cross-ref.org][Grepping Cross References]]
 
   - 2013-05
    * 2013-05-08
 
-     [[../../../blog/2013/05/08/stripping-kernel-code-for-reading.org][Stripping kernel/uboot source to 10% for code reading]]
+     [[../../blog/2013/05/08/stripping-kernel-code-for-reading.org][Stripping kernel/uboot source to 10% for code reading]]
 
   - 2013-02
    * 2013-02-12
 
-     [[../../../blog/2013/02/12/note.org][note]]
+     [[../../blog/2013/02/12/note.org][note]]
 
    * 2013-02-02
 
-     [[../../../blog/2013/02/02/remove-unneeded-files-for-code-reading.org][在阅读源代码时删掉所有非必要文件的方法]]
+     [[../../blog/2013/02/02/remove-unneeded-files-for-code-reading.org][在阅读源代码时删掉所有非必要文件的方法]]
 
  * 2012
   - 2012-10
    * 2012-10-31
 
-     [[../../../blog/2012/10/31/ctags-android-xml.org][用ctags索引Android资源定义的.xml和.png文件]]
+     [[../../blog/2012/10/31/ctags-android-xml.org][用ctags索引Android资源定义的.xml和.png文件]]
 
    * 2012-10-11
 
-     [[../../../blog/2012/10/11/reading-source-code-cn.org][Emacs和它的朋友们——阅读源代码篇]]
+     [[../../blog/2012/10/11/reading-source-code-cn.org][Emacs和它的朋友们——阅读源代码篇]]
 

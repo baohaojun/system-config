@@ -3,10 +3,10 @@
   - 2013-04
    * 2013-04-12
 
-     [[../../../blog/2013/04/12/hardened-bhj-style-macros.org][翅膀硬了]]
+     [[../../blog/2013/04/12/hardened-bhj-style-macros.org][翅膀硬了]]
 
   - 2013-03
    * 2013-03-09
 
-     [[../../../blog/2013/03/09/bhj-do-codegen.org][给任意语言插上宏定义的翅膀]]
+     [[../../blog/2013/03/09/bhj-do-codegen.org][给任意语言插上宏定义的翅膀]]
 
