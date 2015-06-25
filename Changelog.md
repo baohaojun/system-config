@@ -3,10 +3,11 @@
 - New secondary backend [Toast](http://supertoasty.com/)
 - New secondary backend [Notify my Android](https://www.notifymyandroid.com/)
 - New secondary backend Sound playback.
+- New secondary backend [Pushover](https://pushover.net/) 
 - Improved implementation of build in Snore backend.
 - Dropped Qt4
 - Use c++11
-- Api changes
+- Lots of important Api changes
 
 
 # Changes since 0.5.1 #
