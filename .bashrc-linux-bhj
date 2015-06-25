@@ -1,4 +1,4 @@
 #!/bin/bash
 export GPGKEY=FAB5ACB2
 export EDITOR=edit-wait
-
+export DISPLAY=${DISPLAY:-:0} #if it is already set...

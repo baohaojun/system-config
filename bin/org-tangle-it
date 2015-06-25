@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) org-file sh-file"
+fi
+
+
+org_file=$1
+sh_file=$2
+
+org_file_base=$(basename $org_file)
+
+emacs_script=$(
+    cat <<EOF
+          (unless (and (getenv "EMACS") (string-match "\\*Org Src $org_file_base" (buffer-name (car (buffer-list)))))
+           (save-some-buffers t)
+           (find-file "$org_file")
+           (org-babel-tangle))
+EOF
+            )
+if test -e $org_file -a $org_file -nt $sh_file; then
+    emacsclient -e "$emacs_script" 1>&2 &&
+        touch $sh_file && exit 0
+fi
+exit 1

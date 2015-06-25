@@ -1,5 +1,8 @@
 #!/bin/bash
 
+exec 9> ~/.cache/system-config/logs/$(basename $0).lock2
+flock 9
+
 prompt="> "
 TEMP=$(getopt -o p:s --long prompt: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"

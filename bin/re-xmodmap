@@ -29,7 +29,11 @@ sleep2=${SLEEP2:-2}
             fi
         done
         if test $e4000_found = false; then
-            xmodmap ~/.Xmodmap
+            if test -e ~/.Xmodmap; then
+                xmodmap ~/.Xmodmap
+            else
+                xmodmap ~/system-config/etc/hardware-mach/generic/.Xmodmap
+            fi
             exit
         fi
         for x in $(seq 1 $sleep2); do

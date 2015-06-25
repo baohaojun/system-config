@@ -1,2 +1,0 @@
-#!/bin/bash
-slin bhj1 "exec slin bhj2 \"export DISPLAY=\$DISPLAY;export LANG=C; export LC_ALL=C; $@\";"

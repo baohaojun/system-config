@@ -11,6 +11,10 @@ if test ! -e ./xbin/bash; then
     die "Cant find ./xbin/bash"
 fi
 
+my-adb remount
+my-adb stop adsprpcd
+
+for x in $(my-adb getprop |grep running|pn 1|perl -npe 's/.*\.//;s,\].*,,'|grep -v adbd); do my-adb stop $x; done
 ssh-to-phone echo hello
 
 sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded

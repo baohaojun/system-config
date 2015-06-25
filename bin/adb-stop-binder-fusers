@@ -1,12 +1,19 @@
 #!/bin/bash
 
+daemons=(
+
+    media healthd performanc_adj keystore cnd drm ril-daemon
+    servicemanager audiod per_proxy wfdservice
+
+)
+
 if test $(basename $0) = adb-stop-binder-fusers; then
     my-adb stop
-    for s in media healthd performanc_adj keystore cnd drm ril-daemon servicemanager; do
+    for s in ${daemons[@]}; do
         my-adb "stop $s"
     done
 else
-    for s in media healthd performanc_adj keystore cnd drm ril-daemon servicemanager; do
+    for s in ${daemons[@]}; do
         my-adb "start $s"
     done
     my-adb start

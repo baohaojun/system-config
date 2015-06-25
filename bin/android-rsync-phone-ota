@@ -64,7 +64,7 @@ function update-partition() {
         my-adb push $file /data
     fi
 
-    my-adb "dd if=/data/$file of=\$(echo /dev/block/platform/*/by-name/$part) && rm /data/$file && echo yes$$" | grep yes$$
+    my-adb "dd if=/data/$file of=\$(echo /dev/block/platform/*/by-name/$part) && rm /data/$file && sync && echo yes$$" | grep yes$$
 }
 
 if test $(basename $0) = android-rsync-phone-diff; then

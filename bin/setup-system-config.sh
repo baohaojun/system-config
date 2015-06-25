@@ -1,0 +1,1 @@
+../../src/github/smartcm/setup-system-config.sh

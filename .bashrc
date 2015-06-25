@@ -74,7 +74,6 @@ export HISTCONTROL="ignoredups"
 export HISTIGNORE="bg:fg:exit"
 export HISTSIZE=2000
 export HISTFILESIZE=2000
-export DISPLAY=${DISPLAY:-:0} #if it is already set...
 if test "$USER"x = x; then
     export USER=`whoami`
 fi
