@@ -41,6 +41,9 @@ Using a plugin system it is possible to create notifications with many different
 
 - [Windows Phone - Supertoasty](http://supertoasty.com/)
 - [Android - Notify my Android](https://www.notifymyandroid.com/) 
+- [Android and IOS - Pushover] (https://pushover.net/)
+- Playback of sound filles
+
 
 
 ## Projects using Snore ##
