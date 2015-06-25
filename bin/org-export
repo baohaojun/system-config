@@ -147,7 +147,7 @@ EOF
 (
     cd /tmp
     find-or-exec emacs
-    emacsclient -e "$(cat $tmp_el)"
+    emacsclient -e "(load \"$tmp_el\")"
 )
 
 for x in "$@"; do
