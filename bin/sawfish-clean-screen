@@ -4,4 +4,3 @@ sawfish-client -e "(progn
                      (bhj-draw-notification t)
                      (unbind-keys global-keymap \"Button1-Click\")
                      (bind-keys window-keymap \"Button1-Click\" 'raise-and-pass-through-click))"
-fuser -k ~/.cache/system-config/logs/draw-notification-with-sawfish.lock2

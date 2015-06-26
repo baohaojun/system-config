@@ -1,0 +1,9 @@
+#!/usr/bin/python
+from SOAPpy import WSDL, faultType
+mantis = WSDL.Proxy("http://mantis.smartisan.cn/api/soap/mantisconnect.php?wsdl")
+
+note = {'text': 'test'}
+mantis.mc_issue_note_add(
+    51676,
+    note
+)
