@@ -25,41 +25,32 @@ public:
                  "<b>Bold</b><br>"
                  "<u>Underline</u><br>"
                  "<font color=\"blue\">Font</font><br>"
-                 "&lt;&amp;&gt;"
+                 "&lt;&amp;&gt;<br>"
                  "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a><br>");
 private slots:
 void benchmarkUtilsToHtml();
 void benchmarkUtilsToHtmlAllMarkup();
 void benchmarkUtilsToPlain();
 
-private:
-
-/**
- * old toPlaintext function from Utils.
- * @param string A string to decode if needed.
- * @return if the string was rhichtext or html encoded a decoded string, else the original string.
- */
-static inline QString toPlainText(const QString &string)
-{
-    if (Qt::mightBeRichText(string)) {
-        return QTextDocumentFragment::fromHtml(string).toPlainText();
-    } else {
-        return string;
-    }
-}
 };
 
 
 void SnoreBenchmark::benchmarkUtilsToHtml(){
 
 
-    QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::NO_MARKUP), toPlainText(htmlTestString));
+    QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::NO_MARKUP), QString("Italic A\n"
+                                                                               "Italic B\n"
+                                                                               "Bold\n"
+                                                                               "Underline\n"
+                                                                               "Font\n"
+                                                                               "<&>\n"
+                                                                               "Website\n"));
     QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::HREF), QString("Italic A\n"
                                                                           "Italic B\n"
                                                                           "Bold\n"
                                                                           "Underline\n"
                                                                           "Font\n"
-                                                                          "&lt;&amp;&gt;"
+                                                                          "&lt;&amp;&gt;\n"
                                                                           "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a>\n"));
     QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::HREF | Utils::BOLD | Utils::BREAK |
                                     Utils::UNDERLINE | Utils::FONT | Utils::ITALIC), htmlTestString);
