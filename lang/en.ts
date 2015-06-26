@@ -23,6 +23,24 @@
     </message>
 </context>
 <context>
+    <name>PushoverSettings</name>
+    <message>
+        <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="30"/>
+        <source>User Key:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="31"/>
+        <source>Sound:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="32"/>
+        <source>Devices:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <location filename="../src/libsnore/settingsdialog.ui" line="14"/>
@@ -50,27 +68,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="72"/>
-        <source>Primary Backends</source>
+        <location filename="../src/libsnore/settingsdialog.ui" line="69"/>
+        <source>Disable Notification Sound:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/libsnore/settingsdialog.ui" line="82"/>
-        <source>Secondary Bckends</source>
+        <source>Primary Backends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/libsnore/settingsdialog.ui" line="92"/>
-        <source>Frontends</source>
+        <source>Secondary Bckends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/libsnore/settingsdialog.ui" line="102"/>
+        <source>Frontends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.ui" line="112"/>
         <source>Plugins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="115"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="125"/>
         <source>Display Test Notification</source>
         <translation type="unfinished"></translation>
     </message>
@@ -83,7 +106,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/settings/settingswindow.ui" line="23"/>
+        <location filename="../src/settings/settingswindow.ui" line="27"/>
         <source>Application</source>
         <translation type="unfinished"></translation>
     </message>
@@ -105,24 +128,24 @@
     </message>
 </context>
 <context>
-    <name>Snore::SettingsDialog</name>
+    <name>Snore::SnoreCore</name>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="78"/>
-        <source>Hello World</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="80"/>
+        <location filename="../src/libsnore/snore.cpp" line="239"/>
         <source>This is Snore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="80"/>
+        <location filename="../src/libsnore/snore.cpp" line="239"/>
         <source>Project Website</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="82"/>
+        <location filename="../src/libsnore/snore.cpp" line="243"/>
+        <source>Hello World</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/snore.cpp" line="244"/>
         <source>Test Action</source>
         <translation type="unfinished"></translation>
     </message>

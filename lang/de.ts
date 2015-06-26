@@ -19,7 +19,25 @@
     <message>
         <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="28"/>
         <source>Api Key:</source>
-        <translation type="unfinished"></translation>
+        <translation>Api Schlüssel:</translation>
+    </message>
+</context>
+<context>
+    <name>PushoverSettings</name>
+    <message>
+        <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="30"/>
+        <source>User Key:</source>
+        <translation>Benutzer Schlüssel:</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="31"/>
+        <source>Sound:</source>
+        <translation>Klang:</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="32"/>
+        <source>Devices:</source>
+        <translation>Geräte:</translation>
     </message>
 </context>
 <context>
@@ -50,27 +68,32 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="72"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="69"/>
+        <source>Disable Notification Sound:</source>
+        <translation>Mitteilungs Klang Deaktivieren:</translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.ui" line="82"/>
         <source>Primary Backends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="82"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="92"/>
         <source>Secondary Bckends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="92"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="102"/>
         <source>Frontends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="102"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="112"/>
         <source>Plugins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="115"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="125"/>
         <source>Display Test Notification</source>
         <translation>Zeige eine Testmitteilung an</translation>
     </message>
@@ -83,7 +106,7 @@
         <translation>Snore Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/settings/settingswindow.ui" line="23"/>
+        <location filename="../src/settings/settingswindow.ui" line="27"/>
         <source>Application</source>
         <translation>Anwendungen</translation>
     </message>
@@ -105,24 +128,24 @@
     </message>
 </context>
 <context>
-    <name>Snore::SettingsDialog</name>
+    <name>Snore::SnoreCore</name>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="78"/>
-        <source>Hello World</source>
-        <translation>Hallo Welt</translation>
-    </message>
-    <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="80"/>
+        <location filename="../src/libsnore/snore.cpp" line="239"/>
         <source>This is Snore</source>
         <translation>Dies ist Snore</translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="80"/>
+        <location filename="../src/libsnore/snore.cpp" line="239"/>
         <source>Project Website</source>
         <translation>Projekt Webseite</translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.cpp" line="82"/>
+        <location filename="../src/libsnore/snore.cpp" line="243"/>
+        <source>Hello World</source>
+        <translation>Hallo Welt</translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/snore.cpp" line="244"/>
         <source>Test Action</source>
         <translation>Test Aktion</translation>
     </message>
