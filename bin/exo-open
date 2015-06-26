@@ -1,6 +1,11 @@
 #!/bin/bash
 if test "$#" = 1 && [[ "$1" =~ file:///.*% ]]; then
     set -- "$(echo "$1"|un-urlify|perl -npe 's,^file:/*,/,')"
+    if test ! -e "$1"; then
+        if test -e "${1%,*}",*; then
+            set -- "${1%,*}",*
+        fi
+    fi
     echo "$@" > ~/tmp/1.txt
 fi
 /usr/bin/exo-open "$@"
