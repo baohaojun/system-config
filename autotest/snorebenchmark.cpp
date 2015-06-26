@@ -25,6 +25,7 @@ public:
                  "<b>Bold</b><br>"
                  "<u>Underline</u><br>"
                  "<font color=\"blue\">Font</font><br>"
+                 "&lt;&amp;&gt;"
                  "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a><br>");
 private slots:
 void benchmarkUtilsToHtml();
@@ -58,11 +59,12 @@ void SnoreBenchmark::benchmarkUtilsToHtml(){
                                                                           "Bold\n"
                                                                           "Underline\n"
                                                                           "Font\n"
+                                                                          "&lt;&amp;&gt;"
                                                                           "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a>\n"));
     QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::HREF | Utils::BOLD | Utils::BREAK |
                                     Utils::UNDERLINE | Utils::FONT | Utils::ITALIC), htmlTestString);
     QBENCHMARK{
-        Utils::normaliseMarkup(htmlTestString, Utils::NO_MARKUP);
+        Utils::normaliseMarkup(htmlTestString, Utils::HREF);
     }
 }
 
@@ -78,7 +80,7 @@ void SnoreBenchmark::benchmarkUtilsToHtmlAllMarkup()
 void SnoreBenchmark::benchmarkUtilsToPlain()
 {
     QBENCHMARK{
-        toPlainText(htmlTestString);
+        Utils::normaliseMarkup(htmlTestString, Utils::NO_MARKUP);
     }
 }
 QTEST_MAIN(SnoreBenchmark)
