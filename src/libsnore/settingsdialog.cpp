@@ -74,13 +74,7 @@ void SettingsDialog::initTabs()
 
 void Snore::SettingsDialog::on_pushButton_clicked()
 {
-    Application app = SnoreCorePrivate::instance()->defaultApplication();
-    Notification noti(app, app.defaultAlert(), tr("Hello World"),
-                      QString("<i>%1</i><br>"
-                              "<a href=\"https://github.com/Snorenotify/Snorenotify\">%2</a><br>").arg(tr("This is Snore"), tr("Project Website")),
-                      app.icon());
-    noti.addAction(Action(1, tr("Test Action")));
-    SnoreCore::instance().broadcastNotification(noti);
+    SnoreCore::instance().displayExapleNotification();
 }
 
 void SettingsDialog::load()

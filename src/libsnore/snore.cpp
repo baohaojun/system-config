@@ -27,8 +27,6 @@
 
 #include "version.h"
 
-#include <memory>
-
 #include <QSettings>
 #include <QThread>
 
@@ -231,4 +229,18 @@ Notification SnoreCore::getActiveNotificationByID(uint id) const
 {
     Q_D(const SnoreCore);
     return d->m_activeNotifications.value(id);
+}
+
+
+void SnoreCore::displayExapleNotification()
+{
+    Application app = SnoreCorePrivate::instance()->defaultApplication();
+    QString text = QString("<i>%1</i><br>"
+                          "<a href=\"https://github.com/Snorenotify/Snorenotify\">%2</a><br>").arg(tr("This is Snore"), tr("Project Website"));
+    if(!app.constHints().value("use-markup").toBool()) {
+        text = Utils::normaliseMarkup(text, Utils::NO_MARKUP);
+    }
+    Notification noti(app, app.defaultAlert(), tr("Hello World"), text, app.icon());
+    noti.addAction(Action(1, tr("Test Action")));
+    broadcastNotification(noti);
 }

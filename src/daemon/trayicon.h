@@ -42,11 +42,8 @@ private:
     QActionGroup *m_backendActions;
     Snore::SettingsDialog *m_settings;
 
-    QHash<QTimer *, Snore::Notification> m_notifications;
-
 public slots:
     void slotTestNotification();
-    void sloutUpdateTestNotification();
     void slotSettings();
 };
 

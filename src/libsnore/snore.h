@@ -78,6 +78,11 @@ public:
     void broadcastNotification(Notification notification);
 
     /**
+     * Displays a example notification.
+     */
+    void displayExapleNotification();
+
+    /**
      * Register an application.
      * Each application should only be registered once.
      * An application must be registered before a notification can be broadcasted.
