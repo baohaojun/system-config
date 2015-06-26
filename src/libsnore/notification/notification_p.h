@@ -48,6 +48,8 @@ public:
 
     void setTimeoutTimer(QTimer *timer);
 
+    QString resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags);
+
 private:
     Q_DISABLE_COPY(NotificationData)
 

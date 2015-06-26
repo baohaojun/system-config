@@ -90,6 +90,15 @@ void NotificationData::setTimeoutTimer(QTimer *timer)
     m_timeoutTimer.reset(timer);
 }
 
+QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags)
+{
+    if(flags != Utils::NO_MARKUP && !m_application.constHints().value("use-markup").toBool()) {
+        return string.toHtmlEscaped();
+    } else {
+        return Utils::normaliseMarkup(string, flags);
+    }
+}
+
 void NotificationData::initHints()
 {
     m_hints.setValue("silent", SnoreCore::instance().value("Silent", LOCAL_SETTING));

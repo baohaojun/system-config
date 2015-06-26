@@ -94,20 +94,12 @@ const Application &Notification::application() const
 
 QString Notification::title(Utils::MARKUP_FLAGS flags) const
 {
-    if(!application().constHints().value("use-markup").toBool()) {
-        return d->m_title.toHtmlEscaped();
-    } else {
-        return Utils::normaliseMarkup(d->m_title, flags);
-    }
+    return d->resolveMarkup(d->m_title, flags);
 }
 
 QString Notification::text(Utils::MARKUP_FLAGS flags) const
 {
-    if(!application().constHints().value("use-markup").toBool()) {
-        return d->m_text.toHtmlEscaped();
-    }else {
-        return Utils::normaliseMarkup(d->m_text, flags);
-    }
+    return d->resolveMarkup(d->m_text, flags);
 }
 
 const Alert &Notification::alert() const
