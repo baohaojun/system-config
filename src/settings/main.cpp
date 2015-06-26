@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
     app.setApplicationVersion(Snore::Version::version());
 
     Snore::SnoreCore::instance().loadPlugins(Snore::SnorePlugin::ALL);
+    Snore::SnoreCorePrivate::instance()->defaultApplication().hints().setValue("use-markup", QVariant::fromValue(true));
 
     QCommandLineParser parser;
     parser.setApplicationDescription("A settings interface for Snorenotify.");
