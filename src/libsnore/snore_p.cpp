@@ -44,6 +44,8 @@ SnoreCorePrivate::SnoreCorePrivate():
     snoreDebug(SNORE_DEBUG) << "Snore local settings are located in" << normalizeKey("Test", LOCAL_SETTING);
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
+
+    m_defaultApp = Application("SnoreNotify", Icon(":/root/snore.png"));
 }
 
 SnoreCorePrivate::~SnoreCorePrivate()
@@ -141,7 +143,6 @@ void SnoreCorePrivate::init()
     Q_Q(SnoreCore);
     setDefaultValueIntern("Timeout", 10);
     setDefaultValueIntern("Silent", false);
-    q->setDefaultApplication(Application("SnoreNotify", Icon(":/root/snore.png")));
 }
 
 void SnoreCorePrivate::setDefaultValueIntern(const QString &key, const QVariant &value)
@@ -192,14 +193,6 @@ void SnoreCorePrivate::setLocalSttingsPrefix(const QString &prefix)
     syncSettings();
 }
 
-void SnoreCorePrivate::registerMetaTypes()
-{
-    qRegisterMetaType<Notification>();
-    qRegisterMetaType<Application>();
-    qRegisterMetaType<SnorePlugin::PluginTypes>();
-    qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
-}
-
 QString SnoreCorePrivate::tempPath()
 {
     static QTemporaryDir dir;
@@ -233,7 +226,7 @@ void SnoreCorePrivate::slotAboutToQuit()
     }
 }
 
-void SnoreCorePrivate::loadTranslator()
+static void loadTranslator()
 {
     auto installTranslator = [](const QString & locale) {
         snoreDebug(SNORE_DEBUG) << locale;
@@ -260,3 +253,20 @@ void SnoreCorePrivate::loadTranslator()
         }
     }
 }
+
+static void registerMetaTypes()
+{
+    qRegisterMetaType<Notification>();
+    qRegisterMetaType<Application>();
+    qRegisterMetaType<SnorePlugin::PluginTypes>();
+    qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
+}
+
+static void snoreStartup(){
+    loadTranslator();
+    registerMetaTypes();
+}
+
+Q_COREAPP_STARTUP_FUNCTION(snoreStartup)
+
+

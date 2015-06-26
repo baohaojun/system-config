@@ -48,13 +48,8 @@ SnoreCore::SnoreCore(QObject *parent):
 
 SnoreCore &SnoreCore::instance()
 {
-    static SnoreCore *instance = nullptr;
-    if (!instance) {
-        SnoreCorePrivate::loadTranslator();
-        SnoreCorePrivate::registerMetaTypes();
-        instance = new SnoreCore(qApp);
-    }
-    return *instance;
+    static SnoreCore instance(qApp);
+    return instance;
 }
 
 SnoreCore::~SnoreCore()
