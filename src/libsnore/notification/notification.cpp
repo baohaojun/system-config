@@ -94,12 +94,20 @@ const Application &Notification::application() const
 
 QString Notification::title(Utils::MARKUP_FLAGS flags) const
 {
-    return Utils::normaliseMarkup(d->m_title, flags);
+    if(!application().constHints().value("use-markup").toBool()) {
+        return d->m_title.toHtmlEscaped();
+    } else {
+        return Utils::normaliseMarkup(d->m_title, flags);
+    }
 }
 
 QString Notification::text(Utils::MARKUP_FLAGS flags) const
 {
-    return Utils::normaliseMarkup(d->m_text, flags);
+    if(!application().constHints().value("use-markup").toBool()) {
+        return d->m_text.toHtmlEscaped();
+    }else {
+        return Utils::normaliseMarkup(d->m_text, flags);
+    }
 }
 
 const Alert &Notification::alert() const
@@ -204,8 +212,6 @@ QDebug operator <<(QDebug debug, const Snore::Notification::CloseReasons &flags)
         debugPrintEnum(Notification::DISMISSED);
         debugPrintEnum(Notification::ACTIVATED);
         debugPrintEnum(Notification::REPLACED);
-    default:
-        debug << QByteArray::number(flags, 16) << ")";
     }
     return debug.space();
 }

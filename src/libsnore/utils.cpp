@@ -27,6 +27,8 @@
 
 #include <QRegExp>
 #include <QMutex>
+#include <QTextDocument>
+#include <QTextDocumentFragment>
 
 using namespace Snore;
 
@@ -80,6 +82,11 @@ QString Utils::normaliseMarkup(QString string, MARKUP_FLAGS tags)
 {
     static QMutex mutex;
     if(tags == ALL_MARKUP){
+        return string;
+    } else if(tags == NO_MARKUP) {
+        if (Qt::mightBeRichText(string)) {
+            return QTextDocumentFragment::fromHtml(string).toPlainText();
+        }
         return string;
     }
 

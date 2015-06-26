@@ -44,8 +44,9 @@ void Pushover::slotNotify(Notification notification)
 
     QHttpPart text;
     text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"message\""));
-    text.setBody(notification.text(Utils::HREF | Utils::BOLD | Utils::UNDERLINE | Utils::FONT | Utils::ITALIC)
-                 .toUtf8().constData());
+    QString textString = notification.text(Utils::HREF | Utils::BOLD | Utils::UNDERLINE | Utils::FONT | Utils::ITALIC);
+    snoreDebug(SNORE_DEBUG) << "Message" << textString;
+    text.setBody(textString.toUtf8().constData());
     mp->append(text);
 
     QHttpPart priority;
