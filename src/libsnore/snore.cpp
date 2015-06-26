@@ -27,7 +27,7 @@
 
 #include "version.h"
 
-#include <iostream>
+#include <memory>
 
 #include <QSettings>
 #include <QThread>
@@ -48,8 +48,8 @@ SnoreCore::SnoreCore(QObject *parent):
 
 SnoreCore &SnoreCore::instance()
 {
-    static SnoreCore instance(qApp);
-    return instance;
+    static SnoreCore *instance(new SnoreCore(qApp));
+    return *instance;
 }
 
 SnoreCore::~SnoreCore()

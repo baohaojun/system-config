@@ -101,7 +101,7 @@ private:
 
     Application m_defaultApp;
 
-    QString m_localSettingsPrefix = qApp->applicationName().isEmpty() ? "SnoreNotify" : qApp->applicationName();
+    QString m_localSettingsPrefix;
 
     QSettings *m_settings;
 

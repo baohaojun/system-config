@@ -32,6 +32,7 @@
 using namespace Snore;
 
 SnoreCorePrivate::SnoreCorePrivate():
+    m_localSettingsPrefix(qApp->applicationName().isEmpty() ? "SnoreNotify" : qApp->applicationName()),
     m_settings(new QSettings("Snorenotify", "libsnore", this))
 {
     snoreDebug(SNORE_INFO) << "Version:" << Version::version();
@@ -44,6 +45,7 @@ SnoreCorePrivate::SnoreCorePrivate():
     snoreDebug(SNORE_DEBUG) << "Snore local settings are located in" << normalizeKey("Test", LOCAL_SETTING);
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
+
 
     m_defaultApp = Application("SnoreNotify", Icon(":/root/snore.png"));
 }
