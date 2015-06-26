@@ -2,7 +2,7 @@
 set -e
 mkdir -p ~/src/android-mirror
 cd ~/src/android-mirror
-repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --mirror
+repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --mirror || repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo
 repo sync -j4
 repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m icesky-rom.xml --repo-url smartisan:/googlesource/git-repo
 repo sync -j4

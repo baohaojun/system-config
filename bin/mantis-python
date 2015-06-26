@@ -1,9 +1,21 @@
 #!/usr/bin/python
 from SOAPpy import WSDL, faultType
-mantis = WSDL.Proxy("http://mantis.smartisan.cn/api/soap/mantisconnect.php?wsdl")
+
+import argparse;
+parser = argparse.ArgumentParser()
+parser.add_argument("-w", "--wsdl", default="http://mantis.smartisan.cn/api/soap/mantisconnect.php?wsdl")
+parser.add_argument("-u", "--username")
+parser.add_argument("-p", "--password")
+parser.add_argument("-i", "--issue-id", )
+
+arg = parser.parse_args()
+
+mantis = WSDL.Proxy(arg.wsdl);
 
 note = {'text': 'test'}
 mantis.mc_issue_note_add(
+    arg.username,
+    arg.password,
     51676,
     note
 )

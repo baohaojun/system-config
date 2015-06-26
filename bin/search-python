@@ -1,0 +1,2 @@
+#!/bin/bash
+firefox-open-url-pattern "file:///usr/share/doc/python2.7/html"  "file:///usr/share/doc/python2.7/html/search.html?q="$(echo "$@" | urlify)
