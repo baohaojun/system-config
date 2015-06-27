@@ -43,7 +43,7 @@ void Pushover::slotNotify(Notification notification)
     mp->append(title);
 
     QString textString;
-    if(notification.application().constHints().value("use-markup")){
+    if(notification.application().constHints().value("use-markup").toBool()){
         textString = notification.text(Utils::HREF | Utils::BOLD | Utils::UNDERLINE | Utils::FONT | Utils::ITALIC);
 
         QHttpPart html;
