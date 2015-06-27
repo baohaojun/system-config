@@ -42,9 +42,20 @@ void Pushover::slotNotify(Notification notification)
     title.setBody(notification.title().toUtf8().constData());
     mp->append(title);
 
+    QString textString;
+    if(notification.application().constHints().value("use-markup")){
+        textString = notification.text(Utils::HREF | Utils::BOLD | Utils::UNDERLINE | Utils::FONT | Utils::ITALIC);
+
+        QHttpPart html;
+        html.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"html\""));
+        html.setBody("1");
+        mp->append(html);
+    } else {
+        textString = notification.text();
+    }
+
     QHttpPart text;
     text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"message\""));
-    QString textString = notification.text(Utils::HREF | Utils::BOLD | Utils::UNDERLINE | Utils::FONT | Utils::ITALIC);
     snoreDebug(SNORE_DEBUG) << "Message" << textString;
     text.setBody(textString.toUtf8().constData());
     mp->append(text);
@@ -79,11 +90,6 @@ void Pushover::slotNotify(Notification notification)
     user.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"user\""));
     user.setBody(key.toUtf8().constData());
     mp->append(user);
-
-    QHttpPart html;
-    html.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"html\""));
-    html.setBody("1");
-    mp->append(html);
 
     QNetworkReply *reply =  m_manager.post(request, mp);
     mp->setParent(reply);
