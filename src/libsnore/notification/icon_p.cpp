@@ -49,9 +49,9 @@ IconData::IconData(const QString &url):
             QNetworkAccessManager *manager = new QNetworkAccessManager();
             QNetworkRequest request(m_url);
             QNetworkReply *reply = manager->get(request);
-            QObject::connect(reply, &QNetworkReply::downloadProgress, [&](qint64 bytesReceived, qint64 bytesTotal) {
-                snoreDebug(SNORE_DEBUG) << "Downloading:" << m_localUrl << bytesReceived / double(bytesTotal) * 100.0 << "%";
-            });
+//            QObject::connect(reply, &QNetworkReply::downloadProgress, [&](qint64 bytesReceived, qint64 bytesTotal) {
+//                snoreDebug(SNORE_DEBUG) << "Downloading:" << m_localUrl << bytesReceived / double(bytesTotal) * 100.0 << "%";
+//            });
 
             QObject::connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [ &, reply, manager](QNetworkReply::NetworkError code) {
                 snoreDebug(SNORE_WARNING) << "Error:" << code;

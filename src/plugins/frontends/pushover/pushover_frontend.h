@@ -16,35 +16,37 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SNORE_FRONTEND_H
-#define SNORE_FRONTEND_H
-#include "snore_exports.h"
-#include "../notification/notification.h"
-#include "plugins.h"
+#ifndef PUSHOVER_FRONTEND_H
+#define PUSHOVER_FRONTEND_H
+#include "libsnore/plugins/snorefrontend.h"
+#include "libsnore/application.h"
 
-namespace Snore
-{
-class SnorePlugin;
+#include <QNetworkAccessManager>
 
-class SNORE_EXPORT SnoreFrontend: public SnorePlugin
+class QWebSocket;
+
+class PushoverFrontend : public Snore::SnoreFrontend
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnorePlugin)
+    Q_INTERFACES(Snore::SnoreFrontend)
+    Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0" FILE "plugin.json")
 public:
-    SnoreFrontend() = default;
-    virtual ~SnoreFrontend();
+    PushoverFrontend() = default;
+    ~PushoverFrontend() = default;
+    bool initialize() override;
+    bool deinitialize() override;
 
-    virtual bool initialize() override;
-    virtual bool deinitialize() override;
 
-public slots:
-    virtual void slotActionInvoked(Snore::Notification notification);
-    virtual void slotNotificationClosed(Snore::Notification notification);
+private:
+    QNetworkAccessManager m_manager;
+    QWebSocket *m_socket;
+
+    QString secret();
+    QString device();
+
+    void getMessages();
+    void deleteMessages(int latestMessageId);
+
 };
 
-}
-
-Q_DECLARE_INTERFACE(Snore::SnoreFrontend,
-                    "org.Snore.NotificationFrontend/1.0")
-
-#endif//SNORE_FRONTEND_H
+#endif//PUSHOVER_FRONTEND_H

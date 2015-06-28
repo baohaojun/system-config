@@ -45,3 +45,13 @@ bool SnoreFrontend::deinitialize()
     }
     return false;
 }
+
+void SnoreFrontend::slotActionInvoked(Notification)
+{
+
+}
+
+void SnoreFrontend::slotNotificationClosed(Notification)
+{
+
+}
