@@ -31,11 +31,15 @@ using namespace Snore;
 
 bool FreedesktopFrontend::initialize()
 {
+
+    if(!SnoreFrontend::initialize()) {
+        return false;
+    }
     m_adaptor = new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     if (dbus.registerService("org.freedesktop.Notifications")) {
         if (dbus.registerObject("/org/freedesktop/Notifications", this)) {
-            return SnoreFrontend::initialize();
+            return true;
         } else {
             snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register object";
         }

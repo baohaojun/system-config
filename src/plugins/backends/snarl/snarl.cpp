@@ -115,6 +115,10 @@ bool SnarlBackend::initialize()
 {
     setDefaultValue("Password", QString());
 
+    if(!SnoreFrontend::initialize()) {
+        return false;
+    }
+
     SnarlInterface *snarlInterface = new SnarlInterface();
     if (!snarlInterface->IsSnarlRunning()) {
         snoreDebug(SNORE_WARNING) << "Snarl is not running";
@@ -124,7 +128,7 @@ bool SnarlBackend::initialize()
     m_eventLoop = new SnarlBackend::SnarlWidget(this);
     snoreDebug(SNORE_DEBUG) << "Initiating Snarl Backend, Snarl version: " << snarlInterface->GetVersion();
     delete snarlInterface;
-    return SnoreBackend::initialize();
+    return true;
 }
 
 bool SnarlBackend::deinitialize()

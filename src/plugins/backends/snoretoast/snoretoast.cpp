@@ -16,11 +16,15 @@ using namespace Snore;
 
 bool SnoreToast::initialize()
 {
+
+    if(!SnoreFrontend::initialize()) {
+        return false;
+    }
     if (QSysInfo::windowsVersion() < QSysInfo::WV_WINDOWS8) {
         snoreDebug(SNORE_DEBUG) << "SnoreToast does not work on windows" << QSysInfo::windowsVersion();
         return false;
     }
-    return SnoreBackend::initialize();
+    return true;
 }
 
 bool SnoreToast::canCloseNotification() const

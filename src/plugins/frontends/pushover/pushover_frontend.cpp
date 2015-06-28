@@ -33,10 +33,16 @@
 
 using namespace Snore;
 
+// TODO: use qtkeychain to encrypt credentials?
+
 bool PushoverFrontend::initialize()
 {
     setDefaultValue("Secret", "", LOCAL_SETTING);
     setDefaultValue("Device", "", LOCAL_SETTING);
+
+    if(!SnoreFrontend::initialize()) {
+        return false;
+    }
 
     if(device().isEmpty() || secret().isEmpty())
     {
@@ -78,8 +84,7 @@ bool PushoverFrontend::initialize()
        getMessages();
     });
     m_socket->open(QUrl("wss://client.pushover.net/push"));
-    return SnoreFrontend::initialize();
-
+    return true;
 }
 
 bool PushoverFrontend::deinitialize()
@@ -159,7 +164,7 @@ void PushoverFrontend::deleteMessages(int latestMessageId)
     QNetworkRequest request(QUrl(QString("https://api.pushover.net/1/devices/%1/update_highest_message.json").arg(device())));
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/x-www-form-urlencoded"));
-    QNetworkReply *reply =  m_manager.post(request, QString("secret=%1&message=%2").arg(secret(), QString::number(latestMessageId)).toUtf8().constData());
+    QNetworkReply *reply = m_manager.post(request, QString("secret=%1&message=%2").arg(secret(), QString::number(latestMessageId)).toUtf8().constData());
 
 
     connect(reply, &QNetworkReply::finished, [reply]() {

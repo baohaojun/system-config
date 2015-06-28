@@ -28,6 +28,10 @@ using namespace Snore;
 
 bool SnarlNetworkFrontend::initialize()
 {
+
+    if(!SnoreFrontend::initialize()) {
+        return false;
+    }
     parser = new Parser(this);
     tcpServer = new QTcpServer(this);
     if (!tcpServer->listen(QHostAddress::Any, port)) {
@@ -37,7 +41,7 @@ bool SnarlNetworkFrontend::initialize()
         connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
         std::cout << "The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>" << std::endl;
     }
-    return SnoreFrontend::initialize();
+    return true;
 }
 
 bool SnarlNetworkFrontend::deinitialize()

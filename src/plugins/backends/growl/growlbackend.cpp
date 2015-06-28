@@ -35,6 +35,10 @@ bool GrowlBackend::initialize()
     setDefaultValue("Host", "localhost");
     setDefaultValue("Password", "");
 
+    if(!SnoreFrontend::initialize()) {
+        return false;
+    }
+
     s_instance = this;
     auto func = [](growl_callback_data * data)->void {
         snoreDebug(SNORE_DEBUG) << data->id << QString(data->reason) << QString(data->data);
@@ -60,7 +64,7 @@ bool GrowlBackend::initialize()
     };
     if (Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data *)>(func))
             && Growl::isRunning(GROWL_TCP, value("Host").toString().toUtf8().constData())) {
-        return SnoreBackend::initialize();
+        return true;
     }
     snoreDebug(SNORE_DEBUG) << "Growl is not running";
     return false;
