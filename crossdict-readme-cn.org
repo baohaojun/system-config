@@ -1,1 +1,1 @@
-../../doc/baohaojun/crossdict-readme-cn.org
+../../../src/github/baohaojun.github.com/blog/2013/03/08/crossdict-readme-cn.org
