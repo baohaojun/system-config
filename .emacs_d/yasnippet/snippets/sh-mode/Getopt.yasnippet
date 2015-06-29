@@ -3,71 +3,7 @@
 # name: Getopt
 # --
 
-## once start code-generator "^\\\\s *#\\\\s *"
-# function generate-getopt() {
-#     shortopt=
-#     longopt=()
-#     for x in "\$@"; do
-#         shortopt=\$shortopt\${x:0:1}
-#         x=\${x:1}
-#         if test "\${x:0:1}" = :; then
-#             shortopt=\$shortopt:
-#             x=\${x:1}
-#             longopt=("\${longopt[@]}" "\$x:")
-#         else
-#             longopt=("\${longopt[@]}" "\$x,")
-#         fi
-#     done
-#     cat << EOF
-#     TEMP=\\\$(getopt -o \$shortopt --long "\$(for x in "\${longopt[@]}"; do echo -n \$x; done|perl -npe 's/,\$//')"  -n \\\$(basename \\\$0) -- "\\\$@")
-#     \$(for x in "\${longopt[@]}"; do
-#           x=\${x%,}
-#           echo \${x%:}=
-#       done)
-#     eval set -- "\\\$TEMP"
-#     while true; do
-#         case "\\\$1" in
-#         \$(
-#             p=0
-#             while true; do
-#             s=\${shortopt:0:1}
-#             shortopt=\${shortopt:1}
-#             require_arg=false
-#             if test "\${shortopt:0:1}" = :; then
-#                 require_arg=true
-#                 shortopt=\${shortopt:1}
-#             fi;
-#             l=\${longopt[p++]}
-#             l=\${l%,}
-#             l=\${l%:}
-#             cat << EOF2
-#             -\$s|--\$l)
-#             \$(
-#                 if test \$require_arg = true; then
-#                     echo \$l=\\\$2
-#                     echo shift 2
-#                 else
-#                     echo \$l=true
-#                     echo shift
-#                 fi)
-#             EOF2
-#                 echo ";;"
-#
-#             if test -z "\$shortopt"; then
-#                 break
-#             fi
-#         done)
-#             --)
-#                 shift
-#                 break
-#                 ;;
-#             *)
-#                 die "internal error"
-#                 ;;
-#         esac
-#     done
-# EOF
-# }
+## start code-generator "^\\\\s *#\\\\s *"
 # generate-getopt ${1:ggnu p:phone}
 ## end code-generator
 ## start generated code

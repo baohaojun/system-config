@@ -1,10 +1,13 @@
 #!/usr/bin/python
-from SOAPpy import WSDL, faultType
+
+import logging
+logging.basicConfig(level = logging.FATAL)
+from suds.client import Client
 
 import argparse;
 
 def add_note(arg):
-    mantis = WSDL.Proxy(arg.wsdl);
+    mantis = Client(arg.wsdl).service
     mantis.mc_issue_note_add(
         arg.username,
         arg.password,
@@ -13,13 +16,14 @@ def add_note(arg):
     )
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-w", "--wsdl", default="http://mantis.smartisan.cn/api/soap/mantisconnect.php?wsdl")
+parser.add_argument("-w", "--wsdl")
 parser.add_argument("-u", "--username")
 parser.add_argument("-p", "--password")
+parser.add_argument("-d", "--debug", action="store_true")
 
 
 subparsers = parser.add_subparsers()
-parser_add_note = subparsers.add_parser("issue-add-note", help="add issue note")
+parser_add_note = subparsers.add_parser("add-issue-note", help="add issue note")
 parser_add_note.add_argument("-i", "--issue-id")
 parser_add_note.add_argument("-n", "--note")
 parser_add_note.set_defaults(command=add_note)
@@ -27,7 +31,7 @@ parser_add_note.set_defaults(command=add_note)
 parser_get_issue = subparsers.add_parser("issue-get", help="get issue")
 parser_get_issue.add_argument("-i", "--issue-id")
 def get_issue(arg):
-    mantis = WSDL.Proxy(arg.wsdl);
+    mantis = Client(arg.wsdl).service
     print mantis.mc_issue_get(
         arg.username,
         arg.password,
@@ -39,7 +43,7 @@ parser_get_issue.set_defaults(command=get_issue)
 parser_get_filters = subparsers.add_parser("get-filter", help="get filters")
 parser_get_filters.add_argument("--project")
 def get_filter(arg):
-    mantis = WSDL.Proxy(arg.wsdl)
+    mantis = Client(arg.wsdl).service
     print mantis.mc_filter_get(
         arg.username,
         arg.password,
@@ -50,7 +54,7 @@ parser_get_filters.set_defaults(command=get_filter)
 
 parser_get_projects = subparsers.add_parser("get-projects", help="get projects")
 def get_projects(arg):
-    mantis = WSDL.Proxy(arg.wsdl)
+    mantis = Client(arg.wsdl).service
     return mantis.mc_projects_get_user_accessible(
         arg.username,
         arg.password
@@ -58,5 +62,66 @@ def get_projects(arg):
 
 parser_get_projects.set_defaults(command=get_projects)
 
+parser_status_enum = subparsers.add_parser("enum-status", help = "enum status")
+def enum_status(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_enum_status(
+        arg.username,
+        arg.password
+    )
+
+parser_status_enum.set_defaults(command=enum_status)
+
+parser_update_issue = subparsers.add_parser("update-issue", help="update issue")
+parser_update_issue.add_argument("-s", "--status")
+parser_update_issue.add_argument("-i", "--issue-id")
+def update_issue(arg):
+    mantis = Client(arg.wsdl).service
+    issue = mantis.mc_issue_get(
+        arg.username,
+        arg.password,
+        arg.issue_id
+    )
+
+    statuses = mantis.mc_enum_status(
+        arg.username,
+        arg.password
+    )
+
+    found = False
+    for s in statuses:
+        print s
+        if s.name == unicode(arg.status, "utf-8"):
+            arg.status = str(s.id)
+            found = True
+            break
+        if str(s.id) == arg.status:
+            found = True
+            break
+
+    if not found:
+        raise Exception("invalid status " + arg.status)
+    print mantis.mc_issue_update(
+        arg.username,
+        arg.password,
+        arg.issue_id,
+        {
+            'status' : {
+                'id' : arg.status
+            },
+            'project' : issue.project,
+            'category' : issue.category,
+            'summary' : issue.summary,
+            'description' : issue.description,
+            'resolution' : issue.resolution,
+            'due_date' : issue.due_date,
+        }
+    )
+
+parser_update_issue.set_defaults(command=update_issue)
+
 arg = parser.parse_args()
+if arg.debug:
+    logging.basicConfig(level = logging.DEBUG)
+    logging.getLogger('suds.client').setLevel(logging.DEBUG)
 arg.command(arg)
