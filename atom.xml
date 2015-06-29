@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[我常用的补齐方法]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/06/29/0-my-often-used-completion-methods.html"/>
+    <updated>2015-14-29T19:06:56+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/06/29/0-my-often-used-completion-methods.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[开始用beagrep查代码定义]]></title>
     <link href="http://baohaojun.github.io/blog/2015/03/29/0-Start-Using-Beagrep-for-Code-Definition-Lookup.html"/>
     <updated>2015-03-29T20:19:28+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/01/26/0-T1Wrench-2.3.0-Released.html"/>
     <updated>2015-01-26T14:47:00+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/01/26/0-T1Wrench-2.3.0-Released.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[怎样交换键盘Escape和Caps Lock键]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html"/>
-    <updated>2015-01-12T13:42:22+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/01/12/0-How-to-swap-Escape-and-Caps-Lock-on-mainstream-PCs.html</id>
   </entry>
 </feed>

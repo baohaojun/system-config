@@ -1,0 +1,35 @@
+#+title: 我常用的补齐方法
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+# bhj-tags: tool
+
+我不知道自己写过多次篇关于补齐的文章了，但这篇将会是最后一篇😁。
+* bash自带补齐
+这个大家都知道了，比如最早的时候，在bash下输入 =cd （空格）= ，然后按tab键，你会得到当前目录下所有文件、目录的列表。如果你输入 =cd s= ，你会得到所有以 =s= 打头的文件、目录的列表，或者如果只有一个这样的文件的话，这个文件的名字就会直接上屏。
+
+现在的bash智能很多了，默认的安装cd后面不会补齐文件，只会补齐目录，这个其实应该是用上了bash的可编程补齐的机制。
+
+这种补齐方法有个缺陷，那就是你必须从头打字，比如你想cd过去的目录最后两个字符是 “-xxx”，你也没法输入 =cd -xxx= 然后按 Tab 键补齐，所以我想出了 =re= 这个自己扩展的补齐方法。
+
+* =skeleton_compgen_word.pl=: bash补齐和搜索的扩展
+
+=skeleton_compgen_word.pl= 是我对bash补齐和历史命令机制的一个缺陷的补充。上面说了，bash补齐必须从头输入一个文件的名字，中间不允许打错、漏打字，否则就补不出来了；而bash的 =Ctrl-R= 历史命令搜索机制也是一样，一旦你开始输入之后，就必须保证你输入的字符串是你想要获取的历史命令的一个子串。
+
+也就是说，想要获得 “hello world”，你必须输入 “h”，或者 “he”，但问题是这时候你有可能得到 “hell yeah”，而不是你想要的 “hello world”，所以你必须一直输入直到第5个字符o， “hell yeah” 才会被排除， “hello world”才能上屏，之前bash一直不停提示所有的匹配选项。
+
+我的想法是，我可不可以输入 h.w ，直接跳过 “hell yeah”呢？如果有多个候选项，比如还有一个 “holy what the f*ck” 的话，我能不能输入 h.w.1 直接选第一个候选词上屏呢？
+
+=skeleton_compgen_word.pl= 这个脚本让我可以做到这一点，比如我的bash历史里有这么些个 “apt-get install python” 相关的命令：
+
+#+BEGIN_EXAMPLE
+0: true;apt-get install python-suds             2: true;apt-get install python-pip              4: true;apt-get install python-ropemacs pymacs
+1: true;apt-get install python-doc              3: true;apt-get install python-jedi             5: true;apt-get install python-m2crypto
+#+END_EXAMPLE
+
+那么，我只要输入 =re apt.py.pi= 然后按一下 Tab 键，就会补齐到第2条， =apt-get install python-pip= 。 =skeleton_compgen_word.pl= 的工作原理就是以 =.= 为分隔符，把匹配目标串分割为多个子串，然后源文件（源字符串集）中包含所有子串的行（字符串）就是匹配成功的。如果只有一个匹配成功，就上屏，否则就用bash的提示机制。有一个特殊处理！如果分出来的多个子串最后一个是个数字N，而匹配成功的有多于N个串，那第N个串就直接上屏，而不需要继续输入匹配目标串。像上面的情况我输入 =re apt-get python.2= 再按 Tab 键也可以得到 =apt-get install python-pip= 。
+
+** 什么时候用 =.= ，什么时候用空格
+
+* 被动式补齐：菜单选择
+
+* Emacs按词补齐、按任意字符串补齐、按整行补齐

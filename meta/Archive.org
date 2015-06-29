@@ -6,6 +6,11 @@
      [[../blog/readme.org][    ac-clang Manual]]
 
  * 2015
+  - 2015-06
+   * 2015-06-29
+
+     [[../blog/2015/06/29/0-my-often-used-completion-methods.org][我常用的补齐方法]]
+
   - 2015-03
    * 2015-03-29
 
