@@ -45,6 +45,7 @@ NotificationData::NotificationData(const Snore::Application &application, const 
 {
     notificationCount++;
     snoreDebug(SNORE_INFO) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    snoreDebug(SNORE_INFO) << title << text;
     initHints();
 }
 
@@ -61,8 +62,9 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
     m_toReplace(old)
 {
     notificationCount++;
-    initHints();
     snoreDebug(SNORE_INFO) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    snoreDebug(SNORE_INFO) << title << text;
+    initHints();
 }
 
 NotificationData::~NotificationData()
@@ -92,8 +94,12 @@ void NotificationData::setTimeoutTimer(QTimer *timer)
 
 QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags)
 {
-    if(flags != Utils::NO_MARKUP && !m_application.constHints().value("use-markup").toBool()) {
-        return string.toHtmlEscaped();
+    if(!m_application.constHints().value("use-markup").toBool()) {
+        if(flags == Utils::NO_MARKUP){
+            return string;
+        } else {
+            return string.toHtmlEscaped();
+        }
     } else {
         return Utils::normalizeMarkup(string, flags);
     }
