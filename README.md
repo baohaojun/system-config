@@ -8,34 +8,18 @@ Using a plugin system it is possible to create notifications with many different
 ## Supported Backends ##
 - [Windows 8 toast notifications](https://github.com/Snorenotify/Snoretoast) 
 
-[ ![Windows 8 Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/win8_high.jpg) ](http://winkde.org/~pvonreth/other/snore/img/win8.png)
-
 - OSX Notification Center
-
-![OSX Notification Center](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/mac2.png)
-![OSX Notification Center](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/mac.png)
 
 - Free Desktop Notifications
 
-[![Free Desktop Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/fd_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/fd.png)
-
 - [Growl for Windows](http://www.growlforwindows.com/)
 
-[![Growl for Windows Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/growl_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/growl.png)
-
 - [Snarl](http://snarl.fullphat.net/)
-
-[![Snarl Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/snarl_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/snarl.png)
 
 
 - Integrated notifications
 
-[![Snore Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/snore_high.png
-)](http://winkde.org/~pvonreth/other/snore/img/snore.png)
-
 - System Tray
-
-[![System Tray Notification](http://winkde.org/~pvonreth/other/snore/img/Thumbnail%20Pictures/tray_high.jpg)](http://winkde.org/~pvonreth/other/snore/img/tray.png)
 
 ## Supported secondary Backends ##
 
@@ -51,7 +35,7 @@ Using a plugin system it is possible to create notifications with many different
 - [Tomahawk](http://www.tomahawk-player.org/)
 
 ## API Doc ##
-[A documentation of the API can be found here](http://winkde.org/~pvonreth/other/snore/latest/doc/html/index.html)
+[A documentation of the API can be found here](http://patrick.von-reth.de/other/snore/latest/doc/html/index.html)
 
 ## Dependencies ##
 Required dependencies:
