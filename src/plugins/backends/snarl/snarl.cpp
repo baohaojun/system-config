@@ -115,7 +115,7 @@ bool SnarlBackend::initialize()
 {
     setDefaultValue("Password", QString());
 
-    if(!SnoreFrontend::initialize()) {
+    if(!SnoreBackend::initialize()) {
         return false;
     }
 
@@ -205,16 +205,12 @@ void SnarlBackend::slotNotify(Notification notification)
     SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
 
     Snarl::V42::SnarlEnums::MessagePriority priority = Snarl::V42::SnarlEnums::PriorityUndefined;
-    switch (notification.priority()) {
-    case Notification::LOW:
-        priority = Snarl::V42::SnarlEnums::PriorityLow;
-        break;
-    case Notification::NORMAL:
-        priority = Snarl::V42::SnarlEnums::PriorityNormal;
-        break;
-    case Notification::HIGH:
+    if(notification.priority() > 1){
         priority = Snarl::V42::SnarlEnums::PriorityHigh;
-        break;
+    } else if(notification.priority() < -1) {
+        priority = Snarl::V42::SnarlEnums::PriorityLow;
+    }else{
+        priority = static_cast<Snarl::V42::SnarlEnums::MessagePriority>(notification.priority());
     }
 
     ULONG32 id = 0;

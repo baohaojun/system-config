@@ -88,6 +88,11 @@ public:
      */
     enum Prioritys {
         /**
+         * Indicates the lowes priority. The backend might ignore the notification.
+         */
+        LOWEST = -2,
+
+        /**
          * Indicates a low priority.
          */
         LOW = -1,
@@ -100,7 +105,12 @@ public:
         /**
          * Indicates a priority above the normal level.
          */
-        HIGH = +1
+        HIGH = +1,
+
+        /**
+         * Indicates a emegency priority, the notifications is sticky and should be acknowlegded.
+         */
+        EMERGENCY = +2
     };
 
     Notification();

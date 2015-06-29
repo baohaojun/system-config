@@ -22,8 +22,9 @@
 #include "libsnore/application.h"
 
 #include <QNetworkAccessManager>
+#include <QPointer>
+#include <QtWebSockets/QWebSocket>
 
-class QWebSocket;
 
 class PushoverFrontend : public Snore::SnoreFrontend
 {
@@ -36,16 +37,29 @@ public:
     bool initialize() override;
     bool deinitialize() override;
 
+    Snore::PluginSettingsWidget *settingsWidget() override;
+
+    void registerDevice(const QString &email, const QString &password, const QString& deviceName);
+
+public slots:
+    void slotActionInvoked(Snore::Notification notification);
+
+
 
 private:
     QNetworkAccessManager m_manager;
-    QWebSocket *m_socket;
+    QPointer<QWebSocket> m_socket;
 
     QString secret();
     QString device();
 
+    void connectToService();
+
     void getMessages();
     void deleteMessages(int latestMessageId);
+    void acknowledgeNotification(Snore::Notification notification);
+
+
 
 };
 

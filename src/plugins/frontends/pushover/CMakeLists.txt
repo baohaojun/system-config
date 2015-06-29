@@ -2,6 +2,7 @@ find_package(Qt5WebSockets REQUIRED)
 
 set( PUSHOVER_FRONTEND_SRC
      pushover_frontend.cpp
+    pushoversettings.cpp
     )
 
 add_library(libsnore_frontend_pushover MODULE  ${PUSHOVER_FRONTEND_SRC} )

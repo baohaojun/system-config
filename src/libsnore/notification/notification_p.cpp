@@ -34,7 +34,7 @@ uint NotificationData::m_idCount = 1;
 NotificationData::NotificationData(const Snore::Application &application, const Snore::Alert &alert, const QString &title, const QString &text, const Icon &icon,
                                    int timeout, Notification::Prioritys priority):
     m_id(m_idCount++),
-    m_timeout(timeout),
+    m_timeout(priority == Notification::EMERGENCY ? 0 : timeout),
     m_application(application),
     m_alert(alert),
     m_title(title),
@@ -50,7 +50,7 @@ NotificationData::NotificationData(const Snore::Application &application, const 
 
 Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
     m_id(m_idCount++),
-    m_timeout(timeout),
+    m_timeout(priority == Notification::EMERGENCY ? 0 : timeout),
     m_application(old.application()),
     m_alert(old.alert()),
     m_title(title),

@@ -35,7 +35,7 @@ bool GrowlBackend::initialize()
     setDefaultValue("Host", "localhost");
     setDefaultValue("Password", "");
 
-    if(!SnoreFrontend::initialize()) {
+    if(!SnoreBackend::initialize()) {
         return false;
     }
 

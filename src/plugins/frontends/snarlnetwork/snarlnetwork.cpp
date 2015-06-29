@@ -28,7 +28,6 @@ using namespace Snore;
 
 bool SnarlNetworkFrontend::initialize()
 {
-
     if(!SnoreFrontend::initialize()) {
         return false;
     }
