@@ -100,14 +100,17 @@ public:
     bool isValid() const;
 
     /**
-     * Returns application specific hints:
-     * Key              |   Value       |   Required
-     * -------------    |   ----------- |   -----------
-     * use-markup       |   Enable markup support for title and message, strings must be html escaped.|  Many Backends.
-     * desktop-entry    |   The name of the desktop enty associated with the application.             |  Used for The freedesktop backend.
-     * windows-app-id   |   The app id associated with the application.                               |  Needed for the Windows 8 backend [See MSDN Documentation](http://msdn.microsoft.com/en-us/library/windows/apps/dd378459.aspx).
-     * tray-icon        |   A QPointer<QSystemTray> item.                                             |  Needed for the System Tray Backend.
-     * pushover-token   |   The token associated with your application.                               |  Needed to associate pushover notification with your application, to register your application visit [Pushover](https://pushover.net/apps/build).
+     * Returns application specific hints.
+     * Hints are inherited by Notification's.
+     * Key              |   Type                    |    Value       |   Required
+     * -------------    |   -----------             |   -----------  |   -----------
+     * use-markup       |   QString                 |Enable markup support for title and message, strings must be html escaped. |  Many Backends.
+     * desktop-entry    |   QString                 | The name of the desktop enty associated with the application.             |  Used for The freedesktop backend.
+     * windows-app-id   |   QString                 | The app id associated with the application.                               |  Needed for the Windows 8 backend [See MSDN Documentation](http://msdn.microsoft.com/en-us/library/windows/apps/dd378459.aspx).
+     * tray-icon        |   QPointer<QSystemTray>   | A QSystemTray item.                                                       |  Needed for the System Tray Backend.
+     * pushover-token   |   QString                 | The token associated with your application.                               |  Needed to associate pushover notification with your application, to register your application visit [Pushover](https://pushover.net/apps/build).
+     * silent           |   bool                    | Don't play notification sounds.                                           |  Multiple backends.
+     * sound            |   QString                 | Local uri to a sound file.                                                | Secondary Backend Sound.
      */
     Hint &hints();
 

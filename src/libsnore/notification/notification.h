@@ -232,11 +232,9 @@ public:
     const Notification::CloseReasons &closeReason();
 
     /**
-     * Returns notification specific hints:
-     * Key              |   Type        | Value         |   Used In
-     * -------------    |   ----------- |   ----------- |   -----------
-     * silent           |   bool        | Don't play notification sounds. |  Multiple backends.
-     * sound            |   QString     | Local uri to a sound file.      | Secondary Backend Sound.
+     * Returns notification specific hints.
+     * A notification inherits the hints of its application.
+     * @see Application::hints()
      */
     Hint &hints();
 
