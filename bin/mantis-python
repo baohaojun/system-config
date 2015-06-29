@@ -101,6 +101,9 @@ def update_issue(arg):
 
     if not found:
         raise Exception("invalid status " + arg.status)
+    for x in issue.custom_fields:
+        if x.value == None:
+            x.value = ""
     issue.status = {
         'id' : arg.status
     }
