@@ -28,9 +28,8 @@ class OSXNotificationCenter : public Snore::SnoreBackend
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "plugin.json")
 
 public:
-    OSXNotificationCenter() = default;
-    ~OSXNotificationCenter() = default;
-    bool initialize() override;
+    OSXNotificationCenter();
+    ~OSXNotificationCenter();
 
 public slots:
     void slotNotify(Snore::Notification notification) override;
