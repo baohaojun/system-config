@@ -30,7 +30,6 @@ class OSXNotificationCenter : public Snore::SnoreBackend
 public:
     OSXNotificationCenter();
     ~OSXNotificationCenter();
-    bool initialize() override;
 
 public slots:
     void slotNotify(Snore::Notification notification) override;

@@ -12,8 +12,8 @@
 
 using namespace Snore;
 
-QMap<int, Notification> id_to_notification;
-NSMutableDictionary * id_to_nsnotification;
+QMap<int, Notification> m_IdToNotification;
+NSMutableDictionary * m_IdToNSNotification;
 
 
 void emitNotificationClicked(Notification notification) {
@@ -39,15 +39,15 @@ void emitNotificationClicked(Notification notification) {
 {
     
     snoreDebug(SNORE_DEBUG) << "User clicked on notification";
-    int notification_id = [notification.userInfo[@"id"] intValue];
+    int notificationId = [notification.userInfo[@"id"] intValue];
     [center removeDeliveredNotification: notification];
-    if (not id_to_notification.contains(notification_id)) {
+    if (not m_IdToNotification.contains(notificationId)) {
         snoreDebug(SNORE_WARNING) << "User clicked on notification that was not recognized";
         return;
     }
-    Notification snore_notification = id_to_notification[notification_id];
-    snore_notification.data()->setCloseReason(Notification::ACTIVATED);
-    emitNotificationClicked(snore_notification);
+    auto snoreNotification = m_IdToNotification.take(notificationId);
+    snoreNotification.data()->setCloseReason(Notification::ACTIVATED);
+    emitNotificationClicked(snoreNotification);
 }
 @end
 
@@ -82,7 +82,7 @@ UserNotificationItemClass * delegate;
 
 OSXNotificationCenter::OSXNotificationCenter()
 {
-    id_to_nsnotification = [[[NSMutableDictionary alloc] init] autorelease];
+    m_IdToNSNotification = [[[NSMutableDictionary alloc] init] autorelease];
     delegate = new UserNotificationItemClass();
 }
 
@@ -91,23 +91,18 @@ OSXNotificationCenter::~OSXNotificationCenter()
     delete delegate;
 }
 
-bool OSXNotificationCenter::initialize()
-{
-    return SnoreBackend::initialize();
-}
-
 void OSXNotificationCenter::slotNotify(Snore::Notification notification)
 {
-    NSUserNotification * osx_notification = [[[NSUserNotification alloc] init] autorelease];
-    NSString * notification_id = [NSString stringWithFormat:@"%d",notification.id()];
-    osx_notification.title = NSStringFromQString(notification.title());
-    osx_notification.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:notification_id, @"id", nil];
-    osx_notification.informativeText = NSStringFromQString(notification.text());
+    NSUserNotification * osxNotification = [[[NSUserNotification alloc] init] autorelease];
+    NSString * notificationId = [NSString stringWithFormat:@"%d",notification.id()];
+    osxNotification.title = NSStringFromQString(notification.title());
+    osxNotification.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:notificationId, @"id", nil];
+    osxNotification.informativeText = NSStringFromQString(notification.text());
     
     // Add notification to mapper from id to Nofification / NSUserNotification
-    id_to_notification.insert(notification.id(), notification);
-    [id_to_nsnotification setObject:osx_notification forKey: notification_id];
-    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification: osx_notification];
+    m_IdToNotification.insert(notification.id(), notification);
+    [m_IdToNSNotification setObject:osxNotification forKey: notificationId];
+    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification: osxNotification];
     
     slotNotificationDisplayed(notification);
 }
