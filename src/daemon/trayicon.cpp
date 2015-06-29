@@ -35,8 +35,8 @@ using namespace Snore;
 TrayIcon::TrayIcon():
     m_trayIcon(new QSystemTrayIcon(QIcon(":/root/snore.png")))
 {
-    SnoreCorePrivate::instance()->defaultApplication().hints().setValue("use-markup", QVariant::fromValue(true));
-    SnoreCorePrivate::instance()->defaultApplication().hints().setValue("tray-icon", m_trayIcon);
+    SnoreCorePrivate::instance()->defaultApplication().hints().setValue("use-markup", true);
+    SnoreCorePrivate::instance()->defaultApplication().hints().setValue("tray-icon", QVariant::fromValue(QPointer<QSystemTrayIcon>(m_trayIcon)));
 }
 
 void TrayIcon::initConextMenu()

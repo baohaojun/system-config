@@ -106,7 +106,7 @@ public:
      * use-markup       |   Enable markup support for title and message, strings must be html escaped.|  Many Backends.
      * desktop-entry    |   The name of the desktop enty associated with the application.             |  Used for The freedesktop backend.
      * windows-app-id   |   The app id associated with the application.                               |  Needed for the Windows 8 backend [See MSDN Documentation](http://msdn.microsoft.com/en-us/library/windows/apps/dd378459.aspx).
-     * tray-icon        |   A pointer to a QSystemTray item.                                          |  Needed for the System Tray Backend.
+     * tray-icon        |   A QPointer<QSystemTray> item.                                             |  Needed for the System Tray Backend.
      * pushover-token   |   The token associated with your application.                               |  Needed to associate pushover notification with your application, to register your application visit [Pushover](https://pushover.net/apps/build).
      */
     Hint &hints();

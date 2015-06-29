@@ -228,16 +228,15 @@ void PushoverFrontend::getMessages()
                     SnoreCore::instance().registerApplication(app);
                 }
 
-                if(notification.value("html").toInt() == 1) {
-                    app.hints().setValue("use-markup", QVariant::fromValue(true)) ;
-                }
-
 
                 Notification n(app, *app.alerts().begin(), notification.value("title").toString(), notification.value("message").toString(),
                                app.icon(), Notification::defaultTimeout(), static_cast<Notification::Prioritys>(notification.value("priority").toInt()));
                 if(n.priority() == Notification::EMERGENCY){
                     n.hints().setValue("receipt", notification.value("receipt").toString());
                     n.hints().setValue("acked", notification.value("acked").toInt());
+                }
+                if(notification.value("html").toInt() == 1) {
+                    n.hints().setValue("use-markup", true) ;
                 }
                 SnoreCore::instance().broadcastNotification(n);
             }

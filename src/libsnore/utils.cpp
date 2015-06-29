@@ -88,7 +88,6 @@ QString Utils::normalizeMarkup(QString string, MARKUP_FLAGS tags)
     }
 
     QMutexLocker lock(&mutex);
-
     if (~tags & Utils::BREAK) {
         static QRegExp br("<br>");
         string = string.replace(br, "\n");

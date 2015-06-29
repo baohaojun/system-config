@@ -59,7 +59,7 @@ void TrayIconNotifer::slotDeregisterApplication(const Application &application)
 QSystemTrayIcon *TrayIconNotifer::trayIcon(const Application &app)
 {
     if (app.constHints().contains("tray-icon")) {
-        return app.constHints().value("tray-icon").value<QSystemTrayIcon *>();
+        return app.constHints().value("tray-icon").value<QPointer<QSystemTrayIcon>>();
     }
     return nullptr;
 }

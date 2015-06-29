@@ -22,6 +22,7 @@
 
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QPointer>
 
 #include <iostream>
 using namespace Snore;
@@ -117,8 +118,12 @@ void SnarlNetworkFrontend::handleMessages()
 void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
 {
     if (sn.hints().containsPrivateValue(this, "clientSocket")) {
-        QTcpSocket *client = qobject_cast<QTcpSocket *>(sn.hints().privateValue(this, "clientSocket").value<QObject *>());
-        write(client, QString("%1%2\r\n").arg(msg, QString::number(sn.id())));
+        QTcpSocket *client = sn.hints().privateValue(this, "clientSocket").value<QPointer<QTcpSocket>>();
+        if(client){
+            write(client, QString("%1%2\r\n").arg(msg, QString::number(sn.id())));
+        }else{
+            sn.hints().takePrivateValue(this, "clientSocket");
+        }
     }
 }
 

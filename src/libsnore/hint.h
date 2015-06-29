@@ -38,9 +38,8 @@ namespace Snore
  * The keys are case insensitive.
  */
 
-class SNORE_EXPORT Hint : public QObject
+class SNORE_EXPORT Hint
 {
-    Q_OBJECT
 public:
     Hint();
 
@@ -51,19 +50,19 @@ public:
      */
     void setValue(const QString &key, const QVariant &value);
 
-    /**
-     * Sets the value for the key
-     * @param key the key
-     * @param value the value
-     */
-    void setValue(const QString &key, QObject *value);
 
     /**
-     * The associated value of the key if present, returns the default value otherwise.
+     * The associated value of the key.
      * @param key the key
-     * @param defaultValue the fallback value
      */
     QVariant value(const QString &key) const;
+
+
+    /**
+     * The associated value of the key.
+     * @param key the key
+     */
+    QVariant take(const QString &key);
 
     /**
      *
@@ -81,20 +80,11 @@ public:
     void setPrivateValue(const void *owner, const QString &key, const QVariant &value) const;
 
     /**
-     * Sets the value for the key depending on the owner
+     * The associated value of the key if present.
      * @param owner the owner
      * @param key the key
-     * @param value the value
      */
-    void setPrivateValue(const void *owner, const QString &key, QObject *value) const;
-
-    /**
-     * The associated value of the key if present, returns the default value otherwise.
-     * @param owner the owner
-     * @param key the key
-     * @param defaultValue the fallback value
-     */
-    QVariant privateValue(const void *owner, const QString &key, const QVariant &defaultValue = QVariant()) const;
+    QVariant privateValue(const void *owner, const QString &key) const;
 
     /**
      *
@@ -104,8 +94,15 @@ public:
      */
     bool containsPrivateValue(const void *owner, const QString &key) const;
 
-private slots:
-    void slotValueDestroyed();
+
+
+    /**
+     * The associated value of the key if present.
+     * @param owner the owner
+     * @param key the key
+     * @return whether the key is set
+     */
+    QVariant takePrivateValue(const void *owner, const QString &key);
 
 private:
     QVariantHash m_data;

@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QPointer>
 
 using namespace Snore;
 
@@ -116,7 +117,7 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
             break;
         }
         sNotification = Notification(app, alert, title, text, icon, timeout);
-        sNotification.hints().setPrivateValue(snarl, "clientSocket", client);
+        sNotification.hints().setPrivateValue(snarl, "clientSocket", QVariant::fromValue(QPointer<QTcpSocket>(client)));
         break;
     }
     case ADD_CLASS:
