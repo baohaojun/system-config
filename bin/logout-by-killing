@@ -20,5 +20,5 @@ if id | grep 'uid=0\b' -P; then
         done
 else
     sudo umount -l ~/smb;
-    sudo setsid env PATH=$PATH OLDUSER=$USER bash -c $0&
+    sudo setsid env PATH=$PATH OLDUSER=${1:-$USER} bash -c $0&
 fi
