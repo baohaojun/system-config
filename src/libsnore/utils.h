@@ -65,7 +65,7 @@ public:
      * @param string A string to encode if needed.
      * @return if the string was rhichtext html encode string is returnd otherwise the original string.
      */
-    static QString normaliseMarkup(QString string, MARKUP_FLAGS tags);
+    static QString normalizeMarkup(QString string, MARKUP_FLAGS tags);
 
     /**
      * Computes a md5 hash of the provided data.

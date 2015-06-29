@@ -38,40 +38,40 @@ void benchmarkUtilsToPlain();
 void SnoreBenchmark::benchmarkUtilsToHtml(){
 
 
-    QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::NO_MARKUP), QString("Italic A\n"
+    QCOMPARE(Utils::normalizeMarkup(htmlTestString, Utils::NO_MARKUP), QString("Italic A\n"
                                                                                "Italic B\n"
                                                                                "Bold\n"
                                                                                "Underline\n"
                                                                                "Font\n"
                                                                                "<&>\n"
                                                                                "Website\n"));
-    QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::HREF), QString("Italic A\n"
+    QCOMPARE(Utils::normalizeMarkup(htmlTestString, Utils::HREF), QString("Italic A\n"
                                                                           "Italic B\n"
                                                                           "Bold\n"
                                                                           "Underline\n"
                                                                           "Font\n"
                                                                           "&lt;&amp;&gt;\n"
                                                                           "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a>\n"));
-    QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::HREF | Utils::BOLD | Utils::BREAK |
+    QCOMPARE(Utils::normalizeMarkup(htmlTestString, Utils::HREF | Utils::BOLD | Utils::BREAK |
                                     Utils::UNDERLINE | Utils::FONT | Utils::ITALIC), htmlTestString);
     QBENCHMARK{
-        Utils::normaliseMarkup(htmlTestString, Utils::HREF);
+        Utils::normalizeMarkup(htmlTestString, Utils::HREF);
     }
 }
 
 void SnoreBenchmark::benchmarkUtilsToHtmlAllMarkup()
 {
-    QCOMPARE(Utils::normaliseMarkup(htmlTestString, Utils::ALL_MARKUP), htmlTestString);
+    QCOMPARE(Utils::normalizeMarkup(htmlTestString, Utils::ALL_MARKUP), htmlTestString);
 
     QBENCHMARK{
-        Utils::normaliseMarkup(htmlTestString, Utils::ALL_MARKUP);
+        Utils::normalizeMarkup(htmlTestString, Utils::ALL_MARKUP);
     }
 }
 
 void SnoreBenchmark::benchmarkUtilsToPlain()
 {
     QBENCHMARK{
-        Utils::normaliseMarkup(htmlTestString, Utils::NO_MARKUP);
+        Utils::normalizeMarkup(htmlTestString, Utils::NO_MARKUP);
     }
 }
 QTEST_MAIN(SnoreBenchmark)
