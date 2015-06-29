@@ -234,6 +234,7 @@ void PushoverFrontend::getMessages()
                                app.icon(), Notification::defaultTimeout(), static_cast<Notification::Prioritys>(notification.value("priority").toInt()));
                 if(n.priority() == Notification::EMERGENCY){
                     n.hints().setValue("receipt", notification.value("receipt").toString());
+                    n.hints().setValue("acked", notification.value("acked").toString());
                 }
                 SnoreCore::instance().broadcastNotification(n);
             }
@@ -267,6 +268,9 @@ void PushoverFrontend::deleteMessages(int latestMessageId)
 
 void PushoverFrontend::acknowledgeNotification(Notification notification)
 {
+    if(notification.constHints().value("acked").toInt() == 1){
+        return;
+    }
     QString receipt = notification.constHints().value("receipt").toString();
 
     QNetworkRequest request(QUrl(QString("https://api.pushover.net/1/receipts/%1/acknowledge.json").arg(receipt)));
