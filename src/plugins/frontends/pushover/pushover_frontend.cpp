@@ -224,7 +224,7 @@ void PushoverFrontend::getMessages()
                 if (!app.isValid()){
                     Icon icon(QString("https://api.pushover.net/icons/%1.png").arg(notification.value("icon").toString()));
                     app = Application(appName, icon);
-                    app.addAlert(Alert("Default", icon));
+                    app.addAlert(Alert(tr("Default"), icon));
                     SnoreCore::instance().registerApplication(app);
                 }
 
@@ -237,7 +237,7 @@ void PushoverFrontend::getMessages()
                                app.icon(), Notification::defaultTimeout(), static_cast<Notification::Prioritys>(notification.value("priority").toInt()));
                 if(n.priority() == Notification::EMERGENCY){
                     n.hints().setValue("receipt", notification.value("receipt").toString());
-                    n.hints().setValue("acked", notification.value("acked").toString());
+                    n.hints().setValue("acked", notification.value("acked").toInt());
                 }
                 SnoreCore::instance().broadcastNotification(n);
             }
