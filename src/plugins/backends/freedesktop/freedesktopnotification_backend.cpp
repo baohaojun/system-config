@@ -60,10 +60,14 @@ void  FreedesktopBackend::slotNotify(Notification noti)
         FreedesktopImageHint image(noti.icon().image());
         hints["image_data"] = QVariant::fromValue(image);
     }
-
-    if (noti.priority() != Notification::NORMAL) {
-        hints["urgency"] = (char)noti.priority() + 1;
-    }
+	
+	char urgency = '1'
+	if(noti.priority() < 0){
+		urgency = '0';
+	} else if(noti.priority() > 2) {
+		urgency = '2';
+	}
+	hints["urgency"] = urgency;
 
     if (noti.application().constHints().contains("desktop-entry")) {
         hints["desktop-entry"] = noti.application().constHints().value("desktop-entry");
