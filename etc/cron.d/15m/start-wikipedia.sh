@@ -1,1 +1,0 @@
-../../../../external/start-wikipedia.sh

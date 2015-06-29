@@ -1,1 +1,1 @@
-../../src/github/projects/abc.org
+../../src/github/projects/ABC.org
