@@ -1,7 +1,7 @@
 if(WIN32 OR APPLE)
     find_package(Qt5DBus QUIET)
     set_package_properties(Qt5DBus  PROPERTIES
-                                    PURPOSE "Support for Freedesktop Notifications"
+                                    PURPOSE "Support for the Freedesktop Notification Frontend."
                                     TYPE OPTIONAL)
 
     if(Qt5DBus_FOUND)

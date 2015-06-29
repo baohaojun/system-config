@@ -1,10 +1,9 @@
 if(NOT WITH_FREEDESKTOP_FRONTEND AND UNIX AND NOT APPLE)
     find_package(Qt5DBus QUIET)
     set_package_properties(Qt5DBus  PROPERTIES
-                                    PURPOSE "Support for Freedesktop Notifications"
+                                    PURPOSE "Support for the Freedesktop Notification Backend."
                                     TYPE OPTIONAL)
     if(Qt5DBus_FOUND)
-        message(STATUS "Adding Freedesktop notification backend")
 
         set ( FREEDESKTOP_NOTIFICATION_SRC
               freedesktopnotification_backend.cpp
