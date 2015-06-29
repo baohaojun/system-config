@@ -56,6 +56,7 @@ void Pushover::slotNotify(Notification notification)
 
     QHttpPart text;
     text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"message\""));
+    snoreDebug(SNORE_DEBUG) << "Use Markup" << notification.application().constHints().value("use-markup").toBool();
     snoreDebug(SNORE_DEBUG) << "Message" << textString;
     text.setBody(textString.toUtf8().constData());
     mp->append(text);
@@ -64,6 +65,18 @@ void Pushover::slotNotify(Notification notification)
     priority.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"priority\""));
     priority.setBody(QString::number(notification.priority()).toUtf8().constData());
     mp->append(priority);
+    if(notification.priority() == Notification::EMERGENCY){
+
+        QHttpPart retry;
+        retry.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"retry\""));
+        retry.setBody("30");// rety every 30 s
+        mp->append(retry);
+
+        QHttpPart expire;
+        expire.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"expire\""));
+        expire.setBody("300");//5 min
+        mp->append(expire);
+    }
 
     QHttpPart sound;
     sound.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"sound\""));

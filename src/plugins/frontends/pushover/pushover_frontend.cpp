@@ -206,6 +206,8 @@ void PushoverFrontend::getMessages()
         reply->close();
         reply->deleteLater();
 
+        snoreDebug(SNORE_DEBUG) << input;
+
         QJsonObject message = QJsonDocument::fromJson(input).object();
 
         int latestID = -1;
@@ -223,10 +225,11 @@ void PushoverFrontend::getMessages()
                     Icon icon(QString("https://api.pushover.net/icons/%1.png").arg(notification.value("icon").toString()));
                     app = Application(appName, icon);
                     app.addAlert(Alert("Default", icon));
-                    if(notification.value("html").toInt() == 1) {
-                        app.hints().setValue("use-markup", QVariant::fromValue(true)) ;
-                    }
                     SnoreCore::instance().registerApplication(app);
+                }
+
+                if(notification.value("html").toInt() == 1) {
+                    app.hints().setValue("use-markup", QVariant::fromValue(true)) ;
                 }
 
 
@@ -271,10 +274,12 @@ void PushoverFrontend::acknowledgeNotification(Notification notification)
     if(notification.constHints().value("acked").toInt() == 1){
         return;
     }
+    snoreDebug(SNORE_DEBUG) << notification.constHints().value("acked").toInt();
     QString receipt = notification.constHints().value("receipt").toString();
 
     QNetworkRequest request(QUrl(QString("https://api.pushover.net/1/receipts/%1/acknowledge.json").arg(receipt)));
 
+    snoreDebug(SNORE_WARNING) << request.url();
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/x-www-form-urlencoded"));
     QNetworkReply *reply = m_manager.post(request, QString("secret=%1").arg(secret()).toUtf8().constData());
 
@@ -282,6 +287,7 @@ void PushoverFrontend::acknowledgeNotification(Notification notification)
     connect(reply, &QNetworkReply::finished, [reply]() {
         snoreDebug(SNORE_DEBUG) << reply->error();
         snoreDebug(SNORE_DEBUG) << reply->readAll();
+        //TODO:parse reply
         reply->close();
         reply->deleteLater();
     });

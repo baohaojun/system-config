@@ -84,10 +84,7 @@ QString Utils::normalizeMarkup(QString string, MARKUP_FLAGS tags)
     if(tags == ALL_MARKUP){
         return string;
     } else if(tags == NO_MARKUP) {
-        if (Qt::mightBeRichText(string)) {
-            return QTextDocumentFragment::fromHtml(string).toPlainText();
-        }
-        return string;
+        return QTextDocumentFragment::fromHtml(string).toPlainText();
     }
 
     QMutexLocker lock(&mutex);
