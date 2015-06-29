@@ -45,7 +45,7 @@ if ask-if-not-bhj "Install cpan into your \$HOME/perl5?"; then
     export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
     export PERL_MB_OPT="--install_base $HOME/perl5";
     export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
-    export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:$HOME/perl5/lib/perl5:$HOME/etc/perl:$PERL5LIB";
+    export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:$HOME/perl5/lib/perl5:$HOME/system-config/etc/perl${PERL5LIB:+:$PERL5LIB}";
     export PATH="$HOME/perl5/bin:$PATH";
 EOF
 fi

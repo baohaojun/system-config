@@ -14,13 +14,7 @@ function die() {
 
 export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
 
-git_dir=$(cat $(lookup-file .repo/manifest.xml) | perl -ne '
-chomp;
-if (m/name="(.*?)"/ and $ENV{PROJECT} =~ m/$1/ and m/path="(.*?)"/) {
-    print $1 . "\n"
-}
-'
-)
+git_dir=$(my-rfa 'if [[ $PROJECT =~ $(repo-project)$ ]]; then pwd; fi')
 
 if test -n "$git_dir"; then
     cd $(lookup-file .repo/..) || die repo not found.

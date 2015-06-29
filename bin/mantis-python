@@ -101,21 +101,14 @@ def update_issue(arg):
 
     if not found:
         raise Exception("invalid status " + arg.status)
+    issue.status = {
+        'id' : arg.status
+    }
     print mantis.mc_issue_update(
         arg.username,
         arg.password,
         arg.issue_id,
-        {
-            'status' : {
-                'id' : arg.status
-            },
-            'project' : issue.project,
-            'category' : issue.category,
-            'summary' : issue.summary,
-            'description' : issue.description,
-            'resolution' : issue.resolution,
-            'due_date' : issue.due_date,
-        }
+        issue
     )
 
 parser_update_issue.set_defaults(command=update_issue)
