@@ -95,7 +95,7 @@ QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLA
     if(flags != Utils::NO_MARKUP && !m_application.constHints().value("use-markup").toBool()) {
         return string.toHtmlEscaped();
     } else {
-        return Utils::normaliseMarkup(string, flags);
+        return Utils::normalizeMarkup(string, flags);
     }
 }
 

@@ -78,7 +78,7 @@ void Utils::raiseWindowToFront(qlonglong wid)
     }\
 
 
-QString Utils::normaliseMarkup(QString string, MARKUP_FLAGS tags)
+QString Utils::normalizeMarkup(QString string, MARKUP_FLAGS tags)
 {
     static QMutex mutex;
     if(tags == ALL_MARKUP){
