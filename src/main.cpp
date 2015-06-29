@@ -80,6 +80,12 @@ int main(int argc, char *argv[])
     QCommandLineOption iconPath(QStringList() << "i" << "icon", "Set the notification icon.", "icon", ":/root/snore.png");
     parser.addOption(iconPath);
 
+    QCommandLineOption priority(QStringList() << "p" << "priority", "Set the notification's' priority.", "[-2, 2]", "0");
+    parser.addOption(priority);
+
+    QCommandLineOption markup(QStringList() << "markup", "Enable markup support.", "[0,1]", "0");
+    parser.addOption(markup);
+
     QCommandLineOption silent(QStringList() << "silent", "Don't print to stdout.");
     parser.addOption(silent);
 
@@ -101,13 +107,21 @@ int main(int argc, char *argv[])
         Alert alert(parser.value(alertName), icon);
         application.addAlert(alert);
 
+        if(parser.value(markup).toInt() == 1)
+        {
+            application.hints().setValue("use-markup", QVariant::fromValue(true));
+        }
+
         core.registerApplication(application);
 
-        Notification n(application, alert, parser.value(title), parser.value(message), icon);
+        int prio = parser.value(priority).toInt();
+        if(prio < -2 || prio > 2){
+            parser.showHelp(-1);
+        }
+        Notification n(application, alert, parser.value(title), parser.value(message), icon, Notification::defaultTimeout(), static_cast<Notification::Prioritys>(prio));
         if (parser.isSet(_bringProcessToFront) || parser.isSet(_bringWindowToFront)) {
             n.addAction(Action(1, "Bring to Front"));
         }
-
         core.broadcastNotification(n);
         int returnCode = -1;
 
