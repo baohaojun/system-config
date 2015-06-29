@@ -61,7 +61,7 @@ void  FreedesktopBackend::slotNotify(Notification noti)
         hints["image_data"] = QVariant::fromValue(image);
     }
 	
-	char urgency = '1'
+    char urgency = '1';
 	if(noti.priority() < 0){
 		urgency = '0';
 	} else if(noti.priority() > 2) {
