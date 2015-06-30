@@ -1,6 +1,4 @@
 #+title: 我常用的补齐方法
-#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
-#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
 # bhj-tags: tool
 
 我不知道自己写过多次篇关于补齐的文章了，但这篇将会是最后一篇，我决定毕其功于一役😁。
