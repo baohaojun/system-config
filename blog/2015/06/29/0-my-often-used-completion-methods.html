@@ -6,7 +6,7 @@
 <title>我常用的补齐方法</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
-<meta  name="author" content="Haojun Bao" />
+<meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
  <link rel="stylesheet" href="/css/org.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
@@ -106,8 +106,21 @@ for the JavaScript code in this tag.
 <p style="color: red;"> <b>Not finished yet.</b> </p>
 <p style="color: red;"> <b>Not finished yet.</b> </p>
 <p>
-我不知道自己写过多次篇关于补齐的文章了，但这篇将会是最后一篇😁。
+我不知道自己写过多次篇关于补齐的文章了，但这篇将会是最后一篇，我决定毕其功于一役😁。
 </p>
+
+<p>
+同志们哪，千万不要小看了补齐啊，什么是补齐？补齐就是让程序帮你写程序啊。本来你要自己费劲巴拉地打很多字，哎，有了补齐之后，可以少打很多字，一按Tab键，（程序）自动帮你补齐了你想写的程序。有一位大牛（貌似是Perl作者Larry Wall）说过，会写程序的程序是快乐的程序。
+</p>
+
+<p>
+很多人都离不开各种各样的集成开发环境（IDE），因为他们觉得这些IDE提供的补齐功能实在是太方便了。比如说Visual Studio，一上来能帮你自动生成一整个project，其间只需要你回答几个简单的问题，比如应用的名字、窗口类的名字等。然后在写代码的过程中，它还能帮你结合上下文给出补齐提示，比如你有一个String的对象s，你打个s.，它就会列出String类的所有方法供你选择、过滤。这样的功能谁都喜欢，可是，IDE提供的方法总会有个极限，一旦你开始想要一些它的设计者没有想到的功能、改进，基本上就只能干瞪眼了。
+</p>
+
+<p>
+不像Linux下，想自己实现一些自己更喜欢的补齐方式，实在是太简单了。
+</p>
+
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> bash自带补齐</h2>
 <div class="outline-text-2" id="text-1">
@@ -155,17 +168,129 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 什么时候用 <code>.</code> ，什么时候用空格</h3>
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> re 的实现</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+bash有个补齐扩展机制，大致是这样用的： <code>complete comp_func cmd1 cmd2</code> ，意思是说，当你的输入的命令是 CMD1或CMD2时，在你输入参数时按一下Tab键，bash会调起COMP_FUNC函数来帮你补齐参数。COMP_FUNC函数能获得你已经输入的所有单词，然后它只要对某个特殊bash数组变量赋值（COMPREPLY）就代表补齐的结果。所以我用来补齐 re 命令的 comp_re 函数就很简单了：
+</p>
+
+<ol class="org-ol">
+<li>把所有的参数用 <code>.</code> 连接，比如上面两个例子， <code>re apt.py.pi</code> 只有一个参数，内部已经有 <code>.</code> ，连接起来得到得就是 <code>apt.py.pi</code> ； <code>re apt-get python.2</code> 这个有两个参数，第二个内部有 <code>.</code> ，全部连接起来就是 <code>apt-get.python.2</code> 。
+</li>
+
+<li>把这个连接子串交给 <code>skeleton_compgen_word.pl</code> ，同时传给它另一个参数，是我的 .bash_history 文件，它会把第一个参数用 <code>.</code> 切成N个子串，然后用这N个子串到 .bash_history 文件中找到能匹配这N个子串的每一个子串的行，这些行就是我想要的历史命令。
+</li>
+
+<li>如果有多于1个匹配的历史命令，把找到的每个历史命令前面加个序号输出；但如果最后一个子串是一个数字M，那就当作只有1个（第M个）匹配的历史命令是匹配成功的。
+</li>
+
+<li>如果只有一个匹配成功的命令（包含上述最后加数字选择的情况），就在该命令前加分号 <code>;</code> 输出（下面会解释为什么加分号）
+</li>
+
+<li>bash读到这些输出，如果只有一个匹配，则直接上屏，否则会以“序号1：历史命令1  序号2：历史命令2&#x2026;”这样的方式提示用户
+</li>
+
+<li>上屏后，用户得到的补齐结果是： <code>re 匹配参数1 匹配参数2 ;历史命令</code> 这时候分号的作用就显示出来了，这时候你敲回车，bash会执行被分号隔开的两条命令！第一条是 <code>re 匹配参数1 匹配参数2</code> ，第二条就是你想要的 <code>历史命令</code> ！
+
+<p>
+相对于re自己来说，re这个命令函数它对应的补齐函数comp_re是非常复杂的，因为re自己啥也不干，它存在的唯一目的就是帮助补齐😁。
+</p>
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 什么时候用 <code>.</code> ，什么时候用空格</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+因为re的特殊性（它会无视它自己的所有参数），所以你可以用空格，也可以用 <code>.</code> 来输入多个匹配子串。
+</p>
+
+<p>
+但一些其他的命令补齐，就必须用 <code>.</code> 来保证被补齐的参数只有一个。比如我用来发邮件(mailx)、提review（gerrit-push-review)的联系人补齐，我想输入罗永浩的邮箱，必须用： <code>mailx luo.hao</code> 然后按Tab键补成 <code>mailx luoyonghao@XXX</code> ，如果我用空格 <code>mailx luo hao</code> 是不行的 ，首先，mailx的补齐函数不像comp_re，它是只看最后一个参数（hao）的，luo+hao能找得比单单一个hao更精准；其次，即使补齐了，也是错误的，因为我得到的是 <code>mailx luo luoyonghao@XXX</code> （前面多了个参数luo出来）。
+</p>
+</div>
 </div>
 </div>
 
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> 被动式补齐：菜单选择</h2>
-</div>
+<div class="outline-text-2" id="text-3">
+<p>
+补齐函数写多了之后就觉得有点儿太费劲了，因为它要求你先写个很“难”的补齐函数。为什么说补齐函数难呢，因为它很难调试，必须和bash补齐机制放一起才能调试&#x2026;
+</p>
 
+<p>
+所以我换了个思路，比如 <code>git checkout -B branch remote_branch</code> 这样一条命令，REMOTE_BRANCH 这个参数你可以用bash自带（准确地说是bash_completion自带）的补齐机制来补齐它，但缺点是，就像之前一再提到的，你只能从头开始打它的名字，不能从中间你觉得好记的好区分的地方开始打&#x2026;
+</p>
+
+<p>
+而我实在不想写补齐函数了，所以这回我写了个命令行菜单选择命令：
+</p>
+
+<ol class="org-ol">
+<li>给定一堆参数，我把它们打印到终端上，每行一个参数，
+</li>
+
+<li>然后让你输入文字、数字来选择它。
+</li>
+
+<li>如果你输入的是数字M，那我就认为你选择第M个参数。
+</li>
+
+<li>如果你输入的是文字，那就把你的文字用空格、 <code>.</code> 隔开，匹配所有子串的参数留下，其他的扔掉，从头再来
+</li>
+
+<li>如果只有一个参数，那就是它了
+</li>
+</ol>
+
+<p>
+这个命令叫 select-args ，它的一个变体参考了xargs，叫select-output，给定一个命令，把输出的所有行当成参数，一行一个，然后调用select-args选参数。
+</p>
+
+<p>
+于是 REMOTE_BRANCH 我给写成了这样： $(select-output git branch -a），先执行git branch -a得到所有的branch，然后从中选择。
+</p>
+
+<p>
+后来又专门封装了一下，成了一个 git-choose-branch 的脚本。
+</p>
+
+<p>
+后来干脆把 git 命令改了一下，以错为对，写了个名为git的函数，如果发现我的输入是 <code>git co -B</code> ，这个本来是个非法的git命令，是要出错的，但我赋给了它新的含义，先用 git-choose-branch 获得远程分支的名字REMOTE_BRANCH，然后根据远程分支名计算得到本地BRANCH名，最后组合成 <code>command git co -B $BRANCH $REMOTE_BRANCH</code> 。
+</p>
+
+<p>
+如果你觉得这么瞎改git命令不对的话，请想想为什么bash有个alias机制允许你把 <code>rm</code> 改成 <code>alias rm='rm -'i</code> 来让它变得更安全呢？&#x2026;
+</p>
+
+<p>
+后来！我给select-args、select-output加入了简单的历史机制，于是上次你选的选项下次会排在最前面，直接回车就可以了&#x2026;
+</p>
+
+<p>
+我写了个 <code>s</code> 命令，它不是对参数进行补齐，而是对命令进行补齐，输入 <code>s hello world</code> ，它会让你选你要用哪个搜索引擎搜 <code>hello world</code> 。我已经封装了32个搜索引擎了😁。
+</p>
+</div>
+</div>
 <div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> Emacs按词补齐、按任意字符串补齐、按整行补齐</h2>
+<h2 id="sec-4"><span class="section-number-2">4</span> Emacs的补齐机制</h2>
 <div class="outline-text-2" id="text-4">
+<ul class="org-ul">
+<li>Emacs下有个yasnippet，极其强大
+</li>
+
+<li>helm是一个递进式选择的插件，极其强大
+</li>
+
+<li>我有写过一个宏扩展机制，《给所有编程语言插上宏的翅膀》
+</li>
+
+<li>Emacs按词补齐、按任意字符串补齐、按整行补齐，我写的 bbyac 插件。
+</li>
+</ul>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
