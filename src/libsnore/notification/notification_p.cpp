@@ -47,7 +47,6 @@ NotificationData::NotificationData(const Snore::Application &application, const 
     notificationCount++;
     snoreDebug(SNORE_INFO) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
     snoreDebug(SNORE_INFO) << title << text;
-    initHints();
 }
 
 Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
@@ -66,7 +65,6 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
     notificationCount++;
     snoreDebug(SNORE_INFO) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
     snoreDebug(SNORE_INFO) << title << text;
-    initHints();
 }
 
 NotificationData::~NotificationData()
@@ -105,10 +103,5 @@ QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLA
     } else {
         return Utils::normalizeMarkup(string, flags);
     }
-}
-
-void NotificationData::initHints()
-{
-    m_hints.setValue("silent", SnoreCore::instance().value("Silent", LOCAL_SETTING));
 }
 

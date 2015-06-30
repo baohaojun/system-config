@@ -53,8 +53,6 @@ public:
 private:
     Q_DISABLE_COPY(NotificationData)
 
-    void initHints();
-
     uint m_id;
     uint m_updateID;
     int m_timeout;
