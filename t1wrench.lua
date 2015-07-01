@@ -1313,6 +1313,8 @@ local function t1_picture(...)
       picture_to_qqlite_chat(pics)
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity" then
       picture_to_qq_chat(pics)
+   elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity" then
+      picture_to_qq_chat(pics)
    elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then
       picture_to_weibo_chat(pics)
    elseif window:match("com.sina.weibo") then
