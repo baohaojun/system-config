@@ -190,6 +190,11 @@
 
 (eval-after-load 'helm
   '(define-key helm-map [(shift return)] 'bhj-hack-helm-s-return))
+
+(eval-after-load 'bbdb-com
+  '(defun bbdb-complete-mail (&optional start-pos)
+     (bhj-bbdb-complete-mail start-pos)))
+
 (eval-after-load 'elisp-slime-nav
   '(define-key elisp-slime-nav-mode-map (kbd "M-.") 'grep-gtags))
 

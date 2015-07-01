@@ -450,8 +450,8 @@ get imports if java-mode
 
 ;;;***
 
-;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21659 45997
-;;;;;;  221666 183000))
+;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21907 52842
+;;;;;;  938656 49000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -709,7 +709,7 @@ Return a new, flat list that contains all elements of LIST.
 
 \(fn LIST)" nil nil)
 
-(autoload 'bbdb-complete-mail "bhj-defines" "\
+(autoload 'bhj-bbdb-complete-mail "bhj-defines" "\
 Complete the user full-name or net-address before point (up to the
 preceeding newline, colon, or comma, or the value of START-POS).  If
 what has been typed is unique, insert an entry of the form \"User Name
