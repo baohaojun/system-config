@@ -108,7 +108,7 @@ abc-grep() {
 
         ## end generated code
 
-        ssh $abc_host abc abc-files -b "$(abc-base-build)" "$entry"|xargs grep -H -n -e "$entry" "$@" /dev/null
+        ssh $abc_host abc abc-files -b "$(abc-base-build)" "$(echo "$entry" | perl -npe 's/[^\w]/ /g')"|xargs grep -H -n -e "$entry" "$@" /dev/null
     )
 }
 
@@ -157,6 +157,8 @@ fi
 
 if test $# = 0; then
     abc mm
+elif test "$1" = mm; then
+    abc "$@"
 elif test "$(type -t "$1")" = function; then
     "$@"
 else
