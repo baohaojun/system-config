@@ -47,7 +47,7 @@ bool SnoreBackend::initialize()
     connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notify, this, &SnoreBackend::slotNotify, Qt::QueuedConnection);
 
     for (const Application &a : SnoreCore::instance().aplications()) {
-        this->slotRegisterApplication(a);
+        QMetaObject::invokeMethod(this, "slotRegisterApplication", Qt::QueuedConnection, Q_ARG(Snore::Application, a));
     }
 
     return true;
