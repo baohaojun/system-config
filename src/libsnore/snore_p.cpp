@@ -127,7 +127,7 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
     if (setBackendIfAvailible(QLatin1String("OSX Notification Center"))) {
         return true;
     }
-    if (setBackendIfAvailible(QLatin1String("Growl")) {
+    if (setBackendIfAvailible(QLatin1String("Growl"))) {
         return true;
     }
 #endif
