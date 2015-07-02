@@ -78,7 +78,7 @@ public:
     virtual bool initialize();
     virtual bool deinitialize();
 
-public Q_SLOT:
+public Q_SLOTS:
     virtual void slotNotify(Snore::Notification notification);
     virtual void slotNotificationDisplayed(Snore::Notification notification);
 
