@@ -19,10 +19,12 @@
 #include "alert.h"
 #include "alert_p.h"
 
+#include <QDebug>
+
 using namespace Snore;
 
 Alert::Alert() :
-    d(NULL)
+    d(nullptr)
 {}
 
 Alert::Alert(const QString &name, const Icon &icon, bool active):

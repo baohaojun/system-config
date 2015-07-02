@@ -51,12 +51,12 @@ public:
     //TODO: move to private header
     void initTabs();
 
-public slots:
+public Q_SLOTS:
     void setVisible(bool b) override;
     void accept();
     void reset();
 
-private slots:
+private Q_SLOTS:
     void on_pushButton_clicked();
     void load();
     void save();

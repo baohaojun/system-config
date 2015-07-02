@@ -31,7 +31,7 @@ SettingsWindow::~SettingsWindow()
 
 QStringList SettingsWindow::knownApps()
 {
-    return Utils::allSettingsKeysWithPrefix(QString("%1/%2").arg(Utils::settingsVersionSchema(), "LocalSettings"), settings(),
+    return Utils::allSettingsKeysWithPrefix(Utils::settingsVersionSchema() + QLatin1String("/LocalSettings"), settings(),
     [](QSettings & settings) {
         return settings.childGroups();
     });
@@ -39,7 +39,7 @@ QStringList SettingsWindow::knownApps()
 
 QSettings &SettingsWindow::settings()
 {
-    static QSettings settings("Snorenotify", "libsnore");
+    static QSettings settings(QLatin1String("Snorenotify"), QLatin1String("libsnore"));
     return settings;
 }
 

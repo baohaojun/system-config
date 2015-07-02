@@ -31,7 +31,7 @@ public:
     OSXNotificationCenter();
     ~OSXNotificationCenter();
 
-public slots:
+public Q_SLOTS:
     void slotNotify(Snore::Notification notification) override;
 };
 

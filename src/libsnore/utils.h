@@ -72,27 +72,27 @@ public:
      */
     static inline QString computeMD5Hash(const QByteArray &data)
     {
-        return QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex();
+        return QString::fromUtf8(QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex());
     }
 
     static inline QString settingsVersionSchema()
     {
-        return "v1";
+        return QLatin1String("v1");
     }
 
     static inline QString normalizeSettingsKey(const QString &key, SettingsType type, const QString &application)
     {
         if (type == LOCAL_SETTING) {
-            return QString("%1/LocalSettings/%2/%3").arg(settingsVersionSchema(), application, key);
+            return settingsVersionSchema() + QLatin1String("/LocalSettings/") + application + QLatin1Char('/') + key;
         } else {
-            return QString("%1/GlobalSettings/%2").arg(settingsVersionSchema(), key);
+            return settingsVersionSchema() + QLatin1String("/GlobalSettings/") +  key;
         }
     }
 
     template<typename Func>
     static QStringList allSettingsKeysWithPrefix(const QString &prefix, QSettings &settings, Func fun)
     {
-        QStringList groups = prefix.split("/");
+        QStringList groups = prefix.split(QLatin1Char('/'));
         QStringList out;
 
         for (const QString group : groups) {

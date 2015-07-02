@@ -34,7 +34,7 @@ IconData::IconData(const QString &url):
     m_hash(Utils::computeMD5Hash(m_url.toLatin1())),
     m_localUrl(createLocalFileName(m_hash)),
     m_isLocalFile(false),
-    m_isResource(m_url.startsWith(":/") || m_url.startsWith("qrc:/"))
+    m_isResource(m_url.startsWith(QLatin1String(":/")) || m_url.startsWith(QLatin1String("qrc:/")))
 {
     if (!m_isResource && QFile::exists(url)) {
         m_isLocalFile = true;
@@ -47,7 +47,7 @@ IconData::IconData(const QString &url):
             m_isDownloading = true;
             snoreDebug(SNORE_DEBUG) << "Downloading:" << m_url;
             QNetworkAccessManager *manager = new QNetworkAccessManager();
-            QNetworkRequest request(m_url);
+            QNetworkRequest request(QUrl::fromUserInput(m_url));
             QNetworkReply *reply = manager->get(request);
 //            QObject::connect(reply, &QNetworkReply::downloadProgress, [&](qint64 bytesReceived, qint64 bytesTotal) {
 //                snoreDebug(SNORE_DEBUG) << "Downloading:" << m_localUrl << bytesReceived / double(bytesTotal) * 100.0 << "%";

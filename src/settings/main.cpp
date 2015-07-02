@@ -25,7 +25,7 @@ bool setSetting(const QString &appName, SettingsType type, const QString &_key, 
         return false;
     }
     settings.setValue(key, value);
-    cout << "Set: " << qPrintable(key) << " to " << qPrintable(settings.value(key).toString()) << endl;
+    cout <<"Set: " << qPrintable(key) << " to " << qPrintable(settings.value(key).toString()) << endl;
     return true;
 }
 
@@ -45,8 +45,8 @@ void listSettings(SettingsType type, const QString &application)
 
     cout << qPrintable(application) << endl;
     for (const QString &key : Utils::allSettingsKeysWithPrefix(
-                Utils::normalizeSettingsKey("", type, application), settings, getAllKeys)) {
-        cout << "  " << qPrintable(key) << ": " << qPrintable(settings.value(Utils::normalizeSettingsKey(key, type, application)).toString()) << endl;
+                Utils::normalizeSettingsKey(QLatin1String(""), type, application), settings, getAllKeys)) {
+        cout <<"  " << qPrintable(key) << ": " << qPrintable(settings.value(Utils::normalizeSettingsKey(key, type, application)).toString()) << endl;
     }
 }
 
@@ -56,40 +56,40 @@ int main(int argc, char *argv[])
     SettingsWindow *window;
 
     QApplication app(argc, argv);
-    app.setApplicationName("SnoreSettings");
-    app.setOrganizationName("SnoreNotify");
+    app.setApplicationName(QLatin1String("SnoreSettings"));
+    app.setOrganizationName(QLatin1String("SnoreNotify"));
     app.setApplicationVersion(Snore::Version::version());
 
     Snore::SnoreCore::instance().loadPlugins(Snore::SnorePlugin::ALL);
     Snore::SnoreCorePrivate::instance()->defaultApplication().hints().setValue("use-markup", QVariant::fromValue(true));
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("A settings interface for Snorenotify.");
+    parser.setApplicationDescription(QLatin1String("A settings interface for Snorenotify."));
     parser.addHelpOption();
     parser.addVersionOption();
 
     //TODO: merge with appNameCommand ?
-    QCommandLineOption listAppsCommand("apps", "List possible application.");
+    QCommandLineOption listAppsCommand(QLatin1String("apps"), QLatin1String("List possible application."));
     parser.addOption(listAppsCommand);
 
-    QCommandLineOption listSettingsCommand({"l", "list"} , "List settings for the given --appName or the global settings.");
+    QCommandLineOption listSettingsCommand({QLatin1String("l"), QLatin1String("list")} , QLatin1String("List settings for the given --appName or the global settings."));
     parser.addOption(listSettingsCommand);
 
-    QCommandLineOption appNameCommand({"a", "appName"} , "Set the Name of the app <app>.", "app", "GlobalSettings");
+    QCommandLineOption appNameCommand({QLatin1String("a"), QLatin1String("appName")} , QLatin1String("Set the Name of the app <app>."), QLatin1String("app"), QLatin1String("GlobalSettings"));
     parser.addOption(appNameCommand);
 
-    QCommandLineOption typeCommand({"t", "type"} , "Type of the setting [global|local].", "type");
+    QCommandLineOption typeCommand({QLatin1String("t"),QLatin1String("type")} ,QLatin1String("Type of the setting [global|local]."),QLatin1String("type"));
     parser.addOption(typeCommand);
 
-    parser.addPositionalArgument("key", "The settings Key.");
-    parser.addPositionalArgument("value", "The new settings Value");
+    parser.addPositionalArgument(QLatin1String("key"), QLatin1String("The settings Key."));
+    parser.addPositionalArgument(QLatin1String("value"), QLatin1String("The new settings Value"));
 
     parser.process(app);
 
     SettingsType type = GLOBAL_SETTING;
     if (parser.isSet(typeCommand)) {
         QString typeName = parser.value(typeCommand);
-        if (typeName != "global" && typeName == "local") {
+        if (typeName != QLatin1String("global") && typeName == QLatin1String("local")) {
             type = LOCAL_SETTING;
         } else {
             parser.showHelp(1);

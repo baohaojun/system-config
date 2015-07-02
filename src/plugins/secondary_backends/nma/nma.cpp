@@ -28,22 +28,28 @@ using namespace Snore;
 
 void NotifyMyAndroid::slotNotify(Notification notification)
 {
-    QString key = value("ApiKey").toString();
+    QString key = value(QLatin1String("ApiKey")).toString();
     if (key.isEmpty()) {
         return;
     }
 
-    QNetworkRequest request(QUrl("https://www.notifymyandroid.com/publicapi/notify"));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/x-www-form-urlencoded"));
+    QNetworkRequest request(QUrl::fromEncoded("https://www.notifymyandroid.com/publicapi/notify"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
 
-    // TODO: use toHTML?
-    QString data(QString("apikey=%1&application=%2&event=%3&description=%4&priority=%5&content-type=text/html")
-                 .arg(key,
-                      notification.application().name(),
-                      notification.title(),
-                      notification.text(Utils::HREF | Utils::BOLD | Utils::BREAK |
-                                        Utils::UNDERLINE | Utils::FONT | Utils::ITALIC),
-                      QString::number(notification.priority())));
+
+    QString data = QLatin1String("apikey=") + key
+            + QLatin1String("&application=") + notification.application().name()
+            + QLatin1String("&event=") + notification.title()
+            + QLatin1String("&priority=") + QString::number(notification.priority())
+            + QLatin1String("&description=");
+
+    if(notification.constHints().value("supports-markup").toBool()){
+        data += notification.text(Utils::HREF | Utils::BOLD | Utils::BREAK |
+                                  Utils::UNDERLINE | Utils::FONT | Utils::ITALIC)
+                + QLatin1String("&content-type=text/html");
+    }else{
+        data += notification.text();
+    }
 
 
     QNetworkReply *reply =  m_manager.post(request, data.toUtf8().constData());
@@ -58,7 +64,7 @@ void NotifyMyAndroid::slotNotify(Notification notification)
 
 bool NotifyMyAndroid::initialize()
 {
-    setDefaultValue("ApiKey", "");
+    setDefaultValue(QLatin1String("ApiKey"), QString());
     return SnoreSecondaryBackend::initialize();
 }
 

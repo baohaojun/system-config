@@ -41,7 +41,7 @@ private:
     static GrowlBackend *s_instance;
     QHash<QString, Growl *> m_applications;
 
-public slots:
+public Q_SLOTS:
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotDeregisterApplication(const Snore::Application &application) override;
     void slotNotify(Snore::Notification notification) override;

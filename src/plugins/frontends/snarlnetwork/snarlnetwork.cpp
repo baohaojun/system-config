@@ -62,7 +62,7 @@ void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)
 
     if (notification.isActiveIn(this)) {
         snoreDebug(SNORE_DEBUG) << notification.closeReason();
-        callback(notification, "SNP/1.1/304/Notification acknowledged/");
+        callback(notification, QLatin1String("SNP/1.1/304/Notification acknowledged/"));
     }
 }
 
@@ -72,13 +72,13 @@ void SnarlNetworkFrontend::slotNotificationClosed(Snore::Notification notificati
     if (notification.removeActiveIn(this)) {
         switch (notification.closeReason()) {
         case Notification::TIMED_OUT:
-            callback(notification, "SNP/1.1/303/Notification timed out/");
+            callback(notification, QLatin1String("SNP/1.1/303/Notification timed out/"));
             break;
         case Notification::ACTIVATED:
-            callback(notification, "SNP/1.1/307/Notification closed/");
+            callback(notification, QLatin1String("SNP/1.1/307/Notification closed/"));
             break;
         case Notification::DISMISSED:
-            callback(notification, "SNP/1.1/302/Notification cancelled/");
+            callback(notification, QLatin1String("SNP/1.1/302/Notification cancelled/"));
             break;
         default:
             snoreDebug(SNORE_WARNING) << "Unhandled close reason" << notification.closeReason();
@@ -95,10 +95,10 @@ void SnarlNetworkFrontend::handleConnection()
 
 void SnarlNetworkFrontend::handleMessages()
 {
-    const QString out("SNP/1.1/0/OK");
+    const QString out(QLatin1String("SNP/1.1/0/OK"));
     QTcpSocket *client = qobject_cast<QTcpSocket *>(sender());
 
-    QStringList messages(QString::fromLatin1(client->readAll()).trimmed().split("\r\n"));
+    QStringList messages(QString::fromLatin1(client->readAll()).trimmed().split(QLatin1String("\r\n")));
     foreach(const QString & s, messages) {
         if (s.isEmpty()) {
             continue;
@@ -108,9 +108,9 @@ void SnarlNetworkFrontend::handleMessages()
         if (noti.isValid()) {
             noti.addActiveIn(this);
             SnoreCore::instance().broadcastNotification(noti);
-            write(client, QString("%1/%2\r\n").arg(out, QString::number(noti.id())));
+            write(client, QString(QLatin1String("%1/%2\r\n")).arg(out, QString::number(noti.id())));
         } else {
-            write(client, QString("%1\r\n").arg(out));
+            write(client, QString(QLatin1String("%1\r\n")).arg(out));
         }
     }
 }
@@ -120,9 +120,7 @@ void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
     if (sn.hints().containsPrivateValue(this, "clientSocket")) {
         QTcpSocket *client = sn.hints().privateValue(this, "clientSocket").value<QPointer<QTcpSocket>>();
         if(client){
-            write(client, QString("%1%2\r\n").arg(msg, QString::number(sn.id())));
-        }else{
-            sn.hints().takePrivateValue(this, "clientSocket");
+            write(client, QString(QLatin1String("%1%2\r\n")).arg(msg, QString::number(sn.id())));
         }
     }
 }

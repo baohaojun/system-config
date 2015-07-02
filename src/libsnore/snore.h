@@ -150,7 +150,8 @@ public:
     void setDefaultValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
 
     Notification getActiveNotificationByID(uint id) const;
-signals:
+
+Q_SIGNALS:
     /**
      * This signal is emitted when an action on the Notification was performed.
      * Some notification systems don't support actions but will report one if the notification was clicked,

@@ -41,16 +41,16 @@ public:
     virtual bool canCloseNotification() const;
     virtual bool canUpdateNotification() const;
 
-signals:
+Q_SIGNALS:
     void notificationClosed(Snore::Notification);
 
-public slots:
+public Q_SLOTS:
     virtual void slotRegisterApplication(const Snore::Application &application);
     virtual void slotDeregisterApplication(const Snore::Application &application);
     virtual void slotNotify(Snore::Notification notification) = 0;
     virtual void slotCloseNotification(Snore::Notification notification);
 
-protected slots:
+protected Q_SLOTS:
     void slotNotificationDisplayed(Notification notification);
     void slotNotificationActionInvoked(Notification notification, const Action &action = Action());
 
@@ -78,7 +78,7 @@ public:
     virtual bool initialize();
     virtual bool deinitialize();
 
-public slots:
+public Q_SLOT:
     virtual void slotNotify(Snore::Notification notification);
     virtual void slotNotificationDisplayed(Snore::Notification notification);
 

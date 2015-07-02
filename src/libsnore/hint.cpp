@@ -24,63 +24,55 @@ Hint::Hint()
 {
 }
 
-void Hint::setValue(const QString &key, const QVariant &value)
+void Hint::setValue(const QByteArray & key, const QVariant &value)
 {
-    m_data.insert(key.toLower(), value);
+    m_data.insert(key, value);
 }
 
-QVariant Hint::value(const QString &k) const
+QVariant Hint::value(const QByteArray &key) const
 {
-    return m_data.value(k.toLower());
+    return m_data.value(key);
 }
 
-QVariant Hint::take(const QString &key)
+QVariant Hint::take(const QByteArray & key)
 {
-    return m_data.take(key.toLower());
+    return m_data.take(key);
 }
 
-bool Hint::contains(const QString &key) const
+bool Hint::contains(const QByteArray & key) const
 {
-    return m_data.contains(key.toLower());
+    return m_data.contains(key);
 }
 
-void Hint::setPrivateValue(const void *owner, const QString &key, const QVariant &value) const
+void Hint::setPrivateValue(const void *owner, const QByteArray & key, const QVariant &value)
 {
-    QPair<quintptr, QString> pk((quintptr)owner, key.toLower());
-    m_privateData.insert(pk, value);
+    m_privateData.insert(qMakePair<const quintptr,const QByteArray>((quintptr)owner,key), value);
 }
 
-QVariant Hint::privateValue(const void *owner, const QString &k) const
+QVariant Hint::privateValue(const void *owner, const QByteArray &key) const
 {
-    QPair<quintptr, QString> key((quintptr)owner, k.toLower());
-    return m_privateData.value(key);
+    return m_privateData.value(qMakePair<const quintptr,const QByteArray>((quintptr)owner,key));
 }
 
-bool Hint::containsPrivateValue(const void *owner, const QString &key) const
+bool Hint::containsPrivateValue(const void *owner, const QByteArray & key) const
 {
-    QPair<quintptr, QString> pk((quintptr)owner, key.toLower());
-    return m_privateData.contains(pk);
+    return m_privateData.contains(qMakePair<const quintptr,const QByteArray>((quintptr)owner,key));
 }
 
-QVariant Hint::takePrivateValue(const void *owner, const QString &key)
+QVariant Hint::takePrivateValue(const void *owner, const QByteArray & key)
 {
-    QPair<quintptr, QString> pk((quintptr)owner, key.toLower());
-    return m_privateData.take(pk);
+    return m_privateData.take(qMakePair<const quintptr,const QByteArray>((quintptr)owner,key));
 }
 
 QDebug operator<<(QDebug debug, const Snore::Hint &hint)
 {
     debug << "Snore::Hint(";
-    for (QVariantHash::const_iterator it = hint.m_data.constBegin(); it != hint.m_data.constEnd(); ++it) {
-        if (it != hint.m_data.constBegin()) {
-            debug << ", ";
-        }
+    for (auto it = hint.m_data.cbegin(); it != hint.m_data.cend(); ++it) {
+        debug << ", ";
         debug << "(" << it.key() << ", " << it.value();
     }
-    for (QHash< QPair<quintptr, QString>, QVariant>::const_iterator it = hint.m_privateData.constBegin(); it != hint.m_privateData.constEnd(); ++it) {
-        if (it != hint.m_privateData.constBegin()) {
-            debug << ", ";
-        }
+    for (auto it = hint.m_privateData.cbegin(); it != hint.m_privateData.cend(); ++it) {
+    debug << ", ";
         debug << "(" << it.key() << ", " << it.value();
     }
     debug << ")" ;

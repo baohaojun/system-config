@@ -44,7 +44,7 @@ SnorePlugin::~SnorePlugin()
 
 bool SnorePlugin::initialize()
 {
-    setDefaultValue("Enabled", false, LOCAL_SETTING);
+    setDefaultValue(QLatin1String("Enabled"), false, LOCAL_SETTING);
     if (m_initialized) {
         qFatal("Something went wrong, plugin %s is already initialized", this->name().toLatin1().constData());
         return false;
@@ -85,7 +85,7 @@ Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()
 
 QString SnorePlugin::normaliseKey(const QString &key) const
 {
-    return QString("%1/%2.%3").arg(name(), key, settingsVersion());
+    return name() + QLatin1Char('/') + key + QLatin1Char('.') + settingsVersion();
 }
 
 const QString &SnorePlugin::name() const
@@ -107,7 +107,7 @@ const QString SnorePlugin::typeName() const
 
 QString SnorePlugin::settingsVersion() const
 {
-    return "v1";
+    return QLatin1String("v1");
 }
 
 bool SnorePlugin::deinitialize()
@@ -122,12 +122,12 @@ bool SnorePlugin::deinitialize()
 
 SnorePlugin::PluginTypes SnorePlugin::typeFromString(const QString &t)
 {
-    return (SnorePlugin::PluginTypes)SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).keyToValue(t.toUpper().toLatin1());
+    return (SnorePlugin::PluginTypes)SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).keyToValue(t.toUpper().toLatin1().constData());
 }
 
 QString SnorePlugin::typeToString(const SnorePlugin::PluginTypes t)
 {
-    return SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).valueToKey(t);
+    return QString::fromLatin1(SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).valueToKey(t));
 }
 
 QList<SnorePlugin::PluginTypes> SnorePlugin::types()

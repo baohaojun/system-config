@@ -21,7 +21,7 @@ public:
 
     virtual bool canCloseNotification() const override;
 
-public slots:
+public Q_SLOTS:
     void slotNotify(Snore::Notification notification);
     void slotCloseNotification(Snore::Notification notification);
     void slotRegisterApplication(const Snore::Application &application);
@@ -33,7 +33,7 @@ private:
     Snore::Notification m_displayed;
     bool m_currentlyDisplaying = false;
 
-private slots:
+private Q_SLOTS:
     void displayNotification(QSystemTrayIcon *icon);
     void actionInvoked();
 

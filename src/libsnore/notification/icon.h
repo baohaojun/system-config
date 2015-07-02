@@ -45,6 +45,8 @@ public:
 
     static QByteArray dataFromImage(const QImage &image);
 
+    static Icon defaultIcon();
+
     Icon();
 
     /**

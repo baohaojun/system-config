@@ -74,7 +74,7 @@ public:
 namespace {
     
     NSString * NSStringFromQString(QString qstr) {
-        return [NSString stringWithUTF8String: qstr.toUtf8().data()];
+        return [NSString stringWithUTF8String: qstr.toUtf8().constData()];
     }
 }
 

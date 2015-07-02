@@ -33,7 +33,7 @@
 using namespace Snore;
 
 TrayIcon::TrayIcon():
-    m_trayIcon(new QSystemTrayIcon(QIcon(":/root/snore.png")))
+    m_trayIcon(new QSystemTrayIcon(QIcon(QLatin1String(":/root/snore.png"))))
 {
     SnoreCorePrivate::instance()->defaultApplication().hints().setValue("use-markup", true);
     SnoreCorePrivate::instance()->defaultApplication().hints().setValue("tray-icon", QVariant::fromValue(QPointer<QSystemTrayIcon>(m_trayIcon)));
@@ -68,18 +68,18 @@ void TrayIcon::initConextMenu()
 
     m_trayIcon->setVisible(true);
 
-    m_trayMenu = new QMenu("SnoreNotify");
-    QString version = QString("SnoreNotify %1").arg(Version::version());
+    m_trayMenu = new QMenu(QLatin1String("SnoreNotify"));
+    QString version = QLatin1String("SnoreNotify ") + Version::version();
     if (!Version::revision().isEmpty()) {
-        version += QString("-%1").arg(Version::revision());
+        version += QLatin1String("-") + Version::revision();
     }
     m_trayMenu->addAction(version);
     m_trayMenu->addSeparator();
-    m_trayMenu->addAction("Test Notification", this, SLOT(slotTestNotification()));
+    m_trayMenu->addAction(tr("Display Test Notification"), this, SLOT(slotTestNotification()));
     m_trayMenu->addSeparator();
-    m_trayMenu->addAction("Settings", this, SLOT(slotSettings()));
+    m_trayMenu->addAction(tr("Settings"), this, SLOT(slotSettings()));
     m_trayMenu->addSeparator();
-    m_trayMenu->addAction("Exit", qApp, SLOT(quit()));
+    m_trayMenu->addAction(tr("Exit"), qApp, SLOT(quit()));
 
     m_trayIcon->setContextMenu(m_trayMenu);
 }

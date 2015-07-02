@@ -29,7 +29,7 @@ Application::Application(const QString &name, const Icon &icon) :
     d(new ApplicationData(name, icon))
 
 {
-    addAlert(Alert("Default", icon));
+    addAlert(Alert(QObject::tr("Default"), icon));
 }
 
 Application::Application(const Application &other):
@@ -50,7 +50,7 @@ Application::~Application()
 
 void Application::addAlert(const Alert &alert)
 {
-    d->m_alerts.insert(alert.name(), alert);
+    d->m_alerts.insert(alert.name().toUtf8(), alert);
 }
 
 QString Application::name() const
@@ -63,14 +63,14 @@ const Icon &Application::icon()const
     return d->m_icon;
 }
 
-const QHash<QString, Alert> &Application::alerts() const
+const QHash<QByteArray, Alert> &Application::alerts() const
 {
     return d->m_alerts;
 }
 
 const Alert Application::defaultAlert() const
 {
-    return d->m_alerts["Default"];
+    return d->m_alerts.value("Default");
 }
 
 bool Application::isValid() const

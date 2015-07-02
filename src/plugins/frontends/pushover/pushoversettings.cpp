@@ -36,18 +36,18 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
     addRow(tr("Password:"), m_passwordLineEdit);
     addRow(tr("Device Name:"), m_deviceLineEdit);
     updateLoginState();
-    addRow("", m_registerButton);
+    addRow(QString(), m_registerButton);
 
     PushoverFrontend *pushover = dynamic_cast<PushoverFrontend*>(plugin);
     connect(m_registerButton, &QPushButton::clicked, [pushover, this] () {
-        if(!value("Registered", Snore::LOCAL_SETTING).toBool()) {
+        if(!value(QLatin1String("Registered"), Snore::LOCAL_SETTING).toBool()) {
             pushover->registerDevice(m_emailLineEdit->text(), m_passwordLineEdit->text(), m_deviceLineEdit->text());
-            setValue("DeviceName", m_deviceLineEdit->text(), Snore::LOCAL_SETTING);
+            setValue(QLatin1String("DeviceName"), m_deviceLineEdit->text(), Snore::LOCAL_SETTING);
             QTimer *updateTimer = new QTimer(this);
             updateTimer->setInterval(500);
             connect(updateTimer, &QTimer::timeout, [updateTimer, this](){
-                qDebug() << value("Registered").toBool();
-                if (value("Registered", Snore::LOCAL_SETTING).toBool()) {
+                qDebug() << value(QLatin1String("Registered")).toBool();
+                if (value(QLatin1String("Registered"), Snore::LOCAL_SETTING).toBool()) {
                     updateLoginState();
                     updateTimer->deleteLater();
                 }
@@ -55,7 +55,7 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
 
             updateTimer->start();
         }else{
-            setValue("Registered", false, Snore::LOCAL_SETTING);
+            setValue(QLatin1String("Registered"), false, Snore::LOCAL_SETTING);
             updateLoginState();
         }
     });
@@ -67,7 +67,7 @@ PushoverSettings::~PushoverSettings()
 
 void PushoverSettings::load()
 {
-    m_deviceLineEdit->setText(value("DeviceName", Snore::LOCAL_SETTING).toString());
+    m_deviceLineEdit->setText(value(QLatin1String("DeviceName"), Snore::LOCAL_SETTING).toString());
 }
 
 void PushoverSettings::save()
@@ -76,7 +76,7 @@ void PushoverSettings::save()
 
 void PushoverSettings::updateLoginState()
 {
-    if (value("Registered", Snore::LOCAL_SETTING).toBool()) {
+    if (value(QLatin1String("Registered"), Snore::LOCAL_SETTING).toBool()) {
         m_emailLineEdit->setEnabled(false);
         m_passwordLineEdit->setEnabled(false);
         m_deviceLineEdit->setEnabled(false);

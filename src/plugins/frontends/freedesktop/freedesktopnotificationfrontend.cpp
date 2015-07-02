@@ -37,8 +37,8 @@ bool FreedesktopFrontend::initialize()
     }
     m_adaptor = new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    if (dbus.registerService("org.freedesktop.Notifications")) {
-        if (dbus.registerObject("/org/freedesktop/Notifications", this)) {
+    if (dbus.registerService(QLatin1String("org.freedesktop.Notifications"))) {
+        if (dbus.registerObject(QLatin1String("/org/freedesktop/Notifications"), this)) {
             return true;
         } else {
             snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register object";
@@ -53,8 +53,8 @@ bool FreedesktopFrontend::deinitialize()
 {
     if (SnoreFrontend::deinitialize()) {
         QDBusConnection dbus = QDBusConnection::sessionBus();
-        dbus.unregisterService("org.freedesktop.Notifications");
-        dbus.unregisterObject("/org/freedesktop/Notifications");
+        dbus.unregisterService(QLatin1String("org.freedesktop.Notifications"));
+        dbus.unregisterObject(QLatin1String("/org/freedesktop/Notifications"));
         m_adaptor->deleteLater();
         m_adaptor = nullptr;
         return true;
@@ -87,17 +87,17 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     Application app;
     Notification::Prioritys priotity = Notification::NORMAL;
 
-    if (hints.contains("image_data")) {
+    if (hints.contains(QLatin1String("image_data"))) {
         FreedesktopImageHint image;
-        hints["image_data"].value<QDBusArgument>() >> image;
+        hints.value(QLatin1String("image_data")).value<QDBusArgument>() >> image;
         icon = Icon(image.toQImage());
     } else {
-        icon = Icon(":/root/snore.png");
+        icon = Icon::defaultIcon();
     }
 
     if (!SnoreCore::instance().aplications().contains(app_name)) {
         qDebug() << QIcon::themeSearchPaths();
-        QIcon qicon = QIcon::fromTheme(app_icon, QIcon(":/root/snore.png"));
+        QIcon qicon = QIcon::fromTheme(app_icon, QIcon(QLatin1String(":/root/snore.png")));
         QSize max;
         foreach(const QSize & s, qicon.availableSizes()) {
             if (s.width()*s.height() > max.width()*max.height()) {
@@ -105,17 +105,15 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
             }
         }
         Icon appIcon(qicon.pixmap(max).toImage());
-        Alert alert(tr("DBus Alert"), appIcon);
         app = Application(app_name, appIcon);
-        app.hints().setValue("use-markup", QVariant::fromValue(true));
-        app.addAlert(alert);
+        app.hints().setValue("use-markup", true);
         SnoreCore::instance().registerApplication(app);
     } else {
         app = SnoreCore::instance().aplications()[app_name];
     }
 
-    if (hints.contains("urgency")) {
-        priotity =  Notification::Prioritys(hints["urgency"].toInt() - 1);
+    if (hints.contains(QLatin1String("urgency"))) {
+        priotity =  Notification::Prioritys(hints.value(QLatin1String("urgency")).toInt() - 1);
     }
 
     Notification noti;
@@ -123,7 +121,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     if (replaces_id != 0 && toReplace.isValid()) {
         noti = Notification(toReplace, summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
     } else {
-        noti = Notification(app, *app.alerts().begin(), summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
+        noti = Notification(app, app.defaultAlert(), summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
     }
     for (int i = 0; i < actions.length(); i += 2) {
         noti.addAction(Action(actions.at(i).toInt(), actions.at(i + 1)));
@@ -145,18 +143,18 @@ void FreedesktopFrontend::CloseNotification(uint id)
 QStringList FreedesktopFrontend::GetCapabilities()
 {
     return QStringList()
-           << "body"
-           << "urgency"
-           << "body-hyperlinks"
-           << "body-markup"
-           << "icon-static"
-           << "actions";
+           << QLatin1String("body")
+           << QLatin1String("urgency")
+           << QLatin1String("body-hyperlinks")
+           << QLatin1String("body-markup")
+           << QLatin1String("icon-static")
+           << QLatin1String("actions");
 }
 
 QString FreedesktopFrontend::GetServerInformation(QString &vendor, QString &version, QString &specVersion)
 {
-    vendor = "SnoreNotify";
+    vendor = QLatin1String("SnoreNotify");
     version = Version::version();
-    specVersion = "0.9";
-    return "SnoreNotify";
+    specVersion = QLatin1String("0.9");
+    return vendor;
 }

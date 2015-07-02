@@ -56,7 +56,7 @@ private:
 
     inline QString createLocalFileName(const QString &hash)
     {
-        return QString("%1/%2.png").arg(SnoreCorePrivate::tempPath(), hash);
+        return SnoreCorePrivate::tempPath() + QLatin1Char('/') + hash + QLatin1String(".png");
     }
 
 };

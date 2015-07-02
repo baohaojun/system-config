@@ -53,7 +53,7 @@ private:
 
     };
 
-    QHash<QString, Parser::snpTypes> getSnpType;
+    QHash<QByteArray, Parser::snpTypes> getSnpType;
 
 };
 

@@ -40,25 +40,25 @@ void SnoreToast::slotNotify(Notification notification)
     connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
 
     QStringList arguements;
-    arguements << "-t"
+    arguements << QLatin1String("-t")
                << notification.title()
-               << "-m"
+               << QLatin1String("-m")
                << notification.text();
     if (notification.icon().isValid()) {
-        arguements << "-p"
+        arguements << QLatin1String("-p")
                    << QDir::toNativeSeparators(notification.icon().localUrl());
     }
-    arguements << "-w"
-               << "-appID"
+    arguements << QLatin1String("-w")
+               << QLatin1String("-appID")
                << appId(notification.application())
-               << "-id"
+               << QLatin1String("-id")
                << QString::number(notification.id());
     //TODO: could clash with sound backend
     if (notification.hints().value("silent").toBool() || notification.hints().value("sound").isValid()) {
-        arguements << "-silent";
+        arguements << QLatin1String("-silent");
     }
     snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
-    p->start("SnoreToast", arguements);
+    p->start(QLatin1String("SnoreToast"), arguements);
 
     p->setProperty("SNORE_NOTIFICATION", QVariant::fromValue(notification));
 }
@@ -70,12 +70,12 @@ void SnoreToast::slotRegisterApplication(const Application &application)
         p->setReadChannelMode(QProcess::MergedChannels);
 
         QStringList arguements;
-        arguements << "-install"
-                   << QString("SnoreNotify\\%1").arg(qApp->applicationName())
+        arguements << QLatin1String("-install")
+                   << QLatin1String("SnoreNotify\\") + qApp->applicationName()
                    << QDir::toNativeSeparators(qApp->applicationFilePath())
                    << appId(application);
         snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
-        p->start("SnoreToast", arguements);
+        p->start(QLatin1String("SnoreToast"), arguements);
 
         connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int,QProcess::ExitStatus)));
         connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
@@ -88,10 +88,10 @@ void SnoreToast::slotCloseNotification(Notification notification)
     p->setReadChannelMode(QProcess::MergedChannels);
 
     QStringList arguements;
-    arguements << "-close"
+    arguements << QLatin1String("-close")
                << QString::number(notification.id());
     snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
-    p->start("SnoreToast", arguements);
+    p->start(QLatin1String("SnoreToast"), arguements);
 
     connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int,QProcess::ExitStatus)));
     connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
@@ -145,7 +145,7 @@ QString SnoreToast::appId(const Application &application)
         appID = application.constHints().value("windows_app_id").toString();
     }
     if (appID.isEmpty()) {
-        appID = QString("%1.%2.SnoreToast").arg(qApp->organizationName(), qApp->applicationName()).remove(" ");
+        appID = QString(QLatin1String("%1.%2.SnoreToast")).arg(qApp->organizationName(), qApp->applicationName()).remove(QLatin1Char(' '));
     }
     return appID;
 }

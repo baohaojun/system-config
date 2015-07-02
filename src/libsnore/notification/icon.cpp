@@ -35,6 +35,12 @@ QByteArray Icon::dataFromImage(const QImage &image)
     return data;
 }
 
+Icon Icon::defaultIcon()
+{
+    static Icon icon(QLatin1String(":/root/snore.png"));
+    return icon;
+}
+
 Icon::Icon() :
     d(NULL)
 {

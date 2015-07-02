@@ -8,8 +8,8 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName("SnoreNotify");
-    app.setOrganizationName("SnoreNotify");
+    app.setApplicationName(QLatin1String("SnoreNotify"));
+    app.setOrganizationName(QLatin1String("SnoreNotify"));
     app.setApplicationVersion(Snore::Version::version());
     app.setQuitOnLastWindowClosed(false);
 

@@ -17,6 +17,7 @@
 */
 
 #include "application_p.h"
+#include "snore_p.h"
 
 using namespace Snore;
 
@@ -25,9 +26,9 @@ ApplicationData::ApplicationData(const QString &name, const Icon &icon):
     m_icon(icon)
 {
     Q_ASSERT_X(!name.isEmpty(), Q_FUNC_INFO, "invalid name detected");
-    m_hint.setValue("pushover-token", "aFB1TPCyZkkr7mubCGEKy5vJEWak9t");
+    m_hint.setValue("pushover-token", QLatin1String("aFB1TPCyZkkr7mubCGEKy5vJEWak9t"));
     m_hint.setValue("use-markup", false);
-    m_hints.setValue("silent", SnoreCore::instance().value("Silent", LOCAL_SETTING));
+    m_hint.setValue("silent", SnoreCore::instance().value(QLatin1String("Silent"), LOCAL_SETTING));
 }
 
 ApplicationData::~ApplicationData()

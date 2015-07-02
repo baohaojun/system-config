@@ -72,21 +72,19 @@ public:
      */
     void setDefaultValueIntern(const QString &key, const QVariant &value);
 
-private slots:
+private Q_SLOTS:
     //TODO: find a better solutinon for the slots in this section
     friend class Snore::SnoreBackend;
     void slotNotificationActionInvoked(Notification notification);
     void slotNotificationDisplayed(Notification notification);
+    void slotNotificationClosed(Snore::Notification);
+    void slotAboutToQuit();
 
-signals:
+Q_SIGNALS:
     void applicationRegistered(const Snore::Application &);
     void applicationDeregistered(const Snore::Application &);
     void notify(Snore::Notification noti);
     void notificationDisplayed(Snore::Notification notification);
-
-private slots:
-    void slotNotificationClosed(Snore::Notification);
-    void slotAboutToQuit();
 
 private:
     SnoreCorePrivate();

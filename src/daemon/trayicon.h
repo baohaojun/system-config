@@ -42,7 +42,7 @@ private:
     QActionGroup *m_backendActions;
     Snore::SettingsDialog *m_settings;
 
-public slots:
+public Q_SLOTS:
     void slotTestNotification();
     void slotSettings();
 };

@@ -87,7 +87,7 @@ const Action &Notification::actionInvoked() const
     return d->m_actionInvoked;
 }
 
-const Application &Notification::application() const
+Application &Notification::application() const
 {
     return d->m_application;
 }
@@ -184,7 +184,7 @@ NotificationData *Notification::data()
 
 int Notification::defaultTimeout()
 {
-    return SnoreCore::instance().value("Timeout", LOCAL_SETTING).toInt();
+    return SnoreCore::instance().value(QLatin1String("Timeout"), LOCAL_SETTING).toInt();
 }
 
 QDataStream &operator<< (QDataStream &stream, const Notification &noti)

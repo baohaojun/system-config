@@ -12,8 +12,8 @@ set_package_properties(ECM      PROPERTIES
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
 
 include(KDEInstallDirs)
-include(KDECompilerSettings)
 include(KDECMakeSettings)
+include(KDEFrameworkCompilerSettings)
 
 include(GenerateExportHeader)
 

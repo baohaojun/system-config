@@ -98,8 +98,8 @@ void PluginContainer::updatePluginCache()
                     QStringList(pluginFileFilters(type)), QDir::Files)) {
             snoreDebug(SNORE_DEBUG) << "adding" << file.absoluteFilePath();
             QPluginLoader loader(file.absoluteFilePath());
-            QJsonObject data = loader.metaData()["MetaData"].toObject();
-            QString name = data.value("name").toString();
+            QJsonObject data = loader.metaData()[QLatin1String("MetaData")].toObject();
+            QString name = data.value(QLatin1String("name")).toString();
             if (!name.isEmpty()) {
                 PluginContainer *info = new PluginContainer(file.fileName(), name, type);
                 s_pluginCache[type].insert(name, info);
@@ -146,12 +146,13 @@ const QDir &PluginContainer::pluginDir()
             appDir = dir.absolutePath();
         }
 #endif
+        QString suffix = QLatin1String("/libsnore") + QLatin1String(SNORE_SUFFIX);
         list << appDir
              << QLatin1String(LIBSNORE_PLUGIN_PATH)
-             << QString("%1/libsnore" SNORE_SUFFIX).arg(appDir)
-             << QString("%1/../lib/plugins/libsnore" SNORE_SUFFIX).arg(appDir)
-             << QString("%1/../lib64/plugins/libsnore" SNORE_SUFFIX).arg(appDir);
-        foreach(const QString & p, list) {
+             << appDir + suffix
+             << appDir + QLatin1String("/../lib/plugins") + suffix
+             << appDir + QLatin1String("/../lib64/plugins") + suffix;
+        for(const QString & p : list) {
             path = QDir(p);
 
             if (!path.entryInfoList(pluginFileFilters()).isEmpty()) {

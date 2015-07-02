@@ -173,7 +173,7 @@ public:
      *
      * @return the associated application
      */
-    const Application &application() const;
+    Application &application() const;
 
     /**
      * Returns the title of the notification.

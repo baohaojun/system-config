@@ -40,11 +40,11 @@ public:
     virtual bool initialize() override;
     virtual bool deinitialize() override;
 
-public slots:
+public Q_SLOTS:
     void slotActionInvoked(Snore::Notification notification) override;
     void slotNotificationClosed(Snore::Notification notification) override;
 
-private slots:
+private Q_SLOTS:
     void handleConnection();
     void handleMessages();
 

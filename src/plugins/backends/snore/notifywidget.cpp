@@ -24,14 +24,14 @@
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
-    QQuickView(QUrl("qrc:/notification.qml")),
+    QQuickView(QUrl::fromEncoded("qrc:/notification.qml")),
     m_id(pos),
     m_parent(parent),
-    m_mem(QString("SnoreNotifyWidget_rev%1_id%2").arg(QString::number(SHARED_MEM_TYPE_REV()), QString::number(m_id))),
+    m_mem(QLatin1String("SnoreNotifyWidget_rev") + QString::number(SHARED_MEM_TYPE_REV()) + QLatin1String("_id") + QString::number(m_id)),
     m_ready(true)
 {
-    rootContext()->setContextProperty("window", this);
-    rootContext()->setContextProperty("utils", new Utils(this));
+    rootContext()->setContextProperty(QLatin1String("window"), this);
+    rootContext()->setContextProperty(QLatin1String("utils"), new Utils(this));
     m_qmlNotification = rootObject();
 
     setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
@@ -82,7 +82,7 @@ void NotifyWidget::display(const Notification &notification)
         color = vcolor.value<QColor>();
     } else {
         color = computeBackgrondColor(notification.application().icon().image().scaled(20, 20));
-        notification.application().constHints().setPrivateValue(parent(), "backgroundColor", color);
+        notification.application().hints().setPrivateValue(parent(), "backgroundColor", color);
     }
     QRgb gray = qGray(qGray(color.rgb()) - qGray(QColor(Qt::white).rgb()));
     QColor textColor = QColor(gray, gray, gray);
@@ -148,7 +148,7 @@ int NotifyWidget::id()
 
 Qt::Corner NotifyWidget::corner()
 {
-    return static_cast<Qt::Corner>(m_parent->value("Position").toInt());
+    return static_cast<Qt::Corner>(m_parent->value(QLatin1String("Position")).toInt());
 }
 
 qlonglong NotifyWidget::wid()

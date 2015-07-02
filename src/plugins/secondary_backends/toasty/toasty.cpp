@@ -29,25 +29,25 @@ using namespace Snore;
 
 void Toasty::slotNotify(Notification notification)
 {
-    QString key = value("DeviceID").toString();
+    QString key = value(QLatin1String("DeviceID")).toString();
     if (key.isEmpty()) {
         return;
     }
-    QNetworkRequest request(QString("http://api.supertoasty.com/notify/%1").arg(key));
+    QNetworkRequest request(QUrl::fromUserInput(QLatin1String("http://api.supertoasty.com/notify/") + key));
     QHttpMultiPart *mp = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
     QHttpPart title;
-    title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
+    title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"title\"")));
     title.setBody(notification.title().toUtf8().constData());
     mp->append(title);
 
     QHttpPart text;
-    text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text\""));
+    text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"text\"")));
     text.setBody(notification.text().toUtf8().constData());
     mp->append(text);
 
     QHttpPart app;
-    app.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"sender\""));
+    app.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"sender\"")));
     app.setBody(notification.application().name().toUtf8().constData());
     mp->append(app);
 
@@ -58,8 +58,8 @@ void Toasty::slotNotify(Notification notification)
     if (iconSize.height() > 128 || iconSize.width() > 128) {
         sIcon = sIcon.scaled(QSize(128, 128));
     }
-    icon.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QString("form-data; name=\"image\"; filename=\"%1\"").arg(sIcon.localUrl())));
-    icon.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/png"));
+    icon.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"image\"; filename=\"") + sIcon.localUrl() + QLatin1Char('"')));
+    icon.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("image/png")));
     QFile *file = new QFile(sIcon.localUrl());
     file->open(QIODevice::ReadOnly);
     icon.setBodyDevice(file);
@@ -80,7 +80,7 @@ void Toasty::slotNotify(Notification notification)
 
 bool Toasty::initialize()
 {
-    setDefaultValue("DeviceID", "");
+    setDefaultValue(QLatin1String("DeviceID"), QString());
     return SnoreSecondaryBackend::initialize();
 }
 

@@ -40,11 +40,11 @@ public:
     QStringList GetCapabilities();
     QString GetServerInformation(QString &vendor, QString &version, QString &specVersion);
 
-signals:
+Q_SIGNALS:
     void NotificationClosed(uint id, uint reason);
     void ActionInvoked(uint id, const QString &actionKey);
 
-public slots:
+public Q_SLOTS:
     void slotActionInvoked(Snore::Notification notification) override;
     void slotNotificationClosed(Snore::Notification notification) override;
 

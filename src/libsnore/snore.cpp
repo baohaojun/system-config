@@ -41,12 +41,15 @@ SnoreCore::SnoreCore(QObject *parent):
     d_ptr = new SnoreCorePrivate();
     Q_D(SnoreCore);
     d->q_ptr = this;
-    d->init();
 }
 
 SnoreCore &SnoreCore::instance()
 {
-    static SnoreCore *instance(new SnoreCore(qApp));
+    static SnoreCore *instance = nullptr;
+    if(!instance){
+        instance = new SnoreCore(qApp);
+        SnoreCorePrivate::instance()->init();
+    }
     return *instance;
 }
 
@@ -64,7 +67,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
         return;
     }
     Q_D(SnoreCore);
-    setValue("PluginTypes", QVariant::fromValue(types), LOCAL_SETTING);
+    setValue(QLatin1String("PluginTypes"), QVariant::fromValue(types), LOCAL_SETTING);
     snoreDebug(SNORE_DEBUG) << "Loading plugin types:" << types;
     for (SnorePlugin::PluginTypes type : SnorePlugin::types()) {
         if (type != SnorePlugin::ALL && types & type) {
@@ -79,7 +82,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN: {
-                    if (plugin->value("Enabled", LOCAL_SETTING).toBool()) {
+                    if (plugin->value(QLatin1String("Enabled"), LOCAL_SETTING).toBool()) {
                         if (!plugin->initialize()) {
                             snoreDebug(SNORE_WARNING) << "Failed to initialize" << plugin->name();
                             plugin->deinitialize();
@@ -88,7 +91,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                         }
                     }
                 }
-                break;
+                    break;
                 default:
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
@@ -187,7 +190,7 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets(SnorePlugin::PluginTypes
     Q_D(SnoreCore);
     QList<PluginSettingsWidget *> list;
     for (auto name : d->m_pluginNames[type]) {
-//TODO: mem leak?
+        //TODO: mem leak?
         SnorePlugin *p = d->m_plugins[name];
         PluginSettingsWidget *widget = p->settingsWidget();
         if (widget) {
@@ -205,7 +208,7 @@ QVariant SnoreCore::value(const QString &key, SettingsType type) const
     Q_D(const SnoreCore);
     QString nk = d->normalizeKey(key, type);
     if(type == LOCAL_SETTING && !d->m_settings->contains(nk)){
-        nk = d->normalizeKey(QString("%1-SnoreDefault").arg(key),type);
+        nk = d->normalizeKey(key + QStringLiteral("-SnoreDefault"),type);
     }
     return d->m_settings->value(nk);
 }
@@ -235,8 +238,8 @@ Notification SnoreCore::getActiveNotificationByID(uint id) const
 void SnoreCore::displayExapleNotification()
 {
     Application app = SnoreCorePrivate::instance()->defaultApplication();
-    QString text = QString("<i>%1</i><br>"
-                          "<a href=\"https://github.com/Snorenotify/Snorenotify\">%2</a><br>").arg(tr("This is Snore"), tr("Project Website"));
+    QString text = QLatin1String("<i>") + tr("This is Snore") + QLatin1String("</i><br>") +
+            QLatin1String("<a href=\"https://github.com/Snorenotify/Snorenotify\">") + tr("Project Website") + QLatin1String("</a><br>");
     if(!app.constHints().value("use-markup").toBool()) {
         text = Utils::normalizeMarkup(text, Utils::NO_MARKUP);
     }

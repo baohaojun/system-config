@@ -35,7 +35,7 @@ namespace Snore
 {
 /**
  * Hint contains extra information accesible by key.
- * The keys are case insensitive.
+ * The keys are case sensitive.
  */
 
 class SNORE_EXPORT Hint
@@ -48,28 +48,28 @@ public:
      * @param key the key
      * @param value the value
      */
-    void setValue(const QString &key, const QVariant &value);
+    void setValue(const QByteArray & key, const QVariant &value);
 
 
     /**
      * The associated value of the key.
      * @param key the key
      */
-    QVariant value(const QString &key) const;
+    QVariant value(const QByteArray & key) const;
 
 
     /**
      * The associated value of the key.
      * @param key the key
      */
-    QVariant take(const QString &key);
+    QVariant take(const QByteArray & key);
 
     /**
      *
      * @param key the key
      * @return whether the key is set
      */
-    bool contains(const QString &key) const;
+    bool contains(const QByteArray & key) const;
 
     /**
      * Sets the value for the key depending on the owner
@@ -77,14 +77,14 @@ public:
      * @param key the key
      * @param value the value
      */
-    void setPrivateValue(const void *owner, const QString &key, const QVariant &value) const;
+    void setPrivateValue(const void *owner, const QByteArray & key, const QVariant &value);
 
     /**
      * The associated value of the key if present.
      * @param owner the owner
      * @param key the key
      */
-    QVariant privateValue(const void *owner, const QString &key) const;
+    QVariant privateValue(const void *owner, const QByteArray & key) const;
 
     /**
      *
@@ -92,9 +92,7 @@ public:
      * @param key the key
      * @return whether the key is set
      */
-    bool containsPrivateValue(const void *owner, const QString &key) const;
-
-
+    bool containsPrivateValue(const void *owner, const QByteArray & key) const;
 
     /**
      * The associated value of the key if present.
@@ -102,11 +100,11 @@ public:
      * @param key the key
      * @return whether the key is set
      */
-    QVariant takePrivateValue(const void *owner, const QString &key);
+    QVariant takePrivateValue(const void *owner, const QByteArray &key);
 
 private:
-    QVariantHash m_data;
-    mutable QHash<QPair<quintptr, QString>, QVariant> m_privateData;
+    QHash<QByteArray, QVariant>  m_data;
+    QHash<QPair<quintptr, QByteArray>, QVariant> m_privateData;
 
     friend SNORE_EXPORT QDebug(::operator<<)(QDebug, const Snore::Hint &);
 

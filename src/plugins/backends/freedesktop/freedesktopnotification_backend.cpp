@@ -13,13 +13,14 @@ using namespace Snore;
 bool FreedesktopBackend::initialize()
 {
 
-    m_interface = new org::freedesktop::Notifications("org.freedesktop.Notifications", "/org/freedesktop/Notifications",
+    m_interface = new org::freedesktop::Notifications(QLatin1String("org.freedesktop.Notifications"),
+                                                      QLatin1String("/org/freedesktop/Notifications"),
             QDBusConnection::sessionBus(), this);
 
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
     reply.waitForFinished();
     QStringList caps  = reply.value();
-    m_supportsRichtext = caps.contains("body-markup");
+    m_supportsRichtext = caps.contains(QLatin1String("body-markup"));
     connect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
     connect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
 
@@ -58,7 +59,7 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     QVariantMap hints;
     if (noti.icon().isValid()) {
         FreedesktopImageHint image(noti.icon().image());
-        hints["image_data"] = QVariant::fromValue(image);
+        hints.insert(QLatin1String("image_data"), QVariant::fromValue(image));
     }
 	
     char urgency = '1';
@@ -67,10 +68,10 @@ void  FreedesktopBackend::slotNotify(Notification noti)
 	} else if(noti.priority() > 2) {
 		urgency = '2';
 	}
-	hints["urgency"] = urgency;
+    hints.insert(QLatin1String("urgency"), urgency);
 
     if (noti.application().constHints().contains("desktop-entry")) {
-        hints["desktop-entry"] = noti.application().constHints().value("desktop-entry");
+        hints.insert(QLatin1String("desktop-entry"), noti.application().constHints().value("desktop-entry"));
     }
 
     uint updateId = 0;
@@ -79,9 +80,10 @@ void  FreedesktopBackend::slotNotify(Notification noti)
         m_dbusIdMap.take(updateId);
     }
 
-    QString title = QString("%1 - %2").arg(noti.application().name(), noti.title(m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP));
+    QString title = noti.application().name() + QLatin1String(" - ") + noti.title(m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP);
     QString body(noti.text(m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP));
-    QDBusPendingReply<uint>  id = m_interface->Notify(noti.application().name(), updateId, "", title,
+    //TODO: add app icon hint?
+    QDBusPendingReply<uint>  id = m_interface->Notify(noti.application().name(), updateId, QString(), title,
                                   body, actions, hints, noti.isSticky() ? -1 : noti.timeout() * 1000);
 
     id.waitForFinished();

@@ -37,7 +37,7 @@ public:
     virtual bool initialize() override;
     virtual bool deinitialize() override;
 
-public slots:
+public Q_SLOTS:
     virtual void slotActionInvoked(Snore::Notification notification);
     virtual void slotNotificationClosed(Snore::Notification notification);
 };

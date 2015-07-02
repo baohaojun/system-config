@@ -29,25 +29,25 @@ using namespace Snore;
 
 void Pushover::slotNotify(Notification notification)
 {
-    QString key = value("UserKey").toString();
+    QString key = value(QLatin1String("UserKey")).toString();
     if (key.isEmpty()) {
         return;
     }
 
-    QNetworkRequest request(QUrl("https://api.pushover.net/1/messages.json"));
+    QNetworkRequest request(QUrl::fromEncoded("https://api.pushover.net/1/messages.json"));
     QHttpMultiPart *mp = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
     QHttpPart title;
-    title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
+    title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"title\"")));
     title.setBody(notification.title().toUtf8().constData());
     mp->append(title);
 
     QString textString;
-    if(notification.application().constHints().value("use-markup").toBool()){
+    if(notification.constHints().value("use-markup").toBool()){
         textString = notification.text(Utils::HREF | Utils::BOLD | Utils::UNDERLINE | Utils::FONT | Utils::ITALIC);
 
         QHttpPart html;
-        html.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"html\""));
+        html.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"html\"")));
         html.setBody("1");
         mp->append(html);
     } else {
@@ -55,52 +55,52 @@ void Pushover::slotNotify(Notification notification)
     }
 
     QHttpPart text;
-    text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"message\""));
-    snoreDebug(SNORE_DEBUG) << "Use Markup" << notification.application().constHints().value("use-markup").toBool();
+    text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"message\"")));
+    snoreDebug(SNORE_DEBUG) << "Use Markup" << notification.constHints().value("use-markup").toBool();
     snoreDebug(SNORE_DEBUG) << "Message" << textString;
     text.setBody(textString.toUtf8().constData());
     mp->append(text);
 
     QHttpPart priority;
-    priority.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"priority\""));
+    priority.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"priority\"")));
     priority.setBody(QString::number(notification.priority()).toUtf8().constData());
     mp->append(priority);
     if(notification.priority() == Notification::EMERGENCY){
 
         QHttpPart retry;
-        retry.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"retry\""));
+        retry.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"retry\"")));
         retry.setBody("30");// rety every 30 s
         mp->append(retry);
 
         QHttpPart expire;
-        expire.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"expire\""));
+        expire.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"expire\"")));
         expire.setBody("300");//5 min
         mp->append(expire);
     }
 
     QHttpPart sound;
-    sound.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"sound\""));
+    sound.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"sound\"")));
     if (notification.hints().value("silent").toBool()) {
         sound.setBody("none");
     } else {
-        sound.setBody(value("Sound", LOCAL_SETTING).toString().toUtf8().constData());
+        sound.setBody(value(QLatin1String("Sound"), LOCAL_SETTING).toString().toUtf8().constData());
     }
     mp->append(sound);
 
-    if (!value("Devices", LOCAL_SETTING).toString().isEmpty()) {
+    if (!value(QLatin1String("Devices"), LOCAL_SETTING).toString().isEmpty()) {
         QHttpPart devices;
-        devices.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"device\""));
-        devices.setBody(value("Devices", LOCAL_SETTING).toString().toUtf8().constData());
+        devices.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"device\"")));
+        devices.setBody(value(QLatin1String("Devices"), LOCAL_SETTING).toString().toUtf8().constData());
         mp->append(devices);
     }
 
     QHttpPart token;
-    token.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
+    token.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"token\"")));
     token.setBody(notification.application().constHints().value("pushover-token").toString().toUtf8().constData());
     mp->append(token);
 
     QHttpPart user;
-    user.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"user\""));
+    user.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"user\"")));
     user.setBody(key.toUtf8().constData());
     mp->append(user);
 
@@ -118,9 +118,9 @@ void Pushover::slotNotify(Notification notification)
 
 bool Pushover::initialize()
 {
-    setDefaultValue("UserKey", "");
-    setDefaultValue("Sound", "pushover", LOCAL_SETTING);
-    setDefaultValue("Devices", "", LOCAL_SETTING);
+    setDefaultValue(QLatin1String("UserKey"), QString());
+    setDefaultValue(QLatin1String("Sound"), QLatin1String("pushover"), LOCAL_SETTING);
+    setDefaultValue(QLatin1String("Devices"), QString(), LOCAL_SETTING);
     return SnoreSecondaryBackend::initialize();
 }
 

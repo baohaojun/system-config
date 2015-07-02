@@ -38,14 +38,14 @@ PushoverSettings::~PushoverSettings()
 
 void PushoverSettings::load()
 {
-    m_keyLineEdit->setText(value("UserKey").toString());
-    m_soundLineEdit->setText(value("Sound", Snore::LOCAL_SETTING).toString());
-    m_deviceLineEdit->setText(value("Devices", Snore::LOCAL_SETTING).toString());
+    m_keyLineEdit->setText(value(QLatin1String("UserKey")).toString());
+    m_soundLineEdit->setText(value(QLatin1String("Sound"), Snore::LOCAL_SETTING).toString());
+    m_deviceLineEdit->setText(value(QLatin1String("Devices"), Snore::LOCAL_SETTING).toString());
 }
 
 void PushoverSettings::save()
 {
-    setValue("UserKey", m_keyLineEdit->text());
-    setValue("Sound", m_soundLineEdit->text(), Snore::LOCAL_SETTING);
-    setValue("Devices", m_deviceLineEdit->text(), Snore::LOCAL_SETTING);
+    setValue(QLatin1String("UserKey"), m_keyLineEdit->text());
+    setValue(QLatin1String("Sound"), m_soundLineEdit->text(), Snore::LOCAL_SETTING);
+    setValue(QLatin1String("Devices"), m_deviceLineEdit->text(), Snore::LOCAL_SETTING);
 }

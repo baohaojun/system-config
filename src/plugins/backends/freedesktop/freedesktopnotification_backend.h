@@ -17,7 +17,7 @@ public:
     bool canCloseNotification() const override;
     bool canUpdateNotification() const override;
 
-public slots:
+public Q_SLOTS:
     void slotNotify(Snore::Notification notification) override;
     void slotCloseNotification(Snore::Notification notification) override;
 

@@ -36,8 +36,8 @@ Sound::Sound():
 
 bool Sound::initialize()
 {
-    setDefaultValue("Volume", 50);
-    m_player->setVolume(value("Volume").toInt());
+    setDefaultValue(QLatin1String("Volume"), 50);
+    m_player->setVolume(value(QLatin1String("Volume")).toInt());
 
     return SnoreSecondaryBackend::initialize();
 }
@@ -55,7 +55,7 @@ void Sound::slotNotificationDisplayed(Snore::Notification notification)
 
     QString sound = notification.hints().value("sound").toString();
     if (sound.isEmpty()) {
-        sound = value("Sound").toString();
+        sound = value(QLatin1String("Sound")).toString();
     }
     snoreDebug(SNORE_DEBUG) << "SoundFile:" << sound;
     if (!sound.isEmpty()) {

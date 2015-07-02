@@ -59,11 +59,11 @@ public:
     Qt::Corner corner();
     qlonglong wid();
 
-signals:
+Q_SIGNALS:
     void invoked();
     void dismissed();
 
-private slots:
+private Q_SLOTS:
     void slotDismissed();
 
     void slotInvoked();

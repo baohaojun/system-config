@@ -36,11 +36,13 @@ static void init()
     debugLevel = qgetenv("LIBSNORE_DEBUG_LVL").toInt();
     if (qgetenv("LIBSNORE_LOG_TO_FILE").toInt() == 1) {
 
-        QString name = QString("%1/libsnore/%2-log.txt").arg(QDir::tempPath(), qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName());
+        QString name = QDir::tempPath() + QLatin1String("/libsnore/") +
+                (qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName()) +
+                QLatin1String("-log.txt");
         if (!qgetenv("LIBSNORE_LOGFILE").isNull()) {
-            name = QString(qgetenv("LIBSNORE_LOGFILE"));
+            name = QString::fromUtf8(qgetenv("LIBSNORE_LOGFILE"));
         } else {
-            QDir::temp().mkpath("libsnore");
+            QDir::temp().mkpath(QLatin1String("libsnore"));
         }
         std::cout << "Started logging to " << name.toLocal8Bit().constData() << std::endl;
 

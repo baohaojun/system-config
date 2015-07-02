@@ -38,13 +38,13 @@ GrowlSettings::~GrowlSettings()
 
 void GrowlSettings::load()
 {
-    m_host->setText(value("Host").toString());
-    m_password->setText(value("Password").toString());
+    m_host->setText(value(QLatin1String("Host")).toString());
+    m_password->setText(value(QLatin1String("Password")).toString());
 }
 
 void GrowlSettings::save()
 {
-    setValue("Host", m_host->text());
-    setValue("Password", m_password->text());
+    setValue(QLatin1String("Host"), m_host->text());
+    setValue(QLatin1String("Password"), m_password->text());
 }
 

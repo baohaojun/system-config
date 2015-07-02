@@ -41,7 +41,7 @@ public:
 
     void registerDevice(const QString &email, const QString &password, const QString& deviceName);
 
-public slots:
+public Q_SLOTS:
     void slotActionInvoked(Snore::Notification notification);
 
 

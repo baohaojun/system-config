@@ -16,12 +16,12 @@ public:
 
     virtual bool canCloseNotification() const override;
 
-public slots:
+public Q_SLOTS:
     void slotNotify(Snore::Notification notification) override;
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotCloseNotification(Snore::Notification notification) override;
 
-private slots:
+private Q_SLOTS:
     void slotToastNotificationClosed(int code, QProcess::ExitStatus);
     void slotPrintExitStatus(int code, QProcess::ExitStatus);
 private:

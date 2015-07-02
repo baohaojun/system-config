@@ -113,7 +113,7 @@ private:
 
 bool SnarlBackend::initialize()
 {
-    setDefaultValue("Password", QString());
+    setDefaultValue(QLatin1String("Password"), QString());
 
     if(!SnoreBackend::initialize()) {
         return false;
@@ -167,8 +167,8 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
     SnarlInterface *snarlInterface = new SnarlInterface();
     m_applications.insert(application.name(), snarlInterface);
 
-    QString appName = application.name().replace(" ", "_"); //app sig must not contain spaces
-    QString password = value("Password").toString();
+    QString appName = application.name().replace(QLatin1Char(' '), QLatin1Char('_')); //app sig must not contain spaces
+    QString password = value(QLatin1String("Password")).toString();
     LONG32 result = snarlInterface->Register(appName.toUtf8().constData(),
                     application.name().toUtf8().constData(),
                     application.icon().localUrl().toUtf8().constData(),
@@ -190,7 +190,7 @@ void SnarlBackend::slotDeregisterApplication(const Application &application)
         return;
     }
     SnarlInterface *snarlInterface = m_applications.take(application.name());
-    QString appName = application.name().replace(" ", "_"); //app sig must not contain spaces
+    QString appName = application.name().replace(QLatin1Char(' '), QLatin1Char('_')); //app sig must not contain spaces
     snarlInterface->Unregister(appName.toUtf8().constData());
     delete snarlInterface;
 }
@@ -226,7 +226,7 @@ void SnarlBackend::slotNotify(Notification notification)
                                     priority);
 
         foreach(const Action & a, notification.actions()) {
-            snarlInterface->AddAction(id, a.name().toUtf8().constData(), QString("@").append(QString::number(a.id())).toUtf8().constData());
+            snarlInterface->AddAction(id, a.name().toUtf8().constData(), (QLatin1Char('@') + QString::number(a.id())).toUtf8().constData());
         }
         m_idMap[id] = notification;
         notification.hints().setPrivateValue(this, "id", id);

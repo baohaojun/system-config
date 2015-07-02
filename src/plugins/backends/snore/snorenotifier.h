@@ -40,7 +40,7 @@ public:
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 
-public slots:
+public Q_SLOTS:
     virtual void slotNotify(Snore::Notification notification) override;
     virtual void slotCloseNotification(Snore::Notification notification) override;
 
