@@ -120,7 +120,7 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
         return true;
     }
 #elif defined(Q_OS_LINUX)
-    if (setBackendIfAvailible(QLatin1String("FreedesktopNotification")) {
+    if (setBackendIfAvailible(QLatin1String("FreedesktopNotification"))) {
         return true;
     }
 #elif defined(Q_OS_MAC)
