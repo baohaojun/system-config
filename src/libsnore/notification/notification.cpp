@@ -184,7 +184,7 @@ NotificationData *Notification::data()
 
 int Notification::defaultTimeout()
 {
-    return SnoreCore::instance().value(QLatin1String("Timeout"), LOCAL_SETTING).toInt();
+    return SnoreCore::instance().settingsValue(QLatin1String("Timeout"), LOCAL_SETTING).toInt();
 }
 
 QDataStream &operator<< (QDataStream &stream, const Notification &noti)

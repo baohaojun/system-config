@@ -28,7 +28,7 @@ using namespace Snore;
 
 void NotifyMyAndroid::slotNotify(Notification notification)
 {
-    QString key = value(QLatin1String("ApiKey")).toString();
+    QString key = settingsValue(QLatin1String("ApiKey")).toString();
     if (key.isEmpty()) {
         return;
     }
@@ -64,7 +64,7 @@ void NotifyMyAndroid::slotNotify(Notification notification)
 
 bool NotifyMyAndroid::initialize()
 {
-    setDefaultValue(QLatin1String("ApiKey"), QString());
+    setDefaultSettingsValue(QLatin1String("ApiKey"), QString());
     return SnoreSecondaryBackend::initialize();
 }
 

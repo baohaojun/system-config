@@ -44,7 +44,7 @@ SnorePlugin::~SnorePlugin()
 
 bool SnorePlugin::initialize()
 {
-    setDefaultValue(QLatin1String("Enabled"), false, LOCAL_SETTING);
+    setDefaultSettingsValue(QLatin1String("Enabled"), false, LOCAL_SETTING);
     if (m_initialized) {
         qFatal("Something went wrong, plugin %s is already initialized", this->name().toLatin1().constData());
         return false;
@@ -59,19 +59,19 @@ bool SnorePlugin::isInitialized() const
     return m_initialized;
 }
 
-QVariant SnorePlugin::value(const QString &key, SettingsType type) const
+QVariant SnorePlugin::settingsValue(const QString &key, SettingsType type) const
 {
-    return SnoreCore::instance().value(normaliseKey(key), type);
+    return SnoreCore::instance().settingsValue(normaliseKey(key), type);
 }
 
-void SnorePlugin::setValue(const QString &key, const QVariant &value, SettingsType type)
+void SnorePlugin::setSettingsValue(const QString &key, const QVariant &value, SettingsType type)
 {
-    SnoreCore::instance().setValue(normaliseKey(key), value, type);
+    SnoreCore::instance().setSettingsValue(normaliseKey(key), value, type);
 }
 
-void SnorePlugin::setDefaultValue(const QString &key, const QVariant &value, SettingsType type)
+void SnorePlugin::setDefaultSettingsValue(const QString &key, const QVariant &value, SettingsType type)
 {
-    SnoreCore::instance().setDefaultValue(normaliseKey(key), value, type);
+    SnoreCore::instance().setDefaultSettingsValue(normaliseKey(key), value, type);
 }
 
 Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()

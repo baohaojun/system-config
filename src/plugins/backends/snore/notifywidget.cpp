@@ -148,7 +148,7 @@ int NotifyWidget::id()
 
 Qt::Corner NotifyWidget::corner()
 {
-    return static_cast<Qt::Corner>(m_parent->value(QLatin1String("Position")).toInt());
+    return static_cast<Qt::Corner>(m_parent->settingsValue(QLatin1String("Position")).toInt());
 }
 
 qlonglong NotifyWidget::wid()

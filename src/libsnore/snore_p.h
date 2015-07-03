@@ -58,7 +58,7 @@ public:
 
     void syncSettings();
 
-    QString normalizeKey(const QString &key, SettingsType type) const
+    QString normalizeSettingsKey(const QString &key, SettingsType type) const
     {
         return Snore::Utils::normalizeSettingsKey(key, type, m_localSettingsPrefix);
     }
@@ -70,7 +70,7 @@ public:
     /**
      * Set a default value wich can be overritten by a client application call to SnoreCore::setDefaultValue()
      */
-    void setDefaultValueIntern(const QString &key, const QVariant &value);
+    void setDefaultSettingsValueIntern(const QString &key, const QVariant &value);
 
 private Q_SLOTS:
     //TODO: find a better solutinon for the slots in this section

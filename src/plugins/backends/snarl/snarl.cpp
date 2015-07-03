@@ -113,7 +113,7 @@ private:
 
 bool SnarlBackend::initialize()
 {
-    setDefaultValue(QLatin1String("Password"), QString());
+    setDefaultSettingsValue(QLatin1String("Password"), QString());
 
     if(!SnoreBackend::initialize()) {
         return false;
@@ -168,7 +168,7 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
     m_applications.insert(application.name(), snarlInterface);
 
     QString appName = application.name().replace(QLatin1Char(' '), QLatin1Char('_')); //app sig must not contain spaces
-    QString password = value(QLatin1String("Password")).toString();
+    QString password = settingsValue(QLatin1String("Password")).toString();
     LONG32 result = snarlInterface->Register(appName.toUtf8().constData(),
                     application.name().toUtf8().constData(),
                     application.icon().localUrl().toUtf8().constData(),

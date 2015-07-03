@@ -29,7 +29,7 @@ using namespace Snore;
 
 void Pushover::slotNotify(Notification notification)
 {
-    QString key = value(QLatin1String("UserKey")).toString();
+    QString key = settingsValue(QLatin1String("UserKey")).toString();
     if (key.isEmpty()) {
         return;
     }
@@ -83,14 +83,14 @@ void Pushover::slotNotify(Notification notification)
     if (notification.hints().value("silent").toBool()) {
         sound.setBody("none");
     } else {
-        sound.setBody(value(QLatin1String("Sound"), LOCAL_SETTING).toString().toUtf8().constData());
+        sound.setBody(settingsValue(QLatin1String("Sound"), LOCAL_SETTING).toString().toUtf8().constData());
     }
     mp->append(sound);
 
-    if (!value(QLatin1String("Devices"), LOCAL_SETTING).toString().isEmpty()) {
+    if (!settingsValue(QLatin1String("Devices"), LOCAL_SETTING).toString().isEmpty()) {
         QHttpPart devices;
         devices.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"device\"")));
-        devices.setBody(value(QLatin1String("Devices"), LOCAL_SETTING).toString().toUtf8().constData());
+        devices.setBody(settingsValue(QLatin1String("Devices"), LOCAL_SETTING).toString().toUtf8().constData());
         mp->append(devices);
     }
 
@@ -118,9 +118,9 @@ void Pushover::slotNotify(Notification notification)
 
 bool Pushover::initialize()
 {
-    setDefaultValue(QLatin1String("UserKey"), QString());
-    setDefaultValue(QLatin1String("Sound"), QLatin1String("pushover"), LOCAL_SETTING);
-    setDefaultValue(QLatin1String("Devices"), QString(), LOCAL_SETTING);
+    setDefaultSettingsValue(QLatin1String("UserKey"), QString());
+    setDefaultSettingsValue(QLatin1String("Sound"), QLatin1String("pushover"), LOCAL_SETTING);
+    setDefaultSettingsValue(QLatin1String("Devices"), QString(), LOCAL_SETTING);
     return SnoreSecondaryBackend::initialize();
 }
 

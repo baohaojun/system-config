@@ -50,8 +50,8 @@ PushoverFrontend::PushoverFrontend()
 
 bool PushoverFrontend::initialize()
 {
-    setDefaultValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
-    setDefaultValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
+    setDefaultSettingsValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
+    setDefaultSettingsValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
 
     if(!SnoreFrontend::initialize()) {
         return false;
@@ -81,7 +81,7 @@ PluginSettingsWidget *PushoverFrontend::settingsWidget()
 
 void PushoverFrontend::login(const QString &email, const QString &password, const QString &deviceName)
 {
-    setValue(QLatin1String("DeviceName"), deviceName, Snore::LOCAL_SETTING);
+    setSettingsValue(QLatin1String("DeviceName"), deviceName, Snore::LOCAL_SETTING);
 
     QNetworkRequest request(QUrl(QLatin1String("https://api.pushover.net/1/users/login.json")));
 
@@ -110,8 +110,8 @@ void PushoverFrontend::login(const QString &email, const QString &password, cons
 
 void PushoverFrontend::logOut()
 {
-    setValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
-    setValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
+    setSettingsValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
+    setSettingsValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
     m_socket->close();
     m_socket->deleteLater();
     emit loggedInChanged(false);
@@ -137,12 +137,12 @@ void PushoverFrontend::slotActionInvoked(Notification notification)
 
 QString PushoverFrontend::secret()
 {
-    return value(QLatin1String("Secret"),  LOCAL_SETTING).toString();
+    return settingsValue(QLatin1String("Secret"),  LOCAL_SETTING).toString();
 }
 
 QString PushoverFrontend::device()
 {
-    return value(QLatin1String("DeviceID"),  LOCAL_SETTING).toString();
+    return settingsValue(QLatin1String("DeviceID"),  LOCAL_SETTING).toString();
 }
 
 void PushoverFrontend::connectToService()
@@ -211,8 +211,8 @@ void PushoverFrontend::registerDevice(const QString &secret, const QString &devi
         reply->deleteLater();
         QJsonObject message = QJsonDocument::fromJson(input).object();
         if(message.value(QLatin1String("status")).toInt() == 1) {
-            setValue(QLatin1String("Secret"), secret, LOCAL_SETTING);
-            setValue(QLatin1String("DeviceID"), message.value(QLatin1String("id")).toString(), LOCAL_SETTING);;
+            setSettingsValue(QLatin1String("Secret"), secret, LOCAL_SETTING);
+            setSettingsValue(QLatin1String("DeviceID"), message.value(QLatin1String("id")).toString(), LOCAL_SETTING);;
             connectToService();
         } else {
             snoreDebug(SNORE_WARNING) << "An error occure" << input;

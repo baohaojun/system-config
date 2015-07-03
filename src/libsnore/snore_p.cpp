@@ -42,7 +42,7 @@ SnoreCorePrivate::SnoreCorePrivate():
 
     snoreDebug(SNORE_DEBUG) << "Temp dir is" << tempPath();
     snoreDebug(SNORE_DEBUG) << "Snore settings are located in" << m_settings->fileName();
-    snoreDebug(SNORE_DEBUG) << "Snore local settings are located in" << normalizeKey(QLatin1String("Test"), LOCAL_SETTING);
+    snoreDebug(SNORE_DEBUG) << "Snore local settings are located in" << normalizeSettingsKey(QLatin1String("Test"), LOCAL_SETTING);
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
 }
@@ -96,7 +96,7 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         }
 
         m_notificationBackend = b;
-        q->setValue(QLatin1String("PrimaryBackend"), backend, LOCAL_SETTING);
+        q->setSettingsValue(QLatin1String("PrimaryBackend"), backend, LOCAL_SETTING);
         return true;
     }
     return false;
@@ -105,8 +105,8 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 bool SnoreCorePrivate::initPrimaryNotificationBackend()
 {
     Q_Q(SnoreCore);
-    snoreDebug(SNORE_DEBUG) << q->value(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString();
-    if (setBackendIfAvailible(q->value(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString())) {
+    snoreDebug(SNORE_DEBUG) << q->settingsValue(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString();
+    if (setBackendIfAvailible(q->settingsValue(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString())) {
         return true;
     }
 #ifdef Q_OS_WIN
@@ -140,15 +140,15 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
 void SnoreCorePrivate::init()
 {
     Q_Q(SnoreCore);
-    setDefaultValueIntern(QLatin1String("Timeout"), 10);
-    setDefaultValueIntern(QLatin1String("Silent"), false);
+    setDefaultSettingsValueIntern(QLatin1String("Timeout"), 10);
+    setDefaultSettingsValueIntern(QLatin1String("Silent"), false);
     m_defaultApp = Application(QLatin1String("SnoreNotify"), Icon::defaultIcon());
 }
 
-void SnoreCorePrivate::setDefaultValueIntern(const QString &key, const QVariant &value)
+void SnoreCorePrivate::setDefaultSettingsValueIntern(const QString &key, const QVariant &value)
 {
     Q_Q(SnoreCore);
-    QString nk = normalizeKey( key + QLatin1String("-SnoreDefault"), LOCAL_SETTING);
+    QString nk = normalizeSettingsKey( key + QLatin1String("-SnoreDefault"), LOCAL_SETTING);
     if (!m_settings->contains(nk)) {
         m_settings->setValue(nk, value);
     }
@@ -157,7 +157,7 @@ void SnoreCorePrivate::setDefaultValueIntern(const QString &key, const QVariant 
 void SnoreCorePrivate::syncSettings()
 {
     Q_Q(SnoreCore);
-    QString newBackend = q->value(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString();
+    QString newBackend = q->settingsValue(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString();
     if (!newBackend.isEmpty()) {
         QString oldBackend;
         if (m_notificationBackend) {
@@ -166,7 +166,7 @@ void SnoreCorePrivate::syncSettings()
             m_notificationBackend = nullptr;
         }
         if (!setBackendIfAvailible(newBackend)) {
-            snoreDebug(SNORE_WARNING) << "Failed to set new backend" << q->value(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString() << "restoring" << oldBackend;
+            snoreDebug(SNORE_WARNING) << "Failed to set new backend" << q->settingsValue(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString() << "restoring" << oldBackend;
             setBackendIfAvailible(oldBackend);
         }
     }
@@ -176,7 +176,7 @@ void SnoreCorePrivate::syncSettings()
     for(auto type : types) {
         for (auto &pluginName : m_pluginNames[type]) {
             SnorePlugin *plugin = m_plugins.value(pluginName);
-            bool enable = m_plugins[pluginName]->value(QLatin1String("Enabled"), LOCAL_SETTING).toBool();
+            bool enable = m_plugins[pluginName]->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool();
             if (!plugin->isInitialized() && enable) {
                 plugin->initialize();
             } else if (plugin->isInitialized() && !enable) {

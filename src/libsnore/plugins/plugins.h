@@ -63,9 +63,9 @@ public:
     PluginTypes type() const;
     const QString typeName() const;
 
-    QVariant value(const QString &key, SettingsType type = GLOBAL_SETTING) const;
-    void setValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
-    void setDefaultValue(const QString &key, const QVariant &value, SettingsType type = GLOBAL_SETTING);
+    QVariant settingsValue(const QString &key, SettingsType type = GLOBAL_SETTING) const;
+    void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
+    void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
 
     virtual PluginSettingsWidget *settingsWidget();
 

@@ -72,7 +72,7 @@ PushoverSettings::~PushoverSettings()
 
 void PushoverSettings::load()
 {
-    m_deviceLineEdit->setText(value(QLatin1String("DeviceName"), Snore::LOCAL_SETTING).toString());
+    m_deviceLineEdit->setText(settingsValue(QLatin1String("DeviceName"), Snore::LOCAL_SETTING).toString());
 }
 
 void PushoverSettings::save()

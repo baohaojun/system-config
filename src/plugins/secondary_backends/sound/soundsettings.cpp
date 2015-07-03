@@ -53,13 +53,13 @@ SoundSettings::~SoundSettings()
 
 void SoundSettings::load()
 {
-    m_lineEditFileName->setText(value(QLatin1String("Sound")).toString());
-    m_spinBoxVolume->setValue(value(QLatin1String("Volume")).toInt());
+    m_lineEditFileName->setText(settingsValue(QLatin1String("Sound")).toString());
+    m_spinBoxVolume->setValue(settingsValue(QLatin1String("Volume")).toInt());
 }
 
 void SoundSettings::save()
 {
-    setValue(QLatin1String("Sound"), m_lineEditFileName->text());
-    setValue(QLatin1String("Volume"), m_spinBoxVolume->value());
+    setSettingsValue(QLatin1String("Sound"), m_lineEditFileName->text());
+    setSettingsValue(QLatin1String("Volume"), m_spinBoxVolume->value());
 }
 
