@@ -69,7 +69,7 @@ private:
     {
         QStringList out;
         for (const QString &extention : pluginExtentions()) {
-            out << QString(QLatin1String("libsnore_*.%1")).arg(extention);
+            out << QLatin1String("libsnore_*.") + extention;
         }
         return out;
     }
@@ -78,7 +78,7 @@ private:
     {
         QStringList out;
         for (const QString &extention : pluginExtentions()) {
-            out << QString(QLatin1String("libsnore_%1_*.%2")).arg(SnorePlugin::typeToString(type).toLower(), extention);
+            out << QLatin1String("libsnore_") + SnorePlugin::typeToString(type).toLower() + QLatin1String("_*.") + extention;
         }
         return out;
     }

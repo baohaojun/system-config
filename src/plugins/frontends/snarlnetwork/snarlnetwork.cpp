@@ -108,9 +108,9 @@ void SnarlNetworkFrontend::handleMessages()
         if (noti.isValid()) {
             noti.addActiveIn(this);
             SnoreCore::instance().broadcastNotification(noti);
-            write(client, QString(QLatin1String("%1/%2\r\n")).arg(out, QString::number(noti.id())));
+            write(client, out + QLatin1Char("/") + QString::number(noti.id()) + QLatin1String("\r\n"));
         } else {
-            write(client, QString(QLatin1String("%1\r\n")).arg(out));
+            write(client, out + QLatin1String("\r\n"));
         }
     }
 }
@@ -120,7 +120,7 @@ void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
     if (sn.hints().containsPrivateValue(this, "clientSocket")) {
         QTcpSocket *client = sn.hints().privateValue(this, "clientSocket").value<QPointer<QTcpSocket>>();
         if (client) {
-            write(client, QString(QLatin1String("%1%2\r\n")).arg(msg, QString::number(sn.id())));
+            write(client, msg + QString::number(sn.id()) + QLatin1String("\r\n"));
         }
     }
 }

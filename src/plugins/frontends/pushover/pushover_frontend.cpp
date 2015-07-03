@@ -84,7 +84,7 @@ void PushoverFrontend::login(const QString &email, const QString &password, cons
     QNetworkRequest request(QUrl(QLatin1String("https://api.pushover.net/1/users/login.json")));
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
-    QNetworkReply *reply = m_manager.post(request, QString(QLatin1String("email=%1&password=%2")).arg(email, password).toUtf8().constData());
+    QNetworkReply *reply = m_manager.post(request, (QLatin1String("email=") + email + QLatin1String("&password=") + password).toUtf8().constData());
 
     connect(reply, &QNetworkReply::finished, [reply, deviceName, this]() {
         snoreDebug(SNORE_DEBUG) << reply->error();
