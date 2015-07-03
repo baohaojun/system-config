@@ -25,7 +25,6 @@
 #include <QPointer>
 #include <QtWebSockets/QWebSocket>
 
-
 class PushoverFrontend : public Snore::SnoreFrontend
 {
     Q_OBJECT
@@ -39,7 +38,7 @@ public:
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 
-    void login(const QString &email, const QString &password, const QString& deviceName);
+    void login(const QString &email, const QString &password, const QString &deviceName);
     void logOut();
 
     bool isLoggedIn() const;
@@ -67,9 +66,6 @@ private:
     void getMessages();
     void deleteMessages(int latestMessageId);
     void acknowledgeNotification(Snore::Notification notification);
-
-
-
 
 };
 

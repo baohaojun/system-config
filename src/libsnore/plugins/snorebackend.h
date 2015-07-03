@@ -57,7 +57,6 @@ protected Q_SLOTS:
 protected:
     void closeNotification(Snore::Notification, Snore::Notification::CloseReasons);
 
-
 };
 
 }

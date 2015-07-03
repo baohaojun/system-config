@@ -36,21 +36,19 @@ void NotifyMyAndroid::slotNotify(Notification notification)
     QNetworkRequest request(QUrl::fromEncoded("https://www.notifymyandroid.com/publicapi/notify"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
 
-
     QString data = QLatin1String("apikey=") + key
-            + QLatin1String("&application=") + notification.application().name()
-            + QLatin1String("&event=") + notification.title()
-            + QLatin1String("&priority=") + QString::number(notification.priority())
-            + QLatin1String("&description=");
+                   + QLatin1String("&application=") + notification.application().name()
+                   + QLatin1String("&event=") + notification.title()
+                   + QLatin1String("&priority=") + QString::number(notification.priority())
+                   + QLatin1String("&description=");
 
-    if(notification.constHints().value("supports-markup").toBool()){
+    if (notification.constHints().value("supports-markup").toBool()) {
         data += notification.text(Utils::HREF | Utils::BOLD | Utils::BREAK |
                                   Utils::UNDERLINE | Utils::FONT | Utils::ITALIC)
                 + QLatin1String("&content-type=text/html");
-    }else{
+    } else {
         data += notification.text();
     }
-
 
     QNetworkReply *reply =  m_manager.post(request, data.toUtf8().constData());
     connect(reply, &QNetworkReply::finished, [reply]() {

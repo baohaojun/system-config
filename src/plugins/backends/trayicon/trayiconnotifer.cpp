@@ -6,7 +6,6 @@
 #include <QSystemTrayIcon>
 using namespace Snore;
 
-
 bool TrayIconNotifer::deinitialize()
 {
     if (SnoreBackend::deinitialize()) {

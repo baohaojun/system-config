@@ -29,7 +29,7 @@ using namespace Snore;
 
 bool SnarlNetworkFrontend::initialize()
 {
-    if(!SnoreFrontend::initialize()) {
+    if (!SnoreFrontend::initialize()) {
         return false;
     }
     parser = new Parser(this);
@@ -99,7 +99,7 @@ void SnarlNetworkFrontend::handleMessages()
     QTcpSocket *client = qobject_cast<QTcpSocket *>(sender());
 
     QStringList messages(QString::fromLatin1(client->readAll()).trimmed().split(QLatin1String("\r\n")));
-    foreach(const QString & s, messages) {
+    foreach (const QString &s, messages) {
         if (s.isEmpty()) {
             continue;
         }
@@ -119,7 +119,7 @@ void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
 {
     if (sn.hints().containsPrivateValue(this, "clientSocket")) {
         QTcpSocket *client = sn.hints().privateValue(this, "clientSocket").value<QPointer<QTcpSocket>>();
-        if(client){
+        if (client) {
             write(client, QString(QLatin1String("%1%2\r\n")).arg(msg, QString::number(sn.id())));
         }
     }

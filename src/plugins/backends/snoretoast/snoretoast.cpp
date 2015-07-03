@@ -16,7 +16,7 @@ using namespace Snore;
 
 bool SnoreToast::initialize()
 {
-    if(!SnoreBackend::initialize()) {
+    if (!SnoreBackend::initialize()) {
         return false;
     }
     if (QSysInfo::windowsVersion() < QSysInfo::WV_WINDOWS8) {

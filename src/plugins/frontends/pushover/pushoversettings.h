@@ -44,7 +44,6 @@ private:
 private Q_SLOTS:
     void slotUpdateLoginState(bool state);
 
-
 };
 
 #endif // PUSHOVERSETTINGS_H

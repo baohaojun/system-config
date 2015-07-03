@@ -23,7 +23,6 @@
 
 int FreedesktopImageHint::imageHintID = qDBusRegisterMetaType<FreedesktopImageHint>();
 
-
 FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
 {
     QImage image(img.convertToFormat(QImage::Format_ARGB32));

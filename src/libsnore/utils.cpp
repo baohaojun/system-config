@@ -71,57 +71,55 @@ void Utils::raiseWindowToFront(qlonglong wid)
 #endif
 }
 
-
 #define HTML_REPLACE(STRING, PATTERN){\
-    static QRegExp regexp(QLatin1String(PATTERN));\
-    STRING = STRING.replace(regexp, QLatin1String("\\1"));\
+        static QRegExp regexp(QLatin1String(PATTERN));\
+        STRING = STRING.replace(regexp, QLatin1String("\\1"));\
     }\
 
+    QString Utils::normalizeMarkup(QString string, MARKUP_FLAGS tags)
+    {
+        static QMutex mutex;
+        if (tags == ALL_MARKUP) {
+            return string;
+        } else if (tags == NO_MARKUP) {
+            return QTextDocumentFragment::fromHtml(string).toPlainText();
+        }
 
-QString Utils::normalizeMarkup(QString string, MARKUP_FLAGS tags)
-{
-    static QMutex mutex;
-    if(tags == ALL_MARKUP){
+        QMutexLocker lock(&mutex);
+        if (~tags & Utils::BREAK) {
+            static QRegExp br(QLatin1String("<br>"));
+            string = string.replace(br, QLatin1String("\n"));
+        }
+        if (~tags & Utils::HREF) {
+            HTML_REPLACE(string, "<a href=.*>([^<]*)</a>");
+        }
+        if (~tags & Utils::ITALIC) {
+            HTML_REPLACE(string, "<i>([^<]*)</i>");
+        }
+        if (~tags & Utils::BOLD) {
+            HTML_REPLACE(string, "<b>([^<]*)</b>");
+        }
+        if (~tags & Utils::UNDERLINE) {
+            HTML_REPLACE(string, "<u>([^<]*)</u>");
+        }
+        if (~tags & Utils::FONT) {
+            HTML_REPLACE(string, "<font.*>([^<]*)</font>");
+        }
         return string;
-    } else if(tags == NO_MARKUP) {
-        return QTextDocumentFragment::fromHtml(string).toPlainText();
     }
-
-    QMutexLocker lock(&mutex);
-    if (~tags & Utils::BREAK) {
-        static QRegExp br(QLatin1String("<br>"));
-        string = string.replace(br, QLatin1String("\n"));
-    }
-    if (~tags & Utils::HREF) {
-        HTML_REPLACE(string, "<a href=.*>([^<]*)</a>");
-    }
-    if (~tags & Utils::ITALIC) {
-        HTML_REPLACE(string, "<i>([^<]*)</i>");
-    }
-    if (~tags & Utils::BOLD) {
-        HTML_REPLACE(string, "<b>([^<]*)</b>");
-    }
-    if (~tags & Utils::UNDERLINE) {
-        HTML_REPLACE(string, "<u>([^<]*)</u>");
-    }
-    if (~tags & Utils::FONT) {
-        HTML_REPLACE(string, "<font.*>([^<]*)</font>");
-    }
-    return string;
-}
 
 #ifdef Q_OS_WIN
-int Utils::attatchToActiveProcess()
-{
-    int idActive = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
-    return AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) ? idActive : -1;
-}
-
-void Utils::detatchActiveProcess(int idActive)
-{
-    if (idActive != -1) {
-        AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
+    int Utils::attatchToActiveProcess()
+    {
+        int idActive = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
+        return AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) ? idActive : -1;
     }
-}
+
+    void Utils::detatchActiveProcess(int idActive)
+    {
+        if (idActive != -1) {
+            AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
+        }
+    }
 
 #endif

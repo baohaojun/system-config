@@ -29,13 +29,12 @@ using namespace Snore;
 
 GrowlBackend *GrowlBackend::s_instance = nullptr;
 
-
 bool GrowlBackend::initialize()
 {
     setDefaultSettingsValue(QLatin1String("Host"), QLatin1String("localhost"));
     setDefaultSettingsValue(QLatin1String("Password"), QString());
 
-    if(!SnoreBackend::initialize()) {
+    if (!SnoreBackend::initialize()) {
         return false;
     }
 
@@ -80,9 +79,9 @@ bool GrowlBackend::deinitialize()
 
 void GrowlBackend::slotRegisterApplication(const Application &application)
 {
-    snoreDebug( SNORE_DEBUG ) << application.name();
+    snoreDebug(SNORE_DEBUG) << application.name();
     std::vector<std::string> alerts;
-    foreach(const Alert & a, application.alerts()) {
+    foreach (const Alert &a, application.alerts()) {
         snoreDebug(SNORE_DEBUG) << a.name();
         alerts.push_back(a.name().toUtf8().constData());
     }

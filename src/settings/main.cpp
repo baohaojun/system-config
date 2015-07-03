@@ -25,7 +25,7 @@ bool setSetting(const QString &appName, SettingsType type, const QString &_key, 
         return false;
     }
     settings.setValue(key, value);
-    cout <<"Set: " << qPrintable(key) << " to " << qPrintable(settings.value(key).toString()) << endl;
+    cout << "Set: " << qPrintable(key) << " to " << qPrintable(settings.value(key).toString()) << endl;
     return true;
 }
 
@@ -46,7 +46,7 @@ void listSettings(SettingsType type, const QString &application)
     cout << qPrintable(application) << endl;
     for (const QString &key : Utils::allSettingsKeysWithPrefix(
                 Utils::normalizeSettingsKey(QLatin1String(""), type, application), settings, getAllKeys)) {
-        cout <<"  " << qPrintable(key) << ": " << qPrintable(settings.value(Utils::normalizeSettingsKey(key, type, application)).toString()) << endl;
+        cout << "  " << qPrintable(key) << ": " << qPrintable(settings.value(Utils::normalizeSettingsKey(key, type, application)).toString()) << endl;
     }
 }
 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     QCommandLineOption appNameCommand({QLatin1String("a"), QLatin1String("appName")} , QLatin1String("Set the Name of the app <app>."), QLatin1String("app"), QLatin1String("GlobalSettings"));
     parser.addOption(appNameCommand);
 
-    QCommandLineOption typeCommand({QLatin1String("t"),QLatin1String("type")} ,QLatin1String("Type of the setting [global|local]."),QLatin1String("type"));
+    QCommandLineOption typeCommand({QLatin1String("t"), QLatin1String("type")} , QLatin1String("Type of the setting [global|local]."), QLatin1String("type"));
     parser.addOption(typeCommand);
 
     parser.addPositionalArgument(QLatin1String("key"), QLatin1String("The settings Key."));

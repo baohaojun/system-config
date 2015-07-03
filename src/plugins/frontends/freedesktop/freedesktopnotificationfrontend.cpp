@@ -32,7 +32,7 @@ using namespace Snore;
 bool FreedesktopFrontend::initialize()
 {
 
-    if(!SnoreFrontend::initialize()) {
+    if (!SnoreFrontend::initialize()) {
         return false;
     }
     m_adaptor = new  NotificationsAdaptor(this);
@@ -99,7 +99,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         qDebug() << QIcon::themeSearchPaths();
         QIcon qicon = QIcon::fromTheme(app_icon, QIcon(QLatin1String(":/root/snore.png")));
         QSize max;
-        foreach(const QSize & s, qicon.availableSizes()) {
+        foreach (const QSize &s, qicon.availableSizes()) {
             if (s.width()*s.height() > max.width()*max.height()) {
                 max = s;
             }

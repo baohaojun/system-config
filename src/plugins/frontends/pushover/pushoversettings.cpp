@@ -39,28 +39,28 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
     addRow(QString(), m_registerButton);
     addRow(tr("Status"), m_errorMessageLabel);
     addRow(QString(), new QLabel(this));
-    addRow(QString(), new QLabel(tr("If you don't have an accout yet please register at <a href=\"https://pushover.net\">Pushover.net</a>"),this));
+    addRow(QString(), new QLabel(tr("If you don't have an accout yet please register at <a href=\"https://pushover.net\">Pushover.net</a>"), this));
 
     m_emailLineEdit->setEnabled(false);
     m_passwordLineEdit->setEnabled(false);
     m_deviceLineEdit->setEnabled(false);
     m_registerButton->setEnabled(false);
 
-    PushoverFrontend *pushover = dynamic_cast<PushoverFrontend*>(plugin);
+    PushoverFrontend *pushover = dynamic_cast<PushoverFrontend *>(plugin);
     m_errorMessageLabel->setText(pushover->errorMessage());
 
     connect(pushover, &PushoverFrontend::loggedInChanged, this, &PushoverSettings::slotUpdateLoginState);
-    connect(pushover, &PushoverFrontend::error, [this](QString message){
+    connect(pushover, &PushoverFrontend::error, [this](QString message) {
         m_errorMessageLabel->setText(message);
     });
 
     slotUpdateLoginState(pushover->isLoggedIn());
 
-    connect(m_registerButton, &QPushButton::clicked, [pushover, this] () {
+    connect(m_registerButton, &QPushButton::clicked, [pushover, this]() {
         m_registerButton->setEnabled(false);
-        if(!pushover->isLoggedIn()) {
+        if (!pushover->isLoggedIn()) {
             pushover->login(m_emailLineEdit->text(), m_passwordLineEdit->text(), m_deviceLineEdit->text());
-        }else{
+        } else {
             pushover->logOut();
         }
     });

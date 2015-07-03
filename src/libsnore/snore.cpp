@@ -46,7 +46,7 @@ SnoreCore::SnoreCore(QObject *parent):
 SnoreCore &SnoreCore::instance()
 {
     static SnoreCore *instance = nullptr;
-    if(!instance){
+    if (!instance) {
         instance = new SnoreCore(qApp);
         SnoreCorePrivate::instance()->init();
     }
@@ -91,7 +91,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                         }
                     }
                 }
-                    break;
+                break;
                 default:
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
@@ -207,8 +207,8 @@ QVariant SnoreCore::settingsValue(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);
     QString nk = d->normalizeSettingsKey(key, type);
-    if(type == LOCAL_SETTING && !d->m_settings->contains(nk)){
-        nk = d->normalizeSettingsKey(key + QStringLiteral("-SnoreDefault"),type);
+    if (type == LOCAL_SETTING && !d->m_settings->contains(nk)) {
+        nk = d->normalizeSettingsKey(key + QStringLiteral("-SnoreDefault"), type);
     }
     return d->m_settings->value(nk);
 }
@@ -235,13 +235,12 @@ Notification SnoreCore::getActiveNotificationByID(uint id) const
     return d->m_activeNotifications.value(id);
 }
 
-
 void SnoreCore::displayExapleNotification()
 {
     Application app = SnoreCorePrivate::instance()->defaultApplication();
     QString text = QLatin1String("<i>") + tr("This is Snore") + QLatin1String("</i><br>") +
-            QLatin1String("<a href=\"https://github.com/Snorenotify/Snorenotify\">") + tr("Project Website") + QLatin1String("</a><br>");
-    if(!app.constHints().value("use-markup").toBool()) {
+                   QLatin1String("<a href=\"https://github.com/Snorenotify/Snorenotify\">") + tr("Project Website") + QLatin1String("</a><br>");
+    if (!app.constHints().value("use-markup").toBool()) {
         text = Utils::normalizeMarkup(text, Utils::NO_MARKUP);
     }
     Notification noti(app, app.defaultAlert(), tr("Hello World"), text, app.icon());

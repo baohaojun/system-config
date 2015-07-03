@@ -43,7 +43,7 @@ void Pushover::slotNotify(Notification notification)
     mp->append(title);
 
     QString textString;
-    if(notification.constHints().value("use-markup").toBool()){
+    if (notification.constHints().value("use-markup").toBool()) {
         textString = notification.text(Utils::HREF | Utils::BOLD | Utils::UNDERLINE | Utils::FONT | Utils::ITALIC);
 
         QHttpPart html;
@@ -65,7 +65,7 @@ void Pushover::slotNotify(Notification notification)
     priority.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"priority\"")));
     priority.setBody(QString::number(notification.priority()).toUtf8().constData());
     mp->append(priority);
-    if(notification.priority() == Notification::EMERGENCY){
+    if (notification.priority() == Notification::EMERGENCY) {
 
         QHttpPart retry;
         retry.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"retry\"")));

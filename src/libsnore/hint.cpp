@@ -24,7 +24,7 @@ Hint::Hint()
 {
 }
 
-void Hint::setValue(const QByteArray & key, const QVariant &value)
+void Hint::setValue(const QByteArray &key, const QVariant &value)
 {
     m_data.insert(key, value);
 }
@@ -34,34 +34,34 @@ QVariant Hint::value(const QByteArray &key) const
     return m_data.value(key);
 }
 
-QVariant Hint::take(const QByteArray & key)
+QVariant Hint::take(const QByteArray &key)
 {
     return m_data.take(key);
 }
 
-bool Hint::contains(const QByteArray & key) const
+bool Hint::contains(const QByteArray &key) const
 {
     return m_data.contains(key);
 }
 
-void Hint::setPrivateValue(const void *owner, const QByteArray & key, const QVariant &value)
+void Hint::setPrivateValue(const void *owner, const QByteArray &key, const QVariant &value)
 {
-    m_privateData.insert(qMakePair<const quintptr,const QByteArray>((quintptr)owner,key), value);
+    m_privateData.insert(qMakePair<const quintptr, const QByteArray>((quintptr)owner, key), value);
 }
 
 QVariant Hint::privateValue(const void *owner, const QByteArray &key) const
 {
-    return m_privateData.value(qMakePair<const quintptr,const QByteArray>((quintptr)owner,key));
+    return m_privateData.value(qMakePair<const quintptr, const QByteArray>((quintptr)owner, key));
 }
 
-bool Hint::containsPrivateValue(const void *owner, const QByteArray & key) const
+bool Hint::containsPrivateValue(const void *owner, const QByteArray &key) const
 {
-    return m_privateData.contains(qMakePair<const quintptr,const QByteArray>((quintptr)owner,key));
+    return m_privateData.contains(qMakePair<const quintptr, const QByteArray>((quintptr)owner, key));
 }
 
-QVariant Hint::takePrivateValue(const void *owner, const QByteArray & key)
+QVariant Hint::takePrivateValue(const void *owner, const QByteArray &key)
 {
-    return m_privateData.take(qMakePair<const quintptr,const QByteArray>((quintptr)owner,key));
+    return m_privateData.take(qMakePair<const quintptr, const QByteArray>((quintptr)owner, key));
 }
 
 QDebug operator<<(QDebug debug, const Snore::Hint &hint)
@@ -72,7 +72,7 @@ QDebug operator<<(QDebug debug, const Snore::Hint &hint)
         debug << "(" << it.key() << ", " << it.value();
     }
     for (auto it = hint.m_privateData.cbegin(); it != hint.m_privateData.cend(); ++it) {
-    debug << ", ";
+        debug << ", ";
         debug << "(" << it.key() << ", " << it.value();
     }
     debug << ")" ;

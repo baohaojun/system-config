@@ -31,7 +31,7 @@ class SNORE_EXPORT  Utils : public QObject
 {
     Q_OBJECT
 public:
-    enum MARKUP_FLAG{
+    enum MARKUP_FLAG {
         NO_MARKUP   = 0,
         HREF        = 1 << 0,
         BREAK       = 1 << 1,
@@ -42,7 +42,7 @@ public:
         ALL_MARKUP  = ~0
     };
 
-    Q_DECLARE_FLAGS(MARKUP_FLAGS,MARKUP_FLAG)
+    Q_DECLARE_FLAGS(MARKUP_FLAGS, MARKUP_FLAG)
 
     Utils(QObject *parent = nullptr);
     ~Utils();

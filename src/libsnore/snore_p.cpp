@@ -148,7 +148,7 @@ void SnoreCorePrivate::init()
 void SnoreCorePrivate::setDefaultSettingsValueIntern(const QString &key, const QVariant &value)
 {
     Q_Q(SnoreCore);
-    QString nk = normalizeSettingsKey( key + QLatin1String("-SnoreDefault"), LOCAL_SETTING);
+    QString nk = normalizeSettingsKey(key + QLatin1String("-SnoreDefault"), LOCAL_SETTING);
     if (!m_settings->contains(nk)) {
         m_settings->setValue(nk, value);
     }
@@ -173,7 +173,7 @@ void SnoreCorePrivate::syncSettings()
 
     auto types = SnorePlugin::types();
     types.removeOne(SnorePlugin::BACKEND);
-    for(auto type : types) {
+    for (auto type : types) {
         for (auto &pluginName : m_pluginNames[type]) {
             SnorePlugin *plugin = m_plugins.value(pluginName);
             bool enable = m_plugins[pluginName]->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool();
@@ -262,11 +262,11 @@ static void registerMetaTypes()
     qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
 }
 
-static void snoreStartup(){
+static void snoreStartup()
+{
     loadTranslator();
     registerMetaTypes();
 }
 
 Q_COREAPP_STARTUP_FUNCTION(snoreStartup)
-
 

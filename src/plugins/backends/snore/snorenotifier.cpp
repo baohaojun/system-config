@@ -36,7 +36,7 @@ SnoreNotifier::SnoreNotifier():
             snoreDebug(SNORE_DEBUG) << "queue is empty";
             m_timer->stop();
         } else {
-            for(NotifyWidget * w : m_widgets) {
+            for (NotifyWidget *w : m_widgets) {
                 if (w->acquire()) {
                     Notification notification = m_queue.takeFirst();
                     w->display(notification);
@@ -86,7 +86,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         }
     } else {
         if (m_queue.isEmpty()) {
-            for(NotifyWidget * w : m_widgets) {
+            for (NotifyWidget *w : m_widgets) {
                 if (w->acquire()) {
                     display(w, notification);
                     return;

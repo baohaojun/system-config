@@ -94,8 +94,8 @@ void NotificationData::setTimeoutTimer(QTimer *timer)
 
 QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags)
 {
-    if(!m_hints.value("use-markup").toBool()) {
-        if(flags == Utils::NO_MARKUP){
+    if (!m_hints.value("use-markup").toBool()) {
+        if (flags == Utils::NO_MARKUP) {
             return string;
         } else {
             return Utils::normalizeMarkup(string.toHtmlEscaped(), flags);

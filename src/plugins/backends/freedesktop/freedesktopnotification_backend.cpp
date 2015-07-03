@@ -14,7 +14,7 @@ bool FreedesktopBackend::initialize()
 {
 
     m_interface = new org::freedesktop::Notifications(QLatin1String("org.freedesktop.Notifications"),
-                                                      QLatin1String("/org/freedesktop/Notifications"),
+            QLatin1String("/org/freedesktop/Notifications"),
             QDBusConnection::sessionBus(), this);
 
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
@@ -53,7 +53,7 @@ bool FreedesktopBackend::canUpdateNotification() const
 void  FreedesktopBackend::slotNotify(Notification noti)
 {
     QStringList actions;
-    foreach(int k, noti.actions().keys()) {
+    foreach (int k, noti.actions().keys()) {
         actions << QString::number(k) << noti.actions()[k].name();
     }
     QVariantMap hints;
@@ -61,13 +61,13 @@ void  FreedesktopBackend::slotNotify(Notification noti)
         FreedesktopImageHint image(noti.icon().image());
         hints.insert(QLatin1String("image_data"), QVariant::fromValue(image));
     }
-	
+
     char urgency = '1';
-	if(noti.priority() < 0){
-		urgency = '0';
-	} else if(noti.priority() > 2) {
-		urgency = '2';
-	}
+    if (noti.priority() < 0) {
+        urgency = '0';
+    } else if (noti.priority() > 2) {
+        urgency = '2';
+    }
     hints.insert(QLatin1String("urgency"), urgency);
 
     if (noti.application().constHints().contains("desktop-entry")) {

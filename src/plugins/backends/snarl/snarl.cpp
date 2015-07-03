@@ -115,7 +115,7 @@ bool SnarlBackend::initialize()
 {
     setDefaultSettingsValue(QLatin1String("Password"), QString());
 
-    if(!SnoreBackend::initialize()) {
+    if (!SnoreBackend::initialize()) {
         return false;
     }
 
@@ -176,7 +176,7 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
                     (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
     snoreDebug(SNORE_DEBUG) << result;
 
-    foreach(const Alert & alert, application.alerts()) {
+    foreach (const Alert &alert, application.alerts()) {
         snarlInterface->AddClass(alert.name().toUtf8().constData(),
                                  alert.name().toUtf8().constData(),
                                  0, 0, alert.icon().localUrl().toUtf8().constData());
@@ -205,11 +205,11 @@ void SnarlBackend::slotNotify(Notification notification)
     SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
 
     Snarl::V42::SnarlEnums::MessagePriority priority = Snarl::V42::SnarlEnums::PriorityUndefined;
-    if(notification.priority() > 1){
+    if (notification.priority() > 1) {
         priority = Snarl::V42::SnarlEnums::PriorityHigh;
-    } else if(notification.priority() < -1) {
+    } else if (notification.priority() < -1) {
         priority = Snarl::V42::SnarlEnums::PriorityLow;
-    }else{
+    } else {
         priority = static_cast<Snarl::V42::SnarlEnums::MessagePriority>(notification.priority());
     }
 
@@ -225,7 +225,7 @@ void SnarlBackend::slotNotify(Notification notification)
                                     !notification.icon().isLocalFile() ? Icon::dataFromImage(notification.icon().image()).toBase64().constData() : 0,
                                     priority);
 
-        foreach(const Action & a, notification.actions()) {
+        foreach (const Action &a, notification.actions()) {
             snarlInterface->AddAction(id, a.name().toUtf8().constData(), (QLatin1Char('@') + QString::number(a.id())).toUtf8().constData());
         }
         m_idMap[id] = notification;

@@ -37,8 +37,8 @@ static void init()
     if (qgetenv("LIBSNORE_LOG_TO_FILE").toInt() == 1) {
 
         QString name = QDir::tempPath() + QLatin1String("/libsnore/") +
-                (qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName()) +
-                QLatin1String("-log.txt");
+                       (qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName()) +
+                       QLatin1String("-log.txt");
         if (!qgetenv("LIBSNORE_LOGFILE").isNull()) {
             name = QString::fromUtf8(qgetenv("LIBSNORE_LOGFILE"));
         } else {

@@ -92,7 +92,7 @@ QDebug operator<< (QDebug debug, const Snore::Application &app)
 {
     if (app.isValid()) {
         debug << "Snore::Application(" << app.name() << ", ";
-        foreach(const Alert & a, app.alerts()) {
+        foreach (const Alert &a, app.alerts()) {
             debug << a << ", ";
         }
         debug << ")" ;

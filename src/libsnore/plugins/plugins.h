@@ -53,7 +53,6 @@ public:
     SnorePlugin();
     virtual ~SnorePlugin();
 
-
     // TODO: remove need of recursive calling of parent methode....
     virtual bool initialize();
     virtual bool deinitialize();
