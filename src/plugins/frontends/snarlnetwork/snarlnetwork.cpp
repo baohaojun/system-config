@@ -108,7 +108,7 @@ void SnarlNetworkFrontend::handleMessages()
         if (noti.isValid()) {
             noti.addActiveIn(this);
             SnoreCore::instance().broadcastNotification(noti);
-            write(client, out + QLatin1Char("/") + QString::number(noti.id()) + QLatin1String("\r\n"));
+            write(client, out + QLatin1Char('/') + QString::number(noti.id()) + QLatin1String("\r\n"));
         } else {
             write(client, out + QLatin1String("\r\n"));
         }

@@ -145,7 +145,7 @@ QString SnoreToast::appId(const Application &application)
         appID = application.constHints().value("windows_app_id").toString();
     }
     if (appID.isEmpty()) {
-        appID = (qApp->organizationName() + QLatin1Char(".") + qApp->applicationName() + QLatin1String(".SnoreToast")).remove(QLatin1Char(' '));
+        appID = QString(qApp->organizationName() + QLatin1Char('.') + qApp->applicationName() + QLatin1String(".SnoreToast")).remove(QLatin1Char(' '));
     }
     return appID;
 }
