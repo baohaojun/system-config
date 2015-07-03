@@ -32,32 +32,42 @@ class PushoverFrontend : public Snore::SnoreFrontend
     Q_INTERFACES(Snore::SnoreFrontend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0" FILE "plugin.json")
 public:
-    PushoverFrontend() = default;
+    PushoverFrontend();
     ~PushoverFrontend() = default;
     bool initialize() override;
     bool deinitialize() override;
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 
-    void registerDevice(const QString &email, const QString &password, const QString& deviceName);
+    void login(const QString &email, const QString &password, const QString& deviceName);
+    void logOut();
+
+    bool isLoggedIn() const;
+    QString errorMessage();
 
 public Q_SLOTS:
     void slotActionInvoked(Snore::Notification notification);
 
-
+Q_SIGNALS:
+    void loggedInChanged(bool isLoggedIn);
+    void error(QString error);
 
 private:
     QNetworkAccessManager m_manager;
     QPointer<QWebSocket> m_socket;
+    bool m_loggedIn = false;
+    QString m_errorMessage;
 
     QString secret();
     QString device();
 
     void connectToService();
 
+    void registerDevice(const QString &secret, const QString &deviceName);
     void getMessages();
     void deleteMessages(int latestMessageId);
     void acknowledgeNotification(Snore::Notification notification);
+
 
 
 

@@ -38,20 +38,26 @@ using namespace Snore;
 // TODO: use qtkeychain to encrypt credentials?
 // TODO: massive refactoring ...
 
+PushoverFrontend::PushoverFrontend()
+{
+    connect(this, &PushoverFrontend::loggedInChanged, [this](bool state){
+       m_loggedIn = state;
+    });
+    connect(this, &PushoverFrontend::error, [this](QString error){
+       m_errorMessage = error;
+    });
+}
+
 bool PushoverFrontend::initialize()
 {
     setDefaultValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
     setDefaultValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
-    setDefaultValue(QLatin1String("Registered"), false, LOCAL_SETTING);
 
     if(!SnoreFrontend::initialize()) {
         return false;
     }
 
-    if(value(QLatin1String("Registered"), LOCAL_SETTING).toBool())
-    {
-        connectToService();
-    }
+    connectToService();
 
     return true;
 }
@@ -73,8 +79,9 @@ PluginSettingsWidget *PushoverFrontend::settingsWidget()
     return new PushoverSettings(this);
 }
 
-void PushoverFrontend::registerDevice(const QString &email, const QString &password, const QString &deviceName)
+void PushoverFrontend::login(const QString &email, const QString &password, const QString &deviceName)
 {
+    setValue(QLatin1String("DeviceName"), deviceName, Snore::LOCAL_SETTING);
 
     QNetworkRequest request(QUrl(QLatin1String("https://api.pushover.net/1/users/login.json")));
 
@@ -93,37 +100,31 @@ void PushoverFrontend::registerDevice(const QString &email, const QString &passw
 
         if(message.value(QLatin1String("status")).toInt() == 1)
         {
-            QString secret = message.value(QLatin1String("secret")).toString();
-            QNetworkRequest request(QUrl(QLatin1String("https://api.pushover.net/1/devices.json")));
-
-            request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
-            QNetworkReply *reply = m_manager.post(request, QString(QLatin1String("secret=%1&name=%2&os=O")).arg(secret, deviceName).toUtf8().constData());
-
-
-            connect(reply, &QNetworkReply::finished, [reply, secret, this]() {
-                snoreDebug(SNORE_DEBUG) << reply->error();
-                QByteArray input = reply->readAll();
-                reply->close();
-                reply->deleteLater();
-
-
-                QJsonObject message = QJsonDocument::fromJson(input).object();
-
-
-                if(message.value(QLatin1String("status")).toInt() == 1) {
-                    setValue(QLatin1String("Secret"), secret, LOCAL_SETTING);
-                    setValue(QLatin1String("DeviceID"), message.value(QLatin1String("id")).toString(), LOCAL_SETTING);
-                    setValue(QLatin1String("Registered"), true, LOCAL_SETTING);
-                    connectToService();
-                } else {
-                    snoreDebug(SNORE_WARNING) << "An error occure" << input;
-                }
-
-            });
+            registerDevice(message.value(QLatin1String("secret")).toString(), deviceName);
         }else {
             snoreDebug(SNORE_WARNING) << "An error occure" << input;
+            emit loggedInChanged(false);
         }
     });
+}
+
+void PushoverFrontend::logOut()
+{
+    setValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
+    setValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
+    m_socket->close();
+    m_socket->deleteLater();
+    emit loggedInChanged(false);
+}
+
+bool PushoverFrontend::isLoggedIn() const
+{
+    return m_loggedIn;
+}
+
+QString PushoverFrontend::errorMessage()
+{
+    return m_errorMessage;
 }
 
 void PushoverFrontend::slotActionInvoked(Notification notification)
@@ -146,7 +147,7 @@ QString PushoverFrontend::device()
 
 void PushoverFrontend::connectToService()
 {
-    if(!value(QLatin1String("Registered"), LOCAL_SETTING).toBool())
+    if(secret().isEmpty() || device().isEmpty())
     {
         snoreDebug(SNORE_WARNING) << "not logged in";
         return;
@@ -169,8 +170,9 @@ void PushoverFrontend::connectToService()
             connectToService();
             break;
         case 'E':
-            snoreDebug(SNORE_DEBUG) << "Connection Error";
-            setValue(QLatin1String("Registered"), false, LOCAL_SETTING);
+            snoreDebug(SNORE_WARNING) << "Connection Error";
+            emit error(QLatin1String("Please Loggin to https://pushover.net and reanble your device."));
+            emit loggedInChanged(false);
             m_socket->close();
             m_socket->deleteLater();
             break;
@@ -182,14 +184,45 @@ void PushoverFrontend::connectToService()
         snoreDebug(SNORE_DEBUG) << "disconnected";
     });
     connect(m_socket, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), [&](QAbstractSocket::SocketError error){
-        snoreDebug(SNORE_DEBUG) << error << m_socket->errorString();
+        snoreDebug(SNORE_WARNING) << error << m_socket->errorString();
+        emit loggedInChanged(false);
     });
     connect(m_socket, &QWebSocket::connected, [&](){
         snoreDebug(SNORE_DEBUG) << "connecting";
-        m_socket->sendBinaryMessage((QLatin1String("login:=") + device() + QLatin1Char(':') + secret() + QLatin1Char('\n')).toUtf8().constData());
+        m_socket->sendBinaryMessage((QLatin1String("login:") + device() + QLatin1Char(':') + secret() + QLatin1Char('\n')).toUtf8().constData());
+        emit loggedInChanged(true);
         getMessages();
     });
     m_socket->open(QUrl::fromEncoded("wss://client.pushover.net/push"));
+}
+
+void PushoverFrontend::registerDevice(const QString &secret, const QString &deviceName)
+{
+    QNetworkRequest request(QUrl(QLatin1String("https://api.pushover.net/1/devices.json")));
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
+    QNetworkReply *reply = m_manager.post(request, (QLatin1String("os=O&secret=") + secret + QLatin1String("&name=") + deviceName).toUtf8().constData());
+
+
+    connect(reply, &QNetworkReply::finished, [reply, secret, this]() {
+        snoreDebug(SNORE_DEBUG) << reply->error();
+        QByteArray input = reply->readAll();
+        reply->close();
+        reply->deleteLater();
+        QJsonObject message = QJsonDocument::fromJson(input).object();
+        if(message.value(QLatin1String("status")).toInt() == 1) {
+            setValue(QLatin1String("Secret"), secret, LOCAL_SETTING);
+            setValue(QLatin1String("DeviceID"), message.value(QLatin1String("id")).toString(), LOCAL_SETTING);;
+            connectToService();
+        } else {
+            snoreDebug(SNORE_WARNING) << "An error occure" << input;
+            emit loggedInChanged(false);
+            emit error(message.value(QLatin1String("error")).toString());
+        }
+
+    });
+
+
 }
 
 void PushoverFrontend::getMessages()

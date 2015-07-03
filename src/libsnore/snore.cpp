@@ -224,6 +224,7 @@ void SnoreCore::setDefaultValue(const QString &key, const QVariant &value, Setti
     Q_D(SnoreCore);
     QString nk = d->normalizeKey(key, type);
     if (!d->m_settings->contains(nk)) {
+        snoreDebug(SNORE_DEBUG) <<  "Set default value" << nk << value;
         d->m_settings->setValue(nk, value);
     }
 }

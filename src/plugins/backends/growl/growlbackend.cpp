@@ -80,19 +80,19 @@ bool GrowlBackend::deinitialize()
 
 void GrowlBackend::slotRegisterApplication(const Application &application)
 {
-    //    snoreDebug( SNORE_DEBUG ) << application.name().toUtf8().constData();
+    snoreDebug( SNORE_DEBUG ) << application.name();
     std::vector<std::string> alerts;
     foreach(const Alert & a, application.alerts()) {
-        snoreDebug(SNORE_DEBUG) << a.name().toUtf8().constData();
+        snoreDebug(SNORE_DEBUG) << a.name();
         alerts.push_back(a.name().toUtf8().constData());
     }
 
     Growl *growl = new Growl(GROWL_TCP, value(QLatin1String("Host")).toString().toUtf8().constData(),
                              value(QLatin1String("Password")).toString().toUtf8().constData(),
                              application.name().toUtf8().constData());
+    m_applications.insert(application.name(), growl);
     growl->Register(alerts, application.icon().localUrl().toUtf8().constData());
 
-    m_applications.insert(application.name(), growl);
 }
 
 void GrowlBackend::slotDeregisterApplication(const Application &application)

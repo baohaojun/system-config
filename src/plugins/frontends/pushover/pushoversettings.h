@@ -22,7 +22,7 @@
 
 class QLineEdit;
 class QPushButton;
-
+class QLabel;
 
 class PushoverSettings : public Snore::PluginSettingsWidget
 {
@@ -39,8 +39,10 @@ private:
     QLineEdit *m_passwordLineEdit;
     QLineEdit *m_deviceLineEdit;
     QPushButton *m_registerButton;
+    QLabel *m_errorMessageLabel;
 
-    void updateLoginState();
+private Q_SLOTS:
+    void slotUpdateLoginState(bool state);
 
 
 };
