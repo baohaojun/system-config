@@ -18,6 +18,7 @@ include(KDEFrameworkCompilerSettings)
 include(GenerateExportHeader)
 
 include(ECMAddAppIcon)
+include(ECMGeneratePriFile)
 include(ECMInstallIcons)
 include(ECMPackageConfigHelpers)
 include(ECMSetupVersion)

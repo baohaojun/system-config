@@ -82,6 +82,15 @@ ecm_configure_package_config_file(  "${CMAKE_CURRENT_SOURCE_DIR}/LibsnoreConfig.
                                     INSTALL_DESTINATION ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX}
                               )
 
+
+ecm_generate_pri_file(BASE_NAME Libsnore${SNORE_CamelCase_SUFFIX}
+                      LIB_NAME snore${SNORE_SUFFIX}
+                      DEPS "core gui widgets network"
+                      INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR}
+                      FILENAME_VAR pri_filename)
+
+install(FILES ${pri_filename} DESTINATION ${ECM_MKSPECS_INSTALL_DIR})
+
 install(TARGETS libsnore EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Target ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Target DESTINATION ${KDE_INSTALL_CMAKEPACKAGEDIR}/libsnore${SNORE_CamelCase_SUFFIX} NAMESPACE Snore::)
