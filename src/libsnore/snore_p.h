@@ -25,7 +25,8 @@
 #include "utils.h"
 
 #include <QPointer>
-#include <QApplication>
+
+class QSettings;
 
 namespace Snore
 {

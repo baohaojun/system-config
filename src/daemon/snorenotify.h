@@ -19,7 +19,9 @@
 #ifndef SNORENOTIFY_H
 #define SNORENOTIFY_H
 
-#include <QSettings>
+#include <QObject>
+
+class TrayIcon;
 
 namespace Snore
 {
@@ -34,7 +36,7 @@ public:
     ~SnoreNotify();
 
 private:
-    class TrayIcon *m_trayIcon;
+    TrayIcon *m_trayIcon;
 };
 
 #endif // SNORENOTIFY_H

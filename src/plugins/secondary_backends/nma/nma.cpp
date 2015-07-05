@@ -20,7 +20,6 @@
 
 #include"libsnore/utils.h"
 
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 

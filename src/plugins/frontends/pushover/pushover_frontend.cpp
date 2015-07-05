@@ -23,13 +23,11 @@
 #include "libsnore/version.h"
 #include "libsnore/notification/notification_p.h"
 
-#include <QNetworkAccessManager>
-#include <QHttpMultiPart>
 #include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QtWebSockets/QWebSocket>
+#include <QtWebSockets>
 
 using namespace Snore;
 

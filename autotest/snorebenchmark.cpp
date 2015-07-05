@@ -1,11 +1,7 @@
 #include <libsnore/snore.h>
 #include <libsnore/utils.h>
 
-#include <QApplication>
-#include <QDebug>
-
 #include <QTextDocument>
-#include <QTextDocumentFragment>
 
 #include <QtTest>
 

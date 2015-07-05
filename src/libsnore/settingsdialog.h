@@ -20,17 +20,13 @@
 
 #include "snore_exports.h"
 
-#include <QDialog>
-#include <QScopedPointer>
+#include <QWidget>
 
 class QAbstractButton;
 
 namespace Snore
 {
-class SnoreCore;
 class PluginSettingsWidget;
-class Application;
-class Alert;
 }
 
 namespace Ui

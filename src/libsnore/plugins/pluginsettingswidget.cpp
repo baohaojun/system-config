@@ -20,7 +20,6 @@
 #include "snore.h"
 
 #include <QCheckBox>
-#include <QLabel>
 
 using namespace Snore;
 

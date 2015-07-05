@@ -6,7 +6,6 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
-#include <QMainWindow>
 
 #include <iostream>
 

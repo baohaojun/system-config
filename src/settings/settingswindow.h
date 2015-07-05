@@ -23,7 +23,6 @@ public:
 
     static QSettings &settings();
 
-
     template<typename Func>
     static QStringList allSettingsKeysWithPrefix(const QString &prefix, QSettings &settings, Func fun)
     {
@@ -40,7 +39,6 @@ public:
         }
         return out;
     }
-
 
 private Q_SLOTS:
     void on_buttonBox_clicked(QAbstractButton *button);

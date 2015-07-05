@@ -21,9 +21,8 @@
 #include "snore_exports.h"
 #include "snoreglobals.h"
 
-#include <QApplication>
 #include <QCryptographicHash>
-#include <QSettings>
+#include <QObject>
 
 namespace Snore
 {

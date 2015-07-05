@@ -27,6 +27,7 @@
 
 #include "version.h"
 
+#include <QApplication>
 #include <QSettings>
 #include <QThread>
 

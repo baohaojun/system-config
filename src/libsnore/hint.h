@@ -18,7 +18,6 @@
 #ifndef HINT_H
 #define HINT_H
 
-#include <QObject>
 #include <QVariantHash>
 #include <QDebug>
 

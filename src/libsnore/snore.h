@@ -27,7 +27,6 @@
 #include "plugins/plugins.h"
 #include "hint.h"
 
-#include <QSettings>
 #include <QStringList>
 
 /**

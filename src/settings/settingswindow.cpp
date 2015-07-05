@@ -7,7 +7,6 @@
 #include "utils.h"
 
 #include <QApplication>
-#include <QComboBox>
 #include <QDialogButtonBox>
 
 using namespace Snore;

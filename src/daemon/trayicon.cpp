@@ -26,7 +26,6 @@
 #include <QDialogButtonBox>
 #include <QMenu>
 #include <QSystemTrayIcon>
-#include <QTimer>
 
 #include "libsnore/version.h"
 

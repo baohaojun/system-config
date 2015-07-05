@@ -23,7 +23,8 @@
 
 #include <QNetworkAccessManager>
 #include <QPointer>
-#include <QtWebSockets/QWebSocket>
+
+class QWebSocket;
 
 class PushoverFrontend : public Snore::SnoreFrontend
 {

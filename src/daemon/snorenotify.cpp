@@ -23,8 +23,6 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include <QApplication>
-
 using namespace Snore;
 
 SnoreNotify::SnoreNotify()

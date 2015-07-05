@@ -19,7 +19,6 @@
 #include "toastysettings.h"
 #include "libsnore/utils.h"
 
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QHttpMultiPart>

@@ -20,9 +20,7 @@
 #include "snore.h"
 #include "snore_p.h"
 
-#include <QAbstractButton>
 #include <QTabWidget>
-#include <QFormLayout>
 #include <QCheckBox>
 
 using namespace Snore;
