@@ -19,6 +19,8 @@
 #include "application.h"
 #include "application_p.h"
 
+#include <QApplication>
+
 using namespace Snore;
 
 Application::Application():
@@ -29,7 +31,7 @@ Application::Application(const QString &name, const Icon &icon) :
     d(new ApplicationData(name, icon))
 
 {
-    addAlert(Alert(QObject::tr("Default"), icon));
+    addAlert(Alert(qApp->translate("Default Alert", "Default"), icon));
 }
 
 Application::Application(const Application &other):

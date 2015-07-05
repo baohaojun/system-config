@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
+    <name>Default Alert</name>
+    <message>
+        <location filename="../src/libsnore/application.cpp" line="34"/>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GrowlSettings</name>
     <message>
         <location filename="../src/plugins/backends/growl/growlsettings.cpp" line="30"/>
@@ -37,6 +45,51 @@
     <message>
         <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="32"/>
         <source>Devices:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="36"/>
+        <source>Email Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="37"/>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="38"/>
+        <source>Device Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="40"/>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="42"/>
+        <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="88"/>
+        <source>Log out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="89"/>
+        <source>Logged in.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="95"/>
+        <source>Log in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="97"/>
+        <source>Logged out.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -122,7 +175,7 @@
 <context>
     <name>Snore::PluginSettingsWidget</name>
     <message>
-        <location filename="../src/libsnore/plugins/pluginsettingswidget.cpp" line="36"/>
+        <location filename="../src/libsnore/plugins/pluginsettingswidget.cpp" line="35"/>
         <source>Enabled:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -130,22 +183,22 @@
 <context>
     <name>Snore::SnoreCore</name>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="239"/>
+        <location filename="../src/libsnore/snore.cpp" line="242"/>
         <source>This is Snore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="239"/>
+        <location filename="../src/libsnore/snore.cpp" line="243"/>
         <source>Project Website</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="243"/>
+        <location filename="../src/libsnore/snore.cpp" line="247"/>
         <source>Hello World</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="244"/>
+        <location filename="../src/libsnore/snore.cpp" line="248"/>
         <source>Test Action</source>
         <translation type="unfinished"></translation>
     </message>
@@ -206,6 +259,24 @@
     <message>
         <location filename="../src/plugins/secondary_backends/toasty/toastysettings.cpp" line="28"/>
         <source>Device ID:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TrayIcon</name>
+    <message>
+        <location filename="../src/daemon/trayicon.cpp" line="77"/>
+        <source>Display Test Notification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/daemon/trayicon.cpp" line="79"/>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/daemon/trayicon.cpp" line="81"/>
+        <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
