@@ -31,14 +31,55 @@ class SNORE_EXPORT  Utils : public QObject
 {
     Q_OBJECT
 public:
+    /**
+     * The MARKUP_FLAG enum.
+     * If a falg is not present the markup key will be removed.
+     * If any flag is present, special characters mus be html escaped.
+     */
     enum MARKUP_FLAG {
+        /**
+         * No markup is supported.
+         * All markup will be removed.
+         */
         NO_MARKUP   = 0,
+
+        /**
+         * Urls are supprotet.
+         * &lt;a href="www.foo.bar"&gt;Foo Bar&lt;/a&gt;
+         */
         HREF        = 1 << 0,
+
+        /**
+         * Line breeaks &lt;br&gt; are supprotet.
+         * If the flag is not present &lt;br&gt; will be replaced by \\n
+         */
         BREAK       = 1 << 1,
+
+        /**
+         * Bold &lt;b&gt; is supportet.
+         */
         BOLD        = 1 << 2,
+
+        /**
+         * Italic &lt;i&gt; is supportet.
+         */
         ITALIC      = 1 << 3,
+
+        /**
+         * Underline &lt;u&gt; is supportet.
+         */
         UNDERLINE   = 1 << 4,
+
+        /**
+         * Fonst are supportet.
+         * &lt;font color="blue"&gt; word &lt;/font&gt;
+         */
         FONT        = 1 << 5,
+
+        /**
+         * All markup is supported.
+         * No markup will be removed.
+         */
         ALL_MARKUP  = ~0
     };
 
