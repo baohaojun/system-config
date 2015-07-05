@@ -31,7 +31,7 @@ SettingsWindow::~SettingsWindow()
 
 QStringList SettingsWindow::knownApps()
 {
-    return Utils::allSettingsKeysWithPrefix(Utils::settingsVersionSchema() + QLatin1String("/LocalSettings"), settings(),
+    return allSettingsKeysWithPrefix(Utils::settingsVersionSchema() + QLatin1String("/LocalSettings"), settings(),
     [](QSettings & settings) {
         return settings.childGroups();
     });

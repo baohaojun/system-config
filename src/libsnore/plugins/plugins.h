@@ -58,8 +58,19 @@ public:
     virtual bool deinitialize();
     bool isInitialized() const;
 
+    /**
+     * Returns the name of the plugin.
+     */
     const QString &name() const;
+
+    /**
+     * Returns the plugin type.
+     */
     PluginTypes type() const;
+
+    /**
+     * Returns the name of the plugin type.
+     */
     const QString typeName() const;
 
     QVariant settingsValue(const QString &key, SettingsType type = GLOBAL_SETTING) const;
@@ -69,6 +80,9 @@ public:
     virtual PluginSettingsWidget *settingsWidget();
 
 protected:
+    /**
+     * Returns the version suffix used for the plugin settings.
+     */
     virtual QString settingsVersion() const;
 
 private:

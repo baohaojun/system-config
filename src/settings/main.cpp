@@ -44,7 +44,7 @@ void listSettings(SettingsType type, const QString &application)
     };
 
     cout << qPrintable(application) << endl;
-    for (const QString &key : Utils::allSettingsKeysWithPrefix(
+    for (const QString &key : SettingsWindow::allSettingsKeysWithPrefix(
                 Utils::normalizeSettingsKey(QLatin1String(""), type, application), settings, getAllKeys)) {
         cout << "  " << qPrintable(key) << ": " << qPrintable(settings.value(Utils::normalizeSettingsKey(key, type, application)).toString()) << endl;
     }

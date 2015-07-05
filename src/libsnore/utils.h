@@ -102,9 +102,7 @@ public:
     Q_INVOKABLE static void raiseWindowToFront(qlonglong wid);
 
     /**
-     *
-     * @param string A string to encode if needed.
-     * @return if the string was rhichtext html encode string is returnd otherwise the original string.
+     * Removes unsupported markup tags from a string.
      */
     static QString normalizeMarkup(QString string, MARKUP_FLAGS tags);
 
@@ -116,11 +114,20 @@ public:
         return QString::fromUtf8(QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex());
     }
 
+    /**
+     * Version number prefix for the settings.
+     */
     static inline QString settingsVersionSchema()
     {
         return QLatin1String("v1");
     }
 
+    /**
+     * Returns the SettingsKey formated with type and version.
+     * @param key The key.
+     * @param type The Type.
+     * @param application The application's name.
+     */
     static inline QString normalizeSettingsKey(const QString &key, SettingsType type, const QString &application)
     {
         if (type == LOCAL_SETTING) {
@@ -128,23 +135,6 @@ public:
         } else {
             return settingsVersionSchema() + QLatin1String("/GlobalSettings/") +  key;
         }
-    }
-
-    template<typename Func>
-    static QStringList allSettingsKeysWithPrefix(const QString &prefix, QSettings &settings, Func fun)
-    {
-        QStringList groups = prefix.split(QLatin1Char('/'));
-        QStringList out;
-
-        for (const QString group : groups) {
-            settings.beginGroup(group);
-        }
-        out = fun(settings);
-
-        for (int i = 0; i < groups.size(); ++i) {
-            settings.endGroup();
-        }
-        return out;
     }
 
 private:
