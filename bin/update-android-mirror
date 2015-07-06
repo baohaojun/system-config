@@ -8,23 +8,28 @@ set -ex
 
 (
     cd ~/src/android-mirror/ || exit 0
-
+    export http_proxy=localhost:8888
+    export https_proxy=localhost:8888
     for branch in $(
-        cd .repo/manifests >/dev/null 2>&1
-        git branch -a | grep -P -e '/android-\d' | sort -n | tail -n 1 | perl -npe 's,.*/,,'
-        if test ! -e .repo/update-android-branches; then
-            echo jb-dev > .repo/update-android-branches
+                       (        cd .repo/manifests >/dev/null 2>&1
+                                git branch -a | grep -P -e '/android-\d' | sort -n | tail -n 1 | perl -npe 's,.*/,,'
+                       )
+
+                       if test ! -e .repo/update-android-branches; then
+                           echo master > .repo/update-android-branches
+                       fi
+                       cat .repo/update-android-branches 2>/dev/null
+                   );
+    do
+        if repo-switch -u https://android.googlesource.com/platform/manifest -b $branch -m default.xml; then
+            repo sync -j1 || true
         fi
-        cat .repo/update-android-branches 2>/dev/null
-    ); do
-        repo-switch -u https://android.googlesource.com/platform/manifest -b $branch -m default.xml
-        repo sync -j1
     done
 )
 
 #vendor/nvidia and hardware/tegra, we can do nothing, their git is maintained by us.
 
-#git clone --mirror --bare  git://android.git.kernel.org/tools/repo.git
+#git clone --mirror --bare git://android.git.kernel.org/tools/repo.git
 cd ~/src/android-mirror/repo.git
 git fetch
 echo ok, repo update complete

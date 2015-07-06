@@ -1,0 +1,14 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: mantiscmd
+# key: mantiscmd
+# --
+parser_$1 = subparsers.add_parser("$2", help = "$3")
+parser_$1.add_argument("--$4")
+def $1(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.$5(
+        arg.username,
+        arg.password$6
+    )
+
+parser_$1.set_defaults(command=$1)

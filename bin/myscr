@@ -9,10 +9,6 @@ if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then
     export SHELL=/bin/bash
 fi
 
-(
-    sawfish-client -e "(setenv \"DISPLAY\" \"$DISPLAY\")"&
-) >/dev/null 2>&1
-
 if test $# = 0 || test $# = 1 -a "$1" = first; then
 . ~/system-config/.bashrc-ssh-agent
 fi

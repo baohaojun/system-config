@@ -159,6 +159,8 @@ if test $# = 0; then
     abc mm
 elif test "$1" = mm; then
     abc "$@"
+elif test "$1" = sync-qc-oems; then
+    ssh $abc_host abc "$@"
 elif test "$(type -t "$1")" = function; then
     "$@"
 else

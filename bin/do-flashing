@@ -16,8 +16,13 @@ else
     set -x
     if echo "$@" | grep sfo; then
         cd /d/RDL_8974
+    elif echo "$@" | grep icesky_msm8992; then
+        cd /d/RDL_8992
+    elif echo "$@" | grep icesky_msm8994; then
+         cd /d/RDL_8994/
     else
-        cd /d/RDL_8994/
+        echo "Can't find a right DL"
+        exit 0
     fi
     if test ! -e adb.exe; then
         cd ./*/
@@ -32,5 +37,5 @@ else
     set -- "$(printf %q "$1")"
     perl -npe '$p = q('$1'); s/^!set refpath .*/!set refpath $p\\/' application > application.bak
     mv application.bak application
-    myscr first screen bash -c "if test -e MultiFlasher.exe; then ./MultiFlasher.exe; else ./RDL.exe; fi; read -p hello"
+    myscr first screen bash -c "pwd; if test -e MultiFlasher.exe; then ./MultiFlasher.exe; else ./RDL.exe; fi; read -p hello"
 fi

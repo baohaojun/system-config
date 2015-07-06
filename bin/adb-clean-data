@@ -25,4 +25,5 @@ my-adb 'cd /data;
             fi
             rm -r $x
         done
+        setprop persist.preinstalled y
 '

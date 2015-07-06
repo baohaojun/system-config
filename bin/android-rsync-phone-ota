@@ -12,14 +12,20 @@ if test ! "$ANDROID_SERIAL"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  Sno_system
+# generate-getopts  Sno_system Gno_gapps ssystem_only gforce_gapps
 ## end code-generator
 ## start generated code
 no_system=false
+no_gapps=false
+system_only=false
+force_gapps=false
 OPTIND=1
-while getopts 'S' opt; do
+while getopts 'SGsg' opt; do
     case "$opt" in
         S)    no_system=true;;
+        G)    no_gapps=true;;
+        s)    system_only=true;;
+        g)    force_gapps=true;;
         *)    echo Usage Error; exit 2;;
     esac
 done
@@ -58,6 +64,9 @@ function update-partition() {
 }
 
 function update-partition() {
+    if test $system_only = true; then
+        return 0
+    fi
     if test $(basename $file) = boot.img; then
         adb-push -d $file /data
     else
@@ -134,7 +143,9 @@ echo doing rsync in $(pwd)
 adb-stop-all-services
 my-adb remount
 my-adb stop
-if my-adb "test -e /system/framework/com.google.android.maps.jar && echo -n yes && echo $$" | grep yes$$ -q; then
+if test $no_gapps = false &&
+        my-adb "test -e /system/framework/com.google.android.maps.jar && echo -n yes && echo $$" | grep yes$$ -q ||
+            test $force_gapps = true; then
     if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
         # it's lp
         for x in $(find ~/today/forever/gapps-lp/system/ -type f); do

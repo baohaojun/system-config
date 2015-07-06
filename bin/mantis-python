@@ -3,6 +3,7 @@
 import logging
 logging.basicConfig(level = logging.FATAL)
 from suds.client import Client
+from datetime import datetime, timedelta
 
 import argparse;
 
@@ -28,7 +29,7 @@ parser_add_note.add_argument("-i", "--issue-id")
 parser_add_note.add_argument("-n", "--note")
 parser_add_note.set_defaults(command=add_note)
 
-parser_get_issue = subparsers.add_parser("issue-get", help="get issue")
+parser_get_issue = subparsers.add_parser("get-issue", help="get issue")
 parser_get_issue.add_argument("-i", "--issue-id")
 def get_issue(arg):
     mantis = Client(arg.wsdl).service
@@ -115,6 +116,105 @@ def update_issue(arg):
     )
 
 parser_update_issue.set_defaults(command=update_issue)
+
+parser_get_profiles = subparsers.add_parser("get-profiles", help="get profiles")
+parser_get_profiles.add_argument("-p", "--page-number", default=0)
+parser_get_profiles.add_argument("-n", "--per-page", default=20)
+def get_profiles(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_user_profiles_get_all(
+        arg.username,
+        arg.password,
+        arg.page_number,
+        arg.per_page
+    )
+
+parser_get_profiles.set_defaults(command=get_profiles)
+
+parser_get_projects = subparsers.add_parser("get-projects", help="get projects")
+def get_projects(arg):
+    mantis = Client(arg.wsdl).service
+    projects = mantis.mc_projects_get_user_accessible(
+        arg.username,
+        arg.password
+    )
+    for p in projects:
+        print "{0}: {1}".format(p.id, p.name)
+
+parser_get_projects.set_defaults(command=get_projects)
+
+parser_get_user = subparsers.add_parser("get-user", help="get user")
+parser_get_user.add_argument("--project-id", default = 47)
+parser_get_user.add_argument("--access", default = 10)
+def get_user(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_project_get_users(
+        arg.username,
+        arg.password,
+        arg.project_id,
+        arg.access
+    )
+
+parser_get_user.set_defaults(command=get_user)
+
+parser_add_issue = subparsers.add_parser("add-issue", help = "add issue")
+parser_add_issue.add_argument("--project")
+parser_add_issue.add_argument("--summary")
+parser_add_issue.add_argument("--description")
+parser_add_issue.add_argument("--category")
+parser_add_issue.add_argument("--due-date", default = str((datetime.now() + timedelta(15)).date()))
+def add_issue(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_issue_add(
+        arg.username,
+        arg.password,
+        {
+            'project' : {
+                'id' : arg.project
+            },
+            'summary' : arg.summary,
+            'description' : arg.description,
+            'category' : arg.category,
+            'due_date' : arg.due_date,
+        }
+
+    )
+
+parser_add_issue.set_defaults(command=add_issue)
+
+parser_get_categories = subparsers.add_parser("get-categories", help = "get categories")
+parser_get_categories.add_argument("--project", type = int)
+def get_categories(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_project_get_categories(
+        arg.username,
+        arg.password,
+        arg.project
+    )
+
+parser_get_categories.set_defaults(command=get_categories)
+
+parser_enum_custom_field = subparsers.add_parser("enum-custom-field", help = "enum custom field")
+def enum_custom_field(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_enum_custom_field_types(
+        arg.username,
+        arg.password
+    )
+
+parser_enum_custom_field.set_defaults(command=enum_custom_field)
+
+parser_mc_project_get_custom_fields = subparsers.add_parser("get-custom-fields", help = "")
+parser_mc_project_get_custom_fields.add_argument("--project-id")
+def mc_project_get_custom_fields(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_project_get_custom_fields(
+        arg.username,
+        arg.password,
+        arg.project_id
+    )
+
+parser_mc_project_get_custom_fields.set_defaults(command=mc_project_get_custom_fields)
 
 arg = parser.parse_args()
 if arg.debug:
