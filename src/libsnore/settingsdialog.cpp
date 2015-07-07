@@ -119,11 +119,7 @@ void SettingsDialog::save()
 
 void SettingsDialog::setVisible(bool b)
 {
-    if (b) {
-        load();
-    } else {
-        save();
-    }
+    load();
     QWidget::setVisible(b);
 }
 
