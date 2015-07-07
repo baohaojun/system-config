@@ -113,12 +113,18 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
 void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
+    Q_ASSERT_X(!notification.data()->isBroadcasted(), Q_FUNC_INFO, "Notification was already broadcasted.");
+    if (notification.data()->isBroadcasted()) {
+        snoreDebug(SNORE_WARNING) <<  "Notification" << notification << "was already broadcasted.";
+        return;
+    }
     snoreDebug(SNORE_DEBUG) << "Broadcasting" << notification << "timeout:" << notification.timeout();
     if (d->m_notificationBackend != nullptr) {
         if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
             requestCloseNotification(notification.old(), Notification::REPLACED);
         }
     }
+    notification.data()->setBroadcasted();
     emit d->notify(notification);
 }
 

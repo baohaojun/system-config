@@ -50,6 +50,10 @@ public:
 
     QString resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags);
 
+    void setBroadcasted();
+
+    bool isBroadcasted() const;
+
 private:
     Q_DISABLE_COPY(NotificationData)
 
@@ -62,13 +66,14 @@ private:
     QString m_text;
     Icon m_icon;
     Notification::Prioritys m_priority;
-    Notification::CloseReasons m_closeReason;
+    Notification::CloseReasons m_closeReason = Notification::NONE;
     Action m_actionInvoked;
     QHash<int, Action> m_actions;
     Hint m_hints;
     Notification m_toReplace;
     QScopedPointer<QTimer> m_timeoutTimer;
     QSet<const QObject *> m_activeIn;
+    bool m_isBroadcasted = false;
 
     static uint notificationCount;
     static uint m_idCount;

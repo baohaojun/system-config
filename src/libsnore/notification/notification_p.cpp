@@ -41,7 +41,6 @@ NotificationData::NotificationData(const Snore::Application &application, const 
     m_text(text),
     m_icon(icon),
     m_priority(priority),
-    m_closeReason(Notification::NONE),
     m_hints(m_application.constHints())
 {
     notificationCount++;
@@ -58,7 +57,6 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
     m_text(text),
     m_icon(icon),
     m_priority(priority),
-    m_closeReason(Notification::NONE),
     m_hints(m_application.constHints()),
     m_toReplace(old)
 {
@@ -103,5 +101,15 @@ QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLA
     } else {
         return Utils::normalizeMarkup(string, flags);
     }
+}
+
+void NotificationData::setBroadcasted()
+{
+    m_isBroadcasted = true;
+}
+
+bool NotificationData::isBroadcasted() const
+{
+    return m_isBroadcasted;
 }
 
