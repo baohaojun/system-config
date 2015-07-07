@@ -18,10 +18,30 @@
   (add-to-list 'ac-modes 'haskell-interactive-mode)
   (add-hook 'haskell-interactive-mode-hook 'set-auto-complete-as-completion-at-point-function))
 
+(when (executable-find "ghci-ng")
+  (setq-default haskell-process-args-cabal-repl
+                '("--ghc-option=-ferror-spans" "--with-ghc=ghci-ng")))
+
 
 
 ;; Flycheck specifics
 
+(when (and (maybe-require-package 'flycheck-haskell)
+           (require-package 'flycheck-hdevtools))
+  (after-load 'flycheck
+    (add-hook 'haskell-mode-hook #'flycheck-haskell-setup)
+
+    (defun sanityinc/flycheck-haskell-reconfigure ()
+      "Reconfigure flycheck haskell settings, e.g. after changing cabal file."
+      (interactive)
+      (unless (eq major-mode 'haskell-mode)
+        (error "Expected to be in haskell-mode"))
+      (flycheck-haskell-clear-config-cache)
+      (flycheck-haskell-configure)
+      (flycheck-mode -1)
+      (flycheck-mode))
+
+    (require 'flycheck-hdevtools)))
 
 
 ;; Docs
