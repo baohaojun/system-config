@@ -4,3 +4,4 @@ if ps -o cmd $$ | grep 'sawfish'; then
     . ~/.config/system-config/.gnome-keyring.$$
     /bin/rm ~/.config/system-config/.gnome-keyring.$$
 fi
+xset b off
