@@ -41,11 +41,6 @@ Icon Icon::defaultIcon()
     return icon;
 }
 
-Icon::Icon() :
-    d(NULL)
-{
-}
-
 Icon::Icon(const QImage &img):
     d(new IconData(img))
 {
@@ -89,7 +84,7 @@ bool Icon::isLocalFile() const
 
 bool Icon::isValid() const
 {
-    return d && !(d->m_img.isNull() && d->m_url.isEmpty());
+    return !(d->m_img.isNull() && d->m_url.isEmpty());
 }
 
 Icon Icon::scaled(const QSize &s) const

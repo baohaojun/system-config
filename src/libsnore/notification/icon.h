@@ -47,7 +47,6 @@ public:
 
     static Icon defaultIcon();
 
-    Icon();
 
     /**
      * Creates an Icon from an QImage
@@ -114,6 +113,7 @@ public:
     Icon scaled(const QSize &s) const;
 
 private:
+    Icon() = delete;
     QExplicitlySharedDataPointer<IconData> d;
     friend SNORE_EXPORT QDebug(::operator<<)(QDebug, const Snore::Icon &);
 };

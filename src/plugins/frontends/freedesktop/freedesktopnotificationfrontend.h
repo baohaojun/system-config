@@ -50,7 +50,6 @@ public Q_SLOTS:
 
 private:
     Snore::Alert m_alert;
-    Snore::Icon m_icon;
     NotificationsAdaptor *m_adaptor;
 };
 

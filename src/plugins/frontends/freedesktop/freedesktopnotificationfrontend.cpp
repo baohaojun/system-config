@@ -83,7 +83,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
                                  const QString &app_icon, const QString &summary, const QString &body,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
-    Icon icon;
+    Icon icon = Icon::defaultIcon();
     Application app;
     Notification::Prioritys priotity = Notification::NORMAL;
 
@@ -91,8 +91,6 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         FreedesktopImageHint image;
         hints.value(QLatin1String("image_data")).value<QDBusArgument>() >> image;
         icon = Icon(image.toQImage());
-    } else {
-        icon = Icon::defaultIcon();
     }
 
     if (!SnoreCore::instance().aplications().contains(app_name)) {
