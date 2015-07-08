@@ -258,7 +258,7 @@ system notification, just as rythombox does."
     (if (or douban-music-should-replay (file-exists-p "~/.cache/system-config/logs/douban-should-loop"))
         (setq douban-music-should-replay nil)
       (douban-music-get-next-song))
-    (if (> previous-song douban-music-current-song)
+    (if (>= previous-song douban-music-current-song)
         (douban-music-refresh)
       (douban-music-play))))
 
