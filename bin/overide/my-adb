@@ -347,7 +347,7 @@ function gdbserver() {
     fi
     if test "$process"; then
         pid=$(select-output-line -- bash -c 'adb shell ps |grep -P -e "\Q'$process'\E"'|pn 2)
-        exec_the_adb shell gdbserver --attach :$port $pid
+        exec_the_adb shell gdbserver64 --attach :$port $pid
         return 0;
     fi
     $the_adb forward tcp:$port tcp:$port || true

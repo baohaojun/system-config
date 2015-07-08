@@ -24,7 +24,7 @@ if test ! -e "$gdb_exe"; then
 fi
 
 symdir=$(echo $PWD/out/target/product/*/symbols)
-TEMP=$(getopt -o hH:s:c:p:a: --long help,host:,symbol:,core:port:add: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o hH:s:c:p:a: --long help,host:,symbol:,core:,port:,add:,exe: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 core=
 port=3333
@@ -38,6 +38,10 @@ while true; do
             ;;
         -H|--host)
             host=$2
+            shift 2
+            ;;
+        --exe)
+            exe_to_dbg=$2
             shift 2
             ;;
         -s|--symbol)
@@ -67,6 +71,7 @@ while true; do
 done
 
 cat >/tmp/gdbclient.cmds <<EOF
+set sysroot $symdir
 set solib-absolute-prefix $symdir
 set solib-search-path $symdir/system/lib$(for x in $symdir/system/lib/*/; do echo -n :$x; done):$symdir/system/usr/lib/alsa-lib
 $(
@@ -81,7 +86,9 @@ if test -n "$EMACS"; then
     annotate="-f $(if test $(basename $0) = agdb; then echo --interpreter=mi; fi) $annotate"
 fi
 my-adb forward tcp:$port tcp:$port || true
-exe_to_dbg=$(select-output-line -- bash -c "find ./out/target/product/*/symbols/{system,}/*bin -name '*$1*'")
+if test -z "$exe_to_dbg"; then
+    exe_to_dbg=$(select-output-line -- bash -c "find ./out/target/product/*/symbols/{system,}/*bin -name '*$1*'")
+fi
 echo $gdb_exe $annotate -x /tmp/gdbclient.cmds $core $exe_to_dbg > ~/.cache/system-config/logs/agdb.txt
 #exec $gdb_exe $annotate -x /tmp/gdbclient.cmds $core $exe_to_dbg
 exec $gdb_exe $annotate $(if test $(basename $0) = agud; then echo -x /tmp/gdbclient.cmds; fi) $core $exe_to_dbg
