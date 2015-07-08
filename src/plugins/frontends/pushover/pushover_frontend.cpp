@@ -144,6 +144,7 @@ void PushoverFrontend::connectToService()
         snoreDebug(SNORE_WARNING) << "not logged in";
         return;
     }
+    snoreDebug(SNORE_DEBUG) << "Connecting ton service";
     m_socket = new QWebSocket(QString(), QWebSocketProtocol::VersionLatest, this);
 
     connect(m_socket, &QWebSocket::binaryMessageReceived, [&](const QByteArray & msg) {
@@ -172,8 +173,9 @@ void PushoverFrontend::connectToService()
             snoreDebug(SNORE_WARNING) << "unknown message recieved" << msg;
         }
     });
-    connect(m_socket, &QWebSocket::disconnected, []() {
-        snoreDebug(SNORE_DEBUG) << "disconnected";
+    connect(m_socket, &QWebSocket::disconnected, [this]() {
+        snoreDebug(SNORE_WARNING) << "disconnected";
+        QTimer::singleShot(500, this, &PushoverFrontend::connectToService);
     });
     connect(m_socket, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), [&](QAbstractSocket::SocketError error) {
         snoreDebug(SNORE_WARNING) << error << m_socket->errorString();
