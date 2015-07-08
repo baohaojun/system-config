@@ -34,8 +34,10 @@ public:
 
     QString m_name;
     Icon m_icon;
-    QHash<QByteArray, Alert> m_alerts;
+    QHash<QString, Alert> m_alerts;
     Hint m_hint;
+    Alert m_defaultAlert;
+
 };
 
 }

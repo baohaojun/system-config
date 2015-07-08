@@ -86,7 +86,7 @@ public:
      *
      * @return a QHash with the Alers registered with this Application.
      */
-    const QHash<QByteArray, Alert> &alerts() const;
+    const QHash<QString, Alert> &alerts() const;
 
     /**
      *

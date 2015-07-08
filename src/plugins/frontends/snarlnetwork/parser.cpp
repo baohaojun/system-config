@@ -102,8 +102,8 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
     }
 
     if (!alertName.isEmpty() && app.isValid()) {
-        if (app.alerts().contains(alertName.toLatin1())) {
-            alert = app.alerts().value(alertName.toLatin1());
+        if (app.alerts().contains(alertName)) {
+            alert = app.alerts().value(alertName);
         }
     }
 
