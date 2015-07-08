@@ -64,7 +64,8 @@ public:
     ~Application();
 
     /**
-     * Add an alert to the Application
+     * Add an alert to the Application.
+     * Alerts must be added before the application is registered.
      * @param alert the Alert
      */
     void addAlert(const  Alert &alert);

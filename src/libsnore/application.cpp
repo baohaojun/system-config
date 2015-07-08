@@ -18,13 +18,14 @@
 
 #include "application.h"
 #include "application_p.h"
+#include "snore_p.h"
 
 #include <QApplication>
 
 using namespace Snore;
 
 Application::Application():
-    d(NULL)
+    d(nullptr)
 {}
 
 Application::Application(const QString &name, const Icon &icon) :
@@ -52,6 +53,8 @@ Application::~Application()
 
 void Application::addAlert(const Alert &alert)
 {
+    Q_ASSERT_X(!SnoreCore::instance().aplications().contains(name()), Q_FUNC_INFO,
+               "Alerts must be added before the application is Registered." );
     d->m_alerts.insert(alert.name().toUtf8(), alert);
 }
 

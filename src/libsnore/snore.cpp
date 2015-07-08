@@ -92,7 +92,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                         }
                     }
                 }
-                break;
+                    break;
                 default:
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
@@ -114,10 +114,6 @@ void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
     Q_ASSERT_X(!notification.data()->isBroadcasted(), Q_FUNC_INFO, "Notification was already broadcasted.");
-    if (notification.data()->isBroadcasted()) {
-        snoreDebug(SNORE_WARNING) <<  "Notification" << notification << "was already broadcasted.";
-        return;
-    }
     snoreDebug(SNORE_DEBUG) << "Broadcasting" << notification << "timeout:" << notification.timeout();
     if (d->m_notificationBackend != nullptr) {
         if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
@@ -131,11 +127,11 @@ void SnoreCore::broadcastNotification(Notification notification)
 void SnoreCore::registerApplication(const Application &application)
 {
     Q_D(SnoreCore);
-    if (!d->m_applications.contains(application.name())) {
-        snoreDebug(SNORE_DEBUG) << "Registering Application:" << application;
-        d->m_applications.insert(application.name(), application);
-        emit d->applicationRegistered(application);
-    }
+    Q_ASSERT_X(!d->m_applications.contains(application.name()), Q_FUNC_INFO,
+               "Applications mus be registered only once.");
+    snoreDebug(SNORE_DEBUG) << "Registering Application:" << application;
+    d->m_applications.insert(application.name(), application);
+    emit d->applicationRegistered(application);
 }
 
 void SnoreCore::deregisterApplication(const Application &application)
@@ -246,7 +242,7 @@ void SnoreCore::displayExapleNotification()
 {
     Application app = SnoreCorePrivate::instance()->defaultApplication();
     QString text = QLatin1String("<i>") + tr("This is Snore") + QLatin1String("</i><br>") +
-                   QLatin1String("<a href=\"https://github.com/Snorenotify/Snorenotify\">") + tr("Project Website") + QLatin1String("</a><br>");
+            QLatin1String("<a href=\"https://github.com/Snorenotify/Snorenotify\">") + tr("Project Website") + QLatin1String("</a><br>");
     if (!app.constHints().value("use-markup").toBool()) {
         text = Utils::normalizeMarkup(text, Utils::NO_MARKUP);
     }
