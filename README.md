@@ -31,12 +31,26 @@ For a detailed description of our backends see our [Wiki](https://github.com/Sno
 
 
 
-## Projects using Snore ##
+## Projects using Snorenotify ##
 - [Quassel IRC](http://www.quassel-irc.org/)
 - [Tomahawk](http://www.tomahawk-player.org/)
 
-## API Doc ##
+## How to integrate Snorenotify in your project
+## CMake
+  project( MyApp )
+  cmake_minimum_required( VERSION 2.8.12 )
+  find_package(LibsnoreQt5 0.5.91 REQUIRED)
+  
+  add_executable( my_app main.cpp)
+  target_link_libraries( my_app Snore::Libsnore)
+  
+## Qmake
+  QT += LibsnoreQt5
+  
+
+### API Doc
 [A documentation of the API can be found here](http://patrick.von-reth.de/other/snore/latest/doc/html/index.html)
+
 
 ## Dependencies ##
 Required dependencies:
