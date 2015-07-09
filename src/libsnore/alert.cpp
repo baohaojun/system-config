@@ -28,8 +28,14 @@ Alert::Alert() :
 {}
 
 Alert::Alert(const QString &name, const Icon &icon):
-    d(new AlertData(name, icon))
+    d(new AlertData(name, name, icon))
 {}
+
+Alert::Alert(const QString &key, const QString &name, const Icon &icon):
+    d(new AlertData(key,name,icon))
+{
+
+}
 
 Alert::Alert(const Alert &other):
     d(other.d)
@@ -46,6 +52,11 @@ Alert &Alert::operator=(const Alert &other)
 Alert::~Alert()
 {
 
+}
+
+QString Alert::key() const
+{
+    return d->m_key;
 }
 
 QString Alert::name() const

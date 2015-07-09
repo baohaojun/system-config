@@ -27,15 +27,19 @@ Application::Application():
 {}
 
 Application::Application(const QString &name, const Icon &icon) :
-    d(new ApplicationData(name, icon))
+    d(new ApplicationData(name, name, icon))
 
+{
+}
+
+Application::Application(const QString key, const QString &name, const Icon &icon) :
+    d(new ApplicationData(key,name,icon))
 {
 }
 
 Application::Application(const Application &other):
     d(other.d)
 {
-
 }
 
 Application &Application::operator=(const Application &other)
@@ -50,9 +54,14 @@ Application::~Application()
 
 void Application::addAlert(const Alert &alert)
 {
-    Q_ASSERT_X(!SnoreCore::instance().aplications().contains(name()), Q_FUNC_INFO,
+    Q_ASSERT_X(!SnoreCore::instance().aplications().contains(key()), Q_FUNC_INFO,
                "Alerts must be added before the application is Registered." );
-    d->m_alerts.insert(alert.name(), alert);
+    d->m_alerts.insert(alert.key(), alert);
+}
+
+QString Application::key() const
+{
+    return d->m_key;
 }
 
 QString Application::name() const

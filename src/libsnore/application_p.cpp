@@ -23,13 +23,14 @@
 
 using namespace Snore;
 
-ApplicationData::ApplicationData(const QString &name, const Icon &icon):
+ApplicationData::ApplicationData(const QString &key, const QString &name, const Icon &icon):
+    m_key(key),
     m_name(name),
     m_icon(icon),
     m_defaultAlert(qApp->translate("Default Alert", "Default"), icon)
 {
     Q_ASSERT_X(!name.isEmpty(), Q_FUNC_INFO, "invalid name detected");
-    m_alerts.insert(m_defaultAlert.name(), m_defaultAlert);
+    m_alerts.insert(m_defaultAlert.key(), m_defaultAlert);
 
     m_hint.setValue("pushover-token", QLatin1String("aFB1TPCyZkkr7mubCGEKy5vJEWak9t"));
     m_hint.setValue("use-markup", false);

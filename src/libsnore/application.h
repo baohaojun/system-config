@@ -42,12 +42,22 @@ public:
     Application();
 
     /**
-     * Creates a new Application object
-     * @param name
-     * @param icon
+     * Creates a new Application object.
+     * @param name the name of the Application. Used in Snore::applications().
+     * @param icon the icon of the Application.
      * @see SnoreCore::registerApplication
      */
     explicit Application(const QString &name, const Icon &icon);
+
+    /**
+     * Creates a new Application object.
+     * @param key the key of the application. Used in Snore::applications().
+     * @param name the name of the Application.
+     * @param icon the icon of the Application.
+     * @see SnoreCore::registerApplication
+     */
+    explicit Application(const QString key, const QString &name, const Icon &icon);
+
 
     /**
      * The copy constructor
@@ -71,32 +81,33 @@ public:
     void addAlert(const  Alert &alert);
 
     /**
-     *
-     * @return the name of the Application
+     * Returns the key of the Application.
+     * Might be the same as name().
+     */
+    QString key() const;
+
+    /**
+     * Returns the name of the Application.
      */
     QString name() const;
 
     /**
-     *
-     * @return the default icon for Notifications ans Alerts of this Application.
+     * Returns the icon of this Application.
      */
     const Icon &icon() const;
 
     /**
-     *
-     * @return a QHash with the Alers registered with this Application.
+     * Returns a map with the Alers registered with this Application.
      */
     const QHash<QString, Alert> &alerts() const;
 
     /**
-     *
-     * @return the default alert for notifications.
+     * Returns the default alert for notifications.
      */
     const Alert defaultAlert() const;
 
     /**
-     *
-     * @return whether the Application is valid.
+     * Returns whether the Application is valid.
      */
     bool isValid() const;
 

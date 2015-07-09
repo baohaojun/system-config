@@ -127,10 +127,10 @@ void SnoreCore::broadcastNotification(Notification notification)
 void SnoreCore::registerApplication(const Application &application)
 {
     Q_D(SnoreCore);
-    Q_ASSERT_X(!d->m_applications.contains(application.name()), Q_FUNC_INFO,
+    Q_ASSERT_X(!d->m_applications.contains(application.key()), Q_FUNC_INFO,
                "Applications mus be registered only once.");
     snoreDebug(SNORE_DEBUG) << "Registering Application:" << application;
-    d->m_applications.insert(application.name(), application);
+    d->m_applications.insert(application.key(), application);
     emit d->applicationRegistered(application);
 }
 
@@ -138,7 +138,7 @@ void SnoreCore::deregisterApplication(const Application &application)
 {
     Q_D(SnoreCore);
     emit d->applicationDeregistered(application);
-    d->m_applications.take(application.name());
+    d->m_applications.take(application.key());
 }
 
 const QHash<QString, Application> &SnoreCore::aplications() const

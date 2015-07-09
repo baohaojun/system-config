@@ -55,7 +55,7 @@ SnoreCorePrivate::~SnoreCorePrivate()
 
 Application SnoreCorePrivate::defaultApplication()
 {
-    if (!SnoreCore::instance().aplications().contains(m_defaultApp.name())) {
+    if (!SnoreCore::instance().aplications().contains(m_defaultApp.key())) {
         SnoreCore::instance().registerApplication(m_defaultApp);
     }
     return m_defaultApp;
