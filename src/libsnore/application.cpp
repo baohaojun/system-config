@@ -32,7 +32,7 @@ Application::Application(const QString &name, const Icon &icon) :
 {
 }
 
-Application::Application(const QString key, const QString &name, const Icon &icon) :
+Application::Application(const QString &key, const QString &name, const Icon &icon) :
     d(new ApplicationData(key,name,icon))
 {
 }

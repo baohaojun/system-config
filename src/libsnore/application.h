@@ -56,7 +56,7 @@ public:
      * @param icon the icon of the Application.
      * @see SnoreCore::registerApplication
      */
-    explicit Application(const QString key, const QString &name, const Icon &icon);
+    explicit Application(const QString &key, const QString &name, const Icon &icon);
 
 
     /**
