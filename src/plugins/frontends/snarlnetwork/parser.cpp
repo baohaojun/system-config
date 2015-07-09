@@ -113,9 +113,6 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
             SnoreCore::instance().registerApplication(app);
         }
 
-        if (!alert.isActive()) {
-            break;
-        }
         sNotification = Notification(app, alert, title, text, icon, timeout);
         sNotification.hints().setPrivateValue(snarl, "clientSocket", QVariant::fromValue(QPointer<QTcpSocket>(client)));
         break;

@@ -27,8 +27,8 @@ Alert::Alert() :
     d(nullptr)
 {}
 
-Alert::Alert(const QString &name, const Icon &icon, bool active):
-    d(new AlertData(name, icon, active))
+Alert::Alert(const QString &name, const Icon &icon):
+    d(new AlertData(name, icon))
 {}
 
 Alert::Alert(const Alert &other):
@@ -56,11 +56,6 @@ QString Alert::name() const
 const Icon &Alert::icon() const
 {
     return d->m_icon;
-}
-
-bool Alert::isActive() const
-{
-    return d->m_active;
 }
 
 bool Alert::isValid() const

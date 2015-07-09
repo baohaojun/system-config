@@ -44,11 +44,9 @@ public:
      * Creates an alert
      * @param name the name of the Alert
      * @param icon the Icon of the Alert
-     * @param active whether the alert is active, not used yet
-     * @todo is isActive of any use?
      */
 
-    explicit Alert(const QString &name, const Icon &icon, bool active = true);
+    explicit Alert(const QString &name, const Icon &icon);
     /**
      * Creates a copy of other
      * @param other
@@ -73,12 +71,6 @@ public:
      * @return the icon
      */
     const Icon &icon() const;
-
-    /**
-     *
-     * @return whether the Alert is active
-     */
-    bool isActive() const;
 
     /**
      *
