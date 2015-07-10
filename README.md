@@ -26,7 +26,7 @@ For a detailed description for some of our backends see our [Wiki](https://githu
 
 ## Supported secondary Backends ##
 
-- [Windows Phone - Supertoasty](http://supertoasty.com/)
+- [Windows Phone - Toasty](http://supertoasty.com/)
 - [Android - Notify my Android](https://www.notifymyandroid.com/) 
 - [Android and IOS - Pushover] (https://pushover.net/)
 - Playback of sound filles
