@@ -136,7 +136,7 @@ bool SnarlBackend::deinitialize()
     if (SnoreBackend::deinitialize()) {
         if (m_eventLoop) {
             m_eventLoop->deleteLater();
-            m_eventLoop = NULL;
+            m_eventLoop = nullptr;
             m_idMap.clear();
         }
         return true;
@@ -161,6 +161,9 @@ bool SnarlBackend::canUpdateNotification() const
 
 void SnarlBackend::slotRegisterApplication(const Application &application)
 {
+    if (!m_eventLoop) {
+        return;
+    }
 
     Q_ASSERT_X(!m_applications.contains(application.name()), Q_FUNC_INFO, "Application already registered");
 
