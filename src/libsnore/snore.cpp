@@ -99,7 +99,9 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 }
                 snoreDebug(SNORE_DEBUG) << info->name() << "is a" << info->type();
                 d->m_pluginNames[info->type()].append(info->name());
-                d->m_plugins[qMakePair(type, info->name())] = plugin;
+                auto key = qMakePair(type, info->name());
+                Q_ASSERT_X(!d->m_plugins.contains(key), Q_FUNC_INFO, "Multiple plugins of the same type with the same name.");
+                d->m_plugins.insert(key, plugin);
             }
             if (d->m_pluginNames.contains(type)) {
                 qSort(d->m_pluginNames[type]);
