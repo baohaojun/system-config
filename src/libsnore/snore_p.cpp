@@ -111,7 +111,7 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
         return true;
     }
 #ifdef Q_OS_WIN
-    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8 && setBackendIfAvailible(QLatin1String("Windows 8"))) {
+    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8 && setBackendIfAvailible(QLatin1String("Windows Toast"))) {
         return true;
     }
     if (setBackendIfAvailible(QLatin1String("Growl"))) {
@@ -121,7 +121,7 @@ bool SnoreCorePrivate::initPrimaryNotificationBackend()
         return true;
     }
 #elif defined(Q_OS_LINUX)
-    if (setBackendIfAvailible(QLatin1String("FreedesktopNotification"))) {
+    if (setBackendIfAvailible(QLatin1String("Freedesktop"))) {
         return true;
     }
 #elif defined(Q_OS_MAC)
