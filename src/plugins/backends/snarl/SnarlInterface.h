@@ -2,7 +2,7 @@
 #define SNARL_INTERFACE_V42_H
 
 #if defined(__MINGW32__) && !defined(MINGW_HAS_SECURE_API)
-#define MINGW_HAS_SECURE_API
+#define MINGW_HAS_SECURE_API 1
 #endif
 
 #include <tchar.h>
