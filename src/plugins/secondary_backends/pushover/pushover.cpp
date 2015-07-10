@@ -18,7 +18,8 @@
 #include "pushover.h"
 #include "pushoversettings.h"
 
-#include"libsnore/utils.h"
+#include "libsnore/utils.h"
+#include "libsnore/notification/notification_p.h"
 
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -28,7 +29,7 @@ using namespace Snore;
 
 void Pushover::slotNotify(Notification notification)
 {
-    if(notification.data()->source()->name() == name()) {
+    if(notification.data()->sourceAndTargetAreSimilar(this)) {
         return;
     }
 

@@ -263,6 +263,7 @@ void PushoverFrontend::getMessages()
                 if (notification.value(QLatin1String("html")).toInt() == 1) {
                     n.hints().setValue("use-markup", true) ;
                 }
+                n.data()->setSource(this);
                 SnoreCore::instance().broadcastNotification(n);
             }
             if (latestID != -1) {

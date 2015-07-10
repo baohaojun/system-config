@@ -58,7 +58,7 @@ public:
      * Sets the source SnorePlugin.
      * @see source()
      */
-    void setSource(const SnorePlugin *soure);
+    void setSource(SnorePlugin *soure);
 
 
     /**
@@ -66,6 +66,12 @@ public:
      * This is used to prevent notification loops between the frontend and the backend.
      */
     const SnorePlugin* source() const;
+
+    /**
+     * Returns true if the source->name() and the target->name() are the same.
+     * @todo rename
+     */
+    bool sourceAndTargetAreSimilar(const SnorePlugin *target);
 
 private:
     Q_DISABLE_COPY(NotificationData)

@@ -113,3 +113,22 @@ bool NotificationData::isBroadcasted() const
     return m_isBroadcasted;
 }
 
+void NotificationData::setSource(SnorePlugin *soure)
+{
+    m_source = soure;
+}
+
+const SnorePlugin *NotificationData::source() const
+{
+    return m_source;
+}
+
+bool NotificationData::sourceAndTargetAreSimilar(const SnorePlugin *target)
+{
+    if(source() && source()->name() == target->name()) {
+        snoreDebug(SNORE_DEBUG) << "Source" << source() << "and Target" << target << "are the same.";
+        return true;
+    }
+    return false;
+}
+

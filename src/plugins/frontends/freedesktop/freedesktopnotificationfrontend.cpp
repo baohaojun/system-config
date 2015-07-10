@@ -126,6 +126,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
     }
 
     noti.addActiveIn(this);
+    noti.data()->setSource(this);
     SnoreCore::instance().broadcastNotification(noti);
     return noti.id();
 }
