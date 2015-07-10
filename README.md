@@ -7,7 +7,7 @@ Using a plugin system it is possible to create notifications with many different
 For a detailed description for some of our backends see our [Wiki](https://github.com/Snorenotify/Snorenotify/wiki).
 
 ## Supported Backends ##
-- [Windows Toast notifications](https://github.com/Snorenotify/Snoretoast) 
+- [Windows Toast notifications](https://github.com/Snorenotify/Snorenotify/wiki/Windows-Toast-Notification) 
 
 - OSX Notification Center
 
