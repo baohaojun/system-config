@@ -15,6 +15,8 @@ For a detailed description for some of our backends see our [Wiki](https://githu
 
 - [Growl for Windows](http://www.growlforwindows.com/)
 
+- [Growl](http://growl.info/)
+
 - [Snarl](http://snarl.fullphat.net/)
 
 
