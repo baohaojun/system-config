@@ -85,7 +85,7 @@ Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()
 
 QString SnorePlugin::normaliseKey(const QString &key) const
 {
-    return name() + QLatin1Char('/') + key + QLatin1Char('.') + settingsVersion();
+    return name() + QLatin1Char('-') + typeName() + QLatin1Char('/') + key + QLatin1Char('.') + settingsVersion();
 }
 
 const QString &SnorePlugin::name() const

@@ -99,7 +99,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 }
                 snoreDebug(SNORE_DEBUG) << info->name() << "is a" << info->type();
                 d->m_pluginNames[info->type()].append(info->name());
-                d->m_plugins[info->name()] = plugin;
+                d->m_plugins[qMakePair(type, info->name())] = plugin;
             }
             if (d->m_pluginNames.contains(type)) {
                 qSort(d->m_pluginNames[type]);
@@ -194,7 +194,7 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets(SnorePlugin::PluginTypes
     QList<PluginSettingsWidget *> list;
     for (auto name : d->m_pluginNames[type]) {
         //TODO: mem leak?
-        SnorePlugin *p = d->m_plugins[name];
+        SnorePlugin *p = d->m_plugins[qMakePair(type, name)];
         PluginSettingsWidget *widget = p->settingsWidget();
         if (widget) {
             list.append(widget);

@@ -176,8 +176,9 @@ void SnoreCorePrivate::syncSettings()
     types.removeOne(SnorePlugin::BACKEND);
     for (auto type : types) {
         for (auto &pluginName : m_pluginNames[type]) {
-            SnorePlugin *plugin = m_plugins.value(pluginName);
-            bool enable = m_plugins[pluginName]->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool();
+            auto key = qMakePair(type, pluginName);
+            SnorePlugin *plugin = m_plugins.value(key);
+            bool enable = m_plugins[key]->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool();
             if (!plugin->isInitialized() && enable) {
                 plugin->initialize();
             } else if (plugin->isInitialized() && !enable) {
