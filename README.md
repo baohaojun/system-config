@@ -20,7 +20,7 @@ For a detailed description for some of our backends see our [Wiki](https://githu
 - [Snarl](http://snarl.fullphat.net/)
 
 
-- Integrated notifications
+- [Integrated notifications](https://github.com/Snorenotify/Snorenotify/wiki/Integrated-Notification-Backend)
 
 - System Tray
 
