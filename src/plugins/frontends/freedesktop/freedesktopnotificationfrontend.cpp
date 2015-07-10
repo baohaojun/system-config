@@ -83,15 +83,8 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
                                  const QString &app_icon, const QString &summary, const QString &body,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
-    Icon icon = Icon::defaultIcon();
     Application app;
     Notification::Prioritys priotity = Notification::NORMAL;
-
-    if (hints.contains(QLatin1String("image_data"))) {
-        FreedesktopImageHint image;
-        hints.value(QLatin1String("image_data")).value<QDBusArgument>() >> image;
-        icon = Icon(image.toQImage());
-    }
 
     if (!SnoreCore::instance().aplications().contains(app_name)) {
         qDebug() << QIcon::themeSearchPaths();
@@ -108,6 +101,13 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
         SnoreCore::instance().registerApplication(app);
     } else {
         app = SnoreCore::instance().aplications()[app_name];
+    }
+
+    Icon icon = app.icon();
+    if (hints.contains(QLatin1String("image_data"))) {
+        FreedesktopImageHint image;
+        hints.value(QLatin1String("image_data")).value<QDBusArgument>() >> image;
+        icon = Icon(image.toQImage());
     }
 
     if (hints.contains(QLatin1String("urgency"))) {
