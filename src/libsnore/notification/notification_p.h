@@ -54,6 +54,19 @@ public:
 
     bool isBroadcasted() const;
 
+    /**
+     * Sets the source SnorePlugin.
+     * @see source()
+     */
+    void setSource(const SnorePlugin *soure);
+
+
+    /**
+     * Returns the source SnorePlugin.
+     * This is used to prevent notification loops between the frontend and the backend.
+     */
+    const SnorePlugin* source() const;
+
 private:
     Q_DISABLE_COPY(NotificationData)
 
@@ -74,6 +87,7 @@ private:
     QScopedPointer<QTimer> m_timeoutTimer;
     QSet<const QObject *> m_activeIn;
     bool m_isBroadcasted = false;
+    SnorePlugin *m_source = nullptr;
 
     static uint notificationCount;
     static uint m_idCount;

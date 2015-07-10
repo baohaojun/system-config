@@ -28,6 +28,10 @@ using namespace Snore;
 
 void Pushover::slotNotify(Notification notification)
 {
+    if(notification.data()->source()->name() == name()) {
+        return;
+    }
+
     QString key = settingsValue(QLatin1String("UserKey")).toString();
     if (key.isEmpty()) {
         return;

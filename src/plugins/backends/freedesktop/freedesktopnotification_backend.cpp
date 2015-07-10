@@ -52,6 +52,10 @@ bool FreedesktopBackend::canUpdateNotification() const
 
 void  FreedesktopBackend::slotNotify(Notification noti)
 {
+    if(noti.data()->source()->name() == name()) {
+        return;
+    }
+
     QStringList actions;
     foreach (int k, noti.actions().keys()) {
         actions << QString::number(k) << noti.actions()[k].name();
