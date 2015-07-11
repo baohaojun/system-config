@@ -28,14 +28,14 @@ if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication
             rm ~/.config/system-config/ssh-agent.$$
             mv ~/.config/system-config/ssh-agent.$$.2 ~/.config/system-config/ssh-agent
         )
-        . ~/.config/system-config/ssh-agent
+        . ~/system-config/bin/set-ssh-agent
     }
 
     if test ! -e ~/.config/system-config/ssh-agent; then
         echo 1>&2 no ssh-agent found, restart it
         start_ssh_agent
     else
-        . ~/.config/system-config/ssh-agent
+        . ~/system-config/bin/set-ssh-agent
     fi
 
     val=0

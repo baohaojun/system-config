@@ -14,7 +14,7 @@ case $1 in
                          sleep 1 && bash -x ~bhj/system-config/bin/switch-touchpad &
                          sleep 1 && re-xmodmap&
                          sleep 1 && sudo ps-killall pulseaudio&
-                         . ~/.config/system-config/ssh-agent
+                         . ~/system-config/bin/set-ssh-agent
                          sleep 30 && notify-real-home&
             " >~bhj/.cache/system-config/logs/bhj-hibernate-hook.sh.log 2>&1
             echo done "$@"

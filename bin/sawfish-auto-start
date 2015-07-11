@@ -40,6 +40,7 @@ passwd = '$(get-authinfo localhost $USER 22)'
 gnomekeyring.unlock_sync(None, passwd)"
 
 do-ssh-add-all
+. ~/system-config/bin/set-ssh-agent
 
 run-dir-once ~/external/etc/sawfish/start&
 run-dir-once ~/system-config/.sawfish/start&

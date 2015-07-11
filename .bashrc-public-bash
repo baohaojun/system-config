@@ -173,7 +173,7 @@ cd_record()
     fi
 
     if test ~/.config/system-config/ssh-agent -nt /proc/$$/cmdline; then
-        . ~/.config/system-config/ssh-agent
+        . ~/system-config/bin/set-ssh-agent
         touch /proc/$$/cmdline >/dev/null 2>&1
     fi
     if test "$ANDROID_SERIAL" && ! echo "$RECURSIVE_SHELL" | grep -q -e "adb-$ANDROID_SERIAL\."; then

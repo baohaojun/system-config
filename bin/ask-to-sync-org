@@ -97,7 +97,7 @@ if ! is-tty-io; then
 fi
 
 set -e
-. ~/.config/system-config/ssh-agent
+. ~/system-config/bin/set-ssh-agent
 sync-mobile-org
 mkdir -p ~/.cache/system-config/sync-mobile-org/
 touch ~/.cache/system-config/sync-mobile-org/done

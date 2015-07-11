@@ -32,7 +32,7 @@ if screen -list|grep $session_name; then
             if echo $SHELLOPTS | grep -q xtrace; then
                 echo 'set -x;'
             fi
-            echo . ~/.config/system-config/ssh-agent
+            echo . ~/system-config/bin/set-ssh-agent
             printf "cd %q;" "$oldpwd"
             for x in "$@"; do
                 printf "%q " "$x"
