@@ -30,11 +30,7 @@ bool SnoreToast::canCloseNotification() const
 
 void SnoreToast::slotNotify(Notification notification)
 {
-    QProcess *p = new QProcess(this);
-    p->setReadChannelMode(QProcess::MergedChannels);
-
-    connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotToastNotificationClosed(int,QProcess::ExitStatus)));
-    connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
+    QProcess *p = createProcess(notification);
 
     QStringList arguements;
     arguements << QLatin1String("-t")
@@ -55,17 +51,40 @@ void SnoreToast::slotNotify(Notification notification)
         arguements << QLatin1String("-silent");
     }
     snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
-    p->start(QLatin1String("SnoreToast"), arguements);
 
-    p->setProperty("SNORE_NOTIFICATION", QVariant::fromValue(notification));
+    connect(p, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [this, notification](int code) {
+        Notification::CloseReasons reason = Notification::NONE;
+
+        switch (code) {
+        case 0:
+            reason = Notification::ACTIVATED;
+            slotNotificationActionInvoked(notification);
+            break;
+        case 1:
+            //hidden;
+            break;
+        case 2:
+            reason = Notification::DISMISSED;
+            break;
+        case 3:
+            reason = Notification::TIMED_OUT;
+            break;
+        case -1:
+            //failed
+            snoreDebug(SNORE_WARNING) << "SnoreToast failed to display " << notification;
+            break;
+        }
+
+        closeNotification(notification, reason);
+    });
+    p->start(QLatin1String("SnoreToast"), arguements);
 }
 
 void SnoreToast::slotRegisterApplication(const Application &application)
 {
     if (!application.constHints().contains("windows_app_id")) {
-        QProcess *p = new QProcess(this);
-        p->setReadChannelMode(QProcess::MergedChannels);
 
+        QProcess *p = createProcess(Notification());
         QStringList arguements;
         arguements << QLatin1String("-install")
                    << QLatin1String("SnoreNotify\\") + qApp->applicationName()
@@ -73,70 +92,22 @@ void SnoreToast::slotRegisterApplication(const Application &application)
                    << appId(application);
         snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
         p->start(QLatin1String("SnoreToast"), arguements);
-
-        connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int,QProcess::ExitStatus)));
-        connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
     }
 }
 
 void SnoreToast::slotCloseNotification(Notification notification)
 {
-    QProcess *p = new QProcess(this);
-    p->setReadChannelMode(QProcess::MergedChannels);
+    QProcess *p = createProcess(notification);
 
     QStringList arguements;
     arguements << QLatin1String("-close")
                << QString::number(notification.id());
     snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
     p->start(QLatin1String("SnoreToast"), arguements);
-
-    connect(p, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotPrintExitStatus(int,QProcess::ExitStatus)));
-    connect(qApp, SIGNAL(aboutToQuit()), p, SLOT(kill()));
-}
-
-void SnoreToast::slotToastNotificationClosed(int code, QProcess::ExitStatus)
-{
-    QProcess *p = qobject_cast<QProcess *>(sender());
-    snoreDebug(SNORE_DEBUG) << p->readAll();
-    snoreDebug(SNORE_DEBUG) << "Exit code:" << code;
-
-    Notification n = p->property("SNORE_NOTIFICATION").value<Notification>();
-    Notification::CloseReasons reason = Notification::NONE;
-
-    switch (code) {
-    case 0:
-        reason = Notification::ACTIVATED;
-        slotNotificationActionInvoked(n);
-        break;
-    case 1:
-        //hidden;
-        break;
-    case 2:
-        reason = Notification::DISMISSED;
-        break;
-    case 3:
-        reason = Notification::TIMED_OUT;
-        break;
-    case -1:
-        //failed
-        snoreDebug(SNORE_WARNING) << "SnoreToast failed to display " << n;
-        break;
-    }
-
-    closeNotification(n, reason);
-    p->deleteLater();
-}
-
-void SnoreToast::slotPrintExitStatus(int, QProcess::ExitStatus)
-{
-    QProcess *p = qobject_cast<QProcess *>(sender());
-    snoreDebug(SNORE_DEBUG) << p->readAll();
-    p->deleteLater();
 }
 
 QString SnoreToast::appId(const Application &application)
 {
-
     QString appID = application.constHints().value("windows-app-id").toString();
     if (appID.isEmpty()) {
         appID = application.constHints().value("windows_app_id").toString();
@@ -145,4 +116,27 @@ QString SnoreToast::appId(const Application &application)
         appID = QString(qApp->organizationName() + QLatin1Char('.') + qApp->applicationName() + QLatin1String(".SnoreToast")).remove(QLatin1Char(' '));
     }
     return appID;
+}
+
+QProcess *SnoreToast::createProcess(Notification noti)
+{
+    QProcess *p = new QProcess(this);
+    p->setReadChannelMode(QProcess::MergedChannels);
+
+    connect(p, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [p](int, QProcess::ExitStatus) {
+        snoreDebug(SNORE_DEBUG) << p->readAll();
+        p->deleteLater();
+    });
+
+    connect(p, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), [this, p, noti](QProcess::ProcessError) {
+        snoreDebug(SNORE_WARNING) << "SnoreToasts seems to be broken:" << p->errorString();
+        snoreDebug(SNORE_DEBUG) << p->readAll();
+        if (noti.isValid()) {
+            closeNotification(noti, Notification::NONE);
+        }
+        emit initialisationFinished(false);
+        p->deleteLater();
+    });
+    connect(qApp, &QApplication::aboutToQuit, p, &QProcess::kill);
+    return p;
 }

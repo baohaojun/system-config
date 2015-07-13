@@ -38,6 +38,9 @@ SnorePlugin::SnorePlugin()
     connect(this, &SnorePlugin::initialisationFinished, [this](bool b) {
         snoreDebug(SNORE_DEBUG) << "Plugin:" << name() << "initialized" << b;
         Q_ASSERT_X(!(b && m_initialized), Q_FUNC_INFO, "Plugin initialized multiple times.");
+        if (!b) {
+            disable();
+        }
         m_initialized = b;
     });
 }
@@ -115,7 +118,7 @@ void SnorePlugin::setDefaultSettings()
 
 void SnorePlugin::setEnabled(bool enabled)
 {
-    Q_ASSERT_X(isInitialized(), Q_FUNC_INFO, "Plugin not initialized");
+    Q_ASSERT_X(!enabled || isInitialized(), Q_FUNC_INFO, "Plugin not initialized");
     m_enabled = enabled;
 }
 

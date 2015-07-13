@@ -94,6 +94,15 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
                 }
+
+                connect(plugin, &SnorePlugin::initialisationFinished, [d, plugin](bool initialized) {
+                    if (!initialized) {
+                        //TODO: improve
+                        d->m_pluginNames[plugin->type()].removeAll(plugin->name());
+                        d->m_plugins.remove(qMakePair(plugin->type(), plugin->name()));
+                    }
+                });
+
                 QMetaObject::invokeMethod(plugin, "slotInitialize", Qt::QueuedConnection);
                 snoreDebug(SNORE_DEBUG) << info->name() << "is a" << info->type();
                 d->m_pluginNames[info->type()].append(info->name());

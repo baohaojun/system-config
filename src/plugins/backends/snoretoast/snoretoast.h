@@ -21,11 +21,10 @@ public Q_SLOTS:
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotCloseNotification(Snore::Notification notification) override;
 
-private Q_SLOTS:
-    void slotToastNotificationClosed(int code, QProcess::ExitStatus);
-    void slotPrintExitStatus(int code, QProcess::ExitStatus);
 private:
     QString appId(const Snore::Application &application);
+
+    QProcess *createProcess(Snore::Notification noti);
 
 };
 
