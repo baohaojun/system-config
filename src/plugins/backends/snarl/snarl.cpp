@@ -111,35 +111,22 @@ private:
 
 };
 
-bool SnarlBackend::initialize()
+SnarlBackend::SnarlBackend():
+    m_eventLoop(new SnarlBackend::SnarlWidget(this))
 {
-    if (!SnoreBackend::initialize()) {
-        return false;
-    }
-
-    SnarlInterface *snarlInterface = new SnarlInterface();
-    if (!snarlInterface->IsSnarlRunning()) {
-        snoreDebug(SNORE_WARNING) << "Snarl is not running";
-        delete snarlInterface;
-        return false;
-    }
-    m_eventLoop = new SnarlBackend::SnarlWidget(this);
-    snoreDebug(SNORE_DEBUG) << "Initiating Snarl Backend, Snarl version: " << snarlInterface->GetVersion();
-    delete snarlInterface;
-    return true;
 }
 
-bool SnarlBackend::deinitialize()
+SnarlBackend::~SnarlBackend()
 {
-    if (SnoreBackend::deinitialize()) {
-        if (m_eventLoop) {
-            m_eventLoop->deleteLater();
-            m_eventLoop = nullptr;
-            m_idMap.clear();
-        }
-        return true;
-    }
-    return false;
+    delete m_eventLoop;
+}
+
+void SnarlBackend::slotInitialize()
+{
+
+    SnarlInterface *snarlInterface = new SnarlInterface();
+    emit initialisationFinished(snarlInterface->IsSnarlRunning());
+    delete snarlInterface;
 }
 
 PluginSettingsWidget *SnarlBackend::settingsWidget()

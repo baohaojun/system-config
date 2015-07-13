@@ -33,8 +33,8 @@ class SNORE_EXPORT SnoreBackend : public SnorePlugin
 public:
     SnoreBackend() = default;
     virtual ~SnoreBackend();
-    virtual bool initialize() override;
-    virtual bool deinitialize() override;
+
+    virtual void setEnabled(bool enabled) override;
 
     void requestCloseNotification(Snore::Notification notification, Notification::CloseReasons reason);
 
@@ -74,8 +74,8 @@ class SNORE_EXPORT SnoreSecondaryBackend : public SnorePlugin
 public:
     SnoreSecondaryBackend() = default;
     virtual ~SnoreSecondaryBackend();
-    virtual bool initialize();
-    virtual bool deinitialize();
+
+    virtual void setEnabled(bool enabled) override;
 
 public Q_SLOTS:
     virtual void slotNotify(Snore::Notification notification);

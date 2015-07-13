@@ -32,9 +32,6 @@ public:
     SnoreNotifier();
     ~SnoreNotifier();
 
-    bool initialize() override;
-    bool deinitialize() override;
-
     bool canCloseNotification() const override;
     bool canUpdateNotification() const override;
 
@@ -44,6 +41,7 @@ protected:
     void setDefaultSettings() override;
 
 public Q_SLOTS:
+    void slotInitialize() override;
     virtual void slotNotify(Snore::Notification notification) override;
     virtual void slotCloseNotification(Snore::Notification notification) override;
 

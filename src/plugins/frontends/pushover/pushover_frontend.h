@@ -34,8 +34,8 @@ class PushoverFrontend : public Snore::SnoreFrontend
 public:
     PushoverFrontend();
     ~PushoverFrontend() = default;
-    bool initialize() override;
-    bool deinitialize() override;
+
+    void setEnabled(bool enabled) override;
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 
@@ -49,6 +49,7 @@ protected:
     void setDefaultSettings() override;
 
 public Q_SLOTS:
+    void slotInitialize() override;
     void slotActionInvoked(Snore::Notification notification);
 
 Q_SIGNALS:
@@ -65,6 +66,7 @@ private:
     QString device();
 
     void connectToService();
+    void disconnectService();
 
     void registerDevice(const QString &secret, const QString &deviceName);
     void getMessages();

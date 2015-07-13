@@ -44,27 +44,22 @@ PushoverFrontend::PushoverFrontend()
     });
 }
 
-bool PushoverFrontend::initialize()
+void PushoverFrontend::slotInitialize()
 {
-    if (!SnoreFrontend::initialize()) {
-        return false;
-    }
-
-    connectToService();
-
-    return true;
+    emit initialisationFinished(true);
 }
 
-bool PushoverFrontend::deinitialize()
+void PushoverFrontend::setEnabled(bool enabled)
 {
-    if (SnoreFrontend::deinitialize()) {
-        if (m_socket) {
-            m_socket->close();
-            m_socket->deleteLater();
-        }
-        return true;
+    if (enabled == isEnabled()) {
+        return;
     }
-    return false;
+    SnoreFrontend::setEnabled(enabled);
+    if (enabled) {
+        connectToService();
+    } else {
+        disconnectService();
+    }
 }
 
 PluginSettingsWidget *PushoverFrontend::settingsWidget()
@@ -192,6 +187,14 @@ void PushoverFrontend::connectToService()
         getMessages();
     });
     m_socket->open(QUrl::fromEncoded("wss://client.pushover.net/push"));
+}
+
+void PushoverFrontend::disconnectService()
+{
+    if (m_socket) {
+        m_socket->close();
+        m_socket->deleteLater();
+    }
 }
 
 void PushoverFrontend::registerDevice(const QString &secret, const QString &deviceName)

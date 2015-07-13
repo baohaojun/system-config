@@ -31,14 +31,13 @@ public:
     Sound();
     ~Sound() = default;
 
-    virtual bool initialize() override;
-
     Snore::PluginSettingsWidget *settingsWidget() override;
 
 protected:
     void setDefaultSettings() override;
 
 public Q_SLOTS:
+    void slotInitialize() override;
     void slotNotificationDisplayed(Snore::Notification notification) override;
 private:
     QMediaPlayer *m_player;

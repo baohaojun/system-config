@@ -34,8 +34,7 @@ public:
     SnoreFrontend() = default;
     virtual ~SnoreFrontend();
 
-    virtual bool initialize() override;
-    virtual bool deinitialize() override;
+    virtual void setEnabled(bool enabled) override;
 
 public Q_SLOTS:
     virtual void slotActionInvoked(Snore::Notification notification);

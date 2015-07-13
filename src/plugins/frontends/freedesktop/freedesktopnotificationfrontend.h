@@ -31,8 +31,8 @@ class FreedesktopFrontend : public Snore::SnoreFrontend
 public:
     FreedesktopFrontend() = default;
     ~FreedesktopFrontend() = default;
-    bool initialize() override;
-    bool deinitialize() override;
+
+    void setEnabled(bool enabled) override;
 
     uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
     void CloseNotification(uint id);
@@ -45,6 +45,7 @@ Q_SIGNALS:
     void ActionInvoked(uint id, const QString &actionKey);
 
 public Q_SLOTS:
+    void slotInitialize() override;
     void slotActionInvoked(Snore::Notification notification) override;
     void slotNotificationClosed(Snore::Notification notification) override;
 

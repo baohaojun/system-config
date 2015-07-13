@@ -11,13 +11,15 @@ class  FreedesktopBackend: public Snore::SnoreBackend
 public:
     FreedesktopBackend() = default;
     ~FreedesktopBackend() = default;
-    bool initialize() override;
-    bool deinitialize() override;
+
+    void setEnabled(bool enabled) override;
 
     bool canCloseNotification() const override;
     bool canUpdateNotification() const override;
 
 public Q_SLOTS:
+    void slotInitialize() override;
+
     void slotNotify(Snore::Notification notification) override;
     void slotCloseNotification(Snore::Notification notification) override;
 

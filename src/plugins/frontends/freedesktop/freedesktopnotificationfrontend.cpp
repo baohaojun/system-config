@@ -29,37 +29,36 @@
 
 using namespace Snore;
 
-bool FreedesktopFrontend::initialize()
+void FreedesktopFrontend::slotInitialize()
 {
-
-    if (!SnoreFrontend::initialize()) {
-        return false;
-    }
-    m_adaptor = new  NotificationsAdaptor(this);
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    if (dbus.registerService(QLatin1String("org.freedesktop.Notifications"))) {
-        if (dbus.registerObject(QLatin1String("/org/freedesktop/Notifications"), this)) {
-            return true;
-        } else {
-            snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register object";
-        }
-    } else {
-        snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register service";
-    }
-    return false;
+    emit initialisationFinished(true);
 }
 
-bool FreedesktopFrontend::deinitialize()
+void FreedesktopFrontend::setEnabled(bool enabled)
 {
-    if (SnoreFrontend::deinitialize()) {
+    if (enabled == isEnabled()) {
+        return;
+    }
+    SnoreFrontend::setEnabled(enabled);
+    if (enabled) {
+        m_adaptor = new  NotificationsAdaptor(this);
+        QDBusConnection dbus = QDBusConnection::sessionBus();
+        if (dbus.registerService(QLatin1String("org.freedesktop.Notifications"))) {
+            if (!dbus.registerObject(QLatin1String("/org/freedesktop/Notifications"), this)) {
+                snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register object";
+                emit initialisationFinished(false);
+            }
+        } else {
+            snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register service";
+            emit initialisationFinished(false);
+        }
+    } else {
         QDBusConnection dbus = QDBusConnection::sessionBus();
         dbus.unregisterService(QLatin1String("org.freedesktop.Notifications"));
         dbus.unregisterObject(QLatin1String("/org/freedesktop/Notifications"));
         m_adaptor->deleteLater();
         m_adaptor = nullptr;
-        return true;
     }
-    return false;
 }
 
 void FreedesktopFrontend::slotActionInvoked(Notification notification)

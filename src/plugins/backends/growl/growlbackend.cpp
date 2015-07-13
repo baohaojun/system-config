@@ -29,13 +29,10 @@ using namespace Snore;
 
 GrowlBackend *GrowlBackend::s_instance = nullptr;
 
-bool GrowlBackend::initialize()
+GrowlBackend::GrowlBackend()
 {
-    if (!SnoreBackend::initialize()) {
-        return false;
-    }
-
     s_instance = this;
+
     auto func = [](growl_callback_data * data)->void {
         snoreDebug(SNORE_DEBUG) << data->id << QString::fromUtf8(data->reason) << QString::fromUtf8(data->data);
         Notification n = Snore::SnoreCore::instance().getActiveNotificationByID(data->id);
@@ -58,20 +55,17 @@ bool GrowlBackend::initialize()
         }
         s_instance->closeNotification(n, r);
     };
-    if (Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data *)>(func))
-            && Growl::isRunning(GROWL_TCP, settingsValue(QLatin1String("Host")).toString().toUtf8().constData())) {
-        return true;
-    }
-    snoreDebug(SNORE_DEBUG) << "Growl is not running";
-    return false;
+    Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data *)>(func));
 }
 
-bool GrowlBackend::deinitialize()
+GrowlBackend::~GrowlBackend()
 {
-    if (!Growl::shutdown()) {
-        return false;
-    }
-    return SnoreBackend::deinitialize();
+    Growl::shutdown();
+}
+
+void GrowlBackend::slotInitialize()
+{
+    emit initialisationFinished(Growl::isRunning(GROWL_TCP, settingsValue(QLatin1String("Host")).toString().toUtf8().constData()));
 }
 
 void GrowlBackend::slotRegisterApplication(const Application &application)

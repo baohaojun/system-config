@@ -27,10 +27,8 @@ class SnarlBackend: public Snore::SnoreBackend
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "plugin.json")
 public:
-    SnarlBackend() = default;
-    ~SnarlBackend() = default;
-    bool initialize() override;
-    bool deinitialize() override;
+    SnarlBackend();
+    ~SnarlBackend();
     Snore::PluginSettingsWidget *settingsWidget() override;
 
     virtual bool canCloseNotification() const override;
@@ -45,6 +43,7 @@ private:
     QHash<QString, Snarl::V42::SnarlInterface *> m_applications;
 
 public Q_SLOTS:
+    void slotInitialize() override;
     void slotRegisterApplication(const Snore::Application &application);
     void slotDeregisterApplication(const Snore::Application &application);
     void slotNotify(Snore::Notification notification);

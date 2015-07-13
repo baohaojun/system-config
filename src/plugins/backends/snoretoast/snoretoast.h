@@ -12,11 +12,11 @@ class SnoreToast : public Snore::SnoreBackend
 public:
     SnoreToast() = default;
     ~SnoreToast() = default;
-    virtual bool initialize() override;
 
     virtual bool canCloseNotification() const override;
 
 public Q_SLOTS:
+    virtual void slotInitialize() override;
     void slotNotify(Snore::Notification notification) override;
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotCloseNotification(Snore::Notification notification) override;

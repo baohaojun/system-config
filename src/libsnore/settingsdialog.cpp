@@ -113,7 +113,7 @@ void SettingsDialog::save()
     SnoreCore::instance().setSettingsValue(QLatin1String("Silent"), ui->disableNotificationSoundCheckBox->isChecked(), LOCAL_SETTING);
 
     if (dirty) {
-        SnoreCorePrivate::instance()->syncSettings();
+        QMetaObject::invokeMethod(SnoreCorePrivate::instance(), "slotSyncSettings", Qt::QueuedConnection);
     }
 }
 

@@ -55,10 +55,6 @@ public:
      */
     bool primaryBackendCanUpdateNotification() const;
 
-    bool initPrimaryNotificationBackend();
-
-    void syncSettings();
-
     QString normalizeSettingsKey(const QString &key, SettingsType type) const
     {
         return Snore::Utils::normalizeSettingsKey(key, type, m_localSettingsPrefix);
@@ -80,6 +76,10 @@ private Q_SLOTS:
     void slotNotificationDisplayed(Notification notification);
     void slotNotificationClosed(Snore::Notification);
     void slotAboutToQuit();
+
+    void slotSyncSettings();
+
+    bool slotInitPrimaryNotificationBackend();
 
 Q_SIGNALS:
     void applicationRegistered(const Snore::Application &);

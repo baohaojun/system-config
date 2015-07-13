@@ -77,6 +77,11 @@ void Toasty::slotNotify(Notification notification)
 
 }
 
+void Toasty::slotInitialize()
+{
+    emit initialisationFinished(true);
+}
+
 PluginSettingsWidget *Toasty::settingsWidget()
 {
     return new ToastySettings(this);

@@ -87,23 +87,22 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         snoreDebug(SNORE_DEBUG) << "Setting Notification Backend to:" << backend;
         SnoreBackend *b = qobject_cast<SnoreBackend *>(backends.value(backend)->load());
         if (!b->isInitialized()) {
-            if (!b->initialize()) {
-                snoreDebug(SNORE_DEBUG) << "Failed to initialize" << b->name();
-                return false;
-            }
+            snoreDebug(SNORE_DEBUG) << "Failed to initialize" << b->name();
+            return false;
         }
         if (m_notificationBackend) {
-            m_notificationBackend->deinitialize();
+            m_notificationBackend->disable();
         }
 
         m_notificationBackend = b;
+        m_notificationBackend->enable();
         q->setSettingsValue(QLatin1String("PrimaryBackend"), backend, LOCAL_SETTING);
         return true;
     }
     return false;
 }
 
-bool SnoreCorePrivate::initPrimaryNotificationBackend()
+bool SnoreCorePrivate::slotInitPrimaryNotificationBackend()
 {
     Q_Q(SnoreCore);
     snoreDebug(SNORE_DEBUG) << q->settingsValue(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString();
@@ -155,7 +154,7 @@ void SnoreCorePrivate::setDefaultSettingsValueIntern(const QString &key, const Q
     }
 }
 
-void SnoreCorePrivate::syncSettings()
+void SnoreCorePrivate::slotSyncSettings()
 {
     Q_Q(SnoreCore);
     QString newBackend = q->settingsValue(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString();
@@ -163,7 +162,7 @@ void SnoreCorePrivate::syncSettings()
         QString oldBackend;
         if (m_notificationBackend) {
             oldBackend = m_notificationBackend->name();
-            m_notificationBackend->deinitialize();
+            m_notificationBackend->disable();
             m_notificationBackend = nullptr;
         }
         if (!setBackendIfAvailible(newBackend)) {
@@ -179,11 +178,7 @@ void SnoreCorePrivate::syncSettings()
             auto key = qMakePair(type, pluginName);
             SnorePlugin *plugin = m_plugins.value(key);
             bool enable = m_plugins[key]->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool();
-            if (!plugin->isInitialized() && enable) {
-                plugin->initialize();
-            } else if (plugin->isInitialized() && !enable) {
-                plugin->deinitialize();
-            }
+            plugin->setEnabled(enable);
         }
     }
 }
@@ -192,7 +187,7 @@ void SnoreCorePrivate::setLocalSttingsPrefix(const QString &prefix)
 {
     m_localSettingsPrefix = prefix;
     init();
-    syncSettings();
+    QMetaObject::invokeMethod(this, "slotSyncSettings", Qt::QueuedConnection);
 }
 
 QString SnoreCorePrivate::tempPath()
@@ -223,7 +218,7 @@ void SnoreCorePrivate::slotAboutToQuit()
     for (PluginContainer *p : PluginContainer::pluginCache(SnorePlugin::ALL)) {
         if (p->isLoaded()) {
             snoreDebug(SNORE_DEBUG) << "deinitialize" << p->name();
-            p->load()->deinitialize();
+            p->load()->disable();
         }
     }
 }

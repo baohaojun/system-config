@@ -53,10 +53,14 @@ public:
     SnorePlugin();
     virtual ~SnorePlugin();
 
-    // TODO: remove need of recursive calling of parent methode....
-    virtual bool initialize();
-    virtual bool deinitialize();
+    virtual void setEnabled(bool enabled);
+
+    void enable();
+    void disable();
+
     bool isInitialized() const;
+
+    bool isEnabled() const;
 
     /**
      * Returns the name of the plugin.
@@ -79,6 +83,12 @@ public:
 
     virtual PluginSettingsWidget *settingsWidget();
 
+Q_SIGNALS:
+    void initialisationFinished(bool initialized);
+
+public Q_SLOTS:
+    virtual void slotInitialize() = 0;
+
 protected:
     /**
      * Returns the version suffix used for the plugin settings.
@@ -95,6 +105,7 @@ private:
     void setDefaultSettingsPlugin();
 
     bool m_initialized = false;
+    bool m_enabled = false;
     PluginContainer *m_container = nullptr;
 
     friend class PluginContainer;

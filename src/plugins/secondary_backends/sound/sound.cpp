@@ -34,10 +34,10 @@ Sound::Sound():
     });
 }
 
-bool Sound::initialize()
+void Sound::slotInitialize()
 {
     m_player->setVolume(settingsValue(QLatin1String("Volume")).toInt());
-    return SnoreSecondaryBackend::initialize();
+    emit initialisationFinished(true);
 }
 
 PluginSettingsWidget *Sound::settingsWidget()

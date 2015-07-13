@@ -105,39 +105,25 @@ void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
     //the timer will show the next
 }
 
-bool SnoreNotifier::initialize()
+void SnoreNotifier::slotInitialize()
 {
-    if (SnoreBackend::initialize()) {
-        for (int i = 0; i < m_widgets.size(); ++i) {
-            NotifyWidget *w = new NotifyWidget(i, this);
-            m_widgets[i] = w;
-            connect(w, &NotifyWidget::dismissed, [this, w]() {
-                Notification notification = w->notification();
-                closeNotification(notification, Notification::DISMISSED);
-                slotCloseNotification(notification);
-            });
+    for (int i = 0; i < m_widgets.size(); ++i) {
+        NotifyWidget *w = new NotifyWidget(i, this);
+        m_widgets[i] = w;
+        connect(w, &NotifyWidget::dismissed, [this, w]() {
+            Notification notification = w->notification();
+            closeNotification(notification, Notification::DISMISSED);
+            slotCloseNotification(notification);
+        });
 
-            connect(w, &NotifyWidget::invoked, [this, w]() {
-                Notification notification = w->notification();
-                slotNotificationActionInvoked(notification);
-                closeNotification(notification, Notification::ACTIVATED);
-                slotCloseNotification(notification);
-            });
-        }
-        return true;
+        connect(w, &NotifyWidget::invoked, [this, w]() {
+            Notification notification = w->notification();
+            slotNotificationActionInvoked(notification);
+            closeNotification(notification, Notification::ACTIVATED);
+            slotCloseNotification(notification);
+        });
     }
-    return false;
-}
-
-bool SnoreNotifier::deinitialize()
-{
-    if (SnoreBackend::deinitialize()) {
-        for (auto w : m_widgets) {
-            w->deleteLater();
-        }
-        return true;
-    }
-    return false;
+    emit initialisationFinished(true);
 }
 
 bool SnoreNotifier::canCloseNotification() const

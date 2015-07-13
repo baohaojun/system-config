@@ -77,26 +77,24 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 if (!plugin) {
                     continue;
                 }
+
                 switch (info->type()) {
                 case SnorePlugin::BACKEND:
                     break;
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
-                case SnorePlugin::PLUGIN: {
-                    if (plugin->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool()) {
-                        if (!plugin->initialize()) {
-                            snoreDebug(SNORE_WARNING) << "Failed to initialize" << plugin->name();
-                            plugin->deinitialize();
-                            //info->unload();
-                            break;
+                case SnorePlugin::PLUGIN:
+                    connect(plugin, &SnorePlugin::initialisationFinished, [plugin](bool initialized) {
+                        if (initialized) {
+                            plugin->setEnabled(plugin->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool());
                         }
-                    }
-                }
-                break;
+                    });
+                    break;
                 default:
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
                 }
+                QMetaObject::invokeMethod(plugin, "slotInitialize", Qt::QueuedConnection);
                 snoreDebug(SNORE_DEBUG) << info->name() << "is a" << info->type();
                 d->m_pluginNames[info->type()].append(info->name());
                 auto key = qMakePair(type, info->name());
@@ -108,7 +106,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
             }
         }
     }
-    d->initPrimaryNotificationBackend();
+    QMetaObject::invokeMethod(d, "slotInitPrimaryNotificationBackend", Qt::QueuedConnection);
     snoreDebug(SNORE_INFO) << "Loaded Plugins:" << d->m_pluginNames;
 }
 

@@ -17,15 +17,15 @@ class TrayIconNotifer: public Snore::SnoreBackend
 public:
     TrayIconNotifer() = default;
     ~TrayIconNotifer() = default;
-    virtual bool deinitialize() override;
 
     virtual bool canCloseNotification() const override;
 
 public Q_SLOTS:
-    void slotNotify(Snore::Notification notification);
-    void slotCloseNotification(Snore::Notification notification);
-    void slotRegisterApplication(const Snore::Application &application);
-    void slotDeregisterApplication(const Snore::Application &application);
+    void slotInitialize() override;
+    void slotNotify(Snore::Notification notification) override;
+    void slotCloseNotification(Snore::Notification notification) override;
+    void slotRegisterApplication(const Snore::Application &application) override;
+    void slotDeregisterApplication(const Snore::Application &application) override;
 
 private:
     QSystemTrayIcon *trayIcon(const Snore::Application &app);

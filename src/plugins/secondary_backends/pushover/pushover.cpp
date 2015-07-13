@@ -120,6 +120,11 @@ void Pushover::slotNotify(Notification notification)
 
 }
 
+void Pushover::slotInitialize()
+{
+    emit initialisationFinished(true);
+}
+
 PluginSettingsWidget *Pushover::settingsWidget()
 {
     return new PushoverSettings(this);

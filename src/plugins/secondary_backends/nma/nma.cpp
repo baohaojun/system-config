@@ -59,6 +59,11 @@ void NotifyMyAndroid::slotNotify(Notification notification)
 
 }
 
+void NotifyMyAndroid::slotInitialize()
+{
+    emit initialisationFinished(true);
+}
+
 PluginSettingsWidget *NotifyMyAndroid::settingsWidget()
 {
     return new NotifyMyAndroidSettings(this);

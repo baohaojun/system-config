@@ -27,34 +27,41 @@
 #include <iostream>
 using namespace Snore;
 
-bool SnarlNetworkFrontend::initialize()
+SnarlNetworkFrontend::SnarlNetworkFrontend():
+    parser(new Parser(this))
 {
-    if (!SnoreFrontend::initialize()) {
-        return false;
-    }
-    parser = new Parser(this);
+
+}
+
+SnarlNetworkFrontend::~SnarlNetworkFrontend()
+{
+    delete parser;
+}
+
+void SnarlNetworkFrontend::slotInitialize()
+{
     tcpServer = new QTcpServer(this);
     if (!tcpServer->listen(QHostAddress::Any, port)) {
         snoreDebug(SNORE_DEBUG) << "The port is already used";
-        return false;
+        emit initialisationFinished(false);
     } else {
-        connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
         std::cout << "The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>" << std::endl;
     }
-    return true;
+    emit initialisationFinished(true);
 }
 
-bool SnarlNetworkFrontend::deinitialize()
+void SnarlNetworkFrontend::setEnabled(bool enabled)
 {
-    if (SnoreFrontend::deinitialize()) {
-        parser->deleteLater();
-        parser = NULL;
-
-        tcpServer->deleteLater();
-        tcpServer = NULL;
-        return true;
+    if (enabled == isEnabled()) {
+        return;
     }
-    return false;
+    SnoreFrontend::setEnabled(enabled);
+    if (enabled) {
+        connect(tcpServer, &QTcpServer::newConnection, this, SnarlNetworkFrontend::handleConnection);
+    } else {
+        disconnect(tcpServer, &QTcpServer::newConnection, this, SnarlNetworkFrontend::handleConnection);
+    }
+
 }
 
 void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)

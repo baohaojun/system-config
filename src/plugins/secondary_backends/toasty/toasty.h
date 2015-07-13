@@ -37,6 +37,7 @@ protected:
     void setDefaultSettings() override;
 
 public Q_SLOTS:
+    void slotInitialize() override;
     void slotNotify(Snore::Notification notification) override;
 
 private:

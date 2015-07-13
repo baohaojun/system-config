@@ -10,34 +10,32 @@
 
 using namespace Snore;
 
-bool FreedesktopBackend::initialize()
+void FreedesktopBackend::slotInitialize()
 {
-
     m_interface = new org::freedesktop::Notifications(QLatin1String("org.freedesktop.Notifications"),
             QLatin1String("/org/freedesktop/Notifications"),
             QDBusConnection::sessionBus(), this);
-
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
     reply.waitForFinished();
     QStringList caps  = reply.value();
     m_supportsRichtext = caps.contains(QLatin1String("body-markup"));
-    connect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
-    connect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
-
-    return SnoreBackend::initialize();
+    emit initialisationFinished(true);
 }
 
-bool FreedesktopBackend::deinitialize()
+void FreedesktopBackend::setEnabled(bool enabled)
 {
-    if (SnoreBackend::deinitialize()) {
-        disconnect(m_interface, SIGNAL(ActionInvoked(uint,QString)), this, SLOT(slotActionInvoked(uint,QString)));
-        disconnect(m_interface, SIGNAL(NotificationClosed(uint,uint)), this , SLOT(slotNotificationClosed(uint,uint)));
-        m_interface->deleteLater();
-        m_interface = nullptr;
-        m_dbusIdMap.clear();
-        return true;
+    if (enabled == isEnabled()) {
+        return;
     }
-    return false;
+    SnoreBackend::setEnabled(enabled);
+    if (enabled) {
+        connect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
+        connect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
+    } else {
+        disconnect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
+        disconnect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
+
+    }
 }
 
 bool FreedesktopBackend::canCloseNotification() const
