@@ -253,12 +253,14 @@ system notification, just as rythombox does."
 
 (defun douban-music-play-next-refresh ()
   (interactive)
-  (let ((previous-song douban-music-current-song))
+  (let ((previous-song douban-music-current-song)
+        (should-replay douban-music-should-replay))
     (douban-music-kill-process)
     (if (or douban-music-should-replay (file-exists-p "~/.cache/system-config/logs/douban-should-loop"))
         (setq douban-music-should-replay nil)
       (douban-music-get-next-song))
-    (if (>= previous-song douban-music-current-song)
+    (if (and (>= previous-song douban-music-current-song)
+             (not should-replay))
         (douban-music-refresh)
       (douban-music-play))))
 
