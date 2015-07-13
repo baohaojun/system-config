@@ -31,10 +31,8 @@ class SNORE_EXPORT SnoreBackend : public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
 public:
-    SnoreBackend() = default;
+    SnoreBackend();
     virtual ~SnoreBackend();
-
-    virtual void setEnabled(bool enabled) override;
 
     void requestCloseNotification(Snore::Notification notification, Notification::CloseReasons reason);
 
@@ -72,10 +70,8 @@ class SNORE_EXPORT SnoreSecondaryBackend : public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin Snore::SnorePlugin)
 public:
-    SnoreSecondaryBackend() = default;
+    SnoreSecondaryBackend();
     virtual ~SnoreSecondaryBackend();
-
-    virtual void setEnabled(bool enabled) override;
 
 public Q_SLOTS:
     virtual void slotNotify(Snore::Notification notification);

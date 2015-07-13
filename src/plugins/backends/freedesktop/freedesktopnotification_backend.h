@@ -9,10 +9,8 @@ class  FreedesktopBackend: public Snore::SnoreBackend
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "plugin.json")
 public:
-    FreedesktopBackend() = default;
+    FreedesktopBackend();
     ~FreedesktopBackend() = default;
-
-    void setEnabled(bool enabled) override;
 
     bool canCloseNotification() const override;
     bool canUpdateNotification() const override;

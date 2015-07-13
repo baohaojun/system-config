@@ -37,7 +37,7 @@ Sound::Sound():
 void Sound::slotInitialize()
 {
     m_player->setVolume(settingsValue(QLatin1String("Volume")).toInt());
-    emit initialisationFinished(true);
+    emit initializeChanged(true);
 }
 
 PluginSettingsWidget *Sound::settingsWidget()

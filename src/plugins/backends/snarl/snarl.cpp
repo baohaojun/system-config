@@ -125,7 +125,7 @@ void SnarlBackend::slotInitialize()
 {
 
     SnarlInterface *snarlInterface = new SnarlInterface();
-    emit initialisationFinished(snarlInterface->IsSnarlRunning());
+    emit initializeChanged(snarlInterface->IsSnarlRunning());
     delete snarlInterface;
 }
 

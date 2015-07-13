@@ -38,8 +38,6 @@ public:
     SnarlNetworkFrontend();
     ~SnarlNetworkFrontend();
 
-    void setEnabled(bool enabled) override;
-
 public Q_SLOTS:
     void slotInitialize() override;
     void slotActionInvoked(Snore::Notification notification) override;

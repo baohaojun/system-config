@@ -18,9 +18,9 @@ void SnoreToast::slotInitialize()
 {
     if (QSysInfo::windowsVersion() < QSysInfo::WV_WINDOWS8) {
         snoreDebug(SNORE_DEBUG) << "SnoreToast does not work on windows" << QSysInfo::windowsVersion();
-        emit initialisationFinished(false);
+        emit initializeChanged(false);
     }
-    emit initialisationFinished(true);
+    emit initializeChanged(true);
 }
 
 bool SnoreToast::canCloseNotification() const
@@ -134,7 +134,7 @@ QProcess *SnoreToast::createProcess(Notification noti)
         if (noti.isValid()) {
             closeNotification(noti, Notification::NONE);
         }
-        emit initialisationFinished(false);
+        emit initializeChanged(false);
         p->deleteLater();
     });
     connect(qApp, &QApplication::aboutToQuit, p, &QProcess::kill);

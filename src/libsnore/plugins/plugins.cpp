@@ -35,7 +35,7 @@ SnorePlugin::SnorePlugin()
     if (thread() != qApp->thread()) {
         snoreDebug(SNORE_WARNING) << "Plugin initialized in wrong thread.";
     }
-    connect(this, &SnorePlugin::initialisationFinished, [this](bool b) {
+    connect(this, &SnorePlugin::initializeChanged, [this](bool b) {
         snoreDebug(SNORE_DEBUG) << "Plugin:" << name() << "initialized" << b;
         Q_ASSERT_X(!(b && m_initialized), Q_FUNC_INFO, "Plugin initialized multiple times.");
         if (!b) {
@@ -119,6 +119,10 @@ void SnorePlugin::setDefaultSettings()
 void SnorePlugin::setEnabled(bool enabled)
 {
     Q_ASSERT_X(!enabled || isInitialized(), Q_FUNC_INFO, "Plugin not initialized");
+
+    if (enabled != m_enabled) {
+        emit enabledChanged(enabled);
+    }
     m_enabled = enabled;
 }
 

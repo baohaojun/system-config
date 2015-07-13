@@ -29,36 +29,34 @@
 
 using namespace Snore;
 
-void FreedesktopFrontend::slotInitialize()
+FreedesktopFrontend::FreedesktopFrontend()
 {
-    emit initialisationFinished(true);
-}
-
-void FreedesktopFrontend::setEnabled(bool enabled)
-{
-    if (enabled == isEnabled()) {
-        return;
-    }
-    SnoreFrontend::setEnabled(enabled);
-    if (enabled) {
-        m_adaptor = new  NotificationsAdaptor(this);
-        QDBusConnection dbus = QDBusConnection::sessionBus();
-        if (dbus.registerService(QLatin1String("org.freedesktop.Notifications"))) {
-            if (!dbus.registerObject(QLatin1String("/org/freedesktop/Notifications"), this)) {
-                snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register object";
-                emit initialisationFinished(false);
+    connect(this, &FreedesktopFrontend::enabledChanged, [this](bool enabled) {
+        if (enabled) {
+            m_adaptor = new  NotificationsAdaptor(this);
+            QDBusConnection dbus = QDBusConnection::sessionBus();
+            if (dbus.registerService(QLatin1String("org.freedesktop.Notifications"))) {
+                if (!dbus.registerObject(QLatin1String("/org/freedesktop/Notifications"), this)) {
+                    snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register object";
+                    emit initializeChanged(false);
+                }
+            } else {
+                snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register service";
+                emit initializeChanged(false);
             }
         } else {
-            snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register service";
-            emit initialisationFinished(false);
+            QDBusConnection dbus = QDBusConnection::sessionBus();
+            dbus.unregisterService(QLatin1String("org.freedesktop.Notifications"));
+            dbus.unregisterObject(QLatin1String("/org/freedesktop/Notifications"));
+            m_adaptor->deleteLater();
+            m_adaptor = nullptr;
         }
-    } else {
-        QDBusConnection dbus = QDBusConnection::sessionBus();
-        dbus.unregisterService(QLatin1String("org.freedesktop.Notifications"));
-        dbus.unregisterObject(QLatin1String("/org/freedesktop/Notifications"));
-        m_adaptor->deleteLater();
-        m_adaptor = nullptr;
-    }
+    });
+}
+
+void FreedesktopFrontend::slotInitialize()
+{
+    emit initializeChanged(true);
 }
 
 void FreedesktopFrontend::slotActionInvoked(Notification notification)

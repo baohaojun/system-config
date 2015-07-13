@@ -35,8 +35,6 @@ public:
     PushoverFrontend();
     ~PushoverFrontend() = default;
 
-    void setEnabled(bool enabled) override;
-
     Snore::PluginSettingsWidget *settingsWidget() override;
 
     void login(const QString &email, const QString &password, const QString &deviceName);

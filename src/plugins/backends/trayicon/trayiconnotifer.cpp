@@ -9,7 +9,7 @@ using namespace Snore;
 void TrayIconNotifer::slotInitialize()
 {
     m_currentlyDisplaying = false;
-    emit initialisationFinished(true);
+    emit initializeChanged(true);
 }
 
 bool TrayIconNotifer::canCloseNotification() const

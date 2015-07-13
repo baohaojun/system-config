@@ -10,6 +10,20 @@
 
 using namespace Snore;
 
+FreedesktopBackend::FreedesktopBackend()
+{
+    connect(this, &SnoreSecondaryBackend::enabledChanged, [this](bool enabled) {
+        if (enabled) {
+            connect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
+            connect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
+        } else {
+            disconnect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
+            disconnect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
+
+        }
+    });
+}
+
 void FreedesktopBackend::slotInitialize()
 {
     m_interface = new org::freedesktop::Notifications(QLatin1String("org.freedesktop.Notifications"),
@@ -19,23 +33,7 @@ void FreedesktopBackend::slotInitialize()
     reply.waitForFinished();
     QStringList caps  = reply.value();
     m_supportsRichtext = caps.contains(QLatin1String("body-markup"));
-    emit initialisationFinished(true);
-}
-
-void FreedesktopBackend::setEnabled(bool enabled)
-{
-    if (enabled == isEnabled()) {
-        return;
-    }
-    SnoreBackend::setEnabled(enabled);
-    if (enabled) {
-        connect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
-        connect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
-    } else {
-        disconnect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
-        disconnect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
-
-    }
+    emit initializeChanged(true);
 }
 
 bool FreedesktopBackend::canCloseNotification() const

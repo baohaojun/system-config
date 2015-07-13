@@ -123,7 +123,7 @@ void SnoreNotifier::slotInitialize()
             slotCloseNotification(notification);
         });
     }
-    emit initialisationFinished(true);
+    emit initializeChanged(true);
 }
 
 bool SnoreNotifier::canCloseNotification() const

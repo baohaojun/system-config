@@ -42,24 +42,18 @@ PushoverFrontend::PushoverFrontend()
     connect(this, &PushoverFrontend::error, [this](QString error) {
         m_errorMessage = error;
     });
+    connect(this, &PushoverFrontend::enabledChanged, [this](bool enabled) {
+        if (enabled) {
+            connectToService();
+        } else {
+            disconnectService();
+        }
+    });
 }
 
 void PushoverFrontend::slotInitialize()
 {
-    emit initialisationFinished(true);
-}
-
-void PushoverFrontend::setEnabled(bool enabled)
-{
-    if (enabled == isEnabled()) {
-        return;
-    }
-    SnoreFrontend::setEnabled(enabled);
-    if (enabled) {
-        connectToService();
-    } else {
-        disconnectService();
-    }
+    emit initializeChanged(true);
 }
 
 PluginSettingsWidget *PushoverFrontend::settingsWidget()

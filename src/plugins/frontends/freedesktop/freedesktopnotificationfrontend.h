@@ -29,10 +29,8 @@ class FreedesktopFrontend : public Snore::SnoreFrontend
     Q_INTERFACES(Snore::SnoreFrontend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0" FILE "plugin.json")
 public:
-    FreedesktopFrontend() = default;
+    FreedesktopFrontend();
     ~FreedesktopFrontend() = default;
-
-    void setEnabled(bool enabled) override;
 
     uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
     void CloseNotification(uint id);

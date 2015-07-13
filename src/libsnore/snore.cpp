@@ -84,7 +84,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN:
-                    connect(plugin, &SnorePlugin::initialisationFinished, [plugin](bool initialized) {
+                    connect(plugin, &SnorePlugin::initializeChanged, [plugin](bool initialized) {
                         if (initialized) {
                             plugin->setEnabled(plugin->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool());
                         }
@@ -95,7 +95,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                     continue;
                 }
 
-                connect(plugin, &SnorePlugin::initialisationFinished, [d, plugin](bool initialized) {
+                connect(plugin, &SnorePlugin::initializeChanged, [d, plugin](bool initialized) {
                     if (!initialized) {
                         //TODO: improve
                         d->m_pluginNames[plugin->type()].removeAll(plugin->name());

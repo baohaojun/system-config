@@ -93,7 +93,7 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         if (m_notificationBackend) {
             m_notificationBackend->disable();
         }
-        connect(b, &SnoreBackend::initialisationFinished, [this, b](bool initialized) {
+        connect(b, &SnoreBackend::initializeChanged, [this, b](bool initialized) {
             if (!initialized) {
                 slotInitPrimaryNotificationBackend();
             }

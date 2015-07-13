@@ -30,7 +30,13 @@ using namespace Snore;
 SnarlNetworkFrontend::SnarlNetworkFrontend():
     parser(new Parser(this))
 {
-
+    connect(this, &SnarlNetworkFrontend::enabledChanged, [this](bool enabled) {
+        if (enabled) {
+            connect(tcpServer, &QTcpServer::newConnection, this, SnarlNetworkFrontend::handleConnection);
+        } else {
+            disconnect(tcpServer, &QTcpServer::newConnection, this, SnarlNetworkFrontend::handleConnection);
+        }
+    });
 }
 
 SnarlNetworkFrontend::~SnarlNetworkFrontend()
@@ -43,25 +49,11 @@ void SnarlNetworkFrontend::slotInitialize()
     tcpServer = new QTcpServer(this);
     if (!tcpServer->listen(QHostAddress::Any, port)) {
         snoreDebug(SNORE_DEBUG) << "The port is already used";
-        emit initialisationFinished(false);
+        emit initializeChanged(false);
     } else {
         std::cout << "The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>" << std::endl;
     }
-    emit initialisationFinished(true);
-}
-
-void SnarlNetworkFrontend::setEnabled(bool enabled)
-{
-    if (enabled == isEnabled()) {
-        return;
-    }
-    SnoreFrontend::setEnabled(enabled);
-    if (enabled) {
-        connect(tcpServer, &QTcpServer::newConnection, this, SnarlNetworkFrontend::handleConnection);
-    } else {
-        disconnect(tcpServer, &QTcpServer::newConnection, this, SnarlNetworkFrontend::handleConnection);
-    }
-
+    emit initializeChanged(true);
 }
 
 void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)

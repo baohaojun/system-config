@@ -53,7 +53,7 @@ public:
     SnorePlugin();
     virtual ~SnorePlugin();
 
-    virtual void setEnabled(bool enabled);
+    void setEnabled(bool enabled);
 
     void enable();
     void disable();
@@ -84,7 +84,8 @@ public:
     virtual PluginSettingsWidget *settingsWidget();
 
 Q_SIGNALS:
-    void initialisationFinished(bool initialized);
+    void initializeChanged(bool initialized);
+    void enabledChanged(bool enabled);
 
 public Q_SLOTS:
     virtual void slotInitialize() = 0;
