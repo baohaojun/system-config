@@ -122,7 +122,6 @@ int main(int argc, char *argv[])
         if (parser.isSet(_bringProcessToFront) || parser.isSet(_bringWindowToFront)) {
             n.addAction(Action(1, "Bring to Front"));
         }
-        core.broadcastNotification(n);
         int returnCode = -1;
 
         app.connect(&core, &SnoreCore::notificationClosed, [&](Notification noti) {
@@ -141,6 +140,9 @@ int main(int argc, char *argv[])
             returnCode = noti.closeReason();
         });
         app.connect(&core, &SnoreCore::notificationClosed, &app, &QApplication::quit);
+        app.processEvents();
+        core.broadcastNotification(n);
+
         app.exec();
         return returnCode;
     }
