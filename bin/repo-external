@@ -4,29 +4,41 @@ use strict;
 chomp(my $pwd=`pwd`);
 die "$pwd: $!" unless (-e ".repo");
 
-my $repo_dirs=qx(repo forall -c pwd);
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+
+my $print_git_subdir_cmd = 'git ls-tree -r HEAD --name-only|grep /|perl -npe "s,(.*?)/.*,$PWD/\$1,"|perl -npe "s,/$,,"|sort -u;';
+my $repo_sub_dirs=qx(my-rfa '$print_git_subdir_cmd');
+my $repo_dirs = qx(my-rfa 'pwd');
+# print "$repo_dirs";
+# exit;
 our @repo_dirs=split(/\n/, $repo_dirs);
+our @repo_sub_dirs = split(/\n/, $repo_sub_dirs);
+@repo_dirs = (@repo_dirs, @repo_sub_dirs);
 
 sub search_subdir($) {
     my $this_dir=$_[0];
     opendir my $dh, $this_dir or die $!;
 
-    #for x in readdir($dh), 
+    #for x in readdir($dh),
     #if x match exactly with a project dir, skip it
     #elif it matches a prefix of a project dir, recurse it
-    #else print it, 
+    #else print it,
 
-    my @subdirs = grep {-d "$this_dir/$_" and ! -l "$this_dir/$_" and !/^\.$|^\.\.$|^\.repo$/} readdir($dh);
+    my @subdirs = grep {-d "$this_dir/$_" and ! -l "$this_dir/$_" and !/^\.$|^\.git$|^\.\.$|^\.repo$/} readdir($dh);
     closedir $dh;
     for my $sd (@subdirs) {
-        if (grep {/^$this_dir\/$sd$/} @repo_dirs) {
+        if (grep {m,^$this_dir/$sd$,} @repo_sub_dirs) {
+            # debug "skip $this_dir/$sd";
             next;
-        }
-        if (grep {/$this_dir\/$sd/} @repo_dirs) {
+        } elsif (grep {/$this_dir\/$sd/} @repo_dirs) {
+            # debug "working on $sd: " . (grep {/$this_dir\/$sd/} @repo_dirs)[0];
             search_subdir("$this_dir/$sd");
         } else {
             print "$this_dir/$sd\n";
-        }        
+        }
     }
 }
 

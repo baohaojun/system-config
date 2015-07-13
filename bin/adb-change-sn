@@ -3,7 +3,7 @@ if test $# = 1 -a -z "$1"; then
     set -- $(my-adb cat /proc/cmdline|grep -o 'androidboot.serialno=\S*' -P|perl -npe 's/.*=//')
 fi
 unset ANDROID_SERIAL
-my-adb shell 'setsid setsid nohup sh -x -c "
+my-adb -r shell 'setsid setsid nohup sh -x -c "
        usb=$(getprop persist.sys.usb.config)
        x='${1:-222222}'
        setprop persist.usb.serialno \$x

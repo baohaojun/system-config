@@ -5,14 +5,6 @@
 set -e
 
 (
-    cd ~/src/android-mirror/
-    repo sync -j8 -f -m icesky-rom.xml
-    repo sync -j8 -f -m sfo-rom.xml
-    cd ~/src/android-mirror/kernel/linux.git
-    git fetch linus
-)
-
-(
     cd ~/src/android
     repo sync -j4 -f
     repo-changes\?

@@ -82,6 +82,11 @@ abc-repo-revision() {
     ssh $abc_host abc repo-revision -b "${base_build:-$(abc-base-build)}" -p "${repo_path:-$(abc-repo-path)}"
 }
 
+croot() {
+    root_dir=$(lookup-file -e .repo/..)
+    cd $root_dir
+}
+
 abc-base-build() {
     (
         croot

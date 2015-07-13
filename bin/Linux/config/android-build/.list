@@ -37,6 +37,7 @@ libstring-approx-perl
 libtext-glob-perl
 libdatetime-perl
 python3
+ant
 EOF
           ); do
     test -e $x || touch $x

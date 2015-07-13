@@ -1,9 +1,32 @@
 #!/bin/bash
 set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  u:utc
+## end code-generator
+## start generated code
+utc=$(my-adb getprop ro.build.date.utc)
+OPTIND=1
+while getopts 'u:' opt; do
+    case "$opt" in
+        u)    utc=$OPTARG;;
+        *)    echo Usage Error; exit 2;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+if test -z "$utc"; then
+    utc=$(my-adb getprop ro.build.date.utc)
+fi
+
+vmversion=
+
 if test -e DDRCS0.BIN; then
     vmversion=$(strings DDRCS0.BIN |grep --line-buffered 'Linux version' |perl -ne 'print; exit')
+    vmversion=$(echo -n "$vmversion"|urlify|perl -npe 's/ /+/g')
 fi
-vmversion=$(echo -n "$vmversion"|urlify|perl -npe 's/ /+/g')
-vmlinux=$(curl "http://172.16.0.251/cgi-bin/vmlinux-lookup.cgi?version=$vmversion"|pn 2|perl -npe 's!\\!/!g; s!//!$ENV{HOME}/smb/!')
-vmlinux=${vmlinux/172.16.2.16/share.smartisan.cn}
-smb-pull $vmlinux .
+
+vmlinux=$(curl "http://172.16.2.18/cgi-bin/vmlinux-lookup.cgi?version=$vmversion&utc_date=$utc")
+echo "$vmlinux"
