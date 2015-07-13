@@ -107,8 +107,6 @@ void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
 
 bool SnoreNotifier::initialize()
 {
-    setDefaultSettingsValue(QLatin1String("Position"), Qt::TopRightCorner);
-
     if (SnoreBackend::initialize()) {
         for (int i = 0; i < m_widgets.size(); ++i) {
             NotifyWidget *w = new NotifyWidget(i, this);
@@ -155,4 +153,10 @@ bool SnoreNotifier::canUpdateNotification() const
 PluginSettingsWidget *SnoreNotifier::settingsWidget()
 {
     return new SnoreNotifierSettings(this);
+}
+
+void SnoreNotifier::setDefaultSettings()
+{
+    setDefaultSettingsValue(QLatin1String("Position"), Qt::TopRightCorner);
+    SnoreBackend::setDefaultSettings();
 }

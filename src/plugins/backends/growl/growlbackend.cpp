@@ -31,9 +31,6 @@ GrowlBackend *GrowlBackend::s_instance = nullptr;
 
 bool GrowlBackend::initialize()
 {
-    setDefaultSettingsValue(QLatin1String("Host"), QLatin1String("localhost"));
-    setDefaultSettingsValue(QLatin1String("Password"), QString());
-
     if (!SnoreBackend::initialize()) {
         return false;
     }
@@ -125,5 +122,12 @@ void GrowlBackend::slotNotify(Notification notification)
 PluginSettingsWidget *GrowlBackend::settingsWidget()
 {
     return new GrowlSettings(this);
+}
+
+void GrowlBackend::setDefaultSettings()
+{
+    SnoreBackend::setDefaultSettings();
+    setDefaultSettingsValue(QLatin1String("Host"), QLatin1String("localhost"));
+    setDefaultSettingsValue(QLatin1String("Password"), QString());
 }
 

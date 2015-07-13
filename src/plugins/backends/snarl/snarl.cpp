@@ -113,8 +113,6 @@ private:
 
 bool SnarlBackend::initialize()
 {
-    setDefaultSettingsValue(QLatin1String("Password"), QString());
-
     if (!SnoreBackend::initialize()) {
         return false;
     }
@@ -157,6 +155,13 @@ bool SnarlBackend::canCloseNotification() const
 bool SnarlBackend::canUpdateNotification() const
 {
     return true;
+}
+
+void SnarlBackend::setDefaultSettings()
+{
+
+    setDefaultSettingsValue(QLatin1String("Password"), QString());
+    SnoreBackend::setDefaultSettings();
 }
 
 void SnarlBackend::slotRegisterApplication(const Application &application)

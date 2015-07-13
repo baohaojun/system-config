@@ -54,6 +54,7 @@ SnorePlugin *PluginContainer::load()
     }
     SnorePlugin *plugin = qobject_cast<SnorePlugin *> (m_loader.instance());
     plugin->m_container = this;
+    plugin->setDefaultSettings();
     return plugin;
 }
 

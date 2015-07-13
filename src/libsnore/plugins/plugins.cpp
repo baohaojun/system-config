@@ -44,7 +44,6 @@ SnorePlugin::~SnorePlugin()
 
 bool SnorePlugin::initialize()
 {
-    setDefaultSettingsValue(QLatin1String("Enabled"), false, LOCAL_SETTING);
     if (m_initialized) {
         qFatal("Something went wrong, plugin %s is already initialized", this->name().toLatin1().constData());
         return false;
@@ -108,6 +107,11 @@ const QString SnorePlugin::typeName() const
 QString SnorePlugin::settingsVersion() const
 {
     return QLatin1String("v1");
+}
+
+void SnorePlugin::setDefaultSettings()
+{
+    setDefaultSettingsValue(QLatin1String("Enabled"), false, LOCAL_SETTING);
 }
 
 bool SnorePlugin::deinitialize()

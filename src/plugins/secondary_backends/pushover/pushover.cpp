@@ -29,7 +29,7 @@ using namespace Snore;
 
 void Pushover::slotNotify(Notification notification)
 {
-    if(notification.data()->sourceAndTargetAreSimilar(this)) {
+    if (notification.data()->sourceAndTargetAreSimilar(this)) {
         return;
     }
 
@@ -120,15 +120,15 @@ void Pushover::slotNotify(Notification notification)
 
 }
 
-bool Pushover::initialize()
+PluginSettingsWidget *Pushover::settingsWidget()
+{
+    return new PushoverSettings(this);
+}
+
+void Pushover::setDefaultSettings()
 {
     setDefaultSettingsValue(QLatin1String("UserKey"), QString());
     setDefaultSettingsValue(QLatin1String("Sound"), QLatin1String("pushover"), LOCAL_SETTING);
     setDefaultSettingsValue(QLatin1String("Devices"), QString(), LOCAL_SETTING);
-    return SnoreSecondaryBackend::initialize();
-}
-
-PluginSettingsWidget *Pushover::settingsWidget()
-{
-    return new PushoverSettings(this);
+    SnoreSecondaryBackend::setDefaultSettings();
 }

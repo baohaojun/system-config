@@ -36,15 +36,19 @@ Sound::Sound():
 
 bool Sound::initialize()
 {
-    setDefaultSettingsValue(QLatin1String("Volume"), 50);
     m_player->setVolume(settingsValue(QLatin1String("Volume")).toInt());
-
     return SnoreSecondaryBackend::initialize();
 }
 
 PluginSettingsWidget *Sound::settingsWidget()
 {
     return new SoundSettings(this);
+}
+
+void Sound::setDefaultSettings()
+{
+    setDefaultSettingsValue(QLatin1String("Volume"), 50);
+    SnoreSecondaryBackend::setDefaultSettings();
 }
 
 void Sound::slotNotificationDisplayed(Snore::Notification notification)

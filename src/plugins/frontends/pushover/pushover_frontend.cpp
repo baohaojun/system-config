@@ -46,9 +46,6 @@ PushoverFrontend::PushoverFrontend()
 
 bool PushoverFrontend::initialize()
 {
-    setDefaultSettingsValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
-    setDefaultSettingsValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
-
     if (!SnoreFrontend::initialize()) {
         return false;
     }
@@ -118,6 +115,13 @@ bool PushoverFrontend::isLoggedIn() const
 QString PushoverFrontend::errorMessage()
 {
     return m_errorMessage;
+}
+
+void PushoverFrontend::setDefaultSettings()
+{
+    setDefaultSettingsValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
+    setDefaultSettingsValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
+    SnoreFrontend::setDefaultSettings();
 }
 
 void PushoverFrontend::slotActionInvoked(Notification notification)

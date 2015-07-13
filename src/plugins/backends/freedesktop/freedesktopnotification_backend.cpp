@@ -52,7 +52,7 @@ bool FreedesktopBackend::canUpdateNotification() const
 
 void  FreedesktopBackend::slotNotify(Notification noti)
 {
-    if(noti.data()->sourceAndTargetAreSimilar(this)) {
+    if (noti.data()->sourceAndTargetAreSimilar(this)) {
         return;
     }
 

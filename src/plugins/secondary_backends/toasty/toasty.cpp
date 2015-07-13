@@ -77,13 +77,13 @@ void Toasty::slotNotify(Notification notification)
 
 }
 
-bool Toasty::initialize()
-{
-    setDefaultSettingsValue(QLatin1String("DeviceID"), QString());
-    return SnoreSecondaryBackend::initialize();
-}
-
 PluginSettingsWidget *Toasty::settingsWidget()
 {
     return new ToastySettings(this);
+}
+
+void Toasty::setDefaultSettings()
+{
+    setDefaultSettingsValue(QLatin1String("DeviceID"), QString());
+    SnoreSecondaryBackend::setDefaultSettings();
 }

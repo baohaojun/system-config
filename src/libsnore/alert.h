@@ -48,7 +48,6 @@ public:
      */
     explicit Alert(const QString &name, const Icon &icon);
 
-
     /**
      * Creates an alert.
      * @param name the key of the Alert used in Application::alerts().
@@ -69,7 +68,6 @@ public:
      */
     Alert &operator=(const Alert &other);
     ~Alert();
-
 
     /**
      * Returns the key of the Alert, used in Application::alerts().

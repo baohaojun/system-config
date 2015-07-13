@@ -58,7 +58,6 @@ public:
      */
     explicit Application(const QString &key, const QString &name, const Icon &icon);
 
-
     /**
      * The copy constructor
      * @param other

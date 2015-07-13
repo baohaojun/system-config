@@ -31,9 +31,10 @@ public:
     NotifyMyAndroid() = default;
     ~NotifyMyAndroid() = default;
 
-    virtual bool initialize() override;
-
     Snore::PluginSettingsWidget *settingsWidget() override;
+
+protected:
+    void setDefaultSettings() override;
 
 public Q_SLOTS:
     void slotNotify(Snore::Notification notification) override;

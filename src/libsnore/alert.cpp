@@ -32,7 +32,7 @@ Alert::Alert(const QString &name, const Icon &icon):
 {}
 
 Alert::Alert(const QString &key, const QString &name, const Icon &icon):
-    d(new AlertData(key,name,icon))
+    d(new AlertData(key, name, icon))
 {
 
 }

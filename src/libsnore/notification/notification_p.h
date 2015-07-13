@@ -60,12 +60,11 @@ public:
      */
     void setSource(SnorePlugin *soure);
 
-
     /**
      * Returns the source SnorePlugin.
      * This is used to prevent notification loops between the frontend and the backend.
      */
-    const SnorePlugin* source() const;
+    const SnorePlugin *source() const;
 
     /**
      * Returns true if the source->name() and the target->name() are the same.

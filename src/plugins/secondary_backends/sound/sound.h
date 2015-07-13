@@ -35,6 +35,9 @@ public:
 
     Snore::PluginSettingsWidget *settingsWidget() override;
 
+protected:
+    void setDefaultSettings() override;
+
 public Q_SLOTS:
     void slotNotificationDisplayed(Snore::Notification notification) override;
 private:

@@ -47,7 +47,6 @@ public:
 
     static Icon defaultIcon();
 
-
     /**
      * Creates an Icon from an QImage
      * @param img the image

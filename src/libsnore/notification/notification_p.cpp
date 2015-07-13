@@ -125,7 +125,7 @@ const SnorePlugin *NotificationData::source() const
 
 bool NotificationData::sourceAndTargetAreSimilar(const SnorePlugin *target)
 {
-    if(source() && source()->name() == target->name()) {
+    if (source() && source()->name() == target->name()) {
         snoreDebug(SNORE_DEBUG) << "Source" << source() << "and Target" << target << "are the same.";
         return true;
     }

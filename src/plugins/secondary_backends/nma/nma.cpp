@@ -59,13 +59,13 @@ void NotifyMyAndroid::slotNotify(Notification notification)
 
 }
 
-bool NotifyMyAndroid::initialize()
-{
-    setDefaultSettingsValue(QLatin1String("ApiKey"), QString());
-    return SnoreSecondaryBackend::initialize();
-}
-
 PluginSettingsWidget *NotifyMyAndroid::settingsWidget()
 {
     return new NotifyMyAndroidSettings(this);
+}
+
+void NotifyMyAndroid::setDefaultSettings()
+{
+    setDefaultSettingsValue(QLatin1String("ApiKey"), QString());
+    SnoreSecondaryBackend::setDefaultSettings();
 }

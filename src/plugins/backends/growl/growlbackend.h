@@ -36,6 +36,9 @@ public:
     bool deinitialize() override;
     Snore::PluginSettingsWidget *settingsWidget() override;
 
+protected:
+    void setDefaultSettings() override;
+
 private:
     //a static instance for the static callback methode
     static GrowlBackend *s_instance;

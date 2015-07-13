@@ -24,7 +24,6 @@
 
 class QAbstractButton;
 
-
 namespace Snore
 {
 class PluginSettingsWidget;

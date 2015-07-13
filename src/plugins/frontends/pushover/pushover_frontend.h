@@ -45,6 +45,9 @@ public:
     bool isLoggedIn() const;
     QString errorMessage();
 
+protected:
+    void setDefaultSettings() override;
+
 public Q_SLOTS:
     void slotActionInvoked(Snore::Notification notification);
 

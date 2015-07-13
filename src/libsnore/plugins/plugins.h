@@ -85,8 +85,14 @@ protected:
      */
     virtual QString settingsVersion() const;
 
+    /**
+     * Set default setting values for the Plugin.
+     */
+    virtual void setDefaultSettings();
+
 private:
     QString normaliseKey(const QString &key) const;
+    void setDefaultSettingsPlugin();
 
     bool m_initialized = false;
     PluginContainer *m_container = nullptr;

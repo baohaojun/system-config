@@ -92,7 +92,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                         }
                     }
                 }
-                    break;
+                break;
                 default:
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
@@ -244,7 +244,7 @@ void SnoreCore::displayExapleNotification()
 {
     Application app = SnoreCorePrivate::instance()->defaultApplication();
     QString text = QLatin1String("<i>") + tr("This is Snore") + QLatin1String("</i><br>") +
-            QLatin1String("<a href=\"https://github.com/Snorenotify/Snorenotify\">") + tr("Project Website") + QLatin1String("</a><br>");
+                   QLatin1String("<a href=\"https://github.com/Snorenotify/Snorenotify\">") + tr("Project Website") + QLatin1String("</a><br>");
     if (!app.constHints().value("use-markup").toBool()) {
         text = Utils::normalizeMarkup(text, Utils::NO_MARKUP);
     }
