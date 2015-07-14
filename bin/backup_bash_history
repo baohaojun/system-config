@@ -19,7 +19,7 @@ unless (1..2000) {
 s/^#*\s*//;
 
 s/$ign_at_end/\n/;
-s/$re_re/true;/;
+s/$re_re|^(true;)+/true;/;
 s/[ \t]+/ /g;
 print if (length($_) < 1024 and (not m/$ign_words_re/ or 1..2000 or m/^true;/))
 #{%/perl%}
