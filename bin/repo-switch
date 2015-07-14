@@ -59,7 +59,7 @@ while true; do
             exit 0
             ;;
         -e)
-            edit .repo/repo-switch
+            edit .repo/manifest.xml
             exit 0
             ;;
         -c)

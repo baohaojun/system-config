@@ -80,6 +80,8 @@ elif echo "$default_gw" | grep "^172\.16\."; then
     sudo route add -net 172.16.0.0 netmask 255.255.0.0 gw "$default_gw" || true
 fi
 sudo route add default gw 10.0.0.200 || true
-net-for-phone
+if test $(basename $0) = gfw-for-phone; then
+    net-for-phone
+fi
 nat-vbox $tun $USB0
 nat-vbox wlan0 $USB0

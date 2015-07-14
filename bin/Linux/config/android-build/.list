@@ -38,6 +38,10 @@ libtext-glob-perl
 libdatetime-perl
 python3
 ant
+less
+curl
+openssh-client
+subversion
 EOF
           ); do
     test -e $x || touch $x

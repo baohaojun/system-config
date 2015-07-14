@@ -4,7 +4,11 @@ if test "$SYSTEM_CONFIG_INITED" != true; then
 fi
 if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
     if test "$1" = sync; then
-        my-rfa "git clean -xfd; git reset --hard" || true
+        if test -e "smartcm/.do-not-clean"; then
+            true
+        else
+            my-rfa "git clean -xfd; git reset --hard" || true
+        fi
         if test -e .repo/do-not-sync; then
             echo admin set this as not sync, for testing?
             exit 0

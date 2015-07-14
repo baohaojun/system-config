@@ -1,6 +1,8 @@
 #!/bin/bash
 if test $(basename $0) = sawfish-move-to-laptop; then
-    sawfish-client -e '(move-window-to (input-focus) 0 1080)'
+    h=$(xrandr | grep '\*'|tail -n 1|perl -npe 's,.*\d+x(\d+).*,$1,')
+    h=${h:-1080}
+    sawfish-client -e "(move-window-to (input-focus) 0 $h)"
 else
     sawfish-client -e '(move-window-to (input-focus) 0 30)'
 fi
