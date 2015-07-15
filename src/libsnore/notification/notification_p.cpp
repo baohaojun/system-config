@@ -128,7 +128,7 @@ bool NotificationData::sourceAndTargetAreSimilar(const SnorePlugin *target)
 void NotificationData::stopTimeoutTimer()
 {
     if (m_timeoutTimer) {
-        QMetaObject::invokeMethod(m_timeoutTimer.data(), "deleteLater", Qt::QueuedConnection);
+        m_timeoutTimer->deleteLater();
     }
 }
 
