@@ -129,6 +129,7 @@ void SnoreCore::broadcastNotification(Notification notification)
         }
     }
     notification.data()->setBroadcasted();
+    d->startNotificationTimeoutTimer(notification);
     emit d->notify(notification);
 }
 
@@ -185,8 +186,14 @@ bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
 void SnoreCore::requestCloseNotification(Notification n, Notification::CloseReasons r)
 {
     Q_D(SnoreCore);
+
     if (d->m_notificationBackend) {
         d->m_notificationBackend->requestCloseNotification(n, r);
+    } else {
+        if (n.isValid()) {
+            n.data()->setCloseReason(r);
+            emit notificationClosed(n);
+        }
     }
 }
 

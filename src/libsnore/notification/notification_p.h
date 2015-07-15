@@ -32,8 +32,6 @@ class SnorePlugin;
 
 class SNORE_EXPORT NotificationData : public QSharedData
 {
-
-    friend class Notification;
 public:
     NotificationData(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon,
                      int timeout, Notification::Prioritys priority);
@@ -45,8 +43,6 @@ public:
     void setActionInvoked(const Action &action);
 
     void setCloseReason(Notification::CloseReasons r);
-
-    void setTimeoutTimer(QTimer *timer);
 
     QString resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags);
 
@@ -97,6 +93,8 @@ private:
     static uint notificationCount;
     static uint m_idCount;
 
+    friend class Notification;
+    friend class SnoreCorePrivate;
 };
 
 }

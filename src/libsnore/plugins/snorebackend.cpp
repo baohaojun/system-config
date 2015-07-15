@@ -62,9 +62,11 @@ SnoreBackend::~SnoreBackend()
 
 void SnoreBackend::requestCloseNotification(Notification notification, Notification::CloseReasons reason)
 {
-    if (canCloseNotification() && notification.isValid()) {
-        closeNotification(notification, reason);
-        slotCloseNotification(notification);
+    if (notification.isValid()) {
+        if (canCloseNotification()) {
+            slotCloseNotification(notification);
+            closeNotification(notification, reason);
+        }
     }
 }
 
@@ -78,7 +80,7 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
         n.old().removeActiveIn(this);
     }
     n.data()->setCloseReason(reason);
-    snoreDebug(SNORE_DEBUG) << n;
+    snoreDebug(SNORE_DEBUG) << n << reason;
     emit notificationClosed(n);
 }
 
@@ -139,29 +141,6 @@ void SnoreBackend::slotNotificationDisplayed(Notification notification)
 {
     notification.addActiveIn(this);
     SnoreCorePrivate::instance()->slotNotificationDisplayed(notification);
-
-    if (notification.isSticky()) {
-        return;
-    }
-
-    QTimer *timer = new QTimer(this);
-    timer->setSingleShot(true);
-    notification.data()->setTimeoutTimer(timer);
-
-    if (notification.isUpdate()) {
-        notification.old().data()->setTimeoutTimer(nullptr);
-    }
-    timer->setInterval(notification.timeout() * 1000);
-    //dont use a capture for notification, as it can leak
-    uint id = notification.id();
-    connect(timer, &QTimer::timeout, [id]() {
-        Notification notification = SnoreCore::instance().getActiveNotificationByID(id);
-        if (notification.isValid()) {
-            snoreDebug(SNORE_DEBUG) << notification;
-            SnoreCore::instance().requestCloseNotification(notification, Notification::TIMED_OUT);
-        }
-    });
-    timer->start();
 }
 
 void SnoreBackend::slotNotificationActionInvoked(Notification notification, const Action &action)

@@ -67,12 +67,12 @@ const Icon &Notification::icon() const
     return d->m_icon;
 }
 
-const int &Notification::timeout() const
+int Notification::timeout() const
 {
     return d->m_timeout;
 }
 
-Notification Notification::old() const
+Notification &Notification::old() const
 {
     return d->m_toReplace;
 }

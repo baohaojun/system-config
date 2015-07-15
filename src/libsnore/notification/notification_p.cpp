@@ -81,15 +81,6 @@ void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
     m_closeReason = r;
 }
 
-void NotificationData::setTimeoutTimer(QTimer *timer)
-{
-    if (m_timeoutTimer) {
-        m_timeoutTimer->stop();
-        m_timeoutTimer->deleteLater();
-    }
-    m_timeoutTimer.reset(timer);
-}
-
 QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags)
 {
     if (!m_hints.value("use-markup").toBool()) {

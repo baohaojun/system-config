@@ -41,7 +41,6 @@ class SnorePlugin;
 
 class SNORE_EXPORT Notification
 {
-    friend class NotificationData;
 public:
     /**
      * The reason why the Notification was closed.
@@ -161,7 +160,7 @@ public:
      * A timeout of 0 means the notification isSticky and will stay visible until dismissed by the user, if supported by the backend.
      * @see isSticky
      */
-    const int &timeout() const;
+    int timeout() const;
 
     /**
      *
@@ -255,7 +254,7 @@ public:
      * @return the old notification to be replaced
      * @see isUpdate
      */
-    Notification old() const;
+    Notification &old() const;
 
     /**
      *
@@ -284,6 +283,7 @@ public:
 private:
     QExplicitlySharedDataPointer<NotificationData> d;
 
+    friend class NotificationData;
 };
 
 }
