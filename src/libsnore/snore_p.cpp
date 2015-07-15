@@ -93,15 +93,15 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         if (m_notificationBackend) {
             m_notificationBackend->disable();
         }
+        m_notificationBackend = b;
+        m_notificationBackend->enable();
+        q->setSettingsValue(QLatin1String("PrimaryBackend"), backend, LOCAL_SETTING);
+
         connect(b, &SnoreBackend::loadedStateChanged, [this, b](bool initialized) {
             if (!initialized) {
                 slotInitPrimaryNotificationBackend();
             }
         });
-
-        m_notificationBackend = b;
-        m_notificationBackend->enable();
-        q->setSettingsValue(QLatin1String("PrimaryBackend"), backend, LOCAL_SETTING);
         return true;
     }
     return false;
