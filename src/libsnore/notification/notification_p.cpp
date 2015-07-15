@@ -79,10 +79,7 @@ void NotificationData::setActionInvoked(const Snore::Action &action)
 void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
 {
     m_closeReason = r;
-    if (m_timeoutTimer) {
-        m_timeoutTimer->deleteLater();
-        m_timeoutTimer.reset();
-    }
+    stopTimeoutTimer();
 }
 
 QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags)
@@ -125,5 +122,14 @@ bool NotificationData::sourceAndTargetAreSimilar(const SnorePlugin *target)
         return true;
     }
     return false;
+}
+
+void NotificationData::stopTimeoutTimer()
+{
+    if (m_timeoutTimer) {
+        m_timeoutTimer->stop();
+        m_timeoutTimer->deleteLater();
+        m_timeoutTimer.reset(nullptr);
+    }
 }
 

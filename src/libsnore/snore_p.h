@@ -70,7 +70,7 @@ public:
     void setDefaultSettingsValueIntern(const QString &key, const QVariant &value);
 
     void startNotificationTimeoutTimer(Notification notification);
-    void stopNotificationTimeoutTimer(Notification &notification);
+
 private Q_SLOTS:
     //TODO: find a better solutinon for the slots in this section
     friend class Snore::SnoreBackend;

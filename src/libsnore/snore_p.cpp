@@ -235,15 +235,13 @@ void SnoreCorePrivate::startNotificationTimeoutTimer(Notification notification)
         return;
     }
 
-    if (notification.data()->m_timeoutTimer) {
-        stopNotificationTimeoutTimer(notification);
-    }
+    notification.data()->stopTimeoutTimer();
     QTimer *timer = new QTimer();
     notification.data()->m_timeoutTimer.reset(timer);
     timer->setSingleShot(true);
 
     if (notification.isUpdate()) {
-        stopNotificationTimeoutTimer(notification.old());
+        notification.old().data()->stopTimeoutTimer();
     }
     timer->setInterval(notification.timeout() * 1000);
     connect(timer, &QTimer::timeout, [q, notification]() {
@@ -251,15 +249,6 @@ void SnoreCorePrivate::startNotificationTimeoutTimer(Notification notification)
         q->requestCloseNotification(notification, Notification::TIMED_OUT);
     });
     timer->start();
-}
-
-void SnoreCorePrivate::stopNotificationTimeoutTimer(Notification &notification)
-{
-    if (notification.data()->m_timeout) {
-        notification.data()->m_timeoutTimer->stop();
-        notification.data()->m_timeoutTimer->deleteLater();
-        notification.data()->m_timeoutTimer.reset(nullptr);
-    }
 }
 
 ///Startup code
