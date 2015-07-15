@@ -28,5 +28,5 @@ if test -e DDRCS0.BIN; then
     vmversion=$(echo -n "$vmversion"|urlify|perl -npe 's/ /+/g')
 fi
 
-vmlinux=$(curl "http://172.16.2.18/cgi-bin/vmlinux-lookup.cgi?version=$vmversion&utc_date=$utc")
+vmlinux=$(curl -s "http://172.16.2.18/cgi-bin/vmlinux-lookup.cgi?version=$vmversion&utc_date=$utc")
 echo "$vmlinux"

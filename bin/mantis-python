@@ -1,4 +1,7 @@
 #!/usr/bin/python
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 import logging
 logging.basicConfig(level = logging.FATAL)
@@ -76,6 +79,7 @@ parser_status_enum.set_defaults(command=enum_status)
 parser_update_issue = subparsers.add_parser("update-issue", help="update issue")
 parser_update_issue.add_argument("-s", "--status")
 parser_update_issue.add_argument("-i", "--issue-id")
+parser_update_issue.add_argument("--custom-fields", action='append')
 def update_issue(arg):
     mantis = Client(arg.wsdl).service
     issue = mantis.mc_issue_get(
@@ -102,6 +106,12 @@ def update_issue(arg):
 
     if not found:
         raise Exception("invalid status " + arg.status)
+    if arg.custom_fields:
+        for ac in arg.custom_fields:
+            for x in issue.custom_fields:
+                if x.field.name == ac.split('=')[0]:
+                    x.value = ac.split('=')[1]
+
     for x in issue.custom_fields:
         if x.value == None:
             x.value = ""
@@ -162,9 +172,50 @@ parser_add_issue.add_argument("--project")
 parser_add_issue.add_argument("--summary")
 parser_add_issue.add_argument("--description")
 parser_add_issue.add_argument("--category")
+parser_add_issue.add_argument("--handler", default = -1)
 parser_add_issue.add_argument("--due-date", default = str((datetime.now() + timedelta(15)).date()))
+parser_add_issue.add_argument("--custom-fields", action='append')
+
 def add_issue(arg):
     mantis = Client(arg.wsdl).service
+    if arg.handler == -1:
+        login = mantis.mc_login(arg.username, arg.password)
+        arg.handler = login.account_data.id
+    else:
+        users = mantis.mc_project_get_users(
+            arg.username,
+            arg.password,
+            47,
+            10
+        )
+        for n in range(0, len(users)):
+            if arg.handler == users[n].name:
+                arg.handler = users[n].id
+                break
+
+    custom_fields =  mantis.mc_project_get_custom_fields(
+        arg.username,
+        arg.password,
+        arg.project
+    )
+    provided_cf = []
+    for cf in custom_fields:
+        if cf.require_report:
+            if not arg.custom_fields:
+                raise Exception("Custom Field {0} is required".format(cf.field.name))
+            ac_found = False
+            for ac in arg.custom_fields:
+                if cf.field.name == ac.split('=')[0]:
+                    ac_found = True
+                    provided_cf.append({
+                        'field' : {
+                            'id' : cf.field.id
+                        },
+                        'value' : ac.split('=')[1],
+                    })
+            if not ac_found:
+                raise Exception("Custom Field {0} is required".format(cf.field.name))
+
     print mantis.mc_issue_add(
         arg.username,
         arg.password,
@@ -172,10 +223,14 @@ def add_issue(arg):
             'project' : {
                 'id' : arg.project
             },
+            'handler' : {
+                'id' : arg.handler
+            },
             'summary' : arg.summary,
             'description' : arg.description,
             'category' : arg.category,
             'due_date' : arg.due_date,
+            'custom_fields' : provided_cf,
         }
 
     )
@@ -215,6 +270,28 @@ def mc_project_get_custom_fields(arg):
     )
 
 parser_mc_project_get_custom_fields.set_defaults(command=mc_project_get_custom_fields)
+
+parser_mc_login = subparsers.add_parser("login", help = "login")
+def mc_login(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_login(
+        arg.username,
+        arg.password
+    )
+
+parser_mc_login.set_defaults(command=mc_login)
+
+parser_mc_enum_severities = subparsers.add_parser("enum-severities", help = "enum severities")
+def mc_enum_severities(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_enum_severities(
+        arg.username,
+        arg.password
+    )
+
+parser_mc_enum_severities.set_defaults(command=mc_enum_severities)
+
+################################################################
 
 arg = parser.parse_args()
 if arg.debug:
