@@ -63,9 +63,9 @@ GrowlBackend::~GrowlBackend()
     Growl::shutdown();
 }
 
-void GrowlBackend::slotInitialize()
+void GrowlBackend::load()
 {
-    emit initializeChanged(Growl::isRunning(GROWL_TCP, settingsValue(QLatin1String("Host")).toString().toUtf8().constData()));
+    emit loadedStateChanged(Growl::isRunning(GROWL_TCP, settingsValue(QLatin1String("Host")).toString().toUtf8().constData()));
 }
 
 void GrowlBackend::slotRegisterApplication(const Application &application)

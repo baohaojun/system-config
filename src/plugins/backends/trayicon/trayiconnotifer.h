@@ -21,11 +21,13 @@ public:
     virtual bool canCloseNotification() const override;
 
 public Q_SLOTS:
-    void slotInitialize() override;
     void slotNotify(Snore::Notification notification) override;
     void slotCloseNotification(Snore::Notification notification) override;
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotDeregisterApplication(const Snore::Application &application) override;
+
+private Q_SLOTS:
+    void load() override;
 
 private:
     QSystemTrayIcon *trayIcon(const Snore::Application &app);

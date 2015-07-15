@@ -37,8 +37,11 @@ protected:
     void setDefaultSettings() override;
 
 public Q_SLOTS:
-    void slotInitialize() override;
     void slotNotificationDisplayed(Snore::Notification notification) override;
+
+private Q_SLOTS:
+    void load() override;
+
 private:
     QMediaPlayer *m_player;
 };

@@ -86,14 +86,14 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         }
         snoreDebug(SNORE_DEBUG) << "Setting Notification Backend to:" << backend;
         SnoreBackend *b = qobject_cast<SnoreBackend *>(backends.value(backend)->load());
-        if (!b->isInitialized()) {
+        if (!b->isLoaded()) {
             snoreDebug(SNORE_DEBUG) << "Failed to initialize" << b->name();
             return false;
         }
         if (m_notificationBackend) {
             m_notificationBackend->disable();
         }
-        connect(b, &SnoreBackend::initializeChanged, [this, b](bool initialized) {
+        connect(b, &SnoreBackend::loadedStateChanged, [this, b](bool initialized) {
             if (!initialized) {
                 slotInitPrimaryNotificationBackend();
             }

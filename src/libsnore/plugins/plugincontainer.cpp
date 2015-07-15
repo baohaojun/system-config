@@ -52,15 +52,19 @@ SnorePlugin *PluginContainer::load()
         snoreDebug(SNORE_WARNING) << "Failed loading plugin: " << m_loader.errorString();
         return nullptr;
     }
-    SnorePlugin *plugin = qobject_cast<SnorePlugin *> (m_loader.instance());
-    plugin->m_container = this;
-    plugin->setDefaultSettings();
-    return plugin;
+    if (!m_plugin) {
+        m_plugin = qobject_cast<SnorePlugin *> (m_loader.instance());
+        m_plugin->m_container = this;
+        m_plugin->setDefaultSettings();
+        QMetaObject::invokeMethod(m_plugin, "load", Qt::QueuedConnection);
+    }
+    return m_plugin;
 }
 
 void PluginContainer::unload()
 {
     m_loader.unload();
+    m_plugin = nullptr;
 }
 
 const QString &PluginContainer::file()

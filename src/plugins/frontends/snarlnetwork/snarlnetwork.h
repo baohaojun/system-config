@@ -39,11 +39,11 @@ public:
     ~SnarlNetworkFrontend();
 
 public Q_SLOTS:
-    void slotInitialize() override;
     void slotActionInvoked(Snore::Notification notification) override;
     void slotNotificationClosed(Snore::Notification notification) override;
 
 private Q_SLOTS:
+    void load() override;
     void handleConnection();
     void handleMessages();
 

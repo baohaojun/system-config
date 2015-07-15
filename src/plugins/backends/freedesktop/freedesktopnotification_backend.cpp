@@ -24,7 +24,7 @@ FreedesktopBackend::FreedesktopBackend()
     });
 }
 
-void FreedesktopBackend::slotInitialize()
+void FreedesktopBackend::load()
 {
     m_interface = new org::freedesktop::Notifications(QLatin1String("org.freedesktop.Notifications"),
             QLatin1String("/org/freedesktop/Notifications"),
@@ -33,7 +33,7 @@ void FreedesktopBackend::slotInitialize()
     reply.waitForFinished();
     QStringList caps  = reply.value();
     m_supportsRichtext = caps.contains(QLatin1String("body-markup"));
-    emit initializeChanged(true);
+    emit loadedStateChanged(true);
 }
 
 bool FreedesktopBackend::canCloseNotification() const

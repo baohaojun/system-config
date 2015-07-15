@@ -43,9 +43,11 @@ Q_SIGNALS:
     void ActionInvoked(uint id, const QString &actionKey);
 
 public Q_SLOTS:
-    void slotInitialize() override;
     void slotActionInvoked(Snore::Notification notification) override;
     void slotNotificationClosed(Snore::Notification notification) override;
+
+private Q_SLOTS:
+    void load() override;
 
 private:
     Snore::Alert m_alert;

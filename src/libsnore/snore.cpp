@@ -84,7 +84,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN:
-                    connect(plugin, &SnorePlugin::initializeChanged, [plugin](bool initialized) {
+                    connect(plugin, &SnorePlugin::loadedStateChanged, [plugin](bool initialized) {
                         if (initialized) {
                             plugin->setEnabled(plugin->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool());
                         }
@@ -95,7 +95,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                     continue;
                 }
 
-                connect(plugin, &SnorePlugin::initializeChanged, [d, plugin](bool initialized) {
+                connect(plugin, &SnorePlugin::loadedStateChanged, [d, plugin](bool initialized) {
                     if (!initialized) {
                         //TODO: improve
                         d->m_pluginNames[plugin->type()].removeAll(plugin->name());
@@ -103,7 +103,6 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                     }
                 });
 
-                QMetaObject::invokeMethod(plugin, "slotInitialize", Qt::QueuedConnection);
                 snoreDebug(SNORE_DEBUG) << info->name() << "is a" << info->type();
                 d->m_pluginNames[info->type()].append(info->name());
                 auto key = qMakePair(type, info->name());

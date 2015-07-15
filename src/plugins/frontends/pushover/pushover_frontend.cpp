@@ -51,9 +51,9 @@ PushoverFrontend::PushoverFrontend()
     });
 }
 
-void PushoverFrontend::slotInitialize()
+void PushoverFrontend::load()
 {
-    emit initializeChanged(true);
+    emit loadedStateChanged(true);
 }
 
 PluginSettingsWidget *PushoverFrontend::settingsWidget()

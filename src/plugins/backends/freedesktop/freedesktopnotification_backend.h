@@ -16,13 +16,14 @@ public:
     bool canUpdateNotification() const override;
 
 public Q_SLOTS:
-    void slotInitialize() override;
-
     void slotNotify(Snore::Notification notification) override;
     void slotCloseNotification(Snore::Notification notification) override;
 
     void slotActionInvoked(const uint &id, const QString &actionID);
     void slotNotificationClosed(const uint &id, const uint &reason);
+
+private Q_SLOTS:
+    void load() override;
 
 private:
     org::freedesktop::Notifications *m_interface;

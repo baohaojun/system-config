@@ -34,10 +34,10 @@ Sound::Sound():
     });
 }
 
-void Sound::slotInitialize()
+void Sound::load()
 {
     m_player->setVolume(settingsValue(QLatin1String("Volume")).toInt());
-    emit initializeChanged(true);
+    emit loadedStateChanged(true);
 }
 
 PluginSettingsWidget *Sound::settingsWidget()

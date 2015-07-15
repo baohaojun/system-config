@@ -87,6 +87,7 @@ private:
     QString m_pluginName;
     SnorePlugin::PluginTypes m_pluginType;
     QPluginLoader m_loader;
+    SnorePlugin *m_plugin = nullptr;
 };
 }
 

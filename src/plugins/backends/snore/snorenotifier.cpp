@@ -105,7 +105,7 @@ void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
     //the timer will show the next
 }
 
-void SnoreNotifier::slotInitialize()
+void SnoreNotifier::load()
 {
     for (int i = 0; i < m_widgets.size(); ++i) {
         NotifyWidget *w = new NotifyWidget(i, this);
@@ -123,7 +123,7 @@ void SnoreNotifier::slotInitialize()
             slotCloseNotification(notification);
         });
     }
-    emit initializeChanged(true);
+    emit loadedStateChanged(true);
 }
 
 bool SnoreNotifier::canCloseNotification() const

@@ -43,10 +43,12 @@ private:
     QHash<QString, Growl *> m_applications;
 
 public Q_SLOTS:
-    void slotInitialize() override;
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotDeregisterApplication(const Snore::Application &application) override;
     void slotNotify(Snore::Notification notification) override;
+
+private Q_SLOTS:
+    void load() override;
 
 };
 

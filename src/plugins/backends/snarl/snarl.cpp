@@ -121,11 +121,11 @@ SnarlBackend::~SnarlBackend()
     delete m_eventLoop;
 }
 
-void SnarlBackend::slotInitialize()
+void SnarlBackend::load()
 {
 
     SnarlInterface *snarlInterface = new SnarlInterface();
-    emit initializeChanged(snarlInterface->IsSnarlRunning());
+    emit loadedStateChanged(snarlInterface->IsSnarlRunning());
     delete snarlInterface;
 }
 

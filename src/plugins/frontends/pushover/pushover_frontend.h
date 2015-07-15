@@ -47,8 +47,10 @@ protected:
     void setDefaultSettings() override;
 
 public Q_SLOTS:
-    void slotInitialize() override;
     void slotActionInvoked(Snore::Notification notification);
+
+private Q_SLOTS:
+    void load() override;
 
 Q_SIGNALS:
     void loggedInChanged(bool isLoggedIn);

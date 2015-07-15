@@ -43,11 +43,13 @@ private:
     QHash<QString, Snarl::V42::SnarlInterface *> m_applications;
 
 public Q_SLOTS:
-    void slotInitialize() override;
     void slotRegisterApplication(const Snore::Application &application);
     void slotDeregisterApplication(const Snore::Application &application);
     void slotNotify(Snore::Notification notification);
     void slotCloseNotification(Snore::Notification notification);
+
+private Q_SLOTS:
+    void load() override;
 
 private:
     QHash<LONG32, Snore::Notification> m_idMap;

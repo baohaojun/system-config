@@ -6,10 +6,10 @@
 #include <QSystemTrayIcon>
 using namespace Snore;
 
-void TrayIconNotifer::slotInitialize()
+void TrayIconNotifer::load()
 {
     m_currentlyDisplaying = false;
-    emit initializeChanged(true);
+    emit loadedStateChanged(true);
 }
 
 bool TrayIconNotifer::canCloseNotification() const

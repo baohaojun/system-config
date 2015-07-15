@@ -44,16 +44,16 @@ SnarlNetworkFrontend::~SnarlNetworkFrontend()
     delete parser;
 }
 
-void SnarlNetworkFrontend::slotInitialize()
+void SnarlNetworkFrontend::load()
 {
     tcpServer = new QTcpServer(this);
     if (!tcpServer->listen(QHostAddress::Any, port)) {
         snoreDebug(SNORE_DEBUG) << "The port is already used";
-        emit initializeChanged(false);
+        emit loadedStateChanged(false);
     } else {
         std::cout << "The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>" << std::endl;
     }
-    emit initializeChanged(true);
+    emit loadedStateChanged(true);
 }
 
 void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)

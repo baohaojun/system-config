@@ -58,7 +58,7 @@ public:
     void enable();
     void disable();
 
-    bool isInitialized() const;
+    bool isLoaded() const;
 
     bool isEnabled() const;
 
@@ -84,11 +84,11 @@ public:
     virtual PluginSettingsWidget *settingsWidget();
 
 Q_SIGNALS:
-    void initializeChanged(bool initialized);
+    void loadedStateChanged(bool loaded);
     void enabledChanged(bool enabled);
 
-public Q_SLOTS:
-    virtual void slotInitialize() = 0;
+private Q_SLOTS:
+    virtual void load() = 0;
 
 protected:
     /**
