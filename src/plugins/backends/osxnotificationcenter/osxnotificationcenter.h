@@ -33,9 +33,9 @@ public:
 
 public Q_SLOTS:
     void slotNotify(Snore::Notification notification) override;
-	
+
 private Q_SLOTS:
-        void load() override;
+    void load() override;
 };
 
 #endif // OSXNOTIFICATIONCENTER_H

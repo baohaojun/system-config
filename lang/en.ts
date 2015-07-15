@@ -4,7 +4,7 @@
 <context>
     <name>Default Alert</name>
     <message>
-        <location filename="../src/libsnore/application.cpp" line="34"/>
+        <location filename="../src/libsnore/application_p.cpp" line="30"/>
         <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
@@ -183,23 +183,23 @@
 <context>
     <name>Snore::SnoreCore</name>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="242"/>
-        <source>This is Snore</source>
+        <location filename="../src/libsnore/snore.cpp" line="259"/>
+        <source>This is </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="243"/>
-        <source>Project Website</source>
+        <location filename="../src/libsnore/snore.cpp" line="261"/>
+        <source>Everything is awesome!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="247"/>
-        <source>Hello World</source>
+        <location filename="../src/libsnore/snore.cpp" line="265"/>
+        <source>Hello There!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="248"/>
-        <source>Test Action</source>
+        <location filename="../src/libsnore/snore.cpp" line="266"/>
+        <source>Awesome Action!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

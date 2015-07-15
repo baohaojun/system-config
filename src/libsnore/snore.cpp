@@ -256,12 +256,13 @@ Notification SnoreCore::getActiveNotificationByID(uint id) const
 void SnoreCore::displayExapleNotification()
 {
     Application app = SnoreCorePrivate::instance()->defaultApplication();
-    QString text = QLatin1String("<i>") + tr("This is Snore") + QLatin1String("</i><br>") +
-                   QLatin1String("<a href=\"https://github.com/Snorenotify/Snorenotify\">") + tr("Project Website") + QLatin1String("</a><br>");
+    QString text = QLatin1String("<i>") + tr("This is ") + app.name() + QLatin1String("</i><br>"
+                   "<b>") +
+                   tr("Everything is awesome!") + QLatin1String("</b><br>");
     if (!app.constHints().value("use-markup").toBool()) {
         text = Utils::normalizeMarkup(text, Utils::NO_MARKUP);
     }
-    Notification noti(app, app.defaultAlert(), tr("Hello World"), text, app.icon());
-    noti.addAction(Action(1, tr("Test Action")));
+    Notification noti(app, app.defaultAlert(), tr("Hello There!"), text, app.icon());
+    noti.addAction(Action(1, tr("Awesome Action!")));
     broadcastNotification(noti);
 }
