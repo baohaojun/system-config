@@ -23,6 +23,7 @@
 #include "notification.h"
 #include "../hint.h"
 
+#include <QPointer>
 #include <QSharedData>
 #include <QTimer>
 
@@ -87,7 +88,7 @@ private:
     QHash<int, Action> m_actions;
     Hint m_hints;
     Notification m_toReplace;
-    QScopedPointer<QTimer> m_timeoutTimer;
+    QPointer<QTimer> m_timeoutTimer;
     QSet<const QObject *> m_activeIn;
     bool m_isBroadcasted = false;
     SnorePlugin *m_source = nullptr;

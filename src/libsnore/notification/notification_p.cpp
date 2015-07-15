@@ -67,6 +67,7 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
 
 NotificationData::~NotificationData()
 {
+    stopTimeoutTimer();
     notificationCount--;
     snoreDebug(SNORE_INFO) << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
 }
@@ -127,9 +128,7 @@ bool NotificationData::sourceAndTargetAreSimilar(const SnorePlugin *target)
 void NotificationData::stopTimeoutTimer()
 {
     if (m_timeoutTimer) {
-        m_timeoutTimer->stop();
-        m_timeoutTimer->deleteLater();
-        m_timeoutTimer.reset(nullptr);
+        QMetaObject::invokeMethod(m_timeoutTimer.data(), "deleteLater", Qt::QueuedConnection);
     }
 }
 

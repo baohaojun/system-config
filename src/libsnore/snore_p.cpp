@@ -237,7 +237,7 @@ void SnoreCorePrivate::startNotificationTimeoutTimer(Notification notification)
 
     notification.data()->stopTimeoutTimer();
     QTimer *timer = new QTimer();
-    notification.data()->m_timeoutTimer.reset(timer);
+    notification.data()->m_timeoutTimer = timer;
     timer->setSingleShot(true);
 
     if (notification.isUpdate()) {
