@@ -107,3 +107,9 @@ void OSXNotificationCenter::slotNotify(Snore::Notification notification)
     slotNotificationDisplayed(notification);
 }
 
+void OSXNotificationCenter::load()
+{
+	emit loadedStateChanged(true);
+}
+
+
