@@ -257,8 +257,7 @@ void SnoreCore::displayExapleNotification()
 {
     Application app = SnoreCorePrivate::instance()->defaultApplication();
     QString text = QLatin1String("<i>") + tr("This is ") + app.name() + QLatin1String("</i><br>"
-                   "<b>") +
-                   tr("Everything is awesome!") + QLatin1String("</b><br>");
+                   "<b>") + tr("Everything is awesome!") + QLatin1String("</b><br>");
     if (!app.constHints().value("use-markup").toBool()) {
         text = Utils::normalizeMarkup(text, Utils::NO_MARKUP);
     }

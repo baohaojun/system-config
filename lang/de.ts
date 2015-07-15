@@ -200,7 +200,7 @@
     <message>
         <location filename="../src/libsnore/snore.cpp" line="266"/>
         <source>Awesome Action!</source>
-        <translation>Grossartige Aktion!</translation>
+        <translation>Super Aktion!</translation>
     </message>
 </context>
 <context>
