@@ -67,7 +67,7 @@ bool GrowlBackend::isReady()
 {
     bool running = Growl::isRunning(GROWL_TCP, settingsValue(QLatin1String("Host")).toString().toUtf8().constData());
     if (!running) {
-        setErrorString(tr("Growl is not running."));
+        setErrorString(name() + tr(" is not running."));
     }
     return running;
 }
