@@ -79,6 +79,10 @@ void NotificationData::setActionInvoked(const Snore::Action &action)
 void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
 {
     m_closeReason = r;
+    if (m_timeoutTimer) {
+        m_timeoutTimer->deleteLater();
+        m_timeoutTimer.reset();
+    }
 }
 
 QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags)
