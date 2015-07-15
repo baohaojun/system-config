@@ -53,13 +53,24 @@ public:
     SnorePlugin();
     virtual ~SnorePlugin();
 
+    /**
+     * Sets the enabled state of the plugin to @param enabled.
+     */
     void setEnabled(bool enabled);
 
+    /**
+     * Enables the plugin.
+     */
     void enable();
+
+    /**
+     * Disables the plugin.
+     */
     void disable();
 
-    bool isLoaded() const;
-
+    /**
+     * Returns whether the Plugin is enabled.
+     */
     bool isEnabled() const;
 
     /**
@@ -77,6 +88,13 @@ public:
      */
     const QString typeName() const;
 
+    virtual bool isReady();
+
+    /**
+     * Returns the error string or an empty string.
+     */
+    QString errorString() const;
+
     QVariant settingsValue(const QString &key, SettingsType type = GLOBAL_SETTING) const;
     void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
     void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
@@ -84,11 +102,8 @@ public:
     virtual PluginSettingsWidget *settingsWidget();
 
 Q_SIGNALS:
-    void loadedStateChanged(bool loaded);
     void enabledChanged(bool enabled);
-
-private Q_SLOTS:
-    virtual void load() = 0;
+    void error(const QString &error);
 
 protected:
     /**
@@ -101,13 +116,15 @@ protected:
      */
     virtual void setDefaultSettings();
 
+    void setErrorString(const QString &error);
+
 private:
     QString normaliseKey(const QString &key) const;
     void setDefaultSettingsPlugin();
 
-    bool m_initialized = false;
     bool m_enabled = false;
     PluginContainer *m_container = nullptr;
+    QString m_error;
 
     friend class PluginContainer;
 

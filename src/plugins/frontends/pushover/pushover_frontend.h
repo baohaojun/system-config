@@ -49,9 +49,6 @@ protected:
 public Q_SLOTS:
     void slotActionInvoked(Snore::Notification notification);
 
-private Q_SLOTS:
-    void load() override;
-
 Q_SIGNALS:
     void loggedInChanged(bool isLoggedIn);
     void error(QString error);

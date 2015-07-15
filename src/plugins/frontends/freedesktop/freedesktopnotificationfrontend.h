@@ -46,9 +46,6 @@ public Q_SLOTS:
     void slotActionInvoked(Snore::Notification notification) override;
     void slotNotificationClosed(Snore::Notification notification) override;
 
-private Q_SLOTS:
-    void load() override;
-
 private:
     Snore::Alert m_alert;
     NotificationsAdaptor *m_adaptor;

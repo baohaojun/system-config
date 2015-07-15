@@ -120,19 +120,12 @@ private:
 SnarlBackend::SnarlBackend():
     m_eventLoop(new SnarlBackend::SnarlWidget(this))
 {
+
 }
 
 SnarlBackend::~SnarlBackend()
 {
     delete m_eventLoop;
-}
-
-void SnarlBackend::load()
-{
-
-    SnarlInterface *snarlInterface = new SnarlInterface();
-    emit loadedStateChanged(snarlInterface->IsSnarlRunning());
-    delete snarlInterface;
 }
 
 PluginSettingsWidget *SnarlBackend::settingsWidget()
@@ -148,6 +141,15 @@ bool SnarlBackend::canCloseNotification() const
 bool SnarlBackend::canUpdateNotification() const
 {
     return true;
+}
+
+bool SnarlBackend::isReady()
+{
+    bool running = SnarlInterface::IsSnarlRunning();
+    if (!running) {
+        setErrorString(tr("Snarl is not running."));
+    }
+    return running;
 }
 
 void SnarlBackend::setDefaultSettings()

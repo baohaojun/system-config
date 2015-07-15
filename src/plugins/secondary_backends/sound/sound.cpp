@@ -34,12 +34,6 @@ Sound::Sound():
     });
 }
 
-void Sound::load()
-{
-    m_player->setVolume(settingsValue(QLatin1String("Volume")).toInt());
-    emit loadedStateChanged(true);
-}
-
 PluginSettingsWidget *Sound::settingsWidget()
 {
     return new SoundSettings(this);
@@ -56,6 +50,7 @@ void Sound::slotNotificationDisplayed(Snore::Notification notification)
     if (notification.hints().value("silent").toBool()) {
         return;
     }
+    m_player->setVolume(settingsValue(QLatin1String("Volume")).toInt());
 
     QString sound = notification.hints().value("sound").toString();
     if (sound.isEmpty()) {

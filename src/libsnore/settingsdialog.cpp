@@ -69,9 +69,19 @@ void SettingsDialog::initTabs()
     addWidgets(ui->tabWidget_secondary_backends, ui->tab_secondaryBackends, SnorePlugin::SECONDARY_BACKEND);
     addWidgets(ui->tabWidget_frontends, ui->tab_frontends,  SnorePlugin::FRONTEND);
     addWidgets(ui->tabWidget_plugins, ui->tab_plugins, SnorePlugin::PLUGIN);
+
+    ui->errorLabel->setVisible(false);
+    ui->errorLineEdit->setVisible(false);
+
+    connect(&SnoreCore::instance(), &SnoreCore::prmaryNotificationBackendChanged, this, &SettingsDialog::loadPrimaryBackendBox);
+    connect(&SnoreCore::instance(), &SnoreCore::prmaryNotificationBackendError, [this](const QString & error) {
+        ui->errorLabel->setVisible(true);
+        ui->errorLineEdit->setVisible(true);
+        ui->errorLineEdit->setText(error);
+    });
 }
 
-void Snore::SettingsDialog::on_pushButton_clicked()
+void SettingsDialog::on_pushButton_clicked()
 {
     SnoreCore::instance().displayExapleNotification();
 }
@@ -79,21 +89,26 @@ void Snore::SettingsDialog::on_pushButton_clicked()
 void SettingsDialog::load()
 {
     snoreDebug(SNORE_DEBUG) << "loading";
+    loadPrimaryBackendBox(SnoreCore::instance().settingsValue(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString());
+    ui->timeoutSpinBox->setValue(SnoreCore::instance().settingsValue(QLatin1String("Timeout"), LOCAL_SETTING).toInt());
+    ui->disableNotificationSoundCheckBox->setChecked(SnoreCore::instance().settingsValue(QLatin1String("Silent"), LOCAL_SETTING).toBool());
+    for (auto widget : m_tabs) {
+        widget->loadSettings();
+    }
+}
+
+void SettingsDialog::loadPrimaryBackendBox(const QString &backend)
+{
     if (SnoreCore::instance().settingsValue(QLatin1String("PluginTypes"), LOCAL_SETTING).value<SnorePlugin::PluginTypes>() & SnorePlugin::BACKEND) {
         ui->primaryBackendComboBox->clear();
         QStringList list = SnoreCore::instance().pluginNames(SnorePlugin::BACKEND);
         ui->primaryBackendComboBox->addItems(list);
-        ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(SnoreCore::instance().settingsValue(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString()));
+        ui->primaryBackendComboBox->setCurrentIndex(list.indexOf(backend));
         ui->primaryBackendComboBox->setVisible(true);
         ui->primaryBackendLabel->setVisible(true);
     } else {
         ui->primaryBackendComboBox->setVisible(false);
         ui->primaryBackendLabel->setVisible(false);
-    }
-    ui->timeoutSpinBox->setValue(SnoreCore::instance().settingsValue(QLatin1String("Timeout"), LOCAL_SETTING).toInt());
-    ui->disableNotificationSoundCheckBox->setChecked(SnoreCore::instance().settingsValue(QLatin1String("Silent"), LOCAL_SETTING).toBool());
-    for (auto widget : m_tabs) {
-        widget->loadSettings();
     }
 }
 
@@ -114,7 +129,7 @@ void SettingsDialog::save()
     SnoreCore::instance().setSettingsValue(QLatin1String("Silent"), ui->disableNotificationSoundCheckBox->isChecked(), LOCAL_SETTING);
 
     if (dirty) {
-        QMetaObject::invokeMethod(SnoreCorePrivate::instance(), "slotSyncSettings", Qt::QueuedConnection);
+        SnoreCorePrivate::instance()->syncSettings();
     }
 }
 

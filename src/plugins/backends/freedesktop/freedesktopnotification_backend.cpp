@@ -12,6 +12,13 @@ using namespace Snore;
 
 FreedesktopBackend::FreedesktopBackend()
 {
+    m_interface = new org::freedesktop::Notifications(QLatin1String("org.freedesktop.Notifications"),
+            QLatin1String("/org/freedesktop/Notifications"),
+            QDBusConnection::sessionBus(), this);
+    QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
+    reply.waitForFinished();
+    QStringList caps  = reply.value();
+    m_supportsRichtext = caps.contains(QLatin1String("body-markup"));
     connect(this, &SnoreSecondaryBackend::enabledChanged, [this](bool enabled) {
         if (enabled) {
             connect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
@@ -22,18 +29,6 @@ FreedesktopBackend::FreedesktopBackend()
 
         }
     });
-}
-
-void FreedesktopBackend::load()
-{
-    m_interface = new org::freedesktop::Notifications(QLatin1String("org.freedesktop.Notifications"),
-            QLatin1String("/org/freedesktop/Notifications"),
-            QDBusConnection::sessionBus(), this);
-    QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
-    reply.waitForFinished();
-    QStringList caps  = reply.value();
-    m_supportsRichtext = caps.contains(QLatin1String("body-markup"));
-    emit loadedStateChanged(true);
 }
 
 bool FreedesktopBackend::canCloseNotification() const

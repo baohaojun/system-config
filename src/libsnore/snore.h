@@ -166,6 +166,16 @@ Q_SIGNALS:
      */
     void notificationClosed(Snore::Notification);
 
+    /**
+     * This signal is emited in case the Primary backend encountered an error.
+     */
+    void prmaryNotificationBackendError(const QString &error);
+
+    /**
+     * This signal is emited in case the Primary backend changed.
+     */
+    void prmaryNotificationBackendChanged(const QString &erro);
+
 private:
     SnoreCore(QObject *parent);
     SnoreCorePrivate *d_ptr;

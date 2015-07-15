@@ -14,13 +14,13 @@
 
 using namespace Snore;
 
-void SnoreToast::load()
+bool SnoreToast::isReady()
 {
     if (QSysInfo::windowsVersion() < QSysInfo::WV_WINDOWS8) {
-        snoreDebug(SNORE_DEBUG) << "SnoreToast does not work on windows" << QSysInfo::windowsVersion();
-        emit loadedStateChanged(false);
+        setErrorString(name() + tr(" needs at least Windows 8 to run."));
+        return false;
     }
-    emit loadedStateChanged(true);
+    return true;
 }
 
 bool SnoreToast::canCloseNotification() const
@@ -129,12 +129,11 @@ QProcess *SnoreToast::createProcess(Notification noti)
     });
 
     connect(p, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), [this, p, noti](QProcess::ProcessError) {
-        snoreDebug(SNORE_WARNING) << "SnoreToasts seems to be broken:" << p->errorString();
+        setErrorString(name() + tr("encoutered an error: ") + p->errorString());
         snoreDebug(SNORE_DEBUG) << p->readAll();
         if (noti.isValid()) {
             closeNotification(noti, Notification::NONE);
         }
-        emit loadedStateChanged(false);
         p->deleteLater();
     });
     connect(qApp, &QApplication::aboutToQuit, p, &QProcess::kill);

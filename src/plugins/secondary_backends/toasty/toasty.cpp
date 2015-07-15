@@ -77,11 +77,6 @@ void Toasty::slotNotify(Notification notification)
 
 }
 
-void Toasty::load()
-{
-    emit loadedStateChanged(true);
-}
-
 PluginSettingsWidget *Toasty::settingsWidget()
 {
     return new ToastySettings(this);

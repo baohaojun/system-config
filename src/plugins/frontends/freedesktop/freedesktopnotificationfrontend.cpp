@@ -37,12 +37,10 @@ FreedesktopFrontend::FreedesktopFrontend()
             QDBusConnection dbus = QDBusConnection::sessionBus();
             if (dbus.registerService(QLatin1String("org.freedesktop.Notifications"))) {
                 if (!dbus.registerObject(QLatin1String("/org/freedesktop/Notifications"), this)) {
-                    snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register object";
-                    emit loadedStateChanged(false);
+                    setErrorString(tr("Failed to register dbus object."));
                 }
             } else {
-                snoreDebug(SNORE_WARNING) << "Failed to initialize" << name() << "failed to register service";
-                emit loadedStateChanged(false);
+                setErrorString(tr("Failed to register dbus service."));
             }
         } else {
             QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -54,14 +52,8 @@ FreedesktopFrontend::FreedesktopFrontend()
     });
 }
 
-void FreedesktopFrontend::load()
-{
-    emit loadedStateChanged(true);
-}
-
 void FreedesktopFrontend::slotActionInvoked(Notification notification)
 {
-
     if (notification.isActiveIn(this)) {
         if (notification.actionInvoked().isValid()) {
             emit ActionInvoked(notification.id(), QString::number(notification.actionInvoked().id()));

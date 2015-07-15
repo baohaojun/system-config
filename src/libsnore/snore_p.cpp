@@ -86,8 +86,10 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         }
         snoreDebug(SNORE_DEBUG) << "Setting Notification Backend to:" << backend;
         SnoreBackend *b = qobject_cast<SnoreBackend *>(backends.value(backend)->load());
-        if (!b->isLoaded()) {
-            snoreDebug(SNORE_DEBUG) << "Failed to initialize" << b->name();
+        if (!b->isReady()) {
+            snoreDebug(SNORE_DEBUG) << "Backend not ready:" << b->errorString();
+
+            emit q->prmaryNotificationBackendError(b->errorString());
             return false;
         }
         if (m_notificationBackend) {
@@ -97,11 +99,10 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         m_notificationBackend->enable();
         q->setSettingsValue(QLatin1String("PrimaryBackend"), backend, LOCAL_SETTING);
 
-        connect(b, &SnoreBackend::loadedStateChanged, [this, b](bool initialized) {
-            if (!initialized) {
-                slotInitPrimaryNotificationBackend();
-            }
+        connect(b, &SnoreBackend::error, [this, b](const QString &) {
+            slotInitPrimaryNotificationBackend();
         });
+        emit q->prmaryNotificationBackendChanged(b->name());
         return true;
     }
     return false;
@@ -159,7 +160,7 @@ void SnoreCorePrivate::setDefaultSettingsValueIntern(const QString &key, const Q
     }
 }
 
-void SnoreCorePrivate::slotSyncSettings()
+void SnoreCorePrivate::syncSettings()
 {
     Q_Q(SnoreCore);
     QString newBackend = q->settingsValue(QLatin1String("PrimaryBackend"), LOCAL_SETTING).toString();

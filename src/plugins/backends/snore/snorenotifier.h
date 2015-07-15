@@ -44,11 +44,7 @@ public Q_SLOTS:
     virtual void slotNotify(Snore::Notification notification) override;
     virtual void slotCloseNotification(Snore::Notification notification) override;
 
-private Q_SLOTS:
-    void load() override;
-
 private:
-
     QList<Snore::Notification> m_queue;
     QVector<NotifyWidget *> m_widgets;
     QTimer *m_timer;

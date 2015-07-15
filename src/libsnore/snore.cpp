@@ -84,24 +84,12 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN:
-                    connect(plugin, &SnorePlugin::loadedStateChanged, [plugin](bool initialized) {
-                        if (initialized) {
-                            plugin->setEnabled(plugin->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool());
-                        }
-                    });
+                    plugin->setEnabled(plugin->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool());
                     break;
                 default:
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
                 }
-
-                connect(plugin, &SnorePlugin::loadedStateChanged, [d, plugin](bool initialized) {
-                    if (!initialized) {
-                        //TODO: improve
-                        d->m_pluginNames[plugin->type()].removeAll(plugin->name());
-                        d->m_plugins.remove(qMakePair(plugin->type(), plugin->name()));
-                    }
-                });
 
                 snoreDebug(SNORE_DEBUG) << info->name() << "is a" << info->type();
                 d->m_pluginNames[info->type()].append(info->name());

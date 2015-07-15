@@ -35,24 +35,11 @@ SnorePlugin::SnorePlugin()
     if (thread() != qApp->thread()) {
         snoreDebug(SNORE_WARNING) << "Plugin initialized in wrong thread.";
     }
-    connect(this, &SnorePlugin::loadedStateChanged, [this](bool b) {
-        snoreDebug(SNORE_DEBUG) << "Plugin:" << name() << "initialized" << b;
-        Q_ASSERT_X(!(b && m_initialized), Q_FUNC_INFO, "Plugin initialized multiple times.");
-        if (!b) {
-            disable();
-        }
-        m_initialized = b;
-    });
 }
 
 SnorePlugin::~SnorePlugin()
 {
     snoreDebug(SNORE_DEBUG) << name() << this << "deleted";
-}
-
-bool SnorePlugin::isLoaded() const
-{
-    return m_initialized;
 }
 
 bool SnorePlugin::isEnabled() const
@@ -106,6 +93,16 @@ const QString SnorePlugin::typeName() const
     return SnorePlugin::typeToString(type());
 }
 
+bool SnorePlugin::isReady()
+{
+    return m_error.isEmpty();
+}
+
+QString SnorePlugin::errorString() const
+{
+    return m_error;
+}
+
 QString SnorePlugin::settingsVersion() const
 {
     return QLatin1String("v1");
@@ -116,10 +113,16 @@ void SnorePlugin::setDefaultSettings()
     setDefaultSettingsValue(QLatin1String("Enabled"), false, LOCAL_SETTING);
 }
 
+void SnorePlugin::setErrorString(const QString &_error)
+{
+    m_error = name() + tr(" encountered an error: ") + _error;
+    snoreDebug(SNORE_WARNING) << m_error;
+    disable();
+    emit error(_error);
+}
+
 void SnorePlugin::setEnabled(bool enabled)
 {
-    Q_ASSERT_X(!enabled || isLoaded(), Q_FUNC_INFO, "Plugin not initialized");
-
     if (enabled != m_enabled) {
         emit enabledChanged(enabled);
     }

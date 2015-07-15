@@ -39,9 +39,6 @@ protected:
 public Q_SLOTS:
     void slotNotificationDisplayed(Snore::Notification notification) override;
 
-private Q_SLOTS:
-    void load() override;
-
 private:
     QMediaPlayer *m_player;
 };

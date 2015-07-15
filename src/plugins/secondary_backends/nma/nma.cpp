@@ -59,11 +59,6 @@ void NotifyMyAndroid::slotNotify(Notification notification)
 
 }
 
-void NotifyMyAndroid::load()
-{
-    emit loadedStateChanged(true);
-}
-
 PluginSettingsWidget *NotifyMyAndroid::settingsWidget()
 {
     return new NotifyMyAndroidSettings(this);

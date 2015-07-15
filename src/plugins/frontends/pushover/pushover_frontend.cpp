@@ -51,11 +51,6 @@ PushoverFrontend::PushoverFrontend()
     });
 }
 
-void PushoverFrontend::load()
-{
-    emit loadedStateChanged(true);
-}
-
 PluginSettingsWidget *PushoverFrontend::settingsWidget()
 {
     return new PushoverSettings(this);

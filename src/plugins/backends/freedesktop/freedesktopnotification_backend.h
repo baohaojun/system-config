@@ -22,9 +22,6 @@ public Q_SLOTS:
     void slotActionInvoked(const uint &id, const QString &actionID);
     void slotNotificationClosed(const uint &id, const uint &reason);
 
-private Q_SLOTS:
-    void load() override;
-
 private:
     org::freedesktop::Notifications *m_interface;
     QHash<uint, Snore::Notification> m_dbusIdMap;

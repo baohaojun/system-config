@@ -32,9 +32,14 @@ SnarlNetworkFrontend::SnarlNetworkFrontend():
 {
     connect(this, &SnarlNetworkFrontend::enabledChanged, [this](bool enabled) {
         if (enabled) {
+            tcpServer = new QTcpServer(this);
+            if (!tcpServer->listen(QHostAddress::Any, port)) {
+                setErrorString(tr("The port is already used by a different application."));
+                return;
+            }
             connect(tcpServer, &QTcpServer::newConnection, this, SnarlNetworkFrontend::handleConnection);
         } else {
-            disconnect(tcpServer, &QTcpServer::newConnection, this, SnarlNetworkFrontend::handleConnection);
+            tcpServer->deleteLater();
         }
     });
 }
@@ -42,18 +47,6 @@ SnarlNetworkFrontend::SnarlNetworkFrontend():
 SnarlNetworkFrontend::~SnarlNetworkFrontend()
 {
     delete parser;
-}
-
-void SnarlNetworkFrontend::load()
-{
-    tcpServer = new QTcpServer(this);
-    if (!tcpServer->listen(QHostAddress::Any, port)) {
-        snoreDebug(SNORE_DEBUG) << "The port is already used";
-        emit loadedStateChanged(false);
-    } else {
-        std::cout << "The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>" << std::endl;
-    }
-    emit loadedStateChanged(true);
 }
 
 void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)

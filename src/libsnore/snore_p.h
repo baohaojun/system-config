@@ -71,6 +71,7 @@ public:
 
     void startNotificationTimeoutTimer(Notification notification);
 
+    void syncSettings();
 private Q_SLOTS:
     //TODO: find a better solutinon for the slots in this section
     friend class Snore::SnoreBackend;
@@ -78,8 +79,6 @@ private Q_SLOTS:
     void slotNotificationDisplayed(Notification notification);
     void slotNotificationClosed(Snore::Notification);
     void slotAboutToQuit();
-
-    void slotSyncSettings();
 
     bool slotInitPrimaryNotificationBackend();
 

@@ -56,7 +56,6 @@ SnorePlugin *PluginContainer::load()
         m_plugin = qobject_cast<SnorePlugin *> (m_loader.instance());
         m_plugin->m_container = this;
         m_plugin->setDefaultSettings();
-        QMetaObject::invokeMethod(m_plugin, "load", Qt::QueuedConnection);
     }
     return m_plugin;
 }

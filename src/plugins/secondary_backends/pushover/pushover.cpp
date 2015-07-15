@@ -120,11 +120,6 @@ void Pushover::slotNotify(Notification notification)
 
 }
 
-void Pushover::load()
-{
-    emit loadedStateChanged(true);
-}
-
 PluginSettingsWidget *Pushover::settingsWidget()
 {
     return new PushoverSettings(this);

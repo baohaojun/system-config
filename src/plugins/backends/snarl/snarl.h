@@ -34,6 +34,8 @@ public:
     virtual bool canCloseNotification() const override;
     virtual bool canUpdateNotification() const override;
 
+    bool isReady() override;
+
 protected:
     void setDefaultSettings() override;
 
@@ -47,9 +49,6 @@ public Q_SLOTS:
     void slotDeregisterApplication(const Snore::Application &application);
     void slotNotify(Snore::Notification notification);
     void slotCloseNotification(Snore::Notification notification);
-
-private Q_SLOTS:
-    void load() override;
 
 private:
     QHash<LONG32, Snore::Notification> m_idMap;

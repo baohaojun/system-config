@@ -33,6 +33,7 @@ public:
     GrowlBackend();
     ~GrowlBackend();
     Snore::PluginSettingsWidget *settingsWidget() override;
+    bool isReady() override;
 
 protected:
     void setDefaultSettings() override;
@@ -46,9 +47,6 @@ public Q_SLOTS:
     void slotRegisterApplication(const Snore::Application &application) override;
     void slotDeregisterApplication(const Snore::Application &application) override;
     void slotNotify(Snore::Notification notification) override;
-
-private Q_SLOTS:
-    void load() override;
 
 };
 

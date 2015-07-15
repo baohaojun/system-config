@@ -39,9 +39,6 @@ protected:
 public Q_SLOTS:
     void slotNotify(Snore::Notification notification) override;
 
-private Q_SLOTS:
-    void load() override;
-
 private:
     QNetworkAccessManager m_manager;
 

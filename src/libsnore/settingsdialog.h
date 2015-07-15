@@ -71,6 +71,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void on_pushButton_clicked();
     void load();
+    void loadPrimaryBackendBox(const QString &backend);
     void save();
 
 private:

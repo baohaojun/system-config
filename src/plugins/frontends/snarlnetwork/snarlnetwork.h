@@ -43,7 +43,6 @@ public Q_SLOTS:
     void slotNotificationClosed(Snore::Notification notification) override;
 
 private Q_SLOTS:
-    void load() override;
     void handleConnection();
     void handleMessages();
 
