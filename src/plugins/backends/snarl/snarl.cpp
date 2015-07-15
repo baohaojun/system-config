@@ -45,62 +45,68 @@ public:
         SNARL_GLOBAL_MESSAGE = SnarlInterface::Broadcast();
     }
 
-    bool winEvent(MSG *msg, long *result)
+    bool nativeEvent(const QByteArray &eventType, void *message, long *) override
     {
-        Q_UNUSED(result);
-        if (msg->message == SNARL_GLOBAL_MESSAGE) {
-            int action = msg->wParam;
-            if (action == SnarlEnums::SnarlLaunched) {
-                for (const Application &a : SnoreCore::instance().aplications()) {
-                    m_snarl->slotRegisterApplication(a);
+        if (eventType == "windows_generic_MSG") {
+            MSG *msg = static_cast<MSG *>(message);
+            if (msg->message == SNARL_GLOBAL_MESSAGE) {
+                int action = msg->wParam;
+                if (action == SnarlEnums::SnarlLaunched) {
+                    for (const Application &a : SnoreCore::instance().aplications()) {
+                        m_snarl->slotRegisterApplication(a);
+                    }
                 }
-            }
 
-        } else if (msg->message == SNORENOTIFIER_MESSAGE_ID) {
-            int action = msg->wParam & 0xffff;
-            int data = (msg->wParam & 0xffffffff) >> 16;
+            } else if (msg->message == SNORENOTIFIER_MESSAGE_ID) {
+                int action = msg->wParam & 0xffff;
+                int data = (msg->wParam & 0xffffffff) >> 16;
 
-            Notification notification;
-            if (msg->lParam != 0) {
-                notification =  m_snarl->m_idMap.value(msg->lParam);
-            }
+                Notification notification;
+                if (msg->lParam != 0) {
+                    notification =  m_snarl->m_idMap.value(msg->lParam);
+                }
 
-            Notification::CloseReasons reason = Notification::NONE;
-            switch (action) {
-            case SnarlEnums::CallbackInvoked:
-                reason = Notification::ACTIVATED;
-                break;
-            case SnarlEnums::NotifyAction:
-                reason = Notification::ACTIVATED;
+                Notification::CloseReasons reason = Notification::NONE;
+                switch (action) {
+                case SnarlEnums::CallbackInvoked:
+                    reason = Notification::ACTIVATED;
+                    snoreDebug(SNORE_DEBUG) << "Notification clicked";
+                    break;
+                case SnarlEnums::NotifyAction:
+                    reason = Notification::ACTIVATED;
+                    snoreDebug(SNORE_DEBUG) << "Notification action invoked";
+                    if (notification.isValid()) {
+                        m_snarl->slotNotificationActionInvoked(notification, notification.actions().value(data));
+                    }
+                    break;
+                case SnarlEnums::CallbackClosed:
+                    reason = Notification::DISMISSED;
+                    snoreDebug(SNORE_DEBUG) << "Notification dismissed";
+                    break;
+                case SnarlEnums::CallbackTimedOut:
+                    reason = Notification::TIMED_OUT;
+                    snoreDebug(SNORE_DEBUG) << "Notification timed out";
+                    break;
+                //away stuff
+                case SnarlEnums::SnarlUserAway:
+                    snoreDebug(SNORE_DEBUG) << "Snalr user has gone away";
+                    return true;
+                case SnarlEnums::SnarlUserBack:
+                    snoreDebug(SNORE_DEBUG) << "Snalr user has returned";
+                    return true;
+                default:
+                    snoreDebug(SNORE_WARNING) << "Unknown snarl action found!!";
+                    return false;
+                }
                 if (notification.isValid()) {
-                    m_snarl->slotNotificationActionInvoked(notification, notification.actions().value(data));
+                    m_snarl->requestCloseNotification(notification, reason);
+                    m_snarl->m_idMap.take(msg->lParam);
+                } else {
+                    snoreDebug(SNORE_WARNING) << "Snarl notification already closed" << msg->lParam << action;
+                    snoreDebug(SNORE_WARNING) << m_snarl->m_idMap;
                 }
-                break;
-            case SnarlEnums::CallbackClosed:
-                reason = Notification::DISMISSED;
-                break;
-            case SnarlEnums::CallbackTimedOut:
-                reason = Notification::TIMED_OUT;
-                break;
-            //away stuff
-            case SnarlEnums::SnarlUserAway:
-                snoreDebug(SNORE_DEBUG) << "Snalr user has gone away";
                 return true;
-            case SnarlEnums::SnarlUserBack:
-                snoreDebug(SNORE_DEBUG) << "Snalr user has returned";
-                return true;
-            default:
-                snoreDebug(SNORE_DEBUG) << "Unknown snarl action found!!";
-                return false;
             }
-            if (notification.isValid()) {
-                m_snarl->closeNotification(notification, reason);
-                m_snarl->m_idMap.take(msg->lParam);
-            } else {
-                snoreDebug(SNORE_DEBUG) << "Snarl notification already closed" << msg->lParam << action;
-                snoreDebug(SNORE_DEBUG) << m_snarl->m_idMap;
-            }
-            return true;
         }
         return false;
     }
