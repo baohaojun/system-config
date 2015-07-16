@@ -1,9 +1,12 @@
 # Changes since 0.5.3 #
 - Added support for settings.
-- New secondary backend [Toast](http://supertoasty.com/)
-- New secondary backend [Notify my Android](https://www.notifymyandroid.com/)
+- New secondary backend [Toast](http://supertoasty.com/).
+- New secondary backend [Notify my Android](https://www.notifymyandroid.com/).
 - New secondary backend Sound playback.
-- New secondary backend [Pushover](https://pushover.net/) 
+- New secondary backend [Pushover](https://pushover.net/) .
+- New frontend  [Pushover](https://pushover.net/).
+- OSX Notification Center now supports callbacks, thanks to [jendas1](https://github.com/jendas1).
+- Install a .pir file, it is now quite easy to use Snorenotify in a qmake project.
 - Improved implementation of build in Snore backend.
 - Dropped Qt4
 - Use c++11
