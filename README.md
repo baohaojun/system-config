@@ -6,7 +6,8 @@ Using a plugin system it is possible to create notifications with many different
 
 For a detailed description for some of our backends see our [Wiki](https://github.com/Snorenotify/Snorenotify/wiki).
 
-## Supported Backends ##
+## Supported Backends
+
 - [Windows Toast notifications](https://github.com/Snorenotify/Snorenotify/wiki/Windows-Toast-Notification) 
 
 - OSX Notification Center
@@ -24,7 +25,10 @@ For a detailed description for some of our backends see our [Wiki](https://githu
 
 - System Tray
 
-## Supported secondary Backends ##
+## Supported secondary Backends
+
+Secondary backends are those that allow you to send notifications to your phone, a website, play a sound.
+In difference to backends they don't offer interactions with te notification  therefore any number of secondary backends might be enabled. 
 
 - [Windows Phone - Toasty](http://supertoasty.com/)
 - [Android - Notify my Android](https://www.notifymyandroid.com/) 
