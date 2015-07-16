@@ -129,7 +129,7 @@ QProcess *SnoreToast::createProcess(Notification noti)
     });
 
     connect(p, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), [this, p, noti](QProcess::ProcessError) {
-        setErrorString(name() + tr("encoutered an error: ") + p->errorString());
+        setErrorString(name() + p->errorString());
         snoreDebug(SNORE_DEBUG) << p->readAll();
         if (noti.isValid()) {
             closeNotification(noti, Notification::NONE);

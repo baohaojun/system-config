@@ -115,8 +115,8 @@ void SnorePlugin::setDefaultSettings()
 
 void SnorePlugin::setErrorString(const QString &_error)
 {
-    m_error = name() + tr(" encountered an error: ") + _error;
-    snoreDebug(SNORE_WARNING) << m_error;
+    m_error = _error;
+    snoreDebug(SNORE_WARNING) << name() << "encountered an error:" << m_error;
     disable();
     emit error(_error);
 }

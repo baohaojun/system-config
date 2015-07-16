@@ -10,6 +10,27 @@
     </message>
 </context>
 <context>
+    <name>FreedesktopFrontend</name>
+    <message>
+        <location filename="../src/plugins/frontends/freedesktop/freedesktopnotificationfrontend.cpp" line="40"/>
+        <source>Failed to register dbus object.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/frontends/freedesktop/freedesktopnotificationfrontend.cpp" line="43"/>
+        <source>Failed to register dbus service.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GrowlBackend</name>
+    <message>
+        <location filename="../src/plugins/backends/growl/growlbackend.cpp" line="70"/>
+        <source> is not running.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GrowlSettings</name>
     <message>
         <location filename="../src/plugins/backends/growl/growlsettings.cpp" line="30"/>
@@ -126,27 +147,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="82"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="79"/>
+        <source>Error:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/libsnore/settingsdialog.ui" line="96"/>
         <source>Primary Backends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="92"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="106"/>
         <source>Secondary Bckends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="102"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="116"/>
         <source>Frontends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="112"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="126"/>
         <source>Plugins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/settingsdialog.ui" line="125"/>
+        <location filename="../src/libsnore/settingsdialog.ui" line="139"/>
         <source>Display Test Notification</source>
         <translation type="unfinished"></translation>
     </message>
@@ -161,6 +187,22 @@
     <message>
         <location filename="../src/settings/settingswindow.ui" line="27"/>
         <source>Application</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SnarlBackend</name>
+    <message>
+        <location filename="../src/plugins/backends/snarl/snarl.cpp" line="150"/>
+        <source> is not running.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SnarlNetworkFrontend</name>
+    <message>
+        <location filename="../src/plugins/frontends/snarlnetwork/snarlnetwork.cpp" line="37"/>
+        <source>The port is already used by a different application.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -183,22 +225,22 @@
 <context>
     <name>Snore::SnoreCore</name>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="259"/>
+        <location filename="../src/libsnore/snore.cpp" line="247"/>
         <source>This is </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="261"/>
+        <location filename="../src/libsnore/snore.cpp" line="248"/>
         <source>Everything is awesome!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="265"/>
+        <location filename="../src/libsnore/snore.cpp" line="252"/>
         <source>Hello There!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="266"/>
+        <location filename="../src/libsnore/snore.cpp" line="253"/>
         <source>Awesome Action!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -228,6 +270,14 @@
     <message>
         <location filename="../src/plugins/backends/snore/snorenotifiersettings.cpp" line="34"/>
         <source>Position:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SnoreToast</name>
+    <message>
+        <location filename="../src/plugins/backends/snoretoast/snoretoast.cpp" line="20"/>
+        <source> needs at least Windows 8 to run.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

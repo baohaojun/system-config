@@ -54,7 +54,7 @@ public:
     virtual ~SnorePlugin();
 
     /**
-     * Sets the enabled state of the plugin to @param enabled.
+     * Sets the enabled state of the plugin to @param enabled .
      */
     void setEnabled(bool enabled);
 
