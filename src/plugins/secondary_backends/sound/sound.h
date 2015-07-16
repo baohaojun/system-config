@@ -18,7 +18,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "libsnore/plugins/snorebackend.h"
+#include "libsnore/plugins/snoresecondarybackend.h"
 
 class QMediaPlayer;
 

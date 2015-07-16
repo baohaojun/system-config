@@ -61,27 +61,4 @@ protected:
 Q_DECLARE_INTERFACE(Snore::SnoreBackend,
                     "org.Snore.NotificationBackend/1.0")
 
-namespace Snore
-{
-class SnoreCore;
-
-class SNORE_EXPORT SnoreSecondaryBackend : public SnorePlugin
-{
-    Q_OBJECT
-    Q_INTERFACES(Snore::SnorePlugin Snore::SnorePlugin)
-public:
-    SnoreSecondaryBackend();
-    virtual ~SnoreSecondaryBackend();
-
-public Q_SLOTS:
-    virtual void slotNotify(Snore::Notification notification);
-    virtual void slotNotificationDisplayed(Snore::Notification notification);
-
-};
-
-}
-
-Q_DECLARE_INTERFACE(Snore::SnoreSecondaryBackend,
-                    "org.Snore.SecondaryNotificationBackend/1.0")
-
 #endif//SNORE_BACKEND_H

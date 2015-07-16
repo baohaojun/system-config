@@ -31,7 +31,7 @@ using namespace Snore;
 
 SnoreBackend::SnoreBackend()
 {
-    connect(this, &SnoreSecondaryBackend::enabledChanged, [this](bool enabled) {
+    connect(this, &SnoreBackend::enabledChanged, [this](bool enabled) {
         if (enabled) {
             connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::applicationRegistered, this, &SnoreBackend::slotRegisterApplication, Qt::QueuedConnection);
             connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::applicationDeregistered, this, &SnoreBackend::slotDeregisterApplication, Qt::QueuedConnection);
@@ -87,34 +87,6 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
 void SnoreBackend::slotCloseNotification(Notification notification)
 {
     Q_UNUSED(notification)
-}
-
-SnoreSecondaryBackend::SnoreSecondaryBackend()
-{
-    connect(this, &SnoreSecondaryBackend::enabledChanged, [this](bool enabled) {
-        if (enabled) {
-            connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notify, this, &SnoreSecondaryBackend::slotNotify, Qt::QueuedConnection);
-            connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notificationDisplayed, this, &SnoreSecondaryBackend::slotNotificationDisplayed, Qt::QueuedConnection);
-        } else {
-            disconnect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notify, this, &SnoreSecondaryBackend::slotNotify);
-            disconnect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notificationDisplayed, this, &SnoreSecondaryBackend::slotNotificationDisplayed);
-        }
-    });
-}
-
-SnoreSecondaryBackend::~SnoreSecondaryBackend()
-{
-    snoreDebug(SNORE_DEBUG) << "Deleting" << name();
-}
-
-void SnoreSecondaryBackend::slotNotify(Notification)
-{
-
-}
-
-void SnoreSecondaryBackend::slotNotificationDisplayed(Notification)
-{
-
 }
 
 bool SnoreBackend::canCloseNotification() const

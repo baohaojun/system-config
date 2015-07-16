@@ -18,7 +18,8 @@
 #include "nma.h"
 #include "nmasettings.h"
 
-#include"libsnore/utils.h"
+#include "libsnore/log.h"
+#include "libsnore/utils.h"
 
 #include <QNetworkReply>
 #include <QNetworkRequest>

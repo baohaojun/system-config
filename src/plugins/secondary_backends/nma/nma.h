@@ -18,7 +18,7 @@
 #ifndef NMA_H
 #define NMA_H
 
-#include "libsnore/plugins/snorebackend.h"
+#include "libsnore/plugins/snoresecondarybackend.h"
 
 #include <QNetworkAccessManager>
 

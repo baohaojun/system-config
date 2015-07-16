@@ -17,6 +17,8 @@
 */
 #include "toasty.h"
 #include "toastysettings.h"
+
+#include "libsnore/log.h"
 #include "libsnore/utils.h"
 
 #include <QNetworkReply>

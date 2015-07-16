@@ -15,33 +15,34 @@
     You should have received a copy of the GNU Lesser General Public License
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef PUSHOVER_H
-#define PUSHOVER_H
 
-#include "libsnore/plugins/snoresecondarybackend.h"
+#ifndef SNORESECONDARYBACKEND_H
+#define SNORESECONDARYBACKEND_H
 
-#include <QNetworkAccessManager>
+#include "libsnore/snore_exports.h"
+#include "libsnore/plugins/plugins.h"
 
-class Pushover : public Snore::SnoreSecondaryBackend
+namespace Snore
+{
+class SnoreCore;
+
+class SNORE_EXPORT SnoreSecondaryBackend : public SnorePlugin
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnoreSecondaryBackend)
-    Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "plugin.json")
+    Q_INTERFACES(Snore::SnorePlugin Snore::SnorePlugin)
 public:
-    Pushover() = default;
-    ~Pushover() = default;
-
-    Snore::PluginSettingsWidget *settingsWidget() override;
-
-protected:
-    void setDefaultSettings() override;
+    SnoreSecondaryBackend();
+    virtual ~SnoreSecondaryBackend();
 
 public Q_SLOTS:
-    void slotNotify(Snore::Notification notification) override;
-
-private:
-    QNetworkAccessManager m_manager;
+    virtual void slotNotify(Snore::Notification notification);
+    virtual void slotNotificationDisplayed(Snore::Notification notification);
 
 };
 
-#endif // PUSHOVER_H
+}
+
+Q_DECLARE_INTERFACE(Snore::SnoreSecondaryBackend,
+                    "org.Snore.SecondaryNotificationBackend/1.0")
+
+#endif // SNORESECONDARYBACKEND_H

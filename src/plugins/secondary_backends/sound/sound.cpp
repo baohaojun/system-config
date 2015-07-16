@@ -18,6 +18,8 @@
 #include "sound.h"
 #include "soundsettings.h"
 
+#include "libsnore/log.h"
+
 #include <QtMultimedia/QMediaPlayer>
 #include <QTimer>
 

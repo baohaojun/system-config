@@ -18,6 +18,7 @@
 #include "pushover.h"
 #include "pushoversettings.h"
 
+#include "libsnore/log.h"
 #include "libsnore/utils.h"
 #include "libsnore/notification/notification_p.h"
 

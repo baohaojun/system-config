@@ -19,7 +19,7 @@ FreedesktopBackend::FreedesktopBackend()
     reply.waitForFinished();
     QStringList caps  = reply.value();
     m_supportsRichtext = caps.contains(QLatin1String("body-markup"));
-    connect(this, &SnoreSecondaryBackend::enabledChanged, [this](bool enabled) {
+    connect(this, &FreedesktopBackend::enabledChanged, [this](bool enabled) {
         if (enabled) {
             connect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
             connect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
