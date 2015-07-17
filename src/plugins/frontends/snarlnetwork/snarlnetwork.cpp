@@ -37,7 +37,7 @@ SnarlNetworkFrontend::SnarlNetworkFrontend():
                 setErrorString(tr("The port is already used by a different application."));
                 return;
             }
-            connect(tcpServer, &QTcpServer::newConnection, this, SnarlNetworkFrontend::handleConnection);
+            connect(tcpServer, &QTcpServer::newConnection, this, &SnarlNetworkFrontend::handleConnection);
         } else {
             tcpServer->deleteLater();
         }
