@@ -1,0 +1,21 @@
+version: 1.0.{build}
+branches:
+  only:
+  - master
+build_script:
+- call C:\Qt\5.5\msvc2013_64\bin\qtenv2.bat
+- call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64
+- set "MY_ROOT=%APPVEYOR_BUILD_FOLDER:\=/%"
+- set MY_ROOT=%MY_ROOT%/work/install
+- mkdir  %APPVEYOR_BUILD_FOLDER%\work\install
+- mkdir  %APPVEYOR_BUILD_FOLDER%\work\build
+- mkdir  %APPVEYOR_BUILD_FOLDER%\work\build\extra-cmake-modules
+- mkdir  %APPVEYOR_BUILD_FOLDER%\work\build\snorenotify
+- cd %APPVEYOR_BUILD_FOLDER%\work
+- git clone git://anongit.kde.org/extra-cmake-modules.git
+- cd %APPVEYOR_BUILD_FOLDER%\work\build\extra-cmake-modules
+- cmake -G"NMake Makefiles" %APPVEYOR_BUILD_FOLDER%\work\extra-cmake-modules -DCMAKE_INSTALL_PREFIX="%MY_ROOT%"
+- nmake install
+- cd %APPVEYOR_BUILD_FOLDER%\work\build\snorenotify
+- cmake -G"NMake Makefiles" %APPVEYOR_BUILD_FOLDER% -DWITH_SNORE_DAEMON=ON -DWITH_FRONTENDS=ON -DCMAKE_INSTALL_PREFIX="%MY_ROOT%"
+- nmake
