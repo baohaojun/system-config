@@ -180,6 +180,8 @@ while (<STDIN>) {
                 $tag_no_dot =~ s/.*\.//;
                 if (($tag_no_dot ne $old_tag or $line_num != $old_line_num) and $old_tag !~ m/\./) {
                     if ($last_line and $old_type ne 'package') {
+                        (my $to_print = $last_line) =~ s/(^\S+\.)(\w)/$2/g;
+                        print_with_caching($cache, $to_print);
                         my $last_out = "$package.$last_line";
                         print_with_caching($cache, $last_out);
                     }
@@ -192,6 +194,8 @@ while (<STDIN>) {
                 }
 
                 if ($tag =~ m/\./) {
+                    (my $to_print = $_) =~ s/(^\S+\.)(\w)/$2/g;
+                    print_with_caching($cache, $to_print);
                     my $last_out = "$package.$_";
                     print_with_caching($cache, $last_out);
                 }
