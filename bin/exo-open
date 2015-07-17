@@ -7,8 +7,14 @@ if test "$#" = 1 && [[ "$1" =~ file:///.*% ]]; then
         fi
     fi
     echo "$@" > ~/tmp/1.txt
-    if [[ $1 =~ /Maildir/ ]]; then
-        kmail-view "$1"&
-    fi
+    set -x
+    exec >> ~/tmp/1.txt 2>&1
 fi
 /usr/bin/exo-open "$@"
+
+if [[ $1 =~ /Maildir/ ]]; then
+    sleep 1
+    if timed-run 1 emacsclient -e '"hel''lo"' | grep 'hello'; then
+        (kmail-view "$1" ) >/dev/null 2>&1&
+    fi
+fi
