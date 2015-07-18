@@ -5,6 +5,8 @@ use strict;
 use String::ShellQuote;
 use Getopt::Long;
 
+delete $ENV{GREP_OPTIONS};
+
 open(my $debug, ">", glob("~/.cache/system-config/logs/grep-func-call.log"))
   or die "Error: can not open log";
 
