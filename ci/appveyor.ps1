@@ -3,7 +3,7 @@
 function batCall([string] $path, [string] $arg)
 {
     Write-Host "Calling `"$path`" `"$arg`""
-    cmd /c  "`"$path`" `"$arg`" & set" |
+    cmd /c  "$path" "$arg" `& set |
     foreach {
       if ($_ -match "=") {
         $v = $_.split("=")
@@ -11,6 +11,21 @@ function batCall([string] $path, [string] $arg)
         set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
       }
     }
+}
+function fixCmakeDestDir([string] $prefix, [string] $destDir)
+{
+    $prefix=$prefix -replace "/", "\\"
+    $destDir=$destDir -replace "/", "\\"
+    if( $prefix.substring(1,1) -eq ":")
+    {
+        $prefix=$prefix.substring(3)
+    }
+    Write-Host "move $destDir\$prefix to $destDir"
+    mv "$destDir\$prefix\*" "$destDir"
+    $rootLeftOver = $prefix.substring(0, $prefix.indexOf("\\"))
+    Write-Host "rm $destDir\$rootLeftOver"
+    rm -Recurse "$destDir\$rootLeftOver"
+
 }
 $CMAKE_INSTALL_ROOT="$env:APPVEYOR_BUILD_FOLDER/work/install" -replace "\\", "/"
 
@@ -53,5 +68,6 @@ if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\work\install" ) )
 
 
 cd $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
-cmake -G $CMAKE_GENERATOR $env:APPVEYOR_BUILD_FOLDER -DWITH_SNORE_DAEMON=ON -DWITH_FRONTENDS=ON -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
-& $MAKE install DESTDIR=$env:APPVEYOR_BUILD_FOLDER\work\image
+cmake -G $CMAKE_GENERATOR $env:APPVEYOR_BUILD_FOLDER -DCMAKE_BUILD_TYPE=Release -DWITH_SNORE_DAEMON=ON -DWITH_FRONTENDS=ON -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
+& $MAKE install DESTDIR="$env:APPVEYOR_BUILD_FOLDER\work\image"
+fixCmakeDestDir $CMAKE_INSTALL_ROOT "$env:APPVEYOR_BUILD_FOLDER\work\image"
