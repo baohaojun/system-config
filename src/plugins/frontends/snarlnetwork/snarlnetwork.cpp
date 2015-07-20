@@ -51,7 +51,6 @@ SnarlNetworkFrontend::~SnarlNetworkFrontend()
 
 void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)
 {
-
     if (notification.isActiveIn(this)) {
         snoreDebug(SNORE_DEBUG) << notification.closeReason();
         callback(notification, QLatin1String("SNP/1.1/304/Notification acknowledged/"));
