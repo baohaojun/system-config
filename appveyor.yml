@@ -3,9 +3,9 @@ branches:
   only:
   - master
 build_script:
-- ps: >-
-   & "$env:APPVEYOR_BUILD_FOLDER\ci\appveyor.ps1"
-   if ($lastexitcode -ne 0){ exit $lastexitcode }
+- ps: .\ci\appveyor.ps1"
+
+test: off
 
 cache:
 - work\git -> appveyor.yml
@@ -20,4 +20,4 @@ environment:
     
 artifacts:
     - path: work\image
-      name: %APPVEYOR_PROJECT_NAME%
+      name: $(APPVEYOR_PROJECT_NAME)
