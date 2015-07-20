@@ -16,4 +16,8 @@ environment:
     #mingw
     - COMPILER: MINGW
     #msvc
-    #- COMPILER: MSVC
+    - COMPILER: MSVC
+    
+artifacts:
+    - path: work\image
+      name: %APPVEYOR_PROJECT_NAME%

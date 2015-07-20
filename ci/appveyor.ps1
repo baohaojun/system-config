@@ -32,6 +32,7 @@ elseif ( $env:COMPILER -eq "MSVC" )
 
 
 
+mkdir $env:APPVEYOR_BUILD_FOLDER\work\image
 mkdir $env:APPVEYOR_BUILD_FOLDER\work\build
 mkdir $env:APPVEYOR_BUILD_FOLDER\work\build\extra-cmake-modules
 mkdir $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
@@ -53,4 +54,4 @@ if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\work\install" ) )
 
 cd $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
 cmake -G $CMAKE_GENERATOR $env:APPVEYOR_BUILD_FOLDER -DWITH_SNORE_DAEMON=ON -DWITH_FRONTENDS=ON -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
-& $MAKE
+& $MAKE install DESTDIR=$env:APPVEYOR_BUILD_FOLDER\work\image
