@@ -5,7 +5,7 @@ branches:
 build_script:
 - ps: >-
    & "$env:APPVEYOR_BUILD_FOLDER\ci\appveyor.ps1"
-   exit $lastexitcode
+   if ($lastexitcode -ne 0){ exit $lastexitcode }
 
 cache:
 - work\git -> appveyor.yml
