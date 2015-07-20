@@ -4,7 +4,7 @@ branches:
   - master
 build_script:
 - ps: >-
-   $env:APPVEYOR_BUILD_FOLDER\ci\msvc.ps1 
+   & "$env:APPVEYOR_BUILD_FOLDER\ci\msvc.ps1""
    
 
 cache:
