@@ -3,7 +3,7 @@ branches:
   only:
   - master
 build_script:
-- ps: .\ci\appveyor.ps1"
+- ps: .\ci\appveyor.ps1
 
 test: off
 
