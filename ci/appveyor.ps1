@@ -21,8 +21,6 @@ if ( $env:COMPILER -eq "MINGW" )
     $env:PATH=$env:PATH -replace "C:\\Program Files \(x86\)\\Git\\bin", ""
     $CMAKE_GENERATOR="MinGW Makefiles"
     $MAKE = "mingw32-make"
-    
-exit 0
 }
 elseif ( $env:COMPILER -eq "MSVC" )
 {
