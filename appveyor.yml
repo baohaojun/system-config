@@ -9,6 +9,7 @@ build_script:
 
 cache:
 - work\git -> appveyor.yml
+- work\install -> appveyor.yml
 
 environment:
     matrix:
