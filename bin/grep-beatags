@@ -4,9 +4,9 @@ use Getopt::Long qw(:config no_ignore_case);
 use strict;
 use String::ShellQuote;
 use String::Approx 'adistr';
-
 use IPC::Open2;
 
+delete $ENV{GREP_OPTIONS};
 
 my $debug;
 open($debug, ">", glob("~/.cache/system-config/logs/grep-beatags.log")) or
