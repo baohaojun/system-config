@@ -49,10 +49,10 @@ if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\work\install" ) )
     
     cd $env:APPVEYOR_BUILD_FOLDER\work\build\extra-cmake-modules
     cmake -G $CMAKE_GENERATOR $env:APPVEYOR_BUILD_FOLDER\work\git\extra-cmake-modules -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
-    $MAKE install
+    & $MAKE install
 }
 
 
 cd $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
 cmake -G $CMAKE_GENERATOR $env:APPVEYOR_BUILD_FOLDER -DWITH_SNORE_DAEMON=ON -DWITH_FRONTENDS=ON -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
-$MAKE
+& $MAKE
