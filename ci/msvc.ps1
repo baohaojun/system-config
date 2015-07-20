@@ -1,4 +1,4 @@
-Import-Module $env:APPVEYOR_BUILD_FOLDER\ci\ci.psm1
+Import-Module $env:APPVEYOR_BUILD_FOLDER\ci\ci.psm1 -Force
 
 batCall "C:\Qt\5.5\msvc2013_64\bin\qtenv2.bat"
 batCall "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64
