@@ -5,7 +5,13 @@ branches:
 build_script:
 - ps: >-
    & "$env:APPVEYOR_BUILD_FOLDER\ci\msvc.ps1"
-   
 
 cache:
 - work\git -> appveyor.yml
+
+environment:
+    matrix:
+    #mingw
+    - COMPILER: MINGW
+    #msvc
+    - COMPILER: MSVC
