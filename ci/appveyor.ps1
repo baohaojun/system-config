@@ -26,7 +26,7 @@ function fixCmakeDestDir([string] $prefix, [string] $destDir)
     Write-Host "rm $destDir\$rootLeftOver"
     rm -Recurse "$destDir\$rootLeftOver"
 }
-$INSTALL_DIR=$env:APPVEYOR_BUILD_FOLDER\work\install
+$INSTALL_DIR="$env:APPVEYOR_BUILD_FOLDER\work\install"
 $CMAKE_INSTALL_ROOT=$INSTALL_DIR -replace "\\", "/"
 
 $env:PATH="$env:PATH;$INSTALL_DIR"
