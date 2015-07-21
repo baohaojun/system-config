@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "$1"| /usr/bin/ctags-exuberant --langmap=$(lang-map-for-ctags ~/.globalrc|perl -npe 's/,$//') -xu --filter --filter-terminator='###terminator###
+'

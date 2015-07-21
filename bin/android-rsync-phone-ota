@@ -48,8 +48,8 @@ fi
 my-adb -r id | grep 'uid=0\b'
 
 if test $no_system = false; then
-    if ! my-adb 'test -d /data/debian/ && echo -n hello && echo '$$ | grep hello$$ -q; then
-        die "Debian not found on this phone, can't use rsync"
+    if ! my-adb 'test -d /data/debian/ && which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
+        die "Debian or bash not found on this phone, can't use rsync"
     fi
     ssh-to-phone echo hello$$ | grep hello$$
 fi
@@ -163,7 +163,8 @@ fi
 sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
 sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /' |tee ../system.chcon
 my-adb push ../system.chcon /data/
-my-adb 'cd /system; bash -x /data/system.chcon'
+my-adb 'cd /system; bash -x /data/system.chcon; sync'
+my-adb romount
 cd ..
 sudo umount system
 cd ..

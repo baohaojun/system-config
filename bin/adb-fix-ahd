@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+ssh-to-phone echo x
+ssh phone mkdir -p /sdcard/crossdict/ahd
+rsync ~/src/github/ahd/* phone:/sdcard/crossdict/ahd -av

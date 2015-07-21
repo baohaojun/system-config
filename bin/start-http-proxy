@@ -5,8 +5,8 @@ port=8888
 if ! type tinyproxy >/dev/null 2>&1; then
     sudo apt-get install -y tinyproxy
 fi
-export http_proxy=localhost:$port
-export https_proxy=localhost:$port
+export http_proxy=http://localhost:$port
+export https_proxy=http://localhost:$port
 
 if ! is-tty-io || yes-or-no-p "restart tinyproxy?"; then
     sudo ps-killall tinyproxy

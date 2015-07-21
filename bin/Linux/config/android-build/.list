@@ -7,41 +7,41 @@ cd $mydir
 
 for x in $(
               cat <<EOF
-
+ant
+bison
 build-essential
 ccache
 command-not-found
+curl
 expect
+flex
+genisoimage
+gperf
+htop
+less
 lib32stdc++6
 lib32z1
 libc6-dev-i386
 libc6-i386
+libdatetime-perl
+libstring-approx-perl
 libstring-shellquote-perl
-openjdk-7-jdk
-schedtool
-strace
-xmlstarlet
-zlib1g-dev
-zip
+libtext-glob-perl
 libxml2:i386
 libxml2-utils
-genisoimage
-gperf
-bison
-xorriso
-flex
-python-mysqldb
-htop
 mysql-client
-libstring-approx-perl
-libtext-glob-perl
-libdatetime-perl
-python3
-ant
-less
-curl
+openjdk-7-jdk
 openssh-client
+python3
+python-mysqldb
+schedtool
+strace
 subversion
+xclip
+xmlstarlet
+xorriso
+zip
+zlib1g-dev
 EOF
           ); do
     test -e $x || touch $x
