@@ -57,16 +57,16 @@ if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\work\install" ) )
     mkdir $env:APPVEYOR_BUILD_FOLDER\work\install
     mkdir $env:APPVEYOR_BUILD_FOLDER\work\git
     
+    Start-FileDownload https://github.com/martine/ninja/releases/download/v1.6.0/ninja-win.zip
+    7za e ninja-win.zip -o$INSTALL_DIR
+    rm  ninja-win.zip
+    
     cd $env:APPVEYOR_BUILD_FOLDER\work\git
     git clone -q git://anongit.kde.org/extra-cmake-modules.git
     
     cd $env:APPVEYOR_BUILD_FOLDER\work\build\extra-cmake-modules
     cmake -G"Ninja" $env:APPVEYOR_BUILD_FOLDER\work\git\extra-cmake-modules -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
     ninja install
-    
-    Start-FileDownload https://github.com/martine/ninja/releases/download/v1.6.0/ninja-win.zip
-    7za e ninja-win.zip -o$INSTALL_DIR
-    rm  ninja-win.zip
 }
 
 
