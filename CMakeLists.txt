@@ -24,8 +24,9 @@ include(ECMPackageConfigHelpers)
 include(ECMSetupVersion)
 
 #######################################################################
-option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DAEMON=ON" OFF)
-option(WITH_SNORE_DAEMON "Build the Snore daemon, which redirects notifications" OFF)
+option(WITH_FRONTENDS  "Build frontends currently only useful if WITH_SNORE_DAEMON=ON." OFF)
+option(WITH_SNORE_DAEMON "Build the Snore daemon, which redirects notifications." OFF)
+option(WITH_SNORE_SEND "Build snore-send, a cli for snore notifications." ON)
 #######################################################################
 
 set(SNORE_VERSION_MAJOR 0)

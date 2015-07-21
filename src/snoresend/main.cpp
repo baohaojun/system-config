@@ -56,43 +56,43 @@ void bringToFront(QString pid)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName("snore-send");
-    app.setOrganizationName("Snorenotify");
+    app.setApplicationName(QLatin1String("snore-send"));
+    app.setOrganizationName(QLatin1String("Snorenotify"));
     app.setApplicationVersion(Snore::Version::version());
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("A command line interface for Snorenotify.");
+    parser.setApplicationDescription(QLatin1String("A command line interface for Snorenotify."));
     parser.addHelpOption();
     parser.addVersionOption();
 
-    QCommandLineOption title(QStringList() << "t" << "title", "Set the notification title.", "title");
+    QCommandLineOption title(QStringList() << QLatin1String("t") << QLatin1String("title"), QLatin1String("Set the notification title."), QLatin1String("title"));
     parser.addOption(title);
 
-    QCommandLineOption message(QStringList() << "m" << "message", "Set the notification body.", "message");
+    QCommandLineOption message(QStringList() << QLatin1String("m") << QLatin1String("message"), QLatin1String("Set the notification body."), QLatin1String("message"));
     parser.addOption(message);
 
-    QCommandLineOption applicationName(QStringList() << "a" << "application", "Set the notification applicattion.", "application", app.applicationName());
+    QCommandLineOption applicationName(QStringList() << QLatin1String("a") << QLatin1String("application"), QLatin1String("Set the notification applicattion."), QLatin1String("application"), app.applicationName());
     parser.addOption(applicationName);
 
-    QCommandLineOption alertName(QStringList() << "c" << "alert", "Set the notification alert class.", "alert", "Default");
+    QCommandLineOption alertName(QStringList() << QLatin1String("c") << QLatin1String("alert"), QLatin1String("Set the notification alert class."), QLatin1String("alert"), QLatin1String("Default"));
     parser.addOption(alertName);
 
-    QCommandLineOption iconPath(QStringList() << "i" << "icon", "Set the notification icon.", "icon", ":/root/snore.png");
+    QCommandLineOption iconPath(QStringList() << QLatin1String("i") << QLatin1String("icon"), QLatin1String("Set the notification icon."), QLatin1String("icon"), QLatin1String(":/root/snore.png"));
     parser.addOption(iconPath);
 
-    QCommandLineOption priority(QStringList() << "p" << "priority", "Set the notification's' priority.", "[-2, 2]", "0");
+    QCommandLineOption priority(QStringList() << QLatin1String("p") << QLatin1String("priority"), QLatin1String("Set the notification's' priority."), QLatin1String("[-2, 2]"), QLatin1String("0"));
     parser.addOption(priority);
 
-    QCommandLineOption markup(QStringList() << "markup", "Enable markup support.", "[0,1]", "0");
+    QCommandLineOption markup(QStringList() << QLatin1String("markup"), QLatin1String("Enable markup support."), QLatin1String("[0,1]"), QLatin1String("0"));
     parser.addOption(markup);
 
-    QCommandLineOption silent(QStringList() << "silent", "Don't print to stdout.");
+    QCommandLineOption silent(QStringList() << QLatin1String("silent"), QLatin1String("Don't print to stdout."));
     parser.addOption(silent);
 
-    QCommandLineOption _bringProcessToFront(QStringList() << "bring-process-to-front", "Bring process with pid to front if notification is clicked.", "pid");
+    QCommandLineOption _bringProcessToFront(QStringList() << QLatin1String("bring-process-to-front"), QLatin1String("Bring process with pid to front if notification is clicked."), QLatin1String("pid"));
     parser.addOption(_bringProcessToFront);
 
-    QCommandLineOption _bringWindowToFront(QStringList() << "bring-window-to-front", "Bring window with wid to front if notification is clicked.", "wid");
+    QCommandLineOption _bringWindowToFront(QStringList() << QLatin1String("bring-window-to-front"), QLatin1String("Bring window with wid to front if notification is clicked."), QLatin1String("wid"));
     parser.addOption(_bringWindowToFront);
 
     parser.process(app);
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 
         if(parser.value(markup).toInt() == 1)
         {
-            application.hints().setValue("use-markup", QVariant::fromValue(true));
+            application.hints().setValue("use-markup", true);
         }
 
         core.registerApplication(application);
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
         }
         Notification n(application, alert, parser.value(title), parser.value(message), icon, Notification::defaultTimeout(), static_cast<Notification::Prioritys>(prio));
         if (parser.isSet(_bringProcessToFront) || parser.isSet(_bringWindowToFront)) {
-            n.addAction(Action(1, "Bring to Front"));
+            n.addAction(Action(1, qApp->translate("SnoreSend", "Bring to Front")));
         }
         int returnCode = -1;
 
