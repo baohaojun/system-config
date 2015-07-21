@@ -57,6 +57,7 @@
 --langdef=Scala
 --langmap=Scala:.scala
 --regex-scala=/^[ \t]*def[ \t]+([[:alnum:]]+)/\1/f,function/
+--regex-scala=/^[ \t]*override[ \t]+def[ \t]+([[:alnum:]]+)/\1/f,function/
 --regex-scala=/^[ \t]*object[ \t]+([[:alnum:]]+)/\1/c,class/
 --regex-scala=/^[ \t]*class[ \t]+([[:alnum:]]+)/\1/c,class/
 --regex-scala=/^[ \t]*trait[ \t]+([[:alnum:]]+)/\1/c,class/
