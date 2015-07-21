@@ -3,7 +3,7 @@ branches:
   only:
   - master
 build_script:
-- ps: if ( !(Test-Path "ci\appveyorHelp.psm1")) {Start-FileDownload https://raw.githubusercontent.com/TheOneRing/appVeyorHelp/master/appveyorHelp.psm1 -FileName ci\appveyorHelp.psm1 }
+- ps: if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1")) {Start-FileDownload https://raw.githubusercontent.com/TheOneRing/appVeyorHelp/master/appveyorHelp.psm1 -FileName $env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1 }
 - ps: .\ci\appveyor.ps1
 
 test: off
