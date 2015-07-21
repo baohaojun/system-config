@@ -339,9 +339,11 @@ system notification, just as rythombox does."
       (delete-process elt))))
 
 (defun douban--make-sure-int (int-or-str)
-     (if (stringp int-or-str)
-         (string-to-number int-or-str)
-       int-or-str))
+  (if (stringp int-or-str)
+      (string-to-number int-or-str)
+    int-or-str))
+
+(defconst douban--channel-string (replace-regexp-in-string "'" "\"" "{'channels':[{'name_en':'Personal Radio','seq_id':0,'abbr_en':'My','name':'私人兆赫','channel_id':0},{'name':'华语','seq_id':0,'abbr_en':'','channel_id':'1','name_en':''},{'name':'欧美','seq_id':1,'abbr_en':'','channel_id':'2','name_en':''},{'name':'七零','seq_id':2,'abbr_en':'','channel_id':'3','name_en':''},{'name':'八零','seq_id':3,'abbr_en':'','channel_id':'4','name_en':''},{'name':'九零','seq_id':4,'abbr_en':'','channel_id':'5','name_en':''},{'name':'粤语','seq_id':5,'abbr_en':'','channel_id':'6','name_en':''},{'name':'摇滚','seq_id':6,'abbr_en':'','channel_id':'7','name_en':''},{'name':'民谣','seq_id':7,'abbr_en':'','channel_id':'8','name_en':''},{'name':'轻音乐','seq_id':8,'abbr_en':'','channel_id':'9','name_en':''},{'name':'原声','seq_id':9,'abbr_en':'','channel_id':'10','name_en':''},{'name':'爵士','seq_id':10,'abbr_en':'','channel_id':'13','name_en':''},{'name':'电子','seq_id':11,'abbr_en':'','channel_id':'14','name_en':''},{'name':'说唱','seq_id':12,'abbr_en':'','channel_id':'15','name_en':''},{'name':'R&B ','seq_id':13,'abbr_en':'','channel_id':'16','name_en':''},{'name':'日语','seq_id':14,'abbr_en':'','channel_id':'17','name_en':''},{'name':'韩语','seq_id':15,'abbr_en':'','channel_id':'18','name_en':''},{'name':'女声','seq_id':16,'abbr_en':'','channel_id':'20','name_en':''},{'name':'法语','seq_id':17,'abbr_en':'','channel_id':'22','name_en':''},{'name':'古典','seq_id':18,'abbr_en':'','channel_id':'27','name_en':''},{'name':'动漫','seq_id':19,'abbr_en':'','channel_id':'28','name_en':''},{'name':'咖啡馆','seq_id':20,'abbr_en':'','channel_id':'32','name_en':''},{'name':'圣诞','seq_id':21,'abbr_en':'','channel_id':'170','name_en':''},{'name':'豆瓣好歌曲','seq_id':22,'abbr_en':'','channel_id':'179','name_en':''},{'name':'世界音乐','seq_id':23,'abbr_en':'','channel_id':'187','name_en':''},{'name':'布鲁斯','seq_id':24,'abbr_en':'','channel_id':'188','name_en':''},{'name':'新歌','seq_id':25,'abbr_en':'','channel_id':'61','name_en':''},{'name':'雷鬼','seq_id':26,'abbr_en':'','channel_id':'190','name_en':''},{'name':'新青年','seq_id':27,'abbr_en':'','channel_id':'196','name_en':''},{'name':'世界杯','seq_id':28,'abbr_en':'','channel_id':'201','name_en':''},{'name':'小清新','seq_id':29,'abbr_en':'','channel_id':'76','name_en':''},{'name':'Easy ','seq_id':30,'abbr_en':'','channel_id':'77','name_en':''},{'name':'91.1 ','seq_id':31,'abbr_en':'','channel_id':'78','name_en':''},{'name':'“砖”属音乐','seq_id':32,'abbr_en':'','channel_id':'145','name_en':''},{'name':'Pop','seq_id':33,'abbr_en':'','channel_id':'194','name_en':''},{'name':'拉丁','seq_id':34,'abbr_en':'','channel_id':'189','name_en':''},{'name':'草莓乐堡酒镇','seq_id':35,'abbr_en':'','channel_id':'245','name_en':''}]}"))
 
 (defun douban-music-get-channels ()
   "Get channels from douban music server"
@@ -352,28 +354,31 @@ system notification, just as rythombox does."
         jason)
     (with-current-buffer json-buffer
       (goto-char (point-min))
-      (if (not (search-forward "channels"))
-          (message "get channels failed")
-        (setq json-start (line-beginning-position))
-        (setq json-end (line-end-position))
-        (setq json (cdr (assoc 'channels (json-read-from-string
-                                          (decode-coding-string
-                                           (buffer-substring-no-properties
-                                            json-start json-end) 'utf-8)))))
-        (if (not (vectorp json))
-            (error "Invalid data format")
-          (setq douban-music-channels nil)
-          (dotimes (i (length json))
-            (let ((var (aref json i)))
-              (setq douban-music-channels
-                    (cons
-                     (cons (douban--make-sure-int (cdr (assoc 'channel_id var)))
-                           (cdr (assoc 'name var)))
-                     douban-music-channels))))
-          (setq douban-music-channels
-                (sort douban-music-channels
-                      (lambda (el1 el2)
-                        (< (car el1) (car el2))))))))))
+
+      (setq json
+            (cdr (assoc 'channels
+                        (json-read-from-string
+                         (if (not (search-forward "channels" nil t))
+                             douban--channel-string
+                           (setq json-start (line-beginning-position))
+                           (setq json-end (line-end-position))
+                           (decode-coding-string
+                            (buffer-substring-no-properties
+                             json-start json-end) 'utf-8))))))
+      (if (not (vectorp json))
+          (error "Invalid data format")
+        (setq douban-music-channels nil)
+        (dotimes (i (length json))
+          (let ((var (aref json i)))
+            (setq douban-music-channels
+                  (cons
+                   (cons (douban--make-sure-int (cdr (assoc 'channel_id var)))
+                         (cdr (assoc 'name var)))
+                   douban-music-channels))))
+        (setq douban-music-channels
+              (sort douban-music-channels
+                    (lambda (el1 el2)
+                      (< (car el1) (car el2)))))))))
 
 (defun douban-music-get-song-list-async (callback)
   "Get channels from douban music server, async version"
@@ -393,7 +398,7 @@ system notification, just as rythombox does."
          jason)
     (with-current-buffer json-buffer
       (goto-char (point-min))
-      (if (not (search-forward "song"))
+      (if (not (search-forward "song" nil t))
           (message "get song list failed")
         (setq json-start (line-beginning-position))
         (setq json-end (line-end-position))
