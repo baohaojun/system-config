@@ -3,6 +3,7 @@ branches:
   only:
   - master
 build_script:
+- ps: if ( !(Test-Path "ci\appveyorHelp.psm1")) {Start-FileDownload https://raw.githubusercontent.com/TheOneRing/appVeyorHelp/master/appveyorHelp.psm1 -FileName ci\appveyorHelp.psm1 }
 - ps: .\ci\appveyor.ps1
 
 test: off
@@ -12,6 +13,8 @@ cache:
 - work\install -> ci\appveyor.ps1
 - C:\ProgramData\chocolatey\bin -> ci\appveyor.ps1
 - C:\ProgramData\chocolatey\lib -> ci\appveyor.ps1
+- C:\tools -> ci\appveyor.ps1
+- ci\appveyorHelp.psm1 -> ci\appveyor.ps1
 
 environment:
     matrix:
