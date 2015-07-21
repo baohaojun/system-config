@@ -10,6 +10,8 @@ test: off
 cache:
 - work\git -> ci\appveyor.ps1
 - work\install -> ci\appveyor.ps1
+- C:\ProgramData\chocolatey\bin -> ci\appveyor.ps1
+- C:\ProgramData\chocolatey\lib -> ci\appveyor.ps1
 
 environment:
     matrix:
