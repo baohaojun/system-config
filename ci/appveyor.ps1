@@ -25,24 +25,23 @@ function fixCmakeDestDir([string] $prefix, [string] $destDir)
     $rootLeftOver = $prefix.substring(0, $prefix.indexOf("\\"))
     Write-Host "rm $destDir\$rootLeftOver"
     rm -Recurse "$destDir\$rootLeftOver"
-
 }
-$CMAKE_INSTALL_ROOT="$env:APPVEYOR_BUILD_FOLDER/work/install" -replace "\\", "/"
+$INSTALL_DIR=$env:APPVEYOR_BUILD_FOLDER\work\install
+$CMAKE_INSTALL_ROOT=$INSTALL_DIR -replace "\\", "/"
+
+$env:PATH="$env:PATH;$INSTALL_DIR"
+
 
 if ( $env:COMPILER -eq "MINGW" )
 {
     batCall "C:\Qt\5.5\mingw492_32\bin\qtenv2.bat"
     #remove sh.exe from path
     $env:PATH=$env:PATH -replace "C:\\Program Files \(x86\)\\Git\\bin", ""
-    $CMAKE_GENERATOR="MinGW Makefiles"
-    $MAKE = "mingw32-make"
 }
 elseif ( $env:COMPILER -eq "MSVC" )
 {
     batCall "C:\Qt\5.5\msvc2013_64\bin\qtenv2.bat"
     batCall "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64
-    $CMAKE_GENERATOR="NMake Makefiles"
-    $MAKE="nmake"
 }
 
 
@@ -59,15 +58,19 @@ if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\work\install" ) )
     mkdir $env:APPVEYOR_BUILD_FOLDER\work\git
     
     cd $env:APPVEYOR_BUILD_FOLDER\work\git
-    git clone git://anongit.kde.org/extra-cmake-modules.git
+    git clone -q git://anongit.kde.org/extra-cmake-modules.git
     
     cd $env:APPVEYOR_BUILD_FOLDER\work\build\extra-cmake-modules
-    cmake -G $CMAKE_GENERATOR $env:APPVEYOR_BUILD_FOLDER\work\git\extra-cmake-modules -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
-    & $MAKE install
+    cmake -G"Ninja" $env:APPVEYOR_BUILD_FOLDER\work\git\extra-cmake-modules -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
+    ninja install
+    
+    Start-FileDownload https://github.com/martine/ninja/releases/download/v1.6.0/ninja-win.zip
+    7za e ninja-win.zip -o$INSTALL_DIR
+    rm  ninja-win.zip
 }
 
 
 cd $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
-cmake -G $CMAKE_GENERATOR $env:APPVEYOR_BUILD_FOLDER -DCMAKE_BUILD_TYPE=Release -DWITH_SNORE_DAEMON=ON -DWITH_FRONTENDS=ON -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
-& $MAKE install DESTDIR="$env:APPVEYOR_BUILD_FOLDER\work\image"
+cmake -G"Ninja" $env:APPVEYOR_BUILD_FOLDER -DCMAKE_BUILD_TYPE=Release -DWITH_SNORE_DAEMON=ON -DWITH_FRONTENDS=ON -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
+ninja install DESTDIR="$env:APPVEYOR_BUILD_FOLDER\work\image"
 fixCmakeDestDir $CMAKE_INSTALL_ROOT "$env:APPVEYOR_BUILD_FOLDER\work\image"

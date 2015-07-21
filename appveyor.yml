@@ -21,3 +21,5 @@ environment:
 artifacts:
     - path: work\image
       name: $(APPVEYOR_PROJECT_NAME)
+      
+#upodate cache 1
