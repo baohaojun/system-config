@@ -8,8 +8,8 @@ build_script:
 test: off
 
 cache:
-- work\git -> appveyor.yml
-- work\install -> appveyor.yml
+- work\git -> ci\appveyor.ps1
+- work\install -> ci\appveyor.ps1
 
 environment:
     matrix:
@@ -22,4 +22,3 @@ artifacts:
     - path: work\image
       name: $(APPVEYOR_PROJECT_NAME)
       
-#upodate cache 1
