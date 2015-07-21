@@ -48,6 +48,7 @@ plugin-example|Example of function layer plugin parser:\
 :langmap=androidxml\:.xml:\
 :langmap=antlr\:.g.g4:\
 :langmap=OrgMode\:.org:\
+:langmap=Scala\:.scala:\
 :langmap=asm\:.S.s:\
 :langmap=awk\:.awk:\
 :langmap=c\:.c:\
@@ -80,6 +81,7 @@ plugin-example|Example of function layer plugin parser:\
         :gtags_parser=Clojure\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=rep\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=OrgMode\:@prefix@/lib/gtags/exuberant-ctags.la:\
+        :gtags_parser=Scala\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=jar\:@prefix@/lib/gtags/gtags-antlr-java.la:\
         :gtags_parser=antlr\:@prefix@/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=c++\:@prefix@/lib/gtags/exuberant-ctags.la:\
