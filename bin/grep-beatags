@@ -318,7 +318,7 @@ sub do_cscope($$$) {
         $str =~ s,:\t,: <$def> : ,;
         print "$use_full_path$file:$line: $str\n";
         $got_results = 1;
-        if (keys %matches < 5 and not $silent and not is_binary($file)) { # this will be nice!
+        if (keys %matches < 5 and not $silent and not is_binary($file) and -e "$code_dir/$file") { # this will be nice!
             system("ctags-show-definition $code_dir/$file $line $lookup_needle");
         }
     }
