@@ -1,5 +1,6 @@
 #!/bin/bash
 . ~/.config/system-config/.bashrc-path
+. ~/system-config/bin/set-ssh-agent
 EMACS=emacs
 if type emacs-snapshot-gtk; then
     EMACS=emacs-snapshot-gtk

@@ -14,6 +14,7 @@ env=$(cat <<EOF
   (setenv "GNOME_KEYRING_CONTROL" "$GNOME_KEYRING_CONTROL")
   (setenv "GNOME_KEYRING_PID" "$GNOME_KEYRING_PID")
   (setenv "SSH_AUTH_SOCK" "$SSH_AUTH_SOCK")
+  $(if test "$DISPLAY" = ":1"; then echo "(setenv \"DISPLAY\" \":1.0\")"; fi)
   (setenv "GPG_AGENT_INFO" "$GPG_AGENT_INFO"))
 EOF
 )

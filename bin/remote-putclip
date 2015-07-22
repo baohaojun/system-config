@@ -7,11 +7,9 @@ EMACS=t
 
 if [[ $1 =~ \#[0-9]+ ]]; then
     port=$(echo "$1" | perl -npe 's/.*#(\d+):.*/$1/')
-    set -- "$(echo "$1" | perl -npe 's/#(\d+):/:/')"
-else
-    port=22
+    set -- -P $port "$(echo "$1" | perl -npe 's/#(\d+):/:/')"
 fi
-scp -P $port "$1" /tmp/remote-putclip.$$
+scp "$@" /tmp/remote-putclip.$$
 DISPLAY=:0
 . ~/.renew-xauth
 cat /tmp/remote-putclip.$$ | putclip
