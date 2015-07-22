@@ -157,9 +157,12 @@ for my $def (keys %defs) {
 sub get_default_packages($)
 {
     my $package = $_[0];
+    debug "getting imports for $package";
     return unless $package;
-    $package = shell_quote("^$package\..*");
-    open(my $pipe, "-|", "beatags -e $package -t 'class|interface' | pn 1")
+    my $package_q = shell_quote("$package\..*");
+    my $command = "beatags -e $package_q -t 'class|interface' | pn 1 | grep -P '\\Q$package\\E\\.\\w+\$'";
+    debug "exec to import: $command";
+    open(my $pipe, "-|", $command)
         or die "can not open grep-gtags";
 
     while (<$pipe>) {
