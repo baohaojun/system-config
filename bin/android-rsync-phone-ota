@@ -12,20 +12,22 @@ if test ! "$ANDROID_SERIAL"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  Sno_system Gno_gapps ssystem_only gforce_gapps
+# generate-getopts  Sno_system Gno_gapps ssystem_only gforce_gapps ddebug
 ## end code-generator
 ## start generated code
 no_system=false
 no_gapps=false
 system_only=false
 force_gapps=false
+debug=false
 OPTIND=1
-while getopts 'SGsg' opt; do
+while getopts 'SGsgd' opt; do
     case "$opt" in
         S)    no_system=true;;
         G)    no_gapps=true;;
         s)    system_only=true;;
         g)    force_gapps=true;;
+        d)    debug=true;;
         *)    echo Usage Error; exit 2;;
     esac
 done
@@ -146,25 +148,32 @@ my-adb stop
 if test $no_gapps = false &&
         my-adb "test -e /system/framework/com.google.android.maps.jar && echo -n yes && echo $$" | grep yes$$ -q ||
             test $force_gapps = true; then
-    if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
-        # it's lp
-        for x in $(find ~/today/forever/gapps-lp/system/ -type f); do
-            dest=${x#*/gapps-lp/system/}
-            sudo mkdir -p $(dirname $dest)
-            sudo cp $x $dest
-        done
-    else
-        for x in $(find ~/src/github/private-config/bin/gapps-system/ -type f); do
-            dest=${x#*/gapps-system/}
-            sudo cp $x $dest
-        done
-    fi
+    dest=$PWD
+    sudo mv xbin/su xbin/su.copy
+    (
+        if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
+            # it's lp
+            cd ~/today/forever/gapps-lp/system
+        else
+            cd ~/src/github/private-config/bin/gapps-system
+        fi
+        find . -type f | xargs sudo env PATH=$PATH cp-with-dir-struct $dest
+    )
 fi
 sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
-sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /' |tee ../system.chcon
+(
+    sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /'
+    echo chcon u:object_r:zygote_exec:s0 ../system/xbin/sugote
+    echo chmod 755 /system/etc/install-recovery.sh
+    echo ln -sf /system/etc/install-recovery.sh /system/bin/install-recovery.sh
+)|tee ../system.chcon
 my-adb push ../system.chcon /data/
 my-adb 'cd /system; bash -x /data/system.chcon; sync'
 my-adb romount
+if test $debug = true; then
+    echo you should check the files at ~/tmp/system-$tmpPostfix
+    exit
+fi
 cd ..
 sudo umount system
 cd ..

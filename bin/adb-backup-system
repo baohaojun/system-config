@@ -21,33 +21,73 @@ if test -z "$ANDROID_SERIAL"; then
 fi
 
 if test -z "$dataDir"; then
-    export dataDir=~/today/forever/data-$ANDROID_SERIAL
+    serial=$(my-adb cat /proc/cmdline|perl -npe 's/.*serialno=(\S+).*/$1/')
+    if test -z "$serial"; then
+        die "serial not found"
+    fi
+    if test "$serial" != "$ANDROID_SERIAL" && yes-or-no-p "use $ANDROID_SERIAL as serial (hardware serial is $serial)?"; then
+        serial=$ANDROID_SERIAL
+    fi
+
+    export dataDir=~/today/forever/data-$serial
+    export systemDir=~/today/forever/system-$serial
 fi
 
 ssh-to-phone echo shit
-mkdir -p ${dataDir:-~/today/forever/data-f9e6c95}
+mkdir -p $dataDir
 if test $(basename $0) = adb-backup-system; then
-    cd ~/today/forever/system-f9e6c95
-    sudo rsync root@phone:/android/system  . -avz --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --delete-excluded
+    mkdir -p $systemDir
+    cd $systemDir
+    sudo rsync root@phone:/android/system  . -avz --delete --exclude .git
 elif test $(basename $0) = adb-backup-data; then
-    cd ${dataDir:-~/today/forever/data-f9e6c95}
+    cd $dataDir
     my-adb "ls -R -Z /data/debian/android/data/ > /data/chcon.txt" || true
     sudo rsync root@phone:/android/data  . -avz --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --delete-excluded
 elif test $(basename $0) = adb-backup-data-no-sdcard; then
-    cd ${dataDir:-~/today/forever/data-f9e6c95}
+    cd $dataDir
     my-adb "ls -R -Z /data/debian/android/data/ > /data/chcon.txt" || true
     sudo rsync root@phone:/android/data  . -avz --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --exclude data/media --exclude data/debian
 elif test $(basename $0) = adb-restore-data; then
-    cd ${dataDir:-~/today/forever/data-f9e6c95}
+    cd $dataDir
      adb-fix-gms
      sudo rsync data root@phone:/android/ -av "$@" --delete
 elif test $(basename $0) = adb-restore-data-no-sdcard; then
-    cd ${dataDir:-~/today/forever/data-f9e6c95}/
+    cd $dataDir
     adb-stop-all-services
     adb-fix-gms
     generate-chcon.pl data/chcon.txt > data/chcon.sh
     sudo rsync data root@phone:/android/ -av "$@" --delete --exclude='data/media/*' --exclude=data/debian
     my-adb shell 'bash /data/chcon.sh'
+elif test $(basename $0) = adb-backup-su; then
+    gapp_dir=~/src/github/private-config/bin/gapps-system
+    lib_dir=lib
+    if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
+        gapp_dir=~/src/github/gapps-lp/system
+        lib_dir=lib64
+    fi
+    (
+        cd $gapp_dir
+        (
+            cd xbin
+            adb-pull /system/xbin/su /system/xbin/daemonsu /system/xbin/supolicy .
+            adb-pull /system/xbin/sugote /system/xbin/sugote-mksh /system/xbin/.tmpsu .
+            chmod +x *
+        )
+        (
+            cd etc
+            adb-pull /etc/install-recovery.sh .
+        )
+        (
+            cd $lib_dir
+            adb-pull /system/$lib_dir/libsupol.so .
+        )
+
+        (
+            cd app
+            adb-pull /system/app/Superuser .
+            adb-pull /system/app/Superuser.apk .
+        )
+    )
 elif test $(basename $0) = adb-restore-system; then
     cd ~/today/forever/system-f9e6c95
     sudo rsync system root@phone:/android/ -av "$@"
