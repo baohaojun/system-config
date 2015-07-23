@@ -1,4 +1,4 @@
-add_subdirectory(backends)
-add_subdirectory(frontends)
-add_subdirectory(secondary_backends)
-add_subdirectory(plugins)
+ecm_optional_add_subdirectory(backends)
+ecm_optional_add_subdirectory(frontends)
+ecm_optional_add_subdirectory(secondary_backends)
+ecm_optional_add_subdirectory(plugins)

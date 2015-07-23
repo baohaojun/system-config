@@ -19,7 +19,7 @@
 #include "freedesktopnotificationfrontend.h"
 #include "notificationsadaptor.h"
 
-#include "plugins/backends/freedesktop/fredesktopnotification.h"
+#include "plugins/backends/freedesktop_backend/fredesktopnotification.h"
 #include "libsnore/snore.h"
 #include "libsnore/version.h"
 #include "libsnore/notification/notification_p.h"

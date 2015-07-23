@@ -1,5 +1,5 @@
 add_subdirectory(libsnore)
-add_subdirectory(daemon)
-add_subdirectory(settings)
-add_subdirectory(snoresend)
+ecm_optional_add_subdirectory(daemon)
+ecm_optional_add_subdirectory(settings)
+ecm_optional_add_subdirectory(snoresend)
 add_subdirectory(plugins)

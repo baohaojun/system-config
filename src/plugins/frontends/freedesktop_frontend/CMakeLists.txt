@@ -8,7 +8,7 @@ if(Qt5DBus_FOUND)
 
     set( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC
             freedesktopnotificationfrontend.cpp
-            ../../backends/freedesktop/fredesktopnotification.cpp
+            ../../backends/freedesktop_backend/fredesktopnotification.cpp
         )
 
     qt5_add_dbus_adaptor( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC org.freedesktop.Notifications.xml freedesktopnotificationfrontend.h FreedesktopFrontend)
@@ -18,7 +18,7 @@ if(Qt5DBus_FOUND)
 
 
     #install the dbus interface
-    if(WITH_SNORE_DAEMON)
+    if(BUILD_daemon)
         if(WIN32)
             set(SNORE_LOCATION ../bin/snorenotify)
         else()
@@ -28,7 +28,7 @@ if(Qt5DBus_FOUND)
 
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
                               DESTINATION share/dbus-1/services/)
-    endif(WITH_SNORE_DAEMON)
+    endif()
 
     install(TARGETS libsnore_frontend_freedesktop ${SNORE_PLUGIN_INSTALL_PATH})
 

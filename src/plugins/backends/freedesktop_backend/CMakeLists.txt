@@ -9,7 +9,7 @@ if(Qt5DBus_FOUND)
           fredesktopnotification.cpp
       )
 
-    qt5_add_dbus_interface( FREEDESKTOP_NOTIFICATION_SRC ../../frontends/freedesktop/org.freedesktop.Notifications.xml notificationinterface )
+    qt5_add_dbus_interface( FREEDESKTOP_NOTIFICATION_SRC ../../frontends/freedesktop_frontend/org.freedesktop.Notifications.xml notificationinterface )
 
 
     add_library(libsnore_backend_freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_SRC} )
