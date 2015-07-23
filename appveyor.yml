@@ -32,4 +32,6 @@ environment:
 artifacts:
     - path: work\image
       name: $(APPVEYOR_PROJECT_NAME)
+    - path: $(TMP)\libsnore
+      name: snore-log
       
