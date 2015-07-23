@@ -16,4 +16,4 @@ SetupSnoreSend  "$env:APPVEYOR_BUILD_FOLDER\work\image\bin" @{
                      "Pushover-SECONDARY_BACKEND/Enabled.v1" = "true"}}
 
 
-SendSnoreNotification "Build complete!" "Build of SnoreNotify succeeded"
+SendSnoreNotification "Build complete!" "Build of SnoreNotify succeeded!"
