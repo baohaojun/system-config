@@ -70,7 +70,6 @@ add_subdirectory(data)
 add_subdirectory(lang)
 add_subdirectory(src)
 add_subdirectory(autotest)
-add_subdirectory(share)
 
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)

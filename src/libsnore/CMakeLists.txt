@@ -10,7 +10,7 @@ set(LIBSNORE_INCLUDE_DIR ${KDE_INSTALL_INCLUDEDIR}/libsnore)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 
-QT5_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS} ${CMAKE_BINARY_DIR}/lang/snore_i18n.qrc)
+QT5_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 
 add_subdirectory(notification)
 add_subdirectory(plugins)
