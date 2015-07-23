@@ -17,6 +17,12 @@ cache:
 - ci\appveyorHelp.psm1 -> ci\appveyor.ps1
 
 environment:
+    SNORE_TOASTY_ID:
+        secure: lh3yt2ig14pCQMkJ9FRUj4dRLp+pw8qpLgoxr1t8Tpyo27JqXOhYMtGnZPI3wf/S
+        
+    SNORE_PUSHOVER_KEY:
+        secure: KTJ5xlUJfDSxpzaGLsnTDhVa2jxWkzaEcwlI2MGCn4g=
+    
     matrix:
     #mingw
     - COMPILER: MINGW
