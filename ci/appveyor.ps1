@@ -14,4 +14,4 @@ SetupSnoreSend  "$env:APPVEYOR_BUILD_FOLDER\work\image\bin" @{
                   "Toasty-SECONDARY_BACKEND/DeviceID.v1" = $env:SNORE_TOASTY_ID }}
 
 
-SendSnoreNotification "Build complete!" "Build of SnoreNotify succeded"
+SendSnoreNotification "Build complete!" "Build of SnoreNotify succeeded"
