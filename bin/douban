@@ -252,7 +252,10 @@ case "$1" in
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
-        emacsclient -e '(douban-music-play-next-refresh)'
+        if emacsclient -e '(douban-music-play-next-refresh)' 2>&1 |
+               grep '\Q*ERROR*: song list is null\E' -P; then
+            emacsclient -e '(douban-music-refresh)'
+        fi
         ;;
     prev)
         touch ~/.cache/system-config/logs/douban-should-play

@@ -13,8 +13,12 @@ fi
 /usr/bin/exo-open "$@"
 
 if [[ $1 =~ /Maildir/ ]]; then
+    exec 2>~/tmp/1.txt
+    set -x
     sleep 1
-    if timed-run 1 emacsclient -e '"hel''lo"' | grep 'hello'; then
+    if timeout 2 emacsclient -e '"hel''lo"' | grep 'hello'; then
+        true
+    else
         (kmail-view "$1" ) >/dev/null 2>&1&
     fi
 fi
