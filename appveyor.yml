@@ -31,11 +31,11 @@ environment:
     
 artifacts:
     - path: work\image
-      name: $(APPVEYOR_PROJECT_NAME)-$(APPVEYOR_BUILD_VERSION)
+      name: $(APPVEYOR_PROJECT_NAME)-$(APPVEYOR_REPO_COMMIT)
     - path: work\log
       name: log
       
 deploy:
     - provider: Environment
-        name: my
+      name: my
       
