@@ -55,8 +55,7 @@ QStringList SettingsWindow::knownApps()
 
 QSettings &SettingsWindow::settings()
 {
-    static QSettings settings(QLatin1String("Snorenotify"), QLatin1String("libsnore"));
-    return settings;
+    return SnoreCorePrivate::instance()->settings();
 }
 
 void SettingsWindow::on_comboBox_currentIndexChanged(const QString &arg1)

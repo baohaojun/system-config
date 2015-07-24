@@ -33,9 +33,14 @@
 using namespace Snore;
 
 SnoreCorePrivate::SnoreCorePrivate():
-    m_localSettingsPrefix(qApp->applicationName().isEmpty() ? QLatin1String("SnoreNotify") : qApp->applicationName()),
-    m_settings(new QSettings(QLatin1String("Snorenotify"), QLatin1String("libsnore"), this))
+    m_localSettingsPrefix(qApp->applicationName().isEmpty() ? QLatin1String("SnoreNotify") : qApp->applicationName())
 {
+    if(!qgetenv("LIBSNORE_SETTINGS_FILE").isNull())
+    {
+        m_settings =  new QSettings(QString::fromUtf8(qgetenv("LIBSNORE_SETTINGS_FILE")), QSettings::IniFormat);
+    } else {
+        m_settings = new QSettings(QLatin1String("Snorenotify"), QLatin1String("libsnore"), this);
+    }
     snoreDebug(SNORE_INFO) << "Version:" << Version::version();
     if (!Version::revision().isEmpty()) {
         snoreDebug(SNORE_INFO) << "Revision:" << Version::revision();
@@ -187,6 +192,11 @@ void SnoreCorePrivate::syncSettings()
             plugin->setEnabled(enable);
         }
     }
+}
+
+QSettings &SnoreCorePrivate::settings()
+{
+    return *m_settings;
 }
 
 void SnoreCorePrivate::setLocalSttingsPrefix(const QString &prefix)

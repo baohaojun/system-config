@@ -72,6 +72,9 @@ public:
     void startNotificationTimeoutTimer(Notification notification);
 
     void syncSettings();
+
+    QSettings &settings();
+
 private Q_SLOTS:
     //TODO: find a better solutinon for the slots in this section
     friend class Snore::SnoreBackend;
