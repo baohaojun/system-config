@@ -31,7 +31,11 @@ environment:
     
 artifacts:
     - path: work\image
-      name: $(APPVEYOR_PROJECT_NAME)
+      name: $(APPVEYOR_PROJECT_NAME)-$(APPVEYOR_BUILD_VERSION)
     - path: work\log
       name: log
+      
+deploy:
+    - provider: Environment
+        name: my
       
