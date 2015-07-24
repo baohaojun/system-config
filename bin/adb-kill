@@ -1,4 +1,5 @@
 #!/bin/bash
-for x in "$@"; do
-    my-adb shell kill "$x"
+my-adb ps | grep "$@" | tee /dev/stderr | while read u p pp ignore; do
+    echo killing $u $p $pp $ignore;
+    my-adb shell kill $p
 done

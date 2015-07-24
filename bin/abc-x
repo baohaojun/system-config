@@ -113,6 +113,11 @@ abc-grep() {
 
         ## end generated code
 
+        if test -z "$entry" -a $# != 0; then
+            entry=$1
+            shift
+        fi
+
         ssh $abc_host abc abc-files -b "$(abc-base-build)" "$(echo "$entry" | perl -npe 's/[^\w]/ /g')"|xargs grep -H -n -e "$entry" "$@" /dev/null
     )
 }

@@ -19,11 +19,14 @@ while true; do
     esac
 done
 
-host=$(repo-host)
+host=$(gerrit-review-host $( repo-host 2>/dev/null ))
+if test -z "$host"; then
+    host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
+fi
 
 project=$(basename $(repo-project))
 
 if test "$port"; then
     host=$host:$port
 fi
-firefox "$(printf "http://%s#q,project:%%255E.*%s,n,z" $host $project)"
+firefox "$(printf "%s#q,project:%%255E.*%s,n,z" $host $project)"

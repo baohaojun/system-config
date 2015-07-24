@@ -32,7 +32,7 @@ function parallel-xargs() {
     else
         for x in "$@"; do printf '%q ' "$x"; done
     fi
-)" true | tee ~/.cache/system-config/logs/my-rfa.log
+)" true
 }
 
 eval set -- "$TEMP"

@@ -81,6 +81,7 @@ function ew() {
 
 function fix-adbd-and-debug() {
     echo ro.DEBUGGABLE=1 >> $tdir/default.prop
+    perl -npe 's/u:r:install_recovery:s0/u:r:init:s0/' -i $tdir/init.rc
     if test "$USER" = bhj; then
         perl -npe 's/ro.debuggable=1/ro.debuggable=0/' -i $tdir/default.prop
     fi

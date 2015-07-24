@@ -32,6 +32,7 @@ libxml2-utils
 mysql-client
 openjdk-7-jdk
 openssh-client
+policycoreutils
 python3
 python-mysqldb
 schedtool

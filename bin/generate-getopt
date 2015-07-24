@@ -20,7 +20,12 @@ $(
     for x in "${longopt[@]}"; do
         x=${x%,}
         x=${x//-/_}
-        echo ${x%:}=
+        echo -n ${x%:}=
+        if [[ $x =~ :$ ]]; then
+            echo
+        else
+            echo false
+        fi
     done
 )
 eval set -- "\$TEMP"

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -e
+if test $# != 1; then
+    die "Error: Usage $(basename $0) manifest.xml"
+fi
+
+manifest=$1
+repo-switch -m "$manifest"
+
+repo sync -j4 -c -d
+if repo-changes? | grep .; then
+    die "there are repeo changes"
+fi
+
+branches=$(my-rfa 'repo-branch' | sort -u)
+
+for b in $branches; do
+    if ! yes-or-no-p "backup $b?"; then
+        die "Can't backup $b"
+    fi
+done
+
+my-rfa 'git push $(repo-remote) HEAD:refs/heads/backup/$(repo-branch)-$(today) && git push $(repo-remote) :refs/heads/$(repo-branch) || exit -1'
+
+cd .repo/manifests
+for b in $branches; do
+    perl -npe "s,$b,backup/$b-$(today)," -i $manifest
+done
+git-interactive-add
+git mv $manifest backup/$manifest
+git commit -m "backup $manifest"
+gerrit-push-review -R -c
