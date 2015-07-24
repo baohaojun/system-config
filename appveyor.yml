@@ -1,20 +1,22 @@
 version: '{build}'
 branches:
   only:
-  - master
+    - master
+    - ci
+    
 build_script:
-- ps: if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1")) {Start-FileDownload https://raw.githubusercontent.com/TheOneRing/appVeyorHelp/master/appveyorHelp.psm1 -FileName $env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1 }
-- ps: .\ci\appveyor.ps1
+    - ps: if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1")) {Start-FileDownload https://raw.githubusercontent.com/TheOneRing/appVeyorHelp/master/appveyorHelp.psm1 -FileName $env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1 }
+    - ps: .\ci\appveyor.ps1
 
 test: off
 
 cache:
-- work\git -> ci\appveyor.ps1
-- work\install -> ci\appveyor.ps1
-- C:\ProgramData\chocolatey\bin -> ci\appveyor.ps1
-- C:\ProgramData\chocolatey\lib -> ci\appveyor.ps1
-- C:\tools -> ci\appveyor.ps1
-- ci\appveyorHelp.psm1 -> ci\appveyor.ps1
+    - work\git -> ci\appveyor.ps1
+    - work\install -> ci\appveyor.ps1
+    - C:\ProgramData\chocolatey\bin -> ci\appveyor.ps1
+    - C:\ProgramData\chocolatey\lib -> ci\appveyor.ps1
+    - C:\tools -> ci\appveyor.ps1
+    - ci\appveyorHelp.psm1 -> ci\appveyor.ps1
 
 environment:
     SNORE_TOASTY_ID:
@@ -22,6 +24,9 @@ environment:
         
     SNORE_PUSHOVER_KEY:
         secure: KTJ5xlUJfDSxpzaGLsnTDhVa2jxWkzaEcwlI2MGCn4g=
+        
+    FETCH_ARTIFATCS_TOKEN:
+        secure: hKtPfo8p/VouF+zyAAxbXg==
     
     matrix:
     #mingw
@@ -31,7 +36,7 @@ environment:
     
 artifacts:
     - path: work\image
-      name: $(APPVEYOR_PROJECT_NAME)-$(APPVEYOR_REPO_COMMIT)
+      name: $(APPVEYOR_PROJECT_NAME)
     - path: work\log
       name: log
       
