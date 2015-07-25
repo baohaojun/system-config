@@ -28,7 +28,6 @@ cache:
     - work\install -> appveyor.yml
     - C:\ProgramData\chocolatey\bin -> appveyor.yml
     - C:\ProgramData\chocolatey\lib -> appveyor.yml
-    - C:\tools -> appveyor.yml
     - work\appveyorHelp.psm1 -> appveyor.yml
 
 environment:
