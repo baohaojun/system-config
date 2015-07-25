@@ -5,8 +5,24 @@ branches:
     - ci
     
 build_script:
-    - ps: if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1")) {Start-FileDownload https://raw.githubusercontent.com/TheOneRing/appVeyorHelp/master/appveyorHelp.psm1 -FileName $env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1 }
-    - ps: .\ci\appveyor.ps1
+    - ps: |
+        if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1"))
+        {
+            Start-FileDownload https://raw.githubusercontent.com/TheOneRing/appVeyorHelp/master/appveyorHelp.psm1 -FileName $env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1 
+        }
+        $ErrorActionPreference="Stop"
+
+        Import-Module $env:APPVEYOR_BUILD_FOLDER\ci\appveyorHelp.psm1
+
+        Init @("ninja", "extra-cmake-modules", "png2ico") @("SnoreGrowl")
+
+        mkdir -Force $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
+        cd $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
+        LogExec cmake -G"Ninja" $env:APPVEYOR_BUILD_FOLDER -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
+        CmakeImageInstall "$env:APPVEYOR_BUILD_FOLDER\work\image"
+
+
+
 
 test: off
 
@@ -16,7 +32,6 @@ cache:
     - C:\ProgramData\chocolatey\bin -> ci\appveyor.ps1
     - C:\ProgramData\chocolatey\lib -> ci\appveyor.ps1
     - C:\tools -> ci\appveyor.ps1
-    - ci\appveyorHelp.psm1 -> ci\appveyor.ps1
 
 environment:
     SNORE_TOASTY_ID:
@@ -25,20 +40,22 @@ environment:
     SNORE_PUSHOVER_KEY:
         secure: KTJ5xlUJfDSxpzaGLsnTDhVa2jxWkzaEcwlI2MGCn4g=
         
-    FETCH_ARTIFATCS_TOKEN:
-        secure: hKtPfo8p/VouF+zyAAxbXg==
+    FETCH_ARTIFATCS_HOST:
+        secure: rMU3uKmS1tdIFReTTcRgchX2PJaOKSXc72lIG6OOR3RPR3Nhc8hjNnti2+WM52Ei9hsq/QMEsQaWEOFMLrvPPw==
+        
+    QT_VER: 5.5
     
     matrix:
     #mingw
-    - COMPILER: MINGW
+    - COMPILER: mingw492_32
     #msvc
-    - COMPILER: MSVC
+    - COMPILER: msvc2013_64
     
 artifacts:
     - path: work\image
-      name: $(APPVEYOR_PROJECT_NAME)
+      name: $(APPVEYOR_PROJECT_NAME)-Qt$(QT_VER)-$(COMPILER)
     - path: work\log
-      name: log
+      name: log-$(APPVEYOR_PROJECT_NAME)-Qt$(QT_VER)-$(COMPILER)
       
 deploy:
     - provider: Environment
