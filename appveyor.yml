@@ -1,13 +1,10 @@
 version: '{build}'
-branches:
-  only:
-    - master
-    - ci
     
 build_script:
     - ps: |
         if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\work\appveyorHelp.psm1"))
         {
+            mkdir $env:APPVEYOR_BUILD_FOLDER\work\
             Start-FileDownload https://raw.githubusercontent.com/TheOneRing/appVeyorHelp/master/appveyorHelp.psm1 -FileName $env:APPVEYOR_BUILD_FOLDER\work\appveyorHelp.psm1 
         }
         $ErrorActionPreference="Stop"
@@ -55,8 +52,6 @@ environment:
 artifacts:
     - path: work\image
       name: $(APPVEYOR_PROJECT_NAME)-Qt$(QT_VER)-$(COMPILER)
-    - path: work\log
-      name: log-$(APPVEYOR_PROJECT_NAME)-Qt$(QT_VER)-$(COMPILER)
       
 deploy:
     - provider: Environment
