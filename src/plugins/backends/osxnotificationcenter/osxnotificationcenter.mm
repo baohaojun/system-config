@@ -4,12 +4,12 @@
 #include "libsnore/utils.h"
 #include "libsnore/snore.h"
 #include "libsnore/log.h"
-
+#include <QDebug.h>
 #import <QThread.h>
 #import <QApplication.h>
 #import <QMap>
 #include <Foundation/Foundation.h>
-
+#import <objc/runtime.h>
 using namespace Snore;
 
 QMap<int, Notification> m_IdToNotification;
@@ -19,6 +19,36 @@ NSMutableDictionary * m_IdToNSNotification;
 void emitNotificationClicked(Notification notification) {
     emit SnoreCore::instance().actionInvoked(notification);
 }
+
+//
+// Overcome need for bundle identifier to display notification
+//
+
+#pragma mark - Swizzle NSBundle
+
+@implementation NSBundle(swizle)
+// Overriding bundleIdentifier works, but overriding NSUserNotificationAlertStyle does not work.
+- (NSString *)__bundleIdentifier
+{
+    if (self == [NSBundle mainBundle] && ![[self __bundleIdentifier] length]) {
+        return @"com.apple.terminal";
+    } else {
+        return [self __bundleIdentifier];
+    }
+}
+
+@end
+BOOL installNSBundleHook()
+{
+    Class cls = objc_getClass("NSBundle");
+    if (cls) {
+        method_exchangeImplementations(class_getInstanceMethod(cls, @selector(bundleIdentifier)),
+                                       class_getInstanceMethod(cls, @selector(__bundleIdentifier)));
+        return YES;
+    }
+    return NO;
+}
+
 
 //
 // Enable reaction when user clicks on NSUserNotification
@@ -70,20 +100,29 @@ public:
 };
 
 
+
+
 // store some variables that are needed (since obj-c++ does not allow having obj-c classes as c++ members)
 namespace {
     
     NSString * NSStringFromQString(QString qstr) {
-        return [NSString stringWithUTF8String: qstr.toUtf8().constData()];
+        return qstr.toNSString();
+    }
+    QString QStringFromNSString(NSString * str) {
+        return QString::fromNSString(str);
     }
 }
 
-UserNotificationItemClass * delegate;
+static UserNotificationItemClass * delegate = 0;
 
 OSXNotificationCenter::OSXNotificationCenter()
 {
-    m_IdToNSNotification = [[[NSMutableDictionary alloc] init] autorelease];
-    delegate = new UserNotificationItemClass();
+    installNSBundleHook();
+    m_IdToNSNotification = [[NSMutableDictionary alloc] init];
+    if (not delegate) {
+        delegate = new UserNotificationItemClass();
+    }
+    
 }
 
 OSXNotificationCenter::~OSXNotificationCenter()
@@ -95,7 +134,7 @@ void OSXNotificationCenter::slotNotify(Snore::Notification notification)
 {
     NSUserNotification * osxNotification = [[[NSUserNotification alloc] init] autorelease];
     NSString * notificationId = [NSString stringWithFormat:@"%d",notification.id()];
-    osxNotification.title = NSStringFromQString(notification.title());
+    osxNotification.title = notification.title().toNSString();
     osxNotification.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:notificationId, @"id", nil];
     osxNotification.informativeText = NSStringFromQString(notification.text());
     
