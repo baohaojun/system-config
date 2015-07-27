@@ -139,7 +139,7 @@ const QDir &PluginContainer::pluginDir()
         QString appDir = qApp->applicationDirPath();
         QStringList list;
 #ifdef Q_OS_MAC
-        if (appDir == "MacOS") {
+        if (appDir == QLatin1String("MacOS")) {
             list << appDir;
             QDir dir(appDir);
             // Development convenience-hack
