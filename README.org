@@ -46,12 +46,14 @@ write it).
 ** Check out the source code
 
 #+BEGIN_SRC sh
-git clone --recursive https://github.com/baohaojun/ajoke
+git clone --recursive -b gnu-global https://github.com/baohaojun/ajoke
 #+END_SRC
 
 Note the --recursive option, it's important because I have 2
 submodules in ajoke, my patched versions of GNU Global and
 ctags-exuberant.
+
+Also note the =-b gnu-global= option, it's because the master branch of ajoke has switched to use [[https://github.com/baohaojun/beagrep.git][beagrep]] instead of GNU Global for Java indexing, and is currently broken except for my own [[https://github.com/baohaojun/system-config][system-config]].
 
 ** Set up the env
 If you are using Debian or Ubuntu, I have provided a test drive script
