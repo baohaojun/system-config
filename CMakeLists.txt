@@ -34,7 +34,6 @@ set(SNORE_CamelCase_SUFFIX "Qt5")
 
 
 find_package(Qt5Core REQUIRED)
-find_package(Qt5LinguistTools REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5Widgets REQUIRED)
