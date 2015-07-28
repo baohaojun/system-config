@@ -67,12 +67,18 @@ for i in ipairs(qq_emoji_table) do
    qq_emoji_table[qq_emoji_table[i]] = i;
 end
 
+local p = io.popen("the-true-adb version")
+local v = p:read("*a")
+adb_unquoter = ""
+if v:match("1.0.31") then
+   adb_unquoter = '\\"'
+end
+
 if package.config:sub(1, 1) == '/' then
    shell_quote = function (str)
       return "'" .. string.gsub(str, "'", "'\\''") .. "'"
    end
    debug_set_x = "set -x; "
-   adb_unquoter = ''
 else -- windows
    shell_quote = function (str)
       str = str:gsub('\n', '')
@@ -81,7 +87,6 @@ else -- windows
       return '"' .. str .. '"'
    end
    debug_set_x = ""
-   adb_unquoter = ''
    is_windows = true
    the_true_adb = ".\\the-true-adb"
 end
