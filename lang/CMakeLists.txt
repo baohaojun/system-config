@@ -17,7 +17,7 @@ if(Qt5LinguistTools_FOUND)
 
     file( WRITE ${CMAKE_BINARY_DIR}/lang/snore_i18n.qrc.in "${snore_i18n_content}" )
     
-    qt5_add_translation(libsnore_lang ${TS_FILES})
+    QT5_CREATE_TRANSLATION(libsnore_lang ${TS_FILES} ${PROJECT_SOURCE_DIR}/src)
 
     add_custom_command(OUTPUT snore_i18n.qrc
                         COMMAND ${CMAKE_COMMAND}

@@ -12,12 +12,12 @@
 <context>
     <name>FreedesktopFrontend</name>
     <message>
-        <location filename="../src/plugins/frontends/freedesktop/freedesktopnotificationfrontend.cpp" line="40"/>
+        <location filename="../src/plugins/frontends/freedesktop_frontend/freedesktopnotificationfrontend.cpp" line="40"/>
         <source>Failed to register dbus object.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/freedesktop/freedesktopnotificationfrontend.cpp" line="43"/>
+        <location filename="../src/plugins/frontends/freedesktop_frontend/freedesktopnotificationfrontend.cpp" line="43"/>
         <source>Failed to register dbus service.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -54,62 +54,62 @@
 <context>
     <name>PushoverSettings</name>
     <message>
-        <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="30"/>
+        <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="30"/>
         <source>User Key:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="31"/>
+        <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="31"/>
         <source>Sound:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/secondary_backends/pushover/pushoversettings.cpp" line="32"/>
+        <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="32"/>
         <source>Devices:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="36"/>
+        <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="36"/>
         <source>Email Address:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="37"/>
+        <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="37"/>
         <source>Password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="38"/>
+        <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="38"/>
         <source>Device Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="40"/>
+        <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="40"/>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="42"/>
+        <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="42"/>
         <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="88"/>
+        <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="88"/>
         <source>Log out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="89"/>
+        <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="89"/>
         <source>Logged in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="95"/>
+        <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="95"/>
         <source>Log in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/frontends/pushover/pushoversettings.cpp" line="97"/>
+        <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="97"/>
         <source>Logged out.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -270,6 +270,14 @@
     <message>
         <location filename="../src/plugins/backends/snore/snorenotifiersettings.cpp" line="34"/>
         <source>Position:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SnoreSend</name>
+    <message>
+        <location filename="../src/snoresend/main.cpp" line="140"/>
+        <source>Bring to Front</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
