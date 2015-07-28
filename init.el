@@ -136,16 +136,16 @@
 
 (require-package 'gnuplot)
 
+(defun ac-cc-mode-setup ()
+  (setq ac-clang-complete-executable "~/system-config/bin/Linux/clang-complete")
+  (setq ac-sources '(ac-source-clang-async))
+  (ac-clang-launch-completion-process)
+  (add-hook 'hack-local-variables-hook
+            (lambda () (ac-clang-launch-completion-process))))
+
 (if (file-exists-p "~/system-config/.emacs_d/lisp/auto-complete-clang-async.el")
     (progn
       (require 'auto-complete-clang-async)
-
-      (defun ac-cc-mode-setup ()
-        (setq ac-clang-complete-executable "~/system-config/bin/Linux/clang-complete")
-        (setq ac-sources '(ac-source-clang-async))
-        (ac-clang-launch-completion-process)
-        )
-
       (defun my-ac-config ()
         (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
         (add-hook 'auto-complete-mode-hook 'ac-common-setup)
