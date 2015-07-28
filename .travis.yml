@@ -14,12 +14,12 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then source /opt/qt52/bin/qt52-env.sh ;fi
   - mkdir -p ~/git && cd ~/git
   - git clone -q git://anongit.kde.org/extra-cmake-modules.git
-  - git clone -q git@github.com:Snorenotify/SnoreGrowl.git
-  - mkdir -p ~/build && cd ~/build
-  - mkdir -p extra-cmake-modules && cd extra-cmake-modules
+  - git clone -q https://github.com/Snorenotify/SnoreGrowl.git
+  - mkdir -p ~/build
+  - mkdir -p ~/build/extra-cmake-modules && cd ~/build/extra-cmake-modules
   - cmake -G"Ninja" ~/git/extra-cmake-modules -DCMAKE_INSTALL_PREFIX=~/installs/
   - ninja install
-  - mkdir -p snoregrowl && cd snoregrowl
+  - mkdir -p ~/build/snoregrowl && cd ~/build/snoregrowl
   - cmake -G"Ninja" ~/git/SnoreGrowl -DCMAKE_INSTALL_PREFIX=~/installs/
   - ninja install
   
