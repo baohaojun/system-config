@@ -3,7 +3,7 @@
 
 ((c-mode
   (flycheck-mode . nil)
-  (ac-clang-flags
+  (ac-clang-cflags
    "-D__KERNEL__"
    "-include"
    "/home/bhj/src/linux/include/generated/autoconf.h"
