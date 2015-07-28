@@ -72,7 +72,7 @@ if package.config:sub(1, 1) == '/' then
       return "'" .. string.gsub(str, "'", "'\\''") .. "'"
    end
    debug_set_x = "set -x; "
-   adb_unquoter = '\\"'
+   adb_unquoter = ''
 else -- windows
    shell_quote = function (str)
       str = str:gsub('\n', '')
@@ -81,7 +81,7 @@ else -- windows
       return '"' .. str .. '"'
    end
    debug_set_x = ""
-   adb_unquoter = '\\"'
+   adb_unquoter = ''
    is_windows = true
    the_true_adb = ".\\the-true-adb"
 end
