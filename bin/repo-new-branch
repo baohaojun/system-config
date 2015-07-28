@@ -1,0 +1,118 @@
+#!/bin/bash
+
+set -e
+
+# 简介：给定一个某天的build刷机包，里面有一个manifest.xml文件，其中有
+# 每个仓储的git commit hash。我们可以拿这个manifest.xml作为基准，拉出
+# 一条新的线来，然后写一个新的manifest.xml，里面的仓储指定新线，但如果
+# 马上repo sync出来，每个仓储的版本和刷机包里的manifest.xml是一致的。
+
+# 用法： repo-分线 --base base-manifest.xml --branch new-branch-name --out-manifest new-manifest.xml
+# 可选参数： -d dir 在已经 repo init/sync 过的 DIR 目录下工作，而不是重新 repo init/sync 一个
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt b:base B:branch o:out-manifest d:dir fforce
+## end code-generator
+## start generated code
+TEMP=$(getopt -o b:B:o:d:f --long "base:,branch:,out-manifest:,dir:,force"  -n $(basename $0) -- "$@")
+base=
+branch=
+out_manifest=
+dir=
+force=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -b|--base)
+            base=$2
+            shift 2
+            ;;
+        -B|--branch)
+            branch=$2
+            shift 2
+            ;;
+        -o|--out-manifest)
+            out_manifest=$2
+            shift 2
+            ;;
+        -d|--dir)
+            dir=$2
+            shift 2
+            ;;
+        -f|--force)
+            force=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+if test -z "$base" -o -z "$branch" -o -z "$out_manifest"; then
+    die "Usage: $(grep '^# 用法' $me)"
+fi
+
+if test ! -e "$base"; then
+    die "base manifest $base not exist?"
+else
+    actual_base=$(readlink -f "$base")
+fi
+
+if test ! -d "$dir"; then
+    dir=~/tmp/$(basename $base)
+    mkdir -p "$dir"
+    cd "$dir"
+    repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --reference ~/src/android-mirror/
+fi
+
+
+
+cd "$dir"
+rm -f .repo/manifest.xml
+cat "$actual_base" > .repo/manifest.xml
+
+repo sync -j4 -d -c
+
+if test "$force" = true; then
+    force=-f
+else
+    force=
+fi
+
+if ! my-rfa "git push \$(repo-remote) HEAD:refs/heads/$branch $force || exit -1"; then
+    if yes-or-no-p "push $branch failed, try -f?"; then
+        my-rfa "git push \$(repo-remote) HEAD:refs/heads/$branch -f";
+    elif ! yes-or-no-p "push $branch failed for some projects, continue?"; then
+        exit 1
+    fi
+fi
+
+mkdir -p .repo/manifests/$(dirname $out_manifest)
+repo manifest -r --suppress-upstream-revision > .repo/manifests/$out_manifest
+
+(
+    cd .repo/manifests/
+    cp $out_manifest $out_manifest.base
+    perl -npe 's/revision="[a-f0-9]{40}"//; s!revision=".*?"!revision="'$branch'"!' -i $out_manifest
+    git-interactive-add $out_manifest $out_manifest.base
+
+    git commit -m "new $branch in $out_manifest from $actual_base"
+    gerrit-push-review
+)
