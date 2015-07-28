@@ -1,0 +1,43 @@
+language: cpp
+
+os:
+- osx
+- linux
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5 ninja; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo add-apt-repository -y ppa:beineri/opt-qt521; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo add-apt-repository -y ppa:kubuntu-ppa/backports ; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get -qq update; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -q qt52base qt52tools qt52quick1 qt52quickcontrols ninja-build cmake; fi
+  - mkdir -p ~/git && cd ~/git
+  - git clone -q git://anongit.kde.org/extra-cmake-modules.git
+  - mkdir -p ~/build && cd ~/build
+  - mkdir -p extra-cmake-modules && cd extra-cmake-modules
+  - cmake -G"Ninja" ~/git/extra-cmake-modules -DCMAKE_INSTALL_PREFIX=~/installs/
+  - ninja install
+  
+compiler:
+  - clang
+  #- gcc
+  
+script:
+  - cd $TRAVIS_BUILD_DIR
+  - mkdir build
+  - cd build
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cmake -G"Ninja" .. -DCMAKE_INSTALL_PREFIX=~/installs/ -DCMAKE_PREFIX_PATH=/usr/local/opt/qt5 ;fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then source /opt/qt52/bin/qt52-env.sh && cmake -G"Ninja" .. -DCMAKE_INSTALL_PREFIX=~/installs/ ;fi
+  - ninja
+
+# addons:
+  # apt:
+    # sources:
+    # - kubuntu-backports 
+    # packages:
+    # - cmake
+    # - qtbase5-dev
+    # - qtquick1-5-dev
+    # - qttools5-dev
+    # - extra-cmake-modules
+    
