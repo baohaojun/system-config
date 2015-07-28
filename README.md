@@ -6,6 +6,9 @@ Using a plugin system it is possible to create notifications with many different
 
 For a detailed description for some of our backends see our [Wiki](https://github.com/Snorenotify/Snorenotify/wiki).
 
+## Supported
+If you need support on how to use Snorenotify you can reach out to the developers using IRC joining [#Snorenotify](irc://irc.freenode.net/snorenotify) on freenode.
+
 ## Supported Backends
 
 - [Windows Toast notifications](https://github.com/Snorenotify/Snorenotify/wiki/Windows-Toast-Notification) 
@@ -66,6 +69,10 @@ Required dependencies:
 - [CMake](http://www.cmake.org/)
 - [Extra CMake Modules](https://projects.kde.org/projects/kdesupport/extra-cmake-modules)
 - [Qt5](http://qt-project.org/)
+
+## Build status
+- [Windows build status on appveyor.com](https://ci.appveyor.com/project/TheOneRing/snorenotify/)
+- [Linux and Mac OSX build status on travis.org](https://travis-ci.org/Snorenotify/Snorenotify)
 
 
 ## Third party libraries that we ship with our source ##
