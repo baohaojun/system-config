@@ -30,6 +30,9 @@ script:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then source /opt/qt52/bin/qt52-env.sh && cmake -G"Ninja" .. -DCMAKE_INSTALL_PREFIX=~/installs/ ;fi
   - ninja
 
+notifications:
+  irc: "chat.freenode.net#snorenotify"
+
 # addons:
   # apt:
     # sources:
