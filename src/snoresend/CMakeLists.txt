@@ -1,4 +1,6 @@
-add_executable( snore-send main.cpp)
-target_link_libraries( snore-send Snore::Libsnore)
+ecm_add_app_icon(SNORENOTIFY_SNORESEND_DEPS ICONS ${PROJECT_SOURCE_DIR}/data/128-apps-snore.png)
 
-install(TARGETS snore-send ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
+add_executable( snoresend main.cpp ${SNORENOTIFY_SNORESEND_DEPS})
+target_link_libraries( snoresend Snore::Libsnore)
+
+install(TARGETS snoresend ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
