@@ -8,24 +8,17 @@ if(Qt5LinguistTools_FOUND)
     set(LIBSNORE_LANGS de en)
 
     set(TS_FILES )
-    set( snore_i18n_content "<!DOCTYPE RCC><RCC version=\"1.0\">\n<qresource prefix=\"/lang/libsnore\">\n" )
+    set( snore_i18n_content "" )
     foreach( lang ${LIBSNORE_LANGS} )
         list(APPEND TS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${lang}.ts)
-        set( snore_i18n_content "${snore_i18n_content}<file>${lang}.qm</file>\n" )
+        set( snore_i18n_content "${snore_i18n_content}\n\t\t<file>${lang}.qm</file>" )
     endforeach()
-    set( snore_i18n_content "${snore_i18n_content}</qresource>\n</RCC>\n" )
 
-    file( WRITE ${CMAKE_BINARY_DIR}/lang/snore_i18n.qrc.in "${snore_i18n_content}" )
-    
     QT5_CREATE_TRANSLATION(libsnore_lang ${TS_FILES} ${PROJECT_SOURCE_DIR}/src)
 
-    add_custom_command(OUTPUT snore_i18n.qrc
-                        COMMAND ${CMAKE_COMMAND}
-                        ARGS -E copy ${CMAKE_BINARY_DIR}/lang/snore_i18n.qrc.in ${CMAKE_BINARY_DIR}/lang/snore_i18n.qrc
-                        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
 
-
-    add_custom_target(libsnore_lang_translation ALL DEPENDS ${libsnore_lang} DEPENDS snore_i18n.qrc)
+    configure_file(snore_i18n.qrc.in snore_i18n.qrc @ONLY)
+    add_custom_target(libsnore_lang_translation ALL DEPENDS ${libsnore_lang})
 
 
     set(SNORE_RCS ${SNORE_RCS} ${CMAKE_BINARY_DIR}/lang/snore_i18n.qrc PARENT_SCOPE)
