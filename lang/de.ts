@@ -149,7 +149,7 @@
     <message>
         <location filename="../src/libsnore/settingsdialog.ui" line="79"/>
         <source>Error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler:</translation>
     </message>
     <message>
         <location filename="../src/libsnore/settingsdialog.ui" line="96"/>
@@ -278,7 +278,7 @@
     <message>
         <location filename="../src/snoresend/main.cpp" line="140"/>
         <source>Bring to Front</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach vorne bringen</translation>
     </message>
 </context>
 <context>
