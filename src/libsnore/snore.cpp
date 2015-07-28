@@ -102,7 +102,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
             }
         }
     }
-    QMetaObject::invokeMethod(d, "slotInitPrimaryNotificationBackend", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(d, "slotInitPrimaryNotificationBackend", Qt::DirectConnection); // Direct connection is used because the notification backend should be available after plugins are loaded 
     snoreDebug(SNORE_INFO) << "Loaded Plugins:" << d->m_pluginNames;
 }
 
