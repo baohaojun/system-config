@@ -45,6 +45,7 @@ function run_the_adb() {
     shell=shell
 
     if test "$quote_the_args" = true; then
+        adb_version=$(the-true-adb version)
         args=()
         (
             IFS=$'\n'
@@ -52,7 +53,11 @@ function run_the_adb() {
                 args=("${args[@]}" $(
                              if test "${x/ /}" != "$x"; then
                                  # echo \"\'"$(echo -n "$x" | perl -npe "s!'!\\'!")"\'\"
-                                 printf \"%q\" "$x"
+                                 if [[ $adb_version =~ 1\.0\.31 ]]; then
+                                     printf \"%q\" "$x"
+                                 else
+                                     printf %q "$x"
+                                 fi
                              else
                                  printf %q "$x"
                              fi))
@@ -138,6 +143,10 @@ function adb() {
         # wait for device using a loop
         loop-wait-device
         exit
+    fi
+
+    if test "$1" = setprop || test "$1" = shell -a "$2" = setprop; then
+        set -- -r "$@"
     fi
 
     if test "$1" = -r; then

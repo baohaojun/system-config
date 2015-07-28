@@ -3,5 +3,9 @@ set -e
 
 test "$(my-adb echo hello)" = hello
 test "$(my-adb echo 'hello     world')" = 'hello     world'
+test "$(my-adb echo "$(echo -e 'hello\n\nworld')")" = 'hello
+
+world'
+
 adb-tty echo 'hello     world' | grep 'exec.*echo' -q
 echo test 'ok!'

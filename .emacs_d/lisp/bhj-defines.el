@@ -678,8 +678,9 @@ might be bad."
 (defun java-bt-ret-key ()
   (interactive)
   (let ((start-line-str (ajoke--current-line)))
-    (if (string-match "(.*:[0-9]+)" start-line-str)
-        (next-error 0))))
+    (when (string-match "(.*:[0-9]+)" start-line-str)
+      (nodup-ring-insert ajoke--marker-ring (point-marker))
+      (next-error 0))))
 
 ;;;###autoload
 (defun java-bt-next-error (&optional argp reset)
@@ -718,7 +719,7 @@ might be bad."
             (end-of-line)
             (setq grep-output (cdr (assoc-string start-line-str java-bt-tag-alist)))
             (unless grep-output
-              (setq grep-output (shell-command-to-string (concat "java-trace-grep " (shell-quote-argument (ajoke--current-line)))))
+              (setq grep-output (shell-command-to-string (concat "java-trace-grep 2>/dev/null " (shell-quote-argument (ajoke--current-line)))))
               (when (string-equal grep-output "")
                 (setq grep-output (shell-command-to-string (concat "cd ~/src/android/; java-trace-grep " (shell-quote-argument (ajoke--current-line))))))
               (setq java-bt-tag-alist (cons (cons start-line-str grep-output) java-bt-tag-alist))))
@@ -746,6 +747,7 @@ might be bad."
   (setq major-mode 'java-bt-mode-map)
   (setq mode-name "java-bt")
   (setq next-error-function 'java-bt-next-error)
+  (flycheck-mode -1)
   (run-mode-hooks 'java-bt-mode-hook))
 
 ;;;###autoload

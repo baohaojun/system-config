@@ -2,14 +2,16 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  u:utc
+# generate-getopts  u:utc b:base
 ## end code-generator
 ## start generated code
-utc=$(my-adb getprop ro.build.date.utc)
+utc=
+base=
 OPTIND=1
-while getopts 'u:' opt; do
+while getopts 'u:b:' opt; do
     case "$opt" in
         u)    utc=$OPTARG;;
+        b)    base=$OPTARG;;
         *)    echo Usage Error; exit 2;;
     esac
 done
@@ -17,7 +19,7 @@ shift $(($OPTIND - 1))
 
 ## end generated code
 
-if test -z "$utc"; then
+if test -z "$utc" -a -z "$base"; then
     utc=$(my-adb getprop ro.build.date.utc)
 fi
 
@@ -28,5 +30,5 @@ if test -e DDRCS0.BIN; then
     vmversion=$(echo -n "$vmversion"|urlify|perl -npe 's/ /+/g')
 fi
 
-vmlinux=$(curl -s "http://172.16.2.18/cgi-bin/vmlinux-lookup.cgi?version=$vmversion&utc_date=$utc")
+vmlinux=$(curl -s "http://172.16.2.18/cgi-bin/vmlinux-lookup.cgi?version=$vmversion&base_build=$base&utc_date=$utc")
 echo "$vmlinux"

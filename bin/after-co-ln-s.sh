@@ -397,6 +397,11 @@ fi || true
         cd ~/src/github/autoproxy
         git remote add up https://github.com/agunchan/autoproxy
     )
+
+    (
+        cd ~/src/github/shadowsocks-android
+        git remote add up https://github.com/shadowsocks/shadowsocks-android
+    )
 ) >/dev/null 2>&1 || true
 
 if which emacs >/dev/null 2>&1 && test ! -e ~/.config/system-config/emacs-config-done; then

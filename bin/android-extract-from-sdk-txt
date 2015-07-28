@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-last_txt=$(ls ~/src/android/prebuilts/sdk/api/*.txt | sort -n | tail -n 1)
+last_txt=~/src/android/frameworks/base/api/current.txt
 
 cache=~/.cache/system-config/$(basename $0)/$(basename $last_txt|perl -npe 's/\.txt$/.java/')
 
@@ -14,6 +14,6 @@ else
     mkdir -p $(dirname $cache)
     perl -npe 's/^package android \{/package android;/; s/^(\s+)(?:ctor|field)/$1/' $last_txt > $cache
     cd $(dirname $cache)
-    mkgtags >/dev/null 2>&1
+    mkbeatagsidx >/dev/null 2>&1
 fi
 grep-gtags "$@"| perl -npe 's/.*?(<.*?>).*/$1/'
