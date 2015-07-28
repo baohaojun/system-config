@@ -101,18 +101,6 @@ public:
 
 
 
-
-// store some variables that are needed (since obj-c++ does not allow having obj-c classes as c++ members)
-namespace {
-    
-    NSString * NSStringFromQString(QString qstr) {
-        return qstr.toNSString();
-    }
-    QString QStringFromNSString(NSString * str) {
-        return QString::fromNSString(str);
-    }
-}
-
 static UserNotificationItemClass * delegate = 0;
 
 OSXNotificationCenter::OSXNotificationCenter()
@@ -136,7 +124,7 @@ void OSXNotificationCenter::slotNotify(Snore::Notification notification)
     NSString * notificationId = [NSString stringWithFormat:@"%d",notification.id()];
     osxNotification.title = notification.title().toNSString();
     osxNotification.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:notificationId, @"id", nil];
-    osxNotification.informativeText = NSStringFromQString(notification.text());
+    osxNotification.informativeText = notification.text().toNSString();
     
     // Add notification to mapper from id to Nofification / NSUserNotification
     m_IdToNotification.insert(notification.id(), notification);
