@@ -225,22 +225,22 @@
 <context>
     <name>Snore::SnoreCore</name>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="247"/>
+        <location filename="../src/libsnore/snore.cpp" line="252"/>
         <source>This is </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="248"/>
+        <location filename="../src/libsnore/snore.cpp" line="253"/>
         <source>Everything is awesome!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="252"/>
+        <location filename="../src/libsnore/snore.cpp" line="257"/>
         <source>Hello There!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="253"/>
+        <location filename="../src/libsnore/snore.cpp" line="258"/>
         <source>Awesome Action!</source>
         <translation type="unfinished"></translation>
     </message>
