@@ -42,7 +42,7 @@ public:
      */
     static QString tempPath();
 
-    static constexpr int maxNumberOfActiveNotifications()
+    static Q_CONSTEXPR int maxNumberOfActiveNotifications()
     {
         return 3;
     }
