@@ -202,7 +202,7 @@ void SnoreCorePrivate::setLocalSttingsPrefix(const QString &prefix)
 {
     m_localSettingsPrefix = prefix;
     init();
-    QMetaObject::invokeMethod(this, "slotSyncSettings", Qt::QueuedConnection);
+    syncSettings();
 }
 
 QString SnoreCorePrivate::tempPath()
