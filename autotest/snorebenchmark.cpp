@@ -81,7 +81,7 @@ void SnoreBenchmark::benchmarkNotifications()
 {
     SnoreCore &instance = SnoreCore::instance();
     int closed = 0;
-    connect(&instance, SnoreCore::notificationClosed, [&closed](Notification) {
+    connect(&instance, &SnoreCore::notificationClosed, [&closed](Notification) {
         closed++;
     });
 
