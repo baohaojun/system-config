@@ -37,7 +37,6 @@
 using namespace Snore;
 using namespace std;
 
-
 void bringToFront(QString pid)
 {
     snoreDebug(SNORE_DEBUG) << pid;
@@ -45,7 +44,7 @@ void bringToFront(QString pid)
     auto findWindowForPid = [](ulong pid) {
         // based on http://stackoverflow.com/a/21767578
         pair<ulong, HWND> data = make_pair(pid, (HWND)0);
-        ::EnumWindows((WNDENUMPROC)static_cast<BOOL(*)(HWND,LPARAM)>([](HWND handle, LPARAM lParam) -> BOOL {
+        ::EnumWindows((WNDENUMPROC)static_cast<BOOL(*)(HWND, LPARAM)>([](HWND handle, LPARAM lParam) -> BOOL {
             auto isMainWindow = [](HWND handle)
             {
                 return ::GetWindow(handle, GW_OWNER) == (HWND)0 && IsWindowVisible(handle);
@@ -124,15 +123,14 @@ int main(int argc, char *argv[])
         Alert alert(parser.value(alertName), icon);
         application.addAlert(alert);
 
-        if(parser.value(markup).toInt() == 1)
-        {
+        if (parser.value(markup).toInt() == 1) {
             application.hints().setValue("use-markup", true);
         }
 
         core.registerApplication(application);
 
         int prio = parser.value(priority).toInt();
-        if(prio < -2 || prio > 2){
+        if (prio < -2 || prio > 2) {
             parser.showHelp(-1);
         }
         Notification n(application, alert, parser.value(title), parser.value(message), icon, Notification::defaultTimeout(), static_cast<Notification::Prioritys>(prio));
@@ -151,7 +149,7 @@ int main(int argc, char *argv[])
                 if (parser.isSet(_bringProcessToFront)) {
                     bringToFront(parser.value(_bringProcessToFront));
                 } else if (parser.isSet(_bringWindowToFront)) {
-                    Utils::bringWindowToFront((WId)parser.value(_bringWindowToFront).toULongLong(),true);
+                    Utils::bringWindowToFront((WId)parser.value(_bringWindowToFront).toULongLong(), true);
                 }
             }
             returnCode = noti.closeReason();

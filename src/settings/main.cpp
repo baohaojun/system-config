@@ -59,7 +59,7 @@ void listSettings(SettingsType type, const QString &application)
     };
 
     QString prefix = application;
-    if(application == QLatin1String("global")) {
+    if (application == QLatin1String("global")) {
         prefix = QString();
     }
     cout << qPrintable(application) << endl;
@@ -78,7 +78,6 @@ int main(int argc, char *argv[])
     app.setApplicationName(QLatin1String("SnoreSettings"));
     app.setOrganizationName(QLatin1String("SnoreNotify"));
     app.setApplicationVersion(Snore::Version::version());
-
 
     Snore::SnoreCore::instance().loadPlugins(Snore::SnorePlugin::ALL);
     Snore::SnoreCorePrivate::instance()->defaultApplication().hints().setValue("use-markup", QVariant::fromValue(true));
@@ -103,11 +102,10 @@ int main(int argc, char *argv[])
 
     parser.process(app);
 
-
     QString appName = parser.value(appNameCommand);
 
     SettingsType type = GLOBAL_SETTING;
-    if(appName != QLatin1String("global")){
+    if (appName != QLatin1String("global")) {
         type = LOCAL_SETTING;
     }
 

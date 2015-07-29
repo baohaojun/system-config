@@ -20,8 +20,6 @@ public:
         instance.setSettingsValue(QLatin1String("Timeout"), 1, LOCAL_SETTING);
     }
 
-
-
     QString htmlTestString = QLatin1String("<i>Italic A</i><br>"
                                            "<i>Italic B</i><br>"
                                            "<b>Bold</b><br>"
@@ -43,19 +41,19 @@ void SnoreBenchmark::benchmarkUtilsToHtml()
 {
 
     QCOMPARE(Utils::normalizeMarkup(htmlTestString, Utils::NO_MARKUP), QLatin1String("Italic A\n"
-                                                                                     "Italic B\n"
-                                                                                     "Bold\n"
-                                                                                     "Underline\n"
-                                                                                     "Font\n"
-                                                                                     "<&>\n"
-                                                                                     "Website\n"));
+             "Italic B\n"
+             "Bold\n"
+             "Underline\n"
+             "Font\n"
+             "<&>\n"
+             "Website\n"));
     QCOMPARE(Utils::normalizeMarkup(htmlTestString, Utils::HREF), QLatin1String("Italic A\n"
-                                                                                "Italic B\n"
-                                                                                "Bold\n"
-                                                                                "Underline\n"
-                                                                                "Font\n"
-                                                                                "&lt;&amp;&gt;\n"
-                                                                                "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a>\n"));
+             "Italic B\n"
+             "Bold\n"
+             "Underline\n"
+             "Font\n"
+             "&lt;&amp;&gt;\n"
+             "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a>\n"));
     QCOMPARE(Utils::normalizeMarkup(htmlTestString, Utils::HREF | Utils::BOLD | Utils::BREAK |
                                     Utils::UNDERLINE | Utils::FONT | Utils::ITALIC), htmlTestString);
     QBENCHMARK{
@@ -83,23 +81,21 @@ void SnoreBenchmark::benchmarkNotifications()
 {
     SnoreCore &instance = SnoreCore::instance();
     int closed = 0;
-    connect(&instance, SnoreCore::notificationClosed, [&closed](Notification)
-    {
+    connect(&instance, SnoreCore::notificationClosed, [&closed](Notification) {
         closed++;
     });
 
     Application app = SnoreCorePrivate::instance()->defaultApplication();
- //   QBENCHMARK_ONCE{
-        for( int i=0; i<100; ++i)
-        {
-            QString number = QString::number(i);
-            Notification n(app, app.defaultAlert(), QLatin1String("Test ") + number, QLatin1String("Message ") + number, app.icon() );
-            instance.broadcastNotification(n);
-        }
-   // }
-        while(closed < 100){
-            QTest::qWait(100);
-        }
+//   QBENCHMARK_ONCE{
+    for (int i = 0; i < 100; ++i) {
+        QString number = QString::number(i);
+        Notification n(app, app.defaultAlert(), QLatin1String("Test ") + number, QLatin1String("Message ") + number, app.icon());
+        instance.broadcastNotification(n);
+    }
+    // }
+    while (closed < 100) {
+        QTest::qWait(100);
+    }
 
 }
 

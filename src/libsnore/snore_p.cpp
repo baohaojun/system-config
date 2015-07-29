@@ -35,8 +35,7 @@ using namespace Snore;
 SnoreCorePrivate::SnoreCorePrivate():
     m_localSettingsPrefix(qApp->applicationName().isEmpty() ? QLatin1String("SnoreNotify") : qApp->applicationName())
 {
-    if(!qgetenv("LIBSNORE_SETTINGS_FILE").isNull())
-    {
+    if (!qgetenv("LIBSNORE_SETTINGS_FILE").isNull()) {
         m_settings =  new QSettings(QString::fromUtf8(qgetenv("LIBSNORE_SETTINGS_FILE")), QSettings::IniFormat);
     } else {
         m_settings = new QSettings(QLatin1String("Snorenotify"), QLatin1String("libsnore"), this);
@@ -226,12 +225,10 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
 {
     Q_Q(SnoreCore);
     emit q->notificationClosed(n);
-    if(!n.removeActiveIn(q))
-    {
+    if (!n.removeActiveIn(q)) {
         snoreDebug(SNORE_WARNING) << n << "was already closed";
     }
-    if(!m_notificationQue.isEmpty() && m_activeNotifications.size() < maxNumberOfActiveNotifications())
-    {
+    if (!m_notificationQue.isEmpty() && m_activeNotifications.size() < maxNumberOfActiveNotifications()) {
         snoreDebug(SNORE_DEBUG) << "Broadcast from queue" << m_notificationQue.size();
         q->broadcastNotification(m_notificationQue.takeFirst());
     }

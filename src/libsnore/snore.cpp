@@ -109,8 +109,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
 void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
-    if(d->m_activeNotifications.size() > d->maxNumberOfActiveNotifications())
-    {
+    if (d->m_activeNotifications.size() > d->maxNumberOfActiveNotifications()) {
         snoreDebug(SNORE_DEBUG) << "queue size:" << d->m_notificationQue.size() << "active size:" << d->m_activeNotifications.size();
         d->m_notificationQue.append(notification);
         return;
@@ -124,8 +123,7 @@ void SnoreCore::broadcastNotification(Notification notification)
     }
     notification.data()->setBroadcasted();
     notification.addActiveIn(this);
-    if(!d->m_notificationBackend)
-    {
+    if (!d->m_notificationBackend) {
         d->startNotificationTimeoutTimer(notification);
     }
     emit d->notify(notification);
