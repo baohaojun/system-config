@@ -42,17 +42,30 @@ fi
 
 rm -f /tmp/screen-exchange.start
 for x in $(seq 1 $max); do
-    if sawfish-get-screen-shot | grep -P -q -e "$1"; then
+    screen_text=$(sawfish-get-screen-shot)
+    if echo "$screen_text"| grep -P -q -e "$1"; then
         if test $x = 1; then
             exit 0
         fi
 
-        if test $start != 0; then
-            start=1
-        fi
-        echo $((x - 1 - start)) > ~/.cache/system-config/$(basename $0)/$md5
+        echo $((x - 1 - (start = 0 ? 0 : 1))) > ~/.cache/system-config/$(basename $0)/$md5
         exit 0
     else
+        if test "$x" != 1; then
+            for pattern_file in ~/.cache/system-config/$(basename $0)/*.txt; do
+                if test ! -e "$pattern_file"; then
+                    continue
+                fi
+                pattern=$(cat "$pattern_file" | tr -d "\n")
+                md5=$(cat "$pattern_file" | md5sum |pn 1)
+                if echo "$screen_text" | grep -P -q -e "$pattern"; then
+
+                    echo $((x - 1 - (start = 0 ? 0 : 1) )) > ~/.cache/system-config/$(basename $0)/$md5
+                    break
+                fi
+            done
+        fi
+
         if test $x = 1 -a $start != 0; then
             sawfish-send-focused-window-event C-z '"' Home
             for y in $(seq 1 $start); do
