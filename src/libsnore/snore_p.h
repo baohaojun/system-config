@@ -42,6 +42,11 @@ public:
      */
     static QString tempPath();
 
+    static constexpr int maxNumberOfActiveNotifications()
+    {
+        return 3;
+    }
+
 public:
     static SnoreCorePrivate *instance();
     ~SnoreCorePrivate();
@@ -108,6 +113,7 @@ private:
 
     QSettings *m_settings;
 
+    QList<Notification> m_notificationQue;
     QHash<uint, Snore::Notification> m_activeNotifications;
     friend class Snore::Notification;
 

@@ -75,6 +75,7 @@ void SnoreCorePrivate::slotNotificationActionInvoked(Notification notification)
 void SnoreCorePrivate::slotNotificationDisplayed(Notification notification)
 {
     emit notificationDisplayed(notification);
+    startNotificationTimeoutTimer(notification);
 }
 
 bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
@@ -225,6 +226,15 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
 {
     Q_Q(SnoreCore);
     emit q->notificationClosed(n);
+    if(!n.removeActiveIn(q))
+    {
+        snoreDebug(SNORE_WARNING) << n << "was already closed";
+    }
+    if(!m_notificationQue.isEmpty() && m_activeNotifications.size() < maxNumberOfActiveNotifications())
+    {
+        snoreDebug(SNORE_DEBUG) << "Broadcast from queue" << m_notificationQue.size();
+        q->broadcastNotification(m_notificationQue.takeFirst());
+    }
 }
 
 void SnoreCorePrivate::slotAboutToQuit()
