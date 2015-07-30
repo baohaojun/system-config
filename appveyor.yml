@@ -30,16 +30,7 @@ cache:
     - C:\ProgramData\chocolatey\lib -> appveyor.yml
     - work\appveyorHelp.psm1 -> appveyor.yml
 
-environment:
-    SNORE_TOASTY_ID:
-        secure: lh3yt2ig14pCQMkJ9FRUj4dRLp+pw8qpLgoxr1t8Tpyo27JqXOhYMtGnZPI3wf/S
-        
-    SNORE_PUSHOVER_KEY:
-        secure: KTJ5xlUJfDSxpzaGLsnTDhVa2jxWkzaEcwlI2MGCn4g=
-        
-    FETCH_ARTIFATCS_HOST:
-        secure: rMU3uKmS1tdIFReTTcRgchX2PJaOKSXc72lIG6OOR3RPR3Nhc8hjNnti2+WM52Ei9hsq/QMEsQaWEOFMLrvPPw==
-        
+environment:        
     QT_VER: 5.5
     
     matrix:
@@ -48,11 +39,3 @@ environment:
     #msvc
     - COMPILER: msvc2013_64
     
-artifacts:
-    - path: work\image
-      name: $(APPVEYOR_PROJECT_NAME)-Qt$(QT_VER)-$(COMPILER)
-      
-deploy:
-    - provider: Environment
-      name: my
-      
