@@ -11,12 +11,13 @@ build_script:
 
         Import-Module $env:APPVEYOR_BUILD_FOLDER\work\appveyorHelp.psm1
 
-        Init @("ninja", "extra-cmake-modules", "png2ico") @("SnoreGrowl")
+        Init @("ninja", "png2ico") @{"git://anongit.kde.org/extra-cmake-modules.git" = @{"branch" = "master"};
+                                     "https://github.com/Snorenotify/SnoreGrowl.git" = @{"branch" = "v0.4.0"}}
 
         mkdir -Force $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
         cd $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
         LogExec cmake -G"Ninja" $env:APPVEYOR_BUILD_FOLDER -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_ROOT"
-        CmakeImageInstall "$env:APPVEYOR_BUILD_FOLDER\work\image"
+        CmakeImageInstall
 
 
 
@@ -24,7 +25,6 @@ build_script:
 test: off
 
 cache:
-    - work\git -> appveyor.yml
     - work\install -> appveyor.yml
     - C:\ProgramData\chocolatey\bin -> appveyor.yml
     - C:\ProgramData\chocolatey\lib -> appveyor.yml
