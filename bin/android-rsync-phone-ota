@@ -149,7 +149,7 @@ if test $no_gapps = false &&
         my-adb "test -e /system/framework/com.google.android.maps.jar && echo -n yes && echo $$" | grep yes$$ -q ||
             test $force_gapps = true; then
     dest=$PWD
-    sudo mv xbin/su xbin/su.copy
+    sudo mv xbin/su xbin/su.copy || true
     (
         if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
             # it's lp

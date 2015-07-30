@@ -8,6 +8,9 @@ for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; d
     export $x
 done
 
+do-ssh-add-all
+. ~/system-config/bin/set-ssh-agent
+
 env=$(cat <<EOF
 (progn
   (setenv "PATH" "$PATH")
@@ -40,8 +43,6 @@ import gnomekeyring
 passwd = '$(get-authinfo localhost $USER 22)'
 gnomekeyring.unlock_sync(None, passwd)"
 
-do-ssh-add-all
-. ~/system-config/bin/set-ssh-agent
 
 run-dir-once ~/external/etc/sawfish/start&
 run-dir-once ~/system-config/.sawfish/start&

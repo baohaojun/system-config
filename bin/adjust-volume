@@ -4,7 +4,11 @@ function amixer() {
     if test "$PULSE_SERVER"; then
         ssh "$PULSE_SERVER" amixer "$@"
     else
-        command amixer "$@"
+        if grep "card 1" ~/.asoundrc; then
+            command amixer -c 1 "$@"
+        else
+            command amixer "$@"
+        fi
     fi
 }
 
@@ -27,7 +31,6 @@ while true; do
     volume=$(
         (
             amixer|perl -ne 'print if m/^Simple mixer control .Master.,0/ ... m/^Simple/'|grep %
-            amixer|perl -ne 'print if m/^Simple mixer control .PCM.,0/ ... m/^Simple/'|grep %
             echo
             echo '  'volume keys: a to add, s to sub
         ) | perl -npe 'chomp; s/$/\\n/'
@@ -36,10 +39,12 @@ while true; do
     key=$(sawfish-client -e '(event-name (read-event "'"$volume"'"))')
     if test "$key" = '"+"' -o "$key" = '"KP_Add"' -o "$key" = '"XF86AudioRaiseVolume"'; then
         amixer -q sset Master,0 1%+
-        amixer -q sset PCM,0 1%+
+        amixer -q sset PCM,0 100%
+        amixer -q sset Headphone,0 100%
     elif test "$key" = '"-"' -o "$key" = '"KP_Subtract"' -o "$key" = '"XF86AudioLowerVolume"'; then
         amixer -q sset Master,0 1%-
-        amixer -q sset PCM,0 1%-
+        amixer -q sset PCM,0 100%
+        amixer -q sset Headphone,0 100%
     else
         vol=$(amixer | grep 'Playback.*%' | perl -ne 's/.*\[(\d+%)\].*/$1/; print; last');
         echo $vol > ~/.cache/system-config/logs/audion-volume.%

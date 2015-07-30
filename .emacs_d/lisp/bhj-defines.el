@@ -1179,12 +1179,21 @@ criteria can be provided via the optional match-string argument "
                        (buffer-file-name))))
           (default-directory (expand-file-name "~")))
       (shell-command (format "of %s/%s/%s"
-                                   doc-prefix
-                                   (replace-regexp-in-string
-                                    "\\."
-                                    "/"
-                                    package-name)
-                                   html-name)))))
+                             doc-prefix
+                             (replace-regexp-in-string
+                              "\\."
+                              "/"
+                              package-name)
+                             html-name)))))
+
+(defun bhj-get-clang-completion-errors ()
+  (interactive)
+  (let ((cflags "")
+        (ac-clang-cflags ac-clang-cflags))
+    (while ac-clang-cflags
+      (setq cflags (format "%s %s" cflags (shell-quote-argument (car ac-clang-cflags)))
+            ac-clang-cflags (cdr ac-clang-cflags)))
+    (shell-command (format "bhj-get-clang-completion-errors %s %d %d %s" (ajoke--buffer-file-name-local) (line-number-at-pos) (current-column) cflags))))
 
 ;;;###autoload
 (defun bhj-find-missing-file ()

@@ -1,0 +1,10 @@
+#!/bin/bash
+echo "$@"
+
+file=$1
+line=$2
+col=$3
+shift 3
+
+cd $(dirname $file)
+cat $file | /usr/bin/clang -cc1 -fsyntax-only -x c++ "$@" -code-completion-at -:$line:$col -
