@@ -6,8 +6,8 @@ Using a plugin system it is possible to create notifications with many different
 
 For a detailed description for some of our backends see our [Wiki](https://github.com/Snorenotify/Snorenotify/wiki).
 
-## Supported
-If you need support on how to use Snorenotify you can reach out to the developers using IRC joining [#Snorenotify](irc://irc.freenode.net/snorenotify) on freenode.
+## Support
+If you need support on how to use Snorenotify you can reach out to the developers using IRC joining [#Snorenotify](irc://irc.freenode.net/snorenotify) on freenode or using the [Web chat](http://webchat.freenode.net/?channels=snorenotify) .
 
 ## Supported Backends
 
