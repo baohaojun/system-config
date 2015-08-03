@@ -72,6 +72,9 @@
 Each element of it is the line number on the source code buffer,
 where a tag is defined.")
 
+(defun ajoke--push-marker-ring ()
+  (nodup-ring-insert ajoke--marker-ring (point-marker)))
+
 (defun ajoke--buffer-file-name (&optional buf)
   (setq buf (or buf (current-buffer)))
   (with-current-buffer buf
