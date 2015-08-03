@@ -3,6 +3,8 @@
 use Getopt::Long;
 use strict;
 use String::ShellQuote;
+$ENV{'LANG'} = 'C';
+$ENV{'LC_ALL'} = 'C'; # fix grep too slow when ignore_case and gbk file recognized as binary
 
 delete $ENV{GREP_OPTIONS};
 if (-e glob("~/external/local/bin/mkbeagrepidx")) {
@@ -163,11 +165,6 @@ if ($list_beagrep) {
 }
 
 if (!$find_file_only) {
-    if ($ignore_case) {
-        $ENV{'LANG'} = 'C';
-        $ENV{'LC_ALL'} = 'C'; # fix grep too slow when ignore_case
-    }
-
     open(my $grep, "|xargs -d '\\n' -- grep -e $pat -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp");
 
     for (@beagrep_files) {

@@ -1448,6 +1448,7 @@ criteria can be provided via the optional match-string argument "
 
 (defun bhj-todo-from-mail-view-mail ()
   (interactive)
+  (ajoke--push-marker-ring)
   (let ((mail (org-entry-get (point) "FROM")))
     (setq mail (shell-quote-argument mail))
     (shell-command-to-string (format "maildir-view %s >/dev/null 2>&1&" mail))))

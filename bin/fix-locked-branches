@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+use strict;
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+sub should_skip($) {
+    for (@_){
+        if (m/^\Q[access\E/ and not m/\*/) {
+            if (m,refs/meta/config,) {
+                return 0;
+            }
+            return 1;
+        }
+    }
+    return 0;
+                }
+
+while (<>) {
+    if (should_skip $_) {
+        while(<>) {
+            if (m/^\s/) {
+                next;
+            }
+            if (should_skip($_)) {
+                next
+            } else {
+                print;
+                last;
+            }
+        }
+    } else {
+        print;
+    }
+}

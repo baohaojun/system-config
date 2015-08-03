@@ -1,4 +1,7 @@
 #!/bin/bash
+if test "$USER" != bhj; then
+    exit 0
+fi
 
 if test $# = 0; then
     set -- $(for x in $(find ~/system-config/etc/back-to-gmail/ -type l); do readlink -f $x || true; done)

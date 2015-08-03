@@ -50,7 +50,7 @@ proc strcat args {
 
 
 if [string eq "" $password] {
-    set password [qx "get-authinfo -P \"Passworld for $host\" $host $user $port"]
+    set password [qx "get-authinfo -P \"Password for $id_rsa on $host\" $host $user $port"]
 }
 
 spawn ssh-add $id_rsa
