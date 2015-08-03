@@ -262,7 +262,7 @@ system notification, just as rythombox does."
     (if (and (>= previous-song douban-music-current-song)
              (not should-replay))
         (progn
-          (setq douban-music-current-channel (random 7))
+          (setq douban-music-current-channel (if (> (random 10) 6) 22 (random 7)))
           (douban-music-refresh))
       (douban-music-play))))
 
