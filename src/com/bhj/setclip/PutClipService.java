@@ -111,7 +111,23 @@ public class PutClipService extends Service {
                 } finally {
                     dc.close();
                 }
-            } else if (intent.getIntExtra("getcontact", 0) == 1) {
+            } else if (intent.getIntExtra("share-to-note", 0) == 1) {
+                FileReader f = new FileReader(new File(Environment.getExternalStorageDirectory(), "putclip.txt"));
+                char[] buffer = new char[1024 * 1024];
+                int n = f.read(buffer);
+                String str = new String(buffer, 0, n);
+                File putclip = new File(Environment.getExternalStorageDirectory(), "putclip.txt");
+                putclip.delete();
+
+                Intent notesIntent = new Intent();
+                notesIntent.setClassName("com.smartisanos.notes", "com.smartisanos.notes.NotesActivity");
+                notesIntent.setAction(Intent.ACTION_SEND);
+                notesIntent.setType("text/plain");
+                notesIntent.putExtra(Intent.EXTRA_TEXT, str);
+                notesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(notesIntent);
+            }
+            else if (intent.getIntExtra("getcontact", 0) == 1) {
                 String contactNumber = intent.getStringExtra("contact");
                 if (contactNumber == null) {
                     return START_STICKY;
