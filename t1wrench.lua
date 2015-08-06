@@ -5,7 +5,7 @@ local M
 
 -- functions
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
-local shell_quote, putclip, t1_post
+local shell_quote, putclip, t1_post, push_text
 local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share
 local picture_to_momo_share, t1_add_mms_receiver
@@ -696,7 +696,7 @@ adb_start_service_and_wait_file = function(service_cmd, file)
       ]]):format(file, service_cmd, file))
 end
 
-putclip = function(text)
+push_text = function(text)
    if not text and os.getenv("PUTCLIP_ANDROID_FILE") then
       local file = io.open(os.getenv("PUTCLIP_ANDROID_FILE"))
       text = file:read("*a")
@@ -717,6 +717,10 @@ putclip = function(text)
    file:close()
    check_phone()
    system{the_true_adb, 'push', path, '/sdcard/putclip.txt'}
+end
+
+putclip = function(text)
+   push_text(text)
    adb_start_service_and_wait_file_gone('com.bhj.setclip/.PutClipService', '/sdcard/putclip.txt')
 end
 
@@ -845,40 +849,27 @@ end
 
 get_a_note = function(text)
    if text then
-      putclip(text)
+      push_text(text)
    end
-   adb_shell("am start -n com.smartisanos.notes/com.smartisanos.notes.NotesActivity")
-   adb_event(
-      [[
-            sleep .1
-            adb-tap-2 71 162
-            adb-tap 941 163
-   ]])
-   if using_scroll_lock then
-      adb_event("sleep .5 key scroll_lock sleep .4")
-   else
-      adb_event(
-         [[
-                adb-long-press-800 226 440
-                adb-tap 106 258
-         ]])
-      end
-   adb_event(
-      [[
-            adb-tap 934 155
-            adb-tap 984 149
-            adb-tap 429 1446
-            adb-tap 672 151
-   ]])
+   adb_shell("am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei share-to-note 1")
    for i = 1, 10 do
       local window = adb_focused_window()
-      if window == 'com.smartisanos.notes/com.smartisanos.notes.LongLengthWeiboActivity' then
+      if window ~= 'com.smartisanos.notes/com.smartisanos.notes.NotesActivity' then
          sleep(.1 * i)
       end
    end
    adb_event(
       [[
-            adb-tap-2 71 162
+            adb-tap 958 135
+            adb-tap 958 135
+            sleep .1
+            adb-tap 344 1636
+            sleep .1
+            adb-tap 711 151
+   ]])
+   adb_event(
+      [[
+            adb-key BACK
             adb-key BACK
    ]])
    adb_get_last_pic('notes', true)
@@ -1045,7 +1036,7 @@ local function upload_pics(...)
       [[
             for x in /sdcard/DCIM/Camera/t1wrench-*; do
                if test -e "$x"; then
-                  rm -f "$x";
+                  rm -rf "$x";
                   am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture "$x";
                fi;
             done
@@ -1293,7 +1284,7 @@ local function picture_to_weibo_chat(pics, ...)
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
-         local events = post_button .. " sleep .1 adb-tap 375 1410 sleep .1 adb-tap 645 135 sleep .2 adb-tap 369 679 sleep 2"
+         local events = post_button .. " sleep .1 adb-tap 160 1445 sleep .1 adb-tap 645 135 sleep .2 adb-tap 369 679 sleep 2"
          adb_event(events)
       end
       local pic_share_buttons = {
@@ -1304,7 +1295,7 @@ local function picture_to_weibo_chat(pics, ...)
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   adb_event("adb-tap 943 1868 adb-tap 194 1163")
+   adb_event("adb-tap 922 138 key back") -- press the send button and reset the chat keyboard.
 end
 
 local function t1_picture(...)
