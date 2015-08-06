@@ -1,17 +1,19 @@
 #!/bin/bash
 set -x
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts rroot eedit
+# generate-getopts rroot eedit droot
 ## end code-generator
 ## start generated code
 root=false
 edit=false
+root=false
 OPTIND=1
-while getopts 're' opt; do
+while getopts 'red' opt; do
     case "$opt" in
         r)    root=true;;
         e)    edit=true;;
-        *)    echo Usage Error;;
+        d)    root=true;;
+        *)    echo Usage Error; exit 2;;
     esac
 done
 shift $(($OPTIND - 1))

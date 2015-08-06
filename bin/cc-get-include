@@ -14,6 +14,17 @@ function die() {
     find . -iname '*.h*'
     cd /usr/include/
     find . \( -type f -o -type l \) -print
+    (
+        if lookup-file -e ".bhj-includes" >/dev/null 2>&1; then
+            cd $(lookup-file -e ".bhj-includes")
+        fi
+        for x in *; do
+            if test -d "$x"; then
+                cd "$x"
+                find . \( -type f -o -type l \) -print
+            fi
+        done
+    )
 ) | cut -b 3- |
 if test $# = 0; then
    head -n 20
