@@ -1111,7 +1111,7 @@ picture_to_weibo_share = function(pics, ...)
 
       if i == 1 then
          adb_shell("am start -n com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity")
-         adb_event("sleep .5")
+         adb_event("sleep 3")
          local input_method, ime_height = adb_get_input_window_dump()
          if ime_height ~= 0 then
             adb_event("key back")
@@ -1127,7 +1127,7 @@ picture_to_weibo_share = function(pics, ...)
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   adb_event("adb-tap 294 1867 adb-tap 922 1891")
+   adb_event("adb-tap 294 1867 adb-tap-2 890 133 sleep .5")
 end
 
 picture_to_momo_share = function(pics, ...)
