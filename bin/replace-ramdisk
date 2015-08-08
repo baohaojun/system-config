@@ -81,7 +81,7 @@ function ew() {
 
 function fix-adbd-and-debug() {
     echo ro.DEBUGGABLE=1 >> $tdir/default.prop
-    perl -npe 's/u:r:(install_recovery|su|adbd):s0/u:r:init:s0/' -i $tdir/init.rc
+    perl -npe 's/u:r:(install_recovery):s0/u:r:init:s0/' -i $tdir/init.rc
     if test "$USER" = bhj; then
         perl -npe 's/ro.debuggable=1/ro.debuggable=0/' -i $tdir/default.prop
     fi
@@ -91,6 +91,7 @@ function fix-adbd-and-debug() {
     else
         echo $BOOT_IMAGE_PATH need to replace adbd
         if test -e ~/src/github/private-config/etc/adbd; then
+            file $tdir/sbin/adbd
             if file $tdir/sbin/adbd | grep 64-bit; then
                 cp ~/src/github/private-config/etc/adbd.64 $tdir/sbin/adbd -av
             else

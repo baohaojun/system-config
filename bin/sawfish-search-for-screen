@@ -8,8 +8,8 @@ md5=$(echo "$1" | md5sum |pn 1)
 mkdir -p ~/.cache/system-config/$(basename $0)
 echo "$1" > ~/.cache/system-config/$(basename $0)/$md5.txt
 start=0
-if test -e ~/.cache/system-config/$(basename $0)/$md5; then
-    start=$(cat ~/.cache/system-config/$(basename $0)/$md5)
+if test -e ~/.cache/system-config/$(basename $0)/$md5.md5; then
+    start=$(cat ~/.cache/system-config/$(basename $0)/$md5.md5)
     ((start %= max))
 fi
 
@@ -48,7 +48,7 @@ for x in $(seq 1 $max); do
             exit 0
         fi
 
-        echo $((x - 1 - (start = 0 ? 0 : 1))) > ~/.cache/system-config/$(basename $0)/$md5
+        echo $((x - 1 - (start == 0 ? 0 : 1))) | tee ~/.cache/system-config/$(basename $0)/$md5.md5
         exit 0
     else
         if test "$x" != 1; then
@@ -57,12 +57,14 @@ for x in $(seq 1 $max); do
                     continue
                 fi
                 pattern=$(cat "$pattern_file" | tr -d "\n")
-                md5=$(cat "$pattern_file" | md5sum |pn 1)
-                if echo "$screen_text" | grep -P -q -e "$pattern"; then
+                (
+                    md5=$(cat "$pattern_file" | md5sum |pn 1)
+                    if echo "$screen_text" | grep -P -q -e "$pattern"; then
 
-                    echo $((x - 1 - (start = 0 ? 0 : 1) )) > ~/.cache/system-config/$(basename $0)/$md5
-                    break
-                fi
+                        echo $((x - 1 - (start == 0 ? 0 : 1) )) | tee ~/.cache/system-config/$(basename $0)/$md5.md5
+                        break
+                    fi
+                )
             done
         fi
 

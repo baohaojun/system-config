@@ -15,7 +15,7 @@ import sys
 
 def where_pushd():
     pwd = os.environ['PWD']
-    if '/.cache/system-config/for-code-reading' in pwd or '/smb' in pwd or '//' in pwd:
+    if '/.cache/system-config/for-code-reading' in pwd or '/smb' in pwd or '//' in pwd or '/mnt/' in pwd or '/run/' in pwd:
         return
     dir_history = open(os.environ['HOME'] + '/.cache/system-config/.where').read().split('\n');
     dir_history[:0] = [pwd]

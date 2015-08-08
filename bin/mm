@@ -47,6 +47,9 @@ time (
     top_dir=$(readlink -f $top_dir/..)
 
     oldpwd=$PWD
+    if test "$(ap)" = bootable/bootloader/lk; then
+        exec android-make lk
+    fi
     cd $top_dir/
     . build/envsetup.sh
     set_stuff_for_environment

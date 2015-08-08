@@ -1,2 +1,20 @@
 #!/bin/bash
-my-adb -r shell 'echo -n x | tr x \\1 |dd of=$(echo /dev/block/platform/*/by-name/alterable) bs=1 count=1 seek=3; sync'
+
+val=$(my-adb "dd if=\$(echo /dev/block/platform/*/by-name/alterable) bs=1 count=1 skip=3 2>/dev/null|od -d -An"|perl -npe 's/\s//g')
+if test "$(basename $0)" = adb-uart-on; then
+    val=$(( val | 1 ))
+elif test "$(basename $0)" = adb-root-on; then
+    val=$(( val | 128 ))
+elif test "$(basename $0)" = adb-root-off; then
+    val=$(( val & ~128))
+elif test "$(basename $0)" = adb-pmode-on; then
+    my-adb "set -x; echo -n 3| dd of=\$(echo /dev/block/platform/*/by-name/factory) "
+    exit
+elif test "$(basename $0)" = adb-alter-off; then
+    val=0
+else
+    die "can't decide val"
+fi
+
+val=$(printf %o $val)
+my-adb -r shell 'echo -n x | tr x \\'$val' |dd of=$(echo /dev/block/platform/*/by-name/alterable) bs=1 count=1 seek=3; sync'

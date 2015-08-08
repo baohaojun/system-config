@@ -1,6 +1,8 @@
 */cache/*
 */Cache/*
 */cache2/*
+data/dalvik-cache/arm64/*
+data/dalvik-cache/arm/*
 data/anr
 data/*.bin
 data/core

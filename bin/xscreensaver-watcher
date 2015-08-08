@@ -9,8 +9,8 @@ while (<IN>) {
             system "xset dpms 10 120 180";
             unless (-e glob("~/.cache/system-config/logs/screensaver-no-sound-off")) {
                 system("sound-off");
-                system("screen-lock-on&");
             }
+            system("screen-lock-on&");
             $blanked = 1;
         }
     } elsif (m/^UNBLANK/) {
