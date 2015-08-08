@@ -209,3 +209,7 @@
               (ajoke--create-index-function))
             (setq imenu-create-index-function #'ajoke--create-index-function))
           t)
+
+(add-hook 'scala-mode-hook
+          (lambda ()
+            (setq imenu-create-index-function #'ajoke--create-index-function)))
