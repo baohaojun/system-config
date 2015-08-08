@@ -1,0 +1,5 @@
+#+title: 芝麻，关门
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+# bhj-tags: blog
+
+人在江湖飘，岂能不挨刀。这回咱们来说说兄弟我一年多前在江湖上挨了一刀，至今伤口每月还会流血的故事。
