@@ -869,7 +869,9 @@ get_a_note = function(text)
    ]])
    adb_event(
       [[
+            sleep .5
             adb-key BACK
+            sleep .5
             adb-key BACK
    ]])
    adb_get_last_pic('notes', true)
@@ -1224,15 +1226,14 @@ local function picture_to_qq_chat(pics, ...)
          adb_event("457 493 sleep .1 swipe 519 403 519 1800 sleep .3")
       end
       local pic_share_buttons = {
-         "adb-tap 191 394",
-         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
-         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
-         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
+         "adb-tap 271 285", "adb-tap 621 267", "adb-tap 968 291",
+         "adb-tap 285 664", "adb-tap 625 644", "adb-tap 978 653",
+         "adb-tap 284 989", "adb-tap 621 1024", "adb-tap 988 1019"
       }
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   adb_event("adb-tap 608 1831 adb-tap 403 1679 adb-tap 918 1862 sleep .5 adb-tap 312 1275")
+   adb_event("adb-tap 477 1835 adb-tap 898 1840 sleep .5 adb-tap 312 1275")
 end
 
 local function picture_to_qqlite_chat(pics, ...)
