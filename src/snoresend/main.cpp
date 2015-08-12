@@ -72,7 +72,7 @@ void bringToFront(QString pid)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName(QLatin1String("snore-send"));
+    app.setApplicationName(QLatin1String("snoresend"));
     app.setOrganizationName(QLatin1String("Snorenotify"));
     app.setApplicationVersion(Snore::Version::version());
 
