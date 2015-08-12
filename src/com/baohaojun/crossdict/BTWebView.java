@@ -9,9 +9,6 @@ import com.blahti.drag.DragListener;
 import com.blahti.drag.DragSource;
 import com.blahti.drag.MyAbsoluteLayout;
 
-import net.londatiga.android.ActionItem;
-import net.londatiga.android.QuickAction;
-import net.londatiga.android.QuickAction.OnDismissListener;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.Region;
@@ -24,24 +21,28 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import com.googlecode.toolkits.stardict.StarDict;
 import java.util.ArrayList;
-import android.widget.ListView;
+import net.londatiga.android.ActionItem;
+import net.londatiga.android.QuickAction;
+import net.londatiga.android.QuickAction.OnDismissListener;
 
 public class BTWebView extends WebView implements TextSelectionJavascriptInterfaceListener,
-						  OnTouchListener, OnLongClickListener, OnDismissListener, DragListener{
+                                                  OnTouchListener, OnLongClickListener, OnDismissListener, DragListener{
 
     /** The logging tag. */
     private static final String TAG = "BTWebView";
 
     /** Context. */
-    protected	Context	ctx;
+    protected   Context ctx;
 
     /** The context menu. */
     private final String html_head = "<html> <head> <link rel='stylesheet' href='dict.css' type='text/css'> <script src='jquery.js'></script> <script src='rangy-core.js'></script> <script src='rangy-serializer.js'></script> <script src='android.selection.js'></script> </head> <body>";
@@ -100,46 +101,46 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
     private String mBaseUrl = "file:///";
 
     public void setBaseUrlWithDir(String dir) {
-	mBaseUrl = "file://" + dir + "/";
-	Log.e("bhj", String.format("mBaseUrl is set to %s\n", mBaseUrl));
+        mBaseUrl = "file://" + dir + "/";
+        Log.e("bhj", String.format("mBaseUrl is set to %s\n", mBaseUrl));
     }
 
     void setActivity(CrossDictActivity activity) {
-	mActivity = activity;
+        mActivity = activity;
     }
 
     private StarDict mDict;
     void setDict(StarDict dict) {
-	mDict = dict;
+        mDict = dict;
     }
 
     public BTWebView(Context context) {
-	super(context);
+        super(context);
 
-	this.ctx = context;
-	this.setup(context);
+        this.ctx = context;
+        this.setup(context);
     }
 
     public BTWebView(Context context, AttributeSet attrs, int defStyle) {
-	super(context, attrs, defStyle);
+        super(context, attrs, defStyle);
 
-	this.ctx = context;
-	this.setup(context);
+        this.ctx = context;
+        this.setup(context);
 
     }
 
     public BTWebView(Context context, AttributeSet attrs) {
-	super(context, attrs);
+        super(context, attrs);
 
-	this.ctx = context;
-	this.setup(context);
+        this.ctx = context;
+        this.setup(context);
 
     }
 
 
     //*****************************************************
     //*
-    //*		Touch Listeners
+    //*         Touch Listeners
     //*
     //*****************************************************
 
@@ -152,121 +153,121 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-	float xPoint = getDensityIndependentValue(event.getX(), ctx) / getDensityIndependentValue(this.getScale(), ctx);
-	float yPoint = getDensityIndependentValue(event.getY(), ctx) / getDensityIndependentValue(this.getScale(), ctx);
+        float xPoint = getDensityIndependentValue(event.getX(), ctx) / getDensityIndependentValue(this.getScale(), ctx);
+        float yPoint = getDensityIndependentValue(event.getY(), ctx) / getDensityIndependentValue(this.getScale(), ctx);
 
-	// TODO: Need to update this to use this.getScale() as a factor.
+        // TODO: Need to update this to use this.getScale() as a factor.
 
-	if(event.getAction() == MotionEvent.ACTION_DOWN){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
 
-	    String startTouchUrl = String.format("javascript:android.selection.startTouch(%f, %f);",
-						 xPoint, yPoint);
+            String startTouchUrl = String.format("javascript:android.selection.startTouch(%f, %f);",
+                                                 xPoint, yPoint);
 
-	    mLastTouchX = xPoint;
-	    mLastTouchY = yPoint;
+            mLastTouchX = xPoint;
+            mLastTouchY = yPoint;
 
-	    this.loadUrl(startTouchUrl);
-	}
-	else if(event.getAction() == MotionEvent.ACTION_UP){
-	    if(!mScrolling){
-		this.endSelectionMode();
-	    }
+            this.loadUrl(startTouchUrl);
+        }
+        else if(event.getAction() == MotionEvent.ACTION_UP){
+            if(!mScrolling){
+                this.endSelectionMode();
+            }
 
-	    mScrollDiffX = 0;
-	    mScrollDiffY = 0;
-	    mScrolling = false;
+            mScrollDiffX = 0;
+            mScrollDiffY = 0;
+            mScrolling = false;
 
-	}
-	else if(event.getAction() == MotionEvent.ACTION_MOVE){
+        }
+        else if(event.getAction() == MotionEvent.ACTION_MOVE){
 
-	    mScrollDiffX += (xPoint - mLastTouchX);
-	    mScrollDiffY += (yPoint - mLastTouchY);
+            mScrollDiffX += (xPoint - mLastTouchX);
+            mScrollDiffY += (yPoint - mLastTouchY);
 
-	    mLastTouchX = xPoint;
-	    mLastTouchY = yPoint;
-
-
-	    // Only account for legitimate movement.
-	    if(Math.abs(mScrollDiffX) > 10 || Math.abs(mScrollDiffY) > 10){
-		mScrolling = true;
-
-	    }
+            mLastTouchX = xPoint;
+            mLastTouchY = yPoint;
 
 
-	}
+            // Only account for legitimate movement.
+            if(Math.abs(mScrollDiffX) > 10 || Math.abs(mScrollDiffY) > 10){
+                mScrolling = true;
 
-	// If this is in selection mode, then nothing else should handle this touch
-	return false;
+            }
+
+
+        }
+
+        // If this is in selection mode, then nothing else should handle this touch
+        return false;
     }
 
     @Override
     public boolean onLongClick(View v){
-	this.loadUrl("javascript:android.selection.longTouch();");
-	mScrolling = true;
-	return true;
+        this.loadUrl("javascript:android.selection.longTouch();");
+        mScrolling = true;
+        return true;
     }
 
     protected void setup(Context context){
 
 
-	// On Touch Listener
-	this.setOnLongClickListener(this);
-	this.setOnTouchListener(this);
+        // On Touch Listener
+        this.setOnLongClickListener(this);
+        this.setOnTouchListener(this);
 
 
-	// Webview setup
-	this.getSettings().setJavaScriptEnabled(true);
-	this.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-	this.getSettings().setPluginsEnabled(true);
+        // Webview setup
+        this.getSettings().setJavaScriptEnabled(true);
+        this.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        this.getSettings().setPluginState(PluginState.ON);
 
-	// Zoom out fully
-	//this.getSettings().setLoadWithOverviewMode(true);
-	//this.getSettings().setUseWideViewPort(true);
+        // Zoom out fully
+        //this.getSettings().setLoadWithOverviewMode(true);
+        //this.getSettings().setUseWideViewPort(true);
 
-	// Javascript interfaces
-	this.textSelectionJSInterface = new TextSelectionJavascriptInterface(context, this);
-	this.addJavascriptInterface(this.textSelectionJSInterface, this.textSelectionJSInterface.getInterfaceName());
-
-
-	// Create the selection handles
-	createSelectionLayer(context);
+        // Javascript interfaces
+        this.textSelectionJSInterface = new TextSelectionJavascriptInterface(context, this);
+        this.addJavascriptInterface(this.textSelectionJSInterface, this.textSelectionJSInterface.getInterfaceName());
 
 
-	// Set to the empty region
-	Region region = new Region();
-	region.setEmpty();
-	this.lastSelectedRegion = region;
+        // Create the selection handles
+        createSelectionLayer(context);
+
+
+        // Set to the empty region
+        Region region = new Region();
+        region.setEmpty();
+        this.lastSelectedRegion = region;
     }
 
     String mCurrentWord;
     void lookUpWord(String word) {
-	Log.e("bhj", String.format("lookUpWord '%s'\n", word));
-	if (mCurrentWord != null && mCurrentWord.equals(word)) {
-	    Log.e("bhj", String.format("no need to load %s, mCurrentWord is %s\n", word, mCurrentWord));
-	    mActivity.onNewWordLoaded(word);
-	    return;
-	}
-	mCurrentWord = word;
-	ArrayList<String> defs = mDict.getExplanation(word);
-	Log.e("bhj", String.format("got explanation\n"));
-	if (defs == null) {
-	    return;
-	}
-	
-	String html = html_head;
-	for (String def : defs) {
-	    html = html + def;
-	}
-	html = html + html_tail;
+        Log.e("bhj", String.format("lookUpWord '%s'\n", word));
+        if (mCurrentWord != null && mCurrentWord.equals(word)) {
+            Log.e("bhj", String.format("no need to load %s, mCurrentWord is %s\n", word, mCurrentWord));
+            mActivity.onNewWordLoaded(word);
+            return;
+        }
+        mCurrentWord = word;
+        ArrayList<String> defs = mDict.getExplanation(word);
+        Log.e("bhj", String.format("got explanation\n"));
+        if (defs == null) {
+            return;
+        }
 
-	this.loadDataWithBaseURL(mBaseUrl, html, null, "UTF8", null);
-	
-	mActivity.onNewWordLoaded(word);
+        String html = html_head;
+        for (String def : defs) {
+            html = html + def;
+        }
+        html = html + html_tail;
+
+        this.loadDataWithBaseURL(mBaseUrl, html, null, "UTF8", null);
+
+        mActivity.onNewWordLoaded(word);
     }
 
     //*****************************************************
     //*
-    //*		Selection Layer Handling
+    //*         Selection Layer Handling
     //*
     //*****************************************************
 
@@ -277,47 +278,47 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      */
     protected void createSelectionLayer(Context context){
 
-	LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	this.mSelectionDragLayer = (DragLayer) inflater.inflate(R.layout.selection_drag_layer, null);
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.mSelectionDragLayer = (DragLayer) inflater.inflate(R.layout.selection_drag_layer, null);
 
 
-	// Make sure it's filling parent
-	this.mDragController = new DragController(context);
-	this.mDragController.setDragListener(this);
-	this.mDragController.addDropTarget(mSelectionDragLayer);
-	this.mSelectionDragLayer.setDragController(mDragController);
+        // Make sure it's filling parent
+        this.mDragController = new DragController(context);
+        this.mDragController.setDragListener(this);
+        this.mDragController.addDropTarget(mSelectionDragLayer);
+        this.mSelectionDragLayer.setDragController(mDragController);
 
 
-	this.mStartSelectionHandle = (ImageView) this.mSelectionDragLayer.findViewById(R.id.startHandle);
-	this.mStartSelectionHandle.setTag(new Integer(SELECTION_START_HANDLE));
-	this.mEndSelectionHandle = (ImageView) this.mSelectionDragLayer.findViewById(R.id.endHandle);
-	this.mEndSelectionHandle.setTag(new Integer(SELECTION_END_HANDLE));
+        this.mStartSelectionHandle = (ImageView) this.mSelectionDragLayer.findViewById(R.id.startHandle);
+        this.mStartSelectionHandle.setTag(new Integer(SELECTION_START_HANDLE));
+        this.mEndSelectionHandle = (ImageView) this.mSelectionDragLayer.findViewById(R.id.endHandle);
+        this.mEndSelectionHandle.setTag(new Integer(SELECTION_END_HANDLE));
 
-	OnTouchListener handleTouchListener = new OnTouchListener(){
+        OnTouchListener handleTouchListener = new OnTouchListener(){
 
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
 
-		    boolean handledHere = false;
+                    boolean handledHere = false;
 
-		    final int action = event.getAction();
+                    final int action = event.getAction();
 
-		    // Down event starts drag for handle.
-		    if (action == MotionEvent.ACTION_DOWN) {
-			handledHere = startDrag (v);
-			mLastTouchedSelectionHandle = (Integer) v.getTag();
-		    }
+                    // Down event starts drag for handle.
+                    if (action == MotionEvent.ACTION_DOWN) {
+                        handledHere = startDrag (v);
+                        mLastTouchedSelectionHandle = (Integer) v.getTag();
+                    }
 
-		    return handledHere;
-
-
-		}
+                    return handledHere;
 
 
-	    };
+                }
 
-	this.mStartSelectionHandle.setOnTouchListener(handleTouchListener);
-	this.mEndSelectionHandle.setOnTouchListener(handleTouchListener);
+
+            };
+
+        this.mStartSelectionHandle.setOnTouchListener(handleTouchListener);
+        this.mEndSelectionHandle.setOnTouchListener(handleTouchListener);
 
 
     }
@@ -327,67 +328,67 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      */
     private Handler startSelectionModeHandler = new Handler(){
 
-	    public void handleMessage(Message m){
+            public void handleMessage(Message m){
 
-		if(mSelectionBounds == null)
-		    return;
+                if(mSelectionBounds == null)
+                    return;
 
-		addView(mSelectionDragLayer);
+                addView(mSelectionDragLayer);
 
-		drawSelectionHandles();
+                drawSelectionHandles();
 
 
-		int contentHeight = (int) Math.ceil(getDensityDependentValue(getContentHeight(), ctx));
+                int contentHeight = (int) Math.ceil(getDensityDependentValue(getContentHeight(), ctx));
 
-		// Update Layout Params
-		ViewGroup.LayoutParams layerParams = mSelectionDragLayer.getLayoutParams();
-		layerParams.height = contentHeight;
-		layerParams.width = contentWidth;
-		mSelectionDragLayer.setLayoutParams(layerParams);
+                // Update Layout Params
+                ViewGroup.LayoutParams layerParams = mSelectionDragLayer.getLayoutParams();
+                layerParams.height = contentHeight;
+                layerParams.width = contentWidth;
+                mSelectionDragLayer.setLayoutParams(layerParams);
 
-	    }
+            }
 
-	};
+        };
 
     /**
      * Starts selection mode.
      *
-     * @param	selectionBounds
+     * @param   selectionBounds
      */
     public void startSelectionMode(){
 
-	this.startSelectionModeHandler.sendEmptyMessage(0);
+        this.startSelectionModeHandler.sendEmptyMessage(0);
 
     }
 
     // Ends selection mode on the UI thread
     private Handler endSelectionModeHandler = new Handler(){
-	    public void handleMessage(Message m){
+            public void handleMessage(Message m){
 
-		removeView(mSelectionDragLayer);
-		if(getParent() != null && mContextMenu != null && contextMenuVisible){
-		    // This will throw an error if the webview is being redrawn.
-		    // No error handling needed, just need to stop the crash.
-		    try{
-			mContextMenu.dismiss();
-		    }
-		    catch(Exception e){
+                removeView(mSelectionDragLayer);
+                if(getParent() != null && mContextMenu != null && contextMenuVisible){
+                    // This will throw an error if the webview is being redrawn.
+                    // No error handling needed, just need to stop the crash.
+                    try{
+                        mContextMenu.dismiss();
+                    }
+                    catch(Exception e){
 
-		    }
-		}
-		mSelectionBounds = null;
-		mLastTouchedSelectionHandle = -1;
-		loadUrl("javascript: android.selection.clearSelection();");
+                    }
+                }
+                mSelectionBounds = null;
+                mLastTouchedSelectionHandle = -1;
+                loadUrl("javascript: android.selection.clearSelection();");
 
-	    }
-	};
+            }
+        };
 
     /**
      * Ends selection mode.
      */
     public void endSelectionMode(){
 
-	this.endSelectionModeHandler.sendEmptyMessage(0);
+        this.endSelectionModeHandler.sendEmptyMessage(0);
 
     }
 
@@ -395,37 +396,37 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      * Calls the handler for drawing the selection handles.
      */
     private void drawSelectionHandles(){
-	this.drawSelectionHandlesHandler.sendEmptyMessage(0);
+        this.drawSelectionHandlesHandler.sendEmptyMessage(0);
     }
 
     /**
      * Handler for drawing the selection handles on the UI thread.
      */
     private Handler drawSelectionHandlesHandler = new Handler(){
-	    public void handleMessage(Message m){
+            public void handleMessage(Message m){
 
-		MyAbsoluteLayout.LayoutParams startParams = (com.blahti.drag.MyAbsoluteLayout.LayoutParams) mStartSelectionHandle.getLayoutParams();
-		startParams.x = (int) (mSelectionBounds.left - mStartSelectionHandle.getDrawable().getIntrinsicWidth());
-		startParams.y = (int) (mSelectionBounds.top - mStartSelectionHandle.getDrawable().getIntrinsicHeight());
+                MyAbsoluteLayout.LayoutParams startParams = (com.blahti.drag.MyAbsoluteLayout.LayoutParams) mStartSelectionHandle.getLayoutParams();
+                startParams.x = (int) (mSelectionBounds.left - mStartSelectionHandle.getDrawable().getIntrinsicWidth());
+                startParams.y = (int) (mSelectionBounds.top - mStartSelectionHandle.getDrawable().getIntrinsicHeight());
 
-		// Stay on screen.
-		startParams.x = (startParams.x < 0) ? 0 : startParams.x;
-		startParams.y = (startParams.y < 0) ? 0 : startParams.y;
+                // Stay on screen.
+                startParams.x = (startParams.x < 0) ? 0 : startParams.x;
+                startParams.y = (startParams.y < 0) ? 0 : startParams.y;
 
-		mStartSelectionHandle.setLayoutParams(startParams);
+                mStartSelectionHandle.setLayoutParams(startParams);
 
-		MyAbsoluteLayout.LayoutParams endParams = (com.blahti.drag.MyAbsoluteLayout.LayoutParams) mEndSelectionHandle.getLayoutParams();
-		endParams.x = (int) mSelectionBounds.right;
-		endParams.y = (int) mSelectionBounds.bottom;
+                MyAbsoluteLayout.LayoutParams endParams = (com.blahti.drag.MyAbsoluteLayout.LayoutParams) mEndSelectionHandle.getLayoutParams();
+                endParams.x = (int) mSelectionBounds.right;
+                endParams.y = (int) mSelectionBounds.bottom;
 
-		// Stay on screen
-		endParams.x = (endParams.x < 0) ? 0 : endParams.x;
-		endParams.y = (endParams.y < 0) ? 0 : endParams.y;
+                // Stay on screen
+                endParams.x = (endParams.x < 0) ? 0 : endParams.x;
+                endParams.y = (endParams.y < 0) ? 0 : endParams.y;
 
-		mEndSelectionHandle.setLayoutParams(endParams);
+                mEndSelectionHandle.setLayoutParams(endParams);
 
-	    }
-	};
+            }
+        };
 
     /**
      * Checks to see if this view is in selection mode.
@@ -433,14 +434,14 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      */
     public boolean isInSelectionMode(){
 
-	return this.mSelectionDragLayer.getParent() != null;
+        return this.mSelectionDragLayer.getParent() != null;
 
 
     }
 
     //*****************************************************
     //*
-    //*		DragListener Methods
+    //*         DragListener Methods
     //*
     //*****************************************************
 
@@ -450,50 +451,50 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      */
     private boolean startDrag (View v)
     {
-	// Let the DragController initiate a drag-drop sequence.
-	// I use the dragInfo to pass along the object being dragged.
-	// I'm not sure how the Launcher designers do this.
-	Object dragInfo = v;
-	mDragController.startDrag (v, mSelectionDragLayer, dragInfo, DragController.DRAG_ACTION_MOVE);
-	return true;
+        // Let the DragController initiate a drag-drop sequence.
+        // I use the dragInfo to pass along the object being dragged.
+        // I'm not sure how the Launcher designers do this.
+        Object dragInfo = v;
+        mDragController.startDrag (v, mSelectionDragLayer, dragInfo, DragController.DRAG_ACTION_MOVE);
+        return true;
     }
 
 
     @Override
     public void onDragStart(DragSource source, Object info, int dragAction) {
-	// TODO Auto-generated method stub
+        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onDragEnd() {
-	// TODO Auto-generated method stub
+        // TODO Auto-generated method stub
 
-	MyAbsoluteLayout.LayoutParams startHandleParams = (MyAbsoluteLayout.LayoutParams) this.mStartSelectionHandle.getLayoutParams();
-	MyAbsoluteLayout.LayoutParams endHandleParams = (MyAbsoluteLayout.LayoutParams) this.mEndSelectionHandle.getLayoutParams();
+        MyAbsoluteLayout.LayoutParams startHandleParams = (MyAbsoluteLayout.LayoutParams) this.mStartSelectionHandle.getLayoutParams();
+        MyAbsoluteLayout.LayoutParams endHandleParams = (MyAbsoluteLayout.LayoutParams) this.mEndSelectionHandle.getLayoutParams();
 
-	float scale = getDensityIndependentValue(this.getScale(), ctx);
+        float scale = getDensityIndependentValue(this.getScale(), ctx);
 
-	float startX = startHandleParams.x - this.getScrollX();
-	float startY = startHandleParams.y - this.getScrollY();
-	float endX = endHandleParams.x - this.getScrollX();
-	float endY = endHandleParams.y - this.getScrollY();
+        float startX = startHandleParams.x - this.getScrollX();
+        float startY = startHandleParams.y - this.getScrollY();
+        float endX = endHandleParams.x - this.getScrollX();
+        float endY = endHandleParams.y - this.getScrollY();
 
-	startX = getDensityIndependentValue(startX, ctx) / scale;
-	startY = getDensityIndependentValue(startY, ctx) / scale;
-	endX = getDensityIndependentValue(endX, ctx) / scale;
-	endY = getDensityIndependentValue(endY, ctx) / scale;
+        startX = getDensityIndependentValue(startX, ctx) / scale;
+        startY = getDensityIndependentValue(startY, ctx) / scale;
+        endX = getDensityIndependentValue(endX, ctx) / scale;
+        endY = getDensityIndependentValue(endY, ctx) / scale;
 
 
-	if(mLastTouchedSelectionHandle == SELECTION_START_HANDLE && startX > 0 && startY > 0){
-	    String saveStartString = String.format("javascript: android.selection.setStartPos(%f, %f);", startX, startY);
-	    this.loadUrl(saveStartString);
-	}
+        if(mLastTouchedSelectionHandle == SELECTION_START_HANDLE && startX > 0 && startY > 0){
+            String saveStartString = String.format("javascript: android.selection.setStartPos(%f, %f);", startX, startY);
+            this.loadUrl(saveStartString);
+        }
 
-	if(mLastTouchedSelectionHandle == SELECTION_END_HANDLE && endX > 0 && endY > 0){
-	    String saveEndString = String.format("javascript: android.selection.setEndPos(%f, %f);", endX, endY);
-	    this.loadUrl(saveEndString);
-	}
+        if(mLastTouchedSelectionHandle == SELECTION_END_HANDLE && endX > 0 && endY > 0){
+            String saveEndString = String.format("javascript: android.selection.setEndPos(%f, %f);", endX, endY);
+            this.loadUrl(saveEndString);
+        }
 
     }
 
@@ -504,93 +505,93 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      */
     private void showContextMenu(Rect displayRect){
 
-	// Don't show this twice
-	if(this.contextMenuVisible){
-	    return;
-	}
+        // Don't show this twice
+        if(this.contextMenuVisible){
+            return;
+        }
 
-	// Don't use empty rect
-	if(displayRect.right <= displayRect.left){
-	    return;
-	}
-
-
-
-	//Copy action item
-	ActionItem buttonOne = new ActionItem();
-
-	buttonOne.setTitle("Look up");
-	buttonOne.setActionId(1);
-	buttonOne.setIcon(getResources().getDrawable(R.drawable.menu_search));
-
-
-	//Highlight action item
-	ActionItem buttonTwo = new ActionItem();
-
-	buttonTwo.setTitle("Defined with...");
-	buttonTwo.setActionId(2);
-	buttonTwo.setIcon(getResources().getDrawable(R.drawable.menu_info));
-
-	ActionItem buttonThree = new ActionItem();
-
-	buttonThree.setTitle("Matching...");
-	buttonThree.setActionId(3);
-	buttonThree.setIcon(getResources().getDrawable(R.drawable.menu_eraser));
+        // Don't use empty rect
+        if(displayRect.right <= displayRect.left){
+            return;
+        }
 
 
 
-	// The action menu
-	mContextMenu  = new QuickAction(this.getContext());
-	mContextMenu.setOnDismissListener(this);
+        //Copy action item
+        ActionItem buttonOne = new ActionItem();
 
-	// Add buttons
-	mContextMenu.addActionItem(buttonOne);
-	mContextMenu.addActionItem(buttonTwo);
-	mContextMenu.addActionItem(buttonThree);
+        buttonOne.setTitle("Look up");
+        buttonOne.setActionId(1);
+        buttonOne.setIcon(getResources().getDrawable(R.drawable.menu_search));
 
 
+        //Highlight action item
+        ActionItem buttonTwo = new ActionItem();
 
-	//setup the action item click listener
-	mContextMenu.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+        buttonTwo.setTitle("Defined with...");
+        buttonTwo.setActionId(2);
+        buttonTwo.setIcon(getResources().getDrawable(R.drawable.menu_info));
 
-		@Override
-		public void onItemClick(QuickAction source, int pos,
-					int actionId) {
-		    if (actionId == 1) {
-			mActivity.runOnUiThread(new Runnable() {
-				public void run() {
-				    mActivity.lookUpWord(selectedText);
-				}
-			    });
-		    }
-		    else if (actionId == 2) {
-			mActivity.runOnUiThread(new Runnable() {
-				public void run() {
-				    mActivity.lookUpDefiner(selectedText);
-				}
-			    });
-		    }
-		    else if (actionId == 3) {
-			mActivity.runOnUiThread(new Runnable() {
-				public void run() {
-				    mActivity.lookUpMatching(selectedText);
-				}
-			    });
-		    }
-		    contextMenuVisible = false;
-		    endSelectionMode();
-		}
+        ActionItem buttonThree = new ActionItem();
 
-	    });
+        buttonThree.setTitle("Matching...");
+        buttonThree.setActionId(3);
+        buttonThree.setIcon(getResources().getDrawable(R.drawable.menu_eraser));
 
-	this.contextMenuVisible = true;
-	mContextMenu.show(this, displayRect);
+
+
+        // The action menu
+        mContextMenu  = new QuickAction(this.getContext());
+        mContextMenu.setOnDismissListener(this);
+
+        // Add buttons
+        mContextMenu.addActionItem(buttonOne);
+        mContextMenu.addActionItem(buttonTwo);
+        mContextMenu.addActionItem(buttonThree);
+
+
+
+        //setup the action item click listener
+        mContextMenu.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+
+                @Override
+                public void onItemClick(QuickAction source, int pos,
+                                        int actionId) {
+                    if (actionId == 1) {
+                        mActivity.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    mActivity.lookUpWord(selectedText);
+                                }
+                            });
+                    }
+                    else if (actionId == 2) {
+                        mActivity.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    mActivity.lookUpDefiner(selectedText);
+                                }
+                            });
+                    }
+                    else if (actionId == 3) {
+                        mActivity.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    mActivity.lookUpMatching(selectedText);
+                                }
+                            });
+                    }
+                    contextMenuVisible = false;
+                    endSelectionMode();
+                }
+
+            });
+
+        this.contextMenuVisible = true;
+        mContextMenu.show(this, displayRect);
     }
 
 
     //*****************************************************
     //*
-    //*		OnDismiss Listener
+    //*         OnDismiss Listener
     //*
     //*****************************************************
 
@@ -598,13 +599,13 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      * Clears the selection when the context menu is dismissed.
      */
     public void onDismiss(){
-	//clearSelection();
-	this.contextMenuVisible = false;
+        //clearSelection();
+        this.contextMenuVisible = false;
     }
 
     //*****************************************************
     //*
-    //*		Text Selection Javascript Interface Listener
+    //*         Text Selection Javascript Interface Listener
     //*
     //*****************************************************
 
@@ -613,7 +614,7 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      * Shows/updates the context menu based on the range
      */
     public void tsjiJSError(String error){
-	Log.e(TAG, "JSError: " + error);
+        Log.e(TAG, "JSError: " + error);
     }
 
 
@@ -622,7 +623,7 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      */
     public void tsjiStartSelectionMode(){
 
-	this.startSelectionMode();
+        this.startSelectionMode();
 
 
     }
@@ -632,7 +633,7 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      */
     public void tsjiEndSelectionMode(){
 
-	this.endSelectionMode();
+        this.endSelectionMode();
     }
 
     /**
@@ -645,45 +646,45 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      * @param showUnHighlight
      */
     public void tsjiSelectionChanged(String range, String text, String handleBounds, String menuBounds){
-	try {
-	    JSONObject selectionBoundsObject = new JSONObject(handleBounds);
+        try {
+            JSONObject selectionBoundsObject = new JSONObject(handleBounds);
 
-	    float scale = getDensityIndependentValue(this.getScale(), ctx);
+            float scale = getDensityIndependentValue(this.getScale(), ctx);
 
-	    Rect handleRect = new Rect();
-	    handleRect.left = (int) (getDensityDependentValue(selectionBoundsObject.getInt("left"), getContext()) * scale);
-	    handleRect.top = (int) (getDensityDependentValue(selectionBoundsObject.getInt("top"), getContext()) * scale);
-	    handleRect.right = (int) (getDensityDependentValue(selectionBoundsObject.getInt("right"), getContext()) * scale);
-	    handleRect.bottom = (int) (getDensityDependentValue(selectionBoundsObject.getInt("bottom"), getContext()) * scale);
+            Rect handleRect = new Rect();
+            handleRect.left = (int) (getDensityDependentValue(selectionBoundsObject.getInt("left"), getContext()) * scale);
+            handleRect.top = (int) (getDensityDependentValue(selectionBoundsObject.getInt("top"), getContext()) * scale);
+            handleRect.right = (int) (getDensityDependentValue(selectionBoundsObject.getInt("right"), getContext()) * scale);
+            handleRect.bottom = (int) (getDensityDependentValue(selectionBoundsObject.getInt("bottom"), getContext()) * scale);
 
-	    this.mSelectionBounds = handleRect;
-	    this.selectedRange = range;
-	    this.selectedText = text;
+            this.mSelectionBounds = handleRect;
+            this.selectedRange = range;
+            this.selectedText = text;
 
-	    JSONObject menuBoundsObject = new JSONObject(menuBounds);
+            JSONObject menuBoundsObject = new JSONObject(menuBounds);
 
-	    Rect displayRect = new Rect();
-	    displayRect.left = (int) (getDensityDependentValue(menuBoundsObject.getInt("left"), getContext()) * scale);
-	    displayRect.top = (int) (getDensityDependentValue(menuBoundsObject.getInt("top") - 25, getContext()) * scale);
-	    displayRect.right = (int) (getDensityDependentValue(menuBoundsObject.getInt("right"), getContext()) * scale);
-	    displayRect.bottom = (int) (getDensityDependentValue(menuBoundsObject.getInt("bottom") + 25, getContext()) * scale);
+            Rect displayRect = new Rect();
+            displayRect.left = (int) (getDensityDependentValue(menuBoundsObject.getInt("left"), getContext()) * scale);
+            displayRect.top = (int) (getDensityDependentValue(menuBoundsObject.getInt("top") - 25, getContext()) * scale);
+            displayRect.right = (int) (getDensityDependentValue(menuBoundsObject.getInt("right"), getContext()) * scale);
+            displayRect.bottom = (int) (getDensityDependentValue(menuBoundsObject.getInt("bottom") + 25, getContext()) * scale);
 
-	    if(!this.isInSelectionMode()){
-		this.startSelectionMode();
-	    }
+            if(!this.isInSelectionMode()){
+                this.startSelectionMode();
+            }
 
-	    // This will send the menu rect
-	    this.showContextMenu(displayRect);
+            // This will send the menu rect
+            this.showContextMenu(displayRect);
 
-	    drawSelectionHandles();
+            drawSelectionHandles();
 
 
-	} catch (JSONException e) {
-	    // TODO Auto-generated catch block
-	    Log.e("bhj", " JSONException", e);
-	} catch (Exception e) {
-	    Log.e("bhj", " Exception", e);
-	}
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            Log.e("bhj", " JSONException", e);
+        } catch (Exception e) {
+            Log.e("bhj", " Exception", e);
+        }
 
 
     }
@@ -693,13 +694,13 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      * Receives the content width for the page.
      */
     public void tsjiSetContentWidth(float contentWidth){
-	this.contentWidth = (int) this.getDensityDependentValue(contentWidth, ctx);
+        this.contentWidth = (int) this.getDensityDependentValue(contentWidth, ctx);
     }
 
 
     //*****************************************************
     //*
-    //*		Density Conversion
+    //*         Density Conversion
     //*
     //*****************************************************
 
@@ -711,16 +712,16 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      */
     public float getDensityDependentValue(float val, Context ctx){
 
-	// Get display from context
-	Display display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        // Get display from context
+        Display display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
-	// Calculate min bound based on metrics
-	DisplayMetrics metrics = new DisplayMetrics();
-	display.getMetrics(metrics);
+        // Calculate min bound based on metrics
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
 
-	return val * (metrics.densityDpi / 160f);
+        return val * (metrics.densityDpi / 160f);
 
-	//return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, val, metrics);
+        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, val, metrics);
 
     }
 
@@ -732,17 +733,17 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
      */
     public float getDensityIndependentValue(float val, Context ctx){
 
-	// Get display from context
-	Display display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        // Get display from context
+        Display display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
-	// Calculate min bound based on metrics
-	DisplayMetrics metrics = new DisplayMetrics();
-	display.getMetrics(metrics);
+        // Calculate min bound based on metrics
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
 
 
-	return val / (metrics.densityDpi / 160f);
+        return val / (metrics.densityDpi / 160f);
 
-	//return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, val, metrics);
+        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, val, metrics);
 
     }
 }

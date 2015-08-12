@@ -1,10 +1,12 @@
 package com.baohaojun.crossdict;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.ClipboardManager;
 import android.content.ClipData;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 public class ClipMonService extends Service {
@@ -12,7 +14,12 @@ public class ClipMonService extends Service {
     ClipboardManager.OnPrimaryClipChangedListener mClipListner;
     boolean mClipWatched = false;
     @Override
+    public void onCreate() {
+        startForeground(1, new Notification());
+    }
+    @Override
     public int onStartCommand(Intent intent,  int flags,  int startId)  {
+        Log.e("bhj", String.format("%s:%d: start watching clipboard", "ClipMonService.java", 16));
         if (mClipboard == null) {
             mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         }
