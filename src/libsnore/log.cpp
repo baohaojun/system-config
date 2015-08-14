@@ -66,18 +66,18 @@ SnoreLog::SnoreLog(SnoreDebugLevels lvl):
 SnoreLog::~SnoreLog()
 {
     std::wstringstream sstream;
-    sstream << QDateTime::currentDateTime().toString(QLatin1String("hh:mm:ss")).toLocal8Bit().constData()
-            << ": " << m_msg.toLocal8Bit().constData() << std::endl;
+    sstream << QDateTime::currentDateTime().toString(QLatin1String("hh:mm:ss")).toUtf8().constData()
+            << ": " << m_msg.toUtf8().constData();
 
     std::wstring message = sstream.str();
     if (logFile) {
-        *logFile << message.c_str();
+        *logFile << message.c_str() << "\n";
         logFile->flush();
     }
     if (m_lvl == SNORE_WARNING) {
-        std::wcerr << message;
+        std::wcerr << message << std::endl;
     } else  if (debugLevel >= m_lvl) {
-        std::wcout << message;
+        std::wcout << message << std::endl;
     }
 }
 
