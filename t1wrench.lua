@@ -912,7 +912,7 @@ t1_post = function(text) -- use weixin
    end
    if window then print("window is " .. window) end
    if window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity"
-      or window:match("^com.sina.weibo/")
+      or (window:match("^com.sina.weibo/") and not window:match("com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity"))
    then
       weibo_text_share(window)
       return
@@ -1118,7 +1118,7 @@ picture_to_weibo_share = function(pics, ...)
          if ime_height ~= 0 then
             adb_event("key back")
          end
-         adb_event("sleep 1 adb-tap 62 1843 sleep 2")
+         adb_event("sleep 1 adb-tap 62 1843 sleep 2 adb-tap 546 126 adb-tap 340 697 sleep 2")
       end
 
       local pic_share_buttons = {
@@ -1129,7 +1129,10 @@ picture_to_weibo_share = function(pics, ...)
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   adb_event("adb-tap 294 1867 adb-tap-2 890 133 sleep .5")
+   adb_event("adb-tap 294 1867 adb-tap 890 133 sleep .5")
+   if #pics == 1 then
+      adb_event("adb-tap 890 133 sleep .5")
+   end
 end
 
 picture_to_momo_share = function(pics, ...)
