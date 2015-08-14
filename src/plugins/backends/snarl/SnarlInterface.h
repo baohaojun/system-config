@@ -150,9 +150,6 @@ enum AppFlags {
 
 } // namespace SnarlEnums
 
-// ----------------------------------------------------------------------------------------
-/// SnarlParameterList class definition - Helper class, not meant for broad use
-// ----------------------------------------------------------------------------------------
 template<class T>
 class SnarlParameterList
 {

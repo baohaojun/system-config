@@ -67,6 +67,7 @@ public:
      * Load a set of plugins
      *
      * @param types the type of tha plugin
+     * @see Snore::SnorePlugin::PluginType
      */
     Q_INVOKABLE void loadPlugins(Snore::SnorePlugin::PluginTypes types);
 
