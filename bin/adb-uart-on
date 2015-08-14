@@ -3,6 +3,8 @@
 val=$(my-adb "dd if=\$(echo /dev/block/platform/*/by-name/alterable) bs=1 count=1 skip=3 2>/dev/null|od -d -An"|perl -npe 's/\s//g')
 if test "$(basename $0)" = adb-uart-on; then
     val=$(( val | 1 ))
+elif test "$(basename $0)" = adb-uart-off; then
+    val=$(( val & ~1 ))
 elif test "$(basename $0)" = adb-root-on; then
     val=$(( val | 128 ))
 elif test "$(basename $0)" = adb-root-off; then

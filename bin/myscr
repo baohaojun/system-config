@@ -3,6 +3,7 @@ oldpwd=$PWD
 cd
 
 unset ANDROID_SERIAL
+export SCREEN_SESSION_PID=$$
 
 echo shell is $SHELL > ~/.cache/system-config/logs/myscr.log
 if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then

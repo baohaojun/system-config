@@ -25,10 +25,6 @@ if test -z "$dataDir"; then
     if test -z "$serial"; then
         die "serial not found"
     fi
-    if test "$serial" != "$ANDROID_SERIAL" && yes-or-no-p "use $ANDROID_SERIAL as serial (hardware serial is $serial)?"; then
-        serial=$ANDROID_SERIAL
-    fi
-
     export dataDir=~/today/forever/data-$serial
     export systemDir=~/today/forever/system-$serial
 fi

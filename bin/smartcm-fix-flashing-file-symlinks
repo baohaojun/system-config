@@ -11,10 +11,12 @@ fi
 for sym in $(file * | grep broken | pn 1|tr -d :); do
     file=$(readlink $sym)
     dir=$(dirname $file)
+    depth=1
     while test "$dir" -a ! -d "$dir"; do
         dir=$(dirname "$dir")
+        depth=$((depth + 1))
     done
-    file=$(select-output-line --dist-sort $file -- find $dir -name "$(basename $file)")
+    file=$(select-output-line --dist-sort $file -- find $dir -maxdepth $depth -name "$(basename $file)")
     if test -e "$file"; then
         ln -sf $file $sym
     fi

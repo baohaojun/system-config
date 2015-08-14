@@ -2,3 +2,7 @@
 export GPGKEY=FAB5ACB2
 export EDITOR=edit-wait
 export DISPLAY=${DISPLAY:-:0} #if it is already set...
+
+if test "$SCREEN_SESSION_PID"; then
+    . ~/.renew-xauth
+fi
