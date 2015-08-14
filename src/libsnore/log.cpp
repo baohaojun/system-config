@@ -18,12 +18,14 @@
 
 #include "log.h"
 
-#include <iostream>
-#include <QDir>
 #include <QApplication>
+#include <QDateTime>
+#include <QDir>
 #include <QTextStream>
 
+#include <iostream>
 #include <memory>
+#include <sstream>
 
 using namespace Snore;
 
@@ -63,14 +65,19 @@ SnoreLog::SnoreLog(SnoreDebugLevels lvl):
 
 SnoreLog::~SnoreLog()
 {
+    std::wstringstream sstream;
+    sstream << QDateTime::currentDateTime().toString(QLatin1String("hh:mm:ss")).toLocal8Bit().constData()
+            << ": " << m_msg.toLocal8Bit().constData() << std::endl;
+
+    std::wstring message = sstream.str();
     if (logFile) {
-        *logFile << m_msg << "\n";
+        *logFile << message.c_str();
         logFile->flush();
     }
     if (m_lvl == SNORE_WARNING) {
-        std::cerr << m_msg.toLocal8Bit().constData() << std::endl;
+        std::wcerr << message;
     } else  if (debugLevel >= m_lvl) {
-        std::cout << m_msg.toLocal8Bit().constData() << std::endl;
+        std::wcout << message;
     }
 }
 
