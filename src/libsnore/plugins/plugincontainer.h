@@ -30,7 +30,7 @@ class PluginContainer;
 
 typedef  QHash<QString, PluginContainer *> PluginContaienrHash;
 
-class SNORE_EXPORT PluginContainer
+class PluginContainer
 {
 public:
     static const QHash<QString, PluginContainer *> pluginCache(SnorePlugin::PluginTypes type);

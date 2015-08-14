@@ -35,6 +35,8 @@ namespace Snore
 /**
  * Hint contains extra information accesible by key.
  * The keys are case sensitive.
+ *
+ * @author Patrick von Reth \<vonreth at kde.org\>
  */
 
 class SNORE_EXPORT Hint

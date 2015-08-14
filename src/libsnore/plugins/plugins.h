@@ -30,16 +30,50 @@ namespace Snore
 
 class PluginContainer;
 
+/**
+ *  SnorePlugin represents the base class for the plugins.
+ *
+ * @author Patrick von Reth \<vonreth at kde.org\>
+ */
+
 class SNORE_EXPORT SnorePlugin : public QObject
 {
     Q_OBJECT
 public:
+    /**
+     * The PluginType Flags.
+     */
     enum PluginType {
+        /**
+         * Flag for loading no plugins.
+         */
         NONE                = 0,
+
+        /**
+         * Backends are those plugins that are capable of reporting user interaction.
+         */
         BACKEND             = 1 << 0,
+
+        /**
+         * Secondary backaends are non interactive.
+         * Redirection or playback of a sound file.
+         */
         SECONDARY_BACKEND   = 1 << 1,
+
+        /**
+         * Frontends are capable of recieving notifications.
+         */
         FRONTEND            = 1 << 2,
+
+        /**
+         * Generell plugins, currently there are not plugins implemented.
+         */
         PLUGIN              = 1 << 3,
+
+
+        /**
+         * Flag for loading all plugins.
+         */
         ALL                 = ~0
     };
 
