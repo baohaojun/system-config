@@ -127,6 +127,32 @@
            </widget>
           </item>
           <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QToolButton" name="tbPhoneScreen">
+            <property name="toolTip">
+             <string>显示手机屏幕</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_4">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -499,6 +525,7 @@
   <tabstop>tbWeixin</tabstop>
   <tabstop>tbMomo</tabstop>
   <tabstop>tbNotes</tabstop>
+  <tabstop>tbPhoneScreen</tabstop>
   <tabstop>tbPhoneCall</tabstop>
   <tabstop>tbMms</tabstop>
   <tabstop>tbThumbsUp</tabstop>

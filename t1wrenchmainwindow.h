@@ -15,6 +15,7 @@
 #include <QDropEvent>
 #include "contactmodel.h"
 #include <QMap>
+#include "phonescreen.h"
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -86,6 +87,8 @@ private slots:
 
     void on_tbMailClear_clicked();
 
+    void on_tbPhoneScreen_toggled(bool checked);
+
 private:
 
     QMap<QString, QString> mMmsReceiverMap;
@@ -102,6 +105,7 @@ private:
     QSharedPointer<LuaExecuteThread> mLuaThread;
     QSharedPointer<DialogGetEntry> mEmojiDialog;
     QSharedPointer<DialogGetEntry> mContactDialog;
+    QSharedPointer<PhoneScreen> mPhoneScreenDialog;
 
     void afterUsingContactDialog();
     ContactModel* mContactModel;

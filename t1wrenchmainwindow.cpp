@@ -40,6 +40,7 @@
 #include "emojimodel.h"
 #include "contactmodel.h"
 #include "strlistmodel.h"
+#include "phonescreen.h"
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -699,4 +700,20 @@ void T1WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& 
     ui->ptMailBcc->setPlainText(bcc);
     ui->ptMailAttachments->setPlainText(attachments);
     ui->tabWidget->setCurrentIndex(1);
+}
+
+void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
+{
+    if (checked) {
+        if (mPhoneScreenDialog.isNull()) {
+            mPhoneScreenDialog = QSharedPointer<PhoneScreen>(new PhoneScreen(this));
+            mPhoneScreenDialog->setModal(false);
+            mPhoneScreenDialog->show();
+            int winId = mPhoneScreenDialog->winId();
+            QString
+            system(" the-true-adb shell screenrecord --output-format h264 - |mplayer - ")
+        }
+    } else {
+
+    }
 }

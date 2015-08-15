@@ -1,6 +1,6 @@
 #tbPicture, #tbEmoji, #tbScreenCapture, #tbWeibo, #tbWeixin, #tbThumbsUp,
 #tbPhoneCall, #tbMms,
-#sendItPushButton, #configurePushButton, #tbCommandLine, #tbNotes, #tbMomo {
+#sendItPushButton, #configurePushButton, #tbCommandLine, #tbNotes, #tbMomo, #tbPhoneScreen {
     qproperty-iconSize: 24px 24px;
 }
 
@@ -36,7 +36,7 @@
     qproperty-icon: url(skin:smartisan.png)
 }
 
-#tbScreenCapture {
+#tbScreenCaopture {
     qproperty-icon: url(skin:capture-screen.png);
 }
 
@@ -46,6 +46,10 @@
 
 #tbNotes {
     qproperty-icon: url(skin:notes.png);
+}
+
+#tbPhoneScreen {
+    qproperty-icon: url(skin:phone-screen.png);
 }
 
 #tbMomo {

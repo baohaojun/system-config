@@ -49,7 +49,8 @@ SOURCES += main.cpp\
         filteringedit.cpp \
         dialoggetentry.cpp \
         filteringlistview.cpp \
-    fileopenfilter.cpp
+    fileopenfilter.cpp \
+    phonescreen.cpp
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
@@ -69,10 +70,12 @@ HEADERS  += t1wrenchmainwindow.h \
             filteringlistview.h \
             filteringmodel.h \
             dialoggetentry.h \ 
-    fileopenfilter.h
+    fileopenfilter.h \
+    phonescreen.h
 
 FORMS    += t1wrenchmainwindow.ui \
-            dialoggetentry.ui
+            dialoggetentry.ui \
+    phonescreen.ui
 
 RESOURCES += \
     T1Wrench.qrc
