@@ -140,6 +140,10 @@ if [[ "$target_dir" =~ /$ ]] && test ! -d "$target_dir"; then
 fi
 
 if test $# = 2; then
+    if test -L "$target_dir" -a -d "$target_dir" && yes-or-no-p -y "should rm dir-symlink $target_dir first?"; then
+        rm "$target_dir"
+    fi
+
     if test -d "$target_dir"; then
         { target_file=$(basename "$1"); }
     else
