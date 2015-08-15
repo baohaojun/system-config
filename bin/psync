@@ -93,7 +93,7 @@ shift
 
 ssh $host mkdir -p "$target_dir"
 if test -e psync-exclude.rc -a -z "$delete"; then
-    local_exclude='--exclude-from psync-exclude.rc'
+    local_exclude="--exclude-from $PWD/psync-exclude.rc"
 else
     local_exclude=
 fi
