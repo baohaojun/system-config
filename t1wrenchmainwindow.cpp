@@ -710,8 +710,7 @@ void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             mPhoneScreenDialog->setModal(false);
             mPhoneScreenDialog->show();
             int winId = mPhoneScreenDialog->winId();
-            QString
-            system(" the-true-adb shell screenrecord --output-format h264 - |mplayer - ")
+            system(QString().sprintf("set -x; the-true-adb shell screenrecord --raw - |mplayer --wid=%d -&", winId).toUtf8().constData());
         }
     } else {
 
