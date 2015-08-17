@@ -409,10 +409,6 @@ if which emacs >/dev/null 2>&1 && test ! -e ~/.config/system-config/emacs-config
     ~/system-config/bin/Linux/emacs-install-packages
 fi || true
 
-if test "$USER" = bhj && test ! -d ~/src/github/git-upload-patches; then
-    git clone home:repos/git-upload-patches.git ~/src/github/git-upload-patches
-fi >/dev/null 2>&1&
-
 if test -d ~/src/github/semi-offline.wikipedia; then
     (
         cd ~/src/github/semi-offline.wikipedia
