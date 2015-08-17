@@ -19,7 +19,7 @@
 #include "log.h"
 
 #include <QApplication>
-#include <QDateTime>
+#include <QTime>
 #include <QDir>
 #include <QTextStream>
 
@@ -65,19 +65,16 @@ SnoreLog::SnoreLog(SnoreDebugLevels lvl):
 
 SnoreLog::~SnoreLog()
 {
-    std::wstringstream sstream;
-    sstream << QDateTime::currentDateTime().toString(QLatin1String("hh:mm:ss")).toUtf8().constData()
-            << ": " << m_msg.toUtf8().constData();
-
-    std::wstring message = sstream.str();
+    QByteArray message = QTime::currentTime().toString(QLatin1String("hh:mm:ss: ")).toUtf8().constData();
+    message.append(m_msg.toUtf8().constData());
     if (logFile) {
-        *logFile << message.c_str() << "\n";
+        *logFile << message.constData() << "\n";
         logFile->flush();
     }
     if (m_lvl == SNORE_WARNING) {
-        std::wcerr << message << std::endl;
+        std::wcerr << message.constData() << std::endl;
     } else  if (debugLevel >= m_lvl) {
-        std::wcout << message << std::endl;
+        std::wcout << message.constData() << std::endl;
     }
 }
 
