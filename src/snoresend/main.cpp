@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     QCommandLineOption iconPath(QStringList() << QLatin1String("i") << QLatin1String("icon"), QLatin1String("Set the notification icon."), QLatin1String("icon"), QLatin1String(":/root/snore.png"));
     parser.addOption(iconPath);
 
-    QCommandLineOption priority(QStringList() << QLatin1String("p") << QLatin1String("priority"), QLatin1String("Set the notification's' priority."), QLatin1String("[-2, 2]"), QLatin1String("0"));
+    QCommandLineOption priority(QStringList() << QLatin1String("p") << QLatin1String("priority"), QLatin1String("Set the notification's priority."), QLatin1String("[-2, 2]"), QLatin1String("0"));
     parser.addOption(priority);
 
     QCommandLineOption markup(QStringList() << QLatin1String("markup"), QLatin1String("Enable markup support."), QLatin1String("[0,1]"), QLatin1String("0"));
