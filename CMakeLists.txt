@@ -20,8 +20,9 @@ include(GenerateExportHeader)
 include(ECMAddAppIcon)
 include(ECMGeneratePriFile)
 include(ECMInstallIcons)
-include(ECMPackageConfigHelpers)
+include(ECMMarkNonGuiExecutable)
 include(ECMOptionalAddSubdirectory)
+include(ECMPackageConfigHelpers)
 include(ECMSetupVersion)
 
 
