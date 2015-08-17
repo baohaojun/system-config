@@ -19,13 +19,15 @@
 
 #include "plugins/plugins.h"
 
+#include <QLabel>
 #include <QLineEdit>
 
 ToastySettings::ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent) :
     Snore::PluginSettingsWidget(plugin, parent),
     m_lineEdit(new QLineEdit)
 {
-    addRow(tr("Device ID:"), m_lineEdit);
+    addRow(tr("Device ID:"), m_lineEdit, tr("The device id which can be foun in the toasty app."));
+    addRow(QString(), new QLabel(tr("<a href=\"http://supertoasty.com/\">Supertoasty.com</a>"), this));
 }
 
 ToastySettings::~ToastySettings()

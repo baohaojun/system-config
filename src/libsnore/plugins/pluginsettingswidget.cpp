@@ -20,6 +20,7 @@
 #include "snore.h"
 
 #include <QCheckBox>
+#include <QLabel>
 
 using namespace Snore;
 
@@ -47,9 +48,14 @@ const QString PluginSettingsWidget::name() const
     return m_snorePlugin->name();
 }
 
-void PluginSettingsWidget::addRow(const QString &label, QWidget *widget)
+void PluginSettingsWidget::addRow(const QString &label, QWidget *widget, const QString &toolTip)
 {
-    m_layout->addRow(label, widget);
+    QLabel *lb = new QLabel(label, this);
+    m_layout->addRow(lb, widget);
+    if(!toolTip.isEmpty()){
+        widget->setToolTip(toolTip);
+        lb->setToolTip(toolTip);
+    }
 }
 
 void PluginSettingsWidget::loadSettings()

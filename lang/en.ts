@@ -46,26 +46,51 @@
 <context>
     <name>NotifyMyAndroidSettings</name>
     <message>
-        <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="28"/>
+        <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="29"/>
         <source>Api Key:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="29"/>
+        <source>The api key which can be found in your account page on &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="30"/>
+        <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>PushoverSettings</name>
     <message>
-        <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="30"/>
+        <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="31"/>
         <source>User Key:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="31"/>
+        <source>The user key which can be found on your account page on &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="32"/>
         <source>Sound:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="32"/>
+        <source>The pushover sound that it played when a notification is recieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="33"/>
         <source>Devices:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="33"/>
+        <source>The devices that hould recieve the notifications.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -90,6 +115,7 @@
     </message>
     <message>
         <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="42"/>
+        <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="34"/>
         <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -217,7 +243,7 @@
 <context>
     <name>Snore::PluginSettingsWidget</name>
     <message>
-        <location filename="../src/libsnore/plugins/pluginsettingswidget.cpp" line="35"/>
+        <location filename="../src/libsnore/plugins/pluginsettingswidget.cpp" line="36"/>
         <source>Enabled:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -225,22 +251,22 @@
 <context>
     <name>Snore::SnoreCore</name>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="252"/>
+        <location filename="../src/libsnore/snore.cpp" line="255"/>
         <source>This is </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="253"/>
+        <location filename="../src/libsnore/snore.cpp" line="256"/>
         <source>Everything is awesome!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="257"/>
+        <location filename="../src/libsnore/snore.cpp" line="260"/>
         <source>Hello There!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/libsnore/snore.cpp" line="258"/>
+        <location filename="../src/libsnore/snore.cpp" line="261"/>
         <source>Awesome Action!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -276,7 +302,7 @@
 <context>
     <name>SnoreSend</name>
     <message>
-        <location filename="../src/snoresend/main.cpp" line="140"/>
+        <location filename="../src/snoresend/main.cpp" line="138"/>
         <source>Bring to Front</source>
         <translation type="unfinished"></translation>
     </message>
@@ -302,6 +328,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="36"/>
+        <source>The sound played when a notifications is recieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="37"/>
         <source>Select a audio file</source>
         <translation type="unfinished"></translation>
@@ -315,8 +346,18 @@
 <context>
     <name>ToastySettings</name>
     <message>
-        <location filename="../src/plugins/secondary_backends/toasty/toastysettings.cpp" line="28"/>
+        <location filename="../src/plugins/secondary_backends/toasty/toastysettings.cpp" line="29"/>
         <source>Device ID:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/toasty/toastysettings.cpp" line="29"/>
+        <source>The device id which can be foun in the toasty app.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/secondary_backends/toasty/toastysettings.cpp" line="30"/>
+        <source>&lt;a href=&quot;http://supertoasty.com/&quot;&gt;Supertoasty.com&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

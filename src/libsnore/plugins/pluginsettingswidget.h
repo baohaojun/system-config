@@ -38,7 +38,7 @@ public:
 
     const QString name() const;
 
-    void addRow(const QString &label, QWidget *widget);
+    void addRow(const QString &label, QWidget *widget, const QString &toolTip = QString());
 
     void loadSettings();
     void saveSettings();

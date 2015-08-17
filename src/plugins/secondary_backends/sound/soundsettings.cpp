@@ -33,7 +33,7 @@ SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
     m_spinBoxVolume->setRange(0, 100);
     addRow(tr("Volume:"), m_spinBoxVolume);
 
-    addRow(tr("Audio file:"), m_lineEditFileName);
+    addRow(tr("Audio file:"), m_lineEditFileName, tr("The sound played when a notifications is recieved."));
     QPushButton *button = new QPushButton(tr("Select a audio file"));
     connect(button, &QPushButton::clicked, [this]() {
         QFileDialog dialog;
