@@ -52,12 +52,12 @@
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="29"/>
-        <source>The api key which can be found in your account page on &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</source>
+        <source>The api key which can be found in your account page on &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="30"/>
-        <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</source>
+        <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -90,7 +90,7 @@
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="33"/>
-        <source>The devices that hould recieve the notifications.</source>
+        <source>The devices that are to recieve the notifications.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

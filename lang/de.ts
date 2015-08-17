@@ -52,13 +52,21 @@
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="29"/>
-        <source>The api key which can be found in your account page on &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>The api key which can be found in your account page on &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</source>
+        <translation>Der Api Schlüssel welcher in auf deiner Account seite auf &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt; gefunden werden kann.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="30"/>
+        <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</source>
+        <translation>Falls du noch keinenn account hast registriere dich bitte auf &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <source>The api key which can be found in your account page on &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</source>
+        <translation type="vanished">Der Api Schlüssel welcher in auf deiner Account seite auf &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt; gefunden werden kann</translation>
+    </message>
+    <message>
         <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Falls du noch keinenn account hast registriere dich bitte auf &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -71,7 +79,7 @@
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="31"/>
         <source>The user key which can be found on your account page on &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Benutzerschlüssel den du auf deiner account seite auf &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt; finden kannst.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="32"/>
@@ -81,7 +89,7 @@
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="32"/>
         <source>The pushover sound that it played when a notification is recieved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der pushover Ton der beim erhalten einer mitteilung abgespielt wird.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="33"/>
@@ -90,8 +98,8 @@
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="33"/>
-        <source>The devices that hould recieve the notifications.</source>
-        <translation type="unfinished"></translation>
+        <source>The devices that are to recieve the notifications.</source>
+        <translation>Die geräte welche die mitteilung erhalten werden.</translation>
     </message>
     <message>
         <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="36"/>
@@ -330,7 +338,7 @@
     <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="36"/>
         <source>The sound played when a notifications is recieved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Ton der abgespielt wird wenn eine Mitteilung erhalten wird.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="37"/>
@@ -353,12 +361,12 @@
     <message>
         <location filename="../src/plugins/secondary_backends/toasty/toastysettings.cpp" line="29"/>
         <source>The device id which can be foun in the toasty app.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Geräte ID die in der toasty app gefunden werden kann.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/toasty/toastysettings.cpp" line="30"/>
         <source>&lt;a href=&quot;http://supertoasty.com/&quot;&gt;Supertoasty.com&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>

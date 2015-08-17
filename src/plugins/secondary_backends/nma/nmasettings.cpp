@@ -26,8 +26,8 @@ NotifyMyAndroidSettings::NotifyMyAndroidSettings(Snore::SnorePlugin *plugin, QWi
     Snore::PluginSettingsWidget(plugin, parent),
     m_lineEdit(new QLineEdit)
 {
-    addRow(tr("Api Key:"), m_lineEdit, tr("The api key which can be found in your account page on <a href=\"http://notifymyandroid.com/\">Notifymyandroid.com</a>"));
-    addRow(QString(), new QLabel(tr("If you don't have an accout yet please register at <a href=\"http://notifymyandroid.com/\">Notifymyandroid.com</a>"),this));
+    addRow(tr("Api Key:"), m_lineEdit, tr("The api key which can be found in your account page on <a href=\"http://notifymyandroid.com/\">Notifymyandroid.com</a>."));
+    addRow(QString(), new QLabel(tr("If you don't have an accout yet please register at <a href=\"http://notifymyandroid.com/\">Notifymyandroid.com</a>."),this));
 }
 
 NotifyMyAndroidSettings::~NotifyMyAndroidSettings()
