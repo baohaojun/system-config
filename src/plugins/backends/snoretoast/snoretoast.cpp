@@ -82,8 +82,8 @@ void SnoreToast::slotNotify(Notification notification)
 
 void SnoreToast::slotRegisterApplication(const Application &application)
 {
-    if (!application.constHints().contains("windows_app_id")) {
-
+    if (!application.constHints().contains("windows-app-id")) {
+        snoreDebug(SNORE_WARNING) << "No windows-app-id found in hints. Installing default shortcut with appID.";
         QProcess *p = createProcess(Notification());
         QStringList arguements;
         arguements << QLatin1String("-install")
@@ -109,9 +109,6 @@ void SnoreToast::slotCloseNotification(Notification notification)
 QString SnoreToast::appId(const Application &application)
 {
     QString appID = application.constHints().value("windows-app-id").toString();
-    if (appID.isEmpty()) {
-        appID = application.constHints().value("windows_app_id").toString();
-    }
     if (appID.isEmpty()) {
         appID = QString(qApp->organizationName() + QLatin1Char('.') + qApp->applicationName() + QLatin1String(".SnoreToast")).remove(QLatin1Char(' '));
     }
