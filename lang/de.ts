@@ -52,21 +52,13 @@
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="29"/>
-        <source>The api key which can be found in your account page on &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</source>
-        <translation>Der Api Schlüssel welcher in auf deiner Account seite auf &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt; gefunden werden kann.</translation>
+        <source>The api key which can be found in your account page at &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</source>
+        <translation>Der Api Schlüssel welcher auf deiner Account Seite unter &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt; gefunden werden kann.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="30"/>
         <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</source>
-        <translation>Falls du noch keinenn account hast registriere dich bitte auf &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</translation>
-    </message>
-    <message>
-        <source>The api key which can be found in your account page on &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</source>
-        <translation type="vanished">Der Api Schlüssel welcher in auf deiner Account seite auf &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt; gefunden werden kann</translation>
-    </message>
-    <message>
-        <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</source>
-        <translation type="vanished">Falls du noch keinenn account hast registriere dich bitte auf &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;</translation>
+        <translation>Falls du noch keinen Account hast, registriere dich bitte unter &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</translation>
     </message>
 </context>
 <context>
@@ -78,8 +70,8 @@
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="31"/>
-        <source>The user key which can be found on your account page on &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;.</source>
-        <translation>Der Benutzerschlüssel den du auf deiner account seite auf &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt; finden kannst.</translation>
+        <source>The user key which can be found on your account page at &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;.</source>
+        <translation>Der Benutzerschlüssel den du auf deiner Account Seite unter &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt; finden kannst.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="32"/>
@@ -89,7 +81,7 @@
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="32"/>
         <source>The pushover sound that it played when a notification is recieved.</source>
-        <translation>Der pushover Ton der beim erhalten einer mitteilung abgespielt wird.</translation>
+        <translation>Der pushover Klang der beim Erhalten einer Mitteilung abgespielt wird.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="33"/>
@@ -99,7 +91,7 @@
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="33"/>
         <source>The devices that are to recieve the notifications.</source>
-        <translation>Die geräte welche die mitteilung erhalten werden.</translation>
+        <translation>Die Geräte, die die Mitteilung erhalten werden.</translation>
     </message>
     <message>
         <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="36"/>
@@ -125,7 +117,7 @@
         <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="42"/>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="34"/>
         <source>If you don&apos;t have an accout yet please register at &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;</source>
-        <translation>Wenn Sie noch keinen account haben, registireren Sie sich bitte auf &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;</translation>
+        <translation>Wenn Sie noch keinen Account haben, registireren Sie sich bitte unter &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="88"/>
@@ -145,7 +137,7 @@
     <message>
         <location filename="../src/plugins/frontends/pushover_frontend/pushoversettings.cpp" line="97"/>
         <source>Logged out.</source>
-        <translation>Angemeldet.</translation>
+        <translation>Abgemeldet.</translation>
     </message>
 </context>
 <context>
@@ -237,7 +229,7 @@
     <message>
         <location filename="../src/plugins/frontends/snarlnetwork/snarlnetwork.cpp" line="37"/>
         <source>The port is already used by a different application.</source>
-        <translation>Der port wird bereits von einer anderen Anwendung verwendet.</translation>
+        <translation>Der Port wird bereits von einer anderen Anwendung verwendet.</translation>
     </message>
 </context>
 <context>
@@ -320,7 +312,7 @@
     <message>
         <location filename="../src/plugins/backends/snoretoast/snoretoast.cpp" line="20"/>
         <source> needs at least Windows 8 to run.</source>
-        <translation> benötigt mindestens Windows 8 um ausgeführt zu werden.</translation>
+        <translation> benötigt mindestens Windows 8, um ausgeführt zu werden.</translation>
     </message>
 </context>
 <context>
@@ -338,7 +330,7 @@
     <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="36"/>
         <source>The sound played when a notifications is recieved.</source>
-        <translation>Der Ton der abgespielt wird wenn eine Mitteilung erhalten wird.</translation>
+        <translation>Der Klang der abgespielt wird, wenn eine Mitteilung erhalten wird.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/sound/soundsettings.cpp" line="37"/>
@@ -361,7 +353,7 @@
     <message>
         <location filename="../src/plugins/secondary_backends/toasty/toastysettings.cpp" line="29"/>
         <source>The device id which can be foun in the toasty app.</source>
-        <translation>Die Geräte ID die in der toasty app gefunden werden kann.</translation>
+        <translation>Die Geräte ID, die in der Toasty App gefunden werden kann.</translation>
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/toasty/toastysettings.cpp" line="30"/>

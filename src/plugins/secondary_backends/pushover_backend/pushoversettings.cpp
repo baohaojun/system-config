@@ -28,7 +28,7 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
     m_soundLineEdit(new QLineEdit(this)),
     m_deviceLineEdit(new QLineEdit(this))
 {
-    addRow(tr("User Key:"), m_keyLineEdit, tr("The user key which can be found on your account page on <a href=\"https://pushover.net\">Pushover.net</a>."));
+    addRow(tr("User Key:"), m_keyLineEdit, tr("The user key which can be found on your account page at <a href=\"https://pushover.net\">Pushover.net</a>."));
     addRow(tr("Sound:"), m_soundLineEdit, tr("The pushover sound that it played when a notification is recieved."));
     addRow(tr("Devices:"), m_deviceLineEdit, tr("The devices that are to recieve the notifications."));
     addRow(QString(), new QLabel(tr("If you don't have an accout yet please register at <a href=\"https://pushover.net\">Pushover.net</a>"),this));

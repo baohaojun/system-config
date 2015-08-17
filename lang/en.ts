@@ -52,7 +52,7 @@
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/nma/nmasettings.cpp" line="29"/>
-        <source>The api key which can be found in your account page on &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</source>
+        <source>The api key which can be found in your account page at &lt;a href=&quot;http://notifymyandroid.com/&quot;&gt;Notifymyandroid.com&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -70,7 +70,7 @@
     </message>
     <message>
         <location filename="../src/plugins/secondary_backends/pushover_backend/pushoversettings.cpp" line="31"/>
-        <source>The user key which can be found on your account page on &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;.</source>
+        <source>The user key which can be found on your account page at &lt;a href=&quot;https://pushover.net&quot;&gt;Pushover.net&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
