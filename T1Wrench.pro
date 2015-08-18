@@ -35,6 +35,7 @@ unix {
 SOURCES += main.cpp\
 	t1wrenchmainwindow.cpp \
         adbstatethread.cpp \
+        adbphonescreen.cpp \
         bhj_help.cpp \
         luaexecutethread.cpp \
         qcellphonetextedit.cpp \
@@ -54,6 +55,7 @@ SOURCES += main.cpp\
 
 HEADERS  += t1wrenchmainwindow.h \
 	    adbstatethread.hpp \
+            adbphonescreen.hpp \
             luaexecutethread.hpp \
             qcellphonetextedit.h \
             screencapture.h \
@@ -69,7 +71,7 @@ HEADERS  += t1wrenchmainwindow.h \
             filteringedit.h \
             filteringlistview.h \
             filteringmodel.h \
-            dialoggetentry.h \ 
+            dialoggetentry.h \
     fileopenfilter.h \
     phonescreen.h
 

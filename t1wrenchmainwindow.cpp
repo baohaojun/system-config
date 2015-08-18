@@ -709,10 +709,25 @@ void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             mPhoneScreenDialog = QSharedPointer<PhoneScreen>(new PhoneScreen(this));
             mPhoneScreenDialog->setModal(false);
             mPhoneScreenDialog->show();
+            mPhoneScreenDialog->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
+            mPhoneScreenDialog->move(this->x() + this->size().width(), this->y());
             int winId = mPhoneScreenDialog->winId();
-            system(QString().sprintf("set -x; the-true-adb shell screenrecord --raw - |mplayer --wid=%d -&", winId).toUtf8().constData());
+            mPhoneScreenDialog->installEventFilter(mPhoneScreenDialog.data());
         }
     } else {
-
+        system("ps-killall mplayer.--wid");
+        mPhoneScreenDialog->close();
+        mPhoneScreenDialog.clear();
     }
 }
+
+
+
+
+
+
+
+
+
+
+

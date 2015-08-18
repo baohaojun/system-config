@@ -2,6 +2,8 @@
 #define PHONESCREEN_H
 
 #include <QDialog>
+#include "adbphonescreen.hpp"
+#include <QSharedPointer>
 
 namespace Ui {
 class PhoneScreen;
@@ -15,8 +17,16 @@ public:
     explicit PhoneScreen(QWidget *parent = 0);
     ~PhoneScreen();
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *ev);
+    void resizeEvent(QResizeEvent *);
+
+
+
+
 private:
     Ui::PhoneScreen *ui;
+    QSharedPointer<AdbPhoneScreenThread>
 };
 
 #endif // PHONESCREEN_H
