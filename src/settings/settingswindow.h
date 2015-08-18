@@ -33,7 +33,7 @@ class SettingsWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit SettingsWindow(QWidget *parent = 0);
+    explicit SettingsWindow(const QString &appName, QWidget *parent = 0);
     ~SettingsWindow();
 
     static QStringList knownApps();

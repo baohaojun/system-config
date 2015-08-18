@@ -69,11 +69,15 @@ void listSettings(SettingsType type, const QString &application)
     }
 }
 
+int showWindow(const QString &appName)
+{
+    SettingsWindow *window = new SettingsWindow(appName);
+    window->show();
+    return qApp->exec();
+}
+
 int main(int argc, char *argv[])
 {
-
-    SettingsWindow *window;
-
     QApplication app(argc, argv);
     app.setApplicationName(QLatin1String("SnoreSettings"));
     app.setOrganizationName(QLatin1String("SnoreNotify"));
@@ -113,10 +117,9 @@ int main(int argc, char *argv[])
         listApps();
     } else if (parser.isSet(listSettingsCommand)) {
         listSettings(type, appName);
-    } else if (parser.optionNames().empty() && parser.positionalArguments().empty()) {
-        window = new SettingsWindow();
-        window->show();
-        return app.exec();
+    } else if ((parser.optionNames().empty() || (parser.optionNames().size() == 1 && parser.isSet(appNameCommand)))
+               && parser.positionalArguments().empty()) {
+        return showWindow(appName);
     } else {
         QStringList posArgs = parser.positionalArguments();
         if (posArgs.size() != 2) {

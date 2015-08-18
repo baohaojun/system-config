@@ -26,18 +26,34 @@
 #include <QApplication>
 #include <QDialogButtonBox>
 
+#include <iostream>
+
 using namespace Snore;
 
-SettingsWindow::SettingsWindow(QWidget *parent) :
+SettingsWindow::SettingsWindow(const QString &appName, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SettingsWindow)
 {
     ui->setupUi(this);
     ui->widget->show();
 
-    QStringList list = knownApps();
-    list.removeAll(qApp->applicationName());
-    ui->comboBox->addItems(list);
+    if (appName.isEmpty()) {
+        QStringList list = knownApps();
+        list.removeAll(qApp->applicationName());
+        ui->comboBox->addItems(list);
+    } else {
+        if (!knownApps().contains(appName)) {
+
+            std::wcerr << "Error: " << appName.toUtf8().constData() << " is not known to Snorenotify" << std::endl;
+            exit(1);
+        }
+        ui->comboBox->deleteLater();
+        ui->label->deleteLater();
+        SnoreCorePrivate::instance()->setLocalSttingsPrefix(appName);
+        setWindowTitle(appName + tr(" Settings"));
+        ui->widget->initTabs();
+        ui->widget->setVisible(true);
+    }
 }
 
 SettingsWindow::~SettingsWindow()
