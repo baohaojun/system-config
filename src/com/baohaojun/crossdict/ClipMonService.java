@@ -13,6 +13,11 @@ public class ClipMonService extends Service {
     ClipboardManager mClipboard;
     ClipboardManager.OnPrimaryClipChangedListener mClipListner;
     boolean mClipWatched = false;
+
+    static boolean mPowerConnected = false;
+    static void setPowerConnected(boolean v) {
+        mPowerConnected = v;
+    }
     @Override
     public void onCreate() {
         startForeground(1, new Notification());
@@ -30,7 +35,7 @@ public class ClipMonService extends Service {
                         ClipData clip = mClipboard.getPrimaryClip();
                         if (clip != null) {
                             ClipData.Item item = clip.getItemAt(0);
-                            if (item.getText() != null) {
+                            if (item.getText() != null && ! mPowerConnected) {
                                 startActivity(
                                     new Intent(ClipMonService.this, CrossDictActivity.class)
                                     .putExtra("android.intent.extra.TEXT", item.getText().toString())
