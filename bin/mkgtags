@@ -191,10 +191,9 @@ function mkbeagrepidx() {
     if test "$SOURCECODETAGSMODE" != true; then
         cat "$outDir"/$subdir-build-log |
             grep "No filter for" |
-            pn 5 | cut -b 6- |
-            xargs -d \\n bash -c '
+            pn 5 | cut -b 6- | tee /dev/stderr | (
             rebuild=false
-            for x in "$@"; do
+            while read x; do
                 if grep . -I -q "$x"; then
                     attr -s mime_type -V text/plain "$x" >/dev/null 2>&1
                     touch "$x" >/dev/null 2>&1
@@ -204,7 +203,7 @@ function mkbeagrepidx() {
             if test "$rebuild" = true; then
                 echo true
             fi
-            '|grep . -q && (echo rebuild some text files; do_build)
+        ) | grep . -q && (echo rebuild some text files; do_build)
     fi
 }
 
