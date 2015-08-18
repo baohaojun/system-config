@@ -52,7 +52,7 @@ void PluginSettingsWidget::addRow(const QString &label, QWidget *widget, const Q
 {
     QLabel *lb = new QLabel(label, this);
     m_layout->addRow(lb, widget);
-    if(!toolTip.isEmpty()){
+    if (!toolTip.isEmpty()) {
         widget->setToolTip(toolTip);
         lb->setToolTip(toolTip);
     }

@@ -70,7 +70,6 @@ public:
          */
         PLUGIN              = 1 << 3,
 
-
         /**
          * Flag for loading all plugins.
          */
