@@ -6,6 +6,9 @@ use String::ShellQuote;
 use String::Approx 'adistr';
 use IPC::Open2;
 
+$ENV{'LANG'} = 'C';
+$ENV{'LC_ALL'} = 'C'; # fix grep too slow when ignore_case and gbk file recognized as binary
+
 delete $ENV{GREP_OPTIONS};
 
 my $debug;
