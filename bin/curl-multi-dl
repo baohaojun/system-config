@@ -1,12 +1,23 @@
 #!/bin/bash
-TEMP=$(getopt -o s: --long size: -n $(basename $0) -- "$@")
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt s:size ccontinue-transfer
+## end code-generator
+## start generated code
+TEMP=$(getopt -o s:c --long "size:,continue-transfer"  -n $(basename $0) -- "$@")
 size=
+continue_transfer=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -s|--size)
             size=$2
             shift 2
+            ;;
+        -c|--continue-transfer)
+            continue_transfer=true
+            shift
             ;;
         --)
             shift
@@ -18,8 +29,11 @@ while true; do
     esac
 done
 
+## end generated code
+
 if test ! "$size"; then
     size=$(curl -L -I "$1" 2>&1 | grep Content-Length: | pn 2 |tr -d '\r')
+    whole_size=$size
     size=$(( (size + 10) / 10 ))
 fi
 
@@ -29,7 +43,19 @@ size=$(pretty $size | pn 2)
     for x in $(seq 1 10); do
         s=$((size * (x - 1)))
         e=$((size * x - 1))
-        curl $1 -L -r $s-$e -o $(basename $1).$x&
+        if test $((e + 1)) -gt $whole_size; then
+            e=$((whole_size - 1))
+        fi
+        if test "$continue_transfer" = true; then
+            touch $(basename $1).$x
+            final_size=$(( e + 1 - s ))
+            current_size=$(stat -c %s $(basename $1).$x)
+            if test "$final_size" != "$current_size"; then
+                curl $1 -L -r $((s + current_size))-$e -o - >> $(basename $1).$x&
+            fi
+        else
+            curl $1 -L -r $s-$e -o $(basename $1).$x&
+        fi
     done
 ) 9>~/.cache/system-config/logs/$(basename $0).lock.$$
 

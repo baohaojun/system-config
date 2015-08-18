@@ -52,6 +52,7 @@ if test $ORDERED != false; then
     cmdfile=~/.cache/system-config/bhj/select-output-line/$md5.cmd
     histfile=~/.cache/system-config/bhj/select-output-line/$md5.hist
     (
+        touch $histfile.$$
         mv $histfile $histfile.$$ &&
             cp $histfile.$$ $histfile.$$.2 &&
             mv $histfile.$$.2 $histfile

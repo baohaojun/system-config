@@ -44,4 +44,5 @@ if ! grep '^iface wlan0 inet manual' /etc/network/interfaces; then
     sudo bash -c "echo 'iface wlan0 inet manual' >> /etc/network/interfaces";
     sudo /etc/init.d/network-manager restart
 fi
+sudo ifconfig wlan0 $wlan0_ip
 sudo hostapd /etc/hostapd/hostapd.conf

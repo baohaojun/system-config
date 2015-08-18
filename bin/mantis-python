@@ -1,8 +1,11 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+import os
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+import pipes
 import logging
 logging.basicConfig(level = logging.FATAL)
 from suds.client import Client
@@ -168,30 +171,50 @@ def get_user(arg):
 parser_get_user.set_defaults(command=get_user)
 
 parser_add_issue = subparsers.add_parser("add-issue", help = "add issue")
-parser_add_issue.add_argument("--project")
-parser_add_issue.add_argument("--summary")
-parser_add_issue.add_argument("--description")
-parser_add_issue.add_argument("--category")
+parser_add_issue.add_argument("--project", default = '')
+parser_add_issue.add_argument("--summary", default = '')
+parser_add_issue.add_argument("--description", default = '')
+parser_add_issue.add_argument("--category", default = '')
 parser_add_issue.add_argument("--handler", default = -1)
 parser_add_issue.add_argument("--due-date", default = str((datetime.now() + timedelta(15)).date()))
 parser_add_issue.add_argument("--custom-fields", action='append')
 
+def select_values(purpose, vals):
+    os.system("mkdir -p ~/.cache/system-config/mantis-python")
+    vfile = open(os.path.expanduser("~/.cache/system-config/mantis-python/" + purpose), "w")
+    for v in vals:
+        vfile.write(v + "\n")
+    vfile.close()
+    purpose = pipes.quote(purpose)
+    ans = os.popen("select-output-line -o -p {0}: sort ~/.cache/system-config/mantis-python/{0}".format(purpose, purpose)).read()
+    return ans
+
 def add_issue(arg):
     mantis = Client(arg.wsdl).service
+    users = mantis.mc_project_get_users(
+        arg.username,
+        arg.password,
+        47,
+        10
+    )
     if arg.handler == -1:
-        login = mantis.mc_login(arg.username, arg.password)
-        arg.handler = login.account_data.id
-    else:
-        users = mantis.mc_project_get_users(
+        arg.handler = select_values("issue-handler", [x.name for x in users])
+
+    for n in range(0, len(users)):
+        if arg.handler == users[n].name:
+            arg.handler = users[n].id
+            break
+
+    if arg.project == '':
+        projects = mantis.mc_projects_get_user_accessible(
             arg.username,
-            arg.password,
-            47,
-            10
+            arg.password
         )
-        for n in range(0, len(users)):
-            if arg.handler == users[n].name:
-                arg.handler = users[n].id
-                break
+        arg.project = select_values("issue-project", [x.name for x in projects])
+        arg.project = [x.id for x in projects if x.name == arg.project][0]
+        print "project id is", arg.project
+
+
 
     custom_fields =  mantis.mc_project_get_custom_fields(
         arg.username,
@@ -201,20 +224,57 @@ def add_issue(arg):
     provided_cf = []
     for cf in custom_fields:
         if cf.require_report:
-            if not arg.custom_fields:
-                raise Exception("Custom Field {0} is required".format(cf.field.name))
             ac_found = False
-            for ac in arg.custom_fields:
-                if cf.field.name == ac.split('=')[0]:
-                    ac_found = True
+            if arg.custom_fields:
+                for ac in arg.custom_fields:
+                    if cf.field.name == ac.split('=')[0]:
+                        ac_found = True
+                        provided_cf.append({
+                            'field' : {
+                                'id' : cf.field.id
+                            },
+                            'value' : ac.split('=')[1],
+                        })
+            if not ac_found:
+                if cf.field.name == '硬件版本':
                     provided_cf.append({
                         'field' : {
                             'id' : cf.field.id
                         },
-                        'value' : ac.split('=')[1],
+                        'value' : '最新'
                     })
-            if not ac_found:
-                raise Exception("Custom Field {0} is required".format(cf.field.name))
+                elif cf.field.name == '软件版本':
+                    provided_cf.append({
+                        'field' : {
+                            'id' : cf.field.id
+                        },
+                        'value' : os.popen("basename $(get-vmlinux |tail -n 1)|tr -d '\\n'").read()
+                    })
+                else:
+                    print "woring on ", cf.field.name
+                    if not cf.possible_values:
+                        cf.possible_values = 'no|possible|values'
+                    val = select_values("custom-field-" + cf.field.name, cf.possible_values.split('|'))
+
+                    provided_cf.append({
+                        'field' : {
+                            'id' : cf.field.id
+                        },
+                        'value' : val
+                    })
+    if arg.category == '':
+        categories = mantis.mc_project_get_categories(
+            arg.username,
+            arg.password,
+            arg.project
+        )
+        arg.category = select_values("category", categories)
+
+    if arg.summary == '':
+        arg.summary = os.popen("get-stdin -p '请输入issue summary'").read()
+
+    if arg.description == '':
+        arg.description = os.popen("get-stdin -p '请输入issue description'").read()
 
     print mantis.mc_issue_add(
         arg.username,

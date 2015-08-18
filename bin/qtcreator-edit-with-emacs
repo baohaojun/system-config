@@ -1,2 +1,6 @@
 #!/bin/bash
-sawfish-events-delayed .1 "C-S-s" "M-t" "e" "Up" "Up" "RET"
+if test "$(sawfish-top-window)" = QtCreator; then
+    exec sawfish-events-delayed .1 "C-S-s" "M-t" "e" "Up" "Up" "RET"
+fi
+
+exec find-or-exec QtCreator

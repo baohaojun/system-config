@@ -90,15 +90,17 @@ function fix-adbd-and-debug() {
         echo no need to replace the adbd
     else
         echo $BOOT_IMAGE_PATH need to replace adbd
-        if test -e ~/src/github/private-config/etc/adbd; then
+        if test -e ~/src/github/smartcm/etc/adbd; then
             file $tdir/sbin/adbd
             if file $tdir/sbin/adbd | grep 64-bit; then
-                cp ~/src/github/private-config/etc/adbd.64 $tdir/sbin/adbd -av
+                cp ~/src/github/smartcm/etc/adbd.64 $tdir/sbin/adbd -av
             else
-                cp ~/src/github/private-config/etc/adbd $tdir/sbin/adbd -av
+                cp ~/src/github/smartcm/etc/adbd $tdir/sbin/adbd -av
             fi
         elif test -e $mydir/root-adbd; then
             cp $mydir/root-adbd $tdir/sbin/adbd -av
+        else
+            die "can't find adbd to copy"
         fi
     fi
     perl -npe 's/ro.debuggable/ro.DEBUGGABLE/' -i $tdir/sbin/adbd

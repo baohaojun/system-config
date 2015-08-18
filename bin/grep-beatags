@@ -60,6 +60,12 @@ GetOptions(
 
 $saved_type_re = $type_re;
 
+my $line_info;
+if ($lookup_needle =~ /:\d+$/) {
+    ($line_info = $lookup_needle) =~ s/.*:(\d+)$/$1/;
+    $lookup_needle =~ s/:\d+$//;
+
+}
 if ($wild_card) {
     $lookup_needle = ".*";
 }
@@ -316,6 +322,9 @@ sub do_cscope($$$) {
             }
         }
         $str =~ s,:\t,: <$def> : ,;
+        if ($line == 1 and $line_info) {
+            $line = $line_info;
+        }
         print "$use_full_path$file:$line: $str\n";
         $got_results = 1;
         if (keys %matches < 5 and not $silent and not is_binary($file) and -e "$code_dir/$file") { # this will be nice!
