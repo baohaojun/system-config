@@ -25,7 +25,11 @@ function abc() {
                 ;;
             mm)
                 shift;
-                abc-mm "$@"
+                abc-mm "$@" | tee ~/tmp/abc-x.mm
+                echo
+                if yes-or-no-p -y "push the above files"; then
+                    cat ~/tmp/abc-x.mm | perl -ne 'print if m/<<XXX/../^XXX/'|bash
+                fi
                 ;;
             grep)
                 shift
