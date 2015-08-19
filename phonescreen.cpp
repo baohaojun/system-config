@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QTime>
 #include "adbphonescreen.hpp"
+#include <QPixmap>
 
 
 PhoneScreen::PhoneScreen(QWidget *parent) :
@@ -11,10 +12,22 @@ PhoneScreen::PhoneScreen(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    mPhoneScreenThread = QSharedPointer<AdbPhoneScreenThread>(new AdbPhoneScreenThread(this));
+    connect(mPhoneScreenThread.data(), SIGNAL(phoneScreenUpdate()), this, SLOT(phoneScreenUpdate()));
+    mPhoneScreenThread->start();
+}
+
+void PhoneScreen::phoneScreenUpdate()
+{
+    QImage screen("t1wrench-screen.png");
+    ui->phoneScreen->setPixmap(QPixmap::fromImage(screen.scaled(this->width(), this->height())));
 }
 
 PhoneScreen::~PhoneScreen()
 {
+    mPhoneScreenThread->stopIt();
+    mPhoneScreenThread->wait();
+    mPhoneScreenThread.clear();
     delete ui;
 }
 
@@ -38,6 +51,10 @@ bool PhoneScreen::eventFilter(QObject *obj, QEvent *ev)
         } else {
             system(QString().sprintf("set -x; the-true-adb shell input tap %d %d", x, y).toUtf8().constData());
         }
+    } else if (ev->type() == QEvent::Resize) {
+        QResizeEvent *rev = (QResizeEvent *) ev;
+        ui->phoneScreen->resize(rev->size());
+        ui->phoneScreen->move(0, 0);
     }
     fprintf(stderr, "ev is %d", ev->type());
 }

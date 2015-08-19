@@ -1,5 +1,5 @@
-#ifndef _ADBSTATETHREAD_H_
-#define _ADBSTATETHREAD_H_
+#ifndef _ADBPHONESCREEN_H_
+#define _ADBPHONESCREEN_H_
 
 #include <QtCore/QThread>
 class AdbPhoneScreenThread : public QThread
@@ -13,6 +13,10 @@ signals:
     void phoneScreenUpdate();
 protected:
     void run();
+public:
+    void stopIt();
+private:
+    bool shouldStop;
 };
 
-#endif /* _ADBSTATETHREAD_H_ */
+#endif /* _ADBPHONESCREEN_H_ */

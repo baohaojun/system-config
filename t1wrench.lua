@@ -1288,7 +1288,7 @@ local function picture_to_weibo_chat(pics, ...)
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
-         local events = post_button .. " sleep .1 adb-tap 160 1445 sleep .1 adb-tap 645 135 sleep .2 adb-tap 369 679 sleep 2"
+         local events = post_button .. " sleep .2 adb-tap 160 1445 sleep 1.5 adb-tap 645 135 sleep .2 adb-tap 369 679 sleep 2"
          adb_event(events)
       end
       local pic_share_buttons = {
@@ -1299,7 +1299,7 @@ local function picture_to_weibo_chat(pics, ...)
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   adb_event("adb-tap 922 138 key back") -- press the send button and reset the chat keyboard.
+   adb_event("adb-tap 922 138 sleep .5 key back") -- press the send button and reset the chat keyboard.
 end
 
 local function t1_picture(...)
