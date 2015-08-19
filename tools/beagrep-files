@@ -6,6 +6,9 @@ function die() {
     exit -1
 }
 
+LANG=en_US.UTF-8
+LC_ALL=en_US.UTF-8
+
 md5sum=$(
     for x in "$@"; do
         echo "$x"
