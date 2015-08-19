@@ -1221,7 +1221,7 @@ local function picture_to_qq_chat(pics, ...)
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
-         local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1"
+         local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1 adb-tap 350 1672 sleep .1"
          adb_event(events)
          while adb_focused_window() ~= "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity" do
             adb_event{118, 152, "sleep", .5}
