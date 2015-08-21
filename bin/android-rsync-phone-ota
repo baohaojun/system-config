@@ -2,6 +2,12 @@
 
 set -e
 
+if test "$BEING_TIMED" != true; then
+    export BEING_TIMED=true;
+    time $0 "$@"
+    exit
+fi
+
 function die() {
     echo Error: "$@"
     exit -1
