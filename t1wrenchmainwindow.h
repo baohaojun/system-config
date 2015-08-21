@@ -116,6 +116,9 @@ private:
     QString get_text();
     void getclip_android();
     QRadioButton* mLastRadioButton;
+    virtual bool eventFilter(QObject *obj, QEvent *ev);
+    bool handleEmacsKeys(QWidget *w, QKeyEvent *e);
+
 signals:
     void activateWindow();
 };

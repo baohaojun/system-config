@@ -56,7 +56,7 @@ bool PhoneScreen::eventFilter(QObject *obj, QEvent *ev)
         ui->phoneScreen->resize(rev->size());
         ui->phoneScreen->move(0, 0);
     }
-    fprintf(stderr, "ev is %d", ev->type());
+    return QDialog::eventFilter(obj, ev);
 }
 
 void PhoneScreen::resizeEvent(QResizeEvent *)

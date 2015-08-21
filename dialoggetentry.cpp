@@ -25,6 +25,8 @@ DialogGetEntry::DialogGetEntry(FilteringModel* model, const QString& hint, QWidg
 
     ui->filteringListView->selectionModel()->select(mEntryModel->index(0, 0), QItemSelectionModel::Select);
     updateEntryHistory = true;
+
+    ui->entryFilter->installEventFilter(parent);
 }
 
 DialogGetEntry::~DialogGetEntry()
