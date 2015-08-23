@@ -15,8 +15,23 @@ protected:
     void run();
 public:
     void stopIt();
+    void continueLoop();
+    void pauseLoop();
+    void setAppState(Qt::ApplicationState appState);
 private:
     bool shouldStop;
+    bool paused;
+    Qt::ApplicationState mAppState;
 };
 
 #endif /* _ADBPHONESCREEN_H_ */
+
+
+
+
+
+
+
+
+
+

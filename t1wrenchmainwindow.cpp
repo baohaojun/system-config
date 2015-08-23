@@ -714,16 +714,14 @@ void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
         if (mPhoneScreenDialog.isNull()) {
             mPhoneScreenDialog = QSharedPointer<PhoneScreen>(new PhoneScreen(this));
             mPhoneScreenDialog->setModal(false);
-            mPhoneScreenDialog->show();
             mPhoneScreenDialog->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
             mPhoneScreenDialog->move(this->x() + this->size().width(), this->y());
             int winId = mPhoneScreenDialog->winId();
             mPhoneScreenDialog->installEventFilter(mPhoneScreenDialog.data());
         }
+        mPhoneScreenDialog->show();
     } else {
-        system("ps-killall mplayer.--wid");
-        mPhoneScreenDialog->close();
-        mPhoneScreenDialog.clear();
+        mPhoneScreenDialog->hide();
     }
 }
 

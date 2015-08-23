@@ -26,8 +26,6 @@
 #include <QFileOpenEvent>
 #include "fileopenfilter.h"
 
-
-
 using namespace std;
 
 #ifdef Q_OS_WIN32

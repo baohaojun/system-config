@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "adbphonescreen.hpp"
 #include <QSharedPointer>
+#include <QWindow>
 
 namespace Ui {
 class PhoneScreen;
@@ -27,6 +28,8 @@ protected:
 private:
     Ui::PhoneScreen *ui;
     QSharedPointer<AdbPhoneScreenThread> mPhoneScreenThread;
+private slots:
+    void on_applicationStateChanged(Qt::ApplicationState);
 };
 
 #endif // PHONESCREEN_H
