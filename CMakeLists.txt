@@ -16,6 +16,7 @@ include(KDECMakeSettings)
 include(KDEFrameworkCompilerSettings)
 
 include(GenerateExportHeader)
+include (CMakeDependentOption)
 
 include(ECMAddAppIcon)
 include(ECMGeneratePriFile)
