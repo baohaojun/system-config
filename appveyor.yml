@@ -1,5 +1,5 @@
 version: '{build}'
-    
+
 build_script:
     - ps: |
         if ( !(Test-Path "$env:APPVEYOR_BUILD_FOLDER\work\appveyorHelp.psm1"))
@@ -11,8 +11,8 @@ build_script:
 
         Import-Module $env:APPVEYOR_BUILD_FOLDER\work\appveyorHelp.psm1
 
-        Init @("ninja", "png2ico") @{"git://anongit.kde.org/extra-cmake-modules.git" = @{"branch" = "master"};
-                                     "https://github.com/Snorenotify/SnoreGrowl.git" = @{"branch" = "v0.4.0"}}
+        Init @("ninja", "png2ico") ([ordered]@{ "git://anongit.kde.org/extra-cmake-modules.git" = @{"branch" = "master"};
+                                                "https://github.com/Snorenotify/SnoreGrowl.git" = @{"branch" = "v0.4.0"}})
 
         mkdir -Force $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
         cd $env:APPVEYOR_BUILD_FOLDER\work\build\snorenotify
@@ -30,7 +30,7 @@ cache:
     - C:\ProgramData\chocolatey\lib -> appveyor.yml
     - work\appveyorHelp.psm1 -> appveyor.yml
 
-environment:        
+environment:
     QT_VER: 5.5
     
     matrix:
