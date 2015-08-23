@@ -2,15 +2,9 @@ find_package(Qt5DBus QUIET)
 set_package_properties(Qt5DBus  PROPERTIES
                                 PURPOSE "Support for the Freedesktop Notification Frontend."
                                 TYPE OPTIONAL)
-
-option(INSTALL_FREEDESKTOP_NOTIFICATION_SERVICE "Install snorenotify as a dbus service for recieving Notifications." OFF)
-if(WIN32 OR APPLE)
-    set(INSTALL_FREEDESKTOP_NOTIFICATION_SERVICE ON)
-endif()
-add_feature_info(INSTALL_FREEDESKTOP_NOTIFICATION_SERVICE INSTALL_FREEDESKTOP_NOTIFICATION_SERVICE "Install snorenotify as a dbus service for recieving Notifications.")
-
 if(Qt5DBus_FOUND)
     message(STATUS "Adding freedesktop notification frontend")
+
 
     set( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC
             freedesktopnotificationfrontend.cpp
@@ -24,16 +18,24 @@ if(Qt5DBus_FOUND)
 
 
     #install the dbus interface
-    if(INSTALL_FREEDESKTOP_NOTIFICATION_SERVICE)
-        if(WIN32)
-            set(SNORE_LOCATION ../bin/snorenotify)
-        else()
-            set(SNORE_LOCATION ${CMAKE_INSTALL_PREFIX}/bin/snorenotify)
+    if(BUILD_daemon)
+        option(INSTALL_freedesktop_notification_service "Install snorenotify as a dbus service for recieving Notifications." OFF)
+        if(WIN32 OR APPLE)
+            set(INSTALL_freedesktop_notification_service ON)
         endif()
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/org.freedesktop.Notifications.service.cmake ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service)
+        add_feature_info(INSTALL_freedesktop_notification_service INSTALL_freedesktop_notification_service "Install snorenotify as a dbus service for recieving Notifications.")
 
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
-                              DESTINATION share/dbus-1/services/)
+        if(INSTALL_freedesktop_notification_service)
+            if(WIN32)
+                set(SNORE_LOCATION ../bin/snorenotify)
+            else()
+                set(SNORE_LOCATION ${CMAKE_INSTALL_PREFIX}/bin/snorenotify)
+            endif()
+            configure_file(${CMAKE_CURRENT_SOURCE_DIR}/org.freedesktop.Notifications.service.cmake ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service)
+
+            install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
+                                  DESTINATION share/dbus-1/services/)
+        endif()
     endif()
 
     install(TARGETS libsnore_frontend_freedesktop ${SNORE_PLUGIN_INSTALL_PATH})
