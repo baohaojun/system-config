@@ -252,18 +252,44 @@ function adb() {
 
     if test "$1" = logcat -a "$2" = -c; then
         the-true-adb logcat -c
-        exec the-true-adb logcat
+        shift 2
+        exec my-adb logcat "$@"
     fi
 
     if test "$1" = logcat; then
+        ## start code-generator "^\\s *#\\s *"
+        # generate-getopt v:format
+        ## end code-generator
+        ## start generated code
+        TEMP=$(getopt -o v: --long "format:"  -n $(basename $0) -- "$@")
+        format=
+        eval set -- "$TEMP"
+        while true; do
+            case "$1" in
+                -v|--format)
+                    format=$2
+                    shift 2
+                    ;;
+                --)
+                    shift
+                    break
+                    ;;
+                *)
+                    die "internal error"
+                    ;;
+            esac
+        done
+
+        ## end generated code
+
         if test "${2:0:1}" = :; then
             x=$2
             shift 2
-            exec the-true-adb logcat "$@" *:s $(echo -n ${x:1} | perl -npe 's/,|$/:v /g')
+            exec the-true-adb logcat ${format:+-v $format} "$@" *:s $(echo -n ${x:1} | perl -npe 's/,|$/:v /g')
         elif test "${2:0:2}" = s:; then
             x=$2
             shift 2
-            exec the-true-adb logcat "$@" *:v $(echo -n ${x:2} | perl -npe 's/,|$/:s /g')
+            exec the-true-adb logcat ${format:+-v $format} "$@" *:v $(echo -n ${x:2} | perl -npe 's/,|$/:s /g')
         fi
 
     fi

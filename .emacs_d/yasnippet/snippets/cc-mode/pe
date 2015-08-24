@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: pe
+# key: pe
+# --
+fprintf(stderr, "%s:%d: $1\n", __FILE__, __LINE__${2:,});$0
