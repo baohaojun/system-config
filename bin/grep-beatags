@@ -371,7 +371,7 @@ for (@gtags_fallback_dir) {
   my $code_dir = $dir;
   $code_dir =~ s,.*?.cache/system-config/for-code-reading,,;
   if (@java_fallback_dir) {
-      $use_full_path = "$code_dir/";
+      $use_full_path = "";
   }
   unless (-e $dir and -e $code_dir) {
       debug "file not found: $dir or $code_dir";
