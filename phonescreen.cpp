@@ -19,6 +19,11 @@ PhoneScreen::PhoneScreen(QWidget *parent) :
     connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)), this, SLOT(on_applicationStateChanged(Qt::ApplicationState)));
 }
 
+static void qSystem(QString str)
+{
+    system(str.toUtf8().constData());
+}
+
 void PhoneScreen::on_applicationStateChanged(Qt::ApplicationState appState)
 {
     mPhoneScreenThread->setAppState(appState);
@@ -63,8 +68,42 @@ bool PhoneScreen::eventFilter(QObject *obj, QEvent *ev)
         QResizeEvent *rev = (QResizeEvent *) ev;
         ui->phoneScreen->resize(rev->size());
         ui->phoneScreen->move(0, 0);
-    } else if (ev->type() == QEvent::Expose) {
-        QExposeEvent *eev = (QExposeEvent *) ev;
+    } else if (ev->type() == QEvent::KeyPress) {
+        QKeyEvent *kev = (QKeyEvent *)ev;
+        int key = kev->key();
+        Qt::KeyboardModifiers m = kev->modifiers();
+
+        if (m == 0) {
+            if (key == Qt::Key_Home ) {
+                system("the-true-adb shell input keyevent HOME");
+                return true;
+            } else if (key == Qt::Key_Escape) {
+                system("the-true-adb shell input keyevent BACK");
+                return true;
+            } else if (key == Qt::Key_Pause) {
+                system("the-true-adb shell input keyevent POWER");
+                return true;
+            } else if (key == Qt::Key_Backspace) {
+                system("the-true-adb shell input keyevent DEL");
+            }
+        }
+
+        if (!kev->text().isEmpty()) {
+            qDebug() << "key is" << kev->text();
+            if (kev->text() == "'") {
+                system("the-true-adb shell input text \"'\"");
+            } else if (kev->text() == "?") {
+                system("the-true-adb shell input text '\\?'");
+            } else {
+                system(QString().sprintf("the-true-adb shell input text \"'%s'\"", kev->text().toUtf8().constData()).toUtf8().constData());
+            }
+            return true;
+        }
+    } else if (ev->type() == QEvent::Wheel) {
+        QWheelEvent *wev = (QWheelEvent *)ev;
+        int y = wev->angleDelta().y();
+        int x = wev->angleDelta().x();
+        qSystem(QString().sprintf("the-true-adb shell input touchscreen swipe %d %d %d %d 50", wev->x(), wev->y(), wev->x() + x, wev->y() + y));
     }
     return QDialog::eventFilter(obj, ev);
 }
