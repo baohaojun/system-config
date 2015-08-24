@@ -1,10 +1,14 @@
+[![Build Status Travis](https://travis-ci.org/Snorenotify/Snorenotify.svg?branch=master)](https://travis-ci.org/Snorenotify/Snorenotify)
+[![Build status Appveyor](https://ci.appveyor.com/api/projects/status/9cjt34o5ujikxi13/branch/master?svg=true)](https://ci.appveyor.com/project/TheOneRing/snorenotify/branch/master)
+
+
 Snorenotify
 ===========
 
 Snorenotify is a multi platform Qt notification framework. 
 Using a plugin system it is possible to create notifications with many different notification systems on Windows, Unix and Mac.
 
-For a detailed description for some of our backends see our [Wiki](https://github.com/Snorenotify/Snorenotify/wiki).
+For a detailed description for some of our backends see our [Wiki](https://techbase.kde.org/Projects/Snorenotify).
 
 ## Support
 If you need support on how to use Snorenotify you can reach out to the developers using the [mailing list](https://mail.kde.org/mailman/listinfo/snorenotify) or IRC joining [#Snorenotify](irc://irc.freenode.net/snorenotify) on freenode or using the [Web chat](http://webchat.freenode.net/?channels=snorenotify) .
@@ -12,7 +16,7 @@ If you need support on how to use Snorenotify you can reach out to the developer
 
 ## Supported Backends
 
-- [Windows Toast notifications](https://github.com/Snorenotify/Snorenotify/wiki/Windows-Toast-Notification) 
+- [Windows Toast notifications](https://techbase.kde.org/Projects/Snorenotify/Windows-Toast-Notification) 
 
 - OSX Notification Center
 
@@ -25,7 +29,7 @@ If you need support on how to use Snorenotify you can reach out to the developer
 - [Snarl](http://snarl.fullphat.net/)
 
 
-- [Integrated notifications](https://github.com/Snorenotify/Snorenotify/wiki/Integrated-Notification-Backend)
+- [Integrated notifications](https://techbase.kde.org/Projects/Snorenotify/Integrated-Notification-Backend)
 
 - System Tray
 
@@ -61,7 +65,7 @@ In difference to backends they don't offer interactions with te notification  th
   
 
 ### API Doc ###
-[A documentation of the API can be found here](http://patrick.von-reth.de/other/snore/latest/doc/html/index.html)
+[A documentation of the API can be found here](http://api.kde.org/playground-api/libs-apidocs/snorenotify/html/index.html)
 
 
 ## Dependencies ##
@@ -70,10 +74,6 @@ Required dependencies:
 - [CMake](http://www.cmake.org/)
 - [Extra CMake Modules](https://projects.kde.org/projects/kdesupport/extra-cmake-modules)
 - [Qt5](http://qt-project.org/)
-
-## Build status
-- [Windows build status on appveyor.com](https://ci.appveyor.com/project/TheOneRing/snorenotify/)
-- [Linux and Mac OSX build status on travis.org](https://travis-ci.org/Snorenotify/Snorenotify)
 
 
 ## Third party libraries that we ship with our source ##
