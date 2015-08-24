@@ -48,6 +48,10 @@ SnoreCore &SnoreCore::instance()
 {
     static SnoreCore *instance = nullptr;
     if (!instance) {
+        qRegisterMetaType<Notification>();
+        qRegisterMetaType<Application>();
+        qRegisterMetaType<SnorePlugin::PluginTypes>();
+        qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
         instance = new SnoreCore(qApp);
         SnoreCorePrivate::instance()->init();
     }

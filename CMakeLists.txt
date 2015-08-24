@@ -24,6 +24,7 @@ include(ECMInstallIcons)
 include(ECMMarkNonGuiExecutable)
 include(ECMOptionalAddSubdirectory)
 include(ECMPackageConfigHelpers)
+include(ECMPoQmTools)
 include(ECMSetupVersion)
 
 
@@ -40,25 +41,6 @@ find_package(Qt5Network REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
 
-find_package(Doxygen QUIET)
-set_package_properties(Doxygen  PROPERTIES
-                                DESCRIPTION "Doxygen a tool for generating documentation."
-                                URL "http://www.stack.nl/~dimitri/doxygen/"
-                                PURPOSE "Generation of API documentation"
-                                TYPE OPTIONAL)
-
-if(DOXYGEN_FOUND)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in" "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile" @ONLY)
-
-    add_custom_target(doc
-        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Generating API documentation with Doxygen" VERBATIM
-    )
-endif()
-
-
-
 set(LIBSNORE_PLUGIN_PATH ${KDE_INSTALL_PLUGINDIR}/libsnore${SNORE_SUFFIX})
 set(SNORE_PLUGIN_INSTALL_PATH LIBRARY DESTINATION ${LIBSNORE_PLUGIN_PATH})
 message(STATUS "Installing plugins to ${LIBSNORE_PLUGIN_PATH}")
@@ -67,9 +49,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 add_subdirectory(data)
-add_subdirectory(lang)
 add_subdirectory(src)
 add_subdirectory(autotest)
+
+if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
+    ecm_install_po_files_as_qm(po)
+endif()
 
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)

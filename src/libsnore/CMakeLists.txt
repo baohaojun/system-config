@@ -10,6 +10,8 @@ set(LIBSNORE_INCLUDE_DIR ${KDE_INSTALL_INCLUDEDIR}/libsnore)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 
+ecm_create_qm_loader(SnoreNotify_QM_LOADER snorenotify${SNORE_SUFFIX}_qt)
+
 QT5_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 
 add_subdirectory(notification)
@@ -49,7 +51,7 @@ list(APPEND SnoreNotify_HDR
         )
 
 
-add_library( libsnore SHARED ${SnoreNotify_SRCS})
+add_library( libsnore SHARED ${SnoreNotify_SRCS} ${SnoreNotify_QM_LOADER})
 set_target_properties( libsnore PROPERTIES
                                 OUTPUT_NAME "snore${SNORE_SUFFIX}"
                                 VERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}.${SNORE_VERSION_SUFFIX}"

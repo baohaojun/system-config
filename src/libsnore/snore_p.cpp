@@ -28,7 +28,6 @@
 #include <QApplication>
 #include <QSettings>
 #include <QTemporaryDir>
-#include <QTranslator>
 
 using namespace Snore;
 
@@ -266,50 +265,4 @@ void SnoreCorePrivate::startNotificationTimeoutTimer(Notification notification)
     });
     timer->start();
 }
-
-///Startup code
-
-static void loadTranslator()
-{
-    auto installTranslator = [](const QString & locale) {
-        snoreDebug(SNORE_DEBUG) << locale;
-        if (locale != QLatin1String("C")) {
-            QTranslator *translator = new QTranslator(qApp->instance());
-            if (translator->load(locale, QLatin1String(":/lang/libsnore/"))) {
-                snoreDebug(SNORE_DEBUG) << "Using system locale:" << locale;
-                snoreDebug(SNORE_DEBUG) << qApp->installTranslator(translator);
-            } else {
-                translator->deleteLater();
-                QString fileName = QLatin1String(":/lang/libsnore/") + locale + QLatin1String(".qm");
-                snoreDebug(SNORE_DEBUG) << "Failed to load translations for:" << locale << fileName << QFile::exists(fileName) ;
-                return false;
-            }
-        }
-        return true;
-    };
-
-    installTranslator(QLatin1String("en"));
-    QLocale locale = QLocale::system();
-    if (locale.name() != QLatin1String("en")) {
-        if (!installTranslator(locale.name())) {
-            installTranslator(locale.bcp47Name());
-        }
-    }
-}
-
-static void registerMetaTypes()
-{
-    qRegisterMetaType<Notification>();
-    qRegisterMetaType<Application>();
-    qRegisterMetaType<SnorePlugin::PluginTypes>();
-    qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
-}
-
-static void snoreStartup()
-{
-    loadTranslator();
-    registerMetaTypes();
-}
-
-Q_COREAPP_STARTUP_FUNCTION(snoreStartup)
 
