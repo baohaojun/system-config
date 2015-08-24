@@ -5,6 +5,8 @@
 #include <QMessageBox>
 
 extern QString prompt_user(const QString &info, QMessageBox::StandardButtons buttons = QMessageBox::Ok);
+void qSystem(QString str);
+extern bool gScreenCapJpg;
 
 
 #endif /* _T1WRENCH_H_ */

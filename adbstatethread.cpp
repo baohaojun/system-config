@@ -7,6 +7,9 @@
 #include <QtDebug>
 #include <QtCore/QThread>
 #include "bhj_help.hpp"
+#include "t1wrench.h"
+
+bool gScreenCapJpg;
 
 AdbStateThread::AdbStateThread(QObject* parent)
     : QThread(parent)
@@ -96,13 +99,23 @@ void AdbStateThread::run()
         }
 
         QString uname = getExecutionOutput("the-true-adb", args1);
+        static QString lastAdbState;
         if (uname.contains("Linux")) {
             qDebug() << "adb output is " << uname;
+            if (lastAdbState != "Online") {
+                lastAdbState = "Online";
+                if (getExecutionOutput("the-true-adb shell screencap -h").contains("jpg")) {
+                    gScreenCapJpg = 1;
+                } else {
+                    gScreenCapJpg = 0;
+                }
+            }
             emit adbStateUpdate("Online");
             if (getExecutionOutput("the-true-adb", args2).contains("Linux")) {
                 //do nothing
             }
         } else {
+            lastAdbState = "Offline";
             qDebug() << "Offline: adb output is " << uname;
             emit adbStateUpdate("Offline");
             QThread::msleep(500);

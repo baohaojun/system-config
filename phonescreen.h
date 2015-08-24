@@ -28,6 +28,8 @@ protected:
 private:
     Ui::PhoneScreen *ui;
     QSharedPointer<AdbPhoneScreenThread> mPhoneScreenThread;
+    void showEvent(QShowEvent*);
+    void hideEvent(QHideEvent*);
 private slots:
     void on_applicationStateChanged(Qt::ApplicationState);
 };

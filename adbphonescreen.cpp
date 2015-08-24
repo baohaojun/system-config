@@ -1,3 +1,4 @@
+#include "t1wrench.h"
 #include "adbphonescreen.hpp"
 #include <QtCore/QProcess>
 #include <QtCore/QProcessEnvironment>
@@ -28,7 +29,17 @@ void AdbPhoneScreenThread::run()
 {
     while (!shouldStop) {
         if (!paused) {
-            system("set -x; the-true-adb shell screencap /sdcard/t1wrench-screen.png && the-true-adb pull /sdcard/t1wrench-screen.png;");
+            const char *screenFile = "t1wrench-screen.png";
+            if (gScreenCapJpg) {
+                screenFile = "t1wrench-screen.jpg";
+            }
+
+#ifdef Q_OS_WIN32
+            qSystem(QString().sprintf("the-true-adb shell screencap /sdcard/%s", screenFile));
+            qSystem(QString().sprintf("the-true-adb pull /sdcard/%s", screenFile));
+#else
+            qSystem(QString().sprintf("the-true-adb shell screencap /sdcard/%s && the-true-adb pull /sdcard/%s;", screenFile, screenFile));
+#endif
             emit phoneScreenUpdate();
 
         }

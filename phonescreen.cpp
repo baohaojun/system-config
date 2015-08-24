@@ -1,4 +1,5 @@
 #include "phonescreen.h"
+#include "t1wrench.h"
 #include "ui_phonescreen.h"
 #include <QMouseEvent>
 #include <QTime>
@@ -19,7 +20,7 @@ PhoneScreen::PhoneScreen(QWidget *parent) :
     connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)), this, SLOT(on_applicationStateChanged(Qt::ApplicationState)));
 }
 
-static void qSystem(QString str)
+void qSystem(QString str)
 {
     system(str.toUtf8().constData());
 }
@@ -31,7 +32,11 @@ void PhoneScreen::on_applicationStateChanged(Qt::ApplicationState appState)
 
 void PhoneScreen::phoneScreenUpdate()
 {
-    QImage screen("t1wrench-screen.png");
+    QString screenFile = "t1wrench-screen.png";
+    if (gScreenCapJpg) {
+        screenFile = "t1wrench-screen.jpg";
+    }
+    QImage screen(screenFile);
     ui->phoneScreen->setPixmap(QPixmap::fromImage(screen.scaled(this->width(), this->height())));
 }
 
@@ -111,4 +116,14 @@ bool PhoneScreen::eventFilter(QObject *obj, QEvent *ev)
 void PhoneScreen::resizeEvent(QResizeEvent *)
 {
 
+}
+
+void PhoneScreen::showEvent(QShowEvent *ev)
+{
+    mPhoneScreenThread->continueLoop();
+}
+
+void PhoneScreen::hideEvent(QHideEvent *ev)
+{
+    mPhoneScreenThread->pauseLoop();
 }
