@@ -37,13 +37,12 @@ SettingsWindow::SettingsWindow(const QString &appName, QWidget *parent) :
     ui->setupUi(this);
     ui->widget->show();
 
-    if (appName.isEmpty()) {
+    if (appName == QLatin1String("global")) {
         QStringList list = knownApps();
         list.removeAll(qApp->applicationName());
         ui->comboBox->addItems(list);
     } else {
         if (!knownApps().contains(appName)) {
-
             std::wcerr << "Error: " << appName.toUtf8().constData() << " is not known to Snorenotify" << std::endl;
             exit(1);
         }
