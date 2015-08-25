@@ -27,7 +27,6 @@ public:
                                            "<font color=\"blue\">Font</font><br>"
                                            "&lt;&amp;&gt;<br>"
                                            "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a><br>");
-    QTemporaryFile tempSettings;
 
 private Q_SLOTS:
     void benchmarkUtilsToHtml();
