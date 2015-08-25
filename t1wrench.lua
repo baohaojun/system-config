@@ -1069,7 +1069,19 @@ picture_to_weixin_share = function(pics, ...)
       if i == 1 then
          adb_start_weixin_share('image')
          if using_adb_root then
-             adb_event("sleep .5 adb-tap 141 597 sleep .5")
+            for n = 1, 3 do
+               if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI" then
+                  adb_event("sleep 4")
+                  break
+               elseif adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI" then
+                  adb_event("adb-key back sleep .5")
+               elseif adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI" then
+                  adb_event("sleep 1 adb-tap 141 597 sleep 2")
+                  if n == 3 then
+                     adb_event("sleep 4")
+                  end
+               end
+            end
          else
              sleep(.5)
          end
@@ -1083,7 +1095,7 @@ picture_to_weixin_share = function(pics, ...)
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   adb_event("adb-tap 901 1841 adb-tap 75 1867 adb-tap 903 133")
+   adb_event("adb-tap 903 133")
    return "Prompt: please say something"
 end
 
@@ -1118,7 +1130,7 @@ picture_to_weibo_share = function(pics, ...)
          if ime_height ~= 0 then
             adb_event("key back")
          end
-         adb_event("sleep 1 adb-tap 62 1843 sleep 2 adb-tap 546 126 adb-tap 340 697 sleep 2")
+         adb_event("sleep 2 adb-tap 62 1843 sleep 2 adb-tap 546 126 adb-tap 340 697 sleep 2")
       end
 
       local pic_share_buttons = {

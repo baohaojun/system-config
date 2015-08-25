@@ -73,15 +73,17 @@ rsync * $build_dir -av --exclude release
 rsync release $build_dir -av -L
 cd $build_dir
 
-
+if ! which i686-w64-mingw32-nm; then
+    apt-get install mingw32
+fi
 (
     cd lua
-    PATH=~/bin/mingw:$PATH make mingw
+    PATH=~/system-config/bin/mingw:$PATH make mingw
 )
 
 (
     cd luamd5
-    PATH=~/bin/mingw/:$PATH make PLATFORM=mingw
+    PATH=~/system-config/bin/mingw/:$PATH make PLATFORM=mingw
 )
 
 for x in . download; do
