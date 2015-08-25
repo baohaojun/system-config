@@ -103,7 +103,7 @@
      </widget>
      <widget class="QWidget" name="tab_secondaryBackends">
       <attribute name="title">
-       <string>Secondary Bckends</string>
+       <string>Secondary Backends</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>

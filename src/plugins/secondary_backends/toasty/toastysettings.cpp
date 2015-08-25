@@ -26,7 +26,7 @@ ToastySettings::ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent) :
     Snore::PluginSettingsWidget(plugin, parent),
     m_lineEdit(new QLineEdit)
 {
-    addRow(tr("Device ID:"), m_lineEdit, tr("The device id which can be foun in the toasty app."));
+    addRow(tr("Device ID:"), m_lineEdit, tr("The device id which can be found in the toasty app."));
     addRow(QString(), new QLabel(tr("<a href=\"http://supertoasty.com/\">Supertoasty.com</a>"), this));
 }
 

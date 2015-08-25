@@ -158,7 +158,7 @@ void PushoverFrontend::connectToService()
             m_socket->deleteLater();
             break;
         default:
-            snoreDebug(SNORE_WARNING) << "unknown message recieved" << msg;
+            snoreDebug(SNORE_WARNING) << "unknown message received" << msg;
         }
     });
     connect(m_socket, &QWebSocket::disconnected, [this]() {
