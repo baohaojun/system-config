@@ -83,7 +83,7 @@ void SnoreToast::slotNotify(Notification notification)
 void SnoreToast::slotRegisterApplication(const Application &application)
 {
     if (!application.constHints().contains("windows-app-id")) {
-        snoreDebug(SNORE_WARNING) << "No windows-app-id found in hints. Installing default shortcut with appID.";
+        snoreDebug(SNORE_INFO) << "No windows-app-id found in hints. Installing default shortcut with appID.";
         QProcess *p = createProcess(Notification());
         QStringList arguements;
         arguements << QLatin1String("-install")
