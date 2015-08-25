@@ -12,4 +12,4 @@ if(NOT Qt5Test_FOUND)
     return()
 endif()
 
-ecm_add_tests( snorebenchmark.cpp LINK_LIBRARIES Snore::Libsnore Qt5::Test)
+ecm_add_tests( snorebenchmark.cpp display_test.cpp LINK_LIBRARIES Snore::Libsnore Qt5::Test)
