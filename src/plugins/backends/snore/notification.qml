@@ -69,7 +69,6 @@ Rectangle {
         id: title
         height: 14
         color: "#000000"
-
         text: "Title"
         font.pointSize: 10
         font.bold: true
@@ -79,6 +78,7 @@ Rectangle {
         anchors.topMargin: 5
         anchors.left: image.right
         anchors.leftMargin: 5
+        textFormat: Text.RichText
     }
 
     Text {
@@ -97,6 +97,7 @@ Rectangle {
         wrapMode: Text.WordWrap
         maximumLineCount: height / font.pixelSize - 1
         onLinkActivated: Qt.openUrlExternally(link)
+        textFormat: Text.RichText
 
     }
 
