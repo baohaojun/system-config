@@ -24,6 +24,9 @@ void TrayIconNotifer::slotNotify(Notification notification)
     if (icon) {
         m_notificationQue.append(notification);
         displayNotification(icon);
+    } else {
+        closeNotification(notification, Notification::CLOSED);
+        setErrorString(QLatin1String("No tray-icon hint provided for ") + notification.application().name());
     }
 }
 
