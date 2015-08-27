@@ -44,7 +44,7 @@ private:
 
 };
 
-Q_DECLARE_METATYPE(FreedesktopImageHint);
+Q_DECLARE_METATYPE(FreedesktopImageHint)
 
 QDBusArgument &operator<<(QDBusArgument &a,  const FreedesktopImageHint &i);
 const QDBusArgument &operator >>(const QDBusArgument &a,  FreedesktopImageHint  &i) ;
