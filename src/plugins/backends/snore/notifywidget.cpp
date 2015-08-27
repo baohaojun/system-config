@@ -32,7 +32,8 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
     rootContext()->setContextProperty(QLatin1String("window"), this);
     rootContext()->setContextProperty(QLatin1String("utils"), new Utils(this));
 
-    QString font;
+    QString font = qApp->font().family();
+#ifdef Q_OS_WIN
     switch(QSysInfo::windowsVersion()){
         case QSysInfo::WV_WINDOWS8:
         font = QLatin1String("Segoe UI Symbol");
@@ -43,8 +44,9 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
         break;
 #endif
     default:
-        font = qApp->font().family();
+        qt_noop();
     }
+#endif
     rootContext()->setContextProperty(QLatin1String("snoreFont"), font);
     setSource(QUrl::fromEncoded("qrc:/notification.qml"));
 

@@ -25,9 +25,6 @@ Rectangle {
             var id = window.id
             var space = (id + 1) * height * 0.025
 
-            console.debug(snoreFont)
-            console.debug(body.font.family)
-
             animation.target = window
 
             window.y = space + (space + height) * id
