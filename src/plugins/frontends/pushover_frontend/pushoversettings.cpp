@@ -39,7 +39,7 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
     addRow(QString(), m_registerButton);
     addRow(tr("Status"), m_errorMessageLabel);
     addRow(QString(), new QLabel(this));
-    addRow(QString(), new QLabel(tr("If you don't have an accout yet please register at <a href=\"https://pushover.net\">Pushover.net</a>"), this));
+    addRow(QString(), new QLabel(tr("If you don't have an account yet please register at <a href=\"https://pushover.net\">Pushover.net</a>"), this));
 
     m_emailLineEdit->setEnabled(false);
     m_passwordLineEdit->setEnabled(false);
