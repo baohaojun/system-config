@@ -69,6 +69,8 @@ void  FreedesktopBackend::slotNotify(Notification noti)
         hints.insert(QLatin1String("desktop-entry"), noti.application().constHints().value("desktop-entry"));
     }
 
+    hints.insert(QLatin1String("suppress-sound"), noti.constHints().value("silent").toBool());
+
     uint updateId = 0;
     if (noti.isUpdate()) {
         updateId = noti.old().hints().privateValue(this, "id").toUInt();
