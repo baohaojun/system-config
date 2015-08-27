@@ -11,5 +11,5 @@
    cd %userprofile%
    md .android
    cd .android
-   echo 0x29a9 > adb_usb.ini
+   echo 0X29A9 > adb_usb.ini
    #+END_SRC
