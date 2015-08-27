@@ -85,6 +85,7 @@ void SettingsWindow::on_buttonBox_clicked(QAbstractButton *button)
     switch (ui->buttonBox->buttonRole(button)) {
     case QDialogButtonBox::AcceptRole:
         ui->widget->accept();
+        qApp->processEvents();
         qApp->quit();
         break;
     case QDialogButtonBox::ApplyRole:
