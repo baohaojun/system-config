@@ -71,7 +71,7 @@ void DisplayTest::displayTest()
 void DisplayTest::displayTestPlani()
 {
     app.hints().setValue("use-markup", false);
-    testString(QString::fromUtf8("Test\u03A9\U0001F4A9\U0001F600"));
+    testString(QString::fromWCharArray(L"Test\u03A9\U0001F4A9\U0001F600"));
 }
 
 
