@@ -26,7 +26,7 @@ public:
 
 private Q_SLOTS:
     void displayTest();
-    void displayTestPlani();
+    void displayTestPlain();
 
 private:
     void testString(QString message){
@@ -68,7 +68,7 @@ void DisplayTest::displayTest()
 }
 
 
-void DisplayTest::displayTestPlani()
+void DisplayTest::displayTestPlain()
 {
     app.hints().setValue("use-markup", false);
     testString(QString::fromWCharArray(L"Test\u03A9\U0001F4A9\U0001F600"));
