@@ -72,7 +72,6 @@ private:
     QColor computeBackgrondColor(const QImage &img);
 
     Snore::Notification m_notification;
-    QObject *m_qmlNotification;
     int m_id;
     const SnoreNotifier *m_parent;
     QSharedMemory m_mem;

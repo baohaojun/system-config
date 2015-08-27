@@ -24,7 +24,6 @@
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
-    QQuickView(QUrl::fromEncoded("qrc:/notification.qml")),
     m_id(pos),
     m_parent(parent),
     m_mem(QLatin1String("SnoreNotifyWidget_rev") + QString::number(SHARED_MEM_TYPE_REV()) + QLatin1String("_id") + QString::number(m_id)),
@@ -32,7 +31,22 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 {
     rootContext()->setContextProperty(QLatin1String("window"), this);
     rootContext()->setContextProperty(QLatin1String("utils"), new Utils(this));
-    m_qmlNotification = rootObject();
+
+    QString font;
+    switch(QSysInfo::windowsVersion()){
+        case QSysInfo::WV_WINDOWS8:
+        font = QLatin1String("Segoe UI Symbol");
+        break;
+#if QT_VERSION_CHECK(5,5,0)
+    case QSysInfo::WV_10_0:
+        font = QLatin1String("Segoe UI Emoji");
+        break;
+#endif
+    default:
+        font = qApp->font().family();
+    }
+    rootContext()->setContextProperty(QLatin1String("snoreFont"), font);
+    setSource(QUrl::fromEncoded("qrc:/notification.qml"));
 
     setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
 #ifdef Q_OS_MAC
@@ -63,8 +77,8 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 
     setResizeMode(QQuickView::SizeViewToRootObject);
 
-    connect(m_qmlNotification, SIGNAL(invoked()), this, SLOT(slotInvoked()));
-    connect(m_qmlNotification, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
+    connect(rootObject(), SIGNAL(invoked()), this, SLOT(slotInvoked()));
+    connect(rootObject(), SIGNAL(dismissed()), this, SLOT(slotDismissed()));
 }
 
 NotifyWidget::~NotifyWidget()
@@ -86,7 +100,7 @@ void NotifyWidget::display(const Notification &notification)
     }
     QRgb gray = qGray(qGray(color.rgb()) - qGray(QColor(Qt::white).rgb()));
     QColor textColor = QColor(gray, gray, gray);
-    QMetaObject::invokeMethod(m_qmlNotification, "update", Qt::QueuedConnection,
+    QMetaObject::invokeMethod(rootObject(), "update", Qt::QueuedConnection,
                               Q_ARG(QVariant, notification.title(Utils::ALL_MARKUP)),
                               Q_ARG(QVariant, notification.text(Utils::ALL_MARKUP)),
                               Q_ARG(QVariant, QUrl::fromLocalFile(notification.icon().localUrl())),

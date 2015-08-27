@@ -4,12 +4,11 @@ import QtQuick.Window 2.2
 Rectangle {
     id: root
 
+    signal dismissed()
+    signal invoked()
+
     width: body.font.pixelSize * 30
     height: body.font.pixelSize * 9
-
-    signal dismissed()
-
-    signal invoked()
 
     function update(nTitle, bBody, nImage, nAppIcon, color, textColor, isUpdate)
     {
@@ -21,11 +20,13 @@ Rectangle {
         image.source = nImage
         root.color = color
 
-
         if (!isUpdate) {
             var corner = window.corner
             var id = window.id
             var space = (id + 1) * height * 0.025
+
+            console.debug(snoreFont)
+            console.debug(body.font.family)
 
             animation.target = window
 
@@ -79,6 +80,7 @@ Rectangle {
         anchors.left: image.right
         anchors.leftMargin: 5
         textFormat: Text.RichText
+        font.family: snoreFont
     }
 
     Text {
@@ -98,7 +100,7 @@ Rectangle {
         maximumLineCount: height / font.pixelSize - 1
         onLinkActivated: Qt.openUrlExternally(link)
         textFormat: Text.RichText
-
+        font.family: snoreFont
     }
 
 
@@ -146,5 +148,4 @@ Rectangle {
             onClicked: root.dismissed()
         }
     }
-
 }
