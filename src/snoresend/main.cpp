@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
     QCommandLineOption alertName(QStringList() << QLatin1String("c") << QLatin1String("alert"), QLatin1String("Set the notification alert class."), QLatin1String("alert"), QLatin1String("Default"));
     parser.addOption(alertName);
 
-    QCommandLineOption iconPath(QStringList() << QLatin1String("i") << QLatin1String("icon"), QLatin1String("Set the notification icon."), QLatin1String("icon"), QLatin1String(":/root/snore.png"));
+    QCommandLineOption iconPath(QStringList() << QLatin1String("i") << QLatin1String("icon"), QLatin1String("Set the notification icon."), QLatin1String("icon"));
     parser.addOption(iconPath);
 
     QCommandLineOption priority(QStringList() << QLatin1String("p") << QLatin1String("priority"), QLatin1String("Set the notification's priority."), QLatin1String("[-2, 2]"), QLatin1String("0"));
@@ -118,7 +118,10 @@ int main(int argc, char *argv[])
 
         core.loadPlugins(SnorePlugin::BACKEND | SnorePlugin::SECONDARY_BACKEND);
 
-        Icon icon(parser.value(iconPath));
+        Icon icon = Icon::defaultIcon();
+        if (parser.isSet(iconPath)) {
+            icon = Icon(parser.value(iconPath));
+        }
         Application application(parser.value(applicationName), icon);
         Alert alert(parser.value(alertName), icon);
         application.addAlert(alert);
