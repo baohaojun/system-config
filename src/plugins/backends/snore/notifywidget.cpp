@@ -34,8 +34,8 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 
     QString font = qApp->font().family();
 #ifdef Q_OS_WIN
-    switch(QSysInfo::windowsVersion()){
-        case QSysInfo::WV_WINDOWS8:
+    switch (QSysInfo::windowsVersion()) {
+    case QSysInfo::WV_WINDOWS8:
         font = QLatin1String("Segoe UI Symbol");
         break;
 #if QT_VERSION_CHECK(5,5,0)

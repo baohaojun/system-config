@@ -29,18 +29,19 @@ private Q_SLOTS:
     void displayTestPlain();
 
 private:
-    void testString(QString message){
+    void testString(QString message)
+    {
         qDebug() << Utils::normalizeMarkup(message, Utils::NO_MARKUP);
         SnoreCore &snore = SnoreCore::instance();
         QStringList backends = snore.pluginNames(SnorePlugin::BACKEND);
-        auto notify = [&backends, &snore, &message, this](Notification n){
+        auto notify = [&backends, &snore, &message, this](Notification n) {
             qDebug() << n << "closed";
             qDebug() << backends.size();
-            if(backends.empty()) {
+            if (backends.empty()) {
                 return;
             }
             QString old = snore.primaryNotificationBackend();
-            while(snore.primaryNotificationBackend() == old) {
+            while (snore.primaryNotificationBackend() == old) {
                 QString p = backends.takeLast();
                 snore.setSettingsValue(QLatin1String("PrimaryBackend"), p, LOCAL_SETTING);
                 SnoreCorePrivate::instance()->syncSettings();
@@ -60,20 +61,17 @@ private:
     }
 };
 
-
 void DisplayTest::displayTest()
 {
     app.hints().setValue("use-markup", true);
     testString(QLatin1String("<b>Test&#937;</b>&#x1f4a9;&#x1f600;"));
 }
 
-
 void DisplayTest::displayTestPlain()
 {
     app.hints().setValue("use-markup", false);
     testString(QString::fromWCharArray(L"Test\u03A9\U0001F4A9\U0001F600"));
 }
-
 
 QTEST_MAIN(DisplayTest)
 
