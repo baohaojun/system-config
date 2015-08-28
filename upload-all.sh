@@ -3,10 +3,14 @@ shortVersion=$(perl -ne 'print $1 if m!T1聊天小扳手 (.*)</string>!' t1wrenc
 cd ~/tmp
 my-adb start-activity com.baidu.netdisk/com.baidu.netdisk.ui.MainActivity
 
-my-adb 'rm /sdcard/0/*'
-for x in T1Wrench-linux.tgz T1Wrench-macos.zip T1Wrench-windows.zip; do
-    adb push $x /sdcard/0/${x%.*}-$shortVersion.${x#*.}
-done
+if test "$1" = -n; then
+    true
+else
+    my-adb 'mkdir -p /sdcard/0/; rm /sdcard/0/*'
+    for x in T1Wrench-linux.tgz T1Wrench-macos.zip T1Wrench-windows.zip; do
+        adb push $x /sdcard/0/${x%.*}-$shortVersion.${x#*.}
+    done
+fi
 adb-tap 544 346
 adb-tap 489 1203
 adb-tap 236 613
