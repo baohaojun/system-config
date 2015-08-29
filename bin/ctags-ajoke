@@ -172,6 +172,9 @@ while (<STDIN>) {
         $seen_terminator = 0;
         if ($is_java) {
             ($tag, $type, $line_num, $file) = m/^\s*(\S+)\s+(.*?)\s+(\d+)\s+(\S+)/;
+            if ($file ne $old_file) {
+                $package = "";
+            }
             if ($type eq 'package') {
                 $package = $tag;
                 print_with_caching($cache, $_);
@@ -183,7 +186,7 @@ while (<STDIN>) {
                         (my $to_print = $last_line) =~ s/(^\S+\.)(\w)/$2/g;
                         print_with_caching($cache, $to_print);
                         my $last_out = "$package.$last_line";
-                        print_with_caching($cache, $last_out);
+                        print_with_caching($cache, $last_out) if $package;
                     }
                 }
                 if ($_ eq $terminator) {
@@ -197,7 +200,7 @@ while (<STDIN>) {
                     (my $to_print = $_) =~ s/(^\S+\.)(\w)/$2/g;
                     print_with_caching($cache, $to_print);
                     my $last_out = "$package.$_";
-                    print_with_caching($cache, $last_out);
+                    print_with_caching($cache, $last_out) if $package;
                 }
             }
             ($old_tag, $old_type, $old_line_num, $old_file) = ($tag, $type, $line_num, $file);
