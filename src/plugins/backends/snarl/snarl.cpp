@@ -147,7 +147,7 @@ bool SnarlBackend::isReady()
 {
     bool running = SnarlInterface::IsSnarlRunning();
     if (!running) {
-        setErrorString(name() + tr(" is not running."));
+        setErrorString(tr("%1 is not running.").arg(name()));
     }
     return running;
 }

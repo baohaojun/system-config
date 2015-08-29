@@ -49,7 +49,7 @@ SettingsWindow::SettingsWindow(const QString &appName, QWidget *parent) :
         ui->comboBox->deleteLater();
         ui->label->deleteLater();
         SnoreCorePrivate::instance()->setLocalSttingsPrefix(appName);
-        setWindowTitle(appName + tr(" Settings"));
+        setWindowTitle(tr("%1 Settings").arg(appName));
         ui->widget->initTabs();
         ui->widget->setVisible(true);
     }

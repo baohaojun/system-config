@@ -17,7 +17,7 @@ using namespace Snore;
 bool SnoreToast::isReady()
 {
     if (errorString().isEmpty() && QSysInfo::windowsVersion() < QSysInfo::WV_WINDOWS8) {
-        setErrorString(name() + tr(" needs at least Windows 8 to run."));
+        setErrorString(tr("%1 needs at least Windows 8 to run.").arg(name()));
         return false;
     }
     return true;
