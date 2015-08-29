@@ -1,5 +1,9 @@
 #!/bin/bash
 
-find . -name '*.sh' |
+if test $# != 0; then
+    for x in "$@"; do echo "$x"; done
+else
+    find . -name '*.sh'
+fi |
 ctags-ajoke --langmap=$(lang-map-for-ctags ~/.globalrc) -xu --filter --filter-terminator='###terminator###
 '
