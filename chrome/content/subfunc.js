@@ -225,10 +225,10 @@ Firemacs.SubFunc = {
     _followLink: function(dir, wnd, doc) {
         var re;
         if (dir > 0) {
-            re = /buttonright|next|>|下一|下页|→|》/i;
+            re = /buttonright|next|>|下一|下页|→/i;
           re_ptag = /next-link/; // for https://developer.apple.com/
         } else {
-            re = /buttonleft|prev|<|上一|上页|←|《/i;
+            re = /buttonleft|prev|<|上一|上页|←/i;
           re_ptag = /previous-link/;
         }
         var re_exclude = /<.*>|>.*</;
