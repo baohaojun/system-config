@@ -9,6 +9,8 @@ import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -38,11 +40,11 @@ public class PutClipService extends Service {
     }
 
     private void writeFile(String str) throws IOException {
-        FileWriter f = new FileWriter(new File(Environment.getExternalStorageDirectory(), "putclip.txt.1"));
+        FileWriter f = new FileWriter(new File(sdcard, "putclip.txt.1"));
         f.write(str);
         f.close();
-        File txt = new File(Environment.getExternalStorageDirectory(), "putclip.txt.1");
-        txt.renameTo(new File(Environment.getExternalStorageDirectory(), "putclip.txt"));
+        File txt = new File(sdcard, "putclip.txt.1");
+        txt.renameTo(new File(sdcard, "putclip.txt"));
     }
 
     @Override
@@ -99,7 +101,7 @@ public class PutClipService extends Service {
                                            null);
 
                 try {
-                    File txt = new File(Environment.getExternalStorageDirectory(), "listcontacts.txt.1");
+                    File txt = new File(sdcard, "listcontacts.txt.1");
                     FileWriter f = new FileWriter(txt);
                     if (dc.moveToFirst()) {
                         do {
@@ -107,16 +109,16 @@ public class PutClipService extends Service {
                         } while (dc.moveToNext());
                     }
                     f.close();
-                    txt.renameTo(new File(Environment.getExternalStorageDirectory(), "listcontacts.txt"));
+                    txt.renameTo(new File(sdcard, "listcontacts.txt"));
                 } finally {
                     dc.close();
                 }
             } else if (intent.getIntExtra("share-to-note", 0) == 1) {
-                FileReader f = new FileReader(new File(Environment.getExternalStorageDirectory(), "putclip.txt"));
+                FileReader f = new FileReader(new File(sdcard, "putclip.txt"));
                 char[] buffer = new char[1024 * 1024];
                 int n = f.read(buffer);
                 String str = new String(buffer, 0, n);
-                File putclip = new File(Environment.getExternalStorageDirectory(), "putclip.txt");
+                File putclip = new File(sdcard, "putclip.txt");
                 putclip.delete();
 
                 Intent notesIntent = new Intent();
@@ -126,8 +128,21 @@ public class PutClipService extends Service {
                 notesIntent.putExtra(Intent.EXTRA_TEXT, str);
                 notesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(notesIntent);
-            }
-            else if (intent.getIntExtra("getcontact", 0) == 1) {
+            } else if (intent.getIntExtra("getapk", 0) == 1) {
+                try {
+                    PackageManager pm = getPackageManager();
+                    PackageInfo pi = pm.getPackageInfo("com.bhj.setclip", 0);
+
+                    FileWriter f = new FileWriter(new File(sdcard, "setclip-apk.txt.1"));
+                    f.write(pi.applicationInfo.sourceDir);
+                    f.close();
+                    new File(sdcard, "setclip-apk.txt.1").renameTo(new File(sdcard, "setclip-apk.txt"));
+                }
+                catch (Throwable e) {
+                    Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 134), e);
+                }
+
+            } else if (intent.getIntExtra("getcontact", 0) == 1) {
                 String contactNumber = intent.getStringExtra("contact");
                 if (contactNumber == null) {
                     return START_STICKY;
@@ -171,14 +186,14 @@ public class PutClipService extends Service {
                     dataCursor.close();
                 }
             } else {
-                FileReader f = new FileReader(new File(Environment.getExternalStorageDirectory(), "putclip.txt"));
+                FileReader f = new FileReader(new File(sdcard, "putclip.txt"));
                 char[] buffer = new char[1024 * 1024];
                 int n = f.read(buffer);
                 String str = new String(buffer, 0, n);
                 ClipboardManager mClipboard;
                 mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                 mClipboard.setPrimaryClip(ClipData.newPlainText("Styled Text", str));
-                File putclip = new File(Environment.getExternalStorageDirectory(), "putclip.txt");
+                File putclip = new File(sdcard, "putclip.txt");
                 putclip.delete();
             }
         } catch (Exception e) {
@@ -198,4 +213,6 @@ public class PutClipService extends Service {
         }
         return res;
     }
+
+    private static File sdcard = Environment.getExternalStorageDirectory();
 }
