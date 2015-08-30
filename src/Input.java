@@ -9,11 +9,16 @@ import android.view.MotionEvent;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import android.view.InputEvent;
+import dalvik.system.DexClassLoader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,10 +78,48 @@ public class Input {
 
     }
 
+    private static Input mInput;
+    private static Object mAm;
+    private static Method mAmRun;
     private static void doT1Command(String cmd) {
         System.err.println("cmd is " + cmd);
         String[] args = cmd.split("\\s+");
-        (new Input()).run(args);
+        if (args.length == 0)
+            return;
+        if (mInput == null) {
+            mInput = new Input();
+            File t1OptimizeDir = new File("/data/data/com.android.shell/t1wrench");
+            t1OptimizeDir.mkdir();
+        }
+
+        if (mAm == null) {
+            String jarFile = "/system/framework/am.jar";
+            DexClassLoader classLoader = new DexClassLoader(jarFile, "/data/data/com.android.shell/t1wrench/", null, mInput.getClass().getClassLoader());
+            try {
+                Class<?> amClass = classLoader.loadClass("com.android.commands.am.Am");
+                if (amClass != null) {
+                    Constructor<?> amConstructor = amClass.getConstructor();
+                    mAm = amConstructor.newInstance();
+                    mAmRun = mAm.getClass().getMethod("run", String[].class);
+                }
+            }
+            catch (Throwable e) {
+                System.out.println("Error " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        if (args[0].equals("input")) {
+            mInput.run(args);
+        } else if (args[0].equals("am")) {
+            args = Arrays.copyOfRange(args, 1, args.length);
+            try {
+                mAmRun.invoke(mAm, (Object)args);
+            }
+            catch (Throwable e) {
+                System.out.println("Error " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 
     private void run(String[] args) {
