@@ -1,6 +1,6 @@
 #!/bin/bash
 
-out=$(git log -1 "$@"|perl -ne 'print if m/^$/..-1'|perl -ne 's/^    //; s/^Change-Id: /Cid: /; print unless 1..1')
+out=$(git log -1 "$@"|perl -ne 'print if m/^$/..-1'|perl -ne 's/^    //; print unless 1..1')
 if is-tty-io; then
     echo "$out"|putclip
 fi

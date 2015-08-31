@@ -166,6 +166,14 @@ if test $no_gapps = false &&
         find . -type f | xargs sudo env PATH=$PATH cp-with-dir-struct $dest
     )
 fi
+
+(
+    sudo perl -npe 's/factory udisk alterable/factory udisk alterable boot/' -i bin/log-crawler.sh
+    cat <<EOF | sudo tee etc/stcmd-scripts/write-boot-partition
+#!/bin/bash
+dd if=/sdcard/boot.img of=\$(echo /dev/block/platform/*/by-name/boot)
+EOF
+)
 sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
 (
     sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /'
