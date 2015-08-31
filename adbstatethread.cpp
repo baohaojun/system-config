@@ -104,7 +104,9 @@ void AdbStateThread::run()
             qDebug() << "adb output is " << uname;
             if (lastAdbState != "Online") {
                 lastAdbState = "Online";
-                if (getExecutionOutput("the-true-adb shell screencap -h").contains("jpg")) {
+                QString screencapHelp = getExecutionOutput("the-true-adb shell screencap -h");
+                qDebug() << screencapHelp;
+                if (screencapHelp.contains("jpg")) {
                     gScreenCapJpg = 1;
                 } else {
                     gScreenCapJpg = 0;

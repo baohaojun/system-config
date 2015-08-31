@@ -37,6 +37,10 @@ void PhoneScreen::phoneScreenUpdate()
         screenFile = "t1wrench-screen.jpg";
     }
     QImage screen(screenFile);
+    if (screen.isNull()) {
+        qDebug() << "using" << screenFile;
+        system("bash -c 'pwd; ls -l t1wrench-screen.jpg'");
+    }
     ui->phoneScreen->setPixmap(QPixmap::fromImage(screen.scaled(this->width(), this->height())));
 }
 

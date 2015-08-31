@@ -25,8 +25,10 @@ function copy-dlls()
     done
 
     mkdir -p ./release/platforms
+    mkdir -p ./release/imageformats
     rsync $1/plugins/platforms/qwindows.dll ./release/platforms -av
-    chmod 555 ./release/platforms/*
+    rsync $1/plugins/imageformats/qjpeg.dll ./release/imageformats -av
+    chmod 555 ./release/platforms/* ./release/imageformats/*
 }
 
 function make-release-tgz()
