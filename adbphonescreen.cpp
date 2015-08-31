@@ -48,9 +48,6 @@ void AdbPhoneScreenThread::run()
             if (mAppState == Qt::ApplicationActive) {
                 break;
             }
-            if (i == 9) {
-                qDebug() << "slept for 1 second";
-            }
         }
 
     }

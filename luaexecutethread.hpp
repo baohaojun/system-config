@@ -6,11 +6,17 @@
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 #include <lua.hpp>
+#include <QAbstractSocket>
+#include <QTcpSocket>
 
 class LuaExecuteThread : public QThread
 {
     Q_OBJECT
+public slots:
+    void t1SockStateChange(QAbstractSocket::SocketState);
+
 public:
+    QString adbQuickInputAm(QString arg);
     LuaExecuteThread(QObject* parent = NULL);
     void addScript(QStringList script);
     void quitLua();
@@ -31,6 +37,7 @@ private:
     QWaitCondition mWait;
     QWaitCondition mSelectArgsWait;
     QMutex mSelectArgsMutex;
+    QTcpSocket* t1Sock;
 };
 
 #endif /* _LUAEXECUTETHREAD_H_ */

@@ -6,8 +6,11 @@
 #include <QtCore/QProcess>
 #include "lua.hpp"
 #include <QtWidgets/QMessageBox>
+#include <QTcpSocket>
+#include "t1wrench.h"
 
 LuaExecuteThread* that;
+
 static int l_selectArg(lua_State* L)
 {
     int n = luaL_len(L, -1);
@@ -20,6 +23,86 @@ static int l_selectArg(lua_State* L)
     QString res = that->selectArgs(args);
     lua_pushstring(L, res.toUtf8().constData());
     return 1;
+}
+
+void LuaExecuteThread::t1SockStateChange(QAbstractSocket::SocketState newState)
+{
+    qDebug() << "state is " << newState;
+}
+
+static int l_adbQuickInputAm(lua_State* L)
+{
+    int n = luaL_len(L, -1);
+    if (n != 1) {
+        QString error = QString().sprintf("takes only 1 string, got %d", n);
+        luaL_argerror(L, 1, qPrintable(error));
+    }
+
+    QString arg;
+    lua_rawgeti(L, -1, n);
+    arg = QString::fromUtf8(lua_tolstring(L, -1, NULL));
+    lua_settop(L, -2);
+
+    QString res = that->adbQuickInputAm(arg);
+    lua_pushstring(L, res.toUtf8().constData());
+    return 1;
+}
+
+static bool t1SockOk(QTcpSocket* t1Sock)
+{
+    if (t1Sock == NULL) {
+        return false;
+    }
+
+    t1Sock->write("ping\n");
+    t1Sock->flush();
+    t1Sock->readLine();
+    if (t1Sock->state() != QAbstractSocket::ConnectedState) {
+        return false;
+    }
+    return true;
+}
+
+QString LuaExecuteThread::adbQuickInputAm(QString arg)
+{
+    if (!t1SockOk(t1Sock)) {
+        if (t1Sock) {
+            delete t1Sock;
+            t1Sock = NULL;
+            qDebug() << "prepare to reconnect t1Sock";
+        }
+        qDebug() << "connect to localhost 28888";
+        t1Sock = new QTcpSocket(this);
+        t1Sock->connectToHost("localhost", 28888, QIODevice::ReadWrite);
+        t1Sock->waitForConnected();
+    }
+
+    QString res = "input ok\n";
+    if (arg.startsWith("input ") || arg.startsWith("sleep ")) {
+        QStringList actions = arg.split(";", QString::SkipEmptyParts);
+        foreach (const QString& action, actions) {
+            qDebug() << "doing action" << action;
+            if (action.startsWith("sleep ")) {
+                qSystem("set -x; " + action);
+                continue;
+            }
+
+            t1Sock->write(action.toUtf8() + "\n");
+            t1Sock->flush();
+            res = t1Sock->readLine();
+            qDebug() << "got result" << res;
+        }
+    } else if (arg.startsWith("am ")) {
+        t1Sock->write(arg.toUtf8() + "\n");
+        t1Sock->flush();
+        res = t1Sock->readLine();
+        qDebug() << "got result" << res;
+    } else {
+        QString error = "Invalid t1sock input: " + arg;
+        luaL_argerror(L, 1, qPrintable(error));
+    }
+
+    return res;
 }
 
 //f:write(('t1_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments));
@@ -39,8 +122,16 @@ void LuaExecuteThread::run()
 {
     L = luaL_newstate();             /* opens Lua */
     luaL_openlibs(L);        /* opens the standard libraries */
+
     lua_pushcfunction(L, l_selectArg);
     lua_setglobal(L, "select_args");
+
+    lua_pushcfunction(L, l_adbQuickInputAm);
+    lua_setglobal(L, "adb_quick_input");
+
+    lua_pushcfunction(L, l_adbQuickInputAm);
+    lua_setglobal(L, "adb_quick_am");
+
     lua_pushcfunction(L, l_t1_load_mail_heads);
     lua_setglobal(L, "t1_load_mail_heads");
 
@@ -88,7 +179,8 @@ void LuaExecuteThread::run()
 
 LuaExecuteThread::LuaExecuteThread(QObject* parent)
     : QThread(parent),
-      mQuit(false)
+      mQuit(false),
+      t1Sock(NULL)
 {
 }
 

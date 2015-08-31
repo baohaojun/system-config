@@ -113,9 +113,10 @@ void AdbStateThread::run()
                 }
             }
             emit adbStateUpdate("Online");
-            if (getExecutionOutput("the-true-adb", args2).contains("Linux")) {
-                //do nothing
-            }
+            system("the-true-adb shell am startservice -n com.bhj.setclip/.PutClipService --ei getapk 1");
+            system("the-true-adb forward tcp:28888 localabstract:T1Wrench");
+            QString apk = getExecutionOutput("the-true-adb shell cat /sdcard/setclip-apk.txt");
+            qSystem("the-true-adb shell env CLASSPATH=" + apk + " app_process /system/bin/ Input");
         } else {
             lastAdbState = "Offline";
             qDebug() << "Offline: adb output is " << uname;
