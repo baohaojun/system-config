@@ -50,11 +50,15 @@ public class Input {
      *
      * @param args The command-line arguments
      */
-    public static void main(String[] args) {
-        try {
-            LocalServerSocket t1WrenchServer = new LocalServerSocket("T1Wrench");
-            while (true) {
-                LocalSocket t1socket = t1WrenchServer.accept();
+
+    private class T1Thread extends Thread {
+        LocalSocket t1socket;
+        T1Thread(LocalSocket localSock) {
+            t1socket = localSock;
+        }
+
+        public void run() {
+            try {
                 InputStream in = t1socket.getInputStream();
                 OutputStream out = t1socket.getOutputStream();
 
@@ -70,12 +74,33 @@ public class Input {
                         sb.append(buffer);
                     }
                 }
+            } catch (Throwable e) {
+                System.out.println("Error " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+    public static void main(String[] args) {
+        mInput = new Input();
+        File t1OptimizeDir = new File("/data/data/com.android.shell/t1wrench");
+        t1OptimizeDir.mkdir();
+
+        mInput.startServer();
+    }
+
+    private void startServer() {
+        try {
+            LocalServerSocket t1WrenchServer = new LocalServerSocket("T1Wrench");
+            while (true) {
+                LocalSocket t1socket = t1WrenchServer.accept();
+                T1Thread t1Thread = new T1Thread(t1socket);
+                t1Thread.start();
             }
         }
         catch (Throwable e) {
-            Log.e("bhj", String.format("%s:%d: ", "Input.java • src • SetClip", 53), e);
+            System.out.println("Error " + e.getMessage());
+            e.printStackTrace();
         }
-
     }
 
     private static Input mInput;
@@ -86,15 +111,12 @@ public class Input {
         String[] args = cmd.split("\\s+");
         if (args.length == 0)
             return;
-        if (mInput == null) {
-            mInput = new Input();
-            File t1OptimizeDir = new File("/data/data/com.android.shell/t1wrench");
-            t1OptimizeDir.mkdir();
-        }
 
         if (mAm == null) {
             String jarFile = "/system/framework/am.jar";
+            System.err.println("before classLoader");
             DexClassLoader classLoader = new DexClassLoader(jarFile, "/data/data/com.android.shell/t1wrench/", null, mInput.getClass().getClassLoader());
+            System.err.println("after classLoader");
             try {
                 Class<?> amClass = classLoader.loadClass("com.android.commands.am.Am");
                 if (amClass != null) {
@@ -307,7 +329,8 @@ public class Input {
 
         }
         catch (Throwable e) {
-            Log.e("bhj", String.format("%s:%d: ", "Input.java • src", 229), e);
+            System.out.println("Error " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
