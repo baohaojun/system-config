@@ -1361,7 +1361,7 @@ end
 t1_adb_mail = function(subject, to, cc, bcc, attachments)
    adb_shell("am start -n com.android.email/com.android.email.activity.ComposeActivityEmail mailto:; sleep 1; mkdir -p /sdcard/adb-mail")
 
-   adb_event("adb-tap 842 434")
+   adb_event("sleep .5 adb-tap 842 434")
 
    if attachments:gsub("%s", "") ~= "" then
       local files = split("\n", attachments)
