@@ -45,9 +45,10 @@ if test "${1:0:1}" = -; then
 fi
 
 if test $ORDERED != false; then
-    md5=$(echo "$@" | md5sum | pn 1)
     if test $ORDERED != true; then
         md5=$ORDERED
+    else
+        md5=$(echo "$@" | md5sum | pn 1)
     fi
     cmdfile=~/.cache/system-config/bhj/select-output-line/$md5.cmd
     histfile=~/.cache/system-config/bhj/select-output-line/$md5.hist

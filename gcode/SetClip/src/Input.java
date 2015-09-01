@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -63,12 +64,20 @@ public class Input {
                 OutputStream out = t1socket.getOutputStream();
 
                 InputStreamReader ir = new InputStreamReader(in);
+                OutputStreamWriter ow = new OutputStreamWriter(out);
 
                 StringBuilder sb = new StringBuilder();
                 char[] buffer = new char[1];
                 while (ir.read(buffer) == 1) {
                     if (buffer[0] == '\n') {
-                        doT1Command(sb.toString());
+                        if (doT1Command(sb.toString()) < 0) {
+                            ir.close();
+                            ow.close();
+                            break;
+                        } else {
+                            ow.write("input ok\n");
+                            ow.flush();
+                        }
                         sb.setLength(0);
                     } else {
                         sb.append(buffer);
@@ -84,6 +93,25 @@ public class Input {
         mInput = new Input();
         File t1OptimizeDir = new File("/data/data/com.android.shell/t1wrench");
         t1OptimizeDir.mkdir();
+
+        if (mAm == null) {
+            String jarFile = "/system/framework/am.jar";
+            System.err.println("before classLoader");
+            DexClassLoader classLoader = new DexClassLoader(jarFile, "/data/data/com.android.shell/t1wrench/", null, mInput.getClass().getClassLoader());
+            System.err.println("after classLoader");
+            try {
+                Class<?> amClass = classLoader.loadClass("com.android.commands.am.Am");
+                if (amClass != null) {
+                    Constructor<?> amConstructor = amClass.getConstructor();
+                    mAm = amConstructor.newInstance();
+                    mAmRun = mAm.getClass().getMethod("run", String[].class);
+                }
+            }
+            catch (Throwable e) {
+                System.out.println("Error " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
 
         mInput.startServer();
     }
@@ -106,42 +134,26 @@ public class Input {
     private static Input mInput;
     private static Object mAm;
     private static Method mAmRun;
-    private static void doT1Command(String cmd) {
+    private static synchronized int doT1Command(String cmd) {
         System.err.println("cmd is " + cmd);
         String[] args = cmd.split("\\s+");
         if (args.length == 0)
-            return;
-
-        if (mAm == null) {
-            String jarFile = "/system/framework/am.jar";
-            System.err.println("before classLoader");
-            DexClassLoader classLoader = new DexClassLoader(jarFile, "/data/data/com.android.shell/t1wrench/", null, mInput.getClass().getClassLoader());
-            System.err.println("after classLoader");
-            try {
-                Class<?> amClass = classLoader.loadClass("com.android.commands.am.Am");
-                if (amClass != null) {
-                    Constructor<?> amConstructor = amClass.getConstructor();
-                    mAm = amConstructor.newInstance();
-                    mAmRun = mAm.getClass().getMethod("run", String[].class);
-                }
-            }
-            catch (Throwable e) {
-                System.out.println("Error " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-        if (args[0].equals("input")) {
+            return 0;
+        String args0 = args[0];
+        args = Arrays.copyOfRange(args, 1, args.length);
+        if (args0.equals("input")) {
             mInput.run(args);
-        } else if (args[0].equals("am")) {
-            args = Arrays.copyOfRange(args, 1, args.length);
+        } else if (args0.equals("am")) {
             try {
                 mAmRun.invoke(mAm, (Object)args);
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 System.out.println("Error " + e.getMessage());
                 e.printStackTrace();
             }
+        } else if (args0.equals("exit")) {
+            return -1;
         }
+        return 0;
     }
 
     private void run(String[] args) {

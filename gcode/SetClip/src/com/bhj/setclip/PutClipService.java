@@ -2,6 +2,7 @@ package com.bhj.setclip;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
+import android.app.Notification;
 import android.app.Service;
 import android.content.ClipboardManager;
 import android.content.ClipData;
@@ -33,6 +34,15 @@ public class PutClipService extends Service {
         return null;
     }
 
+    @Override
+    public void onCreate()  {
+        super.onCreate();
+        startForeground(1, new Notification());
+        mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+    }
+
+    private static String myClipStr;
+
     private String getTask() {
         ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
@@ -47,6 +57,52 @@ public class PutClipService extends Service {
         txt.renameTo(new File(sdcard, "putclip.txt"));
     }
 
+    ClipboardManager mClipboard;
+    ClipboardManager.OnPrimaryClipChangedListener mClipListner;
+    boolean mClipboardHooked = false;
+
+    boolean mWatchingClipboard = true;
+
+    private void startMonitorClipboard() {
+        mWatchingClipboard = true;
+
+        if (mClipboardHooked) {
+            return;
+        }
+
+        if (mClipListner == null) {
+            mClipListner = new ClipboardManager.OnPrimaryClipChangedListener() {
+                    public void onPrimaryClipChanged() {
+                        if (!mWatchingClipboard) {
+                            return;
+                        }
+                        ClipData clip = mClipboard.getPrimaryClip();
+                        if (clip != null) {
+                            ClipData.Item item = clip.getItemAt(0);
+                            CharSequence text = item.getText();
+                            if (text == null) {
+                                return;
+                            }
+
+                            String str = text.toString();
+
+                            if (!str.equals(PutClipService.myClipStr)) {
+                                Intent crossDictIntent = new Intent();
+                                crossDictIntent.setClassName("com.baohaojun.crossdict", "com.baohaojun.crossdict.CrossDictActivity")
+                                    .putExtra("android.intent.extra.TEXT", str)
+                                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(crossDictIntent);
+                            }
+                        }
+                    }
+                };
+        }
+        if (!mClipboardHooked) {
+            mClipboard.addPrimaryClipChangedListener(mClipListner);
+            mClipboardHooked = true;
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent,  int flags,  int startId)  {
         try {
@@ -58,11 +114,14 @@ public class PutClipService extends Service {
             if (picName != null) {
                 Uri picUri = Uri.parse("file://" + picName);
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, picUri));
+            } else if (intent.getIntExtra("watch-clipboard", 0) == 1) {
+                startMonitorClipboard();
+            } else if (intent.getIntExtra("stop-watch-clipboard", 0) == 1) {
+                mWatchingClipboard = false;
             } else if (intent.getIntExtra("gettask", 0) == 1) {
                 String foregroundTaskPackageName = getTask();
                 writeFile(foregroundTaskPackageName);
             } else if (intent.getIntExtra("getclip", 0) == 1) {
-                ClipboardManager mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                 String str = mClipboard.getPrimaryClip().getItemAt(0).getText().toString();
                 writeFile(str);
             } else if (intent.getIntExtra("getphone", 0) == 1) {
@@ -189,10 +248,8 @@ public class PutClipService extends Service {
                 FileReader f = new FileReader(new File(sdcard, "putclip.txt"));
                 char[] buffer = new char[1024 * 1024];
                 int n = f.read(buffer);
-                String str = new String(buffer, 0, n);
-                ClipboardManager mClipboard;
-                mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-                mClipboard.setPrimaryClip(ClipData.newPlainText("Styled Text", str));
+                myClipStr = new String(buffer, 0, n);
+                mClipboard.setPrimaryClip(ClipData.newPlainText("Styled Text", myClipStr));
                 File putclip = new File(sdcard, "putclip.txt");
                 putclip.delete();
             }

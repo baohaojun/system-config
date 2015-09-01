@@ -12,6 +12,10 @@ function die() {
     exit -1
 }
 
+function select-output-line() {
+    command select-output-line -O $(basename $0) -m 1000 "$@"
+}
+
 if test $# = 0; then
     set -- "$(cat)"
 fi
@@ -58,18 +62,18 @@ case $1 in
         fi
         start=$(basename "$start")
         start=${start%.java}
-        html=$(select-output-line find ~/external/bin/Linux/ext/android-sdk-linux/docs -name "$start.html")
+        html=$(select-output-line -- find ~/external/bin/Linux/ext/android-sdk-linux/docs -name "$start.html")
         if test -e "$html"; then
             shift
             anchor=$(perl -ne 'if (m/a\s+name="(.*\b'$1'\b.*?)"/i) {print $1; exit}' "$html")
             firefox-open-url-pattern /android-sdk-linux/ file://"$html#$anchor"
         elif test -z "$html"; then
             word=$2
-            java=$(select-output-line "grep-gtags -e "$word" -d ~/src/android | grep -P -e '\.java:' | perl -npe 's/java:.*/java/'|sort -u")
+            java=$(select-output-line -- "grep-gtags -e "$word" -d ~/src/android | grep -P -e '\.java:' | perl -npe 's/java:.*/java/'|sort -u")
             java=$(basename "$java")
             start=$java
             start=${start%.java}
-            html=$(select-output-line find ~/external/bin/Linux/ext/android-sdk-linux/docs -name "$start.html")
+            html=$(select-output-line -- find ~/external/bin/Linux/ext/android-sdk-linux/docs -name "$start.html")
             if test -e "$html"; then
                 shift
                 anchor=$(perl -ne 'if (m/a\s+name="(.*\b'$1'\b.*?)"/i) {print $1; exit}' "$html")
@@ -79,9 +83,9 @@ case $1 in
         ;;
     qt|qt-mode)
         export SELECT_DIST_WORD=$2
-        file=$(select-output-line beagrep -e 'a name="'$2'(-prop|-enum)?"|<a href="[^"]*">'$2'</a>' -t "a name $2" -d /usr/share/qt5/doc --grep "-l -P")
+        file=$(select-output-line -- beagrep -e 'a name="'$2'(-prop|-enum)?"|<a href="[^"]*">'$2'</a>' -t "a name $2" -d /usr/share/qt5/doc --grep "-l -P")
         if test -z "$file" -a "${2:0:3}" = set; then
-            file=$(select-output-line beagrep -e 'a name="'${2:3}-prop'"' -d /usr/share/qt5/doc --grep -l -i)
+            file=$(select-output-line -- beagrep -e 'a name="'${2:3}-prop'"' -d /usr/share/qt5/doc --grep -l -i)
             set -- "$1" "$(lc ${2:3:1})${2:4}-prop"
         elif grep -P -e 'a name="'$2'(-prop)"' "$file" -q; then
             set -- "$1" "$2-prop"

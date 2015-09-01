@@ -5,4 +5,5 @@
     cp bin/SetClip-release.apk ~/src/github/T1Wrench/release/SetClip.apk
     cd ~/src/github/T1Wrench/release/
     md5sum SetClip.apk > setclip.apk.md5
+    adb push setclip.apk.md5 /sdcard/t1wrench-setclip.md5
 )
