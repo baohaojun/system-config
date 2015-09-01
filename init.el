@@ -136,12 +136,17 @@
 
 (require-package 'gnuplot)
 
+(defun ac-clang-restart-for-local-variables ()
+  (when (or (eq major-mode 'c-mode)
+            (eq major-mode 'c++-mode))
+    (ac-clang-shutdown-process)
+    (ac-clang-launch-completion-process)))
+
 (defun ac-cc-mode-setup ()
   (setq ac-clang-complete-executable "~/system-config/bin/Linux/clang-complete")
   (setq ac-sources '(ac-source-clang-async))
-  (ac-clang-launch-completion-process)
-  (add-hook 'hack-local-variables-hook
-            (lambda () (ac-clang-launch-completion-process))))
+  (ac-clang-restart-for-local-variables)
+  (add-hook 'hack-local-variables-hook #'ac-clang-restart-for-local-variables))
 
 (if (file-exists-p "~/system-config/.emacs_d/lisp/auto-complete-clang-async.el")
     (progn
