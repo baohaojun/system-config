@@ -142,7 +142,8 @@ public class CrossDictActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                              WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        mWorkingDir = Environment.getExternalStoragePublicDirectory("crossdict/ahd");
+        mWorkingDir = Environment.getExternalStorageDirectory();
+        mWorkingDir = new File(mWorkingDir, "crossdict/ahd");
 
         setContentView(R.layout.crossdict);
         mListView = (SlowListView) findViewById(R.id.nearby_dict_entries);
@@ -510,8 +511,20 @@ public class CrossDictActivity extends Activity {
                     mListView.setActiveDict(new StringArrayDict(stringReduce(mWordHistory)));
                     mWebView.lookUpWord(mWordHistory[0]);
                 } else if (item.getItemId() == R.id.start_service) {
+                    Intent clipIntent = new Intent()
+                        .setClassName("com.bhj.setclip", "com.bhj.setclip.PutClipService")
+                        .putExtra("watch-clipboard", 1);
+                    if (startService(clipIntent) != null) {
+                        return true;
+                    }
                     startService(new Intent(CrossDictActivity.this, ClipMonService.class));
                 } else if (item.getItemId() == R.id.stop_service) {
+                    Intent clipIntent = new Intent()
+                        .setClassName("com.bhj.setclip", "com.bhj.setclip.PutClipService")
+                        .putExtra("stop-watch-clipboard", 1);
+                    if (startService(clipIntent) != null) {
+                        return true;
+                    }
                     stopService(new Intent(CrossDictActivity.this, ClipMonService.class));
                 } else if (item.getItemId() == R.id.donate_menu) {
                     String url = "http://baohaojun.github.com/donate";
