@@ -8,6 +8,7 @@
 #include <QtCore/QThread>
 #include "bhj_help.hpp"
 #include "t1wrench.h"
+#include <QTime>
 
 bool gScreenCapJpg;
 
@@ -116,7 +117,12 @@ void AdbStateThread::run()
             system("the-true-adb shell am startservice -n com.bhj.setclip/.PutClipService --ei getapk 1");
             system("the-true-adb forward tcp:28888 localabstract:T1Wrench");
             QString apk = getExecutionOutput("the-true-adb shell cat /sdcard/setclip-apk.txt");
+            QTime t;
+            t.start();
             qSystem("the-true-adb shell env CLASSPATH=" + apk + " app_process /system/bin/ Input");
+            if (t.elapsed() < 2000) {
+                QThread::msleep(30000);
+            }
         } else {
             lastAdbState = "Offline";
             qDebug() << "Offline: adb output is " << uname;
