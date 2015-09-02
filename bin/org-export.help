@@ -38,7 +38,7 @@ cat <<EOF
         org-export-time-stamp-file nil
         org-html-htmlize-output-type (quote css)
         org-html-head-extra "<link rel=\"stylesheet\" href=\"/css/default.css\" type=\"text/css\" />
- <link rel=\"stylesheet\" href=\"/css/org.css\" type=\"text/css\" />
+ <link rel=\"stylesheet\" href=\"/css/$(org-export.css)\" type=\"text/css\" />
  <link rel=\"shortcut icon\" href=\"/poison.png\" type=\"image/png\" />
 
     <script type=\"text/javascript\" src=\"/js/jquery-1.7.1.min.js\"></script>
