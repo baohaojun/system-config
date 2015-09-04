@@ -163,7 +163,8 @@ void PushoverFrontend::connectToService()
     });
     connect(m_socket, &QWebSocket::disconnected, [this]() {
         snoreDebug(SNORE_WARNING) << "disconnected";
-        QTimer::singleShot(500, this, &PushoverFrontend::connectToService);
+        //TODO: use new style connect once we depend on qt 5.4
+        QTimer::singleShot(500, this, SLOT(PushoverFrontend::connectToService()));
     });
     connect(m_socket, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), [&](QAbstractSocket::SocketError error) {
         snoreDebug(SNORE_WARNING) << error << m_socket->errorString();
