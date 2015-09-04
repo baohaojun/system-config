@@ -135,7 +135,7 @@ void PushoverFrontend::connectToService()
     snoreDebug(SNORE_DEBUG) << "Connecting ton service";
     m_socket = new QWebSocket(QString(), QWebSocketProtocol::VersionLatest, this);
 
-    connect(m_socket, &QWebSocket::binaryMessageReceived, [&](const QByteArray & msg) {
+    connect(m_socket.data(), &QWebSocket::binaryMessageReceived, [&](const QByteArray & msg) {
         char c = msg.at(0);
         switch (c) {
         case '#':
@@ -161,16 +161,16 @@ void PushoverFrontend::connectToService()
             snoreDebug(SNORE_WARNING) << "unknown message received" << msg;
         }
     });
-    connect(m_socket, &QWebSocket::disconnected, [this]() {
+    connect(m_socket.data(), &QWebSocket::disconnected, [this]() {
         snoreDebug(SNORE_WARNING) << "disconnected";
         //TODO: use new style connect once we depend on qt 5.4
         QTimer::singleShot(500, this, SLOT(PushoverFrontend::connectToService()));
     });
-    connect(m_socket, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), [&](QAbstractSocket::SocketError error) {
+    connect(m_socket.data(), static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), [&](QAbstractSocket::SocketError error) {
         snoreDebug(SNORE_WARNING) << error << m_socket->errorString();
         emit loggedInChanged(false);
     });
-    connect(m_socket, &QWebSocket::connected, [&]() {
+    connect(m_socket.data(), &QWebSocket::connected, [&]() {
         snoreDebug(SNORE_DEBUG) << "connecting";
         m_socket->sendBinaryMessage((QLatin1String("login:") + device() + QLatin1Char(':') + secret() + QLatin1Char('\n')).toUtf8().constData());
         emit loggedInChanged(true);
