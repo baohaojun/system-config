@@ -8,11 +8,7 @@ before_install: |-
                 if  [ "$TRAVIS_OS_NAME" == "osx" ]
                 then
                     brew update
-                    brew install ninja
-                    if [ ! -d /usr/local/opt/qt5 ]
-                    then
-                        brew install qt5
-                    fi
+                    brew install ninja qt5
                 fi
                 if [ "$TRAVIS_OS_NAME" == "linux" ]
                 then
@@ -23,27 +19,23 @@ before_install: |-
                     sudo apt-get install -q ninja-build cmake
                     source /opt/qt53/bin/qt53-env.sh
                 fi
-                if [ ! -d ~/snore_work ]
-                then
-                    mkdir -p ~/snore_work
-                    mkdir -p ~/snore_work/git
-                    cd ~/snore_work/git
-                    git clone -q git://anongit.kde.org/extra-cmake-modules.git
-                    git clone -q https://github.com/Snorenotify/SnoreGrowl.git
-                    mkdir -p ~/snore_work/build
-                    cd ~/snore_work/build
-                    mkdir -p ~/snore_work/build/extra-cmake-modules
-                    cd ~/snore_work/build/extra-cmake-modules
-                    cmake -G"Ninja" ~/snore_work/git/extra-cmake-modules -DCMAKE_INSTALL_PREFIX=~/snore_work/installs/
-                    ninja install
-                    mkdir -p ~/snore_work/build/snoregrowl && cd ~/snore_work/build/snoregrowl
-                    cmake -G"Ninja" ~/snore_work/git/SnoreGrowl -DCMAKE_INSTALL_PREFIX=~/snore_work/installs/
-                    ninja install
-                fi
+                mkdir -p ~/git
+                cd ~/git
+                git clone -q git://anongit.kde.org/extra-cmake-modules.git
+                git clone -q https://github.com/Snorenotify/SnoreGrowl.git
+                mkdir -p ~/build
+                cd ~/build
+                mkdir -p ~/build/extra-cmake-modules
+                cd ~/build/extra-cmake-modules
+                cmake -G"Ninja" ~/git/extra-cmake-modules -DCMAKE_INSTALL_PREFIX=~/installs/
+                ninja install
+                mkdir -p ~/build/snoregrowl && cd ~/build/snoregrowl
+                cmake -G"Ninja" ~/git/SnoreGrowl -DCMAKE_INSTALL_PREFIX=~/installs/
+                ninja install
   
 compiler:
   - clang
-  - gcc
+  #- gcc
   
 script: |-
         cd $TRAVIS_BUILD_DIR
@@ -51,18 +43,13 @@ script: |-
         cd build
         if [ "$TRAVIS_OS_NAME" == "osx" ]
         then
-            cmake -G"Ninja" .. -DCMAKE_INSTALL_PREFIX=~/snore_work/installs/ -DCMAKE_PREFIX_PATH=/usr/local/opt/qt5
+            cmake -G"Ninja" .. -DCMAKE_INSTALL_PREFIX=~/installs/ -DCMAKE_PREFIX_PATH=/usr/local/opt/qt5
         fi
         if [ "$TRAVIS_OS_NAME" == "linux" ]
         then
-            cmake -G"Ninja" .. -DCMAKE_INSTALL_PREFIX=~/snore_work/installs/
+            cmake -G"Ninja" .. -DCMAKE_INSTALL_PREFIX=~/installs/
         fi
         ninja install
-
-cache:
-    directories:
-        - $HOME/snore_work
-        - /usr/local/opt/qt5
 
     
 notifications:
