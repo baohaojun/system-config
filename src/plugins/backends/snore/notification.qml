@@ -56,7 +56,7 @@ Rectangle {
     MouseArea {
         id: mouseArea2
         anchors.fill: parent
-        z: 99
+        z: 90
         onClicked: root.invoked()
         hoverEnabled: true
         onEntered: closeButton.visible = true
@@ -139,9 +139,8 @@ Rectangle {
         smooth: true
 
         MouseArea {
-            id: mouseArea1
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
+            id: mouseAreaCloseButton
+            anchors.fill: parent
             onClicked: root.dismissed()
         }
     }
