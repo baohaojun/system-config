@@ -56,7 +56,7 @@ Rectangle {
     MouseArea {
         id: mouseArea2
         anchors.fill: parent
-        z: -1
+        z: 99
         onClicked: root.invoked()
         hoverEnabled: true
         onEntered: closeButton.visible = true
