@@ -14,7 +14,7 @@ set -e
 ) >/dev/null 2>&1 &
 mm-ant
 
-my-adb 'rm -f /sdcard/setclip-apk.txt; am startservice -n com.bhj.setclip/.PutClipService --ei getapk 1; mkdir -p /data/data/com.android.shell/t1wrench; chown shell /data/data/com.android.shell/t1wrench'
+my-adb 'rm -f /sdcard/setclip-apk.txt; am startservice -n com.bhj.setclip/.PutClipService --ei getapk 1'
 sleep 1
 my-adb kill app_process || true
 my-adb env LD_LIBRARY_PATH=/data/data/com.bhj.setclip/lib CLASSPATH=$(my-adb 'cat /sdcard/setclip-apk.txt') app_process /system/bin/ Input
