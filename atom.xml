@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Linux就是我的IDE]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/09/05/0-Linux-is-my-IDE.html"/>
+    <updated>2015-08-05T22:09:00+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/09/05/0-Linux-is-my-IDE.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[芝麻，关门]]></title>
     <link href="http://baohaojun.github.io/blog/2015/08/06/0-close-sesame.html"/>
     <updated>2015-08-08T08:45:32+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html"/>
     <updated>2015-01-28T09:46:06+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[配置postfix用sohu smtpcloud进行relay]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html"/>
-    <updated>2015-01-27T19:45:55+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/01/27/0-config-postfix-to-use-sohu-smtpcloud-for-relay.html</id>
   </entry>
 </feed>

@@ -1,0 +1,5 @@
+#+title: Linux就是我的IDE
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+# bhj-tags: tool
+
+我很少使用诸如Visual Studio、Eclipse、IntelliJ IDEA、Qt Creator等等之类的集成开发环境（IDE，Integrated Development Environment），因为我有一个更好的“IDE”，那就是Linux。
