@@ -293,7 +293,11 @@ adb_am = function(cmd)
       cmd = join(' ', cmd)
    end
    if adb_quick_am ~= nil then
-      adb_quick_am{cmd}
+      local res = adb_quick_am{cmd}
+      if res ~= "input ok\n" then
+         debugging("adb_quick_am not ok: %s, redo using adb sell", res)
+         adb_shell(cmd)
+      end
    else
       adb_shell(cmd)
    end
@@ -346,7 +350,11 @@ local function adb_event(events)
          end
          i = i + 3
       elseif events[i] == 'key' or events[i] == 'adb-key' then
-         command_str = command_str .. ('input keyevent %s;'):format(events[i+1]:upper())
+         local event = events[i+1]:upper()
+         command_str = command_str .. ('input keyevent %s;'):format(event)
+         if event == "SCROLL_LOCK" then
+            command_str = command_str .. "sleep .1;"
+         end
          i = i + 2
       elseif events[i] == 'sleep' then
          command_str = command_str .. ('sleep %s || busybox sleep %s;'):format(events[i+1], events[i+1])
@@ -379,7 +387,11 @@ local function adb_event(events)
    end
    if adb_quick_input ~= nil then
       debugging("doing with " .. command_str)
-      adb_quick_input{command_str}
+      local res = adb_quick_input{command_str}
+      if res ~= "input ok\n" then
+         debugging("adb_quick_input not ok: %s, redo using adb sell", res)
+         adb_shell(command_str)
+      end
    else
       adb_shell(command_str)
    end

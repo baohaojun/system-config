@@ -77,7 +77,7 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
         t1Sock->waitForConnected();
     }
 
-    QString res = "input ok\n";
+    QString res;
     if (arg.startsWith("input ") || arg.startsWith("sleep ")) {
         QStringList actions = arg.split(";", QString::SkipEmptyParts);
         foreach (const QString& action, actions) {
@@ -89,12 +89,14 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
 
             t1Sock->write(action.toUtf8() + "\n");
             t1Sock->flush();
+            t1Sock->waitForReadyRead();
             res = t1Sock->readLine();
             qDebug() << "got result" << res;
         }
     } else if (arg.startsWith("am ")) {
         t1Sock->write(arg.toUtf8() + "\n");
         t1Sock->flush();
+        t1Sock->waitForReadyRead();
         res = t1Sock->readLine();
         qDebug() << "got result" << res;
     } else {
