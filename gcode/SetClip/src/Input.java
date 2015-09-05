@@ -11,6 +11,7 @@ import android.net.LocalSocket;
 import android.view.InputEvent;
 import dalvik.system.DexClassLoader;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -29,6 +30,11 @@ import java.util.Map;
  */
 
 public class Input {
+    private native boolean checkPerm(FileDescriptor fd);
+    static {
+        System.loadLibrary("t1wrench-jni");
+    }
+
     private static final String TAG = "Input";
     private static final String INVALID_ARGUMENTS = "Error: Invalid arguments for command: ";
 
@@ -121,6 +127,11 @@ public class Input {
             LocalServerSocket t1WrenchServer = new LocalServerSocket("T1Wrench");
             while (true) {
                 LocalSocket t1socket = t1WrenchServer.accept();
+                if (!checkPerm(t1socket.getFileDescriptor())) {
+                    System.err.println("socket permission denied");
+                    t1socket.close();
+                    continue;
+                }
                 T1Thread t1Thread = new T1Thread(t1socket);
                 t1Thread.start();
             }
