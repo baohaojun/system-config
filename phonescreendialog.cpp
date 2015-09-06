@@ -6,6 +6,7 @@
 #include "adbphonescreenthread.hpp"
 #include <QPixmap>
 #include <QDebug>
+#include "t1wrenchmainwindow.h"
 
 
 PhoneScreenDialog::PhoneScreenDialog(QWidget *parent) :
@@ -13,11 +14,14 @@ PhoneScreenDialog::PhoneScreenDialog(QWidget *parent) :
     ui(new Ui::PhoneScreenDialog)
 {
     ui->setupUi(this);
-
-    mPhoneScreenThread = QSharedPointer<AdbPhoneScreenThread>(new AdbPhoneScreenThread(this));
-    connect(mPhoneScreenThread.data(), SIGNAL(phoneScreenUpdate()), this, SLOT(phoneScreenUpdate()));
+    mT1Wrench = (T1WrenchMainWindow *)parent;
+    mPhoneScreenThread = new AdbPhoneScreenThread(this);
     mPhoneScreenThread->start();
-    connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)), this, SLOT(on_applicationStateChanged(Qt::ApplicationState)));
+}
+
+QSharedPointer<LuaExecuteThread> PhoneScreenDialog::mLuaThread()
+{
+    return mT1Wrench->mLuaThread;
 }
 
 void qSystem(QString str)
@@ -25,12 +29,7 @@ void qSystem(QString str)
     system(str.toUtf8().constData());
 }
 
-void PhoneScreenDialog::on_applicationStateChanged(Qt::ApplicationState appState)
-{
-    mPhoneScreenThread->setAppState(appState);
-}
-
-void PhoneScreenDialog::phoneScreenUpdate()
+void PhoneScreenDialog::phoneScreenUpdated()
 {
     QString screenFile = "t1wrench-screen.png";
     if (gScreenCapJpg) {
@@ -48,7 +47,7 @@ PhoneScreenDialog::~PhoneScreenDialog()
 {
     mPhoneScreenThread->stopIt();
     mPhoneScreenThread->wait();
-    mPhoneScreenThread.clear();
+    delete mPhoneScreenThread;
     delete ui;
 }
 
@@ -68,10 +67,11 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
         int y = mev->y() * 1920 / this->height();
         QTime now = QTime::currentTime();
         if (abs(x - press_x) + abs(y - press_y) > 20) {
-            system(QString().sprintf("the-true-adb shell input touchscreen swipe %d %d %d %d %d", press_x, press_y, x, y, now.msecsTo(press_time)).toUtf8().constData());
+            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-swipe-%d %d %d %d %d", now.msecsTo(press_time), press_x, press_y, x, y));
         } else {
-            system(QString().sprintf("the-true-adb shell input tap %d %d", x, y).toUtf8().constData());
+            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-tap %d %d", x, y));
         }
+        mPhoneScreenThread->syncScreen();
         return true;
     } else if (ev->type() == QEvent::Resize) {
         QResizeEvent *rev = (QResizeEvent *) ev;
@@ -84,35 +84,41 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
 
         if (m == 0) {
             if (key == Qt::Key_Home ) {
-                system("the-true-adb shell input keyevent HOME");
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key home");
+                mPhoneScreenThread->syncScreen();
                 return true;
             } else if (key == Qt::Key_Escape) {
-                system("the-true-adb shell input keyevent BACK");
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key back");
+                mPhoneScreenThread->syncScreen();
                 return true;
             } else if (key == Qt::Key_Pause) {
-                system("the-true-adb shell input keyevent POWER");
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key power");
+                mPhoneScreenThread->syncScreen();
                 return true;
             } else if (key == Qt::Key_Backspace) {
-                system("the-true-adb shell input keyevent DEL");
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key DEL");
+                mPhoneScreenThread->syncScreen();
+                return true;
             }
         }
 
         if (!kev->text().isEmpty()) {
             qDebug() << "key is" << kev->text();
-            if (kev->text() == "'") {
-                system("the-true-adb shell input text \"'\"");
-            } else if (kev->text() == "?") {
-                system("the-true-adb shell input text '\\?'");
+            if (key == Qt::Key_Space || key == Qt::Key_Enter ||
+                key == Qt::Key_Tab || key == Qt::Key_Return) {
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key space");
             } else {
-                system(QString().sprintf("the-true-adb shell input text \"'%s'\"", kev->text().toUtf8().constData()).toUtf8().constData());
+                mLuaThread()->addScript(QStringList() << "adb_event" << QString("adb-text ") + kev->text());
             }
+            mPhoneScreenThread->syncScreen();
             return true;
         }
     } else if (ev->type() == QEvent::Wheel) {
         QWheelEvent *wev = (QWheelEvent *)ev;
         int y = wev->angleDelta().y();
         int x = wev->angleDelta().x();
-        qSystem(QString().sprintf("the-true-adb shell input touchscreen swipe %d %d %d %d 50", wev->x(), wev->y(), wev->x() + x, wev->y() + y));
+        mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-swipe-50 %d %d %d %d", wev->x(), wev->y(), wev->x() + x, wev->y() + y));
+        mPhoneScreenThread->syncScreen();
     }
     return QDialog::eventFilter(obj, ev);
 }

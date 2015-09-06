@@ -28,6 +28,8 @@ signals:
     void gotSomeLog(const QString& key, const QString& val);
     void selectArgsSig(const QStringList&);
     void load_mail_heads_sig(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments);
+signals:
+    void requestSyncScreen();
 private:
     lua_State *L;
     QString mSelectedArg;

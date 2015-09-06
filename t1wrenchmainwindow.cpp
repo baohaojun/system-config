@@ -293,6 +293,9 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     }
     mLuaThread = QSharedPointer<LuaExecuteThread>(new LuaExecuteThread(this));
     connect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
+    if (!mPhoneScreenDialog.isNull()) {
+        this->connect(mLuaThread.data(), SIGNAL(requestSyncScreen()), mPhoneScreenDialog.data(), SLOT(syncScreen()), Qt::QueuedConnection);
+    }
     connect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
     connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     mLuaThread->start();
@@ -718,6 +721,7 @@ void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             mPhoneScreenDialog->move(this->x() + this->size().width(), this->y());
             int winId = mPhoneScreenDialog->winId();
             mPhoneScreenDialog->installEventFilter(mPhoneScreenDialog.data());
+            this->connect(mLuaThread.data(), SIGNAL(requestSyncScreen()), mPhoneScreenDialog.data(), SLOT(syncScreen()), Qt::QueuedConnection);
         }
         mPhoneScreenDialog->show();
     } else {

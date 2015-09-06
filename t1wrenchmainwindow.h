@@ -1,3 +1,4 @@
+/* -*- mode: c++ -*- */
 #ifndef T1WRENCHMAINWINDOW_H
 #define T1WRENCHMAINWINDOW_H
 
@@ -118,6 +119,7 @@ private:
     QRadioButton* mLastRadioButton;
     virtual bool eventFilter(QObject *obj, QEvent *ev);
     bool handleEmacsKeys(QWidget *w, QKeyEvent *e);
+    friend class PhoneScreenDialog;
 
 signals:
     void activateWindow();

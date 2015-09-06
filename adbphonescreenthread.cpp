@@ -8,16 +8,22 @@
 #include <QtDebug>
 #include <QtCore/QThread>
 #include "bhj_help.hpp"
+#include <QTimer>
 
 AdbPhoneScreenThread::AdbPhoneScreenThread(QObject* parent)
     : QThread(parent)
 {
+    mPhoneScreenDialog = (PhoneScreenDialog *)parent;
     shouldStop = 0;
     paused = 0;
+    mScreenSyncer = 0;
 }
 
 AdbPhoneScreenThread::~AdbPhoneScreenThread()
 {
+    if (mScreenSyncer) {
+        mScreenSyncer->deleteLater();
+    }
 }
 
 void AdbPhoneScreenThread::stopIt()
@@ -27,43 +33,25 @@ void AdbPhoneScreenThread::stopIt()
 
 void AdbPhoneScreenThread::run()
 {
-    while (!shouldStop) {
-        if (!paused) {
-            const char *screenFile = "t1wrench-screen.png";
-            if (gScreenCapJpg) {
-                screenFile = "t1wrench-screen.jpg";
-            }
-
-#ifdef Q_OS_WIN32
-            qSystem(QString().sprintf("the-true-adb shell screencap /sdcard/%s", screenFile));
-            qSystem(QString().sprintf("the-true-adb pull /sdcard/%s", screenFile));
-#else
-            qSystem(QString().sprintf("the-true-adb shell screencap /sdcard/%s && the-true-adb pull /sdcard/%s;", screenFile, screenFile));
-#endif
-            emit phoneScreenUpdate();
-
-        }
-        for (int i = 0; i < 10; i++) {
-            QThread::msleep(100);
-            if (mAppState == Qt::ApplicationActive) {
-                break;
-            }
-        }
-
-    }
+    mScreenSyncer = new PhoneScreenSyncer();
+    connect(mScreenSyncer, SIGNAL(phoneScreenUpdate()), mPhoneScreenDialog, SLOT(phoneScreenUpdated()));
+    connect(this, SIGNAL(dialogShow(bool)), mScreenSyncer, SLOT(startSyncing(bool)));
+    connect(this, SIGNAL(requestSyncScreen()), mScreenSyncer, SLOT(syncScreen()));
+    mScreenSyncer->syncScreen();
+    exec();
 }
 
 void AdbPhoneScreenThread::continueLoop()
 {
-    paused = 0;
+    emit dialogShow(true);
 }
 
 void AdbPhoneScreenThread::pauseLoop()
 {
-    paused = 1;
+    emit dialogShow(false);
 }
 
-void AdbPhoneScreenThread::setAppState(Qt::ApplicationState appState)
+void AdbPhoneScreenThread::syncScreen()
 {
-    mAppState = appState;
+    emit requestSyncScreen();
 }

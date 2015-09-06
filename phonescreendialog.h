@@ -1,10 +1,16 @@
+/* -*- mode: c++ -*- */
 #ifndef PHONESCREEN_H
 #define PHONESCREEN_H
 
 #include <QDialog>
+class PhoneScreenDialog;
+class AdbPhoneScreenThread;
 #include "adbphonescreenthread.hpp"
 #include <QSharedPointer>
 #include <QWindow>
+#include "luaexecutethread.hpp"
+#include <QSharedPointer>
+class T1WrenchMainWindow;
 
 namespace Ui {
 class PhoneScreenDialog;
@@ -18,8 +24,8 @@ public:
     explicit PhoneScreenDialog(QWidget *parent = 0);
     ~PhoneScreenDialog();
 
-private slots:
-    void phoneScreenUpdate();
+public slots:
+    void phoneScreenUpdated();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *ev);
@@ -27,11 +33,12 @@ protected:
 
 private:
     Ui::PhoneScreenDialog *ui;
-    QSharedPointer<AdbPhoneScreenThread> mPhoneScreenThread;
+    AdbPhoneScreenThread* mPhoneScreenThread;
     void showEvent(QShowEvent*);
     void hideEvent(QHideEvent*);
-private slots:
-    void on_applicationStateChanged(Qt::ApplicationState);
+    QSharedPointer<LuaExecuteThread> mLuaThread();
+    T1WrenchMainWindow* mT1Wrench;
+    friend class T1WrenchMainWindow;
 };
 
 #endif // PHONESCREEN_H

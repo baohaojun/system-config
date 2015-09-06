@@ -83,7 +83,9 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
         foreach (const QString& action, actions) {
             qDebug() << "doing action" << action;
             if (action.startsWith("sleep ")) {
-                qSystem("set -x; " + action);
+                int msec = atof(qPrintable(action.mid(6))) * 1000;
+                emit requestSyncScreen();
+                QThread::msleep(msec);
                 continue;
             }
 

@@ -349,6 +349,9 @@ local function adb_event(events)
             command_str = command_str .. add
          end
          i = i + 3
+      elseif events[i] == 'text' or events[i] == 'adb-text' then
+         command_str = command_str .. ("input text %s;"):format(events[i+1])
+         i = i + 2
       elseif events[i] == 'key' or events[i] == 'adb-key' then
          local event = events[i+1]:upper()
          command_str = command_str .. ('input keyevent %s;'):format(event)
@@ -671,7 +674,8 @@ adb_get_input_window_dump = function()
       if tonumber((ime_height - (init_height - app_height)) * default_height / init_height ) >= 1200 then -- new version of google pinyin ime?
          if input_window_dump:match('package=com.google.android.inputmethod.pinyin') then
             ime_height = (1920 - 1140) * init_height / default_height + (init_height - app_height)
-         elseif input_window_dump:match('package=com.google.android.inputmethod.latin') then
+         elseif input_window_dump:match('package=com.google.android.inputmethod.latin') or
+            input_window_dump:match('package=com.android.inputmethod.latin') then
             ime_height = 800 * init_height / default_height + (init_height - app_height)
          end
       end
@@ -1637,6 +1641,7 @@ M.t1_adb_mail = t1_adb_mail
 M.t1_save_mail_heads = t1_save_mail_heads
 M.adb_weixin_lucky_money = adb_weixin_lucky_money
 M.adb_weixin_lucky_money_output = adb_weixin_lucky_money_output
+M.adb_event = adb_event
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
