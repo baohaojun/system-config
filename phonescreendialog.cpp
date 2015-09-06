@@ -1,6 +1,6 @@
-#include "phonescreen.h"
+#include "phonescreendialog.h"
 #include "t1wrench.h"
-#include "ui_phonescreen.h"
+#include "ui_phonescreendialog.h"
 #include <QMouseEvent>
 #include <QTime>
 #include "adbphonescreen.hpp"
@@ -8,9 +8,9 @@
 #include <QDebug>
 
 
-PhoneScreen::PhoneScreen(QWidget *parent) :
+PhoneScreenDialog::PhoneScreenDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PhoneScreen)
+    ui(new Ui::PhoneScreenDialog)
 {
     ui->setupUi(this);
 
@@ -25,12 +25,12 @@ void qSystem(QString str)
     system(str.toUtf8().constData());
 }
 
-void PhoneScreen::on_applicationStateChanged(Qt::ApplicationState appState)
+void PhoneScreenDialog::on_applicationStateChanged(Qt::ApplicationState appState)
 {
     mPhoneScreenThread->setAppState(appState);
 }
 
-void PhoneScreen::phoneScreenUpdate()
+void PhoneScreenDialog::phoneScreenUpdate()
 {
     QString screenFile = "t1wrench-screen.png";
     if (gScreenCapJpg) {
@@ -41,10 +41,10 @@ void PhoneScreen::phoneScreenUpdate()
         qDebug() << "using" << screenFile;
         system("bash -c 'pwd; ls -l t1wrench-screen.jpg'");
     }
-    ui->phoneScreen->setPixmap(QPixmap::fromImage(screen.scaled(this->width(), this->height())));
+    ui->phoneScreenLabel->setPixmap(QPixmap::fromImage(screen.scaled(this->width(), this->height())));
 }
 
-PhoneScreen::~PhoneScreen()
+PhoneScreenDialog::~PhoneScreenDialog()
 {
     mPhoneScreenThread->stopIt();
     mPhoneScreenThread->wait();
@@ -52,7 +52,7 @@ PhoneScreen::~PhoneScreen()
     delete ui;
 }
 
-bool PhoneScreen::eventFilter(QObject *obj, QEvent *ev)
+bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
 {
     static int press_x, press_y;
     static QTime press_time;
@@ -75,8 +75,8 @@ bool PhoneScreen::eventFilter(QObject *obj, QEvent *ev)
         return true;
     } else if (ev->type() == QEvent::Resize) {
         QResizeEvent *rev = (QResizeEvent *) ev;
-        ui->phoneScreen->resize(rev->size());
-        ui->phoneScreen->move(0, 0);
+        ui->phoneScreenLabel->resize(rev->size());
+        ui->phoneScreenLabel->move(0, 0);
     } else if (ev->type() == QEvent::KeyPress) {
         QKeyEvent *kev = (QKeyEvent *)ev;
         int key = kev->key();
@@ -117,17 +117,17 @@ bool PhoneScreen::eventFilter(QObject *obj, QEvent *ev)
     return QDialog::eventFilter(obj, ev);
 }
 
-void PhoneScreen::resizeEvent(QResizeEvent *)
+void PhoneScreenDialog::resizeEvent(QResizeEvent *)
 {
 
 }
 
-void PhoneScreen::showEvent(QShowEvent *ev)
+void PhoneScreenDialog::showEvent(QShowEvent *ev)
 {
     mPhoneScreenThread->continueLoop();
 }
 
-void PhoneScreen::hideEvent(QHideEvent *ev)
+void PhoneScreenDialog::hideEvent(QHideEvent *ev)
 {
     mPhoneScreenThread->pauseLoop();
 }

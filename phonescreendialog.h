@@ -7,16 +7,16 @@
 #include <QWindow>
 
 namespace Ui {
-class PhoneScreen;
+class PhoneScreenDialog;
 }
 
-class PhoneScreen : public QDialog
+class PhoneScreenDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit PhoneScreen(QWidget *parent = 0);
-    ~PhoneScreen();
+    explicit PhoneScreenDialog(QWidget *parent = 0);
+    ~PhoneScreenDialog();
 
 private slots:
     void phoneScreenUpdate();
@@ -26,7 +26,7 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 private:
-    Ui::PhoneScreen *ui;
+    Ui::PhoneScreenDialog *ui;
     QSharedPointer<AdbPhoneScreenThread> mPhoneScreenThread;
     void showEvent(QShowEvent*);
     void hideEvent(QHideEvent*);

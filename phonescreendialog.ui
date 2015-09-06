@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PhoneScreen</class>
- <widget class="QDialog" name="PhoneScreen">
+ <class>PhoneScreenDialog</class>
+ <widget class="QDialog" name="PhoneScreenDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QLabel" name="phoneScreen">
+  <widget class="QLabel" name="phoneScreenLabel">
    <property name="geometry">
     <rect>
      <x>10</x>

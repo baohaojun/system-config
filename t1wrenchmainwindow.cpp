@@ -40,7 +40,7 @@
 #include "emojimodel.h"
 #include "contactmodel.h"
 #include "strlistmodel.h"
-#include "phonescreen.h"
+#include "phonescreendialog.h"
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -712,7 +712,7 @@ void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     if (checked) {
         if (mPhoneScreenDialog.isNull()) {
-            mPhoneScreenDialog = QSharedPointer<PhoneScreen>(new PhoneScreen(this));
+            mPhoneScreenDialog = QSharedPointer<PhoneScreenDialog>(new PhoneScreenDialog(this));
             mPhoneScreenDialog->setModal(false);
             mPhoneScreenDialog->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
             mPhoneScreenDialog->move(this->x() + this->size().width(), this->y());
