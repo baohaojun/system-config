@@ -3,7 +3,7 @@
 #include "ui_phonescreendialog.h"
 #include <QMouseEvent>
 #include <QTime>
-#include "adbphonescreen.hpp"
+#include "adbphonescreenthread.hpp"
 #include <QPixmap>
 #include <QDebug>
 

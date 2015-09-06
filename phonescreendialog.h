@@ -2,7 +2,7 @@
 #define PHONESCREEN_H
 
 #include <QDialog>
-#include "adbphonescreen.hpp"
+#include "adbphonescreenthread.hpp"
 #include <QSharedPointer>
 #include <QWindow>
 

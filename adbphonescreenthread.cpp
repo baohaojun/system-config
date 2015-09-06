@@ -1,5 +1,5 @@
 #include "t1wrench.h"
-#include "adbphonescreen.hpp"
+#include "adbphonescreenthread.hpp"
 #include <QtCore/QProcess>
 #include <QtCore/QProcessEnvironment>
 #include <QtCore/QFile>
