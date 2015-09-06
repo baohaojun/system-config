@@ -1,0 +1,9 @@
+#!/bin/bash
+
+script=$(
+cat <<EOF
+(get-window-xy-size "$1")
+EOF
+)
+
+sawfish-client -e "$script"
