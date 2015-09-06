@@ -103,11 +103,16 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
         }
 
         if (!kev->text().isEmpty()) {
+
             qDebug() << "key is" << kev->text();
             if (key == Qt::Key_Space || key == Qt::Key_Enter ||
                 key == Qt::Key_Tab || key == Qt::Key_Return) {
                 mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key space");
-            } else {
+            } else if (key == Qt::Key_Backspace) {
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key DEL");
+                mPhoneScreenThread->syncScreen();
+                return true;
+            } else if (kev->text()[0].isPrint()) {
                 mLuaThread()->addScript(QStringList() << "adb_event" << QString("adb-text ") + kev->text());
             }
             mPhoneScreenThread->syncScreen();
