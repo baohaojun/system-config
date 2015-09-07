@@ -18,6 +18,12 @@ before_install: |-
                     sudo apt-get install -q qt53base qt53tools qt53quick1 qt53quickcontrols qt53websockets qt53multimedia
                     sudo apt-get install -q ninja-build cmake
                     source /opt/qt53/bin/qt53-env.sh
+                    if [ "$CXX" = "g++" ]
+                    then
+                        sudo apt-get install -q gcc-4.7 g++-4.7
+                        export CXX="g++-4.7"
+                        export CC="gcc-4.7"
+                    fi
                 fi
                 mkdir -p ~/git
                 cd ~/git
@@ -35,7 +41,7 @@ before_install: |-
   
 compiler:
   - clang
-  #- gcc
+  - gcc
   
 script: |-
         cd $TRAVIS_BUILD_DIR
