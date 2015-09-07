@@ -13,6 +13,7 @@ PhoneScreenDialog::PhoneScreenDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PhoneScreenDialog)
 {
+    isShelled = true;
     ui->setupUi(this);
     mT1Wrench = (T1WrenchMainWindow *)parent;
     mPhoneScreenThread = new AdbPhoneScreenThread(this);
@@ -40,7 +41,47 @@ void PhoneScreenDialog::phoneScreenUpdated()
         qDebug() << "using" << screenFile;
         system("bash -c 'pwd; ls -l t1wrench-screen.jpg'");
     }
-    ui->phoneScreenLabel->setPixmap(QPixmap::fromImage(screen.scaled(this->width(), this->height())));
+    if (isShelled) {
+        ui->phoneScreenLabel->setPixmap(QPixmap::fromImage(screen.scaled(this->width() * 1080 / 1187, this->height() * 1920 / 2457)));
+    } else {
+        ui->phoneScreenLabel->setPixmap(QPixmap::fromImage(screen.scaled(this->width(), this->height())));
+    }
+
+}
+
+void PhoneScreenDialog::reloadBackground()
+{
+    int finalWidth;
+
+    if (isShelled) {
+        finalWidth = this->height() * 1187 / 2457;
+    } else {
+        finalWidth = this->height() * 1080 / 1920;
+    }
+
+    if (finalWidth != this->width()) {
+        this->setFixedSize(finalWidth, this->height());
+        return;
+    }
+
+    if (isShelled) {
+        ui->phoneShellLabel->resize(this->size());
+        ui->phoneShellLabel->move(0, 0);
+        QString screenFile = "screenshot_shell.png";
+
+        QImage screen(screenFile);
+        if (screen.isNull()) {
+            qDebug() << "using" << screenFile;
+            system("bash -c 'pwd; ls -l t1wrench-screen.jpg'");
+        }
+        ui->phoneShellLabel->setPixmap(QPixmap::fromImage(screen.scaled(this->width(), this->height())));
+
+        ui->phoneScreenLabel->resize(this->size().width() * 1080 / 1187, this->size().height() * 1920 / 2457);
+        ui->phoneScreenLabel->move(this->size().width() * 53 / 1187, this->size().height() * 259 / 2457);
+    } else {
+        ui->phoneScreenLabel->resize(this->size());
+        ui->phoneScreenLabel->move(0, 0);
+    }
 }
 
 PhoneScreenDialog::~PhoneScreenDialog()
@@ -69,21 +110,26 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
         if (abs(x - press_x) + abs(y - press_y) > 20) {
             mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-swipe-%d %d %d %d %d", now.msecsTo(press_time), press_x, press_y, x, y));
         } else {
-            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-tap %d %d", x, y));
+            if (isShelled) {
+
+            } else {
+                mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-tap %d %d", x, y));
+            }
         }
         mPhoneScreenThread->syncScreen();
         return true;
     } else if (ev->type() == QEvent::Resize) {
-        QResizeEvent *rev = (QResizeEvent *) ev;
-        ui->phoneScreenLabel->resize(rev->size());
-        ui->phoneScreenLabel->move(0, 0);
+        reloadBackground();
     } else if (ev->type() == QEvent::KeyPress) {
         QKeyEvent *kev = (QKeyEvent *)ev;
         int key = kev->key();
         Qt::KeyboardModifiers m = kev->modifiers();
 
         if (m == 0) {
-            if (key == Qt::Key_Home ) {
+            if (key == Qt::Key_F1) {
+                isShelled = !isShelled;
+                reloadBackground();
+            } else if (key == Qt::Key_Home ) {
                 mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key home");
                 mPhoneScreenThread->syncScreen();
                 return true;
@@ -104,9 +150,13 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
 
         if (!kev->text().isEmpty()) {
 
-            qDebug() << "key is" << kev->text();
-            if (key == Qt::Key_Space || key == Qt::Key_Enter ||
-                key == Qt::Key_Tab || key == Qt::Key_Return) {
+            if (key == Qt::Key_Enter || key == Qt::Key_Return) {
+                if (m == Qt::ControlModifier) {
+                    mLuaThread()->addScript(QStringList() << "t1_send_action");
+                } else if (m == 0) {
+                    mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key enter");
+                }
+            } else if (key == Qt::Key_Space || key == Qt::Key_Tab) {
                 mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key space");
             } else if (key == Qt::Key_Backspace) {
                 mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key DEL");
@@ -146,4 +196,9 @@ void PhoneScreenDialog::hideEvent(QHideEvent *ev)
 void PhoneScreenDialog::closeEvent(QCloseEvent *event)
 {
     mPhoneScreenThread->quit();
+}
+
+void PhoneScreenDialog::syncScreen()
+{
+    mPhoneScreenThread->syncScreen();
 }

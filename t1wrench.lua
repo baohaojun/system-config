@@ -45,6 +45,7 @@ local qq_emojis, weixin_emojis
 local sdk_version = 19
 local emojis, emojis_map
 local the_true_adb = "./the-true-adb"
+local t1_send_action
 
 local qq_emoji_table = {
    "微笑", "撇嘴", "色", "发呆", "得意", "流泪", "害羞", "闭嘴",
@@ -1068,6 +1069,10 @@ t1_post = function(text) -- use weixin
    return "text sent"
 end
 
+t1_send_action = function()
+   t1_post('​')
+end
+
 local function upload_pics(...)
    local pics = {...}
    adb_shell(
@@ -1642,6 +1647,7 @@ M.t1_save_mail_heads = t1_save_mail_heads
 M.adb_weixin_lucky_money = adb_weixin_lucky_money
 M.adb_weixin_lucky_money_output = adb_weixin_lucky_money_output
 M.adb_event = adb_event
+M.t1_send_action = t1_send_action
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then

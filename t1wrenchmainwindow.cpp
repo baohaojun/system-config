@@ -200,6 +200,8 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         return;
     }
 
+    ui->phoneTextEdit->setPlaceholderText("");
+    
     if (ui->tbNotes->isChecked()) {
         mLuaThread->addScript(QStringList() << "get_a_note" << text);
         mPictures.insert(0, "last-pic-notes.png");
@@ -730,7 +732,7 @@ void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
         if (mPhoneScreenDialog.isNull()) {
             mPhoneScreenDialog = QSharedPointer<PhoneScreenDialog>(new PhoneScreenDialog(this));
             mPhoneScreenDialog->setModal(false);
-            mPhoneScreenDialog->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
+            mPhoneScreenDialog->setFixedSize(this->size().height() * 1187 / 2457, this->size().height());
             mPhoneScreenDialog->move(this->x() + this->size().width(), this->y());
             int winId = mPhoneScreenDialog->winId();
             mPhoneScreenDialog->installEventFilter(mPhoneScreenDialog.data());
@@ -744,14 +746,12 @@ void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 
 bool T1WrenchMainWindow::eventFilter(QObject *obj, QEvent *ev)
 {
-    
-
     if (ev->type() == QEvent::KeyPress) {
         QWidget* w = (QWidget *)obj;
         QKeyEvent* e = (QKeyEvent*)ev;
         return handleEmacsKeys(w, e);
     }
-    
+
     return QMainWindow::eventFilter(obj, ev);
 }
 

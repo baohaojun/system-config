@@ -26,12 +26,15 @@ public:
 
 public slots:
     void phoneScreenUpdated();
+    void syncScreen();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *ev);
     void resizeEvent(QResizeEvent *);
 
 private:
+    bool isShelled;
+    void reloadBackground();
     void closeEvent(QCloseEvent *event);
     Ui::PhoneScreenDialog *ui;
     AdbPhoneScreenThread* mPhoneScreenThread;

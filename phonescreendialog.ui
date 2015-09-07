@@ -25,13 +25,28 @@
      <x>10</x>
      <y>10</y>
      <width>351</width>
-     <height>511</height>
+     <height>351</height>
     </rect>
    </property>
    <property name="text">
     <string/>
    </property>
   </widget>
+  <widget class="QLabel" name="phoneShellLabel">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>180</y>
+     <width>211</width>
+     <height>351</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <zorder>phoneShellLabel</zorder>
+  <zorder>phoneScreenLabel</zorder>
  </widget>
  <resources/>
  <connections/>
