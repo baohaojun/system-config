@@ -54,6 +54,11 @@ public:
     Icon(const QImage &img);
 
     /**
+     * Creates an Icon from QIcon @p icon
+     */
+    Icon(const QIcon &icon);
+
+    /**
      * Creates an Icon from a url
      * Valid urls are "file://home/foo/foo.png", "C:\\foo.png", ":/root/foo.png", "http://foo.com/foo.png"
      * @param url the url

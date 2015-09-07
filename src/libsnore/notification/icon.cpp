@@ -46,6 +46,10 @@ Icon::Icon(const QImage &img):
 {
 }
 
+Icon::Icon(const QIcon &icon):
+    d(new IconData(icon.pixmap(32).toImage()))
+{}
+
 Icon::Icon(const QString &url):
     d(new IconData(url))
 {
