@@ -32,6 +32,7 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 private:
+    void closeEvent(QCloseEvent *event);
     Ui::PhoneScreenDialog *ui;
     AdbPhoneScreenThread* mPhoneScreenThread;
     void showEvent(QShowEvent*);

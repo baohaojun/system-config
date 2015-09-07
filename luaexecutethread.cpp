@@ -72,7 +72,7 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
             qDebug() << "prepare to reconnect t1Sock";
         }
         qDebug() << "connect to localhost 28888";
-        t1Sock = new QTcpSocket(this);
+        t1Sock = new QTcpSocket();
         t1Sock->connectToHost("localhost", 28888, QIODevice::ReadWrite);
         t1Sock->waitForConnected();
     }
@@ -186,6 +186,12 @@ LuaExecuteThread::LuaExecuteThread(QObject* parent)
       mQuit(false),
       t1Sock(NULL)
 {
+}
+
+LuaExecuteThread::~LuaExecuteThread()
+{
+    if (t1Sock)
+        t1Sock->deleteLater();
 }
 
 void LuaExecuteThread::addScript(QStringList script)

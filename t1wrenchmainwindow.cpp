@@ -565,13 +565,26 @@ void T1WrenchMainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 void T1WrenchMainWindow::closeEvent(QCloseEvent *event)
 {
     if (mQuit == true) {
+        if (!mPhoneScreenDialog.isNull()) {
+            mPhoneScreenDialog->close();
+        }
         QMainWindow::closeEvent(event);
         return;
     }
 
     if (trayIcon->isVisible()) {
         hide();
+        if (mPhoneScreenDialog) {
+            mPhoneScreenDialog->hide();
+        }
         event->ignore();
+    }
+}
+
+void T1WrenchMainWindow::showEvent(QShowEvent *event)
+{
+    if (mPhoneScreenDialog && ui->tbPhoneScreen->isChecked()) {
+        mPhoneScreenDialog->show();
     }
 }
 

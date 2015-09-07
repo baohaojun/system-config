@@ -17,6 +17,7 @@
 #include "contactmodel.h"
 #include <QMap>
 #include "phonescreendialog.h"
+#include <QShowEvent>
 
 namespace Ui {
 class T1WrenchMainWindow;
@@ -97,6 +98,7 @@ private:
     DialogGetEntry* mSelectArgDialog;
     void createTrayIcon();
     void closeEvent(QCloseEvent *event);
+    void showEvent(QShowEvent *event);
 
     QAction* quitAction;
     QSystemTrayIcon* trayIcon;

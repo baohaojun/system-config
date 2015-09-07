@@ -17,6 +17,7 @@ public slots:
 
 public:
     QString adbQuickInputAm(QString arg);
+    ~LuaExecuteThread();
     LuaExecuteThread(QObject* parent = NULL);
     void addScript(QStringList script);
     void quitLua();

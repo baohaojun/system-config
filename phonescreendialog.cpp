@@ -142,3 +142,8 @@ void PhoneScreenDialog::hideEvent(QHideEvent *ev)
 {
     mPhoneScreenThread->pauseLoop();
 }
+
+void PhoneScreenDialog::closeEvent(QCloseEvent *event)
+{
+    mPhoneScreenThread->quit();
+}
