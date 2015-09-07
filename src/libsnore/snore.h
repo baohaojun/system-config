@@ -80,7 +80,7 @@ public:
     /**
      * Displays a example notification.
      */
-    void displayExapleNotification();
+    void displayExampleNotification();
 
     /**
      * Register an application.
@@ -159,23 +159,23 @@ Q_SIGNALS:
      * @todo maybe introduce a special action state for this case
      * @see Action
      */
-    void actionInvoked(Snore::Notification);
+    void actionInvoked(const Snore::Notification &notification);
 
     /**
      * This signal is emitted when a Notification is closed.
      * @see Notification::CloseReasons
      */
-    void notificationClosed(Snore::Notification);
+    void notificationClosed(const Snore::Notification &notification);
 
     /**
      * This signal is emited in case the Primary backend encountered an error.
      */
-    void prmaryNotificationBackendError(const QString &error);
+    void primaryNotificationBackendError(const QString &error);
 
     /**
      * This signal is emited in case the Primary backend changed.
      */
-    void prmaryNotificationBackendChanged(const QString &erro);
+    void primaryNotificationBackendChanged(const QString &error);
 
 private:
     SnoreCore(QObject *parent);

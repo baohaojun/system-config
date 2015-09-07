@@ -93,7 +93,7 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         if (!b->isReady()) {
             snoreDebug(SNORE_DEBUG) << "Backend not ready:" << b->errorString();
 
-            emit q->prmaryNotificationBackendError(b->errorString());
+            emit q->primaryNotificationBackendError(b->errorString());
             return false;
         }
         if (m_notificationBackend) {
@@ -106,7 +106,7 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         connect(b, &SnoreBackend::error, [this, b](const QString &) {
             slotInitPrimaryNotificationBackend();
         });
-        emit q->prmaryNotificationBackendChanged(b->name());
+        emit q->primaryNotificationBackendChanged(b->name());
         return true;
     }
     return false;

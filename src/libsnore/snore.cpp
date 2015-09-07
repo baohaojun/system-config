@@ -253,7 +253,7 @@ Notification SnoreCore::getActiveNotificationByID(uint id) const
     return d->m_activeNotifications.value(id);
 }
 
-void SnoreCore::displayExapleNotification()
+void SnoreCore::displayExampleNotification()
 {
     Application app = SnoreCorePrivate::instance()->defaultApplication();
     QString text = QLatin1String("<i>") + tr("This is %1").arg(app.name()) + QLatin1String("</i><br>"

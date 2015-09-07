@@ -95,7 +95,7 @@ QSystemTrayIcon *TrayIcon::trayIcon()
 
 void TrayIcon::slotTestNotification()
 {
-    SnoreCore::instance().displayExapleNotification();
+    SnoreCore::instance().displayExampleNotification();
 }
 
 void TrayIcon::slotSettings()

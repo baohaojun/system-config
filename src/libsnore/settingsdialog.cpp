@@ -73,8 +73,8 @@ void SettingsDialog::initTabs()
     ui->errorLabel->setVisible(false);
     ui->errorLineEdit->setVisible(false);
 
-    connect(&SnoreCore::instance(), &SnoreCore::prmaryNotificationBackendChanged, this, &SettingsDialog::loadPrimaryBackendBox);
-    connect(&SnoreCore::instance(), &SnoreCore::prmaryNotificationBackendError, [this](const QString & error) {
+    connect(&SnoreCore::instance(), &SnoreCore::primaryNotificationBackendChanged, this, &SettingsDialog::loadPrimaryBackendBox);
+    connect(&SnoreCore::instance(), &SnoreCore::primaryNotificationBackendError, [this](const QString & error) {
         ui->errorLabel->setVisible(true);
         ui->errorLineEdit->setVisible(true);
         ui->errorLineEdit->setText(error);
@@ -83,7 +83,7 @@ void SettingsDialog::initTabs()
 
 void SettingsDialog::on_pushButton_clicked()
 {
-    SnoreCore::instance().displayExapleNotification();
+    SnoreCore::instance().displayExampleNotification();
 }
 
 void SettingsDialog::load()
