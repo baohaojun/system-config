@@ -21,9 +21,9 @@ before_install: |-
                     source /opt/qt53/bin/qt53-env.sh
                     if [ "$CXX" = "g++" ]
                     then
-                        sudo apt-get install -q gcc-4.7 g++-4.7
-                        export CXX="g++-4.7"
-                        export CC="gcc-4.7"
+                        sudo apt-get install -q gcc-4.8 g++-4.8
+                        export CXX="g++-4.8"
+                        export CC="gcc-4.8"
                     fi
                 fi
                 mkdir -p ~/git
