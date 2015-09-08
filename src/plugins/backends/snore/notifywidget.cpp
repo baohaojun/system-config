@@ -65,12 +65,13 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
         m_mem.unlock();
     } else {
         if (!m_mem.attach()) {
-            qFatal("Failed to atatche to shared mem");
+            snoreDebug(SNORE_WARNING) << "Failed to atatche to shared mem";
+        } else {
+            m_mem.lock();
+            SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
+            m_mem.unlock();
+            snoreDebug(SNORE_DEBUG) << "Status" << data->free << data->date.elapsed() / 1000;
         }
-        m_mem.lock();
-        SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
-        m_mem.unlock();
-        snoreDebug(SNORE_DEBUG) << "Status" << data->free << data->date.elapsed() / 1000;
     }
 
     setResizeMode(QQuickView::SizeViewToRootObject);
@@ -110,6 +111,9 @@ void NotifyWidget::display(const Notification &notification)
 
 bool NotifyWidget::acquire()
 {
+    if (!m_mem.isAttached()) {
+       return true;
+    }
     bool out = false;
     if (m_ready) {
         m_mem.lock();
@@ -132,6 +136,9 @@ bool NotifyWidget::acquire()
 
 bool NotifyWidget::release()
 {
+    if (!m_mem.isAttached()) {
+       return true;
+    }
     bool out = false;
     if (!m_ready) {
         m_mem.lock();
