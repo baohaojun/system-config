@@ -94,24 +94,92 @@ PhoneScreenDialog::~PhoneScreenDialog()
 
 bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
 {
-    static int press_x, press_y;
+    static int phone_x, phone_y;
     static QTime press_time;
+
+    static int last_x, last_y;
 
     if (ev->type() == QEvent::MouseButtonPress) {
         QMouseEvent *mev = (QMouseEvent*) ev;
-        press_x = mev->x() * 1080 / this->width();
-        press_y = mev->y() * 1920 / this->height();
+        last_x = mev->x();
+        last_y = mev->y();
+        phone_x = mev->x() * 1080 / this->width();
+        phone_y = mev->y() * 1920 / this->height();
         press_time = QTime::currentTime();
     } else if (ev->type() == QEvent::MouseButtonRelease) {
         QMouseEvent *mev = (QMouseEvent*) ev;
         int x = mev->x() * 1080 / this->width();
         int y = mev->y() * 1920 / this->height();
         QTime now = QTime::currentTime();
-        if (abs(x - press_x) + abs(y - press_y) > 20) {
-            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-swipe-%d %d %d %d %d", now.msecsTo(press_time), press_x, press_y, x, y));
+        if (abs(x - phone_x) + abs(y - phone_y) > 20) {
+            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-swipe-%d %d %d %d %d", now.msecsTo(press_time), phone_x, phone_y, x, y));
         } else {
             if (isShelled) {
+                static int phonePowerButtonX = 953;
+                static int phonePowerButtonY = 8;
 
+                static int phoneLeftUPX = 6;
+                static int phoneLeftUPY = 1128;
+                static int phoneLeftDownX = 6;
+                static int phoneLeftDownY = 1332;
+
+                static int phoneRightUpX = 1178;
+                static int phoneRightUpY = phoneLeftUPY;
+                static int phoneRightDownX = phoneRightUpX;
+                static int phoneRightDownY = phoneLeftDownY;
+
+                static int phoneMenuX = 354;
+                static int phoneHomeX = 594;
+                static int phoneBackX = 834;
+                static int phone3KeysY = 2300;
+
+                static int phoneWidth = 1178;
+                static int phoneHeight = 2457;
+
+                int phoneLastX = last_x * phoneWidth / this->width();
+                int phoneLastY = last_y * phoneHeight / this->height();
+
+                static int phoneScreenLeftX = 52;
+                static int phoneScreenRightX = 1132;
+
+                static int phoneScreenUpY = 258;
+                static int phoneScreenDownY = phoneScreenUpY + 1920;
+
+                if (phoneLastX < phoneScreenRightX &&
+                    phoneLastX > phoneScreenLeftX &&
+                    phoneLastY < phoneScreenDownY &&
+                    phoneLastY > phoneScreenUpY) {
+
+                    int x = (phoneLastX - phoneScreenLeftX);
+                    int y = (phoneLastY - phoneScreenUpY);
+
+                    mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-tap %d %d", x, y));
+                    mPhoneScreenThread->syncScreen();
+                    return true;
+                }
+
+                static struct {
+                    int x;
+                    int y;
+                    const char *key;
+                } keyLocationMap[] = {
+                    { phonePowerButtonX, phonePowerButtonY, "power" },
+                    { phoneLeftUPX, phoneLeftUPY, "volume_up" },
+                    { phoneLeftDownX, phoneLeftDownY, "volume_down" },
+                    { phoneRightUpX, phoneRightUpY, "volume_up" },
+                    { phoneRightDownX, phoneRightDownY, "volume_down" },
+                    { phoneMenuX, phone3KeysY, "menu" },
+                    { phoneHomeX, phone3KeysY, "home" },
+                    { phoneBackX, phone3KeysY, "back" },
+                };
+
+                for (int i = 0; i < sizeof keyLocationMap / sizeof keyLocationMap[0]; i++) {
+                    if (abs(phoneLastX - keyLocationMap[i].x) + abs(phoneLastY - keyLocationMap[i].y) < 100) {
+                        mLuaThread()->addScript(QStringList() << "adb_event" << QString("adb-key ") + keyLocationMap[i].key);
+                        mPhoneScreenThread->syncScreen();
+                        return true;
+                    }
+                }
             } else {
                 mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-tap %d %d", x, y));
             }
