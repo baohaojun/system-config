@@ -19,6 +19,13 @@ shift $(($OPTIND - 1))
 
 ## end generated code
 
+if test $# -gt 1; then
+    for x in "$@"; do
+        smb2ftp -d "$dir" "$x"
+    done
+    exit
+fi
+
 set -- "$(readlink -f "${1:-.}")"
 smb-pull "$1" ~/today/ || cp "$1" ~/today/ -av
 if test -z "$name"; then
@@ -29,6 +36,6 @@ source=$(basename "$1")
 cd ~/today/
 
 tar czfv "${name}.tgz" "$source"
-lftp -c "connect ftp://foxconn:Bg1upNVztqgSo@172.16.16.220/; $(if test "$dir"; then echo "mkdir -p $dir; cd $dir;"; fi) put '${name}'.tgz"
+lftp -c "connect ftp://foxconn:Bg1upNVztqgSo@172.16.16.220/; $(if test "$dir"; then echo "mkdir -p $dir || echo true; cd $dir;"; fi) put '${name}'.tgz"
 rm "$source" -rf
 rm ${name}.tgz -f
