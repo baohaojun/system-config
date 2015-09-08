@@ -55,6 +55,16 @@ public class PutClipService extends Service {
         f.close();
         File txt = new File(sdcard, "putclip.txt.1");
         txt.renameTo(new File(sdcard, "putclip.txt"));
+
+        writeFile(str, new File(sdcard, "putclip.txt.1"));
+    }
+
+    private void writeFile(String str, File file) throws IOException {
+        FileWriter f = new FileWriter(file);
+        f.write(str);
+        f.close();
+        File txt = new File(sdcard, "putclip.txt.1");
+        txt.renameTo(new File(sdcard, "putclip.txt"));
     }
 
     ClipboardManager mClipboard;
@@ -116,8 +126,15 @@ public class PutClipService extends Service {
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, picUri));
             } else if (intent.getIntExtra("watch-clipboard", 0) == 1) {
                 startMonitorClipboard();
+                try {
+                    writeFile("hello", new File(sdcard, ".t1wrench-watching-clipboard.txt"));
+                } catch (Throwable e) {
+                    Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 122), e);
+                }
+
             } else if (intent.getIntExtra("stop-watch-clipboard", 0) == 1) {
                 mWatchingClipboard = false;
+                new File(sdcard, ".t1wrench-watching-clipboard.txt").delete();
             } else if (intent.getIntExtra("gettask", 0) == 1) {
                 String foregroundTaskPackageName = getTask();
                 writeFile(foregroundTaskPackageName);
@@ -193,12 +210,18 @@ public class PutClipService extends Service {
                     PackageInfo pi = pm.getPackageInfo("com.bhj.setclip", 0);
 
                     FileWriter f = new FileWriter(new File(sdcard, "setclip-apk.txt.1"));
-                    f.write(pi.applicationInfo.sourceDir);
+                    f.write(String.format("CLASSPATH=%s LD_LIBRARY_PATH=%s", pi.applicationInfo.sourceDir, pi.applicationInfo.nativeLibraryDir));
                     f.close();
                     new File(sdcard, "setclip-apk.txt.1").renameTo(new File(sdcard, "setclip-apk.txt"));
                 }
                 catch (Throwable e) {
                     Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 134), e);
+                }
+
+                if (new File(sdcard, ".t1wrench-watching-clipboard.txt").exists()) {
+                    startMonitorClipboard();
+                } else {
+                    mWatchingClipboard = false;
                 }
 
             } else if (intent.getIntExtra("getcontact", 0) == 1) {

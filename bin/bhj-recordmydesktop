@@ -1,4 +1,4 @@
 #!/bin/bash
 dir=~/tmp/$(basename $0)
 mkdir -p $dir
-recordmydesktop --on-the-fly-encoding $(sawfish-get-window-xy T1Wrench | tr -d \") -o $dir/out-$(now).ogv
+recordmydesktop "$@" --on-the-fly-encoding $(sawfish-get-window-xy T1Wrench | tr -d \") -o $dir/out-$(now).ogv
