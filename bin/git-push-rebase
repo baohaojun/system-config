@@ -17,13 +17,23 @@ function die() {
 
 export -f die
 
-TEMP=$(getopt -o n --long no-submodule -n $(basename $0) -- "$@")
-no_submodule=
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt nno-submodule aadd_it
+## end code-generator
+## start generated code
+TEMP=$(getopt -o na --long "no-submodule,add_it"  -n $(basename $0) -- "$@")
+no_submodule=false
+add_it=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -n|--no-submodule)
             no_submodule=true
+            shift
+            ;;
+        -a|--add_it)
+            add_it=true
             shift
             ;;
         --)
@@ -35,6 +45,22 @@ while true; do
             ;;
     esac
 done
+
+## end generated code
+
+if test "$add_it" = true; then
+    export GIT_NON_INTERACTIVE_ADD=true
+fi
+
+if test "$GIT_NON_INTERACTIVE_ADD" = true; then
+    function git-interactive-add() {
+        (
+            cd $(lookup-file -e .git/..)
+            git add .
+        )
+    }
+    export -f git-interactive-add
+fi
 
 . ~/system-config/bin/.gitx
 
@@ -79,10 +105,18 @@ if output=$(
         if test "$no_submodule" = true; then
             exit 1 # not 0!
         fi
-        cmd='bash -c "ADD_DONE=true git-push-rebase || echo hello $(pwd) failed&"'
-        if test "$REMOTEIP" = 127.0.0.1; then
-            cmd=${cmd/%'&"'/'"'}
-        fi
+        cmd=$(
+            cat <<'EOF'
+function do_it() {
+    ADD_DONE=true git-push-rebase || echo hello $(pwd) failed
+}
+if test "$REMOTEIP" = 127.0.0.1 || test -d blog/ -a -d css/; then
+    IS_TTY_IO=true do_it
+else
+    do_it&
+fi
+EOF
+           )
         git submodule foreach "$cmd" |
         tee /dev/stderr |
         grep "^hello.*failed$"
@@ -182,7 +216,10 @@ if test -e ".do-blog"; then
 
     if git st -S | grep . ; then
         git-interactive-add
-        yes-or-no-p -y "Continue?"
+        if test "$GIT_NON_INTERACTIVE_ADD" = true || yes-or-no-p -y "Continue?"; then
+            find-or-exec konsole
+            true
+        fi
     fi
 
     if git st -s |grep -e '^A\|^.A\|^D\|^.D'; then
