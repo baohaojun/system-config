@@ -73,7 +73,12 @@ Required dependencies:
 
 - [CMake](http://www.cmake.org/)
 - [Extra CMake Modules](https://projects.kde.org/projects/kdesupport/extra-cmake-modules)
-- [Qt5](http://qt-project.org/)
+- [Qt5 (5.3)](http://qt-project.org/)
+
+## Supported compilers  ##
+- gcc 4.8 and later.
+- msvc 2013 and later.
+- clang 3.4 and later.
 
 
 ## Third party libraries that we ship with our source ##
