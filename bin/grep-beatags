@@ -204,6 +204,7 @@ read_line:
 
         if (not $type_re and $type eq "prototype") {
             debug "ignore prototype for $str";
+            $filter_worked++;
             next;
         }
 
@@ -284,7 +285,7 @@ sub do_cscope($$$) {
         $filter_worked = 0;
         $path_matcher = "";
         $path_matcher_inv = "";
-        $type_re = "";
+        $type_re = ".*";
         do_cscope(@_);
         return 1;
     }

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+adb_event() {
+    bash -c "$@"
+}
+
+i=0
+for x in "$@"; do
+    i=$((i + 1))
+    if test "$(adb-top-activity)" != smartisanos/smartisanos.app.ChooserActivity; then
+        yes-or-no-p -y "Have you clicked the attachment button?"
+    fi
+    adb_event "adb-tap 153 1455"
+
+    target=$(basename "$x")
+    target="/sdcard/adb-mail/$i.$target"
+    adb push "$x" "$target"
+    target="../../../../../..$target"
+    putclip-android "$target"
+
+    if test "$(adb-top-activity)" != "org.openintents.filemanager/org.openintents.filemanager.IntentFilterActivity"; then
+        die "必须安装并使用OI文件管理器才能选择附件"
+    fi
+    adb_event "adb-key back; adb-key scroll_lock"
+    adb_event "adb-tap 959 1876; sleep 1"
+done

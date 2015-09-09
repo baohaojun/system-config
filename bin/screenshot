@@ -8,31 +8,59 @@ function die() {
     exit -1
 }
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt ffull sselected ccurrent ddelay
+## end code-generator
+## start generated code
+TEMP=$(getopt -o fscd --long "full,selected,current,delay"  -n $(basename $0) -- "$@")
+full=false
+selected=false
+current=false
+delay=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -f|--full)
+            full=true
+            shift
+            ;;
+        -s|--selected)
+            selected=true
+            shift
+            ;;
+        -c|--current)
+            current=true
+            shift
+            ;;
+        -d|--delay)
+            delay=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
 select=-s
 
-case "$1" in
-    current|-c)
-        shift;
-        select=-u
-        ;;
-    full|-f)
-        shift;
-        select=-m
-        ;;
-    selected|-s)
-        shift;
-        ;;
-    *)
-        out=$1
-        shift
-        ;;
-esac
-
-if test "$1"; then
-    if test "$out"; then
-        die "Error: 2 out args seen"
-    fi
+if test "$full" = true; then
+    select=-m
+elif test "$current" = true; then
+    select=-u
+elif test "$selected" = true; then
+    select=-s
 fi
+
+
+out=$1
 
 if test ! "$out"; then
     now=`now|perl -npe 's/:/./g'`
@@ -40,6 +68,25 @@ if test ! "$out"; then
     now=shots/"$now"
     out=~/"$now".png
 fi
+
+if test "$delay" = true; then
+    select=-u
+    while true; do
+        sleep 1
+        if test "$(sawfish-client -e '(event-name (last-event))')" = '"RET"'; then
+            bhj-notify screenshot "will start in 5 seconds"
+            for x in $(seq 5 -1 1); do
+                sleep 1
+                if sawfish-client -e '(query-pointer)' | grep '^(0 '; then
+                    break
+                fi
+            done
+
+            break
+        fi
+    done
+fi
+
 while true; do
     scrot $select "$out"
     if test -e "$out"; then
