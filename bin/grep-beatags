@@ -338,46 +338,9 @@ sub do_cscope($$$) {
     return $got_results;
 }
 
-my @java_fallback_dir = glob("$db_dir/.java-fallback*");
+my @java_fallback_dir = ();
 if (do_cscope($db_dir, $lookup_needle, $lookup_restrict_regexp)) {
-    exit unless @java_fallback_dir;
+    exit;
 } elsif (-e "$db_dir/custom-gtags.sh") {
     system("$db_dir/custom-gtags.sh", $lookup_needle);
-}
-
-exit 1 if $do_dir or -e "$db_dir/.no-fallback";
-
-$start_file = "";
-$ENV{GTAGS_START_FILE} = "";
-my @gtags_fallback_dir =
-    (
-     @java_fallback_dir ? @java_fallback_dir :
-     glob("$db_dir/.gtags-fallback-dir*") ? glob("$db_dir/.gtags-fallback-dir*") :
-     glob("~/.gtags-fallback-dir*")
-    );
-
-@gtags_fallback_dir = map {chomp($_ = qx(readlink -f $_)); $_} (@gtags_fallback_dir);
-
-if (@gtags_fallback_dir) {
-    debug "fallback: @gtags_fallback_dir";
-} else {
-    print "No matches and no fallback dirs, will exit now\n" unless $silent;
-    exit;
-}
-
-
-for (@gtags_fallback_dir) {
-  my $dir = $_;
-  my $code_dir = $dir;
-  $code_dir =~ s,.*?.cache/system-config/for-code-reading,,;
-  if (@java_fallback_dir) {
-      $use_full_path = "";
-  }
-  unless (-e $dir and -e $code_dir) {
-      debug "file not found: $dir or $code_dir";
-      next;
-  }
-  debug "Not found in current dir; search in $dir";
-  $type_re = $saved_type_re;
-  do_cscope($dir, $lookup_needle, $lookup_restrict_regexp) and not @java_fallback_dir and last;
 }
