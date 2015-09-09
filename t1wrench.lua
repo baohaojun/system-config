@@ -703,10 +703,10 @@ end
 
 adb_get_input_window_dump = function()
    -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]+.*\SInputMethod/i .. m/^\s*mHasSurface/')
-   local dump = adb_pipe{'dumpsys', 'window'}
+   local dump_str = adb_pipe("dumpsys window; dumpsys input_method")
+   local dump = split("\n", dump_str)
    local input_method = {}
    local started = false
-   dump = split("\n", dump)
    for i = 1, #dump do
       if not started and dump[i]:match("^%s*Window #?%d* ?Window{[a-f0-9]+.*%sInputMethod") then
          started = true
@@ -735,7 +735,7 @@ adb_get_input_window_dump = function()
          end
       end
    end
-   return input_method, ime_height
+   return input_method, ime_height, dump_str
 end
 
 local function adb_input_method_is_null()
@@ -1048,8 +1048,8 @@ t1_post = function(text) -- use weixin
       return
    else
       local add, post_button = '', '958 1820'
-      local input_method, ime_height = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
-      -- debugging("input_method is %s", input_method)
+      local input_method, ime_height, dump = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
+      debug("input_method is %s, ime_xy is %s", input_method, ime_height)
       -- debugging("ime_xy is %s", ime_xy)
 
       if input_method then
