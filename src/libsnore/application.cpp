@@ -28,7 +28,6 @@ Application::Application():
 
 Application::Application(const QString &name, const Icon &icon) :
     d(new ApplicationData(name, name, icon))
-
 {
 }
 
@@ -91,7 +90,6 @@ bool Application::isValid() const
 
 Hint &Application::hints()
 {
-    d->m_hint.setValue("silent", SnoreCore::instance().settingsValue(QLatin1String("Silent"), LOCAL_SETTING));
     return d->m_hint;
 }
 
