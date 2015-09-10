@@ -63,6 +63,7 @@ if test "$GIT_NON_INTERACTIVE_ADD" = true; then
 fi
 
 . ~/system-config/bin/.gitx
+export -f git
 
 (
     flock 9
@@ -109,6 +110,8 @@ if output=$(
         fi
         cmd=$(
             cat <<'EOF'
+set -x
+echo doing it in $PWD 1>&2
 function do_it() {
     ADD_DONE=true git-push-rebase || echo hello $(pwd) failed
 }
