@@ -91,12 +91,13 @@ bool Application::isValid() const
 
 Hint &Application::hints()
 {
+    d->m_hint.setValue("silent", SnoreCore::instance().settingsValue(QLatin1String("Silent"), LOCAL_SETTING));
     return d->m_hint;
 }
 
 const Hint &Application::constHints() const
 {
-    return d->m_hint;
+    return  const_cast<Hint&>(const_cast<Application*>(this)->hints());
 }
 
 QDebug operator<< (QDebug debug, const Snore::Application &app)
