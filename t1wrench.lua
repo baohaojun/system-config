@@ -51,6 +51,12 @@ local t1_send_action
 local weixinAlbumPreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
 local weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI"
 local weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
+local weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
+local qqChatActivity = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity"
+local qqChatActivity2 = "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity"
+local qqPhotoFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListFlowActivity"
+local qqPhotoPreview = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoPreviewActivity"
+local qqPhoteList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListActivity"
 local weiboAlbumActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PhotoAlbumActivity"
 local weiboImagePreviewActivity = "com.sina.weibo/com.sina.weibo.photoalbum.ImagePagerActivity"
 local weiboPicFilterActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PicFilterActivity"
@@ -456,7 +462,6 @@ end
 
 start_weibo_share = function(text)
    local imeTarget = wait_input_target("")
-   weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
    adb_am{"am", "start", "-n", weiboShareActivity}
    if text then putclip(text) else sleep(1) end
    if imeTarget:match(weiboShareActivity) then sleep(1) end
@@ -475,9 +480,11 @@ local function t1_share_to_weibo(text)
 end
 
 wait_top_activity = function(activity)
+   debug("waiting for %s", activity)
    for i = 1, 20 do
       local window = adb_focused_window()
       if window == activity then
+         debug("wait ok")
          return window
       end
       sleep(.1)
@@ -1352,17 +1359,30 @@ local function picture_to_qq_chat(pics, ...)
        ime_height = 0
        adb_event("key back")
    end
+   local chatWindow
    local post_button = ('159 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
-         local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1 adb-tap 350 1672 sleep .1"
-         adb_event(events)
-         while adb_focused_window() ~= "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity" do
-            adb_event{118, 152, "sleep", .5}
+         for n = 1,10 do
+            local window = adb_top_window()
+            if window == qqChatActivity or window == qqChatActivity2 then
+               chatWindow = window
+               adb_event(post_button .. " sleep .5 adb-tap 203 1430")
+               wait_top_activity(qqPhotoFlow)
+               adb_event("adb-tap 351 1703")
+            elseif window == qqPhoteList then
+               adb_event("adb-tap 284 275 adb-tap 81 1847")
+            elseif window == qqPhotoPreview then
+               adb_event("adb-tap 951 159 adb-tap 68 185")
+               if wait_top_activity(qqPhoteList) == qqPhoteList then
+                  break
+               else
+                   adb_event("adb-tap 68 185")
+               end
+            end
          end
-         adb_event("457 493 sleep .1 swipe 519 403 519 1800 sleep .3")
       end
       local pic_share_buttons = {
          "adb-tap 271 285", "adb-tap 621 267", "adb-tap 968 291",
@@ -1372,7 +1392,9 @@ local function picture_to_qq_chat(pics, ...)
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   adb_event("adb-tap 477 1835 adb-tap 898 1840 sleep .5 adb-tap 312 1275")
+   adb_event("adb-tap 477 1835 sleep .1 adb-tap 898 1840")
+   wait_top_activity(chatWindow)
+   adb_event("adb-tap 312 1275")
 end
 
 local function picture_to_qqlite_chat(pics, ...)
