@@ -139,7 +139,7 @@ Hint &Notification::hints()
 
 const Hint &Notification::constHints() const
 {
-    return  const_cast<Hint&>(const_cast<Notification*>(this)->hints());
+    return  const_cast<Hint &>(const_cast<Notification *>(this)->hints());
 }
 
 bool Notification::isValid() const

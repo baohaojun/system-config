@@ -97,7 +97,7 @@ Hint &Application::hints()
 
 const Hint &Application::constHints() const
 {
-    return  const_cast<Hint&>(const_cast<Application*>(this)->hints());
+    return  const_cast<Hint &>(const_cast<Application *>(this)->hints());
 }
 
 QDebug operator<< (QDebug debug, const Snore::Application &app)

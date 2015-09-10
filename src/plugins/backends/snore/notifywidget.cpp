@@ -34,11 +34,11 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 
     QString font = qApp->font().family();
 #ifdef Q_OS_WIN
-    if(QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8 ) {
+    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8) {
         font = QLatin1String("Segoe UI Symbol");
     }
 #if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
-    if(QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS10) {
+    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS10) {
         font = QLatin1String("Segoe UI Emoji");
     }
 #endif
@@ -112,7 +112,7 @@ void NotifyWidget::display(const Notification &notification)
 bool NotifyWidget::acquire()
 {
     if (!m_mem.isAttached()) {
-       return true;
+        return true;
     }
     bool out = false;
     if (m_ready) {
@@ -137,7 +137,7 @@ bool NotifyWidget::acquire()
 bool NotifyWidget::release()
 {
     if (!m_mem.isAttached()) {
-       return true;
+        return true;
     }
     bool out = false;
     if (!m_ready) {
