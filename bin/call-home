@@ -24,7 +24,7 @@ fi
                 if test $home = home; then
                     echo -D 7070
                 fi
-                ) -R :$remote_bind_port:localhost:22 $(if test -e ~/.config/system-config/call-home-user; then cat ~/.config/system-config/call-home-user; fi)$home -p 22
+                ) -R :$remote_bind_port:localhost:22 $(if test -e ~/.config/system-config/call-home-user; then cat ~/.config/system-config/call-home-user; fi)$home
             if test $? = 137; then
                 continue
             fi
