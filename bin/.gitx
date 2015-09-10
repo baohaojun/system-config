@@ -123,15 +123,24 @@ function git()
                 done
             fi
 
-            if test "$1" = submodule -a "$2" = foreach -a $# = 3; then
+            if test "$1" = submodule -a "$2" = foreach; then
                 for x in ~/src/github/*; do
                     if test -d $x -a ! -L $x -a -d $x/.git; then
                         (
                             cd $x
-                            bash -c "$3"
+                            shift 2
+                            echo Entering \'$x\'
+                            if test $# = 1; then
+                                bash -c "$1"
+                            else
+                                "$@"
+                            fi
                         )
                     fi
                 done
+                if test "$#" = 3 && [[ "$3" =~ ' ' ]]; then
+                    set -- "$1" "$2" bash -c "$3"
+                fi
             fi
         fi
 
