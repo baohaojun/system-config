@@ -94,6 +94,8 @@ fi
 
 if test "$ADD_DONE" != true; then
     git-interactive-add
+else
+    git add .
 fi
 
 if test -e .before-push-hook; then
