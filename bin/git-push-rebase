@@ -117,7 +117,7 @@ else
 fi
 EOF
            )
-        git submodule foreach "$cmd" |
+        git submodule foreach bash -c "$cmd" |
         tee /dev/stderr |
         grep "^hello.*failed$"
     )
