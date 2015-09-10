@@ -25,7 +25,7 @@ public Q_SLOTS:
 private:
     org::freedesktop::Notifications *m_interface;
     QHash<uint, Snore::Notification> m_dbusIdMap;
-    bool m_supportsRichtext;
+    bool m_supportsRichtext = false;
 
 };
 
