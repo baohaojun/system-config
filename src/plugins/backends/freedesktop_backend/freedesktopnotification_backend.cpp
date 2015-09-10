@@ -16,9 +16,12 @@ FreedesktopBackend::FreedesktopBackend()
             QLatin1String("/org/freedesktop/Notifications"),
             QDBusConnection::sessionBus(), this);
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
-    reply.waitForFinished();
-    QStringList caps  = reply.value();
-    m_supportsRichtext = caps.contains(QLatin1String("body-markup"));
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, [reply, watcher, this](){
+        qDebug() << reply.value();
+        m_supportsRichtext = reply.value().contains(QLatin1String("body-markup"));
+        watcher->deleteLater();
+    });
     connect(this, &FreedesktopBackend::enabledChanged, [this](bool enabled) {
         if (enabled) {
             connect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
