@@ -7,8 +7,11 @@ Rectangle {
     signal dismissed()
     signal invoked()
 
-    width: body.font.pixelSize * 30
-    height: body.font.pixelSize * 9
+    property int snoreMargin: body.font.pixelSize
+
+    width: snoreMargin * 30
+    height: snoreMargin * 9
+
 
     function update(nTitle, bBody, nImage, nAppIcon, color, textColor, isUpdate)
     {
@@ -58,24 +61,18 @@ Rectangle {
         anchors.fill: parent
         z: 90
         onClicked: root.invoked()
-        hoverEnabled: true
-        onEntered: closeButton.visible = true
-        onExited: closeButton.visible = false
     }
 
     Text {
         id: title
-        height: 14
         color: "#000000"
         text: "Title"
-        font.pointSize: 10
+        font.pointSize: body.font.pointSize * 1.5
         font.bold: true
-        anchors.right: closeButton.left
-        anchors.rightMargin: 22
         anchors.top: parent.top
-        anchors.topMargin: 5
+        anchors.margins: snoreMargin
+        anchors.topMargin: snoreMargin / 2
         anchors.left: image.right
-        anchors.leftMargin: 5
         textFormat: Text.RichText
         font.family: snoreFont
     }
@@ -86,13 +83,11 @@ Rectangle {
         text: "Body"
         font.pointSize: 10
         anchors.right: appIcon.left
-        anchors.rightMargin: 5
         anchors.top: title.bottom
-        anchors.topMargin: 5
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 5
         anchors.left: image.right
-        anchors.leftMargin: 5
+        anchors.margins: snoreMargin
+        anchors.topMargin: snoreMargin / 2
         wrapMode: Text.WordWrap
         maximumLineCount: height / font.pixelSize - 1
         onLinkActivated: Qt.openUrlExternally(link)
@@ -106,11 +101,9 @@ Rectangle {
         width: height
         smooth: true
         anchors.left: parent.left
-        anchors.leftMargin: 5
+        anchors.margins: snoreMargin
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 5
         anchors.top: parent.top
-        anchors.topMargin: 5
         z: 4
     }
 
@@ -120,9 +113,8 @@ Rectangle {
         width: root.height * 0.30
         smooth: true
         anchors.right: parent.right
-        anchors.rightMargin: 5
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 5
+        anchors.margins: snoreMargin
     }
 
     Image {
@@ -130,12 +122,10 @@ Rectangle {
         height: root.height * 0.20
         width: root.height * 0.20
         anchors.top: parent.top
-        anchors.topMargin: 5
+        anchors.margins: snoreMargin
         anchors.right: parent.right
-        anchors.rightMargin: 5
         z: 3
         source: "resources/close.png"
-        visible: false
         smooth: true
 
         MouseArea {
