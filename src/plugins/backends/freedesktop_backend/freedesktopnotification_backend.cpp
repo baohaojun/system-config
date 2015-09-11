@@ -17,7 +17,7 @@ FreedesktopBackend::FreedesktopBackend()
             QDBusConnection::sessionBus(), this);
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [reply, watcher, this](){
+    connect(watcher, &QDBusPendingCallWatcher::finished, [reply, watcher, this]() {
         m_supportsRichtext = reply.value().contains(QLatin1String("body-markup"));
         watcher->deleteLater();
     });

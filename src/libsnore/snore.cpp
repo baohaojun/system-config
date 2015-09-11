@@ -18,6 +18,7 @@
 
 #include "snore.h"
 #include "snore_p.h"
+#include "lambdahint.h"
 #include "notification/notification.h"
 #include "notification/notification_p.h"
 #include "plugins/plugincontainer.h"
@@ -48,8 +49,9 @@ SnoreCore &SnoreCore::instance()
 {
     static SnoreCore *instance = nullptr;
     if (!instance) {
-        qRegisterMetaType<Notification>();
         qRegisterMetaType<Application>();
+        qRegisterMetaType<LambdaHint>();
+        qRegisterMetaType<Notification>();
         qRegisterMetaType<SnorePlugin::PluginTypes>();
         qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
         instance = new SnoreCore(qApp);

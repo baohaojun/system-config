@@ -28,6 +28,7 @@ list(APPEND SnoreNotify_SRCS
         alert.cpp
         alert_p.cpp
         hint.cpp
+        lambdahint.cpp
         log.cpp
         settingsdialog.cpp
         utils.cpp
@@ -42,6 +43,7 @@ list(APPEND SnoreNotify_HDR
         application.h
         alert.h
         hint.h
+        lambdahint.h
         log.h
         settingsdialog.h
         snoreglobals.h
