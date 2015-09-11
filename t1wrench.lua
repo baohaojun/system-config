@@ -22,6 +22,7 @@ local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity
 local start_weibo_share
+local t1_eval
 
 -- variables
 local where_is_dial_key
@@ -1002,6 +1003,12 @@ t1_post = function(text) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
    if text then
+      if text:match("^​") then
+         text = text:sub(string.len("​") + 1)
+         local func = loadstring(text)
+         t1_eval(func)
+         return "executed string"
+      end
       if window:match("com.tencent.mobileqq") then
          putclip(emoji_for_qq(text))
       elseif window:match("com.tencent.mm/") then
@@ -1383,6 +1390,18 @@ local function picture_to_weixin_chat(pics, ...)
       debug("got unknown window: %s", window)
    end
    adb_event("adb-tap 545 191") -- get rid of popup
+   for n = 1, 10 do
+      sleep(.1)
+      adb_event("adb-tap 553 1796 sleep .1")
+      local input_method, ime_height = adb_get_input_window_dump()
+      if ime_height ~= 0 then
+         adb_event("sleep .1 adb-key back")
+         break
+      end
+      if not (adb_top_window()):match("^PopupWindow:") then
+         break
+      end
+   end
 end
 
 local function picture_to_qq_chat(pics, ...)
@@ -1482,7 +1501,7 @@ local function picture_to_weibo_chat(pics, ...)
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
-         for n = 1,10 do
+         for n = 1,30 do
             local window = adb_top_window()
             if window == weiboChatActivity then
                chatWindow = window
@@ -1492,11 +1511,11 @@ local function picture_to_weibo_chat(pics, ...)
                adb_event("adb-tap 521 398")
                sleep(.2)
             elseif window == weiboImagePreviewActivity then
-               adb_event("sleep .1 adb-key back")
+               adb_event("sleep .5 adb-key back sleep .5")
                if wait_top_activity(weiboAlbumActivity) == weiboAlbumActivity then
                   break
                elseif adb_top_window() == weiboImagePreviewActivity then
-                  adb_event("key back")
+                  adb_event("key back sleep .5 ")
                end
             end
          end
@@ -1509,7 +1528,7 @@ local function picture_to_weibo_chat(pics, ...)
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   adb_event("adb-tap 922 138")
+   adb_event("sleep .1 adb-tap 922 138")
    wait_top_activity(weiboChatActivity)
    adb_event("key back")
 end
@@ -1741,18 +1760,22 @@ t1_add_mms_receiver = function(number)
    return "请在小扳手文字输入区输入短信内容并发送"
 end
 
-t1_run = function (file)
-   local ext = file:gsub(".*%.", "")
-   if ext ~= "twa" and ext ~= "小扳手" then
-      return "Can not run this script, must be a .twa file"
-   end
-   local f = loadfile(file)
+t1_eval = function(f)
    for k, v in pairs(M) do
       if not _ENV[k] then
          _ENV[k] = v
       end
    end
    f()
+end
+
+t1_run = function (file)
+   local ext = file:gsub(".*%.", "")
+   if ext ~= "twa" and ext ~= "小扳手" then
+      return "Can not run this script, must be a .twa file"
+   end
+   local f = loadfile(file)
+   t1_eval(f)
 end
 
 local function t1_spread_it()
