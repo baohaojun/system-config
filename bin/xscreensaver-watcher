@@ -3,13 +3,12 @@
 my $blanked = 0;
 open (IN, "xscreensaver-command -watch |");
 while (<IN>) {
+    print "Got $_";
     if (m/^(BLANK|LOCK)/) {
         if (!$blanked) {
             printf "blanked at %s", `date`;
             system "xset dpms 10 120 180";
-            unless (-e glob("~/.cache/system-config/logs/screensaver-no-sound-off")) {
-                system("sound-off");
-            }
+            system("test -e ~/.cache/system-config/logs/screensaver-no-sound-off && sound-off");
             system("screen-lock-on&");
             $blanked = 1;
         }
