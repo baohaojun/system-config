@@ -35,10 +35,12 @@ else
                 done
                 echo $PATH | tr ':' '\n'
             ) | tr '\n' ':'
-        )
+               )
+        export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent|rm-last-nl|tr '\n' ':')
+        printf 'export PATH=%q\n' "$PATH" > ~/.config/system-config/.bashrc-path
+    else
+        echo ~/system-config/etc/path/$(uname)-$(uname -m) not exist?
     fi
-    export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent|rm-last-nl|tr '\n' ':')
-    printf 'export PATH=%q\n' "$PATH" > ~/.config/system-config/.bashrc-path
 
 if ask-if-not-bhj "Install cpan into your \$HOME/perl5?"; then
     cat <<'EOF' >> ~/.config/system-config/.bashrc-path
