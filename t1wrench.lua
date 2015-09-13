@@ -1003,7 +1003,7 @@ t1_post = function(text) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
    if text then
-      if text:match("^​") then
+      if text:match("^​") and text ~= "​" then
          text = text:sub(string.len("​") + 1)
          local func = loadstring(text)
          t1_eval(func)
