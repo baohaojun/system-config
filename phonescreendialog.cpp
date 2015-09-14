@@ -72,7 +72,7 @@ void PhoneScreenDialog::reloadBackground()
         QImage screen(screenFile);
         if (screen.isNull()) {
             qDebug() << "using" << screenFile;
-            system("bash -c 'pwd; ls -l t1wrench-screen.jpg'");
+            system("bash -c 'pwd; ls -l screenshot_shell.png'");
         }
         ui->phoneShellLabel->setPixmap(QPixmap::fromImage(screen.scaled(this->width(), this->height())));
 
