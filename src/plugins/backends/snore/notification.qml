@@ -74,9 +74,9 @@ Rectangle {
         anchors.topMargin: snoreMargin / 2
         anchors.left: image.right
         anchors.right: closeButton.left
-        textFormat: Text.RichText
+        textFormat: Text.StyledText
         font.family: snoreFont
-        clip: true
+        elide: Text.ElideRight
     }
 
     Text {
@@ -91,10 +91,10 @@ Rectangle {
         anchors.margins: snoreMargin
         anchors.topMargin: snoreMargin / 2
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        maximumLineCount: height / font.pixelSize - 1
         onLinkActivated: Qt.openUrlExternally(link)
-        textFormat: Text.RichText
+        textFormat: Text.StyledText
         font.family: snoreFont
+        elide: Text.ElideRight
     }
 
 
