@@ -443,10 +443,6 @@ local function weibo_text_share(window)
       end
       sleep(1)
    end
-   local input_method, ime_height = adb_get_input_window_dump()
-   if ime_height ~= 0 then
-      adb_event("key back")
-   end
    if repost:match('并') then
       adb_event("sleep .1 adb-tap 57 1704")
    end
@@ -465,10 +461,8 @@ local function weibo_text_share(window)
 end
 
 start_weibo_share = function(text)
-   local imeTarget = wait_input_target("")
    adb_am{"am", "start", "-n", weiboShareActivity}
    if text then putclip(text) else sleep(1) end
-   if imeTarget:match(weiboShareActivity) then sleep(1) end
    wait_top_activity(weiboShareActivity)
    adb_event("adb-tap 289 535")
    wait_input_target(weiboShareActivity)
@@ -504,7 +498,10 @@ wait_input_target = function(activity)
          local adb_window_dump = split("\n", adb_pipe("dumpsys window"))
          for x = 1, #adb_window_dump do
             if adb_window_dump[x]:match("mInputMethodTarget.*"..activity) then
-               return adb_window_dump[x]
+               local input_method, ime_height, dump = adb_get_input_window_dump()
+               if not dump:match("mServedInputConnection=null") then
+                  return adb_window_dump[x]
+               end
             end
          end
       end
@@ -1796,6 +1793,7 @@ end
 
 M = {}
 M.putclip = putclip
+M.start_weibo_share = start_weibo_share
 M.t1_post = t1_post
 M.t1_find_weixin_contact = t1_find_weixin_contact
 M.adb_shell = adb_shell
@@ -1813,6 +1811,7 @@ M.emoji_for_qq = emoji_for_qq
 M.split = split
 M.replace_img_with_emoji = replace_img_with_emoji
 M.system = system
+M.sleep = sleep
 M.debugg = debug
 M.get_a_note = get_a_note
 M.adb_get_last_pic = adb_get_last_pic

@@ -1,4 +1,0 @@
-#!/bin/bash
-if git remote | grep '^sm$'; then
-    git push sm HEAD:baohaojun || true
-fi
