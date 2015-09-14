@@ -346,6 +346,9 @@ function get-stlport-and-boost()
         wait
         chmod +x vcredist_x86.exe
         cygstart vcredist_x86.exe
+        wget -N http://download.microsoft.com/download/1/B/E/1BE39E79-7E39-46A3-96FF-047F95396215/dotNetFx40_Full_setup.exe
+        chmod +x dotNetFx40_Full_setup.exe
+        cygstart dotNetFx40_Full_setup.exe
     ) >/dev/null 2>&1 &
 
     (
