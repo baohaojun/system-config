@@ -2,6 +2,7 @@
 #include "qcellphonetextedit.h"
 #include <QDebug>
 #include "t1wrench.h"
+#include <QTextBlock>
 
 
 QCellPhoneTextEdit::QCellPhoneTextEdit(QWidget* parent) : QTextEdit(parent)
@@ -11,6 +12,31 @@ QCellPhoneTextEdit::QCellPhoneTextEdit(QWidget* parent) : QTextEdit(parent)
 
 QCellPhoneTextEdit::~QCellPhoneTextEdit()
 {
+}
+
+void QCellPhoneTextEdit::resizeImages()
+{
+    QTextDocument *doc = document();
+    for (QTextBlock blockIt = doc->begin(); blockIt != doc->end(); blockIt = blockIt.next()) {
+        for (QTextBlock::iterator it = blockIt.begin(); !(it.atEnd()); ++it) {
+            QTextFragment fragment = it.fragment();
+            if (fragment.isValid()) {
+                if(fragment.charFormat().isImageFormat()) {
+                    QTextImageFormat newImageFormat = fragment.charFormat().toImageFormat();
+                    newImageFormat.setWidth(this->font().pointSize());
+                    newImageFormat.setHeight(this->font().pointSize());
+                    if (newImageFormat.isValid())
+                    {
+                        QTextCursor helper = textCursor();
+                        helper.setPosition(fragment.position());
+                        helper.setPosition(fragment.position() + fragment.length(),
+                                           QTextCursor::KeepAnchor);
+                        helper.setCharFormat(newImageFormat);
+                    }
+                }
+            }
+        }
+    }
 }
 
 void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
@@ -26,6 +52,17 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
         }
     }
 
+    if (key == Qt::Key_Plus && (m & ~Qt::ShiftModifier) == Qt::ControlModifier) {
+        QFont newFont(this->font().family(), this->font().pointSize() + 2);
+        this->setFont(newFont);
+        resizeImages();
+        return;
+    } else if (key == Qt::Key_Minus && (m & ~Qt::ShiftModifier) == Qt::ControlModifier) {
+        QFont newFont(this->font().family(), this->font().pointSize() > 10 ? this->font().pointSize() - 2 : this->font().pointSize());
+        this->setFont(newFont);
+        resizeImages();
+        return;
+    }
     if ((key == Qt::Key_8 || key == Qt::Key_Asterisk) && (m & (Qt::AltModifier | Qt::MetaModifier))) {
         emit emojiShortcutPressed();
         return;
@@ -41,7 +78,7 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
 
 void QCellPhoneTextEdit::on_emojiSelected(const QString& emojiPath)
 {
-    textCursor().insertHtml(QString().sprintf("<img src='%s' width=16 height=16 />", qPrintable(emojiPath)));
+    textCursor().insertHtml(QString().sprintf("<img src='%s' width=%d height=%d />", qPrintable(emojiPath), this->font().pointSize(), this->font().pointSize()));
 }
 
 QString QCellPhoneTextEdit::getMyText()

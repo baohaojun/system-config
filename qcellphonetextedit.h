@@ -1,7 +1,7 @@
 /* -*- mode: c++ -*- */
 #ifndef _QCELLPHONETEXTEDIT_H_
 #define _QCELLPHONETEXTEDIT_H_
-#include <QtWidgets/QTextEdit>
+#include <QTextEdit>
 #include <lua.hpp>
 
 class QCellPhoneTextEdit : public QTextEdit
@@ -22,6 +22,7 @@ public slots:
 private:
     QString replaceImagesWithEmoji(const QString& text, const QString& html);
     void keyPressEvent(QKeyEvent *);
+    void resizeImages();
     lua_State* L;
 };
 
