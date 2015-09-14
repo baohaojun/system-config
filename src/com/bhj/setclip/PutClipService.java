@@ -97,6 +97,22 @@ public class PutClipService extends Service {
                             String str = text.toString();
 
                             if (!str.equals(PutClipService.myClipStr)) {
+                                int badChars = 0;
+                                for (int i = 0; i < str.length(); i++) {
+                                    char c = str.charAt(i);
+                                    if (c >= 0x2e80) {
+                                        return;
+                                    }
+
+                                    if (! ((c >= 'a' && c <= 'z') ||
+                                           (c >= 'A' && c <= 'Z') ||
+                                           (c == ' '))) {
+                                        badChars++;
+                                    }
+                                }
+                                if (badChars >= 4) {
+                                    return;
+                                }
                                 Intent crossDictIntent = new Intent();
                                 crossDictIntent.setClassName("com.baohaojun.crossdict", "com.baohaojun.crossdict.CrossDictActivity")
                                     .putExtra("android.intent.extra.TEXT", str)
