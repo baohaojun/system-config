@@ -50,8 +50,8 @@ local emojis, emojis_map
 local the_true_adb = "./the-true-adb"
 local t1_send_action
 local weixinAlbumPreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
-local weixinChatActivity = "com.tencent.mm/com.tencent.mm.ui.LauncherUI"
-local weixinLauncherActivity = weixinChatActivity
+local weixinChatActivity = "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI"
+local weixinLauncherActivity = "com.tencent.mm/com.tencent.mm.ui.LauncherUI"
 local weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI"
 local weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
 local weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
@@ -759,7 +759,10 @@ end
 
 check_phone = function()
    if not adb_pipe(UNAME_CMD):match("Linux") then
-      error("Error: can't put text on phone, not connected?")
+      sleep(.5)
+         if not adb_pipe(UNAME_CMD):match("Linux") then
+            error("Error: can't put text on phone, not connected?")
+         end
    end
 end
 
@@ -1254,18 +1257,14 @@ picture_to_weibo_share = function(pics, ...)
                adb_event("adb-tap 62 1843")
             elseif adb_top_window() == weiboAlbumActivity then
                debug("album for n: %d", n)
-               adb_event("adb-tap 648 299 sleep .2 adb-tap 122 1881 sleep .5")
-               if adb_top_window() == weiboImagePreviewActivity then
-                  print "got into image preview"
-                  adb_event("adb-tap 915 347 sleep .1 adb-key back")
-                  wait_top_activity(weiboAlbumActivity)
-                  break
-               else
-                  sleep(.5)
-               end
+               adb_event("sleep .3 adb-tap 501 340 sleep .2")
             elseif adb_top_window() == weiboImagePreviewActivity then
-               debug("weibo image preview for n: %d", n)
-               adb_event("adb-key back sleep .1")
+                  print "got into image preview"
+                  adb_event("sleep .1 adb-key back sleep .1")
+                  if wait_top_activity(weiboAlbumActivity) == weiboAlbumActivity then
+                     sleep(.1)
+                     break
+                  end
             end
          end
       end
@@ -1330,26 +1329,25 @@ local function picture_to_weixin_chat(pics, ...)
        adb_event("key back")
    end
    local post_button = ('984 %d'):format(1920 - 50)
-   local chatWindow
+   local chatWindow = adb_top_window()
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
          for n = 1,10 do
             local window = adb_top_window()
-            if window == weixinChatActivity then
-               debug("weixinChatActivity for n: %d", n)
+            if window == chatWindow then
+               debug("chatWindow for n: %d", n)
                chatWindow = window
-               adb_event(post_button .. " sleep .2")
-               if adb_top_window() ~= weixinChatActivity then
+               adb_event(post_button .. " sleep .3")
+               if adb_top_window():match("PopupWindow") then
                   debug("got popup window?")
                   adb_event("key back sleep .1 adb-tap 123 1853")
-                  wait_top_activity(weixinChatActivity)
-               else
-                  adb_event("adb-tap 203 1430")
+                  wait_top_activity(chatWindow)
                end
+               adb_event("adb-tap 203 1430")
 
-               debug("weixinChatActivity: clicked")
+               debug("chatWindow: clicked")
                wait_top_activity(weixinAlbumPreviewActivity)
             elseif window == weixinAlbumPreviewActivity then
                adb_event("adb-tap 521 398")
@@ -1357,6 +1355,7 @@ local function picture_to_weixin_chat(pics, ...)
             elseif window == weixinImagePreviewActivity then
                adb_event("sleep .1 adb-key back")
                if wait_top_activity(weixinAlbumPreviewActivity) == weixinAlbumPreviewActivity then
+                  sleep(.2)
                   break
                elseif adb_top_window() == weixinImagePreviewActivity then
                   adb_event("key back")
@@ -1377,7 +1376,7 @@ local function picture_to_weixin_chat(pics, ...)
       wait_top_activity(weixinImagePreviewActivity)
    end
    adb_event("sleep .2 adb-tap 59 1871 sleep .1 adb-tap 927 148")
-   window = wait_top_activity(weixinChatActivity)
+   window = wait_top_activity(chatWindow)
    if window == weixinImagePreviewActivity then
       adb_event("sleep .1 adb-tap 59 1871 sleep .1 adb-tap 927 148")
    elseif window:match("^PopupWindow:") then

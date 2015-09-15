@@ -23,8 +23,9 @@ void QCellPhoneTextEdit::resizeImages()
             if (fragment.isValid()) {
                 if(fragment.charFormat().isImageFormat()) {
                     QTextImageFormat newImageFormat = fragment.charFormat().toImageFormat();
-                    newImageFormat.setWidth(this->font().pointSize());
-                    newImageFormat.setHeight(this->font().pointSize());
+                    int s = this->font().pointSize() + 2;
+                    newImageFormat.setWidth(s);
+                    newImageFormat.setHeight(s);
                     if (newImageFormat.isValid())
                     {
                         QTextCursor helper = textCursor();
@@ -78,7 +79,8 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
 
 void QCellPhoneTextEdit::on_emojiSelected(const QString& emojiPath)
 {
-    textCursor().insertHtml(QString().sprintf("<img src='%s' width=%d height=%d />", qPrintable(emojiPath), this->font().pointSize(), this->font().pointSize()));
+    int s = this->font().pointSize() + 2;
+    textCursor().insertHtml(QString().sprintf("<img src='%s' width=%d height=%d />", qPrintable(emojiPath), s, s));
 }
 
 QString QCellPhoneTextEdit::getMyText()
