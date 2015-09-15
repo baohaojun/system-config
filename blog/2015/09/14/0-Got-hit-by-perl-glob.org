@@ -1,0 +1,65 @@
+#+title: 被perl的glob给坑了
+# bhj-tags: debug
+写了一个perl脚本，会用glob查看我的某个文件，如果发现我的文件系统中存在这个文件的话，就会返回成功，否则返回失败，结果发现不管这个文件存不存在，脚本总是返回一次成功，然后再返回一次失败，并依此循环。
+
+代码大概是这样的：
+
+#+BEGIN_SRC perl
+  while (1) {
+      if (glob("watched-file")) {
+          do_sth();
+      } else {
+          do_sth_else();
+      }
+      ...
+  }
+#+END_SRC
+
+查了半天没发现问题在哪里，最后认真看了一下perldoc -f glob，发现这个函数：
+
+#+BEGIN_QUOTE
+In scalar context, glob iterates through such filename expansions, returning undef when the list is exhausted.
+#+END_QUOTE
+
+怪不得！也就是说我用glob返回一个非空字符串来判断文件是否存在的用法根本就是错误的！既使这个文件不存在，glob也会返回这个文件名，这点就像shell上的glob机制是一样的，如果你指定的通配符模式不能匹配到任何文件，那shell就返回这个通配符模式本身；否则shell返回所有匹配的文件。也就是说：
+
+#+BEGIN_SRC sh
+echo *.c
+#+END_SRC
+
+在当前目录下如果有.c文件的话，上面的shell命令打印出所有.c文件的名字；否则它打印出 =*.c= 这个参数本身...
+
+而在perl里，glob还多了一个“怪异”的特性，那就是perl的上下文环境，如果是在scalar的环境下，glob会依次返回所产生文件名，最后以undef结束。这个有点类似于其他编程语言里的coroutine概念，同一处glob调用多次，会返回不同的结果。
+
+比如下面这个命令：
+
+#+BEGIN_SRC sh
+perl -e 'while (1) { $x = glob(".xnaoehun"); print "$x\n" if $x; if (not $x) {print "ahhh\n"; last} }'
+#+END_SRC
+
+你会看到第二次的glob调用就失败了，程序退出。如果把last去掉的话，会发现程序不停打印：
+
+#+BEGIN_EXAMPLE
+ahhh
+.xnaoehun
+ahhh
+.xnaoehun
+ahhh
+.xnaoehun
+ahhh
+.xnaoehun
+...
+#+END_EXAMPLE
+
+又比如下面这个命令：
+
+#+BEGIN_SRC sh
+perl -e '$x = glob("hello"); print "$x\n"; $x = glob("hello"); print "$x\n";'
+#+END_SRC
+
+两次glob调用的参数一模一样，但这并不构成对同一glob调用场景的多次进入，所以它会打印两行hello：
+
+#+BEGIN_EXAMPLE
+hello
+hello
+#+END_EXAMPLE

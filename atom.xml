@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[被perl的glob给坑了]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/09/14/0-Got-hit-by-perl-glob.html"/>
+    <updated>2015-36-15T09:09:53+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/09/14/0-Got-hit-by-perl-glob.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Linux就是我的IDE]]></title>
     <link href="http://baohaojun.github.io/blog/2015/09/05/0-Linux-is-my-IDE.html"/>
     <updated>2015-09-05T22:08:19+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/01/28/0-xdotool-is-fucking-with-dvp.html"/>
     <updated>2015-01-28T10:28:00+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/01/28/0-xdotool-is-fucking-with-dvp.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[ntfs mount的输出和ls -l看到的真正的uid/gid让我困惑]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html"/>
-    <updated>2015-01-28T09:46:06+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/01/27/1-mount-output-is-confusing-with-ls--l-output-of-uid-gid.html</id>
   </entry>
 </feed>

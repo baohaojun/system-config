@@ -1,6 +1,10 @@
 #+title: Archive
  * 2015
   - 2015-09
+   * 2015-09-14
+
+     [[../blog/2015/09/14/0-Got-hit-by-perl-glob.org][被perl的glob给坑了]]
+
    * 2015-09-05
 
      [[../blog/2015/09/05/0-Linux-is-my-IDE.org][Linux就是我的IDE]]
