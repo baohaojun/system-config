@@ -100,6 +100,7 @@ Rectangle {
 
     Image {
         id: image
+        fillMode: Image.PreserveAspectFit
         width: height
         smooth: true
         anchors.left: parent.left
@@ -111,6 +112,7 @@ Rectangle {
 
     Image {
         id: appIcon
+        fillMode: Image.PreserveAspectFit
         height: root.height * 0.30
         width: root.height * 0.30
         smooth: true
@@ -121,6 +123,7 @@ Rectangle {
 
     Image {
         id: closeButton
+        fillMode: Image.PreserveAspectFit
         height: root.height * 0.20
         width: root.height * 0.20
         anchors.top: parent.top
