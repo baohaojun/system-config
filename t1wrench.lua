@@ -1572,13 +1572,13 @@ end
 t1_adb_mail = function(subject, to, cc, bcc, attachments)
    adb_am("am start -n com.android.email/com.android.email.activity.ComposeActivityEmail mailto:; sleep 1; mkdir -p /sdcard/adb-mail")
 
-   adb_event("sleep .5 adb-tap 842 434")
+   adb_event("sleep .5 adb-tap 842 434 sleep .5")
 
    if attachments:gsub("%s", "") ~= "" then
       local files = split("\n", attachments)
       for i in ipairs(files) do
          local file = files[i]
-         adb_event"adb-tap 993 883"
+         adb_event"adb-tap 993 883 sleep .5"
 
          if not rows_mail_att_finder or rows_mail_att_finder == "手动点" then
             rows_mail_att_finder = select_args{"有几行邮件附件添加应用图标？", "一行", "两行", "手动点（训练）"}
@@ -1603,7 +1603,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
             window = window:gsub("/.*", "")
             error("必须安装并使用OI文件管理器才能选择附件，你使用的是： " .. window)
          end
-         adb_event"key back key scroll_lock"
+         adb_event"sleep .5 key back key scroll_lock sleep .5"
          adb_event"adb-tap 959 1876 sleep 1"
       end
    end
