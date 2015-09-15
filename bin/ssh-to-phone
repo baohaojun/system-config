@@ -19,7 +19,7 @@ if ! my-adb -r id | grep 'uid=0(root)' -q; then
 fi
 
 my-adb push ~/system-config/doc/galaxy-nexus-root/data/start-debian2.sh /data/start-debian2.sh
-my-adb -r shell su -c "set -x; rm -r /data/start-debian.done; bash $xset /data/start-debian2.sh && touch /data/start-debian.done"
+my-adb -r shell sh -c "set -x; rm -r /data/start-debian.done; bash $xset /data/start-debian2.sh && touch /data/start-debian.done"
 if ! my-adb 'if test -e /data/start-debian.done; then echo start debian done; fi' | grep 'start debian done'; then
     if test $(basename $0) = net-for-phone; then
         true;
