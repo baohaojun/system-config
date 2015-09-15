@@ -6,7 +6,7 @@ if test "$USER" != bhj; then
 fi
 
 (
-    flock -n 9 || { echo 'lock failed for home at '$(date); ps-killall sleep.51555005.sleep exit 0; }
+    flock -n 9 || { set +e; echo 'lock failed for home at '$(date); ps-killall sleep.51555005.sleep; exit 0; }
     for home in home realhome; do
         while true; do
             if test $home = home; then
