@@ -97,7 +97,6 @@ Rectangle {
         elide: Text.ElideRight
     }
 
-
     Image {
         id: image
         fillMode: Image.PreserveAspectFit
@@ -129,7 +128,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.margins: snoreMargin
         anchors.right: parent.right
-        z: 3
+        z: 91
         source: "resources/close.png"
         smooth: true
 
