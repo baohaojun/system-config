@@ -7,7 +7,7 @@
     <version>@VERSION@</version>
     <author>Haojun Bao &lt;baohaojun@gmail.com&gt;</author>
     <license>LGPL</license>
-    <homepage>http://github.com/baohaojun/windows-config/raw/master/</homepage>
+    <homepage>http://github.com/baohaojun/system-config/raw/master/gcode/ibus-sdim/</homepage>
     <textdomain>ibus-sdim</textdomain>
     <observed-paths>
         <path>${pkgdatadir}/sdims/</path>
