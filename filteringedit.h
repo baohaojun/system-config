@@ -3,7 +3,7 @@
 
 #include <QPlainTextEdit>
 
-class FilteringEdit : public QPlainTextEdit
+class FilteringEdit : public QTextEdit
 {
     Q_OBJECT
 public:

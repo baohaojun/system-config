@@ -2,7 +2,7 @@
 #include <QDebug>
 
 FilteringEdit::FilteringEdit(QWidget *parent) :
-    QPlainTextEdit(parent)
+    QTextEdit(parent)
 {
 }
 
@@ -53,5 +53,5 @@ void FilteringEdit::keyPressEvent(QKeyEvent *e)
         }
     }
 
-    QPlainTextEdit::keyPressEvent(e);
+    QTextEdit::keyPressEvent(e);
 }

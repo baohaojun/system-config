@@ -13,7 +13,7 @@ PhoneScreenDialog::PhoneScreenDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PhoneScreenDialog)
 {
-    isShelled = true;
+    isShelled = false;
     ui->setupUi(this);
     mT1Wrench = (T1WrenchMainWindow *)parent;
     mPhoneScreenThread = new AdbPhoneScreenThread(this);

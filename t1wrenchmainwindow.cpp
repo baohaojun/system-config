@@ -728,6 +728,7 @@ void T1WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& 
 
 void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
+    static int x, y;
     if (checked) {
         if (mPhoneScreenDialog.isNull()) {
             mPhoneScreenDialog = QSharedPointer<PhoneScreenDialog>(new PhoneScreenDialog(this));
@@ -739,7 +740,11 @@ void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             this->connect(mLuaThread.data(), SIGNAL(requestSyncScreen()), mPhoneScreenDialog.data(), SLOT(syncScreen()), Qt::QueuedConnection);
         }
         mPhoneScreenDialog->show();
+        mPhoneScreenDialog->move(this->x() + this->size().width() + 15, this->y() + 22);
     } else {
+        QPoint pos = mPhoneScreenDialog->pos();
+        x = pos.x();
+        y = pos.y();
         mPhoneScreenDialog->hide();
     }
 }
