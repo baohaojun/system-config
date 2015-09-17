@@ -1,0 +1,7 @@
+#!/bin/bash
+mount /dev/sda1 /home
+mount /home/bhj /home/trusty/home/bhj-chroot -o bind
+mount /home/bhj/src /home/trusty/home/bhj/src -o bind
+mount /bhj/system-config /home/trusty/home/bhj/system-config -o bind
+mount /trusty/boot/ /home/trusty/boot/ -o bind
+exec /usr/sbin/chroot /home/trusty /bin/bash -c 'mount / / -o bind; mount udev /dev -t devtmpfs; exec /sbin/init'

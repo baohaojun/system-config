@@ -25,3 +25,6 @@
 [submodule "gcode/Firemacs"]
         path = gcode/Firemacs
         url = https://github.com/baohaojun/Firemacs
+[submodule "gcode/ibus-sdim"]
+	path = gcode/ibus-sdim
+	url = https://github.com/baohaojun/ibus-sdim

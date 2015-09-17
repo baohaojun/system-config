@@ -1,0 +1,49 @@
+#!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  d:subdir
+## end code-generator
+## start generated code
+subdir=
+OPTIND=1
+while getopts 'd:' opt; do
+    case "$opt" in
+        d)    subdir=$OPTARG;;
+        *)    echo Usage Error; exit 2;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+
+export subdir=${subdir%/}
+git format-patch "$@" | perl -ne '
+    if (m,^diff --git, and not m,^diff --git a/\Q$ENV{subdir}/\E,) {
+        m,^diff --git a/(.*?) b/,;
+        $not_subdir{$1} = 1;
+        $not_subdir = 1;
+    } elsif (m,^diff --git a/\Q$ENV{subdir}/\E,) {
+        $not_subdir = 0;
+    } elsif (m,^--$,) {
+        $not_subdir = 0;
+    }
+    if ($not_subdir == 0) {
+        push @lines, $_;
+    }
+    END {
+        for $line (@lines) {
+            $skip = 0;
+            for $not_subdir (keys %not_subdir) {
+                # print STDERR "checking $not_subdir\n";
+                if ($line =~ m,^\s+\Q$not_subdir\E\s+, or $line =~ m,\s+\Q$not_subdir\E$,) {
+                    $skip = 1;
+                }
+            }
+            if (not $skip) {
+                print $line;
+            }
+        }
+    }
+'
