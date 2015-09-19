@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[小扳手更新记录及最新版下载地址]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/09/19/0-Wrench-changelog-and-download-location.html"/>
+    <updated>2015-29-19T08:09:32+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/09/19/0-Wrench-changelog-and-download-location.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[被perl的glob给坑了]]></title>
     <link href="http://baohaojun.github.io/blog/2015/09/14/0-Got-hit-by-perl-glob.html"/>
-    <updated>2015-36-15T09:09:53+08:00</updated>
+    <updated>2015-09-15T09:37:16+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/09/14/0-Got-hit-by-perl-glob.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.html"/>
     <updated>2015-01-30T15:28:33+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[xdotool is fucking with dvp]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/01/28/0-xdotool-is-fucking-with-dvp.html"/>
-    <updated>2015-01-28T10:28:00+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/01/28/0-xdotool-is-fucking-with-dvp.html</id>
   </entry>
 </feed>
