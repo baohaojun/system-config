@@ -116,7 +116,7 @@ for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Co
         if test $smb = true; then
             smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
             rsync $file rem:/var/www/html/baohaojun/T1Wrench/ -v
-        fi
+        fi || true&
     )
 done
 
