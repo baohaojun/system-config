@@ -58,7 +58,8 @@ for system_arch in $system_archs; do
     sudo rm $(dirname $basepath)/bare -rf
     mkdir $basepath -p
     components='main contrib non-free'
-    extra_args=
+    gpgpath=/usr/share/keyrings/debian-archive-keyring.gpg
+    extra_args="--keyring $gpgpath --debootstrapopts --keyring=$gpgpath"
     if echo $system|grep ubuntu; then
         components='main universe multiverse'
         gpgpath=~/external/ubuntu-keyring/usr/share/keyrings/ubuntu-archive-keyring.gpg

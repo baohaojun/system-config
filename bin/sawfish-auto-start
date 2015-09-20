@@ -8,8 +8,10 @@ for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; d
     export $x
 done
 
+rm ~/.renew-xauth -f
 do-ssh-add-all
 . ~/system-config/bin/set-ssh-agent
+. ~/.profile
 
 env=$(cat <<EOF
 (progn
@@ -17,6 +19,7 @@ env=$(cat <<EOF
   (setenv "GNOME_KEYRING_CONTROL" "$GNOME_KEYRING_CONTROL")
   (setenv "GNOME_KEYRING_PID" "$GNOME_KEYRING_PID")
   (setenv "SSH_AUTH_SOCK" "$SSH_AUTH_SOCK")
+  (setenv "QT_IM_MODULE" (getenv "QT4_IM_MODULE"))
   $(if test "$DISPLAY" = ":1"; then echo "(setenv \"DISPLAY\" \":1.0\")"; fi)
   (setenv "GPG_AGENT_INFO" "$GPG_AGENT_INFO"))
 EOF

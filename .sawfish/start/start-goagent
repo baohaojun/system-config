@@ -1,7 +1,0 @@
-#!/bin/bash
-cd ~/src/github/goagent/local/
-
-while true; do
-    python proxy.py
-    sleep 2
-done

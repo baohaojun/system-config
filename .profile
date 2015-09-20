@@ -24,3 +24,6 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US:en
 export BROWSER=firefox
+if test "$QT4_IM_MODULE" -a ! "$QT_IM_MODULE"; then
+    export QT_IM_MODULE=$QT4_IM_MODULE
+fi

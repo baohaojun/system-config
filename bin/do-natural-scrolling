@@ -3,7 +3,17 @@
 set -e
 xmodmap -e 'pointer = 1 2 3 4 5 6 7 8 9 10'
 
+evdev=0
 for device in $(xinput -list|grep pointer|perl -ne 'print "$1\n" if m/id=(\d+)/'); do
-    xinput set-prop "$device" "Evdev Scrolling Distance" -1 -1 -1 || true
+    if xinput set-prop "$device" "Evdev Scrolling Distance" -1 -1 -1; then
+        evdev=1
+    fi
     xinput set-prop "$device" "Synaptics Scrolling Distance" -112 -112 || true
-done
+done >/dev/null 2>&1
+
+if test $evdev = 0; then
+    xmodmap -e 'pointer = 1 2 3 5 4 6 7 8 9 10'
+    for device in $(xinput -list|grep pointer|perl -ne 'print "$1\n" if m/id=(\d+)/'); do
+        xinput set-prop "$device" "Synaptics Scrolling Distance" 112 112 >/dev/null 2>&1|| true
+    done
+fi

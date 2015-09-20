@@ -3,6 +3,8 @@ umask 0077
 file=${1:-~/.renew-xauth}
 rm -f $file.$$
 
+. set-ssh-agent
+
 cat <<EOF  > $file.$$
 export XAUTHORITY=$XAUTHORITY
 export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS

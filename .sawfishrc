@@ -106,6 +106,7 @@
 (bind-keys global-keymap "XF86Launch6" '(system "find-or-exec T1Wrench%Smartisan T1Wrench&"))
 (bind-keys global-keymap "XF86Launch7" '(system "find-or-exec rdesktop&"))
 (bind-keys global-keymap "XF86Launch9" '(system "ssssh&"))
+(bind-keys global-keymap "XF86Calculator" '(system "custom-command&"))
 (bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
@@ -150,7 +151,6 @@
                                (string-match wclass-or-lambda (bhj-window-class window) 0 t)
                                (string= wclass-or-lambda (window-name window)))
                             (when functionp wclass-or-lambda
-                                  (write (stderr-file) "hello world\n")
                                   (wclass-or-lambda window)))
                       (bhj-activate-window window)
                       (throw 'wFound 'wFound)))
@@ -307,8 +307,6 @@
                 window-mapped-to)
             (if (assoc class (cadr to))
                 (progn
-                  (message (format nil "hello class is %s, to is %s" (symbol-name class) to))
-                  (message (format nil "hello class is %s" (symbol-name class)))
                   (setq window-mapped-to (get-window-map to class))
                   (do-bind-keys-nil-unbind global-keymap from to window-mapped-to class))
               (unbind-keys global-keymap from))))
