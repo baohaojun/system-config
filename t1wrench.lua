@@ -507,6 +507,7 @@ wait_input_target = function(activity)
       end
       sleep(.1)
    end
+   return ""
 end
 
 adb_top_window = function()
@@ -558,14 +559,10 @@ end
 local function t1_share_to_weixin(text)
    debug("share to weixin: %s", text)
    weixinShareActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui"
-   local imeTarget = wait_input_target("")
    adb_start_weixin_share('text')
    if text then
       text = text:gsub("\n", "​\n")
       putclip(text)
-   end
-   if imeTarget:match(weixinShareActivity) then
-      sleep(1)
    end
    wait_input_target(weixinShareActivity)
    t1_post()
