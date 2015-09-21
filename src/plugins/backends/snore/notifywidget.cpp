@@ -186,21 +186,19 @@ void NotifyWidget::slotInvoked()
 
 QColor NotifyWidget::computeBackgrondColor(const QImage &img)
 {
+    int stepSize = img.depth()/8;
     qulonglong r = 0;
     qulonglong g = 0;
     qulonglong b = 0;
-    for (int x = 0; x < img.width(); ++x) {
-        for (int y = 0; y < img.height(); ++y) {
-            QRgb c = img.pixel(x, y);
-            r += qRed(c);
-            g += qGreen(c);
-            b += qBlue(c);
-        }
+    const uchar *end = img.constBits() + img.byteCount();
+    for (const uchar* bit = img.constBits(); bit != end; bit += stepSize ) {
+        const QRgb c = *reinterpret_cast<const QRgb*>(bit);
+        r += qRed(c);
+        g += qGreen(c);
+        b += qBlue(c);
     }
-    int s = img.width() * img.height();
-
-    return QColor(r / s, g / s, b / s);
-
+    int size = img.byteCount()/stepSize;
+    return QColor(r / size, g / size, b / size);
 }
 
 QColor NotifyWidget::compueTextColor(const QColor &backgroundColor)
