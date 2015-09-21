@@ -97,8 +97,7 @@ void NotifyWidget::display(const Notification &notification)
         color = computeBackgrondColor(notification.application().icon().image().scaled(20, 20));
         notification.application().hints().setPrivateValue(parent(), "backgroundColor", color);
     }
-    QRgb gray = qGray(qGray(color.rgb()) - qGray(QColor(Qt::white).rgb()));
-    QColor textColor = QColor(gray, gray, gray);
+    QColor textColor = compueTextColor(color);
     QMetaObject::invokeMethod(rootObject(), "update", Qt::QueuedConnection,
                               Q_ARG(QVariant, notification.title(Utils::ALL_MARKUP)),
                               Q_ARG(QVariant, notification.text(Utils::ALL_MARKUP)),
@@ -202,4 +201,11 @@ QColor NotifyWidget::computeBackgrondColor(const QImage &img)
 
     return QColor(r / s, g / s, b / s);
 
+}
+
+QColor NotifyWidget::compueTextColor(const QColor &backgroundColor)
+{
+    // based on http://stackoverflow.com/a/946734
+    QRgb compColor = qGray(backgroundColor.rgb()) > 186 ? 0 : 255;
+    return QColor(compColor, compColor, compColor);
 }

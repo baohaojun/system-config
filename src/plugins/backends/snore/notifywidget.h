@@ -70,6 +70,7 @@ private Q_SLOTS:
 
 private:
     QColor computeBackgrondColor(const QImage &img);
+    QColor compueTextColor(const QColor &backgroundColor);
 
     Snore::Notification m_notification;
     int m_id;
