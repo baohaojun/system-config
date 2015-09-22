@@ -205,8 +205,12 @@ void SnoreCorePrivate::setLocalSttingsPrefix(const QString &prefix)
 
 QString SnoreCorePrivate::tempPath()
 {
+#if 1
     static QTemporaryDir dir;
     return dir.path();
+#else
+    return QDir::temp().path() + QLatin1String("/libsnore/");
+#endif
 }
 
 // TODO: this is somehow horrible code

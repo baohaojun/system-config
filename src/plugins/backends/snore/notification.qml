@@ -13,47 +13,12 @@ Rectangle {
     height: snoreBaseSize * 9
 
 
-    function update(nTitle, bBody, nImage, nAppIcon, color, textColor, isUpdate)
-    {
-        title.text = nTitle
-        title.color = textColor
-        body.text = bBody
-        body.color = textColor
-        appIcon.source = nAppIcon
-        image.source = nImage
-        root.color = color
-
-        if (!isUpdate) {
-            var corner = window.corner
-            var id = window.id
-            var space = (id + 1) * height * 0.025
-
-            animation.target = window
-
-            window.y = space + (space + height) * id
-            if (corner == Qt.TopRightCorner || corner == Qt.BottomRightCorner) {
-                animation.from = Screen.desktopAvailableWidth
-                animation.to = Screen.desktopAvailableWidth - width
-            } else {
-                animation.from = -width
-                animation.to = 0
-            }
-            if (corner == Qt.TopRightCorner || corner == Qt.TopLeftCorner) {
-                window.y = space + (space + height) * id
-            } else {
-                window.y = Screen.desktopAvailableHeight - (space + (space + height) * (id + 1))
-            }
-
-            animation.start()
-            window.visible = true
-            utils.raiseWindowToFront(window.wid)
-        }
-    }
-
     NumberAnimation{
         id: animation
+        objectName: "animation"
         properties: "x"
         duration: 500
+        target: window
     }
 
     MouseArea {
@@ -65,6 +30,7 @@ Rectangle {
 
     Text {
         id: title
+        objectName: "title"
         color: "#000000"
         text: "Title"
         font.pointSize: body.font.pointSize * 1.5
@@ -81,6 +47,7 @@ Rectangle {
 
     Text {
         id: body
+        objectName: "body"
         color: "#000000"
         text: "Body"
         font.pointSize: 10
@@ -99,6 +66,7 @@ Rectangle {
 
     Image {
         id: image
+        objectName: "image"
         fillMode: Image.PreserveAspectFit
         width: height
         smooth: true
@@ -111,6 +79,7 @@ Rectangle {
 
     Image {
         id: appIcon
+        objectName: "appIcon"
         fillMode: Image.PreserveAspectFit
         height: root.height * 0.30
         width: root.height * 0.30

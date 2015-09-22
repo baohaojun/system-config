@@ -21,6 +21,9 @@
 #include "libsnore/log.h"
 #include "libsnore/utils.h"
 
+#include <QDesktopWidget>
+#include <QQmlProperty>
+
 using namespace Snore;
 
 NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
@@ -30,7 +33,6 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
     m_ready(true)
 {
     rootContext()->setContextProperty(QLatin1String("window"), this);
-    rootContext()->setContextProperty(QLatin1String("utils"), new Utils(this));
 
     QString font = qApp->font().family();
 #ifdef Q_OS_WIN
@@ -45,6 +47,11 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 #endif
     rootContext()->setContextProperty(QLatin1String("snoreFont"), font);
     setSource(QUrl::fromEncoded("qrc:/notification.qml"));
+    m_appIcon = rootObject()->findChild<QObject*>(QLatin1String("appIcon"));
+    m_image = rootObject()->findChild<QObject*>(QLatin1String("image"));
+    m_title = rootObject()->findChild<QObject*>(QLatin1String("title"));
+    m_body = rootObject()->findChild<QObject*>(QLatin1String("body"));
+    m_animation = rootObject()->findChild<QObject*>(QLatin1String("animation"));
 
     setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
 #ifdef Q_OS_MAC
@@ -94,18 +101,45 @@ void NotifyWidget::display(const Notification &notification)
     if (vcolor.isValid()) {
         color = vcolor.value<QColor>();
     } else {
-        color = computeBackgrondColor(notification.application().icon().image().scaled(20, 20));
+        color = computeBackgrondColor(notification.application().icon().pixmap(QSize(20,20)).toImage());
         notification.application().hints().setPrivateValue(parent(), "backgroundColor", color);
     }
     QColor textColor = compueTextColor(color);
-    QMetaObject::invokeMethod(rootObject(), "update", Qt::QueuedConnection,
-                              Q_ARG(QVariant, notification.title(Utils::ALL_MARKUP)),
-                              Q_ARG(QVariant, notification.text(Utils::ALL_MARKUP)),
-                              Q_ARG(QVariant, QUrl::fromLocalFile(notification.icon().localUrl())),
-                              Q_ARG(QVariant, QUrl::fromLocalFile(notification.application().icon().localUrl())),
-                              Q_ARG(QVariant, color),
-                              Q_ARG(QVariant, textColor),
-                              Q_ARG(QVariant, notification.isUpdate()));
+    int appIconWidht = m_appIcon->property("width").toInt();
+    m_appIcon->setProperty("source", QUrl::fromLocalFile(notification.application().icon().localUrl(QSize(appIconWidht,appIconWidht))));
+    int imageWidth = m_image->property("width").toInt();
+    m_image->setProperty("source", QUrl::fromLocalFile(notification.icon().localUrl(QSize(imageWidth,imageWidth))));
+
+
+    m_title->setProperty("text", notification.title(Utils::ALL_MARKUP));
+    m_title->setProperty("color", textColor);
+
+    m_body->setProperty("text", notification.text(Utils::ALL_MARKUP));
+    m_body->setProperty("color", textColor);
+    rootObject()->setProperty("color", color);
+
+
+    if (!notification.isUpdate()) {
+        QDesktopWidget desktop;
+        double space = (id() + 1) * height() * 0.025;
+        setY(space + (space + height()) * id());
+        if (corner() == Qt::TopRightCorner || corner() == Qt::BottomRightCorner) {
+            m_animation->setProperty("from", desktop.availableGeometry().width());
+            m_animation->setProperty("to", desktop.availableGeometry().width() - width());
+        } else {
+            m_animation->setProperty("from", -width());
+            m_animation->setProperty("to", 0);
+        }
+        if (corner() == Qt::TopRightCorner || corner() == Qt::TopLeftCorner) {
+            setY(space + (space + height()) * id());
+        } else {
+            setY(desktop.availableGeometry().height() - (space + (space + height()) * (id() + 1)));
+        }
+
+        QMetaObject::invokeMethod(m_animation, "start");
+        setVisible(true);
+        Utils::raiseWindowToFront(winId());
+    }
 }
 
 bool NotifyWidget::acquire()
@@ -167,11 +201,6 @@ int NotifyWidget::id()
 Qt::Corner NotifyWidget::corner()
 {
     return static_cast<Qt::Corner>(m_parent->settingsValue(QLatin1String("Position")).toInt());
-}
-
-qlonglong NotifyWidget::wid()
-{
-    return this->winId();
 }
 
 void NotifyWidget::slotDismissed()
