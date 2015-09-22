@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class PutClipService extends Service {
     @Override
@@ -205,6 +206,29 @@ public class PutClipService extends Service {
                 } finally {
                     dc.close();
                 }
+            } else if (intent.getIntExtra("share-pics", 0) == 1) {
+                String pkg = intent.getStringExtra("package");
+                String cls = intent.getStringExtra("class");
+
+                String pics = intent.getStringExtra("pics");
+                String[] picsArray = pics.split(",");
+                ArrayList<Uri> imageUris = new ArrayList<Uri>();
+                for (String pic : picsArray) {
+                    imageUris.add(Uri.fromFile(new File(pic)));
+                }
+
+                Intent shareIntent = new Intent();
+                shareIntent.setClassName(pkg, cls);
+                if (picsArray.length == 1) {
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0));
+                } else {
+                    shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+                    shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+                }
+                shareIntent.setType("image/*");
+                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(shareIntent);
             } else if (intent.getIntExtra("share-to-note", 0) == 1) {
                 FileReader f = new FileReader(new File(sdcard, "putclip.txt"));
                 char[] buffer = new char[1024 * 1024];
