@@ -29,6 +29,7 @@
 #include <QMutex>
 #include <QTextDocument>
 #include <QTextDocumentFragment>
+#include <QBuffer>
 
 using namespace Snore;
 
