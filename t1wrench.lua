@@ -551,10 +551,18 @@ adb_start_weixin_share = function(text_or_image)
          break
       end
    end
-   adb_event("adb-tap 654 1850 sleep .1 adb-tap 332 358 sleep .2 " .. click .. " 961 160")
+   adb_event("adb-tap 654 1850 sleep .5 adb-tap 332 358")
+   if wait_top_activity("com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI") == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI" then
+      adb_event("sleep .2 " .. click .. " 961 160")
+   else
+      log("无法切换到朋友圈界面")
+   end
    if text_or_image == 'image' then
       adb_event("adb-tap 213 929") -- choose picture
    end
+   adb_event("adb-tap 143 264")
+   wait_input_target("com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
+   log("start weixin share complete")
 end
 
 local function t1_share_to_weixin(text)
@@ -1083,7 +1091,7 @@ t1_post = function(text) -- use weixin
          end
       else
          if adb_input_method_is_null() then --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
-            add = '560 1840 sleep .1 key back sleep .1'
+            add = '560 1840 sleep .2 key back sleep .2'
          end
       end
 
