@@ -88,7 +88,7 @@ private:
     QHash<int, Action> m_actions;
     Hint m_hints;
     Notification m_toReplace;
-    QPointer<QTimer> m_timeoutTimer;
+    QTimer *m_timeoutTimer = nullptr;
     QSet<const QObject *> m_activeIn;
     bool m_isBroadcasted = false;
     SnorePlugin *m_source = nullptr;

@@ -129,6 +129,7 @@ void NotificationData::stopTimeoutTimer()
 {
     if (m_timeoutTimer) {
         m_timeoutTimer->deleteLater();
+        m_timeoutTimer = nullptr;
     }
 }
 

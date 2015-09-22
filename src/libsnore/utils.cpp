@@ -108,6 +108,16 @@ void Utils::raiseWindowToFront(qlonglong wid)
         return string;
     }
 
+    QByteArray Utils::dataFromImage(const QImage &image)
+    {
+        QByteArray data;
+        QBuffer buffer(&data);
+        buffer.open(QBuffer::WriteOnly);
+        image.save(&buffer, "PNG");
+        return data;
+    }
+
+
 #ifdef Q_OS_WIN
     int Utils::attatchToActiveProcess()
     {

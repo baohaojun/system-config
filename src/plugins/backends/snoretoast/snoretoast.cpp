@@ -36,12 +36,10 @@ void SnoreToast::slotNotify(Notification notification)
     arguements << QLatin1String("-t")
                << notification.title()
                << QLatin1String("-m")
-               << notification.text();
-    if (notification.icon().isValid()) {
-        arguements << QLatin1String("-p")
-                   << QDir::toNativeSeparators(notification.icon().localUrl());
-    }
-    arguements << QLatin1String("-w")
+               << notification.text()
+               << QLatin1String("-p")
+               << QDir::toNativeSeparators(notification.icon().localUrl(QSize(1024,1024)))
+               << QLatin1String("-w")
                << QLatin1String("-appID")
                << appId(notification.application())
                << QLatin1String("-id")

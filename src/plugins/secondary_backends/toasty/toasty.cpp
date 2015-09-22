@@ -54,14 +54,9 @@ void Toasty::slotNotify(Notification notification)
 
     QHttpPart icon;
 
-    Icon sIcon = notification.icon();
-    QSize iconSize = notification.icon().image().size();
-    if (iconSize.height() > 128 || iconSize.width() > 128) {
-        sIcon = sIcon.scaled(QSize(128, 128));
-    }
-    icon.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"image\"; filename=\"") + sIcon.localUrl() + QLatin1Char('"')));
+    icon.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"image\"; filename=\"") + notification.icon().localUrl(QSize(128,128)) + QLatin1Char('"')));
     icon.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("image/png")));
-    QFile *file = new QFile(sIcon.localUrl());
+    QFile *file = new QFile(notification.icon().localUrl(QSize(128,128)));
     file->open(QIODevice::ReadOnly);
     icon.setBodyDevice(file);
     mp->append(icon);

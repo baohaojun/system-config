@@ -20,20 +20,20 @@
 #include "../snore.h"
 #include "../snore_p.h"
 
-#include "notification/icon_p.h"
+#include <QApplication>
+#include <QMutex>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QUrl>
 
-#include <QBuffer>
+
 
 using namespace Snore;
 
-QByteArray Icon::dataFromImage(const QImage &image)
-{
-    QByteArray data;
-    QBuffer buffer(&data);
-    buffer.open(QBuffer::WriteOnly);
-    image.save(&buffer, "PNG");
-    return data;
-}
+
+QSet<QString> Icon::s_localImageCache;
+QMap<QUrl,Icon> Icon::s_downloadImageCache;
 
 Icon Icon::defaultIcon()
 {
@@ -41,73 +41,79 @@ Icon Icon::defaultIcon()
     return icon;
 }
 
-Icon::Icon(const QImage &img):
-    d(new IconData(img))
+Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
 {
+    Icon icon = defaultIcon();
+    snoreDebug(SNORE_DEBUG) << url;
+    if (!s_downloadImageCache.contains(url)) {
+        QTime timeout;
+        timeout.start();
+        QMutex isDownloading;
+        isDownloading.lock();
+        snoreDebug(SNORE_DEBUG) << "Downloading:" << url;
+        QNetworkAccessManager *manager = new QNetworkAccessManager();
+        QNetworkRequest request(url);
+        QNetworkReply *reply = manager->get(request);
+        QObject::connect(reply, &QNetworkReply::downloadProgress, [&](qint64 bytesReceived, qint64 bytesTotal) {
+            snoreDebug(SNORE_DEBUG) << "Downloading:" << url << bytesReceived / double(bytesTotal) * 100.0 << "%";
+        });
+
+        QObject::connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [ & ](QNetworkReply::NetworkError code) {
+            snoreDebug(SNORE_WARNING) << "Error downloading" << url << ":" << code;
+            isDownloading.unlock();
+        });
+        QObject::connect(reply, &QNetworkReply::finished, [ & ]() {
+            if(reply->isOpen()){
+                QImage img(QImage::fromData(reply->readAll(), "PNG"));
+                icon = Icon(QPixmap::fromImage(img));
+                s_downloadImageCache.insert(url, icon);
+                snoreDebug(SNORE_DEBUG) << url << "added to cache.";
+                isDownloading.unlock();
+            } else {
+                snoreDebug(SNORE_DEBUG) << "Download of " << url << "timed out.";
+
+            }
+        });
+
+        while(!isDownloading.tryLock() && timeout.elapsed() < maxTime)
+        {
+            qApp->processEvents();
+        }
+        reply->close();
+        reply->deleteLater();
+        manager->deleteLater();
+    } else {
+        icon = s_downloadImageCache.value(url, defaultIcon());
+        snoreDebug(SNORE_DEBUG) << url << "from cache";
+    }
+    return icon;
 }
 
-Icon::Icon(const QIcon &icon):
-    d(new IconData(icon.pixmap(32).toImage()))
-{}
-
-Icon::Icon(const QString &url):
-    d(new IconData(url))
-{
-}
-
-Icon::Icon(const Icon &other):
-    d(other.d)
-{
-}
-
-Icon &Icon::operator=(const Icon &other)
-{
-    d = other.d;
-    return *this;
-}
-
-Icon::~Icon()
+Icon::Icon(const QPixmap &pixmap):
+    QIcon(pixmap)
 {
 
 }
 
-const QImage &Icon::image() const
+Icon::Icon(const QIcon &other):
+    QIcon(other)
 {
-    return d->image();
+
 }
 
-QString Icon::localUrl()const
+Icon::Icon(const QString &fileName):
+    QIcon(fileName)
 {
-    return d->localUrl();
+
 }
 
-bool Icon::isLocalFile() const
+QString Icon::localUrl(const QSize &size, Mode mode, State state)const
 {
-    return d->m_isLocalFile;
+    QString localFileName = SnoreCorePrivate::tempPath() + QLatin1Char('/') + QString::number(cacheKey()) + QLatin1String("_") + QString::number(size.width())+ QLatin1String("x") + QString::number(size.height()) + QLatin1String(".png");
+    if(!s_localImageCache.contains(localFileName)){
+        QImage(pixmap(size,mode,state).toImage()).save(localFileName, "PNG");
+        s_localImageCache.insert(localFileName);
+    }
+    return localFileName;
 }
 
-bool Icon::isValid() const
-{
-    return !(d->m_img.isNull() && d->m_url.isEmpty());
-}
-
-Icon Icon::scaled(const QSize &s) const
-{
-    return Icon(image().scaled(s, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-}
-
-QString Icon::url() const
-{
-    return d->m_url;
-}
-
-bool Snore::Icon::isRemoteFile() const
-{
-    return d->m_isRemoteFile;
-}
-
-QDebug operator<< (QDebug debug, const Snore::Icon &icon)
-{
-    debug << "Snore::Icon(" << (icon.url().isEmpty() ? icon.d->m_localUrl : icon.url()) <<  ")" ;
-    return debug.maybeSpace();
-}

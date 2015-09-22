@@ -20,106 +20,43 @@
 #define NOTIFICATION_ICON_H
 #include "libsnore/snore_exports.h"
 
+#include <QIcon>
 #include <QSharedData>
 #include <QDebug>
 
-namespace Snore
-{
-class Icon;
-}
-
-SNORE_EXPORT QDebug operator<< (QDebug, const Snore::Icon &);
 
 namespace Snore
 {
-class IconData;
 
 /**
  * Icon contains an image for Notifications.
  * Icon uses a shared datamodel, it's content is never copied and automatically released.
  * @author Patrick von Reth \<vonreth at kde.org\>
  */
-class SNORE_EXPORT Icon
+class SNORE_EXPORT Icon : public QIcon
 {
 public:
-
-    static QByteArray dataFromImage(const QImage &image);
-
     static Icon defaultIcon();
+    static Icon fromWebUrl(const QUrl& url, int maxTime = 5000);
 
-    /**
-     * Creates an Icon from an QImage
-     * @param img the image
-     */
-    Icon(const QImage &img);
 
-    /**
-     * Creates an Icon from QIcon @p icon
-     */
-    Icon(const QIcon &icon);
+    Icon(const QPixmap &pixmap);
+    Icon(const QIcon &other);
+    explicit Icon(const QString &fileName);
 
-    /**
-     * Creates an Icon from a url
-     * Valid urls are "file://home/foo/foo.png", "C:\\foo.png", ":/root/foo.png", "http://foo.com/foo.png"
-     * @param url the url
-     */
-    explicit Icon(const QString &url);
-
-    /**
-     * Creates a copy of other
-     * @param other
-     */
-    Icon(const Icon &other);
-
-    /**
-     * Creates a copy of other
-     * @param other
-     */
-    Icon &operator=(const Icon &other);
-    ~Icon();
-
-    /**
-     *
-     * @return a QImage from the Icon
-     */
-    const QImage &image() const;
 
     /**
      *
      * @return a local url to a file representing the Icon
      */
-    QString localUrl() const;
+    QString localUrl(const QSize &size, Mode mode = Normal, State state = Off) const;
 
-    /**
-     *
-     * @return the url of this Icon or an empty string if created from a QImage
-     */
-    QString url() const;
 
-    /**
-     *
-     * @return whether the Icon was created from a local file
-     */
-    bool isLocalFile() const;
-
-    /**
-     *
-     * @return whether the Icon was created from a remote file
-     */
-    bool isRemoteFile() const;
-
-    /**
-     *
-     * @return whether this is a valid Icon
-     */
-    bool isValid() const;
-
-    Icon scaled(const QSize &s) const;
 
 private:
     Icon() = delete;
-    QExplicitlySharedDataPointer<IconData> d;
-    friend SNORE_EXPORT QDebug(::operator<<)(QDebug, const Snore::Icon &);
+    static QSet<QString> s_localImageCache;
+    static QMap<QUrl,Icon> s_downloadImageCache;
 };
 }
 

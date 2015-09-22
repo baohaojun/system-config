@@ -54,10 +54,9 @@ void  FreedesktopBackend::slotNotify(Notification noti)
         actions << QString::number(k) << noti.actions()[k].name();
     }
     QVariantMap hints;
-    if (noti.icon().isValid()) {
-        FreedesktopImageHint image(noti.icon().image());
-        hints.insert(QLatin1String("image_data"), QVariant::fromValue(image));
-    }
+
+    FreedesktopImageHint image(noti.icon().pixmap(QSize(128,128)).toImage());
+    hints.insert(QLatin1String("image_data"), QVariant::fromValue(image));
 
     char urgency = 1;
     if (noti.priority() < 0) {

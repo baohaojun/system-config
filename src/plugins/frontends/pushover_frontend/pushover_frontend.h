@@ -48,6 +48,7 @@ protected:
 
 public Q_SLOTS:
     void slotActionInvoked(Snore::Notification notification);
+    void connectToService();
 
 Q_SIGNALS:
     void loggedInChanged(bool isLoggedIn);
@@ -62,7 +63,6 @@ private:
     QString secret();
     QString device();
 
-    void connectToService();
     void disconnectService();
 
     void registerDevice(const QString &secret, const QString &deviceName);

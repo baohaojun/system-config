@@ -21,7 +21,7 @@
 #include "snore_exports.h"
 #include "snoreglobals.h"
 
-#include <QCryptographicHash>
+#include <QImage>
 #include <QObject>
 
 namespace Snore
@@ -106,14 +106,6 @@ public:
     static QString normalizeMarkup(QString string, MARKUP_FLAGS tags);
 
     /**
-     * Computes a md5 hash of the provided data.
-     */
-    static inline QString computeMD5Hash(const QByteArray &data)
-    {
-        return QString::fromUtf8(QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex());
-    }
-
-    /**
      * Version number prefix for the settings.
      */
     static inline QString settingsVersionSchema()
@@ -136,6 +128,8 @@ public:
         }
     }
 
+
+    static QByteArray dataFromImage(const QImage &image);
 private:
 #ifdef Q_OS_WIN
     static int attatchToActiveProcess();
