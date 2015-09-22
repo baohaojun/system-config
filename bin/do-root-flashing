@@ -43,11 +43,15 @@ else
             grep -P "^auth\s+\S+\s+\S+\s*$" ~/.smb/smbnetfs.conf;
         fi | perl -ne 'if (m/\s+(\S+)\s+(\S+)\s*$/) {print "$1%$2"}')
 
-    pattern='(^|/)(userdata_)\d+.img$'
+
     if test $(basename $0) = do-root-flashing; then
-        pattern='(^|/)(userdata_|system_)\d+.img$'
+        no_copy_pattern='(^|/)(userdata_|system_)\d+.img$'
+    elif test "$(basename $0)" = do-sansuser-flashing; then
+        no_copy_pattern='(^|/)(userdata_)\d+.img$'
+    else
+        no_copy_pattern=xxxxxxxxxxxxxxx
     fi
-    find . -type f|grep -v -P "$pattern" > ~/tmp/root-flash/files.list
+    find . -type f|grep -v -P "$no_copy_pattern" > ~/tmp/root-flash/files.list
 
 
     outdir=~/tmp/root-flash/$(basename $PWD)
@@ -61,8 +65,14 @@ fi
     cd $outdir
     fix-deep-dirs
     # smb-push .
-    perl -ne 'print unless m/userdata_/' -i $xml
+
     perl -ne 'print unless m/alterable.bin/' -i $xml
+
+    if test $(basename $0) = do-sans-recovery-flashing; then
+        perl -ne 'print unless m/recovery.img/' -i $xml
+    else
+        perl -ne 'print unless m/userdata_/' -i $xml
+    fi
 
     if test $(basename $0) = do-root-flashing; then
         replace-bootimage -b boot.img -- -d
