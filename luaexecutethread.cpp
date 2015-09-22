@@ -25,9 +25,10 @@ static int l_selectArg(lua_State* L)
     return 1;
 }
 
-void LuaExecuteThread::t1SockStateChange(QAbstractSocket::SocketState newState)
+static int l_logToUI(lua_State* L)
 {
-    qDebug() << "state is " << newState;
+    that->logToUI(lua_tolstring(L, -1, NULL));
+    return 0;
 }
 
 static int l_adbQuickInputAm(lua_State* L)
@@ -129,6 +130,9 @@ void LuaExecuteThread::run()
 
     lua_pushcfunction(L, l_selectArg);
     lua_setglobal(L, "select_args");
+
+    lua_pushcfunction(L, l_logToUI);
+    lua_setglobal(L, "log_to_ui");
 
     lua_pushcfunction(L, l_adbQuickInputAm);
     lua_setglobal(L, "adb_quick_input");
@@ -239,4 +243,9 @@ void LuaExecuteThread::on_argSelected(const QString& arg)
 void LuaExecuteThread::load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments)
 {
     emit load_mail_heads_sig(subject, to, cc, bcc, attachments);
+}
+
+void LuaExecuteThread::logToUI(const char *log)
+{
+    emit gotSomeLog("log", log);
 }

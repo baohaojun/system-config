@@ -22,7 +22,7 @@ local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity
 local start_weibo_share
-local t1_eval
+local t1_eval, log, share_pics_to_app
 
 -- variables
 local where_is_dial_key
@@ -492,6 +492,7 @@ wait_top_activity = function(activity)
 end
 
 wait_input_target = function(activity)
+   debug("wait for input method for %s", activity)
    for i = 1, 20 do
       local window = adb_focused_window()
       if window:match(activity) then
@@ -874,6 +875,7 @@ t1_config = function()
    io.close(md5file)
    debugging("on phone: %s, local: %s", setclip_phone_md5, setclip_local_md5)
    if setclip_phone_md5 ~= setclip_local_md5 then
+      log("需要在手机上安装小扳手辅助apk，请确保手机允许安装未知来源的apk。")
       local install_output = io.popen(the_true_adb .. " install -r SetClip.apk"):read("*a")
       if install_output:match("\nSuccess\r?\n") then
          system(the_true_adb .. " push setclip.apk.md5 /sdcard/t1wrench-setclip.md5")
@@ -883,6 +885,8 @@ t1_config = function()
          io.close(md5file)
          if setclip_phone_md5 ~= setclip_local_md5 then
             error("Can't mark the setclip.apk as been installed")
+         else
+            log("小扳手辅助apk安装成功")
          end
       else
          if not os.execute("test -e .quiet-apk-install-failure") then
@@ -1169,57 +1173,38 @@ local function upload_pics(...)
    return targets
 end
 
-picture_to_weixin_share = function(pics, ...)
+share_pics_to_app = function(pkg, cls, pics, ...)
    if type(pics) ~= "table" then
       pics = {pics, ...}
    end
 
-   for i = 1, #pics do
-      local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = pics[i]
-
-      if i == 1 then
-         adb_start_weixin_share('image')
-         if using_adb_root then
-            for n = 1, 10 do
-               if adb_top_window() == weixinAlbumPreviewActivity then
-                  debug("album for n: %d", n)
-                  adb_event("adb-tap 623 283 sleep .2 adb-tap 962 1860 sleep .5")
-                  if adb_focused_window() == weixinImagePreviewActivity then
-                     print "got into image preview"
-                     adb_event("adb-tap 868 1859 sleep .1 adb-key back")
-                     wait_top_activity(weixinAlbumPreviewActivity)
-                     break
-                  else
-                     sleep(.5)
-                  end
-               elseif adb_top_window() == weixinImagePreviewActivity then
-                  debug("image preview for n: %d", n)
-                  adb_event("adb-key back sleep .5")
-                  break
-               elseif adb_top_window() == weixinSnsUploadActivity then
-                  debug("sns upload for n: %d", n)
-                  adb_event("adb-tap 293 341")
-                  wait_input_target(weixinSnsUploadActivity)
-                  adb_event("adb-tap 141 597")
-                  wait_top_activity(weixinAlbumPreviewActivity)
-               end
-            end
-         else
-             sleep(.5)
-         end
-      end
-
-      local pic_share_buttons = {
-         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
-         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
-         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
-      }
-      local i_button = pic_share_buttons[i]
-      adb_event(i_button)
+   if cls:match("^%.") then
+       cls = pkg .. cls
    end
-   adb_event("sleep .2 adb-tap 903 133")
-   return "Prompt: please say something"
+
+   local pics_str = ""
+
+   for i = 1, #pics do
+      if i ~= #pics then
+         pics_str = pics_str .. ","
+      end
+      pics_str = pics_str .. pics[i]
+   end
+
+   adb_am{"am", "startservice", "--user", "0",
+          "-n", "com.bhj.setclip/.PutClipService",
+          "--ei", "share-pics", "1",
+          "--es", "pics", pics_str,
+          "--es", "package", pkg,
+          "--es", "class", cls
+   }
+end
+
+picture_to_weixin_share = function(pics, ...)
+   share_pics_to_app("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI", pics)
+   wait_top_activity(weixinSnsUploadActivity)
+   adb_event("adb-tap 228 401")
+   wait_input_target(weixinSnsUploadActivity)
 end
 
 local function picture_to_weibo_share_upload(...)
@@ -1238,81 +1223,17 @@ local function picture_to_weixin_share_upload(...)
 end
 
 picture_to_weibo_share = function(pics, ...)
-   if type(pics) ~= "table" then
-      pics = {pics, ...}
-   end
-
-   for i = 1, #pics do
-      local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = pics[i]
-
-      if i == 1 then
-         start_weibo_share()
-         for n = 1,10 do
-            if adb_top_window() == weiboShareActivity then
-               sleep(.5)
-               adb_event("adb-tap 62 1843")
-            elseif adb_top_window() == weiboAlbumActivity then
-               debug("album for n: %d", n)
-               adb_event("sleep .3 adb-tap 501 340 sleep .2")
-            elseif adb_top_window() == weiboImagePreviewActivity then
-                  print "got into image preview"
-                  adb_event("sleep .1 adb-key back sleep .1")
-                  if wait_top_activity(weiboAlbumActivity) == weiboAlbumActivity then
-                     sleep(.1)
-                     break
-                  end
-            end
-         end
-      end
-
-      local pic_share_buttons = {
-         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
-         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
-         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
-      }
-      local i_button = pic_share_buttons[i]
-      adb_event(i_button)
-   end
-   adb_event("adb-tap 294 1867 adb-tap 890 133")
-   if #pics == 1 then
-      wait_top_activity(weiboPicFilterActivity)
-      adb_event("adb-tap 890 133")
-   end
+   share_pics_to_app("com.sina.weibo", ".composerinde.ComposerDispatchActivity", pics)
    wait_top_activity(weiboShareActivity)
+   adb_event("adb-tap 162 286")
+   wait_input_target(weiboShareActivity)
 end
 
 picture_to_momo_share = function(pics, ...)
-   if type(pics) ~= "table" then
-      pics = {pics, ...}
-   end
-
-   for i = 1, #pics do
-      local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = pics[i]
-
-      if i == 1 then
-         local momoStart = "com.immomo.momo/com.immomo.momo.android.activity.WelcomeActivity"
-         local momoActivity = "com.immomo.momo/com.immomo.momo.android.activity.maintab.MaintabActivity"
-         adb_start_activity(momoStart)
-         for try = 1, 5 do
-            adb_event("sleep .2")
-            if not adb_is_window(momoActivity) then
-               adb_event("key back")
-               adb_start_activity(momoStart)
-            end
-         end
-         adb_event("sleep .2 adb-tap 288 1821 adb-tap 261 337 adb-tap 972 165 sleep 1")
-      end
-
-      local pic_share_buttons = {
-         "adb-tap 141 408", "adb-tap 387 368", "adb-tap 689 360", "adb-tap 913 324",
-         "adb-tap 142 687", "adb-tap 379 612",
-      }
-      local i_button = pic_share_buttons[i]
-      adb_event(i_button)
-   end
-   adb_event("adb-tap 404 1854 adb-tap 201 534")
+   share_pics_to_app("com.immomo.momo", ".android.activity.feed.SharePublishFeedActivity", pics)
+   wait_top_activity("com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity")
+   adb_event("adb-tap 176 329")
+   wait_input_target("com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity")
 end
 
 local function picture_to_weixin_chat(pics, ...)
@@ -1418,18 +1339,23 @@ local function picture_to_qq_chat(pics, ...)
             if window == qqChatActivity or window == qqChatActivity2 then
                chatWindow = window
                adb_event(post_button .. " sleep .5 adb-tap 203 1430")
-               wait_top_activity(qqPhotoFlow)
+               if wait_top_activity(qqPhotoFlow) ~= qqPhotoFlow then
+                  log("Wait for qqPhotoFlow failed")
+                  adb_event("sleep .5 adb-tap 203 1430")
+                  wait_top_activity(qqPhotoFlow)
+               end
                adb_event("adb-tap 351 1703")
             elseif window == qqPhoteList then
-               adb_event("adb-tap 284 275 adb-tap 81 1847")
+               adb_event("adb-tap 171 427")
             elseif window == qqPhotoPreview then
-               adb_event("adb-tap 951 159 adb-tap 68 185")
+               adb_event("adb-key back")
                if wait_top_activity(qqPhoteList) == qqPhoteList then
                   break
-               else
-                   adb_event("adb-tap 68 185")
+               elseif adb_top_window() == qqPhotoPreview then
+                   adb_event("adb-key back")
                end
             end
+            sleep(.1)
          end
       end
       local pic_share_buttons = {
@@ -1440,7 +1366,7 @@ local function picture_to_qq_chat(pics, ...)
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   adb_event("adb-tap 477 1835 sleep .1 adb-tap 898 1840")
+   adb_event("sleep .1 adb-tap 477 1835 sleep .1 adb-tap 898 1840")
    wait_top_activity(chatWindow)
    adb_event("adb-tap 312 1275")
 end
@@ -1751,6 +1677,12 @@ t1_add_mms_receiver = function(number)
 
    adb_event("sleep 1 key scroll_lock")
    return "请在小扳手文字输入区输入短信内容并发送"
+end
+
+log = function(str)
+   if log_to_ui then
+      log_to_ui(str)
+   end
 end
 
 t1_eval = function(f)

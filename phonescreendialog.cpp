@@ -186,6 +186,8 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
         }
         mPhoneScreenThread->syncScreen();
         return true;
+    } else if (ev->type() == QEvent::Show) {
+        reloadBackground();
     } else if (ev->type() == QEvent::Resize) {
         reloadBackground();
     } else if (ev->type() == QEvent::KeyPress) {

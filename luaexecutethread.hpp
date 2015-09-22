@@ -12,10 +12,8 @@
 class LuaExecuteThread : public QThread
 {
     Q_OBJECT
-public slots:
-    void t1SockStateChange(QAbstractSocket::SocketState);
-
 public:
+    void logToUI(const char *log);
     QString adbQuickInputAm(QString arg);
     ~LuaExecuteThread();
     LuaExecuteThread(QObject* parent = NULL);
