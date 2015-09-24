@@ -1378,8 +1378,9 @@ local function picture_to_qq_chat(pics, ...)
 
    local input_method, ime_height = adb_get_input_window_dump()
    if (ime_height ~= 0) then
-       ime_height = 0
-       adb_event("key back")
+      ime_height = 0
+      log("发送back键以隐藏输入法")
+      adb_event("key back")
    end
    local chatWindow
    local post_button = ('159 %d'):format(1920 - ime_height - 50)
@@ -1387,7 +1388,7 @@ local function picture_to_qq_chat(pics, ...)
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
-         for n = 1,10 do
+         for n = 1,50 do
             local window = adb_top_window()
             if window == qqChatActivity or window == qqChatActivity2 then
                chatWindow = window
@@ -1417,11 +1418,11 @@ local function picture_to_qq_chat(pics, ...)
          "adb-tap 284 989", "adb-tap 621 1024", "adb-tap 988 1019"
       }
       local i_button = pic_share_buttons[i]
+      sleep(.1)
       adb_event(i_button)
    end
    adb_event("sleep .1 adb-tap 477 1835 sleep .1 adb-tap 898 1840")
    wait_top_activity(chatWindow)
-   adb_event("adb-tap 312 1275")
 end
 
 local function picture_to_qqlite_chat(pics, ...)
