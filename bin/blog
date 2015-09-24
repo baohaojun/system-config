@@ -95,6 +95,8 @@ if test "$#" != 0; then
             cd $blogdir
             if test $# = 0; then
                 set -- .org
+            else
+                set -- "$@" '!.html'
             fi
             if test $# = 1; then
                 set -- "$@" ''

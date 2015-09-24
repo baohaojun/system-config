@@ -24,10 +24,12 @@ import android.provider.ContactsContract.RawContacts;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class PutClipService extends Service {
     @Override
@@ -229,6 +231,31 @@ public class PutClipService extends Service {
                 shareIntent.setType("image/*");
                 shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(shareIntent);
+            } else if (intent.getIntExtra("get-last-note-pic", 0) == 1) {
+                final File notesPicDir = new File(sdcard, "smartisan/notes/");
+                final Pattern pngPattern = Pattern.compile(".*\\.png$");
+                Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 235));
+                File[] picFiles = notesPicDir.listFiles(new FilenameFilter() {
+                        public boolean accept(File dir, String filename) {
+                            Log.e("bhj", String.format("%s:%d: %s", "PutClipService.java", 238, filename));
+                            if (dir == notesPicDir && pngPattern.matcher(filename).matches()) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    });
+                if (picFiles.length > 0) {
+                    long newestLastModified = picFiles[0].lastModified();
+                    File newestFile = picFiles[0];
+                    for (File f : picFiles) {
+                        if (newestLastModified < f.lastModified()) {
+                            newestLastModified = f.lastModified();
+                            newestFile = f;
+                        }
+                    }
+                    writeFile(newestFile.toString());
+                }
             } else if (intent.getIntExtra("share-to-note", 0) == 1) {
                 FileReader f = new FileReader(new File(sdcard, "putclip.txt"));
                 char[] buffer = new char[1024 * 1024];
