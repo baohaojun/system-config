@@ -1532,11 +1532,16 @@ local function t1_follow_me()
    check_phone()
    -- http://weibo.com/u/1611427581 (baohaojun)
    -- http://weibo.com/u/1809968333 (beagrep)
-   adb_am{"am", "start", "-n", "com.sina.weibo/.ProfileInfoActivity", "--es", "uid", "1611427581"}
-   if init_width < 720 then
-      adb_event("sleep 1 adb-tap 659 950 key back")
-   else
-      adb_event("sleep 1 adb-tap 659 870 key back")
+   adb_am("am start sinaweibo://userinfo?uid=1611427581")
+   wait_top_activity_match("com.sina.weibo/com.sina.weibo.page.")
+   adb_event("sleep .5 adb-tap 187 1884")
+   log("T1 follow me")
+   for n = 1, 10 do
+      sleep(.2)
+      if adb_top_window() == "com.sina.weibo" then
+         adb_event("key back")
+         break
+      end
    end
 end
 
@@ -1763,10 +1768,21 @@ local function t1_spread_it()
    -- http://weibo.com/1611427581/Bviui9tzF
    -- http://weibo.com/1611427581/BvnNk2PwH?from=page_1005051611427581_profile&wvr=6&mod=weibotime&type=comment
    -- http://m.weibo.cn/1809968333/3774599487375417
-   adb_am{"am", "start", "sinaweibo://detail?mblogid=BvnNk2PwH"}
-   adb_event("sleep 1 adb-tap 911 1863 adb-tap 156 1876 sleep .1")
+   adb_am("am start sinaweibo://userinfo?uid=1611427581")
+   wait_top_activity_match("com.sina.weibo/com.sina.weibo.page.")
+
+   for i = 1, 10 do
+      sleep(.2)
+      adb_event("adb-tap 414 986")
+      if adb_top_window() == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
+         break
+      end
+   end
+   adb_event("adb-tap 911 1863 adb-tap 527 1911")
+   wait_input_target("com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity")
+   adb_event("adb-tap 99 932")
    if using_smartisan_os then
-      t1_post("#如果别人认为你还没有疯，那只是因为你还不够努力😼#")
+      t1_post("#小扳手真好用# 💑💓💕💖💗💘💙💚💛💜💝💞💟😍😻♥❤")
    elseif brand:match("Xiaomi") then
       t1_post("我在小米手机上用Smartisan T1小扳手，赞！下一台手机考虑换Smartisan T1吧😼")
    else
