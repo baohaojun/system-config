@@ -1,7 +1,6 @@
 #!/bin/bash
 
 (
-    cp bin/SetClip-release.apk ~/src/android/vendor/smartisanhw/log-crawler/SetClip.apk
     cp bin/SetClip-release.apk ~/src/github/T1Wrench/release/SetClip.apk
     cd ~/src/github/T1Wrench/release/
     md5sum SetClip.apk > setclip.apk.md5
