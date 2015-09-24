@@ -20,9 +20,10 @@ local adb_weixin_lucky_money_output
 local t1_find_weixin_contact
 local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file, adb_am
-local wait_input_target, wait_top_activity
+local wait_input_target, wait_top_activity, wait_top_activity_match
 local start_weibo_share
 local t1_eval, log, share_pics_to_app
+local picture_to_weibo_comment
 
 -- variables
 local where_is_dial_key
@@ -55,6 +56,8 @@ local weixinLauncherActivity = "com.tencent.mm/com.tencent.mm.ui.LauncherUI"
 local weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI"
 local weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
 local weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
+local weiboCommentActivity = "com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity"
+local weiboForwardActivity = "com.sina.weibo/com.sina.weibo.composerinde.ForwardComposerActivity"
 local qqChatActivity = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity"
 local qqChatActivity2 = "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity"
 local qqPhotoFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListFlowActivity"
@@ -64,6 +67,7 @@ local weiboAlbumActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PhotoAlbumA
 local weiboImagePreviewActivity = "com.sina.weibo/com.sina.weibo.photoalbum.ImagePagerActivity"
 local weiboPicFilterActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PicFilterActivity"
 local weiboChatActivity = "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity"
+local notePicPreview = "com.smartisanos.notes/com.smartisanos.notes.Convert2PicturePreviewActivity"
 
 local qq_emoji_table = {
    "微笑", "撇嘴", "色", "发呆", "得意", "流泪", "害羞", "闭嘴",
@@ -483,6 +487,20 @@ wait_top_activity = function(activity)
    for i = 1, 20 do
       window = adb_focused_window()
       if window == activity then
+         debug("wait ok")
+         return window
+      end
+      sleep(.1)
+   end
+   return window
+end
+
+wait_top_activity_match = function(activity)
+   debug("waiting for %s", activity)
+   local window
+   for i = 1, 20 do
+      window = adb_focused_window()
+      if window:match(activity) then
          debug("wait ok")
          return window
       end
@@ -976,35 +994,28 @@ get_a_note = function(text)
             sleep 1
             adb-tap 711 151
    ]])
-   adb_event(
-      [[
-            sleep .5
-            adb-key BACK
-            sleep .5
-            adb-key BACK
-   ]])
+   if wait_top_activity(notePicPreview) ~= notePicPreview then
+      log("便签好像出问题了")
+   end
+
+   while (wait_top_activity_match("com.smartisanos.notes")):match("com.smartisanos.notes/") do
+      adb_event("key back sleep .5")
+      if not (adb_top_window()):match("com.smartisanos.notes/") then
+         break
+      end
+   end
    adb_get_last_pic('notes', true)
 end
 
 adb_get_last_pic = function(which, remove)
-   if which == 'notes' then
-      local dir = '/sdcard/smartisan/notes'
-      local ls_out1 = adb_pipe("busybox ls -t -1 " .. dir)
-      ls_out1 = ls_out1:gsub("\n.*", "")
-      ls_out1 = ls_out1:gsub("\x1b.-m", "")
-      ls_out1 = ls_out1:gsub("%?+", "*")
-
-      if ls_out1:match('%*') then
-         ls_out1 = adb_pipe(('bash -c "ls %s/%s"'):format(dir, ls_out1))
-         ls_out1 = ls_out1:gsub("\n", "")
-         ls_out1 = ls_out1:gsub(".*/", "")
-      end
-
-      system{the_true_adb, "pull", ("%s/%s"):format(dir, ls_out1), ("last-pic-%s.png"):format(which)}
-      if remove then
-         system{the_true_adb, "shell", "rm", ("%s/%s"):format(dir, ls_out1)}
-         adb_am(("am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture %s/%s"):format(dir, ls_out1))
-      end
+   -- WHICH must be 'notes'
+   adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei get-last-note-pic 1", "/sdcard/putclip.txt")
+   local pic = adb_pipe("cat /sdcard/putclip.txt")
+   pic = pic:gsub('^/storage/emulated/0', '/sdcard')
+   system{the_true_adb, "pull", pic, ("last-pic-%s.png"):format(which)}
+   if remove then
+      system{the_true_adb, "shell", "rm", pic}
+      adb_am(("am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture %s"):format(pic))
    end
 end
 
@@ -1235,6 +1246,40 @@ picture_to_weibo_share = function(pics, ...)
    wait_top_activity(weiboShareActivity)
    adb_event("adb-tap 162 286")
    wait_input_target(weiboShareActivity)
+end
+
+picture_to_weibo_comment = function(pics, ...)
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
+   local weiboShareActivity = adb_top_window() -- comment or forward
+   if #pics ~= 1 then
+      log("微博评论、转发只支持一张图片")
+   end
+   for i = 1, #pics do
+      local ext = last(pics[i]:gmatch("%.[^.]+"))
+      local target = pics[i]
+
+      if i == 1 then
+         wait_input_target(weiboShareActivity)
+         local input_method, ime_height, dump = adb_get_input_window_dump()
+         if ime_height ~= 0 then
+            adb_event("key back sleep .5")
+         end
+         for n = 1,10 do
+            if adb_top_window() == weiboShareActivity then
+               adb_event("adb-tap 62 1843")
+            elseif adb_top_window() == weiboAlbumActivity then
+               adb_event("sleep .3 adb-tap 501 340 sleep .2")
+               if wait_top_activity(weiboShareActivity) == weiboShareActivity then
+                  break
+               end
+            end
+            sleep(.2)
+         end
+      end
+   end
 end
 
 picture_to_momo_share = function(pics, ...)
@@ -1475,6 +1520,8 @@ local function t1_picture(...)
       picture_to_qq_chat(pics)
    elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then
       picture_to_weibo_chat(pics)
+   elseif window == weiboCommentActivity or window == weiboForwardActivity then
+      picture_to_weibo_comment(pics)
    else
       return "Error: can't decide how to share for window: " .. window
    end
@@ -1750,7 +1797,6 @@ M.system = system
 M.sleep = sleep
 M.debugg = debug
 M.get_a_note = get_a_note
-M.adb_get_last_pic = adb_get_last_pic
 M.picture_to_momo_share = picture_to_momo_share_upload
 M.t1_call = t1_call
 M.t1_run = t1_run
