@@ -27,6 +27,7 @@ done
 relative-link -f $oldpwd/*.* .
 relative-link -f $oldpwd/release/* .
 relative-link -f $oldpwd/linux/binaries/* .
+ln -s $oldpwd/linux/binaries/the-true-adb . -f
 (
     if test "$DOING_T1WRENCH_RELEASE"; then
         mkdir -p ~/src/github/T1Wrench-linux

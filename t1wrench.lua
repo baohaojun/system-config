@@ -288,8 +288,8 @@ local function adb_pipe(cmds)
       local quoted_cmds = {}
       for i = 1, #cmds do
          quoted_cmds[i] = shell_quote(cmds[i])
-         if string.find(quoted_cmds[i], " ") then
-            quoted_cmds[i] = adb_unquoter .. quoted_cmds[i] .. adb_unquoter
+         if string.find(quoted_cmds[i], " ") and adb_unquoter ~= "" then
+            quoted_cmds[i] = '"' .. quoted_cmds[i] .. '"'
          end
       end
 
