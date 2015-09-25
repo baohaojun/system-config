@@ -28,14 +28,23 @@ namespace Snore
 {
 
 /**
- * Icon contains an image for Notifications.
- * Icon uses a shared datamodel, it's content is never copied and automatically released.
- * @author Patrick von Reth \<vonreth at kde.org\>
+ * Icon is a convnience wrapper for QIcon.
+ * @author Patrick von Reth \<vonreth at kde.org\>
  */
 class SNORE_EXPORT Icon : public QIcon
 {
 public:
+    /**
+     * Returns the default Snore Icon.
+     */
     static Icon defaultIcon();
+
+    /**
+     * Returns an Icon from a web Url.
+     * This function is blocking until the download is completed, failed or took longer than maxTime.
+     * In case the function failes it will return the same as defaultIcon().
+     * The function caches successful downloads, a Url is only downloaded once.
+     */
     static Icon fromWebUrl(const QUrl &url, int maxTime = 5000);
 
     Icon(const QPixmap &pixmap);
@@ -43,8 +52,7 @@ public:
     explicit Icon(const QString &fileName);
 
     /**
-     *
-     * @return a local url to a file representing the Icon
+     * Returns a local Url to a file representing the Icon.
      */
     QString localUrl(const QSize &size, Mode mode = Normal, State state = Off) const;
 

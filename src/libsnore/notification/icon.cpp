@@ -72,7 +72,7 @@ Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
             }
         });
 
-        while (!isDownloading.tryLock() && timeout.elapsed() < maxTime) {
+        while (!isDownloading.tryLock() && (maxTime != -1 && timeout.elapsed() < maxTime)) {
             qApp->processEvents();
         }
         reply->close();
