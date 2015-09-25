@@ -24,7 +24,6 @@
 #include <QSharedData>
 #include <QDebug>
 
-
 namespace Snore
 {
 
@@ -37,13 +36,11 @@ class SNORE_EXPORT Icon : public QIcon
 {
 public:
     static Icon defaultIcon();
-    static Icon fromWebUrl(const QUrl& url, int maxTime = 5000);
-
+    static Icon fromWebUrl(const QUrl &url, int maxTime = 5000);
 
     Icon(const QPixmap &pixmap);
     Icon(const QIcon &other);
     explicit Icon(const QString &fileName);
-
 
     /**
      *
@@ -51,12 +48,10 @@ public:
      */
     QString localUrl(const QSize &size, Mode mode = Normal, State state = Off) const;
 
-
-
 private:
     Icon() = delete;
     static QSet<QString> s_localImageCache;
-    static QMap<QUrl,Icon> s_downloadImageCache;
+    static QMap<QUrl, Icon> s_downloadImageCache;
 };
 }
 

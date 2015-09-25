@@ -55,7 +55,7 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     }
     QVariantMap hints;
 
-    FreedesktopImageHint image(noti.icon().pixmap(QSize(128,128)).toImage());
+    FreedesktopImageHint image(noti.icon().pixmap(QSize(128, 128)).toImage());
     hints.insert(QLatin1String("image_data"), QVariant::fromValue(image));
 
     char urgency = 1;

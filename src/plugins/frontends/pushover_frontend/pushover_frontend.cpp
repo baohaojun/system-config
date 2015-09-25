@@ -243,8 +243,8 @@ void PushoverFrontend::getMessages()
 
                 if (!app.isValid()) {
                     Icon icon(Icon::fromWebUrl(QUrl::fromEncoded((QLatin1String("https://api.pushover.net/icons/") +
-                              notification.value(QLatin1String("icon")).toString() +
-                              QLatin1String(".png")).toUtf8().constData())));
+                                               notification.value(QLatin1String("icon")).toString() +
+                                               QLatin1String(".png")).toUtf8().constData())));
                     app = Application(appName, icon);
                     SnoreCore::instance().registerApplication(app);
                 }

@@ -174,7 +174,7 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
     QString password = settingsValue(QLatin1String("Password")).toString();
     LONG32 result = snarlInterface->Register(appName.toUtf8().constData(),
                     application.name().toUtf8().constData(),
-                    application.icon().localUrl(QSize(128,128)).toUtf8().constData(),
+                    application.icon().localUrl(QSize(128, 128)).toUtf8().constData(),
                     password.isEmpty() ? 0 : password.toUtf8().constData(),
                     (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
     snoreDebug(SNORE_DEBUG) << result;
@@ -182,7 +182,7 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
     foreach (const Alert &alert, application.alerts()) {
         snarlInterface->AddClass(alert.name().toUtf8().constData(),
                                  alert.name().toUtf8().constData(),
-                                 0, 0, alert.icon().localUrl(QSize(128,128)).toUtf8().constData());
+                                 0, 0, alert.icon().localUrl(QSize(128, 128)).toUtf8().constData());
     }
 }
 
@@ -225,7 +225,7 @@ void SnarlBackend::slotNotify(Notification notification)
                                     notification.text().toUtf8().constData(),
                                     notification.timeout(),
                                     nullptr,
-                                    Utils::dataFromImage(notification.icon().pixmap(QSize(128,128)).toImage()).toBase64().constData(),
+                                    Utils::dataFromImage(notification.icon().pixmap(QSize(128, 128)).toImage()).toBase64().constData(),
                                     priority);
 
         foreach (const Action &a, notification.actions()) {
@@ -242,7 +242,7 @@ void SnarlBackend::slotNotify(Notification notification)
                                notification.text().toUtf8().constData(),
                                notification.timeout(),
                                nullptr,
-                               Utils::dataFromImage(notification.icon().pixmap(QSize(128,128)).toImage()).toBase64().constData(),
+                               Utils::dataFromImage(notification.icon().pixmap(QSize(128, 128)).toImage()).toBase64().constData(),
                                priority);
     }
 

@@ -27,13 +27,10 @@
 #include <QNetworkRequest>
 #include <QUrl>
 
-
-
 using namespace Snore;
 
-
 QSet<QString> Icon::s_localImageCache;
-QMap<QUrl,Icon> Icon::s_downloadImageCache;
+QMap<QUrl, Icon> Icon::s_downloadImageCache;
 
 Icon Icon::defaultIcon()
 {
@@ -63,7 +60,7 @@ Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
             isDownloading.unlock();
         });
         QObject::connect(reply, &QNetworkReply::finished, [ & ]() {
-            if(reply->isOpen()){
+            if (reply->isOpen()) {
                 QImage img(QImage::fromData(reply->readAll(), "PNG"));
                 icon = Icon(QPixmap::fromImage(img));
                 s_downloadImageCache.insert(url, icon);
@@ -75,8 +72,7 @@ Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
             }
         });
 
-        while(!isDownloading.tryLock() && timeout.elapsed() < maxTime)
-        {
+        while (!isDownloading.tryLock() && timeout.elapsed() < maxTime) {
             qApp->processEvents();
         }
         reply->close();
@@ -109,9 +105,9 @@ Icon::Icon(const QString &fileName):
 
 QString Icon::localUrl(const QSize &size, Mode mode, State state)const
 {
-    QString localFileName = SnoreCorePrivate::tempPath() + QLatin1Char('/') + QString::number(cacheKey()) + QLatin1String("_") + QString::number(size.width())+ QLatin1String("x") + QString::number(size.height()) + QLatin1String(".png");
-    if(!s_localImageCache.contains(localFileName)){
-        QImage(pixmap(size,mode,state).toImage()).save(localFileName, "PNG");
+    QString localFileName = SnoreCorePrivate::tempPath() + QLatin1Char('/') + QString::number(cacheKey()) + QLatin1String("_") + QString::number(size.width()) + QLatin1String("x") + QString::number(size.height()) + QLatin1String(".png");
+    if (!s_localImageCache.contains(localFileName)) {
+        QImage(pixmap(size, mode, state).toImage()).save(localFileName, "PNG");
         s_localImageCache.insert(localFileName);
     }
     return localFileName;

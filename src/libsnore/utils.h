@@ -128,7 +128,6 @@ public:
         }
     }
 
-
     static QByteArray dataFromImage(const QImage &image);
 private:
 #ifdef Q_OS_WIN

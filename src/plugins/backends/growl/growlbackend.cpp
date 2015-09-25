@@ -85,7 +85,7 @@ void GrowlBackend::slotRegisterApplication(const Application &application)
                              settingsValue(QLatin1String("Password")).toString().toUtf8().constData(),
                              application.name().toUtf8().constData());
     m_applications.insert(application.name(), growl);
-    growl->Register(alerts, application.icon().localUrl(QSize(128,128)).toUtf8().constData());
+    growl->Register(alerts, application.icon().localUrl(QSize(128, 128)).toUtf8().constData());
 
 }
 
@@ -108,7 +108,7 @@ void GrowlBackend::slotNotify(Notification notification)
                                notification.title().toUtf8().constData(),
                                notification.text().toUtf8().constData());
 
-    data.setIcon(notification.icon().localUrl(QSize(128,128)).toUtf8().constData());
+    data.setIcon(notification.icon().localUrl(QSize(128, 128)).toUtf8().constData());
     data.setCallbackData("1");
     growl->Notify(data);
 

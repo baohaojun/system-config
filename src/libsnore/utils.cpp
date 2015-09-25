@@ -118,7 +118,6 @@ void Utils::raiseWindowToFront(qlonglong wid)
         return data;
     }
 
-
 #ifdef Q_OS_WIN
     int Utils::attatchToActiveProcess()
     {
