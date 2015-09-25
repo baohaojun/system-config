@@ -40,6 +40,19 @@ inline int SHARED_MEM_TYPE_REV()
 class NotifyWidget : public QQuickView
 {
     Q_OBJECT
+    Q_PROPERTY(bool isOrientatedLeft MEMBER m_isOrientatedLeft  NOTIFY isOrientatedLeftChanged)
+    Q_PROPERTY(int animationFrom MEMBER m_animationFrom NOTIFY animationFromChanged)
+    Q_PROPERTY(int animationTo MEMBER m_animationTo NOTIFY animationtoChanged)
+    Q_PROPERTY(int dragMinX MEMBER m_dragMinX NOTIFY dragMinXChanged)
+    Q_PROPERTY(int dragMaxX MEMBER m_dragMaxX NOTIFY dragMaxXChanged)
+    Q_PROPERTY(QColor textColor MEMBER m_textColor NOTIFY textColorChanged)
+    Q_PROPERTY(QString title MEMBER m_title NOTIFY titleChanged)
+    Q_PROPERTY(QString body MEMBER m_body NOTIFY bodyChanged)
+    Q_PROPERTY(int imageSize MEMBER m_imageSize)
+    Q_PROPERTY(int appIconSize MEMBER m_appIconSize)
+    Q_PROPERTY(QUrl image MEMBER m_image NOTIFY imageChanged)
+    Q_PROPERTY(QUrl appIcon MEMBER m_appIcon NOTIFY appIconChanged)
+    Q_PROPERTY(QString fontFamily MEMBER m_fontFamily NOTIFY fontFamilyChanged)
 
 public:
     explicit NotifyWidget(int pos, const SnoreNotifier *parent);
@@ -52,35 +65,63 @@ public:
 
     Snore::Notification &notification();
 
-    int id();
-    Qt::Corner corner();
+    int id() const;
 
 Q_SIGNALS:
     void invoked();
     void dismissed();
 
-private Q_SLOTS:
-    void slotDismissed();
+    void isOrientatedLeftChanged();
+    void animationFromChanged();
+    void animationtoChanged();
+    void dragMinXChanged();
+    void dragMaxXChanged();
 
-    void slotInvoked();
+    void textColorChanged();
+    void colorChanged();
+    void titleChanged();
+    void bodyChanged();
+
+    void imageChanged();
+    void appIconChanged();
+
+    void fontFamilyChanged();
 
 private:
+    void syncSettings();
     QColor computeBackgrondColor(const QImage &img);
     QColor compueTextColor(const QColor &backgroundColor);
+
+    void updateCornerValues(Qt::Corner c);
 
     Snore::Notification m_notification;
     int m_id;
     const SnoreNotifier *m_parent;
     QSharedMemory m_mem;
     bool m_ready;
+    Qt::Corner m_cornerOld = Qt::TopLeftCorner;
+    bool m_isOrientatedLeft;
 
-    QObject *m_appIcon;
-    QObject *m_image;
+    int m_animationFrom;
+    int m_animationTo;
 
-    QObject *m_title;
+    int m_dragMinX;
+    int m_dragMaxX;
 
-    QObject *m_body;
-    QObject *m_animation;
+    int m_imageSize;
+    int m_appIconSize;
+
+    QColor m_textColor;
+
+    QString m_title;
+    QString m_body;
+
+    QString m_fontFamily;
+
+    bool m_initialized = false;
+
+    QUrl m_appIcon;
+    QUrl m_image;
 
 };
 

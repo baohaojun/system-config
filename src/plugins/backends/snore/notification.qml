@@ -4,35 +4,73 @@ import QtQuick.Window 2.2
 Rectangle {
     id: root
 
-    signal dismissed()
-    signal invoked()
-
     property int snoreBaseSize: body.font.pixelSize
 
     width: snoreBaseSize * 30
     height: snoreBaseSize * 9
+    color: window.color
+    Drag.active: mouseAreaAccept.drag.active
+    visible: window.visible
+    x: 0
+    onVisibleChanged: {
+        if(visible){
+            x = 0
+            animation.from = window.animationFrom
+            animation.start()
+        }
+    }
 
+    onXChanged: {
+        window.x += x
+
+        var threashHold = 0
+        if(window.isOrientatedLeft) {
+            threashHold = Math.abs(window.x - window.animationTo + width)
+        }else{
+            threashHold = Math.abs(window.x - window.animationFrom)
+        }
+
+        if(window.visible && threashHold <= width * 0.3){
+            window.visible = false
+            Drag.cancel()
+            window.dismissed()
+        }
+    }
 
     NumberAnimation{
         id: animation
-        objectName: "animation"
         properties: "x"
         duration: 500
         target: window
+        from: window.animationFrom
+        to: window.animationTo
     }
 
     MouseArea {
-        id: mouseArea2
+        id: mouseAreaAccept
         anchors.fill: parent
         z: 90
-        onClicked: root.invoked()
+        onClicked: {
+            window.invoked()
+        }
+        drag.target: parent
+        drag.axis: Drag.XAxis
+        drag.maximumX: window.dragMaxX
+        drag.minimumX: window.dragMinX
+        onPressed: {
+            animation.stop()
+        }
+        onReleased: {
+            animation.from = window.x
+            animation.start()
+        }
     }
+
 
     Text {
         id: title
-        objectName: "title"
-        color: "#000000"
-        text: "Title"
+        color: window.textColor
+        text: window.title
         font.pointSize: body.font.pointSize * 1.5
         font.bold: true
         anchors.top: parent.top
@@ -41,15 +79,14 @@ Rectangle {
         anchors.left: image.right
         anchors.right: closeButton.left
         textFormat: Text.StyledText
-        font.family: snoreFont
+        font.family: window.fontFamily
         elide: Text.ElideRight
     }
 
     Text {
         id: body
-        objectName: "body"
-        color: "#000000"
-        text: "Body"
+        color: window.textColor
+        text: window.body
         font.pointSize: 10
         anchors.right: appIcon.left
         anchors.top: title.bottom
@@ -60,13 +97,12 @@ Rectangle {
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         onLinkActivated: Qt.openUrlExternally(link)
         textFormat: Text.StyledText
-        font.family: snoreFont
+        font.family: window.fontFamily
         elide: Text.ElideRight
     }
 
     Image {
         id: image
-        objectName: "image"
         fillMode: Image.PreserveAspectFit
         width: height
         smooth: true
@@ -75,11 +111,12 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.top: parent.top
         z: 4
+        onWidthChanged: window.imageSize = width
+        source: window.image
     }
 
     Image {
         id: appIcon
-        objectName: "appIcon"
         fillMode: Image.PreserveAspectFit
         height: root.height * 0.30
         width: root.height * 0.30
@@ -87,6 +124,8 @@ Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: snoreBaseSize
+        onWidthChanged: window.appIconSize = width
+        source: window.appIcon
     }
 
     Canvas{
@@ -132,7 +171,7 @@ Rectangle {
         MouseArea {
             id: mouseAreaCloseButton
             anchors.fill: parent
-            onClicked: root.dismissed()
+            onClicked: window.dismissed()
             hoverEnabled: true
             onEntered: parent.requestPaint()
             onExited: parent.requestPaint()

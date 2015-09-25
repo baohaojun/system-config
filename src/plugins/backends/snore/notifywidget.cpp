@@ -21,6 +21,7 @@
 #include "libsnore/log.h"
 #include "libsnore/utils.h"
 
+#include <QApplication>
 #include <QDesktopWidget>
 #include <QQmlProperty>
 
@@ -30,28 +31,24 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
     m_id(pos),
     m_parent(parent),
     m_mem(QLatin1String("SnoreNotifyWidget_rev") + QString::number(SHARED_MEM_TYPE_REV()) + QLatin1String("_id") + QString::number(m_id)),
-    m_ready(true)
+    m_ready(true),
+    m_fontFamily(qApp->font().family())
 {
     rootContext()->setContextProperty(QLatin1String("window"), this);
 
-    QString font = qApp->font().family();
 #ifdef Q_OS_WIN
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8) {
-        font = QLatin1String("Segoe UI Symbol");
+        m_fontFamily = QLatin1String("Segoe UI Symbol");
+        emit fontFamilyChanged();
     }
 #if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS10) {
-        font = QLatin1String("Segoe UI Emoji");
+        m_fontFamily = QLatin1String("Segoe UI Emoji");
+        emit fontFamilyChanged();
     }
 #endif
 #endif
-    rootContext()->setContextProperty(QLatin1String("snoreFont"), font);
     setSource(QUrl::fromEncoded("qrc:/notification.qml"));
-    m_appIcon = rootObject()->findChild<QObject*>(QLatin1String("appIcon"));
-    m_image = rootObject()->findChild<QObject*>(QLatin1String("image"));
-    m_title = rootObject()->findChild<QObject*>(QLatin1String("title"));
-    m_body = rootObject()->findChild<QObject*>(QLatin1String("body"));
-    m_animation = rootObject()->findChild<QObject*>(QLatin1String("animation"));
 
     setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
 #ifdef Q_OS_MAC
@@ -61,8 +58,8 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 #endif
             );
 
-//    setFocusPolicy(Qt::NoFocus);
-//    setAttribute(Qt::WA_ShowWithoutActivating, true);
+    //    setFocusPolicy(Qt::NoFocus);
+    //    setAttribute(Qt::WA_ShowWithoutActivating, true);
 
     if (m_mem.create(sizeof(SHARED_MEM_TYPE))) {
         m_mem.lock();
@@ -82,9 +79,6 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
     }
 
     setResizeMode(QQuickView::SizeViewToRootObject);
-
-    connect(rootObject(), SIGNAL(invoked()), this, SLOT(slotInvoked()));
-    connect(rootObject(), SIGNAL(dismissed()), this, SLOT(slotDismissed()));
 }
 
 NotifyWidget::~NotifyWidget()
@@ -101,42 +95,26 @@ void NotifyWidget::display(const Notification &notification)
     if (vcolor.isValid()) {
         color = vcolor.value<QColor>();
     } else {
-        color = computeBackgrondColor(notification.application().icon().pixmap(QSize(20,20)).toImage());
+        color = computeBackgrondColor(notification.application().icon().pixmap(QSize(20, 20)).toImage());
         notification.application().hints().setPrivateValue(parent(), "backgroundColor", color);
     }
-    QColor textColor = compueTextColor(color);
-    int appIconWidht = m_appIcon->property("width").toInt();
-    m_appIcon->setProperty("source", QUrl::fromLocalFile(notification.application().icon().localUrl(QSize(appIconWidht,appIconWidht))));
-    int imageWidth = m_image->property("width").toInt();
-    m_image->setProperty("source", QUrl::fromLocalFile(notification.icon().localUrl(QSize(imageWidth,imageWidth))));
+    m_appIcon = QUrl::fromLocalFile(notification.application().icon().localUrl(QSize(m_appIconSize, m_appIconSize)));
+    emit appIconChanged();
 
+    m_image = QUrl::fromLocalFile(notification.icon().localUrl(QSize(m_imageSize, m_imageSize)));
+    emit imageChanged();
 
-    m_title->setProperty("text", notification.title(Utils::ALL_MARKUP));
-    m_title->setProperty("color", textColor);
-
-    m_body->setProperty("text", notification.text(Utils::ALL_MARKUP));
-    m_body->setProperty("color", textColor);
-    rootObject()->setProperty("color", color);
-
+    m_title = notification.title(Utils::ALL_MARKUP);
+    emit titleChanged();
+    m_body = notification.text(Utils::ALL_MARKUP);
+    emit bodyChanged();
 
     if (!notification.isUpdate()) {
-        QDesktopWidget desktop;
-        double space = (id() + 1) * height() * 0.025;
-        setY(space + (space + height()) * id());
-        if (corner() == Qt::TopRightCorner || corner() == Qt::BottomRightCorner) {
-            m_animation->setProperty("from", desktop.availableGeometry().width());
-            m_animation->setProperty("to", desktop.availableGeometry().width() - width());
-        } else {
-            m_animation->setProperty("from", -width());
-            m_animation->setProperty("to", 0);
-        }
-        if (corner() == Qt::TopRightCorner || corner() == Qt::TopLeftCorner) {
-            setY(space + (space + height()) * id());
-        } else {
-            setY(desktop.availableGeometry().height() - (space + (space + height()) * (id() + 1)));
-        }
-
-        QMetaObject::invokeMethod(m_animation, "start");
+        syncSettings();
+        m_textColor = compueTextColor(color);
+        setColor(color);
+        emit colorChanged();
+        emit textColorChanged();
         setVisible(true);
         Utils::raiseWindowToFront(winId());
     }
@@ -193,40 +171,59 @@ Notification &NotifyWidget::notification()
     return m_notification;
 }
 
-int NotifyWidget::id()
+int NotifyWidget::id() const
 {
     return m_id;
 }
 
-Qt::Corner NotifyWidget::corner()
+void NotifyWidget::syncSettings()
 {
-    return static_cast<Qt::Corner>(m_parent->settingsValue(QLatin1String("Position")).toInt());
-}
+    Qt::Corner c = static_cast<Qt::Corner>(m_parent->settingsValue(QLatin1String("Position")).toInt());
+    if (c != m_cornerOld || !m_initialized) {
+        m_initialized = true;
+        QDesktopWidget desktop;
 
-void NotifyWidget::slotDismissed()
-{
-    emit dismissed();
-}
+        m_cornerOld = c;
+        m_isOrientatedLeft = c == Qt::TopLeftCorner || c == Qt::BottomLeftCorner;
+        if (m_isOrientatedLeft) {
+            m_dragMinX = m_animationFrom = -width();
+            m_dragMaxX = m_animationTo = 0;
+        } else {
+            m_animationFrom = desktop.availableGeometry().width();
+            m_animationTo = desktop.availableGeometry().width() - width();
+            m_dragMinX =  0;
+            m_dragMaxX = width();
 
-void NotifyWidget::slotInvoked()
-{
-    emit invoked();
+        }
+        double space = (id() + 1) * height() * 0.025;
+
+        if (c == Qt::TopRightCorner || c == Qt::TopLeftCorner) {
+            setY(space + (space + height()) * id());
+        } else {
+            setY(desktop.availableGeometry().height() - (space + (space + height()) * (id() + 1)));
+        }
+        emit isOrientatedLeftChanged();
+        emit animationFromChanged();
+        emit animationtoChanged();
+        emit dragMaxXChanged();
+        emit dragMinXChanged();
+    }
 }
 
 QColor NotifyWidget::computeBackgrondColor(const QImage &img)
 {
-    int stepSize = img.depth()/8;
+    int stepSize = img.depth() / 8;
     qulonglong r = 0;
     qulonglong g = 0;
     qulonglong b = 0;
     const uchar *end = img.constBits() + img.byteCount();
-    for (const uchar* bit = img.constBits(); bit != end; bit += stepSize ) {
-        const QRgb c = *reinterpret_cast<const QRgb*>(bit);
+    for (const uchar *bit = img.constBits(); bit != end; bit += stepSize) {
+        const QRgb c = *reinterpret_cast<const QRgb *>(bit);
         r += qRed(c);
         g += qGreen(c);
         b += qBlue(c);
     }
-    int size = img.byteCount()/stepSize;
+    int size = img.byteCount() / stepSize;
     return QColor(r / size, g / size, b / size);
 }
 
@@ -236,3 +233,4 @@ QColor NotifyWidget::compueTextColor(const QColor &backgroundColor)
     QRgb compColor = qGray(backgroundColor.rgb()) > 186 ? 0 : 255;
     return QColor(compColor, compColor, compColor);
 }
+
