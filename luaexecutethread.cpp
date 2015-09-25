@@ -25,10 +25,31 @@ static int l_selectArg(lua_State* L)
     return 1;
 }
 
+static int l_qt_adb_pipe(lua_State* L)
+{
+    int n = luaL_len(L, -1);
+    QStringList args("shell");
+    for (int i = 1; i <= n; i++) {
+        lua_rawgeti(L, -1, i);
+        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
+        lua_settop(L, -2);
+    }
+
+    QString res = getExecutionOutput("the-true-adb", args);
+    lua_pushstring(L, res.toUtf8().constData());
+    return 1;
+}
+
 static int l_logToUI(lua_State* L)
 {
     that->logToUI(lua_tolstring(L, -1, NULL));
     return 0;
+}
+
+static int l_is_exiting(lua_State* L)
+{
+    lua_pushboolean(L, that->isQuit());
+    return 1;
 }
 
 static int l_adbQuickInputAm(lua_State* L)
@@ -92,14 +113,18 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
 
             t1Sock->write(action.toUtf8() + "\n");
             t1Sock->flush();
-            t1Sock->waitForReadyRead();
+            if (!t1Sock->waitForReadyRead(2000)) {
+                emit gotSomeLog("info", QString("命令超时： ") + action);
+            }
             res = t1Sock->readLine();
             qDebug() << "got result" << res;
         }
     } else if (arg.startsWith("am ")) {
         t1Sock->write(arg.toUtf8() + "\n");
         t1Sock->flush();
-        t1Sock->waitForReadyRead();
+        if (!t1Sock->waitForReadyRead(2000)) {
+            emit gotSomeLog("info", QString("命令超时： ") + arg);
+        }
         res = t1Sock->readLine();
         qDebug() << "got result" << res;
     } else {
@@ -123,6 +148,11 @@ static int l_t1_load_mail_heads(lua_State* L)
     return 0;
 }
 
+bool LuaExecuteThread::isQuit()
+{
+    return mQuit;
+}
+
 void LuaExecuteThread::run()
 {
     L = luaL_newstate();             /* opens Lua */
@@ -130,6 +160,9 @@ void LuaExecuteThread::run()
 
     lua_pushcfunction(L, l_selectArg);
     lua_setglobal(L, "select_args");
+
+    lua_pushcfunction(L, l_qt_adb_pipe);
+    lua_setglobal(L, "qt_adb_pipe");
 
     lua_pushcfunction(L, l_logToUI);
     lua_setglobal(L, "log_to_ui");
@@ -139,6 +172,9 @@ void LuaExecuteThread::run()
 
     lua_pushcfunction(L, l_adbQuickInputAm);
     lua_setglobal(L, "adb_quick_am");
+
+    lua_pushcfunction(L, l_is_exiting);
+    lua_setglobal(L, "is_exiting");
 
     lua_pushcfunction(L, l_t1_load_mail_heads);
     lua_setglobal(L, "t1_load_mail_heads");
@@ -174,7 +210,11 @@ void LuaExecuteThread::run()
         }
         error = lua_pcall(L, script.length(), 1, 0);
         if (error) {
-            emit gotSomeLog("exit", QString().sprintf("Can't run %s: %s", qPrintable(func), lua_tolstring(L, -1, NULL)));
+            QString key = "exit";
+            if (mQuit) {
+                key = "quit";
+            }
+            emit gotSomeLog(key, QString().sprintf("Can't run %s: %s", qPrintable(func), lua_tolstring(L, -1, NULL)));
             lua_close(L);
             return;
         }

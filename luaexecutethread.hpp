@@ -19,6 +19,7 @@ public:
     LuaExecuteThread(QObject* parent = NULL);
     void addScript(QStringList script);
     void quitLua();
+    bool isQuit();
     void run();
     QString selectArgs(const QStringList&);
     void on_argSelected(const QString& arg);

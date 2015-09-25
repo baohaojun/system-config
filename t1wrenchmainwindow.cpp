@@ -56,7 +56,6 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     connect(ui->phoneTextEdit, SIGNAL(controlEnterPressed()), this, SLOT(on_sendItPushButton_clicked()));
     connect(ui->phoneTextEdit, SIGNAL(emojiShortcutPressed()), this, SLOT(on_tbEmoji_clicked()));
     connect(ui->phoneTextEdit, SIGNAL(phoneCallShortcutPressed()), this, SLOT(on_tbPhoneCall_clicked()));
-    connect(ui->phoneTextEdit, SIGNAL(MmsShortcutPressed()), this, SLOT(on_tbMms_clicked()));
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLastRadioButton = NULL;
     createTrayIcon();
@@ -154,7 +153,9 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
     if (key == "getclip-android") {
         ui->phoneTextEdit->insertPlainText(val);
     } else if (key == "exit") {
-        prompt_user(QString().sprintf("后台出错，请重新配置小扳手（重连usb线或点一下配置按钮）:\n\n    %s", qPrintable(val)));
+        if (yes_or_no_p(QString().sprintf("后台出错，请确认是否重启后台？\n\n    %s", qPrintable(val))) == "yes") {
+            on_configurePushButton_clicked();
+        }
     } else if (key == "") {
         // do nothing.
     } else if (key == "start task") {
@@ -168,7 +169,6 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
             v = "OK";
         }
         ui->cmdOutputEdit->insertPlainText(key + ": " + v + "\n");
-        qDebug() << "Unknown key: " << key << " with val: " << val;
     }
 }
 
@@ -290,6 +290,11 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
                     break;
                 }
             }
+        }
+
+        if (mLuaThread->isRunning()) {
+            qDebug() << "it is still running";
+            mLuaThread->terminate();
         }
         mLuaThread.clear();
     }

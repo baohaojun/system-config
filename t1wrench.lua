@@ -250,6 +250,7 @@ local function join(mid, args)
 end
 
 local function adb_do(func, cmds)
+   check_phone()
    if type(cmds) == 'string' then
       return adb_do(func, {"sh", "-c", cmds})
    else
@@ -271,11 +272,30 @@ local function adb_do(func, cmds)
    end
 end
 
+
 local function adb_shell(cmds)
    return adb_do(os.execute, cmds)
 end
 
 local function adb_pipe(cmds)
+   if is_exiting then
+      check_phone()
+   end
+   if qt_adb_pipe then
+      if type(cmds) == 'string' then
+         cmds = {'sh', '-c', cmds}
+      end
+      local quoted_cmds = {}
+      for i = 1, #cmds do
+         quoted_cmds[i] = shell_quote(cmds[i])
+         if string.find(quoted_cmds[i], " ") then
+            quoted_cmds[i] = adb_unquoter .. quoted_cmds[i] .. adb_unquoter
+         end
+      end
+
+      return qt_adb_pipe(quoted_cmds)
+   end
+
    local pipe = adb_do(io.popen, cmds)
    if not pipe then
       return ""
@@ -296,19 +316,7 @@ adb_start_activity = function(a)
 end
 
 adb_focused_window = function()
-   local wdump = adb_pipe{"dumpsys", "window"}
-   local match = string.match(wdump, "mFocusedWindow[^}]*%s(%S+)}")
-   if match then
-      return match
-   end
-   match = wdump:match("mTopFullscreenOpaqueWindowState=Window.-(%S+)%s+paused=false}")
-   if match then
-      return match
-   end
-   if check_phone() or true then
-      return adb_focused_window()
-   end
-   error("Can't find focused window: " .. wdump:sub(1, 20))
+   return adb_top_window() or ""
 end
 
 adb_am = function(cmd)
@@ -782,11 +790,8 @@ local function adb_input_method_is_null()
 end
 
 check_phone = function()
-   if not adb_pipe(UNAME_CMD):match("Linux") then
-      sleep(.5)
-         if not adb_pipe(UNAME_CMD):match("Linux") then
-            error("Error: can't put text on phone, not connected?")
-         end
+   if is_exiting and is_exiting() then
+      error("exiting")
    end
 end
 
@@ -798,7 +803,6 @@ adb_start_service_and_wait_file_gone = function(service_cmd, file)
             for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
                if test -e %s; then
                   sleep .1 || busybox sleep .1;
-                  echo $x;
                else
                   exit;
                fi;
@@ -815,7 +819,6 @@ adb_start_service_and_wait_file = function(service_cmd, file)
             for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
                if test ! -e %s; then
                   sleep .1 || busybox sleep .1;
-                  echo $x;
                else
                   exit;
                fi;
@@ -896,8 +899,10 @@ t1_config = function()
       end
    end
    local setclip_phone_md5 = adb_pipe("cat /sdcard/t1wrench-setclip.md5")
+   setclip_phone_md5 = setclip_phone_md5:gsub("\n", "")
    local md5file = io.open("setclip.apk.md5")
    local setclip_local_md5 = md5file:read("*a")
+   setclip_local_md5 = setclip_local_md5:gsub("\n", "")
    io.close(md5file)
    debugging("on phone: %s, local: %s", setclip_phone_md5, setclip_local_md5)
    if setclip_phone_md5 ~= setclip_local_md5 then
@@ -906,11 +911,9 @@ t1_config = function()
       if install_output:match("\nSuccess\r?\n") then
          system(the_true_adb .. " push setclip.apk.md5 /sdcard/t1wrench-setclip.md5")
          local setclip_phone_md5 = adb_pipe("cat /sdcard/t1wrench-setclip.md5")
-         local md5file = io.open("setclip.apk.md5")
-         local setclip_local_md5 = md5file:read("*a")
-         io.close(md5file)
+         setclip_phone_md5 = setclip_phone_md5:gsub("\n", "")
          if setclip_phone_md5 ~= setclip_local_md5 then
-            error("Can't mark the setclip.apk as been installed")
+            error("Can't mark the setclip.apk as been installed: \n'" .. setclip_phone_md5 .. "'\n : \n'" .. setclip_local_md5 .. "'")
          else
             log("小扳手辅助apk安装成功")
          end

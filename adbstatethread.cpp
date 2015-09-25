@@ -52,18 +52,6 @@ QString getExecutionOutput(const QString& cmd, const QStringList& args)
 
 }
 
-QString getStcmdCmdResult(const QString& cmd, bool stripRetCode)
-{
-    QString res = getExecutionOutput("adb shell stcmd-subcase.sh " + cmd);
-    if (stripRetCode && res.endsWith("ret: 0")) {
-        res = res.left(res.length() - strlen("ret: 0"));
-    }
-    while (res.endsWith("\n")) {
-        res.chop(1);
-    }
-    return res;
-}
-
 QString getExecutionOutput(const QString& cmd)
 {
     if (cmd.contains(" ")) {
@@ -102,7 +90,6 @@ void AdbStateThread::run()
         QString uname = getExecutionOutput("the-true-adb", args1);
         static QString lastAdbState;
         if (uname.contains("Linux")) {
-            qDebug() << "adb output is " << uname;
             if (lastAdbState != "Online") {
                 lastAdbState = "Online";
                 QString screencapHelp = getExecutionOutput("the-true-adb shell screencap -h");
@@ -125,7 +112,6 @@ void AdbStateThread::run()
             }
         } else {
             lastAdbState = "Offline";
-            qDebug() << "Offline: adb output is " << uname;
             emit adbStateUpdate("Offline");
             QThread::msleep(500);
         }
