@@ -117,6 +117,7 @@ abc-base-build() {
 abc-grep() {
     (
         croot
+        echo "make: Entering directory \`$PWD'"
         ## start code-generator "^\\s *#\\s *"
         # generate-getopts -l e:entry
         ## end code-generator
