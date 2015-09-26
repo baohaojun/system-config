@@ -28,13 +28,14 @@ class SnoreNotifier;
 
 typedef struct {
     bool free;
-    QTime date;
+    int date;
+    int timeout;
 
 } SHARED_MEM_TYPE;
 
 inline int SHARED_MEM_TYPE_REV()
 {
-    return 1;
+    return 2;
 }
 
 class NotifyWidget : public QQuickView
@@ -60,7 +61,7 @@ public:
 
     void display(const Snore::Notification &notification);
 
-    bool acquire();
+    bool acquire(int timeout);
     bool release();
 
     Snore::Notification &notification();

@@ -54,7 +54,7 @@ SnoreNotifier::SnoreNotifier():
             m_timer->stop();
         } else {
             for (NotifyWidget *w : m_widgets) {
-                if (w->acquire()) {
+                if (w->acquire(m_queue.first().timeout())) {
                     Notification notification = m_queue.takeFirst();
                     w->display(notification);
                     notification.hints().setPrivateValue(this, "id", w->id());
@@ -104,7 +104,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
     } else {
         if (m_queue.isEmpty()) {
             for (NotifyWidget *w : m_widgets) {
-                if (w->acquire()) {
+                if (w->acquire(notification.timeout())) {
                     display(w, notification);
                     return;
                 }

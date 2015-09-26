@@ -65,7 +65,7 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
         m_mem.lock();
         SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
         data->free = true;
-        data->date = QTime::currentTime();
+        data->date = QTime::currentTime().msecsSinceStartOfDay();
         m_mem.unlock();
     } else {
         if (!m_mem.attach()) {
@@ -73,8 +73,9 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
         } else {
             m_mem.lock();
             SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
-            m_mem.unlock();
-            snoreDebug(SNORE_DEBUG) << "Status" << data->free << data->date.elapsed() / 1000;
+            m_mem.unlock();            
+            int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
+            snoreDebug(SNORE_DEBUG) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
         }
     }
 
@@ -120,7 +121,7 @@ void NotifyWidget::display(const Notification &notification)
     }
 }
 
-bool NotifyWidget::acquire()
+bool NotifyWidget::acquire(int timeout)
 {
     if (!m_mem.isAttached()) {
         return true;
@@ -129,14 +130,16 @@ bool NotifyWidget::acquire()
     if (m_ready) {
         m_mem.lock();
         SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
-        snoreDebug(SNORE_DEBUG) << m_id << data->free << data->date.elapsed() / 1000;
-        bool timedout = data->date.elapsed() / 1000 > 60;
+        int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
+        snoreDebug(SNORE_DEBUG) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
+        bool timedout = elapsed > data->timeout;
         if (data->free || timedout) {
             if (timedout) {
-                snoreDebug(SNORE_DEBUG) << "Notification Lock timed out" << data->date.elapsed() / 1000;
+                snoreDebug(SNORE_DEBUG) << "Notification Lock timed out" << elapsed;
             }
             data->free = false;
-            data->date = QTime::currentTime();
+            data->date = QTime::currentTime().msecsSinceStartOfDay();
+            data->timeout = timedout;
             m_ready = false;
             out = true;
         }
@@ -154,7 +157,8 @@ bool NotifyWidget::release()
     if (!m_ready) {
         m_mem.lock();
         SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
-        snoreDebug(SNORE_DEBUG) << m_id << data->free << data->date.elapsed() / 1000 << m_notification.id();
+        int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
+        snoreDebug(SNORE_DEBUG) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
         if (!data->free) {
             data->free = true;
             m_ready = true;
