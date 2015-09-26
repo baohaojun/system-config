@@ -9,30 +9,27 @@ Rectangle {
     width: snoreBaseSize * 30
     height: snoreBaseSize * 9
     color: window.color
-    Drag.active: mouseAreaAccept.drag.active
-    visible: window.visible
-    x: 0
-    onVisibleChanged: {
-        if(visible){
-            x = 0
-            animation.from = window.animationFrom
-            animation.start()
+
+    Connections{
+        target: window
+        onVisibleChanged: {
+            if(visible){
+                x = 0
+                animation.from = window.animationFrom
+                animation.start()
+            }
         }
     }
+
 
     onXChanged: {
         window.x += x
 
-        var threashHold = 0
-        if(window.isOrientatedLeft) {
-            threashHold = Math.abs(window.x - window.animationTo + width)
-        }else{
-            threashHold = Math.abs(window.x - window.animationFrom)
-        }
-
-        if(window.visible && threashHold <= width * 0.3){
+        var visibleWidth = window.isOrientatedLeft?
+                    window.x - window.animationTo:
+                    window.x - window.animationFrom
+        if(window.visible && Math.abs(visibleWidth + mouseAreaAccept.mouseX) <= width * 0.05){
             window.visible = false
-            Drag.cancel()
             window.dismissed()
         }
     }
@@ -51,6 +48,7 @@ Rectangle {
         anchors.fill: parent
         z: 90
         onClicked: {
+            console.log("invoked")
             window.invoked()
         }
         drag.target: parent

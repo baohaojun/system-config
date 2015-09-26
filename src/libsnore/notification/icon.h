@@ -29,7 +29,7 @@ namespace Snore
 
 /**
  * Icon is a convnience wrapper for QIcon.
- * @author Patrick von Reth \<vonreth at kde.org\>
+ * @author Patrick von Reth \<vonreth at kde.org\>
  */
 class SNORE_EXPORT Icon : public QIcon
 {
