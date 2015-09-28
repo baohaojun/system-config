@@ -6,6 +6,9 @@ Rectangle {
 
     property int snoreBaseSize: body.font.pixelSize
 
+
+    Drag.active: mouseAreaAccept.drag.active
+
     width: snoreBaseSize * 30
     height: snoreBaseSize * 9
     color: window.color
@@ -23,16 +26,22 @@ Rectangle {
 
 
     onXChanged: {
-        window.x += x
-
-        var visibleWidth = window.isOrientatedLeft?
-                    window.x - window.animationTo:
-                    window.x - window.animationFrom
-        if(window.visible && Math.abs(visibleWidth + mouseAreaAccept.mouseX) <= width * 0.05){
-            window.visible = false
-            window.dismissed()
+        // There is a Qt bug which will not stop the mouse tracking if the
+        // item is hid during a drag event.
+        if(Drag.active){
+            window.x += x
+            if(window.visible && Math.abs((window.isOrientatedLeft?
+                                               window.x - window.animationTo:
+                                               window.x - window.animationFrom) + mouseAreaAccept.mouseX) <= width * 0.05){
+                Drag.cancel()
+                window.visible = false
+                window.dismissed()
+            }
+        } else {
+            x = 0
         }
     }
+
 
     NumberAnimation{
         id: animation
@@ -48,7 +57,6 @@ Rectangle {
         anchors.fill: parent
         z: 90
         onClicked: {
-            console.log("invoked")
             window.invoked()
         }
         drag.target: parent
