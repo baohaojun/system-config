@@ -30,11 +30,10 @@ Rectangle {
         // item is hid during a drag event.
         if(Drag.active){
             window.x += x
-            if(window.visible && Math.abs((window.isOrientatedLeft?
+            if(Math.abs((window.isOrientatedLeft?
                                                window.x - window.animationTo:
                                                window.x - window.animationFrom) + mouseAreaAccept.mouseX) <= width * 0.05){
                 Drag.cancel()
-                window.visible = false
                 window.dismissed()
             }
         } else {
