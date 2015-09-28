@@ -132,14 +132,14 @@ bool NotifyWidget::acquire(int timeout)
         SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
         int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
         snoreDebug(SNORE_DEBUG) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
-        bool timedout = elapsed > data->timeout;
-        if (data->free || timedout) {
-            if (timedout) {
+        bool isTimedOut = elapsed > data->timeout;
+        if (data->free || isTimedOut) {
+            if (isTimedOut) {
                 snoreDebug(SNORE_DEBUG) << "Notification Lock timed out" << elapsed;
             }
             data->free = false;
             data->date = QTime::currentTime().msecsSinceStartOfDay();
-            data->timeout = timedout;
+            data->timeout = timeout;
             m_ready = false;
             out = true;
         }
