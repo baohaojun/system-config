@@ -62,6 +62,7 @@ Rectangle {
         drag.axis: Drag.XAxis
         drag.maximumX: window.dragMaxX
         drag.minimumX: window.dragMinX
+        drag.smoothed: true
         onPressed: {
             animation.stop()
         }

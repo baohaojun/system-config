@@ -50,7 +50,7 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
 #endif
     setSource(QUrl::fromEncoded("qrc:/notification.qml"));
 
-    setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus
+    setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus | Qt::BypassWindowManagerHint
 #ifdef Q_OS_MAC
              | Qt::SubWindow
 #else
