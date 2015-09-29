@@ -21,7 +21,6 @@
 #include "../snore_p.h"
 
 #include <QApplication>
-#include <QMutex>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -43,10 +42,6 @@ Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
     Icon icon = defaultIcon();
     snoreDebug(SNORE_DEBUG) << url;
     if (!s_downloadImageCache.contains(url)) {
-        QTime timeout;
-        timeout.start();
-        QMutex isDownloading;
-        isDownloading.lock();
         snoreDebug(SNORE_DEBUG) << "Downloading:" << url;
         QNetworkAccessManager *manager = new QNetworkAccessManager();
         QNetworkRequest request(url);
@@ -55,26 +50,25 @@ Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
             snoreDebug(SNORE_DEBUG) << "Downloading:" << url << bytesReceived / double(bytesTotal) * 100.0 << "%";
         });
 
-        QObject::connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [ & ](QNetworkReply::NetworkError code) {
-            snoreDebug(SNORE_WARNING) << "Error downloading" << url << ":" << code;
-            isDownloading.unlock();
-        });
-        QObject::connect(reply, &QNetworkReply::finished, [ & ]() {
-            if (reply->isOpen()) {
-                QImage img(QImage::fromData(reply->readAll(), "PNG"));
-                icon = Icon(QPixmap::fromImage(img));
+        QTime time;
+        time.start();
+        while (!reply->isFinished() && time.elapsed() < maxTime) {
+            qApp->processEvents(QEventLoop::AllEvents, maxTime);
+        }
+        if (reply->error() != QNetworkReply::NoError) {
+            snoreDebug(SNORE_WARNING) << "Error downloading" << url << ":" << reply->errorString();
+        } else {
+            if (reply->isFinished()) {
+                QPixmap pix;
+                pix.loadFromData(reply->readAll());
+                icon = Icon(pix);
                 s_downloadImageCache.insert(url, icon);
                 snoreDebug(SNORE_DEBUG) << url << "added to cache.";
-                isDownloading.unlock();
             } else {
                 snoreDebug(SNORE_DEBUG) << "Download of " << url << "timed out.";
-
             }
-        });
-
-        while (!isDownloading.tryLock() && (maxTime != -1 && timeout.elapsed() < maxTime)) {
-            qApp->processEvents();
         }
+
         reply->close();
         reply->deleteLater();
         manager->deleteLater();
