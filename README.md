@@ -1,7 +1,3 @@
-[![Build Status Travis](https://travis-ci.org/Snorenotify/Snorenotify.svg?branch=master)](https://travis-ci.org/Snorenotify/Snorenotify)
-[![Build status Appveyor](https://ci.appveyor.com/api/projects/status/9cjt34o5ujikxi13/branch/master?svg=true)](https://ci.appveyor.com/project/TheOneRing/snorenotify/branch/master)
-
-
 Snorenotify
 ===========
 
