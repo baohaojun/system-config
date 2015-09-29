@@ -34,7 +34,6 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
     m_ready(true),
     m_fontFamily(qApp->font().family())
 {
-    rootContext()->setContextProperty(QLatin1String("window"), this);
 
 #ifdef Q_OS_WIN
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8) {
@@ -48,18 +47,18 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
     }
 #endif
 #endif
-    setSource(QUrl::fromEncoded("qrc:/notification.qml"));
+    QQmlApplicationEngine *engine = new QQmlApplicationEngine(this);
+    engine->rootContext()->setContextProperty(QLatin1String("notifyWidget"), this);
+    engine->load(QUrl::fromEncoded("qrc:/notification.qml"));
+    m_window = qobject_cast<QQuickWindow *>(engine->rootObjects().value(0));
 
-    setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus | Qt::BypassWindowManagerHint
+    m_window->setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus | Qt::BypassWindowManagerHint
 #ifdef Q_OS_MAC
-             | Qt::SubWindow
+                       | Qt::SubWindow
 #else
-             | Qt::Tool
+                       | Qt::Tool
 #endif
-            );
-
-    //    setFocusPolicy(Qt::NoFocus);
-    //    setAttribute(Qt::WA_ShowWithoutActivating, true);
+                      );
 
     if (m_mem.create(sizeof(SHARED_MEM_TYPE))) {
         m_mem.lock();
@@ -73,13 +72,11 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
         } else {
             m_mem.lock();
             SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
-            m_mem.unlock();            
+            m_mem.unlock();
             int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
             snoreDebug(SNORE_DEBUG) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
         }
     }
-
-    setResizeMode(QQuickView::SizeViewToRootObject);
 }
 
 NotifyWidget::~NotifyWidget()
@@ -112,12 +109,12 @@ void NotifyWidget::display(const Notification &notification)
 
     if (!notification.isUpdate()) {
         syncSettings();
+        m_color = color;
         m_textColor = compueTextColor(color);
-        setColor(color);
         emit colorChanged();
         emit textColorChanged();
-        setVisible(true);
-        Utils::raiseWindowToFront(winId());
+        m_window->show();
+        Utils::raiseWindowToFront(m_window->winId());
     }
 }
 
@@ -165,7 +162,7 @@ bool NotifyWidget::release()
             out = true;
         }
         m_mem.unlock();
-        hide();
+        m_window->hide();
     }
     return out;
 }
@@ -180,6 +177,11 @@ int NotifyWidget::id() const
     return m_id;
 }
 
+bool NotifyWidget::isVisible() const
+{
+    return m_window->isVisible();
+}
+
 void NotifyWidget::syncSettings()
 {
     Qt::Corner c = static_cast<Qt::Corner>(m_parent->settingsValue(QLatin1String("Position")).toInt());
@@ -190,21 +192,21 @@ void NotifyWidget::syncSettings()
         m_cornerOld = c;
         m_isOrientatedLeft = c == Qt::TopLeftCorner || c == Qt::BottomLeftCorner;
         if (m_isOrientatedLeft) {
-            m_dragMinX = m_animationFrom = -width();
+            m_dragMinX = m_animationFrom = -m_window->width();
             m_dragMaxX = m_animationTo = 0;
         } else {
             m_animationFrom = desktop.availableGeometry().width();
-            m_animationTo = desktop.availableGeometry().width() - width();
+            m_animationTo = desktop.availableGeometry().width() - m_window->width();
             m_dragMinX =  0;
-            m_dragMaxX = width();
+            m_dragMaxX = m_window->width();
 
         }
-        double space = (id() + 1) * height() * 0.025;
+        double space = (id() + 1) * m_window->height() * 0.025;
 
         if (c == Qt::TopRightCorner || c == Qt::TopLeftCorner) {
-            setY(space + (space + height()) * id());
+            m_window->setY(space + (space + m_window->height()) * id());
         } else {
-            setY(desktop.availableGeometry().height() - (space + (space + height()) * (id() + 1)));
+            m_window->setY(desktop.availableGeometry().height() - (space + (space + m_window->height()) * (id() + 1)));
         }
         emit isOrientatedLeftChanged();
         emit animationFromChanged();

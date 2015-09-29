@@ -38,7 +38,7 @@ inline int SHARED_MEM_TYPE_REV()
     return 2;
 }
 
-class NotifyWidget : public QQuickView
+class NotifyWidget : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool isOrientatedLeft MEMBER m_isOrientatedLeft  NOTIFY isOrientatedLeftChanged)
@@ -46,6 +46,7 @@ class NotifyWidget : public QQuickView
     Q_PROPERTY(int animationTo MEMBER m_animationTo NOTIFY animationtoChanged)
     Q_PROPERTY(int dragMinX MEMBER m_dragMinX NOTIFY dragMinXChanged)
     Q_PROPERTY(int dragMaxX MEMBER m_dragMaxX NOTIFY dragMaxXChanged)
+    Q_PROPERTY(QColor color MEMBER m_color NOTIFY colorChanged)
     Q_PROPERTY(QColor textColor MEMBER m_textColor NOTIFY textColorChanged)
     Q_PROPERTY(QString title MEMBER m_title NOTIFY titleChanged)
     Q_PROPERTY(QString body MEMBER m_body NOTIFY bodyChanged)
@@ -67,6 +68,7 @@ public:
     Snore::Notification &notification();
 
     int id() const;
+    bool isVisible() const;
 
 Q_SIGNALS:
     void invoked();
@@ -112,6 +114,7 @@ private:
     int m_imageSize;
     int m_appIconSize;
 
+    QColor m_color;
     QColor m_textColor;
 
     QString m_title;
@@ -123,6 +126,8 @@ private:
 
     QUrl m_appIcon;
     QUrl m_image;
+
+    QQuickWindow *m_window;
 
 };
 
