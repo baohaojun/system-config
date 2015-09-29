@@ -76,7 +76,7 @@ void GrowlBackend::slotRegisterApplication(const Application &application)
 {
     snoreDebug(SNORE_DEBUG) << application.name();
     std::vector<std::string> alerts;
-    foreach (const Alert &a, application.alerts()) {
+    foreach(const Alert & a, application.alerts()) {
         snoreDebug(SNORE_DEBUG) << a.name();
         alerts.push_back(a.name().toUtf8().constData());
     }

@@ -19,7 +19,6 @@ Window {
         }
     }
 
-
     NumberAnimation{
         id: animation
         properties: "x"
@@ -32,6 +31,8 @@ Window {
     Rectangle{
         id: root
 
+        // don't anchor as we need he xChanged signal
+        // a drag event directly on the window is not supported
         height: window.height
         width: window.width
         color: window.color
@@ -54,8 +55,6 @@ Window {
                 x = 0
             }
         }
-
-
 
         MouseArea {
             id: mouseAreaAccept

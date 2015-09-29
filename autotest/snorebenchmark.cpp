@@ -55,7 +55,7 @@ void SnoreBenchmark::benchmarkUtilsToHtml()
              "<a href=\"https://github.com/Snorenotify/Snorenotify\">Website</a>\n"));
     QCOMPARE(Utils::normalizeMarkup(htmlTestString, Utils::HREF | Utils::BOLD | Utils::BREAK |
                                     Utils::UNDERLINE | Utils::FONT | Utils::ITALIC), htmlTestString);
-    QBENCHMARK{
+    QBENCHMARK {
         Utils::normalizeMarkup(htmlTestString, Utils::HREF);
     }
 }
@@ -64,14 +64,14 @@ void SnoreBenchmark::benchmarkUtilsToHtmlAllMarkup()
 {
     QCOMPARE(Utils::normalizeMarkup(htmlTestString, Utils::ALL_MARKUP), htmlTestString);
 
-    QBENCHMARK{
+    QBENCHMARK {
         Utils::normalizeMarkup(htmlTestString, Utils::ALL_MARKUP);
     }
 }
 
 void SnoreBenchmark::benchmarkUtilsToPlain()
 {
-    QBENCHMARK{
+    QBENCHMARK {
         Utils::normalizeMarkup(htmlTestString, Utils::NO_MARKUP);
     }
 }
