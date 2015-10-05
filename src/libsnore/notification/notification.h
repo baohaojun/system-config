@@ -288,7 +288,8 @@ private:
     friend class NotificationData;
 };
 
-inline bool Notification::operator ==(const Notification &other){
+inline bool Notification::operator ==(const Notification &other)
+{
     return id() == other.id();
 }
 

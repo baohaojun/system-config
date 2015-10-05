@@ -95,7 +95,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
     }
     m_queue.append(notification);
     snoreDebug(SNORE_WARNING) << "queing" << m_queue.size();
-    if(!m_timer->isActive()){
+    if (!m_timer->isActive()) {
         m_timer->start();
     }
 }

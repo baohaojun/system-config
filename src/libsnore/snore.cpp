@@ -189,7 +189,7 @@ void SnoreCore::requestCloseNotification(Notification n, Notification::CloseReas
 {
     Q_D(SnoreCore);
     bool wasQued  = d->m_notificationQue.removeOne(n);
-    if(wasQued){
+    if (wasQued) {
         snoreDebug(SNORE_DEBUG) << n << " was qued.";
     }
     if (!wasQued && d->m_notificationBackend) {
