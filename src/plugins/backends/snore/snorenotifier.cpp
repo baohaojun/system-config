@@ -27,7 +27,7 @@
 using namespace Snore;
 
 SnoreNotifier::SnoreNotifier():
-    m_widgets(1),
+    m_widgets(3),
     m_timer(new QTimer(this))
 {
     for (int i = 0; i < m_widgets.size(); ++i) {

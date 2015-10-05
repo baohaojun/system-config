@@ -280,11 +280,17 @@ public:
     bool isActiveIn(const QObject *o) const;
     bool removeActiveIn(const QObject *o);
 
+    inline bool operator ==(const Notification &other);
+
 private:
     QExplicitlySharedDataPointer<NotificationData> d;
 
     friend class NotificationData;
 };
+
+inline bool Notification::operator ==(const Notification &other){
+    return id() == other.id();
+}
 
 }
 Q_DECLARE_METATYPE(Snore::Notification)
