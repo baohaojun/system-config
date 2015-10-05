@@ -33,7 +33,7 @@ typedef struct {
 
 } SHARED_MEM_TYPE;
 
-inline int SHARED_MEM_TYPE_REV()
+Q_CONSTEXPR int SHARED_MEM_TYPE_REV()
 {
     return 2;
 }
@@ -41,6 +41,7 @@ inline int SHARED_MEM_TYPE_REV()
 class NotifyWidget : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int id READ id)
     Q_PROPERTY(bool isOrientatedLeft MEMBER m_isOrientatedLeft  NOTIFY isOrientatedLeftChanged)
     Q_PROPERTY(int animationFrom MEMBER m_animationFrom NOTIFY animationFromChanged)
     Q_PROPERTY(int animationTo MEMBER m_animationTo NOTIFY animationtoChanged)
@@ -57,7 +58,7 @@ class NotifyWidget : public QObject
     Q_PROPERTY(QString fontFamily MEMBER m_fontFamily NOTIFY fontFamilyChanged)
 
 public:
-    explicit NotifyWidget(int pos, const SnoreNotifier *parent);
+    explicit NotifyWidget(int id, const SnoreNotifier *parent);
     ~NotifyWidget();
 
     void display(const Snore::Notification &notification);
@@ -68,7 +69,6 @@ public:
     Snore::Notification &notification();
 
     int id() const;
-    bool isVisible() const;
 
 Q_SIGNALS:
     void invoked();

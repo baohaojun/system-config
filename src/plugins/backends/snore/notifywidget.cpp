@@ -27,8 +27,8 @@
 
 using namespace Snore;
 
-NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
-    m_id(pos),
+NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
+    m_id(id),
     m_parent(parent),
     m_mem(QLatin1String("SnoreNotifyWidget_rev") + QString::number(SHARED_MEM_TYPE_REV()) + QLatin1String("_id") + QString::number(m_id)),
     m_ready(true),
@@ -52,6 +52,8 @@ NotifyWidget::NotifyWidget(int pos, const SnoreNotifier *parent) :
     engine->load(QUrl::fromEncoded("qrc:/notification.qml"));
     m_window = qobject_cast<QQuickWindow *>(engine->rootObjects().value(0));
 
+    // TODO: Qt::BypassWindowManagerHint is needed on linux to make it possible to animate the Window.
+    // It looks like there is a Qt bug wich make some Windows with this flag invisible.
     m_window->setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus | Qt::BypassWindowManagerHint
 #ifdef Q_OS_MAC
                        | Qt::SubWindow
@@ -86,7 +88,7 @@ NotifyWidget::~NotifyWidget()
 
 void NotifyWidget::display(const Notification &notification)
 {
-    snoreDebug(SNORE_DEBUG) << m_id << notification.id();
+    snoreDebug(SNORE_DEBUG) << m_id << notification.id() << m_window->isVisible();
     m_notification = notification;
     QColor color;
     QVariant vcolor = notification.application().constHints().privateValue(parent(), "backgroundColor");
@@ -175,11 +177,6 @@ Notification &NotifyWidget::notification()
 int NotifyWidget::id() const
 {
     return m_id;
-}
-
-bool NotifyWidget::isVisible() const
-{
-    return m_window->isVisible();
 }
 
 void NotifyWidget::syncSettings()

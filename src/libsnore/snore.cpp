@@ -116,6 +116,7 @@ void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
     if (d->m_activeNotifications.size() > d->maxNumberOfActiveNotifications()) {
+#pragma message "TODO: handle updates in queue"
         snoreDebug(SNORE_DEBUG) << "queue size:" << d->m_notificationQue.size() << "active size:" << d->m_activeNotifications.size();
         d->m_notificationQue.append(notification);
         return;

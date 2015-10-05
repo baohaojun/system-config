@@ -11,19 +11,18 @@ Window {
     color: notifyWidget.color
 
 
+
     onVisibleChanged: {
         if(visible){
-            x = 0
             animation.from = notifyWidget.animationFrom
-            animation.start()
+            animation.restart()
+            show()
         }
     }
 
-    NumberAnimation{
+    NumberAnimation on x{
         id: animation
-        properties: "x"
         duration: 500
-        target: window
         from: notifyWidget.animationFrom
         to: notifyWidget.animationTo
     }
@@ -51,9 +50,8 @@ Window {
                     Drag.cancel()
                     notifyWidget.dismissed()
                 }
-            } else {
-                x = 0
             }
+            x = 0
         }
 
         MouseArea {
