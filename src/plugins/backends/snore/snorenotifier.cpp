@@ -94,7 +94,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         }
     }
     m_queue.append(notification);
-    snoreDebug(SNORE_WARNING) << "queing" << m_queue.size();
+    snoreDebug(SNORE_DEBUG) << "queing" << m_queue.size();
     if (!m_timer->isActive()) {
         m_timer->start();
     }
@@ -109,14 +109,12 @@ void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
 
 void SnoreNotifier::slotQueueTimeout()
 {
-    snoreDebug(SNORE_WARNING) << "queue" << m_queue.size();
     if (m_queue.isEmpty()) {
-        //        snoreDebug(SNORE_DEBUG) << "queue is empty";
+        snoreDebug(SNORE_DEBUG) << "queue is empty";
         m_timer->stop();
     } else {
         for (NotifyWidget *w : m_widgets) {
             if (!m_queue.isEmpty() && w->acquire(m_queue.first().timeout())) {
-                snoreDebug(SNORE_WARNING) << "aquired " << w->id();
                 Notification notification = m_queue.takeFirst();
                 notification.hints().setPrivateValue(this, "id", w->id());
                 w->display(notification);
