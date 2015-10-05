@@ -52,13 +52,11 @@ NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
     engine->load(QUrl::fromEncoded("qrc:/notification.qml"));
     m_window = qobject_cast<QQuickWindow *>(engine->rootObjects().value(0));
 
-    // TODO: Qt::BypassWindowManagerHint is needed on linux to make it possible to animate the Window.
-    // It looks like there is a Qt bug wich make some Windows with this flag invisible.
-    m_window->setFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowDoesNotAcceptFocus | Qt::BypassWindowManagerHint
+    // TODO: It looks like there is a Qt bug wich make some Windows with this flag invisible in some cases...(Tested: Kubuntu willy)
+    m_window->setFlags(Qt::WindowStaysOnTopHint | Qt::ToolTip
 #ifdef Q_OS_MAC
-                       | Qt::SubWindow
-#else
-                       | Qt::Tool
+                       // TODO: is this needed or is ToolTip working?
+                       //| Qt::SubWindow
 #endif
                       );
 
