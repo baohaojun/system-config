@@ -47,8 +47,26 @@ time (
     top_dir=$(readlink -f $top_dir/..)
 
     oldpwd=$PWD
-    if test "$(ap)" = bootable/bootloader/lk; then
+    if test "$(ap .git/..)" = bootable/bootloader/lk; then
         exec android-make lk
+    elif test "$(ap .git/..)" = device/qcom/sepolicy; then
+        if test "$DOING_SEPOLICY_HACK" != true; then
+            export DOING_SEPOLICY_HACK=true
+            cd $(lookup-file -e .git/..)
+            cat <<'EOF' >> Android.mk
+LOCAL_PATH:= $(call my-dir)
+ifeq (${ONE_SHOT_MAKEFILE},${LOCAL_PATH}/Android.mk)
+$(info including the main sepolicy file)
+ONE_SHOT_MAKEFILE := external/sepolicy/Android.mk
+include external/sepolicy/Android.mk
+CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
+$(info CUSTOM_MODULES are ${CUSTOM_MODULES})
+endif
+EOF
+            command mm
+            android-make ramdisk-nodeps
+            exec android-make bootimage-nodeps
+        fi
     fi
     cd $top_dir/
     . build/envsetup.sh
@@ -76,7 +94,7 @@ time (
             echo using java 1.6
         fi
 
-        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs $verbose all_modules $(if test "$project" = device/qcom/sepolicy; then echo bootimage; fi) "$@" 2>&1
+        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs $verbose all_modules "$@" 2>&1
         echo mm build is ok
     ) | tee ~/.cache/system-config/logs/mm.log.$$
 

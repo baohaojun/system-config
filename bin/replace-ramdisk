@@ -87,7 +87,7 @@ function fix-adbd-and-debug() {
         perl -npe 's/ro.debuggable=1/ro.debuggable=0/' -i $tdir/default.prop
     fi
 
-    if [[ "$BOOT_IMAGE_PATH" =~ -eng|-userdebug|icesky ]] || test -e $tdir/selinux_version; then
+    if [[ "$BOOT_IMAGE_PATH" =~ -eng|-userdebug ]]; then
         echo no need to replace the adbd
     else
         echo $BOOT_IMAGE_PATH need to replace adbd

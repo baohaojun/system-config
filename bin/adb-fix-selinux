@@ -3,4 +3,5 @@ set -e
 cd ~/tmp
 my-adb -r pull /sepolicy
 my-adb pull /data/logs/.kmsg
+my-adb dmesg >> .kmsg
 audit2allow -p sepolicy -i .kmsg | tee /dev/tty |putclip

@@ -154,7 +154,11 @@ function adb() {
         (
             set -x
             if ! $the_adb shell id | grep uid=0 -q; then
-                if $the_adb root 2>&1 | grep 'restarting adbd as root'; then
+                if test "$($the_adb shell getprop ro.smartisan.sa|tr -d '\r')" = smartisan.mol; then
+                    my-adb 'while test "$(getprop dev.bootcomplete)" != 1; do sleep 1; done'
+                    my-adb su -c 'nohup bash -c "stop adbd; killall adbd; setprop service.adb.root 1; (flock 1 && echo root ok && while true; do adbd; sleep 1; done ) >>/data/adb.lock;"'
+                    sleep 2
+                elif $the_adb root 2>&1 | grep 'restarting adbd as root'; then
                     sleep 2
                 else
                     sleep 2
@@ -222,7 +226,7 @@ function adb() {
     fi
 
     if test $# = 2 -a "$1" = e; then
-        exec e /adb::"$2"
+        exec e /adb:$ANDROID_SERIAL:"$2"
     fi
     if test "$1" = -s; then
         export ANDROID_SERIAL=$2

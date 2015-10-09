@@ -18,21 +18,19 @@ if test ! "$ANDROID_SERIAL"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  Sno_system Gno_gapps ssystem_only gforce_gapps ddebug
+# generate-getopts  Sno_system Gno_gapps ssystem_only ddebug
 ## end code-generator
 ## start generated code
 no_system=false
 no_gapps=false
 system_only=false
-force_gapps=false
 debug=false
 OPTIND=1
-while getopts 'SGsgd' opt; do
+while getopts 'SGsd' opt; do
     case "$opt" in
         S)    no_system=true;;
         G)    no_gapps=true;;
         s)    system_only=true;;
-        g)    force_gapps=true;;
         d)    debug=true;;
         *)    echo Usage Error; exit 2;;
     esac
@@ -151,9 +149,7 @@ echo doing rsync in $(pwd)
 adb-stop-all-services
 my-adb remount
 my-adb stop
-if test $no_gapps = false &&
-        my-adb "test -e /system/framework/com.google.android.maps.jar && echo -n yes && echo $$" | grep yes$$ -q ||
-            test $force_gapps = true; then
+if test $no_gapps = false; then
     dest=$PWD
     sudo mv xbin/su xbin/su.copy || true
     (
