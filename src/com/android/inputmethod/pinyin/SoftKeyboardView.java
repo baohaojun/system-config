@@ -121,7 +121,7 @@ public class SoftKeyboardView extends View {
     public SoftKeyboardView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mSoundManager = SoundManager.getInstance(mContext);
+        mSoundManager = SoundManager.getInstance(getContext());
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -165,8 +165,8 @@ public class SoftKeyboardView extends View {
         if (null != mSoftKeyboard) {
             measuredWidth = mSoftKeyboard.getSkbCoreWidth();
             measuredHeight = mSoftKeyboard.getSkbCoreHeight();
-            measuredWidth += mPaddingLeft + mPaddingRight;
-            measuredHeight += mPaddingTop + mPaddingBottom;
+            measuredWidth += getPaddingLeft() + getPaddingRight();
+            measuredHeight += getPaddingTop() + getPaddingBottom();
         }
         setMeasuredDimension(measuredWidth, measuredHeight);
     }
@@ -264,10 +264,10 @@ public class SoftKeyboardView extends View {
                         desired_width, desired_height);
             }
 
-            mHintLocationToSkbContainer[0] = mPaddingLeft + mSoftKeyDown.mLeft
+            mHintLocationToSkbContainer[0] = getPaddingLeft() + mSoftKeyDown.mLeft
                     - (mBalloonOnKey.getWidth() - mSoftKeyDown.width()) / 2;
             mHintLocationToSkbContainer[0] += mOffsetToSkbContainer[0];
-            mHintLocationToSkbContainer[1] = mPaddingTop
+            mHintLocationToSkbContainer[1] = getPaddingTop()
                     + (mSoftKeyDown.mBottom - keyYMargin)
                     - mBalloonOnKey.getHeight();
             mHintLocationToSkbContainer[1] += mOffsetToSkbContainer[1];
@@ -300,10 +300,10 @@ public class SoftKeyboardView extends View {
             }
 
             // The position to show.
-            mHintLocationToSkbContainer[0] = mPaddingLeft + mSoftKeyDown.mLeft
+            mHintLocationToSkbContainer[0] = getPaddingLeft() + mSoftKeyDown.mLeft
                     + -(mBalloonPopup.getWidth() - mSoftKeyDown.width()) / 2;
             mHintLocationToSkbContainer[0] += mOffsetToSkbContainer[0];
-            mHintLocationToSkbContainer[1] = mPaddingTop + mSoftKeyDown.mTop
+            mHintLocationToSkbContainer[1] = getPaddingTop() + mSoftKeyDown.mTop
                     - mBalloonPopup.getHeight();
             mHintLocationToSkbContainer[1] += mOffsetToSkbContainer[1];
             showBalloon(mBalloonPopup, mHintLocationToSkbContainer, movePress);
@@ -333,7 +333,7 @@ public class SoftKeyboardView extends View {
             mBalloonPopup.delayedDismiss(BalloonHint.TIME_DELAY_DISMISS);
         }
 
-        if (mSoftKeyDown.moveWithinKey(x - mPaddingLeft, y - mPaddingTop)) {
+        if (mSoftKeyDown.moveWithinKey(x - getPaddingLeft(), y - getPaddingTop())) {
             return mSoftKeyDown;
         }
         return null;
@@ -342,7 +342,7 @@ public class SoftKeyboardView extends View {
     public SoftKey onKeyMove(int x, int y) {
         if (null == mSoftKeyDown) return null;
 
-        if (mSoftKeyDown.moveWithinKey(x - mPaddingLeft, y - mPaddingTop)) {
+        if (mSoftKeyDown.moveWithinKey(x - getPaddingLeft(), y - getPaddingTop())) {
             return mSoftKeyDown;
         }
 
@@ -400,7 +400,7 @@ public class SoftKeyboardView extends View {
     protected void onDraw(Canvas canvas) {
         if (null == mSoftKeyboard) return;
 
-        canvas.translate(mPaddingLeft, mPaddingTop);
+        canvas.translate(getPaddingLeft(), getPaddingTop());
 
         Environment env = Environment.getInstance();
         mNormalKeyTextSize = env.getKeyTextSize(false);

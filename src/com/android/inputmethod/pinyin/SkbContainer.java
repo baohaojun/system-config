@@ -21,7 +21,6 @@ import android.content.res.Resources;
 import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -185,18 +184,13 @@ public class SkbContainer extends RelativeLayout implements OnTouchListener {
 
         mLongPressTimer = new LongPressTimer(this);
 
-        // If it runs on an emulator, no bias correction
-        if ("1".equals(SystemProperties.get("ro.kernel.qemu"))) {
-            mYBiasCorrection = 0;
-        } else {
-            mYBiasCorrection = Y_BIAS_CORRECTION;
-        }
+        mYBiasCorrection = Y_BIAS_CORRECTION;
         mBalloonPopup = new BalloonHint(context, this, MeasureSpec.AT_MOST);
         if (POPUPWINDOW_FOR_PRESSED_UI) {
             mBalloonOnKey = new BalloonHint(context, this, MeasureSpec.AT_MOST);
         }
 
-        mPopupSkb = new PopupWindow(mContext);
+        mPopupSkb = new PopupWindow(getContext());
         mPopupSkb.setBackgroundDrawable(null);
         mPopupSkb.setClippingEnabled(false);
     }
@@ -264,7 +258,7 @@ public class SkbContainer extends RelativeLayout implements OnTouchListener {
         int keyHeight = mEnvironment.getKeyHeight();
         int skbHeight = mEnvironment.getSkbHeight();
 
-        Resources r = mContext.getResources();
+        Resources r = getContext().getResources();
         if (null == mSkbFlipper) {
             mSkbFlipper = (ViewFlipper) findViewById(R.id.alpha_floatable);
         }
@@ -276,27 +270,27 @@ public class SkbContainer extends RelativeLayout implements OnTouchListener {
         switch (mSkbLayout) {
         case R.xml.skb_qwerty:
             majorSkb = skbPool.getSoftKeyboard(R.xml.skb_qwerty,
-                    R.xml.skb_qwerty, screenWidth, skbHeight, mContext);
+                    R.xml.skb_qwerty, screenWidth, skbHeight, getContext());
             break;
 
         case R.xml.skb_sym1:
             majorSkb = skbPool.getSoftKeyboard(R.xml.skb_sym1, R.xml.skb_sym1,
-                    screenWidth, skbHeight, mContext);
+                    screenWidth, skbHeight, getContext());
             break;
 
         case R.xml.skb_sym2:
             majorSkb = skbPool.getSoftKeyboard(R.xml.skb_sym2, R.xml.skb_sym2,
-                    screenWidth, skbHeight, mContext);
+                    screenWidth, skbHeight, getContext());
             break;
 
         case R.xml.skb_smiley:
             majorSkb = skbPool.getSoftKeyboard(R.xml.skb_smiley,
-                    R.xml.skb_smiley, screenWidth, skbHeight, mContext);
+                    R.xml.skb_smiley, screenWidth, skbHeight, getContext());
             break;
 
         case R.xml.skb_phone:
             majorSkb = skbPool.getSoftKeyboard(R.xml.skb_phone,
-                    R.xml.skb_phone, screenWidth, skbHeight, mContext);
+                    R.xml.skb_phone, screenWidth, skbHeight, getContext());
             break;
         default:
         }
@@ -341,14 +335,14 @@ public class SkbContainer extends RelativeLayout implements OnTouchListener {
 
             SkbPool skbPool = SkbPool.getInstance();
             SoftKeyboard skb = skbPool.getSoftKeyboard(popupResId, popupResId,
-                    miniSkbWidth, miniSkbHeight, mContext);
+                    miniSkbWidth, miniSkbHeight, getContext());
             if (null == skb) return;
 
             mPopupX = (skbContainerWidth - skb.getSkbTotalWidth()) / 2;
             mPopupY = (skbContainerHeight - skb.getSkbTotalHeight()) / 2;
 
             if (null == mPopupSkbView) {
-                mPopupSkbView = new SoftKeyboardView(mContext, null);
+                mPopupSkbView = new SoftKeyboardView(getContext(), null);
                 mPopupSkbView.onMeasure(LayoutParams.WRAP_CONTENT,
                         LayoutParams.WRAP_CONTENT);
             }

@@ -14,7 +14,8 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="ime_name">谷歌拼音输入法</string>
+  <string name="inputMethod">Input method</string>
+  <string name="ime_name">谷歌拼音输入法</string>
     <string name="ime_settings_activity_name">谷歌拼音输入法设置</string>
     <!-- version = apk(java) + ime engine + sys dict + [hotlist (TBD)] -->
     <string name="version">1.0.0</string>

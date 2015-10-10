@@ -20,7 +20,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <cutils/log.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>

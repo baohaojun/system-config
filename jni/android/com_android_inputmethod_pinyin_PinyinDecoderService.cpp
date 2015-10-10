@@ -15,7 +15,6 @@
  */
 
 #include <assert.h>
-#include <cutils/log.h>
 #include <jni.h>
 #include <string.h>
 #include <sys/types.h>
@@ -24,6 +23,7 @@
 #include "../include/pinyinime.h"
 #include "../include/sync.h"
 #include "../include/userdict.h"
+#include "../include/log.h"
 
 #ifdef __cplusplus
 extern "C" {

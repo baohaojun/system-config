@@ -192,12 +192,12 @@ public class ComposingView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         float width;
         int height;
-        height = mFmi.bottom - mFmi.top + mPaddingTop + mPaddingBottom;
+        height = mFmi.bottom - mFmi.top + getPaddingTop() + getPaddingBottom();
 
         if (null == mDecInfo) {
             width = 0;
         } else {
-            width = mPaddingLeft + mPaddingRight + LEFT_RIGHT_MARGIN * 2;
+            width = getPaddingLeft() + getPaddingRight() + LEFT_RIGHT_MARGIN * 2;
 
             String str;
             if (ComposingStatus.SHOW_STRING_LOWERCASE == mComposingStatus) {
@@ -219,12 +219,12 @@ public class ComposingView extends View {
         }
 
         float x, y;
-        x = mPaddingLeft + LEFT_RIGHT_MARGIN;
-        y = -mFmi.top + mPaddingTop;
+        x = getPaddingLeft() + LEFT_RIGHT_MARGIN;
+        y = -mFmi.top + getPaddingTop();
 
         mPaint.setColor(mStrColorHl);
-        mHlDrawable.setBounds(mPaddingLeft, mPaddingTop, getWidth()
-                - mPaddingRight, getHeight() - mPaddingBottom);
+        mHlDrawable.setBounds(getPaddingLeft(), getPaddingTop(), getWidth()
+                - getPaddingRight(), getHeight() - getPaddingBottom());
         mHlDrawable.draw(canvas);
 
         String splStr = mDecInfo.getOrigianlSplStr().toString();
@@ -232,15 +232,15 @@ public class ComposingView extends View {
     }
 
     private void drawCursor(Canvas canvas, float x) {
-        mCursor.setBounds((int) x, mPaddingTop, (int) x
-                + mCursor.getIntrinsicWidth(), getHeight() - mPaddingBottom);
+        mCursor.setBounds((int) x, getPaddingTop(), (int) x
+                + mCursor.getIntrinsicWidth(), getHeight() - getPaddingBottom());
         mCursor.draw(canvas);
     }
 
     private void drawForPinyin(Canvas canvas) {
         float x, y;
-        x = mPaddingLeft + LEFT_RIGHT_MARGIN;
-        y = -mFmi.top + mPaddingTop;
+        x = getPaddingLeft() + LEFT_RIGHT_MARGIN;
+        y = -mFmi.top + getPaddingTop();
 
         mPaint.setColor(mStrColor);
 
