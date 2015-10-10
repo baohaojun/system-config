@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.inputmethod.pinyin;
+package com.wrench.inputmethod.pinyin;
 
-import com.android.inputmethod.pinyin.IPinyinDecoderService;
+import com.wrench.inputmethod.pinyin.IPinyinDecoderService;
 
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
@@ -103,7 +103,7 @@ public class PinyinDecoderService extends Service {
 
     static {
         try {
-            System.loadLibrary("jni_pinyinime");
+            System.loadLibrary("jni_wrench_pinyinime");
         } catch (UnsatisfiedLinkError ule) {
             Log.e("PinyinDecoderService",
                     "WARNING: Could not load jni_pinyinime natives");

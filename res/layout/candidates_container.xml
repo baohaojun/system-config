@@ -13,7 +13,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<com.android.inputmethod.pinyin.CandidatesContainer xmlns:android="http://schemas.android.com/apk/res/android"
+<com.wrench.inputmethod.pinyin.CandidatesContainer xmlns:android="http://schemas.android.com/apk/res/android"
   android:id="@+id/candidates_container"
   android:background="@drawable/cands_container_bg"
   android:orientation="horizontal"
@@ -41,13 +41,13 @@
     android:layout_height="match_parent"
     android:layout_toLeftOf="@id/arrow_right_btn"
     android:layout_toRightOf="@id/arrow_left_btn">
-    <view class="com.android.inputmethod.pinyin.CandidateView"
+    <view class="com.wrench.inputmethod.pinyin.CandidateView"
         android:id="@+id/candidate_view1"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <view class="com.android.inputmethod.pinyin.CandidateView"
+    <view class="com.wrench.inputmethod.pinyin.CandidateView"
         android:id="@+id/candidate_view2"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
   </ViewFlipper>
-</com.android.inputmethod.pinyin.CandidatesContainer>
+</com.wrench.inputmethod.pinyin.CandidatesContainer>

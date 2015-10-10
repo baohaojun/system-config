@@ -16,6 +16,6 @@
 <!-- The attributes in this XML file provide configuration information -->
 <!-- for the Search Manager. -->
 <input-method xmlns:android="http://schemas.android.com/apk/res/android"
-        android:settingsActivity="com.android.inputmethod.pinyin.SettingsActivity"
+        android:settingsActivity="com.wrench.inputmethod.pinyin.SettingsActivity"
         android:isDefault="@bool/im_is_default"
 />

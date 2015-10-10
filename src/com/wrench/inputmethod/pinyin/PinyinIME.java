@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.inputmethod.pinyin;
+package com.wrench.inputmethod.pinyin;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -150,7 +150,7 @@ public class PinyinIME extends InputMethodService {
     /**
      * The current IME status.
      *
-     * @see com.android.inputmethod.pinyin.PinyinIME.ImeState
+     * @see com.wrench.inputmethod.pinyin.PinyinIME.ImeState
      */
     private ImeState mImeState = ImeState.STATE_IDLE;
 

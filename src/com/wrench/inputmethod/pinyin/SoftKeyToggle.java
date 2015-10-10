@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.inputmethod.pinyin;
+package com.wrench.inputmethod.pinyin;
 
 import android.graphics.drawable.Drawable;
 
@@ -22,7 +22,7 @@ import android.graphics.drawable.Drawable;
  * Class for soft keys which defined in the keyboard xml file. A soft key can be
  * a basic key or a toggling key.
  * 
- * @see com.android.inputmethod.pinyin.SoftKey
+ * @see com.wrench.inputmethod.pinyin.SoftKey
  */
 public class SoftKeyToggle extends SoftKey {
     /**

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.inputmethod.pinyin;
+package com.wrench.inputmethod.pinyin;
 
-import com.android.inputmethod.pinyin.SoftKeyboard.KeyRow;
+import com.wrench.inputmethod.pinyin.SoftKeyboard.KeyRow;
 
 import java.util.List;
 

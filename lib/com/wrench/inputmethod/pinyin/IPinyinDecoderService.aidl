@@ -15,7 +15,7 @@
  */
 
 
-package com.android.inputmethod.pinyin;
+package com.wrench.inputmethod.pinyin;
 
 interface IPinyinDecoderService {
     int getInt();

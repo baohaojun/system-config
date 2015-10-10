@@ -42,7 +42,7 @@
       android:title="@string/setting_others"
       android:summary="@string/setting_others_summary"
       android:key="@string/setting_advanced_key">
-      <intent android:action="com.android.inputmethod.pinyingoogleservice.SETTINGS" />
+      <intent android:action="com.wrench.inputmethod.pinyingoogleservice.SETTINGS" />
     </PreferenceScreen>
 
 	<Preference

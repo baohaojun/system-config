@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.inputmethod.pinyin;
+package com.wrench.inputmethod.pinyin;
 
-import com.android.inputmethod.pinyin.SoftKeyboard.KeyRow;
+import com.wrench.inputmethod.pinyin.SoftKeyboard.KeyRow;
 
 import android.content.res.Resources;
 import android.view.inputmethod.EditorInfo;
@@ -356,7 +356,7 @@ public class InputModeSwitcher {
 
         /**
          * The id of enabled row in the soft keyboard. Refer to
-         * {@link com.android.inputmethod.pinyin.SoftKeyboard.KeyRow} for
+         * {@link com.wrench.inputmethod.pinyin.SoftKeyboard.KeyRow} for
          * details.
          */
         public int mRowIdToEnable;

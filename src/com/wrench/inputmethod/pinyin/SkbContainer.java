@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.inputmethod.pinyin;
+package com.wrench.inputmethod.pinyin;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -58,7 +58,7 @@ public class SkbContainer extends RelativeLayout implements OnTouchListener {
     /**
      * The current soft keyboard layout.
      * 
-     * @see com.android.inputmethod.pinyin.InputModeSwitcher for detailed layout
+     * @see com.wrench.inputmethod.pinyin.InputModeSwitcher for detailed layout
      *      definitions.
      */
     private int mSkbLayout = 0;

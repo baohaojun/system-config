@@ -11,7 +11,7 @@ LOCAL_PACKAGE_NAME := PinyinIME
 
 LOCAL_JNI_SHARED_LIBRARIES := libjni_pinyinime
 
-LOCAL_STATIC_JAVA_LIBRARIES := com.android.inputmethod.pinyin.lib
+LOCAL_STATIC_JAVA_LIBRARIES := com.wrench.inputmethod.pinyin.lib
 
 LOCAL_CERTIFICATE := shared
 

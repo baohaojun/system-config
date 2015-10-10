@@ -14,9 +14,9 @@
      limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android.inputmethod.pinyin">
+    package="com.wrench.inputmethod.pinyin">
 
-        <original-package android:name="com.android.inputmethod.pinyin" />
+        <original-package android:name="com.wrench.inputmethod.pinyin" />
 
         <uses-permission android:name="android.permission.VIBRATE"/>
         <uses-permission android:name="android.permission.INTERNET"/>
@@ -29,7 +29,7 @@
             <service android:name=".PinyinDecoderService"
                 android:exported="true">
                 <intent-filter>
-                    <action android:name="com.android.inputmethod.pinyin.Decoder_Service" />
+                    <action android:name="com.wrench.inputmethod.pinyin.Decoder_Service" />
                     <category android:name="android.intent.category.DEFAULT" />
                 </intent-filter>
             </service>

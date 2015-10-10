@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.inputmethod.pinyin;
+package com.wrench.inputmethod.pinyin;
 
-import com.android.inputmethod.pinyin.InputModeSwitcher.ToggleStates;
+import com.wrench.inputmethod.pinyin.InputModeSwitcher.ToggleStates;
 
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;

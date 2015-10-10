@@ -13,7 +13,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<com.android.inputmethod.pinyin.SkbContainer xmlns:android="http://schemas.android.com/apk/res/android"
+<com.wrench.inputmethod.pinyin.SkbContainer xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
   android:background="@drawable/skb_container_bg"
   android:layout_width="wrap_content"
@@ -25,13 +25,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
-   <com.android.inputmethod.pinyin.SoftKeyboardView
+   <com.wrench.inputmethod.pinyin.SoftKeyboardView
      android:id="@+id/alpha_view1"
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"/>
-   <com.android.inputmethod.pinyin.SoftKeyboardView
+   <com.wrench.inputmethod.pinyin.SoftKeyboardView
      android:id="@+id/alpha_view2"
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"/>
   </ViewFlipper>
-</com.android.inputmethod.pinyin.SkbContainer>
+</com.wrench.inputmethod.pinyin.SkbContainer>

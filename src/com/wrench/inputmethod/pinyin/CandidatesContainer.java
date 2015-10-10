@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.inputmethod.pinyin;
+package com.wrench.inputmethod.pinyin;
 
-import com.android.inputmethod.pinyin.PinyinIME.DecodingInfo;
+import com.wrench.inputmethod.pinyin.PinyinIME.DecodingInfo;
 
 import android.content.Context;
 import android.util.AttributeSet;
