@@ -744,39 +744,58 @@ end
 
 adb_get_input_window_dump = function()
    -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]+.*\SInputMethod/i .. m/^\s*mHasSurface/')
-   local dump_str = adb_pipe("dumpsys window; dumpsys input_method")
+   local dump_str = adb_pipe("dumpsys input_method; dumpsys window")
    local dump = split("\n", dump_str)
-   local input_method = {}
-   local started = false
+   local current_input_method
+   local input_method_lines = {}
+   local input_method_active = false
+   local looking_at_input_method = false
+   local looking_at_input_method_package = ""
    for i = 1, #dump do
-      if not started and dump[i]:match("^%s*Window #?%d* ?Window{[a-f0-9]+.*%sInputMethod") then
-         started = true
-         debugging("started is true")
+      if dump[i]:match("mCurMethodId=") then
+         current_input_method = dump[i]:gsub(".*mCurMethodId=", "")
+         current_input_method = current_input_method:gsub("/.*", "") -- only the package
       end
-      if started == true then
+      if not looking_at_input_method
+         and dump[i]:match("^%s*Window #?%d* ?Window{[a-f0-9]+.*%sInputMethod")
+      then
+         looking_at_input_method = true
+         debugging("looking_at_input_method is true")
+      end
+      if looking_at_input_method == true then
          debugging("got a line: %s", dump[i])
-         input_method[#input_method + 1] = dump[i]
+
+         if dump[i]:match("package=") then
+            looking_at_input_method_package = dump[i]:gsub(".*package=", "")
+            looking_at_input_method_package = looking_at_input_method_package:gsub("%s.*", "")
+         end
+
+         if not current_input_method or current_input_method == looking_at_input_method_package then
+            input_method_lines[#input_method_lines + 1] = dump[i]
+         end
          if dump[i]:match("^%s*mHasSurface") then
-            started = false
+            looking_at_input_method = false
          end
       end
    end
-   local input_window_dump = join("\n", input_method)
-   local input_method = string.match(input_window_dump, "mHasSurface=true")
+   local input_window_dump = join("\n", input_method_lines)
+   input_method_active = string.match(input_window_dump, "mHasSurface=true")
    local ime_xy = last(string.gmatch(input_window_dump, "Requested w=%d+ h=%d+"))
    local ime_height = 0
-   if input_method and ime_xy:match('Requested w=%d+ h=') then
+   if input_method_active and ime_xy:match('Requested w=%d+ h=') then
       ime_height = ime_xy:match('Requested w=%d+ h=(%d+)')
-      if tonumber((ime_height - (init_height - app_height)) * default_height / init_height ) >= 1200 then -- new version of google pinyin ime?
+      if tonumber((ime_height - (init_height - app_height)) * default_height / init_height ) >= 800 then -- new version of google pinyin ime?
          if input_window_dump:match('package=com.google.android.inputmethod.pinyin') then
             ime_height = (1920 - 1140) * init_height / default_height + (init_height - app_height)
+         elseif input_window_dump:match('package=com.wrench.inputmethod.pinyin') then
+            ime_height = (1920 - 1125) * init_height / default_height + (init_height - app_height)
          elseif input_window_dump:match('package=com.google.android.inputmethod.latin') or
             input_window_dump:match('package=com.android.inputmethod.latin') then
             ime_height = 800 * init_height / default_height + (init_height - app_height)
          end
       end
    end
-   return input_method, ime_height, dump_str
+   return input_method_active, ime_height, dump_str
 end
 
 local function adb_input_method_is_null()
@@ -1104,7 +1123,7 @@ t1_post = function(text) -- use weixin
             post_button = ('984 %d'):format(1920 - ime_height - 100)
          end
       else
-         if adb_input_method_is_null() then --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
+         if dump:match("mServedInputConnection=null") then
             add = '560 1840 sleep .2 key back sleep .2'
          end
       end
