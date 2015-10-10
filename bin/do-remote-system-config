@@ -7,7 +7,7 @@ if yes-or-no-p "You can use root@$host without a password?"; then
     auth=$(cat ~/.ssh/authorized_keys)
     auth2=$(printf %q 'command="/home/bhj/system-config/bin/remote-edit-secure"'; echo -n ' '; cat ~/.ssh/id_rsa_nopass.pub)
     ssh root@$host echo hello
-    ssh-exp root@$host 'adduser bhj;
+    ssh-tty root@$host 'adduser bhj;
                         adduser gfw;
                         usermod -a -G sudo bhj;
                         mkdir -p ~bhj/.ssh
