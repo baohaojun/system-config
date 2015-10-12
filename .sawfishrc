@@ -600,7 +600,7 @@
 (defun emacs-code-reading-on (&optional w)
   (when w
     (window-put w 'code-reading t))
-  (system "switch-scroll-led on&")
+  (system "switch-caps-led on&")
   (load-file "~/system-config/.sawfish/lisp/easy-emacs-code-reading.jl"))
 
 (defun unload-keys-in-file (file)
@@ -620,7 +620,7 @@
   (bind-keys global-keymap "F23" '(system "xdotool click 4&"))
   (bind-keys global-keymap "F24" '(system "xdotool click 5&"))
   (bind-keys global-keymap "XF86Back" '(system "xdotool click 1&"))
-  (system "switch-scroll-led off&"))
+  (system "switch-caps-led off&"))
 
 (defun keypad-number-on ()
   (unload-keys-in-file "~/system-config/.sawfish/lisp/keypad.jl"))
