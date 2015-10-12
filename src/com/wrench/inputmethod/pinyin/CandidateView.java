@@ -24,12 +24,13 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.graphics.Paint.FontMetricsInt;
 import android.graphics.drawable.Drawable;
+import android.graphics.Paint;
+import android.graphics.Paint.FontMetricsInt;
+import android.graphics.RectF;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -264,7 +265,7 @@ public class CandidateView extends View {
                 widthMeasureSpec), getDefaultSize(getSuggestedMinimumHeight(),
                 heightMeasureSpec));
 
-        if (mOldWidth != getMeasuredWidth() || mOldHeight != getMeasuredHeight()) {
+        if (Math.abs(mOldWidth - getMeasuredWidth()) > 1 || Math.abs(mOldHeight - getMeasuredHeight()) > 1) {
             onSizeChanged();
         }
     }
