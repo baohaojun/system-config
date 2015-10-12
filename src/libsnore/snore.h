@@ -1,6 +1,6 @@
 /*
     SnoreNotify is a Notification Framework based on Qt
-    Copyright (C) 2013-2015  Patrick von Reth <vonreth@kde.org>
+    Copyright (C) 2013-2015  Hannah von Reth <vonreth@kde.org>
 
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -39,7 +39,7 @@
  * LIBSNORE_LOGFILE                 |   Use with LIBSNORE_LOG_TO_FILE, sets the file to log to
  *
  *
- * @author Patrick von Reth \<vonreth at kde.org\>
+ * @author Hannah von Reth \<vonreth at kde.org\>
  */
 
 namespace Snore
@@ -49,7 +49,7 @@ class SnoreCorePrivate;
 /**
  *  SnoreCore is used to manage and emit Notifications
  *
- * @author Patrick von Reth \<vonreth at kde.org\>
+ * @author Hannah von Reth \<vonreth at kde.org\>
  */
 
 class SNORE_EXPORT SnoreCore : public QObject

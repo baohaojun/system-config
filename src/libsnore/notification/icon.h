@@ -1,6 +1,6 @@
 /*
     SnoreNotify is a Notification Framework based on Qt
-    Copyright (C) 2013-2014  Patrick von Reth <vonreth@kde.org>
+    Copyright (C) 2013-2015  Hannah von Reth <vonreth@kde.org>
 
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -29,7 +29,7 @@ namespace Snore
 
 /**
  * Icon is a convnience wrapper for QIcon.
- * @author Patrick von Reth \<vonreth at kde.org\>
+ * @author Hannah von Reth \<vonreth at kde.org\>
  */
 class SNORE_EXPORT Icon : public QIcon
 {

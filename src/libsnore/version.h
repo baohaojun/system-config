@@ -12,7 +12,7 @@ namespace Snore
 
 /**
  * Version contains relevant version informations.
- * @author Patrick von Reth \<vonreth at kde.org\>
+ * @author Hannah von Reth \<vonreth at kde.org\>
  */
 class SNORE_EXPORT Version
 {

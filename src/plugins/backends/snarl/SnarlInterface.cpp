@@ -33,7 +33,7 @@
 /// <VersionHistory>
 ///  2011-07-31 : General update to match VB6 SVN rev. 232
 ///             : Added AppFlags and MessagePriority enums.
-///  2011-07-12 : MingW64 fixes by Patrick von Reth
+///  2011-07-12 : MingW64 fixes by Hannah von Reth
 ///  2011-07-07 : Some changes to compile under VS2008
 ///                 - Changed vector iterators to begin/end instead of cbegin/cend
 ///                 - Removed const in PairType

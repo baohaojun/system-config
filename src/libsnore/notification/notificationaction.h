@@ -1,6 +1,6 @@
 /*
     SnoreNotify is a Notification Framework based on Qt
-    Copyright (C) 2014  Patrick von Reth <vonreth@kde.org>
+    Copyright (C) 2014-2015  Hannah von Reth <vonreth@kde.org>
 
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -31,7 +31,7 @@ namespace  Snore
  * Some notification systems don't support actions but will report one if the notification was clicked,
  * in this case an invalid Action will be emitted.
  * @see isValid
- * @author Patrick von Reth \<vonreth at kde.org\>
+ * @author Hannah von Reth \<vonreth at kde.org\>
  */
 
 class SNORE_EXPORT Action

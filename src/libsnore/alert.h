@@ -1,6 +1,6 @@
 /*
     SnoreNotify is a Notification Framework based on Qt
-    Copyright (C) 2014  Patrick von Reth <vonreth@kde.org>
+    Copyright (C) 2014-2015  Hannah von Reth <vonreth@kde.org>
 
     SnoreNotify is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -33,7 +33,7 @@ class AlertData;
  *  Alert contains all relevant data to manage different alerts registred with the notification backend.
  *  Application uses a shared datamodel, its content is never copied and automatically released.
  *
- * @author Patrick von Reth \<vonreth at kde.org\>
+ * @author Hannah von Reth \<vonreth at kde.org\>
  */
 
 class SNORE_EXPORT Alert
