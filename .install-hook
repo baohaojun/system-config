@@ -1,0 +1,6 @@
+(
+    cp ./bin/AndroidPinyinIME-release.apk ~/src/github/T1Wrench/release/WrenchIME.apk
+    cd ~/src/github/T1Wrench/release/
+    md5sum WrenchIME.apk > WrenchIME.apk.md5
+    adb push WrenchIME.apk.md5 /sdcard/
+)

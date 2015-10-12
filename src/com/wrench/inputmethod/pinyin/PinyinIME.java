@@ -47,6 +47,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import android.content.ClipboardManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -236,6 +237,18 @@ public class PinyinIME extends InputMethodService {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (processKey(event, 0 != event.getRepeatCount())) return true;
+
+        if (event.getKeyCode() == KeyEvent.KEYCODE_SCROLL_LOCK) {
+	    try {
+		ClipboardManager mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+		String str = mClipboard.getPrimaryClip().getItemAt(0).getText().toString();
+		InputConnection ic = getCurrentInputConnection();
+		ic.commitText(str, 1);
+                return true;
+	    } catch (Exception e) {
+	    }
+        }
+
         return super.onKeyDown(keyCode, event);
     }
 
@@ -1079,6 +1092,7 @@ public class PinyinIME extends InputMethodService {
 
         if (null != mCandidatesContainer && mCandidatesContainer.isShown()) {
             showCandidateWindow(false);
+            setCandidatesViewShown(false);
         }
     }
 
