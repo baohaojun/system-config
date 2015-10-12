@@ -174,6 +174,15 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
 
 void T1WrenchMainWindow::onSelectArgs(const QStringList& args)
 {
+    if (args.size() == 1) {
+        if (yes_or_no_p(args[0]) == "yes") {
+            mLuaThread->on_argSelected(args[0]);
+        } else {
+            mLuaThread->on_argSelected("");
+        }
+        return;
+    }
+
     QString prompt = args[0];
     QStringList argsCopy = args;
     argsCopy.pop_front();

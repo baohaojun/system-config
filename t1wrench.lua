@@ -24,6 +24,7 @@ local wait_input_target, wait_top_activity, wait_top_activity_match
 local start_weibo_share
 local t1_eval, log, share_pics_to_app
 local picture_to_weibo_comment
+local check_scroll_lock
 
 -- variables
 local where_is_dial_key
@@ -443,6 +444,30 @@ local function sleep(time)
    adb_event(("sleep %s"):format(time))
 end
 
+check_scroll_lock = function()
+   if using_scroll_lock then
+      return
+   end
+
+   local input_method, ime_height, ime_connected, current_input_method
+   local function using_wrench_ime()
+      input_method, ime_height, ime_connected, current_input_method = adb_get_input_window_dump()
+      return current_input_method == 'com.wrench.inputmethod.pinyin'
+   end
+
+   while not using_wrench_ime() do
+      if select_args then
+         local prompt_str = ("您的手机系统及当前输入法：%s不支持小扳手，必须使用小扳手输入法才能正常输入，请确保已安装并设置小扳手输入法为当前手机输入法。"):format(current_input_method)
+         if select_args{prompt_str} == "" then
+            error("您取消了本次操作，请在手机上配置好小扳手输入法后再继续使用小扳手")
+         end
+      else
+         debug("您的手机系统及当前输入法：%s不支持小扳手，必须使用小扳手输入法才能正常输入，请确保已安装并设置小扳手输入法为当前手机输入法", current_input_method)
+         sleep(1)
+      end
+   end
+end
+
 local function weibo_text_share(window)
    local repost = '?'
    if window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
@@ -458,18 +483,8 @@ local function weibo_text_share(window)
    if repost:match('并') then
       adb_event("sleep .1 adb-tap 57 1704")
    end
-   if using_scroll_lock then
-      adb_event{'key', 'scroll_lock', 991, 166}
-   elseif using_smartisan_os then
-      adb_event("adb-tap 24 308 adb-key SPACE adb-long-press-800 17 294 adb-tap 545 191 adb-tap 991 166")
-   elseif using_xiaomi_os then
-      adb_event("adb-tap-2 24 308 sleep .1 adb-tap 77 179 adb-tap 991 166")
-   elseif using_oppo_os then
-      adb_event("adb-long-press-800 34 312 adb-tap 72 149 adb-tap 991 166")
-   else
-      adb_event("adb-key space adb-long-press-800 17 294 adb-tap-2 991 166")
-   end
-
+   check_scroll_lock()
+   adb_event{'key', 'scroll_lock', 991, 166}
 end
 
 start_weibo_share = function(text)
@@ -525,8 +540,8 @@ wait_input_target = function(activity)
          local adb_window_dump = split("\n", adb_pipe("dumpsys window"))
          for x = 1, #adb_window_dump do
             if adb_window_dump[x]:match("mInputMethodTarget.*"..activity) then
-               local input_method, ime_height, dump = adb_get_input_window_dump()
-               if not dump:match("mServedInputConnection=null") then
+               local input_method, ime_height, ime_connected = adb_get_input_window_dump()
+               if ime_connected then
                   return adb_window_dump[x]
                end
             end
@@ -607,91 +622,23 @@ local function weixin_text_share(window, text)
    if text then
       text = text:gsub("\n", "​\n")
    end
-   if using_scroll_lock then
-      debug("doing weixin text share")
-      adb_event("adb-key scroll_lock sleep .2 adb-tap 961 171")
-   elseif using_smartisan_os then
-      adb_event(
-         [[
-               adb-key SPACE
-               adb-tap
-               adb-tap 117 283 adb-tap 117 283 adb-tap 325 170 adb-tap 860 155 adb-tap 961 171
-      ]])
-   elseif using_xiaomi_os then
-      adb_event("adb-long-press-800 422 270 adb-tap 147 213 adb-tap 1007 134")
-   elseif using_oppo_os then
-      adb_event("adb-tap 87 312 adb-tap 92 156 adb-tap 947 132")
-   else
-      adb_event("adb-key space adb-long-press-800 111 369 adb-tap 97 265 adb-tap 991 166")
-   end
+   check_scroll_lock()
+   adb_event("adb-key scroll_lock sleep .2 adb-tap 961 171")
 end
 
 local function t1_sms(window)
-   if using_scroll_lock then
-      adb_event{182, 1079, 'key', 'scroll_lock', 864, 921}
-   else
-      local input_method, ime_height = adb_get_input_window_dump()
-      if ime_height == 0 then
-         adb_event("adb-tap 182 1079 sleep .8")
-      end
-
-      local y_double_click = 928
-      local y_paste = 811
-      local y_send = y_double_click
-
-      adb_event(
-         ([[
-                  adb-long-press-800 522 %d
-                  adb-tap 149 %d
-                  adb-tap 919 %d
-         ]]):format(y_double_click, y_paste, y_send)
-      )
-   end
+   check_scroll_lock()
+   adb_event{182, 1079, 'key', 'scroll_lock', 864, 921}
 end
 
 local function t1_google_plus(window)
-   if using_scroll_lock then
-      adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
-   else
-      adb_event(
-         [[
-               adb-tap 233 503
-               sleep .5
-               adb-tap 571 1821
-               adb-tap 571 1821
-
-      ]])
-
-      local input_method, ime_height = adb_get_input_window_dump()
-      if ime_height ~= 0 then
-         adb_event("key back")
-      end
-      adb_event(
-         [[
-               adb-tap-2 105 464
-               adb-tap 286 259
-               adb-tap 875 255
-               adb-tap 922 1819
-         ]]
-      )
-   end
+   check_scroll_lock()
+   adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
 end
 
 local function t1_smartisan_notes(window)
-   if using_scroll_lock then
-      adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
-   else
-      adb_event(
-         [[
-                            adb-long-press 428 412
-                            adb-tap 80 271
-                            adb-tap 940 140
-                            adb-tap 933 117
-                            adb-tap 323 1272
-                            adb-tap 919 123
-         ]]
-      )
-   end
+   check_scroll_lock()
+   adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
 end
 
 local function t1_mail(window)
@@ -699,24 +646,8 @@ local function t1_mail(window)
       adb_tap_mid_bot()
       sleep(2)
    end
-   if using_scroll_lock then
-      adb_event{'key', 'scroll_lock'}
-   else
-
-      local input_method, ime_height = adb_get_input_window_dump()
-      local virtual_key_ratio = app_height / init_height
-      local ime_height_diff = ime_height / (init_height / default_height) - ime_height_ref
-      local y_start_scroll = 1022 / virtual_key_ratio - ime_height_diff
-
-      adb_event(
-         ([[
-               adb-swipe-300 586 %d 586 68
-               adb-tap 560 1840
-               adb-tap-2 299 299
-               adb-tap 505 192
-         ]]):format(y_start_scroll)
-      )
-   end
+   check_scroll_lock()
+   adb_event{'key', 'scroll_lock'}
    if window == 'com.google.android.gm/com.google.android.gm.ComposeActivityGmail' then
       adb_event{806, 178}
    else
@@ -725,11 +656,8 @@ local function t1_mail(window)
 end
 
 local function t1_paste()
-   if using_scroll_lock then
-      adb_event{'key', 'scroll_lock'}
-   else
-      return "无法在此窗口内贴粘"
-   end
+   check_scroll_lock()
+   adb_event{'key', 'scroll_lock'}
 end
 
 local function last(func)
@@ -795,7 +723,9 @@ adb_get_input_window_dump = function()
          end
       end
    end
-   return input_method_active, ime_height, dump_str
+
+   local ime_connected = not dump_str:match("mServedInputConnection=null")
+   return input_method_active, ime_height, ime_connected, current_input_method
 end
 
 local function adb_input_method_is_null()
@@ -873,6 +803,34 @@ putclip = function(text)
    adb_start_service_and_wait_file_gone('com.bhj.setclip/.PutClipService', '/sdcard/putclip.txt')
 end
 
+local check_apk_installed = function(apk, md5)
+   local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
+   md5_on_phone = md5_on_phone:gsub("\n", "")
+   local md5file = io.open(md5)
+   local md5_on_PC = md5file:read("*a")
+   md5_on_PC = md5_on_PC:gsub("\n", "")
+   io.close(md5file)
+   debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
+   if md5_on_phone ~= md5_on_PC then
+      log("需要在手机上安装小扳手辅助应用" .. apk .. "，请确保手机允许安装未知来源的apk。")
+      local install_output = io.popen(the_true_adb .. " install -r " .. apk):read("*a")
+      if install_output:match("\nSuccess\r?\n") then
+         system(("%s push %s /sdcard/%s"):format(the_true_adb, md5, md5))
+         local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
+         md5_on_phone = md5_on_phone:gsub("\n", "")
+         if md5_on_phone ~= md5_on_PC then
+            error("Can't mark the " .. apk .. " as been installed: \n'" .. md5_on_phone .. "'\n : \n'" .. md5_on_PC .. "'")
+         else
+            log("小扳手辅助应用" .. apk .. "安装成功")
+         end
+      else
+         if not os.execute("test -e .quiet-apk-install-failure") then
+            error("Install " .. apk .. " failed, output is " .. install_output)
+         end
+      end
+   end
+end
+
 t1_config = function()
    -- install the apk
    system(the_true_adb .. " devices")
@@ -917,31 +875,7 @@ t1_config = function()
          error("No phone found, can't set up, uname is: " .. uname)
       end
    end
-   local setclip_phone_md5 = adb_pipe("cat /sdcard/t1wrench-setclip.md5")
-   setclip_phone_md5 = setclip_phone_md5:gsub("\n", "")
-   local md5file = io.open("setclip.apk.md5")
-   local setclip_local_md5 = md5file:read("*a")
-   setclip_local_md5 = setclip_local_md5:gsub("\n", "")
-   io.close(md5file)
-   debugging("on phone: %s, local: %s", setclip_phone_md5, setclip_local_md5)
-   if setclip_phone_md5 ~= setclip_local_md5 then
-      log("需要在手机上安装小扳手辅助apk，请确保手机允许安装未知来源的apk。")
-      local install_output = io.popen(the_true_adb .. " install -r SetClip.apk"):read("*a")
-      if install_output:match("\nSuccess\r?\n") then
-         system(the_true_adb .. " push setclip.apk.md5 /sdcard/t1wrench-setclip.md5")
-         local setclip_phone_md5 = adb_pipe("cat /sdcard/t1wrench-setclip.md5")
-         setclip_phone_md5 = setclip_phone_md5:gsub("\n", "")
-         if setclip_phone_md5 ~= setclip_local_md5 then
-            error("Can't mark the setclip.apk as been installed: \n'" .. setclip_phone_md5 .. "'\n : \n'" .. setclip_local_md5 .. "'")
-         else
-            log("小扳手辅助apk安装成功")
-         end
-      else
-         if not os.execute("test -e .quiet-apk-install-failure") then
-            error("Install setclip.apk failed, output is " .. install_output)
-         end
-      end
-   end
+   check_apk_installed("Setclip.apk", "Setclip.apk.md5")
 
    local weixin_phone_file, _, errno = io.open("weixin-phones.txt", "rb")
    if not vcf_file then
@@ -994,6 +928,7 @@ t1_config = function()
       using_scroll_lock = true
    else
       using_scroll_lock = false
+      check_apk_installed("WrenchIME.apk", "WrenchIME.apk.md5")
       debugging("pastetool is false")
    end
    return ("brand is %s, paste is %s"):format(brand, using_scroll_lock)
@@ -1108,7 +1043,7 @@ t1_post = function(text) -- use weixin
       return
    else
       local add, post_button = '', '958 1820'
-      local input_method, ime_height, dump = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
+      local input_method, ime_height, ime_connected = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
       debug("input_method is %s, ime_xy is %s", input_method, ime_height)
       -- debugging("ime_xy is %s", ime_xy)
 
@@ -1123,7 +1058,7 @@ t1_post = function(text) -- use weixin
             post_button = ('984 %d'):format(1920 - ime_height - 100)
          end
       else
-         if dump:match("mServedInputConnection=null") then
+         if not ime_connected then
             add = '560 1840 sleep .2 key back sleep .2'
          end
       end
@@ -1134,53 +1069,8 @@ t1_post = function(text) -- use weixin
 
       debugging("add is %s", add)
 
-      if using_scroll_lock then
-         adb_event(string.format("%s key scroll_lock %s", add, post_button))
-      else
-         if not input_method then
-            adb_event(
-               [[
-                     adb-tap 560 1840
-                     sleep .1
-               ]]
-            )
-         end
-
-         local input_method, ime_height = adb_get_input_window_dump()
-         local virtual_key_ratio = app_height / init_height
-         local ime_height_diff = ime_height / (init_height / default_height) - ime_height_ref
-         local y_double_click = 951 / virtual_key_ratio - ime_height_diff
-         local y_select_all = 862 / virtual_key_ratio - ime_height_diff
-         local y_paste = y_select_all
-         local y_send = (945 - ((default_height - init_height) / 70 + (init_height - app_height - 44) / 22)) / virtual_key_ratio - ime_height_diff
-
-         if using_smartisan_os then
-            adb_event(
-               ([[
-                adb-tap 560 1840 adb-tap-2 560 %d adb-tap 296 %d adb-tap 888 %d adb-tap 976 %d
-            ]]):format(y_double_click, y_select_all, y_paste, y_send)
-            )
-         elseif using_xiaomi_os then
-            adb_event(
-               ([[
-                        adb-tap 560 1840 adb-long-press-800 560 %d adb-tap 310 %d adb-tap 501 %d adb-tap 976 %d
-               ]]):format(y_double_click, y_select_all, y_paste, y_send)
-            )
-         elseif using_oppo_os then
-            adb_event(
-               ([[
-                        adb-tap 560 1840 adb-long-press-800 560 %d adb-tap 263 %d sleep .1 adb-tap 452 %d adb-tap 976 %d
-               ]]):format(y_double_click, y_select_all, y_paste, y_send)
-            )
-         else
-            debugging("not using smartisan os")
-            adb_event(
-               ([[
-                        adb-tap 560 1824 adb-long-press-800 353 %d adb-tap 220 %d adb-tap 995 %d
-               ]]):format(y_double_click, y_paste, y_send)
-            )
-         end
-      end
+      check_scroll_lock()
+      adb_event(string.format("%s key scroll_lock %s", add, post_button))
    end
    return "text sent"
 end
@@ -1285,7 +1175,7 @@ picture_to_weibo_comment = function(pics, ...)
 
       if i == 1 then
          wait_input_target(weiboShareActivity)
-         local input_method, ime_height, dump = adb_get_input_window_dump()
+         local input_method, ime_height = adb_get_input_window_dump()
          if ime_height ~= 0 then
             adb_event("key back sleep .5")
          end
