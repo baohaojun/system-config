@@ -41,8 +41,6 @@ local default_width, default_height = 1080, 1920
 local init_width, init_height = 1080, 1920
 local app_width, app_height = 1080,1920
 local width_ratio, height_ratio = app_width / default_width,  app_height / default_height
-local using_smartisan_os = true
-local using_xiaomi_os = false
 local using_oppo_os = false
 local brand = "smartisan"
 local model = "T1"
@@ -388,6 +386,7 @@ local function adb_event(events)
          local event = events[i+1]:upper()
          command_str = command_str .. ('input keyevent %s;'):format(event)
          if event == "SCROLL_LOCK" then
+            check_scroll_lock()
             command_str = command_str .. "sleep .1;"
          end
          i = i + 2
@@ -483,7 +482,6 @@ local function weibo_text_share(window)
    if repost:match('并') then
       adb_event("sleep .1 adb-tap 57 1704")
    end
-   check_scroll_lock()
    adb_event{'key', 'scroll_lock', 991, 166}
 end
 
@@ -622,22 +620,18 @@ local function weixin_text_share(window, text)
    if text then
       text = text:gsub("\n", "​\n")
    end
-   check_scroll_lock()
    adb_event("adb-key scroll_lock sleep .2 adb-tap 961 171")
 end
 
 local function t1_sms(window)
-   check_scroll_lock()
    adb_event{182, 1079, 'key', 'scroll_lock', 864, 921}
 end
 
 local function t1_google_plus(window)
-   check_scroll_lock()
    adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
 end
 
 local function t1_smartisan_notes(window)
-   check_scroll_lock()
    adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
 end
 
@@ -646,7 +640,6 @@ local function t1_mail(window)
       adb_tap_mid_bot()
       sleep(2)
    end
-   check_scroll_lock()
    adb_event{'key', 'scroll_lock'}
    if window == 'com.google.android.gm/com.google.android.gm.ComposeActivityGmail' then
       adb_event{806, 178}
@@ -656,7 +649,6 @@ local function t1_mail(window)
 end
 
 local function t1_paste()
-   check_scroll_lock()
    adb_event{'key', 'scroll_lock'}
 end
 
@@ -803,6 +795,30 @@ putclip = function(text)
    adb_start_service_and_wait_file_gone('com.bhj.setclip/.PutClipService', '/sdcard/putclip.txt')
 end
 
+local check_file_pushed = function(file, md5)
+   local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
+   md5_on_phone = md5_on_phone:gsub("\n", "")
+   local md5file = io.open(md5)
+   local md5_on_PC = md5file:read("*a")
+   md5_on_PC = md5_on_PC:gsub("\n", "")
+   io.close(md5file)
+   debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
+   if md5_on_phone ~= md5_on_PC then
+      log("需要把" .. file .. "上传到手机。")
+      system(("%s push %s /data/data/com.android.shell/%s.bak"):format(the_true_adb, file, file))
+      system(("%s shell mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s"):format(the_true_adb, file, file))
+
+      system(("%s push %s /sdcard/%s"):format(the_true_adb, md5, md5))
+      local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
+      md5_on_phone = md5_on_phone:gsub("\n", "")
+      if md5_on_phone ~= md5_on_PC then
+         error("Can't mark the " .. file .. " as been installed: \n'" .. md5_on_phone .. "'\n : \n'" .. md5_on_PC .. "'")
+      else
+         log("小扳手辅助文件" .. file .. "上传成功")
+      end
+   end
+end
+
 local check_apk_installed = function(apk, md5)
    local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
    md5_on_phone = md5_on_phone:gsub("\n", "")
@@ -876,6 +892,7 @@ t1_config = function()
       end
    end
    check_apk_installed("Setclip.apk", "Setclip.apk.md5")
+   check_file_pushed("am.jar", "am.jar.md5")
 
    local weixin_phone_file, _, errno = io.open("weixin-phones.txt", "rb")
    if not vcf_file then
@@ -901,19 +918,7 @@ t1_config = function()
    app_height = app_width:match('x(%d+)')
    app_width = app_width:match('(%d+)x')
    width_ratio, height_ratio = app_width / default_width,  app_height / default_height
-
-
-   if brand:match("smartisan") then
-      using_smartisan_os = true
-   else
-      using_smartisan_os = false
-   end
-
-   if brand:match("Xiaomi") then
-      using_xiaomi_os = true
-   elseif brand:match("OPPO") then
-      using_oppo_os = true
-   end
+   log("width_ratio is " .. width_ratio .. ", height_ratio is " .. height_ratio)
 
    local id = adb_pipe("id")
    if id:match("uid=0") then
@@ -1069,7 +1074,6 @@ t1_post = function(text) -- use weixin
 
       debugging("add is %s", add)
 
-      check_scroll_lock()
       adb_event(string.format("%s key scroll_lock %s", add, post_button))
    end
    return "text sent"
@@ -1447,11 +1451,12 @@ local function t1_follow_me()
    -- http://weibo.com/u/1809968333 (beagrep)
    adb_am("am start sinaweibo://userinfo?uid=1611427581")
    wait_top_activity_match("com.sina.weibo/com.sina.weibo.page.")
-   adb_event("sleep .5 adb-tap 187 1884")
+   adb_event("sleep 1 adb-tap 187 1884")
    log("T1 follow me")
    for n = 1, 10 do
       sleep(.2)
       if adb_top_window() == "com.sina.weibo" then
+         sleep(.5)
          adb_event("key back")
          break
       end
@@ -1685,22 +1690,22 @@ local function t1_spread_it()
    wait_top_activity_match("com.sina.weibo/com.sina.weibo.page.")
 
    for i = 1, 10 do
-      sleep(.2)
-      adb_event("adb-tap 414 986")
+      sleep((11 - i) * .06)
+      if adb_top_window() == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
+         break
+      end
+      adb_event("adb-tap 584 1087")
       if adb_top_window() == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
          break
       end
    end
-   adb_event("adb-tap 911 1863 adb-tap 527 1911")
+   adb_event("adb-tap 911 1863")
+   sleep(.2)
+   adb_event("sleep .2 adb-tap 527 1911")
    wait_input_target("com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity")
    adb_event("adb-tap 99 932")
-   if using_smartisan_os then
-      t1_post("#小扳手真好用# 💑💓💕💖💗💘💙💚💛💜💝💞💟😍😻♥❤")
-   elseif brand:match("Xiaomi") then
-      t1_post("我在小米手机上用Smartisan T1小扳手，赞！下一台手机考虑换Smartisan T1吧😼")
-   else
-     t1_post(("我在%s的%s手机上用Smartisan T1小扳手，赞！下一台手机考虑换Smartisan T1吧😼"):format(brand, model))
-   end
+   t1_post("#小扳手真好用# 💑💓💕💖💗💘💙💚💛💜💝💞💟😍😻♥❤")
+   adb_event("sleep .5 adb-key back sleep .5")
 end
 
 M = {}
