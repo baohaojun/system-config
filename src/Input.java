@@ -95,30 +95,40 @@ public class Input {
             }
         }
     }
-    public static void main(String[] args) {
-        mInput = new Input();
-        File t1OptimizeDir = new File("/data/data/com.android.shell/t1wrench");
-        t1OptimizeDir.mkdir();
+    private static void loadAm(String jarFile) throws Exception {
+        System.err.println("before classLoader");
+        DexClassLoader classLoader = new DexClassLoader(jarFile, "/data/data/com.android.shell/t1wrench/", null, mInput.getClass().getClassLoader());
+        System.err.println("after classLoader");
+        Class<?> amClass = classLoader.loadClass("com.android.commands.am.Am");
+        if (amClass != null) {
+            Constructor<?> amConstructor = amClass.getConstructor();
+            mAm = amConstructor.newInstance();
+            mAmRun = mAm.getClass().getMethod("run", String[].class);
+        }
+    }
 
+    private static void initAm() {
         if (mAm == null) {
-            String jarFile = "/system/framework/am.jar";
-            System.err.println("before classLoader");
-            DexClassLoader classLoader = new DexClassLoader(jarFile, "/data/data/com.android.shell/t1wrench/", null, mInput.getClass().getClassLoader());
-            System.err.println("after classLoader");
             try {
-                Class<?> amClass = classLoader.loadClass("com.android.commands.am.Am");
-                if (amClass != null) {
-                    Constructor<?> amConstructor = amClass.getConstructor();
-                    mAm = amConstructor.newInstance();
-                    mAmRun = mAm.getClass().getMethod("run", String[].class);
+                loadAm("/system/framework/am.jar");
+            } catch (ClassNotFoundException e) {
+                String jarFile = "/data/data/com.android.shell/am.jar";
+                try {
+                    loadAm(jarFile);
+                } catch (Throwable e2) {
+                    System.out.println("Error " + e2.getMessage());
+                    e2.printStackTrace();
                 }
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 System.out.println("Error " + e.getMessage());
                 e.printStackTrace();
             }
         }
+    }
 
+    public static void main(String[] args) {
+        mInput = new Input();
+        initAm();
         mInput.startServer();
     }
 
@@ -156,10 +166,12 @@ public class Input {
             mInput.run(args);
         } else if (args0.equals("am")) {
             try {
+                initAm();
                 mAmRun.invoke(mAm, (Object)args);
             } catch (Throwable e) {
                 System.out.println("Error " + e.getMessage());
                 e.printStackTrace();
+                mAm = null;
             }
         } else if (args0.equals("exit")) {
             return -1;
