@@ -108,7 +108,7 @@ void AdbStateThread::run()
             t.start();
             qSystem("the-true-adb shell sh /sdcard/setclip-apk.txt app_process /system/bin/ Input");
             if (t.elapsed() < 2000) {
-                QThread::msleep(30000);
+                getExecutionOutput("the-true-adb", args2);
             }
         } else {
             lastAdbState = "Offline";
