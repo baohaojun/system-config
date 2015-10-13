@@ -9,6 +9,7 @@ if yes-or-no-p "You can use root@$host without a password?"; then
     ssh root@$host echo hello
     ssh-tty root@$host 'adduser bhj;
                         adduser gfw;
+                        apt-get install sudo
                         usermod -a -G sudo bhj;
                         mkdir -p ~bhj/.ssh
                         mkdir -p ~gfw/.ssh
@@ -18,6 +19,7 @@ if yes-or-no-p "You can use root@$host without a password?"; then
                         chown gfw\. ~gfw/.ssh -R
                         echo bhj ALL=NOPASSWD: ALL | sudo tee /etc/sudoers.d/bhj;
                         sudo chmod 440 /etc/sudoers.d/bhj
+                        apt-get install rsync
                        '
     rsync ~/.ssh/id_rsa $host:.ssh/id_rsa
 else
@@ -25,11 +27,8 @@ else
     rsync ~/.ssh/id_rsa_nopass $host:.ssh/id_rsa
 fi
 
-
-
-ssh-exp $host "bash -c 'echo bhj ALL=NOPASSWD: ALL | sudo tee /etc/sudoers.d/bhj; sudo chmod 440 /etc/sudoers.d/bhj'"
 ssh-exp $host "sudo mkdir -p ~root/.ssh/; cat ~/.ssh/authorized_keys | sudo tee -a ~root/.ssh/authorized_keys"
-ssh-exp $host "mkdir -p ~/.config; touch ~/.config/system-config/no-texlive"
+ssh-exp $host "mkdir -p ~/.config/system-config/; touch ~/.config/system-config/no-texlive"
 
 if test "$NO_SYSTEM_CONFIG" = true; then
     true
