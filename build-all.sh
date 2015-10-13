@@ -72,8 +72,8 @@ git submodule foreach 'git clean -xfd'
     ./build-linux.sh
     touch ~/tmp/build-t1/build-ok
 )&
-
 (
+
     ssh bhj-mac rm $(up) -rf
     rm ~/tmp/build-t1-mac -rf
     mkdir ~/tmp/build-t1-mac -p
@@ -111,6 +111,7 @@ for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Co
             file=~/tmp/$dir.tgz
             tar czfv $file $dir --exclude-vcs
         else
+            rm -f $file
             zip -r $file $dir -x '*/.git/*'
         fi
         if test $smb = true; then
