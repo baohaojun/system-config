@@ -38,7 +38,8 @@ function make-release-tgz()
     command rsync -av -d release/ download/release/ t1wrench-release --exclude="*.obj" \
             --exclude="*.o" \
             --exclude="*.cpp" \
-            --exclude="*.moc"
+            --exclude="*.moc" \
+            --delete
 
     set -x
     command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git

@@ -13,7 +13,7 @@ if test $(uname) = Linux; then
         ./build-mac.sh"
 
     if test "$DOING_T1WRENCH_RELEASE"; then
-        rsync bhj-mac:$(up .)/T1Wrench.app ../T1Wrench-macos/ -av
+        rsync bhj-mac:$(up .)/T1Wrench.app ../T1Wrench-macos/ -av --delete
     fi
 else
     set -e
