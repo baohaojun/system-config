@@ -21,8 +21,8 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
             if test "$LOCALPORT" = def; then
                 portarg=
             fi
-
-            ssh ${REMOTEUSER:-$USER}@$REMOTEIP remote-putclip $(whoami)@$LOCALIP$portarg:$FILE
+            remote_port=${REMOTEPORT:-22}
+            ssh ${REMOTEUSER:-$USER}@$REMOTEIP -p $remote_port remote-putclip $(whoami)@$LOCALIP$portarg:$FILE
             exit 0
         fi
 
