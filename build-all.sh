@@ -33,6 +33,8 @@ if test ! "$shortVersion"; then
     die "No shortVersion defined"
 fi
 
+export T1_GIT_HASH=$(git log --pretty=%h -1)
+
 . .gitx
 
 if git st -s | grep . -q; then
@@ -41,7 +43,7 @@ if git st -s | grep . -q; then
 fi
 
 oldVersion=$(perl -ne 'print $1 if m!<string>Smartisan T1聊天小扳手\s*(.*)</string>!' t1wrenchmainwindow.ui)
-perl -npe 's!<string>Smartisan T1聊天小扳手.*</string>!<string>Smartisan T1聊天小扳手 $ENV{shortVersion}</string>!' -i t1wrenchmainwindow.ui
+perl -npe 's!<string>Smartisan T1聊天小扳手.*</string>!<string>Smartisan T1聊天小扳手 $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i t1wrenchmainwindow.ui
 
 if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
     if test $(compare-version "$oldVersion" "$shortVersion") = "=" &&
