@@ -21,14 +21,23 @@ xmlstarlet sel -B -t -m //default \
     -o '$default_remote = "'  -v @remote -o '";' -n \
     -o '$default_revision = "' -m //default -v @revision -o '";' -n $1
 
+name=name
+path=path
+pathSuffix=
+if test -d ../platform/build.git; then
+    name=path
+    path=name
+    pathSuffix=.git
+fi
+
 for x in "$@"; do
     if test -e $x; then
         xmlstarlet sel -B -t -m //project \
-            -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"project"} = "' -v @name  -o '";' -n \
-            -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"path"} = ("' -v @path  -o '" or "' -v @name -o '");' -n \
-            -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"branch"} = ("' -v @revision  -o '" or $default_revision);' -n \
-            -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"upstream"} = ("' -v @upstream  -o '" or "' -v @revision -o '" or $default_revision);' -n \
-            -o '$repo_info{$android_path . ("/' -v @path -o '" or "/' -v @name -o '")}{"remote"} = ("' -v @remote  -o '" or $default_remote);' -n \
+            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"project"} = "' -v @name  -o '";' -n \
+            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"path"} = ("' -v @$path$pathSuffix  -o '" or "' -v @name -o '");' -n \
+            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"branch"} = ("' -v @revision  -o '" or $default_revision);' -n \
+            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"upstream"} = ("' -v @upstream  -o '" or "' -v @revision -o '" or $default_revision);' -n \
+            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"remote"} = ("' -v @remote  -o '" or $default_remote);' -n \
             $x
     fi
 done | perl -npe 's,/+,/,g; s,/",",g'
