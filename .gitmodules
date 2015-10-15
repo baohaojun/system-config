@@ -4,3 +4,6 @@
 [submodule "qt-solutions"]
 	path = qt-solutions
 	url = home:repos/qt-solutions
+[submodule "adb-client"]
+	path = adb-client
+	url = https://github.com/baohaojun/libadb-client.qt
