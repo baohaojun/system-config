@@ -21,8 +21,7 @@ local t1_find_weixin_contact
 local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity, wait_top_activity_match
-local start_weibo_share
-local t1_eval, log, share_pics_to_app
+local t1_eval, log, share_pics_to_app, share_text_to_app
 local picture_to_weibo_comment
 local check_scroll_lock
 
@@ -485,21 +484,10 @@ local function weibo_text_share(window)
    adb_event{'key', 'scroll_lock', 991, 166}
 end
 
-start_weibo_share = function(text)
-   adb_am{"am", "start", "-n", weiboShareActivity}
-   if text then putclip(text) else sleep(1) end
-   wait_top_activity(weiboShareActivity)
-   adb_event("adb-tap 289 535")
-   wait_input_target(weiboShareActivity)
-   local input_method, ime_height = adb_get_input_window_dump()
-   if ime_height ~= 0 then
-      adb_event("key back")
-   end
-end
-
 local function t1_share_to_weibo(text)
-   start_weibo_share(text)
-   t1_post()
+   share_text_to_app("com.sina.weibo", ".composerinde.ComposerDispatchActivity", text)
+   wait_input_target(weiboShareActivity)
+   t1_send_action()
 end
 
 wait_top_activity = function(activity)
@@ -688,6 +676,9 @@ adb_get_input_window_dump = function()
          if dump[i]:match("package=") then
             looking_at_input_method_package = dump[i]:gsub(".*package=", "")
             looking_at_input_method_package = looking_at_input_method_package:gsub("%s.*", "")
+            if current_input_method == looking_at_input_method_package then -- only look at the last section
+               input_method_lines = {}
+            end
          end
 
          if not current_input_method or current_input_method == looking_at_input_method_package then
@@ -1106,6 +1097,21 @@ local function upload_pics(...)
       adb_am{"am", "startservice", "--user", "0", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
    end
    return targets
+end
+
+share_text_to_app = function(pkg, cls, text)
+   push_text(text)
+
+   if cls:match("^%.") then
+       cls = pkg .. cls
+   end
+
+   adb_am{"am", "startservice", "--user", "0",
+          "-n", "com.bhj.setclip/.PutClipService",
+          "--ei", "share-text", "1",
+          "--es", "package", pkg,
+          "--es", "class", cls
+   }
 end
 
 share_pics_to_app = function(pkg, cls, pics, ...)
