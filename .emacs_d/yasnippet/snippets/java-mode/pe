@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: pe
+# key: pe
+# --
+System.err.println(String.format("%s:%d: $2", "`(buffer-name)`", `(line-number-at-pos)`$3));$0

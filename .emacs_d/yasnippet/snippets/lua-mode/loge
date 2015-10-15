@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: loge
+# key: loge
+# --
+log("@`(line-number-at-pos)`: $3")

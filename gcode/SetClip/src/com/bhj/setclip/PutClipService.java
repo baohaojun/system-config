@@ -132,6 +132,21 @@ public class PutClipService extends Service {
         }
     }
 
+    private String readAndDelete(String fileName) throws java.io.FileNotFoundException, java.io.IOException {
+        File file = new File(sdcard, fileName);
+        FileReader f = new FileReader(file);
+        char[] buffer = new char[1024 * 1024];
+        int n = f.read(buffer);
+        f.close();
+        file.delete();
+        if (n >= 0) {
+            String str = new String(buffer, 0, n);
+            return str;
+        } else {
+            return "";
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent,  int flags,  int startId)  {
         try {
@@ -231,6 +246,18 @@ public class PutClipService extends Service {
                 shareIntent.setType("image/*");
                 shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(shareIntent);
+            } else if (intent.getIntExtra("share-text", 0) == 1) {
+                String pkg = intent.getStringExtra("package");
+                String cls = intent.getStringExtra("class");
+
+                String text = readAndDelete("putclip.txt");
+                Intent shareIntent = new Intent();
+                shareIntent.setClassName(pkg, cls);
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(shareIntent);
             } else if (intent.getIntExtra("get-last-note-pic", 0) == 1) {
                 final File notesPicDir = new File(sdcard, "smartisan/notes/");
                 final Pattern pngPattern = Pattern.compile(".*\\.png$");
@@ -257,12 +284,7 @@ public class PutClipService extends Service {
                     writeFile(newestFile.toString());
                 }
             } else if (intent.getIntExtra("share-to-note", 0) == 1) {
-                FileReader f = new FileReader(new File(sdcard, "putclip.txt"));
-                char[] buffer = new char[1024 * 1024];
-                int n = f.read(buffer);
-                String str = new String(buffer, 0, n);
-                File putclip = new File(sdcard, "putclip.txt");
-                putclip.delete();
+                String str = readAndDelete("putclip.txt");
 
                 Intent notesIntent = new Intent();
                 notesIntent.setClassName("com.smartisanos.notes", "com.smartisanos.notes.NotesActivity");
@@ -335,13 +357,8 @@ public class PutClipService extends Service {
                     dataCursor.close();
                 }
             } else {
-                FileReader f = new FileReader(new File(sdcard, "putclip.txt"));
-                char[] buffer = new char[1024 * 1024];
-                int n = f.read(buffer);
-                myClipStr = new String(buffer, 0, n);
+                myClipStr = readAndDelete("putclip.txt");
                 mClipboard.setPrimaryClip(ClipData.newPlainText("Styled Text", myClipStr));
-                File putclip = new File(sdcard, "putclip.txt");
-                putclip.delete();
             }
         } catch (Exception e) {
             Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 77), e);

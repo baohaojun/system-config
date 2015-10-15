@@ -2,11 +2,17 @@
 set -x
 set -e
 
+(
+    cd jni
+    ndk-build
+)
+
 # PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
 (
     for x in $(seq 1 60); do
         sleep 1;
-        if test "$(adb-top-activity)" = 警告; then
+        adb_top_activity=$(adb-top-activity)
+        if test "$adb_top_activity" =  警告 -o "$adb_top_activity" = "Warning"; then
             adb-tap 747 1186
             break
         fi

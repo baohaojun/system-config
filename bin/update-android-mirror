@@ -4,20 +4,23 @@ set -ex
 . ~/system-config/.bashrc
 . ~/system-config/bin/set-ssh-agent
 
-(
-    cd ~/src/android-mirror/linux-2.6.git || exit 0
-    git fetch https://github.com/mirrors/linux
-)
 
 (
     cd ~/src/android-mirror/ || exit 0
-    (
-        repo init -u s:qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml
-        repo sync -j8 -f -m icesky-rom.xml
-        repo sync -j8 -f -m sfo-rom.xml
-        cd ~/src/android-mirror/kernel/linux.git
-        git fetch linus
-    ) || true
+    if ! is-tty-io; then
+        (
+            cd ~/src/android-mirror/kernel/msm.git || exit 0
+            git fetch https://github.com/mirrors/linux
+        )
+
+        (
+            repo init -u s:qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml
+            repo sync -j8 -f -m icesky-rom.xml
+            repo sync -j8 -f -m sfo-rom.xml
+            cd ~/src/android-mirror/kernel/linux.git
+            git fetch linus
+        ) || true
+    fi
 
     export http_proxy=http://localhost:8888
     export https_proxy=http://localhost:8888

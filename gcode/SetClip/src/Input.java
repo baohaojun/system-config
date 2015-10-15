@@ -31,8 +31,11 @@ import java.util.Map;
 
 public class Input {
     private native boolean checkPerm(FileDescriptor fd);
+    private native static int getUid();
+    private static String optCacheDirName;
     static {
         System.loadLibrary("t1wrench-jni");
+        optCacheDirName = "/data/data/com.android.shell/t1wrench." + String.format("%d", getUid());
     }
 
     private static final String TAG = "Input";
@@ -97,7 +100,7 @@ public class Input {
     }
     private static void loadAm(String jarFile) throws Exception {
         System.err.println("before classLoader");
-        DexClassLoader classLoader = new DexClassLoader(jarFile, "/data/data/com.android.shell/t1wrench/", null, mInput.getClass().getClassLoader());
+        DexClassLoader classLoader = new DexClassLoader(jarFile, optCacheDirName, null, mInput.getClass().getClassLoader());
         System.err.println("after classLoader");
         Class<?> amClass = classLoader.loadClass("com.android.commands.am.Am");
         if (amClass != null) {
@@ -127,6 +130,9 @@ public class Input {
     }
 
     public static void main(String[] args) {
+        File t1OptimizeDir = new File(optCacheDirName);
+        t1OptimizeDir.mkdir();
+
         mInput = new Input();
         initAm();
         mInput.startServer();

@@ -64,6 +64,7 @@ fi
 
 function do_install() {
     if test -e .install-hook; then
+        echo doing install hook
         . .install-hook
     fi
     install_type=${1:-installd}

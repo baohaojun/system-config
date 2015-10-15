@@ -17,6 +17,7 @@
 #include <android/log.h>
 #include <stdio.h>
 #include "jni.h"
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
@@ -48,10 +49,17 @@ checkPerm(JNIEnv *env, jobject thiz, jobject fileDescriptor) {
     return false;
 }
 
+static jint
+getUid(JNIEnv *env, jclass clazz) {
+    jint uid = (jint)getuid();
+    return uid;
+}
+
 static const char *classPathName = "Input";
 
 static JNINativeMethod methods[] = {
   {"checkPerm", "(Ljava/io/FileDescriptor;)Z", (void*)checkPerm },
+  {"getUid", "()I", (void*)getUid},
 };
 
 /*

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) APK_FILE"
+fi
+
+tdir=~/tmp/apk-unzips/$(basename "$1")
+unzip "$1" -d $tdir
+cd $tdir
+axml2xml.pl AndroidManifest.xml > x.xml
+mv x.xml AndroidManifest.xml
+e AndroidManifest.xml
