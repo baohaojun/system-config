@@ -13,13 +13,14 @@ export DOING_T1WRENCH_RELEASE=true
 # generate-getopts ssmb r:ReleaseVersion
 ## end code-generator
 ## start generated code
-smb=true
+smb=false
 ReleaseVersion=
+OPTIND=1
 while getopts 'sr:' opt; do
     case "$opt" in
-        s)    smb=false;;
+        s)    smb=true;;
         r)    ReleaseVersion=$OPTARG;;
-        *)    echo Usage Error;;
+        *)    echo Usage Error; exit 2;;
     esac
 done
 shift $(($OPTIND - 1))
