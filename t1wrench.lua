@@ -54,6 +54,8 @@ local weixinLauncherActivity = "com.tencent.mm/com.tencent.mm.ui.LauncherUI"
 local weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI"
 local weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
 local weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
+local emailSmartisanActivity = "com.android.email/com.android.email.activity.ComposeActivityEmail"
+local oiFileChooseActivity = "org.openintents.filemanager/org.openintents.filemanager.IntentFilterActivity"
 local weiboCommentActivity = "com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity"
 local weiboForwardActivity = "com.sina.weibo/com.sina.weibo.composerinde.ForwardComposerActivity"
 local qqChatActivity = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity"
@@ -1031,7 +1033,7 @@ t1_post = function(text) -- use weixin
    elseif window == "com.android.email/com.android.mail.compose.ComposeActivity" or
       window == "com.android.email/com.android.email.activity.Welcome" or
       window == "com.android.email/com.android.email2.ui.MailActivityEmail" or
-   window == "com.android.email/com.android.email.activity.ComposeActivityEmail" then
+   window == emailSmartisanActivity then
       t1_mail(window)
       return
    elseif string.match(window, "^PopupWindow:") then
@@ -1477,9 +1479,10 @@ t1_save_mail_heads = function(file, subject, to, cc, bcc, attachments)
 end
 
 t1_adb_mail = function(subject, to, cc, bcc, attachments)
-   adb_am("am start -n com.android.email/com.android.email.activity.ComposeActivityEmail mailto:; sleep 1; mkdir -p /sdcard/adb-mail")
+   adb_am("am start -n " .. emailSmartisanActivity .. " mailto:; mkdir -p /sdcard/adb-mail")
+   wait_input_target(emailSmartisanActivity)
 
-   adb_event("sleep .5 adb-tap 842 434 sleep .5")
+   adb_event("adb-tap 842 434 sleep 1.5") -- 展开
 
    if attachments:gsub("%s", "") ~= "" then
       local files = split("\n", attachments)
@@ -1505,8 +1508,9 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
          target = "../../../../../.." .. target
          putclip(target)
 
+         wait_input_target(oiFileChooseActivity)
          local window = adb_focused_window()
-         if window ~= "org.openintents.filemanager/org.openintents.filemanager.IntentFilterActivity" then
+         if window ~= oiFileChooseActivity then
             window = window:gsub("/.*", "")
             error("必须安装并使用OI文件管理器才能选择附件，你使用的是： " .. window)
          end
