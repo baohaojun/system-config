@@ -31,12 +31,11 @@ ln -s $oldpwd/linux/binaries/the-true-adb . -f
 (
     if test "$DOING_T1WRENCH_RELEASE"; then
         mkdir -p ~/src/github/T1Wrench-linux
-        command rsync -L T1Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/T1Wrench-linux -av
-        command rsync -L $oldpwd/linux/binaries/* ~/src/github/T1Wrench-linux -av
+        command rsync -L $oldpwd/linux/binaries/* T1Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/T1Wrench-linux -av --delete --exclude-from=$HOME/src/github/T1Wrench/release-exclude.txt
         exit
     fi
 
-    destroy-windows T1Wrench
+    destroy-windows T1Wrench || true
     ps-killall T1Wrench.\!pro || true
     if test $# = 1 && [[ "$1" =~ debug ]]; then
         ps-killall gdb.T1Wrench
