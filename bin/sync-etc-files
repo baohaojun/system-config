@@ -6,4 +6,4 @@ sudo cp ~/system-config/doc/usr/lib/pm-utils/sleep.d/bhj-hibernate-hook.sh /lib/
 sudo cp ~/system-config/etc/tsocks.conf /etc/tsocks.conf
 sudo cp ~/system-config/etc/tinyproxy.conf /etc/
 cat ~/system-config/etc/news/leafnode/config | sudo tee /etc/news/leafnode/config >/dev/null 2>&1 || true
-sudo /etc/init.d/udev restart
+sudo /etc/init.d/udev restart || true
