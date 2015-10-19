@@ -29,6 +29,7 @@
                    "-I/usr/include"
                    "-I/usr/include/lua5.2"
                    "-I/home/bhj/tmp/build-t1"
+                   "-I/usr/include/c++/5/utility"
                    "-I.")
   (flycheck-clang-include-path "/usr/include/x86_64-linux-gnu/qt5/QtConcurrent"
                                "/usr/include/x86_64-linux-gnu/qt5/QtCore"
