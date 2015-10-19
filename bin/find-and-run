@@ -3,4 +3,5 @@
 set -e
 file=$(lookup-file -e "$1")
 cd $(dirname $file)
-./$1
+shift
+./$(basename "$file") "$@"

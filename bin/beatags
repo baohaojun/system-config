@@ -11,6 +11,9 @@ function die() {
 
 export source_dir=$(readlink -f .)
 export db_dir=~/.cache/system-config/for-code-reading/$source_dir
+if test ! -d "$db_dir"/.beagrep; then
+    die "not a beagrep directory"
+fi
 
 for x in $db_dir/.java-fallback.*; do
     if test "$DOING_FALLBACKS" = true; then
