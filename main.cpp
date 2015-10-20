@@ -112,7 +112,8 @@ int main(int argc, char *argv[])
         w.startTask(argv[1]);
     }
 
-    AdbStateThread adbState(&w);
+    AdbStateThread adbState;
+    adbState.moveToThread(&adbState);
     w.connect(&adbState, SIGNAL(adbStateUpdate(QString)), &w, SLOT(adbStateUpdated(QString)));
     adbState.start();
 

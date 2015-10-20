@@ -8,6 +8,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QTcpSocket>
 #include "t1wrench.h"
+#include "adbclient.h"
 
 LuaExecuteThread* that;
 
@@ -28,14 +29,14 @@ static int l_selectArg(lua_State* L)
 static int l_qt_adb_pipe(lua_State* L)
 {
     int n = luaL_len(L, -1);
-    QStringList args("shell");
+    QStringList args;
     for (int i = 1; i <= n; i++) {
         lua_rawgeti(L, -1, i);
         args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
         lua_settop(L, -2);
     }
 
-    QString res = getExecutionOutput("the-true-adb", args);
+    QString res = AdbClient::doAdbShell(args);
     lua_pushstring(L, res.toUtf8().constData());
     return 1;
 }

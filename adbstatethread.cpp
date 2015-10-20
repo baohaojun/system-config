@@ -15,10 +15,114 @@ bool gScreenCapJpg;
 AdbStateThread::AdbStateThread(QObject* parent)
     : QThread(parent)
 {
+    pingReplyOK = false;
+    pingSocket = NULL;
+    mAdbInput = NULL;
+    mAdbInputFinished = false;
+    mConnectTimer = NULL;
 }
 
 AdbStateThread::~AdbStateThread()
 {
+}
+
+
+void AdbStateThread::onInputDataReady()
+{
+    qDebug() << mAdbInput->getSock()->readAll();
+}
+
+void AdbStateThread::canPingInputServer()
+{
+
+}
+
+void AdbStateThread::timeOut()
+{
+
+}
+
+void AdbStateThread::inputServerFinished()
+{
+    mAdbInputFinished = true;
+}
+
+void AdbStateThread::onDisconnected()
+{
+    qDebug() << "onDisconnected" << QThread::currentThreadId();
+    if (!mConnectTimer) {
+        mConnectTimer = new QTimer();
+        mConnectTimer->setSingleShot(true);
+        connect(mConnectTimer, SIGNAL(timeout()), this, SLOT(onDisconnected()));
+
+    }
+    // at the start, suppose the adb not connected.
+    QStringList args1 = QStringList() << "sh" << "-c" << "if test \"$(getprop sys.boot_completed)\" = 1; then { echo -n Lin && echo -n ux; }; fi";
+
+
+    QString uname = adb_quote_shell(args1);
+    static QString lastAdbState;
+    emit adbStateUpdate("Offline");
+    if (!uname.contains("Linux")) {
+        lastAdbState = "Offline";
+        mConnectTimer->start(1000);
+        return;
+    }
+
+    if (lastAdbState != "Online") {
+        lastAdbState = "Online";
+        QString screencapHelp = adb_quote_shell(QStringList() << "screencap" << "-h");
+        if (screencapHelp.contains("jpg")) {
+            gScreenCapJpg = 1;
+        } else {
+            gScreenCapJpg = 0;
+        }
+    }
+
+    if (pingSocket) {
+        delete pingSocket;
+        pingReplyOK = false;
+    }
+    pingSocket = new QTcpSocket();
+
+    if (!mAdbInput || mAdbInput && mAdbInputFinished) {
+        if (mAdbInput)
+            delete mAdbInput;
+        mAdbInput = AdbClient::doAdbPipe("sh /sdcard/setclip-apk.txt app_process /system/bin/ Input");
+        mAdbInputFinished = false;
+        connect(mAdbInput->getSock(), SIGNAL(readyRead()), this, SLOT(onInputDataReady()));
+        connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(inputServerFinished()));
+    }
+
+    AdbClient::doAdbForward("host:forward:tcp:28888;localabstract:T1Wrench");
+    pingSocket->connectToHost("localhost", 28888, QIODevice::ReadWrite);
+    if (!pingSocket->waitForConnected()) {
+        qDebug() << "can't connect ping";
+        mConnectTimer->start(1000);
+        return;
+    }
+    if (!_writex(*pingSocket, "ping\n", 5)) {
+        qDebug() << "Can't write ping";
+        mConnectTimer->start(1000);
+        return;
+    }
+
+    if (!pingSocket->waitForReadyRead(500)) {
+        qDebug() << "Can't wait for read\n";
+        mConnectTimer->start(1000);
+        return;
+    }
+
+    if (QString(pingSocket->readLine(100)).contains("input ok")) {
+        emit adbStateUpdate("Online");
+        connect(pingSocket, SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()));
+    } else {
+        qDebug() << "Can't read";
+        mConnectTimer->start(1000);
+        return;
+    }
+
+
 }
 
 void die(const char* how)
@@ -52,6 +156,23 @@ QString getExecutionOutput(const QString& cmd, const QStringList& args)
 
 }
 
+QString shell_quote(const QString& str)
+{
+    QString res = str;
+    res.replace("'", "'\\''");
+    res = "'" + res + "'";
+    return res;
+}
+
+QString adb_quote_shell(const QStringList& args)
+{
+    QStringList qargs;
+    foreach (const QString& arg, args) {
+        qargs << shell_quote(arg);
+    }
+    return AdbClient::doAdbShell(qargs);
+}
+
 QString getExecutionOutput(const QString& cmd)
 {
     if (cmd.contains(" ")) {
@@ -65,55 +186,7 @@ QString getExecutionOutput(const QString& cmd)
 
 void AdbStateThread::run()
 {
-
-    QDir tmpdir = QDir::temp();
-    QString version = getExecutionOutput("the-true-adb version");
-    bool adb_1031 = 0;
-    if (version.contains("1.0.31")) {
-        adb_1031 = 1;
-    }
-
-    while (1) {
-        // at the start, suppose the adb not connected.
-        QStringList args1 = QStringList() << "shell" << "sh" << "-c" << "'if test \"$(getprop sys.boot_completed)\" = 1; then uname || busybox uname || { echo -n Lin && echo -n ux; }; fi'";
-        QStringList args2 = QStringList() << "shell" << "sh" << "-c" << "'sleep 300; uname || busybox uname || { echo -n Lin && echo -n ux; }'";
-        if (adb_1031) {
-            QString last = args1.last();
-            args1.pop_back();
-            args1 += last.replace('\'', ' ');
-
-            last = args2.last();
-            args2.pop_back();
-            args2 += last.replace('\'', ' ');
-        }
-
-        QString uname = getExecutionOutput("the-true-adb", args1);
-        static QString lastAdbState;
-        if (uname.contains("Linux")) {
-            if (lastAdbState != "Online") {
-                lastAdbState = "Online";
-                QString screencapHelp = getExecutionOutput("the-true-adb shell screencap -h");
-                qDebug() << screencapHelp;
-                if (screencapHelp.contains("jpg")) {
-                    gScreenCapJpg = 1;
-                } else {
-                    gScreenCapJpg = 0;
-                }
-            }
-            emit adbStateUpdate("Online");
-            system("the-true-adb shell am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getapk 1");
-            system("the-true-adb forward tcp:28888 localabstract:T1Wrench");
-            QString env = getExecutionOutput("the-true-adb shell cat /sdcard/setclip-apk.txt");
-            QTime t;
-            t.start();
-            qSystem("the-true-adb shell sh /sdcard/setclip-apk.txt app_process /system/bin/ Input");
-            if (t.elapsed() < 2000) {
-                getExecutionOutput("the-true-adb", args2);
-            }
-        } else {
-            lastAdbState = "Offline";
-            emit adbStateUpdate("Offline");
-            QThread::msleep(500);
-        }
-    }
+    this->moveToThread(this);
+    onDisconnected();
+    exec();
 }

@@ -33,6 +33,7 @@ unix {
 }
 
 SOURCES += main.cpp\
+        adbclient.cpp \
 	t1wrenchmainwindow.cpp \
         adbstatethread.cpp \
         adbphonescreenthread.cpp \
@@ -55,6 +56,7 @@ SOURCES += main.cpp\
     phonescreensyncer.cpp
 
 HEADERS  += t1wrenchmainwindow.h \
+            adbclient.h \
 	    adbstatethread.hpp \
             adbphonescreenthread.hpp \
             luaexecutethread.hpp \
