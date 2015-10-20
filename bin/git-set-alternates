@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) MIRROR"
+fi
+
+if test ! -d "$1/.git"; then
+    die "$1 not a git repo?"
+fi
+
+if test ! -d ".git"; then
+    die "$PWD not a git repo?"
+fi
+
+echo "$(readlink -f "$1")"/.git/objects > .git/objects/info/alternates
