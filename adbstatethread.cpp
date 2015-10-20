@@ -88,6 +88,7 @@ void AdbStateThread::onDisconnected()
     if (!mAdbInput || mAdbInput && mAdbInputFinished) {
         if (mAdbInput)
             delete mAdbInput;
+        AdbClient::doAdbShell("am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getapk 1");
         mAdbInput = AdbClient::doAdbPipe("sh /sdcard/setclip-apk.txt app_process /system/bin/ Input");
         mAdbInputFinished = false;
         connect(mAdbInput->getSock(), SIGNAL(readyRead()), this, SLOT(onInputDataReady()));

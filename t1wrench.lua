@@ -5,6 +5,7 @@ local M
 
 -- functions
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
+local adb_push, adb_pull, adb_install
 local shell_quote, putclip, t1_post, push_text
 local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share
@@ -760,6 +761,42 @@ adb_start_service_and_wait_file = function(service_cmd, file)
       ]]):format(file, service_cmd, file))
 end
 
+adb_push = function(lpath, rpath)
+   if type(lpath) == 'table' then
+      if #lpath ~= 2 then
+         error("invalid adb_push call")
+      end
+      lpath, rpath = lpath[1], lpath[2]
+   end
+   if qt_adb_push then
+      qt_adb_push{lpath, rpath}
+   else
+      system{the_true_adb, 'push', lpath, rpath}
+   end
+end
+
+adb_pull = function(rpath, lpath)
+   if type(rpath) == 'table' then
+      if #rpath ~= 2 then
+         error("invalid adb_pull call")
+      end
+      rpath, lpath = rpath[1], rpath[2]
+   end
+   if qt_adb_pull then
+      qt_adb_pull{rpath, lpath}
+   else
+      system{the_true_adb, 'pull', rpath, lpath}
+   end
+end
+
+adb_install = function(apk)
+   if qt_adb_install then
+      return qt_adb_install{apk}
+   else
+      return io.popen(the_true_adb .. " install -r " .. apk):read("*a")
+   end
+end
+
 push_text = function(text)
    if not text and os.getenv("PUTCLIP_ANDROID_FILE") then
       local file = io.open(os.getenv("PUTCLIP_ANDROID_FILE"))
@@ -799,7 +836,7 @@ local check_file_pushed = function(file, md5)
    if md5_on_phone ~= md5_on_PC then
       log("需要把" .. file .. "上传到手机。")
       adb_push{file, "/data/data/com.android.shell/" .. file .. ".bak"}
-      adb_shell("mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s"):format(file, file))
+      adb_shell(("mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s"):format(file, file))
 
       adb_push{md5, "/sdcard/" .. md5}
       local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
@@ -822,8 +859,8 @@ local check_apk_installed = function(apk, md5)
    debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
    if md5_on_phone ~= md5_on_PC then
       log("需要在手机上安装小扳手辅助应用" .. apk .. "，请确保手机允许安装未知来源的apk。")
-      local install_output = adb_install{apk}
-      if install_output:match("\nSuccess\r?\n") then
+      local install_output = adb_install(apk)
+      if install_output:match("\nSuccess") then
          adb_push{md5, "/sdcard/" .. md5}
          local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
          md5_on_phone = md5_on_phone:gsub("\n", "")
@@ -842,6 +879,7 @@ end
 
 t1_config = function()
    -- install the apk
+   log("@882: ")
    local uname = adb_pipe(UNAME_CMD)
    if not uname:match("Linux") then
       local home = os.getenv("HOME")
@@ -883,6 +921,7 @@ t1_config = function()
          error("No phone found, can't set up, uname is: " .. uname)
       end
    end
+   log("@924: ")
    check_apk_installed("Setclip.apk", "Setclip.apk.md5")
    check_file_pushed("am.jar", "am.jar.md5")
 

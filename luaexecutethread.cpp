@@ -12,6 +12,74 @@
 
 LuaExecuteThread* that;
 
+static QStringList l_getArgs(lua_State* L)
+{
+    int n = luaL_len(L, -1);
+    QStringList args;
+    for (int i = 1; i <= n; i++) {
+        lua_rawgeti(L, -1, i);
+        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
+        lua_settop(L, -2);
+    }
+    return args;
+}
+
+static int l_adb_push(lua_State* L)
+{
+    QStringList args = l_getArgs(L);
+    if (args.size() != 2) {
+        luaL_argerror(L, 2, "takes 2 argument");
+    }
+
+    if (!AdbClient::doAdbPush(args[0], args[1])) {
+        lua_pushstring(L, "adb push failed");
+        lua_error(L);
+    }
+    return 0;
+}
+
+static int l_adb_pull(lua_State* L)
+{
+    QStringList args = l_getArgs(L);
+    if (args.size() != 2) {
+        luaL_argerror(L, 2, "takes 2 argument");
+    }
+
+    qDebug() << "adb pull" << args;
+
+    if (!AdbClient::doAdbPull(args[0], args[1])) {
+        lua_pushstring(L, ("adb pull failed: " + args[0] + " " + args[1]).toUtf8().constData());
+        lua_error(L);
+    }
+    return 0;
+}
+
+static int l_adb_install(lua_State* L)
+{
+    QStringList args = l_getArgs(L);
+    if (args.size() != 1) {
+        luaL_argerror(L, 1, "takes 1 argument");
+    }
+
+    QString apk = args[0];
+    QString tmpApk = QString("/data/local/tmp/") + QFileInfo(apk).fileName();
+    qDebug() << "apk is" << apk << "tmpApk is" << tmpApk;
+    if (!AdbClient::doAdbPush(apk, tmpApk)) {
+        lua_pushstring(L, "adb push apk for install failed");
+        lua_error(L);
+    }
+
+    QString res = AdbClient::doAdbShell("pm install -r " + tmpApk);
+    if (res == "") {
+        lua_pushstring(L, "adb install failed");
+        lua_error(L);
+    }
+
+    lua_pushstring(L, res.toUtf8().constData());
+    // pm 'install' '-r' '/data/local/tmp/Setclip.apk'
+    return 1;
+}
+
 static int l_selectArg(lua_State* L)
 {
     int n = luaL_len(L, -1);
@@ -161,6 +229,15 @@ void LuaExecuteThread::run()
 
     lua_pushcfunction(L, l_selectArg);
     lua_setglobal(L, "select_args");
+
+    lua_pushcfunction(L, l_adb_push);
+    lua_setglobal(L, "qt_adb_push");
+
+    lua_pushcfunction(L, l_adb_pull);
+    lua_setglobal(L, "qt_adb_pull");
+
+    lua_pushcfunction(L, l_adb_install);
+    lua_setglobal(L, "qt_adb_install");
 
     lua_pushcfunction(L, l_qt_adb_pipe);
     lua_setglobal(L, "qt_adb_pipe");
