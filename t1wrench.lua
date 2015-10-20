@@ -780,7 +780,7 @@ push_text = function(text)
    file:write(text)
    file:close()
    check_phone()
-   system{the_true_adb, 'push', path, '/sdcard/putclip.txt'}
+   adb_push{path, '/sdcard/putclip.txt'}
 end
 
 putclip = function(text)
@@ -798,10 +798,10 @@ local check_file_pushed = function(file, md5)
    debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
    if md5_on_phone ~= md5_on_PC then
       log("需要把" .. file .. "上传到手机。")
-      system(("%s push %s /data/data/com.android.shell/%s.bak"):format(the_true_adb, file, file))
-      system(("%s shell mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s"):format(the_true_adb, file, file))
+      adb_push{file, "/data/data/com.android.shell/" .. file .. ".bak"}
+      adb_shell("mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s"):format(file, file))
 
-      system(("%s push %s /sdcard/%s"):format(the_true_adb, md5, md5))
+      adb_push{md5, "/sdcard/" .. md5}
       local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
       md5_on_phone = md5_on_phone:gsub("\n", "")
       if md5_on_phone ~= md5_on_PC then
@@ -822,9 +822,9 @@ local check_apk_installed = function(apk, md5)
    debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
    if md5_on_phone ~= md5_on_PC then
       log("需要在手机上安装小扳手辅助应用" .. apk .. "，请确保手机允许安装未知来源的apk。")
-      local install_output = io.popen(the_true_adb .. " install -r " .. apk):read("*a")
+      local install_output = adb_install{apk}
       if install_output:match("\nSuccess\r?\n") then
-         system(("%s push %s /sdcard/%s"):format(the_true_adb, md5, md5))
+         adb_push{md5, "/sdcard/" .. md5}
          local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
          md5_on_phone = md5_on_phone:gsub("\n", "")
          if md5_on_phone ~= md5_on_PC then
@@ -842,7 +842,6 @@ end
 
 t1_config = function()
    -- install the apk
-   system(the_true_adb .. " devices")
    local uname = adb_pipe(UNAME_CMD)
    if not uname:match("Linux") then
       local home = os.getenv("HOME")
@@ -878,7 +877,7 @@ t1_config = function()
          end
          ini_file:write("0x29a9\n")
          ini_file:close()
-         system{the_true_adb, "kill-server"}
+         adb_kill_server()
          error("Done config for your adb devices, please try again")
       else
          error("No phone found, can't set up, uname is: " .. uname)
@@ -890,7 +889,7 @@ t1_config = function()
    local weixin_phone_file, _, errno = io.open("weixin-phones.txt", "rb")
    if not vcf_file then
       adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listcontacts 1", "/sdcard/listcontacts.txt")
-      system(the_true_adb .. " pull /sdcard/listcontacts.txt weixin-phones.txt")
+      adb_pull{"/sdcard/listcontacts.txt", "weixin-phones.txt"}
    end
 
    sdk_version = adb_pipe("getprop ro.build.version.sdk")
@@ -967,9 +966,9 @@ adb_get_last_pic = function(which, remove)
    adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei get-last-note-pic 1", "/sdcard/putclip.txt")
    local pic = adb_pipe("cat /sdcard/putclip.txt")
    pic = pic:gsub('^/storage/emulated/0', '/sdcard')
-   system{the_true_adb, "pull", pic, ("last-pic-%s.png"):format(which)}
+   adb_pull{pic, ("last-pic-%s.png"):format(which)}
    if remove then
-      system{the_true_adb, "shell", "rm", pic}
+      adb_shell{rm, pic}
       adb_am(("am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture %s"):format(pic))
    end
 end
@@ -1095,7 +1094,7 @@ local function upload_pics(...)
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = ('/sdcard/DCIM/Camera/t1wrench-%d-%d%s'):format(time, i, ext)
       targets[#targets + 1] = target
-      system{the_true_adb, 'push', pics[i], target}
+      adb_push{pics[i], target}
       adb_am{"am", "startservice", "--user", "0", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
    end
    return targets
@@ -1504,7 +1503,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
 
          local target = file:gsub(".*[\\/]", "")
          target = "/sdcard/adb-mail/" .. i .. "." .. target
-         system{the_true_adb, "push", file, target}
+         adb_push{file, target}
          target = "../../../../../.." .. target
          putclip(target)
 
