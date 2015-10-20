@@ -6,6 +6,10 @@ function die() {
     exit -1
 }
 
+function debug() {
+    echo $BASH_SOURCE:${BASH_LINENO[0]}:debug: @$PWD "$@" >> ~/.cache/system-config/logs/update-beatags.log 2>&1 &
+}
+
 
 # When called, we must be at the top of the beagrep indexed source folder.
 
@@ -41,9 +45,9 @@ md5file=$md5dir/${md5sum:2}
 
 if test -e "$md5file" -a -z "$UPDATE_TAG_CACHE"; then
     cat "$md5file";
+    trap '' SIGHUP
     (
         set -x
-        trap '' SIGHUP
         UPDATE_TAG_CACHE=true bash -x beatags "$@"
     ) > ~/.cache/system-config/logs/update-beatags.log 2>&1 &
     exit
