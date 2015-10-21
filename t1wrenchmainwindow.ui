@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Smartisan T1聊天小扳手 V3.1.0 (ddf1ab6)</string>
+   <string>Smartisan T1聊天小扳手 V3.1.0 (dbb5c6a)</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="5,1">

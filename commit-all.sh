@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/ ~/src/github/T1Wrench-windows; do
+for x in ~/src/github/T1Wrench-*; do
     (
         cd $x
         if test $(basename $0) = reset-all.sh; then

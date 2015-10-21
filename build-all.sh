@@ -56,7 +56,7 @@ if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
 fi
 
 if is-tty-io; then
-    src_version=$(cd ~/src/github/T1Wrench-linux; cat .src-version.txt)
+    src_version=$(cd ~/src/github/T1Wrench-debian; cat .src-version.txt)
     git log $src_version..HEAD
     yes-or-no-p -y "Continue '$oldVersion' -> '$shortVersion'?"
 fi
@@ -68,6 +68,12 @@ git submodule foreach 'git clean -xfd'
     rm ~/tmp/build-t1-windows -rf
     ./build-wine.sh
     touch ~/tmp/build-t1-windows/build-ok
+)&
+
+(
+    rm ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/ -rf
+    ssh trusty "export DOING_T1WRENCH_RELEASE=true; cd $PWD; ./build-linux.sh -r T1Wrench-ubuntu-14.04"
+    touch ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/build-ok
 )&
 
 (
@@ -90,6 +96,10 @@ if test ! -e ~/tmp/build-t1-windows/build-ok; then
     die "Windows build failed"
 fi
 
+if test ! -e ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/build-ok; then
+    die "ubuntu build failed"
+fi
+
 if test ! -e ~/tmp/build-t1/build-ok; then
     die "Linux build failed"
 fi
@@ -98,7 +108,11 @@ if test ! -e ~/tmp/build-t1-mac/build-ok; then
     die "Mac build failed"
 fi
 
-for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Contents/MacOS/ ~/src/github/T1Wrench-windows; do
+for x in ~/src/github/T1Wrench-debian \
+             ~/src/github/T1Wrench-macos/T1Wrench.app/Contents/MacOS/ \
+             ~/src/github/T1Wrench-windows \
+             ~/src/github/T1Wrench-ubuntu-14.04 \
+         ; do
     (
         cd $x
         if test -e last-pic-notes.png; then
@@ -110,7 +124,7 @@ for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Co
         cd ..
 
         file=~/tmp/$dir.zip
-        if test "$dir" = T1Wrench-linux; then
+        if test "$dir" = T1Wrench-debian -o "$dir" = T1Wrench-ubuntu-14.04; then
             file=~/tmp/$dir.tgz
             tar czfv $file $dir --exclude-vcs
         else

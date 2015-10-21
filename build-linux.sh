@@ -1,5 +1,26 @@
 #!/bin/bash
 set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  r:release_dir
+## end code-generator
+## start generated code
+release_dir=
+OPTIND=1
+while getopts 'r:' opt; do
+    case "$opt" in
+        r)    release_dir=$OPTARG;;
+        *)    echo Usage Error; exit 2;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+if test -z "$release_dir"; then
+    release_dir=T1Wrench-debian
+fi
+
 cd $(dirname $(readlink -f $0))
 build_dir=~/tmp/build-t1
 if test $# = 1 && [[ "$1" =~ debug ]]; then
@@ -30,8 +51,8 @@ relative-link -f $oldpwd/linux/binaries/* .
 ln -s $oldpwd/linux/binaries/the-true-adb . -f
 (
     if test "$DOING_T1WRENCH_RELEASE"; then
-        mkdir -p ~/src/github/T1Wrench-linux
-        command rsync -L $oldpwd/linux/binaries/* T1Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/T1Wrench-linux -av --delete --exclude-from=$HOME/src/github/T1Wrench/release-exclude.txt
+        mkdir -p ~/src/github/$release_dir
+        command rsync -L $oldpwd/linux/binaries/* T1Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/$release_dir -av --delete --exclude-from=$HOME/src/github/T1Wrench/release-exclude.txt
         exit
     fi
 
