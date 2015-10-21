@@ -152,6 +152,8 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
 
     if (key == "getclip-android") {
         ui->phoneTextEdit->insertPlainText(val);
+    } else if (key == "prompt") {
+        prompt_user(val);
     } else if (key == "exit") {
         if (yes_or_no_p(QString().sprintf("后台出错，请确认是否重启后台？\n\n    %s", qPrintable(val))) == "yes") {
             on_configurePushButton_clicked();

@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
     AdbStateThread adbState;
     adbState.moveToThread(&adbState);
     w.connect(&adbState, SIGNAL(adbStateUpdate(QString)), &w, SLOT(adbStateUpdated(QString)));
+    w.connect(&adbState, SIGNAL(adbStateInfo(QString, QString)), &w, SLOT(onInfoUpdate(QString, QString)), Qt::BlockingQueuedConnection);
     adbState.start();
 
     QDir::addSearchPath("skin", ":/skin/default/resources");

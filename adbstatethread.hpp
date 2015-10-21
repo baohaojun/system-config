@@ -28,6 +28,7 @@ private:
 
 signals:
     void adbStateUpdate(const QString& state);
+    void adbStateInfo(const QString& type, const QString& text);
 protected:
     void run();
 };

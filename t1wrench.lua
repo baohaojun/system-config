@@ -24,7 +24,7 @@ local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity, wait_top_activity_match
 local t1_eval, log, share_pics_to_app, share_text_to_app
 local picture_to_weibo_comment
-local check_scroll_lock
+local check_scroll_lock, prompt_user
 
 -- variables
 local where_is_dial_key
@@ -91,12 +91,7 @@ for i in ipairs(qq_emoji_table) do
    qq_emoji_table[qq_emoji_table[i]] = i;
 end
 
-local p = io.popen("the-true-adb version")
-local v = p:read("*a")
 adb_unquoter = ""
-if v:match("1.0.31") then
-   adb_unquoter = '\\"'
-end
 
 if package.config:sub(1, 1) == '/' then
    shell_quote = function (str)
@@ -445,6 +440,12 @@ local function sleep(time)
    adb_event(("sleep %s"):format(time))
 end
 
+prompt_user = function(txt)
+   if select_args then
+      return select_args{txt}
+   end
+end
+
 check_scroll_lock = function()
    if using_scroll_lock then
       return
@@ -629,13 +630,13 @@ end
 local function t1_mail(window)
    if window == 'com.android.email/com.android.email.activity.Welcome' or window == 'com.android.email/com.android.email2.ui.MailActivityEmail' then
       adb_tap_mid_bot()
-      sleep(2)
+      wait_input_target("com.android.email/com.android.mail.compose.ComposeActivity")
    end
-   adb_event{'key', 'scroll_lock'}
+   adb_event("key scroll_lock sleep .2")
    if window == 'com.google.android.gm/com.google.android.gm.ComposeActivityGmail' then
       adb_event{806, 178}
    else
-      adb_event("sleep .1 adb-tap 998 174")
+      adb_event("adb-tap 998 174")
    end
 end
 
@@ -746,19 +747,25 @@ adb_start_service_and_wait_file_gone = function(service_cmd, file)
 end
 
 adb_start_service_and_wait_file = function(service_cmd, file)
-   adb_shell(
+   local res = adb_pipe(
       (
-      [[
+         [[
             rm %s;
             am startservice --user 0 -n %s&
             for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
                if test ! -e %s; then
                   sleep .1 || busybox sleep .1;
                else
+                  echo -n ye && echo s
                   exit;
                fi;
             done
       ]]):format(file, service_cmd, file))
+   if res:match("yes") then
+      return true
+   else
+      return false
+   end
 end
 
 adb_push = function(lpath, rpath)
@@ -879,7 +886,14 @@ end
 
 t1_config = function()
    -- install the apk
-   log("@882: ")
+   if not qt_adb_pipe then
+      local p = io.popen("the-true-adb version")
+      local v = p:read("*a")
+      if v:match("1.0.31") then
+         adb_unquoter = '\\"'
+      end
+   end
+
    local uname = adb_pipe(UNAME_CMD)
    if not uname:match("Linux") then
       local home = os.getenv("HOME")
@@ -921,14 +935,16 @@ t1_config = function()
          error("No phone found, can't set up, uname is: " .. uname)
       end
    end
-   log("@924: ")
    check_apk_installed("Setclip.apk", "Setclip.apk.md5")
    check_file_pushed("am.jar", "am.jar.md5")
 
    local weixin_phone_file, _, errno = io.open("weixin-phones.txt", "rb")
    if not vcf_file then
-      adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listcontacts 1", "/sdcard/listcontacts.txt")
-      adb_pull{"/sdcard/listcontacts.txt", "weixin-phones.txt"}
+      if adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listcontacts 1", "/sdcard/listcontacts.txt") then
+         adb_pull{"/sdcard/listcontacts.txt", "weixin-phones.txt"}
+      else
+         log("无法同步微信联系人")
+      end
    end
 
    sdk_version = adb_pipe("getprop ro.build.version.sdk")
@@ -1559,7 +1575,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
    local insert_text = function(contact)
       if contact ~= "" then
          putclip(contact)
-         adb_event"key scroll_lock"
+         adb_event"key scroll_lock sleep .5"
       end
       adb_event"key DPAD_DOWN"
    end

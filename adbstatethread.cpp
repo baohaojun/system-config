@@ -88,8 +88,27 @@ void AdbStateThread::onDisconnected()
     if (!mAdbInput || mAdbInput && mAdbInputFinished) {
         if (mAdbInput)
             delete mAdbInput;
-        AdbClient::doAdbShell("am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getapk 1");
-        mAdbInput = AdbClient::doAdbPipe("sh /sdcard/setclip-apk.txt app_process /system/bin/ Input");
+        QString res = AdbClient::doAdbShell("rm /sdcard/setclip-apk.txt;"
+                                            "am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getapk 1;"
+                                            "for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do "
+                                            "if test -e /sdcard/setclip-apk.txt; then echo -n ye && echo s; break; fi; sleep .1; done");
+        if (!res.contains("yes")) {
+            emit adbStateInfo("prompt", "需要重新安装小扳手辅助apk，请允许");
+            if (!AdbClient::doAdbPush("Setclip.apk", "/data/local/tmp/Setclip.apk")) {
+                emit adbStateInfo("info", "无法上传小扳手辅助apk");
+                mConnectTimer->start(1000);
+                return;
+            }
+            QString res = AdbClient::doAdbShell("pm install -r /data/local/tmp/Setclip.apk");
+            if (!res.contains("\nSuccess")) {
+                emit adbStateInfo("prompt", "安装小扳手辅助apk失败，请检查手机安全设置是否禁止通过USB安装:\n\n" + res);
+                mConnectTimer->start(1000);
+                return;
+            } else {
+                emit adbStateInfo("info", "小扳手辅助apk安装成功");
+            }
+        }
+        mAdbInput = AdbClient::doAdbPipe("if test -e /sdcard/setclip-apk.txt; then sh /sdcard/setclip-apk.txt app_process /system/bin/ Input; else echo apk not found?; fi");
         mAdbInputFinished = false;
         connect(mAdbInput->getSock(), SIGNAL(readyRead()), this, SLOT(onInputDataReady()));
         connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(inputServerFinished()));
