@@ -3,12 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>小扳手更新记录及最新版下载地址</title>
+<title>如何在Linux下运行小扳手（包含Ubuntu 12.04）</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/light-blue.css" type="text/css" />
+ <link rel="stylesheet" href="/css/pink-bliss.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -102,73 +102,85 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">小扳手更新记录及最新版下载地址</h1>
-
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> 2.6.3</h2>
-<div class="outline-text-2" id="text-1">
+<h1 class="title">如何在Linux下运行小扳手（包含Ubuntu 12.04）</h1>
 <p>
-百度网盘下载地址：<a href="http://t.cn/Ry6hFRS">http://t.cn/Ry6hFRS</a>
+小扳手的开发是基于Linux系统进行的，所以Linux下的小扳手应该是稳定性最高的，不过由于Linux发行版比较多的缘故，很多朋友还没有在Linux下用上小扳手。
 </p>
-</div>
 
-<div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 修改记录</h3>
-<div class="outline-text-3" id="text-1-1">
-<ul class="org-ul">
-<li>修正不能微信分享的问题
-</li>
-<li>提升微信聊天窗口打开后没有输入焦点的第一条消息发送成功率
-</li>
-</ul>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> 2.6.2</h2>
-<div class="outline-text-2" id="text-2">
 <p>
-百度网盘下载地址：<a href="http://t.cn/RyxW8GE">http://t.cn/RyxW8GE</a>
+在Linux下使用小扳手很简单，就是在命令行上cd到小扳手的解压目录下，然后运行 ./T1Wrench 就可以了。或者直接输入 T1Wrench 程序的完整路径也可以（假设你的T1Wrench解压在 <code>~/T1Wrench-debian</code> 目录下）： <code>~/T1Wrench-debian/T1Wrench</code> 。
 </p>
-</div>
 
-<div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 修改记录</h3>
-<div class="outline-text-3" id="text-2-1">
-<ul class="org-ul">
-<li>修复微信分享出错的问题
-</li>
-</ul>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> 2.6.1</h2>
-<div class="outline-text-2" id="text-3">
 <p>
-百度网盘下载地址： <a href="http://t.cn/RyMTayX">http://t.cn/RyMTayX</a>
+目前Linux版的小扳手每次都出两个.tgz免安装包，一个是给debian的，名为 T1Wrench-debian.tgz ，另一个是给ubuntu的，名为 T1Wrench-ubuntu-14.04.tgz （虽然名字里带 14.04 ubuntu 版本号，但亲测在 12.04的版本上也可以用，但需要一些特殊配置，见下文）。
 </p>
+
+<p>
+下面说一下运行前需要装的一些软件。
+</p>
+
+<p>
+在Debian或Ubuntu 14.04下都只要装Qt5和lua5.2就可以了：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">sudo apt-get install qt5-default liblua5.2-dev
+</pre>
 </div>
 
-<div id="outline-container-sec-3-1" class="outline-3">
-<h3 id="sec-3-1"><span class="section-number-3">3.1</span> 修改记录</h3>
-<div class="outline-text-3" id="text-3-1">
-<ul class="org-ul">
-<li>大大加快小扳手操作速度
+<p>
+然后在 Ubuntu 12.04 下稍微麻烦一点，需要用ppa安装Qt5:
+</p>
+
+<ol class="org-ol">
+<li>安装 python-software-properties
+
+<div class="org-src-container">
+
+<pre class="src src-sh">sudo apt-get install python-software-properties
+</pre>
+</div>
 </li>
-<li>大大提高小扳手图片聊天、分享的成功率
+
+<li>设置 Qt5 ppa
+
+<div class="org-src-container">
+
+<pre class="src src-sh">sudo apt-add-repository ppa:beineri/opt-qt55
+sudo apt-get update
+</pre>
+</div>
 </li>
-<li>增加小扳手桌面同步带壳功能，提高同步桌面上操作速度与成功概率
+
+<li>安装所需软件包
+
+<div class="org-src-container">
+
+<pre class="src src-sh">sudo apt-get install qt55base liblua5.2-dev
+</pre>
+</div>
 </li>
-</ul>
+
+<li>设置 Qt5 的环境
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-builtin">.</span> /opt/qt55/bin/qt55-env.sh
+</pre>
+</div>
+
+<p>
+上面这条命令在你每次运行小扳手之前都需要设置，否则会找不到小扳手要用到的 Qt5 .so 库文件。因此，你可以把它加到你的 <code>~/.bashrc</code> 文件里，这样你就不用每次都非得手动输入一遍上面这条命令了。
+</p>
+</li>
+</ol>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="blog/2015/09/14/0-Got-hit-by-perl-glob.html"> <!-- prev-url -->
+      <a href="blog/2015/09/19/0-Wrench-changelog-and-download-location.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        被perl的glob给坑了 <!-- prev-title -->
+        小扳手更新记录及最新版下载地址 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -180,16 +192,13 @@ for the JavaScript code in this tag.
   </ul>
 </nav>
 </div>
-</div>
-</div>
-</div>
 <!-- {%html-mode%} -->
 
 <div id="disqus_container">
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2015/09/19/0-Wrench-changelog-and-download-location.html';
+    var disqus_url = 'http://baohaojun.github.io/blog/2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -265,7 +274,8 @@ for the JavaScript code in this tag.
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2015/09/14/0-Got-hit-by-perl-glob.html'> 被perl的glob给坑了 </a></li>
+        <li><a href='blog/2015/09/19/0-Wrench-changelog-and-download-location.html'> 小扳手更新记录及最新版下载地址 </a></li>
+<li><a href='blog/2015/09/14/0-Got-hit-by-perl-glob.html'> 被perl的glob给坑了 </a></li>
 <li><a href='blog/2015/09/05/0-Linux-is-my-IDE.html'> Linux就是我的IDE </a></li>
 <li><a href='blog/2015/08/06/0-close-sesame.html'> 芝麻，关门 </a></li>
 <li><a href='blog/2015/06/29/0-my-often-used-completion-methods.html'> 我常用的补齐方法 </a></li>
@@ -274,7 +284,6 @@ for the JavaScript code in this tag.
 <li><a href='blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html'> 小扳手2.5.0 </a></li>
 <li><a href='blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html'> 小扳手抢红包秘决 </a></li>
 <li><a href='blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.html'> 怎样在命令行上测试小扳手 </a></li>
-<li><a href='blog/2015/01/28/0-xdotool-is-fucking-with-dvp.html'> xdotool is fucking with dvp </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

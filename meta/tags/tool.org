@@ -1,5 +1,10 @@
 #+title: Computer tools
  * 2015
+  - 2015-10
+   * 2015-10-22
+
+     [[../../blog/2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.org][如何在Linux下运行小扳手（包含Ubuntu 12.04）]]
+
   - 2015-09
    * 2015-09-19
 

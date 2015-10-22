@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[如何在Linux下运行小扳手（包含Ubuntu 12.04）]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.html"/>
+    <updated>2015-20-22T13:10:01+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[小扳手更新记录及最新版下载地址]]></title>
     <link href="http://baohaojun.github.io/blog/2015/09/19/0-Wrench-changelog-and-download-location.html"/>
     <updated>2015-09-19T08:29:58+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html"/>
     <updated>2015-02-19T09:54:10+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[怎样在命令行上测试小扳手]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.html"/>
-    <updated>2015-01-30T15:28:33+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/01/30/0-How-to-test-t1wrench-on-command-line.html</id>
   </entry>
 </feed>

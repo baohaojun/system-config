@@ -1,0 +1,45 @@
+#+title: 如何在Linux下运行小扳手（包含Ubuntu 12.04）
+# bhj-tags: tool
+
+小扳手的开发是基于Linux系统进行的，所以Linux下的小扳手应该是稳定性最高的，不过由于Linux发行版比较多的缘故，很多朋友还没有在Linux下用上小扳手。
+
+在Linux下使用小扳手很简单，就是在命令行上cd到小扳手的解压目录下，然后运行 ./T1Wrench 就可以了。或者直接输入 T1Wrench 程序的完整路径也可以（假设你的T1Wrench解压在 =~/T1Wrench-debian= 目录下）： =~/T1Wrench-debian/T1Wrench= 。
+
+目前Linux版的小扳手每次都出两个.tgz免安装包，一个是给debian的，名为 T1Wrench-debian.tgz ，另一个是给ubuntu的，名为 T1Wrench-ubuntu-14.04.tgz （虽然名字里带 14.04 ubuntu 版本号，但亲测在 12.04的版本上也可以用，但需要一些特殊配置，见下文）。
+
+下面说一下运行前需要装的一些软件。
+
+在Debian或Ubuntu 14.04下都只要装Qt5和lua5.2就可以了：
+
+#+BEGIN_SRC sh
+sudo apt-get install qt5-default liblua5.2-dev
+#+END_SRC
+
+然后在 Ubuntu 12.04 下稍微麻烦一点，需要用ppa安装Qt5:
+
+1. 安装 python-software-properties
+
+    #+BEGIN_SRC sh
+    sudo apt-get install python-software-properties
+    #+END_SRC
+
+2. 设置 Qt5 ppa
+
+    #+BEGIN_SRC sh
+    sudo apt-add-repository ppa:beineri/opt-qt55
+    sudo apt-get update
+    #+END_SRC
+
+3. 安装所需软件包
+
+   #+BEGIN_SRC sh
+   sudo apt-get install qt55base liblua5.2-dev
+   #+END_SRC
+
+4. 设置 Qt5 的环境
+
+   #+BEGIN_SRC sh
+   . /opt/qt55/bin/qt55-env.sh
+   #+END_SRC
+
+   上面这条命令在你每次运行小扳手之前都需要设置，否则会找不到小扳手要用到的 Qt5 .so 库文件。因此，你可以把它加到你的 =~/.bashrc= 文件里，这样你就不用每次都非得手动输入一遍上面这条命令了。
