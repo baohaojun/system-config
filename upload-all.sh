@@ -1,5 +1,5 @@
 #!/bin/bash
-shortVersion=$(perl -ne 'print $1 if m!T1聊天小扳手 (.*)</string>!' t1wrenchmainwindow.ui)
+shortVersion=$(perl -ne 'print $1 if m!T1聊天小扳手 (.*)</string>!' t1wrenchmainwindow.ui|perl -npe 's/ .*//')
 cd ~/tmp
 my-adb start-activity com.baidu.netdisk/com.baidu.netdisk.ui.MainActivity
 
@@ -8,7 +8,7 @@ if test "$1" = -n; then
 else
     my-adb 'mkdir -p /sdcard/0/; rm /sdcard/0/*'
     for x in T1Wrench-debian.tgz T1Wrench-ubuntu-14.04.tgz T1Wrench-macos.zip T1Wrench-windows.zip; do
-        adb push $x /sdcard/0/${x%.*}-$shortVersion.${x#*.}
+        adb push $x /sdcard/0/${x%.*}-$shortVersion.${x##*.}
     done
 fi
 adb-tap 544 346
