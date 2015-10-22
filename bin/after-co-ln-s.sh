@@ -48,6 +48,8 @@ fi
 if test $can_sudo = true -a $USER = bhj; then
     sudo apt-get remove -y pulseaudio pulseaudio-module-x11 pulseaudio-utils || true
     sudo mkdir -p ~root/.ssh
+    mkdir -p ~/.ssh/
+    touch ~/.ssh/config
     sudo cp ~/.ssh/* ~root/.ssh/ -r
 fi
 
@@ -297,7 +299,7 @@ fi
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
 if can-sudo-and-ask-if-not-bhj "Do you want to make power button to hibernate?"; then
-    sudo cp ~/system-config/etc/systemd/logind.conf /etc/systemd/logind.conf
+    sudo cp ~/system-config/etc/systemd/logind.conf /etc/systemd/logind.conf || true
 fi
 
 if ask-if-not-bhj "Do you want to use bhj's git-exclude file?"; then
@@ -359,14 +361,14 @@ if test -x ~/src/github/private-config/after-co.sh; then
     ~/src/github/private-config/after-co.sh
 fi
 
-if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service; then
+if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service && test -d /etc/systemd/system/; then
     sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
     sudo chmod a+X /etc/systemd/system/rc-local.service
     sudo systemctl --system daemon-reload
     sudo systemctl enable rc-local.service
     sudo systemctl start rc-local.service
 else
-    sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
+    sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service || true
 fi
 
 

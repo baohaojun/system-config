@@ -1,3 +1,6 @@
 #!/bin/bash
 
 mount-share-folders
+start-sshs
+
+cowbuilder-chroot -c ~/external/cowbuilder/ubuntu-trusty-amd64/ /etc/init.d/ssh start

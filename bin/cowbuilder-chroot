@@ -1,0 +1,52 @@
+#!/bin/bash
+
+if test "$UNSHARE" != true; then
+    sudo unshare -m -- su - $USER -c "UNSHARE=true $0 $*"
+    exit
+fi
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  c:cow
+## end code-generator
+## start generated code
+cow=
+OPTIND=1
+while getopts 'c:' opt; do
+    case "$opt" in
+        c)    cow=$OPTARG;;
+        *)    echo Usage Error; exit 2;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+## end generated code
+
+if test -z "$cow"; then
+    cow=$(select-output-line -o -- find ~/external/cowbuilder -maxdepth 1 -type d -name '*-*')
+fi
+
+if test ! -d "$cow"/chroot; then
+    base="$cow"/bare/base.tgz
+    if test ! -e "$base"; then
+        die "base not found: $base"
+    fi
+    mkdir -p "$cow"/chroot
+    sudo tar zxfv "$base" -C "$cow"/chroot
+fi
+
+chroot="$cow"/chroot
+mount | grep "$chroot" |while read what on where x; do
+    sudo umount "$where"
+done
+
+mount | grep 'on /(sys|proc|dev)' -P|while read what on where x; do
+    sudo mount $where "$chroot"/$where -o bind
+done
+
+mkdir "$chroot"/$HOME/.ssh -p
+for x in system-config src .ssh; do
+    sudo mount ~/$x "$chroot"/$HOME/$x -o bind
+done
+
+sudo chroot "$chroot" "$@"
