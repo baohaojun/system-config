@@ -138,7 +138,7 @@ for x in ~/src/github/T1Wrench-debian \
                 mkdir -p old-versions
                 mv ${bfile%.*}* old-versions || true
             )
-            smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench/${bfile%.*}-$shortVersion.${bfile#*.}
+            smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench/${bfile%.*}-$shortVersion.${bfile##*.}
             rsync $file rem:/var/www/html/baohaojun/T1Wrench/ -v
         fi || true&
     )

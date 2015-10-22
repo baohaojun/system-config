@@ -101,7 +101,14 @@ void AdbStateThread::onDisconnected()
             }
             QString res = AdbClient::doAdbShell("pm install -r /data/local/tmp/Setclip.apk");
             if (!res.contains("\nSuccess")) {
-                emit adbStateInfo("prompt", "安装小扳手辅助apk失败，请检查手机安全设置是否禁止通过USB安装:\n\n" + res);
+                if (res.contains("INSTALL_FAILED_UNKNOWN_SOURCES")) {
+                    emit adbStateInfo("prompt",
+                                      "安装小扳手辅助apk失败，请检查手机安全设置是否禁止通过USB安装:\n\n"
+                                      "（在Smartisan手机上，打开：设置->安全中心->高级设置->应用程序安装来源管理，勾选“未知来源”）\n\n"
+                                      + res);
+                } else {
+                    emit adbStateInfo("prompt", "安装小扳手辅助apk失败，请检查手机安全设置是否禁止通过USB安装:\n\n" + res);
+                }
                 mConnectTimer->start(1000);
                 return;
             } else {
