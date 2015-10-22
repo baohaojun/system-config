@@ -68,11 +68,11 @@
 
 - Windows :: https://github.com/baohaojun/T1Wrench/archive/T1Wrench-windows.zip
 - Mac :: https://github.com/baohaojun/T1Wrench/archive/T1Wrench-macos.zip
-- Linux :: https://github.com/baohaojun/T1Wrench/archive/T1Wrench-linux.zip
+- Linux :: https://github.com/baohaojun/T1Wrench/archive/T1Wrench-debian.zip 和 https://github.com/baohaojun/T1Wrench/archive/T1Wrench-ubuntu-14.04.zip
 
 这几个地址不管小扳手怎么升级，始终都会是最新的版本供大家下载。
 
-但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：三个版本的链接都在里面，自取所需吧： http://t.cn/Rwp2kaz
+但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：各个平台的最校版本链接都在 [[../../../2015/09/19/0-Wrench-changelog-and-download-location.org][这个中转博客里]] 。
 
 ** 安装
 
@@ -82,7 +82,7 @@
 
 - Windows :: 解压之后双击T1Wrench.exe开始运行
 - Mac :: 解压之后双击T1Wrench.app开始运行
-- Linux :: 解压之后运行./T1Wrench。您需要自己安装qt5的支持库。我是在debian testing上编出来的，但是我有个同事用ubuntu 12.04也可以运行小扳手。还有一个方案是用wine，我的Windows版的小扳手就是用wine编译、测试的🃏。
+- Linux :: 解压之后运行./T1Wrench。请参考 [[../../../2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.org][怎么在Linux下使用小扳手]] 。
 
 ** 连接手机
 
@@ -210,15 +210,9 @@
 
 - 其他手机支不支持？
 
-  为了更好的支持我们公司自己的手机，小扳手做了很多优化，其中有些优化需要手机系统的软件配合，所以其他厂商的手机从2.6.1版小扳手开始已经不能很好的支持了。
+  从小扳手 3.1.0 版开始，只要是安卓手机，都支持小扳手，但前提是必须在使用小扳手时使用小扳手自带的输入法（没错，就叫小扳手输入法）。
 
-  抱歉。
-
-  +我做了一些适配工作，目前试过可以适配的机型有：Nexus 5、Galaxy Note 2/3、小米4、小米2S、红米、联想A360t（一款移动定制机，屏幕分辨率相当低）。+
-
-  +有兴趣的同学可以试一下，欢迎您用小扳手操作其他品牌的手机，要记得给我点赞哦😉。+
-
-  当然，作为锤子科技的员工，更欢迎您购买我们公司的手机😄。
+  另外，有两家的手机 （meizu 和 LG 的），它们的系统有点特殊，小扳手在这两家的系统上只能输入文字，但不能发送。详情见 [[../../../2015/09/19/0-Wrench-changelog-and-download-location.org][修改记录]] 页面上关于 3.1.0 版的说明。
 
 - 我的PC系统是Windows 8，驱动装不上？
 
