@@ -299,7 +299,7 @@ public class PutClipService extends Service {
                     PackageInfo pi = pm.getPackageInfo("com.bhj.setclip", 0);
 
                     FileWriter f = new FileWriter(new File(sdcard, "setclip-apk.txt.1"));
-                    f.write(String.format("CLASSPATH=%s LD_LIBRARY_PATH=%s \"$@\"", pi.applicationInfo.sourceDir, pi.applicationInfo.nativeLibraryDir));
+                    f.write(String.format("if test -e %s; then CLASSPATH=%s LD_LIBRARY_PATH=%s \"$@\"; else echo %s not found; fi", pi.applicationInfo.sourceDir, pi.applicationInfo.sourceDir, pi.applicationInfo.nativeLibraryDir, pi.applicationInfo.sourceDir));
                     f.close();
                     new File(sdcard, "setclip-apk.txt.1").renameTo(new File(sdcard, "setclip-apk.txt"));
                 }
