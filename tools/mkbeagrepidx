@@ -191,7 +191,7 @@ function mkbeagrepidx() {
     if test "$SOURCECODETAGSMODE" != true; then
         cat "$outDir"/$subdir-build-log |
             grep "No filter for" |
-            pn 5 | cut -b 6- | tee /dev/stderr | (
+            awk '{print $5}' | cut -b 6- | tee /dev/stderr | (
             rebuild=false
             while read x; do
                 if grep . -I -q "$x"; then

@@ -12,7 +12,7 @@ LC_ALL=en_US.UTF-8
 md5sum=$(
     for x in "$@"; do
         echo "$x"
-    done | md5sum | pn 1
+    done | md5sum | awk '{print $1}'
       )
 md5dir=.cache/${md5sum:0:1}/${md5sum:1:1}
 md5file=$md5dir/${md5sum:2}
