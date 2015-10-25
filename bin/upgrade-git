@@ -1,4 +1,7 @@
 #!/bin/bash
+if ! which apt-add-repository >/dev/null 2>&1; then
+    sudo apt-get install python-software-properties
+fi
 sudo add-apt-repository ppa:git-core/ppa -y
 sudo apt-get update
 sudo apt-get install git
