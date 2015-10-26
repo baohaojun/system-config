@@ -133,6 +133,7 @@ system notification, just as rythombox does."
 (defvar douban-music-local-url nil "The local saved mp3 to play instead of http://...")
 (defvar douban-music-local-icon nil "The local saved icon to display.")
 (defvar douban-music-song-list nil "Song list for current channel.")
+(defvar douban-music-song-json [] "The json returned.")
 (defvar douban-music-current-song nil "Song currently playing.")
 (defvar douban-music-channels nil "Total channels for douban music.")
 (defvar douban-music-current-channel nil "Current channel for douban music.")
@@ -413,15 +414,19 @@ system notification, just as rythombox does."
         (setq json (cdr (assoc 'song (json-read-from-string
                                       (decode-coding-string
                                        (buffer-substring-no-properties json-start json-end)
-                                       'utf-8)))))
-        (if (not (vectorp json))
-            (error "Invalid data format")
-          (setq douban-music-song-list nil)
-          (setq douban-music-current-song 0)
-          (dotimes (i (length json))
-            (let ((var (aref json i)))
-              (setq douban-music-song-list
-                    (cons var douban-music-song-list)))))))))
+                                       'utf-8))))
+              douban-music-song-json json)
+        (cond ((not (vectorp json))
+               (error "Invalid data format"))
+              ((= (length json) 0)
+               (setq json douban-music-song-json))
+              (t (setq douban-music-song-json json)))
+        (setq douban-music-song-list nil)
+        (setq douban-music-current-song 0)
+        (dotimes (i (length json))
+          (let ((var (aref json i)))
+            (setq douban-music-song-list
+                  (cons var douban-music-song-list))))))))
 
 (defun douban-music-interface-update ()
   (with-current-buffer douban-music-buffer-name
