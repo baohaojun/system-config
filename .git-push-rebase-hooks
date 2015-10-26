@@ -30,14 +30,17 @@ if test "$PWD" = ~/system-config; then
                 echo no need to update
                 break
             fi
-            echo Which file to use as base?
+            echo Which file to use as base for $x?
             updated_file=$(select-output-line 'for x in *; do
                             (
                                 f=$(readlink -f "$x")
                                 cd "$(dirname "$f")"
                                 git st -s "$f" | grep -q . && echo "$f"
-                            )
+                            ) && break
                         done')
+            if test ! -e "$updated_file"; then
+                start_recursive_shell "update $x"
+            fi
             for file in $(for x in *; do readlink -f "$x"; done); do
                 if test "$updated_file" = "$file"; then
                     continue

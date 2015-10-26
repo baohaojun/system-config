@@ -411,6 +411,17 @@ if which emacs >/dev/null 2>&1 && test ! -e ~/.config/system-config/emacs-config
     ~/system-config/bin/Linux/emacs-install-packages
 fi || true
 
+if test -d ~/system-config/.emacs_d/elpa && test ! -d ~/.emacs.d/elpa/.git; then
+    mkdir -p ~/.emacs.d/
+    cp -av ~/system-config/.emacs_d/elpa ~/.emacs.d/
+    (
+        cd ~/.emacs.d/elpa
+        git init .
+        git add .
+        git commit -m 'init elpa'
+    )
+fi || true
+
 if test -d ~/src/github/semi-offline.wikipedia; then
     (
         cd ~/src/github/semi-offline.wikipedia

@@ -113,6 +113,9 @@
 ;;popup the manual page, try:)
 (put 'narrow-to-region 'disabled nil)
 
+(define-key esc-map [(meta .)] 'ajoke-pop-mark-back)
+(define-key esc-map [(meta \,)] 'ajoke-pop-mark)
+(define-key esc-map [(meta \;)] 'anzu-query-replace-regexp)
 (global-set-key [(meta control \,)] 'ajoke-pop-mark)
 (global-set-key [(meta control .)] 'ajoke-pop-mark-back)
 (prefer-coding-system 'utf-8-unix)

@@ -31,7 +31,7 @@ emacs --batch --eval "$emacs_code"
 mkdir -p ~/src/github
 cd ~/src/github
 
-if test -d ~/system-config/.emacs_d/elpa && test ! -d ~/.emacs.d/elpa; then
+if test -d ~/system-config/.emacs_d/elpa && test ! -d ~/.emacs.d/elpa/.git; then
     mkdir -p ~/.emacs.d/
     cp -av ~/system-config/.emacs_d/elpa ~/.emacs.d/
     (

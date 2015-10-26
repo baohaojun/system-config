@@ -247,6 +247,8 @@
         ("C-v" . '((qpdfview "SPC") (t "Next")))
         ("SPC" . '((Fbreader "Next")))
         ("BS" . '((Fbreader "Prior")))
+        ("C-." . '((Xfce4-terminal "ESC" ".")))
+        ("C-," . '((Xfce4-terminal "ESC" ",")))
         ("M-v" . '((qpdfview "BS") (t "Prior")))
         ("M-<" . '((qpdfview "Home")
                    (t "C-Home")))
@@ -322,7 +324,7 @@
                 (when (string= "Wine" class)
                   (setq class (translate-string (substring (caddr (get-x-property w (quote WM_CLASS))) 0) "|")))
                 (if (string-match emacs-style-window-class-re class 0 t)
-                    (undo-global-remap (intern class))
+                    (undo-global-remap (intern class)) ; it will map emacs style windows if specified
                   (do-global-remap (intern class)))
                 (if (string-match gnome-windows-re (window-class w) 0 t)
                     (setq bhj-is-gnome? t)
