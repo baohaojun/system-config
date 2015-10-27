@@ -116,6 +116,7 @@
 (define-key esc-map [(meta .)] 'ajoke-pop-mark-back)
 (define-key esc-map [(meta \,)] 'ajoke-pop-mark)
 (define-key esc-map [(meta \;)] 'anzu-query-replace-regexp)
+(define-key esc-map [(\?)] 'undo-tree-redo)
 (global-set-key [(meta control \,)] 'ajoke-pop-mark)
 (global-set-key [(meta control .)] 'ajoke-pop-mark-back)
 (prefer-coding-system 'utf-8-unix)

@@ -249,6 +249,7 @@
         ("BS" . '((Fbreader "Prior")))
         ("C-." . '((Xfce4-terminal "ESC" ".")))
         ("C-," . '((Xfce4-terminal "ESC" ",")))
+        ("C-?" . '((Xfce4-terminal "ESC" "?")))
         ("M-v" . '((qpdfview "BS") (t "Prior")))
         ("M-<" . '((qpdfview "Home")
                    (t "C-Home")))
