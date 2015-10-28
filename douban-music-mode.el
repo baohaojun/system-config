@@ -414,8 +414,7 @@ system notification, just as rythombox does."
         (setq json (cdr (assoc 'song (json-read-from-string
                                       (decode-coding-string
                                        (buffer-substring-no-properties json-start json-end)
-                                       'utf-8))))
-              douban-music-song-json json)
+                                       'utf-8)))))
         (cond ((not (vectorp json))
                (error "Invalid data format"))
               ((= (length json) 0)
