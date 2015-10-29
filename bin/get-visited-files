@@ -1,0 +1,61 @@
+#!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt d:targte-dir
+## end code-generator
+## start generated code
+TEMP=$(getopt -o d: --long "targte-dir:"  -n $(basename $0) -- "$@")
+targte_dir=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -d|--targte-dir)
+            targte_dir=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+if test -z "$targte_dir"; then
+    targte_dir=.
+fi
+
+
+(
+    cd "$targte_dir"
+    find . -type f -print0|xargs -0 touch
+    sleep 1
+    touch mark
+)
+
+if ! "$@"; then
+    if yes-or-no-p -n "do-release failed, should continue?"; then
+        true
+    fi
+fi
+(
+    cd $targte_dir
+    find . -type f -anewer mark -a \! -newermm mark > ~/tmp/newer.$$
+    rm -rf oem-release-out
+    mkdir oem-release-out
+    (
+        cat ~/tmp/newer.$$|
+            while read file; do
+                if test -e "$file"; then
+                    echo "$file"
+                fi
+            done
+        find ./common/ -name 'partition*.xml'
+    ) | xargs cp-with-dir-struct oem-release-out
+)
+

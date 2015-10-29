@@ -4,12 +4,23 @@ if test "$DEBUG"; then
     set -x
 fi
 
-go_back="End Prior"
+whole_screen=
+
 if test $(basename $0) = sawfish-get-screen-shot-whole; then
-    go_back=C-Home
+    whole_screen=-h
 fi
 rm /tmp/screen-exchange
-sawfish-send-focused-window-event "C-z" "ESC" $go_back "y" "G" "C-e" "RET" "C-z" ">"
+command="hardcopy $whole_screen /tmp/screen-exchange"
+
+
+sawfish-send-focused-window-event "C-z" ":" $(
+    for n in $(seq 0 ${#command}); do
+        if test "${command:n:1}" = " "; then
+            echo SPC
+        else
+            echo "${command:n:1}"
+        fi
+    done ) RET
 
 for x in $(seq 1 20); do
     if test -e /tmp/screen-exchange; then

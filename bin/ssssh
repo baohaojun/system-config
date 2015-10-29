@@ -1,30 +1,46 @@
 #!/bin/bash
-if test $# -gt 0; then
-    host=$1
-    search=$1
-    if test -e ~/src/github/private-config/.ssssh/search-$host; then
-        search=$(cat ~/src/github/private-config/.ssssh/search-$host)
-    fi
-    shift 1
-fi
-
-if test $# -gt 0; then
-    search=$1
-    shift 1
-fi
+host=$1
 
 if test -z "$host"; then
     host=$(select-output-line -o 'for x in ~/src/github/private-config/.ssssh/search-*; do echo ${x##*/search-}; done')
-    search=$(cat ~/src/github/private-config/.ssssh/search-$host)
-    if test "$host" = localhost; then
-        search=$USER@$HOSTNAME
-    fi
+fi
+
+if test ! -e ~/src/github/private-config/.ssssh/search-$host; then
+    bhj-notify hello "host $host not found in .ssssh"
+    exit
+fi
+
+. ~/src/github/private-config/.ssssh/search-$host
+search=$regexp
+if test "$host" = localhost; then
+    search=$USER@$HOSTNAME
 fi
 
 find-or-exec konsole
-if test "$search" && sawfish-search-for-screen "$search"; then
-    true
-elif test "$host" = localhost; then
+if test -z "$search"; then
+    bhj-notify "hello" "nothing to search for $host"
+    exit
+fi
+
+current_window_text=$(sawfish-get-screen-shot)
+
+if echo "$current_window_text"| grep -P -q -e "$search"; then
+    exit
+fi
+
+xdotool key super+space apostrophe
+sleep .05
+xdotool type "$name"
+sleep .05
+xdotool key Return
+
+current_window_text=$(sawfish-get-screen-shot)
+if echo "$current_window_text"| grep -P -q -e "$search"; then
+    exit
+fi
+
+export SCREEN_TITLE=$name
+if test "$host" = localhost; then
     myscr bash
 else
     if test ! -e ~/.config/system-config/is-realhome; then

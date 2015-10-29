@@ -91,6 +91,15 @@ if test $# != 0; then
 fi
 
 repodir=$(lookup-file -e .repo)
+
+if test "$repo_init_branch" = :; then
+    (
+        cd .repo/manifests
+        git pull
+    )
+    repo_init_branch=$(cd .repo/manifests; select-output-line "git branch -a |perl -npe  'print if s,^\s*remotes/origin/,,'")
+fi
+
 if test -z "$repodir"; then
     (set -x; repo init -p auto -u ${repo_init_url:-$(cat ~/.repoconfig/.repo_manifest_url)}\
         -m ${repo_init_manifest:-default.xml}\
