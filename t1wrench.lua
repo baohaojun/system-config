@@ -6,7 +6,7 @@ local M
 -- functions
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
-local shell_quote, putclip, t1_post, push_text
+local shell_quote, putclip, t1_post, push_text, t1_post2
 local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share
 local picture_to_momo_share, t1_add_mms_receiver
@@ -1028,6 +1028,12 @@ adb_get_last_pic = function(which, remove)
    end
 end
 
+t1_post2 = function(text1, text2)
+   putclip(text1)
+   adb_event("key scroll_lock key dpad_down")
+   t1_post(text2)
+end
+
 t1_post = function(text) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
@@ -1805,6 +1811,7 @@ M.adb_weixin_lucky_money = adb_weixin_lucky_money
 M.adb_weixin_lucky_money_output = adb_weixin_lucky_money_output
 M.adb_event = adb_event
 M.t1_send_action = t1_send_action
+M.t1_post2 = t1_post2
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
