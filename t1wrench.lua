@@ -7,7 +7,7 @@ local M
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
 local shell_quote, putclip, t1_post, push_text, t1_post2
-local adb_start_activity
+local adb_start_activity, qq_talk_to
 local picture_to_weixin_share, picture_to_weibo_share
 local picture_to_momo_share, t1_add_mms_receiver
 local adb_get_input_window_dump, adb_top_window
@@ -1812,6 +1812,7 @@ M.adb_weixin_lucky_money_output = adb_weixin_lucky_money_output
 M.adb_event = adb_event
 M.t1_send_action = t1_send_action
 M.t1_post2 = t1_post2
+M.qq_talk_to = qq_talk_to
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
