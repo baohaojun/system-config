@@ -10,6 +10,10 @@ if test ! -e ~/src/github/private-config/.ssssh/search-$host; then
     exit
 fi
 
+regexp=
+name=
+command=
+
 . ~/src/github/private-config/.ssssh/search-$host
 search=$regexp
 if test "$host" = localhost; then
@@ -39,8 +43,13 @@ if echo "$current_window_text"| grep -P -q -e "$search"; then
     exit
 fi
 
+echo "$current_window_text" > ~/tmp/1.txt
+bhj-notify "hello" "$search not found"
+
 export SCREEN_TITLE=$name
-if test "$host" = localhost; then
+if test "$command"; then
+    myscr $command
+elif test "$host" = localhost; then
     myscr bash
 else
     if test ! -e ~/.config/system-config/is-realhome; then

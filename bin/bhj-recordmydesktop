@@ -1,4 +1,34 @@
 #!/bin/bash
 dir=~/tmp/$(basename $0)
 mkdir -p $dir
-recordmydesktop "$@" --on-the-fly-encoding $(sawfish-get-window-xy T1Wrench | tr -d \") -o $dir/out-$(now).ogv
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt w:window-class
+## end code-generator
+## start generated code
+TEMP=$(getopt -o w: --long "window-class:"  -n $(basename $0) -- "$@")
+window_class=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -w|--window-class)
+            window_class=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+if test -z "$window_class"; then
+    window_class=T1Wrench
+fi
+
+recordmydesktop "$@" --on-the-fly-encoding $(sawfish-get-window-xy "$window_class" | tr -d \") -o $dir/out-$(now).ogv
