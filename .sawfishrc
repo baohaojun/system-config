@@ -172,7 +172,7 @@
                 (lambda ()
                   (find-window-or-exec (eval wclass) wcommand)))))
  '(
-   ("Super-m"          "emacs" "emacs.bhj")
+   ("Super-m"          "Emacs%" "emacs.bhj")
    ("v"                "adjust-volume" "adjust-volume")
    ("C-,"              "hello world no such thing" "firefox pop")
    ("C-."              "hello world no such thing" "firefox push")

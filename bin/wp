@@ -6,8 +6,8 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     function _cygwin_share_path() {
         FILE=$1
         host=$(echo "$FILE" | perl -npe 's/.*?:server=(.*?),.*/$1/')
-        share=$(echo "$FILE" | perl -npe 's!.*?,share=(.*?)/.*!$1!')
-        path=$(echo "$FILE" | perl -npe 's!.*?,share=.*?/!!')
+        share=$(echo "$FILE" | perl -npe 's!.*?,share=(.*?)(/|$).*!$1!')
+        path=$(echo "$FILE" | perl -npe 's!.*?,share=.*?(/|$)!!')
         FILE=//$host/$share/$path
         echo "$FILE"
     }

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if test "$1" = root; then
+    wxh=$(xrandr | grep '\*'|pn 1)
+    echo "\"-x 0 -y 0 --width ${wxh%x*} --height ${wxh#*x}\""
+    exit
+fi
+
 script=$(
 cat <<EOF
 (get-window-xy-size "$1")

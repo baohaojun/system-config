@@ -1,0 +1,23 @@
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+        menuentry 'Ubuntu GNU/Linux, with Linux 4.0.0-1-amd64 (recovery mode)' --class debian --class gnu-linux --class gnu --class os  {
+                load_video
+                insmod gzio
+                if [ x$grub_platform = xxen ]; then insmod xzio; insmod lzopio; fi
+                insmod part_msdos
+                insmod ext2
+                set root='hd1,msdos1'
+                if [ x$feature_platform_search_hint = xy ]; then
+                  search --no-floppy --fs-uuid --set=root --hint-bios=hd1,msdos1 --hint-efi=hd1,msdos1 --hint-baremetal=ahci1,msdos1  5566de2f-289b-4ed6-9455-6fcfefae9e17
+                else
+                  search --no-floppy --fs-uuid --set=root 5566de2f-289b-4ed6-9455-6fcfefae9e17
+                fi
+                echo    'Loading Linux 4.0.0-1-amd64 ...'
+                linux   /trusty/boot/vmlinuz-3.13.0-24-generic root=UUID=5566de2f-289b-4ed6-9455-6fcfefae9e17 ro init=/trusty/boot/chroot-ubuntu
+                echo    'Loading initial ramdisk ...'
+                initrd  /trusty/boot/initrd.img-3.13.0-24-generic
+        }
