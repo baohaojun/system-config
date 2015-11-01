@@ -1966,7 +1966,7 @@
         /* org-archived */
         color: #7f7f7f;
       }
-      .org-org-block {
+      pre.example, .org-org-block {
         /* org-block */
         color: #7f7f7f;
       }
@@ -2000,7 +2000,7 @@
         /* org-clock-overlay */
         background-color: #ffff00;
       }
-      .org-org-code {
+      code, .org-org-code {
         /* org-code */
         color: #7f7f7f;
       }

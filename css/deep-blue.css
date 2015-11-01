@@ -1891,7 +1891,7 @@
         /* org-archived */
         color: #b3b3b3;
       }
-      .org-org-block {
+      pre.example, .org-org-block {
         /* org-block */
         color: #b3b3b3;
       }
@@ -1923,7 +1923,7 @@
         /* org-clock-overlay */
         background-color: #4a708b;
       }
-      .org-org-code {
+      code, .org-org-code {
         /* org-code */
         color: #b3b3b3;
       }
