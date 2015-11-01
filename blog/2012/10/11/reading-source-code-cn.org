@@ -88,11 +88,11 @@ Emacs配套试用的话，你需要用很多步骤：
 后输入 ~make -f - out/target/product/xx/kernel~ ，底下的临时输出窗口就
 会显示：
 
-#+begin_example
+#+BEGIN_SRC compout
 cp out/target/product/xx/kernel-out/uImage out/target/product/xx/kernel
 cp: cannot stat `out/target/product/xx/kernel-out/uImage': No such file or directory
 make: *** [out/target/product/xx/kernel] Error 1
-#+end_example
+#+END_SRC
 
 于是你就知道试用通过了，并且这小段代码已经在它应该在的位置上，没那么多
 乱七八糟非常不简约的步骤哦！
@@ -116,7 +116,7 @@ make: *** [out/target/product/xx/kernel] Error 1
    [[../../../../images/post/orrur-read.png][file:../../../../images/post/orrur-read.png]]
 
    当然，现在我知道Emacs有一个perldoc命令可以直接显示read函数了，可是在
-   此之前，这个小技巧真的让我很开心:-) 因为要不然的话，我只能在终端里用
+   此之前，这个小技巧真的让我很开心😊 因为要不然的话，我只能在终端里用
    ~/read~ 然后不停地按 ~n~ 去找下一个 read 出现的地方，而一行上可能会
    有出现很多次 read。而这样不停地机械地按，还容易按过头啊。或者我可以
    想一个更复杂的正则表达式比如 ~/^ *read~ （匹配一行开头任意个空格后跟
@@ -163,10 +163,10 @@ compilation-mode（make出错，perl脚本里的die，还有很多其他程序�
 compilation-mode的联系，把grep的匹配也称之为一个error，软件逻辑重用是好
 的，但这样的名字重用真的会造成困惑吧）。
 
-下面你会看到我把所有的代码阅读工具的界面都归一到grep-mode上来了，所以可见grep在我心目中的重要性:-)
+下面你会看到我把所有的代码阅读工具的界面都归一到grep-mode上来了，所以可见grep在我心目中的重要性😊
 
 （这种做法是非常极端的，当我们发现一样好的东西的时候，应该像一条疯狗一
-样扑上去，死死咬住不放:-) grep很好用，所以让我们到处都用grep；文件很好
+样扑上去，死死咬住不放😊 grep很好用，所以让我们到处都用grep；文件很好
 用，所以让我们做一个everything is a file的操作系统；面像对象很好，所以
 让我们做一个一切皆对象的编程语言；…… 参见 [[http://blog.ezyang.com/2012/11/extremist-programming/][极端编程]]。）
 
@@ -191,7 +191,7 @@ ctags-exuberant是emacs自带的etags的一个加强兼容版。用它可以查�
 
 #+begin_example
 --langdef=kconfig
---langmap=kconfig:(Kconfig)
+--langmap=kconfig:​(Kconfig)
 --regex-kconfig=/^(menu)?config[ \t]*([a-zA-Z0-9_]+)/CONFIG_\2/d,definition/
 #+end_example
 

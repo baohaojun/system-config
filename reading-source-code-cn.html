@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
-<link rel="stylesheet" href="/css/org.css" type="text/css" />
+ <link rel="stylesheet" href="/css/pink-bliss.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -145,6 +145,7 @@ Vim/Emacs等比起来。
 </div>
 </div>
 
+
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> Emacs</h2>
 <div class="outline-text-2" id="text-2">
@@ -189,6 +190,7 @@ Lisp是很有好处的（据说:-）。
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2"><span class="section-number-3">2.2</span> 友好的与其他强大的工具配套使用——外功</h3>
 <div class="outline-text-3" id="text-2-2">
@@ -240,11 +242,13 @@ out/target/product/%/kernel:
 会显示：
 </p>
 
-<pre class="example">
-cp out/target/product/xx/kernel-out/uImage out/target/product/xx/kernel
-cp: cannot stat `out/target/product/xx/kernel-out/uImage': No such file or directory
-make: *** [out/target/product/xx/kernel] Error 1
+<div class="org-src-container">
+
+<pre class="src src-compout">cp out/target/product/xx/kernel-out/uImage out/target/product/xx/kernel
+<span class="org-function-name">cp</span>: cannot stat `out/target/product/xx/kernel-out/uImage': No such file or directory
+<span class="org-function-name">make</span>: *** [out/target/product/xx/kernel] Error 1
 </pre>
+</div>
 
 <p>
 于是你就知道试用通过了，并且这小段代码已经在它应该在的位置上，没那么多
@@ -252,6 +256,7 @@ make: *** [out/target/product/xx/kernel] Error 1
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2-2" class="outline-4">
 <h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> 文档</h4>
 <div class="outline-text-4" id="text-2-2-2">
@@ -281,7 +286,7 @@ Emacs里打开看，并且比起在终端上用相应的man(1)等命令打开，
 
 <p>
 当然，现在我知道Emacs有一个perldoc命令可以直接显示read函数了，可是在
-此之前，这个小技巧真的让我很开心:-) 因为要不然的话，我只能在终端里用
+此之前，这个小技巧真的让我很开心😊 因为要不然的话，我只能在终端里用
 <code>/read</code> 然后不停地按 <code>n</code> 去找下一个 read 出现的地方，而一行上可能会
 有出现很多次 read。而这样不停地机械地按，还容易按过头啊。或者我可以
 想一个更复杂的正则表达式比如 <code>/^ *read</code> （匹配一行开头任意个空格后跟
@@ -291,6 +296,7 @@ less的正则表达式语法是怎样。
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2-3" class="outline-4">
 <h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> 使用</h4>
 <div class="outline-text-4" id="text-2-2-3">
@@ -303,6 +309,7 @@ less的正则表达式语法是怎样。
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2-4" class="outline-4">
 <h4 id="sec-2-2-4"><span class="section-number-4">2.2.4</span> 逆袭の使用</h4>
 <div class="outline-text-4" id="text-2-2-4">
@@ -328,6 +335,7 @@ elisp程序和一段perl程序其实都是程序。
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> Grep</h2>
 <div class="outline-text-2" id="text-3">
@@ -354,12 +362,12 @@ compilation-mode的联系，把grep的匹配也称之为一个error，软件逻�
 </p>
 
 <p>
-下面你会看到我把所有的代码阅读工具的界面都归一到grep-mode上来了，所以可见grep在我心目中的重要性:-)
+下面你会看到我把所有的代码阅读工具的界面都归一到grep-mode上来了，所以可见grep在我心目中的重要性😊
 </p>
 
 <p>
 （这种做法是非常极端的，当我们发现一样好的东西的时候，应该像一条疯狗一
-样扑上去，死死咬住不放:-) grep很好用，所以让我们到处都用grep；文件很好
+样扑上去，死死咬住不放😊 grep很好用，所以让我们到处都用grep；文件很好
 用，所以让我们做一个everything is a file的操作系统；面像对象很好，所以
 让我们做一个一切皆对象的编程语言；…… 参见 <a href="http://blog.ezyang.com/2012/11/extremist-programming/">极端编程</a>。）
 </p>
@@ -377,6 +385,7 @@ Grep finished (matches found) at Fri Oct 19 16:25:46
 </pre>
 </div>
 </div>
+
 <div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4"><span class="section-number-2">4</span> ctags-exuberant</h2>
 <div class="outline-text-2" id="text-4">
@@ -389,7 +398,7 @@ ctags-exuberant是emacs自带的etags的一个加强兼容版。用它可以查�
 
 <pre class="example">
 --langdef=kconfig
---langmap=kconfig:(Kconfig)
+--langmap=kconfig:​(Kconfig)
 --regex-kconfig=/^(menu)?config[ \t]*([a-zA-Z0-9_]+)/CONFIG_\2/d,definition/
 </pre>
 </div>
@@ -456,6 +465,7 @@ multi-grep，但幸好这些grep/ctags查得都很快）。
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-4-2" class="outline-3">
 <h3 id="sec-4-2"><span class="section-number-3">4.2</span> 多点定义下的距离计算</h3>
 <div class="outline-text-3" id="text-4-2">
@@ -547,6 +557,7 @@ libstring-approx-perl</code> 。它已经帮我们实现了计算两个字符串
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-5" class="outline-2">
 <h2 id="sec-5"><span class="section-number-2">5</span> imenu</h2>
 <div class="outline-text-2" id="text-5">
@@ -606,6 +617,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-6" class="outline-2">
 <h2 id="sec-6"><span class="section-number-2">6</span> beagrep</h2>
 <div class="outline-text-2" id="text-6">
@@ -641,6 +653,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-7" class="outline-2">
 <h2 id="sec-7"><span class="section-number-2">7</span> 生成调用关系图</h2>
 <div class="outline-text-2" id="text-7">
@@ -656,6 +669,7 @@ source-insight有生成调用关系图的功能（有人用过吗？），我们
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-8" class="outline-2">
 <h2 id="sec-8"><span class="section-number-2">8</span> cscope 和 gtags</h2>
 <div class="outline-text-2" id="text-8">
@@ -674,6 +688,7 @@ ctags-exuberant，因为它有内建增量更新索引机制。
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-9" class="outline-2">
 <h2 id="sec-9"><span class="section-number-2">9</span> 查找局部变量的定义</h2>
 <div class="outline-text-2" id="text-9">

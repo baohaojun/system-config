@@ -1,3 +1,5 @@
+<style type="text/css">
+    <!--
       body {
         color: #2E3436;
         background-color: #EDEDED;
@@ -11,6 +13,16 @@
         /* ac-candidate-mouse-face */
         color: #ffffff;
         background-color: #0000ff;
+      }
+      .org-ac-cider-candidate {
+        /* ac-cider-candidate-face */
+        color: #000000;
+        background-color: #d3d3d3;
+      }
+      .org-ac-cider-selection {
+        /* ac-cider-selection-face */
+        color: #ffffff;
+        background-color: #4682b4;
       }
       .org-ac-clang-candidate {
         /* ac-clang-candidate-face */
@@ -72,6 +84,35 @@
         color: #ffffff;
         background-color: #cd5b45;
       }
+      .org-anzu-match-1 {
+        /* anzu-match-1 */
+        color: #000000;
+        background-color: #7fffd4;
+      }
+      .org-anzu-match-2 {
+        /* anzu-match-2 */
+        color: #000000;
+        background-color: #00ff7f;
+      }
+      .org-anzu-match-3 {
+        /* anzu-match-3 */
+        color: #000000;
+        background-color: #ffff00;
+      }
+      .org-anzu-mode-line {
+        /* anzu-mode-line */
+        color: #ff00ff;
+        font-weight: bold;
+      }
+      .org-anzu-replace-highlight {
+        /* anzu-replace-highlight */
+        color: #ffffff;
+        background-color: #77A4DD;
+      }
+      .org-anzu-replace-to {
+        /* anzu-replace-to */
+        color: #ff0000;
+      }
       .org-bbdb-field-name {
         /* bbdb-field-name */
         color: #0084C8;
@@ -122,6 +163,11 @@
       .org-c-annotation {
         /* c-annotation-face */
         color: #F5666D;
+      }
+      .org-c-nonbreakable-space {
+        /* c-nonbreakable-space-face */
+        color: #181a26;
+        background-color: #cccccc;
       }
       .org-calendar-month-header {
         /* calendar-month-header */
@@ -180,6 +226,18 @@
       .org-cl-lib-highlight-deprecated {
         /* cl-lib-highlight-deprecated */
         color: #CE5C00;
+      }
+      .org-clojure-character {
+        /* clojure-character-face */
+        color: #4E9A06;
+      }
+      .org-clojure-interop-method {
+        /* clojure-interop-method-face */
+        color: #A020F0;
+      }
+      .org-clojure-keyword {
+        /* clojure-keyword-face */
+        color: #F5666D;
       }
       .org-comint-highlight-input {
         /* comint-highlight-input */
@@ -249,16 +307,6 @@
         /* font-lock-constant-face */
         color: #F5666D;
       }
-      .org-css-property {
-        /* css-property */
-        color: #0084C8;
-        font-weight: bold;
-      }
-      .org-css-selector {
-        /* css-selector */
-        color: #00578E;
-        font-weight: bold;
-      }
       .org-cua-global-mark {
         /* cua-global-mark */
         color: #000000;
@@ -281,18 +329,6 @@
       .org-diary {
         /* diary */
         color: #ff0000;
-      }
-      .org-diary-anniversary {
-        /* diary-anniversary */
-        color: #A52A2A;
-        font-weight: bold;
-      }
-      .org-diary-button {
-      }
-      .org-diary-time {
-        /* diary-time */
-        color: #0084C8;
-        font-weight: bold;
       }
       .org-diff-added {
         /* diff-added */
@@ -317,6 +353,44 @@
       .org-diff-header {
         /* diff-header */
         background-color: #cccccc;
+      }
+      .org-diff-hl-change {
+        /* diff-hl-change */
+        color: #0000cd;
+        background-color: #ddddff;
+      }
+      .org-diff-hl-delete {
+        /* diff-hl-delete */
+        color: #cd0000;
+        font-weight: bold;
+      }
+      .org-diff-hl-dired-change {
+        /* diff-hl-dired-change */
+        color: #0000cd;
+        background-color: #ddddff;
+      }
+      .org-diff-hl-dired-delete {
+        /* diff-hl-dired-delete */
+        color: #cd0000;
+        font-weight: bold;
+      }
+      .org-diff-hl-dired-ignored {
+        /* diff-hl-dired-ignored */
+        color: #7f7f7f;
+      }
+      .org-diff-hl-dired-insert {
+        /* diff-hl-dired-insert */
+        color: #008b00;
+        font-weight: bold;
+      }
+      .org-diff-hl-dired-unknown {
+        /* diff-hl-dired-unknown */
+        color: #7f7f7f;
+      }
+      .org-diff-hl-insert {
+        /* diff-hl-insert */
+        color: #008b00;
+        font-weight: bold;
       }
       .org-diff-hunk-header {
         /* diff-hunk-header */
@@ -510,42 +584,44 @@
         /* font-lock-doc-face */
         color: #4E9A06;
       }
+      .org-douban-music-album {
+        /* douban-music-album-face */
+        color: #cd0000;
+        font-size: 105%;
+      }
+      .org-douban-music-artist {
+        /* douban-music-artist-face */
+        color: #4169e1;
+        font-size: 105%;
+      }
+      .org-douban-music-company {
+        /* douban-music-company-face */
+        color: #ffff00;
+        font-size: 105%;
+      }
+      .org-douban-music-publish-year {
+        /* douban-music-publish-year-face */
+        color: #00ff00;
+        font-size: 105%;
+      }
+      .org-douban-music-tag {
+        /* douban-music-tag-face */
+        color: #63b8ff;
+        font-size: 110%;
+      }
+      .org-douban-music-title {
+        /* douban-music-title-face */
+        color: #a6a6a6;
+        font-size: 105%;
+      }
+      .org-douban-music-track {
+        /* douban-music-track-face */
+        color: #b3b3b3;
+        font-size: 120%;
+      }
       .org-eldoc-highlight-function-argument {
         /* eldoc-highlight-function-argument */
         font-weight: bold;
-      }
-      .org-epa-field-body {
-        /* epa-field-body */
-        font-style: italic;
-      }
-      .org-epa-field-name {
-        /* epa-field-name */
-        font-weight: bold;
-      }
-      .org-epa-mark {
-        /* epa-mark */
-        color: #ff0000;
-        font-weight: bold;
-      }
-      .org-epa-string {
-        /* epa-string */
-        color: #00008b;
-      }
-      .org-epa-validity-disabled {
-        /* epa-validity-disabled */
-        font-style: italic;
-      }
-      .org-epa-validity-high {
-        /* epa-validity-high */
-        font-weight: bold;
-      }
-      .org-epa-validity-low {
-        /* epa-validity-low */
-        font-style: italic;
-      }
-      .org-epa-validity-medium {
-        /* epa-validity-medium */
-        font-style: italic;
       }
       .org-error {
         /* error */
@@ -572,12 +648,12 @@
       }
       .org-flycheck-error-list-checker-name {
         /* flycheck-error-list-checker-name */
-        color: #2F8B58;
+        color: #00578E;
         font-weight: bold;
       }
       .org-flycheck-error-list-column-number {
         /* flycheck-error-list-column-number */
-        color: #4E9A06;
+        color: #F5666D;
       }
       .org-flycheck-error-list-error {
         /* flycheck-error-list-error */
@@ -588,6 +664,11 @@
         color: #ffffff;
         background-color: #4A90D9;
       }
+      .org-flycheck-error-list-id {
+        /* flycheck-error-list-id */
+        color: #2F8B58;
+        font-weight: bold;
+      }
       .org-flycheck-error-list-info {
         /* flycheck-error-list-info */
         color: #4E9A06;
@@ -595,8 +676,7 @@
       }
       .org-flycheck-error-list-line-number {
         /* flycheck-error-list-line-number */
-        color: #A52A2A;
-        font-weight: bold;
+        color: #F5666D;
       }
       .org-flycheck-error-list-warning {
         /* flycheck-error-list-warning */
@@ -639,69 +719,6 @@
         /* font-lock-function-name-face */
         color: #00578E;
         font-weight: bold;
-      }
-      .org-git-commit-branch {
-        /* git-commit-branch-face */
-        color: #0084C8;
-        font-weight: bold;
-      }
-      .org-git-commit-comment-action {
-        /* git-commit-comment-action-face */
-        color: #0084C8;
-        font-weight: bold;
-      }
-      .org-git-commit-comment-file {
-        /* git-commit-comment-file-face */
-        color: #4E9A06;
-      }
-      .org-git-commit-comment-heading {
-        /* git-commit-comment-heading-face */
-        color: #A52A2A;
-        font-weight: bold;
-      }
-      .org-git-commit-known-pseudo-header {
-        /* git-commit-known-pseudo-header-face */
-        color: #A52A2A;
-        font-weight: bold;
-      }
-      .org-git-commit-no-branch {
-        /* git-commit-no-branch-face */
-        color: #0084C8;
-        font-weight: bold;
-      }
-      .org-git-commit-nonempty-second-line {
-        /* git-commit-nonempty-second-line-face */
-        color: #F5666D;
-        font-weight: bold;
-      }
-      .org-git-commit-note {
-        /* git-commit-note-face */
-        color: #4E9A06;
-      }
-      .org-git-commit-overlong-summary {
-        /* git-commit-overlong-summary-face */
-        color: #F5666D;
-        font-weight: bold;
-      }
-      .org-git-commit-pseudo-header {
-        /* git-commit-pseudo-header-face */
-        color: #4E9A06;
-      }
-      .org-git-commit-summary {
-        /* git-commit-summary-face */
-        color: #2F8B58;
-        font-weight: bold;
-      }
-      .org-git-rebase-description {
-      }
-      .org-git-rebase-hash {
-        /* git-rebase-hash */
-        color: #b22222;
-      }
-      .org-git-rebase-killed-action {
-        /* git-rebase-killed-action */
-        color: #204A87;
-        text-decoration: line-through;
       }
       .org-glyphless-char {
         /* glyphless-char */
@@ -876,6 +893,18 @@
         /* gnus-summary-selected */
         text-decoration: underline;
       }
+      .org-guide-keyXhighlight-command {
+        /* guide-key/highlight-command-face */
+        color: #ff4500;
+      }
+      .org-guide-keyXkey {
+        /* guide-key/key-face */
+        color: #006400;
+      }
+      .org-guide-keyXprefix-command {
+        /* guide-key/prefix-command-face */
+        color: #0000ff;
+      }
       .org-header-line {
         /* header-line */
         color: #CCCCCC;
@@ -921,8 +950,7 @@
       }
       .org-helm-buffer-file {
         /* helm-buffer-file */
-        color: #2F8B58;
-        font-weight: bold;
+        color: #A020F0;
       }
       .org-helm-buffer-not-saved {
         /* helm-buffer-not-saved */
@@ -946,10 +974,20 @@
         color: #000000;
         background-color: #faffb5;
       }
+      .org-helm-etags-file {
+        /* helm-etags-file */
+        color: #8b814c;
+        text-decoration: underline;
+      }
       .org-helm-ff-directory {
         /* helm-ff-directory */
         color: #8b0000;
         background-color: #d3d3d3;
+      }
+      .org-helm-ff-dotted-directory {
+        /* helm-ff-dotted-directory */
+        color: #000000;
+        background-color: #696969;
       }
       .org-helm-ff-executable {
         /* helm-ff-executable */
@@ -1004,6 +1042,11 @@
         color: #CCCCCC;
         background-color: #000000;
       }
+      .org-helm-header-line-left-margin {
+        /* helm-header-line-left-margin */
+        color: #000000;
+        background-color: #ffff00;
+      }
       .org-helm-helper {
         /* helm-helper */
         color: #CCCCCC;
@@ -1034,6 +1077,11 @@
         /* helm-match */
         color: #b00000;
       }
+      .org-helm-match-item {
+        /* helm-match-item */
+        color: #ffffff;
+        background-color: #77A4DD;
+      }
       .org-helm-moccur-buffer {
         /* helm-moccur-buffer */
         color: #00ced1;
@@ -1050,12 +1098,11 @@
       .org-helm-selection {
         /* helm-selection */
         background-color: #b5ffd1;
-        text-decoration: underline;
       }
       .org-helm-selection-line {
         /* helm-selection-line */
-        background-color: #8b3a3a;
-        text-decoration: underline;
+        color: #ffffff;
+        background-color: #4A90D9;
       }
       .org-helm-separator {
         /* helm-separator */
@@ -1082,9 +1129,23 @@
         color: #ffffff;
         background-color: #4A90D9;
       }
+      .org-highlight-quoted-quote {
+        /* highlight-quoted-quote */
+        color: #A52A2A;
+        font-weight: bold;
+      }
+      .org-highlight-quoted-symbol {
+        /* highlight-quoted-symbol */
+        color: #F5666D;
+      }
       .org-highlight-symbol {
         /* highlight-symbol-face */
         background-color: #e5e5e5;
+      }
+      .org-hl-line {
+        /* hl-line */
+        color: #ffffff;
+        background-color: #4A90D9;
       }
       .org-holiday {
         /* holiday */
@@ -1185,6 +1246,35 @@
         font-style: italic;
         text-decoration: underline;
       }
+      .org-jiralib-comment {
+        /* jiralib-comment-face */
+        background-color: #3b3b3b;
+      }
+      .org-jiralib-comment-header {
+        /* jiralib-comment-header-face */
+        font-weight: bold;
+      }
+      .org-jiralib-issue-info {
+        /* jiralib-issue-info-face */
+        color: #000000;
+        background-color: #8b8b00;
+      }
+      .org-jiralib-issue-summary {
+        /* jiralib-issue-summary-face */
+        font-weight: bold;
+      }
+      .org-jiralib-link-filter {
+        /* jiralib-link-filter-face */
+        text-decoration: underline;
+      }
+      .org-jiralib-link-issue {
+        /* jiralib-link-issue-face */
+        text-decoration: underline;
+      }
+      .org-jiralib-link-project {
+        /* jiralib-link-project-face */
+        text-decoration: underline;
+      }
       .org-keyword {
         /* font-lock-keyword-face */
         color: #A52A2A;
@@ -1204,241 +1294,138 @@
         color: #6799CC;
         text-decoration: underline;
       }
-      .org-log-edit-header {
-        /* log-edit-header */
-        color: #A52A2A;
-        font-weight: bold;
+      .org-markdown-blockquote {
+        /* markdown-blockquote-face */
+        color: #4E9A06;
       }
-      .org-log-edit-summary {
-        /* log-edit-summary */
-        color: #00578E;
-        font-weight: bold;
-      }
-      .org-log-edit-unknown-header {
-        /* log-edit-unknown-header */
-        color: #204A87;
-      }
-      .org-magit-branch {
-        /* magit-branch */
+      .org-markdown-bold {
+        /* markdown-bold-face */
         color: #0084C8;
         font-weight: bold;
       }
-      .org-magit-cherry-equivalent {
-        /* magit-cherry-equivalent */
-        color: #ff00ff;
+      .org-markdown-comment {
+        /* markdown-comment-face */
+        color: #204A87;
       }
-      .org-magit-cherry-unmatched {
-        /* magit-cherry-unmatched */
-        color: #00ffff;
-      }
-      .org-magit-diff-add {
-        /* magit-diff-add */
-        color: #4CB64A;
-        font-weight: bold;
-      }
-      .org-magit-diff-del {
-        /* magit-diff-del */
-        color: #F5666D;
-      }
-      .org-magit-diff-file-header {
-        /* magit-diff-file-header */
-        background-color: #b3b3b3;
-        font-weight: bold;
-      }
-      .org-magit-diff-hunk-header {
-        /* magit-diff-hunk-header */
-        background-color: #cccccc;
-      }
-      .org-magit-diff-merge-current {
-        /* magit-diff-merge-current */
-        color: #A020F0;
-      }
-      .org-magit-diff-merge-diff3-separator {
-        /* magit-diff-merge-diff3-separator */
-        color: #A020F0;
-      }
-      .org-magit-diff-merge-proposed {
-        /* magit-diff-merge-proposed */
-        color: #A020F0;
-      }
-      .org-magit-diff-merge-separator {
-        /* magit-diff-merge-separator */
-        color: #A020F0;
-      }
-      .org-magit-diff-none {
-        /* magit-diff-none */
-        color: #333333;
-      }
-      .org-magit-item-highlight {
-        /* magit-item-highlight */
-        background-color: #FEFFBF;
-      }
-      .org-magit-item-mark {
-        /* magit-item-mark */
-        color: #ffffff;
-        background-color: #4A90D9;
-      }
-      .org-magit-key-mode-args {
-        /* magit-key-mode-args-face */
-        background-color: #d9d9d9;
-      }
-      .org-magit-key-mode-button {
-        /* magit-key-mode-button-face */
-        color: #A020F0;
-      }
-      .org-magit-key-mode-header {
-        /* magit-key-mode-header-face */
+      .org-markdown-footnote {
+        /* markdown-footnote-face */
         color: #A52A2A;
         font-weight: bold;
       }
-      .org-magit-key-mode-switch {
-        /* magit-key-mode-switch-face */
-        color: #F5666D;
-        font-weight: bold;
-      }
-      .org-magit-log-author {
-        /* magit-log-author */
-        color: #b22222;
-      }
-      .org-magit-log-date {
-      }
-      .org-magit-log-graph {
-        /* magit-log-graph */
-        color: #1c1c1c;
-      }
-      .org-magit-log-head-label-bisect-bad {
-        /* magit-log-head-label-bisect-bad */
-        color: #8b3a3a;
-        background-color: #ff6a6a;
-      }
-      .org-magit-log-head-label-bisect-good {
-        /* magit-log-head-label-bisect-good */
-        color: #556b2f;
-        background-color: #90ee90;
-      }
-      .org-magit-log-head-label-bisect-skip {
-        /* magit-log-head-label-bisect-skip */
-        color: #b8860b;
-        background-color: #eedd82;
-      }
-      .org-magit-log-head-label-default {
-        /* magit-log-head-label-default */
-        background-color: #7f7f7f;
-      }
-      .org-magit-log-head-label-head {
-        /* magit-log-head-label-head */
-        color: #000000;
-        background-color: #b3b3b3;
-      }
-      .org-magit-log-head-label-local {
-        /* magit-log-head-label-local */
-        color: #4F78B5;
-      }
-      .org-magit-log-head-label-patches {
-        /* magit-log-head-label-patches */
-        color: #8b3a3a;
-        background-color: #ff6a6a;
-      }
-      .org-magit-log-head-label-remote {
-        /* magit-log-head-label-remote */
-        color: #4CB64A;
-      }
-      .org-magit-log-head-label-tags {
-        /* magit-log-head-label-tags */
-        color: #8b6914;
-        background-color: #fffacd;
-      }
-      .org-magit-log-head-label-wip {
-        /* magit-log-head-label-wip */
-        color: #8db6cd;
-        background-color: #f2f2f2;
-      }
-      .org-magit-log-message {
-      }
-      .org-magit-log-reflog-label-amend {
-        /* magit-log-reflog-label-amend */
-        color: #8b6914;
-        background-color: #fffacd;
-      }
-      .org-magit-log-reflog-label-checkout {
-        /* magit-log-reflog-label-checkout */
-        color: #607b8b;
-        background-color: #d9d9d9;
-      }
-      .org-magit-log-reflog-label-cherry-pick {
-        /* magit-log-reflog-label-cherry-pick */
-        color: #556b2f;
-        background-color: #90ee90;
-      }
-      .org-magit-log-reflog-label-commit {
-        /* magit-log-reflog-label-commit */
-        color: #8b6914;
-        background-color: #fffacd;
-      }
-      .org-magit-log-reflog-label-merge {
-        /* magit-log-reflog-label-merge */
-        color: #8b6914;
-        background-color: #fffacd;
-      }
-      .org-magit-log-reflog-label-other {
-        /* magit-log-reflog-label-other */
-        background-color: #7f7f7f;
-      }
-      .org-magit-log-reflog-label-rebase {
-        /* magit-log-reflog-label-rebase */
-        color: #698b22;
-        background-color: #d9d9d9;
-      }
-      .org-magit-log-reflog-label-remote {
-        /* magit-log-reflog-label-remote */
-        background-color: #7f7f7f;
-      }
-      .org-magit-log-reflog-label-reset {
-        /* magit-log-reflog-label-reset */
-        color: #8b3a3a;
-        background-color: #ff6a6a;
-      }
-      .org-magit-log-sha1 {
-        /* magit-log-sha1 */
-        color: #FF7092;
-      }
-      .org-magit-process-ng {
-        /* magit-process-ng */
-        color: #ff0000;
-        font-weight: bold;
-      }
-      .org-magit-process-ok {
-        /* magit-process-ok */
-        color: #00ff00;
-        font-weight: bold;
-      }
-      .org-magit-section-title {
-        /* magit-section-title */
+      .org-markdown-header {
+        /* markdown-header-face */
         color: #00578E;
         font-weight: bold;
       }
-      .org-magit-signature-bad {
-        /* magit-signature-bad */
-        color: #ff0000;
+      .org-markdown-header-delimiter {
+        /* markdown-header-delimiter-face */
+        color: #00578E;
+        font-weight: bold;
       }
-      .org-magit-signature-good {
-        /* magit-signature-good */
-        color: #00ff00;
+      .org-markdown-header-face-1 {
+        /* markdown-header-face-1 */
+        color: #00578E;
+        font-weight: bold;
       }
-      .org-magit-signature-none {
+      .org-markdown-header-face-2 {
+        /* markdown-header-face-2 */
+        color: #00578E;
+        font-weight: bold;
       }
-      .org-magit-signature-untrusted {
-        /* magit-signature-untrusted */
-        color: #00ffff;
+      .org-markdown-header-face-3 {
+        /* markdown-header-face-3 */
+        color: #00578E;
+        font-weight: bold;
       }
-      .org-magit-tag {
-        /* magit-tag */
-        color: #8b6914;
-        background-color: #fffacd;
+      .org-markdown-header-face-4 {
+        /* markdown-header-face-4 */
+        color: #00578E;
+        font-weight: bold;
       }
-      .org-magit-whitespace-warning {
-        /* magit-whitespace-warning-face */
-        background-color: #ff0000;
+      .org-markdown-header-face-5 {
+        /* markdown-header-face-5 */
+        color: #00578E;
+        font-weight: bold;
+      }
+      .org-markdown-header-face-6 {
+        /* markdown-header-face-6 */
+        color: #00578E;
+        font-weight: bold;
+      }
+      .org-markdown-header-rule {
+        /* markdown-header-rule-face */
+        color: #00578E;
+        font-weight: bold;
+      }
+      .org-markdown-inline-code {
+        /* markdown-inline-code-face */
+        color: #F5666D;
+      }
+      .org-markdown-italic {
+        /* markdown-italic-face */
+        color: #0084C8;
+        font-weight: bold;
+        font-style: italic;
+      }
+      .org-markdown-language-keyword {
+        /* markdown-language-keyword-face */
+        color: #2F8B58;
+        font-weight: bold;
+      }
+      .org-markdown-line-break {
+        /* markdown-line-break-face */
+        color: #F5666D;
+        text-decoration: underline;
+      }
+      .org-markdown-link {
+        /* markdown-link-face */
+        color: #A52A2A;
+        font-weight: bold;
+      }
+      .org-markdown-link-title {
+        /* markdown-link-title-face */
+        color: #204A87;
+      }
+      .org-markdown-list {
+        /* markdown-list-face */
+        color: #A020F0;
+      }
+      .org-markdown-math {
+        /* markdown-math-face */
+        color: #4E9A06;
+      }
+      .org-markdown-metadata-key {
+        /* markdown-metadata-key-face */
+        color: #0084C8;
+        font-weight: bold;
+      }
+      .org-markdown-metadata-value {
+        /* markdown-metadata-value-face */
+        color: #4E9A06;
+      }
+      .org-markdown-missing-link {
+        /* markdown-missing-link-face */
+        color: #F5666D;
+        font-weight: bold;
+      }
+      .org-markdown-pre {
+        /* markdown-pre-face */
+        color: #F5666D;
+      }
+      .org-markdown-reference {
+        /* markdown-reference-face */
+        color: #2F8B58;
+        font-weight: bold;
+      }
+      .org-markdown-strike-through {
+        /* markdown-strike-through-face */
+        color: #0084C8;
+        font-weight: bold;
+        text-decoration: line-through;
+      }
+      .org-markdown-url {
+        /* markdown-url-face */
+        color: #4E9A06;
       }
       .org-match {
         /* match */
@@ -1859,7 +1846,7 @@
         /* org-document-info-keyword */
         color: #7f7f7f;
       }
-      .org-org-document-title {
+      h1.title, .org-org-document-title {
         /* org-document-title */
         color: #191970;
         font-weight: bold;
@@ -1925,7 +1912,7 @@
       }
       .org-org-hide {
         /* org-hide */
-        color: #add8e6;
+        color: #EDEDED;
       }
       .org-org-latex-and-related {
         /* org-latex-and-related */
@@ -2104,6 +2091,63 @@
         /* outline-8 */
         color: #4E9A06;
       }
+      .org-package-description {
+        /* package-description */
+        color: #2E3436;
+        background-color: #EDEDED;
+      }
+      .org-package-name {
+        /* package-name */
+        color: #0066CC;
+        text-decoration: underline;
+      }
+      .org-package-status-avail-obso {
+        /* package-status-avail-obso */
+        color: #204A87;
+      }
+      .org-package-status-available {
+        /* package-status-available */
+        color: #2E3436;
+        background-color: #EDEDED;
+      }
+      .org-package-status-built-in {
+        /* package-status-built-in */
+        color: #A020F0;
+      }
+      .org-package-status-builtin {
+        /* package-status-builtin-face */
+        color: #A020F0;
+      }
+      .org-package-status-dependency {
+        /* package-status-dependency */
+        color: #204A87;
+      }
+      .org-package-status-disabled {
+        /* package-status-disabled */
+        color: #F5666D;
+        font-weight: bold;
+      }
+      .org-package-status-external {
+        /* package-status-external */
+        color: #A020F0;
+      }
+      .org-package-status-held {
+        /* package-status-held */
+        color: #F5666D;
+      }
+      .org-package-status-incompat {
+        /* package-status-incompat */
+        color: #204A87;
+      }
+      .org-package-status-installed {
+        /* package-status-installed */
+        color: #204A87;
+      }
+      .org-package-status-unsigned {
+        /* package-status-unsigned */
+        color: #F5666D;
+        font-weight: bold;
+      }
       .org-page-break-lines {
         /* page-break-lines */
         color: #204A87;
@@ -2232,6 +2276,10 @@
       }
       .org-scroll-bar {
       }
+      .org-sdim-string {
+        /* sdim-string-face */
+        text-decoration: underline;
+      }
       .org-secondary-selection {
         /* secondary-selection */
         background-color: #ffff00;
@@ -2264,6 +2312,32 @@
         /* show-paren-mismatch */
         color: #ffffff;
         background-color: #a020f0;
+      }
+      .org-smerge-base {
+        /* smerge-base */
+        background-color: #ffffaa;
+      }
+      .org-smerge-markers {
+        /* smerge-markers */
+        background-color: #d9d9d9;
+      }
+      .org-smerge-mine {
+        /* smerge-mine */
+        background-color: #ffdddd;
+      }
+      .org-smerge-other {
+        /* smerge-other */
+        background-color: #ddffdd;
+      }
+      .org-smerge-refined-added {
+        /* smerge-refined-added */
+        background-color: #aaffaa;
+      }
+      .org-smerge-refined-changed {
+      }
+      .org-smerge-refined-removed {
+        /* smerge-refined-removed */
+        background-color: #ffbbbb;
       }
       .org-speedbar-button {
         /* speedbar-button-face */
@@ -2379,6 +2453,24 @@
       }
       .org-variable-pitch {
       }
+      .org-vc-conflict-state {
+      }
+      .org-vc-edited-state {
+      }
+      .org-vc-locally-added-state {
+      }
+      .org-vc-locked-state {
+      }
+      .org-vc-missing-state {
+      }
+      .org-vc-needs-update-state {
+      }
+      .org-vc-removed-state {
+      }
+      .org-vc-state-base {
+      }
+      .org-vc-up-to-date-state {
+      }
       .org-vertical-border {
       }
       .org-warning {
@@ -2390,10 +2482,39 @@
         color: #F5666D;
         font-weight: bold;
       }
+      .org-wgrep {
+        /* wgrep-face */
+        color: #ffffff;
+        background-color: #228b22;
+      }
+      .org-wgrep-delete {
+        /* wgrep-delete-face */
+        color: #ffc0cb;
+        background-color: #228b22;
+      }
+      .org-wgrep-done {
+        /* wgrep-done-face */
+        color: #0000ff;
+      }
+      .org-wgrep-file {
+        /* wgrep-file-face */
+        color: #ffffff;
+        background-color: #228b22;
+      }
+      .org-wgrep-reject {
+        /* wgrep-reject-face */
+        color: #ff0000;
+        font-weight: bold;
+      }
       .org-which-func {
         /* which-func */
         color: #00578E;
         font-weight: bold;
+      }
+      .org-whitespace-big-indent {
+        /* whitespace-big-indent */
+        color: #b22222;
+        background-color: #ff0000;
       }
       .org-whitespace-empty {
         /* whitespace-empty */
@@ -2485,6 +2606,14 @@
       .org-yas--field-debug {
       }
 
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
       a:hover {
         text-decoration: underline;
       }
+    -->
+</style>
