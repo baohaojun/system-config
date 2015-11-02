@@ -2,6 +2,38 @@
 
 set -x
 set -e
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt s:ssid p:password
+## end code-generator
+## start generated code
+TEMP=$(getopt -o s:p: --long "ssid:,password:"  -n $(basename $0) -- "$@")
+ssid=
+password=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -s|--ssid)
+            ssid=$2
+            shift 2
+            ;;
+        -p|--password)
+            password=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
 if which udhcpd && which hostapd; then
     true
 else
@@ -33,11 +65,17 @@ if test ! -e /etc/hostapd/hostapd.conf; then
     zcat /usr/share/doc/hostapd/examples/hostapd.conf.gz | sudo tee /etc/hostapd/hostapd.conf
 fi
 
-ssid=$(select-args baohaojun unknown)
-passwd=$(select-args helloworld iamsofunny)
+if test -z "$ssid"; then
+    ssid=$(select-args baohaojun unknown)
+fi
+
+if test -z "$password"; then
+    password=$(select-args helloworld iamsofunny)
+fi
+
 sudo perl -npe "s/^ssid=.*/ssid=$ssid/;
 s/#?wpa=.*/wpa=1/g;
-s/#?wpa_passphrase=.*/wpa_passphrase=$passwd/" -i /etc/hostapd/hostapd.conf
+s/#?wpa_passphrase=.*/wpa_passphrase=$password/" -i /etc/hostapd/hostapd.conf
 
 # sudo ifconfig wlan0 up
 if ! grep '^iface wlan0 inet manual' /etc/network/interfaces; then

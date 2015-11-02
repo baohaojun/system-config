@@ -28,7 +28,8 @@ classes.jar: unknown package name of class file
 warning: no entries written for string/
 failed to reconstruct target deflate chunk 1
 make: .*/target/product/.*/recovery.img. Error 1 .ignored.
-cp: cannot stat .*/target/product/.*/root/init.recovery.*.rc.: No such file or directory
+cp: cannot stat .*/target/product/.*/root/init.recovery.*.rc.*: No such file or directory
+mapname:  conversion of  failed
 static void LocationService_agps_data_conn_failed\(
 after.failed - before.failed, pos\);
 EOF
