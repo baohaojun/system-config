@@ -95,6 +95,8 @@ private slots:
 
 private:
 
+    bool anyShareChecked();
+
     QMap<QString, QString> mMmsReceiverMap;
 
     DialogGetEntry* mSelectArgDialog;

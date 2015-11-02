@@ -203,6 +203,14 @@ void T1WrenchMainWindow::onSelectArgs(const QStringList& args)
     dialog.disconnect();
 }
 
+bool T1WrenchMainWindow::anyShareChecked()
+{
+    return  ui->tbWeibo->isChecked() ||
+        ui->tbWeixin->isChecked() ||
+        ui->tbQq->isChecked() ||
+        ui->tbMomo->isChecked();
+}
+
 void T1WrenchMainWindow::on_sendItPushButton_clicked()
 {
     QString text = get_text();
@@ -217,10 +225,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         mLuaThread->addScript(QStringList() << "get_a_note" << text);
         mPictures.insert(0, "last-pic-notes.png");
         text = "#小扳手便笺#";
-        if (! ui->tbWeibo->isChecked() &&
-            ! ui->tbWeixin->isChecked() &&
-            ! ui->tbQq->isChecked() &&
-            ! ui->tbMomo->isChecked()) {
+        if (!anyShareChecked()) {
             mLuaThread->addScript((QStringList() << "t1_picture") + mPictures);
             mPictures.clear();
             return;
@@ -352,10 +357,7 @@ void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
 
     pix.save("screen-shot.png", "PNG");
 
-    if ((ui->tbWeixin->isChecked() ||
-         ui->tbWeibo->isChecked() ||
-         ui->tbQq->isChecked() ||
-         ui->tbMomo->isChecked()) &&
+    if (anyShareChecked() &&
         ui->tbScreenCapture->isChecked() &&
         !mPictures.isEmpty()) {
         ui->tbScreenCapture->setChecked(false);
@@ -363,10 +365,7 @@ void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
         return;
     }
 
-    if ((ui->tbWeixin->isChecked() ||
-         ui->tbWeibo->isChecked() ||
-         ui->tbQq->isChecked() ||
-         ui->tbMomo->isChecked())) {
+    if (anyShareChecked()) {
         QString text = get_text();
         ui->tbScreenCapture->setCheckable(true);
         ui->tbScreenCapture->setChecked(true);
@@ -384,10 +383,7 @@ void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
 
 void T1WrenchMainWindow::on_tbPicture_clicked()
 {
-    if ((ui->tbWeixin->isChecked() ||
-         ui->tbWeibo->isChecked() ||
-         ui->tbQq->isChecked() ||
-         ui->tbMomo->isChecked()) && !mPictures.isEmpty()) {
+    if (anyShareChecked() && !mPictures.isEmpty()) {
         ui->tbPicture->setChecked(false);
         mPictures.clear();
         return;
@@ -400,10 +396,7 @@ void T1WrenchMainWindow::on_tbPicture_clicked()
         return;
     }
 
-    if ((ui->tbWeixin->isChecked() ||
-         ui->tbWeibo->isChecked() ||
-         ui->tbQq->isChecked() ||
-         ui->tbMomo->isChecked())) {
+    if (anyShareChecked()) {
         QString text = get_text();
         ui->tbPicture->setCheckable(true);
         ui->tbPicture->setChecked(true);
@@ -441,10 +434,7 @@ void T1WrenchMainWindow::on_tbWeibo_clicked()
         prompt_user("您之后输入的文字和选择的照片、截图将被分享到微博");
     }
 
-    if (!ui->tbWeibo->isChecked() &&
-        !ui->tbWeixin->isChecked() &&
-        !ui->tbQq->isChecked() &&
-        !ui->tbMomo->isChecked()) {
+    if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
         mPictures.clear();
     }
@@ -457,10 +447,7 @@ void T1WrenchMainWindow::on_tbWeixin_clicked()
         mSettings.setValue("firstTimeWeixin", 0);
         prompt_user("您之后输入的文字和选择的照片、截图将被分享到微信朋友圈");
     }
-    if (!ui->tbWeibo->isChecked() &&
-        !ui->tbQq->isChecked() &&
-        !ui->tbMomo->isChecked() &&
-        !ui->tbWeixin->isChecked()) {
+    if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
         mPictures.clear();
     }
@@ -472,10 +459,7 @@ void T1WrenchMainWindow::on_tbQq_clicked()
         mSettings.setValue("firstTimeQq", 0);
         prompt_user("您之后输入的文字和选择的照片、截图将被分享到微信朋友圈");
     }
-    if (!ui->tbWeibo->isChecked() &&
-        !ui->tbWeixin->isChecked() &&
-        !ui->tbMomo->isChecked() &&
-        !ui->tbQq->isChecked()) {
+    if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
         mPictures.clear();
     }
@@ -487,7 +471,7 @@ void T1WrenchMainWindow::on_tbMomo_clicked()
         mSettings.setValue("firstTimeMomo", 0);
         prompt_user("您之后输入的文字和选择的照片、截图将被分享到陌陌留言板");
     }
-    if (!ui->tbWeibo->isChecked() && !ui->tbMomo->isChecked()) {
+    if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
         mPictures.clear();
     }

@@ -7,8 +7,8 @@ local M
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
 local shell_quote, putclip, t1_post, push_text, t1_post2
-local adb_start_activity, qq_talk_to
-local picture_to_weixin_share, picture_to_weibo_share
+local adb_start_activity
+local picture_to_weixin_share, picture_to_weibo_share, picture_to_qq_share
 local picture_to_momo_share, t1_add_mms_receiver
 local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share, adb_is_window
@@ -18,7 +18,7 @@ local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic, debugging
 local adb_weixin_lucky_money
 local adb_weixin_lucky_money_output
-local t1_find_weixin_contact
+local t1_find_weixin_contact, t1_find_qq_contact
 local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity, wait_top_activity_match
@@ -55,6 +55,7 @@ local weixinLauncherActivity = "com.tencent.mm/com.tencent.mm.ui.LauncherUI"
 local weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI"
 local weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
 local weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
+local qqShareActivity = "com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity"
 local emailSmartisanActivity = "com.android.email/com.android.email.activity.ComposeActivityEmail"
 local oiFileChooseActivity = "org.openintents.filemanager/org.openintents.filemanager.IntentFilterActivity"
 local weiboCommentActivity = "com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity"
@@ -491,6 +492,12 @@ end
 local function t1_share_to_weibo(text)
    share_text_to_app("com.sina.weibo", ".composerinde.ComposerDispatchActivity", text)
    wait_input_target(weiboShareActivity)
+   t1_send_action()
+end
+
+local function t1_share_to_qq(text)
+   share_text_to_app("com.qzone", "com.qzonex.module.operation.ui.QZonePublishMoodActivity",  text)
+   wait_input_target(qqShareActivity)
    t1_send_action()
 end
 
@@ -1210,6 +1217,14 @@ picture_to_weixin_share = function(pics, ...)
    wait_input_target(weixinSnsUploadActivity)
 end
 
+picture_to_qq_share = function(pics, ...)
+   log("share to qq")
+   share_pics_to_app("com.qzone", "com.qzonex.module.operation.ui.QZonePublishMoodActivity", pics)
+   wait_top_activity(qqShareActivity)
+   adb_event("adb-tap 228 401")
+   wait_input_target(qqShareActivity)
+end
+
 local function picture_to_weibo_share_upload(...)
    local pics = upload_pics(...)
    picture_to_weibo_share(pics)
@@ -1689,6 +1704,18 @@ t1_find_weixin_contact = function(number)
    adb_am("am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getcontact 1 --es contact " .. number)
 end
 
+t1_find_qq_contact = function(number)
+   local contact_type
+   if (number:match("@qq.com")) then
+      number = number:gsub("@qq.com", "")
+      contact_type = 0
+   elseif (number:match("@QQ.com")) then
+      number = number:gsub("@QQ.com", "")
+      contact_type = 1
+   end
+   adb_am(("am start --user 0 -n com.tencent.mobileqq/.activity.ChatActivity --es uin %d --ei uintype %d"):format(number, contact_type))
+end
+
 local press_dial_key = function()
    if not where_is_dial_key then
       where_is_dial_key = select_args{"拨号键在哪儿呢？", "中间", "左数第一个", "左数第二个"}
@@ -1812,7 +1839,9 @@ M.adb_weixin_lucky_money_output = adb_weixin_lucky_money_output
 M.adb_event = adb_event
 M.t1_send_action = t1_send_action
 M.t1_post2 = t1_post2
-M.qq_talk_to = qq_talk_to
+M.t1_find_qq_contact = t1_find_qq_contact
+M.t1_share_to_qq = t1_share_to_qq
+M.picture_to_qq_share = picture_to_qq_share
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
