@@ -43,7 +43,7 @@ void EmojiModel::filterSelectedItems(const QStringList& split)
     foreach (const QString& emoji, mEmojis) {
         bool match = 1;
         foreach(const QString& stem, split) {
-            if (emoji.indexOf(stem, 0, Qt::CaseInsensitive) < 0) {
+            if (!emoji.contains(stem, Qt::CaseInsensitive)) {
                 match = 0;
                 break;
             }

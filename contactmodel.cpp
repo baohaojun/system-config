@@ -200,7 +200,7 @@ void ContactModel::filterSelectedItems(const QStringList& split)
 
         foreach(const QString& stem, split) {
 
-            if (vcard.mName.indexOf(stem, 0, Qt::CaseInsensitive) >= 0) {
+            if (vcard.mName.contains(stem, Qt::CaseInsensitive)) {
                 continue;
             }
 

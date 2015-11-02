@@ -27,7 +27,7 @@ void StrlistModel::filterSelectedItems(const QStringList& split)
     foreach (const QString& str, mStrList) {
         int match = 1;
         foreach(const QString& stem, split) {
-            if (str.indexOf(stem, 0, Qt::CaseInsensitive) >= 0) {
+            if (str.contains(stem, Qt::CaseInsensitive)) {
                 continue;
             }
             match = 0;
