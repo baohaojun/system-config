@@ -497,6 +497,7 @@ void T1WrenchMainWindow::initContactDialog(bool isMail)
     } else if (ui->tbQq->isChecked()) {
         placeHolder = "QQ号@qq.com过滤";
         mContactModel->setWeixin(false);
+        mContactModel->setInitFilter("@qq.com");
         isMail = true;
     } else {
         mContactModel->setWeixin(false);

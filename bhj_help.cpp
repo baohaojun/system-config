@@ -6,10 +6,18 @@
 #include <QRegularExpressionMatch>
 #include <QDebug>
 
+static void shit()
+{
+
+}
+
 bool matchOneString(const QStringList& strList, const QString& str)
 {
     foreach(const QString& entry, strList) {
-        if (entry.indexOf(str) >= 0) {
+        if (entry.indexOf(str, Qt::CaseInsensitive) >= 0) {
+            if (entry.indexOf("QQ.com") >= 0) {
+                shit();
+            }
             return true;
         }
     }
@@ -20,7 +28,7 @@ QStringList filterMatchedStrings(const QStringList& strList, const QString& str)
 {
     QStringList res;
     foreach(const QString& entry, strList) {
-        if (entry.indexOf(str) >= 0) {
+        if (entry.indexOf(str, Qt::CaseInsensitive) >= 0) {
             res << entry;
         }
     }

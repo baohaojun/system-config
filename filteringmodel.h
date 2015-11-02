@@ -33,6 +33,7 @@ class FilteringModel : public QAbstractListModel
 
  private:
     int mMaxHistEntries;
+    QString mInitFilter;
     QString mFilter;
     QList<QString> mHistoryList;
     void sortEntriesWithHistory(int oldRows = 0);
@@ -41,6 +42,7 @@ class FilteringModel : public QAbstractListModel
 
 
  public:
+    void setInitFilter(QString initFilter) { mInitFilter = initFilter; };
     QString getSelectedText(int i);
     QString getSelectedDisplayText(int i);
     void updateHistory(int i);

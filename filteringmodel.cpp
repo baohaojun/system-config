@@ -61,6 +61,9 @@ void FilteringModel::sortEntriesWithHistory(int oldRows)
 
 void FilteringModel::setFilter(QString filter)
 {
+    if (!mInitFilter.isEmpty()) {
+        filter = filter + " " + mInitFilter;
+    }
     if (filter == mFilter) {
         sortEntriesWithHistory();
         return;
