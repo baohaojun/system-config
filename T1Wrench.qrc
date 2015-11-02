@@ -10,7 +10,6 @@
     </qresource>
 
     <qresource prefix="/skin/default">
-      <file>resources/style.css</file>
       <file>resources/capture-screen.png</file>
       <file>resources/phone-screen.png</file>
       <file>resources/picture.png</file>

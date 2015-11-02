@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
+    <width>580</width>
     <height>592</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabChat">
        <attribute name="title">
@@ -339,12 +339,20 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
+            </property>
            </widget>
           </item>
           <item row="4" column="2">
            <widget class="QToolButton" name="tbMailAddAttachment">
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
             </property>
            </widget>
           </item>
@@ -365,6 +373,10 @@
            <widget class="QToolButton" name="tbMailAddTo">
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
             </property>
            </widget>
           </item>
@@ -426,6 +438,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
+            </property>
            </widget>
           </item>
           <item row="4" column="1">
@@ -460,6 +476,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/mail-clear.png</normaloff>:/skin/default/resources/mail-clear.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -469,6 +489,10 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/mail-save.png</normaloff>:/skin/default/resources/mail-save.png</iconset>
             </property>
            </widget>
           </item>
@@ -480,6 +504,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -489,6 +517,10 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/mail-new.png</normaloff>:/skin/default/resources/mail-new.png</iconset>
             </property>
            </widget>
           </item>
