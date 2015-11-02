@@ -1712,6 +1712,9 @@ t1_find_qq_contact = function(number)
    elseif (number:match("@QQ.com")) then
       number = number:gsub("@QQ.com", "")
       contact_type = 1
+   else
+      log("Invalid qq number: " .. number)
+      return
    end
    adb_am(("am start --user 0 -n com.tencent.mobileqq/.activity.ChatActivity --es uin %d --ei uintype %d"):format(number, contact_type))
 end

@@ -457,7 +457,7 @@ void T1WrenchMainWindow::on_tbQq_clicked()
 {
     if (ui->tbQq->isChecked() && mSettings.value("firstTimeQq", 1).toInt() == 1) {
         mSettings.setValue("firstTimeQq", 0);
-        prompt_user("您之后输入的文字和选择的照片、截图将被分享到微信朋友圈");
+        prompt_user("您之后输入的文字和选择的照片、截图将被分享到QQ空间");
     }
     if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
@@ -912,5 +912,22 @@ bool T1WrenchMainWindow::handleEmacsKeys(QWidget *w, QKeyEvent *e)
             return true;
         }
     }
+
+    if (m == (Qt::AltModifier | Qt::ControlModifier)) {
+        if (key == Qt::Key_Q) {
+            this->ui->tbQq->toggle();
+        } else if (key == Qt::Key_B) {
+            this->ui->tbWeibo->toggle();
+        } else if (key == Qt::Key_W) {
+            this->ui->tbWeixin->toggle();
+        } else if (key == Qt::Key_M) {
+            this->ui->tbMomo->toggle();
+        } else {
+            goto default_filter;
+        }
+        return true;
+    }
+
+default_filter:
     return QMainWindow::eventFilter(w, e);
 }

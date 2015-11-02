@@ -18,6 +18,7 @@ FilteringModel::FilteringModel(QObject *parent) :
     mSettings("Smartisan", "Wrench", parent),
     mFilter("hello world")
 {
+    mMaxHistEntries = mSettings.value("max-history-entries", QVariant(20)).toInt();
     L = luaL_newstate();             /* opens Lua */
     luaL_openlibs(L);        /* opens the standard libraries */
 }
@@ -118,34 +119,37 @@ void FilteringModel::updateHistory(int i)
     if (i >= 0 && i < mSelectedItems.size()) {
         QString key = mSelectedItems[i].displayText;
         updateHistory(key);
-        mSettings.setValue(getNthHistoryVarName(mHistoryHead++),
-                          QVariant(key));
-        mSettings.setValue(getHistoryHeadName(), QVariant(mHistoryHead));
+        for (int i = 0; i < mHistoryList.size(); i++) {
+            mSettings.setValue(getNthHistoryVarName(i), QVariant(mHistoryList[i]));
+        }
     }
 }
 
 void FilteringModel::updateHistory(QString key)
 {
-    mHistoryList.removeOne(key);
-    mHistoryList.push_back(key);
-    while (mHistoryList.size() > 20) {
-        mHistoryList.pop_front();
+    if (key.isEmpty()) {
+        return;
+    }
+    while (mHistoryList.removeOne(key)) {
+        ;
+    }
+    mHistoryList.push_front(key);
+    while (mHistoryList.size() > mMaxHistEntries) {
+        mHistoryList.pop_back();
     }
 }
 
 void FilteringModel::initHistory()
 {
-    mHistoryHead = mSettings.value(getHistoryHeadName(), QVariant(0)).toInt();
-    for (int j = 0; j < 20; j++) {
-        int i = 20 - j - 1;
-        updateHistory(mSettings.value(getNthHistoryVarName(mHistoryHead + j), QVariant("")).toString());
+    for (int j = 0; j < mMaxHistEntries; j++) {
+        updateHistory(mSettings.value(getNthHistoryVarName(j), QVariant("")).toString());
     }
     setFilter("");
 }
 
 QString FilteringModel::getNthHistoryVarName(int n)
 {
-    return getHistoryName() + QString().sprintf("-%d", n % 20);
+    return getHistoryName() + QString().sprintf("-%d", n % mMaxHistEntries);
 }
 QString FilteringModel::getHistoryHeadName()
 {

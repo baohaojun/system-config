@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Smartisan T1聊天小扳手 V3.1.0 (ddc793c)</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QToolButton { qproperty-iconSize: 24px 24px; }</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="5,1">
     <item>
@@ -52,6 +55,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/emoji.png</normaloff>:/skin/default/resources/emoji.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -61,6 +68,10 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/picture.png</normaloff>:/skin/default/resources/picture.png</iconset>
             </property>
            </widget>
           </item>
@@ -72,6 +83,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/capture-screen.png</normaloff>:/skin/default/resources/capture-screen.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -81,6 +96,10 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/com_sina_weibo_icon.png</normaloff>:/skin/default/resources/com_sina_weibo_icon.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -95,23 +114,31 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/com_tencent_mm_icon.png</normaloff>:/skin/default/resources/com_tencent_mm_icon.png</iconset>
+            </property>
             <property name="checkable">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-            <widget class="QToolButton" name="tbQq">
-              <property name="toolTip">
-                <string>分享到QQ空间</string>
-              </property>
-              <property name="text">
-                <string>...</string>
-              </property>
-              <property name="checkable">
-                <bool>true</bool>
-              </property>
-            </widget>
+           <widget class="QToolButton" name="tbQq">
+            <property name="toolTip">
+             <string>分享到QQ空间</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/qq.png</normaloff>:/skin/default/resources/qq.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QToolButton" name="tbMomo">
@@ -120,6 +147,10 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/momo.png</normaloff>:/skin/default/resources/momo.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -133,6 +164,10 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/notes.png</normaloff>:/skin/default/resources/notes.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -160,6 +195,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/phone-screen.png</normaloff>:/skin/default/resources/phone-screen.png</iconset>
+            </property>
             <property name="checkable">
              <bool>true</bool>
             </property>
@@ -186,6 +225,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/phone-call.png</normaloff>:/skin/default/resources/phone-call.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -195,6 +238,10 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/mms.png</normaloff>:/skin/default/resources/mms.png</iconset>
             </property>
            </widget>
           </item>
@@ -206,6 +253,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/thumbs_up.png</normaloff>:/skin/default/resources/thumbs_up.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -216,6 +267,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/config.png</normaloff>:/skin/default/resources/config.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -225,6 +280,10 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="T1Wrench.qrc">
+              <normaloff>:/skin/default/resources/smartisan.png</normaloff>:/skin/default/resources/smartisan.png</iconset>
             </property>
            </widget>
           </item>

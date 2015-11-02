@@ -122,10 +122,5 @@ int main(int argc, char *argv[])
     QDir::addSearchPath("config", ":config");
     QDir::addSearchPath("chatstyle", ":chatstyle/clear");
 
-    QFile cssFile("skin:style.css");
-    cssFile.open(QIODevice::ReadOnly | QIODevice::Text);
-    QByteArray ba = cssFile.readAll();
-    qApp->setStyleSheet(ba);
-    cssFile.close();
     return a.exec();
 }

@@ -26,13 +26,13 @@ class FilteringModel : public QAbstractListModel
     virtual void filterSelectedItems(const QStringList&) = 0;
     virtual QString getHistoryName() = 0;
     QMap<QString, SelectedItem> mSelectedItemsRevMap;
-    int mHistoryHead;
     QSettings mSettings;
     virtual void initHistory();
     virtual QString getNthHistoryVarName(int n);
     virtual QString getHistoryHeadName();
 
  private:
+    int mMaxHistEntries;
     QString mFilter;
     QList<QString> mHistoryList;
     void sortEntriesWithHistory(int oldRows = 0);
