@@ -217,7 +217,10 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         mLuaThread->addScript(QStringList() << "get_a_note" << text);
         mPictures.insert(0, "last-pic-notes.png");
         text = "#小扳手便笺#";
-        if (! ui->tbWeibo->isChecked() && ! ui->tbWeixin->isChecked() && ! ui->tbMomo->isChecked()) {
+        if (! ui->tbWeibo->isChecked() &&
+            ! ui->tbWeixin->isChecked() &&
+            ! ui->tbQq->isChecked() &&
+            ! ui->tbMomo->isChecked()) {
             mLuaThread->addScript((QStringList() << "t1_picture") + mPictures);
             mPictures.clear();
             return;
@@ -253,6 +256,17 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
             mLuaThread->addScript(QStringList() << "t1_post" << text);
         }
         ui->tbWeixin->setChecked(false);
+    }
+
+    if (ui->tbQq->isChecked()) {
+        share = 1;
+        if (mPictures.isEmpty()) {
+            mLuaThread->addScript(QStringList() << "t1_share_to_qq" << text);
+        } else {
+            mLuaThread->addScript((QStringList() << "picture_to_qq_share") + mPictures);
+            mLuaThread->addScript(QStringList() << "t1_post" << text);
+        }
+        ui->tbQq->setChecked(false);
     }
 
     if (ui->tbMomo->isChecked()) {
@@ -338,7 +352,10 @@ void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
 
     pix.save("screen-shot.png", "PNG");
 
-    if ((ui->tbWeixin->isChecked() || ui->tbWeibo->isChecked() || ui->tbMomo->isChecked()) &&
+    if ((ui->tbWeixin->isChecked() ||
+         ui->tbWeibo->isChecked() ||
+         ui->tbQq->isChecked() ||
+         ui->tbMomo->isChecked()) &&
         ui->tbScreenCapture->isChecked() &&
         !mPictures.isEmpty()) {
         ui->tbScreenCapture->setChecked(false);
@@ -346,7 +363,10 @@ void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
         return;
     }
 
-    if ((ui->tbWeixin->isChecked() || ui->tbWeibo->isChecked() || ui->tbMomo->isChecked())) {
+    if ((ui->tbWeixin->isChecked() ||
+         ui->tbWeibo->isChecked() ||
+         ui->tbQq->isChecked() ||
+         ui->tbMomo->isChecked())) {
         QString text = get_text();
         ui->tbScreenCapture->setCheckable(true);
         ui->tbScreenCapture->setChecked(true);
@@ -364,7 +384,10 @@ void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
 
 void T1WrenchMainWindow::on_tbPicture_clicked()
 {
-    if ((ui->tbWeixin->isChecked() || ui->tbWeibo->isChecked() || ui->tbMomo->isChecked()) && !mPictures.isEmpty()) {
+    if ((ui->tbWeixin->isChecked() ||
+         ui->tbWeibo->isChecked() ||
+         ui->tbQq->isChecked() ||
+         ui->tbMomo->isChecked()) && !mPictures.isEmpty()) {
         ui->tbPicture->setChecked(false);
         mPictures.clear();
         return;
@@ -377,7 +400,10 @@ void T1WrenchMainWindow::on_tbPicture_clicked()
         return;
     }
 
-    if ((ui->tbWeixin->isChecked() || ui->tbWeibo->isChecked() || ui->tbMomo->isChecked())) {
+    if ((ui->tbWeixin->isChecked() ||
+         ui->tbWeibo->isChecked() ||
+         ui->tbQq->isChecked() ||
+         ui->tbMomo->isChecked())) {
         QString text = get_text();
         ui->tbPicture->setCheckable(true);
         ui->tbPicture->setChecked(true);
@@ -415,7 +441,10 @@ void T1WrenchMainWindow::on_tbWeibo_clicked()
         prompt_user("您之后输入的文字和选择的照片、截图将被分享到微博");
     }
 
-    if (!ui->tbWeibo->isChecked() && !ui->tbWeixin->isChecked() && !ui->tbMomo->isChecked()) {
+    if (!ui->tbWeibo->isChecked() &&
+        !ui->tbWeixin->isChecked() &&
+        !ui->tbQq->isChecked() &&
+        !ui->tbMomo->isChecked()) {
         ui->tbPicture->setCheckable(false);
         mPictures.clear();
     }
@@ -428,7 +457,25 @@ void T1WrenchMainWindow::on_tbWeixin_clicked()
         mSettings.setValue("firstTimeWeixin", 0);
         prompt_user("您之后输入的文字和选择的照片、截图将被分享到微信朋友圈");
     }
-    if (!ui->tbWeibo->isChecked() && !ui->tbWeixin->isChecked()) {
+    if (!ui->tbWeibo->isChecked() &&
+        !ui->tbQq->isChecked() &&
+        !ui->tbMomo->isChecked() &&
+        !ui->tbWeixin->isChecked()) {
+        ui->tbPicture->setCheckable(false);
+        mPictures.clear();
+    }
+}
+
+void T1WrenchMainWindow::on_tbQq_clicked()
+{
+    if (ui->tbQq->isChecked() && mSettings.value("firstTimeQq", 1).toInt() == 1) {
+        mSettings.setValue("firstTimeQq", 0);
+        prompt_user("您之后输入的文字和选择的照片、截图将被分享到微信朋友圈");
+    }
+    if (!ui->tbWeibo->isChecked() &&
+        !ui->tbWeixin->isChecked() &&
+        !ui->tbMomo->isChecked() &&
+        !ui->tbQq->isChecked()) {
         ui->tbPicture->setCheckable(false);
         mPictures.clear();
     }
@@ -463,6 +510,10 @@ void T1WrenchMainWindow::initContactDialog(bool isMail)
     if (ui->tbWeixin->isChecked() && !isMail) {
         placeHolder = "微信联系人过滤";
         mContactModel->setWeixin(true);
+    } else if (ui->tbQq->isChecked()) {
+        placeHolder = "QQ号@qq.com过滤";
+        mContactModel->setWeixin(false);
+        isMail = true;
     } else {
         mContactModel->setWeixin(false);
     }
@@ -475,6 +526,9 @@ void T1WrenchMainWindow::on_tbMms_clicked()
 {
     if (ui->tbWeixin->isChecked()) {
         ui->tbWeixin->setChecked(false);
+    }
+    if (ui->tbQq->isChecked()) {
+        ui->tbQq->setChecked(false);
     }
     initContactDialog();
     mMmsReceiverMap.clear();
@@ -511,6 +565,7 @@ void T1WrenchMainWindow::on_tbPhoneCall_clicked()
     connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_Dial(QString)));
     afterUsingContactDialog();
     ui->tbWeixin->setChecked(false);
+    ui->tbQq->setChecked(false);
 }
 
 void T1WrenchMainWindow::on_tbNotes_clicked()
@@ -536,6 +591,10 @@ void T1WrenchMainWindow::on_Dial(const QString&contact)
 {
     if (ui->tbWeixin->isChecked()) {
         mLuaThread->addScript(QStringList() << "t1_find_weixin_contact" << contact);
+        return;
+    }
+    if (ui->tbQq->isChecked()) {
+        mLuaThread->addScript(QStringList() << "t1_find_qq_contact" << contact);
         return;
     }
     mLuaThread->addScript(QStringList() << "t1_call" << contact);

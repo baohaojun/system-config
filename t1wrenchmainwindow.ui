@@ -101,6 +101,19 @@
            </widget>
           </item>
           <item>
+            <widget class="QToolButton" name="tbQq">
+              <property name="toolTip">
+                <string>分享到QQ空间</string>
+              </property>
+              <property name="text">
+                <string>...</string>
+              </property>
+              <property name="checkable">
+                <bool>true</bool>
+              </property>
+            </widget>
+          </item>
+          <item>
            <widget class="QToolButton" name="tbMomo">
             <property name="toolTip">
              <string>分享到陌陌留言板</string>
@@ -523,6 +536,7 @@
   <tabstop>tbScreenCapture</tabstop>
   <tabstop>tbWeibo</tabstop>
   <tabstop>tbWeixin</tabstop>
+  <tabstop>tbQq</tabstop>
   <tabstop>tbMomo</tabstop>
   <tabstop>tbNotes</tabstop>
   <tabstop>tbPhoneScreen</tabstop>

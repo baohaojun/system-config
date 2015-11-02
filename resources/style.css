@@ -1,4 +1,4 @@
-#tbPicture, #tbEmoji, #tbScreenCapture, #tbWeibo, #tbWeixin, #tbThumbsUp,
+#tbPicture, #tbEmoji, #tbScreenCapture, #tbWeibo, #tbWeixin, #tbQq, #tbThumbsUp,
 #tbPhoneCall, #tbMms,
 #sendItPushButton, #configurePushButton, #tbCommandLine, #tbNotes, #tbMomo, #tbPhoneScreen {
     qproperty-iconSize: 24px 24px;
@@ -18,6 +18,10 @@
 
 #tbWeixin {
     qproperty-icon: url(skin:com_tencent_mm_icon.png)
+}
+
+#tbQq {
+    qproperty-icon: url(skin:qq.png)
 }
 
 #configurePushButton {

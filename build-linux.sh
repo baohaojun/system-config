@@ -63,6 +63,7 @@ ln -s $oldpwd/linux/binaries/the-true-adb . -f
         myscr gdb ./T1Wrench
         find-or-exec konsole
     else
+        rm $build_dir-debug/T1Wrench -f || true
         mkfifo /tmp/build-linux.$$
         myscr bash -c "echo T1Wrench; ./T1Wrench > /tmp/build-linux.$$ 2>&1"
         cat /tmp/build-linux.$$
