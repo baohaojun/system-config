@@ -1453,6 +1453,13 @@ criteria can be provided via the optional match-string argument "
     (setq mail (shell-quote-argument mail))
     (shell-command-to-string (format "maildir-view %s >/dev/null 2>&1&" mail))))
 
+(defun bhj-todo-copy-id ()
+  (interactive)
+  (ajoke--push-marker-ring)
+  (let ((mail (org-entry-get (point) "ID")))
+    (setq mail (shell-quote-argument mail))
+    (shell-command-to-string (format "putclip %s >/dev/null 2>&1&" mail))))
+
 (defun org-export-string (string fmt &optional dir)
   "Export STRING to FMT using existing export facilities.
 During export STRING is saved to a temporary file whose location

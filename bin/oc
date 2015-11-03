@@ -1,2 +1,3 @@
 #!/bin/bash
-nautilus "$@" &
+
+/usr/bin/dolphin --select "$@" &

@@ -351,6 +351,23 @@ def mc_enum_severities(arg):
 
 parser_mc_enum_severities.set_defaults(command=mc_enum_severities)
 
+parser_mc_filter_get_issue_headers = subparsers.add_parser("filter-get-issue-headers", help = "get issue headers with a filter")
+parser_mc_filter_get_issue_headers.add_argument("--project-id", default=0)
+parser_mc_filter_get_issue_headers.add_argument("--filter-id")
+def mc_filter_get_issue_headers(arg):
+    mantis = Client(arg.wsdl).service
+    print mantis.mc_filter_get_issue_headers(
+        arg.username,
+        arg.password,
+        arg.project_id,
+        arg.filter_id,
+        0,
+        -1
+    )
+
+parser_mc_filter_get_issue_headers.set_defaults(command=mc_filter_get_issue_headers)
+
+
 ################################################################
 
 arg = parser.parse_args()

@@ -11,6 +11,10 @@ if test $# != 1; then
     die "Error: Usage $(basename $0) *U=41* (the maildir/cur file name)"
 fi
 
+if [[ "$1" =~ ^https?:// ]]; then
+    exec of "$1"
+fi
+
 cd "$(dirname "$1")"
 set -- "$(basename "$1")"
 if test ! -e "$1"; then
