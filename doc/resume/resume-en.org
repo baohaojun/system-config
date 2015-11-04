@@ -17,7 +17,18 @@
 
 
 * Work Experience
-*** September 2013 - /Present/
+*** March 2014 - /present/
+    *Tools Architect*, Smartisan, Beijing
+
+    - Work as architect in Tools team.
+      * Implement tools for phone debug.
+      * Debug phone over heat issue.
+      * Write a server version of beagrep, allow colleagues search code quickly.
+      * Take over CM responsibility, build and release version for Smartisan T1.
+      * Implement T1Wrench, a PC tool that allows controling phone, see http://t.cn/RyMEl18 .
+      * Implement phone flashing tool for Linux PC.
+
+*** September 2013 - March 2014
     *Technical Expert*, Alibaba, Beijing
     - SMART (software measurement analysis reporting tool) Android
       Client App development.
@@ -29,36 +40,14 @@
       total solution. In charge of designing and implementing mobile
       phone factory production tools.
 
-      * Implemented all test cases using Bash scripts, to make
-        development more dynamic and efficient.
-
-      * For those unavoidable hardware tests, implemented them with
-        C/C++ programming: LCD (framebuffer), Touch (input device),
-        Camera (V4L2), Audio (ALSA, Marvell API), CP (AT command),
-        Sensors/Wifi/BlueTooth (Android HAL programming).
-
-      * Went to ShenZhen factory to track the tool's usage on
-        production line and collect first hand feedback, improved it
-        accordingly.
-
     - Also worked in the BSP team, focusing on tools related
       components, such as Uboot, Kernel API, factory partitions.
 
-      * Brought up usbtty from scratch in Uboot, to solve serial
-        console too inconvinient to use issue on Form Factor.
-
-      * Implemented whole disk flashing with fastboot, so that
-        collegues can flash under Linux easily and efficiently,
-        instead of using Windows and Marvell proprietary Windows-only
-        software for the task.
 
     - Drawing from my experience with open source community, gave
       advice for cooperation process with other teams and sites of
       Marvell.
 
-      * Update Marvell Android Makefiles to enable parallel building
-        and use of ccache. Kernel build time reduced from 10min to
-        2min.
 
 *** March 2010 - October 2011
 
@@ -95,8 +84,7 @@
 * Free Software Projects
 
 *** Emacs
-  - [[http://github.com/baohaojun/skeleton-complete][skeleton-complete.el]] ::  A completion command for Emacs
-       (Emacs-lisp).
+  - [[http://github.com/baohaojun/bbyac][bbyac.el]] ::  A completion command for Emacs (Emacs-lisp).
 
   - [[https://github.com/baohaojun/org-jira][org-jira.el]] ::  An Emacs minor mode for using org-mode to track
                     Jira issues (Emacs-lisp).
@@ -128,13 +116,13 @@
 * Technical Skills
 
 *** Languages \& Libraries
-    - Proficient :: Perl, Python, Bash, Emacs Lisp, C, C++, Java
+    - Proficient :: Perl, Python, Bash, Emacs Lisp, C, C++, Java, Lua
 
     - Used :: ObjC, C#, PHP
 *** Authoring
     - Text :: Org-mode, Emacs
 *** Version Control
-    Git
+    Git, Gerrit
 *** System Admin
     System admin for Debian based Gnu/Linux distributions, Bash
     programming

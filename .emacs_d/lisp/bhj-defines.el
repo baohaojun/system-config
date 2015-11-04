@@ -39,43 +39,6 @@ might be bad."
   (other-window 0))
 
 ;;;###autoload
-(defun fix-latex-cjk ()
-  "move the cjk env outmost with the document env"
-  (interactive)
-  (when (eq major-mode 'latex-mode)
-    (save-excursion
-      (goto-char (point-min))
-      (let ((move-around-lines '("\\AtBeginDvi{\\special{pdf:tounicode UTF8-UCS2}}"
-                                 "\\begin{CJK"
-                                 "\\CJKtilde")))
-
-        (mapc (lambda (str)
-               (when (search-forward str nil t)
-                 (goto-char (line-beginning-position))
-                 (kill-line 1)
-                 (search-backward "\\begin{document}")
-                 (goto-char (line-end-position))
-                 (forward-char)
-                 (yank)))
-             (reverse move-around-lines)))
-      (let ((move-around-lines '("\\end{CJK")))
-        (mapc (lambda (str)
-               (when (search-forward str nil t)
-                 (goto-char (line-beginning-position))
-                 (kill-line 1)
-                 (search-forward "\\end{document}")
-                 (goto-char (line-beginning-position))
-                 (yank)
-                 (let ((use-cjk "\\usepackage{CJKutf8}"))
-                   (unless (save-excursion
-                             (goto-char (point-min))
-                             (search-forward use-cjk nil t))
-                     (search-backward "\\documentclass")
-                     (goto-char (line-end-position))
-                     (insert (concat "\n" use-cjk))))))
-             (reverse move-around-lines))))))
-
-;;;###autoload
 (defun confirm-risky-remote-edit ()
   (let ((filename (buffer-file-name)))
     (when (and (file-remote-p filename) (string-match "/system-config/" filename))

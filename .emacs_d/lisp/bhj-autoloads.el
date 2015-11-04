@@ -450,8 +450,8 @@ get imports if java-mode
 
 ;;;***
 
-;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (21907 52842
-;;;;;;  938656 49000))
+;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (22074 898 452473
+;;;;;;  123000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -463,11 +463,6 @@ might be bad.
 
 (autoload 'bhj-2-window-visit-next-file "bhj-defines" "\
 Make there 2 windows, and the other window visit the next buffer in buffer-list
-
-\(fn)" t nil)
-
-(autoload 'fix-latex-cjk "bhj-defines" "\
-move the cjk env outmost with the document env
 
 \(fn)" t nil)
 

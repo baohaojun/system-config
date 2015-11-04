@@ -14,7 +14,7 @@
  '(bbyac-max-chars 80)
  '(before-save-hook
    (quote
-    (confirm-risky-remote-edit cleanup-buffer-safe fix-latex-cjk ajoke-get-imports-if-java-mode)))
+    (ac-clang-reparse-buffer confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(compilation-message-face (quote default))
@@ -203,7 +203,7 @@
      (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp")
      (TeX-master . t)
      (indent-tab-mode . t))))
- '(save-place t nil (saveplace))
+ '(save-place-mode t nil (saveplace))
  '(scalable-fonts-allowed t)
  '(select-enable-primary t)
  '(senator-minor-mode-hook (quote (ignore)))

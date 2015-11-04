@@ -1,2 +1,5 @@
 *.aux
 *.out
+presentations/_minted-android-dev/
+GB.log
+GB.pdf

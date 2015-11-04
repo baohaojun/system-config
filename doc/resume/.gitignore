@@ -16,3 +16,4 @@ resume-cn.tex
 *.toc
 resume-cn.tex
 *.pyg
+_minted-resume-cn/

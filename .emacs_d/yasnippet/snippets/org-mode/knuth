@@ -1,0 +1,87 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: knuth
+# key: knuth
+# --
+
+** 根据脚本名字或脚本第一个参数来决定调用哪个函数
+
+#+name: which-to-call
+#+BEGIN_SRC sh
+  if test "\$(readlink -f "\$BASH_SOURCE")" = "\$(readlink -f "\$(echo "\$0" | grep / || which "\$0" 2>/dev/null)" )"; then
+
+      ## start code-generator "^\\\\s *#\\\\s *"
+      # generate-getopts xdebug XDEBUG
+      ## end code-generator
+      ## start generated code
+      debug=false
+      DEBUG=false
+      OPTIND=1
+      while getopts 'xX' opt; do
+          case "\$opt" in
+              x)    debug=true;;
+              X)    DEBUG=true;;
+              ,*)    echo Usage Error; exit 2;;
+          esac
+      done
+      shift \$((\$OPTIND - 1))
+
+      ## end generated code
+
+      if test "\$debug" = true; then
+          export xdebug=true
+          set -x
+      elif test "\$DEBUG" = true; then
+          export xdebug=true
+          set -x
+          if echo \$SHELLOPTS | grep -q xtrace; then
+              export SHELLOPTS
+          fi
+      else
+          unset xdebug
+      fi
+
+      me=\$(readlink -f \$0)
+      if test ! -e "\$me"; then
+          me=\$(readlink -f "\$(which \$0)")
+          if test ! -e "\$me"; then
+              die "Can't find out about me"
+              exit 1
+          fi
+      fi
+
+      if grep -q -P "^\\s*function \$1\\s*\\(" "\$me" || test "\$(basename \$0)" = "\$1"; then
+          command=\$1
+          shift
+          original_command=("\$command" "\$@")
+          "\$command" "\$@"
+      else
+          die "'\$1': smartcm command not found"
+      fi
+  fi
+
+#+END_SRC
+
+** 最终的版本：
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/src/github/smartcm/sync-push-to-simt :comments link :shebang "#!/bin/bash" :noweb yes
+
+  # All bash scripts should start with ~set -e~ to fail early and loudly.
+  set -e
+
+  if test "\$SYSTEM_CONFIG_INITED" != true; then
+      . ~/system-config/.bashrc
+  fi
+
+  <<which-to-call>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
+#+BEGIN_EXAMPLE
+# Local Variables: #
+# after-save-hook: (lambda () (shell-command-to-string "(perl -ne 'print unless m/after-save-hook:/' ~/src/github/smartcm/smartcm.org > ~/src/github/smartisan-blog/blog/2015/11/04/0-sync-push-to-simt.org; sleep 5;) >/dev/null 2>/dev/null &")) #
+# eval: (mmm-mode 1) #
+# End: #
+#+END_EXAMPLE
+

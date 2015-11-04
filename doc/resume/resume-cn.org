@@ -3,7 +3,6 @@
 
 #+LaTeX_HEADER: \usepackage{mycv}
 #+BEGIN_LaTeX
-\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
 \begin{CJK*}{UTF8}{simsun}
 #+END_LaTeX
 
