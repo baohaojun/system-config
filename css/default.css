@@ -2479,18 +2479,7 @@ a img {
 
 /* Header
 ----------------------------------------------- */
-@media all {
-  #header {
-    width:660px;
-    margin:0 auto 10px;
-    border:1px solid #ccc;
-    }
-  }
-@media handheld {
-  #header {
-    width:90%;
-    }
-  }
+
 #blog-title {
   margin:5px 5px 0;
   padding:20px 20px .25em;
@@ -2512,7 +2501,6 @@ a img {
   padding:0 20px 20px;
   border:1px solid #eee;
   border-width:0 1px 1px;
-  max-width:700px;
   font:78%/1.4em "Trebuchet MS",Trebuchet,Arial,Verdana,Sans-serif;
   text-transform:uppercase;
   letter-spacing:.2em;
@@ -2522,6 +2510,11 @@ a img {
 /* Content
 ----------------------------------------------- */
 @media all {
+    #header {
+        width:660px;
+        margin:0 auto 10px;
+        border:1px solid #ccc;
+    }
   #bhj_article {
     width:760px;
     margin:0 auto;
@@ -2536,20 +2529,35 @@ a img {
     width:220px;
     float:right;
     }
-  }
-@media handheld {
-  #bhj_article {
-    width:90%;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2),   /* Webkit-based browsers */
+only screen and (min--moz-device-pixel-ratio: 2),      /* Older Firefox browsers (prior to Firefox 16) */
+only screen and (min-resolution: 2dppx),               /* The standard way */
+only screen and (min-resolution: 192dpi) {             /* dppx fallback */
+
+    #header {
+        width:85%;
+        margin:0 auto 5px;
+        border:1px solid #ccc;
     }
-  #bhj_leftpane, #content {
-    width:100%;
-    float:none;
+    #bhj_article {
+        width:90%;
     }
-  #sidebar {
-    width:100%;
-    float:none;
+    #bhj_leftpane, #content {
+        width:100%;
+        float:none;
     }
-  }
+    #sidebar {
+        width:100%;
+        float:none;
+        display: none;
+    }
+    #description {
+        font:60%/1.2em "Trebuchet MS",Trebuchet,Arial,Verdana,Sans-serif;
+        text-transform:uppercase;
+    }
+}
 
 /* Headings
 ----------------------------------------------- */

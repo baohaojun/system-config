@@ -1,5 +1,10 @@
 #+title: Blogging
  * 2015
+  - 2015-11
+   * 2015-11-04
+
+     [[../../blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.org][优化了一下手机上看博客的效果]]
+
   - 2015-08
    * 2015-08-06
 

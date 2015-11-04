@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[优化了一下手机上看博客的效果]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.html"/>
+    <updated>2015-19-04T13:11:53+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[如何在Linux下运行小扳手（包含Ubuntu 12.04）]]></title>
     <link href="http://baohaojun.github.io/blog/2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.html"/>
     <updated>2015-10-22T13:20:08+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html"/>
     <updated>2015-02-25T14:11:24+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[小扳手抢红包秘决]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html"/>
-    <updated>2015-02-19T09:54:10+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/02/19/0-Draw-Lucky-Money-With-T1Wrench.html</id>
   </entry>
 </feed>
