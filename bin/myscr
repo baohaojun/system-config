@@ -35,6 +35,7 @@ if screen -list|grep $session_name; then
             fi
             echo . ~/system-config/bin/set-ssh-agent
             printf "cd %q;" "$oldpwd"
+            echo export SCREEN_TITLE=$SCREEN_TITLE
             for x in "$@"; do
                 printf "%q " "$x"
             done

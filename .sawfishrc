@@ -97,17 +97,19 @@
 (bind-keys global-keymap "Super-S-Right"  '(system "douban forth&"))
 (bind-keys global-keymap "Super-S-Left"  '(system "douban back&"))
 (bind-keys global-keymap "XF86AudioNext"  '(system "douban next&"))
-(bind-keys s-h-keymap "p"  '(system "emacs-get-android-clipboard&"))
-(bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
 (bind-keys global-keymap "XF86AudioPrev"  '(system "douban prev&"))
 (bind-keys global-keymap "Super-XF86AudioPlay"  '(system "douban info&"))
 (bind-keys global-keymap "XF86AudioPlay"  '(system "douban pause&"))
+(bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))
+
+(bind-keys s-h-keymap "p"  '(system "emacs-get-android-clipboard&"))
+(bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
 (bind-keys global-keymap "XF86Launch5" '(system "do-capture&"))
 (bind-keys global-keymap "XF86Launch6" '(system "find-or-exec T1Wrench%Smartisan T1Wrench&"))
 (bind-keys global-keymap "XF86Launch7" '(system "find-or-exec rdesktop&"))
 (bind-keys global-keymap "XF86Launch9" '(system "EMACS=t ssssh&"))
 (bind-keys global-keymap "XF86Calculator" '(system "custom-command&"))
-(bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))
+
 (bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys s-h-keymap "Super-i" '(read-event (format nil "Window is %s;\n\n WM_CLASS is: %s;\n\n and Window class is: %s\n\n and Window name is %s\n\nPress any key to continue..."

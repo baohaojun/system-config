@@ -1,0 +1,70 @@
+#!/usr/bin/perl
+
+my $song_list;
+my $song_list_exist;
+chdir glob("~/Music/like") or die "can't chdir ~/Music/like";
+
+my $list_file = glob("~/Music/songs.list");
+
+if (-e $list_file) {
+    $song_list_exist = 1;
+    open($song_list, "<", $list_file)
+        or die "can't open songs list";
+} else {
+    open($song_list, "-|", "find ~/Music/like -name '*.mp3'");
+}
+
+my %songs_map;
+
+my $songs_playing = 0;
+my $song_list_tmp_file = "$list_file.$$";
+my $song_list_tmp_fh;
+
+while (<$song_list>) {
+    chomp;
+    if (m,.*/Music/like/(.*)/(.*)/(.*)$,) {
+        $songs_map{$_}{author} = $1;
+        $songs_map{$_}{album} = $2;
+        $songs_map{$_}{song} = $_;
+        if (not $songs_playing and not $song_list_exist) {
+            $songs_playing = 1;
+            open($song_list_tmp_fh, ">", $song_list_tmp_file) or
+                die "Can't open tmp file";
+            system("mplayer", "$_");
+        }
+    }
+    if (not $song_list_exist) {
+        print $song_list_tmp_fh "$_\n";
+    }
+}
+
+if (not $song_list_exist) {
+    close $song_list_tmp_fh;
+    rename "$song_list_tmp_file", "$list_file";
+}
+
+my $loop_file = glob("~/.cache/system-config/logs/douban-should-loop");
+my $info_file = glob("~/Music/song.info");
+my $should_replay = glob("~/.cache/system-config/logs/douban-should-play");
+my $no_disturb = glob("~/.do-not-disturb");
+
+while (1) {
+    for (keys %songs_map) {
+        open(my $song_info, ">", $info_file);
+        print $song_info "$_\n";
+        close $song_info;
+        if (not -e $no_disturb) {
+            system("douban info&");
+        } elsif (-e "$no_disturb.bak") {
+            rename "$no_disturb.bak", "$no_disturb";
+        }
+        system("mplayer", "$_");
+        while (-e $should_replay) {
+            unlink $should_replay;
+            system("mplayer", "$_");
+        }
+        while (-e $loop_file) {
+            system("mplayer", "$_");
+        }
+    }
+}

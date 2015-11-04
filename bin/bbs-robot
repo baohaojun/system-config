@@ -4,4 +4,8 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export DEBUG=true
 fi
 
+if test "$SCREEN_TITLE" != bbs; then
+    exec ssssh bbs
+fi
+
 bbs-robot.exp "$@" 2> ~/.cache/system-config/logs/bbs-robot.log

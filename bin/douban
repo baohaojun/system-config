@@ -11,32 +11,22 @@ if echo $SHELLOPTS | grep -q xtrace; then
 fi
 
 function douban-misc() {
-    emacsclient -e '
-        (let* ((song-info (elt douban-music-song-list douban-music-current-song))
-               (channel (aget douban-music-channels douban-music-current-channel))
-               (album (aget song-info '\''albumtitle))
-               (title (aget song-info '\''title))
-               (picture (aget song-info '\''picture))
-               (artist (aget song-info '\''artist))
-               (url (aget song-info '\''url)))
-          (shell-command-to-string
-            (format "#set -x;
-  export channel=%s;
-  export artist=%s;
-  export album=%s;
-  export title=%s;
-  export picture_url=%s;
-  export mp3_url=%s
-  export song=~/Music/like/$artist/$album/$title.mp3
-  export icon=~/Music/like/$artist/$album/$title.png
-  export douban_action='$douban_action'
-  douban misc"
-                (shell-quote-argument (replace-regexp-in-string "/" "%" channel))
-                (shell-quote-argument (replace-regexp-in-string "/" "%" artist))
-                (shell-quote-argument (replace-regexp-in-string "/" "%" album))
-                (shell-quote-argument (replace-regexp-in-string "/" "%" title))
-                (shell-quote-argument picture)
-                (shell-quote-argument url))))'
+    export song=$(cat ~/Music/song.info)
+    if test ! -e "$song"; then
+        die "invalid song info: $song"
+    fi
+
+    export channel=unknown
+    export album=$(dirname "$song")
+    export artist=$(basename "$(dirname "$album")")
+    export album=$(basename "$album")
+
+    export title=$(basename "$song")
+    export title=${title%.mp3}
+
+    export icon=${song/%.mp3/.png}
+    export douban_action
+    exec douban misc
 }
 
 sawfish-clean-screen >/dev/null 2>&1 &
@@ -151,8 +141,6 @@ case "$1" in
                 start-play-hook)
                     if test ! -e "$song" -o ! -e "$icon" ; then
                         mkdir -p "$(dirname "$song")"
-                        wget "$picture_url" -O "$icon".$$ && mv "$icon".$$ "$icon"
-                        wget "$mp3_url" -O "$song".$$ && mv "$song".$$ "$song"
                     fi
                     if test -e "$song".like || test -e "$(dirname "$song")"/../.like -a ! -e "$song".unlike; then
                         like-mp3-tags "$song"
@@ -200,10 +188,10 @@ case "$1" in
         fi
         ;;
     back)
-        emacsclient -e '(douban-music-seek-backward '$2')'
+        killall mplayer
         ;;
     forth)
-        emacsclient -e '(douban-music-seek-forward '$2')'
+        killall mplayer
         ;;
     should-play)
         shift
@@ -243,26 +231,22 @@ case "$1" in
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
-        emacsclient -e '(progn
-                          (setq douban-music-should-replay t)
-                          (douban-music-play-next-refresh))'
+        killall mplayer
+        if test -e ~/.do-not-disturb.bak; then
+            (
+                sleep 1
+                mv ~/.do-not-disturb.bak ~/.do-not-disturb
+            )&
+        fi
         ;;
     next)
-        touch ~/.cache/system-config/logs/douban-should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
         fi
-        if emacsclient -e '(douban-music-play-next-refresh)' 2>&1 |
-               grep '\Q*ERROR*: song list is null\E' -P; then
-            emacsclient -e '(douban-music-refresh)'
-        fi
+        killall mplayer
         ;;
     prev)
-        touch ~/.cache/system-config/logs/douban-should-play
-        if test -e ~/.do-not-disturb; then
-            mv ~/.do-not-disturb ~/.do-not-disturb.bak
-        fi
-        emacsclient -e '(douban-music-play-previous)'
+        true
         ;;
     loop)
         touch ~/.cache/system-config/logs/douban-should-loop
@@ -273,29 +257,28 @@ case "$1" in
         douban info
         ;;
     rchan)
-        x=$(random 5) || true
-        ((x++))
-        emacsclient -e "(douban-music-set-channel $x)"
+        true
         ;;
     nchan)
-        if test -e ~/.do-not-disturb; then
-            mv ~/.do-not-disturb ~/.do-not-disturb.bak
-        fi
-        emacsclient -e '(douban-music-next-channel)'
+        true
         ;;
     pchan)
-        if test -e ~/.do-not-disturb; then
-            mv ~/.do-not-disturb ~/.do-not-disturb.bak
-        fi
-        emacsclient -e '(douban-music-prev-channel)'
+        true
         ;;
     pause)
-        emacsclient -e '(douban-music-pause/resume)'
+        if test -e ~/Music/paused; then
+            killall -CONT mplayer
+            rm ~/Music/paused -f
+        else
+            killall -STOP mplayer
+            touch ~/Music/paused
+        fi
         ;;
     show)
-        emacsclient -e "(progn (setq douban-music-default-channel (1+ $(random 5)))
-                               (douban-music))"
-        find-or-exec emacs
+        (
+            flock -n 0 && random-music-player
+        ) 0< ~/system-config/bin/random-music-player ||
+            douban info
         ;;
     *)
         die "not a douban.el command"

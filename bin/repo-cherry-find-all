@@ -6,6 +6,16 @@ function die() {
     exit -1
 }
 
+git_version=$(git version | pn 3)
+
+if version-lower-than "$git_version" 2.0 && yes-or-no-p -y "Your git version is too low, upgrade?"; then
+    upgrade-git
+fi
+
+if ! which xmlstarlet >/dev/null 2>&1 && yes-or-no-p -y "You need to install xmlstarlet, do it now?"; then
+    sudo apt-get install xmlstarlet
+fi
+
 if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
