@@ -136,9 +136,9 @@ void FilteringModel::updateHistory(QString key)
     while (mHistoryList.removeOne(key)) {
         ;
     }
-    mHistoryList.push_front(key);
+    mHistoryList.push_back(key);
     while (mHistoryList.size() > mMaxHistEntries) {
-        mHistoryList.pop_back();
+        mHistoryList.pop_front();
     }
 }
 
