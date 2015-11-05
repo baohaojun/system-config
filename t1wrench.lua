@@ -14,6 +14,7 @@ local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share, adb_is_window
 local adb_focused_window
 local t1_config, check_phone
+local weixin_find_friend, qq_find_friend
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic, debugging
 local adb_weixin_lucky_money
@@ -52,6 +53,7 @@ local t1_send_action
 local weixinAlbumPreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
 local weixinChatActivity = "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI"
 local weixinLauncherActivity = "com.tencent.mm/com.tencent.mm.ui.LauncherUI"
+local weixinSearchActivity = "com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI"
 local weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI"
 local weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
 local weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
@@ -560,6 +562,53 @@ adb_top_window = function()
    return top_window:sub(1, -2)
 end
 
+local function weixin_open_homepage()
+   adb_am("am start -n " .. weixinLauncherActivity)
+   wait_top_activity_match("com.tencent.mm/")
+   for i = 1, 20 do
+      sleep(.1)
+      log("touch the search button")
+
+      adb_event"adb-tap 801 132"
+      sleep(.1)
+      if adb_top_window() == weixinSearchActivity then
+         log("exit from search by key back")
+         wait_input_target(weixinSearchActivity)
+         adb_event"key back sleep .1 key back sleep .1"
+         sleep(.1)
+         break
+      end
+      log("exit the current by touching back botton")
+      adb_event"88 170 sleep .1 88 170 sleep .1"
+      sleep(.1)
+      adb_am("am start -n " .. weixinLauncherActivity)
+   end
+end
+
+local function qq_open_homepage()
+   adb_am("am start -n " .. qqChatActivity2)
+   for i = 1, 20 do
+      adb_event"sleep .2 adb-tap 167 193 sleep .2"
+      local top_window = adb_top_window()
+      if top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQSettingSettingActivity" or
+      top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.FriendProfileCardActivity" then
+         log("got into " .. top_window)
+         adb_event"key back sleep .4 key back sleep .6 adb-tap 150 1866"
+         if adb_top_window() == qqChatActivity2 then
+            log("exit to qq home now")
+            break
+         end
+      else
+         local ime_active, height, ime_connected = adb_get_input_window_dump()
+         if ime_connected then
+            log("ime is connected")
+            adb_event"key back sleep .2"
+         end
+      end
+      adb_am("am start -n " .. qqChatActivity2)
+   end
+end
+
 adb_start_weixin_share = function(text_or_image)
    if using_adb_root then
       if text_or_image == 'text' then
@@ -579,16 +628,7 @@ adb_start_weixin_share = function(text_or_image)
       error("Can only do image or text")
    end
 
-   adb_am("am start -n " .. weixinLauncherActivity)
-   for i = 1, 3 do
-      if adb_top_window() ~= weixinLauncherActivity then
-         adb_event("adb-tap 88 170 sleep " .. (.2 * i))
-         adb_am("am start -n " .. weixinLauncherActivity)
-      else
-         adb_event("adb-tap-2 88 170")
-         break
-      end
-   end
+   weixin_open_homepage()
    adb_event("adb-tap 654 1850 sleep .5 adb-tap 332 358")
    if wait_top_activity("com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI") == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI" then
       adb_event("sleep .2 " .. click .. " 961 160")
@@ -738,8 +778,7 @@ check_phone = function()
    end
 end
 
-adb_start_service_and_wait_file_gone = function(service_cmd, file)
-   adb_am("am startservice --user 0 -n " .. service_cmd)
+adb_wait_file_gone = function(file)
    adb_shell(
       (
       [[
@@ -751,6 +790,15 @@ adb_start_service_and_wait_file_gone = function(service_cmd, file)
                fi;
             done
       ]]):format(file))
+end
+
+local function adb_start_service(service_cmd)
+   adb_am("am startservice --user 0 -n " .. service_cmd)
+end
+
+adb_start_service_and_wait_file_gone = function(service_cmd, file)
+   adb_start_service(service_cmd)
+   adb_wait_file_gone(file)
 end
 
 adb_start_service_and_wait_file = function(service_cmd, file)
@@ -832,6 +880,11 @@ push_text = function(text)
    file:close()
    check_phone()
    adb_push{path, '/sdcard/putclip.txt'}
+end
+
+putclip_nowait = function(text)
+   push_text(text)
+   adb_start_service('com.bhj.setclip/.PutClipService')
 end
 
 putclip = function(text)
@@ -1039,6 +1092,24 @@ t1_post2 = function(text1, text2)
    putclip(text1)
    adb_event("key scroll_lock key dpad_down")
    t1_post(text2)
+end
+
+weixin_find_friend = function(friend_name)
+   weixin_open_homepage()
+   adb_event"adb-tap 786 116"
+   putclip(friend_name)
+   wait_input_target("com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI")
+   adb_event"sleep .2 key scroll_lock sleep .5"
+   adb_event"adb-tap 245 382"
+end
+
+qq_find_friend = function(friend_name)
+   putclip_nowait(friend_name)
+   log("qq find friend: " .. friend_name)
+   qq_open_homepage()
+   adb_event"adb-tap 391 288"
+   wait_input_target(qqChatActivity2)
+   adb_event"key scroll_lock sleep .5 adb-tap 303 291"
 end
 
 t1_post = function(text) -- use weixin
@@ -1701,6 +1772,9 @@ end
 
 
 t1_find_weixin_contact = function(number)
+   if not number:match("^[0-9]+$") then
+      return weixin_find_friend(number)
+   end
    adb_am("am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getcontact 1 --es contact " .. number)
 end
 
@@ -1713,10 +1787,14 @@ t1_find_qq_contact = function(number)
       number = number:gsub("@QQ.com", "")
       contact_type = 1
    else
-      log("Invalid qq number: " .. number)
+      qq_find_friend(number)
       return
    end
-   adb_am(("am start --user 0 -n com.tencent.mobileqq/.activity.ChatActivity --es uin %d --ei uintype %d"):format(number, contact_type))
+   if using_adb_root then
+      adb_am(("am start --user 0 -n com.tencent.mobileqq/.activity.ChatActivity --es uin %d --ei uintype %d"):format(number, contact_type))
+   else
+      t1_find_qq_contact(number)
+   end
 end
 
 local press_dial_key = function()
@@ -1845,6 +1923,8 @@ M.t1_post2 = t1_post2
 M.t1_find_qq_contact = t1_find_qq_contact
 M.t1_share_to_qq = t1_share_to_qq
 M.picture_to_qq_share = picture_to_qq_share
+M.weixin_find_friend = weixin_find_friend
+M.qq_open_homepage = qq_open_homepage
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
