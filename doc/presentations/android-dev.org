@@ -1,4 +1,3 @@
-#+Latex: \AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
 #+Latex: \begin{CJK*}{UTF8}{simsun}
 #+Latex: \CJKtilde
 

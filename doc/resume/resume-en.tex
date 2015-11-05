@@ -1,5 +1,5 @@
-% Created 2015-11-04 Wed 19:04
-\documentclass[11pt]{article}
+% Created 2015-11-04 Wed 21:42
+\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}
 \usepackage{CJKutf8}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -17,6 +17,7 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \tolerance=1000
+\usepackage{minted}
 \usepackage{mycv}
 \author{Bao Haojun}
 \date{\today}
@@ -25,10 +26,12 @@
   pdfkeywords={},
   pdfsubject={},
   pdfcreator={Emacs 25.0.50.1 (Org mode 8.2.10)}}
+\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
 \begin{document}
 \begin{CJK*}{UTF8}{simsun}
 
 \maketitle
+\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
 
 
 
@@ -222,5 +225,5 @@ Chinese Academy of Science
 
 
 % Emacs 25.0.50.1 (Org mode 8.2.10)
-\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
+\end{CJK*}
 \end{document}
