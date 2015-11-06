@@ -42,11 +42,11 @@ function make-release-tgz()
             --delete
 
     set -x
-    command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git
-
     if test "$DOING_T1WRENCH_RELEASE"; then
-        exit
+        command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git
     fi
+
+    exit
     cd $release_dir
     rm build.bat -f
     mkfifo /tmp/build-wine.$$
