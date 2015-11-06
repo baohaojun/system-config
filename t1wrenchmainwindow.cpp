@@ -303,6 +303,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     if (mLuaThread.isNull()) {
         is_starting = true;
     }
+    QProcess::startDetached("./the-true-adb", QStringList("start-server"));
     if (!mLuaThread.isNull()) {
         if (mLuaThread->isRunning()) {
             if (yes_or_no_p("后台仍在运行，点 确定 按钮重新配置，点 取消 继续使用当前设置？") != "yes") {

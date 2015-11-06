@@ -25,6 +25,7 @@
 #include <QtSingleApplication>
 #include <QFileOpenEvent>
 #include "fileopenfilter.h"
+#include <QProcess>
 
 using namespace std;
 
@@ -121,6 +122,8 @@ int main(int argc, char *argv[])
     QDir::addSearchPath("skin", ":/skin/default/resources");
     QDir::addSearchPath("config", ":config");
     QDir::addSearchPath("chatstyle", ":chatstyle/clear");
+
+    QProcess::startDetached("./the-true-adb", QStringList("start-server"));
 
     return a.exec();
 }

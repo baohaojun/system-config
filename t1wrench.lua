@@ -96,21 +96,24 @@ end
 
 adb_unquoter = ""
 
+shell_quote = function (str)
+   return "'" .. string.gsub(str, "'", "'\\''") .. "'"
+end
+
 if package.config:sub(1, 1) == '/' then
-   shell_quote = function (str)
-      return "'" .. string.gsub(str, "'", "'\\''") .. "'"
-   end
    if is_debugging then
       debug_set_x = "set -x; "
    else
       debug_set_x = ""
    end
 else -- windows
-   shell_quote = function (str)
-      str = str:gsub('\n', '')
-      str = str:gsub('\\', '\\\\')
-      str = str:gsub('"', '\\"')
-      return '"' .. str .. '"'
+   if adb_quick_am == nil then
+      shell_quote = function (str)
+         str = str:gsub('\n', '')
+         str = str:gsub('\\', '\\\\')
+         str = str:gsub('"', '\\"')
+         return '"' .. str .. '"'
+      end
    end
    debug_set_x = ""
    is_windows = true
@@ -271,12 +274,15 @@ local function adb_do(func, cmds)
    end
 end
 
-
+local adb_pipe
 local function adb_shell(cmds)
+   if qt_adb_pipe then
+      return adb_pipe(cmds)
+   end
    return adb_do(os.execute, cmds)
 end
 
-local function adb_pipe(cmds)
+adb_pipe = function(cmds)
    if is_exiting then
       check_phone()
    end
