@@ -43,12 +43,15 @@ cd /cygdrive/c/
 )
 
 if test ! -e setup-x86_64.exe; then
-    if ! which wget && yes-or-no-p -y wget not found, use browser to download; then
+    if test -e /cygdrive/c/Users/$USER/Downloads/setup-x86_64.exe; then
+        cp /cygdrive/c/Users/$USER/Downloads/setup-x86_64.exe /cygdrive/c/
+    elif ! which wget; then
         cygstart http://cygwin.com/setup-x86_64.exe
         exit 1
+    else
+        wget -N  http://cygwin.com/setup-x86_64.exe
+        chmod +x setup-x86_64.exe
     fi
-    wget -N  http://cygwin.com/setup-x86_64.exe
-    chmod +x setup-x86_64.exe
 fi
 
 pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make
@@ -58,16 +61,10 @@ pkgs=(nc util-linux git vim rsync inetutils apache2 shutdown make
       cygutils-extra procps wget git-svn libcrypt-devel flex gperf
       bison)
 
-if test "$NO_INSTALL" = true; then 
+if test "$NO_INSTALL" = true; then
     true
 else
-/cygdrive/c/setup-x86_64.exe -q -n -d -A -P "${pkgs[@]}" || true
-
-if true; then
-    for x in "${pkgs[@]}"; do
-        /cygdrive/c/setup-x86_64.exe -q -n -d -A -P $x
-    done
-fi
+/cygdrive/c/setup-x86_64.exe -q -n -d -A -P "$(echo -n ${pkgs[@]}|tr \  ,)" || true
 fi
 
 cpan String::ShellQuote

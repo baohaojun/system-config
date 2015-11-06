@@ -146,7 +146,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo -n "/scp:`whoami`@$LOCALIP:$FILE"
     }
 
-    export FILE=${1:-$(readlink -f .)}
+    export FILE=${1:-$PWD}
     export FILE=$(lookup-file "$FILE")
     if [[ "$FILE" =~ ^smb:// ]]; then
         export FILE=${FILE/smb:\/\//${HOME}/smb/}

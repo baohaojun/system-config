@@ -5,6 +5,8 @@ adb-over-tcp
 remote=$(adb devices|grep :5555 | pn 1)
 host=${remote%:5555}
 adb disconnect
+adb devices
+adb forward tcp:5555 tcp:5555
 
-ssh $1 -R 5555:$host:5555 '. ~/system-config/.bashrc; the-true-adb connect localhost; bash'
+ssh $1 -R 5555:localhost:5555 '. ~/system-config/.bashrc; the-true-adb connect localhost; cat'
 

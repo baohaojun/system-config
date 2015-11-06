@@ -216,13 +216,6 @@ print $_ . "\n";
             fi
         fi
 
-        if test "$1" = commit; then
-            if test "$(arg1-arg2 -s "$@")" = -s && yes-or-no-p -y "Add signed-off-by?"; then
-                shift
-                set -- commit -s "$@"
-            fi
-        fi
-
         command git "$@"
     )
 

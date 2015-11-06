@@ -17,5 +17,6 @@
 	diffstat = true
 [format]
 	pretty = fuller
+	signOff = true
 [push]
 	default = simple

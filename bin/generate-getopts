@@ -18,10 +18,15 @@ for (@ARGV) {
         $_ = substr($_, 1);
     }
     my $name = $_;
+    my $take_init_value = 0;
+    if ($name =~ s/=$//) {
+        $take_init_value = 1;
+    }
     push @args, {
         opt => $opt,
         need_arg => $need_arg,
         name => $name,
+        take_init_value => $take_init_value,
     };
 }
 
@@ -31,6 +36,9 @@ for (@args) {
         $_->{name} =~ s/=.*//;
     } else {
         print "=";
+        if ($_->{take_init_value}) {
+            print "\${$_->{name}}";
+        }
     }
 
     if (not $_->{need_arg}) {
