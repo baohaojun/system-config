@@ -33,7 +33,7 @@ typedef struct {
 
 } SHARED_MEM_TYPE;
 
-Q_CONSTEXPR int SHARED_MEM_TYPE_REV()
+inline int SHARED_MEM_TYPE_REV()
 {
     return 2;
 }
