@@ -593,24 +593,32 @@ end
 
 local function qq_open_homepage()
    adb_am("am start -n " .. qqChatActivity2)
-   for i = 1, 20 do
-      adb_event"sleep .2 adb-tap 167 193 sleep .2"
-      local top_window = adb_top_window()
-      if top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQSettingSettingActivity" or
-      top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.FriendProfileCardActivity" then
-         log("got into " .. top_window)
-         adb_event"key back sleep .4 key back sleep .6 adb-tap 150 1866"
-         if adb_top_window() == qqChatActivity2 then
-            log("exit to qq home now")
+
+   while true do
+      sleep(.2)
+      local ime_active, height, ime_connected = adb_get_input_window_dump()
+      log(("ime activity is %s, height is %d, ime_connected is %s"):format(ime_active, height, ime_connected))
+      local done_back = false
+      if ime_connected then
+         adb_event"key back sleep .1"
+         done_back = true
+      end
+      if ime_active then
+         done_back = true
+         adb_event"key back sleep .1"
+      end
+      if not done_back and adb_top_window() == qqChatActivity2 then
+         adb_event"adb-tap 181 1863 sleep .5"
+         local top_window = adb_top_window()
+         if not top_window or top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQSettingSettingActivity" then
+            log("got into setting!")
+            adb_event"key back sleep .1 key back sleep .1 key back sleep .1"
+         else
             break
          end
-      else
-         local ime_active, height, ime_connected = adb_get_input_window_dump()
-         if ime_connected then
-            log("ime is connected")
-            adb_event"key back sleep .2"
-         end
       end
+
+      adb_event"key back sleep .1"
       adb_am("am start -n " .. qqChatActivity2)
    end
 end
