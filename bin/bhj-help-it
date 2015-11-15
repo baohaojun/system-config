@@ -13,7 +13,7 @@ function die() {
 }
 
 function select-output-line() {
-    command select-output-line -O $(basename $0) -m 1000 "$@"
+    command select-output-line -O $(basename $0).$SELECT_DIST_WORD -m 1000 "$@"
 }
 
 if test $# = 0; then
@@ -82,7 +82,7 @@ case $1 in
         fi
         ;;
     qt|qt-mode)
-        export SELECT_DIST_WORD=$2
+        export SELECT_DIST_WORD=${2,,}
         file=$(select-output-line -- beagrep -e 'a name="'$2'(-prop|-enum)?"|<a href="[^"]*">'$2'</a>' -t "a name $2" -d /usr/share/qt5/doc --grep "-l -P")
         if test -z "$file" -a "${2:0:3}" = set; then
             file=$(select-output-line -- beagrep -e 'a name="'${2:3}-prop'"' -d /usr/share/qt5/doc --grep -l -i)

@@ -88,14 +88,20 @@ dood=(
             cat $tmpfile
             rm $tmpfile
         ) |
-        if test $ORDERED != true -a $ORDERED != false; then
-            uniq-and-dist-sort "$(cat $histfile.$$  2>/dev/null | head -n 1)"
-        elif test "$SELECT_DIST_WORD"; then
-            uniq-and-dist-sort "$SELECT_DIST_WORD"
-        else
-            uniq-even-non-ajacent
-        fi
-
+            if test $ORDERED != true -a $ORDERED != false; then
+                if test "$SELECT_DIST_WORD"; then
+                    (
+                        cat $histfile.$$  2>/dev/null | head -n 1
+                        uniq-and-dist-sort "$SELECT_DIST_WORD"
+                    ) | uniq-even-non-ajacent
+                else
+                    uniq-and-dist-sort "$(cat $histfile.$$  2>/dev/null | head -n 1)"
+                fi
+            elif test "$SELECT_DIST_WORD"; then
+                uniq-and-dist-sort "$SELECT_DIST_WORD"
+            else
+                uniq-even-non-ajacent
+            fi
     )
 ) || true
 if test ${#dood[@]} = 0; then

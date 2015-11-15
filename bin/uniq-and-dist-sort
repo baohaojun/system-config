@@ -1,5 +1,18 @@
 #!/usr/bin/env perl
 
+my $debug;
+my $logfile = $0;
+$logfile =~ s!.*/!!;
+if ($ENV{DEBUG} eq 'true') {
+    $debug = *STDERR;
+} else {
+    open($debug, ">", glob("~/.cache/system-config/logs/$logfile.log"))
+        or die "Can not open debug log file ~/.cache/system-config/logs/$logfile.log";
+}
+sub debug(@) {
+    print $debug "@_\n";
+}
+
 use Getopt::Long;
 use String::Approx 'adistr';
 my $pre;
@@ -32,7 +45,17 @@ if ($pre) {
         print $_;
     }
 }
-@file = sort {abs(adistr($a, $str)) <=> abs(adistr($b, $str))} @file;
+
+debug "sort with $str";
+
+my %basenames;
+
+map {
+    (my $base = $_) =~ s,.*/,,;
+    $basenames{$_} = $base;
+} @file;
+
+@file = sort {abs(adistr($basenames{$a}, $str)) <=> abs(adistr($basenames{$b}, $str))} @file;
 
 for (@file) {
     next if ($pre and exists $file{$pre . $_} or exists $file_pre{$_});
