@@ -100,5 +100,8 @@ fi
     (
         sleep 15
         draw-notification-with-sawfish "$1"
+        sawfish-client -e "(unbind-keys global-keymap \"Button1-Click\")
+                           (bind-keys window-keymap \"Button1-Click\" 'raise-and-pass-through-click))"
+
     )&
 )&
