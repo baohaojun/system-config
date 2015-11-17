@@ -62,17 +62,8 @@ if test "$TERM" = dumb; then
 else
     . ~/system-config/.bashrc-no-emacs
 fi
-DEBEMAIL="baohaojun@gmail.com"
-DEBFULLNAME="Bao Haojun"
-export DEBEMAIL DEBFULLNAME
 
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US:
-export INFOPATH=${HOME}/src/github/org-mode/doc:${INFOPATH}
-export ANDROID_HOME=${ANDROID_HOME:-~/external/bin/Linux/ext/android-sdk-linux}
-export ANDROIDSDK_HOME=${ANDROIDSDK_HOME:-$ANDROID_HOME}
-export ANDROID_NDK_HOME=${ANDROID_NDK_HOME:-~/external/bin/Linux/ext/ndk}
+
 export HISTCONTROL="ignoredups"
 export HISTIGNORE="bg:fg:exit"
 export HISTSIZE=2000
@@ -82,6 +73,10 @@ if test "$USER"x = x; then
 fi
 export USE_CCACHE=1
 export MONO_PATH=~/.mono/MimeKit.1.0.3.0/lib/net40
+
+if test -e ~/system-config/.by-user/$USER/.bashrc; then
+    . ~/system-config/.by-user/$USER/.bashrc
+fi
 
 alias svngdiff='svn diff --diff-cmd ~/system-config/bin/svntkdiff'
 alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour

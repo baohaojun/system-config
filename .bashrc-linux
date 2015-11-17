@@ -8,8 +8,8 @@ if [ -n "$BASH_VERSION" -a "$BASH" = /bin/bash ]; then
 fi
 
 . ~/system-config/.bashrc-aliases
-if test -e ~/system-config/.bashrc-linux-$USER; then
-    . ~/system-config/.bashrc-linux-$USER
+if test -e ~/system-config/.by-user/$USER/.bashrc-linux; then
+    . ~/system-config/.by-user/$USER/.bashrc-linux
 fi
 
 # % cpan

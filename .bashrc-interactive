@@ -111,6 +111,6 @@ function cds() {
 . ~/system-config/bin/my-rsync
 . ~/system-config/bin/.gitx
 
-if test -e ~/system-config/.bashrc-interactive-$USER; then
-    . ~/system-config/.bashrc-interactive-$USER
+if test -e ~/system-config/.by-user/$USER/.bashrc-interactive; then
+    . ~/system-config/.by-user/$USER/.bashrc-interactive
 fi

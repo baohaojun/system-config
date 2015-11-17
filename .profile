@@ -19,11 +19,10 @@ if test "$SYSTEM_CONFIG_INITED" != true -a -e ~/.config/system-config/.bashrc-pa
     . ~/.config/system-config/.bashrc-path
 fi
 
-export TZ="Asia/Shanghai"
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US:en
-export BROWSER=firefox
+if test -e ~/system-config/.by-user/$USER/.profile; then
+    . ~/system-config/.by-user/$USER/.profile
+fi
+
 if test "$QT4_IM_MODULE" -a ! "$QT_IM_MODULE"; then
     export QT_IM_MODULE=$QT4_IM_MODULE
 fi
