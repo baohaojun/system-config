@@ -1,5 +1,12 @@
 #+title: Qt QString indexOf不考虑大小写的坑
-#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
 # bhj-tags: Bug
 
 在 [[../../../2014/12/01/0-T1Wrench-2.0-Usage-Guide.org][小扳手]] 的开发过程中，一不小心跌进了一个坑里，半天没跑出来。
+
+事情是这样的，我刚开始学Qt编程的时候，对 QString 的用法都不太熟，对字符串的一个常见操作“一个字符串A是否包含另一个字符串B”，我居然不知道 QString 里自带一个函数叫 =contains= ，所以直接自己用第一眼看到的一个类似的函数 =indexOf= 来实现了相同的逻辑，即如果 =indexOf= 返回一个非负数的时候，就表示字串B在字串A中能找到，所以A包含B为真。
+
+结果过了很久之后，突然发现我需要不区分大小写的子串包含操作，然后我一查文档， =indexOf= 也是支持这个 CaseInsensitive 参数的，于是我就加上了这个参数，结果程序一直不能给出我预期的结果。
+
+后来专门做了个实验，才知道 =indexOf= 如果加上 =CaseInsensitive= ，它就跟 =contains= 加 =CaseInsensitive= 不等价了。基本上 =indexOf= 加 =CaseInsensitive= 你不要用就对了，相当于是 undefined behavior...
+
+我的心中，真的是万马奔腾啊！

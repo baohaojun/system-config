@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/wheatgrass.css" type="text/css" />
+ <link rel="stylesheet" href="/css/dichromacy.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -103,9 +103,24 @@ for the JavaScript code in this tag.
   <div id='bhj_leftpane'>
 <div id="content">
 <h1 class="title">Qt QString indexOf不考虑大小写的坑</h1>
-<p style="color: red;"> <b>Not finished yet.</b> </p>
 <p>
 在 <a href="blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html">小扳手</a> 的开发过程中，一不小心跌进了一个坑里，半天没跑出来。
+</p>
+
+<p>
+事情是这样的，我刚开始学Qt编程的时候，对 QString 的用法都不太熟，对字符串的一个常见操作“一个字符串A是否包含另一个字符串B”，我居然不知道 QString 里自带一个函数叫 <code>contains</code> ，所以直接自己用第一眼看到的一个类似的函数 <code>indexOf</code> 来实现了相同的逻辑，即如果 <code>indexOf</code> 返回一个非负数的时候，就表示字串B在字串A中能找到，所以A包含B为真。
+</p>
+
+<p>
+结果过了很久之后，突然发现我需要不区分大小写的子串包含操作，然后我一查文档， <code>indexOf</code> 也是支持这个 CaseInsensitive 参数的，于是我就加上了这个参数，结果程序一直不能给出我预期的结果。
+</p>
+
+<p>
+后来专门做了个实验，才知道 <code>indexOf</code> 如果加上 <code>CaseInsensitive</code> ，它就跟 <code>contains</code> 加 <code>CaseInsensitive</code> 不等价了。基本上 <code>indexOf</code> 加 <code>CaseInsensitive</code> 你不要用就对了，相当于是 undefined behavior&#x2026;
+</p>
+
+<p>
+我的心中，真的是万马奔腾啊！
 </p>
 <nav>
   <ul id="prev_next_posts">
