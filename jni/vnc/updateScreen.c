@@ -55,8 +55,9 @@ void FUNCTION(void)
 
   if (rotation==0) {
     for (j = 0; j < vncscr->height; j++) {
+      offset = j * vncscr->width;
       for (i = 0; i < vncscr->width; i++) {
-        offset = j * vncscr->width;
+    
 
         if (method==FRAMEBUFFER)
         pixelToVirtual = PIXEL_TO_VIRTUALPIXEL_FB(i,j);

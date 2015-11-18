@@ -62,7 +62,7 @@ enum method_type {AUTO,FRAMEBUFFER,ADB,GRALLOC,FLINGER};
 enum method_type method=AUTO;
 
 #define PIXEL_TO_VIRTUALPIXEL_FB(i,j) ((j+scrinfo.yoffset)*scrinfo.xres_virtual+i+scrinfo.xoffset)
-#define PIXEL_TO_VIRTUALPIXEL(i,j) ((j*screenformat.width)+i)
+#define PIXEL_TO_VIRTUALPIXEL(i,j) ((j*(screenformat.width + screenformat.pad))+i)
 
 #define OUT 8 
 #include "updateScreen.c" 

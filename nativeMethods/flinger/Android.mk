@@ -25,7 +25,8 @@ else ifeq ($(PLATFORM_SDK_VERSION),15)
 LOCAL_SHARED_LIBRARIES := libgui libui libbinder libcutils
 else
 #add here more sdk versions
-LOCAL_SHARED_LIBRARIES := libgui libui libbinder libcutils
+LOCAL_SHARED_LIBRARIES := libgui libui libbinder libcutils libutils
+
 endif
 
 include $(BUILD_SHARED_LIBRARY)
