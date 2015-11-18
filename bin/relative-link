@@ -97,19 +97,32 @@ if test -z "$UNAME_CHECKED" -a "$USE_NT_SYMLINK"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts fln_force nno_clobber
+# generate-getopt fln_force nno_clobber
 ## end code-generator
 ## start generated code
+TEMP=$(getopt -o fn --long "ln_force,no_clobber"  -n $(basename $0) -- "$@")
 ln_force=false
 no_clobber=false
-while getopts 'fn' opt; do
-    case "$opt" in
-        f)    ln_force=true;;
-        n)    no_clobber=true;;
-        *)    echo Usage Error;;
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -f|--ln_force)
+            ln_force=true
+            shift
+            ;;
+        -n|--no_clobber)
+            no_clobber=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
     esac
 done
-shift $(($OPTIND - 1))
 
 ## end generated code
 target_file=''
