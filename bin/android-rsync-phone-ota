@@ -149,13 +149,13 @@ echo doing rsync in $(pwd)
 adb-stop-all-services
 my-adb remount
 my-adb stop
-if test $no_gapps = false; then
+if test $no_gapps = false && test -e ~/src/github/private-config/bin/gapps-system; then
     dest=$PWD
     sudo mv xbin/su xbin/su.copy || true
     (
         if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
             # it's lp
-            cd ~/today/forever/gapps-lp/system
+            cd ~/src/github/gapps-lp/system
         else
             cd ~/src/github/private-config/bin/gapps-system
         fi
