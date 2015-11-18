@@ -107,6 +107,9 @@ fi
 function update-non-system-partitions() {
     xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^ ' |grep -v '_\d+' -P|perl -npe 'END{print "done done\n"}'|
         while read file part; do
+            if test -z "$part"; then
+                continue
+            fi
             do_continue=false;
             for part_comp in PrimaryGPT BackupGPT udisk alterable modemst1 modemst2 persist fsg; do
                 if test $part = $part_comp; then
