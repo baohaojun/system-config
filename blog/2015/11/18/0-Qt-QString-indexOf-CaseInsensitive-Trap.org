@@ -1,0 +1,5 @@
+#+title: Qt QString indexOf不考虑大小写的坑
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+# bhj-tags: Bug
+
+在 [[../../../2014/12/01/0-T1Wrench-2.0-Usage-Guide.org][小扳手]] 的开发过程中，一不小心跌进了一个坑里，半天没跑出来。

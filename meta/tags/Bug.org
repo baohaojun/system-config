@@ -1,5 +1,10 @@
 #+title: Bugs that I have encountered, see if someone else will find it useful.
  * 2015
+  - 2015-11
+   * 2015-11-18
+
+     [[../../blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.org][Qt QString indexOf不考虑大小写的坑]]
+
   - 2015-01
    * 2015-01-28
 

@@ -1,0 +1,1 @@
+../../../blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.org

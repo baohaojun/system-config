@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Qt QString indexOf不考虑大小写的坑]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html"/>
+    <updated>2015-08-18T14:11:43+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[优化了一下手机上看博客的效果]]></title>
     <link href="http://baohaojun.github.io/blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.html"/>
-    <updated>2015-19-04T13:11:53+08:00</updated>
+    <updated>2015-11-04T13:20:01+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html"/>
     <updated>2015-03-03T12:33:55+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[小扳手2.5.0]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html"/>
-    <updated>2015-02-25T14:11:24+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/02/25/0-T1Wrench-2.5.0-Release-Notes.html</id>
   </entry>
 </feed>
