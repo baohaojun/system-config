@@ -118,7 +118,10 @@ pcm.dmixed {
         }
         # apulse (a cut-down replacement for pulseaudio) needs dsnoop
         # https://bbs.archlinux.org/viewtopic.php?id=187258
-        capture.pcm "dsnoop"
+        capture.pcm {
+            type hw
+            card 1
+        }
 }
 
 

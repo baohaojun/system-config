@@ -4,5 +4,4 @@ subfont-text-scale=4
 subfont-encoding=unicode
 subcp=gbk
 font="Microsoft YaHei"
-
-
+ao=alsa

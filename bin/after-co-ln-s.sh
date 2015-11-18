@@ -411,6 +411,15 @@ if which emacs >/dev/null 2>&1 && test ! -e ~/.config/system-config/emacs-config
     ~/system-config/bin/Linux/emacs-install-packages
 fi || true
 
+if test -d ~/system-config/src/github/; then
+    mkdir -p ~/src/github/
+    for x in ~/system-config/src/github/*/; do
+        if test -d "$x" -a ! -d ~/src/github/"$(basename "$x")"; then
+            relative-link $x ~/src/github
+        fi
+    done
+fi
+
 if test -d ~/system-config/.emacs_d/elpa && test ! -d ~/.emacs.d/elpa/.git; then
     mkdir -p ~/.emacs.d/
     cp -av ~/system-config/.emacs_d/elpa ~/.emacs.d/

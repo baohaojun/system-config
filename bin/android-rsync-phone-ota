@@ -2,6 +2,14 @@
 
 set -e
 
+if test "$(pretty 20|pn 3)" != 0x14; then
+    read -p "You need to install libmarpa-r2-perl.
+    press Enter to continue... "
+    if ! sudo apt-get install libmarpa-r2-perl; then
+        cpan -i Marpa::R2
+    fi
+fi
+
 if test "$BEING_TIMED" != true; then
     export BEING_TIMED=true;
     time $0 "$@"
@@ -149,15 +157,21 @@ echo doing rsync in $(pwd)
 adb-stop-all-services
 my-adb remount
 my-adb stop
-if test $no_gapps = false && test -e ~/src/github/private-config/bin/gapps-system; then
+
+gapps_updir=~/src/github/
+if test -d ~/system-config/src/github/gapps-t1; then
+    gapps_updir=~/system-config/src/github
+fi
+
+if test $no_gapps = false && test -e $gapps_updir/gapps-t1; then
     dest=$PWD
     sudo mv xbin/su xbin/su.copy || true
     (
         if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
             # it's lp
-            cd ~/src/github/gapps-lp/system
+            cd $gapps_updir/gapps-lp/system
         else
-            cd ~/src/github/private-config/bin/gapps-system
+            cd $gapps_updir/gapps-t1
         fi
         find . -type f | xargs sudo env PATH=$PATH cp-with-dir-struct $dest
     )
