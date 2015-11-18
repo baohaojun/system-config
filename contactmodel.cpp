@@ -154,6 +154,16 @@ static QString normalizedPhone(const QString& phone) {
     return res;
 }
 
+static void bug(const QString& stem) {
+    qDebug() << "bug for " << stem;
+}
+
+#define debug_it(x) do {                         \
+    if (split.contains("zhang")) {              \
+        bug(x);                                \
+    }                                           \
+} while (0)
+
 void ContactModel::filterSelectedItems(const QStringList& split)
 {
 
@@ -199,10 +209,23 @@ void ContactModel::filterSelectedItems(const QStringList& split)
         }
 
         foreach(const QString& stem, split) {
-
             if (vcard.mName.contains(stem, Qt::CaseInsensitive)) {
                 continue;
             }
+
+            if (namePinyin.isEmpty()) {
+                namePinyin = getPinyinSpelling(vcard.mName);
+            }
+
+            if (matchOneString(namePinyin, stem)) {
+                continue;
+            }
+
+            // else if (vcard.mEmails.contains("42385513@qq.com")) {
+            //     debug_it("hello 1 world: " + vcard.mName + " : "
+            //              + namePinyin.join(" ") + " : " + split.join(" x ")
+            //              + " : " + vcard.mEmails.join(" e "));
+            // }
 
             if (!mIsMail) { // doing tels
                 if (matchOneString(tels, stem)) {
@@ -216,6 +239,16 @@ void ContactModel::filterSelectedItems(const QStringList& split)
 
             } else {
                 if (matchOneString(mails, stem)) {
+                    // this should be done only if stem does not
+                    // matches name.  so this must come after name
+                    // compared and not matched.
+
+                    // because otherwise, if a user named zhangshuang,
+                    // who has two emails, zhangshuang@XXX and
+                    // 123456@qq, and we filter it with "qq zhang",
+                    // then the 123456@qq will be filtered out when
+                    // zhang matches zhangshuang@XXX.
+
                     mails = filterMatchedStrings(mails, stem);
                     continue;
                 }
@@ -223,15 +256,6 @@ void ContactModel::filterSelectedItems(const QStringList& split)
                     continue;
                 }
             }
-
-            if (namePinyin.isEmpty()) {
-                namePinyin = getPinyinSpelling(vcard.mName);
-            }
-
-            if (matchOneString(namePinyin, stem)) {
-                continue;
-            }
-
             match = 0;
             break;
         }
