@@ -1,0 +1,5 @@
+#!/bin/bash
+port=8087
+export http_proxy=http://localhost:$port
+export https_proxy=http://localhost:$port
+start_recursive_shell xnet
