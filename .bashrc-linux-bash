@@ -58,7 +58,7 @@ if test -e ~/.config/system-config/sudo-ssh; then
 
 else
     function sudo {
-        command sudo env SSH_AUTH_SOCK=$SSH_AUTH_SOCK PATH=$PATH  "$@"
+        command sudo env http_proxy=$http_proxy SSH_AUTH_SOCK=$SSH_AUTH_SOCK PATH=$PATH  "$@"
     }
 fi
 export -f sudo
