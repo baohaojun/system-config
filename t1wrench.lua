@@ -1014,6 +1014,10 @@ t1_config = function()
 
    local weixin_phone_file, _, errno = io.open("weixin-phones.txt", "rb")
    if not vcf_file then
+      local res = adb_pipe("if test -e /sdcard/listcontacts.txt; then echo yes; fi")
+      if res and res:match("yes") then
+         adb_pull{"/sdcard/listcontacts.txt", "weixin-phones.txt"}
+      end
       if adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listcontacts 1", "/sdcard/listcontacts.txt") then
          adb_pull{"/sdcard/listcontacts.txt", "weixin-phones.txt"}
       else
