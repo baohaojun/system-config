@@ -2,7 +2,7 @@
 set -e
 my-adb -r stop
 
-if test -z "$ANDROID_SERIAL"; then
+if test -z "$ANDROID_SERIAL" -a "$USER" = bhj; then
     die "Can't do it without ANDROID_SERIAL set"
 fi
 

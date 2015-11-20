@@ -176,7 +176,7 @@ if test $no_gapps = false && test -e $gapps_updir/gapps-t1; then
         else
             cd $gapps_updir/gapps-t1
         fi
-        find . -type f | xargs sudo env PATH=$PATH cp-with-dir-struct $dest
+        find . -name '.git' -prune -o -type f -print  | xargs sudo env PATH=$PATH cp-with-dir-struct $dest
     )
 fi
 

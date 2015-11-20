@@ -47,5 +47,10 @@ if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication
     fi
 fi
 
-do-ssh-add-all&
+if is-tty-io; then
+    do-ssh-add-all&
+else
+    do-ssh-add&
+fi
+
 export-ssh-agent-to-emacs-and-sawfish
