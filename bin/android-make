@@ -163,7 +163,8 @@ exec 9> $OUT_DIR/.android-full-build.lock
 
         fi
 
-
+        echo make starts here
+        export REALLY_DOING_BUILD=true
         if test $# != 0; then
             if test $# = 1 -a $1 = msm-kernel; then
                 (

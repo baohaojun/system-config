@@ -385,7 +385,7 @@
         ("d" . ((Firefox . ("C-x" "C-d")) (Iceweasel . ("C-x" "C-d"))))))
 
 
-(setq gnome-windows-re "gnome-terminal|nautilus|evince|eog|gedit")
+(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Gucharmap")
 
 (defun rewrite-event-for-xdotool (event)
   (let* ((keys-break-down (string-split "-" event))

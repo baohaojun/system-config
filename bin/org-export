@@ -61,6 +61,8 @@ EOF
     next=0
     export title
     for x in "$@"; do
+        # echo working with $x 1>&2
+        # ps.tree $$.org-export 1>&2
         if ! grep -e '^#+title:' -i "$x" -q; then
             (
                 title=$(basename "$x" | perl -npe 's/_/\\_/g;')
