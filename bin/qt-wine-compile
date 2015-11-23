@@ -1,0 +1,3 @@
+#!/bin/bash
+qt-wine qmake.exe
+qt-wine mingw32-make.exe -j8 "$@" | perl -npe 's/\\/\//g'

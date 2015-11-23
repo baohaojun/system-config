@@ -1,0 +1,14 @@
+#!/bin/bash
+
+function wine() {
+    cat > build.bat<<EOF
+set path=$(for x in ~/.wine/drive_c/Qt/Qt*/*/mingw*/bin; do
+               echo $x;
+           done |
+           perl -npe 'chomp; s!$ENV{HOME}/.wine/drive_c!c:!; s!$!;!')%path%
+$@
+EOF
+    command wine cmd.exe /c build.bat
+}
+
+wine "$@"
