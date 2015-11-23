@@ -82,7 +82,11 @@ for x in $diffs; do
         fi
         if test -z "$target_branch"; then
             echo target branch is not found in $x'!'
-            start_recursive_shell "No target branch" || ret=$?
+            if is-tty-io; then
+                start_recursive_shell "No target branch" || ret=$?
+            else
+                exit $?
+            fi
             if test "$ret" = 5; then
                 exit
             elif test $ret = 4; then
@@ -98,7 +102,13 @@ for x in $diffs; do
             for y in $(grep -P -e "$1" $x |grep -v 'Merge commit.*into'| pn 3|uniq-even-non-ajacent); do
                 export WORKING_REV=$y
                 ret=0
-                git cherry-pick --allow-empty $y || start_recursive_shell "cherry failed: $y" || ret=$?
+                if git cherry-pick --allow-empty $y; then
+                    true
+                elif is-tty-io; then
+                    start_recursive_shell "cherry failed: $y" || ret=$?
+                else
+                    exit -1
+                fi
                 if test $ret = 5; then
                     exit
                 elif test $ret = 4; then
