@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if ! timeout 1 emacsclient -e '(save-some-buffers)'; then
+    find-or-exec emacs
+    emacsclient -e '(save-some-buffers)'
+fi

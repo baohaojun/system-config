@@ -10,6 +10,32 @@ fi
 
 set -e
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt eerror-exit
+## end code-generator
+## start generated code
+TEMP=$(getopt -o e --long "error-exit"  -n $(basename $0) -- "$@")
+error_exit=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -e|--error-exit)
+            error_exit=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
 function die() {
     echo Error: "$@"
     exit -1
@@ -19,19 +45,31 @@ if test $# = 0; then
     die "Error: Usage $(basename $0) window_class [program_to_exec]"
 fi
 
+window_not_found_command=${2:-true}
+if test "$error_exit" = true; then
+    window_not_found_command="${2:-touch ~/tmp/find-or-exec-failed.$$}"
+fi
+
 if test "$1" = konsole; then
     sawfish_exp=$(printf '(find-window-or-exec %s "%s")' \
                          '(lambda (w) (and
                                         (string-match "konsole|xfce4-terminal" (bhj-window-class w) 0 t)
                                         (not (string= "emacs" (window-name w)))))' \
-                         "${2:-true}"
+                         "$window_not_found_command"
                )
 elif test "$1" = emacs -a -x ~/external/local/bin/emacs; then
     sawfish_exp=$(printf '(find-window-or-exec (lambda (w) (string= (window-name w) "emacs")))')
 else
-    sawfish_exp=$(printf '(find-window-or-exec "%s" "%s")' "$1" "${2:-true}")
+    sawfish_exp=$(printf '(find-window-or-exec "%s" "%s")' "$1" "$window_not_found_command")
 fi
 
 
 
 sawfish-client -e "$sawfish_exp"
+if test $error_exit = true; then
+    if test -e ~/tmp/find-or-exec-failed.$$; then
+        rm ~/tmp/find-or-exec-failed.$$
+        exit 1
+    fi
+    exit 0
+fi

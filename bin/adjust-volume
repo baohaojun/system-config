@@ -41,10 +41,12 @@ while true; do
         amixer -q sset Master,0 1%+
         amixer -q sset PCM,0 100%
         amixer -q sset Headphone,0 100%
+        amixer -q sset Speaker,0 100%
     elif test "$key" = '"-"' -o "$key" = '"KP_Subtract"' -o "$key" = '"XF86AudioLowerVolume"'; then
         amixer -q sset Master,0 1%-
         amixer -q sset PCM,0 100%
         amixer -q sset Headphone,0 100%
+        amixer -q sset Speaker,0 100%
     else
         vol=$(amixer | grep 'Playback.*%' | perl -ne 's/.*\[(\d+%)\].*/$1/; print; last');
         echo $vol > ~/.cache/system-config/logs/audion-volume.%

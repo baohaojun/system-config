@@ -1,0 +1,151 @@
+#+Latex: \begin{CJK*}{UTF8}{simsun}
+#+Latex: \CJKtilde
+
+
+#+TITLE:     System-config：我很丑，但是我很温柔
+#+AUTHOR:    包昊军
+#+EMAIL:     baohaojun@gmail.com
+#+DATE:      2015-11-20
+#+LATEX_CLASS_OPTIONS: [presentation,CJKbookmarks]
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:2 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:
+#+LINK_HOME:
+
+#+BEAMER_THEME: Berkeley
+#+BEAMER_COLOR_THEME: lily
+
+* 一种有意思的UX：交互式补齐
+** 在Firefox中
+
+[[./images/firefox.ps]]
+
+** 在Emacs中
+
+[[./images/emacs.ps]]
+
+** 在文件管理器中？
+
+[[./images/file-manager.ps]]
+
+** 在命令行上
+
+[[./images/ui-cli.ps]]
+
+** 在命令行上(2)
+
+*** s (search engine)
+*** git co -B
+*** git cherry-pick
+
+
+** 在小扳手里
+[[./images/wrench-ui.ps]]
+
+** 到处都是
+
+*** 窗口管理器
+*** Emacs的几乎所有命令——helm
+*** 命令行上的变种
+*** 在输入法里
+*** 在Smartisan手机里，邮件联系人搜索
+
+* 最重要的7种武器
+** 编辑器(Emacs）
+*** 一切皆文本，不管是程序，还是文档
+*** 各种更强大的补齐
+- C/C++语言 (Qt/Visual C++)
+- Java
+- bbyac
+- yasnippet
+- codegen
+- getopts/getopt
+*** 利用Emacs阅读源代码
+
+** Emacs续（阅读源代码）
+*** beagrep
+*** grep-beatags
+*** grep-func-call
+*** 查local变量的定义
+*** 查local变量的使用
+** Emacs续（查文档）
+*** man手册
+*** info
+*** html——交给firefox
+** 命令行(xfce4-terminal + bash)
+*** 历史机制
+- bash自带
+- re
+- cd的历史机制
+*** 各种工具的无限组合
+- of
+- putclip
+- 切下当前命令行输入的快捷键
+- up/swp
+** 浏览器(firefox)
+*** 像Emacs一样的按键（看萨苏的博客）
+*** 可以自己写monkeygrease脚本
+*** 可以当我的文档工具
+*** 可以当我的字典
+** 桌面管理器(sawfish)
+*** 为其他所有工具的集成提供辅助
+- 为Emacs阅读代码提供辅助
+- 为Qt Creator与Emacs切换提供辅助
+*** 自定义快捷键
+*** 像Vim那样，可以有模式的概念
+*** 让所有程序的文字输入，都支持基本的Emacs快捷键
+
+** 版本管理工具
+*** Git与Emacs、脚本的集成 refactory-rename
+*** ew uu
+*** git-interactive-add
+*** 没有版本管理工具，就没有system-config
+*** 开始任何项目，先创建system-config
+
+** Linux
+
+*** 为什么这些工具如此重要？
+- 允许用户沉浸在里头
+- 我不讨厌鼠标，但讨厌切换
+  * 为什么要做字典的鼠标选词、查询功能
+
+** 自己
+*** 再好的工具，还是要靠人来用
+* 总结
+** s: 名字为什么这么短
+***  海明码原理和优化
+*** 容易的事情更容易
+*** 难的事情变容易
+*** 不可能的事情变可能
+*** 分N步的事情变1步
+*** 大项目分解成小项目
+*** 自顶向下与自下而上
+** 许愿式编程
+*** jwz的编程方法
+- org-mode介绍
+- GTD
+*** Linus的编程方法
+*** sicp 和 htdp
+** 高效编辑器的七种习惯
+*** 不要试图一下子学太多，够用就好
+*** 快来fork我的system-config项目吧
+- https://github.com/baohaojun/system-config
+*** 快开始学Emacs吧
+
+** 致谢
+
+*** 王垠
+*** 锤子科技、老板、同事
+
+#+Latex: \end{CJK*}
+
+# Local Variables: #
+# eval: (org-beamer-mode) #
+# eval: (mmm-mode 1) #
+# End: #

@@ -1,0 +1,18 @@
+#!/bin/bash
+# -*- mode: sawfish -*-
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+me=$(readlink -f "$(which $0)")
+if test ! -e "$me"; then
+die "Can't find out about me"
+exit 1
+fi
+fi
+cat $me | perl -ne 'print if (m/cat .me/ .. 1)' | perl -ne 'print if 2 .. 1' | sawfish-client; exit
+
+(mapcar
+ (lambda (w)
+   (when (string= "qpdfview" (window-class w))
+     (resize-window-to w 940 710))
+   w)
+ (managed-windows))

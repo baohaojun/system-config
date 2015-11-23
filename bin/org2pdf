@@ -18,6 +18,13 @@ fi
 org_file=false
 if test "${1##*.}" = org; then
     org_file=true
+    git-interactive-add
+    org2pdf-fix-images.pl "$1"
+    git add ./images/
+    e "$1"
+    find-or-exec "konsole"
+    git-interactive-add
+
     set -- "${1/%.org/.tex}"
 fi
 
@@ -87,7 +94,9 @@ latex -shell-escape $1
 dvipdfmx ${1/%.tex/.dvi}
 
 ps-killall acroread
-evince ${1/%.tex/.pdf}&
+evince --unique ${1/%.tex/.pdf}&
+sleep 2
+qpdfview-resize
 
 
 

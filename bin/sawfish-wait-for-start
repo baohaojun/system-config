@@ -1,5 +1,5 @@
 #!/bin/bash
-seconds=${1:-5}
+seconds=${1:-60}
 for x in $(seq 1 $seconds); do
     sleep 1
     if sawfish-client -e '(query-pointer)' | grep '^(0 '; then

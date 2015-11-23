@@ -71,20 +71,7 @@ fi
 
 if test "$delay" = true; then
     select=-u
-    while true; do
-        sleep 1
-        if test "$(sawfish-client -e '(event-name (last-event))')" = '"RET"'; then
-            bhj-notify screenshot "will start in 5 seconds"
-            for x in $(seq 5 -1 1); do
-                sleep 1
-                if sawfish-client -e '(query-pointer)' | grep '^(0 '; then
-                    break
-                fi
-            done
-
-            break
-        fi
-    done
+    sawfish-wait-for-start
 fi
 
 while true; do
