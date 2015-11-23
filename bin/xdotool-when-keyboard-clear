@@ -3,10 +3,4 @@ while query-keyboard-state >/dev/null 2>&1; do
     sleep .1;
 done
 
-if test "$DONE_AAAAA" != true; then
-    setxkbmap -layout us -variant dvp
-    re-xmodmap 2>&1 | cat
-    sawfish-client -e '(setenv "DONE_AAAAA" "true")'
-fi
-
 xdotool "$@"
