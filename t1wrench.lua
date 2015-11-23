@@ -4,6 +4,13 @@
 local M
 
 -- functions
+local window_post_button_map = {}
+local phone_info_map = {}
+local save_window_types
+local save_phone_info
+local phone_serial = ""
+local configDir = "."
+
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
 local shell_quote, putclip, t1_post, push_text, t1_post2
@@ -958,7 +965,7 @@ local check_apk_installed = function(apk, md5)
    end
 end
 
-t1_config = function()
+t1_config = function(passedConfigDirPath)
    -- install the apk
    if not qt_adb_pipe then
       local p = io.popen("the-true-adb version")
@@ -1061,6 +1068,31 @@ t1_config = function()
       check_apk_installed("WrenchIME.apk", "WrenchIME.apk.md5")
       debugging("pastetool is false")
    end
+
+
+   if passedConfigDirPath then
+      configDir = passedConfigDirPath
+   end
+   local dofile_res
+   dofile_res, window_post_button_map = pcall(dofile, configDir .. package.config:sub(1, 1) .. "window_post_botton.lua")
+   if not dofile_res then
+      dofile_res, window_post_button_map = pcall(dofile, "window_post_botton.lua")
+      if not dofile_res then
+         window_post_button_map = {}
+         save_window_types()
+      end
+   end
+
+   dofile_res, phone_info_map = pcall(dofile, configDir .. package.config:sub(1, 1) .. "phone_info.lua")
+   if not dofile_res then
+      log("phone info failed")
+      phone_info_map = {}
+      save_phone_info()
+   else
+      log("phone info ok")
+   end
+
+   phone_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")
    return ("brand is %s, paste is %s"):format(brand, using_scroll_lock)
 end
 
@@ -1128,6 +1160,26 @@ qq_find_friend = function(friend_name)
    adb_event"adb-tap 391 288"
    wait_input_target(qqChatActivity2)
    adb_event"key scroll_lock sleep .5 adb-tap 303 291"
+end
+
+save_window_types = function()
+   local mapfile = io.open(configDir .. package.config:sub(1, 1) .. "window_post_botton.lua", "w")
+   mapfile:write("local map = {}\n")
+   for k, v in pairs(window_post_button_map) do
+      mapfile:write(("map['%s'] = '%s'\n"):format(k, v))
+   end
+   mapfile:write("return map\n")
+   mapfile:close()
+end
+
+save_phone_info = function()
+   local infofile = io.open(configDir .. package.config:sub(1, 1) .. "phone_info.lua", "w")
+   infofile:write("local map = {}\n")
+   for k, v in pairs(phone_info_map) do
+      infofile:write(("map['%s'] = '%s'\n"):format(k, v))
+   end
+   infofile:write("return map\n")
+   infofile:close()
 end
 
 t1_post = function(text) -- use weixin
@@ -1213,12 +1265,40 @@ t1_post = function(text) -- use weixin
          end
       else
          if not ime_connected then
-            add = '560 1840 sleep .2 key back sleep .2'
+            adb_event("560 1840")
+            wait_input_target(window)
+            adb_event("key back sleep .2")
+            add = ''
          end
       end
 
       if window == "com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity" then
          post_button = '954 166'
+      end
+
+      local window_type = window_post_button_map[window]
+      if not window_type then
+         window_type = select_args{'发送按钮在哪儿',
+                                   '像微信聊天一样在输入法窗口右上方',
+                                   '像微博分享一样在屏幕右上方',
+                                   '我自己手动来按发送按钮',
+         }
+         if window_type == '像微信聊天一样在输入法窗口右上方' then
+            window_type = 'weixin-chat'
+         elseif window_type == '像微博分享一样在屏幕右上方' then
+            window_type = 'weibo-share'
+         else
+            window_type = 'manual-post'
+         end
+         window_post_button_map[window] = window_type
+         save_window_types()
+      end
+      if window_type == 'weixin-chat' then
+         post_button = post_button -- empty
+      elseif window_type == 'weibo-share' then
+         post_button = '991 166'
+      elseif window_type == 'manual-post' then
+         post_button = ''
       end
 
       debugging("add is %s", add)
@@ -1817,7 +1897,12 @@ end
 
 local press_dial_key = function()
    if not where_is_dial_key then
-      where_is_dial_key = select_args{"拨号键在哪儿呢？", "中间", "左数第一个", "左数第二个"}
+      where_is_dial_key = phone_info_map[phone_serial .. ":拨号键位置"]
+      if not where_is_dial_key then
+         where_is_dial_key = select_args{"拨号键在哪儿呢？", "中间", "左数第一个", "左数第二个"}
+         phone_info_map[phone_serial .. ":拨号键位置"] = where_is_dial_key
+         save_phone_info()
+      end
    end
    debugging("where_is_dial_key is %s", where_is_dial_key)
    if where_is_dial_key == "中间" then

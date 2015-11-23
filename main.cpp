@@ -26,6 +26,7 @@
 #include <QFileOpenEvent>
 #include "fileopenfilter.h"
 #include <QProcess>
+#include "t1wrench.h"
 
 using namespace std;
 
@@ -125,5 +126,13 @@ int main(int argc, char *argv[])
 
     QProcess::startDetached("./the-true-adb", QStringList("start-server"));
 
+    QString str = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, ".", QStandardPaths::LocateDirectory);
+    QDir configDir(str);
+    configDir.mkdir("T1Wrench");
+    str = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "T1Wrench", QStandardPaths::LocateDirectory);
+    configDirPath = str;
+
     return a.exec();
 }
+
+QString configDirPath;

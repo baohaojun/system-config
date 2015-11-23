@@ -41,6 +41,8 @@
 #include "contactmodel.h"
 #include "strlistmodel.h"
 #include "phonescreendialog.h"
+#include <QStandardPaths>
+#include "t1wrench.h"
 
 QString emacsWeixinSh;
 T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
@@ -77,7 +79,7 @@ void T1WrenchMainWindow::adbStateUpdated(const QString& state)
 {
     if (state.toLower() == "online" && ui->adbStateLabel->text().toLower() != "online") {
         if (!mLuaThread.isNull() && mLuaThread->isRunning()) {
-            mLuaThread->addScript(QStringList() << "t1_config");
+            mLuaThread->addScript(QStringList() << "t1_config" << configDirPath);
         } else {
             on_configurePushButton_clicked();
         }
@@ -96,7 +98,7 @@ void T1WrenchMainWindow::adbStateUpdated(const QString& state)
 //     cmdOutputEdit->insertPlainText(output);
 // }
 
-QString prompt_user(const QString &info, QMessageBox::StandardButtons buttons = QMessageBox::Ok)
+QString prompt_user(const QString &info, QMessageBox::StandardButtons buttons)
 {
     QMessageBox msgBox;
     msgBox.setText(info);
@@ -338,7 +340,7 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     mLuaThread->start();
     if (! is_starting) {
-        mLuaThread->addScript(QStringList() << "t1_config");
+        mLuaThread->addScript(QStringList() << "t1_config" << configDirPath);
     }
 }
 
