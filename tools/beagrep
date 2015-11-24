@@ -2,6 +2,7 @@
 
 use Getopt::Long;
 use strict;
+use Cwd 'realpath';
 use String::ShellQuote;
 $ENV{'LANG'} = 'C';
 $ENV{'LC_ALL'} = 'C'; # fix grep too slow when ignore_case and gbk file recognized as binary
@@ -20,10 +21,12 @@ my $pathpat = '.';
 my $additional_tokens = $ENV{BEAGREP_ADDITIONAL_TOKENS};
 my $use_tokens = '';
 my $pathdeny = '^$';
-chomp(my $pwd = qx/readlink -f "`pwd`"/);
+my $pwd = realpath(".");
 my $pwd_opt;
 my $list_beagrep;
 my $short_format = 0;
+my $use_beagrep_for_dir;
+my $use_top_code_dir;
 
 my $ignore_case;
 my $find_file_only = 0;
@@ -48,6 +51,8 @@ sub debug(@) {
 
 my $grep_add_opts = "";
 GetOptions(
+    "beagrep=s" => \$use_beagrep_for_dir,
+    "top=s" => \$use_top_code_dir,
     "a=s" => \$additional_tokens,
     "t=s" => \$use_tokens,
     "e=s" => \$pat,
@@ -90,7 +95,7 @@ if ($pwd_opt) {
     if (not -d $pwd_opt) {
         $pwd_opt = qx(select-beagrep-dir $pwd_opt);
     }
-    chomp($pwd = qx(readlink -f $pwd_opt));
+    $pwd = realpath $pwd_opt;
 }
 chdir $pwd or die "$pwd: $!";
 
@@ -124,13 +129,21 @@ debug "pat is: $pat.\n";
 #   . substr(qx/beagrep-get-tokens $pat/, 0, -1)
 #   . "[0m'\n";
 
-my $beagrep_files = $use_tokens ? qx/beagrep-files -- $use_tokens/ : qx/beagrep-files -- $pat $additional_tokens/;
-my @beagrep_files = split(/\n/, $beagrep_files);
+open(my $beagrep_files_pipe, "-|", ($use_tokens ? "beagrep-files -- $use_tokens" : "beagrep-files -- $pat $additional_tokens"));
 
-
+print "use_beagrep_for_dir is $use_beagrep_for_dir\n";
 my $pwd_save = $pwd;
 my $cache_dir = glob("~/.cache/system-config/for-code-reading");
 my $db_dir = "$cache_dir/$pwd";
+if ($use_beagrep_for_dir) {
+    $use_beagrep_for_dir = realpath $use_beagrep_for_dir;
+    $db_dir = "$cache_dir/$use_beagrep_for_dir";
+    if (not $use_top_code_dir) {
+        die "with -D $use_beagrep_for_dir, you must specify top_code_dir with -T"
+    } else {
+        $pwd = realpath $use_top_code_dir;
+    }
+}
 while (! -d "$db_dir/.beagrep") {
     debug "no beagrep db at $db_dir";
     $pwd =~ s!(.*)/.*!$1!;
@@ -153,21 +166,25 @@ chdir $pwd;
 chomp($pwd = qx/pwd -P/);
 my $start = length($pwd) + 1;
 if ($short_format) {
-    map {$_ = substr($_, $start)} @beagrep_files;
     printf "Using short format, Entering directory \`%s'\n", $pwd;
 }
 
 if ($list_beagrep) {
-  for (@beagrep_files) {
-    print "$_:$file_default_line: [01;31m****************![0m\n";
-  }
-  exit 0;
+    while (<$beagrep_files_pipe>) {
+        $_ = substr($_, $start) if ($short_format);
+        print "$_:$file_default_line: [01;31m****************![0m\n";
+    }
+    exit 0;
 }
 
+my @beagrep_files;
 if (!$find_file_only) {
     open(my $grep, "|xargs -d '\\n' -- grep -e $pat -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp");
 
-    for (@beagrep_files) {
+    while (<$beagrep_files_pipe>) {
+        chomp;
+        $_ = substr($_, $start) if ($short_format);
+        push @beagrep_files, $_;
         next unless m/$pathpat/i;
         next if m/$pathdeny/i;
         print $grep "$_\n";
@@ -200,7 +217,7 @@ if ($find_file_only || 1) {
 if (@fallback_dirs and not $ENV{DOING_BEAGREP_FALLBACK}) {
     $ENV{DOING_BEAGREP_FALLBACK} = 1;
     for (@fallback_dirs) {
-        chomp($_ = qx(readlink -f $_));
+        $_ = realpath $_;
         $_ =~ s,/.*\.cache/system-config/for-code-reading,,;
         print("Going to work in $_\n");
         chdir $_ or die "Can't chdir to $_";
