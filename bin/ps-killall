@@ -21,6 +21,7 @@ ps.pl $match | grep -v $(basename $0) | tee /dev/stderr | pn 1  |
                               echo $x is in loop of ppid
                               continue
                           fi
-                          kill $sig "$x";
+                          kill "$x"
+                          (sleep 1; kill $sig "$x" >/dev/null 2>&1)&
                       done
                   ' true
