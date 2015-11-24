@@ -1,11 +1,42 @@
 #!/bin/bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt yyes t:timeout
+## end code-generator
+## start generated code
+TEMP=$(getopt -o yt: --long "yes,timeout:"  -n $(basename $0) -- "$@")
+yes=false
+timeout=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -y|--yes)
+            yes=true
+            shift
+            ;;
+        -t|--timeout)
+            timeout=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+
 default=no
 prompt=(yes/No)
-if test "$1" = -y; then
+if test "$yes" = true ; then
     default=yes;
     prompt=(Yes/no)
-    shift
 fi
 
 user_prompt=$(echo -n "$@")
@@ -17,9 +48,11 @@ if test "$EMACS"; then
     REPLY=$(ask-for-input-with-sawfish -p "$user_prompt $prompt:")
 elif ! tty >/dev/null 2>&1; then
     REPLY=
-else
-    (echo -n >/dev/tty) >/dev/null 2>&1 &&
-    read -e -p "$user_prompt $prompt: " >/dev/tty 2>&1
+elif (echo -n >/dev/tty) >/dev/null 2>&1; then
+        if test "$timeout"; then
+            timeout="-t $timeout"
+        fi
+        read $timeout -e -p "$user_prompt $prompt: " >/dev/tty 2>&1
 fi
 
 if test -z "$REPLY" -a $default = yes; then
