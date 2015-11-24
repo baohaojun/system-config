@@ -262,6 +262,19 @@ function adb() {
 
     if test "$1" = logcat; then
         shift
+        has_extension() {
+            for x in "$@"; do
+                if test "${x:0:1}" = :; then
+                    return 0
+                elif test "${x:0:2}" = s:; then
+                    return 0
+                fi
+            done
+            return 1
+        }
+        if ! has_extension "$@"; then
+            exec the-true-adb logcat "$@"
+        fi
         ## start code-generator "^\\s *#\\s *"
         # generate-getopt v:format
         ## end code-generator

@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt m:manifest b:branch
+## end code-generator
+## start generated code
+TEMP=$(getopt -o m:b: --long "manifest:,branch:"  -n $(basename $0) -- "$@")
+manifest=
+branch=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -m|--manifest)
+            manifest=$2
+            shift 2
+            ;;
+        -b|--branch)
+            branch=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+
+relative-link "$manifest" .repo/manifest.xml -f
+repo sync -j4 -d -c
+my-rfa 'git push $(repo-remote) HEAD:refs/heads/'$branch
+mkdir -p .repo/manifests/${branch%/*}
+repo manifest -r | perl -npe 's,revision=".*" upstream=".*",,; s,revision=".*",revision="'$branch'",' > .repo/manifests/${branch}.xml
