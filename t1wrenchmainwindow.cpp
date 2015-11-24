@@ -249,12 +249,15 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
     }
 
     bool share = 0;
+    if (anyShareChecked() && ! mPictures.isEmpty()) {
+        mLuaThread->addScript(QStringList("upload_pics") + mPictures);
+    }
     if (ui->tbWeibo->isChecked()) {
         share = 1;
         if (mPictures.isEmpty()) {
             mLuaThread->addScript(QStringList() << "t1_share_to_weibo" << text);
         } else {
-            mLuaThread->addScript((QStringList() << "picture_to_weibo_share") + mPictures);
+            mLuaThread->addScript(QStringList() << "picture_to_weibo_share");
             mLuaThread->addScript(QStringList() << "t1_post" << text);
         }
         ui->tbWeibo->setChecked(false);
@@ -265,7 +268,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         if (mPictures.isEmpty()) {
             mLuaThread->addScript(QStringList() << "t1_share_to_weixin" << text);
         } else {
-            mLuaThread->addScript((QStringList() << "picture_to_weixin_share") + mPictures);
+            mLuaThread->addScript(QStringList() << "picture_to_weixin_share");
             mLuaThread->addScript(QStringList() << "t1_post" << text);
         }
         ui->tbWeixin->setChecked(false);
@@ -276,7 +279,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         if (mPictures.isEmpty()) {
             mLuaThread->addScript(QStringList() << "t1_share_to_qq" << text);
         } else {
-            mLuaThread->addScript((QStringList() << "picture_to_qq_share") + mPictures);
+            mLuaThread->addScript(QStringList() << "picture_to_qq_share");
             mLuaThread->addScript(QStringList() << "t1_post" << text);
         }
         ui->tbQq->setChecked(false);
@@ -287,7 +290,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         if (mPictures.isEmpty()) {
             prompt_user("陌陌分享失败，没有图片不能分享（可以考虑用便签）。");
         } else {
-            mLuaThread->addScript((QStringList() << "picture_to_momo_share") + mPictures);
+            mLuaThread->addScript(QStringList() << "picture_to_momo_share");
             mLuaThread->addScript(QStringList() << "t1_post" << text);
         }
         ui->tbMomo->setChecked(false);

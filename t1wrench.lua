@@ -10,6 +10,7 @@ local save_window_types
 local save_phone_info
 local phone_serial = ""
 local configDir = "."
+local last_uploaded_pics = {}
 
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
@@ -1164,7 +1165,9 @@ save_window_types = function()
    local mapfile = io.open(configDir .. package.config:sub(1, 1) .. "window_post_botton.lua", "w")
    mapfile:write("local map = {}\n")
    for k, v in pairs(window_post_button_map) do
-      mapfile:write(("map['%s'] = '%s'\n"):format(k, v))
+      if k ~= "" then
+         mapfile:write(("map['%s'] = '%s'\n"):format(k, v))
+      end
    end
    mapfile:write("return map\n")
    mapfile:close()
@@ -1332,6 +1335,7 @@ local function upload_pics(...)
       adb_push{pics[i], target}
       adb_am{"am", "startservice", "--user", "0", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
    end
+   last_uploaded_pics = targets
    return targets
 end
 
@@ -1378,6 +1382,9 @@ share_pics_to_app = function(pkg, cls, pics, ...)
 end
 
 picture_to_weixin_share = function(pics, ...)
+   if pics == nil then
+      pics = last_uploaded_pics
+   end
    share_pics_to_app("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI", pics)
    wait_top_activity(weixinSnsUploadActivity)
    adb_event("adb-tap 228 401")
@@ -1385,6 +1392,9 @@ picture_to_weixin_share = function(pics, ...)
 end
 
 picture_to_qq_share = function(pics, ...)
+   if pics == nil then
+      pics = last_uploaded_pics
+   end
    log("share to qq")
    share_pics_to_app("com.qzone", "com.qzonex.module.operation.ui.QZonePublishMoodActivity", pics)
    wait_top_activity(qqShareActivity)
@@ -1392,22 +1402,10 @@ picture_to_qq_share = function(pics, ...)
    wait_input_target(qqShareActivity)
 end
 
-local function picture_to_weibo_share_upload(...)
-   local pics = upload_pics(...)
-   picture_to_weibo_share(pics)
-end
-
-local function picture_to_momo_share_upload(...)
-   local pics = upload_pics(...)
-   picture_to_momo_share(pics)
-end
-
-local function picture_to_weixin_share_upload(...)
-   local pics = upload_pics(...)
-   picture_to_weixin_share(pics)
-end
-
 picture_to_weibo_share = function(pics, ...)
+   if pics == nil then
+      pics = last_uploaded_pics
+   end
    share_pics_to_app("com.sina.weibo", ".composerinde.ComposerDispatchActivity", pics)
    wait_top_activity(weiboShareActivity)
    adb_event("adb-tap 162 286")
@@ -1449,6 +1447,9 @@ picture_to_weibo_comment = function(pics, ...)
 end
 
 picture_to_momo_share = function(pics, ...)
+   if pics == nil then
+       pics = last_uploaded_pics
+   end
    share_pics_to_app("com.immomo.momo", ".android.activity.feed.SharePublishFeedActivity", pics)
    wait_top_activity("com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity")
    adb_event("adb-tap 176 329")
@@ -1456,6 +1457,9 @@ picture_to_momo_share = function(pics, ...)
 end
 
 local function picture_to_weixin_chat(pics, ...)
+   if pics == nil then
+      pics = last_uploaded_pics
+   end
    if type(pics) ~= "table" then
       pics = {pics, ...}
    end
@@ -1998,9 +2002,12 @@ M.t1_picture = t1_picture
 M.t1_follow_me = t1_follow_me
 M.t1_share_to_weibo = t1_share_to_weibo
 M.t1_share_to_weixin = t1_share_to_weixin
-M.picture_to_weibo_share = picture_to_weibo_share_upload
-M.picture_to_weixin_share = picture_to_weixin_share_upload
+M.picture_to_weibo_share = picture_to_weibo_share
+M.picture_to_weixin_share = picture_to_weixin_share
+M.picture_to_momo_share = picture_to_momo_share
+M.picture_to_qq_share = picture_to_qq_share
 M.t1_spread_it = t1_spread_it
+M.upload_pics = upload_pics
 M.adb_start_weixin_share = adb_start_weixin_share
 M.t1_config = t1_config
 M.emoji_for_qq = emoji_for_qq
@@ -2010,7 +2017,6 @@ M.system = system
 M.sleep = sleep
 M.debugg = debug
 M.get_a_note = get_a_note
-M.picture_to_momo_share = picture_to_momo_share_upload
 M.t1_call = t1_call
 M.t1_run = t1_run
 M.t1_add_mms_receiver = t1_add_mms_receiver
@@ -2023,7 +2029,6 @@ M.t1_send_action = t1_send_action
 M.t1_post2 = t1_post2
 M.t1_find_qq_contact = t1_find_qq_contact
 M.t1_share_to_qq = t1_share_to_qq
-M.picture_to_qq_share = picture_to_qq_share
 M.weixin_find_friend = weixin_find_friend
 M.qq_open_homepage = qq_open_homepage
 
