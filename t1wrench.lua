@@ -1088,8 +1088,6 @@ t1_config = function(passedConfigDirPath)
       log("phone info failed")
       phone_info_map = {}
       save_phone_info()
-   else
-      log("phone info ok")
    end
 
    phone_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")

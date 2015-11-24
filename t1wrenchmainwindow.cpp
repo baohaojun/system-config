@@ -221,8 +221,14 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
         return;
     }
 
+    if (anyShareChecked() && mSettings.value("firstTimeWeibo", 1).toInt() == -1) {
+        if (yes_or_no_p("你输入的文字将被分享到社交网络，请点击OK以确认") != "yes") {
+            return;
+        }
+    }
+
     ui->phoneTextEdit->setPlaceholderText("");
-    
+
     if (ui->tbNotes->isChecked()) {
         mLuaThread->addScript(QStringList() << "get_a_note" << text);
         mPictures.insert(0, "last-pic-notes.png");
