@@ -65,7 +65,7 @@ GrowlBackend::~GrowlBackend()
 
 bool GrowlBackend::isReady()
 {
-    bool running = Growl::isRunning(GROWL_TCP, settingsValue(QLatin1String("Host")).toString().toUtf8().constData());
+    bool running = Growl::isRunning(GROWL_TCP, settingsValue(QStringLiteral("Host")).toString().toUtf8().constData());
     if (!running) {
         setErrorString(tr("%1 is not running.").arg(name()));
     }
@@ -81,8 +81,8 @@ void GrowlBackend::slotRegisterApplication(const Application &application)
         alerts.push_back(a.name().toUtf8().constData());
     }
 
-    Growl *growl = new Growl(GROWL_TCP, settingsValue(QLatin1String("Host")).toString().toUtf8().constData(),
-                             settingsValue(QLatin1String("Password")).toString().toUtf8().constData(),
+    Growl *growl = new Growl(GROWL_TCP, settingsValue(QStringLiteral("Host")).toString().toUtf8().constData(),
+                             settingsValue(QStringLiteral("Password")).toString().toUtf8().constData(),
                              application.name().toUtf8().constData());
     m_applications.insert(application.name(), growl);
     growl->Register(alerts, application.icon().localUrl(QSize(128, 128)).toUtf8().constData());
@@ -123,7 +123,7 @@ PluginSettingsWidget *GrowlBackend::settingsWidget()
 void GrowlBackend::setDefaultSettings()
 {
     SnoreBackend::setDefaultSettings();
-    setDefaultSettingsValue(QLatin1String("Host"), QLatin1String("localhost"));
-    setDefaultSettingsValue(QLatin1String("Password"), QString());
+    setDefaultSettingsValue(QStringLiteral("Host"), QLatin1String("localhost"));
+    setDefaultSettingsValue(QStringLiteral("Password"), QString());
 }
 
