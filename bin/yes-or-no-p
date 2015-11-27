@@ -2,12 +2,13 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt yyes t:timeout
+# generate-getopt yyes t:timeout ndefault_no
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o yt: --long "yes,timeout:"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o yt:n --long "yes,timeout:,default_no"  -n $(basename $0) -- "$@")
 yes=false
 timeout=
+default_no=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -18,6 +19,10 @@ while true; do
         -t|--timeout)
             timeout=$2
             shift 2
+            ;;
+        -n|--default_no)
+            default_no=true
+            shift
             ;;
         --)
             shift
@@ -31,6 +36,9 @@ done
 
 ## end generated code
 
+if test "$default_no" = true; then
+    yes=false
+fi
 
 default=no
 prompt=(yes/No)
