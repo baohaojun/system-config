@@ -34,7 +34,7 @@
 
 using namespace Snore;
 
-Q_LOGGING_CATEGORY(SNORE, "SNORE")
+Q_LOGGING_CATEGORY(SNORE, "SNORE", QtWarningMsg)
 
 SnoreCore::SnoreCore(QObject *parent):
     QObject(parent)
