@@ -45,8 +45,14 @@ if test "${rev:0:4}" = http; then
     review_id=$(basename $rev)
     rev=$(gerrit query --current-patch-set $(basename $rev)|grep revision: | pn 2)
     gerrit review $rev $action
-    if gerrit query --current-patch-set $review_id | grep 'status: MERGED'; then
+    query_output=$(gerrit query --dependencies --current-patch-set $review_id )
+    if echo "$query_output" | grep 'status: MERGED'; then
         echo done
+    elif echo "$query_output" | grep 'status: SUBMITTED'; then
+        dep=$(echo "$query_output" | perl -ne 'print if m/^\s+dependsOn:/ .. -1' | grep revision: | pn 2)
+        if yes-or-no-p -y "do $dep"; then
+            exec gerrit-do-review http://$dep
+        fi
     else
         echo not Merged: $(gerrit query --current-patch-set $review_id | grep 'status:')
         exit 1

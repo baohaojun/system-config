@@ -1,14 +1,16 @@
 #!/bin/bash
 
-if my-adb shell 'which busybox && echo yes' |grep -q yes; then
+if my-adb shell 'which busybox && which bash && echo yes' |grep -q yes; then
     true
 else
     busybox_file=~/src/android/vendor/smartisanhw/log-crawler/busybox
+    bash_file=~/src/android/vendor/smartisanhw/log-crawler/bash
     if test ! -e $busybox_file; then
         busybox_file=~/system-config/doc/galaxy-nexus-root/system/xbin/busybox
     fi
     adb-push ~/src/android/vendor/smartisanhw/log-crawler/bash /system/bin/bash
     adb-push $busybox_file /system/xbin
+    adb-push $bash_file /system/xbin
 fi
 
 applets=$(

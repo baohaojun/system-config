@@ -27,6 +27,7 @@ my $list_beagrep;
 my $short_format = 0;
 my $use_beagrep_for_dir;
 my $use_top_code_dir;
+my $abc_base;
 
 my $ignore_case;
 my $find_file_only = 0;
@@ -52,6 +53,7 @@ sub debug(@) {
 my $grep_add_opts = "";
 GetOptions(
     "beagrep=s" => \$use_beagrep_for_dir,
+    "abc=s" => \$abc_base,
     "top=s" => \$use_top_code_dir,
     "a=s" => \$additional_tokens,
     "t=s" => \$use_tokens,
@@ -68,6 +70,10 @@ GetOptions(
     "s!" => \$short_format,
     "rewrite=s" => \$replace_with,
     ) or die;
+
+if ($pwd_opt) {
+    $abc_base = "";
+}
 
 if ($replace_with) {
     my $char_1 = substr($replace_with, 0, 1);
@@ -129,9 +135,20 @@ debug "pat is: $pat.\n";
 #   . substr(qx/beagrep-get-tokens $pat/, 0, -1)
 #   . "[0m'\n";
 
-open(my $beagrep_files_pipe, "-|", ($use_tokens ? "beagrep-files -- $use_tokens" : "beagrep-files -- $pat $additional_tokens"));
+my $beagrep_files_cmd = "beagrep-files -- $use_tokens";
+if (not $use_tokens) {
+    $beagrep_files_cmd = "beagrep-files -- $pat $additional_tokens";
+}
 
-print "use_beagrep_for_dir is $use_beagrep_for_dir\n";
+my $beagrep_files_pipe;
+if ($abc_base) {
+    open($beagrep_files_pipe, "-|", "abc-x", "-b", "$abc_base", "abc-files", "$pat $additional_tokens");
+} else {
+    open($beagrep_files_pipe, "-|", $beagrep_files_cmd);
+}
+
+
+
 my $pwd_save = $pwd;
 my $cache_dir = glob("~/.cache/system-config/for-code-reading");
 my $db_dir = "$cache_dir/$pwd";
@@ -148,7 +165,14 @@ while (! -d "$db_dir/.beagrep") {
     debug "no beagrep db at $db_dir";
     $pwd =~ s!(.*)/.*!$1!;
     if (not $pwd or $pwd eq "/") {
-        die "Can not find beagrep data for $pwd_save";
+        $pwd = qx(lookup-file -e .repo);
+        if ($pwd) {
+            $pwd =~ s/.repo$//;
+            $db_dir = "$cache_dir/$pwd";
+            last;
+        } else {
+            die "Can not find beagrep data for $pwd_save";
+        }
     }
     $db_dir = "$cache_dir/$pwd";
     debug "change db to $db_dir";
@@ -171,7 +195,7 @@ if ($short_format) {
 
 if ($list_beagrep) {
     while (<$beagrep_files_pipe>) {
-        $_ = substr($_, $start) if ($short_format);
+        $_ = substr($_, $start) if ($short_format and not $abc_base);
         print "$_:$file_default_line: [01;31m****************![0m\n";
     }
     exit 0;
@@ -183,7 +207,7 @@ if (!$find_file_only) {
 
     while (<$beagrep_files_pipe>) {
         chomp;
-        $_ = substr($_, $start) if ($short_format);
+        $_ = substr($_, $start) if ($short_format and not $abc_base);
         push @beagrep_files, $_;
         next unless m/$pathpat/i;
         next if m/$pathdeny/i;

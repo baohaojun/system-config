@@ -13,7 +13,7 @@ function die() {
     exit -1
 }
 
-if echo "$SSH_ORIGINAL_COMMAND" | grep -o -P -e '[^-a-z0-9:./_ ]+' -i; then
+if echo "$SSH_ORIGINAL_COMMAND" | grep -o -P -e '[^-%a-z0-9:./_ ]+' -i; then
     die "The above characters are not allowed"
 fi
 

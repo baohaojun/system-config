@@ -35,6 +35,13 @@ function abc() {
                 shift
                 abc-grep "$@"
                 ;;
+            abc-files)
+                shift
+                abc-files "$@"
+                ;;
+            base)
+                abc-base-build
+                ;;
         esac
     )
 }
@@ -58,22 +65,6 @@ abc-mm() {
     if git status -s|grep '??'; then
         git status -s | awk '{print $2}' | xargs -d \\n git add
     fi
-
-    ## start code-generator "^\\s *#\\s *"
-    # generate-getopts -l b:base_build
-    ## end code-generator
-    ## start generated code
-    local base_build=
-    local OPTIND=1
-    while getopts 'b:' opt; do
-        case "$opt" in
-            b)    base_build=$OPTARG;;
-            *)    echo Usage Error; exit 2;;
-        esac
-    done
-    shift $(($OPTIND - 1))
-
-    ## end generated code
 
     base_build=${base_build:-$(abc-base-build)}
     repo_path=$(abc-repo-path)
@@ -108,9 +99,13 @@ croot() {
 }
 
 abc-base-build() {
+    if test "$base_build"; then
+        echo $base_build
+        return
+    fi
     (
         croot
-        readlink -f ./.repo/manifest.xml|perl -npe 's,.*/,,; s,\.xml$,,'
+        readlink -f ./.repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,; s,\.xml$,,; s,/,%,g'
     )
 }
 
@@ -143,6 +138,13 @@ abc-grep() {
     )
 }
 
+abc-files() {
+    (
+        croot
+        ssh $abc_host abc abc-files -b "$(abc-base-build)" "$(echo "$@" | perl -npe 's/[^\w]/ /g')"
+    )
+}
+
 abc-repo-branch() {
     repo forall . -c 'echo $REPO_RREV'
     # fixme
@@ -159,16 +161,18 @@ abc-repo-pwd() {
 }
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  h:abc_host xxdebug
+# generate-getopts  h:abc_host xxdebug b:base_build
 ## end code-generator
 ## start generated code
 abc_host=
 xdebug=false
+base_build=
 OPTIND=1
-while getopts 'h:x' opt; do
+while getopts 'h:xb:' opt; do
     case "$opt" in
         h)    abc_host=$OPTARG;;
         x)    xdebug=true;;
+        b)    base_build=$OPTARG;;
         *)    echo Usage Error; exit 2;;
     esac
 done
