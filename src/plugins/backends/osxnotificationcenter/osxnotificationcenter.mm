@@ -3,13 +3,14 @@
 #include "libsnore/notification/notification_p.h"
 #include "libsnore/utils.h"
 #include "libsnore/snore.h"
-#include "libsnore/log.h"
+
 #include <QDebug.h>
 #import <QThread.h>
 #import <QApplication.h>
 #import <QMap>
 #include <Foundation/Foundation.h>
 #import <objc/runtime.h>
+
 using namespace Snore;
 
 QMap<int, Notification> m_IdToNotification;
