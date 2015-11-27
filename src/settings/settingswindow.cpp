@@ -98,6 +98,6 @@ void SettingsWindow::on_buttonBox_clicked(QAbstractButton *button)
         qApp->quit();
         break;
     default:
-        snoreDebug(SNORE_WARNING) << "unhandled role" << button->text() << ui->buttonBox->buttonRole(button);
+        qCWarning(SNORE) << "unhandled role" << button->text() << ui->buttonBox->buttonRole(button);
     }
 }

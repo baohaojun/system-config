@@ -57,7 +57,7 @@ SnoreBackend::SnoreBackend()
 
 SnoreBackend::~SnoreBackend()
 {
-    snoreDebug(SNORE_DEBUG) << "Deleting" << name();
+    qCDebug(SNORE) << "Deleting" << name();
 }
 
 void SnoreBackend::requestCloseNotification(Notification notification, Notification::CloseReasons reason)
@@ -80,7 +80,7 @@ void SnoreBackend::closeNotification(Notification n, Notification::CloseReasons 
         n.old().removeActiveIn(this);
     }
     n.data()->setCloseReason(reason);
-    snoreDebug(SNORE_DEBUG) << n << reason;
+    qCDebug(SNORE) << n << reason;
     emit notificationClosed(n);
 }
 

@@ -70,40 +70,40 @@ public:
                 switch (action) {
                 case SnarlEnums::CallbackInvoked:
                     reason = Notification::ACTIVATED;
-                    snoreDebug(SNORE_DEBUG) << "Notification clicked";
+                    qCDebug(SNORE) << "Notification clicked";
                     break;
                 case SnarlEnums::NotifyAction:
                     reason = Notification::ACTIVATED;
-                    snoreDebug(SNORE_DEBUG) << "Notification action invoked";
+                    qCDebug(SNORE) << "Notification action invoked";
                     if (notification.isValid()) {
                         m_snarl->slotNotificationActionInvoked(notification, notification.actions().value(data));
                     }
                     break;
                 case SnarlEnums::CallbackClosed:
                     reason = Notification::DISMISSED;
-                    snoreDebug(SNORE_DEBUG) << "Notification dismissed";
+                    qCDebug(SNORE) << "Notification dismissed";
                     break;
                 case SnarlEnums::CallbackTimedOut:
                     reason = Notification::TIMED_OUT;
-                    snoreDebug(SNORE_DEBUG) << "Notification timed out";
+                    qCDebug(SNORE) << "Notification timed out";
                     break;
                 //away stuff
                 case SnarlEnums::SnarlUserAway:
-                    snoreDebug(SNORE_DEBUG) << "Snalr user has gone away";
+                    qCDebug(SNORE) << "Snalr user has gone away";
                     return true;
                 case SnarlEnums::SnarlUserBack:
-                    snoreDebug(SNORE_DEBUG) << "Snalr user has returned";
+                    qCDebug(SNORE) << "Snalr user has returned";
                     return true;
                 default:
-                    snoreDebug(SNORE_WARNING) << "Unknown snarl action found!!";
+                    qCWarning(SNORE) << "Unknown snarl action found!!";
                     return false;
                 }
                 if (notification.isValid()) {
                     m_snarl->requestCloseNotification(notification, reason);
                     m_snarl->m_idMap.take(msg->lParam);
                 } else {
-                    snoreDebug(SNORE_WARNING) << "Snarl notification already closed" << msg->lParam << action;
-                    snoreDebug(SNORE_WARNING) << m_snarl->m_idMap;
+                    qCWarning(SNORE) << "Snarl notification already closed" << msg->lParam << action;
+                    qCWarning(SNORE) << m_snarl->m_idMap;
                 }
                 return true;
             }
@@ -177,9 +177,9 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
                     application.icon().localUrl(QSize(128, 128)).toUtf8().constData(),
                     password.isEmpty() ? 0 : password.toUtf8().constData(),
                     (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
-    snoreDebug(SNORE_DEBUG) << result;
+    qCDebug(SNORE) << result;
 
-    foreach(const Alert & alert, application.alerts()) {
+    foreach (const Alert &alert, application.alerts()) {
         snarlInterface->AddClass(alert.name().toUtf8().constData(),
                                  alert.name().toUtf8().constData(),
                                  0, 0, alert.icon().localUrl(QSize(128, 128)).toUtf8().constData());
@@ -189,7 +189,7 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
 void SnarlBackend::slotDeregisterApplication(const Application &application)
 {
     if (!m_applications.contains(application.name())) {
-        snoreDebug(SNORE_DEBUG) << "Unknown apllication: " << application.name();
+        qCDebug(SNORE) << "Unknown apllication: " << application.name();
         return;
     }
     SnarlInterface *snarlInterface = m_applications.take(application.name());
@@ -201,7 +201,7 @@ void SnarlBackend::slotDeregisterApplication(const Application &application)
 void SnarlBackend::slotNotify(Notification notification)
 {
     if (!m_applications.contains(notification.application().name())) {
-        snoreDebug(SNORE_DEBUG) << "Unknown apllication: " << notification.application().name();
+        qCDebug(SNORE) << "Unknown apllication: " << notification.application().name();
         return;
     }
 
@@ -217,7 +217,7 @@ void SnarlBackend::slotNotify(Notification notification)
     }
 
     ULONG32 id = 0;
-    snoreDebug(SNORE_DEBUG) << notification.icon();
+    qCDebug(SNORE) << notification.icon();
 
     if (!notification.isUpdate()) {
         id = snarlInterface->Notify(notification.alert().name().toUtf8().constData(),
@@ -228,7 +228,7 @@ void SnarlBackend::slotNotify(Notification notification)
                                     Utils::dataFromImage(notification.icon().pixmap(QSize(128, 128)).toImage()).toBase64().constData(),
                                     priority);
 
-        foreach(const Action & a, notification.actions()) {
+        foreach (const Action &a, notification.actions()) {
             snarlInterface->AddAction(id, a.name().toUtf8().constData(), (QLatin1Char('@') + QString::number(a.id())).toUtf8().constData());
         }
         m_idMap[id] = notification;
@@ -254,7 +254,7 @@ void SnarlBackend::slotNotify(Notification notification)
 void SnarlBackend::slotCloseNotification(Notification notification)
 {
     if (!m_applications.contains(notification.application().name())) {
-        snoreDebug(SNORE_DEBUG) << "Unknown apllication: " << notification.application().name();
+        qCDebug(SNORE) << "Unknown apllication: " << notification.application().name();
         return;
     }
     ULONG32 id = notification.hints().privateValue(this, "id").toUInt();

@@ -49,7 +49,7 @@ PluginContainer::~PluginContainer()
 SnorePlugin *PluginContainer::load()
 {
     if (!m_loader.isLoaded() && !m_loader.load()) {
-        snoreDebug(SNORE_WARNING) << "Failed loading plugin: " << m_loader.errorString();
+        qCWarning(SNORE) << "Failed loading plugin: " << m_loader.errorString();
         return nullptr;
     }
     if (!m_plugin) {
@@ -88,23 +88,23 @@ bool PluginContainer::isLoaded() const
 
 void PluginContainer::updatePluginCache()
 {
-    snoreDebug(SNORE_DEBUG) << "Updating plugin cache";
-    foreach(PluginContaienrHash list, s_pluginCache.values()) {
+    qCDebug(SNORE) << "Updating plugin cache";
+    foreach (PluginContaienrHash list, s_pluginCache.values()) {
         qDeleteAll(list);
         list.clear();
     }
 
-    foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
-        foreach(const QFileInfo & file, pluginDir().entryInfoList(
-                    QStringList(pluginFileFilters(type)), QDir::Files)) {
-            snoreDebug(SNORE_DEBUG) << "adding" << file.absoluteFilePath();
+    foreach (const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
+        foreach (const QFileInfo &file, pluginDir().entryInfoList(
+                     QStringList(pluginFileFilters(type)), QDir::Files)) {
+            qCDebug(SNORE) << "adding" << file.absoluteFilePath();
             QPluginLoader loader(file.absoluteFilePath());
             QJsonObject data = loader.metaData()[QStringLiteral("MetaData")].toObject();
             QString name = data.value(QStringLiteral("name")).toString();
             if (!name.isEmpty()) {
                 PluginContainer *info = new PluginContainer(file.fileName(), name, type);
                 s_pluginCache[type].insert(name, info);
-                snoreDebug(SNORE_DEBUG) << "added" << name << "to cache";
+                qCDebug(SNORE) << "added" << name << "to cache";
             }
         }
     }
@@ -116,7 +116,7 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
         QTime time;
         time.start();
         updatePluginCache();
-        snoreDebug(SNORE_DEBUG) << "Plugins loaded in:" << time.elapsed();
+        qCDebug(SNORE) << "Plugins loaded in:" << time.elapsed();
     }
 
     QHash<QString, PluginContainer *> out;
@@ -153,19 +153,19 @@ const QDir &PluginContainer::pluginDir()
              << appDir + suffix
              << appDir + QStringLiteral("/../lib/plugins") + suffix
              << appDir + QStringLiteral("/../lib64/plugins") + suffix;
-        foreach(const QString & p, list) {
+        foreach (const QString &p, list) {
             path = QDir(p);
 
             if (!path.entryInfoList(pluginFileFilters()).isEmpty()) {
                 break;
             } else {
-                snoreDebug(SNORE_DEBUG) << "Possible pluginpath:" << path.absolutePath() << "does not contain plugins.";
+                qCDebug(SNORE) << "Possible pluginpath:" << path.absolutePath() << "does not contain plugins.";
             }
         }
         if (path.entryInfoList(pluginFileFilters()).isEmpty()) {
-            snoreDebug(SNORE_WARNING) << "Couldnt find any plugins";
+            qCWarning(SNORE) << "Couldnt find any plugins";
         }
-        snoreDebug(SNORE_INFO) << "PluginPath is :" << path.absolutePath();
+        qCInfo(SNORE) << "PluginPath is :" << path.absolutePath();
     }
     return path;
 }

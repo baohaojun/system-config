@@ -58,7 +58,7 @@ void TrayIcon::initConextMenu()
             m_settings->setVisible(false);
             break;
         default:
-            snoreDebug(SNORE_WARNING) << "unhandled role" << button->text() << box->buttonRole(button);
+            qCWarning(SNORE) << "unhandled role" << button->text() << box->buttonRole(button);
         }
     });
     m_settings->layout()->addWidget(box);

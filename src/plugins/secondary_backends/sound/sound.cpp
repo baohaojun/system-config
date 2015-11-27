@@ -18,8 +18,6 @@
 #include "sound.h"
 #include "soundsettings.h"
 
-#include "libsnore/log.h"
-
 #include <QtMultimedia/QMediaPlayer>
 #include <QTimer>
 
@@ -29,10 +27,10 @@ Sound::Sound():
     m_player(new QMediaPlayer(this))
 {
 //    connect(m_player,QMediaPlayer::positionChanged,[](qint64 pos){
-//        snoreDebug(SNORE_DEBUG) << "Player: " << pos;
+//        qCDebug(SNORE) << "Player: " << pos;
 //    });
     connect(m_player, &QMediaPlayer::stateChanged, [](QMediaPlayer::State state) {
-        snoreDebug(SNORE_DEBUG) << "Player: " << state;
+        qCDebug(SNORE) << "Player: " << state;
     });
 }
 
@@ -58,10 +56,10 @@ void Sound::slotNotificationDisplayed(Snore::Notification notification)
     if (sound.isEmpty()) {
         sound = settingsValue(QLatin1String("Sound")).toString();
     }
-    snoreDebug(SNORE_DEBUG) << "SoundFile:" << sound;
+    qCDebug(SNORE) << "SoundFile:" << sound;
     if (!sound.isEmpty()) {
         m_player->setMedia(QUrl::fromLocalFile(sound));
-        snoreDebug(SNORE_DEBUG) << "SoundFile:" << m_player->media().canonicalUrl();
+        qCDebug(SNORE) << "SoundFile:" << m_player->media().canonicalUrl();
         m_player->play();
         QTimer *timeout = new QTimer(this);
         timeout->setSingleShot(true);

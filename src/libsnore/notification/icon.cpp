@@ -40,14 +40,14 @@ Icon Icon::defaultIcon()
 Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
 {
     Icon icon = defaultIcon();
-    snoreDebug(SNORE_DEBUG) << url;
+    qCDebug(SNORE) << url;
     if (!s_downloadImageCache.contains(url)) {
-        snoreDebug(SNORE_DEBUG) << "Downloading:" << url;
+        qCDebug(SNORE) << "Downloading:" << url;
         QNetworkAccessManager *manager = new QNetworkAccessManager();
         QNetworkRequest request(url);
         QNetworkReply *reply = manager->get(request);
         QObject::connect(reply, &QNetworkReply::downloadProgress, [&](qint64 bytesReceived, qint64 bytesTotal) {
-            snoreDebug(SNORE_DEBUG) << "Downloading:" << url << bytesReceived / double(bytesTotal) * 100.0 << "%";
+            qCDebug(SNORE) << "Downloading:" << url << bytesReceived / double(bytesTotal) * 100.0 << "%";
         });
 
         QTime time;
@@ -56,16 +56,16 @@ Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
             qApp->processEvents(QEventLoop::AllEvents, maxTime);
         }
         if (reply->error() != QNetworkReply::NoError) {
-            snoreDebug(SNORE_WARNING) << "Error downloading" << url << ":" << reply->errorString();
+            qCWarning(SNORE) << "Error downloading" << url << ":" << reply->errorString();
         } else {
             if (reply->isFinished()) {
                 QPixmap pix;
                 pix.loadFromData(reply->readAll());
                 icon = Icon(pix);
                 s_downloadImageCache.insert(url, icon);
-                snoreDebug(SNORE_DEBUG) << url << "added to cache.";
+                qCDebug(SNORE) << url << "added to cache.";
             } else {
-                snoreDebug(SNORE_DEBUG) << "Download of " << url << "timed out.";
+                qCDebug(SNORE) << "Download of " << url << "timed out.";
             }
         }
 
@@ -74,7 +74,7 @@ Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
         manager->deleteLater();
     } else {
         icon = s_downloadImageCache.value(url, defaultIcon());
-        snoreDebug(SNORE_DEBUG) << url << "from cache";
+        qCDebug(SNORE) << url << "from cache";
     }
     return icon;
 }

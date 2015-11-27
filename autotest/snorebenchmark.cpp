@@ -14,7 +14,6 @@ class SnoreBenchmark : public QObject
 public:
     SnoreBenchmark()
     {
-        SnoreLog::setDebugLvl(3);
         SnoreCore &instance = SnoreCore::instance();
         instance.loadPlugins(SnorePlugin::BACKEND);
         instance.setSettingsValue(QStringLiteral("Timeout"), 1, LOCAL_SETTING);

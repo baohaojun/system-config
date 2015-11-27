@@ -36,7 +36,7 @@ SnoreFrontend::SnoreFrontend()
 
 SnoreFrontend::~SnoreFrontend()
 {
-    snoreDebug(SNORE_DEBUG) << "Deleting" << name();
+    qCDebug(SNORE) << "Deleting" << name();
 }
 
 void SnoreFrontend::slotActionInvoked(Notification)

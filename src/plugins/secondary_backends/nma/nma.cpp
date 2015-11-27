@@ -18,7 +18,6 @@
 #include "nma.h"
 #include "nmasettings.h"
 
-#include "libsnore/log.h"
 #include "libsnore/utils.h"
 
 #include <QNetworkReply>
@@ -52,8 +51,8 @@ void NotifyMyAndroid::slotNotify(Notification notification)
 
     QNetworkReply *reply =  m_manager.post(request, data.toUtf8().constData());
     connect(reply, &QNetworkReply::finished, [reply]() {
-        snoreDebug(SNORE_DEBUG) << reply->error();
-        snoreDebug(SNORE_DEBUG) << reply->readAll();
+        qCDebug(SNORE) << reply->error();
+        qCDebug(SNORE) << reply->readAll();
         reply->close();
         reply->deleteLater();
     });

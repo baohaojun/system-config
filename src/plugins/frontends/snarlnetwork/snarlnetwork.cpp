@@ -52,7 +52,7 @@ SnarlNetworkFrontend::~SnarlNetworkFrontend()
 void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)
 {
     if (notification.isActiveIn(this)) {
-        snoreDebug(SNORE_DEBUG) << notification.closeReason();
+        qCDebug(SNORE) << notification.closeReason();
         callback(notification, QStringLiteral("SNP/1.1/304/Notification acknowledged/"));
     }
 }
@@ -72,7 +72,7 @@ void SnarlNetworkFrontend::slotNotificationClosed(Snore::Notification notificati
             callback(notification, QStringLiteral("SNP/1.1/302/Notification cancelled/"));
             break;
         default:
-            snoreDebug(SNORE_WARNING) << "Unhandled close reason" << notification.closeReason();
+            qCWarning(SNORE) << "Unhandled close reason" << notification.closeReason();
         }
     }
 }
@@ -90,7 +90,7 @@ void SnarlNetworkFrontend::handleMessages()
     QTcpSocket *client = qobject_cast<QTcpSocket *>(sender());
 
     QStringList messages(QString::fromLatin1(client->readAll()).trimmed().split(QStringLiteral("\r\n")));
-    foreach(const QString & s, messages) {
+    foreach (const QString &s, messages) {
         if (s.isEmpty()) {
             continue;
         }

@@ -48,7 +48,7 @@ void SnoreToast::slotNotify(Notification notification)
     if (notification.hints().value("silent").toBool() || notification.hints().value("sound").isValid()) {
         arguements << QLatin1String("-silent");
     }
-    snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
+    qCDebug(SNORE) << "SnoreToast" << arguements;
 
     connect(p, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [this, notification](int code) {
         Notification::CloseReasons reason = Notification::NONE;
@@ -69,7 +69,7 @@ void SnoreToast::slotNotify(Notification notification)
             break;
         case -1:
             //failed
-            snoreDebug(SNORE_WARNING) << "SnoreToast failed to display " << notification;
+            qCWarning(SNORE) << "SnoreToast failed to display " << notification;
             break;
         }
 
@@ -81,14 +81,14 @@ void SnoreToast::slotNotify(Notification notification)
 void SnoreToast::slotRegisterApplication(const Application &application)
 {
     if (!application.constHints().contains("windows-app-id")) {
-        snoreDebug(SNORE_INFO) << "No windows-app-id found in hints. Installing default shortcut with appID.";
+        qCInfo(SNORE) << "No windows-app-id found in hints. Installing default shortcut with appID.";
         QProcess *p = createProcess(Notification());
         QStringList arguements;
         arguements << QLatin1String("-install")
                    << QLatin1String("SnoreNotify\\") + qApp->applicationName()
                    << QDir::toNativeSeparators(qApp->applicationFilePath())
                    << appId(application);
-        snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
+        qCDebug(SNORE) << "SnoreToast" << arguements;
         p->start(QLatin1String("SnoreToast"), arguements);
     }
 }
@@ -100,7 +100,7 @@ void SnoreToast::slotCloseNotification(Notification notification)
     QStringList arguements;
     arguements << QLatin1String("-close")
                << QString::number(notification.id());
-    snoreDebug(SNORE_DEBUG) << "SnoreToast" << arguements;
+    qCDebug(SNORE) << "SnoreToast" << arguements;
     p->start(QLatin1String("SnoreToast"), arguements);
 }
 
@@ -119,13 +119,13 @@ QProcess *SnoreToast::createProcess(Notification noti)
     p->setReadChannelMode(QProcess::MergedChannels);
 
     connect(p, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [p](int, QProcess::ExitStatus) {
-        snoreDebug(SNORE_DEBUG) << p->readAll();
+        qCDebug(SNORE) << p->readAll();
         p->deleteLater();
     });
 
     connect(p, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), [this, p, noti](QProcess::ProcessError) {
         setErrorString(name() + p->errorString());
-        snoreDebug(SNORE_DEBUG) << p->readAll();
+        qCDebug(SNORE) << p->readAll();
         if (noti.isValid()) {
             closeNotification(noti, Notification::NONE);
         }

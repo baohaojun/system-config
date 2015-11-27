@@ -21,7 +21,6 @@
 
 #include "snore_exports.h"
 #include "snoreglobals.h"
-#include "log.h"
 #include "application.h"
 #include "notification/notification.h"
 #include "plugins/plugins.h"

@@ -34,6 +34,8 @@
 
 using namespace Snore;
 
+Q_LOGGING_CATEGORY(SNORE, "SNORE")
+
 SnoreCore::SnoreCore(QObject *parent):
     QObject(parent)
 {
@@ -69,16 +71,16 @@ SnoreCore::~SnoreCore()
 void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
 {
     if (QThread::currentThread() != thread()) {
-        snoreDebug(SNORE_DEBUG) << "Delayed Plugin loading." << QThread::currentThread() << thread();
+        qCDebug(SNORE) << "Delayed Plugin loading." << QThread::currentThread() << thread();
         QMetaObject::invokeMethod(this, "loadPlugins", Qt::BlockingQueuedConnection, Q_ARG(Snore::SnorePlugin::PluginTypes, types));
         return;
     }
     Q_D(SnoreCore);
     setSettingsValue(QStringLiteral("PluginTypes"), QVariant::fromValue(types), LOCAL_SETTING);
-    snoreDebug(SNORE_DEBUG) << "Loading plugin types:" << types;
-    foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
+    qCDebug(SNORE) << "Loading plugin types:" << types;
+    foreach (const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
         if (type != SnorePlugin::ALL && types & type) {
-            foreach(PluginContainer * info, PluginContainer::pluginCache(type).values()) {
+            foreach (PluginContainer *info, PluginContainer::pluginCache(type).values()) {
                 SnorePlugin *plugin = info->load();
                 if (!plugin) {
                     continue;
@@ -93,11 +95,11 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                     plugin->setEnabled(plugin->settingsValue(QStringLiteral("Enabled"), LOCAL_SETTING).toBool());
                     break;
                 default:
-                    snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
+                    qCWarning(SNORE) << "Plugin Cache corrupted\n" << info->file() << info->type();
                     continue;
                 }
 
-                snoreDebug(SNORE_DEBUG) << info->name() << "is a" << info->type();
+                qCDebug(SNORE) << info->name() << "is a" << info->type();
                 d->m_pluginNames[info->type()].append(info->name());
                 auto key = qMakePair(type, info->name());
                 Q_ASSERT_X(!d->m_plugins.contains(key), Q_FUNC_INFO, "Multiple plugins of the same type with the same name.");
@@ -109,19 +111,19 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
         }
     }
     d->slotInitPrimaryNotificationBackend();
-    snoreDebug(SNORE_INFO) << "Loaded Plugins:" << d->m_pluginNames;
+    qCInfo(SNORE) << "Loaded Plugins:" << d->m_pluginNames;
 }
 
 void SnoreCore::broadcastNotification(Notification notification)
 {
     Q_D(SnoreCore);
     if (d->m_activeNotifications.size() > d->maxNumberOfActiveNotifications()) {
-        snoreDebug(SNORE_DEBUG) << "queue size:" << d->m_notificationQue.size() << "active size:" << d->m_activeNotifications.size();
+        qCDebug(SNORE) << "queue size:" << d->m_notificationQue.size() << "active size:" << d->m_activeNotifications.size();
         d->m_notificationQue.append(notification);
         return;
     }
     Q_ASSERT_X(!notification.data()->isBroadcasted(), Q_FUNC_INFO, "Notification was already broadcasted.");
-    snoreDebug(SNORE_DEBUG) << "Broadcasting" << notification << "timeout:" << notification.timeout();
+    qCDebug(SNORE) << "Broadcasting" << notification << "timeout:" << notification.timeout();
     if (d->m_notificationBackend != nullptr) {
         if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
             requestCloseNotification(notification.old(), Notification::REPLACED);
@@ -140,7 +142,7 @@ void SnoreCore::registerApplication(const Application &application)
     Q_D(SnoreCore);
     Q_ASSERT_X(!d->m_applications.contains(application.key()), Q_FUNC_INFO,
                "Applications mus be registered only once.");
-    snoreDebug(SNORE_DEBUG) << "Registering Application:" << application;
+    qCDebug(SNORE) << "Registering Application:" << application;
     d->m_applications.insert(application.key(), application);
     emit d->applicationRegistered(application);
 }
@@ -190,7 +192,7 @@ void SnoreCore::requestCloseNotification(Notification n, Notification::CloseReas
     Q_D(SnoreCore);
     bool wasQued  = d->m_notificationQue.removeOne(n);
     if (wasQued) {
-        snoreDebug(SNORE_DEBUG) << n << " was qued.";
+        qCDebug(SNORE) << n << " was qued.";
     }
     if (!wasQued && d->m_notificationBackend) {
         d->m_notificationBackend->requestCloseNotification(n, r);
@@ -212,7 +214,7 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets(SnorePlugin::PluginTypes
 {
     Q_D(SnoreCore);
     QList<PluginSettingsWidget *> list;
-    foreach(const QString & name, d->m_pluginNames[type]) {
+    foreach (const QString &name, d->m_pluginNames[type]) {
         //TODO: mem leak?
         SnorePlugin *p = d->m_plugins[qMakePair(type, name)];
         PluginSettingsWidget *widget = p->settingsWidget();
@@ -247,7 +249,7 @@ void SnoreCore::setDefaultSettingsValue(const QString &key, const QVariant &valu
     Q_D(SnoreCore);
     QString nk = d->normalizeSettingsKey(key, type);
     if (!d->m_settings->contains(nk)) {
-        snoreDebug(SNORE_DEBUG) <<  "Set default value" << nk << value;
+        qCDebug(SNORE) <<  "Set default value" << nk << value;
         d->m_settings->setValue(nk, value);
     }
 }

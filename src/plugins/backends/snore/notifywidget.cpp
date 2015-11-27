@@ -18,7 +18,6 @@
 
 #include "notifywidget.h"
 #include "snorenotifier.h"
-#include "libsnore/log.h"
 #include "libsnore/utils.h"
 
 #include <QApplication>
@@ -68,13 +67,13 @@ NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
         m_mem.unlock();
     } else {
         if (!m_mem.attach()) {
-            snoreDebug(SNORE_WARNING) << "Failed to atatche to shared mem";
+            qCWarning(SNORE) << "Failed to atatche to shared mem";
         } else {
             m_mem.lock();
             SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
             m_mem.unlock();
             int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
-            snoreDebug(SNORE_DEBUG) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
+            qCDebug(SNORE) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
         }
     }
 }
@@ -86,7 +85,7 @@ NotifyWidget::~NotifyWidget()
 
 void NotifyWidget::display(const Notification &notification)
 {
-    snoreDebug(SNORE_DEBUG) << m_id << notification.id() << m_window->isVisible();
+    qCDebug(SNORE) << m_id << notification.id() << m_window->isVisible();
     m_notification = notification;
     QColor color;
     QVariant vcolor = notification.application().constHints().privateValue(parent(), "backgroundColor");
@@ -128,11 +127,11 @@ bool NotifyWidget::acquire(int timeout)
         m_mem.lock();
         SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
         int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
-        snoreDebug(SNORE_DEBUG) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
+        qCDebug(SNORE) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
         bool isTimedOut = elapsed > data->timeout;
         if (data->free || isTimedOut) {
             if (isTimedOut) {
-                snoreDebug(SNORE_DEBUG) << "Notification Lock timed out" << elapsed;
+                qCDebug(SNORE) << "Notification Lock timed out" << elapsed;
             }
             data->free = false;
             data->date = QTime::currentTime().msecsSinceStartOfDay();
@@ -155,7 +154,7 @@ bool NotifyWidget::release()
         m_mem.lock();
         SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
         int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
-        snoreDebug(SNORE_DEBUG) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
+        qCDebug(SNORE) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
         if (!data->free) {
             data->free = true;
             m_ready = true;

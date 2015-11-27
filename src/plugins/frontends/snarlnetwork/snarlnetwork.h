@@ -19,7 +19,6 @@
 #ifndef SNARLNETWORK_H
 #define SNARLNETWORK_H
 #include "libsnore/plugins/snorefrontend.h"
-#include "libsnore/log.h"
 #include "parser.h"
 
 #include <QTcpSocket>
@@ -55,7 +54,7 @@ private:
 
     inline void write(QTcpSocket *dest, const QString &msg)
     {
-        snoreDebug(SNORE_DEBUG) << msg;
+        qCDebug(SNORE) << msg;
         dest->write(msg.toLatin1());
     }
 

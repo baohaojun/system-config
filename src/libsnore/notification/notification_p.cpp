@@ -19,7 +19,6 @@
 #include "notification/notification_p.h"
 #include "notification/icon.h"
 #include "../hint.h"
-#include "libsnore/log.h"
 #include "libsnore/plugins/plugins.h"
 #include "libsnore/snore.h"
 
@@ -44,8 +43,8 @@ NotificationData::NotificationData(const Snore::Application &application, const 
     m_hints(m_application.constHints())
 {
     notificationCount++;
-    snoreDebug(SNORE_INFO) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
-    snoreDebug(SNORE_INFO) << title << text;
+    qCInfo(SNORE) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    qCInfo(SNORE) << title << text;
 }
 
 Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
@@ -61,15 +60,15 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
     m_toReplace(old)
 {
     notificationCount++;
-    snoreDebug(SNORE_INFO) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
-    snoreDebug(SNORE_INFO) << title << text;
+    qCInfo(SNORE) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    qCInfo(SNORE) << title << text;
 }
 
 NotificationData::~NotificationData()
 {
     stopTimeoutTimer();
     notificationCount--;
-    snoreDebug(SNORE_INFO) << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
+    qCInfo(SNORE) << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
 }
 
 void NotificationData::setActionInvoked(const Snore::Action &action)
@@ -119,7 +118,7 @@ const SnorePlugin *NotificationData::source() const
 bool NotificationData::sourceAndTargetAreSimilar(const SnorePlugin *target)
 {
     if (source() && source()->name() == target->name()) {
-        snoreDebug(SNORE_DEBUG) << "Source" << source() << "and Target" << target << "are the same.";
+        qCDebug(SNORE) << "Source" << source() << "and Target" << target << "are the same.";
         return true;
     }
     return false;

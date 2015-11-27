@@ -34,7 +34,7 @@ GrowlBackend::GrowlBackend()
     s_instance = this;
 
     auto func = [](growl_callback_data * data)->void {
-        snoreDebug(SNORE_DEBUG) << data->id << QString::fromUtf8(data->reason) << QString::fromUtf8(data->data);
+        qCDebug(SNORE) << data->id << QString::fromUtf8(data->reason) << QString::fromUtf8(data->data);
         Notification n = Snore::SnoreCore::instance().getActiveNotificationByID(data->id);
         if (!n.isValid())
         {
@@ -74,10 +74,10 @@ bool GrowlBackend::isReady()
 
 void GrowlBackend::slotRegisterApplication(const Application &application)
 {
-    snoreDebug(SNORE_DEBUG) << application.name();
+    qCDebug(SNORE) << application.name();
     std::vector<std::string> alerts;
-    foreach(const Alert & a, application.alerts()) {
-        snoreDebug(SNORE_DEBUG) << a.name();
+    foreach (const Alert &a, application.alerts()) {
+        qCDebug(SNORE) << a.name();
         alerts.push_back(a.name().toUtf8().constData());
     }
 
@@ -102,7 +102,7 @@ void GrowlBackend::slotNotify(Notification notification)
 {
     Growl *growl = m_applications.value(notification.application().name());
     QString alert = notification.alert().name();
-    snoreDebug(SNORE_DEBUG) << "Notify Growl:" << notification.application() << alert << notification.title();
+    qCDebug(SNORE) << "Notify Growl:" << notification.application() << alert << notification.title();
 
     GrowlNotificationData data(alert.toUtf8().constData(), notification.id(),
                                notification.title().toUtf8().constData(),

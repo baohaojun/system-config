@@ -37,7 +37,7 @@ SnoreSecondaryBackend::SnoreSecondaryBackend()
 
 SnoreSecondaryBackend::~SnoreSecondaryBackend()
 {
-    snoreDebug(SNORE_DEBUG) << "Deleting" << name();
+    qCDebug(SNORE) << "Deleting" << name();
 }
 
 void SnoreSecondaryBackend::slotNotify(Notification)

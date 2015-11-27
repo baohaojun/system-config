@@ -33,13 +33,13 @@ SnorePlugin::SnorePlugin()
 {
     Q_ASSERT_X(thread() == qApp->thread(), Q_FUNC_INFO, "Plugin initialized in wrong thread");
     if (thread() != qApp->thread()) {
-        snoreDebug(SNORE_WARNING) << "Plugin initialized in wrong thread.";
+        qCWarning(SNORE) << "Plugin initialized in wrong thread.";
     }
 }
 
 SnorePlugin::~SnorePlugin()
 {
-    snoreDebug(SNORE_DEBUG) << name() << this << "deleted";
+    qCDebug(SNORE) << name() << this << "deleted";
 }
 
 bool SnorePlugin::isEnabled() const
@@ -116,7 +116,7 @@ void SnorePlugin::setDefaultSettings()
 void SnorePlugin::setErrorString(const QString &_error)
 {
     m_error = _error;
-    snoreDebug(SNORE_WARNING) << name() << "encountered an error:" << m_error;
+    qCWarning(SNORE) << name() << "encountered an error:" << m_error;
     disable();
     emit error(_error);
 }

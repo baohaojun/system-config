@@ -68,11 +68,11 @@ BOOL installNSBundleHook()
 - (void) userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
 {
     
-    snoreDebug(SNORE_DEBUG) << "User clicked on notification";
+    qCDebug(SNORE) << "User clicked on notification";
     int notificationId = [notification.userInfo[@"id"] intValue];
     [center removeDeliveredNotification: notification];
     if (not m_IdToNotification.contains(notificationId)) {
-        snoreDebug(SNORE_WARNING) << "User clicked on notification that was not recognized";
+        qCWarning(SNORE) << "User clicked on notification that was not recognized";
         return;
     }
     auto snoreNotification = m_IdToNotification.take(notificationId);

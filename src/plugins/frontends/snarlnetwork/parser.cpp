@@ -50,7 +50,7 @@ Parser::Parser(SnarlNetworkFrontend *snarl):
 
 void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *client)
 {
-    snoreDebug(SNORE_DEBUG) << msg;
+    qCDebug(SNORE) << msg;
     QStringList splitted(msg.split(QStringLiteral("#?")));
     snpTypes action(ERROR);
 
@@ -64,7 +64,7 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
     QByteArray key;
     QString value;
 
-    foreach(const QString & s, splitted) {
+    foreach (const QString &s, splitted) {
         key = s.mid(0, s.indexOf(QLatin1String("="))).toLower().toLatin1();
         value = s.mid(s.indexOf(QLatin1String("=")) + 1);
         switch (getSnpType.value(key)) {
@@ -119,7 +119,7 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
     }
     case ADD_CLASS:
         if (alertName.isEmpty()) {
-            snoreDebug(SNORE_DEBUG) << "Error registering alert with empty name";
+            qCDebug(SNORE) << "Error registering alert with empty name";
             break;
         }
         alert = Alert(alertName, icon);
@@ -129,7 +129,7 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
         if (!snarl->m_applications.contains(client)) {
             snarl->m_applications[client] = Application(appName, icon);
         } else {
-            snoreDebug(SNORE_DEBUG) << appName << "already registred";
+            qCDebug(SNORE) << appName << "already registred";
         }
         break;
     case UNREGISTER:

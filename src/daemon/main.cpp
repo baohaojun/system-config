@@ -16,7 +16,6 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "snorenotify.h"
-#include "libsnore/log.h"
 #include "libsnore/version.h"
 
 #include <QApplication>

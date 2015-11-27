@@ -17,7 +17,6 @@
 */
 #include "hint.h"
 #include "lambdahint.h"
-#include "log.h"
 
 using namespace Snore;
 

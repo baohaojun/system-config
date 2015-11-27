@@ -34,7 +34,7 @@ void TrayIconNotifer::slotCloseNotification(Notification n)
 {
     QSystemTrayIcon *icon = trayIcon(n.application());
     if (icon) {
-        snoreDebug(SNORE_DEBUG) << n;
+        qCDebug(SNORE) << n;
         m_currentlyDisplaying = false;
         displayNotification(icon);
     }

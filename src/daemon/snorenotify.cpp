@@ -31,7 +31,7 @@ SnoreNotify::SnoreNotify()
     SnoreCore::instance().loadPlugins(SnorePlugin::ALL);
     m_trayIcon->initConextMenu();
 
-    snoreDebug(SNORE_DEBUG) << "Snorenotfiy initialized with" << SnoreCore::instance().primaryNotificationBackend();
+    qCDebug(SNORE) << "Snorenotfiy initialized with" << SnoreCore::instance().primaryNotificationBackend();
 }
 
 SnoreNotify::~SnoreNotify()

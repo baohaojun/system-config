@@ -15,7 +15,6 @@ public:
     DisplayTest():
         app(QStringLiteral("Test"), Icon::defaultIcon())
     {
-        SnoreLog::setDebugLvl(3);
         SnoreCore &instance = SnoreCore::instance();
         instance.loadPlugins(SnorePlugin::BACKEND);
         instance.setSettingsValue(QStringLiteral("Timeout"), 5, LOCAL_SETTING);

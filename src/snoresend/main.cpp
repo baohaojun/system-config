@@ -18,7 +18,6 @@
 
 #include <libsnore/snore.h>
 #include <libsnore/notification/notification.h>
-#include <libsnore/log.h>
 #include <libsnore/version.h>
 #include <libsnore/utils.h>
 
@@ -39,7 +38,7 @@ using namespace std;
 
 void bringToFront(QString pid)
 {
-    snoreDebug(SNORE_DEBUG) << pid;
+    qCDebug(SNORE) << pid;
 #ifdef Q_OS_WIN
     auto findWindowForPid = [](ulong pid) {
         // based on http://stackoverflow.com/a/21767578
@@ -112,7 +111,7 @@ int main(int argc, char *argv[])
     parser.addOption(_bringWindowToFront);
 
     parser.process(app);
-    snoreDebug(SNORE_DEBUG) << app.arguments();
+    qCDebug(SNORE) << app.arguments();
     if (parser.isSet(title) && parser.isSet(message)) {
         SnoreCore &core = SnoreCore::instance();
 

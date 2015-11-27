@@ -46,7 +46,7 @@ bool setSetting(const QString &appName, SettingsType type, const QString &_key, 
 
 void listApps()
 {
-    foreach(const QString & app, SettingsWindow::knownApps()) {
+    foreach (const QString &app, SettingsWindow::knownApps()) {
         cout << qPrintable(app) << endl;
     }
 }
@@ -63,8 +63,8 @@ void listSettings(SettingsType type, const QString &application)
         prefix = QString();
     }
     cout << qPrintable(application) << endl;
-    foreach(const QString & key, SettingsWindow::allSettingsKeysWithPrefix(
-                Utils::normalizeSettingsKey(QLatin1String(""), type, prefix), settings, getAllKeys)) {
+    foreach (const QString &key, SettingsWindow::allSettingsKeysWithPrefix(
+                 Utils::normalizeSettingsKey(QLatin1String(""), type, prefix), settings, getAllKeys)) {
         cout << "  " << qPrintable(key) << ": " << qPrintable(settings.value(Utils::normalizeSettingsKey(key, type, prefix)).toString()) << endl;
     }
 }

@@ -49,7 +49,7 @@ void SettingsDialog::initTabs()
         bool enabled = false;
         target->clear();
         if (types & type) {
-            foreach(PluginSettingsWidget * widget, SnoreCore::instance().settingWidgets(type)) {
+            foreach (PluginSettingsWidget *widget, SnoreCore::instance().settingWidgets(type)) {
                 target->addTab(widget, widget->name());
                 m_tabs.append(widget);
                 enabled = true;
@@ -88,11 +88,11 @@ void SettingsDialog::on_pushButton_clicked()
 
 void SettingsDialog::load()
 {
-    snoreDebug(SNORE_DEBUG) << "loading";
+    qCDebug(SNORE) << "loading";
     loadPrimaryBackendBox(SnoreCore::instance().settingsValue(QStringLiteral("PrimaryBackend"), LOCAL_SETTING).toString());
     ui->timeoutSpinBox->setValue(SnoreCore::instance().settingsValue(QStringLiteral("Timeout"), LOCAL_SETTING).toInt());
     ui->disableNotificationSoundCheckBox->setChecked(SnoreCore::instance().settingsValue(QStringLiteral("Silent"), LOCAL_SETTING).toBool());
-    foreach(auto widget, m_tabs) {
+    foreach (auto widget, m_tabs) {
         widget->loadSettings();
     }
 }
@@ -114,9 +114,9 @@ void SettingsDialog::loadPrimaryBackendBox(const QString &backend)
 
 void SettingsDialog::save()
 {
-    snoreDebug(SNORE_DEBUG) << "saving";
+    qCDebug(SNORE) << "saving";
     bool dirty = false;
-    foreach(auto w, m_tabs) {
+    foreach (auto w, m_tabs) {
         w->saveSettings();
         dirty |= w->isDirty();
     }

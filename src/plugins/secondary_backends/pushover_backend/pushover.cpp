@@ -18,7 +18,6 @@
 #include "pushover.h"
 #include "pushoversettings.h"
 
-#include "libsnore/log.h"
 #include "libsnore/utils.h"
 #include "libsnore/notification/notification_p.h"
 
@@ -61,8 +60,8 @@ void Pushover::slotNotify(Notification notification)
 
     QHttpPart text;
     text.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"message\"")));
-    snoreDebug(SNORE_DEBUG) << "Use Markup" << notification.constHints().value("use-markup").toBool();
-    snoreDebug(SNORE_DEBUG) << "Message" << textString;
+    qCDebug(SNORE) << "Use Markup" << notification.constHints().value("use-markup").toBool();
+    qCDebug(SNORE) << "Message" << textString;
     text.setBody(textString.toUtf8().constData());
     mp->append(text);
 
@@ -113,8 +112,8 @@ void Pushover::slotNotify(Notification notification)
     mp->setParent(reply);
 
     connect(reply, &QNetworkReply::finished, [reply]() {
-        snoreDebug(SNORE_DEBUG) << reply->error();
-        snoreDebug(SNORE_DEBUG) << reply->readAll();
+        qCDebug(SNORE) << reply->error();
+        qCDebug(SNORE) << reply->readAll();
         reply->close();
         reply->deleteLater();
     });

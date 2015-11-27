@@ -50,7 +50,7 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     }
 
     QStringList actions;
-    foreach(int k, noti.actions().keys()) {
+    foreach (int k, noti.actions().keys()) {
         actions << QString::number(k) << noti.actions()[k].name();
     }
     QVariantMap hints;
@@ -89,12 +89,12 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     m_dbusIdMap[id.value()] = noti;
     slotNotificationDisplayed(noti);
 
-    snoreDebug(SNORE_DEBUG) << noti.id() << "|" << id.value();
+    qCDebug(SNORE) << noti.id() << "|" << id.value();
 }
 
 void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID)
 {
-    snoreDebug(SNORE_DEBUG) << id << m_dbusIdMap[id];
+    qCDebug(SNORE) << id << m_dbusIdMap[id];
     Notification noti = m_dbusIdMap[id];
     if (!noti.isValid()) {
         return;
@@ -105,7 +105,7 @@ void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &action
 void FreedesktopBackend::slotCloseNotification(Notification notification)
 {
     uint id = notification.hints().privateValue(this, "id").toUInt();
-    snoreDebug(SNORE_DEBUG) << notification.id() << id;
+    qCDebug(SNORE) << notification.id() << id;
     m_interface->CloseNotification(id);
 }
 
@@ -138,7 +138,7 @@ void FreedesktopBackend::slotNotificationClosed(const uint &id, const uint &reas
         closeReason = Notification::NONE;
     }
 
-    snoreDebug(SNORE_DEBUG) << id << "|" << closeReason << reason;
+    qCDebug(SNORE) << id << "|" << closeReason << reason;
     if (id == 0) {
         return;
     }

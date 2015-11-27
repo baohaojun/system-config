@@ -69,14 +69,14 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         if (notification.old().hints().privateValue(this, "id").isValid()) {
             NotifyWidget *w = m_widgets[notification.old().hints().privateValue(this, "id").toInt()];
             if (w->notification().isValid() && w->notification().id() == notification.old().id()) {
-                snoreDebug(SNORE_DEBUG) << "replacing notification" << w->notification().id() << notification.id();
+                qCDebug(SNORE) << "replacing notification" << w->notification().id() << notification.id();
                 display(w, notification);
             }
         } else {
             for (int i = 0; i < m_queue.length(); ++i) {
                 Notification n = m_queue.at(i);
                 if (n.id() == notification.old().id()) {
-                    snoreDebug(SNORE_DEBUG) << "replacing qued notification" << n.id() << notification.id();
+                    qCDebug(SNORE) << "replacing qued notification" << n.id() << notification.id();
                     m_queue.replace(i, notification);
                 }
             }
@@ -84,7 +84,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         return;
     }
     if (m_queue.isEmpty()) {
-        foreach(NotifyWidget * w, m_widgets) {
+        foreach (NotifyWidget *w, m_widgets) {
             if (w->acquire(notification.timeout())) {
                 display(w, notification);
                 return;
@@ -92,7 +92,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         }
     }
     m_queue.append(notification);
-    snoreDebug(SNORE_DEBUG) << "queing" << m_queue.size();
+    qCDebug(SNORE) << "queing" << m_queue.size();
     if (!m_timer->isActive()) {
         m_timer->start();
     }
@@ -108,10 +108,10 @@ void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
 void SnoreNotifier::slotQueueTimeout()
 {
     if (m_queue.isEmpty()) {
-        snoreDebug(SNORE_DEBUG) << "queue is empty";
+        qCDebug(SNORE) << "queue is empty";
         m_timer->stop();
     } else {
-        foreach(NotifyWidget * w, m_widgets) {
+        foreach (NotifyWidget *w, m_widgets) {
             if (!m_queue.isEmpty() && w->acquire(m_queue.first().timeout())) {
                 Notification notification = m_queue.takeFirst();
                 notification.hints().setPrivateValue(this, "id", w->id());

@@ -18,7 +18,6 @@
 #include "toasty.h"
 #include "toastysettings.h"
 
-#include "libsnore/log.h"
 #include "libsnore/utils.h"
 
 #include <QNetworkReply>
@@ -66,8 +65,8 @@ void Toasty::slotNotify(Notification notification)
     file->setParent(reply);
 
     connect(reply, &QNetworkReply::finished, [reply]() {
-        snoreDebug(SNORE_DEBUG) << reply->error();
-        snoreDebug(SNORE_DEBUG) << reply->readAll();
+        qCDebug(SNORE) << reply->error();
+        qCDebug(SNORE) << reply->readAll();
         reply->close();
         reply->deleteLater();
     });
