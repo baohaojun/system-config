@@ -28,7 +28,7 @@ using namespace Snore;
 
 void NotifyMyAndroid::slotNotify(Notification notification)
 {
-    QString key = settingsValue(QLatin1String("ApiKey")).toString();
+    QString key = settingsValue(QStringLiteral("ApiKey")).toString();
     if (key.isEmpty()) {
         return;
     }
@@ -67,6 +67,6 @@ PluginSettingsWidget *NotifyMyAndroid::settingsWidget()
 
 void NotifyMyAndroid::setDefaultSettings()
 {
-    setDefaultSettingsValue(QLatin1String("ApiKey"), QString());
+    setDefaultSettingsValue(QStringLiteral("ApiKey"), QString());
     SnoreSecondaryBackend::setDefaultSettings();
 }

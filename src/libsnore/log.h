@@ -88,7 +88,5 @@ private:
     SnoreDebugLevels m_lvl;
     QString m_msg;
 };
-
 }
-
 #endif // SNORELOG_H

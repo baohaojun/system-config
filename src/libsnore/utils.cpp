@@ -74,7 +74,7 @@ void Utils::raiseWindowToFront(qlonglong wid)
 
 #define HTML_REPLACE(STRING, PATTERN){\
         static QRegExp regexp(QLatin1String(PATTERN));\
-        STRING = STRING.replace(regexp, QLatin1String("\\1"));\
+        STRING = STRING.replace(regexp, QStringLiteral("\\1"));\
     }\
      
 QString Utils::normalizeMarkup(QString string, MARKUP_FLAGS tags)
@@ -89,7 +89,7 @@ QString Utils::normalizeMarkup(QString string, MARKUP_FLAGS tags)
     QMutexLocker lock(&mutex);
     if (~tags & Utils::BREAK) {
         static QRegExp br(QLatin1String("<br>"));
-        string = string.replace(br, QLatin1String("\n"));
+        string = string.replace(br, QStringLiteral("\n"));
     }
     if (~tags & Utils::HREF) {
         HTML_REPLACE(string, "<a href=.*>([^<]*)</a>");

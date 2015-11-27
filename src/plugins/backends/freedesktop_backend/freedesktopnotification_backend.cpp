@@ -12,13 +12,13 @@ using namespace Snore;
 
 FreedesktopBackend::FreedesktopBackend()
 {
-    m_interface = new org::freedesktop::Notifications(QLatin1String("org.freedesktop.Notifications"),
-            QLatin1String("/org/freedesktop/Notifications"),
+    m_interface = new org::freedesktop::Notifications(QStringLiteral("org.freedesktop.Notifications"),
+            QStringLiteral("/org/freedesktop/Notifications"),
             QDBusConnection::sessionBus(), this);
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [reply, watcher, this]() {
-        m_supportsRichtext = reply.value().contains(QLatin1String("body-markup"));
+        m_supportsRichtext = reply.value().contains(QStringLiteral("body-markup"));
         watcher->deleteLater();
     });
     connect(this, &FreedesktopBackend::enabledChanged, [this](bool enabled) {
@@ -56,7 +56,7 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     QVariantMap hints;
 
     FreedesktopImageHint image(noti.icon().pixmap(QSize(128, 128)).toImage());
-    hints.insert(QLatin1String("image_data"), QVariant::fromValue(image));
+    hints.insert(QStringLiteral("image_data"), QVariant::fromValue(image));
 
     char urgency = 1;
     if (noti.priority() < 0) {
@@ -64,13 +64,13 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     } else if (noti.priority() > 2) {
         urgency = 2;
     }
-    hints.insert(QLatin1String("urgency"), urgency);
+    hints.insert(QStringLiteral("urgency"), urgency);
 
     if (noti.application().constHints().contains("desktop-entry")) {
-        hints.insert(QLatin1String("desktop-entry"), noti.application().constHints().value("desktop-entry"));
+        hints.insert(QStringLiteral("desktop-entry"), noti.application().constHints().value("desktop-entry"));
     }
 
-    hints.insert(QLatin1String("suppress-sound"), noti.constHints().value("silent").toBool());
+    hints.insert(QStringLiteral("suppress-sound"), noti.constHints().value("silent").toBool());
 
     uint updateId = 0;
     if (noti.isUpdate()) {

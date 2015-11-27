@@ -34,7 +34,7 @@ void Pushover::slotNotify(Notification notification)
         return;
     }
 
-    QString key = settingsValue(QLatin1String("UserKey")).toString();
+    QString key = settingsValue(QStringLiteral("UserKey")).toString();
     if (key.isEmpty()) {
         return;
     }
@@ -88,14 +88,14 @@ void Pushover::slotNotify(Notification notification)
     if (notification.hints().value("silent").toBool()) {
         sound.setBody("none");
     } else {
-        sound.setBody(settingsValue(QLatin1String("Sound"), LOCAL_SETTING).toString().toUtf8().constData());
+        sound.setBody(settingsValue(QStringLiteral("Sound"), LOCAL_SETTING).toString().toUtf8().constData());
     }
     mp->append(sound);
 
-    if (!settingsValue(QLatin1String("Devices"), LOCAL_SETTING).toString().isEmpty()) {
+    if (!settingsValue(QStringLiteral("Devices"), LOCAL_SETTING).toString().isEmpty()) {
         QHttpPart devices;
         devices.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"device\"")));
-        devices.setBody(settingsValue(QLatin1String("Devices"), LOCAL_SETTING).toString().toUtf8().constData());
+        devices.setBody(settingsValue(QStringLiteral("Devices"), LOCAL_SETTING).toString().toUtf8().constData());
         mp->append(devices);
     }
 
@@ -128,8 +128,8 @@ PluginSettingsWidget *Pushover::settingsWidget()
 
 void Pushover::setDefaultSettings()
 {
-    setDefaultSettingsValue(QLatin1String("UserKey"), QString());
-    setDefaultSettingsValue(QLatin1String("Sound"), QLatin1String("pushover"), LOCAL_SETTING);
-    setDefaultSettingsValue(QLatin1String("Devices"), QString(), LOCAL_SETTING);
+    setDefaultSettingsValue(QStringLiteral("UserKey"), QString());
+    setDefaultSettingsValue(QStringLiteral("Sound"), QLatin1String("pushover"), LOCAL_SETTING);
+    setDefaultSettingsValue(QStringLiteral("Devices"), QString(), LOCAL_SETTING);
     SnoreSecondaryBackend::setDefaultSettings();
 }

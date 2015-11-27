@@ -36,17 +36,17 @@ public:
     explicit SettingsWindow(const QString &appName, QWidget *parent = 0);
     ~SettingsWindow();
 
-    static QStringList knownApps();
+    static const QStringList knownApps();
 
     static QSettings &settings();
 
     template<typename Func>
-    static QStringList allSettingsKeysWithPrefix(const QString &prefix, QSettings &settings, Func fun)
+    static const QStringList allSettingsKeysWithPrefix(const QString &prefix, QSettings &settings, Func fun)
     {
         QStringList groups = prefix.split(QLatin1Char('/'));
         QStringList out;
 
-        for (const QString group : groups) {
+        foreach(const QString & group, groups) {
             settings.beginGroup(group);
         }
         out = fun(settings);

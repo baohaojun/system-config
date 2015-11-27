@@ -58,9 +58,9 @@ PluginSettingsWidget *PushoverFrontend::settingsWidget()
 
 void PushoverFrontend::login(const QString &email, const QString &password, const QString &deviceName)
 {
-    setSettingsValue(QLatin1String("DeviceName"), deviceName, Snore::LOCAL_SETTING);
+    setSettingsValue(QStringLiteral("DeviceName"), deviceName, Snore::LOCAL_SETTING);
 
-    QNetworkRequest request(QUrl(QLatin1String("https://api.pushover.net/1/users/login.json")));
+    QNetworkRequest request(QUrl(QStringLiteral("https://api.pushover.net/1/users/login.json")));
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
     QNetworkReply *reply = m_manager.post(request, (QLatin1String("email=") + email + QLatin1String("&password=") + password).toUtf8().constData());
@@ -73,8 +73,8 @@ void PushoverFrontend::login(const QString &email, const QString &password, cons
 
         QJsonObject message = QJsonDocument::fromJson(input).object();
 
-        if (message.value(QLatin1String("status")).toInt() == 1) {
-            registerDevice(message.value(QLatin1String("secret")).toString(), deviceName);
+        if (message.value(QStringLiteral("status")).toInt() == 1) {
+            registerDevice(message.value(QStringLiteral("secret")).toString(), deviceName);
         } else {
             snoreDebug(SNORE_WARNING) << "An error occure" << input;
             emit loggedInChanged(false);
@@ -84,8 +84,8 @@ void PushoverFrontend::login(const QString &email, const QString &password, cons
 
 void PushoverFrontend::logOut()
 {
-    setSettingsValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
-    setSettingsValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
+    setSettingsValue(QStringLiteral("Secret"), QString(), LOCAL_SETTING);
+    setSettingsValue(QStringLiteral("DeviceID"), QString(), LOCAL_SETTING);
     m_socket->close();
     m_socket->deleteLater();
     emit loggedInChanged(false);
@@ -103,8 +103,8 @@ QString PushoverFrontend::errorMessage()
 
 void PushoverFrontend::setDefaultSettings()
 {
-    setDefaultSettingsValue(QLatin1String("Secret"), QString(), LOCAL_SETTING);
-    setDefaultSettingsValue(QLatin1String("DeviceID"), QString(), LOCAL_SETTING);
+    setDefaultSettingsValue(QStringLiteral("Secret"), QString(), LOCAL_SETTING);
+    setDefaultSettingsValue(QStringLiteral("DeviceID"), QString(), LOCAL_SETTING);
     SnoreFrontend::setDefaultSettings();
 }
 
@@ -118,12 +118,12 @@ void PushoverFrontend::slotActionInvoked(Notification notification)
 
 QString PushoverFrontend::secret()
 {
-    return settingsValue(QLatin1String("Secret"),  LOCAL_SETTING).toString();
+    return settingsValue(QStringLiteral("Secret"),  LOCAL_SETTING).toString();
 }
 
 QString PushoverFrontend::device()
 {
-    return settingsValue(QLatin1String("DeviceID"),  LOCAL_SETTING).toString();
+    return settingsValue(QStringLiteral("DeviceID"),  LOCAL_SETTING).toString();
 }
 
 void PushoverFrontend::connectToService()
@@ -152,7 +152,7 @@ void PushoverFrontend::connectToService()
             break;
         case 'E':
             snoreDebug(SNORE_WARNING) << "Connection Error";
-            emit error(QLatin1String("Please Loggin to https://pushover.net and reanble your device."));
+            emit error(QStringLiteral("Please Loggin to https://pushover.net and reanble your device."));
             emit loggedInChanged(false);
             m_socket->close();
             m_socket->deleteLater();
@@ -189,7 +189,7 @@ void PushoverFrontend::disconnectService()
 
 void PushoverFrontend::registerDevice(const QString &secret, const QString &deviceName)
 {
-    QNetworkRequest request(QUrl(QLatin1String("https://api.pushover.net/1/devices.json")));
+    QNetworkRequest request(QUrl(QStringLiteral("https://api.pushover.net/1/devices.json")));
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
     QNetworkReply *reply = m_manager.post(request, (QLatin1String("os=O&secret=") + secret + QLatin1String("&name=") + deviceName).toUtf8().constData());
@@ -200,14 +200,14 @@ void PushoverFrontend::registerDevice(const QString &secret, const QString &devi
         reply->close();
         reply->deleteLater();
         QJsonObject message = QJsonDocument::fromJson(input).object();
-        if (message.value(QLatin1String("status")).toInt() == 1) {
-            setSettingsValue(QLatin1String("Secret"), secret, LOCAL_SETTING);
-            setSettingsValue(QLatin1String("DeviceID"), message.value(QLatin1String("id")).toString(), LOCAL_SETTING);;
+        if (message.value(QStringLiteral("status")).toInt() == 1) {
+            setSettingsValue(QStringLiteral("Secret"), secret, LOCAL_SETTING);
+            setSettingsValue(QStringLiteral("DeviceID"), message.value(QStringLiteral("id")).toString(), LOCAL_SETTING);;
             connectToService();
         } else {
             snoreDebug(SNORE_WARNING) << "An error occure" << input;
             emit loggedInChanged(false);
-            emit error(message.value(QLatin1String("error")).toString());
+            emit error(message.value(QStringLiteral("error")).toString());
         }
 
     });
@@ -231,33 +231,33 @@ void PushoverFrontend::getMessages()
         QJsonObject message = QJsonDocument::fromJson(input).object();
 
         int latestID = -1;
-        if (message.value(QLatin1String("status")).toInt() == 1) {
-            QJsonArray notifications = message.value(QLatin1String("messages")).toArray();
-            for (const QJsonValue &v : notifications) {
+        if (message.value(QStringLiteral("status")).toInt() == 1) {
+            QJsonArray notifications = message.value(QStringLiteral("messages")).toArray();
+            foreach(const QJsonValue & v, notifications) {
                 QJsonObject notification = v.toObject();
 
-                latestID = qMax(latestID, notification.value(QLatin1String("id")).toInt());
+                latestID = qMax(latestID, notification.value(QStringLiteral("id")).toInt());
 
-                QString appName = notification.value(QLatin1String("app")).toString();
+                QString appName = notification.value(QStringLiteral("app")).toString();
                 Application app = SnoreCore::instance().aplications().value(appName);
 
                 if (!app.isValid()) {
                     Icon icon(Icon::fromWebUrl(QUrl::fromEncoded((QLatin1String("https://api.pushover.net/icons/") +
-                                               notification.value(QLatin1String("icon")).toString() +
+                                               notification.value(QStringLiteral("icon")).toString() +
                                                QLatin1String(".png")).toUtf8().constData())));
                     app = Application(appName, icon);
                     SnoreCore::instance().registerApplication(app);
                 }
 
-                Notification n(app, app.defaultAlert(), notification.value(QLatin1String("title")).toString(),
-                               notification.value(QLatin1String("message")).toString(),
+                Notification n(app, app.defaultAlert(), notification.value(QStringLiteral("title")).toString(),
+                               notification.value(QStringLiteral("message")).toString(),
                                app.icon(), Notification::defaultTimeout(),
-                               static_cast<Notification::Prioritys>(notification.value(QLatin1String("priority")).toInt()));
+                               static_cast<Notification::Prioritys>(notification.value(QStringLiteral("priority")).toInt()));
                 if (n.priority() == Notification::EMERGENCY) {
-                    n.hints().setValue("receipt", notification.value(QLatin1String("receipt")).toString());
-                    n.hints().setValue("acked", notification.value(QLatin1String("acked")).toInt());
+                    n.hints().setValue("receipt", notification.value(QStringLiteral("receipt")).toString());
+                    n.hints().setValue("acked", notification.value(QStringLiteral("acked")).toInt());
                 }
-                if (notification.value(QLatin1String("html")).toInt() == 1) {
+                if (notification.value(QStringLiteral("html")).toInt() == 1) {
                     n.hints().setValue("use-markup", true) ;
                 }
                 n.data()->setSource(this);

@@ -54,9 +54,7 @@ SnoreNotifier::SnoreNotifier():
 
 SnoreNotifier::~SnoreNotifier()
 {
-    for (auto w : m_widgets) {
-        w->deleteLater();
-    }
+    qDeleteAll(m_widgets);
 }
 
 void SnoreNotifier::slotNotify(Snore::Notification notification)
@@ -86,7 +84,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         return;
     }
     if (m_queue.isEmpty()) {
-        for (NotifyWidget *w : m_widgets) {
+        foreach(NotifyWidget * w, m_widgets) {
             if (w->acquire(notification.timeout())) {
                 display(w, notification);
                 return;
@@ -113,7 +111,7 @@ void SnoreNotifier::slotQueueTimeout()
         snoreDebug(SNORE_DEBUG) << "queue is empty";
         m_timer->stop();
     } else {
-        for (NotifyWidget *w : m_widgets) {
+        foreach(NotifyWidget * w, m_widgets) {
             if (!m_queue.isEmpty() && w->acquire(m_queue.first().timeout())) {
                 Notification notification = m_queue.takeFirst();
                 notification.hints().setPrivateValue(this, "id", w->id());
@@ -141,6 +139,6 @@ PluginSettingsWidget *SnoreNotifier::settingsWidget()
 
 void SnoreNotifier::setDefaultSettings()
 {
-    setDefaultSettingsValue(QLatin1String("Position"), Qt::TopRightCorner);
+    setDefaultSettingsValue(QStringLiteral("Position"), Qt::TopRightCorner);
     SnoreBackend::setDefaultSettings();
 }

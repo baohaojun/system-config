@@ -39,10 +39,10 @@ SnoreNotifierSettings::~SnoreNotifierSettings()
 
 void SnoreNotifierSettings::load()
 {
-    m_comboBox->setCurrentIndex(settingsValue(QLatin1String("Position")).toInt());
+    m_comboBox->setCurrentIndex(settingsValue(QStringLiteral("Position")).toInt());
 }
 
 void SnoreNotifierSettings::save()
 {
-    setSettingsValue(QLatin1String("Position"), m_comboBox->currentIndex());
+    setSettingsValue(QStringLiteral("Position"), m_comboBox->currentIndex());
 }

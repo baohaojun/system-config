@@ -89,10 +89,8 @@ bool PluginContainer::isLoaded() const
 void PluginContainer::updatePluginCache()
 {
     snoreDebug(SNORE_DEBUG) << "Updating plugin cache";
-    for (auto list : s_pluginCache) {
-        foreach(PluginContainer * p, list.values()) {
-            delete p;
-        }
+    foreach(PluginContaienrHash list, s_pluginCache.values()) {
+        qDeleteAll(list);
         list.clear();
     }
 
@@ -101,8 +99,8 @@ void PluginContainer::updatePluginCache()
                     QStringList(pluginFileFilters(type)), QDir::Files)) {
             snoreDebug(SNORE_DEBUG) << "adding" << file.absoluteFilePath();
             QPluginLoader loader(file.absoluteFilePath());
-            QJsonObject data = loader.metaData()[QLatin1String("MetaData")].toObject();
-            QString name = data.value(QLatin1String("name")).toString();
+            QJsonObject data = loader.metaData()[QStringLiteral("MetaData")].toObject();
+            QString name = data.value(QStringLiteral("name")).toString();
             if (!name.isEmpty()) {
                 PluginContainer *info = new PluginContainer(file.fileName(), name, type);
                 s_pluginCache[type].insert(name, info);
@@ -122,7 +120,7 @@ const QHash<QString, PluginContainer *> PluginContainer::pluginCache(SnorePlugin
     }
 
     QHash<QString, PluginContainer *> out;
-    for (auto t : SnorePlugin::types()) {
+    for (auto &t : SnorePlugin::types()) {
         if (t & type) {
             out.unite(s_pluginCache.value(t));
         }
@@ -151,11 +149,11 @@ const QDir &PluginContainer::pluginDir()
 #endif
         QString suffix = QLatin1String("/libsnore") + QLatin1String(SNORE_SUFFIX);
         list << appDir
-             << QLatin1String(LIBSNORE_PLUGIN_PATH)
+             << QStringLiteral(LIBSNORE_PLUGIN_PATH)
              << appDir + suffix
-             << appDir + QLatin1String("/../lib/plugins") + suffix
-             << appDir + QLatin1String("/../lib64/plugins") + suffix;
-        for (const QString &p : list) {
+             << appDir + QStringLiteral("/../lib/plugins") + suffix
+             << appDir + QStringLiteral("/../lib64/plugins") + suffix;
+        foreach(const QString & p, list) {
             path = QDir(p);
 
             if (!path.entryInfoList(pluginFileFilters()).isEmpty()) {

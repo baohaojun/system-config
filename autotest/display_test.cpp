@@ -13,12 +13,12 @@ class DisplayTest : public QObject
     Q_OBJECT
 public:
     DisplayTest():
-        app(QLatin1String("Test"), Icon::defaultIcon())
+        app(QStringLiteral("Test"), Icon::defaultIcon())
     {
         SnoreLog::setDebugLvl(3);
         SnoreCore &instance = SnoreCore::instance();
         instance.loadPlugins(SnorePlugin::BACKEND);
-        instance.setSettingsValue(QLatin1String("Timeout"), 5, LOCAL_SETTING);
+        instance.setSettingsValue(QStringLiteral("Timeout"), 5, LOCAL_SETTING);
         SnoreCore::instance().registerApplication(app);
     }
 
@@ -43,11 +43,11 @@ private:
             QString old = snore.primaryNotificationBackend();
             while (snore.primaryNotificationBackend() == old) {
                 QString p = backends.takeLast();
-                snore.setSettingsValue(QLatin1String("PrimaryBackend"), p, LOCAL_SETTING);
+                snore.setSettingsValue(QStringLiteral("PrimaryBackend"), p, LOCAL_SETTING);
                 SnoreCorePrivate::instance()->syncSettings();
                 if (snore.primaryNotificationBackend() == p) {
                     qDebug() << p;
-                    snore.broadcastNotification(Notification(app, app.defaultAlert(), QLatin1String("Title"), message, app.icon()));
+                    snore.broadcastNotification(Notification(app, app.defaultAlert(), QStringLiteral("Title"), message, app.icon()));
                 }
             }
         };
@@ -64,7 +64,7 @@ private:
 void DisplayTest::displayTest()
 {
     app.hints().setValue("use-markup", true);
-    testString(QLatin1String("<b>Test&#937;</b>&#x1f4a9;&#x1f600;"));
+    testString(QStringLiteral("<b>Test&#937;</b>&#x1f4a9;&#x1f600;"));
 }
 
 void DisplayTest::displayTestPlain()

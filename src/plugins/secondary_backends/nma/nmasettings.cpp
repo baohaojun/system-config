@@ -36,10 +36,10 @@ NotifyMyAndroidSettings::~NotifyMyAndroidSettings()
 
 void NotifyMyAndroidSettings::load()
 {
-    m_lineEdit->setText(settingsValue(QLatin1String("ApiKey")).toString());
+    m_lineEdit->setText(settingsValue(QStringLiteral("ApiKey")).toString());
 }
 
 void NotifyMyAndroidSettings::save()
 {
-    setSettingsValue(QLatin1String("ApiKey"), m_lineEdit->text());
+    setSettingsValue(QStringLiteral("ApiKey"), m_lineEdit->text());
 }

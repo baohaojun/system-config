@@ -29,33 +29,45 @@
 
 using namespace Snore;
 
-static int debugLevel = 0;
-static std::unique_ptr<QTextStream> logFile = std::unique_ptr<QTextStream>();
-static std::unique_ptr<QFile> file = std::unique_ptr<QFile>();
-
-static void init()
+class LogData
 {
-    debugLevel = qgetenv("LIBSNORE_DEBUG_LVL").toInt();
-    if (qgetenv("LIBSNORE_LOG_TO_FILE").toInt() == 1) {
+public:
+    int debugLevel = 0;
+    QTextStream *logFile = nullptr;
+    QFile *file = nullptr;
 
-        QString name = QDir::tempPath() + QLatin1String("/libsnore/") +
-                       (qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName()) +
-                       QLatin1String("-log.txt");
-        if (!qgetenv("LIBSNORE_LOGFILE").isNull()) {
-            name = QString::fromUtf8(qgetenv("LIBSNORE_LOGFILE"));
-        } else {
-            QDir::temp().mkpath(QLatin1String("libsnore"));
-        }
-        std::cout << "Started logging to " << name.toLocal8Bit().constData() << std::endl;
+    LogData()
+    {
+        debugLevel = qgetenv("LIBSNORE_DEBUG_LVL").toInt();
+        if (qgetenv("LIBSNORE_LOG_TO_FILE").toInt() == 1) {
 
-        file = std::unique_ptr<QFile>(new QFile(name));
-        if (!file->open(QFile::WriteOnly)) {
-            qFatal("Failed to open log file %s", qPrintable(name));
+            QString name = QDir::tempPath() + QStringLiteral("/libsnore/") +
+                           (qApp->applicationName().isEmpty() ? QString::number(qApp->applicationPid()) : qApp->applicationName()) +
+                           QLatin1String("-log.txt");
+            if (!qEnvironmentVariableIsSet("LIBSNORE_LOGFILE")) {
+                name = QString::fromUtf8(qgetenv("LIBSNORE_LOGFILE"));
+            } else {
+                QDir::temp().mkpath(QStringLiteral("libsnore"));
+            }
+            std::cout << "Started logging to " << name.toLocal8Bit().constData() << std::endl;
+
+            file = new QFile(name);
+            if (!file->open(QFile::WriteOnly)) {
+                qFatal("Failed to open log file %s", qPrintable(name));
+            }
+            logFile = new QTextStream(file);
         }
-        logFile = std::unique_ptr<QTextStream>(new QTextStream(file.get()));
     }
-}
-Q_COREAPP_STARTUP_FUNCTION(init)
+
+    ~LogData()
+    {
+        delete logFile;
+        delete file;
+    }
+
+};
+
+Q_GLOBAL_STATIC(LogData, s_data)
 
 SnoreLog::SnoreLog(SnoreDebugLevels lvl):
     QDebug(&m_msg),
@@ -65,20 +77,20 @@ SnoreLog::SnoreLog(SnoreDebugLevels lvl):
 
 SnoreLog::~SnoreLog()
 {
-    QByteArray message = QTime::currentTime().toString(QLatin1String("hh:mm:ss: ")).toUtf8().constData();
+    QByteArray message = QTime::currentTime().toString(QStringLiteral("hh:mm:ss: ")).toUtf8().constData();
     message.append(m_msg.toUtf8().constData());
-    if (logFile) {
-        *logFile << message.constData() << "\n";
-        logFile->flush();
+    if (s_data->logFile) {
+        *s_data->logFile << message.constData() << "\n";
+        s_data->logFile->flush();
     }
     if (m_lvl == SNORE_WARNING) {
         std::wcerr << message.constData() << std::endl;
-    } else  if (debugLevel >= m_lvl) {
+    } else  if (s_data->debugLevel >= m_lvl) {
         std::wcout << message.constData() << std::endl;
     }
 }
 
 void SnoreLog::setDebugLvl(int i)
 {
-    debugLevel = i;
+    s_data->debugLevel = i;
 }

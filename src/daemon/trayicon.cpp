@@ -32,7 +32,7 @@
 using namespace Snore;
 
 TrayIcon::TrayIcon():
-    m_trayIcon(new QSystemTrayIcon(QIcon(QLatin1String(":/root/snore.png"))))
+    m_trayIcon(new QSystemTrayIcon(QIcon(QStringLiteral(":/root/snore.png"))))
 {
     SnoreCorePrivate::instance()->defaultApplication().hints().setValue("use-markup", true);
     SnoreCorePrivate::instance()->defaultApplication().hints().setValue("tray-icon", QVariant::fromValue(QPointer<QSystemTrayIcon>(m_trayIcon)));
@@ -67,7 +67,7 @@ void TrayIcon::initConextMenu()
 
     m_trayIcon->setVisible(true);
 
-    m_trayMenu = new QMenu(QLatin1String("SnoreNotify"));
+    m_trayMenu = new QMenu(QStringLiteral("SnoreNotify"));
     QString version = QLatin1String("SnoreNotify ") + Version::version();
     if (!Version::revision().isEmpty()) {
         version += QLatin1String("-") + Version::revision();

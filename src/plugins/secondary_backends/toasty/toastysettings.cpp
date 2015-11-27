@@ -36,10 +36,10 @@ ToastySettings::~ToastySettings()
 
 void ToastySettings::load()
 {
-    m_lineEdit->setText(settingsValue(QLatin1String("DeviceID")).toString());
+    m_lineEdit->setText(settingsValue(QStringLiteral("DeviceID")).toString());
 }
 
 void ToastySettings::save()
 {
-    setSettingsValue(QLatin1String("DeviceID"), m_lineEdit->text());
+    setSettingsValue(QStringLiteral("DeviceID"), m_lineEdit->text());
 }

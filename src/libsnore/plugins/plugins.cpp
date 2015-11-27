@@ -105,12 +105,12 @@ QString SnorePlugin::errorString() const
 
 QString SnorePlugin::settingsVersion() const
 {
-    return QLatin1String("v1");
+    return QStringLiteral("v1");
 }
 
 void SnorePlugin::setDefaultSettings()
 {
-    setDefaultSettingsValue(QLatin1String("Enabled"), false, LOCAL_SETTING);
+    setDefaultSettingsValue(QStringLiteral("Enabled"), false, LOCAL_SETTING);
 }
 
 void SnorePlugin::setErrorString(const QString &_error)
@@ -149,7 +149,7 @@ QString SnorePlugin::typeToString(const SnorePlugin::PluginTypes t)
     return QString::fromLatin1(SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).valueToKey(t));
 }
 
-QList<SnorePlugin::PluginTypes> SnorePlugin::types()
+const QList<SnorePlugin::PluginTypes> &SnorePlugin::types()
 {
     static QList<SnorePlugin::PluginTypes> t;
     if (t.isEmpty()) {

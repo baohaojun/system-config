@@ -30,7 +30,7 @@ using namespace Snore;
 
 void Toasty::slotNotify(Notification notification)
 {
-    QString key = settingsValue(QLatin1String("DeviceID")).toString();
+    QString key = settingsValue(QStringLiteral("DeviceID")).toString();
     if (key.isEmpty()) {
         return;
     }
@@ -81,6 +81,6 @@ PluginSettingsWidget *Toasty::settingsWidget()
 
 void Toasty::setDefaultSettings()
 {
-    setDefaultSettingsValue(QLatin1String("DeviceID"), QString());
+    setDefaultSettingsValue(QStringLiteral("DeviceID"), QString());
     SnoreSecondaryBackend::setDefaultSettings();
 }

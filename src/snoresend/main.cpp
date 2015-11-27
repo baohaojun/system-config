@@ -72,43 +72,43 @@ void bringToFront(QString pid)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName(QLatin1String("snoresend"));
-    app.setOrganizationName(QLatin1String("Snorenotify"));
+    app.setApplicationName(QStringLiteral("snoresend"));
+    app.setOrganizationName(QStringLiteral("Snorenotify"));
     app.setApplicationVersion(Snore::Version::version());
 
     QCommandLineParser parser;
-    parser.setApplicationDescription(QLatin1String("A command line interface for Snorenotify."));
+    parser.setApplicationDescription(QStringLiteral("A command line interface for Snorenotify."));
     parser.addHelpOption();
     parser.addVersionOption();
 
-    QCommandLineOption title(QStringList() << QLatin1String("t") << QLatin1String("title"), QLatin1String("Set the notification title."), QLatin1String("title"));
+    QCommandLineOption title(QStringList() << QStringLiteral("t") << QStringLiteral("title"), QStringLiteral("Set the notification title."), QStringLiteral("title"));
     parser.addOption(title);
 
-    QCommandLineOption message(QStringList() << QLatin1String("m") << QLatin1String("message"), QLatin1String("Set the notification body."), QLatin1String("message"));
+    QCommandLineOption message(QStringList() << QStringLiteral("m") << QStringLiteral("message"), QStringLiteral("Set the notification body."), QStringLiteral("message"));
     parser.addOption(message);
 
-    QCommandLineOption applicationName(QStringList() << QLatin1String("a") << QLatin1String("application"), QLatin1String("Set the notification applicattion."), QLatin1String("application"), app.applicationName());
+    QCommandLineOption applicationName(QStringList() << QStringLiteral("a") << QStringLiteral("application"), QStringLiteral("Set the notification applicattion."), QStringLiteral("application"), app.applicationName());
     parser.addOption(applicationName);
 
-    QCommandLineOption alertName(QStringList() << QLatin1String("c") << QLatin1String("alert"), QLatin1String("Set the notification alert class."), QLatin1String("alert"), QLatin1String("Default"));
+    QCommandLineOption alertName(QStringList() << QStringLiteral("c") << QStringLiteral("alert"), QStringLiteral("Set the notification alert class."), QStringLiteral("alert"), QStringLiteral("Default"));
     parser.addOption(alertName);
 
-    QCommandLineOption iconPath(QStringList() << QLatin1String("i") << QLatin1String("icon"), QLatin1String("Set the notification icon."), QLatin1String("icon"));
+    QCommandLineOption iconPath(QStringList() << QStringLiteral("i") << QStringLiteral("icon"), QStringLiteral("Set the notification icon."), QStringLiteral("icon"));
     parser.addOption(iconPath);
 
-    QCommandLineOption priority(QStringList() << QLatin1String("p") << QLatin1String("priority"), QLatin1String("Set the notification's priority."), QLatin1String("[-2, 2]"), QLatin1String("0"));
+    QCommandLineOption priority(QStringList() << QStringLiteral("p") << QStringLiteral("priority"), QStringLiteral("Set the notification's priority."), QStringLiteral("[-2, 2]"), QStringLiteral("0"));
     parser.addOption(priority);
 
-    QCommandLineOption markup(QStringList() << QLatin1String("markup"), QLatin1String("Enable markup support."), QLatin1String("[0,1]"), QLatin1String("0"));
+    QCommandLineOption markup(QStringList() << QStringLiteral("markup"), QStringLiteral("Enable markup support."), QStringLiteral("[0,1]"), QStringLiteral("0"));
     parser.addOption(markup);
 
-    QCommandLineOption silent(QStringList() << QLatin1String("silent"), QLatin1String("Don't print to stdout."));
+    QCommandLineOption silent(QStringList() << QStringLiteral("silent"), QStringLiteral("Don't print to stdout."));
     parser.addOption(silent);
 
-    QCommandLineOption _bringProcessToFront(QStringList() << QLatin1String("bring-process-to-front"), QLatin1String("Bring process with pid to front if notification is clicked."), QLatin1String("pid"));
+    QCommandLineOption _bringProcessToFront(QStringList() << QStringLiteral("bring-process-to-front"), QStringLiteral("Bring process with pid to front if notification is clicked."), QStringLiteral("pid"));
     parser.addOption(_bringProcessToFront);
 
-    QCommandLineOption _bringWindowToFront(QStringList() << QLatin1String("bring-window-to-front"), QLatin1String("Bring window with wid to front if notification is clicked."), QLatin1String("wid"));
+    QCommandLineOption _bringWindowToFront(QStringList() << QStringLiteral("bring-window-to-front"), QStringLiteral("Bring window with wid to front if notification is clicked."), QStringLiteral("wid"));
     parser.addOption(_bringWindowToFront);
 
     parser.process(app);

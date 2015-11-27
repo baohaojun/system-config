@@ -54,13 +54,13 @@ private:
     {
         QStringList out;
 #if defined(Q_OS_UNIX)
-        out << QLatin1String("so");
+        out << QStringLiteral("so");
 #endif
 #if defined(Q_OS_WIN)
-        out << QLatin1String("dll");
+        out << QStringLiteral("dll");
 #endif
 #if defined(Q_OS_MAC)
-        out << QLatin1String("dylib");
+        out << QStringLiteral("dylib");
 #endif
         return out;
     }

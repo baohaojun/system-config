@@ -60,7 +60,7 @@ SettingsWindow::~SettingsWindow()
     delete ui;
 }
 
-QStringList SettingsWindow::knownApps()
+const QStringList SettingsWindow::knownApps()
 {
     return allSettingsKeysWithPrefix(Utils::settingsVersionSchema() + QLatin1String("/LocalSettings"), settings(),
     [](QSettings & settings) {

@@ -37,18 +37,18 @@ NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
 
 #ifdef Q_OS_WIN
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8) {
-        m_fontFamily = QLatin1String("Segoe UI Symbol");
+        m_fontFamily = QStringLiteral("Segoe UI Symbol");
         emit fontFamilyChanged();
     }
 #if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS10) {
-        m_fontFamily = QLatin1String("Segoe UI Emoji");
+        m_fontFamily = QStringLiteral("Segoe UI Emoji");
         emit fontFamilyChanged();
     }
 #endif
 #endif
     QQmlApplicationEngine *engine = new QQmlApplicationEngine(this);
-    engine->rootContext()->setContextProperty(QLatin1String("notifyWidget"), this);
+    engine->rootContext()->setContextProperty(QStringLiteral("notifyWidget"), this);
     engine->load(QUrl::fromEncoded("qrc:/notification.qml"));
     m_window = qobject_cast<QQuickWindow *>(engine->rootObjects().value(0));
 
@@ -179,7 +179,7 @@ int NotifyWidget::id() const
 
 void NotifyWidget::syncSettings()
 {
-    Qt::Corner c = static_cast<Qt::Corner>(m_parent->settingsValue(QLatin1String("Position")).toInt());
+    Qt::Corner c = static_cast<Qt::Corner>(m_parent->settingsValue(QStringLiteral("Position")).toInt());
     if (c != m_cornerOld || !m_initialized) {
         m_initialized = true;
         QDesktopWidget desktop;

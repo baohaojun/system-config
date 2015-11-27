@@ -110,7 +110,7 @@ public:
      */
     static inline QString settingsVersionSchema()
     {
-        return QLatin1String("v1");
+        return QStringLiteral("v1");
     }
 
     /**

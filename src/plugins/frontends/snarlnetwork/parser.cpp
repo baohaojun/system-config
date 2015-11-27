@@ -51,7 +51,7 @@ Parser::Parser(SnarlNetworkFrontend *snarl):
 void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *client)
 {
     snoreDebug(SNORE_DEBUG) << msg;
-    QStringList splitted(msg.split(QLatin1String("#?")));
+    QStringList splitted(msg.split(QStringLiteral("#?")));
     snpTypes action(ERROR);
 
     QString appName;
@@ -64,7 +64,7 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
     QByteArray key;
     QString value;
 
-    foreach(QString s, splitted) {
+    foreach(const QString & s, splitted) {
         key = s.mid(0, s.indexOf(QLatin1String("="))).toLower().toLatin1();
         value = s.mid(s.indexOf(QLatin1String("=")) + 1);
         switch (getSnpType.value(key)) {

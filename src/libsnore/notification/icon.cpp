@@ -33,7 +33,7 @@ QMap<QUrl, Icon> Icon::s_downloadImageCache;
 
 Icon Icon::defaultIcon()
 {
-    static Icon icon(QLatin1String(":/root/snore.png"));
+    static Icon icon(QStringLiteral(":/root/snore.png"));
     return icon;
 }
 

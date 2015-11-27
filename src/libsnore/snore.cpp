@@ -74,11 +74,11 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
         return;
     }
     Q_D(SnoreCore);
-    setSettingsValue(QLatin1String("PluginTypes"), QVariant::fromValue(types), LOCAL_SETTING);
+    setSettingsValue(QStringLiteral("PluginTypes"), QVariant::fromValue(types), LOCAL_SETTING);
     snoreDebug(SNORE_DEBUG) << "Loading plugin types:" << types;
-    for (SnorePlugin::PluginTypes type : SnorePlugin::types()) {
+    foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
         if (type != SnorePlugin::ALL && types & type) {
-            for (PluginContainer *info : PluginContainer::pluginCache(type).values()) {
+            foreach(PluginContainer * info, PluginContainer::pluginCache(type).values()) {
                 SnorePlugin *plugin = info->load();
                 if (!plugin) {
                     continue;
@@ -90,7 +90,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN:
-                    plugin->setEnabled(plugin->settingsValue(QLatin1String("Enabled"), LOCAL_SETTING).toBool());
+                    plugin->setEnabled(plugin->settingsValue(QStringLiteral("Enabled"), LOCAL_SETTING).toBool());
                     break;
                 default:
                     snoreDebug(SNORE_WARNING) << "Plugin Cache corrupted\n" << info->file() << info->type();
@@ -212,7 +212,7 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets(SnorePlugin::PluginTypes
 {
     Q_D(SnoreCore);
     QList<PluginSettingsWidget *> list;
-    for (auto name : d->m_pluginNames[type]) {
+    foreach(const QString & name, d->m_pluginNames[type]) {
         //TODO: mem leak?
         SnorePlugin *p = d->m_plugins[qMakePair(type, name)];
         PluginSettingsWidget *widget = p->settingsWidget();

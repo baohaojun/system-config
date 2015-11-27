@@ -53,7 +53,7 @@ void SnarlNetworkFrontend::slotActionInvoked(Snore::Notification notification)
 {
     if (notification.isActiveIn(this)) {
         snoreDebug(SNORE_DEBUG) << notification.closeReason();
-        callback(notification, QLatin1String("SNP/1.1/304/Notification acknowledged/"));
+        callback(notification, QStringLiteral("SNP/1.1/304/Notification acknowledged/"));
     }
 }
 
@@ -63,13 +63,13 @@ void SnarlNetworkFrontend::slotNotificationClosed(Snore::Notification notificati
     if (notification.removeActiveIn(this)) {
         switch (notification.closeReason()) {
         case Notification::TIMED_OUT:
-            callback(notification, QLatin1String("SNP/1.1/303/Notification timed out/"));
+            callback(notification, QStringLiteral("SNP/1.1/303/Notification timed out/"));
             break;
         case Notification::ACTIVATED:
-            callback(notification, QLatin1String("SNP/1.1/307/Notification closed/"));
+            callback(notification, QStringLiteral("SNP/1.1/307/Notification closed/"));
             break;
         case Notification::DISMISSED:
-            callback(notification, QLatin1String("SNP/1.1/302/Notification cancelled/"));
+            callback(notification, QStringLiteral("SNP/1.1/302/Notification cancelled/"));
             break;
         default:
             snoreDebug(SNORE_WARNING) << "Unhandled close reason" << notification.closeReason();
@@ -86,10 +86,10 @@ void SnarlNetworkFrontend::handleConnection()
 
 void SnarlNetworkFrontend::handleMessages()
 {
-    const QString out(QLatin1String("SNP/1.1/0/OK"));
+    const QString out(QStringLiteral("SNP/1.1/0/OK"));
     QTcpSocket *client = qobject_cast<QTcpSocket *>(sender());
 
-    QStringList messages(QString::fromLatin1(client->readAll()).trimmed().split(QLatin1String("\r\n")));
+    QStringList messages(QString::fromLatin1(client->readAll()).trimmed().split(QStringLiteral("\r\n")));
     foreach(const QString & s, messages) {
         if (s.isEmpty()) {
             continue;
