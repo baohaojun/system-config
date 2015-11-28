@@ -32,9 +32,9 @@
 using namespace Snore;
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
-SNORE_EXPORT Q_LOGGING_CATEGORY(SNORE, "libsnorenotify", QtWarningMsg)
+Q_LOGGING_CATEGORY(SNORE, "libsnorenotify", QtWarningMsg)
 #else
-SNORE_EXPORT Q_LOGGING_CATEGORY(SNORE, "libsnorenotify")
+Q_LOGGING_CATEGORY(SNORE, "libsnorenotify")
 #endif
 
 

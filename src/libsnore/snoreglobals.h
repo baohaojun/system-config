@@ -19,6 +19,8 @@
 #ifndef SNOREGLOBALS
 #define SNOREGLOBALS
 
+#include "snore_exports.h"
+
 #include <QLoggingCategory>
 
 namespace Snore
@@ -31,7 +33,7 @@ enum SettingsType {
 
 }
 
-Q_DECLARE_LOGGING_CATEGORY(SNORE)
+SNORE_EXPORT Q_DECLARE_LOGGING_CATEGORY(SNORE)
 
 #endif // SNOREGLOBALS
 
