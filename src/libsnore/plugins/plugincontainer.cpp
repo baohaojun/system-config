@@ -165,7 +165,7 @@ const QDir &PluginContainer::pluginDir()
         if (path.entryInfoList(pluginFileFilters()).isEmpty()) {
             qCWarning(SNORE) << "Couldnt find any plugins";
         }
-        qCInfo(SNORE) << "PluginPath is :" << path.absolutePath();
+        qCDebug(SNORE) << "PluginPath is :" << path.absolutePath();
     }
     return path;
 }

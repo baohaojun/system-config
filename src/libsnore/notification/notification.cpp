@@ -157,7 +157,7 @@ void Notification::addActiveIn(const QObject *o)
     }
     d->m_activeIn.insert(o);
     SnoreCorePrivate::instance()->m_activeNotifications[id()] = *this;
-    qCInfo(SNORE) << SnoreCorePrivate::instance()->m_activeNotifications.size();
+    qCDebug(SNORE) << SnoreCorePrivate::instance()->m_activeNotifications.size();
 }
 
 bool Notification::isActiveIn(const QObject *o) const
@@ -170,7 +170,7 @@ bool Notification::removeActiveIn(const QObject *o)
     bool out = d->m_activeIn.remove(o);
     if (d->m_activeIn.isEmpty()) {
         SnoreCorePrivate::instance()->m_activeNotifications.remove(id());
-        qCInfo(SNORE) << SnoreCorePrivate::instance()->m_activeNotifications.size();
+        qCDebug(SNORE) << SnoreCorePrivate::instance()->m_activeNotifications.size();
     }
     return out;
 }

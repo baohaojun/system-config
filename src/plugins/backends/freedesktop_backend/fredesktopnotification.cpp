@@ -25,8 +25,8 @@ int FreedesktopImageHint::imageHintID = qDBusRegisterMetaType<FreedesktopImageHi
 
 FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
 {
-    QImage image(img.convertToFormat(QImage::Format_ARGB32));
-    imageData = QByteArray((char *)image.rgbSwapped().bits(), image.byteCount());
+    QImage image(img.convertToFormat(QImage::Format_ARGB32).rgbSwapped());
+    imageData = QByteArray((char *)image.bits(), image.byteCount());
     width = image.width();
     height = image.height();
     rowstride = image.bytesPerLine();

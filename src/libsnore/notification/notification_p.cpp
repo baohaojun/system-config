@@ -43,8 +43,8 @@ NotificationData::NotificationData(const Snore::Application &application, const 
     m_hints(m_application.constHints())
 {
     notificationCount++;
-    qCInfo(SNORE) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
-    qCInfo(SNORE) << title << text;
+    qCDebug(SNORE) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    qCDebug(SNORE) << title << text;
 }
 
 Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
@@ -60,15 +60,15 @@ Snore::NotificationData::NotificationData(const Notification &old, const QString
     m_toReplace(old)
 {
     notificationCount++;
-    qCInfo(SNORE) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
-    qCInfo(SNORE) << title << text;
+    qCDebug(SNORE) << "Creating Notification: ActiveNotifications" << notificationCount << "id" << m_id;
+    qCDebug(SNORE) << title << text;
 }
 
 NotificationData::~NotificationData()
 {
     stopTimeoutTimer();
     notificationCount--;
-    qCInfo(SNORE) << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
+    qCDebug(SNORE) << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
 }
 
 void NotificationData::setActionInvoked(const Snore::Action &action)

@@ -31,6 +31,13 @@
 
 using namespace Snore;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
+SNORE_EXPORT Q_LOGGING_CATEGORY(SNORE, "libsnorenotify", QtWarningMsg)
+#else
+SNORE_EXPORT Q_LOGGING_CATEGORY(SNORE, "libsnorenotify")
+#endif
+
+
 SnoreCorePrivate::SnoreCorePrivate():
     m_localSettingsPrefix(qApp->applicationName().isEmpty() ? QStringLiteral("SnoreNotify") : qApp->applicationName())
 {
@@ -39,9 +46,9 @@ SnoreCorePrivate::SnoreCorePrivate():
     } else {
         m_settings = new QSettings(QStringLiteral("Snorenotify"), QStringLiteral("libsnore"), this);
     }
-    qCInfo(SNORE) << "Version:" << Version::version();
+    qCDebug(SNORE) << "Version:" << Version::version();
     if (!Version::revision().isEmpty()) {
-        qCInfo(SNORE) << "Revision:" << Version::revision();
+        qCDebug(SNORE) << "Revision:" << Version::revision();
     }
 
     qCDebug(SNORE) << "Temp dir is" << tempPath();

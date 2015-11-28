@@ -34,8 +34,6 @@
 
 using namespace Snore;
 
-Q_LOGGING_CATEGORY(SNORE, "SNORE", QtWarningMsg)
-
 SnoreCore::SnoreCore(QObject *parent):
     QObject(parent)
 {
@@ -111,7 +109,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
         }
     }
     d->slotInitPrimaryNotificationBackend();
-    qCInfo(SNORE) << "Loaded Plugins:" << d->m_pluginNames;
+    qCDebug(SNORE) << "Loaded Plugins:" << d->m_pluginNames;
 }
 
 void SnoreCore::broadcastNotification(Notification notification)
