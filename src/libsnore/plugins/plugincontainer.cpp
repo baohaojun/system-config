@@ -89,14 +89,14 @@ bool PluginContainer::isLoaded() const
 void PluginContainer::updatePluginCache()
 {
     qCDebug(SNORE) << "Updating plugin cache";
-    foreach (PluginContaienrHash list, s_pluginCache.values()) {
+    foreach(PluginContaienrHash list, s_pluginCache.values()) {
         qDeleteAll(list);
         list.clear();
     }
 
-    foreach (const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
-        foreach (const QFileInfo &file, pluginDir().entryInfoList(
-                     QStringList(pluginFileFilters(type)), QDir::Files)) {
+    foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
+        foreach(const QFileInfo & file, pluginDir().entryInfoList(
+                    QStringList(pluginFileFilters(type)), QDir::Files)) {
             qCDebug(SNORE) << "adding" << file.absoluteFilePath();
             QPluginLoader loader(file.absoluteFilePath());
             QJsonObject data = loader.metaData()[QStringLiteral("MetaData")].toObject();
@@ -153,7 +153,7 @@ const QDir &PluginContainer::pluginDir()
              << appDir + suffix
              << appDir + QStringLiteral("/../lib/plugins") + suffix
              << appDir + QStringLiteral("/../lib64/plugins") + suffix;
-        foreach (const QString &p, list) {
+        foreach(const QString & p, list) {
             path = QDir(p);
 
             if (!path.entryInfoList(pluginFileFilters()).isEmpty()) {

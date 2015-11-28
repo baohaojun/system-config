@@ -179,7 +179,7 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
                     (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
     qCDebug(SNORE) << result;
 
-    foreach (const Alert &alert, application.alerts()) {
+    foreach(const Alert & alert, application.alerts()) {
         snarlInterface->AddClass(alert.name().toUtf8().constData(),
                                  alert.name().toUtf8().constData(),
                                  0, 0, alert.icon().localUrl(QSize(128, 128)).toUtf8().constData());
@@ -228,7 +228,7 @@ void SnarlBackend::slotNotify(Notification notification)
                                     Utils::dataFromImage(notification.icon().pixmap(QSize(128, 128)).toImage()).toBase64().constData(),
                                     priority);
 
-        foreach (const Action &a, notification.actions()) {
+        foreach(const Action & a, notification.actions()) {
             snarlInterface->AddAction(id, a.name().toUtf8().constData(), (QLatin1Char('@') + QString::number(a.id())).toUtf8().constData());
         }
         m_idMap[id] = notification;

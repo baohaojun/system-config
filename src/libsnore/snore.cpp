@@ -76,9 +76,9 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
     Q_D(SnoreCore);
     setSettingsValue(QStringLiteral("PluginTypes"), QVariant::fromValue(types), LOCAL_SETTING);
     qCDebug(SNORE) << "Loading plugin types:" << types;
-    foreach (const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
+    foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
         if (type != SnorePlugin::ALL && types & type) {
-            foreach (PluginContainer *info, PluginContainer::pluginCache(type).values()) {
+            foreach(PluginContainer * info, PluginContainer::pluginCache(type).values()) {
                 SnorePlugin *plugin = info->load();
                 if (!plugin) {
                     continue;
@@ -212,7 +212,7 @@ QList<PluginSettingsWidget *> SnoreCore::settingWidgets(SnorePlugin::PluginTypes
 {
     Q_D(SnoreCore);
     QList<PluginSettingsWidget *> list;
-    foreach (const QString &name, d->m_pluginNames[type]) {
+    foreach(const QString & name, d->m_pluginNames[type]) {
         //TODO: mem leak?
         SnorePlugin *p = d->m_plugins[qMakePair(type, name)];
         PluginSettingsWidget *widget = p->settingsWidget();

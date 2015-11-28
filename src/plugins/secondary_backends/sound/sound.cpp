@@ -41,7 +41,7 @@ PluginSettingsWidget *Sound::settingsWidget()
 
 void Sound::setDefaultSettings()
 {
-    setDefaultSettingsValue(QLatin1String("Volume"), 50);
+    setDefaultSettingsValue(QStringLiteral("Volume"), 50);
     SnoreSecondaryBackend::setDefaultSettings();
 }
 
@@ -50,11 +50,11 @@ void Sound::slotNotificationDisplayed(Snore::Notification notification)
     if (notification.hints().value("silent").toBool()) {
         return;
     }
-    m_player->setVolume(settingsValue(QLatin1String("Volume")).toInt());
+    m_player->setVolume(settingsValue(QStringLiteral("Volume")).toInt());
 
     QString sound = notification.hints().value("sound").toString();
     if (sound.isEmpty()) {
-        sound = settingsValue(QLatin1String("Sound")).toString();
+        sound = settingsValue(QStringLiteral("Sound")).toString();
     }
     qCDebug(SNORE) << "SoundFile:" << sound;
     if (!sound.isEmpty()) {

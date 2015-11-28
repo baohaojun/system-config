@@ -37,7 +37,6 @@ Q_LOGGING_CATEGORY(SNORE, "libsnorenotify", QtWarningMsg)
 Q_LOGGING_CATEGORY(SNORE, "libsnorenotify")
 #endif
 
-
 SnoreCorePrivate::SnoreCorePrivate():
     m_localSettingsPrefix(qApp->applicationName().isEmpty() ? QStringLiteral("SnoreNotify") : qApp->applicationName())
 {
@@ -188,8 +187,8 @@ void SnoreCorePrivate::syncSettings()
 
     auto types = SnorePlugin::types();
     types.removeOne(SnorePlugin::BACKEND);
-    foreach (auto type, types) {
-        foreach (auto &pluginName, m_pluginNames[type]) {
+    foreach(auto type, types) {
+        foreach(auto & pluginName, m_pluginNames[type]) {
             auto key = qMakePair(type, pluginName);
             SnorePlugin *plugin = m_plugins.value(key);
             bool enable = m_plugins[key]->settingsValue(QStringLiteral("Enabled"), LOCAL_SETTING).toBool();

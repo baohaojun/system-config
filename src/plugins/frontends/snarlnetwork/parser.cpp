@@ -64,7 +64,7 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
     QByteArray key;
     QString value;
 
-    foreach (const QString &s, splitted) {
+    foreach(const QString & s, splitted) {
         key = s.mid(0, s.indexOf(QLatin1String("="))).toLower().toLatin1();
         value = s.mid(s.indexOf(QLatin1String("=")) + 1);
         switch (getSnpType.value(key)) {

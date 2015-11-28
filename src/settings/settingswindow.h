@@ -46,7 +46,7 @@ public:
         QStringList groups = prefix.split(QLatin1Char('/'));
         QStringList out;
 
-        foreach (const QString &group, groups) {
+        foreach(const QString & group, groups) {
             settings.beginGroup(group);
         }
         out = fun(settings);

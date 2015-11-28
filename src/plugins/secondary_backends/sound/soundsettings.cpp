@@ -40,8 +40,10 @@ SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
         dialog.setNameFilter(tr("All Audio files").append(QLatin1String("(*.mp3 *.wav *.ogg)")));
         dialog.setFileMode(QFileDialog::ExistingFile);
         dialog.setDirectory(m_lineEditFileName->text());
+        dialog.set
         if (dialog.exec()) {
-            m_lineEditFileName->setText(dialog.selectedFiles().first());
+            QStringList files = dialog.selectedFiles();
+            m_lineEditFileName->setText(files.first());
         }
     });
     addRow(QString(), button);
@@ -53,13 +55,13 @@ SoundSettings::~SoundSettings()
 
 void SoundSettings::load()
 {
-    m_lineEditFileName->setText(settingsValue(QLatin1String("Sound")).toString());
-    m_spinBoxVolume->setValue(settingsValue(QLatin1String("Volume")).toInt());
+    m_lineEditFileName->setText(settingsValue(QStringLiteral("Sound")).toString());
+    m_spinBoxVolume->setValue(settingsValue(QStringLiteral("Volume")).toInt());
 }
 
 void SoundSettings::save()
 {
-    setSettingsValue(QLatin1String("Sound"), m_lineEditFileName->text());
-    setSettingsValue(QLatin1String("Volume"), m_spinBoxVolume->value());
+    setSettingsValue(QStringLiteral("Sound"), m_lineEditFileName->text());
+    setSettingsValue(QStringLiteral("Volume"), m_spinBoxVolume->value());
 }
 

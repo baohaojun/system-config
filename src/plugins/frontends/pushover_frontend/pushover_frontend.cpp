@@ -233,7 +233,7 @@ void PushoverFrontend::getMessages()
         int latestID = -1;
         if (message.value(QStringLiteral("status")).toInt() == 1) {
             QJsonArray notifications = message.value(QStringLiteral("messages")).toArray();
-            foreach (const QJsonValue &v, notifications) {
+            foreach(const QJsonValue & v, notifications) {
                 QJsonObject notification = v.toObject();
 
                 latestID = qMax(latestID, notification.value(QStringLiteral("id")).toInt());
