@@ -22,7 +22,7 @@ local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share, adb_is_window
 local adb_focused_window
 local t1_config, check_phone
-local weixin_find_friend, qq_find_friend
+local weixin_find_friend, qq_find_friend, qq_find_group_friend
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic, debugging
 local adb_weixin_lucky_money
@@ -106,6 +106,29 @@ adb_unquoter = ""
 
 shell_quote = function (str)
    return "'" .. string.gsub(str, "'", "'\\''") .. "'"
+end
+
+function spairs(t, order)
+    -- collect the keys
+    local keys = {}
+    for k in pairs(t) do keys[#keys+1] = k end
+
+    -- if order function given, sort by it by passing the table and keys a, b,
+    -- otherwise just sort the keys
+    if order then
+        table.sort(keys, function(a,b) return order(t, a, b) end)
+    else
+        table.sort(keys)
+    end
+
+    -- return the iterator function
+    local i = 0
+    return function()
+        i = i + 1
+        if keys[i] then
+            return keys[i], t[keys[i]]
+        end
+    end
 end
 
 if package.config:sub(1, 1) == '/' then
@@ -1161,10 +1184,44 @@ qq_find_friend = function(friend_name)
    adb_event"key scroll_lock sleep .5 adb-tap 303 291"
 end
 
+qq_find_group_friend = function(friend_name)
+   putclip_nowait(friend_name)
+   log("qq find group friend: " .. friend_name)
+   local window = adb_top_window()
+   if window ~= qqChatActivity and window ~= qqChatActivity2 then
+      log("qq window is not chat: " .. window)
+      return
+   end
+   adb_event("adb-tap 974 167")
+   local chatSetting = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatSettingForTroop"
+   window = wait_top_activity(chatSetting)
+   if window ~= chatSetting then
+      log("did not get chatSetting: " .. window)
+      return
+   end
+   adb_event("sleep 1 adb-tap 330 1482")
+   local troopList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity"
+   window = wait_top_activity(troopList)
+   if window ~= troopList then
+      log("did not get troopWindow: " .. window)
+      return
+   end
+   adb_event("sleep .5 adb-tap 243 305")
+   wait_input_target(troopList)
+   adb_event("key scroll_lock sleep .5 adb-tap 326 320")
+   local troopMember = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberCardActivity"
+   window = wait_top_activity(troopMember)
+   if window ~= troopMember then
+      log("did not get troopMember: " .. window)
+      return
+   end
+   adb_event("sleep .5 adb-tap 864 1800")
+end
+
 save_window_types = function()
    local mapfile = io.open(configDir .. package.config:sub(1, 1) .. "window_post_botton.lua", "w")
    mapfile:write("local map = {}\n")
-   for k, v in pairs(window_post_button_map) do
+   for k, v in spairs(window_post_button_map) do
       if k ~= "" then
          mapfile:write(("map['%s'] = '%s'\n"):format(k, v))
       end
@@ -1886,6 +1943,13 @@ t1_find_qq_contact = function(number)
    elseif (number:match("@QQ.com")) then
       number = number:gsub("@QQ.com", "")
       contact_type = 1
+   elseif (number:match("@")) then
+      local names = split("@", number)
+      local who, where = names[1] or "", names[2] or ""
+      qq_find_friend(where)
+      sleep(.5)
+      qq_find_group_friend(who)
+      return
    else
       qq_find_friend(number)
       return
