@@ -134,7 +134,7 @@ abc-grep() {
             shift
         fi
 
-        ssh $abc_host abc abc-files -b "$(abc-base-build)" "$(echo "$entry" | perl -npe 's/[^\w]/ /g')"|xargs grep -H -n -e "$entry" "$@" /dev/null
+        ssh $abc_host abc abc-files -b "$(abc-base-build)" "$(echo "$entry" | perl -npe 's/[^\w]/ /g')"|xargs -d \\n grep -H -n -e "$entry" "$@" /dev/null
     )
 }
 

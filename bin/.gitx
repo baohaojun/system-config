@@ -187,6 +187,7 @@ print $_ . "\n";
             exit
         fi
         if test $# = 3 -a "$1" = co -a "$2" = -B; then
+            echo git co -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
             git co -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
             exit
         fi

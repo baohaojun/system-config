@@ -186,7 +186,7 @@ fi
 #!/bin/bash
 dd if=/sdcard/boot.img of=\$(echo /dev/block/platform/*/by-name/boot)
 EOF
-)
+) || true
 sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
 (
     sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /'
