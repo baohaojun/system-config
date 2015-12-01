@@ -1,6 +1,11 @@
 local map = {}
+map['com.android.contacts/com.android.contacts.activities.ContactEditorActivity'] = 'manual-post'
+map['com.android.mms/com.android.mms.ui.ComposeMessageActivity'] = 'manual-post'
+map['com.qzone/com.qzonex.module.global.FeedActionPanelActivity'] = 'weixin-chat'
 map['com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity'] = 'weibo-share'
 map['com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity'] = 'weixin-chat'
+map['com.skype.raider/com.skype.android.app.chat.ChatActivity'] = 'weixin-chat'
+map['com.skype.raider/com.skype.android.app.contacts.ContactDirectorySearchActivity'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentDetailUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI'] = 'weixin-chat'
