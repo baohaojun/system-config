@@ -6,7 +6,6 @@
 
 #include <QDebug.h>
 #import <QThread.h>
-#import <QApplication.h>
 #import <QMap>
 #include <Foundation/Foundation.h>
 #import <objc/runtime.h>
