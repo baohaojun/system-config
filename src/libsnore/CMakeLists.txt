@@ -104,5 +104,6 @@ if(UNIX)
     ecm_install_icons(ICONS ${PROJECT_SOURCE_DIR}/data/128-apps-snore.png DESTINATION ${KDE_INSTALL_ICONDIR})
 endif()
 
-
-add_subdirectory(settings)
+if(Qt5Widgets_FOUND)
+    add_subdirectory(settings)
+endif()

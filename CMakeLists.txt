@@ -38,7 +38,12 @@ set(SNORE_CamelCase_SUFFIX "Qt5")
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
-find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Widgets QUIET)
+
+set_package_properties(Qt5Widgets PROPERTIES
+                                  PURPOSE "Supprot for the daemon and the settings dialog as well as some backends."
+                                  TYPE OPTIONAL)
 
 
 set(LIBSNORE_INCLUDE_DIR ${KDE_INSTALL_INCLUDEDIR}/libsnore)
