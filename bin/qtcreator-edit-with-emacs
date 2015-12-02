@@ -1,6 +1,15 @@
 #!/bin/bash
-if test "$(sawfish-top-window)" = QtCreator; then
+top_window=$(sawfish-top-window)
+
+if test "$top_window" = QtCreator; then
     exec sawfish-events-delayed .1 "C-S-s" "M-t" "e" "Up" "Up" "RET"
+elif test "$top_window" = Iceweasel -o "$top_window" = Firefox; then
+    sawfish-events-delayed .1 "C-Home" "C-S-End" "C-c"
+    getclip > ~/tmp/firefox-edit.$$
+    ew ~/tmp/firefox-edit.$$
+    cat ~/tmp/firefox-edit.$$ | putclip
+    find-or-exec $top_window
+    exec sawfish-events-delayed .1 "S-Insert"
 fi
 
 exec find-or-exec QtCreator
