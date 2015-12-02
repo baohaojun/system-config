@@ -7,7 +7,7 @@
 #include "libsnore/plugins/snorebackend.h"
 
 #include <QDir>
-#include <QApplication>
+#include <QGuiApplication>
 #include <QSysInfo>
 
 #include <windows.h>
@@ -131,6 +131,6 @@ QProcess *SnoreToast::createProcess(Notification noti)
         }
         p->deleteLater();
     });
-    connect(qApp, &QApplication::aboutToQuit, p, &QProcess::kill);
+    connect(qApp, &QGuiApplication::aboutToQuit, p, &QProcess::kill);
     return p;
 }
