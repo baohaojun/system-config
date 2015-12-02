@@ -1,19 +1,6 @@
-
-if(WIN32)
-    message(STATUS "Adding Snarl notification backend")
-
-
-    set( SNARL_SRC
-        SnarlInterface.cpp
-        snarl.cpp
-        snarlsettings.cpp
-        )
-    add_library(libsnore_backend_snarl MODULE ${SNARL_SRC} )
-    target_link_libraries(libsnore_backend_snarl Snore::Libsnore )
+if(WIN32)    
+    add_snore_plugin(snarl SOURCES snarl.cpp SnarlInterface.cpp SETTINGS_SOURCES snarlsettings.cpp TYPE backend LIBS Qt5::Widgets)
     if(MINGW)
         set_target_properties(libsnore_backend_snarl PROPERTIES COMPILE_FLAGS "-Wno-conversion-null -Wno-unused")
     endif(MINGW)
-
-    install(TARGETS libsnore_backend_snarl ${SNORE_PLUGIN_INSTALL_PATH})
-
 endif(WIN32)

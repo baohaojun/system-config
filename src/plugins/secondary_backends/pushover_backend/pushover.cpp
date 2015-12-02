@@ -16,7 +16,6 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pushover.h"
-#include "pushoversettings.h"
 
 #include "libsnore/utils.h"
 #include "libsnore/notification/notification_p.h"
@@ -118,11 +117,6 @@ void Pushover::slotNotify(Notification notification)
         reply->deleteLater();
     });
 
-}
-
-PluginSettingsWidget *Pushover::settingsWidget()
-{
-    return new PushoverSettings(this);
 }
 
 void Pushover::setDefaultSettings()

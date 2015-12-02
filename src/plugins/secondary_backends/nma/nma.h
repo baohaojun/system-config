@@ -31,8 +31,6 @@ public:
     NotifyMyAndroid() = default;
     ~NotifyMyAndroid() = default;
 
-    Snore::PluginSettingsWidget *settingsWidget() override;
-
 protected:
     void setDefaultSettings() override;
 

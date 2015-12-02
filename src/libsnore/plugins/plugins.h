@@ -21,7 +21,6 @@
 #include "libsnore/snore_exports.h"
 #include "libsnore/snoreglobals.h"
 #include "libsnore/notification/notification.h"
-#include "pluginsettingswidget.h"
 
 #include <QHash>
 
@@ -71,6 +70,11 @@ public:
         PLUGIN              = 1 << 3,
 
         /**
+         * A settings page for a Plugin.
+         */
+        SETTINGS    = 1 << 4,
+
+        /**
          * Flag for loading all plugins.
          */
         ALL                 = ~0
@@ -114,7 +118,7 @@ public:
     /**
      * Returns the plugin type.
      */
-    PluginTypes type() const;
+    virtual PluginTypes type() const;
 
     /**
      * Returns the name of the plugin type.
@@ -132,7 +136,6 @@ public:
     void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
     void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
 
-    virtual PluginSettingsWidget *settingsWidget();
 
 Q_SIGNALS:
     void enabledChanged(bool enabled);

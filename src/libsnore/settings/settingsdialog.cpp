@@ -20,6 +20,7 @@
 #include "ui_settingsdialog.h"
 #include "snore.h"
 #include "snore_p.h"
+#include "settings.h"
 
 #include <QTabWidget>
 #include <QCheckBox>
@@ -49,7 +50,7 @@ void SettingsDialog::initTabs()
         bool enabled = false;
         target->clear();
         if (types & type) {
-            foreach(PluginSettingsWidget * widget, SnoreCore::instance().settingWidgets(type)) {
+            foreach(PluginSettingsWidget * widget, Settings::settingWidgets(type)) {
                 target->addTab(widget, widget->name());
                 m_tabs.append(widget);
                 enabled = true;

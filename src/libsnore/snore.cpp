@@ -28,7 +28,7 @@
 
 #include "version.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QSettings>
 #include <QThread>
 
@@ -90,6 +90,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::SECONDARY_BACKEND:
                 case SnorePlugin::FRONTEND:
                 case SnorePlugin::PLUGIN:
+                case SnorePlugin::SETTINGS:
                     plugin->setEnabled(plugin->settingsValue(QStringLiteral("Enabled"), LOCAL_SETTING).toBool());
                     break;
                 default:
@@ -208,23 +209,6 @@ void SnoreCore::setDefaultApplication(Application app)
     d->m_defaultApp = app;
 }
 
-QList<PluginSettingsWidget *> SnoreCore::settingWidgets(SnorePlugin::PluginTypes type)
-{
-    Q_D(SnoreCore);
-    QList<PluginSettingsWidget *> list;
-    foreach(const QString & name, d->m_pluginNames[type]) {
-        //TODO: mem leak?
-        SnorePlugin *p = d->m_plugins[qMakePair(type, name)];
-        PluginSettingsWidget *widget = p->settingsWidget();
-        if (widget) {
-            list.append(widget);
-        }
-    }
-    qSort(list.begin(), list.end(), [](PluginSettingsWidget * a, PluginSettingsWidget * b) {
-        return a->name() < b->name();
-    });
-    return list;
-}
 
 QVariant SnoreCore::settingsValue(const QString &key, SettingsType type) const
 {

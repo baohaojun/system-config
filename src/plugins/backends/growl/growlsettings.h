@@ -18,7 +18,8 @@
 #ifndef GROWLSETTINGS_H
 #define GROWLSETTINGS_H
 
-#include "plugins/pluginsettingswidget.h"
+#include "libsnore/settings/pluginsettingswidget.h"
+#include "libsnore/plugins/settingsplugin.h"
 
 class QLineEdit;
 
@@ -37,5 +38,7 @@ private:
     QLineEdit *m_host;
     QLineEdit *m_password;
 };
+
+SNORE_DECLARE_SETTINGS_PLUGIN(GrowlSettings);
 
 #endif // GROWLSETTINGS_H

@@ -42,11 +42,7 @@ class NotifyWidget : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int id READ id)
-    Q_PROPERTY(bool isOrientatedLeft MEMBER m_isOrientatedLeft  NOTIFY isOrientatedLeftChanged)
-    Q_PROPERTY(int animationFrom MEMBER m_animationFrom NOTIFY animationFromChanged)
-    Q_PROPERTY(int animationTo MEMBER m_animationTo NOTIFY animationtoChanged)
-    Q_PROPERTY(int dragMinX MEMBER m_dragMinX NOTIFY dragMinXChanged)
-    Q_PROPERTY(int dragMaxX MEMBER m_dragMaxX NOTIFY dragMaxXChanged)
+    Q_PROPERTY(Qt::Corner position MEMBER m_corner NOTIFY positionChanged)
     Q_PROPERTY(QColor color MEMBER m_color NOTIFY colorChanged)
     Q_PROPERTY(QColor textColor MEMBER m_textColor NOTIFY textColorChanged)
     Q_PROPERTY(QString title MEMBER m_title NOTIFY titleChanged)
@@ -74,11 +70,7 @@ Q_SIGNALS:
     void invoked();
     void dismissed();
 
-    void isOrientatedLeftChanged();
-    void animationFromChanged();
-    void animationtoChanged();
-    void dragMinXChanged();
-    void dragMaxXChanged();
+    void positionChanged();
 
     void textColorChanged();
     void colorChanged();
@@ -102,14 +94,8 @@ private:
     const SnoreNotifier *m_parent;
     QSharedMemory m_mem;
     bool m_ready;
-    Qt::Corner m_cornerOld = Qt::TopLeftCorner;
-    bool m_isOrientatedLeft;
 
-    int m_animationFrom;
-    int m_animationTo;
-
-    int m_dragMinX;
-    int m_dragMaxX;
+    Qt::Corner m_corner = Qt::TopLeftCorner;
 
     int m_imageSize;
     int m_appIconSize;

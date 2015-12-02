@@ -20,8 +20,7 @@
 #include "snorenotifier.h"
 #include "libsnore/utils.h"
 
-#include <QApplication>
-#include <QDesktopWidget>
+#include <QGuiApplication>
 #include <QQmlProperty>
 
 using namespace Snore;
@@ -179,34 +178,10 @@ int NotifyWidget::id() const
 void NotifyWidget::syncSettings()
 {
     Qt::Corner c = static_cast<Qt::Corner>(m_parent->settingsValue(QStringLiteral("Position")).toInt());
-    if (c != m_cornerOld || !m_initialized) {
+    if (c != m_corner || !m_initialized) {
         m_initialized = true;
-        QDesktopWidget desktop;
-
-        m_cornerOld = c;
-        m_isOrientatedLeft = c == Qt::TopLeftCorner || c == Qt::BottomLeftCorner;
-        if (m_isOrientatedLeft) {
-            m_dragMinX = m_animationFrom = -m_window->width();
-            m_dragMaxX = m_animationTo = 0;
-        } else {
-            m_animationFrom = desktop.availableGeometry().width();
-            m_animationTo = desktop.availableGeometry().width() - m_window->width();
-            m_dragMinX =  0;
-            m_dragMaxX = m_window->width();
-
-        }
-        double space = (id() + 1) * m_window->height() * 0.025;
-
-        if (c == Qt::TopRightCorner || c == Qt::TopLeftCorner) {
-            m_window->setY(space + (space + m_window->height()) * id());
-        } else {
-            m_window->setY(desktop.availableGeometry().height() - (space + (space + m_window->height()) * (id() + 1)));
-        }
-        emit isOrientatedLeftChanged();
-        emit animationFromChanged();
-        emit animationtoChanged();
-        emit dragMaxXChanged();
-        emit dragMinXChanged();
+        m_corner = c;
+        emit positionChanged();
     }
 }
 

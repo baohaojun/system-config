@@ -4,17 +4,16 @@ import QtQuick.Window 2.2
 Window {
     id: window
     property int snoreBaseSize: body.font.pixelSize
+    property int animationStart
 
 
     width: snoreBaseSize * 30
     height: snoreBaseSize * 9
     color: notifyWidget.color
 
-
-
     onVisibleChanged: {
         if(visible){
-            animation.from = notifyWidget.animationFrom
+            animation.from = animationStart
             animation.restart()
             show()
         }
@@ -23,8 +22,6 @@ Window {
     NumberAnimation on x{
         id: animation
         duration: 500
-        from: notifyWidget.animationFrom
-        to: notifyWidget.animationTo
     }
 
     Rectangle{
@@ -38,15 +35,42 @@ Window {
 
         Drag.active: mouseAreaAccept.drag.active
 
+        function updatePosition()
+        {
+            var corner = notifyWidget.position
+
+            if (corner === Qt.TopLeftCorner || corner === Qt.BottomLeftCorner) {
+                animationStart = mouseAreaAccept.drag.minimumX = animation.from = -window.width
+                mouseAreaAccept.drag.maximumX = animation.to = 0
+            } else {
+                animationStart = animation.from = Screen.desktopAvailableWidth
+                animation.to = Screen.desktopAvailableWidth - window.width
+                mouseAreaAccept.drag.minimumX =  0
+                mouseAreaAccept.drag.maximumX = window.width
+            }
+            var space = (notifyWidget.id + 1) * window.height * 0.025
+
+            if (corner === Qt.TopRightCorner || corner === Qt.TopLeftCorner) {
+                window.y = space + (space + window.height) * notifyWidget.id
+            } else {
+                window.y = Screen.desktopAvailableHeight - (space + (space + height) * (notifyWidget.id + 1))
+            }
+        }
+
+        Screen.onDesktopAvailableHeightChanged: root.updatePosition()
+        Screen.onDesktopAvailableWidthChanged: root.updatePosition()
+
+        Connections{
+            target: notifyWidget
+            onPositionChanged: root.updatePosition()
+        }
 
         onXChanged: {
             // There is a Qt bug which will not stop the mouse tracking if the
             // item is hid during a drag event.
             if(Drag.active){
                 window.x += x
-                if(Math.abs(window.x - (notifyWidget.isOrientatedLeft?
-                                            notifyWidget.animationTo:
-                                            notifyWidget.animationFrom) + mouseAreaAccept.mouseX) <= width * 0.05){
+                if(Math.abs(window.x - Math.max(animation.from, animation.to) +  mouseAreaAccept.mouseX) <= width * 0.05){
                     Drag.cancel()
                     notifyWidget.dismissed()
                 }
@@ -63,8 +87,6 @@ Window {
             }
             drag.target: root
             drag.axis: Drag.XAxis
-            drag.maximumX: notifyWidget.dragMaxX
-            drag.minimumX: notifyWidget.dragMinX
             drag.smoothed: true
             onPressed: {
                 animation.stop()

@@ -4,7 +4,7 @@ set(SnoreNotify_SRCS ${SnoreNotify_SRCS}
         plugins/snorefrontend.cpp
         plugins/snorebackend.cpp
         plugins/snoresecondarybackend.cpp
-        plugins/pluginsettingswidget.cpp
+        plugins/settingsplugin.cpp
         PARENT_SCOPE)
 
 set(SnoreNotify_HDR
@@ -12,7 +12,7 @@ set(SnoreNotify_HDR
         snorefrontend.h
         snorebackend.h
         snoresecondarybackend.h
-        pluginsettingswidget.h)
+        settingsplugin.h)
 
 
 install(FILES ${SnoreNotify_HDR} DESTINATION ${LIBSNORE_INCLUDE_DIR}/plugins)

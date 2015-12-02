@@ -2,7 +2,8 @@
 
 find_dependency(Qt5Core REQUIRED)
 find_dependency(Qt5Network REQUIRED)
-find_dependency(Qt5Widgets REQUIRED)
 
 include("${CMAKE_CURRENT_LIST_DIR}/Libsnore@SNORE_CamelCase_SUFFIX@Target.cmake")
 
+set(SNORE_PLUGIN_INSTALL_PATH @SNORE_PLUGIN_INSTALL_PATH@)
+include("${CMAKE_CURRENT_LIST_DIR}/SnoreAddPlugin.cmake")

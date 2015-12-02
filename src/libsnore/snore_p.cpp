@@ -25,7 +25,7 @@
 #include "notification/notification_p.h"
 #include "version.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QSettings>
 #include <QTemporaryDir>
 

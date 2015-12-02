@@ -1,8 +1,1 @@
-set( SNARL_NETWORK_SRC
-    snarlnetwork.cpp
-    parser.cpp
-    )
-add_library(libsnore_frontend_snarlnetwork MODULE  ${SNARL_NETWORK_SRC} )
-target_link_libraries(libsnore_frontend_snarlnetwork Snore::Libsnore)
-
-install(TARGETS libsnore_frontend_snarlnetwork ${SNORE_PLUGIN_INSTALL_PATH})
+add_snore_plugin(snarlnetwork SOURCES snarlnetwork.cpp parser.cpp TYPE frontend)

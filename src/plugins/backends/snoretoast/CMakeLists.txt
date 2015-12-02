@@ -1,11 +1,4 @@
 if(WIN32)
-    message(STATUS "Adding SnoreToast notification backend")
-    set( TOASTER_SRC
-        snoretoast.cpp
-        )
-    add_library(libsnore_backend_snoretoast MODULE ${TOASTER_SRC} )
-    target_link_libraries(libsnore_backend_snoretoast Snore::Libsnore)
-
-    install(TARGETS libsnore_backend_snoretoast ${SNORE_PLUGIN_INSTALL_PATH})
-    install(FILES SnoreToast.exe DESTINATION bin)
+    add_snore_plugin(snoretoast SOURCES snoretoast.cpp TYPE backend)
+    install(FILES SnoreToast.exe ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 endif(WIN32)

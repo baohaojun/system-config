@@ -18,7 +18,8 @@
 #ifndef NOTIFYMYANDROID_H
 #define NOTIFYMYANDROID_H
 
-#include "plugins/pluginsettingswidget.h"
+#include "libsnore/plugins/settingsplugin.h"
+#include "libsnore/settings/pluginsettingswidget.h"
 
 class QLineEdit;
 
@@ -36,5 +37,7 @@ private:
     QLineEdit *m_lineEdit;
 
 };
+
+SNORE_DECLARE_SETTINGS_PLUGIN(NotifyMyAndroidSettings);
 
 #endif // NOTIFYMYANDROID_HH

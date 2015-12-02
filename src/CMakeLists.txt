@@ -1,4 +1,7 @@
+include(libsnore/SnoreAddPlugin.cmake)
+
 add_subdirectory(libsnore)
+
 ecm_optional_add_subdirectory(daemon)
 add_feature_info(BUILD_daemon BUILD_daemon "Build and installd the snorenotify daemon which recieves and redirects notifications.")
 

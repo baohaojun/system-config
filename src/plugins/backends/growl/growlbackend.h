@@ -32,7 +32,6 @@ class GrowlBackend: public Snore::SnoreBackend
 public:
     GrowlBackend();
     ~GrowlBackend();
-    Snore::PluginSettingsWidget *settingsWidget() override;
     bool isReady() override;
 
 protected:

@@ -31,8 +31,6 @@ public:
     Sound();
     ~Sound() = default;
 
-    Snore::PluginSettingsWidget *settingsWidget() override;
-
 protected:
     void setDefaultSettings() override;
 

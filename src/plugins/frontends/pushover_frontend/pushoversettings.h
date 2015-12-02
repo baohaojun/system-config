@@ -18,7 +18,9 @@
 #ifndef PUSHOVERSETTINGS_H
 #define PUSHOVERSETTINGS_H
 
-#include "plugins/pluginsettingswidget.h"
+#include "libsnore/settings/pluginsettingswidget.h"
+#include "libsnore/plugins/settingsplugin.h"
+
 
 class QLineEdit;
 class QPushButton;
@@ -45,5 +47,7 @@ private Q_SLOTS:
     void slotUpdateLoginState(bool state);
 
 };
+
+SNORE_DECLARE_SETTINGS_PLUGIN(PushoverSettings)
 
 #endif // PUSHOVERSETTINGS_H

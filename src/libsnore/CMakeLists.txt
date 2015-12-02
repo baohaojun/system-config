@@ -6,7 +6,6 @@ if(NOT SNORE_REVISION)
     set(SNORE_REVISION "")
 endif()
 
-set(LIBSNORE_INCLUDE_DIR ${KDE_INSTALL_INCLUDEDIR}/libsnore)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 
@@ -18,8 +17,6 @@ add_subdirectory(notification)
 add_subdirectory(plugins)
 
 
-qt5_wrap_ui(UI settingsdialog.ui)
-
 list(APPEND SnoreNotify_SRCS
         snore.cpp
         snore_p.cpp
@@ -29,9 +26,7 @@ list(APPEND SnoreNotify_SRCS
         alert_p.cpp
         hint.cpp
         lambdahint.cpp
-        settingsdialog.cpp
         utils.cpp
-        ${UI}
         ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
         ${SNORENOTIFY_RCS}
         )
@@ -43,7 +38,6 @@ list(APPEND SnoreNotify_HDR
         alert.h
         hint.h
         lambdahint.h
-        settingsdialog.h
         snoreglobals.h
         utils.h
         ${CMAKE_CURRENT_BINARY_DIR}/snore_exports.h
@@ -54,14 +48,14 @@ list(APPEND SnoreNotify_HDR
 add_library( libsnore SHARED ${SnoreNotify_SRCS} ${SnoreNotify_QM_LOADER})
 set_target_properties( libsnore PROPERTIES
                                 OUTPUT_NAME "snore${SNORE_SUFFIX}"
-                                VERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}.${SNORE_VERSION_SUFFIX}"
+                                VERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}"
                                 SOVERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}"
                                 EXPORT_NAME Libsnore)
 set_property( TARGET libsnore
               APPEND
               PROPERTY COMPILE_DEFINITIONS LIBSNORE_PLUGIN_PATH="${KDE_INSTALL_FULL_PLUGINDIR}/libsnore${SNORE_SUFFIX}" SNORE_SUFFIX="${SNORE_SUFFIX}"
 )
-target_link_libraries( libsnore PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network)
+target_link_libraries( libsnore PUBLIC Qt5::Core Qt5::Gui Qt5::Network)
 
 add_library(Snore::Libsnore ALIAS libsnore)
 
@@ -75,7 +69,7 @@ target_include_directories( libsnore PUBLIC
                             $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/src>)
 
 
-ecm_setup_version("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}" VARIABLE_PREFIX SOLID
+ecm_setup_version("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}" VARIABLE_PREFIX SNORE
                         PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}ConfigVersion.cmake"
                         SOVERSION ${SNORE_VERSION_MAJOR})
 
@@ -100,6 +94,7 @@ install(EXPORT Libsnore${SNORE_CamelCase_SUFFIX}Target DESTINATION ${KDE_INSTALL
 install(FILES ${SnoreNotify_HDR} DESTINATION ${LIBSNORE_INCLUDE_DIR})
 
 install(FILES
+        SnoreAddPlugin.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}Config.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/Libsnore${SNORE_CamelCase_SUFFIX}ConfigVersion.cmake
         DESTINATION
@@ -110,3 +105,4 @@ if(UNIX)
 endif()
 
 
+add_subdirectory(settings)

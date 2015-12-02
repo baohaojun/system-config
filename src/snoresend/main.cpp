@@ -21,7 +21,7 @@
 #include <libsnore/version.h>
 #include <libsnore/utils.h>
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QCommandLineParser>
 
 #include <iostream>
@@ -70,7 +70,7 @@ void bringToFront(QString pid)
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("snoresend"));
     app.setOrganizationName(QStringLiteral("Snorenotify"));
     app.setApplicationVersion(Snore::Version::version());
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
             }
             returnCode = noti.closeReason();
         });
-        app.connect(&core, &SnoreCore::notificationClosed, &app, &QApplication::quit);
+        app.connect(&core, &SnoreCore::notificationClosed, &app, &QGuiApplication::quit);
         app.processEvents();
         core.broadcastNotification(n);
 

@@ -29,7 +29,6 @@ class SnarlBackend: public Snore::SnoreBackend
 public:
     SnarlBackend();
     ~SnarlBackend();
-    Snore::PluginSettingsWidget *settingsWidget() override;
 
     virtual bool canCloseNotification() const override;
     virtual bool canUpdateNotification() const override;
@@ -41,7 +40,7 @@ protected:
 
 private:
     class SnarlWidget;
-    SnarlBackend::SnarlWidget *m_eventLoop;
+    SnarlBackend::SnarlWidget *m_eventLoop = nullptr;
     QHash<QString, Snarl::V42::SnarlInterface *> m_applications;
 
 public Q_SLOTS:

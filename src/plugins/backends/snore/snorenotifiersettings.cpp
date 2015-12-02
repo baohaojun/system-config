@@ -46,3 +46,4 @@ void SnoreNotifierSettings::save()
 {
     setSettingsValue(QStringLiteral("Position"), m_comboBox->currentIndex());
 }
+

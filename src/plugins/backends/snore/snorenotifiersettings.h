@@ -18,7 +18,8 @@
 #ifndef SNORENOTIFIERSETTINGS_H
 #define SNORENOTIFIERSETTINGS_H
 
-#include "plugins/pluginsettingswidget.h"
+#include "libsnore/settings/pluginsettingswidget.h"
+#include "libsnore/plugins/settingsplugin.h"
 
 namespace Snore
 {
@@ -38,5 +39,8 @@ public:
 private:
     QComboBox *m_comboBox;
 };
+
+
+SNORE_DECLARE_SETTINGS_PLUGIN(SnoreNotifierSettings);
 
 #endif // SNORENOTIFIERSETTINGS_H

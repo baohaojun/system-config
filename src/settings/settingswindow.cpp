@@ -25,6 +25,7 @@
 
 #include <QApplication>
 #include <QDialogButtonBox>
+#include <QAbstractButton>
 
 #include <iostream>
 

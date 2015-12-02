@@ -18,7 +18,8 @@
 #ifndef TOASTYSETTINGS_H
 #define TOASTYSETTINGS_H
 
-#include "plugins/pluginsettingswidget.h"
+#include "libsnore/settings/pluginsettingswidget.h"
+#include "libsnore/plugins/settingsplugin.h"
 
 class QLineEdit;
 
@@ -36,5 +37,8 @@ private:
     QLineEdit *m_lineEdit;
 
 };
+
+
+SNORE_DECLARE_SETTINGS_PLUGIN(ToastySettings);
 
 #endif // TOASTYSETTINGS_H

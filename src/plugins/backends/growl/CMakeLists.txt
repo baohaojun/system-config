@@ -6,11 +6,5 @@ set_package_properties(SnoreGrowl++ PROPERTIES
                                     TYPE RECOMMENDED)
 
 if(SnoreGrowl++_FOUND)
-    set( GROWL_SRC growlbackend.cpp growlsettings.cpp)
-
-    add_library(libsnore_backend_growl MODULE ${GROWL_SRC} )
-    target_link_libraries(libsnore_backend_growl Snore::Libsnore Snore::SnoreGrowl++ ${CMAKE_THREAD_LIBS_INIT})
-
-
-    install(TARGETS libsnore_backend_growl ${SNORE_PLUGIN_INSTALL_PATH})
+    add_snore_plugin(growl SOURCES growlbackend.cpp SETTINGS_SOURCES growlsettings.cpp TYPE backend LIBS Snore::SnoreGrowl++)
 endif()

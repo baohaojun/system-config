@@ -17,7 +17,6 @@
 */
 
 #include "growlbackend.h"
-#include "growlsettings.h"
 
 #include "libsnore/snore.h"
 #include "libsnore/snore_p.h"
@@ -113,11 +112,6 @@ void GrowlBackend::slotNotify(Notification notification)
     growl->Notify(data);
 
     slotNotificationDisplayed(notification);
-}
-
-PluginSettingsWidget *GrowlBackend::settingsWidget()
-{
-    return new GrowlSettings(this);
 }
 
 void GrowlBackend::setDefaultSettings()

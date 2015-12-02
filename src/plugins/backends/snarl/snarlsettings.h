@@ -15,10 +15,11 @@
     You should have received a copy of the GNU Lesser General Public License
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef GROWLSETTINGS_H
-#define GROWLSETTINGS_H
+#ifndef SNARLSETTINGS_H
+#define SNARLSETTINGS_H
 
-#include "plugins/pluginsettingswidget.h"
+#include "libsnore/settings/pluginsettingswidget.h"
+#include "libsnore/plugins/settingsplugin.h"
 
 class QLineEdit;
 
@@ -37,4 +38,6 @@ private:
     QLineEdit *m_password;
 };
 
-#endif // GROWLSETTINGS_H
+SNORE_DECLARE_SETTINGS_PLUGIN(SnarlSettings);
+
+#endif // SNARLSETTINGS_H

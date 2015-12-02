@@ -20,7 +20,7 @@
 #include "../snore.h"
 #include "../snore_p.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>

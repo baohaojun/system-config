@@ -16,7 +16,6 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "nma.h"
-#include "nmasettings.h"
 
 #include "libsnore/utils.h"
 
@@ -57,11 +56,6 @@ void NotifyMyAndroid::slotNotify(Notification notification)
         reply->deleteLater();
     });
 
-}
-
-PluginSettingsWidget *NotifyMyAndroid::settingsWidget()
-{
-    return new NotifyMyAndroidSettings(this);
 }
 
 void NotifyMyAndroid::setDefaultSettings()

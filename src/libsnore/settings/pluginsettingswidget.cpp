@@ -16,7 +16,7 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pluginsettingswidget.h"
-#include "plugins.h"
+#include "libsnore/plugins/plugins.h"
 #include "snore.h"
 
 #include <QCheckBox>

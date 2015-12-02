@@ -16,7 +16,6 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sound.h"
-#include "soundsettings.h"
 
 #include <QtMultimedia/QMediaPlayer>
 #include <QTimer>
@@ -32,11 +31,6 @@ Sound::Sound():
     connect(m_player, &QMediaPlayer::stateChanged, [](QMediaPlayer::State state) {
         qCDebug(SNORE) << "Player: " << state;
     });
-}
-
-PluginSettingsWidget *Sound::settingsWidget()
-{
-    return new SoundSettings(this);
 }
 
 void Sound::setDefaultSettings()

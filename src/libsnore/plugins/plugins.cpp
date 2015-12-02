@@ -25,7 +25,7 @@
 
 #include <QDebug>
 #include <QMetaEnum>
-#include <QApplication>
+#include <QGuiApplication>
 
 using namespace Snore;
 
@@ -60,15 +60,6 @@ void SnorePlugin::setSettingsValue(const QString &key, const QVariant &value, Se
 void SnorePlugin::setDefaultSettingsValue(const QString &key, const QVariant &value, SettingsType type)
 {
     SnoreCore::instance().setDefaultSettingsValue(normaliseKey(key), value, type);
-}
-
-Snore::PluginSettingsWidget *SnorePlugin::settingsWidget()
-{
-    if (type() != SnorePlugin::BACKEND) {
-        // don't display a useless default widget for backends
-        return new PluginSettingsWidget(this);
-    }
-    return nullptr;
 }
 
 QString SnorePlugin::normaliseKey(const QString &key) const

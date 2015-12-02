@@ -15,31 +15,25 @@
     You should have received a copy of the GNU Lesser General Public License
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef PUSHOVERSETTINGS_H
-#define PUSHOVERSETTINGS_H
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
+#include "libsnore/settings/snore_settings_exports.h"
+#include "libsnore/plugins/plugins.h"
 #include "libsnore/settings/pluginsettingswidget.h"
-#include "libsnore/plugins/settingsplugin.h"
 
-class QLineEdit;
+namespace Snore{
 
-class PushoverSettings : public Snore::PluginSettingsWidget
+class SNORE_SETTINGS_EXPORT Settings
 {
-    Q_OBJECT
 public:
-    explicit PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
-    ~PushoverSettings();
-
-    void load() override;
-    void save() override;
-
-private:
-    QLineEdit *m_keyLineEdit;
-    QLineEdit *m_soundLineEdit;
-    QLineEdit *m_deviceLineEdit;
+  /**
+     *
+     * @return A list of widgets a settings dialog.
+     */
+    static QList<PluginSettingsWidget *> settingWidgets(SnorePlugin::PluginTypes type);
 
 };
+}
 
-SNORE_DECLARE_SETTINGS_PLUGIN(PushoverSettings);
-
-#endif // PUSHOVERSETTINGS_H
+#endif // SETTINGS_H

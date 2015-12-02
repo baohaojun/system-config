@@ -31,8 +31,6 @@ public:
     Toasty() = default;
     ~Toasty() = default;
 
-    Snore::PluginSettingsWidget *settingsWidget() override;
-
 protected:
     void setDefaultSettings() override;
 
@@ -43,5 +41,6 @@ private:
     QNetworkAccessManager m_manager;
 
 };
+
 
 #endif // TOASTY_H

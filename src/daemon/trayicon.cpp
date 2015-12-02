@@ -17,15 +17,17 @@
 */
 
 #include "trayicon.h"
-#include "libsnore/settingsdialog.h"
+#include "libsnore/settings/settingsdialog.h"
 #include "libsnore/snore.h"
 #include "libsnore/snore_p.h"
 
 #include <QAction>
 #include <QApplication>
+#include <QAbstractButton>
 #include <QDialogButtonBox>
 #include <QMenu>
 #include <QSystemTrayIcon>
+#include <QLayout>
 
 #include "libsnore/version.h"
 

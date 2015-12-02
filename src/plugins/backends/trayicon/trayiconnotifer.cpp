@@ -4,6 +4,8 @@
 #include "libsnore/utils.h"
 
 #include <QSystemTrayIcon>
+#include <QApplication>
+
 using namespace Snore;
 
 TrayIconNotifer::TrayIconNotifer()
@@ -92,5 +94,14 @@ void TrayIconNotifer::actionInvoked()
         displayNotification(icon);
     }
 
+}
+
+bool TrayIconNotifer::isReady()
+{    
+    if(!qobject_cast< QApplication* >(qApp)){
+     setErrorString(tr("This plugin only works with QApllication"));
+     return false;
+    }
+    return true;
 }
 

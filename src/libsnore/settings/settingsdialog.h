@@ -18,7 +18,8 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include "snore_exports.h"
+#include "libsnore/settings/snore_settings_exports.h"
+#include "libsnore/settings/pluginsettingswidget.h"
 
 #include <QWidget>
 
@@ -42,7 +43,7 @@ namespace Snore
  * If your application does not offer a ui you might call snore-settings insetad.
  */
 
-class SNORE_EXPORT SettingsDialog : public QWidget
+class SNORE_SETTINGS_EXPORT SettingsDialog : public QWidget
 {
     Q_OBJECT
 

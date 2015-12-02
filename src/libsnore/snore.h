@@ -138,12 +138,6 @@ public:
      */
     void setDefaultApplication(Application app);
 
-    /**
-     *
-     * @return A list of widgets a settings dialog.
-     */
-    QList<PluginSettingsWidget *> settingWidgets(SnorePlugin::PluginTypes type);
-
     QVariant settingsValue(const QString &key, SettingsType type = GLOBAL_SETTING) const;
     void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
     void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);

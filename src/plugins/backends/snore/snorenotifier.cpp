@@ -18,7 +18,6 @@
 
 #include "snorenotifier.h"
 #include "notifywidget.h"
-#include "snorenotifiersettings.h"
 #include "libsnore/notification/notification_p.h"
 #include "libsnore/snore_p.h"
 
@@ -130,11 +129,6 @@ bool SnoreNotifier::canCloseNotification() const
 bool SnoreNotifier::canUpdateNotification() const
 {
     return true;
-}
-
-PluginSettingsWidget *SnoreNotifier::settingsWidget()
-{
-    return new SnoreNotifierSettings(this);
 }
 
 void SnoreNotifier::setDefaultSettings()

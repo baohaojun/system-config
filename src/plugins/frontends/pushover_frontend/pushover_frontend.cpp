@@ -17,7 +17,6 @@
 */
 
 #include "pushover_frontend.h"
-#include "pushoversettings.h"
 
 #include "libsnore/snore.h"
 #include "libsnore/version.h"
@@ -49,11 +48,6 @@ PushoverFrontend::PushoverFrontend()
             disconnectService();
         }
     });
-}
-
-PluginSettingsWidget *PushoverFrontend::settingsWidget()
-{
-    return new PushoverSettings(this);
 }
 
 void PushoverFrontend::login(const QString &email, const QString &password, const QString &deviceName)

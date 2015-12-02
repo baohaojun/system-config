@@ -18,7 +18,7 @@
 #ifndef PLUGINSETTINGSWIDGET_H
 #define PLUGINSETTINGSWIDGET_H
 
-#include "libsnore/snore_exports.h"
+#include "libsnore/settings/snore_settings_exports.h"
 #include "libsnore/snoreglobals.h"
 
 #include <QWidget>
@@ -29,7 +29,7 @@ namespace Snore
 {
 class SnorePlugin;
 
-class SNORE_EXPORT PluginSettingsWidget : public QWidget
+class SNORE_SETTINGS_EXPORT PluginSettingsWidget : public QWidget
 {
     Q_OBJECT
 public:

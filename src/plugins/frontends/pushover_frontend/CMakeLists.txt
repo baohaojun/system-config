@@ -5,13 +5,5 @@ set_package_properties(Qt5WebSockets  PROPERTIES
                                 TYPE OPTIONAL)
 
 if(Qt5WebSockets_FOUND)
-    set( PUSHOVER_FRONTEND_SRC
-         pushover_frontend.cpp
-         pushoversettings.cpp
-        )
-
-    add_library(libsnore_frontend_pushover MODULE  ${PUSHOVER_FRONTEND_SRC} )
-    target_link_libraries(libsnore_frontend_pushover Snore::Libsnore Qt5::WebSockets )
-    install(TARGETS libsnore_frontend_pushover ${SNORE_PLUGIN_INSTALL_PATH})
-
+    add_snore_plugin(pushover SOURCES pushover_frontend.cpp SETTINGS_SOURCES pushoversettings.cpp TYPE frontend LIBS Qt5::WebSockets)
 endif()

@@ -16,7 +16,7 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pushoversettings.h"
-#include "pushover_frontend.h"
+//#include "pushover_frontend.h"
 
 #include "plugins/plugins.h"
 
@@ -46,7 +46,8 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
     m_deviceLineEdit->setEnabled(false);
     m_registerButton->setEnabled(false);
 
-    PushoverFrontend *pushover = dynamic_cast<PushoverFrontend *>(plugin);
+    // TODO: find a replacement
+/*    PushoverFrontend *pushover = dynamic_cast<PushoverFrontend *>(plugin);
     m_errorMessageLabel->setText(pushover->errorMessage());
 
     connect(pushover, &PushoverFrontend::loggedInChanged, this, &PushoverSettings::slotUpdateLoginState);
@@ -64,6 +65,7 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
             pushover->logOut();
         }
     });
+    */
 }
 
 PushoverSettings::~PushoverSettings()

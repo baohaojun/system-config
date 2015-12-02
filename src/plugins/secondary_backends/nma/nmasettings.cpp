@@ -17,7 +17,7 @@
 */
 #include "nmasettings.h"
 
-#include "plugins/plugins.h"
+#include "libsnore/plugins/plugins.h"
 
 #include <QLabel>
 #include <QLineEdit>

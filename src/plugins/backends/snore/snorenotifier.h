@@ -35,8 +35,6 @@ public:
     bool canCloseNotification() const override;
     bool canUpdateNotification() const override;
 
-    Snore::PluginSettingsWidget *settingsWidget() override;
-
 protected:
     void setDefaultSettings() override;
 public Q_SLOTS:
@@ -52,5 +50,6 @@ private:
     QTimer *m_timer;
 
 };
+
 
 #endif // SNORENOTIFIER_H

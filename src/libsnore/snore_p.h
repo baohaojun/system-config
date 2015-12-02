@@ -30,6 +30,8 @@ class QSettings;
 
 namespace Snore
 {
+class Settings;
+
 class SNORE_EXPORT SnoreCorePrivate : public QObject
 {
     Q_DECLARE_PUBLIC(SnoreCore)
@@ -116,6 +118,7 @@ private:
     QList<Notification> m_notificationQue;
     QHash<uint, Snore::Notification> m_activeNotifications;
     friend class Snore::Notification;
+    friend class Snore::Settings;
 
 };
 }

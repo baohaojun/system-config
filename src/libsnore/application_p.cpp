@@ -20,7 +20,7 @@
 #include "lambdahint.h"
 #include "snore_p.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 
 using namespace Snore;
 

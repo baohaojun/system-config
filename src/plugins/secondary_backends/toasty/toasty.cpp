@@ -16,7 +16,6 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "toasty.h"
-#include "toastysettings.h"
 
 #include "libsnore/utils.h"
 
@@ -71,11 +70,6 @@ void Toasty::slotNotify(Notification notification)
         reply->deleteLater();
     });
 
-}
-
-PluginSettingsWidget *Toasty::settingsWidget()
-{
-    return new ToastySettings(this);
 }
 
 void Toasty::setDefaultSettings()

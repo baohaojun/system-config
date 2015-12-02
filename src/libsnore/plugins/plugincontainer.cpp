@@ -25,7 +25,7 @@
 #include "../version.h"
 
 #include <QDir>
-#include <QApplication>
+#include <QGuiApplication>
 #include <QTime>
 
 using namespace Snore;

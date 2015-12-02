@@ -1,10 +1,1 @@
-set( TOASTY_SRC
-    toasty.cpp
-    toastysettings.cpp
-    )
-
-add_library(libsnore_secondary_backend_toasty MODULE ${TOASTY_SRC} )
-target_link_libraries(libsnore_secondary_backend_toasty Snore::Libsnore)
-
-install(TARGETS libsnore_secondary_backend_toasty ${SNORE_PLUGIN_INSTALL_PATH})
-
+add_snore_plugin(toasty SOURCES toasty.cpp SETTINGS_SOURCES toastysettings.cpp TYPE secondary_backend)

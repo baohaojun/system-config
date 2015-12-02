@@ -2,7 +2,8 @@
 #ifndef SOUNDSETTINGS_H
 #define SOUNDSETTINGS_H
 
-#include "plugins/pluginsettingswidget.h"
+#include "libsnore/settings/pluginsettingswidget.h"
+#include "libsnore/plugins/settingsplugin.h"
 
 class QLineEdit;
 class QSpinBox;
@@ -22,5 +23,7 @@ private:
     QSpinBox *m_spinBoxVolume;
 
 };
+
+SNORE_DECLARE_SETTINGS_PLUGIN(SoundSettings);
 
 #endif // SOUNDSETTINGS_H

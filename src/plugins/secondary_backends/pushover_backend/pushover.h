@@ -31,8 +31,6 @@ public:
     Pushover() = default;
     ~Pushover() = default;
 
-    Snore::PluginSettingsWidget *settingsWidget() override;
-
 protected:
     void setDefaultSettings() override;
 
