@@ -47,25 +47,25 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
     m_registerButton->setEnabled(false);
 
     // TODO: find a replacement
-/*    PushoverFrontend *pushover = dynamic_cast<PushoverFrontend *>(plugin);
-    m_errorMessageLabel->setText(pushover->errorMessage());
+    /*    PushoverFrontend *pushover = dynamic_cast<PushoverFrontend *>(plugin);
+        m_errorMessageLabel->setText(pushover->errorMessage());
 
-    connect(pushover, &PushoverFrontend::loggedInChanged, this, &PushoverSettings::slotUpdateLoginState);
-    connect(pushover, &PushoverFrontend::error, [this](QString message) {
-        m_errorMessageLabel->setText(message);
-    });
+        connect(pushover, &PushoverFrontend::loggedInChanged, this, &PushoverSettings::slotUpdateLoginState);
+        connect(pushover, &PushoverFrontend::error, [this](QString message) {
+            m_errorMessageLabel->setText(message);
+        });
 
-    slotUpdateLoginState(pushover->isLoggedIn());
+        slotUpdateLoginState(pushover->isLoggedIn());
 
-    connect(m_registerButton, &QPushButton::clicked, [pushover, this]() {
-        m_registerButton->setEnabled(false);
-        if (!pushover->isLoggedIn()) {
-            pushover->login(m_emailLineEdit->text(), m_passwordLineEdit->text(), m_deviceLineEdit->text());
-        } else {
-            pushover->logOut();
-        }
-    });
-    */
+        connect(m_registerButton, &QPushButton::clicked, [pushover, this]() {
+            m_registerButton->setEnabled(false);
+            if (!pushover->isLoggedIn()) {
+                pushover->login(m_emailLineEdit->text(), m_passwordLineEdit->text(), m_deviceLineEdit->text());
+            } else {
+                pushover->logOut();
+            }
+        });
+        */
 }
 
 PushoverSettings::~PushoverSettings()

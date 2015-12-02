@@ -22,15 +22,16 @@
 #include "libsnore/plugins/plugins.h"
 #include "libsnore/settings/pluginsettingswidget.h"
 
-namespace Snore{
+namespace Snore
+{
 
 class SNORE_SETTINGS_EXPORT Settings
 {
 public:
-  /**
-     *
-     * @return A list of widgets a settings dialog.
-     */
+    /**
+       *
+       * @return A list of widgets a settings dialog.
+       */
     static QList<PluginSettingsWidget *> settingWidgets(SnorePlugin::PluginTypes type);
 
 };

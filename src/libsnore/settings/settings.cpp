@@ -24,27 +24,25 @@
 
 using namespace Snore;
 
-
 QList<PluginSettingsWidget *> Settings::settingWidgets(SnorePlugin::PluginTypes type)
 {
     SnoreCorePrivate *core(SnoreCorePrivate::instance());
     QList<PluginSettingsWidget *> list;
     foreach(const QString & name, core->m_pluginNames[type]) {
         //TODO: mem leak?
-        
+
         SnorePlugin *plugin = core->m_plugins[qMakePair(type, name)];
-        SettingsPlugin *settingsPlugin = qobject_cast< Snore::SettingsPlugin* >(core->m_plugins[qMakePair(Snore::SnorePlugin::SETTINGS, name)]);
-        if(settingsPlugin){
-          PluginSettingsWidget *widget = settingsPlugin->settingsWidget(plugin);
-          if (widget) {
-              list.append(widget);
-          }
-        }else{
-            if(!qobject_cast< Snore::SnoreBackend* >(plugin))
-            {
+        SettingsPlugin *settingsPlugin = qobject_cast< Snore::SettingsPlugin * >(core->m_plugins[qMakePair(Snore::SnorePlugin::SETTINGS, name)]);
+        if (settingsPlugin) {
+            PluginSettingsWidget *widget = settingsPlugin->settingsWidget(plugin);
+            if (widget) {
+                list.append(widget);
+            }
+        } else {
+            if (!qobject_cast< Snore::SnoreBackend * >(plugin)) {
                 list.append(new PluginSettingsWidget(plugin));
-            }            
-        }        
+            }
+        }
     }
     qSort(list.begin(), list.end(), [](PluginSettingsWidget * a, PluginSettingsWidget * b) {
         return a->name() < b->name();

@@ -97,10 +97,10 @@ void TrayIconNotifer::actionInvoked()
 }
 
 bool TrayIconNotifer::isReady()
-{    
-    if(!qobject_cast< QApplication* >(qApp)){
-     setErrorString(tr("This plugin only works with QApllication"));
-     return false;
+{
+    if (!qobject_cast< QApplication * >(qApp)) {
+        setErrorString(tr("This plugin only works with QApllication"));
+        return false;
     }
     return true;
 }

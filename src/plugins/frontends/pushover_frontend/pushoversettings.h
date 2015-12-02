@@ -21,7 +21,6 @@
 #include "libsnore/settings/pluginsettingswidget.h"
 #include "libsnore/plugins/settingsplugin.h"
 
-
 class QLineEdit;
 class QPushButton;
 class QLabel;

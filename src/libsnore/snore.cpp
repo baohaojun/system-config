@@ -209,7 +209,6 @@ void SnoreCore::setDefaultApplication(Application app)
     d->m_defaultApp = app;
 }
 
-
 QVariant SnoreCore::settingsValue(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);

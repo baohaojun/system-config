@@ -38,7 +38,6 @@ private:
 
 };
 
-
 SNORE_DECLARE_SETTINGS_PLUGIN(ToastySettings);
 
 #endif // TOASTYSETTINGS_H

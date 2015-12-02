@@ -19,46 +19,45 @@
 #ifndef SETTINGSPLUGIN_H
 #define SETTINGSPLUGIN_H
 
-
 #include "libsnore/snore_exports.h"
 #include "libsnore/plugins/plugins.h"
 
-namespace Snore {
+namespace Snore
+{
 
-class PluginSettingsWidget;  
+class PluginSettingsWidget;
 
 class SNORE_EXPORT SettingsPlugin :  public SnorePlugin
 {
-Q_OBJECT
-Q_INTERFACES(Snore::SnorePlugin)
+    Q_OBJECT
+    Q_INTERFACES(Snore::SnorePlugin)
 public:
-SettingsPlugin();
-~SettingsPlugin();
+    SettingsPlugin();
+    ~SettingsPlugin();
 
-PluginTypes type() const override{
-  return SnorePlugin::SETTINGS;
-};
+    PluginTypes type() const override
+    {
+        return SnorePlugin::SETTINGS;
+    };
 
-virtual PluginSettingsWidget *settingsWidget(SnorePlugin *parent) = 0;
+    virtual PluginSettingsWidget *settingsWidget(SnorePlugin *parent) = 0;
 
 };
 
 }
 
-
 Q_DECLARE_INTERFACE(Snore::SettingsPlugin,
                     "org.Snore.SettingsPlugin/1.0")
 
 #define SNORE_DECLARE_SETTINGS_PLUGIN(NAME)\
-class NAMESettings : public Snore::SettingsPlugin{\
-    Q_OBJECT\
-    Q_INTERFACES(Snore::SettingsPlugin)\
-    Q_PLUGIN_METADATA(IID "org.Snore.SettingsPlugin/1.0" FILE "plugin.json")\
-public:\
-  Snore::PluginSettingsWidget *settingsWidget(Snore::SnorePlugin *parent) override{\
-      return new NAME(parent);\
-}\
-};
-  
+    class NAMESettings : public Snore::SettingsPlugin{\
+        Q_OBJECT\
+        Q_INTERFACES(Snore::SettingsPlugin)\
+        Q_PLUGIN_METADATA(IID "org.Snore.SettingsPlugin/1.0" FILE "plugin.json")\
+    public:\
+        Snore::PluginSettingsWidget *settingsWidget(Snore::SnorePlugin *parent) override{\
+            return new NAME(parent);\
+        }\
+    };
 
 #endif // SETTINGSPLUGIN_H

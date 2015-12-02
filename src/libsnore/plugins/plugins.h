@@ -136,7 +136,6 @@ public:
     void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
     void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
 
-
 Q_SIGNALS:
     void enabledChanged(bool enabled);
     void error(const QString &error);
