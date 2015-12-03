@@ -78,8 +78,8 @@ void  FreedesktopBackend::slotNotify(Notification noti)
         m_dbusIdMap.take(updateId);
     }
 
-    QString title = noti.application().name() + QLatin1String(" - ") + noti.title(m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP);
-    QString body(noti.text(m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP));
+    QString title = noti.application().name() + QLatin1String(" - ") + noti.title(m_supportsRichtext ? Utils::AllMarkup : Utils::NoMarkup);
+    QString body(noti.text(m_supportsRichtext ? Utils::AllMarkup : Utils::NoMarkup));
     //TODO: add app icon hint?
     QDBusPendingReply<uint>  id = m_interface->Notify(noti.application().name(), updateId, QString(), title,
                                   body, actions, hints, noti.isSticky() ? -1 : noti.timeout() * 1000);
@@ -126,16 +126,16 @@ void FreedesktopBackend::slotNotificationClosed(const uint &id, const uint &reas
     Notification::CloseReasons closeReason;
     switch (reason) {
     case (1):
-        closeReason = Notification::TIMED_OUT;
+        closeReason = Notification::TimedOut;
         break;
     case (2):
-        closeReason = Notification::DISMISSED;
+        closeReason = Notification::Dismissed;
         break;
     case (3):
-        closeReason = Notification::CLOSED;
+        closeReason = Notification::Closed;
         break;
     default:
-        closeReason = Notification::NONE;
+        closeReason = Notification::None;
     }
 
     qCDebug(SNORE) << id << "|" << closeReason << reason;

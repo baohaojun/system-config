@@ -33,7 +33,7 @@ uint NotificationData::m_idCount = 1;
 NotificationData::NotificationData(const Snore::Application &application, const Snore::Alert &alert, const QString &title, const QString &text, const Icon &icon,
                                    int timeout, Notification::Prioritys priority):
     m_id(m_idCount++),
-    m_timeout(priority == Notification::EMERGENCY ? 0 : timeout),
+    m_timeout(priority == Notification::Emergency ? 0 : timeout),
     m_application(application),
     m_alert(alert),
     m_title(title),
@@ -49,7 +49,7 @@ NotificationData::NotificationData(const Snore::Application &application, const 
 
 Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
     m_id(m_idCount++),
-    m_timeout(priority == Notification::EMERGENCY ? 0 : timeout),
+    m_timeout(priority == Notification::Emergency ? 0 : timeout),
     m_application(old.application()),
     m_alert(old.alert()),
     m_title(title),
@@ -82,10 +82,10 @@ void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
     stopTimeoutTimer();
 }
 
-QString NotificationData::resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags)
+QString NotificationData::resolveMarkup(const QString &string, Utils::MarkupFlags flags)
 {
     if (!m_hints.value("use-markup").toBool()) {
-        if (flags == Utils::NO_MARKUP) {
+        if (flags == Utils::NoMarkup) {
             return string;
         } else {
             return Utils::normalizeMarkup(string.toHtmlEscaped(), flags);

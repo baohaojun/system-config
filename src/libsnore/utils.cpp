@@ -76,33 +76,33 @@ void Utils::raiseWindowToFront(qlonglong wid)
         STRING = STRING.replace(regexp, QStringLiteral("\\1"));\
     }\
      
-QString Utils::normalizeMarkup(QString string, MARKUP_FLAGS tags)
+QString Utils::normalizeMarkup(QString string, MarkupFlags tags)
 {
     static QMutex mutex;
-    if (tags == ALL_MARKUP) {
+    if (tags == AllMarkup) {
         return string;
-    } else if (tags == NO_MARKUP) {
+    } else if (tags == NoMarkup) {
         return QTextDocumentFragment::fromHtml(string).toPlainText();
     }
 
     QMutexLocker lock(&mutex);
-    if (~tags & Utils::BREAK) {
+    if (~tags & Utils::Break) {
         static QRegExp br(QLatin1String("<br>"));
         string = string.replace(br, QStringLiteral("\n"));
     }
-    if (~tags & Utils::HREF) {
+    if (~tags & Utils::Href) {
         HTML_REPLACE(string, "<a href=.*>([^<]*)</a>");
     }
-    if (~tags & Utils::ITALIC) {
+    if (~tags & Utils::Italic) {
         HTML_REPLACE(string, "<i>([^<]*)</i>");
     }
-    if (~tags & Utils::BOLD) {
+    if (~tags & Utils::Bold) {
         HTML_REPLACE(string, "<b>([^<]*)</b>");
     }
-    if (~tags & Utils::UNDERLINE) {
+    if (~tags & Utils::Underline) {
         HTML_REPLACE(string, "<u>([^<]*)</u>");
     }
-    if (~tags & Utils::FONT) {
+    if (~tags & Utils::Font) {
         HTML_REPLACE(string, "<font.*>([^<]*)</font>");
     }
     return string;

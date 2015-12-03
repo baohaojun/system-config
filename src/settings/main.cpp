@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     app.setOrganizationName(QStringLiteral("SnoreNotify"));
     app.setApplicationVersion(Snore::Version::version());
 
-    Snore::SnoreCore::instance().loadPlugins(Snore::SnorePlugin::ALL);
+    Snore::SnoreCore::instance().loadPlugins(Snore::SnorePlugin::All);
     Snore::SnoreCorePrivate::instance()->defaultApplication().hints().setValue("use-markup", QVariant::fromValue(true));
 
     QCommandLineParser parser;
@@ -108,9 +108,9 @@ int main(int argc, char *argv[])
 
     QString appName = parser.value(appNameCommand);
 
-    SettingsType type = GLOBAL_SETTING;
+    SettingsType type = GlobalSettings;
     if (appName != QStringLiteral("global")) {
-        type = LOCAL_SETTING;
+        type = LocalSettings;
     }
 
     if (parser.isSet(listAppsCommand)) {

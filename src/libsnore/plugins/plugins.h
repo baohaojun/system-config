@@ -46,38 +46,38 @@ public:
         /**
          * Flag for loading no plugins.
          */
-        NONE                = 0,
+        None                = 0,
 
         /**
          * Backends are those plugins that are capable of reporting user interaction.
          */
-        BACKEND             = 1 << 0,
+        Backend             = 1 << 0,
 
         /**
          * Secondary backaends are non interactive.
          * Redirection or playback of a sound file.
          */
-        SECONDARY_BACKEND   = 1 << 1,
+        SecondaryBackend   = 1 << 1,
 
         /**
          * Frontends are capable of recieving notifications.
          */
-        FRONTEND            = 1 << 2,
+        Frontend            = 1 << 2,
 
         /**
          * Generell plugins, currently there are not plugins implemented.
          */
-        PLUGIN              = 1 << 3,
+        Plugin              = 1 << 3,
 
         /**
          * A settings page for a Plugin.
          */
-        SETTINGS    = 1 << 4,
+        Settings    = 1 << 4,
 
         /**
          * Flag for loading all plugins.
          */
-        ALL                 = ~0
+        All                 = ~0
     };
 
     Q_DECLARE_FLAGS(PluginTypes, PluginType)
@@ -132,9 +132,9 @@ public:
      */
     QString errorString() const;
 
-    QVariant settingsValue(const QString &key, SettingsType type = GLOBAL_SETTING) const;
-    void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
-    void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
+    QVariant settingsValue(const QString &key, SettingsType type = GlobalSettings) const;
+    void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSettings);
+    void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSettings);
 
 Q_SIGNALS:
     void enabledChanged(bool enabled);

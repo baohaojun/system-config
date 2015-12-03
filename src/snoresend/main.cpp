@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
     if (parser.isSet(title) && parser.isSet(message)) {
         SnoreCore &core = SnoreCore::instance();
 
-        core.loadPlugins(SnorePlugin::BACKEND | SnorePlugin::SECONDARY_BACKEND);
+        core.loadPlugins(SnorePlugin::Backend | SnorePlugin::SecondaryBackend);
 
         Icon icon = Icon::defaultIcon();
         if (parser.isSet(iconPath)) {
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
                 QDebug(&reason) << noti.closeReason();
                 cout << qPrintable(reason) << endl;
             }
-            if (noti.closeReason() == Notification::CLOSED) {
+            if (noti.closeReason() == Notification::Closed) {
                 if (parser.isSet(_bringProcessToFront)) {
                     bringToFront(parser.value(_bringProcessToFront));
                 } else if (parser.isSet(_bringWindowToFront)) {

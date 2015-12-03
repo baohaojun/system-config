@@ -16,8 +16,8 @@ public:
         app(QStringLiteral("Test"), Icon::defaultIcon())
     {
         SnoreCore &instance = SnoreCore::instance();
-        instance.loadPlugins(SnorePlugin::BACKEND);
-        instance.setSettingsValue(QStringLiteral("Timeout"), 5, LOCAL_SETTING);
+        instance.loadPlugins(SnorePlugin::Backend);
+        instance.setSettingsValue(QStringLiteral("Timeout"), 5, LocalSettings);
         SnoreCore::instance().registerApplication(app);
     }
 
@@ -30,9 +30,9 @@ private Q_SLOTS:
 private:
     void testString(QString message)
     {
-        qDebug() << Utils::normalizeMarkup(message, Utils::NO_MARKUP);
+        qDebug() << Utils::normalizeMarkup(message, Utils::NoMarkup);
         SnoreCore &snore = SnoreCore::instance();
-        QStringList backends = snore.pluginNames(SnorePlugin::BACKEND);
+        QStringList backends = snore.pluginNames(SnorePlugin::Backend);
         auto notify = [&backends, &snore, &message, this](Notification n) {
             qDebug() << n << "closed";
             qDebug() << backends.size();
@@ -42,7 +42,7 @@ private:
             QString old = snore.primaryNotificationBackend();
             while (snore.primaryNotificationBackend() == old) {
                 QString p = backends.takeLast();
-                snore.setSettingsValue(QStringLiteral("PrimaryBackend"), p, LOCAL_SETTING);
+                snore.setSettingsValue(QStringLiteral("PrimaryBackend"), p, LocalSettings);
                 SnoreCorePrivate::instance()->syncSettings();
                 if (snore.primaryNotificationBackend() == p) {
                     qDebug() << p;

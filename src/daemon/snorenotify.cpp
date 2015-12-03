@@ -28,7 +28,7 @@ using namespace Snore;
 SnoreNotify::SnoreNotify()
 {
     m_trayIcon = new TrayIcon();
-    SnoreCore::instance().loadPlugins(SnorePlugin::ALL);
+    SnoreCore::instance().loadPlugins(SnorePlugin::All);
     m_trayIcon->initConextMenu();
 
     qCDebug(SNORE) << "Snorenotfiy initialized with" << SnoreCore::instance().primaryNotificationBackend();

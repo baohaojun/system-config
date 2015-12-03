@@ -74,10 +74,10 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
         return;
     }
     Q_D(SnoreCore);
-    setSettingsValue(QStringLiteral("PluginTypes"), QVariant::fromValue(types), LOCAL_SETTING);
+    setSettingsValue(QStringLiteral("PluginTypes"), QVariant::fromValue(types), LocalSettings);
     qCDebug(SNORE) << "Loading plugin types:" << types;
     foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
-        if (type != SnorePlugin::ALL && types & type) {
+        if (type != SnorePlugin::All && types & type) {
             foreach(PluginContainer * info, PluginContainer::pluginCache(type).values()) {
                 SnorePlugin *plugin = info->load();
                 if (!plugin) {
@@ -85,13 +85,13 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 }
 
                 switch (info->type()) {
-                case SnorePlugin::BACKEND:
+                case SnorePlugin::Backend:
                     break;
-                case SnorePlugin::SECONDARY_BACKEND:
-                case SnorePlugin::FRONTEND:
-                case SnorePlugin::PLUGIN:
-                case SnorePlugin::SETTINGS:
-                    plugin->setEnabled(plugin->settingsValue(QStringLiteral("Enabled"), LOCAL_SETTING).toBool());
+                case SnorePlugin::SecondaryBackend:
+                case SnorePlugin::Frontend:
+                case SnorePlugin::Plugin:
+                case SnorePlugin::Settings:
+                    plugin->setEnabled(plugin->settingsValue(QStringLiteral("Enabled"), LocalSettings).toBool());
                     break;
                 default:
                     qCWarning(SNORE) << "Plugin Cache corrupted\n" << info->file() << info->type();
@@ -125,7 +125,7 @@ void SnoreCore::broadcastNotification(Notification notification)
     qCDebug(SNORE) << "Broadcasting" << notification << "timeout:" << notification.timeout();
     if (d->m_notificationBackend != nullptr) {
         if (notification.isUpdate() && !d->m_notificationBackend->canUpdateNotification()) {
-            requestCloseNotification(notification.old(), Notification::REPLACED);
+            requestCloseNotification(notification.old(), Notification::Replaced);
         }
     }
     notification.data()->setBroadcasted();
@@ -213,7 +213,7 @@ QVariant SnoreCore::settingsValue(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);
     QString nk = d->normalizeSettingsKey(key, type);
-    if (type == LOCAL_SETTING && !d->m_settings->contains(nk)) {
+    if (type == LocalSettings && !d->m_settings->contains(nk)) {
         nk = d->normalizeSettingsKey(key + QStringLiteral("-SnoreDefault"), type);
     }
     return d->m_settings->value(nk);
@@ -247,7 +247,7 @@ void SnoreCore::displayExampleNotification()
     QString text = QLatin1String("<i>") + tr("This is %1").arg(app.name()) + QLatin1String("</i><br>"
                    "<b>") + tr("Everything is awesome!") + QLatin1String("</b><br>");
     if (!app.constHints().value("use-markup").toBool()) {
-        text = Utils::normalizeMarkup(text, Utils::NO_MARKUP);
+        text = Utils::normalizeMarkup(text, Utils::NoMarkup);
     }
     Notification noti(app, app.defaultAlert(), tr("Hello There!"), text, app.icon());
     noti.addAction(Action(1, tr("Awesome Action!")));

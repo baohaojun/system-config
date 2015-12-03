@@ -32,7 +32,7 @@ QList<PluginSettingsWidget *> Settings::settingWidgets(SnorePlugin::PluginTypes 
         //TODO: mem leak?
 
         SnorePlugin *plugin = core->m_plugins[qMakePair(type, name)];
-        SettingsPlugin *settingsPlugin = qobject_cast< Snore::SettingsPlugin * >(core->m_plugins[qMakePair(Snore::SnorePlugin::SETTINGS, name)]);
+        SettingsPlugin *settingsPlugin = qobject_cast< Snore::SettingsPlugin * >(core->m_plugins[qMakePair(Snore::SnorePlugin::Settings, name)]);
         if (settingsPlugin) {
             PluginSettingsWidget *widget = settingsPlugin->settingsWidget(plugin);
             if (widget) {

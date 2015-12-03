@@ -100,9 +100,9 @@ void NotifyWidget::display(const Notification &notification)
     m_image = QUrl::fromLocalFile(notification.icon().localUrl(QSize(m_imageSize, m_imageSize)));
     emit imageChanged();
 
-    m_title = notification.title(Utils::ALL_MARKUP);
+    m_title = notification.title(Utils::AllMarkup);
     emit titleChanged();
-    m_body = notification.text(Utils::ALL_MARKUP);
+    m_body = notification.text(Utils::AllMarkup);
     emit bodyChanged();
 
     if (!notification.isUpdate()) {

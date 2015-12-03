@@ -37,7 +37,7 @@ public:
 
     PluginTypes type() const override
     {
-        return SnorePlugin::SETTINGS;
+        return SnorePlugin::Settings;
     };
 
     virtual PluginSettingsWidget *settingsWidget(SnorePlugin *parent) = 0;

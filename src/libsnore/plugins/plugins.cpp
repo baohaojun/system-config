@@ -101,7 +101,7 @@ QString SnorePlugin::settingsVersion() const
 
 void SnorePlugin::setDefaultSettings()
 {
-    setDefaultSettingsValue(QStringLiteral("Enabled"), false, LOCAL_SETTING);
+    setDefaultSettingsValue(QStringLiteral("Enabled"), false, LocalSettings);
 }
 
 void SnorePlugin::setErrorString(const QString &_error)

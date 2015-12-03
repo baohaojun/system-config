@@ -111,7 +111,7 @@ public:
      *
      * @return a list of plugins
      */
-    const QStringList pluginNames(SnorePlugin::PluginTypes type = SnorePlugin::ALL) const;
+    const QStringList pluginNames(SnorePlugin::PluginTypes type = SnorePlugin::All) const;
 
     /**
      *
@@ -138,9 +138,9 @@ public:
      */
     void setDefaultApplication(Application app);
 
-    QVariant settingsValue(const QString &key, SettingsType type = GLOBAL_SETTING) const;
-    void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
-    void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GLOBAL_SETTING);
+    QVariant settingsValue(const QString &key, SettingsType type = GlobalSettings) const;
+    void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSettings);
+    void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSettings);
 
     Notification getActiveNotificationByID(uint id) const;
 

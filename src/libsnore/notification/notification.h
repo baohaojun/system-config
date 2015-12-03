@@ -49,35 +49,35 @@ public:
         /**
          * The default value, the notification was not closed.
          */
-        NONE = 0,
+        None = 0,
 
         /**
          * The Notification was closed becaouse it timed out.
          */
-        TIMED_OUT = 1,
+        TimedOut = 1,
 
         /**
          * The Notification was dismissed by the user, close button.
          */
-        DISMISSED = 2,
+        Dismissed = 2,
 
         /**
          * The Notification was activated, an action was invoked.
          * @see actionInvoked()
          */
-        ACTIVATED = 3,
+        Activated = 3,
 
         /**
          * @deprecated same as ACTIVATED
          */
-        CLOSED = 3,
+        Closed = 3,
 
         /**
          * The notification was replaced by an update.
          * This value will be used if a notification backend does not support updating.
          *
          */
-        REPLACED = 4
+        Replaced = 4
     };
     Q_ENUMS(CloseReasons)
 
@@ -89,27 +89,27 @@ public:
         /**
          * Indicates the lowes priority. The backend might ignore the notification.
          */
-        LOWEST = -2,
+        Lowest = -2,
 
         /**
          * Indicates a low priority.
          */
-        LOW = -1,
+        Low = -1,
 
         /**
          * The default priority.
          */
-        NORMAL = 0,
+        Normal = 0,
 
         /**
          * Indicates a priority above the normal level.
          */
-        HIGH = +1,
+        High = +1,
 
         /**
          * Indicates a emegency priority, the notifications is sticky and should be acknowlegded.
          */
-        EMERGENCY = +2
+        Emergency = +2
     };
 
     Notification();
@@ -123,7 +123,7 @@ public:
      * @param timeout the timeout
      * @param priority the priority
      */
-    explicit Notification(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Notification::Prioritys priority = NORMAL);
+    explicit Notification(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Notification::Prioritys priority = Normal);
 
     /**
      * Creates and update Notification replacing an existing Notification
@@ -134,7 +134,7 @@ public:
      * @param timeout the timeout
      * @param priority the piority
      */
-    explicit Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Snore::Notification::Prioritys priority = NORMAL);
+    explicit Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Snore::Notification::Prioritys priority = Normal);
 
     /**
      * The copy constructor
@@ -178,13 +178,13 @@ public:
      * Returns the title of the notification.
      * @param flags the supported markup flags.
      */
-    QString title(Utils::MARKUP_FLAGS flags = Utils::NO_MARKUP) const;
+    QString title(Utils::MarkupFlags flags = Utils::NoMarkup) const;
 
     /**
      * Returns the notification text.
      * @param flags the supported markup flags.
      */
-    QString text(Utils::MARKUP_FLAGS flags = Utils::NO_MARKUP) const;
+    QString text(Utils::MarkupFlags flags = Utils::NoMarkup) const;
 
     /**
      *

@@ -92,12 +92,12 @@ Application &Notification::application() const
     return d->m_application;
 }
 
-QString Notification::title(Utils::MARKUP_FLAGS flags) const
+QString Notification::title(Utils::MarkupFlags flags) const
 {
     return d->resolveMarkup(d->m_title, flags);
 }
 
-QString Notification::text(Utils::MARKUP_FLAGS flags) const
+QString Notification::text(Utils::MarkupFlags flags) const
 {
     return d->resolveMarkup(d->m_text, flags);
 }
@@ -182,7 +182,7 @@ NotificationData *Notification::data()
 
 int Notification::defaultTimeout()
 {
-    return SnoreCore::instance().settingsValue(QStringLiteral("Timeout"), LOCAL_SETTING).toInt();
+    return SnoreCore::instance().settingsValue(QStringLiteral("Timeout"), LocalSettings).toInt();
 }
 
 QDataStream &operator<< (QDataStream &stream, const Notification &noti)
@@ -197,11 +197,11 @@ QDebug operator <<(QDebug debug, const Snore::Notification::CloseReasons &flags)
 {
     debug.nospace() << "CloseReasons(";
     switch (flags) {
-        debugPrintEnum(Notification::NONE);
-        debugPrintEnum(Notification::TIMED_OUT);
-        debugPrintEnum(Notification::DISMISSED);
-        debugPrintEnum(Notification::ACTIVATED);
-        debugPrintEnum(Notification::REPLACED);
+        debugPrintEnum(Notification::None);
+        debugPrintEnum(Notification::TimedOut);
+        debugPrintEnum(Notification::Dismissed);
+        debugPrintEnum(Notification::Activated);
+        debugPrintEnum(Notification::Replaced);
     }
     return debug.space();
 }
@@ -210,9 +210,9 @@ QDebug operator<< (QDebug debug, const Snore::Notification::Prioritys &flags)
 {
     debug.nospace() << "Prioritys(";
     switch (flags) {
-        debugPrintEnum(Notification::LOW);
-        debugPrintEnum(Notification::NORMAL);
-        debugPrintEnum(Notification::HIGH);
+        debugPrintEnum(Notification::Low);
+        debugPrintEnum(Notification::Normal);
+        debugPrintEnum(Notification::High);
     default:
         debug << QByteArray::number(flags, 16) << ")";
     }

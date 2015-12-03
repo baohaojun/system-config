@@ -52,7 +52,7 @@ SnoreCorePrivate::SnoreCorePrivate():
 
     qCDebug(SNORE) << "Temp dir is" << tempPath();
     qCDebug(SNORE) << "Snore settings are located in" << m_settings->fileName();
-    qCDebug(SNORE) << "Snore local settings are located in" << normalizeSettingsKey(QStringLiteral("Test"), LOCAL_SETTING);
+    qCDebug(SNORE) << "Snore local settings are located in" << normalizeSettingsKey(QStringLiteral("Test"), LocalSettings);
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(slotAboutToQuit()));
 }
@@ -85,11 +85,11 @@ void SnoreCorePrivate::slotNotificationDisplayed(Notification notification)
 bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 {
     Q_Q(SnoreCore);
-    if (m_pluginNames[SnorePlugin::BACKEND].contains(backend)) {
+    if (m_pluginNames[SnorePlugin::Backend].contains(backend)) {
         if (backend == q->primaryNotificationBackend()) {
             return true;
         }
-        const QHash<QString, PluginContainer *> backends = PluginContainer::pluginCache(SnorePlugin::BACKEND);
+        const QHash<QString, PluginContainer *> backends = PluginContainer::pluginCache(SnorePlugin::Backend);
         if (!backends.contains(backend)) {
             qCDebug(SNORE) << "Unknown Backend:" << backend;
             return false;
@@ -107,7 +107,7 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
         }
         m_notificationBackend = b;
         m_notificationBackend->enable();
-        q->setSettingsValue(QStringLiteral("PrimaryBackend"), backend, LOCAL_SETTING);
+        q->setSettingsValue(QStringLiteral("PrimaryBackend"), backend, LocalSettings);
 
         connect(b, &SnoreBackend::error, [this, b](const QString &) {
             slotInitPrimaryNotificationBackend();
@@ -121,8 +121,8 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 bool SnoreCorePrivate::slotInitPrimaryNotificationBackend()
 {
     Q_Q(SnoreCore);
-    qCDebug(SNORE) << q->settingsValue(QStringLiteral("PrimaryBackend"), LOCAL_SETTING).toString();
-    if (setBackendIfAvailible(q->settingsValue(QStringLiteral("PrimaryBackend"), LOCAL_SETTING).toString())) {
+    qCDebug(SNORE) << q->settingsValue(QStringLiteral("PrimaryBackend"), LocalSettings).toString();
+    if (setBackendIfAvailible(q->settingsValue(QStringLiteral("PrimaryBackend"), LocalSettings).toString())) {
         return true;
     }
 #ifdef Q_OS_WIN
@@ -162,7 +162,7 @@ void SnoreCorePrivate::init()
 
 void SnoreCorePrivate::setDefaultSettingsValueIntern(const QString &key, const QVariant &value)
 {
-    QString nk = normalizeSettingsKey(key + QLatin1String("-SnoreDefault"), LOCAL_SETTING);
+    QString nk = normalizeSettingsKey(key + QLatin1String("-SnoreDefault"), LocalSettings);
     if (!m_settings->contains(nk)) {
         m_settings->setValue(nk, value);
     }
@@ -171,7 +171,7 @@ void SnoreCorePrivate::setDefaultSettingsValueIntern(const QString &key, const Q
 void SnoreCorePrivate::syncSettings()
 {
     Q_Q(SnoreCore);
-    QString newBackend = q->settingsValue(QStringLiteral("PrimaryBackend"), LOCAL_SETTING).toString();
+    QString newBackend = q->settingsValue(QStringLiteral("PrimaryBackend"), LocalSettings).toString();
     if (!newBackend.isEmpty()) {
         QString oldBackend;
         if (m_notificationBackend) {
@@ -180,18 +180,18 @@ void SnoreCorePrivate::syncSettings()
             m_notificationBackend = nullptr;
         }
         if (!setBackendIfAvailible(newBackend)) {
-            qCWarning(SNORE) << "Failed to set new backend" << q->settingsValue(QStringLiteral("PrimaryBackend"), LOCAL_SETTING).toString() << "restoring" << oldBackend;
+            qCWarning(SNORE) << "Failed to set new backend" << q->settingsValue(QStringLiteral("PrimaryBackend"), LocalSettings).toString() << "restoring" << oldBackend;
             setBackendIfAvailible(oldBackend);
         }
     }
 
     auto types = SnorePlugin::types();
-    types.removeOne(SnorePlugin::BACKEND);
+    types.removeOne(SnorePlugin::Backend);
     foreach(auto type, types) {
         foreach(auto & pluginName, m_pluginNames[type]) {
             auto key = qMakePair(type, pluginName);
             SnorePlugin *plugin = m_plugins.value(key);
-            bool enable = m_plugins[key]->settingsValue(QStringLiteral("Enabled"), LOCAL_SETTING).toBool();
+            bool enable = m_plugins[key]->settingsValue(QStringLiteral("Enabled"), LocalSettings).toBool();
             plugin->setEnabled(enable);
         }
     }
@@ -245,7 +245,7 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
 
 void SnoreCorePrivate::slotAboutToQuit()
 {
-    for (PluginContainer *p : PluginContainer::pluginCache(SnorePlugin::ALL)) {
+    for (PluginContainer *p : PluginContainer::pluginCache(SnorePlugin::All)) {
         if (p->isLoaded()) {
             qCDebug(SNORE) << "deinitialize" << p->name();
             p->load()->disable();
@@ -271,7 +271,7 @@ void SnoreCorePrivate::startNotificationTimeoutTimer(Notification notification)
     timer->setInterval(notification.timeout() * 1000);
     connect(timer, &QTimer::timeout, [q, notification]() {
         qCDebug(SNORE) << notification;
-        q->requestCloseNotification(notification, Notification::TIMED_OUT);
+        q->requestCloseNotification(notification, Notification::TimedOut);
     });
     timer->start();
 }

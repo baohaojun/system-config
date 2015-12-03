@@ -46,8 +46,8 @@ public:
     bool isDirty();
 
 protected:
-    QVariant settingsValue(const QString &key, Snore::SettingsType type = Snore::GLOBAL_SETTING) const;
-    void setSettingsValue(const QString &key, const QVariant &settingsValue, Snore::SettingsType type = Snore::GLOBAL_SETTING);
+    QVariant settingsValue(const QString &key, Snore::SettingsType type = Snore::GlobalSettings) const;
+    void setSettingsValue(const QString &key, const QVariant &settingsValue, Snore::SettingsType type = Snore::GlobalSettings);
 
     virtual void load();
     virtual void save();

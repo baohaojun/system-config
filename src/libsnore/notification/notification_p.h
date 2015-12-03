@@ -45,7 +45,7 @@ public:
 
     void setCloseReason(Notification::CloseReasons r);
 
-    QString resolveMarkup(const QString &string, Utils::MARKUP_FLAGS flags);
+    QString resolveMarkup(const QString &string, Utils::MarkupFlags flags);
 
     void setBroadcasted();
 
@@ -83,7 +83,7 @@ private:
     QString m_text;
     Icon m_icon;
     Notification::Prioritys m_priority;
-    Notification::CloseReasons m_closeReason = Notification::NONE;
+    Notification::CloseReasons m_closeReason = Notification::None;
     Action m_actionInvoked;
     QHash<int, Action> m_actions;
     Hint m_hints;

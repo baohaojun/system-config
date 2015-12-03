@@ -31,58 +31,58 @@ class SNORE_EXPORT  Utils : public QObject
     Q_OBJECT
 public:
     /**
-     * The MARKUP_FLAG enum.
+     * The MarkupFlag enum.
      * If a falg is not present the markup key will be removed.
      * If any flag is present, special characters mus be html escaped.
      */
-    enum MARKUP_FLAG {
+    enum MarkupFlag {
         /**
          * No markup is supported.
          * All markup will be removed.
          */
-        NO_MARKUP   = 0,
+        NoMarkup   = 0,
 
         /**
          * Urls are supprotet.
          * &lt;a href="www.foo.bar"&gt;Foo Bar&lt;/a&gt;
          */
-        HREF        = 1 << 0,
+        Href        = 1 << 0,
 
         /**
          * Line breeaks &lt;br&gt; are supprotet.
          * If the flag is not present &lt;br&gt; will be replaced by \\n
          */
-        BREAK       = 1 << 1,
+        Break       = 1 << 1,
 
         /**
          * Bold &lt;b&gt; is supportet.
          */
-        BOLD        = 1 << 2,
+        Bold        = 1 << 2,
 
         /**
          * Italic &lt;i&gt; is supportet.
          */
-        ITALIC      = 1 << 3,
+        Italic      = 1 << 3,
 
         /**
          * Underline &lt;u&gt; is supportet.
          */
-        UNDERLINE   = 1 << 4,
+        Underline   = 1 << 4,
 
         /**
          * Fonst are supportet.
          * &lt;font color="blue"&gt; word &lt;/font&gt;
          */
-        FONT        = 1 << 5,
+        Font        = 1 << 5,
 
         /**
          * All markup is supported.
          * No markup will be removed.
          */
-        ALL_MARKUP  = ~0
+        AllMarkup  = ~0
     };
 
-    Q_DECLARE_FLAGS(MARKUP_FLAGS, MARKUP_FLAG)
+    Q_DECLARE_FLAGS(MarkupFlags, MarkupFlag)
 
     Utils(QObject *parent = nullptr);
     ~Utils();
@@ -103,7 +103,7 @@ public:
     /**
      * Removes unsupported markup tags from a string.
      */
-    static QString normalizeMarkup(QString string, MARKUP_FLAGS tags);
+    static QString normalizeMarkup(QString string, MarkupFlags tags);
 
     /**
      * Version number prefix for the settings.
@@ -121,7 +121,7 @@ public:
      */
     static inline QString normalizeSettingsKey(const QString &key, SettingsType type, const QString &application)
     {
-        if (type == LOCAL_SETTING) {
+        if (type == LocalSettings) {
             return settingsVersionSchema() + QLatin1String("/LocalSettings/") + application + QLatin1Char('/') + key;
         } else {
             return settingsVersionSchema() + QLatin1String("/GlobalSettings/") +  key;
@@ -138,6 +138,6 @@ private:
 };
 
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Utils::MARKUP_FLAGS)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Utils::MarkupFlags)
 
 #endif // UTILS_H

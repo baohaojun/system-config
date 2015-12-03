@@ -36,7 +36,7 @@ ApplicationData::ApplicationData(const QString &key, const QString &name, const 
     m_hint.setValue("pushover-token", QLatin1String("aFB1TPCyZkkr7mubCGEKy5vJEWak9t"));
     m_hint.setValue("use-markup", false);
     m_hint.setValue("silent", QVariant::fromValue(LambdaHint([]() {
-        return SnoreCore::instance().settingsValue(QStringLiteral("Silent"), LOCAL_SETTING);
+        return SnoreCore::instance().settingsValue(QStringLiteral("Silent"), LocalSettings);
     })));
 
 }

@@ -34,14 +34,14 @@ SnoreNotifier::SnoreNotifier():
         m_widgets[i] = w;
         connect(w, &NotifyWidget::dismissed, [this, w]() {
             Notification notification = w->notification();
-            closeNotification(notification, Notification::DISMISSED);
+            closeNotification(notification, Notification::Dismissed);
             slotCloseNotification(notification);
         });
 
         connect(w, &NotifyWidget::invoked, [this, w]() {
             Notification notification = w->notification();
             slotNotificationActionInvoked(notification);
-            closeNotification(notification, Notification::ACTIVATED);
+            closeNotification(notification, Notification::Activated);
             slotCloseNotification(notification);
         });
     }
