@@ -141,7 +141,7 @@ bool SnarlBackend::canUpdateNotification() const
 bool SnarlBackend::isReady()
 {
     if (!qobject_cast< QApplication * >(qApp)) {
-        setErrorString(tr("This plugin only works with QApllication"));
+        setErrorString(tr("This plugin only works with QApplication"));
         return false;
     }
 
