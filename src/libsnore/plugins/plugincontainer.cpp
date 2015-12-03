@@ -104,7 +104,7 @@ void PluginContainer::updatePluginCache()
             if (!name.isEmpty()) {
                 PluginContainer *info = new PluginContainer(file.fileName(), name, type);
                 s_pluginCache[type].insert(name, info);
-                qCDebug(SNORE) << "added" << name << "to cache";
+                qCDebug(SNORE) << "added" << type << ":" << name << "to cache";
             }
         }
     }

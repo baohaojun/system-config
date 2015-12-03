@@ -77,8 +77,12 @@ private:
     static inline const QStringList pluginFileFilters(Snore::SnorePlugin::PluginTypes type)
     {
         QStringList out;
+        QString typeName = SnorePlugin::typeToString(type).toLower();
+        if (type == Snore::SnorePlugin::SecondaryBackend) {
+            typeName = QStringLiteral("secondary_backend");
+        }
         for (const QString &extention : pluginExtentions()) {
-            out << QLatin1String("libsnore_") + SnorePlugin::typeToString(type).toLower() + QLatin1String("_*.") + extention;
+            out << QLatin1String("libsnore_") + typeName + QLatin1String("_*.") + extention;
         }
         return out;
     }
