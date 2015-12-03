@@ -17,7 +17,7 @@ public:
     {
         SnoreCore &instance = SnoreCore::instance();
         instance.loadPlugins(SnorePlugin::Backend);
-        instance.setSettingsValue(QStringLiteral("Timeout"), 5, LocalSettings);
+        instance.setSettingsValue(QStringLiteral("Timeout"), 5, LocalSetting);
         SnoreCore::instance().registerApplication(app);
     }
 
@@ -42,7 +42,7 @@ private:
             QString old = snore.primaryNotificationBackend();
             while (snore.primaryNotificationBackend() == old) {
                 QString p = backends.takeLast();
-                snore.setSettingsValue(QStringLiteral("PrimaryBackend"), p, LocalSettings);
+                snore.setSettingsValue(QStringLiteral("PrimaryBackend"), p, LocalSetting);
                 SnoreCorePrivate::instance()->syncSettings();
                 if (snore.primaryNotificationBackend() == p) {
                     qDebug() << p;

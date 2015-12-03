@@ -51,21 +51,21 @@ void SnoreToast::slotNotify(Notification notification)
     qCDebug(SNORE) << "SnoreToast" << arguements;
 
     connect(p, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [this, notification](int code) {
-        Notification::CloseReasons reason = Notification::NONE;
+        Notification::CloseReasons reason = Notification::None;
 
         switch (code) {
         case 0:
-            reason = Notification::ACTIVATED;
+            reason = Notification::Activated;
             slotNotificationActionInvoked(notification);
             break;
         case 1:
             //hidden;
             break;
         case 2:
-            reason = Notification::DISMISSED;
+            reason = Notification::Dismissed;
             break;
         case 3:
-            reason = Notification::TIMED_OUT;
+            reason = Notification::TimedOut;
             break;
         case -1:
             //failed
@@ -127,7 +127,7 @@ QProcess *SnoreToast::createProcess(Notification noti)
         setErrorString(name() + p->errorString());
         qCDebug(SNORE) << p->readAll();
         if (noti.isValid()) {
-            closeNotification(noti, Notification::NONE);
+            closeNotification(noti, Notification::None);
         }
         p->deleteLater();
     });

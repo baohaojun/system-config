@@ -62,13 +62,13 @@ void SnarlNetworkFrontend::slotNotificationClosed(Snore::Notification notificati
 
     if (notification.removeActiveIn(this)) {
         switch (notification.closeReason()) {
-        case Notification::TIMED_OUT:
+        case Notification::TimedOut:
             callback(notification, QStringLiteral("SNP/1.1/303/Notification timed out/"));
             break;
-        case Notification::ACTIVATED:
+        case Notification::Activated:
             callback(notification, QStringLiteral("SNP/1.1/307/Notification closed/"));
             break;
-        case Notification::DISMISSED:
+        case Notification::Dismissed:
             callback(notification, QStringLiteral("SNP/1.1/302/Notification cancelled/"));
             break;
         default:

@@ -69,22 +69,22 @@ public:
                 Notification::CloseReasons reason = Notification::NONE;
                 switch (action) {
                 case SnarlEnums::CallbackInvoked:
-                    reason = Notification::ACTIVATED;
+                    reason = Notification::Activated;
                     qCDebug(SNORE) << "Notification clicked";
                     break;
                 case SnarlEnums::NotifyAction:
-                    reason = Notification::ACTIVATED;
+                    reason = Notification::Activated;
                     qCDebug(SNORE) << "Notification action invoked";
                     if (notification.isValid()) {
                         m_snarl->slotNotificationActionInvoked(notification, notification.actions().value(data));
                     }
                     break;
                 case SnarlEnums::CallbackClosed:
-                    reason = Notification::DISMISSED;
+                    reason = Notification::Dismissed;
                     qCDebug(SNORE) << "Notification dismissed";
                     break;
                 case SnarlEnums::CallbackTimedOut:
-                    reason = Notification::TIMED_OUT;
+                    reason = Notification::TimedOut;
                     qCDebug(SNORE) << "Notification timed out";
                     break;
                 //away stuff

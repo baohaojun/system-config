@@ -108,9 +108,9 @@ int main(int argc, char *argv[])
 
     QString appName = parser.value(appNameCommand);
 
-    SettingsType type = GlobalSettings;
-    if (appName != QStringLiteral("global")) {
-        type = LocalSettings;
+    SettingsType type = GlobalSetting;
+    if (appName != QLatin1String("global")) {
+        type = LocalSetting;
     }
 
     if (parser.isSet(listAppsCommand)) {

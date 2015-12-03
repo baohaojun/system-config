@@ -73,7 +73,7 @@ uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     Application app;
-    Notification::Prioritys priotity = Notification::NORMAL;
+    Notification::Prioritys priotity = Notification::Normal;
 
     if (!SnoreCore::instance().aplications().contains(app_name)) {
         Icon appIcon(QIcon::fromTheme(app_icon, QIcon(QStringLiteral(":/root/snore.png"))));
@@ -116,19 +116,19 @@ void FreedesktopFrontend::CloseNotification(uint id)
 {
     Notification noti = SnoreCore::instance().getActiveNotificationByID(id);
     if (noti.isValid()) {
-        SnoreCore::instance().requestCloseNotification(noti, Notification::TIMED_OUT);
+        SnoreCore::instance().requestCloseNotification(noti, Notification::TimedOut);
     }
 }
 
 QStringList FreedesktopFrontend::GetCapabilities()
 {
-    return QStringList()
-           << QStringLiteral("body")
-           << QStringLiteral("urgency")
-           << QStringLiteral("body-hyperlinks")
-           << QStringLiteral("body-markup")
-           << QStringLiteral("icon-static")
-           << QStringLiteral("actions");
+    return QStringList({ QStringLiteral("body"),
+                         QStringLiteral("urgency"),
+                         QStringLiteral("body-hyperlinks"),
+                         QStringLiteral("body-markup"),
+                         QStringLiteral("icon-static"),
+                         QStringLiteral("actions")
+                       });
 }
 
 QString FreedesktopFrontend::GetServerInformation(QString &vendor, QString &version, QString &specVersion)

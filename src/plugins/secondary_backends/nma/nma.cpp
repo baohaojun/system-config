@@ -41,8 +41,8 @@ void NotifyMyAndroid::slotNotify(Notification notification)
                    + QLatin1String("&description=");
 
     if (notification.constHints().value("supports-markup").toBool()) {
-        data += notification.text(Utils::HREF | Utils::BOLD | Utils::BREAK |
-                                  Utils::UNDERLINE | Utils::FONT | Utils::ITALIC)
+        data += notification.text(Utils::Href | Utils::Bold | Utils::Break |
+                                  Utils::Underline | Utils::Font | Utils::Italic)
                 + QLatin1String("&content-type=text/html");
     } else {
         data += notification.text();

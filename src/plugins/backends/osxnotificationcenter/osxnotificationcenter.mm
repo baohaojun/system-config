@@ -76,7 +76,7 @@ BOOL installNSBundleHook()
         return;
     }
     auto snoreNotification = m_IdToNotification.take(notificationId);
-    snoreNotification.data()->setCloseReason(Notification::ACTIVATED);
+    snoreNotification.data()->setCloseReason(Notification::Activated);
     emitNotificationClicked(snoreNotification);
 }
 @end

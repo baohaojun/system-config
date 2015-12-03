@@ -27,8 +27,8 @@ namespace Snore
 {
 
 enum SettingsType {
-    GlobalSettings,
-    LocalSettings
+    GlobalSetting,
+    LocalSetting
 };
 
 }

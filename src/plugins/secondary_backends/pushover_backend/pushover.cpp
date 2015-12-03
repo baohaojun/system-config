@@ -47,7 +47,7 @@ void Pushover::slotNotify(Notification notification)
 
     QString textString;
     if (notification.constHints().value("use-markup").toBool()) {
-        textString = notification.text(Utils::HREF | Utils::BOLD | Utils::UNDERLINE | Utils::FONT | Utils::ITALIC);
+        textString = notification.text(Utils::Href | Utils::Bold | Utils::Underline | Utils::Font | Utils::Italic);
 
         QHttpPart html;
         html.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"html\"")));
@@ -68,7 +68,7 @@ void Pushover::slotNotify(Notification notification)
     priority.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"priority\"")));
     priority.setBody(QString::number(notification.priority()).toUtf8().constData());
     mp->append(priority);
-    if (notification.priority() == Notification::EMERGENCY) {
+    if (notification.priority() == Notification::Emergency) {
 
         QHttpPart retry;
         retry.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"retry\"")));
@@ -86,14 +86,14 @@ void Pushover::slotNotify(Notification notification)
     if (notification.hints().value("silent").toBool()) {
         sound.setBody("none");
     } else {
-        sound.setBody(settingsValue(QStringLiteral("Sound"), LOCAL_SETTING).toString().toUtf8().constData());
+        sound.setBody(settingsValue(QStringLiteral("Sound"), LocalSetting).toString().toUtf8().constData());
     }
     mp->append(sound);
 
-    if (!settingsValue(QStringLiteral("Devices"), LOCAL_SETTING).toString().isEmpty()) {
+    if (!settingsValue(QStringLiteral("Devices"), LocalSetting).toString().isEmpty()) {
         QHttpPart devices;
         devices.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"device\"")));
-        devices.setBody(settingsValue(QStringLiteral("Devices"), LOCAL_SETTING).toString().toUtf8().constData());
+        devices.setBody(settingsValue(QStringLiteral("Devices"), LocalSetting).toString().toUtf8().constData());
         mp->append(devices);
     }
 
@@ -122,7 +122,7 @@ void Pushover::slotNotify(Notification notification)
 void Pushover::setDefaultSettings()
 {
     setDefaultSettingsValue(QStringLiteral("UserKey"), QString());
-    setDefaultSettingsValue(QStringLiteral("Sound"), QLatin1String("pushover"), LOCAL_SETTING);
-    setDefaultSettingsValue(QStringLiteral("Devices"), QString(), LOCAL_SETTING);
+    setDefaultSettingsValue(QStringLiteral("Sound"), QLatin1String("pushover"), LocalSetting);
+    setDefaultSettingsValue(QStringLiteral("Devices"), QString(), LocalSetting);
     SnoreSecondaryBackend::setDefaultSettings();
 }

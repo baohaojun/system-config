@@ -16,7 +16,7 @@ public:
     {
         SnoreCore &instance = SnoreCore::instance();
         instance.loadPlugins(SnorePlugin::Backend);
-        instance.setSettingsValue(QStringLiteral("Timeout"), 1, LocalSettings);
+        instance.setSettingsValue(QStringLiteral("Timeout"), 1, LocalSetting);
     }
 
     // clazy is complaining about this string but QStringLiteral won't work for the multiline string, so use QStringBuilder to silence it.

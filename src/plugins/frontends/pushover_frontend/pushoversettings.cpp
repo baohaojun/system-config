@@ -74,7 +74,7 @@ PushoverSettings::~PushoverSettings()
 
 void PushoverSettings::load()
 {
-    m_deviceLineEdit->setText(settingsValue(QStringLiteral("DeviceName"), Snore::LOCAL_SETTING).toString());
+    m_deviceLineEdit->setText(settingsValue(QStringLiteral("DeviceName"), Snore::LocalSetting).toString());
 }
 
 void PushoverSettings::save()

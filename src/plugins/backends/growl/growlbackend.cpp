@@ -39,17 +39,17 @@ GrowlBackend::GrowlBackend()
         {
             return;
         }
-        Notification::CloseReasons r = Notification::NONE;
+        Notification::CloseReasons r = Notification::None;
         std::string reason(data->reason);
         if (reason == "TIMEDOUT")
         {
-            r = Notification::TIMED_OUT;
+            r = Notification::TimedOut;
         } else if (reason == "CLOSED")
         {
-            r = Notification::DISMISSED;
+            r = Notification::Dismissed;
         } else if (reason == "CLICK")
         {
-            r = Notification::ACTIVATED;
+            r = Notification::Activated;
             s_instance->slotNotificationActionInvoked(n);
         }
         s_instance->closeNotification(n, r);

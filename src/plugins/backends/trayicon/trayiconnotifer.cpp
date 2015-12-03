@@ -27,7 +27,7 @@ void TrayIconNotifer::slotNotify(Notification notification)
         m_notificationQue.append(notification);
         displayNotification(icon);
     } else {
-        closeNotification(notification, Notification::CLOSED);
+        closeNotification(notification, Notification::Closed);
         setErrorString(QLatin1String("No tray-icon hint provided for ") + notification.application().name());
     }
 }
@@ -89,7 +89,7 @@ void TrayIconNotifer::actionInvoked()
     QSystemTrayIcon *icon = trayIcon(n.application());
     if (icon && n.isValid()) {
         slotNotificationActionInvoked(n);
-        closeNotification(n, Notification::ACTIVATED);
+        closeNotification(n, Notification::Activated);
         m_currentlyDisplaying = false;
         displayNotification(icon);
     }

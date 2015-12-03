@@ -52,7 +52,7 @@ PushoverFrontend::PushoverFrontend()
 
 void PushoverFrontend::login(const QString &email, const QString &password, const QString &deviceName)
 {
-    setSettingsValue(QStringLiteral("DeviceName"), deviceName, Snore::LOCAL_SETTING);
+    setSettingsValue(QStringLiteral("DeviceName"), deviceName, Snore::LocalSetting);
 
     QNetworkRequest request(QUrl(QStringLiteral("https://api.pushover.net/1/users/login.json")));
 
@@ -78,8 +78,8 @@ void PushoverFrontend::login(const QString &email, const QString &password, cons
 
 void PushoverFrontend::logOut()
 {
-    setSettingsValue(QStringLiteral("Secret"), QString(), LOCAL_SETTING);
-    setSettingsValue(QStringLiteral("DeviceID"), QString(), LOCAL_SETTING);
+    setSettingsValue(QStringLiteral("Secret"), QString(), LocalSetting);
+    setSettingsValue(QStringLiteral("DeviceID"), QString(), LocalSetting);
     m_socket->close();
     m_socket->deleteLater();
     emit loggedInChanged(false);
@@ -97,14 +97,14 @@ QString PushoverFrontend::errorMessage()
 
 void PushoverFrontend::setDefaultSettings()
 {
-    setDefaultSettingsValue(QStringLiteral("Secret"), QString(), LOCAL_SETTING);
-    setDefaultSettingsValue(QStringLiteral("DeviceID"), QString(), LOCAL_SETTING);
+    setDefaultSettingsValue(QStringLiteral("Secret"), QString(), LocalSetting);
+    setDefaultSettingsValue(QStringLiteral("DeviceID"), QString(), LocalSetting);
     SnoreFrontend::setDefaultSettings();
 }
 
 void PushoverFrontend::slotActionInvoked(Notification notification)
 {
-    if (notification.priority() == Notification::EMERGENCY) {
+    if (notification.priority() == Notification::Emergency) {
         qCWarning(SNORE) << "emergeency notification" << notification;
         acknowledgeNotification(notification);
     }
@@ -112,12 +112,12 @@ void PushoverFrontend::slotActionInvoked(Notification notification)
 
 QString PushoverFrontend::secret()
 {
-    return settingsValue(QStringLiteral("Secret"),  LOCAL_SETTING).toString();
+    return settingsValue(QStringLiteral("Secret"),  LocalSetting).toString();
 }
 
 QString PushoverFrontend::device()
 {
-    return settingsValue(QStringLiteral("DeviceID"),  LOCAL_SETTING).toString();
+    return settingsValue(QStringLiteral("DeviceID"),  LocalSetting).toString();
 }
 
 void PushoverFrontend::connectToService()
@@ -195,8 +195,8 @@ void PushoverFrontend::registerDevice(const QString &secret, const QString &devi
         reply->deleteLater();
         QJsonObject message = QJsonDocument::fromJson(input).object();
         if (message.value(QStringLiteral("status")).toInt() == 1) {
-            setSettingsValue(QStringLiteral("Secret"), secret, LOCAL_SETTING);
-            setSettingsValue(QStringLiteral("DeviceID"), message.value(QStringLiteral("id")).toString(), LOCAL_SETTING);;
+            setSettingsValue(QStringLiteral("Secret"), secret, LocalSetting);
+            setSettingsValue(QStringLiteral("DeviceID"), message.value(QStringLiteral("id")).toString(), LocalSetting);;
             connectToService();
         } else {
             qCWarning(SNORE) << "An error occure" << input;
@@ -247,7 +247,7 @@ void PushoverFrontend::getMessages()
                                notification.value(QStringLiteral("message")).toString(),
                                app.icon(), Notification::defaultTimeout(),
                                static_cast<Notification::Prioritys>(notification.value(QStringLiteral("priority")).toInt()));
-                if (n.priority() == Notification::EMERGENCY) {
+                if (n.priority() == Notification::Emergency) {
                     n.hints().setValue("receipt", notification.value(QStringLiteral("receipt")).toString());
                     n.hints().setValue("acked", notification.value(QStringLiteral("acked")).toInt());
                 }

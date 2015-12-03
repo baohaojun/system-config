@@ -121,7 +121,7 @@ public:
      */
     static inline QString normalizeSettingsKey(const QString &key, SettingsType type, const QString &application)
     {
-        if (type == LocalSettings) {
+        if (type == LocalSetting) {
             return settingsVersionSchema() + QLatin1String("/LocalSettings/") + application + QLatin1Char('/') + key;
         } else {
             return settingsVersionSchema() + QLatin1String("/GlobalSettings/") +  key;

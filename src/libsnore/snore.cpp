@@ -74,7 +74,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
         return;
     }
     Q_D(SnoreCore);
-    setSettingsValue(QStringLiteral("PluginTypes"), QVariant::fromValue(types), LocalSettings);
+    setSettingsValue(QStringLiteral("PluginTypes"), QVariant::fromValue(types), LocalSetting);
     qCDebug(SNORE) << "Loading plugin types:" << types;
     foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
         if (type != SnorePlugin::All && types & type) {
@@ -91,7 +91,7 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
                 case SnorePlugin::Frontend:
                 case SnorePlugin::Plugin:
                 case SnorePlugin::Settings:
-                    plugin->setEnabled(plugin->settingsValue(QStringLiteral("Enabled"), LocalSettings).toBool());
+                    plugin->setEnabled(plugin->settingsValue(QStringLiteral("Enabled"), LocalSetting).toBool());
                     break;
                 default:
                     qCWarning(SNORE) << "Plugin Cache corrupted\n" << info->file() << info->type();
@@ -213,7 +213,7 @@ QVariant SnoreCore::settingsValue(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);
     QString nk = d->normalizeSettingsKey(key, type);
-    if (type == LocalSettings && !d->m_settings->contains(nk)) {
+    if (type == LocalSetting && !d->m_settings->contains(nk)) {
         nk = d->normalizeSettingsKey(key + QStringLiteral("-SnoreDefault"), type);
     }
     return d->m_settings->value(nk);
