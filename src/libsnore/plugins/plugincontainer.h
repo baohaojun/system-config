@@ -52,17 +52,16 @@ private:
     static const QDir &pluginDir();
     static inline const QStringList pluginExtentions()
     {
-        QStringList out({
+        QStringList out;
 #if defined(Q_OS_UNIX)
-        QStringLiteral("so")
+        out << QStringLiteral("so");
 #endif
 #if defined(Q_OS_WIN)
-        QStringLiteral("dll")
+        out << QStringLiteral("dll");
 #endif
 #if defined(Q_OS_MAC)
-        QStringLiteral("dylib")
+        out << QStringLiteral("dylib");
 #endif
-        });
         return out;
     }
 
