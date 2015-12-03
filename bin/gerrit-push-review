@@ -146,6 +146,9 @@ if is-tty-io && test $do_review = true; then
 fi
 
 (
+    if [[ "$(git log --pretty=%ae -1 "$rev")" =~ cmbuild@ ]] ; then
+        die "Must not push with author as cmbuild@"
+    fi
     echo git push $REMOTE "$rev":$where/`repo-branch`
     git push --no-thin --receive-pack="$(
             echo -n 'git receive-pack ';

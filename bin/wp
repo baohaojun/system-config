@@ -34,6 +34,12 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         elif [[ "$FILE" =~ ^// ]]; then
             FILE=`echo "$FILE"|perl -npe 's,/,\\\\,g'`
         else
+            local REAL_FILE=$(readlink -f $FILE)
+            if test -e "$REAL_FILE" -a "$REAL_FILE" != "$FILE"; then
+                FILE=$REAL_FILE
+                swp
+                return
+            fi
             FILE=z:$FILE
         fi
         echo -n "$FILE"
@@ -47,6 +53,12 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
             FILE=$(_cygwin_share_path "$FILE")
             FILE=smb:$FILE
         else
+            local REAL_FILE=$(readlink -f $FILE)
+            if test -e "$REAL_FILE" -a "$REAL_FILE" != "$FILE"; then
+                FILE=$REAL_FILE
+                sup
+                return
+            fi
             FILE=z:$FILE
         fi
         printf %q "$FILE"
