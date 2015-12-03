@@ -73,12 +73,6 @@ const QString &SnorePlugin::name() const
     return m_container->name();
 }
 
-SnorePlugin::PluginTypes SnorePlugin::type() const
-{
-    Q_ASSERT_X(m_container, Q_FUNC_INFO, "Plugin container not set.");
-    return m_container->type();
-}
-
 const QString SnorePlugin::typeName() const
 {
     return SnorePlugin::typeToString(type());

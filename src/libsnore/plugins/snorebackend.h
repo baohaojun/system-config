@@ -39,6 +39,11 @@ public:
     virtual bool canCloseNotification() const;
     virtual bool canUpdateNotification() const;
 
+    PluginTypes type() const override
+    {
+        return Backend;
+    }
+
 Q_SIGNALS:
     void notificationClosed(Snore::Notification);
 

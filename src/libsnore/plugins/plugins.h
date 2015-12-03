@@ -118,7 +118,7 @@ public:
     /**
      * Returns the plugin type.
      */
-    virtual PluginTypes type() const;
+    virtual PluginTypes type() const = 0;
 
     /**
      * Returns the name of the plugin type.

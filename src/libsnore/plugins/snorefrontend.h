@@ -34,6 +34,11 @@ public:
     SnoreFrontend();
     virtual ~SnoreFrontend();
 
+    PluginTypes type() const override
+    {
+        return Frontend;
+    }
+
 public Q_SLOTS:
     virtual void slotActionInvoked(Snore::Notification notification);
     virtual void slotNotificationClosed(Snore::Notification notification);

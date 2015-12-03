@@ -34,6 +34,11 @@ public:
     SnoreSecondaryBackend();
     virtual ~SnoreSecondaryBackend();
 
+    PluginTypes type() const override
+    {
+        return SecondaryBackend;
+    }
+
 public Q_SLOTS:
     virtual void slotNotify(Snore::Notification notification);
     virtual void slotNotificationDisplayed(Snore::Notification notification);
