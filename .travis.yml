@@ -42,7 +42,7 @@ before_install: |-
   
 compiler:
   - clang
-  - gcc
+#  - gcc
   
 script: |-
         cd $TRAVIS_BUILD_DIR
