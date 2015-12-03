@@ -66,7 +66,7 @@ public:
                     notification =  m_snarl->m_idMap.value(msg->lParam);
                 }
 
-                Notification::CloseReasons reason = Notification::NONE;
+                Notification::CloseReasons reason = Notification::None;
                 switch (action) {
                 case SnarlEnums::CallbackInvoked:
                     reason = Notification::Activated;
