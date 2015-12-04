@@ -40,6 +40,6 @@ private:
     QComboBox *m_comboBox;
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(SnoreNotifierSettings);
+SNORE_DECLARE_SETTINGS_PLUGIN(SnoreNotifierSettings)
 
 #endif // SNORENOTIFIERSETTINGS_H

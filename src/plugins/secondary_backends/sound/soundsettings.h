@@ -24,6 +24,6 @@ private:
 
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(SoundSettings);
+SNORE_DECLARE_SETTINGS_PLUGIN(SoundSettings)
 
 #endif // SOUNDSETTINGS_H

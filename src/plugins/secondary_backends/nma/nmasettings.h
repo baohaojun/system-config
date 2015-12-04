@@ -38,6 +38,6 @@ private:
 
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(NotifyMyAndroidSettings);
+SNORE_DECLARE_SETTINGS_PLUGIN(NotifyMyAndroidSettings)
 
 #endif // NOTIFYMYANDROID_HH
