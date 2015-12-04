@@ -1,0 +1,49 @@
+#!/usr/bin/env perl
+
+use strict;
+
+if (not -e glob("~/.config/system-config/mantis-filter-id")) {
+    print "not mantis filter id found\n";
+    exit 0;
+}
+
+chomp(my $filter_id = qx(cat ~/.config/system-config/mantis-filter-id));
+
+open(my $mantis_pipe, "-|", "mantis.sh filter-get-issue-headers --filter-id $filter_id")
+    or die "Can't open mantis pipe";
+
+
+open(my $mantis_org, ">", glob("~/src/github/projects/mantis.org"))
+    or die "Can't open mantis org";
+
+my ($mantis_id, $mantis_subject, %mantis_map);
+while (<$mantis_pipe>) {
+    chomp;
+    if (s/^\s*id\s*=\s*//) {
+        $mantis_id = $_;
+        next;
+    }
+
+    if (s/^\s*summary\s*=\s*"//) {
+        s/"$//;
+        $mantis_subject = $_;
+        $mantis_map{$mantis_id} = $mantis_subject;
+        next;
+    }
+}
+
+for $mantis_id (sort keys %mantis_map) {
+    $mantis_subject = $mantis_map{$mantis_id};
+
+
+    print $mantis_org <<EOF;
+* TODO $mantis_subject
+
+  :PROPERTIES:
+  :FROM:     http://mantis.smartisan.cn/view.php?id=$mantis_id
+  :ID:       $mantis_id
+  :END:
+
+EOF
+
+}

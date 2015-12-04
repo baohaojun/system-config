@@ -35,6 +35,10 @@ function abc() {
                 shift
                 abc-grep "$@"
                 ;;
+            tags)
+                shift
+                abc-tags "$@"
+                ;;
             abc-files)
                 shift
                 abc-files "$@"
@@ -135,6 +139,35 @@ abc-grep() {
         fi
 
         ssh $abc_host abc abc-files -b "$(abc-base-build)" "$(echo "$entry" | perl -npe 's/[^\w]/ /g')"|xargs -d \\n grep -H -n -e "$entry" "$@" /dev/null
+    )
+}
+
+abc-tags() {
+    (
+        croot
+        echo "make: Entering directory \`$PWD'"
+        ## start code-generator "^\\s *#\\s *"
+        # generate-getopts -l e:entry
+        ## end code-generator
+        ## start generated code
+        local entry=
+        local OPTIND=1
+        while getopts 'e:' opt; do
+            case "$opt" in
+                e)    entry=$OPTARG;;
+                *)    echo Usage Error;;
+            esac
+        done
+        shift $(($OPTIND - 1))
+
+        ## end generated code
+
+        if test -z "$entry" -a $# != 0; then
+            entry=$1
+            shift
+        fi
+
+        ssh $abc_host abc abc-tags -b "$(abc-base-build)" "$(echo "$entry" | perl -npe 's/[^\w]/ /g')"
     )
 }
 

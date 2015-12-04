@@ -175,6 +175,7 @@ function adb() {
                     fi
                 done
             fi
+            $the_adb shell setprop persist.smartisan.dev-tweaks 1
         )
         shift
     fi
