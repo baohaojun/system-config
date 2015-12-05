@@ -48,7 +48,6 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
     m_registerButton->setEnabled(false);
 
     QPointer<PushoverClient> pushover = plugin->constHints().value("client").value<QPointer<PushoverClient>>();
-    qDebug() << pushover;
     Q_ASSERT_X(pushover, Q_FUNC_INFO, "Failed to retrieve PushoverClient.");
 
     if (pushover) {
@@ -92,7 +91,6 @@ void PushoverSettings::slotUpdateLoginState(PushoverClient::LoginState state)
 {
     if (state != m_state) {
         m_state = state;
-        qDebug() << state;
         if (state == PushoverClient::LoggedIn) {
             m_emailLineEdit->setEnabled(false);
             m_passwordLineEdit->setEnabled(false);
