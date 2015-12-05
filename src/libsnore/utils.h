@@ -23,6 +23,7 @@
 
 #include <QImage>
 #include <QObject>
+#include <QWindow>
 
 namespace Snore
 {
@@ -89,16 +90,19 @@ public:
 
     /**
      * Raise a window to the front and activates it.
-     * @param wid the Id of the window to raise.
+     * @param window the window to raise.
      * @param focus whether the window should request focus.
      */
-    //TODO: make Wid usable with the meta system and change signature.
-    Q_INVOKABLE static void bringWindowToFront(qlonglong wid, bool focus);
+    Q_INVOKABLE static void bringWindowToFront(const QWindow *window, bool focus);
+
+#ifdef Q_OS_WIN
+    static void bringWindowToFront(HWND wid, bool focus);
+#endif
 
     /**
      * Raised the Window to front and don't make it active or steal focus.
      */
-    Q_INVOKABLE static void raiseWindowToFront(qlonglong wid);
+    Q_INVOKABLE static void raiseWindowToFront(const QWindow *window);
 
     /**
      * Removes unsupported markup tags from a string.
@@ -129,6 +133,7 @@ public:
     }
 
     static QByteArray dataFromImage(const QImage &image);
+
 private:
 #ifdef Q_OS_WIN
     static int attatchToActiveProcess();

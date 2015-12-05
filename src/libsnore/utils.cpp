@@ -43,31 +43,38 @@ Utils::~Utils()
 
 }
 
-void Utils::bringWindowToFront(qlonglong _wid, bool focus)
+void Utils::bringWindowToFront(const QWindow *window, bool focus)
 {
 #ifdef Q_OS_WIN
-    HWND wid = (HWND)_wid;
+    bringWindowToFront((HWND)window->winId(), focus);
+#else
+    // TODO: implement
+    Q_UNUSED(window);
+    Q_UNUSED(focus);
+#endif
+}
+
+#ifdef Q_OS_WIN
+void Utils::bringWindowToFront(HWND wid, bool focus)
+{
     int active = attatchToActiveProcess();
     SetForegroundWindow(wid);
     if (focus) {
         SetFocus(wid);
     }
     detatchActiveProcess(active);
-#else
-    Q_UNUSED(_wid);
-    Q_UNUSED(focus);
-#endif
 }
+#endif
 
-void Utils::raiseWindowToFront(qlonglong wid)
+void Utils::raiseWindowToFront(const QWindow *window)
 {
     // Looks like qt is handling it on linux.
 #ifdef Q_OS_WIN
     int active = attatchToActiveProcess();
-    SetWindowPos((HWND)wid, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    SetWindowPos((HWND)window->winId(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     detatchActiveProcess(active);
 #else
-    Q_UNUSED(wid);
+    Q_UNUSED(window);
 #endif
 }
 

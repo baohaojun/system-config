@@ -112,7 +112,7 @@ void NotifyWidget::display(const Notification &notification)
         emit colorChanged();
         emit textColorChanged();
         m_window->show();
-        Utils::raiseWindowToFront(m_window->winId());
+        Utils::raiseWindowToFront(m_window);
     }
 }
 

@@ -63,7 +63,7 @@ void bringToFront(QString pid)
 
     HWND wid = findWindowForPid(pid.toInt());
     if (wid) {
-        Utils::bringWindowToFront((WId)wid, true);
+        Utils::bringWindowToFront(wid, true);
     }
 #endif
 }
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
                 if (parser.isSet(_bringProcessToFront)) {
                     bringToFront(parser.value(_bringProcessToFront));
                 } else if (parser.isSet(_bringWindowToFront)) {
-                    Utils::bringWindowToFront((WId)parser.value(_bringWindowToFront).toULongLong(), true);
+                    Utils::bringWindowToFront((HWND)parser.value(_bringWindowToFront).toULongLong(), true);
                 }
             }
             returnCode = noti.closeReason();
