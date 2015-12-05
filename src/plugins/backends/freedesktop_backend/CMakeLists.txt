@@ -11,10 +11,7 @@ if(Qt5DBus_FOUND)
 
     qt5_add_dbus_interface( FREEDESKTOP_NOTIFICATION_SRC ../../frontends/freedesktop_frontend/org.freedesktop.Notifications.xml notificationinterface )
 
+    add_snore_plugin(Freedesktop SOURCES ${FREEDESKTOP_NOTIFICATION_SRC} TYPE Backend LIBS Qt5::DBus)
 
-    add_library(libsnore_backend_freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_SRC} )
-    target_link_libraries(libsnore_backend_freedesktop Snore::Libsnore Qt5::DBus )
-
-    install(TARGETS libsnore_backend_freedesktop ${SNORE_PLUGIN_INSTALL_PATH})
 endif()
 

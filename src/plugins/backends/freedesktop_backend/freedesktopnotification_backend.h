@@ -7,7 +7,7 @@ class  FreedesktopBackend: public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreBackend)
-    Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "plugin.json")
+    Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "snore_plugin.json")
 public:
     FreedesktopBackend();
     ~FreedesktopBackend() = default;

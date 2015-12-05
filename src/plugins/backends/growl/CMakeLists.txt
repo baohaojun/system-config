@@ -6,5 +6,5 @@ set_package_properties(SnoreGrowl++ PROPERTIES
                                     TYPE RECOMMENDED)
 
 if(SnoreGrowl++_FOUND)
-    add_snore_plugin(growl SOURCES growlbackend.cpp SETTINGS_SOURCES growlsettings.cpp TYPE backend LIBS Snore::SnoreGrowl++)
+    add_snore_plugin(Growl SOURCES growlbackend.cpp SETTINGS_SOURCES growlsettings.cpp TYPE Backend LIBS Snore::SnoreGrowl++)
 endif()

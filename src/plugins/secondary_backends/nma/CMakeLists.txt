@@ -1,1 +1,1 @@
-add_snore_plugin(nma SOURCES nma.cpp SETTINGS_SOURCES nmasettings.cpp TYPE secondary_backend)
+add_snore_plugin(NMA SOURCES nma.cpp SETTINGS_SOURCES nmasettings.cpp TYPE SecondaryBackend)

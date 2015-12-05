@@ -78,9 +78,6 @@ private:
     {
         QStringList out;
         QString typeName = SnorePlugin::typeToString(type).toLower();
-        if (type == Snore::SnorePlugin::SecondaryBackend) {
-            typeName = QStringLiteral("secondary_backend");
-        }
         for (const QString &extention : pluginExtentions()) {
             out << QLatin1String("libsnore_") + typeName + QLatin1String("_*.") + extention;
         }

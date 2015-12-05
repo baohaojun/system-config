@@ -1,1 +1,1 @@
-add_snore_plugin(snarlnetwork SOURCES snarlnetwork.cpp parser.cpp TYPE frontend)
+add_snore_plugin(SnarlNetwork SOURCES snarlnetwork.cpp parser.cpp TYPE Frontend)

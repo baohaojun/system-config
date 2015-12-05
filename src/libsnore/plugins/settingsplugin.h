@@ -53,7 +53,7 @@ Q_DECLARE_INTERFACE(Snore::SettingsPlugin,
     class NAMESettings : public Snore::SettingsPlugin{\
         Q_OBJECT\
         Q_INTERFACES(Snore::SettingsPlugin)\
-        Q_PLUGIN_METADATA(IID "org.Snore.SettingsPlugin/1.0" FILE "plugin.json")\
+        Q_PLUGIN_METADATA(IID "org.Snore.SettingsPlugin/1.0" FILE "snore_settings_plugin.json")\
     public:\
         Snore::PluginSettingsWidget *settingsWidget(Snore::SnorePlugin *parent) override{\
             return new NAME(parent);\

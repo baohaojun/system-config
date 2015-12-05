@@ -1,5 +1,5 @@
 if(WIN32)    
-    add_snore_plugin(snarl SOURCES snarl.cpp SnarlInterface.cpp SETTINGS_SOURCES snarlsettings.cpp TYPE backend LIBS Qt5::Widgets)
+    add_snore_plugin(Snarl SOURCES snarl.cpp SnarlInterface.cpp SETTINGS_SOURCES snarlsettings.cpp TYPE Backend LIBS Qt5::Widgets)
     if(MINGW)
         set_target_properties(libsnore_backend_snarl PROPERTIES COMPILE_FLAGS "-Wno-conversion-null -Wno-unused")
     endif(MINGW)
