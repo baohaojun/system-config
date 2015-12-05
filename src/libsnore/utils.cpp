@@ -75,60 +75,60 @@ void Utils::raiseWindowToFront(qlonglong wid)
         static QRegExp regexp(QLatin1String(PATTERN));\
         STRING = STRING.replace(regexp, QStringLiteral("\\1"));\
     }\
-     
-QString Utils::normalizeMarkup(QString string, MarkupFlags tags)
-{
-    static QMutex mutex;
-    if (tags == AllMarkup) {
+
+    QString Utils::normalizeMarkup(QString string, MarkupFlags tags)
+    {
+        static QMutex mutex;
+        if (tags == AllMarkup) {
+            return string;
+        } else if (tags == NoMarkup) {
+            return QTextDocumentFragment::fromHtml(string).toPlainText();
+        }
+
+        QMutexLocker lock(&mutex);
+        if (~tags & Utils::Break) {
+            static QRegExp br(QLatin1String("<br>"));
+            string = string.replace(br, QStringLiteral("\n"));
+        }
+        if (~tags & Utils::Href) {
+            HTML_REPLACE(string, "<a href=.*>([^<]*)</a>");
+        }
+        if (~tags & Utils::Italic) {
+            HTML_REPLACE(string, "<i>([^<]*)</i>");
+        }
+        if (~tags & Utils::Bold) {
+            HTML_REPLACE(string, "<b>([^<]*)</b>");
+        }
+        if (~tags & Utils::Underline) {
+            HTML_REPLACE(string, "<u>([^<]*)</u>");
+        }
+        if (~tags & Utils::Font) {
+            HTML_REPLACE(string, "<font.*>([^<]*)</font>");
+        }
         return string;
-    } else if (tags == NoMarkup) {
-        return QTextDocumentFragment::fromHtml(string).toPlainText();
     }
 
-    QMutexLocker lock(&mutex);
-    if (~tags & Utils::Break) {
-        static QRegExp br(QLatin1String("<br>"));
-        string = string.replace(br, QStringLiteral("\n"));
+    QByteArray Utils::dataFromImage(const QImage &image)
+    {
+        QByteArray data;
+        QBuffer buffer(&data);
+        buffer.open(QBuffer::WriteOnly);
+        image.save(&buffer, "PNG");
+        return data;
     }
-    if (~tags & Utils::Href) {
-        HTML_REPLACE(string, "<a href=.*>([^<]*)</a>");
-    }
-    if (~tags & Utils::Italic) {
-        HTML_REPLACE(string, "<i>([^<]*)</i>");
-    }
-    if (~tags & Utils::Bold) {
-        HTML_REPLACE(string, "<b>([^<]*)</b>");
-    }
-    if (~tags & Utils::Underline) {
-        HTML_REPLACE(string, "<u>([^<]*)</u>");
-    }
-    if (~tags & Utils::Font) {
-        HTML_REPLACE(string, "<font.*>([^<]*)</font>");
-    }
-    return string;
-}
-
-QByteArray Utils::dataFromImage(const QImage &image)
-{
-    QByteArray data;
-    QBuffer buffer(&data);
-    buffer.open(QBuffer::WriteOnly);
-    image.save(&buffer, "PNG");
-    return data;
-}
 
 #ifdef Q_OS_WIN
-int Utils::attatchToActiveProcess()
-{
-    int idActive = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
-    return AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) ? idActive : -1;
-}
-
-void Utils::detatchActiveProcess(int idActive)
-{
-    if (idActive != -1) {
-        AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
+    int Utils::attatchToActiveProcess()
+    {
+        int idActive = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
+        return AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) ? idActive : -1;
     }
-}
+
+    void Utils::detatchActiveProcess(int idActive)
+    {
+        if (idActive != -1) {
+            AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
+        }
+    }
 
 #endif

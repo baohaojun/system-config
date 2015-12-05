@@ -90,7 +90,7 @@ void SnarlNetworkFrontend::handleMessages()
     QTcpSocket *client = qobject_cast<QTcpSocket *>(sender());
 
     QStringList messages(QString::fromLatin1(client->readAll()).trimmed().split(QStringLiteral("\r\n")));
-    foreach(const QString & s, messages) {
+    foreach (const QString &s, messages) {
         if (s.isEmpty()) {
             continue;
         }

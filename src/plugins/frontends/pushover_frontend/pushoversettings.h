@@ -21,6 +21,8 @@
 #include "libsnore/settings/pluginsettingswidget.h"
 #include "libsnore/plugins/settingsplugin.h"
 
+#include "pushoverclient.h"
+
 class QLineEdit;
 class QPushButton;
 class QLabel;
@@ -41,9 +43,10 @@ private:
     QLineEdit *m_deviceLineEdit;
     QPushButton *m_registerButton;
     QLabel *m_errorMessageLabel;
+    PushoverClient::LoginState m_state = PushoverClient::Undefined;
 
 private Q_SLOTS:
-    void slotUpdateLoginState(bool state);
+    void slotUpdateLoginState(PushoverClient::LoginState state);
 
 };
 

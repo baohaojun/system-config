@@ -187,8 +187,8 @@ void SnoreCorePrivate::syncSettings()
 
     auto types = SnorePlugin::types();
     types.removeOne(SnorePlugin::Backend);
-    foreach(auto type, types) {
-        foreach(auto & pluginName, m_pluginNames[type]) {
+    foreach (auto type, types) {
+        foreach (auto &pluginName, m_pluginNames[type]) {
             auto key = qMakePair(type, pluginName);
             SnorePlugin *plugin = m_plugins.value(key);
             bool enable = m_plugins[key]->settingsValue(QStringLiteral("Enabled"), LocalSetting).toBool();
@@ -275,4 +275,3 @@ void SnoreCorePrivate::startNotificationTimeoutTimer(Notification notification)
     });
     timer->start();
 }
-

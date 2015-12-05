@@ -30,7 +30,6 @@ function(add_snore_plugin SNORE_NAME)
     string( TOLOWER "${SNORE_TYPE}" SNORE_TYPE_LOWERCASE)
 
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/snore_plugin.json "{ \"name\" : \"${SNORE_NAME}\" }")
-message(STATUS libsnore_${SNORE_TYPE_LOWERCASE}_${SNORE_NAME_LOWERCASE} )
     add_library(libsnore_${SNORE_TYPE_LOWERCASE}_${SNORE_NAME_LOWERCASE} MODULE ${SNORE_SOURCES})
     target_link_libraries(libsnore_${SNORE_TYPE_LOWERCASE}_${SNORE_NAME_LOWERCASE} Snore::Libsnore ${SNORE_LIBS})
     install(TARGETS libsnore_${SNORE_TYPE_LOWERCASE}_${SNORE_NAME_LOWERCASE} ${SNORE_PLUGIN_INSTALL_PATH})

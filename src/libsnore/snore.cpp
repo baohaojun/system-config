@@ -54,6 +54,24 @@ SnoreCore &SnoreCore::instance()
         qRegisterMetaType<Notification>();
         qRegisterMetaType<SnorePlugin::PluginTypes>();
         qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
+        if (qEnvironmentVariableIsSet("LIBSNORE_DEBUG")) {
+            auto printer = [](QtMsgType type, const QMessageLogContext & context, const QString & msg) {
+                QByteArray localMsg = msg.toLocal8Bit();
+                switch (type) {
+                case QtDebugMsg:
+                    fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+                    break;
+                case QtWarningMsg:
+                    fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+                    break;
+                case QtFatalMsg:
+                    fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+                    abort();
+                }
+                fflush(stderr);
+            };
+            qInstallMessageHandler(printer);
+        }
         instance = new SnoreCore(qApp);
         SnoreCorePrivate::instance()->init();
     }
@@ -76,9 +94,9 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
     Q_D(SnoreCore);
     setSettingsValue(QStringLiteral("PluginTypes"), QVariant::fromValue(types), LocalSetting);
     qCDebug(SNORE) << "Loading plugin types:" << types;
-    foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
+    foreach (const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
         if (type != SnorePlugin::All && types & type) {
-            foreach(PluginContainer * info, PluginContainer::pluginCache(type).values()) {
+            foreach (PluginContainer *info, PluginContainer::pluginCache(type).values()) {
                 SnorePlugin *plugin = info->load();
                 if (!plugin) {
                     continue;

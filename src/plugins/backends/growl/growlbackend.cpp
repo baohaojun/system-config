@@ -75,7 +75,7 @@ void GrowlBackend::slotRegisterApplication(const Application &application)
 {
     qCDebug(SNORE) << application.name();
     std::vector<std::string> alerts;
-    foreach(const Alert & a, application.alerts()) {
+    foreach (const Alert &a, application.alerts()) {
         qCDebug(SNORE) << a.name();
         alerts.push_back(a.name().toUtf8().constData());
     }

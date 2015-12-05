@@ -28,7 +28,7 @@ QList<PluginSettingsWidget *> Settings::settingWidgets(SnorePlugin::PluginTypes 
 {
     SnoreCorePrivate *core(SnoreCorePrivate::instance());
     QList<PluginSettingsWidget *> list;
-    foreach(const QString & name, core->m_pluginNames[type]) {
+    foreach (const QString &name, core->m_pluginNames[type]) {
         //TODO: mem leak?
 
         SnorePlugin *plugin = core->m_plugins[qMakePair(type, name)];

@@ -21,6 +21,7 @@
 #include "libsnore/snore_exports.h"
 #include "libsnore/snoreglobals.h"
 #include "libsnore/notification/notification.h"
+#include "libsnore/hint.h"
 
 #include <QHash>
 
@@ -136,6 +137,8 @@ public:
     void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSetting);
     void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSetting);
 
+    const Hint &constHints() const;
+
 Q_SIGNALS:
     void enabledChanged(bool enabled);
     void error(const QString &error);
@@ -153,6 +156,7 @@ protected:
 
     void setErrorString(const QString &error);
 
+    Hint &hints();
 private:
     QString normaliseKey(const QString &key) const;
     void setDefaultSettingsPlugin();
@@ -160,6 +164,7 @@ private:
     bool m_enabled = false;
     PluginContainer *m_container = nullptr;
     QString m_error;
+    Hint m_hints;
 
     friend class PluginContainer;
 

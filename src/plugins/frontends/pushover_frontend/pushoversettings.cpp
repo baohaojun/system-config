@@ -16,9 +16,10 @@
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pushoversettings.h"
-//#include "pushover_frontend.h"
+#include "pushoverclient.h"
 
-#include "plugins/plugins.h"
+#include "libsnore/plugins/plugins.h"
+#include "libsnore/hint.h"
 
 #include <QLineEdit>
 #include <QPushButton>
@@ -46,12 +47,16 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
     m_deviceLineEdit->setEnabled(false);
     m_registerButton->setEnabled(false);
 
-    // TODO: find a replacement
-    /*    PushoverFrontend *pushover = dynamic_cast<PushoverFrontend *>(plugin);
+    QPointer<PushoverClient> pushover = plugin->constHints().value("client").value<QPointer<PushoverClient>>();
+    qDebug() << pushover;
+    Q_ASSERT_X(pushover, Q_FUNC_INFO, "Failed to retrieve PushoverClient.");
+
+    if (pushover) {
+
         m_errorMessageLabel->setText(pushover->errorMessage());
 
-        connect(pushover, &PushoverFrontend::loggedInChanged, this, &PushoverSettings::slotUpdateLoginState);
-        connect(pushover, &PushoverFrontend::error, [this](QString message) {
+        connect(pushover, &PushoverClient::loggedInChanged, this, &PushoverSettings::slotUpdateLoginState);
+        connect(pushover, &PushoverClient::error, [this](QString message) {
             m_errorMessageLabel->setText(message);
         });
 
@@ -59,13 +64,15 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
 
         connect(m_registerButton, &QPushButton::clicked, [pushover, this]() {
             m_registerButton->setEnabled(false);
-            if (!pushover->isLoggedIn()) {
+            if (pushover->isLoggedIn() != PushoverClient::LoggedIn) {
                 pushover->login(m_emailLineEdit->text(), m_passwordLineEdit->text(), m_deviceLineEdit->text());
             } else {
                 pushover->logOut();
             }
         });
-        */
+
+    }
+
 }
 
 PushoverSettings::~PushoverSettings()
@@ -81,22 +88,32 @@ void PushoverSettings::save()
 {
 }
 
-void PushoverSettings::slotUpdateLoginState(bool state)
+void PushoverSettings::slotUpdateLoginState(PushoverClient::LoginState state)
 {
-    if (state) {
-        m_emailLineEdit->setEnabled(false);
-        m_passwordLineEdit->setEnabled(false);
-        m_deviceLineEdit->setEnabled(false);
-        m_registerButton->setText(tr("Log out"));
-        m_errorMessageLabel->setText(tr("Logged in."));
-
-    } else {
-        m_emailLineEdit->setEnabled(true);
-        m_passwordLineEdit->setEnabled(true);
-        m_deviceLineEdit->setEnabled(true);
-        m_registerButton->setText(tr("Log in"));
-
-        m_errorMessageLabel->setText(tr("Logged out."));
+    if (state != m_state) {
+        m_state = state;
+        qDebug() << state;
+        if (state == PushoverClient::LoggedIn) {
+            m_emailLineEdit->setEnabled(false);
+            m_passwordLineEdit->setEnabled(false);
+            m_deviceLineEdit->setEnabled(false);
+            m_registerButton->setText(tr("Log out"));
+        } else {
+            m_emailLineEdit->setEnabled(true);
+            m_passwordLineEdit->setEnabled(true);
+            m_deviceLineEdit->setEnabled(true);
+            m_registerButton->setText(tr("Log in"));
+        }
+        switch (state) {
+        case PushoverClient::LoggedIn:
+            m_errorMessageLabel->setText(tr("Logged in."));
+            break;
+        case PushoverClient::LoggedOut:
+            m_errorMessageLabel->setText(tr("Logged out."));
+            break;
+        default:
+            break;
+        }
     }
     m_registerButton->setEnabled(true);
 }

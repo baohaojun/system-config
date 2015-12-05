@@ -83,7 +83,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         return;
     }
     if (m_queue.isEmpty()) {
-        foreach(NotifyWidget * w, m_widgets) {
+        foreach (NotifyWidget *w, m_widgets) {
             if (w->acquire(notification.timeout())) {
                 display(w, notification);
                 return;
@@ -110,7 +110,7 @@ void SnoreNotifier::slotQueueTimeout()
         qCDebug(SNORE) << "queue is empty";
         m_timer->stop();
     } else {
-        foreach(NotifyWidget * w, m_widgets) {
+        foreach (NotifyWidget *w, m_widgets) {
             if (!m_queue.isEmpty() && w->acquire(m_queue.first().timeout())) {
                 Notification notification = m_queue.takeFirst();
                 notification.hints().setPrivateValue(this, "id", w->id());

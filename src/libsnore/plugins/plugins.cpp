@@ -62,6 +62,16 @@ void SnorePlugin::setDefaultSettingsValue(const QString &key, const QVariant &va
     SnoreCore::instance().setDefaultSettingsValue(normaliseKey(key), value, type);
 }
 
+const Hint &SnorePlugin::constHints() const
+{
+    return const_cast<Hint &>(const_cast<SnorePlugin *>(this)->hints());
+}
+
+Hint &SnorePlugin::hints()
+{
+    return m_hints;
+}
+
 QString SnorePlugin::normaliseKey(const QString &key) const
 {
     return name() + QLatin1Char('-') + typeName() + QLatin1Char('/') + key + QLatin1Char('.') + settingsVersion();

@@ -21,10 +21,7 @@
 #include "libsnore/plugins/snorefrontend.h"
 #include "libsnore/application.h"
 
-#include <QNetworkAccessManager>
-#include <QPointer>
-
-class QWebSocket;
+#include "pushoverclient.h"
 
 class PushoverFrontend : public Snore::SnoreFrontend
 {
@@ -35,38 +32,14 @@ public:
     PushoverFrontend();
     ~PushoverFrontend() = default;
 
-    void login(const QString &email, const QString &password, const QString &deviceName);
-    void logOut();
-
-    bool isLoggedIn() const;
-    QString errorMessage();
-
 protected:
     void setDefaultSettings() override;
 
 public Q_SLOTS:
     void slotActionInvoked(Snore::Notification notification) override;
-    void connectToService();
-
-Q_SIGNALS:
-    void loggedInChanged(bool isLoggedIn);
-    void error(QString error);
 
 private:
-    QNetworkAccessManager m_manager;
-    QPointer<QWebSocket> m_socket;
-    bool m_loggedIn = false;
-    QString m_errorMessage;
-
-    QString secret();
-    QString device();
-
-    void disconnectService();
-
-    void registerDevice(const QString &secret, const QString &deviceName);
-    void getMessages();
-    void deleteMessages(int latestMessageId);
-    void acknowledgeNotification(Snore::Notification notification);
+    PushoverClient *m_client;
 
 };
 
