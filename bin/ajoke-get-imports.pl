@@ -189,6 +189,10 @@ sub get_wildcards($)
 
     $import = shell_quote($import);
     for my $file (keys %def_files) {
+        if (not -e "$code_dir/$file") {
+            debug("file not exist: $code_dir/$file");
+            next;
+        }
         open(my $pipe, "-|", "global-ctags $import..* $code_dir/$file")
             or die "can not open global-ctags";
         while (<$pipe>) {
@@ -220,7 +224,7 @@ sub find_import_for($)
     }
     debug "beatags -e $def -t 'class|interface|enum(?!-constant)' -p '\\.java|\\.aidl|\\.jar'";
     open(my $pipe, "-|", "beatags -e $def -t 'class|interface|enum(?!-constant)' -p '\\.java|\\.aidl|\\.jar'")
-        or die "can not open grep-gtags";
+        or die "can not open beatags";
 
     my @imports;
     while (<$pipe>) {
