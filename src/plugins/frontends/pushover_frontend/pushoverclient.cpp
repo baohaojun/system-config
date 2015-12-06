@@ -65,7 +65,7 @@ void PushoverClient::login(const QString &email, const QString &password, const 
         if (message.value(QStringLiteral("status")).toInt() == 1) {
             registerDevice(message.value(QStringLiteral("secret")).toString(), deviceName);
         } else {
-            emit error(tr("Failed to login. Please check yor credentials."));
+            emit error(tr("Failed to login. Please check your credentials."));
             emit loggedInChanged(Error);
         }
     });
@@ -126,7 +126,7 @@ void PushoverClient::connectToService()
             break;
         case 'E':
             qCWarning(SNORE) << "Connection Error";
-            emit error(tr("Please Loggin to %1 and reanble your device.").arg(QStringLiteral("https://pushover.net")));
+            emit error(tr("Please login to %1 and reeanble your device.").arg(QStringLiteral("https://pushover.net")));
             emit loggedInChanged(Error);
             m_socket->close();
             m_socket->deleteLater();
@@ -188,7 +188,7 @@ void PushoverClient::registerDevice(const QString &secret, const QString &device
                     errorMessages << errorKey + QLatin1Char(' ') + error.toString();
                 }
             }
-            emit error(tr("Failed to login errors: %1").arg(errorMessages.join(QStringLiteral(", "))));
+            emit error(tr("Failed to login due to errors: %1").arg(errorMessages.join(QStringLiteral(", "))));
         }
 
     });
