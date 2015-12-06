@@ -7,29 +7,23 @@ import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.NotificationListenerService.*;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 import android.widget.Toast;
 
 public class WrenchNotificationHelper extends NotificationListenerService {
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent,  int flags,  int startId)  {
-        Toast.makeText(this, "hello world", Toast.LENGTH_SHORT).show();
-        return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
+    public void onCreate()  {
+        super.onCreate();
+        Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 17));
     }
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn)  {
+        Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 22));
     }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn)  {
+        Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 34));
     }
 }
