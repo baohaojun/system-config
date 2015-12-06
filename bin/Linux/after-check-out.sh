@@ -38,6 +38,9 @@ sudo usermod -a -G dialout $(whoami) || true
 sudo perl -npe 's/^#user_allow_other/user_allow_other/' -i /etc/fuse.conf
 mkdir -p ~/src/github
 emacs-install-packages || true
+if test ! -d ~/src/github/presentations/; then
+    git clone https://github.com/baohaojun/presentations ~/src/github/presentations
+fi
 
 if test ! -d /usr/local/share/info; then
     sudo mkdir -p /usr/local/share/info
