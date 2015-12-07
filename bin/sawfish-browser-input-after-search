@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) search-words input-words"
+fi
+
+search=$1
+input=$2
+putclip "$search"
+
+for x in C-s C-v C-g TAB; do
+    sawfish-browser-input "$x"
+    sleep .5
+done
+
+putclip "$input"
+
+for x in C-v RET; do
+    sawfish-browser-input "$x"
+    sleep .5
+done
