@@ -129,7 +129,7 @@ void Parser::parse(Notification &sNotification, const QString &msg, QTcpSocket *
         if (!snarl->m_applications.contains(client)) {
             snarl->m_applications[client] = Application(appName, icon);
         } else {
-            qCDebug(SNORE) << appName << "already registred";
+            qCDebug(SNORE) << appName << "already registered";
         }
         break;
     case UNREGISTER:

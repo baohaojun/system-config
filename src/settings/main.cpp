@@ -34,7 +34,7 @@ bool setSetting(const QString &appName, SettingsType type, const QString &_key, 
     QString key = Utils::normalizeSettingsKey(_key, type, appName);
     QVariant oldValue = settings.value(key);
 
-    //TODO: make sure that the values are valid qvariant.canConvert doesnt work.
+    //TODO: make sure that the values are valid qvariant.canConvert doesn't work.
     if (!oldValue.isValid()) {
         cout << "Invalid key: " << qPrintable(key) << endl;
         return false;

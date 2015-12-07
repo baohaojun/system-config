@@ -39,7 +39,7 @@ namespace Snore
 {
 
 /**
- * A QWidget providing acces to the settings of the plugins.
+ * A QWidget providing access to the settings of the plugins.
  * If your application does not offer a ui you might call snore-settings insetad.
  */
 

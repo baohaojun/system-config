@@ -72,7 +72,7 @@ public:
     void init();
 
     /**
-     * Set a default value wich can be overritten by a client application call to SnoreCore::setDefaultValue()
+     * Set a default value which can be overritten by a client application call to SnoreCore::setDefaultValue()
      */
     void setDefaultSettingsValueIntern(const QString &key, const QVariant &value);
 

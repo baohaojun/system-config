@@ -122,7 +122,7 @@ public:
     /**
      * Sets the primary notification backend.
      * @param backend the name of the backend.
-     * @return whether the backend was set succesful.
+     * @return whether the backend was set successful.
      */
     bool setPrimaryNotificationBackend(const QString &backend);
 
@@ -161,12 +161,12 @@ Q_SIGNALS:
     void notificationClosed(const Snore::Notification &notification);
 
     /**
-     * This signal is emited in case the Primary backend encountered an error.
+     * This signal is emitted in case the Primary backend encountered an error.
      */
     void primaryNotificationBackendError(const QString &error);
 
     /**
-     * This signal is emited in case the Primary backend changed.
+     * This signal is emitted in case the Primary backend changed.
      */
     void primaryNotificationBackendChanged(const QString &error);
 

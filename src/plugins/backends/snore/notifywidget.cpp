@@ -50,7 +50,7 @@ NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
     engine->load(QUrl::fromEncoded("qrc:/notification.qml"));
     m_window = qobject_cast<QQuickWindow *>(engine->rootObjects().value(0));
 
-    // TODO: It looks like there is a Qt bug wich make some Windows with this flag invisible in some cases...(Tested: Kubuntu willy)
+    // TODO: It looks like there is a Qt bug which make some Windows with this flag invisible in some cases...(Tested: Kubuntu willy)
     m_window->setFlags(Qt::WindowStaysOnTopHint | Qt::ToolTip
 #ifdef Q_OS_MAC
                        // TODO: is this needed or is ToolTip working?

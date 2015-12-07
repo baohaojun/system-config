@@ -91,7 +91,7 @@ LONG32 SnarlInterface::DoRequest(LPCSTR request, UINT replyTimeout)
     // Create COPYDATASTRUCT
     COPYDATASTRUCT cds;
     cds.dwData = 0x534E4C03;           // "SNL",3
-    cds.cbData = (DWORD)strlen(request);      // No knowledge of max string lenght
+    cds.cbData = (DWORD)strlen(request);      // No knowledge of max string length
     cds.lpData = const_cast<char *>(request);
 
     // Send message

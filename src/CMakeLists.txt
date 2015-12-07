@@ -4,7 +4,7 @@ add_subdirectory(libsnore)
 
 if(Qt5Widgets_FOUND)
     ecm_optional_add_subdirectory(daemon)
-    add_feature_info(BUILD_daemon BUILD_daemon "Build and installd the snorenotify daemon which recieves and redirects notifications.")
+    add_feature_info(BUILD_daemon BUILD_daemon "Build and installd the snorenotify daemon which receives and redirects notifications.")
 
     ecm_optional_add_subdirectory(settings)
     add_feature_info(BUILD_settings BUILD_settings "Build and installd the snorensettings application which allows the modification of the settings for all applications using libsnore.")

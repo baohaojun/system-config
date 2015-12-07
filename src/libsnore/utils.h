@@ -33,7 +33,7 @@ class SNORE_EXPORT  Utils : public QObject
 public:
     /**
      * The MarkupFlag enum.
-     * If a falg is not present the markup key will be removed.
+     * If a flag is not present the markup key will be removed.
      * If any flag is present, special characters mus be html escaped.
      */
     enum MarkupFlag {
@@ -50,7 +50,7 @@ public:
         Href        = 1 << 0,
 
         /**
-         * Line breeaks &lt;br&gt; are supprotet.
+         * Line breaks &lt;br&gt; are supprotet.
          * If the flag is not present &lt;br&gt; will be replaced by \\n
          */
         Break       = 1 << 1,

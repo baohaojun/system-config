@@ -212,7 +212,7 @@ public:
 
     /**
      *
-     * @return the availible actions
+     * @return the available actions
      * @see addAction
      */
     const QHash<int, Action> &actions() const;

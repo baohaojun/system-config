@@ -126,7 +126,7 @@ void PushoverClient::connectToService()
             break;
         case 'E':
             qCWarning(SNORE) << "Connection Error";
-            emit error(tr("Please login to %1 and reeanble your device.").arg(QStringLiteral("https://pushover.net")));
+            emit error(tr("Please login to %1 and reenable your device.").arg(QStringLiteral("https://pushover.net")));
             emit loggedInChanged(Error);
             m_socket->close();
             m_socket->deleteLater();
@@ -179,7 +179,7 @@ void PushoverClient::registerDevice(const QString &secret, const QString &device
             m_frontend->setSettingsValue(QStringLiteral("DeviceID"), message.value(QStringLiteral("id")).toString(), LocalSetting);;
             connectToService();
         } else {
-            qCWarning(SNORE) << "An error occure" << input;
+            qCWarning(SNORE) << "An error occured" << input;
             emit loggedInChanged(Error);
             QStringList errorMessages;
             QJsonObject errors = message.value(QStringLiteral("errors")).toObject();
@@ -248,7 +248,7 @@ void PushoverClient::getMessages()
                 deleteMessages(latestID);
             }
         } else {
-            qCWarning(SNORE) << "An error occure" << input;
+            qCWarning(SNORE) << "An error occured" << input;
         }
 
     });

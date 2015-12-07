@@ -91,7 +91,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         }
     }
     m_queue.append(notification);
-    qCDebug(SNORE) << "queing" << m_queue.size();
+    qCDebug(SNORE) << "queueing" << m_queue.size();
     if (!m_timer->isActive()) {
         m_timer->start();
     }

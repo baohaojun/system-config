@@ -30,7 +30,7 @@ namespace Snore
 class AlertData;
 
 /**
- *  Alert contains all relevant data to manage different alerts registred with the notification backend.
+ *  Alert contains all relevant data to manage different alerts registered with the notification backend.
  *  Application uses a shared datamodel, its content is never copied and automatically released.
  *
  * @author Hannah von Reth \<vonreth at kde.org\>
