@@ -104,12 +104,13 @@ int main(int argc, char *argv[])
     QCommandLineOption silent(QStringList() << QStringLiteral("silent"), QStringLiteral("Don't print to stdout."));
     parser.addOption(silent);
 
+#ifdef Q_OS_WIN
     QCommandLineOption _bringProcessToFront(QStringList() << QStringLiteral("bring-process-to-front"), QStringLiteral("Bring process with pid to front if notification is clicked."), QStringLiteral("pid"));
     parser.addOption(_bringProcessToFront);
 
     QCommandLineOption _bringWindowToFront(QStringList() << QStringLiteral("bring-window-to-front"), QStringLiteral("Bring window with wid to front if notification is clicked."), QStringLiteral("wid"));
     parser.addOption(_bringWindowToFront);
-
+#endif
     parser.process(app);
     qCDebug(SNORE) << app.arguments();
     if (parser.isSet(title) && parser.isSet(message)) {
@@ -148,11 +149,13 @@ int main(int argc, char *argv[])
                 cout << qPrintable(reason) << endl;
             }
             if (noti.closeReason() == Notification::Closed) {
+#ifdef Q_OS_WIN
                 if (parser.isSet(_bringProcessToFront)) {
                     bringToFront(parser.value(_bringProcessToFront));
                 } else if (parser.isSet(_bringWindowToFront)) {
                     Utils::bringWindowToFront((HWND)parser.value(_bringWindowToFront).toULongLong(), true);
                 }
+#endif
             }
             returnCode = noti.closeReason();
         });

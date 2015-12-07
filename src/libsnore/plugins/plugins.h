@@ -66,7 +66,7 @@ public:
         Frontend            = 1 << 2,
 
         /**
-         * General plugins, currently there are not plugins implemented.
+         * General plugins, currently there are no plugins implemented.
          */
         Plugin              = 1 << 3,
 
