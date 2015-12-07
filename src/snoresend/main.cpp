@@ -137,9 +137,11 @@ int main(int argc, char *argv[])
             parser.showHelp(-1);
         }
         Notification n(application, alert, parser.value(title), parser.value(message), icon, Notification::defaultTimeout(), static_cast<Notification::Prioritys>(prio));
+#ifdef Q_OS_WIN
         if (parser.isSet(_bringProcessToFront) || parser.isSet(_bringWindowToFront)) {
             n.addAction(Action(1, qApp->translate("SnoreSend", "Bring to Front")));
         }
+#endif
         int returnCode = -1;
 
         app.connect(&core, &SnoreCore::notificationClosed, [&](Notification noti) {
