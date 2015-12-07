@@ -107,6 +107,9 @@ int main(int argc, char *argv[])
     QCommandLineOption _bringProcessToFront(QStringList() << QStringLiteral("bring-process-to-front"), QStringLiteral("Bring process with pid to front if notification is clicked."), QStringLiteral("pid"));
     parser.addOption(_bringProcessToFront);
 
+    QCommandLineOption _bringWindowToFront(QStringList() << QStringLiteral("bring-window-to-front"), QStringLiteral("Bring window with wid to front if notification is clicked."), QStringLiteral("wid"));
+    parser.addOption(_bringWindowToFront);
+
     parser.process(app);
     qCDebug(SNORE) << app.arguments();
     if (parser.isSet(title) && parser.isSet(message)) {
@@ -133,7 +136,7 @@ int main(int argc, char *argv[])
             parser.showHelp(-1);
         }
         Notification n(application, alert, parser.value(title), parser.value(message), icon, Notification::defaultTimeout(), static_cast<Notification::Prioritys>(prio));
-        if (parser.isSet(_bringProcessToFront)) {
+        if (parser.isSet(_bringProcessToFront) || parser.isSet(_bringWindowToFront)) {
             n.addAction(Action(1, qApp->translate("SnoreSend", "Bring to Front")));
         }
         int returnCode = -1;
@@ -147,6 +150,8 @@ int main(int argc, char *argv[])
             if (noti.closeReason() == Notification::Closed) {
                 if (parser.isSet(_bringProcessToFront)) {
                     bringToFront(parser.value(_bringProcessToFront));
+                } else if (parser.isSet(_bringWindowToFront)) {
+                    Utils::bringWindowToFront((HWND)parser.value(_bringWindowToFront).toULongLong(), true);
                 }
             }
             returnCode = noti.closeReason();
