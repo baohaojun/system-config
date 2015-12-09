@@ -1,1 +1,27 @@
-mm_adb
+#!/bin/bash
+
+set -o pipefail
+
+set -e
+repo_dir=$(lookup-file .repo)
+if test -d "$repo_dir"; then
+    mark_file=$repo_dir/mm-adb.mark
+else
+    die ".repo not found"
+fi
+
+touch $mark_file
+sleep .5
+
+mm "$@"
+
+TARGET_OUT=$repo_dir/../$(android-env get_build_var TARGET_OUT)
+find "$TARGET_OUT" -type f -newer $mark_file|while read x; do
+    if test ! -f "$x"; then
+        "$x is not a file, skip"
+        continue
+    fi
+    y=$(echo $x|perl -npe 's,.*/target/product/.*?/,/,')
+    printf "adb-push %q %q\n" "$x" "$y"
+    adb-push $x $y >/dev/null 2>&1
+done

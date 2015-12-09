@@ -16,6 +16,7 @@ curl
 expect
 flex
 genisoimage
+gitk
 gperf
 htop
 less

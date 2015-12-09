@@ -38,13 +38,13 @@ android的mm命令，能够单独编译一个子项目，有时候编译出来�
 
 # [lookup-file|^lookup-file] 这个有点类似于android系统环境里的gettop，不管你在哪个子目录里，直接{{lookup-file out/target/product/ventana/system/lib/libletou-auto-test.so}}就可以给出那个文件的绝对路径。
 # [adb-push|^adb-push]，自动帮你做lookup-file、remount sysmte分区，push文件的工作。原始版本的adb一次只能push一个文件或目录，用这个adb-push可以一次push多个文件或目录。
-# [mm_adb|^mm_adb]，把mm的输出传给这个脚本，会直接调adb-push，把相应文件push到相应目录下。
+# [mm-adb|^mm-adb]，把mm的输出传给这个脚本，会直接调adb-push，把相应文件push到相应目录下。
 
 用法：
 
 把这三个文件放到PATH中，再跑
 
-   mm|mm_adb
+   mm|mm-adb
 
 *注意*，adb-push这个脚本是用perl写的，里面用到了一个cpan上的库，你需要跑一下
 
