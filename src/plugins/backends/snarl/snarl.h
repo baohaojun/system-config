@@ -44,10 +44,10 @@ private:
     QHash<QString, Snarl::V42::SnarlInterface *> m_applications;
 
 public Q_SLOTS:
-    void slotRegisterApplication(const Snore::Application &application);
-    void slotDeregisterApplication(const Snore::Application &application);
-    void slotNotify(Snore::Notification notification);
-    void slotCloseNotification(Snore::Notification notification);
+    void slotRegisterApplication(const Snore::Application &application) override;
+    void slotDeregisterApplication(const Snore::Application &application) override;
+    void slotNotify(Snore::Notification notification) override;
+    void slotCloseNotification(Snore::Notification notification) override;
 
 private:
     QHash<LONG32, Snore::Notification> m_idMap;
