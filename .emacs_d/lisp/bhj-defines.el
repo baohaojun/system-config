@@ -1466,6 +1466,17 @@ to the value of `temporary-file-directory'."
         nil
       text)))
 
+(defun org-smb-link-export (path desc format)
+  "For exporting smb link into html"
+  (when (eq 'html format)
+    (format "<a href='smb:%s'>%s</a>"
+            path
+            (if desc
+                desc
+              (replace-regexp-in-string "/" "\\\\" path)))))
+
+(org-add-link-type "smb" nil #'org-smb-link-export)
+
 (setq interprogram-cut-function 'bhj-select-text
       interprogram-paste-function 'bhj-select-value)
 
