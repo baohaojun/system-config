@@ -42,15 +42,15 @@ else
         echo ~/system-config/etc/path/$(uname)-$(uname -m) not exist?
     fi
 
-if ask-if-not-bhj "Install cpan into your \$HOME/perl5?"; then
-    cat <<'EOF' >> ~/.config/system-config/.bashrc-path
+    if ask-if-not-bhj "Install cpan into your \$HOME/perl5?"; then
+        cat <<'EOF' >> ~/.config/system-config/.bashrc-path
     export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
     export PERL_MB_OPT="--install_base $HOME/perl5";
     export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
     export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:$HOME/perl5/lib/perl5:$HOME/system-config/etc/perl${PERL5LIB:+:$PERL5LIB}";
     export PATH="$HOME/perl5/bin:$PATH";
 EOF
-fi
+    fi
     . ~/.config/system-config/.bashrc-path
 fi
 

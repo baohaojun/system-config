@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+cd ~/system-config/
+
+if git status -s | grep . -q; then
+    die "Your ~/system-config/ seems to be not clean, please commit first: $(echo; echo; git status) "
+fi
+
+git pull --rebase
+
+rm ~/.config/system-config/.bashrc-path
+. ~/.bashrc
+~/system-config/bin/after-co-ln-s </dev/null >/dev/null 2>&1 &

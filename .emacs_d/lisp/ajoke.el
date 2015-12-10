@@ -603,7 +603,7 @@ beginning of current defun."
 (defun ajoke-get-imports-if-java-mode ()
   "get imports if java-mode"
   (interactive)
-  (when (eq major-mode 'java-mode)
+  (when (and (eq major-mode 'java-mode) (not (file-remote-p (buffer-file-name))))
     (let ((before-save-hook nil))
       (save-buffer))
     (ajoke-get-imports)))
