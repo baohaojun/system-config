@@ -1,5 +1,6 @@
 local map = {}
 map['com.android.contacts/com.android.contacts.activities.ContactEditorActivity'] = 'manual-post'
+map['com.android.contacts/com.android.contacts.activities.ContactSelectionActivity'] = 'manual-post'
 map['com.android.mms/com.android.mms.ui.ComposeMessageActivity'] = 'manual-post'
 map['com.android.settings/com.android.settings.wifi.WifiSetupActivity'] = 'manual-post'
 map['com.baidu.tieba_mini/com.baidu.tieba.imMessageCenter.im.chat.PersonalChatActivity'] = 'weixin-chat'
@@ -22,5 +23,6 @@ map['com.tencent.mobileqq/com.tencent.mobileqq.activity.contact.troop.TroopActiv
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.EditActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity'] = 'weixin-chat'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity'] = 'manual-post'
+map['com.youku.phone/com.youku.ui.activity.DetailActivity'] = 'weixin-chat'
 map['Keyguard'] = 'weixin-chat'
 return map
