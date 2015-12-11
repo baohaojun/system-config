@@ -46,6 +46,9 @@ function abc() {
             base)
                 abc-base-build
                 ;;
+            *)
+                die "no such abc-x command: $1"
+                ;;
         esac
     )
 }

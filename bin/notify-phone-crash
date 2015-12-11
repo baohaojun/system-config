@@ -70,36 +70,6 @@ if test $(basename $0) = adb-fix-gms; then
             fi
         )&
 
-        if test "$(my-adb 'test -e /data/debian/usr/bin/sudo && echo yes')" = yes; then
-            true
-        else
-            my-adb remount
-            my-adb '
-            set -x
-            for x in /data/debian/usr/lib/pt_chown.bak /data/debian/usr/bin/sudo.bak; do
-                cp $x /system/bin/$(basename $x)
-                chmod 4755 /system/bin/$(basename $x)
-                rm ${x%.bak}
-                ln -s /system/bin/$(basename $x) ${x%.bak}
-            done
-        '
-            my-adb romount
-        fi
-
-        if test "$(my-adb 'test -e /system/priv-app/GmsCore.apk -o -d /system/priv-app/GmsCore && echo yes')" = yes; then
-            true
-        else
-            my-adb stop
-
-            if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
-                # it's lp
-                adb-push ~/today/forever/gapps-lp/system/* /system/
-            else
-                adb-push ~/today/forever/gapps-system/* /system/
-            fi
-        fi
-
-
         if test "$(my-adb netcfg | grep wlan0 | pn 5)" = 00:0a:f5:79:b2:54; then
             adb-fix-wifi-mac
             my-adb reboot

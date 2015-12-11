@@ -5,6 +5,59 @@ function die() {
     exit -1
 }
 
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt e:execute-command
+## end code-generator
+## start generated code
+TEMP=$(getopt -o e: --long "execute-command:"  -n $(basename $0) -- "$@")
+execute_command=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -e|--execute-command)
+            execute_command=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+default_command() {
+    git log -1000 $1..$2 | indent-clipboard -
+}
+
+if test -z "$execute_command"; then
+    execute_command=default_command
+fi
+
+## end generated code
+
+if test "$(basename "$0")" = repo-good-bad-command; then
+
+    echo() {
+        true;
+    }
+
+    indent-clipboard() {
+        cat
+    }
+fi
+
 sep() {
     echo
     echo "****************************************************************"
@@ -34,15 +87,17 @@ t_xml=$2
 f_projects=$(xmlstarlet sel -t -m //project -v @name -n $f_xml)
 t_projects=$(xmlstarlet sel -t -m //project -v @name -n $t_xml)
 
-echo "These projects are deleted:"
-arg1-arg2 "$f_projects" "$t_projects" | indent-clipboard -
+if test "$(basename "$0")" = repo-released-manifest-diff; then
+    echo "These projects are deleted:"
+    arg1-arg2 "$f_projects" "$t_projects" | indent-clipboard -
 
-sep
+    sep
 
-echo "These projects are added:"
-arg1-arg2 "$t_projects" "$f_projects" | indent-clipboard -
+    echo "These projects are added:"
+    arg1-arg2 "$t_projects" "$f_projects" | indent-clipboard -
 
-sep
+    sep
+fi
 
 (
     xmlstarlet sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $f_xml | grep .
@@ -61,6 +116,9 @@ sep
 ) |
     (
         . /tmp/f.env.$$
+        if yes-or-no-p -t 5 -y "Remove tmp file /tmp/f.env.$$?"; then
+            rm /tmp/f.env.$$
+        fi
         while read name revision path; do
             check-rev-and-path
             f_rev=${from_path_revision_map[$path]}
@@ -72,11 +130,11 @@ sep
                 elif test ! -d "$path"; then
                     echo "$path not exist, will not show git log"
                 else
-                    echo "git log -10 $f_rev..$revision"
+                    echo "git log -1000 $f_rev..$revision"
                     echo
                     (
                         cd $path
-                        git log -10 $f_rev..$revision | indent-clipboard -
+                        eval "$execute_command" $f_rev $revision
                     )
                 fi | indent-clipboard -
                 sep
