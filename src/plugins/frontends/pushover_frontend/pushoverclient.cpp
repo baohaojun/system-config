@@ -138,7 +138,7 @@ void PushoverClient::connectToService()
     connect(m_socket.data(), &QWebSocket::disconnected, [this]() {
         qCWarning(SNORE) << "disconnected";
         //TODO: use new style connect once we depend on qt 5.4
-        QTimer::singleShot(500, this, SLOT(PushoverClient::connectToService()));
+        QTimer::singleShot(500, this, SLOT(connectToService()));
     });
     connect(m_socket.data(), static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), [&](QAbstractSocket::SocketError error) {
         qCWarning(SNORE) << error << m_socket->errorString();
