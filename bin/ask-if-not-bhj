@@ -9,6 +9,11 @@ if test "$USER" = bhj; then
    exit
 fi
 
+if test -e ~/.ssh/id_rsa-baohaojun.pub; then
+    true
+    exit
+fi
+
 if test "$(basename $0)" = no-if-not-bhj; then
     false
     exit
