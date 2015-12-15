@@ -1,1 +1,114 @@
-../../src/github/private-config/bin/search-google
+#!/bin/bash
+
+#http://work.alibaba-inc.com/work/search?keywords=%E5%85%83%E4%BB%B2&type=person&offset=0&tabIndex=1
+
+url=
+prog=$(basename $0)
+host=$(basename $0 | perl -npe 's/.*?-//')
+domain=com/search?q=
+
+if test $# = 0; then
+    set -- "$(xclip -o)"
+fi
+
+if [[ $0 =~ baidu-baike ]]; then
+    exec search-baidu "$@" site:baike.baidu.com
+fi
+
+fill=$(echo "$@"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g')
+
+if [[ $host =~ wikipedia ]]; then
+    domain=org/w/index.php?search=
+fi
+
+if [[ $host =~ duckduckgo ]]; then
+    domain=com/?q=
+fi
+
+if test $host = wiki.smartisan.cn; then
+    domain="/doku.php?do=search&id="
+fi
+
+if test $host = cpan; then
+    url="http://search.cpan.org/search?mode=all&query=$fill"
+    exec firefox-open-url-pattern "http://search.cpan.org" "$url"
+fi
+
+if test $host = msdn-lucky; then
+    url="https://www.google.co.uk/search?btnI=1&q=site%3Amsdn.microsoft.com+$fill"
+    exec firefox-open-url-pattern "http://msdn.microsoft.com" "$url"
+fi
+
+if [[ $host =~ baidu ]]; then
+    domain=com/s?wd=
+fi
+
+if test ${domain:0:1} = /; then
+    dot=
+else
+    dot=.
+fi
+
+if test $host = gerrit; then
+    host=
+    domain=$(printf "172.16.0.9:8080/#/q/%s,n,z" "$fill")
+    dot=
+    fill=
+fi
+
+url=${url:-http://$host$dot$domain$fill}
+
+if test $prog = search-google; then
+    url="https://www.google.com.hk/search?q=$fill"
+fi
+
+if test $prog = search-google-gfw; then
+    url="https://www.google.co.uk/search?q=$fill"
+fi
+
+if test $prog = search-gmap; then
+    if test -e "$1"; then
+        gps=$(exiftool "$1" | grep "GPS Coord" | head -n 1 | perl -npe 's/.*?://; s/ deg /°/g; s/\s+//g; $_ = substr($_, 0, rindex($_, ",")); s/[ESWN]//g');
+        fill=$(echo "$gps" | perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g')
+        url="http://ditu.google.cn/maps?newwindow=1&safe=strict&q=$fill&um=1&ie=UTF-8&hl=zh-CN&sa=N&tab=wl"
+    fi
+fi
+
+if test $prog = search-aliman; then
+    url="http://work.alibaba-inc.com/work/search?keywords=$fill&type=person&offset=0&tabIndex=1"
+fi
+
+if test $prog = search-sf; then
+    url="http://sf-express.com/cn/sc/dynamic_functions/waybill/#search/bill-number/$fill"
+fi
+
+if test $prog = search-taobao-item; then
+    url="http://detail.tmall.com/item.htm?spm=a3104.100017441.w900-4533435431.2.7UCp95&id=$fill"
+fi
+
+if test $prog = search-mantis; then
+    fill=$(echo $@|perl -npe 's/ticket:\s*(\d+)/$1/i; s/\s+//')
+    url=$(get-about-me mantis)$fill
+fi
+
+if test $prog = search-aliwork; then
+    url="http://work.alibaba-inc.com/work/search?keywords=$fill&offset=0&tabIndex=1"
+fi
+
+if test $prog = search-ishare; then
+    url="http://ishare.iask.sina.com.cn/search.php?key=$fill&format="
+fi
+
+set -x
+
+if test "$EMACS" = t; then
+    firefox "$url"
+else
+    firefox "$url"&
+    echo "$url"|
+    if is-tty-io; then
+        tee /dev/tty|putclip
+    else
+        cat
+    fi
+fi

@@ -105,6 +105,12 @@ fi
     declare -A from_path_revision_map
     while read name revision path; do
         check-rev-and-path
+        if test -z "$path"; then
+            path=$name
+        fi
+        if test -z "$path"; then
+            die "both name and path not set"
+        fi
         from_path_revision_map[$path]=$revision
     done
     export from_path_revision_map
@@ -120,10 +126,16 @@ fi
             rm /tmp/f.env.$$
         fi
         while read name revision path; do
+            if test -z "$path"; then
+                path=$name
+            fi
+            if test -z "$path"; then
+                die "both name and path not set"
+            fi
             check-rev-and-path
             f_rev=${from_path_revision_map[$path]}
             if test "$f_rev" != "$revision"; then
-                echo "$path: old: $_rev, new: $revision"
+                echo "$path: old: $f_rev, new: $revision"
                 echo
                 if test -z "$f_rev"; then
                     echo "old revision is blank, will not show git log"
