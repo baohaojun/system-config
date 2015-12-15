@@ -1,4 +1,9 @@
 local map = {}
+map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity'] = 'weixin-chat'
+map['com.alibaba.android.rimet/com.alibaba.android.user.login.SignUpActivity'] = 'manual-post'
+map['com.alibaba.android.rimet/com.alibaba.android.user.profile.activities.EditProfileActivity'] = 'manual-post'
+map['com.alibaba.android.rimet/com.alibaba.android.user.settings.activity.ChangePwdActivity'] = 'manual-post'
+map['com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.ContactEditorActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.ContactSelectionActivity'] = 'manual-post'
 map['com.android.mms/com.android.mms.ui.ComposeMessageActivity'] = 'manual-post'
