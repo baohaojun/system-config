@@ -8,7 +8,7 @@ $ENV{'LANG'} = 'C';
 $ENV{'LC_ALL'} = 'C'; # fix grep too slow when ignore_case and gbk file recognized as binary
 
 delete $ENV{GREP_OPTIONS};
-if (-e glob("~/external/local/bin/mkbeagrepidx")) {
+if (-e glob("~/external/local/bin/mkbeagrepidx") and not -e "/usr/local/bin/mkbeagrepidx") {
     if ($ENV{LD_LIBRARY_PATH}) {
         $ENV{LD_LIBRARY_PATH} = glob("~/external/local/lib") . ":$ENV{LD_LIBRARY_PATH}"
     } else {
