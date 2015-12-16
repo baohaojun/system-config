@@ -33,7 +33,7 @@ local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity, wait_top_activity_match
 local t1_eval, log, share_pics_to_app, share_text_to_app
 local picture_to_weibo_comment
-local check_scroll_lock, prompt_user
+local check_scroll_lock, prompt_user, yes_or_no_p
 
 -- variables
 local where_is_dial_key
@@ -484,6 +484,13 @@ prompt_user = function(txt)
    if select_args then
       return select_args{txt}
    end
+end
+
+yes_or_no_p = function(txt)
+   if select_args then
+      return select_args{txt} ~= ""
+   end
+   return false
 end
 
 check_scroll_lock = function()
@@ -1338,13 +1345,19 @@ t1_post = function(text) -- use weixin
       if not window_type then
          window_type = select_args{'发送按钮在哪儿',
                                    '像微信聊天一样在输入法窗口右上方',
+                                   '像微信聊天一样，但发送前让我确认',
                                    '像微博分享一样在屏幕右上方',
+                                   '像微博分享一样，但发送前让我确认',
                                    '我自己手动来按发送按钮',
          }
          if window_type == '像微信聊天一样在输入法窗口右上方' then
             window_type = 'weixin-chat'
          elseif window_type == '像微博分享一样在屏幕右上方' then
             window_type = 'weibo-share'
+         elseif window_type == '像微信聊天一样，但发送前让我确认' then
+            window_type = 'weixin-confirm'
+         elseif window_type == '像微博分享一样，但发送前让我确认' then
+            window_type = 'weibo-confirm'
          else
             window_type = 'manual-post'
          end
@@ -1353,8 +1366,20 @@ t1_post = function(text) -- use weixin
       end
       if window_type == 'weixin-chat' then
          post_button = post_button -- empty
+      elseif window_type == 'weixin-confirm' then
+         if yes_or_no_p("像微信聊天一样发送，请确认") then
+            post_button = post_button
+         else
+            post_button = ''
+         end
       elseif window_type == 'weibo-share' then
          post_button = '991 166'
+      elseif window_type == 'weibo-confirm' then
+         if yes_or_no_p("像微博分享一样发送，请确认") then
+            post_button = '991 166'
+         else
+            post_button = ''
+         end
       elseif window_type == 'manual-post' then
          post_button = ''
       end
