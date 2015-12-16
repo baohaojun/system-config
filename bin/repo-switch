@@ -47,15 +47,19 @@ while true; do
                      -m $(readlink -f .repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,') --repo-url $(cd .repo/repo && git-remote-url) $(
                     ref=$(cd .repo/manifests.git; git config repo.reference || true)
                     if test "$ref"; then
+                        if test "$(readlink -f ~/src/android-mirror)" = "$(readlink -f "$ref")"; then
+                            ref=~/src/android-mirror
+                        fi
                         echo --reference $(up $ref)
                     fi
                      ) || true
                  )
-            if is-tty-io; then
-                echo "$print" | tee /dev/stderr | putclip
-            else
-                echo "$print"
-            fi
+            echo "$print" | perl -npe 's,ssh://172.16.0.9:29418/,smartisan:,g; s,smartisan:/,smartisan:,g' |
+                if is-tty-io </dev/stdout; then
+                    cat | tee /dev/stderr | putclip
+                else
+                    cat
+                fi
             exit 0
             ;;
         -e)

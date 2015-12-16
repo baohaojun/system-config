@@ -2,46 +2,45 @@
 
 use strict;
 
-if (not -e glob("~/.config/system-config/mantis-filter-id")) {
-    print "not mantis filter id found\n";
-    exit 0;
-}
-
-chomp(my $filter_id = qx(cat ~/.config/system-config/mantis-filter-id));
-
-open(my $mantis_pipe, "-|", "mantis.sh filter-get-issue-headers --filter-id $filter_id")
-    or die "Can't open mantis pipe";
+open(my $gerrit_pipe, "-|", "gerrit -h s query owner:baohaojun is:open; gerrit -h s query reviewer:baohaojun is:open")
+    or die "Can't open gerrit pipe";
 
 
-open(my $mantis_org, ">", glob("~/src/github/projects/mantis.org"))
-    or die "Can't open mantis org";
+open(my $gerrit_org, ">", glob("~/src/github/projects/gerrit.org"))
+    or die "Can't open gerrit org";
 
-my ($mantis_id, $mantis_subject, %mantis_map);
-while (<$mantis_pipe>) {
+my ($gerrit_id, $gerrit_url, $gerrit_subject, %gerrit_map, %gerrit_id_map);
+while (<$gerrit_pipe>) {
     chomp;
-    if (s/^\s*id\s*=\s*//) {
-        $mantis_id = $_;
+    if (s/^\s*subject:\s*//) {
+        $gerrit_subject = $_;
         next;
     }
 
-    if (s/^\s*summary\s*=\s*"//) {
-        s/"$//;
-        $mantis_subject = $_;
-        $mantis_map{$mantis_id} = $mantis_subject;
+    if (s/^\s*id:\s*//) {
+        $gerrit_id = $_;
+        next;
+    }
+
+    if (s/^\s*url:\s*//) {
+        $gerrit_url = $_;
+        $gerrit_map{$gerrit_url} = $gerrit_subject;
+        $gerrit_id_map{$gerrit_url} = $gerrit_id;
         next;
     }
 }
 
-for $mantis_id (sort keys %mantis_map) {
-    $mantis_subject = $mantis_map{$mantis_id};
+for $gerrit_url (sort keys %gerrit_map) {
+    $gerrit_subject = $gerrit_map{$gerrit_url};
+    $gerrit_id = $gerrit_id_map{$gerrit_url};
 
 
-    print $mantis_org <<EOF;
-* TODO $mantis_subject
+    print $gerrit_org <<EOF;
+* TODO $gerrit_subject
 
   :PROPERTIES:
-  :FROM:     http://mantis.smartisan.cn/view.php?id=$mantis_id
-  :ID:       $mantis_id
+  :FROM:     $gerrit_url
+  :ID:       $gerrit_id
   :END:
 
 EOF

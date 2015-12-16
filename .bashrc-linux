@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export CLASSPATH=/usr/share/java/stringtemplate4.jar:/usr/share/java/antlr3.jar:/usr/share/java/antlr3-runtime.jar:$HOME/bin/Linux/ext/antlrworks.jar:.
+export CLASSPATH=/usr/share/java/stringtemplate4.jar:/usr/share/java/stringtemplate.jar:/usr/share/java/antlr3.jar:/usr/share/java/antlr3-runtime.jar:$HOME/bin/Linux/ext/antlrworks.jar:.
 
 alias minicom='minicom -w -D /dev/ttyUSB*'
 if [ -n "$BASH_VERSION" -a "$BASH" = /bin/bash ]; then
