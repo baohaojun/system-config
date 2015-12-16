@@ -12,3 +12,39 @@ git pull --rebase
 rm ~/.config/system-config/.bashrc-path
 . ~/.bashrc
 ~/system-config/bin/after-co-ln-s </dev/null >/dev/null 2>&1 &
+
+hint() {
+    read -p "$@.
+    请按‘回车’继续.. "
+}
+
+function setup-ext-local() {
+    if test ! -d ~/external/local/.git; then
+        hint "即将从gerrit服务器获取 ~/external/local"
+        rmdir ~/external/local >/dev/null 2>&1 || true
+        git clone smartisan:baohaojun/ext-local ~/external/local
+    fi
+
+    if test "$(readlink -f ~/external/local)" != "$(readlink -f /home/bhj/external/local)" -a ! -d /home/bhj/external/local; then
+        hint "即将为你配置~/external/local，可能会需要输入你的sudo密码"
+        # 必须保证能在 /home/bhj 目录下找到我的库文件。
+        sudo ln -sf ~ /home/bhj
+    fi
+}
+
+setup-ext-local
+
+cd ~/external/local
+
+if git status -s | grep . -q; then
+    die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "
+fi
+git pull --rebase
+
+cd ~/external/bin/Linux/ext/jdk
+if test -d .git; then
+    if git status -s | grep . -q; then
+        die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "
+    fi
+    git pull --rebase
+fi
