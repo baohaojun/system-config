@@ -6,7 +6,7 @@ open(my $gerrit_pipe, "-|", "gerrit -h s query owner:baohaojun is:open; gerrit -
     or die "Can't open gerrit pipe";
 
 
-open(my $gerrit_org, ">", glob("~/src/github/projects/gerrit.org"))
+open(my $gerrit_org, ">", glob("~/src/github/projects/gerrit.org.$$"))
     or die "Can't open gerrit org";
 
 my ($gerrit_id, $gerrit_url, $gerrit_subject, %gerrit_map, %gerrit_id_map);
@@ -46,3 +46,5 @@ for $gerrit_url (sort keys %gerrit_map) {
 EOF
 
 }
+close $gerrit_org;
+rename(glob("~/src/github/projects/gerrit.org.$$"), glob("~/src/github/projects/gerrit.org"));
