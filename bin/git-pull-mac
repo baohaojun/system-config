@@ -46,7 +46,10 @@ if git config --global user.email| grep -q baohaojun; then
     git submodule foreach 'git config user.email baohaojun@gmail.com'
     git config user.email baohaojun@gmail.com
 fi
-~/system-config/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
+if test "$PWD" = ~/system-config; then
+    echo run after-co-ln-s.sh again...
+    ~/system-config/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
+fi
 mkdir -p ~/.cache/system-config/for-code-reading/$HOME/system-config
 touch ~/.cache/system-config/for-code-reading/$HOME/system-config/.for-code-reading
 rm -f ~/system-config/.for-code-reading

@@ -5,13 +5,21 @@ fi
 export PATH=/bin:"$PATH"
 
 uname=$(uname)
-if test "$uname" = CYGWIN_NT-5.1 -o "$uname" = CYGWIN_NT-6.1
-then
+march=$(uname -m)
+
+if test "$uname" = CYGWIN_NT-5.1 -o "$uname" = CYGWIN_NT-6.1; then
     if test ! "$EMACS"; then
         . ~/system-config/.bashrc-windows
     fi
 else
     . ~/system-config/.bashrc-linux
+fi
+
+if test ~/.config/system-config/.bashrc-path -ot ~/system-config/etc/path/$uname-$march; then
+    if test -e ~/.config/system-config/.bashrc-path; then
+        echo re-create ~/.config/system-config/.bashrc-path
+        rm -f ~/.config/system-config/.bashrc-path || true
+    fi
 fi
 
 if test -e ~/.config/system-config/.bashrc-path; then
@@ -22,11 +30,11 @@ else
     if test -x /opt/local/libexec/gnubin/readlink; then
         export PATH=/opt/local/libexec/gnubin:$PATH
     fi
-    if test -d ~/system-config/etc/path/$(uname)-$(uname -m); then
+    if test -d ~/system-config/etc/path/$uname-$march; then
         rm -rf ~/external/etc/overide/
         export PATH=$(
-            builtin cd ~/system-config/etc/path/$(uname)-$(uname -m) ||
-                builtin cd ~/system-config/etc/path/$(uname) ||
+            builtin cd ~/system-config/etc/path/$uname-$march ||
+                builtin cd ~/system-config/etc/path/$uname ||
                 builtin cd ~/system-config/etc/path/$(uname|sed -e 's/-.*//') ||
                 builtin cd ~/system-config/etc/path/$(uname|sed -e 's/_.*//')
             (
@@ -39,7 +47,7 @@ else
         export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent|rm-last-nl|tr '\n' ':')
         printf 'export PATH=%q\n' "$PATH" > ~/.config/system-config/.bashrc-path
     else
-        echo ~/system-config/etc/path/$(uname)-$(uname -m) not exist?
+        echo ~/system-config/etc/path/$uname-$march not exist?
     fi
 
     if ask-if-not-bhj "Install cpan into your \$HOME/perl5?"; then

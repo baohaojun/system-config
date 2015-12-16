@@ -7,7 +7,7 @@ export TMPDIR=~/.cache
 mkdir -p $TMPDIR
 mkdir -p ~/.cache/system-config/logs
 
-if test -x ~/external/local/bin/beagrep; then
+if test -x ~/external/local/bin/beagrep -a ! -e /usr/local/bin/mkbeagrepidx; then
     export LD_LIBRARY_PATH=~/external/local/lib
 fi
 
