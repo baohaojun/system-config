@@ -33,26 +33,26 @@
 
 using namespace Snore;
 
-PushoverClient::PushoverClient(PushoverFrontend *frontend):
+PushoverClient::PushoverClient(PushoverFrontend* frontend):
     m_frontend(frontend)
 {
     connect(this, &PushoverClient::loggedInChanged, [this](PushoverClient::LoginState state) {
         m_loggedIn = state;
     });
-    connect(this, &PushoverClient::error, [this](QString error) {
+    connect(this, &PushoverClient::error, [this](const QString & error) {
         qCWarning(SNORE) << error;
         m_errorMessage = error;
     });
 }
 
-void PushoverClient::login(const QString &email, const QString &password, const QString &deviceName)
+void PushoverClient::login(const QString& email, const QString& password, const QString& deviceName)
 {
     m_frontend->setSettingsValue(QStringLiteral("DeviceName"), deviceName, Snore::LocalSetting);
 
     QNetworkRequest request(QUrl(QStringLiteral("https://api.pushover.net/1/users/login.json")));
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
-    QNetworkReply *reply = m_manager.post(request, (QLatin1String("email=") + email + QLatin1String("&password=") + password).toUtf8().constData());
+    QNetworkReply* reply = m_manager.post(request, (QLatin1String("email=") + email + QLatin1String("&password=") + password).toUtf8().constData());
 
     connect(reply, &QNetworkReply::finished, [reply, deviceName, this]() {
         qCDebug(SNORE) << reply->error();
@@ -161,12 +161,12 @@ void PushoverClient::disconnectService()
     }
 }
 
-void PushoverClient::registerDevice(const QString &secret, const QString &deviceName)
+void PushoverClient::registerDevice(const QString& secret, const QString& deviceName)
 {
     QNetworkRequest request(QUrl(QStringLiteral("https://api.pushover.net/1/devices.json")));
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
-    QNetworkReply *reply = m_manager.post(request, (QLatin1String("os=O&secret=") + secret + QLatin1String("&name=") + deviceName).toUtf8().constData());
+    QNetworkReply* reply = m_manager.post(request, (QLatin1String("os=O&secret=") + secret + QLatin1String("&name=") + deviceName).toUtf8().constData());
 
     connect(reply, &QNetworkReply::finished, [reply, secret, this]() {
         qCDebug(SNORE) << reply->error();
@@ -183,8 +183,10 @@ void PushoverClient::registerDevice(const QString &secret, const QString &device
             emit loggedInChanged(Error);
             QStringList errorMessages;
             QJsonObject errors = message.value(QStringLiteral("errors")).toObject();
-            foreach (const auto &errorKey, errors.keys()) {
-                foreach (const auto &error, errors.value(errorKey).toArray()) {
+            foreach (const auto & errorKey, errors.keys()) {
+                auto array = errors.value(errorKey).toArray();
+                errorMessages.reserve(array.size());
+                foreach (const auto & error, array) {
                     errorMessages << errorKey + QLatin1Char(' ') + error.toString();
                 }
             }
@@ -199,7 +201,7 @@ void PushoverClient::getMessages()
 {
     QNetworkRequest request(QUrl::fromEncoded((QLatin1String("https://api.pushover.net/1/messages.json?"
                             "secret=") + secret() + QLatin1String("&device_id=") + device()).toUtf8().constData()));
-    QNetworkReply *reply =  m_manager.get(request);
+    QNetworkReply* reply =  m_manager.get(request);
 
     connect(reply, &QNetworkReply::finished, [reply, this]() {
         qCDebug(SNORE) << reply->error();
@@ -214,7 +216,7 @@ void PushoverClient::getMessages()
         int latestID = -1;
         if (message.value(QStringLiteral("status")).toInt() == 1) {
             QJsonArray notifications = message.value(QStringLiteral("messages")).toArray();
-            foreach (const QJsonValue &v, notifications) {
+            foreach (const QJsonValue & v, notifications) {
                 QJsonObject notification = v.toObject();
 
                 latestID = qMax(latestID, notification.value(QStringLiteral("id")).toInt());
@@ -262,7 +264,7 @@ void PushoverClient::deleteMessages(int latestMessageId)
                             device() + QLatin1String("/update_highest_message.json")).toUtf8().constData()));
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
-    QNetworkReply *reply = m_manager.post(request, (QLatin1String("secret=") + secret() + QLatin1String("&message=") + QString::number(latestMessageId)).toUtf8().constData());
+    QNetworkReply* reply = m_manager.post(request, (QLatin1String("secret=") + secret() + QLatin1String("&message=") + QString::number(latestMessageId)).toUtf8().constData());
 
     connect(reply, &QNetworkReply::finished, [reply]() {
         qCDebug(SNORE) << reply->error();
@@ -284,7 +286,7 @@ void PushoverClient::acknowledgeNotification(Notification notification)
                             receipt + QLatin1String("/acknowledge.json")).toUtf8().constData()));
     qCWarning(SNORE) << request.url();
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("application/x-www-form-urlencoded")));
-    QNetworkReply *reply = m_manager.post(request, (QLatin1String("secret=") + secret()).toUtf8().constData());
+    QNetworkReply* reply = m_manager.post(request, (QLatin1String("secret=") + secret()).toUtf8().constData());
 
     connect(reply, &QNetworkReply::finished, [reply]() {
         qCDebug(SNORE) << reply->error();

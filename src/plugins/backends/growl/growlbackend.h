@@ -26,8 +26,8 @@
 class GrowlBackend: public Snore::SnoreBackend
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnoreBackend)
-    Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "snore_plugin.json")
+    Q_INTERFACES ( Snore::SnoreBackend )
+    Q_PLUGIN_METADATA ( IID "org.Snore.NotificationBackend/1.0" FILE "snore_plugin.json" )
 
 public:
     GrowlBackend();
@@ -39,13 +39,13 @@ protected:
 
 private:
     //a static instance for the static callback methode
-    static GrowlBackend *s_instance;
-    QHash<QString, Growl *> m_applications;
+    static GrowlBackend* s_instance;
+    QHash<QString, Growl*> m_applications;
 
 public Q_SLOTS:
-    void slotRegisterApplication(const Snore::Application &application) override;
-    void slotDeregisterApplication(const Snore::Application &application) override;
-    void slotNotify(Snore::Notification notification) override;
+    void slotRegisterApplication ( const Snore::Application& application ) override;
+    void slotDeregisterApplication ( const Snore::Application& application ) override;
+    void slotNotify ( Snore::Notification notification ) override;
 
 };
 

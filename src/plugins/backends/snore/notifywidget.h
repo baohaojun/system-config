@@ -41,28 +41,28 @@ inline int SHARED_MEM_TYPE_REV()
 class NotifyWidget : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int id READ id)
-    Q_PROPERTY(Qt::Corner position MEMBER m_corner NOTIFY positionChanged)
-    Q_PROPERTY(QColor color MEMBER m_color NOTIFY colorChanged)
-    Q_PROPERTY(QColor textColor MEMBER m_textColor NOTIFY textColorChanged)
-    Q_PROPERTY(QString title MEMBER m_title NOTIFY titleChanged)
-    Q_PROPERTY(QString body MEMBER m_body NOTIFY bodyChanged)
-    Q_PROPERTY(int imageSize MEMBER m_imageSize)
-    Q_PROPERTY(int appIconSize MEMBER m_appIconSize)
-    Q_PROPERTY(QUrl image MEMBER m_image NOTIFY imageChanged)
-    Q_PROPERTY(QUrl appIcon MEMBER m_appIcon NOTIFY appIconChanged)
-    Q_PROPERTY(QString fontFamily MEMBER m_fontFamily NOTIFY fontFamilyChanged)
+    Q_PROPERTY ( int id READ id )
+    Q_PROPERTY ( Qt::Corner position MEMBER m_corner NOTIFY positionChanged )
+    Q_PROPERTY ( QColor color MEMBER m_color NOTIFY colorChanged )
+    Q_PROPERTY ( QColor textColor MEMBER m_textColor NOTIFY textColorChanged )
+    Q_PROPERTY ( QString title MEMBER m_title NOTIFY titleChanged )
+    Q_PROPERTY ( QString body MEMBER m_body NOTIFY bodyChanged )
+    Q_PROPERTY ( int imageSize MEMBER m_imageSize )
+    Q_PROPERTY ( int appIconSize MEMBER m_appIconSize )
+    Q_PROPERTY ( QUrl image MEMBER m_image NOTIFY imageChanged )
+    Q_PROPERTY ( QUrl appIcon MEMBER m_appIcon NOTIFY appIconChanged )
+    Q_PROPERTY ( QString fontFamily MEMBER m_fontFamily NOTIFY fontFamilyChanged )
 
 public:
-    explicit NotifyWidget(int id, const SnoreNotifier *parent);
+    explicit NotifyWidget ( int id, const SnoreNotifier* parent );
     ~NotifyWidget();
 
-    void display(const Snore::Notification &notification);
+    void display ( const Snore::Notification& notification );
 
-    bool acquire(int timeout);
+    bool acquire ( int timeout );
     bool release();
 
-    Snore::Notification &notification();
+    Snore::Notification& notification();
 
     int id() const;
 
@@ -84,14 +84,14 @@ Q_SIGNALS:
 
 private:
     void syncSettings();
-    QColor computeBackgrondColor(const QImage &img);
-    QColor compueTextColor(const QColor &backgroundColor);
+    QColor computeBackgrondColor ( const QImage& img );
+    QColor compueTextColor ( const QColor& backgroundColor );
 
-    void updateCornerValues(Qt::Corner c);
+    void updateCornerValues ( Qt::Corner c );
 
     Snore::Notification m_notification;
     int m_id;
-    const SnoreNotifier *m_parent;
+    const SnoreNotifier* m_parent;
     QSharedMemory m_mem;
     bool m_ready;
 
@@ -113,7 +113,7 @@ private:
     QUrl m_appIcon;
     QUrl m_image;
 
-    QQuickWindow *m_window;
+    QQuickWindow* m_window;
 
 };
 

@@ -37,15 +37,15 @@ Icon Icon::defaultIcon()
     return icon;
 }
 
-Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
+Icon Icon::fromWebUrl(const QUrl& url, int maxTime)
 {
     Icon icon = defaultIcon();
     qCDebug(SNORE) << url;
     if (!s_downloadImageCache.contains(url)) {
         qCDebug(SNORE) << "Downloading:" << url;
-        QNetworkAccessManager *manager = new QNetworkAccessManager();
+        QNetworkAccessManager* manager = new QNetworkAccessManager();
         QNetworkRequest request(url);
-        QNetworkReply *reply = manager->get(request);
+        QNetworkReply* reply = manager->get(request);
         QObject::connect(reply, &QNetworkReply::downloadProgress, [&](qint64 bytesReceived, qint64 bytesTotal) {
             qCDebug(SNORE) << "Downloading:" << url << bytesReceived / double(bytesTotal) * 100.0 << "%";
         });
@@ -79,25 +79,25 @@ Icon Icon::fromWebUrl(const QUrl &url, int maxTime)
     return icon;
 }
 
-Icon::Icon(const QPixmap &pixmap):
+Icon::Icon(const QPixmap& pixmap):
     QIcon(pixmap)
 {
 
 }
 
-Icon::Icon(const QIcon &other):
+Icon::Icon(const QIcon& other):
     QIcon(other)
 {
 
 }
 
-Icon::Icon(const QString &fileName):
+Icon::Icon(const QString& fileName):
     QIcon(fileName)
 {
 
 }
 
-QString Icon::localUrl(const QSize &size, Mode mode, State state)const
+QString Icon::localUrl(QSize size, Mode mode, State state)const
 {
     QString localFileName = SnoreCorePrivate::tempPath() + QLatin1Char('/') + QString::number(cacheKey()) + QLatin1String("_") + QString::number(size.width()) + QLatin1String("x") + QString::number(size.height()) + QLatin1String(".png");
     if (!s_localImageCache.contains(localFileName)) {

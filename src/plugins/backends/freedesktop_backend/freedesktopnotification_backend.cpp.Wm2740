@@ -13,9 +13,9 @@ using namespace Snore;
 
 FreedesktopBackend::FreedesktopBackend()
 {
-    m_interface = new org::freedesktop::Notifications(QLatin1String("org.freedesktop.Notifications"),
-            QLatin1String("/org/freedesktop/Notifications"),
-            QDBusConnection::sessionBus(), this);
+    m_interface = new org::freedesktop::Notifications ( QLatin1String ( "org.freedesktop.Notifications" ),
+            QLatin1String ( "/org/freedesktop/Notifications" ),
+            QDBusConnection::sessionBus(), this );
 
 
 }
@@ -30,24 +30,24 @@ void FreedesktopBackend::initialize()
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
     reply.waitForFinished();
     QStringList caps  = reply.value();
-    m_supportsRichtext = caps.contains(QLatin1String("body-markup"));
-    emit initialisationFinished(true);
+    m_supportsRichtext = caps.contains ( QLatin1String ( "body-markup" ) );
+    emit initialisationFinished ( true );
 }
 
-void FreedesktopBackend::setEnabled(bool enabled)
+void FreedesktopBackend::setEnabled ( bool enabled )
 {
-    if(enabled == isEnabled()){
+    if ( enabled == isEnabled() ) {
         return;
     }
-    SnoreBackend::setEnabled(enabled);
-    if(enabled){
-        connect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
-        connect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
-    }else{
-        disconnect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
-        disconnect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
+    SnoreBackend::setEnabled ( enabled );
+    if ( enabled ) {
+        connect ( m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked );
+        connect ( m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed );
+    } else {
+        disconnect ( m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked );
+        disconnect ( m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed );
 
- }
+    }
 }
 
 bool FreedesktopBackend::canCloseNotification() const
@@ -60,72 +60,72 @@ bool FreedesktopBackend::canUpdateNotification() const
     return true;
 }
 
-void  FreedesktopBackend::slotNotify(Notification noti)
+void  FreedesktopBackend::slotNotify ( Notification noti )
 {
-    if (noti.data()->sourceAndTargetAreSimilar(this)) {
+    if ( noti.data()->sourceAndTargetAreSimilar ( this ) ) {
         return;
     }
 
     QStringList actions;
-    foreach (int k, noti.actions().keys()) {
-        actions << QString::number(k) << noti.actions()[k].name();
+    foreach ( int k, noti.actions().keys() ) {
+        actions << QString::number ( k ) << noti.actions() [k].name();
     }
     QVariantMap hints;
-    if (noti.icon().isValid()) {
-        FreedesktopImageHint image(noti.icon().image());
-        hints.insert(QLatin1String("image_data"), QVariant::fromValue(image));
+    if ( noti.icon().isValid() ) {
+        FreedesktopImageHint image ( noti.icon().image() );
+        hints.insert ( QLatin1String ( "image_data" ), QVariant::fromValue ( image ) );
     }
 
     char urgency = '1';
-    if (noti.priority() < 0) {
+    if ( noti.priority() < 0 ) {
         urgency = '0';
-    } else if (noti.priority() > 2) {
+    } else if ( noti.priority() > 2 ) {
         urgency = '2';
     }
-    hints.insert(QLatin1String("urgency"), urgency);
+    hints.insert ( QLatin1String ( "urgency" ), urgency );
 
-    if (noti.application().constHints().contains("desktop-entry")) {
-        hints.insert(QLatin1String("desktop-entry"), noti.application().constHints().value("desktop-entry"));
+    if ( noti.application().constHints().contains ( "desktop-entry" ) ) {
+        hints.insert ( QLatin1String ( "desktop-entry" ), noti.application().constHints().value ( "desktop-entry" ) );
     }
 
     uint updateId = 0;
-    if (noti.isUpdate()) {
-        updateId = noti.old().hints().privateValue(this, "id").toUInt();
-        m_dbusIdMap.take(updateId);
+    if ( noti.isUpdate() ) {
+        updateId = noti.old().hints().privateValue ( this, "id" ).toUInt();
+        m_dbusIdMap.take ( updateId );
     }
 
-    QString title = noti.application().name() + QLatin1String(" - ") + noti.title(m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP);
-    QString body(noti.text(m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP));
+    QString title = noti.application().name() + QLatin1String ( " - " ) + noti.title ( m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP );
+    QString body ( noti.text ( m_supportsRichtext ? Utils::ALL_MARKUP : Utils::NO_MARKUP ) );
     //TODO: add app icon hint?
-    QDBusPendingReply<uint>  id = m_interface->Notify(noti.application().name(), updateId, QString(), title,
-                                  body, actions, hints, noti.isSticky() ? -1 : noti.timeout() * 1000);
+    QDBusPendingReply<uint>  id = m_interface->Notify ( noti.application().name(), updateId, QString(), title,
+                                  body, actions, hints, noti.isSticky() ? -1 : noti.timeout() * 1000 );
 
     id.waitForFinished();
-    noti.hints().setPrivateValue(this, "id", id.value());
+    noti.hints().setPrivateValue ( this, "id", id.value() );
     m_dbusIdMap[id.value()] = noti;
-    slotNotificationDisplayed(noti);
+    slotNotificationDisplayed ( noti );
 
-    qCDebug(SNORE) << noti.id() << "|" << id.value();
+    qCDebug ( SNORE ) << noti.id() << "|" << id.value();
 }
 
-void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID)
+void FreedesktopBackend::slotActionInvoked ( const uint& id, const QString& actionID )
 {
-    qCDebug(SNORE) << id << m_dbusIdMap[id];
+    qCDebug ( SNORE ) << id << m_dbusIdMap[id];
     Notification noti = m_dbusIdMap[id];
-    if (!noti.isValid()) {
+    if ( !noti.isValid() ) {
         return;
     }
-    slotNotificationActionInvoked(noti, noti.actions().value(actionID.toInt()));;
+    slotNotificationActionInvoked ( noti, noti.actions().value ( actionID.toInt() ) );;
 }
 
-void FreedesktopBackend::slotCloseNotification(Notification notification)
+void FreedesktopBackend::slotCloseNotification ( Notification notification )
 {
-    uint id = notification.hints().privateValue(this, "id").toUInt();
-    qCDebug(SNORE) << notification.id() << id;
-    m_interface->CloseNotification(id);
+    uint id = notification.hints().privateValue ( this, "id" ).toUInt();
+    qCDebug ( SNORE ) << notification.id() << id;
+    m_interface->CloseNotification ( id );
 }
 
-void FreedesktopBackend::slotNotificationClosed(const uint &id, const uint &reason)
+void FreedesktopBackend::slotNotificationClosed ( const uint& id, const uint& reason )
 {
     /*
      *
@@ -140,27 +140,27 @@ void FreedesktopBackend::slotNotificationClosed(const uint &id, const uint &reas
      *  4 - Undefined/reserved reasons.
     */
     Notification::CloseReasons closeReason;
-    switch (reason) {
-    case (1):
+    switch ( reason ) {
+    case ( 1 ) :
         closeReason = Notification::TIMED_OUT;
         break;
-    case (2):
+    case ( 2 ) :
         closeReason = Notification::DISMISSED;
         break;
-    case (3):
+    case ( 3 ) :
         closeReason = Notification::CLOSED;
         break;
     default:
         closeReason = Notification::NONE;
     }
 
-    qCDebug(SNORE) << id << "|" << closeReason << reason;
-    if (id == 0) {
+    qCDebug ( SNORE ) << id << "|" << closeReason << reason;
+    if ( id == 0 ) {
         return;
     }
-    Notification noti =  m_dbusIdMap.take(id);
-    if (noti.isValid()) {
-        closeNotification(noti, closeReason);
+    Notification noti =  m_dbusIdMap.take ( id );
+    if ( noti.isValid() ) {
+        closeNotification ( noti, closeReason );
     }
 }
 

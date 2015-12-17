@@ -29,7 +29,7 @@ namespace Snore
 class ApplicationData : public QSharedData
 {
 public:
-    ApplicationData(const QString &key, const QString &name, const Icon &icon);
+    ApplicationData ( const QString& key, const QString& name, const Icon& icon );
     ~ApplicationData();
 
     QString m_key;
@@ -38,6 +38,7 @@ public:
     QHash<QString, Alert> m_alerts;
     Hint m_hint;
     Alert m_defaultAlert;
+    Q_DISABLE_COPY ( ApplicationData )
 
 };
 

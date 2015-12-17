@@ -33,36 +33,35 @@ class SettingsWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit SettingsWindow(const QString &appName, QWidget *parent = 0);
+    explicit SettingsWindow ( const QString& appName, QWidget* parent = 0 );
     ~SettingsWindow();
 
     static const QStringList knownApps();
 
-    static QSettings &settings();
+    static QSettings& settings();
 
     template<typename Func>
-    static const QStringList allSettingsKeysWithPrefix(const QString &prefix, QSettings &settings, Func fun)
-    {
-        QStringList groups = prefix.split(QLatin1Char('/'));
+    static const QStringList allSettingsKeysWithPrefix ( const QString& prefix, QSettings& settings, Func fun ) {
+        QStringList groups = prefix.split ( QLatin1Char ( '/' ) );
         QStringList out;
 
-        foreach (const QString &group, groups) {
-            settings.beginGroup(group);
+        foreach ( const QString &group, groups ) {
+            settings.beginGroup ( group );
         }
-        out = fun(settings);
+        out = fun ( settings );
 
-        for (int i = 0; i < groups.size(); ++i) {
+        for ( int i = 0; i < groups.size(); ++i ) {
             settings.endGroup();
         }
         return out;
     }
 
 private Q_SLOTS:
-    void on_buttonBox_clicked(QAbstractButton *button);
-    void on_comboBox_currentIndexChanged(const QString &arg1);
+    void on_buttonBox_clicked ( QAbstractButton* button );
+    void on_comboBox_currentIndexChanged ( const QString& arg1 );
 
 private:
-    Ui::SettingsWindow *ui;
+    Ui::SettingsWindow* ui;
 };
 
 #endif // SETTINGSWINDOW_H

@@ -79,7 +79,7 @@ public:
          */
         Replaced = 4
     };
-    Q_ENUMS(CloseReasons)
+    Q_ENUMS ( CloseReasons )
 
     /**
      * The Priority for the Notification.
@@ -123,7 +123,7 @@ public:
      * @param timeout the timeout
      * @param priority the priority
      */
-    explicit Notification(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Notification::Prioritys priority = Normal);
+    explicit Notification ( const Application& application, const Alert& alert, const QString& title, const QString& text, const Icon& icon, int timeout = defaultTimeout(), Notification::Prioritys priority = Normal );
 
     /**
      * Creates and update Notification replacing an existing Notification
@@ -134,19 +134,19 @@ public:
      * @param timeout the timeout
      * @param priority the piority
      */
-    explicit Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout = defaultTimeout(), Snore::Notification::Prioritys priority = Normal);
+    explicit Notification ( const Notification& old, const QString& title, const QString& text, const Icon& icon, int timeout = defaultTimeout(), Snore::Notification::Prioritys priority = Normal );
 
     /**
      * The copy constructor
      * @param other
      */
-    Notification(const Notification &other);
+    Notification ( const Notification& other );
 
     /**
      * The copy operator
      * @param other
      */
-    Notification &operator=(const Notification &other);
+    Notification& operator= ( const Notification& other );
     ~Notification();
 
     /**
@@ -166,37 +166,37 @@ public:
      *
      * @return a valid Action if one was invoked otherwise an invalid.
      */
-    const Action &actionInvoked() const;
+    const Action& actionInvoked() const;
 
     /**
      *
      * @return the associated application
      */
-    Application &application() const;
+    Application& application() const;
 
     /**
      * Returns the title of the notification.
      * @param flags the supported markup flags.
      */
-    QString title(Utils::MarkupFlags flags = Utils::NoMarkup) const;
+    QString title ( Utils::MarkupFlags flags = Utils::NoMarkup ) const;
 
     /**
      * Returns the notification text.
      * @param flags the supported markup flags.
      */
-    QString text(Utils::MarkupFlags flags = Utils::NoMarkup) const;
+    QString text ( Utils::MarkupFlags flags = Utils::NoMarkup ) const;
 
     /**
      *
      * @return the icon
      */
-    const Icon &icon() const;
+    const Icon& icon() const;
 
     /**
      *
      * @return the associated alert
      */
-    const Alert &alert() const;
+    const Alert& alert() const;
 
     /**
      * A sticki notification will stay visible until dismissed, if supported by the backend.
@@ -215,33 +215,33 @@ public:
      * @return the available actions
      * @see addAction
      */
-    const QHash<int, Action> &actions() const;
+    const QHash<int, Action>& actions() const;
 
     /**
      * Adds an Action to the Notification
      * @param a the action
      * @see actions
      */
-    void addAction(const Action &a);
+    void addAction ( const Action& a );
 
     /**
      *
      * @return the close reason
      */
-    const Notification::CloseReasons &closeReason();
+    const Notification::CloseReasons& closeReason();
 
     /**
      * Returns notification specific hints.
      * A notification inherits the hints of its application.
      * @see Application::hints()
      */
-    Hint &hints();
+    Hint& hints();
 
     /**
      *
      * @return hints associated with this notification
      */
-    const Hint &constHints() const;
+    const Hint& constHints() const;
 
     /**
      *
@@ -254,7 +254,7 @@ public:
      * @return the old notification to be replaced
      * @see isUpdate
      */
-    Notification &old() const;
+    Notification& old() const;
 
     /**
      *
@@ -267,7 +267,7 @@ public:
      *
      * @return a data pointer for internal use
      */
-    NotificationData *data();
+    NotificationData* data();
 
     /**
      *
@@ -276,11 +276,11 @@ public:
     static int defaultTimeout();
 
     //TODO: find a better name.
-    void addActiveIn(const QObject *o);
-    bool isActiveIn(const QObject *o) const;
-    bool removeActiveIn(const QObject *o);
+    void addActiveIn ( const QObject* o );
+    bool isActiveIn ( const QObject* o ) const;
+    bool removeActiveIn ( const QObject* o );
 
-    inline bool operator ==(const Notification &other);
+    inline bool operator == ( const Notification& other );
 
 private:
     QExplicitlySharedDataPointer<NotificationData> d;
@@ -288,25 +288,25 @@ private:
     friend class NotificationData;
 };
 
-inline bool Notification::operator ==(const Notification &other)
+inline bool Notification::operator == ( const Notification& other )
 {
     return id() == other.id();
 }
 
 }
-Q_DECLARE_METATYPE(Snore::Notification)
+Q_DECLARE_METATYPE ( Snore::Notification )
 
-QDataStream &operator<< (QDataStream &stream, const Snore::Notification &noti);
+QDataStream& operator<< ( QDataStream& stream, const Snore::Notification& noti );
 
-SNORE_EXPORT QDebug operator<< (QDebug, const Snore::Notification::CloseReasons &);
+SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Notification::CloseReasons& );
 
-SNORE_EXPORT QDebug operator<< (QDebug, const Snore::Notification::Prioritys &);
+SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::Notification::Prioritys& );
 
-inline QDebug operator<< (QDebug debug, const Snore::Notification &noti)
+inline QDebug operator<< ( QDebug debug, const Snore::Notification& noti )
 {
-    if (noti.isValid()) {
+    if ( noti.isValid() ) {
         debug.nospace() << "Snore::Notification(" << noti.title() << ", " << noti.text() << ", id = " << noti.id();
-        if (noti.isUpdate()) {
+        if ( noti.isUpdate() ) {
             debug << ", oldID = " << noti.old().id();
         }
         debug << ")" ;

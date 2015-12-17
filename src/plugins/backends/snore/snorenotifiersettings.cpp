@@ -22,7 +22,7 @@
 
 using namespace Snore;
 
-SnoreNotifierSettings::SnoreNotifierSettings(SnorePlugin *snore, QWidget *parent) :
+SnoreNotifierSettings::SnoreNotifierSettings(SnorePlugin* snore, QWidget* parent) :
     PluginSettingsWidget(snore, parent),
     m_comboBox(new QComboBox)
 {

@@ -26,22 +26,22 @@ Application::Application():
     d(nullptr)
 {}
 
-Application::Application(const QString &name, const Icon &icon) :
+Application::Application(const QString& name, const Icon& icon) :
     d(new ApplicationData(name, name, icon))
 {
 }
 
-Application::Application(const QString &key, const QString &name, const Icon &icon) :
+Application::Application(const QString& key, const QString& name, const Icon& icon) :
     d(new ApplicationData(key, name, icon))
 {
 }
 
-Application::Application(const Application &other):
+Application::Application(const Application& other):
     d(other.d)
 {
 }
 
-Application &Application::operator=(const Application &other)
+Application& Application::operator=(const Application& other)
 {
     d = other.d;
     return *this;
@@ -51,7 +51,7 @@ Application::~Application()
 {
 }
 
-void Application::addAlert(const Alert &alert)
+void Application::addAlert(const Alert& alert)
 {
     Q_ASSERT_X(!SnoreCore::instance().aplications().contains(key()), Q_FUNC_INFO,
                "Alerts must be added before the application is Registered.");
@@ -68,12 +68,12 @@ QString Application::name() const
     return d->m_name;
 }
 
-const Icon &Application::icon()const
+const Icon& Application::icon()const
 {
     return d->m_icon;
 }
 
-const QHash<QString, Alert> &Application::alerts() const
+const QHash<QString, Alert>& Application::alerts() const
 {
     return d->m_alerts;
 }
@@ -88,21 +88,21 @@ bool Application::isValid() const
     return d;
 }
 
-Hint &Application::hints()
+Hint& Application::hints()
 {
     return d->m_hint;
 }
 
-const Hint &Application::constHints() const
+const Hint& Application::constHints() const
 {
-    return  const_cast<Hint &>(const_cast<Application *>(this)->hints());
+    return  const_cast<Hint&>(const_cast<Application*>(this)->hints());
 }
 
-QDebug operator<< (QDebug debug, const Snore::Application &app)
+QDebug operator<< (QDebug debug, const Snore::Application& app)
 {
     if (app.isValid()) {
         debug << "Snore::Application(" << app.name() << ", ";
-        foreach (const Alert &a, app.alerts()) {
+        foreach (const Alert & a, app.alerts()) {
             debug << a << ", ";
         }
         debug << ")" ;

@@ -32,7 +32,7 @@
 
 using namespace Snore;
 
-Utils::Utils(QObject *parent):
+Utils::Utils(QObject* parent):
     QObject(parent)
 {
 
@@ -43,7 +43,7 @@ Utils::~Utils()
 
 }
 
-void Utils::bringWindowToFront(const QWindow *window, bool focus)
+void Utils::bringWindowToFront(const QWindow* window, bool focus)
 {
 #ifdef Q_OS_WIN
     bringWindowToFront((HWND)window->winId(), focus);
@@ -66,7 +66,7 @@ void Utils::bringWindowToFront(HWND wid, bool focus)
 }
 #endif
 
-void Utils::raiseWindowToFront(const QWindow *window)
+void Utils::raiseWindowToFront(const QWindow* window)
 {
     // Looks like qt is handling it on linux.
 #ifdef Q_OS_WIN
@@ -82,60 +82,60 @@ void Utils::raiseWindowToFront(const QWindow *window)
         static QRegExp regexp(QLatin1String(PATTERN));\
         STRING = STRING.replace(regexp, QStringLiteral("\\1"));\
     }\
-
-    QString Utils::normalizeMarkup(QString string, MarkupFlags tags)
-    {
-        static QMutex mutex;
-        if (tags == AllMarkup) {
-            return string;
-        } else if (tags == NoMarkup) {
-            return QTextDocumentFragment::fromHtml(string).toPlainText();
-        }
-
-        QMutexLocker lock(&mutex);
-        if (~tags & Utils::Break) {
-            static QRegExp br(QLatin1String("<br>"));
-            string = string.replace(br, QStringLiteral("\n"));
-        }
-        if (~tags & Utils::Href) {
-            HTML_REPLACE(string, "<a href=.*>([^<]*)</a>");
-        }
-        if (~tags & Utils::Italic) {
-            HTML_REPLACE(string, "<i>([^<]*)</i>");
-        }
-        if (~tags & Utils::Bold) {
-            HTML_REPLACE(string, "<b>([^<]*)</b>");
-        }
-        if (~tags & Utils::Underline) {
-            HTML_REPLACE(string, "<u>([^<]*)</u>");
-        }
-        if (~tags & Utils::Font) {
-            HTML_REPLACE(string, "<font.*>([^<]*)</font>");
-        }
+     
+QString Utils::normalizeMarkup(QString string, MarkupFlags tags)
+{
+    static QMutex mutex;
+    if (tags == AllMarkup) {
         return string;
+    } else if (tags == NoMarkup) {
+        return QTextDocumentFragment::fromHtml(string).toPlainText();
     }
 
-    QByteArray Utils::dataFromImage(const QImage &image)
-    {
-        QByteArray data;
-        QBuffer buffer(&data);
-        buffer.open(QBuffer::WriteOnly);
-        image.save(&buffer, "PNG");
-        return data;
+    QMutexLocker lock(&mutex);
+    if (~tags & Utils::Break) {
+        static QRegExp br(QLatin1String("<br>"));
+        string = string.replace(br, QStringLiteral("\n"));
     }
+    if (~tags & Utils::Href) {
+        HTML_REPLACE(string, "<a href=.*>([^<]*)</a>");
+    }
+    if (~tags & Utils::Italic) {
+        HTML_REPLACE(string, "<i>([^<]*)</i>");
+    }
+    if (~tags & Utils::Bold) {
+        HTML_REPLACE(string, "<b>([^<]*)</b>");
+    }
+    if (~tags & Utils::Underline) {
+        HTML_REPLACE(string, "<u>([^<]*)</u>");
+    }
+    if (~tags & Utils::Font) {
+        HTML_REPLACE(string, "<font.*>([^<]*)</font>");
+    }
+    return string;
+}
+
+QByteArray Utils::dataFromImage(const QImage& image)
+{
+    QByteArray data;
+    QBuffer buffer(&data);
+    buffer.open(QBuffer::WriteOnly);
+    image.save(&buffer, "PNG");
+    return data;
+}
 
 #ifdef Q_OS_WIN
-    int Utils::attatchToActiveProcess()
-    {
-        int idActive = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
-        return AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) ? idActive : -1;
-    }
+int Utils::attatchToActiveProcess()
+{
+    int idActive = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
+    return AttachThreadInput(GetCurrentThreadId(), idActive, TRUE) ? idActive : -1;
+}
 
-    void Utils::detatchActiveProcess(int idActive)
-    {
-        if (idActive != -1) {
-            AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
-        }
+void Utils::detatchActiveProcess(int idActive)
+{
+    if (idActive != -1) {
+        AttachThreadInput(GetCurrentThreadId(), idActive, FALSE);
     }
+}
 
 #endif

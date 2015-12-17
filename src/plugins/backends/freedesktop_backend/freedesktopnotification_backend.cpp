@@ -16,7 +16,7 @@ FreedesktopBackend::FreedesktopBackend()
             QStringLiteral("/org/freedesktop/Notifications"),
             QDBusConnection::sessionBus(), this);
     QDBusPendingReply<QStringList> reply = m_interface->GetCapabilities();
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [reply, watcher, this]() {
         m_supportsRichtext = reply.value().contains(QStringLiteral("body-markup"));
         watcher->deleteLater();
@@ -92,7 +92,7 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     qCDebug(SNORE) << noti.id() << "|" << id.value();
 }
 
-void FreedesktopBackend::slotActionInvoked(const uint &id, const QString &actionID)
+void FreedesktopBackend::slotActionInvoked(const uint id, const QString& actionID)
 {
     qCDebug(SNORE) << id << m_dbusIdMap[id];
     Notification noti = m_dbusIdMap[id];
@@ -109,7 +109,7 @@ void FreedesktopBackend::slotCloseNotification(Notification notification)
     m_interface->CloseNotification(id);
 }
 
-void FreedesktopBackend::slotNotificationClosed(const uint &id, const uint &reason)
+void FreedesktopBackend::slotNotificationClosed(const uint id, const uint reason)
 {
     /*
      *

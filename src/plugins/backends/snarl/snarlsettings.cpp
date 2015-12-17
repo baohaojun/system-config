@@ -21,7 +21,7 @@
 
 using namespace Snore;
 
-SnarlSettings::SnarlSettings(SnorePlugin *plugin, QWidget *parent):
+SnarlSettings::SnarlSettings(SnorePlugin* plugin, QWidget* parent):
     PluginSettingsWidget(plugin, parent),
     m_password(new QLineEdit)
 {

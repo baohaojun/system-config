@@ -26,8 +26,8 @@
 class PushoverFrontend : public Snore::SnoreFrontend
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnoreFrontend)
-    Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0" FILE "snore_plugin.json")
+    Q_INTERFACES ( Snore::SnoreFrontend )
+    Q_PLUGIN_METADATA ( IID "org.Snore.NotificationFrontend/1.0" FILE "snore_plugin.json" )
 public:
     PushoverFrontend();
     ~PushoverFrontend() = default;
@@ -36,10 +36,10 @@ protected:
     void setDefaultSettings() override;
 
 public Q_SLOTS:
-    void slotActionInvoked(Snore::Notification notification) override;
+    void slotActionInvoked ( Snore::Notification notification ) override;
 
 private:
-    PushoverClient *m_client;
+    PushoverClient* m_client;
 
 };
 

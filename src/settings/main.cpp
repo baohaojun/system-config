@@ -28,9 +28,9 @@
 using namespace Snore;
 using namespace std;
 
-bool setSetting(const QString &appName, SettingsType type, const QString &_key, const QString &value)
+bool setSetting(const QString& appName, SettingsType type, const QString& _key, const QString& value)
 {
-    QSettings &settings = SettingsWindow::settings();
+    QSettings& settings = SettingsWindow::settings();
     QString key = Utils::normalizeSettingsKey(_key, type, appName);
     QVariant oldValue = settings.value(key);
 
@@ -46,14 +46,14 @@ bool setSetting(const QString &appName, SettingsType type, const QString &_key, 
 
 void listApps()
 {
-    foreach (const QString &app, SettingsWindow::knownApps()) {
+    foreach (const QString & app, SettingsWindow::knownApps()) {
         cout << qPrintable(app) << endl;
     }
 }
 
-void listSettings(SettingsType type, const QString &application)
+void listSettings(SettingsType type, const QString& application)
 {
-    QSettings &settings = SettingsWindow::settings();
+    QSettings& settings = SettingsWindow::settings();
     auto getAllKeys = [](QSettings & settings) {
         return settings.allKeys();
     };
@@ -63,20 +63,20 @@ void listSettings(SettingsType type, const QString &application)
         prefix = QString();
     }
     cout << qPrintable(application) << endl;
-    foreach (const QString &key, SettingsWindow::allSettingsKeysWithPrefix(
+    foreach (const QString & key, SettingsWindow::allSettingsKeysWithPrefix(
                  Utils::normalizeSettingsKey(QLatin1String(""), type, prefix), settings, getAllKeys)) {
         cout << "  " << qPrintable(key) << ": " << qPrintable(settings.value(Utils::normalizeSettingsKey(key, type, prefix)).toString()) << endl;
     }
 }
 
-int showWindow(const QString &appName)
+int showWindow(const QString& appName)
 {
-    SettingsWindow *window = new SettingsWindow(appName);
+    SettingsWindow* window = new SettingsWindow(appName);
     window->show();
     return qApp->exec();
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("SnoreSettings"));
@@ -95,10 +95,10 @@ int main(int argc, char *argv[])
     QCommandLineOption listAppsCommand(QStringLiteral("apps"), QStringLiteral("List possible application."));
     parser.addOption(listAppsCommand);
 
-    QCommandLineOption listSettingsCommand({QStringLiteral("l"), QStringLiteral("list")} , QStringLiteral("List settings for the given --appName or the global settings."));
+    QCommandLineOption listSettingsCommand( {QStringLiteral("l"), QStringLiteral("list")} , QStringLiteral("List settings for the given --appName or the global settings."));
     parser.addOption(listSettingsCommand);
 
-    QCommandLineOption appNameCommand({QStringLiteral("a"), QStringLiteral("appName")} , QStringLiteral("Set the Name of the app <app> or global."), QStringLiteral("app"), QStringLiteral("global"));
+    QCommandLineOption appNameCommand( {QStringLiteral("a"), QStringLiteral("appName")} , QStringLiteral("Set the Name of the app <app> or global."), QStringLiteral("app"), QStringLiteral("global"));
     parser.addOption(appNameCommand);
 
     parser.addPositionalArgument(QStringLiteral("key"), QStringLiteral("The settings Key."));

@@ -30,24 +30,23 @@ class PluginSettingsWidget;
 class SNORE_EXPORT SettingsPlugin :  public SnorePlugin
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnorePlugin)
+    Q_INTERFACES ( Snore::SnorePlugin )
 public:
     SettingsPlugin();
     ~SettingsPlugin();
 
-    PluginTypes type() const override
-    {
+    PluginTypes type() const override {
         return SnorePlugin::Settings;
     };
 
-    virtual PluginSettingsWidget *settingsWidget(SnorePlugin *parent) = 0;
+    virtual PluginSettingsWidget* settingsWidget ( SnorePlugin* parent ) = 0;
 
 };
 
 }
 
-Q_DECLARE_INTERFACE(Snore::SettingsPlugin,
-                    "org.Snore.SettingsPlugin/1.0")
+Q_DECLARE_INTERFACE ( Snore::SettingsPlugin,
+                      "org.Snore.SettingsPlugin/1.0" )
 
 #define SNORE_DECLARE_SETTINGS_PLUGIN(NAME)\
     class NAMESettings : public Snore::SettingsPlugin{\

@@ -25,7 +25,7 @@
 
 using namespace Snore;
 
-NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
+NotifyWidget::NotifyWidget(int id, const SnoreNotifier* parent) :
     m_id(id),
     m_parent(parent),
     m_mem(QLatin1String("SnoreNotifyWidget_rev") + QString::number(SHARED_MEM_TYPE_REV()) + QLatin1String("_id") + QString::number(m_id)),
@@ -45,10 +45,10 @@ NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
     }
 #endif
 #endif
-    QQmlApplicationEngine *engine = new QQmlApplicationEngine(this);
+    QQmlApplicationEngine* engine = new QQmlApplicationEngine(this);
     engine->rootContext()->setContextProperty(QStringLiteral("notifyWidget"), this);
     engine->load(QUrl::fromEncoded("qrc:/notification.qml"));
-    m_window = qobject_cast<QQuickWindow *>(engine->rootObjects().value(0));
+    m_window = qobject_cast<QQuickWindow*>(engine->rootObjects().value(0));
 
     // TODO: It looks like there is a Qt bug which make some Windows with this flag invisible in some cases...(Tested: Kubuntu willy)
     m_window->setFlags(Qt::WindowStaysOnTopHint | Qt::ToolTip
@@ -60,7 +60,7 @@ NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
 
     if (m_mem.create(sizeof(SHARED_MEM_TYPE))) {
         m_mem.lock();
-        SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
+        SHARED_MEM_TYPE* data = (SHARED_MEM_TYPE*)m_mem.data();
         data->free = true;
         data->date = QTime::currentTime().msecsSinceStartOfDay();
         m_mem.unlock();
@@ -69,7 +69,7 @@ NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
             qCWarning(SNORE) << "Failed to atatche to shared mem";
         } else {
             m_mem.lock();
-            SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
+            SHARED_MEM_TYPE* data = (SHARED_MEM_TYPE*)m_mem.data();
             m_mem.unlock();
             int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
             qCDebug(SNORE) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
@@ -82,7 +82,7 @@ NotifyWidget::~NotifyWidget()
     release();
 }
 
-void NotifyWidget::display(const Notification &notification)
+void NotifyWidget::display(const Notification& notification)
 {
     qCDebug(SNORE) << m_id << notification.id() << m_window->isVisible();
     m_notification = notification;
@@ -124,7 +124,7 @@ bool NotifyWidget::acquire(int timeout)
     bool out = false;
     if (m_ready) {
         m_mem.lock();
-        SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
+        SHARED_MEM_TYPE* data = (SHARED_MEM_TYPE*)m_mem.data();
         int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
         qCDebug(SNORE) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
         bool isTimedOut = elapsed > data->timeout;
@@ -151,7 +151,7 @@ bool NotifyWidget::release()
     bool out = false;
     if (!m_ready) {
         m_mem.lock();
-        SHARED_MEM_TYPE *data = (SHARED_MEM_TYPE *)m_mem.data();
+        SHARED_MEM_TYPE* data = (SHARED_MEM_TYPE*)m_mem.data();
         int elapsed = (QTime::currentTime().msecsSinceStartOfDay() - data->date) / 1000;
         qCDebug(SNORE) << m_id << "State:" << data->free << "Time:" << elapsed << "Timeout:" << data->timeout;
         if (!data->free) {
@@ -165,7 +165,7 @@ bool NotifyWidget::release()
     return out;
 }
 
-Notification &NotifyWidget::notification()
+Notification& NotifyWidget::notification()
 {
     return m_notification;
 }
@@ -185,15 +185,15 @@ void NotifyWidget::syncSettings()
     }
 }
 
-QColor NotifyWidget::computeBackgrondColor(const QImage &img)
+QColor NotifyWidget::computeBackgrondColor(const QImage& img)
 {
     int stepSize = img.depth() / 8;
     qulonglong r = 0;
     qulonglong g = 0;
     qulonglong b = 0;
-    const uchar *end = img.constBits() + img.byteCount();
-    for (const uchar *bit = img.constBits(); bit != end; bit += stepSize) {
-        const QRgb c = *reinterpret_cast<const QRgb *>(bit);
+    const uchar* end = img.constBits() + img.byteCount();
+    for (const uchar* bit = img.constBits(); bit != end; bit += stepSize) {
+        const QRgb c = *reinterpret_cast<const QRgb*>(bit);
         r += qRed(c);
         g += qGreen(c);
         b += qBlue(c);
@@ -202,7 +202,7 @@ QColor NotifyWidget::computeBackgrondColor(const QImage &img)
     return QColor(r / size, g / size, b / size);
 }
 
-QColor NotifyWidget::compueTextColor(const QColor &backgroundColor)
+QColor NotifyWidget::compueTextColor(const QColor& backgroundColor)
 {
     // based on http://stackoverflow.com/a/946734
     QRgb compColor = qGray(backgroundColor.rgb()) > 186 ? 0 : 255;

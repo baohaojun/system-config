@@ -47,37 +47,37 @@ bool SnorePlugin::isEnabled() const
     return m_enabled;
 }
 
-QVariant SnorePlugin::settingsValue(const QString &key, SettingsType type) const
+QVariant SnorePlugin::settingsValue(const QString& key, SettingsType type) const
 {
     return SnoreCore::instance().settingsValue(normaliseKey(key), type);
 }
 
-void SnorePlugin::setSettingsValue(const QString &key, const QVariant &value, SettingsType type)
+void SnorePlugin::setSettingsValue(const QString& key, const QVariant& value, SettingsType type)
 {
     SnoreCore::instance().setSettingsValue(normaliseKey(key), value, type);
 }
 
-void SnorePlugin::setDefaultSettingsValue(const QString &key, const QVariant &value, SettingsType type)
+void SnorePlugin::setDefaultSettingsValue(const QString& key, const QVariant& value, SettingsType type)
 {
     SnoreCore::instance().setDefaultSettingsValue(normaliseKey(key), value, type);
 }
 
-const Hint &SnorePlugin::constHints() const
+const Hint& SnorePlugin::constHints() const
 {
-    return const_cast<Hint &>(const_cast<SnorePlugin *>(this)->hints());
+    return const_cast<Hint&>(const_cast<SnorePlugin*>(this)->hints());
 }
 
-Hint &SnorePlugin::hints()
+Hint& SnorePlugin::hints()
 {
     return m_hints;
 }
 
-QString SnorePlugin::normaliseKey(const QString &key) const
+QString SnorePlugin::normaliseKey(const QString& key) const
 {
     return name() + QLatin1Char('-') + typeName() + QLatin1Char('/') + key + QLatin1Char('.') + settingsVersion();
 }
 
-const QString &SnorePlugin::name() const
+const QString& SnorePlugin::name() const
 {
     Q_ASSERT_X(m_container, Q_FUNC_INFO, "Plugin container not set.");
     return m_container->name();
@@ -108,7 +108,7 @@ void SnorePlugin::setDefaultSettings()
     setDefaultSettingsValue(QStringLiteral("Enabled"), false, LocalSetting);
 }
 
-void SnorePlugin::setErrorString(const QString &_error)
+void SnorePlugin::setErrorString(const QString& _error)
 {
     m_error = _error;
     qCWarning(SNORE) << name() << "encountered an error:" << m_error;
@@ -134,7 +134,7 @@ void SnorePlugin::disable()
     setEnabled(false);
 }
 
-SnorePlugin::PluginTypes SnorePlugin::typeFromString(const QString &t)
+SnorePlugin::PluginTypes SnorePlugin::typeFromString(const QString& t)
 {
     return (SnorePlugin::PluginTypes)SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).keyToValue(t.toUpper().toLatin1().constData());
 }
@@ -144,11 +144,12 @@ QString SnorePlugin::typeToString(const SnorePlugin::PluginTypes t)
     return QString::fromLatin1(SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType")).valueToKey(t));
 }
 
-const QList<SnorePlugin::PluginTypes> &SnorePlugin::types()
+const QList<SnorePlugin::PluginTypes>& SnorePlugin::types()
 {
     static QList<SnorePlugin::PluginTypes> t;
     if (t.isEmpty()) {
         QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
+        t.reserve(e.keyCount());
         for (int i = 0; i < e.keyCount(); ++i) {
             t << (SnorePlugin::PluginTypes) e.value(i);
         }
@@ -156,7 +157,7 @@ const QList<SnorePlugin::PluginTypes> &SnorePlugin::types()
     return t;
 }
 
-QDebug operator<<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
+QDebug operator<<(QDebug debug, const Snore::SnorePlugin::PluginTypes& flags)
 {
     QMetaEnum e = SnorePlugin::staticMetaObject.enumerator(SnorePlugin::staticMetaObject.indexOfEnumerator("PluginType"));
     debug.nospace() << "PluginTypes(";
@@ -179,19 +180,19 @@ QDebug operator<<(QDebug debug, const Snore::SnorePlugin::PluginTypes &flags)
 
 }
 
-QDebug operator<<(QDebug debug, const Snore::SnorePlugin *p)
+QDebug operator<<(QDebug debug, const Snore::SnorePlugin* p)
 {
-    debug.nospace() << p->metaObject()->className() << "(" << (void *)p  << ", " << p->name() << ")";
+    debug.nospace() << p->metaObject()->className() << "(" << (void*)p  << ", " << p->name() << ")";
     return debug.space();
 }
 
-QDataStream &operator<<(QDataStream &out, const Snore::SnorePlugin::PluginTypes &type)
+QDataStream& operator<<(QDataStream& out, const Snore::SnorePlugin::PluginTypes& type)
 {
     out << static_cast<int>(type);
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in, Snore::SnorePlugin::PluginTypes &type)
+QDataStream& operator>>(QDataStream& in, Snore::SnorePlugin::PluginTypes& type)
 {
     int key;
     in >> key;

@@ -36,7 +36,7 @@
 using namespace Snore;
 using namespace std;
 
-void bringToFront(QString pid)
+void bringToFront(const QString& pid)
 {
     qCDebug(SNORE) << pid;
 #ifdef Q_OS_WIN
@@ -44,15 +44,13 @@ void bringToFront(QString pid)
         // based on http://stackoverflow.com/a/21767578
         pair<ulong, HWND> data = make_pair(pid, (HWND)0);
         ::EnumWindows((WNDENUMPROC)static_cast<BOOL(*)(HWND, LPARAM)>([](HWND handle, LPARAM lParam) -> BOOL {
-            auto isMainWindow = [](HWND handle)
-            {
+            auto isMainWindow = [](HWND handle) {
                 return ::GetWindow(handle, GW_OWNER) == (HWND)0 && IsWindowVisible(handle);
             };
-            pair<ulong, HWND> &data = *(pair<ulong, HWND> *)lParam;
+            pair<ulong, HWND>& data = *(pair<ulong, HWND>*)lParam;
             ulong process_id = 0;
             ::GetWindowThreadProcessId(handle, &process_id);
-            if (data.first != process_id || !isMainWindow(handle))
-            {
+            if (data.first != process_id || !isMainWindow(handle)) {
                 return TRUE;
             }
             data.second = handle;
@@ -68,7 +66,7 @@ void bringToFront(QString pid)
 #endif
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QGuiApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("snoresend"));
@@ -114,7 +112,7 @@ int main(int argc, char *argv[])
     parser.process(app);
     qCDebug(SNORE) << app.arguments();
     if (parser.isSet(title) && parser.isSet(message)) {
-        SnoreCore &core = SnoreCore::instance();
+        SnoreCore& core = SnoreCore::instance();
 
         core.loadPlugins(SnorePlugin::Backend | SnorePlugin::SecondaryBackend);
 

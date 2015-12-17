@@ -55,7 +55,7 @@ void Sound::slotNotificationDisplayed(Snore::Notification notification)
         m_player->setMedia(QUrl::fromLocalFile(sound));
         qCDebug(SNORE) << "SoundFile:" << m_player->media().canonicalUrl();
         m_player->play();
-        QTimer *timeout = new QTimer(this);
+        QTimer* timeout = new QTimer(this);
         timeout->setSingleShot(true);
         timeout->setInterval(notification.timeout() * 1000);
         connect(timeout, &QTimer::timeout, [this, timeout] {

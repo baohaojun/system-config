@@ -27,8 +27,8 @@
 class SnarlNetworkFrontend : public Snore::SnoreFrontend
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnoreFrontend)
-    Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0" FILE "snore_plugin.json")
+    Q_INTERFACES ( Snore::SnoreFrontend )
+    Q_PLUGIN_METADATA ( IID "org.Snore.NotificationFrontend/1.0" FILE "snore_plugin.json" )
     friend class Parser;
 public:
     static const int port = 9887;
@@ -38,24 +38,23 @@ public:
     ~SnarlNetworkFrontend();
 
 public Q_SLOTS:
-    void slotActionInvoked(Snore::Notification notification) override;
-    void slotNotificationClosed(Snore::Notification notification) override;
+    void slotActionInvoked ( Snore::Notification notification ) override;
+    void slotNotificationClosed ( Snore::Notification notification ) override;
 
 private Q_SLOTS:
     void handleConnection();
     void handleMessages();
 
 private:
-    QTcpServer *tcpServer;
-    Parser *parser;
-    QHash<QTcpSocket *, Snore::Application> m_applications;
+    QTcpServer* tcpServer;
+    Parser* parser;
+    QHash<QTcpSocket*, Snore::Application> m_applications;
 
-    void callback(Snore::Notification &sn, QString msg);
+    void callback ( Snore::Notification& sn, const QString& msg );
 
-    inline void write(QTcpSocket *dest, const QString &msg)
-    {
-        qCDebug(SNORE) << msg;
-        dest->write(msg.toLatin1());
+    inline void write ( QTcpSocket* dest, const QString& msg ) {
+        qCDebug ( SNORE ) << msg;
+        dest->write ( msg.toLatin1() );
     }
 
 };

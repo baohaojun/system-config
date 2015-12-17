@@ -26,7 +26,7 @@ Action::Action():
 
 }
 
-Action::Action(int id, QString name):
+Action::Action(int id, const QString& name):
     m_id(id),
     m_name(name)
 {
@@ -48,7 +48,7 @@ int Action::id() const
     return m_id;
 }
 
-QDataStream &operator<< (QDataStream &stream, const Action &a)
+QDataStream& operator<< (QDataStream& stream, const Action& a)
 {
     stream << a.id() << a.name();
     return stream;

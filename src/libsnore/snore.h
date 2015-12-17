@@ -53,13 +53,13 @@ class SnoreCorePrivate;
 
 class SNORE_EXPORT SnoreCore : public QObject
 {
-    Q_DECLARE_PRIVATE(SnoreCore)
+    Q_DECLARE_PRIVATE ( SnoreCore )
     Q_OBJECT
 public:
     /**
      * Creates a Notification Manager SnoreCore
      */
-    static SnoreCore &instance();
+    static SnoreCore& instance();
     ~SnoreCore();
 
     /**
@@ -68,13 +68,13 @@ public:
      * @param types the type of tha plugin
      * @see Snore::SnorePlugin::PluginType
      */
-    Q_INVOKABLE void loadPlugins(Snore::SnorePlugin::PluginTypes types);
+    Q_INVOKABLE void loadPlugins ( Snore::SnorePlugin::PluginTypes types );
 
     /**
      * Broadcast a notification.
      * @param notification the Notification
      */
-    void broadcastNotification(Notification notification);
+    void broadcastNotification ( Notification notification );
 
     /**
      * Displays a example notification.
@@ -89,7 +89,7 @@ public:
      * @see broadcastNotification
      * @param application the application
      */
-    void registerApplication(const Application &application);
+    void registerApplication ( const Application& application );
 
     /**
      * Deregisters an application.
@@ -99,19 +99,19 @@ public:
      * @see setPrimaryNotificationBackend
      * @param application the application
      */
-    void deregisterApplication(const Application &application);
+    void deregisterApplication ( const Application& application );
 
     /**
      *
      * @return a QHash of all registered applications
      */
-    const QHash<QString, Application> &aplications() const;
+    const QHash<QString, Application>& aplications() const;
 
     /**
      *
      * @return a list of plugins
      */
-    const QStringList pluginNames(SnorePlugin::PluginTypes type = SnorePlugin::All) const;
+    const QStringList pluginNames ( SnorePlugin::PluginTypes type = SnorePlugin::All ) const;
 
     /**
      *
@@ -124,25 +124,25 @@ public:
      * @param backend the name of the backend.
      * @return whether the backend was set successful.
      */
-    bool setPrimaryNotificationBackend(const QString &backend);
+    bool setPrimaryNotificationBackend ( const QString& backend );
 
     /**
      * Try to close a Notification if the backend supports the action.
      * @see SnoreBackend::canCloseNotification
      */
-    void requestCloseNotification(Notification, Notification::CloseReasons);
+    void requestCloseNotification ( Notification, Notification::CloseReasons );
 
     /**
      * Sets the default application used for internal notifications.
      * @param app The default application.
      */
-    void setDefaultApplication(Application app);
+    void setDefaultApplication ( Application app );
 
-    QVariant settingsValue(const QString &key, SettingsType type = GlobalSetting) const;
-    void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSetting);
-    void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSetting);
+    QVariant settingsValue ( const QString& key, SettingsType type = GlobalSetting ) const;
+    void setSettingsValue ( const QString& key, const QVariant& settingsValue, SettingsType type = GlobalSetting );
+    void setDefaultSettingsValue ( const QString& key, const QVariant& settingsValue, SettingsType type = GlobalSetting );
 
-    Notification getActiveNotificationByID(uint id) const;
+    Notification getActiveNotificationByID ( uint id ) const;
 
 Q_SIGNALS:
     /**
@@ -152,27 +152,27 @@ Q_SIGNALS:
      * @todo maybe introduce a special action state for this case
      * @see Action
      */
-    void actionInvoked(const Snore::Notification &notification);
+    void actionInvoked ( const Snore::Notification& notification );
 
     /**
      * This signal is emitted when a Notification is closed.
      * @see Notification::CloseReasons
      */
-    void notificationClosed(const Snore::Notification &notification);
+    void notificationClosed ( const Snore::Notification& notification );
 
     /**
      * This signal is emitted in case the Primary backend encountered an error.
      */
-    void primaryNotificationBackendError(const QString &error);
+    void primaryNotificationBackendError ( const QString& error );
 
     /**
      * This signal is emitted in case the Primary backend changed.
      */
-    void primaryNotificationBackendChanged(const QString &error);
+    void primaryNotificationBackendChanged ( const QString& error );
 
 private:
-    SnoreCore(QObject *parent);
-    SnoreCorePrivate *d_ptr;
+    SnoreCore ( QObject* parent );
+    SnoreCorePrivate* d_ptr;
 
 };
 

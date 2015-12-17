@@ -36,7 +36,7 @@ public:
     ~SnoreNotify();
 
 private:
-    TrayIcon *m_trayIcon;
+    TrayIcon* m_trayIcon;
 };
 
 #endif // SNORENOTIFY_H

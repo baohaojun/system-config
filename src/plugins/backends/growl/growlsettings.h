@@ -27,7 +27,7 @@ class GrowlSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
 public:
-    explicit GrowlSettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
+    explicit GrowlSettings ( Snore::SnorePlugin* plugin, QWidget* parent = 0 );
     ~GrowlSettings();
 
 protected:
@@ -35,10 +35,10 @@ protected:
     void save() override;
 
 private:
-    QLineEdit *m_host;
-    QLineEdit *m_password;
+    QLineEdit* m_host;
+    QLineEdit* m_password;
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(GrowlSettings)
+SNORE_DECLARE_SETTINGS_PLUGIN ( GrowlSettings )
 
 #endif // GROWLSETTINGS_H

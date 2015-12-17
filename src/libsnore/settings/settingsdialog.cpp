@@ -27,7 +27,7 @@
 
 using namespace Snore;
 
-SettingsDialog::SettingsDialog(QWidget *parent) :
+SettingsDialog::SettingsDialog(QWidget* parent) :
     QWidget(parent),
     ui(new Ui::SettingsDialog)
 {
@@ -50,7 +50,7 @@ void SettingsDialog::initTabs()
         bool enabled = false;
         target->clear();
         if (types & type) {
-            foreach (PluginSettingsWidget *widget, Settings::settingWidgets(type)) {
+            foreach (PluginSettingsWidget * widget, Settings::settingWidgets(type)) {
                 target->addTab(widget, widget->name());
                 m_tabs.append(widget);
                 enabled = true;
@@ -98,7 +98,7 @@ void SettingsDialog::load()
     }
 }
 
-void SettingsDialog::loadPrimaryBackendBox(const QString &backend)
+void SettingsDialog::loadPrimaryBackendBox(const QString& backend)
 {
     if (SnoreCore::instance().settingsValue(QStringLiteral("PluginTypes"), LocalSetting).value<SnorePlugin::PluginTypes>() & SnorePlugin::Backend) {
         ui->primaryBackendComboBox->clear();

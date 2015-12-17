@@ -21,7 +21,7 @@
 
 using namespace Snore;
 
-GrowlSettings::GrowlSettings(SnorePlugin *plugin, QWidget *parent):
+GrowlSettings::GrowlSettings(SnorePlugin* plugin, QWidget* parent):
     PluginSettingsWidget(plugin, parent),
     m_host(new QLineEdit),
     m_password(new QLineEdit)

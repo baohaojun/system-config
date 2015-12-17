@@ -31,7 +31,7 @@
 
 using namespace Snore;
 
-SettingsWindow::SettingsWindow(const QString &appName, QWidget *parent) :
+SettingsWindow::SettingsWindow(const QString& appName, QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::SettingsWindow)
 {
@@ -69,19 +69,19 @@ const QStringList SettingsWindow::knownApps()
     });
 }
 
-QSettings &SettingsWindow::settings()
+QSettings& SettingsWindow::settings()
 {
     return SnoreCorePrivate::instance()->settings();
 }
 
-void SettingsWindow::on_comboBox_currentIndexChanged(const QString &arg1)
+void SettingsWindow::on_comboBox_currentIndexChanged(const QString& arg1)
 {
     SnoreCorePrivate::instance()->setLocalSttingsPrefix(arg1);
     ui->widget->initTabs();
     ui->widget->setVisible(true);
 }
 
-void SettingsWindow::on_buttonBox_clicked(QAbstractButton *button)
+void SettingsWindow::on_buttonBox_clicked(QAbstractButton* button)
 {
     switch (ui->buttonBox->buttonRole(button)) {
     case QDialogButtonBox::AcceptRole:

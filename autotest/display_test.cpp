@@ -13,9 +13,8 @@ class DisplayTest : public QObject
     Q_OBJECT
 public:
     DisplayTest():
-        app(QStringLiteral("Test"), Icon::defaultIcon())
-    {
-        SnoreCore &instance = SnoreCore::instance();
+        app(QStringLiteral("Test"), Icon::defaultIcon()) {
+        SnoreCore& instance = SnoreCore::instance();
         instance.loadPlugins(SnorePlugin::Backend);
         instance.setSettingsValue(QStringLiteral("Timeout"), 5, LocalSetting);
         SnoreCore::instance().registerApplication(app);
@@ -28,10 +27,9 @@ private Q_SLOTS:
     void displayTestPlain();
 
 private:
-    void testString(QString message)
-    {
+    void testString(const QString& message) {
         qDebug() << Utils::normalizeMarkup(message, Utils::NoMarkup);
-        SnoreCore &snore = SnoreCore::instance();
+        SnoreCore& snore = SnoreCore::instance();
         QStringList backends = snore.pluginNames(SnorePlugin::Backend);
         auto notify = [&backends, &snore, &message, this](Notification n) {
             qDebug() << n << "closed";

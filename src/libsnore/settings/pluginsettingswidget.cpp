@@ -24,7 +24,7 @@
 
 using namespace Snore;
 
-PluginSettingsWidget::PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *parent) :
+PluginSettingsWidget::PluginSettingsWidget(SnorePlugin* snorePlugin, QWidget* parent) :
     QWidget(parent),
     m_snorePlugin(snorePlugin),
     m_layout(new QFormLayout),
@@ -48,9 +48,9 @@ const QString PluginSettingsWidget::name() const
     return m_snorePlugin->name();
 }
 
-void PluginSettingsWidget::addRow(const QString &label, QWidget *widget, const QString &toolTip)
+void PluginSettingsWidget::addRow(const QString& label, QWidget* widget, const QString& toolTip)
 {
-    QLabel *lb = new QLabel(label, this);
+    QLabel* lb = new QLabel(label, this);
     m_layout->addRow(lb, widget);
     if (!toolTip.isEmpty()) {
         widget->setToolTip(toolTip);
@@ -79,12 +79,12 @@ bool PluginSettingsWidget::isDirty()
     return m_dirty;
 }
 
-QVariant PluginSettingsWidget::settingsValue(const QString &key, SettingsType type) const
+QVariant PluginSettingsWidget::settingsValue(const QString& key, SettingsType type) const
 {
     return m_snorePlugin->settingsValue(key, type);
 }
 
-void PluginSettingsWidget::setSettingsValue(const QString &key, const QVariant &value, SettingsType type)
+void PluginSettingsWidget::setSettingsValue(const QString& key, const QVariant& value, SettingsType type)
 {
     if (this->settingsValue(key) != value) {
         m_snorePlugin->setSettingsValue(key, value, type);

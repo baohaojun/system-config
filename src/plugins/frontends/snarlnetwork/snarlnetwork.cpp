@@ -79,18 +79,18 @@ void SnarlNetworkFrontend::slotNotificationClosed(Snore::Notification notificati
 
 void SnarlNetworkFrontend::handleConnection()
 {
-    QTcpSocket *client = tcpServer->nextPendingConnection();
-    connect(client, SIGNAL(readyRead()), this, SLOT(handleMessages()));
-    connect(client, SIGNAL(disconnected()), client, SLOT(deleteLater()));
+    QTcpSocket* client = tcpServer->nextPendingConnection();
+    connect(client, &QTcpSocket::readyRead, this, &SnarlNetworkFrontend::handleMessages);
+    connect(client, &QTcpSocket::disconnected, client, &QTcpSocket::deleteLater);
 }
 
 void SnarlNetworkFrontend::handleMessages()
 {
     const QString out(QStringLiteral("SNP/1.1/0/OK"));
-    QTcpSocket *client = qobject_cast<QTcpSocket *>(sender());
+    QTcpSocket* client = qobject_cast<QTcpSocket*>(sender());
 
     QStringList messages(QString::fromLatin1(client->readAll()).trimmed().split(QStringLiteral("\r\n")));
-    foreach (const QString &s, messages) {
+    foreach (const QString & s, messages) {
         if (s.isEmpty()) {
             continue;
         }
@@ -106,10 +106,10 @@ void SnarlNetworkFrontend::handleMessages()
     }
 }
 
-void SnarlNetworkFrontend::callback(Notification &sn, const QString msg)
+void SnarlNetworkFrontend::callback(Notification& sn, const QString& msg)
 {
     if (sn.hints().containsPrivateValue(this, "clientSocket")) {
-        QTcpSocket *client = sn.hints().privateValue(this, "clientSocket").value<QPointer<QTcpSocket>>();
+        QTcpSocket* client = sn.hints().privateValue(this, "clientSocket").value<QPointer<QTcpSocket>>();
         if (client) {
             write(client, msg + QString::number(sn.id()) + QLatin1String("\r\n"));
         }

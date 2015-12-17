@@ -39,20 +39,18 @@ class SnarlBackend::SnarlWidget: public QWidget
 {
     //Q_OBJECT
 public:
-    SnarlWidget(SnarlBackend *snarl):
-        m_snarl(snarl)
-    {
+    SnarlWidget(SnarlBackend* snarl):
+        m_snarl(snarl) {
         SNARL_GLOBAL_MESSAGE = SnarlInterface::Broadcast();
     }
 
-    bool nativeEvent(const QByteArray &eventType, void *message, long *) override
-    {
+    bool nativeEvent(const QByteArray& eventType, void* message, long*) override {
         if (eventType == "windows_generic_MSG") {
-            MSG *msg = static_cast<MSG *>(message);
+            MSG* msg = static_cast<MSG*>(message);
             if (msg->message == SNARL_GLOBAL_MESSAGE) {
                 int action = msg->wParam;
                 if (action == SnarlEnums::SnarlLaunched) {
-                    for (const Application &a : SnoreCore::instance().aplications()) {
+                    for (const Application & a : SnoreCore::instance().aplications()) {
                         m_snarl->slotRegisterApplication(a);
                     }
                 }
@@ -87,7 +85,7 @@ public:
                     reason = Notification::TimedOut;
                     qCDebug(SNORE) << "Notification timed out";
                     break;
-                //away stuff
+                    //away stuff
                 case SnarlEnums::SnarlUserAway:
                     qCDebug(SNORE) << "Snalr user has gone away";
                     return true;
@@ -113,7 +111,7 @@ public:
 
 private:
     uint SNARL_GLOBAL_MESSAGE;
-    SnarlBackend *m_snarl;
+    SnarlBackend* m_snarl;
 
 };
 
@@ -140,7 +138,7 @@ bool SnarlBackend::canUpdateNotification() const
 
 bool SnarlBackend::isReady()
 {
-    if (!qobject_cast< QApplication * >(qApp)) {
+    if (!qobject_cast< QApplication* >(qApp)) {
         setErrorString(tr("This plugin only works with QApplication"));
         return false;
     }
@@ -162,7 +160,7 @@ void SnarlBackend::setDefaultSettings()
     SnoreBackend::setDefaultSettings();
 }
 
-void SnarlBackend::slotRegisterApplication(const Application &application)
+void SnarlBackend::slotRegisterApplication(const Application& application)
 {
     if (!m_eventLoop) {
         return;
@@ -170,7 +168,7 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
 
     Q_ASSERT_X(!m_applications.contains(application.name()), Q_FUNC_INFO, "Application already registered");
 
-    SnarlInterface *snarlInterface = new SnarlInterface();
+    SnarlInterface* snarlInterface = new SnarlInterface();
     m_applications.insert(application.name(), snarlInterface);
 
     QString appName = application.name().replace(QLatin1Char(' '), QLatin1Char('_')); //app sig must not contain spaces
@@ -182,20 +180,20 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
                     (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
     qCDebug(SNORE) << result;
 
-    foreach (const Alert &alert, application.alerts()) {
+    foreach (const Alert & alert, application.alerts()) {
         snarlInterface->AddClass(alert.name().toUtf8().constData(),
                                  alert.name().toUtf8().constData(),
                                  0, 0, alert.icon().localUrl(QSize(128, 128)).toUtf8().constData());
     }
 }
 
-void SnarlBackend::slotDeregisterApplication(const Application &application)
+void SnarlBackend::slotDeregisterApplication(const Application& application)
 {
     if (!m_applications.contains(application.name())) {
         qCDebug(SNORE) << "Unknown apllication: " << application.name();
         return;
     }
-    SnarlInterface *snarlInterface = m_applications.take(application.name());
+    SnarlInterface* snarlInterface = m_applications.take(application.name());
     QString appName = application.name().replace(QLatin1Char(' '), QLatin1Char('_')); //app sig must not contain spaces
     snarlInterface->Unregister(appName.toUtf8().constData());
     delete snarlInterface;
@@ -208,7 +206,7 @@ void SnarlBackend::slotNotify(Notification notification)
         return;
     }
 
-    SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
+    SnarlInterface* snarlInterface = m_applications.value(notification.application().name());
 
     Snarl::V42::SnarlEnums::MessagePriority priority = Snarl::V42::SnarlEnums::PriorityUndefined;
     if (notification.priority() > 1) {
@@ -231,7 +229,7 @@ void SnarlBackend::slotNotify(Notification notification)
                                     Utils::dataFromImage(notification.icon().pixmap(QSize(128, 128)).toImage()).toBase64().constData(),
                                     priority);
 
-        foreach (const Action &a, notification.actions()) {
+        foreach (const Action & a, notification.actions()) {
             snarlInterface->AddAction(id, a.name().toUtf8().constData(), (QLatin1Char('@') + QString::number(a.id())).toUtf8().constData());
         }
         m_idMap[id] = notification;

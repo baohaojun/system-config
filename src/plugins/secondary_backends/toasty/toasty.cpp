@@ -33,7 +33,7 @@ void Toasty::slotNotify(Notification notification)
         return;
     }
     QNetworkRequest request(QUrl::fromUserInput(QLatin1String("http://api.supertoasty.com/notify/") + key));
-    QHttpMultiPart *mp = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+    QHttpMultiPart* mp = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
     QHttpPart title;
     title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"title\"")));
@@ -54,12 +54,12 @@ void Toasty::slotNotify(Notification notification)
 
     icon.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"image\"; filename=\"") + notification.icon().localUrl(QSize(128, 128)) + QLatin1Char('"')));
     icon.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QLatin1String("image/png")));
-    QFile *file = new QFile(notification.icon().localUrl(QSize(128, 128)));
+    QFile* file = new QFile(notification.icon().localUrl(QSize(128, 128)));
     file->open(QIODevice::ReadOnly);
     icon.setBodyDevice(file);
     mp->append(icon);
 
-    QNetworkReply *reply =  m_manager.post(request, mp);
+    QNetworkReply* reply =  m_manager.post(request, mp);
     mp->setParent(reply);
     file->setParent(reply);
 

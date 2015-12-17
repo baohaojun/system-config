@@ -29,23 +29,23 @@ Notification::Notification() :
 {
 }
 
-Notification::Notification(const Application &application, const Alert &alert, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
+Notification::Notification(const Application& application, const Alert& alert, const QString& title, const QString& text, const Icon& icon, int timeout, Notification::Prioritys priority):
     d(new  NotificationData(application, alert, title, text, icon, timeout, priority))
 {
 
 }
 
-Notification::Notification(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
+Notification::Notification(const Notification& old, const QString& title, const QString& text, const Icon& icon, int timeout, Notification::Prioritys priority):
     d(new  NotificationData(old, title, text, icon, timeout, priority))
 {
 }
 
-Notification::Notification(const Notification &other) :
+Notification::Notification(const Notification& other) :
     d(other.d)
 {
 }
 
-Notification &Notification::operator=(const Notification &other)
+Notification& Notification::operator=(const Notification& other)
 {
     d = other.d;
     return *this;
@@ -61,7 +61,7 @@ uint Notification::id() const
     return d->m_id;
 }
 
-const Icon &Notification::icon() const
+const Icon& Notification::icon() const
 {
     return d->m_icon;
 }
@@ -71,7 +71,7 @@ int Notification::timeout() const
     return d->m_timeout;
 }
 
-Notification &Notification::old() const
+Notification& Notification::old() const
 {
     return d->m_toReplace;
 }
@@ -81,12 +81,12 @@ bool Notification::isUpdate() const
     return d->m_toReplace.isValid();
 }
 
-const Action &Notification::actionInvoked() const
+const Action& Notification::actionInvoked() const
 {
     return d->m_actionInvoked;
 }
 
-Application &Notification::application() const
+Application& Notification::application() const
 {
     return d->m_application;
 }
@@ -101,7 +101,7 @@ QString Notification::text(Utils::MarkupFlags flags) const
     return d->resolveMarkup(d->m_text, flags);
 }
 
-const Alert &Notification::alert() const
+const Alert& Notification::alert() const
 {
     return d->m_alert;
 }
@@ -116,29 +116,29 @@ Notification::Prioritys Notification::priority() const
     return d->m_priority;
 }
 
-void Notification::addAction(const Action &a)
+void Notification::addAction(const Action& a)
 {
     d->m_actions.insert(a.id(), a);
 }
 
-const QHash<int, Action> &Notification::actions() const
+const QHash<int, Action>& Notification::actions() const
 {
     return d->m_actions;
 }
 
-const Notification::CloseReasons &Notification::closeReason()
+const Notification::CloseReasons& Notification::closeReason()
 {
     return d->m_closeReason;
 }
 
-Hint &Notification::hints()
+Hint& Notification::hints()
 {
     return d->m_hints;
 }
 
-const Hint &Notification::constHints() const
+const Hint& Notification::constHints() const
 {
-    return  const_cast<Hint &>(const_cast<Notification *>(this)->hints());
+    return  const_cast<Hint&>(const_cast<Notification*>(this)->hints());
 }
 
 bool Notification::isValid() const
@@ -146,7 +146,7 @@ bool Notification::isValid() const
     return d;
 }
 
-void Notification::addActiveIn(const QObject *o)
+void Notification::addActiveIn(const QObject* o)
 {
     bool contains = d->m_activeIn.contains(o);
     Q_ASSERT_X(!contains, Q_FUNC_INFO, "already active");
@@ -159,12 +159,12 @@ void Notification::addActiveIn(const QObject *o)
     qCDebug(SNORE) << SnoreCorePrivate::instance()->m_activeNotifications.size();
 }
 
-bool Notification::isActiveIn(const QObject *o) const
+bool Notification::isActiveIn(const QObject* o) const
 {
     return d->m_activeIn.contains(o);
 }
 
-bool Notification::removeActiveIn(const QObject *o)
+bool Notification::removeActiveIn(const QObject* o)
 {
     bool out = d->m_activeIn.remove(o);
     if (d->m_activeIn.isEmpty()) {
@@ -174,7 +174,7 @@ bool Notification::removeActiveIn(const QObject *o)
     return out;
 }
 
-NotificationData *Notification::data()
+NotificationData* Notification::data()
 {
     return d.data();
 }
@@ -184,7 +184,7 @@ int Notification::defaultTimeout()
     return SnoreCore::instance().settingsValue(QStringLiteral("Timeout"), LocalSetting).toInt();
 }
 
-QDataStream &operator<< (QDataStream &stream, const Notification &noti)
+QDataStream& operator<< (QDataStream& stream, const Notification& noti)
 {
     stream << "Title: " << noti.title() << " Text: " << noti.text() << " ID: " << noti.id() ;
     return stream;
@@ -192,7 +192,7 @@ QDataStream &operator<< (QDataStream &stream, const Notification &noti)
 
 #define debugPrintEnum(x) case x:  debug << #x ")"; break
 
-QDebug operator <<(QDebug debug, const Snore::Notification::CloseReasons &flags)
+QDebug operator <<(QDebug debug, const Snore::Notification::CloseReasons& flags)
 {
     debug.nospace() << "CloseReasons(";
     switch (flags) {
@@ -205,7 +205,7 @@ QDebug operator <<(QDebug debug, const Snore::Notification::CloseReasons &flags)
     return debug.space();
 }
 
-QDebug operator<< (QDebug debug, const Snore::Notification::Prioritys &flags)
+QDebug operator<< (QDebug debug, const Snore::Notification::Prioritys& flags)
 {
     debug.nospace() << "Prioritys(";
     switch (flags) {

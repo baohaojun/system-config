@@ -29,24 +29,23 @@ class SnorePlugin;
 class SNORE_EXPORT SnoreFrontend: public SnorePlugin
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnorePlugin)
+    Q_INTERFACES ( Snore::SnorePlugin )
 public:
     SnoreFrontend();
     virtual ~SnoreFrontend();
 
-    PluginTypes type() const override
-    {
+    PluginTypes type() const override {
         return Frontend;
     }
 
 public Q_SLOTS:
-    virtual void slotActionInvoked(Snore::Notification notification);
-    virtual void slotNotificationClosed(Snore::Notification notification);
+    virtual void slotActionInvoked ( Snore::Notification notification );
+    virtual void slotNotificationClosed ( Snore::Notification notification );
 };
 
 }
 
-Q_DECLARE_INTERFACE(Snore::SnoreFrontend,
-                    "org.Snore.NotificationFrontend/1.0")
+Q_DECLARE_INTERFACE ( Snore::SnoreFrontend,
+                      "org.Snore.NotificationFrontend/1.0" )
 
 #endif//SNORE_FRONTEND_H

@@ -27,19 +27,19 @@ class PushoverSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
 public:
-    explicit PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
+    explicit PushoverSettings ( Snore::SnorePlugin* plugin, QWidget* parent = 0 );
     ~PushoverSettings();
 
     void load() override;
     void save() override;
 
 private:
-    QLineEdit *m_keyLineEdit;
-    QLineEdit *m_soundLineEdit;
-    QLineEdit *m_deviceLineEdit;
+    QLineEdit* m_keyLineEdit;
+    QLineEdit* m_soundLineEdit;
+    QLineEdit* m_deviceLineEdit;
 
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(PushoverSettings)
+SNORE_DECLARE_SETTINGS_PLUGIN ( PushoverSettings )
 
 #endif // PUSHOVERSETTINGS_H

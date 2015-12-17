@@ -27,7 +27,7 @@ class SnarlSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
 public:
-    explicit SnarlSettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
+    explicit SnarlSettings ( Snore::SnorePlugin* plugin, QWidget* parent = 0 );
     ~SnarlSettings();
 
 protected:
@@ -35,9 +35,9 @@ protected:
     void save() override;
 
 private:
-    QLineEdit *m_password;
+    QLineEdit* m_password;
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(SnarlSettings)
+SNORE_DECLARE_SETTINGS_PLUGIN ( SnarlSettings )
 
 #endif // SNARLSETTINGS_H

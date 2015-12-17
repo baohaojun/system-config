@@ -29,41 +29,40 @@ namespace Snore
 class SNORE_EXPORT SnoreBackend : public SnorePlugin
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnorePlugin)
+    Q_INTERFACES ( Snore::SnorePlugin )
 public:
     SnoreBackend();
     virtual ~SnoreBackend();
 
-    void requestCloseNotification(Snore::Notification notification, Notification::CloseReasons reason);
+    void requestCloseNotification ( Snore::Notification notification, Notification::CloseReasons reason );
 
     virtual bool canCloseNotification() const;
     virtual bool canUpdateNotification() const;
 
-    PluginTypes type() const override
-    {
+    PluginTypes type() const override {
         return Backend;
     }
 
 Q_SIGNALS:
-    void notificationClosed(Snore::Notification);
+    void notificationClosed ( Snore::Notification );
 
 public Q_SLOTS:
-    virtual void slotRegisterApplication(const Snore::Application &application);
-    virtual void slotDeregisterApplication(const Snore::Application &application);
-    virtual void slotNotify(Snore::Notification notification) = 0;
-    virtual void slotCloseNotification(Snore::Notification notification);
+    virtual void slotRegisterApplication ( const Snore::Application& application );
+    virtual void slotDeregisterApplication ( const Snore::Application& application );
+    virtual void slotNotify ( Snore::Notification notification ) = 0;
+    virtual void slotCloseNotification ( Snore::Notification notification );
 
 protected Q_SLOTS:
-    void slotNotificationDisplayed(Notification notification);
-    void slotNotificationActionInvoked(Notification notification, const Action &action = Action());
+    void slotNotificationDisplayed ( Notification notification );
+    void slotNotificationActionInvoked ( Notification notification, const Action& action = Action() );
 
 protected:
-    void closeNotification(Snore::Notification, Snore::Notification::CloseReasons);
+    void closeNotification ( Snore::Notification, Snore::Notification::CloseReasons );
 
 };
 
 }
-Q_DECLARE_INTERFACE(Snore::SnoreBackend,
-                    "org.Snore.NotificationBackend/1.0")
+Q_DECLARE_INTERFACE ( Snore::SnoreBackend,
+                      "org.Snore.NotificationBackend/1.0" )
 
 #endif//SNORE_BACKEND_H

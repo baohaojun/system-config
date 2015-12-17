@@ -30,7 +30,7 @@ SnoreNotifier::SnoreNotifier():
     m_timer(new QTimer(this))
 {
     for (int i = 0; i < m_widgets.size(); ++i) {
-        NotifyWidget *w = new NotifyWidget(i, this);
+        NotifyWidget* w = new NotifyWidget(i, this);
         m_widgets[i] = w;
         connect(w, &NotifyWidget::dismissed, [this, w]() {
             Notification notification = w->notification();
@@ -66,7 +66,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
 
     if (notification.isUpdate()) {
         if (notification.old().hints().privateValue(this, "id").isValid()) {
-            NotifyWidget *w = m_widgets[notification.old().hints().privateValue(this, "id").toInt()];
+            NotifyWidget* w = m_widgets[notification.old().hints().privateValue(this, "id").toInt()];
             if (w->notification().isValid() && w->notification().id() == notification.old().id()) {
                 qCDebug(SNORE) << "replacing notification" << w->notification().id() << notification.id();
                 display(w, notification);
@@ -83,7 +83,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
         return;
     }
     if (m_queue.isEmpty()) {
-        foreach (NotifyWidget *w, m_widgets) {
+        foreach (NotifyWidget * w, m_widgets) {
             if (w->acquire(notification.timeout())) {
                 display(w, notification);
                 return;
@@ -99,7 +99,7 @@ void SnoreNotifier::slotNotify(Snore::Notification notification)
 
 void SnoreNotifier::slotCloseNotification(Snore::Notification notification)
 {
-    NotifyWidget *w = m_widgets[notification.hints().privateValue(this, "id").toInt()];
+    NotifyWidget* w = m_widgets[notification.hints().privateValue(this, "id").toInt()];
     w->release();
     slotQueueTimeout();
 }
@@ -110,7 +110,7 @@ void SnoreNotifier::slotQueueTimeout()
         qCDebug(SNORE) << "queue is empty";
         m_timer->stop();
     } else {
-        foreach (NotifyWidget *w, m_widgets) {
+        foreach (NotifyWidget * w, m_widgets) {
             if (!m_queue.isEmpty() && w->acquire(m_queue.first().timeout())) {
                 Notification notification = m_queue.takeFirst();
                 notification.hints().setPrivateValue(this, "id", w->id());

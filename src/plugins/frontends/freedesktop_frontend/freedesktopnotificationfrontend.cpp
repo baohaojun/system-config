@@ -68,9 +68,9 @@ void FreedesktopFrontend::slotNotificationClosed(Notification notification)
     }
 }
 
-uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
-                                 const QString &app_icon, const QString &summary, const QString &body,
-                                 const QStringList &actions, const QVariantMap &hints, int timeout)
+uint FreedesktopFrontend::Notify(const QString& app_name, uint replaces_id,
+                                 const QString& app_icon, const QString& summary, const QString& body,
+                                 const QStringList& actions, const QVariantMap& hints, int timeout)
 {
     Application app;
     Notification::Prioritys priotity = Notification::Normal;
@@ -122,16 +122,16 @@ void FreedesktopFrontend::CloseNotification(uint id)
 
 QStringList FreedesktopFrontend::GetCapabilities()
 {
-    return QStringList({ QStringLiteral("body"),
-                         QStringLiteral("urgency"),
-                         QStringLiteral("body-hyperlinks"),
-                         QStringLiteral("body-markup"),
-                         QStringLiteral("icon-static"),
-                         QStringLiteral("actions")
-                       });
+    return QStringList( { QStringLiteral("body"),
+                          QStringLiteral("urgency"),
+                          QStringLiteral("body-hyperlinks"),
+                          QStringLiteral("body-markup"),
+                          QStringLiteral("icon-static"),
+                          QStringLiteral("actions")
+                        });
 }
 
-QString FreedesktopFrontend::GetServerInformation(QString &vendor, QString &version, QString &specVersion)
+QString FreedesktopFrontend::GetServerInformation(QString& vendor, QString& version, QString& specVersion)
 {
     vendor = QStringLiteral("SnoreNotify");
     version = Version::version();

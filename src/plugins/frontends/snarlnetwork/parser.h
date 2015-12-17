@@ -28,12 +28,12 @@ class Parser : public QObject
 {
     Q_OBJECT
 public:
-    Parser(class SnarlNetworkFrontend *snarl);
+    Parser ( class SnarlNetworkFrontend* snarl );
 
-    void parse(Snore::Notification &sNotification, const QString &msg, class QTcpSocket *client);
+    void parse ( Snore::Notification& sNotification, const QString& msg, class QTcpSocket* client );
 
 private:
-    class SnarlNetworkFrontend *snarl;
+    class SnarlNetworkFrontend* snarl;
 
     enum snpTypes {
         TYPE,

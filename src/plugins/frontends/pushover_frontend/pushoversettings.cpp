@@ -25,7 +25,7 @@
 #include <QPushButton>
 #include <QLabel>
 
-PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) :
+PushoverSettings::PushoverSettings(Snore::SnorePlugin* plugin, QWidget* parent) :
     Snore::PluginSettingsWidget(plugin, parent),
     m_emailLineEdit(new QLineEdit(this)),
     m_passwordLineEdit(new QLineEdit(this)),
@@ -55,7 +55,7 @@ PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) 
         m_errorMessageLabel->setText(pushover->errorMessage());
 
         connect(pushover, &PushoverClient::loggedInChanged, this, &PushoverSettings::slotUpdateLoginState);
-        connect(pushover, &PushoverClient::error, [this](QString message) {
+        connect(pushover, &PushoverClient::error, [this](const QString & message) {
             m_errorMessageLabel->setText(message);
         });
 

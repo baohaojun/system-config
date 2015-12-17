@@ -20,11 +20,11 @@ namespace Snarl
 namespace V42
 {
 
-static LPCTSTR SnarlWindowClass = _T("w>Snarl");
-static LPCTSTR SnarlWindowTitle = _T("Snarl");
+static LPCTSTR SnarlWindowClass = _T ( "w>Snarl" );
+static LPCTSTR SnarlWindowTitle = _T ( "Snarl" );
 
-static LPCTSTR SnarlGlobalMsg = _T("SnarlGlobalEvent");
-static LPCTSTR SnarlAppMsg    = _T("SnarlAppMessage");
+static LPCTSTR SnarlGlobalMsg = _T ( "SnarlGlobalEvent" );
+static LPCTSTR SnarlAppMsg    = _T ( "SnarlAppMessage" );
 
 static const DWORD WM_SNARLTEST = WM_USER + 237;
 
@@ -156,41 +156,35 @@ class SnarlParameterList
 public:
     typedef std::pair<std::basic_string<T>, std::basic_string<T> > PairType;
 
-    SnarlParameterList()
-    {
+    SnarlParameterList() {
     }
 
-    explicit SnarlParameterList(int initialCapacity)
-    {
-        list.reserve(initialCapacity);
+    explicit SnarlParameterList ( int initialCapacity ) {
+        list.reserve ( initialCapacity );
     }
 
-    void Add(const T *_key, const T *_value)
-    {
-        if (_value != NULL) {
-            list.push_back(PairType(std::basic_string<T>(_key), std::basic_string<T>(_value)));    //
+    void Add ( const T* _key, const T* _value ) {
+        if ( _value != NULL ) {
+            list.push_back ( PairType ( std::basic_string<T> ( _key ), std::basic_string<T> ( _value ) ) ); //
         }
     }
 
-    void Add(const T *_key, LONG32 _value)
-    {
+    void Add ( const T* _key, LONG32 _value ) {
         std::basic_stringstream<T> valStr;
         valStr << _value;
-        list.push_back(PairType(std::basic_string<T>(_key), valStr.str()));
+        list.push_back ( PairType ( std::basic_string<T> ( _key ), valStr.str() ) );
     }
 
-    void Add(const T *_key, void *_value)
-    {
-        if (_value != NULL) {
+    void Add ( const T* _key, void* _value ) {
+        if ( _value != NULL ) {
             std::basic_stringstream<T> valStr;
-            valStr << (INT_PTR)_value; // Uckly hack, to get stringstream to print void* as decimal not hex
+            valStr << ( INT_PTR ) _value; // Uckly hack, to get stringstream to print void* as decimal not hex
 
-            list.push_back(PairType(std::basic_string<T>(_key), valStr.str()));
+            list.push_back ( PairType ( std::basic_string<T> ( _key ), valStr.str() ) );
         }
     }
 
-    const std::vector<PairType> &GetList() const
-    {
+    const std::vector<PairType>& GetList() const {
         return list;
     }
 
@@ -208,116 +202,88 @@ public:
     class Requests
     {
     public:
-        static LPCSTR  AddActionA()
-        {
+        static LPCSTR  AddActionA() {
             return  "addaction";
         }
-        static LPCWSTR AddActionW()
-        {
+        static LPCWSTR AddActionW() {
             return L"addaction";
         }
-        static LPCSTR  AddClassA()
-        {
+        static LPCSTR  AddClassA() {
             return  "addclass";
         }
-        static LPCWSTR AddClassW()
-        {
+        static LPCWSTR AddClassW() {
             return L"addclass";
         }
-        static LPCSTR  ClearActionsA()
-        {
+        static LPCSTR  ClearActionsA() {
             return  "clearactions";
         }
-        static LPCWSTR ClearActionsW()
-        {
+        static LPCWSTR ClearActionsW() {
             return L"clearactions";
         }
-        static LPCSTR  ClearClassesA()
-        {
+        static LPCSTR  ClearClassesA() {
             return  "clearclasses";
         }
-        static LPCWSTR ClearClassesW()
-        {
+        static LPCWSTR ClearClassesW() {
             return L"clearclasses";
         }
-        static LPCSTR  HelloA()
-        {
+        static LPCSTR  HelloA() {
             return  "hello";
         }
-        static LPCWSTR HelloW()
-        {
+        static LPCWSTR HelloW() {
             return L"hello";
         }
-        static LPCSTR  HideA()
-        {
+        static LPCSTR  HideA() {
             return  "hide";
         }
-        static LPCWSTR HideW()
-        {
+        static LPCWSTR HideW() {
             return L"hide";
         }
-        static LPCSTR  IsVisibleA()
-        {
+        static LPCSTR  IsVisibleA() {
             return  "isvisible";
         }
-        static LPCWSTR IsVisibleW()
-        {
+        static LPCWSTR IsVisibleW() {
             return L"isvisible";
         }
-        static LPCSTR  NotifyA()
-        {
+        static LPCSTR  NotifyA() {
             return  "notify";
         }
-        static LPCWSTR NotifyW()
-        {
+        static LPCWSTR NotifyW() {
             return L"notify";
         }
-        static LPCSTR  RegisterA()
-        {
+        static LPCSTR  RegisterA() {
             return  "reg";    // register
         }
-        static LPCWSTR RegisterW()
-        {
+        static LPCWSTR RegisterW() {
             return L"reg";
         }
-        static LPCSTR  RemoveClassA()
-        {
+        static LPCSTR  RemoveClassA() {
             return  "remclass";
         }
-        static LPCWSTR RemoveClassW()
-        {
+        static LPCWSTR RemoveClassW() {
             return L"remclass";
         }
-        static LPCSTR  UnregisterA()
-        {
+        static LPCSTR  UnregisterA() {
             return  "unregister";
         }
-        static LPCWSTR UnregisterW()
-        {
+        static LPCWSTR UnregisterW() {
             return L"unregister";
         }
-        static LPCSTR  UpdateAppA()
-        {
+        static LPCSTR  UpdateAppA() {
             return  "updateapp";
         }
-        static LPCWSTR UpdateAppW()
-        {
+        static LPCWSTR UpdateAppW() {
             return L"updateapp";
         }
-        static LPCSTR  UpdateA()
-        {
+        static LPCSTR  UpdateA() {
             return  "update";
         }
-        static LPCWSTR UpdateW()
-        {
+        static LPCWSTR UpdateW() {
             return L"update";
         }
-        static LPCSTR  VersionA()
-        {
+        static LPCSTR  VersionA() {
             return  "version";
         }
-        static LPCWSTR VersionW()
-        {
+        static LPCWSTR VersionW() {
             return L"version";
         }
     };
@@ -330,26 +296,21 @@ public:
     // ------------------------------------------------------------------------------------
 
     // Use FreeString, when SnarlInterface returns a null terminated string pointer
-    static LPTSTR AllocateString(size_t n)
-    {
+    static LPTSTR AllocateString ( size_t n ) {
         return new TCHAR[n];
     }
-    static void FreeString(LPSTR str)
-    {
+    static void FreeString ( LPSTR str ) {
         delete [] str;
         str = NULL;
     }
-    static void FreeString(LPCSTR str)
-    {
+    static void FreeString ( LPCSTR str ) {
         delete [] str;
     }
-    static void FreeString(LPWSTR str)
-    {
+    static void FreeString ( LPWSTR str ) {
         delete [] str;
         str = NULL;
     }
-    static void FreeString(LPCWSTR str)
-    {
+    static void FreeString ( LPCWSTR str ) {
         delete [] str;
     }
 
@@ -361,16 +322,16 @@ public:
     ///   Negative on failure. (Get error code by abs(return_value))
     ///   <see>http://sourceforge.net/apps/mediawiki/snarlwin/index.php?title=Windows_API#Return_Value</see>
     /// </returns>
-    static LONG32 DoRequest(LPCSTR request, UINT replyTimeout = 1000);
-    static LONG32 DoRequest(LPCWSTR request, UINT replyTimeout = 1000);
+    static LONG32 DoRequest ( LPCSTR request, UINT replyTimeout = 1000 );
+    static LONG32 DoRequest ( LPCWSTR request, UINT replyTimeout = 1000 );
 
     /// <summary>Escapes a string, so it can be passed to Snarl.</summary>
     /// <remarks>
     ///   Should only be used, if you are using DoRequest() and not the helper functions.
     ///   Remember to Escape each key/value pair individually.
     /// </remarks>
-    static std::basic_string<char> &Escape(std::basic_string<char> &str);
-    static std::basic_string<wchar_t> &Escape(std::basic_string<wchar_t> &str);
+    static std::basic_string<char>& Escape ( std::basic_string<char>& str );
+    static std::basic_string<wchar_t>& Escape ( std::basic_string<wchar_t>& str );
 
     /// <summary>Returns the global Snarl Application message  (V39)</summary>
     /// <returns>Returns Snarl application registered message.</returns>
@@ -419,15 +380,15 @@ public:
     // ------------------------------------------------------------------------------------
 
     /// <summary>Adds an action to an existing (on-screen or in the missed list) notification.</summary>
-    LONG32 AddAction(LONG32 msgToken, LPCSTR  label, LPCSTR  cmd);
-    LONG32 AddAction(LONG32 msgToken, LPCWSTR label, LPCWSTR cmd);
+    LONG32 AddAction ( LONG32 msgToken, LPCSTR  label, LPCSTR  cmd );
+    LONG32 AddAction ( LONG32 msgToken, LPCWSTR label, LPCWSTR cmd );
 
     /// <summary>Add a notification class to Snarl.</summary>
-    LONG32 AddClass(LPCSTR classId, LPCSTR name, LPCSTR title = NULL, LPCSTR text = NULL, LPCSTR icon = NULL, LPCSTR sound = NULL, LONG32 duration = NULL, LPCSTR callback = NULL, bool enabled = true);
-    LONG32 AddClass(LPCWSTR classId, LPCWSTR name, LPCWSTR title = NULL, LPCWSTR text = NULL, LPCWSTR icon = NULL, LPCWSTR sound = NULL, LONG32 duration = -1, LPCWSTR callback = NULL, bool enabled = true);
+    LONG32 AddClass ( LPCSTR classId, LPCSTR name, LPCSTR title = NULL, LPCSTR text = NULL, LPCSTR icon = NULL, LPCSTR sound = NULL, LONG32 duration = NULL, LPCSTR callback = NULL, bool enabled = true );
+    LONG32 AddClass ( LPCWSTR classId, LPCWSTR name, LPCWSTR title = NULL, LPCWSTR text = NULL, LPCWSTR icon = NULL, LPCWSTR sound = NULL, LONG32 duration = -1, LPCWSTR callback = NULL, bool enabled = true );
 
     /// <summary>Remove all notification classes in one call.</summary>
-    LONG32 ClearActions(LONG32 msgToken);
+    LONG32 ClearActions ( LONG32 msgToken );
 
     /// <summary>Remove all notification classes in one call.</summary>
     LONG32 ClearClasses();
@@ -438,34 +399,34 @@ public:
     LONG32 GetLastMsgToken() const;
 
     /// <summary>Hide a Snarl notification.</summary>
-    LONG32 Hide(LONG32 msgToken);
+    LONG32 Hide ( LONG32 msgToken );
 
     /// <summary>Test if a Snarl notification is visible. If the message is visible the function returns SnarlEnums::Success.</summary>
-    LONG32 IsVisible(LONG32 msgToken);
+    LONG32 IsVisible ( LONG32 msgToken );
 
     /// <summary>Show a Snarl notification.</summary>
     /// <returns>Returns the notification token or negative on failure.</returns>
     /// <remarks>You can use <see cref="GetLastMsgToken()" /> to get the last token.</remarks>
-    LONG32 Notify(LPCSTR classId = NULL, LPCSTR title = NULL, LPCSTR text = NULL, LONG32 timeout = -1, LPCSTR iconPath = NULL, LPCSTR iconBase64 = NULL, SnarlEnums::MessagePriority priority = SnarlEnums::PriorityUndefined, LPCSTR uid = NULL, LPCSTR callback = NULL, LPCSTR value = NULL);
-    LONG32 Notify(LPCWSTR classId = NULL, LPCWSTR title = NULL, LPCWSTR text = NULL, LONG32 timeout = -1, LPCWSTR iconPath = NULL, LPCWSTR iconBase64 = NULL,  SnarlEnums::MessagePriority priority = SnarlEnums::PriorityUndefined, LPCWSTR uid = NULL, LPCWSTR callback = NULL, LPCWSTR value = NULL);
+    LONG32 Notify ( LPCSTR classId = NULL, LPCSTR title = NULL, LPCSTR text = NULL, LONG32 timeout = -1, LPCSTR iconPath = NULL, LPCSTR iconBase64 = NULL, SnarlEnums::MessagePriority priority = SnarlEnums::PriorityUndefined, LPCSTR uid = NULL, LPCSTR callback = NULL, LPCSTR value = NULL );
+    LONG32 Notify ( LPCWSTR classId = NULL, LPCWSTR title = NULL, LPCWSTR text = NULL, LONG32 timeout = -1, LPCWSTR iconPath = NULL, LPCWSTR iconBase64 = NULL,  SnarlEnums::MessagePriority priority = SnarlEnums::PriorityUndefined, LPCWSTR uid = NULL, LPCWSTR callback = NULL, LPCWSTR value = NULL );
 
     /// <summary>Register application with Snarl.</summary>
     /// <returns>The application token or negative on failure.</returns>
     /// <remarks>The application token is saved in SnarlInterface member variable, so just use return value to check for error.</remarks>
-    LONG32 Register(LPCSTR  signature, LPCSTR  title, LPCSTR  icon = NULL, LPCSTR  password = NULL, HWND hWndReplyTo = NULL, LONG32 msgReply = 0, SnarlEnums::AppFlags flags = SnarlEnums::AppFlagNone);
-    LONG32 Register(LPCWSTR signature, LPCWSTR title, LPCWSTR icon = NULL, LPCWSTR password = NULL, HWND hWndReplyTo = NULL, LONG32 msgReply = 0, SnarlEnums::AppFlags flags = SnarlEnums::AppFlagNone);
+    LONG32 Register ( LPCSTR  signature, LPCSTR  title, LPCSTR  icon = NULL, LPCSTR  password = NULL, HWND hWndReplyTo = NULL, LONG32 msgReply = 0, SnarlEnums::AppFlags flags = SnarlEnums::AppFlagNone );
+    LONG32 Register ( LPCWSTR signature, LPCWSTR title, LPCWSTR icon = NULL, LPCWSTR password = NULL, HWND hWndReplyTo = NULL, LONG32 msgReply = 0, SnarlEnums::AppFlags flags = SnarlEnums::AppFlagNone );
 
     /// <summary>Remove a notification class added with AddClass().</summary>
-    LONG32 RemoveClass(LPCSTR classId);
-    LONG32 RemoveClass(LPCWSTR classId);
+    LONG32 RemoveClass ( LPCSTR classId );
+    LONG32 RemoveClass ( LPCWSTR classId );
 
     /// <summary>Update the text or other parameters of a visible Snarl notification.</summary>
-    LONG32 Update(LONG32 msgToken, LPCSTR classId = NULL, LPCSTR title = NULL, LPCSTR text = NULL, LONG32 timeout = -1, LPCSTR iconPath = NULL, LPCSTR iconBase64 = NULL, SnarlEnums::MessagePriority priority = SnarlEnums::PriorityUndefined, LPCSTR callback = NULL, LPCSTR value = NULL);
-    LONG32 Update(LONG32 msgToken, LPCWSTR classId = NULL, LPCWSTR title = NULL, LPCWSTR text = NULL, LONG32 timeout = -1, LPCWSTR iconPath = NULL, LPCWSTR iconBase64 = NULL, SnarlEnums::MessagePriority priority = SnarlEnums::PriorityUndefined, LPCWSTR callback = NULL, LPCWSTR value = NULL);
+    LONG32 Update ( LONG32 msgToken, LPCSTR classId = NULL, LPCSTR title = NULL, LPCSTR text = NULL, LONG32 timeout = -1, LPCSTR iconPath = NULL, LPCSTR iconBase64 = NULL, SnarlEnums::MessagePriority priority = SnarlEnums::PriorityUndefined, LPCSTR callback = NULL, LPCSTR value = NULL );
+    LONG32 Update ( LONG32 msgToken, LPCWSTR classId = NULL, LPCWSTR title = NULL, LPCWSTR text = NULL, LONG32 timeout = -1, LPCWSTR iconPath = NULL, LPCWSTR iconBase64 = NULL, SnarlEnums::MessagePriority priority = SnarlEnums::PriorityUndefined, LPCWSTR callback = NULL, LPCWSTR value = NULL );
 
     /// <summary>Unregister application with Snarl when application is closing.</summary>
-    LONG32 Unregister(LPCSTR signature);
-    LONG32 Unregister(LPCWSTR signature);
+    LONG32 Unregister ( LPCSTR signature );
+    LONG32 Unregister ( LPCWSTR signature );
 
     /// <summary>Update information provided when calling RegisterApp.</summary>
     /*LONG32 UpdateApp(LPCSTR title = NULL, LPCSTR icon = NULL);
@@ -476,13 +437,13 @@ private:
     /// <summary>Convert a unicode string to UTF8</summary>
     /// <returns>Returns pointer to the new string - Remember to delete [] returned string !</returns>
     /// <remarks>Remember to call FreeString on returned string !!!</remarks>
-    static LPSTR  WideToUTF8(LPCWSTR szWideStr);
+    static LPSTR  WideToUTF8 ( LPCWSTR szWideStr );
 
-    static LONG32 DoRequest(LPCSTR request, SnarlParameterList<char> &spl, UINT replyTimeout = 1000);
-    static LONG32 DoRequest(LPCWSTR request, SnarlParameterList<wchar_t> &spl, UINT replyTimeout = 1000);
+    static LONG32 DoRequest ( LPCSTR request, SnarlParameterList<char>& spl, UINT replyTimeout = 1000 );
+    static LONG32 DoRequest ( LPCWSTR request, SnarlParameterList<wchar_t>& spl, UINT replyTimeout = 1000 );
 
-    void SetPassword(LPCSTR password);
-    void SetPassword(LPCWSTR password);
+    void SetPassword ( LPCSTR password );
+    void SetPassword ( LPCWSTR password );
     void ClearPassword();
 
     LONG32 appToken;

@@ -27,17 +27,17 @@ class ToastySettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
 public:
-    explicit ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
+    explicit ToastySettings ( Snore::SnorePlugin* plugin, QWidget* parent = 0 );
     ~ToastySettings();
 
     void load() override;
     void save() override;
 
 private:
-    QLineEdit *m_lineEdit;
+    QLineEdit* m_lineEdit;
 
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(ToastySettings)
+SNORE_DECLARE_SETTINGS_PLUGIN ( ToastySettings )
 
 #endif // TOASTYSETTINGS_H
