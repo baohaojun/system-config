@@ -111,10 +111,10 @@ if output=$(
             cat <<'EOF'
 echo doing it in $PWD 1>&2
 function do_it() {
-    ADD_DONE=true git-push-rebase || echo hello $(pwd) failed
+    ADD_DONE=true git-push-rebase "$@" || echo hello $(pwd) failed
 }
 if test "$REMOTEIP" = 127.0.0.1 || test -d blog/ -a -d css/; then
-    IS_TTY_IO=true do_it
+    IS_TTY_IO=true do_it -a
 else
     do_it&
 fi

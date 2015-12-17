@@ -2,8 +2,23 @@ My customizations of Posix systems (Linux/Cygwin/Mac OS X).
 
 * How to use it
 
+Under debian linux or other debian derived systems such as ubuntu, it's simple to set up system-config:
+
 #+BEGIN_SRC sh
-cd ~
-git clone --recursive https://github.com/baohaojun/system-config/
+git clone --recursive https://github.com/baohaojun/system-config/ ~/system-config
 ~/system-config/bin/Linux/after-check-out.sh
 #+END_SRC
+
+You probably need to fix some bugs when running =after-check-out.sh=. And then, make system-config your own by forking it and customizing it.
+
+On non debian systems, it's not automated yet -- patches are welcome.
+
+* Disclaimer
+
+System-config started out as a very personal project. If you decided to use it, please do so at your own risk, there is absolutely no warranty of any kind😅.
+
+If you have your own customization, it would be a good idea that you back them up before you try system-config. It's a good idea that you too put your own customization into a git repo, if you have not done so already.
+
+* Git submodules
+
+System-config comes with some sudmodules -- that's why there's a =--recursive= argument in the usage command -- such as [[https://github.com/baohaojun/beagrep][beagrep]], which will be checked out together with system-config. But there are also some other “submodules”, such as [[http://github.com/baohaojun/emacs.d][~/src/github/emacs.d]] that are not managed by system-config's git submodule, but as separate projects which will be checked out when running =after-check-out.sh=.
