@@ -1,3 +1,6 @@
 #!/bin/bash
 
-sawfish-send-window-event '(- |^)(Mozilla Firefox|Chromium|Iceweasel)\$' "$@"
+for x in "$@"; do
+    sawfish-send-window-event '(- |^)(Mozilla Firefox|Chromium|Iceweasel)\$' "$x"
+    sleep .2
+done

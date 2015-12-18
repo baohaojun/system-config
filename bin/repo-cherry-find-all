@@ -224,6 +224,9 @@ my-rfa -j $jobs '
     if test "$DEBUG" = true; then
         set -x
     fi
+    if test -e ~/src/github/smartcm/repo-cherry-find-all/$(ap)/.ignore; then
+        exit
+    fi
     TOP=$ANDROID_TOP;
     log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
     mkdir -p $(dirname $log);
