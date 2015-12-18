@@ -12,6 +12,7 @@ map['com.baidu.tieba_mini/com.baidu.tieba.imMessageCenter.im.chat.PersonalChatAc
 map['com.baidu.tieba_mini/com.baidu.tieba.mention.SingleMentionActivity'] = 'weixin-chat'
 map['com.baidu.tieba_mini/com.baidu.tieba.pb.pb.main.PbActivity'] = 'weixin-chat'
 map['com.baidu.tieba_mini/com.baidu.tieba.write.write.WriteActivity'] = 'manual-post'
+map['com.demon.weism/com.demon.weism.activity.InfoBoxesActivity'] = 'weixin-chat'
 map['com.demon.weism/com.demon.weism.activity.NewMainActivity'] = 'weixin-chat'
 map['com.google.android.apps.plus/com.google.android.apps.plus.phone.HostStreamOneUpActivity'] = 'weixin-chat'
 map['com.google.android.youtube'] = 'manual-post'
