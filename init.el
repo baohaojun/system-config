@@ -147,21 +147,13 @@
   (setq ac-sources '(ac-source-clang-async))
   (ac-clang-restart-for-local-variables)
   (add-hook 'hack-local-variables-hook #'ac-clang-restart-for-local-variables))
+(require 'auto-complete-clang-async)
+(defun my-ac-config ()
+  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
+  (global-auto-complete-mode t))
 
-(if (file-exists-p "~/system-config/.emacs_d/lisp/auto-complete-clang-async.el")
-    (progn
-      (require 'auto-complete-clang-async)
-      (defun my-ac-config ()
-        (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
-        (add-hook 'auto-complete-mode-hook 'ac-common-setup)
-        (global-auto-complete-mode t))
-
-      (my-ac-config))
-  (require-package 'auto-complete-clang)
-  (require 'auto-complete-clang)
-  (defun my-ac-cc-mode-setup ()
-    (setq ac-sources '(ac-source-clang)))
-  (add-hook 'c-mode-common-hook 'my-ac-cc-mode-setup))
+(my-ac-config)
 
 (require-package 'ac-helm)
 (require-package 'lua-mode)
