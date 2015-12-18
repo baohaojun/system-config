@@ -57,7 +57,7 @@ if test "$1" = konsole; then
                                         (not (string= "emacs" (window-name w)))))' \
                          "$window_not_found_command"
                )
-elif test "$1" = emacs -a -x ~/external/local/bin/emacs; then
+elif test "$1" = emacs -a "$(which emacs)" = ~/external/local/bin/emacs; then
     sawfish_exp=$(printf '(find-window-or-exec (lambda (w) (string= (window-name w) "emacs")))')
 else
     sawfish_exp=$(printf '(find-window-or-exec "%s" "%s")' "$1" "$window_not_found_command")
