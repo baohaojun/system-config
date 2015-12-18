@@ -406,10 +406,7 @@ fi || true
     )
 ) >/dev/null 2>&1 || true
 
-if which emacs >/dev/null 2>&1 && test ! -e ~/.config/system-config/emacs-config-done; then
-    touch ~/.config/system-config/emacs-config-done
-    ~/system-config/bin/Linux/emacs-install-packages
-fi || true
+~/system-config/bin/Linux/emacs-install-packages || true
 
 if test -d ~/system-config/src/github/; then
     mkdir -p ~/src/github/

@@ -36,6 +36,7 @@
  '(edebug-eval-macro-args t)
  '(fci-rule-color "#444444")
  '(fill-column 70)
+ '(gc-cons-threshold 3500000)
  '(gdb-find-source-frame t)
  '(gdb-many-windows t)
  '(gdb-same-frame t)

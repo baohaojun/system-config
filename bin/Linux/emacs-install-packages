@@ -1,39 +1,12 @@
 #!/bin/bash
 set -e
 
-emacs_code=$(cat <<EOF
-(when (and
-        (> emacs-major-version 23)
-        $( if test $# != 0; then echo t; else echo nil; fi))
-    (require 'package)
-    (add-to-list 'package-archives
-                 '("marmalade" . "http://marmalade-repo.org/packages/"))
-    (add-to-list 'package-archives
-                 '("melpa" . "http://melpa.milkbox.net/packages/"))
-    (package-initialize)
-    (package-refresh-contents)
-
-    $(
-        for x in $(
-                       if test $# != 0; then
-                           echo "$@";
-                       else
-                           echo org
-                       fi
-                   ); do
-            echo "(ignore-errors (package-install '$(basename $x)))"
-        done
-    )
-)
-EOF
-)
-emacs --batch --eval "$emacs_code"
 mkdir -p ~/src/github
 cd ~/src/github
 
-if test -d ~/system-config/.emacs_d/elpa && test ! -d ~/.emacs.d/elpa/.git; then
+if test -d ~/system-config/.emacs_d/elpa; then
     mkdir -p ~/.emacs.d/
-    cp -av ~/system-config/.emacs_d/elpa ~/.emacs.d/
+    rsync -av ~/system-config/.emacs_d/elpa ~/.emacs.d/
     (
         cd ~/.emacs.d/elpa
         git init .
@@ -42,34 +15,32 @@ if test -d ~/system-config/.emacs_d/elpa && test ! -d ~/.emacs.d/elpa/.git; then
     )
 fi || true
 
+need_regenerate_el=false
+
 if test -d ~/system-config/src/github/twittering-mode; then
     mkdir -p ~/src/github
     for x in ~/system-config/src/github/*; do
-        ln -s $x ~/src/github >/dev/null 2>&1 || true
+        if test ! -e ~/src/github/$(basename $x); then
+            ln -sf $x ~/src/github
+            need_regenerate_el=true
+        fi
     done
     ln -s ~/src/github/emacs.d/site-lisp ~/.emacs.d/ || true
 else
-    if test ! -e twittering-mode/.git; then
-        git clone http://github.com/baohaojun/twittering-mode
-    fi
-
-    if test ! -e weibo.emacs/.git; then
-        git clone http://github.com/baohaojun/weibo.emacs
-    fi
-
-    if test ! -e emacs.d/.git; then
-        git clone http://github.com/baohaojun/emacs.d
-        mkdir -p ~/.emacs.d/
+    for x in twittering-mode weibo.emacs emacs.d DoubanMusic guilt emacs-clang-complete-async; do
+        if test ! -e "$x/.git"; then
+            git clone http://github.com/baohaojun/$x
+            need_regenerate_el=true
+        fi
+    done
+    if ! test -d ~/.emacs.d/site-lisp; then
         relative-link emacs.d/site-lisp ~/.emacs.d/
-    fi
-
-    if test ! -e guilt/.git; then
-        git clone http://github.com/baohaojun/guilt
     fi
 fi
 
-cd ~/src/github
-cat <<EOF > ~/.config/system-config/emacs.gen.el
+if test "$need_regenerate_el" = true; then
+    cd ~/src/github
+    cat <<EOF > ~/.config/system-config/emacs.gen.el
 (setq load-path
       (nconc (list
 $(
@@ -82,5 +53,6 @@ done
 )
              load-path))
 EOF
+fi
 
 echo OK.
