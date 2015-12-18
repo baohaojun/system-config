@@ -1,0 +1,7 @@
+#!/bin/bash
+export http_proxy=http://127.0.0.1:8087/
+export https_proxy=$http_proxy
+export HTTP_PROXY=$http_proxy
+export HTTPS_PROXY=$HTTP_PROXY
+
+start_recursive_shell xx.proxy
