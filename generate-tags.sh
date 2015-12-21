@@ -69,7 +69,7 @@ done
 
 org-export -L $(
     (
-        git st -s meta/tags/*.org|pnn 2
+        git st -s meta/tags/*.org|pn 2
         for x in meta/tags/*.org; do
             if test ! -e ${x/%.org/.html}; then
                 echo $x
