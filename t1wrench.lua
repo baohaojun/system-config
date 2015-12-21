@@ -5,6 +5,7 @@ local M
 
 -- functions
 local window_post_button_map = {}
+local mail_group_map = {}
 local phone_info_map = {}
 local save_window_types
 local save_phone_info
@@ -1105,6 +1106,11 @@ t1_config = function(passedConfigDirPath)
       configDir = passedConfigDirPath
    end
    local dofile_res
+   dofile_res, mail_group_map = pcall(dofile, configDir .. package.config:sub(1, 1) .. "mail_groups.lua")
+   if not dofile_res then
+      mail_group_map = {}
+   end
+
    dofile_res, window_post_button_map = pcall(dofile, configDir .. package.config:sub(1, 1) .. "window_post_botton.lua")
    if not dofile_res then
       dofile_res, window_post_button_map = pcall(dofile, "window_post_botton.lua")
@@ -1806,7 +1812,26 @@ t1_save_mail_heads = function(file, subject, to, cc, bcc, attachments)
    debugging("hello saving to %s t1_save_mail_heads", file)
 end
 
+expand_mail_groups = function(contacts)
+   local contact_array = split(",", contacts)
+   local res = ""
+   for i in ipairs(contact_array) do
+      local contact = contact_array[i]
+      if mail_group_map[contact] then
+         res = res .. mail_group_map[contact]
+      else
+         res = res .. contact
+      end
+      res = res .. ","
+   end
+   return res
+end
+
 t1_adb_mail = function(subject, to, cc, bcc, attachments)
+   to = expand_mail_groups(to)
+   cc = expand_mail_groups(cc)
+   bcc = expand_mail_groups(bcc)
+
    adb_am("am start -n " .. emailSmartisanActivity .. " mailto:; mkdir -p /sdcard/adb-mail")
    wait_input_target(emailSmartisanActivity)
 
