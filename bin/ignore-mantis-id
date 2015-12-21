@@ -1,0 +1,7 @@
+#!/bin/bash
+if test $# != 1; then
+    die "Error: Usage $(basename $0) mantis-id"
+fi
+
+mkdir -p ~/.config/system-config/ignored-mantis-id
+touch ~/.config/system-config/ignored-mantis-id/"$1"
