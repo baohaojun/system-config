@@ -1,7 +1,7 @@
 include(ECMAddTests)
 find_package(Qt5Test QUIET)
 
-set_package_properties(Qt5Core PROPERTIES
+set_package_properties(Qt5Test PROPERTIES
     DESCRIPTION "Qt5 unit testing framework"
     URL "http://www.qt.io"
     TYPE OPTIONAL
