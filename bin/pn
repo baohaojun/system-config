@@ -4,4 +4,4 @@ shift
 if test $# = 1; then
     set -- -F "$@"
 fi
-awk "$@" '{print $'$which'}' | if test $(basename $0) = pn; then rm-last-nl; else cat; fi
+awk "$@" '{print $'$which'}'
