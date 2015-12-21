@@ -7,14 +7,6 @@ export PATH=/bin:"$PATH"
 uname=$(uname)
 march=$(uname -m)
 
-if test "$uname" = CYGWIN_NT-5.1 -o "$uname" = CYGWIN_NT-6.1; then
-    if test ! "$EMACS"; then
-        . ~/system-config/.bashrc-windows
-    fi
-else
-    . ~/system-config/.bashrc-linux
-fi
-
 if test ~/.config/system-config/.bashrc-path -ot ~/system-config/etc/path/$uname-$march; then
     if test -e ~/.config/system-config/.bashrc-path; then
         echo re-create ~/.config/system-config/.bashrc-path
@@ -24,7 +16,13 @@ fi
 
 if test -e ~/.config/system-config/.bashrc-path; then
     if test -z "$RECURSIVE_SHELL"; then
-        . ~/.config/system-config/.bashrc-path
+        if test "$USER" = bhj; then
+            . ~/.config/system-config/.bashrc-path
+        else
+            OLD_PATH=$PATH
+            . ~/.config/system-config/.bashrc-path
+            PATH=$PATH:$OLD_PATH
+        fi
     fi
 else
     if test -x /opt/local/libexec/gnubin/readlink; then
@@ -60,6 +58,14 @@ else
 EOF
     fi
     . ~/.config/system-config/.bashrc-path
+fi
+
+if test "$uname" = CYGWIN_NT-5.1 -o "$uname" = CYGWIN_NT-6.1; then
+    if test ! "$EMACS"; then
+        . ~/system-config/.bashrc-windows
+    fi
+else
+    . ~/system-config/.bashrc-linux
 fi
 
 if test ! "$EMACS"; then
