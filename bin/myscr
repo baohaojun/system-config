@@ -44,7 +44,6 @@ if screen -list|grep $session_name; then
         find-or-exec konsole >/dev/null 2>&1 || true
         (sleep 5 && rm /tmp/screen-exec.$$)&
         if test -z "$SCREEN_TITLE"; then
-            bhj-notify hello "I have no title set: $*"
             SCREEN_TITLE=bash
         fi
         exec screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$

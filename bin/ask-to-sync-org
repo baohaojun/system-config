@@ -35,6 +35,9 @@ function need-sync() {
         fi
     else
         info will not check the org data
+        if test "$FORCE_CHECK_MOBILE_ORG" = true; then
+            return 0
+        fi
         return 1
     fi
 
@@ -71,10 +74,6 @@ if ! is-tty-io; then
     my-adb -w echo shit
 fi
 
-if test "$(my-adb getprop sys.usb.config)" = mtp,adb; then
-    info it is mtp, exit
-    exit 0
-fi
 if ! need-sync; then
     exit 0
 fi
