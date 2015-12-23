@@ -22,7 +22,7 @@ bool TrayIconNotifer::canCloseNotification() const
 
 void TrayIconNotifer::slotNotify(Notification notification)
 {
-    QSystemTrayIcon* icon = trayIcon(notification.application());
+    QSystemTrayIcon *icon = trayIcon(notification.application());
     if (icon) {
         m_notificationQue.append(notification);
         displayNotification(icon);
@@ -34,7 +34,7 @@ void TrayIconNotifer::slotNotify(Notification notification)
 
 void TrayIconNotifer::slotCloseNotification(Notification n)
 {
-    QSystemTrayIcon* icon = trayIcon(n.application());
+    QSystemTrayIcon *icon = trayIcon(n.application());
     if (icon) {
         qCDebug(SNORE) << n;
         m_currentlyDisplaying = false;
@@ -42,23 +42,23 @@ void TrayIconNotifer::slotCloseNotification(Notification n)
     }
 }
 
-void TrayIconNotifer::slotRegisterApplication(const Application& application)
+void TrayIconNotifer::slotRegisterApplication(const Application &application)
 {
-    QSystemTrayIcon* icon = trayIcon(application);
+    QSystemTrayIcon *icon = trayIcon(application);
     if (icon) {
         connect(icon, &QSystemTrayIcon::messageClicked, this, &TrayIconNotifer::actionInvoked);
     }
 }
 
-void TrayIconNotifer::slotDeregisterApplication(const Application& application)
+void TrayIconNotifer::slotDeregisterApplication(const Application &application)
 {
-    QSystemTrayIcon* icon = trayIcon(application);
+    QSystemTrayIcon *icon = trayIcon(application);
     if (icon) {
         disconnect(icon, &QSystemTrayIcon::messageClicked, this, &TrayIconNotifer::actionInvoked);
     }
 }
 
-QSystemTrayIcon* TrayIconNotifer::trayIcon(const Application& app)
+QSystemTrayIcon *TrayIconNotifer::trayIcon(const Application &app)
 {
     if (app.constHints().contains("tray-icon")) {
         return app.constHints().value("tray-icon").value<QPointer<QSystemTrayIcon>>();
@@ -66,7 +66,7 @@ QSystemTrayIcon* TrayIconNotifer::trayIcon(const Application& app)
     return nullptr;
 }
 
-void TrayIconNotifer::displayNotification(QSystemTrayIcon* icon)
+void TrayIconNotifer::displayNotification(QSystemTrayIcon *icon)
 {
     Q_ASSERT(icon);
     if (m_currentlyDisplaying) {
@@ -86,7 +86,7 @@ void TrayIconNotifer::displayNotification(QSystemTrayIcon* icon)
 void TrayIconNotifer::actionInvoked()
 {
     Notification n = m_displayed;
-    QSystemTrayIcon* icon = trayIcon(n.application());
+    QSystemTrayIcon *icon = trayIcon(n.application());
     if (icon && n.isValid()) {
         slotNotificationActionInvoked(n);
         closeNotification(n, Notification::Activated);
@@ -98,7 +98,7 @@ void TrayIconNotifer::actionInvoked()
 
 bool TrayIconNotifer::isReady()
 {
-    if (!qobject_cast< QApplication* >(qApp)) {
+    if (!qobject_cast< QApplication * >(qApp)) {
         setErrorString(tr("This plugin only works with QApplication"));
         return false;
     }

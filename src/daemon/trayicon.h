@@ -34,13 +34,13 @@ public:
     TrayIcon();
     void initConextMenu();
     void hide();
-    class QSystemTrayIcon* trayIcon();
+    class QSystemTrayIcon *trayIcon();
 
 private:
-    class QSystemTrayIcon* m_trayIcon;
-    class QMenu* m_trayMenu;
-    QActionGroup* m_backendActions;
-    Snore::SettingsDialog* m_settings;
+    class QSystemTrayIcon *m_trayIcon;
+    class QMenu *m_trayMenu;
+    QActionGroup *m_backendActions;
+    Snore::SettingsDialog *m_settings;
 
 public Q_SLOTS:
     void slotTestNotification();

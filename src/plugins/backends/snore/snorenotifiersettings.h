@@ -31,15 +31,15 @@ class SnoreNotifierSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
 public:
-    explicit SnoreNotifierSettings ( Snore::SnorePlugin* snore, QWidget* parent = nullptr );
+    explicit SnoreNotifierSettings(Snore::SnorePlugin *snore, QWidget *parent = nullptr);
     ~SnoreNotifierSettings();
     void load();
     void save();
 
 private:
-    QComboBox* m_comboBox;
+    QComboBox *m_comboBox;
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN ( SnoreNotifierSettings )
+SNORE_DECLARE_SETTINGS_PLUGIN(SnoreNotifierSettings)
 
 #endif // SNORENOTIFIERSETTINGS_H

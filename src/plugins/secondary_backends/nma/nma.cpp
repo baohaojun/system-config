@@ -48,7 +48,7 @@ void NotifyMyAndroid::slotNotify(Notification notification)
         data += notification.text();
     }
 
-    QNetworkReply* reply =  m_manager.post(request, data.toUtf8().constData());
+    QNetworkReply *reply =  m_manager.post(request, data.toUtf8().constData());
     connect(reply, &QNetworkReply::finished, [reply]() {
         qCDebug(SNORE) << reply->error();
         qCDebug(SNORE) << reply->readAll();

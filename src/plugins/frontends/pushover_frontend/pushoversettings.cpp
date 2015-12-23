@@ -25,7 +25,7 @@
 #include <QPushButton>
 #include <QLabel>
 
-PushoverSettings::PushoverSettings(Snore::SnorePlugin* plugin, QWidget* parent) :
+PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) :
     Snore::PluginSettingsWidget(plugin, parent),
     m_emailLineEdit(new QLineEdit(this)),
     m_passwordLineEdit(new QLineEdit(this)),

@@ -17,6 +17,7 @@
 */
 #include "settingswindow.h"
 #include "ui_settingswindow.h"
+#include "settingsutils.h"
 
 #include "snore.h"
 #include "snore_p.h"
@@ -31,7 +32,7 @@
 
 using namespace Snore;
 
-SettingsWindow::SettingsWindow(const QString& appName, QWidget* parent) :
+SettingsWindow::SettingsWindow(const QString &appName, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SettingsWindow)
 {
@@ -39,11 +40,11 @@ SettingsWindow::SettingsWindow(const QString& appName, QWidget* parent) :
     ui->widget->show();
 
     if (appName == QLatin1String("global")) {
-        QStringList list = knownApps();
+        QStringList list = SettingsUtils::knownApps();
         list.removeAll(qApp->applicationName());
         ui->comboBox->addItems(list);
     } else {
-        if (!knownApps().contains(appName)) {
+        if (!SettingsUtils::knownApps().contains(appName)) {
             std::wcerr << "Error: " << appName.toUtf8().constData() << " is not known to Snorenotify" << std::endl;
             exit(1);
         }
@@ -61,27 +62,14 @@ SettingsWindow::~SettingsWindow()
     delete ui;
 }
 
-const QStringList SettingsWindow::knownApps()
-{
-    return allSettingsKeysWithPrefix(Utils::settingsVersionSchema() + QLatin1String("/LocalSettings"), settings(),
-    [](QSettings & settings) {
-        return settings.childGroups();
-    });
-}
-
-QSettings& SettingsWindow::settings()
-{
-    return SnoreCorePrivate::instance()->settings();
-}
-
-void SettingsWindow::on_comboBox_currentIndexChanged(const QString& arg1)
+void SettingsWindow::on_comboBox_currentIndexChanged(const QString &arg1)
 {
     SnoreCorePrivate::instance()->setLocalSttingsPrefix(arg1);
     ui->widget->initTabs();
     ui->widget->setVisible(true);
 }
 
-void SettingsWindow::on_buttonBox_clicked(QAbstractButton* button)
+void SettingsWindow::on_buttonBox_clicked(QAbstractButton *button)
 {
     switch (ui->buttonBox->buttonRole(button)) {
     case QDialogButtonBox::AcceptRole:

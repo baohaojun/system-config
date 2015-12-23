@@ -26,7 +26,6 @@
 namespace Snore
 {
 
-
 /**
  * LambdaHint is a helper type to enable us to inset functions into the hints.
  * This is useful to be able to add hints that might change during runtime.
@@ -38,9 +37,9 @@ class SNORE_EXPORT LambdaHint
 {
 public:
     LambdaHint();
-    LambdaHint ( std::function< QVariant() > function );
+    LambdaHint(std::function< QVariant() > function);
 
-    QVariant operator() ();
+    QVariant operator()();
 
 private:
     std::function<QVariant() > m_func;
@@ -48,6 +47,6 @@ private:
 
 }
 
-Q_DECLARE_METATYPE ( Snore::LambdaHint )
+Q_DECLARE_METATYPE(Snore::LambdaHint)
 
 #endif // LAMBDAHINT_H

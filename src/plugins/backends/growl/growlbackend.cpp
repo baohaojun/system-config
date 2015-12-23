@@ -26,7 +26,7 @@
 
 using namespace Snore;
 
-GrowlBackend* GrowlBackend::s_instance = nullptr;
+GrowlBackend *GrowlBackend::s_instance = nullptr;
 
 GrowlBackend::GrowlBackend()
 {
@@ -35,22 +35,26 @@ GrowlBackend::GrowlBackend()
     auto func = [](growl_callback_data * data)->void {
         qCDebug(SNORE) << data->id << QString::fromUtf8(data->reason) << QString::fromUtf8(data->data);
         Notification n = Snore::SnoreCore::instance().getActiveNotificationByID(data->id);
-        if (!n.isValid()) {
+        if (!n.isValid())
+        {
             return;
         }
         Notification::CloseReasons r = Notification::None;
         std::string reason(data->reason);
-        if (reason == "TIMEDOUT") {
+        if (reason == "TIMEDOUT")
+        {
             r = Notification::TimedOut;
-        } else if (reason == "CLOSED") {
+        } else if (reason == "CLOSED")
+        {
             r = Notification::Dismissed;
-        } else if (reason == "CLICK") {
+        } else if (reason == "CLICK")
+        {
             r = Notification::Activated;
             s_instance->slotNotificationActionInvoked(n);
         }
         s_instance->closeNotification(n, r);
     };
-    Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data*)>(func));
+    Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data *)>(func));
 }
 
 GrowlBackend::~GrowlBackend()
@@ -67,16 +71,16 @@ bool GrowlBackend::isReady()
     return running;
 }
 
-void GrowlBackend::slotRegisterApplication(const Application& application)
+void GrowlBackend::slotRegisterApplication(const Application &application)
 {
     qCDebug(SNORE) << application.name();
     std::vector<std::string> alerts(application.alerts().size());
-    foreach (const Alert & a, application.alerts()) {
+    foreach(const Alert & a, application.alerts()) {
         qCDebug(SNORE) << a.name();
         alerts.push_back(a.name().toUtf8().constData());
     }
 
-    Growl* growl = new Growl(GROWL_TCP, settingsValue(QStringLiteral("Host")).toString().toUtf8().constData(),
+    Growl *growl = new Growl(GROWL_TCP, settingsValue(QStringLiteral("Host")).toString().toUtf8().constData(),
                              settingsValue(QStringLiteral("Password")).toString().toUtf8().constData(),
                              application.name().toUtf8().constData());
     m_applications.insert(application.name(), growl);
@@ -84,9 +88,9 @@ void GrowlBackend::slotRegisterApplication(const Application& application)
 
 }
 
-void GrowlBackend::slotDeregisterApplication(const Application& application)
+void GrowlBackend::slotDeregisterApplication(const Application &application)
 {
-    Growl* growl = m_applications.take(application.name());
+    Growl *growl = m_applications.take(application.name());
     if (growl == nullptr) {
         return;
     }
@@ -95,7 +99,7 @@ void GrowlBackend::slotDeregisterApplication(const Application& application)
 
 void GrowlBackend::slotNotify(Notification notification)
 {
-    Growl* growl = m_applications.value(notification.application().name());
+    Growl *growl = m_applications.value(notification.application().name());
     QString alert = notification.alert().name();
     qCDebug(SNORE) << "Notify Growl:" << notification.application() << alert << notification.title();
 

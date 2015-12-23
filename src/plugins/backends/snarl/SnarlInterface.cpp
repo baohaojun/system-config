@@ -59,9 +59,9 @@ namespace V42
 // workaround for mingw-w64 bug
 #ifdef __MINGW64_VERSION_MAJOR
 extern "C" {
-    __declspec(dllimport) errno_t __cdecl strcpy_s(char* _Dst, size_t _SizeInBytes, const char* _Src);
-    __declspec(dllimport) errno_t __cdecl wcscpy_s(wchar_t* _Dst, size_t _SizeInBytes, const wchar_t* _Src);
-    __declspec(dllimport) errno_t __cdecl strncat_s(char* _Dst, size_t _DstSizeInChars, const char* _Src, size_t _MaxCount);
+    __declspec(dllimport) errno_t __cdecl strcpy_s(char *_Dst, size_t _SizeInBytes, const char *_Src);
+    __declspec(dllimport) errno_t __cdecl wcscpy_s(wchar_t *_Dst, size_t _SizeInBytes, const wchar_t *_Src);
+    __declspec(dllimport) errno_t __cdecl strncat_s(char *_Dst, size_t _DstSizeInChars, const char *_Src, size_t _MaxCount);
 }
 #endif //__MINGW64_VERSION_MAJOR
 
@@ -92,7 +92,7 @@ LONG32 SnarlInterface::DoRequest(LPCSTR request, UINT replyTimeout)
     COPYDATASTRUCT cds;
     cds.dwData = 0x534E4C03;           // "SNL",3
     cds.cbData = (DWORD)strlen(request);      // No knowledge of max string length
-    cds.lpData = const_cast<char*>(request);
+    cds.lpData = const_cast<char *>(request);
 
     // Send message
     if (SendMessageTimeout(hWnd, WM_COPYDATA, (WPARAM)GetCurrentProcessId(), (LPARAM)&cds, SMTO_ABORTIFHUNG | SMTO_NOTIMEOUTIFNOTHUNG, replyTimeout, &nResult) == 0) {
@@ -128,7 +128,7 @@ LONG32 SnarlInterface::DoRequest(LPCWSTR request, UINT replyTimeout)
     return nResult;
 }
 
-std::basic_string<char>& SnarlInterface::Escape(std::basic_string<char>& str)
+std::basic_string<char> &SnarlInterface::Escape(std::basic_string<char> &str)
 {
     std::basic_string<char>::size_type strLength = str.length();
     for (std::basic_string<char>::size_type i = 0; i < strLength; ++i) {
@@ -144,7 +144,7 @@ std::basic_string<char>& SnarlInterface::Escape(std::basic_string<char>& str)
     return str;
 }
 
-std::basic_string<wchar_t>& SnarlInterface::Escape(std::basic_string<wchar_t>& str)
+std::basic_string<wchar_t> &SnarlInterface::Escape(std::basic_string<wchar_t> &str)
 {
     std::basic_string<wchar_t>::size_type strLength = str.length();
     for (std::basic_string<wchar_t>::size_type i = 0; i < strLength; ++i) {
@@ -169,7 +169,7 @@ LPCTSTR SnarlInterface::GetAppPath()
             TCHAR strTmp[MAX_PATH] = {0};
             int nReturn = GetWindowText(hWndPath, strTmp, MAX_PATH - 1);
             if (nReturn > 0) {
-                TCHAR* strReturn = AllocateString(nReturn + 1);
+                TCHAR *strReturn = AllocateString(nReturn + 1);
                 _tcsncpy(strReturn, strTmp, nReturn + 1);
                 strReturn[nReturn] = 0;
                 return strReturn;
@@ -182,7 +182,7 @@ LPCTSTR SnarlInterface::GetAppPath()
 
 LPCTSTR SnarlInterface::GetIconsPath()
 {
-    TCHAR* szIconPath = NULL;
+    TCHAR *szIconPath = NULL;
     LPCTSTR szPath = GetAppPath();
     if (!szPath) {
         return NULL;
@@ -590,10 +590,10 @@ LONG32 SnarlInterface::UpdateApp(LPCWSTR title, LPCWSTR icon)
 // Private functions
 //-----------------------------------------------------------------------------
 
-LONG32 SnarlInterface::DoRequest(LPCSTR request, SnarlParameterList<char>& spl, UINT replyTimeout)
+LONG32 SnarlInterface::DoRequest(LPCSTR request, SnarlParameterList<char> &spl, UINT replyTimeout)
 {
     // <action>[?<data>=<value>[&<data>=<value>]]
-    const std::vector<SnarlParameterList<char>::PairType>& list = spl.GetList();
+    const std::vector<SnarlParameterList<char>::PairType> &list = spl.GetList();
 
     if (list.size() > 0) {
         std::string requestStr = request;
@@ -605,7 +605,7 @@ LONG32 SnarlInterface::DoRequest(LPCSTR request, SnarlParameterList<char>& spl, 
             SnarlParameterList<char>::PairType pair = *iter;
 
             if (iter->second.length() > 0) {
-                std::basic_string<char>& value = const_cast<std::basic_string<char>&>(iter->second);
+                std::basic_string<char> &value = const_cast<std::basic_string<char>&>(iter->second);
                 requestStr.append(iter->first).append("=").append(Escape(value));
                 requestStr.append("&");
             }
@@ -619,10 +619,10 @@ LONG32 SnarlInterface::DoRequest(LPCSTR request, SnarlParameterList<char>& spl, 
     }
 }
 
-LONG32 SnarlInterface::DoRequest(LPCWSTR request, SnarlParameterList<wchar_t>& spl, UINT replyTimeout)
+LONG32 SnarlInterface::DoRequest(LPCWSTR request, SnarlParameterList<wchar_t> &spl, UINT replyTimeout)
 {
     // <action>[?<data>=<value>[&<data>=<value>]]
-    const std::vector<SnarlParameterList<wchar_t>::PairType>& list = spl.GetList();
+    const std::vector<SnarlParameterList<wchar_t>::PairType> &list = spl.GetList();
 
     if (list.size() > 0) {
         std::basic_string<wchar_t> requestStr = request;
@@ -632,7 +632,7 @@ LONG32 SnarlInterface::DoRequest(LPCWSTR request, SnarlParameterList<wchar_t>& s
         for (std::vector<SnarlParameterList<wchar_t>::PairType>::const_iterator iter = list.begin(); // cbegin();
                 iter != listEnd; ++iter) {
             if (iter->second.length() > 0) {
-                std::basic_string<wchar_t>& value = const_cast<std::basic_string<wchar_t>&>(iter->second);
+                std::basic_string<wchar_t> &value = const_cast<std::basic_string<wchar_t>&>(iter->second);
                 requestStr.append(iter->first).append(L"=").append(Escape(value));
                 requestStr.append(L"&");
             }

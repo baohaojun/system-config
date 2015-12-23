@@ -7,8 +7,8 @@
 class SnoreToast : public Snore::SnoreBackend
 {
     Q_OBJECT
-    Q_INTERFACES ( Snore::SnoreBackend )
-    Q_PLUGIN_METADATA ( IID "org.Snore.NotificationBackend/1.0" FILE "snore_plugin.json" )
+    Q_INTERFACES(Snore::SnoreBackend)
+    Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "snore_plugin.json")
 public:
     SnoreToast() = default;
     ~SnoreToast() = default;
@@ -17,14 +17,14 @@ public:
 
     bool isReady() override;
 public Q_SLOTS:
-    void slotNotify ( Snore::Notification notification ) override;
-    void slotRegisterApplication ( const Snore::Application& application ) override;
-    void slotCloseNotification ( Snore::Notification notification ) override;
+    void slotNotify(Snore::Notification notification) override;
+    void slotRegisterApplication(const Snore::Application &application) override;
+    void slotCloseNotification(Snore::Notification notification) override;
 
 private:
-    QString appId ( const Snore::Application& application );
+    QString appId(const Snore::Application &application);
 
-    QProcess* createProcess ( Snore::Notification noti );
+    QProcess *createProcess(Snore::Notification noti);
 
 };
 

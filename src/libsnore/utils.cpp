@@ -32,7 +32,7 @@
 
 using namespace Snore;
 
-Utils::Utils(QObject* parent):
+Utils::Utils(QObject *parent):
     QObject(parent)
 {
 
@@ -43,7 +43,7 @@ Utils::~Utils()
 
 }
 
-void Utils::bringWindowToFront(const QWindow* window, bool focus)
+void Utils::bringWindowToFront(const QWindow *window, bool focus)
 {
 #ifdef Q_OS_WIN
     bringWindowToFront((HWND)window->winId(), focus);
@@ -66,7 +66,7 @@ void Utils::bringWindowToFront(HWND wid, bool focus)
 }
 #endif
 
-void Utils::raiseWindowToFront(const QWindow* window)
+void Utils::raiseWindowToFront(const QWindow *window)
 {
     // Looks like qt is handling it on linux.
 #ifdef Q_OS_WIN
@@ -115,7 +115,7 @@ QString Utils::normalizeMarkup(QString string, MarkupFlags tags)
     return string;
 }
 
-QByteArray Utils::dataFromImage(const QImage& image)
+QByteArray Utils::dataFromImage(const QImage &image)
 {
     QByteArray data;
     QBuffer buffer(&data);

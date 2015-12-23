@@ -83,9 +83,9 @@ public:
         AllMarkup  = ~0
     };
 
-    Q_DECLARE_FLAGS ( MarkupFlags, MarkupFlag )
+    Q_DECLARE_FLAGS(MarkupFlags, MarkupFlag)
 
-    Utils ( QObject* parent = nullptr );
+    Utils(QObject *parent = nullptr);
     ~Utils();
 
     /**
@@ -93,27 +93,28 @@ public:
      * @param window the window to raise.
      * @param focus whether the window should request focus.
      */
-    Q_INVOKABLE static void bringWindowToFront ( const QWindow* window, bool focus );
+    Q_INVOKABLE static void bringWindowToFront(const QWindow *window, bool focus);
 
 #ifdef Q_OS_WIN
-    static void bringWindowToFront ( HWND wid, bool focus );
+    static void bringWindowToFront(HWND wid, bool focus);
 #endif
 
     /**
      * Raised the Window to front and don't make it active or steal focus.
      */
-    Q_INVOKABLE static void raiseWindowToFront ( const QWindow* window );
+    Q_INVOKABLE static void raiseWindowToFront(const QWindow *window);
 
     /**
      * Removes unsupported markup tags from a string.
      */
-    static QString normalizeMarkup ( QString string, MarkupFlags tags );
+    static QString normalizeMarkup(QString string, MarkupFlags tags);
 
     /**
      * Version number prefix for the settings.
      */
-    static inline QString settingsVersionSchema() {
-        return QStringLiteral ( "v1" );
+    static inline QString settingsVersionSchema()
+    {
+        return QStringLiteral("v1");
     }
 
     /**
@@ -122,25 +123,26 @@ public:
      * @param type The Type.
      * @param application The application's name.
      */
-    static inline QString normalizeSettingsKey ( const QString& key, SettingsType type, const QString& application ) {
-        if ( type == LocalSetting ) {
-            return settingsVersionSchema() + QLatin1String ( "/LocalSettings/" ) + application + QLatin1Char ( '/' ) + key;
+    static inline QString normalizeSettingsKey(const QString &key, SettingsType type, const QString &application)
+    {
+        if (type == LocalSetting) {
+            return settingsVersionSchema() + QLatin1String("/LocalSettings/") + application + QLatin1Char('/') + key;
         } else {
-            return settingsVersionSchema() + QLatin1String ( "/GlobalSettings/" ) +  key;
+            return settingsVersionSchema() + QLatin1String("/GlobalSettings/") +  key;
         }
     }
 
-    static QByteArray dataFromImage ( const QImage& image );
+    static QByteArray dataFromImage(const QImage &image);
 
 private:
 #ifdef Q_OS_WIN
     static int attatchToActiveProcess();
-    static void detatchActiveProcess ( int idActive );
+    static void detatchActiveProcess(int idActive);
 #endif
 
 };
 
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS ( Snore::Utils::MarkupFlags )
+Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::Utils::MarkupFlags)
 
 #endif // UTILS_H

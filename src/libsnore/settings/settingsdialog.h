@@ -48,7 +48,7 @@ class SNORE_SETTINGS_EXPORT SettingsDialog : public QWidget
     Q_OBJECT
 
 public:
-    explicit SettingsDialog ( QWidget* parent = nullptr );
+    explicit SettingsDialog(QWidget *parent = nullptr);
     ~SettingsDialog();
 
     /**
@@ -57,7 +57,7 @@ public:
     void initTabs();
 
 public Q_SLOTS:
-    void setVisible ( bool b ) override;
+    void setVisible(bool b) override;
 
     /**
      * Save the settings.
@@ -72,12 +72,12 @@ public Q_SLOTS:
 private Q_SLOTS:
     void on_pushButton_clicked();
     void load();
-    void loadPrimaryBackendBox ( const QString& backend );
+    void loadPrimaryBackendBox(const QString &backend);
     void save();
 
 private:
-    Ui::SettingsDialog* ui;
-    QList<Snore::PluginSettingsWidget*> m_tabs;
+    Ui::SettingsDialog *ui;
+    QList<Snore::PluginSettingsWidget *> m_tabs;
 
 };
 }

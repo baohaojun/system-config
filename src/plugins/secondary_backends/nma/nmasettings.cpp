@@ -22,7 +22,7 @@
 #include <QLabel>
 #include <QLineEdit>
 
-NotifyMyAndroidSettings::NotifyMyAndroidSettings(Snore::SnorePlugin* plugin, QWidget* parent) :
+NotifyMyAndroidSettings::NotifyMyAndroidSettings(Snore::SnorePlugin *plugin, QWidget *parent) :
     Snore::PluginSettingsWidget(plugin, parent),
     m_lineEdit(new QLineEdit)
 {

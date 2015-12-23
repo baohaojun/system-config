@@ -47,7 +47,7 @@ public:
      * @param icon the icon of the Application.
      * @see SnoreCore::registerApplication
      */
-    explicit Application ( const QString& name, const Icon& icon );
+    explicit Application(const QString &name, const Icon &icon);
 
     /**
      * Creates a new Application object.
@@ -56,19 +56,19 @@ public:
      * @param icon the icon of the Application.
      * @see SnoreCore::registerApplication
      */
-    explicit Application ( const QString& key, const QString& name, const Icon& icon );
+    explicit Application(const QString &key, const QString &name, const Icon &icon);
 
     /**
      * The copy constructor
      * @param other
      */
-    Application ( const Application& other );
+    Application(const Application &other);
 
     /**
      * The copy operator
      * @param other
      */
-    Application& operator= ( const Application& other );
+    Application &operator= (const Application &other);
 
     ~Application();
 
@@ -77,7 +77,7 @@ public:
      * Alerts must be added before the application is registered.
      * @param alert the Alert
      */
-    void addAlert ( const  Alert& alert );
+    void addAlert(const  Alert &alert);
 
     /**
      * Returns the key of the Application.
@@ -93,12 +93,12 @@ public:
     /**
      * Returns the icon of this Application.
      */
-    const Icon& icon() const;
+    const Icon &icon() const;
 
     /**
      * Returns a map with the Alers registered with this Application.
      */
-    const QHash<QString, Alert>& alerts() const;
+    const QHash<QString, Alert> &alerts() const;
 
     /**
      * Returns the default alert for notifications.
@@ -123,13 +123,13 @@ public:
      * silent           |   bool                    | Don't play notification sounds.                                           |  Multiple backends.
      * sound            |   QString                 | Local uri to a sound file.                                                | Secondary Backend Sound.
      */
-    Hint& hints();
+    Hint &hints();
 
     /**
      * Same as hints
      * @see hints
      */
-    const Hint& constHints() const;
+    const Hint &constHints() const;
 
 private:
     QExplicitlySharedDataPointer<ApplicationData> d;
@@ -137,8 +137,8 @@ private:
 };
 
 }
-Q_DECLARE_METATYPE ( Snore::Application )
+Q_DECLARE_METATYPE(Snore::Application)
 
-SNORE_EXPORT QDebug operator<< ( QDebug debug, const Snore::Application& app );
+SNORE_EXPORT QDebug operator<< (QDebug debug, const Snore::Application &app);
 
 #endif // APPLICATION_H

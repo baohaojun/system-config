@@ -38,13 +38,13 @@ public:
         Undefined
     };
 
-    PushoverClient ( PushoverFrontend* frontend );
+    PushoverClient(PushoverFrontend *frontend);
 
     void logOut();
-    void login ( const QString& email, const QString& password, const QString& deviceName );
+    void login(const QString &email, const QString &password, const QString &deviceName);
     void disconnectService();
 
-    void acknowledgeNotification ( Snore::Notification notification );
+    void acknowledgeNotification(Snore::Notification notification);
 
     LoginState isLoggedIn() const;
     QString errorMessage();
@@ -53,11 +53,11 @@ public Q_SLOTS:
     void connectToService();
 
 Q_SIGNALS:
-    void loggedInChanged ( LoginState isLoggedIn );
-    void error ( const QString& error );
+    void loggedInChanged(LoginState isLoggedIn);
+    void error(const QString &error);
 
 private:
-    PushoverFrontend* m_frontend;
+    PushoverFrontend *m_frontend;
     QNetworkAccessManager m_manager;
     QPointer<QWebSocket> m_socket;
     LoginState m_loggedIn = LoggedOut;
@@ -66,9 +66,9 @@ private:
     QString secret();
     QString device();
 
-    void registerDevice ( const QString& secret, const QString& deviceName );
+    void registerDevice(const QString &secret, const QString &deviceName);
     void getMessages();
-    void deleteMessages ( int latestMessageId );
+    void deleteMessages(int latestMessageId);
 };
 
 #endif // PUSHOVERCLIENT_H

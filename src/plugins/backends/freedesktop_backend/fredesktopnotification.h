@@ -28,7 +28,7 @@ class FreedesktopImageHint
 {
 public:
     FreedesktopImageHint() = default;
-    FreedesktopImageHint ( const QImage& img );
+    FreedesktopImageHint(const QImage &img);
     QImage toQImage() const;
 
     int width;
@@ -44,9 +44,9 @@ private:
 
 };
 
-Q_DECLARE_METATYPE ( FreedesktopImageHint )
+Q_DECLARE_METATYPE(FreedesktopImageHint)
 
-QDBusArgument& operator<< ( QDBusArgument& a,  const FreedesktopImageHint& i );
-const QDBusArgument& operator >> ( const QDBusArgument& a,  FreedesktopImageHint&  i ) ;
+QDBusArgument &operator<< (QDBusArgument &a,  const FreedesktopImageHint &i);
+const QDBusArgument &operator >> (const QDBusArgument &a,  FreedesktopImageHint  &i) ;
 
 #endif // FreedesktopNotification_H

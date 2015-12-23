@@ -32,7 +32,7 @@ public:
        *
        * @return A list of widgets a settings dialog.
        */
-    static QList<PluginSettingsWidget*> settingWidgets ( SnorePlugin::PluginTypes type );
+    static QList<PluginSettingsWidget *> settingWidgets(SnorePlugin::PluginTypes type);
 
 };
 }

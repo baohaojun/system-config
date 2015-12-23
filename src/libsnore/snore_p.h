@@ -34,7 +34,7 @@ class Settings;
 
 class SNORE_EXPORT SnoreCorePrivate : public QObject
 {
-    Q_DECLARE_PUBLIC ( SnoreCore )
+    Q_DECLARE_PUBLIC(SnoreCore)
     Q_OBJECT
 
 public:
@@ -44,16 +44,17 @@ public:
      */
     static QString tempPath();
 
-    static Q_DECL_CONSTEXPR int maxNumberOfActiveNotifications() {
+    static Q_DECL_CONSTEXPR int maxNumberOfActiveNotifications()
+    {
         return 3;
     }
 
 public:
-    static SnoreCorePrivate* instance();
+    static SnoreCorePrivate *instance();
     ~SnoreCorePrivate();
     Application defaultApplication();
 
-    bool setBackendIfAvailible ( const QString& backend );
+    bool setBackendIfAvailible(const QString &backend);
 
     /**
      *
@@ -61,49 +62,50 @@ public:
      */
     bool primaryBackendCanUpdateNotification() const;
 
-    QString normalizeSettingsKey ( const QString& key, SettingsType type ) const {
-        return Snore::Utils::normalizeSettingsKey ( key, type, m_localSettingsPrefix );
+    QString normalizeSettingsKey(const QString &key, SettingsType type) const
+    {
+        return Snore::Utils::normalizeSettingsKey(key, type, m_localSettingsPrefix);
     }
 
-    void setLocalSttingsPrefix ( const QString& prefix );
+    void setLocalSttingsPrefix(const QString &prefix);
 
     void init();
 
     /**
      * Set a default value which can be overritten by a client application call to SnoreCore::setDefaultValue()
      */
-    void setDefaultSettingsValueIntern ( const QString& key, const QVariant& value );
+    void setDefaultSettingsValueIntern(const QString &key, const QVariant &value);
 
-    void startNotificationTimeoutTimer ( Notification notification );
+    void startNotificationTimeoutTimer(Notification notification);
 
     void syncSettings();
 
-    QSettings& settings();
+    QSettings &settings();
 
 private Q_SLOTS:
     //TODO: find a better solutinon for the slots in this section
     friend class Snore::SnoreBackend;
-    void slotNotificationActionInvoked ( Notification notification );
-    void slotNotificationDisplayed ( Notification notification );
-    void slotNotificationClosed ( Snore::Notification );
+    void slotNotificationActionInvoked(Notification notification);
+    void slotNotificationDisplayed(Notification notification);
+    void slotNotificationClosed(Snore::Notification);
     void slotAboutToQuit();
 
     bool slotInitPrimaryNotificationBackend();
 
 Q_SIGNALS:
-    void applicationRegistered ( const Snore::Application& );
-    void applicationDeregistered ( const Snore::Application& );
-    void notify ( Snore::Notification noti );
-    void notificationDisplayed ( Snore::Notification notification );
+    void applicationRegistered(const Snore::Application &);
+    void applicationDeregistered(const Snore::Application &);
+    void notify(Snore::Notification noti);
+    void notificationDisplayed(Snore::Notification notification);
 
 private:
     SnoreCorePrivate();
-    SnoreCore* q_ptr;
+    SnoreCore *q_ptr;
 
     QHash<QString, Application> m_applications;
 
     QHash<SnorePlugin::PluginTypes, QStringList> m_pluginNames;
-    QHash<QPair<SnorePlugin::PluginTypes, QString>, SnorePlugin*> m_plugins;
+    QHash<QPair<SnorePlugin::PluginTypes, QString>, SnorePlugin *> m_plugins;
 
     QPointer<SnoreBackend> m_notificationBackend;
 
@@ -111,7 +113,7 @@ private:
 
     QString m_localSettingsPrefix;
 
-    QSettings* m_settings;
+    QSettings *m_settings;
 
     QList<Notification> m_notificationQue;
     QHash<uint, Snore::Notification> m_activeNotifications;

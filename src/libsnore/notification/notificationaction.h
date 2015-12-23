@@ -44,7 +44,7 @@ public:
      * @param id can be used to identify the action
      * @param name will be displayed in the notification system.
      */
-    Action ( int id, const QString& name );
+    Action(int id, const QString &name);
 
     /**
      *
@@ -70,5 +70,5 @@ private:
 };
 }
 
-QDataStream& operator<< ( QDataStream& stream, const Snore::Action& action );
+QDataStream &operator<< (QDataStream &stream, const Snore::Action &action);
 #endif // NOTIFICATIONACTION_H

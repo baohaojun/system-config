@@ -45,16 +45,16 @@ public:
      * In case the function failes it will return the same as defaultIcon().
      * The function caches successful downloads, a Url is only downloaded once.
      */
-    static Icon fromWebUrl ( const QUrl& url, int maxTime = 5000 );
+    static Icon fromWebUrl(const QUrl &url, int maxTime = 5000);
 
-    Icon ( const QPixmap& pixmap );
-    Icon ( const QIcon& other );
-    explicit Icon ( const QString& fileName );
+    Icon(const QPixmap &pixmap);
+    Icon(const QIcon &other);
+    explicit Icon(const QString &fileName);
 
     /**
      * Returns a local Url to a file representing the Icon.
      */
-    QString localUrl ( QSize size, Mode mode = Normal, State state = Off ) const;
+    QString localUrl(QSize size, Mode mode = Normal, State state = Off) const;
 
 private:
     Icon() = delete;

@@ -39,11 +39,11 @@ SnoreBackend::SnoreBackend()
             connect(this, &SnoreBackend::notificationClosed, SnoreCorePrivate::instance(), &SnoreCorePrivate::slotNotificationClosed, Qt::QueuedConnection);
             connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notify, this, &SnoreBackend::slotNotify, Qt::QueuedConnection);
 
-            for (const Application & a : SnoreCore::instance().aplications()) {
+            for (const Application &a : SnoreCore::instance().aplications()) {
                 slotRegisterApplication(a);
             }
         } else {
-            for (const Application & a : SnoreCore::instance().aplications()) {
+            for (const Application &a : SnoreCore::instance().aplications()) {
                 slotDeregisterApplication(a);
             }
             disconnect(SnoreCorePrivate::instance(), &SnoreCorePrivate::applicationRegistered, this, &SnoreBackend::slotRegisterApplication);
@@ -99,12 +99,12 @@ bool SnoreBackend::canUpdateNotification() const
     return false;
 }
 
-void SnoreBackend::slotRegisterApplication(const Application& application)
+void SnoreBackend::slotRegisterApplication(const Application &application)
 {
     Q_UNUSED(application);
 }
 
-void SnoreBackend::slotDeregisterApplication(const Application& application)
+void SnoreBackend::slotDeregisterApplication(const Application &application)
 {
     Q_UNUSED(application);
 }
@@ -115,7 +115,7 @@ void SnoreBackend::slotNotificationDisplayed(Notification notification)
     SnoreCorePrivate::instance()->slotNotificationDisplayed(notification);
 }
 
-void SnoreBackend::slotNotificationActionInvoked(Notification notification, const Action& action)
+void SnoreBackend::slotNotificationActionInvoked(Notification notification, const Action &action)
 {
     notification.data()->setActionInvoked(action);
     SnoreCorePrivate::instance()->slotNotificationActionInvoked(notification);

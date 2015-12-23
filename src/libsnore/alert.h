@@ -46,7 +46,7 @@ public:
      * @param name the name of the Alert.
      * @param icon the Icon of the Alert.
      */
-    explicit Alert ( const QString& name, const Icon& icon );
+    explicit Alert(const QString &name, const Icon &icon);
 
     /**
      * Creates an alert.
@@ -54,19 +54,19 @@ public:
      * @param name the name of the Alert.
      * @param icon the Icon of the Alert.
      */
-    explicit Alert ( const QString& key, const QString& name, const Icon& icon );
+    explicit Alert(const QString &key, const QString &name, const Icon &icon);
 
     /**
      * Creates a copy of other
      * @param other
      */
-    Alert ( const Alert& other );
+    Alert(const Alert &other);
 
     /**
      * Creates a copy of other.
      * @param other
      */
-    Alert& operator= ( const Alert& other );
+    Alert &operator= (const Alert &other);
     ~Alert();
 
     /**
@@ -83,7 +83,7 @@ public:
     /**
      * Returns the icon of the Alert.
      */
-    const Icon& icon() const;
+    const Icon &icon() const;
 
     /**
      * Returns whether the Alert is valid.
@@ -96,6 +96,6 @@ private:
 };
 }
 
-QDebug SNORE_EXPORT operator<< ( QDebug debug, const Snore::Alert& alert );
+QDebug SNORE_EXPORT operator<< (QDebug debug, const Snore::Alert &alert);
 
 #endif // ALERT_H

@@ -1,0 +1,67 @@
+#ifndef SNORE_VERSION_H
+#define SNORE_VERSION_H
+
+#undef major
+#undef minor
+
+#include <QString>
+
+namespace Snore
+{
+
+/**
+ * Version contains relevant version informations.
+ * @author Hannah von Reth \<vonreth at kde.org\>
+ */
+class Version
+{
+public:
+    /**
+     *
+     * @return the version "major().minor().patch()"
+     */
+    static const QString version()
+    {
+        return QStringLiteral("${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}");
+    }
+
+    /**
+     *
+     * @return the major version
+     */
+    static const QString major()
+    {
+        return QStringLiteral("${SNORE_VERSION_MAJOR}");
+    }
+
+    /**
+    *
+     * @return the minor version
+     */
+    static const QString minor()
+    {
+        return QStringLiteral("${SNORE_VERSION_MINOR}");
+    }
+
+    /**
+     *
+     * @return the patch version
+     */
+    static const QString patch()
+    {
+        return QStringLiteral("${SNORE_VERSION_PATCH}");
+    }
+
+    /**
+     *
+     * @return the git revision, can be empty in a release
+     */
+    static const QString revision()
+    {
+        return QStringLiteral("${SNORE_REVISION}");
+    }
+
+};
+
+}
+#endif

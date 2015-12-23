@@ -34,7 +34,7 @@
 
 using namespace Snore;
 
-SnoreCore::SnoreCore(QObject* parent):
+SnoreCore::SnoreCore(QObject *parent):
     QObject(parent)
 {
     if (QThread::currentThread() != parent->thread()) {
@@ -45,9 +45,9 @@ SnoreCore::SnoreCore(QObject* parent):
     d->q_ptr = this;
 }
 
-SnoreCore& SnoreCore::instance()
+SnoreCore &SnoreCore::instance()
 {
-    static SnoreCore* instance = nullptr;
+    static SnoreCore *instance = nullptr;
     if (!instance) {
         qRegisterMetaType<Application>();
         qRegisterMetaType<LambdaHint>();
@@ -76,10 +76,10 @@ void SnoreCore::loadPlugins(SnorePlugin::PluginTypes types)
     Q_D(SnoreCore);
     setSettingsValue(QStringLiteral("PluginTypes"), QVariant::fromValue(types), LocalSetting);
     qCDebug(SNORE) << "Loading plugin types:" << types;
-    foreach (const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
+    foreach(const SnorePlugin::PluginTypes type, SnorePlugin::types()) {
         if (type != SnorePlugin::All && types & type) {
-            foreach (PluginContainer * info, PluginContainer::pluginCache(type).values()) {
-                SnorePlugin* plugin = info->load();
+            foreach(PluginContainer * info, PluginContainer::pluginCache(type).values()) {
+                SnorePlugin *plugin = info->load();
                 if (!plugin) {
                     continue;
                 }
@@ -136,7 +136,7 @@ void SnoreCore::broadcastNotification(Notification notification)
     emit d->notify(notification);
 }
 
-void SnoreCore::registerApplication(const Application& application)
+void SnoreCore::registerApplication(const Application &application)
 {
     Q_D(SnoreCore);
     Q_ASSERT_X(!d->m_applications.contains(application.key()), Q_FUNC_INFO,
@@ -146,14 +146,14 @@ void SnoreCore::registerApplication(const Application& application)
     emit d->applicationRegistered(application);
 }
 
-void SnoreCore::deregisterApplication(const Application& application)
+void SnoreCore::deregisterApplication(const Application &application)
 {
     Q_D(SnoreCore);
     emit d->applicationDeregistered(application);
     d->m_applications.take(application.key());
 }
 
-const QHash<QString, Application>& SnoreCore::aplications() const
+const QHash<QString, Application> &SnoreCore::aplications() const
 {
     Q_D(const SnoreCore);
     return d->m_applications;
@@ -180,7 +180,7 @@ const QString SnoreCore::primaryNotificationBackend() const
     return d->m_notificationBackend->name();
 }
 
-bool SnoreCore::setPrimaryNotificationBackend(const QString& backend)
+bool SnoreCore::setPrimaryNotificationBackend(const QString &backend)
 {
     Q_D(SnoreCore);
     return d->setBackendIfAvailible(backend);
@@ -209,7 +209,7 @@ void SnoreCore::setDefaultApplication(const Application app)
     d->m_defaultApp = app;
 }
 
-QVariant SnoreCore::settingsValue(const QString& key, SettingsType type) const
+QVariant SnoreCore::settingsValue(const QString &key, SettingsType type) const
 {
     Q_D(const SnoreCore);
     QString nk = d->normalizeSettingsKey(key, type);
@@ -219,13 +219,13 @@ QVariant SnoreCore::settingsValue(const QString& key, SettingsType type) const
     return d->m_settings->value(nk);
 }
 
-void SnoreCore::setSettingsValue(const QString& key, const QVariant& value, SettingsType type)
+void SnoreCore::setSettingsValue(const QString &key, const QVariant &value, SettingsType type)
 {
     Q_D(SnoreCore);
     d->m_settings->setValue(d->normalizeSettingsKey(key, type), value);
 }
 
-void SnoreCore::setDefaultSettingsValue(const QString& key, const QVariant& value, SettingsType type)
+void SnoreCore::setDefaultSettingsValue(const QString &key, const QVariant &value, SettingsType type)
 {
     Q_D(SnoreCore);
     QString nk = d->normalizeSettingsKey(key, type);

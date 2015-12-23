@@ -22,7 +22,7 @@
 #include <QLabel>
 #include <QLineEdit>
 
-ToastySettings::ToastySettings(Snore::SnorePlugin* plugin, QWidget* parent) :
+ToastySettings::ToastySettings(Snore::SnorePlugin *plugin, QWidget *parent) :
     Snore::PluginSettingsWidget(plugin, parent),
     m_lineEdit(new QLineEdit)
 {

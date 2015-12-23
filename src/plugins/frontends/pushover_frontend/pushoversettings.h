@@ -31,25 +31,25 @@ class PushoverSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
 public:
-    explicit PushoverSettings ( Snore::SnorePlugin* plugin, QWidget* parent = 0 );
+    explicit PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
     ~PushoverSettings();
 
     void load() override;
     void save() override;
 
 private:
-    QLineEdit* m_emailLineEdit;
-    QLineEdit* m_passwordLineEdit;
-    QLineEdit* m_deviceLineEdit;
-    QPushButton* m_registerButton;
-    QLabel* m_errorMessageLabel;
+    QLineEdit *m_emailLineEdit;
+    QLineEdit *m_passwordLineEdit;
+    QLineEdit *m_deviceLineEdit;
+    QPushButton *m_registerButton;
+    QLabel *m_errorMessageLabel;
     PushoverClient::LoginState m_state = PushoverClient::Undefined;
 
 private Q_SLOTS:
-    void slotUpdateLoginState ( PushoverClient::LoginState state );
+    void slotUpdateLoginState(PushoverClient::LoginState state);
 
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN ( PushoverSettings )
+SNORE_DECLARE_SETTINGS_PLUGIN(PushoverSettings)
 
 #endif // PUSHOVERSETTINGS_H

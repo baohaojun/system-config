@@ -31,7 +31,7 @@ class AlertData : public QSharedData
 {
     friend class Alert;
 public:
-    AlertData ( const QString& key, const QString& name, const Icon& icon );
+    AlertData(const QString &key, const QString &name, const Icon &icon);
     ~AlertData();
 
     QString m_key;
@@ -39,7 +39,7 @@ public:
     Icon m_icon;
 
 private:
-    Q_DISABLE_COPY ( AlertData )
+    Q_DISABLE_COPY(AlertData)
 
 };
 }

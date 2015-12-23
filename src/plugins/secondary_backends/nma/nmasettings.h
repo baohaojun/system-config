@@ -27,17 +27,17 @@ class NotifyMyAndroidSettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
 public:
-    explicit NotifyMyAndroidSettings ( Snore::SnorePlugin* plugin, QWidget* parent = 0 );
+    explicit NotifyMyAndroidSettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
     ~NotifyMyAndroidSettings();
 
     void load() override;
     void save() override;
 
 private:
-    QLineEdit* m_lineEdit;
+    QLineEdit *m_lineEdit;
 
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN ( NotifyMyAndroidSettings )
+SNORE_DECLARE_SETTINGS_PLUGIN(NotifyMyAndroidSettings)
 
 #endif // NOTIFYMYANDROID_HH

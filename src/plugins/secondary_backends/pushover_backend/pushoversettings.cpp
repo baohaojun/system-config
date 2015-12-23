@@ -22,7 +22,7 @@
 #include <QLabel>
 #include <QLineEdit>
 
-PushoverSettings::PushoverSettings(Snore::SnorePlugin* plugin, QWidget* parent) :
+PushoverSettings::PushoverSettings(Snore::SnorePlugin *plugin, QWidget *parent) :
     Snore::PluginSettingsWidget(plugin, parent),
     m_keyLineEdit(new QLineEdit(this)),
     m_soundLineEdit(new QLineEdit(this)),

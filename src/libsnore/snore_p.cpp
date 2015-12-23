@@ -82,20 +82,20 @@ void SnoreCorePrivate::slotNotificationDisplayed(Notification notification)
     startNotificationTimeoutTimer(notification);
 }
 
-bool SnoreCorePrivate::setBackendIfAvailible(const QString& backend)
+bool SnoreCorePrivate::setBackendIfAvailible(const QString &backend)
 {
     Q_Q(SnoreCore);
     if (m_pluginNames[SnorePlugin::Backend].contains(backend)) {
         if (backend == q->primaryNotificationBackend()) {
             return true;
         }
-        const QHash<QString, PluginContainer*> backends = PluginContainer::pluginCache(SnorePlugin::Backend);
+        const QHash<QString, PluginContainer *> backends = PluginContainer::pluginCache(SnorePlugin::Backend);
         if (!backends.contains(backend)) {
             qCDebug(SNORE) << "Unknown Backend:" << backend;
             return false;
         }
         qCDebug(SNORE) << "Setting Notification Backend to:" << backend;
-        SnoreBackend* b = qobject_cast<SnoreBackend*>(backends.value(backend)->load());
+        SnoreBackend *b = qobject_cast<SnoreBackend *>(backends.value(backend)->load());
         if (!b->isReady()) {
             qCDebug(SNORE) << "Backend not ready:" << b->errorString();
 
@@ -109,7 +109,7 @@ bool SnoreCorePrivate::setBackendIfAvailible(const QString& backend)
         m_notificationBackend->enable();
         q->setSettingsValue(QStringLiteral("PrimaryBackend"), backend, LocalSetting);
 
-        connect(b, &SnoreBackend::error, [this, b](const QString&) {
+        connect(b, &SnoreBackend::error, [this, b](const QString &) {
             slotInitPrimaryNotificationBackend();
         });
         emit q->primaryNotificationBackendChanged(b->name());
@@ -160,7 +160,7 @@ void SnoreCorePrivate::init()
     m_defaultApp = Application(QStringLiteral("SnoreNotify"), Icon::defaultIcon());
 }
 
-void SnoreCorePrivate::setDefaultSettingsValueIntern(const QString& key, const QVariant& value)
+void SnoreCorePrivate::setDefaultSettingsValueIntern(const QString &key, const QVariant &value)
 {
     QString nk = normalizeSettingsKey(key + QLatin1String("-SnoreDefault"), LocalSetting);
     if (!m_settings->contains(nk)) {
@@ -187,22 +187,22 @@ void SnoreCorePrivate::syncSettings()
 
     auto types = SnorePlugin::types();
     types.removeOne(SnorePlugin::Backend);
-    foreach (auto type, types) {
-        foreach (auto & pluginName, m_pluginNames[type]) {
+    foreach(auto type, types) {
+        foreach(auto & pluginName, m_pluginNames[type]) {
             auto key = qMakePair(type, pluginName);
-            SnorePlugin* plugin = m_plugins.value(key);
+            SnorePlugin *plugin = m_plugins.value(key);
             bool enable = m_plugins[key]->settingsValue(QStringLiteral("Enabled"), LocalSetting).toBool();
             plugin->setEnabled(enable);
         }
     }
 }
 
-QSettings& SnoreCorePrivate::settings()
+QSettings &SnoreCorePrivate::settings()
 {
     return *m_settings;
 }
 
-void SnoreCorePrivate::setLocalSttingsPrefix(const QString& prefix)
+void SnoreCorePrivate::setLocalSttingsPrefix(const QString &prefix)
 {
     m_localSettingsPrefix = prefix;
     init();
@@ -220,7 +220,7 @@ QString SnoreCorePrivate::tempPath()
 }
 
 // TODO: this is somehow horrible code
-SnoreCorePrivate* SnoreCorePrivate::instance()
+SnoreCorePrivate *SnoreCorePrivate::instance()
 {
     return SnoreCore::instance().d_ptr;
 }
@@ -245,7 +245,7 @@ void SnoreCorePrivate::slotNotificationClosed(Notification n)
 
 void SnoreCorePrivate::slotAboutToQuit()
 {
-    for (PluginContainer * p : PluginContainer::pluginCache(SnorePlugin::All)) {
+    for (PluginContainer *p : PluginContainer::pluginCache(SnorePlugin::All)) {
         if (p->isLoaded()) {
             qCDebug(SNORE) << "deinitialize" << p->name();
             p->load()->disable();
@@ -261,7 +261,7 @@ void SnoreCorePrivate::startNotificationTimeoutTimer(Notification notification)
     }
 
     notification.data()->stopTimeoutTimer();
-    QTimer* timer = new QTimer();
+    QTimer *timer = new QTimer();
     notification.data()->m_timeoutTimer = timer;
     timer->setSingleShot(true);
 

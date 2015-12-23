@@ -81,12 +81,12 @@ public:
         All                 = ~0
     };
 
-    Q_DECLARE_FLAGS ( PluginTypes, PluginType )
-    Q_ENUMS ( PluginType )
+    Q_DECLARE_FLAGS(PluginTypes, PluginType)
+    Q_ENUMS(PluginType)
 
-    static PluginTypes typeFromString ( const QString& t );
-    static QString typeToString ( const PluginTypes t );
-    static const QList<Snore::SnorePlugin::PluginTypes>& types();
+    static PluginTypes typeFromString(const QString &t);
+    static QString typeToString(const PluginTypes t);
+    static const QList<Snore::SnorePlugin::PluginTypes> &types();
 
     SnorePlugin();
     virtual ~SnorePlugin();
@@ -94,7 +94,7 @@ public:
     /**
      * Sets the enabled state of the plugin to @param enabled .
      */
-    void setEnabled ( bool enabled );
+    void setEnabled(bool enabled);
 
     /**
      * Enables the plugin.
@@ -114,7 +114,7 @@ public:
     /**
      * Returns the name of the plugin.
      */
-    const QString& name() const;
+    const QString &name() const;
 
     /**
      * Returns the plugin type.
@@ -133,15 +133,15 @@ public:
      */
     QString errorString() const;
 
-    QVariant settingsValue ( const QString& key, SettingsType type = GlobalSetting ) const;
-    void setSettingsValue ( const QString& key, const QVariant& settingsValue, SettingsType type = GlobalSetting );
-    void setDefaultSettingsValue ( const QString& key, const QVariant& settingsValue, SettingsType type = GlobalSetting );
+    QVariant settingsValue(const QString &key, SettingsType type = GlobalSetting) const;
+    void setSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSetting);
+    void setDefaultSettingsValue(const QString &key, const QVariant &settingsValue, SettingsType type = GlobalSetting);
 
-    const Hint& constHints() const;
+    const Hint &constHints() const;
 
 Q_SIGNALS:
-    void enabledChanged ( bool enabled );
-    void error ( const QString& error );
+    void enabledChanged(bool enabled);
+    void error(const QString &error);
 
 protected:
     /**
@@ -154,15 +154,15 @@ protected:
      */
     virtual void setDefaultSettings();
 
-    void setErrorString ( const QString& error );
+    void setErrorString(const QString &error);
 
-    Hint& hints();
+    Hint &hints();
 private:
-    QString normaliseKey ( const QString& key ) const;
+    QString normaliseKey(const QString &key) const;
     void setDefaultSettingsPlugin();
 
     bool m_enabled = false;
-    PluginContainer* m_container = nullptr;
+    PluginContainer *m_container = nullptr;
     QString m_error;
     Hint m_hints;
 
@@ -171,16 +171,16 @@ private:
 };
 
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS ( Snore::SnorePlugin::PluginTypes )
-Q_DECLARE_METATYPE ( Snore::SnorePlugin::PluginTypes )
+Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::SnorePlugin::PluginTypes)
+Q_DECLARE_METATYPE(Snore::SnorePlugin::PluginTypes)
 
-Q_DECLARE_INTERFACE ( Snore::SnorePlugin,
-                      "org.Snore.SnorePlugin/1.0" )
+Q_DECLARE_INTERFACE(Snore::SnorePlugin,
+                    "org.Snore.SnorePlugin/1.0")
 
-SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::SnorePlugin::PluginTypes& );
-SNORE_EXPORT QDebug operator<< ( QDebug, const Snore::SnorePlugin* );
+SNORE_EXPORT QDebug operator<< (QDebug, const Snore::SnorePlugin::PluginTypes &);
+SNORE_EXPORT QDebug operator<< (QDebug, const Snore::SnorePlugin *);
 
-SNORE_EXPORT QDataStream& operator<< ( QDataStream& out, const Snore::SnorePlugin::PluginTypes& type );
-SNORE_EXPORT QDataStream& operator>> ( QDataStream& in, Snore::SnorePlugin::PluginTypes& type );
+SNORE_EXPORT QDataStream &operator<< (QDataStream &out, const Snore::SnorePlugin::PluginTypes &type);
+SNORE_EXPORT QDataStream &operator>> (QDataStream &in, Snore::SnorePlugin::PluginTypes &type);
 
 #endif//SNORE_PLUGINS_H

@@ -25,7 +25,7 @@
 
 using namespace Snore;
 
-SoundSettings::SoundSettings(SnorePlugin* snorePlugin, QWidget* parent) :
+SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
     PluginSettingsWidget(snorePlugin, parent),
     m_lineEditFileName(new QLineEdit),
     m_spinBoxVolume(new QSpinBox)
@@ -34,7 +34,7 @@ SoundSettings::SoundSettings(SnorePlugin* snorePlugin, QWidget* parent) :
     addRow(tr("Volume:"), m_spinBoxVolume);
 
     addRow(tr("Audio file:"), m_lineEditFileName, tr("The sound played when a notification is received."));
-    QPushButton* button = new QPushButton(tr("Select a audio file"));
+    QPushButton *button = new QPushButton(tr("Select a audio file"));
     connect(button, &QPushButton::clicked, [this]() {
         QFileDialog dialog;
         dialog.setNameFilter(tr("All Audio files").append(QLatin1String("(*.mp3 *.wav *.ogg)")));

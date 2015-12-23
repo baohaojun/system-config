@@ -15,32 +15,22 @@
     You should have received a copy of the GNU Lesser General Public License
     along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "snarlsettings.h"
 
-#include <QLineEdit>
+#include "settingsutils.h"
+#include "libsnore/utils.h"
+#include "libsnore/snore_p.h"
 
 using namespace Snore;
 
-SnarlSettings::SnarlSettings(SnorePlugin *plugin, QWidget *parent):
-    PluginSettingsWidget(plugin, parent),
-    m_password(new QLineEdit)
+const QStringList SettingsUtils::knownApps()
 {
-    m_password->setEchoMode(QLineEdit::Password);
-    addRow(tr("Password:"), m_password);
+    return allSettingsKeysWithPrefix(Utils::settingsVersionSchema() + QLatin1String("/LocalSettings"), settings(),
+    [](QSettings & settings) {
+        return settings.childGroups();
+    });
 }
 
-SnarlSettings::~SnarlSettings()
+QSettings &SettingsUtils::settings()
 {
-
+    return SnoreCorePrivate::instance()->settings();
 }
-
-void SnarlSettings::load()
-{
-    m_password->setText(settingsValue(QLatin1String("Password")).toString());
-}
-
-void SnarlSettings::save()
-{
-    setSettingsValue(QLatin1String("Password"), m_password->text());
-}
-

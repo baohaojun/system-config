@@ -12,8 +12,9 @@ class SnoreBenchmark : public QObject
 {
     Q_OBJECT
 public:
-    SnoreBenchmark() {
-        SnoreCore& instance = SnoreCore::instance();
+    SnoreBenchmark()
+    {
+        SnoreCore &instance = SnoreCore::instance();
         instance.loadPlugins(SnorePlugin::Backend);
         instance.setSettingsValue(QStringLiteral("Timeout"), 1, LocalSetting);
     }
@@ -77,7 +78,7 @@ void SnoreBenchmark::benchmarkUtilsToPlain()
 
 void SnoreBenchmark::benchmarkNotifications()
 {
-    SnoreCore& instance = SnoreCore::instance();
+    SnoreCore &instance = SnoreCore::instance();
     int closed = 0;
     connect(&instance, &SnoreCore::notificationClosed, [&closed](Notification) {
         closed++;

@@ -28,55 +28,7 @@
 using namespace Snore;
 using namespace std;
 
-bool setSetting(const QString& appName, SettingsType type, const QString& _key, const QString& value)
-{
-    QSettings& settings = SettingsWindow::settings();
-    QString key = Utils::normalizeSettingsKey(_key, type, appName);
-    QVariant oldValue = settings.value(key);
-
-    //TODO: make sure that the values are valid qvariant.canConvert doesn't work.
-    if (!oldValue.isValid()) {
-        cout << "Invalid key: " << qPrintable(key) << endl;
-        return false;
-    }
-    settings.setValue(key, value);
-    cout << "Set: " << qPrintable(key) << " to " << qPrintable(settings.value(key).toString()) << endl;
-    return true;
-}
-
-void listApps()
-{
-    foreach (const QString & app, SettingsWindow::knownApps()) {
-        cout << qPrintable(app) << endl;
-    }
-}
-
-void listSettings(SettingsType type, const QString& application)
-{
-    QSettings& settings = SettingsWindow::settings();
-    auto getAllKeys = [](QSettings & settings) {
-        return settings.allKeys();
-    };
-
-    QString prefix = application;
-    if (application == QLatin1String("global")) {
-        prefix = QString();
-    }
-    cout << qPrintable(application) << endl;
-    foreach (const QString & key, SettingsWindow::allSettingsKeysWithPrefix(
-                 Utils::normalizeSettingsKey(QLatin1String(""), type, prefix), settings, getAllKeys)) {
-        cout << "  " << qPrintable(key) << ": " << qPrintable(settings.value(Utils::normalizeSettingsKey(key, type, prefix)).toString()) << endl;
-    }
-}
-
-int showWindow(const QString& appName)
-{
-    SettingsWindow* window = new SettingsWindow(appName);
-    window->show();
-    return qApp->exec();
-}
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("SnoreSettings"));
@@ -91,45 +43,14 @@ int main(int argc, char* argv[])
     parser.addHelpOption();
     parser.addVersionOption();
 
-    //TODO: merge with appNameCommand ?
-    QCommandLineOption listAppsCommand(QStringLiteral("apps"), QStringLiteral("List possible application."));
-    parser.addOption(listAppsCommand);
-
-    QCommandLineOption listSettingsCommand( {QStringLiteral("l"), QStringLiteral("list")} , QStringLiteral("List settings for the given --appName or the global settings."));
-    parser.addOption(listSettingsCommand);
-
-    QCommandLineOption appNameCommand( {QStringLiteral("a"), QStringLiteral("appName")} , QStringLiteral("Set the Name of the app <app> or global."), QStringLiteral("app"), QStringLiteral("global"));
+    QCommandLineOption appNameCommand({QStringLiteral("a"), QStringLiteral("appName") } , QStringLiteral("Set the Name of the app <app> or global."), QStringLiteral("app"), QStringLiteral("global"));
     parser.addOption(appNameCommand);
-
-    parser.addPositionalArgument(QStringLiteral("key"), QStringLiteral("The settings Key."));
-    parser.addPositionalArgument(QStringLiteral("value"), QStringLiteral("The new settings Value"));
 
     parser.process(app);
 
     QString appName = parser.value(appNameCommand);
 
-    SettingsType type = GlobalSetting;
-    if (appName != QLatin1String("global")) {
-        type = LocalSetting;
-    }
-
-    if (parser.isSet(listAppsCommand)) {
-        listApps();
-    } else if (parser.isSet(listSettingsCommand)) {
-        listSettings(type, appName);
-    } else if ((parser.optionNames().empty() || (parser.optionNames().size() == 1 && parser.isSet(appNameCommand)))
-               && parser.positionalArguments().empty()) {
-        return showWindow(appName);
-    } else {
-        QStringList posArgs = parser.positionalArguments();
-        if (posArgs.size() != 2) {
-            parser.showHelp(1);
-        }
-        if (!setSetting(appName, type, posArgs[0], posArgs[1])) {
-            return 1;
-        }
-    }
-    app.processEvents();
-    return 0;
+    SettingsWindow *window = new SettingsWindow(appName);
+    window->show();
+    return qApp->exec();
 }
-

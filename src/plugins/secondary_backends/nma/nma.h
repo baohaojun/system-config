@@ -25,8 +25,8 @@
 class NotifyMyAndroid : public Snore::SnoreSecondaryBackend
 {
     Q_OBJECT
-    Q_INTERFACES ( Snore::SnoreSecondaryBackend )
-    Q_PLUGIN_METADATA ( IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "snore_plugin.json" )
+    Q_INTERFACES(Snore::SnoreSecondaryBackend)
+    Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "snore_plugin.json")
 public:
     NotifyMyAndroid() = default;
     ~NotifyMyAndroid() = default;
@@ -35,7 +35,7 @@ protected:
     void setDefaultSettings() override;
 
 public Q_SLOTS:
-    void slotNotify ( Snore::Notification notification ) override;
+    void slotNotify(Snore::Notification notification) override;
 
 private:
     QNetworkAccessManager m_manager;

@@ -30,7 +30,7 @@ bool SnoreToast::canCloseNotification() const
 
 void SnoreToast::slotNotify(Notification notification)
 {
-    QProcess* p = createProcess(notification);
+    QProcess *p = createProcess(notification);
 
     QStringList arguements;
     arguements << QLatin1String("-t")
@@ -78,11 +78,11 @@ void SnoreToast::slotNotify(Notification notification)
     p->start(QLatin1String("SnoreToast"), arguements);
 }
 
-void SnoreToast::slotRegisterApplication(const Application& application)
+void SnoreToast::slotRegisterApplication(const Application &application)
 {
     if (!application.constHints().contains("windows-app-id")) {
         qCInfo(SNORE) << "No windows-app-id found in hints. Installing default shortcut with appID.";
-        QProcess* p = createProcess(Notification());
+        QProcess *p = createProcess(Notification());
         QStringList arguements;
         arguements << QLatin1String("-install")
                    << QLatin1String("SnoreNotify\\") + qApp->applicationName()
@@ -95,7 +95,7 @@ void SnoreToast::slotRegisterApplication(const Application& application)
 
 void SnoreToast::slotCloseNotification(Notification notification)
 {
-    QProcess* p = createProcess(notification);
+    QProcess *p = createProcess(notification);
 
     QStringList arguements;
     arguements << QLatin1String("-close")
@@ -104,7 +104,7 @@ void SnoreToast::slotCloseNotification(Notification notification)
     p->start(QLatin1String("SnoreToast"), arguements);
 }
 
-QString SnoreToast::appId(const Application& application)
+QString SnoreToast::appId(const Application &application)
 {
     QString appID = application.constHints().value("windows-app-id").toString();
     if (appID.isEmpty()) {
@@ -113,9 +113,9 @@ QString SnoreToast::appId(const Application& application)
     return appID;
 }
 
-QProcess* SnoreToast::createProcess(Notification noti)
+QProcess *SnoreToast::createProcess(Notification noti)
 {
-    QProcess* p = new QProcess(this);
+    QProcess *p = new QProcess(this);
     p->setReadChannelMode(QProcess::MergedChannels);
 
     connect(p, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [p](int, QProcess::ExitStatus) {

@@ -30,7 +30,7 @@ uint NotificationData::notificationCount = 0;
 
 uint NotificationData::m_idCount = 1;
 
-NotificationData::NotificationData(const Snore::Application& application, const Snore::Alert& alert, const QString& title, const QString& text, const Icon& icon,
+NotificationData::NotificationData(const Snore::Application &application, const Snore::Alert &alert, const QString &title, const QString &text, const Icon &icon,
                                    int timeout, Notification::Prioritys priority):
     m_id(m_idCount++),
     m_timeout(priority == Notification::Emergency ? 0 : timeout),
@@ -47,7 +47,7 @@ NotificationData::NotificationData(const Snore::Application& application, const 
     qCDebug(SNORE) << title << text;
 }
 
-Snore::NotificationData::NotificationData(const Notification& old, const QString& title, const QString& text, const Icon& icon, int timeout, Notification::Prioritys priority):
+Snore::NotificationData::NotificationData(const Notification &old, const QString &title, const QString &text, const Icon &icon, int timeout, Notification::Prioritys priority):
     m_id(m_idCount++),
     m_timeout(priority == Notification::Emergency ? 0 : timeout),
     m_application(old.application()),
@@ -71,7 +71,7 @@ NotificationData::~NotificationData()
     qCDebug(SNORE) << "Deleting Notification: ActiveNotifications" << notificationCount << "id" << m_id << "Close Reason:" << m_closeReason;
 }
 
-void NotificationData::setActionInvoked(const Snore::Action& action)
+void NotificationData::setActionInvoked(const Snore::Action &action)
 {
     m_actionInvoked = action;
 }
@@ -82,7 +82,7 @@ void NotificationData::setCloseReason(Snore::Notification::CloseReasons r)
     stopTimeoutTimer();
 }
 
-QString NotificationData::resolveMarkup(const QString& string, Utils::MarkupFlags flags)
+QString NotificationData::resolveMarkup(const QString &string, Utils::MarkupFlags flags)
 {
     if (!m_hints.value("use-markup").toBool()) {
         if (flags == Utils::NoMarkup) {
@@ -105,17 +105,17 @@ bool NotificationData::isBroadcasted() const
     return m_isBroadcasted;
 }
 
-void NotificationData::setSource(SnorePlugin* soure)
+void NotificationData::setSource(SnorePlugin *soure)
 {
     m_source = soure;
 }
 
-const SnorePlugin* NotificationData::source() const
+const SnorePlugin *NotificationData::source() const
 {
     return m_source;
 }
 
-bool NotificationData::sourceAndTargetAreSimilar(const SnorePlugin* target)
+bool NotificationData::sourceAndTargetAreSimilar(const SnorePlugin *target)
 {
     if (source() && source()->name() == target->name()) {
         qCDebug(SNORE) << "Source" << source() << "and Target" << target << "are the same.";

@@ -38,7 +38,7 @@ void Pushover::slotNotify(Notification notification)
     }
 
     QNetworkRequest request(QUrl::fromEncoded("https://api.pushover.net/1/messages.json"));
-    QHttpMultiPart* mp = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+    QHttpMultiPart *mp = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
     QHttpPart title;
     title.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"title\"")));
@@ -107,7 +107,7 @@ void Pushover::slotNotify(Notification notification)
     user.setBody(key.toUtf8().constData());
     mp->append(user);
 
-    QNetworkReply* reply =  m_manager.post(request, mp);
+    QNetworkReply *reply =  m_manager.post(request, mp);
     mp->setParent(reply);
 
     connect(reply, &QNetworkReply::finished, [reply]() {

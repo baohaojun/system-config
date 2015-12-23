@@ -7,7 +7,7 @@ if(NOT SNORE_REVISION)
 endif()
 
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version.h")
 
 ecm_create_qm_loader(SnoreNotify_QM_LOADER snorenotify${SNORE_SUFFIX}_qt)
 
@@ -27,7 +27,6 @@ list(APPEND SnoreNotify_SRCS
         hint.cpp
         lambdahint.cpp
         utils.cpp
-        ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
         ${SNORENOTIFY_RCS}
         )
 
@@ -41,7 +40,7 @@ list(APPEND SnoreNotify_HDR
         snoreglobals.h
         utils.h
         ${CMAKE_CURRENT_BINARY_DIR}/snore_exports.h
-        version.h
+        ${CMAKE_CURRENT_BINARY_DIR}/version.h
         )
 
 

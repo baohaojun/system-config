@@ -24,22 +24,22 @@
 
 using namespace Snore;
 
-QList<PluginSettingsWidget*> Settings::settingWidgets(SnorePlugin::PluginTypes type)
+QList<PluginSettingsWidget *> Settings::settingWidgets(SnorePlugin::PluginTypes type)
 {
-    SnoreCorePrivate* core(SnoreCorePrivate::instance());
-    QList<PluginSettingsWidget*> list;
-    foreach (const QString & name, core->m_pluginNames[type]) {
+    SnoreCorePrivate *core(SnoreCorePrivate::instance());
+    QList<PluginSettingsWidget *> list;
+    foreach(const QString & name, core->m_pluginNames[type]) {
         //TODO: mem leak?
 
-        SnorePlugin* plugin = core->m_plugins[qMakePair(type, name)];
-        SettingsPlugin* settingsPlugin = qobject_cast< Snore::SettingsPlugin* >(core->m_plugins[qMakePair(Snore::SnorePlugin::Settings, name + SnorePlugin::typeToString(type))]);
+        SnorePlugin *plugin = core->m_plugins[qMakePair(type, name)];
+        SettingsPlugin *settingsPlugin = qobject_cast< Snore::SettingsPlugin * >(core->m_plugins[qMakePair(Snore::SnorePlugin::Settings, name + SnorePlugin::typeToString(type))]);
         if (settingsPlugin) {
-            PluginSettingsWidget* widget = settingsPlugin->settingsWidget(plugin);
+            PluginSettingsWidget *widget = settingsPlugin->settingsWidget(plugin);
             if (widget) {
                 list.append(widget);
             }
         } else {
-            if (!qobject_cast< Snore::SnoreBackend* >(plugin)) {
+            if (!qobject_cast< Snore::SnoreBackend * >(plugin)) {
                 list.append(new PluginSettingsWidget(plugin));
             }
         }

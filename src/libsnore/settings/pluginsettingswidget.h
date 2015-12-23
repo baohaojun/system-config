@@ -33,12 +33,12 @@ class SNORE_SETTINGS_EXPORT PluginSettingsWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit PluginSettingsWidget ( SnorePlugin* snorePlugin, QWidget* parent = nullptr );
+    explicit PluginSettingsWidget(SnorePlugin *snorePlugin, QWidget *parent = nullptr);
     ~PluginSettingsWidget();
 
     const QString name() const;
 
-    void addRow ( const QString& label, QWidget* widget, const QString& toolTip = QString() );
+    void addRow(const QString &label, QWidget *widget, const QString &toolTip = QString());
 
     void loadSettings();
     void saveSettings();
@@ -46,16 +46,16 @@ public:
     bool isDirty();
 
 protected:
-    QVariant settingsValue ( const QString& key, Snore::SettingsType type = Snore::GlobalSetting ) const;
-    void setSettingsValue ( const QString& key, const QVariant& settingsValue, Snore::SettingsType type = Snore::GlobalSetting );
+    QVariant settingsValue(const QString &key, Snore::SettingsType type = Snore::GlobalSetting) const;
+    void setSettingsValue(const QString &key, const QVariant &settingsValue, Snore::SettingsType type = Snore::GlobalSetting);
 
     virtual void load();
     virtual void save();
 
 private:
-    SnorePlugin* m_snorePlugin;
-    QFormLayout* m_layout;
-    QCheckBox* m_enabled;
+    SnorePlugin *m_snorePlugin;
+    QFormLayout *m_layout;
+    QCheckBox *m_enabled;
     bool m_dirty = false;
 
 };

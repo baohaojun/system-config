@@ -26,29 +26,29 @@ class NotificationsAdaptor;
 class FreedesktopFrontend : public Snore::SnoreFrontend
 {
     Q_OBJECT
-    Q_INTERFACES ( Snore::SnoreFrontend )
-    Q_PLUGIN_METADATA ( IID "org.Snore.NotificationFrontend/1.0" FILE "snore_plugin.json" )
+    Q_INTERFACES(Snore::SnoreFrontend)
+    Q_PLUGIN_METADATA(IID "org.Snore.NotificationFrontend/1.0" FILE "snore_plugin.json")
 public:
     FreedesktopFrontend();
     ~FreedesktopFrontend() = default;
 
-    uint Notify ( const QString& app_name, uint replaces_id, const QString& app_icon, const QString& summary, const QString& body, const QStringList& actions, const QVariantMap& hints, int timeout );
-    void CloseNotification ( uint id );
+    uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
+    void CloseNotification(uint id);
 
     QStringList GetCapabilities();
-    QString GetServerInformation ( QString& vendor, QString& version, QString& specVersion );
+    QString GetServerInformation(QString &vendor, QString &version, QString &specVersion);
 
 Q_SIGNALS:
-    void NotificationClosed ( uint id, uint reason );
-    void ActionInvoked ( uint id, const QString& actionKey );
+    void NotificationClosed(uint id, uint reason);
+    void ActionInvoked(uint id, const QString &actionKey);
 
 public Q_SLOTS:
-    void slotActionInvoked ( Snore::Notification notification ) override;
-    void slotNotificationClosed ( Snore::Notification notification ) override;
+    void slotActionInvoked(Snore::Notification notification) override;
+    void slotNotificationClosed(Snore::Notification notification) override;
 
 private:
     Snore::Alert m_alert;
-    NotificationsAdaptor* m_adaptor;
+    NotificationsAdaptor *m_adaptor;
 };
 
 #endif//FREEDESKTOPNOTIFICATION_FRONTEND_H

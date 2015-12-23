@@ -24,7 +24,7 @@
 
 using namespace Snore;
 
-ApplicationData::ApplicationData(const QString& key, const QString& name, const Icon& icon):
+ApplicationData::ApplicationData(const QString &key, const QString &name, const Icon &icon):
     m_key(key),
     m_name(name),
     m_icon(icon),
