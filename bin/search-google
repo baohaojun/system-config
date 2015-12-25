@@ -99,6 +99,10 @@ if test $prog = search-ishare; then
     url="http://ishare.iask.sina.com.cn/search.php?key=$fill&format="
 fi
 
+if test "$prog" = search-japanese; then
+    url="https://www.google.co.uk/search?q=$fill+英语"
+fi
+
 set -x
 
 if test "$EMACS" = t; then
