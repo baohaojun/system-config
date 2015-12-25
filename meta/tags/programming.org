@@ -1,4 +1,10 @@
 #+title: General programming
+ * 2015
+  - 2015-12
+   * 2015-12-24
+
+     [[../../blog/2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.org][大公司、小公司、自由开源软件社区的代码管理]]
+
  * 2014
   - 2014-08
    * 2014-08-03

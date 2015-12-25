@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[大公司、小公司、自由开源软件社区的代码管理]]></title>
+    <link href="http://baohaojun.github.io/blog/2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.html"/>
+    <updated>2015-48-25T14:12:56+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Qt QString indexOf不考虑大小写的坑]]></title>
     <link href="http://baohaojun.github.io/blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html"/>
     <updated>2015-11-18T14:09:02+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/03/29/0-Start-Using-Beagrep-for-Code-Definition-Lookup.html"/>
     <updated>2015-03-29T20:19:28+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/03/29/0-Start-Using-Beagrep-for-Code-Definition-Lookup.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[一个在安卓手机上“一键”安装debian系统的脚本]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html"/>
-    <updated>2015-03-03T12:33:55+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/03/03/0-A-Single-Script-to-Install-Debian-on-Android-Phone.html</id>
   </entry>
 </feed>
