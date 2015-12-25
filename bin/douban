@@ -82,7 +82,16 @@ case "$1" in
                         postfix=$postfix'//'
                     fi
 
-                    bhj-notify -i "$icon" DoubanMusic.el$(if test -e ~/.cache/system-config/logs/douban-should-loop; then echo -n -loop; fi) \
+                    looping=
+                    if test -e ~/.cache/system-config/logs/douban-should-loop; then
+                        looping=-LO
+                    fi
+
+                    if test -e ~/.cache/system-config/logs/douban-should-loop-author; then
+                        looping=${looping:--}LA
+                    fi
+
+                    bhj-notify -i "$icon" DoubanMusic.el$looping \
                         "$(
                                 echo channel: $channel
                                 echo
@@ -171,6 +180,16 @@ case "$1" in
         douban_action=print douban-misc >/dev/null 2>&1
         cat ~/.cache/system-config/logs/douban.print
         ;;
+    loop-same-author)
+        shift
+        if test -e ~/.cache/system-config/logs/douban-should-loop-author; then
+            rm ~/.cache/system-config/logs/douban-should-loop-author
+            killall mplayer
+        else
+            touch ~/.cache/system-config/logs/douban-should-loop-author
+            douban info
+        fi
+        ;;
     start-play-hook)
         douban_action=start-play-hook douban-misc
         ;;
@@ -230,14 +249,14 @@ case "$1" in
         touch ~/.cache/system-config/logs/douban-should-play
         if test -e ~/.do-not-disturb; then
             mv ~/.do-not-disturb ~/.do-not-disturb.bak
-        fi
-        killall mplayer
-        if test -e ~/.do-not-disturb.bak; then
             (
                 sleep 1
                 mv ~/.do-not-disturb.bak ~/.do-not-disturb
             )&
         fi
+
+        killall mplayer
+        douban info
         ;;
     next)
         if test -e ~/.do-not-disturb; then

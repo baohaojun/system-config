@@ -2,6 +2,7 @@
 set -e
 cd $(lookup-file .git/hooks)
 if test -e ~/src/android/.repo/repo/hooks/commit-msg; then
+    rm -f commit-msg
     cp ~/src/android/.repo/repo/hooks/commit-msg .
 else
     (

@@ -6,7 +6,9 @@ use Getopt::Long;
 my $partition_name_to_modify;
 my $new_partition_uuid;
 my $output_file;
+my $output_size;
 GetOptions(
+    "s!" => \$output_size,
     "p=s" => \$partition_name_to_modify,
     "u=s" => \$new_partition_uuid,
     "o=s" => \$output_file,
@@ -171,7 +173,22 @@ for (1..$number_of_partition_entries) {
 
     $guid_type =~ m/(.{8})(.{4})(.{4})(.{4})(.*)/;
     print "$name : $1-$2-$3-$4-$5\n";
-
+    if ($output_size) {
+        print "$name lba : \n  pretty ";
+        for my $lba ($lba2, $lba1) {
+            my $true_lba = "";
+            while ($lba =~ m/(.{2})/g) {
+                $true_lba = $1 . "$true_lba";
+            }
+            print "0x$true_lba*512";
+            if ($lba eq $lba2) {
+                print "-";
+            } else {
+                print "+512"
+            }
+        }
+        print "\n";
+    }
 }
 
 printf "crc2 is %x : %x\n", gpt_calc_crc32($modified_entries, 0), $partition_entries_crc32;

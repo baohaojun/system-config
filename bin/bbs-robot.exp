@@ -105,9 +105,9 @@ if [string eq "" $password] {
 }
 
 if [string eq "" $mode] {
-    spawn $loc ssh $user@$host
+    spawn $loc ssh1 $user@$host
 } else {
-    spawn $loc ssh $mode $user@$host
+    spawn $loc ssh1 $mode $user@$host
 }
 
 expect -timeout 150 password {

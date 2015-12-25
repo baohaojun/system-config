@@ -89,6 +89,7 @@
 (bind-keys s-h-keymap "S"  '(system "os&"))
 (bind-keys s-h-keymap "n"  '(system "douban next&"))
 (bind-keys global-keymap "KP_Multiply" '(system "douban like&"))
+(bind-keys global-keymap "Super-KP_Multiply" '(system "douban loop-same-author&"))
 (bind-keys global-keymap "KP_Divide" '(system "douban unlike&"))
 (bind-keys global-keymap "Super-Down"  '(system "douban info&"))
 (bind-keys global-keymap "Super-Up" '(system "douban ba&"))

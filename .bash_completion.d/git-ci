@@ -20,7 +20,7 @@ _git_ci()
 }
 
 
-complete -o filenames -F _git_ci gitci gerrit-review gerrit-push-review gerrit-add-reviewer
+complete -o filenames -F _git_ci gitci gerrit-review gerrit-push-review gerrit-add-reviewer gerrit-push-review-smartisan
 complete -o filenames -F _git_ci gitci-amend
 
 # Local variables:

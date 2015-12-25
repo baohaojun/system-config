@@ -50,9 +50,15 @@ if test "$icon"; then
 else
     notification-manager "$label" "$content"
 fi
+
+md5=$(echo "$label" | md5sum | pn 1)
+md5file=~/.cache/system-config/logs/bhj-notify.$md5
+
+fuser -k "$md5file" || true
 if test $(basename $0) = bhj-short-notify; then
     (
         sleep 5
         notification-manager "$label"
+        rm "$md5file"
     )&
-fi
+fi 9> $md5file

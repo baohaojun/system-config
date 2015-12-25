@@ -95,10 +95,18 @@ fi
   (bind-keys global-keymap \"Button1-Click\" '(system \"sawfish-clean-screen&\"))
   (bhj-draw-notification nil (make-image $read_icon) $read_head $read_content))"
 
+    md5=$(cat "$tmp_head" | md5sum | pn 1)
+    md5file=~/.cache/system-config/logs/bhj-notify.$md5
     rm -f "$tmp_icon" "$tmp_content" "$tmp_head"
 
+
+
+    fuser -k "$md5file" || true
+
     (
-        sleep 15
+        set -e
+        sleep 5 > $md5file
+        rm $md5file
         draw-notification-with-sawfish "$1"
         sawfish-client -e "(unbind-keys global-keymap \"Button1-Click\")
                            (bind-keys window-keymap \"Button1-Click\" 'raise-and-pass-through-click))"
