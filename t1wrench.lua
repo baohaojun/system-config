@@ -1192,9 +1192,10 @@ qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
    log("qq find friend: " .. friend_name)
    qq_open_homepage()
-   adb_event"adb-tap 391 288"
+   adb_event"adb-tap 391 288 sleep .8"
    wait_input_target(qqChatActivity2)
-   adb_event"key scroll_lock sleep .5 adb-tap 303 291"
+   adb_event"key scroll_lock sleep .6 adb-tap 303 291"
+
 end
 
 qq_find_group_friend = function(friend_name)
