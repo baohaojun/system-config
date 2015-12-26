@@ -103,12 +103,26 @@ if test "$prog" = search-japanese; then
     url="https://www.google.co.uk/search?q=$fill+英语"
 fi
 
+if test "$prog" = search-jisho; then
+    url="http://jisho.org/search?utf8=✓&keyword=$fill"
+    pat=//jisho.org/
+fi
+
+if test "$prog" = search-ja.wiktionary; then
+    url="https://en.wiktionary.org/wiki/$fill#Japanese"
+    pat="https://en.wiktionary.org/"
+fi
+
 set -x
 
-if test "$EMACS" = t; then
-    firefox "$url"
+if test "$pat"; then
+    firefox-open-url-pattern "$pat" "$url"
 else
-    firefox "$url"&
+    firefox "$url"
+fi&
+if test "$EMACS" = t; then
+    true
+else
     echo "$url"|
     if is-tty-io; then
         tee /dev/tty|putclip

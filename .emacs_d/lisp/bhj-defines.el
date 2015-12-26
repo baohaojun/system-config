@@ -1119,10 +1119,11 @@ criteria can be provided via the optional match-string argument "
              (buffer-substring-no-properties (region-beginning)
                                              (region-end))
            (current-word))))
-  (shell-command (format "setsid bash -c %s\\& >/dev/null 2>&1"
-                         (shell-quote-argument
-                          (format "s %s"
-                                  (shell-quote-argument word))))))
+  (let ((default-directory (expand-file-name "~")))
+    (shell-command (format "setsid bash -c %s\\& >/dev/null 2>&1"
+                           (shell-quote-argument
+                            (format "s %s"
+                                    (shell-quote-argument word)))))))
 
 ;;;###autoload
 (defun bhj-open-android-doc-on-java-buffer ()

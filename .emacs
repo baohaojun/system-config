@@ -57,7 +57,6 @@
   (load "~/src/github/emacs.d/init.el"))
 
 (keydef "C-S-g" (let ((grep-buffers-buffer-name "*grep-buffers*")) (grep-buffers)))
-(keydef "C-M-j" 'bhj-jdk-help)
 (keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
