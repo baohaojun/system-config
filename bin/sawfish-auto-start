@@ -9,13 +9,18 @@ for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; d
 done
 
 rm ~/.renew-xauth -f
-do-ssh-add-all
+if test "$USER" = bhj; then
+    redo-ssh-agent
+fi
 . ~/system-config/bin/set-ssh-agent
 . ~/.profile
 
 env=$(cat <<EOF
 (progn
   (setenv "PATH" "$PATH")
+  (setenv "LC_ALL" "$LC_ALL")
+  (setenv "LANG" "$LANG")
+  (setenv "LANGUAGE" "$LANGUAGE")
   (setenv "GNOME_KEYRING_CONTROL" "$GNOME_KEYRING_CONTROL")
   (setenv "GNOME_KEYRING_PID" "$GNOME_KEYRING_PID")
   (setenv "SSH_AUTH_SOCK" "$SSH_AUTH_SOCK")

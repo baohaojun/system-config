@@ -1,7 +1,5 @@
 #!/bin/bash
 
-if test -e ~/.config/system-config/ssh-agent-$LOCALPORT; then
-    . ~/.config/system-config/ssh-agent-$LOCALPORT
-elif test -e ~/.config/system-config/ssh-agent; then
+if test -e ~/.config/system-config/ssh-agent; then
     . ~/.config/system-config/ssh-agent
 fi

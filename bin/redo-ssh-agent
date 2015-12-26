@@ -17,8 +17,26 @@ else
     return 0
 fi
 
-. ~/system-config/bin/set-ssh-agent
-if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication agent'; then
+if test "$SSH_AUTH_SOCK" && ssh-add -l 2>&1; then
+    # it's working, we need to see if we need to update the ssh-agent
+    SAVED_SSH_AUTH_SOCK=$SSH_AUTH_SOCK
+    SAVED_SSH_AGENT_PID=$SSH_AGENT_PID
+    (
+        umask 077
+        . ~/system-config/bin/set-ssh-agent
+        if test "$SAVED_SSH_AUTH_SOCK" != "$SSH_AUTH_SOCK"; then
+            cat <<EOF > ~/.config/system-config/ssh-agent.$$
+# update SSH_AUTH_SOCK
+export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
+export SSH_AGENT_PID=$SSH_AGENT_PID
+EOF
+            mv ~/.config/system-config/ssh-agent.$$ ~/.config/system-config/ssh-agent
+        fi
+    ) || true
+fi
+
+. ~/.config/system-config/ssh-agent || true
+if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication agent|Error connecting to agent' -P; then
     start_ssh_agent() {
         (
             set -e
@@ -47,10 +65,12 @@ if ssh-add -l 2>&1 | grep -q 'Could not open a connection to your authentication
     fi
 fi
 
-if is-tty-io; then
-    do-ssh-add-all&
-else
+if test "$RUNNING_IN_CRON" = true; then
     do-ssh-add&
+else
+    do-ssh-add-all&
 fi
 
-export-ssh-agent-to-emacs-and-sawfish
+if is-tty-io; then
+    export-ssh-agent-to-emacs-and-sawfish
+fi
