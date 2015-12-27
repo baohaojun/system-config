@@ -8,7 +8,7 @@ fi
 (
     flock -n 9 || { set +e; echo 'lock failed for home at '$(date); ps-killall sleep.51555005; exit 0; }
     sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
-    for home in home realhome; do
+    for home in realhome; do
         while true; do
             ssh_start_time=$(date +%s)
             remote_bind_port=$(get-about-me remote-bind-port)
