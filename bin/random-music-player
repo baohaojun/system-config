@@ -61,13 +61,13 @@ sub play_1_song($) {
         } elsif (-e "$no_disturb.bak") {
             rename "$no_disturb.bak", "$no_disturb";
         }
-        system("mplayer", "$_");
+        system("mplayer.exp", "$_");
         while (-e $should_replay) {
             unlink $should_replay;
-            system("mplayer", "$_");
+            system("mplayer.exp", "$_");
         }
         while (-e $loop_file) {
-            system("mplayer", "$_");
+            system("mplayer.exp", "$_");
         }
     }
 

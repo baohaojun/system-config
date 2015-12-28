@@ -27,12 +27,6 @@ lcd()
 
     if [[ "$1" =~ ^\\\\|^//|^smb://|^file:///[0-9]+\.|/smb/ && `uname` = Linux ]]; then
         chmod 600 ~/.smb/*
-        if ! mount | grep -q '^smbnetfs on'; then
-            if smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"|grep -q . ; then
-                sudo umount -l ~/smb
-                smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"
-            fi
-        fi
         builtin cd ~/smb/"$(ip-or-name "$1")"
         return 0
     fi

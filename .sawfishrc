@@ -99,6 +99,8 @@
 (bind-keys global-keymap "Super-S-Left"  '(system "douban back&"))
 (bind-keys global-keymap "XF86AudioNext"  '(system "douban next&"))
 (bind-keys global-keymap "XF86AudioPrev"  '(system "douban prev&"))
+(bind-keys global-keymap "Super-KP_Right"  '(system "douban jump-forth&"))
+(bind-keys global-keymap "Super-KP_Left"  '(system "douban jump-back&"))
 (bind-keys global-keymap "Super-XF86AudioPlay"  '(system "douban info&"))
 (bind-keys global-keymap "XF86AudioPlay"  '(system "douban pause&"))
 (bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))

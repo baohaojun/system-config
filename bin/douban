@@ -264,6 +264,12 @@ case "$1" in
         fi
         killall mplayer
         ;;
+    jump-forth)
+        ps-killall -USR1 mplayer.expect
+        ;;
+    jump-back)
+        ps-killall -USR2 mplayer.expect
+        ;;
     prev)
         true
         ;;
