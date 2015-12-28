@@ -3,7 +3,7 @@
 	url = https://github.com/baohaojun/md5
 [submodule "qt-solutions"]
 	path = qt-solutions
-	url = home:repos/qt-solutions
+	url = https://github.com/baohaojun/qt-solutions
 [submodule "adb-client"]
 	path = adb-client
 	url = https://github.com/baohaojun/libadb-client.qt
