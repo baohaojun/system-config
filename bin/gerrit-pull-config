@@ -5,7 +5,7 @@ if test "$(basename $0)" = gerrit-pull-config; then
     git reset --hard FETCH_HEAD
 elif test "$(basename $0)" = gerrit-push-config; then
     git-interactive-add
-    git commit -m "$(cat .commit-msg-bhj; rm .commit-msg-bhj)"
+    git commit -m "$(cat .commit-msg-bhj; rm .commit-msg-bhj)" || true
     git push $(repo-remote) HEAD:refs/meta/config
 else
     die "unknown command: $0"

@@ -4,6 +4,32 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt fFORCE_CHECK_MOBILE_ORG
+## end code-generator
+## start generated code
+TEMP=$(getopt -o f --long "FORCE_CHECK_MOBILE_ORG"  -n $(basename $0) -- "$@")
+FORCE_CHECK_MOBILE_ORG=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -f|--FORCE_CHECK_MOBILE_ORG)
+            FORCE_CHECK_MOBILE_ORG=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+
 if id | grep -q '^uid=0\b' -P; then
     rmmod option || true
     su - bhj -c "~bhj/system-config/bin/ask-to-sync-org&"

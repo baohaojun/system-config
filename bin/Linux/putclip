@@ -37,4 +37,8 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
 else
     rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
     xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
+    if test "$(xclip -o -selection clipboard)" != "$(xclip -o)"; then
+        sleep .1
+        xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
+    fi
 fi

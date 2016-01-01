@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+find-or-exec Tagainijisho tagainijisho
+putclip "$@"
+
+for key in C-l C-Home S-End DEL S-Insert; do
+    sawfish-send-window-event "^Tagaini Jisho$" $key
+done
+
+

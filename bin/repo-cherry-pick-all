@@ -11,23 +11,38 @@ if test $# == 0; then
     die "please specify whose changes you want to cherry pick"
 fi
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt sshell hdo_here nno_fetch Rno_reverts ddry-run
+## end code-generator
+## start generated code
+TEMP=$(getopt -o shnRd --long "shell,do_here,no_fetch,no_reverts,dry-run"  -n $(basename $0) -- "$@")
 shell=false
 do_here=false
 no_fetch=false
-TEMP=$(getopt -o shn --long shell,here -n $(basename $0) -- "$@")
+no_reverts=false
+dry_run=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -n)
-            no_fetch=true
-            shift
-            ;;
         -s|--shell)
             shell=true
             shift
             ;;
-        -h|--here)
+        -h|--do_here)
             do_here=true
+            shift
+            ;;
+        -n|--no_fetch)
+            no_fetch=true
+            shift
+            ;;
+        -R|--no_reverts)
+            no_reverts=true
+            shift
+            ;;
+        -d|--dry-run)
+            dry_run=true
             shift
             ;;
         --)
@@ -39,6 +54,8 @@ while true; do
             ;;
     esac
 done
+
+## end generated code
 
 if test -d .repo; then
     diffs=$(rgrep -l -P -e "$1" out/diff | sort)
@@ -56,9 +73,9 @@ else
     fi
 fi
 
-for x in $diffs; do
-    x=$(readlink -f $x)
-    dir=$(echo $x|perl -npe 's!.*/!!; s/.log$//; s!%!/!g')
+for diff_file in $diffs; do
+    diff_file=$(readlink -f $diff_file)
+    dir=$(echo $diff_file|perl -npe 's!.*/!!; s/.log$//; s!%!/!g')
     (
         cd $dir || exit 0
         if test "$(basename $0)" = repo-cherry-push-all; then
@@ -85,10 +102,11 @@ for x in $diffs; do
         if test $do_here = true; then
             target_branch=HEAD
         else
-            target_branch=$(grep -o 'not found in .*' $x|pn 4|head -n 1)
+            target_branch=$(grep -o 'not found in .*' $diff_file|pn 4|head -n 1)
         fi
+
         if test -z "$target_branch"; then
-            echo target branch is not found in $x'!'
+            echo target branch is not found in $diff_file'!'
             if is-tty-io; then
                 start_recursive_shell "No target branch" || ret=$?
             else
@@ -106,13 +124,49 @@ for x in $diffs; do
                     echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
                     ) || true
             fi
-            for y in $(grep -P -e "$1" $x |grep -v 'Merge commit.*into'| pn 3|uniq-even-non-ajacent); do
-                export WORKING_REV=$y
+
+            if test "$no_reverts" = true; then
+                declare -A reverted_commits
+                cat $diff_file | (
+                    while read line; do
+                        if echo "$line" | grep '{{{Revert "' -q; then
+                            subject=$(echo "$line" | perl -npe 's,.*\{\{\{Revert "(.*)"\}\}\}.*,$1,')
+                            reverted_commits[$subject]=1
+                        fi
+                    done
+                    export reverted_commits
+                    export -p |grep -P -e 'declare -Ax reverted_commits' > $diff_file.env
+                )
+                . $diff_file.env
+            fi
+
+            declare -A skiped_later_reverted_commits
+
+            for git_commit_id in $(grep -P -e "$1" $diff_file |grep -v 'Merge commit.*into'| pn 3|uniq-even-non-ajacent); do
+                export WORKING_REV=$git_commit_id
                 ret=0
-                if git cherry-pick --allow-empty $y; then
+                if test "$no_reverts" = true; then
+                    . $diff_file.env
+                    subject=$(git log -1 --pretty=%s $git_commit_id)
+                    if test "${reverted_commits[$subject]}" = 1 && yes-or-no-p -y skip $git_commit_id: $subject, it is reverted later?; then
+                        echo skip $git_commit_id: $subject
+                        skiped_later_reverted_commits[Revert \"$subject\"]=1
+                        continue
+                    fi
+
+                    if test "${skiped_later_reverted_commits[$subject]}" = 1 && yes-or-no-p -y skip $git_commit_id: $subject, the original has been skipped?; then
+                        echo skip $git_commit_id: $subject
+                        skiped_later_reverted_commits[Revert \"$subject\"]=1
+                        continue
+                    fi
+                fi
+                if test "$dry_run"; then
+                    continue
+                fi
+                if git cherry-pick --allow-empty $git_commit_id; then
                     true
                 elif is-tty-io; then
-                    start_recursive_shell "cherry failed: $y" || ret=$?
+                    start_recursive_shell "cherry failed: $git_commit_id" || ret=$?
                 else
                     exit -1
                 fi

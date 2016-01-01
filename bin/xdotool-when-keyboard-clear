@@ -1,6 +1,30 @@
 #!/bin/bash
+
+exec 9> ~/.cache/system-config/logs/$(basename $0).lock
+flock 9
+
 while query-keyboard-state >/dev/null 2>&1; do
     sleep .1;
 done
 
+current_window=$(sawfish-client -e "(window-id (input-focus))")
+if test "$xdotool_window" -a "$xdotool_window" != "$current_window"; then
+
+    function set-focus() {
+        sawfish-client -e "
+(mapc
+  (lambda (w)
+    (when (= (window-id w) $1)
+      (set-input-focus w)))
+  (managed-windows))"
+    }
+    if test "$current_window" != "$xdotool_window"; then
+        set-focus "$xdotool_window"
+    fi
+fi
+
 xdotool "$@"
+
+if test "$xdotool_window" -a "$xdotool_window" != "$current_window"; then
+    set-focus "$current_window"
+fi

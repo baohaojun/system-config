@@ -409,15 +409,21 @@
       (setq modifiers (cdr modifiers)))
     (cond
      ((string= main-key "RET")
-      (setq main-key "Return")))
+      (setq main-key "Return"))
+     ((string= main-key "ESC")
+      (setq main-key "Escape")))
     (setq result (concat result main-key))))
 
 (defun synthesize-event-gnome? (event window)
   ;;(message (format nil "key is %s, window is %s" event (bhj-window-class window)))
-  (if bhj-is-gnome?
+  (if (or (and (eq (input-focus) window)
+               bhj-is-gnome?)
+          (and (not (eq (input-focus) window))
+               (string-match gnome-windows-re (window-class window) 0 t)))
       (progn
         (system
-         (format nil "xdotool-when-keyboard-clear key %s&"
+         (format nil "xdotool_window=%d xdotool-when-keyboard-clear key %s&"
+                 (window-id window)
                  (rewrite-event-for-xdotool event))))
     (synthesize-event event window)))
 

@@ -34,7 +34,7 @@ if test $# = 0 || test "$#" = 2 -a "$1" = -F -a "$2" = -T; then
     set -- \
         --xf $(select-output-line -p "From which xml" -o 'cd .repo/manifests; find . -name "*.xml"') \
         --xt $(select-output-line -p "To which xml" -o 'cd .repo/manifests; find . -name "*.xml"')
-    yes-or-no-p -y "You want run with $@?"
+    yes-or-no-p -y -- "You want run with $@?"
 fi
 
 local_from=false
@@ -219,7 +219,7 @@ else
         export -p |grep -P -e 'declare -Ax (from_path_revision_map|from_path_remote_map)' > $from_manifest_xml.env
     )
 fi
-
+rm -f out >/dev/null 2>&1 || true
 my-rfa -j $jobs '
     if test "$DEBUG" = true; then
         set -x

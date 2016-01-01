@@ -44,10 +44,8 @@ case "$1" in
             set -x
             case $douban_action in
                 lyrics)
-                    douban_action=info douban misc
-                    url=$(search-lyrics "$artist" "$title")
-                    host=$(echo $url|perl -npe 's!((?:.*://)?.*?)/.*!$1!')
-                    firefox-open-url-pattern $host "$url"
+                    douban_action=info douban misc || true
+                    search-google "lyrics" "$artist" "$title"
                     ;;
                 print)
                     (
@@ -199,9 +197,7 @@ case "$1" in
     lyrics)
         shift
         if test $# != 0; then
-            url=$(search-lyrics "$@")
-            host=$(echo $url|perl -npe 's!((?:.*://)?.*?)/.*!$1!')
-            firefox-open-url-pattern $host "$url"
+            search-google "lyrics" "$@"
         else
             douban_action=lyrics douban-misc
         fi

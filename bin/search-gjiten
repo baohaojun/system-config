@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+find-or-exec ^Gjiten gjiten
+unset EMACS
+putclip "$@"
+
+for key in M-s C-v Return; do
+    sleep .1
+    sawfish-send-window-event "^Gjiten.*\$" $key
+done&

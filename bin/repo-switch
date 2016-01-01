@@ -52,14 +52,12 @@ while true; do
                         fi
                         echo --reference $(up $ref)
                     fi
-                     ) || true
+                     ) | perl -npe 's,ssh://172.16.0.9:29418/,smartisan:,g; s,smartisan:/,smartisan:,g'
                  )
-            echo "$print" | perl -npe 's,ssh://172.16.0.9:29418/,smartisan:,g; s,smartisan:/,smartisan:,g' |
-                if is-tty-io </dev/stdout; then
-                    cat | tee /dev/stderr | putclip
-                else
-                    cat
-                fi
+            echo "$print"
+            if is-tty-io </dev/stdout; then
+                echo "$print" | putclip
+            fi
             exit 0
             ;;
         -e)

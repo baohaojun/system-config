@@ -41,7 +41,7 @@ git log $src..$dest > $destlog
 
 
 export srclog=/tmp/log_in_src.$$
-git log --format="%%commit%% %H %ae(%ai) %ce(%ci) : %s%n%B" $dest..$src > $srclog
+git log --format="%%commit%% %H %ae(%ai) %ce(%ci) : {{{%s}}}%n%B" $dest..$src > $srclog
 
 need_die=0
 
