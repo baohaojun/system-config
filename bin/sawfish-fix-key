@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if test $# = 1; then
+    set -- "$1" "$1"
+fi
+
+sawfish_cmd=$(cat <<EOF
+(progn
+  (bind-keys global-keymap "$1" '(synthesize-event-gnome? "$2" (input-focus)))
+  (bind-keys window-keymap "$1" '(synthesize-event-gnome? "$2" (input-focus))))
+EOF
+              )
+sawfish-client -e "$sawfish_cmd"

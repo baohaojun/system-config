@@ -438,7 +438,7 @@
   (message (apply format nil fmt args)))
 
 (defun super-key-binding (key)
-  ;(message (format nil "calling %s for %s" key (bhj-window-class (input-focus)) ))
+                                        ;(message (format nil "calling %s for %s" key (bhj-window-class (input-focus)) ))
   (let* ((fw (input-focus))
          (class (window-class fw))
          (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))
@@ -456,6 +456,9 @@
 
 (defun bind-super-key (key)
   (bind-keys global-keymap
+             (concat "Super-" key)
+             `(super-key-binding ,key))
+  (bind-keys window-keymap
              (concat "Super-" key)
              `(super-key-binding ,key)))
 
