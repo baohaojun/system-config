@@ -731,12 +731,15 @@ local function t1_mail(window)
    if window == 'com.android.email/com.android.email.activity.Welcome' or window == 'com.android.email/com.android.email2.ui.MailActivityEmail' then
       adb_tap_mid_bot()
       wait_input_target("com.android.email/com.android.mail.compose.ComposeActivity")
+      sleep(.5)
    end
-   adb_event("key scroll_lock sleep .2")
-   if window == 'com.google.android.gm/com.google.android.gm.ComposeActivityGmail' then
-      adb_event{806, 178}
-   else
-      adb_event("adb-tap 998 174")
+   adb_event("key scroll_lock sleep .5")
+   if yes_or_no_p("确认发送邮件") then
+      if window == 'com.google.android.gm/com.google.android.gm.ComposeActivityGmail' then
+         adb_event{806, 178}
+      else
+         adb_event("adb-tap 998 174")
+      end
    end
 end
 
