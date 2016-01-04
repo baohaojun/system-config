@@ -35,7 +35,7 @@ AC_SUBST(VERSION)
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test "x$PKG_CONFIG" = "xno"; then
-	AC_MSG_ERROR([You need to install pkg-config])
+        AC_MSG_ERROR([You need to install pkg-config])
 fi
 
 AC_PATH_PROG(BASH, bash)
@@ -43,12 +43,12 @@ AC_SUBST(BASH)
 
 AC_PATH_PROG(MONO, mono, no)
 if test "x$MONO" = "xno"; then
-	AC_MSG_ERROR([You need to install the Mono runtime])
+        AC_MSG_ERROR([You need to install the Mono runtime])
 fi
 
 AC_PATH_PROG(MCS, gmcs, no)
 if test "x$MCS" = "xno"; then
-	AC_MSG_ERROR([You need to install the Mono gmcs compiler])
+        AC_MSG_ERROR([You need to install the Mono gmcs compiler])
 fi
 
 AC_MSG_CHECKING([for mono.pc])
@@ -63,20 +63,21 @@ BEAGREP_DEFINES=""
 # check that we have the require version of mono
 
 # Temporary: check for mono-1.9
-PKG_CHECK_MODULES(MONO, mono-2 >= 1.9, mono_1_9=yes, mono_1_9=no) 
+PKG_CHECK_MODULES(MONO, mono-2 >= 1.9, mono_1_9=yes, mono_1_9=no)
 if test "x$mono_1_9" = "xno"; then
-	AC_MSG_RESULT([missing mono >= 1.9. Searching for mono >= 1.2.4])
-	PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED) 
+        AC_MSG_RESULT([missing mono >= 1.9. Searching for mono >= 1.2.4])
+        PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED)
 else
-	AC_MSG_RESULT([found mono >= 1.9])
-	BEAGREP_DEFINES="$BEAGREP_DEFINES -define:MONO_1_9"
+        AC_MSG_RESULT([found mono >= 1.9])
+        BEAGREP_DEFINES="$BEAGREP_DEFINES -define:MONO_1_9"
 fi
 
 # check for various mono DLLs that we need.
 needed_dlls="Mono.Data.Sqlite Mono.Posix System.Data System.Web ICSharpCode.SharpZipLib"
 for i in $needed_dlls; do
   AC_MSG_CHECKING([for $i.dll])
-  if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
+  if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll &&
+     test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/4.5/$i.dll; then
     AC_MSG_ERROR([missing required mono DLL: $i.dll])
   else
     AC_MSG_RESULT([found])
@@ -134,28 +135,28 @@ dnl ----------------------------------------------
 dnl inotify
 
 AC_ARG_ENABLE([inotify],
-	 AC_HELP_STRING([--disable-inotify], [Disable inotify filesystem monitoring support (default auto)]),
-	 enable_inotify=$enableval,
-	 enable_inotify=auto)
+         AC_HELP_STRING([--disable-inotify], [Disable inotify filesystem monitoring support (default auto)]),
+         enable_inotify=$enableval,
+         enable_inotify=auto)
 
 AC_CHECK_HEADERS(sys/inotify.h)
 
 if test "x$ac_cv_header_sys_inotify_h" = "xno"; then
 
-	dnl error out if user has explicitly requested inotify
-	if test "x$enable_inotify" = "xyes"; then
-		AC_MSG_ERROR([inotify is unavailable on your system architecture])
-	fi
+        dnl error out if user has explicitly requested inotify
+        if test "x$enable_inotify" = "xyes"; then
+                AC_MSG_ERROR([inotify is unavailable on your system architecture])
+        fi
 
-	enable_inotify="no (unavailable)"
+        enable_inotify="no (unavailable)"
 
 else
 
-	if test "x$enable_inotify" != "xno"; then
-		enable_inotify="yes"
-	else
-		enable_inotify="no (disabled)"
-	fi
+        if test "x$enable_inotify" != "xno"; then
+                enable_inotify="yes"
+        else
+                enable_inotify="no (disabled)"
+        fi
 
 fi
 
@@ -176,9 +177,9 @@ PKG_CHECK_MODULES([GLIB], glib-2.0 >= 2.2.0)
 dnl ----------------------------------------------
 PKG_CHECK_MODULES(BEAGREPD,
 [
-	shared-mime-info
-	gmime-sharp-2.6 >= $GMIME_SHARP_REQUIRED
-	glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
+        shared-mime-info
+        gmime-sharp-2.6 >= $GMIME_SHARP_REQUIRED
+        glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
 ])
 BEAGREPD_LIBS="$BEAGREPD_LIBS"
 AC_SUBST(BEAGREPD_LIBS)
@@ -206,26 +207,26 @@ dnl ----------------------------------------------
 dnl Monodoc
 
 AC_ARG_ENABLE(docs,
-	AC_HELP_STRING([--disable-docs],
-	[Do not build documentation (default yes)]),
-	with_docs=$enableval,
-	with_docs=yes)
+        AC_HELP_STRING([--disable-docs],
+        [Do not build documentation (default yes)]),
+        with_docs=$enableval,
+        with_docs=yes)
 
 if test "x$with_docs" = "xyes"; then
-	AC_PATH_PROG(MONODOCER, monodocer, no)
-	if test "x$MONODOCER" = "xno"; then
-		AC_MSG_ERROR([You need to install monodoc, or pass --disable-docs to configure to skip documentation installation])
-	fi
+        AC_PATH_PROG(MONODOCER, monodocer, no)
+        if test "x$MONODOCER" = "xno"; then
+                AC_MSG_ERROR([You need to install monodoc, or pass --disable-docs to configure to skip documentation installation])
+        fi
 
-	AC_PATH_PROG(MDASSEMBLER, mdassembler, no)
-	if test "x$MDASSEMBLER" = "xno"; then
-		AC_MSG_ERROR([You need to install mdassembler, or pass --disable-docs to configure to skip documentation installation])
-	fi
+        AC_PATH_PROG(MDASSEMBLER, mdassembler, no)
+        if test "x$MDASSEMBLER" = "xno"; then
+                AC_MSG_ERROR([You need to install mdassembler, or pass --disable-docs to configure to skip documentation installation])
+        fi
 
-	AM_CONDITIONAL(BUILD_DOCS, true)
+        AM_CONDITIONAL(BUILD_DOCS, true)
 else
-	AC_MSG_NOTICE([not building Beagrep csharp API documentation])
-	AM_CONDITIONAL(BUILD_DOCS, false)
+        AC_MSG_NOTICE([not building Beagrep csharp API documentation])
+        AM_CONDITIONAL(BUILD_DOCS, false)
 fi
 
 dnl ----------------------------------------------
@@ -233,13 +234,13 @@ dnl ----------------------------------------------
 dnl Conditional for debugging XML messages.
 
 AC_ARG_ENABLE([xml-dump],
-	AC_HELP_STRING([--enable-xml-dump], [Enables printing of the XML messages sent between components (default no)]),
-	enable_xml_dump=$enableval,
-	enable_xml_dump=no)
+        AC_HELP_STRING([--enable-xml-dump], [Enables printing of the XML messages sent between components (default no)]),
+        enable_xml_dump=$enableval,
+        enable_xml_dump=no)
 
 if test "x$enable_xml_dump" = "xyes"; then
-	AC_DEFINE_UNQUOTED(ENABLE_XML_DUMP, 1, [Dump XML messages for debugging])
-	BEAGREP_DEFINES="$BEAGREP_DEFINES -define:ENABLE_XML_DUMP"
+        AC_DEFINE_UNQUOTED(ENABLE_XML_DUMP, 1, [Dump XML messages for debugging])
+        BEAGREP_DEFINES="$BEAGREP_DEFINES -define:ENABLE_XML_DUMP"
 fi
 
 AC_SUBST(BEAGREP_DEFINES)
@@ -264,12 +265,12 @@ beagrep.spec
 ])
 
 echo "
-	Beagrep version:           ${VERSION}
-	Target OS:		  ${os}
-	Inotify:		  ${enable_inotify}
+        Beagrep version:           ${VERSION}
+        Target OS:                ${os}
+        Inotify:                  ${enable_inotify}
 
-	Prefix:			  ${prefix}
+        Prefix:                   ${prefix}
 
-	Build RDF Adapter         ${enable_rdf_adapter} (purely experimental)
-	Build docs?               ${with_docs}
+        Build RDF Adapter         ${enable_rdf_adapter} (purely experimental)
+        Build docs?               ${with_docs}
 "

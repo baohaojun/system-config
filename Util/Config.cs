@@ -679,9 +679,6 @@ namespace Beagrep.Util {
 		[XmlArrayItem (ElementName="BoolOption", Type=typeof (BoolOption))]
 		[XmlArrayItem (ElementName="StringOption", Type=typeof (StringOption))]
 		[XmlArrayItem (ElementName="ListOption", Type=typeof (ListOption))]
-		[XmlElement (ElementName="BoolOption", Type=typeof (BoolOption))]
-		[XmlElement (ElementName="StringOption", Type=typeof (StringOption))]
-		[XmlElement (ElementName="ListOption", Type=typeof (ListOption))]
 		/* Exposed only for serialization. Do not use. */
 		public HashtableEnumerator options_enumerator {
 			get { return new HashtableEnumerator (options); }
@@ -952,7 +949,6 @@ namespace Beagrep.Util {
 			Type = OptionType.List;
 		}
 
-		[XmlElement (ElementName = "Value", Type = typeof (string))]
 		[XmlArrayItem (ElementName = "Value", Type = typeof (string))]
 		// Each value is separated by "Separator"
 		public string[] Values_String = new string [0];
@@ -987,7 +983,7 @@ namespace Beagrep.Util {
 
 				foreach (string value in Values_String) {
 					// Skip the bad values
-					string[] values = value.Split (new char [] {Separator});	
+					string[] values = value.Split (new char [] {Separator});
 					if (values == null || values.Length != num_params)
 						continue;
 
@@ -999,7 +995,7 @@ namespace Beagrep.Util {
 			set {
 				if (value == null)
 					return;
-				
+
 				int num_params = NumParams;
 				string[] values_string = new string[value.Count];
 
@@ -1021,7 +1017,7 @@ namespace Beagrep.Util {
 	}
 
 	public class SearchingConfig : Section {
-		
+
 		private KeyBinding show_search_window_binding = new KeyBinding ("F12");
 		public KeyBinding ShowSearchWindowBinding {
 			get { return show_search_window_binding; }
@@ -1037,14 +1033,14 @@ namespace Beagrep.Util {
 			get { return beagrep_search_pos_x; }
 			set { beagrep_search_pos_x = value; }
 		}
-		
+
 		private float beagrep_search_pos_y = 0;
 		public float BeagrepPosY {
 			get { return beagrep_search_pos_y; }
 			set { beagrep_search_pos_y = value; }
 		}
-		
-		private float beagrep_search_width = 0; 
+
+		private float beagrep_search_width = 0;
 		public float BeagrepSearchWidth {
 			get { return beagrep_search_width; }
 			set { beagrep_search_width = value; }
@@ -1107,7 +1103,7 @@ namespace Beagrep.Util {
 		}
 	}
 
-	public class IndexingConfig : Section 
+	public class IndexingConfig : Section
 	{
 		private ArrayList roots = new ArrayList ();
 		[XmlArray]
@@ -1157,7 +1153,7 @@ namespace Beagrep.Util {
 		}
 	}
 
-	public class NetworkingConfig : Section 
+	public class NetworkingConfig : Section
 	{
 		// Index sharing service is disabled by default
 		private bool service_enabled = false;
@@ -1172,7 +1168,7 @@ namespace Beagrep.Util {
 		// This is a list of registered and paired nodes which
 		// the local client can search
 		private ArrayList network_services = new ArrayList ();
-		
+
 		public bool ServiceEnabled {
 			get { return service_enabled; }
 			set { service_enabled = value; }
@@ -1207,7 +1203,7 @@ namespace Beagrep.Util {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	
+
 	public enum ExcludeType {
 		Path,
 		Pattern,
@@ -1245,7 +1241,7 @@ namespace Beagrep.Util {
 						regex = new Regex (value.Substring (1, value.Length - 2));
 						break;
 					}
-					
+
 					int i = value.IndexOf ('*');
 					if (i == -1) {
 						exactMatch = value;
@@ -1268,8 +1264,8 @@ namespace Beagrep.Util {
 			this.Type = type;
 			this.Value = value;
 		}
-		
-		public bool IsMatch (string param) 
+
+		public bool IsMatch (string param)
 		{
 			switch (Type) {
 			case ExcludeType.Path:
@@ -1295,7 +1291,7 @@ namespace Beagrep.Util {
 			return false;
 		}
 
-		public override bool Equals (object obj) 
+		public override bool Equals (object obj)
 		{
 			ExcludeItem exclude = obj as ExcludeItem;
 			return (exclude != null && exclude.Type == type && exclude.Value == val);
@@ -1309,39 +1305,39 @@ namespace Beagrep.Util {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	
+
 	public class KeyBinding {
 		public string Key;
-		
+
 		[XmlAttribute]
 		public bool Ctrl = false;
 		[XmlAttribute]
 		public bool Alt = false;
-		
+
 		public KeyBinding () {}
 		public KeyBinding (string key) : this (key, false, false) {}
-		
-		public KeyBinding (string key, bool ctrl, bool alt) 
+
+		public KeyBinding (string key, bool ctrl, bool alt)
 		{
 			Key = key;
 			Ctrl = ctrl;
 			Alt = alt;
 		}
-		
+
 		public override string ToString ()
 		{
 			string result = "";
-			
+
 			if (Ctrl)
 				result += "<Ctrl>";
 			if (Alt)
 				result += "<Alt>";
-			
+
 			result += Key;
 
 			return result;
 		}
-		
+
 		public string ToReadableString ()
 		{
 			return ToString ().Replace (">", "-").Replace ("<", "");
