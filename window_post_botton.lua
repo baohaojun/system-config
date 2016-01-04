@@ -15,6 +15,7 @@ map['com.baidu.tieba_mini/com.baidu.tieba.write.write.WriteActivity'] = 'manual-
 map['com.demon.weism/com.demon.weism.activity.InfoBoxesActivity'] = 'weixin-chat'
 map['com.demon.weism/com.demon.weism.activity.NewMainActivity'] = 'weixin-chat'
 map['com.google.android.apps.plus/com.google.android.apps.plus.phone.HostStreamOneUpActivity'] = 'weixin-chat'
+map['com.google.android.gms/com.google.android.gms.auth.login.BrowserActivity'] = 'manual-post'
 map['com.google.android.youtube'] = 'manual-post'
 map['com.qzone/com.qzonex.module.global.FeedActionPanelActivity'] = 'weixin-chat'
 map['com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity'] = 'weibo-share'
