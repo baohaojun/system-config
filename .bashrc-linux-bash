@@ -1,4 +1,8 @@
 #!/bin/bash
+if [ -e /etc/bash.bashrc ] ; then
+    . /etc/bash.bashrc
+fi
+
 apt-get()
 {
     if test "$1" = source; then
