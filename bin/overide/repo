@@ -14,6 +14,7 @@ if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
             exit 0
         fi
     elif test "$1" = init -a -d .repo/manifests/.git; then
+            echo "repo sync failed?" > .repo/grep-errors.txt
             (
                 cd .repo/manifests
                 git reset --hard
