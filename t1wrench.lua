@@ -35,6 +35,7 @@ local wait_input_target, wait_top_activity, wait_top_activity_match
 local t1_eval, log, share_pics_to_app, share_text_to_app
 local picture_to_weibo_comment
 local check_scroll_lock, prompt_user, yes_or_no_p
+local smartisan_mail_compose = "com.android.email/com.android.mail.compose.ComposeActivity"
 
 -- variables
 local where_is_dial_key
@@ -730,7 +731,7 @@ end
 local function t1_mail(window)
    if window == 'com.android.email/com.android.email.activity.Welcome' or window == 'com.android.email/com.android.email2.ui.MailActivityEmail' then
       adb_tap_mid_bot()
-      wait_input_target("com.android.email/com.android.mail.compose.ComposeActivity")
+      wait_input_target(smartisan_mail_compose)
       sleep(.5)
    end
    adb_event("key scroll_lock sleep .5")
@@ -1313,7 +1314,7 @@ t1_post = function(text) -- use weixin
    elseif window == "com.smartisanos.notes/com.smartisanos.notes.NotesActivity" then
       t1_smartisan_notes(window)
       return
-   elseif window == "com.android.email/com.android.mail.compose.ComposeActivity" or
+   elseif window == smartisan_mail_compose or
       window == "com.android.email/com.android.email.activity.Welcome" or
       window == "com.android.email/com.android.email2.ui.MailActivityEmail" or
    window == emailSmartisanActivity then
@@ -1833,6 +1834,12 @@ end
 
 t1_adb_mail = function(subject, to, cc, bcc, attachments)
    to = expand_mail_groups(to)
+   if to ~= "" and subject == "" and cc == "" and bcc == "" and attachments == "" then
+         putclip(to)
+         adb_event"sleep .5 key scroll_lock sleep .5"
+         return
+   end
+
    cc = expand_mail_groups(cc)
    bcc = expand_mail_groups(bcc)
 
