@@ -22,6 +22,7 @@ map['com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity'] = 'weib
 map['com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity'] = 'weixin-chat'
 map['com.skype.raider/com.skype.android.app.chat.ChatActivity'] = 'weixin-chat'
 map['com.skype.raider/com.skype.android.app.contacts.ContactDirectorySearchActivity'] = 'manual-post'
+map['com.taobao.taobao/com.taobao.wangxin.activity.ChatActivity'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentDetailUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI'] = 'weixin-chat'
