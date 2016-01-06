@@ -146,15 +146,16 @@ case "$1" in
                     ) >> ~/.cache/system-config/logs/douban-like2.log 2>&1
                     ;;
                 start-play-hook)
-                    if test ! -e "$song" -o ! -e "$icon" ; then
+                    if test ! -e "$song" || test ! -e "$icon" ; then
                         mkdir -p "$(dirname "$song")"
                     fi
                     if test -e "$song".like || test -e "$(dirname "$song")"/../.like -a ! -e "$song".unlike; then
-                        like-mp3-tags "$song"
-                        douban_action=info douban-misc
+                        if like-mp3-tags "$song"; then
+                            douban_action=info douban-misc
+                        fi
                     else
                         my-adb rm /sdcard/Music/"$(basename "$song")"
-                    fi > ~/.cache/system-config/logs/douban-like.log 2>&1
+                    fi
 
                     if test ! -e ~/.do-not-disturb; then
                         douban_action=info douban misc

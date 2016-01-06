@@ -34,14 +34,13 @@ if file "$png" | grep 'jpeg image data' -i; then
 fi
 
 
-
-if my-adb "test -e /sdcard/Music/""$(basename "$mp3")"" && echo $$" | grep ^${$}$; then
+if my-adb "test -e /sdcard/Music/\"""$(basename "$mp3")""\" && echo $$" | grep ^${$}$; then
     my-adb rm /sdcard/Music/"$(basename "$mp3")"
     adb-scan-media /sdcard/Music/"$(basename "$mp3")"
 fi
 
-if my-adb "test -e /sdcard/Music/""$(mp3path "$mp3")"" && echo $$" | grep ^${$}$; then
-    true
+if my-adb "test -e /sdcard/Music/\"""$(mp3path "$mp3")""\" && echo $$" | grep ^${$}$; then
+    exit 1
 else
     type=FRONT_COVER
     cp "$mp3" "$mp3"-$$.mp3
@@ -55,4 +54,5 @@ else
     mv "$mp3"-$$.mp3 "$mp3"
     # rm "$mp3"-$$.mp3 -f
     adb-scan-media /sdcard/Music/"$(mp3path "$mp3")"
+    true
 fi

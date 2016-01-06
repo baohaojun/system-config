@@ -61,6 +61,7 @@ sub play_1_song($) {
         } elsif (-e "$no_disturb.bak") {
             rename "$no_disturb.bak", "$no_disturb";
         }
+        system("douban start-play-hook&");
         system("mplayer.exp", "$_");
         while (-e $should_replay) {
             unlink $should_replay;
