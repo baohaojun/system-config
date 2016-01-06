@@ -28,6 +28,28 @@ function compile_beagrep() {
     sudo make install
 }
 
+function compile_beagle() {
+    cd ~/src/github/beagle/beagle
+    git clean -xfd
+
+    if test -e /usr/lib/pkgconfig/gmime-sharp-2.6.pc/gmime-sharp-2.6.pc; then
+        (
+            cd /usr/lib/pkgconfig/
+            sudo mv gmime-sharp-2.6.pc/gmime-sharp-2.6.pc gmime-sharp-2.6.pc.2
+            sudo rmdir gmime-sharp-2.6.pc
+            sudo mv gmime-sharp-2.6.pc.2 gmime-sharp-2.6.pc
+        )
+    fi
+    ./autogen.sh
+    if test -e /opt/local/bin/bash; then
+        ./configure --prefix=/opt/local
+    else
+        ./configure
+    fi
+    make
+    sudo make install
+}
+
 function compile_local_beagrep() {
     (
         cd ~/external/
