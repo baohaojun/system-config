@@ -52,7 +52,7 @@ while true; do
                         fi
                         echo --reference $(up $ref)
                     fi
-                     ) | perl -npe 's,ssh://172.16.0.9:29418/,smartisan:,g; s,smartisan:/,smartisan:,g'
+                     ) | perl -npe 's,ssh://172.16.0.9:29418/|scode:,smartisan:,g; s,smartisan:/,smartisan:,g; s,-b refs/heads/,-b ,'
                  )
             echo "$print"
             if is-tty-io </dev/stdout; then
