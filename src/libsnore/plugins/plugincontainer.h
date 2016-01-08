@@ -46,7 +46,7 @@ public:
     bool isLoaded() const;
 
 private:
-    Q_DISABLE_COPY(PluginContainer);
+    Q_DISABLE_COPY(PluginContainer)
     static QHash<SnorePlugin::PluginTypes, PluginContaienrHash > s_pluginCache;
 
     void static updatePluginCache();
