@@ -6,6 +6,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.user.settings.activity.Change
 map['com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.ContactEditorActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.ContactSelectionActivity'] = 'manual-post'
+map['com.android.contacts/com.android.contacts.activities.DialtactsActivity'] = 'manual-post'
 map['com.android.mms/com.android.mms.ui.ComposeMessageActivity'] = 'weixin-confirm'
 map['com.android.settings/com.android.settings.wifi.WifiSetupActivity'] = 'manual-post'
 map['com.baidu.tieba_mini/com.baidu.tieba.imMessageCenter.im.chat.PersonalChatActivity'] = 'weixin-chat'
