@@ -42,16 +42,16 @@ _repo-switch() {
                     echo https://android.googlesource.com/platform/manifest
                     echo git@www.rayzertrack.com:ggl/pxa935/platform/manifest
                     echo git@www.rayzertrack.com:nv/android/manifest
-		    echo file:///android/manifest.git
-		    (cd `lookup-file .repo/manifests` >/dev/null 2>&1; git-remote-url)
+                    echo file:///android/manifest.git
+                    (cd `lookup-file .repo/manifests` >/dev/null 2>&1; git-remote-url)
                     cat ~/.repo-manifest-urls 2>/dev/null
                 ) |sort -u | tee ~/.repo-manifest-urls.bak
-		mv ~/.repo-manifest-urls.bak ~/.repo-manifest-urls >/dev/null 2>&1
+                mv ~/.repo-manifest-urls.bak ~/.repo-manifest-urls >/dev/null 2>&1
             )
             ;;
     esac
-    COMPREPLY=( 
-        $( compgen -W "$br_list" -- "$cur" ) 
+    COMPREPLY=(
+        $( compgen -W "$br_list" -- "$cur" )
         $( compgen -f -- "$cur" )
     )
     return 0
@@ -61,40 +61,11 @@ _git_tags() {
     local br_list
     COMPREPLY=()
     cur=${COMP_WORDS[COMP_CWORD]}
-    
+
     br_list=$( git tag)
     COMPREPLY=( $( compgen -W "$br_list" -- "$cur" ) )
     return 0
 }
-    
+
 complete -F _repo-switch repo-switch
 complete -F _git_tags git-track-tag
-
-_mail() {
-    COMPREPLY=()
-    cur=${COMP_WORDS[COMP_CWORD]}
-    prev=${COMP_WORDS[COMP_CWORD-1]}
-
-    if [[ $prev == '-a' ]]
-    then
-        return 0
-    fi
-    
-    cd ~/.mail.addr
-
-    
-
-    
-
-    local IFS=$'\n'
-
-
-    COMPREPLY=( $( compgen -A file -- $cur ) )
-    cd - >/dev/null
-
-
-    return 0
-}
-
-complete -F _mail -o default -o filenames mail
-complete -F _mail -o default -o filenames motds.sh

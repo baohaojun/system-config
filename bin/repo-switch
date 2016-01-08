@@ -179,7 +179,7 @@ if test -z "$repo_init_branch"; then
     fi
 fi
 
-if ! tty >/dev/null 2>&1; then
+if ! tty >/dev/null 2>&1 && test -z "$repo_init_manifest"; then
     repo_init_manifest=${old_repo_init_manifest:-default.xml}
 fi
 

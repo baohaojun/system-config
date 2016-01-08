@@ -22,7 +22,7 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
                 portarg=
             fi
             remote_port=${REMOTEPORT:-22}
-            ssh ${REMOTEUSER:-$USER}@$REMOTEIP -p $remote_port remote-putclip $(whoami)@$LOCALIP$portarg:$FILE
+            ssh -o StrictHostKeyChecking=no ${REMOTEUSER:-$USER}@$REMOTEIP -p $remote_port remote-putclip $(whoami)@$LOCALIP$portarg:$FILE
             exit 0
         fi
 

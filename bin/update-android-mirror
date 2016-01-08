@@ -9,11 +9,6 @@ set -ex
     cd ~/src/android-mirror/ || exit 0
     if ! is-tty-io; then
         (
-            repo init -u s:qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml
-            repo sync -j8 -f -m icesky-rom.xml
-            repo sync -j8 -f -m sfo-rom.xml
-        ) || true
-        (
             cd ~/src/android-mirror/kernel/msm.git || exit 0
             git fetch https://github.com/mirrors/linux
         ) || true
@@ -22,10 +17,17 @@ set -ex
     export http_proxy=http://localhost:8888
     export https_proxy=http://localhost:8888
     repo-switch -u https://android.googlesource.com/platform/manifest -b master -m default.xml
-    repo sync -j1 -f || true
+    if repo sync -j1 -f; then
+        my-rfa '(pwd; git push --no-thin s:qualcomm/$(repo-project) refs/heads/*:refs/heads/* 2>&1)|tee git-push.txt'
+        if my-rfa 'grep rejected git-push.txt -q && pwd' | grep .; then
+            my-rfa 'grep rejected git-push.txt -q && pwd' | mailx baohaojun@gmail.com -s "Some android branches failed to sync"
+        fi
+    else
+        day=$(today +%d|perl -npe 's/^0*//')
+        if (( day % 5 == 1 )); then
+            mailx baohaojun@gmail.com -s "Android mirror failed to sync" </dev/null
+        fi
+    fi
 )
 
-#git clone --mirror --bare git://android.git.kernel.org/tools/repo.git
-cd ~/src/android-mirror/git-repo.git
-git fetch
 echo ok, repo update complete

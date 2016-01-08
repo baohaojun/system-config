@@ -48,3 +48,6 @@ EOF
 }
 close $gerrit_org;
 rename(glob("~/src/github/projects/gerrit.org.$$"), glob("~/src/github/projects/gerrit.org"));
+if (-s glob("~/src/github/projects/gerrit.org")) {
+    system("bhj-notify gerrit \"You've have got gerrit review requests\"");
+}

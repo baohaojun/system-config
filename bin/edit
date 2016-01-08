@@ -162,7 +162,7 @@ EOC
   $ssh_cmd = shell_quote($ssh_cmd);
   print "ssh $remote_ip $ssh_cmd";
   my $remote_port = ($ENV{REMOTEPORT} or 22);
-  my $res = system("ssh $remote_ip -p $remote_port $ssh_cmd");
+  my $res = system("ssh -o StrictHostKeyChecking=no $remote_ip -p $remote_port $ssh_cmd");
   exit $res unless @ARGV;
 } else {
   my @cmd = edit_1($myfile);
