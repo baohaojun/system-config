@@ -67,9 +67,15 @@ fi
 
 mkdir -p ~/Downloads/forever ~/external/local ~/.cache/system-config/logs
 
-for x in 15m hourly daily weekly; do
-    mkdir -p ~/external/etc/cron.d/$x;
-done
+if test -d ~/src/github/external-etc/; then
+    rm -rf ~/external/etc || true
+    relative-link ~/src/github/external-etc ~/external/etc
+else
+    for x in 15m hourly daily weekly; do
+        mkdir -p ~/external/etc/cron.d/$x;
+    done
+    mkdir -p ~/external/etc/at
+fi
 
 if test $can_sudo = true && test $(uname)  = Linux -a ! -e ~/.cache/system-config/logs/offline-is-unstable; then
     (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.cache/system-config/logs/offline-is-unstable) || true
@@ -83,7 +89,7 @@ cd ~/system-config/
 uname=$(uname|perl -npe 's/_.*//')
 mkdir -p ~/external/bin/$uname/ext
 mkdir -p ~/.cache/system-config/notification-manager
-mkdir -p ~/external/etc/at
+
 echo ~/external/etc/at >> ~/.cache/system-config/.where
 
 function die() {

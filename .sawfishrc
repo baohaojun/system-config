@@ -68,7 +68,6 @@
 (bind-keys global-keymap "Super-h" s-h-keymap)
 
 (load-file "~/system-config/.sawfish/iswitch-window.jl")
-(bind-keys global-keymap "Super-s" 'iswitch-window)
 
 (defun bhj-global-cycle-class (window)
   (let ((class (window-class window)))
@@ -123,12 +122,6 @@
                                                      (window-name (input-focus)))))
 (bind-keys s-h-keymap "i" '(system "indent-clipboard&"))
 (bind-keys s-h-keymap "I" '(system "deindent-clipboard&"))
-
-(bind-keys window-keymap "Super-q"
-             (lambda ()
-               (let ((window (input-focus)))
-                 (unless (equal (window-class window) "Xfce4-panel")
-                   (delete-window-safely window)))))
 
 (defun bhj-activate-window (window)
   (if (window-iconified-p window)
@@ -696,3 +689,9 @@
                        (setq Y wY))))
             (filter (lambda (w) (string-equal class (window-class w))) (managed-windows)))
     (format nil "-x %d -y %d --width %d --height %d" x y (- X x) (- Y y))))
+
+(bind-keys window-keymap "Super-q"
+             (lambda ()
+               (let ((window (input-focus)))
+                 (unless (equal (window-class window) "Xfce4-panel")
+                   (delete-window-safely window)))))
