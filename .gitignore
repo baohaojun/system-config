@@ -57,3 +57,5 @@ libparser/asm_res.h
 libparser/c_res.h
 libparser/cpp_res.h
 libparser/php_res.h
+libparser/java_res.h
+compile
