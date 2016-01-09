@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo bash -c 'chvt 7 </dev/tty1'

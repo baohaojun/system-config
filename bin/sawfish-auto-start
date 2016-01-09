@@ -46,10 +46,9 @@ EOF
 )
 sawfish-client -e "$env"
 
-python -c "
-import gnomekeyring
-passwd = '$(get-authinfo localhost $USER 22)'
-gnomekeyring.unlock_sync(None, passwd)"
+if test -e ~/src/github/private-config/bin/ugly; then
+    ~/src/github/private-config/bin/ugly
+fi
 
 setsid run-dir-once ~/external/etc/sawfish/start&
 setsid run-dir-once ~/system-config/.sawfish/start&
