@@ -65,7 +65,6 @@
         keys))
 (setq move-lock-when-maximized nil)
 
-(bind-keys global-keymap "Super-h" s-h-keymap)
 
 (load-file "~/system-config/.sawfish/iswitch-window.jl")
 
@@ -341,7 +340,6 @@
 (bind-keys s-h-keymap "Super-h"  '(synthesize-event "Super-h" (input-focus)))
 (bind-keys s-h-keymap "Super-s" 'iswitch-window)
 (bind-keys s-h-keymap "Super-f" '(maximize-window-fullscreen-toggle (input-focus)))
-(unbind-keys global-keymap "Super-f")
 
 (bind-keys window-keymap "Button1-Click" 'raise-and-pass-through-click)
 
@@ -691,7 +689,9 @@
     (format nil "-x %d -y %d --width %d --height %d" x y (- X x) (- Y y))))
 
 (bind-keys window-keymap "Super-q"
-             (lambda ()
-               (let ((window (input-focus)))
-                 (unless (equal (window-class window) "Xfce4-panel")
-                   (delete-window-safely window)))))
+           (lambda ()
+             (let ((window (input-focus)))
+               (unless (equal (window-class window) "Xfce4-panel")
+                 (delete-window-safely window)))))
+(bind-keys global-keymap "Super-h" s-h-keymap)
+(bind-keys window-keymap "Super-h" s-h-keymap)
