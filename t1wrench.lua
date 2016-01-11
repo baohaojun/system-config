@@ -74,6 +74,7 @@ local weiboCommentActivity = "com.sina.weibo/com.sina.weibo.composerinde.Comment
 local weiboForwardActivity = "com.sina.weibo/com.sina.weibo.composerinde.ForwardComposerActivity"
 local qqChatActivity = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity"
 local qqChatActivity2 = "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity"
+local qqGroupSearch = "com.tencent.mobileqq/com.tencent.mobileqq.search.activity.GroupSearchActivity"
 local qqPhotoFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListFlowActivity"
 local qqPhotoPreview = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoPreviewActivity"
 local qqPhoteList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListActivity"
@@ -577,17 +578,23 @@ wait_top_activity_match = function(activity)
    return window
 end
 
-wait_input_target = function(activity)
-   debug("wait for input method for %s", activity)
+wait_input_target = function(...)
+   activities = {...}
+   for i = 1, #activities do
+      debug("wait for input method for %s", activities[i])
+   end
    for i = 1, 20 do
       local window = adb_focused_window()
-      if window:match(activity) then
-         local adb_window_dump = split("\n", adb_pipe("dumpsys window"))
-         for x = 1, #adb_window_dump do
-            if adb_window_dump[x]:match("mInputMethodTarget.*"..activity) then
-               local input_method, ime_height, ime_connected = adb_get_input_window_dump()
-               if ime_connected then
-                  return adb_window_dump[x]
+      for ai = 1, #activities do
+         local activity = activities[ai]
+         if window:match(activity) then
+            local adb_window_dump = split("\n", adb_pipe("dumpsys window"))
+            for x = 1, #adb_window_dump do
+               if adb_window_dump[x]:match("mInputMethodTarget.*"..activity) then
+                  local input_method, ime_height, ime_connected = adb_get_input_window_dump()
+                  if ime_connected then
+                     return adb_window_dump[x]
+                  end
                end
             end
          end
@@ -1197,9 +1204,13 @@ qq_find_friend = function(friend_name)
    log("qq find friend: " .. friend_name)
    qq_open_homepage()
    adb_event"adb-tap 391 288 sleep .8"
-   wait_input_target(qqChatActivity2)
-   adb_event"key scroll_lock sleep .6 adb-tap 303 291"
-
+   local top_window = wait_input_target(qqChatActivity2, qqGroupSearch)
+      adb_event"key scroll_lock sleep .6"
+   if top_window and top_window:match(qqGroupSearch) then
+      adb_event"adb-tap 365 384"
+   else
+      adb_event"adb-tap 303 291"
+   end
 end
 
 qq_find_group_friend = function(friend_name)
@@ -1356,6 +1367,7 @@ t1_post = function(text) -- use weixin
       if not window_type then
          window_type = select_args{'发送按钮在哪儿',
                                    '像微信聊天一样在输入法窗口右上方',
+                                   '像QQ那样在输入法窗口右上方，隔着一排按钮',
                                    '像微信聊天一样，但发送前让我确认',
                                    '像微博分享一样在屏幕右上方',
                                    '像微博分享一样，但发送前让我确认',
@@ -1363,6 +1375,8 @@ t1_post = function(text) -- use weixin
          }
          if window_type == '像微信聊天一样在输入法窗口右上方' then
             window_type = 'weixin-chat'
+         elseif window_type == '像QQ那样在输入法窗口右上方，隔着一排按钮' then
+            window_type = 'qq-chat'
          elseif window_type == '像微博分享一样在屏幕右上方' then
             window_type = 'weibo-share'
          elseif window_type == '像微信聊天一样，但发送前让我确认' then
@@ -1377,6 +1391,8 @@ t1_post = function(text) -- use weixin
       end
       if window_type == 'weixin-chat' then
          post_button = post_button -- empty
+      elseif window_type == 'qq-chat' then
+         post_button = '975 1716'
       elseif window_type == 'weixin-confirm' then
          if yes_or_no_p("像微信聊天一样发送，请确认") then
             post_button = post_button
