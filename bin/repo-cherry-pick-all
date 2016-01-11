@@ -160,7 +160,7 @@ for diff_file in $diffs; do
                         continue
                     fi
                 fi
-                if test "$dry_run"; then
+                if test "$dry_run" = true; then
                     continue
                 fi
                 if git cherry-pick --allow-empty $git_commit_id; then
