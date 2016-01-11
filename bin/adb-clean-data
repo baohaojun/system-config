@@ -12,7 +12,7 @@ fi
 
 my-adb 'cd /data;
         for x in *; do
-            if test $x = media -o $x = app -o $x = debian -o $x = property; then
+            if test $x = media -o $x = debian -o $x = property; then
                 continue;
             else
                 rm -r $x;

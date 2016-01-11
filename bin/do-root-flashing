@@ -10,6 +10,33 @@ function die() {
     exit -1
 }
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt p:partitions
+## end code-generator
+## start generated code
+TEMP=$(getopt -o p: --long "partitions:"  -n $(basename $0) -- "$@")
+partitions=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--partitions)
+            partitions=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+
 if test ! -e rawprogram_unsparse.xml && test ! -e sparse_images/rawprogram_unsparse.xml; then
     die "can't find the rawprogram_unsparse.xml"
 fi
@@ -30,35 +57,23 @@ else
 
     rm -rf $workingdir/$(basename $PWD) ~/tmp/root-flash
     mkdir -p $workingdir/ ~/tmp/root-flash || true
-
-    sup_path=$(sup)
-    smb_host=$(echo "$sup_path" | perl -npe 's,smb://(.*?)/.*,$1,')
-    smb_share=$(echo "$sup_path" | perl -npe 's,smb:(//.*?/.*?)/.*,$1,')
-    smb_path=${sup_path:${#smb_share}+5}
-
-    user_pass=$(
-        if grep -q -P "^auth\s+$smb_host\s+" ~/.smb/smbnetfs.conf; then
-            grep -P "^auth\s+$smb_host\s+" ~/.smb/smbnetfs.conf;
-        else
-            grep -P "^auth\s+\S+\s+\S+\s*$" ~/.smb/smbnetfs.conf;
-        fi | perl -ne 'if (m/\s+(\S+)\s+(\S+)\s*$/) {print "$1%$2"}')
-
-
-    if test $(basename $0) = do-root-flashing; then
-        no_copy_pattern='(^|/)(userdata_|system_)\d+.img$'
-    elif test "$(basename $0)" = do-sansuser-flashing; then
-        no_copy_pattern='(^|/)(userdata_)\d+.img$'
-    else
-        no_copy_pattern=xxxxxxxxxxxxxxx
-    fi
-    find . -type f|grep -v -P "$no_copy_pattern" > ~/tmp/root-flash/files.list
-
-
     outdir=~/tmp/root-flash/$(basename $PWD)
-    rm -rf $outdir
-    mkdir -p $outdir
 
-    smbclient -U "$user_pass" $smb_share -D $smb_path -TFc - ~/tmp/root-flash/files.list | tar xv -C $outdir
+    find . -type f | while read file; do
+        if ! grep -q -P -e "\Q$(basename $file)\E" $xml; then
+            echo do $file
+            cp-with-dir-struct $outdir $file
+        else
+            echo checking $file with $partitions
+            for p in $partitions; do
+                if [[ $(basename $file) =~ $p.* ]]; then
+                    echo do $file
+                    cp-with-dir-struct $outdir $file
+                    break
+                fi
+            done
+        fi
+    done
 fi
 
 (
@@ -68,15 +83,26 @@ fi
 
     perl -ne 'print unless m/alterable.bin/' -i $xml
 
-    if test $(basename $0) = do-sans-recovery-flashing; then
-        perl -ne 'print unless m/recovery.img/' -i $xml
+
+    if yes-or-no-p -y skip update boot.img?; then
+        true
     else
-        perl -ne 'print unless m/userdata_/' -i $xml
+        replace-bootimage -b boot.img -- -d
     fi
 
-    if test $(basename $0) = do-root-flashing; then
-        replace-bootimage -b boot.img -- -d
-        perl -ne 'print unless m/system_/' -i $xml
-    fi
+    export partitions
+    perl -ne '
+        $skip = 0;
+        if (m/filename="/ and not m/filename=""/) {
+            @partitions = split(" ", $ENV{partitions});
+            $skip = 1;
+            for $p (@partitions) {
+                if (m/filename="$p/) {
+                    $skip = 0;
+                }
+            }
+        }
+        print unless $skip == 1;
+    ' -i $xml
     do-flashing
 )

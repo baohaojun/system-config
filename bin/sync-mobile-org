@@ -20,7 +20,7 @@ function sync-phone-files() {
         fi
     elif test "$1" = "-r"; then
         if test $rsync = true; then
-            rsync -av . media_rw@phone:/data/media/0/MobileOrg/ --exclude .git --delete
+            rsync -av . media_rw@phone:/data/media/0/MobileOrg/ --exclude .git --delete || true
         else
             for x in *; do
                 my-adb push $x /sdcard/MobileOrg/$x

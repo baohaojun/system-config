@@ -348,7 +348,7 @@ function adb() {
     else
 
         adb_commands=(backup bugreport emu forward get-devpath
-            get-serialno get-state help install jdwp kill-server
+            get-serialno get-state help jdwp kill-server
             logcat ppp pull push reboot reboot-bootloader remount
             restore root shell start-server status-window sync tcpip
             uninstall usb version wait-for-device devices connect sideload

@@ -166,7 +166,7 @@ if test -d ~/system-config/src/github/gapps-t1; then
     gapps_updir=~/system-config/src/github
 fi
 
-if test $no_gapps = false && test -e $gapps_updir/gapps-t1; then
+if test -e $gapps_updir/gapps-t1; then
     dest=$PWD
     sudo mv xbin/su xbin/su.copy || true
     (
@@ -176,7 +176,14 @@ if test $no_gapps = false && test -e $gapps_updir/gapps-t1; then
         else
             cd $gapps_updir/gapps-t1
         fi
-        find . -name '.git' -prune -o -type f -print  | xargs sudo env PATH=$PATH cp-with-dir-struct $dest
+
+        find . -name '.git' -prune -o -type f -print |
+            if test $no_gapps = false; then
+                cat
+            else
+                grep 'install-recovery.sh|Superuser.apk|/xbin/|libsupol.so' -P
+            fi |
+            xargs sudo env PATH=$PATH cp-with-dir-struct $dest
     )
 fi
 
