@@ -74,6 +74,8 @@ local weiboCommentActivity = "com.sina.weibo/com.sina.weibo.composerinde.Comment
 local weiboForwardActivity = "com.sina.weibo/com.sina.weibo.composerinde.ForwardComposerActivity"
 local qqChatActivity = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity"
 local qqChatActivity2 = "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity"
+local qqAlbumList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity"
+local qqCameraFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.richmedia.FlowCameraPtvActivity2"
 local qqGroupSearch = "com.tencent.mobileqq/com.tencent.mobileqq.search.activity.GroupSearchActivity"
 local qqPhotoFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListFlowActivity"
 local qqPhotoPreview = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoPreviewActivity"
@@ -550,14 +552,21 @@ local function t1_share_to_qq(text)
    t1_send_action()
 end
 
-wait_top_activity = function(activity)
-   debug("waiting for %s", activity)
+wait_top_activity = function(...)
+   activities = {...}
+   for i = 1, #activities do
+      debug("wait for top activity: %s", activities[i])
+   end
+
    local window
    for i = 1, 20 do
-      window = adb_focused_window()
-      if window == activity then
-         debug("wait ok")
-         return window
+      for ai = 1, #activities do
+         local activity = activities[ai]
+         window = adb_focused_window()
+         if window == activity then
+            debug("wait ok")
+            return window
+         end
       end
       sleep(.1)
    end
@@ -644,7 +653,7 @@ local function qq_open_homepage()
    while true do
       sleep(.2)
       local ime_active, height, ime_connected = adb_get_input_window_dump()
-      log(("ime activity is %s, height is %d, ime_connected is %s"):format(ime_active, height, ime_connected))
+      log("ime activity is %s, height is %d, ime_connected is %s", ime_active, height, ime_connected)
       local done_back = false
       if ime_connected then
          adb_event"key back sleep .1"
@@ -965,7 +974,7 @@ local check_file_pushed = function(file, md5)
    io.close(md5file)
    debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
    if md5_on_phone ~= md5_on_PC then
-      log("需要把" .. file .. "上传到手机。")
+      log("需要把%s上传到手机。", file)
       adb_push{file, "/data/data/com.android.shell/" .. file .. ".bak"}
       adb_shell(("mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s"):format(file, file))
 
@@ -975,7 +984,7 @@ local check_file_pushed = function(file, md5)
       if md5_on_phone ~= md5_on_PC then
          error("Can't mark the " .. file .. " as been installed: \n'" .. md5_on_phone .. "'\n : \n'" .. md5_on_PC .. "'")
       else
-         log("小扳手辅助文件" .. file .. "上传成功")
+         log("小扳手辅助文件 %s 上传成功", file)
       end
    end
 end
@@ -989,7 +998,7 @@ local check_apk_installed = function(apk, md5)
    io.close(md5file)
    debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
    if md5_on_phone ~= md5_on_PC then
-      log("需要在手机上安装小扳手辅助应用" .. apk .. "，请确保手机允许安装未知来源的apk。")
+      log("需要在手机上安装小扳手辅助应用 %s，请确保手机允许安装未知来源的apk。", apk)
       local install_output = adb_install(apk)
       if install_output:match("\nSuccess") then
          adb_push{md5, "/sdcard/" .. md5}
@@ -998,7 +1007,7 @@ local check_apk_installed = function(apk, md5)
          if md5_on_phone ~= md5_on_PC then
             error("Can't mark the " .. apk .. " as been installed: \n'" .. md5_on_phone .. "'\n : \n'" .. md5_on_PC .. "'")
          else
-            log("小扳手辅助应用" .. apk .. "安装成功")
+            log("小扳手辅助应用 %s 安装成功", apk)
          end
       else
          if not os.execute("test -e .quiet-apk-install-failure") then
@@ -1093,7 +1102,7 @@ t1_config = function(passedConfigDirPath)
    app_height = app_width:match('x(%d+)')
    app_width = app_width:match('(%d+)x')
    width_ratio, height_ratio = app_width / default_width,  app_height / default_height
-   log("width_ratio is " .. width_ratio .. ", height_ratio is " .. height_ratio)
+   log("width_ratio is %f, height_ratio is %f ", width_ratio, height_ratio)
 
    local id = adb_pipe("id")
    if id:match("uid=0") then
@@ -1201,7 +1210,7 @@ end
 
 qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
-   log("qq find friend: " .. friend_name)
+   log("qq find friend: %s", friend_name)
    qq_open_homepage()
    adb_event"adb-tap 391 288 sleep .8"
    local top_window = wait_input_target(qqChatActivity2, qqGroupSearch)
@@ -1215,24 +1224,24 @@ end
 
 qq_find_group_friend = function(friend_name)
    putclip_nowait(friend_name)
-   log("qq find group friend: " .. friend_name)
+   log("qq find group friend: %s", friend_name)
    local window = adb_top_window()
    if window ~= qqChatActivity and window ~= qqChatActivity2 then
-      log("qq window is not chat: " .. window)
+      log("qq window is not chat: %s", window)
       return
    end
    adb_event("adb-tap 974 167")
    local chatSetting = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatSettingForTroop"
    window = wait_top_activity(chatSetting)
    if window ~= chatSetting then
-      log("did not get chatSetting: " .. window)
+      log("did not get chatSetting: %s", window)
       return
    end
    adb_event("sleep 1 adb-tap 330 1482")
    local troopList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity"
    window = wait_top_activity(troopList)
    if window ~= troopList then
-      log("did not get troopWindow: " .. window)
+      log("did not get troopWindow: %s", window)
       return
    end
    adb_event("sleep .5 adb-tap 243 305")
@@ -1241,7 +1250,7 @@ qq_find_group_friend = function(friend_name)
    local troopMember = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberCardActivity"
    window = wait_top_activity(troopMember)
    if window ~= troopMember then
-      log("did not get troopMember: " .. window)
+      log("did not get troopMember: %s", window)
       return
    end
    adb_event("sleep .5 adb-tap 864 1800")
@@ -1337,7 +1346,7 @@ t1_post = function(text) -- use weixin
    else
       local add, post_button = '', '958 1820'
       local input_method, ime_height, ime_connected = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
-      debug("input_method is %s, ime_xy is %s", input_method, ime_height)
+      log("input_method is %s, ime_xy is %s", input_method, ime_height)
       -- debugging("ime_xy is %s", ime_xy)
 
       if input_method then
@@ -1392,7 +1401,7 @@ t1_post = function(text) -- use weixin
       if window_type == 'weixin-chat' then
          post_button = post_button -- empty
       elseif window_type == 'qq-chat' then
-         post_button = '975 1716'
+         post_button = ('975 %d'):format(1920 - ime_height - 200)
       elseif window_type == 'weixin-confirm' then
          if yes_or_no_p("像微信聊天一样发送，请确认") then
             post_button = post_button
@@ -1662,6 +1671,7 @@ local function picture_to_qq_chat(pics, ...)
       adb_event("key back")
    end
    local chatWindow
+   local image_button = ('288 %d'):format(1920 - ime_height - 50)
    local post_button = ('159 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
@@ -1671,13 +1681,21 @@ local function picture_to_qq_chat(pics, ...)
             local window = adb_top_window()
             if window == qqChatActivity or window == qqChatActivity2 then
                chatWindow = window
-               adb_event(post_button .. " sleep .5 adb-tap 203 1430")
-               if wait_top_activity(qqPhotoFlow) ~= qqPhotoFlow then
-                  log("Wait for qqPhotoFlow failed")
-                  adb_event("sleep .5 adb-tap 203 1430")
-                  wait_top_activity(qqPhotoFlow)
+               adb_event(image_button .. " sleep .5 adb-tap 70 1873")
+               local top_window = wait_top_activity(qqAlbumList, qqCameraFlow)
+
+               if top_window == qqCameraFlow then
+                  while adb_top_window() == qqCameraFlow do
+                      log("still got qqCameraFlow")
+                      adb_event"key back sleep .5"
+                  end
+                  image_button = ('380 %d'):format(1920 - ime_height - 50)
+               elseif top_window ~= qqAlbumList then
+                  log("Wait for qqAlbumList failed")
+                  return
+               else
+                  adb_event("sleep .5 adb-tap 329 336")
                end
-               adb_event("adb-tap 351 1703")
             elseif window == qqPhoteList then
                adb_event("adb-tap 171 427")
             elseif window == qqPhotoPreview then
@@ -2081,9 +2099,9 @@ t1_add_mms_receiver = function(number)
    return "请在小扳手文字输入区输入短信内容并发送"
 end
 
-log = function(str)
+log = function(fmt, ...)
    if log_to_ui then
-      log_to_ui(str)
+      log_to_ui(string.format(fmt, ...))
    end
 end
 
