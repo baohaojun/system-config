@@ -16,7 +16,7 @@ include(KDECMakeSettings)
 include(KDEFrameworkCompilerSettings)
 
 include(GenerateExportHeader)
-include (CMakeDependentOption)
+include(CMakeDependentOption)
 
 include(ECMAddAppIcon)
 include(ECMGeneratePriFile)
@@ -29,8 +29,8 @@ include(ECMSetupVersion)
 
 
 set(SNORE_VERSION_MAJOR 0)
-set(SNORE_VERSION_MINOR 6)
-set(SNORE_VERSION_PATCH 9)
+set(SNORE_VERSION_MINOR 7)
+set(SNORE_VERSION_PATCH 0)
 
 set(SNORE_SUFFIX "-qt5")
 set(SNORE_CamelCase_SUFFIX "Qt5")
