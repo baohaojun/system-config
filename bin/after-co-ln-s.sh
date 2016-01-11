@@ -363,8 +363,8 @@ set-use-my-own-firefox
 if test ! -d ~/.config/system-config/about_me && yes-or-no-p "You want to configure your about_me?"; then
     after-co-settings.sh
 fi
-if test -x ~/src/github/private-config/after-co.sh; then
-    ~/src/github/private-config/after-co.sh
+if test -x ~/src/github/private-config/bin/bhj-after-co.sh; then
+    ~/src/github/private-config/bin/bhj-after-co.sh
 fi
 
 if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service && test -d /etc/systemd/system/; then
