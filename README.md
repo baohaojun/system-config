@@ -50,18 +50,20 @@ In difference to backends they don't offer interactions with te notification  th
 
     project( MyApp )
     cmake_minimum_required( VERSION 2.8.12 )
-    find_package(LibsnoreQt5 0.5.91 REQUIRED)
+    find_package(LibsnoreQt5 0.7.0 REQUIRED)
+    find_package(LibsnoreSettingsQt5 0.7.0 OPTIONAL)
   
     add_executable( my_app main.cpp)
-    target_link_libraries( my_app Snore::Libsnore)
+    target_link_libraries( my_app Snore::Libsnore Snore::LibsnoreSettings)
   
 ### Qmake ###
 
     QT += LibsnoreQt5
+    QT += LibsnoreSettingsQt5
   
 
 ### API Doc ###
-[A documentation of the API can be found here](http://api.kde.org/playground-api/libs-apidocs/snorenotify/html/index.html)
+[A documentation of the API can be found here](http://hannah.von-reth.de/snorenotify/doc/latest/)
 
 
 ## Dependencies ##
