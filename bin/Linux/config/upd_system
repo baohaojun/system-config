@@ -22,8 +22,8 @@ if is-debian; then
         if ! perl -e 'use String::ShellQuote' >/dev/null 2>&1; then
             sudo apt-get install libstring-shellquote-perl
         fi
-        old_name=$(perl -ne 'print "$1\n" if m!debian/? (\w+) main!' /etc/apt/sources.list | sort -u; echo "no-such-thing")
-        old_name=$(select-output-line -- echo "$old_name")
+        old_name=$(perl -ne 'print "$1\n" if m!debian/? (\w+) main!' /etc/apt/sources.list | sort -u; echo "keep-it-as-is-do-not-want-debian-testing")
+        old_name=$(select-output-line -p "Which version to replace as testing?" -- echo "$old_name")
         sudo perl -npe 's!debian/?\s+'$old_name'\s+main!debian/ testing main!' -i /etc/apt/sources.list
     fi
 

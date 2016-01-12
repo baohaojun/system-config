@@ -1,2 +1,5 @@
 #!/bin/bash
+if ! which lsb_release >/dev/null 2>&1; then
+    sudo apt-get install -y lsb-release 1>&2
+fi
 test "$(lsb_release -i | pn 3)" = Debian

@@ -26,24 +26,47 @@ if test ! "$ANDROID_SERIAL"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  Sno_system Gno_gapps ssystem_only ddebug
+# generate-getopt  Sno_system Gno_gapps ssystem_only ddebug x:skip-partitions
 ## end code-generator
 ## start generated code
+TEMP=$(getopt -o SGsdx: --long "no_system,no_gapps,system_only,debug,skip-partitions:"  -n $(basename $0) -- "$@")
 no_system=false
 no_gapps=false
 system_only=false
 debug=false
-OPTIND=1
-while getopts 'SGsd' opt; do
-    case "$opt" in
-        S)    no_system=true;;
-        G)    no_gapps=true;;
-        s)    system_only=true;;
-        d)    debug=true;;
-        *)    echo Usage Error; exit 2;;
+skip_partitions=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -S|--no_system)
+            no_system=true
+            shift
+            ;;
+        -G|--no_gapps)
+            no_gapps=true
+            shift
+            ;;
+        -s|--system_only)
+            system_only=true
+            shift
+            ;;
+        -d|--debug)
+            debug=true
+            shift
+            ;;
+        -x|--skip-partitions)
+            skip_partitions=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
     esac
 done
-shift $(($OPTIND - 1))
 
 ## end generated code
 
@@ -111,7 +134,7 @@ function update-non-system-partitions() {
                 continue
             fi
             do_continue=false;
-            for part_comp in PrimaryGPT BackupGPT udisk alterable modemst1 modemst2 persist fsg; do
+            for part_comp in PrimaryGPT BackupGPT udisk alterable modemst1 modemst2 persist fsg $skip_partitions; do
                 if test $part = $part_comp; then
                     do_continue=true
                     break

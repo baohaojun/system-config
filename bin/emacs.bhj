@@ -24,11 +24,6 @@ emacsclient -e '(progn
 
 sawfish-re-maximize
 
-export ANDROID_SERIAL=$(
-    if test -e ~/.config/system-config/my-adb-serial; then
-        cat ~/.config/system-config/my-adb-serial
-    else
-        echo a2024058
-    fi);
+export ANDROID_SERIAL=$(get-about-me -d a2024058 adb-serial);
 for x in sawfish-client emacsclient; do $x -e '(setenv "ANDROID_SERIAL" "'$ANDROID_SERIAL'")'; done
 emacs-source-env ~/system-config/bin/set-ssh-agent SSH_AUTH_SOCK
