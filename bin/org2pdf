@@ -32,7 +32,7 @@ fi
 
 if test $org_file = true || yes-or-no-p -y "Export from .org"; then
     exp_func=org-latex-export-to-latex
-    if grep -q -P 'org-beamer-mode|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
+    if grep -q -P -i 'org-beamer-mode|BEAMER_THEME|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
         exp_func=org-beamer-export-to-latex
     fi
     eval_arg=$(cat <<EOF
@@ -62,6 +62,7 @@ BEGIN {
         }
         @saved_lines = ();
     }
+    $end_cjk = "\\end{CJK*}\n";
 }
 
 if (m/\\\Qbegin{document}/) {

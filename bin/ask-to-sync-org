@@ -31,7 +31,6 @@ done
 
 
 if id | grep -q '^uid=0\b' -P; then
-    rmmod option || true
     su - bhj -c "~bhj/system-config/bin/ask-to-sync-org&"
     exit 0
 fi

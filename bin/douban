@@ -46,6 +46,8 @@ case "$1" in
                 lyrics)
                     douban_action=info douban misc || true
                     search-google "lyrics" "$artist" "$title"
+                    sleep 1
+                    search-google "lyrics" "$artist" "$title" site:lyrics.wikia.com
                     ;;
                 print)
                     (

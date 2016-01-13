@@ -75,7 +75,7 @@ function loop-wait-device() {
     if test -z "$ANDROID_SERIAL"; then
         unset ANDROID_SERIAL
     fi
-    echo -n loop-wait-for-device > /dev/tty || true
+    echo -n loop-wait-for-device 1>&2 || true
     for x in $(seq 1 ${1:-6000}); do
         if test $($the_adb devices | grep -v 'List of devices attached' | grep $ANDROID_SERIAL. | wc -l) -gt 0; then
             if echo "$(command my-adb "echo -n hello; echo $$")" | grep -q  hello$$; then
@@ -83,12 +83,12 @@ function loop-wait-device() {
             fi
         fi
         sleep 1
-        echo -n . > /dev/tty
+        echo -n . >/dev/stderr
         if (( x % 60 == 0)); then
-            echo $((x / 60 )) > /dev/tty
+            echo $((x / 60 )) 1>&2
         fi
     done
-    echo loop-wait-for-device failed > /dev/tty
+    echo loop-wait-for-device failed 1>&2
     return 1
 }
 
@@ -166,9 +166,9 @@ function adb() {
                 echo
                 loop-wait-device
                 while true; do
-                    echo -n '.' 1>/dev/tty
+                    echo -n '.' 1>&2
                     if $the_adb shell id | grep uid=0 -q; then
-                        echo "root is here" 1>/dev/tty
+                        echo "root is here" 1>&2
                         break
                     else
                         sleep 1

@@ -1,11 +1,61 @@
 #!/bin/bash
 
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+if test "$RUNNING_WITH_MY_OWN_SESSION" != true; then
+    echo "export RUNNING_WITH_MY_OWN_SESSION=true; $me" | at now
+fi
+
+(
+    echo '****************************************************************'
+    set
+    echo
+) >> /tmp/$(basename $0).$UID
+
 if ! is-tty-io; then
     exec > /tmp/$(basename $0).txt 2>&1
 fi
 set -x
 
-for x in $(seq 1 20); do
-    rmmod option && exit
-    sleep .5
-done
+cd /sys/bus/usb/drivers/option
+# DEVPATH=/devices/pci0000:00/0000:00:14.0/usb1/1-2
+devpath=$(basename $DEVPATH)
+
+(
+    for n in $(seq 1 20); do
+        done_unbind=false
+        for x in *:*; do
+            if test ! -e "$x"; then
+                break
+            fi
+            if test "${x%:*}" = "$devpath" -o "$(cat $x/interface)" = "ADB Interface"; then
+                echo "$x" | tee unbind || true
+                done_unbind=true
+            fi
+        done
+        echo time: $n
+        sleep .2 || true
+    done
+
+    bhj_cmd=$(cat <<EOF
+        exec > /tmp/rmmod-option.\$UID 2>&1
+        set -x
+        if my-adb devices?; then
+            if my-adb devices? | grep "offline\$"; then
+                ps-killall adb.fork-server
+            fi
+        fi
+        if test "$ID_SERIAL_SHORT" = "\$(get-about-me adb-serial)"; then
+            ask-to-sync-org
+        fi
+EOF
+)
+    su - bhj -c "echo \"$bhj_cmd\"|at now"
+)&
