@@ -23,7 +23,7 @@ if test ! -x ~/system-config/bin/"$x" -a "${x:0:2}" = "s "; then
     s "${x:2}"
     exit
 fi
-if test $# = 1 -a "$1" = ''; then
-    set -- "$(getclip)"
+if test $# = 1 -a "$1" = '' || test $# = 0; then
+    set -- "$(xclip -o)"
 fi
 "$x" "$@"

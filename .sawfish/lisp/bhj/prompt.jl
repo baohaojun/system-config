@@ -515,6 +515,7 @@ displayed. See the `display-message' function for more details.")
 
   (bind-keys prompt-keymap
              "ESC" prompt-esc
+             "Super-Button1-Click" prompt-accept
              "C-g" prompt-exit
              "C-u" prompt-clear
              "BS" prompt-backspace
