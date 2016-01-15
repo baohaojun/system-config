@@ -1,4 +1,10 @@
 #+title: Archive
+ * 2016
+  - 2016-01
+   * 2016-01-14
+
+     [[../blog/2016/01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.org][Cannot connect to adb under linux because of option module]]
+
  * 2015
   - 2015-12
    * 2015-12-24

@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Cannot connect to adb under linux because of option module]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html"/>
+    <updated>2016-31-15T16:01:16+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[大公司、小公司、自由开源软件社区的代码管理]]></title>
     <link href="http://baohaojun.github.io/blog/2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.html"/>
     <updated>2015-12-25T14:49:05+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/06/29/0-my-often-used-completion-methods.html"/>
     <updated>2015-06-29T19:15:09+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/06/29/0-my-often-used-completion-methods.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[开始用beagrep查代码定义]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/03/29/0-Start-Using-Beagrep-for-Code-Definition-Lookup.html"/>
-    <updated>2015-03-29T20:19:28+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/03/29/0-Start-Using-Beagrep-for-Code-Definition-Lookup.html</id>
   </entry>
 </feed>
