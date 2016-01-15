@@ -6,8 +6,8 @@ if test -z "$ANDROID_SERIAL" -a "$USER" = bhj; then
     die "Can't do it without ANDROID_SERIAL set"
 fi
 
-if test "$ANDROID_SERIAL" = a2024058; then
-    die "Must not run it on a2024058"
+if test "$ANDROID_SERIAL" = $(get-about-me adb-serial); then
+    die "Must not run it on $ANDROID_SERIAL, it's your daily phone"
 fi
 
 my-adb 'cd /data;
