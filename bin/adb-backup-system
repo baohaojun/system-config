@@ -17,8 +17,15 @@ shift $(($OPTIND - 1))
 ## end generated code
 
 if test -z "$ANDROID_SERIAL"; then
-    . export-android-serial
+    die "Must set ANDROID_SERIAL"
+elif test "$ANDROID_SERIAL" = "$(get-about-me adb-serial)"; then
+    echo "It's dangerous to restore data to your daily use phone."
+    read -p 'Please type these words: "Yes, I mean it": '
+    if test "$REPLY" != "Yes, I mean it"; then
+        die "Must confirm by typing the correct words"
+    fi
 fi
+
 
 if test -z "$dataDir"; then
     serial=$(my-adb cat /proc/cmdline|perl -npe 's/.*serialno=(\S+).*/$1/')
@@ -31,6 +38,7 @@ fi
 
 ssh-to-phone echo shit
 mkdir -p $dataDir
+
 if test $(basename $0) = adb-backup-system; then
     mkdir -p $systemDir
     cd $systemDir
@@ -53,7 +61,7 @@ elif test $(basename $0) = adb-restore-data-no-sdcard; then
     adb-fix-gms
     generate-chcon.pl data/chcon.txt > data/chcon.sh
     sudo rsync data root@phone:/android/ -av "$@" --delete --exclude='data/media/*' --exclude=data/debian
-    my-adb shell 'bash /data/chcon.sh'
+    my-adb shell 'cd /; bash /data/chcon.sh'
 elif test $(basename $0) = adb-backup-su; then
     gapp_dir=~/src/github/private-config/bin/gapps-system
     lib_dir=lib

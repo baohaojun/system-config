@@ -1,4 +1,7 @@
 #!/bin/bash
-my-adb start-activity com.android.settings/com.android.settings.PackageInstallerSettingsActivity
+my-adb -r start-activity com.android.settings/com.android.settings.PackageInstallerSettingsActivity
 adb-tap 908 602
+adb-tap 439 801
+sleep 1
+adb-tap 721 1230
 adb-tap 792 1162
