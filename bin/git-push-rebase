@@ -91,8 +91,10 @@ fi
 if test ! "$(wgit symbolic-ref --short HEAD)"; then
     if git-is-ancestor master HEAD; then
         command git co -B master
+    elif git-is-ancestor HEAD master; then
+        command git co master
     else
-        echo HEAD not setup correctly, please check $PWD
+        die HEAD not setup correctly, please check $PWD
     fi
 fi
 
