@@ -90,6 +90,8 @@ fi
 
 if test ! "$(wgit symbolic-ref --short HEAD)" && git-is-ancestor master HEAD; then
     command git co -B master
+else
+    echo HEAD not setup correctly, please check $PWD
 fi
 
 if test "$ADD_DONE" != true; then
