@@ -102,7 +102,10 @@ esac
 if test -x ~/external/firefox/firefox; then
     export BROWSER=firefox
 fi
-if test -e ~/.bashrc-cust; then
-    . ~/.bashrc-cust;
-fi
+
+for cust in ~/src/github/smartcm/.bashrc-cust ~/.bashrc-cust; do
+    if test -e $cust; then
+        . $cust
+    fi
+done
 export SYSTEM_CONFIG_INITED=true
