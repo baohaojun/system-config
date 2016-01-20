@@ -232,7 +232,7 @@ if test -e local_manifests/local_manifist.xml; then
 fi
 
 cd manifests
-git co HEAD^
+git checkout HEAD^
 for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
 
 (

@@ -76,7 +76,9 @@ sub play_1_song($) {
 
 while (1) {
     for (keys %songs_map) {
-        play_1_song $_;
+        if (not -e $should_loop_same_author) {
+            play_1_song $_;
+        }
         while (-e $should_loop_same_author) {
             my $author = $songs_map{$_}{author};
             if (-s $should_loop_same_author) {
