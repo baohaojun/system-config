@@ -2078,6 +2078,17 @@ local press_dial_key = function()
 end
 
 t1_call = function(number)
+   if number:match("@@") then
+      local names = split("@@", number)
+      local who, where = names[1] or "", names[2] or ""
+      if where == "qq" then
+         t1_find_qq_contact(who)
+      elseif where == "wx" then
+         t1_find_weixin_contact(who)
+      end
+      return
+   end
+
    adb_am("am start -a android.intent.action.DIAL tel:" .. number)
    adb_event("sleep .5")
    press_dial_key()
