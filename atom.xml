@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[那些年，我们一起追过的偶像]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/01/20/0-my-brother-is-my-hero.html"/>
+    <updated>2016-26-21T13:01:34+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/01/20/0-my-brother-is-my-hero.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Cannot connect to adb under linux because of option module]]></title>
     <link href="http://baohaojun.github.io/blog/2016/01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html"/>
-    <updated>2016-31-15T16:01:16+08:00</updated>
+    <updated>2016-01-15T16:31:27+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/08/06/0-close-sesame.html"/>
     <updated>2015-08-08T08:45:32+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/08/06/0-close-sesame.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[我常用的补齐方法]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/06/29/0-my-often-used-completion-methods.html"/>
-    <updated>2015-06-29T19:15:09+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/06/29/0-my-often-used-completion-methods.html</id>
   </entry>
 </feed>

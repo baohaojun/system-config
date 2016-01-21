@@ -1,6 +1,10 @@
 #+title: Archive
  * 2016
   - 2016-01
+   * 2016-01-20
+
+     [[../blog/2016/01/20/0-my-brother-is-my-hero.org][那些年，我们一起追过的偶像]]
+
    * 2016-01-14
 
      [[../blog/2016/01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.org][Cannot connect to adb under linux because of option module]]
