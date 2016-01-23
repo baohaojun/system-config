@@ -20,7 +20,7 @@ DialogGetEntry::DialogGetEntry(FilteringModel* model, const QString& hint, QWidg
     connect(ui->entryFilter, SIGNAL(selectedCurrentEntryWithText(QString)), ui->filteringListView, SLOT(selectedCurrentEntryWithText(QString)));
     connect(ui->entryFilter, SIGNAL(selectAllEntries()), ui->filteringListView, SLOT(selectAllEntries()));
     connect(ui->filteringListView, SIGNAL(selectedCurrentEntry(QModelIndex)), this, SLOT(on_filteringListView_doubleClicked(QModelIndex)));
-    connect(ui->filteringListView, SIGNAL(selectedCurrentText(QString)), this, SLOT(on_entrySelected(QString)));
+    connect(ui->filteringListView, SIGNAL(selectedCurrentText(QString)), this, SLOT(on_currentTextSelected(QString)));
     connect(ui->filteringListView, SIGNAL(selectedCurrentEntryNoHistory(QModelIndex)), this, SLOT(selectedCurrentEntryNoHistory(QModelIndex)));
 
     ui->filteringListView->selectionModel()->select(mEntryModel->index(0, 0), QItemSelectionModel::Select);
@@ -54,6 +54,12 @@ void DialogGetEntry::on_filteringListView_doubleClicked(const QModelIndex &index
 void DialogGetEntry::on_entrySelected(const QString& entry)
 {
     emit entrySelected(entry);
+}
+
+void DialogGetEntry::on_currentTextSelected(const QString& text)
+{
+    emit entrySelected(text);
+    mEntryModel->maybeAddTextIntoHistory(text);
 }
 
 void DialogGetEntry::selectedCurrentEntryNoHistory(const QModelIndex &index)

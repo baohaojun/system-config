@@ -30,9 +30,9 @@ class FilteringModel : public QAbstractListModel
     virtual void initHistory();
     virtual QString getNthHistoryVarName(int n);
     virtual QString getHistoryHeadName();
+    int mMaxHistEntries;
 
  private:
-    int mMaxHistEntries;
     QString mInitFilter;
     QString mFilter;
     QList<QString> mHistoryList;
@@ -43,6 +43,7 @@ class FilteringModel : public QAbstractListModel
 
  public:
     void setInitFilter(QString initFilter) { mInitFilter = initFilter; };
+    virtual void maybeAddTextIntoHistory(const QString& text) {};
     QString getSelectedText(int i);
     QString getSelectedDisplayText(int i);
     void updateHistory(int i);

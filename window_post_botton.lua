@@ -34,6 +34,7 @@ map['com.smartisanos.notes/com.smartisanos.notes.share.ShareActivity'] = 'manual
 map['com.smartisanos.notes/com.smartisanos.notes.share.weibo.ui.WeiboOAuthActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.tao.rate.ui.commit.MainRateActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.wangxin.activity.ChatActivity'] = 'weixin-chat'
+map['com.tencent.mm/com.tencent.mm.plugin.label.ui.ContactLabelUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentDetailUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI'] = 'weixin-chat'

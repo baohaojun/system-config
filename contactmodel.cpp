@@ -137,6 +137,7 @@ ContactModel::ContactModel(QObject *parent) :
 
     std::sort(mVcards.begin(), mVcards.end(), vCardLess);
     initHistory();
+    mInputTextHistory = mSettings.value("contactInputHistory").toStringList();
 }
 
 static QString normalizedPhone(const QString& phone) {
@@ -184,6 +185,24 @@ void ContactModel::filterSelectedItems(const QStringList& split)
                 weixinPhoneMap[phone] = 1;
             }
             f.close();
+        }
+    }
+
+    foreach(const QString& history, mInputTextHistory) {
+        int match = 1;
+        foreach(const QString& stem, split) {
+            if (! history.contains(stem)) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) {
+            SelectedItem si(history, history);
+            si.icon = mDefaultAvatar;
+            if (!mSelectedItemsRevMap.contains(si.displayText)) {
+                mSelectedItems << si;
+                mSelectedItemsRevMap[si.displayText] = si;
+            }
         }
     }
 
@@ -280,4 +299,15 @@ void ContactModel::filterSelectedItems(const QStringList& split)
 QString ContactModel::getHistoryName()
 {
     return "contact-history";
+}
+
+void ContactModel::maybeAddTextIntoHistory(const QString& text)
+{
+    mInputTextHistory.push_front(text);
+    while (!mInputTextHistory.isEmpty() && mInputTextHistory.length() > mMaxHistEntries) {
+        mInputTextHistory.pop_back();
+    }
+
+    mSettings.setValue("contactInputHistory", QVariant(mInputTextHistory));
+    mSettings.sync();
 }

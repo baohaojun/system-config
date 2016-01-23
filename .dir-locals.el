@@ -20,6 +20,8 @@
                    "-I/usr/include/x86_64-linux-gnu/qt5/QtXml"
                    "-I/usr/include/x86_64-linux-gnu/qt5"
                    "-I/usr/include/c++/4.9"
+                   "-I/usr/include/c++/5"
+                   "-I/usr/include/x86_64-linux-gnu/c++/5/x32"
                    "-I/usr/include/x86_64-linux-gnu/c++/4.9"
                    "-I/usr/include/c++/4.9/backward"
                    "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include"

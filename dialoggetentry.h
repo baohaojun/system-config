@@ -23,6 +23,7 @@ private slots:
     void on_filteringListView_doubleClicked(const QModelIndex &index);
     void selectedCurrentEntryNoHistory(const QModelIndex &index);
     void on_entrySelected(const QString& entry);
+    void on_currentTextSelected(const QString& text);
  signals:
     void entrySelected(const QString&);
     void entrySelectedWithDisplayText(const QString&, const QString&);

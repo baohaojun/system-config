@@ -25,12 +25,15 @@ public:
         setFilter("\t");
     };
 
+    void maybeAddTextIntoHistory(const QString& text);
+
 private:
     bool mIsMail;
+    QStringList mInputTextHistory;
+
     bool mIsWeixin;
     QPixmap mDefaultAvatar;
     QList<VCard> mVcards;
-    QSettings mSettings;
 
 signals:
 
