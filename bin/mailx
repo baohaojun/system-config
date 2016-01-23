@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if echo $SHELLOPTS | grep -q xtrace; then
+    export SHELLOPTS
+fi
+
+
 declare -a subject
 declare -a body
 declare -a attachments

@@ -1,4 +1,21 @@
 #!/bin/bash
+
+if test $# = 1 -a "$1" = '' || test $# = 0; then
+    set -- "$(xclip -o)"
+fi
+
+if test "$DESKTOP_SESSION" = sawfish; then
+    event=$(sawfish-client -e '(event-name (last-event))')
+    if test "$event" = '"Super-Button1-Click"'; then
+        last_action=$(cat ~/.cache/system-config/logs/last-search | head -n 1)
+    fi
+    if test "$last_action" -a -x ~/system-config/bin/"$last_action"; then
+        $last_action "$@"
+        exit
+    fi
+
+fi
+
 x=$(select-output-line '
     (
         if test -e ~/.cache/system-config/logs/last-search; then
@@ -23,7 +40,5 @@ if test ! -x ~/system-config/bin/"$x" -a "${x:0:2}" = "s "; then
     s "${x:2}"
     exit
 fi
-if test $# = 1 -a "$1" = '' || test $# = 0; then
-    set -- "$(xclip -o)"
-fi
+
 "$x" "$@"
