@@ -83,7 +83,7 @@
 (defun bhj-window-class (window)
   (format nil "%s%%%s" (window-class window) (window-name window)))
 
-(bind-keys s-h-keymap "s"  '(system "s&"))
+(bind-keys s-h-keymap "s"  '(system "EMACS=t s&"))
 (bind-keys s-h-keymap "S"  '(system "os&"))
 (bind-keys s-h-keymap "n"  '(system "douban next&"))
 (bind-keys global-keymap "KP_Multiply" '(system "douban like&"))
@@ -107,7 +107,7 @@
 (bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
 (bind-keys global-keymap "XF86Launch5" '(system "EMACS=t do-capture&"))
 (bind-keys global-keymap "XF86Launch6" '(system "find-or-exec T1Wrench%Smartisan T1Wrench&"))
-(bind-keys global-keymap "XF86Launch7" '(system "find-or-exec rdesktop&"))
+(bind-keys global-keymap "XF86Launch7" '(system "find-or-exec gjiten gjiten&"))
 (bind-keys global-keymap "XF86Launch8" '(system "custom-command&"))
 (bind-keys global-keymap "XF86Launch9" '(system "EMACS=t ssssh&"))
 

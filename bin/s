@@ -28,11 +28,11 @@ x=$(select-output-line '
     ) | uniq-even-non-ajacent '
 )
 
-if test -x ~/system-config/bin/"$x"; then
+if test -x ~/system-config/bin/"$x" -a "$event" != '"Super-Button3-Click"'; then
    (
        echo $x
        cat ~/.cache/system-config/logs/last-search
-   ) > ~/.cache/system-config/logs/last-search.$$
+   ) | uniq-even-non-ajacent > ~/.cache/system-config/logs/last-search.$$
    mv ~/.cache/system-config/logs/last-search.$$ ~/.cache/system-config/logs/last-search
 fi&
 

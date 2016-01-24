@@ -1,2 +1,6 @@
 #!/bin/bash
-wget -r -l1 -k --page-requisites -c "$@"
+recur='-r -l1'
+if test "$(arg1-arg2 "-l0" "$@")" = ''; then
+    recur=-p
+fi
+wget $recur -k --page-requisites -c "$@"
