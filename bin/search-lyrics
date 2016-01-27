@@ -3,3 +3,5 @@
 search-google "lyrics" "$@"
 sleep 1
 search-google "lyrics" "$@" translation site:lyrics.wikia.com
+sleep 1
+search-google "lyrics" "$@" site:www.kkbox.com

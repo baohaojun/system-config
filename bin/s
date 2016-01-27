@@ -1,12 +1,21 @@
 #!/bin/bash
 
+set -x
+if echo $SHELLOPTS | grep -q xtrace; then
+    exec > ~/tmp/$(basename $0).txt 2>&1
+fi
+
 if test $# = 1 -a "$1" = '' || test $# = 0; then
     set -- "$(xclip -o)"
 fi
 
+button1='"Super-Button1-Click"'
+button2='"Super-Button2-Click"'
+button3='"Super-Button3-Click"'
+
 if test "$DESKTOP_SESSION" = sawfish; then
-    event=$(sawfish-client -e '(event-name (last-event))')
-    if test "$event" = '"Super-Button1-Click"'; then
+    start_event=$(sawfish-client -e '(event-name (last-event))')
+    if test "$start_event" = '"Super-Button1-Click"'; then
         last_action=$(cat ~/.cache/system-config/logs/last-search | head -n 1)
     fi
     if test "$last_action" -a -x ~/system-config/bin/"$last_action"; then
@@ -16,7 +25,7 @@ if test "$DESKTOP_SESSION" = sawfish; then
 
 fi
 
-x=$(select-output-line '
+search_engines=$(
     (
         if test -e ~/.cache/system-config/logs/last-search; then
             cat ~/.cache/system-config/logs/last-search;
@@ -25,20 +34,63 @@ x=$(select-output-line '
         for x in search-* gerrit-browser-review; do
             echo $x;
         done|sort -u
-    ) | uniq-even-non-ajacent '
-)
+    ) | uniq-even-non-ajacent | grep .
+              )
 
-if test -x ~/system-config/bin/"$x" -a "$event" != '"Super-Button3-Click"'; then
-   (
-       echo $x
-       cat ~/.cache/system-config/logs/last-search
-   ) | uniq-even-non-ajacent > ~/.cache/system-config/logs/last-search.$$
-   mv ~/.cache/system-config/logs/last-search.$$ ~/.cache/system-config/logs/last-search
+engineX=$(select-args $search_engines)
+
+engine1=$(echo "$search_engines" | perl -ne 'print if 1..1' )
+engine2=$(echo "$search_engines" | perl -ne 'print if 2..2')
+engine3=$(echo "$search_engines" | perl -ne 'print if 3..3')
+engine4=$(echo "$search_engines" | perl -ne 'print if 4..4')
+
+select_event=$(sawfish-client -e '(event-name (last-event))')
+
+update_last_search=true
+
+for event in $button1 $button2 $button3; do
+    if test "$start_event" = "$event"; then
+        update_last_search=false
+        break
+    fi
+done
+
+function update-engine-order() {
+    (
+        for x in "$@"; do
+            echo "$x"
+        done
+        cat ~/.cache/system-config/logs/last-search
+    ) | uniq-even-non-ajacent > ~/.cache/system-config/logs/last-search.$$
+    mv ~/.cache/system-config/logs/last-search.$$ ~/.cache/system-config/logs/last-search
+}
+
+if test "$engineX" = "$engine1"; then
+    if test "$start_event" = "$button2"; then
+        engineX=$engine2
+    elif test "$start_event" = "$button3"; then
+        engineX=$engine3
+    fi
+elif test "$update_last_search" = false; then # button call
+    if test "$start_event" = "$button2" -a "$engineX" != "$engine2"; then
+        update-engine-order "$engine1" $engineX "$engine3"
+    elif test "$start_event" = "$button3" -a "$engineX" != "$engine3"; then
+        if test "$engineX" = "$engine2"; then
+            update-engine-order "$engine1" "$engine3" "$engineX"
+        else
+            update-engine-order "$engine1" "$engine2" "$engineX"
+        fi
+    fi
+fi
+
+
+if test -x ~/system-config/bin/"$engineX" -a "$update_last_search" = true; then
+    update-engine-order "$engineX"
 fi&
 
-if test ! -x ~/system-config/bin/"$x" -a "${x:0:2}" = "s "; then
-    s "${x:2}"
+if test ! -x ~/system-config/bin/"$engineX" -a "${engineX:0:2}" = "s "; then
+    s "${engineX:2}"
     exit
 fi
 
-"$x" "$@"
+"$engineX" "$@"

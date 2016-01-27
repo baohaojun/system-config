@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: execlog
+# key: execlog
+# --
+exec > ~/tmp/\$(basename \$0).txt 2>&1

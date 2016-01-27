@@ -384,11 +384,6 @@ sync-etc-files
 mkdir -p ~/.cache # just in case the following command will create
 # .cache with root permission.
 
-if test "$USER" = bhj; then
-    update-host-ip bhj-sg 128.199.228.174
-    update-host-ip home 128.199.228.174
-    update-host-ip bhj-ny 45.55.239.123
-fi || true
 (
     set +e
     (
