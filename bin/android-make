@@ -176,6 +176,24 @@ EOF
                     cd $OUT_DIR
                     $do_nice mm bootimage-nodeps -j$jobs $verbose
                 )
+            elif test $# = 1 -a $1 = selinux; then
+                (
+                    cat <<'EOF' > $OUT_DIR/Android.mk
+LOCAL_PATH:= $(call my-dir)
+selinux_bhj: $(foreach se,seapp_contexts selinux_version sepolicy service_contexts,${PRODUCT_OUT}/root/${se})
+ifeq (${ONE_SHOT_MAKEFILE},${LOCAL_PATH}/Android.mk)
+$(info including the main sepolicy file)
+ONE_SHOT_MAKEFILE := external/sepolicy/Android.mk
+include device/qcom/sepolicy/Android.mk
+include external/sepolicy/Android.mk
+# include cts/tests/tests/security/Android.mk
+# CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
+$(info CUSTOM_MODULES are ${CUSTOM_MODULES})
+endif
+EOF
+                    cd $OUT_DIR/
+                    $do_nice mm -j$jobs $verbose selinux_bhj
+                )
             elif test $# = 1 -a $1 = lk; then
                 (
                     (

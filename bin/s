@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -x
 if echo $SHELLOPTS | grep -q xtrace; then
     exec > ~/tmp/$(basename $0).txt 2>&1
 fi
