@@ -363,6 +363,7 @@ set-use-my-own-firefox
 if test ! -d ~/.config/system-config/about_me && yes-or-no-p "You want to configure your about_me?"; then
     after-co-settings.sh
 fi
+
 if test -x ~/src/github/private-config/bin/bhj-after-co.sh; then
     ~/src/github/private-config/bin/bhj-after-co.sh
 fi

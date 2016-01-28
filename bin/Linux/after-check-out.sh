@@ -61,4 +61,8 @@ sudo  /etc/init.d/postfix restart
 #编译一些软件
 do_compile
 
+if test -e ~/src/github/private-config/bin/bhj-after-check-out.sh; then
+    ~/src/github/private-config/bin/bhj-after-check-out.sh
+fi
+
 echo 'Full config OK'

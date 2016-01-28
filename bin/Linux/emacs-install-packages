@@ -27,7 +27,7 @@ if test -d ~/system-config/src/github/twittering-mode; then
     done
     ln -s ~/src/github/emacs.d/site-lisp ~/.emacs.d/ || true
 else
-    for x in twittering-mode weibo.emacs emacs.d DoubanMusic guilt emacs-clang-complete-async; do
+    for x in opencc twittering-mode weibo.emacs emacs.d DoubanMusic guilt emacs-clang-complete-async; do
         if test ! -e "$x/.git"; then
             git clone http://github.com/baohaojun/$x
             need_regenerate_el=true

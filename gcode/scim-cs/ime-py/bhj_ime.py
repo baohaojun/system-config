@@ -257,6 +257,8 @@ class ime:
     page_size = 10 #max cands per page
     use_cand_as_comp = True
     def __init__(self, in_, out_):
+        global _g_ime_s2t_mode
+        self.s2t_mode = _g_ime_s2t_mode
         self.escape_mode = False
         self.__unicode_cands = []
         self.special_keys = special_keys.special_keys
@@ -669,9 +671,17 @@ class ime:
             self.beepstr = ''
 
     def reply_commit(self):
-        if self.commitstr:
-            self.__reply('commit: %s' % self.commitstr)
-            self.commitstr = ''
+        if self.commitstr == '!s':
+            self.s2t_mode = False
+        elif self.commitstr == '!t':
+            self.s2t_mode = True
+        elif self.commitstr:
+            if self.s2t_mode and _g_opencc:
+                self.__reply('commit: %s' % _g_opencc.convert(self.commitstr))
+            else:
+                self.__reply('commit: %s' % self.commitstr)
+
+        self.commitstr = ''
 
     def reply_hint(self, arg=''):
         if self.hintstr:
@@ -728,6 +738,16 @@ def init():
 
     global _g_ime_single_mode
     _g_ime_single_mode = os.path.exists(os.path.join(os.environ["HOME"], ".sdim-single"))
+
+    global _g_ime_s2t_mode
+    _g_ime_s2t_mode = os.path.exists(os.path.join(os.environ["HOME"], ".sdim-s2t"))
+    global _g_opencc
+    if _g_ime_s2t_mode:
+        try:
+            import opencc
+            _g_opencc = opencc.OpenCC("zhs2zht.ini")
+        except:
+            pass
 
     global _g_ime_trans
     _g_ime_trans = ime_trans()
