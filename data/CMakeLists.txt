@@ -7,6 +7,7 @@ set(DICT_GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(
   DICTS_RAW
   STCharacters
+  SJCharacters
   STPhrases
   TSCharacters
   TSPhrases
@@ -136,6 +137,7 @@ endforeach(DICT)
 
 set(CONFIG_FILES
   config/s2t.json
+  config/s2j.json
   config/t2s.json
   config/s2tw.json
   config/s2twp.json
