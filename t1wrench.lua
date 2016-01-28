@@ -2091,6 +2091,9 @@ t1_call = function(number)
 
    adb_am("am start -a android.intent.action.DIAL tel:" .. number)
    adb_event("sleep .5")
+   if not yes_or_no_p("确认拨打电话") then
+       return
+   end
    press_dial_key()
    adb_event("sleep 1")
    if adb_top_window() == "com.android.contacts/com.android.contacts.activities.DialtactsActivity" then
