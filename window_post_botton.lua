@@ -37,6 +37,7 @@ map['com.taobao.taobao/com.taobao.wangxin.activity.ChatActivity'] = 'weixin-chat
 map['com.tencent.mm/com.tencent.mm.plugin.label.ui.ContactLabelUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentDetailUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI'] = 'weixin-chat'
+map['com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.ui.contact.ContactRemarkInfoModUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.LauncherUI'] = 'weixin-chat'
