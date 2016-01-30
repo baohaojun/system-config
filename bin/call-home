@@ -1,13 +1,7 @@
 #! /bin/bash
 
-if test "$USER" != bhj; then
-    echo Should not start ssh because you are not bao haojun
-    exit 0
-fi
-
 (
     flock -n 9 || { set +e; echo 'lock failed for home at '$(date); ps-killall sleep.51555005; exit 0; }
-    sudo systemctl status ssh.service|grep -e 'active .running' || sudo systemctl restart ssh.service
     for home in realhome; do
         while true; do
             ssh_start_time=$(date +%s)
@@ -16,7 +10,7 @@ fi
                 remote_bind_port=$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3))
             fi
             ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=300 -i ~/.ssh/id_rsa_nopass -qN \
-                -R :$remote_bind_port:localhost:22 $(if test -e ~/.config/system-config/call-home-user -a $home = home; then cat ~/.config/system-config/call-home-user; fi)$home
+                -R :$remote_bind_port:localhost:22 $home
             if test $? = 137; then
                 continue
             fi
@@ -30,20 +24,6 @@ fi
             ((x = x + y))
             sleep $x.51555005
         done&
-
-        while true; do
-            remote_bind_port=$(get-about-me remote-bind-port)
-            if test "$remote_bind_port" = unknown; then
-                remote_bind_port=$(printf %d 0x2$( (from-mac; echo $home)|sha1sum|cut -b 1-3))
-            fi
-            if ! ssh -N realhome -p $remote_bind_port; then
-                sleep 5
-                if ! ssh -N realhome -p $remote_bind_port; then
-                    ps-killall ssh.strict.realhome
-                fi
-                sleep 30
-            fi
-        done
     done
 ) 9>~/.cache/system-config/logs/$(basename $0).lock  2>&1 &
 
