@@ -1,7 +1,7 @@
 Source: beagrep
 Section: utils
 Priority: extra
-Maintainer: Bao haojun <baohaojun@gmail.com>
+Maintainer: Bao Haojun (No Comment) <baohaojun@gmail.com>
 Build-Depends:
   cpio,
   dh-autoreconf,
