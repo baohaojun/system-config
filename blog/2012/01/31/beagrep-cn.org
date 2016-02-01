@@ -51,7 +51,7 @@ git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
 # command will try to install them automatically, but if it fails then
 # you need figure out which packages to install manually. Good luck!
 # Or you can contact me for help.
-apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
+apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
 
 # do the build
 (set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
