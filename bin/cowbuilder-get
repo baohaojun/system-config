@@ -30,6 +30,9 @@ if test $# = 0; then
         system=$(select-args -o $systems)
         arch=$(select-args amd64 i386)
         $0 $system-$arch
+        if yes-or-no-p -y installed $system-$arch, exit; then
+            exit
+        fi
     done
 fi
 

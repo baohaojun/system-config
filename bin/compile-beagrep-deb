@@ -1,8 +1,12 @@
 #!/bin/bash
 
+set -e
+
 cd ~/system-config/gcode
-tar czfv ~/.cache/system-config/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
+version=$(cat beagrep/debian/changelog|head -n 1|perl -npe 's!beagrep \(([\d.]*)-.*!$1!')
+tar czfv ~/tmp/beagrep_${version}.orig.tar.gz beagrep --exclude-vcs
 cd ~/tmp
-tar zxfv beagrep_0.4.0.orig.tar.gz
+rm beagrep -rf
+tar zxfv beagrep_${version}.orig.tar.gz
 cd beagrep
-dpkg-buildpackage
+dpkg-buildpackage "$@"
