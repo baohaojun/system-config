@@ -49,14 +49,11 @@ else
     dot=.
 fi
 
-if test $host = gerrit; then
-    host=
-    domain=$(printf "172.16.0.9:8080/#/q/%s,n,z" "$fill")
-    dot=
-    fill=
-fi
-
 url=${url:-http://$host$dot$domain$fill}
+
+if test $host = gerrit; then
+    url=$(printf "https://172.16.0.9:8080/#/q/%s,n,z" "$fill")
+fi
 
 if test $prog = search-google; then
     url="https://www.google.com.hk/search?q=$fill"

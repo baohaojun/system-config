@@ -2,7 +2,19 @@
 set -e
 mkdir -p ~/src/android-mirror
 cd ~/src/android-mirror
-repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --mirror || repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo
-repo sync -j4
-repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m icesky-rom.xml --repo-url smartisan:/googlesource/git-repo
-repo sync -j4
+
+function sync-with-xml() {
+    if is-tty-io; then
+        yes-or-no-p -y -- do $1 || true
+    fi
+    repo init -u smartisan:qualcomm/platform/manifest.git -b sanfrancisco -m $1 --repo-url smartisan:/googlesource/git-repo
+    repo sync -j4
+}
+
+repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --mirror || true
+ln -s . qualcomm || true
+
+sync-with-xml 'default.xml -b master'
+sync-with-xml sfo-rom.xml
+sync-with-xml icesky-rom.xml
+sync-with-xml t2-m-rom.xml

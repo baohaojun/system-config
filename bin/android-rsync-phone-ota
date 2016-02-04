@@ -12,7 +12,14 @@ fi
 
 if test "$BEING_TIMED" != true; then
     export BEING_TIMED=true;
-    time $0 "$@"
+
+    if set -o|grep xtrace.*on -q; then
+        bashx='bash -x'
+    else
+        bashx=
+    fi
+
+    time $bashx $0 "$@"
     exit
 fi
 
@@ -85,12 +92,17 @@ fi
 my-adb -r id | grep 'uid=0\b'
 
 if test $no_system = false; then
-    if ! my-adb 'test -d /data/debian/ && which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
+    if ! my-adb 'which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
+        adb-fix-busybox
+    elif ! my-adb 'test -d /data/debian/ && which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
         die "Debian or bash not found on this phone, can't use rsync"
     fi
     ssh-to-phone echo hello$$ | grep hello$$
 fi
 
+my-adb mount -t ext4 /dev/block/bootdevice/by-name/userdata /data
+my-adb mount /dev/block/bootdevice/by-name/system /system
+my-adb 'ln -s /dev/block/platform/soc.0/* /dev/block/platform/'
 # this is for debugging
 function update-partition() {
     size=$(stat -c %s $file)

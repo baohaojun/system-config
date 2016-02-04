@@ -5,4 +5,4 @@
         if test -d "$dir"; then
             find "$dir" -maxdepth 1 -name "*$1*"
         fi
-    done
+    done | tee /dev/stderr | EMACS=t select-output-line cat | putclip

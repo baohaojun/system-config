@@ -14,17 +14,19 @@ if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
             exit 0
         fi
     elif test "$1" = init -a -d .repo/manifests/.git; then
-            echo "repo sync failed?" > .repo/grep-errors.txt
-            (
-                cd .repo/manifests
-                git reset --hard
-                git clean -xfd
-                find . -type f -name '*.xml'|xargs touch /dev/null
-            )
+        my-rfa "git clean -xfd; git reset --hard" || true
+        echo "repo sync failed?" > .repo/grep-errors.txt
+        (
+            cd .repo/manifests
+            git reset --hard
+            git clean -xfd
+            find . -type f -name '*.xml'|xargs touch /dev/null
+        )
     fi
 fi
 
 if test "$1" = sync; then
+    rm .repo/repo-paths -f
     set -- "$@" --no-tags
     time ~/system-config/bin/repo "$@" && my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'
     exit

@@ -14,8 +14,8 @@ if test "$DISPLAY"; then
     echo export REMOTEIP=$REMOTEIP > ~/.remoteip
 fi
 
-export PS1HostName=`hostname`
-export PS1='\n( $USER@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue '\$PROMPT_RET\$RECURSIVE_SHELL'[0m)\n\$'
+export PS1HOSTNAME=`hostname`
+export PS1='\n( $USER@$PS1HOSTNAME [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue '\$PROMPT_RET\$RECURSIVE_SHELL'[0m)\n\$'
 if test "$TERM" = dumb; then
     export PS1='\$'
 fi

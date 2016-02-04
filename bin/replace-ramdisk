@@ -131,6 +131,7 @@ if test "$do_busybox" = true; then
     mv $tdir/systex/bin/busybox $tdir/sbin
     ln -s /sbin/busybox $tdir/systex/bin/busybox
     perl -npe 's,/system/bin/sh,/systex/bin/sh,g' -i $tdir/sbin/adbd
+    perl -npe 's,export PATH /sbin:,export PATH /systex/bin:/sbin:,' -i $tdir/init.rc
 fi
 
 for x in "$@"; do

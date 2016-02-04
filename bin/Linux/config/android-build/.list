@@ -29,6 +29,7 @@ liblua5.2-dev
 libstring-approx-perl
 libstring-shellquote-perl
 libtext-glob-perl
+libxml-parser-perl
 libxml2:i386
 libxml2-utils
 lua5.2

@@ -6,7 +6,7 @@ set -ex
 
 
 (
-    cd ~/src/android-mirror/ || exit 0
+    cd ~/src/android-mirror.google/ || exit 0
 
 
     export http_proxy=http://localhost:8888
@@ -28,7 +28,13 @@ set -ex
             done
     fi
 
-    repo-switch -u https://android.googlesource.com/platform/manifest -b master -m default.xml
+    (
+        cd .repo/manifests
+        git reset --hard
+        git clean -xfd
+    ) || true
+
+    repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml
     if repo sync -j1 -f; then
         my-rfa '
             (

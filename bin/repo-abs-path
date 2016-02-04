@@ -1,0 +1,2 @@
+#!/bin/bash
+git config remote.$(repo-remote).url | perl -npe 's!.*:(\d+)?/*!!'

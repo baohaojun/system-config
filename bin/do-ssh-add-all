@@ -1,5 +1,5 @@
 #!/bin/bash
-for x in $(find ~/.ssh/ -name 'id_rsa*'|grep -v '\.pub'); do
+for x in $(find ~/.ssh/ -name 'id_rsa*'|grep -v '\.pub'|sort); do
     (
         host=
         if test -e $(dirname $x)/.$(basename $x).host; then

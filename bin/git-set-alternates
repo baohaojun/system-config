@@ -6,12 +6,21 @@ if test $# != 1; then
     die "Error: Usage $(basename $0) MIRROR"
 fi
 
-if test ! -d "$1/.git"; then
+if test ! -d "$1/.git" && ! [[ $1 =~ \.git$ ]]; then
     die "$1 not a git repo?"
 fi
 
-if test ! -d ".git"; then
+if test ! -d ".git" && ! [[ $PWD =~ \.git$ ]]; then
     die "$PWD not a git repo?"
 fi
 
-echo "$(readlink -f "$1")"/.git/objects > .git/objects/info/alternates
+gitdir=.
+if test -d .git; then
+    gitdir=.git
+fi
+
+if test -d "$1/.git"; then
+    echo "$(readlink -f "$1")"/.git/objects
+else
+    echo "$(readlink -f "$1")"/objects
+fi > $gitdir/objects/info/alternates

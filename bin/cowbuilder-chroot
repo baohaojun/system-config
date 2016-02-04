@@ -44,12 +44,14 @@ else
 
     chroot="$cow"/chroot
 fi
-mount | grep "$chroot" |while read what on where x; do
+cat /proc/self/mounts | grep "$chroot" |while read what on where x; do
     sudo umount "$where"
 done
 
-mount | grep 'on /(sys|proc|dev)' -P|while read what on where x; do
-    sudo mount $where "$chroot"/$where -o bind
+cat /proc/self/mounts | while read what where x; do
+    if echo $where | grep '^/(sys|proc|dev)' -P -q; then
+        sudo mount $where "$chroot"/$where -o bind
+    fi
 done
 
 mkdir "$chroot"/$HOME/.ssh -p

@@ -51,4 +51,15 @@ fi
 
 ~/system-config/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
 . ~/system-config/.bashrc
+
+(
+    cd ~/system-config/bin/Linux/config/android-build
+    for x in *; do
+        if ! dpkg-query -l $x; then
+            install-pkgs android-build
+            exit
+        fi
+    done
+)
+
 echo system-config update complete...

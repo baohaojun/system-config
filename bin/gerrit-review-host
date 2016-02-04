@@ -2,8 +2,8 @@
 
 declare -A host_map
 
-host_map[smartisan]="http://172.16.0.9:8080"
-host_map[172.16.0.9]=http://172.16.0.9:8080
+host_map[smartisan]="https://172.16.0.9:8080"
+host_map[172.16.0.9]=https://172.16.0.9:8080
 
 if test -z "$1"; then
     die "Usage: gerrit-review-host gerrit-host"

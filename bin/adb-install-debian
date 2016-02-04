@@ -109,10 +109,6 @@ fi
 
 # 这些是在手机上执行的内容
 
-export LD_PRELOAD=
-export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
-export HOME=/root
-
 mount -o remount /data # rm the nodev flag
 
 if [ ! -d /tmp ]; then
@@ -121,8 +117,6 @@ fi
 if [ ! -f /tmp/.mounted ] ; then
     mount -t tmpfs none /tmp && touch /tmp/.mounted
 fi
-
-unset LD_PRELOAD
 
 # setup posix shared memory
 if [ ! -d /dev/shm ] ; then mkdir /dev/shm ; fi
