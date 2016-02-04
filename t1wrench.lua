@@ -1681,10 +1681,11 @@ local function picture_to_qq_chat(pics, ...)
             local window = adb_top_window()
             if window == qqChatActivity or window == qqChatActivity2 then
                chatWindow = window
-               adb_event(image_button .. " sleep .5 adb-tap 70 1873")
+               adb_event(image_button .. " sleep 2 adb-tap 70 1873")
                local top_window = wait_top_activity(qqAlbumList, qqCameraFlow)
 
                if top_window == qqCameraFlow then
+                  log("get qqCameraFlow")
                   while adb_top_window() == qqCameraFlow do
                       log("still got qqCameraFlow")
                       adb_event"key back sleep .5"
@@ -1874,19 +1875,36 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
          return
    end
 
-   cc = expand_mail_groups(cc)
-   bcc = expand_mail_groups(bcc)
+   local paste_attachment_only = false
 
-   adb_am("am start -n " .. emailSmartisanActivity .. " mailto:; mkdir -p /sdcard/adb-mail")
-   wait_input_target(emailSmartisanActivity)
+   if attachments ~= "" and subject == "" and cc == "" and bcc == "" and to == "" then
+      paste_attachment_only = true
+   end
 
-   adb_event("adb-tap 842 434 sleep 1.5") -- 展开
+   if not paste_attachment_only then
+
+      cc = expand_mail_groups(cc)
+      bcc = expand_mail_groups(bcc)
+
+      adb_am("am start -n " .. emailSmartisanActivity .. " mailto:; mkdir -p /sdcard/adb-mail")
+      wait_input_target(emailSmartisanActivity)
+
+      adb_event("adb-tap 842 434 sleep 1.5") -- 展开
+   end
 
    if attachments:gsub("%s", "") ~= "" then
       local files = split("\n", attachments)
       for i in ipairs(files) do
          local file = files[i]
-         adb_event"adb-tap 993 883 sleep .5"
+         if paste_attachment_only then
+            if yes_or_no_p("请在手机上点击添加附件的按钮") then
+               sleep(.5)
+            else
+               return
+            end
+         else
+            adb_event"adb-tap 993 883 sleep .5"
+         end
 
          if not rows_mail_att_finder or rows_mail_att_finder == "手动点" then
             rows_mail_att_finder = select_args{"有几行邮件附件添加应用图标？", "一行", "两行", "手动点（训练）"}
@@ -1916,6 +1934,11 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
          adb_event"adb-tap 959 1876 sleep 1"
       end
    end
+
+   if paste_attachment_only then
+      return
+   end
+
    local insert_text = function(contact)
       if contact ~= "" then
          putclip(contact)
