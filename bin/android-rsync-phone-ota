@@ -163,17 +163,20 @@ function update-non-system-partitions() {
         done
 }
 
+export tmpPostfix=$$
+sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 $(readlink -f $xml) >/dev/null 2>&1 || kill $$&
+
 if test $(basename $0) = android-rsync-phone-diff; then
     update-non-system-partitions
-elif test $no_system = false; then
-    update-non-system-partitions&
 else
     update-non-system-partitions
-    exit
+    if test $no_system = true; then
+        exit
+    fi
 fi
 
-export tmpPostfix=$$
-sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 $(readlink -f $xml)
+echo "non system partitions done, wait for system.img unsparse..."
+wait
 
 mv ~/tmp/system-$tmpPostfix.img.2 ~/tmp/system-$tmpPostfix.img
 mkdir -p ~/tmp/system-$tmpPostfix/system
@@ -199,6 +202,20 @@ my-adb stop
 gapps_updir=~/src/github/
 if test -d ~/system-config/src/github/gapps-t1; then
     gapps_updir=~/system-config/src/github
+fi
+
+if test ! -e xbin/busybox; then
+    busybox_file=~/src/android/vendor/smartisanhw/log-crawler/busybox
+    bash_file=~/src/android/vendor/smartisanhw/log-crawler/bash
+    if test ! -e $busybox_file; then
+        busybox_file=~/system-config/doc/galaxy-nexus-root/system/xbin/busybox
+    fi
+    sudo cp $busybox_file ./xbin
+    sudo cp $bash_file ./xbin
+    for x in $(find ~/system-config/doc/galaxy-nexus-root/system/xbin -type l); do
+        x=$(basename $x)
+        sudo ln -s busybox ./xbin/$x || true
+    done
 fi
 
 if test -e $gapps_updir/gapps-t1; then
