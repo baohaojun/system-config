@@ -42,10 +42,10 @@ if ($remote_ip) {
 }
 
 
-my @emacsclient = ('emacsclient', '-n');
+my @emacsclient = ('emacs.client', '-n');
 
 if ($0 =~ m,/?edit-wait$, or $0 =~ m,/?ew$,) {
-  @emacsclient = ('emacsclient');
+  @emacsclient = ('emacs.client');
 }
 
 if ($ENV{REMOTEIP} eq "127.0.0.1") {

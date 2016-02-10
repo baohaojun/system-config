@@ -168,7 +168,7 @@ $(
 )
 EOF
 
-    emacsclient -d -e "
+    emacs.client -d -e "
 (progn
   (require 'gnus)
   (gnus)

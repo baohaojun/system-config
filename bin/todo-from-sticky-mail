@@ -17,7 +17,7 @@ if test $# = 0; then
         flock 9
         find . -maxdepth 3 -type f -name '*:*F*'|xargs -d \\n todo-from-sticky-mail /dev/null
         sync_nnmaildir -m
-        emacsclient -d -e "(let ((gnus-interactive-exit nil)) (gnus-group-exit))" || true
+        emacs.client -d -e "(let ((gnus-interactive-exit nil)) (gnus-group-exit))" || true
     ) 9> ~/.offlineimap/lock
     exit
 fi

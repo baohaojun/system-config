@@ -38,7 +38,7 @@ fi
 msg_dir=$(basename $(dirname $PWD))
 if test $(basename $0) = maildir-view; then
     if test "$msg_id"; then
-        emacsclient -d -e '(org-open-link-from-string "gnus:'$msg_dir'#'"$msg_id"'")'
+        emacs.client -d -e '(org-open-link-from-string "gnus:'$msg_dir'#'"$msg_id"'")'
     else
         e "$1"
     fi

@@ -48,4 +48,4 @@ else
         fi
     done
 fi
-emacsclient -d -e '(org-open-link-from-string "gnus:bhj.MSG#'"$msg_id"'")'
+emacs.client -d -e '(org-open-link-from-string "gnus:bhj.MSG#'"$msg_id"'")'
