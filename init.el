@@ -162,6 +162,7 @@
 (when *is-a-mac*
   (require-package 'osx-location))
 (require-package 'regex-tool)
+(require-package 'restclient)
 
 ;;----------------------------------------------------------------------------
 ;; Allow access from emacsclient
