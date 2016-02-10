@@ -53,7 +53,13 @@ TARGETS = 				\
 
 TARGETS_MDB = $(TARGETS:%=%.mdb)
 
-PREBUILT_WRAPPERS = beagrep beagrep-files beagrep-get-tokens mkbeagrepidx beagrep-unurl-and-filter.pl beagrep-glob-files
+PREBUILT_WRAPPERS = beagrep                     \
+                    lookup-file                 \
+                    beagrep-files               \
+                    beagrep-get-tokens          \
+                    mkbeagrepidx                \
+                    beagrep-unurl-and-filter.pl \
+                    beagrep-glob-files
 
 BUILT_WRAPPERS = 			\
 	$(STATIC_QUERY_WRAPPER)		\

@@ -496,13 +496,6 @@ install-data-local: $(ALL_TARGETS)
 		rm -f $$i.tmp;							\
 	done
 
-	@for i in $(SBIN_WRAPPERS); do						\
-		sed -e "s|\#installed=1|installed=1|" < $$i > $$i.tmp;		\
-		echo "$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(sbindir)/$$i";	\
-		$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(sbindir)/$$i || exit 1;	\
-		rm -f $$i.tmp;							\
-	done
-
 	@sed -e "s|\#installed=1|installed=1|" < $(INDEX_HELPER_WRAPPER) > $(INDEX_HELPER_WRAPPER).tmp
 	$(INSTALL_SCRIPT) $(INDEX_HELPER_WRAPPER).tmp $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
 	@rm -f $(INDEX_HELPER_WRAPPER).tmp
@@ -556,9 +549,7 @@ uninstall-local:
 
 BIN_WRAPPERS = \
 	$(DAEMON_WRAPPER)		\
-	$(EXTRACT_CONTENT_WRAPPER)
-
-SBIN_WRAPPERS = \
+	$(EXTRACT_CONTENT_WRAPPER)      \
 	$(BUILD_INDEX_WRAPPER)		\
 	$(DUMP_INDEX_WRAPPER)		\
 	$(MANAGE_INDEX_WRAPPER)		\
