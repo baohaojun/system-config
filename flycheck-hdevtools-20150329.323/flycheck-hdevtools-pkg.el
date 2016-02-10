@@ -1,1 +1,0 @@
-(define-package "flycheck-hdevtools" "20150329.323" "A flycheck checker for Haskell using hdevtools" '((flycheck "0.21alpha1") (dash "2.0")) :url "https://github.com/flycheck/flycheck-hdevtools" :keywords '("convenience" "languages" "tools"))
