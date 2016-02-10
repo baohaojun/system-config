@@ -200,60 +200,25 @@ apt-get install $(<span class="org-sh-quoted-exec">cat</span> debian/control | p
 </div>
 
 <div id="outline-container-sec-2-1-2" class="outline-4">
-<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> <a id="using.deb" name="using.deb"></a> Using .deb under debian/ubuntu</h4>
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> Use Ubuntu PPA</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <p>
-<b>Help!</b> This has stopped working, help needed. Really appreciate if
-someone can fix this and tell me what went wrong. See the update
-below.
-</p>
-
-<p>
-<b>Update (2014-05-03)</b> I found that building and installing the lastest
-version of beagrep deb package will sometimes cause runtime exception
-when running on Ubuntu 12.04 (and maybe other versions too <i>2014-12-17</i>). So you are encouraged to build and
-install from source code directly, which does not show this
-problem. Another reason is these packages is quite outdated.
-</p>
-
-<p>
-I have provided several .deb package files on github, one for debian
-testing, 3 for ubuntu lucid(10.04), oneiric(11.10) and
-precise(12.04). They are all for amd64. If you happen to be using one
-of these, you can download them <a href="https://github.com/baohaojun/beagrep/downloads">here</a>. Here's how to install it using
-ubuntu 12.04 as an example. After you have downloaded the .deb file:
+If you are using ubuntu LTS version such as 12.04 or 14.04, you may use <a href="https://launchpad.net/~baohaojun">my personal ppa</a> and install from that, for e.g., to install beagrep on ubuntu 14.04, you can run the following commands:
 </p>
 
 <div class="org-src-container">
 
-<pre class="src src-sh">dpkg -i beagrep-for-ubuntu-precise-2012-09-05-ae0a1a2.deb
-<span class="org-comment-delimiter"># </span><span class="org-comment">The above step will probably get dependency errors, so you fix it:</span>
-apt-get -f install
-<span class="org-comment-delimiter"># </span><span class="org-comment">This will install the dependence packages.</span>
+<pre class="src src-sh">sudo add-apt-repository ppa:baohaojun/beagrep-14.04 -y
+sudo apt-get update
+sudo apt-get install beagrep
 </pre>
 </div>
 </div>
 </div>
 
-
-
 <div id="outline-container-sec-2-1-3" class="outline-4">
-<h4 id="sec-2-1-3"><span class="section-number-4">2.1.3</span> Build .deb by yourself</h4>
+<h4 id="sec-2-1-3"><span class="section-number-4">2.1.3</span> <a id="using.ppa" name="using.ppa"></a> Build .deb by yourself</h4>
 <div class="outline-text-4" id="text-2-1-3">
-<p>
-<b>Help!</b> This has stopped working, help needed. Really appreciate if
-someone can fix this and tell me what went wrong. See the update
-below.
-</p>
-
-<p>
-<b>Update (2014-05-03)</b> I found that building and installing the lastest
-version of beagrep deb package will sometimes cause runtime exception
-when running on Ubuntu 12.04 (and maybe other versions too
-<i>2014-12-17</i>). So you are encouraged to build and install from source
-code directly, which does not show this problem.
-</p>
-
 <p>
 Before someone volunteer to make beagrep into debian/ubuntu
 distribution, you might also find a need to build .deb by yourself
@@ -294,7 +259,16 @@ The .deb file is generated in the <code>~/tmp</code> directory.
 </p>
 </li>
 
-<li>Refer to <a href="#using.deb">2.1.2</a> for how to install.
+<li>Install the .deb file:
+
+<div class="org-src-container">
+
+<pre class="src src-sh">dpkg -i beagrep_0.4.0-1_amd64.deb
+<span class="org-comment-delimiter"># </span><span class="org-comment">The above step will probably get dependency errors, so you fix it:</span>
+apt-get -f install
+<span class="org-comment-delimiter"># </span><span class="org-comment">This will install the dependence packages.</span>
+</pre>
+</div>
 </li>
 </ol>
 </div>

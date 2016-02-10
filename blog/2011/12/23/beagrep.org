@@ -65,44 +65,18 @@ apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/St
 (set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
 #+end_src
 
-***  <<using.deb>> Using .deb under debian/ubuntu
+*** Use Ubuntu PPA
 
-*Help!* This has stopped working, help needed. Really appreciate if
-someone can fix this and tell me what went wrong. See the update
-below.
+If you are using ubuntu LTS version such as 12.04 or 14.04, you may use [[https://launchpad.net/~baohaojun][my personal ppa]] and install from that, for e.g., to install beagrep on ubuntu 14.04, you can run the following commands:
 
-*Update (2014-05-03)* I found that building and installing the lastest
-version of beagrep deb package will sometimes cause runtime exception
-when running on Ubuntu 12.04 (and maybe other versions too /2014-12-17/). So you are encouraged to build and
-install from source code directly, which does not show this
-problem. Another reason is these packages is quite outdated.
+#+BEGIN_SRC sh
+sudo add-apt-repository ppa:baohaojun/beagrep-14.04 -y
+sudo apt-get update
+sudo apt-get install beagrep
 
-I have provided several .deb package files on github, one for debian
-testing, 3 for ubuntu lucid(10.04), oneiric(11.10) and
-precise(12.04). They are all for amd64. If you happen to be using one
-of these, you can download them [[https://github.com/baohaojun/beagrep/downloads][here]]. Here's how to install it using
-ubuntu 12.04 as an example. After you have downloaded the .deb file:
+#+END_SRC
 
-#+begin_src sh
-dpkg -i beagrep-for-ubuntu-precise-2012-09-05-ae0a1a2.deb
-# The above step will probably get dependency errors, so you fix it:
-apt-get -f install
-# This will install the dependence packages.
-#+end_src
-
-
-
-*** Build .deb by yourself
-
-*Help!* This has stopped working, help needed. Really appreciate if
-someone can fix this and tell me what went wrong. See the update
-below.
-
-*Update (2014-05-03)* I found that building and installing the lastest
-version of beagrep deb package will sometimes cause runtime exception
-when running on Ubuntu 12.04 (and maybe other versions too
-/2014-12-17/). So you are encouraged to build and install from source
-code directly, which does not show this problem.
+*** <<using.ppa>> Build .deb by yourself
 
 Before someone volunteer to make beagrep into debian/ubuntu
 distribution, you might also find a need to build .deb by yourself
@@ -130,7 +104,14 @@ Here's how I do it:
 
    The .deb file is generated in the =~/tmp= directory.
 
-4. Refer to [[using.deb]] for how to install.
+4. Install the .deb file:
+
+   #+BEGIN_SRC sh
+   dpkg -i beagrep_0.4.0-1_amd64.deb
+   # The above step will probably get dependency errors, so you fix it:
+   apt-get -f install
+   # This will install the dependence packages.
+   #+END_SRC
 
 ** Windows install
 
