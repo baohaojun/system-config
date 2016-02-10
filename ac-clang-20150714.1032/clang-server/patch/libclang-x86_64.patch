@@ -1,0 +1,29 @@
+Index: tools/libclang/CMakeLists.txt
+===================================================================
+--- tools/libclang/CMakeLists.txt	(revision 226551)
++++ tools/libclang/CMakeLists.txt	(working copy)
+@@ -72,9 +72,9 @@
+ endif()
+ 
+ if(WIN32)
+-  set(output_name "libclang")
++  set(output_name "libclang-x86_64")
+ else()
+-  set(output_name "clang")
++  set(output_name "clang-x86_64")
+ endif()
+ 
+ add_clang_library(libclang ${ENABLE_SHARED} ${ENABLE_STATIC}
+Index: tools/libclang/Makefile
+===================================================================
+--- tools/libclang/Makefile	(revision 226551)
++++ tools/libclang/Makefile	(working copy)
+@@ -8,7 +8,7 @@
+ ##===----------------------------------------------------------------------===##
+ 
+ CLANG_LEVEL := ../..
+-LIBRARYNAME = clang
++LIBRARYNAME = clang-x86_64
+ 
+ EXPORTED_SYMBOL_FILE = $(PROJ_SRC_DIR)/libclang.exports
+ 

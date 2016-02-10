@@ -1,0 +1,152 @@
+2015-07-13  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Merge commit 'f3a899bb1c36e25e078eed2890eb2fecb22f4175' from js2-mode
+
+2015-04-24  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Merge commit 'ac93b9eef9b6ac44d187b9688d68a7a5f205b3fe' from js2-mode
+
+	Conflicts:
+	packages/js2-mode/js2-mode.el
+
+2015-04-15  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	* js2-mode.el (js2-mode): Use cursor-sensor-mode if available.
+
+	(js2-export-node): Fix apparent paren typo.
+	(js2-get-token-internal-1): Remove unused var `quote-char'.
+	(js2-clear-face): Also remove cursor-sensor-functions.
+	(js2-parse-primary-expr): Remove unused var `pn'.
+	(js2-parse-legacy-array-comp): Remove unused var `first'.
+	(js2-mode-show-node, js2-mode-show-warn-or-err): Use
+	cursor-sensor-functions if available.
+	(js2-mode-hide-overlay, js2-echo-error): Adapt to new calling
+	convention.
+	(js2-echo-help): Declare obsolete.
+	(js2-mode-extend-comment): Look for the appropriate property.
+
+2015-02-02  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Merge commit '7558a961a03b3a9d26fafc69d9665e4aadf47738' from js2-mode
+
+2014-11-18  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Merge commit '3abcd90ddc2f446ddf0fb874dd79ba870c26ad2d' from js2-mode
+
+2014-11-15  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Merge commit '2c744815cf9e4653625dd25f2e7f8b59c152782d' from js2-mode
+
+	Conflicts:
+	packages/js2-mode/js2-imenu-extras.el
+
+2014-10-15  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	* packages/js2-mode/js2-imenu-extras.el: Use Unix-style EOL.
+
+2014-01-14  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Merge commit '3575aaa39f311822dcedd53235ba036e9cf68ab8' from js2-mode
+
+2013-11-07  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	* js2-mode/tests: Add copyright headers.
+
+2013-11-06  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Merge remote-tracking branch 'js2-mode/master'
+
+2013-10-06  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Add packages/js2-mode/.elpaignore
+
+2013-08-21  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	Sync from js2-mode/master
+
+2013-08-20  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	* packages/js2-mode/js2-mode.el: Remove unused variables.  Use posix 
+	character classes.  Do a bit of CSE simplification.
+	(js2-parse-highlight-member-expr-node): Flip test order to simplify
+	code.
+	(js2-re-search-forward, js2-re-search-backward): Don't quote code.
+	(js2-echo-help): Defalias applies to symbol, not functions.
+
+2013-08-15  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	Fix up copyrights and the checking code
+
+2013-08-15  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	Mark merge point of js2-mode.
+
+2013-06-19  Dmitry Gutov  <dgutov@yandex.ru>
+
+	js2-mode: Merge from upstream
+
+	Git commit 714dca50644c75884d9d90f10328c7a12e02cdcc
+
+2013-06-08  Dmitry Gutov  <dgutov@yandex.ru>
+
+	js2-mode: Merge from upstream
+
+	Git commit 1c53de75e0acd19d61ad45a91b32c183948e5128
+
+2013-05-10  Dmitry Gutov  <dgutov@yandex.ru>
+
+	js2-mode: Fix a typo
+
+	Git commit c50f3d1d9db63bcbea3f02036ee17ab0d7511be0
+
+2013-05-10  Dmitry Gutov  <dgutov@yandex.ru>
+
+	js2-mode: Merge from upstream
+
+	* js2-imenu-extras: New file.
+
+	Git commit 3c69aea0c267e7bbadd5e35eb6cab54764c9d91c
+
+2013-03-07  Dmitry Gutov  <dgutov@yandex.ru>
+
+	js2-mode: Merge from upstream (js2-multiline-decl-indentation)
+
+2013-02-28  Dmitry Gutov  <dgutov@yandex.ru>
+
+	js2-mode: Merge from upstream
+
+2013-02-19  Dmitry Gutov  <dgutov@yandex.ru>
+
+	js2-mode: Use \\' instead of $
+
+2013-02-19  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Merge from upstream
+
+2013-02-17  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Merge from upstream
+
+2012-12-26  Dmitry Gutov  <dgutov@yandex.ru>
+
+	* js2-mode: same for Returns -> Return
+
+2012-12-26  Dmitry Gutov  <dgutov@yandex.ru>
+
+	Re-apply the Toggles -> Toggle wording change
+
+2012-12-25  Dmitry Gutov  <dgutov@yandex.ru>
+
+	* js2-mode: merge from upstream
+
+	Lots of small changes, too many to enumerate.
+
+2012-10-31  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	* admin/update-archive.sh: Keep old packages.
+
+2011-07-01  Chong Yidong  <cyd@stupidchicken.com>
+
+	Give every package its own directory in packages/ including single-file
+	packages.
+

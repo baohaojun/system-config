@@ -1,0 +1,22 @@
+Index: lib/Support/MemoryBuffer.cpp
+===================================================================
+--- lib/Support/MemoryBuffer.cpp	(revision 226551)
++++ lib/Support/MemoryBuffer.cpp	(working copy)
+@@ -267,6 +267,9 @@
+                           bool RequiresNullTerminator,
+                           int PageSize,
+                           bool IsVolatileSize) {
++#if 1
++  return false;
++#else
+   // mmap may leave the buffer without null terminator if the file size changed
+   // by the time the last page is mapped in, so avoid it if the file size is
+   // likely to change.
+@@ -306,6 +309,7 @@
+     return false;
+ 
+   return true;
++#endif
+ }
+ 
+ static ErrorOr<std::unique_ptr<MemoryBuffer>>

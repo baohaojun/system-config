@@ -1,0 +1,38 @@
+This is inst_svn.info, produced by makeinfo version 5.2 from
+inst_svn.texi.
+
+The latest development version of ESS is available via
+<https://svn.R-project.org/ESS/>, the ESS Subversion repository.  If you
+have a Subversion client (see <http://subversion.tigris.org/>), you can
+download the sources using:
+     % svn checkout https://svn.r-project.org/ESS/trunk PATH
+which will put the ESS files into directory PATH.  Later, within that
+directory, 'svn update' will bring that directory up to date.
+Windows-based tools such as TortoiseSVN are also available for
+downloading the files.  Alternatively, you can browse the sources with a
+web browser at: ESS SVN site (https://svn.r-project.org/ESS/trunk).
+However, please use a subversion client instead to minimize the load
+when retrieving.
+
+   If you remove other versions of ESS from your emacs load-path, you
+can then use the development version by adding the following to .emacs:
+
+     (load "/path/to/ess-svn/lisp/ess-site.el")
+
+   Note that https is required, and that the SSL certificate for the
+Subversion server of the R project is
+
+     Certificate information:
+      - General name: r-project.org
+      - Serial number: 04:9D:4F:0D:53:03:DB
+      - Valid: from  03/10/2014  to  03/10/2016
+      - Issuer: Starfield Secure Certificate Authority - G2
+                http://certs.starfieldtech.com/repository/
+      - SHA1-Fingerprint: F5:15:96:DB:F1:2F:35:1B:96:06:C3:A4:2A:E2:80:78:76:4C:A4:30
+      - MD5-Fingerprint: D8:7D:4F:8F:ED:92:65:EE:EE:A5:73:2D:BB:F6:35:E6
+
+
+
+Tag Table:
+
+End Tag Table

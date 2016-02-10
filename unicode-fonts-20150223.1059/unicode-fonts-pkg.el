@@ -1,0 +1,1 @@
+(define-package "unicode-fonts" "20150223.1059" "Configure Unicode fonts" '((font-utils "0.7.2") (ucs-utils "0.8.0") (list-utils "0.4.2") (persistent-soft "0.8.10") (pcache "0.3.1")) :url "http://github.com/rolandwalker/unicode-fonts" :keywords '("i18n" "faces" "frames" "wp" "interface"))
