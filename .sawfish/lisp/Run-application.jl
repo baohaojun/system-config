@@ -155,6 +155,6 @@
                 ('top run-application:y-offset)
                 ('bottom (- -1 run-application:y-offset))
                 (nil nil))))
-  (system (format nil "%s &" (prompt-for-application "Run application: "))))
+  (system (format nil "%s &" (string-replace "&\\s*$" "" (prompt-for-application "Run application: ")))))
 
 (define-command 'run-application run-application)

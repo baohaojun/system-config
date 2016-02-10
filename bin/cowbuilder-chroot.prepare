@@ -1,7 +1,9 @@
 #!/bin/bash
-apt-get install ssh vim sudo bash_completion locales man
+apt-get update
+apt-get install ssh vim sudo bash-completion locales man git dput fakeroot
+apt-get install software-properties-common || apt-get install python-software-properties
 echo en_US.UTF-8 UTF-8 > /etc/locale.gen
-locale-gen
+locale-gen en_US.UTF-8
 
 adduser bhj
 usermod -a -G sudo bhj

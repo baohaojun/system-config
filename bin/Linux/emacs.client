@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#(for x in "$@"; do echo \'$x\'\ ; done; echo) | tee -a ~/tmp/emacsclient.txt
 if test "$1" = -d; then
     shift
     find-or-exec emacs&

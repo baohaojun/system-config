@@ -17,11 +17,11 @@ else
     mime=$(cd /tmp; touch $$.$1; xdg-mime query filetype $$.$1; rm $$.$1)
 fi
 
-if grep -P -e "^\Q$mime\E=" ~/.local/share/applications/mimeapps.list; then
-    perl -npe "s#$mime=.*#$mime=bhj-custom-$2.desktop#" -i ~/.local/share/applications/mimeapps.list
+if grep -P -e "^\Q$mime\E=" ~/.config/mimeapps.list; then
+    perl -npe "s#$mime=.*#$mime=bhj-custom-$2.desktop#" -i ~/.config/mimeapps.list
 else
     perl -ne 'print; if (m/Applications\]|Associations\]/) {print '\"$mime=bhj-custom-$2.desktop\\n\"';}' \
-        -i ~/.local/share/applications/mimeapps.list
+        -i ~/.config/mimeapps.list
 fi
 
 cat <<EOF > ~/.local/share/applications/bhj-custom-$2.desktop

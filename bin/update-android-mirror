@@ -4,13 +4,36 @@ set -ex
 . ~/system-config/.bashrc
 . ~/system-config/bin/set-ssh-agent
 
+export http_proxy=http://localhost:8888
+export https_proxy=http://localhost:8888
 
 (
-    cd ~/src/android-mirror.google/ || exit 0
+    if test ! -d ~/src/android-mirror.google/; then
+        if test ! -d ~/src/android-mirror; then
+            exit 0
+        fi
+
+        (
+            cd ~/src/android-mirror
+            find . -name '*.git' -type d -print -prune | grep -v /\\.repo/ | while read gitdir; do
+                mkdir -p ~/src/android-mirror.google/$(dirname $gitdir)
+                git init --bare ~/src/android-mirror.google/$gitdir
+                abs_gitdir=$(readlink -f $gitdir)
+
+                (
+                    cd ~/src/android-mirror.google/$gitdir
+                    git-set-alternates $abs_gitdir
+                )
+            done
+        )
+        cd ~/src/android-mirror.google
+        repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml --mirror
+        exit 0
+    fi
+
+    cd ~/src/android-mirror.google/.repo/.. || exit 0
 
 
-    export http_proxy=http://localhost:8888
-    export https_proxy=http://localhost:8888
     day=$(today +%d|perl -npe 's/^0*//')
     weekday=$(today +%w)
 
