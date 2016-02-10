@@ -19,22 +19,32 @@ config adds improved defaults and extended support for the following:
 * Python
 * PHP
 * Haskell
+* Elm
 * Erlang
 * Common Lisp (with Slime)
 
 In particular, there's a nice config for *tab autocompletion*, and
-flycheck is used to immediately highlight syntax errors in Ruby, HAML,
+`flycheck` is used to immediately highlight syntax errors in Ruby, HAML,
 Python, Javascript, PHP and a number of other languages.
 
-## Requirements
+## Supported Emacs versions
 
-* Emacs 23.3 or greater (note that Emacs 24 is required for some
-  functionality, including `magit` and `flycheck`, and will likely
-  become the minimum required version some time soon.)
-* To make the most of the programming language-specific support in
-  this config, further programs will likely be required, particularly
-  those that [flycheck](https://github.com/flycheck/flycheck) uses to
-  provide on-the-fly syntax checking.
+The config should run on Emacs 23.3 or greater and is designed to
+degrade smoothly - see the Travis build - but note that Emacs 24 and
+above is required for an increasing number of key packages, including
+`magit` and `flycheck`, so to get full you should use the latest Emacs
+version available to you.
+
+Some Windows users might need to follow
+[these instructions](http://xn--9dbdkw.se/diary/how_to_enable_GnuTLS_for_Emacs_24_on_Windows/index.en.html)
+to get TLS (ie. SSL) support included in their Emacs.
+
+## Other requirements
+
+To make the most of the programming language-specific support in this
+config, further programs will likely be required, particularly those
+that [flycheck](https://github.com/flycheck/flycheck) uses to provide
+on-the-fly syntax checking.
 
 ## Installation
 

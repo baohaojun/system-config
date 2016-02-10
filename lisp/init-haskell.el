@@ -41,13 +41,13 @@
       (flycheck-mode -1)
       (flycheck-mode))
 
-    (require 'flycheck-hdevtools)))
+    (after-load 'haskell-mode
+      (require 'flycheck-hdevtools))))
 
 
 ;; Docs
 
 (dolist (hook '(haskell-mode-hook inferior-haskell-mode-hook haskell-interactive-mode-hook))
-  (add-hook hook 'turn-on-haskell-doc-mode)
   (add-hook hook (lambda () (subword-mode +1)))
   (add-hook hook (lambda () (eldoc-mode 1))))
 (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
@@ -96,6 +96,13 @@
     (add-to-list
      'compilation-error-regexp-alist alias)))
 
+
+;; Stop haskell-mode's compiler note navigation from clobbering highlight-symbol-nav-mode
+(after-load 'haskell
+  (define-key interactive-haskell-mode-map (kbd "M-n") nil)
+  (define-key interactive-haskell-mode-map (kbd "M-p") nil)
+  (define-key interactive-haskell-mode-map (kbd "M-N") 'haskell-goto-next-error)
+  (define-key interactive-haskell-mode-map (kbd "M-P") 'haskell-goto-prev-error))
 
 
 (provide 'init-haskell)
