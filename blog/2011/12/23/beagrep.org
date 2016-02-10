@@ -65,7 +65,7 @@ apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/St
 (set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
 #+end_src
 
-*** Use Ubuntu PPA
+*** <<using.ppa>> Use Ubuntu PPA
 
 If you are using ubuntu LTS version such as 12.04 or 14.04, you may use [[https://launchpad.net/~baohaojun][my personal ppa]] and install from that, for e.g., to install beagrep on ubuntu 14.04, you can run the following commands:
 
@@ -76,7 +76,7 @@ sudo apt-get install beagrep
 
 #+END_SRC
 
-*** <<using.ppa>> Build .deb by yourself
+*** Build .deb by yourself
 
 Before someone volunteer to make beagrep into debian/ubuntu
 distribution, you might also find a need to build .deb by yourself
