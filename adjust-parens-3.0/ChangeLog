@@ -1,0 +1,48 @@
+2013-12-26  Barry  <gundaetiapo@gmail.com>
+
+	* adjust-parens: Two new defcustoms:
+	 adjust-parens-fallback-(in|de)dent-function
+
+	  Reduce code duplication.
+
+2013-11-27  Ryan C. Thompson  <rct@thompsonclan.org>
+
+	* adjust-parens.el (adjust-parens-mode): Convert to minor mode
+	(adjust-parens-p): Only adjust parens if indentation is correct, else
+	defer to indent-for-tab-command.
+	(adjust-parens-and-indent): Take numeric prefix instead of raw and
+	handle non positive prefix arg.
+	(adjust-parens-and-indent): Return t from function.
+	(lisp-dedent-adjust-parens): Return nil iff no change to buffer.
+	* adjust-parens-tests.el (apt-mode-test): Add tests for minor mode 
+	enabling/disabling
+	(apt-indent-dedent-test): Add tests for behavior when indentation is
+	incorrect or point is not at end of indentation
+	* Makefile: Have check target not depend on .elc files, so as it is
+	possible to make check and get non byte compiled backtraces if there's
+	a failure.
+
+2013-10-28  Barry  <gundaetiapo@gmail.com>
+
+	* adjust-parens.el (last-sexp-with-relative-depth): Fix function 
+	documentation which indicated negative depth when positive is correct.
+
+2013-10-23  Barry O'Reilly  <gundaetiapo@gmail.com>
+
+	* adjust-parens.el: Generalize to also work with alternative list 
+	closing chars, such as Clojure's brackets.
+
+2013-10-08  Barry O'Reilly  <gundaetiapo@gmail.com>
+
+	* Makefile: New file to provide 'make check' tests
+	* adjust-parens-tests.el: New tests
+	(apt-near-bob-test): Test indenting near BOB
+	(apt-indent-dedent-test): Test same case described in Commentary
+	* adjust-parens.el: Fix bug when near BOB or EOB. Fix compiler warning
+	due to using defvarred prefix-arg as lexical var.
+
+2013-08-29  Barry O'Reilly  <gundaetiapo@gmail.com>
+
+	* README: Update with corrected information.
+	* packages/adjust-parens/adjust-parens.el: Add new package.
+
