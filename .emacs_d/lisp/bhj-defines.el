@@ -1476,8 +1476,6 @@ to the value of `temporary-file-directory'."
                 desc
               (replace-regexp-in-string "/" "\\\\" path)))))
 
-(org-add-link-type "smb" nil #'org-smb-link-export)
-
 (setq interprogram-cut-function 'bhj-select-text
       interprogram-paste-function 'bhj-select-value)
 

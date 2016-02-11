@@ -1,8 +1,9 @@
 #!/bin/bash
 if test -z "$SSH_CLIENT"; then
     export LOCALIP=localhost
-    export LOCALPORT=22
+    export LOCALPORT=${LOCALPORT:-22}
     export REMOTEIP=localhost
+    export REMOTEPORT=${LOCALPORT:-22}
 fi
 
 function sudoedit()

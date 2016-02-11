@@ -69,7 +69,7 @@
  '(ispell-program-name "aspell")
  '(jira-host "localhost.18888")
  '(jira-url "http://localhost:18888/rpc/xmlrpc")
- '(jiralib-url "https://127.0.0.1/jira")
+ '(jiralib-url "http://localhost:8081/")
  '(keyboard-coding-system (quote cp936))
  '(linum-format " %7i ")
  '(lisp-mode-hook

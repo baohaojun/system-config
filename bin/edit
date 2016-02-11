@@ -154,11 +154,10 @@ if ($remote_ip and $ENV{REMOTEIP} ne "127.0.0.1") {
   my $ssh_cmd = join(" ", @cmd);
 
   $ssh_cmd = <<EOC;
-if test `uname` != Linux; then
-    psexec.exe -sid "\$(cygpath -alw "\$(which findexec)")" -t emacs@
-fi
+. ~/.config/system-config/.bashrc-path
 $ssh_cmd
 EOC
+
   $ssh_cmd = shell_quote($ssh_cmd);
   print "ssh $remote_ip $ssh_cmd";
   my $remote_port = ($ENV{REMOTEPORT} or 22);

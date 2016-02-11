@@ -179,6 +179,9 @@
         (apply orig-fun args))
     (apply orig-fun args)))
 
+(eval-after-load 'org
+  '(org-add-link-type "smb" nil #'org-smb-link-export))
+
 (eval-after-load 'ox-html
   '(advice-add 'org-html-fontify-code :around #'org-html-fontify-code-compout))
 
