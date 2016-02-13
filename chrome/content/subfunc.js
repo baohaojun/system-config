@@ -271,12 +271,18 @@ Firemacs.SubFunc = {
           return;
         }
       }
-      alert("Next/Prev link not found, using default for php manual");
-        if (dir > 0) {
-            loadURI(links[1].href); //for the php manual, the 2nd link is the next link
-        } else {
-            loadURI(links[0].href);
-        }
+
+      if (doc.URL.search(/\d+(?:\.jpg|\.png)$/i) != -1) {
+        var urlParts = /(.*\/)(\d+)(\.jpg|\.png)$/.exec(doc.URL);
+        loadURI(urlParts[1] + (+urlParts[2] + 1) + urlParts[3]);
+        return;
+      }
+      alert("Next/Prev link not found, using default for php manual: " + doc.URL);
+      if (dir > 0) {
+        loadURI(links[1].href); //for the php manual, the 2nd link is the next link
+      } else {
+        loadURI(links[0].href);
+      }
     },
 
     ////////////////////////////////////////////////////////////////
