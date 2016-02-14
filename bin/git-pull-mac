@@ -13,7 +13,7 @@ else
     git pull
     exit
 fi
-if ! git fetch $origin -v; then
+if ! git fetch $origin >/dev/null 2>&1; then
     die "failed to fetch $origin: $PWD"
 fi
 for x in remotes/$(git-remote-branch); do
@@ -30,14 +30,29 @@ for x in remotes/$(git-remote-branch); do
     fi
 done
 
-git submodule init
-git submodule update
+(
+    git submodule init
+    git submodule update
+) >/dev/null 2>&1
 
 if test "$FETCH_ONLY" = true; then
     git submodule foreach 'bash -c "git-pull-mac"'
     exit 0
 fi
-git submodule foreach 'bash -c "git-pull-mac&"' | grep .
+
+git submodule foreach 'bash -c "
+    function do-git-pull-mac-twice() {
+        git-pull-mac ||
+            (
+                export http_proxy=http://localhost:8087
+                export https_proxy=http://localhost:8087
+                git-pull-mac
+            )
+    }
+
+    if ! do-git-pull-mac-twice; then
+        echo git-pull-mac failed in $PWD;
+    fi&"' | grep -v '^Entering '|grep 'failed in' || true # wait...
 if git config --global user.email| grep -q baohaojun; then
     git submodule foreach 'git config user.email baohaojun@gmail.com'
     git config user.email baohaojun@gmail.com
