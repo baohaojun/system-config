@@ -305,6 +305,10 @@ fi
 
 if test $(pwd) = ~/system-config; then
     CHECKING_SUBMODULE= git-notify-push
+    (
+        cd ~/src/github/private-config/bin
+        git pull
+    ) >/dev/null 2>&1&
 fi
 
 exit 0;
