@@ -44,11 +44,6 @@ cdr()
     fi
 }
 
-rbranch()
-{
-    repo forall . -c 'echo $REPO_RREV'
-}
-
 if tty -s; then
     stty -ixon -ixoff >/dev/null 2>&1
 fi

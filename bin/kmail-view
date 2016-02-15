@@ -1,14 +1,18 @@
 #!/bin/bash
 
 prog=$(basename $0)
+echo "$1" >> ~/.cache/system-config/logs/$prog.log
 if test $# = 1; then
     if test ! -e "$1"; then
-        bhj-notify "$prog" "$1 not exist!"
-        echo "$1" >> ~/.cache/system-config/logs/$prog.log
-        x=$(echo "$1" | perl -npe 's/:.*//')
+        x=$(echo "$1" | perl -npe 's,file:/+,/,; s/:.*//')
         x=$(echo "$x"*)
         set -- "$x"
     fi
+fi
+
+if test ! -e "$1"; then
+    bhj-notify "$prog" "$1 not exist!"
+    exit 0
 fi
 
 if test $prog = kmail-view; then

@@ -182,12 +182,12 @@ abc-files() {
 }
 
 abc-repo-branch() {
-    repo forall . -c 'echo $REPO_RREV'
+    repo forall $(repo-project) -c 'echo $REPO_RREV'
     # fixme
 }
 
 abc-repo-path() {
-    repo forall . -c 'echo $REPO_PATH'
+    repo forall $(repo-project) -c 'echo $REPO_PATH'
 }
 
 abc-repo-pwd() {

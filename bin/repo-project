@@ -3,7 +3,12 @@ if test "$REPO_INFO"; then
     $REPO_INFO project
     exit
 elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
-    repo forall . -c 'echo $REPO_PROJECT'
+    (
+        cd $(lookup-file .git/..)
+        if test ! "$USING_MY_RFA"; then
+            USING_MY_RFA=true my-rfa . repo-project
+        fi
+    )
     exit
 fi
 

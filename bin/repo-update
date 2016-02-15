@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
 echo head is at $(git rev-parse HEAD)
-repo sync -c -n .
+repo sync -c -n $(repo-project)
 git rebase $(repo-remote)/$(repo-branch)
 echo head is at $(git rev-parse HEAD)

@@ -106,7 +106,7 @@ if test $do_fetch = true; then
     if test -z "$(lookup-file -e .repo)" || [[ $PWD =~ /\.repo/manifests ]]; then
         git fetch -n -v $(repo-remote) $(repo-branch)
     else
-        repo sync -c -n . || git fetch -n origin
+        repo sync -c -n $(repo-project) || git fetch -n origin
     fi
     echo git fetch done
 fi

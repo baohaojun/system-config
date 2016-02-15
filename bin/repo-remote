@@ -25,7 +25,7 @@ elif lookup-file -e .repo/.. >/dev/null 2>&1; then
             git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!'
         fi
     else
-        repo forall . -c 'echo $REPO_REMOTE' 2>/dev/null
+        repo forall $(repo-project) -c 'echo $REPO_REMOTE' 2>/dev/null
     fi
 else
     git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!'

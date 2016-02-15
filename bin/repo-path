@@ -2,7 +2,7 @@
 if test "$REPO_INFO"; then
     $REPO_INFO path
 elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1 ; then
-    repo forall . -c 'echo $REPO_PATH'
+    repo forall $(repo-project) -c 'echo $REPO_PATH'
 else
     basename "$PWD"
 fi

@@ -1,14 +1,14 @@
 #!/bin/bash
 set -x
+. ~/.config/system-config/.bashrc-path
 if test "${SSH_ORIGINAL_COMMAND/#remote-putclip */remote-putclip}" = remote-putclip; then
-    . ~/.config/system-config/.bashrc-path
     remote-putclip "${SSH_ORIGINAL_COMMAND/#remote-putclip /}"
     exit 0
 fi
-file=$(echo "$SSH_ORIGINAL_COMMAND" | grep '^emacsclient '|tail -n 1|perl -npe 's/^emacsclient +(-n +)?(\+1 +)?//;')
+file=$(echo "$SSH_ORIGINAL_COMMAND" | grep '^emacs\.client '|tail -n 1|perl -npe 's/^emacs\.client +(-n +)?(\+1 +)?//;')
 
 wait=
-if echo "$SSH_ORIGINAL_COMMAND" | grep '^emacsclient +-n +' -P -q; then
+if echo "$SSH_ORIGINAL_COMMAND" | grep '^emacs\.client +-n +' -P -q; then
     wait=-n
 fi
 
@@ -22,7 +22,7 @@ if test "$file"; then
     fi
     . ~/.renew-xauth
     find-or-exec emacs
-    emacsclient $wait $line "$file"
+    emacs.client $wait $line "$file"
 else
     echo "What do you want to edit?"
 fi

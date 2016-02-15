@@ -1,2 +1,2 @@
 #!/bin/bash
-repo forall . -c 'echo $REPO_RREV' 2>/dev/null || git branch |grep '\*'|pn 2
+repo forall $(repo-project) -c 'echo $REPO_RREV' 2>/dev/null || git branch |grep '\*'|pn 2

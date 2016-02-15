@@ -10,6 +10,7 @@ set -e
 if test $# != 1; then
     die "Error: Usage $(basename $0) *U=41* (the maildir/cur file name)"
 fi
+echo "$@" >> ~/.cache/system-config/logs/$(basename $0).log
 
 if [[ "$1" =~ ^https?:// ]]; then
     exec of "$1"

@@ -47,5 +47,5 @@ fi
 if test "$REPO_INFO"; then
     $REPO_INFO branch
 else
-    repo forall . -c 'echo $REPO_RREV'
+    repo forall $(repo-project) -c 'echo $REPO_RREV'
 fi

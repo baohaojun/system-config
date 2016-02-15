@@ -1,2 +1,2 @@
 #!/bin/bash
-repo forall . -c 'echo $REPO_LREV'
+repo forall $(repo-project) -c 'echo $REPO_LREV'

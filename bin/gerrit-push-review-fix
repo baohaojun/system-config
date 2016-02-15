@@ -22,9 +22,7 @@ while true; do
     git merge $(repo-remote-branch)
     gerrit-push-review
     gerrit-do-review
-    repo sync -n .
+    repo sync -n $(repo-project)
     git co $head
     git rebase $(repo-remote-branch)
 done
-
-    
