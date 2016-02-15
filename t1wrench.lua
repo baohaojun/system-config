@@ -733,7 +733,10 @@ local function weixin_text_share(window, text)
 end
 
 local function t1_sms(window)
-   adb_event{182, 1079, 'key', 'scroll_lock', 864, 921}
+   adb_event"adb-tap 192 1227 sleep .5 adb-key scroll_lock"
+   if yes_or_no_p("确认发送短信？") then
+      adb_event"adb-tap 857 1008"
+   end
 end
 
 local function t1_google_plus(window)
