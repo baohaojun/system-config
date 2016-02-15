@@ -56,7 +56,7 @@ git submodule foreach 'bash -c "
 if git config --global user.email| grep -q baohaojun; then
     git submodule foreach 'git config user.email baohaojun@gmail.com'
     git config user.email baohaojun@gmail.com
-fi
+fi >/dev/null 2>&1&
 if test "$PWD" = ~/system-config; then
     echo run after-co-ln-s.sh again...
     ~/system-config/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
