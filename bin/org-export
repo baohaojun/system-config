@@ -36,8 +36,9 @@ done
 orgs=(
     $(
         find blog -name '*.org'|
-        sort -n|
-        xargs -d \\n bash -c 'for x in "$@"; do readlink -f "$x"; done' true
+            grep -v '\.#'|
+            sort -n|
+            xargs -d \\n bash -c 'for x in "$@"; do readlink -f "$x"; done' true
     )
 )
 
