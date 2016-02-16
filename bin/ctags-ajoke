@@ -89,7 +89,12 @@ $terminator =~ s/^--filter-terminator=//;
 use IPC::Open2;
 
 $|++;
-my $ctags_pid = open2(my $read, my $write, "ctags-exuberant", @ARGV);
+
+my $ctags_pid = open2(my $readCtags, my $writeCtags, "ctags-exuberant", @ARGV);
+my $jar_pid = open2(my $readJar, my $writeJar, "gtagsAntlrJavaParser");
+
+my ($read, $write) = ($readCtags, $writeCtags);
+
 sub check_tag_cached($$) {
     my ($tag, $source) = @_;
 
@@ -125,6 +130,11 @@ sub close_cache_and_rename($$$) {
 while (<STDIN>) {
 
     chomp(my $source = $_);
+    if ($source =~ m/\.jar$/i) {
+        ($read, $write) = ($readJar, $writeJar);
+    } else {
+        ($read, $write) = ($readCtags, $writeCtags);
+    }
     (my $dir = $source) =~ s,(.*)/.*,$1,;
     unless ($checked_dir_custom_parser{$dir}) {
         check_dir_custom_parser($dir);
@@ -222,9 +232,19 @@ while (<STDIN>) {
         close $read;
         close $write;
         close_cache_and_rename($cache, "$cache_f.tag.$$", "$cache_f.tag");
-        wait;
-        $ctags_pid = open2($read, $write, "ctags-exuberant", @ARGV)
-            or die "Can not open ctags-exuberant pipe";
+
+
+        if ($source =~ m/\.jar$/i) {
+            waitpid $jar_pid, 0;
+            $jar_pid = open2($readJar, $writeJar, "gtagsAntlrJavaParser");
+        } else {
+            waitpid $ctags_pid, 0;
+            $ctags_pid = open2($readCtags, $writeCtags, "ctags-exuberant", @ARGV)
+                or die "Can not open ctags-exuberant pipe";
+
+        }
     }
 }
-close($write);
+
+close($writeCtags);
+close($writeJar);
