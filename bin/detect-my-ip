@@ -1,11 +1,12 @@
 #!/bin/bash
 
-(cat <<EOF
-GET /checkip HTTP/1.1
-User-Agent: Wget/1.13.4 (linux-gnu)
-Accept: */*
-Host: ddns.oray.com
-Connection: Keep-Alive
+ip=$(curl -s ddns.oray.com/checkip|sed -e 's/.*Current IP Address: \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/')
+if test -z "$ip"; then
+    ip=$(curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//')
+fi
 
-EOF
-sleep 5) | busybox nc ddns.oray.com 80 | grep 'Current IP' | sed -e 's/.*Current IP Address: \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'
+if test -z "$ip"; then
+    ip=$(wget http://ipinfo.io/ip -qO -)
+fi
+
+echo $ip

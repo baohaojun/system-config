@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if test ~/system-config/gcode/playground/java/Mail8Bit2QuotedPrintable.class -ot ~/system-config/gcode/playground/java/Mail8Bit2QuotedPrintable.java; then
+    (
+        cd ~/system-config/gcode/playground/java
+        javac -cp /usr/share/java/mailapi.jar Mail8Bit2QuotedPrintable.java || (
+            sudo apt-get install libmail-java
+            javac -cp /usr/share/java/mailapi.jar Mail8Bit2QuotedPrintable.java
+        )
+    )
+fi
+
+mkdir ~/tmp/mails -p
+tmpFile=~/tmp/mails/$(basename "$1")
+if ! java -cp /usr/share/java/mailapi.jar:$HOME/system-config/gcode/playground/java Mail8Bit2QuotedPrintable "$1" $tmpFile; then
+    bhj-notify quote-printify "failed for $tmpFile"
+else
+    perl -npe 's/^From />From /' -i $tmpFile
+    set -- $tmpFile
+fi
