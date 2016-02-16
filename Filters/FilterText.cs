@@ -81,6 +81,9 @@ namespace Beagrep.Filters {
 
                 protected override void RegisterSupportedTypes ()
                 {
+                        if (Environment.GetEnvironmentVariable("SOURCECODETAGSMODE") == "true") {
+                                AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-java-archive"));
+                        }
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xhtml+xml"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sln"));
                         AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml"));
