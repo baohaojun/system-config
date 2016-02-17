@@ -1,7 +1,6 @@
 #+title: kmail --view can't display some maildir files correctly
 # bhj-tags: workaround
-I use offlineimap/Maildir/Emacs GNUS to read mails. Sometimes, I have a fancy html mail that can't render nicely in GNUS, so I have defined a key to open it with external helper program, i.e., =kmail --view= (The Emacs function I used to define the externel helper is =[[https://www.google.com/search?q=bhj%2dview%2dmail%2dexternal
-][bhj-view-mail-external]]=).
+I use offlineimap/Maildir/Emacs GNUS to read mails. Sometimes, I have a fancy html mail that can't render nicely in GNUS, so I have defined a key to open it with external helper program, i.e., =kmail --view= (The Emacs function I used to define the externel helper is [[https://www.google.com/search?q%3Dbhj-view-mail-external][bhj-view-mail-external]]).
 
 But, there is a problem, sometimes kmail can't display my message correctly, instead, it displays something like this:
 
