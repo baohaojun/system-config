@@ -3,12 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>kmail &#x2013;view can't display some maildir files correctly</title>
+<title>workaround for some bugs I found</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Haojun Bao" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/deep-blue.css" type="text/css" />
+ <link rel="stylesheet" href="/css/adwaita.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -102,61 +102,23 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">kmail &#x2013;view can't display some maildir files correctly</h1>
-<p>
-I use offlineimap/Maildir/Emacs GNUS to read mails. Sometimes, I have a fancy html mail that can't render nicely in GNUS, so I have defined a key to open it with external helper program, i.e., <code>kmail --view</code> (The Emacs function I used to define the externel helper is <code>[[https://www.google.com/search?q=bhj%2dview%2dmail%2dexternal
-][bhj-view-mail-external]]</code>).
-</p>
+<h1 class="title">workaround for some bugs I found</h1>
+<ul class="org-ul">
+<li>2016
+<ul class="org-ul">
+<li>2016-02
+<ul class="org-ul">
+<li>2016-02-17
 
 <p>
-But, there is a problem, sometimes kmail can't display my message correctly, instead, it displays something like this:
+<a href="../../blog/2016/02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html">kmail &#x2013;view can't display some maildir files correctly</a>
 </p>
-
-
-<div class="figure">
-<p><a href="images/bad-kmail-view.png"><img src="images/bad-kmail-view.png" alt="bad-kmail-view.png" /></a>
-</p>
-</div>
-
-<p>
-All the Chinese characters are displayed incorrectly, as if they are some latin-1 characters. But there are some Chinese emails that do display <b>correctly</b>.
-</p>
-
-<p>
-Some googling took me to <a href="https://bugs.kde.org/show_bug.cgi?id=350774">this bug</a>. Then I started tweaking kmail relentlessly, and found these results:
-</p>
-
-<ol class="org-ol">
-<li>The same mail can be viewed correctly <b>if I find it in the kmail main window and double click to view</b>.
 </li>
-
-<li>The same mail can <b>not</b> be viewed correctly if I open it from command line with <code>kmail --view file://FILEPATH</code>
+</ul>
 </li>
-</ol>
-
-<p>
-Openning the file in Emacs editor and comparing it with other viewable Chinese emails, I found a difference, that the buggy emails are <code>Content-Transfer-Encoding: 8bit</code>, while the OK emails are <code>Content-Transfer-Encoding: quoted-printable</code>. So I started to try to <a href="https://www.google.com/search?q=convert+8bit+mails+to+quoted-printable+site:stackoverflow.com">convert 8bit mails to quoted-printable</a>.
-</p>
-
-<p>
-And the result is a java program <a href="https://github.com/baohaojun/system-config/raw/master/gcode/playground/java/Mail8Bit2QuotedPrintable.java">Mail8Bit2QuotedPrintable.java</a> and 2 shell scripts: <a href="https://www.google.com/search?q=kmail-view+in+system-config+site:github.com">kmail-view in system-config</a> and <a href="https://github.com/baohaojun/system-config/raw/master/bin/8bit2=">8bit2=</a>.
-</p>
-<nav>
-  <ul id="prev_next_posts">
-    <li class="prev_post">
-      <a href="blog/2016/01/20/0-my-brother-is-my-hero.html"> <!-- prev-url -->
-        <i class="icon-chevron-left">《</i>
-        那些年，我们一起追过的偶像 <!-- prev-title -->
-      </a>
-    </li>
-    <li class="next_post" style="text-align: right;">
-      <a href="meta/Archive.html"> <!-- next-url -->
-        Archive <!-- next-title -->
-        <i class="icon-chevron-right">》</i>
-      </a>
-    </li>
-  </ul>
-</nav>
+</ul>
+</li>
+</ul>
 </div>
 <!-- {%html-mode%} -->
 
@@ -164,7 +126,7 @@ And the result is a java program <a href="https://github.com/baohaojun/system-co
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
     var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://baohaojun.github.io/blog/2016/02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html';
+    var disqus_url = 'http://baohaojun.github.io/meta/tags/workaround.html';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -235,21 +197,12 @@ And the result is a java program <a href="https://github.com/baohaojun/system-co
 
     <h2>Tags</h2>
     <ul>
-                <li><a href="../../../../meta/tags/workaround.html" title="workaround for some bugs I found">workaround</a></li>
+        
     </ul>
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='blog/2016/01/20/0-my-brother-is-my-hero.html'> 那些年，我们一起追过的偶像 </a></li>
-<li><a href='blog/2016/01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html'> Cannot connect to adb under linux because of optio... </a></li>
-<li><a href='blog/2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.html'> 大公司、小公司、自由开源软件社区的代码管理 </a></li>
-<li><a href='blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html'> Qt QString indexOf不考虑大小写的坑 </a></li>
-<li><a href='blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.html'> 优化了一下手机上看博客的效果 </a></li>
-<li><a href='blog/2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.html'> 如何在Linux下运行小扳手（包含Ubuntu 12.04） </a></li>
-<li><a href='blog/2015/09/19/0-Wrench-changelog-and-download-location.html'> 小扳手更新记录及最新版下载地址 </a></li>
-<li><a href='blog/2015/09/14/0-Got-hit-by-perl-glob.html'> 被perl的glob给坑了 </a></li>
-<li><a href='blog/2015/09/05/0-Linux-is-my-IDE.html'> Linux就是我的IDE </a></li>
-<li><a href='blog/2015/08/06/0-close-sesame.html'> 芝麻，关门 </a></li>
+        
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>

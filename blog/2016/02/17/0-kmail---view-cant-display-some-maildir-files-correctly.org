@@ -1,0 +1,22 @@
+#+title: kmail --view can't display some maildir files correctly
+# bhj-tags: workaround
+I use offlineimap/Maildir/Emacs GNUS to read mails. Sometimes, I have a fancy html mail that can't render nicely in GNUS, so I have defined a key to open it with external helper program, i.e., =kmail --view= (The Emacs function I used to define the externel helper is =[[https://www.google.com/search?q=bhj%2dview%2dmail%2dexternal
+][bhj-view-mail-external]]=).
+
+But, there is a problem, sometimes kmail can't display my message correctly, instead, it displays something like this:
+
+[[../../../../images/bad-kmail-view.png][file:../../../../images/bad-kmail-view.png]]
+
+All the Chinese characters are displayed incorrectly, as if they are some latin-1 characters. But there are some Chinese emails that do display *correctly*.
+
+Some googling took me to [[https://bugs.kde.org/show_bug.cgi?id%3D350774][this bug]]. Then I started tweaking kmail relentlessly, and found these results:
+
+1. The same mail can be viewed correctly *if I find it in the kmail main window and double click to view*.
+
+2. The same mail can *not* be viewed correctly if I open it from command line with =kmail --view file://FILEPATH=
+
+Openning the file in Emacs editor and comparing it with other viewable Chinese emails, I found a difference, that the buggy emails are =Content-Transfer-Encoding: 8bit=, while the OK emails are =Content-Transfer-Encoding: quoted-printable=. So I started to try to [[https://www.google.com/search?q=convert+8bit+mails+to+quoted%2dprintable+site%3astackoverflow%2ecom
+][convert 8bit mails to quoted-printable]].
+
+And the result is a java program [[https://github.com/baohaojun/system-config/raw/master/gcode/playground/java/Mail8Bit2QuotedPrintable.java][Mail8Bit2QuotedPrintable.java]] and 2 shell scripts: [[https://www.google.com/search?q=kmail%2dview+in+system%2dconfig+site%3agithub%2ecom
+][kmail-view in system-config]] and [[https://github.com/baohaojun/system-config/raw/master/bin/8bit2%3D][8bit2=]].

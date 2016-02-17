@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[kmail --view can't display some maildir files correctly]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html"/>
+    <updated>2016-15-17T11:02:47+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[那些年，我们一起追过的偶像]]></title>
     <link href="http://baohaojun.github.io/blog/2016/01/20/0-my-brother-is-my-hero.html"/>
     <updated>2016-01-21T13:26:44+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/09/05/0-Linux-is-my-IDE.html"/>
     <updated>2015-09-05T22:08:19+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/09/05/0-Linux-is-my-IDE.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[芝麻，关门]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/08/06/0-close-sesame.html"/>
-    <updated>2015-08-08T08:45:32+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/08/06/0-close-sesame.html</id>
   </entry>
 </feed>

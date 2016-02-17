@@ -1,5 +1,10 @@
 #+title: Archive
  * 2016
+  - 2016-02
+   * 2016-02-17
+
+     [[../blog/2016/02/17/0-kmail---view-cant-display-some-maildir-files-correctly.org][kmail --view can't display some maildir files correctly]]
+
   - 2016-01
    * 2016-01-20
 
