@@ -237,6 +237,15 @@ might be bad."
   (let ((bhj-occur-regexp (downcase "\\*\\*\\*.*stop\\|method does not override or implement\\|syntax error\\|invalid argument\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]elapsed \\|cannot find symbol\\|error [0-9]\\| : error \\|because of errors\\|[0-9] error\\b\\|error:\\|command not found\\|error while loading shared libraries\\|undefined symbol\\|undefined reference to\\|permission denied\\|test.*unary operator expected\\|No space left on device\\|Traceback (most recent call last\\|javac: file not found:\\|illegal start of type\\|Multiple same specifications")))
     (call-interactively 'bhj-occur)))
 
+(defvar bhj-search-url-history nil)
+(defun bhj-search-url ()
+  (interactive)
+  (let* ((search-entry (bhj-current-word))
+         (search-engine (completing-read "Which search engine? " (split-string (shell-command-to-string "cd ~/system-config/bin; echo urlof-search-*")) nil nil nil 'bhj-search-url-history)))
+    (when (region-active-p)
+      (delete-region (region-beginning) (region-end)))
+    (insert (format "[[%s][%s]]" (shell-command-to-string (format "%s %s" search-engine (shell-quote-argument search-entry))) search-entry))))
+
 ;;;###autoload
 (defun bhj-occur-logcat-errors ()
   (interactive)

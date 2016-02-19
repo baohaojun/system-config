@@ -2,6 +2,30 @@
 set -e
 cd ~/tmp
 my-adb -r pull /sepolicy
-my-adb pull /data/logs/.kmsg
+my-adb pull /data/logs/.kmsg || true
 my-adb dmesg >> .kmsg
+
+if test ! -d ~/external/selinux/external/selinux/.git; then
+    mkdir ~/external/selinux/external -p
+    git clone smartisan:qualcomm/platform/external/selinux --reference ~/src/android-mirror/platform/external/selinux.git ~/external/selinux/external/selinux
+fi
+
+if test ! -d ~/external/selinux/prebuilts/python/linux-x86/2.7.5/.git; then
+    mkdir ~/external/selinux/prebuilts/python/linux-x86/ -p;
+    git clone smartisan:qualcomm/platform/prebuilts/python/linux-x86/2.7.5 --reference ~/src/android-mirror/platform/prebuilts/python/linux-x86/2.7.5.git ~/external/selinux/prebuilts/python/linux-x86/2.7.5;
+fi
+
+function audit2allow() {
+    ANDROID_BUILD_TOP=~/external/selinux
+    unamestr=`uname`
+    if [ "$unamestr" = "Linux" -o "$unamestr" = "linux" ]; then
+        export LD_LIBRARY_PATH=$ANDROID_BUILD_TOP/external/selinux/prebuilts/lib
+        export PYTHONPATH=$ANDROID_BUILD_TOP/prebuilts/python/linux-x86/2.7.5/lib/python2.7/site-packages
+        python $ANDROID_BUILD_TOP/external/selinux/policycoreutils/audit2allow/audit2allow "$@"
+    else
+        echo "audit2allow is only supported on linux"
+    fi
+
+}
+
 audit2allow -p sepolicy -i .kmsg | tee /dev/tty |putclip

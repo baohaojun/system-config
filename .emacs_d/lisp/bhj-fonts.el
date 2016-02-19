@@ -42,10 +42,13 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     ;; We have to use set-face-attribute
     (set-face-attribute
      'default nil :font en-font)
-    (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size (+ 0.0 english-font-size)))
-    (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size (+ 0.0 english-font-size)))
+    (condition-case font-error
+        (progn
+          (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size (+ 0.0 english-font-size)))
+          (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size (+ 0.0 english-font-size)))
 
-    (set-fontset-font t 'symbol (font-spec :family "Courier New"))
+          (set-fontset-font t 'symbol (font-spec :family "Courier New")))
+      (error nil))
     (set-fontset-font t 'symbol (font-spec :family "Unifont") nil 'append)
     (set-fontset-font t nil (font-spec :family "DejaVu Sans"))
 

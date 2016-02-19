@@ -35,6 +35,6 @@ if test "$edit" = true; then
 else
     edit=
 fi
-
-adb-push $edit $root $1 /data/; my-adb shell "dd if=/data/$(basename $1) of=\$(echo /dev/block/platform/*/by-name/$2)"
+my-adb 'ln -s /dev/block/platform/soc.0/* /dev/block/platform/'
+adb-push $edit $root $1 /data/; my-adb shell "set -x; dd if=/data/$(basename $1) of=\$(echo /dev/block/platform/*/by-name/$2)"
 my-adb shell sync

@@ -44,6 +44,7 @@ if test ! -e "$boot"; then
     if test "$output" = "$boot"; then
         output=~/tmp/boot.img
     fi
+    my-adb 'ln -s /dev/block/platform/soc.0/* /dev/block/platform/'
     boot_part=$(my-adb 'echo /dev/block/platform/*/by-name/boot')
     if test "$boot" = adb; then
         my-adb -r echo hello

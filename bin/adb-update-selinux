@@ -5,7 +5,7 @@ set -e
 if [[ "$1" =~ ^/scp: ]]; then
     mkdir ~/tmp/$(basename $0) -p
     cd ~/tmp/$(basename $0)
-    rsync "${1#/scp:}" ./ -av --delete
+    my-rsync "${1#/scp:}" ./ -av --delete
     cd $(basename "$1")
     replace-bootimage -b adb seapp_contexts property_contexts service_contexts file_contexts selinux_version sepolicy
     adb-push-partition ~/tmp/boot.img boot

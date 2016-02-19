@@ -18,3 +18,14 @@ sync-with-xml 'default.xml -b master'
 sync-with-xml sfo-rom.xml
 sync-with-xml icesky-rom.xml
 sync-with-xml t2-m-rom.xml
+(
+    cd kernel/msm.git
+    git remote add msm310 smartisan:qualcomm/kernel/msm-3.10 || true
+    git fetch msm310
+)
+
+(
+    cd kernel/msm-3.10.git
+    git remote add msm smartisan:qualcomm/kernel/msm || true
+    git fetch msm
+)

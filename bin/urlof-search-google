@@ -1,0 +1,10 @@
+#!/bin/bash
+
+export BHJ_URLIFY=true
+exec 2>/dev/null
+
+program=${0/urlof-search-/search-}
+
+url=$($program "$@")
+echo -n "$url"
+echo -n "$url" | putclip

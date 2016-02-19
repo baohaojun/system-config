@@ -244,7 +244,7 @@
         ("C-s" . '((Firefox "C-s")
                    (Iceweasel "C-s")
                    (Okular "F3")
-                   (Gjiten "M-s" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "Home" "S-End")
+                   (Gjiten "M-s" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "Home" "S-End" "RET")
                    (t "C-g")))
         ("C-v" . '((qpdfview "SPC") (t "Next")))
         ("SPC" . '((Fbreader "Next")))
@@ -380,6 +380,7 @@
         ("l" . ((Firefox . ("C-x" "C-l")) (Iceweasel . ("C-x" "C-l"))))
         ("r" . ((Firefox . ("C-x" "C-r")) (Iceweasel . ("C-x" "C-r"))))
         ("s" . ((Firefox . ("C-x" "C-s")) (Iceweasel . ("C-x" "C-s"))
+                (Gjiten . ("M-x" "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"))
                 (Qtcreator . "C-S-s")))
         ("d" . ((Firefox . ("C-x" "C-d")) (Iceweasel . ("C-x" "C-d"))))))
 

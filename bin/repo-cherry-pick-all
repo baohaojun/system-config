@@ -57,6 +57,10 @@ done
 
 ## end generated code
 
+if test "$no_reverts" != true && yes-or-no-p -y "Skip reverted patches"; then
+    no_reverts=true
+fi
+
 if test -d .repo; then
     diffs=$(rgrep -l -P -e "$1" out/diff | sort)
 else

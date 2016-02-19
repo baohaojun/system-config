@@ -25,6 +25,12 @@ if [[ $host =~ duckduckgo ]]; then
     domain=com/?q=
 fi
 
+for site in stackoverflow github; do
+    if [[ $host =~ $site ]]; then
+        exec search-google "$@" site:$site.com
+    fi
+done
+
 if test $host = wiki.smartisan.cn; then
     domain="/doku.php?do=search&id="
 fi
@@ -56,11 +62,7 @@ if test $host = gerrit; then
 fi
 
 if test $prog = search-google; then
-    url="https://www.google.com.hk/search?q=$fill"
-fi
-
-if test $prog = search-google-gfw; then
-    url="https://www.google.co.uk/search?q=$fill"
+    url="https://www.google.com/search?q=$fill"
 fi
 
 if test $prog = search-gmap; then
@@ -111,6 +113,11 @@ if test "$prog" = search-ja.wiktionary; then
 fi
 
 set -x
+
+if test "$BHJ_URLIFY" = true; then
+    echo -n "$url"
+    exit
+fi
 
 if test "$pat"; then
     firefox-open-url-pattern "$pat" "$url"

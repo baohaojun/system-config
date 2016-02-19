@@ -84,7 +84,7 @@ if test "$#" != 0; then
             ;;
         u)
             shift
-            putclip $(github-pagep $(f "$@"))
+            putclip $(github-pagep $(f "$@") | perl -npe 's,(//[^/]*/)(\.\./)*,$1,')
             ;;
         x)
             myscr bash -c "git-push-rebase"
