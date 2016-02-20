@@ -44,7 +44,7 @@ else
 
     chroot="$cow"/chroot
 fi
-cat /proc/self/mounts | grep "$chroot" |while read what on where x; do
+cat /proc/self/mounts | grep "$chroot" |while read what where x; do
     sudo umount "$where"
 done
 
@@ -54,9 +54,20 @@ cat /proc/self/mounts | while read what where x; do
     fi
 done
 
-mkdir "$chroot"/$HOME/.ssh -p
-for x in system-config src .ssh; do
-    sudo mount ~/$x "$chroot"/$HOME/$x -o bind
-done
+sudo mkdir "$chroot"/$HOME/.ssh -p
+sudo chown $USER\. "$chroot"/$HOME -R
+
+(
+    cd
+    system_config=system-config
+    if test -d ~/src/system-config; then
+        system_config=src/system-config
+    fi
+
+    for x in $system_config src .ssh; do
+    rsync $x "$chroot"/$HOME/$x -av >/dev/null 2>&1
+    done&
+)
 
 sudo chroot "$chroot" "$@"
+

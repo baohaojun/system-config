@@ -11,7 +11,7 @@ function sync-with-xml() {
     repo sync -j4
 }
 
-repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --mirror || true
+repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --mirror >/dev/null 2>&1 || true
 ln -s . qualcomm || true
 
 sync-with-xml 'default.xml -b master'
