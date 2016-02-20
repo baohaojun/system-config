@@ -2,7 +2,8 @@
 set -x
 . ~/.config/system-config/.bashrc-path
 if test "${SSH_ORIGINAL_COMMAND/#remote-putclip */remote-putclip}" = remote-putclip; then
-    remote-putclip "${SSH_ORIGINAL_COMMAND/#remote-putclip /}"
+    SSH_ORIGINAL_COMMAND=$(echo "${SSH_ORIGINAL_COMMAND}" | grep ^remote-putclip|pn 1)
+    remote-putclip "${SSH_ORIGINAL_COMMAND#remote-putclip }"
     exit 0
 fi
 file=$(echo "$SSH_ORIGINAL_COMMAND" | grep '^emacs\.client '|tail -n 1|perl -npe 's/^emacs\.client +(-n +)?(\+1 +)?//;')
