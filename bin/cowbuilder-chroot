@@ -64,8 +64,8 @@ sudo chown $USER\. "$chroot"/$HOME -R
         system_config=src/system-config
     fi
 
-    for x in $system_config src .ssh; do
-    rsync $x "$chroot"/$HOME/$x -av >/dev/null 2>&1
+    for x in $system_config .ssh; do
+    rsync $x "$chroot"/$HOME/ -av >/dev/null 2>&1
     done&
 )
 
