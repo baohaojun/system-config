@@ -246,7 +246,15 @@ fi
 dd if=/sdcard/boot.img of=\$(echo /dev/block/platform/*/by-name/boot)
 EOF
 ) || true
-sudo rsync . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
+
+sudo bash -c "
+    mkdir ~/.ssh -p
+    if test ! -e ~/.ssh/id_rsa; then
+        cp $HOME/.ssh/id_rsa ~/.ssh/
+    fi
+"
+
+sudo rsync -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
 (
     sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /'
     echo chcon u:object_r:zygote_exec:s0 ../system/xbin/sugote

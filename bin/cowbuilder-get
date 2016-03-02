@@ -10,6 +10,8 @@ if test -L /var/cache/pbuilder -a ! -e /var/cache/pbuilder; then
     sudo mkdir -p $(readlink -m /var/cache/pbuilder)
 fi
 
+check-program pbuilder pbuilder
+
 scriptd=/usr/share/debootstrap/scripts
 systems=$(
     cd /usr/share/debootstrap/scripts;

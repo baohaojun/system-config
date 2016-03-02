@@ -1,0 +1,10 @@
+#!/bin/bash
+sep=$1
+shift
+
+echo -n "$1"
+shift
+while test $# != 0; do
+    echo -n "$sep$1"
+    shift
+done

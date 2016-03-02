@@ -8,6 +8,7 @@ fi
     if setxkbmap -query | grep 'variant:\s+dvp' -Pq; then
         setxkbmap -layout us
         xmodmap ~/system-config/etc/hardware-mach/.Xmodmap-undo
+        do-unnatural-scrolling
     else
         setxkbmap -layout us -variant dvp
         re-xmodmap 2>&1|tee

@@ -85,6 +85,7 @@ if ($do_component) {
 }
 
 $lookup_needle =~ s/\+.*//;
+$lookup_needle =~ s/\?$/.*/;
 
 my $start_dir = $ENV{PWD};
 chomp($start_dir = qx/readlink -f "$start_dir"/);

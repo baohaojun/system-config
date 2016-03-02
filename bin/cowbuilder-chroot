@@ -5,7 +5,7 @@ if test "$UNSHARE" != true; then
         bashx='bash -x'
     fi
 
-    sudo unshare -m -- su - $USER -c "UNSHARE=true $bashx $0 $*"
+    sudo unshare -m -- env PATH=$PATH HOME=$HOME USER=$USER UIDX=$UID bash -c "UNSHARE=true $bashx $0 $*"
     exit
 fi
 
@@ -65,8 +65,10 @@ sudo chown $USER\. "$chroot"/$HOME -R
     fi
 
     for x in $system_config .ssh; do
-    rsync $x "$chroot"/$HOME/ -av >/dev/null 2>&1
+        rsync $x "$chroot"/$HOME/ -av >/dev/null 2>&1
     done&
+    sudo cp ~/system-config/bin/cowbuilder-chroot.prepare "$chroot"/root/
+    sudo perl -npe "s/bhj/$USER/; s/adduser/adduser --uid $UIDX/" -i "$chroot"/root/cowbuilder-chroot.prepare
 )
 
 sudo chroot "$chroot" "$@"

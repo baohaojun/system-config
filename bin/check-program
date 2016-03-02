@@ -1,4 +1,8 @@
 #!/bin/bash
+set -e
+if test $# = 1; then
+    set -- "$1" "$2"
+fi
 if which "$1" >/dev/null 2>&1; then
     true
 else

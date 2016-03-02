@@ -4,9 +4,6 @@ mkdir -p ~/src/android-mirror
 cd ~/src/android-mirror
 
 function sync-with-xml() {
-    if is-tty-io; then
-        yes-or-no-p -y -- do $1 || true
-    fi
     repo init -u smartisan:qualcomm/platform/manifest.git -b sanfrancisco -m $1 --repo-url smartisan:/googlesource/git-repo
     repo sync -j4
 }

@@ -71,7 +71,7 @@ function git()
 
     if test $# = 2 -a "$1" = st -a "$2" = ..; then
         echo stat the whole directory
-        command git st
+        command git status
         return
     fi
 
@@ -105,10 +105,10 @@ function git()
                         (
                             cd $x
 
-                            y=$(git st -s)
+                            y=$(git status -s)
                             if test "$y"; then
                                 echo $x not clean 1>&2
-                                git st -s
+                                git status -s
                                 echo ---------------- 1>&2
                                 exit 0
                             fi
@@ -159,7 +159,7 @@ print $_ . "\n";
             if test $# = 2 -o $# = 1; then
                 where=.
             fi
-            if command git st -s $where | grep '??'; then
+            if command git status -s $where | grep '??'; then
                 echo Warning: git not clean, will not clean it
                 if yes-or-no-p -n "Continue?"; then
                     true;
@@ -170,14 +170,14 @@ print $_ . "\n";
             fi
         fi
         if test $# = 1 -a "$1" = co; then
-            git co "$(select-output-line 'git reflog | head -n 20' | pn 1)"
+            git checkout "$(select-output-line 'git reflog | head -n 20' | pn 1)"
             exit
         fi
 
         if test "$#" = 1 -a "$1" = reset-files-to-rev; then
             x=$(select-output-line 'git reflog | head -n 20' | pn 1)
             git ls-tree --name-only HEAD | xargs -d \\n git rm -rf
-            git co "$x" -- .
+            git checkout "$x" -- .
             git commit -m "$(git log --pretty="%B" "$x" -1)"
             exit
         fi
@@ -187,8 +187,8 @@ print $_ . "\n";
             exit
         fi
         if test $# = 3 -a "$1" = co -a "$2" = -B; then
-            echo git co -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
-            git co -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
+            echo git checkout -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
+            git checkout -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
             exit
         fi
 

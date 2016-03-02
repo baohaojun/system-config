@@ -1,0 +1,118 @@
+#!/bin/bash
+
+# mount /dev/sda1 /home
+# mount /home/bhj /home/trusty/home/bhj-chroot -o bind
+# mount /home/bhj/src /home/trusty/home/bhj/src -o bind
+# mount /bhj/system-config /home/trusty/home/bhj/system-config -o bind
+# mount /trusty/boot/ /home/trusty/boot/ -o bind
+# exec /usr/sbin/chroot /home/trusty /bin/bash -c 'mount / / -o bind; mount udev /dev -t devtmpfs; exec /sbin/init'
+
+set -e
+cow=$(select-output-line -o -- find ~/external/cowbuilder -maxdepth 1 -type d -name '*-*')
+if test -z "$cow"; then
+    die "cow not found"
+fi
+
+cowname=$(basename $cow)
+cowchroot=$cow/chroot
+
+home_dev=$(get-mount-1 $cowchroot/boot)
+root_dev=$(get-mount-1 /)
+boot_dev=$(get-mount-1 /boot)
+
+sudo mkdir -p /boot/$cowname
+sudo cp $cowchroot/boot /boot/$cowname -av
+cowboot_dir=/boot/$cowname/boot
+
+cat <<EOF |sudo tee /$cowname/chroot-cow
+#!/bin/bash
+set -x
+mount -o remount,rw /
+$(
+    if test $home_dev != $root_dev; then
+        echo mount $(get-mount-1 /home) /home
+    fi
+)
+
+mount /home $cowchroot/home -o bind
+mkdir -p $cowchroot/old-root /$cowname/
+mount / $cowchroot/old-root -o bind
+
+$(
+    echo mount /$cowname/boot $cowchroot/boot/ -o bind
+)
+exec /usr/sbin/chroot $cowchroot /bin/bash -c 'mount / / -o bind; mount udev /dev -t devtmpfs; exec /sbin/init'
+
+EOF
+
+vmlinux=${cowboot_dir#/boot}/$(
+    cd $cowboot_dir
+    find . -name 'vmlinu*'|sort -h|tail -n 1|cut -b 2-
+       )
+
+initrd=${cowboot_dir#/boot}/$(
+    cd $cowboot_dir
+    find . -name 'initrd*'|sort -h|tail -n 1|cut -b 2-
+      )
+
+if ! yes-or-no-p -y $vmlinux $initrd; then
+    die "can't use this $vmlinux/$initrd"
+fi
+
+function get-uuid() {
+    (
+        cd /dev/disk/by-uuid
+        for x in *; do
+            if test $(readlink -f $x) = $1; then
+                echo "$x"
+                break
+            fi
+        done
+    )
+}
+
+boot_uuid=$(
+    get-uuid $boot_dev
+         )
+
+root_uuid=$(
+    get-uuid $root_dev
+         )
+
+if test $boot_dev = /dev/sda1; then
+    hdNmsdosN=hd0,msdos1
+elif test $boot_dev = /dev/sdb1; then
+    hdNmsdosN=hd1,msdos1
+else
+    die "can't decide hdNmsdosN"
+fi
+
+cat <<EOF | sudo tee /etc/grub.d/40_$cowname
+#!/bin/sh
+exec tail -n +3 \$0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+        menuentry '$cowname Linux $(basename $vmlinux|perl -npe 's/.*?-//') ' --class debian --class gnu-linux --class gnu --class os  {
+                load_video
+                insmod gzio
+                if [ x\$grub_platform = xxen ]; then insmod xzio; insmod lzopio; fi
+                insmod part_msdos
+                insmod ext2
+                set root='$hdNmsdosN'
+                if [ x\$feature_platform_search_hint = xy ]; then
+                  search --no-floppy --fs-uuid --set=root --hint-bios=$hdNmsdosN --hint-efi=$hdNmsdosN --hint-baremetal=${hdNmsdosN/#hd/ahci}  $boot_uuid
+                else
+                  search --no-floppy --fs-uuid --set=root $boot_uuid
+                fi
+                echo    'Loading Linux $(basename $vmlinux) ...'
+                linux   $vmlinux root=$(if test "$root_uuid"; then echo UUID=$boot_uuid; else echo $root_dev; fi) ro init=/$cowname/chroot-cow
+                echo    'Loading initial ramdisk ...'
+                initrd  $initrd
+        }
+
+EOF
+
+sudo chmod +x /etc/grub.d/40_$cowname /$cowname/chroot-cow
+sudo update-grub

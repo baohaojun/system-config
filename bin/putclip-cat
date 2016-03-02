@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+if test $# != 1; then
+    die "Error: Usage $(basename $0) file"
+fi
+
+file=$(up $1)
+cat <<EOF | putclip
+cat <<EOF2 > $file
+$(cat $1)
+EOF2
+EOF

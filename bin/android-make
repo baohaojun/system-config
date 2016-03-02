@@ -215,9 +215,9 @@ EOF
         else
             echo PATH is $PATH
             if test "$make_dir"; then
-                mmma "$(relative-path "$make_dir" .)" -j$jobs
+                mmma "$(relative-path "$make_dir" .)" -j$jobs $verbose
             else
-                $do_nice make -j$jobs $keep
+                $do_nice make -j$jobs $keep $verbose
             fi
 
         fi && result=$result'all ok; ' && echo build is successful || true

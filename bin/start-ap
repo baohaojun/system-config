@@ -3,6 +3,9 @@
 set -x
 set -e
 
+check-program hostapd
+check-program udhcpd
+check-program macchanger
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt s:ssid p:password
@@ -34,12 +37,7 @@ done
 
 ## end generated code
 
-if which udhcpd && which hostapd; then
-    true
-else
-    sudo apt-get install udhcpd hostapd || true
-fi
-wlan0_ip=${1:-192.168.0.1}
+wlan0_ip=192.168.0.1
 name_servers=$(grep -P -e '^\s*nameserver' /etc/resolv.conf | pn 2 | tr '\n' ' ')
 net_prefix=${wlan0_ip%.*}
 
@@ -66,15 +64,16 @@ if test ! -e /etc/hostapd/hostapd.conf; then
 fi
 
 if test -z "$ssid"; then
-    ssid=$(select-args baohaojun unknown)
-fi
-
-if test -z "$password"; then
-    password=$(select-args helloworld iamsofunny)
+    if test -e ~/.config/system-config/start-ap; then
+        . ~/.config/system-config/start-ap
+    else
+        ssid=$(select-args baohaojun unknown)
+        password=$(select-args helloworld iamsofunny)
+    fi
 fi
 
 sudo perl -npe "s/^ssid=.*/ssid=$ssid/;
-s/#?wpa=.*/wpa=1/g;
+s/#?wpa=.*/wpa=2/g;
 s/#?wpa_passphrase=.*/wpa_passphrase=$password/" -i /etc/hostapd/hostapd.conf
 
 # sudo ifconfig wlan0 up
@@ -82,5 +81,17 @@ if ! grep '^iface wlan0 inet manual' /etc/network/interfaces; then
     sudo bash -c "echo 'iface wlan0 inet manual' >> /etc/network/interfaces";
     sudo /etc/init.d/network-manager restart
 fi
+
+(
+    set -x
+    for x in $(seq 1 5); do
+        sudo ifconfig wlan0 down; sleep .$x;
+        if sudo macchanger --mac $(random-mac) wlan0; then
+            sudo ifconfig wlan0 up;
+            break
+        fi
+    done
+)
+
 sudo ifconfig wlan0 $wlan0_ip
-sudo hostapd /etc/hostapd/hostapd.conf
+sudo hostapd "$@" /etc/hostapd/hostapd.conf

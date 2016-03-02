@@ -30,7 +30,6 @@ if test "$PWD" = ~/system-config; then
                 echo no need to update
                 break
             fi
-            echo Which file to use as base for $x?
             updated_file=$(select-output-line 'for x in *; do
                             (
                                 f=$(readlink -f "$x")

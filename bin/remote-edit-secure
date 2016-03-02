@@ -2,7 +2,7 @@
 set -x
 . ~/.config/system-config/.bashrc-path
 if test "${SSH_ORIGINAL_COMMAND/#remote-putclip */remote-putclip}" = remote-putclip; then
-    SSH_ORIGINAL_COMMAND=$(echo "${SSH_ORIGINAL_COMMAND}" | grep ^remote-putclip|pn 1)
+    SSH_ORIGINAL_COMMAND=$(echo "${SSH_ORIGINAL_COMMAND}" | grep ^remote-putclip|head -n 1)
     remote-putclip "${SSH_ORIGINAL_COMMAND#remote-putclip }"
     exit 0
 fi
