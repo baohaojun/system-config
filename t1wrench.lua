@@ -632,7 +632,7 @@ local function weixin_open_homepage()
       log("touch the search button")
 
       adb_event"adb-tap 801 132"
-      sleep(.1)
+      sleep(.2)
       if adb_top_window() == weixinSearchActivity then
          log("exit from search by key back")
          wait_input_target(weixinSearchActivity)
