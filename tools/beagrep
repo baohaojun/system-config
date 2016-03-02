@@ -38,6 +38,7 @@ my $replace_with;
 
 my @saved_args = @ARGV;
 my @fallback_dirs;
+my $only_grep_myself;
 
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
@@ -67,6 +68,7 @@ GetOptions(
     "c!" => sub {$ENV{LC_ALL} = "C"},
     "f!" => \$find_file_only,
     "l!" => \$list_beagrep,
+    "o!" => \$only_grep_myself,
     "s!" => \$short_format,
     "rewrite=s" => \$replace_with,
     ) or die;
@@ -238,7 +240,7 @@ if ($find_file_only || 1) {
     }
 }
 
-if (@fallback_dirs and not $ENV{DOING_BEAGREP_FALLBACK}) {
+if (@fallback_dirs and not $ENV{DOING_BEAGREP_FALLBACK} and not $only_grep_myself) {
     $ENV{DOING_BEAGREP_FALLBACK} = 1;
     for (@fallback_dirs) {
         $_ = realpath $_;
