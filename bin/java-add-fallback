@@ -4,6 +4,15 @@ me=$(basename $0)
 
 fallback=${me/-add-/-}
 
+if test "$DO_BOTH" != true; then
+    export DO_BOTH=true
+    if test "$me" = beagrep-add-fallback; then
+        java-add-fallback "$@"
+    else
+        beagrep-add-fallback "$@"
+    fi
+fi
+
 if test -e ~/system-config/etc/bash.d/cd_beagrep; then
     . ~/system-config/etc/bash.d/cd_beagrep
 elif test "$AJOKE_DIR"; then
@@ -55,7 +64,7 @@ for x in $(seq 0 100); do
         break
     fi
     if test "$(readlink -f $this_db_dir/.$fallback.$x)" = $that_db_dir; then
-        die "$1 already a fallback at $x"
+        die "$1 already a $fallback at $x"
     fi
 done
 
