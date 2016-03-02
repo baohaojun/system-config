@@ -1873,6 +1873,10 @@ end
 t1_adb_mail = function(subject, to, cc, bcc, attachments)
    to = expand_mail_groups(to)
    if to ~= "" and subject == "" and cc == "" and bcc == "" and attachments == "" then
+         local window = adb_top_window()
+         if window == "com.android.contacts/com.android.contacts.activities.ContactSelectionActivity" then
+             adb_event"key back"
+         end
          putclip(to)
          adb_event"sleep .5 key scroll_lock sleep .5"
          return
