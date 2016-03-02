@@ -23,6 +23,10 @@
 (eval-after-load 'org
   '(progn
      (require 'org-jira)
+     (require 'org-crypt)
+     (org-crypt-use-before-save-magic)
+     (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+     (setq org-crypt-key nil)
      (condition-case nil
          (load "jira-users")
        (error nil))
