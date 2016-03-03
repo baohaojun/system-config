@@ -2,6 +2,30 @@
 if test "$SYSTEM_CONFIG_INITED" != true; then
     . ~/system-config/.bashrc
 fi
+
+if test "$1" = init; then
+    saved_args=()
+    should_cd=false
+    build_dir=
+    while test "$1"; do
+        if [[ "$1" =~ ^\!.*\! ]]; then
+            build_dir=$HOME/jw/$(echo "$1" | perl -npe 's/!(.*)!.*/$1/')
+            should_cd=true
+        fi
+        saved_args=("${saved_args[@]}" "${1#\!*\!}")
+        shift
+    done
+    set -- "${saved_args[@]}"
+    if test "$should_cd" = true; then
+        mkdir -p $build_dir
+        rm -f ./.true_build_dir
+        relative-link $build_dir ./.true_build_dir
+        cd $build_dir
+    fi
+elif test -d ./.true_build_dir; then
+    cd "$(readlink -f ./.true_build_dir)"
+fi
+
 if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
     if test "$1" = sync; then
         if test -e "smartcm/.do-not-clean"; then
