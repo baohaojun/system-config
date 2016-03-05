@@ -57,6 +57,16 @@
        nil "Edit all lines matching a given regexp" single
        ((:url . "http://elpa.gnu.org/packages/all.html")
 	(:keywords "matching"))])
+ (ampc .
+       [(0 2)
+	nil "Asynchronous Music Player Controller" single
+	((:url . "http://elpa.gnu.org/packages/ampc.html")
+	 (:keywords "ampc" "mpc" "mpd"))])
+ (arbitools .
+	    [(0 51)
+	     nil "Package for chess tournaments administration" single
+	     ((:url . "http://elpa.gnu.org/packages/arbitools.html")
+	      (:keywords))])
  (ascii-art-to-unicode .
 		       [(1 9)
 			nil "a small artist adjunct" single
@@ -143,14 +153,14 @@
 	   ((:keywords "abbrev" "convenience" "matching")
 	    (:url . "http://company-mode.github.io/"))])
  (company-math .
-	       [(1 0 1)
+	       [(1 1)
 		((company
 		  (0 8 0))
 		 (math-symbol-lists
 		  (1 0)))
-		"Completion backends for unicode math symbols and latex tags" single
-		((:url . "https://github.com/vspinu/company-math")
-		 (:keywords "unicode" "symbols" "completion"))])
+		"Completion backends for unicode math symbols and latex tags" tar
+		((:keywords "unicode" "symbols" "completion")
+		 (:url . "https://github.com/vspinu/company-math"))])
  (company-statistics .
 		     [(0 2 2)
 		      ((emacs
@@ -161,7 +171,7 @@
 		      ((:keywords "abbrev" "convenience" "matching")
 		       (:url . "https://github.com/company-mode/company-statistics"))])
  (context-coloring .
-		   [(7 2 0)
+		   [(7 2 1)
 		    ((emacs
 		      (24 3))
 		     (js2-mode
@@ -294,10 +304,23 @@
 		  "Emacs mode based on common modern interface and ergonomics." tar
 		  ((:keywords "convenience")
 		   (:url . "https://github.com/ergoemacs/ergoemacs-mode"))])
+ (excorporate .
+	      [(0 7 1)
+	       ((emacs
+		 (24 1))
+		(fsm
+		 (0 2))
+		(soap-client
+		 (3 0 2))
+		(url-http-ntlm
+		 (2 0 2)))
+	       "Exchange integration" tar
+	       ((:keywords "calendar")
+		(:url . "http://elpa.gnu.org/packages/excorporate.html"))])
  (exwm .
-       [(0 1)
+       [(0 4)
 	((xelb
-	  (0 3)))
+	  (0 6)))
 	"Emacs X Window Manager" tar
 	((:keywords "unix")
 	 (:url . "https://github.com/ch11ng/exwm"))])
@@ -458,17 +481,17 @@
 	     ((:url . "http://elpa.gnu.org/packages/markchars.html")
 	      (:keywords))])
  (math-symbol-lists .
-		    [(1 0)
-		     nil "Lists of Unicode math symbols and latex commands" single
-		     ((:url . "https://github.com/vspinu/math-symbol-lists")
-		      (:keywords "unicode" "symbols" "mathematics"))])
+		    [(1 1)
+		     nil "Lists of Unicode math symbols and latex commands" tar
+		     ((:keywords "unicode" "symbols" "mathematics")
+		      (:url . "https://github.com/vspinu/math-symbol-lists"))])
  (memory-usage .
 	       [(0 2)
 		nil "Analyze the memory usage of Emacs in various ways" single
 		((:url . "http://elpa.gnu.org/packages/memory-usage.html")
 		 (:keywords "maint"))])
  (metar .
-	[(0 1)
+	[(0 2)
 	 ((cl-lib
 	   (0 5)))
 	 "Retrieve and decode METAR weather information" single
@@ -492,8 +515,8 @@
 	   ((:url . "http://elpa.gnu.org/packages/minimap.html")
 	    (:keywords))])
  (multishell .
-	     [(1 1 3)
-	      nil "facilitate multiple local and remote shell buffers" tar
+	     [(1 1 5)
+	      nil "Easily use multiple shell buffers, local and remote." tar
 	      ((:keywords "processes")
 	       (:url . "https://github.com/kenmanheimer/EmacsMultishell"))])
  (muse .
@@ -559,7 +582,7 @@
 	     ((:url . "https://github.com/michael-heerdegen/on-screen.el")
 	      (:keywords "convenience"))])
  (org .
-      [(20160208)
+      [(20160229)
        nil "Outline-based notes management and organizer" tar nil])
  (osc .
       [(0 1)
@@ -639,6 +662,11 @@
 		  nil "restore original position after scrolling" single
 		  ((:url . "http://elpa.gnu.org/packages/scroll-restore.html")
 		   (:keywords "scrolling"))])
+ (sed-mode .
+	   [(1 0)
+	    nil "Major mode to edit sed scripts" single
+	    ((:url . "http://elpa.gnu.org/packages/sed-mode.html")
+	     (:keywords))])
  (seq .
       [(1 11)
        nil "Sequence manipulation functions" single
@@ -650,10 +678,10 @@
 	     ((:keywords "languages" "shen")
 	      (:url . "http://elpa.gnu.org/packages/shen-mode.html"))])
  (sisu-mode .
-	    [(3 0 3)
+	    [(7 1 8)
 	     nil "Major mode for SiSU markup text" single
-	     ((:url . "http://elpa.gnu.org/packages/sisu-mode.html")
-	      (:keywords "text" "processes" "tools"))])
+	     ((:url . "http://www.sisudoc.org/")
+	      (:keywords "text" "syntax" "processes" "tools"))])
  (sml-mode .
 	   [(6 7)
 	    nil "Major mode for editing (Standard) ML" single
@@ -672,7 +700,7 @@
 	   ((:keywords "games")
 	    (:url . "http://elpa.gnu.org/packages/sokoban.html"))])
  (sotlisp .
-	  [(1 4 1)
+	  [(1 5 1)
 	   ((emacs
 	     (24 1)))
 	   "Write lisp at the speed of thought." single
@@ -684,7 +712,7 @@
 	   ((:url . "https://github.com/Malabarba/spinner.el")
 	    (:keywords "processes" "mode-line"))])
  (stream .
-	 [(2 1 0)
+	 [(2 2 0)
 	  ((emacs
 	    (25)))
 	  "Implementation of streams" single
@@ -726,7 +754,7 @@
 		      ((:url . "http://elpa.gnu.org/packages/temp-buffer-browse.html")
 		       (:keywords "convenience"))])
  (test-simple .
-	      [(1 1)
+	      [(1 2 0)
 	       ((cl-lib
 		 (0)))
 	       "Simple Unit Test Framework for Emacs Lisp" single
@@ -744,6 +772,13 @@
 	nil "Quickly generate linear ranges in Emacs" tar
 	((:keywords "convenience")
 	 (:url . "https://github.com/abo-abo/tiny"))])
+ (tramp-theme .
+	      [(0 1 1)
+	       ((emacs
+		 (24 1)))
+	       "Custom theme for remote buffers" single
+	       ((:url . "http://elpa.gnu.org/packages/tramp-theme.html")
+		(:keywords "convenience" "faces"))])
  (transcribe .
 	     [(1 0 2)
 	      nil "Package for audio transcriptions" single
@@ -767,6 +802,15 @@
 		  [(0 1)
 		   nil "Unicode confusables table" tar
 		   ((:url . "http://elpa.gnu.org/packages/uni-confusables.html"))])
+ (url-http-ntlm .
+		[(2 0 2)
+		 ((cl-lib
+		   (0 5))
+		  (ntlm
+		   (2 0 0)))
+		 "NTLM authentication for the url library" single
+		 ((:url . "http://elpa.gnu.org/packages/url-http-ntlm.html")
+		  (:keywords "comm" "data" "processes" "hypermedia"))])
  (vlf .
       [(1 7)
        nil "View Large Files" tar
@@ -826,7 +870,7 @@
 	 ((:url . "http://elpa.gnu.org/packages/xclip.html")
 	  (:keywords "convenience" "tools"))])
  (xelb .
-       [(0 4)
+       [(0 6)
 	((emacs
 	  (24 4))
 	 (cl-generic
