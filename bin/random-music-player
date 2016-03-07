@@ -26,6 +26,7 @@ while (<$song_list>) {
     if (m,.*/Music/like/(.*)/(.*)/(.*)$,) {
         $songs_map{$_}{author} = $1;
         $songs_author_map{$1}{$_} = 1;
+        $songs_author_map{"$1/$2"}{$_} = 1;
         $songs_map{$_}{album} = $2;
         $songs_map{$_}{song} = $_;
         if (not $songs_playing and not $song_list_exist) {

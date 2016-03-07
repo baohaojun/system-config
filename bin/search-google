@@ -112,6 +112,10 @@ if test "$prog" = search-ja.wiktionary; then
     pat="https://en.wiktionary.org/"
 fi
 
+if test "$prog" = search-jenkins; then
+    url="http://build1:8080/job/$fill"
+fi
+
 set -x
 
 if test "$BHJ_URLIFY" = true; then

@@ -18,7 +18,7 @@ cd "$1"
 
 (
     flock -n 9
-    for x in ./*; do
-        ($x || true&)
+    for x in $PWD/*; do
+        (cd /tmp; $x || true&)
     done
 ) 9> .$(basename $0).lock

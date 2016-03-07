@@ -69,6 +69,7 @@ sudo chown $USER\. "$chroot"/$HOME -R
     done&
     sudo cp ~/system-config/bin/cowbuilder-chroot.prepare "$chroot"/root/
     sudo perl -npe "s/bhj/$USER/; s/adduser/adduser --uid $UIDX/" -i "$chroot"/root/cowbuilder-chroot.prepare
+    sudo mount -o bind ~/src "$chroot"/$HOME/src
 )
 
 sudo chroot "$chroot" "$@"
