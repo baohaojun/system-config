@@ -241,6 +241,7 @@
         ("M-f" . '((t "C-Right")))
         ("M-B" . '((t "C-S-Left")))
         ("M-F" . '((t "C-S-Right")))
+        ("F12" . '((Emacs "Home" "C-c" "C-t" "S" "TAB" "TAB" "C-c" "C-n" "Home" "M-f" "C-f")))
         ("C-s" . '((Firefox "C-s")
                    (Iceweasel "C-s")
                    (Okular "F3")

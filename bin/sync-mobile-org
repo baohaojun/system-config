@@ -20,7 +20,7 @@ function sync-phone-files() {
         fi
     elif test "$1" = "-r"; then
         if test $rsync = true; then
-            rsync -av . media_rw@phone:/data/media/0/MobileOrg/ --exclude .git --delete || true
+            rsync -av * media_rw@phone:/data/media/0/MobileOrg/ --exclude .git --delete || true
         else
             for x in *; do
                 my-adb push $x /sdcard/MobileOrg/$x
@@ -71,7 +71,11 @@ find-or-exec konsole
 cd ~/system-config/doc/projects
 
 if git-dirty; then
-    git-interactive-add
+    if yes-or-no-p -y "git add all?"; then
+        git add .
+    else
+        git-interactive-add
+    fi
     git commit -m 'auto commit' -s || true
 fi
 
@@ -93,7 +97,7 @@ if test ! -d .git; then
     git init
 fi
 if git-dirty; then
-    git-interactive-add
+    git add .
 fi
 function sync-on-phone() {
     my-adb touch /sdcard/MobileOrg/mobileorg.org.bak
@@ -133,8 +137,12 @@ function check_git_dir() {
     cd  "$1"
 
     find-or-exec konsole
-    git-interactive-add
-    if ! yes-or-no-p -y "Continue for $2 @$PWD"; then
+    if test "$PWD" = ~/today/MobileOrg; then
+        git add .
+    else
+        git-interactive-add
+    fi
+    if ! yes-or-no-p -t 5 -y "Continue for $2 @$PWD"; then
         exit 0
     fi
 }
