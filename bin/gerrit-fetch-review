@@ -2,7 +2,11 @@
 set -e
 tmpf=/tmp/$(basename $0).$$
 if test $# = 1 -a "${1:0:4}" = http; then
-    set -- "$(basename "$1")"
+    if echo "$1" |grep -q "/\d+/\d+$" -P; then
+        set -- $(echo "$1"|perl -npe 's,.*/(\d+)/\d+$,$1,')
+    else
+        set -- "$(basename "$1")"
+    fi
 fi
 gerrit query "$@" --current-patch-set > $tmpf
 
