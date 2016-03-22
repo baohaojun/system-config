@@ -84,6 +84,9 @@
   (format nil "%s%%%s" (window-class window) (window-name window)))
 
 (bind-keys s-h-keymap "s"  '(system "EMACS=t s&"))
+(bind-keys s-h-keymap "F1"  '(system "EMACS=t s&"))
+(bind-keys s-h-keymap "F2"  '(system "EMACS=t s&"))
+(bind-keys s-h-keymap "F3"  '(system "EMACS=t s&"))
 (bind-keys s-h-keymap "S"  '(system "os&"))
 (bind-keys s-h-keymap "n"  '(system "douban next&"))
 (bind-keys global-keymap "KP_Multiply" '(system "douban like&"))

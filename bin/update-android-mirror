@@ -68,7 +68,7 @@ export https_proxy=http://localhost:8888
                 )
             )|tee git-push.txt'
         if my-rfa 'grep rejected git-push.txt -q && pwd' | grep .; then
-            my-rfa 'grep rejected git-push.txt -q && pwd' | mailx baohaojun@gmail.com -s "Some android branches failed to sync"
+            my-rfa 'grep -nH "rejected.*non-fast-forward" $PWD/git-push.txt' | mailx baohaojun@gmail.com -s "Some android branches failed to sync"
         fi
     else
         if (( day % 5 == 1 )); then

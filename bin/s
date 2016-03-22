@@ -14,6 +14,11 @@ button3='"Super-Button3-Click"'
 
 if test "$DESKTOP_SESSION" = sawfish; then
     start_event=$(sawfish-client -e '(event-name (last-event))')
+    if test "$start_event" = '"F2"'; then
+        start_event=$button2
+    elif test "$start_event" = '"F3"'; then
+        start_event=$button3
+    fi
     if test "$start_event" = '"Super-Button1-Click"'; then
         last_action=$(cat ~/.cache/system-config/logs/last-search | head -n 1)
     fi

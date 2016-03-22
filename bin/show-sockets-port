@@ -1,16 +1,23 @@
 #!/bin/bash
 
-for x in $(cat /proc/net/tcp | perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg'|grep -e ":$1\b"|tee /dev/stderr|pn 10); do
-
-    echo inode is $x;
-    for p in $(sudo bash -c 'echo /proc/*/fd'); do
-        if sudo ls -l $p/ 2>/dev/null |grep -e "\b$x\b"; then
-            p=${p#/proc/}
-            p=${p%/*}
-            echo process is $p
-            ps.pl $p
+cat /proc/net/tcp | perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg'|grep -e ":$1\b"|
+    while read line; do
+        echo $line 1>&2
+        x=$(echo $line | pn 10)
+        if test $x = 0; then
+            echo need continue for inode = 0
+            continue
         fi
+
+        echo inode is $x;
+        for p in $(sudo bash -c 'echo /proc/*/fd'); do
+            if sudo ls -l $p/ 2>/dev/null |grep -e "\b$x\b"; then
+                p=${p#/proc/}
+                p=${p%/*}
+                echo process is $p
+                ps.pl $p
+            fi
+        done
     done
-done
 
 
