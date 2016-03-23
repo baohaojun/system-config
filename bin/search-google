@@ -112,6 +112,10 @@ if test "$prog" = search-ja.wiktionary; then
     pat="https://en.wiktionary.org/"
 fi
 
+if test "$prog" = search-jaccent; then
+    url="http://www.gavo.t.u-tokyo.ac.jp/ojad/search/index/sortprefix:accent/narabi1:kata_asc/narabi2:accent_asc/narabi3:mola_asc/yure:visible/curve:invisible/details:invisible/limit:20/word:$fill"
+fi
+
 if test "$prog" = search-jenkins; then
     url="http://build1:8080/job/$fill"
 fi
