@@ -87,7 +87,10 @@ elif test "$update_last_search" = false; then # button call
     fi
 fi
 
-
+if [[ "$engineX" =~ "n " ]]; then
+    engineX=$(cd ~/system-config/bin/; select-args $(echo search-${engineX#n }*))
+    update_last_search=false
+fi
 if test -x ~/system-config/bin/"$engineX" -a "$update_last_search" = true; then
     update-engine-order "$engineX"
 fi&
