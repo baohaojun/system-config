@@ -4,6 +4,10 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 
+if test "$(which adb)" != ~/system-config/bin/Linux/adb; then
+    bark "Your adb is not from system-config, may cause problem: $(which adb)"
+fi
+
 myname=$(basename $0)
 
 function die() {
@@ -255,7 +259,7 @@ function adb() {
         my-adb -W || true
     fi
 
-    if test "$1" = logcat -a "$2" = -c; then
+    if test "$1" = logcat -a "$2" = -C; then
         the-true-adb logcat -c
         shift 2
         exec my-adb logcat "$@"

@@ -36,5 +36,12 @@ else
     edit=
 fi
 my-adb 'ln -s /dev/block/platform/soc.0/* /dev/block/platform/'
-adb-push $edit $root $1 /data/; my-adb shell "set -x; dd if=/data/$(basename $1) of=\$(echo /dev/block/platform/*/by-name/$2)"
+if my-adb id | grep 'uid=0\b' -P -q; then
+    su=
+    adb-push $edit $root $1 /sdcard/;
+else
+    su='su -c'
+    adb push $1 /sdcard/$(basename $1)
+fi
+my-adb shell $su "set -x; dd if=/sdcard/$(basename $1) of=\$(echo /dev/block/platform/*/by-name/$2)"
 my-adb shell sync

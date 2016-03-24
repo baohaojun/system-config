@@ -33,27 +33,28 @@ if test ! "$ANDROID_SERIAL"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt  Sno_system Gno_gapps ssystem_only ddebug x:skip-partitions
+# generate-getopt  Sno-system Gno-gapps ssystem-only ddebug x:skip-partitions Hno-hack
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o SGsdx: --long "no_system,no_gapps,system_only,debug,skip-partitions:"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o SGsdx:H --long "no-system,no-gapps,system-only,debug,skip-partitions:,no-hack"  -n $(basename $0) -- "$@")
 no_system=false
 no_gapps=false
 system_only=false
 debug=false
 skip_partitions=
+no_hack=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -S|--no_system)
+        -S|--no-system)
             no_system=true
             shift
             ;;
-        -G|--no_gapps)
+        -G|--no-gapps)
             no_gapps=true
             shift
             ;;
-        -s|--system_only)
+        -s|--system-only)
             system_only=true
             shift
             ;;
@@ -64,6 +65,10 @@ while true; do
         -x|--skip-partitions)
             skip_partitions=$2
             shift 2
+            ;;
+        -H|--no-hack)
+            no_hack=true
+            shift
             ;;
         --)
             shift
@@ -117,7 +122,11 @@ function update-partition() {
         return 0
     fi
     if test $(basename $file) = boot.img; then
-        adb-push -d $file /data
+        if test $no_hack = true; then
+            adb-push $file /data
+        else
+            adb-push -d $file /data
+        fi
     else
         my-adb push $file /data
     fi
@@ -218,7 +227,7 @@ if test ! -e xbin/busybox; then
     done
 fi
 
-if test -e $gapps_updir/gapps-t1; then
+if test -e $gapps_updir/gapps-t1 -a $no_hack = false; then
     dest=$PWD
     sudo mv xbin/su xbin/su.copy || true
     (
@@ -258,8 +267,10 @@ sudo rsync -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --dele
 (
     sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /'
     echo chcon u:object_r:zygote_exec:s0 ../system/xbin/sugote
-    echo chmod 755 /system/etc/install-recovery.sh
-    echo ln -sf /system/etc/install-recovery.sh /system/bin/install-recovery.sh
+    if test $no_hack = false; then
+        echo chmod 755 /system/etc/install-recovery.sh
+        echo ln -sf /system/etc/install-recovery.sh /system/bin/install-recovery.sh
+    fi
 )|tee ../system.chcon
 my-adb push ../system.chcon /data/
 my-adb 'cd /system; bash -x /data/system.chcon; sync'

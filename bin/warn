@@ -1,0 +1,7 @@
+#!/bin/bash
+exec 1>&2
+echo -n "$@"
+for x in $(seq 1 5); do
+    echo -n .
+done
+echo
