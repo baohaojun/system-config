@@ -8,6 +8,7 @@ set(
   DICTS_RAW
   STCharacters
   SJCharacters
+  JSCharacters
   STPhrases
   TSCharacters
   TSPhrases
@@ -138,6 +139,7 @@ endforeach(DICT)
 set(CONFIG_FILES
   config/s2t.json
   config/s2j.json
+  config/j2s.json
   config/t2s.json
   config/s2tw.json
   config/s2twp.json
