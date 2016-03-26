@@ -674,10 +674,16 @@ class ime:
         if self.commitstr == '!s':
             self.s2t_mode = False
         elif self.commitstr == '!t':
-            self.s2t_mode = True
+            self.s2t_mode = 't'
+        elif self.commitstr == '!j':
+            self.s2t_mode = 'j'
         elif self.commitstr:
-            if self.s2t_mode and _g_opencc:
-                self.__reply('commit: %s' % _g_opencc.convert(self.commitstr))
+            global _g_opencc_s2t
+            global _g_opencc_s2j
+            if self.s2t_mode == 't' and _g_opencc_s2t:
+                self.__reply('commit: %s' % _g_opencc_s2t.convert(self.commitstr))
+            elif self.s2t_mode == 'j' and _g_opencc_s2j:
+                self.__reply('commit: %s' % _g_opencc_s2j.convert(self.commitstr))
             else:
                 self.__reply('commit: %s' % self.commitstr)
 
@@ -741,13 +747,14 @@ def init():
 
     global _g_ime_s2t_mode
     _g_ime_s2t_mode = os.path.exists(os.path.join(os.environ["HOME"], ".sdim-s2t"))
-    global _g_opencc
-    if _g_ime_s2t_mode:
-        try:
-            import opencc
-            _g_opencc = opencc.OpenCC("zhs2zht.ini")
-        except:
-            pass
+    global _g_opencc_s2t
+    global _g_opencc_s2j
+    try:
+        import opencc
+        _g_opencc_s2t = opencc.OpenCC("s2t.json")
+        _g_opencc_s2j = opencc.OpenCC("s2j.json")
+    except:
+        pass
 
     global _g_ime_trans
     _g_ime_trans = ime_trans()

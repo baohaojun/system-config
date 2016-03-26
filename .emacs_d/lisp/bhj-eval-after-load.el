@@ -22,6 +22,7 @@
 
 (eval-after-load 'org
   '(progn
+     (org-defkey org-mode-map [?\e (shift return)] 'org-insert-todo-heading)
      (require 'org-jira)
      (require 'org-crypt)
      (org-crypt-use-before-save-magic)

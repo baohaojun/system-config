@@ -23,7 +23,7 @@ function f()
         exit
     fi
     set -e
-    out=$(ORIGINAL_MATCHER="$@ "'!\.class$' select-output-line -- "find . -type f -iname '*$1*'|xargs ls -t")
+    out=$(ORIGINAL_MATCHER="$@ "'!\.class$' select-output-line -- "find . $F_FIND_OPTS -type f -iname '*$1*'|xargs ls -t")
     echo $out
     if is-tty-io; then
         putclip $out

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if test $(basename $0) = java7; then
+    PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
+else # java6
+    PATH=~/external/bin/Linux/ext/jdk/bin:$PATH
+fi
+if test $# = 0; then
+    start_recursive_shell $(basename $0)
+else
+    "$@"
+fi
