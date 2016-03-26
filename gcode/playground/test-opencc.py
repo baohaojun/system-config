@@ -6,7 +6,7 @@ import sys
 import os
 
 progname = os.path.basename(sys.argv[0])
-if progname != 'test-opencc.':
+if progname != 'test-opencc.py':
     cc = opencc.OpenCC(progname + '.json')
 else:
     cc = opencc.OpenCC('s2j.json')
