@@ -22,11 +22,12 @@ else
             if grep -q $jkanji /usr/share/gjiten/dics/kanjidic; then
                 echo -n "$kanji "; grep $jkanji /usr/share/gjiten/dics/kanjidic | perl -npe 's/[-\w.{}]//g; s/\s+/ /g'
                 echo
-            elif grep -q $skanji /usr/share/gjiten/dics/kanjidic; then
+            fi
+            if grep -q $skanji /usr/share/gjiten/dics/kanjidic; then
                 echo -n "$skanji "; grep $skanji /usr/share/gjiten/dics/kanjidic | perl -npe 's/[-\w.{}]//g; s/\s+/ /g'
                 echo
             fi
-        done | ja_JP sort -k 3 | (
+        done | ja_JP sort -k 3 | uniq-even-non-ajacent | (
         mkdir ~/system-config/cache/$(basename $0) -p
         tee ~/system-config/cache/$(basename $0)/$pinyin.$$
         mv ~/system-config/cache/$(basename $0)/$pinyin.$$ ~/system-config/cache/$(basename $0)/$pinyin
