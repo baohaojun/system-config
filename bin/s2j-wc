@@ -1,12 +1,10 @@
 #!/bin/bash
 set -e
 hanzi=$1
-md5=$(echo $hanzi|md5sum|cut -b 1-2)
+md5=$(echo $hanzi|md5sum|cut -b 1)
 
 if test -e ~/system-config/cache/$(basename $0)/$md5/$hanzi; then
     cat ~/system-config/cache/$(basename $0)/$md5/$hanzi
 else
-    mkdir -p ~/.cache/system-config/$(basename $0)/$md5
-    $(basename $0|perl -npe 's/-wc//') "$hanzi"| tee ~/system-config/cache/$(basename $0)/$md5/$hanzi.$$
-    mv ~/system-config/cache/$(basename $0)/$md5/$hanzi.$$ ~/system-config/cache/$(basename $0)/$md5/$hanzi
+    echo $hanzi
 fi
