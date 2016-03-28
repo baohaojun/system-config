@@ -19,6 +19,11 @@ function die() {
     exit -1
 }
 
+if test "$1" = run -a -x "$2"; then
+    shift
+    exec "$@" > ~/tmp/bhj-cron-runner.$$ 2>&1
+fi
+
 for dir in ~/system-config/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; do
     if test ! -d $dir; then
         continue
@@ -29,10 +34,9 @@ for dir in ~/system-config/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; d
         if test "$x" != "${x%.stackdump}" -o -d "$x" || [[ $x =~ \# ]]; then
             continue
         fi
-        chmod +x $x || true
         test -e $x || continue
         ld=$logdir/$x/$(date +%A)/
         mkdir -p $ld
-        ($x || bhj-notify cron-runner "$x failed: errno $?" &) > $ld/$(date +%H:%M) 2>&1
+        ($x || mail-bhj cron-runner "$x failed: errno $?" &) > $ld/$(date +%H:%M) 2>&1
     done
 done&

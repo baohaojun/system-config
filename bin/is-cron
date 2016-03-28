@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+if test "$RUNNING_IN_CRON" = true; then
+    true
+else
+    false
+fi

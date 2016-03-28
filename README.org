@@ -21,4 +21,4 @@ If you have your own customization, it would be a good idea that you back them u
 
 * Git submodules
 
-System-config comes with some sudmodules -- that's why there's a =--recursive= argument in the usage command -- such as [[https://github.com/baohaojun/beagrep][beagrep]], which will be checked out together with system-config. But there are also some other “submodules”, such as [[http://github.com/baohaojun/emacs.d][~/src/github/emacs.d]] that are not managed by system-config's git submodule, but as separate projects which will be checked out when running =after-check-out.sh=.
+System-config comes with some submodules -- that's why there's a =--recursive= argument in the usage command -- such as [[https://github.com/baohaojun/beagrep][beagrep]], which will be checked out together with system-config. But there are also some other “submodules”, such as [[http://github.com/baohaojun/emacs.d][~/src/github/emacs.d]] that are not managed by system-config's git submodule, but as separate projects which will be checked out when running =after-check-out.sh=.

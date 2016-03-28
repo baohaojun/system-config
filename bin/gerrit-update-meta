@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+git fetch $(repo-remote) refs/*:refs/*
+git co refs/meta/config
