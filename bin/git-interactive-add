@@ -41,6 +41,10 @@ while true; do
     esac
 done
 
+if test -e .git-interactive-add.before; then
+    bash .git-interactive-add.before
+fi
+
 function git-diff() {
     clear
 

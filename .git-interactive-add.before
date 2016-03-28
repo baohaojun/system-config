@@ -1,0 +1,3 @@
+#!/bin/bash
+cd ~/system-config/cache/
+git add .
