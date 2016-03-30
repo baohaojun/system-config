@@ -1,5 +1,12 @@
 #!/bin/bash
 set -e
+
+if test "$#" = 0; then
+    while read -p "Please input the hanzi pinyin that you want as kanji 音訓：" pinyin; do
+        $0 $pinyin
+    done
+    exit
+fi
 pinyin=$1
 
 pager=cat

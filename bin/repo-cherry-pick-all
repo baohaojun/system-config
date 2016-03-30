@@ -167,7 +167,7 @@ for diff_file in $diffs; do
                 if test "$dry_run" = true; then
                     continue
                 fi
-                if git cherry-pick --allow-empty $git_commit_id; then
+                if git cherry-pick -x --allow-empty $git_commit_id; then
                     true
                 elif is-tty-io; then
                     start_recursive_shell "cherry failed: $git_commit_id" || ret=$?

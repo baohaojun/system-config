@@ -1,0 +1,10 @@
+#!/bin/bash
+ssh smartisan gerrit show-queue -w |perl -ne 'print if s/.*\((.*)\)/$1/'|
+perl -ne '
+     chomp;
+     $w{$_}++;
+     END{
+         for (sort {$w{$b} <=> $w{$a}} keys %w) {
+             print "$_ $w{$_}\n";
+         }
+     }'

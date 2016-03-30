@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) LOCAL_DIR REMOTE_GIT_URL"
+fi
+
+dir=$1
+url=$2
+
+if test ! -d $dir/.git; then
+    mkdir -p $dir
+    (
+        cd $dir
+        git clone $url .
+    )
+else
+    (
+        cd $dir
+        git pull
+    )
+fi

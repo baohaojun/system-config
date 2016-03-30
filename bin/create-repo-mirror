@@ -14,7 +14,7 @@ ln -s . qualcomm || true
 sync-with-xml 'default.xml -b master'
 sync-with-xml sfo-rom.xml
 sync-with-xml icesky-rom.xml
-sync-with-xml t2-m-rom.xml
+sync-with-xml surabaya-rom-8996-r01200.3.xml
 (
     cd kernel/msm.git
     git remote add msm310 smartisan:qualcomm/kernel/msm-3.10 || true

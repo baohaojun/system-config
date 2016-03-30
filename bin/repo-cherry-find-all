@@ -229,6 +229,9 @@ my-rfa -j $jobs '
     fi
     TOP=$ANDROID_TOP;
     log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
+    if [[ $log =~ /\.log$ ]]; then
+        die "Error for $(ap): can not find repo path"
+    fi
     mkdir -p $(dirname $log);
     if test -z "$to_manifest_xml"; then
         if test ! "$remote" -a $local_from = false ; then
@@ -257,7 +260,7 @@ my-rfa -j $jobs '
         exit
     fi
     echo git-change-id-ffable $from $to in $PWD
-    git-change-id-ffable $from $to > $log
+    git-change-id-ffable $from $to > $log || true
     if test $(stat -c %s $log) = 0; then
         rm $log;
     fi;
