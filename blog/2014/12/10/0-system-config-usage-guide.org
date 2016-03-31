@@ -12,7 +12,7 @@ System-config是github上的一个项目，里面包含了我的所有配置文�
 
 如果没有看过 [[../../01/03/0-7-habits-of-highly-effective-editting.org][高效文本编辑的七个习惯]] 的话，强烈推荐在看本文之前或/和之后看看，Vim作者写的，我翻译的。
 
-（我后来录了一个两小时的视频，在bilibili上，[[http://www.bilibili.com/video/av3376647/][我的十年Linux使用经验]] ，欢迎去上吐槽。）
+（我后来录了一个两小时的视频，在bilibili上，[[http://www.bilibili.com/video/av3376647/][我的十年Linux使用经验]] ，欢迎上去吐槽。）
 
 * system-config 是什么
 
