@@ -10,7 +10,9 @@ System-config是github上的一个项目，里面包含了我的所有配置文�
 
 说不定你还能学会一两个新工具的用法😁。
 
-如果没有看过 [[../../01/03/0-7-habits-of-highly-effective-editting.org][高效文本编辑的七个习惯]] 的话，强烈推荐在看本文之前或/和之后看看那篇文章，Vim作者写的，我翻译的。
+如果没有看过 [[../../01/03/0-7-habits-of-highly-effective-editting.org][高效文本编辑的七个习惯]] 的话，强烈推荐在看本文之前或/和之后看看，Vim作者写的，我翻译的。
+
+（我后来录了一个两小时的视频，在bilibili上，[[http://www.bilibili.com/video/av3376647/][我的十年Linux使用经验]] ，欢迎去上吐槽。）
 
 * system-config 是什么
 
@@ -22,11 +24,19 @@ github上有一些跟system-config类似的项目，但好像还没有像我的�
 
 我最早开始折腾这些配置，是在当年很有名的清华大学王垠的博客上，看到他把自己的配置一条一条地粘贴在自己的文章里，我就一条一条地拷贝下来，中间经常容易出错。即使没有出错，我也非常担心自己是不是在拷贝的时候少拷了一行代码之类的，非常没有保证。所以后来我学会了svn之后就把这些程序放到了google-code上。后来学了git之后就转移到github了。不知道大家有没有过类似地从网上到处拷一小段配置、代码的经历😁。
 
-我的system-config最佳的使用方法是你把它给fork出去，以后你会有一些你自己觉得适合你个人的特殊的使用习惯，然后你就可以考虑把它们放到你自己的system-config里。当然，初期的话，你可以先考虑直接用我的，然后再考虑fork。这样即使中间你已经有了一些改进，基本上应该也不会丢失。因为我们是在用git管理我们的配置代码。另外，当你觉得你发现了我写的一些不够合理的地方，欢迎在github上给我提merge request。
+接下来说一下如何使用我的system-config。（当你使用一段时间之后，你也可以fork这个项目，然后把你自己喜欢的一些设置加入到你的fork中。当然，如果你发现我写的有一些不够合理的地方，也欢迎在github上给我提pull request。）
 
 * 如何配置system-config
 
-system-config的配置很简单，你只需要下载 [[https://github.com/baohaojun/baohaojun.github.com//raw/master/system-config.sh][这个文件]] ，然后运行它就可以。在运行的过程中，脚本会询问你是要简易版配置还是火力全开版：
+ *注意：* 此处给出的配置方法并不适用于锤子科技公司内部同事——你们用公司内部wiki上的那个配置方法是更方便的。
+
+system-config的配置很简单，你只要运行这个命令就可以：
+
+#+BEGIN_SRC sh
+bash -c "$(curl -s http://baohaojun.github.io/system-config.sh)" system-config.sh
+#+END_SRC
+
+在运行的过程中，脚本会询问你是要简易版配置还是火力全开版：
 
 [[../../../../images/confirm-which-system-config.png][file:../../../../images/confirm-which-system-config.png]]
 
@@ -46,30 +56,21 @@ system-config的配置很简单，你只需要下载 [[https://github.com/baohao
 
 在上面的命令行提示下输入 =yes= 再回车，最后输出 =Full config OK= 的话就表示成功了。中间可能需要回答几个问题。
 
-也可以自己手动运行下面这两条命令进行完整版的配置：
-
-#+BEGIN_SRC sh
-git clone --recursive https://github.com/baohaojun/system-config ~/system-config
-~/system-config/bin/Linux/after-check-out.sh
-#+END_SRC
-
-其中，第一步是在下载system-config项目的代码。 =--recursive= 参数是因为 =system-config= 项目还有好几个子项目，需要一起下载下来。
-
-第二步则运行一些配置脚本，把我的工作环境能自动化配置的部分全部重新配置出来。这个配置的时间可能会有点长，尤其是如果你的Debian/Ubuntu机器是新装的，很多软件会在配置system-config的时候被自动安装，花的时间会更长一点。请一定要有耐心，相信最后的system-config会让你觉得是值得的😅。
+这个配置第一步是下载system-config项目的代码。第二步则运行一些配置脚本，把我的工作环境能自动化配置的部分全部重新配置出来。这个配置的时间可能会有点长，尤其是如果你的Debian/Ubuntu机器是新装的，很多软件会在配置system-config的时候被自动安装，花的时间会更长一点。请一定要有耐心，相信最后的system-config会让你觉得是值得的😅。
 
 运行的过程中可能需要你输入几次sudo密码，以及按几次回车、输入yes/no再回车等。其他的一般都已经尽量做到自动化了。
 
 ** 配置过程中出了问题怎么办
 
-可以的话让我直接过来看一下。或者请直接截个屏或者拷贝下出错时的终端输出发邮件给我。当然，最喜欢的是能自己google解决问题的朋友了😆。
+请拷贝下出错时的终端输出发邮件给我。当然，最喜欢的是能自己google解决问题的朋友了😆。
 
 * bash相关的操作
 
 接下来要开始讲一些我的system-config下与一般的Linux系统不大一样的一些用法。
 
-我在写system-config的时候绝大多数情况下都会尽量注意与原有的命令兼容。因为否则的话有些命令在别人写的脚本里被用到，如果我重写过这个命令，并且不兼容的话，我运行这个脚本就会失败，这是不能接受的。
+我在写system-config的时候绝大多数情况下都会尽量注意与原有的命令兼容，只会在一些本来应该出错的用法下对该命令进行扩展。比如cd命令，正常的用法是 =cd DIR= ，这里 =DIR= 是 =cd= 的 *唯一* 参数，比如可以是你想要进入的目录的绝对路径 =/home/bhj/src/android/external/libsepol= 。我对它进行扩展之后，我的 cd 用法就变成了 =cd DIR_STEM1 DIR_STEM2= ，也就是说，我可以只打我想去的目录的几个关键字（可能是我觉得比较好记的），然后如果只有一个历史目录能“匹配”这几个关键字的话，system-config就直接帮我进入到那个目录了。（如果你发现我的一些改动会导致你原来的程序、使用习惯出错，请给我 [[https://github.com/baohaojun/system-config/issues/new][提Bug]] 。
 
-但是接下来要讲的是那些不一样的地方，所以请一定在配置了我的system-config之后再来尝试这些命令。
+接下来要讲的很多内容就是那些不一样的地方，所以请一定在配置了我的system-config之后再来尝试这些命令。
 
 ** cd命令
 

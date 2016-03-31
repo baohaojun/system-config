@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[偶像的十大预言]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/03/02/0-steve-yegges-ten-predictions.html"/>
+    <updated>2016-03-02T20:46:06+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/03/02/0-steve-yegges-ten-predictions.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[kmail --view can't display some maildir files correctly]]></title>
     <link href="http://baohaojun.github.io/blog/2016/02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html"/>
     <updated>2016-02-17T11:16:00+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/09/14/0-Got-hit-by-perl-glob.html"/>
     <updated>2015-09-15T09:37:16+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/09/14/0-Got-hit-by-perl-glob.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Linux就是我的IDE]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/09/05/0-Linux-is-my-IDE.html"/>
-    <updated>2015-09-05T22:08:19+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/09/05/0-Linux-is-my-IDE.html</id>
   </entry>
 </feed>
